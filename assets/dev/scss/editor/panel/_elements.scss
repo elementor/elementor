@@ -91,21 +91,12 @@
 #elementor-panel-elements-search-wrapper {
 	position: relative;
 	margin: 10px 10px 5px;
-
-	i {
-		position: absolute;
-		@include end(0);
-		top: 50%;
-		color: $editor-light;
-		transform: translateY(-50%);
-		transition: $end 1s;
-	}
 }
 
 #elementor-panel-elements-search-input {
 	background-color: rgba(255,255,255,.7);
 	font-size: 11px;
-	@include padding(10px, 27px, 10px, 10px);
+	@include padding(10px, 10px, 10px, 29px);
 	font-style: italic;
 	color: $editor-light;
 	border: none;
@@ -116,15 +107,15 @@
 	-moz-appearance: none;
 
 	+ i {
-		@include end(10px);
+		position: absolute;
+		@include start(10px);
+		top: 50%;
+		color: $editor-light;
+		transform: translateY(-50%);
 	}
 
 	&:focus {
 		background-color: rgba(255,255,255,1);
-		@include padding-start(15px);
-
-		+ i {
-			@include end(15px);
-		}
+		@include padding-end(15px);
 	}
 }

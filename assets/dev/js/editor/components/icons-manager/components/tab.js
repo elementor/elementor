@@ -9,7 +9,7 @@ class Tab extends Component {
 	componentDidMount = () => {
 		if ( this.props.selected && this.props.selected.value ) {
 			setTimeout( () => {
-				const element = document.querySelector( '.selected' );
+				const element = document.querySelector( '.elementor-selected' );
 				if ( element ) {
 					element.scrollIntoView( false );
 				}
@@ -57,7 +57,7 @@ class Tab extends Component {
 	};
 
 	getLibrary = ( libraryName ) => {
-		const icons = elementor.config.icons.filter( ( library ) => {
+		const icons = elementor.config.icons.libraries.filter( ( library ) => {
 			return libraryName === library.name;
 		} );
 		return icons;

@@ -134,7 +134,7 @@ class Widget_Icon_List extends Widget_Base {
 				'label_block' => true,
 				'default' => [
 					'value' => 'fas fa-check',
-					'library' => 'solid',
+					'library' => 'fa-solid',
 				],
 				'fa4compatibility' => 'icon',
 			]
@@ -164,21 +164,21 @@ class Widget_Icon_List extends Widget_Base {
 						'text' => __( 'List Item #1', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-check',
-							'library' => 'solid',
+							'library' => 'fa-solid',
 						],
 					],
 					[
 						'text' => __( 'List Item #2', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-times',
-							'library' => 'solid',
+							'library' => 'fa-solid',
 						],
 					],
 					[
 						'text' => __( 'List Item #3', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-dot-circle',
-							'library' => 'solid',
+							'library' => 'fa-solid',
 						],
 					],
 				],
@@ -384,6 +384,7 @@ class Widget_Icon_List extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'fill: {{VALUE}};',
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -400,6 +401,7 @@ class Widget_Icon_List extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -526,6 +528,11 @@ class Widget_Icon_List extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$fallback_defaults = [
+			'fa fa-check',
+			'fa fa-times',
+			'fa fa-dot-circle-o',
+		];
 
 		$this->add_render_attribute( 'icon_list', 'class', 'elementor-icon-list-items' );
 		$this->add_render_attribute( 'list_item', 'class', 'elementor-icon-list-item' );
@@ -543,6 +550,7 @@ class Widget_Icon_List extends Widget_Base {
 				$this->add_render_attribute( $repeater_setting_key, 'class', 'elementor-icon-list-text' );
 
 				$this->add_inline_editing_attributes( $repeater_setting_key );
+				$migration_allowed = Icons_Manager::is_migration_allowed();
 				?>
 				<li class="elementor-icon-list-item" >
 					<?php
@@ -562,9 +570,14 @@ class Widget_Icon_List extends Widget_Base {
 						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 					}
 
-					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon'] ) ) :
+					// add old default
+					if ( ! isset( $item['icon'] ) && ! $migration_allowed ) {
+						$item['icon'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-check';
+					}
+
+					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon']['value'] ) ) :
 						$migrated = isset( $item['__fa4_migrated']['selected_icon'] );
-						$is_new = empty( $item['icon'] );
+						$is_new = empty( $item['icon'] ) && $migration_allowed;
 						?>
 						<span class="elementor-icon-list-icon">
 							<?php
@@ -605,7 +618,8 @@ class Widget_Icon_List extends Widget_Base {
 				view.addRenderAttribute( 'icon_list', 'class', 'elementor-inline-items' );
 				view.addRenderAttribute( 'list_item', 'class', 'elementor-inline-item' );
 			}
-			var iconsHTML = {};
+			var iconsHTML = {},
+				migrated = {};
 		#>
 		<# if ( settings.icon_list ) { #>
 			<ul {{{ view.getRenderAttributeString( 'icon_list' ) }}}>
@@ -621,10 +635,17 @@ class Widget_Icon_List extends Widget_Base {
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>
-						<# if ( item.icon || item.selected_icon ) { #>
+						<# if ( item.icon || item.selected_icon.value ) { #>
 						<span class="elementor-icon-list-icon">
-							<# iconsHTML[index] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true } ); #>
-							{{{ iconsHTML[index] }}}
+							<#
+								iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true }, 'i', 'object' );
+								migrated[ index ] = elementor.helpers.isIconMigrated( item, 'selected_icon' );
+								if ( iconsHTML[ index ] && iconsHTML[ index ].rendered && ( ! item.icon || migrated[ index ] ) ) { #>
+									{{{ iconsHTML[ index ].value }}}
+								<# } else { #>
+									<i class="{{ item.icon }}" aria-hidden="true"></i>
+								<# }
+							#>
 						</span>
 						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>

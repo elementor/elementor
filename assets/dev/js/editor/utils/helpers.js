@@ -75,7 +75,7 @@ helpers = {
 	},
 
 	enqueueIconFonts( iconType ) {
-		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) ) {
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! ElementorConfig[ 'icons_update_needed' ] ) {
 			return;
 		}
 
@@ -102,7 +102,7 @@ helpers = {
 	},
 
 	getIconLibrarySettings( iconType ) {
-		const iconSetting = ElementorConfig.icons.filter( ( library ) => iconType === library.name );
+		const iconSetting = elementor.config.icons.libraries.filter( ( library ) => iconType === library.name );
 		if ( iconSetting[ 0 ] && iconSetting[ 0 ].name ) {
 			return iconSetting[ 0 ];
 		}
@@ -131,7 +131,7 @@ helpers = {
 		const iconType = icon.library,
 			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
-			if ( 'inline' === returnType ) {
+			if ( 'panel' === returnType ) {
 				return '<img src="' + iconValue.url + '">';
 			}
 			return {
@@ -160,6 +160,13 @@ helpers = {
 		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
 	},
 
+	isIconMigrated( settings, controlName ) {
+		if ( settings.__fa4_migrated && settings.__fa4_migrated[ controlName ] ) {
+			return true;
+		}
+		return false;
+	},
+
 	fetchFa4ToFa5Mapping() {
 		const storageKey = 'fa4Tofa5Mapping';
 		let mapping = elementorCommon.storage.get( storageKey );
@@ -180,7 +187,7 @@ helpers = {
 		// every thing else is converted to solid
 		return {
 			value: 'fas' + fa4Value.replace( 'fa ', ' ' ),
-			library: 'solid',
+			library: 'fa-solid',
 		};
 	},
 
@@ -264,6 +271,95 @@ helpers = {
 
 	getUniqueID() {
 		return Math.random().toString( 16 ).substr( 2, 7 );
+	},
+
+	getSocialNetworkNameFromIcon( iconsControl, fallbackControl, toUpperCase = false, migrated = null, withIcon = false ) {
+		let social = '',
+			icon = '';
+		if ( fallbackControl && ! migrated ) {
+			social = fallbackControl.replace( 'fa fa-', '' );
+			icon = '<i class="' + fallbackControl + '"></i>';
+		} else if ( iconsControl.value && 'svg' !== iconsControl.library ) {
+			social = iconsControl.value.split( ' ' )[ 1 ];
+			if ( ! social ) {
+				social = '';
+			} else {
+				social = social.replace( 'fa-', '' );
+			}
+			icon = this.renderIcon( null, iconsControl, {}, 'i', 'panel' );
+		} else {
+			icon = this.renderIcon( null, iconsControl, {}, 'i', 'panel' );
+		}
+		if ( '' !== social && toUpperCase ) {
+			social = social.split( '-' ).join( ' ' );
+			social = social.replace( /\b\w/g, ( letter ) => letter.toUpperCase() );
+		}
+		social = elementor.hooks.applyFilters( 'elementor/social_icons/network_name', social, iconsControl, fallbackControl, toUpperCase, withIcon );
+		if ( withIcon ) {
+			social = icon + ' ' + social;
+		}
+		return social;
+	},
+
+	getSimpleDialog( id, title, message, confirmString, onConfirm ) {
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: id,
+			headerMessage: title,
+			message: message,
+			position: {
+				my: 'center center',
+				at: 'center center',
+			},
+			strings: {
+				confirm: confirmString,
+				cancel: elementor.translate( 'cancel' ),
+			},
+			onConfirm: onConfirm,
+		} );
+	},
+
+	maybeDisableWidget() {
+		if ( ! ElementorConfig[ 'icons_update_needed' ] ) {
+			return false;
+		}
+
+		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
+			widgetType = elementView.model.get( 'widgetType' ),
+			widgetData = elementor.config.widgets[ widgetType ],
+			hasControlOfType = ( controls, type ) => {
+				let has = false;
+				jQuery.each( controls, ( controlName, controlData ) => {
+					if ( type === controlData.type ) {
+						has = true;
+						return false;
+					}
+					if ( 'repeater' === controlData.type ) {
+						has = hasControlOfType( controlData.fields, type );
+						if ( has ) {
+							return false;
+						}
+					}
+				} );
+				return has;
+			};
+
+		if ( widgetData ) {
+			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
+			if ( hasIconsControl ) {
+				const onConfirm = () => {
+					window.location.href = ElementorConfig.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+				};
+				elementor.helpers.getSimpleDialog(
+					'elementor-enable-fa5-dialog',
+					elementor.translate( 'enable_fa5' ),
+					elementor.translate( 'dialog_confirm_enable_fa5' ),
+					elementor.translate( 'update' ),
+					onConfirm
+				).show();
+				return true;
+			}
+		}
+		return false;
 	},
 
 	/*

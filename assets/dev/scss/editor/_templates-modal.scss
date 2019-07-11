@@ -11,6 +11,10 @@ $remote-templates-items-space: 30px;
 			color: darken($editor-success, 10%);
 		}
 	}
+
+	.dialog-buttons-wrapper {
+		display: none;
+	}
 }
 
 #elementor-template-library-header-menu {
@@ -242,7 +246,7 @@ label.elementor-template-library-order-label {
 
 				&:after {
 					color: $editor-accent;
-					content: '\f004';
+					content: '\e93f';
 				}
 			}
 		}
@@ -269,7 +273,7 @@ label.elementor-template-library-order-label {
 
 		&:after {
 			color: $editor-light;
-			content: '\f08a';
+			content: '\e923';
 		}
 	}
 }
@@ -468,7 +472,7 @@ label.elementor-template-library-order-label {
 				i {
 
 					&:before {
-						content: '\f004';
+						content: '\e93f';
 						color: $editor-accent;
 					}
 				}

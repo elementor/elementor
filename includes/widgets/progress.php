@@ -199,9 +199,41 @@ class Widget_Progress extends Widget_Base {
 		);
 
 		$this->add_control(
+			'bar_height',
+			[
+				'label' => __( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-progress-bar' => 'height: {{SIZE}}{{UNIT}}; line-height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'bar_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-progress-wrapper' => 'border-radius: {{SIZE}}{{UNIT}}; overflow: hidden;',
+				],
+			]
+		);
+
+		$this->add_control(
+			'inner_text_heading',
+			[
+				'label' => __( 'Inner Text', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'bar_inline_color',
 			[
-				'label' => __( 'Inner Text Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-bar' => 'color: {{VALUE}};',
@@ -212,28 +244,12 @@ class Widget_Progress extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name' => 'bar_typography',
+				'name' => 'bar_inner_typography',
 				'selector' => '{{WRAPPER}} .elementor-progress-bar',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Border::get_type(), [
-				'name' => 'bar_border',
-				'selector' => '{{WRAPPER}} .elementor-progress-wrapper',
-			]
-		);
-
-		$this->add_control(
-			'bar_border_radius',
-			[
-				'label' => __( 'Border Radius', 'elementor-pro' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-progress-wrapper' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; overflow: hidden;',
+				'exclude' => [
+					'line_height',
 				],
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 

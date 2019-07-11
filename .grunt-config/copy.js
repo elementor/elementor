@@ -32,12 +32,15 @@ const getBuildFiles = [
 	'!yarn.lock',
 	'!docker-compose.yml',
 	'!nightwatch.conf.js',
-
 	'!assets/dev/**',
 	'!assets/**/*.map',
+	'!assets/js/qunit-tests*',
 	'!modules/**/assets/**',
 	'!core/**/assets/**',
-	'!*~'
+	'!*~',
+
+	// Conflict with above rule.
+	'core/files/assets/**',
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}

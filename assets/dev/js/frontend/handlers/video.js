@@ -48,6 +48,14 @@ const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
 
 		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+
+		if ( $videoIframe[ 0 ].src.includes( 'vimeo.com' ) ) {
+			const videoSrc = $videoIframe[ 0 ].src,
+				timeMatch = /#t=[^&]*/.exec( videoSrc );
+
+			// Param '#t=' must be last in the URL
+			$videoIframe[ 0 ].src = videoSrc.slice( 0, timeMatch.index ) + videoSrc.slice( timeMatch.index + timeMatch[ 0 ].length ) + timeMatch[ 0 ];
+		}
 	},
 
 	animateVideo: function() {
