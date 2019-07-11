@@ -139,23 +139,31 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_control(
-			'icon',
+			'selected_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right',
+				'type' => Controls_Manager::ICONS,
 				'separator' => 'before',
+				'fa4compatibility' => 'icon',
+				'default' => [
+					'value' => 'fas fa-caret' . ( is_rtl() ? '-left' : '-right' ),
+					'library' => 'fa-solid',
+				],
 			]
 		);
 
 		$this->add_control(
-			'icon_active',
+			'selected_active_icon',
 			[
 				'label' => __( 'Active Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-caret-up',
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon_active',
+				'default' => [
+					'value' => 'fas fa-caret-up',
+					'library' => 'fa-solid',
+				],
 				'condition' => [
-					'icon!' => '',
+					'selected_icon[value]!' => '',
 				],
 			]
 		);
@@ -324,7 +332,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'icon!' => '',
+					'selected_icon[value]!' => '',
 				],
 			]
 		);
@@ -347,9 +355,6 @@ class Widget_Toggle extends Widget_Base {
 				'default' => is_rtl() ? 'right' : 'left',
 				'toggle' => false,
 				'label_block' => false,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 
@@ -359,10 +364,8 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title .elementor-toggle-icon .fa:before' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'icon!' => '',
+					'{{WRAPPER}} .elementor-toggle .elementor-tab-title .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-toggle .elementor-tab-title .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -373,10 +376,8 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon .fa:before' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'icon!' => '',
+					'{{WRAPPER}} .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -395,9 +396,6 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-icon.elementor-toggle-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-toggle .elementor-toggle-icon.elementor-toggle-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'icon!' => '',
 				],
 			]
 		);
@@ -474,6 +472,20 @@ class Widget_Toggle extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
+		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
+
+		if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// @todo: remove when deprecated
+			// added as bc in 2.6
+			// add old default
+			$settings['icon'] = 'fa fa-caret' . ( is_rtl() ? '-left' : '-right' );
+			$settings['icon_active'] = 'fa fa-caret-up';
+			$settings['icon_align'] = $this->get_settings( 'icon_align' );
+		}
+
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
+
 		?>
 		<div class="elementor-toggle" role="tablist">
 			<?php
@@ -504,10 +516,16 @@ class Widget_Toggle extends Widget_Base {
 				?>
 				<div class="elementor-toggle-item">
 					<<?php echo esc_html( $settings['title_html_tag'] ); ?> <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>>
-						<?php if ( $settings['icon'] ) : ?>
+						<?php if ( $has_icon ) : ?>
 						<span class="elementor-toggle-icon elementor-toggle-icon-<?php echo esc_attr( $settings['icon_align'] ); ?>" aria-hidden="true">
-							<i class="elementor-toggle-icon-closed <?php echo esc_attr( $settings['icon'] ); ?>"></i>
-							<i class="elementor-toggle-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
+							<?php
+							if ( $is_new || $migrated ) { ?>
+								<span class="elementor-toggle-icon-closed"><?php Icons_Manager::render_icon( $settings['selected_icon'] ); ?></span>
+								<span class="elementor-toggle-icon-opened"><?php Icons_Manager::render_icon( $settings['selected_active_icon'], [ 'class' => 'elementor-toggle-icon-opened' ] ); ?></span>
+							<?php } else { ?>
+								<i class="elementor-toggle-icon-closed <?php echo esc_attr( $settings['icon'] ); ?>"></i>
+								<i class="elementor-toggle-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
+							<?php } ?>
 						</span>
 						<?php endif; ?>
 						<a href=""><?php echo $item['tab_title']; ?></a>
@@ -532,7 +550,10 @@ class Widget_Toggle extends Widget_Base {
 		<div class="elementor-toggle" role="tablist">
 			<#
 			if ( settings.tabs ) {
-				var tabindex = view.getIDInt().toString().substr( 0, 3 );
+				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
+					iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, {}, 'i' , 'object' ),
+					iconActiveHTML = elementor.helpers.renderIcon( view, settings.selected_active_icon, {}, 'i' , 'object' ),
+					migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 
 				_.each( settings.tabs, function( item, index ) {
 					var tabCount = index + 1,
@@ -559,10 +580,15 @@ class Widget_Toggle extends Widget_Base {
 					#>
 					<div class="elementor-toggle-item">
 						<{{{ settings.title_html_tag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
-							<# if ( settings.icon ) { #>
+							<# if ( settings.icon || settings.selected_icon ) { #>
 							<span class="elementor-toggle-icon elementor-toggle-icon-{{ settings.icon_align }}" aria-hidden="true">
-								<i class="elementor-toggle-icon-closed {{ settings.icon }}"></i>
-								<i class="elementor-toggle-icon-opened {{ settings.icon_active }}"></i>
+								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+									<span class="elementor-toggle-icon-closed">{{{ iconHTML.value }}}</span>
+									<span class="elementor-toggle-icon-opened">{{{ iconActiveHTML.value }}}</span>
+								<# } else { #>
+									<i class="elementor-toggle-icon-closed {{ settings.icon }}"></i>
+									<i class="elementor-toggle-icon-opened {{ settings.icon_active }}"></i>
+								<# } #>
 							</span>
 							<# } #>
 							<a href="">{{{ item.tab_title }}}</a>

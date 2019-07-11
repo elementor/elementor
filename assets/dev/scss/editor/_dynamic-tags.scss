@@ -41,17 +41,6 @@
 	height: 27px;
 	box-sizing: border-box; // overriding for TinyMCE environment
 
-	&__settings {
-
-		i {
-			color: $editor-lightest;
-
-			&.eicon-wrench {
-				cursor: pointer;
-			}
-		}
-	}
-
 	&__title {
 		padding: 0 8px;
 		flex-grow: 1;
@@ -60,9 +49,15 @@
 		white-space: nowrap;
 	}
 
+	&__settings,
 	&__remove {
 		color: $editor-lighter;
 		cursor: pointer;
+		transition: $transition-hover;
+
+		&:hover {
+			color: $editor-light;
+		}
 	}
 
 	.elementor-control-type-wysiwyg & {

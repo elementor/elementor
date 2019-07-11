@@ -143,6 +143,13 @@ class Svg_Handler {
 			return $file;
 		}
 
+		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
+
+		if ( 'svg' !== $ext ) {
+			$file['error'] = sprintf( __( 'The uploaded %s file is not supported. Please upload a valid svg file', 'elementor' ), $ext );
+			return $file;
+		}
+
 		if ( ! self::is_enabled() ) {
 			$file['error'] = __( 'SVG file is not allowed for security reasons', 'elementor' );
 			return $file;
@@ -160,7 +167,7 @@ class Svg_Handler {
 	 * @return bool
 	 */
 	private function is_elementor_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-editor-upload' === $_POST['uploadTypeCaller'];
+		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-editor-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
 	}
 
 	/**
@@ -200,10 +207,11 @@ class Svg_Handler {
 	 * @return bool
 	 */
 	private function is_encoded( $contents ) {
+		$needle = "\x1f\x8b\x08";
 		if ( function_exists( 'mb_strpos' ) ) {
-			return 0 === mb_strpos( $contents, "\x1f" . "\x8b" . "\x08" );
+			return 0 === mb_strpos( $contents, $needle );
 		} else {
-			return 0 === strpos( $contents, "\x1f" . "\x8b" . "\x08" );
+			return 0 === strpos( $contents, $needle );
 		}
 	}
 
@@ -272,23 +280,18 @@ class Svg_Handler {
 			$allowed_tags = $this->get_allowed_elements();
 		}
 
-		$tag_name = $element->tagName;
-		$node_value = $element->nodeValue;
+		$tag_name = $element->tagName; // phpcs:ignore -- php DomDocument
 
 		if ( ! in_array( strtolower( $tag_name ), $allowed_tags ) ) {
 			$this->remove_element( $element );
 			return false;
 		}
 
-//		if ( ! empty( $node_value ) && $this->has_js_value( $node_value ) ) {
-//			$this->remove_element( $element );
-//			return false;
-//		}
 		return true;
 	}
 
 	private function remove_element( $element ) {
-		$element->parentNode->removeChild( $element );
+		$element->parentNode->removeChild( $element ); // phpcs:ignore -- php DomDocument
 	}
 
 	/**
@@ -472,7 +475,7 @@ class Svg_Handler {
 
 	/**
 	 * validate_allowed_attributes
-	 * @param $element
+	 * @param \DOMElement $element
 	 */
 	private function validate_allowed_attributes( $element ) {
 		static $allowed_attributes = false;
@@ -527,7 +530,7 @@ class Svg_Handler {
 	private function validate_use_tag( $element ) {
 		$xlinks = $element->getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
 		if ( $xlinks && '#' !== substr( $xlinks, 0, 1 ) ) {
-			$element->parentNode->removeChild( $element );
+			$element->parentNode->removeChild( $element ); // phpcs:ignore -- php DomNode
 		}
 	}
 
@@ -536,8 +539,8 @@ class Svg_Handler {
 	 */
 	private function strip_doctype() {
 		foreach ( $this->svg_dom->childNodes as $child ) {
-			if ( XML_DOCUMENT_TYPE_NODE === $child->nodeType ) {
-				$child->parentNode->removeChild( $child );
+			if ( XML_DOCUMENT_TYPE_NODE === $child->nodeType ) { // phpcs:ignore -- php DomDocument
+				$child->parentNode->removeChild( $child ); // phpcs:ignore -- php DomDocument
 			}
 		}
 	}
@@ -585,6 +588,9 @@ class Svg_Handler {
 		// we do this backwards so we don't skip anything if we delete a node
 		// see comments at: http://php.net/manual/en/class.domnamednodemap.php
 		for ( $index = $elements->length - 1; $index >= 0; $index-- ) {
+			/**
+			 * @var \DOMElement $current_element
+			 */
 			$current_element = $elements->item( $index );
 			// If the tag isn't in the whitelist, remove it and continue with next iteration
 			if ( ! $this->is_allowed_tag( $current_element ) ) {
@@ -601,7 +607,7 @@ class Svg_Handler {
 				$current_element->removeAttribute( 'href' );
 			}
 
-			if ( 'use' === strtolower( $current_element->tagName ) ) {
+			if ( 'use' === strtolower( $current_element->tagName ) ) { // phpcs:ignore -- php DomDocument
 				$this->validate_use_tag( $current_element );
 			}
 		}
@@ -680,7 +686,6 @@ class Svg_Handler {
 		} catch ( \Exception $e ) {
 			return $attachment_data;
 		}
-
 
 		$src = $attachment_data['url'];
 		$width = (int) $svg['width'];

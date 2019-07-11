@@ -425,17 +425,17 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_styles' );
 
 		wp_register_style(
-			'elementor-icons',
-			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
-			[],
-			'5.1.0'
-		);
-
-		wp_register_style(
 			'font-awesome',
 			$this->get_css_assets_url( 'font-awesome', 'assets/lib/font-awesome/css/' ),
 			[],
 			'4.7.0'
+		);
+
+		wp_register_style(
+			'elementor-icons',
+			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
+			[],
+			'5.3.0'
 		);
 
 		wp_register_style(
@@ -544,7 +544,6 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_styles' );
 
 		wp_enqueue_style( 'elementor-icons' );
-		wp_enqueue_style( 'font-awesome' );
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
@@ -560,8 +559,12 @@ class Frontend extends App {
 		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 			$this->parse_global_css_code();
 
-			$css_file = new Post_CSS( get_the_ID() );
-			$css_file->enqueue();
+			$post_id = get_the_ID();
+			// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
+			if ( $post_id && is_singular() ) {
+				$css_file = new Post_CSS( get_the_ID() );
+				$css_file->enqueue();
+			}
 		}
 	}
 
@@ -639,8 +642,11 @@ class Frontend extends App {
 	}
 
 	private function maybe_enqueue_icon_font( $icon_font_type ) {
-		$icons_types = Icons_Manager::get_icon_manager_tabs();
+		if ( ! Icons_Manager::is_migration_allowed() ) {
+			return;
+		}
 
+		$icons_types = Icons_Manager::get_icon_manager_tabs();
 		if ( ! isset( $icons_types[ $icon_font_type ] ) ) {
 			return;
 		}
@@ -649,36 +655,19 @@ class Frontend extends App {
 		if ( isset( $icon_type['url'] ) ) {
 			$this->icon_fonts_to_enqueue[ $icon_font_type ] = [ $icon_type['url'] ];
 		}
-
-		if ( isset( $icon_type['enqueue'] ) ) {
-			foreach ( (array) $icon_type['enqueue'] as $font_css_url ) {
-				$this->icon_fonts_to_enqueue[ $icon_font_type ][] = $font_css_url;
-			}
-		}
-
-		if ( isset( $icon_type['enqueue_scripts'] ) ) {
-			foreach ( (array) $icon_type['enqueue_scripts'] as $script_src ) {
-				$this->icon_fonts_to_enqueue[ $icon_font_type ][] = $font_css_url;
-			}
-		}
 	}
 
 	private function enqueue_icon_fonts() {
-		if ( empty( $this->icon_fonts_to_enqueue ) ) {
+		if ( empty( $this->icon_fonts_to_enqueue ) || ! Icons_Manager::is_migration_allowed() ) {
 			return;
 		}
 
-		foreach ( $this->icon_fonts_to_enqueue as $icon_type => $assets ) {
-			foreach ( $assets as $index => $css_url ) {
-				if ( in_array( $css_url, $this->enqueued_icon_fonts ) ) {
-					continue;
-				}
-
-				$suffix = $index > 0 ? '-' . $index : '';
-				wp_enqueue_style( 'elementor-icons-' . $icon_type . $suffix, $css_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-				$this->enqueued_icon_fonts[] = $css_url;
-			}
+		foreach ( $this->icon_fonts_to_enqueue as $icon_type => $css_url ) {
+			wp_enqueue_style( 'elementor-icons-' . $icon_type );
+			$this->enqueued_icon_fonts[] = $css_url;
 		}
+
+		//clear enqueued icons
 		$this->icon_fonts_to_enqueue = [];
 	}
 

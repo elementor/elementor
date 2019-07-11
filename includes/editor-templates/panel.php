@@ -139,7 +139,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
 	<input id="elementor-mode-switcher-preview-input" type="checkbox">
 	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview">
-		<i class="fa" aria-hidden="true" title="<?php esc_attr_e( 'Hide Panel', 'elementor' ); ?>"></i>
+		<i class="eicon" aria-hidden="true" title="<?php esc_attr_e( 'Hide Panel', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo __( 'Hide Panel', 'elementor' ); ?></span>
 	</label>
 </script>
@@ -168,8 +168,8 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<# if ( elementData.help_url ) { #>
 		<div id="elementor-panel__editor__help">
 			<a id="elementor-panel__editor__help__link" href="{{ elementData.help_url }}" target="_blank">
-				<?php echo __( 'Need Help?', 'elementor' ); ?>
-				<i class="eicon-info"></i>
+				<?php echo __( 'Need Help', 'elementor' ); ?>
+				<i class="eicon-help-o"></i>
 			</a>
 		</div>
 	<# } #>
@@ -191,7 +191,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 <script type="text/template" id="tmpl-elementor-panel-scheme-typography-item">
 	<div class="elementor-panel-heading">
 		<div class="elementor-panel-heading-toggle">
-			<i class="fa" aria-hidden="true"></i>
+			<i class="eicon" aria-hidden="true"></i>
 		</div>
 		<div class="elementor-panel-heading-title">{{{ title }}}</div>
 	</div>
@@ -265,7 +265,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div class="elementor-dynamic-cover__title" title="{{{ title + ' ' + content }}}">{{{ title + ' ' + content }}}</div>
 	<# if ( isRemovable ) { #>
 		<div class="elementor-dynamic-cover__remove">
-			<i class="eion-close-circle"></i>
+			<i class="eicon-close-circle"></i>
 		</div>
 	<# } #>
 </script>

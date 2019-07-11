@@ -263,6 +263,10 @@
 					border-color: darken($editor-info, 10%);
 				}
 			}
+
+			&:hover {
+				color: $editor-darkest;
+			}
 		}
 
 		&--hidden {

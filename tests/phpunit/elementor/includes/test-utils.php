@@ -14,7 +14,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_source_of_placeholder_image() {
-		$this->assertSame( ELEMENTOR_ASSETS_URL . 'images/placeholder.svg', Utils::get_placeholder_image_src() );
+		$this->assertSame( ELEMENTOR_ASSETS_URL . 'images/placeholder.png', Utils::get_placeholder_image_src() );
 	}
 
 	public function test_should_return_edit_link() {

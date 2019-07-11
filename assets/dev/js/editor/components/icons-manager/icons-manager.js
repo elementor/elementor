@@ -6,29 +6,37 @@ import { unmountComponentAtNode } from 'react-dom';
 
 export default class extends elementorModules.Module {
 	onInit() {
-		this.layout = new ModalLayout();
-
-		const layoutModal = this.layout.getModal();
-
-		layoutModal.addButton( {
-			name: 'insert_icon',
-			text: elementor.translate( 'Insert' ),
-			callback: () => {
-				this.updateControlValue();
-				this.unMountIconManager();
-			},
-		} );
-
-		layoutModal
-			.on( 'show', this.onPickerShow.bind( this ) )
-			.on( 'hide', this.unMountIconManager );
-
 		// Init icon library helper
 		this.library = new IconLibrary();
 		// Init Icon library Storage helper
 		this.store = new Store();
 		// Fetch fa4 to fa5 migration data
 		elementor.helpers.fetchFa4ToFa5Mapping();
+
+		this.cache = {};
+	}
+
+	getLayout() {
+		if ( ! this.layout ) {
+			this.layout = new ModalLayout();
+
+			const layoutModal = this.layout.getModal();
+
+			layoutModal.addButton( {
+				name: 'insert_icon',
+				text: elementor.translate( 'Insert' ),
+				classes: 'elementor-button elementor-button-success',
+				callback: () => {
+					this.updateControlValue();
+					this.unMountIconManager();
+				},
+			} );
+
+			layoutModal
+				.on( 'show', this.onPickerShow.bind( this ) )
+				.on( 'hide', this.unMountIconManager );
+		}
+		return this.layout;
 	}
 
 	getDefaultSettings() {
@@ -45,13 +53,15 @@ export default class extends elementorModules.Module {
 
 	onPickerShow() {
 		const controlView = this.getSettings( 'controlView' ),
-			loaded = {},
+			loaded = {
+				GoPro: true,
+			},
 			iconManagerConfig = {
 				recommended: controlView.model.get( 'recommended' ) || false,
 			};
 
 		let selected = controlView.getControlValue(),
-			icons = elementor.config.icons;
+			icons = elementor.config.icons.libraries;
 
 		if ( ! selected.library || ! selected.value ) {
 			selected = {
@@ -76,6 +86,8 @@ export default class extends elementorModules.Module {
 					name: 'recommended',
 					label: 'Recommended',
 					icons: iconManagerConfig.recommended,
+					labelIcon: 'eicon-star-o',
+					native: true,
 				} );
 			}
 		} else {
@@ -97,6 +109,14 @@ export default class extends elementorModules.Module {
 
 		// Set active tab
 		let activeTab = selected.library || icons[ 0 ].name;
+		if ( 'svg' === selected.library ) {
+			activeTab = icons[ 0 ].name;
+		}
+
+		// selected Library exists
+		if ( ! Object.keys( icons ).some( ( library ) => library === activeTab ) ) {
+			activeTab = icons[ 0 ].name;
+		}
 
 		// Show recommended tab if selected from it
 		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && iconManagerConfig.recommended.hasOwnProperty( selected.library ) ) {
@@ -106,6 +126,9 @@ export default class extends elementorModules.Module {
 				activeTab = icons[ 0 ].name;
 			}
 		}
+
+		iconManagerConfig.customIconsURL = elementor.config.customIconsURL;
+
 		iconManagerConfig.activeTab = activeTab;
 		return renderIconManager( iconManagerConfig );
 	}
@@ -120,6 +143,6 @@ export default class extends elementorModules.Module {
 	show( options ) {
 		this.setSettings( 'controlView', options.view );
 
-		this.layout.showModal( options );
+		this.getLayout().showModal( options );
 	}
 }

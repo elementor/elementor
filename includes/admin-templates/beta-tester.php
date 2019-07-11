@@ -8,11 +8,7 @@ $user = wp_get_current_user();
 
 $ajax = Plugin::$instance->common->get_component( 'ajax' );
 
-$beta_tester_email = get_user_meta( $user->ID, User::BETA_TESTER_META_KEY, true );
-
-if ( ! $beta_tester_email ) {
-	$beta_tester_email = $user->user_email;
-}
+$beta_tester_email = $user->user_email;
 
 /**
  * Print beta tester dialog.
@@ -28,7 +24,7 @@ if ( ! $beta_tester_email ) {
 <script type="text/template" id="tmpl-elementor-beta-tester">
 	<form id="elementor-beta-tester-form" method="post">
 		<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
-		<input type="hidden" name="action" value="elementor_beta_tester_newsletter" />
+		<input type="hidden" name="action" value="elementor_beta_tester_signup" />
 		<div id="elementor-beta-tester-form__caption"><?php echo __( 'Get Beta Updates', 'elementor' ); ?></div>
 		<div id="elementor-beta-tester-form__description"><?php echo __( 'As a beta tester, you’ll receive an update that includes a testing version of Elementor and it’s content directly to your Email', 'elementor' ); ?></div>
 		<div id="elementor-beta-tester-form__input-wrapper">
@@ -41,7 +37,7 @@ if ( ! $beta_tester_email ) {
 			</button>
 		</div>
 		<div id="elementor-beta-tester-form__terms">
-			<?php echo sprintf( __( 'By opting-in, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); ?>
+			<?php echo sprintf( __( 'By clicking Sign Up, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); ?>
 		</div>
 	</form>
 </script>
