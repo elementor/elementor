@@ -48,15 +48,15 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
 
 		if ( $videoIframe[ 0 ].src.includes( 'vimeo.com' ) ) {
-			const videoSrc = $videoIframe[ 0 ].src;
-			const indexOfStartTimeKey = videoSrc.indexOf( '#t=' );
+			const videoSrc = $videoIframe[ 0 ].src,
+				indexOfStartTimeKey = videoSrc.indexOf( '#t=' );
 
 			// insert the autoplay flag before the '#t=' param. Param '#t=' must be last in the URL
-			$videoIframe[ 0 ].src = [ videoSrc.slice( 0, indexOfStartTimeKey ), '&autoplay=1', videoSrc.slice( indexOfStartTimeKey ) ].join( '' );
+			$videoIframe[ 0 ].src = videoSrc.slice( 0, indexOfStartTimeKey ) + '&autoplay=1' + videoSrc.slice( indexOfStartTimeKey );
 		} else {
 			$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
 		}
-	}
+	},
 
 	animateVideo() {
 		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
