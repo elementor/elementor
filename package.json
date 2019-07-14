@@ -12,7 +12,7 @@
 	"devDependencies": {
 		"@babel/core": "7.0.0",
 		"@babel/plugin-proposal-class-properties": "^7.2.1",
-		"@babel/runtime-corejs2": "7.0.0",
+		"@babel/runtime-corejs2": "^7.0.0",
 		"autoprefixer": "~8.5.0",
 		"babel-eslint": "^8.2.6",
 		"babel-loader": "8.0.0",
