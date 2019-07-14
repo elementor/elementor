@@ -15,7 +15,7 @@ Manager = function() {
 	var init = function() {
 		elementor.on( 'preview:loaded', addPanelPage );
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		self.history = require( './history/manager' );
 

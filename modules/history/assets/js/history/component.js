@@ -5,8 +5,8 @@ export default class extends elementorModules.Component {
 
 	getCommands() {
 		return {
-			undo: () => this.context.navigate(),
-			redo: () => this.context.navigate( true ),
+			undo: () => this.manager.navigate(),
+			redo: () => this.manager.navigate( true ),
 		};
 	}
 

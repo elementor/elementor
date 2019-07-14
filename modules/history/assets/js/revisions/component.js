@@ -24,7 +24,7 @@ export default class extends elementorModules.Component {
 	}
 
 	navigate( up ) {
-		if ( this.context.getItems().length > 1 ) {
+		if ( this.manager.getItems().length > 1 ) {
 			elementor.getPanelView().getCurrentPageView().currentTab.navigate( up );
 		}
 	}

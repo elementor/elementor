@@ -36,11 +36,11 @@ export default class extends elementorModules.Component {
 	}
 
 	renderTab( tab ) {
-		this.context.getCurrentPageView().activateTab( tab );
+		this.manager.getCurrentPageView().activateTab( tab );
 	}
 
 	activateTab( tab ) {
-		this.activeTabs[ this.context.getCurrentPageView().model.id ] = tab;
+		this.activeTabs[ this.manager.getCurrentPageView().model.id ] = tab;
 
 		super.activateTab( tab );
 	}
@@ -69,10 +69,10 @@ export default class extends elementorModules.Component {
 		const action = 'panel/open_editor/' + model.get( 'elType' );
 
 		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( action, this.context, model, view );
+		elementor.hooks.doAction( action, this.manager, model, view );
 
 		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this.context, model, view );
+		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this.manager, model, view );
 
 		return editor;
 	}

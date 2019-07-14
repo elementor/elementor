@@ -52,11 +52,11 @@ export default class extends elementorModules.Component {
 	getRoutes() {
 		return {
 			import: () => {
-				this.context.layout.showImportView();
+				this.manager.layout.showImportView();
 			},
 
 			'save-template': ( args ) => {
-				this.context.layout.showSaveTemplateView( args.model );
+				this.manager.layout.showSaveTemplateView( args.model );
 			},
 		};
 	}
@@ -80,7 +80,7 @@ export default class extends elementorModules.Component {
 	}
 
 	renderTab( tab ) {
-		this.context.setScreen( this.tabs[ tab ].filter );
+		this.manager.setScreen( this.tabs[ tab ].filter );
 	}
 
 	activateTab( tab ) {
@@ -90,13 +90,13 @@ export default class extends elementorModules.Component {
 	}
 
 	open() {
-		if ( ! this.context.layout ) {
-			this.context.layout = new TemplateLibraryLayoutView();
+		if ( ! this.manager.layout ) {
+			this.manager.layout = new TemplateLibraryLayoutView();
 
-			this.context.layout.getModal().on( 'hide', () => this.close() );
+			this.manager.layout.getModal().on( 'hide', () => this.close() );
 		}
 
-		this.context.layout.showModal();
+		this.manager.layout.showModal();
 
 		return true;
 	}
@@ -106,14 +106,14 @@ export default class extends elementorModules.Component {
 			return false;
 		}
 
-		this.context.modalConfig = {};
-		this.context.layout.getModal().hide();
+		this.manager.modalConfig = {};
+		this.manager.layout.getModal().hide();
 
 		return true;
 	}
 
 	show( args ) {
-		this.context.modalConfig = args;
+		this.manager.modalConfig = args;
 
 		if ( args.toDefault || ! elementorCommon.route.restoreState( 'library' ) ) {
 			elementorCommon.route.to( this.getDefault() );

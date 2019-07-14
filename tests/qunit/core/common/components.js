@@ -7,7 +7,7 @@ jQuery( () => {
 					return 'test';
 				}
 			},
-			instance = new Component( { context: self } );
+			instance = new Component( { manager: self } );
 
 		elementorCommon.components.register( instance );
 
@@ -30,7 +30,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const routes = elementorCommon.route.getAll();
 
@@ -52,7 +52,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const component = elementorCommon.components.get( 'test' );
 
@@ -60,7 +60,7 @@ jQuery( () => {
 		assert.equal( typeof elementorCommon.route.commands[ component.getNamespace() + '/tabB' ], 'function' );
 	} );
 
-	QUnit.test( 'Register without context', ( assert ) => {
+	QUnit.test( 'Register without a manager', ( assert ) => {
 		const Component = class extends elementorModules.Component {
 			getNamespace() {
 				return 'test';
@@ -71,7 +71,7 @@ jQuery( () => {
 			() => {
 				new Component();
 			},
-			new Error( 'context is required' )
+			new Error( 'manager is required' )
 		);
 	} );
 
@@ -80,7 +80,7 @@ jQuery( () => {
 
 		assert.throws(
 			() => {
-				const instance = new Component( { context: self } );
+				const instance = new Component( { manager: self } );
 				instance.getNamespace();
 			},
 			new Error( 'getNamespace must be override.' )
@@ -100,7 +100,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const component = elementorCommon.components.get( 'test-commands' );
 
@@ -130,7 +130,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const handlers = elementorCommon.shortcuts.handlers[ 'ctrl+a' ],
 			keys = Object.keys( handlers );
@@ -153,7 +153,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const component = elementorCommon.components.get( 'test-shortcuts-no-command' ),
 			handlers = elementorCommon.shortcuts.getAll();
@@ -187,7 +187,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		assert.throws(
 			() => {
@@ -227,7 +227,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.commands.run( command );
 
@@ -256,7 +256,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.commands.run( namespace + '/commandA', {
 			argA: 1,
@@ -282,7 +282,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.commands.run( namespace + '/commandA', {
 			onBefore: () => {
@@ -312,7 +312,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.commands.run( namespace + '/commandA' );
 
@@ -340,7 +340,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const component = elementorCommon.components.get( 'run-command-with-dependency' );
 
@@ -394,7 +394,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( routeA );
 
@@ -432,7 +432,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const args = {
 			argA: 1,
@@ -463,7 +463,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA', {
 			onBefore: () => {
@@ -498,7 +498,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const $fixture = jQuery(
 			'<div id="' + namespace + '">' +
@@ -542,7 +542,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		const component = elementorCommon.components.get( namespace ),
 			newTabIndex = 1;
@@ -583,7 +583,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
 
@@ -611,7 +611,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
 
@@ -637,7 +637,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
 		assert.equal( routeCount, 1 );
@@ -667,7 +667,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
 
@@ -699,7 +699,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
 		assert.equal( openCount, 1 );
@@ -734,7 +734,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
 		assert.equal( routeStatus, 'notChanged' );
@@ -764,7 +764,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
 		assert.equal( routeStatus, 'afterRoute' );
@@ -793,7 +793,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA', routeArgs );
 		elementorCommon.route.saveState( namespace );
@@ -831,7 +831,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA', routeArgs );
 
@@ -871,7 +871,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
@@ -912,7 +912,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		// Outside scope.
 		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
@@ -960,7 +960,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new SecondComponent( { context: self } ) );
+		elementorCommon.components.register( new SecondComponent( { manager: self } ) );
 
 		// Activate the first component.
 		elementorCommon.route.to( namespace + '/routeA' );
@@ -998,7 +998,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
 
@@ -1027,7 +1027,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new SecondComponent( { context: self } ) );
+		elementorCommon.components.register( new SecondComponent( { manager: self } ) );
 
 		const component = elementorCommon.components.get( namespace ),
 			secondComponent = elementorCommon.components.get( secondNamespace );
