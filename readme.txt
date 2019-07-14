@@ -221,6 +221,15 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.6.2 - 2019-07-14 =
+* Tweak: Make sure activeTab exists in Icon library
+* Fix: Star rating widget alignment is not responsive ([#8444](https://github.com/elementor/elementor/issues/8444))
+* Fix: Temporarily reverted `application/json` content type to support various server configurations
+* Fix: Progress Bar typography backward compatibility
+* Fix: Missing `fas` icons in Social Icons widget
+* Fix: Navigator Indicators tooltip location
+* Fix: Added Icon List backward compatibility on template import
+
 = 2.6.1 - 2019-07-10 =
 * Tweak: Added responsive controls to Icon size and Icon rotation in Icon widget
 * Fix: Preview Could Not Be Loaded `.htaccess` error if permalink structure not set
