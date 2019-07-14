@@ -56,7 +56,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		} else {
 			$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
 		}
-	},
+	}
 
 	animateVideo() {
 		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
