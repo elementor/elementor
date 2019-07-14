@@ -23,7 +23,7 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 
 		this.currentAnimation = animation;
 
-		setTimeout( function() {
+		setTimeout( () => {
 			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
 		}, animationDelay );
 	}
@@ -32,8 +32,8 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 		return this.getCurrentDeviceSetting( 'animation' ) || this.getCurrentDeviceSetting( '_animation' );
 	}
 
-	onInit() {
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
+	onInit( ...args ) {
+		super.onInit( ...args );
 
 		if ( this.getAnimation() ) {
 			elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );

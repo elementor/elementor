@@ -15,8 +15,8 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		};
 	}
 
-	onInit() {
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
+	onInit( ...args ) {
+		super.onInit( ...args );
 
 		const elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,

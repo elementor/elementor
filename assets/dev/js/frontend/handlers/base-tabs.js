@@ -100,8 +100,8 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		} );
 	}
 
-	onInit() {
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
+	onInit( ...args ) {
+		super.onInit( ...args );
 
 		this.activateDefaultTab();
 	}

@@ -1,10 +1,4 @@
 class TextEditor extends elementorModules.frontend.handlers.Base {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.dropCapLetter = '';
-	}
-
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -73,15 +67,15 @@ class TextEditor extends elementorModules.frontend.handlers.Base {
 
 		this.elements.$dropCapLetter.text( trimmedFirstLetter );
 
-		const restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, function( match ) {
+		const restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, ( match ) => {
 			return new Array( match.length + 1 ).join( '&nbsp;' );
 		} );
 
 		$paragraph.html( restoredParagraphContent ).prepend( this.elements.$dropCap );
 	}
 
-	onInit() {
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
+	onInit( ...args ) {
+		super.onInit( ...args );
 
 		this.wrapDropCap();
 	}

@@ -295,7 +295,7 @@ class Shapes extends elementorModules.frontend.handlers.Base {
 
 		const svgURL = this.getSvgURL( shapeType, fileName );
 
-		jQuery.get( svgURL, function( data ) {
+		jQuery.get( svgURL, ( data ) => {
 			$svgContainer.empty().append( data.childNodes[ 0 ] );
 		} );
 
