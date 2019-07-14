@@ -178,7 +178,7 @@ class Widget_Star_Rating extends Widget_Base {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
-				'prefix_class' => 'elementor-star-rating--align-',
+				'prefix_class' => 'elementor-star-rating%s--align-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}}',
 				],
