@@ -1,10 +1,4 @@
 export default class baseTabs extends elementorModules.frontend.handlers.Base {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.$activeContent = null;
-	}
-
 	getDefaultSettings() {
 		return {
 			selectors: {
