@@ -31,7 +31,7 @@ export default class extends elementorModules.Component {
 	}
 
 	open() {
-		this.context.open();
+		this.manager.open();
 		return true;
 	}
 
@@ -40,7 +40,7 @@ export default class extends elementorModules.Component {
 			return false;
 		}
 
-		this.context.close();
+		this.manager.close();
 
 		return true;
 	}

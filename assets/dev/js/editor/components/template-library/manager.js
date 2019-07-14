@@ -73,7 +73,7 @@ TemplateLibraryManager = function() {
 
 		registerDefaultFilterTerms();
 
-		this.component = elementorCommon.components.register( new Component( { context: this } ) );
+		this.component = elementorCommon.components.register( new Component( { manager: this } ) );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',

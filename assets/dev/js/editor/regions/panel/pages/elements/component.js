@@ -15,6 +15,6 @@ export default class extends elementorModules.Component {
 	}
 
 	renderTab( tab ) {
-		this.context.setPage( 'elements' ).showView( tab );
+		this.manager.setPage( 'elements' ).showView( tab );
 	}
 }

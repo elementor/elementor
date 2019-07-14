@@ -2,11 +2,11 @@ import Module from './module';
 
 export default class extends Module {
 	__construct( args ) {
-		if ( ! args || ! args.context ) {
-			throw Error( 'context is required' );
+		if ( ! args || ! args.manager ) {
+			throw Error( 'manager is required' );
 		}
 
-		this.context = args.context;
+		this.manager = args.manager;
 		this.tabs = {};
 		this.isActive = {};
 		this.isModal = false;

@@ -5,10 +5,10 @@ export default class extends elementorModules.Component {
 
 	getRoutes() {
 		return {
-			menu: () => this.context.setPage( 'menu' ),
-			'global-colors': () => this.context.setPage( 'colorScheme' ),
-			'global-fonts': () => this.context.setPage( 'typographyScheme' ),
-			'color-picker': () => this.context.setPage( 'colorPickerScheme' ),
+			menu: () => this.manager.setPage( 'menu' ),
+			'global-colors': () => this.manager.setPage( 'colorScheme' ),
+			'global-fonts': () => this.manager.setPage( 'typographyScheme' ),
+			'color-picker': () => this.manager.setPage( 'colorPickerScheme' ),
 		};
 	}
 

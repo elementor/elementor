@@ -77,7 +77,7 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementorCommon.components.register( new Component( { context: self } ) );
+		elementorCommon.components.register( new Component( { manager: self } ) );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
