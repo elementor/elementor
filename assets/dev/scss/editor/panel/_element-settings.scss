@@ -71,28 +71,54 @@
 }
 
 #elementor-panel__editor__help {
-	padding: 25px;
-	text-align: center;
+	padding: 50px 25px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	&__link {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		color: $editor-darkest;
+		color: $editor-dark;
 		font-size: 12px;
 		font-weight: 500;
-
-		&:hover {
-			
-			&, & i {
-				color: $editor-info;
-			}
-		}
+		transition: $transition-hover;
 
 		i {
 			padding: 0 5px;
 			color: $editor-light;
 			font-size: 18px;
+			position: relative;
+
+			&:after {
+				content: '';
+				position: absolute;
+				height: 13px;
+				width: 13px;
+				top: 3px;
+				bottom: 0;
+				left: 8px;
+				right: 0;
+				border-radius: 50%;
+				z-index: -1;
+			}
+		}
+
+		&:hover {
+			color: $editor-darkest;
+
+			i {
+				color: $editor-info;
+
+				&:before {
+					content: '\e941';
+				}
+
+				&:after {
+					background: #fff;
+				}
+			}
 		}
 	}
 }

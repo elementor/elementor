@@ -14,7 +14,8 @@ export default class extends BaseRegion {
 			customPosition: {
 				title: elementor.translate( 'custom_positioning' ),
 				icon: 'cursor-move',
-				settingKeys: [ '_position' ],
+				settingKeys: [ '_position', '_element_width' ],
+				section: '_section_position',
 			},
 		};
 

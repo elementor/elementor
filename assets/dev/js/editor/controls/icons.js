@@ -150,7 +150,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		super.onRender();
 		// @todo: move to manager
 		if ( ! this.cache.loaded && this.isMigrationAllowed() ) {
-			elementor.config.icons.forEach( ( library ) => {
+			elementor.config.icons.libraries.forEach( ( library ) => {
 				if ( 'all' === library.name ) {
 					return;
 				}
@@ -226,6 +226,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	getSvgNotEnabledDialog() {
 		const onConfirm = () => {
 			elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
+			this.openFrame();
 		};
 		return elementor.helpers.getSimpleDialog(
 			'elementor-enable-svg-dialog',

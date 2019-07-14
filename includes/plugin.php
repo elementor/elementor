@@ -328,7 +328,7 @@ class Plugin {
 	 * @since 2.6.0
 	 * @access public
 	 *
-	 * @var Files_Manager
+	 * @var Assets_Manager
 	 */
 	public $assets_manager;
 

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { render } from 'react-dom';
 import Tab from './tab';
+import IconsGoPro from './icons-go-pro';
 
 class IconsManager extends Component {
 	state = {
@@ -10,7 +11,7 @@ class IconsManager extends Component {
 			library: '',
 			value: '',
 		},
-		iconTabs: elementor.config.icons,
+		iconTabs: elementor.config.icons.libraries,
 		loaded: this.props.loaded,
 		filter: '',
 	};
@@ -51,6 +52,10 @@ class IconsManager extends Component {
 				activeTab = this.props.activeTab;
 			}
 		}
+		if ( 'GoPro' === activeTab ) {
+			return activeTab;
+		}
+
 		if ( ! loaded[ activeTab ] ) {
 			return false;
 		}
@@ -79,8 +84,16 @@ class IconsManager extends Component {
 		this.setState( { loaded: loaded } );
 	}
 
-	getIconTabsLinks = () => {
+	isNativeTab( tab ) {
+		return ( 'all' === tab.name || 'recommended' === tab.name || 'fa-' === tab.name.substr( 0, 3 ) ) && tab.native;
+	}
+
+	getIconTabsLinks = ( native = true ) => {
 		return this.props.icons.map( ( tab ) => {
+			if ( native ^ this.isNativeTab( tab ) ) {
+				return '';
+			}
+
 			const isCurrentTab = tab.name === this.state.activeTab;
 
 			let className = 'elementor-icons-manager__tab-link';
@@ -178,52 +191,86 @@ class IconsManager extends Component {
 		return selected;
 	};
 
+	getUploadCustomButton() {
+		let onClick = () => {
+			if ( 'GoPro' === this.state.activeTab ) {
+				return;
+			}
+			this.setState( { activeTab: 'GoPro' } );
+		};
+
+		if ( this.props.customIconsURL ) {
+			onClick = () => {
+				window.open( this.props.customIconsURL, '_blank' );
+			};
+		}
+
+		return (
+			<div id="elementor-icons-manager__upload">
+				<div id="elementor-icons-manager__upload__title">{ elementor.translate( 'my_libraries' ) }</div>
+				<button id="elementor-icons-manager__upload__button" className="elementor-button elementor-button-default" onClick={ onClick }>{ elementor.translate( 'upload' ) }</button>
+			</div>
+		);
+	}
+
+	getSearchHTML() {
+		return (
+			<div id="elementor-icons-manager__search">
+				<input placeholder={ 'Filter by name...' } onInput={ this.handleSearch }/>
+				<i className={ 'eicon-search' }></i>
+			</div>
+		);
+	}
+
 	render = () => {
 		const activeTab = this.getActiveTab(),
-			activeTabName = ( activeTab.name ) ? activeTab.name : activeTab;
-		const {	showSearch = true } = this.props,
+			activeTabName = ( activeTab.name ) ? activeTab.name : activeTab,
+			{ showSearch = true } = this.props,
 			{ filter } = this.state,
 			selected = this.getSelected();
 
-		if ( ! activeTabName || ! this.state.loaded[ activeTabName ] ) {
-			return 'Loading';
-		}
+		if ( 'GoPro' !== activeTab ) {
+			if ( ! activeTabName || ! this.state.loaded[ activeTabName ] ) {
+				return 'Loading';
+			}
 
-		if ( activeTab ) {
-			activeTab.icons = this.getActiveTabIcons( activeTab );
+			if ( activeTab ) {
+				activeTab.icons = this.getActiveTabIcons( activeTab );
+			}
 		}
 
 		return (
 			<Fragment>
-				<div id="elementor-icons-manager__sidebar">
+				<div id="elementor-icons-manager__sidebar" className={ 'elementor-templates-modal__sidebar' }>
 					<div id="elementor-icons-manager__tab-links">
 						{ this.getIconTabsLinks() }
+						{ this.getUploadCustomButton() }
+						{ this.getIconTabsLinks( false ) }
 					</div>
 				</div>
-				<div id="elementor-icons-manager__main">
-					{ showSearch ? (
-						<div id="elementor-icons-manager__search">
-							<input placeholder={ 'Filter by name...' } onInput={ this.handleSearch }/>
-							<i className={ 'eicon-search' }></i>
-						</div> ) : ''
+				<div id="elementor-icons-manager__main" className={ 'elementor-templates-modal__content' }>
+					{ 'GoPro' === activeTabName ? <IconsGoPro /> :
+						<Fragment>
+							{ showSearch ? this.getSearchHTML() : '' }
+							<div id="elementor-icons-manager__tab__wrapper">
+								<div id="elementor-icons-manager__tab__title">{ activeTab.label }</div>
+								<div id="elementor-icons-manager__tab__content">
+									<input type="hidden" name="icon_value" id="icon_value" value={ selected.value }/>
+									<input type="hidden" name="icon_type" id="icon_type" value={ selected.library }/>
+									{ this.state.loaded[ activeTab.name ] ? (
+										<Tab
+											setSelected={ this.setSelected }
+											selected={ selected }
+											filter={ filter }
+											key={ activeTab.name }
+											{ ... activeTab } />
+									) : (
+										'Loading'
+									) }
+								</div>
+							</div>
+						</Fragment>
 					}
-					<div id="elementor-icons-manager__tab__wrapper">
-						<div id="elementor-icons-manager__tab__title">{ activeTab.label }</div>
-						<div id="elementor-icons-manager__tab__content">
-							<input type="hidden" name="icon_value" id="icon_value" value={ selected.value } />
-							<input type="hidden" name="icon_type" id="icon_type" value={ selected.library } />
-							{ this.state.loaded[ activeTab.name ] ? (
-								<Tab
-									setSelected={ this.setSelected }
-									selected={ selected }
-									filter={ filter }
-									key={ activeTab.name }
-									{ ... activeTab } />
-							) : (
-								'Loading'
-							) }
-						</div>
-					</div>
 				</div>
 			</Fragment>
 		);
@@ -245,6 +292,7 @@ export { renderIconManager };
 
 IconsManager.propTypes = {
 	activeTab: PropTypes.any,
+	customIconsURL: PropTypes.string,
 	icons: PropTypes.any,
 	loaded: PropTypes.any,
 	modalView: PropTypes.any,

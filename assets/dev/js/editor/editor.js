@@ -5,9 +5,8 @@ import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
-
 import IconsManager from './components/icons-manager/icons-manager';
-//_.noConflict();
+
 const App = Marionette.Application.extend( {
 	loaded: false,
 
