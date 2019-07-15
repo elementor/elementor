@@ -46,7 +46,7 @@ jQuery( () => {
 				return 'test';
 			}
 
-			getTabs() {
+			getInitialTabs() {
 				return {
 					tabA: { title: 'tabA' },
 					tabB: { title: 'tabB' },
@@ -488,7 +488,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getTabs() {
+			getInitialTabs() {
 				return {
 					tabA: { title: 'tabA' },
 					tabB: { title: 'tabB' },

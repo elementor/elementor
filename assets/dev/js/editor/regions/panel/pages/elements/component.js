@@ -3,7 +3,7 @@ export default class extends elementorModules.Component {
 		return 'panel/elements';
 	}
 
-	getTabs() {
+	getInitialTabs() {
 		return {
 			categories: { title: elementor.translate( 'elements' ) },
 			global: { title: elementor.translate( 'global' ) },

@@ -10,7 +10,7 @@ export default class extends elementorModules.Component {
 		return 'panel/editor';
 	}
 
-	getTabs() {
+	getInitialTabs() {
 		return {
 			content: { title: elementor.translate( 'content' ) },
 			style: { title: elementor.translate( 'style' ) },
