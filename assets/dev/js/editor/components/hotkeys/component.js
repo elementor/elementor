@@ -1,20 +1,12 @@
 import ModalLayout from './modal-layout';
 
-export default class extends elementorModules.Component {
-	__construct( args ) {
-		super.__construct( args );
-
-		this.isModal = true;
-	}
-
+export default class extends elementorModules.ComponentModal {
 	getNamespace() {
 		return 'shortcuts';
 	}
 
-	getRoutes() {
-		return {
-			'': () => {},
-		};
+	getModalLayout() {
+		return ModalLayout;
 	}
 
 	getShortcuts() {
@@ -23,25 +15,5 @@ export default class extends elementorModules.Component {
 				keys: 'ctrl+?',
 			},
 		};
-	}
-
-	open() {
-		if ( ! this.layout ) {
-			this.layout = new ModalLayout();
-			this.layout.getModal().on( 'hide', () => this.close() );
-		}
-
-		this.layout.showModal();
-		return true;
-	}
-
-	close() {
-		if ( ! super.close() ) {
-			return false;
-		}
-
-		this.layout.getModal().hide();
-
-		return true;
 	}
 }

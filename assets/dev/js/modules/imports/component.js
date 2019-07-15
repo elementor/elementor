@@ -9,7 +9,6 @@ export default class extends Module {
 		this.manager = args.manager;
 		this.tabs = {};
 		this.isActive = {};
-		this.isModal = false;
 		this.defaultRoute = '';
 		this.currentTab = '';
 	}
@@ -20,13 +19,6 @@ export default class extends Module {
 		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
 
 		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
-
-		if ( this.isModal ) {
-			elementorCommon.shortcuts.register( 'esc', {
-				scopes: [ this.getNamespace() ],
-				callback: () => this.close(),
-			} );
-		}
 	}
 
 	getNamespace() {

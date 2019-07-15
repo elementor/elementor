@@ -1,3 +1,5 @@
+import HeaderView from "../../../../core/common/assets/js/views/modal/header";
+
 jQuery( () => {
 	QUnit.module( 'Components' );
 
@@ -977,53 +979,63 @@ jQuery( () => {
 		assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
 	} );
 
+	QUnit.test( 'Modal component without a modal layout', ( assert ) => {
+		const namespace = 'modal-component-without-a-modal-layout';
+
+		const Component = class extends elementorModules.ComponentModal {
+			getNamespace() {
+				return namespace;
+			}
+		};
+
+		assert.throws(
+			() => {
+				const instance = new Component( { manager: self } );
+				instance.getModalLayout();
+			},
+			new Error( 'getModalLayout must be override.' )
+		);
+	} );
+
 	QUnit.test( 'Modal component with esc shortcut', ( assert ) => {
 		const namespace = 'modal-component-with-esc-shortcut';
 
-		const Component = class extends elementorModules.Component {
-			__construct( args ) {
-				super.__construct( args );
-
-				this.isModal = true;
-			}
-
+		const Component = class extends elementorModules.ComponentModal {
 			getNamespace() {
 				return namespace;
 			}
 
-			getRoutes() {
-				return {
-					routeA: () => {},
+			getModalLayout() {
+				const layout = class extends elementorModules.common.views.modal.Layout {
+					initialize() { /* do not render */ }
 				};
+
+				return layout;
 			}
 		};
 
 		elementorCommon.components.register( new Component( { manager: self } ) );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		elementorCommon.route.to( namespace );
 
 		runShortcut( { which: 27 /* esc */ } );
 
-		assert.equal( elementorCommon.route.is( namespace + '/routeA' ), false, 'Component is closed by `esc` key.' );
+		assert.equal( elementorCommon.route.is( namespace ), false, 'Component is closed by `esc` key.' );
 
 		// Second component.
 		const secondNamespace = 'second-' + namespace;
 
-		const SecondComponent = class extends elementorModules.Component {
-			__construct( args ) {
-				super.__construct( args );
-
-				this.isModal = true;
-			}
-
+		const SecondComponent = class extends elementorModules.ComponentModal {
 			getNamespace() {
 				return secondNamespace;
 			}
 
-			getRoutes() {
-				return {
-					routeA: () => {},
+			getModalLayout() {
+				const layout = class extends elementorModules.common.views.modal.Layout {
+					initialize() { /* do not render */ }
 				};
+
+				return layout;
 			}
 		};
 
@@ -1033,10 +1045,10 @@ jQuery( () => {
 			secondComponent = elementorCommon.components.get( secondNamespace );
 
 		// Activate the second component.
-		elementorCommon.route.to( secondNamespace + '/routeA' );
+		elementorCommon.route.to( secondNamespace );
 
 		// Activate the first component.
-		elementorCommon.route.to( namespace + '/routeA' );
+		elementorCommon.route.to( namespace );
 
 		// Ensure tow components are open.
 		assert.equal( component.isOpen, true );

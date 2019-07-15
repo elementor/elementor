@@ -1,20 +1,12 @@
 import FinderLayout from './modal-layout';
 
-export default class extends elementorModules.Component {
-	__construct( args ) {
-		super.__construct( args );
-
-		this.isModal = true;
-	}
-
+export default class extends elementorModules.ComponentModal {
 	getNamespace() {
 		return 'finder';
 	}
 
-	getRoutes() {
-		return {
-			'': () => { /* Nothing to do, it's already rendered. */ },
-		};
+	getModalLayout() {
+		return FinderLayout;
 	}
 
 	getCommands() {
@@ -55,26 +47,7 @@ export default class extends elementorModules.Component {
 		};
 	}
 
-	open() {
-		if ( ! this.layout ) {
-			this.layout = new FinderLayout();
-			this.layout.getModal().on( 'hide', () => this.close() );
-		}
 
-		this.layout.showModal();
-
-		return true;
-	}
-
-	close() {
-		if ( ! super.close() ) {
-			return false;
-		}
-
-		this.layout.getModal().hide();
-
-		return true;
-	}
 
 	getItemsView() {
 		return this.layout.modalContent.currentView.content.currentView;

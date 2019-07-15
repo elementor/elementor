@@ -1,10 +1,9 @@
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
-export default class extends elementorModules.Component {
+export default class extends elementorModules.ComponentModal {
 	__construct( args ) {
 		super.__construct( args );
 
-		this.isModal = true;
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;
 
 		if ( 'block' === this.docLibraryConfig.type ) {
@@ -16,6 +15,10 @@ export default class extends elementorModules.Component {
 
 	getNamespace() {
 		return 'library';
+	}
+
+	getModalLayout() {
+		return TemplateLibraryLayoutView;
 	}
 
 	getTabs() {
@@ -90,13 +93,11 @@ export default class extends elementorModules.Component {
 	}
 
 	open() {
+		super.open();
+
 		if ( ! this.manager.layout ) {
-			this.manager.layout = new TemplateLibraryLayoutView();
-
-			this.manager.layout.getModal().on( 'hide', () => this.close() );
+			this.manager.layout = this.layout;
 		}
-
-		this.manager.layout.showModal();
 
 		return true;
 	}
@@ -107,7 +108,6 @@ export default class extends elementorModules.Component {
 		}
 
 		this.manager.modalConfig = {};
-		this.manager.layout.getModal().hide();
 
 		return true;
 	}
