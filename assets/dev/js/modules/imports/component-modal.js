@@ -23,7 +23,7 @@ export default class extends Component {
 	open() {
 		if ( ! this.layout ) {
 			const layout = this.getModalLayout();
-			this.layout = new layout();
+			this.layout = new layout( { component: this } );
 
 			this.layout.getModal().on( 'hide', () => this.close() );
 		}
