@@ -2,9 +2,10 @@ const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-la
 
 export default class extends elementorModules.ComponentModal {
 	__construct( args ) {
-		super.__construct( args );
-
+		// Before contruct because it's used in getInitialTabs().
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;
+
+		super.__construct( args );
 
 		if ( 'block' === this.docLibraryConfig.type ) {
 			this.setDefaultRoute( 'templates/blocks' );
