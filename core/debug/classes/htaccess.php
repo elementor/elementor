@@ -10,9 +10,11 @@ class Htaccess extends Inspection_Base {
 	}
 
 	public function run() {
-		if ( false === get_option( 'permalink_structure', false ) ) {
+		$permalink_structure = get_option( 'permalink_structure' );
+		if ( empty( $permalink_structure ) ) {
 			return true;
 		}
+
 		if ( empty( $_SERVER['SERVER_SOFTWARE'] ) ) {
 			$this->message = __( 'We failed to recognize your Server software. Please contact your hosting provider.', 'elementor' );
 			return false;

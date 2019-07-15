@@ -34,6 +34,7 @@ const getBuildFiles = [
 	'!nightwatch.conf.js',
 	'!assets/dev/**',
 	'!assets/**/*.map',
+	'!assets/js/qunit-tests*',
 	'!modules/**/assets/**',
 	'!core/**/assets/**',
 	'!*~',

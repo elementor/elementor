@@ -111,16 +111,6 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-view-',
-				'conditions' => [
-					'relation' => 'or',
-					'terms' => [
-						[
-							'name' => 'selected_icon[value]',
-							'operator' => '!=',
-							'value' => '',
-						],
-					],
-				],
 			]
 		);
 
@@ -613,7 +603,7 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$icon_tag = 'span';
 
-		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+		if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
 			// add old default
 			$settings['icon'] = 'fa fa-star';
 		}
@@ -720,5 +710,9 @@ class Widget_Icon_Box extends Widget_Base {
 			</div>
 		</div>
 		<?php
+	}
+
+	public function on_import( $element ) {
+		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
 	}
 }

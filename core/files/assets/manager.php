@@ -41,6 +41,10 @@ class Manager {
 		do_action( 'elementor/core/files/assets/assets_registered', $this );
 	}
 
+	public function get_asset( $name ) {
+		return isset( $this->asset_types[ $name ] ) ? $this->asset_types[ $name ] : false;
+	}
+
 	/**
 	 * Add Asset
 	 * @param $instance

@@ -102,7 +102,7 @@ helpers = {
 	},
 
 	getIconLibrarySettings( iconType ) {
-		const iconSetting = ElementorConfig.icons.filter( ( library ) => iconType === library.name );
+		const iconSetting = elementor.config.icons.libraries.filter( ( library ) => iconType === library.name );
 		if ( iconSetting[ 0 ] && iconSetting[ 0 ].name ) {
 			return iconSetting[ 0 ];
 		}
@@ -325,17 +325,26 @@ helpers = {
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			widgetType = elementView.model.get( 'widgetType' ),
-			widgetData = elementor.config.widgets[ widgetType ];
+			widgetData = elementor.config.widgets[ widgetType ],
+			hasControlOfType = ( controls, type ) => {
+				let has = false;
+				jQuery.each( controls, ( controlName, controlData ) => {
+					if ( type === controlData.type ) {
+						has = true;
+						return false;
+					}
+					if ( 'repeater' === controlData.type ) {
+						has = hasControlOfType( controlData.fields, type );
+						if ( has ) {
+							return false;
+						}
+					}
+				} );
+				return has;
+			};
 
 		if ( widgetData ) {
-			let hasIconsControl = false;
-			jQuery.each( widgetData.controls, ( controlName, controlData ) => {
-				if ( 'icons' === controlData.type ) {
-					hasIconsControl = true;
-					return false;
-				}
-			} );
-
+			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
 			if ( hasIconsControl ) {
 				const onConfirm = () => {
 					window.location.href = ElementorConfig.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';

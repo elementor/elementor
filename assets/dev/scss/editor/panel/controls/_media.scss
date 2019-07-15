@@ -103,13 +103,13 @@
 	&__tool {
 		flex-grow: 1;
 		color: #fff;
-		background-color: rgba($editor-dark, .6);
+		background-color: rgba($editor-dark, .85);
 		padding: 9.5px;
 		font-size: 11px;
 		transition: background .3s;
 
 		&:hover {
-			background-color: rgba($editor-dark, .85);
+			background-color: rgba($editor-dark, .95);
 		}
 	}
 
@@ -131,7 +131,7 @@
 		transition: all .3s ease-in-out;
 
 		&:not(:hover) {
-			opacity: .8;
+		//	opacity: .8;
 		}
 
 		&:hover {

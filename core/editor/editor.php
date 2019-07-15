@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -517,7 +518,10 @@ class Editor {
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
-			'icons' => Icons_Manager::get_icon_manager_tabs_config(),
+			'icons' => [
+				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
+				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library-go-pro&utm_campaign=gopro&utm_medium=wp-dash' ),
+			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.json',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
@@ -592,11 +596,11 @@ class Editor {
 
 				// Enable SVG uploads.
 				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
-				'dialog_confirm_enable_svg' => __( 'SVG files may contain malicious code. Elementor will try to remove it. However, enabling this feature still poses potential security risks.', 'elementor' ),
+				'dialog_confirm_enable_svg' => __( 'Before you enable SVG upload, note that SVG files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
 
 				// Enable fontawesome 5 if needed.
 				'enable_fa5' => __( 'Elementor\'s New Icon Library', 'elementor' ),
-				'dialog_confirm_enable_fa5' => __( 'Elementor v2.6 includes an update from FontAwesome 4 to 5. In order to continue using icons, including over 1,500 FA5 icons, be sure to click "Update".', 'elementor' ) . ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+				'dialog_confirm_enable_fa5' => __( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Upgrade".', 'elementor' ) . ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 
 				// Panel Preview Mode.
 				'back_to_editor' => __( 'Show Panel', 'elementor' ),
@@ -711,6 +715,10 @@ class Editor {
 				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
 
 				'icon_library' => __( 'Icon Library', 'elementor' ),
+				'my_libraries' => __( 'My Libraries', 'elementor' ),
+				'upload' => __( 'Upload', 'elementor' ),
+				'icons_promotion' => __( 'Become a Pro user to upload unlimited font icon folders to your website.', 'elementor' ),
+				'go_pro_»' => __( 'Go Pro »', 'elementor' ),
 				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
 				// TODO: Remove.

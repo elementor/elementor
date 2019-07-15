@@ -528,6 +528,11 @@ class Widget_Icon_List extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$fallback_defaults = [
+			'fa fa-check',
+			'fa fa-times',
+			'fa fa-dot-circle-o',
+		];
 
 		$this->add_render_attribute( 'icon_list', 'class', 'elementor-icon-list-items' );
 		$this->add_render_attribute( 'list_item', 'class', 'elementor-icon-list-item' );
@@ -565,9 +570,14 @@ class Widget_Icon_List extends Widget_Base {
 						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 					}
 
-					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon'] ) ) :
-						$migrated = isset( $item['__fa4_migrated']['selected_icon'] );
-						$is_new = empty( $item['icon'] ) && $migration_allowed;
+					// add old default
+					if ( ! isset( $item['icon'] ) && ! $migration_allowed ) {
+						$item['icon'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-check';
+					}
+
+					$migrated = isset( $item['__fa4_migrated']['selected_icon'] );
+					$is_new = ! isset( $item['icon'] ) && $migration_allowed;
+					if ( ! empty( $item['icon'] ) || ( ! empty( $item['selected_icon']['value'] ) && $is_new ) ) :
 						?>
 						<span class="elementor-icon-list-icon">
 							<?php
@@ -625,7 +635,7 @@ class Widget_Icon_List extends Widget_Base {
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>
-						<# if ( item.icon || item.selected_icon ) { #>
+						<# if ( item.icon || item.selected_icon.value ) { #>
 						<span class="elementor-icon-list-icon">
 							<#
 								iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true }, 'i', 'object' );
@@ -649,5 +659,9 @@ class Widget_Icon_List extends Widget_Base {
 		<#	} #>
 
 		<?php
+	}
+
+	public function on_import( $element ) {
+		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
 	}
 }
