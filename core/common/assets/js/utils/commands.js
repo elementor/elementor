@@ -46,12 +46,6 @@ export default class extends elementorModules.Module {
 		return this;
 	}
 
-	unregister( command ) {
-		delete this.commands[ command ];
-
-		return this;
-	}
-
 	getComponent( command ) {
 		const componentName = this.components[ command ];
 
