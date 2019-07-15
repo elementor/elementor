@@ -7,9 +7,9 @@ export default class extends elementorModules.ComponentModal {
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;
 
 		if ( 'block' === this.docLibraryConfig.type ) {
-			this.setDefault( 'templates/blocks' );
+			this.setDefaultRoute( 'templates/blocks' );
 		} else {
-			this.setDefault( 'templates/pages' );
+			this.setDefaultRoute( 'templates/pages' );
 		}
 	}
 
@@ -116,7 +116,7 @@ export default class extends elementorModules.ComponentModal {
 		this.manager.modalConfig = args;
 
 		if ( args.toDefault || ! elementorCommon.route.restoreState( 'library' ) ) {
-			elementorCommon.route.to( this.getDefault() );
+			elementorCommon.route.to( this.getDefaultRoute() );
 		}
 	}
 }

@@ -86,11 +86,11 @@ export default class extends Module {
 
 	onCloseRoute() {}
 
-	setDefault( route ) {
+	setDefaultRoute( route ) {
 		this.defaultRoute = this.getNamespace() + '/' + route;
 	}
 
-	getDefault() {
+	getDefaultRoute() {
 		return this.defaultRoute;
 	}
 
