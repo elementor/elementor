@@ -21,35 +21,30 @@ export default class extends elementorModules.ComponentModal {
 		return TemplateLibraryLayoutView;
 	}
 
-	getTabs() {
-		// Allow add tabs via `addTab`.
-		if ( _.isEmpty( this.tabs ) ) {
-			this.tabs = {
-				'templates/blocks': {
-					title: elementor.translate( 'blocks' ),
-					filter: {
-						source: 'remote',
-						type: 'block',
-						subtype: this.docLibraryConfig.category,
-					},
+	getInitialTabs() {
+		return {
+			'templates/blocks': {
+				title: elementor.translate( 'blocks' ),
+				filter: {
+					source: 'remote',
+					type: 'block',
+					subtype: this.docLibraryConfig.category,
 				},
-				'templates/pages': {
-					title: elementor.translate( 'pages' ),
-					filter: {
-						source: 'remote',
-						type: 'page',
-					},
+			},
+			'templates/pages': {
+				title: elementor.translate( 'pages' ),
+				filter: {
+					source: 'remote',
+					type: 'page',
 				},
-				'templates/my-templates': {
-					title: elementor.translate( 'my_templates' ),
-					filter: {
-						source: 'local',
-					},
+			},
+			'templates/my-templates': {
+				title: elementor.translate( 'my_templates' ),
+				filter: {
+					source: 'local',
 				},
-			};
-		}
-
-		return this.tabs;
+			},
+		};
 	}
 
 	getRoutes() {

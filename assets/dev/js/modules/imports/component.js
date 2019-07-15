@@ -7,7 +7,7 @@ export default class extends Module {
 		}
 
 		this.manager = args.manager;
-		this.tabs = {};
+		this.tabs = this.getInitialTabs();
 		this.defaultRoute = '';
 		this.currentTab = '';
 	}
@@ -33,6 +33,10 @@ export default class extends Module {
 	}
 
 	getRoutes() {
+		return {};
+	}
+
+	getInitialTabs() {
 		return {};
 	}
 

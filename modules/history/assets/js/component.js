@@ -3,7 +3,7 @@ export default class extends elementorModules.Component {
 		return 'panel/history';
 	}
 
-	getTabs() {
+	getInitialTabs() {
 		return {
 			actions: { title: elementor.translate( 'actions' ) },
 			revisions: { title: elementor.translate( 'revisions' ) },
