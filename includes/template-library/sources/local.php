@@ -1211,6 +1211,12 @@ class Source_Local extends Source_Base {
 
 		$current_type = get_query_var( 'elementor_library_type' );
 
+		$document_types = Plugin::instance()->documents->get_document_types();
+
+		if ( empty( $document_types[ $current_type ] ) ) {
+			return;
+		}
+
 		// TODO: Better way to exclude widget type.
 		if ( 'widget' === $current_type ) {
 			return;

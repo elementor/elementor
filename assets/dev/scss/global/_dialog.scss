@@ -65,10 +65,6 @@
 			padding: 13px 0;
 			outline: 0;
 
-			&:first-child {
-				color: $editor-dark;
-			}
-
 			&:hover {
 				background-color: lighten( $editor-background, 5%);
 			}

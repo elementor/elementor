@@ -57,7 +57,7 @@ class Tab extends Component {
 	};
 
 	getLibrary = ( libraryName ) => {
-		const icons = elementor.config.icons.filter( ( library ) => {
+		const icons = elementor.config.icons.libraries.filter( ( library ) => {
 			return libraryName === library.name;
 		} );
 		return icons;

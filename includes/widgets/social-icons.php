@@ -110,7 +110,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'deviantart',
 						'digg',
 						'dribbble',
-						'envelope',
+						'elementor',
 						'facebook',
 						'flickr',
 						'foursquare',
@@ -122,7 +122,6 @@ class Widget_Social_Icons extends Widget_Base {
 						'houzz',
 						'instagram',
 						'jsfiddle',
-						'link',
 						'linkedin',
 						'medium',
 						'meetup',
@@ -131,7 +130,6 @@ class Widget_Social_Icons extends Widget_Base {
 						'pinterest',
 						'product-hunt',
 						'reddit',
-						'rss',
 						'shopping-cart',
 						'skype',
 						'slideshare',
@@ -158,6 +156,11 @@ class Widget_Social_Icons extends Widget_Base {
 						'yelp',
 						'youtube',
 						'500px',
+					],
+					'fa-solid' => [
+						'envelope',
+						'link',
+						'rss',
 					],
 				],
 			]
@@ -201,7 +204,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'item_icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover)' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -215,8 +218,8 @@ class Widget_Social_Icons extends Widget_Base {
 					'item_icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover) i' => 'color: {{VALUE}};',
-					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover) svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}} i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}} svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -333,7 +336,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon:not(:hover)' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -347,8 +350,8 @@ class Widget_Social_Icons extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon:not(:hover) i' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-social-icon:not(:hover) svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -514,6 +517,11 @@ class Widget_Social_Icons extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$fallback_defaults = [
+			'fa fa-facebook',
+			'fa fa-twitter',
+			'fa fa-google-plus',
+		];
 
 		$class_animation = '';
 
@@ -521,16 +529,24 @@ class Widget_Social_Icons extends Widget_Base {
 			$class_animation = ' elementor-animation-' . $settings['hover_animation'];
 		}
 
+		$migration_allowed = Icons_Manager::is_migration_allowed();
+
 		?>
 		<div class="elementor-social-icons-wrapper">
 			<?php
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
+				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
+				$is_new = empty( $item['social'] ) && $migration_allowed;
 				$social = '';
+
+				// add old default
+				if ( empty( $item['social'] ) && ! $migration_allowed ) {
+					$item['social'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-wordpress';
+				}
+
 				if ( ! empty( $item['social'] ) ) {
 					$social = str_replace( 'fa fa-', '', $item['social'] );
 				}
-				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = empty( $item['social'] ) && Icons_Manager::is_migration_allowed();
 
 				if ( ( $is_new || $migrated ) && 'svg' !== $item['social_icon']['library'] ) {
 					$social = explode( ' ', $item['social_icon']['value'], 2 );
