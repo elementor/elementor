@@ -105,7 +105,7 @@ export default class extends Module {
 	addTab( tab, args, position ) {
 		this.tabs[ tab ] = args;
 		// It can be 0.
-		if ( undefined !== typeof position ) {
+		if ( 'undefined' !== typeof position ) {
 			const newTabs = {};
 			const ids = Object.keys( this.tabs );
 			// Remove new tab
