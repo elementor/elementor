@@ -86,10 +86,6 @@ export default class Shortcuts {
 		} );
 	}
 
-	setComponent( component ) {
-		this.component = component;
-	}
-
 	isControlEvent( event ) {
 		return event[ environment.mac ? 'metaKey' : 'ctrlKey' ];
 	}

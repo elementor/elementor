@@ -26,7 +26,7 @@ export default class extends elementorModules.Component {
 
 				this.setDefaultTab( args );
 
-				elementorCommon.route.to( this.getDefault(), args );
+				elementorCommon.route.to( this.getDefaultRoute(), args );
 			},
 		};
 	}
@@ -55,7 +55,7 @@ export default class extends elementorModules.Component {
 			defaultTab = 'content';
 		}
 
-		this.setDefault( defaultTab );
+		this.setDefaultRoute( defaultTab );
 	}
 
 	openEditor( model, view ) {

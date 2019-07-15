@@ -25,6 +25,7 @@ export default class extends Commands {
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
+
 		this.getComponent( route ).onCloseRoute();
 	}
 
