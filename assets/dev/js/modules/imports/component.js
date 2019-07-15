@@ -8,7 +8,6 @@ export default class extends Module {
 
 		this.manager = args.manager;
 		this.tabs = {};
-		this.isActive = {};
 		this.defaultRoute = '';
 		this.currentTab = '';
 	}
@@ -83,21 +82,9 @@ export default class extends Module {
 		elementorCommon.components.inactivate( this.getNamespace() );
 	}
 
-	onRoute() {
-		this.isActive = true;
-		this.toggleUIIndicator( true );
-	}
+	onRoute() {}
 
-	onCloseRoute() {
-		this.isActive = false;
-		this.toggleUIIndicator( false );
-	}
-
-	toggleUIIndicator( value ) {
-		if ( this.getUIIndicator ) {
-			jQuery( this.getUIIndicator() ).toggleClass( 'elementor-open', value );
-		}
-	}
+	onCloseRoute() {}
 
 	setDefault( route ) {
 		this.defaultRoute = this.getNamespace() + '/' + route;
