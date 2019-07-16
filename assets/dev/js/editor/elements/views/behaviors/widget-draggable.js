@@ -72,11 +72,11 @@ export default class extends Marionette.Behavior {
 			isRTL = elementorFrontend.config.is_rtl;
 
 		const parentWidth = this.$el.offsetParent().width(),
-			elementWidth = this.$el.outerWidth( true );
+			elementWidth = this.$el.outerWidth( true ),
+			left = ui.position.left,
+			right = parentWidth - left - elementWidth;
 
-		let left = ui.position.left,
-			right = parentWidth - left - elementWidth,
-			xPos = isRTL ? right : left,
+		let	xPos = isRTL ? right : left,
 			yPos = ui.position.top,
 			offsetX = '_offset_x',
 			offsetY = '_offset_y';
