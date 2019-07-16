@@ -1265,7 +1265,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		if ( ! empty( $control['conditions'] ) && ! Conditions::check( $control['conditions'], $values ) ) {
-		    return false;
+			return false;
 		}
 
 		if ( empty( $control['condition'] ) ) {
