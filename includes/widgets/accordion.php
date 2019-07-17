@@ -452,10 +452,13 @@ class Widget_Accordion extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 
-		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+		if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// @todo: remove when deprecated
+			// added as bc in 2.6
 			// add old default
 			$settings['icon'] = 'fa fa-plus';
 			$settings['icon_active'] = 'fa fa-minus';
+			$settings['icon_align'] = $this->get_settings( 'icon_align' );
 		}
 
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
