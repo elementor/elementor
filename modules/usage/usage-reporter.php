@@ -28,7 +28,7 @@ class Usage_Reporter extends Base_Reporter {
 	}
 
 	public function get_usage() {
-		/** @var \Elementor\Modules\Usage\Module $module */
+		/** @var Module $module */
 		$module = Module::instance();
 		$usage = '<tr>';
 
@@ -44,14 +44,13 @@ class Usage_Reporter extends Base_Reporter {
 
 		$usage .= '</tr>';
 
-
 		return [
 			'value' => $usage,
 		];
 	}
 
 	public function get_raw_usage() {
-		/** @var \Elementor\Modules\Usage\Module $module */
+		/** @var Module $module */
 		$module = Module::instance();
 		$usage = PHP_EOL;
 
