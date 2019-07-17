@@ -9,7 +9,7 @@
 	overflow: visible;
 	background-color: $editor-background;
 	z-index: $first-layer;
-	font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+	font-family: $admin-font-family;
 	font-size: 13px;
 
 	.elementor-editor-active & {
