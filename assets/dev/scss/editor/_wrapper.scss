@@ -28,7 +28,7 @@ a {
 
 body {
     color: $editor-dark;
-    font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+    font-family: $admin-font-family;
     font-size: 13px;
     font-weight: normal;
     line-height: 1;

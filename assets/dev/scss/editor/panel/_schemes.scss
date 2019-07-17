@@ -20,7 +20,7 @@
 	box-shadow: $panel-bottom-shadow;
 
 	.elementor-button {
-		font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+		font-family: $admin-font-family;
 		font-size: 11px;
 		font-weight: 400;
 	}
