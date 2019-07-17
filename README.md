@@ -223,6 +223,15 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.6.4 - 2019-07-17 ###
+* Tweak: Added CSS variable for admin font family
+* Tweak: Updated dialog library
+* Tweak: Improved `.htaccess` error message in `Preview Could Not Be Loaded` message
+* Fix: `Condition` and `Conditions` not working together ([#8233](https://github.com/elementor/elementor/issues/8233))
+* Fix: Pages are always displayed in `draft` status ([#8510](https://github.com/elementor/elementor/issues/8510))
+* Fix: Incorrect Absolute position dragging values in RTL ([#7719](https://github.com/elementor/elementor/issues/7719))
+* Fix: SVG icon hover color in Button widget
+
 ### 2.6.3 - 2019-07-15 ###
 * Tweak: Improve Icon control preview color for better visibility ([#8530](https://github.com/elementor/elementor/issues/8530))
 * Tweak: Cleaning all output buffering in order to enable Gzip
