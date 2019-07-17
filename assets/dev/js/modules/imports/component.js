@@ -24,6 +24,11 @@ export default class extends Module {
 		throw Error( 'getNamespace must be override.' );
 	}
 
+	getRootContainer() {
+		const parts = this.getNamespace().split( '/' );
+		return parts[ 0 ];
+	}
+
 	getCommands() {
 		return {};
 	}
@@ -84,6 +89,10 @@ export default class extends Module {
 
 	inactivate() {
 		elementorCommon.components.inactivate( this.getNamespace() );
+	}
+
+	isActive() {
+		return elementorCommon.components.isActive( this.getNamespace() );
 	}
 
 	onRoute() {

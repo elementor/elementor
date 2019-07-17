@@ -29,4 +29,8 @@ export default class extends elementorModules.Module {
 	inactivate( namespace ) {
 		delete this.activeComponents[ namespace ];
 	}
+
+	isActive( namespace ) {
+		return !! this.activeComponents[ namespace ];
+	}
 }
