@@ -86,9 +86,13 @@ export default class extends Module {
 		elementorCommon.components.inactivate( this.getNamespace() );
 	}
 
-	onRoute() {}
+	onRoute() {
+		this.activate();
+	}
 
-	onCloseRoute() {}
+	onCloseRoute() {
+		this.inactivate();
+	}
 
 	setDefaultRoute( route ) {
 		this.defaultRoute = this.getNamespace() + '/' + route;
