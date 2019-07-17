@@ -223,6 +223,10 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.6.3 - 2019-07-15 ###
+* Tweak: Improve Icon control preview color for better visibility ([#8530](https://github.com/elementor/elementor/issues/8530))
+* Tweak: Cleaning all output buffering in order to enable Gzip
+
 ### 2.6.2 - 2019-07-14 ###
 * Tweak: Make sure activeTab exists in Icon library
 * Fix: Star rating widget alignment is not responsive ([#8444](https://github.com/elementor/elementor/issues/8444))
