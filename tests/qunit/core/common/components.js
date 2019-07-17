@@ -299,8 +299,32 @@ jQuery( () => {
 		assert.equal( onAfterStatus, 'afterRun' );
 	} );
 
-	QUnit.test( 'Check if run command is activate the component', ( assert ) => {
-		const namespace = 'run-command-activate-component';
+	QUnit.test( 'Check if route to is activate the component', ( assert ) => {
+		const namespace = 'route-to-activate-component';
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { manager: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA' );
+
+		const activeComponent = Object.keys( elementorCommon.components.activeComponents ).pop();
+
+		assert.equal( activeComponent, namespace );
+	} );
+
+	QUnit.test( 'Ensure that run command is not activate the component', ( assert ) => {
+		const namespace = 'run-command-not-activate-component';
 
 		const Component = class extends elementorModules.Component {
 			getNamespace() {
@@ -320,7 +344,7 @@ jQuery( () => {
 
 		const activeComponent = Object.keys( elementorCommon.components.activeComponents ).pop();
 
-		assert.equal( activeComponent, namespace );
+		assert.notEqual( activeComponent, namespace );
 	} );
 
 	QUnit.test( 'Run command with dependency', ( assert ) => {

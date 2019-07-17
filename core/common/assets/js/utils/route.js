@@ -57,14 +57,13 @@ export default class extends Commands {
 			return false;
 		}
 
-		const parts = route.split( '/' ),
-			container = parts[ 0 ];
+		const component = this.getComponent( route );
+
+		const container = component.getRootContainer();
 
 		if ( this.current[ container ] ) {
 			this.getComponent( this.current[ container ] ).onCloseRoute();
 		}
-
-		const component = this.getComponent( route );
 
 		if ( ! component.isOpen ) {
 			component.isOpen = component.open();
@@ -92,13 +91,18 @@ export default class extends Commands {
 			return false;
 		}
 
-		const parts = route.split( '/' ),
-			container = parts[ 0 ];
+		const container = this.getComponent( route ).getRootContainer();
 
 		return _.isEqual( args, this.currentArgs[ container ] );
 	}
 
 	isPartOf( route ) {
+		const component = elementorCommon.components.get( route );
+
+		if ( component ) {
+			return component.isActive();
+		}
+
 		/**
 		 * Check against current command hierarchically.
 		 * For example `is( 'panel' )` will be true for `panel/elements`
