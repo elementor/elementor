@@ -417,7 +417,7 @@ class Tracker {
 	 *
 	 * Retrieve tracking data and apply filter
 	 *
-	 * @access private\
+	 * @access private
 	 * @static
 	 *
 	 * @param bool $is_first_time
