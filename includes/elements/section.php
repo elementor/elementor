@@ -426,18 +426,8 @@ class Element_Section extends Element_Base {
 					'top' => __( 'Top', 'elementor' ),
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
-					'space-between' => __( 'Space Between', 'elementor' ),
-					'space-around' => __( 'Space Around', 'elementor' ),
-					'space-evenly' => __( 'Space Evenly', 'elementor' ),
 				],
-				'selectors_dictionary' => [
-					'top' => 'flex-start',
-					'middle' => 'center',
-					'bottom' => 'flex-end',
-				],
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap' => 'align-content: {{VALUE}}',
-				],
+				'prefix_class' => 'elementor-section-content-',
 			]
 		);
 
