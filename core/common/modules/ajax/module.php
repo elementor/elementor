@@ -257,8 +257,11 @@ class Module extends BaseModule {
 
 		$json = wp_json_encode( $response );
 
-		// Temp removed GZIP support.
-		if ( false && function_exists( 'gzencode' ) ) {
+		while ( ob_get_status() ) {
+			ob_end_clean();
+		}
+
+		if ( function_exists( 'gzencode' ) ) {
 			$response = gzencode( $json );
 
 			header( 'Content-Type: application/json; charset=utf-8' );
