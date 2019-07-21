@@ -11,7 +11,7 @@
 	</php>
 
 	<testsuites>
-		<testsuite>
+		<testsuite name="elementor">
 			<directory prefix="test-" suffix=".php">./tests/phpunit/</directory>
 		</testsuite>
 	</testsuites>
