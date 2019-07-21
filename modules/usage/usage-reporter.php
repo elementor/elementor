@@ -18,7 +18,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Usage_Reporter extends Base_Reporter {
 
 	public function get_title() {
-		return 'Elements Usage';
+		$title = 'Elements Usage';
+
+		if ( empty( $_GET['elementor_usage_recalc'] ) ) { // phpcs:ignore -- nonce validation is not require here.
+			$nonce = wp_create_nonce( 'elementor_usage_recalc' );
+			$url = add_query_arg( [
+				'elementor_usage_recalc' => 1,
+				'_wpnonce' => $nonce,
+			] );
+
+			$title .= '<a id="elementor-usage-recalc" href="' . $url . '#elementor-usage-recalc" class="">Recalc</a>';
+		}
+
+		return $title;
 	}
 
 	public function get_fields() {
@@ -30,6 +42,17 @@ class Usage_Reporter extends Base_Reporter {
 	public function get_usage() {
 		/** @var Module $module */
 		$module = Module::instance();
+
+		if ( ! empty( $_GET['elementor_usage_recalc'] ) ) {
+			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'elementor_usage_recalc' ) ) {
+				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
+					'back_link' => true,
+				] );
+			}
+
+			$module->recalc_usage();
+		}
+
 		$usage = '<tr>';
 
 		foreach ( $module->get_formatted_usage() as $doc_type => $data ) {
