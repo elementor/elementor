@@ -5,7 +5,7 @@
 	var ElementorGutenbergApp = {
 
 		cacheElements: function() {
-			this.isElementorMode = '1' === ElementorGutenbergSettings.isElementorMode;
+			this.isElementorMode = ElementorGutenbergSettings.isElementorMode;
 
 			this.cache = {};
 
