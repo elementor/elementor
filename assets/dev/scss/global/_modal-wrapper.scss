@@ -1,7 +1,7 @@
 .elementor-templates-modal {
 
 	.dialog-widget-content {
-		font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
+		font-family: $admin-font-family;
 		background-color: $editor-background-light;
 		width: 100%;
 
