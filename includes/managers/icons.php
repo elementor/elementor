@@ -93,7 +93,7 @@ class Icons_Manager {
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fab fa-font-awesome-alt',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_fa_asset_url( 'regular', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'regular', 'js', false ),
 				'native' => true,
 			],
 			'fa-solid' => [
@@ -105,7 +105,7 @@ class Icons_Manager {
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_fa_asset_url( 'solid', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'solid', 'js', false ),
 				'native' => true,
 			],
 			'fa-brands' => [
@@ -117,7 +117,7 @@ class Icons_Manager {
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fab fa-font-awesome-flag',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_fa_asset_url( 'brands', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'brands', 'js', false ),
 				'native' => true,
 			],
 		] );
