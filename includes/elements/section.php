@@ -418,7 +418,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'content_position',
 			[
-				'label' => __( 'Content Position', 'elementor' ),
+				'label' => __( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
