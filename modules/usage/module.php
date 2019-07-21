@@ -8,6 +8,7 @@ use Elementor\System_Info\Main as System_Info;
 use Elementor\DB;
 use Elementor\Plugin;
 use WP_Post;
+use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -43,7 +44,7 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Get formatted usage
+	 * Get formatted usage.
 	 *
 	 * Retrieve formatted usage, for frontend.
 	 *
@@ -97,10 +98,10 @@ class Module extends BaseModule {
 		return $usage;
 	}
 
-	/***
-	 * Set saving flag
+	/**
+	 * Before document Save.
 	 *
-	 * Called on elementor/document/before_save
+	 * Called on elementor/document/before_save, remove document from global & set saving flag.
 	 *
 	 * @param Document $document
 	 */
@@ -111,13 +112,14 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Save the current usage
+	 * After document save.
 	 *
-	 * Called on elementor/document/after_save
+	 * Called on elementor/document/after_save, adds document to global & clear saving flag.
 	 *
 	 * @param Document $document
 	 */
 	public function after_document_save( $document ) {
+
 		if ( DB::STATUS_PUBLISH === $document->get_post()->post_status ) {
 			$this->save_document_usage( $document );
 		}
@@ -126,9 +128,9 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * On Status Change
+	 * On Status Change.
 	 *
-	 * Called on transition_post_status
+	 * Called on transition_post_status.
 	 *
 	 * @param string $new_status
 	 * @param string $old_status
@@ -163,9 +165,9 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Add's tracking data
+	 * Add's tracking data.
 	 *
-	 * Called on elementor/tracker/send_tracking_data_params
+	 * Called on elementor/tracker/send_tracking_data_params.
 	 *
 	 * @param array $params
 	 *
@@ -177,22 +179,22 @@ class Module extends BaseModule {
 		return $params;
 	}
 
-	/***
-	 * Recalculate usage
+	/**
+	 * Recalculate usage.
 	 *
-	 * Recalculate usage for all elementor posts
+	 * Recalculate usage for all elementor posts.
 	 *
 	 * @param int $limit
 	 * @param int $offset
 	 */
-	public function recalc_usage( $limit = -1, $offset = 0 ) {
+	public function recalc_usage( $limit = - 1, $offset = 0 ) {
 		if ( 0 === $offset ) {
 			delete_option( self::OPTION_NAME );
 		}
 
 		$post_types = get_post_types( array( 'public' => true ) );
 
-		$query = new \WP_Query( [
+		$query = new WP_Query( [
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
 			'post_status' => 'publish',
@@ -212,9 +214,9 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Increase controls count
+	 * Increase controls count.
 	 *
-	 * Increase controls count, for each element
+	 * Increase controls count, for each element.
 	 *
 	 * @param array & $element_ref
 	 * @param string $tab
@@ -238,8 +240,8 @@ class Module extends BaseModule {
 		$element_ref['controls'][ $tab ][ $section ][ $control ] += $count;
 	}
 
-	/***
-	 * Add to global
+	/**
+	 * Add to global.
 	 *
 	 * Add's usage to global (update database).
 	 *
@@ -261,12 +263,12 @@ class Module extends BaseModule {
 				];
 			}
 
-			$global_element_ref = &$global_usage[ $doc_name ][ $element_type ];
-			$global_element_ref['count'] += $element_data['count'];
-
 			if ( empty( $element_data['controls'] ) ) {
 				continue;
 			}
+
+			$global_element_ref = &$global_usage[ $doc_name ][ $element_type ];
+			$global_element_ref['count'] += $element_data['count'];
 
 			foreach ( $element_data['controls'] as $tab => $sections ) {
 				foreach ( $sections as $section => $controls ) {
@@ -280,8 +282,8 @@ class Module extends BaseModule {
 		update_option( self::OPTION_NAME, $global_usage, false );
 	}
 
-	/***
-	 * Remove from global
+	/**
+	 * Remove from global.
 	 *
 	 * Remove's usage from global (update database).
 	 *
@@ -289,6 +291,11 @@ class Module extends BaseModule {
 	 */
 	private function remove_from_global( $document ) {
 		$prev_usage = $document->get_meta( self::META_KEY );
+
+		if ( empty( $prev_usage ) ) {
+			return;
+		}
+
 		$doc_name = $document->get_name();
 
 		$global_usage = get_option( self::OPTION_NAME, [] );
@@ -324,8 +331,8 @@ class Module extends BaseModule {
 		update_option( self::OPTION_NAME, $global_usage, false );
 	}
 
-	/***
-	 * Get elements usage
+	/**
+	 * Get elements usage.
 	 *
 	 * Get's the current elements usage by passed elements array parameter.
 	 *
@@ -363,7 +370,7 @@ class Module extends BaseModule {
 
 			$changed_controls_count = 0;
 
-			// Loop over all element settings
+			// Loop over all element settings.
 			foreach ( $element['settings'] as $control => $value ) {
 				if ( empty( $controls[ $control ] ) ) {
 					continue;
@@ -379,7 +386,7 @@ class Module extends BaseModule {
 
 				$section = $control_config['section'];
 
-				// If setting value is not the control default
+				// If setting value is not the control default.
 				if ( $value !== $control_config['default'] ) {
 					$this->increase_controls_count( $usage[ $type ], $tab, $section, $control, 1 );
 
@@ -397,7 +404,7 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Save document usage
+	 * Save document usage.
 	 *
 	 * Save requested document usage, and update global.
 	 *
@@ -408,12 +415,16 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// current
-		$usage = $this->get_elements_usage( $document->get_elements_raw_data() );
+		// Get data manually to avoid conflict with `\Elementor\Core\Base\Document::get_elements_data... convert_to_elementor`.
+		$data = $document->get_json_meta( '_elementor_data' );
 
-		$document->update_meta( self::META_KEY, $usage );
+		if ( ! empty( $data ) ) {
+			$usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
-		$this->add_to_global( $document->get_name(), $usage );
+			$document->update_meta( self::META_KEY, $usage );
+
+			$this->add_to_global( $document->get_name(), $usage );
+		}
 	}
 
 	/**

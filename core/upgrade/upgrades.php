@@ -505,4 +505,12 @@ class Upgrades {
 		add_option( 'elementor_icon_manager_needs_update', 'yes' );
 		add_option( 'elementor_load_fa4_shim', 'yes' );
 	}
+
+	/**
+	 * Format was changed.
+	 */
+	public static function _v_2_6_6_remove_old_usage_data() {
+		delete_option( \Elementor\Modules\Usage\Module::OPTION_NAME );
+		delete_post_meta_by_key( \Elementor\Modules\Usage\Module::META_KEY );
+	}
 }
