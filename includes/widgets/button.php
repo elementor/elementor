@@ -569,4 +569,8 @@ class Widget_Button extends Widget_Base {
 		</span>
 		<?php
 	}
+
+	public function on_import( $element ) {
+		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
+	}
 }
