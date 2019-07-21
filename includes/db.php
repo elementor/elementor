@@ -226,7 +226,7 @@ class DB {
 	 * @return array Content in Elementor format.
 	 */
 	public function get_new_editor_from_wp_editor( $post_id ) {
-		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->documents->get( $post_id )->convert_to_elementor()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->documents->get( $post_id )->convert_to_elementor()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
