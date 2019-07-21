@@ -505,4 +505,21 @@ class Upgrades {
 		add_option( 'elementor_icon_manager_needs_update', 'yes' );
 		add_option( 'elementor_load_fa4_shim', 'yes' );
 	}
+
+	/**
+	 * Set FontAwesome 5 value Migration on for button widget
+	 *
+	 * @param Updater $updater
+	 */
+	public static function _v_2_6_6_fa4_migration_button( $updater ) {
+		$changes = [
+			[
+				'callback' => [ 'Elementor\Core\Upgrade\Upgrade_Utils', '_migrate_icon_fa4_value' ],
+				'control_ids' => [
+					'icon' => 'selected_icon',
+				],
+			],
+		];
+		Upgrade_Utils::_update_widget_settings( 'button', $updater, $changes );
+	}
 }
