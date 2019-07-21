@@ -107,6 +107,9 @@ class Widget_Star_Rating extends Widget_Base {
 				'max' => 10,
 				'step' => 0.1,
 				'default' => 5,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -329,11 +332,11 @@ class Widget_Star_Rating extends Widget_Base {
 	 */
 	protected function render_stars( $icon ) {
 		$rating_data = $this->get_rating();
-		$rating = $rating_data[0];
-		$floored_rating = (int) $rating;
+		$rating = (float) $rating_data[0];
+		$floored_rating = floor( $rating );
 		$stars_html = '';
 
-		for ( $stars = 1; $stars <= $rating_data[1]; $stars++ ) {
+		for ( $stars = 1.0; $stars <= $rating_data[1]; $stars++ ) {
 			if ( $stars <= $floored_rating ) {
 				$stars_html .= '<i class="elementor-star-full">' . $icon . '</i>';
 			} elseif ( $floored_rating + 1 === $stars && $rating !== $floored_rating ) {
