@@ -17,13 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Usage_Reporter extends Base_Reporter {
 
+	const RECALC_ACTION = 'elementor_usage_recalc';
+
 	public function get_title() {
 		$title = 'Elements Usage';
 
-		if ( empty( $_GET['elementor_usage_recalc'] ) ) { // phpcs:ignore -- nonce validation is not require here.
-			$nonce = wp_create_nonce( 'elementor_usage_recalc' );
+		if ( empty( $_GET[ self::RECALC_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
+			$nonce = wp_create_nonce( self::RECALC_ACTION );
 			$url = add_query_arg( [
-				'elementor_usage_recalc' => 1,
+				self::RECALC_ACTION => 1,
 				'_wpnonce' => $nonce,
 			] );
 
@@ -43,8 +45,8 @@ class Usage_Reporter extends Base_Reporter {
 		/** @var Module $module */
 		$module = Module::instance();
 
-		if ( ! empty( $_GET['elementor_usage_recalc'] ) ) {
-			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'elementor_usage_recalc' ) ) {
+		if ( ! empty( $_GET[ self::RECALC_ACTION ] ) ) {
+			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], self::RECALC_ACTION ) ) {
 				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
 					'back_link' => true,
 				] );
