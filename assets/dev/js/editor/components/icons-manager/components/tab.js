@@ -3,7 +3,7 @@ import {
 	Component,
 	Fragment,
 } from 'react';
-import Icon from './Icon';
+import Icon from './icon';
 
 class Tab extends Component {
 	componentDidMount = () => {
