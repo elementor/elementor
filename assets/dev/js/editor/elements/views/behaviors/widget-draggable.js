@@ -68,15 +68,18 @@ export default class extends Marionette.Behavior {
 			editModel = this.view.getEditModel(),
 			hOrientation = editModel.getSetting( '_offset_orientation_h' ),
 			vOrientation = editModel.getSetting( '_offset_orientation_v' ),
-			settingToChange = {};
+			settingToChange = {},
+			isRTL = elementorFrontend.config.is_rtl;
 
-		let xPos = ui.position.left,
+		const parentWidth = this.$el.offsetParent().width(),
+			elementWidth = this.$el.outerWidth( true ),
+			left = ui.position.left,
+			right = parentWidth - left - elementWidth;
+
+		let	xPos = isRTL ? right : left,
 			yPos = ui.position.top,
 			offsetX = '_offset_x',
 			offsetY = '_offset_y';
-
-		const parentWidth = this.$el.offsetParent().width(),
-			elementWidth = this.$el.outerWidth( true );
 
 		if ( 'end' === hOrientation ) {
 			xPos = parentWidth - xPos - elementWidth;
