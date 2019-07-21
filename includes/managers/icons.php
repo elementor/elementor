@@ -49,7 +49,7 @@ class Icons_Manager {
 				continue;
 			}
 			$dependencies = [];
-			if ( isset( $icon_type['enqueue'] ) && $icon_type['enqueue'] ) {
+			if ( ! empty( $icon_type['enqueue'] ) ) {
 				foreach ( (array) $icon_type['enqueue'] as $font_css_url ) {
 					if ( ! in_array( $font_css_url, array_keys( $shared_styles ) ) ) {
 						$style_handle = 'elementor-icons-shared-' . count( $shared_styles );

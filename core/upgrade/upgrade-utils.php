@@ -91,7 +91,7 @@ class Upgrade_Utils {
 			return $element;
 		}
 		foreach ( $args['control_ids'] as $old_name => $new_name ) {
-			if ( ! empty( $element['settings'][ $old_name ] ) ) {
+			if ( empty( $element['settings'][ $old_name ] ) && ! isset( $element['settings'][ $new_name ] ) ) {
 				continue;
 			}
 			$element['settings'][ $new_name ] = Icons_Manager::fa4_to_fa5_value_migration( $element['settings'][ $old_name ] );
