@@ -101,8 +101,12 @@ class Module extends BaseModule {
 	 * Set saving flag
 	 *
 	 * Called on elementor/document/before_save
+	 *
+	 * @param Document $document
 	 */
-	public function set_saving_flag() {
+	public function before_document_save( $document ) {
+		$this->remove_from_global( $document );
+
 		$this->is_document_saving = true;
 	}
 
@@ -113,7 +117,7 @@ class Module extends BaseModule {
 	 *
 	 * @param Document $document
 	 */
-	public function save_usage( $document ) {
+	public function after_document_save( $document ) {
 		if ( DB::STATUS_PUBLISH === $document->get_post()->post_status ) {
 			$this->save_document_usage( $document );
 		}
@@ -131,6 +135,11 @@ class Module extends BaseModule {
 	 * @param WP_Post $post
 	 */
 	public function on_status_change( $new_status, $old_status, $post ) {
+		// If it's from elementor editor, the usage should be saved via `before_document_save`/`after_document_save`.
+		if ( $this->is_document_saving ) {
+			return;
+		}
+
 		$document = Plugin::$instance->documents->get( $post->ID );
 
 		if ( ! $document ) {
@@ -142,14 +151,7 @@ class Module extends BaseModule {
 		$is_private_unpublish = 'private' === $old_status && 'private' !== $new_status;
 
 		if ( $is_update || $is_public_unpublish || $is_private_unpublish ) {
-			$prev_usage = $document->get_meta( self::META_KEY );
-
-			$this->remove_from_global( $document->get_name(), $prev_usage );
-		}
-
-		// If it's from elementor editor, the usage should be saved after post meta was updated.
-		if ( $this->is_document_saving ) {
-			return;
+			$this->remove_from_global( $document );
 		}
 
 		$is_public_publish = 'publish' !== $old_status && 'publish' === $new_status;
@@ -205,7 +207,7 @@ class Module extends BaseModule {
 				continue;
 			}
 
-			$this->save_usage( $document );
+			$this->after_document_save( $document );
 		}
 	}
 
@@ -283,15 +285,17 @@ class Module extends BaseModule {
 	 *
 	 * Remove's usage from global (update database).
 	 *
-	 * @param string $doc_name
-	 * @param array $doc_usage
+	 * @param Document $document
 	 */
-	private function remove_from_global( $doc_name, $doc_usage ) {
+	private function remove_from_global( $document ) {
+		$prev_usage = $document->get_meta( self::META_KEY );
+		$doc_name = $document->get_name();
+
 		$global_usage = get_option( self::OPTION_NAME, [] );
 
-		foreach ( $doc_usage as $element_type => $doc_value ) {
+		foreach ( $prev_usage as $element_type => $doc_value ) {
 			if ( isset( $global_usage[ $doc_name ][ $element_type ]['count'] ) ) {
-				$global_usage[ $doc_name ][ $element_type ]['count'] -= $doc_usage[ $element_type ]['count'];
+				$global_usage[ $doc_name ][ $element_type ]['count'] -= $prev_usage[ $element_type ]['count'];
 
 				if ( 0 === $global_usage[ $doc_name ][ $element_type ]['count'] ) {
 					unset( $global_usage[ $doc_name ][ $element_type ] );
@@ -299,7 +303,7 @@ class Module extends BaseModule {
 					continue;
 				}
 
-				foreach ( $doc_usage[ $element_type ]['controls'] as $tab => $sections ) {
+				foreach ( $prev_usage[ $element_type ]['controls'] as $tab => $sections ) {
 					foreach ( $sections as $section => $controls ) {
 						foreach ( $controls as $control => $count ) {
 							if ( isset( $global_usage[ $doc_name ][ $element_type ]['controls'][ $tab ][ $section ][ $control ] ) ) {
@@ -422,8 +426,8 @@ class Module extends BaseModule {
 	public function __construct() {
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
 
-		add_action( 'elementor/document/before_save', [ $this, 'set_saving_flag' ] );
-		add_action( 'elementor/document/after_save', [ $this, 'save_usage' ] );
+		add_action( 'elementor/document/before_save', [ $this, 'before_document_save' ] );
+		add_action( 'elementor/document/after_save', [ $this, 'after_document_save' ] );
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 
