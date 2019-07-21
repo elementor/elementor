@@ -521,5 +521,6 @@ class Upgrades {
 			],
 		];
 		Upgrade_Utils::_update_widget_settings( 'button', $updater, $changes );
+		Upgrade_Utils::_update_widget_settings( 'icon-box', $updater, $changes );
 	}
 }
