@@ -86,15 +86,16 @@ class Canary_Deployment extends Module {
 
 		$canary_version = $canary_deployment['plugin_info']['new_version'];
 
-		if ( version_compare( $canary_version, ELEMENTOR_VERSION, '>' ) ) {
-			if ( ! empty( $canary_deployment['conditions'] ) && ! $this->check_conditions( $canary_deployment['conditions'] ) ) {
-				return false;
-			}
+		if ( version_compare( $canary_version, ELEMENTOR_VERSION, '<=' ) ) {
+			return false;
+		}
+
+		if ( ! empty( $canary_deployment['conditions'] ) && ! $this->check_conditions( $canary_deployment['conditions'] ) ) {
+			return false;
 		}
 
 		return $canary_deployment['plugin_info'];
 	}
-
 
 	private function check_conditions( $groups ) {
 		foreach ( $groups as $group ) {

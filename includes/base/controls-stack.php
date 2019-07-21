@@ -1264,8 +1264,8 @@ abstract class Controls_Stack extends Base_Object {
 			$values = $this->get_settings();
 		}
 
-		if ( ! empty( $control['conditions'] ) ) {
-			return Conditions::check( $control['conditions'], $values );
+		if ( ! empty( $control['conditions'] ) && ! Conditions::check( $control['conditions'], $values ) ) {
+			return false;
 		}
 
 		if ( empty( $control['condition'] ) ) {

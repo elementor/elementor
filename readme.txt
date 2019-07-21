@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 5.4
-Stable tag: 2.6.1
+Stable tag: 2.6.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,31 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.6.5 - 2019-07-18 =
+* Fix: Reverted the changes in Section and Column Vertical Alignment control
+
+= 2.6.4 - 2019-07-17 =
+* Tweak: Added CSS variable for admin font family
+* Tweak: Updated dialog library
+* Tweak: Improved `.htaccess` error message in `Preview Could Not Be Loaded` message
+* Fix: `Condition` and `Conditions` not working together ([#8233](https://github.com/elementor/elementor/issues/8233))
+* Fix: Pages are always displayed in `draft` status ([#8510](https://github.com/elementor/elementor/issues/8510))
+* Fix: Incorrect Absolute position dragging values in RTL ([#7719](https://github.com/elementor/elementor/issues/7719))
+* Fix: SVG icon hover color in Button widget
+
+= 2.6.3 - 2019-07-15 =
+* Tweak: Improve Icon control preview color for better visibility ([#8530](https://github.com/elementor/elementor/issues/8530))
+* Tweak: Cleaning all output buffering in order to enable Gzip
+
+= 2.6.2 - 2019-07-14 =
+* Tweak: Make sure activeTab exists in Icon library
+* Fix: Star rating widget alignment is not responsive ([#8444](https://github.com/elementor/elementor/issues/8444))
+* Fix: Temporarily reverted `application/json` content type to support various server configurations
+* Fix: Progress Bar typography backward compatibility
+* Fix: Missing `fas` icons in Social Icons widget
+* Fix: Navigator Indicators tooltip location
+* Fix: Added Icon List backward compatibility on template import
 
 = 2.6.1 - 2019-07-10 =
 * Tweak: Added responsive controls to Icon size and Icon rotation in Icon widget
