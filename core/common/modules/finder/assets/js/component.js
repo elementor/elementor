@@ -47,8 +47,6 @@ export default class extends elementorModules.ComponentModal {
 		};
 	}
 
-
-
 	getItemsView() {
 		return this.layout.modalContent.currentView.content.currentView;
 	}

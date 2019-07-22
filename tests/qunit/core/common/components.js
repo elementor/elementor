@@ -1,5 +1,3 @@
-import HeaderView from "../../../../core/common/assets/js/views/modal/header";
-
 jQuery( () => {
 	QUnit.module( 'Components' );
 
