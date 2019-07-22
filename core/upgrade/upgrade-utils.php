@@ -91,6 +91,11 @@ class Upgrade_Utils {
 			return $element;
 		}
 		foreach ( $args['control_ids'] as $old_name => $new_name ) {
+			// exit if new value exists
+			if ( isset( $element['settings'][ $new_name ] ) ) {
+				continue;
+			}
+			// exit if no value to migrate
 			if ( empty( $element['settings'][ $old_name ] ) && ! isset( $element['settings'][ $new_name ] ) ) {
 				continue;
 			}
