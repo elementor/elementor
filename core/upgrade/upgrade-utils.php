@@ -75,33 +75,4 @@ class Upgrade_Utils {
 
 		return $updater->should_run_again( $post_ids );
 	}
-
-	/**
-	 * migrate Icon control string value to Icons control array value
-	 *
-	 * @param array $element
-	 * @param array $args
-	 *
-	 * @return mixed
-	 */
-	public static function _migrate_icon_fa4_value( $element, $args ) {
-		$widget_id = $args['widget_id'];
-
-		if ( empty( $element['widgetType'] ) || $widget_id !== $element['widgetType'] ) {
-			return $element;
-		}
-		foreach ( $args['control_ids'] as $old_name => $new_name ) {
-			// exit if new value exists
-			if ( isset( $element['settings'][ $new_name ] ) ) {
-				continue;
-			}
-			// exit if no value to migrate
-			if ( empty( $element['settings'][ $old_name ] ) && ! isset( $element['settings'][ $new_name ] ) ) {
-				continue;
-			}
-			$element['settings'][ $new_name ] = Icons_Manager::fa4_to_fa5_value_migration( $element['settings'][ $old_name ] );
-			$args['do_update'] = true;
-		}
-		return $element;
-	}
 }
