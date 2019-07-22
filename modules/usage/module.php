@@ -148,12 +148,12 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$is_update = 'publish' === $old_status && 'publish' === $new_status;
 		$is_public_unpublish = 'publish' === $old_status && 'publish' !== $new_status;
 		$is_private_unpublish = 'private' === $old_status && 'private' !== $new_status;
 
-		if ( $is_update || $is_public_unpublish || $is_private_unpublish ) {
+		if ( $is_public_unpublish || $is_private_unpublish ) {
 			$this->remove_from_global( $document );
+
 		}
 
 		$is_public_publish = 'publish' !== $old_status && 'publish' === $new_status;
@@ -162,6 +162,11 @@ class Module extends BaseModule {
 		if ( $is_public_publish || $is_private_publish ) {
 			$this->save_document_usage( $document );
 		}
+	}
+
+	public function on_before_delete_post( $post_id ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+		$this->remove_from_global( $document );
 	}
 
 	/**
@@ -263,12 +268,12 @@ class Module extends BaseModule {
 				];
 			}
 
+			$global_element_ref = &$global_usage[ $doc_name ][ $element_type ];
+			$global_element_ref['count'] += $element_data['count'];
+
 			if ( empty( $element_data['controls'] ) ) {
 				continue;
 			}
-
-			$global_element_ref = &$global_usage[ $doc_name ][ $element_type ];
-			$global_element_ref['count'] += $element_data['count'];
 
 			foreach ( $element_data['controls'] as $tab => $sections ) {
 				foreach ( $sections as $section => $controls ) {
@@ -307,6 +312,10 @@ class Module extends BaseModule {
 				if ( 0 === $global_usage[ $doc_name ][ $element_type ]['count'] ) {
 					unset( $global_usage[ $doc_name ][ $element_type ] );
 
+					if ( 0 === count( $global_usage[ $doc_name ] ) ) {
+						unset( $global_usage[ $doc_name ] );
+					}
+
 					continue;
 				}
 
@@ -329,6 +338,8 @@ class Module extends BaseModule {
 		}
 
 		update_option( self::OPTION_NAME, $global_usage, false );
+
+		$document->delete_meta( self::META_KEY );
 	}
 
 	/**
@@ -356,7 +367,7 @@ class Module extends BaseModule {
 				$usage[ $type ] = [
 					'count' => 0,
 					'control_percent' => 0,
-					'controls' => null,
+					'controls' => [],
 				];
 			}
 
@@ -418,7 +429,7 @@ class Module extends BaseModule {
 		// Get data manually to avoid conflict with `\Elementor\Core\Base\Document::get_elements_data... convert_to_elementor`.
 		$data = $document->get_json_meta( '_elementor_data' );
 
-		if ( ! empty( $data ) ) {
+		if ( is_array( $data ) ) {
 			$usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
 			$document->update_meta( self::META_KEY, $usage );
@@ -436,6 +447,7 @@ class Module extends BaseModule {
 	 */
 	public function __construct() {
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
+		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );
 
 		add_action( 'elementor/document/before_save', [ $this, 'before_document_save' ] );
 		add_action( 'elementor/document/after_save', [ $this, 'after_document_save' ] );
