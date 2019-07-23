@@ -47,14 +47,14 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 
 		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
 
+		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+
 		if ( $videoIframe[ 0 ].src.includes( 'vimeo.com' ) ) {
 			const videoSrc = $videoIframe[ 0 ].src,
-				indexOfStartTimeKey = videoSrc.indexOf( '#t=' );
+				timeMatch = /#t=[^&]*/.exec( videoSrc );
 
-			// insert the autoplay flag before the '#t=' param. Param '#t=' must be last in the URL
-			$videoIframe[ 0 ].src = videoSrc.slice( 0, indexOfStartTimeKey ) + '&autoplay=1' + videoSrc.slice( indexOfStartTimeKey );
-		} else {
-			$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+			// Param '#t=' must be last in the URL
+			$videoIframe[ 0 ].src = videoSrc.slice( 0, timeMatch.index ) + videoSrc.slice( timeMatch.index + timeMatch[ 0 ].length ) + timeMatch[ 0 ];
 		}
 	}
 

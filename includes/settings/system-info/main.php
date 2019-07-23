@@ -197,7 +197,7 @@ class Main {
 		}
 
 		$reports_info = self::get_allowed_reports();
-		$reports = $this->load_reports( $reports_info );
+		$reports = $this->load_reports( $reports_info, 'raw' );
 
 		$domain = parse_url( site_url(), PHP_URL_HOST );
 

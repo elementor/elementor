@@ -272,7 +272,8 @@ export default class extends Marionette.CompositeView {
 
 			this.ui.indicators.append( $indicator );
 
-			$indicator.tipsy();
+			// Added delay of 500ms because the indicators bar has a CSS transition attribute of .5s
+			$indicator.tipsy( { delayIn: 300 } );
 		} );
 	}
 
