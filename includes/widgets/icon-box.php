@@ -648,7 +648,7 @@ class Widget_Icon_Box extends Widget_Base {
 				<?php
 				if ( $is_new || $migrated ) {
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
-				} else {
+				} elseif ( ! empty( $settings['icon'] ) ) {
 					?><i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i><?php
 				}
 				?>
