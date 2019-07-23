@@ -639,7 +639,7 @@ class Widget_Icon_Box extends Widget_Base {
 			$has_icon = true;
 		}
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$is_new = ! isset( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<?php if ( $has_icon ) : ?>
