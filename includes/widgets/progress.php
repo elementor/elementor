@@ -249,7 +249,6 @@ class Widget_Progress extends Widget_Base {
 				'exclude' => [
 					'line_height',
 				],
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 

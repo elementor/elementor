@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.7.2
+ * Dialogs Manager v4.7.3
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -252,9 +252,18 @@
 			self.hide();
 		};
 
+		var isIgnoredTarget = function(event) {
+
+			if (! settings.hide.ignore) {
+				return false;
+			}
+
+			return !! $(event.target).closest(settings.hide.ignore).length;
+		};
+
 		var hideOnOutsideClick = function(event) {
 
-			if (isContextMenuClickEvent(event) || $(event.target).closest(elements.widget).length) {
+			if (isContextMenuClickEvent(event) || $(event.target).closest(elements.widget).length || isIgnoredTarget(event)) {
 				return;
 			}
 
@@ -336,6 +345,7 @@
 					onOutsideContextMenu: false,
 					onBackgroundClick: true,
 					onEscKeyPress: true,
+					ignore: ''
 				}
 			};
 
