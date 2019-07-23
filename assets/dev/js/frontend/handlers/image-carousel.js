@@ -1,30 +1,30 @@
-const ImageCarouselHandler = elementorModules.frontend.handlers.Base.extend( {
-	getDefaultSettings: function() {
+class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				carousel: '.elementor-image-carousel',
 			},
 		};
-	},
+	}
 
-	getDefaultElements: function() {
-		var selectors = this.getSettings( 'selectors' );
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
 
 		return {
 			$carousel: this.$element.find( selectors.carousel ),
 		};
-	},
+	}
 
-	onInit: function() {
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
+	onInit( ...args ) {
+		super.onInit( ...args );
 
-		var elementSettings = this.getElementSettings(),
+		const elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
 			isSingleSlide = 1 === slidesToShow,
 			defaultLGDevicesSlidesCount = isSingleSlide ? 1 : 2,
 			breakpoints = elementorFrontend.config.breakpoints;
 
-		var slickOptions = {
+		const slickOptions = {
 			slidesToShow: slidesToShow,
 			autoplay: 'yes' === elementSettings.autoplay,
 			autoplaySpeed: elementSettings.autoplay_speed,
@@ -59,9 +59,9 @@ const ImageCarouselHandler = elementorModules.frontend.handlers.Base.extend( {
 		}
 
 		this.elements.$carousel.slick( slickOptions );
-	},
-} );
+	}
+}
 
-module.exports = function( $scope ) {
+export default ( $scope ) => {
 	elementorFrontend.elementsHandler.addHandler( ImageCarouselHandler, { $element: $scope } );
 };

@@ -1,21 +1,32 @@
+import accordionHandler from './handlers/accordion';
+import alertHandler from './handlers/alert';
+import counterHandler from './handlers/counter';
+import progressHandler from './handlers/progress';
+import tabsHandler from './handlers/tabs';
+import toggleHandler from './handlers/toggle';
+import videoHandler from './handlers/video';
+import imageCarouselHandler from './handlers/image-carousel';
+import textEditorHandler from './handlers/text-editor';
+import sectionHandler from './handlers/section';
+
 module.exports = function( $ ) {
 	const self = this;
 
 	// element-type.skin-type
 	const handlers = {
 		// Elements
-		section: require( 'elementor-frontend/handlers/section' ),
+		section: sectionHandler,
 
 		// Widgets
-		'accordion.default': require( 'elementor-frontend/handlers/accordion' ),
-		'alert.default': require( 'elementor-frontend/handlers/alert' ),
-		'counter.default': require( 'elementor-frontend/handlers/counter' ),
-		'progress.default': require( 'elementor-frontend/handlers/progress' ),
-		'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
-		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
-		'video.default': require( 'elementor-frontend/handlers/video' ),
-		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' ),
+		'accordion.default': accordionHandler,
+		'alert.default': alertHandler,
+		'counter.default': counterHandler,
+		'progress.default': progressHandler,
+		'tabs.default': tabsHandler,
+		'toggle.default': toggleHandler,
+		'video.default': videoHandler,
+		'image-carousel.default': imageCarouselHandler,
+		'text-editor.default': textEditorHandler,
 	};
 
 	const handlersInstances = {};
