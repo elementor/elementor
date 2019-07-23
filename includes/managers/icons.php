@@ -243,6 +243,12 @@ class Icons_Manager {
 	 */
 	public static function fa4_to_fa5_value_migration( $value ) {
 		static $migration_dictionary = false;
+		if ( '' === $value ) {
+			return [
+				'value' => '',
+				'library' => '',
+			];
+		}
 		if ( false === $migration_dictionary ) {
 			$migration_dictionary = json_decode( file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
 		}

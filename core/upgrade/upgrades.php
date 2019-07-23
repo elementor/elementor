@@ -526,10 +526,12 @@ class Upgrades {
 			if ( isset( $element['settings'][ $new_name ] ) ) {
 				continue;
 			}
+
 			// exit if no value to migrate
-			if ( empty( $element['settings'][ $old_name ] ) && ! isset( $element['settings'][ $new_name ] ) ) {
+			if ( ! isset( $element['settings'][ $old_name ] ) ) {
 				continue;
 			}
+
 			$element['settings'][ $new_name ] = Icons_Manager::fa4_to_fa5_value_migration( $element['settings'][ $old_name ] );
 			$args['do_update'] = true;
 		}

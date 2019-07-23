@@ -230,9 +230,6 @@ class Widget_Button extends Widget_Base {
 						'max' => 50,
 					],
 				],
-				'condition' => [
-					'selected_icon[value]!' => '',
-				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
