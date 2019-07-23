@@ -50,7 +50,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
 				if ( empty( $element['widgetType'] ) || 'image' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -107,7 +107,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
@@ -169,7 +169,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
@@ -504,5 +504,32 @@ class Upgrades {
 	public static function _v_2_6_0_fa4_migration_flag() {
 		add_option( 'elementor_icon_manager_needs_update', 'yes' );
 		add_option( 'elementor_load_fa4_shim', 'yes' );
+	}
+
+	/**
+	 * Format was changed.
+	 */
+	public static function _v_2_6_7_remove_old_usage_data() {
+		delete_option( \Elementor\Modules\Usage\Module::OPTION_NAME );
+		delete_post_meta_by_key( \Elementor\Modules\Usage\Module::META_KEY );
+	}
+
+	/**
+	 *  Update database to separate page from post.
+	 */
+	public static function _v_2_6_7_rename_document_types_to_wp() {
+		global $wpdb;
+
+		$wpdb->query( "UPDATE $wpdb->postmeta SET meta_value ='wp-page'
+			WHERE meta_key = '_elementor_template_type' && post_id in (
+		    	SELECT p1.ID FROM $wpdb->posts AS p LEFT JOIN $wpdb->posts AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) WHERE p.post_type = 'page'
+			);
+		 ");
+
+		$wpdb->query( "UPDATE $wpdb->postmeta SET meta_value ='wp-post'
+			WHERE meta_key = '_elementor_template_type' && post_id in (
+		    	SELECT p1.ID FROM $wpdb->posts AS p LEFT JOIN $wpdb->posts AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) WHERE p.post_type = 'post'
+			);
+		 ");
 	}
 }
