@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Post extends Document {
+abstract class Base extends Document {
 
 	/**
 	 * @since 2.0.8
@@ -45,23 +45,6 @@ class Post extends Document {
 				],
 			]
 		);
-	}
-
-	/**
-	 * @since 2.0.0
-	 * @access public
-	 */
-	public function get_name() {
-		return 'post';
-	}
-
-	/**
-	 * @since 2.0.0
-	 * @access public
-	 * @static
-	 */
-	public static function get_title() {
-		return __( 'Page', 'elementor' );
 	}
 
 	/**
