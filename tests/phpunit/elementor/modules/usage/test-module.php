@@ -4,7 +4,6 @@ namespace Elementor\Testing\Modules\Usage;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Usage\Module;
 use Elementor\Testing\Elementor_Test_Base;
-use WP_Post;
 
 class Elementor_Test_Module extends Elementor_Test_Base {
 	/**
@@ -70,6 +69,9 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		'elements' => [],
 	];
 
+	/**
+	 * @var array
+	 */
 	static $column_mock = [
 		'id' => 'a2e9b68',
 		'elType' => 'column',
@@ -95,24 +97,6 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	 * @var string
 	 */
 	static $meta_data_mock_default = '[{"id":"3d605a1","elType":"section","settings":[],"elements":[{"id":"d7bc6ea","elType":"column","settings":{"_column_size":100},"elements":[{"id":"bf7ca8a","elType":"widget","settings":{"text":"Click here"},"elements":[],"widgetType":"button"}],"isInner":false}],"isInner":false}]';
-
-	/**
-	 * @return Document|false
-	 */
-	private function create_post() {
-		$admin = $this->factory()->create_and_get_administrator_user();
-
-		wp_set_current_user( $admin->ID );
-
-		$post = $this->factory()->create_and_get_custom_post( [
-			'post_author' => $admin->ID,
-			'post_type' => 'post',
-		] );
-
-		$document = self::elementor()->documents->get( $post->ID );
-
-		return $document;
-	}
 
 	public function setUp() {
 		parent::setUp();
@@ -224,7 +208,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$usage_meta_after = self::$document->get_meta( Module::META_KEY );
 
 		// Check meta.
-		$this->assertIsNotArray( $usage_meta_after );
+		$this->assertEquals( 'string', gettype( $usage_meta_after ) );
 
 		// Get global.
 		$global_usage = get_option( Module::OPTION_NAME, [] );
@@ -264,7 +248,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$usage_meta_after = self::$document->get_meta( Module::META_KEY );
 
 		// Check meta.
-		$this->assertIsNotArray( $usage_meta_after );
+		$this->assertEquals( 'string', gettype( $usage_meta_after ) );
 
 		// Get global.
 		$global_usage = get_option( Module::OPTION_NAME, [] );
@@ -274,6 +258,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_formatted_usage() {
+		$doc_name = self::$document->get_name();
 		/** @var Module $module */
 		$module = Module::instance();
 
@@ -281,7 +266,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$formatted_usage = $module->get_formatted_usage();
 
 		// Check if button exist and it value is `1`.
-		$this->assertEquals( 1, $formatted_usage['post']['elements']['Button'] );
+		$this->assertEquals( 1, $formatted_usage[$doc_name]['elements']['Button'] );
 	}
 
 	public function test_controls() {
@@ -349,5 +334,23 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		// Check if both new two elements exist in global usage.
 		$this->assertEquals( 1, $global_usage[ $doc_name ]['button']['count'] );
+	}
+
+	/**
+	 * @return Document|false
+	 */
+	private function create_post() {
+		$admin = $this->factory()->create_and_get_administrator_user();
+
+		wp_set_current_user( $admin->ID );
+
+		$post = $this->factory()->create_and_get_custom_post( [
+			'post_author' => $admin->ID,
+			'post_type' => 'post',
+		] );
+
+		$document = self::elementor()->documents->get( $post->ID );
+
+		return $document;
 	}
 }
