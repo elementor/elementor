@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 5.4
-Stable tag: 2.6.5
+Stable tag: 2.6.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,14 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.6.6 - 2019-07-23 =
+* Fix: WordPress editor is open by default ([#8628](https://github.com/elementor/elementor/issues/8628), [#8647](https://github.com/elementor/elementor/issues/8647))
+* Fix: Icon spacing disappeared after upgrading to Font Awesome 5 ([#8609](https://github.com/elementor/elementor/issues/8609))
+* Fix: Star icon appears instead of an unset icon in Icon Box widget after upgrading to Font Awesome 5 ([#8596](https://github.com/elementor/elementor/issues/8596))
+* Fix: Empty icon library by Using JS files instead of JSON for icon lists
+* Fix: `Preview Could Not be Loaded` message displayed if `$_SERVER['SERVER_SOFTWARE']` is empty
+* Fix: Navigator Indicators RTL UI glitches
 
 = 2.6.5 - 2019-07-18 =
 * Fix: Reverted the changes in Section and Column Vertical Alignment control
