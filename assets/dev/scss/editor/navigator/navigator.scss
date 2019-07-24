@@ -242,7 +242,9 @@
 			z-index: 91;
 
 			&:not(:hover) {
-				transform: translateX(calc(100% - 8px));
+				$transform: getValueByDirection(calc(100% - 8px), calc(-100% + 8px));
+
+				transform: translateX($transform);
 			}
 		}
 
