@@ -639,7 +639,7 @@ class Widget_Icon_Box extends Widget_Base {
 			$has_icon = true;
 		}
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$is_new = ! isset( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<?php if ( $has_icon ) : ?>
@@ -648,7 +648,7 @@ class Widget_Icon_Box extends Widget_Base {
 				<?php
 				if ( $is_new || $migrated ) {
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
-				} else {
+				} elseif ( ! empty( $settings['icon'] ) ) {
 					?><i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i><?php
 				}
 				?>
@@ -713,6 +713,6 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	public function on_import( $element ) {
-		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
+		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon', true );
 	}
 }

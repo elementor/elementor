@@ -49,7 +49,7 @@ class Icons_Manager {
 				continue;
 			}
 			$dependencies = [];
-			if ( isset( $icon_type['enqueue'] ) ) {
+			if ( ! empty( $icon_type['enqueue'] ) ) {
 				foreach ( (array) $icon_type['enqueue'] as $font_css_url ) {
 					if ( ! in_array( $font_css_url, array_keys( $shared_styles ) ) ) {
 						$style_handle = 'elementor-icons-shared-' . count( $shared_styles );
@@ -93,7 +93,7 @@ class Icons_Manager {
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fab fa-font-awesome-alt',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_fa_asset_url( 'regular', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'regular', 'js', false ),
 				'native' => true,
 			],
 			'fa-solid' => [
@@ -105,7 +105,7 @@ class Icons_Manager {
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_fa_asset_url( 'solid', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'solid', 'js', false ),
 				'native' => true,
 			],
 			'fa-brands' => [
@@ -117,7 +117,7 @@ class Icons_Manager {
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fab fa-font-awesome-flag',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_fa_asset_url( 'brands', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'brands', 'js', false ),
 				'native' => true,
 			],
 		] );
@@ -231,14 +231,70 @@ class Icons_Manager {
 		return true;
 	}
 
-	public static function on_import_migration( $element, $old_control, $new_control ) {
-		if ( isset( $element['settings'][ $old_control ] ) && empty( $element['settings'][ $old_control ] ) && self::is_migration_allowed() ) {
-			unset( $element['settings'][ $old_control ] );
-			$element['settings'][ $new_control ] = [
+	/**
+	 * Font Awesome 4 to font Awesome 5 Value Migration
+	 *
+	 * used to convert string value of Icon control to array value of Icons control
+	 * ex: 'fa fa-star' => [ 'value' => 'fas fa-star', 'library' => 'fa-solid' ]
+	 *
+	 * @param $value
+	 *
+	 * @return array
+	 */
+	public static function fa4_to_fa5_value_migration( $value ) {
+		static $migration_dictionary = false;
+		if ( '' === $value ) {
+			return [
 				'value' => '',
 				'library' => '',
 			];
 		}
+		if ( false === $migration_dictionary ) {
+			$migration_dictionary = json_decode( file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
+		}
+		if ( isset( $migration_dictionary[ $value ] ) ) {
+			return $migration_dictionary[ $value ];
+		}
+
+		return [
+			'value' => 'fas ' . str_replace( 'fa ', '', $value ),
+			'library' => 'fa-solid',
+		];
+	}
+
+	/**
+	 * on_import_migration
+	 * @param array $element        settings array
+	 * @param string $old_control   old control id
+	 * @param string $new_control   new control id
+	 * @param bool $remove_old      boolean weather to remove old control or not
+	 *
+	 * @return array
+	 */
+	public static function on_import_migration( array $element, $old_control = '', $new_control = '', $remove_old = false ) {
+
+		if ( ! isset( $element['settings'][ $old_control ] ) ) {
+			return $element;
+		}
+
+		// Case when old value is saved as empty string
+		$new_value = [
+			'value' => '',
+			'library' => '',
+		];
+
+		// Case when old value needs migration
+		if ( ! empty( $element['settings'][ $old_control ] ) && ! self::is_migration_allowed() ) {
+			$new_value = self::fa4_to_fa5_value_migration( $element['settings'][ $old_control ] );
+		}
+
+		$element['settings'][ $new_control ] = $new_value;
+
+		//remove old value
+		if ( $remove_old ) {
+			unset( $element['settings'][ $old_control ] );
+		}
+
 		return $element;
 	}
 
