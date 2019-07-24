@@ -380,7 +380,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		// Check element with dynamic control.
 		$global_usage = get_option( Module::OPTION_NAME, [] );
 
-		$this->assertArrayHasKey( Module::GLOBAL_TAB, $global_usage[ $doc_name ]['heading']['controls'] );
+		$this->assertArrayHasKey( Module::GENERAL_TAB, $global_usage[ $doc_name ]['heading']['controls'] );
 		$this->assertEquals(1, $global_usage[ $doc_name ]['heading']['controls']['content']['section_title']['link']);
 		$this->assertEquals(1, $global_usage[ $doc_name ]['heading']['controls']['content']['section_title']['title']);
 

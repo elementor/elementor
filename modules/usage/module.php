@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  */
 class Module extends BaseModule {
-	const GLOBAL_TAB = 'global';
+	const GENERAL_TAB = 'general';
 	const META_KEY = '_elementor_elements_usage';
 	const OPTION_NAME = 'elementor_elements_usage';
 
@@ -130,7 +130,7 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * On Status Change.
+	 * On status change.
 	 *
 	 * Called on transition_post_status.
 	 *
@@ -166,6 +166,13 @@ class Module extends BaseModule {
 		}
 	}
 
+	/**
+	 * On before delete post.
+	 *
+	 * Called on on_before_delete_post.
+	 *
+	 * @param int $post_id
+	 */
 	public function on_before_delete_post( $post_id ) {
 		$document = Plugin::$instance->documents->get( $post_id );
 		$this->remove_from_global( $document );
@@ -245,6 +252,73 @@ class Module extends BaseModule {
 		}
 
 		$element_ref['controls'][ $tab ][ $section ][ $control ] += $count;
+	}
+
+	/**
+	 * Add Controls
+	 *
+	 * Add's controls to this element_ref, returns changed controls count.
+	 *
+	 * @param array $settings_controls
+	 * @param array $element_controls
+	 * @param array & $element_ref
+	 *
+	 * @return int ($changed_controls_count).
+	 */
+	private function add_controls( $settings_controls, $element_controls, & $element_ref ) {
+		$changed_controls_count = 0;
+
+		// Loop over all element settings.
+		foreach ( $settings_controls as $control => $value ) {
+			if ( empty( $element_controls[ $control ] ) ) {
+				continue;
+			}
+
+			$control_config = $element_controls[ $control ];
+
+			if ( ! isset( $control_config['section'], $control_config['default'] ) ) {
+				continue;
+			}
+
+			$tab = $control_config['tab'];
+			$section = $control_config['section'];
+
+			// If setting value is not the control default.
+			if ( $value !== $control_config['default'] ) {
+				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
+
+				$changed_controls_count ++;
+			}
+		}
+
+		return $changed_controls_count;
+	}
+
+	/**
+	 * Add general controls.
+	 *
+	 * Extract general controls to element ref, return clean `$settings_control`.
+	 *
+	 * @param array $settings_controls
+	 * @param array & $element_ref
+	 *
+	 * @return array ($settings_controls).
+	 */
+	private function add_general_controls( $settings_controls, & $element_ref ) {
+		if ( ! empty( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] ) ) {
+			$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
+
+			// Add dynamic count to controls under `global` tab.
+			$this->increase_controls_count(
+				$element_ref,
+				self::GENERAL_TAB,
+				Manager::DYNAMIC_SETTING_KEY,
+				'count',
+				count( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] )
+			);
+		}
+
+		return $settings_controls;
 	}
 
 	/**
@@ -381,44 +455,11 @@ class Module extends BaseModule {
 
 			$element_controls = $element_instance->get_controls();
 			$settings_controls = $element['settings'];
+			$element_ref = &$usage[ $type ];
 
-			if ( ! empty( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] ) ) {
-				$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
+			$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
 
-				// Add dynamic count to controls under `global` tab.
-				$this->increase_controls_count(
-					$usage[ $type ],
-					self::GLOBAL_TAB,
-					Manager::DYNAMIC_SETTING_KEY,
-					'count',
-					count( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] )
-				);
-			}
-
-			$changed_controls_count = 0;
-
-			// Loop over all element settings.
-			foreach ( $settings_controls as $control => $value ) {
-				if ( empty( $element_controls[ $control ] ) ) {
-					continue;
-				}
-
-				$control_config = $element_controls[ $control ];
-
-				if ( ! isset( $control_config['section'], $control_config['default'] ) ) {
-					continue;
-				}
-
-				$tab = $control_config['tab'];
-				$section = $control_config['section'];
-
-				// If setting value is not the control default.
-				if ( $value !== $control_config['default'] ) {
-					$this->increase_controls_count( $usage[ $type ], $tab, $section, $control, 1 );
-
-					$changed_controls_count ++;
-				}
-			}
+			$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
 
 			$percent = $changed_controls_count / ( count( $element_controls ) / 100 );
 			$usage[ $type ] ['control_percent'] = (int) round( $percent );
