@@ -3,6 +3,7 @@ namespace Elementor\Testing\Modules\Usage;
 
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Usage\Module;
+use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Module extends Elementor_Test_Base {
@@ -92,6 +93,24 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		'widgetType' => 'button',
 	];
 
+	/**
+	 * @var array
+	 */
+	static $element_with_dynamic_settings_mock = [
+		'id' => '5a1e8e7',
+		'elType' => 'widget',
+		'settings' => [
+			'title' => 'Add Your Heading Text Here',
+			'header_size' => 'h3',
+			'align' => 'right',
+			'__dynamic__' => [
+				'title' => '[elementor-tag id="2e7ade9" name="post-title" settings="%7B%7D"]',
+				'link' => '[elementor-tag id="68a0003" name="post-url" settings="%7B%7D"]',
+			],
+		],
+		'elements' => [],
+		'widgetType' => 'heading',
+	];
 
 	/**
 	 * @var string
@@ -266,7 +285,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$formatted_usage = $module->get_formatted_usage();
 
 		// Check if button exist and it value is `1`.
-		$this->assertEquals( 1, $formatted_usage[$doc_name]['elements']['Button'] );
+		$this->assertEquals( 1, $formatted_usage[ $doc_name ]['elements']['Button'] );
 	}
 
 	public function test_controls() {
@@ -304,7 +323,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$doc_name = self::$document->get_name();
 
 		// Document with two elements.
-		$document_with_elements = self::$document_mock_without_elements;
+		$document = self::$document_mock_without_elements;
 		$column = self::$column_mock;
 		$section = self::$section_mock;
 
@@ -312,11 +331,10 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$column['elements'][] = self::$element_mock;
 
 		$section['elements'][] = $column;
-
-		$document_with_elements['elements'][] = $section;
+		$document['elements'][] = $section;
 
 		// Save document
-		self::$document->save( $document_with_elements );
+		self::$document->save( $document );
 
 		// Get global usage.
 		$global_usage = get_option( Module::OPTION_NAME, [] );
@@ -324,16 +342,57 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		// Check if both new two elements exist in global usage.
 		$this->assertEquals( 2, $global_usage[ $doc_name ]['button']['count'] );
 
-		unset( $document_with_elements['elements'][0]['elements'][0]['elements'][1] );
+		unset( $document['elements'][0]['elements'][0]['elements'][1] );
 
 		// Save document
-		self::$document->save( $document_with_elements );
+		self::$document->save( $document );
 
 		// Get global usage.
 		$global_usage = get_option( Module::OPTION_NAME, [] );
 
 		// Check if both new two elements exist in global usage.
 		$this->assertEquals( 1, $global_usage[ $doc_name ]['button']['count'] );
+	}
+
+	public function test_dynamic_control() {
+		$doc_name = self::$document->get_name();
+
+		// Implant dynamic tags.
+		require_once( __DIR__ . '/dynamic-tags/title.php' );
+		require_once( __DIR__ . '/dynamic-tags/link.php' );
+
+		Plugin::$instance->dynamic_tags->register_tag( new \Elementor\Testing\Modules\Usage\DynamicTags\Title() );
+		Plugin::$instance->dynamic_tags->register_tag( new \Elementor\Testing\Modules\Usage\DynamicTags\Link() );
+
+		// Document with element that includes control with dynamic settings.
+		$document = self::$document_mock_without_elements;
+		$section = self::$section_mock;
+		$column = self::$column_mock;
+		$element = self::$element_with_dynamic_settings_mock;
+
+		$column['elements'][] = &$element;
+		$section['elements'][] = &$column;
+		$document['elements'][] = &$section;
+
+		// Add element with dynamic control.
+		self::$document->save( $document );
+
+		// Check element with dynamic control.
+		$global_usage = get_option( Module::OPTION_NAME, [] );
+
+		$this->assertArrayHasKey( Module::GLOBAL_TAB, $global_usage[ $doc_name ]['heading']['controls'] );
+		$this->assertEquals(1, $global_usage[ $doc_name ]['heading']['controls']['content']['section_title']['link']);
+		$this->assertEquals(1, $global_usage[ $doc_name ]['heading']['controls']['content']['section_title']['title']);
+
+		// Remove settings.
+		$element['settings'] = [];
+
+		self::$document->save( $document );
+
+		// Check element without dynamic control.
+		$global_usage = get_option( Module::OPTION_NAME, [] );
+
+		$this->assertEquals( 0, count( $global_usage[ $doc_name ]['heading']['controls'] ) );
 	}
 
 	/**
