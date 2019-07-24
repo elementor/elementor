@@ -4,6 +4,7 @@ namespace Elementor\Modules\Usage;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\DynamicTags\Manager;
 use Elementor\System_Info\Main as System_Info;
 use Elementor\DB;
 use Elementor\Plugin;
@@ -22,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  */
 class Module extends BaseModule {
+	const GLOBAL_TAB = 'global';
 	const META_KEY = '_elementor_elements_usage';
 	const OPTION_NAME = 'elementor_elements_usage';
 
@@ -377,24 +379,37 @@ class Module extends BaseModule {
 				return $element;
 			}
 
-			$controls = $element_instance->get_controls();
+			$element_controls = $element_instance->get_controls();
+			$settings_controls = $element['settings'];
+
+			if ( ! empty( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] ) ) {
+				$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
+
+				// Add dynamic count to controls under `global` tab.
+				$this->increase_controls_count(
+					$usage[ $type ],
+					self::GLOBAL_TAB,
+					Manager::DYNAMIC_SETTING_KEY,
+					'count',
+					count( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] )
+				);
+			}
 
 			$changed_controls_count = 0;
 
 			// Loop over all element settings.
-			foreach ( $element['settings'] as $control => $value ) {
-				if ( empty( $controls[ $control ] ) ) {
+			foreach ( $settings_controls as $control => $value ) {
+				if ( empty( $element_controls[ $control ] ) ) {
 					continue;
 				}
 
-				$control_config = $controls[ $control ];
-
-				$tab = $control_config['tab'];
+				$control_config = $element_controls[ $control ];
 
 				if ( ! isset( $control_config['section'], $control_config['default'] ) ) {
 					continue;
 				}
 
+				$tab = $control_config['tab'];
 				$section = $control_config['section'];
 
 				// If setting value is not the control default.
@@ -405,7 +420,7 @@ class Module extends BaseModule {
 				}
 			}
 
-			$percent = $changed_controls_count / ( count( $controls ) / 100 );
+			$percent = $changed_controls_count / ( count( $element_controls ) / 100 );
 			$usage[ $type ] ['control_percent'] = (int) round( $percent );
 
 			return $element;
