@@ -72,20 +72,6 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve the list of scripts the image carousel widget depended on.
-	 *
-	 * Used to set scripts dependencies required to run the widget.
-	 *
-	 * @since 1.3.0
-	 * @access public
-	 *
-	 * @return array Widget scripts dependencies.
-	 */
-	public function get_script_depends() {
-		return [ 'jquery-slick' ];
-	}
-
-	/**
 	 * Register image carousel widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -405,7 +391,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-prev, {{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-next' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'navigation' => [ 'arrows', 'both' ],
@@ -419,7 +405,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-prev, {{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-next' => 'color: {{VALUE}};',
 				],
 				'condition' => [
 					'navigation' => [ 'arrows', 'both' ],
@@ -467,7 +453,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .swiper-pagination-bullet' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
@@ -481,7 +467,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .swiper-pagination-bullet' => 'background: {{VALUE}};',
 				],
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
@@ -523,7 +509,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'slides_to_show!' => '1',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .slick-track' => 'display: flex; align-items: {{VALUE}};',
+					'{{WRAPPER}} .swiper-wrapper' => 'display: flex; align-items: {{VALUE}};',
 				],
 			]
 		);
@@ -558,14 +544,12 @@ class Widget_Image_Carousel extends Widget_Base {
 					'size' => 20,
 				],
 				'show_label' => false,
-				'selectors' => [
-					'{{WRAPPER}} .slick-list' => 'margin-left: -{{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .slick-slide .slick-slide-inner' => 'padding-left: {{SIZE}}{{UNIT}};',
-				],
 				'condition' => [
 					'image_spacing' => 'custom',
 					'slides_to_show!' => '1',
 				],
+				'frontend_available' => true,
+                'render_type' => 'none',
 			]
 		);
 
@@ -573,7 +557,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image',
+				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .swiper-slide-image',
 				'separator' => 'before',
 			]
 		);
@@ -585,7 +569,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .swiper-slide-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -678,7 +662,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		foreach ( $settings['carousel'] as $index => $attachment ) {
 			$image_url = Group_Control_Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
 
-			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+			$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 
 			$link = $this->get_link_url( $attachment, $settings );
 
@@ -711,7 +695,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 			$image_caption = $this->get_image_caption( $attachment );
 
-			$slide_html = '<div class="slick-slide"><figure class="slick-slide-inner">' . $image_html;
+			$slide_html = '<div class="swiper-slide"><figure class="swiper-slide-inner">' . $image_html;
 
 			if ( ! empty( $image_caption ) ) {
 				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption>';
@@ -727,27 +711,45 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 		}
 
-		$this->add_render_attribute( 'carousel', 'class', 'elementor-image-carousel' );
+		$this->add_render_attribute( 'carousel', 'class', 'elementor-image-carousel swiper-wrapper' );
 
-		if ( 'none' !== $settings['navigation'] ) {
-			if ( 'dots' !== $settings['navigation'] ) {
-				$this->add_render_attribute( 'carousel', 'class', 'slick-arrows-' . $settings['arrows_position'] );
-			}
+		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
+		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
 
-			if ( 'arrows' !== $settings['navigation'] ) {
-				$this->add_render_attribute( 'carousel', 'class', 'slick-dots-' . $settings['dots_position'] );
-			}
+        if ( $show_dots ) {
+            $dots_class = 'swiper-dots-' . $settings['dots_position'];
+        }
+
+		if ( $show_arrows ) {
+			$arrows_class = 'swiper-arrows-' . $settings['arrows_position'];
 		}
 
 		if ( 'yes' === $settings['image_stretch'] ) {
-			$this->add_render_attribute( 'carousel', 'class', 'slick-image-stretch' );
+			$this->add_render_attribute( 'carousel', 'class', 'swiper-image-stretch' );
 		}
 
+		$slides_count = count( $settings['carousel'] );
+
 		?>
-		<div class="elementor-image-carousel-wrapper elementor-slick-slider" dir="<?php echo $settings['direction']; ?>">
+		<div class="elementor-image-carousel-wrapper swiper-container <?php echo $dots_class; echo $arrows_class ? ' ' . $arrows_class : ''; ?>" dir="<?php echo $settings['direction']; ?>">
 			<div <?php echo $this->get_render_attribute_string( 'carousel' ); ?>>
 				<?php echo implode( '', $slides ); ?>
 			</div>
+			<?php if ( 1 < $slides_count ) : ?>
+				<?php if ( $show_dots ) : ?>
+                    <div class="swiper-pagination"></div>
+				<?php endif; ?>
+				<?php if ( $show_arrows ) : ?>
+                    <div class="elementor-swiper-button elementor-swiper-button-prev">
+                        <i class="eicon-chevron-left" aria-hidden="true"></i>
+                        <span class="elementor-screen-only"><?php _e( 'Previous', 'elementor-pro' ); ?></span>
+                    </div>
+                    <div class="elementor-swiper-button elementor-swiper-button-next">
+                        <i class="eicon-chevron-right" aria-hidden="true"></i>
+                        <span class="elementor-screen-only"><?php _e( 'Next', 'elementor-pro' ); ?></span>
+                    </div>
+				<?php endif; ?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
