@@ -549,7 +549,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'slides_to_show!' => '1',
 				],
 				'frontend_available' => true,
-                'render_type' => 'none',
+				'render_type' => 'none',
 			]
 		);
 
@@ -716,12 +716,16 @@ class Widget_Image_Carousel extends Widget_Base {
 		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
 
-        if ( $show_dots ) {
-            $dots_class = 'swiper-dots-' . $settings['dots_position'];
-        }
+		if ( $show_dots ) {
+			$dots_class = 'swiper-dots-' . $settings['dots_position'];
+		}
 
 		if ( $show_arrows ) {
 			$arrows_class = 'swiper-arrows-' . $settings['arrows_position'];
+		}
+
+		if ( $show_arrows || $show_dots ) {
+			$render_arrows_dots_classes = $dots_class . ' ' . $arrows_class;
 		}
 
 		if ( 'yes' === $settings['image_stretch'] ) {
@@ -731,23 +735,23 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_count = count( $settings['carousel'] );
 
 		?>
-		<div class="elementor-image-carousel-wrapper swiper-container <?php echo $dots_class; echo $arrows_class ? ' ' . $arrows_class : ''; ?>" dir="<?php echo $settings['direction']; ?>">
+		<div class="elementor-image-carousel-wrapper swiper-container <?php echo $render_arrows_dots_classes; ?>" dir="<?php echo $settings['direction']; ?>">
 			<div <?php echo $this->get_render_attribute_string( 'carousel' ); ?>>
 				<?php echo implode( '', $slides ); ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
 				<?php if ( $show_dots ) : ?>
-                    <div class="swiper-pagination"></div>
+					<div class="swiper-pagination"></div>
 				<?php endif; ?>
 				<?php if ( $show_arrows ) : ?>
-                    <div class="elementor-swiper-button elementor-swiper-button-prev">
-                        <i class="eicon-chevron-left" aria-hidden="true"></i>
-                        <span class="elementor-screen-only"><?php _e( 'Previous', 'elementor-pro' ); ?></span>
-                    </div>
-                    <div class="elementor-swiper-button elementor-swiper-button-next">
-                        <i class="eicon-chevron-right" aria-hidden="true"></i>
-                        <span class="elementor-screen-only"><?php _e( 'Next', 'elementor-pro' ); ?></span>
-                    </div>
+					<div class="elementor-swiper-button elementor-swiper-button-prev">
+						<i class="eicon-chevron-left" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php _e( 'Previous', 'elementor-pro' ); ?></span>
+					</div>
+					<div class="elementor-swiper-button elementor-swiper-button-next">
+						<i class="eicon-chevron-right" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php _e( 'Next', 'elementor-pro' ); ?></span>
+					</div>
 				<?php endif; ?>
 			<?php endif; ?>
 		</div>
