@@ -49,10 +49,8 @@ export default class extends elementorModules.Component {
 		let defaultTab;
 		if ( this.activeTabs[ args.model.id ] ) {
 			defaultTab = this.activeTabs[ args.model.id ];
-		} else if ( args.model.get( 'elType' ).match( /section|column/ ) ) {
-			defaultTab = 'layout';
 		} else {
-			defaultTab = 'content';
+			defaultTab = jQuery( this.getTabsWrapperSelector() ).find( '.elementor-component-tab' ).eq( 0 ).data( 'tab' );
 		}
 
 		this.setDefaultRoute( defaultTab );
