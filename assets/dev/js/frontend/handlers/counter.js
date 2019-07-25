@@ -1,14 +1,37 @@
-module.exports = function( $scope, $ ) {
-	elementorFrontend.waypoint( $scope.find( '.elementor-counter-number' ), function() {
-		var $number = $( this ),
-			data = $number.data();
+class Counter extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
+		return {
+			selectors: {
+				counterNumber: '.elementor-counter-number',
+			},
+		};
+	}
 
-		var decimalDigits = data.toValue.toString().match( /\.(.*)/ );
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
+		return {
+			$counterNumber: this.$element.find( selectors.counterNumber ),
+		};
+	}
 
-		if ( decimalDigits ) {
-			data.rounding = decimalDigits[ 1 ].length;
-		}
+	onInit() {
+		super.onInit();
 
-		$number.numerator( data );
+		elementorFrontend.waypoint( this.elements.$counterNumber, () => {
+			const data = this.elements.$counterNumber.data(),
+				decimalDigits = data.toValue.toString().match( /\.(.*)/ );
+
+			if ( decimalDigits ) {
+				data.rounding = decimalDigits[ 1 ].length;
+			}
+
+			this.elements.$counterNumber.numerator( data );
+		} );
+	}
+}
+
+export default ( $scope ) => {
+	elementorFrontend.elementsHandler.addHandler( Counter, {
+		$element: $scope,
 	} );
 };

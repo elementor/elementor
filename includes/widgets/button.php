@@ -230,9 +230,6 @@ class Widget_Button extends Widget_Base {
 						'max' => 50,
 					],
 				],
-				'condition' => [
-					'selected_icon[value]!' => '',
-				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
@@ -568,5 +565,9 @@ class Widget_Button extends Widget_Base {
 			<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
 		</span>
 		<?php
+	}
+
+	public function on_import( $element ) {
+		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
 	}
 }

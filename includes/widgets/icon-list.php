@@ -420,7 +420,6 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon' => 'width: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -662,6 +661,6 @@ class Widget_Icon_List extends Widget_Base {
 	}
 
 	public function on_import( $element ) {
-		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
+		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon', true );
 	}
 }

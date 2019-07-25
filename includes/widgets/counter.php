@@ -123,6 +123,9 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Number Prefix', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'placeholder' => 1,
 			]
@@ -133,6 +136,9 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Number Suffix', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'placeholder' => __( 'Plus', 'elementor' ),
 			]
@@ -182,6 +188,9 @@ class Widget_Counter extends Widget_Base {
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => __( 'Cool Number', 'elementor' ),
 				'placeholder' => __( 'Cool Number', 'elementor' ),
 			]

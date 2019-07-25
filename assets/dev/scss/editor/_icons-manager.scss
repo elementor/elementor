@@ -39,6 +39,10 @@
 		align-items: center;
 		justify-content: space-between;
 
+		@media (max-width: $editor-screen-lg-max) {
+			margin: 20px 25px;
+		}
+
 		&__title {
 			color: $editor-light;
 			font-size: 11px;
