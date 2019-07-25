@@ -61,12 +61,18 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			swiperOptions.loopedSlides = this.getSlidesCount();
 		}
 
+		if ( isSingleSlide ) {
+			swiperOptions.effect = 'fade' === elementSettings.effect ? 'fade' : 'slide';
+		} else {
+			swiperOptions.slidesPerGroup = +elementSettings.slides_to_scroll || defaultLGDevicesSlidesCount;
+		}
+
 		if ( elementSettings.image_spacing_custom ) {
 			swiperOptions.spaceBetween = elementSettings.image_spacing_custom.size;
 		}
 
-		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation;
-		const showDots = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation;
+		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation,
+			showDots = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation;
 
 		if ( showArrows ) {
 			swiperOptions.navigation = {
@@ -86,14 +92,8 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		return swiperOptions;
 	}
 
-	getSpaceBetween() {
-		var propertyName = 'image_spacing_custom';
-
-		return this.getElementSettings( propertyName ).size || 0;
-	}
-
 	updateSpaceBetween( swiper ) {
-		var newSpaceBetween = this.getSpaceBetween();
+		var newSpaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
 
 		swiper.params.spaceBetween = newSpaceBetween;
 
@@ -111,20 +111,12 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	}
 
 	onElementChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'width' ) ) {
-			this.swiper.update();
-		}
-
 		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
 			this.updateSpaceBetween( this.swiper, propertyName );
 		}
 	}
 
 	onEditSettingsChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'width' ) ) {
-			this.swiper.update();
-		}
-
 		if ( 'activeItemIndex' === propertyName ) {
 			this.swiper.slideToLoop( this.getEditSettings( 'activeItemIndex' ) - 1 );
 		}

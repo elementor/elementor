@@ -713,19 +713,20 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$this->add_render_attribute( 'carousel', 'class', 'elementor-image-carousel swiper-wrapper' );
 
+		$this->add_render_attribute( 'carousel-wrapper', 'class', 'elementor-image-carousel-wrapper swiper-container' );
+		$this->add_render_attribute( 'carousel-wrapper', 'dir', $settings['direction'] );
+
 		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
 
 		if ( $show_dots ) {
 			$dots_class = 'swiper-dots-' . $settings['dots_position'];
+			$this->add_render_attribute( 'carousel-wrapper', 'class', $dots_class );
 		}
 
 		if ( $show_arrows ) {
 			$arrows_class = 'swiper-arrows-' . $settings['arrows_position'];
-		}
-
-		if ( $show_arrows || $show_dots ) {
-			$render_arrows_dots_classes = $dots_class . ' ' . $arrows_class;
+			$this->add_render_attribute( 'carousel-wrapper', 'class', $arrows_class );
 		}
 
 		if ( 'yes' === $settings['image_stretch'] ) {
@@ -735,7 +736,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_count = count( $settings['carousel'] );
 
 		?>
-		<div class="elementor-image-carousel-wrapper swiper-container <?php echo $render_arrows_dots_classes; ?>" dir="<?php echo $settings['direction']; ?>">
+		<div <?php echo $this->get_render_attribute_string( 'carousel-wrapper' ); ?>>
 			<div <?php echo $this->get_render_attribute_string( 'carousel' ); ?>>
 				<?php echo implode( '', $slides ); ?>
 			</div>
