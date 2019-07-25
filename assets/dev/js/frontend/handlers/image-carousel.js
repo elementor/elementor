@@ -91,10 +91,10 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		return swiperOptions;
 	}
 
-	updateSpaceBetween( swiper ) {
-		swiper.params.spaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
+	updateSpaceBetween() {
+		this.swiper.params.spaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
 
-		swiper.update();
+		this.swiper.update();
 	}
 
 	onInit( ...args ) {
@@ -109,7 +109,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 	onElementChange( propertyName ) {
 		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
-			this.updateSpaceBetween( this.swiper, propertyName );
+			this.updateSpaceBetween();
 		}
 	}
 
