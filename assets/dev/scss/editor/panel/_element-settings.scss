@@ -13,7 +13,7 @@
 		display: table-cell;
 
 		&.elementor-active {
-			background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+			background-image: linear-gradient(to bottom, $editor-background-light, #fff);
 			border-bottom: 3px solid $editor-accent;
 		}
 
