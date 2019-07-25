@@ -52,17 +52,20 @@
 	}
 }
 
+.select2-results__option[aria-selected=true] {
+	color: $editor-darkest;
+
+	&:not(.select2-results__option--highlighted) {
+		background-color: initial;
+	}
+}
+
 .select2-dropdown {
 	border-color: $editor-light;
 
 	.select2-search__field {
 		outline: none;
 	}
-}
-
-
-.select2-selection__placeholder {
-	color: $editor-light;
 }
 
 // Modal Confirm (the_content missing)
