@@ -793,8 +793,6 @@ const App = Marionette.Application.extend( {
 			this.onFirstPreviewLoaded();
 		}
 
-		this.initNavigator();
-
 		this.addRegions( {
 			sections: iframeRegion,
 		} );
@@ -846,6 +844,8 @@ const App = Marionette.Application.extend( {
 		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
 			this.showFlexBoxAttentionDialog();
 		}
+
+		this.initNavigator();
 
 		this.previewLoadedOnce = true;
 	},
