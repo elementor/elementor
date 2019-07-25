@@ -33,7 +33,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		const swiperOptions = {
 			slidesPerView: slidesToShow,
-			slidesPerGroup: +elementSettings.slides_to_scroll || 1,
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
 		};
@@ -62,7 +61,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		}
 
 		if ( isSingleSlide ) {
-			swiperOptions.effect = 'fade' === elementSettings.effect ? 'fade' : 'slide';
+			swiperOptions.effect = elementSettings.effect;
 		} else {
 			swiperOptions.slidesPerGroup = +elementSettings.slides_to_scroll || defaultLGDevicesSlidesCount;
 		}
@@ -93,9 +92,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	}
 
 	updateSpaceBetween( swiper ) {
-		var newSpaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
-
-		swiper.params.spaceBetween = newSpaceBetween;
+		swiper.params.spaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
 
 		swiper.update();
 	}
