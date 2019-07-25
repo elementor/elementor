@@ -933,7 +933,7 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
-		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
 
 		$common = Plugin::$instance->common;
 
@@ -1061,7 +1061,7 @@ class Editor {
 	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
-		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
@@ -1088,7 +1088,7 @@ class Editor {
 	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
-		// _deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
 
 		return wp_verify_nonce( $nonce );
 	}
@@ -1105,7 +1105,7 @@ class Editor {
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
-		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
@@ -1124,7 +1124,7 @@ class Editor {
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {
-		// _deprecated_function( __METHOD__, '2.3.0' );
+		 _deprecated_function( __METHOD__, '2.3.0' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
