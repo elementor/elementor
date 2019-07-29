@@ -426,6 +426,19 @@ class Widgets_Manager {
 	}
 
 	/**
+	 * Enqueue widgets styles
+	 *
+	 * Enqueue all the styles defined as a dependency for each widget
+	 *
+	 * @access public
+	 */
+	public function enqueue_widgets_styles() {
+		foreach ( $this->get_widget_types() as $widget ) {
+			$widget->enqueue_styles();
+		}
+	}
+
+	/**
 	 * Retrieve inline editing configuration.
 	 *
 	 * Returns general inline editing configurations like toolbar types etc.
