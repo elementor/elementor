@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-panel-element-search">
 	<label for="elementor-panel-elements-search-input" class="screen-reader-text"><?php echo __( 'Search Widget:', 'elementor' ); ?></label>
-	<input type="search" id="elementor-panel-elements-search-input" placeholder="<?php esc_attr_e( 'Search Widget...', 'elementor' ); ?>" />
+	<input type="search" id="elementor-panel-elements-search-input" placeholder="<?php esc_attr_e( 'Search Widget...', 'elementor' ); ?>" autocomplete="off"/>
 	<i class="eicon-search" aria-hidden="true"></i>
 </script>
 
