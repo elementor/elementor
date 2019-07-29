@@ -30,15 +30,15 @@ const aliasList = {
 
 const moduleRules = {
 	rules: [
-		{
-			enforce: 'pre',
-			test: /\.js$/,
-			exclude: /node_modules/,
-			loader: 'eslint-loader',
-			//options: {
-			//	failOnError: true,
-			//}
-		},
+		// {
+		// 	enforce: 'pre',
+		// 	test: /\.js$/,
+		// 	exclude: /node_modules/,
+		// 	loader: 'eslint-loader',
+		// 	options: {
+		// 		failOnError: true,
+		// 	}
+		// },
 		{
 			test: /\.js$/,
 			exclude: /node_modules/,
@@ -46,7 +46,14 @@ const moduleRules = {
 				{
 					loader: 'babel-loader',
 					query: {
-						presets: ['env'],
+						presets: [ '@wordpress/default' ],
+						plugins: [
+							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
+							[ 'transform-react-jsx' ],
+							[ '@babel/plugin-proposal-class-properties' ],
+							[ '@babel/plugin-transform-runtime' ],
+							[ '@babel/plugin-transform-modules-commonjs' ],
+						],
 					},
 				},
 			],
@@ -65,6 +72,7 @@ const entry = {
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
+	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),

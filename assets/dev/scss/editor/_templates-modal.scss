@@ -11,6 +11,10 @@ $remote-templates-items-space: 30px;
 			color: darken($editor-success, 10%);
 		}
 	}
+
+	.dialog-buttons-wrapper {
+		display: none;
+	}
 }
 
 #elementor-template-library-header-menu {
@@ -69,7 +73,7 @@ $remote-templates-items-space: 30px;
 		font-size: 18px;
 
 		&:before {
-			content: getValueByDirection( '\e908', '\e907' );
+			content: getValueByDirection( '\e87e', '\e87d' );
 		}
 	}
 }
@@ -137,7 +141,7 @@ $remote-templates-items-space: 30px;
 
 				&:after {
 					font-family: eicons;
-					content: '\e956';
+					content: '\e8ae';
 					@include margin-start(3px);
 				}
 			}
@@ -147,7 +151,7 @@ $remote-templates-items-space: 30px;
 				+ .elementor-template-library-order-label {
 
 					&:after {
-						content: '\e955';
+						content: '\e8ad';
 					}
 				}
 			}
@@ -242,7 +246,7 @@ label.elementor-template-library-order-label {
 
 				&:after {
 					color: $editor-accent;
-					content: '\f004';
+					content: '\e93f';
 				}
 			}
 		}
@@ -269,7 +273,7 @@ label.elementor-template-library-order-label {
 
 		&:after {
 			color: $editor-light;
-			content: '\f08a';
+			content: '\e923';
 		}
 	}
 }
@@ -278,13 +282,11 @@ label.elementor-template-library-order-label {
 	width: 200px;
 	position: relative;
 
-	&:after {
-		content: '\e863';
+	i {
 		position: absolute;
 		top: 50%;
 		@include end(0);
 		transform: translateY(-50%);
-		font-family: eicons;
 	}
 }
 
@@ -470,7 +472,7 @@ label.elementor-template-library-order-label {
 				i {
 
 					&:before {
-						content: '\f004';
+						content: '\e93f';
 						color: $editor-accent;
 					}
 				}

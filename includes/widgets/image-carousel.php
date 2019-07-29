@@ -499,6 +499,35 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'gallery_vertical_align',
+			[
+				'label' => __( 'Vertical Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'options' => [
+					'flex-start' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'flex-end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'condition' => [
+					'slides_to_show!' => '1',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .slick-track' => 'display: flex; align-items: {{VALUE}};',
+				],
+			]
+		);
+
 		$this->add_control(
 			'image_spacing',
 			[
@@ -582,19 +611,19 @@ class Widget_Image_Carousel extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'fa fa-align-justify',
+						'icon' => 'eicon-text-align-justify',
 					],
 				],
 				'default' => 'center',

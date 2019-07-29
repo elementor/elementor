@@ -225,6 +225,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
 	protected static function _get_items( array $haystack, $needle = null ) {
+		// _deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_items()' );
+
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
 		}
@@ -776,6 +778,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Class controls.
 	 */
 	final public function get_class_controls() {
+		_deprecated_function( __METHOD__, '2.1.0' );
+
 		return array_filter(
 			$this->get_active_controls(), function( $control ) {
 				return ( isset( $control['prefix_class'] ) );
@@ -1260,8 +1264,8 @@ abstract class Controls_Stack extends Base_Object {
 			$values = $this->get_settings();
 		}
 
-		if ( ! empty( $control['conditions'] ) ) {
-			return Conditions::check( $control['conditions'], $values );
+		if ( ! empty( $control['conditions'] ) && ! Conditions::check( $control['conditions'], $values ) ) {
+			return false;
 		}
 
 		if ( empty( $control['condition'] ) ) {
@@ -1269,7 +1273,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
-			preg_match( '/([a-z_0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
+			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
 
 			$pure_condition_key = $condition_key_parts[1];
 			$condition_sub_key = $condition_key_parts[2];
@@ -1801,32 +1805,9 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Parsed settings.
 	 */
 	protected function _get_parsed_settings() {
-		_deprecated_function( __METHOD__, '2.3.0', 'Controls_Stack::get_init_settings' );
+		_deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_init_settings()' );
 
 		return $this->get_init_settings();
-	}
-
-	/**
-	 * Sanitize initial data.
-	 *
-	 * Performs data cleaning and sanitization.
-	 *
-	 * @since 2.0.0
-	 * @deprecated 2.1.5 Use `Controls_Stack::sanitize_settings` instead
-	 * @access protected
-	 *
-	 * @param array $data     Data to sanitize.
-	 * @param array $controls Optional. An array of controls. Default is an
-	 *                        empty array.
-	 *
-	 * @return array Sanitized data.
-	 */
-	protected function sanitize_initial_data( $data, array $controls = [] ) {
-		_deprecated_function( __METHOD__, '2.1.5', 'Controls_Stack::sanitize_settings' );
-
-		$data['settings'] = $this->sanitize_settings( $data['settings'], $controls );
-
-		return $data;
 	}
 
 	/**

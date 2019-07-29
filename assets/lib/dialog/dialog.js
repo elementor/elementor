@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.7.1
+ * Dialogs Manager v4.7.3
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -252,9 +252,18 @@
 			self.hide();
 		};
 
+		var isIgnoredTarget = function(event) {
+
+			if (! settings.hide.ignore) {
+				return false;
+			}
+
+			return !! $(event.target).closest(settings.hide.ignore).length;
+		};
+
 		var hideOnOutsideClick = function(event) {
 
-			if (isContextMenuClickEvent(event) || $(event.target).closest(elements.widget).length) {
+			if (isContextMenuClickEvent(event) || $(event.target).closest(elements.widget).length || isIgnoredTarget(event)) {
 				return;
 			}
 
@@ -336,6 +345,7 @@
 					onOutsideContextMenu: false,
 					onBackgroundClick: true,
 					onEscKeyPress: true,
+					ignore: ''
 				}
 			};
 
@@ -413,21 +423,18 @@
 			}
 		};
 
-		this.addElement = function(name, element, type) {
+		this.addElement = function(name, element, classes) {
 
 			var $newElement = elements[name] = $(element || '<div>'),
-				normalizedName = normalizeClassName(name),
-				className = [];
+				normalizedName = normalizeClassName(name);
 
-			if (type) {
-				className.push(settings.classes.globalPrefix + '-' + type);
-			}
+			classes = classes ? classes + ' ' : '';
 
-			className.push(settings.classes.globalPrefix + '-' + normalizedName);
+			classes += settings.classes.globalPrefix + '-' + normalizedName;
 
-			className.push(settings.classes.prefix + '-' + normalizedName);
+			classes += ' ' + settings.classes.prefix + '-' + normalizedName;
 
-			$newElement.addClass(className.join(' '));
+			$newElement.addClass(classes);
 
 			return $newElement;
 		};
@@ -755,8 +762,13 @@
 
 			var self = this,
 				settings = self.getSettings(),
-				buttonSettings = jQuery.extend(settings.button, options),
-				$button = self.addElement(options.name, $('<' + buttonSettings.tag + '>').text(options.text), 'button');
+				buttonSettings = jQuery.extend(settings.button, options);
+
+			var classes = options.classes ? options.classes + ' ' : '';
+
+			classes += settings.classes.globalPrefix + '-button';
+
+			var $button = self.addElement(options.name, $('<' + buttonSettings.tag + '>').text(options.text), classes);
 
 			self.buttons.push($button);
 

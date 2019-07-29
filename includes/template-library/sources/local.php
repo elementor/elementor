@@ -2,13 +2,12 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Editor\Editor;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
-use Elementor\Editor;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
-use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -444,36 +443,40 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int The ID of the saved/updated template, `WP_Error` otherwise.
 	 */
 	public function save_item( $template_data ) {
-		$type = Plugin::$instance->documents->get_document_type( $template_data['type'], false );
-
-		if ( ! $type ) {
-			return new \WP_Error( 'save_error', sprintf( 'Invalid template type "%s".', $template_data['type'] ) );
-		}
-
-		// TODO: Work with the documents system.
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
 			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
-		$template_id = wp_insert_post( [
-			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
-			'post_status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
-			'post_type' => self::CPT,
+		$defaults = [
+			'title' => __( '(no title)', 'elementor' ),
+			'page_settings' => [],
+			'status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
+		];
+
+		$template_data = wp_parse_args( $template_data, $defaults );
+
+		$document = Plugin::$instance->documents->create(
+			$template_data['type'],
+			[
+				'post_title' => $template_data['title'],
+				'post_status' => $template_data['status'],
+				'post_type' => self::CPT,
+			]
+		);
+
+		if ( is_wp_error( $document ) ) {
+			/**
+			 * @var \WP_Error $document
+			 */
+			return $document;
+		}
+
+		$document->save( [
+			'elements' => $template_data['content'],
+			'settings' => $template_data['page_settings'],
 		] );
 
-		if ( is_wp_error( $template_id ) ) {
-			return $template_id;
-		}
-
-		Plugin::$instance->db->set_is_elementor_page( $template_id );
-
-		Plugin::$instance->db->save_editor( $template_id, $template_data['content'] );
-
-		$this->save_item_type( $template_id, $template_data['type'] );
-
-		if ( ! empty( $template_data['page_settings'] ) ) {
-			SettingsManager::get_settings_managers( 'page' )->save_settings( $template_data['page_settings'], $template_id );
-		}
+		$template_id = $document->get_main_id();
 
 		/**
 		 * After template library save.
@@ -519,7 +522,15 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
-		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
+		$document = Plugin::$instance->documents->get( $new_data['id'] );
+
+		if ( ! $document ) {
+			return new \WP_Error( 'save_error', __( 'Template not exist.', 'elementor' ) );
+		}
+
+		$document->save( [
+			'elements' => $new_data['content'],
+		] );
 
 		/**
 		 * After template library update.
@@ -610,7 +621,8 @@ class Source_Local extends Source_Base {
 		if ( ! empty( $args['display'] ) ) {
 			$content = $db->get_builder( $template_id );
 		} else {
-			$content = $db->get_plain_editor( $template_id );
+			$document = Plugin::$instance->documents->get( $template_id );
+			$content = $document ? $document->get_elements_data() : [];
 		}
 
 		if ( ! empty( $content ) ) {
@@ -1198,6 +1210,12 @@ class Source_Local extends Source_Base {
 		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
 
 		$current_type = get_query_var( 'elementor_library_type' );
+
+		$document_types = Plugin::instance()->documents->get_document_types();
+
+		if ( empty( $document_types[ $current_type ] ) ) {
+			return;
+		}
 
 		// TODO: Better way to exclude widget type.
 		if ( 'widget' === $current_type ) {

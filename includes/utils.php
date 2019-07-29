@@ -21,14 +21,16 @@ class Utils {
 	 * Whether the current request is a WordPress ajax request.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.6.0 Use `wp_doing_ajax()` instead.
 	 * @access public
 	 * @static
 	 *
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		// TODO: When minimum required version of WordPress will be 4.7, use `wp_doing_ajax()` instead.
-		return defined( 'DOING_AJAX' ) && DOING_AJAX;
+		// _deprecated_function( __METHOD__, '2.6.0', `wp_doing_ajax()` );
+
+		return wp_doing_ajax();
 	}
 
 	/**
@@ -62,7 +64,7 @@ class Utils {
 	 * @return string Post edit link.
 	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_edit_url()' );
+		_deprecated_function( __METHOD__, '2.6.0', 'Plugin::$instance->documents->get( $post_id )->get_edit_url()' );
 
 		if ( ! $post_id ) {
 			$post_id = get_the_ID();
@@ -86,7 +88,7 @@ class Utils {
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
 		 */
-		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
+		$edit_link = apply_filters_deprecated( 'elementor/utils/get_edit_link', [ $edit_link, $post_id ], '2.0.0', 'elementor/document/urls/edit' );
 
 		return $edit_link;
 	}
@@ -139,7 +141,7 @@ class Utils {
 	 * @return string Post preview URL.
 	 */
 	public static function get_preview_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_preview_url()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_preview_url()' );
 
 		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
@@ -154,7 +156,7 @@ class Utils {
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
 		 */
-		$url = apply_filters( 'elementor/utils/preview_url', $url, $post_id );
+		$url = apply_filters_deprecated( 'elementor/utils/preview_url', [ $url, $post_id ], '2.0.0', 'elementor/document/urls/preview' );
 
 		return $url;
 	}
@@ -175,7 +177,7 @@ class Utils {
 	 * @return string WordPress preview URL.
 	 */
 	public static function get_wp_preview_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()' );
 
 		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 
@@ -190,7 +192,7 @@ class Utils {
 		 * @param string $wp_preview_url WordPress preview URL.
 		 * @param int    $post_id        Post ID.
 		 */
-		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
+		$wp_preview_url = apply_filters_deprecated( 'elementor/utils/wp_preview_url', [ $wp_preview_url, $post_id ], '2.0.0', 'elementor/document/urls/wp_preview' );
 
 		return $wp_preview_url;
 	}
@@ -261,7 +263,7 @@ class Utils {
 	 * @return string Exit to dashboard URL.
 	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()' );
 
 		return Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
 	}
@@ -445,58 +447,12 @@ class Utils {
 	}
 
 	/**
-	 * Do action deprecated.
-	 *
-	 * Fires functions attached to a deprecated action hook.
-	 *
-	 * @since 1.0.10
-	 * @access public
-	 * @static
-	 * @deprecated 2.1.0 Use `do_action_deprecated()` instead
-	 *
-	 * @param string $tag         The name of the action hook.
-	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
-	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param bool   $replacement Optional. The hook that should have been used.
-	 * @param string $message     Optional. A message regarding the change.
-	 */
-	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		_deprecated_function( __METHOD__, '2.1.0', 'do_action_deprecated()' );
-
-		do_action_deprecated( $tag, $args, $version, $replacement, $message );
-	}
-
-	/**
-	 * Do filter deprecated.
-	 *
-	 * Fires functions attached to a deprecated filter hook.
-	 *
-	 * @since 1.0.10
-	 * @access public
-	 * @static
-	 * @deprecated 2.1.0 Use `apply_filters_deprecated()` instead
-	 *
-	 * @param string $tag         The name of the filter hook.
-	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
-	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param bool   $replacement Optional. The hook that should have been used.
-	 * @param string $message     Optional. A message regarding the change.
-	 *
-	 * @return mixed The filtered value after all hooked functions are applied to it.
-	 */
-	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		_deprecated_function( __METHOD__, '2.1.0', 'apply_filters_deprecated()' );
-
-		return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
-	}
-
-	/**
 	 * Get last edited string.
 	 *
 	 * Retrieve a string saying when the post was saved or the last time it was edited.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get()` method instead.
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_last_edited()` method instead.
 	 *
 	 * @access public
 	 * @static
@@ -506,7 +462,7 @@ class Utils {
 	 * @return string Last edited string.
 	 */
 	public static function get_last_edited( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_last_edited()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 

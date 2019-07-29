@@ -85,7 +85,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return string Scheme value.
+	 * @return array Scheme value.
 	 */
 	public function get_scheme_value() {
 		$scheme_value = get_option( 'elementor_scheme_' . static::get_type() );
@@ -164,7 +164,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 				</div>
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
 					<button class="elementor-button">
-						<i class="fa fa-times" aria-hidden="true"></i>
+						<i class="eicon-close" aria-hidden="true"></i>
 						<?php echo __( 'Discard', 'elementor' ); ?>
 					</button>
 				</div>

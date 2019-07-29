@@ -12,6 +12,8 @@ export default class extends Marionette.CompositeView {
 			title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
 			toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
 			toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
+			indicators: '> .elementor-navigator__item > .elementor-navigator__element__indicators',
+			indicator: '> .elementor-navigator__item > .elementor-navigator__element__indicators > .elementor-navigator__element__indicator',
 			elements: '> .elementor-navigator__elements',
 		};
 	}
@@ -22,6 +24,7 @@ export default class extends Marionette.CompositeView {
 			'click @ui.item': 'onItemClick',
 			'click @ui.toggle': 'onToggleClick',
 			'click @ui.toggleList': 'onToggleListClick',
+			'click @ui.indicator': 'onIndicatorClick',
 			'dblclick @ui.title': 'onTitleDoubleClick',
 			'keydown @ui.title': 'onTitleKeyDown',
 			'paste @ui.title': 'onTitlePaste',
@@ -251,12 +254,41 @@ export default class extends Marionette.CompositeView {
 		} );
 	}
 
+	renderIndicators() {
+		const settings = this.model.get( 'settings' ).attributes;
+
+		this.ui.indicators.empty();
+
+		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+			const isShouldBeIndicated = indicatorSettings.settingKeys.some( ( key ) => settings[ key ] );
+
+			if ( ! isShouldBeIndicated ) {
+				return;
+			}
+
+			const $indicator = jQuery( '<div>', { class: 'elementor-navigator__element__indicator', title: indicatorSettings.title } )
+				.attr( 'data-section', indicatorSettings.section )
+				.html( `<i class="eicon-${ indicatorSettings.icon }"></i>` );
+
+			this.ui.indicators.append( $indicator );
+
+			// Added delay of 500ms because the indicators bar has a CSS transition attribute of .5s
+			$indicator.tipsy( { delayIn: 300 } );
+		} );
+	}
+
 	onRender() {
 		this.activateSortable();
+
+		if ( this.isRoot() ) {
+			return;
+		}
 
 		this.ui.item.css( 'padding-' + ( elementorCommon.config.isRTL ? 'right' : 'left' ), this.getIndent() );
 
 		this.toggleHiddenClass();
+
+		this.renderIndicators();
 	}
 
 	onModelChange() {
@@ -269,6 +301,14 @@ export default class extends Marionette.CompositeView {
 		if ( undefined !== settingsModel.changed._title ) {
 			this.ui.title.text( this.model.getTitle() );
 		}
+
+		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+			if ( Object.keys( settingsModel.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
+				this.renderIndicators();
+
+				return false;
+			}
+		} );
 	}
 
 	onItemClick() {
@@ -379,5 +419,20 @@ export default class extends Marionette.CompositeView {
 		this.addEditingClass();
 
 		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.getLayout().elements.$el );
+	}
+
+	onIndicatorClick( event ) {
+		const section = event.currentTarget.dataset.section;
+
+		setTimeout( () => {
+			const editor = elementor.getPanelView().currentPageView,
+				tab = editor.getControlModel( section ).get( 'tab' );
+
+			editor.activateSection( section );
+
+			editor.activateTab( tab );
+
+			editor.render();
+		} );
 	}
 }

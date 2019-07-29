@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -138,6 +140,7 @@ class Tracker {
 			'email' => get_option( 'admin_email' ),
 			'usages' => [
 				'posts' => self::get_posts_usage(),
+				'elements' => self::get_elements_usage(),
 				'library' => self::get_library_usage(),
 			],
 			'is_first_time' => empty( $last_send ),
@@ -229,7 +232,7 @@ class Tracker {
 	 */
 	public static function admin_notices() {
 		// Show tracker notice after 24 hours from installed time.
-		if ( self::get_installed_time() > strtotime( '-24 hours' ) ) {
+		if ( Plugin::$instance->get_install_time() > strtotime( '-24 hours' ) ) {
 			return;
 		}
 
@@ -303,26 +306,6 @@ class Tracker {
 	 */
 	public static function is_notice_shown() {
 		return self::$notice_shown;
-	}
-
-	/**
-	 * Get installed time.
-	 *
-	 * Retrieve the time when Elementor was installed.
-	 *
-	 * @since 2.0.0
-	 * @access private
-	 * @static
-	 *
-	 * @return int Unix timestamp when Elementor was installed.
-	 */
-	private static function get_installed_time() {
-		$installed_time = get_option( '_elementor_installed_time' );
-		if ( ! $installed_time ) {
-			$installed_time = time();
-			update_option( '_elementor_installed_time', $installed_time );
-		}
-		return $installed_time;
 	}
 
 	/**
@@ -412,6 +395,22 @@ class Tracker {
 		}
 
 		return $usage;
+
+	}
+
+	/**
+	 * Get elements usage.
+	 *
+	 * Retrieve the usage of elements in Elementor.
+	 *
+	 * @since 2.6.0
+	 * @access private
+	 * @static
+	 *
+	 * @return array The usage of elements in Elementor grouped by document types.
+	 */
+	private static function get_elements_usage() {
+		return get_option( Document::ELEMENTS_USAGE_OPTION_NAME );
 
 	}
 

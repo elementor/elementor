@@ -37,6 +37,26 @@ class Compatibility {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
 			add_filter( 'wxr_importer.pre_process.post_meta', [ __CLASS__, 'on_wxr_importer_pre_process_post_meta' ] );
 		}
+
+		add_action( 'elementor/maintenance_mode/mode_changed', [ __CLASS__, 'clear_3rd_party_cache' ] );
+	}
+
+	public static function clear_3rd_party_cache() {
+		// W3 Total Cache.
+		if ( function_exists( 'w3tc_flush_all' ) ) {
+			w3tc_flush_all();
+		}
+
+		// WP Fastest Cache.
+		if ( ! empty( $GLOBALS['wp_fastest_cache'] ) && method_exists( $GLOBALS['wp_fastest_cache'], 'deleteCache' ) ) {
+			$GLOBALS['wp_fastest_cache']->deleteCache();
+		}
+
+		// WP Super Cache
+		if ( function_exists( 'wp_cache_clean_cache' ) ) {
+			global $file_prefix;
+			wp_cache_clean_cache( $file_prefix, true );
+		}
 	}
 
 	/**
@@ -96,7 +116,7 @@ class Compatibility {
 	public static function init() {
 		// Hotfix for NextGEN Gallery plugin.
 		if ( defined( 'NGG_PLUGIN_VERSION' ) ) {
-			add_filter( 'elementor/utils/get_edit_link', function( $edit_link ) {
+			add_filter( 'elementor/document/urls/edit', function( $edit_link ) {
 				return add_query_arg( 'display_gallery_iframe', '', $edit_link );
 			} );
 		}

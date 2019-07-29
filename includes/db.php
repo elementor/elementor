@@ -88,7 +88,7 @@ class DB {
 	 * @return bool
 	 */
 	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->save()' );
+		_deprecated_function( __METHOD__, '2.6.0', 'Plugin::$instance->documents->get( $post_id )->save()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -178,7 +178,7 @@ class DB {
 	 * @return array Post data.
 	 */
 	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_elements_data()' );
+		_deprecated_function( __METHOD__, '2.6.0', 'Plugin::$instance->documents->get( $post_id )->get_elements_data()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -195,7 +195,7 @@ class DB {
 	 * Retrieve the auto-saved post revision that is newer than current post.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_newer_autosave()` method instead.
+	 * @deprecated 2.0.0
 	 *
 	 * @access public
 	 *
@@ -204,7 +204,7 @@ class DB {
 	 * @return \WP_Post|false The auto-saved post, or false.
 	 */
 	public function get_newer_autosave( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_newer_autosave()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_newer_autosave()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -218,7 +218,7 @@ class DB {
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
 	 * @since 2.1.0
-	 * @deprecated 2.3.0 Use `$document->convert_to_elementor()` instead
+	 * @deprecated 2.3.0 Use `Plugin::$instance->documents->get( $post_id )->convert_to_elementor()` instead
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -226,7 +226,8 @@ class DB {
 	 * @return array Content in Elementor format.
 	 */
 	public function get_new_editor_from_wp_editor( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.3.0', '$document->convert_to_elementor()' );
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->documents->get( $post_id )->convert_to_elementor()' );
+
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( $document ) {
@@ -243,7 +244,7 @@ class DB {
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.1.0 Use `DB::get_new_editor_from_wp_editor()` instead
+	 * @deprecated 2.1.0 Use `Plugin::$instance->documents->get( $post_id )->convert_to_elementor()` instead
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -251,7 +252,7 @@ class DB {
 	 * @return array Content in Elementor format.
 	 */
 	public function _get_new_editor_from_wp_editor( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.1.0', __CLASS__ . '::get_new_editor_from_wp_editor()' );
+		_deprecated_function( __METHOD__, '2.1.0', 'Plugin::$instance->documents->get( $post_id )->convert_to_elementor()' );
 
 		return $this->get_new_editor_from_wp_editor( $post_id );
 	}
@@ -611,7 +612,8 @@ class DB {
 	 * @return string Post plain text.
 	 */
 	public function get_plain_text( $post_id ) {
-		$data = $this->get_plain_editor( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id );
+		$data = $document ? $document->get_elements_data() : [];
 
 		return $this->get_plain_text_from_data( $data );
 	}

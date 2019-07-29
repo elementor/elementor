@@ -44,30 +44,9 @@ class Manager extends BaseManager {
 	 * @return bool True is templates are supported, False otherwise.
 	 */
 	public static function is_cpt_custom_templates_supported() {
-		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported()' );
 
 		return Utils::is_cpt_custom_templates_supported();
-	}
-
-	/**
-	 * Get page data.
-	 *
-	 * Retrieves page data for any given a page ID.
-	 *
-	 * @since      1.6.0
-	 * @deprecated 1.6.0
-	 * @access     public
-	 * @static
-	 *
-	 * @param int $id Page ID.
-	 *
-	 * @return BaseModel
-	 */
-	public static function get_page( $id ) {
-		// translators: %s Elementor Document Settings API URL
-		_deprecated_file( __METHOD__, '1.6.0', 'the new settings API', sprintf( 'See <a href="%s">Elementor Document Settings</a> for more information.', 'https://developers.elementor.com/elementor-document-settings/' ) );
-
-		return SettingsManager::get_settings_managers( 'page' )->get_model( $id );
 	}
 
 	/**
@@ -207,7 +186,8 @@ class Manager extends BaseManager {
 	protected function save_settings_to_db( array $settings, $id ) {
 		// Use update/delete_metadata in order to handle also revisions.
 		if ( ! empty( $settings ) ) {
-			update_metadata( 'post', $id, self::META_KEY, $settings );
+			// Use `wp_slash` in order to avoid the unslashing during the `update_post_meta`.
+			update_metadata( 'post', $id, self::META_KEY, wp_slash( $settings ) );
 		} else {
 			delete_metadata( 'post', $id, self::META_KEY );
 		}

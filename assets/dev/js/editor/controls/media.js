@@ -6,10 +6,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.controlMedia = '.elementor-control-media';
-		ui.mediaImage = '.elementor-control-media-image';
+		ui.mediaImage = '.elementor-control-media__preview';
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
-		ui.deleteButton = '.elementor-control-media-delete';
+		ui.removeButton = '.elementor-control-media__remove';
 
 		return ui;
 	},
@@ -17,7 +17,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	events: function() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
-			'click @ui.deleteButton': 'deleteImage',
+			'click @ui.removeButton': 'deleteImage',
 		} );
 	},
 
@@ -44,6 +44,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		this.frame.open();
+
+		const selectedId = this.getControlValue( 'id' );
+		if ( ! selectedId ) {
+			return;
+		}
+
+		const selection = this.frame.state().get( 'selection' );
+		selection.add( wp.media.attachment( selectedId ) );
 	},
 
 	deleteImage: function( event ) {

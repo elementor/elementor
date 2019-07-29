@@ -32,6 +32,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
+	const ELEMENTS_USAGE_META_KEY = '_elementor_elements_usage';
+	const ELEMENTS_USAGE_OPTION_NAME = 'elementor_elements_usage';
 
 	private $main_id;
 
@@ -158,10 +160,12 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.0.12
-	 * @deprecated 2.4.0
+	 * @deprecated 2.4.0 Use `Document::get_remote_library_config()` instead
 	 * @access public
 	 */
-	public function get_remote_library_type() {}
+	public function get_remote_library_type() {
+		// _deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_remote_library_config()' );
+	}
 
 	/**
 	 * @since 2.0.0
@@ -221,10 +225,12 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.0.6
-	 * @deprecated 2.4.0 Use `Document::get_container_attributes` instead
+	 * @deprecated 2.4.0 Use `Document::get_container_attributes()` instead
 	 * @access public
 	 */
 	public function get_container_classes() {
+		// _deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_container_attributes()' );
+
 		return '';
 	}
 
@@ -245,13 +251,6 @@ abstract class Document extends Controls_Stack {
 
 		if ( ! Plugin::$instance->preview->is_preview_mode( $id ) ) {
 			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
-		}
-
-		// TODO: BC since 2.4.0
-		$classes = $this->get_container_classes();
-
-		if ( $classes ) {
-			$attributes['class'] .= ' ' . $classes;
 		}
 
 		return $attributes;
@@ -521,8 +520,12 @@ abstract class Document extends Controls_Stack {
 		 */
 		do_action( 'elementor/document/before_save', $this, $data );
 
-		if ( isset( $data['settings'] ) ) {
-			if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
+		if ( ! current_user_can( 'unfiltered_html' ) ) {
+			$data = wp_kses_post_deep( $data );
+		}
+
+		if ( ! empty( $data['settings'] ) ) {
+			if ( isset( $data['settings']['post_status'] ) && DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
 					define( 'DOING_AUTOSAVE', true );
 				}
@@ -534,7 +537,8 @@ abstract class Document extends Controls_Stack {
 			$this->post = get_post( $this->post->ID );
 		}
 
-		if ( isset( $data['elements'] ) ) {
+		// Don't check is_empty, because an empty array should be saved.
+		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$this->save_elements( $data['elements'] );
 		}
 
@@ -882,6 +886,8 @@ abstract class Document extends Controls_Stack {
 	protected function save_elements( $elements ) {
 		$editor_data = $this->get_elements_raw_data( $elements );
 
+		$this->save_usage( $editor_data );
+
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
@@ -959,10 +965,10 @@ abstract class Document extends Controls_Stack {
 	/**
 	 * @since 2.0.0
 	 * @access public
-	 * @deprecated Use `save_template_type`.
+	 * @deprecated 2.2.0 Use `Document::save_template_type()`.
 	 */
 	public function save_type() {
-		// TODO: _deprecated_function( __METHOD__, '2.2.0', 'save_template_type' );
+		_deprecated_function( __METHOD__, '2.2.0', __CLASS__ . '::save_template_type()' );
 
 		$this->save_template_type();
 	}
@@ -1130,14 +1136,6 @@ abstract class Document extends Controls_Stack {
 			'autoImportSettings' => false,
 		];
 
-		// TODO: BC since 2.4.0
-		$bc_type = $this->get_remote_library_type();
-
-		if ( $bc_type ) {
-			$config['category'] = $bc_type;
-		}
-		// END BC
-
 		return $config;
 	}
 
@@ -1167,5 +1165,67 @@ abstract class Document extends Controls_Stack {
 
 			$element->print_element();
 		}
+	}
+
+	private function save_usage( $elements ) {
+		if ( DB::STATUS_PUBLISH !== $this->post->post_status ) {
+			return;
+		}
+
+		if ( ! self::get_property( 'is_editable' ) ) {
+			return;
+		}
+
+		$usage = [];
+		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( & $usage ) {
+			if ( empty( $element['widgetType'] ) ) {
+				$type = $element['elType'];
+			} else {
+				$type = $element['widgetType'];
+			}
+
+			if ( ! isset( $usage[ $type ] ) ) {
+				$usage[ $type ] = 0;
+			}
+
+			$usage[ $type ]++;
+
+			return $element;
+		} );
+
+		// Keep prev usage, before updating the new usage meta.
+		$prev_usage = $this->get_meta( self::ELEMENTS_USAGE_META_KEY );
+
+		$this->update_meta( self::ELEMENTS_USAGE_META_KEY, $usage );
+
+		// Handle global usage.
+		$doc_type = $this->get_name();
+
+		$global_usage = get_option( self::ELEMENTS_USAGE_OPTION_NAME, [] );
+
+		if ( $prev_usage ) {
+			foreach ( $prev_usage as $type => $count ) {
+				if ( isset( $global_usage[ $doc_type ][ $type ] ) ) {
+					$global_usage[ $doc_type ][ $type ] -= $prev_usage[ $type ];
+					if ( 0 === $global_usage[ $doc_type ][ $type ] ) {
+						unset( $global_usage[ $doc_type ][ $type ] );
+					}
+				}
+			}
+		}
+
+		foreach ( $usage as $type => $count ) {
+			if ( ! isset( $global_usage[ $doc_type ] ) ) {
+				$global_usage[ $doc_type ] = [];
+			}
+
+			if ( ! isset( $global_usage[ $doc_type ][ $type ] ) ) {
+				$global_usage[ $doc_type ][ $type ] = 0;
+			}
+
+			$global_usage[ $doc_type ][ $type ] += $usage[ $type ];
+		}
+
+		update_option( self::ELEMENTS_USAGE_OPTION_NAME, $global_usage );
 	}
 }

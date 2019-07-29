@@ -10,13 +10,18 @@ export default class extends BaseRegion {
 
 		this.opened = false;
 
+		this.indicators = {
+			customPosition: {
+				title: elementor.translate( 'custom_positioning' ),
+				icon: 'cursor-move',
+				settingKeys: [ '_position', '_element_width' ],
+				section: '_section_position',
+			},
+		};
+
 		this.ensurePosition = this.ensurePosition.bind( this );
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-
-		if ( this.storage.visible ) {
-			this.open();
-		}
 	}
 
 	getStorageKey() {

@@ -16,19 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Element_Section extends Element_Base {
 
 	/**
-	 * Section edit tools.
-	 *
-	 * Holds the section edit tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @var array Section edit tools.
-	 */
-	protected static $_edit_tools;
-
-	/**
 	 * Section predefined columns presets.
 	 *
 	 * Holds the predefined columns width for each columns count available by
@@ -199,54 +186,6 @@ class Element_Section extends Element_Base {
 				$preset['key'] = $columns_count . $preset_index;
 			}
 		}
-	}
-
-	/**
-	 * Get default edit tools.
-	 *
-	 * Retrieve the section default edit tools. Used to set initial tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @return array Default section edit tools.
-	 */
-	protected static function get_default_edit_tools() {
-		$section_label = __( 'Section', 'elementor' );
-
-		$edit_tools = [
-			'add' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
-				'icon' => 'plus',
-			],
-			'edit' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Edit %s', 'elementor' ), $section_label ),
-				'icon' => 'handle',
-			],
-		];
-
-		if ( self::is_edit_buttons_enabled() ) {
-			$edit_tools += [
-				'duplicate' => [
-					/* translators: %s: Section label */
-					'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
-					'icon' => 'clone',
-				],
-			];
-		}
-
-		$edit_tools += [
-			'remove' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Delete %s', 'elementor' ), $section_label ),
-				'icon' => 'close',
-			],
-		];
-
-		return $edit_tools;
 	}
 
 	/**
@@ -479,7 +418,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'content_position',
 			[
-				'label' => __( 'Content Position', 'elementor' ),
+				'label' => __( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -579,6 +518,9 @@ class Element_Section extends Element_Base {
 						'frontend_available' => true,
 					],
 					'video_end' => [
+						'frontend_available' => true,
+					],
+					'play_once' => [
 						'frontend_available' => true,
 					],
 				],
@@ -1137,15 +1079,15 @@ class Element_Section extends Element_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 				],
 				'selectors' => [
@@ -1221,6 +1163,7 @@ class Element_Section extends Element_Base {
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
 				'style_transfer' => false,
+				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
 
@@ -1236,6 +1179,7 @@ class Element_Section extends Element_Base {
 				'prefix_class' => '',
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 				'label_block' => false,
+				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
 
@@ -1337,7 +1281,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
+				'raw' => __( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -1388,35 +1332,6 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
-	 * Render section edit tools.
-	 *
-	 * Used to generate the edit tools HTML.
-	 *
-	 * @since 1.8.0
-	 * @access protected
-	 */
-	protected function render_edit_tools() {
-		?>
-		<div class="elementor-element-overlay">
-			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-					<?php if ( 'add' === $edit_tool_name ) : ?>
-						<# if ( ! isInner ) { #>
-					<?php endif; ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
-						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
-					</li>
-					<?php if ( 'add' === $edit_tool_name ) : ?>
-						<# } #>
-					<?php endif; ?>
-				<?php endforeach; ?>
-			</ul>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Render section output in the editor.
 	 *
 	 * Used to generate the live preview, using a Backbone JavaScript template.
@@ -1426,10 +1341,16 @@ class Element_Section extends Element_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<# if ( settings.background_video_link ) { #>
+		<#
+			if ( settings.background_video_link ) {
+				let videoAttributes = 'autoplay muted playsinline';
+				if ( ! settings.background_play_once ) {
+					videoAttributes += ' loop';
+				}
+		#>
 			<div class="elementor-background-video-container elementor-hidden-phone">
 				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
+				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
@@ -1462,8 +1383,14 @@ class Element_Section extends Element_Base {
 					<div class="elementor-background-video-container elementor-hidden-phone">
 						<?php if ( $video_properties ) : ?>
 							<div class="elementor-background-video-embed"></div>
-						<?php else : ?>
-							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
+							<?php
+						else :
+							$video_tag_attributes = 'autoplay muted playsinline';
+							if ( 'yes' !== $settings['background_play_once'] ) :
+								$video_tag_attributes .= ' loop';
+							endif;
+							?>
+							<video class="elementor-background-video-hosted elementor-html5-video" <?php echo $video_tag_attributes; ?>></video>
 						<?php endif; ?>
 					</div>
 					<?php
@@ -1471,7 +1398,7 @@ class Element_Section extends Element_Base {
 			endif;
 
 			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
+									in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
 				?>

@@ -3,6 +3,7 @@ namespace Elementor\Core\Files;
 
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Files\Svg\Svg_Handler;
 use Elementor\Core\Responsive\Files\Frontend;
 use Elementor\Utils;
 
@@ -99,16 +100,6 @@ class Manager {
 		foreach ( glob( $path ) as $file_path ) {
 			unlink( $file_path );
 		}
-
-		/**
-		 * Elementor clear files.
-		 *
-		 * Fires after Elementor clears files
-		 *
-		 * @since 2.0.8
-		 * @deprecated 2.1.0 Use `elementor/core/files/clear_cache` instead
-		 */
-		do_action_deprecated( 'elementor/css-file/clear_cache', [], '2.1.0', 'elementor/core/files/clear_cache' );
 
 		/**
 		 * Elementor clear files.

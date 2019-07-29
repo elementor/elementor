@@ -135,11 +135,11 @@ class Widget_Star_Rating extends Widget_Base {
 				'options' => [
 					'solid' => [
 						'title' => __( 'Solid', 'elementor' ),
-						'icon' => 'fa fa-star',
+						'icon' => 'eicon-star',
 					],
 					'outline' => [
 						'title' => __( 'Outline', 'elementor' ),
-						'icon' => 'fa fa-star-o',
+						'icon' => 'eicon-star-o',
 					],
 				],
 				'default' => 'solid',
@@ -163,22 +163,22 @@ class Widget_Star_Rating extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'fa fa-align-justify',
+						'icon' => 'eicon-text-align-justify',
 					],
 				],
-				'prefix_class' => 'elementor-star-rating--align-',
+				'prefix_class' => 'elementor-star-rating%s--align-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}}',
 				],
@@ -354,11 +354,11 @@ class Widget_Star_Rating extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$rating_data = $this->get_rating();
 		$textual_rating = $rating_data[0] . '/' . $rating_data[1];
-		$icon = '&#61445;';
+		$icon = '&#xE934;';
 
 		if ( 'star_fontawesome' === $settings['star_style'] ) {
 			if ( 'outline' === $settings['unmarked_star_style'] ) {
-				$icon = '&#61446;';
+				$icon = '&#xE933;';
 			}
 		} elseif ( 'star_unicode' === $settings['star_style'] ) {
 			$icon = '&#9733;';
@@ -421,11 +421,11 @@ class Widget_Star_Rating extends Widget_Base {
 
 				return starsHtml;
 			},
-			icon = '&#61445;';
+			icon = '&#xE934;';
 
 			if ( 'star_fontawesome' === settings.star_style ) {
 				if ( 'outline' === settings.unmarked_star_style ) {
-					icon = '&#61446;';
+					icon = '&#xE933;';
 				}
 			} else if ( 'star_unicode' === settings.star_style ) {
 				icon = '&#9733;';

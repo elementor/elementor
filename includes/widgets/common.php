@@ -119,6 +119,7 @@ class Widget_Common extends Widget_Base {
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
 				'style_transfer' => false,
+				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
 
@@ -132,6 +133,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'prefix_class' => '',
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
 
@@ -707,7 +709,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
+				'raw' => __( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
