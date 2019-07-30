@@ -221,6 +221,15 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.6.7 - 2019-07-30 =
+* Tweak: Run `.htaccess` inspection only when needed
+* Tweak: UI glitches in `select2` control
+* Tweak: `get_style_depends` styles are now loaded in editor preview
+* Fix: Avoid false-positive editor loading error ([#8706](https://github.com/elementor/elementor/issues/8706))
+* Fix: Disable browser suggestions on panel elements search input ([#6581](https://github.com/elementor/elementor/issues/6581))
+* Fix: Contributor role can view other contributors draft and pending posts when Elementor is installed ([#8689](https://github.com/elementor/elementor/issues/8689))
+* Fix: Save changed before previewing a revision
+
 = 2.6.6 - 2019-07-23 =
 * Fix: WordPress editor is open by default ([#8628](https://github.com/elementor/elementor/issues/8628), [#8647](https://github.com/elementor/elementor/issues/8647))
 * Fix: Icon spacing disappeared after upgrading to Font Awesome 5 ([#8609](https://github.com/elementor/elementor/issues/8609))
