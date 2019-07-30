@@ -51,7 +51,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) || 'image' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -108,7 +108,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
@@ -170,7 +170,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
@@ -334,7 +334,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( & $do_update ) {
 				if ( empty( $element['widgetType'] ) || 'video' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -433,7 +433,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update, $widgets ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( & $do_update, $widgets ) {
 				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
 					return $element;
 				}
@@ -554,14 +554,6 @@ class Upgrades {
 		];
 		Upgrade_Utils::_update_widget_settings( 'button', $updater, $changes );
 		Upgrade_Utils::_update_widget_settings( 'icon-box', $updater, $changes );
-	}
-
-	/**
-	 * Format was changed.
-	 */
-	public static function _v_2_6_7_remove_old_usage_data() {
-		delete_option( \Elementor\Modules\Usage\Module::OPTION_NAME );
-		delete_post_meta_by_key( \Elementor\Modules\Usage\Module::META_KEY );
 	}
 
 	/**
