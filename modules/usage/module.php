@@ -121,7 +121,6 @@ class Module extends BaseModule {
 	 * @param Document $document
 	 */
 	public function after_document_save( $document ) {
-
 		if ( DB::STATUS_PUBLISH === $document->get_post()->post_status ) {
 			$this->save_document_usage( $document );
 		}
@@ -201,7 +200,7 @@ class Module extends BaseModule {
 	 * @param int $limit
 	 * @param int $offset
 	 */
-	public function recalc_usage( $limit = - 1, $offset = 0 ) {
+	public function recalc_usage( $limit = -1, $offset = 0 ) {
 		if ( 0 === $offset ) {
 			delete_option( self::OPTION_NAME );
 		}
