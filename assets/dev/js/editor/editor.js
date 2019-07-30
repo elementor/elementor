@@ -756,7 +756,7 @@ const App = Marionette.Application.extend( {
 
 		var previewWindow = this.$preview[ 0 ].contentWindow;
 
-		if ( ! previewWindow.elementorFrontend || elementor.config.preview.debug_data.error ) {
+		if ( ! previewWindow.elementorFrontend ) {
 			this.onPreviewLoadingError();
 
 			return;
