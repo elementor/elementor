@@ -97,12 +97,6 @@ export default class extends Commands {
 	}
 
 	isPartOf( route ) {
-		const component = elementorCommon.components.get( route );
-
-		if ( component ) {
-			return component.isActive();
-		}
-
 		/**
 		 * Check against current command hierarchically.
 		 * For example `is( 'panel' )` will be true for `panel/elements`
