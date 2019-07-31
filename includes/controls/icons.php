@@ -130,14 +130,11 @@ class Control_Icons extends Control_Base_Multiple {
 		remove_filter( 'upload_mimes', [ $this, 'support_svg_import' ], 100 );
 
 		if ( ! $imported ) {
-			$imported = [
-				'id' => '',
-				'url' => '',
-			];
+			$settings['value'] = '';
+			$settings['library'] = '';
+		} else {
+			$settings['value'] = $imported;
 		}
-
-		$settings['value'] = $imported;
-
 		return $settings;
 	}
 }
