@@ -112,4 +112,29 @@ class Control_Icons extends Control_Base_Multiple {
 			'is_svg_enabled' => Svg_Handler::is_enabled(),
 		];
 	}
+
+	public function support_svg_import( $mimes ) {
+		$mimes['svg'] = 'image/svg+xml';
+		return $mimes;
+	}
+
+	public function on_import( $settings ) {
+		if ( empty( $settings['library'] ) || 'svg' !== $settings['library'] || empty( $settings['value']['url'] ) ) {
+			return $settings;
+		}
+
+		add_filter( 'upload_mimes', [ $this, 'support_svg_import' ], 100 );
+
+		$imported = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings['value'] );
+
+		remove_filter( 'upload_mimes', [ $this, 'support_svg_import' ], 100 );
+
+		if ( ! $imported ) {
+			$settings['value'] = '';
+			$settings['library'] = '';
+		} else {
+			$settings['value'] = $imported;
+		}
+		return $settings;
+	}
 }
