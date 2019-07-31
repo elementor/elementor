@@ -330,6 +330,12 @@ class Widget_Star_Rating extends Widget_Base {
 	}
 
 	/**
+	 * Print the actual stars and calculate their filling.
+	 *
+	 * Rating type is float to allow stars-count to be a fraction.
+	 * Floored-rating type is int, to represent the rounded-down stars count.
+	 * In the `for` loop, the index type is float to allow comparing with the rating value.
+	 *
 	 * @since 2.3.0
 	 * @access protected
 	 */

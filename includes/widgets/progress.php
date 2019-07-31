@@ -359,7 +359,10 @@ class Widget_Progress extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<#
-		const progress_percentage = 100 < settings.percent.size ? 100 : settings.percent.size;
+		let progress_percentage = 0;
+		if ( ! isNaN() ) {
+			progress_percentage = 100 < settings.percent.size ? 100 : settings.percent.size;
+		}
 
 		view.addRenderAttribute( 'progressWrapper', {
 			'class': [ 'elementor-progress-wrapper', 'progress-' + settings.progress_type ],
@@ -382,8 +385,7 @@ class Widget_Progress extends Widget_Base {
 		<div {{{ view.getRenderAttributeString( 'progressWrapper' ) }}}>
 			<div class="elementor-progress-bar" data-max="{{ settings.percent.size }}">
 				<span {{{ view.getRenderAttributeString( 'inner_text' ) }}}>{{{ settings.inner_text }}}</span>
-				<#
-				if ( 'hide' !== settings.display_percentage ) { #>
+				<# if ( 'hide' !== settings.display_percentage ) { #>
 					<span class="elementor-progress-percentage">{{{ progress_percentage }}}%</span>
 				<# } #>
 			</div>
