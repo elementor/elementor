@@ -49,10 +49,10 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || defaultLGDevicesSlidesCount,
 		};
 
-		if ( ! this.isEdit && elementSettings.autoplay ) {
+		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
 				delay: elementSettings.autoplay_speed,
-				disableOnInteraction: !! elementSettings.pause_on_interaction,
+				disableOnInteraction: !! elementSettings.pause_on_hover,
 			};
 		}
 
