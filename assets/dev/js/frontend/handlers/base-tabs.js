@@ -1,7 +1,5 @@
-module.exports = elementorModules.frontend.handlers.Base.extend( {
-	$activeContent: null,
-
-	getDefaultSettings: function() {
+export default class baseTabs extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				tabTitle: '.elementor-tab-title',
@@ -16,18 +14,18 @@ module.exports = elementorModules.frontend.handlers.Base.extend( {
 			hidePrevious: true,
 			autoExpand: true,
 		};
-	},
+	}
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 		};
-	},
+	}
 
-	activateDefaultTab: function() {
+	activateDefaultTab() {
 		const settings = this.getSettings();
 
 		if ( ! settings.autoExpand || ( 'editor' === settings.autoExpand && ! this.isEdit ) ) {
@@ -50,9 +48,9 @@ module.exports = elementorModules.frontend.handlers.Base.extend( {
 
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
-	},
+	}
 
-	deactivateActiveTab: function( tabIndex ) {
+	deactivateActiveTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
@@ -62,9 +60,9 @@ module.exports = elementorModules.frontend.handlers.Base.extend( {
 		$activeTitle.add( $activeContent ).removeClass( activeClass );
 
 		$activeContent[ settings.hideTabFn ]();
-	},
+	}
 
-	activateTab: function( tabIndex ) {
+	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
@@ -73,13 +71,13 @@ module.exports = elementorModules.frontend.handlers.Base.extend( {
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
 
 		$requestedContent[ settings.showTabFn ]();
-	},
+	}
 
-	isActiveTab: function( tabIndex ) {
+	isActiveTab( tabIndex ) {
 		return this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
-	},
+	}
 
-	bindEvents: function() {
+	bindEvents() {
 		this.elements.$tabTitles.on( {
 			keydown: ( event ) => {
 				if ( 'Enter' === event.key ) {
@@ -94,21 +92,21 @@ module.exports = elementorModules.frontend.handlers.Base.extend( {
 				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 			},
 		} );
-	},
+	}
 
-	onInit: function() {
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
+	onInit( ...args ) {
+		super.onInit( ...args );
 
 		this.activateDefaultTab();
-	},
+	}
 
-	onEditSettingsChange: function( propertyName ) {
+	onEditSettingsChange( propertyName ) {
 		if ( 'activeItemIndex' === propertyName ) {
 			this.activateDefaultTab();
 		}
-	},
+	}
 
-	changeActiveTab: function( tabIndex ) {
+	changeActiveTab( tabIndex ) {
 		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
 
@@ -123,5 +121,5 @@ module.exports = elementorModules.frontend.handlers.Base.extend( {
 		if ( ! isActiveTab ) {
 			this.activateTab( tabIndex );
 		}
-	},
-} );
+	}
+}
