@@ -719,10 +719,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 		}
 
-		$this->add_render_attribute( 'carousel', 'class', 'elementor-image-carousel swiper-wrapper' );
-
-		$this->add_render_attribute( 'carousel-wrapper', 'class', 'elementor-image-carousel-wrapper swiper-container' );
-		$this->add_render_attribute( 'carousel-wrapper', 'dir', $settings['direction'] );
+		$this->add_render_attribute( [
+            'carousel' => [
+                'class' => 'elementor-image-carousel swiper-wrapper',
+            ],
+			'carousel-wrapper' => [
+				'class' => 'elementor-image-carousel-wrapper swiper-container',
+                'dir' => $settings['direction'],
+            ],
+        ] );
 
 		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
