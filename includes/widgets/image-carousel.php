@@ -664,6 +664,8 @@ class Widget_Image_Carousel extends Widget_Base {
 
 			$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 
+			$image_html_open = '';
+
 			$link = $this->get_link_url( $attachment, $settings );
 
 			if ( $link ) {
@@ -690,18 +692,18 @@ class Widget_Image_Carousel extends Widget_Base {
 					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
 				}
 
-				$image_html = '<a ' . $this->get_render_attribute_string( $link_key ) . '>' . $image_html . '</a>';
+				$image_html_open = '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 			}
 
 			$image_caption = $this->get_image_caption( $attachment );
 
-			$slide_html = '<div class="swiper-slide"><figure class="swiper-slide-inner">' . $image_html;
+			$slide_html = '<div class="swiper-slide">' . $image_html_open . '<figure class="swiper-slide-inner">' . $image_html;
 
 			if ( ! empty( $image_caption ) ) {
 				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption>';
 			}
 
-			$slide_html .= '</figure></div>';
+			$slide_html .= '</figure></a></div>';
 
 			$slides[] = $slide_html;
 
@@ -714,7 +716,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_render_attribute( 'carousel', 'class', 'elementor-image-carousel swiper-wrapper' );
 
 		$this->add_render_attribute( 'carousel-wrapper', 'class', 'elementor-image-carousel-wrapper swiper-container' );
-		$this->add_render_attribute( 'carousel-wrapper', 'dir', $settings['direction'] );
 
 		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
