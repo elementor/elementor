@@ -305,6 +305,7 @@ class Widget_Counter extends Widget_Base {
 			'class' => 'elementor-counter-number',
 			'data-duration' => $settings['duration'],
 			'data-to-value' => $settings['ending_number'],
+			'data-from-value' => $settings['starting_number'],
 		] );
 
 		if ( ! empty( $settings['thousand_separator'] ) ) {
