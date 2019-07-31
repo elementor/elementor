@@ -65,33 +65,6 @@
 	}
 }
 
-
-// In columns stretch mode
-
-.elementor-container {
-
-	> .elementor-row {
-
-		> .elementor-column {
-
-			> .elementor-column-wrap {
-
-				.elementor-section-content-top > & {
-					align-items: flex-start;
-				}
-
-				.elementor-section-content-middle > & {
-					align-items: center;
-				}
-
-				.elementor-section-content-bottom > & {
-					align-items: flex-end;
-				}
-			}
-		}
-	}
-}
-
 // Row
 .elementor-row {
 	width: 100%;

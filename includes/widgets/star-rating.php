@@ -155,6 +155,9 @@ class Widget_Star_Rating extends Widget_Base {
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'separator' => 'before',
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -181,7 +184,7 @@ class Widget_Star_Rating extends Widget_Base {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
-				'prefix_class' => 'elementor-star-rating--align-',
+				'prefix_class' => 'elementor-star-rating%s--align-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}}',
 				],

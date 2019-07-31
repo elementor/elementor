@@ -522,7 +522,7 @@ class Editor {
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
 				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library-go-pro&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
-			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.json',
+			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
@@ -929,7 +929,7 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
-		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
 
 		$common = Plugin::$instance->common;
 
@@ -1057,7 +1057,7 @@ class Editor {
 	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
-		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
@@ -1084,7 +1084,7 @@ class Editor {
 	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
-		// _deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
 
 		return wp_verify_nonce( $nonce );
 	}
@@ -1101,7 +1101,7 @@ class Editor {
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
-		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
@@ -1120,7 +1120,7 @@ class Editor {
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {
-		// _deprecated_function( __METHOD__, '2.3.0' );
+		 _deprecated_function( __METHOD__, '2.3.0' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );

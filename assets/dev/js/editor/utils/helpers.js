@@ -387,8 +387,8 @@ helpers = {
 		}
 
 		// Multiple conditions with relations.
-		if ( conditions ) {
-			return elementor.conditions.check( conditions, values );
+		if ( conditions && ! elementor.conditions.check( conditions, values ) ) {
+			return false;
 		}
 
 		if ( _.isEmpty( condition ) ) {
