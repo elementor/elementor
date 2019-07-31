@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\DynamicTags\Module as TagsModule;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -46,9 +44,6 @@ class Control_Select extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'options' => [],
-			'dynamic' => [
-				'categories' => [ TagsModule::NUMBER_CATEGORY ],
-			],
 		];
 	}
 
@@ -70,7 +65,7 @@ class Control_Select extends Base_Data_Control {
 				<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<# } #>
 			<div class="elementor-control-input-wrapper">
-				<select id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}" class="elementor-control-tag-area ">
+				<select id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}">
 				<#
 					var printOptions = function( options ) {
 						_.each( options, function( option_title, option_value ) { #>

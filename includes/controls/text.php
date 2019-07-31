@@ -76,7 +76,6 @@ class Control_Text extends Base_Data_Control {
 			'dynamic' => [
 				'categories' => [
 					TagsModule::TEXT_CATEGORY,
-					TagsModule::NUMBER_CATEGORY,
 				],
 			],
 		];
