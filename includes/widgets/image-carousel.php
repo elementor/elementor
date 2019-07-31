@@ -664,7 +664,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 			$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 
-			$image_html_open = '';
+			$link_tag = '';
 
 			$link = $this->get_link_url( $attachment, $settings );
 
@@ -692,18 +692,24 @@ class Widget_Image_Carousel extends Widget_Base {
 					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
 				}
 
-				$image_html_open = '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
+				$link_tag = '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 			}
 
 			$image_caption = $this->get_image_caption( $attachment );
 
-			$slide_html = '<div class="swiper-slide">' . $image_html_open . '<figure class="swiper-slide-inner">' . $image_html;
+			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
 
 			if ( ! empty( $image_caption ) ) {
 				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption>';
 			}
 
-			$slide_html .= '</figure></a></div>';
+			$slide_html .= '</figure>';
+
+			if ( $link ) {
+				$slide_html .= '</a>';
+			}
+
+			$slide_html .= '</div>';
 
 			$slides[] = $slide_html;
 
