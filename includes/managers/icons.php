@@ -273,7 +273,7 @@ class Icons_Manager {
 	 */
 	public static function on_import_migration( array $element, $old_control = '', $new_control = '', $remove_old = false ) {
 
-		if ( ! isset( $element['settings'][ $old_control ] ) ) {
+		if ( ! isset( $element['settings'][ $old_control ] ) || isset( $element['settings'][ $new_control ] ) ) {
 			return $element;
 		}
 
