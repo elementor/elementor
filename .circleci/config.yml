@@ -3,6 +3,9 @@ workflows:
   PHP-JS-Lints:
     jobs:
       - php-js-lints
+  JS-Qunit:
+    jobs:
+      - js-qunit
   PHPUnit-PHP5.4:
     jobs:
     - php54-wp51-build
@@ -365,21 +368,43 @@ jobs:
 
   php-js-lints:
     docker:
-    - image: pojome/php-js-lints
+      - image: pojome/php-js-lints
     steps:
-    - checkout
-    - run:
-        name: "Run JS lint"
-        command: |
-          mkdir -p /root/junit
-          eslint . -f junit > /root/junit/eslint.xml
-    - run:
-        name: "Run PHP lint"
-        command: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-          phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --report=gitblame --report-junit=/root/junit/phpcs.xml
-    - store_test_results:
-        path: ~/junit
-    - store_artifacts:
-        path: ~/junit
+      - checkout
+      - run:
+          name: "Run JS lint"
+          command: |
+            mkdir -p /root/junit
+            eslint . -f junit > /root/junit/eslint.xml
+      - run:
+          name: "Run PHP lint"
+          command: |
+            export PATH=$HOME/.composer/vendor/bin:$PATH
+            phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+            phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --report=gitblame --report-junit=/root/junit/phpcs.xml
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+  js-qunit:
+    docker:
+      - image: circleci/node:latest-browsers
+    steps:
+      - checkout
+      - run:
+          name: "Install Grunt"
+          command: |
+            sudo npm install -g grunt-cli
+      - run:
+          name: "NPM Install"
+          command: |
+            cd ~/project
+            npm install
+      - run:
+          name: "Grunt Scripts"
+          command: |
+            grunt scripts
+      - run:
+          name: "Run Qunit"
+          command: |
+            grunt qunit

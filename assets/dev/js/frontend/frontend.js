@@ -1,6 +1,5 @@
 /* global elementorFrontendConfig */
 import DocumentsManager from './documents-manager';
-import HotKeys from '../../../../core/common/assets/js/utils/hot-keys';
 import Storage from '../../../../core/common/assets/js/utils/storage';
 import environment from '../../../../core/common/assets/js/utils/environment';
 
@@ -121,12 +120,6 @@ class Frontend extends elementorModules.ViewModule {
 
 			return dialogsManager;
 		};
-	}
-
-	initHotKeys() {
-		this.hotKeys = new HotKeys();
-
-		this.hotKeys.bindListener( this.elements.$window );
 	}
 
 	initOnReadyComponents() {
@@ -280,10 +273,6 @@ class Frontend extends elementorModules.ViewModule {
 
 		// Keep this line before `initOnReadyComponents` call
 		this.elements.$window.trigger( 'elementor/frontend/init' );
-
-		if ( ! this.isEditMode() ) {
-			this.initHotKeys();
-		}
 
 		this.initOnReadyElements();
 
