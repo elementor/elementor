@@ -1,6 +1,6 @@
-var TabsModule = require( 'elementor-frontend/handlers/base-tabs' );
+import TabsModule from './base-tabs';
 
-module.exports = function( $scope ) {
+export default ( $scope ) => {
 	elementorFrontend.elementsHandler.addHandler( TabsModule, {
 		$element: $scope,
 		showTabFn: 'slideDown',

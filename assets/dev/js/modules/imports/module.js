@@ -168,7 +168,9 @@ Module.prototype.getDefaultSettings = function() {
 	return {};
 };
 
-Module.extendsCount = 0;
+Module.prototype.getConstructorID = function() {
+	return this.constructor.name;
+};
 
 Module.extend = function( properties ) {
 	const $ = jQuery,
@@ -183,19 +185,6 @@ Module.extend = function( properties ) {
 	child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
 
 	child.prototype.constructor = child;
-
-	/*
-	 * Constructor ID is used to set an unique ID
-	 * to every extend of the Module.
-	 *
-	 * It's useful in some cases such as unique
-	 * listener for frontend handlers.
-	 */
-	const constructorID = ++Module.extendsCount;
-
-	child.prototype.getConstructorID = function() {
-		return constructorID;
-	};
 
 	child.__super__ = parent.prototype;
 
