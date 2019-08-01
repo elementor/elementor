@@ -1,87 +1,9 @@
 //
 // Image Carousel
 //
-
-$caption-space: 30px;
-
 .elementor-widget-image-carousel {
 
 	.swiper-container {
 		position: static; // Allow navigation arrows to stay outside
-
-		.swiper-slide {
-			text-align: center;
-
-			figure {
-				img {
-					width: initial;
-				}
-			}
-		}
-	}
-
-	.swiper-dots- {
-
-		&inside {
-
-			.swiper-container-horizontal > .swiper-pagination-bullets {
-				bottom: 8px;
-			}
-		}
-
-		&outside {
-			padding-bottom: $caption-space;
-
-			.swiper-container-horizontal > .swiper-pagination-bullets {
-				bottom: 5px;
-			}
-
-			.elementor-swiper-button {
-				top: calc(50% - #{$caption-space} / 2);
-			}
-		}
-	}
-
-	.swiper-arrows- {
-		&outside {
-			.elementor-swiper-button-prev {
-				left: -30px;
-
-				[dir="rtl"] & {
-					left: auto;
-					right: 20px;
-				}
-			}
-
-			.elementor-swiper-button-next {
-				right: -30px;
-
-				[dir="rtl"] & {
-					left: 20px;
-					right: auto;
-				}
-			}
-		}
-	}
-
-	.swiper-image-stretch {
-
-		.swiper-slide {
-
-			.swiper-slide-image {
-				width: 100%;
-			}
-		}
-	}
-
-	.elementor-swiper-button {
-
-		&-prev {
-			left: 10px;
-		}
-
-		&-next {
-			right: 10px;
-		}
 	}
 }
