@@ -30,8 +30,8 @@ $remote-templates-items-space: 30px;
 	cursor: pointer;
 
 	&.elementor-active {
-		background-image: linear-gradient(to bottom, #f3f3f3, #fff);
-		border-bottom: 3px solid #9b0a46;
+		background-image: linear-gradient(to bottom, $editor-background-light, #fff);
+		border-bottom: 3px solid $editor-accent;
 	}
 }
 
