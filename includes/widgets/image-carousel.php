@@ -373,6 +373,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'inside' => __( 'Inside', 'elementor' ),
 					'outside' => __( 'Outside', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-arrows-position-',
 				'condition' => [
 					'navigation' => [ 'arrows', 'both' ],
 				],
@@ -435,6 +436,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'outside' => __( 'Outside', 'elementor' ),
 					'inside' => __( 'Inside', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-pagination-position-',
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
 				],
@@ -731,16 +733,6 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
-
-		if ( $show_dots ) {
-			$dots_class = 'swiper-dots-' . $settings['dots_position'];
-			$this->add_render_attribute( 'carousel-wrapper', 'class', $dots_class );
-		}
-
-		if ( $show_arrows ) {
-			$arrows_class = 'swiper-arrows-' . $settings['arrows_position'];
-			$this->add_render_attribute( 'carousel-wrapper', 'class', $arrows_class );
-		}
 
 		if ( 'yes' === $settings['image_stretch'] ) {
 			$this->add_render_attribute( 'carousel', 'class', 'swiper-image-stretch' );
