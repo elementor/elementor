@@ -59,10 +59,6 @@ export default class Shortcuts {
 		}
 
 		jQuery.each( handlers, ( key, handler ) => {
-			if ( handler.scopes && ! this.inScope( handler.scopes ) ) {
-				return;
-			}
-
 			if ( handler.dependency && ! handler.dependency( event ) ) {
 				return;
 			}
@@ -114,11 +110,20 @@ export default class Shortcuts {
 		return shortcut.join( '+' );
 	}
 
-	inScope( scopes ) {
+	isActiveScope( scopes ) {
+		const activeComponents = Object.keys( elementorCommon.components.activeComponents ),
+			activeComponent = activeComponents[ activeComponents.length - 1 ],
+			component = elementorCommon.components.get( activeComponent );
+
+		if ( ! component ) {
+			return false;
+		}
+
+		const namespace = component.getNamespace(),
+			rootScope = component.getRootContainer();
+
 		return scopes.some( ( scope ) => {
-			if ( elementorCommon.route.isPartOf( scope ) ) {
-				return true;
-			}
+			return namespace === scope || rootScope === scope;
 		} );
 	}
 
@@ -129,23 +134,20 @@ export default class Shortcuts {
 			return false;
 		}
 
-		const activeComponents = Object.keys( elementorCommon.components.activeComponents ),
-			byPriority = [],
-			scopes = {};
-
-		jQuery.each( handlers, ( key, handler ) => {
-			if ( handler.scopes ) {
-				handler.scopes.forEach( ( scope ) => scopes[ scope ] = handler );
-			}
+		const inCurrentScope = handlers.filter( ( handler ) => {
+			return handler.scopes && this.isActiveScope( handler.scopes );
 		} );
 
-		for ( let i = activeComponents.length - 1; 0 <= i; i-- ) {
-			if ( scopes[ activeComponents[ i ] ] ) {
-				byPriority.push( scopes[ activeComponents[ i ] ] );
-				return byPriority;
-			}
+		if ( inCurrentScope.length ) {
+			return inCurrentScope;
 		}
 
-		return handlers;
+		const noScope = handlers.filter( ( handler ) => {
+			return ! handler.scopes;
+		} );
+
+		if ( noScope.length ) {
+			return noScope;
+		}
 	}
 }
