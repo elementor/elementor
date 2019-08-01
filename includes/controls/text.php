@@ -74,7 +74,9 @@ class Control_Text extends Base_Data_Control {
 			'placeholder' => '',
 			'title' => '',
 			'dynamic' => [
-				'categories' => [ TagsModule::TEXT_CATEGORY ],
+				'categories' => [
+					TagsModule::TEXT_CATEGORY,
+				],
 			],
 		];
 	}
