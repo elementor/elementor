@@ -106,6 +106,9 @@ class Widget_Counter extends Widget_Base {
 				'label' => __( 'Starting Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 0,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -115,6 +118,9 @@ class Widget_Counter extends Widget_Base {
 				'label' => __( 'Ending Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 100,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
