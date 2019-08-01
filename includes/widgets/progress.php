@@ -360,7 +360,7 @@ class Widget_Progress extends Widget_Base {
 		?>
 		<#
 		let progress_percentage = 0;
-		if ( ! isNaN() ) {
+		if ( ! isNaN( settings.percent.size ) ) {
 			progress_percentage = 100 < settings.percent.size ? 100 : settings.percent.size;
 		}
 
