@@ -1,5 +1,5 @@
 // TODO: Maybe it should merge with panel/elements?
-export default class extends elementorModules.Component {
+export default class extends elementorModules.common.Component {
 	getNamespace() {
 		return 'elements';
 	}

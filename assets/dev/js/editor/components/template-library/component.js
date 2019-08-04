@@ -1,6 +1,6 @@
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
-export default class extends elementorModules.ComponentModal {
+export default class extends elementorModules.common.ComponentModal {
 	__construct( args ) {
 		// Before contruct because it's used in getInitialTabs().
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;

@@ -1,6 +1,4 @@
-import Module from './module';
-
-export default class extends Module {
+export default class extends elementorModules.Module {
 	__construct( args ) {
 		if ( ! args || ! args.manager ) {
 			throw Error( 'manager is required' );
