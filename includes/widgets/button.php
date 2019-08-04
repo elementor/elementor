@@ -500,7 +500,7 @@ class Widget_Button extends Widget_Base {
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon || settings.selected_icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
-						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
+						<# if ( ( migrated || ! settings.icon ) && iconHTML && iconHTML.rendered ) { #>
 							{{{ iconHTML.value }}}
 						<# } else { #>
 							<i class="{{ settings.icon }}" aria-hidden="true"></i>
