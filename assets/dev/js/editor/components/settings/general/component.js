@@ -1,4 +1,4 @@
-export default class extends elementorModules.Component {
+export default class extends elementorModules.common.Component {
 	getNamespace() {
 		return 'panel/general-settings';
 	}
