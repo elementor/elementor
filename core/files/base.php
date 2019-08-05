@@ -1,6 +1,7 @@
 <?php
-
 namespace Elementor\Core\Files;
+
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -62,6 +63,15 @@ abstract class Base {
 		$wp_upload_dir = self::get_wp_uploads_dir();
 
 		return $wp_upload_dir['baseurl'] . '/' . self::UPLOADS_DIR;
+	}
+
+	/**
+	 * Use a create function for PhpDoc (@return static).
+	 *
+	 * @return static
+	 */
+	public static function create() {
+		return Plugin::$instance->files_manager->get( get_called_class(), func_get_args() );
 	}
 
 	/**
