@@ -3,10 +3,12 @@ import Storage from './utils/storage';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
-import Components from './utils/components';
-import Commands from './utils/commands';
-import Route from './utils/route';
-import Shortcuts from './utils/shortcuts';
+import Components from './components/components';
+import Commands from './components/commands';
+import Route from './components/route';
+import Shortcuts from './components/shortcuts';
+import Component from './components/component';
+import ComponentModal from './components/component-modal';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {

@@ -1,6 +1,6 @@
 import FinderLayout from './modal-layout';
 
-export default class extends elementorModules.ComponentModal {
+export default class extends elementorModules.common.ComponentModal {
 	getNamespace() {
 		return 'finder';
 	}
