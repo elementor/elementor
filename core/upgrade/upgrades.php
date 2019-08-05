@@ -334,7 +334,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( & $do_update ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update ) {
 				if ( empty( $element['widgetType'] ) || 'video' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -433,7 +433,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( & $do_update, $widgets ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update, $widgets ) {
 				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
 					return $element;
 				}
@@ -554,24 +554,5 @@ class Upgrades {
 		];
 		Upgrade_Utils::_update_widget_settings( 'button', $updater, $changes );
 		Upgrade_Utils::_update_widget_settings( 'icon-box', $updater, $changes );
-	}
-
-	/**
-	 *  Update database to separate page from post.
-	 */
-	public static function _v_2_6_7_rename_document_types_to_wp() {
-		global $wpdb;
-
-		$wpdb->query( "UPDATE $wpdb->postmeta SET meta_value ='wp-page'
-			WHERE meta_key = '_elementor_template_type' && post_id in (
-		    	SELECT p1.ID FROM $wpdb->posts AS p LEFT JOIN $wpdb->posts AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) WHERE p.post_type = 'page'
-			);
-		 ");
-
-		$wpdb->query( "UPDATE $wpdb->postmeta SET meta_value ='wp-post'
-			WHERE meta_key = '_elementor_template_type' && post_id in (
-		    	SELECT p1.ID FROM $wpdb->posts AS p LEFT JOIN $wpdb->posts AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) WHERE p.post_type = 'post'
-			);
-		 ");
 	}
 }
