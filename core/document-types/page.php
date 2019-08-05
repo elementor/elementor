@@ -5,12 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Post extends Base {
+class Page extends Base {
+	public static function get_properties() {
+		$properties = parent::get_properties();
+
+		$properties['cpt'] = [ 'page' ];
+
+		return $properties;
+	}
+
 	/**
 	 * @access public
 	 */
 	public function get_name() {
-		return 'wp-post';
+		return 'wp-page';
 	}
 
 	/**
@@ -18,6 +26,6 @@ class Post extends Base {
 	 * @static
 	 */
 	public static function get_title() {
-		return __( 'Post', 'elementor' );
+		return __( 'Page', 'elementor' );
 	}
 }
