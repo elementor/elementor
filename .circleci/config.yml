@@ -49,6 +49,14 @@ workflows:
     - php72-wp49-build
     - php72-wp48-build
     - php72-wp47-build
+  Build-and-Deploy:
+    jobs:
+      - build-and-deploy:
+          filters:
+            branches:
+              only:
+                - develop
+                - /release\/.*/
 
 version: 2
 
@@ -383,3 +391,32 @@ jobs:
         path: ~/junit
     - store_artifacts:
         path: ~/junit
+
+  build-and-deploy:
+    docker:
+      - image: pojome/php-js-lints
+    steps:
+      - checkout
+      - run:
+          name: "Install Dependencies"
+          command: |
+            cd ~/project
+            npm install
+      - run:
+          name: "Build and Deploy"
+          command: |
+            export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
+            export PACKAGE_VERSION=$(cat package.json \
+              | grep version \
+              | head -1 \
+              | awk -F: '{ print $2 }' \
+              | sed 's/[",]//g' \
+              | tr -d '[[:space:]]')
+            export PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}.zip"
+            grunt build
+            sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
+            sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
+            mv build elementor
+            zip -r $PLUGIN_ZIP_FILENAME elementor
+            rsync -qr -e "ssh -o StrictHostKeyChecking=no" -r $PLUGIN_ZIP_FILENAME ${deployed_user}@${deployed_host}:${deployed_path}/$(date '+%Y-%m/') > /dev/null
+
