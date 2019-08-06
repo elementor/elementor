@@ -408,7 +408,7 @@ class Documents_Manager {
 		}
 
 		// Don't touch not existing or not allowed caps.
-		if ( isset( $caps[0] )){
+		if ( isset( $caps[0] ) ) {
 			if ( empty( $allcaps[ $caps[0] ] ) ) {
 				return $allcaps;
 			}
