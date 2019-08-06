@@ -434,7 +434,7 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "develop" ];
               then npm version patch
             fi
-            if [[ "${CIRCLE_BRANCH}" =~ ^release/* ]];
+            if [[ "${CIRCLE_BRANCH}" == release/* ]];
               then npm version minor
             fi
             export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
