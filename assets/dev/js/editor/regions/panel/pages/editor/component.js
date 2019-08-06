@@ -27,6 +27,15 @@ export default class extends elementorModules.common.Component {
 				this.setDefaultTab( args );
 
 				elementorCommon.route.to( this.getDefaultRoute(), args );
+
+				// BC: Run hooks after the route render's the view.
+				const action = 'panel/open_editor/' + args.model.get( 'elType' );
+
+				// Example: panel/open_editor/widget
+				elementor.hooks.doAction( action, this.manager, args.model, args.view );
+
+				// Example: panel/open_editor/widget/heading
+				elementor.hooks.doAction( action + '/' + args.model.get( 'widgetType' ), this.manager, args.model, args.view );
 			},
 		};
 	}
@@ -63,14 +72,6 @@ export default class extends elementorModules.common.Component {
 			controls: elementor.getElementControls( model ),
 			editedElementView: view,
 		} );
-
-		const action = 'panel/open_editor/' + model.get( 'elType' );
-
-		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( action, this.manager, model, view );
-
-		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this.manager, model, view );
 
 		return editor;
 	}

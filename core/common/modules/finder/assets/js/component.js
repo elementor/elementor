@@ -13,7 +13,7 @@ export default class extends elementorModules.common.ComponentModal {
 		return {
 			'navigate/down': () => this.getItemsView().activateNextItem(),
 			'navigate/up': () => this.getItemsView().activateNextItem( true ),
-			'navigate/select': () => ( event ) => this.getItemsView().goToActiveItem( event ),
+			'navigate/select': ( event ) => this.getItemsView().goToActiveItem( event ),
 		};
 	}
 
