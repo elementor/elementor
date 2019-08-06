@@ -1,0 +1,61 @@
+.gallery-image {
+    background-position: center center;
+    background-size: cover;
+    width: 100%;
+}
+
+.gallery-container {
+    display: flex;
+    flex-wrap: wrap;
+    --hgap: 0;
+    --vgap: 0;
+    --columns: 0;
+    --gap-count: 0;
+}
+
+.gallery-item {
+    flex-grow: 0;
+    flex-shrink: 0;
+    --item-width: 0;
+    --item-height: 0;
+    --column: 0;
+}
+
+.gallery-justified .gallery-item {
+    width: calc(var(--item-width) * (100% - var(--hgap) * var(--gap-count)));
+    margin-bottom: var(--vgap);
+}
+
+.gallery-justified .gallery-item:not(.gallery-first-row-item) {
+    margin-left: var(--hgap);
+}
+
+.gallery-justified .gallery-item:not(.gallery-first-row-item) .gallery-image {
+    height: 100%;
+}
+
+.gallery-justified .gallery-first-row-item .gallery-image {
+    padding-bottom: var(--item-height);
+}
+
+.gallery-masonry .gallery-item {
+    --percent-height: 0;
+    --row: 0;
+    position: absolute;
+    width: calc(100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns)));
+    left: calc((100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns))) * var(--column) + (var(--hgap) * var(--column)));
+    top: calc(var(--percent-height) + (var(--row) * var(--vgap)));
+    transition-property: top, left;
+    transition-duration: .7s;
+}
+
+.gallery-masonry .gallery-image {
+    padding-bottom: var(--item-height);
+}
+
+.gallery-masonry {
+    --highest-column-gap-count: 0;
+    height: 0;
+    position: relative;
+    margin-bottom: calc(var(--highest-column-gap-count) * var(--vgap));
+}
