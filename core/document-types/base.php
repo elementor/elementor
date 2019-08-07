@@ -97,7 +97,7 @@ abstract class Base extends Document {
 				'label' => __( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'description' => sprintf(
-					/* translators: %s: Setting page link */
+				/* translators: %s: Setting page link */
 					__( 'Not working? You can set a different selector for the title in the <a href="%s" target="_blank">Settings page</a>.', 'elementor' ),
 					Settings::get_url() . '#tab-style'
 				),
@@ -225,6 +225,7 @@ abstract class Base extends Document {
 	protected function get_remote_library_config() {
 		$config = parent::get_remote_library_config();
 
+		$config['category'] = '';
 		$config['type'] = 'page';
 
 		return $config;

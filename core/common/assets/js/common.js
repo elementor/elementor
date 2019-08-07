@@ -1,9 +1,14 @@
 import Helpers from './utils/helpers';
 import Storage from './utils/storage';
-import HotKeys from './utils/hot-keys';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
+import Components from './components/components';
+import Commands from './components/commands';
+import Route from './components/route';
+import Shortcuts from './components/shortcuts';
+import Component from './components/component';
+import ComponentModal from './components/component-modal';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -31,9 +36,13 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.storage = new Storage();
 
-		this.hotKeys = new HotKeys();
+		this.components = new Components();
 
-		this.hotKeys.bindListener( this.elements.$window );
+		this.shortcuts = new Shortcuts( this.elements.$window );
+
+		this.commands = new Commands();
+
+		this.route = new Route();
 
 		this.dialogsManager = new DialogsManager.Instance();
 

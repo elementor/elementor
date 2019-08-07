@@ -51,6 +51,8 @@ EditorView = ControlsStack.extend( {
 			activeTab: this.activeTab,
 			activeSection: this.activeSection,
 		} );
+
+		return this;
 	},
 
 	openActiveSection: function() {

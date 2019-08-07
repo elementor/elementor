@@ -21,14 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
-	<# screens.forEach( ( screen ) => { #>
-		<div class="elementor-template-library-menu-item" data-template-source="{{{ screen.source }}}"{{{ screen.type ? ' data-template-type="' + screen.type + '"' : '' }}}>{{{ screen.title }}}</div>
+	<# jQuery.each( tabs, ( tab, args ) => { #>
+		<div class="elementor-component-tab elementor-template-library-menu-item" data-tab="{{{ tab }}}">{{{ args.title }}}</div>
 	<# } ); #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-preview">
 	<div id="elementor-template-library-header-preview-insert-wrapper" class="elementor-templates-modal__header__item">
-		{{{ elementor.templates.getLayout().getTemplateActionButton( obj ) }}}
+		{{{ elementor.templates.layout.getTemplateActionButton( obj ) }}}
 	</div>
 </script>
 
@@ -146,7 +146,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<div class="elementor-template-library-template-footer">
-		{{{ elementor.templates.getLayout().getTemplateActionButton( obj ) }}}
+		{{{ elementor.templates.layout.getTemplateActionButton( obj ) }}}
 		<div class="elementor-template-library-template-name">{{{ title }}} - {{{ type }}}</div>
 		<div class="elementor-template-library-favorite">
 			<input id="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-input" type="checkbox"{{ favorite ? " checked" : "" }}>
