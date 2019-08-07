@@ -394,5 +394,7 @@ export default ( $scope ) => {
 		elementorFrontend.elementsHandler.addHandler( HandlesPosition, { $element: $scope } );
 	}
 
-	elementorFrontend.elementsHandler.addHandler( BackgroundVideo, { $element: $scope } );
+	if ( 'mobile' !== elementorFrontend.getCurrentDeviceMode() ) {
+		elementorFrontend.elementsHandler.addHandler( BackgroundVideo, { $element: $scope } );
+	}
 };
