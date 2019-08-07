@@ -26,7 +26,7 @@ $beta_tester_email = $user->user_email;
 		<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
 		<input type="hidden" name="action" value="elementor_beta_tester_signup" />
 		<div id="elementor-beta-tester-form__caption"><?php echo __( 'Get Beta Updates', 'elementor' ); ?></div>
-		<div id="elementor-beta-tester-form__description"><?php echo __( 'As a beta tester, you’ll receive an update that includes a testing version of Elementor and it’s content directly to your Email', 'elementor' ); ?></div>
+		<div id="elementor-beta-tester-form__description"><?php echo __( 'As a beta tester, you’ll receive an update that includes a testing version of Elementor and its content directly to your Email', 'elementor' ); ?></div>
 		<div id="elementor-beta-tester-form__input-wrapper">
 			<input id="elementor-beta-tester-form__email" name="beta_tester_email" type="email" placeholder="<?php echo __( 'Your Email', 'elementor' ); ?>" required value="<?php echo $beta_tester_email; ?>" />
 			<button id="elementor-beta-tester-form__submit" class="elementor-button elementor-button-success">

@@ -721,7 +721,7 @@ class Editor {
 				'my_libraries' => __( 'My Libraries', 'elementor' ),
 				'upload' => __( 'Upload', 'elementor' ),
 				'icons_promotion' => __( 'Become a Pro user to upload unlimited font icon folders to your website.', 'elementor' ),
-				'go_pro_»' => __( 'Go Pro »', 'elementor' ),
+				'go_pro' => __( 'Go Pro', 'elementor' ),
 				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
 				// TODO: Remove.

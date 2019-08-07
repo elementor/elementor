@@ -430,6 +430,13 @@ jobs:
       - run:
           name: "Build and Deploy"
           command: |
+            npm config set git-tag-version false
+            if [ "${CIRCLE_BRANCH}" == "develop" ];
+              then npm version patch
+            fi
+            if [[ "${CIRCLE_BRANCH:0:7}" == "release" ]];
+              then npm version minor
+            fi
             export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
             export PACKAGE_VERSION=$(cat package.json \
               | grep version \
