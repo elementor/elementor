@@ -1,16 +1,9 @@
 //
 // Image Carousel
 //
+.elementor-widget-image-carousel {
 
-.elementor-image-carousel-wrapper {
-
-	.slick-image-stretch {
-
-		.slick-slide {
-
-			.slick-slide-image {
-				width: 100%;
-			}
-		}
+	.swiper-container {
+		position: static; // Allow navigation arrows to stay outside
 	}
 }

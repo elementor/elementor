@@ -107,6 +107,9 @@ class Widget_Star_Rating extends Widget_Base {
 				'max' => 10,
 				'step' => 0.1,
 				'default' => 5,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -152,6 +155,9 @@ class Widget_Star_Rating extends Widget_Base {
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'separator' => 'before',
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -324,16 +330,22 @@ class Widget_Star_Rating extends Widget_Base {
 	}
 
 	/**
+	 * Print the actual stars and calculate their filling.
+	 *
+	 * Rating type is float to allow stars-count to be a fraction.
+	 * Floored-rating type is int, to represent the rounded-down stars count.
+	 * In the `for` loop, the index type is float to allow comparing with the rating value.
+	 *
 	 * @since 2.3.0
 	 * @access protected
 	 */
 	protected function render_stars( $icon ) {
 		$rating_data = $this->get_rating();
-		$rating = $rating_data[0];
-		$floored_rating = (int) $rating;
+		$rating = (float) $rating_data[0];
+		$floored_rating = floor( $rating );
 		$stars_html = '';
 
-		for ( $stars = 1; $stars <= $rating_data[1]; $stars++ ) {
+		for ( $stars = 1.0; $stars <= $rating_data[1]; $stars++ ) {
 			if ( $stars <= $floored_rating ) {
 				$stars_html .= '<i class="elementor-star-full">' . $icon . '</i>';
 			} elseif ( $floored_rating + 1 === $stars && $rating !== $floored_rating ) {
