@@ -146,7 +146,7 @@ class Svg_Handler {
 		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
 
 		if ( 'svg' !== $ext ) {
-			$file['error'] = sprintf( __( 'The uploaded %s file is not supported. Please upload a valid svg file', 'elementor' ), $ext );
+			$file['error'] = sprintf( __( 'The uploaded %s file is not supported. Please upload a valid SVG file', 'elementor' ), $ext );
 			return $file;
 		}
 
