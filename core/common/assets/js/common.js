@@ -7,8 +7,6 @@ import Components from './components/components';
 import Commands from './components/commands';
 import Route from './components/route';
 import Shortcuts from './components/shortcuts';
-import Component from './components/component';
-import ComponentModal from './components/component-modal';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
