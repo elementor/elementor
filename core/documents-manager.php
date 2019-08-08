@@ -3,6 +3,7 @@ namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\DocumentTypes\Page;
 use Elementor\Core\DocumentTypes\Post;
 use Elementor\DB;
 use Elementor\Plugin;
@@ -117,7 +118,9 @@ class Documents_Manager {
 	 */
 	public function register_default_types() {
 		$default_types = [
-			'post' => Post::get_class_full_name(),
+			'post' => Post::get_class_full_name(), // BC.
+			'wp-post' => Post::get_class_full_name(),
+			'wp-page' => Page::get_class_full_name(),
 		];
 
 		foreach ( $default_types as $type => $class ) {
