@@ -365,7 +365,7 @@ jQuery( () => {
 			() => {
 				$e.routes.register( '', 'panel', () => {} );
 			},
-			new Error( "Route: '' component is not exist." )
+			new Error( "Routes: '' component is not exist." )
 		);
 	} );
 
@@ -374,7 +374,7 @@ jQuery( () => {
 			() => {
 				$e.route( 'not-existing-route' );
 			},
-			new Error( 'Route: `not-existing-route` not found.' )
+			new Error( 'Routes: `not-existing-route` not found.' )
 		);
 	} );
 
