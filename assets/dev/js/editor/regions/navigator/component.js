@@ -12,10 +12,10 @@ export default class extends elementorModules.common.Component {
 	defaultCommands() {
 		return {
 			toggle: () => {
-				if ( elementorCommon.route.isPartOf( 'navigator' ) ) {
+				if ( $e.routes.isPartOf( 'navigator' ) ) {
 					this.close();
 				} else {
-					elementorCommon.route.to( 'navigator' );
+					$e.route( 'navigator' );
 				}
 			},
 		};

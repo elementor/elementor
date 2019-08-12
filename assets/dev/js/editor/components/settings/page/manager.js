@@ -6,7 +6,7 @@ module.exports = BaseSettings.extend( {
 	onInit: function() {
 		BaseSettings.prototype.onInit.apply( this );
 
-		elementorCommon.components.register( new Component( { manager: this } ) );
+		$e.components.register( new Component( { manager: this } ) );
 	},
 
 	save: function() {},
@@ -24,7 +24,7 @@ module.exports = BaseSettings.extend( {
 					elementor.reloadPreview();
 
 					elementor.once( 'preview:loaded', function() {
-						elementorCommon.route.to( 'panel/page-settings/settings' );
+						$e.route( 'panel/page-settings/settings' );
 					} );
 				},
 			} );

@@ -8,7 +8,7 @@ export default class extends Component {
 	onInit() {
 		super.onInit();
 
-		elementorCommon.shortcuts.register( 'esc', {
+		$e.shortcuts.register( 'esc', {
 			scopes: [ this.getNamespace() ],
 			callback: () => this.close(),
 		} );

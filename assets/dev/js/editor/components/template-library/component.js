@@ -83,7 +83,7 @@ export default class extends elementorModules.common.ComponentModal {
 	}
 
 	activateTab( tab ) {
-		elementorCommon.route.saveState( 'library' );
+		$e.routes.saveState( 'library' );
 
 		super.activateTab( tab );
 	}
@@ -111,8 +111,8 @@ export default class extends elementorModules.common.ComponentModal {
 	show( args ) {
 		this.manager.modalConfig = args;
 
-		if ( args.toDefault || ! elementorCommon.route.restoreState( 'library' ) ) {
-			elementorCommon.route.to( this.getDefaultRoute() );
+		if ( args.toDefault || ! $e.routes.restoreState( 'library' ) ) {
+			$e.route( this.getDefaultRoute() );
 		}
 	}
 }

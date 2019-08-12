@@ -23,7 +23,7 @@ export default class extends elementorModules.common.Component {
 
 	activate() {
 		// Activate the tab component itself.
-		elementorCommon.components.activate( this.getTabRoute( this.currentTab ) );
+		$e.components.activate( this.getTabRoute( this.currentTab ) );
 	}
 
 	getTabsWrapperSelector() {

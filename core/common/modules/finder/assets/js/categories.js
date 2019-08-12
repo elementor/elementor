@@ -69,7 +69,7 @@ export default class extends Marionette.CompositeView {
 
 	goToActiveItem( event ) {
 		const $a = this.$activeItem.children( 'a' ),
-			isControlClicked = elementorCommon.shortcuts.isControlEvent( event );
+			isControlClicked = $e.shortcuts.isControlEvent( event );
 
 		if ( isControlClicked ) {
 			$a.attr( 'target', '_blank' );
