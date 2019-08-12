@@ -15,10 +15,6 @@ module.exports = Marionette.LayoutView.extend( {
 		tabs: '.elementor-panel-navigation-tab',
 	},
 
-	events: {
-		'click @ui.tabs': 'onTabClick',
-	},
-
 	regionViews: {},
 
 	currentTab: null,
@@ -31,7 +27,7 @@ module.exports = Marionette.LayoutView.extend( {
 		const historyItems = elementor.history.history.getItems();
 
 		this.regionViews = {
-			history: {
+			actions: {
 				view: function() {
 					return TabHistoryView;
 				},
@@ -57,15 +53,6 @@ module.exports = Marionette.LayoutView.extend( {
 		};
 	},
 
-	activateTab: function( tabName ) {
-		this.ui.tabs
-			.removeClass( 'elementor-active' )
-			.filter( '[data-view="' + tabName + '"]' )
-			.addClass( 'elementor-active' );
-
-		this.showView( tabName );
-	},
-
 	getCurrentTab: function() {
 		return this.currentTab;
 	},
@@ -82,17 +69,5 @@ module.exports = Marionette.LayoutView.extend( {
 		this.currentTab = new View( options );
 
 		this.content.show( this.currentTab );
-	},
-
-	onRender: function() {
-		this.showView( 'history' );
-	},
-
-	onTabClick: function( event ) {
-		this.activateTab( event.currentTarget.dataset.view );
-	},
-
-	onDestroy: function() {
-		elementor.getPanelView().getFooterView().ui.history.removeClass( 'elementor-open' );
 	},
 } );
