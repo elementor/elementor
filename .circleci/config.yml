@@ -8,50 +8,58 @@ workflows:
       - js-qunit
   PHPUnit-PHP5.4:
     jobs:
-    - php54-wp51-build
-    - php54-wp50-build
-    - php54-wp49-build
-    - php54-wp48-build
-    - php54-wp47-build
+    - php54-wp51-tests
+    - php54-wp50-tests
+    - php54-wp49-tests
+    - php54-wp48-tests
+    - php54-wp47-tests
   PHPUnit-PHP5.5:
     jobs:
-    - php55-wp51-build
-    - php55-wp50-build
-    - php55-wp49-build
-    - php55-wp48-build
-    - php55-wp47-build
+    - php55-wp51-tests
+    - php55-wp50-tests
+    - php55-wp49-tests
+    - php55-wp48-tests
+    - php55-wp47-tests
   PHPUnit-PHP5.6:
     jobs:
-    - php56-wp-latest-build
-    - php56-wp51-build
-    - php56-wp50-build
-    - php56-wp49-build
-    - php56-wp48-build
-    - php56-wp47-build
+    - php56-wp-latest-tests
+    - php56-wp51-tests
+    - php56-wp50-tests
+    - php56-wp49-tests
+    - php56-wp48-tests
+    - php56-wp47-tests
   PHPUnit-PHP7.0:
     jobs:
-    - php70-wp-latest-build
-    - php70-wp51-build
-    - php70-wp50-build
-    - php70-wp49-build
-    - php70-wp48-build
-    - php70-wp47-build
+    - php70-wp-latest-tests
+    - php70-wp51-tests
+    - php70-wp50-tests
+    - php70-wp49-tests
+    - php70-wp48-tests
+    - php70-wp47-tests
   PHPUnit-PHP7.1:
     jobs:
-    - php71-wp-latest-build
-    - php71-wp51-build
-    - php71-wp50-build
-    - php71-wp49-build
-    - php71-wp48-build
-    - php71-wp47-build
+    - php71-wp-latest-tests
+    - php71-wp51-tests
+    - php71-wp50-tests
+    - php71-wp49-tests
+    - php71-wp48-tests
+    - php71-wp47-tests
   PHPUnit-PHP7.2:
     jobs:
-    - php72-wp-latest-build
-    - php72-wp51-build
-    - php72-wp50-build
-    - php72-wp49-build
-    - php72-wp48-build
-    - php72-wp47-build
+    - php72-wp-latest-tests
+    - php72-wp51-tests
+    - php72-wp50-tests
+    - php72-wp49-tests
+    - php72-wp48-tests
+    - php72-wp47-tests
+  Build-and-Deploy:
+    jobs:
+      - build-and-deploy:
+          filters:
+            branches:
+              only:
+                - develop
+                - /release\/.*/
 
 version: 2
 
@@ -102,7 +110,7 @@ job-references:
         path: ~/phpunit
 
 jobs:
-  php54-wp51-build:
+  php54-wp51-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "5.1"
@@ -110,7 +118,7 @@ jobs:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
 
-  php54-wp50-build:
+  php54-wp50-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "5.0"
@@ -118,7 +126,7 @@ jobs:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
 
-  php54-wp49-build:
+  php54-wp49-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.9"
@@ -126,7 +134,7 @@ jobs:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
 
-  php54-wp48-build:
+  php54-wp48-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.8"
@@ -134,7 +142,7 @@ jobs:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
 
-  php54-wp47-build:
+  php54-wp47-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.7"
@@ -142,7 +150,7 @@ jobs:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
 
-  php55-wp51-build:
+  php55-wp51-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.1"
@@ -150,7 +158,7 @@ jobs:
       - image: pojome/php-cli:5.5
       - image: *mysql_image
 
-  php55-wp50-build:
+  php55-wp50-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.0"
@@ -158,7 +166,7 @@ jobs:
       - image: pojome/php-cli:5.5
       - image: *mysql_image
 
-  php55-wp49-build:
+  php55-wp49-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "4.9"
@@ -166,7 +174,7 @@ jobs:
       - image: pojome/php-cli:5.5
       - image: *mysql_image
 
-  php55-wp48-build:
+  php55-wp48-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.8"
@@ -174,7 +182,7 @@ jobs:
     - image: pojome/php-cli:5.5
     - image: *mysql_image
 
-  php55-wp47-build:
+  php55-wp47-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.7"
@@ -182,13 +190,13 @@ jobs:
     - image: pojome/php-cli:5.5
     - image: *mysql_image
 
-  php56-wp-latest-build:
+  php56-wp-latest-tests:
     <<: *php_job
     docker:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
 
-  php56-wp51-build:
+  php56-wp51-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.1"
@@ -196,7 +204,7 @@ jobs:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
 
-  php56-wp50-build:
+  php56-wp50-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.0"
@@ -204,7 +212,7 @@ jobs:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
 
-  php56-wp49-build:
+  php56-wp49-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "4.9"
@@ -212,7 +220,7 @@ jobs:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
 
-  php56-wp48-build:
+  php56-wp48-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.8"
@@ -220,7 +228,7 @@ jobs:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
 
-  php56-wp47-build:
+  php56-wp47-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.7"
@@ -228,13 +236,13 @@ jobs:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
 
-  php70-wp-latest-build:
+  php70-wp-latest-tests:
     <<: *php_job
     docker:
     - image: pojome/php-cli:7.0
     - image: *mysql_image
 
-  php70-wp51-build:
+  php70-wp51-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.1"
@@ -242,7 +250,7 @@ jobs:
       - image: pojome/php-cli:7.0
       - image: *mysql_image
 
-  php70-wp50-build:
+  php70-wp50-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.0"
@@ -250,7 +258,7 @@ jobs:
       - image: pojome/php-cli:7.0
       - image: *mysql_image
 
-  php70-wp49-build:
+  php70-wp49-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "4.9"
@@ -258,7 +266,7 @@ jobs:
       - image: pojome/php-cli:7.0
       - image: *mysql_image
 
-  php70-wp48-build:
+  php70-wp48-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.8"
@@ -266,7 +274,7 @@ jobs:
     - image: pojome/php-cli:7.0
     - image: *mysql_image
 
-  php70-wp47-build:
+  php70-wp47-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.7"
@@ -274,13 +282,13 @@ jobs:
     - image: pojome/php-cli:7.0
     - image: *mysql_image
 
-  php71-wp-latest-build:
+  php71-wp-latest-tests:
     <<: *php_job
     docker:
     - image: pojome/php-cli:7.1
     - image: *mysql_image
 
-  php71-wp51-build:
+  php71-wp51-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.1"
@@ -288,7 +296,7 @@ jobs:
       - image: pojome/php-cli:7.1
       - image: *mysql_image
 
-  php71-wp50-build:
+  php71-wp50-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.0"
@@ -296,7 +304,7 @@ jobs:
       - image: pojome/php-cli:7.1
       - image: *mysql_image
 
-  php71-wp49-build:
+  php71-wp49-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "4.9"
@@ -304,7 +312,7 @@ jobs:
       - image: pojome/php-cli:7.1
       - image: *mysql_image
 
-  php71-wp48-build:
+  php71-wp48-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.8"
@@ -312,7 +320,7 @@ jobs:
     - image: pojome/php-cli:7.1
     - image: *mysql_image
 
-  php71-wp47-build:
+  php71-wp47-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.7"
@@ -320,13 +328,13 @@ jobs:
     - image: pojome/php-cli:7.1
     - image: *mysql_image
 
-  php72-wp-latest-build:
+  php72-wp-latest-tests:
     <<: *php_job
     docker:
     - image: pojome/php-cli:7.2
     - image: *mysql_image
 
-  php72-wp51-build:
+  php72-wp51-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.1"
@@ -334,7 +342,7 @@ jobs:
       - image: pojome/php-cli:7.2
       - image: *mysql_image
 
-  php72-wp50-build:
+  php72-wp50-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "5.0"
@@ -342,7 +350,7 @@ jobs:
       - image: pojome/php-cli:7.2
       - image: *mysql_image
 
-  php72-wp49-build:
+  php72-wp49-tests:
     <<: *php_job
     environment:
       - WP_VERSION: "4.9"
@@ -350,7 +358,7 @@ jobs:
       - image: pojome/php-cli:7.2
       - image: *mysql_image
 
-  php72-wp48-build:
+  php72-wp48-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.8"
@@ -358,7 +366,7 @@ jobs:
     - image: pojome/php-cli:7.2
     - image: *mysql_image
 
-  php72-wp47-build:
+  php72-wp47-tests:
     <<: *php_job
     environment:
     - WP_VERSION: "4.7"
@@ -408,3 +416,39 @@ jobs:
           name: "Run Qunit"
           command: |
             grunt qunit
+
+  build-and-deploy:
+    docker:
+      - image: pojome/php-js-lints
+    steps:
+      - checkout
+      - run:
+          name: "Install Dependencies"
+          command: |
+            cd ~/project
+            npm install
+      - run:
+          name: "Build and Deploy"
+          command: |
+            npm config set git-tag-version false
+            if [ "${CIRCLE_BRANCH}" == "develop" ];
+              then npm version patch
+            fi
+            if [[ "${CIRCLE_BRANCH:0:7}" == "release" ]];
+              then npm version minor
+            fi
+            export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
+            export PACKAGE_VERSION=$(cat package.json \
+              | grep version \
+              | head -1 \
+              | awk -F: '{ print $2 }' \
+              | sed 's/[",]//g' \
+              | tr -d '[[:space:]]')
+            export PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}.zip"
+            grunt build
+            sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
+            sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
+            mv build elementor
+            zip -r $PLUGIN_ZIP_FILENAME elementor
+            rsync -qr -e "ssh -o StrictHostKeyChecking=no" -r $PLUGIN_ZIP_FILENAME ${deployed_user}@${deployed_host}:${deployed_path}/$(date '+%Y-%m/') > /dev/null
+
