@@ -14,7 +14,7 @@ export default class extends Component {
 		} );
 	}
 
-	getRoutes() {
+	defaultRoutes() {
 		return {
 			'': () => { /* Nothing to do, it's already rendered. */ },
 		};

@@ -3,7 +3,7 @@ export default class extends elementorModules.common.Component {
 		return 'panel';
 	}
 
-	getRoutes() {
+	defaultRoutes() {
 		return {
 			menu: () => this.manager.setPage( 'menu' ),
 			'global-colors': () => this.manager.setPage( 'colorScheme' ),
@@ -12,7 +12,7 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
 			save: () => elementor.saver.saveDraft(),
@@ -37,7 +37,7 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			toggle: {
 				keys: 'ctrl+p',

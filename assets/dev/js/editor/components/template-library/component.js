@@ -2,7 +2,7 @@ const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-la
 
 export default class extends elementorModules.common.ComponentModal {
 	__construct( args ) {
-		// Before contruct because it's used in getInitialTabs().
+		// Before contruct because it's used in defaultTabs().
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;
 
 		super.__construct( args );
@@ -22,7 +22,7 @@ export default class extends elementorModules.common.ComponentModal {
 		return TemplateLibraryLayoutView;
 	}
 
-	getInitialTabs() {
+	defaultTabs() {
 		return {
 			'templates/blocks': {
 				title: elementor.translate( 'blocks' ),
@@ -48,7 +48,7 @@ export default class extends elementorModules.common.ComponentModal {
 		};
 	}
 
-	getRoutes() {
+	defaultRoutes() {
 		return {
 			import: () => {
 				this.manager.layout.showImportView();
@@ -60,13 +60,13 @@ export default class extends elementorModules.common.ComponentModal {
 		};
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			show: this.show,
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			show: {
 				keys: 'ctrl+shift+l',

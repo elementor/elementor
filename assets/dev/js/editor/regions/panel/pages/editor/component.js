@@ -10,7 +10,7 @@ export default class extends elementorModules.common.Component {
 		return 'panel/editor';
 	}
 
-	getInitialTabs() {
+	defaultTabs() {
 		return {
 			content: { title: elementor.translate( 'content' ) },
 			style: { title: elementor.translate( 'style' ) },
@@ -19,7 +19,7 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			open: ( args ) => {
 				this.openEditor( args.model, args.view );

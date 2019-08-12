@@ -3,14 +3,14 @@ export default class extends elementorModules.common.Component {
 		return 'panel/history';
 	}
 
-	getInitialTabs() {
+	defaultTabs() {
 		return {
 			actions: { title: elementor.translate( 'actions' ) },
 			revisions: { title: elementor.translate( 'revisions' ) },
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			actions: {
 				keys: 'ctrl+shift+h',

@@ -4,7 +4,11 @@ export default class extends elementorModules.Module {
 			this.manager = args.manager;
 		}
 
-		this.tabs = this.getInitialTabs();
+		this.commands = this.defaultCommands();
+		this.routes = this.defaultRoutes();
+		this.tabs = this.defaultTabs();
+		this.shortcuts = this.defaultShortcuts();
+
 		this.defaultRoute = '';
 		this.currentTab = '';
 	}
@@ -26,24 +30,36 @@ export default class extends elementorModules.Module {
 		return parts[ 0 ];
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {};
 	}
 
-	getShortcuts() {
+	defaultRoutes() {
 		return {};
+	}
+
+	defaultTabs() {
+		return {};
+	}
+
+	defaultShortcuts() {
+		return {};
+	}
+
+	getCommands() {
+		return this.commands;
 	}
 
 	getRoutes() {
-		return {};
-	}
-
-	getInitialTabs() {
-		return {};
+		return this.routes;
 	}
 
 	getTabs() {
 		return this.tabs;
+	}
+
+	getShortcuts() {
+		return this.shortcuts;
 	}
 
 	registerCommand( command, callback ) {

@@ -3,14 +3,14 @@ export default class extends elementorModules.common.Component {
 		return 'panel/history/actions';
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			undo: () => this.manager.navigate(),
 			redo: () => this.manager.navigate( true ),
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			undo: {
 				keys: 'ctrl+z',

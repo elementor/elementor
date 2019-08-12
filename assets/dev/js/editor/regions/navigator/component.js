@@ -3,13 +3,13 @@ export default class extends elementorModules.common.Component {
 		return 'navigator';
 	}
 
-	getRoutes() {
+	defaultRoutes() {
 		return {
 			'': () => {},
 		};
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			toggle: () => {
 				if ( elementorCommon.route.isPartOf( 'navigator' ) ) {
@@ -21,7 +21,7 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			toggle: {
 				keys: 'ctrl+i',

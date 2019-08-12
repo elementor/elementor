@@ -22,7 +22,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 					routeB: () => {},
@@ -44,7 +44,7 @@ jQuery( () => {
 				return 'test';
 			}
 
-			getInitialTabs() {
+			defaultTabs() {
 				return {
 					tabA: { title: 'tabA' },
 					tabB: { title: 'tabB' },
@@ -58,21 +58,6 @@ jQuery( () => {
 
 		assert.equal( typeof elementorCommon.route.commands[ component.getNamespace() + '/tabA' ], 'function' );
 		assert.equal( typeof elementorCommon.route.commands[ component.getNamespace() + '/tabB' ], 'function' );
-	} );
-
-	QUnit.test( 'Register without a manager', ( assert ) => {
-		const Component = class extends elementorModules.common.Component {
-			getNamespace() {
-				return 'test';
-			}
-		};
-
-		assert.throws(
-			() => {
-				new Component();
-			},
-			new Error( 'manager is required' )
-		);
 	} );
 
 	QUnit.test( 'Register without namespace', ( assert ) => {
@@ -93,7 +78,7 @@ jQuery( () => {
 				return 'test-commands';
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
@@ -115,13 +100,13 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					commandA: {
 						keys: 'ctrl+a',
@@ -144,7 +129,7 @@ jQuery( () => {
 				return 'test-shortcuts-no-command';
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					notExistCommand: {
 						keys: 'ctrl+a',
@@ -180,7 +165,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
@@ -217,7 +202,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {
 						assert.equal( elementorCommon.commands.is( command ), true );
@@ -246,7 +231,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: ( args ) => {
 						assert.equal( args.argA, 1 );
@@ -275,7 +260,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
@@ -305,7 +290,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
@@ -329,7 +314,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
@@ -357,7 +342,7 @@ jQuery( () => {
 				return false;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => commandStatus = 'afterRun',
 				};
@@ -406,7 +391,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {
 						routeAStatus = 'afterRoute';
@@ -447,7 +432,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: ( args ) => {
 						assert.equal( args.argA, 1 );
@@ -480,7 +465,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
@@ -510,7 +495,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getInitialTabs() {
+			defaultTabs() {
 				return {
 					tabA: { title: 'tabA' },
 					tabB: { title: 'tabB' },
@@ -600,7 +585,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
@@ -628,7 +613,7 @@ jQuery( () => {
 				return false;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
@@ -652,7 +637,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {
 						routeCount++;
@@ -684,7 +669,7 @@ jQuery( () => {
 				return false;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
@@ -715,7 +700,7 @@ jQuery( () => {
 				return true;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 					routeB: () => {},
@@ -750,7 +735,7 @@ jQuery( () => {
 				routeStatus = 'closed';
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 					routeB: () => {},
@@ -781,7 +766,7 @@ jQuery( () => {
 				routeStatus = 'afterRoute';
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
@@ -808,7 +793,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: ( args ) => {
 						assert.equal( args, routeArgs );
@@ -846,7 +831,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: ( args ) => {
 						assert.equal( args, routeArgs );
@@ -878,7 +863,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {
 						commandStatus = 'afterRun';
@@ -886,7 +871,7 @@ jQuery( () => {
 				};
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					commandA: {
 						keys: 'ctrl+z',
@@ -912,7 +897,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {
 						commandStatus = 'afterRunInScope';
@@ -920,13 +905,13 @@ jQuery( () => {
 				};
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					commandA: {
 						keys: 'ctrl+z',
@@ -967,7 +952,7 @@ jQuery( () => {
 				return 'second-' + namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {
 						secondCommandStatus = 'afterRun';
@@ -975,7 +960,7 @@ jQuery( () => {
 				};
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					commandA: {
 						keys: 'ctrl+z',
