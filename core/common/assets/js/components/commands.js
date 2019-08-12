@@ -59,20 +59,28 @@ export default class extends elementorModules.Module {
 		return command === this.current[ container ];
 	}
 
-	getCurrent( container ) {
-		if ( ! this.current[ container ] ) {
-			return false;
+	getCurrent( container = '' ) {
+		if ( container ) {
+			if ( ! this.current[ container ] ) {
+				return false;
+			}
+
+			return this.current[ container ];
 		}
 
-		return this.current[ container ];
+		return this.current;
 	}
 
-	getCurrentArgs( container ) {
-		if ( ! this.currentArgs[ container ] ) {
-			return false;
+	getCurrentArgs( container = '' ) {
+		if ( container ) {
+			if ( ! this.currentArgs[ container ] ) {
+				return false;
+			}
+
+			return this.currentArgs[ container ];
 		}
 
-		return this.currentArgs[ container ];
+		return this.currentArgs;
 	}
 
 	beforeRun( command, args = {} ) {
