@@ -16,7 +16,7 @@ export default class extends elementorModules.Module {
 		let namespace;
 		if ( 'string' === typeof component ) {
 			namespace = component;
-			component = elementorCommon.components.get( namespace );
+			component = $e.components.get( namespace );
 
 			if ( ! component ) {
 				this.error( `'${ namespace }' component is not exist.` );
@@ -40,7 +40,7 @@ export default class extends elementorModules.Module {
 		if ( shortcut ) {
 			shortcut.command = fullCommand;
 			shortcut.callback = ( event ) => this.runShortcut( fullCommand, event );
-			elementorCommon.shortcuts.register( shortcut.keys, shortcut );
+			$e.shortcuts.register( shortcut.keys, shortcut );
 		}
 
 		return this;
@@ -49,7 +49,7 @@ export default class extends elementorModules.Module {
 	getComponent( command ) {
 		const namespace = this.components[ command ];
 
-		return elementorCommon.components.get( namespace );
+		return $e.components.get( namespace );
 	}
 
 	is( command ) {

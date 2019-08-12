@@ -8,7 +8,7 @@ export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
-		elementorCommon.components.register( new Component( { manager: this } ) );
+		$e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
 
@@ -29,7 +29,7 @@ export default class extends BaseRegion {
 
 		elementor.on( 'navigator:init', () => {
 			if ( this.storage.visible ) {
-				elementorCommon.route.to( 'navigator' );
+				$e.route( 'navigator' );
 			}
 		} );
 	}

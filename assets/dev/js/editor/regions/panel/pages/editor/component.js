@@ -26,7 +26,7 @@ export default class extends elementorModules.common.Component {
 
 				this.setDefaultTab( args );
 
-				elementorCommon.route.to( this.getDefaultRoute(), args );
+				$e.route( this.getDefaultRoute(), args );
 
 				// BC: Run hooks after the route render's the view.
 				const action = 'panel/open_editor/' + args.model.get( 'elType' );

@@ -63,11 +63,11 @@ export default class extends elementorModules.Module {
 	}
 
 	registerCommand( command, callback ) {
-		elementorCommon.commands.register( this, command, callback );
+		$e.commands.register( this, command, callback );
 	}
 
 	registerRoute( route, callback ) {
-		elementorCommon.route.register( this, route, callback );
+		$e.routes.register( this, route, callback );
 	}
 
 	registerTabRoute( tab ) {
@@ -91,21 +91,21 @@ export default class extends elementorModules.Module {
 
 		this.inactivate();
 
-		elementorCommon.route.clearCurrent( this.getNamespace() );
+		$e.routes.clearCurrent( this.getNamespace() );
 
 		return true;
 	}
 
 	activate() {
-		elementorCommon.components.activate( this.getNamespace() );
+		$e.components.activate( this.getNamespace() );
 	}
 
 	inactivate() {
-		elementorCommon.components.inactivate( this.getNamespace() );
+		$e.components.inactivate( this.getNamespace() );
 	}
 
 	isActive() {
-		return elementorCommon.components.isActive( this.getNamespace() );
+		return $e.components.isActive( this.getNamespace() );
 	}
 
 	onRoute() {
@@ -167,7 +167,7 @@ export default class extends elementorModules.Module {
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
 			.off( 'click' )
 			.on( 'click', ( event ) => {
-				elementorCommon.route.to( this.getTabRoute( event.currentTarget.dataset.tab ) );
+				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ) );
 			} )
 			.removeClass( 'elementor-active' )
 			.filter( '[data-tab="' + tab + '"]' )
