@@ -1,5 +1,5 @@
 export default class extends elementorModules.Module {
-	__construct( args ) {
+	__construct( args = {} ) {
 		if ( args.manager ) {
 			this.manager = args.manager;
 		}
