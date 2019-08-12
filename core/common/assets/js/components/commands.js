@@ -53,10 +53,13 @@ export default class extends elementorModules.Module {
 	}
 
 	is( command ) {
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
+		const component = this.getComponent( command );
 
-		return command === this.current[ container ];
+		if ( ! component ) {
+			return false;
+		}
+
+		return command === this.current[ component.getRootContainer() ];
 	}
 
 	getCurrent( container = '' ) {
@@ -100,13 +103,11 @@ export default class extends elementorModules.Module {
 			return false;
 		}
 
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
+		const component = this.getComponent( command ),
+			container = component.getRootContainer();
 
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
-
-		const component = this.getComponent( command );
 
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
@@ -123,13 +124,14 @@ export default class extends elementorModules.Module {
 		return true;
 	}
 
+	// It's separated in order to allow override.
 	runShortcut( command, event ) {
 		this.run( command, event );
 	}
 
 	afterRun( command ) {
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
+		const component = this.getComponent( command ),
+			container = component.getRootContainer();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
