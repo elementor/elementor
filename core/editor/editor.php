@@ -98,6 +98,9 @@ class Editor {
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
+		// Temp: Allow plugins to know that the editor route is ready. TODO: Remove on 2.7.3.
+		define( 'ELEMENTOR_EDITOR_USE_ROUTER', true );
+
 		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
 		query_posts( [
 			'p' => $this->_post_id,
@@ -577,6 +580,7 @@ class Editor {
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
+				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'go_to' => __( 'Go To', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
@@ -717,7 +721,7 @@ class Editor {
 				'my_libraries' => __( 'My Libraries', 'elementor' ),
 				'upload' => __( 'Upload', 'elementor' ),
 				'icons_promotion' => __( 'Become a Pro user to upload unlimited font icon folders to your website.', 'elementor' ),
-				'go_pro_»' => __( 'Go Pro »', 'elementor' ),
+				'go_pro' => __( 'Go Pro', 'elementor' ),
 				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
 				// TODO: Remove.

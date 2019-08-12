@@ -20,14 +20,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		search: '#elementor-panel-elements-search-area',
 	},
 
-	ui: {
-		tabs: '.elementor-panel-navigation-tab',
-	},
-
-	events: {
-		'click @ui.tabs': 'onTabClick',
-	},
-
 	regionViews: {},
 
 	elementsCollection: null,
@@ -146,15 +138,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.categoriesCollection = categoriesCollection;
 	},
 
-	activateTab: function( tabName ) {
-		this.ui.tabs
-			.removeClass( 'elementor-active' )
-			.filter( '[data-view="' + tabName + '"]' )
-			.addClass( 'elementor-active' );
-
-		this.showView( tabName );
-	},
-
 	showView: function( viewName ) {
 		var viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {};
@@ -178,7 +161,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	focusSearch: function() {
-		if ( ! elementor.userCan( 'design' ) || ! this.search ) {
+		if ( ! elementor.userCan( 'design' ) || ! this.search /* default panel is not elements */ || ! this.search.currentView /* on global elements empty */ ) {
 			return;
 		}
 
@@ -198,17 +181,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onShow: function() {
-		this.showView( 'categories' );
-
 		this.showView( 'search' );
 
 		if ( this.options.autoFocusSearch ) {
 			setTimeout( this.focusSearch.bind( this ) );
 		}
-	},
-
-	onTabClick: function( event ) {
-		this.activateTab( event.currentTarget.dataset.view );
 	},
 } );
 
