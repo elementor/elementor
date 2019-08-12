@@ -1,10 +1,9 @@
 export default class extends elementorModules.Module {
 	__construct( args ) {
-		if ( ! args || ! args.manager ) {
-			throw Error( 'manager is required' );
+		if ( args.manager ) {
+			this.manager = args.manager;
 		}
 
-		this.manager = args.manager;
 		this.tabs = this.getInitialTabs();
 		this.defaultRoute = '';
 		this.currentTab = '';
