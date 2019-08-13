@@ -3,4 +3,8 @@
 	.elementor-control-input-wrapper {
 		max-width: 25%;
 	}
+
+	&.elementor-control-dynamic-value .elementor-control-input-wrapper {
+		max-width: 100%;
+	}
 }
