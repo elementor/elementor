@@ -404,7 +404,7 @@ jobs:
   php73-wp49-tests:
     <<: *php_job
     environment:
-      - WP_VERSION: "4.9"
+      - WP_VERSION: "4.9.10"
     docker:
       - image: pojome/php-cli:7.3
       - image: *mysql_image
@@ -412,7 +412,7 @@ jobs:
   php73-wp48-tests:
     <<: *php_job
     environment:
-      - WP_VERSION: "4.8"
+      - WP_VERSION: "4.8.9"
     docker:
       - image: pojome/php-cli:7.3
       - image: *mysql_image
@@ -420,7 +420,7 @@ jobs:
   php73-wp47-tests:
     <<: *php_job
     environment:
-      - WP_VERSION: "4.7"
+      - WP_VERSION: "4.7.13"
     docker:
       - image: pojome/php-cli:7.3
       - image: *mysql_image
