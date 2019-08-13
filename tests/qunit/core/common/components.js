@@ -7,11 +7,11 @@ jQuery( () => {
 					return 'test';
 				}
 			},
-			instance = new Component( { manager: self } );
+			instance = new Component();
 
-		elementorCommon.components.register( instance );
+		$e.components.register( instance );
 
-		assert.equal( elementorCommon.components.get( 'test' ), instance );
+		assert.equal( $e.components.get( 'test' ), instance );
 	} );
 
 	QUnit.test( 'Register routes', ( assert ) => {
@@ -22,7 +22,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 					routeB: () => {},
@@ -30,9 +30,9 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		const routes = elementorCommon.route.getAll();
+		const routes = $e.routes.getAll();
 
 		assert.notEqual( routes.indexOf( namespace + '/routeA' ), -1 );
 		assert.notEqual( routes.indexOf( namespace + '/routeB' ), -1 );
@@ -44,7 +44,7 @@ jQuery( () => {
 				return 'test';
 			}
 
-			getInitialTabs() {
+			defaultTabs() {
 				return {
 					tabA: { title: 'tabA' },
 					tabB: { title: 'tabB' },
@@ -52,27 +52,12 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		const component = elementorCommon.components.get( 'test' );
+		const component = $e.components.get( 'test' );
 
-		assert.equal( typeof elementorCommon.route.commands[ component.getNamespace() + '/tabA' ], 'function' );
-		assert.equal( typeof elementorCommon.route.commands[ component.getNamespace() + '/tabB' ], 'function' );
-	} );
-
-	QUnit.test( 'Register without a manager', ( assert ) => {
-		const Component = class extends elementorModules.common.Component {
-			getNamespace() {
-				return 'test';
-			}
-		};
-
-		assert.throws(
-			() => {
-				new Component();
-			},
-			new Error( 'manager is required' )
-		);
+		assert.equal( typeof $e.routes.commands[ component.getNamespace() + '/tabA' ], 'function' );
+		assert.equal( typeof $e.routes.commands[ component.getNamespace() + '/tabB' ], 'function' );
 	} );
 
 	QUnit.test( 'Register without namespace', ( assert ) => {
@@ -80,7 +65,7 @@ jQuery( () => {
 
 		assert.throws(
 			() => {
-				const instance = new Component( { manager: self } );
+				const instance = new Component();
 				instance.getNamespace();
 			},
 			new Error( 'getNamespace must be override.' )
@@ -93,18 +78,18 @@ jQuery( () => {
 				return 'test-commands';
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		const component = elementorCommon.components.get( 'test-commands' );
+		const component = $e.components.get( 'test-commands' );
 
-		assert.equal( typeof elementorCommon.commands.commands[ component.getNamespace() + '/commandA' ], 'function' );
+		assert.equal( typeof $e.commands.commands[ component.getNamespace() + '/commandA' ], 'function' );
 	} );
 
 	QUnit.test( 'Register shortcuts', ( assert ) => {
@@ -115,13 +100,13 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					commandA: {
 						keys: 'ctrl+a',
@@ -130,9 +115,9 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		const handlers = elementorCommon.shortcuts.handlers[ 'ctrl+a' ],
+		const handlers = $e.shortcuts.handlers[ 'ctrl+a' ],
 			keys = Object.keys( handlers );
 
 		assert.equal( handlers[ keys[ 0 ] ].command, namespace + '/commandA' );
@@ -144,7 +129,7 @@ jQuery( () => {
 				return 'test-shortcuts-no-command';
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					notExistCommand: {
 						keys: 'ctrl+a',
@@ -153,10 +138,10 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		const component = elementorCommon.components.get( 'test-shortcuts-no-command' ),
-			handlers = elementorCommon.shortcuts.getAll();
+		const component = $e.components.get( 'test-shortcuts-no-command' ),
+			handlers = $e.shortcuts.getAll();
 
 		assert.equal( typeof handlers[ component.getNamespace() + '/notExistCommand' ], 'undefined' );
 	} );
@@ -166,7 +151,7 @@ jQuery( () => {
 	QUnit.test( 'Error on register command without component', ( assert ) => {
 		assert.throws(
 			() => {
-				elementorCommon.commands.register( '', 'save', () => {} );
+				$e.commands.register( '', 'save', () => {} );
 			},
 			new Error( "Commands: '' component is not exist." )
 		);
@@ -180,18 +165,18 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
 		assert.throws(
 			() => {
-				elementorCommon.commands.register( namespace, 'commandA', () => {} );
+				$e.commands.register( namespace, 'commandA', () => {} );
 			},
 			new Error( `Commands: \`${ namespace + '/commandA' }\` is already registered.` )
 		);
@@ -200,7 +185,7 @@ jQuery( () => {
 	QUnit.test( 'Error on run non exited command', ( assert ) => {
 		assert.throws(
 			() => {
-				elementorCommon.commands.run( 'not-existing-command' );
+				$e.run( 'not-existing-command' );
 			},
 			new Error( 'Commands: `not-existing-command` not found.' )
 		);
@@ -217,23 +202,23 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {
-						assert.equal( elementorCommon.commands.is( command ), true );
+						assert.equal( $e.commands.is( command ), true );
 						commandStatus = 'afterRun';
 					},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.commands.run( command );
+		$e.run( command );
 
 		assert.equal( commandStatus, 'afterRun' );
 
-		assert.equal( elementorCommon.commands.is( command ), false );
+		assert.equal( $e.commands.is( command ), false );
 	} );
 
 	QUnit.test( 'Run command with args', ( assert ) => {
@@ -246,23 +231,23 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: ( args ) => {
 						assert.equal( args.argA, 1 );
-						assert.equal( elementorCommon.commands.getCurrentArgs( namespace ), args );
+						assert.equal( $e.commands.getCurrentArgs( namespace ), args );
 					},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.commands.run( namespace + '/commandA', {
+		$e.run( namespace + '/commandA', {
 			argA: 1,
 		} );
 
-		assert.equal( elementorCommon.commands.getCurrentArgs( namespace ), false );
+		assert.equal( $e.commands.getCurrentArgs( namespace ), false );
 	} );
 
 	QUnit.test( 'Run command with events args', ( assert ) => {
@@ -275,16 +260,16 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.commands.run( namespace + '/commandA', {
+		$e.run( namespace + '/commandA', {
 			onBefore: () => {
 				onBeforeStatus = 'afterRun';
 			},
@@ -305,18 +290,18 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 
-		const activeComponent = Object.keys( elementorCommon.components.activeComponents ).pop();
+		const activeComponent = Object.keys( $e.components.activeComponents ).pop();
 
 		assert.equal( activeComponent, namespace );
 	} );
@@ -329,18 +314,18 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.commands.run( namespace + '/commandA' );
+		$e.run( namespace + '/commandA' );
 
-		const activeComponent = Object.keys( elementorCommon.components.activeComponents ).pop();
+		const activeComponent = Object.keys( $e.components.activeComponents ).pop();
 
 		assert.notEqual( activeComponent, namespace );
 	} );
@@ -357,18 +342,18 @@ jQuery( () => {
 				return false;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => commandStatus = 'afterRun',
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		const component = elementorCommon.components.get( 'run-command-with-dependency' );
+		const component = $e.components.get( 'run-command-with-dependency' );
 
-		elementorCommon.commands.run( component.getNamespace() + '/commandA' );
+		$e.run( component.getNamespace() + '/commandA' );
 
 		assert.equal( commandStatus, 'beforeRun' );
 	} );
@@ -378,18 +363,18 @@ jQuery( () => {
 	QUnit.test( 'Error on register route without component', ( assert ) => {
 		assert.throws(
 			() => {
-				elementorCommon.route.register( '', 'panel', () => {} );
+				$e.routes.register( '', 'panel', () => {} );
 			},
-			new Error( "Route: '' component is not exist." )
+			new Error( "Routes: '' component is not exist." )
 		);
 	} );
 
 	QUnit.test( 'Error on run non exited command', ( assert ) => {
 		assert.throws(
 			() => {
-				elementorCommon.route.to( 'not-existing-route' );
+				$e.route( 'not-existing-route' );
 			},
-			new Error( 'Route: `not-existing-route` not found.' )
+			new Error( 'Routes: `not-existing-route` not found.' )
 		);
 	} );
 
@@ -406,7 +391,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {
 						routeAStatus = 'afterRoute';
@@ -418,22 +403,22 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( routeA );
+		$e.route( routeA );
 
-		assert.equal( elementorCommon.route.is( routeA ), true );
-		assert.equal( elementorCommon.route.is( routeB ), false );
+		assert.equal( $e.routes.is( routeA ), true );
+		assert.equal( $e.routes.is( routeB ), false );
 		assert.equal( routeAStatus, 'afterRoute' );
 
-		elementorCommon.route.to( routeB );
+		$e.route( routeB );
 
-		assert.equal( elementorCommon.route.is( routeB ), true );
-		assert.equal( elementorCommon.route.is( routeA ), false );
+		assert.equal( $e.routes.is( routeB ), true );
+		assert.equal( $e.routes.is( routeA ), false );
 		assert.equal( routeBStatus, 'afterRoute' );
 
-		assert.equal( elementorCommon.route.isPartOf( namespace ), true );
-		assert.equal( elementorCommon.route.isPartOf( 'notPartOf' ), false );
+		assert.equal( $e.routes.isPartOf( namespace ), true );
+		assert.equal( $e.routes.isPartOf( 'notPartOf' ), false );
 	} );
 
 	QUnit.test( 'Route with args', ( assert ) => {
@@ -447,7 +432,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: ( args ) => {
 						assert.equal( args.argA, 1 );
@@ -456,18 +441,18 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
 		const args = {
 			argA: 1,
 		};
 
-		elementorCommon.route.to( namespace + '/routeA', args );
+		$e.route( namespace + '/routeA', args );
 
-		assert.equal( elementorCommon.route.is( namespace + '/routeA', args ), true );
-		assert.equal( elementorCommon.route.is( routeA ), false );
+		assert.equal( $e.routes.is( namespace + '/routeA', args ), true );
+		assert.equal( $e.routes.is( routeA ), false );
 
-		assert.equal( elementorCommon.route.getCurrentArgs( namespace ), args );
+		assert.equal( $e.routes.getCurrentArgs( namespace ), args );
 	} );
 
 	QUnit.test( 'Route with events args', ( assert ) => {
@@ -480,16 +465,16 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA', {
+		$e.route( namespace + '/routeA', {
 			onBefore: () => {
 				onBeforeStatus = 'afterRoute';
 			},
@@ -510,7 +495,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getInitialTabs() {
+			defaultTabs() {
 				return {
 					tabA: { title: 'tabA' },
 					tabB: { title: 'tabB' },
@@ -522,7 +507,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
 		const $fixture = jQuery(
 			'<div id="' + namespace + '">' +
@@ -533,11 +518,11 @@ jQuery( () => {
 
 		jQuery( 'body' ).append( $fixture );
 
-		elementorCommon.route.to( namespace + '/tabA' );
+		$e.route( namespace + '/tabA' );
 
 		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabA' );
 
-		elementorCommon.route.to( namespace + '/tabB' );
+		$e.route( namespace + '/tabB' );
 
 		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
 
@@ -566,9 +551,9 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		const component = elementorCommon.components.get( namespace ),
+		const component = $e.components.get( namespace ),
 			newTabIndex = 1;
 
 		component.addTab( 'tabB', {}, newTabIndex );
@@ -583,7 +568,7 @@ jQuery( () => {
 
 		jQuery( 'body' ).append( $fixture );
 
-		elementorCommon.route.to( namespace + '/tabB' );
+		$e.route( namespace + '/tabB' );
 
 		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
 
@@ -600,18 +585,18 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 
-		const activeComponent = Object.keys( elementorCommon.components.activeComponents ).pop();
+		const activeComponent = Object.keys( $e.components.activeComponents ).pop();
 
 		assert.equal( activeComponent, namespace );
 	} );
@@ -628,18 +613,18 @@ jQuery( () => {
 				return false;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 
-		assert.equal( elementorCommon.route.is( namespace + '/routeA' ), false );
+		assert.equal( $e.routes.is( namespace + '/routeA' ), false );
 	} );
 
 	QUnit.test( 'Re-route is avoided', ( assert ) => {
@@ -652,7 +637,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {
 						routeCount++;
@@ -661,11 +646,11 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 		assert.equal( routeCount, 1 );
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 		assert.equal( routeCount, 1 );
 	} );
 
@@ -684,20 +669,20 @@ jQuery( () => {
 				return false;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 
 		assert.equal( openCount, 1 );
 
-		assert.equal( elementorCommon.route.is( namespace + '/routeA' ), false );
+		assert.equal( $e.routes.is( namespace + '/routeA' ), false );
 	} );
 
 	QUnit.test( 'Re-open component is avoided', ( assert ) => {
@@ -715,7 +700,7 @@ jQuery( () => {
 				return true;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 					routeB: () => {},
@@ -723,16 +708,16 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 		assert.equal( openCount, 1 );
-		elementorCommon.route.to( namespace + '/routeB' );
+		$e.route( namespace + '/routeB' );
 		assert.equal( openCount, 1 );
 
-		elementorCommon.components.get( namespace ).close();
+		$e.components.get( namespace ).close();
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 		assert.equal( openCount, 2 );
 	} );
 
@@ -750,7 +735,7 @@ jQuery( () => {
 				routeStatus = 'closed';
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 					routeB: () => {},
@@ -758,12 +743,12 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 		assert.equal( routeStatus, 'notChanged' );
 
-		elementorCommon.route.to( namespace + '/routeB' );
+		$e.route( namespace + '/routeB' );
 		assert.equal( routeStatus, 'closed' );
 	} );
 
@@ -781,16 +766,16 @@ jQuery( () => {
 				routeStatus = 'afterRoute';
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 		assert.equal( routeStatus, 'afterRoute' );
 	} );
 
@@ -808,7 +793,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: ( args ) => {
 						assert.equal( args, routeArgs );
@@ -817,19 +802,19 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA', routeArgs );
-		elementorCommon.route.saveState( namespace );
-		elementorCommon.components.get( namespace ).close();
+		$e.route( namespace + '/routeA', routeArgs );
+		$e.routes.saveState( namespace );
+		$e.components.get( namespace ).close();
 
-		assert.equal( elementorCommon.route.getCurrent( namespace ), false );
-		assert.equal( elementorCommon.route.getCurrentArgs( namespace ), false );
+		assert.equal( $e.routes.getCurrent( namespace ), false );
+		assert.equal( $e.routes.getCurrentArgs( namespace ), false );
 
-		elementorCommon.route.restoreState( namespace );
+		$e.routes.restoreState( namespace );
 
-		assert.equal( elementorCommon.route.getCurrent( namespace ), namespace + '/routeA' );
-		assert.equal( elementorCommon.route.getCurrentArgs( namespace ), routeArgs );
+		assert.equal( $e.routes.getCurrent( namespace ), namespace + '/routeA' );
+		assert.equal( $e.routes.getCurrentArgs( namespace ), routeArgs );
 	} );
 
 	QUnit.test( 'Refresh container', ( assert ) => {
@@ -846,7 +831,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: ( args ) => {
 						assert.equal( args, routeArgs );
@@ -855,11 +840,11 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace + '/routeA', routeArgs );
+		$e.route( namespace + '/routeA', routeArgs );
 
-		elementorCommon.route.refreshContainer( namespace );
+		$e.routes.refreshContainer( namespace );
 	} );
 
 	QUnit.module( 'Shortcuts' );
@@ -878,7 +863,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {
 						commandStatus = 'afterRun';
@@ -886,7 +871,7 @@ jQuery( () => {
 				};
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					commandA: {
 						keys: 'ctrl+z',
@@ -895,7 +880,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
 		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
@@ -912,7 +897,7 @@ jQuery( () => {
 				return namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {
 						commandStatus = 'afterRunInScope';
@@ -920,13 +905,13 @@ jQuery( () => {
 				};
 			}
 
-			getRoutes() {
+			defaultRoutes() {
 				return {
 					routeA: () => {},
 				};
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					commandA: {
 						keys: 'ctrl+z',
@@ -936,7 +921,7 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
 		// Outside scope.
 		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
@@ -944,14 +929,14 @@ jQuery( () => {
 		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
 
 		// Inside scope.
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 
 		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
 
 		// Closed scope.
-		elementorCommon.components.get( namespace ).close();
+		$e.components.get( namespace ).close();
 
 		commandStatus = 'beforeRunInScope';
 
@@ -967,7 +952,7 @@ jQuery( () => {
 				return 'second-' + namespace;
 			}
 
-			getCommands() {
+			defaultCommands() {
 				return {
 					commandA: () => {
 						secondCommandStatus = 'afterRun';
@@ -975,7 +960,7 @@ jQuery( () => {
 				};
 			}
 
-			getShortcuts() {
+			defaultShortcuts() {
 				return {
 					commandA: {
 						keys: 'ctrl+z',
@@ -984,17 +969,17 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new SecondComponent( { manager: self } ) );
+		$e.components.register( new SecondComponent() );
 
 		// Activate the first component.
-		elementorCommon.route.to( namespace + '/routeA' );
+		$e.route( namespace + '/routeA' );
 
 		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
 
 		// Close the first component.
-		elementorCommon.components.get( namespace ).close();
+		$e.components.get( namespace ).close();
 
 		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
@@ -1012,7 +997,7 @@ jQuery( () => {
 
 		assert.throws(
 			() => {
-				const instance = new Component( { manager: self } );
+				const instance = new Component();
 				instance.getModalLayout();
 			},
 			new Error( 'getModalLayout must be override.' )
@@ -1036,13 +1021,13 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component() );
 
-		elementorCommon.route.to( namespace );
+		$e.route( namespace );
 
 		runShortcut( { which: 27 /* esc */ } );
 
-		assert.equal( elementorCommon.route.is( namespace ), false, 'Component is closed by `esc` key.' );
+		assert.equal( $e.routes.is( namespace ), false, 'Component is closed by `esc` key.' );
 
 		// Second component.
 		const secondNamespace = 'second-' + namespace;
@@ -1061,16 +1046,16 @@ jQuery( () => {
 			}
 		};
 
-		elementorCommon.components.register( new SecondComponent( { manager: self } ) );
+		$e.components.register( new SecondComponent() );
 
-		const component = elementorCommon.components.get( namespace ),
-			secondComponent = elementorCommon.components.get( secondNamespace );
+		const component = $e.components.get( namespace ),
+			secondComponent = $e.components.get( secondNamespace );
 
 		// Activate the second component.
-		elementorCommon.route.to( secondNamespace );
+		$e.route( secondNamespace );
 
 		// Activate the first component.
-		elementorCommon.route.to( namespace );
+		$e.route( namespace );
 
 		// Ensure tow components are open.
 		assert.equal( component.isOpen, true );

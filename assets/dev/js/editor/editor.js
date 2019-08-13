@@ -275,7 +275,7 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		elementorCommon.components.register( new Component( { manager: this } ) );
+		$e.components.register( new Component( { manager: this } ) );
 
 		this.hotkeysScreen = new HotkeysScreen();
 
@@ -382,7 +382,7 @@ const App = Marionette.Application.extend( {
 		if ( ! targetElement ) {
 			const panel = elementor.getPanelView();
 
-			if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
+			if ( $e.routes.isPartOf( 'panel/editor' ) ) {
 				targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
 			}
 		}
@@ -398,7 +398,7 @@ const App = Marionette.Application.extend( {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
 		// Set default page to elements.
-		elementorCommon.route.to( 'panel/elements/categories' );
+		$e.route( 'panel/elements/categories' );
 
 		this.trigger( 'panel:init' );
 	},
@@ -462,7 +462,7 @@ const App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				elementorCommon.route.to( 'panel/elements/categories' );
+				$e.route( 'panel/elements/categories' );
 			}
 		} );
 	},
@@ -547,7 +547,7 @@ const App = Marionette.Application.extend( {
 						name: 'view_revisions',
 						text: elementor.translate( 'view_all_revisions' ),
 						callback: function() {
-							elementorCommon.route.to( 'panel/history/revisions' );
+							$e.route( 'panel/history/revisions' );
 						},
 					},
 				],
@@ -557,7 +557,7 @@ const App = Marionette.Application.extend( {
 
 	openLibraryOnStart: function() {
 		if ( '#library' === location.hash ) {
-			elementorCommon.commands.run( 'library/show' );
+			$e.run( 'library/show' );
 
 			location.hash = '';
 		}
@@ -788,7 +788,7 @@ const App = Marionette.Application.extend( {
 		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
 		if ( this.previewLoadedOnce ) {
-			elementorCommon.route.to( 'panel/elements/categories' );
+			$e.route( 'panel/elements/categories' );
 		} else {
 			this.onFirstPreviewLoaded();
 		}
@@ -823,7 +823,7 @@ const App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		elementorCommon.shortcuts.bindListener( elementorFrontend.elements.$window );
+		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
