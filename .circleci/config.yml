@@ -49,6 +49,14 @@ workflows:
     - php72-wp49-tests
     - php72-wp48-tests
     - php72-wp47-tests
+  PHPUnit-PHP7.3:
+    jobs:
+    - php73-wp-latest-tests
+    - php73-wp51-tests
+    - php73-wp50-tests
+    - php73-wp49-tests
+    - php73-wp48-tests
+    - php73-wp47-tests
   Build-and-Deploy:
     jobs:
       - build-and-deploy:
@@ -370,6 +378,52 @@ jobs:
     docker:
     - image: pojome/php-cli:7.2
     - image: *mysql_image
+
+  php73-wp-latest-tests:
+    <<: *php_job
+    docker:
+      - image: pojome/php-cli:7.3
+      - image: *mysql_image
+
+  php73-wp51-tests:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.1"
+    docker:
+      - image: pojome/php-cli:7.3
+      - image: *mysql_image
+
+  php73-wp50-tests:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.0"
+    docker:
+      - image: pojome/php-cli:7.3
+      - image: *mysql_image
+
+  php73-wp49-tests:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "4.9"
+    docker:
+      - image: pojome/php-cli:7.3
+      - image: *mysql_image
+
+  php73-wp48-tests:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "4.8"
+    docker:
+      - image: pojome/php-cli:7.3
+      - image: *mysql_image
+
+  php73-wp47-tests:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "4.7"
+    docker:
+      - image: pojome/php-cli:7.3
+      - image: *mysql_image
 
   php-js-lints:
     docker:
