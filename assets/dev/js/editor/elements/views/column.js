@@ -172,7 +172,12 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	addNewColumn: function() {
-		this.trigger( 'request:add:new' );
+		$e.run( 'elements/create', {
+			element: this._parent,
+			options: {
+				at: this.$el.index() + 1,
+			},
+		} );
 	},
 
 	// Events

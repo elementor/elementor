@@ -42,10 +42,6 @@ class AddSectionBase extends Marionette.ItemView {
 		return 'elementor-add-section elementor-visible-desktop';
 	}
 
-	addSection( properties, options ) {
-		return elementor.getPreviewView().addChildElement( properties, jQuery.extend( {}, this.options, options ) );
-	}
-
 	setView( view ) {
 		this.$el.attr( 'data-view', view );
 	}
@@ -78,8 +74,12 @@ class AddSectionBase extends Marionette.ItemView {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						callback: this.paste.bind( this ),
 						isEnabled: this.isPasteEnabled.bind( this ),
+						callback: () => $e.run( 'elements/paste', {
+							element: elementor.getPreviewView(),
+							at: this.getOption( 'at' ),
+							rebuild: true,
+						} ),
 					},
 				],
 			}, {
@@ -88,25 +88,17 @@ class AddSectionBase extends Marionette.ItemView {
 					{
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
-						callback: this.copy.bind( this ),
 						isEnabled: hasContent,
+						callback: () => $e.run( 'elements/copyAll', {} ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
-						callback: elementor.clearPage.bind( elementor ),
 						isEnabled: hasContent,
+						callback: () => $e.run( 'elements/empty' ),
 					},
 				],
 			},
 		];
-	}
-
-	copy() {
-		elementor.getPreviewView().copy();
-	}
-
-	paste() {
-		elementor.getPreviewView().paste( this.getOption( 'at' ) );
 	}
 
 	isPasteEnabled() {
@@ -136,41 +128,32 @@ class AddSectionBase extends Marionette.ItemView {
 		this.closeSelectPresets();
 
 		const selectedStructure = event.currentTarget.dataset.structure,
-			parsedStructure = elementor.presetsFactory.getParsedStructure( selectedStructure ),
-			elements = [];
-
-		let loopIndex;
-
-		for ( loopIndex = 0; loopIndex < parsedStructure.columnsCount; loopIndex++ ) {
-			elements.push( {
-				id: elementor.helpers.getUniqueID(),
-				elType: 'column',
-				settings: {},
-				elements: [],
-			} );
-		}
+			parsedStructure = elementor.presetsFactory.getParsedStructure( selectedStructure );
 
 		elementor.channels.data.trigger( 'element:before:add', {
 			elType: 'section',
 		} );
 
-		const newSection = this.addSection( { elements: elements }, { edit: false } );
-
-		newSection.setStructure( selectedStructure );
-
-		newSection.getEditModel().trigger( 'request:edit' );
+		$e.run( 'elements/createSection', {
+			columns: parsedStructure.columnsCount,
+			structure: selectedStructure,
+			options: jQuery.extend( {}, this.options ),
+		} );
 
 		elementor.channels.data.trigger( 'element:after:add' );
 	}
 
 	onDropping() {
-		elementor.channels.data.trigger( 'section:before:drop' );
-
 		if ( elementor.helpers.maybeDisableWidget() ) {
 			return;
 		}
 
-		this.addSection().addElementFromPanel();
+		elementor.channels.data.trigger( 'section:before:drop' );
+
+		$e.run( 'elements/createSection', {
+			columns: 1,
+			returnValue: true,
+		} ).addElementFromPanel();
 
 		elementor.channels.data.trigger( 'section:after:drop' );
 	}

@@ -108,35 +108,4 @@ module.exports = Marionette.CompositeView.extend( {
 	isCollectionFilled: function() {
 		return false;
 	},
-
-	onChildviewRequestAddNew: function( childView ) {
-		this.addChildElement( {}, {
-			at: childView.$el.index() + 1,
-			trigger: {
-				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add',
-			},
-		} );
-	},
-
-	onChildviewRequestPaste: function( childView ) {
-		var self = this;
-
-		if ( self.isCollectionFilled() ) {
-			return;
-		}
-
-		var elements = elementorCommon.storage.get( 'transfer' ).elements,
-			index = self.collection.indexOf( childView.model );
-
-		elementor.channels.data.trigger( 'element:before:add', elements[ 0 ] );
-
-		elements.forEach( function( item ) {
-			index++;
-
-			self.addChildElement( item, { at: index, clone: true } );
-		} );
-
-		elementor.channels.data.trigger( 'element:after:add', elements[ 0 ] );
-	},
 } );

@@ -113,13 +113,17 @@ export default class extends elementorModules.Module {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.commands[ command ].apply( component, [ args ] );
+		const results = this.commands[ command ].apply( component, [ args ] );
 
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args ] );
 		}
 
 		this.afterRun( command, args );
+
+		if ( args.returnValue ) {
+			return results;
+		}
 
 		return true;
 	}

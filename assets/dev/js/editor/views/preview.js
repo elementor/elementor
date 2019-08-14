@@ -42,8 +42,12 @@ Preview = BaseSectionsContainerView.extend( {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						callback: this.paste.bind( this ),
 						isEnabled: this.isPasteEnabled.bind( this ),
+						callback: ( at ) => $e.run( 'elements/paste', {
+							element: this,
+							at: at,
+							rebuild: true,
+						} ),
 					},
 				],
 			}, {
@@ -52,80 +56,18 @@ Preview = BaseSectionsContainerView.extend( {
 					{
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
-						callback: this.copy.bind( this ),
 						isEnabled: hasContent,
+						callback: () => $e.run( 'elements/copyAll', {} ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
-						callback: elementor.clearPage.bind( elementor ),
 						isEnabled: hasContent,
-					},
+						callback: () => $e.run( 'elements/empty' ),
+},
 				],
 			},
 		];
 	},
-
-	copy: function() {
-		elementorCommon.storage.set( 'transfer', {
-			type: 'copy',
-			elementsType: 'section',
-			elements: elementor.elements.toJSON( { copyHtmlCache: true } ),
-		} );
-	},
-
-	paste: function( atIndex ) {
-		var self = this,
-			transferData = elementorCommon.storage.get( 'transfer' ),
-			section,
-			index = undefined !== atIndex ? atIndex : this.collection.length;
-
-		elementor.channels.data.trigger( 'element:before:add', transferData.elements[ 0 ] );
-
-		if ( 'section' === transferData.elementsType ) {
-			transferData.elements.forEach( function( element ) {
-				self.addChildElement( element, {
-					at: index,
-					edit: false,
-					clone: true,
-				} );
-
-				index++;
-			} );
-		} else if ( 'column' === transferData.elementsType ) {
-			section = self.addChildElement( { allowEmpty: true }, { at: atIndex } );
-
-			section.model.unset( 'allowEmpty' );
-
-			index = 0;
-
-			transferData.elements.forEach( function( element ) {
-				section.addChildElement( element, {
-					at: index,
-					clone: true,
-				} );
-
-				index++;
-			} );
-
-			section.redefineLayout();
-		} else {
-			section = self.addChildElement( null, { at: atIndex } );
-
-			index = 0;
-
-			transferData.elements.forEach( function( element ) {
-				section.addChildElement( element, {
-					at: index,
-					clone: true,
-				} );
-
-				index++;
-			} );
-		}
-
-		elementor.channels.data.trigger( 'element:after:add', transferData.elements[ 0 ] );
-	},
-
 	isPasteEnabled: function() {
 		return elementorCommon.storage.get( 'transfer' );
 	},

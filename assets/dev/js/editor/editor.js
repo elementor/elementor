@@ -362,7 +362,7 @@ const App = Marionette.Application.extend( {
 					cancel: elementor.translate( 'cancel' ),
 				},
 				onConfirm: function() {
-					self.elements.reset();
+					$e.run( 'elements/empty', { force: true } );
 				},
 			} );
 
@@ -611,10 +611,6 @@ const App = Marionette.Application.extend( {
 		jQuery( '#elementor-preview-loading' ).show();
 
 		this.$preview[ 0 ].contentWindow.location.reload( true );
-	},
-
-	clearPage: function() {
-		this.getClearPageDialog().show();
 	},
 
 	changeDeviceMode: function( newDeviceMode ) {

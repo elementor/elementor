@@ -9,6 +9,19 @@ module.exports = BaseSettings.extend( {
 		$e.components.register( new Component( { manager: this } ) );
 	},
 
+	getEditedView() {
+		const editModel = new Backbone.Model( {
+			id: 'document',
+			elType: 'document',
+			settings: elementor.settings.page.model,
+		} );
+
+		return {
+			getEditModel: () => editModel,
+			model: editModel,
+		};
+	},
+
 	save: function() {},
 
 	changeCallbacks: {

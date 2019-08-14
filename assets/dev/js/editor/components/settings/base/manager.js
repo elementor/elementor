@@ -24,6 +24,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			view: elementor.settings.panelPages[ name ] || elementor.settings.panelPages.base,
 			title: this.getSettings( 'panelPage.title' ),
 			options: {
+				editedView: this.getEditedView(),
 				model: this.model,
 				controls: this.model.controls,
 				name: name,

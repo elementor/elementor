@@ -74,8 +74,6 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
-
-		this._checkIsEmpty();
 	},
 
 	getContextMenuGroups: function() {
@@ -140,11 +138,17 @@ SectionView = BaseElementView.extend( {
 			throw new TypeError( 'The provided structure doesn\'t match the columns count.' );
 		}
 
-		this.model.setSetting( 'structure', structure );
+		$e.run( 'elements/settings', {
+			element: this,
+			settings: { structure },
+			options: { external: true },
+		} );
+
+		this.resizeColumns();
 	},
 
-	redefineLayout: function() {
-		var preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
+	resizeColumns: function() {
+		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
 
 		this.collection.each( function( model, index ) {
 			model.setSetting( '_column_size', preset.preset[ index ] );
@@ -171,12 +175,6 @@ SectionView = BaseElementView.extend( {
 
 	_checkIsFull: function() {
 		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
-	},
-
-	_checkIsEmpty: function() {
-		if ( ! this.collection.length && ! this.model.get( 'allowEmpty' ) ) {
-			this.addChildElement( null, { edit: false } );
-		}
 	},
 
 	getColumnAt: function( index ) {
@@ -246,14 +244,6 @@ SectionView = BaseElementView.extend( {
 		this._checkIsFull();
 	},
 
-	onSettingsChanged: function( settingsModel ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		if ( settingsModel.changed.structure ) {
-			this.redefineLayout();
-		}
-	},
-
 	onAddButtonClick: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.fadeToDeath();
@@ -278,24 +268,6 @@ SectionView = BaseElementView.extend( {
 		} );
 
 		this.addSectionView = addSectionView;
-	},
-
-	onAddChild: function() {
-		if ( ! this.isBuffering && ! this.model.get( 'allowEmpty' ) ) {
-			// Reset the layout just when we have really add/remove element.
-			this.resetLayout();
-		}
-	},
-
-	onRemoveChild: function() {
-		if ( ! this.isManualRemoving ) {
-			return;
-		}
-
-		// If it's the last column, please create new one.
-		this._checkIsEmpty();
-
-		this.resetLayout();
 	},
 
 	onChildviewRequestResizeStart: function( columnView ) {

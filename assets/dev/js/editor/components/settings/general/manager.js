@@ -19,4 +19,17 @@ module.exports = BaseSettings.extend( {
 			elementor.settings.page.updateStylesheet();
 		},
 	},
+
+	getEditedView() {
+		const editModel = new Backbone.Model( {
+			id: 'general_settings',
+			elType: 'general_settings',
+			settings: elementor.settings.general.model,
+		} );
+
+		return {
+			getEditModel: () => editModel,
+			model: editModel,
+		};
+	},
 } );

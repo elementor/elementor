@@ -88,23 +88,29 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.history.history.addItem( historyItem );
 	},
 
-	add: function( models, toView, position ) {
-		if ( 'section' === models[ 0 ].elType ) {
-			_.each( models, function( model ) {
-				model.allowEmpty = true;
-			} );
-		}
-
+	add: function( models, toView, at ) {
 		// Fix for case the iframe has been reloaded and the old `elementor-inner` is not exist.
-		if ( toView.$el.hasClass( 'elementor-inner' ) && toView.$el[ 0 ].ownerDocument !== elementor.$previewContents[ 0 ] ) {
+		if ( toView.$el.hasClass( 'elementor-inner' ) ) {
 			toView = elementor.getPreviewView();
 		}
-
-		toView.addChildModel( models, { at: position, silent: 0 } );
+		models.forEach( ( model ) => {
+			$e.run( 'elements/create', {
+				element: toView,
+				data: model,
+				options: { at },
+			} );
+			if ( null !== at ) {
+				at++;
+			}
+		} );
 	},
 
-	remove: function( models, fromCollection ) {
-		fromCollection.remove( models, { silent: 0 } );
+	remove: function( models, fromView ) {
+		models.forEach( ( model ) => {
+			const element = fromView.children.find( ( view ) => view.model.id === model.id );
+
+			$e.run( 'elements/delete', { element } );
+		} );
 	},
 
 	restore: function( historyItem, isRedo ) {
@@ -137,14 +143,14 @@ module.exports = Marionette.Behavior.extend( {
 				if ( isRedo ) {
 					this.add( history.models, behavior.view, history.event.index );
 				} else {
-					this.remove( history.models, behavior.view.collection );
+					this.remove( history.models, behavior.view );
 				}
 
 				didAction = true;
 				break;
 			case 'remove':
 				if ( isRedo ) {
-					this.remove( history.models, behavior.view.collection );
+					this.remove( history.models, behavior.view );
 				} else {
 					this.add( history.models, behavior.view, history.event.index );
 				}

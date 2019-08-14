@@ -24,24 +24,14 @@ module.exports = Marionette.ItemView.extend( {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						callback: this.paste.bind( this ),
 						isEnabled: this.isPasteEnabled.bind( this ),
+						callback: () => $e.run( 'elements/paste', {
+							element: this._parent,
+						} ),
 					},
 				],
 			},
 		];
-	},
-
-	paste: function() {
-		var self = this,
-			elements = elementorCommon.storage.get( 'transfer' ).elements,
-			index = 0;
-
-		elements.forEach( function( item ) {
-			self._parent.addChildElement( item, { at: index, clone: true } );
-
-			index++;
-		} );
 	},
 
 	isPasteEnabled: function() {

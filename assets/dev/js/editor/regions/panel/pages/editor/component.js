@@ -67,11 +67,11 @@ export default class extends elementorModules.common.Component {
 
 	openEditor( model, view ) {
 		const title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ),
-		editor = elementor.getPanelView().setPage( 'editor', title, {
-			model: model,
-			controls: elementor.getElementControls( model ),
-			editedElementView: view,
-		} );
+			editor = elementor.getPanelView().setPage( 'editor', title, {
+				model: model,
+				controls: elementor.getElementControls( model ),
+				editedElementView: view,
+			} );
 
 		return editor;
 	}

@@ -95,34 +95,37 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		elementor.channels.data
 			.reply( 'dragging:model', model )
+			.reply( 'dragging:view', this.view.children.findByModel( model ) )
 			.reply( 'dragging:parent:view', this.view )
 			.trigger( 'drag:start', model )
 			.trigger( model.get( 'elType' ) + ':drag:start' );
 	},
 
+	// Move section.
 	updateSort: function( ui ) {
-		var model = elementor.channels.data.request( 'dragging:model' ),
+		const element = elementor.channels.data.request( 'dragging:view' ),
 			$childElement = ui.item,
+			at = $childElement.parent().children().index( $childElement ),
 			collection = this.view.collection,
-			newIndex = $childElement.parent().children().index( $childElement ),
-			child = this.view.children.findByModelCid( model.cid );
+		child = this.view.children.findByModelCid( element.model.cid );
 
-		this.view.addChildElement( model.clone(), {
-			at: newIndex,
-			trigger: {
-				beforeAdd: 'drag:before:update',
-				afterAdd: 'drag:after:update',
-			},
-			onBeforeAdd: function() {
-				child._isRendering = true;
-
-				collection.remove( model );
+		$e.run( 'elements/move', {
+			element: elementor.channels.data.request( 'dragging:view' ),
+			target: this.view,
+			options: {
+				at,
+				onBeforeAdd: function() {
+					child._isRendering = true;
+					$e.run( 'elements/delete', {
+						element,
+						options: { trigger: false },
+					} );
+				},
 			},
 		} );
-
-		elementor.saver.setFlagEditorChange( true );
 	},
 
+	// Move Column/Widget.
 	receiveSort: function( event, ui ) {
 		event.stopPropagation();
 
@@ -143,23 +146,16 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var newIndex = ui.item.index(),
-			modelData = model.toJSON( { copyHtmlCache: true } );
+		$e.run( 'elements/move', {
+			element: elementor.channels.data.request( 'dragging:view' ),
+			target: this.view,
+			options: {
+				at: ui.item.index(),
+				onAfterAdd: function() {
+					const element = elementor.channels.data.request( 'dragging:view' );
 
-		this.view.addChildElement( modelData, {
-			at: newIndex,
-			trigger: {
-				beforeAdd: 'drag:before:update',
-				afterAdd: 'drag:after:update',
-			},
-			onAfterAdd: function() {
-				var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
-
-				senderSection.isManualRemoving = true;
-
-				model.destroy();
-
-				senderSection.isManualRemoving = false;
+					$e.run( 'elements/delete', { element } );
+				},
 			},
 		} );
 	},
