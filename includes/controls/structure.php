@@ -50,7 +50,7 @@ class Control_Structure extends Base_Data_Control {
 					{{{ elementor.presetsFactory.getPresetSVG( currentPreset.preset, 233, 72, 5 ).outerHTML }}}
 				</div>
 				<div class="elementor-control-structure-reset">
-					<i class="fa fa-undo" aria-hidden="true"></i>
+					<i class="eicon-undo" aria-hidden="true"></i>
 					<?php echo __( 'Reset Structure', 'elementor' ); ?>
 				</div>
 				<#
