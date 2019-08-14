@@ -785,6 +785,7 @@ class Admin extends App {
 	protected function get_init_settings() {
 		$settings = [
 			'home_url' => home_url(),
+			'settings_url' => Settings::get_url(),
 			'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
 			'i18n' => [
 				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
