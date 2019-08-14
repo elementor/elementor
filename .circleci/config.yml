@@ -54,9 +54,6 @@ workflows:
     - php73-wp-latest-tests
     - php73-wp51-tests
     - php73-wp50-tests
-    - php73-wp49-tests
-    - php73-wp48-tests
-    - php73-wp47-tests
   Build-and-Deploy:
     jobs:
       - build-and-deploy:
@@ -397,30 +394,6 @@ jobs:
     <<: *php_job
     environment:
       - WP_VERSION: "5.0"
-    docker:
-      - image: pojome/php-cli:7.3
-      - image: *mysql_image
-
-  php73-wp49-tests:
-    <<: *php_job
-    environment:
-      - WP_VERSION: "4.9.10"
-    docker:
-      - image: pojome/php-cli:7.3
-      - image: *mysql_image
-
-  php73-wp48-tests:
-    <<: *php_job
-    environment:
-      - WP_VERSION: "4.8.9"
-    docker:
-      - image: pojome/php-cli:7.3
-      - image: *mysql_image
-
-  php73-wp47-tests:
-    <<: *php_job
-    environment:
-      - WP_VERSION: "4.7.13"
     docker:
       - image: pojome/php-cli:7.3
       - image: *mysql_image
