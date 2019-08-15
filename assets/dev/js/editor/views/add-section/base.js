@@ -75,7 +75,7 @@ class AddSectionBase extends Marionette.ItemView {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'elements/paste', {
+						callback: () => $e.run( 'document/elements/paste', {
 							element: elementor.getPreviewView(),
 							at: this.getOption( 'at' ),
 							rebuild: true,
@@ -89,12 +89,12 @@ class AddSectionBase extends Marionette.ItemView {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'elements/copyAll', {} ),
+						callback: () => $e.run( 'document/elements/copyAll', {} ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'elements/empty' ),
+						callback: () => $e.run( 'document/elements/empty' ),
 					},
 				],
 			},
@@ -134,7 +134,7 @@ class AddSectionBase extends Marionette.ItemView {
 			elType: 'section',
 		} );
 
-		$e.run( 'elements/createSection', {
+		$e.run( 'document/elements/createSection', {
 			columns: parsedStructure.columnsCount,
 			structure: selectedStructure,
 			options: jQuery.extend( {}, this.options ),
@@ -150,7 +150,7 @@ class AddSectionBase extends Marionette.ItemView {
 
 		elementor.channels.data.trigger( 'section:before:drop' );
 
-		$e.run( 'elements/createSection', {
+		$e.run( 'document/elements/createSection', {
 			columns: 1,
 			returnValue: true,
 		} ).addElementFromPanel();

@@ -138,7 +138,7 @@ SectionView = BaseElementView.extend( {
 			throw new TypeError( 'The provided structure doesn\'t match the columns count.' );
 		}
 
-		$e.run( 'elements/settings', {
+		$e.run( 'document/elements/settings', {
 			element: this,
 			settings: { structure },
 			options: { external: true },

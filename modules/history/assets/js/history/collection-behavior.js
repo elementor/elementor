@@ -94,7 +94,7 @@ module.exports = Marionette.Behavior.extend( {
 			toView = elementor.getPreviewView();
 		}
 		models.forEach( ( model ) => {
-			$e.run( 'elements/create', {
+			$e.run( 'document/elements/create', {
 				element: toView,
 				data: model,
 				options: { at },
@@ -109,7 +109,7 @@ module.exports = Marionette.Behavior.extend( {
 		models.forEach( ( model ) => {
 			const element = fromView.children.find( ( view ) => view.model.id === model.id );
 
-			$e.run( 'elements/delete', { element } );
+			$e.run( 'document/elements/delete', { element } );
 		} );
 	},
 

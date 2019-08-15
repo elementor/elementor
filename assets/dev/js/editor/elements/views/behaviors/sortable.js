@@ -109,14 +109,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 			collection = this.view.collection,
 		child = this.view.children.findByModelCid( element.model.cid );
 
-		$e.run( 'elements/move', {
+		$e.run( 'document/elements/move', {
 			element: elementor.channels.data.request( 'dragging:view' ),
 			target: this.view,
 			options: {
 				at,
 				onBeforeAdd: function() {
 					child._isRendering = true;
-					$e.run( 'elements/delete', {
+					$e.run( 'document/elements/delete', {
 						element,
 						options: { trigger: false },
 					} );
@@ -146,7 +146,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		$e.run( 'elements/move', {
+		$e.run( 'document/elements/move', {
 			element: elementor.channels.data.request( 'dragging:view' ),
 			target: this.view,
 			options: {
@@ -154,7 +154,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 				onAfterAdd: function() {
 					const element = elementor.channels.data.request( 'dragging:view' );
 
-					$e.run( 'elements/delete', { element } );
+					$e.run( 'document/elements/delete', { element } );
 				},
 			},
 		} );

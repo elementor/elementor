@@ -126,7 +126,7 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-clone',
 						title: elementor.translate( 'duplicate' ),
 						shortcut: controlSign + '+D',
-						callback: () => $e.run( 'elements/duplicate', { element: this } ),
+						callback: () => $e.run( 'document/elements/duplicate', { element: this } ),
 					},
 				],
 			}, {
@@ -136,13 +136,13 @@ BaseElementView = BaseContainer.extend( {
 						name: 'copy',
 						title: elementor.translate( 'copy' ),
 						shortcut: controlSign + '+C',
-						callback: () => $e.run( 'elements/copy', { element: this } ),
+						callback: () => $e.run( 'document/elements/copy', { element: this } ),
 					}, {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
 						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'elements/paste', {
+						callback: () => $e.run( 'document/elements/paste', {
 							element: this._parent,
 							at: this._parent.collection.indexOf( this.model ),
 						} ),
@@ -153,11 +153,11 @@ BaseElementView = BaseContainer.extend( {
 						isEnabled: () => {
 							return !! elementorCommon.storage.get( 'transfer' );
 						},
-						callback: () => $e.run( 'elements/pasteStyle', { element: this } ),
+						callback: () => $e.run( 'document/elements/pasteStyle', { element: this } ),
 					}, {
 						name: 'resetStyle',
 						title: elementor.translate( 'reset_style' ),
-						callback: () => $e.run( 'elements/resetStyle', { element: this } ),
+						callback: () => $e.run( 'document/elements/resetStyle', { element: this } ),
 					},
 				],
 			}, {
@@ -168,7 +168,7 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-trash',
 						title: elementor.translate( 'delete' ),
 						shortcut: '⌦',
-						callback: () => $e.run( 'elements/delete', { element: this } ),
+						callback: () => $e.run( 'document/elements/delete', { element: this } ),
 					},
 				],
 			},
@@ -282,7 +282,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 		};
 
-		$e.run( 'elements/create', {
+		$e.run( 'document/elements/create', {
 			element: this,
 			data,
 			options,
@@ -644,13 +644,13 @@ BaseElementView = BaseContainer.extend( {
 	onDuplicateButtonClick( event ) {
 		event.stopPropagation();
 
-		$e.run( 'elements/duplicate', { element: this } );
+		$e.run( 'document/elements/duplicate', { element: this } );
 	},
 
 	onRemoveButtonClick( event ) {
 		event.stopPropagation();
 
-		$e.run( 'elements/delete', { element: this } );
+		$e.run( 'document/elements/delete', { element: this } );
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`

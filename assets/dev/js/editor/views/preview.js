@@ -43,7 +43,7 @@ Preview = BaseSectionsContainerView.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: ( at ) => $e.run( 'elements/paste', {
+						callback: ( at ) => $e.run( 'document/elements/paste', {
 							element: this,
 							at: at,
 							rebuild: true,
@@ -57,12 +57,12 @@ Preview = BaseSectionsContainerView.extend( {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'elements/copyAll', {} ),
+						callback: () => $e.run( 'document/elements/copyAll', {} ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'elements/empty' ),
+						callback: () => $e.run( 'document/elements/empty' ),
 },
 				],
 			},

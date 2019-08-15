@@ -6,7 +6,7 @@ import environment from '../../../../core/common/assets/js/utils/environment.js'
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
-import Component from './elements/component';
+import Component from './document/elements/component';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -362,7 +362,7 @@ const App = Marionette.Application.extend( {
 					cancel: elementor.translate( 'cancel' ),
 				},
 				onConfirm: function() {
-					$e.run( 'elements/empty', { force: true } );
+					$e.run( 'document/elements/empty', { force: true } );
 				},
 			} );
 

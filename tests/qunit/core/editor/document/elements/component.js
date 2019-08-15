@@ -40,13 +40,13 @@ jQuery( () => {
 
 	QUnit.test( 'Settings', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			columns: 1,
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -55,7 +55,7 @@ jQuery( () => {
 		} );
 
 		// Create button.
-		const eButton = $e.run( 'elements/create', {
+		const eButton = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -72,7 +72,7 @@ jQuery( () => {
 		} );
 
 		// Change button text.
-		$e.run( 'elements/settings', {
+		$e.run( 'document/elements/settings', {
 			element: eButton,
 			settings: {
 				text: 'i test it',
@@ -85,7 +85,7 @@ jQuery( () => {
 
 	QUnit.test( 'Create Section', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
@@ -95,13 +95,13 @@ jQuery( () => {
 
 	QUnit.test( 'Create Column', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			columns: 1,
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -117,12 +117,12 @@ jQuery( () => {
 
 	QUnit.test( 'Create Widget', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -131,7 +131,7 @@ jQuery( () => {
 		} );
 
 		// Create Button.
-		const eButton = $e.run( 'elements/create', {
+		const eButton = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -152,12 +152,12 @@ jQuery( () => {
 
 	QUnit.test( 'Duplicate', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -166,7 +166,7 @@ jQuery( () => {
 		} );
 
 		// Create button.
-		const eButton = $e.run( 'elements/create', {
+		const eButton = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -182,7 +182,7 @@ jQuery( () => {
 		} );
 
 		// Duplicate button.
-		$e.run( 'elements/duplicate', {
+		$e.run( 'document/elements/duplicate', {
 			element: eButton,
 		} );
 
@@ -192,12 +192,12 @@ jQuery( () => {
 
 	QUnit.test( 'Copy & Paste', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -206,7 +206,7 @@ jQuery( () => {
 		} );
 
 		// Create button.
-		const eButton = $e.run( 'elements/create', {
+		const eButton = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -222,12 +222,12 @@ jQuery( () => {
 		} );
 
 		// Copy button.
-		$e.run( 'elements/copy', {
+		$e.run( 'document/elements/copy', {
 			element: eButton,
 		} );
 
 		// Paste button
-		$e.run( 'elements/paste', {
+		$e.run( 'document/elements/paste', {
 			element: eCol,
 		} );
 
@@ -237,12 +237,12 @@ jQuery( () => {
 
 	QUnit.test( 'Paste Style', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -251,7 +251,7 @@ jQuery( () => {
 		} );
 
 		// Create button.
-		const eButtonSimple = $e.run( 'elements/create', {
+		const eButtonSimple = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -267,7 +267,7 @@ jQuery( () => {
 		} );
 
 		// Create button with style.
-		const eButtonStyled = $e.run( 'elements/create', {
+		const eButtonStyled = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -284,12 +284,12 @@ jQuery( () => {
 		} );
 
 		// Copy styled button.
-		$e.run( 'elements/copy', {
+		$e.run( 'document/elements/copy', {
 			element: eButtonStyled,
 		} );
 
 		// Paste style to simple button.
-		$e.run( 'elements/pasteStyle', {
+		$e.run( 'document/elements/pasteStyle', {
 			element: eButtonSimple,
 		} );
 
@@ -299,12 +299,12 @@ jQuery( () => {
 
 	QUnit.test( 'Reset Style', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -313,7 +313,7 @@ jQuery( () => {
 		} );
 
 		// Create button with style.
-		const eButtonStyled = $e.run( 'elements/create', {
+		const eButtonStyled = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -330,7 +330,7 @@ jQuery( () => {
 		} );
 
 		// Paste style to simple button.
-		$e.run( 'elements/resetStyle', {
+		$e.run( 'document/elements/resetStyle', {
 			element: eButtonStyled,
 		} );
 
@@ -340,12 +340,12 @@ jQuery( () => {
 
 	QUnit.test( 'Move', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
 		// Create column 1.
-		const eCol1 = $e.run( 'elements/create', {
+		const eCol1 = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -354,7 +354,7 @@ jQuery( () => {
 		} );
 
 		// Create column 2.
-		const eCol2 = $e.run( 'elements/create', {
+		const eCol2 = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -363,7 +363,7 @@ jQuery( () => {
 		} );
 
 		// Create button at column1.
-		const eButton = $e.run( 'elements/create', {
+		const eButton = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -380,7 +380,7 @@ jQuery( () => {
 		} );
 
 		// Move button to eCol2.
-		$e.run( 'elements/move', {
+		$e.run( 'document/elements/move', {
 			element: eButton,
 			target: eCol2,
 		} );
@@ -392,12 +392,12 @@ jQuery( () => {
 
 	QUnit.test( 'Delete', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -406,7 +406,7 @@ jQuery( () => {
 		} );
 
 		// Create button 1.
-		const eButton1 = $e.run( 'elements/create', {
+		const eButton1 = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -423,7 +423,7 @@ jQuery( () => {
 		} );
 
 		// Create button 2.
-		const eButton2 = $e.run( 'elements/create', {
+		const eButton2 = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -440,7 +440,7 @@ jQuery( () => {
 		} );
 
 		// Delete button 1.
-		$e.run( 'elements/delete', {
+		$e.run( 'document/elements/delete', {
 			element: eButton1,
 		} );
 
@@ -448,7 +448,7 @@ jQuery( () => {
 		assert.equals( eCol.collection.length, 1 );
 
 		// Delete button 2.
-		$e.run( 'elements/delete', {
+		$e.run( 'document/elements/delete', {
 			element: eButton2,
 		} );
 
@@ -459,12 +459,12 @@ jQuery( () => {
 	QUnit.test( 'Copy All', ( assert ) => {
 		setTimeout( () => {
 			// Create section.
-			const eSection = $e.run( 'elements/createSection', {
+			const eSection = $e.run( 'document/elements/createSection', {
 				returnValue: true,
 			} );
 
 			// Create column.
-			const eCol = $e.run( 'elements/create', {
+			const eCol = $e.run( 'document/elements/create', {
 				element: eSection,
 				options: {
 					edit: false,
@@ -473,7 +473,7 @@ jQuery( () => {
 			} );
 
 			// Create button 1.
-			const eButton1 = $e.run( 'elements/create', {
+			const eButton1 = $e.run( 'document/elements/create', {
 				data: {
 					elType: 'widget',
 					widgetType: 'button',
@@ -490,7 +490,7 @@ jQuery( () => {
 			} );
 
 			// Create button 2.
-			const eButton2 = $e.run( 'elements/create', {
+			const eButton2 = $e.run( 'document/elements/create', {
 				data: {
 					elType: 'widget',
 					widgetType: 'button',
@@ -507,10 +507,10 @@ jQuery( () => {
 			} );
 
 			// Copy all.
-			$e.run( 'elements/copyAll' );
+			$e.run( 'document/elements/copyAll' );
 
 			// Paste.
-			$e.run( 'elements/paste', {
+			$e.run( 'document/elements/paste', {
 				element: elementor.getPreviewView(),
 				rebuild: true,
 			} );
@@ -523,12 +523,12 @@ jQuery( () => {
 
 	QUnit.test( 'Empty', ( assert ) => {
 		// Create section.
-		const eSection = $e.run( 'elements/createSection', {
+		const eSection = $e.run( 'document/elements/createSection', {
 			returnValue: true,
 		} );
 
 		// Create column.
-		const eCol = $e.run( 'elements/create', {
+		const eCol = $e.run( 'document/elements/create', {
 			element: eSection,
 			options: {
 				edit: false,
@@ -537,7 +537,7 @@ jQuery( () => {
 		} );
 
 		// Create button 1.
-		const eButton1 = $e.run( 'elements/create', {
+		const eButton1 = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -554,7 +554,7 @@ jQuery( () => {
 		} );
 
 		// Create button 2.
-		const eButton2 = $e.run( 'elements/create', {
+		const eButton2 = $e.run( 'document/elements/create', {
 			data: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -571,7 +571,7 @@ jQuery( () => {
 		} );
 
 		// Remove all.
-		$e.run( 'elements/empty', { force: true } );
+		$e.run( 'document/elements/empty', { force: true } );
 
 		// Check.
 		assert.equals( elementor.getPreviewView().collection.length, 0 );

@@ -196,7 +196,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		$e.run( 'elements/settings', {
+		$e.run( 'document/elements/settings', {
 			element: this.view,
 			settings: {
 				[ this.getEditingSettingKey() ]: this.editor.getContent(),
