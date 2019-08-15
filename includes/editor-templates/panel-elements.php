@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i class="eicon-loading eicon-animation-spin"></i>
 	</div>
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
-		<div id="elementor-panel-elements-navigation-all" class="elementor-panel-navigation-tab elementor-active" data-view="categories"><?php echo __( 'Elements', 'elementor' ); ?></div>
-		<div id="elementor-panel-elements-navigation-global" class="elementor-panel-navigation-tab" data-view="global"><?php echo __( 'Global', 'elementor' ); ?></div>
+		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="categories"><?php echo __( 'Elements', 'elementor' ); ?></div>
+		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo __( 'Global', 'elementor' ); ?></div>
 	</div>
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-panel-element-search">
 	<label for="elementor-panel-elements-search-input" class="screen-reader-text"><?php echo __( 'Search Widget:', 'elementor' ); ?></label>
-	<input type="search" id="elementor-panel-elements-search-input" placeholder="<?php esc_attr_e( 'Search Widget...', 'elementor' ); ?>" />
+	<input type="search" id="elementor-panel-elements-search-input" placeholder="<?php esc_attr_e( 'Search Widget...', 'elementor' ); ?>" autocomplete="off"/>
 	<i class="eicon-search" aria-hidden="true"></i>
 </script>
 

@@ -693,10 +693,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	save() {
-		const model = this.model;
-
-		elementor.templates.startModal( {
-			onReady: () => elementor.templates.getLayout().showSaveTemplateView( model ),
+		elementorCommon.route.to( 'library/save-template', {
+			model: this.model,
 		} );
 	},
 
@@ -760,7 +758,7 @@ BaseElementView = BaseContainer.extend( {
 		const model = this.getEditModel(),
 			panel = elementor.getPanelView();
 
-		if ( 'editor' === panel.getCurrentPageName() && panel.getCurrentPageView().model === model ) {
+		if ( elementorCommon.route.isPartOf( 'panel/editor' ) && panel.getCurrentPageView().model === model ) {
 			return;
 		}
 
@@ -768,7 +766,10 @@ BaseElementView = BaseContainer.extend( {
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 
-		panel.openEditor( model, this );
+		elementorCommon.commands.run( 'panel/editor/open', {
+			model: model,
+			view: this,
+		} );
 	},
 
 	onDuplicateButtonClick( event ) {

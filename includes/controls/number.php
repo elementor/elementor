@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -46,6 +48,9 @@ class Control_Number extends Base_Data_Control {
 			'step' => '',
 			'placeholder' => '',
 			'title' => '',
+			'dynamic' => [
+				'categories' => [ TagsModule::NUMBER_CATEGORY ],
+			],
 		];
 	}
 
@@ -65,7 +70,7 @@ class Control_Number extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input id="<?php echo $control_uid; ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" class="tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
+				<input id="<?php echo $control_uid; ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" class="tooltip-target elementor-control-tag-area" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
 			</div>
 		</div>
 		<# if ( data.description ) { #>

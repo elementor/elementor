@@ -128,7 +128,14 @@ class Manager {
 		if ( ! $source_instance instanceof Source_Base ) {
 			return new \WP_Error( 'wrong_instance_source' );
 		}
-		$this->_registered_sources[ $source_instance->get_id() ] = $source_instance;
+
+		$source_id = $source_instance->get_id();
+
+		if ( isset( $this->_registered_sources[ $source_id ] ) ) {
+			return new \WP_Error( 'source_exists' );
+		}
+
+		$this->_registered_sources[ $source_id ] = $source_instance;
 
 		return true;
 	}
@@ -139,6 +146,8 @@ class Manager {
 	 * Remove an existing template sources from the list of registered template
 	 * sources.
 	 *
+	 * @deprecated 2.7.0
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
@@ -147,12 +156,6 @@ class Manager {
 	 * @return bool Whether the source was unregistered.
 	 */
 	public function unregister_source( $id ) {
-		if ( ! isset( $this->_registered_sources[ $id ] ) ) {
-			return false;
-		}
-
-		unset( $this->_registered_sources[ $id ] );
-
 		return true;
 	}
 

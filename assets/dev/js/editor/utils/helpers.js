@@ -158,6 +158,11 @@ helpers = {
 			return htmlTag;
 		}
 		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
+		if ( 'object' === returnType ) {
+			return {
+				rendered: false,
+			};
+		}
 	},
 
 	isIconMigrated( settings, controlName ) {

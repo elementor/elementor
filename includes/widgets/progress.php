@@ -125,6 +125,9 @@ class Widget_Progress extends Widget_Base {
 					'size' => 50,
 					'unit' => '%',
 				],
+				'dynamic' => [
+					'active' => true,
+				],
 				'label_block' => true,
 			]
 		);
@@ -291,6 +294,7 @@ class Widget_Progress extends Widget_Base {
 
 	/**
 	 * Render progress widget output on the frontend.
+	 * Make sure value does no exceed 100%.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -300,12 +304,17 @@ class Widget_Progress extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$progress_percentage = is_numeric( $settings['percent']['size'] ) ? $settings['percent']['size'] : '0';
+		if ( 100 < $progress_percentage ) {
+			$progress_percentage = 100;
+		}
+
 		$this->add_render_attribute( 'wrapper', [
 			'class' => 'elementor-progress-wrapper',
 			'role' => 'progressbar',
 			'aria-valuemin' => '0',
 			'aria-valuemax' => '100',
-			'aria-valuenow' => $settings['percent']['size'],
+			'aria-valuenow' => $progress_percentage,
 			'aria-valuetext' => $settings['inner_text'],
 		] );
 
@@ -315,7 +324,7 @@ class Widget_Progress extends Widget_Base {
 
 		$this->add_render_attribute( 'progress-bar', [
 			'class' => 'elementor-progress-bar',
-			'data-max' => $settings['percent']['size'],
+			'data-max' => $progress_percentage,
 		] );
 
 		$this->add_render_attribute( 'inner_text', [
@@ -332,7 +341,7 @@ class Widget_Progress extends Widget_Base {
 			<div <?php echo $this->get_render_attribute_string( 'progress-bar' ); ?>>
 				<span <?php echo $this->get_render_attribute_string( 'inner_text' ); ?>><?php echo $settings['inner_text']; ?></span>
 				<?php if ( 'hide' !== $settings['display_percentage'] ) { ?>
-					<span class="elementor-progress-percentage"><?php echo $settings['percent']['size']; ?>%</span>
+					<span class="elementor-progress-percentage"><?php echo $progress_percentage; ?>%</span>
 				<?php } ?>
 			</div>
 		</div>
@@ -350,12 +359,17 @@ class Widget_Progress extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<#
+		let progress_percentage = 0;
+		if ( ! isNaN( settings.percent.size ) ) {
+			progress_percentage = 100 < settings.percent.size ? 100 : settings.percent.size;
+		}
+
 		view.addRenderAttribute( 'progressWrapper', {
 			'class': [ 'elementor-progress-wrapper', 'progress-' + settings.progress_type ],
 			'role': 'progressbar',
 			'aria-valuemin': '0',
 			'aria-valuemax': '100',
-			'aria-valuenow': settings.percent.size,
+			'aria-valuenow': progress_percentage,
 			'aria-valuetext': settings.inner_text
 		} );
 
@@ -369,10 +383,10 @@ class Widget_Progress extends Widget_Base {
 			<span class="elementor-title">{{{ settings.title }}}</span><#
 		} #>
 		<div {{{ view.getRenderAttributeString( 'progressWrapper' ) }}}>
-			<div class="elementor-progress-bar" data-max="{{ settings.percent.size }}">
+			<div class="elementor-progress-bar" data-max="{{ progress_percentage }}">
 				<span {{{ view.getRenderAttributeString( 'inner_text' ) }}}>{{{ settings.inner_text }}}</span>
 				<# if ( 'hide' !== settings.display_percentage ) { #>
-					<span class="elementor-progress-percentage">{{{ settings.percent.size }}}%</span>
+					<span class="elementor-progress-percentage">{{{ progress_percentage }}}%</span>
 				<# } #>
 			</div>
 		</div>
