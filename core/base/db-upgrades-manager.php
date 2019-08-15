@@ -2,7 +2,6 @@
 
 namespace Elementor\Core\Base;
 
-use Elementor\Core\Upgrade\Updater;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
