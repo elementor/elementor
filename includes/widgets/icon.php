@@ -333,8 +333,15 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => __( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'deg' ],
 				'default' => [
 					'size' => 0,
+					'unit' => 'deg',
+				],
+				'tablet_default' => [
+					'unit' => 'deg',
+				],
+				'mobile_default' => [
 					'unit' => 'deg',
 				],
 				'selectors' => [

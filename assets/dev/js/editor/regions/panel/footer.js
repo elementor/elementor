@@ -87,19 +87,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showSettingsPage: function() {
-		const panel = elementor.getPanelView();
-
-		if ( 'page_settings' === panel.getCurrentPageName() ) {
-			return;
-		}
-
-		this.ui.settings.addClass( 'elementor-open' );
-
-		panel.setPage( 'page_settings' );
-
-		panel.getCurrentPageView().on( 'destroy', () => {
-			this.ui.settings.removeClass( 'elementor-open' );
-		} );
+		elementorCommon.route.to( 'panel/page-settings/settings' );
 	},
 
 	onMenuButtonsClick: function( event ) {
@@ -120,7 +108,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		this.showSettingsPage();
+		elementorCommon.route.to( 'panel/page-settings/settings' );
 	},
 
 	onDeviceModeChange: function() {
@@ -143,24 +131,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSaveTemplateClick: function() {
-		elementor.templates.startModal( {
-			onReady: function() {
-				elementor.templates.getLayout().showSaveTemplateView();
-			},
-		} );
+		elementorCommon.route.to( 'library/save-template' );
 	},
 
 	onHistoryClick: function() {
-		if ( 'historyPage' !== elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().setPage( 'historyPage' );
-		}
+		elementorCommon.route.to( 'panel/history/actions' );
 	},
 
 	onNavigatorClick: function() {
-		if ( elementor.navigator.isOpen() ) {
-			elementor.navigator.close();
-		} else {
-			elementor.navigator.open();
-		}
+		elementorCommon.commands.run( 'navigator/toggle' );
 	},
 } );
