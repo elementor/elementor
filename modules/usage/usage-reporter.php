@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor system report handler class responsible for generating a report for
  * the user.
- *
- * @since 1.0.0
  */
 class Usage_Reporter extends Base_Reporter {
 
@@ -64,7 +62,7 @@ class Usage_Reporter extends Base_Reporter {
 				$usage .= $element . ': ' . $count . PHP_EOL;
 			}
 
-			$usage .= '</td></tr>';
+			$usage .= '</td>';
 		}
 
 		$usage .= '</tr>';

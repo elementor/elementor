@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor usage module.
  *
  * Elementor usage module handler class is responsible for registering and
- * managing Elementor usage modules.
+ * managing Elementor usage data.
  *
  */
 class Module extends BaseModule {
@@ -73,6 +73,7 @@ class Module extends BaseModule {
 			// Sort by key.
 			ksort( $elements );
 
+			// Replace element type with element title.
 			foreach ( $elements as $element_type => $data ) {
 				unset( $elements[ $element_type ] );
 
@@ -154,7 +155,6 @@ class Module extends BaseModule {
 
 		if ( $is_public_unpublish || $is_private_unpublish ) {
 			$this->remove_from_global( $document );
-
 		}
 
 		$is_public_publish = 'publish' !== $old_status && 'publish' === $new_status;
@@ -201,6 +201,8 @@ class Module extends BaseModule {
 	 * @param int $offset
 	 */
 	public function recalc_usage( $limit = -1, $offset = 0 ) {
+		// While requesting recalc_usage we delete all the old data.
+		// If you do it by steps, you can use offset, so we do not need remove all the data, each request.
 		if ( 0 === $offset ) {
 			delete_option( self::OPTION_NAME );
 		}
@@ -210,7 +212,7 @@ class Module extends BaseModule {
 		$query = new WP_Query( [
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
-			'post_status' => 'publish',
+			'post_status' => [ 'publish', 'private' ],
 			'posts_per_page' => $limit,
 			'offset' => $offset,
 		] );
@@ -456,6 +458,7 @@ class Module extends BaseModule {
 			$settings_controls = $element['settings'];
 			$element_ref = &$usage[ $type ];
 
+			// Add dynamic values.
 			$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
 
 			$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
