@@ -714,9 +714,6 @@ const App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
-		NProgress.start();
-		NProgress.inc( 0.2 );
-
 		this.config = ElementorConfig;
 
 		Backbone.Radio.DEBUG = false;
@@ -956,10 +953,4 @@ const App = Marionette.Application.extend( {
 	},
 } );
 
-window.elementor = new App();
-
-if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
-	elementor.start();
-}
-
-module.exports = elementor;
+module.exports = App;
