@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Testing\Modules\Usage;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
 
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Usage\Module;
