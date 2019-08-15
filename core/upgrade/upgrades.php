@@ -2,6 +2,7 @@
 namespace Elementor\Core\Upgrade;
 
 use Elementor\Icons_Manager;
+use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -559,7 +560,7 @@ class Upgrades {
 	/**
 	 *  Update database to separate page from post.
 	 */
-	public static function _v_2_6_7_rename_document_types_to_wp() {
+	public static function _v_2_7_0_rename_document_types_to_wp() {
 		global $wpdb;
 
 		$wpdb->query( "UPDATE $wpdb->postmeta SET meta_value ='wp-page'
@@ -578,8 +579,20 @@ class Upgrades {
 	/**
 	 * Format was changed.
 	 */
-	public static function _v_2_6_6_remove_old_usage_data() {
+	public static function _v_2_7_0_remove_old_usage_data() {
 		delete_option( \Elementor\Modules\Usage\Module::OPTION_NAME );
 		delete_post_meta_by_key( \Elementor\Modules\Usage\Module::META_KEY );
+	}
+
+	/**
+	 * Recalc usage.
+	 *
+	 * @param Updater $updater
+	 */
+	public static function _v_2_7_0_recalc_usage_data( $updater ) {
+		/** @var Module $module */
+		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
+
+		$module->recalc_usage( $updater->get_limit(), $updater->get_current_offset() );
 	}
 }
