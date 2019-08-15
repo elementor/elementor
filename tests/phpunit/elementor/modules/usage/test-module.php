@@ -5,8 +5,10 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
 
-class Elementor_Test_Module extends Elementor_Test_Base {
+class Test_Module extends Elementor_Test_Base {
 	/**
 	 * @var Document
 	 */
@@ -357,12 +359,8 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	public function test_dynamic_control() {
 		$doc_name = self::$document->get_name();
 
-		// Implant dynamic tags.
-		require_once( __DIR__ . '/dynamic-tags/title.php' );
-		require_once( __DIR__ . '/dynamic-tags/link.php' );
-
-		Plugin::$instance->dynamic_tags->register_tag( new \Elementor\Testing\Modules\Usage\DynamicTags\Title() );
-		Plugin::$instance->dynamic_tags->register_tag( new \Elementor\Testing\Modules\Usage\DynamicTags\Link() );
+		Plugin::$instance->dynamic_tags->register_tag( new Title() );
+		Plugin::$instance->dynamic_tags->register_tag( new Link() );
 
 		// Document with element that includes control with dynamic settings.
 		$document = self::$document_mock_without_elements;

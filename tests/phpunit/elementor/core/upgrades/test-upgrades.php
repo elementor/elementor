@@ -8,9 +8,9 @@ use Elementor\Core\Upgrade\Upgrades;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
-use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Elementor_Test_Module;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
 
-class Elementor_Test_Upgrades extends Elementor_Test_Base {
+class Test_Upgrades extends Elementor_Test_Base {
 
 	public function test_v_2_7_0_rename_document_types_to_wp() {
 		// Create a post with post types (post, page).
@@ -120,6 +120,6 @@ class Elementor_Test_Upgrades extends Elementor_Test_Base {
 		$document = $this->create_post();
 
 		// Save document.
-		$document->save( Elementor_Test_Module::$document_mock_default );
+		$document->save( Test_Module::$document_mock_default );
 	}
 }

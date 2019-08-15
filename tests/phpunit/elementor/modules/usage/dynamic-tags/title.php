@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Testing\Modules\Usage\DynamicTags;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags;
 
 use Elementor\Core\DynamicTags\Base_Tag;
 
