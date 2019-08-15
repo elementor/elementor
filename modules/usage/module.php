@@ -201,8 +201,8 @@ class Module extends BaseModule {
 	 * @param int $offset
 	 */
 	public function recalc_usage( $limit = -1, $offset = 0 ) {
-		// While requesting recalc_usage we delete all the old data.
-		// If you do it by steps, you can use offset, so we do not need remove all the data, each request.
+		// While requesting recalc_usage, data should be deleted.
+		// if its in a batch the data should be deleted only on the first batch.
 		if ( 0 === $offset ) {
 			delete_option( self::OPTION_NAME );
 		}
