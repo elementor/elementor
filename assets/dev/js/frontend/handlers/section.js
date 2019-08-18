@@ -5,18 +5,13 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 				swiperContainer: '.elementor-section-background-slideshow',
 				swiperSlides: '.swiper-slide',
 			},
+			classes: {
+				swiperContainer: 'elementor-section-background-slideshow swiper-container',
+				swiperWrapper: 'swiper-wrapper',
+				swiperSlide: 'elementor-section-background-slideshow__slide swiper-slide',
+				swiperSlideInner: 'elementor-section-background-slideshow__slide__image',
+			},
 		};
-	}
-
-	getDefaultElements() {
-		const selectors = this.getSettings( 'selectors' ),
-			elements = {
-				$backgroundSlideShowContainer: this.$element.find( selectors.swiperContainer ),
-			};
-
-		elements.$slides = elements.$backgroundSlideShowContainer.find( selectors.swiperSlides );
-
-		return elements;
 	}
 
 	getSwiperOptions() {
@@ -63,7 +58,42 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 		return this.elements.$slides.length;
 	}
 
+	buildSwiperElements() {
+		const classes = this.getSettings( 'classes' ),
+			elementSettings = this.getElementSettings();
+
+		const $container = jQuery( '<div>', { class: classes.swiperContainer } ),
+			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } );
+
+		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
+			const $slide = jQuery( '<div>', { class: classes.swiperSlide } ),
+				$slidebg = jQuery( '<div>', {
+				class: classes.swiperSlideInner,
+				style: 'background-image: url("' + slide.url + '");',
+			} );
+
+			$slide.append( $slidebg );
+			$wrapper.append( $slide );
+		} );
+
+		$container.append( $wrapper );
+
+		this.$element.prepend( $container );
+	}
+
+	getSlideshowElements() {
+		const selectors = this.getSettings( 'selectors' );
+
+		this.elements = {
+			$backgroundSlideShowContainer: this.$element.find( selectors.swiperContainer ),
+		};
+
+		this.elements.$slides = this.elements.$backgroundSlideShowContainer.find( selectors.swiperSlides );
+	}
+
 	initSlider() {
+		this.getSlideshowElements();
+
 		const $slider = this.elements.$backgroundSlideShowContainer;
 
 		if ( ! $slider.length ) {
@@ -77,13 +107,43 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 		this.swiper = new Swiper( $slider, this.getSwiperOptions() );
 	}
 
+	run() {
+		const elementSettings = this.getElementSettings();
+
+		if ( 'slideshow' === elementSettings.background_background ) {
+			this.buildSwiperElements();
+
+			this.initSlider();
+		} else {
+			this.onDestroy();
+		}
+	}
+
 	onInit() {
 		super.onInit();
 
 		const elementSettings = this.getElementSettings();
 
 		if ( 'slideshow' === elementSettings.background_background ) {
-			this.initSlider();
+			this.run();
+		}
+	}
+
+	onDestroy() {
+		super.onDestroy();
+
+		const $slider = this.elements.$backgroundSlideShowContainer;
+
+		if ( this.swiper || $slider ) {
+			this.swiper.destroy();
+
+			$slider.remove();
+		}
+	}
+
+	onElementChange( propertyName ) {
+		if ( 'background_background' === propertyName ) {
+			this.run();
 		}
 	}
 }
