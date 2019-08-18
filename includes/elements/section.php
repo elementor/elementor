@@ -585,9 +585,6 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Background Overlay', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => [
-					'background_background' => [ 'classic', 'gradient', 'video' ],
-				],
 			]
 		);
 
@@ -1352,34 +1349,15 @@ class Element_Section extends Element_Base {
 	protected function _content_template() {
 		?>
 		<#
-			if ( settings.background_video_link ) {
-				let videoAttributes = 'autoplay muted playsinline';
-				if ( ! settings.background_play_once ) {
-					videoAttributes += ' loop';
-				}
+		if ( settings.background_video_link ) {
+			let videoAttributes = 'autoplay muted playsinline';
+			if ( ! settings.background_play_once ) {
+				videoAttributes += ' loop';
+			}
 		#>
 			<div class="elementor-background-video-container elementor-hidden-phone">
 				<div class="elementor-background-video-embed"></div>
 				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
-			</div>
-		<# } #>
-
-		<#
-		if ( 'slideshow' === settings.background_background ) {
-			let kenClass = '';
-
-			if ( '' != slide.background_ken_burns ) {
-			kenClass = ' elementor-ken-' + slide.zoom_direction;
-			}
-		#>
-			<div class="elementor-section-background-slideshow swiper-container">
-				<div class="swiper-wrapper">
-					<# jQuery.each( settings.background_slideshow_gallery, function( index, attachment ) { #>
-					<div class="elementor-section-background-slideshow__slide swiper-slide{{ kenClass }}">
-						<img class="elementor-section-background-slideshow__slide__image"  src="{{ attachment.url }}" />
-					</div>
-					<# } ); #>
-				</div>
 			</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
