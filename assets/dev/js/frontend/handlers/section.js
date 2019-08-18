@@ -26,6 +26,7 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 			autoplay: {
 				delay: elementSettings.background_slideshow_autoplay_speed,
 				disableOnInteraction: false,
+				stopOnLastSlide: 'yes' !== elementSettings.background_slideshow_loop,
 			},
 		};
 
@@ -38,9 +39,10 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 				swiperOptions.effect = 'fade';
 				break;
 			case 'slide_right':
+				swiperOptions.initialSlide = this.getSlidesCount() - 1;
+				swiperOptions.autoplay.reverseDirection = true;
 				break;
 			case 'slide_left':
-				swiperOptions.autoplay.reverseDirection = true;
 				break;
 			case 'slide_up':
 				swiperOptions.direction = 'vertical';
