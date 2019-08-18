@@ -44,20 +44,14 @@ class Control_Structure extends Base_Data_Control {
 		?>
 		<div class="elementor-control-field">
 			<div class="elementor-control-input-wrapper">
-				<div class="elementor-control-structure-title"><?php echo __( 'Structure', 'elementor' ); ?></div>
 				<# var currentPreset = elementor.presetsFactory.getPresetByStructure( data.controlValue ); #>
 				<div class="elementor-control-structure-preset elementor-control-structure-current-preset">
 					{{{ elementor.presetsFactory.getPresetSVG( currentPreset.preset, 233, 72, 5 ).outerHTML }}}
-				</div>
-				<div class="elementor-control-structure-reset">
-					<i class="fa fa-undo" aria-hidden="true"></i>
-					<?php echo __( 'Reset Structure', 'elementor' ); ?>
 				</div>
 				<#
 				var morePresets = getMorePresets();
 
 				if ( morePresets.length > 1 ) { #>
-					<div class="elementor-control-structure-more-presets-title"><?php echo __( 'More Structures', 'elementor' ); ?></div>
 					<div class="elementor-control-structure-more-presets">
 						<# _.each( morePresets, function( preset ) { #>
 							<div class="elementor-control-structure-preset-wrapper">
@@ -71,7 +65,12 @@ class Control_Structure extends Base_Data_Control {
 					</div>
 				<# } #>
 			</div>
-		</div>
+            <div class="elementor-control-structure-reset">
+                <i class="eicon-undo" aria-hidden="true"></i>
+				<?php echo __( 'Reset', 'elementor' ); ?>
+            </div>
+
+        </div>
 
 		<# if ( data.description ) { #>
 			<div class="elementor-control-field-description">{{{ data.description }}}</div>
