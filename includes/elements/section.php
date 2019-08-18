@@ -516,7 +516,7 @@ class Element_Section extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'types' => [ 'classic', 'gradient', 'video' ],
+				'types' => [ 'classic', 'gradient', 'video', 'slideshow' ],
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -1361,6 +1361,25 @@ class Element_Section extends Element_Base {
 			<div class="elementor-background-video-container elementor-hidden-phone">
 				<div class="elementor-background-video-embed"></div>
 				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
+			</div>
+		<# } #>
+
+		<#
+		if ( 'slideshow' === settings.background_background ) {
+			let kenClass = '';
+
+			if ( '' != slide.background_ken_burns ) {
+			kenClass = ' elementor-ken-' + slide.zoom_direction;
+			}
+		#>
+			<div class="elementor-section-background-slideshow swiper-container">
+				<div class="swiper-wrapper">
+					<# jQuery.each( settings.background_slideshow_gallery, function( index, attachment ) { #>
+					<div class="elementor-section-background-slideshow__slide swiper-slide{{ kenClass }}">
+						<img class="elementor-section-background-slideshow__slide__image"  src="{{ attachment.url }}" />
+					</div>
+					<# } ); #>
+				</div>
 			</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
