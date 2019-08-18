@@ -159,6 +159,10 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	run() {
 		const elementSettings = this.getElementSettings();
 
+		if ( ! elementSettings.background_play_on_mobile && 'mobile' === elementorFrontend.getCurrentDeviceMode() ) {
+			return;
+		}
+
 		if ( 'video' === elementSettings.background_background && elementSettings.background_video_link ) {
 			this.activate();
 		} else {
@@ -394,7 +398,5 @@ export default ( $scope ) => {
 		elementorFrontend.elementsHandler.addHandler( HandlesPosition, { $element: $scope } );
 	}
 
-	if ( 'mobile' !== elementorFrontend.getCurrentDeviceMode() ) {
-		elementorFrontend.elementsHandler.addHandler( BackgroundVideo, { $element: $scope } );
-	}
+	elementorFrontend.elementsHandler.addHandler( BackgroundVideo, { $element: $scope } );
 };
