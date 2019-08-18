@@ -533,6 +533,9 @@ class Element_Section extends Element_Base {
 					'play_once' => [
 						'frontend_available' => true,
 					],
+					'play_on_mobile' => [
+						'frontend_available' => true,
+					],
 				],
 			]
 		);
@@ -1352,13 +1355,20 @@ class Element_Section extends Element_Base {
 	protected function _content_template() {
 		?>
 		<#
-			if ( settings.background_video_link ) {
-				let videoAttributes = 'autoplay muted playsinline';
-				if ( ! settings.background_play_once ) {
-					videoAttributes += ' loop';
-				}
+        if ( settings.background_video_link ) {
+            let videoAttributes = 'autoplay muted playsinline';
+
+            if ( ! settings.background_play_once ) {
+                videoAttributes += ' loop';
+            }
+
+            view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+
+            if ( ! settings.background_play_on_mobile ) {
+                view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+            }
 		#>
-			<div class="elementor-background-video-container elementor-hidden-phone">
+			<div {{ view.getRenderAttributeString( 'backgroundVideoContainer' ) }}>
 				<div class="elementor-background-video-embed"></div>
 				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
 			</div>
@@ -1389,8 +1399,14 @@ class Element_Section extends Element_Base {
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
 					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
+
+				    $this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+
+					if ( ! $settings[ 'background_play_on_mobile' ] ) {
+						$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+					}
 					?>
-					<div class="elementor-background-video-container elementor-hidden-phone">
+					<div <?php echo $this->get_render_attribute_string( 'background-video-container' ); ?>>
 						<?php if ( $video_properties ) : ?>
 							<div class="elementor-background-video-embed"></div>
 							<?php
