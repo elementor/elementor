@@ -1355,18 +1355,18 @@ class Element_Section extends Element_Base {
 	protected function _content_template() {
 		?>
 		<#
-        if ( settings.background_video_link ) {
-            let videoAttributes = 'autoplay muted playsinline';
+		if ( settings.background_video_link ) {
+			let videoAttributes = 'autoplay muted playsinline';
 
-            if ( ! settings.background_play_once ) {
-                videoAttributes += ' loop';
-            }
+			if ( ! settings.background_play_once ) {
+				videoAttributes += ' loop';
+			}
 
-            view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
-            if ( ! settings.background_play_on_mobile ) {
-                view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
-            }
+			if ( ! settings.background_play_on_mobile ) {
+				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+			}
 		#>
 			<div {{ view.getRenderAttributeString( 'backgroundVideoContainer' ) }}>
 				<div class="elementor-background-video-embed"></div>
@@ -1400,9 +1400,9 @@ class Element_Section extends Element_Base {
 				if ( $settings['background_video_link'] ) :
 					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 
-				    $this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+					$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
-					if ( ! $settings[ 'background_play_on_mobile' ] ) {
+					if ( ! $settings['background_play_on_mobile'] ) {
 						$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
 					}
 					?>
