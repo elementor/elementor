@@ -620,16 +620,19 @@ class Group_Control_Background extends Group_Control_Base {
 			'frontend_available' => true,
 		];
 
+		$slide_start = ! is_rtl() ? __( 'Slide Right', 'elementor' ) : __( 'Slide Left', 'elementor' );
+		$slide_end = is_rtl() ? __( 'Slide Right', 'elementor' ) : __( 'Slide Left', 'elementor' );
+
 		$fields['slideshow_content_animation'] = [
-			'label' => __( 'Images Animation', 'elementor-pro' ),
+			'label' => __( 'Image Animation', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'fade',
 			'options' => [
-				'fade' => __( 'Fade', 'elementor-pro' ),
-				'slide_down' => __( 'Slide Down', 'elementor-pro' ),
-				'slide_up' => __( 'Slide Up', 'elementor-pro' ),
-				'slide_right' => __( 'Slide Right', 'elementor-pro' ),
-				'slide_left' => __( 'Slide Left', 'elementor-pro' ),
+				'fade' => __( 'Fade', 'elementor' ),
+				'slide_down' => __( 'Slide Down', 'elementor' ),
+				'slide_up' => __( 'Slide Up', 'elementor' ),
+				'slide_right' => $slide_start,
+				'slide_left' => $slide_end,
 			],
 			'condition' => [
 				'background' => [ 'slideshow' ],
@@ -651,8 +654,8 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => __( 'Zoom Direction', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
-				'in' => __( 'In', 'elementor-pro' ),
-				'out' => __( 'Out', 'elementor-pro' ),
+				'in' => __( 'In', 'elementor' ),
+				'out' => __( 'Out', 'elementor' ),
 			],
 			'condition' => [
 				'background' => [ 'slideshow' ],
@@ -664,6 +667,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['slideshow_loop'] = [
 			'label' => __( 'Infinite Loop', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
+			'default' => true,
 			'condition' => [
 				'background' => [ 'slideshow' ],
 			],
@@ -672,7 +676,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['slideshow_autoplay_speed'] = [
-			'label' => __( 'Autoplay Speed', 'elementor-pro' ),
+			'label' => __( 'Autoplay Speed', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'default' => 5000,
 			'condition' => [
@@ -682,7 +686,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['slideshow_animation_speed'] = [
-			'label' => __( 'Animation Speed', 'elementor-pro' ),
+			'label' => __( 'Animation Speed', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'default' => 500,
 			'condition' => [
