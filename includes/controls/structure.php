@@ -93,6 +93,7 @@ class Control_Structure extends Base_Data_Control {
 		return [
 			'separator' => 'none',
 			'label_block' => true,
+			'show_label' => false,
 		];
 	}
 }
