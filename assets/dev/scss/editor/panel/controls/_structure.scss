@@ -21,7 +21,6 @@
 	}
 
 	.elementor-control-structure-current-preset {
-		margin-top: 15px;
 
 		// For Safari
 		svg {
@@ -41,7 +40,8 @@
 		}
 	}
 
-	.elementor-control-structure-title, .elementor-control-structure-more-presets-title {
+	.elementor-control-structure-title,
+	.elementor-control-structure-more-presets-title {
 		color: $editor-darkest;
 		font-weight: bold;
 		padding: 13.5px 20px;
@@ -93,7 +93,7 @@
 			display: none;
 
 			&:checked + .elementor-control-structure-preset {
-				border: 1px solid $editor-light;
+				border: 1px solid $editor-background;
 
 				path {
 					fill: $editor-light;

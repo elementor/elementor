@@ -230,6 +230,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		// Element Name for the Navigator
 		$this->add_control(
 			'_title',
 			[
@@ -479,6 +480,17 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
 				'separator' => 'before',
+			]
+		);
+
+		$this->end_controls_section();
+
+		// Section Structure
+		$this->start_controls_section(
+			'section_structure',
+			[
+				'label' => __( 'Structure', 'elementor' ),
+				'tab' => Controls_Manager::TAB_LAYOUT,
 			]
 		);
 
