@@ -54,9 +54,10 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 
 	buildSwiperElements() {
 		const classes = this.getSettings( 'classes' ),
-			elementSettings = this.getElementSettings();
+			elementSettings = this.getElementSettings(),
+			direction = 'slide_left' === elementSettings.background_slideshow_content_animation ? 'ltr' : 'rtl';
 
-		const $container = jQuery( '<div>', { class: classes.swiperContainer } ),
+		const $container = jQuery( '<div>', { class: classes.swiperContainer, dir: direction } ),
 			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } );
 
 		this.elements.$slides = jQuery();

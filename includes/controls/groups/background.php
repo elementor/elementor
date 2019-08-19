@@ -620,19 +620,16 @@ class Group_Control_Background extends Group_Control_Base {
 			'frontend_available' => true,
 		];
 
-		$slide_start = ! is_rtl() ? __( 'Slide Right', 'elementor' ) : __( 'Slide Left', 'elementor' );
-		$slide_end = is_rtl() ? __( 'Slide Right', 'elementor' ) : __( 'Slide Left', 'elementor' );
-
 		$fields['slideshow_content_animation'] = [
 			'label' => __( 'Image Animation', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'fade',
 			'options' => [
 				'fade' => __( 'Fade', 'elementor' ),
+				'slide_right' => __( 'Slide Right', 'elementor' ),
+				'slide_left' => __( 'Slide Left', 'elementor' ),
 				'slide_down' => __( 'Slide Down', 'elementor' ),
 				'slide_up' => __( 'Slide Up', 'elementor' ),
-				'slide_right' => $slide_start,
-				'slide_left' => $slide_end,
 			],
 			'condition' => [
 				'background' => [ 'slideshow' ],
