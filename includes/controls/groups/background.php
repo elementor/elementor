@@ -667,7 +667,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['slideshow_loop'] = [
 			'label' => __( 'Infinite Loop', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
-			'default' => true,
+			'default' => 'yes',
 			'condition' => [
 				'background' => [ 'slideshow' ],
 			],
