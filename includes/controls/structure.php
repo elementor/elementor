@@ -48,7 +48,7 @@ class Control_Structure extends Base_Data_Control {
 				var morePresets = getMorePresets();
 
 				if ( morePresets.length ) { #>
-					<div class="elementor-control-structure-more-presets">
+					<div class="elementor-control-structure-presets">
 						<# _.each( morePresets, function( preset ) { #>
 							<div class="elementor-control-structure-preset-wrapper">
 								<input id="<?php echo $preset_control_uid; ?>" type="radio" name="elementor-control-structure-preset-{{ data._cid }}" data-setting="structure" value="{{ preset.key }}">
