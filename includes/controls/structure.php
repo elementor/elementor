@@ -44,14 +44,10 @@ class Control_Structure extends Base_Data_Control {
 		?>
 		<div class="elementor-control-field">
 			<div class="elementor-control-input-wrapper">
-				<# var currentPreset = elementor.presetsFactory.getPresetByStructure( data.controlValue ); #>
-				<div class="elementor-control-structure-preset elementor-control-structure-current-preset">
-					{{{ elementor.presetsFactory.getPresetSVG( currentPreset.preset, 233, 72, 5 ).outerHTML }}}
-				</div>
 				<#
 				var morePresets = getMorePresets();
 
-				if ( morePresets.length > 1 ) { #>
+				if ( morePresets.length ) { #>
 					<div class="elementor-control-structure-more-presets">
 						<# _.each( morePresets, function( preset ) { #>
 							<div class="elementor-control-structure-preset-wrapper">

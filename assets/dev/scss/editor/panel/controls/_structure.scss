@@ -4,28 +4,16 @@
 		border: 1px solid $editor-background;
 		padding: 3px;
 		border-radius: 3px;
+		display: inline-block;
+		cursor: pointer;
+		height: 50px;
 
-		&:not(.elementor-control-structure-current-preset) {
-			display: inline-block;
-			cursor: pointer;
-			height: 50px;
-
-			svg {
-				height: 100%;
-			}
+		svg {
+			height: 100%;
 		}
 
 		path {
 			fill: $editor-background;
-		}
-	}
-
-	.elementor-control-structure-current-preset {
-
-		// For Safari
-		svg {
-			display: block;
-			width: 100%;
 		}
 	}
 
