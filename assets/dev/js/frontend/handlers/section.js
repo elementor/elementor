@@ -1,3 +1,128 @@
+class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
+		return {
+			selectors: {
+				swiperContainer: '.elementor-section-background-slideshow',
+				swiperSlides: '.swiper-slide',
+			},
+			classes: {
+				swiperContainer: 'elementor-section-background-slideshow swiper-container',
+				swiperWrapper: 'swiper-wrapper',
+				swiperSlide: 'elementor-section-background-slideshow__slide swiper-slide',
+				swiperSlideInner: 'elementor-section-background-slideshow__slide__image',
+			},
+		};
+	}
+
+	getSwiperOptions() {
+		const elementSettings = this.getElementSettings();
+
+		const swiperOptions = {
+			grabCursor: false,
+			slidesPerView: 1,
+			slidesPerGroup: 1,
+			loop: 'yes' === elementSettings.background_slideshow_loop,
+			speed: elementSettings.background_slideshow_animation_speed,
+			autoplay: {
+				delay: elementSettings.background_slideshow_autoplay_speed,
+				stopOnLastSlide: ! elementSettings.background_slideshow_loop,
+			},
+		};
+
+		if ( 'yes' === elementSettings.background_slideshow_loop ) {
+			swiperOptions.loopedSlides = this.getSlidesCount();
+		}
+
+		switch ( elementSettings.background_slideshow_content_animation ) {
+			case 'fade':
+				swiperOptions.effect = 'fade';
+				break;
+			case 'slide_down':
+				swiperOptions.autoplay.reverseDirection = true;
+			// eslint-disable-next-line no-fallthrough
+			case 'slide_up':
+				swiperOptions.direction = 'vertical';
+				break;
+		}
+
+		return swiperOptions;
+	}
+
+	getSlidesCount() {
+		return this.elements.$slides.length;
+	}
+
+	buildSwiperElements() {
+		const classes = this.getSettings( 'classes' ),
+			elementSettings = this.getElementSettings(),
+			direction = 'slide_left' === elementSettings.background_slideshow_content_animation ? 'ltr' : 'rtl';
+
+		const $container = jQuery( '<div>', { class: classes.swiperContainer, dir: direction } ),
+			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } );
+
+		this.elements.$slides = jQuery();
+
+		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
+			const $slide = jQuery( '<div>', { class: classes.swiperSlide } ),
+				$slidebg = jQuery( '<div>', {
+				class: classes.swiperSlideInner,
+				style: 'background-image: url("' + slide.url + '");',
+			} );
+
+			$slide.append( $slidebg );
+			$wrapper.append( $slide );
+
+			this.elements.$slides = this.elements.$slides.add( $slide );
+		} );
+
+		$container.append( $wrapper );
+
+		this.$element.prepend( $container );
+
+		this.elements.$backgroundSlideShowContainer = $container;
+	}
+
+	initSlider() {
+		if ( 1 >= this.getSlidesCount() ) {
+			return;
+		}
+
+		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
+	}
+
+	run() {
+		if ( 'slideshow' === this.getElementSettings( 'background_background' ) ) {
+			this.buildSwiperElements();
+
+			this.initSlider();
+		} else {
+			this.onDestroy();
+		}
+	}
+
+	onInit() {
+		super.onInit();
+
+		this.run();
+	}
+
+	onDestroy() {
+		super.onDestroy();
+
+		if ( this.swiper ) {
+			this.swiper.destroy();
+
+			this.elements.$backgroundSlideShowContainer.remove();
+		}
+	}
+
+	onElementChange( propertyName ) {
+		if ( 'background_background' === propertyName ) {
+			this.run();
+		}
+	}
+}
+
 class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
@@ -399,4 +524,6 @@ export default ( $scope ) => {
 	}
 
 	elementorFrontend.elementsHandler.addHandler( BackgroundVideo, { $element: $scope } );
+
+	elementorFrontend.elementsHandler.addHandler( BackgroundSlideshow, { $element: $scope } );
 };
