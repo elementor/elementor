@@ -25,8 +25,7 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 			speed: elementSettings.background_slideshow_animation_speed,
 			autoplay: {
 				delay: elementSettings.background_slideshow_autoplay_speed,
-				disableOnInteraction: false,
-				stopOnLastSlide: 'yes' !== elementSettings.background_slideshow_loop,
+				stopOnLastSlide: ! elementSettings.background_slideshow_loop,
 			},
 		};
 
@@ -67,6 +66,8 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 		const $container = jQuery( '<div>', { class: classes.swiperContainer } ),
 			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } );
 
+		this.elements.$slides = jQuery();
+
 		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
 			const $slide = jQuery( '<div>', { class: classes.swiperSlide } ),
 				$slidebg = jQuery( '<div>', {
@@ -76,43 +77,27 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 
 			$slide.append( $slidebg );
 			$wrapper.append( $slide );
+
+			this.elements.$slides = this.elements.$slides.add( $slide );
 		} );
 
 		$container.append( $wrapper );
 
 		this.$element.prepend( $container );
-	}
 
-	getSlideshowElements() {
-		const selectors = this.getSettings( 'selectors' );
-
-		this.elements = {
-			$backgroundSlideShowContainer: this.$element.find( selectors.swiperContainer ),
-		};
-
-		this.elements.$slides = this.elements.$backgroundSlideShowContainer.find( selectors.swiperSlides );
+		this.elements.$backgroundSlideShowContainer = $container;
 	}
 
 	initSlider() {
-		this.getSlideshowElements();
-
-		const $slider = this.elements.$backgroundSlideShowContainer;
-
-		if ( ! $slider.length ) {
-			return;
-		}
-
 		if ( 1 >= this.getSlidesCount() ) {
 			return;
 		}
 
-		this.swiper = new Swiper( $slider, this.getSwiperOptions() );
+		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
 	}
 
 	run() {
-		const elementSettings = this.getElementSettings();
-
-		if ( 'slideshow' === elementSettings.background_background ) {
+		if ( 'slideshow' === this.getElementSettings( 'background_background' ) ) {
 			this.buildSwiperElements();
 
 			this.initSlider();
@@ -124,22 +109,16 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		super.onInit();
 
-		const elementSettings = this.getElementSettings();
-
-		if ( 'slideshow' === elementSettings.background_background ) {
-			this.run();
-		}
+		this.run();
 	}
 
 	onDestroy() {
 		super.onDestroy();
 
-		const $slider = this.elements.$backgroundSlideShowContainer;
-
-		if ( this.swiper || $slider ) {
+		if ( this.swiper ) {
 			this.swiper.destroy();
 
-			$slider.remove();
+			this.elements.$backgroundSlideShowContainer.remove();
 		}
 	}
 
@@ -550,7 +529,5 @@ export default ( $scope ) => {
 		elementorFrontend.elementsHandler.addHandler( BackgroundVideo, { $element: $scope } );
 	}
 
-	if ( $scope.find( '.elementor-section-background-slideshow' ) ) {
-		elementorFrontend.elementsHandler.addHandler( BackgroundSlideshow, { $element: $scope } );
-	}
+	elementorFrontend.elementsHandler.addHandler( BackgroundSlideshow, { $element: $scope } );
 };
