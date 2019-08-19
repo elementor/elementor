@@ -37,18 +37,11 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 			case 'fade':
 				swiperOptions.effect = 'fade';
 				break;
-			case 'slide_right':
-				swiperOptions.initialSlide = this.getSlidesCount() - 1;
+			case 'slide_down':
 				swiperOptions.autoplay.reverseDirection = true;
-				break;
-			case 'slide_left':
-				break;
+			// eslint-disable-next-line no-fallthrough
 			case 'slide_up':
 				swiperOptions.direction = 'vertical';
-				break;
-			case 'slide_down':
-				swiperOptions.direction = 'vertical';
-				swiperOptions.autoplay.reverseDirection = true;
 				break;
 		}
 

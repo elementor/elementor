@@ -644,6 +644,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['slideshow_ken_burns'] = [
 			'label' => __( 'Ken Burns Effect', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
+			'default' => '',
 			'condition' => [
 				'background' => [ 'slideshow' ],
 			],
@@ -653,6 +654,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['slideshow_ken_burns_zoom_direction'] = [
 			'label' => __( 'Zoom Direction', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
+			'default' => 'in',
 			'options' => [
 				'in' => __( 'In', 'elementor' ),
 				'out' => __( 'Out', 'elementor' ),
