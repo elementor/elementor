@@ -71,6 +71,11 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 		}
 	}
 
+	prepareVimeoVideo() {
+		const $backgroundVideoContainer = this.elements.$backgroundVideoContainer,
+			elementSettings = this.getElementSettings();
+	}
+
 	prepareYTVideo( YT, videoID ) {
 		const $backgroundVideoContainer = this.elements.$backgroundVideoContainer,
 			elementSettings = this.getElementSettings();
@@ -117,11 +122,17 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	activate() {
-		let videoLink = this.getElementSettings( 'background_video_link' );
-		const videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink ),
-			playOnce = this.getElementSettings( 'background_play_once' );
+		let videoLink = this.getElementSettings( 'background_video_link' ),
+			videoID;
 
-		this.isYTVideo = ! ! videoID;
+		const playOnce = this.getElementSettings( 'background_play_once' );
+
+		if ( videoLink.includes( 'vimeo.com' ) ) {
+			videoID = elementorFrontend.utils.vimeo.getVimeoIDFromURL( videoLink );
+		} else {
+			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink );
+			this.isYTVideo = ! ! videoID;
+		}
 
 		if ( videoID ) {
 			elementorFrontend.utils.youtube.onYoutubeApiReady( ( YT ) => {

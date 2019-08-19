@@ -6,6 +6,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
+	VimeoModule = require( 'elementor-frontend/utils/vimeo' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
@@ -125,6 +126,7 @@ class Frontend extends elementorModules.ViewModule {
 	initOnReadyComponents() {
 		this.utils = {
 			youtube: new YouTubeModule(),
+			vimeo: new VimeoModule(),
 			anchors: new AnchorsModule(),
 			lightbox: new LightboxModule(),
 		};
