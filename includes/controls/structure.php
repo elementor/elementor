@@ -65,7 +65,7 @@ class Control_Structure extends Base_Data_Control {
 				<i class="eicon-undo" aria-hidden="true"></i>
 				<?php echo __( 'Reset', 'elementor' ); ?>
 			</div>
-        </div>
+		</div>
 		<# if ( data.description ) { #>
 			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
