@@ -1,11 +1,8 @@
 class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
-			selectors: {
-				swiperContainer: '.elementor-background-slideshow',
-				swiperSlides: '.swiper-slide',
-			},
 			classes: {
+				swiperContainer: 'elementor-background-slideshow',
 				swiperWrapper: 'swiper-wrapper',
 				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
 				swiperSlideInner: 'elementor-background-slideshow__slide__image',
