@@ -624,9 +624,6 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Slideshow Gallery', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::GALLERY,
 			'label_block' => true,
-			'dynamic' => [
-				'active' => true,
-			],
 			'condition' => [
 				'background' => [ 'slideshow' ],
 			],
