@@ -22,10 +22,10 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 		return elements;
 	}
 
-	calcVideosSize() {
+	calcVideosSize( $video ) {
 		const containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
 			containerHeight = this.elements.$backgroundVideoContainer.outerHeight(),
-			aspectRatioSetting = '16:9', //TEMP
+			aspectRatioSetting = $video ? $video.outerWidth() + ':' + $video.outerHeight() : '16:9', //TEMP
 			aspectRatioArray = aspectRatioSetting.split( ':' ),
 			aspectRatio = aspectRatioArray[ 0 ] / aspectRatioArray[ 1 ],
 			ratioWidth = containerWidth / aspectRatio,
@@ -39,8 +39,21 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	changeVideoSize() {
-		const $video = this.isYTVideo ? jQuery( this.player.getIframe() ) : this.elements.$backgroundVideoHosted,
-			size = this.calcVideosSize();
+		if ( ! this.isHostedVideo && ! this.player ) {
+			return;
+		}
+
+		let $video;
+
+		if ( this.isYTVideo ) {
+			$video = jQuery( this.player.getIframe() );
+		} else if ( this.isVimeoVideo ) {
+			$video = jQuery( this.player.element );
+		} else if ( this.isHostedVideo ) {
+			$video = this.elements.$backgroundVideoHosted;
+		}
+
+		const size = this.calcVideosSize( $video );
 
 		$video.width( size.width ).height( size.height );
 	}
@@ -71,9 +84,23 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 		}
 	}
 
-	prepareVimeoVideo() {
+	prepareVimeoVideo( Vimeo, videoId ) {
 		const $backgroundVideoContainer = this.elements.$backgroundVideoContainer,
-			elementSettings = this.getElementSettings();
+			elementSettings = this.getElementSettings(),
+			selectors = this.getSettings( 'selectors' ),
+			videoSize = this.calcVideosSize(),
+			vimeoOptions = {
+				id: videoId,
+				width: videoSize.width,
+				background: true,
+				loop: ! elementSettings.background_play_once,
+				transparent: false,
+				playsinline: false,
+			};
+
+		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
+
+		this.player.ready().then( () => jQuery( this.player.element ).addClass( 'elementor-background-video-embed' ) );
 	}
 
 	prepareYTVideo( YT, videoID ) {
@@ -129,18 +156,29 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 
 		if ( videoLink.includes( 'vimeo.com' ) ) {
 			videoID = elementorFrontend.utils.vimeo.getVimeoIDFromURL( videoLink );
+			this.isVimeoVideo = ! ! videoID;
 		} else {
 			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink );
 			this.isYTVideo = ! ! videoID;
 		}
 
 		if ( videoID ) {
-			elementorFrontend.utils.youtube.onYoutubeApiReady( ( YT ) => {
-				setTimeout( () => {
-					this.prepareYTVideo( YT, videoID );
-				}, 0 );
-			} );
+			if ( this.isYTVideo ) {
+				elementorFrontend.utils.youtube.onYoutubeApiReady( ( YT ) => {
+					setTimeout( () => {
+						this.prepareYTVideo( YT, videoID );
+					}, 0 );
+				} );
+			}
+
+			if ( this.isVimeoVideo ) {
+				elementorFrontend.utils.vimeo.onVimeoApiReady( ( VimeoPlayer ) => {
+					this.prepareVimeoVideo( VimeoPlayer, videoID );
+				} );
+			}
 		} else {
+			this.isHostedVideo = true;
+
 			const startTime = this.getElementSettings( 'background_video_start' ),
 				endTime = this.getElementSettings( 'background_video_end' );
 			if ( startTime || endTime ) {
@@ -158,7 +196,7 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	deactivate() {
-		if ( this.isYTVideo && this.player.getIframe() ) {
+		if ( ( this.isYTVideo && this.player.getIframe() ) || this.isVimeoVideo ) {
 			this.player.destroy();
 		} else {
 			this.elements.$backgroundVideoHosted.removeAttr( 'src' ).off( 'ended' );
