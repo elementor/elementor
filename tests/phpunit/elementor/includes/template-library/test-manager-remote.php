@@ -28,20 +28,8 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_should_return_true_from_unregister_source() {
-		$this->assertTrue( self::$manager->unregister_source( 'remote' ) );
-	}
-
-	public function test_should_return_true_from_register_source() {
-		$this->assertTrue( self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Remote' ) );
-	}
-
-	public function test_should_return_registered_sources() {
-		$this->assertEquals( self::$manager->get_registered_sources()['remote'], new \Elementor\TemplateLibrary\Source_Remote() );
-	}
-
 	public function test_should_return_source() {
-		$this->assertEquals( self::$manager->get_source( 'remote' ), new \Elementor\TemplateLibrary\Source_Remote() );
+		$this->assertInstanceOf( '\Elementor\TemplateLibrary\Source_Remote', self::$manager->get_source( 'remote' ) );
 	}
 
 	public function test_should_return_wp_error_from_save_template() {

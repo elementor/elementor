@@ -383,7 +383,7 @@ class Widget_Progress extends Widget_Base {
 			<span class="elementor-title">{{{ settings.title }}}</span><#
 		} #>
 		<div {{{ view.getRenderAttributeString( 'progressWrapper' ) }}}>
-			<div class="elementor-progress-bar" data-max="{{ settings.percent.size }}">
+			<div class="elementor-progress-bar" data-max="{{ progress_percentage }}">
 				<span {{{ view.getRenderAttributeString( 'inner_text' ) }}}>{{{ settings.inner_text }}}</span>
 				<# if ( 'hide' !== settings.display_percentage ) { #>
 					<span class="elementor-progress-percentage">{{{ progress_percentage }}}%</span>
