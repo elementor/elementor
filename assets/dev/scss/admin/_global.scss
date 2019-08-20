@@ -295,3 +295,12 @@ body {
 		color:  $editor-dark;
 	}
 }
+
+// Fix SVG preview in admin media listing alternate view
+body {
+	&.post-type-attachment {
+		table.media .column-title .media-icon img[src$=".svg"] {
+			width: 100%;
+		}
+	}
+}
