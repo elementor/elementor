@@ -471,6 +471,43 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Remove render attribute.
+	 *
+	 * Used to remove an element (with its keys and their values), key (with its values),
+	 * or value/s from an HTML element's render attribute.
+	 *
+	 * @since 2.7.0
+	 * @access public
+	 *
+	 * @param string $element       The HTML element.
+	 * @param string $key           Optional. Attribute key. Default is null.
+	 * @param array|string $values   Optional. Attribute value/s. Default is null.
+	 */
+	public function remove_render_attribute( $element, $key = null, $values = null ) {
+		if ( $key && ! isset( $this->render_attributes[ $element ][ $key ] ) ) {
+			return;
+		}
+
+		if ( $values ) {
+			$values = (array) $values;
+
+			$this->render_attributes[ $element ][ $key ] = array_diff( $this->render_attributes[ $element ][ $key ], $values );
+
+			return;
+		}
+
+		if ( $key ) {
+			unset( $this->render_attributes[ $element ][ $key ] );
+
+			return;
+		}
+
+		if ( isset( $this->render_attributes[ $element ] ) ) {
+			unset( $this->render_attributes[ $element ] );
+		}
+	}
+
+	/**
 	 * Get render attribute string.
 	 *
 	 * Used to retrieve the value of the render attribute.
