@@ -25,7 +25,7 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	calcVideosSize( $video ) {
 		const containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
 			containerHeight = this.elements.$backgroundVideoContainer.outerHeight(),
-			aspectRatioSetting = $video ? $video.outerWidth() + ':' + $video.outerHeight() : '16:9', //TEMP
+			aspectRatioSetting = this.isVimeoVideo ? $video ? $video.outerWidth() + ':' + $video.outerHeight() : '16:9' : '16:9', //TEMP
 			aspectRatioArray = aspectRatioSetting.split( ':' ),
 			aspectRatio = aspectRatioArray[ 0 ] / aspectRatioArray[ 1 ],
 			ratioWidth = containerWidth / aspectRatio,
@@ -100,7 +100,10 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 
 		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
 
-		this.player.ready().then( () => jQuery( this.player.element ).addClass( 'elementor-background-video-embed' ) );
+		this.player.ready().then( () => {
+			jQuery( this.player.element ).addClass( 'elementor-background-video-embed' );
+			this.changeVideoSize();
+		} );
 	}
 
 	prepareYTVideo( YT, videoID ) {
