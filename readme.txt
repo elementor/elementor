@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 5.4
-Stable tag: 2.6.7
+Stable tag: 2.6.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,14 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.6.8 - 2019-08-07 =
+* Tweak: Added SVG import/export support to Icons control
+* Fix: Empty `caps` while checking user `caps` ([#8732](https://github.com/elementor/elementor/issues/8732))
+* Fix: Rotate control not working in Icon widget responsive modes ([#8753](https://github.com/elementor/elementor/issues/8753))
+* Fix: Counter widget start number greater than 999
+* Fix: Avoid migrating old Icon value if new one exists on import
+* Fix: Editor not being loaded when using an Icon from removed Icon Set
 
 = 2.6.7 - 2019-07-30 =
 * Tweak: Run `.htaccess` inspection only when needed
