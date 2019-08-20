@@ -87,6 +87,7 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	prepareVimeoVideo( Vimeo, videoId ) {
 		const $backgroundVideoContainer = this.elements.$backgroundVideoContainer,
 			elementSettings = this.getElementSettings(),
+			startTime = elementSettings.background_video_start ? elementSettings.background_video_start : 0,
 			selectors = this.getSettings( 'selectors' ),
 			videoSize = this.calcVideosSize(),
 			vimeoOptions = {
@@ -100,9 +101,47 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 
 		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
 
+		// Handle user-defined start/end times
+		this.handleVimeoStartEndTimes( elementSettings, startTime );
+
 		this.player.ready().then( () => {
 			jQuery( this.player.element ).addClass( 'elementor-background-video-embed' );
 			this.changeVideoSize();
+		} );
+	}
+
+	handleVimeoStartEndTimes( elementSettings, startTime ) {
+		// If a start time is defined, set the start time
+		if ( 0 !== startTime ) {
+			this.player.on( 'play', ( data ) => {
+				if ( 0 === data.seconds ) {
+					this.player.setCurrentTime( startTime );
+				}
+			} );
+		}
+
+		// If start time is defined but an end time is not, go to user-defined start time at video end.
+		// Vimeo JS API has an ended event, but it never fires when infinite loop is defined, so we
+		// get the video duration (returns a promise) then use duration-0.5s as end time
+		this.player.getDuration().then( ( duration ) => {
+			this.player.on( 'timeupdate', ( data ) => {
+				if ( 0 !== startTime && ! elementSettings.background_video_end && data.seconds > duration - 0.5 ) {
+					this.player.setCurrentTime( startTime );
+				}
+			} );
+		} );
+
+		// If an end time is defined, handle ending the video
+		this.player.on( 'timeupdate', ( data ) => {
+			if ( elementSettings.background_video_end && elementSettings.background_video_end < data.seconds ) {
+				if ( elementSettings.background_play_once ) {
+					// Stop at user-defined end time if not loop
+					this.player.pause();
+				} else {
+					// Go to start time if loop
+					this.player.setCurrentTime( startTime );
+				}
+			}
 		} );
 	}
 
