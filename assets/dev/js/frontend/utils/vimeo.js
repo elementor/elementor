@@ -22,7 +22,7 @@ export default class VimeoModule extends elementorModules.ViewModule {
 	}
 
 	getVimeoIDFromURL( url ) {
-		var videoIDParts = url.match( /^(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com\/(\d+))([^?&#"'>]?)/ );
+		const videoIDParts = url.match( /^(?:https?:\/\/)?(?:www|player\.)?(?:vimeo\.com\/(\d+))([^?&#"'>]?)/ );
 
 		return videoIDParts && videoIDParts[ 1 ];
 	}
