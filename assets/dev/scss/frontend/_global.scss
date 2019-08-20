@@ -241,6 +241,7 @@
 .elementor-ken-burns {
 	transition-property: transform;
 	transition-duration: 10s;
+	transition-timing-function: linear;
 
 	&--out {
 		transform: scale(1.3);
