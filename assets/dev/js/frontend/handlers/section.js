@@ -112,13 +112,25 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
 	}
 
+	activate() {
+		this.buildSwiperElements();
+
+		this.initSlider();
+	}
+
+	deactivate() {
+		if ( this.swiper ) {
+			this.swiper.destroy();
+
+			this.elements.$backgroundSlideShowContainer.remove();
+		}
+	}
+
 	run() {
 		if ( 'slideshow' === this.getElementSettings( 'background_background' ) ) {
-			this.buildSwiperElements();
-
-			this.initSlider();
+			this.activate();
 		} else {
-			this.onDestroy();
+			this.deactivate();
 		}
 	}
 
@@ -131,11 +143,7 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 	onDestroy() {
 		super.onDestroy();
 
-		if ( this.swiper ) {
-			this.swiper.destroy();
-
-			this.elements.$backgroundSlideShowContainer.remove();
-		}
+		this.deactivate();
 	}
 
 	onElementChange( propertyName ) {
