@@ -23,8 +23,12 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	calcVideosSize( $video ) {
+		let aspectRatioSetting;
+
 		if ( this.isVimeoVideo ) {
-			const aspectRatioSetting = $video ? $video.outerWidth() + ':' + $video.outerHeight() : '16:9';
+			aspectRatioSetting = $video ? $video.outerWidth() + ':' + $video.outerHeight() : '16:9';
+		} else {
+			aspectRatioSetting = '16:9';
 		}
 
 		const containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
