@@ -521,21 +521,6 @@ class Element_Section extends Element_Base {
 					'background' => [
 						'frontend_available' => true,
 					],
-					'video_link' => [
-						'frontend_available' => true,
-					],
-					'video_start' => [
-						'frontend_available' => true,
-					],
-					'video_end' => [
-						'frontend_available' => true,
-					],
-					'play_once' => [
-						'frontend_available' => true,
-					],
-					'play_on_mobile' => [
-						'frontend_available' => true,
-					],
 				],
 			]
 		);

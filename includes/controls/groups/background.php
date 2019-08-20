@@ -559,6 +559,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_start'] = [
@@ -570,6 +571,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_end'] = [
@@ -581,6 +583,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['play_once'] = [
@@ -590,6 +593,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['play_on_mobile'] = [
@@ -599,6 +603,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_fallback'] = [
