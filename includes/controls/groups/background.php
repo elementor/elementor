@@ -654,6 +654,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'slideshow' ],
 			],
 			'of_type' => 'slideshow',
+			'frontend_available' => true,
 		];
 
 		$fields['slideshow_ken_burns_zoom_direction'] = [
@@ -669,6 +670,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'slideshow_ken_burns!' => '',
 			],
 			'of_type' => 'slideshow',
+			'frontend_available' => true,
 		];
 
 		$fields['slideshow_loop'] = [

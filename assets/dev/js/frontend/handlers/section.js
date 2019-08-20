@@ -2,20 +2,24 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				swiperContainer: '.elementor-section-background-slideshow',
+				swiperContainer: '.elementor-background-slideshow',
 				swiperSlides: '.swiper-slide',
 			},
 			classes: {
-				swiperContainer: 'elementor-section-background-slideshow swiper-container',
 				swiperWrapper: 'swiper-wrapper',
-				swiperSlide: 'elementor-section-background-slideshow__slide swiper-slide',
-				swiperSlideInner: 'elementor-section-background-slideshow__slide__image',
+				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
+				swiperSlideInner: 'elementor-background-slideshow__slide__image',
+				kenBurns: 'elementor-ken-burns',
+				kenBurnsActive: 'elementor-ken-burns--active',
+				kenBurnsIn: 'elementor-ken-burns--in',
+				kenBurnsOut: 'elementor-ken-burns--out',
 			},
 		};
 	}
 
 	getSwiperOptions() {
-		const elementSettings = this.getElementSettings();
+		const elementSettings = this.getElementSettings(),
+			kenBurnsActiveClass = this.getSettings( 'classes.kenBurnsActive' );
 
 		const swiperOptions = {
 			grabCursor: false,
@@ -26,6 +30,17 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 			autoplay: {
 				delay: elementSettings.background_slideshow_autoplay_speed,
 				stopOnLastSlide: ! elementSettings.background_slideshow_loop,
+			},
+			on: {
+				slideChange: function() {
+					if ( this.$activeImage ) {
+						this.$activeImage.removeClass( kenBurnsActiveClass );
+					}
+
+					this.$activeImage = jQuery( this.slides[ this.activeIndex ] ).children();
+
+					this.$activeImage.addClass( kenBurnsActiveClass );
+				},
 			},
 		};
 
@@ -55,19 +70,29 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 	buildSwiperElements() {
 		const classes = this.getSettings( 'classes' ),
 			elementSettings = this.getElementSettings(),
-			direction = 'slide_left' === elementSettings.background_slideshow_content_animation ? 'ltr' : 'rtl';
+			direction = 'slide_left' === elementSettings.background_slideshow_content_animation ? 'ltr' : 'rtl',
+			$container = jQuery( '<div>', { class: classes.swiperContainer, dir: direction } ),
+			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } ),
+			kenBurnsActive = elementSettings.background_slideshow_ken_burns;
 
-		const $container = jQuery( '<div>', { class: classes.swiperContainer, dir: direction } ),
-			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } );
+		let slideInnerClass = classes.swiperSlideInner;
+
+		if ( kenBurnsActive ) {
+			slideInnerClass += ' ' + classes.kenBurns;
+
+			const kenBurnsDirection = 'in' === elementSettings.background_slideshow_ken_burns_zoom_direction ? 'kenBurnsIn' : 'kenBurnsOut';
+
+			slideInnerClass += ' ' + classes[ kenBurnsDirection ];
+		}
 
 		this.elements.$slides = jQuery();
 
 		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
 			const $slide = jQuery( '<div>', { class: classes.swiperSlide } ),
 				$slidebg = jQuery( '<div>', {
-				class: classes.swiperSlideInner,
-				style: 'background-image: url("' + slide.url + '");',
-			} );
+					class: slideInnerClass,
+					style: 'background-image: url("' + slide.url + '");',
+				} );
 
 			$slide.append( $slidebg );
 			$wrapper.append( $slide );
