@@ -309,7 +309,7 @@ class Module extends BaseModule {
 		if ( ! empty( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] ) ) {
 			$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
 
-			// Add dynamic count to controls under `global` tab.
+			// Add dynamic count to controls under `general` tab.
 			$this->increase_controls_count(
 				$element_ref,
 				self::GENERAL_TAB,
@@ -448,7 +448,7 @@ class Module extends BaseModule {
 				];
 			}
 
-			$usage[ $type ]['count'] ++;
+			$usage[ $type ]['count']++;
 
 			if ( ! $element_instance ) {
 				return $element;
