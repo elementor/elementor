@@ -56,8 +56,12 @@
 		}
 
 		&-option {
-			padding: 5px 0;
 			font-size: 12px;
+			line-height: 1.2;
+
+			&:not(:first-child) {
+				padding-top: 5px;
+			}
 		}
 	}
 
