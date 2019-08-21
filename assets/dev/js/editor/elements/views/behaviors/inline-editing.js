@@ -196,13 +196,21 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		$e.run( 'document/elements/settings', {
-			element: this.view,
-			settings: {
-				[ this.getEditingSettingKey() ]: this.editor.getContent(),
-			},
-			options: { external: true },
-		} );
+		const key = this.getEditingSettingKey(),
+			parts = key.split( '.' );
+
+		// If repeater.
+		if ( 3 === parts.length ) {
+			this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
+		} else {
+			$e.run( 'document/elements/settings', {
+				element: this.view,
+				settings: {
+					[ key ]: this.editor.getContent(),
+				},
+				options: { external: true },
+			} );
+		}
 	},
 } );
 
