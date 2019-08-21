@@ -102,7 +102,7 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 			'slideshow' => [
 				'title' => _x( 'Background Slideshow', 'Background Control', 'elementor' ),
-				'icon' => 'eicon-slider-push',
+				'icon' => 'eicon-slideshow',
 			],
 		];
 	}
