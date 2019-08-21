@@ -119,24 +119,13 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 
 	handleVimeoStartEndTimes( elementSettings, startTime ) {
 		// If a start time is defined, set the start time
-		if ( 0 !== startTime ) {
+		if ( startTime ) {
 			this.player.on( 'play', ( data ) => {
 				if ( 0 === data.seconds ) {
 					this.player.setCurrentTime( startTime );
 				}
 			} );
 		}
-
-		// If start time is defined but an end time is not, go to user-defined start time at video end.
-		// Vimeo JS API has an ended event, but it never fires when infinite loop is defined, so we
-		// get the video duration (returns a promise) then use duration-0.5s as end time
-		this.player.getDuration().then( ( duration ) => {
-			this.player.on( 'timeupdate', ( data ) => {
-				if ( 0 !== startTime && ! elementSettings.background_video_end && data.seconds > duration - 0.5 ) {
-					this.player.setCurrentTime( startTime );
-				}
-			} );
-		} );
 
 		// If an end time is defined, handle ending the video
 		this.player.on( 'timeupdate', ( data ) => {
@@ -149,6 +138,15 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 					this.player.setCurrentTime( startTime );
 				}
 			}
+
+			// If start time is defined but an end time is not, go to user-defined start time at video end.
+			// Vimeo JS API has an 'ended' event, but it never fires when infinite loop is defined, so we
+			// get the video duration (returns a promise) then use duration-0.5s as end time
+			this.player.getDuration().then( ( duration ) => {
+				if ( startTime && ! elementSettings.background_video_end && data.seconds > duration - 0.5 ) {
+					this.player.setCurrentTime( startTime );
+				}
+			} );
 		} );
 	}
 
