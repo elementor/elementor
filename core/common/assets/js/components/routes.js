@@ -57,9 +57,8 @@ export default class extends Commands {
 			return false;
 		}
 
-		const component = this.getComponent( route );
-
-		const container = component.getRootContainer();
+		const component = this.getComponent( route ),
+			container = component.getRootContainer();
 
 		if ( this.current[ container ] ) {
 			this.getComponent( this.current[ container ] ).onCloseRoute();
@@ -120,6 +119,6 @@ export default class extends Commands {
 	}
 
 	error( message ) {
-		throw Error( 'Route: ' + message );
+		throw Error( 'Routes: ' + message );
 	}
 }

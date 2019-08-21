@@ -8,7 +8,7 @@ export default class extends elementorModules.common.Component {
 		return ! ! args.element;
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			copy: ( args ) => args.element.copy(),
 			duplicate: ( args ) => args.element.duplicate(),
@@ -18,7 +18,7 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			copy: {
 				keys: 'ctrl+c',
