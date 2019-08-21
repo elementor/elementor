@@ -4,7 +4,6 @@
 
 .elementor-control-type-repeater {
 
-	&,
 	.elementor-control:not(.elementor-control-type-tab) {
 		padding-right: 10px;
 		padding-left: 10px;
@@ -101,6 +100,6 @@
 
 	.elementor-button-wrapper {
 		text-align: center;
-		padding: 10px;
+		padding-top: 5px;
 	}
 }

@@ -290,9 +290,17 @@ body {
 	display: none;
 }
 
-
 #confirm_fa_migration_admin_modal {
 	.dialog-confirm-ok {
 		color:  $editor-dark;
+	}
+}
+
+// Fix SVG preview in admin media listing alternate view
+body {
+	&.post-type-attachment {
+		table.media .column-title .media-icon img[src$=".svg"] {
+			width: 100%;
+		}
 	}
 }
