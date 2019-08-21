@@ -588,11 +588,15 @@ class Upgrades {
 	 * Recalc usage.
 	 *
 	 * @param Updater $updater
+	 *
+	 * @return bool
 	 */
 	public static function _v_2_7_0_recalc_usage_data( $updater ) {
 		/** @var Module $module */
 		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
 
-		$module->recalc_usage( $updater->get_limit(), $updater->get_current_offset() );
+		$post_count = $module->recalc_usage( $updater->get_limit(), $updater->get_current_offset() );
+
+		return ( $post_count === $updater->get_limit() );
 	}
 }
