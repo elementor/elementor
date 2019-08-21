@@ -3,7 +3,7 @@ export default class extends elementorModules.common.Component {
 		return 'panel/general-settings';
 	}
 
-	getInitialTabs() {
+	defaultTabs() {
 		return {
 			style: { title: elementor.translate( 'style' ) },
 			lightbox: { title: elementor.translate( 'lightbox' ) },

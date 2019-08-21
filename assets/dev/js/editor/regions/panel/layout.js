@@ -21,10 +21,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	childEvents: {
 		'click:add': function() {
-			elementorCommon.route.to( 'panel/elements/categories' );
+			$e.route( 'panel/elements/categories' );
 		},
 		'editor:destroy': function() {
-			elementorCommon.route.to( 'panel/elements/categories', {
+			$e.route( 'panel/elements/categories', {
 				autoFocusSearch: false,
 			} );
 		},
@@ -37,11 +37,11 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
-		elementorCommon.components.register( new PanelComponent( { manager: this } ) );
+		$e.components.register( new PanelComponent( { manager: this } ) );
 
-		elementorCommon.components.register( new ElementsComponent( { manager: this } ) );
+		$e.components.register( new ElementsComponent( { manager: this } ) );
 
-		elementorCommon.components.register( new EditorComponent( { manager: this } ) );
+		$e.components.register( new EditorComponent( { manager: this } ) );
 
 		this.initPages();
 	},

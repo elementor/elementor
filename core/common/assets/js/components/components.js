@@ -20,6 +20,10 @@ export default class extends elementorModules.Module {
 		return this.components[ id ];
 	}
 
+	getActive() {
+		return this.activeComponents;
+	}
+
 	activate( namespace ) {
 		// Add as last.
 		this.inactivate( namespace );

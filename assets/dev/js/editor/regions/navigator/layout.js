@@ -56,6 +56,6 @@ export default class extends Marionette.LayoutView {
 	}
 
 	onCloseClick() {
-		elementorCommon.components.get( 'navigator' ).close();
+		$e.components.get( 'navigator' ).close();
 	}
 }

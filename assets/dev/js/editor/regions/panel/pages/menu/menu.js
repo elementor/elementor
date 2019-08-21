@@ -75,7 +75,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			name: 'finder',
 			icon: 'eicon-search',
 			title: elementorCommon.translate( 'finder', 'finder' ),
-			callback: () => elementorCommon.route.to( 'finder' ),
+			callback: () => $e.route( 'finder' ),
 		}, 'go_to', 'view-page' );
 
 		this.addItem( {
@@ -83,7 +83,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			icon: 'eicon-paint-brush',
 			title: elementor.translate( 'global_colors' ),
 			type: 'page',
-			callback: () => elementorCommon.route.to( 'panel/global-colors' ),
+			callback: () => $e.route( 'panel/global-colors' ),
 		}, 'style' );
 
 		this.addItem( {
@@ -91,7 +91,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			icon: 'eicon-font',
 			title: elementor.translate( 'global_fonts' ),
 			type: 'page',
-			callback: () => elementorCommon.route.to( 'panel/global-fonts' ),
+			callback: () => $e.route( 'panel/global-fonts' ),
 		}, 'style' );
 
 		this.addItem( {
@@ -99,7 +99,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			icon: 'eicon-eyedropper',
 			title: elementor.translate( 'color_picker' ),
 			type: 'page',
-			callback: () => elementorCommon.route.to( 'panel/color-picker' ),
+			callback: () => $e.route( 'panel/color-picker' ),
 		}, 'style' );
 
 		this.addItem( {
@@ -107,7 +107,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			icon: 'eicon-cogs',
 			title: elementor.translate( 'global_settings' ),
 			type: 'page',
-			callback: () => elementorCommon.route.to( 'panel/general-settings/style' ),
+			callback: () => $e.route( 'panel/general-settings/style' ),
 		}, 'settings', 'elementor-settings' );
 
 		this.addItem( {
