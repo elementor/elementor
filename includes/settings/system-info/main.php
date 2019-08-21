@@ -254,6 +254,7 @@ class Main {
 
 			$reporter_params = [
 				'name' => $report_name,
+				'format' => $format,
 			];
 
 			$reporter_params = array_merge( $reporter_params, $report_info );
