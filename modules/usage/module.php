@@ -95,7 +95,6 @@ class Module extends BaseModule {
 				'elements' => $elements,
 			];
 
-
 			// Sort usage by title.
 			uasort( $usage, function( $a, $b ) {
 				return ( $a['title'] > $b['title'] );
@@ -208,6 +207,8 @@ class Module extends BaseModule {
 	 *
 	 * @param int $limit
 	 * @param int $offset
+	 *
+	 * @return int
 	 */
 	public function recalc_usage( $limit = -1, $offset = 0 ) {
 		// While requesting recalc_usage, data should be deleted.
