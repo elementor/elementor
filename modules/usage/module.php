@@ -244,7 +244,7 @@ class Module extends BaseModule {
 	 *
 	 * Increase controls count, for each element.
 	 *
-	 * @param array & $element_ref
+	 * @param array &$element_ref
 	 * @param string $tab
 	 * @param string $section
 	 * @param string $control
@@ -273,11 +273,11 @@ class Module extends BaseModule {
 	 *
 	 * @param array $settings_controls
 	 * @param array $element_controls
-	 * @param array & $element_ref
+	 * @param array &$element_ref
 	 *
 	 * @return int ($changed_controls_count).
 	 */
-	private function add_controls( $settings_controls, $element_controls, & $element_ref ) {
+	private function add_controls( $settings_controls, $element_controls, &$element_ref ) {
 		$changed_controls_count = 0;
 
 		// Loop over all element settings.
@@ -312,7 +312,7 @@ class Module extends BaseModule {
 	 * Extract general controls to element ref, return clean `$settings_control`.
 	 *
 	 * @param array $settings_controls
-	 * @param array & $element_ref
+	 * @param array &$element_ref
 	 *
 	 * @return array ($settings_controls).
 	 */
@@ -442,7 +442,7 @@ class Module extends BaseModule {
 	private function get_elements_usage( $elements ) {
 		$usage = [];
 
-		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( & $usage ) {
+		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage ) {
 			if ( empty( $element['widgetType'] ) ) {
 				$type = $element['elType'];
 				$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
