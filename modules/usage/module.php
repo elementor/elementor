@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\Usage;
 
 use Elementor\Core\Base\Document;
@@ -8,7 +7,6 @@ use Elementor\Core\DynamicTags\Manager;
 use Elementor\System_Info\Main as System_Info;
 use Elementor\DB;
 use Elementor\Plugin;
-use WP_Post;
 use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,9 +68,6 @@ class Module extends BaseModule {
 				$doc_title = ucwords( $tab_group ) . ' - ' . $doc_title;
 			}
 
-			// Sort by key.
-			ksort( $elements );
-
 			// Replace element type with element title.
 			foreach ( $elements as $element_type => $data ) {
 				unset( $elements[ $element_type ] );
@@ -92,10 +87,23 @@ class Module extends BaseModule {
 				$elements[ $widget_title ] = $data['count'];
 			}
 
+			// Sort elements by key.
+			ksort( $elements );
+
 			$usage[ $doc_type ] = [
 				'title' => $doc_title,
 				'elements' => $elements,
 			];
+
+			// Sort usage by title.
+			usort( $usage, function( $a, $b ) {
+				return ( $a['title'] > $b['title'] );
+			} );
+
+			// If title includes '-' will have lower priority.
+			usort( $usage, function( $a ) {
+				return strpos( $a['title'], '-' );
+			} );
 		}
 
 		return $usage;
@@ -136,7 +144,7 @@ class Module extends BaseModule {
 	 *
 	 * @param string $new_status
 	 * @param string $old_status
-	 * @param WP_Post $post
+	 * @param \WP_Post $post
 	 */
 	public function on_status_change( $new_status, $old_status, $post ) {
 		// If it's from elementor editor, the usage should be saved via `before_document_save`/`after_document_save`.
@@ -226,6 +234,8 @@ class Module extends BaseModule {
 
 			$this->after_document_save( $document );
 		}
+
+		return $query->found_posts;
 	}
 
 	/**
@@ -239,7 +249,7 @@ class Module extends BaseModule {
 	 * @param string $control
 	 * @param int $count
 	 */
-	private function increase_controls_count( & $element_ref, $tab, $section, $control, $count ) {
+	private function increase_controls_count( &$element_ref, $tab, $section, $control, $count ) {
 		if ( ! isset( $element_ref['controls'][ $tab ] ) ) {
 			$element_ref['controls'][ $tab ] = [];
 		}
@@ -288,7 +298,7 @@ class Module extends BaseModule {
 			if ( $value !== $control_config['default'] ) {
 				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
 
-				$changed_controls_count ++;
+				$changed_controls_count++;
 			}
 		}
 
@@ -305,7 +315,7 @@ class Module extends BaseModule {
 	 *
 	 * @return array ($settings_controls).
 	 */
-	private function add_general_controls( $settings_controls, & $element_ref ) {
+	private function add_general_controls( $settings_controls, &$element_ref ) {
 		if ( ! empty( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] ) ) {
 			$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
 
@@ -497,6 +507,16 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Add system info report.
+	 */
+	public function add_system_info_report() {
+		System_Info::add_report( 'usage', [
+			'file_name' => __DIR__ . '/usage-reporter.php',
+			'class_name' => __NAMESPACE__ . '\Usage_Reporter',
+		] );
+	}
+
+	/**
 	 * Usage module constructor.
 	 *
 	 * Initializing Elementor usage module.
@@ -512,9 +532,6 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 
-		System_Info::add_report( 'usage', [
-			'file_name' => __DIR__ . '/usage-reporter.php',
-			'class_name' => __NAMESPACE__ . '\Usage_Reporter',
-		] );
+		add_action( 'admin_init', [ $this, 'add_system_info_report' ] );
 	}
 }
