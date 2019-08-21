@@ -26,7 +26,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		let aspectRatioSetting = '16:9';
 
 		if ( 'vimeo' === this.videoType ) {
-			aspectRatioSetting = $video.outerWidth() + ':' + $video.outerHeight();
+			aspectRatioSetting = $video[ 0 ].width + ':' + $video[ 0 ].height;
 		}
 
 		const containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
@@ -96,14 +96,15 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 	prepareVimeoVideo( Vimeo, videoId ) {
 		const elementSettings = this.getElementSettings(),
 			startTime = elementSettings.background_video_start ? elementSettings.background_video_start : 0,
-			videoSize = this.calcVideosSize(),
+			videoSize = this.elements.$backgroundVideoContainer.outerWidth(),
 			vimeoOptions = {
 				id: videoId,
 				width: videoSize.width,
-				background: true,
+				autoplay: true,
 				loop: ! elementSettings.background_play_once,
 				transparent: false,
 				playsinline: false,
+				background: true,
 			};
 
 		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
@@ -201,21 +202,17 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 		const playOnce = this.getElementSettings( 'background_play_once' );
 
-		if ( this.getVideoIDFromURL( videoLink ) ) {
-			if ( -1 !== videoLink.indexOf( 'vimeo.com' ) ) {
-				this.videoType = 'vimeo';
-				this.apiProvider = elementorFrontend.utils.vimeo;
-			} else {
-				this.videoType = 'youtube';
-				this.apiProvider = elementorFrontend.utils.youtube;
-			}
+		if ( -1 !== videoLink.indexOf( 'vimeo.com' ) ) {
+			this.videoType = 'vimeo';
+			this.apiProvider = elementorFrontend.utils.vimeo;
+		} else if ( videoLink.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+			this.videoType = 'youtube';
+			this.apiProvider = elementorFrontend.utils.youtube;
 		}
 
 		if ( this.apiProvider ) {
 			videoID = this.apiProvider.getVideoIDFromURL( videoLink );
-		}
 
-		if ( this.apiProvider ) {
 			this.apiProvider.onApiReady( ( apiObject ) => {
 				if ( 'youtube' === this.videoType ) {
 					this.prepareYTVideo( apiObject, videoID );
