@@ -125,6 +125,12 @@ WidgetView = BaseElementView.extend( {
 			return;
 		}
 
+		// Fix long history restore bug.
+		// Does not render destroyed view.
+		if ( this.isDestroyed ) {
+			return;
+		}
+
 		Marionette.CompositeView.prototype.render.apply( this, arguments );
 	},
 

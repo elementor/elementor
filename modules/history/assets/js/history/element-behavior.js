@@ -44,7 +44,7 @@ module.exports = Marionette.Behavior.extend( {
 			},
 		};
 
-		elementor.history.history.addItem( historyItem );
+		$e.run( 'document/history/addItem', historyItem );
 
 		delete this.oldValues[ control.name ];
 	},
@@ -105,7 +105,7 @@ module.exports = Marionette.Behavior.extend( {
 			historyItem.subTitle = control.label;
 		}
 
-		elementor.history.history.addItem( historyItem );
+		$e.run( 'document/history/addItem', historyItem );
 	},
 
 	restore: function( historyItem, isRedo ) {
@@ -134,7 +134,11 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 
 		// Set at once.
-		settings.setExternalChange( restoredValues );
+		$e.run( 'document/elements/settings', {
+			element: view,
+			settings: restoredValues,
+			options: { external: true },
+		} );
 
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
 

@@ -80,6 +80,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	setSettingsModel: function( value ) {
+		if ( this._parent && this._parent._parent.model && this._parent._parent.model.attributes.is_repeater ) {
+			this.elementSettingsModel.set( this.model.get( 'name' ), value );
+
+			return;
+		}
+
 		$e.run( 'document/elements/settings', {
 			element: this.options.element,
 			settings: {

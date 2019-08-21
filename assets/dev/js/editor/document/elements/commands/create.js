@@ -3,9 +3,7 @@ import Base from './base';
 // Create.
 export default class extends Base {
 	apply() {
-		const { args } = this,
-			options = args.options || {},
-			data = args.data || {};
+		const { args } = this;
 
 		if ( ! args.element && ! args.elements ) {
 			throw Error( 'element or elements are required.' );
@@ -15,19 +13,29 @@ export default class extends Base {
 			throw Error( 'element and elements cannot go together please select one of them.' );
 		}
 
-		const elements = args.elements || [ args.element ];
+		if ( ! args.model ) {
+			throw Error( 'model is required.' );
+		}
 
-		if ( ! options.hasOwnProperty( 'trigger' ) || true === options.trigger ) {
-			options.trigger = {
-				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add',
-			};
+		const options = args.options || {},
+			model = args.model,
+			elements = args.elements || [ args.element ];
+
+		let historyId = null;
+
+		if ( elementor.history.history.getActive() ) {
+			historyId = $e.run( 'document/history/startLog', {
+				elements,
+				model,
+				type: 'add',
+				returnValue: true,
+			} );
 		}
 
 		let result = [];
 
 		elements.forEach( ( element ) => {
-			const createdElement = element.addChildElement( data, options );
+			const createdElement = element.addChildElement( model, options );
 
 			result.push( createdElement );
 
@@ -38,6 +46,10 @@ export default class extends Base {
 
 		if ( 1 === result.length ) {
 			result = result[ 0 ];
+		}
+
+		if ( historyId ) {
+			$e.run( 'document/history/endLog', { id: historyId } );
 		}
 
 		return result;

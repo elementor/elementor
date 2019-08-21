@@ -30,6 +30,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	childViewOptions: function() {
 		return {
+			element: this.getOption( 'element' ),
 			controlFields: this.model.get( 'fields' ),
 			titleField: this.model.get( 'title_field' ),
 			itemActions: this.model.get( 'item_actions' ),

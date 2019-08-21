@@ -3,7 +3,9 @@
 
 import Copy from './copy';
 import Create from './create';
+import CreateSection from './create-section';
 import Delete from './delete';
+import Duplicate from './duplicate';
 import Paste from './paste';
 import Move from './move';
 import PasteStyle from './paste-style';
@@ -13,7 +15,9 @@ import Settings from './settings';
 export default {
 	Copy,
 	Create,
+	CreateSection,
 	Delete,
+	Duplicate,
 	Paste,
 	Move,
 	PasteStyle,
@@ -24,7 +28,9 @@ export default {
 export {
 	Copy,
 	Create,
+	CreateSection,
 	Delete,
+	Duplicate,
 	Paste,
 	Move,
 	PasteStyle,

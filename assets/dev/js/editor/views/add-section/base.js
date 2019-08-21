@@ -148,14 +148,18 @@ class AddSectionBase extends Marionette.ItemView {
 			return;
 		}
 
-		elementor.channels.data.trigger( 'section:before:drop' );
+		const historyId = $e.run( 'document/history/startLog', {
+			elements: [ elementor.channels.panelElements.request( 'element:selected' ) ],
+			type: 'add',
+			returnValue: true,
+		} );
 
 		$e.run( 'document/elements/createSection', {
 			columns: 1,
 			returnValue: true,
 		} ).addElementFromPanel();
 
-		elementor.channels.data.trigger( 'section:after:drop' );
+		$e.run( 'document/history/endLog', { id: historyId } );
 	}
 }
 

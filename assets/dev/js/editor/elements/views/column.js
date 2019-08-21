@@ -173,6 +173,9 @@ ColumnView = BaseElementView.extend( {
 
 	addNewColumn: function() {
 		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'column',
+			},
 			element: this._parent,
 			options: {
 				at: this.$el.index() + 1,

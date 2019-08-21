@@ -103,25 +103,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	// Move section.
 	updateSort: function( ui ) {
-		const element = elementor.channels.data.request( 'dragging:view' ),
-			$childElement = ui.item,
-			at = $childElement.parent().children().index( $childElement ),
-			collection = this.view.collection,
-		child = this.view.children.findByModelCid( element.model.cid );
+		const at = ui.item.parent().children().index( ui.item );
 
 		$e.run( 'document/elements/move', {
 			element: elementor.channels.data.request( 'dragging:view' ),
 			target: this.view,
-			options: {
-				at,
-				onBeforeAdd: function() {
-					child._isRendering = true;
-					$e.run( 'document/elements/delete', {
-						element,
-						options: { trigger: false },
-					} );
-				},
-			},
+			options: { at },
 		} );
 	},
 
@@ -151,11 +138,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 			target: this.view,
 			options: {
 				at: ui.item.index(),
-				onAfterAdd: function() {
-					const element = elementor.channels.data.request( 'dragging:view' );
-
-					$e.run( 'document/elements/delete', { element } );
-				},
 			},
 		} );
 	},

@@ -82,28 +82,6 @@ var	Manager = function() {
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
-		elementor.channels.data
-			.on( 'drag:before:update', self.startMovingItem )
-			.on( 'drag:after:update', self.endItem )
-
-			.on( 'element:before:add', self.startAddElement )
-			.on( 'element:after:add', self.endItem )
-
-			.on( 'element:before:remove', self.startRemoveElement )
-			.on( 'element:after:remove', self.endItem )
-
-			.on( 'element:before:paste:style', self.startPasteStyle )
-			.on( 'element:after:paste:style', self.endItem )
-
-			.on( 'element:before:reset:style', self.startResetStyle )
-			.on( 'element:after:reset:style', self.endItem )
-
-			.on( 'section:before:drop', self.startDropElement )
-			.on( 'section:after:drop', self.endItem )
-
-			.on( 'template:before:insert', self.startInsertTemplate )
-			.on( 'template:after:insert', self.endItem );
-
 		elementor.channels.editor.on( 'saved', onPanelSave );
 	};
 
@@ -121,14 +99,23 @@ var	Manager = function() {
 
 	this.startItem = function( itemData ) {
 		currentItemID = this.addItem( itemData );
+
+		return currentItemID;
 	};
 
-	this.endItem = function() {
+	this.endItem = function( id ) {
+		if ( currentItemID !== id ) {
+			return;
+		}
 		currentItemID = null;
 	};
 
 	this.isItemStarted = function() {
 		return null !== currentItemID;
+	};
+
+	this.getCurrentId = function() {
+		return currentItemID;
 	};
 
 	this.addItem = function( itemData ) {
@@ -171,18 +158,7 @@ var	Manager = function() {
 			self.startItemAction = '';
 		}
 
-		var position = 0;
-
-		// Temp fix. On move a column - insert the `remove` subItem before the section changes subItem.
-		// In a multi columns section - the structure has been changed,
-		// In a one column section - it's filled with an empty column,
-		// The order is important for the `redoItem`, that needed to change the section first
-		// and only after that - to remove the column.
-		if ( 'column' === itemData.elementType && 'remove' === itemData.type && 'column' === currentItem.get( 'elementType' ) ) {
-			position = 1;
-		}
-
-		currentItem.get( 'items' ).add( itemData, { at: position } );
+		currentItem.get( 'items' ).add( itemData, { at: 0 } );
 
 		items.add( currentItem, { at: 0 } );
 
@@ -308,64 +284,6 @@ var	Manager = function() {
 		} );
 
 		return founded;
-	};
-
-	this.startMovingItem = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'move',
-			title: self.getModelLabel( model ),
-			elementType: model.elType || model.get( 'elType' ),
-		} );
-	};
-
-	this.startInsertTemplate = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: elementor.translate( 'template' ),
-			subTitle: model.get( 'title' ),
-			elementType: 'template',
-		} );
-	};
-
-	this.startDropElement = function() {
-		var elementView = elementor.channels.panelElements.request( 'element:selected' );
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: self.getModelLabel( elementView.model ),
-			elementType: elementView.model.get( 'widgetType' ) || elementView.model.get( 'elType' ),
-		} );
-	};
-
-	this.startAddElement = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: self.getModelLabel( model ),
-			elementType: model.elType,
-		} );
-	};
-
-	this.startPasteStyle = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'paste_style',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
-	};
-
-	this.startResetStyle = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'reset_style',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
-	};
-
-	this.startRemoveElement = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'remove',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
 	};
 
 	init();

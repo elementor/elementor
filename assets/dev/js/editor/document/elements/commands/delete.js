@@ -11,35 +11,43 @@ export default class extends Base {
 			throw Error( 'element and elements cannot go together please select one of them.' );
 		}
 
-		const elements = args.elements || [ args.element ],
-			options = args.options || {};
+		const elements = args.elements || [ args.element ];
 
-		options.trigger = ( ! options.hasOwnProperty( 'trigger' ) || true === options.trigger );
+		let historyId = null;
+
+		if ( elementor.history.history.getActive() ) {
+			historyId = $e.run( 'document/history/startLog', {
+				elements: elements,
+				type: 'remove',
+				returnValue: true,
+			} );
+		}
 
 		elements.forEach( ( element ) => {
-			if ( options.trigger ) {
-				elementor.channels.data.trigger( 'element:before:remove', element.model );
-			}
-
 			const parent = element._parent;
 
 			element.model.destroy();
 
-			if ( 'section' === parent.model.get( 'elType' ) && elementor.history.history.getActive() ) {
-				if ( 0 === parent.collection.length ) {
+			if ( 'section' === parent.model.get( 'elType' ) ) {
+				if ( 0 === parent.collection.length && elementor.history.history.getActive() ) {
 					this.handleEmptySection( parent );
-				} else {
+				} else if ( parent.collection.length ) {
 					parent.resetLayout();
 				}
 			}
-
-			if ( options.trigger ) {
-				elementor.channels.data.trigger( 'element:after:remove', element.model );
-			}
 		} );
+
+		if ( historyId ) {
+			$e.run( 'document/history/endLog', { id: historyId } );
+		}
 	}
 
 	handleEmptySection( section ) {
-		$e.run( 'document/elements/create', { element: section } );
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'column',
+			},
+			element: section,
+		} );
 	}
 }

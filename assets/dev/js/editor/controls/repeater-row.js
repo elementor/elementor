@@ -46,6 +46,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	childViewOptions: function() {
 		return {
+			element: this.options.element,
 			elementSettingsModel: this.model,
 		};
 	},

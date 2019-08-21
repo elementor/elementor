@@ -31,10 +31,10 @@ export default class extends Base {
 		const pasteTo = ( elements, options = {} ) => {
 			options = Object.assign( { at: null, clone: true }, options );
 
-			transferData.elements.forEach( function( data ) {
+			transferData.elements.forEach( function( model ) {
 				$e.run( 'document/elements/create', {
 					elements,
-					data,
+					model,
 					options,
 				} );
 
@@ -57,6 +57,9 @@ export default class extends Base {
 					} );
 				} else if ( 'column' === transferData.elementsType ) {
 					const section = $e.run( 'document/elements/create', {
+						model: {
+							elType: 'column',
+						},
 						element: currentElement,
 						options: {
 							at,

@@ -17,7 +17,12 @@ export default class extends Base {
 			args.elements = [ args.element ];
 		}
 
-		const transferData = elementorCommon.storage.get( 'transfer' ),
+		const historyId = $e.run( 'document/history/startLog', {
+				elements: args.elements,
+				type: 'paste_style',
+				returnValue: true,
+			} ),
+			transferData = elementorCommon.storage.get( 'transfer' ),
 			sourceElement = transferData.elements[ 0 ],
 			sourceSettings = sourceElement.settings;
 
@@ -82,5 +87,7 @@ export default class extends Base {
 
 			element.renderOnChange();
 		} );
+
+		$e.run( 'document/history/endLog', { id: historyId } );
 	}
 }

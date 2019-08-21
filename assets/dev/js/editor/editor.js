@@ -6,7 +6,9 @@ import environment from '../../../../core/common/assets/js/utils/environment.js'
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
-import Component from './document/elements/component';
+import ElementsComponent from './document/elements/component';
+import RepeaterComponent from './document/elements/repeater/component.js';
+import HistoryComponent from './document/history/component';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -275,7 +277,9 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		$e.components.register( new Component( { manager: this } ) );
+		$e.components.register( new ElementsComponent( { manager: this } ) );
+		$e.components.register( new RepeaterComponent( { manager: this } ) );
+		$e.components.register( new HistoryComponent( { manager: this } ) );
 
 		this.hotkeysScreen = new HotkeysScreen();
 

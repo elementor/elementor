@@ -35,7 +35,7 @@ module.exports = Marionette.Behavior.extend( {
 			},
 		};
 
-		elementor.history.history.addItem( historyItem );
+		$e.run( 'document/history/addItem', historyItem );
 	},
 
 	saveCollectionHistory: function( collection, event ) {
@@ -85,19 +85,23 @@ module.exports = Marionette.Behavior.extend( {
 			},
 		};
 
-		elementor.history.history.addItem( historyItem );
+		$e.run( 'document/history/addItem', historyItem );
 	},
 
-	add: function( models, toView, at ) {
+	add: function( models, toView, at = null ) {
 		// Fix for case the iframe has been reloaded and the old `elementor-inner` is not exist.
 		if ( toView.$el.hasClass( 'elementor-inner' ) ) {
 			toView = elementor.getPreviewView();
 		}
+
 		models.forEach( ( model ) => {
 			$e.run( 'document/elements/create', {
 				element: toView,
-				data: model,
-				options: { at },
+				model: model,
+				options: {
+					at,
+					edit: false,
+				},
 			} );
 			if ( null !== at ) {
 				at++;

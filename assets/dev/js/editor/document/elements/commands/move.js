@@ -1,6 +1,6 @@
 import Base from './base';
 
-// Move.
+// כMove.
 export default class extends Base {
 	apply() {
 		const { args } = this;
@@ -18,30 +18,30 @@ export default class extends Base {
 		}
 
 		const options = args.options || {},
-			elements = args.element ? [ args.element ] : args.elements;
+			elements = args.element ? [ args.element ] : args.elements,
+			historyId = $e.run( 'document/history/startLog', {
+				elements,
+				type: 'move',
+				returnValue: true,
+			} );
 
-		elementor.channels.data.trigger( 'drag:before:update', elements[ 0 ].model );
+		const reCreate = [];
 
 		elements.forEach( ( element ) => {
-			const data = element.model.clone();
+			reCreate.push( elementorCommon.helpers.cloneObject( element.model ) );
 
+			$e.run( 'document/elements/delete', { element } );
+		} );
+
+		reCreate.forEach( ( model ) => {
 			$e.run( 'document/elements/create', {
 				element: args.target,
-				data,
+				model,
 				options,
 				returnValue: true,
 			} );
 		} );
 
-		// For multi selection.
-		if ( ! options.onBeforeAdd && ! options.onAfterAdd ) {
-			elements.forEach( ( element ) => {
-				element._isRendering = true;
-
-				$e.run( 'document/elements/delete', { element } );
-			} );
-		}
-
-		elementor.channels.data.trigger( 'drag:after:update' );
+		$e.run( 'document/history/endLog', { id: historyId } );
 	}
 }

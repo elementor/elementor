@@ -254,7 +254,7 @@ BaseElementView = BaseContainer.extend( {
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' );
 
-		const data = {
+		const model = {
 			elType: elementView.model.get( 'elType' ),
 		};
 
@@ -262,10 +262,10 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( 'widget' === data.elType ) {
-			data.widgetType = elementView.model.get( 'widgetType' );
-		} else if ( 'section' === data.elType ) {
-			data.isInner = true;
+		if ( 'widget' === model.elType ) {
+			model.widgetType = elementView.model.get( 'widgetType' );
+		} else if ( 'section' === model.elType ) {
+			model.isInner = true;
 		} else {
 			return;
 		}
@@ -273,7 +273,7 @@ BaseElementView = BaseContainer.extend( {
 		const customData = elementView.model.get( 'custom' );
 
 		if ( customData ) {
-			jQuery.extend( data, customData );
+			jQuery.extend( model, customData );
 		}
 
 		options.onAfterAdd = function( newModel, newView ) {
@@ -284,7 +284,7 @@ BaseElementView = BaseContainer.extend( {
 
 		$e.run( 'document/elements/create', {
 			element: this,
-			data,
+			model,
 			options,
 		} );
 	},

@@ -1,6 +1,6 @@
 import Base from './base';
 
-// Reset style.
+// Duplicate.
 export default class extends Base {
 	apply() {
 		const { args } = this;
@@ -13,38 +13,25 @@ export default class extends Base {
 			throw Error( 'element and elements cannot go together please select one of them.' );
 		}
 
-		if ( args.element ) {
+		if ( ! args.elements ) {
 			args.elements = [ args.element ];
 		}
 
 		const historyId = $e.run( 'document/history/startLog', {
 			elements: args.elements,
-			type: 'reset_style',
+			type: 'duplicate', // TODO: add translation.
 			returnValue: true,
 		} );
 
 		args.elements.forEach( ( element ) => {
-			const editModel = element.getEditModel(),
-				controls = editModel.get( 'settings' ).controls,
-				defaultValues = {};
+			const parent = element._parent,
+				at = element._index + 1;
 
-			element.allowRender = false;
-
-			jQuery.each( controls, ( controlName, control ) => {
-				if ( ! element.isStyleTransferControl( control ) ) {
-					return;
-				}
-
-				defaultValues[ controlName ] = control.default;
+			$e.run( 'document/elements/create', {
+				element: parent,
+				model: element.model.clone(),
+				options: { at },
 			} );
-
-			editModel.setSetting( defaultValues );
-
-			elementor.channels.data.trigger( 'element:after:reset:style', editModel );
-
-			element.allowRender = true;
-
-			element.renderOnChange();
 		} );
 
 		$e.run( 'document/history/endLog', { id: historyId } );

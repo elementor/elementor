@@ -201,9 +201,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			settings: {
 				[ this.getEditingSettingKey() ]: this.editor.getContent(),
 			},
-			options: {
-				external: true,
-			},
+			options: { external: true },
 		} );
 	},
 } );
