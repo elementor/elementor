@@ -95,13 +95,14 @@ class Module extends BaseModule {
 				'elements' => $elements,
 			];
 
+
 			// Sort usage by title.
-			usort( $usage, function( $a, $b ) {
+			uasort( $usage, function( $a, $b ) {
 				return ( $a['title'] > $b['title'] );
 			} );
 
 			// If title includes '-' will have lower priority.
-			usort( $usage, function( $a ) {
+			uasort( $usage, function( $a ) {
 				return strpos( $a['title'], '-' );
 			} );
 		}
