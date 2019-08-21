@@ -7,7 +7,6 @@ use Elementor\Core\DynamicTags\Manager;
 use Elementor\System_Info\Main as System_Info;
 use Elementor\DB;
 use Elementor\Plugin;
-use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -219,7 +218,7 @@ class Module extends BaseModule {
 
 		$post_types = get_post_types( array( 'public' => true ) );
 
-		$query = new WP_Query( [
+		$query = new \WP_Query( [
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'private' ],
