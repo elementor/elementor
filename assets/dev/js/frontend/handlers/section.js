@@ -51,7 +51,6 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 				break;
 			case 'slide_down':
 				swiperOptions.autoplay.reverseDirection = true;
-			// eslint-disable-next-line no-fallthrough
 			case 'slide_up':
 				swiperOptions.direction = 'vertical';
 				break;
