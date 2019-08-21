@@ -28,10 +28,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->assertWPError( self::$manager->register_source( 'Elementor\Core\Common\Modules\Ajax\Module' ), 'wrong_instance_source' );
 	}
 
-	public function test_should_return_false_from_unregister_source() {
-		$this->assertFalse( self::$manager->unregister_source( 0 ) );
-	}
-
 	public function test_should_fail_to_return_source() {
 		$this->assertFalse( self::$manager->get_source( 'invalid source' ) );
 	}

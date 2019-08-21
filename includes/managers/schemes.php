@@ -216,6 +216,7 @@ class Schemes_Manager {
 	 */
 	public function get_scheme_value( $scheme_type, $scheme_value ) {
 		$scheme = $this->get_scheme( $scheme_type );
+
 		if ( ! $scheme ) {
 			return false;
 		}

@@ -78,7 +78,6 @@ module.exports = {
 		'no-dupe-keys': 'error',
 		'no-duplicate-case': 'error',
 		'no-eval': 'error',
-		'no-fallthrough': 'error',
 		'no-multiple-empty-lines': [ 'error', { max: 1 } ],
 		'no-multi-str': 'off',
 		'no-negated-in-lhs': 'error',
