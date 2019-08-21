@@ -2,12 +2,11 @@
 import DocumentsManager from './documents-manager';
 import Storage from '../../../../core/common/assets/js/utils/storage';
 import environment from '../../../../core/common/assets/js/utils/environment';
-import VimeoModuleClass from 'elementor-frontend/utils/vimeo';
+import YouTubeModule from './utils/youtube';
+import VimeoModule from './utils/vimeo';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
-	VimeoModule = VimeoModuleClass,
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
