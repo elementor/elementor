@@ -552,7 +552,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Video Link', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
 			'placeholder' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
-			'description' => __( 'YouTube/Vimeo link or video file (mp4 is recommended).', 'elementor' ),
+			'description' => __( 'YouTube/Vimeo link, or link to video file (mp4 is recommended).', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
 			'condition' => [
