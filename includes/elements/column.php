@@ -113,6 +113,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		// Element Name for the Navigator
 		$this->add_control(
 			'_title',
 			[

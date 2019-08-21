@@ -213,7 +213,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	onDestroy: function() {
-		this.removeEditorListeners();
+		if ( this.isEdit ) {
+			this.removeEditorListeners();
+		}
 
 		if ( this.unbindEvents ) {
 			this.unbindEvents();
