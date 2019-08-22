@@ -1,6 +1,6 @@
-import VideoApiImporterModule from './video-api-importer-base';
+import BaseLoader from './base-loader';
 
-export default class VimeoModule extends VideoApiImporterModule {
+export default class VimeoLoader extends BaseLoader {
 	getApiURL() {
 		return 'https://player.vimeo.com/api/player.js';
 	}
