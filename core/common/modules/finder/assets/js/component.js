@@ -9,7 +9,7 @@ export default class extends elementorModules.common.ComponentModal {
 		return FinderLayout;
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			'navigate/down': () => this.getItemsView().activateNextItem(),
 			'navigate/up': () => this.getItemsView().activateNextItem( true ),
@@ -17,7 +17,7 @@ export default class extends elementorModules.common.ComponentModal {
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			'': {
 				keys: 'ctrl+e',

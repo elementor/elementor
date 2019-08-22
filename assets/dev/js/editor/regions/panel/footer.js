@@ -87,7 +87,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showSettingsPage: function() {
-		elementorCommon.route.to( 'panel/page-settings/settings' );
+		$e.route( 'panel/page-settings/settings' );
 	},
 
 	onMenuButtonsClick: function( event ) {
@@ -108,7 +108,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		elementorCommon.route.to( 'panel/page-settings/settings' );
+		$e.route( 'panel/page-settings/settings' );
 	},
 
 	onDeviceModeChange: function() {
@@ -131,14 +131,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSaveTemplateClick: function() {
-		elementorCommon.route.to( 'library/save-template' );
+		$e.route( 'library/save-template' );
 	},
 
 	onHistoryClick: function() {
-		elementorCommon.route.to( 'panel/history/actions' );
+		$e.route( 'panel/history/actions' );
 	},
 
 	onNavigatorClick: function() {
-		elementorCommon.commands.run( 'navigator/toggle' );
+		$e.run( 'navigator/toggle' );
 	},
 } );

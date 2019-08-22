@@ -16,7 +16,7 @@ export default class extends elementorModules.Module {
 		let namespace;
 		if ( 'string' === typeof component ) {
 			namespace = component;
-			component = elementorCommon.components.get( namespace );
+			component = $e.components.get( namespace );
 
 			if ( ! component ) {
 				this.error( `'${ namespace }' component is not exist.` );
@@ -40,7 +40,7 @@ export default class extends elementorModules.Module {
 		if ( shortcut ) {
 			shortcut.command = fullCommand;
 			shortcut.callback = ( event ) => this.runShortcut( fullCommand, event );
-			elementorCommon.shortcuts.register( shortcut.keys, shortcut );
+			$e.shortcuts.register( shortcut.keys, shortcut );
 		}
 
 		return this;
@@ -49,30 +49,41 @@ export default class extends elementorModules.Module {
 	getComponent( command ) {
 		const namespace = this.components[ command ];
 
-		return elementorCommon.components.get( namespace );
+		return $e.components.get( namespace );
 	}
 
 	is( command ) {
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
+		const component = this.getComponent( command );
 
-		return command === this.current[ container ];
-	}
-
-	getCurrent( container ) {
-		if ( ! this.current[ container ] ) {
+		if ( ! component ) {
 			return false;
 		}
 
-		return this.current[ container ];
+		return command === this.current[ component.getRootContainer() ];
 	}
 
-	getCurrentArgs( container ) {
-		if ( ! this.currentArgs[ container ] ) {
-			return false;
+	getCurrent( container = '' ) {
+		if ( container ) {
+			if ( ! this.current[ container ] ) {
+				return false;
+			}
+
+			return this.current[ container ];
 		}
 
-		return this.currentArgs[ container ];
+		return this.current;
+	}
+
+	getCurrentArgs( container = '' ) {
+		if ( container ) {
+			if ( ! this.currentArgs[ container ] ) {
+				return false;
+			}
+
+			return this.currentArgs[ container ];
+		}
+
+		return this.currentArgs;
 	}
 
 	beforeRun( command, args = {} ) {
@@ -92,13 +103,11 @@ export default class extends elementorModules.Module {
 			return false;
 		}
 
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
+		const component = this.getComponent( command ),
+			container = component.getRootContainer();
 
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
-
-		const component = this.getComponent( command );
 
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
@@ -115,13 +124,14 @@ export default class extends elementorModules.Module {
 		return true;
 	}
 
+	// It's separated in order to allow override.
 	runShortcut( command, event ) {
 		this.run( command, event );
 	}
 
 	afterRun( command ) {
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
+		const component = this.getComponent( command ),
+			container = component.getRootContainer();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];

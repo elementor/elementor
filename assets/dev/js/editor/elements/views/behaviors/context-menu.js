@@ -63,7 +63,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenu: function( event ) {
-		if ( elementorCommon.shortcuts.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
+		if ( $e.shortcuts.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 

@@ -418,7 +418,7 @@ class Manager {
 			$post_id_for_data = $post_id;
 		}
 
-		$css_file = new Dynamic_CSS( $post_id, $post_id_for_data );
+		$css_file = Dynamic_CSS::create( $post_id, $post_id_for_data );
 
 		$css_file->enqueue();
 	}

@@ -3,25 +3,25 @@ export default class extends elementorModules.common.Component {
 		return 'navigator';
 	}
 
-	getRoutes() {
+	defaultRoutes() {
 		return {
 			'': () => {},
 		};
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			toggle: () => {
-				if ( elementorCommon.route.isPartOf( 'navigator' ) ) {
+				if ( $e.routes.isPartOf( 'navigator' ) ) {
 					this.close();
 				} else {
-					elementorCommon.route.to( 'navigator' );
+					$e.route( 'navigator' );
 				}
 			},
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			toggle: {
 				keys: 'ctrl+i',

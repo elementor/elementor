@@ -5,7 +5,7 @@ import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
 import Components from './components/components';
 import Commands from './components/commands';
-import Route from './components/route';
+import Routes from './components/routes';
 import Shortcuts from './components/shortcuts';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
@@ -34,13 +34,20 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.storage = new Storage();
 
-		this.components = new Components();
+		window.$e = {
+			components: new Components(),
+			commands: new Commands(),
+			routes: new Routes(),
+			shortcuts: new Shortcuts( jQuery( window ) ),
 
-		this.shortcuts = new Shortcuts( this.elements.$window );
+			run: ( ...args ) => {
+				return $e.commands.run.apply( $e.commands, args );
+			},
 
-		this.commands = new Commands();
-
-		this.route = new Route();
+			route: ( ...args ) => {
+				return $e.routes.to.apply( $e.routes, args );
+			},
+		};
 
 		this.dialogsManager = new DialogsManager.Instance();
 

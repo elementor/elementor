@@ -3,14 +3,14 @@ export default class extends elementorModules.common.Component {
 		return 'panel/history/revisions';
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			up: () => this.navigate( true ),
 			down: () => this.navigate(),
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			up: {
 				keys: 'up',

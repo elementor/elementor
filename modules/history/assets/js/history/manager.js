@@ -63,8 +63,8 @@ var	Manager = function() {
 	};
 
 	var updatePanelPageCurrentItem = function() {
-		if ( elementorCommon.route.is( 'panel/history/actions' ) ) {
-			elementorCommon.route.refreshContainer( 'panel' );
+		if ( $e.routes.is( 'panel/history/actions' ) ) {
+			$e.routes.refreshContainer( 'panel' );
 		}
 	};
 
@@ -77,7 +77,7 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component( { manager: self } ) );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
@@ -209,10 +209,10 @@ var	Manager = function() {
 			panelPage = panel.getCurrentPageView(),
 			viewToScroll;
 
-		if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
+		if ( $e.routes.isPartOf( 'panel/editor' ) ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
 				// If the the element isn't exist - show the history panel
-				elementorCommon.route.to( 'panel/history/actions' );
+				$e.route( 'panel/history/actions' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
 				viewToScroll = panelPage.getOption( 'editedElementView' );
