@@ -33,8 +33,6 @@ export default class extends Marionette.CompositeView {
 		this.childViewContainer = '#elementor-finder__results';
 
 		this.collection = new Backbone.Collection( Object.values( elementorCommon.finder.getSettings( 'data' ) ) );
-
-		this.addHotKeys();
 	}
 
 	activateItem( $item ) {
@@ -71,7 +69,7 @@ export default class extends Marionette.CompositeView {
 
 	goToActiveItem( event ) {
 		const $a = this.$activeItem.children( 'a' ),
-			isControlClicked = elementorCommon.hotKeys.isControlEvent( event );
+			isControlClicked = $e.shortcuts.isControlEvent( event );
 
 		if ( isControlClicked ) {
 			$a.attr( 'target', '_blank' );
@@ -82,27 +80,6 @@ export default class extends Marionette.CompositeView {
 		if ( isControlClicked ) {
 			$a.removeAttr( 'target' );
 		}
-	}
-
-	addHotKeys() {
-		const DOWN_ARROW = 40,
-			UP_ARROW = 38,
-			ENTER = 13;
-
-		elementorCommon.hotKeys.addHotKeyHandler( DOWN_ARROW, 'finderNextItem', {
-			isWorthHandling: () => elementorCommon.finder.getLayout().getModal().isVisible(),
-			handle: () => this.activateNextItem(),
-		} );
-
-		elementorCommon.hotKeys.addHotKeyHandler( UP_ARROW, 'finderPreviousItem', {
-			isWorthHandling: () => elementorCommon.finder.getLayout().getModal().isVisible(),
-			handle: () => this.activateNextItem( true ),
-		} );
-
-		elementorCommon.hotKeys.addHotKeyHandler( ENTER, 'finderSelectItem', {
-			isWorthHandling: () => elementorCommon.finder.getLayout().getModal().isVisible() && this.$activeItem,
-			handle: ( event ) => this.goToActiveItem( event ),
-		} );
 	}
 
 	onCategoryItemMouseEnter( event ) {

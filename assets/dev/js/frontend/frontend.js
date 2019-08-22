@@ -1,12 +1,12 @@
 /* global elementorFrontendConfig */
 import DocumentsManager from './documents-manager';
-import HotKeys from '../../../../core/common/assets/js/utils/hot-keys';
 import Storage from '../../../../core/common/assets/js/utils/storage';
 import environment from '../../../../core/common/assets/js/utils/environment';
+import YouTubeApiLoader from './utils/video-api/youtube-loader';
+import VimeoApiLoader from './utils/video-api/vimeo-loader';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
@@ -123,15 +123,10 @@ class Frontend extends elementorModules.ViewModule {
 		};
 	}
 
-	initHotKeys() {
-		this.hotKeys = new HotKeys();
-
-		this.hotKeys.bindListener( this.elements.$window );
-	}
-
 	initOnReadyComponents() {
 		this.utils = {
-			youtube: new YouTubeModule(),
+			youtube: new YouTubeApiLoader(),
+			vimeo: new VimeoApiLoader(),
 			anchors: new AnchorsModule(),
 			lightbox: new LightboxModule(),
 		};
@@ -280,10 +275,6 @@ class Frontend extends elementorModules.ViewModule {
 
 		// Keep this line before `initOnReadyComponents` call
 		this.elements.$window.trigger( 'elementor/frontend/init' );
-
-		if ( ! this.isEditMode() ) {
-			this.initHotKeys();
-		}
 
 		this.initOnReadyElements();
 

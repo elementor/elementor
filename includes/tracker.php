@@ -133,29 +133,7 @@ class Tracker {
 		// Update time first before sending to ensure it is set.
 		update_option( 'elementor_tracker_last_send', time() );
 
-		// Send here..
-		$params = [
-			'system' => self::get_system_reports_data(),
-			'site_lang' => get_bloginfo( 'language' ),
-			'email' => get_option( 'admin_email' ),
-			'usages' => [
-				'posts' => self::get_posts_usage(),
-				'elements' => self::get_elements_usage(),
-				'library' => self::get_library_usage(),
-			],
-			'is_first_time' => empty( $last_send ),
-		];
-
-		/**
-		 * Tracker send tracking data params.
-		 *
-		 * Filters the data parameters when sending tracking request.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array $params Variable to encode as JSON.
-		 */
-		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
+		$params = self::get_tracking_data( empty( $last_send ) );
 
 		add_filter( 'https_ssl_verify', '__return_false' );
 
@@ -399,22 +377,6 @@ class Tracker {
 	}
 
 	/**
-	 * Get elements usage.
-	 *
-	 * Retrieve the usage of elements in Elementor.
-	 *
-	 * @since 2.6.0
-	 * @access private
-	 * @static
-	 *
-	 * @return array The usage of elements in Elementor grouped by document types.
-	 */
-	private static function get_elements_usage() {
-		return get_option( Document::ELEMENTS_USAGE_OPTION_NAME );
-
-	}
-
-	/**
 	 * Get library usage.
 	 *
 	 * Retrieve the number of Elementor library items saved.
@@ -448,5 +410,44 @@ class Tracker {
 
 		return $usage;
 
+	}
+
+	/**
+	 * Get the tracking data
+	 *
+	 * Retrieve tracking data and apply filter
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @param bool $is_first_time
+	 *
+	 * @return array
+	 */
+	private static function get_tracking_data( $is_first_time = false ) {
+		$params = [
+			'system' => self::get_system_reports_data(),
+			'site_lang' => get_bloginfo( 'language' ),
+			'email' => get_option( 'admin_email' ),
+			'usages' => [
+				'posts' => self::get_posts_usage(),
+				'library' => self::get_library_usage(),
+			],
+			'is_first_time' => $is_first_time,
+		];
+
+		/**
+		 * Tracker send tracking data params.
+		 *
+		 * Filters the data parameters when sending tracking request.
+		 *
+		 * @param array $params Variable to encode as JSON.
+		 *
+		 * @since 1.0.0
+		 *
+		 */
+		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
+
+		return $params;
 	}
 }
