@@ -15,8 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Autoloader {
 
-	const ALIASES_DEPRECATION_RANGE = 0.2;
-
 	/**
 	 * Classes map.
 	 *
@@ -291,17 +289,7 @@ class Autoloader {
 		if ( $has_class_alias ) {
 			class_alias( $final_class_name, $class );
 
-			preg_match( '/^[0-9]+\.[0-9]+/', ELEMENTOR_VERSION, $current_version );
-
-			$current_version_as_float = (float) $current_version[0];
-
-			preg_match( '/^[0-9]+\.[0-9]+/', $alias_data['version'], $alias_version );
-
-			$alias_version_as_float = (float) $alias_version[0];
-
-			if ( $current_version_as_float - $alias_version_as_float >= self::ALIASES_DEPRECATION_RANGE ) {
-				_deprecated_file( $class, $alias_data['version'], $final_class_name );
-			}
+			Utils::handle_deprecation( $class, $alias_data['version'], $final_class_name );
 		}
 	}
 }
