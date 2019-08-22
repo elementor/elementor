@@ -361,6 +361,9 @@ class Frontend extends App {
 			true
 		);
 
+		/**
+		 * @deprecated since 2.7.0 Use Swiper instead
+		 */
 		wp_register_script(
 			'jquery-slick',
 			$this->get_js_assets_url( 'slick', 'assets/lib/slick/' ),
@@ -435,7 +438,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.3.0'
+			'5.4.0'
 		);
 
 		wp_register_style(

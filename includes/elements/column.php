@@ -258,7 +258,13 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
+				'types' => [ 'classic', 'gradient', 'slideshow' ],
 				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-element-populated, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
+				'fields_options' => [
+					'background' => [
+						'frontend_available' => true,
+					],
+				],
 			]
 		);
 
