@@ -4,17 +4,17 @@ export default class extends elementorModules.common.Component {
 		return 'elements';
 	}
 
-	dependency( args ) {
-		return ! ! args.element;
+	dependency() {
+		return ! ! elementor.getCurrentElement();
 	}
 
 	defaultCommands() {
 		return {
-			copy: ( args ) => args.element.copy(),
-			duplicate: ( args ) => args.element.duplicate(),
-			delete: ( args ) => args.element.removeElement(),
-			paste: ( args ) => args.element.paste(),
-			pasteStyle: ( args ) => args.element.paste(),
+			copy: () => elementor.getCurrentElement().copy(),
+			duplicate: () => elementor.getCurrentElement().duplicate(),
+			delete: () => elementor.getCurrentElement().removeElement(),
+			paste: () => elementor.getCurrentElement().paste(),
+			pasteStyle: () => elementor.getCurrentElement().pasteStyle(),
 		};
 	}
 
