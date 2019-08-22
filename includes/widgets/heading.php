@@ -53,7 +53,7 @@ class Widget_Heading extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-type-tool';
+		return 'eicon-t-letter';
 	}
 
 	/**
