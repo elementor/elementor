@@ -179,30 +179,6 @@ class Autoloader {
 
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
-			'CSS_File' => [
-				'replacement' => 'Core\Files\CSS\Base',
-				'version' => '2.1.0',
-			],
-			'Global_CSS_File' => [
-				'replacement' => 'Core\Files\CSS\Global_CSS',
-				'version' => '2.1.0',
-			],
-			'Post_CSS_File' => [
-				'replacement' => 'Core\Files\CSS\Post',
-				'version' => '2.1.0',
-			],
-			'Posts_CSS_Manager' => [
-				'replacement' => 'Core\Files\Manager',
-				'version' => '2.1.0',
-			],
-			'Post_Preview_CSS' => [
-				'replacement' => 'Core\Files\CSS\Post_Preview',
-				'version' => '2.1.0',
-			],
-			'Responsive' => [
-				'replacement' => 'Core\Responsive\Responsive',
-				'version' => '2.1.0',
-			],
 			'Admin' => [
 				'replacement' => 'Core\Admin\Admin',
 				'version' => '2.2.0',
