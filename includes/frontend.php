@@ -361,6 +361,9 @@ class Frontend extends App {
 			true
 		);
 
+		/**
+		 * @deprecated since 2.7.0 Use Swiper instead
+		 */
 		wp_register_script(
 			'jquery-slick',
 			$this->get_js_assets_url( 'slick', 'assets/lib/slick/' ),
