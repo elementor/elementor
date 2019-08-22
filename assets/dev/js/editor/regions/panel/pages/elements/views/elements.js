@@ -26,7 +26,7 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 	},
 
 	onFilterChanged: function() {
-		var filterValue = elementor.channels.panelElements.request( 'filter:value' );
+		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( ! filterValue ) {
 			this.onFilterEmpty();
@@ -38,7 +38,7 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 	},
 
 	onFilterEmpty: function() {
-		elementor.getPanelView().getCurrentPageView().showView( 'categories' );
+		$e.routes.refreshContainer( 'panel' );
 	},
 } );
 

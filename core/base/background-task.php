@@ -361,6 +361,10 @@ abstract class Background_Task extends \WP_Background_Process {
 		}
 	}
 
+	public function set_current_item( $item ) {
+		$this->current_item = $item;
+	}
+
 	protected function format_callback_log( $item ) {
 		return implode( '::', (array) $item['callback'] );
 	}

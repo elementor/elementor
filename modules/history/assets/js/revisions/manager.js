@@ -1,3 +1,5 @@
+import Component from './component';
+
 var RevisionsCollection = require( './collection' ),
 	RevisionsManager;
 
@@ -6,7 +8,7 @@ RevisionsManager = function() {
 
 	let revisions;
 
-	var onEditorSaved = function( data ) {
+	const onEditorSaved = function( data ) {
 		if ( data.latest_revisions ) {
 			self.addRevisions( data.latest_revisions );
 		}
@@ -22,34 +24,8 @@ RevisionsManager = function() {
 		} );
 	};
 
-	var attachEvents = function() {
+	const attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
-	};
-
-	var addHotKeys = function() {
-		var UP_ARROW_KEY = 38,
-			DOWN_ARROW_KEY = 40;
-
-		var navigationHandler = {
-			isWorthHandling: function() {
-				var panel = elementor.getPanelView();
-
-				if ( 'historyPage' !== panel.getCurrentPageName() ) {
-					return false;
-				}
-
-				var revisionsTab = panel.getCurrentPageView().getCurrentTab();
-
-				return revisionsTab.currentPreviewId && revisionsTab.currentPreviewItem && revisionsTab.children.length > 1;
-			},
-			handle: function( event ) {
-				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( UP_ARROW_KEY === event.which );
-			},
-		};
-
-		elementorCommon.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
-
-		elementorCommon.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
 	};
 
 	this.getItems = function() {
@@ -135,14 +111,12 @@ RevisionsManager = function() {
 	this.init = function() {
 		attachEvents();
 
-		addHotKeys();
+		$e.components.register( new Component( { manager: self } ) );
 	};
 
 	this.onRevisionsUpdate = function() {
-		const panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().activateTab( 'revisions' );
+		if ( $e.routes.is( 'panel/history/revisions' ) ) {
+			$e.routes.refreshContainer( 'panel' );
 		}
 	};
 };

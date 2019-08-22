@@ -60,6 +60,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		// Element Name for the Navigator
 		$this->add_control(
 			'_title',
 			[

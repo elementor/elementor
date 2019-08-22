@@ -12,7 +12,6 @@
 		.elementor-input,
 		.elementor-input-style {
 			padding-right: 46px;
-			height: 26px;
 		}
 	}
 
@@ -26,7 +25,7 @@
 			position: absolute;
 			top: 0;
 			right: 0;
-			height: 26px;
+			height: 27px;
 			width: 40px;
 			border-left: 1px solid $editor-lightest;
 			cursor: pointer;
@@ -57,8 +56,12 @@
 		}
 
 		&-option {
-			padding: 5px;
 			font-size: 12px;
+			line-height: 1.2;
+
+			&:not(:first-child) {
+				padding-top: 5px;
+			}
 		}
 	}
 

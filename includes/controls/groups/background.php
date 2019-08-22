@@ -100,6 +100,10 @@ class Group_Control_Background extends Group_Control_Base {
 				'title' => _x( 'Background Video', 'Background Control', 'elementor' ),
 				'icon' => 'eicon-video-camera',
 			],
+			'slideshow' => [
+				'title' => _x( 'Background Slideshow', 'Background Control', 'elementor' ),
+				'icon' => 'eicon-slideshow',
+			],
 		];
 	}
 
@@ -548,13 +552,14 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Video Link', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
 			'placeholder' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
-			'description' => __( 'YouTube link or video file (mp4 is recommended).', 'elementor' ),
+			'description' => __( 'YouTube/Vimeo link, or link to video file (mp4 is recommended).', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
 			'condition' => [
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_start'] = [
@@ -566,6 +571,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_end'] = [
@@ -577,6 +583,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['play_once'] = [
@@ -586,11 +593,22 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
+		];
+
+		$fields['play_on_mobile'] = [
+			'label' => __( 'Play On Mobile', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_fallback'] = [
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
-			'description' => __( 'This cover image will replace the background video on mobile and tablet devices.', 'elementor' ),
+			'description' => __( 'This cover image will replace the background video in case that the video could not be loaded.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
 			'label_block' => true,
 			'condition' => [
@@ -600,6 +618,92 @@ class Group_Control_Background extends Group_Control_Base {
 				'{{SELECTOR}}' => 'background: url("{{URL}}") 50% 50%; background-size: cover;',
 			],
 			'of_type' => 'video',
+		];
+
+		$fields['slideshow_gallery'] = [
+			'label' => _x( 'Slideshow Gallery', 'Background Control', 'elementor' ),
+			'type' => Controls_Manager::GALLERY,
+			'label_block' => true,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_content_animation'] = [
+			'label' => __( 'Image Animation', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => 'fade',
+			'options' => [
+				'fade' => __( 'Fade', 'elementor' ),
+				'slide_right' => __( 'Slide Right', 'elementor' ),
+				'slide_left' => __( 'Slide Left', 'elementor' ),
+				'slide_down' => __( 'Slide Down', 'elementor' ),
+				'slide_up' => __( 'Slide Up', 'elementor' ),
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_ken_burns'] = [
+			'label' => __( 'Ken Burns Effect', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_ken_burns_zoom_direction'] = [
+			'label' => __( 'Zoom Direction', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => 'in',
+			'options' => [
+				'in' => __( 'In', 'elementor' ),
+				'out' => __( 'Out', 'elementor' ),
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+				'slideshow_ken_burns!' => '',
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_loop'] = [
+			'label' => __( 'Infinite Loop', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'default' => 'yes',
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_autoplay_speed'] = [
+			'label' => __( 'Autoplay Speed', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'default' => 5000,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_animation_speed'] = [
+			'label' => __( 'Animation Speed', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'default' => 500,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'frontend_available' => true,
 		];
 
 		return $fields;

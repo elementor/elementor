@@ -361,6 +361,9 @@ class Frontend extends App {
 			true
 		);
 
+		/**
+		 * @deprecated since 2.7.0 Use Swiper instead
+		 */
 		wp_register_script(
 			'jquery-slick',
 			$this->get_js_assets_url( 'slick', 'assets/lib/slick/' ),
@@ -435,7 +438,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.3.0'
+			'5.4.0'
 		);
 
 		wp_register_style(
@@ -562,7 +565,7 @@ class Frontend extends App {
 			$post_id = get_the_ID();
 			// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
 			if ( $post_id && is_singular() ) {
-				$css_file = new Post_CSS( get_the_ID() );
+				$css_file = Post_CSS::create( get_the_ID() );
 				$css_file->enqueue();
 			}
 		}
@@ -776,7 +779,7 @@ class Frontend extends App {
 	 * @access protected
 	 */
 	protected function parse_global_css_code() {
-		$scheme_css_file = new Global_CSS( 'global.css' );
+		$scheme_css_file = Global_CSS::create( 'global.css' );
 
 		$scheme_css_file->enqueue();
 	}
@@ -871,9 +874,9 @@ class Frontend extends App {
 
 		if ( ! $this->_is_excerpt ) {
 			if ( $document->is_autosave() ) {
-				$css_file = new Post_Preview( $document->get_post()->ID );
+				$css_file = Post_Preview::create( $document->get_post()->ID );
 			} else {
-				$css_file = new Post_CSS( $post_id );
+				$css_file = Post_CSS::create( $post_id );
 			}
 
 			$css_file->enqueue();
