@@ -1362,7 +1362,7 @@ class Element_Section extends Element_Base {
 				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
 			}
 		#>
-			<div {{ view.getRenderAttributeString( 'backgroundVideoContainer' ) }}>
+			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
 				<div class="elementor-background-video-embed"></div>
 				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
 			</div>
