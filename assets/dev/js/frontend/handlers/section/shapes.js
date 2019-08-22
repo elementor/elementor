@@ -72,7 +72,7 @@ export default class Shapes extends elementorModules.frontend.handlers.Base {
 		const shapeChange = propertyName.match( /^shape_divider_(top|bottom)$/ );
 
 		if ( shapeChange ) {
-			this.buildSVG( shapeChange[ 1 ] ).bind( this );
+			this.buildSVG( shapeChange[ 1 ] );
 
 			return;
 		}
@@ -80,7 +80,7 @@ export default class Shapes extends elementorModules.frontend.handlers.Base {
 		const negativeChange = propertyName.match( /^shape_divider_(top|bottom)_negative$/ );
 
 		if ( negativeChange ) {
-			this.buildSVG( negativeChange[ 1 ] ).bind( this );
+			this.buildSVG( negativeChange[ 1 ] );
 
 			this.setNegative( negativeChange[ 1 ] );
 		}
