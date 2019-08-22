@@ -2,8 +2,8 @@
 import DocumentsManager from './documents-manager';
 import Storage from '../../../../core/common/assets/js/utils/storage';
 import environment from '../../../../core/common/assets/js/utils/environment';
-import YouTubeModule from './utils/youtube';
-import VimeoModule from './utils/vimeo';
+import YouTubeApiLoader from './utils/video-api/youtube-loader';
+import VimeoApiLoader from './utils/video-api/vimeo-loader';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
@@ -125,8 +125,8 @@ class Frontend extends elementorModules.ViewModule {
 
 	initOnReadyComponents() {
 		this.utils = {
-			youtube: new YouTubeModule(),
-			vimeo: new VimeoModule(),
+			youtube: new YouTubeApiLoader(),
+			vimeo: new VimeoApiLoader(),
 			anchors: new AnchorsModule(),
 			lightbox: new LightboxModule(),
 		};

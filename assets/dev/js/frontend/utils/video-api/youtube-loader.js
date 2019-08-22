@@ -1,6 +1,6 @@
-import VideoApiImporterModule from './video-api-importer-base';
+import BaseLoader from './base-loader';
 
-export default class YoutubeModule extends VideoApiImporterModule {
+export default class YoutubeLoader extends BaseLoader {
 	getApiURL() {
 		return 'https://www.youtube.com/iframe_api';
 	}

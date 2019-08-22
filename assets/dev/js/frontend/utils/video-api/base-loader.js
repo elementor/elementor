@@ -1,4 +1,4 @@
-export default class VideoApiImporterBase extends elementorModules.ViewModule {
+export default class BaseLoader extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			isInserted: false,
