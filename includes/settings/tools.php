@@ -202,7 +202,7 @@ class Tools extends Settings_Page {
 	protected function create_tabs() {
 		$rollback_html = '<select class="elementor-rollback-select">';
 
-		foreach( $this->get_rollback_versions() as $version ) {
+		foreach ( $this->get_rollback_versions() as $version ) {
 			$rollback_html .= "<option value='{$version}'>$version</option>";
 		}
 		$rollback_html .= '</select>';
