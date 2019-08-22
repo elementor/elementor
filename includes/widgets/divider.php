@@ -110,7 +110,7 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'groups' => [
 					[
-						'label' => __( 'Classic', 'elementor-pro' ),
+						'label' => __( 'Classic', 'elementor' ),
 						'options' => [
 							'solid' => __( 'Solid', 'elementor' ),
 							'double' => __( 'Double', 'elementor' ),
@@ -120,7 +120,7 @@ class Widget_Divider extends Widget_Base {
 						],
 					],
 					[
-						'label' => __( 'Line', 'elementor-pro' ),
+						'label' => __( 'Line', 'elementor' ),
 						'options' => [
 							'zigzag' => __( 'Zig Zag', 'elementor' ),
 							'curly' => __( 'Curly', 'elementor' ),
@@ -129,7 +129,7 @@ class Widget_Divider extends Widget_Base {
 						],
 					],
 					[
-						'label' => __( 'Pattern', 'elementor-pro' ),
+						'label' => __( 'Pattern', 'elementor' ),
 						'options' => [
 							'squered' => __( 'Squared', 'elementor' ),
 							'hearts' => __( 'Hearts', 'elementor' ),
@@ -218,15 +218,15 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'line' => [
-						'title' => __( 'None', 'elementor-pro' ),
+						'title' => __( 'None', 'elementor' ),
 						'icon' => 'eicon-ban',
 					],
 					'line_text' => [
-						'title' => __( 'Text', 'elementor-pro' ),
+						'title' => __( 'Text', 'elementor' ),
 						'icon' => 'eicon-t-letter-bold',
 					],
 					'line_icon' => [
-						'title' => __( 'Icon', 'elementor-pro' ),
+						'title' => __( 'Icon', 'elementor' ),
 						'icon' => 'eicon-star',
 					],
 				],
@@ -251,7 +251,7 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'condition' => [
-					'look' => 'line_text'
+					'look' => 'line_text',
 				],
 				'dynamic' => [
 					'active' => true,
@@ -269,7 +269,7 @@ class Widget_Divider extends Widget_Base {
 					'library' => 'fa-solid',
 				],
 				'condition' => [
-					'look' => 'line_icon'
+					'look' => 'line_icon',
 				],
 			]
 		);
@@ -331,7 +331,7 @@ class Widget_Divider extends Widget_Base {
 					'{{WRAPPER}} svg' => 'height: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
-					'separator_type' => 'pattern'
+					'separator_type' => 'pattern',
 				],
 				'render_type' => 'template',
 			]
@@ -344,7 +344,7 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ '%', 'px' ],
 				'condition' => [
-					'separator_type' => 'pattern'
+					'separator_type' => 'pattern',
 				],
 			]
 		);
@@ -377,7 +377,7 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'Text', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'look' => 'line_text'
+					'look' => 'line_text',
 				],
 			]
 		);
@@ -426,7 +426,7 @@ class Widget_Divider extends Widget_Base {
 					],
 				],
 				'default' => 'center',
-				'prefix_class' => 'elementor-widget-divider--element-align-'
+				'prefix_class' => 'elementor-widget-divider--element-align-',
 			]
 		);
 
@@ -455,7 +455,7 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'look' => 'line_icon'
+					'look' => 'line_icon',
 				],
 			]
 		);
@@ -567,7 +567,7 @@ class Widget_Divider extends Widget_Base {
 					],
 				],
 				'default' => 'center',
-				'prefix_class' => 'elementor-widget-divider--element-align-'
+				'prefix_class' => 'elementor-widget-divider--element-align-',
 			]
 		);
 
@@ -739,32 +739,24 @@ class Widget_Divider extends Widget_Base {
 		?>
 		<div class="elementor-divider">
 			<span class="elementor-divider-separator">
-			<?php if ( 'line_icon' === ( $settings[ 'look' ] ) && ! empty( $settings[ 'icon' ] ) ) {
+			<?php if ( 'line_icon' === ( $settings['look'] ) && ! empty( $settings['icon'] ) ) :
 				echo $svg_code; ?>
 				<div class="elementor-icon elementor-divider__element">
-					<?php Icons_Manager::render_icon( $settings[ 'icon' ], [ 'aria-hidden' => 'true' ] ); ?>
+					<?php Icons_Manager::render_icon( $settings['icon'], [ 'aria-hidden' => 'true' ] ); ?>
 				</div>
-			<?php echo $svg_code2;
-				} elseif ( ! empty( $settings[ 'text' ] ) )  {
-				echo $svg_code; ?>
+				<?php
+					echo $svg_code2;
+				elseif ( ! empty( $settings['text'] ) ) :
+					echo $svg_code; ?>
 				<span class="elementor-divider__text elementor-divider__element">
-					<?php echo $settings[ 'text' ]; ?>
+					<?php echo $settings['text']; ?>
 				</span>
-			<?php echo $svg_code2;
-				} else {
+					<?php echo $svg_code2;
+				else :
 					echo $svg_code;
-				} ?>
+				endif; ?>
 			</span>
 		</div>
 		<?php
 	}
-
-	/**
-	 * Render divider widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
 }
