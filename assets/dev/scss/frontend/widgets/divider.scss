@@ -2,14 +2,13 @@
 // Divider
 //
 
-:root {
+.elementor-widget-divider {
 	--divider-border-style: solid;
 	--divider-border-width: 1px;
 	--divider-border-color: $gray-darkest;
 	--divider-icon-size: 20px;
-}
-
-.elementor-widget-divider {
+	--divider-element-spacing: 5px;
+	--divider-pattern-height: 24px;
 
 	.elementor-divider {
 		line-height: 0;
@@ -18,6 +17,11 @@
 		&__text {
 			font-size: 15px;
 			line-height: 1;
+		}
+
+		&__element {
+			margin: 0 var(--divider-element-spacing);
+			flex-shrink: 0;
 		}
 	}
 
@@ -28,13 +32,13 @@
 	.elementor-divider-separator {
 		display: flex;
 		margin: 0 auto;
+		direction: ltr;
 	}
 
 	&--view {
 
 		&-line_text, &-line_icon {
 			.elementor-divider-separator{
-				display: flex;
 				align-items: center;
 
 				&:before, &:after {
@@ -48,9 +52,88 @@
 		}
 	}
 
+	&--element-align {
+
+		&-left {
+
+			.elementor-divider {
+
+				.elementor-divider-separator > svg:first-of-type {
+					flex-grow: 0;
+					flex-shrink: 100;
+				}
+
+				&-separator:before {
+					content: none;
+				}
+
+				&__element {
+					margin-left: 0;
+				}
+			}
+		}
+
+		&-right {
+
+			.elementor-divider {
+
+				.elementor-divider-separator > svg:last-of-type {
+					flex-grow: 0;
+					flex-shrink: 100;
+				}
+
+				&-separator:after {
+					content: none;
+				}
+
+				&__element {
+					margin-right: 0;
+				}
+			}
+		}
+	}
+
 	&:not(.elementor-widget-divider--view-line_text):not(.elementor-widget-divider--view-line_icon) {
 		.elementor-divider-separator {
 			border-top: var(--divider-border-width) var(--divider-border-style) var(--divider-border-color);
 		}
 	}
+
+	&--separator-type {
+
+		&-pattern {
+			--divider-border-style: none;
+		}
+	}
+
+	svg {
+		width: 100%;
+		height: var(--divider-pattern-height);
+
+		pattern {
+			overflow: visible;
+			stroke: var(--divider-border-color);
+			stroke-width: calc(var(--divider-border-width)/2);
+			fill: var(--divider-border-color);
+			stroke-linecap:square;
+			stroke-miterlimit:10;
+
+			&.has-fill {
+				stroke: transparent;
+			}
+
+			&.has-stroke {
+				fill: transparent;
+			}
+		}
+
+		rect {
+			width: 100%;
+			height: 100%;
+		}
+	}
+}
+
+.rtl .elementor-widget-divider .elementor-divider__text {
+	direction: rtl;
 }
