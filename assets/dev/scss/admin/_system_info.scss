@@ -78,4 +78,14 @@
 			@include border-start(3px solid $editor-orange);
 		}
 	}
+
+	a#elementor-usage-recalc {
+		font-size: 80%;
+		@include margin-start(15px);
+		color: $gray;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }

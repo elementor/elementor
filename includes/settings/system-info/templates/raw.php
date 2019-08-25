@@ -48,7 +48,12 @@ foreach ( $reports as $report_name => $report ) :
 				echo PHP_EOL . PHP_EOL;
 			endforeach;
 		} else {
-			echo "{$sub_indent}{$field['label']}: {$field['value']}" . PHP_EOL;
+			$label = $field['label'];
+
+			if ( ! empty( $label ) ) {
+				$label .= ': ';
+			}
+			echo "{$sub_indent}{$label}{$field['value']}" . PHP_EOL;
 		}
 	endforeach;
 
