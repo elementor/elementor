@@ -3,14 +3,14 @@ export default class extends elementorModules.common.Component {
 		return 'panel/history';
 	}
 
-	getInitialTabs() {
+	defaultTabs() {
 		return {
 			actions: { title: elementor.translate( 'actions' ) },
 			revisions: { title: elementor.translate( 'revisions' ) },
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			actions: {
 				keys: 'ctrl+shift+h',
@@ -23,7 +23,7 @@ export default class extends elementorModules.common.Component {
 
 	activate() {
 		// Activate the tab component itself.
-		elementorCommon.components.activate( this.getTabRoute( this.currentTab ) );
+		$e.components.activate( this.getTabRoute( this.currentTab ) );
 	}
 
 	getTabsWrapperSelector() {

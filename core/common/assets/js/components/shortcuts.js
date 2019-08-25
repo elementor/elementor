@@ -111,9 +111,9 @@ export default class Shortcuts {
 	}
 
 	isActiveScope( scopes ) {
-		const activeComponents = Object.keys( elementorCommon.components.activeComponents ),
+		const activeComponents = Object.keys( $e.components.activeComponents ),
 			activeComponent = activeComponents[ activeComponents.length - 1 ],
-			component = elementorCommon.components.get( activeComponent );
+			component = $e.components.get( activeComponent );
 
 		if ( ! component ) {
 			return false;

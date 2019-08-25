@@ -7,7 +7,8 @@ import toggleHandler from './handlers/toggle';
 import videoHandler from './handlers/video';
 import imageCarouselHandler from './handlers/image-carousel';
 import textEditorHandler from './handlers/text-editor';
-import sectionHandler from './handlers/section';
+import sectionHandler from './handlers/section/section';
+import columnHandler from './handlers/column';
 
 module.exports = function( $ ) {
 	const self = this;
@@ -16,6 +17,7 @@ module.exports = function( $ ) {
 	const handlers = {
 		// Elements
 		section: sectionHandler,
+		column: columnHandler,
 
 		// Widgets
 		'accordion.default': accordionHandler,

@@ -9,7 +9,7 @@ export default class extends elementorModules.common.ComponentModal {
 		return ModalLayout;
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			'': {
 				keys: 'ctrl+?',

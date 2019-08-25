@@ -135,7 +135,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.addPanelPage();
 
 		if ( ! elementor.userCan( 'design' ) ) {
-			elementorCommon.route.to( 'panel/page-settings/settings' );
+			$e.route( 'panel/page-settings/settings' );
 		}
 	},
 } );

@@ -23,12 +23,12 @@ abstract class Base_Reporter {
 	 *
 	 * Holds the list of all the properties of the report.
 	 *
-	 * @access private
+	 * @access protected
 	 * @static
 	 *
 	 * @var array
 	 */
-	private $_properties;
+	protected $_properties;
 
 	/**
 	 * Get report title.
@@ -128,6 +128,7 @@ abstract class Base_Reporter {
 	public static function get_properties_keys() {
 		return [
 			'name',
+			'format',
 			'fields',
 		];
 	}
