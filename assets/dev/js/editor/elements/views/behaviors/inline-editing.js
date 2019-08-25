@@ -196,17 +196,24 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		const key = this.getEditingSettingKey(),
-			parts = key.split( '.' );
+		let key = this.getEditingSettingKey(),
+			parts = key.split( '.' ),
+			value = this.editor.getContent();
 
-		// If repeater.
 		if ( 3 === parts.length ) {
-			this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
+			$e.run( 'document/elements/repeater/settings', {
+				element: this.view,
+				name: parts[ 0 ],
+				index: parts[ 1 ],
+				settings: {
+					[ parts[ 2 ] ]: value,
+				},
+			} );
 		} else {
 			$e.run( 'document/elements/settings', {
 				element: this.view,
 				settings: {
-					[ key ]: this.editor.getContent(),
+					[ key ]: value,
 				},
 				options: { external: true },
 			} );

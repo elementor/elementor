@@ -53,10 +53,10 @@ jQuery( () => {
 		} ),
 	};
 
-	QUnit.module( 'eCommands' );
+	QUnit.module( 'document/elements' );
 
 	/** -------------------------------------------
-	 * @description Test eQuery Commands (Single Selection).
+	 * @description Test eCommands elements (Single Selection).
 	 * -------------------------------------------- */
 
 	QUnit.test( 'Empty', ( assert ) => {
@@ -553,7 +553,7 @@ jQuery( () => {
 	} );
 
 	/** -------------------------------------------
-	 * @description Test eQuery Commands (Multiple Selection).
+	 * @description Test eCommands elements (Multiple Selection).
 	 * -------------------------------------------- */
 
 	QUnit.test( 'Multiple Settings', ( assert ) => {

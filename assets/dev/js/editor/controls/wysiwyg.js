@@ -83,6 +83,8 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		if ( ! elementor.config.tinymceHasCustomConfig ) {
 			self.rearrangeButtons();
 		}
+
+		self.options.element.renderHTML();
 	},
 
 	applySavedValue: function() {
@@ -99,8 +101,6 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	},
 
 	saveEditor: function() {
-		this.editor.save();
-
 		this.setValue( this.editor.getContent() );
 	},
 
@@ -160,7 +160,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 
 		setTimeout( () => {
 			if ( ! this.isDestroyed ) {
-				this.editor.on( 'keyup change undo redo SetContent', this.saveEditor.bind( this ) );
+				this.editor.on( 'keyup change undo redo', this.saveEditor.bind( this ) );
 			}
 		}, 100 );
 	},

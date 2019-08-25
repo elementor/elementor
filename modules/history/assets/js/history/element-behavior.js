@@ -124,21 +124,25 @@ module.exports = Marionette.Behavior.extend( {
 		// Stop listen to restore actions
 		behavior.stopListening( settings, 'change', this.saveHistory );
 
-		var restoredValues = {};
-		_.each( history.changed, function( values, key ) {
-			if ( isRedo ) {
-				restoredValues[ key ] = values.new;
-			} else {
-				restoredValues[ key ] = values.old;
-			}
-		} );
+		// TODO: temp fix ( do nothing if its repeater ).
+		if ( settings._repeater ) {
+			delete settings._repeater;
+		} else {
+			var restoredValues = {};
+			_.each( history.changed, function( values, key ) {
+				if ( isRedo ) {
+					restoredValues[ key ] = values.new;
+				} else {
+					restoredValues[ key ] = values.old;
+				}
+			} );
 
-		// Set at once.
-		$e.run( 'document/elements/settings', {
-			element: view,
-			settings: restoredValues,
-			options: { external: true },
-		} );
+			$e.run( 'document/elements/settings', {
+				element: view,
+				settings: restoredValues,
+				options: { external: true },
+			} );
+		}
 
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
 

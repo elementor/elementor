@@ -1,4 +1,4 @@
-import Commands from './commands/commands';
+import * as Commands from './commands/commands';
 
 export default class extends elementorModules.common.Component {
 	getNamespace() {

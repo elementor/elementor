@@ -2,6 +2,11 @@ import Base from './base';
 
 // Reset style.
 export default class extends Base {
+	getHistory( args ) {
+		// TODO: Move command to new syntax.
+		return false;
+	}
+
 	apply() {
 		const { args } = this;
 

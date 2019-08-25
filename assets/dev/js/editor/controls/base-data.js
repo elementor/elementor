@@ -80,20 +80,30 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	setSettingsModel: function( value ) {
+		const key = this.model.get( 'name' );
+
 		if ( this._parent && this._parent._parent.model && this._parent._parent.model.attributes.is_repeater ) {
-			this.elementSettingsModel.set( this.model.get( 'name' ), value );
+			$e.run( 'document/elements/repeater/settings', {
+				element: this.options.element,
+				name: this._parent._parent.model.get( 'name' ),
+				index: this._parent.itemIndex - 1,
+				settings: {
+					[ key ]: value,
+				},
+				options: {
+					trigger: false,
+				},
+			} );
+		} else {
+			$e.run( 'document/elements/settings', {
+				element: this.options.element,
+				settings: {
+					[ key ]: value,
+				},
+			} );
 
-			return;
+			this.triggerMethod( 'settings:change' );
 		}
-
-		$e.run( 'document/elements/settings', {
-			element: this.options.element,
-			settings: {
-				[ this.model.get( 'name' ) ]: value,
-			},
-		} );
-
-		this.triggerMethod( 'settings:change' );
 	},
 
 	applySavedValue: function() {

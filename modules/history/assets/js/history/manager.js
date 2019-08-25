@@ -196,7 +196,8 @@ var	Manager = function() {
 		} else if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
 			const history = item.get( 'items' ).first().get( 'history' );
 
-				if ( history && history.behavior.view.model ) {
+				// TODO: After remove history collection & elements behavior fix scrollToView.
+				if ( history && history.behavior.view && history.behavior.view.model ) {
 					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
 				}
 			}

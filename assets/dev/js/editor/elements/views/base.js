@@ -491,6 +491,19 @@ BaseElementView = BaseContainer.extend( {
 		return 'elementor-element-' + this.getID();
 	},
 
+	renderHTML: function() {
+		const templateType = this.getTemplateType(),
+			editModel = this.getEditModel();
+
+		if ( 'js' === templateType ) {
+			this.getEditModel().setHtmlCache();
+			this.render();
+			editModel.renderOnLeave = true;
+		} else {
+			editModel.renderRemoteServer();
+		}
+	},
+
 	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
@@ -540,16 +553,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Re-render the template
-		const templateType = this.getTemplateType(),
-			editModel = this.getEditModel();
-
-		if ( 'js' === templateType ) {
-			this.getEditModel().setHtmlCache();
-			this.render();
-			editModel.renderOnLeave = true;
-		} else {
-			editModel.renderRemoteServer();
-		}
+		this.renderHTML();
 	},
 
 	getDynamicParsingSettings() {

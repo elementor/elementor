@@ -12,19 +12,6 @@ import PasteStyle from './paste-style';
 import ResetStyle from './reset-style';
 import Settings from './settings';
 
-export default {
-	Copy,
-	Create,
-	CreateSection,
-	Delete,
-	Duplicate,
-	Paste,
-	Move,
-	PasteStyle,
-	ResetStyle,
-	Settings,
-};
-
 export {
 	Copy,
 	Create,
