@@ -31,10 +31,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getID: function() {
-		return this.$element.attr( 'data-id' );
-	},
-
 	getUniqueHandlerID: function( cid, $element ) {
 		if ( ! cid ) {
 			cid = this.getModelCID();
