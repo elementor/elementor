@@ -216,6 +216,7 @@
 		border-radius: 3px;
 		cursor: pointer;
 		transition: $transition-hover;
+		overflow: hidden;
 
 		&:hover {
 			box-shadow: 0 1px 14px rgba(0, 0, 0, 0.16)
