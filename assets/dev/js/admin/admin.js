@@ -211,6 +211,16 @@
 				},
 			} );
 
+			$( 'select.elementor-rollback-select' ).on( 'change', function() {
+				var $this = $( this ),
+					$rollbackButton = $this.next( '.elementor-rollback-button' ),
+					placeholderText = $rollbackButton.data( 'placeholder-text' ),
+					placeholderUrl = $rollbackButton.data( 'placeholder-url' );
+
+				$rollbackButton.html( placeholderText.replace( '{VERSION}', $this.val() ) );
+				$rollbackButton.attr( 'href', placeholderUrl.replace( 'VERSION', $this.val() ) );
+			} ).trigger( 'change' );
+
 			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 
