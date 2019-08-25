@@ -5,7 +5,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	templateHelpers: function() {
 		return {
-			tabs: elementorCommon.components.get( 'library' ).getTabs(),
+			tabs: $e.components.get( 'library' ).getTabs(),
 		};
 	},
 } );

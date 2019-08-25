@@ -218,7 +218,7 @@ class Revisions_Manager {
 
 		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
-		$post_css = new Post_CSS( $parent_id );
+		$post_css = Post_CSS::create( $parent_id );
 
 		$post_css->update();
 	}

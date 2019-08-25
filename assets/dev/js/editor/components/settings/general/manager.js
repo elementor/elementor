@@ -6,7 +6,7 @@ module.exports = BaseSettings.extend( {
 	onInit: function() {
 		BaseSettings.prototype.onInit.apply( this );
 
-		elementorCommon.components.register( new Component( { manager: this } ) );
+		$e.components.register( new Component( { manager: this } ) );
 	},
 
 	changeCallbacks: {

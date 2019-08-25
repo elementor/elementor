@@ -15,8 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Autoloader {
 
-	const ALIASES_DEPRECATION_RANGE = 0.2;
-
 	/**
 	 * Classes map.
 	 *
@@ -181,30 +179,6 @@ class Autoloader {
 
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
-			'CSS_File' => [
-				'replacement' => 'Core\Files\CSS\Base',
-				'version' => '2.1.0',
-			],
-			'Global_CSS_File' => [
-				'replacement' => 'Core\Files\CSS\Global_CSS',
-				'version' => '2.1.0',
-			],
-			'Post_CSS_File' => [
-				'replacement' => 'Core\Files\CSS\Post',
-				'version' => '2.1.0',
-			],
-			'Posts_CSS_Manager' => [
-				'replacement' => 'Core\Files\Manager',
-				'version' => '2.1.0',
-			],
-			'Post_Preview_CSS' => [
-				'replacement' => 'Core\Files\CSS\Post_Preview',
-				'version' => '2.1.0',
-			],
-			'Responsive' => [
-				'replacement' => 'Core\Responsive\Responsive',
-				'version' => '2.1.0',
-			],
 			'Admin' => [
 				'replacement' => 'Core\Admin\Admin',
 				'version' => '2.2.0',
@@ -291,17 +265,7 @@ class Autoloader {
 		if ( $has_class_alias ) {
 			class_alias( $final_class_name, $class );
 
-			preg_match( '/^[0-9]+\.[0-9]+/', ELEMENTOR_VERSION, $current_version );
-
-			$current_version_as_float = (float) $current_version[0];
-
-			preg_match( '/^[0-9]+\.[0-9]+/', $alias_data['version'], $alias_version );
-
-			$alias_version_as_float = (float) $alias_version[0];
-
-			if ( $current_version_as_float - $alias_version_as_float >= self::ALIASES_DEPRECATION_RANGE ) {
-				_deprecated_file( $class, $alias_data['version'], $final_class_name );
-			}
+			Utils::handle_deprecation( $class, $alias_data['version'], $final_class_name );
 		}
 	}
 }
