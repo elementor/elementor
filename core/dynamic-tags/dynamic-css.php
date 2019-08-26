@@ -85,8 +85,17 @@ class Dynamic_CSS extends Post {
 	 * @since 2.0.13
 	 * @access public
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null, $is_repeater_item = false ) {
 		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
+
+		$has_repeaters = array_filter( $controls, function( $control ) {
+			return 'repeater' === $control['type'];
+		} );
+
+		if ( empty( $dynamic_settings ) && ! empty( $has_repeaters ) ) {
+			$dynamic_settings = $has_repeaters;
+		}
+
 		if ( ! empty( $dynamic_settings ) ) {
 			$controls = array_intersect_key( $controls, $dynamic_settings );
 
@@ -96,7 +105,7 @@ class Dynamic_CSS extends Post {
 
 			foreach ( $controls as $control ) {
 				if ( ! empty( $control['style_fields'] ) ) {
-					$this->add_repeater_control_style_rules( $controls_stack, $control, $values[ $control['name'] ], $placeholders, $replacements );
+					$this->add_repeater_control_style_rules( $controls_stack, $control, $parsed_dynamic_settings[ $control['name'] ], $placeholders, $replacements );
 				}
 
 				if ( empty( $control['selectors'] ) ) {
@@ -104,6 +113,12 @@ class Dynamic_CSS extends Post {
 				}
 
 				$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
+			}
+		}
+
+		if ( true === $is_repeater_item ) {
+			foreach ( $controls as $control ) {
+				$this->add_control_style_rules( $control, $values, $all_controls, $placeholders, $replacements );
 			}
 		}
 

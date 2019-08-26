@@ -722,7 +722,8 @@ abstract class Base extends Base_File {
 				$repeater_values[ $index ],
 				$placeholders,
 				array_merge( $replacements, [ '.elementor-repeater-item-' . $repeater_values[ $index ]['_id'] ] ),
-				$repeater_control['fields']
+				$repeater_control['fields'],
+				true
 			);
 		}
 	}
