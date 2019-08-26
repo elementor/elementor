@@ -240,7 +240,7 @@ const App = Marionette.Application.extend( {
 
 		if ( ! View ) {
 			var controlData = this.config.controls[ controlID ],
-				isUIControl = -1 !== controlData.features.indexOf( 'ui' );
+				isUIControl = controlData && -1 !== controlData.features.indexOf( 'ui' );
 
 			View = this.modules.controls[ isUIControl ? 'Base' : 'BaseData' ];
 		}

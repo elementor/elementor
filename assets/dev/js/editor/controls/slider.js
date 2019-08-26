@@ -25,6 +25,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	initSlider: function() {
+		if ( ! this.ui.slider[ 0 ] ) {
+			return;
+		}
+
 		this.destroySlider();
 
 		const isMultiple = this.isMultiple(),
@@ -72,7 +76,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 
 	applySavedValue: function() {
 		ControlBaseUnitsItemView.prototype.applySavedValue.apply( this, arguments );
-		if ( this.ui.slider[ 0 ].noUiSlider ) {
+		if ( this.ui.slider[ 0 ] && this.ui.slider[ 0 ].noUiSlider ) {
 			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		}
 	},
@@ -92,7 +96,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	destroySlider: function() {
-		if ( this.ui.slider[ 0 ].noUiSlider ) {
+		if ( this.ui.slider[ 0 ] && this.ui.slider[ 0 ].noUiSlider ) {
 			this.ui.slider[ 0 ].noUiSlider.destroy();
 		}
 	},

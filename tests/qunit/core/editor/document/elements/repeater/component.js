@@ -1,59 +1,5 @@
 jQuery( () => {
-	// Fake Testing.
-	class _assert {
-		constructor( name ) {
-			this.name = name;
-		}
-
-		equals( a, b ) {
-			if ( a === b ) {
-				console.info( `Test: '${ this.name }' is equal` );
-			} else {
-				throw Error( `Test: '${ this.name }' is not equal` );
-			}
-		}
-	}
-
-	const QUnit = {
-		test: ( ( name, fn ) => {
-			setTimeout( () => {
-				const assert = new _assert( name );
-
-				console.info( `Testing Test: '${ name }'` );
-
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					columns: 1,
-					returnValue: true,
-				} );
-
-				const eCol = eSection.children._views[ Object.keys( eSection.children._views )[ 0 ] ];
-
-				$e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'heading',
-						settings: {
-							title: `Testing ${ name } ->`,
-							title_color: '#000000',
-						},
-					},
-					element: eCol,
-
-				} );
-
-				fn( assert );
-			} );
-		} ),
-
-		module: ( ( name ) => {
-			elementor.elements.reset();
-
-			alert( `Testing Module: '${ name } '` );
-		} ),
-	};
-
-	QUnit.module( 'eCommands `document/elements/repeater`' );
+	QUnit.module( 'Component: document/elements/repeater' );
 
 	/** -------------------------------------------
 	 * @description Test eCommands Repeater (Single Selection).
@@ -90,7 +36,7 @@ jQuery( () => {
 		} );
 
 		// Check.
-		assert.equals( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
+		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
 	} );
 
 	QUnit.test( 'Remove', ( assert ) => {
@@ -121,7 +67,7 @@ jQuery( () => {
 		} );
 
 		// Check.
-		assert.equals( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 1 );
+		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 1 );
 	} );
 
 	QUnit.test( 'Settings', ( assert ) => {
@@ -157,7 +103,7 @@ jQuery( () => {
 		} );
 
 		// Check.
-		assert.equals( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
 	} );
 
 	QUnit.test( 'Duplicate', ( assert ) => {
@@ -188,7 +134,7 @@ jQuery( () => {
 		} );
 
 		// Check.
-		assert.equals( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
+		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
 	} );
 
 	QUnit.test( 'Move', ( assert ) => {
@@ -220,6 +166,6 @@ jQuery( () => {
 		} );
 
 		// Check.
-		assert.equals( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
+		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
 	} );
 } );
