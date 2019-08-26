@@ -9,6 +9,7 @@ import imageCarouselHandler from './handlers/image-carousel';
 import textEditorHandler from './handlers/text-editor';
 import sectionHandler from './handlers/section/section';
 import columnHandler from './handlers/column';
+import globalHandler from './handlers/global';
 
 module.exports = function( $ ) {
 	const self = this;
@@ -34,7 +35,7 @@ module.exports = function( $ ) {
 	const handlersInstances = {};
 
 	const addGlobalHandlers = function() {
-		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
+		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 	};
 
 	const addElementsHandlers = function() {
