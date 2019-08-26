@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Page extends Base {
+class Page extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 

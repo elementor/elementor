@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Post extends Base {
+class Post extends PageBase {
 	/**
 	 * @access public
 	 */
