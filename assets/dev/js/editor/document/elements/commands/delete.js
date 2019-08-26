@@ -2,31 +2,21 @@ import Base from './base';
 
 // Delete.
 export default class extends Base {
-	getHistory( args ) {
-		// TODO: Move command to new syntax.
-		return false;
+	validateArgs( args ) {
+		this.requireElements( args );
 	}
 
-	apply() {
-		const { args } = this;
+	getHistory( args ) {
+		const { elements = [ args.element ] } = args;
 
-		if ( ! args.element && ! args.elements ) {
-			throw Error( 'element or elements are required.' );
-		} else if ( args.element && args.elements ) {
-			throw Error( 'element and elements cannot go together please select one of them.' );
-		}
+		return {
+			elements,
+			type: 'remove',
+		};
+	}
 
-		const elements = args.elements || [ args.element ];
-
-		let historyId = null;
-
-		if ( elementor.history.history.getActive() ) {
-			historyId = $e.run( 'document/history/startLog', {
-				elements: elements,
-				type: 'remove',
-				returnValue: true,
-			} );
-		}
+	apply( args ) {
+		const { elements = [ args.element ] } = args;
 
 		elements.forEach( ( element ) => {
 			const parent = element._parent;
@@ -41,10 +31,6 @@ export default class extends Base {
 				}
 			}
 		} );
-
-		if ( historyId ) {
-			$e.run( 'document/history/endLog', { id: historyId } );
-		}
 	}
 
 	handleEmptySection( section ) {

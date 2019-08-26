@@ -2,35 +2,23 @@ import Base from './base';
 
 // כMove.
 export default class extends Base {
-	getHistory( args ) {
-		// TODO: Move command to new syntax.
-		return false;
+	validateArgs( args ) {
+		this.requireElements( args );
+		this.requireArgument( 'target', args );
 	}
 
-	apply() {
-		const { args } = this;
+	getHistory( args ) {
+		const { elements = [ args.element ] } = args;
 
-		if ( ! args.target ) {
-			throw Error( 'target is required.' );
-		}
+		return {
+			elements,
+			type: 'move',
+		};
+	}
 
-		if ( ! args.element && ! args.elements ) {
-			throw Error( 'element or elements are required.' );
-		}
-
-		if ( args.element && args.elements ) {
-			throw Error( 'element and elements cannot go together please select one of them.' );
-		}
-
-		const options = args.options || {},
-			elements = args.element ? [ args.element ] : args.elements,
-			historyId = $e.run( 'document/history/startLog', {
-				elements,
-				type: 'move',
-				returnValue: true,
-			} );
-
-		const reCreate = [];
+	apply( args ) {
+		const { target, options = {}, elements = [ args.element ] } = args,
+			reCreate = [];
 
 		elements.forEach( ( element ) => {
 			reCreate.push( elementorCommon.helpers.cloneObject( element.model ) );
@@ -40,13 +28,11 @@ export default class extends Base {
 
 		reCreate.forEach( ( model ) => {
 			$e.run( 'document/elements/create', {
-				element: args.target,
+				element: target,
 				model,
 				options,
 				returnValue: true,
 			} );
 		} );
-
-		$e.run( 'document/history/endLog', { id: historyId } );
 	}
 }

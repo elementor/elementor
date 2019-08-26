@@ -2,40 +2,23 @@ import Base from './base';
 
 // Create.
 export default class extends Base {
-	getHistory( args ) {
-		// TODO: Move command to new syntax.
-		return false;
+	validateArgs( args ) {
+		this.requireElements( args );
+		this.requireArgument( 'model', args );
 	}
 
-	apply() {
-		const { args } = this;
+	getHistory( args ) {
+		const { model, elements = [ args.element ] } = args;
 
-		if ( ! args.element && ! args.elements ) {
-			throw Error( 'element or elements are required.' );
-		}
+		return {
+			elements,
+			model,
+			type: 'add',
+		};
+	}
 
-		if ( args.element && args.elements ) {
-			throw Error( 'element and elements cannot go together please select one of them.' );
-		}
-
-		if ( ! args.model ) {
-			throw Error( 'model is required.' );
-		}
-
-		const options = args.options || {},
-			model = args.model,
-			elements = args.elements || [ args.element ];
-
-		let historyId = null;
-
-		if ( elementor.history.history.getActive() ) {
-			historyId = $e.run( 'document/history/startLog', {
-				elements,
-				model,
-				type: 'add',
-				returnValue: true,
-			} );
-		}
+	apply( args ) {
+		const { model, options = {}, elements = [ args.element ] } = args;
 
 		let result = [];
 
@@ -51,10 +34,6 @@ export default class extends Base {
 
 		if ( 1 === result.length ) {
 			result = result[ 0 ];
-		}
-
-		if ( historyId ) {
-			$e.run( 'document/history/endLog', { id: historyId } );
 		}
 
 		return result;

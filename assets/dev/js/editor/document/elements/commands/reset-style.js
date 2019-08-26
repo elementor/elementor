@@ -1,34 +1,24 @@
 import Base from './base';
 
-// Reset style.
+// ResetStyle.
 export default class extends Base {
-	getHistory( args ) {
-		// TODO: Move command to new syntax.
-		return false;
+	validateArgs( args ) {
+		this.requireElements( args );
 	}
 
-	apply() {
-		const { args } = this;
+	getHistory( args ) {
+		const { elements = [ args.element ] } = args;
 
-		if ( ! args.element && ! args.elements ) {
-			throw Error( 'element or elements are required.' );
-		}
-
-		if ( args.element && args.elements ) {
-			throw Error( 'element and elements cannot go together please select one of them.' );
-		}
-
-		if ( args.element ) {
-			args.elements = [ args.element ];
-		}
-
-		const historyId = $e.run( 'document/history/startLog', {
-			elements: args.elements,
+		return {
+			elements,
 			type: 'reset_style',
-			returnValue: true,
-		} );
+		};
+	}
 
-		args.elements.forEach( ( element ) => {
+	apply( args ) {
+		const { elements = [ args.element ] } = args;
+
+		elements.forEach( ( element ) => {
 			const editModel = element.getEditModel(),
 				controls = editModel.get( 'settings' ).controls,
 				defaultValues = {};
@@ -51,7 +41,5 @@ export default class extends Base {
 
 			element.renderOnChange();
 		} );
-
-		$e.run( 'document/history/endLog', { id: historyId } );
 	}
 }

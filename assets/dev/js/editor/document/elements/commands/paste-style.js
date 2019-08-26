@@ -1,37 +1,29 @@
 import Base from './base';
 
-// Paste style.
+// TODO: rewrite apply function.
+// PasteStyle.
 export default class extends Base {
-	getHistory( args ) {
-		// TODO: Move command to new syntax.
-		return false;
+	validateArgs( args ) {
+		this.requireElements( args );
 	}
 
-	apply() {
-		const { args } = this;
+	getHistory( args ) {
+		const { elements = [ args.element ] } = args;
 
-		if ( ! args.element && ! args.elements ) {
-			throw Error( 'element or elements are required.' );
-		}
+		return {
+			elements,
+			type: 'paste_style',
+		};
+	}
 
-		if ( args.element && args.elements ) {
-			throw Error( 'element and elements cannot go together please select one of them.' );
-		}
+	apply( args ) {
+		const { elements = [ args.element ] } = args;
 
-		if ( args.element ) {
-			args.elements = [ args.element ];
-		}
-
-		const historyId = $e.run( 'document/history/startLog', {
-				elements: args.elements,
-				type: 'paste_style',
-				returnValue: true,
-			} ),
-			transferData = elementorCommon.storage.get( 'transfer' ),
+		const transferData = elementorCommon.storage.get( 'transfer' ),
 			sourceElement = transferData.elements[ 0 ],
 			sourceSettings = sourceElement.settings;
 
-		args.elements.forEach( ( element ) => {
+		elements.forEach( ( element ) => {
 			const targetEditModel = element.getEditModel(),
 				targetSettings = targetEditModel.get( 'settings' ),
 				targetSettingsAttributes = targetSettings.attributes,
@@ -92,7 +84,5 @@ export default class extends Base {
 
 			element.renderOnChange();
 		} );
-
-		$e.run( 'document/history/endLog', { id: historyId } );
 	}
 }

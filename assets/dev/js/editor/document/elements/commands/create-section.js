@@ -3,27 +3,18 @@ import Base from './base';
 // CreateSection.
 export default class extends Base {
 	getHistory( args ) {
-		// TODO: Move command to new syntax.
-		return false;
-	}
-
-	apply() {
-		const { args } = this,
-			options = args.options || {},
-			elements = [];
-
-		if ( ! args.columns ) {
-			args.columns = 1;
-		}
-
-		const historyId = $e.run( 'document/history/startLog', {
+		return {
 			type: 'add',
 			title: elementor.translate( 'section' ),
 			elementType: 'section',
-			returnValue: true,
-		} );
+		};
+	}
 
-		for ( let loopIndex = 0; loopIndex < args.columns; loopIndex++ ) {
+	apply( args ) {
+		const { structure = false, columns = 1, options = {} } = args,
+			elements = [];
+
+		for ( let loopIndex = 0; loopIndex < columns; loopIndex++ ) {
 			elements.push( {
 				id: elementor.helpers.getUniqueID(),
 				elType: 'column',
@@ -32,16 +23,17 @@ export default class extends Base {
 			} );
 		}
 
-		const section = elementor.getPreviewView().addChildElement( { elements }, options );
+		const eSection = $e.run( 'document/elements/create', {
+			element: elementor.getPreviewView(),
+			model: { elements },
+			options,
+			returnValue: true,
+		} );
 
-		if ( args.structure ) {
-			section.setStructure( args.structure );
+		if ( structure ) {
+			eSection.setStructure( structure );
 		}
 
-		section.getEditModel().trigger( 'request:edit' );
-
-		$e.run( 'document/history/endLog', { id: historyId } );
-
-		return section;
+		return eSection;
 	}
 }

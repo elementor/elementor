@@ -2,95 +2,84 @@ import Base from './base';
 
 // Paste.
 export default class extends Base {
+	validateArgs( args ) {
+		const { storageKey = 'transfer' } = args,
+			transferData = elementorCommon.storage.get( storageKey );
+
+		this.requireElements( args )
+
+		if ( ! transferData.hasOwnProperty( 'elements' ) ) {
+			throw Error( `storage with key: '${ storageKey }' does not have elements` );
+		}
+	}
+
 	getHistory( args ) {
-		// TODO: Move command to new syntax.
+		// History is not required.
 		return false;
 	}
 
-	apply() {
-		const { args } = this;
-
-		if ( ! args.element && ! args.elements ) {
-			throw Error( 'element or elements are required.' );
-		}
-
-		if ( args.element && args.elements ) {
-			throw Error( 'element and elements cannot go together please select one of them.' );
-		}
-
-		if ( args.element ) {
-			args.elements = [ args.element ];
-		}
-
-		if ( ! args.storageKey ) {
-			args.storageKey = 'transfer';
-		}
-
-		const transferData = elementorCommon.storage.get( args.storageKey );
-
-		if ( ! transferData.hasOwnProperty( 'elements' ) ) {
-			throw Error( `storage with key: '${ args.storageKey }' does not have elements` );
-		}
-
-		// TODO: should it be member of this class?
-		const pasteTo = ( elements, options = {} ) => {
-			options = Object.assign( { at: null, clone: true }, options );
-
-			transferData.elements.forEach( function( model ) {
-				$e.run( 'document/elements/create', {
-					elements,
-					model,
-					options,
-				} );
-
-				// On paste sections, increase the `at` for every section.
-				if ( null !== options.at ) {
-					options.at++;
-				}
-			} );
-		};
+	apply( args ) {
+		const { at, rebuild = false, storageKey = 'transfer', elements = [ args.element ] } = args,
+			transferData = elementorCommon.storage.get( storageKey );
 
 		// Paste on "Add Section" area.
-		if ( args.rebuild ) {
-			args.elements.forEach( ( currentElement ) => {
-				const at = 'undefined' === typeof args.at ? currentElement.collection.length : args.at;
+		if ( rebuild ) {
+			elements.forEach( ( currentElement ) => {
+				const index = 'undefined' === typeof at ? currentElement.collection.length : at;
 
 				if ( 'section' === transferData.elementsType ) {
-					pasteTo( [ currentElement ], {
-						at,
+					this.pasteTo( transferData, [ currentElement ], {
+						at: index,
 						edit: false,
 					} );
 				} else if ( 'column' === transferData.elementsType ) {
 					const section = $e.run( 'document/elements/create', {
+						element: currentElement,
 						model: {
 							elType: 'column',
 						},
-						element: currentElement,
 						options: {
-							at,
+							at: index,
 							edit: false,
 						},
 						returnValue: true,
 					} );
 
-					pasteTo( [ section ] );
+					this.pasteTo( transferData, [ section ] );
 
 					section.resizeColumns();
 				} else {
 					// Next code changed from original since `_checkIsEmpty()` was removed.
 					const section = $e.run( 'document/elements/createSection', {
-						options: {
-							at,
-						},
 						columns: 1,
+						options: {
+							at: index,
+						},
 						returnValue: true,
 					} );
 
-					pasteTo( [ section ] );
+					this.pasteTo( transferData, [ section ] );
 				}
 			} );
 		} else {
-			pasteTo( args.elements );
+			this.pasteTo( transferData, elements );
 		}
+	}
+
+	pasteTo( transferData, elements, options = {} ) {
+		options = Object.assign( { at: null, clone: true }, options );
+
+		transferData.elements.forEach( function( model ) {
+			$e.run( 'document/elements/create', {
+				elements,
+				model,
+				options,
+			} );
+
+			// On paste sections, increase the `at` for every section.
+			if ( null !== options.at ) {
+				options.at++;
+			}
+		} );
 	}
 }
