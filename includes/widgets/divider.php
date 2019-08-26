@@ -116,22 +116,16 @@ class Widget_Divider extends Widget_Base {
 							'double' => __( 'Double', 'elementor' ),
 							'dotted' => __( 'Dotted', 'elementor' ),
 							'dashed' => __( 'Dashed', 'elementor' ),
-							'none' => __( 'None', 'elementor' ),
-						],
-					],
-					[
-						'label' => __( 'Line', 'elementor-pro' ),
-						'options' => [
 							'zigzag' => __( 'Zig Zag', 'elementor' ),
 							'curly' => __( 'Curly', 'elementor' ),
 							'curved' => __( 'Curved', 'elementor' ),
 							'wavey' => __( 'Wavey', 'elementor' ),
+							'squared' => __( 'Squared', 'elementor' ),
 						],
 					],
 					[
 						'label' => __( 'Pattern', 'elementor-pro' ),
 						'options' => [
-							'squered' => __( 'Squared', 'elementor' ),
 							'hearts' => __( 'Hearts', 'elementor' ),
 							'stars' => __( 'Stars', 'elementor' ),
 						],
@@ -145,6 +139,18 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
+		$classic_separator_styles = [
+			'solid',
+			'double',
+			'dotted',
+			'dashed',
+		];
+
+		$solid_separator_styles = [
+			'hearts',
+			'stars',
+		];
+
 		$this->add_control(
 			'separator_type',
 			[
@@ -152,7 +158,7 @@ class Widget_Divider extends Widget_Base {
 				'default' => 'pattern',
 				'prefix_class' => 'elementor-widget-divider--separator-type-',
 				'condition' => [
-					'style!' => [ 'solid', 'double', 'dotted', 'dashed', 'none' ],
+					'style!' => $classic_separator_styles,
 				],
 				'render_type' => 'template',
 			]
@@ -253,6 +259,7 @@ class Widget_Divider extends Widget_Base {
 				'condition' => [
 					'look' => 'line_text'
 				],
+				'default' => __( 'Add Your Text Here', 'elementor' ),
 				'dynamic' => [
 					'active' => true,
 				],
@@ -288,6 +295,23 @@ class Widget_Divider extends Widget_Base {
 		);
 
 		$this->add_control(
+			'color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
+				'default' => '#000',
+				'render_type' => 'template',
+				'selectors' => [
+					'{{WRAPPER}}' => '--divider-border-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
 			'weight',
 			[
 				'label' => __( 'Weight', 'elementor' ),
@@ -301,23 +325,12 @@ class Widget_Divider extends Widget_Base {
 						'max' => 10,
 					],
 				],
+				'render_type' => 'template',
+				'conditions!' => [
+					'style!' => $solid_separator_styles,
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--divider-border-width: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color',
-			[
-				'label' => __( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--divider-border-color: {{VALUE}}',
 				],
 			]
 		);
@@ -328,12 +341,14 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} svg' => 'height: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--divider-pattern-height: {{SIZE}}{{UNIT}}',
+				],
+				'default' => [
+					'size' => 20,
 				],
 				'condition' => [
 					'separator_type' => 'pattern'
 				],
-				'render_type' => 'template',
 			]
 		);
 
@@ -343,6 +358,12 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ '%', 'px' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--divider-pattern-size: {{SIZE}}{{UNIT}}'
+				],
+				'default' => [
+					'size' => 20,
+				],
 				'condition' => [
 					'separator_type' => 'pattern'
 				],
@@ -369,6 +390,47 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'animation',
+			[
+				'label' => __( 'Animation', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => __( 'None', 'elementor' ),
+					'moveBgRight' => __( 'Right', 'elementor' ),
+					'moveBgLeft' => __( 'Left', 'elementor' ),
+				],
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => '--divider-pattern-animation: {{VALUE}}',
+				],
+				'separator' => 'before',
+				'condition' => [
+					'separator_type' => 'pattern'
+				],
+			]
+		);
+
+		$this->add_control(
+			'animation_speed',
+			[
+				'label' => __( 'Speed', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--divider-pattern-animation-speed: {{SIZE}}s',
+				],
+				'condition' => [
+					'animation!' => '',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -379,15 +441,6 @@ class Widget_Divider extends Widget_Base {
 				'condition' => [
 					'look' => 'line_text'
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
-				'selector' => '{{WRAPPER}} .elementor-divider__text',
 			]
 		);
 
@@ -403,6 +456,15 @@ class Widget_Divider extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-divider__text' => 'color: {{VALUE}}',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'typography',
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'selector' => '{{WRAPPER}} .elementor-divider__text',
 			]
 		);
 
@@ -653,75 +715,80 @@ class Widget_Divider extends Widget_Base {
 	 * @since  2.7.0
 	 * @access private
 	 */
-	private function build_svg( $is_end = false ) {
-		$settings = $this->get_active_settings();
+	private function build_svg() {
+		$settings = $this->get_settings_for_display();
 
 		if ( 'pattern' != $settings['separator_type'] ) {
 			return '';
 		}
 
-		$pattern_id = 'ElementorSVGPattern-' . $this->get_id();
-		$view_box = '0 0 24 24';
-		$pattern = '';
+		$svg_shapes = [
+			'zigzag'  => [
+				'shape' => '<polyline points="0,18 12,6 24,18 "/>',
+				'preserve_aspect_ratio' => false,
+			],
+			'wavey'   => [
+				'shape' => '<path d="M0,6c6,0,0.9,11.1,6.9,11.1S18,6,24,6"/>',
+				'preserve_aspect_ratio' => false,
+			],
+			'curved'   => [
+				'shape' => '<path d="M0,6c6,0,6,13,12,13S18,6,24,6"/>',
+				'preserve_aspect_ratio' => false,
+			],
+			'squared' => [
+				'shape' => '<polyline points="0,6 6,6 6,18 18,18 18,6 24,6 	"/>',
+				'preserve_aspect_ratio' => false,
+			],
+			'curly'   => [
+				'shape' => '<path d="M0,21c3.3,0,8.3-0.9,15.7-7.1c6.6-5.4,4.4-9.3,2.4-10.3c-3.4-1.8-7.7,1.3-7.3,8.8C11.2,20,17.1,21,24,21"/>',
+				'preserve_aspect_ratio' => false,
+			],
+			'hearts'  => [
+				'shape' => '<path d="M20.9,4.3c-2.4-2-5.9-1.6-8,0.6L12,5.8l-0.8-0.9C9,2.7,5.5,2.3,3.1,4.3c-2.7,2.3-2.8,6.4-0.4,8.9l8.3,8.6c0.5,0.6,1.4,0.6,1.9,0l8.3-8.6C23.7,10.8,23.6,6.6,20.9,4.3z"/>',
+				'preserve_aspect_ratio' => true,
+			],
+			'stars'   => [
+				'shape' => '<path d="M10.8,1.7L8.1,7.1l-6,0.9C1,8.1,0.6,9.4,1.4,10.1l4.3,4.1l-1,5.9c-0.2,1.1,1,1.9,1.9,1.4l5.4-2.8l5.4,2.8c1,0.5,2.1-0.3,1.9-1.4l-1-5.9l4.3-4.1c0.8-0.7,0.3-2-0.7-2.2l-6-0.9l-2.7-5.3C12.7,0.8,11.3,0.8,10.8,1.7z"/>',
+				'preserve_aspect_ratio' => true,
+			],
+		];
 
-		if ( ! $is_end ) {
+		$selected_pattern = $svg_shapes[ $settings['style'] ];
+		$preserve_aspect_ratio = $selected_pattern['preserve_aspect_ratio'] ? 'xMidYMid meet' : 'none';
+		$view_box = isset( $selected_pattern['view_box'] ) ? $selected_pattern['view_box'] : '0 0 24 24';
 
-			$svg_shapes = [
-				'zigzag'  => [
-					'shape' => '<polyline points="0,18 12,6 24,18 "/>',
-					'preserve_aspect_ratio' => false,
-					'view_box' => '0 0 24 20',
-				],
-				'wavey'   => [
-					'shape' => '<path d="M0,6c6,0,0.9,11.1,6.9,11.1S18,6,24,6"/>',
-					'preserve_aspect_ratio' => false,
-				],
-				'curved'   => [
-					'shape' => '<path d="M0,6c6,0,6,13,12,13S18,6,24,6"/>',
-					'preserve_aspect_ratio' => false,
-				],
-				'squered' => [
-					'shape' => '<polyline points="0,6 6,6 6,18 18,18 18,6 24,6 	"/>',
-					'preserve_aspect_ratio' => false,
-				],
-				'curly'   => [
-					'shape' => '<path d="M0,21c3.3,0,8.3-0.9,15.7-7.1c6.6-5.4,4.4-9.3,2.4-10.3c-3.4-1.8-7.7,1.3-7.3,8.8C11.2,20,17.1,21,24,21"/>',
-					'preserve_aspect_ratio' => false,
-				],
-				'hearts'  => [
-					'shape' => '<path d="M20.9,4.3c-2.4-2-5.9-1.6-8,0.6L12,5.8l-0.8-0.9C9,2.7,5.5,2.3,3.1,4.3c-2.7,2.3-2.8,6.4-0.4,8.9l8.3,8.6c0.5,0.6,1.4,0.6,1.9,0l8.3-8.6C23.7,10.8,23.6,6.6,20.9,4.3z"/>',
-					'preserve_aspect_ratio' => true,
-				],
-				'stars'   => [
-					'shape' => '<path id="Path-Copy-40" d="M10.8,1.7L8.1,7.1l-6,0.9C1,8.1,0.6,9.4,1.4,10.1l4.3,4.1l-1,5.9c-0.2,1.1,1,1.9,1.9,1.4l5.4-2.8l5.4,2.8c1,0.5,2.1-0.3,1.9-1.4l-1-5.9l4.3-4.1c0.8-0.7,0.3-2-0.7-2.2l-6-0.9l-2.7-5.3C12.7,0.8,11.3,0.8,10.8,1.7z"/>',
-					'preserve_aspect_ratio' => true,
-				],
-			];
+		$attr = [
+			'preserveAspectRatio' => $preserve_aspect_ratio,
+			'overflow' => 'visible',
+			'height' => '100%',
+			'viewBox' => $view_box,
+		];
 
-			$selected_pattern = $svg_shapes[ $settings['style'] ];
-			$preserve_aspect_ratio = $selected_pattern['preserve_aspect_ratio'] ? 'xMinYMid meet' : 'none';
-			$pattern_class = $selected_pattern['preserve_aspect_ratio'] ? 'has-fill' : 'has-stroke';
-			$view_box = isset( $selected_pattern['view_box'] ) ? $selected_pattern['view_box'] : $view_box;
-			$pattern_size = ! empty( $settings['pattern_size']['size'] ) ? $settings['pattern_size']['size'] : 20;
-			$pattern_size = '%' === $settings['pattern_size']['unit'] ? $pattern_size . '%' : $pattern_size;
-
-			$this->add_render_attribute( 'pattern', [
-				'class'               => $pattern_class,
-				'id'                  => $pattern_id,
-				'preserveAspectRatio' => $preserve_aspect_ratio,
-				'patternUnits'        => 'userSpaceOnUse',
-				'width'               => $pattern_size,
-				'height'              => '100%',
-				'viewBox'             => $view_box,
-				'overflow'            => 'visible',
-			] );
-
-			$pattern_attribute_string = $this->get_render_attribute_string( 'pattern' );
-			$shape = $selected_pattern['shape'];
-			$pattern = '<defs><pattern ' . $pattern_attribute_string . '>' . $shape . '</pattern></defs>';
+		if ( $selected_pattern['preserve_aspect_ratio'] ) {
+			$attr['fill'] = $settings['color'];
+			$attr['stroke'] = 'none';
+		} else {
+			$attr['stroke'] = $settings['color'];
+			$attr['stroke-width'] = $settings['weight']['size'];
+			$attr['fill'] = 'none';
+			$attr['stroke-linecap'] = 'square';
+			$attr['stroke-miterlimit'] = '10';
 		}
 
-		return '<svg>' . $pattern . '<rect fill="url(#' . $pattern_id . ')" /></svg>';
+		$this->add_render_attribute( 'svg', $attr );
+
+		$pattern_attribute_string = $this->get_render_attribute_string( 'svg' );
+		$shape = $selected_pattern['shape'];
+
+		return '<svg xmlns="http://www.w3.org/2000/svg" ' . $pattern_attribute_string . '>' . $shape . '</svg>';
+	}
+
+	public function svg_to_data_uri( $svg  ) {
+		return str_replace(
+			[ '<', '>', '"', '#' ],
+			[ '%3C', '%3E', "'", '%23' ],
+			$svg
+		);
 	}
 
 	/**
@@ -735,25 +802,27 @@ class Widget_Divider extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$svg_code = $this->build_svg();
-		$svg_code2 = $this->build_svg( true );
+		$has_icon = 'line_icon' === ( $settings[ 'look' ] ) && ! empty( $settings[ 'icon' ] );
+		$has_text = 'line_text' === ( $settings[ 'look' ] ) && ! empty( $settings[ 'text' ] );
+		$has_element = $has_icon || $has_text;
 		?>
 		<div class="elementor-divider">
+			<?php if ( ! empty( $svg_code ) ) { ?>
+			<style>
+				.elementor-element-<?php echo $this->get_id(); ?> {
+					--divider-pattern-url: url("data:image/svg+xml,<?php echo $this->svg_to_data_uri( $svg_code ) ?>");
+				}
+			</style>
+			<?php } ?>
 			<span class="elementor-divider-separator">
-			<?php if ( 'line_icon' === ( $settings[ 'look' ] ) && ! empty( $settings[ 'icon' ] ) ) {
-				echo $svg_code; ?>
-				<div class="elementor-icon elementor-divider__element">
-					<?php Icons_Manager::render_icon( $settings[ 'icon' ], [ 'aria-hidden' => 'true' ] ); ?>
-				</div>
-			<?php echo $svg_code2;
-				} elseif ( ! empty( $settings[ 'text' ] ) )  {
-				echo $svg_code; ?>
-				<span class="elementor-divider__text elementor-divider__element">
-					<?php echo $settings[ 'text' ]; ?>
-				</span>
-			<?php echo $svg_code2;
-				} else {
-					echo $svg_code;
-				} ?>
+			<?php if ( $has_icon ) { ?>
+				<div class="elementor-icon elementor-divider__element"><?php Icons_Manager::render_icon( $settings[ 'icon' ], [ 'aria-hidden' => 'true' ] ); ?></div>
+			<?php } elseif ( $has_text )  {
+				$this->add_inline_editing_attributes( 'text' );
+				$this->add_render_attribute( 'text', [ 'class' => [ 'elementor-divider__text', 'elementor-divider__element' ] ] );
+				?>
+				<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings[ 'text' ]; ?></span>
+			<?php } ?>
 			</span>
 		</div>
 		<?php
