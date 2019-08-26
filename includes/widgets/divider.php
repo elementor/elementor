@@ -257,7 +257,7 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'condition' => [
-					'look' => 'line_text'
+					'look' => 'line_text',
 				],
 				'default' => __( 'Add Your Text Here', 'elementor' ),
 				'dynamic' => [
@@ -276,7 +276,7 @@ class Widget_Divider extends Widget_Base {
 					'library' => 'fa-solid',
 				],
 				'condition' => [
-					'look' => 'line_icon'
+					'look' => 'line_icon',
 				],
 			]
 		);
@@ -347,7 +347,7 @@ class Widget_Divider extends Widget_Base {
 					'size' => 20,
 				],
 				'condition' => [
-					'separator_type' => 'pattern'
+					'separator_type' => 'pattern',
 				],
 			]
 		);
@@ -359,13 +359,13 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ '%', 'px' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--divider-pattern-size: {{SIZE}}{{UNIT}}'
+					'{{WRAPPER}}' => '--divider-pattern-size: {{SIZE}}{{UNIT}}',
 				],
 				'default' => [
 					'size' => 20,
 				],
 				'condition' => [
-					'separator_type' => 'pattern'
+					'separator_type' => 'pattern',
 				],
 			]
 		);
@@ -406,7 +406,7 @@ class Widget_Divider extends Widget_Base {
 				],
 				'separator' => 'before',
 				'condition' => [
-					'separator_type' => 'pattern'
+					'separator_type' => 'pattern',
 				],
 			]
 		);
@@ -439,7 +439,7 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'Text', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'look' => 'line_text'
+					'look' => 'line_text',
 				],
 			]
 		);
@@ -488,7 +488,7 @@ class Widget_Divider extends Widget_Base {
 					],
 				],
 				'default' => 'center',
-				'prefix_class' => 'elementor-widget-divider--element-align-'
+				'prefix_class' => 'elementor-widget-divider--element-align-',
 			]
 		);
 
@@ -517,7 +517,7 @@ class Widget_Divider extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'look' => 'line_icon'
+					'look' => 'line_icon',
 				],
 			]
 		);
@@ -629,7 +629,7 @@ class Widget_Divider extends Widget_Base {
 					],
 				],
 				'default' => 'center',
-				'prefix_class' => 'elementor-widget-divider--element-align-'
+				'prefix_class' => 'elementor-widget-divider--element-align-',
 			]
 		);
 
@@ -718,7 +718,7 @@ class Widget_Divider extends Widget_Base {
 	private function build_svg() {
 		$settings = $this->get_settings_for_display();
 
-		if ( 'pattern' != $settings['separator_type'] ) {
+		if ( 'pattern' !== $settings['separator_type'] ) {
 			return '';
 		}
 
@@ -783,7 +783,7 @@ class Widget_Divider extends Widget_Base {
 		return '<svg xmlns="http://www.w3.org/2000/svg" ' . $pattern_attribute_string . '>' . $shape . '</svg>';
 	}
 
-	public function svg_to_data_uri( $svg  ) {
+	public function svg_to_data_uri( $svg ) {
 		return str_replace(
 			[ '<', '>', '"', '#' ],
 			[ '%3C', '%3E', "'", '%23' ],
@@ -802,38 +802,33 @@ class Widget_Divider extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$svg_code = $this->build_svg();
-		$has_icon = 'line_icon' === ( $settings[ 'look' ] ) && ! empty( $settings[ 'icon' ] );
-		$has_text = 'line_text' === ( $settings[ 'look' ] ) && ! empty( $settings[ 'text' ] );
-		$has_element = $has_icon || $has_text;
+		$has_icon = 'line_icon' === ( $settings['look'] ) && ! empty( $settings['icon'] );
+		$has_text = 'line_text' === ( $settings['look'] ) && ! empty( $settings['text'] );
 		?>
 		<div class="elementor-divider">
-			<?php if ( ! empty( $svg_code ) ) { ?>
+			<?php if ( ! empty( $svg_code ) ) : ?>
 			<style>
 				.elementor-element-<?php echo $this->get_id(); ?> {
-					--divider-pattern-url: url("data:image/svg+xml,<?php echo $this->svg_to_data_uri( $svg_code ) ?>");
+					--divider-pattern-url: url("data:image/svg+xml,<?php echo $this->svg_to_data_uri( $svg_code ); ?>");
 				}
 			</style>
-			<?php } ?>
+			<?php endif; ?>
 			<span class="elementor-divider-separator">
-			<?php if ( $has_icon ) { ?>
-				<div class="elementor-icon elementor-divider__element"><?php Icons_Manager::render_icon( $settings[ 'icon' ], [ 'aria-hidden' => 'true' ] ); ?></div>
-			<?php } elseif ( $has_text )  {
+			<?php if ( $has_icon ) : ?>
+				<div class="elementor-icon elementor-divider__element">
+					<?php
+					Icons_Manager::render_icon( $settings['icon'], [
+						'aria-hidden' => 'true',
+					] );
+					?></div>
+			<?php elseif ( $has_text ) :
 				$this->add_inline_editing_attributes( 'text' );
 				$this->add_render_attribute( 'text', [ 'class' => [ 'elementor-divider__text', 'elementor-divider__element' ] ] );
 				?>
-				<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings[ 'text' ]; ?></span>
-			<?php } ?>
+				<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
+			<?php endif; ?>
 			</span>
 		</div>
 		<?php
 	}
-
-	/**
-	 * Render divider widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
 }
