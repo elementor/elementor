@@ -30,8 +30,10 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	open() {
-		this.manager.open();
+	open( args ) {
+		const { model = false } = args;
+
+		this.manager.open( model );
 		return true;
 	}
 
