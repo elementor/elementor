@@ -1,10 +1,15 @@
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import {
+	Component,
+	Fragment,
+	createRef,
+} from 'react';
 import { render } from 'react-dom';
 import Tab from './tab';
 import IconsGoPro from './icons-go-pro';
 
 class IconsManager extends Component {
+	scrollViewRef = createRef();
 	state = {
 		activeTab: this.props.activeTab,
 		selected: {
@@ -252,9 +257,9 @@ class IconsManager extends Component {
 					{ 'GoPro' === activeTabName ? <IconsGoPro /> :
 						<Fragment>
 							{ showSearch ? this.getSearchHTML() : '' }
-							<div id="elementor-icons-manager__tab__wrapper">
+							<div id="elementor-icons-manager__tab__wrapper" ref={ this.scrollViewRef }>
 								<div id="elementor-icons-manager__tab__title">{ activeTab.label }</div>
-								<div id="elementor-icons-manager__tab__content">
+								<div id="elementor-icons-manager__tab__content_wrapper">
 									<input type="hidden" name="icon_value" id="icon_value" value={ selected.value }/>
 									<input type="hidden" name="icon_type" id="icon_type" value={ selected.library }/>
 									{ this.state.loaded[ activeTab.name ] ? (
@@ -263,6 +268,7 @@ class IconsManager extends Component {
 											selected={ selected }
 											filter={ filter }
 											key={ activeTab.name }
+											parentRef={ this.scrollViewRef }
 											{ ... activeTab } />
 									) : (
 										'Loading'
