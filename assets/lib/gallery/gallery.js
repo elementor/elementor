@@ -14,16 +14,19 @@
 		getDefaultSettings() {
 			return {
 				container: null,
-				type: 'justified',
+				type: 'grid',
 				columns: 5,
 				horizontalGap: 10,
 				verticalGap: 10,
+				animationDuration: 300,
 				classesPrefix: 'gallery-',
 				classes: {
 					container: 'container',
 					item: 'item',
 					image: 'image',
+					link: 'link',
 					firstRowItem: 'first-row-item',
+					animated: '-animated',
 				},
 				breakpoints: {
 					1024: {
@@ -42,90 +45,11 @@
 
 		initGalleriesTypes() {
 			this.galleriesTypes = {
+				grid: Grid,
 				justified: Justified,
 				masonry: Masonry,
 			};
 		}
-
-		/*calculateItemSpot( itemIndex ) {
-			return {
-				row: Math.ceil( ( itemIndex + 1 ) / this.settings.columns ),
-				column: ( itemIndex % this.settings.columns ) + 1,
-			};
-		}
-
-		setItemsSize() {
-			this.itemsSize = {};
-
-			this.$items.each( ( index, item ) => {
-				const itemSize = {
-					width: 200,
-					height: 150,
-				};
-
-				$( item ).css( itemSize );
-
-				const spot = this.calculateItemSpot( index );
-
-				if ( ! this.itemsSize[ spot.row ] ) {
-					this.itemsSize[ spot.row ] = {};
-				}
-
-				this.itemsSize[ spot.row ][ spot.column ] = itemSize;
-			} );
-		}
-
-		setItemsPosition() {
-			const columnsHeight = {};
-
-			let currentRowWidth;
-
-			this.$items.each( ( index, item ) => {
-				const itemSpot = this.calculateItemSpot( index ),
-					itemSize = this.itemsSize[ itemSpot.row ][ itemSpot.column ];
-
-				if ( ! columnsHeight[ itemSpot.column ] ) {
-					columnsHeight[ itemSpot.column ] = 0;
-				}
-
-				if ( 1 === itemSpot.column ) {
-					currentRowWidth = 0;
-				}
-
-				if ( 1 !== itemSpot.column ) {
-					currentRowWidth += this.settings.verticalGap;
-				}
-
-				if ( 1 !== itemSpot.row ) {
-					columnsHeight[ itemSpot.column ] += this.settings.horizontalGap;
-				}
-
-				$( item ).css( {
-					top: columnsHeight[ itemSpot.column ],
-					left: currentRowWidth,
-				} );
-
-				currentRowWidth += itemSize.width;
-
-				columnsHeight[ itemSpot.column ] += itemSize.height;
-			} );
-
-			this.columnsHeight = columnsHeight;
-		}
-
-		setContainerSize() {
-			const highestColumnSize = Math.max( ...Object.values( this.columnsHeight ) );
-
-			this.$container.height( highestColumnSize );
-		}
-
-		layOutGallery() {
-			this.setItemsSize();
-
-			this.setItemsPosition();
-
-			this.setContainerSize();
-		}*/
 
 		createGallery() {
 			const GalleryHandlerType = this.galleriesTypes[ this.settings.type ];
@@ -140,7 +64,7 @@
 
 	class GalleryType {
 		constructor( settings ) {
-			this.settings = $.extend( true, settings, this.getDefaultSettings() );
+			this.settings = $.extend( true, this.getDefaultSettings(), settings );
 
 			this.$container = $( this.settings.container );
 
@@ -179,6 +103,12 @@
 				$image = $( '<div>', { class: this.getItemClass( classes.image ) } ).css( 'background-image', 'url(' + itemData.thumbnail + ')' );
 
 			$item.append( $image );
+
+			if ( itemData.url ) {
+				const $link = $( '<a>', { class: this.getItemClass( classes.link ), href: itemData.url } );
+
+				$image.wrap( $link );
+			}
 
 			return $item;
 		}
@@ -282,6 +212,7 @@
 
 			containerStyle.setProperty( '--hgap', this.getCurrentDeviceSetting( 'horizontalGap' ) + 'px' );
 			containerStyle.setProperty( '--vgap', this.getCurrentDeviceSetting( 'verticalGap' ) + 'px' );
+			containerStyle.setProperty( '--animation-duration', this.settings.animationDuration + 'ms' );
 
 			this.run();
 		}
@@ -291,7 +222,58 @@
 		}
 
 		destroy() {
-			unbindEvents();
+			this.unbindEvents();
+		}
+	}
+
+	class Grid extends GalleryType {
+		getDefaultSettings() {
+			return {
+				aspectRatio: '16:9',
+			};
+		}
+
+		setItemsPosition() {
+			const columns = this.getCurrentDeviceSetting( 'columns' );
+
+			this.$items.each( ( index, item ) => {
+				item.style.setProperty( '--column', index % columns );
+				item.style.setProperty( '--row', Math.floor( index / columns ) );
+			} );
+		}
+
+		setContainerSize() {
+			const columns = this.getCurrentDeviceSetting( 'columns' ),
+				rows = Math.ceil( this.settings.items.length / columns ),
+				containerStyle = this.$container[ 0 ].style;
+
+			containerStyle.setProperty( '--columns', columns );
+
+			containerStyle.setProperty( '--rows', rows );
+
+			const itemWidth = this.$items.width(),
+				aspectRatio = this.settings.aspectRatio.split( ':' ),
+				aspectRatioPercents = aspectRatio[ 1 ] / aspectRatio[ 0 ],
+				itemHeight = aspectRatioPercents * itemWidth,
+				totalHeight = itemHeight * rows + ( this.getCurrentDeviceSetting( 'horizontalGap' ) * ( rows - 1 ) ),
+				calculatedAspectRatio = totalHeight / this.$container.width() * 100;
+
+			containerStyle.setProperty( '--aspect-ratio', ( aspectRatioPercents * 100 ) + '%' );
+			containerStyle.setProperty( '--container-aspect-ratio', calculatedAspectRatio + '%' );
+		}
+
+		run() {
+			const animatedClass = this.getItemClass( this.settings.classes.animated );
+
+			this.$container.addClass( animatedClass );
+
+			setTimeout( () => {
+				this.setItemsPosition();
+
+				this.setContainerSize();
+
+				setTimeout( () => this.$container.removeClass( animatedClass ), this.settings.animationDuration );
+			}, 100 );
 		}
 	}
 
@@ -303,35 +285,48 @@
 				breakpoints: {
 					1024: {
 						idealRowHeight: 150,
-						lastRow: 'normal',
+						lastRow: 'fit',
 					},
 					768: {
 						idealRowHeight: 100,
-						lastRow: 'normal',
+						lastRow: 'fit',
 					},
 				},
 			};
 		}
 
 		run() {
-			this.makeJustifiedRow( 0, this.$container.width() );
+			this.rowsHeights = [];
+
+			this.rowsCount = 0;
+
+			this.containerWidth = this.$container.width();
+
+			this.makeJustifiedRow( 0 );
 		}
 
-		makeJustifiedRow( startIndex, containerWidth ) {
+		makeJustifiedRow( startIndex ) {
 			let oldRowWidth = 0;
 
 			for ( let index = startIndex; ; index++ ) {
-				const itemComputedWidth = Math.round( this.getCurrentDeviceSetting( 'idealRowHeight' ) * this.imagesData[ index ].ratio ),
-					newRowWidth = oldRowWidth + itemComputedWidth;
+				let itemComputedWidth = Math.round( this.getCurrentDeviceSetting( 'idealRowHeight' ) * this.imagesData[ index ].ratio );
 
-				if ( newRowWidth > containerWidth ) {
-					const oldDiff = containerWidth - oldRowWidth,
-						newDiff = newRowWidth - containerWidth;
+				if ( itemComputedWidth > this.containerWidth ) {
+					itemComputedWidth = this.containerWidth;
+				}
+
+				const newRowWidth = oldRowWidth + itemComputedWidth;
+
+				if ( newRowWidth > this.containerWidth ) {
+					const oldDiff = this.containerWidth - oldRowWidth,
+						newDiff = newRowWidth - this.containerWidth;
 
 					if ( oldDiff < newDiff ) {
 						this.fitImagesInContainer( startIndex, index, oldRowWidth );
 
-						this.makeJustifiedRow( index, containerWidth );
+						this.rowsCount++;
+
+						this.makeJustifiedRow( index );
 
 						break;
 					}
@@ -345,10 +340,12 @@
 					const lastRowMode = this.getCurrentDeviceSetting( 'lastRow' );
 
 					if ( 'hide' !== lastRowMode ) {
-						const totalRowWidth = 'fit' === lastRowMode ? newRowWidth : containerWidth;
+						const totalRowWidth = 'fit' === lastRowMode ? newRowWidth : this.containerWidth;
 
 						this.fitImagesInContainer( startIndex, index + 1, totalRowWidth );
 					}
+
+					this.inflateGalleryHeight();
 
 					break;
 				}
@@ -360,6 +357,8 @@
 		fitImagesInContainer( startIndex, endIndex, rowWidth ) {
 			const gapCount = endIndex - startIndex - 1;
 
+			let aggregatedWidth = 0;
+
 			for ( let index = startIndex; index < endIndex; index++ ) {
 				const imageData = this.imagesData[ index ],
 					percentWidth = imageData.computedWidth / rowWidth,
@@ -368,15 +367,51 @@
 
 				item.style.setProperty( '--item-width', percentWidth );
 				item.style.setProperty( '--gap-count', gapCount );
+				item.style.setProperty( '--item-height', ( ( imageData.height / imageData.width ) * 100 ) + '%' );
+				item.style.setProperty( '--item-left', aggregatedWidth );
+				item.style.setProperty( '--item-row-index', index - startIndex );
+
+				aggregatedWidth += percentWidth;
 
 				if ( index === startIndex ) {
 					item.classList.add( firstRowItemClass );
 
-					item.style.setProperty( '--item-height', ( ( imageData.height / imageData.width ) * 100 ) + '%' );
+					const imagePxWidth = percentWidth * ( this.containerWidth - ( gapCount * this.getCurrentDeviceSetting( 'horizontalGap' ) ) );
+
+					this.rowsHeights.push( imagePxWidth / imageData.ratio );
 				} else {
 					item.classList.remove( firstRowItemClass );
 				}
 			}
+		}
+
+		inflateGalleryHeight() {
+			const totalRowsHeight = this.rowsHeights.reduce( (total, item ) => total + item ),
+				finalContainerHeight = totalRowsHeight + this.rowsCount * this.getCurrentDeviceSetting( 'verticalGap' ),
+				containerAspectRatio = finalContainerHeight / this.containerWidth,
+				percentRowsHeights = this.rowsHeights.map( ( rowHeight ) => rowHeight / finalContainerHeight * 100 );
+
+			let currentRow = -1,
+				accumulatedTop = 0;
+
+			this.$items.each( ( index, item ) => {
+				const itemRowIndex = item.style.getPropertyValue( '--item-row-index' ),
+					isFirstItem = '0' === itemRowIndex;
+
+				if ( isFirstItem ) {
+					currentRow++;
+
+					if ( currentRow ) {
+						accumulatedTop += percentRowsHeights[ currentRow - 1 ];
+					}
+				}
+
+				item.style.setProperty( '--item-top', accumulatedTop + '%' );
+				item.style.setProperty( '--item-height', percentRowsHeights[ currentRow ] + '%' );
+				item.style.setProperty( '--row', currentRow );
+			} );
+
+			this.$container[ 0 ].style.setProperty( '--container-aspect-ratio', containerAspectRatio );
 		}
 	}
 
