@@ -15,9 +15,6 @@ export default class extends elementorModules.common.Component {
 			actions: {
 				keys: 'ctrl+shift+h',
 			},
-			revisions: {
-				keys: 'ctrl+shift+r',
-			},
 		};
 	}
 
