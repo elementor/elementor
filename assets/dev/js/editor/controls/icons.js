@@ -148,15 +148,8 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	onRender() {
 		super.onRender();
-		// @todo: move to manager
-		if ( ! this.cache.loaded && this.isMigrationAllowed() ) {
-			elementor.config.icons.libraries.forEach( ( library ) => {
-				if ( 'all' === library.name ) {
-					return;
-				}
-				elementor.iconManager.library.initIconType( library );
-			} );
-			this.cache.loaded = true;
+		if ( this.isMigrationAllowed() ) {
+			elementor.iconManager.loadIconLibraries();
 		}
 	}
 
