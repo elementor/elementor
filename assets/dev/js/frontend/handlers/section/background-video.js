@@ -254,6 +254,10 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 	run() {
 		const elementSettings = this.getElementSettings();
 
+		if ( ! elementSettings.background_play_on_mobile && 'mobile' === elementorFrontend.getCurrentDeviceMode() ) {
+			return;
+		}
+
 		if ( 'video' === elementSettings.background_background && elementSettings.background_video_link ) {
 			this.activate();
 		} else {
