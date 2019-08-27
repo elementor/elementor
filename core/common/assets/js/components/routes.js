@@ -64,8 +64,8 @@ export default class extends Commands {
 			this.getComponent( this.current[ container ] ).onCloseRoute();
 		}
 
-		if ( ! component.isOpen ) {
-			component.isOpen = component.open();
+		if ( ! component.isOpen || args.reOpen ) {
+			component.isOpen = component.open( args );
 		}
 
 		return component.isOpen;
