@@ -7,8 +7,12 @@
 	--divider-border-width: 1px;
 	--divider-border-color: $gray-darkest;
 	--divider-icon-size: 20px;
-	--divider-element-spacing: 5px;
+	--divider-element-spacing: 10px;
 	--divider-pattern-height: 24px;
+	--divider-pattern-size: 20px;
+	--divider-pattern-url: none;
+	--divider-pattern-animation: '';
+	--divider-pattern-animation-speed: 5s;
 
 	.elementor-divider {
 		line-height: 0;
@@ -58,7 +62,7 @@
 
 			.elementor-divider {
 
-				.elementor-divider-separator > svg:first-of-type {
+				.elementor-divider-separator > .elementor-divider__svg:first-of-type {
 					flex-grow: 0;
 					flex-shrink: 100;
 				}
@@ -77,7 +81,7 @@
 
 			.elementor-divider {
 
-				.elementor-divider-separator > svg:last-of-type {
+				.elementor-divider-separator > .elementor-divider__svg:last-of-type {
 					flex-grow: 0;
 					flex-shrink: 100;
 				}
@@ -103,37 +107,37 @@
 
 		&-pattern {
 			--divider-border-style: none;
-		}
-	}
 
-	svg {
-		width: 100%;
-		height: var(--divider-pattern-height);
-
-		pattern {
-			overflow: visible;
-			stroke: var(--divider-border-color);
-			stroke-width: calc(var(--divider-border-width)/2);
-			fill: var(--divider-border-color);
-			stroke-linecap:square;
-			stroke-miterlimit:10;
-
-			&.has-fill {
-				stroke: transparent;
+			.elementor-divider-separator, .elementor-divider-separator:before, .elementor-divider-separator:after {
+				width: 100%;
+				height: var(--divider-pattern-height);
+				background-image: var(--divider-pattern-url);
+				background-size: var(--divider-pattern-size) 100%;
+				background-repeat: round;
+				animation: var(--divider-pattern-animation) var(--divider-pattern-animation-speed) linear infinite;
 			}
 
-			&.has-stroke {
-				fill: transparent;
+			&.elementor-widget-divider--view {
+				&-line_text, &-line_icon {
+					.elementor-divider-separator {
+						background-image: none;
+					}
+				}
 			}
-		}
-
-		rect {
-			width: 100%;
-			height: 100%;
 		}
 	}
 }
 
 .rtl .elementor-widget-divider .elementor-divider__text {
 	direction: rtl;
+}
+
+@keyframes moveBgRight {
+	from { background-position-x: 0; }
+	to { background-position-x: 1000px; }
+}
+
+@keyframes moveBgLeft {
+	from { background-position-x: 1000px; }
+	to { background-position-x: 0; }
 }
