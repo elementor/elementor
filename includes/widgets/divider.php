@@ -87,7 +87,6 @@ class Widget_Divider extends Widget_Base {
 		return [ 'divider', 'hr', 'line', 'border' ];
 	}
 
-
 	private $classic_separator_styles = [
 		'solid',
 		'double',
@@ -166,7 +165,6 @@ class Widget_Divider extends Widget_Base {
 							'trees_tribal' => __( 'Trees Tribal', 'elementor' ),
 							'planes_tribal' => __( 'Planes Tribal', 'elementor' ),
 							'arrows_up_tribal' => __( 'Arrows Up Tribal', 'elementor' ),
-							'double' => __( 'Double', 'elementor' ),
 							'dots_tribal' => __( 'Dots Tribal', 'elementor' ),
 							'rhombus' => __( 'Rhombus', 'elementor' ),
 							'squares' => __( 'Squares', 'elementor' ),
@@ -370,7 +368,7 @@ class Widget_Divider extends Widget_Base {
 				],
 				'render_type' => 'template',
 				'condition' => [
-					'style' => $this->stroke_separator_styles,
+					'style' => array_merge( $this->stroke_separator_styles, $this->classic_separator_styles ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--divider-border-width: {{SIZE}}{{UNIT}}',
