@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
-import {
-	Component,
-	Fragment,
-} from 'react';
+import LazyIconList from './icon-list';
+import { Component } from 'react';
 import Icon from './icon';
 
 class Tab extends Component {
@@ -18,28 +16,27 @@ class Tab extends Component {
 	};
 
 	getIconsOfType( type, icons ) {
-		const { selected } = this.props;
+		const { selected, filter } = this.props;
 		return Object.entries( icons ).map( ( icon ) => {
 			const iconData = icon[ 1 ],
 				iconName = icon[ 0 ],
-				className = iconData.displayPrefix + ' ' + iconData.selector,
-				setter = {
-					value: className,
-					library: type,
-				};
+				className = iconData.displayPrefix + ' ' + iconData.selector;
+
 			let containerClass = 'elementor-icons-manager__tab__item';
 			if ( selected.value === className ) {
 				containerClass += ' elementor-selected';
 			}
 
+			const key = containerClass + type + '-' + iconName + filter;
+
 			return (
 				<Icon
-					key={ type + '-' + iconName }
+					key={ key }
 					library={ type }
 					keyID={ iconName }
 					containerClass={ containerClass }
 					className={ className }
-					setSelectedHandler={ () => this.props.setSelected( setter ) }
+					setSelectedHandler={ this.props.setSelected }
 					data={ iconData }
 				/>
 			);
@@ -103,10 +100,21 @@ class Tab extends Component {
 	};
 
 	render = () => {
+		const icons = this.getIconsComponentList();
+		let selectedIndex = -1;
+		for ( const [ index, icon ] of icons.entries() ) {
+			if ( icon.props.containerClass.includes( 'elementor-selected' ) ) {
+				selectedIndex = index;
+				break;
+			}
+		}
+
 		return (
-			<Fragment>
-				{ this.getIconsComponentList() }
-			</Fragment>
+			<LazyIconList
+				selectedIndex={ selectedIndex }
+				items={ icons }
+				parentRef={ this.props.parentRef }
+			/>
 		);
 	};
 }
@@ -118,6 +126,7 @@ Tab.propTypes = {
 	name: PropTypes.string,
 	selected: PropTypes.object,
 	setSelected: PropTypes.func,
+	parentRef: PropTypes.any,
 };
 
 export default Tab;
