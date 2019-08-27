@@ -27,27 +27,30 @@ class LazyIconList extends Component {
 	};
 
 	maybeMeasureItem = () => {
-		if ( ! this.state.itemSize.width ) {
-			const wrapper = document.getElementById( this.selectors.wrapper );
-			const testElement = document.querySelector( this.selectors.item );
-			if ( ! testElement ) {
-				return;
-			}
-			const newState = {
-				itemSize: {
-					width: testElement.offsetWidth + 20,
-					height: testElement.offsetHeight + 20,
-				},
-				wrapperSize: {
-					width: wrapper.offsetWidth,
-					height: wrapper.clientHeight,
-				},
-			};
-
-			return this.setState( newState, () => {
-				this.maybeScrollToSelected();
-			} );
+		if ( this.state.itemSize.width ) {
+			return;
 		}
+		// CSS Item Padding
+		const itemPadding = 20,
+			wrapper = document.getElementById( this.selectors.wrapper ),
+			testElement = document.querySelector( this.selectors.item );
+		if ( ! testElement ) {
+			return;
+		}
+		const newState = {
+			itemSize: {
+				width: testElement.offsetWidth + itemPadding,
+				height: testElement.offsetHeight + itemPadding,
+			},
+			wrapperSize: {
+				width: wrapper.offsetWidth,
+				height: wrapper.clientHeight,
+			},
+		};
+
+		return this.setState( newState, () => {
+			this.maybeScrollToSelected();
+		} );
 	};
 
 	maybeScrollToSelected = () => {
