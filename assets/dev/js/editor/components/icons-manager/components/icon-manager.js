@@ -1,11 +1,15 @@
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import {
+	Component,
+	Fragment,
+	createRef,
+} from 'react';
 import { render } from 'react-dom';
 import Tab from './tab';
 import IconsGoPro from './icons-go-pro';
 
 class IconsManager extends Component {
-	scrollViewRef = React.createRef();
+	scrollViewRef = createRef();
 	state = {
 		activeTab: this.props.activeTab,
 		selected: {
