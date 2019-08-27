@@ -110,7 +110,7 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'groups' => [
 					[
-						'label' => __( 'Classic', 'elementor-pro' ),
+						'label' => __( 'Classic', 'elementor' ),
 						'options' => [
 							'solid' => __( 'Solid', 'elementor' ),
 							'double' => __( 'Double', 'elementor' ),
@@ -124,7 +124,7 @@ class Widget_Divider extends Widget_Base {
 						],
 					],
 					[
-						'label' => __( 'Pattern', 'elementor-pro' ),
+						'label' => __( 'Pattern', 'elementor' ),
 						'options' => [
 							'hearts' => __( 'Hearts', 'elementor' ),
 							'stars' => __( 'Stars', 'elementor' ),
@@ -224,15 +224,15 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'line' => [
-						'title' => __( 'None', 'elementor-pro' ),
+						'title' => __( 'None', 'elementor' ),
 						'icon' => 'eicon-ban',
 					],
 					'line_text' => [
-						'title' => __( 'Text', 'elementor-pro' ),
+						'title' => __( 'Text', 'elementor' ),
 						'icon' => 'eicon-t-letter-bold',
 					],
 					'line_icon' => [
-						'title' => __( 'Icon', 'elementor-pro' ),
+						'title' => __( 'Icon', 'elementor' ),
 						'icon' => 'eicon-star',
 					],
 				],
