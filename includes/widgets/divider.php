@@ -544,7 +544,12 @@ class Widget_Divider extends Widget_Base {
 					'size' => 20,
 				],
 				'condition' => [
-					'separator_type' => 'pattern',
+					'style!' => [
+						'solid',
+						'double',
+						'dotted',
+						'dashed',
+					],
 				],
 			]
 		);
@@ -562,7 +567,12 @@ class Widget_Divider extends Widget_Base {
 					'size' => 20,
 				],
 				'condition' => [
-					'separator_type' => 'pattern',
+					'style!' => [
+						'solid',
+						'double',
+						'dotted',
+						'dashed',
+					],
 					'pattern_spacing_flag!' => 'no-spacing',
 				],
 			]
