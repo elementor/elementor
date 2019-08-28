@@ -38,7 +38,7 @@ module.exports = {
 		'computed-property-spacing': [ 'error', 'always' ],
 		'comma-dangle': [ 'error', 'always-multiline' ],
 		'no-undef': 'off',
-		'no-unused-vars': 'warn',
+		'no-unused-vars': [ 'warn', { 'ignoreRestSiblings': true } ],
 		'dot-notation': 'error',
 		'no-shadow': 'error',
 		'no-lonely-if': 'error',
