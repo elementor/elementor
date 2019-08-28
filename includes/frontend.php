@@ -385,6 +385,16 @@ class Frontend extends App {
 		);
 
 		wp_register_script(
+			'elementor-gallery',
+			$this->get_js_assets_url( 'gallery', 'assets/lib/gallery/' ),
+			[
+				'jquery',
+			],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
 			[
@@ -453,6 +463,13 @@ class Frontend extends App {
 			$this->get_css_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[],
 			'4.1.4'
+		);
+
+		wp_register_style(
+			'elementor-gallery',
+			$this->get_css_assets_url( 'gallery', 'assets/lib/gallery/' ),
+			[],
+			'1.0.0'
 		);
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';

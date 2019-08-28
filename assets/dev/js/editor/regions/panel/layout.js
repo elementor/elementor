@@ -196,6 +196,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 				suppressScrollX: true,
 			} );
 
+			// The RTL is buggy, so always keep it LTR.
+			this.perfectScrollbar.isRtl = false;
+
 			return;
 		}
 
