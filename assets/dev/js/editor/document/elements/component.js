@@ -18,14 +18,7 @@ export default class extends elementorModules.common.Component {
 			},
 			duplicate: ( args ) => ( new Commands.Duplicate( args ) ).run(),
 			delete: ( args ) => ( new Commands.Delete( args ) ).run(),
-			empty: ( args = {} ) => {
-				if ( args.force ) {
-					elementor.elements.reset();
-					return;
-				}
-
-				elementor.getClearPageDialog().show();
-			},
+			empty: ( args ) => ( new Commands.Empty( args ) ).run(),
 			import: ( args ) => {
 				if ( ! args.model ) {
 					throw Error( 'model is required.' );

@@ -38,7 +38,7 @@ export default class extends Base {
 		return {
 			elements: elements,
 			type: 'remove',
-			subTitle: name,
+			subTitle: elementor.translate( 'Item' ),
 			history: {
 				behavior: {
 					restore: this.constructor.restore,
@@ -53,7 +53,8 @@ export default class extends Base {
 
 	apply( args ) {
 		const { name, elements = [ args.element ] } = args,
-			index = null === args.index ? -1 : args.index;
+			index = null === args.index ? -1 : args.index,
+			result = [];
 
 		elements.forEach( ( element ) => {
 			const settingsModel = element.getEditModel().get( 'settings' ),
@@ -69,8 +70,16 @@ export default class extends Base {
 
 			collection.remove( model );
 
+			result.push( model );
+
 			// TODO: not always needed (when history is active).
 			element.renderOnChange( settingsModel );
 		} );
+
+		if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 }

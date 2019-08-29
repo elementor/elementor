@@ -25,6 +25,7 @@ export default class extends Base {
 
 			element.allowRender = false;
 
+			// TODO: move to es6.
 			jQuery.each( controls, ( controlName, control ) => {
 				if ( ! element.isStyleTransferControl( control ) ) {
 					return;
@@ -33,9 +34,10 @@ export default class extends Base {
 				defaultValues[ controlName ] = control.default;
 			} );
 
-			editModel.setSetting( defaultValues );
-
-			elementor.channels.data.trigger( 'element:after:reset:style', editModel );
+			$e.run( 'document/elements/settings', {
+				element,
+				settings: defaultValues,
+			} );
 
 			element.allowRender = true;
 

@@ -1,544 +1,192 @@
+import Elements from '../helpers/elements';
+
 jQuery( () => {
 	QUnit.module( 'Component: document/elements', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Empty', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eColumn = Elements.createSection( 1, true );
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				Elements.createButton( eColumn );
+				Elements.createButton( eColumn );
 
-				// Create button 1.
-				$e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Create button 2.
-				$e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Remove all.
-				$e.run( 'document/elements/empty', { force: true } );
+				Elements.empty();
 
 				// Check.
 				assert.equal( elementor.getPreviewView().collection.length, 0 );
 			} );
 
 			QUnit.test( 'Copy All', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eSection = Elements.createSection( 1 );
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				const eColumn = Elements.createColumn( eSection );
 
-				// Create button 1.
-				$e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
+				Elements.createButton( eColumn );
+				Elements.createButton( eColumn );
 
-				// Create button 2.
-				$e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
+				Elements.copyAll();
 
-				// Copy all.
-				$e.run( 'document/elements/copyAll' );
-
-				// Paste.
-				$e.run( 'document/elements/paste', {
-					element: elementor.getPreviewView(),
-					rebuild: true,
-				} );
+				Elements.paste( elementor.getPreviewView(), true );
 
 				assert.equal( eSection.collection.length, 2 );
 			} );
 
-			QUnit.test( 'Settings', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					columns: 1,
-					returnValue: true,
-				} );
-
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create button.
-				const eButton = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Change button text.
-				$e.run( 'document/elements/settings', {
-					element: eButton,
-					settings: {
-						text: 'i test it',
-					},
-				} );
-
-				// Check button text.
-				assert.equal( eButton.model.attributes.settings.attributes.text, 'i test it' );
-			} );
-
 			QUnit.test( 'Create Section', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eSection = Elements.createSection( 1 );
 
 				// Check section exist.
 				assert.equal( Boolean( elementor.getPreviewView().children.findByModel( eSection.model ) ), true );
 			} );
 
 			QUnit.test( 'Create Column', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					columns: 1,
-					returnValue: true,
-				} );
-
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				const eColumn = Elements.createSection( 1, true );
 
 				// Check column exist.
 				assert.equal( elementor.getPreviewView().children.some( ( a ) => {
-					return a.children.findByModel( eCol.model );
+					return a.children.findByModel( eColumn.model );
 				} ), true );
 			} );
 
 			QUnit.test( 'Create Widget', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
-
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create Button.
-				const eButton = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
+				const eColumn = Elements.createSection( 1, true );
+				const eButton = Elements.createButton( eColumn );
 				// Check button exist.
-				assert.equal( Boolean( eCol.children.findByModel( eButton.model ) ), true );
+				assert.equal( Boolean( eColumn.children.findByModel( eButton.model ) ), true );
+			} );
+
+			QUnit.test( 'Create Widget: Inner Section', ( assert ) => {
+				const eColumn = Elements.createSection( 1, true );
+				const eInnerSection = Elements.createInnerSection( eColumn );
+
+				// Check inner section exist.
+				assert.equal( Boolean( eColumn.children.findByModel( eInnerSection.model ) ), true );
+
+				// Check inner section have two columns.
+				assert.equal( eInnerSection.collection.length, 2 );
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eColumn = Elements.createSection( 1, true );
+				const eButton = Elements.createButton( eColumn );
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				Elements.duplicate( eButton );
 
-				// Create button.
-				const eButton = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Duplicate button.
-				$e.run( 'document/elements/duplicate', {
-					element: eButton,
-				} );
+				// TODO: Test if duplicate item have unique ids.
 
 				// Check duplicated button exist.
-				assert.equal( eCol.children.length, 2 );
+				assert.equal( eColumn.children.length, 2 );
 			} );
 
 			QUnit.test( 'Copy & Paste', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eColumn = Elements.createSection( 1, true );
+				const eButton = Elements.createButton( eColumn );
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create button.
-				const eButton = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Copy button.
-				$e.run( 'document/elements/copy', {
-					element: eButton,
-				} );
-
-				// Paste button
-				$e.run( 'document/elements/paste', {
-					element: eCol,
-				} );
+				Elements.copy( eButton );
+				Elements.paste( eColumn );
 
 				// Check pasted button exist.
-				assert.equal( eCol.children.length, 2 );
+				assert.equal( eColumn.children.length, 2 );
+			} );
+
+			QUnit.test( 'Settings', ( assert ) => {
+				const eButton = Elements.createMockButtonWidget();
+
+				// Change button text.
+				Elements.settings( eButton, {
+					text: 'i test it',
+				} );
+
+				// Check button text.
+				assert.equal( eButton.model.attributes.settings.attributes.text, 'i test it' );
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eButtonSimple = Elements.createMockButtonWidget();
+				const eButtonStyled = Elements.createMockButtonStyled();
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create button.
-				const eButtonSimple = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Create button with style.
-				const eButtonStyled = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Copy styled button.
-				$e.run( 'document/elements/copy', {
-					element: eButtonStyled,
-				} );
-
-				// Paste style to simple button.
-				$e.run( 'document/elements/pasteStyle', {
-					element: eButtonSimple,
-				} );
+				Elements.copy( eButtonStyled );
+				Elements.pasteStyle( eButtonSimple );
 
 				// Check pasted style exist.
 				assert.equal( eButtonSimple.model.attributes.settings.attributes.background_color, '#000000' );
 			} );
 
 			QUnit.test( 'Reset Style', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eButtonStyled = Elements.createMockButtonStyled();
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create button with style.
-				const eButtonStyled = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Paste style to simple button.
-				$e.run( 'document/elements/resetStyle', {
-					element: eButtonStyled,
-				} );
+				Elements.resetStyle( eButtonStyled );
 
 				// Check pasted style exist.
 				assert.equal( eButtonStyled.model.attributes.settings.attributes.background_color, '' );
 			} );
 
-			QUnit.test( 'Move', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+			QUnit.test( 'Move Section', ( assert ) => {
+				// Create Section at 0.
+				Elements.createSection();
 
-				// Create column 1.
-				const eCol1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				const eSection = Elements.createSection( 3 );
 
-				// Create column 2.
-				const eCol2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				Elements.move( eSection, elementor.getPreviewView(), { at: 0 } );
 
-				// Create button at column1.
-				const eButton = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol1,
-					returnValue: true,
-				} );
+				// Validate first section have 3 columns.
+				assert.equal( elementor.getPreviewView().model.attributes.elements.first().attributes.elements.length, 3 );
+			} );
 
-				// Move button to eCol2.
-				$e.run( 'document/elements/move', {
-					element: eButton,
-					target: eCol2,
-				} );
+			QUnit.test( 'Move Column', ( assert ) => {
+				const eSection1 = Elements.createSection();
+				const eSection2 = Elements.createSection();
+
+				const eColumn = Elements.createColumn( eSection1 );
+
+				Elements.move( eColumn, eSection2 );
 
 				// Validate.
-				assert.equal( eCol1.collection.length, 0 );
-				assert.equal( eCol2.collection.length, 1 );
+				assert.equal( eSection2.collection.length, 2 );
+			} );
+
+			QUnit.test( 'Move Widget', ( assert ) => {
+				const eSection = Elements.createSection();
+
+				const eColumn1 = Elements.createColumn( eSection );
+				const eColumn2 = Elements.createColumn( eSection );
+
+				const eButton = Elements.createButton( eColumn1 );
+
+				Elements.move( eButton, eColumn2 );
+
+				// Validate.
+				assert.equal( eColumn1.collection.length, 0 );
+				assert.equal( eColumn2.collection.length, 1 );
 			} );
 
 			QUnit.test( 'Delete', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
-
 				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				const eColumn = Elements.createSection( 1, true );
 
-				// Create button 1.
-				const eButton1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
+				const eButton1 = Elements.createButton( eColumn );
+				const eButton2 = Elements.createButton( eColumn );
 
-				// Create button 2.
-				const eButton2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Delete button 1.
-				$e.run( 'document/elements/delete', {
-					element: eButton1,
-				} );
+				Elements.delete( eButton1 );
 
 				// Validate.
-				assert.equal( eCol.collection.length, 1 );
+				assert.equal( eColumn.collection.length, 1 );
 
-				// Delete button 2.
-				$e.run( 'document/elements/delete', {
-					element: eButton2,
-				} );
+				Elements.delete( eButton2 );
 
 				// Validate.
-				assert.equal( eCol.collection.length, 0 );
+				assert.equal( eColumn.collection.length, 0 );
 			} );
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Multiple Settings', ( assert ) => {
-				// Create section 1.
-				const eSection1 = $e.run( 'document/elements/createSection', {
-					columns: 1,
-					returnValue: true,
-				} );
+				const eSection1 = Elements.createSection();
+				const eSection2 = Elements.createSection();
 
-				// Create section 2.
-				const eSection2 = $e.run( 'document/elements/createSection', {
-					columns: 1,
-					returnValue: true,
-				} );
+				const eColumns = Elements.createMultiColumn( [ eSection1, eSection2 ] );
 
-				// Create column for each section.
-				const eCols = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					elements: [ eSection1, eSection2 ],
-					returnValue: true,
-				} );
+				const eButtons = Elements.createMultiButton( eColumns );
 
-				// Create button for each column.
-				const eButtons = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					elements: eCols,
-					returnValue: true,
-				} );
-
-				// Change button text for each button.
-				$e.run( 'document/elements/settings', {
-					elements: eButtons,
-					settings: {
-						text: 'i test it',
-					},
-				} );
+				Elements.multiSettings( eButtons, { text: 'i test it' } );
 
 				// Check button text.
 				eButtons.forEach( ( eButton ) => {
@@ -547,237 +195,70 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Multiple Columns', ( assert ) => {
-				// Create section 1.
-				const eSection1 = $e.run( 'document/elements/createSection', {
-					columns: 1,
-					returnValue: true,
-				} );
+				const eSection1 = Elements.createSection();
+				const eSection2 = Elements.createSection();
 
-				// Create section 2.
-				const eSection2 = $e.run( 'document/elements/createSection', {
-					columns: 1,
-					returnValue: true,
-				} );
-
-				// Create column.
-				const eCols = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					elements: [ eSection1, eSection2 ],
-					returnValue: true,
-				} );
+				const eColumns = Elements.createMultiColumn( [ eSection1, eSection2 ] );
 
 				// Check columns exist.
-				eCols.forEach( ( eCol ) => {
+				eColumns.forEach( ( eColumn ) => {
 					assert.equal( elementor.getPreviewView().children.some( ( a ) => {
-						return a.children.findByModel( eCol.model );
+						return a.children.findByModel( eColumn.model );
 					} ), true );
 				} );
 			} );
 
 			QUnit.test( 'Create Multiple Widgets', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eColumn1 = Elements.createSection( 1, true );
+				const eColumn2 = Elements.createSection( 1, true );
 
-				// Create column 1.
-				const eCol1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create column 2.
-				const eCol2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create Buttons.
-				const eButtons = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					elements: [ eCol1, eCol2 ],
-					returnValue: true,
-				} );
+				const eButtons = Elements.createMultiButton( [ eColumn1, eColumn2 ] );
 
 				// Check button exist.
-				assert.equal( Boolean( eCol1.children.findByModel( eButtons[ 0 ].model ) ), true );
-				assert.equal( Boolean( eCol2.children.findByModel( eButtons[ 1 ].model ) ), true );
+				assert.equal( Boolean( eColumn1.children.findByModel( eButtons[ 0 ].model ) ), true );
+				assert.equal( Boolean( eColumn2.children.findByModel( eButtons[ 1 ].model ) ), true );
 			} );
 
 			QUnit.test( 'Multiple Duplicate', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eColumn1 = Elements.createSection( 1, true );
+				const eColumn2 = Elements.createSection( 1, true );
 
-				// Create column 1.
-				const eCol1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				const eButtons = Elements.createMultiButton( [ eColumn1, eColumn2 ] );
 
-				// Create column 2.
-				const eCol2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create button.
-				const eButtons = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					elements: [ eCol1, eCol2 ],
-					returnValue: true,
-				} );
-
-				// Duplicate button.
-				$e.run( 'document/elements/duplicate', {
-					elements: eButtons,
-				} );
+				Elements.multiDuplicate( eButtons );
 
 				// Check duplicated button exist.
-				assert.equal( eCol1.children.length, 2 );
-				assert.equal( eCol2.children.length, 2 );
+				assert.equal( eColumn1.children.length, 2 );
+				assert.equal( eColumn2.children.length, 2 );
 			} );
 
 			QUnit.test( 'Multiple Copy & Paste', ( assert ) => {
-				// Create section 1.
-				const eSection1 = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eSection1 = Elements.createSection();
+				const eSection2 = Elements.createSection();
 
-				// Create section 2.
-				const eSection2 = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eColumns = Elements.createMultiColumn( [ eSection1, eSection2 ] );
 
-				// Create columns.
-				const eCols = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					elements: [ eSection1, eSection2 ],
-					returnValue: true,
-				} );
+				const eButtons = Elements.createMultiButton( eColumns );
 
-				// Create buttons.
-				const eButtons = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					elements: eCols,
-					returnValue: true,
-				} );
+				Elements.copy( eButtons[ 0 ] );
 
-				// Copy buttons.
-				$e.run( 'document/elements/copy', {
-					element: eButtons[ 0 ],
-				} );
-
-				// Paste button
-				$e.run( 'document/elements/paste', {
-					elements: eCols,
-				} );
+				Elements.multiPaste( eColumns );
 
 				// Check pasted button exist.
-				eCols.forEach( ( eCol ) => {
-					assert.equal( eCol.children.length, 2 );
+				eColumns.forEach( ( eColumn ) => {
+					assert.equal( eColumn.children.length, 2 );
 				} );
 			} );
 
 			QUnit.test( 'Multiple Paste Style', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eButtonSimple1 = Elements.createMockButtonWidget();
+				const eButtonSimple2 = Elements.createMockButtonWidget();
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				const eButtonStyled = Elements.createMockButtonStyled();
 
-				// Create button 1.
-				const eButtonSimple1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
+				Elements.copy( eButtonStyled );
 
-				// Create button 2.
-				const eButtonSimple2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'hey',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Create button with style.
-				const eButtonStyled = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Copy styled button.
-				$e.run( 'document/elements/copy', {
-					element: eButtonStyled,
-				} );
-
-				// Paste style to simple button.
-				$e.run( 'document/elements/pasteStyle', {
-					elements: [ eButtonSimple1, eButtonSimple2 ],
-				} );
+				Elements.multiPasteStyle( [ eButtonSimple1, eButtonSimple2 ] );
 
 				// Check pasted style exist.
 				assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, '#000000' );
@@ -785,51 +266,10 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Multiple Reset Style', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eButtonStyled1 = Elements.createMockButtonStyled();
+				const eButtonStyled2 = Elements.createMockButtonStyled();
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create button 1 with style.
-				const eButtonStyled1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				const eButtonStyled2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Paste style to simple button.
-				$e.run( 'document/elements/resetStyle', {
-					elements: [ eButtonStyled1, eButtonStyled2 ],
-				} );
+				Elements.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
 
 				// Check pasted style exist.
 				assert.equal( eButtonStyled1.model.attributes.settings.attributes.background_color, '' );
@@ -837,118 +277,32 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Multiple Move', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eSection = Elements.createSection();
 
-				// Create column 1.
-				const eCol1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				const eColumn1 = Elements.createColumn( eSection );
+				const eColumn2 = Elements.createColumn( eSection );
 
-				// Create column 2.
-				const eCol2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
-
-				// Create button 1 at column1.
-				const eButton1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol1,
-					returnValue: true,
-				} );
-
-				// Create button2 at column1.
-				const eButton2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol1,
-					returnValue: true,
-				} );
+				const eButton1 = Elements.createButton( eColumn1 );
+				const eButton2 = Elements.createButton( eColumn1 );
 
 				// Move button to eCol2.
-				$e.run( 'document/elements/move', {
-					elements: [ eButton1, eButton2 ],
-					target: eCol2,
-				} );
+				Elements.multiMove( [ eButton1, eButton2 ], eColumn2 );
 
 				// Validate.
-				assert.equal( eCol1.collection.length, 0 );
-				assert.equal( eCol2.collection.length, 2 );
+				assert.equal( eColumn1.collection.length, 0 );
+				assert.equal( eColumn2.collection.length, 2 );
 			} );
 
 			QUnit.test( 'Multiple Delete', ( assert ) => {
-				// Create section.
-				const eSection = $e.run( 'document/elements/createSection', {
-					returnValue: true,
-				} );
+				const eColumn = Elements.createSection( 1 , true );
 
-				// Create column.
-				const eCol = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'column',
-					},
-					element: eSection,
-					returnValue: true,
-				} );
+				const eButton1 = Elements.createButton( eColumn );
+				const eButton2 = Elements.createButton( eColumn );
 
-				// Create button 1.
-				const eButton1 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Create button 2.
-				const eButton2 = $e.run( 'document/elements/create', {
-					model: {
-						elType: 'widget',
-						widgetType: 'button',
-						settings: {
-							text: 'You can copy me',
-							background_color: '#000000',
-						},
-					},
-					element: eCol,
-					returnValue: true,
-				} );
-
-				// Delete buttons.
-				$e.run( 'document/elements/delete', {
-					elements: [ eButton1, eButton2 ],
-				} );
+				Elements.multiDelete( [ eButton1, eButton2 ] );
 
 				// Validate.
-				assert.equal( eCol.collection.length, 0 );
+				assert.equal( eColumn.collection.length, 0 );
 			} );
 		} );
 	} );

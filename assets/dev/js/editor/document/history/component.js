@@ -85,6 +85,14 @@ export default class extends elementorModules.common.Component {
 
 				item.get( 'items' ).unshift( itemData );
 			},
+
+			undo: () => {
+				$e.run( 'panel/history/actions/undo' ); // TODO: swap between the commands.
+			},
+
+			redo: () => {
+				$e.run( 'panel/history/actions/redo' ); // TODO: swap between the commands.
+			},
 		};
 	}
 

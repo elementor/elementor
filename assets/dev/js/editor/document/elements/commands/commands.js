@@ -6,6 +6,7 @@ import Create from './create';
 import CreateSection from './create-section';
 import Delete from './delete';
 import Duplicate from './duplicate';
+import Empty from './empty';
 import Paste from './paste';
 import Move from './move';
 import PasteStyle from './paste-style';
@@ -18,6 +19,7 @@ export {
 	CreateSection,
 	Delete,
 	Duplicate,
+	Empty,
 	Paste,
 	Move,
 	PasteStyle,

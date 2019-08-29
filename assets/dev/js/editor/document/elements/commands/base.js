@@ -1,6 +1,4 @@
 export default class {
-	static calledOnce = [];
-
 	/**
 	 * Function constructor().
 	 *
@@ -12,14 +10,6 @@ export default class {
 		this.args = args;
 
 		this.initialize();
-
-		// TODO: May not work in production.
-		if ( ! this.constructor.calledOnce[ this.constructor.name ] ) {
-			this.once();
-
-			this.constructor.calledOnce[ this.constructor.name ] = true;
-		}
-
 		this.validateArgs( args );
 
 		this.history = this.getHistory( args );
@@ -151,5 +141,16 @@ export default class {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Function isHistoryActive().
+	 *
+	 * Return `elementor.history.history.getActive()`.
+	 *
+	 * @returns {Boolean}
+	 */
+	isHistoryActive() {
+		return elementor.history.history.getActive();
 	}
 }

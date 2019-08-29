@@ -527,6 +527,11 @@ helpers = {
 		}
 
 		setTimeout( function() {
+			// Sometimes element removed during the timeout.
+			if ( ! jQuery( document ).find( $element ).length ) {
+				return;
+			}
+
 			var parentHeight = $parent.height(),
 				parentScrollTop = $parent.scrollTop(),
 				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[ 0 ].offsetTop,

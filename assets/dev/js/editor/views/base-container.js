@@ -80,7 +80,7 @@ module.exports = Marionette.CompositeView.extend( {
 			elementor.channels.data.trigger( options.trigger.afterAdd, newItem );
 		}
 
-		if ( options.edit ) {
+		if ( options.edit && elementor.history.history.getActive() ) {
 			newModel.trigger( 'request:edit' );
 		}
 
@@ -103,6 +103,16 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 
 		return item;
+	},
+
+	lookup: function() {
+		let element = this;
+
+		if ( element.isDestroyed ) {
+			element = elementorCommon.helpers.findViewById( element.model.id );
+		}
+
+		return element;
 	},
 
 	isCollectionFilled: function() {

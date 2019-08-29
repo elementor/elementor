@@ -252,11 +252,10 @@ BaseElementView = BaseContainer.extend( {
 	addElementFromPanel( options ) {
 		options = options || {};
 
-		const elementView = elementor.channels.panelElements.request( 'element:selected' );
-
-		const model = {
-			elType: elementView.model.get( 'elType' ),
-		};
+		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
+			model = {
+				elType: elementView.model.get( 'elType' ),
+			};
 
 		if ( elementor.helpers.maybeDisableWidget() ) {
 			return;
@@ -275,12 +274,6 @@ BaseElementView = BaseContainer.extend( {
 		if ( customData ) {
 			jQuery.extend( model, customData );
 		}
-
-		options.onAfterAdd = function( newModel, newView ) {
-			if ( 'section' === newView.getElementType() && newView.isInner() ) {
-				newView.addChildElement();
-			}
-		};
 
 		$e.run( 'document/elements/create', {
 			element: this,

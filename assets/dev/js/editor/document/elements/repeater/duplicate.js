@@ -15,7 +15,8 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { index, name, options = {}, elements = [ args.element ] } = args;
+		const { index, name, options = {}, elements = [ args.element ] } = args,
+			result = [];
 
 		elements.forEach( ( element ) => {
 			const settingsModel = element.getEditModel().get( 'settings' ),
@@ -23,14 +24,21 @@ export default class extends Base {
 				collection = settingsModel.get( controlName ),
 				item = collection.at( index );
 
-			$e.run( 'document/elements/repeater/insert', {
-				elements,
+			result.push( $e.run( 'document/elements/repeater/insert', {
+				element,
 				name,
 				model: item.toJSON(),
+				returnValue: true,
 				options: Object.assign( {
 					at: index + 1,
 				}, options ),
-			} );
+			} ) );
 		} );
+
+		if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 }

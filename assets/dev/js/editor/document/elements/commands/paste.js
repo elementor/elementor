@@ -20,7 +20,8 @@ export default class extends Base {
 
 	apply( args ) {
 		const { at, rebuild = false, storageKey = 'transfer', elements = [ args.element ] } = args,
-			transferData = elementorCommon.storage.get( storageKey );
+			transferData = elementorCommon.storage.get( storageKey ),
+			result = [];
 
 		// Paste on "Add Section" area.
 		if ( rebuild ) {
@@ -28,10 +29,10 @@ export default class extends Base {
 				const index = 'undefined' === typeof at ? currentElement.collection.length : at;
 
 				if ( 'section' === transferData.elementsType ) {
-					this.pasteTo( transferData, [ currentElement ], {
+					result.push ( this.pasteTo( transferData, [ currentElement ], {
 						at: index,
 						edit: false,
-					} );
+					} ) );
 				} else if ( 'column' === transferData.elementsType ) {
 					const section = $e.run( 'document/elements/create', {
 						element: currentElement,
@@ -45,7 +46,7 @@ export default class extends Base {
 						returnValue: true,
 					} );
 
-					this.pasteTo( transferData, [ section ] );
+					result.push( this.pasteTo( transferData, [ section ] ) );
 
 					section.resizeColumns();
 				} else {
@@ -58,28 +59,43 @@ export default class extends Base {
 						returnValue: true,
 					} );
 
-					this.pasteTo( transferData, [ section ] );
+					result.push( this.pasteTo( transferData, [ section ] ) );
 				}
 			} );
 		} else {
-			this.pasteTo( transferData, elements );
+			result.push( this.pasteTo( transferData, elements ) );
 		}
+
+		if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 
 	pasteTo( transferData, elements, options = {} ) {
 		options = Object.assign( { at: null, clone: true }, options );
 
+		const result = [];
+
 		transferData.elements.forEach( function( model ) {
-			$e.run( 'document/elements/create', {
+			result.push( $e.run( 'document/elements/create', {
 				elements,
 				model,
 				options,
-			} );
+				returnValue: true,
+			} ) );
 
 			// On paste sections, increase the `at` for every section.
 			if ( null !== options.at ) {
 				options.at++;
 			}
 		} );
+
+		if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 }

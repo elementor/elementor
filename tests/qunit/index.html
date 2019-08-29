@@ -92,6 +92,7 @@
 	<script type='text/javascript' src='./../../assets/lib/imagesloaded/imagesloaded.min.js'></script>
 
 	<script>
+		/* global jQuery */
 		const ElementorConfig = {
 			document: { remoteLibrary: {}, urls: {}, panel: { widgets_settings: {} } },
 			user: { introduction: {}, restrictions: [] },
@@ -108,7 +109,10 @@
 			autosave_interval: 1000,
 		};
 		const elementorFrontend = {
-			elements: { window },
+			elements: {
+				window,
+				$window: jQuery( window ),
+			},
 			config: { elements: { data: {}, editSettings: {} }, breakpoints: {} },
 			isEditMode: () => {
 			},

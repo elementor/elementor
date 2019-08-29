@@ -159,7 +159,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		this.ui.inputWrapper.html( $editor );
 
 		setTimeout( () => {
-			if ( ! this.isDestroyed ) {
+			if ( ! this.isDestroyed && this.editor ) {
 				this.editor.on( 'keyup change undo redo', this.saveEditor.bind( this ) );
 			}
 		}, 100 );

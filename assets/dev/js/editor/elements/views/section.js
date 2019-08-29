@@ -4,6 +4,8 @@ var BaseElementView = require( 'elementor-elements/views/base' ),
 import AddSectionView from '../../views/add-section/inline';
 
 SectionView = BaseElementView.extend( {
+	defaultInnerSectionColumns: 2,
+
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
 	addSectionView: null,
@@ -164,6 +166,24 @@ SectionView = BaseElementView.extend( {
 		this.collection.each( function( model ) {
 			model.setSetting( '_inline_size', null );
 		} );
+	},
+
+	handleEmptySection: function() {
+		$e.run( 'document/elements/create', {
+			element: this,
+			model: {
+				elType: 'column',
+			},
+		} );
+	},
+
+	handleCreateInnerSection: function() {
+		for ( let i = 0; i < this.defaultInnerSectionColumns; ++i ) {
+			this.addChildElement();
+		}
+
+		// TODO: maybe we need `history false` flag since it does not need to restore it.
+		this.setStructure( this.defaultInnerSectionColumns + '0' );
 	},
 
 	isCollectionFilled: function() {

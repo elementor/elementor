@@ -3,20 +3,19 @@ import Base from '../commands/base';
 // Insert.
 export default class extends Base {
 	static restore( historyItem, isRedo ) {
-		if ( isRedo ) {
-			const data = historyItem.get( 'data' );
+		const elements = historyItem.get( 'elements' ),
+			data = historyItem.get( 'data' );
 
+		if ( isRedo ) {
 			$e.run( 'document/elements/repeater/insert', {
-				elements: historyItem.get( 'elements' ),
+				elements,
 				model: data.model,
 				name: data.name,
 				options: { at: data.index },
 			} );
 		} else {
-			const data = historyItem.get( 'data' );
-
 			$e.run( 'document/elements/repeater/remove', {
-				elements: historyItem.get( 'elements' ),
+				elements,
 				name: data.name,
 				index: data.index,
 			} );
@@ -36,7 +35,7 @@ export default class extends Base {
 		return {
 			elements,
 			type: 'add',
-			subTitle: name,
+			subTitle: elementor.translate( 'Item' ),
 			data: {
 				model,
 				name,

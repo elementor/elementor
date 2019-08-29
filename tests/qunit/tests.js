@@ -29,4 +29,4 @@ elementor.config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core
 require( './core/common/components' );
 require( './core/editor/document/elements/component' );
 require( './core/editor/document/elements/repeater/component' );
-
+require( './core/editor/document/history/component' );

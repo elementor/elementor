@@ -16,17 +16,28 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { elements = [ args.element ] } = args;
+		const { elements = [ args.element ] } = args,
+			result = [];
 
 		elements.forEach( ( element ) => {
 			const parent = element._parent,
 				at = element._index + 1;
 
-			$e.run( 'document/elements/create', {
+			result.push( $e.run( 'document/elements/create', {
 				element: parent,
-				model: element.model.clone(),
-				options: { at },
-			} );
+				model: element.model,
+				returnValue: true,
+				options: {
+					at,
+					clone: true,
+				},
+			} ) );
 		} );
+
+		if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 }

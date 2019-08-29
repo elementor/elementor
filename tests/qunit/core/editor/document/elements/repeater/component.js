@@ -1,171 +1,63 @@
+import Elements from '../../helpers/elements';
+
 jQuery( () => {
 	QUnit.module( 'Component: document/elements/repeater' );
 
-	/** -------------------------------------------
-	 * @description Test eCommands Repeater (Single Selection).
-	 * -------------------------------------------- */
+	QUnit.module( 'Single Selection', () => {
+		QUnit.test( 'Insert', ( assert ) => {
+			const eColumn = Elements.createSection( 1, true ),
+				eTabs = Elements.createTabs( eColumn );
 
-	QUnit.test( 'Insert', ( assert ) => {
-		// Create section.
-		const eSection = $e.run( 'document/elements/createSection', {
-			columns: 1,
-			returnValue: true,
-		} );
-
-		// Get col.
-		const eCol = eSection.children._views[ Object.keys( eSection.children._views )[ 0 ] ];
-
-		// Create tabs.
-		const eTabs = $e.run( 'document/elements/create', {
-			model: {
-				elType: 'widget',
-				widgetType: 'tabs',
-			},
-			element: eCol,
-			returnValue: true,
-		} );
-
-		// Insert tab item.
-		$e.run( 'document/elements/repeater/insert', {
-			element: eTabs,
-			model: {
+			Elements.repeaterInsert( eTabs, 'tabs', {
 				tab_title: 'Test Tab Title',
 				tab_content: 'Test Tab Content',
-			},
-			name: 'tabs',
+			} );
+
+			// Check.
+			assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
 		} );
 
-		// Check.
-		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
-	} );
+		QUnit.test( 'Remove', ( assert ) => {
+			const eColumn = Elements.createSection( 1, true ),
+				eTabs = Elements.createTabs( eColumn );
 
-	QUnit.test( 'Remove', ( assert ) => {
-		// Create section.
-		const eSection = $e.run( 'document/elements/createSection', {
-			columns: 1,
-			returnValue: true,
+			Elements.repeaterRemove( eTabs, 'tabs', 1 );
+
+			// Check.
+			assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 1 );
 		} );
 
-		// Get col.
-		const eCol = eSection.children._views[ Object.keys( eSection.children._views )[ 0 ] ];
+		QUnit.test( 'Settings', ( assert ) => {
+			const eColumn = Elements.createSection( 1, true ),
+				eTabs = Elements.createTabs( eColumn ),
+				tabTitle = 'This is was changed';
 
-		// Create tabs.
-		const eTabs = $e.run( 'document/elements/create', {
-			model: {
-				elType: 'widget',
-				widgetType: 'tabs',
-			},
-			element: eCol,
-			returnValue: true,
-		} );
-
-		// Remove tab item.
-		$e.run( 'document/elements/repeater/remove', {
-			element: eTabs,
-			index: 1,
-			name: 'tabs',
-		} );
-
-		// Check.
-		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 1 );
-	} );
-
-	QUnit.test( 'Settings', ( assert ) => {
-		// Create section.
-		const eSection = $e.run( 'document/elements/createSection', {
-			columns: 1,
-			returnValue: true,
-		} );
-
-		// Get col.
-		const eCol = eSection.children._views[ Object.keys( eSection.children._views )[ 0 ] ];
-
-		// Create tabs.
-		const eTabs = $e.run( 'document/elements/create', {
-			model: {
-				elType: 'widget',
-				widgetType: 'tabs',
-			},
-			element: eCol,
-			returnValue: true,
-		} );
-
-		const tabTitle = 'This is was changed';
-
-		// Change tab item.
-		$e.run( 'document/elements/repeater/settings', {
-			element: eTabs,
-			name: 'tabs',
-			index: 1,
-			settings: {
+			Elements.repeaterSettings( eTabs, 'tabs', 1, {
 				tab_title: tabTitle,
-			},
+			} );
+
+			// Check.
+			assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
 		} );
 
-		// Check.
-		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
-	} );
+		QUnit.test( 'Duplicate', ( assert ) => {
+			const eColumn = Elements.createSection( 1, true ),
+				eTabs = Elements.createTabs( eColumn );
 
-	QUnit.test( 'Duplicate', ( assert ) => {
-		// Create section.
-		const eSection = $e.run( 'document/elements/createSection', {
-			columns: 1,
-			returnValue: true,
+			Elements.repeaterDuplicate( eTabs, 'tabs', 1 );
+
+			// Check.
+			assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
 		} );
 
-		// Get col.
-		const eCol = eSection.children._views[ Object.keys( eSection.children._views )[ 0 ] ];
+		QUnit.test( 'Move', ( assert ) => {
+			const eColumn = Elements.createSection( 1, true ),
+				eTabs = Elements.createTabs( eColumn );
 
-		// Create tabs.
-		const eTabs = $e.run( 'document/elements/create', {
-			model: {
-				elType: 'widget',
-				widgetType: 'tabs',
-			},
-			element: eCol,
-			returnValue: true,
+			Elements.repeaterMove( eTabs, 'tabs', 1, 0 );
+
+			// Check.
+			assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
 		} );
-
-		// Duplicate tab item.
-		$e.run( 'document/elements/repeater/duplicate', {
-			element: eTabs,
-			name: 'tabs',
-			index: 1,
-		} );
-
-		// Check.
-		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
-	} );
-
-	QUnit.test( 'Move', ( assert ) => {
-		// Create section.
-		const eSection = $e.run( 'document/elements/createSection', {
-			columns: 1,
-			returnValue: true,
-		} );
-
-		// Get col.
-		const eCol = eSection.children._views[ Object.keys( eSection.children._views )[ 0 ] ];
-
-		// Create tabs.
-		const eTabs = $e.run( 'document/elements/create', {
-			model: {
-				elType: 'widget',
-				widgetType: 'tabs',
-			},
-			element: eCol,
-			returnValue: true,
-		} );
-
-		// Move tab item.
-		$e.run( 'document/elements/repeater/move', {
-			element: eTabs,
-			name: 'tabs',
-			sourceIndex: 1,
-			targetIndex: 0,
-		} );
-
-		// Check.
-		assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
 	} );
 } );

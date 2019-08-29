@@ -72,7 +72,7 @@ export default class Settings extends Base {
 				index,
 			},
 			type: 'change',
-			subTitle: name,
+			subTitle: elementor.translate( 'Item' ),
 			history: {
 				behavior: {
 					restore: Settings.restore,
@@ -81,21 +81,17 @@ export default class Settings extends Base {
 		} );
 	}
 
-	once() {
-		this.constructor.lazyHistory = _.debounce( this.constructor.logHistory, 800 );
-	}
-
-	getHistory() {
-		// Manual history.
-		return false;
-	}
-
 	validateArgs( args ) {
 		this.requireElements( args );
 
 		this.requireArgument( 'settings', args );
 		this.requireArgument( 'name', args );
 		this.requireArgument( 'index', args );
+	}
+
+	getHistory( args ) {
+		// Manual history.
+		return false;
 	}
 
 	apply( args ) {
@@ -110,6 +106,7 @@ export default class Settings extends Base {
 
 			item.set( settings );
 
+			// TODO: handle/remove this trigger.
 			if ( ! options.hasOwnProperty( 'trigger' ) || options.trigger ) {
 				Object.entries( settings ).forEach( ( setting ) => {
 					collection.models[ index ].trigger( `change:external:${ setting[ 0 ] }`, setting[ 1 ] );
@@ -121,7 +118,13 @@ export default class Settings extends Base {
 		} );
 
 		if ( elementor.history.history.getActive() ) {
-			this.constructor.lazyHistory( args );
+			if ( options.lazy ) {
+				Settings.lazyHistory( args );
+			} else {
+				Settings.logHistory( args );
+			}
 		}
 	}
 }
+
+Settings.lazyHistory = _.debounce( Settings.logHistory, 800 );

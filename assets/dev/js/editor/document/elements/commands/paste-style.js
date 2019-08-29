@@ -1,6 +1,5 @@
 import Base from './base';
 
-// TODO: rewrite apply function.
 // PasteStyle.
 export default class extends Base {
 	validateArgs( args ) {
@@ -17,6 +16,8 @@ export default class extends Base {
 	}
 
 	apply( args ) {
+		// TODO: rewrite ( warning: too many function exits ).
+		// Moved from Old mechanism.
 		const { elements = [ args.element ] } = args;
 
 		const transferData = elementorCommon.storage.get( 'transfer' ),
@@ -74,11 +75,10 @@ export default class extends Base {
 
 			element.allowRender = false;
 
-			elementor.channels.data.trigger( 'element:before:paste:style', targetEditModel );
-
-			targetEditModel.setSetting( diffSettings );
-
-			elementor.channels.data.trigger( 'element:after:paste:style', targetEditModel );
+			$e.run( 'document/elements/settings', {
+				element,
+				settings: diffSettings,
+			} );
 
 			element.allowRender = true;
 

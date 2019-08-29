@@ -1,6 +1,6 @@
 import Base from './base';
 
-// כMove.
+// Move.
 export default class extends Base {
 	validateArgs( args ) {
 		this.requireElements( args );

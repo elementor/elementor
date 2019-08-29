@@ -1,6 +1,3 @@
-var ElementHistoryBehavior = require( './element-behavior' ),
-	CollectionHistoryBehavior = require( './collection-behavior' );
-
 import ItemModel from './item-model';
 import Component from './component';
 
@@ -18,26 +15,6 @@ var	Manager = function() {
 		move: elementor.translate( 'moved' ),
 		paste_style: elementor.translate( 'style_pasted' ),
 		reset_style: elementor.translate( 'style_reset' ),
-	};
-
-	var addBehaviors = function( behaviors ) {
-		behaviors.ElementHistory = {
-			behaviorClass: ElementHistoryBehavior,
-		};
-
-		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior,
-		};
-
-		return behaviors;
-	};
-
-	var addCollectionBehavior = function( behaviors ) {
-		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior,
-		};
-
-		return behaviors;
 	};
 
 	var getActionLabel = function( itemData ) {
@@ -78,9 +55,6 @@ var	Manager = function() {
 
 	var init = function() {
 		$e.components.register( new Component( { manager: self } ) );
-
-		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
 
 		elementor.channels.editor.on( 'saved', onPanelSave );
 	};
@@ -263,6 +237,7 @@ var	Manager = function() {
 		return elementor.getElementData( model ).title;
 	};
 
+	// TODO: remove use elementorCommon.helper.findViewRecursive.
 	this.findView = function( modelID, views ) {
 		var founded = false;
 
