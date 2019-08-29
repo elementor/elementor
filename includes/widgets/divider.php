@@ -941,15 +941,15 @@ class Widget_Divider extends Widget_Base {
 		$svg_code = $this->build_svg();
 		$has_icon = 'line_icon' === ( $settings['look'] ) && ! empty( $settings['icon'] );
 		$has_text = 'line_text' === ( $settings['look'] ) && ! empty( $settings['text'] );
+
+		$this->add_render_attribute( 'wrapper', 'class', 'elementor-divider' );
+
+		if ( ! empty( $svg_code ) ) {
+			$this->add_render_attribute( 'wrapper', 'style', '--divider-pattern-url: url("data:image/svg+xml,' . $this->svg_to_data_uri( $svg_code ) . '");' );
+		}
+
 		?>
-		<div class="elementor-divider">
-			<?php if ( ! empty( $svg_code ) ) : ?>
-				<style>
-					.elementor-element-<?php echo $this->get_id(); ?> {
-						--divider-pattern-url: url("data:image/svg+xml,<?php echo $this->svg_to_data_uri( $svg_code ); ?>");
-					}
-				</style>
-			<?php endif; ?>
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>">
 			<span class="elementor-divider-separator">
 			<?php if ( $has_icon ) : ?>
 				<div class="elementor-icon elementor-divider__element">
