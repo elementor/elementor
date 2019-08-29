@@ -103,7 +103,7 @@ class Widget_Divider extends Widget_Base {
 		 *
 		 * @param array $additional_styles Additional Elementor divider styles.
 		 */
-		$additional_styles = apply_filters( 'elementor/divider/styles/additional_styles', [] );
+		$additional_styles = apply_filters( 'elementor/divider/styles/additional_styles', $additional_styles );
 		return $additional_styles;
 	}
 
