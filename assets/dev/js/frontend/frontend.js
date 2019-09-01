@@ -82,14 +82,13 @@ class Frontend extends elementorModules.ViewModule {
 		return getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
 	}
 
-	getCurrentDeviceSetting( settings, settingKey ) {
-		const devices = [ 'desktop', 'tablet', 'mobile' ],
-			currentDeviceMode = elementorFrontend.getCurrentDeviceMode();
+	getDeviceSetting( settings, settingKey, deviceMode ) {
+		const devices = [ 'desktop', 'tablet', 'mobile' ];
 
-		let currentDeviceIndex = devices.indexOf( currentDeviceMode );
+		let deviceIndex = devices.indexOf( deviceMode );
 
-		while ( currentDeviceIndex > 0 ) {
-			const currentDevice = devices[ currentDeviceIndex ],
+		while ( deviceIndex > 0 ) {
+			const currentDevice = devices[ deviceIndex ],
 				fullSettingKey = settingKey + '_' + currentDevice,
 				deviceValue = settings[ fullSettingKey ];
 
@@ -97,10 +96,14 @@ class Frontend extends elementorModules.ViewModule {
 				return deviceValue;
 			}
 
-			currentDeviceIndex--;
+			deviceIndex--;
 		}
 
 		return settings[ settingKey ];
+	}
+
+	getCurrentDeviceSetting( settings, settingKey ) {
+		return this.getDeviceSetting( settings, settingKey, elementorFrontend.getCurrentDeviceMode() );
 	}
 
 	isEditMode() {
