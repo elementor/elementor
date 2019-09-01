@@ -386,7 +386,7 @@ class Frontend extends App {
 
 		wp_register_script(
 			'elementor-gallery',
-			$this->get_js_assets_url( 'gallery', 'assets/lib/gallery/' ),
+			$this->get_js_assets_url( 'eGallery', 'assets/lib/eGallery/js/' ),
 			[
 				'jquery',
 			],
@@ -467,7 +467,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-gallery',
-			$this->get_css_assets_url( 'gallery', 'assets/lib/gallery/' ),
+			$this->get_css_assets_url( 'eGallery', 'assets/lib/eGallery/css/' ),
 			[],
 			'1.0.0'
 		);

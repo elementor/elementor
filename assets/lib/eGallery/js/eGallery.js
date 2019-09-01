@@ -2,7 +2,7 @@
  * By Elementor Team
  */
 ( ( $ ) => {
-	class Gallery {
+	class EGallery {
 		constructor( userSettings ) {
 			this.settings = $.extend( true, this.getDefaultSettings(), userSettings );
 
@@ -223,6 +223,8 @@
 
 		destroy() {
 			this.unbindEvents();
+
+			this.$container.empty();
 		}
 	}
 
@@ -481,7 +483,7 @@
 			if ( ! isCommand ) {
 				settings.container = this;
 
-				$this.data( 'gallery', new Gallery( settings ) );
+				$this.data( 'gallery', new EGallery( settings ) );
 
 				return;
 			}
@@ -506,5 +508,5 @@
 		return this;
 	};
 
-	window.Gallery = Gallery;
+	window.EGallery = EGallery;
 } )( jQuery );
