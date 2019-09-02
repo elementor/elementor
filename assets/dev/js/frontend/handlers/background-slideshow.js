@@ -48,6 +48,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		switch ( elementSettings.background_slideshow_slide_transition ) {
 			case 'fade':
 				swiperOptions.effect = 'fade';
+				swiperOptions.fadeEffect = {
+					crossFade: true,
+				};
 				break;
 			case 'slide_down':
 				swiperOptions.autoplay.reverseDirection = true;
