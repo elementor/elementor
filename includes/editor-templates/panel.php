@@ -148,8 +148,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div class="elementor-panel-navigation">
 		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) {
 			if ( 'content' !== tabSlug && ! elementor.userCan( 'design' ) ) {
-			return;
-		}
+				return;
+			}
+			$e.bc.ensureTab( 'panel/editor', tabSlug );
 			#>
 			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<a href="#">{{{ tabTitle }}}</a>

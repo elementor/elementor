@@ -7,6 +7,7 @@ import Components from './components/components';
 import Commands from './components/commands';
 import Routes from './components/routes';
 import Shortcuts from './components/shortcuts';
+import BackwardsCompatibility from './components/backwards-compatibility';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -39,6 +40,7 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 			commands: new Commands(),
 			routes: new Routes(),
 			shortcuts: new Shortcuts( jQuery( window ) ),
+			bc: new BackwardsCompatibility(),
 
 			run: ( ...args ) => {
 				return $e.commands.run.apply( $e.commands, args );
