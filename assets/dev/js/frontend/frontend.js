@@ -82,7 +82,7 @@ class Frontend extends elementorModules.ViewModule {
 		return getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
 	}
 
-	getDeviceSetting( settings, settingKey, deviceMode ) {
+	getDeviceSetting( deviceMode, settings, settingKey ) {
 		const devices = [ 'desktop', 'tablet', 'mobile' ];
 
 		let deviceIndex = devices.indexOf( deviceMode );
