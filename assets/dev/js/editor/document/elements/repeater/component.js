@@ -1,4 +1,4 @@
-import * as Commands from './commands';
+import * as Commands from './commands/commands';
 
 export default class extends elementorModules.common.Component {
 	getNamespace() {
@@ -7,6 +7,36 @@ export default class extends elementorModules.common.Component {
 
 	defaultCommands() {
 		return {
+			active: ( args ) => {
+				const { index, elements = [ args.element ] } = args;
+
+				elements.forEach( ( element ) => {
+					// TODO: Ask mati how to do it more efficient way.
+					// And even better that each active element will have his control attached to the view.
+					const contentChild = elementor.getPanelView().getChildView( 'content' ).children;
+
+					if ( ! contentChild ) {
+						return;
+					}
+
+					let { _views } = contentChild,
+						control = null;
+
+					for ( const i in _views ) {
+						if ( _views[ i ].options && _views[ i ].options.element.model.id === element.model.id ) {
+							control = _views[ i ];
+							break;
+						}
+					}
+
+					if ( ! control ) {
+						return;
+					}
+
+					control.getOption( 'elementEditSettings' ).set( 'activeItemIndex', index );
+				} );
+			},
+
 			duplicate: ( args ) => ( new Commands.Duplicate( args ) ).run(),
 			insert: ( args ) => ( new Commands.Insert( args ) ).run(),
 			move: ( args ) => ( new Commands.Move( args ) ).run(),

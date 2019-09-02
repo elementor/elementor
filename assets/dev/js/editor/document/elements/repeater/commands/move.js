@@ -1,4 +1,4 @@
-import Base from '../commands/base';
+import Base from '../../commands/base';
 
 export default class extends Base {
 	validateArgs( args ) {

@@ -1,4 +1,4 @@
-import Base from '../commands/base';
+import Base from '../../commands/base';
 
 // Duplicate
 export default class extends Base {
@@ -21,7 +21,7 @@ export default class extends Base {
 		elements.forEach( ( element ) => {
 			const settingsModel = element.getEditModel().get( 'settings' ),
 				controlName = element.model.get( 'widgetType' ),
-				collection = settingsModel.get( controlName ),
+				collection = settingsModel.get( name ),
 				item = collection.at( index );
 
 			result.push( $e.run( 'document/elements/repeater/insert', {

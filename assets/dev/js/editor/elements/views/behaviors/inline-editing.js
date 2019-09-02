@@ -155,6 +155,18 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		 * use advanced toolbars.
 		 */
 		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
+			const settings = this.view.getEditModel().get( 'settings' );
+
+			/**
+			 * Fix Inset/Remove bug.
+			 * Seems that when you turn inline editing ( pressing on the tab content for the first time )
+			 * it coz the bug.
+			 * TODO: Check if repeater.
+			 */
+			if ( settings && 'tabs' === settings.get( 'widgetType' ) ) {
+				return;
+			}
+
 			this.view.getEditModel().renderRemoteServer();
 		}
 	},
@@ -200,6 +212,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			parts = key.split( '.' ),
 			value = this.editor.getContent();
 
+		// Is it repeater?
 		if ( 3 === parts.length ) {
 			$e.run( 'document/elements/repeater/settings', {
 				element: this.view,
@@ -208,6 +221,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 				settings: {
 					[ parts[ 2 ] ]: value,
 				},
+				options: {
+					lazy: true,
+				},
 			} );
 		} else {
 			$e.run( 'document/elements/settings', {
@@ -215,7 +231,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 				settings: {
 					[ key ]: value,
 				},
-				options: { external: true },
+				options: {
+					external: true,
+					lazy: true,
+				},
 			} );
 		}
 	},

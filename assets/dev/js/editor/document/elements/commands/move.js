@@ -26,13 +26,23 @@ export default class extends Base {
 			$e.run( 'document/elements/delete', { element } );
 		} );
 
+		let count = 0;
 		reCreate.forEach( ( model ) => {
+			// If multiple fix position.
+			if ( options.hasOwnProperty( 'at' ) && reCreate.length > 1 ) {
+				if ( 0 !== count ) {
+					options.at += count;
+				}
+			}
+
 			$e.run( 'document/elements/create', {
 				element: target,
 				model,
 				options,
 				returnValue: true,
 			} );
+
+			count++;
 		} );
 	}
 }

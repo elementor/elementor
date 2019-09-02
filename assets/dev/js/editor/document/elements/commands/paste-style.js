@@ -20,7 +20,7 @@ export default class extends Base {
 		// Moved from Old mechanism.
 		const { elements = [ args.element ] } = args;
 
-		const transferData = elementorCommon.storage.get( 'transfer' ),
+		const transferData = elementorCommon.storage.get( 'transfer' ), // TODO: storage should be args.storageKey
 			sourceElement = transferData.elements[ 0 ],
 			sourceSettings = sourceElement.settings;
 

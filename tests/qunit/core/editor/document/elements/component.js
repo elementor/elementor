@@ -16,9 +16,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Copy All', ( assert ) => {
-				const eSection = Elements.createSection( 1 );
-
-				const eColumn = Elements.createColumn( eSection );
+				const eSection = Elements.createSection( 1 ),
+					eColumn = Elements.createColumn( eSection );
 
 				Elements.createButton( eColumn );
 				Elements.createButton( eColumn );
@@ -47,26 +46,27 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Widget', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true );
-				const eButton = Elements.createButton( eColumn );
+				const eColumn = Elements.createSection( 1, true ),
+					eButton = Elements.createButton( eColumn );
+
 				// Check button exist.
 				assert.equal( Boolean( eColumn.children.findByModel( eButton.model ) ), true );
 			} );
 
 			QUnit.test( 'Create Widget: Inner Section', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true );
-				const eInnerSection = Elements.createInnerSection( eColumn );
+				const eColumn = Elements.createSection( 1, true ),
+					eInnerSection = Elements.createInnerSection( eColumn );
 
 				// Check inner section exist.
 				assert.equal( Boolean( eColumn.children.findByModel( eInnerSection.model ) ), true );
 
 				// Check inner section have two columns.
-				assert.equal( eInnerSection.collection.length, 2 );
+				assert.equal( eInnerSection.collection.length, 2 ); // TODO: get default inner section columns.
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true );
-				const eButton = Elements.createButton( eColumn );
+				const eColumn = Elements.createSection( 1, true ),
+					eButton = Elements.createButton( eColumn );
 
 				Elements.duplicate( eButton );
 
@@ -77,8 +77,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Copy & Paste', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true );
-				const eButton = Elements.createButton( eColumn );
+				const eColumn = Elements.createSection( 1, true ),
+					eButton = Elements.createButton( eColumn );
 
 				Elements.copy( eButton );
 				Elements.paste( eColumn );
@@ -100,8 +100,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
-				const eButtonSimple = Elements.createMockButtonWidget();
-				const eButtonStyled = Elements.createMockButtonStyled();
+				const eButtonSimple = Elements.createMockButtonWidget(),
+					eButtonStyled = Elements.createMockButtonStyled();
 
 				Elements.copy( eButtonStyled );
 				Elements.pasteStyle( eButtonSimple );
@@ -132,10 +132,9 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move Column', ( assert ) => {
-				const eSection1 = Elements.createSection();
-				const eSection2 = Elements.createSection();
-
-				const eColumn = Elements.createColumn( eSection1 );
+				const eSection1 = Elements.createSection(),
+					eSection2 = Elements.createSection(),
+					eColumn = Elements.createColumn( eSection1 );
 
 				Elements.move( eColumn, eSection2 );
 
@@ -144,12 +143,10 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move Widget', ( assert ) => {
-				const eSection = Elements.createSection();
-
-				const eColumn1 = Elements.createColumn( eSection );
-				const eColumn2 = Elements.createColumn( eSection );
-
-				const eButton = Elements.createButton( eColumn1 );
+				const eSection = Elements.createSection(),
+					eColumn1 = Elements.createColumn( eSection ),
+					eColumn2 = Elements.createColumn( eSection ),
+					eButton = Elements.createButton( eColumn1 );
 
 				Elements.move( eButton, eColumn2 );
 
@@ -159,11 +156,9 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Delete', ( assert ) => {
-				// Create column.
-				const eColumn = Elements.createSection( 1, true );
-
-				const eButton1 = Elements.createButton( eColumn );
-				const eButton2 = Elements.createButton( eColumn );
+				const eColumn = Elements.createSection( 1, true ),
+					eButton1 = Elements.createButton( eColumn ),
+					eButton2 = Elements.createButton( eColumn );
 
 				Elements.delete( eButton1 );
 
@@ -178,27 +173,10 @@ jQuery( () => {
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
-			QUnit.test( 'Multiple Settings', ( assert ) => {
-				const eSection1 = Elements.createSection();
-				const eSection2 = Elements.createSection();
-
-				const eColumns = Elements.createMultiColumn( [ eSection1, eSection2 ] );
-
-				const eButtons = Elements.createMultiButton( eColumns );
-
-				Elements.multiSettings( eButtons, { text: 'i test it' } );
-
-				// Check button text.
-				eButtons.forEach( ( eButton ) => {
-					assert.equal( eButton.model.attributes.settings.attributes.text, 'i test it' );
-				} );
-			} );
-
-			QUnit.test( 'Create Multiple Columns', ( assert ) => {
-				const eSection1 = Elements.createSection();
-				const eSection2 = Elements.createSection();
-
-				const eColumns = Elements.createMultiColumn( [ eSection1, eSection2 ] );
+			QUnit.test( 'Create Columns', ( assert ) => {
+				const eSection1 = Elements.createSection(),
+					eSection2 = Elements.createSection(),
+					eColumns = Elements.multiCreateColumn( [ eSection1, eSection2 ] );
 
 				// Check columns exist.
 				eColumns.forEach( ( eColumn ) => {
@@ -208,22 +186,20 @@ jQuery( () => {
 				} );
 			} );
 
-			QUnit.test( 'Create Multiple Widgets', ( assert ) => {
-				const eColumn1 = Elements.createSection( 1, true );
-				const eColumn2 = Elements.createSection( 1, true );
-
-				const eButtons = Elements.createMultiButton( [ eColumn1, eColumn2 ] );
+			QUnit.test( 'Create Widgets', ( assert ) => {
+				const eColumn1 = Elements.createSection( 1, true ),
+					eColumn2 = Elements.createSection( 1, true ),
+					eButtons = Elements.multiCreateButton( [ eColumn1, eColumn2 ] );
 
 				// Check button exist.
 				assert.equal( Boolean( eColumn1.children.findByModel( eButtons[ 0 ].model ) ), true );
 				assert.equal( Boolean( eColumn2.children.findByModel( eButtons[ 1 ].model ) ), true );
 			} );
 
-			QUnit.test( 'Multiple Duplicate', ( assert ) => {
-				const eColumn1 = Elements.createSection( 1, true );
-				const eColumn2 = Elements.createSection( 1, true );
-
-				const eButtons = Elements.createMultiButton( [ eColumn1, eColumn2 ] );
+			QUnit.test( 'Duplicate', ( assert ) => {
+				const eColumn1 = Elements.createSection( 1, true ),
+					eColumn2 = Elements.createSection( 1, true ),
+					eButtons = Elements.multiCreateButton( [ eColumn1, eColumn2 ] );
 
 				Elements.multiDuplicate( eButtons );
 
@@ -232,13 +208,25 @@ jQuery( () => {
 				assert.equal( eColumn2.children.length, 2 );
 			} );
 
-			QUnit.test( 'Multiple Copy & Paste', ( assert ) => {
-				const eSection1 = Elements.createSection();
-				const eSection2 = Elements.createSection();
+			QUnit.test( 'Settings', ( assert ) => {
+				const eSection1 = Elements.createSection(),
+					eSection2 = Elements.createSection(),
+					eColumns = Elements.multiCreateColumn( [ eSection1, eSection2 ] ),
+					eButtons = Elements.multiCreateButton( eColumns );
 
-				const eColumns = Elements.createMultiColumn( [ eSection1, eSection2 ] );
+				Elements.multiSettings( eButtons, { text: 'i test it' } );
 
-				const eButtons = Elements.createMultiButton( eColumns );
+				// Check button text.
+				eButtons.forEach( ( eButton ) => {
+					assert.equal( eButton.model.attributes.settings.attributes.text, 'i test it' );
+				} );
+			} );
+
+			QUnit.test( 'Copy & Paste', ( assert ) => {
+				const eSection1 = Elements.createSection(),
+					eSection2 = Elements.createSection(),
+					eColumns = Elements.multiCreateColumn( [ eSection1, eSection2 ] ),
+					eButtons = Elements.multiCreateButton( eColumns );
 
 				Elements.copy( eButtons[ 0 ] );
 
@@ -250,11 +238,10 @@ jQuery( () => {
 				} );
 			} );
 
-			QUnit.test( 'Multiple Paste Style', ( assert ) => {
-				const eButtonSimple1 = Elements.createMockButtonWidget();
-				const eButtonSimple2 = Elements.createMockButtonWidget();
-
-				const eButtonStyled = Elements.createMockButtonStyled();
+			QUnit.test( 'Paste Style', ( assert ) => {
+				const eButtonSimple1 = Elements.createMockButtonWidget(),
+					eButtonSimple2 = Elements.createMockButtonWidget(),
+					eButtonStyled = Elements.createMockButtonStyled();
 
 				Elements.copy( eButtonStyled );
 
@@ -265,9 +252,9 @@ jQuery( () => {
 				assert.equal( eButtonSimple2.model.attributes.settings.attributes.background_color, '#000000' );
 			} );
 
-			QUnit.test( 'Multiple Reset Style', ( assert ) => {
-				const eButtonStyled1 = Elements.createMockButtonStyled();
-				const eButtonStyled2 = Elements.createMockButtonStyled();
+			QUnit.test( 'Reset Style', ( assert ) => {
+				const eButtonStyled1 = Elements.createMockButtonStyled(),
+					eButtonStyled2 = Elements.createMockButtonStyled();
 
 				Elements.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
 
@@ -276,16 +263,41 @@ jQuery( () => {
 				assert.equal( eButtonStyled2.model.attributes.settings.attributes.background_color, '' );
 			} );
 
-			QUnit.test( 'Multiple Move', ( assert ) => {
-				const eSection = Elements.createSection();
+			QUnit.test( 'Move Sections', ( assert ) => {
+				// Create Section at 0.
+				Elements.createSection();
 
-				const eColumn1 = Elements.createColumn( eSection );
-				const eColumn2 = Elements.createColumn( eSection );
+				const eSection1 = Elements.createSection( 3 ),
+					eSection2 = Elements.createSection( 4 );
 
-				const eButton1 = Elements.createButton( eColumn1 );
-				const eButton2 = Elements.createButton( eColumn1 );
+				Elements.multiMove( [ eSection1, eSection2 ], elementor.getPreviewView(), { at: 0 } );
 
-				// Move button to eCol2.
+				// Validate first section have 3 columns.
+				assert.equal( elementor.getPreviewView().model.attributes.elements.first().attributes.elements.length, 3 );
+
+				// Validate second section have 4 columns.
+				assert.equal( elementor.getPreviewView().model.attributes.elements.at( 1 ).attributes.elements.length, 4 );
+			} );
+
+			QUnit.test( 'Move Columns', ( assert ) => {
+				const eSection1 = Elements.createSection(),
+					eSection2 = Elements.createSection(),
+					eColumn1 = Elements.createColumn( eSection1 ),
+					eColumn2 = Elements.createColumn( eSection1 );
+
+				Elements.multiMove( [ eColumn1, eColumn2 ], eSection2 );
+
+				// Validate.
+				assert.equal( eSection2.collection.length, 3 );
+			} );
+
+			QUnit.test( 'Move Widgets', ( assert ) => {
+				const eSection = Elements.createSection(),
+					eColumn1 = Elements.createColumn( eSection ),
+					eColumn2 = Elements.createColumn( eSection ),
+					eButton1 = Elements.createButton( eColumn1 ),
+					eButton2 = Elements.createButton( eColumn1 );
+
 				Elements.multiMove( [ eButton1, eButton2 ], eColumn2 );
 
 				// Validate.
@@ -293,11 +305,10 @@ jQuery( () => {
 				assert.equal( eColumn2.collection.length, 2 );
 			} );
 
-			QUnit.test( 'Multiple Delete', ( assert ) => {
-				const eColumn = Elements.createSection( 1 , true );
-
-				const eButton1 = Elements.createButton( eColumn );
-				const eButton2 = Elements.createButton( eColumn );
+			QUnit.test( 'Delete', ( assert ) => {
+				const eColumn = Elements.createSection( 1, true ),
+				eButton1 = Elements.createButton( eColumn ),
+				eButton2 = Elements.createButton( eColumn );
 
 				Elements.multiDelete( [ eButton1, eButton2 ] );
 

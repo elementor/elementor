@@ -83,8 +83,6 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		if ( ! elementor.config.tinymceHasCustomConfig ) {
 			self.rearrangeButtons();
 		}
-
-		self.options.element.renderHTML();
 	},
 
 	applySavedValue: function() {

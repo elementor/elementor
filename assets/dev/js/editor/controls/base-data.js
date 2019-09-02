@@ -82,7 +82,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 	setSettingsModel: function( value ) {
 		const key = this.model.get( 'name' );
 
-		if ( this._parent && this._parent._parent.model && this._parent._parent.model.attributes.is_repeater ) {
+		// TODO: too ugly.
+		if ( this.isRepeater() ) {
 			$e.run( 'document/elements/repeater/settings', {
 				element: this.options.element,
 				name: this._parent._parent.model.get( 'name' ),
@@ -91,6 +92,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 					[ key ]: value,
 				},
 				options: {
+					lazy: true,
 					trigger: false,
 				},
 			} );
@@ -99,6 +101,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 				element: this.options.element,
 				settings: {
 					[ key ]: value,
+				},
+				options: {
+					lazy: true,
 				},
 			} );
 
@@ -282,6 +287,17 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	updateElementModel: function( value ) {
 		this.setValue( value );
+	},
+
+	isRepeater: function() {
+		if ( this._parent &&
+			this._parent._parent &&
+			this._parent._parent.model &&
+			this._parent._parent.model.attributes.is_repeater ) {
+			return true;
+		}
+
+		return false;
 	},
 }, {
 	// Static methods

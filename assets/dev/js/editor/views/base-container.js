@@ -81,6 +81,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( options.edit && elementor.history.history.getActive() ) {
+			// TODO: should be directly.
 			newModel.trigger( 'request:edit' );
 		}
 

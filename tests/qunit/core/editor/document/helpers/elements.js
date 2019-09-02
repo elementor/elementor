@@ -1,3 +1,4 @@
+// TODO: Refactor this class.
 export default class {
 	static createSection( columns = 1, returnFirstColumn = false ) {
 		const eSection = $e.run( 'document/elements/createSection', {
@@ -14,71 +15,83 @@ export default class {
 
 	static createColumn( eElement ) {
 		return $e.run( 'document/elements/create', {
+			element: eElement,
 			model: {
 				elType: 'column',
 			},
-			element: eElement,
 			returnValue: true,
 		} );
 	}
 
-	static createMultiColumn( eElements ) {
+	static multiCreateColumn( eElements ) {
 		return $e.run( 'document/elements/create', {
+			elements: eElements,
 			model: {
 				elType: 'column',
 			},
-			elements: eElements,
 			returnValue: true,
 		} );
 	}
 
 	static createButton( eElement, settings = {} ) {
 		return $e.run( 'document/elements/create', {
+			element: eElement,
 			model: {
 				elType: 'widget',
 				widgetType: 'button',
 				settings,
 			},
-			element: eElement,
 			returnValue: true,
 		} );
 	}
 
-	static createMultiButton( eElements, settings = {} ) {
+	static multiCreateButton( eElements, settings = {} ) {
 		return $e.run( 'document/elements/create', {
+			elements: eElements,
 			model: {
 				elType: 'widget',
 				widgetType: 'button',
 				settings,
 			},
-			elements: eElements,
 			returnValue: true,
 		} );
 	}
 
 	static createInnerSection( eElement ) {
 		return $e.run( 'document/elements/create', {
+			element: eElement,
 			model: {
 				elType: 'section',
 				isInner: true,
 			},
-			element: eElement,
+			returnValue: true,
+		} );
+	}
+
+	static multiCreateInnerSection( eElements ) {
+		return $e.run( 'document/elements/create', {
+			elements: eElements,
+			model: {
+				elType: 'section',
+				isInner: true,
+			},
 			returnValue: true,
 		} );
 	}
 
 	static createTabs( eElement ) {
 		return $e.run( 'document/elements/create', {
+			element: eElement,
 			model: {
 				elType: 'widget',
 				widgetType: 'tabs',
 			},
-			element: eElement,
 			returnValue: true,
 		} );
 
 	}
 
+	// TODO: rename function.
 	static createMockButtonWidget( eElement = null ) {
 		if ( ! eElement ) {
 			eElement = this.createSection( 1, true );
@@ -87,6 +100,18 @@ export default class {
 		return this.createButton( eElement );
 	}
 
+	// TODO: rename function.
+	static multiCreateMockButtonWidget( eElements = null ) {
+		if ( ! eElements ) {
+			eElements = [];
+			eElements.push( this.createSection( 1, true ) );
+			eElements.push( this.createSection( 1, true ) );
+		}
+
+		return this.multiCreateButton( eElements );
+	}
+
+	// TODO: rename function.
 	static createMockButtonStyled( eElement = null ) {
 		if ( ! eElement ) {
 			eElement = this.createSection( 1, true );
@@ -98,9 +123,29 @@ export default class {
 		} );
 	}
 
+	// TODO: rename function.
+	static multiCreateMockButtonStyled( eElements = null ) {
+		if ( ! eElements ) {
+			eElements = [];
+			eElements.push( this.createSection( 1, true ) );
+			eElements.push( this.createSection( 1, true ) );
+		}
+
+		return this.multiCreateButton( eElements, {
+			text: 'createMockButtonStyled',
+			background_color: '#000000',
+		} );
+	}
+
 	static copy( eElement ) {
 		$e.run( 'document/elements/copy', {
 			element: eElement,
+		} );
+	}
+
+	static multiCopy( eElements ) {
+		$e.run( 'document/elements/copy', {
+			elements: eElements,
 		} );
 	}
 
@@ -162,16 +207,25 @@ export default class {
 		} );
 	}
 
-	static settings( eElement, settings ) {
+	static settings( eElement, settings, options = {} ) {
 		$e.run( 'document/elements/settings', {
 			element: eElement,
 			settings,
+			options,
 		} );
 	}
 
 	static multiSettings( eElements, settings ) {
 		$e.run( 'document/elements/settings', {
 			elements: eElements,
+			settings,
+		} );
+	}
+
+	static subSettings( eElement, key, settings ) {
+		$e.run( 'document/elements/subSettings', {
+			element: eElement,
+			key,
 			settings,
 		} );
 	}
@@ -217,9 +271,27 @@ export default class {
 		} );
 	}
 
+	static multiRepeaterInsert( eElements, name, item ) {
+		return $e.run( 'document/elements/repeater/insert', {
+			elements: eElements,
+			name,
+			model: item,
+			returnValue: true,
+		} );
+	}
+
 	static repeaterRemove( eElement, name, index ) {
 		return $e.run( 'document/elements/repeater/remove', {
 			element: eElement,
+			name,
+			index,
+			returnValue: true,
+		} );
+	}
+
+	static multiRepeaterRemove( eElements, name, index ) {
+		return $e.run( 'document/elements/repeater/remove', {
+			elements: eElements,
 			name,
 			index,
 			returnValue: true,
@@ -235,6 +307,15 @@ export default class {
 		} );
 	}
 
+	static multiRepeaterSettings( eElements, name, index, settings ) {
+		$e.run( 'document/elements/repeater/settings', {
+			elements: eElements,
+			name,
+			index,
+			settings,
+		} );
+	}
+
 	static repeaterDuplicate( eElement, name, index ) {
 		return $e.run( 'document/elements/repeater/duplicate', {
 			element: eElement,
@@ -244,9 +325,27 @@ export default class {
 		} );
 	}
 
+	static multiRepeaterDuplicate( eElements, name, index ) {
+		return $e.run( 'document/elements/repeater/duplicate', {
+			elements: eElements,
+			name,
+			index,
+			returnValue: true,
+		} );
+	}
+
 	static repeaterMove( eElement, name, sourceIndex, targetIndex ) {
 		$e.run( 'document/elements/repeater/move', {
 			element: eElement,
+			name,
+			sourceIndex,
+			targetIndex,
+		} );
+	}
+
+	static multiRepeaterMove( eElements, name, sourceIndex, targetIndex ) {
+		$e.run( 'document/elements/repeater/move', {
+			elements: eElements,
 			name,
 			sourceIndex,
 			targetIndex,

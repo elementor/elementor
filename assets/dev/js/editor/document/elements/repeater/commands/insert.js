@@ -1,4 +1,4 @@
-import Base from '../commands/base';
+import Base from '../../commands/base';
 
 // Insert.
 export default class extends Base {
@@ -49,7 +49,7 @@ export default class extends Base {
 		};
 	}
 
-	getFlagEditorChange() {
+	isDataChanged() {
 		return true;
 	}
 
@@ -63,7 +63,13 @@ export default class extends Base {
 
 			result.push( collection.push( model, options ) );
 
-			// TODO: not always needed (when history is active).
+			if ( this.isHistoryActive() ) {
+				$e.run( 'document/elements/repeater/active', {
+					element,
+					index: options.at ? ( options.at + 1 ) : collection.length,
+				} );
+			}
+
 			element.renderOnChange( settingsModel );
 		} );
 

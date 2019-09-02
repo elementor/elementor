@@ -5,8 +5,8 @@ export default class extends elementorModules.common.Component {
 
 	defaultCommands() {
 		return {
-			undo: () => this.manager.navigate(),
-			redo: () => this.manager.navigate( true ),
+			undo: () => $e.run( 'document/history/undo' ),
+			redo: () => $e.run( 'document/history/redo' ),
 		};
 	}
 

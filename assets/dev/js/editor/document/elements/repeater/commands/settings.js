@@ -1,4 +1,4 @@
-import Base from '../commands/base';
+import Base from '../../commands/base';
 
 // Settings.
 export default class Settings extends Base {
@@ -113,7 +113,6 @@ export default class Settings extends Base {
 				} );
 			}
 
-			// TODO: not always needed (when history is active).
 			element.renderOnChange( settingsModel );
 		} );
 
