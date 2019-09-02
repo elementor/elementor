@@ -631,8 +631,29 @@ class Group_Control_Background extends Group_Control_Base {
 			'frontend_available' => true,
 		];
 
-		$fields['slideshow_content_animation'] = [
-			'label' => __( 'Image Animation', 'elementor' ),
+		$fields['slideshow_loop'] = [
+			'label' => __( 'Infinite Loop', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'default' => 'yes',
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_slide_duration'] = [
+			'label' => __( 'Slide Duration', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'default' => 5000,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_slide_transition'] = [
+			'label' => __( 'Slide Transition', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'fade',
 			'options' => [
@@ -649,9 +670,20 @@ class Group_Control_Background extends Group_Control_Base {
 			'frontend_available' => true,
 		];
 
+		$fields['slideshow_transition_duration'] = [
+			'label' => __( 'Transition Duration (ms)', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'default' => 500,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'frontend_available' => true,
+		];
+
 		$fields['slideshow_ken_burns'] = [
 			'label' => __( 'Ken Burns Effect', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
+			'separator' => 'before',
 			'condition' => [
 				'background' => [ 'slideshow' ],
 			],
@@ -672,37 +704,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'slideshow_ken_burns!' => '',
 			],
 			'of_type' => 'slideshow',
-			'frontend_available' => true,
-		];
-
-		$fields['slideshow_loop'] = [
-			'label' => __( 'Infinite Loop', 'elementor' ),
-			'type' => Controls_Manager::SWITCHER,
-			'default' => 'yes',
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
-			'of_type' => 'slideshow',
-			'frontend_available' => true,
-		];
-
-		$fields['slideshow_autoplay_speed'] = [
-			'label' => __( 'Autoplay Speed', 'elementor' ),
-			'type' => Controls_Manager::NUMBER,
-			'default' => 5000,
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
-			'frontend_available' => true,
-		];
-
-		$fields['slideshow_animation_speed'] = [
-			'label' => __( 'Animation Speed', 'elementor' ),
-			'type' => Controls_Manager::NUMBER,
-			'default' => 500,
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
 			'frontend_available' => true,
 		];
 
