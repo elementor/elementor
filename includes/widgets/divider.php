@@ -359,6 +359,7 @@ class Widget_Divider extends Widget_Base {
 				'prefix_class' => 'elementor-widget-divider--separator-type-',
 				'condition' => [
 					'style!' => [
+						'',
 						'solid',
 						'double',
 						'dotted',
@@ -577,6 +578,7 @@ class Widget_Divider extends Widget_Base {
 				],
 				'condition' => [
 					'style!' => [
+						'',
 						'solid',
 						'double',
 						'dotted',
@@ -600,6 +602,7 @@ class Widget_Divider extends Widget_Base {
 				],
 				'condition' => [
 					'style!' => array_merge( array_keys( $this->filter_styles_by( $styles, 'supports_amount', false ) ), [
+						'',
 						'solid',
 						'double',
 						'dotted',
