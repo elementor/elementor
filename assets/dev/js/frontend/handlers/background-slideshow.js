@@ -23,9 +23,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			slidesPerView: 1,
 			slidesPerGroup: 1,
 			loop: 'yes' === elementSettings.background_slideshow_loop,
-			speed: elementSettings.background_slideshow_animation_speed,
+			speed: elementSettings.background_slideshow_transition_duration,
 			autoplay: {
-				delay: elementSettings.background_slideshow_autoplay_speed,
+				delay: elementSettings.background_slideshow_slide_duration,
 				stopOnLastSlide: ! elementSettings.background_slideshow_loop,
 			},
 			on: {
@@ -45,7 +45,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			swiperOptions.loopedSlides = this.getSlidesCount();
 		}
 
-		switch ( elementSettings.background_slideshow_content_animation ) {
+		switch ( elementSettings.background_slideshow_slide_transition ) {
 			case 'fade':
 				swiperOptions.effect = 'fade';
 				break;
@@ -66,7 +66,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	buildSwiperElements() {
 		const classes = this.getSettings( 'classes' ),
 			elementSettings = this.getElementSettings(),
-			direction = 'slide_left' === elementSettings.background_slideshow_content_animation ? 'ltr' : 'rtl',
+			direction = 'slide_left' === elementSettings.background_slideshow_slide_transition ? 'ltr' : 'rtl',
 			$container = jQuery( '<div>', { class: classes.swiperContainer, dir: direction } ),
 			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } ),
 			kenBurnsActive = elementSettings.background_slideshow_ken_burns;
