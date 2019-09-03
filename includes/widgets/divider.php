@@ -577,6 +577,11 @@ class Widget_Divider extends Widget_Base {
 				'default' => [
 					'size' => 20,
 				],
+				'range' => [
+					'px' => [
+						'step' => 0.1,
+					],
+				],
 				'condition' => [
 					'style!' => [
 						'',
@@ -600,6 +605,14 @@ class Widget_Divider extends Widget_Base {
 				],
 				'default' => [
 					'size' => 20,
+				],
+				'range' => [
+					'px' => [
+						'step' => 0.1,
+					],
+					'%' => [
+						'step' => 0.01,
+					],
 				],
 				'condition' => [
 					'style!' => array_merge( array_keys( $this->filter_styles_by( $styles, 'supports_amount', false ) ), [
