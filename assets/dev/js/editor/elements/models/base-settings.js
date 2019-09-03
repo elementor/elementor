@@ -173,7 +173,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getActiveControls: function( controls, attributes ) {
-		var activeControls = {};
+		const activeControls = {};
 
 		if ( ! controls ) {
 			controls = this.controls;
@@ -183,7 +183,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			attributes = this.attributes;
 		}
 
-		_.each( controls, function( control, controlKey ) {
+		jQuery.each( controls, ( controlKey, control ) => {
 			if ( elementor.helpers.isActiveControl( control, attributes ) ) {
 				activeControls[ controlKey ] = control;
 			}
