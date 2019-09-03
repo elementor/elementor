@@ -643,6 +643,7 @@ class Widget_Divider extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-divider' => 'padding-top: {{SIZE}}{{UNIT}}; padding-bottom: {{SIZE}}{{UNIT}};',
 				],
+				'separator' => 'before',
 			]
 		);
 
