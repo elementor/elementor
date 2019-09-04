@@ -25,7 +25,13 @@ TemplateLibraryManager = function() {
 					$e.route( 'library/templates/my-templates', {
 						onBefore: () => {
 							if ( templatesCollection ) {
-								templatesCollection.add( successData );
+								const itemExist = templatesCollection.findWhere( {
+									template_id: successData.template_id,
+								} );
+
+								if ( ! itemExist ) {
+									templatesCollection.add( successData );
+								}
 							}
 						},
 					} );

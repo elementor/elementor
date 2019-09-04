@@ -41,7 +41,7 @@ var	Manager = function() {
 
 	var updatePanelPageCurrentItem = function() {
 		if ( $e.routes.is( 'panel/history/actions' ) ) {
-			$e.routes.refreshContainer( 'panel' );
+			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
 		}
 	};
 

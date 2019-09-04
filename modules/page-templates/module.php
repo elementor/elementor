@@ -4,11 +4,11 @@ namespace Elementor\Modules\PageTemplates;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\DocumentTypes\Post as PostDocument;
 use Elementor\DB;
-use Elementor\Modules\Library\Documents\Page as PageDocument;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Core\DocumentTypes\PageBase as PageBase;
+use Elementor\Modules\Library\Documents\Page as LibraryPageDocument;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -232,7 +232,7 @@ class Module extends BaseModule {
 	 * @param Document $document The document instance.
 	 */
 	public function action_register_template_control( $document ) {
-		if ( $document instanceof PostDocument || $document instanceof PageDocument ) {
+		if ( $document instanceof PageBase || $document instanceof LibraryPageDocument ) {
 			$this->register_template_control( $document );
 		}
 	}

@@ -140,7 +140,18 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	final public function enqueue_scripts() {
+		$deprecated_scripts = [
+			'jquery-slick' => [
+				'version' => '2.7.0',
+				'replacement' => 'Swiper',
+			],
+		];
+
 		foreach ( $this->get_script_depends() as $script ) {
+			if ( isset( $deprecated_scripts[ $script ] ) ) {
+				Utils::handle_deprecation( $script, $deprecated_scripts[ $script ]['version'], $deprecated_scripts[ $script ]['replacement'] );
+			}
+
 			wp_enqueue_script( $script );
 		}
 	}
