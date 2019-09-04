@@ -1,3 +1,5 @@
+import Container from '../../container/container';
+
 var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' );
 
 module.exports = Marionette.ItemView.extend( {
@@ -90,6 +92,7 @@ module.exports = Marionette.ItemView.extend( {
 			controls: this.model.controls,
 			name: this.options.name,
 			controlName: this.options.controlName,
+			container: this.options.container,
 			el: this.getSettingsPopup().getElements( 'message' )[ 0 ],
 		} );
 

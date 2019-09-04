@@ -1,3 +1,5 @@
+import Container from '../../container/container';
+
 var TagPanelView = require( 'elementor-dynamic-tags/tag-panel-view' );
 
 module.exports = Marionette.Behavior.extend( {
@@ -119,13 +121,27 @@ module.exports = Marionette.Behavior.extend( {
 			this.tagView.destroy();
 		}
 
-		var tagView = this.tagView = new TagPanelView( {
+		const tagView = this.tagView = new TagPanelView( {
 			id: id,
 			name: name,
 			settings: settings,
 			controlName: this.view.model.get( 'name' ),
 			dynamicSettings: this.getOption( 'dynamicSettings' ),
 		} );
+
+		if ( tagView.model ) {
+			const elementContainer = this.view.options.container;
+
+			tagView.options.container = new Container( {
+				id: id,
+				document: elementContainer.document,
+				view: '@see dynamic-tags/control-behavior.js',
+				model: tagView.model,
+				settings: tagView.model,
+				parent: elementContainer,
+				renderer: elementContainer,
+			} );
+		}
 
 		tagView.render();
 

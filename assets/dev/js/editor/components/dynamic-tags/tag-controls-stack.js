@@ -1,3 +1,5 @@
+import Container from '../../container/container';
+
 var EmptyView = require( 'elementor-dynamic-tags/tag-controls-stack-empty' );
 
 module.exports = elementorModules.editor.views.ControlsStack.extend( {
@@ -10,6 +12,13 @@ module.exports = elementorModules.editor.views.ControlsStack.extend( {
 	isEmpty: function() {
 		// Ignore the section control
 		return this.collection.length < 2;
+	},
+
+	childViewOptions: function() {
+		return {
+			elementSettingsModel: this.model,
+			container: this.options.container,
+		};
 	},
 
 	getNamespaceArray: function() {
