@@ -701,7 +701,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'text_align',
 			[
 				'label' => __( 'Position', 'elementor' ),
@@ -842,7 +842,7 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'icon_align',
 			[
 				'label' => __( 'Position', 'elementor' ),
