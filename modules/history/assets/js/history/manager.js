@@ -84,6 +84,16 @@ var	Manager = function() {
 		currentItemID = null;
 	};
 
+	this.deleteItem = function( id ) {
+		const item = items.findWhere( {
+			id: id,
+		} );
+
+		items.remove( item );
+
+		currentItemID = null;
+	};
+
 	this.isItemStarted = function() {
 		return null !== currentItemID;
 	};

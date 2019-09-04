@@ -3,29 +3,29 @@ import Base from './base';
 // Duplicate.
 export default class extends Base {
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 	}
 
 	getHistory( args ) {
-		const { elements = [ args.element ] } = args;
+		const { containers = [ args.container ] } = args;
 
 		return {
-			elements,
+			containers,
 			type: 'duplicate', // TODO: add translation.
 		};
 	}
 
 	apply( args ) {
-		const { elements = [ args.element ] } = args,
+		const { containers = [ args.container ] } = args,
 			result = [];
 
-		elements.forEach( ( element ) => {
-			const parent = element._parent,
-				at = element._index + 1;
+		containers.forEach( ( container ) => {
+			const parent = container.parent,
+				at = container.view._index + 1;
 
 			result.push( $e.run( 'document/elements/create', {
-				element: parent,
-				model: element.model,
+				container: parent,
+				model: container.model.toJSON(),
 				returnValue: true,
 				options: {
 					at,

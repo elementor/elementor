@@ -7,6 +7,7 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ElementsComponent from './document/elements/component';
+import DynamicComponent from './document/dynamic/component';
 import RepeaterComponent from './document/elements/repeater/component.js';
 import HistoryComponent from './document/history/component';
 
@@ -256,6 +257,10 @@ const App = Marionette.Application.extend( {
 		return this.sections.currentView;
 	},
 
+	getPreviewContainer: function() {
+		return this.getPreviewView().getContainer();
+	},
+
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
@@ -277,9 +282,10 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		$e.components.register( new ElementsComponent( { manager: this } ) );
-		$e.components.register( new RepeaterComponent( { manager: this } ) );
-		$e.components.register( new HistoryComponent( { manager: this } ) );
+		$e.components.register( new ElementsComponent() );
+		$e.components.register( new RepeaterComponent() );
+		$e.components.register( new HistoryComponent() );
+		$e.components.register( new DynamicComponent() );
 
 		this.hotkeysScreen = new HotkeysScreen();
 

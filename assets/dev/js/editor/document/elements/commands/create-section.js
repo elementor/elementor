@@ -24,14 +24,14 @@ export default class extends Base {
 		}
 
 		const eSection = $e.run( 'document/elements/create', {
-			element: elementor.getPreviewView(),
+			container: elementor.getPreviewContainer(),
 			model: { elements },
 			options,
 			returnValue: true,
 		} );
 
 		if ( structure ) {
-			eSection.setStructure( structure );
+			eSection.view.setStructure( structure );
 		}
 
 		return eSection;

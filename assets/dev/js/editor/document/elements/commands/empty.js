@@ -30,6 +30,7 @@ export default class extends Base {
 	apply( args ) {
 		if ( args.force ) {
 			elementor.elements.reset();
+			elementor.getPreviewContainer().panel.closeEditor();
 			return;
 		}
 

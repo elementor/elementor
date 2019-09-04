@@ -4,10 +4,6 @@ export default class extends elementorModules.common.Component {
 		return 'document/history';
 	}
 
-	// dependency( args ) {
-	// 	return ! ! args.element;
-	// }
-
 	getCommands() {
 		return {
 			startLog: ( args ) => {
@@ -21,8 +17,8 @@ export default class extends elementorModules.common.Component {
 					throw Error( 'type is required.' );
 				}
 
-				if ( args.elements && 1 === args.elements.length ) {
-					args.element = args.elements[ 0 ];
+				if ( args.containers && 1 === args.containers.length ) {
+					args.container = args.containers[ 0 ];
 				}
 
 				// TODO: rewrite & optimize.
@@ -37,22 +33,22 @@ export default class extends elementorModules.common.Component {
 						args.title = elementor.history.history.getModelLabel( model );
 						args.elementType = model.elType;
 					}
-				} else if ( args.element ) {
-					const { element } = args,
-						elType = element.model.get( 'elType' );
+				} else if ( args.container ) {
+					const { container } = args,
+						elType = container.model.get( 'elType' );
 
 					if ( ! elType ) {
 						args.title = elementor.translate( 'section' );
 						args.elementType = 'section';
 					} else {
-						args.title = elementor.history.history.getModelLabel( element.model );
+						args.title = elementor.history.history.getModelLabel( container.model );
 						args.elementType = elType;
 					}
-				} else if ( args.elements ) {
+				} else if ( args.containers ) {
 					args.title = elementor.translate( 'element' );
 				}
 
-				if ( args.elements && args.elements.length > 1 ) {
+				if ( args.containers && args.containers.length > 1 ) {
 					args.title = elementor.translate( 'elements' );
 				}
 
@@ -61,6 +57,10 @@ export default class extends elementorModules.common.Component {
 
 			endLog: ( args ) => {
 				elementor.history.history.endItem( args.id );
+			},
+
+			deleteLog: ( args ) => {
+				elementor.history.history.deleteItem( args.id );
 			},
 
 			addItem: ( itemData ) => {

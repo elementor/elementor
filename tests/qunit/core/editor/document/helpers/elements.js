@@ -7,15 +7,15 @@ export default class {
 		} );
 
 		if ( returnFirstColumn ) {
-			return eSection.children._views[ Object.keys( eSection.children._views )[ 0 ] ];
+			return eSection.view.children._views[ Object.keys( eSection.view.children._views )[ 0 ] ].getContainer();
 		}
 
 		return eSection;
 	}
 
-	static createColumn( eElement ) {
+	static createColumn( eContainer ) {
 		return $e.run( 'document/elements/create', {
-			element: eElement,
+			container: eContainer,
 			model: {
 				elType: 'column',
 			},
@@ -23,9 +23,9 @@ export default class {
 		} );
 	}
 
-	static multiCreateColumn( eElements ) {
+	static multiCreateColumn( eContainers ) {
 		return $e.run( 'document/elements/create', {
-			elements: eElements,
+			containers: eContainers,
 			model: {
 				elType: 'column',
 			},
@@ -33,9 +33,9 @@ export default class {
 		} );
 	}
 
-	static createButton( eElement, settings = {} ) {
+	static createButton( eContainer, settings = {} ) {
 		return $e.run( 'document/elements/create', {
-			element: eElement,
+			container: eContainer,
 			model: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -45,9 +45,9 @@ export default class {
 		} );
 	}
 
-	static multiCreateButton( eElements, settings = {} ) {
+	static multiCreateButton( eContainers, settings = {} ) {
 		return $e.run( 'document/elements/create', {
-			elements: eElements,
+			containers: eContainers,
 			model: {
 				elType: 'widget',
 				widgetType: 'button',
@@ -57,9 +57,9 @@ export default class {
 		} );
 	}
 
-	static createInnerSection( eElement ) {
+	static createInnerSection( eContainer ) {
 		return $e.run( 'document/elements/create', {
-			element: eElement,
+			container: eContainer,
 			model: {
 				elType: 'section',
 				isInner: true,
@@ -68,9 +68,9 @@ export default class {
 		} );
 	}
 
-	static multiCreateInnerSection( eElements ) {
+	static multiCreateInnerSection( eContainers ) {
 		return $e.run( 'document/elements/create', {
-			elements: eElements,
+			containers: eContainers,
 			model: {
 				elType: 'section',
 				isInner: true,
@@ -79,9 +79,9 @@ export default class {
 		} );
 	}
 
-	static createTabs( eElement ) {
+	static createTabs( eContainer ) {
 		return $e.run( 'document/elements/create', {
-			element: eElement,
+			container: eContainer,
 			model: {
 				elType: 'widget',
 				widgetType: 'tabs',
@@ -92,60 +92,60 @@ export default class {
 	}
 
 	// TODO: rename function.
-	static createMockButtonWidget( eElement = null ) {
-		if ( ! eElement ) {
-			eElement = this.createSection( 1, true );
+	static createMockButtonWidget( eContainer = null ) {
+		if ( ! eContainer ) {
+			eContainer = this.createSection( 1, true );
 		}
 
-		return this.createButton( eElement );
+		return this.createButton( eContainer );
 	}
 
 	// TODO: rename function.
-	static multiCreateMockButtonWidget( eElements = null ) {
-		if ( ! eElements ) {
-			eElements = [];
-			eElements.push( this.createSection( 1, true ) );
-			eElements.push( this.createSection( 1, true ) );
+	static multiCreateMockButtonWidget( eContainers = null ) {
+		if ( ! eContainers ) {
+			eContainers = [];
+			eContainers.push( this.createSection( 1, true ) );
+			eContainers.push( this.createSection( 1, true ) );
 		}
 
-		return this.multiCreateButton( eElements );
+		return this.multiCreateButton( eContainers );
 	}
 
 	// TODO: rename function.
-	static createMockButtonStyled( eElement = null ) {
-		if ( ! eElement ) {
-			eElement = this.createSection( 1, true );
+	static createMockButtonStyled( eContainer = null ) {
+		if ( ! eContainer ) {
+			eContainer = this.createSection( 1, true );
 		}
 
-		return this.createButton( eElement, {
+		return this.createButton( eContainer, {
 			text: 'createMockButtonStyled',
 			background_color: '#000000',
 		} );
 	}
 
 	// TODO: rename function.
-	static multiCreateMockButtonStyled( eElements = null ) {
-		if ( ! eElements ) {
-			eElements = [];
-			eElements.push( this.createSection( 1, true ) );
-			eElements.push( this.createSection( 1, true ) );
+	static multiCreateMockButtonStyled( eContainers = null ) {
+		if ( ! eContainers ) {
+			eContainers = [];
+			eContainers.push( this.createSection( 1, true ) );
+			eContainers.push( this.createSection( 1, true ) );
 		}
 
-		return this.multiCreateButton( eElements, {
+		return this.multiCreateButton( eContainers, {
 			text: 'createMockButtonStyled',
 			background_color: '#000000',
 		} );
 	}
 
-	static copy( eElement ) {
+	static copy( eContainer ) {
 		$e.run( 'document/elements/copy', {
-			element: eElement,
+			container: eContainer,
 		} );
 	}
 
-	static multiCopy( eElements ) {
+	static multiCopy( eContainers ) {
 		$e.run( 'document/elements/copy', {
-			elements: eElements,
+			containers: eContainers,
 		} );
 	}
 
@@ -153,108 +153,108 @@ export default class {
 		$e.run( 'document/elements/copyAll' );
 	}
 
-	static paste( eElement, rebuild = false ) {
+	static paste( eContainer, rebuild = false ) {
 		return $e.run( 'document/elements/paste', {
-			element: eElement,
+			container: eContainer,
 			rebuild,
 			returnValue: true,
 		} );
 	}
 
-	static multiPaste( eElements ) {
+	static multiPaste( eContainers ) {
 		return $e.run( 'document/elements/paste', {
-			elements: eElements,
+			containers: eContainers,
 			returnValue: true,
 		} );
 	}
 
-	static pasteStyle( eElement ) {
+	static pasteStyle( eContainer ) {
 		$e.run( 'document/elements/pasteStyle', {
-			element: eElement,
+			container: eContainer,
 		} );
 	}
 
-	static multiPasteStyle( eElements ) {
+	static multiPasteStyle( eContainers ) {
 		$e.run( 'document/elements/pasteStyle', {
-			elements: eElements,
+			containers: eContainers,
 		} );
 	}
 
 
-	static resetStyle( eElement ) {
+	static resetStyle( eContainer ) {
 		$e.run( 'document/elements/resetStyle', {
-			element: eElement,
+			container: eContainer,
 		} );
 	}
 
-	static multiResetStyle( eElements ) {
+	static multiResetStyle( eContainers ) {
 		$e.run( 'document/elements/resetStyle', {
-			elements: eElements,
+			containers: eContainers,
 		} );
 	}
 
-	static duplicate( eElement ) {
+	static duplicate( eContainer ) {
 		return $e.run( 'document/elements/duplicate', {
-			element: eElement,
+			container: eContainer,
 			returnValue: true,
 		} );
 	}
 
-	static multiDuplicate( eElements ) {
+	static multiDuplicate( eContainers ) {
 		return $e.run( 'document/elements/duplicate', {
-			elements: eElements,
+			containers: eContainers,
 			returnValue: true,
 		} );
 	}
 
-	static settings( eElement, settings, options = {} ) {
+	static settings( eContainer, settings, options = {} ) {
 		$e.run( 'document/elements/settings', {
-			element: eElement,
+			container: eContainer,
 			settings,
 			options,
 		} );
 	}
 
-	static multiSettings( eElements, settings ) {
+	static multiSettings( eContainers, settings ) {
 		$e.run( 'document/elements/settings', {
-			elements: eElements,
+			containers: eContainers,
 			settings,
 		} );
 	}
 
-	static subSettings( eElement, key, settings ) {
+	static subSettings( eContainer, key, settings ) {
 		$e.run( 'document/elements/subSettings', {
-			element: eElement,
+			container: eContainer,
 			key,
 			settings,
 		} );
 	}
 
-	static move( eElement, eTarget, options = {} ) {
+	static move( eContainer, eTarget, options = {} ) {
 		$e.run( 'document/elements/move', {
-			element: eElement,
+			container: eContainer,
 			target: eTarget,
 			options,
 		} );
 	}
 
-	static multiMove( eElements, eTarget, options = {} ) {
+	static multiMove( eContainers, eTarget, options = {} ) {
 		$e.run( 'document/elements/move', {
-			elements: eElements,
+			containers: eContainers,
 			target: eTarget,
 			options,
 		} );
 	}
 
-	static delete( eElement ) {
+	static delete( eContainer ) {
 		$e.run( 'document/elements/delete', {
-			element: eElement,
+			container: eContainer,
 		} );
 	}
 
-	static multiDelete( eElements ) {
+	static multiDelete( eContainers ) {
 		$e.run( 'document/elements/delete', {
-			elements: eElements,
+			containers: eContainers,
 		} );
 	}
 
@@ -262,93 +262,97 @@ export default class {
 		$e.run( 'document/elements/empty', { force: true } );
 	}
 
-	static repeaterInsert( eElement, name, item ) {
+	static repeaterInsert( eContainer, name, item ) {
 		return $e.run( 'document/elements/repeater/insert', {
-			element: eElement,
+			container: eContainer,
 			name,
 			model: item,
 			returnValue: true,
 		} );
 	}
 
-	static multiRepeaterInsert( eElements, name, item ) {
+	static multiRepeaterInsert( eContainers, name, item ) {
 		return $e.run( 'document/elements/repeater/insert', {
-			elements: eElements,
+			containers: eContainers,
 			name,
 			model: item,
 			returnValue: true,
 		} );
 	}
 
-	static repeaterRemove( eElement, name, index ) {
+	static repeaterRemove( eContainer, name, index ) {
 		return $e.run( 'document/elements/repeater/remove', {
-			element: eElement,
+			container: eContainer,
 			name,
 			index,
 			returnValue: true,
 		} );
 	}
 
-	static multiRepeaterRemove( eElements, name, index ) {
+	static multiRepeaterRemove( eContainers, name, index ) {
 		return $e.run( 'document/elements/repeater/remove', {
-			elements: eElements,
+			containers: eContainers,
 			name,
 			index,
 			returnValue: true,
 		} );
 	}
 
-	static repeaterSettings( eElement, name, index, settings ) {
+	static repeaterSettings( eContainer, name, index, settings ) {
 		$e.run( 'document/elements/repeater/settings', {
-			element: eElement,
+			container: eContainer,
 			name,
 			index,
 			settings,
 		} );
 	}
 
-	static multiRepeaterSettings( eElements, name, index, settings ) {
+	static multiRepeaterSettings( eContainers, name, index, settings ) {
 		$e.run( 'document/elements/repeater/settings', {
-			elements: eElements,
+			containers: eContainers,
 			name,
 			index,
 			settings,
 		} );
 	}
 
-	static repeaterDuplicate( eElement, name, index ) {
+	static repeaterDuplicate( eContainer, name, index ) {
 		return $e.run( 'document/elements/repeater/duplicate', {
-			element: eElement,
+			container: eContainer,
 			name,
 			index,
 			returnValue: true,
 		} );
 	}
 
-	static multiRepeaterDuplicate( eElements, name, index ) {
+	static multiRepeaterDuplicate( eContainers, name, index ) {
 		return $e.run( 'document/elements/repeater/duplicate', {
-			elements: eElements,
+			containers: eContainers,
 			name,
 			index,
 			returnValue: true,
 		} );
 	}
 
-	static repeaterMove( eElement, name, sourceIndex, targetIndex ) {
+	static repeaterMove( eContainer, name, sourceIndex, targetIndex ) {
 		$e.run( 'document/elements/repeater/move', {
-			element: eElement,
+			container: eContainer,
 			name,
 			sourceIndex,
 			targetIndex,
 		} );
 	}
 
-	static multiRepeaterMove( eElements, name, sourceIndex, targetIndex ) {
+	static multiRepeaterMove( eContainers, name, sourceIndex, targetIndex ) {
 		$e.run( 'document/elements/repeater/move', {
-			elements: eElements,
+			containers: eContainers,
 			name,
 			sourceIndex,
 			targetIndex,
 		} );
 	}
+}
+// For run in Devtools.
+if ( ! window.assert ) {
+	window.assert = {}; window.assert.equal = (a,b,c) => { if (a !== b) throw Error(`${a}!=${b} ${c}`) }
 }

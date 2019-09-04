@@ -5,18 +5,18 @@ export default class extends Base {
 	static restore( historyItem, isRedo ) {
 		const subItems = historyItem.collection;
 
-		historyItem.get( 'elements' ).forEach( ( element ) => {
-			const data = subItems.findWhere( { element } ).get( 'data' );
+		historyItem.get( 'containers' ).forEach( ( container ) => {
+			const data = subItems.findWhere( { container } ).get( 'data' );
 
 			if ( isRedo ) {
 				$e.run( 'document/elements/repeater/remove', {
-					element,
+					container,
 					name: data.name,
 					index: data.index,
 				} );
 			} else {
 				$e.run( 'document/elements/repeater/insert', {
-					element,
+					container,
 					model: data.model,
 					name: data.name,
 					options: { at: data.index },
@@ -26,17 +26,17 @@ export default class extends Base {
 	}
 
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 
 		this.requireArgument( 'name', args );
 		this.requireArgument( 'index', args );
 	}
 
 	getHistory( args ) {
-		const { name, elements = [ args.element ] } = args;
+		const { name, containers = [ args.container ] } = args;
 
 		return {
-			elements: elements,
+			containers,
 			type: 'remove',
 			subTitle: elementor.translate( 'Item' ),
 			history: {
@@ -52,18 +52,17 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { name, elements = [ args.element ] } = args,
+		const { name, containers = [ args.container ] } = args,
 			index = null === args.index ? -1 : args.index,
 			result = [];
 
-		elements.forEach( ( element ) => {
-			const settingsModel = element.getEditModel().get( 'settings' ),
-				collection = settingsModel.get( name ),
+		containers.forEach( ( container ) => {
+			const collection = container.settings.get( name ),
 				model = collection.at( index );
 
 			if ( elementor.history.history.getActive() ) {
 				$e.run( 'document/history/addSubItem', {
-					element, // TODO: Find better way.
+					container, // TODO: Find better way.
 					data: { name, model, index },
 				} );
 			}
@@ -73,12 +72,12 @@ export default class extends Base {
 
 			if ( this.isHistoryActive() ) {
 				$e.run( 'document/elements/repeater/active', {
-					element,
+					container,
 					index: collection.length === index ? index : collection.length,
 				} );
 			}
 
-			element.renderOnChange( settingsModel );
+			container.view.renderOnChange( container.settings );
 		} );
 
 		if ( 1 === result.length ) {

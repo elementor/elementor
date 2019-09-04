@@ -91,11 +91,7 @@ export default class extends elementorModules.Module {
 			this.error( `\`${ command }\` not found.` );
 		}
 
-		if ( ! this.getComponent( command ).dependency( args ) ) {
-			return false;
-		}
-
-		return true;
+		return this.getComponent( command ).dependency( command, args );
 	}
 
 	run( command, args = {} ) {

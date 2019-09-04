@@ -1,3 +1,5 @@
+import Container from "../container/container";
+
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	RepeaterRowView = require( 'elementor-controls/repeater-row' ),
 	ControlRepeaterItemView;
@@ -28,9 +30,21 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	childViewOptions: function() {
+	childViewOptions: function( rowModel, index ) {
+		const elementContainer = this.getOption( 'container' );
+
+		elementContainer.children[ index ] = new Container( {
+			id: rowModel.get( '_id' ),
+			document: elementContainer.document,
+			view: '@see repeater.js',
+			model: rowModel,
+			settings: rowModel,
+			parent: elementContainer,
+			renderer: elementContainer,
+		} );
+
 		return {
-			element: this.getOption( 'element' ),
+			container: elementContainer.children[ index ],
 			controlFields: this.model.get( 'fields' ),
 			titleField: this.model.get( 'title_field' ),
 			itemActions: this.model.get( 'item_actions' ),
@@ -64,6 +78,9 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			// Set the value silent
 			this.elementSettingsModel.set( controlName, this.collection, { silent: true } );
 		}
+
+		// Reset children.
+		this.getOption( 'container' ).children = [];
 	},
 
 	initialize: function() {
@@ -92,10 +109,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 		this.currentEditableChild = rowView;
 
-		$e.run( 'document/elements/repeater/active', {
-			element: this.options.element,
-			index: rowView._index + 1,
-		} );
+		this.updateActiveRow();
 	},
 
 	toggleMinRowsClass: function() {
@@ -106,12 +120,34 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.$el.toggleClass( 'elementor-repeater-has-minimum-rows', 1 >= this.collection.length );
 	},
 
+	updateActiveRow: function() {
+		var activeItemIndex = 1;
+
+		if ( this.currentEditableChild ) {
+			activeItemIndex = this.currentEditableChild.itemIndex;
+		}
+
+		this.setEditSetting( 'activeItemIndex', activeItemIndex );
+	},
+
+	updateChildIndexes: function() {
+		var collection = this.collection;
+
+		this.children.each( function( view ) {
+			view.updateIndex( collection.indexOf( view.model ) + 1 );
+
+			view.setTitle();
+		} );
+	},
+
 	onRender: function() {
 		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		if ( this.model.get( 'item_actions' ).sort ) {
 			this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
 		}
+
+		this.toggleMinRowsClass();
 	},
 
 	onSortStart: function( event, ui ) {
@@ -146,11 +182,16 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			newIndex = ui.item.index();
 
 		$e.run( 'document/elements/repeater/move', {
-			element: this.options.element,
+			container: this.options.element.getContainer(),
 			name: this.model.get( 'name' ),
 			sourceIndex: oldIndex,
 			targetIndex: newIndex,
 		} );
+	},
+
+	onAddChild: function() {
+		this.updateChildIndexes();
+		this.updateActiveRow();
 	},
 
 	onButtonAddRowClick: function() {
@@ -167,44 +208,42 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		}
 
 		const newModel = $e.run( 'document/elements/repeater/insert', {
-			element: this.options.element,
+			container: this.options.element.getContainer(),
 			name: this.model.get( 'name' ),
 			model: defaults,
 			returnValue: true,
 		} );
 
 		this.editRow( this.children.findByModel( newModel ) );
-
-		this.toggleMinRowsClass();
 	},
 
 	onChildviewClickRemove: function( childView ) {
 		$e.run( 'document/elements/repeater/remove', {
-			element: this.options.element,
+			container: this.options.element.getContainer(),
 			name: this.model.get( 'name' ),
 			index: childView._index,
 		} );
 
-		this.toggleMinRowsClass();
+		this.updateActiveRow();
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
 		$e.run( 'document/elements/repeater/duplicate', {
-			element: this.options.element,
+			container: this.options.element.getContainer(),
 			name: this.model.get( 'name' ),
 			index: childView._index,
 		} );
-
-		this.toggleMinRowsClass();
 	},
 
 	onChildviewClickEdit: function( childView ) {
 		this.editRow( childView );
+	},
 
-		$e.run( 'document/elements/repeater/active', {
-			element: this.options.element,
-			index: childView._index + 1,
-		} );
+	onAfterExternalChange: function() {
+		// Update the collection with current value
+		this.fillCollection();
+
+		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
 	},
 } );
 

@@ -3,20 +3,20 @@ import Base from './base';
 // Delete.
 export default class extends Base {
 	static restore( historyItem, isRedo ) {
-		const elements = historyItem.get( 'elements' );
+		const containers = historyItem.get( 'containers' );
 
 		if ( isRedo ) {
-			elements.forEach( ( element ) => {
-				$e.run( 'document/elements/delete', { element: element.lookup() } );
+			containers.forEach( ( container ) => {
+				$e.run( 'document/elements/delete', { container } );
 			} );
 		} else {
 			const subItems = historyItem.collection;
 
-			elements.forEach( ( element ) => {
-				const data = subItems.findWhere( { element } ).get( 'data' );
+			containers.forEach( ( container ) => {
+				const data = subItems.findWhere( { container } ).get( 'data' );
 
 				$e.run( 'document/elements/create', {
-					element: data.parent,
+					container: data.parent,
 					model: data.model,
 					options: {
 						at: data.at,
@@ -27,14 +27,14 @@ export default class extends Base {
 	}
 
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 	}
 
 	getHistory( args ) {
-		const { elements = [ args.element ] } = args;
+		const { containers = [ args.container ] } = args;
 
 		return {
-			elements,
+			containers,
 			type: 'remove',
 			history: {
 				behavior: {
@@ -45,29 +45,33 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { elements = [ args.element ] } = args;
+		const { containers = [ args.container ] } = args;
 
-		elements.forEach( ( element ) => {
-			const parent = element._parent;
+		containers.forEach( ( container ) => {
+			container = container.lookup();
+
+			const parent = container.parent;
 
 			if ( this.isHistoryActive() ) {
 				$e.run( 'document/history/addSubItem', {
-					element,
+					container,
 					data: {
-						model: elementorCommon.helpers.cloneObject( element.model ),
-						parent: element._parent,
-						at: element._index,
+						model: container.model.toJSON(),
+						parent: container.parent,
+						at: container.view._index,
 					},
 				} );
 			}
 
-			element.model.destroy();
+			container.model.destroy();
+
+			container.panel.refresh();
 
 			if ( parent && parent.model && 'section' === parent.model.get( 'elType' ) ) {
-				if ( 0 === parent.collection.length && this.isHistoryActive() ) {
-					parent.handleEmptySection();
-				} else if ( parent.collection.length ) {
-					parent.resetLayout();
+				if ( 0 === parent.view.collection.length && this.isHistoryActive() ) {
+					parent.view.handleEmptySection();
+				} else if ( parent.view.collection.length ) {
+					parent.view.resetLayout();
 				}
 			}
 		} );

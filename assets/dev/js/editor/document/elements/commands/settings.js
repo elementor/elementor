@@ -18,25 +18,11 @@ export default class Settings extends Base {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
-		historyItem.get( 'elements' ).forEach( ( element ) => {
-
-			// Re-find the element.
-			if ( element.isDestroyed ) {
-
-				element = elementorCommon.helpers.findViewRecursive(
-					elementor.getPreviewView().children,
-					'id',
-					element.model.id,
-					false
-				);
-
-				element = element[ 0 ];
-			}
-
-			const changes = data.changes[ element.model.id ];
+		historyItem.get( 'containers' ).forEach( ( container ) => {
+			const changes = data.changes[ container.id ];
 
 			$e.run( 'document/elements/settings', {
-				element,
+				container,
 				settings: isRedo ? changes.new : changes.old,
 			} );
 		} );
@@ -50,11 +36,11 @@ export default class Settings extends Base {
 	 * @param {{}} args
 	 */
 	static logHistory( args ) {
-		const { elements = [ args.element ], settings } = args,
+		const { containers = [ args.container ], settings } = args,
 			changes = {};
 
-		elements.forEach( ( element ) => {
-			const { id } = element.model;
+		containers.forEach( ( container ) => {
+			const { id } = container;
 
 			if ( ! changes[ id ] ) {
 				changes[ id ] = {};
@@ -68,17 +54,17 @@ export default class Settings extends Base {
 			}
 
 			Object.keys( settings ).forEach( ( settingKey ) => {
-				if ( 'undefined' !== typeof element.oldValues[ settingKey ] ) {
-					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( element.oldValues[ settingKey ] );
+				if ( 'undefined' !== typeof container.oldValues[ settingKey ] ) {
+					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( container.oldValues[ settingKey ] );
 					changes[ id ].new[ settingKey ] = settings[ settingKey ];
 				}
 			} );
 
-			delete element.oldValues;
+			delete container.oldValues;
 		} );
 
 		$e.run( 'document/history/addItem', {
-			elements,
+			containers,
 			data: { changes },
 			type: 'change',
 			history: {
@@ -90,7 +76,7 @@ export default class Settings extends Base {
 	}
 
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 		this.requireArgument( 'settings', args );
 	}
 
@@ -100,18 +86,18 @@ export default class Settings extends Base {
 	}
 
 	apply( args ) {
-		const { settings, options = {}, elements = [ args.element ] } = args;
+		const { settings, options = {}, containers = [ args.container ] } = args;
 
-		elements.forEach( ( element ) => {
-			const settingsModel = element.getEditModel().get( 'settings' );
-
-			element.oldValues = element.oldValues || settingsModel.toJSON();
+		containers.forEach( ( container ) => {
+			container.oldValues = container.oldValues || container.settings.toJSON();
 
 			if ( options.external ) {
-				settingsModel.setExternalChange( settings );
+				container.settings.setExternalChange( settings );
 			} else {
-				settingsModel.set( settings );
+				container.settings.set( settings );
 			}
+
+			container.render();
 		} );
 
 		if ( elementor.history.history.getActive() ) {

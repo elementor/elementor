@@ -1,3 +1,5 @@
+import Container from "../container/container";
+
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	RepeaterRowView;
 
@@ -46,7 +48,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	childViewOptions: function() {
 		return {
-			element: this.options.element,
+			container: this.options.container,
 			elementSettingsModel: this.model,
 		};
 	},

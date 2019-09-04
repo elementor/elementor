@@ -18,11 +18,11 @@ export default class Settings extends Base {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
-		historyItem.get( 'elements' ).forEach( ( element ) => {
-			const changes = data.changes[ element.model.id ];
+		historyItem.get( 'containers' ).forEach( ( container ) => {
+			const changes = data.changes[ container.id ];
 
 			$e.run( 'document/elements/repeater/settings', {
-				element,
+				container,
 				name: data.name,
 				index: data.index,
 				settings: isRedo ? changes.new : changes.old,
@@ -39,11 +39,11 @@ export default class Settings extends Base {
 	 */
 	static logHistory( args ) {
 		const { name, index, settings } = args,
-			elements = args.elements || [ args.element ],
+			containers = args.containers || [ args.container ],
 			changes = {};
 
-		elements.forEach( ( element ) => {
-			const { id } = element.model;
+		containers.forEach( ( container ) => {
+			const { id } = container;
 
 			if ( ! changes[ id ] ) {
 				changes[ id ] = {};
@@ -57,15 +57,15 @@ export default class Settings extends Base {
 			}
 
 			Object.keys( settings ).forEach( ( settingKey ) => {
-				changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( element.oldValues[ settingKey ] );
+				changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( container.oldValues[ settingKey ] );
 				changes[ id ].new[ settingKey ] = settings[ settingKey ];
 			} );
 
-			delete element.oldValues;
+			delete container.oldValues;
 		} );
 
 		$e.run( 'document/history/addItem', {
-			elements,
+			containers,
 			data: {
 				changes,
 				name,
@@ -82,7 +82,7 @@ export default class Settings extends Base {
 	}
 
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 
 		this.requireArgument( 'settings', args );
 		this.requireArgument( 'name', args );
@@ -95,14 +95,13 @@ export default class Settings extends Base {
 	}
 
 	apply( args ) {
-		const { settings, name, index, options = {}, elements = [ args.element ] } = args;
+		const { settings, name, index, options = {}, containers = [ args.container ] } = args;
 
-		elements.forEach( ( element ) => {
-			const settingsModel = element.getEditModel().get( 'settings' ),
-				collection = settingsModel.get( name ),
+		containers.forEach( ( container ) => {
+			const collection = container.settings.get( name ),
 				item = collection.at( index );
 
-			element.oldValues = element.oldValues || item.toJSON();
+			container.oldValues = container.oldValues || item.toJSON();
 
 			item.set( settings );
 
@@ -113,7 +112,7 @@ export default class Settings extends Base {
 				} );
 			}
 
-			element.renderOnChange( settingsModel );
+			container.render();
 		} );
 
 		if ( elementor.history.history.getActive() ) {

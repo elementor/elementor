@@ -106,8 +106,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 		const at = ui.item.parent().children().index( ui.item );
 
 		$e.run( 'document/elements/move', {
-			element: elementor.channels.data.request( 'dragging:view' ),
-			target: this.view,
+			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
+			target: this.view.getContainer(),
 			options: { at },
 		} );
 	},
@@ -134,7 +134,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 
 		$e.run( 'document/elements/move', {
-			element: elementor.channels.data.request( 'dragging:view' ),
+			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view,
 			options: {
 				at: ui.item.index(),

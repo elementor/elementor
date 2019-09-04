@@ -13,7 +13,7 @@ jQuery( () => {
 				} );
 
 				// Check.
-				assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
+				assert.equal( eTabs.settings.get( 'tabs' ).length, 3 );
 			} );
 
 			QUnit.test( 'Remove', ( assert ) => {
@@ -23,7 +23,7 @@ jQuery( () => {
 				Elements.repeaterRemove( eTabs, 'tabs', 1 );
 
 				// Check.
-				assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 1 );
+				assert.equal( eTabs.settings.get( 'tabs' ).length, 1 );
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
@@ -36,7 +36,7 @@ jQuery( () => {
 				} );
 
 				// Check.
-				assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+				assert.equal( eTabs.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
@@ -46,7 +46,7 @@ jQuery( () => {
 				Elements.repeaterDuplicate( eTabs, 'tabs', 1 );
 
 				// Check.
-				assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
+				assert.equal( eTabs.settings.get( 'tabs' ).length, 3 );
 			} );
 
 			QUnit.test( 'Move', ( assert ) => {
@@ -56,7 +56,7 @@ jQuery( () => {
 				Elements.repeaterMove( eTabs, 'tabs', 1, 0 );
 
 				// Check.
-				assert.equal( eTabs.getEditModel().get( 'settings' ).get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
+				assert.equal( eTabs.settings.get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
 			} );
 		} );
 
@@ -72,8 +72,8 @@ jQuery( () => {
 				} );
 
 				// Check.
-				assert.equal( eTabs1.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
-				assert.equal( eTabs2.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
+				assert.equal( eTabs1.settings.get( 'tabs' ).length, 3 );
+				assert.equal( eTabs2.settings.get( 'tabs' ).length, 3 );
 			} );
 
 			QUnit.test( 'Remove', ( assert ) => {
@@ -85,8 +85,8 @@ jQuery( () => {
 				Elements.multiRepeaterRemove( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
 				// Check.
-				assert.equal( eTabs1.getEditModel().get( 'settings' ).get( 'tabs' ).length, 1 );
-				assert.equal( eTabs2.getEditModel().get( 'settings' ).get( 'tabs' ).length, 1 );
+				assert.equal( eTabs1.settings.get( 'tabs' ).length, 1 );
+				assert.equal( eTabs2.settings.get( 'tabs' ).length, 1 );
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
@@ -100,8 +100,8 @@ jQuery( () => {
 				} );
 
 				// Check.
-				assert.equal( eTabs1.getEditModel().get( 'settings' ).get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
-				assert.equal( eTabs2.getEditModel().get( 'settings' ).get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+				assert.equal( eTabs1.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+				assert.equal( eTabs2.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
@@ -112,8 +112,8 @@ jQuery( () => {
 				Elements.multiRepeaterDuplicate( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
 				// Check.
-				assert.equal( eTabs1.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
-				assert.equal( eTabs2.getEditModel().get( 'settings' ).get( 'tabs' ).length, 3 );
+				assert.equal( eTabs1.settings.get( 'tabs' ).length, 3 );
+				assert.equal( eTabs2.settings.get( 'tabs' ).length, 3 );
 			} );
 
 			QUnit.test( 'Move', ( assert ) => {
@@ -124,8 +124,8 @@ jQuery( () => {
 					Elements.multiRepeaterMove( [ eTabs1, eTabs2 ], 'tabs', 1, 0 );
 
 				// Check.
-				assert.equal( eTabs1.getEditModel().get( 'settings' ).get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
-				assert.equal( eTabs2.getEditModel().get( 'settings' ).get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
+				assert.equal( eTabs1.settings.get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
+				assert.equal( eTabs2.settings.get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
 			} );
 		} );
 	} );

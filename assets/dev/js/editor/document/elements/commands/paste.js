@@ -6,10 +6,10 @@ export default class extends Base {
 		const { storageKey = 'transfer' } = args,
 			transferData = elementorCommon.storage.get( storageKey );
 
-		this.requireElements( args )
+		this.requireContainer( args );
 
-		if ( ! transferData.hasOwnProperty( 'elements' ) ) {
-			throw Error( `storage with key: '${ storageKey }' does not have elements` );
+		if ( ! transferData.hasOwnProperty( 'containers' ) ) {
+			throw Error( `storage with key: '${ storageKey }' does not have containers` );
 		}
 	}
 
@@ -19,23 +19,23 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { at, rebuild = false, storageKey = 'transfer', elements = [ args.element ] } = args,
+		const { at, rebuild = false, storageKey = 'transfer', containers = [ args.container ] } = args,
 			transferData = elementorCommon.storage.get( storageKey ),
 			result = [];
 
 		// Paste on "Add Section" area.
 		if ( rebuild ) {
-			elements.forEach( ( currentElement ) => {
-				const index = 'undefined' === typeof at ? currentElement.collection.length : at;
+			containers.forEach( ( currentContainer ) => {
+				const index = 'undefined' === typeof at ? currentContainer.view.collection.length : at;
 
 				if ( 'section' === transferData.elementsType ) {
-					result.push ( this.pasteTo( transferData, [ currentElement ], {
+					result.push( this.pasteTo( transferData, [ currentContainer ], {
 						at: index,
 						edit: false,
 					} ) );
 				} else if ( 'column' === transferData.elementsType ) {
 					const section = $e.run( 'document/elements/create', {
-						element: currentElement,
+						container: currentContainer,
 						model: {
 							elType: 'column',
 						},
@@ -63,7 +63,7 @@ export default class extends Base {
 				}
 			} );
 		} else {
-			result.push( this.pasteTo( transferData, elements ) );
+			result.push( this.pasteTo( transferData, containers ) );
 		}
 
 		if ( 1 === result.length ) {
@@ -73,14 +73,14 @@ export default class extends Base {
 		return result;
 	}
 
-	pasteTo( transferData, elements, options = {} ) {
+	pasteTo( transferData, containers, options = {} ) {
 		options = Object.assign( { at: null, clone: true }, options );
 
 		const result = [];
 
-		transferData.elements.forEach( function( model ) {
+		transferData.containers.forEach( function( model ) {
 			result.push( $e.run( 'document/elements/create', {
-				elements,
+				containers,
 				model,
 				options,
 				returnValue: true,

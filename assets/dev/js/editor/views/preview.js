@@ -1,3 +1,5 @@
+import Container from '../container/container';
+
 var BaseSectionsContainerView = require( 'elementor-views/base-sections-container' ),
 	Preview;
 
@@ -30,6 +32,25 @@ Preview = BaseSectionsContainerView.extend( {
 		return jQuery.extend( parentBehaviors, behaviors );
 	},
 
+	getContainer() {
+		if ( ! this.container ) {
+			this.container = new Container( {
+				id: 'document',
+				view: this,
+				model: this.model,
+				settings: elementor.settings.page.model,
+				children: elementor.elements,
+				dynamic: {},
+			} );
+
+			// Refer `document` to itself.
+			this.container.document = this.container;
+			this.container.parent = this.container;
+		}
+
+		return this.container;
+	},
+
 	getContextMenuGroups: function() {
 		var hasContent = function() {
 			return elementor.elements.length > 0;
@@ -44,7 +65,7 @@ Preview = BaseSectionsContainerView.extend( {
 						title: elementor.translate( 'paste' ),
 						isEnabled: this.isPasteEnabled.bind( this ),
 						callback: ( at ) => $e.run( 'document/elements/paste', {
-							element: this,
+							container: this.getContainer(),
 							at: at,
 							rebuild: true,
 						} ),
@@ -57,7 +78,7 @@ Preview = BaseSectionsContainerView.extend( {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'document/elements/copyAll', {} ),
+						callback: () => $e.run( 'document/elements/copyAll' ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),

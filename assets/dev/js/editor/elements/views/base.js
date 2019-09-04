@@ -1,4 +1,5 @@
 import environment from '../../../../../../core/common/assets/js/utils/environment';
+import Container from '../../container/container';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -105,6 +106,22 @@ BaseElementView = BaseContainer.extend( {
 		return this.model;
 	},
 
+	getContainer() {
+		if ( ! this.container ) {
+			this.container = new Container( {
+				id: this.model.id,
+				document: elementor.getPreviewContainer(), // getPreviewContainer does not exist yet.
+				view: this,
+				model: this.model,
+				activeControl: false,
+				settings: this.model.get( 'settings' ),
+				children: {},
+				parent: this._parent.getContainer() || {},
+			} );
+		}
+		return this.container;
+	},
+
 	getContextMenuGroups() {
 		const controlSign = environment.mac ? '⌘' : '^';
 
@@ -119,14 +136,14 @@ BaseElementView = BaseContainer.extend( {
 						callback: () => $e.run( 'panel/editor/open', {
 								model: this.options.model, // Todo: remove on merge router
 								view: this, // Todo: remove on merge router
-								element: this,
+								container: this.getContainer(),
 							} ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
 						title: elementor.translate( 'duplicate' ),
 						shortcut: controlSign + '+D',
-						callback: () => $e.run( 'document/elements/duplicate', { element: this } ),
+						callback: () => $e.run( 'document/elements/duplicate', { container: this.getContainer() } ),
 					},
 				],
 			}, {
@@ -136,14 +153,14 @@ BaseElementView = BaseContainer.extend( {
 						name: 'copy',
 						title: elementor.translate( 'copy' ),
 						shortcut: controlSign + '+C',
-						callback: () => $e.run( 'document/elements/copy', { element: this } ),
+						callback: () => $e.run( 'document/elements/copy', { container: this.getContainer() } ),
 					}, {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
 						isEnabled: this.isPasteEnabled.bind( this ),
 						callback: () => $e.run( 'document/elements/paste', {
-							element: this._parent,
+							container: this.getContainer().parent,
 							at: this._parent.collection.indexOf( this.model ),
 						} ),
 					}, {
@@ -153,11 +170,11 @@ BaseElementView = BaseContainer.extend( {
 						isEnabled: () => {
 							return !! elementorCommon.storage.get( 'transfer' );
 						},
-						callback: () => $e.run( 'document/elements/pasteStyle', { element: this } ),
+						callback: () => $e.run( 'document/elements/pasteStyle', { container: this.getContainer() } ),
 					}, {
 						name: 'resetStyle',
 						title: elementor.translate( 'reset_style' ),
-						callback: () => $e.run( 'document/elements/resetStyle', { element: this } ),
+						callback: () => $e.run( 'document/elements/resetStyle', { container: this.getContainer() } ),
 					},
 				],
 			}, {
@@ -168,7 +185,7 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-trash',
 						title: elementor.translate( 'delete' ),
 						shortcut: '⌦',
-						callback: () => $e.run( 'document/elements/delete', { element: this } ),
+						callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
 					},
 				],
 			},
@@ -276,7 +293,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		$e.run( 'document/elements/create', {
-			element: this,
+			container: this.getContainer(),
 			model,
 			options,
 		} );
@@ -641,13 +658,13 @@ BaseElementView = BaseContainer.extend( {
 	onDuplicateButtonClick( event ) {
 		event.stopPropagation();
 
-		$e.run( 'document/elements/duplicate', { element: this } );
+		$e.run( 'document/elements/duplicate', { container: this.getContainer() } );
 	},
 
 	onRemoveButtonClick( event ) {
 		event.stopPropagation();
 
-		$e.run( 'document/elements/delete', { element: this } );
+		$e.run( 'document/elements/delete', { container: this.getContainer() } );
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`

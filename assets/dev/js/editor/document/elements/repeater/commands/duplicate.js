@@ -3,7 +3,7 @@ import Base from '../../commands/base';
 // Duplicate
 export default class extends Base {
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 
 		this.requireArgument( 'index', args );
 		this.requireArgument( 'name', args );
@@ -15,17 +15,17 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { index, name, options = {}, elements = [ args.element ] } = args,
+		const { index, name, options = {}, containers = [ args.container ] } = args,
 			result = [];
 
-		elements.forEach( ( element ) => {
-			const settingsModel = element.getEditModel().get( 'settings' ),
-				controlName = element.model.get( 'widgetType' ),
+		containers.forEach( ( container ) => {
+			const settingsModel = container.settings,
+				controlName = container.model.get( 'widgetType' ),
 				collection = settingsModel.get( name ),
 				item = collection.at( index );
 
 			result.push( $e.run( 'document/elements/repeater/insert', {
-				element,
+				container,
 				name,
 				model: item.toJSON(),
 				returnValue: true,

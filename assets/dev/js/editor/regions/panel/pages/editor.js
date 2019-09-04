@@ -11,6 +11,7 @@ EditorView = ControlsStack.extend( {
 	childViewOptions: function() {
 		return {
 			element: this.getOption( 'editedElementView' ),
+			container: this.getOption( 'editedElementView' ).getContainer(),
 			elementSettingsModel: this.model.get( 'settings' ),
 			elementEditSettings: this.model.get( 'editSettings' ),
 		};

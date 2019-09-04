@@ -1,3 +1,5 @@
+import Container from '../../../container/container';
+
 export default class {
 	/**
 	 * Function constructor().
@@ -16,22 +18,29 @@ export default class {
 	}
 
 	/**
-	 * Function requireElements().
+	 * Function requireContainer().
 	 *
-	 * Validate `arg.element` & `arg.elements`.
+	 * Validate `arg.container` & `arg.containers`.
 	 *
 	 * @param {{}} args
 	 *
 	 * @throws Error
 	 */
-	requireElements( args = this.args ) {
-		if ( ! args.element && ! args.elements ) {
-			throw Error( 'element or elements are required.' );
+	requireContainer( args = this.args ) {
+		if ( ! args.container && ! args.containers ) {
+			throw Error( 'container or containers are required.' );
 		}
 
-		if ( args.element && args.elements ) {
-			throw Error( 'element and elements cannot go together please select one of them.' );
+		if ( args.container && args.containers ) {
+			throw Error( 'container and containers cannot go together please select one of them.' );
 		}
+
+		const containers = args.containers || [ args.container ];
+		containers.forEach( ( container ) => {
+			if ( ! ( container instanceof Container ) ) {
+				throw Error( 'container invalid instance.' );
+			}
+		} );
 	}
 
 	/**
@@ -44,7 +53,6 @@ export default class {
 	 *
 	 * @throws Error
 	 *
-	 * @todo make function accept multi property.
 	 */
 	requireArgument( property, args = this.args ) {
 		if ( ! args.hasOwnProperty( property ) ) {
@@ -52,8 +60,64 @@ export default class {
 		}
 	}
 
-	once() {
+	/**
+	 * Function requireArgumentType().
+	 *
+	 * Validate property in args using `typeof(args.whatever) === type`.
+	 *
+	 * @param {String} property
+	 * @param {String} type
+	 * @param {{}} args
+	 *
+	 * @throws Error
+	 *
+	 */
+	requireArgumentType( property, type, args = this.args ) {
+		this.requireArgument( property, args );
 
+		if ( ( typeof args[ property ] !== type ) ) {
+			throw Error( `${ property } invalid type: ${ type }.` );
+		}
+	}
+
+	/**
+	 * Function requireArgumentInstance().
+	 *
+	 * Validate property in args using `args.whatever instanceof instance`.
+	 *
+	 * @param {String} property
+	 * @param {instanceof} instance
+	 * @param {{}} args
+	 *
+	 * @throws Error
+	 *
+	 */
+	requireArgumentInstance( property, instance, args = this.args ) {
+		this.requireArgument( property, args );
+
+		if ( ! ( args[ property ] instanceof instance ) ) {
+			throw Error( `${ property } invalid instance.` );
+		}
+	}
+
+	/**
+	 * Function requireArgumentConstructor().
+	 *
+	 * Validate property in args using `args.whatever.constructor === type`.
+	 *
+	 * @param {String} property
+	 * @param {{}} type
+	 * @param {{}} args
+	 *
+	 * @throws Error
+	 *
+	 */
+	requireArgumentConstructor( property, type, args = this.args ) {
+		this.requireArgument( property, args );
+
+		if ( ( args[ property ].constructor !== type ) ) {
+			throw Error( `${ property } invalid constructor type.` );
+		}
 	}
 
 	/**
@@ -89,7 +153,7 @@ export default class {
 	 * @throws Error
 	 */
 	getHistory( args ) {
-		throw Error( 'getHistory() cannot return null, please provide getHistory functionality.' );
+		throw Error( 'getHistory() should be implemented, please provide getHistory functionality.' );
 	}
 
 	/**
@@ -97,7 +161,7 @@ export default class {
 	 *
 	 * should set editor change flag on?.
 	 *
-	 * returns {Boolean}
+	 * @returns {Boolean}
 	 */
 	isDataChanged() {
 		return false;
@@ -130,7 +194,15 @@ export default class {
 			historyId = $e.run( 'document/history/startLog', this.history );
 		}
 
-		const result = this.apply( this.args );
+		let result;
+
+		// Rollback history on failure.
+		try {
+			result = this.apply( this.args );
+		} catch ( e ) {
+			$e.run( 'document/history/deleteLog', { id: historyId } );
+			return false;
+		}
 
 		if ( historyId ) {
 			$e.run( 'document/history/endLog', { id: historyId } );

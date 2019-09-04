@@ -141,7 +141,7 @@ SectionView = BaseElementView.extend( {
 		}
 
 		$e.run( 'document/elements/settings', {
-			element: this,
+			container: this.getContainer(),
 			settings: { structure },
 			options: { external: true },
 		} );
@@ -170,7 +170,7 @@ SectionView = BaseElementView.extend( {
 
 	handleEmptySection: function() {
 		$e.run( 'document/elements/create', {
-			element: this,
+			container: this.getContainer(),
 			model: {
 				elType: 'column',
 			},
@@ -247,7 +247,15 @@ SectionView = BaseElementView.extend( {
 			throw new RangeError( this.errors.columnWidthTooSmall );
 		}
 
-		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
+		$e.run( 'document/elements/settings', {
+			container: nextChildView.getContainer(),
+			settings: {
+				_inline_size: nextElementNewSize,
+			},
+			options: {
+				lazy: true,
+			},
+		} );
 
 		return true;
 	},

@@ -1,29 +1,30 @@
 import Base from './base';
+import Container from '../../../container/container';
 
 // Move.
 export default class extends Base {
 	validateArgs( args ) {
-		this.requireElements( args );
-		this.requireArgument( 'target', args );
+		this.requireContainer( args );
+		this.requireArgumentInstance( 'target', Container, args );
 	}
 
 	getHistory( args ) {
-		const { elements = [ args.element ] } = args;
+		const { containers = [ args.container ] } = args;
 
 		return {
-			elements,
+			containers,
 			type: 'move',
 		};
 	}
 
 	apply( args ) {
-		const { target, options = {}, elements = [ args.element ] } = args,
+		const { target, options = {}, containers = [ args.container ] } = args,
 			reCreate = [];
 
-		elements.forEach( ( element ) => {
-			reCreate.push( elementorCommon.helpers.cloneObject( element.model ) );
+		containers.forEach( ( container ) => {
+			reCreate.push( container.model.toJSON() );
 
-			$e.run( 'document/elements/delete', { element } );
+			$e.run( 'document/elements/delete', { container } );
 		} );
 
 		let count = 0;
@@ -36,7 +37,7 @@ export default class extends Base {
 			}
 
 			$e.run( 'document/elements/create', {
-				element: target,
+				container: target,
 				model,
 				options,
 				returnValue: true,

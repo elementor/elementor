@@ -176,7 +176,7 @@ ColumnView = BaseElementView.extend( {
 			model: {
 				elType: 'column',
 			},
-			element: this._parent,
+			container: this.getContainer().parent,
 			options: {
 				at: this.$el.index() + 1,
 			},

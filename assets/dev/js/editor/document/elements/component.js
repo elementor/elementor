@@ -5,6 +5,31 @@ export default class extends elementorModules.common.Component {
 		return 'document/elements';
 	}
 
+	// TODO: find better solution.
+	dependency( command, args ) {
+		switch ( command ) {
+			case 'document/elements/create':
+				const { containers = [ args.container ] } = args;
+
+				if ( 'column' === args.model.elType ) {
+					const canAddColumn = ! containers.some( ( container ) => {
+						return container.view.isCollectionFilled();
+					} );
+
+					if ( ! canAddColumn ) {
+						throw Error( 'Can\'t add column :(' );
+					}
+				}
+
+				break;
+
+			default:
+				break;
+		}
+
+		return true;
+	}
+
 	defaultCommands() {
 		return {
 			create: ( args ) => ( new Commands.Create( args ) ).run(),
@@ -12,7 +37,7 @@ export default class extends elementorModules.common.Component {
 			copy: ( args ) => ( new Commands.Copy( args ) ).run(),
 			copyAll: () => {
 				$e.run( 'document/elements/copy', {
-					elements: Object.values( elementor.getPreviewView().children._views ),
+					containers: Object.values( elementor.getPreviewView().children._views ).map( ( view ) => view.getContainer() ),
 					elementsType: 'section',
 				} );
 			},

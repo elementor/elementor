@@ -3,14 +3,14 @@ import Base from './base';
 // PasteStyle.
 export default class extends Base {
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 	}
 
 	getHistory( args ) {
-		const { elements = [ args.element ] } = args;
+		const { containers = [ args.container ] } = args;
 
 		return {
-			elements,
+			containers,
 			type: 'paste_style',
 		};
 	}
@@ -18,21 +18,20 @@ export default class extends Base {
 	apply( args ) {
 		// TODO: rewrite ( warning: too many function exits ).
 		// Moved from Old mechanism.
-		const { elements = [ args.element ] } = args;
+		const { containers = [ args.container ] } = args;
 
 		const transferData = elementorCommon.storage.get( 'transfer' ), // TODO: storage should be args.storageKey
-			sourceElement = transferData.elements[ 0 ],
-			sourceSettings = sourceElement.settings;
+			sourceContainer = transferData.containers[ 0 ],
+			sourceSettings = sourceContainer.settings;
 
-		elements.forEach( ( element ) => {
-			const targetEditModel = element.getEditModel(),
-				targetSettings = targetEditModel.get( 'settings' ),
+		containers.forEach( ( container ) => {
+			const targetSettings = container.settings,
 				targetSettingsAttributes = targetSettings.attributes,
 				targetControls = targetSettings.controls,
 				diffSettings = {};
 
 			jQuery.each( targetControls, ( controlName, control ) => {
-				if ( ! element.isStyleTransferControl( control ) ) {
+				if ( ! container.view.isStyleTransferControl( control ) ) {
 					return;
 				}
 
@@ -73,16 +72,16 @@ export default class extends Base {
 				diffSettings[ controlName ] = controlSourceValue;
 			} );
 
-			element.allowRender = false;
+			container.view.allowRender = false;
 
 			$e.run( 'document/elements/settings', {
-				element,
+				container,
 				settings: diffSettings,
 			} );
 
-			element.allowRender = true;
+			container.view.allowRender = true;
 
-			element.renderOnChange();
+			container.view.renderOnChange();
 		} );
 	}
 }

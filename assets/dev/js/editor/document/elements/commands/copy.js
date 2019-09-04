@@ -3,7 +3,7 @@ import Base from './base';
 // Copy.
 export default class extends Base {
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 	}
 
 	getHistory( args ) {
@@ -12,14 +12,14 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { storageKey = 'transfer', elements = [ args.element ], elementsType = elements[ 0 ].elType } = args,
-			cloneElements = elements.map( ( element ) => {
-			return element.model.toJSON( { copyHtmlCache: true } );
+		const { storageKey = 'transfer', containers = [ args.container ], elementsType = containers[ 0 ].model.elType } = args,
+			cloneContainers = containers.map( ( container ) => {
+			return container.model.toJSON( { copyHtmlCache: true } );
 		} );
 
 		elementorCommon.storage.set( storageKey, {
 			type: 'copy',
-			elements: cloneElements,
+			containers: cloneContainers,
 			elementsType,
 		} );
 	}

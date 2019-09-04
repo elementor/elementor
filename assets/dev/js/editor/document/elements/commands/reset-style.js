@@ -3,31 +3,30 @@ import Base from './base';
 // ResetStyle.
 export default class extends Base {
 	validateArgs( args ) {
-		this.requireElements( args );
+		this.requireContainer( args );
 	}
 
 	getHistory( args ) {
-		const { elements = [ args.element ] } = args;
+		const { containers = [ args.container ] } = args;
 
 		return {
-			elements,
+			containers,
 			type: 'reset_style',
 		};
 	}
 
 	apply( args ) {
-		const { elements = [ args.element ] } = args;
+		const { containers = [ args.container ] } = args;
 
-		elements.forEach( ( element ) => {
-			const editModel = element.getEditModel(),
-				controls = editModel.get( 'settings' ).controls,
+		containers.forEach( ( container ) => {
+			const controls = container.settings.controls,
 				defaultValues = {};
 
-			element.allowRender = false;
+			container.view.allowRender = false;
 
 			// TODO: move to es6.
 			jQuery.each( controls, ( controlName, control ) => {
-				if ( ! element.isStyleTransferControl( control ) ) {
+				if ( ! container.view.isStyleTransferControl( control ) ) {
 					return;
 				}
 
@@ -35,13 +34,13 @@ export default class extends Base {
 			} );
 
 			$e.run( 'document/elements/settings', {
-				element,
+				container,
 				settings: defaultValues,
 			} );
 
-			element.allowRender = true;
+			container.view.allowRender = true;
 
-			element.renderOnChange();
+			container.view.renderOnChange();
 		} );
 	}
 }

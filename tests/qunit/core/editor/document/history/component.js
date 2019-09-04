@@ -15,10 +15,11 @@ jQuery( () => {
 
 				$e.run( 'document/history/undo' );
 
-				// Element Does not exist.
 				assert.equal( historyItem.status, 'applied', 'History Item status is applied' );
-				assert.equal( eSection.isDestroyed, true, 'Element has been destroyed' );
-				assert.equal( jQuery( document ).find( eSection.$el ).length, 0, 'Element has been removed from DOM' );
+
+				// Element Does not exist.
+				assert.equal( eSection.view.isDestroyed, true, 'Element has been destroyed' );
+				assert.equal( jQuery( document ).find( eSection.view.$el ).length, 0, 'Element has been removed from DOM' );
 
 				$e.run( 'document/history/redo' );
 
@@ -28,9 +29,9 @@ jQuery( () => {
 				const eSectionAfterRedo = eSection.lookup();
 
 				// Element exist again.
-				assert.notEqual( eSectionAfterRedo.cid, eSection.cid, 'Element was recreated and not a reference to the old one' );
-				assert.equal( eSectionAfterRedo.model.id, eSection.model.id, 'Element was re-added to DOM' );
-				assert.equal( eSectionAfterRedo._index, eSection._index, 'Element was re-added to correct position' );
+				assert.notEqual( eSectionAfterRedo.view.cid, eSection.view.cid, 'Element was recreated and not a reference to the old one' );
+				assert.equal( eSectionAfterRedo.id, eSection.id, 'Element was re-added to DOM' );
+				assert.equal( eSectionAfterRedo.view._index, eSection.view._index, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Create Column', ( assert ) => {
@@ -44,10 +45,11 @@ jQuery( () => {
 
 				$e.run( 'document/history/undo' );
 
-				// Element Does not exist.
 				assert.equal( historyItem.status, 'applied', 'History Item status is applied' );
-				assert.equal( eColumn.isDestroyed, true, 'Element has been destroyed' );
-				assert.equal( jQuery( document ).find( eColumn.$el ).length, 0, 'Element has been removed from DOM' );
+
+				// Element Does not exist.
+				assert.equal( eColumn.view.isDestroyed, true, 'Element has been destroyed' );
+				assert.equal( jQuery( document ).find( eColumn.view.$el ).length, 0, 'Element has been removed from DOM' );
 
 				$e.run( 'document/history/redo' );
 
@@ -57,9 +59,9 @@ jQuery( () => {
 				const eColumnAfterRedo = eColumn.lookup();
 
 				// Element exist again.
-				assert.notEqual( eColumnAfterRedo.cid, eColumn.cid, 'Element was recreated and not a reference to the old one' );
-				assert.equal( eColumnAfterRedo.model.id, eColumn.model.id, 'Element was re-added to DOM' );
-				assert.equal( eColumnAfterRedo._index, eColumn._index, 'Element was re-added to correct position' );
+				assert.notEqual( eColumnAfterRedo.view.cid, eColumn.view.cid, 'Element was recreated and not a reference to the old one' );
+				assert.equal( eColumnAfterRedo.id, eColumn.id, 'Element was re-added to DOM' );
+				assert.equal( eColumnAfterRedo.view._index, eColumn.view._index, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Create Widget', ( assert ) => {
@@ -72,10 +74,11 @@ jQuery( () => {
 
 				$e.run( 'document/history/undo' );
 
-				// Element Does not exist.
 				assert.equal( historyItem.status, 'applied', 'History Item status is applied' );
-				assert.equal( eWidget.isDestroyed, true, 'Element has been destroyed' );
-				assert.equal( jQuery( document ).find( eWidget.$el ).length, 0, 'Element has been removed from DOM' );
+
+				// Element Does not exist.
+				assert.equal( eWidget.view.isDestroyed, true, 'Element has been destroyed' );
+				assert.equal( jQuery( document ).find( eWidget.view.$el ).length, 0, 'Element has been removed from DOM' );
 
 				$e.run( 'document/history/redo' );
 
@@ -85,33 +88,34 @@ jQuery( () => {
 				const eWidgetAfterRedo = eWidget.lookup();
 
 				// Element exist again.
-				assert.notEqual( eWidgetAfterRedo.cid, eWidget.cid, 'Element was recreated and not a reference to the old one' );
-				assert.equal( eWidgetAfterRedo.model.id, eWidget.model.id, 'Element was re-added to DOM' );
-				assert.equal( eWidgetAfterRedo._index, eWidget._index, 'Element was re-added to correct position' );
+				assert.notEqual( eWidgetAfterRedo.view.cid, eWidget.view.cid, 'Element was recreated and not a reference to the old one' );
+				assert.equal( eWidgetAfterRedo.id, eWidget.id, 'Element was re-added to DOM' );
+				assert.equal( eWidgetAfterRedo.view._index, eWidget.view._index, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Create Widget: Inner Section', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
 					eInnerSection = Elements.createInnerSection( eColumn ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes,
-					{ defaultInnerSectionColumns } = eInnerSection,
+					{ defaultInnerSectionColumns } = eInnerSection.view,
 					innerSectionColumnsIds = [];
 
-				eInnerSection.children.forEach( ( el ) => innerSectionColumnsIds.push( el.model.id ) );
+				eInnerSection.view.children.forEach( ( el ) => innerSectionColumnsIds.push( el.model.id ) );
 
 				// Exist in history.
 				assert.equal( historyItem.type, 'add', 'History Item type is "add"' );
 				assert.equal( historyItem.elementType, 'section', 'History Item element is "section"' );
 
 				// Inner section have x columns.
-				assert.equal( eInnerSection.collection.length, defaultInnerSectionColumns, `InnerSection have "${ defaultInnerSectionColumns }" columns` );
+				assert.equal( eInnerSection.view.collection.length, defaultInnerSectionColumns, `InnerSection have "${ defaultInnerSectionColumns }" columns` );
 
 				$e.run( 'document/history/undo' );
 
-				// Element Does not exist.
 				assert.equal( historyItem.status, 'applied', 'History Item status is applied' );
-				assert.equal( eInnerSection.isDestroyed, true, 'Element has been destroyed' );
-				assert.equal( jQuery( document ).find( eInnerSection.$el ).length, 0, 'Element has been removed from DOM' );
+
+				// Element Does not exist.
+				assert.equal( eInnerSection.view.isDestroyed, true, 'Element has been destroyed' );
+				assert.equal( jQuery( document ).find( eInnerSection.view.$el ).length, 0, 'Element has been removed from DOM' );
 
 				$e.run( 'document/history/redo' );
 
@@ -121,14 +125,14 @@ jQuery( () => {
 				const eInnerSectionAfterRedo = eInnerSection.lookup();
 
 				// Element exist again.
-				assert.notEqual( eInnerSectionAfterRedo.cid, eInnerSection.cid, 'Element was recreated and not a reference to the old one' );
-				assert.equal( eInnerSectionAfterRedo.model.id, eInnerSection.model.id, 'Element was re-added to DOM' );
-				assert.equal( eInnerSectionAfterRedo._index, eInnerSection._index, 'Element was re-added to correct position' );
+				assert.notEqual( eInnerSectionAfterRedo.view.cid, eInnerSection.view.cid, 'Element was recreated and not a reference to the old one' );
+				assert.equal( eInnerSectionAfterRedo.id, eInnerSection.id, 'Element was re-added to DOM' );
+				assert.equal( eInnerSectionAfterRedo.view._index, eInnerSection.view._index, 'Element was re-added to correct position' );
 
 				// back two columns with the same ids as before.
 				const innerSectionAfterRedoColumnsIds = [];
 
-				eInnerSectionAfterRedo.children.forEach( ( el ) => innerSectionAfterRedoColumnsIds.push( el.model.id ) );
+				eInnerSectionAfterRedo.view.children.forEach( ( el ) => innerSectionAfterRedoColumnsIds.push( el.model.id ) );
 
 				assert.equal( innerSectionAfterRedoColumnsIds.length, defaultInnerSectionColumns, `Inner Section have "${ defaultInnerSectionColumns } columns"` );
 				assert.deepEqual( innerSectionAfterRedoColumnsIds, innerSectionColumnsIds, 'Inner section columns have the same ids as before.' );
@@ -145,10 +149,11 @@ jQuery( () => {
 
 				$e.run( 'document/history/undo' );
 
-				// Element Does not exist.
 				assert.equal( historyItem.status, 'applied', 'History Item status is applied' );
-				assert.equal( eWidgetDuped.isDestroyed, true, 'Element has been destroyed' );
-				assert.equal( jQuery( document ).find( eWidgetDuped.$el ).length, 0, 'Element has been removed from DOM' );
+
+				// Element Does not exist.
+				assert.equal( eWidgetDuped.view.isDestroyed, true, 'Element has been destroyed' );
+				assert.equal( jQuery( document ).find( eWidgetDuped.view.$el ).length, 0, 'Element has been removed from DOM' );
 
 				$e.run( 'document/history/redo' );
 
@@ -158,9 +163,9 @@ jQuery( () => {
 				const eDupedWidgetAfterRedo = eWidgetDuped.lookup();
 
 				// Element exist again.
-				assert.notEqual( eDupedWidgetAfterRedo.cid, eWidgetDuped.cid, 'Element was recreated and not a reference to the old one' );
-				assert.equal( eDupedWidgetAfterRedo.model.id, eWidgetDuped.model.id, 'Element was re-added to DOM' );
-				assert.equal( eDupedWidgetAfterRedo._index, eWidgetDuped._index, 'Element was re-added to correct position' );
+				assert.notEqual( eDupedWidgetAfterRedo.view.cid, eWidgetDuped.view.cid, 'Element was recreated and not a reference to the old one' );
+				assert.equal( eDupedWidgetAfterRedo.id, eWidgetDuped.id, 'Element was re-added to DOM' );
+				assert.equal( eDupedWidgetAfterRedo.view._index, eWidgetDuped.view._index, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Copy & Paste', ( assert ) => {
@@ -178,10 +183,11 @@ jQuery( () => {
 
 				$e.run( 'document/history/undo' );
 
-				// Element Does not exist.
 				assert.equal( historyItem.status, 'applied', 'History Item status is applied' );
-				assert.equal( ePastedWidget.isDestroyed, true, 'Element has been destroyed' );
-				assert.equal( jQuery( document ).find( ePastedWidget.$el ).length, 0, 'Element has been removed from DOM' );
+
+				// Element Does not exist.
+				assert.equal( ePastedWidget.view.isDestroyed, true, 'Element has been destroyed' );
+				assert.equal( jQuery( document ).find( ePastedWidget.view.$el ).length, 0, 'Element has been removed from DOM' );
 
 				$e.run( 'document/history/redo' );
 
@@ -191,9 +197,9 @@ jQuery( () => {
 				const ePastedWidgetAfterRedo = ePastedWidget.lookup();
 
 				// Element exist again.
-				assert.notEqual( ePastedWidgetAfterRedo.cid, ePastedWidget.cid, 'Element was recreated and not a reference to the old one' );
-				assert.equal( ePastedWidgetAfterRedo.model.id, ePastedWidget.model.id, 'Element was re-added to DOM' );
-				assert.equal( ePastedWidgetAfterRedo._index, ePastedWidget._index, 'Element was re-added to correct position' );
+				assert.notEqual( ePastedWidgetAfterRedo.view.cid, ePastedWidget.view.cid, 'Element was recreated and not a reference to the old one' );
+				assert.equal( ePastedWidgetAfterRedo.id, ePastedWidget.id, 'Element was re-added to DOM' );
+				assert.equal( ePastedWidgetAfterRedo.view._index, ePastedWidget.view._index, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
@@ -217,6 +223,43 @@ jQuery( () => {
 				$e.run( 'document/history/redo' );
 
 				assert.equal( eWidget.model.attributes.settings.attributes.text, 'i test it', 'Settings restored' );
+			} );
+
+			QUnit.test( 'Settings: Lazy', ( assert ) => {
+				const text = 'i test it',
+					historyItems = elementor.history.history.getItems(),
+					settingsChangeCount = 10,
+					eWidget = Elements.createMockButtonWidget(),
+					historyCountBeforeLazy = historyItems.length;
+
+				// Change button text.
+				for ( let i = 0; i < settingsChangeCount; ++i ) {
+					Elements.settings( eWidget, { text }, {
+						lazy: true,
+					} );
+				}
+
+				let done = assert.async(); // Pause the test till done.
+
+				setTimeout( () => {
+					const historyItem = historyItems.at( 0 ).attributes,
+						historyDiff = historyItems.length - historyCountBeforeLazy;
+
+					// Exist in history.
+					assert.equal( historyDiff, 1, 'History items length is "1"' );
+					assert.equal( historyItem.type, 'change', 'History Item type is "change"' );
+					assert.equal( historyItem.elementType, 'widget', 'History Item element is "widget"' );
+
+					$e.run( 'document/history/undo' );
+
+					assert.notEqual( eWidget.model.attributes.settings.attributes.text, text, 'Settings back to default' );
+
+					$e.run( 'document/history/redo' );
+
+					assert.equal( eWidget.model.attributes.settings.attributes.text, text, 'Settings restored' );
+
+					done();
+				}, 1000 ); // TODO: make timeout access able.
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
@@ -265,10 +308,10 @@ jQuery( () => {
 				Elements.createSection();
 
 				const eSection = Elements.createSection( 3 ),
-					originalPosition = eSection._index,
+					originalPosition = eSection.view._index,
 					targetPosition = 0;
 
-				Elements.move( eSection, elementor.getPreviewView(), { at: targetPosition } );
+				Elements.move( eSection, elementor.getPreviewContainer(), { at: targetPosition } );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -279,20 +322,20 @@ jQuery( () => {
 
 				const eSectionAfterUndo = eSection.lookup();
 
-				assert.equal( eSectionAfterUndo._index, originalPosition, 'Element has been returned to the original position' );
+				assert.equal( eSectionAfterUndo.view._index, originalPosition, 'Element has been returned to the original position' );
 
 				$e.run( 'document/history/redo' );
 
 				const eSectionAfterRedo = eSection.lookup();
 
-				assert.equal( eSectionAfterRedo._index, targetPosition, 'Element was re-added to correct position' );
+				assert.equal( eSectionAfterRedo.view._index, targetPosition, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Move Column between sections', ( assert ) => {
 				const eSection1 = Elements.createSection(),
 					eSection2 = Elements.createSection(),
 					eColumn = Elements.createColumn( eSection1 ),
-					originalPosition = eColumn._index,
+					originalPosition = eColumn.view._index,
 					targetPosition = 1;
 
 				Elements.move( eColumn, eSection2, { at: targetPosition } );
@@ -306,20 +349,20 @@ jQuery( () => {
 
 				const eColumnAfterUndo = eColumn.lookup();
 
-				assert.equal( eColumnAfterUndo._index, originalPosition, 'Element has been returned to the original position' );
+				assert.equal( eColumnAfterUndo.view._index, originalPosition, 'Element has been returned to the original position' );
 
 				$e.run( 'document/history/redo' );
 
 				const eColumnAfterRedo = eColumn.lookup();
 
-				assert.equal( eColumnAfterRedo._index, targetPosition, 'Element was re-added to correct position' );
+				assert.equal( eColumnAfterRedo.view._index, targetPosition, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Move Column in same section', ( assert ) => {
 				const eSection = Elements.createSection(),
 					eColumn1 = Elements.createColumn( eSection ),
 					eColumn2 = Elements.createColumn( eSection ),
-					originalPosition = eColumn2._index,
+					originalPosition = eColumn2.view._index,
 					targetPosition = 0;
 
 				Elements.move( eColumn2, eSection, { at: targetPosition } );
@@ -333,13 +376,13 @@ jQuery( () => {
 
 				const eColumnAfterUndo = eColumn2.lookup();
 
-				assert.equal( eColumnAfterUndo._index, originalPosition, 'Element has been returned to the original position' );
+				assert.equal( eColumnAfterUndo.view._index, originalPosition, 'Element has been returned to the original position' );
 
 				$e.run( 'document/history/redo' );
 
 				const eColumnAfterRedo = eColumn2.lookup();
 
-				assert.equal( eColumnAfterRedo._index, targetPosition, 'Element was re-added to correct position' );
+				assert.equal( eColumnAfterRedo.view._index, targetPosition, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Move Widget', ( assert ) => {
@@ -347,7 +390,7 @@ jQuery( () => {
 					eColumn1 = Elements.createColumn( eSection ),
 					eColumn2 = Elements.createColumn( eSection ),
 					eWidget = Elements.createButton( eColumn1 ),
-					originalPosition = eWidget._index,
+					originalPosition = eWidget.view._index,
 					targetPosition = 1;
 
 				Elements.createButton( eColumn2 );
@@ -364,13 +407,13 @@ jQuery( () => {
 
 				const eWidgetAfterUndo = eWidget.lookup();
 
-				assert.equal( eWidgetAfterUndo._index, originalPosition, 'Element has been returned to the original position' );
+				assert.equal( eWidgetAfterUndo.view._index, originalPosition, 'Element has been returned to the original position' );
 
 				$e.run( 'document/history/redo' );
 
 				const eWidgetAfterRedo = eWidget.lookup();
 
-				assert.equal( eWidgetAfterRedo._index, targetPosition, 'Element was re-added to correct position' );
+				assert.equal( eWidgetAfterRedo.view._index, targetPosition, 'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Delete', ( assert ) => {
@@ -392,16 +435,16 @@ jQuery( () => {
 				const eWidgetAfterUndo = eWidget.lookup();
 
 				// Element Does not exist.
-				assert.notEqual( eWidgetAfterUndo.cid, eWidget.cid, 'Element was recreated and not a reference to the old one' );
-				assert.equal( eWidgetAfterUndo.model.id, eWidget.model.id, 'Element was re-added to DOM' );
-				assert.equal( eWidgetAfterUndo._index, eWidget._index, 'Element was re-added to correct position' );
+				assert.notEqual( eWidgetAfterUndo.view.cid, eWidget.view.cid, 'Element was recreated and not a reference to the old one' );
+				assert.equal( eWidgetAfterUndo.id, eWidget.id, 'Element was re-added to DOM' );
+				assert.equal( eWidgetAfterUndo.view._index, eWidget.view._index, 'Element was re-added to correct position' );
 
 				$e.run( 'document/history/redo' );
 
 				// Element exist again.
 				assert.equal( historyItem.status, 'not_applied', 'History Item status is not_applied' );
-				assert.equal( eWidget.isDestroyed, true, 'Element has been destroyed' );
-				assert.equal( jQuery( document ).find( eWidget.$el ).length, 0, 'Element has been removed from DOM' );
+				assert.equal( eWidget.view.isDestroyed, true, 'Element has been destroyed' );
+				assert.equal( jQuery( document ).find( eWidget.view.$el ).length, 0, 'Element has been removed from DOM' );
 			} );
 		} );
 
@@ -422,8 +465,8 @@ jQuery( () => {
 
 				// Elements Does not exist.
 				eColumns.forEach( ( eColumn ) => {
-					assert.equal( eColumn.isDestroyed, true, 'Element has been destroyed' );
-					assert.equal( jQuery( document ).find( eColumn.$el ).length, 0, 'Element has been removed from DOM' );
+					assert.equal( eColumn.view.isDestroyed, true, 'Element has been destroyed' );
+					assert.equal( jQuery( document ).find( eColumn.view.$el ).length, 0, 'Element has been removed from DOM' );
 				} );
 
 				$e.run( 'document/history/redo' );
@@ -435,9 +478,9 @@ jQuery( () => {
 				eColumns.forEach( ( eColumn ) => {
 					const eColumnAfterRedo = eColumn.lookup();
 
-					assert.notEqual( eColumnAfterRedo.cid, eColumn.cid, 'Element was recreated and not a reference to the old one' );
-					assert.equal( eColumnAfterRedo.model.id, eColumn.model.id, 'Element was re-added to DOM' );
-					assert.equal( eColumnAfterRedo._index, eColumn._index, 'Element was re-added to correct position' );
+					assert.notEqual( eColumnAfterRedo.view.cid, eColumn.view.cid, 'Element was recreated and not a reference to the old one' );
+					assert.equal( eColumnAfterRedo.id, eColumn.id, 'Element was re-added to DOM' );
+					assert.equal( eColumnAfterRedo.view._index, eColumn.view._index, 'Element was re-added to correct position' );
 				} );
 			} );
 
@@ -455,8 +498,8 @@ jQuery( () => {
 
 				// Elements Does not exist.
 				eWidgets.forEach( ( eWidget ) => {
-					assert.equal( eWidget.isDestroyed, true, 'Element has been destroyed' );
-					assert.equal( jQuery( document ).find( eWidget.$el ).length, 0, 'Element has been removed from DOM' );
+					assert.equal( eWidget.view.isDestroyed, true, 'Element has been destroyed' );
+					assert.equal( jQuery( document ).find( eWidget.view.$el ).length, 0, 'Element has been removed from DOM' );
 				} );
 
 				$e.run( 'document/history/redo' );
@@ -468,9 +511,9 @@ jQuery( () => {
 					const eWidgetAfterRedo = eWidget.lookup();
 
 					// Elements exist again.
-					assert.notEqual( eWidgetAfterRedo.cid, eWidget.cid, 'Element was recreated and not a reference to the old one' );
-					assert.equal( eWidgetAfterRedo.model.id, eWidget.model.id, 'Element was re-added to DOM' );
-					assert.equal( eWidgetAfterRedo._index, eWidget._index, 'Element was re-added to correct position' );
+					assert.notEqual( eWidgetAfterRedo.view.cid, eWidget.view.cid, 'Element was recreated and not a reference to the old one' );
+					assert.equal( eWidgetAfterRedo.id, eWidget.id, 'Element was re-added to DOM' );
+					assert.equal( eWidgetAfterRedo.view._index, eWidget.view._index, 'Element was re-added to correct position' );
 				} );
 			} );
 
@@ -479,15 +522,15 @@ jQuery( () => {
 					eColumn2 = Elements.createSection( 1, true ),
 					eInnerSections = Elements.multiCreateInnerSection( [ eColumn1, eColumn2 ] ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes,
-					{ defaultInnerSectionColumns } = eInnerSections[ 0 ],
+					{ defaultInnerSectionColumns } = eInnerSections[ 0 ].view,
 					innerSectionColumnsIds = {};
 
 				eInnerSections.forEach( ( eInnerSection ) => {
-					if ( ! innerSectionColumnsIds[ eInnerSection.model.id ] ) {
-						innerSectionColumnsIds[ eInnerSection.model.id ] = [];
+					if ( ! innerSectionColumnsIds[ eInnerSection.id ] ) {
+						innerSectionColumnsIds[ eInnerSection.id ] = [];
 					}
 
-					eInnerSection.children.forEach( ( el ) => innerSectionColumnsIds[ eInnerSection.model.id ].push( el.model.id ) );
+					eInnerSection.view.children.forEach( ( el ) => innerSectionColumnsIds[ eInnerSection.id ].push( el.model.id ) );
 				} );
 
 				// Exist in history.
@@ -495,7 +538,7 @@ jQuery( () => {
 				assert.equal( historyItem.elementType, 'section', 'History Item element is "section"' );
 
 				// Inner section have x columns.
-				eInnerSections.forEach( ( eInnerSection ) => assert.equal( eInnerSection.collection.length,
+				eInnerSections.forEach( ( eInnerSection ) => assert.equal( eInnerSection.view.collection.length,
 					defaultInnerSectionColumns, `InnerSection have "${ defaultInnerSectionColumns }" columns` ) );
 
 				$e.run( 'document/history/undo' );
@@ -504,8 +547,8 @@ jQuery( () => {
 
 				// Elements Does not exist.
 				eInnerSections.forEach( ( eInnerSection ) => {
-					assert.equal( eInnerSection.isDestroyed, true, 'Element has been destroyed' );
-					assert.equal( jQuery( document ).find( eInnerSection.$el ).length, 0, 'Element has been removed from DOM' );
+					assert.equal( eInnerSection.view.isDestroyed, true, 'Element has been destroyed' );
+					assert.equal( jQuery( document ).find( eInnerSection.view.$el ).length, 0, 'Element has been removed from DOM' );
 				} );
 
 				$e.run( 'document/history/redo' );
@@ -517,9 +560,9 @@ jQuery( () => {
 					const eInnerSectionAfterRedo = eInnerSection.lookup();
 
 					// Element exist again.
-					assert.notEqual( eInnerSectionAfterRedo.cid, eInnerSection.cid, 'Element was recreated and not a reference to the old one' );
-					assert.equal( eInnerSectionAfterRedo.model.id, eInnerSection.model.id, 'Element was re-added to DOM' );
-					assert.equal( eInnerSectionAfterRedo._index, eInnerSection._index, 'Element was re-added to correct position' );
+					assert.notEqual( eInnerSectionAfterRedo.view.cid, eInnerSection.view.cid, 'Element was recreated and not a reference to the old one' );
+					assert.equal( eInnerSectionAfterRedo.id, eInnerSection.id, 'Element was re-added to DOM' );
+					assert.equal( eInnerSectionAfterRedo.view._index, eInnerSection.view._index, 'Element was re-added to correct position' );
 				} );
 
 				// back two columns with the same ids as before.
@@ -528,11 +571,11 @@ jQuery( () => {
 				eInnerSections.forEach( ( eInnerSection ) => {
 					eInnerSection = eInnerSection.lookup();
 
-					if ( ! innerSectionAfterRedoColumnsIds[ eInnerSection.model.id ] ) {
-						innerSectionAfterRedoColumnsIds[ eInnerSection.model.id ] = [];
+					if ( ! innerSectionAfterRedoColumnsIds[ eInnerSection.id ] ) {
+						innerSectionAfterRedoColumnsIds[ eInnerSection.id ] = [];
 					}
 
-					eInnerSection.children.forEach( ( el ) => innerSectionAfterRedoColumnsIds[ eInnerSection.model.id ].push( el.model.id ) );
+					eInnerSection.view.children.forEach( ( el ) => innerSectionAfterRedoColumnsIds[ eInnerSection.id ].push( el.model.id ) );
 				} );
 
 				Object.entries( innerSectionAfterRedoColumnsIds ).forEach( ( [ key, ids ] ) => {
@@ -558,8 +601,8 @@ jQuery( () => {
 
 				// Element Does not exist.
 				eWidgetsDuped.forEach( ( eWidgetDuped ) => {
-					assert.equal( eWidgetDuped.isDestroyed, true, 'Element has been destroyed' );
-					assert.equal( jQuery( document ).find( eWidgetDuped.$el ).length, 0, 'Element has been removed from DOM' );
+					assert.equal( eWidgetDuped.view.isDestroyed, true, 'Element has been destroyed' );
+					assert.equal( jQuery( document ).find( eWidgetDuped.view.$el ).length, 0, 'Element has been removed from DOM' );
 				} );
 
 				$e.run( 'document/history/redo' );
@@ -571,9 +614,9 @@ jQuery( () => {
 					const eDupedWidgetAfterRedo = eWidgetDuped.lookup();
 
 					// Element exist again.
-					assert.notEqual( eDupedWidgetAfterRedo.cid, eWidgetDuped.cid, 'Element was recreated and not a reference to the old one' );
-					assert.equal( eDupedWidgetAfterRedo.model.id, eWidgetDuped.model.id, 'Element was re-added to DOM' );
-					assert.equal( eDupedWidgetAfterRedo._index, eWidgetDuped._index, 'Element was re-added to correct position' );
+					assert.notEqual( eDupedWidgetAfterRedo.view.cid, eWidgetDuped.view.cid, 'Element was recreated and not a reference to the old one' );
+					assert.equal( eDupedWidgetAfterRedo.id, eWidgetDuped.id, 'Element was re-added to DOM' );
+					assert.equal( eDupedWidgetAfterRedo.view._index, eWidgetDuped.view._index, 'Element was re-added to correct position' );
 				} );
 			} );
 
@@ -598,8 +641,8 @@ jQuery( () => {
 
 				// Element Does not exist.
 				ePastedWidgets.forEach( ( ePastedWidget ) => {
-					assert.equal( ePastedWidget.isDestroyed, true, 'Element has been destroyed' );
-					assert.equal( jQuery( document ).find( ePastedWidget.$el ).length, 0, 'Element has been removed from DOM' );
+					assert.equal( ePastedWidget.view.isDestroyed, true, 'Element has been destroyed' );
+					assert.equal( jQuery( document ).find( ePastedWidget.view.$el ).length, 0, 'Element has been removed from DOM' );
 				} );
 
 				$e.run( 'document/history/redo' );
@@ -611,9 +654,9 @@ jQuery( () => {
 					const ePastedWidgetAfterRedo = ePastedWidget.lookup();
 
 					// Element exist again.
-					assert.notEqual( ePastedWidgetAfterRedo.cid, ePastedWidget.cid, 'Element was recreated and not a reference to the old one' );
-					assert.equal( ePastedWidgetAfterRedo.model.id, ePastedWidget.model.id, 'Element was re-added to DOM' );
-					assert.equal( ePastedWidgetAfterRedo._index, ePastedWidget._index, 'Element was re-added to correct position' );
+					assert.notEqual( ePastedWidgetAfterRedo.view.cid, ePastedWidget.view.cid, 'Element was recreated and not a reference to the old one' );
+					assert.equal( ePastedWidgetAfterRedo.id, ePastedWidget.id, 'Element was re-added to DOM' );
+					assert.equal( ePastedWidgetAfterRedo.view._index, ePastedWidget.view._index, 'Element was re-added to correct position' );
 				} );
 			} );
 
@@ -699,7 +742,7 @@ jQuery( () => {
 			QUnit.test( 'Insert', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
 					eTabs = Elements.createTabs( eColumn ),
-					originalItemsCount = eTabs.model.get( 'settings' ).get( 'tabs' ).length,
+					originalItemsCount = eTabs.settings.get( 'tabs' ).length,
 					eTabModel = Elements.repeaterInsert( eTabs, 'tabs', {
 						tab_title: 'Test Tab Title',
 						tab_content: 'Test Tab Content',
@@ -716,14 +759,14 @@ jQuery( () => {
 
 				// Item does not exist.
 				assert.equal( historyItem.status, 'applied', 'History Item status is applied' );
-				assert.equal( eTabs.model.get( 'settings' ).get( 'tabs' ).find( eTabModel ), undefined, 'Item has been removed from collection' );
-				assert.equal( eTabs.model.get( 'settings' ).get( 'tabs' ).length, originalItemsCount, 'Element collection count is like original count' );
+				assert.equal( eTabs.settings.get( 'tabs' ).find( eTabModel ), undefined, 'Item has been removed from collection' );
+				assert.equal( eTabs.settings.get( 'tabs' ).length, originalItemsCount, 'Element collection count is like original count' );
 
 				$e.run( 'document/history/redo' );
 
 				// Item  exist.
 				assert.equal( historyItem.status, 'not_applied', 'History Item status is not_applied' );
-				assert.notEqual( eTabs.model.get( 'settings' ).get( 'tabs' ).length, originalItemsCount, 'Element collection count is not like original count' );
+				assert.notEqual( eTabs.settings.get( 'tabs' ).length, originalItemsCount, 'Element collection count is not like original count' );
 			} );
 
 			QUnit.test( 'Remove', ( assert ) => {
@@ -784,7 +827,7 @@ jQuery( () => {
 			QUnit.test( 'Duplicate', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
 					eTabs = Elements.createTabs( eColumn ),
-					originalItemsCount = eTabs.model.get( 'settings' ).get( 'tabs' ).length,
+					originalItemsCount = eTabs.settings.get( 'tabs' ).length,
 					eTabModel = Elements.repeaterDuplicate( eTabs, 'tabs', 1 );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
@@ -798,8 +841,8 @@ jQuery( () => {
 
 				// Item does not exist.
 				assert.equal( historyItem.status, 'applied', 'History Item status is applied' );
-				assert.equal( eTabs.model.get( 'settings' ).get( 'tabs' ).find( eTabModel ), undefined, 'Item has been removed from collection' );
-				assert.equal( eTabs.model.get( 'settings' ).get( 'tabs' ).length, originalItemsCount, 'Element collection count is like original count' );
+				assert.equal( eTabs.settings.get( 'tabs' ).find( eTabModel ), undefined, 'Item has been removed from collection' );
+				assert.equal( eTabs.settings.get( 'tabs' ).length, originalItemsCount, 'Element collection count is like original count' );
 
 				$e.run( 'document/history/redo' );
 

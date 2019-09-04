@@ -148,27 +148,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.editor.destroy();
 
 		this.view.allowRender = true;
-
-		/**
-		 * Inline editing has several toolbar types (advanced, basic and none). When editing is stopped,
-		 * we need to rerender the area. To prevent multiple renderings, we will render only areas that
-		 * use advanced toolbars.
-		 */
-		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
-			const settings = this.view.getEditModel().get( 'settings' );
-
-			/**
-			 * Fix Inset/Remove bug.
-			 * Seems that when you turn inline editing ( pressing on the tab content for the first time )
-			 * it coz the bug.
-			 * TODO: Check if repeater.
-			 */
-			if ( settings && 'tabs' === settings.get( 'widgetType' ) ) {
-				return;
-			}
-
-			this.view.getEditModel().renderRemoteServer();
-		}
 	},
 
 	onInlineEditingClick: function( event ) {
@@ -210,33 +189,24 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	onInlineEditingUpdate: function() {
 		let key = this.getEditingSettingKey(),
 			parts = key.split( '.' ),
-			value = this.editor.getContent();
+			container = this.view.getContainer();
 
 		// Is it repeater?
 		if ( 3 === parts.length ) {
-			$e.run( 'document/elements/repeater/settings', {
-				element: this.view,
-				name: parts[ 0 ],
-				index: parts[ 1 ],
-				settings: {
-					[ parts[ 2 ] ]: value,
-				},
-				options: {
-					lazy: true,
-				},
-			} );
-		} else {
-			$e.run( 'document/elements/settings', {
-				element: this.view,
-				settings: {
-					[ key ]: value,
-				},
-				options: {
-					external: true,
-					lazy: true,
-				},
-			} );
+			container = container.children[ parts[ 1 ] ];
+			key = parts[ 2 ];
 		}
+
+		$e.run( 'document/elements/settings', {
+			container,
+			settings: {
+				[ key ]: this.editor.getContent(),
+			},
+			options: {
+				external: true,
+				lazy: true,
+			},
+		} );
 	},
 } );
 

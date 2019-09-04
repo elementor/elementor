@@ -81,34 +81,17 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	setSettingsModel: function( value ) {
 		const key = this.model.get( 'name' );
+		$e.run( 'document/elements/settings', {
+			container: this.options.container,
+			settings: {
+				[ key ]: value,
+			},
+			options: {
+				lazy: true,
+			},
+		} );
 
-		// TODO: too ugly.
-		if ( this.isRepeater() ) {
-			$e.run( 'document/elements/repeater/settings', {
-				element: this.options.element,
-				name: this._parent._parent.model.get( 'name' ),
-				index: this._parent.itemIndex - 1,
-				settings: {
-					[ key ]: value,
-				},
-				options: {
-					lazy: true,
-					trigger: false,
-				},
-			} );
-		} else {
-			$e.run( 'document/elements/settings', {
-				element: this.options.element,
-				settings: {
-					[ key ]: value,
-				},
-				options: {
-					lazy: true,
-				},
-			} );
-
-			this.triggerMethod( 'settings:change' );
-		}
+		this.triggerMethod( 'settings:change' );
 	},
 
 	applySavedValue: function() {
