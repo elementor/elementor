@@ -6,7 +6,7 @@
 # Assets
 /assets/dev/js                                          @kobizz
 /assets/dev/js/editor/components                        @kobizz @matipojo
-/assets/dev/scss                                        @arielk @kobizz
+/assets/dev/scss                                        @kobizz
 
 # External Libraries
 /assets/lib                                             @kingyes
@@ -15,6 +15,7 @@
 # Tools
 /bin                                                    @kingyes
 /Gruntfile.js                                           @kingyes @bainternet
+/.grunt-config                                          @kingyes @bainternet
 
 # Core
 /core                                                   @kingyes
