@@ -22,7 +22,7 @@
 /core/admin                                             @kingyes
 /core/base                                              @kingyes @matipojo @kobizz
 /core/common                                            @kobizz
-/core/common/modules/ajax                               @matipojo
+/core/common/modules/ajax                               @kobizz @matipojo
 /core/common/modules/connect                            @matipojo
 /core/common/modules/finder                             @kobizz
 /core/debug                                             @matipojo
@@ -45,12 +45,12 @@
 /includes/base                                          @kingyes @matipojo @kobizz
 /includes/controls                                      @kingyes @kobizz
 /includes/editor-templates                              @kobizz
-/includes/elements                                      @kingyes @matipojo
+/includes/elements                                      @kingyes @kobizz @matipojo
 /includes/libraries                                     @kingyes @matipojo
 /includes/managers                                      @kingyes @matipojo @kobizz
 /includes/schemes                                       @kobizz
 
-/includes/settings                                      @kingyes
+/includes/settings                                      @kingyes @kobizz
 /includes/settings/system-info                          @kobizz
 
 # Template Library
