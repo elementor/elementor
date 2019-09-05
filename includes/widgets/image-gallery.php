@@ -39,7 +39,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Image Gallery', 'elementor' );
+		return __( 'Basic Gallery', 'elementor' );
 	}
 
 	/**
