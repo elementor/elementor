@@ -36,11 +36,12 @@ export default class Settings extends Base {
 	 * @param {{}} args
 	 */
 	static logHistory( args ) {
-		const { containers = [ args.container ], settings } = args,
+		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args,
 			changes = {};
 
 		containers.forEach( ( container ) => {
-			const { id } = container;
+			const { id } = container,
+				newSettings = isMultiSettings ? settings[ container.id ] : settings;
 
 			if ( ! changes[ id ] ) {
 				changes[ id ] = {};
@@ -53,17 +54,17 @@ export default class Settings extends Base {
 				};
 			}
 
-			Object.keys( settings ).forEach( ( settingKey ) => {
+			Object.keys( newSettings ).forEach( ( settingKey ) => {
 				if ( 'undefined' !== typeof container.oldValues[ settingKey ] ) {
 					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( container.oldValues[ settingKey ] );
-					changes[ id ].new[ settingKey ] = settings[ settingKey ];
+					changes[ id ].new[ settingKey ] = newSettings[ settingKey ];
 				}
 			} );
 
 			delete container.oldValues;
 		} );
 
-		$e.run( 'document/history/addItem', {
+		let historyItem = {
 			containers,
 			data: { changes },
 			type: 'change',
@@ -72,7 +73,13 @@ export default class Settings extends Base {
 					restore: Settings.restore,
 				},
 			},
-		} );
+		};
+
+		if ( options.history ) {
+			historyItem = Object.assign( options.history, historyItem );
+		}
+
+		$e.run( 'document/history/addItem', historyItem );
 	}
 
 	validateArgs( args ) {
@@ -86,15 +93,17 @@ export default class Settings extends Base {
 	}
 
 	apply( args ) {
-		const { settings, options = {}, containers = [ args.container ] } = args;
+		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args;
 
 		containers.forEach( ( container ) => {
+			const newSettings = isMultiSettings ? settings[ container.id ] : settings;
+
 			container.oldValues = container.oldValues || container.settings.toJSON();
 
 			if ( options.external ) {
-				container.settings.setExternalChange( settings );
+				container.settings.setExternalChange( newSettings );
 			} else {
-				container.settings.set( settings );
+				container.settings.set( newSettings );
 			}
 
 			container.render();
