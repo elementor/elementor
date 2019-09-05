@@ -1,4 +1,3 @@
-
 export default class extends elementorModules.common.Component {
 	getNamespace() {
 		return 'document/history';
@@ -22,34 +21,36 @@ export default class extends elementorModules.common.Component {
 				}
 
 				// TODO: rewrite & optimize.
-				if ( args.model ) {
-					const model = args.model.attributes || args.model;
+				if ( ! args.title ) {
+					if ( args.model ) {
+						const model = args.model.attributes || args.model;
 
-					// If model empty.
-					if ( 0 === Object.keys( model ).length ) {
-						args.title = elementor.translate( 'column' );
-						args.elementType = 'column';
-					} else {
-						args.title = elementor.history.history.getModelLabel( model );
-						args.elementType = model.elType;
+						// If model empty.
+						if ( 0 === Object.keys( model ).length ) {
+							args.title = elementor.translate( 'column' );
+							args.elementType = 'column';
+						} else {
+							args.title = elementor.history.history.getModelLabel( model );
+							args.elementType = model.elType;
+						}
+					} else if ( args.container ) {
+						const { container } = args,
+							elType = container.model.get( 'elType' );
+
+						if ( ! elType ) {
+							args.title = elementor.translate( 'section' );
+							args.elementType = 'section';
+						} else {
+							args.title = elementor.history.history.getModelLabel( container.model );
+							args.elementType = elType;
+						}
+					} else if ( args.containers ) {
+						args.title = elementor.translate( 'element' );
 					}
-				} else if ( args.container ) {
-					const { container } = args,
-						elType = container.model.get( 'elType' );
 
-					if ( ! elType ) {
-						args.title = elementor.translate( 'section' );
-						args.elementType = 'section';
-					} else {
-						args.title = elementor.history.history.getModelLabel( container.model );
-						args.elementType = elType;
+					if ( args.containers && args.containers.length > 1 ) {
+						args.title = elementor.translate( 'elements' );
 					}
-				} else if ( args.containers ) {
-					args.title = elementor.translate( 'element' );
-				}
-
-				if ( args.containers && args.containers.length > 1 ) {
-					args.title = elementor.translate( 'elements' );
 				}
 
 				return elementor.history.history.startItem( args );
