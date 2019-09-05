@@ -4,7 +4,7 @@
  */
 const path = require( 'path' );
 
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const aliasList = {
 	alias: {
@@ -112,7 +112,10 @@ const webpackProductionConfig = {
 	optimization: {
 		minimize: true,
 		minimizer: [
-			new UglifyJsPlugin( {
+			new TerserPlugin( {
+				terserOptions: {
+					keep_fnames: true,
+				},
 				include: /\.min\.js$/
 			} ),
 		],
