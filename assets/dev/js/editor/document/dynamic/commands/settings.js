@@ -1,4 +1,4 @@
-import Base from '../../elements/commands/base';
+import Base from '../../commands/base';
 
 export default class extends Base {
 	static restore( historyItem, isRedo ) {

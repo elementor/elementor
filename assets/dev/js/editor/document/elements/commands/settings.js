@@ -1,4 +1,4 @@
-import Base from './base';
+import Base from '../../commands/base';
 
 // Settings.
 export default class Settings extends Base {

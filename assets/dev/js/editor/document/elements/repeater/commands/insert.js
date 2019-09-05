@@ -1,4 +1,4 @@
-import Base from '../../commands/base';
+import Base from '../../../commands/base';
 
 // Insert.
 export default class extends Base {

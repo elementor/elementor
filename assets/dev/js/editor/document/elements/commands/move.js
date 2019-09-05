@@ -1,4 +1,4 @@
-import Base from './base';
+import Base from '../../commands/base';
 import Container from '../../../container/container';
 
 // Move.

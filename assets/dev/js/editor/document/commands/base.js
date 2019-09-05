@@ -1,4 +1,4 @@
-import Container from '../../../container/container';
+import Container from '../../container/container';
 
 export default class {
 	/**
@@ -201,6 +201,7 @@ export default class {
 			result = this.apply( this.args );
 		} catch ( e ) {
 			$e.run( 'document/history/deleteLog', { id: historyId } );
+			//console.error( e );
 			return false;
 		}
 
