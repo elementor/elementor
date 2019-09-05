@@ -745,22 +745,20 @@ class Widget_Image_Carousel extends Widget_Base {
 			<div <?php echo $this->get_render_attribute_string( 'carousel' ); ?>>
 				<?php echo implode( '', $slides ); ?>
 			</div>
-			<?php if ( 1 < $slides_count ) : ?>
-				<?php if ( $show_dots ) : ?>
-					<div class="swiper-pagination"></div>
-				<?php endif; ?>
-				<?php if ( $show_arrows ) : ?>
-					<div class="elementor-swiper-button elementor-swiper-button-prev">
-						<i class="eicon-chevron-left" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php _e( 'Previous', 'elementor' ); ?></span>
-					</div>
-					<div class="elementor-swiper-button elementor-swiper-button-next">
-						<i class="eicon-chevron-right" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php _e( 'Next', 'elementor' ); ?></span>
-					</div>
-				<?php endif; ?>
+			<?php if ( $slides_count > 1 && $show_dots ) : ?>
+				<div class="swiper-pagination"></div>
 			<?php endif; ?>
 		</div>
+		<?php if ( $slides_count > 1 && $show_arrows ) : ?>
+			<div class="elementor-swiper-button elementor-swiper-button-prev">
+				<i class="eicon-chevron-left" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php echo __( 'Previous', 'elementor' ); ?></span>
+			</div>
+			<div class="elementor-swiper-button elementor-swiper-button-next">
+				<i class="eicon-chevron-right" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php echo __( 'Next', 'elementor' ); ?></span>
+			</div>
+		<?php endif; ?>
 		<?php
 	}
 
