@@ -623,10 +623,10 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['slideshow_gallery'] = [
 			'label' => _x( 'Slideshow Gallery', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::GALLERY,
-			'label_block' => true,
 			'condition' => [
 				'background' => [ 'slideshow' ],
 			],
+			'show_label' => false,
 			'of_type' => 'slideshow',
 			'frontend_available' => true,
 		];
