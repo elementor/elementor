@@ -127,6 +127,14 @@ class Widget_Divider extends Widget_Base {
 					'round' => false,
 					'group' => 'line',
 				],
+				'multiple'   => [
+					'label' => _x( 'Multiple', 'shapes', 'elementor' ),
+					'shape' => '<path d="M24,8v12H0V8H24z M24,4v1H0V4H24z"/>',
+					'preserve_aspect_ratio' => false,
+					'supports_amount' => false,
+					'round' => false,
+					'group' => 'pattern',
+				],
 				'slashes' => [
 					'label' => _x( 'Slashes', 'shapes', 'elementor' ),
 					'shape' => '<g transform="translate(-12.000000, 0)"><path d="M28,0L10,18"/><path d="M18,0L0,18"/><path d="M48,0L30,18"/><path d="M38,0L20,18"/></g>',
@@ -168,14 +176,6 @@ class Widget_Divider extends Widget_Base {
 					'round' => true,
 					'group' => 'pattern',
 				],
-				'double_pattern'   => [
-					'label' => _x( 'Double', 'shapes', 'elementor' ),
-					'shape' => '<path d="M24,8v12H0V8H24z M24,4v1H0V4H24z"/>',
-					'preserve_aspect_ratio' => false,
-					'supports_amount' => false,
-					'round' => false,
-					'group' => 'pattern',
-				],
 				'pluses'   => [
 					'label' => _x( 'Pluses', 'shapes', 'elementor' ),
 					'shape' => '<path d="M21.4,9.6h-7.1V2.6c0-0.9-0.7-1.6-1.6-1.6h-1.6c-0.9,0-1.6,0.7-1.6,1.6v7.1H2.6C1.7,9.6,1,10.3,1,11.2v1.6c0,0.9,0.7,1.6,1.6,1.6h7.1v7.1c0,0.9,0.7,1.6,1.6,1.6h1.6c0.9,0,1.6-0.7,1.6-1.6v-7.1h7.1c0.9,0,1.6-0.7,1.6-1.6v-1.6C23,10.3,22.3,9.6,21.4,9.6z"/>',
@@ -200,8 +200,8 @@ class Widget_Divider extends Widget_Base {
 					'round' => false,
 					'group' => 'pattern',
 				],
-				'squares'   => [
-					'label' => _x( 'Squares', 'shapes', 'elementor' ),
+				'rectangles'   => [
+					'label' => _x( 'Rectangles', 'shapes', 'elementor' ),
 					'shape' => '<rect x="15" y="0" width="30" height="30"/>',
 					'preserve_aspect_ratio' => false,
 					'supports_amount' => true,
@@ -212,6 +212,15 @@ class Widget_Divider extends Widget_Base {
 				'dots_tribal'   => [
 					'label' => _x( 'Dots', 'shapes', 'elementor' ),
 					'shape' => '<path d="M3,10.2c2.6,0,2.6,2,2.6,3.2S4.4,16.5,3,16.5s-3-1.4-3-3.2S0.4,10.2,3,10.2z M18.8,10.2c1.7,0,3.2,1.4,3.2,3.2s-1.4,3.2-3.2,3.2c-1.7,0-3.2-1.4-3.2-3.2S17,10.2,18.8,10.2z M34.6,10.2c1.5,0,2.6,1.4,2.6,3.2s-0.5,3.2-1.9,3.2c-1.5,0-3.4-1.4-3.4-3.2S33.1,10.2,34.6,10.2z M50.5,10.2c1.7,0,3.2,1.4,3.2,3.2s-1.4,3.2-3.2,3.2c-1.7,0-3.3-0.9-3.3-2.6S48.7,10.2,50.5,10.2z M66.2,10.2c1.5,0,3.4,1.4,3.4,3.2s-1.9,3.2-3.4,3.2c-1.5,0-2.6-0.4-2.6-2.1S64.8,10.2,66.2,10.2z M82.2,10.2c1.7,0.8,2.6,1.4,2.6,3.2s-0.1,3.2-1.6,3.2c-1.5,0-3.7-1.4-3.7-3.2S80.5,9.4,82.2,10.2zM98.6,10.2c1.5,0,2.6,0.4,2.6,2.1s-1.2,4.2-2.6,4.2c-1.5,0-3.7-0.4-3.7-2.1S97.1,10.2,98.6,10.2z M113.4,10.2c1.2,0,2.2,0.9,2.2,3.2s-0.1,3.2-1.3,3.2s-3.1-1.4-3.1-3.2S112.2,10.2,113.4,10.2z"/>',
+					'preserve_aspect_ratio' => true,
+					'supports_amount' => false,
+					'round' => false,
+					'group' => 'tribal',
+					'view_box' => '0 0 126 26',
+				],
+				'trees_2_tribal'   => [
+					'label' => _x( 'Fir Tree', 'shapes', 'elementor' ),
+					'shape' => '<path d="M111.9,18.3v3.4H109v-3.4H111.9z M90.8,18.3v3.4H88v-3.4H90.8z M69.8,18.3v3.4h-2.9v-3.4H69.8z M48.8,18.3v3.4h-2.9v-3.4H48.8z M27.7,18.3v3.4h-2.9v-3.4H27.7z M6.7,18.3v3.4H3.8v-3.4H6.7z M46.4,4l4.3,4.8l-1.8,0l3.5,4.4l-2.2-0.1l3,3.3l-11,0.4l3.6-3.8l-2.9-0.1l3.1-4.2l-1.9,0L46.4,4z M111.4,4l2.4,4.8l-1.8,0l3.5,4.4l-2.5-0.1l3.3,3.3h-11l3.1-3.4l-2.5-0.1l3.1-4.2l-1.9,0L111.4,4z M89.9,4l2.9,4.8l-1.9,0l3.2,4.2l-2.5,0l3.5,3.5l-11-0.4l3-3.1l-2.4,0L88,8.8l-1.9,0L89.9,4z M68.6,4l3,4.4l-1.9,0.1l3.4,4.1l-2.7,0.1l3.8,3.7H63.8l2.9-3.6l-2.9,0.1L67,8.7l-2,0.1L68.6,4z M26.5,4l3,4.4l-1.9,0.1l3.7,4.7l-2.5-0.1l3.3,3.3H21l3.1-3.4l-2.5-0.1l3.2-4.3l-2,0.1L26.5,4z M4.9,4l3.7,4.8l-1.5,0l3.1,4.2L7.6,13l3.4,3.4H0l3-3.3l-2.3,0.1l3.5-4.4l-2.3,0L4.9,4z"/>',
 					'preserve_aspect_ratio' => true,
 					'supports_amount' => false,
 					'round' => false,
@@ -262,15 +271,6 @@ class Widget_Divider extends Widget_Base {
 					'round' => false,
 					'group' => 'tribal',
 					'view_box' => '0 0 123 26',
-				],
-				'trees_2_tribal'   => [
-					'label' => _x( 'Trees 2', 'shapes', 'elementor' ),
-					'shape' => '<path d="M111.9,18.3v3.4H109v-3.4H111.9z M90.8,18.3v3.4H88v-3.4H90.8z M69.8,18.3v3.4h-2.9v-3.4H69.8z M48.8,18.3v3.4h-2.9v-3.4H48.8z M27.7,18.3v3.4h-2.9v-3.4H27.7z M6.7,18.3v3.4H3.8v-3.4H6.7z M46.4,4l4.3,4.8l-1.8,0l3.5,4.4l-2.2-0.1l3,3.3l-11,0.4l3.6-3.8l-2.9-0.1l3.1-4.2l-1.9,0L46.4,4z M111.4,4l2.4,4.8l-1.8,0l3.5,4.4l-2.5-0.1l3.3,3.3h-11l3.1-3.4l-2.5-0.1l3.1-4.2l-1.9,0L111.4,4z M89.9,4l2.9,4.8l-1.9,0l3.2,4.2l-2.5,0l3.5,3.5l-11-0.4l3-3.1l-2.4,0L88,8.8l-1.9,0L89.9,4z M68.6,4l3,4.4l-1.9,0.1l3.4,4.1l-2.7,0.1l3.8,3.7H63.8l2.9-3.6l-2.9,0.1L67,8.7l-2,0.1L68.6,4z M26.5,4l3,4.4l-1.9,0.1l3.7,4.7l-2.5-0.1l3.3,3.3H21l3.1-3.4l-2.5-0.1l3.2-4.3l-2,0.1L26.5,4z M4.9,4l3.7,4.8l-1.5,0l3.1,4.2L7.6,13l3.4,3.4H0l3-3.3l-2.3,0.1l3.5-4.4l-2.3,0L4.9,4z"/>',
-					'preserve_aspect_ratio' => true,
-					'supports_amount' => false,
-					'round' => false,
-					'group' => 'tribal',
-					'view_box' => '0 0 126 26',
 				],
 				'planes_tribal'   => [
 					'label' => _x( 'Tribal', 'shapes', 'elementor' ),
@@ -548,7 +548,7 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'value' => Scheme_Color::COLOR_2,
 				],
 				'default' => '#000',
 				'render_type' => 'template',
@@ -684,7 +684,7 @@ class Widget_Divider extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'value' => Scheme_Color::COLOR_2,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-divider__text' => 'color: {{VALUE}}',
@@ -696,7 +696,7 @@ class Widget_Divider extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
 				'selector' => '{{WRAPPER}} .elementor-divider__text',
 			]
 		);
@@ -820,7 +820,7 @@ class Widget_Divider extends Widget_Base {
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'value' => Scheme_Color::COLOR_2,
 				],
 			]
 		);
