@@ -45,7 +45,9 @@
 /includes/base                                          @kingyes @matipojo @kobizz
 /includes/controls                                      @kingyes @kobizz
 /includes/editor-templates                              @kobizz
-/includes/elements                                      @kingyes @kobizz @matipojo
+/includes/elements/column.php                           @kingyes @kobizz
+/includes/elements/repeater.php                         @kingyes @matipojo
+/includes/elements/section.php                          @kingyes @kobizz
 /includes/libraries                                     @kingyes @matipojo
 /includes/managers                                      @kingyes @matipojo @kobizz
 /includes/schemes                                       @kobizz
