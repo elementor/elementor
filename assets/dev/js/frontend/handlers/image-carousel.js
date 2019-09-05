@@ -110,6 +110,8 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	onElementChange( propertyName ) {
 		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
 			this.updateSpaceBetween();
+		} else if ( 'arrows_position' === propertyName ) {
+			this.swiper.update();
 		}
 	}
 
