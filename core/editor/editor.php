@@ -514,6 +514,7 @@ class Editor {
 			'document' => $document->get_config(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'current_user_can_publish' => $current_user_can_publish,
+			'tabs' => $plugin->controls_manager->get_tabs(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
 			'widgets' => $plugin->widgets_manager->get_widget_types_config(),

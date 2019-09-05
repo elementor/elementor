@@ -105,6 +105,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				transparent: false,
 				playsinline: false,
 				background: true,
+				muted: true,
 			};
 
 		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
