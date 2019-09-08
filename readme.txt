@@ -250,7 +250,6 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 * Fix: Heading widget with the character "0" is not visible on frontend
 * Deprecated: Removed old deprecated aliases ([Developers Blog Post](https://developers.elementor.com/v2-7-0-planned-deprecations/))
 
-
 = 2.6.8 - 2019-08-07 =
 * Tweak: Added SVG import/export support to Icons control
 * Fix: Empty `caps` while checking user `caps` ([#8732](https://github.com/elementor/elementor/issues/8732))
