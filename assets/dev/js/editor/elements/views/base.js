@@ -110,7 +110,7 @@ BaseElementView = BaseContainer.extend( {
 		if ( ! this.container ) {
 			this.container = new Container( {
 				id: this.model.id,
-				document: elementor.getPreviewContainer(), // getPreviewContainer does not exist yet.
+				document: elementor.getPreviewContainer(),
 				view: this,
 				model: this.model,
 				activeControl: false,

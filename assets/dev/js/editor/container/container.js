@@ -17,7 +17,7 @@ export default class Container {
 			this[ key ] = value;
 		} );
 
-		if ( ! this.renderer ) {
+		if ( 'undefined' === typeof this.renderer ) {
 			this.renderer = this;
 		}
 
@@ -38,6 +38,10 @@ export default class Container {
 	}
 
 	render() {
+		if ( ! this.renderer ) {
+			return;
+		}
+
 		this.renderer.view.renderOnChange( this.settings );
 	}
 }

@@ -7,10 +7,10 @@ export default class extends elementorModules.common.Component {
 
 	// TODO: find better solution.
 	dependency( command, args ) {
+		const { containers = [ args.container ] } = args;
+
 		switch ( command ) {
 			case 'document/elements/create':
-				const { containers = [ args.container ] } = args;
-
 				if ( 'column' === args.model.elType ) {
 					const canAddColumn = ! containers.some( ( container ) => {
 						return container.view.isCollectionFilled();
