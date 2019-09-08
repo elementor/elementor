@@ -11,7 +11,6 @@ import Paste from './paste';
 import Move from './move';
 import PasteStyle from './paste-style';
 import ResetStyle from './reset-style';
-import ResizeColumn from './resize-column';
 import Settings from './settings';
 
 export {
@@ -25,6 +24,5 @@ export {
 	Move,
 	PasteStyle,
 	ResetStyle,
-	ResizeColumn,
 	Settings,
 };
