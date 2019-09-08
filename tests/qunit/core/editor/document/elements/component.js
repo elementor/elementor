@@ -9,70 +9,103 @@ jQuery( () => {
 				Elements.createButton( eColumn );
 				Elements.createButton( eColumn );
 
+				// Ensure editor saver.
+				elementor.saver.setFlagEditorChange( false );
+
 				Elements.empty();
 
 				// Check.
-				assert.equal( elementor.getPreviewContainer().view.collection.length, 0 );
+				assert.equal( elementor.getPreviewContainer().view.collection.length, 0,
+					'all elements were removed.' );
+				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'Copy All', ( assert ) => {
 				const eSection = Elements.createSection( 1 ),
-					eColumn = Elements.createColumn( eSection );
+					eColumn = Elements.createColumn( eSection ),
+					eButtonsCount = 2;
 
-				Elements.createButton( eColumn );
-				Elements.createButton( eColumn );
+				for ( let i = 0; i < eButtonsCount; ++i ) {
+					Elements.createButton( eColumn );
+				}
 
 				Elements.copyAll();
 
 				Elements.paste( elementor.getPreviewContainer(), true );
 
-				assert.equal( eSection.view.collection.length, 2 );
+				assert.equal( eSection.view.collection.length, eButtonsCount,
+					`'${ eButtonsCount }' buttons were created.` );
 			} );
 
 			QUnit.test( 'Create Section', ( assert ) => {
-				const eSection = Elements.createSection( 1 );
+				const eSection = Elements.createSection( 1 ),
+					isSectionCreated = Boolean( elementor.getPreviewContainer().view.children.findByModel( eSection.model ) );
 
-				// Check section exist.
-				assert.equal( Boolean( elementor.getPreviewContainer().view.children.findByModel( eSection.model ) ), true );
+				// Check.
+				assert.equal( isSectionCreated, true, 'Section were created.' );
+				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'Create Column', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true );
+				const eColumn = Elements.createSection( 1, true ),
+					isColumnCreated = elementor.getPreviewContainer().view.children.some( ( a ) => {
+						return a.children.findByModel( eColumn.model );
+					} );
 
 				// Check column exist.
-				assert.equal( elementor.getPreviewContainer().view.children.some( ( a ) => {
-					return a.children.findByModel( eColumn.model );
-				} ), true );
+				assert.equal( isColumnCreated, true, 'Column were created.' );
+				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
+			} );
+
+			QUnit.test( 'Resize Column', ( assert ) => {
+				const newSize = 20,
+					eSection = Elements.createSection( 2 ),
+					eColumn1 = eSection.view.children.findByIndex( 0 ).getContainer(),
+					eColumn2 = eSection.view.children.findByIndex( 1 ).getContainer();
+
+				Elements.resizeColumn( eColumn1, newSize );
+
+				// Check values.
+				assert.equal( eColumn1.settings.attributes._inline_size, newSize, `Column1 size was changed to '${ newSize }'.` );
+				// assert.equal( eColumn2.settings.attributes._inline_size.toFixed( 0 ), '80' ); TODO: Does not work in tests.
 			} );
 
 			QUnit.test( 'Create Widget', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
-					eButton = Elements.createButton( eColumn );
+					eButton = Elements.createButton( eColumn ),
+					isButtonCreated = Boolean( eColumn.view.children.findByModel( eButton.model ) );
 
 				// Check button exist.
-				assert.equal( Boolean( eColumn.view.children.findByModel( eButton.model ) ), true );
+				assert.equal( isButtonCreated, true, 'Button were created.' );
 			} );
 
 			QUnit.test( 'Create Widget: Inner Section', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eInnerSection = Elements.createInnerSection( eColumn );
+				const eSection = Elements.createSection( 1 ),
+					{ defaultInnerSectionColumns } = eSection.view,
+					eColumn = eSection.view.children.findByIndex( 0 ).getContainer(),
+					eInnerSection = Elements.createInnerSection( eColumn ),
+					isInnerSectionCreated = Boolean( eColumn.view.children.findByModel( eInnerSection.model ) );
 
-				assert.equal( Boolean( eColumn.view.children.findByModel( eInnerSection.model ) ), true, 'Check inner section exist' );
-
-				console.log( eInnerSection.view );
-				assert.equal( eInnerSection.view.collection.length, 2, 'Check inner section have two columns' ); // TODO: get default inner section columns.
+				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
+				assert.equal( eInnerSection.view.collection.length, defaultInnerSectionColumns,
+					`'${ defaultInnerSectionColumns }' columns were created in the inner section.` );
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
-					eButton = Elements.createButton( eColumn );
+					eButton = Elements.createButton( eColumn ),
+					eButtonDuplicateCount = 2;
 
-				Elements.duplicate( eButton );
+				for ( let i = 0; i < eButtonDuplicateCount; ++i ) {
+					const eDuplicatedButton = Elements.duplicate( eButton );
 
-				// TODO: Test if duplicate item have unique ids.
+					// Check if duplicated buttons have unique ids.
+					assert.notEqual( eDuplicatedButton.id, eButton.id, `Duplicate button # ${ i + 1 } have unique id.` );
+				}
 
 				// Check duplicated button exist.
-				assert.equal( eColumn.view.children.length, 2 );
+				assert.equal( eColumn.view.children.length, ( eButtonDuplicateCount + 1 ),
+					`'${ eButtonDuplicateCount }' buttons were duplicated.` );
 			} );
 
 			QUnit.test( 'Copy & Paste', ( assert ) => {
@@ -80,42 +113,58 @@ jQuery( () => {
 					eButton = Elements.createButton( eColumn );
 
 				Elements.copy( eButton );
+
+				// Ensure editor saver.
+				elementor.saver.setFlagEditorChange( false );
+
 				Elements.paste( eColumn );
 
-				// Check pasted button exist.
-				assert.equal( eColumn.view.children.length, 2 );
+				// Check.
+				assert.equal( eColumn.view.children.length, 2, 'Pasted element were created.' );
+				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
-				const eButton = Elements.createMockButtonWidget();
+				const eButton = Elements.createMockButtonWidget(),
+					text = 'i test it';
 
 				// Change button text.
-				Elements.settings( eButton, {
-					text: 'i test it',
-				} );
+				Elements.settings( eButton, { text } );
 
 				// Check button text.
-				assert.equal( eButton.model.attributes.settings.attributes.text, 'i test it' );
+				assert.equal( eButton.settings.attributes.text, text, `text setting were changed to: '${ text }'.` );
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
 				const eButtonSimple = Elements.createMockButtonWidget(),
-					eButtonStyled = Elements.createMockButtonStyled();
+					eButtonStyled = Elements.createMockButtonStyled(),
+					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
 
 				Elements.copy( eButtonStyled );
+
+				// Ensure editor saver.
+				elementor.saver.setFlagEditorChange( false );
+
 				Elements.pasteStyle( eButtonSimple );
 
-				// Check pasted style exist.
-				assert.equal( eButtonSimple.model.attributes.settings.attributes.background_color, '#000000' );
+				// Check
+				assert.equal( eButtonSimple.settings.attributes.background_color, eStyledButtonBackground,
+					`Button background color was changed to '${ eStyledButtonBackground }'.` );
+				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'Reset Style', ( assert ) => {
 				const eButtonStyled = Elements.createMockButtonStyled();
 
+				// Ensure editor saver.
+				elementor.saver.setFlagEditorChange( false );
+
 				Elements.resetStyle( eButtonStyled );
 
 				// Check pasted style exist.
-				assert.equal( eButtonStyled.model.attributes.settings.attributes.background_color, '' );
+				assert.equal( eButtonStyled.settings.attributes.background_color, '',
+					'Button with custom style were (style) restored.' );
+				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'Move Section', ( assert ) => {
@@ -127,7 +176,8 @@ jQuery( () => {
 				Elements.move( eSection, elementor.getPreviewContainer(), { at: 0 } );
 
 				// Validate first section have 3 columns.
-				assert.equal( elementor.getPreviewContainer().model.attributes.elements.first().attributes.elements.length, 3 );
+				assert.equal( elementor.getPreviewContainer().model.attributes.elements.first().attributes.elements.length, 3,
+					'Section were moved.' );
 			} );
 
 			QUnit.test( 'Move Column', ( assert ) => {
@@ -138,7 +188,8 @@ jQuery( () => {
 				Elements.move( eColumn, eSection2 );
 
 				// Validate.
-				assert.equal( eSection2.view.collection.length, 2 );
+				assert.equal( eSection2.view.collection.length, 2,
+					'Columns were moved.' );
 			} );
 
 			QUnit.test( 'Move Widget', ( assert ) => {
@@ -150,8 +201,8 @@ jQuery( () => {
 				Elements.move( eButton, eColumn2 );
 
 				// Validate.
-				assert.equal( eColumn1.view.collection.length, 0 );
-				assert.equal( eColumn2.view.collection.length, 1 );
+				assert.equal( eColumn1.view.collection.length, 0, 'Widget were removed from first column.' );
+				assert.equal( eColumn2.view.collection.length, 1, 'Widget were moved/created at the second column.' );
 			} );
 
 			QUnit.test( 'Delete', ( assert ) => {
@@ -162,12 +213,17 @@ jQuery( () => {
 				Elements.delete( eButton1 );
 
 				// Validate.
-				assert.equal( eColumn.view.collection.length, 1 );
+				assert.equal( eColumn.view.collection.length, 1, 'Button #1 were deleted.' );
+
+				// Ensure editor saver.
+				elementor.saver.setFlagEditorChange( false );
 
 				Elements.delete( eButton2 );
 
 				// Validate.
-				assert.equal( eColumn.view.collection.length, 0 );
+				assert.equal( eColumn.view.collection.length, 0, 'Button #2 were deleted.' );
+
+				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
 			} );
 		} );
 
@@ -178,21 +234,27 @@ jQuery( () => {
 					eColumns = Elements.multiCreateColumn( [ eSection1, eSection2 ] );
 
 				// Check columns exist.
+				let count = 1;
 				eColumns.forEach( ( eColumn ) => {
-					assert.equal( elementor.getPreviewContainer().view.children.some( ( a ) => {
+					const isColumnCreated = elementor.getPreviewContainer().view.children.some( ( a ) => {
 						return a.children.findByModel( eColumn.model );
-					} ), true );
+					} );
+
+					assert.equal( isColumnCreated, true, `Column #${ count } were created.` );
+					++count;
 				} );
 			} );
 
 			QUnit.test( 'Create Widgets', ( assert ) => {
 				const eColumn1 = Elements.createSection( 1, true ),
 					eColumn2 = Elements.createSection( 1, true ),
-					eButtons = Elements.multiCreateButton( [ eColumn1, eColumn2 ] );
+					eButtons = Elements.multiCreateButton( [ eColumn1, eColumn2 ] ),
+					isButton1Created = Boolean( eColumn1.view.children.findByModel( eButtons[ 0 ].model ) ),
+					isButton2Created = Boolean( eColumn2.view.children.findByModel( eButtons[ 1 ].model ) );
 
 				// Check button exist.
-				assert.equal( Boolean( eColumn1.view.children.findByModel( eButtons[ 0 ].model ) ), true );
-				assert.equal( Boolean( eColumn2.view.children.findByModel( eButtons[ 1 ].model ) ), true );
+				assert.equal( isButton1Created, true, 'Button #1 were created.' );
+				assert.equal( isButton2Created, true, 'Button #2 were created.' );
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
@@ -203,21 +265,25 @@ jQuery( () => {
 				Elements.multiDuplicate( eButtons );
 
 				// Check duplicated button exist.
-				assert.equal( eColumn1.view.children.length, 2 );
-				assert.equal( eColumn2.view.children.length, 2 );
+				assert.equal( eColumn1.view.children.length, 2, 'Two buttons were created.' );
+				assert.equal( eColumn2.view.children.length, 2, 'Two buttons were duplicated.' );
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
 				const eSection1 = Elements.createSection(),
 					eSection2 = Elements.createSection(),
 					eColumns = Elements.multiCreateColumn( [ eSection1, eSection2 ] ),
-					eButtons = Elements.multiCreateButton( eColumns );
+					eButtons = Elements.multiCreateButton( eColumns ),
+					text = 'i test it';
 
-				Elements.multiSettings( eButtons, { text: 'i test it' } );
+				Elements.multiSettings( eButtons, { text } );
 
 				// Check button text.
+				let count = 1;
 				eButtons.forEach( ( eButton ) => {
-					assert.equal( eButton.model.attributes.settings.attributes.text, 'i test it' );
+					assert.equal( eButton.model.attributes.settings.attributes.text, text,
+						`Button #${ count } text was changed to: '${ text }.'` );
+					++count;
 				} );
 			} );
 
@@ -232,23 +298,29 @@ jQuery( () => {
 				Elements.multiPaste( eColumns );
 
 				// Check pasted button exist.
+				let count = 1;
 				eColumns.forEach( ( eColumn ) => {
-					assert.equal( eColumn.view.children.length, 2 );
+					assert.equal( eColumn.view.children.length, 2,
+						`Button #${ count } were pasted.` );
+					++count;
 				} );
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
 				const eButtonSimple1 = Elements.createMockButtonWidget(),
 					eButtonSimple2 = Elements.createMockButtonWidget(),
-					eButtonStyled = Elements.createMockButtonStyled();
+					eButtonStyled = Elements.createMockButtonStyled(),
+					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
 
 				Elements.copy( eButtonStyled );
 
 				Elements.multiPasteStyle( [ eButtonSimple1, eButtonSimple2 ] );
 
 				// Check pasted style exist.
-				assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, '#000000' );
-				assert.equal( eButtonSimple2.model.attributes.settings.attributes.background_color, '#000000' );
+				assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
+					`Button #1 background color was changed to '${ eStyledButtonBackground }'.` );
+				assert.equal( eButtonSimple2.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
+					`Button #2 background color was changed to '${ eStyledButtonBackground }'.` );
 			} );
 
 			QUnit.test( 'Reset Style', ( assert ) => {
@@ -258,24 +330,30 @@ jQuery( () => {
 				Elements.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
 
 				// Check pasted style exist.
-				assert.equal( eButtonStyled1.model.attributes.settings.attributes.background_color, '' );
-				assert.equal( eButtonStyled2.model.attributes.settings.attributes.background_color, '' );
+				assert.equal( eButtonStyled1.model.attributes.settings.attributes.background_color, '',
+					'Button #1 with custom style were (style) restored.' );
+				assert.equal( eButtonStyled2.model.attributes.settings.attributes.background_color, '',
+					'Button #2 with custom style were (style) restored.' );
 			} );
 
 			QUnit.test( 'Move Sections', ( assert ) => {
 				// Create Section at 0.
 				Elements.createSection();
 
-				const eSection1 = Elements.createSection( 3 ),
-					eSection2 = Elements.createSection( 4 );
+				const section1ColumnsCount = 3,
+					section2ColumnsCount = 4,
+					eSection1 = Elements.createSection( section1ColumnsCount ),
+					eSection2 = Elements.createSection( section2ColumnsCount );
 
 				Elements.multiMove( [ eSection1, eSection2 ], elementor.getPreviewContainer(), { at: 0 } );
 
 				// Validate first section have 3 columns.
-				assert.equal( elementor.getPreviewContainer().model.attributes.elements.first().attributes.elements.length, 3 );
+				assert.equal( elementor.getPreviewContainer().model.attributes.elements.first().attributes.elements.length, section1ColumnsCount,
+					`Section #1, '${ section1ColumnsCount }' columns were created.` );
 
 				// Validate second section have 4 columns.
-				assert.equal( elementor.getPreviewContainer().model.attributes.elements.at( 1 ).attributes.elements.length, 4 );
+				assert.equal( elementor.getPreviewContainer().model.attributes.elements.at( 1 ).attributes.elements.length, section2ColumnsCount,
+					`Section #2, '${ section2ColumnsCount }' columns were created.` );
 			} );
 
 			QUnit.test( 'Move Columns', ( assert ) => {
@@ -287,7 +365,8 @@ jQuery( () => {
 				Elements.multiMove( [ eColumn1, eColumn2 ], eSection2 );
 
 				// Validate.
-				assert.equal( eSection2.view.collection.length, 3 );
+				assert.equal( eSection2.view.collection.length, 3,
+					'Columns were moved.' );
 			} );
 
 			QUnit.test( 'Move Widgets', ( assert ) => {
@@ -300,8 +379,8 @@ jQuery( () => {
 				Elements.multiMove( [ eButton1, eButton2 ], eColumn2 );
 
 				// Validate.
-				assert.equal( eColumn1.view.collection.length, 0 );
-				assert.equal( eColumn2.view.collection.length, 2 );
+				assert.equal( eColumn1.view.collection.length, 0, 'Widgets were removed from the first column.' );
+				assert.equal( eColumn2.view.collection.length, 2, 'Widgets were moved/create at the second column.' );
 			} );
 
 			QUnit.test( 'Delete', ( assert ) => {
@@ -312,7 +391,7 @@ jQuery( () => {
 				Elements.multiDelete( [ eButton1, eButton2 ] );
 
 				// Validate.
-				assert.equal( eColumn.view.collection.length, 0 );
+				assert.equal( eColumn.view.collection.length, 0, 'Buttons were deleted.' );
 			} );
 		} );
 	} );
