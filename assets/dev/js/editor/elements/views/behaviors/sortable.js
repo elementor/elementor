@@ -135,7 +135,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		$e.run( 'document/elements/move', {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
-			target: this.view,
+			target: this.view.getContainer(),
 			options: {
 				at: ui.item.index(),
 			},

@@ -150,11 +150,28 @@ SectionView = BaseElementView.extend( {
 	},
 
 	resizeColumns: function() {
-		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
+		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() ),
+			containers = [],
+			settings = {};
 
-		this.collection.each( function( model, index ) {
-			model.setSetting( '_column_size', preset.preset[ index ] );
-			model.setSetting( '_inline_size', null );
+		this.children.each( ( columnView, index ) => {
+			const container = columnView.getContainer();
+
+			containers.push( container );
+
+			settings[ container.id ] = {
+				_column_size: preset.preset[ index ],
+				_inline_size: null,
+			};
+		} );
+
+		$e.run( 'document/elements/settings', {
+			containers,
+			settings,
+			isMultiSettings: true,
+			options: {
+				external: true,
+			},
 		} );
 	},
 
@@ -163,8 +180,17 @@ SectionView = BaseElementView.extend( {
 	},
 
 	resetColumnsCustomSize: function() {
-		this.collection.each( function( model ) {
-			model.setSetting( '_inline_size', null );
+		this.children.each( ( columnView ) => {
+			$e.run( 'document/elements/settings', {
+				container: columnView.getContainer(),
+				settings: {
+					_inline_size: null,
+				},
+				options: {
+					external: true,
+					lazy: true,
+				},
+			} );
 		} );
 	},
 
@@ -207,10 +233,6 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) + 1 );
 	},
 
-	getPreviousColumn: function( columnView ) {
-		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
-	},
-
 	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {
 		columnView.ui.percentsTooltip.show();
 
@@ -225,39 +247,6 @@ SectionView = BaseElementView.extend( {
 		columnView.ui.percentsTooltip.hide();
 
 		nextColumnView.ui.percentsTooltip.hide();
-	},
-
-	resizeChild: function( childView, currentSize, newSize ) {
-		var nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
-
-		if ( ! nextChildView ) {
-			throw new ReferenceError( 'There is not any next column' );
-		}
-
-		var minColumnSize = 2,
-			$nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		if ( nextElementNewSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooLarge );
-		}
-
-		if ( newSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooSmall );
-		}
-
-		$e.run( 'document/elements/settings', {
-			container: nextChildView.getContainer(),
-			settings: {
-				_inline_size: nextElementNewSize,
-			},
-			options: {
-				lazy: true,
-			},
-		} );
-
-		return true;
 	},
 
 	destroyAddSectionView: function() {
@@ -328,22 +317,19 @@ SectionView = BaseElementView.extend( {
 
 	onChildviewRequestResize: function( columnView, ui ) {
 		// Get current column details
-		var currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
+		const currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
 
 		ui.element.css( {
 			width: '',
 			left: 'initial', // Fix for RTL resizing
 		} );
 
-		var newSize = this.getColumnPercentSize( ui.element, ui.size.width );
+		const newSize = ( ui.size.width / ui.element.parent().width() * 100 ).toFixed( 3 );
 
-		try {
-			this.resizeChild( columnView, currentSize, newSize );
-		} catch ( e ) {
-			return;
-		}
-
-		columnView.model.setSetting( '_inline_size', newSize );
+		$e.run( 'document/elements/resizeColumn', {
+			container: columnView.getContainer(),
+			width: newSize,
+		} );
 	},
 
 	onDestroy: function() {

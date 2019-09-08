@@ -7,10 +7,10 @@ export default class extends elementorModules.common.Component {
 
 	// TODO: find better solution.
 	dependency( command, args ) {
+		const { containers = [ args.container ] } = args;
+
 		switch ( command ) {
 			case 'document/elements/create':
-				const { containers = [ args.container ] } = args;
-
 				if ( 'column' === args.model.elType ) {
 					const canAddColumn = ! containers.some( ( container ) => {
 						return container.view.isCollectionFilled();
@@ -20,7 +20,16 @@ export default class extends elementorModules.common.Component {
 						throw Error( 'Can\'t add column :(' );
 					}
 				}
+				break;
 
+			case 'document/elements/settings':
+				if ( args.settings && args.settings._inline_size && ! args.isMultiSettings ) {
+					$e.run( 'document/elements/resizeColumn', {
+						containers: containers,
+						width: args.settings._inline_size,
+					} );
+					return false;
+				}
 				break;
 
 			default:
@@ -75,6 +84,7 @@ export default class extends elementorModules.common.Component {
 			paste: ( args ) => ( new Commands.Paste( args ) ).run(),
 			pasteStyle: ( args ) => ( new Commands.PasteStyle( args ) ).run(),
 			resetStyle: ( args ) => ( new Commands.ResetStyle( args ) ).run(),
+			resizeColumn: ( args ) => ( new Commands.ResizeColumn( args ) ).run(),
 			settings: ( args ) => ( new Commands.Settings( args ) ).run(),
 		};
 	}

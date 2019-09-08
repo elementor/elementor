@@ -24,6 +24,9 @@ export default class Settings extends Base {
 			$e.run( 'document/elements/settings', {
 				container,
 				settings: isRedo ? changes.new : changes.old,
+				options: {
+					external: true,
+				},
 			} );
 		} );
 	}
