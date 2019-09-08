@@ -99,7 +99,6 @@ const Module = function() {
 				break;
 			default:
 				message = 'An error occurs';
-				break;
 		}
 
 		return message;
