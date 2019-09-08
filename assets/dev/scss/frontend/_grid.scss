@@ -65,6 +65,58 @@
 	}
 }
 
+// TODO: BC since 2.7.0
+.elementor-bc-flex-widget {
+
+	.elementor-section-content-top {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: flex-start;
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-section-content-middle {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: center;
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-section-content-bottom {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: flex-end;
+					}
+				}
+			}
+		}
+	}
+}
+
 // Row
 .elementor-row {
 	width: 100%;
@@ -254,7 +306,7 @@ ul.elementor-icon-list-items.elementor-inline-items {
 		}
 
 		@for $i from 1 through 12 {
-			
+
 			&#{$device}-#{$i} {
 				.elementor-grid {
 					grid-template-columns: repeat(#{$i} , 1fr);

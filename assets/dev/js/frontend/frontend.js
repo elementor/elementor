@@ -103,7 +103,7 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getCurrentDeviceSetting( settings, settingKey ) {
-		return this.getDeviceSetting( settings, settingKey, elementorFrontend.getCurrentDeviceMode() );
+		return this.getDeviceSetting( elementorFrontend.getCurrentDeviceMode(), settings, settingKey );
 	}
 
 	isEditMode() {

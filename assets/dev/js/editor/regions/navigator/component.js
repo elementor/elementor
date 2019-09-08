@@ -11,11 +11,13 @@ export default class extends elementorModules.common.Component {
 
 	defaultCommands() {
 		return {
+			open: () => $e.route( this.getNamespace() ),
+			close: () => this.close(),
 			toggle: () => {
-				if ( $e.routes.isPartOf( 'navigator' ) ) {
+				if ( this.isOpen ) {
 					this.close();
 				} else {
-					$e.route( 'navigator' );
+					$e.route( this.getNamespace() );
 				}
 			},
 		};

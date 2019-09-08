@@ -14,6 +14,20 @@ export default class extends Component {
 		} );
 	}
 
+	defaultCommands() {
+		return {
+			open: () => $e.route( this.getNamespace() ),
+			close: () => this.close(),
+			toggle: () => {
+				if ( this.isOpen ) {
+					this.close();
+				} else {
+					$e.route( this.getNamespace() );
+				}
+			},
+		};
+	}
+
 	defaultRoutes() {
 		return {
 			'': () => { /* Nothing to do, it's already rendered. */ },
