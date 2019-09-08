@@ -34,9 +34,8 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 
 	onInit( ...args ) {
 		super.onInit( ...args );
-
 		if ( this.getAnimation() ) {
-			elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
+			elementorFrontend.waypoint( this.$element, () => this.animate() );
 		}
 	}
 
