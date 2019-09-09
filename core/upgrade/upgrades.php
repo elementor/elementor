@@ -559,21 +559,44 @@ class Upgrades {
 
 	/**
 	 *  Update database to separate page from post.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @param string $type
+	 *
+	 * @return bool
 	 */
-	public static function _v_2_7_0_rename_document_types_to_wp() {
+	public static function rename_document_base_to_wp( $updater, $type ) {
 		global $wpdb;
 
-		$wpdb->query( "UPDATE $wpdb->postmeta SET meta_value ='wp-page'
-			WHERE meta_key = '_elementor_template_type' && post_id in (
-		    	SELECT p1.ID FROM $wpdb->posts AS p LEFT JOIN $wpdb->posts AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) WHERE p.post_type = 'page'
-			);
-		 ");
+		$post_ids = $updater->query_col( $wpdb->prepare(
+			"SELECT p1.ID FROM {$wpdb->posts} AS p 
+					LEFT JOIN {$wpdb->posts} AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) 
+					WHERE p.post_type = %s;", $type ) );
 
-		$wpdb->query( "UPDATE $wpdb->postmeta SET meta_value ='wp-post'
-			WHERE meta_key = '_elementor_template_type' && post_id in (
-		    	SELECT p1.ID FROM $wpdb->posts AS p LEFT JOIN $wpdb->posts AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) WHERE p.post_type = 'post'
-			);
-		 ");
+		if ( empty( $post_ids ) ) {
+			return false;
+		}
+
+		$sql_post_ids = implode( ',', $post_ids );
+
+		$wpdb->query( $wpdb->prepare(
+			"UPDATE $wpdb->postmeta SET meta_value = %s
+			WHERE meta_key = '_elementor_template_type' && post_id in ( %s );
+		 ", 'wp-' . $type, $sql_post_ids ) );
+
+		return $updater->should_run_again( $post_ids );
+	}
+
+	/**
+	 *  Update database to separate page from post.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
+		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
 	}
 
 	/**
