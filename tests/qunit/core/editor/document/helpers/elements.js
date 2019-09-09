@@ -33,6 +33,13 @@ export default class {
 		} );
 	}
 
+	static resizeColumn( eContainer, width ) {
+		$e.run( 'document/elements/resizeColumn', {
+			container: eContainer,
+			width,
+		} );
+	}
+
 	static createButton( eContainer, settings = {} ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,

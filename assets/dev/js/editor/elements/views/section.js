@@ -100,6 +100,7 @@ SectionView = BaseElementView.extend( {
 		var isModelInstance = model instanceof Backbone.Model,
 			isInner = this.isInner();
 
+		// TODO: handle this.
 		if ( isModelInstance ) {
 			model.set( 'isInner', isInner );
 		} else {
@@ -119,10 +120,6 @@ SectionView = BaseElementView.extend( {
 			forcePlaceholderSize: true,
 			tolerance: 'pointer',
 		};
-	},
-
-	getColumnPercentSize: function( element, size ) {
-		return +( size / element.parent().width() * 100 ).toFixed( 3 );
 	},
 
 	getDefaultStructure: function() {
@@ -213,7 +210,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	isCollectionFilled: function() {
-		var MAX_SIZE = 10,
+		var MAX_SIZE = 10, // TODO: Not the best place.
 			columnsCount = this.collection.length;
 
 		return ( MAX_SIZE <= columnsCount );
@@ -224,7 +221,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	getColumnAt: function( index ) {
-		var model = this.collection.at( index );
+		const model = this.collection.at( index );
 
 		return model ? this.children.findByModelCid( model.cid ) : null;
 	},
@@ -316,9 +313,6 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onChildviewRequestResize: function( columnView, ui ) {
-		// Get current column details
-		const currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
-
 		ui.element.css( {
 			width: '',
 			left: 'initial', // Fix for RTL resizing
@@ -329,6 +323,9 @@ SectionView = BaseElementView.extend( {
 		$e.run( 'document/elements/resizeColumn', {
 			container: columnView.getContainer(),
 			width: newSize,
+			options: {
+				lazy: true,
+			},
 		} );
 	},
 

@@ -120,13 +120,9 @@ jQuery( () => {
 
 				Elements.resizeColumn( eColumn1, newSize );
 
-				let done = assert.async(); // Pause the test till done.
+				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
-				// Since resize columns using lazy, we should wait for it to be done.
-				setTimeout( () => {
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-					// Exist in history.
+				// Exist in history.
 					inHistoryValidate( assert, historyItem, 'change', 'column' );
 
 					// Undo
@@ -136,13 +132,10 @@ jQuery( () => {
 					assert.equal( eColumn2.settings.attributes._inline_size, column2InlineSize, 'Column2 back to default' );
 
 					// Redo
-					redoValidate( assert, historyItem );
+				redoValidate( assert, historyItem );
 
-					assert.equal( eColumn1.settings.attributes._inline_size, newSize, 'Column1 restored' );
-					//assert.equal( eColumn2.settings.attributes._inline_size, column2InlineSize, 'Column2 back restored' ); TODO: In test resize columns works different ;(
-
-					done();
-				}, 1000 ); // TODO: make timeout access able.
+				assert.equal( eColumn1.settings.attributes._inline_size, newSize, 'Column1 restored' );
+				//assert.equal( eColumn2.settings.attributes._inline_size, column2InlineSize + 100, 'Column2 back restored' ); // TODO: In test resize columns works different ;(
 			} );
 
 			QUnit.test( 'Create Widget', ( assert ) => {

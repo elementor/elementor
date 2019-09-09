@@ -23,7 +23,11 @@ export default class extends elementorModules.common.Component {
 				break;
 
 			case 'document/elements/settings':
-				if ( args.settings && args.settings._inline_size && ! args.isMultiSettings ) {
+				if ( ! args.settings ) {
+					return;
+				}
+
+				if ( args.settings._inline_size && ! args.isMultiSettings ) {
 					$e.run( 'document/elements/resizeColumn', {
 						containers: containers,
 						width: args.settings._inline_size,
