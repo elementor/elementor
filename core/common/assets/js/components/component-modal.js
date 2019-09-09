@@ -2,7 +2,7 @@ import Component from './component';
 
 export default class extends Component {
 	getModalLayout() {
-		throw Error( 'getModalLayout must be override.' );
+		this.forceMethodImplementation( 'getModalLayout' );
 	}
 
 	onInit() {

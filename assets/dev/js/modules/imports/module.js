@@ -90,10 +90,22 @@ const Module = function() {
 		return self.setSettings( keyStack.join( '.' ), value, settingsContainer[ currentKey ] );
 	};
 
-	this.forceMethodImplementation = function( methodArguments ) {
-		const functionName = methodArguments.callee.name;
+	this.getErrorMessage = function( type, functionName ) {
+		let message;
 
-		throw new ReferenceError( 'The method ' + functionName + ' must to be implemented in the inheritor child.' );
+		switch ( type ) {
+			case 'forceMethodImplementation':
+				message = `The method '${ functionName }' must to be implemented in the inheritor child.`;
+				break;
+			default:
+				message = 'An error occurs';
+		}
+
+		return message;
+	};
+
+	this.forceMethodImplementation = function( functionName ) {
+		throw new Error( this.getErrorMessage( 'forceMethodImplementation', functionName ) );
 	};
 
 	this.on = function( eventName, callback ) {

@@ -11,11 +11,6 @@ export default class extends elementorModules.common.ComponentModal {
 
 	defaultCommands() {
 		return Object.assign( super.defaultCommands(), {
-			search: ( args ) => $e.route( this.getNamespace(), {
-				onAfter: () => {
-					this.layout.modalContent.currentView.ui.searchInput.val( args.text ).trigger( 'input' );
-				},
-			} ),
 			'navigate/down': () => this.getItemsView().activateNextItem(),
 			'navigate/up': () => this.getItemsView().activateNextItem( true ),
 			'navigate/select': ( event ) => this.getItemsView().goToActiveItem( event ),
