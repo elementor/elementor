@@ -271,17 +271,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 	updateElementModel: function( value ) {
 		this.setValue( value );
 	},
-
-	isRepeater: function() {
-		if ( this._parent &&
-			this._parent._parent &&
-			this._parent._parent.model &&
-			this._parent._parent.model.attributes.is_repeater ) {
-			return true;
-		}
-
-		return false;
-	},
 }, {
 	// Static methods
 	getStyleValue: function( placeholder, controlValue, controlData ) {

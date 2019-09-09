@@ -1,4 +1,5 @@
 import Elements from '../helpers/elements';
+import Container from '../../../../../../assets/dev/js/editor/container/container';
 
 const undoValidate = ( assert, historyItem ) => {
 	$e.run( 'document/history/undo' );
@@ -39,12 +40,11 @@ const recreatedValidate = ( assert, eController ) => {
 jQuery( () => {
 	QUnit.module( 'Component: document/history', ( hooks ) => {
 		hooks.beforeEach( () => {
-			// TODO: Whatever you wish.
+			elementor.history.history.getItems().reset();
 		} );
 
 		QUnit.module( 'miscellaneous', () => {
 			QUnit.test( 'Saver Editor Flag', ( assert ) => {
-				elementor.history.history.getItems().reset();
 				elementor.saver.setFlagEditorChange( false );
 
 				Elements.createSection( 1 );
@@ -65,6 +65,14 @@ jQuery( () => {
 
 				// Saver editor flag is `true`.
 				assert.equal( elementor.saver.isEditorChanged(), true, 'After create, saver editor flag is "true".' );
+			} );
+
+			QUnit.test( 'History Rollback', ( assert ) => {
+				$e.run( 'document/elements/settings', { container: ( new Container( {} ) ), settings: {} } );
+
+				const historyItem = elementor.history.history.getItems().at( 0 );
+
+				assert.equal( historyItem, undefined, 'History was rolled back.' );
 			} );
 		} );
 
@@ -123,15 +131,15 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-					inHistoryValidate( assert, historyItem, 'change', 'column' );
+				inHistoryValidate( assert, historyItem, 'change', 'column' );
 
-					// Undo
-					undoValidate( assert, historyItem );
+				// Undo
+				undoValidate( assert, historyItem );
 
-					assert.equal( eColumn1.settings.attributes._inline_size, column1InlineSize, 'Column1 back to default' );
-					assert.equal( eColumn2.settings.attributes._inline_size, column2InlineSize, 'Column2 back to default' );
+				assert.equal( eColumn1.settings.attributes._inline_size, column1InlineSize, 'Column1 back to default' );
+				assert.equal( eColumn2.settings.attributes._inline_size, column2InlineSize, 'Column2 back to default' );
 
-					// Redo
+				// Redo
 				redoValidate( assert, historyItem );
 
 				assert.equal( eColumn1.settings.attributes._inline_size, newSize, 'Column1 restored' );

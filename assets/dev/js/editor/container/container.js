@@ -13,7 +13,14 @@ export default class Container {
 	panel;
 
 	constructor( args ) {
-		Object.entries( args ).forEach( ( [ key, value ] ) => {
+		args = Object.entries( args );
+
+		// If empty.
+		if ( 0 === args.length ) {
+			return;
+		}
+
+		args.forEach( ( [ key, value ] ) => {
 			this[ key ] = value;
 		} );
 
