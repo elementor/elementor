@@ -995,12 +995,13 @@ jQuery( () => {
 			}
 		};
 
+		const instance = new Component();
+
 		assert.throws(
 			() => {
-				const instance = new Component();
 				instance.getModalLayout();
 			},
-			new Error( 'getModalLayout must be override.' )
+			new Error( instance.getErrorMessage( 'forceMethodImplementation', 'getModalLayout' ) )
 		);
 	} );
 

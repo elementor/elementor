@@ -10,11 +10,11 @@ export default class extends elementorModules.common.ComponentModal {
 	}
 
 	defaultCommands() {
-		return {
+		return Object.assign( super.defaultCommands(), {
 			'navigate/down': () => this.getItemsView().activateNextItem(),
 			'navigate/up': () => this.getItemsView().activateNextItem( true ),
 			'navigate/select': ( event ) => this.getItemsView().goToActiveItem( event ),
-		};
+		} );
 	}
 
 	defaultShortcuts() {

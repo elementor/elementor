@@ -61,9 +61,9 @@ export default class extends elementorModules.common.ComponentModal {
 	}
 
 	defaultCommands() {
-		return {
-			show: this.show,
-		};
+		return Object.assign( super.defaultCommands(), {
+			open: this.show,
+		} );
 	}
 
 	defaultShortcuts() {
