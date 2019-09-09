@@ -105,6 +105,8 @@ export default class extends elementorModules.Module {
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
 
+		this.trigger( 'run', component, command, args );
+
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
 		}

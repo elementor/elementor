@@ -140,6 +140,8 @@ class App extends BaseApp {
 		);
 
 		$this->print_config();
+
+		do_action( 'elementor/common/after_register_scripts', $this );
 	}
 
 	/**
