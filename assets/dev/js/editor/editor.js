@@ -557,7 +557,7 @@ const App = Marionette.Application.extend( {
 
 	openLibraryOnStart: function() {
 		if ( '#library' === location.hash ) {
-			$e.run( 'library/show' );
+			$e.run( 'library/open' );
 
 			location.hash = '';
 		}
