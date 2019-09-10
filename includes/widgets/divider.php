@@ -459,6 +459,7 @@ class Widget_Divider extends Widget_Base {
 					],
 				],
 				'selectors' => [
+					'{{WRAPPER}} .elementor-divider' => 'text-align: {{VALUE}}',
 					'{{WRAPPER}} .elementor-divider-separator' => 'margin: 0 auto; margin-{{VALUE}}: 0',
 				],
 			]
