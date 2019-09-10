@@ -488,20 +488,6 @@ button.swiper-pagination-bullet {
 			}
 		}
 	}
-
-	&inside {
-
-		.elementor-swiper-button {
-
-			&-prev {
-				left: 10px;
-			}
-
-			&-next {
-				right: 10px;
-			}
-		}
-	}
 }
 
 .swiper-image-stretch {
@@ -523,6 +509,14 @@ button.swiper-pagination-bullet {
 	color: $slides_gui;
 	top: 50%;
 	transform: translateY(-50%);
+
+	&-prev {
+		left: 10px;
+	}
+
+	&-next {
+		right: 10px;
+	}
 
 	&.swiper-button-disabled {
 		opacity: 0.3;
