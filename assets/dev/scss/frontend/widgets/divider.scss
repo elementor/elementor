@@ -11,6 +11,7 @@
 	--divider-pattern-height: 24px;
 	--divider-pattern-size: 20px;
 	--divider-pattern-url: none;
+	--divider-pattern-repeat: repeat-x;
 
 	.elementor-divider {
 		line-height: 0;
@@ -111,8 +112,7 @@
 				min-height: var(--divider-pattern-height);
 				background-image: var(--divider-pattern-url);
 				background-size: var(--divider-pattern-size) 100%;
-				background-position: center;
-				background-repeat: round;
+				background-repeat: var(--divider-pattern-repeat);
 			}
 
 			&.elementor-widget-divider--view {
@@ -127,6 +127,10 @@
 
 	&--no-spacing {
 		--divider-pattern-size: auto;
+	}
+
+	&--bg-round {
+		--divider-pattern-repeat: round;
 	}
 }
 

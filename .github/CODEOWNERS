@@ -6,7 +6,7 @@
 # Assets
 /assets/dev/js                                          @kobizz
 /assets/dev/js/editor/components                        @kobizz @matipojo
-/assets/dev/scss                                        @arielk @kobizz
+/assets/dev/scss                                        @kobizz
 
 # External Libraries
 /assets/lib                                             @kingyes
@@ -15,13 +15,14 @@
 # Tools
 /bin                                                    @kingyes
 /Gruntfile.js                                           @kingyes @bainternet
+/.grunt-config                                          @kingyes @bainternet
 
 # Core
 /core                                                   @kingyes
 /core/admin                                             @kingyes
 /core/base                                              @kingyes @matipojo @kobizz
 /core/common                                            @kobizz
-/core/common/modules/ajax                               @matipojo
+/core/common/modules/ajax                               @kobizz @matipojo
 /core/common/modules/connect                            @matipojo
 /core/common/modules/finder                             @kobizz
 /core/debug                                             @matipojo
@@ -44,12 +45,14 @@
 /includes/base                                          @kingyes @matipojo @kobizz
 /includes/controls                                      @kingyes @kobizz
 /includes/editor-templates                              @kobizz
-/includes/elements                                      @kingyes @matipojo
+/includes/elements/column.php                           @kingyes @kobizz
+/includes/elements/repeater.php                         @kingyes @matipojo
+/includes/elements/section.php                          @kingyes @kobizz
 /includes/libraries                                     @kingyes @matipojo
 /includes/managers                                      @kingyes @matipojo @kobizz
 /includes/schemes                                       @kobizz
 
-/includes/settings                                      @kingyes
+/includes/settings                                      @kingyes @kobizz
 /includes/settings/system-info                          @kobizz
 
 # Template Library
