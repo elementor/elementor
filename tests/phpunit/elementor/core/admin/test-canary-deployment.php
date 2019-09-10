@@ -1,23 +1,29 @@
 <?php
-namespace Elementor\Testing\Core\Admin;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Admin;
 
-use Elementor\Core\Admin\Canary_Deployment;
+use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
 
-class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
+class Test_Canary_Deployment extends Elementor_Test_Base {
+
+	const CURRENT_VERSION = ELEMENTOR_VERSION;
+	const PLUGIN_BASE = ELEMENTOR_PLUGIN_BASE;
+	const PLUGIN_FILE = ELEMENTOR__FILE__;
+	const CANARY_DEPLOYMENT_CLASS = 'Elementor\Core\Admin\Canary_Deployment';
+	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
 
 	public function setUp() {
 		parent::setUp();
 
 		// Create an instance if not exist. (on test only this class).
-		\Elementor\Plugin::instance();
+		Plugin::instance();
 	}
 
 	/**
 	 * On first plugins updates check, the initial transient is empty. canary SHOULD NOT filter the data.
 	 */
 	public function test_wp_no_response() {
-		$canary_version = $this->increase_version( ELEMENTOR_VERSION );
+		$canary_version = $this->increase_version( static::CURRENT_VERSION );
 		$this->set_api_info( $canary_version );
 
 		// Empty data.
@@ -34,19 +40,19 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 	 * If the stable doesn't has updates. canary SHOULD add his new version.
 	 */
 	public function test_no_stable_update() {
-		$canary_version = $this->increase_version( ELEMENTOR_VERSION );
+		$canary_version = $this->increase_version( static::CURRENT_VERSION );
 		$this->set_api_info( $canary_version );
 
 		$filtered_transient = $this->canary_check();
 
-		$this->assertSame( $canary_version, $filtered_transient->response[ ELEMENTOR_PLUGIN_BASE ]->new_version );
+		$this->assertSame( $canary_version, $filtered_transient->response[ static::PLUGIN_BASE ]->new_version );
 	}
 
 	/**
 	 * If both canary and stable version has updates, but canary is newer. canary SHOULD add his new version.
 	 */
 	public function test_canary_is_newer() {
-		$stable_newer_version = $this->increase_version( ELEMENTOR_VERSION );
+		$stable_newer_version = $this->increase_version( static::CURRENT_VERSION );
 
 		$canary_version = $this->increase_version( $stable_newer_version );
 		$this->set_api_info( $canary_version );
@@ -55,7 +61,7 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 		$wp_plugins_transient = (object)[
 			'last_checked' => time(),
 			'response' => [
-				ELEMENTOR_PLUGIN_BASE => (object) [
+				static::PLUGIN_BASE => (object) [
 					'new_version' => $stable_newer_version,
 				]
 			]
@@ -63,14 +69,14 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 
 		$filtered_transient = $this->canary_check( $wp_plugins_transient );
 
-		$this->assertSame( $canary_version, $filtered_transient->response[ ELEMENTOR_PLUGIN_BASE ]->new_version );
+		$this->assertSame( $canary_version, $filtered_transient->response[ static::PLUGIN_BASE ]->new_version );
 	}
 
 	/**
 	 * If the stable version has newer updates. canary SHOULD NOT add his new version.
 	 */
 	public function test_stable_is_newer() {
-		$canary_version = $this->increase_version( ELEMENTOR_VERSION );
+		$canary_version = $this->increase_version( static::CURRENT_VERSION );
 		$this->set_api_info( $canary_version );
 
 		$stable_newer_version =  $this->increase_version( $canary_version );
@@ -79,7 +85,7 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 		$wp_plugins_transient = (object)[
 			'last_checked' => time(),
 			'response' => [
-				ELEMENTOR_PLUGIN_BASE => (object) [
+				static::PLUGIN_BASE => (object) [
 					'new_version' => $stable_newer_version,
 				]
 			]
@@ -87,7 +93,7 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 
 		$filtered_transient = $this->canary_check( $wp_plugins_transient );
 
-		$this->assertSame( $stable_newer_version, $filtered_transient->response[ ELEMENTOR_PLUGIN_BASE ]->new_version );
+		$this->assertSame( $stable_newer_version, $filtered_transient->response[ static::PLUGIN_BASE ]->new_version );
 	}
 
 	public function test_condition_type_wordpress() {
@@ -146,8 +152,6 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 	}
 
 	public function test_condition_type_plugin() {
-		// On tests, the plugin base (for `is_plugin_active`) is 'elementor/elementor.php', but the real file (for `get_plugin_data`) is ELEMENTOR_PLUGIN_BASE.
-
 		// Not active.
 		$filtered_transient = $this->check_condition( [
 			'type' => 'plugin',
@@ -157,10 +161,11 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 		] );
 		$this->assertNotEmpty( $filtered_transient->response );
 
+		// On tests, the plugin base (for `is_plugin_active`) is 'elementor/elementor.php', but the real file (for `get_plugin_data`) is static::PLUGIN_BASE.
 		$condition = [
 			'type' => 'plugin',
 			'plugin' => PLUGIN_PATH, // @see tests/bootstrap.php:14.
-			'plugin_file' => ELEMENTOR__FILE__,
+			'plugin_file' => static::PLUGIN_FILE,
 			'operator' => '>',
 		];
 
@@ -170,17 +175,17 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 		$this->assertNotEmpty( $filtered_transient->response );
 
 		// Bigger than.
-		$condition['version'] = $this->increase_version( ELEMENTOR_VERSION );
+		$condition['version'] = $this->increase_version( static::CURRENT_VERSION );
 		$filtered_transient = $this->check_condition( $condition );
 		$this->assertEmpty( $filtered_transient->response );
 
 		// Equal.
-		$condition['version'] = ELEMENTOR_VERSION;
+		$condition['version'] = static::CURRENT_VERSION;
 		$filtered_transient = $this->check_condition( $condition );
 		$this->assertEmpty( $filtered_transient->response );
 
 		// Lower than.
-		$condition['version'] = $this->decrease_version( ELEMENTOR_VERSION );
+		$condition['version'] = $this->decrease_version( static::CURRENT_VERSION );
 		$filtered_transient = $this->check_condition( $condition );
 
 		$this->assertNotEmpty( $filtered_transient->response );
@@ -261,7 +266,7 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 	}
 
 	private function check_conditions_group( $group ) {
-		$canary_version = $this->increase_version( ELEMENTOR_VERSION );
+		$canary_version = $this->increase_version( static::CURRENT_VERSION );
 
 		$this->set_api_info( $canary_version, [
 			$group
@@ -276,7 +281,7 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 	}
 
 	private function set_api_info( $canary_version, $conditions = [] ) {
-		$elementor_api_data_transient_key = 'elementor_remote_info_api_data_' . ELEMENTOR_VERSION;
+		$elementor_api_data_transient_key = self::TRANSIENT_KEY_PREFIX . static::CURRENT_VERSION;
 
 		set_transient( $elementor_api_data_transient_key, [
 			'canary_deployment' => [
@@ -306,7 +311,8 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 			];
 		}
 
-		$cd = new Canary_Deployment();
+		$class_name = static::CANARY_DEPLOYMENT_CLASS;
+		$cd = new $class_name();
 
 		return $cd->check_version( $transient );
 	}
