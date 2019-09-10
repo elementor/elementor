@@ -622,4 +622,23 @@ class Upgrades {
 
 		return ( $post_count === $updater->get_limit() );
 	}
+
+	/**
+	 * Format was changed.
+	 */
+	public static function _v_2_7_1_remove_old_usage_data() {
+		delete_option( 'elementor_elements_usage' );
+		delete_post_meta_by_key( '_elementor_elements_usage' );
+	}
+
+	/**
+	 * Recalc usage.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_2_7_1_recalc_usage_data( $updater ) {
+		return self::_v_2_7_0_recalc_usage_data( $updater );
+	}
 }

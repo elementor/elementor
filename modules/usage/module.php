@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Module extends BaseModule {
 	const GENERAL_TAB = 'general';
-	const META_KEY = '_elementor_elements_usage';
-	const OPTION_NAME = 'elementor_elements_usage';
+	const META_KEY = '_elementor_controls_usage';
+	const OPTION_NAME = 'elementor_controls_usage';
 
 	/**
 	 * @var bool
