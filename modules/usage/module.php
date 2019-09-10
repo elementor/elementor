@@ -236,7 +236,7 @@ class Module extends BaseModule {
 			$this->after_document_save( $document );
 		}
 
-		return $query->found_posts;
+		return count( $query->posts );
 	}
 
 	/**
