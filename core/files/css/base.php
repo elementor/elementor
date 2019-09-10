@@ -494,6 +494,9 @@ abstract class Base extends Base_File {
 			}
 
 			if ( ! empty( $parsed_dynamic_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] ) ) {
+				// Dynamic CSS should not be added to the CSS files.
+				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
+				// and printed in a style tag.
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
 				continue;
 			}

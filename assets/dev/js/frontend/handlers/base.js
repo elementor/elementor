@@ -188,7 +188,13 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			jQuery.each( settings.getActiveControls(), function( controlKey ) {
 				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
-					elementSettings[ controlKey ] = attributes[ controlKey ];
+					let value = attributes[ controlKey ];
+
+					if ( value.toJSON ) {
+						value = value.toJSON();
+					}
+
+					elementSettings[ controlKey ] = value;
 				}
 			} );
 		} else {
@@ -213,7 +219,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	onDestroy: function() {
-		this.removeEditorListeners();
+		if ( this.isEdit ) {
+			this.removeEditorListeners();
+		}
 
 		if ( this.unbindEvents ) {
 			this.unbindEvents();

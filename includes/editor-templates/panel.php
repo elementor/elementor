@@ -62,7 +62,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<i class="eicon-navigator" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo __( 'Navigator', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target elementor-toggle-state" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
 		<i class="eicon-history" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo __( 'History', 'elementor' ); ?></span>
 	</div>
@@ -148,10 +148,11 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div class="elementor-panel-navigation">
 		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) {
 			if ( 'content' !== tabSlug && ! elementor.userCan( 'design' ) ) {
-			return;
-		}
+				return;
+			}
+			$e.bc.ensureTab( 'panel/editor', tabSlug );
 			#>
-			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<a href="#">{{{ tabTitle }}}</a>
 			</div>
 		<# } ); #>
@@ -268,15 +269,4 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			<i class="eicon-close-circle"></i>
 		</div>
 	<# } #>
-</script>
-
-<script type="text/template" id="tmpl-elementor-panel-page-settings">
-	<div class="elementor-panel-navigation">
-		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
-			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-				<a href="#">{{{ tabTitle }}}</a>
-			</div>
-			<# } ); #>
-	</div>
-	<div id="elementor-panel-page-settings-controls"></div>
 </script>

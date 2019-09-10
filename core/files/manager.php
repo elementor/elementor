@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Manager {
 
+	private $files = [];
+
 	/**
 	 * Files manager constructor.
 	 *
@@ -30,6 +32,18 @@ class Manager {
 	 */
 	public function __construct() {
 		$this->register_actions();
+	}
+
+	public function get( $class, $args ) {
+		$id = $class . '-' . wp_json_encode( $args );
+
+		if ( ! isset( $this->files[ $id ] ) ) {
+			// Create an instance from dynamic args length.
+			$reflection_class = new \ReflectionClass( $class );
+			$this->files[ $id ] = $reflection_class->newInstanceArgs( $args );
+		}
+
+		return $this->files[ $id ];
 	}
 
 	/**
@@ -49,7 +63,7 @@ class Manager {
 			return;
 		}
 
-		$css_file = new Post_CSS( $post_id );
+		$css_file = Post_CSS::create( $post_id );
 
 		$css_file->delete();
 	}

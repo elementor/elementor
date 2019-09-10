@@ -101,23 +101,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	addPanelMenuItem: function() {
-		var menuSettings = this.getSettings( 'panelPage.menu' );
-
-		if ( ! menuSettings ) {
-			return;
-		}
-
-		var menuItemOptions = {
-			icon: menuSettings.icon,
-			title: this.getSettings( 'panelPage.title' ),
-			type: 'page',
-			pageName: this.getSettings( 'name' ) + '_settings',
-		};
-
-		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
-	},
-
 	onInit: function() {
 		this.initModel();
 
@@ -128,6 +111,30 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.debounceSave = _.debounce( this.save, 3000 );
 
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
+	},
+
+	/**
+	 * BC for custom settings without a JS component.
+	 */
+	addPanelMenuItem: function() {
+		const menuSettings = this.getSettings( 'panelPage.menu' );
+
+		if ( ! menuSettings ) {
+			return;
+		}
+
+		const namespace = 'panel/' + this.getSettings( 'name' ) + '-settings',
+			menuItemOptions = {
+			icon: menuSettings.icon,
+			title: this.getSettings( 'panelPage.title' ),
+			type: 'page',
+			pageName: this.getSettings( 'name' ) + '_settings',
+			callback: () => $e.route( `${ namespace }/settings` ),
+		};
+
+		$e.bc.ensureTab( namespace, 'settings', menuItemOptions.pageName );
+
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
 	},
 
 	onModelChange: function( model ) {
@@ -154,7 +161,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.addPanelPage();
 
 		if ( ! elementor.userCan( 'design' ) ) {
-			elementor.panel.currentView.setPage( 'page_settings' );
+			$e.route( 'panel/page-settings/settings' );
 		}
 	},
 } );

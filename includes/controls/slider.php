@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -69,6 +71,10 @@ class Control_Slider extends Control_Base_Units {
 				'labels' => [],
 				'scales' => 0,
 				'handles' => 'default',
+				'dynamic' => [
+					'categories' => [ TagsModule::NUMBER_CATEGORY ],
+					'property' => 'size',
+				],
 			]
 		);
 	}
@@ -90,20 +96,21 @@ class Control_Slider extends Control_Base_Units {
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<?php $this->print_units_template(); ?>
 			<div class="elementor-control-input-wrapper elementor-clearfix">
+				<div class="elementor-control-tag-area ">
 				<# if ( isMultiple && ( data.labels.length || data.scales ) ) { #>
 					<div class="elementor-slider__extra">
 						<# if ( data.labels.length ) { #>
-							<div class="elementor-slider__labels">
-								<# jQuery.each( data.labels, ( index, label ) => { #>
-									<div class="elementor-slider__label">{{{ label }}}</div>
-								<# } ); #>
-							</div>
+						<div class="elementor-slider__labels">
+							<# jQuery.each( data.labels, ( index, label ) => { #>
+								<div class="elementor-slider__label">{{{ label }}}</div>
+							<# } ); #>
+						</div>
 						<# } if ( data.scales ) { #>
-							<div class="elementor-slider__scales">
-								<# for ( var i = 0; i < data.scales; i++ ) { #>
-									<div class="elementor-slider__scale"></div>
-								<# } #>
-							</div>
+						<div class="elementor-slider__scales">
+							<# for ( var i = 0; i < data.scales; i++ ) { #>
+								<div class="elementor-slider__scale"></div>
+							<# } #>
+						</div>
 						<# } #>
 					</div>
 				<# } #>
@@ -113,6 +120,7 @@ class Control_Slider extends Control_Base_Units {
 						<input id="<?php echo $control_uid; ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" data-setting="size" />
 					</div>
 				<# } #>
+				</div>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

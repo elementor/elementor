@@ -42,7 +42,10 @@ module.exports = Marionette.Behavior.extend( {
 				{
 					name: 'navigator',
 					title: elementor.translate( 'navigator' ),
-					callback: elementor.navigator.open.bind( elementor.navigator, this.view.model ),
+					callback: () => $e.route( 'navigator', {
+						reOpen: true,
+						model: this.view.model,
+					} ),
 				},
 			],
 		} );
@@ -63,7 +66,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenu: function( event ) {
-		if ( elementorCommon.hotKeys.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
+		if ( $e.shortcuts.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 

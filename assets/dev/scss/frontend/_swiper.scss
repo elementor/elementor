@@ -10,6 +10,17 @@
 	overflow: hidden;
 	/* Fix of Webkit flickering */
 	z-index: 1;
+
+	.swiper-slide {
+
+		figure {
+			line-height: 0;
+		}
+	}
+
+	.elementor-lightbox-content-source {
+		display: none;
+	}
 }
 
 .swiper-container-no-flexbox .swiper-slide {
@@ -145,7 +156,7 @@
 
 /* Common Styles */
 .swiper-pagination-fraction, .swiper-pagination-custom, .swiper-container-horizontal > .swiper-pagination-bullets {
-	bottom: 10px;
+	bottom: 5px;
 	left: 0;
 	width: 100%;
 }
@@ -436,6 +447,86 @@ button.swiper-pagination-bullet {
 
 .swiper-scrollbar-cursor-drag {
 	cursor: move;
+}
+
+.elementor-pagination-position-outside {
+	$caption-space: 30px;
+
+	.swiper-container {
+		padding-bottom: $caption-space;
+	}
+
+	.elementor-swiper-button {
+		top: calc(50% - #{$caption-space} / 2);
+	}
+}
+
+.elementor-swiper {
+	position: relative;
+}
+
+.elementor-main-swiper {
+	position: static;
+}
+
+.elementor-arrows-position- {
+
+	&outside {
+
+		.swiper-container {
+			width: calc(100% - 60px);
+		}
+
+		.elementor-swiper-button {
+
+			&-prev {
+				left: 0;
+			}
+
+			&-next {
+				right: 0;
+			}
+		}
+	}
+
+	&inside {
+
+		.elementor-swiper-button {
+
+			&-prev {
+				left: 10px;
+			}
+
+			&-next {
+				right: 10px;
+			}
+		}
+	}
+}
+
+.swiper-image-stretch {
+
+	.swiper-slide {
+
+		.swiper-slide-image {
+			width: 100%;
+		}
+	}
+}
+
+.elementor-swiper-button {
+	position: absolute;
+	display: inline-flex; // Position exactly in center
+	z-index: 1;
+	cursor: pointer;
+	font-size: 25px;
+	color: $slides_gui;
+	top: 50%;
+	transform: translateY(-50%);
+
+	&.swiper-button-disabled {
+		opacity: 0.3;
+	}
 }
 
 /* Preloader */

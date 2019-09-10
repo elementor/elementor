@@ -1,9 +1,13 @@
 import Helpers from './utils/helpers';
 import Storage from './utils/storage';
-import HotKeys from './utils/hot-keys';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
+import Components from './components/components';
+import Commands from './components/commands';
+import Routes from './components/routes';
+import Shortcuts from './components/shortcuts';
+import BackwardsCompatibility from './components/backwards-compatibility';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -31,9 +35,21 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.storage = new Storage();
 
-		this.hotKeys = new HotKeys();
+		window.$e = {
+			components: new Components(),
+			commands: new Commands(),
+			routes: new Routes(),
+			shortcuts: new Shortcuts( jQuery( window ) ),
+			bc: new BackwardsCompatibility(),
 
-		this.hotKeys.bindListener( this.elements.$window );
+			run: ( ...args ) => {
+				return $e.commands.run.apply( $e.commands, args );
+			},
+
+			route: ( ...args ) => {
+				return $e.routes.to.apply( $e.routes, args );
+			},
+		};
 
 		this.dialogsManager = new DialogsManager.Instance();
 

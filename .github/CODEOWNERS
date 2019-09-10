@@ -1,0 +1,70 @@
+# Default
+*                                                       @kingyes
+*.js                                                    @kobizz
+*.php                                                   @matipojo
+
+# Assets
+/assets/dev/js                                          @kobizz
+/assets/dev/js/editor/components                        @kobizz @matipojo
+/assets/dev/scss                                        @kobizz
+
+# External Libraries
+/assets/lib                                             @kingyes
+/assets/shapes                                          @joshmarom
+
+# Tools
+/bin                                                    @kingyes
+/Gruntfile.js                                           @kingyes @bainternet
+/.grunt-config                                          @kingyes @bainternet
+
+# Core
+/core                                                   @kingyes
+/core/admin                                             @kingyes
+/core/base                                              @kingyes @matipojo @kobizz
+/core/common                                            @kobizz
+/core/common/modules/ajax                               @kobizz @matipojo
+/core/common/modules/connect                            @matipojo
+/core/common/modules/finder                             @kobizz
+/core/debug                                             @matipojo
+/core/document-types                                    @matipojo
+/core/dynamic-tags                                      @kobizz
+/core/editor                                            @kobizz
+/core/files                                             @kobizz @matipojo
+/core/logger                                            @matipojo
+/core/responsive                                        @kobizz
+/core/role-manager                                      @bainternet
+/core/settings                                          @matipojo
+/core/upgrade                                           @kingyes @matipojo
+/core/utils                                             @kingyes @matipojo @kobizz
+
+# Documentation
+/docs                                                   @bainternet
+
+# Includes
+/includes/admin-templates                               @kingyes @kobizz
+/includes/base                                          @kingyes @matipojo @kobizz
+/includes/controls                                      @kingyes @kobizz
+/includes/editor-templates                              @kobizz
+/includes/elements/column.php                           @kingyes @kobizz
+/includes/elements/repeater.php                         @kingyes @matipojo
+/includes/elements/section.php                          @kingyes @kobizz
+/includes/libraries                                     @kingyes @matipojo
+/includes/managers                                      @kingyes @matipojo @kobizz
+/includes/schemes                                       @kobizz
+
+/includes/settings                                      @kingyes @kobizz
+/includes/settings/system-info                          @kobizz
+
+# Template Library
+/includes/template-library                              @kingyes @kobizz
+
+# Widgets
+/includes/widgets                                       @kingyes @matipojo @kobizz
+
+# Modules
+/modules                                                @matipojo
+/modules/dynamic-tags                                   @matipojo @kobizz
+/modules/gutenberg                                      @kingyes @bainternet
+
+# Tests
+/tests                                                  @kingyes @matipojo
