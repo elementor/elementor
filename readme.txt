@@ -221,6 +221,14 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.7.1 - 2019-09-10 =
+* Fix: Self Hosted video lightbox closing when clicking on the video ([#8931](https://github.com/elementor/elementor/issues/8931))
+* Fix: Downgrade from v2.7.0 causes 500 errors
+* Fix: Vertical alignment issue in Safari browser ([#9034](https://github.com/elementor/elementor/issues/9034))
+* Fix: `contains` and `!contains` control conditions ([#9043](https://github.com/elementor/elementor/issues/9043))
+* Fix: Use background updater for v2.7 script task ([Topic](https://wordpress.org/support/topic/v2-7-not-stable/))
+* Fix: Backwards compatibility for previous versions using Divider widget
+
 = 2.7.0 - 2019-09-08 =
 * New: Added background slideshow to Section, Column and Inner Section elements ([#2898](https://github.com/elementor/elementor/issues/2898), [#4022](https://github.com/elementor/elementor/issues/4022))
 * New: Editor JS API to improve capabilities and stability ([Developers Blog Post](https://developers.elementor.com/elementor-2-7-new-editor-js-api-e/))
