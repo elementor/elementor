@@ -42,6 +42,10 @@ class Conditions {
 				return false !== array_search( $left_value, $right_value );
 			case '!in':
 				return false === array_search( $left_value, $right_value );
+			case 'contains':
+				return in_array( $right_value, $left_value );
+			case '!contains':
+				return ! in_array( $right_value, $left_value );
 			case '<':
 				return $left_value < $right_value;
 			case '<=':
