@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Module extends BaseModule {
 	const GENERAL_TAB = 'general';
-	const META_KEY = '_elementor_elements_usage';
-	const OPTION_NAME = 'elementor_elements_usage';
+	const META_KEY = '_elementor_controls_usage';
+	const OPTION_NAME = 'elementor_controls_usage';
 
 	/**
 	 * @var bool
@@ -236,7 +236,7 @@ class Module extends BaseModule {
 			$this->after_document_save( $document );
 		}
 
-		return $query->found_posts;
+		return count( $query->posts );
 	}
 
 	/**
