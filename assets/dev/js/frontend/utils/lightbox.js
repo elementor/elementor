@@ -139,7 +139,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			modal = this.getModal();
 
 		if ( 'hosted' === options.videoType ) {
-			var videoParams = jQuery.extend( { src: options.url, autoplay: '' }, options.videoParams );
+			var videoParams = jQuery.extend( { class: classes.preventClose, src: options.url, autoplay: '' }, options.videoParams );
 
 			$videoElement = jQuery( '<video>', videoParams );
 		} else {
