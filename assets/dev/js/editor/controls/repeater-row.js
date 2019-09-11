@@ -1,5 +1,3 @@
-import Container from "../container/container";
-
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	RepeaterRowView;
 

@@ -1,5 +1,3 @@
-import Container from '../../container/container';
-
 export default class {
 	/**
 	 * Function constructor().
@@ -37,7 +35,7 @@ export default class {
 
 		const containers = args.containers || [ args.container ];
 		containers.forEach( ( container ) => {
-			if ( ! ( container instanceof Container ) ) {
+			if ( ! ( container instanceof elementorModules.editor.Container ) ) {
 				throw Error( 'container invalid instance.' );
 			}
 		} );

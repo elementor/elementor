@@ -1,5 +1,4 @@
 import environment from '../../../../../../core/common/assets/js/utils/environment';
-import Container from '../../container/container';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -108,7 +107,7 @@ BaseElementView = BaseContainer.extend( {
 
 	getContainer() {
 		if ( ! this.container ) {
-			this.container = new Container( {
+			this.container = new elementorModules.editor.Container( {
 				id: this.model.id,
 				document: elementor.getPreviewContainer(),
 				view: this,

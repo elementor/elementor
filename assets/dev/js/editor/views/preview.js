@@ -1,4 +1,3 @@
-import Container from '../container/container';
 
 var BaseSectionsContainerView = require( 'elementor-views/base-sections-container' ),
 	Preview;
@@ -34,7 +33,7 @@ Preview = BaseSectionsContainerView.extend( {
 
 	getContainer() {
 		if ( ! this.container ) {
-			this.container = new Container( {
+			this.container = new elementorModules.editor.Container( {
 				id: 'document',
 				view: this,
 				model: this.model,

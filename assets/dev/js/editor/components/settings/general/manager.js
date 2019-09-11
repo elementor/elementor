@@ -1,5 +1,4 @@
 import Component from './component';
-import Container from '../../../container/container';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
@@ -28,7 +27,7 @@ module.exports = BaseSettings.extend( {
 			settings: elementor.settings.general.model,
 		} );
 
-		const container = new Container( {
+		const container = new elementorModules.editor.Container( {
 			id: editModel.id,
 			document: elementor.getPreviewContainer(),
 			view: '@see general/manager.js',

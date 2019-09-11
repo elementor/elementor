@@ -1,5 +1,3 @@
-import Container from '../../container/container';
-
 var TagPanelView = require( 'elementor-dynamic-tags/tag-panel-view' );
 
 module.exports = Marionette.Behavior.extend( {
@@ -132,7 +130,7 @@ module.exports = Marionette.Behavior.extend( {
 		if ( tagView.model ) {
 			const elementContainer = this.view.options.container;
 
-			tagView.options.container = new Container( {
+			tagView.options.container = new elementorModules.editor.Container( {
 				id: id,
 				document: elementContainer.document,
 				view: '@see dynamic-tags/control-behavior.js',

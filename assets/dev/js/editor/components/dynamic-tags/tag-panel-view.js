@@ -1,5 +1,3 @@
-import Container from '../../container/container';
-
 var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' );
 
 module.exports = Marionette.ItemView.extend( {

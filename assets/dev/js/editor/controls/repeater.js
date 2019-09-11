@@ -1,5 +1,3 @@
-import Container from "../container/container";
-
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	RepeaterRowView = require( 'elementor-controls/repeater-row' ),
 	ControlRepeaterItemView;
@@ -33,7 +31,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	childViewOptions: function( rowModel, index ) {
 		const elementContainer = this.getOption( 'container' );
 
-		elementContainer.children[ index ] = new Container( {
+		elementContainer.children[ index ] = new elementorModules.editor.Container( {
 			id: rowModel.get( '_id' ),
 			document: elementContainer.document,
 			view: '@see repeater.js',

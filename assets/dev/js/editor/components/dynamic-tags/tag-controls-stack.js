@@ -1,5 +1,3 @@
-import Container from '../../container/container';
-
 var EmptyView = require( 'elementor-dynamic-tags/tag-controls-stack-empty' );
 
 module.exports = elementorModules.editor.views.ControlsStack.extend( {

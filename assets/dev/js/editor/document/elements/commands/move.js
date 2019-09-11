@@ -1,11 +1,10 @@
 import Base from '../../commands/base';
-import Container from '../../../container/container';
 
 // Move.
 export default class extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
-		this.requireArgumentInstance( 'target', Container, args );
+		this.requireArgumentInstance( 'target', elementorModules.editor.Container, args );
 	}
 
 	getHistory( args ) {

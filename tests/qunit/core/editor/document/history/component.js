@@ -1,5 +1,4 @@
 import Elements from '../helpers/elements';
-import Container from '../../../../../../assets/dev/js/editor/container/container';
 
 const undoValidate = ( assert, historyItem ) => {
 	$e.run( 'document/history/undo' );
@@ -68,7 +67,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'History Rollback', ( assert ) => {
-				$e.run( 'document/elements/settings', { container: ( new Container( {} ) ), settings: {} } );
+				$e.run( 'document/elements/settings', { container: ( new elementorModules.editor.Container( {} ) ), settings: {} } );
 
 				const historyItem = elementor.history.history.getItems().at( 0 );
 
