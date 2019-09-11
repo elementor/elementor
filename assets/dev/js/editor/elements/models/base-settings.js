@@ -81,7 +81,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 						model: function( attributes, options ) {
 							options = options || {};
 
-							options.controls = field.fields;
+							options.controls = {};
+
+							Object.entries( field.fields ).map( ( [ key, item ] ) => {
+								options.controls[ item.name ] = item;
+							} );
 
 							if ( ! attributes._id ) {
 								attributes._id = elementor.helpers.getUniqueID();

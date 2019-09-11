@@ -67,10 +67,19 @@ export default class Settings extends Base {
 			delete container.oldValues;
 		} );
 
+		const settingsKeys = Object.keys( settings );
+
+		let subTitle = '';
+
+		if ( 1 === settingsKeys.length ) {
+			subTitle = containers[ 0 ].settings.options.controls[ settingsKeys[ 0 ] ].label;
+		}
+
 		let historyItem = {
 			containers,
 			data: { changes },
 			type: 'change',
+			subTitle: subTitle,
 			history: {
 				behavior: {
 					restore: Settings.restore,

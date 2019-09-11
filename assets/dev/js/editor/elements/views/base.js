@@ -109,6 +109,7 @@ BaseElementView = BaseContainer.extend( {
 		if ( ! this.container ) {
 			this.container = new elementorModules.editor.Container( {
 				id: this.model.id,
+				label: elementor.history.history.getModelLabel( this.model ),
 				document: elementor.getPreviewContainer(),
 				view: this,
 				model: this.model,

@@ -35,6 +35,7 @@ Preview = BaseSectionsContainerView.extend( {
 		if ( ! this.container ) {
 			this.container = new elementorModules.editor.Container( {
 				id: 'document',
+				label: elementor.config.document.panel.title,
 				view: this,
 				model: this.model,
 				settings: elementor.settings.page.model,

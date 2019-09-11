@@ -16,39 +16,16 @@ export default class extends elementorModules.common.Component {
 					throw Error( 'type is required.' );
 				}
 
-				if ( args.containers && 1 === args.containers.length ) {
-					args.container = args.containers[ 0 ];
+				const { containers = [ args.container ] } = args;
+
+				if ( ! containers.length ) {
+					throw Error( 'container or containers are required.' );
 				}
 
-				// TODO: rewrite & optimize.
 				if ( ! args.title ) {
-					if ( args.model ) {
-						const model = args.model.attributes || args.model;
-
-						// If model empty.
-						if ( 0 === Object.keys( model ).length ) {
-							args.title = elementor.translate( 'column' );
-							args.elementType = 'column';
-						} else {
-							args.title = elementor.history.history.getModelLabel( model );
-							args.elementType = model.elType;
-						}
-					} else if ( args.container ) {
-						const { container } = args,
-							elType = container.model.get( 'elType' );
-
-						if ( ! elType ) {
-							args.title = elementor.translate( 'section' );
-							args.elementType = 'section';
-						} else {
-							args.title = elementor.history.history.getModelLabel( container.model );
-							args.elementType = elType;
-						}
-					} else if ( args.containers ) {
-						args.title = elementor.translate( 'element' );
-					}
-
-					if ( args.containers && args.containers.length > 1 ) {
+					if ( 1 === containers.length ) {
+						args.title = containers[ 0 ].label;
+					} else {
 						args.title = elementor.translate( 'elements' );
 					}
 				}
