@@ -15,15 +15,34 @@
   --item-height: 0;
   --column: 0;
   --row: 0;
+  position: relative;
   flex-grow: 0;
   flex-shrink: 0;
   transition-property: top, left;
   transition-duration: var(--animation-duration); }
+  .e-gallery-item:not(:hover) .e-gallery-overlay {
+    display: none; }
 
 .e-gallery-image {
   background-position: center center;
   background-size: cover;
   width: 100%; }
+
+.e-gallery-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  flex-direction: column;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5); }
+  .e-gallery-overlay__title {
+    font-size: 24px; }
 
 .e-gallery-grid:not(.e-gallery--animated) {
   display: grid;
