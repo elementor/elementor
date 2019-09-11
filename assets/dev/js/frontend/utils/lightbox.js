@@ -5,6 +5,12 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	swiper: null,
 
+	videoType: null,
+
+	apiProvider: null,
+
+	player: null,
+
 	getDefaultSettings: function() {
 		return {
 			classes: {
@@ -269,28 +275,94 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	playSlideVideo: function() {
-		var $activeSlide = this.getSlide( 'active' ),
+		const $activeSlide = this.getSlide( 'active' ),
 			videoURL = $activeSlide.data( 'elementor-slideshow-video' );
 
 		if ( ! videoURL ) {
 			return;
 		}
 
-		var classes = this.getSettings( 'classes' ),
+		const classes = this.getSettings( 'classes' ),
 			$videoContainer = jQuery( '<div>', { class: classes.videoContainer + ' ' + classes.invisible } ),
 			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
-			$videoFrame = jQuery( '<iframe>', { src: videoURL } ),
 			$playIcon = $activeSlide.children( '.' + classes.playButton );
 
 		$videoContainer.append( $videoWrapper );
 
-		$videoWrapper.append( $videoFrame );
-
 		$activeSlide.append( $videoContainer );
 
-		$playIcon.addClass( classes.playing ).removeClass( classes.hidden );
+		if ( -1 !== videoURL.indexOf( 'vimeo.com' ) ) {
+			this.videoType = 'vimeo';
+			this.apiProvider = elementorFrontend.utils.vimeo;
+		} else if ( videoURL.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+			this.videoType = 'youtube';
+			this.apiProvider = elementorFrontend.utils.youtube;
+		}
 
-		$videoFrame.on( 'load', function() {
+		const videoID = this.apiProvider.getVideoIDFromURL( videoURL );
+
+		this.apiProvider.onApiReady( ( apiObject ) => {
+			if ( 'youtube' === this.videoType ) {
+				this.prepareYTVideo( apiObject, videoID, $videoContainer, $videoWrapper, $playIcon );
+			}
+
+			if ( 'vimeo' === this.videoType ) {
+				this.prepareVimeoVideo( apiObject, videoID, $videoContainer, $videoWrapper, $playIcon );
+			}
+		} );
+
+		$playIcon.addClass( classes.playing ).removeClass( classes.hidden );
+	},
+
+	prepareYTVideo: function( YT, videoID, $videoContainer, $videoWrapper, $playIcon ) {
+		const classes = this.getSettings( 'classes' ),
+			$videoPlaceholderElement = jQuery( '<div>' );
+		let startStateCode = YT.PlayerState.PLAYING;
+
+		$videoWrapper.append( $videoPlaceholderElement );
+
+		// Since version 67, Chrome doesn't fire the `PLAYING` state at start time
+		if ( window.chrome ) {
+			startStateCode = YT.PlayerState.UNSTARTED;
+		}
+
+		$videoContainer.addClass( 'elementor-loading' + ' ' + classes.invisible );
+
+		this.player = new YT.Player( $videoPlaceholderElement[ 0 ], {
+			videoId: videoID,
+			events: {
+				onReady: () => {
+					$playIcon.addClass( classes.hidden );
+
+					$videoContainer.removeClass( classes.invisible );
+
+					this.player.playVideo();
+				},
+				onStateChange: ( event ) => {
+					if ( event.data === startStateCode ) {
+						$videoContainer.removeClass( 'elementor-loading' + ' ' + classes.invisible );
+					}
+				},
+			},
+			playerVars: {
+				controls: 0,
+				rel: 0,
+			},
+		} );
+	},
+
+	prepareVimeoVideo: function( Vimeo, videoId, $videoContainer, $videoWrapper, $playIcon ) {
+		const classes = this.getSettings( 'classes' ),
+			vimeoOptions = {
+				id: videoId,
+				autoplay: true,
+				transparent: false,
+				playsinline: false,
+			};
+
+		this.player = new Vimeo.Player( $videoWrapper, vimeoOptions );
+
+		this.player.ready().then( () => {
 			$playIcon.addClass( classes.hidden );
 
 			$videoContainer.removeClass( classes.invisible );
