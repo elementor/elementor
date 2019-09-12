@@ -39,7 +39,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			model: rowModel,
 			settings: rowModel,
 			parent: elementContainer,
-			renderer: elementContainer,
+			renderer: elementContainer.renderer,
 		} );
 
 		return {
@@ -51,13 +51,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	createItemModel: function( attrs, options, controlView ) {
-		options = options || {};
+		/*options = options || {};
 
 		options.controls = controlView.model.get( 'fields' );
 
 		if ( ! attrs._id ) {
 			attrs._id = elementor.helpers.getUniqueID();
-		}
+		}*/
 
 		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
@@ -181,7 +181,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			newIndex = ui.item.index();
 
 		$e.run( 'document/elements/repeater/move', {
-			container: this.options.element.getContainer(),
+			container: this.options.container,
 			name: this.model.get( 'name' ),
 			sourceIndex: oldIndex,
 			targetIndex: newIndex,
@@ -201,13 +201,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			defaults[ key ] = field.default;
 		} );
 
-		// TODO: Ask Mati.
-		if ( defaults[ 'tab_title' ] ) {
-			defaults[ 'tab_title' ] += ' #' + ( this.collection.length + 1 );
-		}
-
 		const newModel = $e.run( 'document/elements/repeater/insert', {
-			container: this.options.element.getContainer(),
+			container: this.options.container,
 			name: this.model.get( 'name' ),
 			model: defaults,
 			returnValue: true,
@@ -218,7 +213,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	onChildviewClickRemove: function( childView ) {
 		$e.run( 'document/elements/repeater/remove', {
-			container: this.options.element.getContainer(),
+			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,
 		} );
@@ -228,7 +223,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	onChildviewClickDuplicate: function( childView ) {
 		$e.run( 'document/elements/repeater/duplicate', {
-			container: this.options.element.getContainer(),
+			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,
 		} );
