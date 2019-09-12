@@ -198,7 +198,9 @@ export default class {
 		try {
 			result = this.apply( this.args );
 		} catch ( e ) {
-			$e.run( 'document/history/deleteLog', { id: historyId } );
+			if ( historyId ) {
+				$e.run( 'document/history/deleteLog', { id: historyId } );
+			}
 
 			if ( $e.devTools ) {
 				$e.devTools.log.error( e );
