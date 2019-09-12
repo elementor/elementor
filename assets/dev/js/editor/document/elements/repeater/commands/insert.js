@@ -63,7 +63,7 @@ export default class extends Base {
 
 			result.push( itemModel );
 
-			container.view.renderOnChange( container.settings );
+			container.render();
 		} );
 
 		if ( 1 === result.length ) {
