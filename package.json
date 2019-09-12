@@ -1,7 +1,7 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "2.7.0",
+	"version": "2.7.1",
 	"prev_stable_version": "2.6.8",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
@@ -38,6 +38,7 @@
 		"grunt-contrib-qunit": "^3.1.0",
 		"grunt-contrib-sass": "~1.0.0",
 		"grunt-contrib-watch": "^1.1.0",
+		"grunt-notify": "^0.4.5",
 		"grunt-postcss": "~0.9.0",
 		"grunt-release": "~0.14.0",
 		"grunt-sass": "^2.1.0",
@@ -49,7 +50,8 @@
 		"mini-css-extract-plugin": "^0.4.3",
 		"path": "^0.12.7",
 		"terser-webpack-plugin": "^1.4.1",
-		"webpack": "^4.16.5"
+		"webpack": "^4.16.5",
+		"webpack-shell-plugin": "^0.5.0"
 	},
 	"dependencies": {
 		"@babel/plugin-transform-modules-commonjs": "^7.2.0",

@@ -4,6 +4,8 @@
  */
 const path = require( 'path' );
 
+const WebpackShellPlugin = require('webpack-shell-plugin');
+
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const aliasList = {
@@ -61,6 +63,12 @@ const moduleRules = {
 	],
 };
 
+const plugins = [];
+
+plugins.push( new WebpackShellPlugin( {
+	onBuildExit: ['grunt notify:watch'],
+} ) );
+
 const entry = {
 	'editor': [
 		path.resolve( __dirname, '../assets/dev/js/editor/utils/jquery-serialize-object.js' ),
@@ -90,6 +98,7 @@ const webpackConfig = {
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]'
 	},
+	plugins: plugins,
 	module: moduleRules,
 	resolve: aliasList,
 	entry: entry,
