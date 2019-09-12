@@ -204,6 +204,10 @@ export default class {
 				$e.devTools.log.error( e );
 			}
 
+			if ( elementor.isTesting ) {
+				console.error( e );
+			}
+
 			return false;
 		}
 
