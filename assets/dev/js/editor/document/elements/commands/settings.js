@@ -71,7 +71,7 @@ export default class Settings extends Base {
 
 		let subTitle = '';
 
-		if ( 1 === settingsKeys.length ) {
+		if ( ! isMultiSettings && 1 === settingsKeys.length ) {
 			subTitle = containers[ 0 ].settings.options.controls[ settingsKeys[ 0 ] ].label;
 		}
 
