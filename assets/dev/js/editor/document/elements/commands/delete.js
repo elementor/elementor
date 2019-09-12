@@ -55,6 +55,8 @@ export default class extends Base {
 			if ( this.isHistoryActive() ) {
 				$e.run( 'document/history/addSubItem', {
 					container,
+					type: 'sub-remove',
+					elementType: container.model.get( 'elType' ),
 					data: {
 						model: container.model.toJSON(),
 						parent: container.parent,

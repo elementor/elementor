@@ -74,6 +74,8 @@ export default class Create extends Base {
 			if ( this.isHistoryActive() ) {
 				$e.run( 'document/history/addSubItem', {
 					container,
+					type: 'sub-add',
+					elementType: createdContainer.model.get( 'elType' ),
 					data: {
 						toRestoreContainer: createdContainer,
 						toRestoreModel: createdContainer.model.toJSON(),

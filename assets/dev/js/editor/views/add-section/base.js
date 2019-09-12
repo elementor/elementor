@@ -142,11 +142,13 @@ class AddSectionBase extends Marionette.ItemView {
 			return;
 		}
 
-		const historyId = $e.run( 'document/history/startLog', {
-			container: elementor.channels.panelElements.request( 'element:selected' ), // TODO: here we pass the view, this is will work, but its bad practice.
-			type: 'add',
-			returnValue: true,
-		} );
+		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
+			historyId = $e.run( 'document/history/startLog', {
+				type: 'add',
+				title: selectedElement.model.get( 'title' ),
+				elementType: selectedElement.model.get( 'elType' ),
+				returnValue: true,
+			} );
 
 		$e.run( 'document/elements/createSection', {
 			columns: 1,
