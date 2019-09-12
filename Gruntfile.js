@@ -27,6 +27,7 @@ module.exports = function( grunt ) {
 		clean: require( './.grunt-config/clean' ),
 		webpack: require( './.grunt-config/webpack' ),
 		qunit: require( './.grunt-config/qunit' ),
+		notify: require( './.grunt-config/notify' ),
 	} );
 
 	// Default task(s).
