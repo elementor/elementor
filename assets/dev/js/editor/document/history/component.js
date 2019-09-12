@@ -3,6 +3,34 @@ export default class extends elementorModules.common.Component {
 		return 'document/history';
 	}
 
+	normalizeLogArgs( args ) {
+		const { containers = [ args.container ] } = args;
+
+		if ( ! args.title ) {
+			if ( 1 === containers.length ) {
+				args.title = containers[ 0 ].label;
+			} else {
+				args.title = elementor.translate( 'elements' );
+			}
+		}
+
+		if ( ! args.elementType ) {
+			if ( 1 === containers.length ) {
+				args.elementType = containers[ 0 ].model.get( 'elType' );
+			} else {
+				// Most common element in array.
+				args.elementType = _.chain( containers.map( ( item ) => item.model.get( 'elType' ) ) )
+					.countBy()
+					.pairs()
+					.max( _.last )
+					.head()
+					.value();
+			}
+		}
+
+		return args;
+	}
+
 	getCommands() {
 		return {
 			startLog: ( args ) => {
@@ -22,13 +50,7 @@ export default class extends elementorModules.common.Component {
 					throw Error( 'container or containers are required.' );
 				}
 
-				if ( ! args.title ) {
-					if ( 1 === containers.length ) {
-						args.title = containers[ 0 ].label;
-					} else {
-						args.title = elementor.translate( 'elements' );
-					}
-				}
+				args = this.normalizeLogArgs( args );
 
 				return elementor.history.history.startItem( args );
 			},
@@ -49,10 +71,12 @@ export default class extends elementorModules.common.Component {
 				} );
 			},
 
-			addSubItem: ( itemData ) => {
+			addSubItem: ( args ) => {
 				if ( ! elementor.history.history.getActive() ) {
 					return;
 				}
+
+				args = this.normalizeLogArgs( args );
 
 				const items = elementor.history.history.getItems(),
 					item = items.findWhere( { id: elementor.history.history.getCurrentId() } );
@@ -61,7 +85,7 @@ export default class extends elementorModules.common.Component {
 					throw new Error( 'History item not found.' );
 				}
 
-				item.get( 'items' ).unshift( itemData );
+				item.get( 'items' ).unshift( args );
 			},
 
 			undo: () => {
