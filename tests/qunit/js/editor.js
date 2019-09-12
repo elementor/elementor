@@ -4,7 +4,10 @@ import editorBase from './../../../assets/dev/js/editor/editor-base';
 const App = editorBase.extend();
 
 window.elementor = new App( {
+	isTesting: true,
+
 	$previewContents: jQuery( document ),
+
 	getPreviewView: function() {
 		if ( ! this.previewLoaded ) {
 			var iframeRegion = new Marionette.Region( {
