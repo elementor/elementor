@@ -12,7 +12,6 @@ export default class extends elementorModules.Module {
 		this.store = new Store();
 		// Fetch fa4 to fa5 migration data
 		elementor.helpers.fetchFa4ToFa5Mapping();
-
 		this.cache = {};
 	}
 
@@ -49,6 +48,18 @@ export default class extends elementorModules.Module {
 		const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
 		unmountComponentAtNode( containerElement );
+	}
+
+	loadIconLibraries() {
+		if ( ! this.cache.loaded ) {
+			elementor.config.icons.libraries.forEach( ( library ) => {
+				if ( 'all' === library.name ) {
+					return;
+				}
+				elementor.iconManager.library.initIconType( library );
+			} );
+			this.cache.loaded = true;
+		}
 	}
 
 	onPickerShow() {

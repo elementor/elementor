@@ -225,7 +225,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
 	protected static function _get_items( array $haystack, $needle = null ) {
-		// _deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_items()' );
+		 _deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_items()' );
 
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
@@ -1787,27 +1787,6 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return $settings;
-	}
-
-	/**
-	 * Get parsed settings.
-	 *
-	 * Retrieve the parsed settings for all the controls that represent them.
-	 * The parser set default values and process the settings.
-	 *
-	 * Classes that extend `Controls_Stack` can add new process to the settings
-	 * parser.
-	 *
-	 * @since 1.4.0
-	 * @deprecated 2.3.0 Use `Controls_Stack::get_init_settings()` instead
-	 * @access protected
-	 *
-	 * @return array Parsed settings.
-	 */
-	protected function _get_parsed_settings() {
-		_deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_init_settings()' );
-
-		return $this->get_init_settings();
 	}
 
 	/**

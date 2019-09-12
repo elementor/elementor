@@ -54,8 +54,8 @@ class Widgets_Manager {
 			'icon',
 			'icon-box',
 			'star-rating',
-			'image-gallery',
 			'image-carousel',
+			'image-gallery',
 			'icon-list',
 			'counter',
 			'progress',
@@ -422,6 +422,19 @@ class Widgets_Manager {
 	public function enqueue_widgets_scripts() {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->enqueue_scripts();
+		}
+	}
+
+	/**
+	 * Enqueue widgets styles
+	 *
+	 * Enqueue all the styles defined as a dependency for each widget
+	 *
+	 * @access public
+	 */
+	public function enqueue_widgets_styles() {
+		foreach ( $this->get_widget_types() as $widget ) {
+			$widget->enqueue_styles();
 		}
 	}
 

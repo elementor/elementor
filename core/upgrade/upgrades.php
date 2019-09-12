@@ -2,6 +2,7 @@
 namespace Elementor\Core\Upgrade;
 
 use Elementor\Icons_Manager;
+use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -334,7 +335,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( & $do_update ) {
 				if ( empty( $element['widgetType'] ) || 'video' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -433,7 +434,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update, $widgets ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( & $do_update, $widgets ) {
 				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
 					return $element;
 				}
@@ -554,5 +555,78 @@ class Upgrades {
 		];
 		Upgrade_Utils::_update_widget_settings( 'button', $updater, $changes );
 		Upgrade_Utils::_update_widget_settings( 'icon-box', $updater, $changes );
+	}
+
+	/**
+	 *  Update database to separate page from post.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @param string $type
+	 *
+	 * @return bool
+	 */
+	public static function rename_document_base_to_wp( $updater, $type ) {
+		global $wpdb;
+
+		$post_ids = $updater->query_col( $wpdb->prepare(
+			"SELECT p1.ID FROM {$wpdb->posts} AS p 
+					LEFT JOIN {$wpdb->posts} AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) 
+					WHERE p.post_type = %s;", $type ) );
+
+		if ( empty( $post_ids ) ) {
+			return false;
+		}
+
+		$sql_post_ids = implode( ',', $post_ids );
+
+		$wpdb->query( $wpdb->prepare(
+			"UPDATE $wpdb->postmeta SET meta_value = %s
+			WHERE meta_key = '_elementor_template_type' && post_id in ( %s );
+		 ", 'wp-' . $type, $sql_post_ids ) );
+
+		return $updater->should_run_again( $post_ids );
+	}
+
+	/**
+	 *  Update database to separate page from post.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
+		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
+	}
+
+	// Upgrade code was fixed & moved to _v_2_7_1_remove_old_usage_data.
+	/* public static function _v_2_7_0_remove_old_usage_data() {} */
+
+	// Upgrade code moved to _v_2_7_1_recalc_usage_data.
+	/* public static function _v_2_7_0_recalc_usage_data( $updater ) {} */
+
+	/**
+	 * Don't use the old data anymore.
+	 * Since 2.7.1 the key was changed from `elementor_elements_usage` to `elementor_controls_usage`.
+	 */
+	public static function _v_2_7_1_remove_old_usage_data() {
+		delete_option( 'elementor_elements_usage' );
+		delete_post_meta_by_key( '_elementor_elements_usage' );
+	}
+
+	/**
+	 * Recalc usage.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_2_7_1_recalc_usage_data( $updater ) {
+		/** @var Module $module */
+		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
+
+		$post_count = $module->recalc_usage( $updater->get_limit(), $updater->get_current_offset() );
+
+		return ( $post_count === $updater->get_limit() );
 	}
 }

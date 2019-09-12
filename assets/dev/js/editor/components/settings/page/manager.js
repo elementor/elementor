@@ -1,6 +1,13 @@
+import Component from './component';
+
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
+	onInit: function() {
+		BaseSettings.prototype.onInit.apply( this );
+
+		$e.components.register( new Component( { manager: this } ) );
+	},
 
 	save: function() {},
 
@@ -17,7 +24,7 @@ module.exports = BaseSettings.extend( {
 					elementor.reloadPreview();
 
 					elementor.once( 'preview:loaded', function() {
-						elementor.getPanelView().setPage( 'page_settings' );
+						$e.route( 'panel/page-settings/settings' );
 					} );
 				},
 			} );

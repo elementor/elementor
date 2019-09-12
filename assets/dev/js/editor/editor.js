@@ -6,6 +6,7 @@ import environment from '../../../../core/common/assets/js/utils/environment.js'
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
+import Component from './elements/component';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -147,7 +148,7 @@ const App = Marionette.Application.extend( {
 			ignore: '.elementor-control-dynamic-switcher',
 		},
 		panelFooterSubMenus: {
-			element: '.elementor-panel-footer-tool',
+			element: '.elementor-panel-footer-tool.elementor-toggle-state',
 			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
 			callback: ( $elementsToHide ) => {
 				$elementsToHide.removeClass( 'elementor-open' );
@@ -274,7 +275,7 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		this.initHotKeys();
+		$e.components.register( new Component( { manager: this } ) );
 
 		this.hotkeysScreen = new HotkeysScreen();
 
@@ -369,241 +370,35 @@ const App = Marionette.Application.extend( {
 		};
 	},
 
-	initHotKeys: function() {
-		const keysDictionary = {
-			c: 67,
-			d: 68,
-			i: 73,
-			l: 76,
-			m: 77,
-			p: 80,
-			s: 83,
-			v: 86,
-			del: 46,
-			esc: 27,
-		};
+	getCurrentElement: function() {
+		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 
-		var $ = jQuery,
-			hotKeysHandlers = {},
-			hotKeysManager = elementorCommon.hotKeys;
+		if ( ! isPreview ) {
+			return false;
+		}
 
-		hotKeysHandlers[ keysDictionary.c ] = {
-			copyElement: {
-				isWorthHandling: function( event ) {
-					if ( ! hotKeysManager.isControlEvent( event ) ) {
-						return false;
-					}
+		let targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
 
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
+		if ( ! targetElement ) {
+			const panel = elementor.getPanelView();
 
-					if ( ! isEditorOpen ) {
-						return false;
-					}
+			if ( $e.routes.isPartOf( 'panel/editor' ) ) {
+				targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
+			}
+		}
 
-					var frontendWindow = elementorFrontend.elements.window,
-						textSelection = getSelection() + frontendWindow.getSelection();
+		if ( ! targetElement ) {
+			targetElement = elementor.getPreviewView();
+		}
 
-					if ( ! textSelection && environment.firefox ) {
-						textSelection = [ window, frontendWindow ].some( function( window ) {
-							var activeElement = window.document.activeElement;
-
-							if ( ! activeElement || -1 === [ 'INPUT', 'TEXTAREA' ].indexOf( activeElement.tagName ) ) {
-								return;
-							}
-
-							var originalInputType;
-
-							// Some of input types can't retrieve a selection
-							if ( 'INPUT' === activeElement.tagName ) {
-								originalInputType = activeElement.type;
-
-								activeElement.type = 'text';
-							}
-
-							var selection = activeElement.value.substring( activeElement.selectionStart, activeElement.selectionEnd );
-
-							activeElement.type = originalInputType;
-
-							return ! ! selection;
-						} );
-					}
-
-					return ! textSelection;
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).copy();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.d ] = {
-			duplicateElement: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					var panel = elementor.getPanelView();
-
-					if ( 'editor' !== panel.getCurrentPageName() ) {
-						return;
-					}
-
-					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.i ] = {
-			navigator: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
-				},
-				handle: function() {
-					if ( elementor.navigator.storage.visible ) {
-						elementor.navigator.close();
-					} else {
-						elementor.navigator.open();
-					}
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.l ] = {
-			showTemplateLibrary: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
-				},
-				handle: function() {
-					elementor.templates.startModal();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.m ] = {
-			changeDeviceMode: {
-				devices: [ 'desktop', 'tablet', 'mobile' ],
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
-				},
-				handle: function() {
-					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
-						modeIndex = this.devices.indexOf( currentDeviceMode );
-
-					modeIndex++;
-
-					if ( modeIndex >= this.devices.length ) {
-						modeIndex = 0;
-					}
-
-					elementor.changeDeviceMode( this.devices[ modeIndex ] );
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.p ] = {
-			changeEditMode: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.s ] = {
-			saveEditor: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					elementor.saver.saveDraft();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.v ] = {
-			pasteElement: {
-				isWorthHandling: function( event ) {
-					if ( ! hotKeysManager.isControlEvent( event ) ) {
-						return false;
-					}
-
-					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName;
-				},
-				handle: function( event ) {
-					var targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
-
-					if ( ! targetElement ) {
-						var panel = elementor.getPanelView();
-
-						if ( 'editor' === panel.getCurrentPageName() ) {
-							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
-						}
-					}
-
-					if ( event.shiftKey ) {
-						if ( targetElement && targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
-							targetElement.pasteStyle();
-						}
-
-						return;
-					}
-
-					if ( ! targetElement ) {
-						targetElement = elementor.getPreviewView();
-					}
-
-					if ( targetElement.isPasteEnabled() ) {
-						targetElement.paste();
-					}
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.del ] = {
-			deleteElement: {
-				isWorthHandling: function( event ) {
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
-
-					if ( ! isEditorOpen ) {
-						return false;
-					}
-
-					var $target = $( event.target );
-
-					if ( $target.is( ':input, .elementor-input' ) ) {
-						return false;
-					}
-
-					return ! $target.closest( '[contenteditable="true"]' ).length;
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.esc ] = {
-			quitEditor: {
-				isWorthHandling: function() {
-					return ! jQuery( '.dialog-widget:visible' ).length;
-				},
-				handle: function() {
-					elementor.getPanelView().setPage( 'menu' );
-				},
-			},
-		};
-
-		_.each( hotKeysHandlers, function( handlers, keyCode ) {
-			_.each( handlers, function( handler, handlerName ) {
-				hotKeysManager.addHotKeyHandler( keyCode, handlerName, handler );
-			} );
-		} );
+		return targetElement;
 	},
 
 	initPanel: function() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
+
+		// Set default page to elements.
+		$e.route( 'panel/elements/categories' );
 
 		this.trigger( 'panel:init' );
 	},
@@ -617,10 +412,6 @@ const App = Marionette.Application.extend( {
 		} );
 
 		this.trigger( 'navigator:init' );
-
-		if ( this.navigator.storage.visible ) {
-			this.navigator.open();
-		}
 	},
 
 	setAjax: function() {
@@ -671,11 +462,7 @@ const App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				var panelView = elementor.getPanelView();
-
-				if ( 'elements' !== panelView.getCurrentPageName() ) {
-					panelView.setPage( 'elements' );
-				}
+				$e.route( 'panel/elements/categories' );
 			}
 		} );
 	},
@@ -760,10 +547,7 @@ const App = Marionette.Application.extend( {
 						name: 'view_revisions',
 						text: elementor.translate( 'view_all_revisions' ),
 						callback: function() {
-							var panel = elementor.getPanelView();
-
-							panel.setPage( 'historyPage' );
-							panel.getCurrentPageView().activateTab( 'revisions' );
+							$e.route( 'panel/history/revisions' );
 						},
 					},
 				],
@@ -773,7 +557,7 @@ const App = Marionette.Application.extend( {
 
 	openLibraryOnStart: function() {
 		if ( '#library' === location.hash ) {
-			elementor.templates.startModal();
+			$e.run( 'library/open' );
 
 			location.hash = '';
 		}
@@ -972,7 +756,7 @@ const App = Marionette.Application.extend( {
 
 		var previewWindow = this.$preview[ 0 ].contentWindow;
 
-		if ( ! previewWindow.elementorFrontend || elementor.config.preview.debug_data.error ) {
+		if ( ! previewWindow.elementorFrontend ) {
 			this.onPreviewLoadingError();
 
 			return;
@@ -1004,12 +788,10 @@ const App = Marionette.Application.extend( {
 		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
 		if ( this.previewLoadedOnce ) {
-			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
+			$e.route( 'panel/elements/categories' );
 		} else {
 			this.onFirstPreviewLoaded();
 		}
-
-		this.initNavigator();
 
 		this.addRegions( {
 			sections: iframeRegion,
@@ -1041,9 +823,9 @@ const App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		elementorCommon.hotKeys.bindListener( elementorFrontend.elements.$window );
+		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
-		this.trigger( 'preview:loaded' );
+		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
 		this.loaded = true;
 	},
@@ -1062,6 +844,8 @@ const App = Marionette.Application.extend( {
 		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
 			this.showFlexBoxAttentionDialog();
 		}
+
+		this.initNavigator();
 
 		this.previewLoadedOnce = true;
 	},
@@ -1103,7 +887,7 @@ const App = Marionette.Application.extend( {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: debugData.message + previewDebugLink,
-				onConfirm: function() {
+			onConfirm: function() {
 					open( debugData.doc_url, '_blank' );
 				} };
 
@@ -1122,8 +906,8 @@ const App = Marionette.Application.extend( {
 				onConfirm: function() {
 					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
 					open( url, '_blank' );
-				},
-			} );
+			},
+		} );
 		} );
 	},
 

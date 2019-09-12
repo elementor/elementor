@@ -90,10 +90,22 @@ const Module = function() {
 		return self.setSettings( keyStack.join( '.' ), value, settingsContainer[ currentKey ] );
 	};
 
-	this.forceMethodImplementation = function( methodArguments ) {
-		const functionName = methodArguments.callee.name;
+	this.getErrorMessage = function( type, functionName ) {
+		let message;
 
-		throw new ReferenceError( 'The method ' + functionName + ' must to be implemented in the inheritor child.' );
+		switch ( type ) {
+			case 'forceMethodImplementation':
+				message = `The method '${ functionName }' must to be implemented in the inheritor child.`;
+				break;
+			default:
+				message = 'An error occurs';
+		}
+
+		return message;
+	};
+
+	this.forceMethodImplementation = function( functionName ) {
+		throw new Error( this.getErrorMessage( 'forceMethodImplementation', functionName ) );
 	};
 
 	this.on = function( eventName, callback ) {
@@ -168,7 +180,9 @@ Module.prototype.getDefaultSettings = function() {
 	return {};
 };
 
-Module.extendsCount = 0;
+Module.prototype.getConstructorID = function() {
+	return this.constructor.name;
+};
 
 Module.extend = function( properties ) {
 	const $ = jQuery,
@@ -183,19 +197,6 @@ Module.extend = function( properties ) {
 	child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
 
 	child.prototype.constructor = child;
-
-	/*
-	 * Constructor ID is used to set an unique ID
-	 * to every extend of the Module.
-	 *
-	 * It's useful in some cases such as unique
-	 * listener for frontend handlers.
-	 */
-	const constructorID = ++Module.extendsCount;
-
-	child.prototype.getConstructorID = function() {
-		return constructorID;
-	};
 
 	child.__super__ = parent.prototype;
 

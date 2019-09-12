@@ -4,7 +4,7 @@
  */
 const path = require( 'path' );
 
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const aliasList = {
 	alias: {
@@ -77,6 +77,7 @@ const entry = {
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
+	'qunit-tests': path.resolve( __dirname, '../tests/qunit/tests.js' ),
 };
 
 const webpackConfig = {
@@ -111,7 +112,10 @@ const webpackProductionConfig = {
 	optimization: {
 		minimize: true,
 		minimizer: [
-			new UglifyJsPlugin( {
+			new TerserPlugin( {
+				terserOptions: {
+					keep_fnames: true,
+				},
 				include: /\.min\.js$/
 			} ),
 		],

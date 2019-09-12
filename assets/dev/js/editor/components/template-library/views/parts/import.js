@@ -37,7 +37,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	},
 
 	importTemplate: function( fileName, fileData ) {
-		const layout = elementor.templates.getLayout();
+		const layout = elementor.templates.layout;
 
 		const options = {
 			data: {
@@ -47,7 +47,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			success: ( successData ) => {
 				elementor.templates.getTemplatesCollection().add( successData );
 
-				elementor.templates.setScreen( 'local' );
+				$e.route( 'library/templates/my-templates' );
 			},
 			error: ( errorData ) => {
 				elementor.templates.showErrorDialog( errorData );

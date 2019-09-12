@@ -53,7 +53,7 @@ class Widget_Heading extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-type-tool';
+		return 'eicon-t-letter';
 	}
 
 	/**
@@ -290,7 +290,7 @@ class Widget_Heading extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		if ( empty( $settings['title'] ) ) {
+		if ( '' === $settings['title'] ) {
 			return;
 		}
 

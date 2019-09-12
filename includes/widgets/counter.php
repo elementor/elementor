@@ -106,6 +106,9 @@ class Widget_Counter extends Widget_Base {
 				'label' => __( 'Starting Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 0,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -115,6 +118,9 @@ class Widget_Counter extends Widget_Base {
 				'label' => __( 'Ending Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 100,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -123,6 +129,9 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Number Prefix', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'placeholder' => 1,
 			]
@@ -133,6 +142,9 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Number Suffix', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'placeholder' => __( 'Plus', 'elementor' ),
 			]
@@ -182,6 +194,9 @@ class Widget_Counter extends Widget_Base {
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => __( 'Cool Number', 'elementor' ),
 				'placeholder' => __( 'Cool Number', 'elementor' ),
 			]
@@ -305,6 +320,7 @@ class Widget_Counter extends Widget_Base {
 			'class' => 'elementor-counter-number',
 			'data-duration' => $settings['duration'],
 			'data-to-value' => $settings['ending_number'],
+			'data-from-value' => $settings['starting_number'],
 		] );
 
 		if ( ! empty( $settings['thousand_separator'] ) ) {

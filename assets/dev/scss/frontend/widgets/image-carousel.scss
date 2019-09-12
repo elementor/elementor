@@ -1,16 +1,20 @@
 //
 // Image Carousel
 //
+.elementor-widget-image-carousel {
 
-.elementor-image-carousel-wrapper {
+	.swiper-container {
+		position: static; // Allow navigation arrows to stay outside
 
-	.slick-image-stretch {
+		.swiper-slide {
 
-		.slick-slide {
-
-			.slick-slide-image {
-				width: 100%;
+			figure {
+				line-height: inherit;
 			}
 		}
+	}
+
+	.swiper-slide {
+		text-align: center;
 	}
 }

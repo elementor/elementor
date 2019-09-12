@@ -63,13 +63,7 @@ class Model extends BaseModel {
 	 * }
 	 */
 	public function get_panel_page_settings() {
-		return [
-			'title' => __( 'Global Settings', 'elementor' ),
-			'menu' => [
-				'icon' => 'eicon-cogs',
-				'beforeItem' => 'elementor-settings',
-			],
-		];
+		return [];
 	}
 
 	/**
