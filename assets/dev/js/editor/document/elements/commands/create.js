@@ -44,7 +44,8 @@ export default class Create extends Base {
 			model,
 			options,
 			type: 'add',
-			title: elementor.history.history.getModelLabel( args.model ),
+			title: elementor.history.history.getModelLabel( model ),
+			elementType: model.elType,
 			history: {
 				behavior: {
 					restore: this.constructor.restore,
