@@ -211,6 +211,8 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
+
+		this.trigger( 'initialize' );
 	},
 
 	getHandlesOverlay: function() {

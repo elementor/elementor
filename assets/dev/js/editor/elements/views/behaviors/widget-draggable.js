@@ -10,6 +10,15 @@ export default class extends Marionette.Behavior {
 		super.initialize();
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.toggle );
+
+		// TODO: Work with this.listenTo( this.view.getContainer().settings ).
+		this.view.on( 'initialize', () => {
+			this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', ( settings ) => {
+				if ( undefined !== settings.changed._position ) {
+					this.toggle();
+				}
+			} );
+		} );
 	}
 
 	activate() {
@@ -101,11 +110,6 @@ export default class extends Marionette.Behavior {
 			settings: settingToChange,
 			options: {
 				external: true,
-			},
-			onAfter: () => {
-				if ( undefined !== settingToChange._position ) {
-					this.toggle();
-				}
 			},
 		} );
 
