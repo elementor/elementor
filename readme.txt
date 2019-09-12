@@ -4,8 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 5.4
-Beta tag: 2.7.0-beta3
-Stable tag: 2.6.8
+Stable tag: 2.7.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -221,6 +220,43 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.7.1 - 2019-09-10 =
+* Fix: Self Hosted video lightbox closing when clicking on the video ([#8931](https://github.com/elementor/elementor/issues/8931))
+* Fix: Downgrade from v2.7.0 causes 500 errors
+* Fix: Vertical alignment issue in Safari browser ([#9034](https://github.com/elementor/elementor/issues/9034))
+* Fix: `contains` and `!contains` control conditions ([#9043](https://github.com/elementor/elementor/issues/9043))
+* Fix: Use background updater for v2.7 script task ([Topic](https://wordpress.org/support/topic/v2-7-not-stable/))
+* Fix: Backwards compatibility for previous versions using Divider widget
+
+= 2.7.0 - 2019-09-08 =
+* New: Added background slideshow to Section, Column and Inner Section elements ([#2898](https://github.com/elementor/elementor/issues/2898), [#4022](https://github.com/elementor/elementor/issues/4022))
+* New: Editor JS API to improve capabilities and stability ([Developers Blog Post](https://developers.elementor.com/elementor-2-7-new-editor-js-api-e/))
+* New: Added additional divider styles to Divider widget ([#7418](https://github.com/elementor/elementor/issues/7418))
+* Tweak: Background videos now support Vimeo as a source ([#1903](https://github.com/elementor/elementor/issues/1903))
+* Tweak: Added the option to add Icon and Text to Divider widget ([#7418](https://github.com/elementor/elementor/issues/7418))
+* Tweak: Converted all widgets JS handlers to ES6 classes ([Developers Blog Post](https://developers.elementor.com/building-a-simple-custom-widget-with-javascript/), [Developers Documentation](https://developers.elementor.com/creating-a-new-widget/adding-javascript-to-elementor-widgets/))
+* Tweak: Added option to select the version you rollback to in "Version Control" tool
+* Tweak: Use `swiper.js` instead of `slick.js` in Image Carousel widget ([Developers Blog Post](https://developers.elementor.com/elementor-2-7-moving-sliders-from-slick-to-swiper/))
+* Tweak: Implemented virtual list render in Icons Library to improve performance and stability
+* Tweak: Added support of `wp_body_open` in Canvas template
+* Tweak: Editor Panel UI tweaks
+* Tweak: Updated Gallery control UI
+* Tweak: Moved structure control into section panel in Section element
+* Tweak: Added option to allow background video to play on mobile devices if device support it
+* Tweak: Added more post statuses to show in the Finder ([#8175](https://github.com/elementor/elementor/issues/8175))
+* Tweak: Added `Space-around`, `Space-between` and `Space-evenly` to Vertical Align options in Section element
+* Tweak: Added filter for additional styles by 3rd party plugins `elementor/divider/styles/additional_styles` to Divider widget
+* Tweak: Removed "Need Help?" button from WP widgets
+* Tweak: Updated `Eicons` library to v5.4.0
+* Fix: Background video plays on mobile devices in some cases (#8782, [Developers Blog Post](https://developers.elementor.com/background-video-in-mobile-mode/))
+* Fix: Icon List alignment issue ([#8539](https://github.com/elementor/elementor/issues/8539))
+* Fix: Two clicks needed to start Vimeo videos with image overlay
+* Fix: Init navigator only once when changing page template
+* Fix: Added backwards compatibility for `Controls_Manager::add_tab()` and `\Elementor\Core\Settings\Manager::add_settings_manager()`
+* Fix: Carousels navigation arrows causes horizontal scroll when setting to `Outside`
+* Fix: Heading widget with the character "0" is not visible on frontend
+* Deprecated: Removed old deprecated aliases ([Developers Blog Post](https://developers.elementor.com/v2-7-0-planned-deprecations/))
 
 = 2.6.8 - 2019-08-07 =
 * Tweak: Added SVG import/export support to Icons control

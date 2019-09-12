@@ -174,7 +174,7 @@ class Element_Column extends Element_Base {
 					// TODO: The following line is for BC since 2.7.0
 					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
 					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position)
-					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-column-wrap.elementor-element-populated > .elementor-widget-wrap' => 'align-content: {{VALUE}}',
+					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-column-wrap.elementor-element-populated > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 			]
 		);
