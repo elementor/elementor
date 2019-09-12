@@ -67,7 +67,11 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'History Rollback', ( assert ) => {
-				$e.run( 'document/elements/settings', { container: ( new elementorModules.editor.Container( {} ) ), settings: {} } );
+				try {
+					$e.run( 'document/elements/settings', { container: ( new elementorModules.editor.Container( {} ) ), settings: {} } );
+				} catch ( e ) {
+					// Do nothing (ignore).
+				}
 
 				const historyItem = elementor.history.history.getItems().at( 0 );
 

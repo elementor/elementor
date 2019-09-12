@@ -143,7 +143,7 @@ class AddSectionBase extends Marionette.ItemView {
 		}
 
 		const historyId = $e.run( 'document/history/startLog', {
-			elements: [ elementor.channels.panelElements.request( 'element:selected' ) ],
+			container: elementor.channels.panelElements.request( 'element:selected' ), // TODO: here we pass the view, this is will work, but its bad practice.
 			type: 'add',
 			returnValue: true,
 		} );
