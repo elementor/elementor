@@ -1,4 +1,3 @@
-
 var BaseSectionsContainerView = require( 'elementor-views/base-sections-container' ),
 	Preview;
 
