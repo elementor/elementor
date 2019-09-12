@@ -19,7 +19,7 @@ export default class extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgument( 'settings', args );
+		this.requireArgumentConstructor( 'settings', Object, args );
 	}
 
 	getHistory( args ) {

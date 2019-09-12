@@ -32,6 +32,7 @@ export default class Create extends Base {
 
 	validateArgs( args ) {
 		this.requireContainer( args );
+
 		this.requireArgumentConstructor( 'model', Object, args );
 	}
 
