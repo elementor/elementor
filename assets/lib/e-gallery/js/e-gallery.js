@@ -901,7 +901,7 @@ function (_BaseGalleryType) {
           }
         }
 
-        var isLastItem = index === this.settings.items.length - 1;
+        var isLastItem = index === this.getActiveItems().length - 1;
         this.imagesData[index].computedWidth = itemComputedWidth;
 
         if (isLastItem) {
