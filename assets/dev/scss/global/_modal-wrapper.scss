@@ -167,6 +167,7 @@
 	}
 
 	&__sidebar {
+		flex-shrink: 0;
 		width: 25%;
 		background-color: rgba(255, 255, 255, 0.3);
 	}
