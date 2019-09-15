@@ -75,7 +75,7 @@ class Usage_Reporter extends Base_Reporter {
 		$module = Module::instance();
 		$usage = PHP_EOL;
 
-		foreach ( $module->get_formatted_usage() as $doc_type => $data ) {
+		foreach ( $module->get_formatted_usage( 'raw' ) as $doc_type => $data ) {
 			$usage .= "\t{$data['title']}" . PHP_EOL;
 
 			foreach ( $data['elements'] as $element => $count ) {
