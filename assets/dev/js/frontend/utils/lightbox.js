@@ -125,8 +125,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	setImageContent: function( imageURL ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { class: classes.item } ),
-			$image = jQuery( '<img>', { src: imageURL, class: classes.image + ' ' + classes.preventClose } );
+			$item = jQuery( '<div>', { class: `${ classes.item } ${ classes.preventClose }` } ),
+			$image = jQuery( '<img>', { src: imageURL, class: classes.image } );
 
 		$item.append( $image );
 
@@ -135,7 +135,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	setVideoContent: function( options ) {
 		var classes = this.getSettings( 'classes' ),
-			$videoContainer = jQuery( '<div>', { class: classes.videoContainer } ),
+			$videoContainer = jQuery( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
 			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
 			$videoElement,
 			modal = this.getModal();

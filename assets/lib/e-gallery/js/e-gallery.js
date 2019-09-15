@@ -297,8 +297,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_grid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./types/grid */ "./src/js/types/grid.js");
 /* harmony import */ var _types_justified__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./types/justified */ "./src/js/types/justified.js");
 /* harmony import */ var _types_masonry__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./types/masonry */ "./src/js/types/masonry.js");
-/* harmony import */ var _scss_eGallery_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../scss/eGallery.scss */ "./src/scss/eGallery.scss");
-/* harmony import */ var _scss_eGallery_scss__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_scss_eGallery_scss__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _scss_e_gallery_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../scss/e-gallery.scss */ "./src/scss/e-gallery.scss");
+/* harmony import */ var _scss_e_gallery_scss__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_scss_e_gallery_scss__WEBPACK_IMPORTED_MODULE_5__);
 
 
 
@@ -312,7 +312,7 @@ function () {
   function EGallery(userSettings) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, EGallery);
 
-    this.settings = jQuery.extend(true, this.getDefaultSettings(), userSettings);
+    this.userSettings = userSettings;
     this.initGalleriesTypes();
     this.createGallery();
   }
@@ -322,7 +322,11 @@ function () {
     value: function getDefaultSettings() {
       return {
         container: null,
+        items: null,
         type: 'grid',
+        tags: [],
+        overlay: false,
+        overlayTemplate: '<div class="{{ classesPrefix }}{{ classes.overlayTitle }}">{{ title }}</div><div class="{{ classesPrefix }}{{ classes.overlayDescription }}">{{ description }}</div>',
         columns: 5,
         horizontalGap: 10,
         verticalGap: 10,
@@ -332,9 +336,16 @@ function () {
           container: 'container',
           item: 'item',
           image: 'image',
+          overlay: 'overlay',
+          overlayTitle: 'overlay__title',
+          overlayDescription: 'overlay__description',
           link: 'link',
           firstRowItem: 'first-row-item',
           animated: '-animated'
+        },
+        selectors: {
+          items: '.e-gallery-item',
+          image: '.e-gallery-image'
         },
         breakpoints: {
           1024: {
@@ -362,8 +373,14 @@ function () {
   }, {
     key: "createGallery",
     value: function createGallery() {
-      var GalleryHandlerType = this.galleriesTypes[this.settings.type];
-      this.galleryHandler = new GalleryHandlerType(this.settings);
+      var settings = jQuery.extend(true, this.getDefaultSettings(), this.userSettings);
+      var GalleryHandlerType = this.galleriesTypes[settings.type];
+      this.galleryHandler = new GalleryHandlerType(settings);
+    }
+  }, {
+    key: "setSettings",
+    value: function setSettings(key, value) {
+      this.galleryHandler.setSettings(key, value);
     }
   }, {
     key: "destroy",
@@ -434,46 +451,25 @@ function () {
       this.elements.$window.on('resize', this.runGallery);
     }
   }, {
-    key: "createItem",
-    value: function createItem(itemData) {
-      var classes = this.settings.classes,
-          $item = jQuery('<div>', {
-        "class": this.getItemClass(classes.item)
-      }),
-          $image = jQuery('<div>', {
-        "class": this.getItemClass(classes.image)
-      }).css('background-image', 'url(' + itemData.thumbnail + ')');
-      $item.append($image);
+    key: "getNestedObjectData",
+    value: function getNestedObjectData(object, key) {
+      var keyStack = key.split('.'),
+          currentKey = keyStack.splice(0, 1);
 
-      if (itemData.url) {
-        var $link = jQuery('<a>', {
-          "class": this.getItemClass(classes.link),
-          href: itemData.url
-        });
-        $image.wrap($link);
+      if (!keyStack.length) {
+        return {
+          object: object,
+          key: key
+        };
       }
 
-      return $item;
+      return this.getNestedObjectData(object[currentKey], keyStack.join('.'));
     }
   }, {
-    key: "debounce",
-    value: function debounce(func, wait) {
-      var timeout;
-      return function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        var context = this;
-
-        var later = function later() {
-          timeout = null;
-          func.apply(context, args);
-        };
-
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-      };
+    key: "getTemplateArgs",
+    value: function getTemplateArgs(args, key) {
+      var nestedObjectData = this.getNestedObjectData(args, key);
+      return nestedObjectData.object[nestedObjectData.key] || '';
     }
   }, {
     key: "getCurrentBreakpoint",
@@ -504,18 +500,117 @@ function () {
       return this.settings[settingKey];
     }
   }, {
+    key: "getActiveItems",
+    value: function getActiveItems() {
+      var activeTags = this.settings.tags;
+
+      if (!activeTags.length) {
+        return this.$items;
+      }
+
+      return this.$items.filter(function (index, item) {
+        var itemTags = item.dataset.eGalleryTags;
+
+        if (!itemTags) {
+          return false;
+        }
+
+        itemTags = itemTags.split(/[ ,]+/);
+        return activeTags.some(function (tag) {
+          return itemTags.includes(tag);
+        });
+      });
+    }
+  }, {
+    key: "compileTemplate",
+    value: function compileTemplate(template, args) {
+      var _this = this;
+
+      return template.replace(/{{([^}]+)}}/g, function (match, placeholder) {
+        return _this.getTemplateArgs(args, placeholder.trim());
+      });
+    }
+  }, {
+    key: "createOverlay",
+    value: function createOverlay(overlayData) {
+      var _this$settings = this.settings,
+          classes = _this$settings.classes,
+          overlayTemplate = _this$settings.overlayTemplate,
+          $overlay = jQuery('<div>', {
+        "class": this.getItemClass(classes.overlay)
+      }),
+          overlayContent = this.compileTemplate(overlayTemplate, jQuery.extend(true, this.settings, overlayData));
+      $overlay.html(overlayContent);
+      return $overlay;
+    }
+  }, {
+    key: "createItem",
+    value: function createItem(itemData) {
+      var classes = this.settings.classes,
+          $item = jQuery('<div>', {
+        "class": this.getItemClass(classes.item),
+        'data-e-gallery-tags': itemData.tags
+      }),
+          $image = jQuery('<div>', {
+        "class": this.getItemClass(classes.image)
+      }).css('background-image', 'url(' + itemData.thumbnail + ')');
+      var $overlay;
+
+      if (this.settings.overlay) {
+        $overlay = this.createOverlay(itemData);
+      }
+
+      var $contentWrapper = $item;
+
+      if (itemData.url) {
+        $contentWrapper = jQuery('<a>', {
+          "class": this.getItemClass(classes.link),
+          href: itemData.url
+        });
+        $item.html($contentWrapper);
+      }
+
+      $contentWrapper.html($image);
+
+      if ($overlay) {
+        $contentWrapper.append($overlay);
+      }
+
+      return $item;
+    }
+  }, {
+    key: "debounce",
+    value: function debounce(func, wait) {
+      var timeout;
+      return function () {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        var context = this;
+
+        var later = function later() {
+          timeout = null;
+          func.apply(context, args);
+        };
+
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+  }, {
     key: "buildGallery",
     value: function buildGallery() {
-      var _this = this;
+      var _this2 = this;
 
       var items = this.settings.items;
       this.$items = jQuery();
       items.forEach(function (item) {
-        var $item = _this.createItem(item);
+        var $item = _this2.createItem(item);
 
-        _this.$items = _this.$items.add($item);
+        _this2.$items = _this2.$items.add($item);
 
-        _this.$container.append($item);
+        _this2.$container.append($item);
       });
     }
   }, {
@@ -530,39 +625,72 @@ function () {
   }, {
     key: "loadImages",
     value: function loadImages() {
-      var _this2 = this;
+      var _this3 = this;
 
       var allPromises = [];
       this.imagesData = [];
-      jQuery.each(this.settings.items, function (index) {
+      this.settings.items.forEach(function (item, index) {
         var image = new Image(),
             promise = new Promise(function (resolve) {
           image.onload = resolve;
         });
         allPromises.push(promise);
         promise.then(function () {
-          return _this2.calculateImageSize(image, index);
+          return _this3.calculateImageSize(image, index);
         });
-        image.src = _this2.settings.items[index].thumbnail;
+        image.src = item.thumbnail;
       });
       Promise.all(allPromises).then(function () {
-        return _this2.runGallery();
+        return _this3.runGallery();
       });
+    }
+  }, {
+    key: "makeGalleryFromContent",
+    value: function makeGalleryFromContent() {
+      var selectors = this.settings.selectors,
+          items = [];
+      this.$items = this.$container.find(selectors.items);
+      this.$items.each(function (index, item) {
+        var $image = jQuery(item).find(selectors.image),
+            imageSource = $image.data('thumbnail');
+        $image.css('background-image', "url(\"".concat(imageSource, "\")"));
+        items[index] = {
+          thumbnail: imageSource
+        };
+      });
+      this.settings.items = items;
     }
   }, {
     key: "prepareGallery",
     value: function prepareGallery() {
-      this.buildGallery();
+      if (this.settings.items) {
+        this.buildGallery();
+      } else {
+        this.makeGalleryFromContent();
+      }
+
       this.loadImages();
     }
   }, {
     key: "runGallery",
-    value: function runGallery() {
+    value: function runGallery(refresh) {
       var containerStyle = this.$container[0].style;
       containerStyle.setProperty('--hgap', this.getCurrentDeviceSetting('horizontalGap') + 'px');
       containerStyle.setProperty('--vgap', this.getCurrentDeviceSetting('verticalGap') + 'px');
       containerStyle.setProperty('--animation-duration', this.settings.animationDuration + 'ms');
-      this.run();
+      this.$items.hide();
+      this.getActiveItems().show();
+      this.run(refresh);
+    }
+  }, {
+    key: "setSettings",
+    value: function setSettings(key, value) {
+      var nestedObjectData = this.getNestedObjectData(this.settings, key);
+
+      if (nestedObjectData.object) {
+        nestedObjectData.object[nestedObjectData.key] = value;
+        this.runGallery(true);
+      }
     }
   }, {
     key: "unbindEvents",
@@ -634,7 +762,7 @@ function (_BaseGalleryType) {
     key: "setItemsPosition",
     value: function setItemsPosition() {
       var columns = this.getCurrentDeviceSetting('columns');
-      this.$items.each(function (index, item) {
+      this.getActiveItems().each(function (index, item) {
         item.style.setProperty('--column', index % columns);
         item.style.setProperty('--row', Math.floor(index / columns));
       });
@@ -647,7 +775,7 @@ function (_BaseGalleryType) {
           containerStyle = this.$container[0].style;
       containerStyle.setProperty('--columns', columns);
       containerStyle.setProperty('--rows', rows);
-      var itemWidth = this.$items.width(),
+      var itemWidth = this.getActiveItems().width(),
           aspectRatio = this.settings.aspectRatio.split(':'),
           aspectRatioPercents = aspectRatio[1] / aspectRatio[0],
           itemHeight = aspectRatioPercents * itemWidth,
@@ -773,7 +901,7 @@ function (_BaseGalleryType) {
           }
         }
 
-        var isLastItem = index === this.settings.items.length - 1;
+        var isLastItem = index === this.getActiveItems().length - 1;
         this.imagesData[index].computedWidth = itemComputedWidth;
 
         if (isLastItem) {
@@ -794,13 +922,14 @@ function (_BaseGalleryType) {
   }, {
     key: "fitImagesInContainer",
     value: function fitImagesInContainer(startIndex, endIndex, rowWidth) {
-      var gapCount = endIndex - startIndex - 1;
+      var gapCount = endIndex - startIndex - 1,
+          $items = this.getActiveItems();
       var aggregatedWidth = 0;
 
       for (var index = startIndex; index < endIndex; index++) {
         var imageData = this.imagesData[index],
             percentWidth = imageData.computedWidth / rowWidth,
-            item = this.$items.get(index),
+            item = $items.get(index),
             firstRowItemClass = this.getItemClass(this.settings.classes.firstRowItem);
         item.style.setProperty('--item-width', percentWidth);
         item.style.setProperty('--gap-count', gapCount);
@@ -831,7 +960,7 @@ function (_BaseGalleryType) {
       });
       var currentRow = -1,
           accumulatedTop = 0;
-      this.$items.each(function (index, item) {
+      this.getActiveItems().each(function (index, item) {
         var itemRowIndex = item.style.getPropertyValue('--item-row-index'),
             isFirstItem = '0' === itemRowIndex;
 
@@ -899,12 +1028,12 @@ function (_BaseGalleryType) {
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Masonry, [{
     key: "run",
-    value: function run() {
+    value: function run(refresh) {
       var _this = this;
 
       var currentBreakpoint = this.getCurrentBreakpoint();
 
-      if (currentBreakpoint === this.currentBreakpoint) {
+      if (!refresh && currentBreakpoint === this.currentBreakpoint) {
         return;
       }
 
@@ -914,8 +1043,9 @@ function (_BaseGalleryType) {
           columns = this.getCurrentDeviceSetting('columns'),
           containerWidth = this.$container.width(),
           horizontalGap = this.getCurrentDeviceSetting('horizontalGap'),
-          itemWidth = (containerWidth - horizontalGap * (columns - 1)) / columns;
-      this.$items.each(function (index, item) {
+          itemWidth = (containerWidth - horizontalGap * (columns - 1)) / columns,
+          $items = this.getActiveItems();
+      $items.each(function (index, item) {
         var row = Math.floor(index / columns),
             indexAtRow = index % columns,
             imageData = _this.imagesData[index],
@@ -932,14 +1062,14 @@ function (_BaseGalleryType) {
       });
       var highestColumn = Math.max.apply(Math, heights),
           highestColumnIndex = heights.indexOf(highestColumn),
-          rows = Math.floor(this.settings.items.length / this.settings.columns),
-          rowsRemainder = this.settings.items.length % this.settings.columns,
+          rows = Math.floor(this.settings.items.length / columns),
+          rowsRemainder = this.settings.items.length % columns,
           highestColumnsGapsCount = rowsRemainder > highestColumnIndex ? rows : rows - 1,
           containerAspectRatio = highestColumn / containerWidth;
       this.$container[0].style.setProperty('--columns', columns);
       this.$container[0].style.setProperty('--highest-column-gap-count', highestColumnsGapsCount);
       this.$container.css('padding-bottom', containerAspectRatio * 100 + '%');
-      this.$items.each(function (index, item) {
+      $items.each(function (index, item) {
         var percentHeight = aggregatedHeights[index] ? aggregatedHeights[index] / highestColumn * 100 : 0,
             row = Math.floor(index / columns);
         item.style.setProperty('--percent-height', percentHeight + '%');
@@ -955,10 +1085,10 @@ function (_BaseGalleryType) {
 
 /***/ }),
 
-/***/ "./src/scss/eGallery.scss":
-/*!********************************!*\
-  !*** ./src/scss/eGallery.scss ***!
-  \********************************/
+/***/ "./src/scss/e-gallery.scss":
+/*!*********************************!*\
+  !*** ./src/scss/e-gallery.scss ***!
+  \*********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

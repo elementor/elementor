@@ -4,6 +4,8 @@
 
 	<arg name="parallel" value="8" />
 
+	<config name="text_domain" value="elementor" />
+
 	<exclude-pattern>vendor/</exclude-pattern>
 	<exclude-pattern>build/</exclude-pattern>
 	<exclude-pattern>node_modules/</exclude-pattern>

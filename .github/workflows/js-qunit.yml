@@ -1,0 +1,22 @@
+name: JS-Qunit
+
+on:
+  push:
+    paths:
+      - '*.js'
+  pull_request:
+    paths:
+      - '*.js'
+
+jobs:
+  Qunit:
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: yarn
+      - name: "Grunt Scripts"
+        run: grunt scripts
+      - name: "Run Qunit"
+        run: grunt qunit
