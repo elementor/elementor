@@ -13,6 +13,7 @@ use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
 class Test_Upgrades extends Elementor_Test_Base {
 
 	public function test_v_2_7_0_rename_document_types_to_wp() {
+		$this->markTestSkipped();
 		// Create a post with post types (post, page).
 		$document_post = $this->create_post( 'post' );
 		$document_page = $this->create_post( 'page' );
@@ -49,36 +50,62 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertEquals( 'wp-page', $page_meta );
 	}
 
-	public function test_v_2_7_0_remove_old_usage_data() {
-		/** @var Module $module */
-		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
+	public function test_v_2_7_1_remove_old_usage_data() {
+		$old_usage_option_name = 'elementor_elements_usage';
+		$old_usage_meta_key = '_elementor_elements_usage';
 
-		$this->create_document_with_data();
+		add_option( $old_usage_option_name, 'test' );
+		$document = $this->create_post();
+		$document->update_main_meta( $old_usage_meta_key, 'test' );
 
-		$this->assertNotEquals( 0, count($module->get_formatted_usage()) );
+		$this->assertEquals( 'test', get_option( $old_usage_option_name ) );
+		$this->assertEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
 
 		// Run upgrade.
-		Upgrades::_v_2_7_0_remove_old_usage_data();
+		Upgrades::_v_2_7_1_remove_old_usage_data();
 
-		// Check there is no usage.
-		$this->assertEquals( 0, count($module->get_formatted_usage()) );
+		$this->assertNotEquals( 'test', get_option( $old_usage_option_name ) );
+		$this->assertNotEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
 	}
 
-	public function test_v_2_7_0_recalc_usage_data() {
-		// Create a post but delete the usage data.
-		$this->test_v_2_7_0_remove_old_usage_data();
+	public function test_v_2_7_1_recalc_usage_data() {
+		$posts_count = 10;
+		$query_limit = 3;
+		$expected_iterations = (int) ceil( $posts_count / $query_limit );
+		$upgrade_iterations = 1;
+
+		// Create posts.
+		for ( $i = 0; $i < $posts_count; $i++ ) {
+			$this->create_document_with_data();
+		}
 
 		$updater = $this->create_updater();
+		$updater->set_limit( $query_limit );
 
 		// Run upgrade.
-		Upgrades::_v_2_7_0_recalc_usage_data( $updater );
+		while ( Upgrades::_v_2_7_1_recalc_usage_data( $updater ) ) {
+			$upgrade_iterations++;
+
+			$updater->set_current_item( [
+				'iterate_num' => $upgrade_iterations,
+			] );
+
+			// Avoid infinity loop.
+			if ( $upgrade_iterations > $posts_count ) {
+				break;
+			}
+		}
+
+		$this->assertEquals( $expected_iterations, $upgrade_iterations );
 
 		/** @var Module $module */
 		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
+		$usage = get_option( $module::OPTION_NAME, [] );
 
 		// Check there usage.
-		$this->assertEquals( 1, count($module->get_formatted_usage()) );
+		$this->assertEquals( $posts_count, $usage['wp-post']['button']['count'] );
 	}
+
 
 	/**
 	 * @param string $post_type

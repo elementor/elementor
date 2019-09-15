@@ -595,16 +595,24 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
+	// Because the query is slow on large sites, temporary don't upgrade.
+	/*	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
 		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
-	}
+	}*/
+
+	// Upgrade code was fixed & moved to _v_2_7_1_remove_old_usage_data.
+	/* public static function _v_2_7_0_remove_old_usage_data() {} */
+
+	// Upgrade code moved to _v_2_7_1_recalc_usage_data.
+	/* public static function _v_2_7_0_recalc_usage_data( $updater ) {} */
 
 	/**
-	 * Format was changed.
+	 * Don't use the old data anymore.
+	 * Since 2.7.1 the key was changed from `elementor_elements_usage` to `elementor_controls_usage`.
 	 */
-	public static function _v_2_7_0_remove_old_usage_data() {
-		delete_option( \Elementor\Modules\Usage\Module::OPTION_NAME );
-		delete_post_meta_by_key( \Elementor\Modules\Usage\Module::META_KEY );
+	public static function _v_2_7_1_remove_old_usage_data() {
+		delete_option( 'elementor_elements_usage' );
+		delete_post_meta_by_key( '_elementor_elements_usage' );
 	}
 
 	/**
@@ -614,7 +622,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_2_7_0_recalc_usage_data( $updater ) {
+	public static function _v_2_7_1_recalc_usage_data( $updater ) {
 		/** @var Module $module */
 		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
 
