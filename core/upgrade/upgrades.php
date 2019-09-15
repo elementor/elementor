@@ -595,9 +595,10 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
+	// Because the query is slow on large sites, temporary don't upgrade.
+	/*	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
 		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
-	}
+	}*/
 
 	// Upgrade code was fixed & moved to _v_2_7_1_remove_old_usage_data.
 	/* public static function _v_2_7_0_remove_old_usage_data() {} */
