@@ -5,10 +5,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	swiper: null,
 
-	videoType: null,
-
-	apiProvider: null,
-
 	player: null,
 
 	getDefaultSettings: function() {
@@ -287,26 +283,26 @@ module.exports = elementorModules.ViewModule.extend( {
 			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
 			$playIcon = $activeSlide.children( '.' + classes.playButton );
 
+		let videoType, apiProvider;
+
 		$videoContainer.append( $videoWrapper );
 
 		$activeSlide.append( $videoContainer );
 
 		if ( -1 !== videoURL.indexOf( 'vimeo.com' ) ) {
-			this.videoType = 'vimeo';
-			this.apiProvider = elementorFrontend.utils.vimeo;
+			videoType = 'vimeo';
+			apiProvider = elementorFrontend.utils.vimeo;
 		} else if ( videoURL.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
-			this.videoType = 'youtube';
-			this.apiProvider = elementorFrontend.utils.youtube;
+			videoType = 'youtube';
+			apiProvider = elementorFrontend.utils.youtube;
 		}
 
-		const videoID = this.apiProvider.getVideoIDFromURL( videoURL );
+		const videoID = apiProvider.getVideoIDFromURL( videoURL );
 
-		this.apiProvider.onApiReady( ( apiObject ) => {
-			if ( 'youtube' === this.videoType ) {
+		apiProvider.onApiReady( ( apiObject ) => {
+			if ( 'youtube' === videoType ) {
 				this.prepareYTVideo( apiObject, videoID, $videoContainer, $videoWrapper, $playIcon );
-			}
-
-			if ( 'vimeo' === this.videoType ) {
+			} else if ( 'vimeo' === videoType ) {
 				this.prepareVimeoVideo( apiObject, videoID, $videoContainer, $videoWrapper, $playIcon );
 			}
 		} );
