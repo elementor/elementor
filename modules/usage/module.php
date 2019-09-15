@@ -146,6 +146,10 @@ class Module extends BaseModule {
 	 * @param \WP_Post $post
 	 */
 	public function on_status_change( $new_status, $old_status, $post ) {
+		if ( wp_is_post_autosave( $post ) ) {
+			return;
+		}
+
 		// If it's from elementor editor, the usage should be saved via `before_document_save`/`after_document_save`.
 		if ( $this->is_document_saving ) {
 			return;
