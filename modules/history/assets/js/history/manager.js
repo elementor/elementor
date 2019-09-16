@@ -207,10 +207,10 @@ var	Manager = function() {
 
 			if ( 'not_applied' === item.get( 'status' ) ) {
 				item.get( 'items' ).each( function( subItem ) {
-					var history = subItem.get( 'history' );
+					const restore = subItem.get( 'restore' );
 
-					if ( history ) { /* type duplicate first items hasn't history */
-						history.behavior.restore( subItem );
+					if ( restore ) {
+						restore( subItem );
 					}
 				} );
 
@@ -227,10 +227,10 @@ var	Manager = function() {
 				var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
 
 				_( reversedSubItems ).each( function( subItem ) {
-					var history = subItem.get( 'history' );
+					const restore = subItem.get( 'restore' );
 
-					if ( history ) { /* type duplicate first items hasn't history */
-						history.behavior.restore( subItem, true );
+					if ( restore ) {
+						restore( subItem, true );
 					}
 				} );
 

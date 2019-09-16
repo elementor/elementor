@@ -3,31 +3,24 @@ import Base from '../../commands/base';
 // Create.
 export default class Create extends Base {
 	static restore( historyItem, isRedo ) {
-		const containers = historyItem.get( 'containers' ),
-			options = historyItem.get( 'options' ) || {},
-			subItems = historyItem.collection;
+		const data = historyItem.get( 'data' ),
+			container = historyItem.get( 'container' ),
+			options = historyItem.get( 'options' ) || {};
 
 		// No clone when restoring, eg: duplicate will generate unique ids while restoring.
 		if ( options.clone ) {
 			options.clone = false;
 		}
 
-		containers.forEach( ( container ) => {
-			const data = subItems.findWhere( { container } ).get( 'data' );
-
-			if ( isRedo ) {
-				const model = historyItem.get( 'model' ),
-					{ toRestoreModel } = data;
-
-				$e.run( 'document/elements/create', {
-					container,
-					model: toRestoreModel,
-					options,
-				} );
-			} else {
-				$e.run( 'document/elements/delete', { container: data.toRestoreContainer } );
-			}
-		} );
+		if ( isRedo ) {
+			$e.run( 'document/elements/create', {
+				container,
+				model: data.toRestoreModel,
+				options,
+			} );
+		} else {
+			$e.run( 'document/elements/delete', { container: data.toRestoreContainer } );
+		}
 	}
 
 	validateArgs( args ) {
@@ -42,15 +35,9 @@ export default class Create extends Base {
 		return {
 			containers,
 			model,
-			options,
 			type: 'add',
 			title: elementor.history.history.getModelLabel( model ),
 			elementType: model.elType,
-			history: {
-				behavior: {
-					restore: this.constructor.restore,
-				},
-			},
 		};
 	}
 
@@ -76,6 +63,8 @@ export default class Create extends Base {
 					container,
 					type: 'sub-add',
 					elementType: createdContainer.model.get( 'elType' ),
+					restore: this.constructor.restore,
+					options,
 					data: {
 						toRestoreContainer: createdContainer,
 						toRestoreModel: createdContainer.model.toJSON(),

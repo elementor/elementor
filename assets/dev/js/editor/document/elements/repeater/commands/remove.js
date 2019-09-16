@@ -3,26 +3,23 @@ import Base from '../../../commands/base';
 // Remove.
 export default class extends Base {
 	static restore( historyItem, isRedo ) {
-		const subItems = historyItem.collection;
+		const data = historyItem.get( 'data' ),
+			container = historyItem.get( 'container' );
 
-		historyItem.get( 'containers' ).forEach( ( container ) => {
-			const data = subItems.findWhere( { container } ).get( 'data' );
-
-			if ( isRedo ) {
-				$e.run( 'document/elements/repeater/remove', {
-					container,
-					name: data.name,
-					index: data.index,
-				} );
-			} else {
-				$e.run( 'document/elements/repeater/insert', {
-					container,
-					model: data.model,
-					name: data.name,
-					options: { at: data.index },
-				} );
-			}
-		} );
+		if ( isRedo ) {
+			$e.run( 'document/elements/repeater/remove', {
+				container,
+				name: data.name,
+				index: data.index,
+			} );
+		} else {
+			$e.run( 'document/elements/repeater/insert', {
+				container,
+				model: data.model,
+				name: data.name,
+				options: { at: data.index },
+			} );
+		}
 	}
 
 	validateArgs( args ) {
@@ -39,11 +36,6 @@ export default class extends Base {
 			containers,
 			type: 'remove',
 			subTitle: elementor.translate( 'Item' ),
-			history: {
-				behavior: {
-					restore: this.constructor.restore,
-				},
-			},
 		};
 	}
 
@@ -64,6 +56,7 @@ export default class extends Base {
 				$e.run( 'document/history/addSubItem', {
 					container, // TODO: Find better way.
 					data: { name, model, index },
+					restore: this.constructor.restore,
 				} );
 			}
 

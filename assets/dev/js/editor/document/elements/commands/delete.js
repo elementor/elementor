@@ -3,25 +3,18 @@ import Base from '../../commands/base';
 // Delete.
 export default class extends Base {
 	static restore( historyItem, isRedo ) {
-		const containers = historyItem.get( 'containers' );
+		const container = historyItem.get( 'container' ),
+			data = historyItem.get( 'data' );
 
 		if ( isRedo ) {
-			containers.forEach( ( container ) => {
-				$e.run( 'document/elements/delete', { container } );
-			} );
+			$e.run( 'document/elements/delete', { container } );
 		} else {
-			const subItems = historyItem.collection;
-
-			containers.forEach( ( container ) => {
-				const data = subItems.findWhere( { container } ).get( 'data' );
-
-				$e.run( 'document/elements/create', {
-					container: data.parent,
-					model: data.model,
-					options: {
-						at: data.at,
-					},
-				} );
+			$e.run( 'document/elements/create', {
+				container: data.parent,
+				model: data.model,
+				options: {
+					at: data.at,
+				},
 			} );
 		}
 	}
@@ -36,11 +29,6 @@ export default class extends Base {
 		return {
 			containers,
 			type: 'remove',
-			history: {
-				behavior: {
-					restore: this.constructor.restore,
-				},
-			},
 		};
 	}
 
@@ -57,6 +45,7 @@ export default class extends Base {
 					container,
 					type: 'sub-remove',
 					elementType: container.model.get( 'elType' ),
+					restore: this.constructor.restore,
 					data: {
 						model: container.model.toJSON(),
 						parent: container.parent,

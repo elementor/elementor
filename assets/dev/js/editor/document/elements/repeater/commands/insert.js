@@ -41,11 +41,7 @@ export default class extends Base {
 				name,
 				index: options.at,
 			},
-			history: {
-				behavior: {
-					restore: this.constructor.restore,
-				},
-			},
+			restore: this.constructor.restore,
 		};
 	}
 

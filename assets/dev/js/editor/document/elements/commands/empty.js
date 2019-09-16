@@ -16,11 +16,7 @@ export default class extends Base {
 				elementType: 'section',
 				title: elementor.translate( 'all_content' ),
 				data: elementor.elements.toJSON(),
-				history: {
-					behavior: {
-						restore: this.constructor.restore,
-					},
-				},
+				restore: this.constructor.restore,
 			};
 		}
 

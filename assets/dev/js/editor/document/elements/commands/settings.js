@@ -71,7 +71,7 @@ export default class Settings extends Base {
 
 		let subTitle = '';
 
-		if ( ! isMultiSettings && 1 === settingsKeys.length ) {
+		if ( ! isMultiSettings && 1 === settingsKeys.length && containers[ 0 ].settings.options.controls[ settingsKeys[ 0 ] ] ) {
 			subTitle = containers[ 0 ].settings.options.controls[ settingsKeys[ 0 ] ].label;
 		}
 
@@ -80,11 +80,7 @@ export default class Settings extends Base {
 			data: { changes },
 			type: 'change',
 			subTitle: subTitle,
-			history: {
-				behavior: {
-					restore: Settings.restore,
-				},
-			},
+			restore: Settings.restore,
 		};
 
 		if ( options.history ) {

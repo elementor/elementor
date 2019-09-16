@@ -73,11 +73,7 @@ export default class Settings extends Base {
 			},
 			type: 'change',
 			subTitle: elementor.translate( 'Item' ),
-			history: {
-				behavior: {
-					restore: Settings.restore,
-				},
-			},
+			restore: Settings.restore,
 		} );
 	}
 

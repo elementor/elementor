@@ -43,11 +43,7 @@ export default class extends Base {
 			containers,
 			data: { changes },
 			type: 'change',
-			history: {
-				behavior: {
-					restore: this.constructor.restore,
-				},
-			},
+			restore: this.constructor.restore,
 		};
 	}
 
