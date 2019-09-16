@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['latest', '5.1', '5.0', '4.9', '4.8']
+        wordpress_versions: ['latest', '5.1', '5.0']
     name: WordPress ${{ matrix.wordpress_versions }}
     steps:
       - name: Checkout source code
@@ -40,9 +40,7 @@ jobs:
         run: php7.2 /tmp/phpunit-6
       - name: PHP7.2 - Multisite
         run: WP_MULTISITE=1 php7.2 /tmp/phpunit-6
-      - if: matrix.wordpress_versions != '4.9' && matrix.wordpress_versions != '4.8'
         name: PHP7.3
         run: php7.3 /tmp/phpunit-6
-      - if: matrix.wordpress_versions != '4.9' && matrix.wordpress_versions != '4.8'
         name: PHP7.3 - Multisite
         run: WP_MULTISITE=1 php7.3 /tmp/phpunit-6
