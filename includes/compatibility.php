@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,6 +40,31 @@ class Compatibility {
 		}
 
 		add_action( 'elementor/maintenance_mode/mode_changed', [ __CLASS__, 'clear_3rd_party_cache' ] );
+
+		add_action( 'elementor/element/before_section_start', [ __CLASS__, 'document_post_deprecated_hooks' ], 10, 3 );
+		add_action( 'elementor/element/after_section_start', [ __CLASS__, 'document_post_deprecated_hooks' ], 10, 3 );
+		add_action( 'elementor/element/before_section_end', [ __CLASS__, 'document_post_deprecated_hooks' ], 10, 3 );
+		add_action( 'elementor/element/after_section_end', [ __CLASS__, 'document_post_deprecated_hooks' ], 10, 3 );
+	}
+
+	public static function document_post_deprecated_hooks( $instance, $section_id, $args ) {
+		if ( ! $instance instanceof PageBase ) {
+			return;
+		}
+
+		$current_action = current_action();
+		$current_action = explode( '/', $current_action );
+		$current_sub_action = $current_action[2];
+
+		$deprecated_action = "elementor/element/post/{$section_id}/{$current_sub_action}";
+
+		if ( ! has_action( $deprecated_action ) ) {
+			return;
+		}
+
+		$replacement = "`elementor/element/wp-post/{$section_id}/{$current_sub_action}` or `elementor/element/wp-page/{$section_id}/{$current_sub_action}`";
+		_deprecated_hook( $deprecated_action, '2.7.0', $replacement );
+		do_action( $deprecated_action, $instance, $section_id, $args );
 	}
 
 	public static function clear_3rd_party_cache() {
@@ -213,7 +239,7 @@ class Compatibility {
 			} );
 		}
 
-		// Fix Preview URL for https://premium.wpmudev.org/project/domain-mapping/ plugin
+		// Fix Preview URL for https://github.com/wpmudev/domain-mapping plugin
 		if ( class_exists( 'domain_map' ) ) {
 			add_filter( 'elementor/document/urls/preview', function( $preview_url ) {
 				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== $_SERVER['HTTP_HOST'] ) {

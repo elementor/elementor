@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 2.7.1
+Stable tag: 2.7.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,12 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.7.2 - 2019-09-16 =
+* Fix: Data updater stuck in site with large database ([Topic](https://wordpress.org/support/topic/the-elementor-data-updater-problems-continue/), [Topic](https://wordpress.org/support/topic/v2-7-not-stable/))
+* Fix: Added backward compatibility for deprecated hooks in page settings ([#9060](https://github.com/elementor/elementor/issues/9060), [#9080](https://github.com/elementor/elementor/issues/9080))
+* Fix: Added support for custom document in `autosave` ([#9070](https://github.com/elementor/elementor/issues/9070))
+* Fix: Changed the default `slidesPerGroup` from 2 to 1 in Image Carousel widget
 
 = 2.7.1 - 2019-09-10 =
 * Fix: Self Hosted video lightbox closing when clicking on the video ([#8931](https://github.com/elementor/elementor/issues/8931))
