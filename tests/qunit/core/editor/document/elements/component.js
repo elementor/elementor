@@ -91,6 +91,17 @@ jQuery( () => {
 					`'${ defaultInnerSectionColumns }' columns were created in the inner section.` );
 			} );
 
+			QUnit.test( 'Create Widget: Custom Position', ( assert ) => {
+				const eButton = Elements.createMockButtonWidget();
+
+				Elements.settings( eButton, {
+					_position: 'absolute',
+				} );
+
+				assert.equal( eButton.view.$el.hasClass( 'elementor-absolute' ), true, '',
+					'Widget have "elementor-absolute" class.' );
+			} );
+
 			QUnit.test( 'Duplicate', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
 					eButton = Elements.createButton( eColumn ),
@@ -176,7 +187,7 @@ jQuery( () => {
 				Elements.move( eSection, elementor.getPreviewContainer(), { at: 0 } );
 
 				// Validate first section have 3 columns.
-				assert.equal( elementor.getPreviewContainer().model.attributes.elements.first().attributes.elements.length, 3,
+				assert.equal( elementor.getPreviewContainer().children.first().attributes.elements.length, 3, 3,
 					'Section were moved.' );
 			} );
 
