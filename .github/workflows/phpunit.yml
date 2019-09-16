@@ -40,7 +40,7 @@ jobs:
         run: php7.2 /tmp/phpunit-6
       - name: PHP7.2 - Multisite
         run: WP_MULTISITE=1 php7.2 /tmp/phpunit-6
-        name: PHP7.3
+      - name: PHP7.3
         run: php7.3 /tmp/phpunit-6
-        name: PHP7.3 - Multisite
+      - name: PHP7.3 - Multisite
         run: WP_MULTISITE=1 php7.3 /tmp/phpunit-6
