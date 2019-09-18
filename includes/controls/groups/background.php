@@ -643,7 +643,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['slideshow_slide_duration'] = [
-			'label' => __( 'Duration', 'elementor-pro' ) . ' (ms)',
+			'label' => __( 'Duration', 'elementor' ) . ' (ms)',
 			'type' => Controls_Manager::NUMBER,
 			'default' => 5000,
 			'condition' => [
@@ -658,10 +658,10 @@ class Group_Control_Background extends Group_Control_Base {
 			'default' => 'fade',
 			'options' => [
 				'fade' => 'Fade',
-				'slide-up' => 'Slide Up',
-				'slide-down' => 'Slide Down',
-				'slide-right' => 'Slide Right',
-				'slide-left' => 'Slide Left',
+				'slide_right' => 'Slide Right',
+				'slide_left' => 'Slide Left',
+				'slide_up' => 'Slide Up',
+				'slide_down' => 'Slide Down',
 			],
 			'condition' => [
 				'background' => [ 'slideshow' ],
@@ -671,7 +671,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['slideshow_transition_duration'] = [
-			'label' => __( 'Transition Duration', 'elementor-pro' ) . ' (ms)',
+			'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
 			'type' => Controls_Manager::NUMBER,
 			'default' => 500,
 			'condition' => [
