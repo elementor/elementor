@@ -1016,7 +1016,7 @@ class Widget_Divider extends Widget_Base {
 		}
 
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>">
+		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<span class="elementor-divider-separator">
 			<?php if ( $has_icon ) : ?>
 				<div class="elementor-icon elementor-divider__element">
