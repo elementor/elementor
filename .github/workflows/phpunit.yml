@@ -1,12 +1,6 @@
 name: PHPUnit
 
-on:
-  push:
-    paths:
-      - '*.php'
-  pull_request:
-    paths:
-      - '*.php'
+on: [push, pull_request]
 
 jobs:
   run:
