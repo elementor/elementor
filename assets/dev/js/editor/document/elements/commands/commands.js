@@ -3,7 +3,6 @@
 
 import Copy from './copy';
 import Create from './create';
-import CreateSection from './create-section';
 import Delete from './delete';
 import Duplicate from './duplicate';
 import Empty from './empty';
@@ -11,13 +10,11 @@ import Paste from './paste';
 import Move from './move';
 import PasteStyle from './paste-style';
 import ResetStyle from './reset-style';
-import ResizeColumn from './resize-column';
 import Settings from './settings';
 
 export {
 	Copy,
 	Create,
-	CreateSection,
 	Delete,
 	Duplicate,
 	Empty,
@@ -25,6 +22,5 @@ export {
 	Move,
 	PasteStyle,
 	ResetStyle,
-	ResizeColumn,
 	Settings,
 };

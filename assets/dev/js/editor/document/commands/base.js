@@ -12,6 +12,8 @@ export default class {
 		this.initialize();
 		this.validateArgs( args );
 
+		this.currentCommand = $e.commands.getCurrent( 'document' );
+
 		this.history = this.getHistory( args );
 	}
 
@@ -192,16 +194,15 @@ export default class {
 			historyId = $e.run( 'document/history/startLog', this.history );
 		}
 
-		let result;
+		let result,
+			success = false;
 
-		// Rollback history on failure.
 		try {
+			$e.hooks.runDependency( this.currentCommand, this.args );
+
 			result = this.apply( this.args );
 		} catch ( e ) {
-			if ( historyId ) {
-				$e.run( 'document/history/deleteLog', { id: historyId } );
-			}
-
+			// Rollback history on failure.
 			if ( $e.devTools ) {
 				$e.devTools.log.error( e );
 			}
@@ -210,8 +211,14 @@ export default class {
 				console.error( e );
 			}
 
+			if ( historyId ) {
+				$e.run( 'document/history/deleteLog', { id: historyId } );
+			}
+
 			return false;
 		}
+
+		$e.hooks.runAfter( this.currentCommand, this.args, result );
 
 		if ( historyId ) {
 			$e.run( 'document/history/endLog', { id: historyId } );

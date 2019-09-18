@@ -235,6 +235,8 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
+		// TODO: Move to hook dependency.
+
 		var errors = [],
 			columnSize = this.model.getSetting( '_column_size' );
 
@@ -245,17 +247,17 @@ ColumnView = BaseElementView.extend( {
 			return errors;
 		}
 
-		if ( ! oldValue ) {
-			oldValue = columnSize;
-		}
+		// if ( ! oldValue ) {
+		// 	oldValue = columnSize;
+		// }
 
-		try {
-			this._parent.resizeChild( this, +oldValue, +newValue );
-		} catch ( e ) {
-			if ( e.message === this._parent.errors.columnWidthTooLarge ) {
-				errors.push( e.message );
-			}
-		}
+		// try {
+		// 	this._parent.resizeChild( this, +oldValue, +newValue );
+		// } catch ( e ) {
+		// 	if ( e.message === this._parent.errors.columnWidthTooLarge ) {
+		// 		errors.push( e.message );
+		// 	}
+		// }
 
 		return errors;
 	},

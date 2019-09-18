@@ -51,7 +51,10 @@ export default class extends Base {
 					section.resizeColumns();
 				} else {
 					// Next code changed from original since `_checkIsEmpty()` was removed.
-					const section = $e.run( 'document/elements/createSection', {
+					const section = $e.run( 'document/elements/create', {
+						model: {
+							elType: 'column',
+						},
 						columns: 1,
 						options: {
 							at: index,

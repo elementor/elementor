@@ -1,7 +1,11 @@
 // TODO: Refactor this class.
 export default class {
 	static createSection( columns = 1, returnFirstColumn = false ) {
-		const eSection = $e.run( 'document/elements/createSection', {
+		const eSection = $e.run( 'document/elements/create', {
+			model: {
+				elType: 'section',
+			},
+			container: elementor.getPreviewContainer(),
 			columns,
 			returnValue: true,
 		} );
@@ -34,9 +38,11 @@ export default class {
 	}
 
 	static resizeColumn( eContainer, width ) {
-		$e.run( 'document/elements/resizeColumn', {
+		$e.run( 'document/elements/settings', {
 			container: eContainer,
-			width,
+			settings: {
+				_inline_size: width,
+			},
 		} );
 	}
 

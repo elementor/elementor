@@ -51,11 +51,6 @@ export default class Create extends Base {
 
 			const createdContainer = container.view.addChildElement( model, options ).getContainer();
 
-			// Create column for inner section (Moved from elements/views/base.js).
-			if ( this.isHistoryActive() && 'section' === createdContainer.model.get( 'elType' ) && createdContainer.model.get( 'isInner' ) ) {
-				createdContainer.view.handleCreateInnerSection();
-			}
-
 			result.push( createdContainer );
 
 			if ( this.isHistoryActive() ) {

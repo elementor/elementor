@@ -1,46 +1,9 @@
 import * as Commands from './commands/commands';
+import './hooks/hooks';
 
 export default class extends elementorModules.common.Component {
 	getNamespace() {
 		return 'document/elements';
-	}
-
-	// TODO: find better solution.
-	dependency( command, args ) {
-		const { containers = [ args.container ] } = args;
-
-		switch ( command ) {
-			case 'document/elements/create':
-				if ( 'column' === args.model.elType ) {
-					const canAddColumn = ! containers.some( ( container ) => {
-						return container.view.isCollectionFilled();
-					} );
-
-					if ( ! canAddColumn ) {
-						throw Error( 'Can\'t add column :(' );
-					}
-				}
-				break;
-
-			case 'document/elements/settings':
-				if ( ! args.settings ) {
-					return;
-				}
-
-				if ( args.settings._inline_size && ! args.isMultiSettings ) {
-					$e.run( 'document/elements/resizeColumn', {
-						containers: containers,
-						width: args.settings._inline_size,
-					} );
-					return false;
-				}
-				break;
-
-			default:
-				break;
-		}
-
-		return true;
 	}
 
 	defaultCommands() {

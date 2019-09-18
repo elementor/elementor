@@ -57,14 +57,12 @@ export default class extends Base {
 			container.model.destroy();
 
 			container.panel.refresh();
-
-			if ( parent && parent.model && 'section' === parent.model.get( 'elType' ) ) {
-				if ( 0 === parent.view.collection.length && this.isHistoryActive() ) {
-					parent.view.handleEmptySection();
-				} else if ( parent.view.collection.length ) {
-					parent.view.resetLayout();
-				}
-			}
 		} );
+
+		if ( 1 === containers.length ) {
+			return containers[ 0 ];
+		}
+
+		return containers;
 	}
 }

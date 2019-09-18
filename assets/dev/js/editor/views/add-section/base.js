@@ -130,10 +130,14 @@ class AddSectionBase extends Marionette.ItemView {
 		const selectedStructure = event.currentTarget.dataset.structure,
 			parsedStructure = elementor.presetsFactory.getParsedStructure( selectedStructure );
 
-		$e.run( 'document/elements/createSection', {
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'section',
+			},
+			container: elementor.getPreviewContainer(),
 			columns: parsedStructure.columnsCount,
 			structure: selectedStructure,
-			options: jQuery.extend( {}, this.options ),
+			options: Object.assign( {}, this.options ),
 		} );
 	}
 
@@ -150,7 +154,11 @@ class AddSectionBase extends Marionette.ItemView {
 				returnValue: true,
 			} );
 
-		$e.run( 'document/elements/createSection', {
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'section',
+			},
+			container: elementor.getPreviewContainer(),
 			columns: 1,
 			returnValue: true,
 		} ).view.addElementFromPanel();
