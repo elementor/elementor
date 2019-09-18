@@ -123,7 +123,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	setImageContent: function( imageURL ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { class: `${ classes.item } ${ classes.preventClose }` } ),
+			$item = jQuery( '<div>', { class: classes.item } ),
 			$image = jQuery( '<img>', { src: imageURL, class: classes.image } );
 
 		$item.append( $image );
