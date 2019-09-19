@@ -60,8 +60,10 @@ export default class extends Base {
 				} );
 			}
 
+			// Remove from container and add to result.
+			result.push( container.children.pop( index ) );
+
 			collection.remove( model );
-			result.push( model );
 
 			container.render();
 		} );
