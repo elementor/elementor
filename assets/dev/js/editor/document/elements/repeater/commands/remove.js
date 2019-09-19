@@ -63,14 +63,7 @@ export default class extends Base {
 			collection.remove( model );
 			result.push( model );
 
-			if ( this.isHistoryActive() ) {
-				$e.run( 'document/elements/repeater/active', {
-					container,
-					index: collection.length === index ? index : collection.length,
-				} );
-			}
-
-			container.view.renderOnChange( container.settings );
+			container.render();
 		} );
 
 		if ( 1 === result.length ) {
