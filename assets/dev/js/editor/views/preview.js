@@ -37,6 +37,7 @@ Preview = BaseSectionsContainerView.extend( {
 				label: elementor.config.document.panel.title,
 				view: this,
 				model: this.model,
+				controls: elementor.settings.page.model.controls,
 				settings: elementor.settings.page.model,
 				children: elementor.elements,
 				dynamic: {},

@@ -33,6 +33,7 @@ module.exports = BaseSettings.extend( {
 			document: elementor.getPreviewContainer(),
 			view: '@see general/manager.js',
 			model: editModel,
+			controls: editModel.controls,
 			settings: editModel.get( 'settings' ),
 			renderer: false,
 		} );

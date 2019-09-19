@@ -71,8 +71,8 @@ export default class Settings extends Base {
 
 		let subTitle = '';
 
-		if ( ! isMultiSettings && 1 === settingsKeys.length && containers[ 0 ].settings.options.controls[ settingsKeys[ 0 ] ] ) {
-			subTitle = containers[ 0 ].settings.options.controls[ settingsKeys[ 0 ] ].label;
+		if ( ! isMultiSettings && 1 === settingsKeys.length && containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
+			subTitle = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
 		}
 
 		let historyItem = {

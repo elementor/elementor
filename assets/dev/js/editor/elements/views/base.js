@@ -107,14 +107,17 @@ BaseElementView = BaseContainer.extend( {
 
 	getContainer() {
 		if ( ! this.container ) {
+			const settingsModel = this.model.get( 'settings' );
+
 			this.container = new elementorModules.editor.Container( {
 				id: this.model.id,
 				label: elementor.history.history.getModelLabel( this.model ),
 				document: elementor.getPreviewContainer(),
 				view: this,
 				model: this.model,
+				controls: settingsModel.options.controls,
 				activeControl: false,
-				settings: this.model.get( 'settings' ),
+				settings: settingsModel,
 				children: {},
 				parent: this._parent.getContainer() || {},
 			} );

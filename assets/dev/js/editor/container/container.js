@@ -2,8 +2,10 @@ import Panel from './panel';
 
 export default class Container {
 	// TODO: add documentation.
+	// TODO: order all new container(s) args with the same order.
 	id;
 	model;
+	controls = {};
 	view;
 	settings;
 	parent;
@@ -20,8 +22,9 @@ export default class Container {
 			return;
 		}
 
+		// Set properties, if not defined - keep the defaults.
 		args.forEach( ( [ key, value ] ) => {
-			this[ key ] = value;
+			this[ key ] = 'undefined' === typeof value ? this[ key ] : value;
 		} );
 
 		if ( 'undefined' === typeof this.renderer ) {
