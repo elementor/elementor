@@ -77,9 +77,9 @@ export default class Settings extends Base {
 
 		let historyItem = {
 			containers,
+			subTitle,
 			data: { changes },
 			type: 'change',
-			subTitle: subTitle,
 			restore: Settings.restore,
 		};
 
