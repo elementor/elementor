@@ -124,9 +124,23 @@
 	<script type='text/javascript' src='./../../assets/dev/js/editor/utils/jquery-html5-dnd.js'></script>
 	<script type='text/javascript' src='./../../assets/lib/jquery-hover-intent/jquery-hover-intent.min.js'></script>
 	<script type='text/javascript' src='./../../assets/js/editor-modules.js'></script>
+
+	<script type="text/html" id="tmpl-elementor-button-content">
+		<span class="button-text">{{{ settings.text }}}</span>
+	</script>
+
+
+	<script type="text/html" id="tmpl-elementor-tag-post-custom-field-content">
+		<span>{{{  }}}</span>
+	</script>
+
 	<script>
 		const originalGet = Marionette.TemplateCache.get;
 		Marionette.TemplateCache.get = function( template ) {
+			if ( jQuery( template ).length ) {
+				return originalGet.apply( Marionette.TemplateCache, [ template ] );
+			}
+
 			return () => `<div class="${template}"></div>`;
 		};
 

@@ -4,6 +4,8 @@ import column from './mock/elments/column.json';
 import button from './mock/elments/button.json';
 import heading from './mock/elments/heading.json';
 import tabs from './mock/elments/tabs.json';
+import form from './mock/elments/form.json';
+import postCustomField from './mock/dynamic-tags/post-custom-field';
 
 elementor.start();
 
@@ -16,6 +18,11 @@ elementor.config.widgets = {
 	button,
 	heading,
 	tabs,
+	form,
+};
+
+elementor.config.dynamicTags.tags = {
+	'post-custom-field': postCustomField,
 };
 
 elementor.config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core-ui wp-editor-wrap tmce-active"><div id="wp-elementorwpeditor-editor-tools" class="wp-editor-tools hide-if-no-js"><div id="wp-elementorwpeditor-media-buttons" class="wp-media-buttons"><button type="button" id="insert-media-button" class="button insert-media add_media" data-editor="elementorwpeditor"><span class="wp-media-buttons-icon"></span> Add Media</button></div>\n' +
@@ -30,3 +37,4 @@ require( './core/common/components' );
 require( './core/editor/document/elements/component' );
 require( './core/editor/document/elements/repeater/component' );
 require( './core/editor/document/history/component' );
+require( './core/editor/document/dynamic/component' );
