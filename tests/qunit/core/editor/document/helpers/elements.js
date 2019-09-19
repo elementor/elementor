@@ -101,7 +101,17 @@ export default class {
 			},
 			returnValue: true,
 		} );
+	}
 
+	static createForm( eContainer ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'form',
+			},
+			returnValue: true,
+		} );
 	}
 
 	// TODO: rename function.

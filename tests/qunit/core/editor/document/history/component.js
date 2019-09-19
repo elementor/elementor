@@ -883,6 +883,58 @@ jQuery( () => {
 				assert.equal( eTabs.settings.get( 'tabs' ).at( targetIndex ).id,
 					eTabModel.id, 'Item restored to targetIndex' );
 			} );
+
+			QUnit.test( 'Deep', ( assert ) => {
+				const eColumn = Elements.createSection( 1, true ),
+					name = 'form_fields',
+					eForm = Elements.createForm( eColumn ),
+					beforeInsertItemsCount = eForm.settings.get( name ).length,
+					// Insert Item.
+					eFormField = Elements.repeaterInsert( eForm, name, {
+						field_type: 'text',
+						field_label: 'Name',
+					} );
+
+				// Change field_type = 'email' for new item.
+				Elements.settings( eFormField, { field_type: 'email' }, {
+					external: true,
+				} );
+
+				// Change required = 'true' for new item.
+				Elements.settings( eFormField, { required: 'true' }, {
+					external: true,
+				} );
+
+				$e.run( 'document/history/undo' );
+
+				// Validate required = '' for new item.
+				assert.equal( eFormField.settings.attributes.required, '', 'Require setting back to default' );
+
+				$e.run( 'document/history/undo' );
+
+				// Validate field_type = 'text' for new item.
+				assert.equal( eFormField.settings.attributes.field_type, 'text', 'field_type setting back to default' );
+
+				$e.run( 'document/history/undo' );
+
+				// Validate new inserted item removed.
+				assert.equal( eForm.settings.get( name ).length, beforeInsertItemsCount, 'New item was removed' );
+
+				$e.run( 'document/history/redo' );
+
+				// Validate new inserted item was recreated.
+				assert.equal( eForm.settings.get( name ).length, ( beforeInsertItemsCount + 1 ), 'New item was recreated' );
+
+				$e.run( 'document/history/redo' );
+
+				// Validate field_type = 'email' for new item.
+				assert.equal( eFormField.settings.attributes.field_type, 'email', 'field_type setting was restored' );
+
+				$e.run( 'document/history/redo' );
+
+				// Validate required = 'true' for new item.
+				assert.equal( eFormField.settings.attributes.required, 'true', 'Require setting was restored' );
+			} );
 		} );
 	} );
 } );
