@@ -37,7 +37,7 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 	},
 
 	onInputChange: function() {
-		this.getCurrentEditedSection().resizeColumns();
+		this.getCurrentEditedSection().adjustColumns();
 	},
 
 	onResetStructureClick: function() {

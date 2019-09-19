@@ -7,9 +7,20 @@ SectionView = BaseElementView.extend( {
 	defaultInnerSectionColumns: 2,
 	defaultMinColumnSize: 2,
 
+	childViewContainer: '> .elementor-container > .elementor-row',
+
+	errors: {
+		columnWidthTooLarge: 'New column width is too large',
+		columnWidthTooSmall: 'New column width is too small',
+	},
+
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
 	addSectionView: null,
+
+	_checkIsFull: function() {
+		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
+	},
 
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
@@ -21,8 +32,6 @@ SectionView = BaseElementView.extend( {
 	tagName: function() {
 		return this.model.getSetting( 'html_tag' ) || 'section';
 	},
-
-	childViewContainer: '> .elementor-container > .elementor-row',
 
 	behaviors: function() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
@@ -37,9 +46,24 @@ SectionView = BaseElementView.extend( {
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
 
-	errors: {
-		columnWidthTooLarge: 'New column width is too large',
-		columnWidthTooSmall: 'New column width is too small',
+	initialize: function() {
+		BaseElementView.prototype.initialize.apply( this, arguments );
+
+		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
+	},
+
+	addChildModel: function( model ) {
+		var isModelInstance = model instanceof Backbone.Model,
+			isInner = this.isInner();
+
+		if ( isModelInstance ) {
+			// TODO: change to command.
+			model.set( 'isInner', isInner );
+		} else {
+			model.isInner = isInner;
+		}
+
+		return BaseElementView.prototype.addChildModel.apply( this, arguments );
 	},
 
 	getEditButtons: function() {
@@ -73,12 +97,6 @@ SectionView = BaseElementView.extend( {
 		return editTools;
 	},
 
-	initialize: function() {
-		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
-	},
-
 	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
 			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'transfer' } ) );
@@ -95,20 +113,6 @@ SectionView = BaseElementView.extend( {
 		} );
 
 		return groups;
-	},
-
-	addChildModel: function( model ) {
-		var isModelInstance = model instanceof Backbone.Model,
-			isInner = this.isInner();
-
-		// TODO: handle this.
-		if ( isModelInstance ) {
-			model.set( 'isInner', isInner );
-		} else {
-			model.isInner = isInner;
-		}
-
-		return BaseElementView.prototype.addChildModel.apply( this, arguments );
 	},
 
 	getSortableOptions: function() {
@@ -135,6 +139,16 @@ SectionView = BaseElementView.extend( {
 		return this.model.getSetting( 'structure' );
 	},
 
+	getColumnAt: function( index ) {
+		var model = this.collection.at( index );
+
+		return model ? this.children.findByModelCid( model.cid ) : null;
+	},
+
+	getNextColumn: function( columnView ) {
+		return this.getColumnAt( this.collection.indexOf( columnView.model ) + 1 );
+	},
+
 	getPreviousColumn: function( columnView ) {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
@@ -152,10 +166,10 @@ SectionView = BaseElementView.extend( {
 			options: { external: true },
 		} );
 
-		this.resizeColumns();
+		this.adjustColumns();
 	},
 
-	resizeColumns: function() {
+	adjustColumns: function() {
 		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() ),
 			containers = [],
 			settings = {};
@@ -219,24 +233,10 @@ SectionView = BaseElementView.extend( {
 	},
 
 	isCollectionFilled: function() {
-		var MAX_SIZE = 10, // TODO: Not the best place.
+		var MAX_SIZE = 10,
 			columnsCount = this.collection.length;
 
 		return ( MAX_SIZE <= columnsCount );
-	},
-
-	_checkIsFull: function() {
-		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
-	},
-
-	getColumnAt: function( index ) {
-		const model = this.collection.at( index );
-
-		return model ? this.children.findByModelCid( model.cid ) : null;
-	},
-
-	getNextColumn: function( columnView ) {
-		return this.getColumnAt( this.collection.indexOf( columnView.model ) + 1 );
 	},
 
 	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {

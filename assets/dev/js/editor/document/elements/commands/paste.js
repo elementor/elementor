@@ -48,7 +48,7 @@ export default class extends Base {
 
 					result.push( this.pasteTo( transferData, [ section ] ) );
 
-					section.resizeColumns();
+					section.adjustColumns();
 				} else {
 					// Next code changed from original since `_checkIsEmpty()` was removed.
 					const section = $e.run( 'document/elements/create', {
