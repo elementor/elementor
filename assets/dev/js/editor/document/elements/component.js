@@ -7,53 +7,16 @@ export default class extends elementorModules.common.Component {
 	}
 
 	defaultCommands() {
-		return {
-			create: ( args ) => ( new Commands.Create( args ) ).run(),
-			createSection: ( args = {} ) => ( new Commands.CreateSection( args ) ).run(),
-			copy: ( args ) => ( new Commands.Copy( args ) ).run(),
-			copyAll: () => {
-				$e.run( 'document/elements/copy', {
-					containers: Object.values( elementor.getPreviewView().children._views ).map( ( view ) => view.getContainer() ),
-					elementsType: 'section',
-				} );
-			},
-			duplicate: ( args ) => ( new Commands.Duplicate( args ) ).run(),
-			delete: ( args ) => ( new Commands.Delete( args ) ).run(),
-			empty: ( args ) => ( new Commands.Empty( args ) ).run(),
-			import: ( args ) => {
-				if ( ! args.model ) {
-					throw Error( 'model is required.' );
-				}
+		const commands = {};
 
-				if ( ! args.data ) {
-					throw Error( 'data is required.' );
-				}
+		// Convert `Commands` to `elementorModules.common.Component` workable format.
+		Object.entries( Commands ).forEach( ( [ command, classReference ] ) => {
+			command = command.charAt( 0 ).toLowerCase() + command.slice( 1 );
 
-				const { model, data } = args,
-					options = args.options || {},
-					historyId = $e.run( 'document/history/startLog', {
-						type: 'add',
-						title: elementor.translate( 'template' ),
-						subTitle: model.get( 'title' ),
-						elementType: 'template',
-						returnValue: true,
-					} );
+			commands[ command ] = ( args ) => ( new classReference( args ) ).run();
+		} );
 
-				elementor.getPreviewView().addChildModel( data.content, options );
-
-				if ( options.withPageSettings ) {
-					elementor.settings.page.model.setExternalChange( data.page_settings );
-				}
-
-				$e.run( 'document/history/endLog', { id: historyId } );
-			},
-			move: ( args ) => ( new Commands.Move( args ) ).run(),
-			paste: ( args ) => ( new Commands.Paste( args ) ).run(),
-			pasteStyle: ( args ) => ( new Commands.PasteStyle( args ) ).run(),
-			resetStyle: ( args ) => ( new Commands.ResetStyle( args ) ).run(),
-			resizeColumn: ( args ) => ( new Commands.ResizeColumn( args ) ).run(),
-			settings: ( args ) => ( new Commands.Settings( args ) ).run(),
-		};
+		return commands;
 	}
 
 	defaultShortcuts() {
