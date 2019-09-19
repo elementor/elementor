@@ -80,9 +80,10 @@ export default class Settings extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgument( 'settings', args );
-		this.requireArgument( 'name', args );
-		this.requireArgument( 'index', args );
+		this.requireArgumentType( 'name', 'string', args );
+		this.requireArgumentType( 'index', 'number', args );
+
+		this.requireArgumentConstructor( 'settings', Object, args );
 	}
 
 	getHistory( args ) {

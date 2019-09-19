@@ -5,8 +5,8 @@ export default class extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgument( 'index', args );
-		this.requireArgument( 'name', args );
+		this.requireArgumentType( 'name', 'string', args );
+		this.requireArgumentType( 'index', 'number', args );
 	}
 
 	getHistory( args ) {

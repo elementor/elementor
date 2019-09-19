@@ -4,6 +4,7 @@ import Base from '../../commands/base';
 export default class extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
+
 		this.requireArgumentInstance( 'target', elementorModules.editor.Container, args );
 	}
 
