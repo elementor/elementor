@@ -2,6 +2,8 @@ var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlBoxShadowItemView;
 
 ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
+	debounceHistory: true,
+
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 

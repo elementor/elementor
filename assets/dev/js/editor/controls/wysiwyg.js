@@ -2,6 +2,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlWysiwygItemView;
 
 ControlWysiwygItemView = ControlBaseDataView.extend( {
+	debounceHistory: true,
 
 	editor: null,
 

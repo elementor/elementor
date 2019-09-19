@@ -2,6 +2,8 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlColorItemView;
 
 ControlColorItemView = ControlBaseDataView.extend( {
+	debounceHistory: true,
+
 	applySavedValue: function() {
 		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
 

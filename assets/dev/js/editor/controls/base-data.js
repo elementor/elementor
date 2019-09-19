@@ -4,6 +4,7 @@ var ControlBaseView = require( 'elementor-controls/base' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
+	debounceHistory: false,
 
 	ui: function() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
@@ -32,12 +33,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	events: function() {
 		return {
-			'input @ui.input': 'onBaseInputChange',
+			'input @ui.input': 'onBaseInputTextChange',
 			'change @ui.checkbox': 'onBaseInputChange',
 			'change @ui.radio': 'onBaseInputChange',
-			'input @ui.textarea': 'onBaseInputChange',
+			'input @ui.textarea': 'onBaseInputTextChange',
 			'change @ui.select': 'onBaseInputChange',
-			'input @ui.contentEditable': 'onBaseInputChange',
+			'input @ui.contentEditable': 'onBaseInputTextChange',
 			'click @ui.responsiveSwitchers': 'onResponsiveSwitchersClick',
 		};
 	},
@@ -87,7 +88,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 				[ key ]: value,
 			},
 			options: {
-				lazy: true,
+				debounceHistory: this.debounceHistory,
 			},
 		} );
 
@@ -187,6 +188,16 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.toggleControlVisibility();
 
 		this.addTooltip();
+	},
+
+	onBaseInputTextChange: function( event ) {
+		const originalDebounceHistory = this.debounceHistory;
+
+		this.debounceHistory = true;
+
+		this.onBaseInputChange( event );
+
+		this.debounceHistory = originalDebounceHistory;
 	},
 
 	onBaseInputChange: function( event ) {
