@@ -204,7 +204,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			},
 			options: {
 				external: true,
-				lazy: true,
+				debounceHistory: true,
 			},
 		} );
 	},

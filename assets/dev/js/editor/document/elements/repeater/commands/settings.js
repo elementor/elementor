@@ -5,7 +5,7 @@ export default class Settings extends Base {
 	/**
 	 * @type {function( args )}
 	 */
-	static lazyHistory;
+	static debounceHistory;
 
 	/**
 	 * Function restore.
@@ -112,8 +112,8 @@ export default class Settings extends Base {
 		} );
 
 		if ( elementor.history.history.getActive() ) {
-			if ( options.lazy ) {
-				Settings.lazyHistory( args );
+			if ( options.debounceHistory ) {
+				Settings.debounceHistory( args );
 			} else {
 				Settings.logHistory( args );
 			}
@@ -121,4 +121,4 @@ export default class Settings extends Base {
 	}
 }
 
-Settings.lazyHistory = _.debounce( Settings.logHistory, 800 );
+Settings.debounceHistory = _.debounce( Settings.logHistory, 800 );

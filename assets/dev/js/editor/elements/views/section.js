@@ -194,7 +194,7 @@ SectionView = BaseElementView.extend( {
 				},
 				options: {
 					external: true,
-					lazy: true,
+					debounceHistory: true,
 				},
 			} );
 		} );
@@ -255,7 +255,7 @@ SectionView = BaseElementView.extend( {
 		nextColumnView.ui.percentsTooltip.hide();
 	},
 
-	resizeColumn: function( childView, currentSize, newSize, resizeSource = true, lazy = true ) {
+	resizeColumn: function( childView, currentSize, newSize, resizeSource = true, debounceHistory = true ) {
 		const nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
 
 		if ( ! nextChildView ) {
@@ -296,7 +296,7 @@ SectionView = BaseElementView.extend( {
 			settings,
 			isMultiSettings: true,
 			options: {
-				lazy,
+				debounceHistory,
 				external: true,
 				history: {
 					elementType: 'column',

@@ -286,7 +286,7 @@ jQuery( () => {
 				// Change button text.
 				for ( let i = 0; i < settingsChangeCount; ++i ) {
 					Elements.settings( eWidget, { text }, {
-						lazy: true,
+						debounceHistory: true,
 					} );
 				}
 
