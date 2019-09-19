@@ -51,14 +51,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	createItemModel: function( attrs, options, controlView ) {
-		/*options = options || {};
-
-		options.controls = controlView.model.get( 'fields' );
-
-		if ( ! attrs._id ) {
-			attrs._id = elementor.helpers.getUniqueID();
-		}*/
-
 		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 
@@ -209,6 +201,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 
 		this.editRow( this.children.findByModel( newModel ) );
+		this.toggleMinRowsClass();
 	},
 
 	onChildviewClickRemove: function( childView ) {
@@ -219,6 +212,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 
 		this.updateActiveRow();
+		this.toggleMinRowsClass();
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
@@ -227,6 +221,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			name: this.model.get( 'name' ),
 			index: childView._index,
 		} );
+
+		this.toggleMinRowsClass();
 	},
 
 	onChildviewClickEdit: function( childView ) {
