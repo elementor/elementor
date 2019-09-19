@@ -167,15 +167,16 @@ var	Manager = function() {
 
 		var panel = elementor.getPanelView(),
 			panelPage = panel.getCurrentPageView(),
+			editedElementView = panelPage.getOption( 'editedElementView' ),
 			viewToScroll;
 
-		if ( $e.routes.isPartOf( 'panel/editor' ) ) {
-			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
+		if ( $e.routes.isPartOf( 'panel/editor' ) && editedElementView ) {
+			if ( editedElementView.isDestroyed ) {
 				// If the the element isn't exist - show the history panel
 				$e.route( 'panel/history/actions' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
-				viewToScroll = panelPage.getOption( 'editedElementView' );
+				viewToScroll = editedElementView;
 			}
 		} else if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
 			const history = item.get( 'items' ).first().get( 'history' );
