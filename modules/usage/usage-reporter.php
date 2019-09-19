@@ -27,7 +27,7 @@ class Usage_Reporter extends Base_Reporter {
 				'_wpnonce' => $nonce,
 			] );
 
-			$title .= '<a id="elementor-usage-recalc" href="' . $url . '#elementor-usage-recalc" class="">Recalc</a>';
+			$title .= '<a id="elementor-usage-recalc" href="' . $url . '#elementor-usage-recalc" class="box-title-tool">Recalc</a>';
 		}
 
 		return $title;
