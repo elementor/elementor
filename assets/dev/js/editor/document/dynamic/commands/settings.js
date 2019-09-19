@@ -39,8 +39,20 @@ export default class extends Base {
 			};
 		} );
 
+		const settingsKeys = Object.keys( settings );
+
+		/*
+		* TODO: subTitle getting is code duplication create a common logic.
+		* */
+		let subTitle = '';
+
+		if ( 1 === settingsKeys.length && containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
+			subTitle = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
+		}
+
 		return {
 			containers,
+			subTitle,
 			data: { changes },
 			type: 'change',
 			restore: this.constructor.restore,
