@@ -33,7 +33,7 @@ class Log_Reporter extends Base_Reporter {
 			$title .= '<a href="' . $url . '#elementor-clear-log" class="box-title-tool">' . __( 'Clear Log', 'elementor' ) . '</a>';
 		}
 
-		return $title . '<span id="elementor-clear-log" ></span>';
+		return $title . '<span id="elementor-clear-log"></span>';
 	}
 
 	public function get_fields() {
