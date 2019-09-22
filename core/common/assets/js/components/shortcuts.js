@@ -59,16 +59,16 @@ export default class Shortcuts {
 		}
 
 		jQuery.each( handlers, ( key, handler ) => {
-			if ( handler.dependency && ! handler.dependency( event ) ) {
-				return;
-			}
-
 			if ( handler.exclude && -1 !== handler.exclude.indexOf( 'input' ) ) {
 				const $target = jQuery( event.target );
 
 				if ( $target.is( ':input, .elementor-input' ) || $target.closest( '[contenteditable="true"]' ).length ) {
 					return;
 				}
+			}
+
+			if ( handler.dependency && ! handler.dependency( event ) ) {
+				return;
 			}
 
 			// Fix for some keyboard sources that consider alt key as ctrl key

@@ -42,7 +42,10 @@ module.exports = Marionette.Behavior.extend( {
 				{
 					name: 'navigator',
 					title: elementor.translate( 'navigator' ),
-					callback: elementor.navigator.open.bind( elementor.navigator, this.view.model ),
+					callback: () => $e.route( 'navigator', {
+						reOpen: true,
+						model: this.view.model,
+					} ),
 				},
 			],
 		} );

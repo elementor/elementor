@@ -59,7 +59,6 @@
 	width: 100%;
 	height: 100%;
 	position: relative;
-	text-align: center;
 }
 
 /* Auto Height */
@@ -473,21 +472,19 @@ button.swiper-pagination-bullet {
 .elementor-arrows-position- {
 
 	&outside {
-		.elementor-swiper-button-prev {
-			left: -30px;
 
-			[dir="rtl"] & {
-				left: auto;
-				right: 20px;
-			}
+		.swiper-container {
+			width: calc(100% - 60px);
 		}
 
-		.elementor-swiper-button-next {
-			right: -30px;
+		.elementor-swiper-button {
 
-			[dir="rtl"] & {
-				left: 20px;
-				right: auto;
+			&-prev {
+				left: 0;
+			}
+
+			&-next {
+				right: 0;
 			}
 		}
 	}
@@ -513,16 +510,16 @@ button.swiper-pagination-bullet {
 	top: 50%;
 	transform: translateY(-50%);
 
-	&.swiper-button-disabled {
-		opacity: 0.3;
-	}
-
 	&-prev {
 		left: 10px;
 	}
 
 	&-next {
 		right: 10px;
+	}
+
+	&.swiper-button-disabled {
+		opacity: 0.3;
 	}
 }
 

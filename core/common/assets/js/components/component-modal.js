@@ -2,7 +2,7 @@ import Component from './component';
 
 export default class extends Component {
 	getModalLayout() {
-		throw Error( 'getModalLayout must be override.' );
+		this.forceMethodImplementation( 'getModalLayout' );
 	}
 
 	onInit() {
@@ -12,6 +12,20 @@ export default class extends Component {
 			scopes: [ this.getNamespace() ],
 			callback: () => this.close(),
 		} );
+	}
+
+	defaultCommands() {
+		return {
+			open: () => $e.route( this.getNamespace() ),
+			close: () => this.close(),
+			toggle: () => {
+				if ( this.isOpen ) {
+					this.close();
+				} else {
+					$e.route( this.getNamespace() );
+				}
+			},
+		};
 	}
 
 	defaultRoutes() {

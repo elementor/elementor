@@ -128,6 +128,10 @@ export default class extends elementorModules.Module {
 		delete this.tabs[ tab ];
 	}
 
+	hasTab( tab ) {
+		return ! ! this.tabs[ tab ];
+	}
+
 	addTab( tab, args, position ) {
 		this.tabs[ tab ] = args;
 		// It can be 0.

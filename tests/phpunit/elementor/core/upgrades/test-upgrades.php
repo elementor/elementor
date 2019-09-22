@@ -38,7 +38,8 @@ class Test_Upgrades extends Elementor_Test_Base {
 		wp_cache_flush();
 
 		// Run upgrade.
-		Upgrades::_v_2_7_0_rename_document_types_to_wp();
+		$updater = $this->create_updater();
+		Upgrades::_v_2_7_0_rename_document_types_to_wp( $updater );
 
 		// Assert again (wp_post, wp_page).
 		$post_meta = $document_post->get_meta( Document::TYPE_META_KEY );
