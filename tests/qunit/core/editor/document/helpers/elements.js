@@ -375,7 +375,3 @@ export default class {
 		} );
 	}
 }
-// For run in Devtools.
-if ( ! window.assert ) {
-	window.assert = {}; window.assert.equal = (a,b,c) => { if (a !== b) throw Error(`${a}!=${b} ${c}`) }
-}

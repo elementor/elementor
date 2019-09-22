@@ -67,8 +67,8 @@ jQuery( () => {
 					eTabs2 = Elements.createTabs( eColumn );
 
 					Elements.multiRepeaterInsert( [ eTabs1, eTabs2 ], 'tabs', {
-					tab_title: 'Test Tab Title',
-					tab_content: 'Test Tab Content',
+						tab_title: 'Test Tab Title',
+						tab_content: 'Test Tab Content',
 				} );
 
 				// Check.
@@ -80,7 +80,6 @@ jQuery( () => {
 				const eColumn = Elements.createSection( 1, true ),
 					eTabs1 = Elements.createTabs( eColumn ),
 					eTabs2 = Elements.createTabs( eColumn );
-
 
 				Elements.multiRepeaterRemove( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
