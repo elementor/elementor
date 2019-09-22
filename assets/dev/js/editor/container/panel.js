@@ -1,3 +1,5 @@
+import Container from './container';
+
 export default class Panel {
 	/**
 	 * Function constructor().

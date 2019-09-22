@@ -1,19 +1,78 @@
 import Panel from './panel';
 
 export default class Container {
-	// TODO: add documentation.
 	// TODO: order all new container(s) args with the same order.
+
+	/**
+	 * Container id.
+	 *
+	 * @type {String}
+	 */
 	id;
+
+	/**
+	 * Container model.
+	 *
+	 * @type {Backbone.Model}
+	 */
 	model;
-	controls = {};
-	view;
+
+	/**
+	 * Container settings.
+	 *
+	 * @type {Backbone.Model}
+	 */
 	settings;
+
+	/**
+	 * Container view.
+	 *
+	 * @type {{}}
+	 */
+	view;
+
+	/**
+	 * Container parent.
+	 *
+	 * @type {Container}
+	 */
 	parent;
+
+	/**
+	 * Container children(s).
+	 *
+	 * @type {Array}
+	 */
 	children;
+
+	/**
+	 * Container dynamic.
+	 *
+	 * @type {Backbone.Model}
+	 */
 	dynamic;
+
+	/**
+	 * Container renderer (The one who render).
+	 *
+	 * @type {Container}
+	 */
 	renderer;
+
+	/**
+	 * Container panel.
+	 *
+	 * @type {Panel}
+	 */
 	panel;
 
+	/**
+	 * Function constructor().
+	 *
+	 * Create container.
+	 *
+	 * @param {{}} args
+	 */
 	constructor( args ) {
 		args = Object.entries( args );
 
@@ -35,6 +94,13 @@ export default class Container {
 		this.panel = new Panel( this );
 	}
 
+	/**
+	 * Function lookup().
+	 *
+	 * If the view were destroyed, we gonna try to find it again if it exist.
+	 *
+	 * @returns {Container}
+	 */
 	lookup() {
 		let result = this;
 
@@ -47,6 +113,11 @@ export default class Container {
 		return result;
 	}
 
+	/**
+	 * Function render().
+	 *
+	 * Tell the `this.renderer` view.renderOnChange.
+	 */
 	render() {
 		if ( ! this.renderer ) {
 			return;
