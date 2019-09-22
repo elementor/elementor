@@ -23,6 +23,10 @@ class Db extends Base {
 		update_option( self::LOG_NAME, $log, 'no' );
 	}
 
+	public function clear() {
+		delete_option( self::LOG_NAME );
+	}
+
 	private function maybe_truncate_log() {
 		/** @var Log_Item[] $log */
 		$log = $this->get_log();
