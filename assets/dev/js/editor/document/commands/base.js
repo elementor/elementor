@@ -36,6 +36,7 @@ export default class {
 		}
 
 		const containers = args.containers || [ args.container ];
+
 		containers.forEach( ( container ) => {
 			if ( ! ( container instanceof elementorModules.editor.Container ) ) {
 				throw Error( 'container invalid instance.' );
@@ -175,7 +176,7 @@ export default class {
 	 * @param {{}}
 	 */
 	apply( args ) {
-
+		throw Error( 'apply() should be implemented, please provide apply functionality.' );
 	}
 
 	/**
@@ -186,16 +187,14 @@ export default class {
 	 * @returns {*}
 	 */
 	run() {
-		let historyId = null;
+		let result,
+			historyId = null;
 
 		if ( this.history && elementor.history.history.getActive() ) {
 			this.history = Object.assign( this.history, { returnValue: true } );
 
 			historyId = $e.run( 'document/history/startLog', this.history );
 		}
-
-		let result,
-			success = false;
 
 		try {
 			$e.hooks.runDependency( this.currentCommand, this.args );
