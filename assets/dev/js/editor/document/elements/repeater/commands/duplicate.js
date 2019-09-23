@@ -10,8 +10,13 @@ export default class extends Base {
 	}
 
 	getHistory( args ) {
-		// History handled by insert.
-		return false;
+		const { containers = [ args.container ] } = args;
+
+		return {
+			containers,
+			type: 'duplicate', // TODO: add translation.
+			subTitle: elementor.translate( 'Item' ),
+		};
 	}
 
 	apply( args ) {
