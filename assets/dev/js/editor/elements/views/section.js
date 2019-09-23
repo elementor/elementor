@@ -373,23 +373,20 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onChildviewRequestResize: function( columnView, ui ) {
-		// Get current column details
-		const currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
-
 		ui.element.css( {
 			width: '',
 			left: 'initial', // Fix for RTL resizing
 		} );
 
-		const newSize = this.getColumnPercentSize( ui.element, ui.size.width );
-
-		try {
-			this.resizeColumn( columnView, currentSize, newSize );
-		} catch ( e ) {
-			if ( $e.devTools ) {
-				$e.devTools.log.error( e );
-			}
-		}
+		$e.run( 'document/elements/settings', {
+			container: columnView.getContainer(),
+			settings: {
+				_inline_size: this.getColumnPercentSize( ui.element, ui.size.width ),
+			},
+			options: {
+				debounceHistory: true,
+			},
+		} );
 	},
 
 	onDestroy: function() {
