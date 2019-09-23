@@ -715,6 +715,10 @@ function () {
   }, {
     key: "runGallery",
     value: function runGallery(refresh) {
+      if (!this.settings.items) {
+        return;
+      }
+
       var containerStyle = this.$container[0].style;
       containerStyle.setProperty('--hgap', this.getCurrentDeviceSetting('horizontalGap') + 'px');
       containerStyle.setProperty('--vgap', this.getCurrentDeviceSetting('verticalGap') + 'px');
