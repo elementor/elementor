@@ -45,6 +45,9 @@ $e.hooks.registerAfter( 'document/elements/create', 'create-section-columns', ( 
 	if ( structure ) {
 		containers.forEach( ( container ) => {
 			container.view.setStructure( structure );
+
+			// Focus on last container.
+			container.model.trigger( 'request:edit' );
 		} );
 	}
 } );
