@@ -11,7 +11,12 @@ $e.hooks.registerAfter( 'document/elements/delete', 'handle-section', ( args, co
 		}
 
 		if ( 0 === parent.view.collection.length ) {
-			parent.view.handleEmptySection();
+			$e.run( 'document/elements/create', {
+				container: parent,
+				model: {
+					elType: 'column',
+				},
+			} );
 		} else {
 			parent.view.resetLayout();
 		}

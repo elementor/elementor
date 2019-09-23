@@ -204,24 +204,6 @@ SectionView = BaseElementView.extend( {
 		} );
 	},
 
-	handleEmptySection: function() {
-		$e.run( 'document/elements/create', {
-			container: this.getContainer(),
-			model: {
-				elType: 'column',
-			},
-		} );
-	},
-
-	handleCreateInnerSection: function() {
-		for ( let i = 0; i < this.defaultInnerSectionColumns; ++i ) {
-			this.addChildElement();
-		}
-
-		// TODO: maybe we need `history false` flag since it does not need to restore it.
-		this.setStructure( this.defaultInnerSectionColumns + '0' );
-	},
-
 	isCollectionFilled: function() {
 		var MAX_SIZE = 10,
 			columnsCount = this.collection.length;
