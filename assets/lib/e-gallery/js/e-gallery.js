@@ -656,6 +656,11 @@ function () {
 
       var allPromises = [];
       this.imagesData = [];
+
+      if (!this.settings.items) {
+        return;
+      }
+
       this.settings.items.forEach(function (item, index) {
         var image = new Image(),
             promise = new Promise(function (resolve) {
@@ -663,7 +668,11 @@ function () {
         });
         allPromises.push(promise);
         promise.then(function () {
-          return _this3.calculateImageSize(image, index);
+          return new Promise(function (resolve) {
+            _this3.calculateImageSize(image, index);
+
+            resolve();
+          });
         });
         image.src = item.thumbnail;
       });
@@ -677,6 +686,11 @@ function () {
       var selectors = this.settings.selectors,
           items = [];
       this.$items = this.$container.find(selectors.items);
+
+      if (!this.$items.length) {
+        return;
+      }
+
       this.$items.each(function (index, item) {
         var $image = jQuery(item).find(selectors.image),
             imageSource = $image.data('thumbnail');
@@ -906,7 +920,7 @@ function (_BaseGalleryType) {
       var oldRowWidth = 0;
 
       for (var index = startIndex;; index++) {
-        var itemComputedWidth = Math.round(this.getCurrentDeviceSetting('idealRowHeight') * this.imagesData[index].ratio);
+        var itemComputedWidth = Math.round(this.getCurrentDeviceSetting('idealRowHeight') * this.getActiveImagesData(index).ratio);
 
         if (itemComputedWidth > this.containerWidth) {
           itemComputedWidth = this.containerWidth;
