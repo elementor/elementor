@@ -46,7 +46,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		swiperOptions.breakpoints[ elementorBreakpoints.lg ] = {
 			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
-			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || defaultLGDevicesSlidesCount,
+			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
 		};
 
 		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
@@ -62,8 +62,12 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		if ( isSingleSlide ) {
 			swiperOptions.effect = elementSettings.effect;
+
+			if ( 'fade' === elementSettings.effect ) {
+				swiperOptions.fadeEffect = { crossFade: true };
+			}
 		} else {
-			swiperOptions.slidesPerGroup = +elementSettings.slides_to_scroll || defaultLGDevicesSlidesCount;
+			swiperOptions.slidesPerGroup = +elementSettings.slides_to_scroll || 1;
 		}
 
 		if ( elementSettings.image_spacing_custom ) {
@@ -110,6 +114,8 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	onElementChange( propertyName ) {
 		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
 			this.updateSpaceBetween();
+		} else if ( 'arrows_position' === propertyName ) {
+			this.swiper.update();
 		}
 	}
 

@@ -2,10 +2,11 @@
 import DocumentsManager from './documents-manager';
 import Storage from '../../../../core/common/assets/js/utils/storage';
 import environment from '../../../../core/common/assets/js/utils/environment';
+import YouTubeApiLoader from './utils/video-api/youtube-loader';
+import VimeoApiLoader from './utils/video-api/vimeo-loader';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-	YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
@@ -81,14 +82,13 @@ class Frontend extends elementorModules.ViewModule {
 		return getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
 	}
 
-	getCurrentDeviceSetting( settings, settingKey ) {
-		const devices = [ 'desktop', 'tablet', 'mobile' ],
-			currentDeviceMode = elementorFrontend.getCurrentDeviceMode();
+	getDeviceSetting( deviceMode, settings, settingKey ) {
+		const devices = [ 'desktop', 'tablet', 'mobile' ];
 
-		let currentDeviceIndex = devices.indexOf( currentDeviceMode );
+		let deviceIndex = devices.indexOf( deviceMode );
 
-		while ( currentDeviceIndex > 0 ) {
-			const currentDevice = devices[ currentDeviceIndex ],
+		while ( deviceIndex > 0 ) {
+			const currentDevice = devices[ deviceIndex ],
 				fullSettingKey = settingKey + '_' + currentDevice,
 				deviceValue = settings[ fullSettingKey ];
 
@@ -96,10 +96,14 @@ class Frontend extends elementorModules.ViewModule {
 				return deviceValue;
 			}
 
-			currentDeviceIndex--;
+			deviceIndex--;
 		}
 
 		return settings[ settingKey ];
+	}
+
+	getCurrentDeviceSetting( settings, settingKey ) {
+		return this.getDeviceSetting( elementorFrontend.getCurrentDeviceMode(), settings, settingKey );
 	}
 
 	isEditMode() {
@@ -124,7 +128,8 @@ class Frontend extends elementorModules.ViewModule {
 
 	initOnReadyComponents() {
 		this.utils = {
-			youtube: new YouTubeModule(),
+			youtube: new YouTubeApiLoader(),
+			vimeo: new VimeoApiLoader(),
 			anchors: new AnchorsModule(),
 			lightbox: new LightboxModule(),
 		};

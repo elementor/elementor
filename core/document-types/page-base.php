@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Base extends Document {
+abstract class PageBase extends Document {
 
 	/**
 	 * @since 2.0.8

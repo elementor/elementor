@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Module extends BaseModule {
 	const GENERAL_TAB = 'general';
-	const META_KEY = '_elementor_elements_usage';
-	const OPTION_NAME = 'elementor_elements_usage';
+	const META_KEY = '_elementor_controls_usage';
+	const OPTION_NAME = 'elementor_controls_usage';
 
 	/**
 	 * @var bool
@@ -49,13 +49,13 @@ class Module extends BaseModule {
 	 *
 	 * @return array
 	 */
-	public function get_formatted_usage() {
+	public function get_formatted_usage( $format = 'html' ) {
 		$usage = [];
 
 		foreach ( get_option( self::OPTION_NAME, [] ) as $doc_type => $elements ) {
 			$doc_class = Plugin::$instance->documents->get_document_type( $doc_type );
 
-			if ( $doc_class ) {
+			if ( 'html' === $format && $doc_class ) {
 				$doc_title = $doc_class::get_title();
 			} else {
 				$doc_title = $doc_type;
@@ -63,7 +63,7 @@ class Module extends BaseModule {
 
 			$tab_group = $doc_class::get_property( 'admin_tab_group' );
 
-			if ( $tab_group ) {
+			if ( 'html' === $format && $tab_group ) {
 				$doc_title = ucwords( $tab_group ) . ' - ' . $doc_title;
 			}
 
@@ -77,7 +77,7 @@ class Module extends BaseModule {
 
 				$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
 
-				if ( $widget_instance ) {
+				if ( 'html' === $format && $widget_instance ) {
 					$widget_title = $widget_instance->get_title();
 				} else {
 					$widget_title = $element_type;
@@ -146,6 +146,10 @@ class Module extends BaseModule {
 	 * @param \WP_Post $post
 	 */
 	public function on_status_change( $new_status, $old_status, $post ) {
+		if ( wp_is_post_autosave( $post ) ) {
+			return;
+		}
+
 		// If it's from elementor editor, the usage should be saved via `before_document_save`/`after_document_save`.
 		if ( $this->is_document_saving ) {
 			return;
@@ -236,7 +240,7 @@ class Module extends BaseModule {
 			$this->after_document_save( $document );
 		}
 
-		return $query->found_posts;
+		return count( $query->posts );
 	}
 
 	/**

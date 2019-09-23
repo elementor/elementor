@@ -27,7 +27,7 @@ class Usage_Reporter extends Base_Reporter {
 				'_wpnonce' => $nonce,
 			] );
 
-			$title .= '<a id="elementor-usage-recalc" href="' . $url . '#elementor-usage-recalc" class="">Recalc</a>';
+			$title .= '<a id="elementor-usage-recalc" href="' . $url . '#elementor-usage-recalc" class="box-title-tool">Recalc</a>';
 		}
 
 		return $title;
@@ -75,7 +75,7 @@ class Usage_Reporter extends Base_Reporter {
 		$module = Module::instance();
 		$usage = PHP_EOL;
 
-		foreach ( $module->get_formatted_usage() as $doc_type => $data ) {
+		foreach ( $module->get_formatted_usage( 'raw' ) as $doc_type => $data ) {
 			$usage .= "\t{$data['title']}" . PHP_EOL;
 
 			foreach ( $data['elements'] as $element => $count ) {

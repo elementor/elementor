@@ -2,19 +2,33 @@ import Component from './component';
 
 export default class extends Component {
 	getModalLayout() {
-		throw Error( 'getModalLayout must be override.' );
+		this.forceMethodImplementation( 'getModalLayout' );
 	}
 
 	onInit() {
 		super.onInit();
 
-		elementorCommon.shortcuts.register( 'esc', {
+		$e.shortcuts.register( 'esc', {
 			scopes: [ this.getNamespace() ],
 			callback: () => this.close(),
 		} );
 	}
 
-	getRoutes() {
+	defaultCommands() {
+		return {
+			open: () => $e.route( this.getNamespace() ),
+			close: () => this.close(),
+			toggle: () => {
+				if ( this.isOpen ) {
+					this.close();
+				} else {
+					$e.route( this.getNamespace() );
+				}
+			},
+		};
+	}
+
+	defaultRoutes() {
 		return {
 			'': () => { /* Nothing to do, it's already rendered. */ },
 		};

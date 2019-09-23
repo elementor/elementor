@@ -10,7 +10,7 @@ export default class extends elementorModules.common.Component {
 		return 'panel/editor';
 	}
 
-	getInitialTabs() {
+	defaultTabs() {
 		return {
 			content: { title: elementor.translate( 'content' ) },
 			style: { title: elementor.translate( 'style' ) },
@@ -19,14 +19,14 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
 			open: ( args ) => {
 				this.openEditor( args.model, args.view );
 
 				this.setDefaultTab( args );
 
-				elementorCommon.route.to( this.getDefaultRoute(), args );
+				$e.route( this.getDefaultRoute(), args );
 
 				// BC: Run hooks after the route render's the view.
 				const action = 'panel/open_editor/' + args.model.get( 'elType' );

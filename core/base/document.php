@@ -545,7 +545,7 @@ abstract class Document extends Controls_Stack {
 		$this->save_version();
 
 		// Remove Post CSS
-		$post_css = new Post_CSS( $this->post->ID );
+		$post_css = Post_CSS::create( $this->post->ID );
 
 		$post_css->delete();
 

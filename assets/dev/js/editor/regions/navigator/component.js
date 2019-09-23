@@ -3,25 +3,27 @@ export default class extends elementorModules.common.Component {
 		return 'navigator';
 	}
 
-	getRoutes() {
+	defaultRoutes() {
 		return {
 			'': () => {},
 		};
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
+			open: () => $e.route( this.getNamespace() ),
+			close: () => this.close(),
 			toggle: () => {
-				if ( elementorCommon.route.isPartOf( 'navigator' ) ) {
+				if ( this.isOpen ) {
 					this.close();
 				} else {
-					elementorCommon.route.to( 'navigator' );
+					$e.route( this.getNamespace() );
 				}
 			},
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			toggle: {
 				keys: 'ctrl+i',
@@ -30,8 +32,10 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	open() {
-		this.manager.open();
+	open( args ) {
+		const { model = false } = args;
+
+		this.manager.open( model );
 		return true;
 	}
 

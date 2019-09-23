@@ -3,7 +3,7 @@ import { Component } from 'react';
 
 export default class Icon extends Component {
 	setSelected = () => {
-		this.props.setSelectedHandler( this.props.data.selector, this.props.library );
+		this.props.setSelectedHandler( { value: this.props.data.displayPrefix + ' ' + this.props.data.selector, library: this.props.library } );
 	};
 	render = () => {
 		return (

@@ -4,6 +4,6 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.channel = Backbone.Radio.channel( 'ELEMENTOR:finder' );
 
-		elementorCommon.components.register( new Component( { manager: this } ) );
+		$e.components.register( new Component( { manager: this } ) );
 	}
 }

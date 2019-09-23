@@ -9,15 +9,15 @@ export default class extends elementorModules.common.ComponentModal {
 		return FinderLayout;
 	}
 
-	getCommands() {
-		return {
+	defaultCommands() {
+		return Object.assign( super.defaultCommands(), {
 			'navigate/down': () => this.getItemsView().activateNextItem(),
 			'navigate/up': () => this.getItemsView().activateNextItem( true ),
 			'navigate/select': ( event ) => this.getItemsView().goToActiveItem( event ),
-		};
+		} );
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			'': {
 				keys: 'ctrl+e',

@@ -111,12 +111,12 @@ RevisionsManager = function() {
 	this.init = function() {
 		attachEvents();
 
-		elementorCommon.components.register( new Component( { manager: self } ) );
+		$e.components.register( new Component( { manager: self } ) );
 	};
 
 	this.onRevisionsUpdate = function() {
-		if ( elementorCommon.route.is( 'panel/history/revisions' ) ) {
-			elementorCommon.route.refreshContainer( 'panel' );
+		if ( $e.routes.is( 'panel/history/revisions' ) ) {
+			$e.routes.refreshContainer( 'panel' );
 		}
 	};
 };

@@ -18,9 +18,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Log_Reporter extends Base_Reporter {
 
 	const MAX_ENTRIES = 20;
+	const CLEAR_LOG_ACTION = 'elementor-clear-log';
 
 	public function get_title() {
-		return 'Log';
+		$title = 'Log';
+
+		if ( empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
+			$nonce = wp_create_nonce( self::CLEAR_LOG_ACTION );
+			$url = add_query_arg( [
+				self::CLEAR_LOG_ACTION => 1,
+				'_wpnonce' => $nonce,
+			] );
+
+			$title .= '<a href="' . $url . '#elementor-clear-log" class="box-title-tool">' . __( 'Clear Log', 'elementor' ) . '</a>';
+		}
+
+		return $title . '<span id="elementor-clear-log"></span>';
 	}
 
 	public function get_fields() {
@@ -30,12 +43,23 @@ class Log_Reporter extends Base_Reporter {
 	}
 
 	public function get_log_entries() {
-
-		$log_string = 'No entries to display';
-
 		/** @var \Elementor\Core\Logger\Manager $manager */
 		$manager = Manager::instance();
-		$logger = $manager->get_logger();
+
+		/** @var \Elementor\Core\Logger\Loggers\Db $logger */
+		$logger = $manager->get_logger( 'db' );
+
+		if ( ! empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) {
+			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], self::CLEAR_LOG_ACTION ) ) {
+				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
+					'back_link' => true,
+				] );
+			}
+
+			$logger->clear();
+		}
+
+		$log_string = 'No entries to display';
 		$log_entries = $logger->get_formatted_log_entries( self::MAX_ENTRIES, true );
 
 		if ( ! empty( $log_entries ) ) {

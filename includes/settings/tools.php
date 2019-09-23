@@ -98,14 +98,19 @@ class Tools extends Settings_Page {
 	public function post_elementor_rollback() {
 		check_admin_referer( 'elementor_rollback' );
 
+		$rollback_versions = $this->get_rollback_versions();
+		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
+			wp_die( __( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
+		}
+
 		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
 
 		$rollback = new Rollback(
 			[
-				'version' => ELEMENTOR_PREVIOUS_STABLE_VERSION,
+				'version' => $_GET['version'],
 				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
 				'plugin_slug' => $plugin_slug,
-				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, ELEMENTOR_PREVIOUS_STABLE_VERSION ),
+				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $_GET['version'] ),
 			]
 		);
 
@@ -139,6 +144,51 @@ class Tools extends Settings_Page {
 		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
 	}
 
+	private function get_rollback_versions() {
+		$rollback_versions = get_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION );
+		if ( false === $rollback_versions ) {
+			$max_versions = 30;
+
+			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+
+			$plugin_information = plugins_api(
+				'plugin_information', [
+					'slug' => 'elementor',
+				]
+			);
+
+			if ( empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
+				return [];
+			}
+
+			krsort( $plugin_information->versions );
+
+			$rollback_versions = [];
+
+			$current_index = 0;
+			foreach ( $plugin_information->versions as $version => $download_link ) {
+				if ( $max_versions <= $current_index ) {
+					break;
+				}
+
+				if ( preg_match( '/(trunk|beta|rc)/i', strtolower( $version ) ) ) {
+					continue;
+				}
+
+				if ( version_compare( $version, ELEMENTOR_VERSION, '>=' ) ) {
+					continue;
+				}
+
+				$current_index++;
+				$rollback_versions[] = $version;
+			}
+
+			set_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION, $rollback_versions, WEEK_IN_SECONDS );
+		}
+
+		return $rollback_versions;
+	}
+
 	/**
 	 * Create tabs.
 	 *
@@ -150,6 +200,13 @@ class Tools extends Settings_Page {
 	 * @return array An array with the page tabs, sections and fields.
 	 */
 	protected function create_tabs() {
+		$rollback_html = '<select class="elementor-rollback-select">';
+
+		foreach ( $this->get_rollback_versions() as $version ) {
+			$rollback_html .= "<option value='{$version}'>$version</option>";
+		}
+		$rollback_html .= '</select>';
+
 		return [
 			'general' => [
 				'label' => __( 'General', 'elementor' ),
@@ -225,13 +282,9 @@ class Tools extends Settings_Page {
 								'field_args' => [
 									'type' => 'raw_html',
 									'html' => sprintf(
-										'<a href="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
-										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback' ), 'elementor_rollback' ),
-										sprintf(
-											/* translators: %s: Elementor previous stable version */
-											__( 'Reinstall v%s', 'elementor' ),
-											ELEMENTOR_PREVIOUS_STABLE_VERSION
-										)
+										$rollback_html . '<a data-placeholder-text="' . __( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
+										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' ),
+										__( 'Reinstall', 'elementor' )
 									),
 									'desc' => '<span style="color: red;">' . __( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],

@@ -22,10 +22,16 @@ TemplateLibraryManager = function() {
 			},
 			ajaxParams: {
 				success: function( successData ) {
-					elementorCommon.route.to( 'library/templates/my-templates', {
+					$e.route( 'library/templates/my-templates', {
 						onBefore: () => {
 							if ( templatesCollection ) {
-								templatesCollection.add( successData );
+								const itemExist = templatesCollection.findWhere( {
+									template_id: successData.template_id,
+								} );
+
+								if ( ! itemExist ) {
+									templatesCollection.add( successData );
+								}
 							}
 						},
 					} );
@@ -73,7 +79,7 @@ TemplateLibraryManager = function() {
 
 		registerDefaultFilterTerms();
 
-		this.component = elementorCommon.components.register( new Component( { manager: this } ) );
+		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',

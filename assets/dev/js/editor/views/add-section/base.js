@@ -118,7 +118,7 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	onAddTemplateButtonClick() {
-		elementorCommon.commands.run( 'library/show', this.getTemplatesModalOptions() );
+		$e.run( 'library/open', this.getTemplatesModalOptions() );
 	}
 
 	onRender() {

@@ -48,6 +48,10 @@ class Safe_Mode {
 		return isset( $_GET['elementor-preview'] );
 	}
 
+	public function is_editor_ajax() {
+		return is_admin() && isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'];
+	}
+
 	public function add_hooks() {
 		add_filter( 'pre_option_active_plugins', function () {
 			return get_option( 'elementor_safe_mode_allowed_plugins' );
@@ -107,7 +111,7 @@ class Safe_Mode {
 			return;
 		}
 
-		if ( ! $this->is_editor() && ! $this->is_editor_preview() ) {
+		if ( ! $this->is_editor() && ! $this->is_editor_preview() && ! $this->is_editor_ajax() ) {
 			return;
 		}
 

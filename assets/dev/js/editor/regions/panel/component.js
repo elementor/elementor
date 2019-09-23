@@ -3,7 +3,7 @@ export default class extends elementorModules.common.Component {
 		return 'panel';
 	}
 
-	getRoutes() {
+	defaultRoutes() {
 		return {
 			menu: () => this.manager.setPage( 'menu' ),
 			'global-colors': () => this.manager.setPage( 'colorScheme' ),
@@ -12,11 +12,14 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getCommands() {
+	defaultCommands() {
 		return {
+			open: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' ),
+			close: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' ),
 			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
 			save: () => elementor.saver.saveDraft(),
-			exit: () => elementorCommon.route.to( 'panel/menu' ),
+			publish: () => elementor.saver.publish(),
+			exit: () => $e.route( 'panel/menu' ),
 			'change-device-mode': ( args ) => {
 				const devices = [ 'desktop', 'tablet', 'mobile' ];
 				if ( ! args.device ) {
@@ -37,7 +40,7 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getShortcuts() {
+	defaultShortcuts() {
 		return {
 			toggle: {
 				keys: 'ctrl+p',
