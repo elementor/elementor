@@ -3,34 +3,6 @@ export default class extends elementorModules.common.Component {
 		return 'document/history';
 	}
 
-	normalizeLogArgs( args ) {
-		const { containers = [ args.container ] } = args;
-
-		if ( ! args.title ) {
-			if ( 1 === containers.length ) {
-				args.title = containers[ 0 ].label;
-			} else {
-				args.title = elementor.translate( 'elements' );
-			}
-		}
-
-		if ( ! args.elementType ) {
-			if ( 1 === containers.length ) {
-				args.elementType = containers[ 0 ].model.get( 'elType' );
-			} else {
-				// Most common element in array.
-				args.elementType = _.chain( containers.map( ( item ) => item.model.get( 'elType' ) ) )
-					.countBy()
-					.pairs()
-					.max( _.last )
-					.head()
-					.value();
-			}
-		}
-
-		return args;
-	}
-
 	getCommands() {
 		return {
 			startLog: ( args ) => {
@@ -76,13 +48,23 @@ export default class extends elementorModules.common.Component {
 					return;
 				}
 
-				args = this.normalizeLogArgs( args );
+				const id = args.id || elementor.history.history.getCurrentId();
+
+				args = this.normalizeLogArgs( args )
 
 				const items = elementor.history.history.getItems(),
-					item = items.findWhere( { id: elementor.history.history.getCurrentId() } );
+					item = items.findWhere( { id } );
 
 				if ( ! item ) {
 					throw new Error( 'History item not found.' );
+				}
+
+				/**
+				 * Sometimes `args.id` passed to `addSubItem`, to add sub item for specific id.
+				 * this `id` should not be passed as sub-item.
+				 */
+				if ( args.id ) {
+					delete args.id;
 				}
 
 				item.get( 'items' ).unshift( args );
@@ -98,9 +80,31 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
-	getShortcuts() {
-		return {
+	normalizeLogArgs( args ) {
+		const { containers = [ args.container ] } = args;
 
-		};
+		if ( ! args.title ) {
+			if ( 1 === containers.length ) {
+				args.title = containers[ 0 ].label;
+			} else {
+				args.title = elementor.translate( 'elements' );
+			}
+		}
+
+		if ( ! args.elementType ) {
+			if ( 1 === containers.length ) {
+				args.elementType = containers[ 0 ].model.get( 'elType' );
+			} else {
+				// Most common element in array.
+				args.elementType = _.chain( containers.map( ( item ) => item.model.get( 'elType' ) ) )
+					.countBy()
+					.pairs()
+					.max( _.last )
+					.head()
+					.value();
+			}
+		}
+
+		return args;
 	}
 }

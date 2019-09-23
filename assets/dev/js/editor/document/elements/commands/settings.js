@@ -3,9 +3,32 @@ import Base from '../../commands/base';
 // Settings.
 export default class Settings extends Base {
 	/**
-	 * @type {function( args )}
+	 * Array of Object(s) { id = 'id of args snapshot', handler = ' return value of setTimeout ' }.
+	 *
+	 * @type {Array}
 	 */
-	static debounceHistory;
+	static snapshots = [];
+
+	/**
+	 * Each stimulation we save the unique `this.args` sate id.
+	 *
+	 * @type {String}
+	 */
+	static lastSnapshot = '';
+
+	/**
+	 * Last `HistoryId` since last debounce.
+	 *
+	 * @type {number}
+	 */
+	static debounceHistoryId = 0;
+
+	/**
+	 * Debounce timer.
+	 *
+	 * @type Number
+	 */
+	static debounceTimer = 0;
 
 	/**
 	 * Function restore.
@@ -38,7 +61,7 @@ export default class Settings extends Base {
 	 *
 	 * @param {{}} args
 	 */
-	static logHistory( args ) {
+	static logHistory( args, historyId = false ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args,
 			changes = {};
 
@@ -67,17 +90,8 @@ export default class Settings extends Base {
 			delete container.oldValues;
 		} );
 
-		const settingsKeys = Object.keys( settings );
-
-		let subTitle = '';
-
-		if ( ! isMultiSettings && 1 === settingsKeys.length && containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
-			subTitle = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
-		}
-
 		let historyItem = {
 			containers,
-			subTitle,
 			data: { changes },
 			type: 'change',
 			restore: Settings.restore,
@@ -87,7 +101,15 @@ export default class Settings extends Base {
 			historyItem = Object.assign( options.history, historyItem );
 		}
 
-		$e.run( 'document/history/addItem', historyItem );
+		if ( historyId ) {
+			historyItem = Object.assign( { id: historyId }, historyItem );
+		}
+
+		$e.run( 'document/history/addSubItem', historyItem );
+	}
+
+	initialize() {
+		this.historyAction = false;
 	}
 
 	validateArgs( args ) {
@@ -96,15 +118,84 @@ export default class Settings extends Base {
 		this.requireArgumentConstructor( 'settings', Object, args );
 	}
 
+	getArgsSnapshotId( args ) {
+		const { containers = [ args.container ], settings = {} } = args;
+
+		return containers.map( ( container ) => container.id ).join( ',' ) + ',' + Object.keys( settings );
+	}
+
 	getHistory( args ) {
-		// Manual history.
-		return false;
+		if ( ! this.isHistoryActive() ) {
+			return false;
+		}
+
+		const { options = {} } = args,
+			currentArgsSnapshot = this.getArgsSnapshotId( args );
+
+		// Get current time.
+		const now = ( new Date() ).getTime();
+
+		if ( options.debounceHistory ) {
+			// If no timer or 1 second passed from last simulation.
+			if ( ! this.constructor.debounceTimer || now - this.constructor.debounceTimer > 1000 ) {
+				this.historyAction = 'debounce';
+			}
+
+			// Clear all current snapshots
+			this.constructor.snapshots = this.constructor.snapshots.filter( ( snapshot ) => {
+				if ( snapshot.id === currentArgsSnapshot ) {
+					clearTimeout( snapshot.handler );
+					return false;
+				}
+
+				return true;
+			} );
+
+			// Anyway if debounceHistory set to be true, we create timeout for saving log history.
+			this.constructor.snapshots.push( {
+				id: currentArgsSnapshot,
+				handler: setTimeout( () => {
+					this.constructor.logHistory( args, this.constructor.debounceHistoryId );
+				}, 1000 ),
+			} );
+
+			// Init || Update timer.
+			this.constructor.debounceTimer = now;
+		} else {
+			this.historyAction = 'normal';
+		}
+
+		if ( ! this.historyAction ) {
+			return false;
+		}
+
+		this.constructor.lastSnapshot = currentArgsSnapshot;
+
+		const { containers = [ args.container ], settings = {}, isMultiSettings = false } = args,
+			settingsKeys = Object.keys( settings );
+
+		let subTitle = '';
+
+		if ( ! isMultiSettings &&
+			1 === settingsKeys.length &&
+			containers[ 0 ].controls &&
+			containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
+			subTitle = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
+		}
+
+		return {
+			containers,
+			subTitle,
+			type: 'change',
+		};
 	}
 
 	apply( args ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args;
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			const newSettings = isMultiSettings ? settings[ container.id ] : settings;
 
 			container.oldValues = container.oldValues || container.settings.toJSON();
@@ -119,13 +210,11 @@ export default class Settings extends Base {
 		} );
 
 		if ( this.isHistoryActive() ) {
-			if ( options.debounceHistory ) {
-				Settings.debounceHistory( args );
-			} else {
-				Settings.logHistory( args );
+			if ( 'debounce' === this.historyAction && this.historyId ) {
+				this.constructor.debounceHistoryId = this.historyId;
+			} else if ( 'normal' === this.historyAction ) {
+				this.constructor.logHistory( args );
 			}
 		}
 	}
 }
-
-Settings.debounceHistory = _.debounce( Settings.logHistory, 800 );
