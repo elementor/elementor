@@ -170,28 +170,18 @@ SectionView = BaseElementView.extend( {
 	},
 
 	adjustColumns: function() {
-		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() ),
-			containers = [],
-			settings = {};
+		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
 
 		this.children.each( ( columnView, index ) => {
 			const container = columnView.getContainer();
 
-			containers.push( container );
-
-			settings[ container.id ] = {
-				_column_size: preset.preset[ index ],
-				_inline_size: null,
-			};
-		} );
-
-		$e.run( 'document/elements/settings', {
-			containers,
-			settings,
-			isMultiSettings: true,
-			options: {
-				external: true,
-			},
+			$e.run( 'document/elements/settings', {
+				container,
+				settings: {
+					_column_size: preset.preset[ index ],
+					_inline_size: null,
+				},
+			} );
 		} );
 	},
 

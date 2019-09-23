@@ -36,10 +36,6 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 		return elementor.presetsFactory.getPresets( parsedStructure.columnsCount );
 	},
 
-	onInputChange: function() {
-		this.getCurrentEditedSection().adjustColumns();
-	},
-
 	onResetStructureClick: function() {
 		this.getCurrentEditedSection().resetColumnsCustomSize();
 	},
