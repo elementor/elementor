@@ -15,6 +15,7 @@ export default class {
 		this.currentCommand = $e.commands.getCurrent( 'document' );
 
 		this.history = this.getHistory( args );
+		this.historyId = null;
 	}
 
 	/**
@@ -187,13 +188,12 @@ export default class {
 	 * @returns {*}
 	 */
 	run() {
-		let result,
-			historyId = null;
+		let result;
 
-		if ( this.history && elementor.history.history.getActive() ) {
+		if ( this.history && this.isHistoryActive() ) {
 			this.history = Object.assign( this.history, { returnValue: true } );
 
-			historyId = $e.run( 'document/history/startLog', this.history );
+			this.historyId = $e.run( 'document/history/startLog', this.history );
 		}
 
 		try {
@@ -210,8 +210,8 @@ export default class {
 				console.error( e );
 			}
 
-			if ( historyId ) {
-				$e.run( 'document/history/deleteLog', { id: historyId } );
+			if ( this.historyId ) {
+				$e.run( 'document/history/deleteLog', { id: this.historyId } );
 			}
 
 			return false;
@@ -219,8 +219,8 @@ export default class {
 
 		$e.hooks.runAfter( this.currentCommand, this.args, result );
 
-		if ( historyId ) {
-			$e.run( 'document/history/endLog', { id: historyId } );
+		if ( this.historyId ) {
+			$e.run( 'document/history/endLog', { id: this.historyId } );
 		}
 
 		if ( this.isDataChanged() ) {
