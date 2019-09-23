@@ -126,28 +126,38 @@ jQuery( () => {
 				const newSize = 20,
 					eSection = Elements.createSection( 2 ),
 					eColumn1 = eSection.view.children.findByIndex( 0 ).getContainer(),
-					eColumn2 = eSection.view.children.findByIndex( 1 ).getContainer(),
-					column1InlineSize = eColumn1.settings.attributes._inline_size,
-					column2InlineSize = eColumn2.settings.attributes._inline_size;
+					eColumn2 = eSection.view.children.findByIndex( 1 ).getContainer();
+
+				// Manual specific `_inline_size` since tests does not have real ui.
+				$e.run( 'document/elements/settings', {
+					containers: [ eColumn1, eColumn2 ],
+					settings: {
+						[ eColumn1.id ]: { _inline_size: 50 },
+						[ eColumn2.id ]: { _inline_size: 50 },
+					},
+					isMultiSettings: true,
+				} );
 
 				Elements.resizeColumn( eColumn1, newSize );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Column Width (%)', 'column' );
+				inHistoryValidate( assert, historyItem, 'change', 'Column', 'column' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
 
-				assert.equal( eColumn1.settings.attributes._inline_size, column1InlineSize, 'Column1 back to default' );
-				assert.equal( eColumn2.settings.attributes._inline_size, column2InlineSize, 'Column2 back to default' );
+				assert.equal( eColumn1.settings.attributes._inline_size, 50, 'Column1 back to default' );
+				assert.equal( eColumn2.settings.attributes._inline_size, 50, 'Column2 back to default' );
 
 				// Redo.
 				redoValidate( assert, historyItem );
 
-				assert.equal( eColumn1.settings.attributes._inline_size, newSize, 'Column1 restored' );
-				//assert.equal( eColumn2.settings.attributes._inline_size, column2InlineSize + 100, 'Column2 back restored' ); // TODO: In test resize columns works different ;(
+				assert.equal( eColumn1.settings.attributes._inline_size, newSize,
+					'Column1 restored' );
+				assert.equal( eColumn2.settings.attributes._inline_size, 100 - newSize,
+					'Column2 restored' );
 			} );
 
 			QUnit.test( 'Create Widget', ( assert ) => {

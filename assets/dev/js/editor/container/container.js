@@ -104,6 +104,10 @@ export default class Container {
 	lookup() {
 		let result = this;
 
+		if ( ! this.view.lookup ) {
+			return result;
+		}
+
 		const lookup = this.view.lookup();
 
 		if ( lookup ) {
