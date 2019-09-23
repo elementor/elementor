@@ -612,11 +612,14 @@ BaseElementView = BaseContainer.extend( {
 		if ( this.toggleEditTools ) {
 			const editButton = this.ui.editButton;
 
-			this.ui.tools.hoverIntent( function() {
-				editButton.addClass( 'elementor-active' );
-			}, function() {
-				editButton.removeClass( 'elementor-active' );
-			}, { timeout: 500 } );
+			// Since this.ui.tools does not exist while testing.
+			if ( this.ui.tools ) {
+				this.ui.tools.hoverIntent( function() {
+					editButton.addClass( 'elementor-active' );
+				}, function() {
+					editButton.removeClass( 'elementor-active' );
+				}, { timeout: 500 } );
+			}
 		}
 	},
 

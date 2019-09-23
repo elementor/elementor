@@ -881,7 +881,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Tabs', 'widget' );
+				inHistoryValidate( assert, historyItem, 'duplicate', 'Tabs', 'widget' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -944,39 +944,49 @@ jQuery( () => {
 				} );
 
 				// Change required = 'true' for new item.
-				Elements.settings( eFormField, { required: 'true' }, {
+				Elements.settings( eFormField, { required: 'yes' }, {
 					external: true,
 				} );
 
+				// Undo
 				$e.run( 'document/history/undo' );
 
 				// Validate required = '' for new item.
-				assert.equal( eFormField.settings.attributes.required, '', 'Require setting back to default' );
+				assert.equal( eFormField.settings.get( 'required' ), '',
+					'Require setting back to default' );
 
+				// Undo
 				$e.run( 'document/history/undo' );
 
 				// Validate field_type = 'text' for new item.
-				assert.equal( eFormField.settings.attributes.field_type, 'text', 'field_type setting back to default' );
+				assert.equal( eFormField.settings.get( 'field_type' ), 'text',
+					'field_type setting back to default' );
 
 				$e.run( 'document/history/undo' );
 
 				// Validate new inserted item removed.
-				assert.equal( eForm.settings.get( name ).length, beforeInsertItemsCount, 'New item was removed' );
+				assert.equal( eForm.settings.get( name ).length, beforeInsertItemsCount,
+					'New item was removed' );
 
+				// Redo
 				$e.run( 'document/history/redo' );
 
 				// Validate new inserted item was recreated.
-				assert.equal( eForm.settings.get( name ).length, ( beforeInsertItemsCount + 1 ), 'New item was recreated' );
+				assert.equal( eForm.settings.get( name ).length, ( beforeInsertItemsCount + 1 ),
+					'New item was recreated' );
 
+				// Redo
 				$e.run( 'document/history/redo' );
 
 				// Validate field_type = 'email' for new item.
-				assert.equal( eFormField.settings.attributes.field_type, 'email', 'field_type setting was restored' );
+				assert.equal( eFormField.settings.get( 'field_type' ), 'email',
+					'field_type setting was restored' );
 
 				$e.run( 'document/history/redo' );
 
 				// Validate required = 'true' for new item.
-				assert.equal( eFormField.settings.attributes.required, 'true', 'Require setting was restored' );
+				assert.equal( eFormField.settings.get( 'required' ), 'yes',
+					'Require setting was restored' );
 			} );
 		} );
 
@@ -1099,7 +1109,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Tabs', 'widget' ); // TODO: check why title is `Tabs` instead of `elements`.
+				inHistoryValidate( assert, historyItem, 'duplicate', 'elements', 'widget' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
