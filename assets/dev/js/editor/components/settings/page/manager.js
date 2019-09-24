@@ -18,12 +18,12 @@ module.exports = BaseSettings.extend( {
 
 		const container = new elementorModules.editor.Container( {
 			id: editModel.id,
-			label: elementor.config.document.panel.title,
 			document: elementor.getPreviewContainer(),
-			view: '@see page/manager.js',
 			model: editModel,
-			controls: editModel.controls,
 			settings: editModel.get( 'settings' ),
+			view: '@see page/manager.js',
+			label: elementor.config.document.panel.title,
+			controls: editModel.controls,
 			renderer: false,
 		} );
 

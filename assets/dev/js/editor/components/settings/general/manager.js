@@ -29,12 +29,12 @@ module.exports = BaseSettings.extend( {
 
 		const container = new elementorModules.editor.Container( {
 			id: editModel.id,
-			label: elementor.translate( 'global_settings' ),
 			document: elementor.getPreviewContainer(),
-			view: '@see general/manager.js',
 			model: editModel,
-			controls: editModel.controls,
 			settings: editModel.get( 'settings' ),
+			view: '@see general/manager.js',
+			label: elementor.translate( 'global_settings' ),
+			controls: editModel.controls,
 			renderer: false,
 		} );
 

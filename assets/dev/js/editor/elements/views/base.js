@@ -111,15 +111,14 @@ BaseElementView = BaseContainer.extend( {
 
 			this.container = new elementorModules.editor.Container( {
 				id: this.model.id,
-				label: elementor.history.history.getModelLabel( this.model ),
 				document: elementor.getPreviewContainer(),
-				view: this,
 				model: this.model,
-				controls: settingsModel.options.controls,
-				activeControl: false,
 				settings: settingsModel,
-				children: {},
+				view: this,
 				parent: this._parent.getContainer() || {},
+				children: [],
+				label: elementor.history.history.getModelLabel( this.model ),
+				controls: settingsModel.options.controls,
 			} );
 		}
 		return this.container;

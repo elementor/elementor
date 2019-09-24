@@ -132,13 +132,13 @@ module.exports = Marionette.Behavior.extend( {
 
 			tagView.options.container = new elementorModules.editor.Container( {
 				id: id,
-				label: elementContainer.label + ' ' + this.view.options.model.get( 'label' ),
 				document: elementContainer.document,
-				view: '@see dynamic-tags/control-behavior.js',
 				model: tagView.model,
-				controls: tagView.model.options.controls,
 				settings: tagView.model,
+				view: '@see dynamic-tags/control-behavior.js',
 				parent: elementContainer,
+				label: elementContainer.label + ' ' + this.view.options.model.get( 'label' ),
+				controls: tagView.model.options.controls,
 				renderer: elementContainer,
 			} );
 		}

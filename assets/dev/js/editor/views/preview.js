@@ -34,13 +34,12 @@ Preview = BaseSectionsContainerView.extend( {
 		if ( ! this.container ) {
 			this.container = new elementorModules.editor.Container( {
 				id: 'document',
-				label: elementor.config.document.panel.title,
-				view: this,
 				model: this.model,
-				controls: elementor.settings.page.model.controls,
 				settings: elementor.settings.page.model,
+				view: this,
 				children: elementor.elements,
-				dynamic: {},
+				label: elementor.config.document.panel.title,
+				controls: elementor.settings.page.model.controls,
 			} );
 
 			// Refer `document` to itself.

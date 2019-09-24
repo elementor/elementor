@@ -1,14 +1,19 @@
 import Panel from './panel';
 
 export default class Container {
-	// TODO: order all new container(s) args with the same order.
-
 	/**
 	 * Container id.
 	 *
 	 * @type {String}
 	 */
 	id;
+
+	/**
+	 * Container document
+	 *
+	 * @type {Container}
+	 */
+	document;
 
 	/**
 	 * Container model.
@@ -43,7 +48,7 @@ export default class Container {
 	 *
 	 * @type {Array}
 	 */
-	children;
+	children = [];
 
 	/**
 	 * Container dynamic.
@@ -51,6 +56,20 @@ export default class Container {
 	 * @type {Backbone.Model}
 	 */
 	dynamic;
+
+	/**
+	 * Container label.
+	 *
+	 * @type {String}
+	 */
+	label;
+
+	/**
+	 * Container controls.
+	 *
+	 * @type {{}}
+	 */
+	controls;
 
 	/**
 	 * Container renderer (The one who render).
