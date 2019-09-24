@@ -528,11 +528,11 @@ helpers = {
 
 		setTimeout( function() {
 			// Sometimes element removed during the timeout.
-			if ( ! jQuery( document ).find( $element ).length ) {
+			if ( ! $element[ 0 ].isConnected ) {
 				return;
 			}
 
-			var parentHeight = $parent.height(),
+			const parentHeight = $parent.height(),
 				parentScrollTop = $parent.scrollTop(),
 				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[ 0 ].offsetTop,
 				topToCheck = elementTop - parentScrollTop;

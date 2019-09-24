@@ -54,7 +54,7 @@ export default class extends Base {
 
 			if ( elementor.history.history.getActive() ) {
 				$e.run( 'document/history/addSubItem', {
-					container, // TODO: Find better way.
+					container,
 					data: { name, model, index },
 					restore: this.constructor.restore,
 				} );

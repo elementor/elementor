@@ -180,13 +180,16 @@ var	Manager = function() {
 				viewToScroll = editedElementView;
 			}
 		} else if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
-			const history = item.get( 'items' ).first().get( 'history' );
+			const historyItem = item.get( 'items' ).first();
 
-				// TODO: After remove history collection & elements behavior fix scrollToView.
-				if ( history && history.behavior.view && history.behavior.view.model ) {
-					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
+			if ( historyItem.get( 'restore' ) ) {
+				const container = item.get( 'items' ).first().get( 'container' );
+
+				if ( container ) {
+					viewToScroll = container.lookup().view;
 				}
 			}
+		}
 
 		updatePanelPageCurrentItem();
 
@@ -247,31 +250,6 @@ var	Manager = function() {
 		}
 
 		return elementor.getElementData( model ).title;
-	};
-
-	// TODO: remove use elementorCommon.helper.findViewRecursive.
-	this.findView = function( modelID, views ) {
-		var founded = false;
-
-		if ( ! views ) {
-			views = elementor.getPreviewView().children;
-		}
-
-		_.each( views._views, ( view ) => {
-			if ( founded ) {
-				return;
-			}
-			// Widget global used getEditModel
-			var model = view.getEditModel ? view.getEditModel() : view.model;
-
-			if ( modelID === model.get( 'id' ) ) {
-				founded = view;
-			} else if ( view.children && view.children.length ) {
-				founded = this.findView( modelID, view.children );
-			}
-		} );
-
-		return founded;
 	};
 
 	init();
