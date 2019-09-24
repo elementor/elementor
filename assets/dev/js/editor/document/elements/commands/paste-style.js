@@ -6,6 +6,20 @@ export default class extends Base {
 		this.requireContainer( args );
 	}
 
+	validateControls( source, target ) {
+		let result = true;
+
+		if (
+			undefined === source ||
+			undefined === target ||
+			( 'object' === typeof source ^ 'object' === typeof target )
+		) {
+			result = false;
+		}
+
+		return result;
+	}
+
 	getHistory( args ) {
 		const { containers = [ args.container ] } = args;
 
@@ -16,11 +30,8 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		// TODO: rewrite ( warning: too many function exits ).
-		// Moved from Old mechanism.
-		const { containers = [ args.container ] } = args;
-
-		const transferData = elementorCommon.storage.get( 'transfer' ), // TODO: storage should be args.storageKey
+		const { containers = [ args.container ], storageKey = 'transfer' } = args,
+			transferData = elementorCommon.storage.get( storageKey ),
 			sourceContainer = transferData.containers[ 0 ],
 			sourceSettings = sourceContainer.settings;
 
@@ -30,7 +41,7 @@ export default class extends Base {
 				targetControls = targetSettings.controls,
 				diffSettings = {};
 
-			jQuery.each( targetControls, ( controlName, control ) => {
+			Object.entries( targetControls ).forEach( ( [ controlName, control ] ) => {
 				if ( ! container.view.isStyleTransferControl( control ) ) {
 					return;
 				}
@@ -38,20 +49,14 @@ export default class extends Base {
 				const controlSourceValue = sourceSettings[ controlName ],
 					controlTargetValue = targetSettingsAttributes[ controlName ];
 
-				if ( undefined === controlSourceValue || undefined === controlTargetValue ) {
-					return;
-				}
-
-				if ( 'object' === typeof controlSourceValue ^ 'object' === typeof controlTargetValue ) {
+				if ( ! this.validateControls( controlSourceValue, controlTargetValue ) ) {
 					return;
 				}
 
 				if ( 'object' === typeof controlSourceValue ) {
-					let isEqual = true;
-
-					jQuery.each( controlSourceValue, function( propertyKey ) {
+					const isEqual = Object.keys( controlSourceValue ).some( ( propertyKey ) => {
 						if ( controlSourceValue[ propertyKey ] !== controlTargetValue[ propertyKey ] ) {
-							return isEqual = false;
+							return false;
 						}
 					} );
 
@@ -59,13 +64,9 @@ export default class extends Base {
 						return;
 					}
 				}
-				if ( controlSourceValue === controlTargetValue ) {
-					return;
-				}
 
-				const ControlView = elementor.getControlView( control.type );
-
-				if ( ! ControlView.onPasteStyle( control, controlSourceValue ) ) {
+				if ( controlSourceValue === controlTargetValue ||
+					! elementor.getControlView( control.type ).onPasteStyle( control, controlSourceValue ) ) {
 					return;
 				}
 
