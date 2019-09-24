@@ -4,6 +4,7 @@ var BaseElementView = require( 'elementor-elements/views/base' ),
 import AddSectionView from '../../views/add-section/inline';
 
 SectionView = BaseElementView.extend( {
+	// TODO: defaults should be static.
 	defaultInnerSectionColumns: 2,
 	defaultMinColumnSize: 2,
 
