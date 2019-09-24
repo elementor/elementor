@@ -1,5 +1,7 @@
 import Base from '../../commands/base';
 
+const DEBOUNCE_DELAY = 1000; // 1 second.
+
 // Settings.
 export default class Settings extends Base {
 	/**
@@ -137,7 +139,7 @@ export default class Settings extends Base {
 
 		if ( options.debounceHistory ) {
 			// If no timer or 1 second passed from last simulation.
-			if ( ! this.constructor.debounceTimer || now - this.constructor.debounceTimer > 1000 ) {
+			if ( ! this.constructor.debounceTimer || now - this.constructor.debounceTimer > DEBOUNCE_DELAY ) {
 				this.historyAction = 'debounce';
 			}
 
