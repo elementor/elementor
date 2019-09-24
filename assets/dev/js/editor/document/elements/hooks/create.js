@@ -24,8 +24,9 @@ $e.hooks.registerAfter( 'document/elements/create', 'create-section-columns', ( 
 	}
 
 	let { columns = 1 } = args;
+
 	if ( args.model.isInner && 1 === columns ) {
-		columns++; // TODO: use default from section.js
+		columns = containers[ 0 ].view.defaultInnerSectionColumns;
 	}
 
 	for ( let loopIndex = 0; loopIndex < columns; loopIndex++ ) {

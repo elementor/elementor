@@ -82,7 +82,7 @@ export default class extends Base {
 
 			container.view.allowRender = true;
 
-			container.view.renderOnChange();
+			container.render();
 		} );
 	}
 }
