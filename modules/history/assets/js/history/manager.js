@@ -183,7 +183,9 @@ var	Manager = function() {
 			const historyItem = item.get( 'items' ).first();
 
 			if ( historyItem.get( 'restore' ) ) {
-				const container = item.get( 'items' ).first().get( 'container' );
+				const container = 'sub-add' === historyItem.get( 'type' ) ?
+					historyItem.get( 'data' ).toRestoreContainer :
+					historyItem.get( 'container' ) || historyItem.get( 'containers' )[ 0 ];
 
 				if ( container ) {
 					viewToScroll = container.lookup().view;

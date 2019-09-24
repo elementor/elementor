@@ -1,4 +1,5 @@
 import Base from '../../commands/base';
+import item from "../../../../../../../core/common/modules/finder/assets/js/item";
 
 export default class extends Base {
 	validateArgs( args ) {
@@ -8,27 +9,33 @@ export default class extends Base {
 	}
 
 	getHistory( args ) {
-		// Manual history.
-		return false;
+		const { model } = args;
+
+		return {
+			type: 'add',
+			title: elementor.translate( 'template' ),
+			subTitle: model.get( 'title' ),
+			elementType: 'template',
+		};
 	}
 
 	apply( args ) {
-		const { model, data } = args,
+		const previewContainer = elementor.getPreviewContainer(),
+			{ data } = args,
 			options = args.options || {},
-			historyId = $e.run( 'document/history/startLog', {
-				type: 'add',
-				title: elementor.translate( 'template' ),
-				subTitle: model.get( 'title' ),
-				elementType: 'template',
-				returnValue: true,
-			} );
+			at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at;
 
-		elementor.getPreviewView().addChildModel( data.content, options );
+		Object.entries( data.content ).forEach( ( [ index, model ] ) => {
+			$e.run( 'document/elements/create', {
+				container: elementor.getPreviewContainer(),
+				model,
+				options: Object.assign( { at: at + index }, options ),
+			} );
+		} );
 
 		if ( options.withPageSettings ) {
+			// TODO: use settings command.
 			elementor.settings.page.model.setExternalChange( data.page_settings );
 		}
-
-		$e.run( 'document/history/endLog', { id: historyId } );
 	}
 }
