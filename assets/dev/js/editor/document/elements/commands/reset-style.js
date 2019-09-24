@@ -24,13 +24,12 @@ export default class extends Base {
 
 			container.view.allowRender = false;
 
-			// TODO: move to es6.
-			jQuery.each( controls, ( controlName, control ) => {
+			Object.entries( controls ).forEach( ( [ controlName, control ] ) => {
 				if ( ! container.view.isStyleTransferControl( control ) ) {
-					return;
-				}
+						return;
+					}
 
-				defaultValues[ controlName ] = control.default;
+					defaultValues[ controlName ] = control.default;
 			} );
 
 			$e.run( 'document/elements/settings', {
@@ -40,7 +39,7 @@ export default class extends Base {
 
 			container.view.allowRender = true;
 
-			container.view.renderOnChange();
+			container.render();
 		} );
 	}
 }
