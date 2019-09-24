@@ -52,6 +52,9 @@ class Module extends BaseModule {
 	public function get_formatted_usage( $format = 'html' ) {
 		$usage = [];
 
+		$posts = \Elementor\Tracker::get_posts_usage();
+		$library = \Elementor\Tracker::get_library_usage();
+
 		foreach ( get_option( self::OPTION_NAME, [] ) as $doc_type => $elements ) {
 			$doc_class = Plugin::$instance->documents->get_document_type( $doc_type );
 
@@ -60,6 +63,18 @@ class Module extends BaseModule {
 			} else {
 				$doc_title = $doc_type;
 			}
+
+			$posts_usage = $posts;
+
+			if ( $doc_class::get_property( 'show_in_library' ) ) {
+				$posts_usage = $library;
+			}
+
+			$doc_type_common = str_replace( 'wp-', '', $doc_type );
+
+			$doc_usage = isset( $posts_usage[ $doc_type_common ] ) ? $posts_usage[ $doc_type_common ] : 0;
+
+			$doc_count = is_array( $doc_usage ) ? $doc_usage['publish'] : $doc_usage;
 
 			$tab_group = $doc_class::get_property( 'admin_tab_group' );
 
@@ -92,6 +107,7 @@ class Module extends BaseModule {
 			$usage[ $doc_type ] = [
 				'title' => $doc_title,
 				'elements' => $elements,
+				'count' => $doc_count,
 			];
 
 			// Sort usage by title.

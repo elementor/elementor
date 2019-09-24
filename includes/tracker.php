@@ -352,7 +352,7 @@ class Tracker {
 	 * @return array The number of posts using Elementor grouped by post types
 	 *               and post status.
 	 */
-	private static function get_posts_usage() {
+	public static function get_posts_usage() {
 		global $wpdb;
 
 		$usage = [];
@@ -382,13 +382,13 @@ class Tracker {
 	 * Retrieve the number of Elementor library items saved.
 	 *
 	 * @since 2.0.0
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @return array The number of Elementor library items grouped by post types
 	 *               and meta value.
 	 */
-	private static function get_library_usage() {
+	public static function get_library_usage() {
 		global $wpdb;
 
 		$usage = [];
