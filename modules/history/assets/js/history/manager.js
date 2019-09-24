@@ -10,6 +10,7 @@ var	Manager = function() {
 
 	var translations = {
 		add: elementor.translate( 'added' ),
+		duplicate: elementor.translate( 'duplicate' ),
 		remove: elementor.translate( 'removed' ),
 		change: elementor.translate( 'edited' ),
 		move: elementor.translate( 'moved' ),

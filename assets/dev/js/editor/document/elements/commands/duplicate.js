@@ -11,7 +11,7 @@ export default class extends Base {
 
 		return {
 			containers,
-			type: 'duplicate', // TODO: add translation.
+			type: 'duplicate',
 		};
 	}
 
