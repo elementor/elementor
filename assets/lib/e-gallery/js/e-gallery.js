@@ -924,7 +924,13 @@ function (_BaseGalleryType) {
       var oldRowWidth = 0;
 
       for (var index = startIndex;; index++) {
-        var itemComputedWidth = Math.round(this.getCurrentDeviceSetting('idealRowHeight') * this.getActiveImagesData(index).ratio);
+        var imageData = this.getActiveImagesData(index);
+
+        if ('undefined' === typeof imageData) {
+          break;
+        }
+
+        var itemComputedWidth = Math.round(this.getCurrentDeviceSetting('idealRowHeight') * imageData.ratio);
 
         if (itemComputedWidth > this.containerWidth) {
           itemComputedWidth = this.containerWidth;
@@ -945,7 +951,7 @@ function (_BaseGalleryType) {
         }
 
         var isLastItem = index === this.getActiveItems().length - 1;
-        this.getActiveImagesData(index).computedWidth = itemComputedWidth;
+        imageData.computedWidth = itemComputedWidth;
 
         if (isLastItem) {
           var lastRowMode = this.getCurrentDeviceSetting('lastRow');
@@ -970,8 +976,13 @@ function (_BaseGalleryType) {
       var aggregatedWidth = 0;
 
       for (var index = startIndex; index < endIndex; index++) {
-        var imageData = this.getActiveImagesData(index),
-            percentWidth = imageData.computedWidth / rowWidth,
+        var imageData = this.getActiveImagesData(index);
+
+        if ('undefined' === typeof imageData) {
+          break;
+        }
+
+        var percentWidth = imageData.computedWidth / rowWidth,
             item = $items.get(index),
             firstRowItemClass = this.getItemClass(this.settings.classes.firstRowItem);
         item.style.setProperty('--item-width', percentWidth);
@@ -1088,12 +1099,21 @@ function (_BaseGalleryType) {
           horizontalGap = this.getCurrentDeviceSetting('horizontalGap'),
           itemWidth = (containerWidth - horizontalGap * (columns - 1)) / columns,
           $items = this.getActiveItems();
+
+      if (!$items) {
+        return;
+      }
+
       $items.each(function (index, item) {
         var row = Math.floor(index / columns),
             indexAtRow = index % columns,
-            imageData = _this.getActiveImagesData(index),
-            itemHeight = itemWidth / imageData.ratio;
+            imageData = _this.getActiveImagesData(index);
 
+        if ('undefined' === typeof imageData) {
+          return;
+        }
+
+        var itemHeight = itemWidth / imageData.ratio;
         item.style.setProperty('--item-height', imageData.height / imageData.width * 100 + '%');
         item.style.setProperty('--column', indexAtRow);
 
