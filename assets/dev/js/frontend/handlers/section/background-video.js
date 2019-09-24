@@ -103,7 +103,6 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				autoplay: true,
 				loop: ! elementSettings.background_play_once,
 				transparent: false,
-				playsinline: false,
 				background: true,
 				muted: true,
 			};
@@ -193,6 +192,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			playerVars: {
 				controls: 0,
 				rel: 0,
+				playsinline: 1,
 			},
 		} );
 	}
