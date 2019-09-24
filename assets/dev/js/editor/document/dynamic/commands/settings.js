@@ -1,4 +1,5 @@
 import Base from '../../commands/base';
+import Settings from '../../elements/commands/settings';
 
 export default class extends Base {
 	static restore( historyItem, isRedo ) {
@@ -39,16 +40,7 @@ export default class extends Base {
 			};
 		} );
 
-		const settingsKeys = Object.keys( settings );
-
-		/*
-		* TODO: subTitle getting is code duplication create a common logic.
-		* */
-		let subTitle = '';
-
-		if ( 1 === settingsKeys.length && containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
-			subTitle = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
-		}
+		const subTitle = Settings.getSubTitle( args );
 
 		return {
 			containers,

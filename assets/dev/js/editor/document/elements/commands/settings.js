@@ -110,6 +110,22 @@ export default class Settings extends Base {
 		$e.run( 'document/history/addSubItem', historyItem );
 	}
 
+	static getSubTitle( args ) {
+		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
+			settingsKeys = Object.keys( settings );
+
+		let result = '';
+
+		if ( ! isMultiSettings &&
+			1 === settingsKeys.length &&
+			containers[ 0 ].controls &&
+			containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
+			result = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
+		}
+
+		return result;
+	}
+
 	initialize() {
 		this.historyAction = false;
 	}
@@ -158,7 +174,7 @@ export default class Settings extends Base {
 				id: currentArgsSnapshot,
 				handler: setTimeout( () => {
 					this.constructor.logHistory( args, this.constructor.debounceHistoryId );
-				}, 1000 ),
+				}, DEBOUNCE_DELAY ),
 			} );
 
 			// Init || Update timer.
@@ -174,16 +190,7 @@ export default class Settings extends Base {
 		this.constructor.lastSnapshot = currentArgsSnapshot;
 
 		const { containers = [ args.container ], settings = {}, isMultiSettings = false } = args,
-			settingsKeys = Object.keys( settings );
-
-		let subTitle = '';
-
-		if ( ! isMultiSettings &&
-			1 === settingsKeys.length &&
-			containers[ 0 ].controls &&
-			containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
-			subTitle = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
-		}
+			subTitle = this.constructor.getSubTitle( args );
 
 		return {
 			containers,
