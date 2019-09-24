@@ -20,6 +20,7 @@ SectionView = BaseElementView.extend( {
 	addSectionView: null,
 
 	_checkIsFull: function() {
+		// TODO: should be part of $e.events.
 		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
 	},
 
@@ -51,20 +52,6 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
-	},
-
-	addChildModel: function( model ) {
-		var isModelInstance = model instanceof Backbone.Model,
-			isInner = this.isInner();
-
-		if ( isModelInstance ) {
-			// TODO: change to command.
-			model.set( 'isInner', isInner );
-		} else {
-			model.isInner = isInner;
-		}
-
-		return BaseElementView.prototype.addChildModel.apply( this, arguments );
 	},
 
 	getEditButtons: function() {
