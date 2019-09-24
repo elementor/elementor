@@ -223,7 +223,7 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 = 2.7.3 - 2019-09-24 =
 * Tweak: Updated E-gallery library to v1.0.1
-* Fix: Images overlap issue in Image Carousel widget ((Topic)[https://wordpress.org/support/topic/elementor-image-carousel-2/#post-11943476])
+* Fix: Images overlap issue in Image Carousel widget ([Topic](https://wordpress.org/support/topic/elementor-image-carousel-2/#post-11943476))
 * Fix: Removed extra character in Divider widget ([#9102](https://github.com/elementor/elementor/issues/9102))
 * Fix: Console error after resetting "Background Slideshow" gallery
 * Fix: Popup templates not visible in My Templates tab on import action
