@@ -35,7 +35,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	isPasteEnabled: function() {
-		var transferData = elementorCommon.storage.get( 'transfer' );
+		var transferData = elementorCommon.storage.get( 'clipboard' );
 
 		if ( ! transferData ) {
 			return false;

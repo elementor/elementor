@@ -7,7 +7,7 @@ export default class Create extends Base {
 			container = historyItem.get( 'container' ),
 			options = historyItem.get( 'options' ) || {};
 
-		// No clone when restoring, eg: duplicate will generate unique ids while restoring.
+		// No clone when restoring. e.g: duplicate will generate unique ids while restoring.
 		if ( options.clone ) {
 			options.clone = false;
 		}

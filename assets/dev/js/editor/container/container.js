@@ -116,7 +116,7 @@ export default class Container {
 	/**
 	 * Function lookup().
 	 *
-	 * If the view were destroyed, we gonna try to find it again if it exist.
+	 * If the view were destroyed, try to find it again if it exists.
 	 *
 	 * @returns {Container}
 	 */

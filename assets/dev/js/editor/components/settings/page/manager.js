@@ -21,7 +21,7 @@ module.exports = BaseSettings.extend( {
 			document: elementor.getPreviewContainer(),
 			model: editModel,
 			settings: editModel.get( 'settings' ),
-			view: '@see page/manager.js',
+			view: 'TODO: @see page/manager.js',
 			label: elementor.config.document.panel.title,
 			controls: editModel.controls,
 			renderer: false,

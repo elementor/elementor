@@ -137,7 +137,7 @@ module.exports = Marionette.Behavior.extend( {
 				settings: tagView.model,
 				view: '@see dynamic-tags/control-behavior.js',
 				parent: elementContainer,
-				label: elementContainer.label + ' ' + this.view.options.model.get( 'label' ),
+				label: elementContainer.label + ' ' + tagView.model.get( 'label' ),
 				controls: tagView.model.options.controls,
 				renderer: elementContainer,
 			} );

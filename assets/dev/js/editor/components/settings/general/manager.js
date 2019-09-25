@@ -32,7 +32,7 @@ module.exports = BaseSettings.extend( {
 			document: elementor.getPreviewContainer(),
 			model: editModel,
 			settings: editModel.get( 'settings' ),
-			view: '@see general/manager.js',
+			view: 'TODO: @see general/manager.js',
 			label: elementor.translate( 'global_settings' ),
 			controls: editModel.controls,
 			renderer: false,

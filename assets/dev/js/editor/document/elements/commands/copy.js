@@ -12,7 +12,7 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { storageKey = 'transfer', containers = [ args.container ], elementsType = containers[ 0 ].model.elType } = args,
+		const { storageKey = 'clipboard', containers = [ args.container ], elementsType = containers[ 0 ].model.elType } = args,
 			cloneContainers = containers.map( ( container ) => {
 			return container.model.toJSON( { copyHtmlCache: true } );
 		} );

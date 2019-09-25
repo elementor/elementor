@@ -117,7 +117,7 @@ export default class {
 	requireArgumentConstructor( property, type, args = this.args ) {
 		this.requireArgument( property, args );
 
-		if ( ( args[ property ].constructor !== type ) ) {
+		if ( args[ property ].constructor !== type ) {
 			throw Error( `${ property } invalid constructor type.` );
 		}
 	}
@@ -161,7 +161,7 @@ export default class {
 	/**
 	 * Function isDataChanged().
 	 *
-	 * should set editor change flag on?.
+	 * Whether the editor needs to set change flag on/off.
 	 *
 	 * @returns {Boolean}
 	 */
@@ -172,7 +172,7 @@ export default class {
 	/**
 	 * Function apply().
 	 *
-	 * Apply the actual command.
+	 * Do the actual command.
 	 *
 	 * @param {{}}
 	 */
@@ -183,7 +183,7 @@ export default class {
 	/**
 	 * Function run().
 	 *
-	 * Run command.
+	 * Run command with history & hooks.
 	 *
 	 * @returns {*}
 	 */

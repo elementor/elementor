@@ -170,7 +170,7 @@ BaseElementView = BaseContainer.extend( {
 						title: elementor.translate( 'paste_style' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => {
-							return !! elementorCommon.storage.get( 'transfer' );
+							return !! elementorCommon.storage.get( 'clipboard' );
 						},
 						callback: () => $e.run( 'document/elements/pasteStyle', { container: this.getContainer() } ),
 					}, {
@@ -243,7 +243,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isPasteEnabled() {
-		const transferData = elementorCommon.storage.get( 'transfer' );
+		const transferData = elementorCommon.storage.get( 'clipboard' );
 
 		if ( ! transferData || this.isCollectionFilled() ) {
 			return false;

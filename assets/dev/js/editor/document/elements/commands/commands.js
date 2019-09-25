@@ -1,4 +1,4 @@
-// Used uppercase here since delete is saved javascript word.
+// Used uppercase here since `delete` is a saved javascript word.
 // Alphabetical order.
 
 import Copy from './copy';
