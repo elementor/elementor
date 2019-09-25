@@ -638,10 +638,6 @@ class Utils {
 	 * @param string $control_value
 	 */
 	public static function control_is_empty( $control_value ) {
-		if ( '0' === $control_value || ! empty( $control_value ) ) {
-			return false;
-		}
-
-		return true;
+		return '0' !== $control_value && empty( $control_value );
 	}
 }
