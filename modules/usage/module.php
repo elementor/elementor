@@ -470,16 +470,20 @@ class Module extends BaseModule {
 			}
 
 			$element_controls = $element_instance->get_controls();
-			$settings_controls = $element['settings'];
-			$element_ref = &$usage[ $type ];
 
-			// Add dynamic values.
-			$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
+			if ( isset( $element['settings'] ) ) {
+				$settings_controls = $element['settings'];
+				$element_ref = &$usage[ $type ];
 
-			$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
+				// Add dynamic values.
+				$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
 
-			$percent = $changed_controls_count / ( count( $element_controls ) / 100 );
-			$usage[ $type ] ['control_percent'] = (int) round( $percent );
+				$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
+
+				$percent = $changed_controls_count / ( count( $element_controls ) / 100 );
+
+				$usage[ $type ] ['control_percent'] = (int) round( $percent );
+			}
 
 			return $element;
 		} );
