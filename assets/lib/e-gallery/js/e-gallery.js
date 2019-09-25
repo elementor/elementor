@@ -723,8 +723,8 @@ function () {
       containerStyle.setProperty('--hgap', this.getCurrentDeviceSetting('horizontalGap') + 'px');
       containerStyle.setProperty('--vgap', this.getCurrentDeviceSetting('verticalGap') + 'px');
       containerStyle.setProperty('--animation-duration', this.settings.animationDuration + 'ms');
-      this.$items.hide();
-      this.getActiveItems().show();
+      this.$items.addClass('gallery-item--hidden');
+      this.getActiveItems().removeClass('gallery-item--hidden');
       this.run(refresh);
     }
   }, {
