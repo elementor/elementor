@@ -194,18 +194,22 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			defaults[ key ] = field.default;
 		} );
 
-		const newModel = $e.run( 'document/elements/repeater/insert', {
+		const newItem = $e.run( 'document/elements/repeater/insert', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			model: defaults,
 			returnValue: true,
 		} );
 
-		this.editRow( this.children.findByModel( newModel ) );
+		this.editRow( this.children.findByModel( newItem.model ) );
 		this.toggleMinRowsClass();
 	},
 
 	onChildviewClickRemove: function( childView ) {
+		if ( childView === this.currentEditableChild ) {
+			delete this.currentEditableChild;
+		}
+
 		$e.run( 'document/elements/repeater/remove', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
@@ -213,6 +217,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 
 		this.updateActiveRow();
+		this.updateChildIndexes();
+
 		this.toggleMinRowsClass();
 	},
 
