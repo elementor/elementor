@@ -191,8 +191,6 @@ export default class {
 		let result;
 
 		if ( this.history && this.isHistoryActive() ) {
-			this.history = Object.assign( this.history, { returnValue: true } );
-
 			this.historyId = $e.run( 'document/history/startLog', this.history );
 		}
 

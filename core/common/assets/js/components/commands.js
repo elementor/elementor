@@ -119,11 +119,11 @@ export default class extends elementorModules.Module {
 
 		this.afterRun( command, args );
 
-		if ( args.returnValue ) {
-			return results;
+		if ( false === args.returnValue ) {
+			return true;
 		}
 
-		return true;
+		return results;
 	}
 
 	// It's separated in order to allow override.

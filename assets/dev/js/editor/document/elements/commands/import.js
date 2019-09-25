@@ -1,5 +1,4 @@
 import Base from '../../commands/base';
-import item from "../../../../../../../core/common/modules/finder/assets/js/item";
 
 export default class extends Base {
 	validateArgs( args ) {

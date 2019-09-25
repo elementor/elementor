@@ -36,8 +36,6 @@ export default class extends elementorModules.common.Component {
 			},
 
 			addItem: ( itemData ) => {
-				itemData = Object.assign( itemData, { returnValue: true } );
-
 				$e.run( 'document/history/endLog', {
 					id: $e.run( 'document/history/startLog', itemData ),
 				} );

@@ -38,7 +38,6 @@ export default class extends Base {
 				container,
 				name,
 				model,
-				returnValue: true,
 				options: { at: targetIndex },
 			} ) );
 		} );

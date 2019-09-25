@@ -151,7 +151,6 @@ class AddSectionBase extends Marionette.ItemView {
 				type: 'add',
 				title: selectedElement.model.get( 'title' ),
 				elementType: selectedElement.model.get( 'elType' ),
-				returnValue: true,
 			} );
 
 		$e.run( 'document/elements/create', {
@@ -160,7 +159,6 @@ class AddSectionBase extends Marionette.ItemView {
 			},
 			container: elementor.getPreviewContainer(),
 			columns: 1,
-			returnValue: true,
 		} ).view.addElementFromPanel();
 
 		$e.run( 'document/history/endLog', { id: historyId } );

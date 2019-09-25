@@ -198,7 +198,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			model: defaults,
-			returnValue: true,
 		} );
 
 		this.editRow( this.children.findByModel( newItem.model ) );

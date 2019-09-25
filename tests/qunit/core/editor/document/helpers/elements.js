@@ -7,7 +7,6 @@ export default class {
 			},
 			container: elementor.getPreviewContainer(),
 			columns,
-			returnValue: true,
 		} );
 
 		if ( returnFirstColumn ) {
@@ -23,7 +22,6 @@ export default class {
 			model: {
 				elType: 'column',
 			},
-			returnValue: true,
 		} );
 	}
 
@@ -33,7 +31,6 @@ export default class {
 			model: {
 				elType: 'column',
 			},
-			returnValue: true,
 		} );
 	}
 
@@ -54,7 +51,6 @@ export default class {
 				widgetType: 'button',
 				settings,
 			},
-			returnValue: true,
 		} );
 	}
 
@@ -66,7 +62,6 @@ export default class {
 				widgetType: 'button',
 				settings,
 			},
-			returnValue: true,
 		} );
 	}
 
@@ -77,7 +72,6 @@ export default class {
 				elType: 'section',
 				isInner: true,
 			},
-			returnValue: true,
 		} );
 	}
 
@@ -88,7 +82,6 @@ export default class {
 				elType: 'section',
 				isInner: true,
 			},
-			returnValue: true,
 		} );
 	}
 
@@ -99,7 +92,6 @@ export default class {
 				elType: 'widget',
 				widgetType: 'tabs',
 			},
-			returnValue: true,
 		} );
 	}
 
@@ -110,7 +102,6 @@ export default class {
 				elType: 'widget',
 				widgetType: 'form',
 			},
-			returnValue: true,
 		} );
 	}
 
@@ -180,14 +171,12 @@ export default class {
 		return $e.run( 'document/elements/paste', {
 			container: eContainer,
 			rebuild,
-			returnValue: true,
 		} );
 	}
 
 	static multiPaste( eContainers ) {
 		return $e.run( 'document/elements/paste', {
 			containers: eContainers,
-			returnValue: true,
 		} );
 	}
 
@@ -219,14 +208,12 @@ export default class {
 	static duplicate( eContainer ) {
 		return $e.run( 'document/elements/duplicate', {
 			container: eContainer,
-			returnValue: true,
 		} );
 	}
 
 	static multiDuplicate( eContainers ) {
 		return $e.run( 'document/elements/duplicate', {
 			containers: eContainers,
-			returnValue: true,
 		} );
 	}
 
@@ -290,7 +277,6 @@ export default class {
 			container: eContainer,
 			name,
 			model: item,
-			returnValue: true,
 		} );
 	}
 
@@ -299,7 +285,6 @@ export default class {
 			containers: eContainers,
 			name,
 			model: item,
-			returnValue: true,
 		} );
 	}
 
@@ -308,7 +293,6 @@ export default class {
 			container: eContainer,
 			name,
 			index,
-			returnValue: true,
 		} );
 	}
 
@@ -317,7 +301,6 @@ export default class {
 			containers: eContainers,
 			name,
 			index,
-			returnValue: true,
 		} );
 	}
 
@@ -344,7 +327,6 @@ export default class {
 			container: eContainer,
 			name,
 			index,
-			returnValue: true,
 		} );
 	}
 
@@ -353,7 +335,6 @@ export default class {
 			containers: eContainers,
 			name,
 			index,
-			returnValue: true,
 		} );
 	}
 

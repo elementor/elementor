@@ -40,7 +40,6 @@ export default class extends Base {
 				container: target,
 				model,
 				options,
-				returnValue: true,
 			} );
 
 			count++;

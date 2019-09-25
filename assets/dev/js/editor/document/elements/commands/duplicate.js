@@ -26,7 +26,6 @@ export default class extends Base {
 			result.push( $e.run( 'document/elements/create', {
 				container: parent,
 				model: container.model.toJSON(),
-				returnValue: true,
 				options: {
 					at,
 					clone: true,

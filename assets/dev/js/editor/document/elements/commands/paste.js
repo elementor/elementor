@@ -43,7 +43,6 @@ export default class extends Base {
 							at: index,
 							edit: false,
 						},
-						returnValue: true,
 					} );
 
 					result.push( this.pasteTo( transferData, [ section ] ) );
@@ -59,7 +58,6 @@ export default class extends Base {
 						options: {
 							at: index,
 						},
-						returnValue: true,
 					} );
 
 					result.push( this.pasteTo( transferData, [ section ] ) );
@@ -86,7 +84,6 @@ export default class extends Base {
 				containers,
 				model,
 				options,
-				returnValue: true,
 			} ) );
 
 			// On paste sections, increase the `at` for every section.

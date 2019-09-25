@@ -39,7 +39,6 @@ $e.hooks.registerAfter( 'document/elements/create', 'create-section-columns', ( 
 				settings: {},
 				elements: [],
 			},
-			returnValue: true,
 		} );
 	}
 

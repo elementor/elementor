@@ -33,7 +33,6 @@ export default class extends Base {
 				container,
 				name,
 				model: item.toJSON(),
-				returnValue: true,
 				options: Object.assign( {
 					at: index + 1,
 				}, options ),
