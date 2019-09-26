@@ -1,4 +1,4 @@
-export default class {
+export default class Base {
 	/**
 	 * Function constructor().
 	 *
@@ -9,12 +9,18 @@ export default class {
 	constructor( args ) {
 		this.args = args;
 
+		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize();
+
+		// Validate args before run.
 		this.validateArgs( args );
 
+		// Acknowledge self about which command it run.
 		this.currentCommand = $e.commands.getCurrent( 'document' );
 
+		// Get History from child command.
 		this.history = this.getHistory( args );
+
 		this.historyId = null;
 	}
 
@@ -128,9 +134,7 @@ export default class {
 	 * Initialize command, called after construction.
 	 *
 	 */
-	initialize() {
-
-	}
+	initialize() {}
 
 	/**
 	 * Function validateArgs().
@@ -139,9 +143,7 @@ export default class {
 	 *
 	 * @param {{}} args
 	 */
-	validateArgs( args ) {
-
-	}
+	validateArgs( args ) {}
 
 	/**
 	 * Function getHistory().
@@ -194,6 +196,8 @@ export default class {
 			this.historyId = $e.run( 'document/history/startLog', this.history );
 		}
 
+		this.onBeforeApply( this.args );
+
 		try {
 			$e.hooks.runDependency( this.currentCommand, this.args );
 
@@ -209,11 +213,13 @@ export default class {
 			}
 
 			if ( this.historyId ) {
-				$e.run( 'document/history/deleteLog', { id: this.historyId } );
+				$e.run( 'document/history/deleteLog', { id: this.historyId }   );
 			}
 
 			return false;
 		}
+
+		this.onAfterApply( this.args );
 
 		$e.hooks.runAfter( this.currentCommand, this.args, result );
 
@@ -238,4 +244,18 @@ export default class {
 	isHistoryActive() {
 		return elementor.history.history.getActive();
 	}
+
+	/**
+	 * Function onBeforeApply.
+	 *
+	 * @param {{}} args
+	 */
+	onBeforeApply( args ) {}
+
+	/**
+	 * Function onAfterApply.
+	 *
+	 * @param {{}} args
+	 */
+	onAfterApply( args ) {}
 }

@@ -1,45 +1,25 @@
-import Base from '../../commands/base';
+import Debounce from '../../commands/debounce';
 
-const DEBOUNCE_DELAY = 1000; // 1 second.
+const COMMAND_DEBOUNCE_DELAY = 1000; // 1 second.
 
 // Settings.
-export default class Settings extends Base {
-	/**
-	 * Array of Object(s) { id = 'id of args snapshot', handler = ' return value of setTimeout ' }.
-	 *
-	 * @type {Array}
-	 */
-	static snapshots = [];
+export default class Settings extends Debounce {
+	static getSubTitle( args ) {
+		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
+			settingsKeys = Object.keys( settings );
 
-	/**
-	 * Each stimulation we save the unique `this.args` sate id.
-	 *
-	 * @type {String}
-	 */
-	static lastSnapshot = '';
+		let result = '';
 
-	/**
-	 * Last `HistoryId` since last debounce.
-	 *
-	 * @type {number}
-	 */
-	static debounceHistoryId = 0;
+		if ( ! isMultiSettings &&
+			1 === settingsKeys.length &&
+			containers[ 0 ].controls &&
+			containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
+			result = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
+		}
 
-	/**
-	 * Debounce timer.
-	 *
-	 * @type Number
-	 */
-	static debounceTimer = 0;
+		return result;
+	}
 
-	/**
-	 * Function restore.
-	 *
-	 * Restore Settings.
-	 *
-	 * @param {{}} historyItem
-	 * @param {Boolean} isRedo
-	 */
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -56,13 +36,6 @@ export default class Settings extends Base {
 		} );
 	}
 
-	/**
-	 * Function logHistory.
-	 *
-	 * Log history for settings command.
-	 *
-	 * @param {{}} args
-	 */
 	static logHistory( args, historyId = false ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args,
 			changes = {};
@@ -110,84 +83,20 @@ export default class Settings extends Base {
 		$e.run( 'document/history/addSubItem', historyItem );
 	}
 
-	static getSubTitle( args ) {
-		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
-			settingsKeys = Object.keys( settings );
-
-		let result = '';
-
-		if ( ! isMultiSettings &&
-			1 === settingsKeys.length &&
-			containers[ 0 ].controls &&
-			containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
-			result = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
-		}
-
-		return result;
-	}
-
-	initialize() {
-		this.historyAction = false;
-	}
-
 	validateArgs( args ) {
 		this.requireContainer( args );
 
 		this.requireArgumentConstructor( 'settings', Object, args );
 	}
 
-	getArgsSnapshotId( args ) {
-		const { containers = [ args.container ], settings = {} } = args;
-
-		return containers.map( ( container ) => container.id ).join( ',' ) + ',' + Object.keys( settings );
+	getDebounceDelay() {
+		return COMMAND_DEBOUNCE_DELAY;
 	}
 
 	getHistory( args ) {
-		if ( ! this.isHistoryActive() ) {
+		if ( ! super.getHistory( args ) ) {
 			return false;
 		}
-
-		const { options = {} } = args,
-			currentArgsSnapshot = this.getArgsSnapshotId( args );
-
-		// Get current time.
-		const now = ( new Date() ).getTime();
-
-		if ( options.debounceHistory ) {
-			// If no timer or 1 second passed from last simulation.
-			if ( ! this.constructor.debounceTimer || now - this.constructor.debounceTimer > DEBOUNCE_DELAY ) {
-				this.historyAction = 'debounce';
-			}
-
-			// Clear all current snapshots
-			this.constructor.snapshots = this.constructor.snapshots.filter( ( snapshot ) => {
-				if ( snapshot.id === currentArgsSnapshot ) {
-					clearTimeout( snapshot.handler );
-					return false;
-				}
-
-				return true;
-			} );
-
-			// Anyway if debounceHistory set to be true, we create timeout for saving log history.
-			this.constructor.snapshots.push( {
-				id: currentArgsSnapshot,
-				handler: setTimeout( () => {
-					this.constructor.logHistory( args, this.constructor.debounceHistoryId );
-				}, DEBOUNCE_DELAY ),
-			} );
-
-			// Init || Update timer.
-			this.constructor.debounceTimer = now;
-		} else {
-			this.historyAction = 'normal';
-		}
-
-		if ( ! this.historyAction ) {
-			return false;
-		}
-
-		this.constructor.lastSnapshot = currentArgsSnapshot;
 
 		const { containers = [ args.container ], settings = {}, isMultiSettings = false } = args,
 			subTitle = this.constructor.getSubTitle( args );
@@ -207,6 +116,7 @@ export default class Settings extends Base {
 
 			const newSettings = isMultiSettings ? settings[ container.id ] : settings;
 
+			// Save for debounce.
 			container.oldValues = container.oldValues || container.settings.toJSON();
 
 			if ( options.external ) {
@@ -217,13 +127,5 @@ export default class Settings extends Base {
 
 			container.render();
 		} );
-
-		if ( this.isHistoryActive() ) {
-			if ( 'debounce' === this.historyAction && this.historyId ) {
-				this.constructor.debounceHistoryId = this.historyId;
-			} else if ( 'normal' === this.historyAction ) {
-				this.constructor.logHistory( args );
-			}
-		}
 	}
 }

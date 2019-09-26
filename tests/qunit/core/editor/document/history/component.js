@@ -1,4 +1,5 @@
 import Elements from '../helpers/elements';
+import Settings from '../../../../../../assets/dev/js/editor/document/elements/commands/settings';
 
 const undoValidate = ( assert, historyItem ) => {
 	$e.run( 'document/history/undo' );
@@ -287,11 +288,11 @@ jQuery( () => {
 				assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
 			} );
 
-			QUnit.test( 'Settings: Lazy', ( assert ) => {
+			QUnit.test( 'Settings: Debounce', ( assert ) => {
 				const historyItems = elementor.history.history.getItems(),
 					settingsChangeCount = 10,
 					eWidget = Elements.createMockButtonWidget(),
-					historyCountBeforeLazy = historyItems.length,
+					historyCountBeforeDebounce = historyItems.length,
 					text = 'i test it',
 					defaultText = eWidget.settings.attributes.text;
 
@@ -306,7 +307,7 @@ jQuery( () => {
 
 				setTimeout( () => {
 					const historyItem = historyItems.at( 0 ).attributes,
-						historyDiff = historyItems.length - historyCountBeforeLazy;
+						historyDiff = historyItems.length - historyCountBeforeDebounce;
 
 					// How many changes.
 					assert.equal( historyDiff, 1, 'History items length is "1"' );
@@ -325,7 +326,7 @@ jQuery( () => {
 					assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
 
 					done();
-				}, 1000 ); // TODO: make timeout access able.
+				}, Settings.debounceDelay );
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
