@@ -1,6 +1,6 @@
 import Debounce from '../../commands/debounce';
 
-const COMMAND_DEBOUNCE_DELAY = 1000; // 1 second.
+const COMMAND_DEBOUNCE_DELAY = 800; // ms.
 
 // Settings.
 export default class Settings extends Debounce {
