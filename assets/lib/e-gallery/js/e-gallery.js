@@ -330,7 +330,7 @@ function () {
         columns: 5,
         horizontalGap: 10,
         verticalGap: 10,
-        animationDuration: 300,
+        animationDuration: 350,
         classesPrefix: 'e-gallery-',
         classes: {
           container: 'container',
@@ -816,7 +816,7 @@ function (_BaseGalleryType) {
     key: "setContainerSize",
     value: function setContainerSize() {
       var columns = this.getCurrentDeviceSetting('columns'),
-          rows = Math.ceil(this.settings.items.length / columns),
+          rows = Math.ceil(this.getActiveItems().length / columns),
           containerStyle = this.$container[0].style;
       containerStyle.setProperty('--columns', columns);
       containerStyle.setProperty('--rows', rows);
@@ -837,14 +837,14 @@ function (_BaseGalleryType) {
       var animatedClass = this.getItemClass(this.settings.classes.animated);
       this.$container.addClass(animatedClass);
       setTimeout(function () {
-        _this.setItemsPosition();
-
         _this.setContainerSize();
+
+        _this.setItemsPosition();
 
         setTimeout(function () {
           return _this.$container.removeClass(animatedClass);
         }, _this.settings.animationDuration);
-      }, 100);
+      }, 50);
     }
   }]);
 
