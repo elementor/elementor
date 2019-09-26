@@ -62,8 +62,10 @@ class Compatibility {
 			return;
 		}
 
-		$replacement = "`elementor/element/wp-post/{$section_id}/{$current_sub_action}` or `elementor/element/wp-page/{$section_id}/{$current_sub_action}`";
-		_deprecated_hook( $deprecated_action, '2.7.0', $replacement );
+		// TODO: Hard deprecation on 3.1.0.
+		// $replacement = "`elementor/element/wp-post/{$section_id}/{$current_sub_action}` or `elementor/element/wp-page/{$section_id}/{$current_sub_action}`";
+		// _deprecated_hook( $deprecated_action, '2.7.0', $replacement );
+
 		do_action( $deprecated_action, $instance, $section_id, $args );
 	}
 
