@@ -213,7 +213,7 @@ export default class Base {
 			}
 
 			if ( this.historyId ) {
-				$e.run( 'document/history/deleteLog', { id: this.historyId }   );
+				$e.run( 'document/history/deleteLog', { id: this.historyId } );
 			}
 
 			return false;

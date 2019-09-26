@@ -272,6 +272,10 @@ export default class {
 		$e.run( 'document/elements/empty', { force: true } );
 	}
 
+	static import( data , model ) {
+		$e.run( 'document/elements/import', { data, model } );
+	}
+
 	static repeaterInsert( eContainer, name, item ) {
 		return $e.run( 'document/elements/repeater/insert', {
 			container: eContainer,
