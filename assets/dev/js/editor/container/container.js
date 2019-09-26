@@ -146,6 +146,15 @@ export default class Container {
 			return;
 		}
 
+		/**
+		 * TODO: remove, temp fix:
+		 * Steps to reproduce: Dynamic in repeater
+		 * Create a Form - change the default value of name to post-date, change the post-date format.
+		 */
+		if ( 'object' !== typeof this.renderer.view ) {
+			return;
+		}
+
 		this.renderer.view.renderOnChange( this.settings );
 	}
 }

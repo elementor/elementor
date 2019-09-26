@@ -4,6 +4,10 @@ $e.hooks.registerAfter( 'document/elements/settings', 'resize-column', ( args ) 
 		return;
 	}
 
+	if ( args.settings._inline_size >= 100 ) {
+		throw Error( '_inline_size cannot be more then 100.' );
+	}
+
 	const { containers = [ args.container ], options = {} } = args;
 
 	if ( ! options.debounceHistory ) {
@@ -11,6 +15,10 @@ $e.hooks.registerAfter( 'document/elements/settings', 'resize-column', ( args ) 
 	}
 
 	containers.forEach( ( container ) => {
+		if ( container.view.children.length >= 1 ) {
+			throw Error( 'Could not resize one column.' );
+		}
+
 		const parentView = container.parent.view,
 			columnView = container.view,
 			currentSize = container.settings._previousAttributes._inline_size || container.settings._previousAttributes._column_size,

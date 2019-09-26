@@ -79,8 +79,6 @@ ColumnView = BaseElementView.extend( {
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
 	},
 
 	attachElContent: function() {
@@ -232,34 +230,6 @@ ColumnView = BaseElementView.extend( {
 		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
 			this.changeSizeUI();
 		}
-	},
-
-	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
-		// TODO: Move to hook dependency.
-
-		var errors = [],
-			columnSize = this.model.getSetting( '_column_size' );
-
-		// If there's only one column
-		if ( 100 === columnSize ) {
-			errors.push( 'Could not resize one column' );
-
-			return errors;
-		}
-
-		// if ( ! oldValue ) {
-		// 	oldValue = columnSize;
-		// }
-
-		// try {
-		// 	this._parent.resizeChild( this, +oldValue, +newValue );
-		// } catch ( e ) {
-		// 	if ( e.message === this._parent.errors.columnWidthTooLarge ) {
-		// 		errors.push( e.message );
-		// 	}
-		// }
-
-		return errors;
 	},
 
 	onAddButtonClick: function( event ) {
