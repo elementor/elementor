@@ -346,7 +346,7 @@ class Tracker {
 	 * Retrieve the number of posts using Elementor.
 	 *
 	 * @since 2.0.0
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @return array The number of posts using Elementor grouped by post types
