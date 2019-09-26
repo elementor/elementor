@@ -1,7 +1,16 @@
 import Elements from '../helpers/elements';
 
+/**
+ * TODO: everywhere possible dont use created container
+ * to check command propriety, but use: 'elementor.getPreviewContainer'
+ */
+
 jQuery( () => {
-	QUnit.module( 'Component: document/elements', () => {
+	QUnit.module( 'Component: document/elements', ( hooks ) => {
+		hooks.beforeEach( () => {
+			Elements.empty();
+		} );
+
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Empty', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true );
@@ -31,9 +40,11 @@ jQuery( () => {
 
 				Elements.copyAll();
 
+				Elements.empty();
+
 				Elements.paste( elementor.getPreviewContainer(), true );
 
-				assert.equal( eSection.view.collection.length, eButtonsCount,
+				assert.equal( elementor.elements.at( 0 ).get( 'elements' ).at( 1 ).get( 'elements' ).length, eButtonsCount,
 					`'${ eButtonsCount }' buttons were created.` );
 			} );
 
@@ -144,8 +155,10 @@ jQuery( () => {
 				Elements.paste( eColumn );
 
 				// Check.
-				assert.equal( eColumn.view.children.length, 2, 'Pasted element were created.' );
-				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
+				assert.equal( elementor.elements.at( 0 ).get( 'elements' ).at( 0 ).get( 'elements' ).length, 2,
+					'Pasted element were created.' );
+				assert.equal( elementor.saver.isEditorChanged(), true,
+					'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {

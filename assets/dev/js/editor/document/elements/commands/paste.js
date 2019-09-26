@@ -51,8 +51,9 @@ export default class extends Base {
 				} else {
 					// Next code changed from original since `_checkIsEmpty()` was removed.
 					const section = $e.run( 'document/elements/create', {
+						container: currentContainer,
 						model: {
-							elType: 'column',
+							elType: 'section',
 						},
 						columns: 1,
 						options: {
@@ -60,7 +61,7 @@ export default class extends Base {
 						},
 					} );
 
-					result.push( this.pasteTo( transferData, [ section ] ) );
+					result.push( this.pasteTo( transferData, [ section.view.children.first().getContainer() ] ) );
 				}
 			} );
 		} else {

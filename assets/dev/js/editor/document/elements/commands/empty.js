@@ -5,7 +5,11 @@ export default class extends Base {
 		if ( isRedo ) {
 			$e.run( 'document/elements/empty', { force: true } );
 		} else {
-			elementor.getPreviewView().addChildModel( historyItem.get( 'data' ) );
+			const data = historyItem.get( 'data' );
+
+			if ( data ) {
+				elementor.getPreviewView().addChildModel( data );
+			}
 		}
 	}
 
@@ -15,7 +19,7 @@ export default class extends Base {
 				type: 'remove',
 				elementType: 'section',
 				title: elementor.translate( 'all_content' ),
-				data: elementor.elements.toJSON(),
+				data: elementor.elements ? elementor.elements.toJSON() : null,
 				restore: this.constructor.restore,
 			};
 		}
@@ -24,7 +28,7 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		if ( args.force ) {
+		if ( args.force && elementor.elements ) {
 			elementor.elements.reset();
 			elementor.getPreviewContainer().panel.closeEditor();
 			return;
