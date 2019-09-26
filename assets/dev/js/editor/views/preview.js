@@ -89,7 +89,7 @@ Preview = BaseSectionsContainerView.extend( {
 		];
 	},
 	isPasteEnabled: function() {
-		return elementorCommon.storage.get( 'transfer' );
+		return elementorCommon.storage.get( 'clipboard' );
 	},
 
 	onRender: function() {

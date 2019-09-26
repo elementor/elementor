@@ -3,7 +3,7 @@ import Base from '../../commands/base';
 // Paste.
 export default class extends Base {
 	validateArgs( args ) {
-		const { storageKey = 'transfer' } = args,
+		const { storageKey = 'clipboard' } = args,
 			transferData = elementorCommon.storage.get( storageKey );
 
 		this.requireContainer( args );
@@ -19,7 +19,7 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { at, rebuild = false, storageKey = 'transfer', containers = [ args.container ] } = args,
+		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ] } = args,
 			transferData = elementorCommon.storage.get( storageKey ),
 			result = [];
 

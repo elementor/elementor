@@ -30,7 +30,7 @@ export default class extends Base {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], storageKey = 'transfer' } = args,
+		const { containers = [ args.container ], storageKey = 'clipboard' } = args,
 			transferData = elementorCommon.storage.get( storageKey ),
 			sourceContainer = transferData.containers[ 0 ],
 			sourceSettings = sourceContainer.settings;

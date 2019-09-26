@@ -149,7 +149,7 @@ BaseElementView = BaseContainer.extend( {
 					},
 				],
 			}, {
-				name: 'transfer',
+				name: 'clipboard',
 				actions: [
 					{
 						name: 'copy',
