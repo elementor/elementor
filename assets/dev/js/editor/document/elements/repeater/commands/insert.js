@@ -57,11 +57,7 @@ export default class extends Base {
 		containers.forEach( ( container ) => {
 			const collection = container.settings.get( name );
 
-			collection.push( model, options );
-
-			const childContainer = container.children[ container.children.length - 1 ];
-
-			result.push( childContainer );
+			result.push( collection.push( model, options ) );
 
 			container.render();
 		} );

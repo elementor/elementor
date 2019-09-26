@@ -194,13 +194,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			defaults[ key ] = field.default;
 		} );
 
-		const newItem = $e.run( 'document/elements/repeater/insert', {
+		const newModel = $e.run( 'document/elements/repeater/insert', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			model: defaults,
 		} );
 
-		this.editRow( this.children.findByModel( newItem.model ) );
+		this.editRow( this.children.findByModel( newModel ) );
 		this.toggleMinRowsClass();
 	},
 

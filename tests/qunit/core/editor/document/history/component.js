@@ -941,20 +941,23 @@ jQuery( () => {
 				const eColumn = Elements.createSection( 1, true ),
 					name = 'form_fields',
 					eForm = Elements.createForm( eColumn ),
-					beforeInsertItemsCount = eForm.settings.get( name ).length,
-					// Insert Item.
-					eFormField = Elements.repeaterInsert( eForm, name, {
-						field_type: 'text',
-						field_label: 'Name',
-					} );
+					beforeInsertItemsCount = eForm.settings.get( name ).length;
+
+				// Insert Item.
+				Elements.repeaterInsert( eForm, name, {
+					field_type: 'text',
+					field_label: 'Name',
+				} );
+
+				const currentItemIndex = eForm.settings.get( name ).length - 1;
 
 				// Change field_type = 'email' for new item.
-				Elements.settings( eFormField, { field_type: 'email' }, {
+				Elements.repeaterSettings( eForm, name, currentItemIndex, { field_type: 'email' }, {
 					external: true,
 				} );
 
 				// Change required = 'true' for new item.
-				Elements.settings( eFormField, { required: 'yes' }, {
+				Elements.repeaterSettings( eForm, name, currentItemIndex, { required: 'yes' }, {
 					external: true,
 				} );
 
@@ -962,14 +965,14 @@ jQuery( () => {
 				$e.run( 'document/history/undo' );
 
 				// Validate required = '' for new item.
-				assert.equal( eFormField.settings.get( 'required' ), '',
+				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), '',
 					'Require setting back to default' );
 
 				// Undo
 				$e.run( 'document/history/undo' );
 
 				// Validate field_type = 'text' for new item.
-				assert.equal( eFormField.settings.get( 'field_type' ), 'text',
+				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'text',
 					'field_type setting back to default' );
 
 				$e.run( 'document/history/undo' );
@@ -989,13 +992,13 @@ jQuery( () => {
 				$e.run( 'document/history/redo' );
 
 				// Validate field_type = 'email' for new item.
-				assert.equal( eFormField.settings.get( 'field_type' ), 'email',
+				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'email',
 					'field_type setting was restored' );
 
 				$e.run( 'document/history/redo' );
 
 				// Validate required = 'true' for new item.
-				assert.equal( eFormField.settings.get( 'required' ), 'yes',
+				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), 'yes',
 					'Require setting was restored' );
 			} );
 		} );
