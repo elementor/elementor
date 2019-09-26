@@ -1,10 +1,10 @@
 === Elementor Page Builder ===
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet, ramiy, yehudah
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
-Requires at least: 4.7
+Requires at least: 5.0
 Tested up to: 5.2
-Requires PHP: 5.4
-Stable tag: 2.7.2
+Requires PHP: 5.6
+Stable tag: 2.7.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -161,8 +161,8 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = Minimum Requirements =
 
-* WordPress 4.7 or greater
-* PHP version 5.4 or greater
+* WordPress 5.0 or greater
+* PHP version 5.6 or greater
 * MySQL version 5.0 or greater
 
 = We recommend your host supports: =
@@ -207,7 +207,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 == Screenshots ==
 
@@ -220,6 +220,17 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.7.3 - 2019-09-24 =
+* Tweak: Updated E-gallery library to v1.0.1
+* Fix: Images overlap issue in Image Carousel widget ([Topic](https://wordpress.org/support/topic/elementor-image-carousel-2/#post-11943476))
+* Fix: Removed extra character in Divider widget ([#9102](https://github.com/elementor/elementor/issues/9102))
+* Fix: Console error after resetting "Background Slideshow" gallery
+* Fix: Popup templates not visible in My Templates tab on import action
+* Fix: Panel spinner issue caused by 3rd party addons when activating Safe Mode
+* Fix: Lightbox won't close on background click in Image widget
+* Fix: "Need Help" hover UI glitch in RTL
+* Fix: SVG icon missing in Icon List widget
 
 = 2.7.2 - 2019-09-16 =
 * Fix: Data updater stuck in site with large database ([Topic](https://wordpress.org/support/topic/the-elementor-data-updater-problems-continue/), [Topic](https://wordpress.org/support/topic/v2-7-not-stable/))

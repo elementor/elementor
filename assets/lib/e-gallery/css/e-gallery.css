@@ -88,6 +88,3 @@
     top: calc(var(--percent-height) + (var(--row) * var(--vgap))); }
   .e-gallery-masonry .e-gallery-image {
     padding-bottom: var(--item-height); }
-
-
-/*# sourceMappingURL=e-gallery.css.map*/

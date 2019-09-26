@@ -502,13 +502,15 @@ function () {
   }, {
     key: "getActiveItems",
     value: function getActiveItems() {
-      var activeTags = this.settings.tags;
+      var returnIndexes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var activeTags = this.settings.tags,
+          activeIndexes = [];
 
       if (!activeTags.length) {
         return this.$items;
       }
 
-      return this.$items.filter(function (index, item) {
+      var filteredItems = this.$items.filter(function (index, item) {
         var itemTags = item.dataset.eGalleryTags;
 
         if (!itemTags) {
@@ -516,10 +518,35 @@ function () {
         }
 
         itemTags = itemTags.split(/[ ,]+/);
-        return activeTags.some(function (tag) {
+
+        if (activeTags.some(function (tag) {
           return itemTags.includes(tag);
-        });
+        })) {
+          if (returnIndexes) {
+            activeIndexes.push(index);
+          }
+
+          return true;
+        }
+
+        return false;
       });
+
+      if (returnIndexes) {
+        return activeIndexes;
+      }
+
+      return filteredItems;
+    }
+  }, {
+    key: "getActiveImagesData",
+    value: function getActiveImagesData(index) {
+      if (this.settings.tags.length) {
+        var itemIndex = this.getActiveItems(true)[index];
+        return this.imagesData[itemIndex];
+      }
+
+      return this.imagesData[index];
     }
   }, {
     key: "compileTemplate",
@@ -629,6 +656,11 @@ function () {
 
       var allPromises = [];
       this.imagesData = [];
+
+      if (!this.settings.items) {
+        return;
+      }
+
       this.settings.items.forEach(function (item, index) {
         var image = new Image(),
             promise = new Promise(function (resolve) {
@@ -636,7 +668,11 @@ function () {
         });
         allPromises.push(promise);
         promise.then(function () {
-          return _this3.calculateImageSize(image, index);
+          return new Promise(function (resolve) {
+            _this3.calculateImageSize(image, index);
+
+            resolve();
+          });
         });
         image.src = item.thumbnail;
       });
@@ -650,6 +686,11 @@ function () {
       var selectors = this.settings.selectors,
           items = [];
       this.$items = this.$container.find(selectors.items);
+
+      if (!this.$items.length) {
+        return;
+      }
+
       this.$items.each(function (index, item) {
         var $image = jQuery(item).find(selectors.image),
             imageSource = $image.data('thumbnail');
@@ -674,6 +715,10 @@ function () {
   }, {
     key: "runGallery",
     value: function runGallery(refresh) {
+      if (!this.settings.items) {
+        return;
+      }
+
       var containerStyle = this.$container[0].style;
       containerStyle.setProperty('--hgap', this.getCurrentDeviceSetting('horizontalGap') + 'px');
       containerStyle.setProperty('--vgap', this.getCurrentDeviceSetting('verticalGap') + 'px');
@@ -854,15 +899,13 @@ function (_BaseGalleryType) {
     value: function getDefaultSettings() {
       return {
         idealRowHeight: 200,
-        lastRow: 'normal',
+        lastRow: 'auto',
         breakpoints: {
           1024: {
-            idealRowHeight: 150,
-            lastRow: 'fit'
+            idealRowHeight: 150
           },
           768: {
-            idealRowHeight: 100,
-            lastRow: 'fit'
+            idealRowHeight: 100
           }
         }
       };
@@ -881,7 +924,13 @@ function (_BaseGalleryType) {
       var oldRowWidth = 0;
 
       for (var index = startIndex;; index++) {
-        var itemComputedWidth = Math.round(this.getCurrentDeviceSetting('idealRowHeight') * this.imagesData[index].ratio);
+        var imageData = this.getActiveImagesData(index);
+
+        if ('undefined' === typeof imageData) {
+          break;
+        }
+
+        var itemComputedWidth = Math.round(this.getCurrentDeviceSetting('idealRowHeight') * imageData.ratio);
 
         if (itemComputedWidth > this.containerWidth) {
           itemComputedWidth = this.containerWidth;
@@ -902,13 +951,13 @@ function (_BaseGalleryType) {
         }
 
         var isLastItem = index === this.getActiveItems().length - 1;
-        this.imagesData[index].computedWidth = itemComputedWidth;
+        imageData.computedWidth = itemComputedWidth;
 
         if (isLastItem) {
           var lastRowMode = this.getCurrentDeviceSetting('lastRow');
 
           if ('hide' !== lastRowMode) {
-            var totalRowWidth = 'fit' === lastRowMode ? newRowWidth : this.containerWidth;
+            var totalRowWidth = 'fit' === lastRowMode || 0.7 <= newRowWidth / this.containerWidth ? newRowWidth : this.containerWidth;
             this.fitImagesInContainer(startIndex, index + 1, totalRowWidth);
           }
 
@@ -927,8 +976,13 @@ function (_BaseGalleryType) {
       var aggregatedWidth = 0;
 
       for (var index = startIndex; index < endIndex; index++) {
-        var imageData = this.imagesData[index],
-            percentWidth = imageData.computedWidth / rowWidth,
+        var imageData = this.getActiveImagesData(index);
+
+        if ('undefined' === typeof imageData) {
+          break;
+        }
+
+        var percentWidth = imageData.computedWidth / rowWidth,
             item = $items.get(index),
             firstRowItemClass = this.getItemClass(this.settings.classes.firstRowItem);
         item.style.setProperty('--item-width', percentWidth);
@@ -1045,11 +1099,21 @@ function (_BaseGalleryType) {
           horizontalGap = this.getCurrentDeviceSetting('horizontalGap'),
           itemWidth = (containerWidth - horizontalGap * (columns - 1)) / columns,
           $items = this.getActiveItems();
+
+      if (!$items) {
+        return;
+      }
+
       $items.each(function (index, item) {
         var row = Math.floor(index / columns),
             indexAtRow = index % columns,
-            imageData = _this.imagesData[index],
-            itemHeight = itemWidth / imageData.ratio;
+            imageData = _this.getActiveImagesData(index);
+
+        if ('undefined' === typeof imageData) {
+          return;
+        }
+
+        var itemHeight = itemWidth / imageData.ratio;
         item.style.setProperty('--item-height', imageData.height / imageData.width * 100 + '%');
         item.style.setProperty('--column', indexAtRow);
 
