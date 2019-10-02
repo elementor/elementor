@@ -104,7 +104,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		if ( ! this.elements.$carousel.length ) {
+		if ( ! this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length ) {
 			return;
 		}
 
