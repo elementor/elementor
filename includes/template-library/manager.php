@@ -230,6 +230,9 @@ class Manager {
 	public function get_library_data( array $args ) {
 		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
 
+		// Ensure all document are registered.
+		Plugin::$instance->documents->get_document_types();
+
 		return [
 			'templates' => $this->get_templates(),
 			'config' => $library_data['types_data'],
