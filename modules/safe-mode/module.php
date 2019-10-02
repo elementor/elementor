@@ -282,7 +282,7 @@ class Module extends \Elementor\Core\Base\Module {
 		<script>
 			var ElementorSafeMode = function() {
 				var attachEvents = function() {
-					jQuery( '.elementor-disable-safe-mode' ).on( 'click', function( e ) {
+				  jQuery( '.elementor-disable-safe-mode' ).on( 'click', function( e ) {
 						if ( ! elementorCommon || ! elementorCommon.ajax ) {
 							return;
 						}
@@ -424,6 +424,11 @@ class Module extends \Elementor\Core\Base\Module {
 		add_filter( 'template_include', [ $this, 'filter_template' ], 999 );
 		add_filter( 'elementor/document/urls/preview', [ $this, 'filter_preview_url' ] );
 		add_action( 'elementor/editor/footer', [ $this, 'print_safe_mode_notice' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ], 11 /* After Common Scripts */ );
+	}
+
+	public function register_scripts() {
+		wp_add_inline_script( 'elementor-common', 'elementorCommon.ajax.addRequestConstant( "elementor-mode", "safe" );' );
 	}
 
 	private function is_enabled() {

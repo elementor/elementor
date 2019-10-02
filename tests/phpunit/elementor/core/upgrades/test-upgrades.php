@@ -13,6 +13,7 @@ use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
 class Test_Upgrades extends Elementor_Test_Base {
 
 	public function test_v_2_7_0_rename_document_types_to_wp() {
+		$this->markTestSkipped();
 		// Create a post with post types (post, page).
 		$document_post = $this->create_post( 'post' );
 		$document_page = $this->create_post( 'page' );
