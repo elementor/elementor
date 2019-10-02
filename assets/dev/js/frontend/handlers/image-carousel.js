@@ -79,14 +79,14 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		if ( showArrows ) {
 			swiperOptions.navigation = {
-				prevEl: this.$element.find( '.elementor-swiper-button-prev' ),
-				nextEl: this.$element.find( '.elementor-swiper-button-next' ),
+				prevEl: '.elementor-swiper-button-prev',
+				nextEl: '.elementor-swiper-button-next',
 			};
 		}
 
 		if ( showDots ) {
 			swiperOptions.pagination = {
-				el: this.$element.find( '.swiper-pagination' ),
+				el: '.swiper-pagination',
 				type: 'bullets',
 				clickable: true,
 			};
