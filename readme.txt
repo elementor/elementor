@@ -1,9 +1,9 @@
 === Elementor Page Builder ===
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet, ramiy, yehudah
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
-Requires at least: 4.7
+Requires at least: 5.0
 Tested up to: 5.2
-Requires PHP: 5.4
+Requires PHP: 5.6
 Stable tag: 2.7.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -161,8 +161,8 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = Minimum Requirements =
 
-* WordPress 4.7 or greater
-* PHP version 5.4 or greater
+* WordPress 5.0 or greater
+* PHP version 5.6 or greater
 * MySQL version 5.0 or greater
 
 = We recommend your host supports: =
@@ -207,7 +207,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 == Screenshots ==
 
