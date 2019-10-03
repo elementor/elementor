@@ -393,7 +393,7 @@ class Widget_Star_Rating extends Widget_Base {
 		?>
 
 		<div class="elementor-star-rating__wrapper">
-			<?php if ( ! empty( $settings['title'] ) ) : ?>
+			<?php if ( ! Utils::is_empty( $settings['title'] ) ) : ?>
 				<div class="elementor-star-rating__title"><?php echo $settings['title']; ?></div>
 			<?php endif; ?>
 			<?php echo $stars_element; ?>

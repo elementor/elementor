@@ -583,7 +583,7 @@ class Widget_Image extends Widget_Base {
 					$caption = wp_get_attachment_caption( $settings['image']['id'] );
 					break;
 				case 'custom':
-					$caption = ! empty( $settings['caption'] ) ? $settings['caption'] : '';
+					$caption = ! Utils::is_empty( $settings['caption'] ) ? $settings['caption'] : '';
 			}
 		}
 		return $caption;

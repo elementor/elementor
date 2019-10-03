@@ -333,7 +333,7 @@ class Widget_Progress extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'inner_text' );
 
-		if ( ! empty( $settings['title'] ) ) { ?>
+		if ( ! Utils::is_empty( $settings['title'] ) ) { ?>
 			<span class="elementor-title"><?php echo $settings['title']; ?></span>
 		<?php } ?>
 

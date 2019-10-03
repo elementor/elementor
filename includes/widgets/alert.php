@@ -272,7 +272,7 @@ class Widget_Alert extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		if ( empty( $settings['alert_title'] ) ) {
+		if ( Utils::is_empty( $settings['alert_title'] ) ) {
 			return;
 		}
 
@@ -289,7 +289,7 @@ class Widget_Alert extends Widget_Base {
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<span <?php echo $this->get_render_attribute_string( 'alert_title' ); ?>><?php echo $settings['alert_title']; ?></span>
 			<?php
-			if ( ! empty( $settings['alert_description'] ) ) :
+			if ( ! Utils::is_empty( $settings['alert_description'] ) ) :
 				$this->add_render_attribute( 'alert_description', 'class', 'elementor-alert-description' );
 
 				$this->add_inline_editing_attributes( 'alert_description' );
