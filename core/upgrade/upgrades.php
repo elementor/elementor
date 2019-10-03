@@ -335,7 +335,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( & $do_update ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( &$do_update ) {
 				if ( empty( $element['widgetType'] ) || 'video' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -434,7 +434,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( & $do_update, $widgets ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( &$do_update, $widgets ) {
 				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
 					return $element;
 				}
