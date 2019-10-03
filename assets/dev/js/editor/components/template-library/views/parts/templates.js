@@ -158,6 +158,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			allowClear: true,
 			width: 150,
 		} );
+
+		$filters.on( 'select2:clearing', ( event ) => {
+			event.preventDefault();
+
+			$filters.val( '' ).trigger( 'change' );
+		} );
 	},
 
 	setMasonrySkin: function() {
