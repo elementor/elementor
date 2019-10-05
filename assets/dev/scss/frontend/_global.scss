@@ -31,7 +31,7 @@
 		box-shadow: none;
 	}
 
-	.elementor-widget:not(.elementor-widget-text-editor) figure {
+	.elementor-widget:not(.elementor-widget-text-editor) figure:not(.aligncentre) {
 		margin: 0;
 	}
 
