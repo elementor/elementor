@@ -428,22 +428,18 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Used to add link tag attributes to a specific HTML element.
 	 *
-	 * The HTML tag is represented by the element parameter, then you need to
-	 * define the attribute key and the attribute key. The final result will be:
-	 * `<element attribute_key="attribute_value">`.
+	 * The HTML link tag is represented by the element parameter, then you need to
+	 * pass an array of link settings in the same format they are set by Elementor's URL control.
 	 *
 	 * Example usage:
 	 *
-	 * `$this->add_render_attribute( 'wrapper', 'class', 'custom-widget-wrapper-class' );`
-	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );`
-	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );`
+	 * `$this->add_render_attribute( 'button', $settings['link'] );`
 	 *
-	 * @since 1.0.0
+	 * @since 2.8.0
 	 * @access public
 	 *
 	 * @param array|string $element   The HTML element.
-	 * @param array|string $key       Optional. Attribute key. Default is null.
-	 * @param array|string $value     Optional. Attribute value. Default is null.
+	 * @param array $url_control      Array of link settings.
 	 * @param bool         $overwrite Optional. Whether to overwrite existing
 	 *                                attribute. Default is false, not to overwrite.
 	 *
