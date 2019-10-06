@@ -221,6 +221,16 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.7.4 - 2019-10-06 =
+* Tweak: Improved filtering animation behavior in Gallery widget
+* Fix: Icon custom colors being overridden by styling custom colors in Social Icons widget
+* Fix: Added `SVG` custom color support for Social Icons widget
+* Fix: Elements not being displayed when it has the value `0`
+* Fix: Pagination glitch in image carousel widget
+* Fix: Select2 throws JS console error when trying to unset a dropdown value in Templates modal
+* Fix: Background Slideshow overrides the Columns' border-radius
+* Fix: Tabs not working after previewing a template in Templates modal
+
 = 2.7.3 - 2019-09-24 =
 * Tweak: Updated E-gallery library to v1.0.1
 * Fix: Images overlap issue in Image Carousel widget ([Topic](https://wordpress.org/support/topic/elementor-image-carousel-2/#post-11943476))
