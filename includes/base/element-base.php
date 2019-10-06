@@ -433,7 +433,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Example usage:
 	 *
-	 * `$this->add_render_attribute( 'button', $settings['link'] );`
+	 * `$this->add_link_attributes( 'button', $settings['link'] );`
 	 *
 	 * @since 2.8.0
 	 * @access public
