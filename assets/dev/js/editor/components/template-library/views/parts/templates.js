@@ -158,12 +158,6 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			allowClear: true,
 			width: 150,
 		} );
-
-		$filters.on( 'select2:clearing', ( event ) => {
-			event.preventDefault();
-
-			$filters.val( '' ).trigger( 'change' );
-		} );
 	},
 
 	setMasonrySkin: function() {
@@ -179,14 +173,18 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.toggleClass( 'elementor-templates-filter-active', ! ! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
 
+	onRender() {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
+			this.setFiltersUI();
+		}
+	},
+
 	onRenderCollection: function() {
 		this.addSourceData();
 
 		this.toggleFilterClass();
 
 		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
-			this.setFiltersUI();
-
 			this.setMasonrySkin();
 		}
 	},
