@@ -201,7 +201,7 @@ class Settings_Controls {
 
 		$field['options'] = [];
 		foreach ( $post_types_objects as $cpt_slug => $post_type ) {
-			if ( in_array( $cpt_slug, $field['exclude'] ) ) {
+			if ( in_array( $cpt_slug, $field['exclude'], true ) ) {
 				continue;
 			}
 
