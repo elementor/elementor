@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.2  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.7.3  
+**Stable tag:** 2.7.4  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -222,6 +222,16 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.7.4 - 2019-10-06 ###
+* Tweak: Improved filtering animation behavior in Gallery widget
+* Fix: Icon custom colors being overridden by styling custom colors in Social Icons widget
+* Fix: Added `SVG` custom color support for Social Icons widget
+* Fix: Elements not being displayed when it has the value `0`
+* Fix: Pagination glitch in image carousel widget
+* Fix: Select2 throws JS console error when trying to unset a dropdown value in Templates modal
+* Fix: Background Slideshow overrides the Columns' border-radius
+* Fix: Tabs not working after previewing a template in Templates modal
 
 ### 2.7.3 - 2019-09-24 ###
 * Tweak: Updated E-gallery library to v1.0.1

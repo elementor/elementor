@@ -57,6 +57,9 @@ export default class extends elementorModules.common.ComponentModal {
 			'save-template': ( args ) => {
 				this.manager.layout.showSaveTemplateView( args.model );
 			},
+			preview: ( args ) => {
+				this.manager.layout.showPreviewView( args.model );
+			},
 		};
 	}
 
