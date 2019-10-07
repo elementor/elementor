@@ -5,6 +5,7 @@ export default class extends Commands {
 		super( ...args );
 
 		this.savedStates = {};
+		this.history = [];
 	}
 
 	refreshContainer( container ) {
@@ -73,6 +74,19 @@ export default class extends Commands {
 
 	to( route, args ) {
 		this.run( route, args );
+
+		this.history.push( {
+			route,
+			args,
+		} );
+	}
+
+	back() {
+		this.history.pop();
+
+		const last = this.history.pop();
+
+		this.to( last.route, last.args );
 	}
 
 	// Don't use the event object.

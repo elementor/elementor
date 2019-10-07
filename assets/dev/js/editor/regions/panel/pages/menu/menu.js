@@ -59,74 +59,12 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	},
 
 	addAdminMenu: function() {
-		this.groups.add( {
-			name: 'style',
-			title: elementor.translate( 'global_style' ),
-			items: [],
-		}, { at: 0 } );
-
-		this.groups.add( {
-			name: 'settings',
-			title: elementor.translate( 'settings' ),
-			items: [],
-		}, { at: 1 } );
-
 		this.addItem( {
 			name: 'finder',
 			icon: 'eicon-search',
 			title: elementorCommon.translate( 'finder', 'finder' ),
 			callback: () => $e.route( 'finder' ),
 		}, 'go_to', 'view-page' );
-
-		this.addItem( {
-			name: 'global-colors',
-			icon: 'eicon-paint-brush',
-			title: elementor.translate( 'global_colors' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/global-colors' ),
-		}, 'style' );
-
-		this.addItem( {
-			name: 'global-fonts',
-			icon: 'eicon-font',
-			title: elementor.translate( 'global_fonts' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/global-fonts' ),
-		}, 'style' );
-
-		this.addItem( {
-			name: 'color-picker',
-			icon: 'eicon-eyedropper',
-			title: elementor.translate( 'color_picker' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/color-picker' ),
-		}, 'style' );
-
-		this.addItem( {
-			name: 'global-settings',
-			icon: 'eicon-cogs',
-			title: elementor.translate( 'global_settings' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/general-settings/style' ),
-		}, 'settings', 'elementor-settings' );
-
-		this.addItem( {
-			name: 'elementor-settings',
-			icon: 'eicon-editor-external-link',
-			title: elementor.translate( 'elementor_settings' ),
-			type: 'link',
-			link: elementor.config.settings_page_link,
-			newTab: true,
-		}, 'settings' );
-
-		this.addItem( {
-			name: 'about-elementor',
-			icon: 'eicon-info-circle',
-			title: elementor.translate( 'about_elementor' ),
-			type: 'link',
-			link: elementor.config.elementor_site,
-			newTab: true,
-		}, 'settings' );
 	},
 
 	getGroups: function() {

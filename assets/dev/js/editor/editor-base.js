@@ -10,6 +10,7 @@ import ElementsComponent from './document/elements/component';
 import DynamicComponent from './document/dynamic/component';
 import RepeaterComponent from './document/elements/repeater/component.js';
 import HistoryComponent from './document/history/component';
+import KitManager from '../../../../core/kits/assets/js/manager.js';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -287,6 +288,7 @@ const App = Marionette.Application.extend( {
 		$e.components.register( new HistoryComponent() );
 		$e.components.register( new DynamicComponent() );
 
+		this.kitManager = new KitManager( elementor.config.kit );
 		this.hotkeysScreen = new HotkeysScreen();
 
 		this.iconManager = new IconsManager();
