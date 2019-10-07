@@ -1,0 +1,49 @@
+/**
+ * Dark css mode. See https://stackoverflow.com/questions/147500/is-it-possible-to-include-one-css-file-in-another
+ */
+body,
+.elementor-panel-heading-title,
+.elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab a
+{
+	color:#EEE;
+}
+.elementor-panel .elementor-panel-navigation {
+	background-color:#111;
+}
+.elementor-panel #elementor-panel-elements-search-input,
+.elementor-panel #elementor-panel-elements-search-input:focus{
+	background:#333;
+	color:#FFF;
+}
+.elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-active {
+	background-image:linear-gradient(to bottom, rgb(0,0,0), rgb(88, 88, 88));
+}
+
+body .elementor-panel,
+body .elementor-control,
+body .elementor-panel .elementor-element,
+body input, body select, body textarea, .elementor-input-style,
+body input.wp-color-picker,
+.select2-container--default .select2-selection--single,
+.eicon-device-desktop,
+#elementor-loading,
+#elementor-loader,
+#elementor-try-safe-mode{
+	background-color: #000;
+	color:#FFF;
+}
+.wp-picker-default.button, .wp-picker-clear.button {
+	background-color:#555;
+}
+body .wp-picker-container.wp-picker-container.wp-picker-container,
+.elementor-panel .elementor-controls-popover,
+.iris-picker
+{
+	background-color:rgb(72, 72, 72);
+}
+.elementor-panel .elementor-controls-popover:before {
+	border-bottom-color:rgb(72, 72, 72);
+}
+body .elementor-panel .elementor-element .icon{
+	color:#FFF;
+}

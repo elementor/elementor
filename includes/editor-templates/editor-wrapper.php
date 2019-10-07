@@ -35,6 +35,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 	<script>
 		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>';
 	</script>
+	<link rel="stylesheet" href="<?php echo ELEMENTOR_ASSETS_URL.'/css/dark.css';?>" media="(prefers-color-scheme: dark)">';
 </head>
 <body class="<?php echo implode( ' ', $body_classes ); ?>">
 <div id="elementor-editor-wrapper">
