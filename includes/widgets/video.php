@@ -280,7 +280,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'playsinline',
+			'play_on_mobile',
 			[
 				'label' => __( 'Play on Mobile', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
@@ -920,7 +920,7 @@ class Widget_Video extends Widget_Base {
 		if ( $settings['autoplay'] && ! $this->has_image_overlay() ) {
 			$params['autoplay'] = '1';
 
-			if ( $settings['playsinline'] ) {
+			if ( $settings['play_on_mobile'] ) {
 				$params['playsinline'] = '1';
 			}
 		}
