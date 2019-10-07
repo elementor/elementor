@@ -280,6 +280,17 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'playsinline',
+			[
+				'label' => __( 'Play on Mobile', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'autoplay' => 'yes',
+				],
+			]
+		);
+
+		$this->add_control(
 			'mute',
 			[
 				'label' => __( 'Mute', 'elementor' ),
@@ -908,6 +919,10 @@ class Widget_Video extends Widget_Base {
 
 		if ( $settings['autoplay'] && ! $this->has_image_overlay() ) {
 			$params['autoplay'] = '1';
+
+			if ( $settings['playsinline'] ) {
+				$params['playsinline'] = '1';
+			}
 		}
 
 		$params_dictionary = [];
