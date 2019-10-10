@@ -438,50 +438,7 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-		$this->start_controls_section(
-			'document_settings',
-			[
-				'label' => __( 'General Settings', 'elementor' ),
-				'tab' => Controls_Manager::TAB_SETTINGS,
-			]
-		);
-
-		$this->add_control(
-			'post_title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => $this->post->post_title,
-				'label_block' => true,
-				'separator' => 'none',
-			]
-		);
-
-		$post_type_object = get_post_type_object( $this->post->post_type );
-
-		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
-		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
-
-		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
-
-			$statuses = get_post_statuses();
-			if ( 'future' === $this->get_main_post()->post_status ) {
-				$statuses['future'] = __( 'Future', 'elementor' );
-			}
-
-			$this->add_control(
-				'post_status',
-				[
-					'label' => __( 'Status', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => $this->get_main_post()->post_status,
-					'options' => $statuses,
-				]
-			);
-		}
-
-		$this->end_controls_section();
-
+		$this->register_document_controls();
 		/**
 		 * Register document controls.
 		 *
@@ -1162,5 +1119,51 @@ abstract class Document extends Controls_Stack {
 
 			$element->print_element();
 		}
+	}
+
+	protected function register_document_controls() {
+		$this->start_controls_section(
+			'document_settings',
+			[
+				'label' => __( 'General Settings', 'elementor' ),
+				'tab' => Controls_Manager::TAB_SETTINGS,
+			]
+		);
+
+		$this->add_control(
+			'post_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => $this->post->post_title,
+				'label_block' => true,
+				'separator' => 'none',
+			]
+		);
+
+		$post_type_object = get_post_type_object( $this->post->post_type );
+
+		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
+		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
+
+		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
+
+			$statuses = get_post_statuses();
+			if ( 'future' === $this->get_main_post()->post_status ) {
+				$statuses['future'] = __( 'Future', 'elementor' );
+			}
+
+			$this->add_control(
+				'post_status',
+				[
+					'label' => __( 'Status', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => $this->get_main_post()->post_status,
+					'options' => $statuses,
+				]
+			);
+		}
+
+		$this->end_controls_section();
 	}
 }

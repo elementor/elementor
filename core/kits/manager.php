@@ -2,6 +2,7 @@
 namespace Elementor\Core\Kits;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 
@@ -69,13 +70,45 @@ class Manager {
 		return $kit->get_config();
 	}
 
+	public function before_enqueue_styles() {
+		$document = $this->get_kit_for_frontend();
+
+		if ( $document ) {
+			$css = Post::create( $document->get_main_id() );
+			$css->enqueue();
+		}
+	}
+
 	public function render_panel_html() {
 		require __DIR__ . '/views/panel.php';
+	}
+
+	public function get_kit_for_frontend() {
+		$kit = false;
+
+		$preview_id = $this->get_kit_preview_id();
+
+		if ( $preview_id ) {
+			$kit = Plugin::$instance->documents->get( $preview_id );
+		} else {
+			$active = $this->get_active();
+
+			if ( 'publish' === $active->get_main_post()->post_status ) {
+				$kit = $active;
+			}
+		}
+
+		return $kit;
+	}
+
+	public function get_kit_preview_id() {
+		return empty( $_GET['kit_preview_id' ] ) ? false : $_GET['kit_preview_id'];
 	}
 
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
+		add_action( 'elementor/frontend/before_enqueue_styles', [ $this, 'before_enqueue_styles' ] );
 	}
 }

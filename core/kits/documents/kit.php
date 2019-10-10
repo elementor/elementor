@@ -68,6 +68,8 @@ class Kit extends PageBase {
 	 * @access protected
 	 */
 	protected function _register_controls() {
+		$this->register_document_controls();
+
 		$this->start_controls_section(
 			'section_typography',
 			[
@@ -238,6 +240,9 @@ class Kit extends PageBase {
 	}
 
 	public function add_theme_template_controls() {
+		Plugin::$instance->controls_manager->add_tab( 'theme_templates', __( 'Theme Template', 'elementor' ) );
+		Plugin::$instance->controls_manager->add_tab( 'site_settings', __( 'Site Settings', 'elementor' ) );
+
 		$this->start_controls_section(
 			'section_theme_template_pro',
 			[
@@ -259,12 +264,39 @@ class Kit extends PageBase {
 				         __( 'Theme Builder allows you to build your own theme', 'elementor' ) .
 				         '</div>' .
 				         '<div class="elementor-nerd-box-message">' .
-					         __( 'This feature is only available on Elementor Pro.', 'elementor' ) .
-					         '</div>
+				         __( 'This feature is only available on Elementor Pro.', 'elementor' ) .
+				         '</div>
 							<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
-					         __( 'Go Pro', 'elementor' ) .
-					         '</a>
+				         __( 'Go Pro', 'elementor' ) .
+				         '</a>
 							</div>',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_site_settings',
+			[
+				'label' => __( 'Site Identity', 'elementor' ),
+				'tab' => 'site_settings',
+			]
+		);
+
+		$this->add_control(
+			'site_name',
+			[
+				'label' => __( 'Site Name', 'elementor' ),
+				'default' => get_option( 'blogname' ),
+			]
+		);
+
+		$this->add_control(
+			'site_description',
+			[
+				'label' => __( 'Site Description', 'elementor' ),
+				'default' => get_option( 'blogdescription' ),
+				'label_block' => true,
 			]
 		);
 

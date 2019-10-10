@@ -22,16 +22,21 @@ export default class extends Marionette.ItemView {
 		};
 	}
 
+	templateHelpers() {
+		return {
+			hasHistory: ( $e.routes.historyPerComponent[ 'panel/global' ] && 1 <= $e.routes.historyPerComponent[ 'panel/global' ].length ),
+		};
+	}
+
 	setTitle( title ) {
 		this.ui.title.html( title );
 	}
 
 	onClickClose() {
-		$e.routes.close( 'menu' );
+		$e.components.components[ 'panel/global' ].close();
 	}
 
 	onClickBack() {
-		$e.routes.back();
+		$e.routes.back( 'panel/global' );
 	}
 }
-

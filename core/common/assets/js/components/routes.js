@@ -6,6 +6,7 @@ export default class extends Commands {
 
 		this.savedStates = {};
 		this.history = [];
+		this.historyPerComponent = {};
 	}
 
 	refreshContainer( container ) {
@@ -15,6 +16,10 @@ export default class extends Commands {
 		this.clearCurrent( container );
 
 		this.to( currentRoute, currentArgs );
+	}
+
+	clearHistory( container ) {
+		delete this.historyPerComponent[ container ];
 	}
 
 	clearCurrent( container ) {
@@ -73,18 +78,30 @@ export default class extends Commands {
 	}
 
 	to( route, args ) {
+		this.trigger( 'routes/to/before', route, args );
+
 		this.run( route, args );
 
-		this.history.push( {
+		const namespace = this.getComponent( route ).getNamespace();
+
+		if ( ! this.historyPerComponent[ namespace ] ) {
+			this.historyPerComponent[ namespace ] = [];
+		}
+
+		this.historyPerComponent[ namespace ].push( {
 			route,
 			args,
 		} );
+
+		this.trigger( 'routes/to/after', route, args );
 	}
 
-	back() {
-		this.history.pop();
+	back( namespace ) {
+		const history = this.historyPerComponent[ namespace ];
 
-		const last = this.history.pop();
+		history.pop();
+
+		const last = history.pop();
 
 		this.to( last.route, last.args );
 	}

@@ -11,6 +11,7 @@ export default class extends elementorModules.Module {
 
 		this.defaultRoute = '';
 		this.currentTab = '';
+		this.history = [];
 	}
 
 	onInit() {
@@ -92,6 +93,8 @@ export default class extends elementorModules.Module {
 		this.inactivate();
 
 		$e.routes.clearCurrent( this.getNamespace() );
+
+		$e.routes.clearHistory( this.getNamespace() );
 
 		return true;
 	}

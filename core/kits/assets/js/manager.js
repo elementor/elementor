@@ -49,7 +49,8 @@ export default class Settings extends elementorModules.ViewModule {
 
 			this.container = new elementorModules.editor.Container( {
 				id: editModel.id,
-				document: 'kit',
+				document: elementor.config.kit,
+				children: new Backbone.Model(),
 				model: editModel,
 				settings: editModel.get( 'settings' ),
 				view: 'TODO: @see kits/assets/js/component.js',
@@ -62,63 +63,22 @@ export default class Settings extends elementorModules.ViewModule {
 		return this.container;
 	}
 
-	getDataToSave( data ) {
-		data.id = elementor.config.kit.id;
+	addPanelPage() {
+		const container = this.getContainer();
 
-		return data;
+		elementor.getPanelView().addPage( 'kit_settings', {
+			view: panelView,
+			title: container.label,
+			name: 'kit_settings',
+			fullPage: true,
+			options: {
+				container,
+				model: container.model,
+				controls: container.settings.controls,
+				name: 'kit',
+			},
+		} );
 	}
-
-	save( callback ) {
-			var self = this;
-
-			if ( ! self.hasChange ) {
-				return;
-			}
-
-			var settings = this.model.toJSON( { remove: [ 'default' ] } ),
-				data = this.getDataToSave( {
-					data: settings,
-				} );
-
-			NProgress.start();
-
-			elementorCommon.ajax.addRequest( 'save_page_settings', {
-
-				kit_id: elementor.config.kit.id,
-				data: data,
-				success: function() {
-					NProgress.done();
-
-					self.setSettings( 'settings', settings );
-
-					self.hasChange = false;
-
-					if ( callback ) {
-						callback.apply( self, arguments );
-					}
-				},
-				error: function() {
-					alert( 'An error occurred' );
-				},
-			} );
-		}
-
-		addPanelPage() {
-			const container = this.getContainer();
-
-			elementor.getPanelView().addPage( 'kit_settings', {
-				view: panelView,
-				title: container.label,
-				name: 'kit_settings',
-				fullPage: true,
-				options: {
-					container,
-					model: container.model,
-					controls: container.settings.controls,
-					name: 'kit',
-				},
-			} );
-		}
 
 	addPanelMenuItem() {
 		const menu = elementor.modules.layouts.panel.pages.menu.Menu;
