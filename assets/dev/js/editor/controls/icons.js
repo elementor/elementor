@@ -40,13 +40,13 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			skin = this.model.get( 'skin' );
 
 		ui.controlMedia = '.elementor-control-media';
-		ui.svgUploader = '.elementor-control-svg-uploader';
-		ui.iconPickers = '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button';
-		ui.deleteButton = 'full' === skin ? '.elementor-control-media__remove' : '.elementor-control-media-inline__remove';
+		ui.svgUploader = 'media' === skin ? '.elementor-control-svg-uploader' : 'elementor-control-icons--inline__svg';
+		ui.iconPickers = 'media' === skin ? '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button' : 'elementor-control-icons--inline__icon';
+		ui.deleteButton = 'media' === skin ? '.elementor-control-media__remove' : '.elementor-control-icons--inline__remove';
 		ui.previewPlaceholder = '.elementor-control-media__preview';
 		ui.previewContainer = '.elementor-control-preview-area';
-		ui.inlineCurrentIcon = '.elementor-control-current-icon';
-		ui.inputs = '[type="radio"]';
+		ui.inlineDisplayedIcon = '.elementor-control-icons--inline__displayed-icon';
+		ui.radioInputs = '[type="radio"]';
 
 		return ui;
 	}
@@ -55,7 +55,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		return jQuery.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.iconPickers': 'openPicker',
 			'click @ui.svgUploader': 'openFrame',
-			'click @ui.inputs': 'onClickInput',
+			'click @ui.radioInputs': 'onClickInput',
 			'click @ui.deleteButton': 'deleteIcon',
 		} );
 	}
@@ -273,9 +273,10 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	applySavedValue() {
 		const controlValue = this.getControlValue(),
-			skin = this.model.get( 'skin' ) ? this.model.get( 'skin' ) : 'full',
-			iconContainer = 'inline' === skin ? this.ui.inlineCurrentIcon : this.ui.previewPlaceholder,
+			skin = this.model.get( 'skin' ),
+			iconContainer = 'inline' === skin ? this.ui.inlineDisplayedIcon : this.ui.previewPlaceholder,
 			defaultIcon = this.model.get( 'default' );
+
 		let iconValue = controlValue.value,
 			iconType = controlValue.library;
 
@@ -284,11 +285,13 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			iconType = '';
 		}
 
-		if ( 'full' === skin ) {
+		if ( 'media' === skin ) {
 			this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
 		}
 
-		this.markChecked( iconType );
+		if ( 'inline' === skin ) {
+			this.markChecked( iconType );
+		}
 
 		if ( ! iconValue ) {
 			if ( 'inline' === skin ) {
@@ -327,17 +330,17 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	markChecked( iconType ) {
-		this.ui.inputs.filter( ':checked' ).prop( 'checked', false );
+		this.ui.radioInputs.filter( ':checked' ).prop( 'checked', false );
 
 		if ( ! iconType ) {
-			return this.ui.inputs.filter( '[value="none"]' ).prop( 'checked', false );
+			return this.ui.radioInputs.filter( '[value="none"]' ).prop( 'checked', false );
 		}
 
 		if ( 'svg' !== iconType ) {
 			iconType = 'icon';
 		}
 
-		this.ui.inputs.filter( '[value="' + iconType + '"]' ).prop( 'checked', true );
+		this.ui.radioInputs.filter( '[value="' + iconType + '"]' ).prop( 'checked', true );
 	}
 
 	onClickInput() {

@@ -107,18 +107,18 @@ class Control_Icons extends Control_Base_Multiple {
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
 					<input id="<?php echo $control_uid; ?>-none" type="radio" value="none">
-					<label class="elementor-choices-label tooltip-target elementor-control-media-inline__remove" for="<?php echo $control_uid; ?>-none" data-tooltip="<?php echo __( 'Remove', 'elementor' ); ?>" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+					<label class="elementor-choices-label tooltip-target elementor-control-icons--inline__remove" for="<?php echo $control_uid; ?>-none" data-tooltip="<?php echo __( 'Remove', 'elementor' ); ?>" title="<?php echo __( 'Remove', 'elementor' ); ?>">
 						<i class="eicon-ban" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo __( 'Remove', 'elementor' ); ?></span>
 					</label>
 					<input id="<?php echo $control_uid; ?>-svg" type="radio" value="svg">
-					<label class="elementor-choices-label tooltip-target elementor-control-svg-uploader" for="<?php echo $control_uid; ?>-svg" data-tooltip="<?php echo __( 'Upload SVG', 'elementor' ); ?>" title="<?php echo __( 'Upload SVG', 'elementor' ); ?>">
+					<label class="elementor-choices-label tooltip-target elementor-control-icons--inline__svg" for="<?php echo $control_uid; ?>-svg" data-tooltip="<?php echo __( 'Upload SVG', 'elementor' ); ?>" title="<?php echo __( 'Upload SVG', 'elementor' ); ?>">
 						<span aria-hidden="true">SVG</span>
 						<span class="elementor-screen-only"><?php echo __( 'Upload SVG', 'elementor' ); ?></span>
 					</label>
 					<input id="<?php echo $control_uid; ?>-icon" type="radio" value="icon">
-					<label class="elementor-choices-label tooltip-target elementor-control-icon-picker" for="<?php echo $control_uid; ?>-icon" data-tooltip="<?php echo __( 'Icon Library', 'elementor' ); ?>" title="<?php echo __( 'Icon Library', 'elementor' ); ?>">
-						<span class="elementor-control-current-icon">
+					<label class="elementor-choices-label tooltip-target elementor-control-icons--inline__icon" for="<?php echo $control_uid; ?>-icon" data-tooltip="<?php echo __( 'Icon Library', 'elementor' ); ?>" title="<?php echo __( 'Icon Library', 'elementor' ); ?>">
+						<span class="elementor-control-icons--inline__displayed-icon">
 							<i class="eicon-circle" aria-hidden="true"></i>
 						</span>
 						<span class="elementor-screen-only"><?php echo __( 'Icon Library', 'elementor' ); ?></span>
