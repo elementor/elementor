@@ -7,7 +7,7 @@ body,
 {
 	color:#EEE;
 }
-.elementor-panel .elementor-panel-navigation {
+.elementor-panel .elementor-panel-navigation, .widget-content {
 	background-color:#111;
 }
 .elementor-panel #elementor-panel-elements-search-input,
