@@ -29,7 +29,7 @@ export class Create extends Base {
 	}
 
 	getHistory( args ) {
-		const { model, options, containers = [ args.container ] } = args;
+		const { model, containers = [ args.container ] } = args;
 
 		return {
 			containers,

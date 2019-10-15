@@ -263,7 +263,7 @@ export default class {
 		$e.run( 'document/elements/empty', { force: true } );
 	}
 
-	static import( data , model ) {
+	static import( data, model ) {
 		$e.run( 'document/elements/import', { data, model } );
 	}
 

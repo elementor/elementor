@@ -29,7 +29,7 @@ export class Remove extends Base {
 	}
 
 	getHistory( args ) {
-		const { name, containers = [ args.container ] } = args;
+		const { containers = [ args.container ] } = args;
 
 		return {
 			containers,

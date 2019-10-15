@@ -24,7 +24,6 @@ export class Duplicate extends Base {
 
 		containers.forEach( ( container ) => {
 			const settingsModel = container.settings,
-				controlName = container.model.get( 'widgetType' ),
 				collection = settingsModel.get( name ),
 				item = collection.at( index );
 

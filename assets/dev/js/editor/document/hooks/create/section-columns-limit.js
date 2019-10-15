@@ -1,5 +1,4 @@
 import HookDependency from '../base/dependency';
-import Container from '../../../container/container';
 
 export class SectionColumnsLimit extends HookDependency {
 	hook() {

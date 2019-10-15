@@ -10,7 +10,7 @@ export class Move extends Base {
 	}
 
 	getHistory( args ) {
-		const { name, containers = [ args.container ] } = args;
+		const { containers = [ args.container ] } = args;
 
 		return {
 			containers,

@@ -48,7 +48,7 @@ export default class Component extends elementorModules.common.Component {
 
 				const id = args.id || elementor.history.history.getCurrentId();
 
-				args = this.normalizeLogArgs( args )
+				args = this.normalizeLogArgs( args );
 
 				const items = elementor.history.history.getItems(),
 					item = items.findWhere( { id } );

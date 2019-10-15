@@ -2,7 +2,6 @@ import * as Commands from './commands/';
 import * as Hooks from '../hooks/';
 
 export default class extends elementorModules.common.Component {
-
 	onInit() {
 		super.onInit();
 

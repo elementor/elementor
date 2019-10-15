@@ -97,7 +97,7 @@ export class Settings extends Debounce {
 			return false;
 		}
 
-		const { containers = [ args.container ], settings = {}, isMultiSettings = false } = args,
+		const { containers = [ args.container ] } = args,
 			subTitle = this.constructor.getSubTitle( args );
 
 		return {

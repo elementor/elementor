@@ -1,5 +1,4 @@
 import HookAfter from '../base/after';
-import Container from '../../../container/container';
 
 export class SetStructure extends HookAfter {
 	hook() {

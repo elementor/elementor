@@ -37,8 +37,6 @@ export class Delete extends Base {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			const parent = container.parent;
-
 			if ( this.isHistoryActive() ) {
 				$e.run( 'document/history/addSubItem', {
 					container,

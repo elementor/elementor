@@ -51,7 +51,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	createItemModel: function( attrs, options, controlView ) {
+	createItemModel: function( attrs, options ) {
 		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 

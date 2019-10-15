@@ -1,5 +1,4 @@
 import HookAfter from '../base/after';
-import Container from '../../../container/container';
 import Create from '../../elements/commands/create';
 
 export class SectionColumns extends HookAfter {

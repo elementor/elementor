@@ -1,5 +1,4 @@
 import HookAfter from '../base/after';
-import Container from '../../../container/container';
 
 export class SectionResetLayout extends HookAfter {
 	hook() {
@@ -12,7 +11,6 @@ export class SectionResetLayout extends HookAfter {
 
 	conditioning( args ) {
 		return ! args.model || 'column' !== args.model.elType;
-
 	}
 
 	/**
