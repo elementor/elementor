@@ -192,7 +192,6 @@ export default class {
 		} );
 	}
 
-
 	static resetStyle( eContainer ) {
 		$e.run( 'document/elements/resetStyle', {
 			container: eContainer,
@@ -228,14 +227,6 @@ export default class {
 	static multiSettings( eContainers, settings ) {
 		$e.run( 'document/elements/settings', {
 			containers: eContainers,
-			settings,
-		} );
-	}
-
-	static subSettings( eContainer, key, settings ) {
-		$e.run( 'document/elements/subSettings', {
-			container: eContainer,
-			key,
 			settings,
 		} );
 	}

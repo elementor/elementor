@@ -2,7 +2,7 @@ import Base from './base';
 
 const DEFAULT_DEBOUNCE_DELAY = 800;
 
-export default class extends Base {
+export default class Debounce extends Base {
 	/**
 	 * Debounce delay.
 	 *
@@ -50,7 +50,7 @@ export default class extends Base {
 	 *
 	 * Do the actual history logging.
 	 *
-	 * @param {String|Boolean} historyId
+	 * @param {Number|Boolean} historyId
 	 * @param {{}} args
 	 */
 	static logHistory( args, historyId = false ) {
@@ -119,11 +119,7 @@ export default class extends Base {
 
 		this.constructor.lastUniqueArgsId = currentArgsUniqueId;
 
-		if ( ! this.constructor.debounceAction ) {
-			return false;
-		}
-
-		return true;
+		return this.constructor.debounceAction;
 	}
 
 	onAfterApply( args ) {
