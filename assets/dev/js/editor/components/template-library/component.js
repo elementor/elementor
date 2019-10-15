@@ -68,7 +68,7 @@ export default class extends elementorModules.common.ComponentModal {
 
 	defaultShortcuts() {
 		return {
-			show: {
+			open: {
 				keys: 'ctrl+shift+l',
 			},
 		};
