@@ -1,6 +1,6 @@
 import * as Commands from './commands/';
 
-export default class extends elementorModules.common.Component {
+export default class Component extends elementorModules.common.Component {
 	getNamespace() {
 		return 'document/dynamic';
 	}

@@ -1,10 +1,19 @@
-export default class extends elementorModules.Module {
+export default class Hooks extends elementorModules.Module {
+	static _DEBUG = false;
+
 	constructor( ...args ) {
 		super( ...args );
 
 		this.current = null;
 
 		this.hooks = {
+			dependency: {},
+			after: {},
+		};
+
+		this.usedIds = [];
+
+		this.depth = {
 			dependency: {},
 			after: {},
 		};
@@ -39,12 +48,22 @@ export default class extends elementorModules.Module {
 		}
 	}
 
+	checkId( id ) {
+		if ( 0 === this.usedIds.indexOf( id ) ) {
+			throw Error( `id: '${ id }' is already in use.` );
+		}
+	}
+
 	register( event, command, id, callback ) {
 		this.checkEvent( event );
+		this.checkId( id );
 
 		if ( ! this.hooks[ event ][ command ] ) {
 			this.hooks[ event ][ command ] = [];
 		}
+
+		// Save used id(s).
+		this.usedIds.push( id );
 
 		return this.hooks[ event ][ command ].push( {
 			id,
@@ -63,8 +82,6 @@ export default class extends elementorModules.Module {
 	runDependency( command, args, then ) {
 		const hooks = this.hooks.dependency[ command ];
 
-		let isBreak = false;
-
 		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
 			this.onRun( command, args, 'dependency' );
 
@@ -73,11 +90,21 @@ export default class extends elementorModules.Module {
 			for ( const i in hooks ) {
 				const hook = hooks[ i ];
 
-				this.onCallback( command, args, 'dependency', hook.id );
-
-				if ( ! hook.callback( args ) ) {
-					throw 'Break-Hook';
+				if ( undefined === this.depth.dependency[ hook.id ] ) {
+					this.depth.dependency[ hook.id ] = 0;
 				}
+
+				this.depth.dependency[ hook.id ]++;
+
+				if ( 1 === this.depth.dependency[ hook.id ] ) {
+					this.onCallback( command, args, 'dependency', hook.id );
+
+					if ( ! hook.callback( args ) ) {
+						throw 'Break-Hook';
+					}
+				}
+
+				this.depth.dependency[ hook.id ]--;
 			}
 		}
 	}
@@ -91,9 +118,21 @@ export default class extends elementorModules.Module {
 			this.current = command;
 
 			for ( const i in hooks ) {
-				this.onCallback( command, args, 'after', hooks[ i ].id );
+				const hook = hooks[ i ];
 
-				hooks[ i ].callback( args, result );
+				if ( undefined === this.depth.after[ hook.id ] ) {
+					this.depth.after[ hook.id ] = 0;
+				}
+
+				this.depth.after[ hook.id ]++;
+
+				if ( 1 === this.depth.after[ hook.id ] ) {
+					this.onCallback( command, args, 'after', hook.id );
+
+					hooks[ i ].callback( args, result );
+				}
+
+				this.depth.after[ hook.id ]--;
 			}
 		}
 	}
