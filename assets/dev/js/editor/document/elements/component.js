@@ -1,7 +1,17 @@
 import * as Commands from './commands/';
-import './hooks/';
+import * as Hooks from './hooks/';
 
 export default class extends elementorModules.common.Component {
+
+	onInit() {
+		super.onInit();
+
+		// Load hooks.
+		Object.entries( Hooks ).forEach( ( [ hook, hookReference ] ) =>
+			new hookReference()
+		);
+	}
+
 	getNamespace() {
 		return 'document/elements';
 	}
