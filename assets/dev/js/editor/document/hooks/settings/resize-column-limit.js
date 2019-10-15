@@ -1,5 +1,5 @@
-import HookDependency from '../../../hooks/dependency';
-import Container from '../../../../container/container';
+import HookDependency from '../base/dependency';
+import Container from '../../../container/container';
 
 export class ResizeColumnLimit extends HookDependency {
 	hook() {

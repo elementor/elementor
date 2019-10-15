@@ -1,5 +1,5 @@
-import HookAfter from '../../../hooks/after';
-import Container from '../../../../container/container';
+import HookAfter from '../base/after';
+import Container from '../../../container/container';
 
 export class ResizeColumn extends HookAfter {
 	hook() {
