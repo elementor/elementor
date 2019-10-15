@@ -1,5 +1,6 @@
 import HookAfter from '../../../hooks/after';
 import Container from '../../../../container/container';
+import Create from '../../commands/create';
 
 export class SectionColumns extends HookAfter {
 	hook() {
@@ -35,18 +36,34 @@ export class SectionColumns extends HookAfter {
 			columns = containers[ 0 ].view.defaultInnerSectionColumns;
 		}
 
-		for ( let loopIndex = 0; loopIndex < columns; loopIndex++ ) {
-			$e.run( 'document/elements/create', {
-				containers,
-				options,
-				model: {
+		containers.forEach( ( /**Container*/ container ) => {
+			for ( let loopIndex = 0; loopIndex < columns; loopIndex++ ) {
+				const model = {
 					id: elementor.helpers.getUniqueID(),
 					elType: 'column',
 					settings: {},
 					elements: [],
-				},
-			} );
-		}
+				};
+
+				container.view.addChildModel( model, options );
+
+				/**
+				 * Manual history & not using of `$e.run('document/elements/create')`
+				 * For performance reasons.
+				 */
+				$e.run( 'document/history/addSubItem', {
+					container,
+					type: 'sub-add',
+					elementType: 'column',
+					restore: Create.restore,
+					options,
+					data: {
+						toRestoreContainer: container,
+						toRestoreModel: model,
+					},
+				} );
+			}
+		} );
 
 		if ( structure ) {
 			containers.forEach( ( container ) => {
