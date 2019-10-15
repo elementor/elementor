@@ -10,11 +10,6 @@ SectionView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-container > .elementor-row',
 
-	errors: {
-		columnWidthTooLarge: 'New column width is too large',
-		columnWidthTooSmall: 'New column width is too small',
-	},
-
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
 	addSectionView: null,
@@ -219,20 +214,12 @@ SectionView = BaseElementView.extend( {
 		const nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
 
 		if ( ! nextChildView ) {
-			throw new ReferenceError( 'There is not any next column' );
+			return false;
 		}
 
 		const $nextElement = nextChildView.$el,
 			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
 			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		if ( nextElementNewSize < this.defaultMinColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooLarge );
-		}
-
-		if ( newSize < this.defaultMinColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooSmall );
-		}
 
 		const currentColumnContainer = childView.getContainer(),
 			nextColumnContainer = nextChildView.getContainer(),
@@ -264,6 +251,8 @@ SectionView = BaseElementView.extend( {
 				},
 			},
 		} );
+
+		return true;
 	},
 
 	destroyAddSectionView: function() {
