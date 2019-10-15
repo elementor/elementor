@@ -1,6 +1,6 @@
 import Base from '../../commands/base';
 
-export default class extends Base {
+export class Empty extends Base {
 	static restore( historyItem, isRedo ) {
 		if ( isRedo ) {
 			$e.run( 'document/elements/empty', { force: true } );
@@ -37,3 +37,5 @@ export default class extends Base {
 		elementor.getClearPageDialog().show();
 	}
 }
+
+export default Empty;

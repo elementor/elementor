@@ -1,7 +1,3 @@
 // Alphabetical order.
 
-import Settings from './settings';
-
-export {
-	Settings,
-};
+export { Settings } from './settings';

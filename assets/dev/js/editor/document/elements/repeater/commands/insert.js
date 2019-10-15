@@ -1,7 +1,6 @@
 import Base from '../../../commands/base';
 
-// Insert.
-export default class extends Base {
+export class Insert extends Base {
 	static restore( historyItem, isRedo ) {
 		const containers = historyItem.get( 'containers' ),
 			data = historyItem.get( 'data' );
@@ -69,3 +68,5 @@ export default class extends Base {
 		return result;
 	}
 }
+
+export default Insert;

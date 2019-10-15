@@ -1,14 +1,7 @@
-import Duplicate from './duplicate';
-import Insert from './insert';
-import Move from './move';
-import Remove from './remove';
-import Settings from './settings';
-
 // Alphabetical order.
-export {
-	Duplicate,
-	Insert,
-	Move,
-	Remove,
-	Settings,
-};
+
+export { Duplicate } from './duplicate';
+export { Insert } from './insert';
+export { Move } from './move';
+export { Remove } from './remove';
+export { Settings } from './settings';

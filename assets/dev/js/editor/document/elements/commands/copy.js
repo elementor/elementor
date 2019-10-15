@@ -1,7 +1,6 @@
 import Base from '../../commands/base';
 
-// Copy.
-export default class extends Base {
+export class Copy extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -24,3 +23,5 @@ export default class extends Base {
 		} );
 	}
 }
+
+export default Copy;

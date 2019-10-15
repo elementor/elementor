@@ -1,7 +1,6 @@
 import Base from '../../commands/base';
 
-// Paste.
-export default class extends Base {
+export class Paste extends Base {
 	validateArgs( args ) {
 		const { storageKey = 'clipboard' } = args,
 			transferData = elementorCommon.storage.get( storageKey );
@@ -100,3 +99,5 @@ export default class extends Base {
 		return result;
 	}
 }
+
+export default Paste;

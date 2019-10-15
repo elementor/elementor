@@ -1,7 +1,6 @@
 import Base from '../../commands/base';
 
-// Delete.
-export default class extends Base {
+export class Delete extends Base {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );
@@ -66,3 +65,5 @@ export default class extends Base {
 		return containers;
 	}
 }
+
+export default Delete;

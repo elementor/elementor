@@ -1,5 +1,5 @@
-import * as Commands from './commands/commands';
-import './hooks/hooks';
+import * as Commands from './commands/';
+import './hooks/';
 
 export default class extends elementorModules.common.Component {
 	getNamespace() {

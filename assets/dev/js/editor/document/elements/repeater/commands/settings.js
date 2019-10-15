@@ -1,7 +1,6 @@
 import Base from '../../../commands/base';
 
-// Settings.
-export default class Settings extends Base {
+export class Settings extends Base {
 	/**
 	 * @type {function( args )}
 	 */
@@ -123,3 +122,5 @@ export default class Settings extends Base {
 }
 
 Settings.debounceHistory = _.debounce( Settings.logHistory, 800 );
+
+export default Settings;

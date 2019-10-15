@@ -1,7 +1,7 @@
 import Base from '../../commands/base';
-import Settings from '../../elements/commands/settings';
+import ElementsSettings from '../../elements/commands/settings';
 
-export default class extends Base {
+export class Settings extends Base {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -40,7 +40,7 @@ export default class extends Base {
 			};
 		} );
 
-		const subTitle = Settings.getSubTitle( args );
+		const subTitle = ElementsSettings.getSubTitle( args );
 
 		return {
 			containers,
@@ -67,3 +67,5 @@ export default class extends Base {
 		} );
 	}
 }
+
+export default Settings;

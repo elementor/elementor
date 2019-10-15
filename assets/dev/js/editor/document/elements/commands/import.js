@@ -1,6 +1,6 @@
 import Base from '../../commands/base';
 
-export default class extends Base {
+export class Import extends Base {
 	validateArgs( args ) {
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
 
@@ -38,3 +38,5 @@ export default class extends Base {
 		}
 	}
 }
+
+export default Import;

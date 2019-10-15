@@ -1,7 +1,6 @@
 import Base from '../../commands/base';
 
-// ResetStyle.
-export default class extends Base {
+export class ResetStyle extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -43,3 +42,5 @@ export default class extends Base {
 		} );
 	}
 }
+
+export default ResetStyle;

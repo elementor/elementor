@@ -1,6 +1,6 @@
 import Base from '../../commands/base.js';
 
-export default class extends Base {
+export class CopyAll extends Base {
 	getHistory( args ) {
 		// No history for the command.
 		return false;
@@ -13,3 +13,5 @@ export default class extends Base {
 		} );
 	}
 }
+
+export default CopyAll;

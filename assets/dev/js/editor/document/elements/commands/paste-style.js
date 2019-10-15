@@ -1,7 +1,6 @@
 import Base from '../../commands/base';
 
-// PasteStyle.
-export default class extends Base {
+export class PasteStyle extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -86,3 +85,5 @@ export default class extends Base {
 		} );
 	}
 }
+
+export default PasteStyle;

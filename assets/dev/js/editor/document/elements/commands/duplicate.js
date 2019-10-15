@@ -1,7 +1,6 @@
 import Base from '../../commands/base';
 
-// Duplicate.
-export default class extends Base {
+export class Duplicate extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -40,3 +39,5 @@ export default class extends Base {
 		return result;
 	}
 }
+
+export default Duplicate;

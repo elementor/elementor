@@ -2,8 +2,7 @@ import Debounce from '../../commands/debounce';
 
 const COMMAND_DEBOUNCE_DELAY = 800; // ms.
 
-// Settings.
-export default class Settings extends Debounce {
+export class Settings extends Debounce {
 	static getSubTitle( args ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
 			settingsKeys = Object.keys( settings );
@@ -129,3 +128,5 @@ export default class Settings extends Debounce {
 		} );
 	}
 }
+
+export default Settings;

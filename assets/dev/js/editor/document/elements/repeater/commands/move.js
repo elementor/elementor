@@ -1,13 +1,12 @@
 import Base from '../../../commands/base';
 
-export default class extends Base {
+export class Move extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
 		this.requireArgumentType( 'name', 'string', args );
 		this.requireArgumentType( 'sourceIndex', 'number', args );
 		this.requireArgumentType( 'targetIndex', 'number', args );
-
 	}
 
 	getHistory( args ) {
@@ -49,3 +48,5 @@ export default class extends Base {
 		return result;
 	}
 }
+
+export default Move;
