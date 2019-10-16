@@ -24,7 +24,7 @@ export class SectionsColumns extends HookAfter {
 	 * @param {{}} args
 	 * @param {Container||Container[]} containers
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	apply( args, containers ) {
 		if ( ! Array.isArray( containers ) ) {

@@ -214,6 +214,11 @@ BaseElementView = BaseContainer.extend( {
 
 		this.initControlsCSSParser();
 
+		/**
+		 * Created for `behaviors/widget-draggable.js` to listen changes in settings model.
+		 * toggle is needed for `widget-draggable` when `settings.changed._position` changes.
+		 * example: Custom Position.
+		 */
 		this.trigger( 'initialize' );
 	},
 

@@ -12,7 +12,7 @@ export class Settings extends Base {
 	 * Restore Settings.
 	 *
 	 * @param {{}} historyItem
-	 * @param {Boolean} isRedo
+	 * @param {boolean} isRedo
 	 */
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );

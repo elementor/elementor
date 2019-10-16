@@ -11,15 +11,16 @@ export class Copy extends Base {
 	}
 
 	apply( args ) {
-		const { storageKey = 'clipboard', containers = [ args.container ], elementsType = containers[ 0 ].model.elType } = args,
-			cloneContainers = containers.map( ( container ) => {
-			return container.model.toJSON( { copyHtmlCache: true } );
-		} );
+		const {
+			storageKey = 'clipboard',
+			containers = [ args.container ],
+			elementsType = containers[ 0 ].model.elType,
+		} = args;
 
 		elementorCommon.storage.set( storageKey, {
 			type: 'copy',
-			containers: cloneContainers,
 			elementsType,
+			containers: containers.map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) ),
 		} );
 	}
 }

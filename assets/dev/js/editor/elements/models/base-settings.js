@@ -21,6 +21,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			defaults = {};
 
 		_.each( self.controls, function( control ) {
+			// Check features since they does not exist in tests.
 			var isUIControl = control.features && -1 !== control.features.indexOf( 'ui' );
 
 			if ( isUIControl ) {

@@ -27,7 +27,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	initSlider: function() {
-		// For tests.
+		// Slider does not exist in tests.
 		if ( ! this.ui.slider[ 0 ] ) {
 			return;
 		}
@@ -79,7 +79,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 
 	applySavedValue: function() {
 		ControlBaseUnitsItemView.prototype.applySavedValue.apply( this, arguments );
-		// For tests.
+		// Slider does not exist in tests.
 		if ( this.ui.slider[ 0 ] && this.ui.slider[ 0 ].noUiSlider ) {
 			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		}
@@ -100,7 +100,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	destroySlider: function() {
-		// For tests.
+		// Slider does not exist in tests.
 		if ( this.ui.slider[ 0 ] && this.ui.slider[ 0 ].noUiSlider ) {
 			this.ui.slider[ 0 ].noUiSlider.destroy();
 		}

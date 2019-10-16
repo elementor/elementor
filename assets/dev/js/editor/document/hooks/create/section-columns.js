@@ -20,7 +20,7 @@ export class SectionColumns extends HookAfter {
 	 * @param {{}} args
 	 * @param {Container||Container[]} containers
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	apply( args, containers ) {
 		const { structure = false, options = {} } = args;

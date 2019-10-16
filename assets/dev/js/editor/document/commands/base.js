@@ -56,7 +56,7 @@ export default class Base {
 	 *
 	 * Validate property in args.
 	 *
-	 * @param {String} property
+	 * @param {string} property
 	 * @param {{}} args
 	 *
 	 * @throws Error
@@ -73,8 +73,8 @@ export default class Base {
 	 *
 	 * Validate property in args using `typeof(args.whatever) === type`.
 	 *
-	 * @param {String} property
-	 * @param {String} type
+	 * @param {string} property
+	 * @param {string} type
 	 * @param {{}} args
 	 *
 	 * @throws Error
@@ -93,7 +93,7 @@ export default class Base {
 	 *
 	 * Validate property in args using `args.whatever instanceof instance`.
 	 *
-	 * @param {String} property
+	 * @param {string} property
 	 * @param {instanceof} instance
 	 * @param {{}} args
 	 *
@@ -113,7 +113,7 @@ export default class Base {
 	 *
 	 * Validate property in args using `args.whatever.constructor === type`.
 	 *
-	 * @param {String} property
+	 * @param {string} property
 	 * @param {{}} type
 	 * @param {{}} args
 	 *
@@ -165,7 +165,7 @@ export default class Base {
 	 *
 	 * Whether the editor needs to set change flag on/off.
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	isDataChanged() {
 		return false;
@@ -239,7 +239,7 @@ export default class Base {
 	 *
 	 * Return `elementor.history.history.getActive()`.
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	isHistoryActive() {
 		return elementor.history.history.getActive();
@@ -248,12 +248,16 @@ export default class Base {
 	/**
 	 * Function onBeforeApply.
 	 *
+	 * Called before apply().
+	 *
 	 * @param {{}} args
 	 */
 	onBeforeApply( args ) {}
 
 	/**
 	 * Function onAfterApply.
+	 *
+	 * Called after apply().
 	 *
 	 * @param {{}} args
 	 */

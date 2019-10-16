@@ -14,9 +14,4 @@ export default class Component extends elementorModules.common.Component {
 			settings: ( args ) => ( new Commands.Settings( args ) ).run(),
 		};
 	}
-
-	defaultShortcuts() {
-		return {
-		};
-	}
 }

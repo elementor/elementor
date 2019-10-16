@@ -2,7 +2,7 @@ export default class Base {
 	/**
 	 * Hold all hooks that were created within this class.
 	 *
-	 * @type {Object[]}
+	 * @type {object[]}
 	 */
 	static hooks = [];
 
@@ -11,7 +11,7 @@ export default class Base {
 	 *
 	 * Returns all hooks that were created within this class.
 	 *
-	 * @returns {Object[]}
+	 * @returns {object[]}
 	 */
 	static getAll() {
 		return constructor.hooks;
@@ -93,7 +93,7 @@ export default class Base {
 	 *
 	 * Returns the full command path to hook.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	hook() {
 		throw Error( 'hook() must be implanted.' );
@@ -104,7 +104,7 @@ export default class Base {
 	 *
 	 * Returns command id for the hook (should be unique).
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	id() {
 		throw Error( 'id() must be implanted.' );
@@ -117,7 +117,7 @@ export default class Base {
 	 *
 	 * @param {{}} args
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	conditioning( args ) {
 		throw Error( 'conditioning() must be implanted.' );
@@ -130,7 +130,7 @@ export default class Base {
 	 *
 	 * @param {{}} args
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	apply( args ) {
 		throw Error( 'apply() must be implanted.' );
