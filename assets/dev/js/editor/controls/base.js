@@ -49,18 +49,21 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function( options ) {
-		this.elementSettingsModel = options.elementSettingsModel;
+		/**
+		 * @type {Container}
+		 */
+		this.container = options.container;
 
 		var controlType = this.model.get( 'type' ),
 			controlSettings = jQuery.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 
 		this.model.set( controlSettings );
 
-		this.listenTo( this.elementSettingsModel, 'change', this.toggleControlVisibility );
+		this.listenTo( this.container.settings, 'change', this.toggleControlVisibility );
 	},
 
 	toggleControlVisibility: function() {
-		var isVisible = elementor.helpers.isActiveControl( this.model, this.elementSettingsModel.attributes );
+		var isVisible = elementor.helpers.isActiveControl( this.model, this.container.settings.attributes );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 

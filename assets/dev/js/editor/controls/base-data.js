@@ -69,11 +69,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.registerValidators();
 
-		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
+		this.listenTo( this.container.settings, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
 	getControlValue: function() {
-		return this.elementSettingsModel.get( this.model.get( 'name' ) );
+		return this.container.settings.get( this.model.get( 'name' ) );
 	},
 
 	setValue: function( value ) {
@@ -206,7 +206,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		var input = event.currentTarget,
 			value = this.getInputValue( input ),
 			validators = this.validators.slice( 0 ),
-			settingsValidators = this.elementSettingsModel.validators[ this.model.get( 'name' ) ];
+			settingsValidators = this.container.settings.validators[ this.model.get( 'name' ) ];
 
 		if ( settingsValidators ) {
 			validators = validators.concat( settingsValidators );

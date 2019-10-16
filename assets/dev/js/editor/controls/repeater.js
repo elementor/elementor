@@ -57,7 +57,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	fillCollection: function() {
 		var controlName = this.model.get( 'name' );
-		this.collection = this.elementSettingsModel.get( controlName );
+		this.collection = this.container.settings.get( controlName );
 
 		// Hack for history redo/undo
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
@@ -68,7 +68,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			} );
 
 			// Set the value silent
-			this.elementSettingsModel.set( controlName, this.collection, { silent: true } );
+			this.container.settings.set( controlName, this.collection, { silent: true } );
 		}
 
 		// Reset children.

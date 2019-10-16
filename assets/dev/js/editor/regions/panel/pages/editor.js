@@ -12,7 +12,7 @@ EditorView = ControlsStack.extend( {
 		return {
 			element: this.getOption( 'editedElementView' ),
 			container: this.getOption( 'editedElementView' ).getContainer(),
-			elementSettingsModel: this.model.get( 'settings' ),
+			// TODO elementSettingsModel: this.model.get( 'settings' ),
 			elementEditSettings: this.model.get( 'editSettings' ),
 		};
 	},

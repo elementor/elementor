@@ -17,7 +17,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	initialize: function() {
 		if ( ! this.listenerAttached ) {
-			this.listenTo( this.view.options.elementSettingsModel, 'change:external:__dynamic__', this.onAfterExternalChange );
+			this.listenTo( this.view.options.container.settings, 'change:external:__dynamic__', this.onAfterExternalChange );
 			this.listenerAttached = true;
 		}
 	},
@@ -49,7 +49,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	isDynamicMode: function() {
-		var dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' );
+		var dynamicSettings = this.view.container.settings.get( '__dynamic__' );
 
 		return ! ! ( dynamicSettings && dynamicSettings[ this.view.model.get( 'name' ) ] );
 	},
@@ -164,7 +164,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	getDynamicValue: function() {
-		return this.view.elementSettingsModel.get( '__dynamic__' )[ this.view.model.get( 'name' ) ];
+		return this.view.container.settings.get( '__dynamic__' )[ this.view.model.get( 'name' ) ];
 	},
 
 	getDynamicControlSettings: function() {
@@ -231,16 +231,16 @@ module.exports = Marionette.Behavior.extend( {
 
 	onTagViewRemove: function() {
 		var settingKey = this.view.model.get( 'name' ),
-			dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' );
+			dynamicSettings = this.view.container.settings.get( '__dynamic__' );
 
 		dynamicSettings = elementorCommon.helpers.cloneObject( dynamicSettings );
 
 		delete dynamicSettings[ settingKey ];
 
 		if ( Object.keys( dynamicSettings ).length ) {
-			this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings, this.getDynamicControlSettings( settingKey ) );
+			this.view.container.settings.set( '__dynamic__', dynamicSettings, this.getDynamicControlSettings( settingKey ) );
 		} else {
-			this.view.elementSettingsModel.unset( '__dynamic__', this.getDynamicControlSettings( settingKey ) );
+			this.view.container.settings.unset( '__dynamic__', this.getDynamicControlSettings( settingKey ) );
 		}
 
 		this.toggleDynamicClass();
