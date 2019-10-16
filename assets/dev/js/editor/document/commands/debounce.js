@@ -1,7 +1,5 @@
 import Base from './base';
 
-const DEFAULT_DEBOUNCE_DELAY = 800;
-
 /**
  * @typedef UniqueArgsState
  * @type {object}
@@ -9,34 +7,32 @@ const DEFAULT_DEBOUNCE_DELAY = 800;
  * @property {number} handler
  */
 
-export default class Debounce extends Base {
-	/**
-	 * Debounce delay.
-	 *
-	 * @type {number}
-	 */
-	static debounceDelay = DEFAULT_DEBOUNCE_DELAY;
+/**
+ * @type {number}
+ */
+export const DEFAULT_DEBOUNCE_DELAY = 800;
 
+export default class Debounce extends Base {
 	/**
 	 * Last `HistoryId` since last debounce.
 	 *
 	 * @type {number}
 	 */
-	static debounceHistoryId = 0;
+	static lastHistoryId = 0;
 
 	/**
 	 * Debounce timer.
 	 *
 	 * @type {number}
 	 */
-	static debounceTimer = 0;
+	static timer = 0;
 
 	/**
 	 * Debounce action, how should the debounce extender act.
 	 *
 	 * @type {string}
 	 */
-	static debounceAction = '';
+	static action = '';
 
 	/**
 	 * Array of UniqueArgsState
@@ -65,21 +61,6 @@ export default class Debounce extends Base {
 	}
 
 	/**
-	 * Function constructor().
-	 *
-	 * Create debounce command.
-	 *
-	 * @param {{}} args
-	 */
-	constructor( args ) {
-		super( args );
-
-		if ( this.getDebounceDelay ) {
-			this.constructor.debounceDelay = this.getDebounceDelay();
-		}
-	}
-
-	/**
 	 * Function getArgsUniqueId().
 	 *
 	 * Get "snapshot" of args and return unique id.
@@ -102,7 +83,7 @@ export default class Debounce extends Base {
 		}
 
 		// Clear the action first.
-		this.constructor.debounceAction = '';
+		Debounce.action = '';
 
 		const { options = {} } = args,
 			currentArgsUniqueId = this.getArgsUniqueId( args );
@@ -111,13 +92,13 @@ export default class Debounce extends Base {
 			// Get current time.
 			const now = ( new Date() ).getTime();
 
-			// If no timer or `debounceDelay` time passed from last stimulation.
-			if ( ! this.constructor.debounceTimer || now - this.constructor.debounceTimer > this.constructor.debounceDelay ) {
-				this.constructor.debounceAction = 'debounce';
+			// If no timer or `DEFAULT_DEBOUNCE_DELAY` passed from last stimulation.
+			if ( ! Debounce.timer || now - Debounce.timer > DEFAULT_DEBOUNCE_DELAY ) {
+				Debounce.action = 'debounce';
 			}
 
 			// Clear all current snapshots.
-			this.constructor.uniqueArgsStates = this.constructor.uniqueArgsStates.filter( ( uniqueArgsState ) => {
+			Debounce.uniqueArgsStates = Debounce.uniqueArgsStates.filter( ( uniqueArgsState ) => {
 				if ( uniqueArgsState.id === currentArgsUniqueId ) {
 					clearTimeout( uniqueArgsState.handler );
 					return false;
@@ -127,30 +108,30 @@ export default class Debounce extends Base {
 			} );
 
 			// Anyway if `options.debounceHistory` set to be true, we create timeout for saving log history.
-			this.constructor.uniqueArgsStates.push( {
+			Debounce.uniqueArgsStates.push( {
 				id: currentArgsUniqueId,
 				handler: setTimeout( () => {
-					this.constructor.logHistory( args, this.constructor.debounceHistoryId );
-				}, this.constructor.debounceDelay ),
+					this.constructor.logHistory( args, Debounce.lastHistoryId );
+				}, DEFAULT_DEBOUNCE_DELAY ),
 			} );
 
 			// Init || Update timer.
-			this.constructor.debounceTimer = now;
+			Debounce.timer = now;
 		} else {
-			this.constructor.debounceAction = 'normal';
+			Debounce.action = 'normal';
 		}
 
-		this.constructor.lastUniqueArgsId = currentArgsUniqueId;
+		Debounce.lastUniqueArgsId = currentArgsUniqueId;
 
-		return !! this.constructor.debounceAction;
+		return !! Debounce.action;
 	}
 
 	onAfterApply( args ) {
 		if ( this.isHistoryActive() ) {
-			if ( 'normal' === this.constructor.debounceAction ) {
+			if ( 'normal' === Debounce.action ) {
 				this.constructor.logHistory( args );
-			} else if ( 'debounce' === this.constructor.debounceAction && this.historyId ) {
-				this.constructor.debounceHistoryId = this.historyId;
+			} else if ( 'debounce' === Debounce.action && this.historyId ) {
+				Debounce.lastHistoryId = this.historyId;
 			}
 		}
 	}

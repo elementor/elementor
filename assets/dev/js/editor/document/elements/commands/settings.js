@@ -1,7 +1,5 @@
 import Debounce from '../../commands/debounce';
 
-const COMMAND_DEBOUNCE_DELAY = 800; // ms.
-
 export class Settings extends Debounce {
 	static getSubTitle( args ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
@@ -86,10 +84,6 @@ export class Settings extends Debounce {
 		this.requireContainer( args );
 
 		this.requireArgumentConstructor( 'settings', Object, args );
-	}
-
-	getDebounceDelay() {
-		return COMMAND_DEBOUNCE_DELAY;
 	}
 
 	getHistory( args ) {

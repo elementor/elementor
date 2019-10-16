@@ -1,5 +1,5 @@
 import Elements from '../helpers/elements';
-import Settings from '../../../../../../assets/dev/js/editor/document/elements/commands/settings';
+import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../assets/dev/js/editor/document/commands/debounce';
 import BlockFaq from './../../../../mock/library/blocks/faq.json';
 
 const undoValidate = ( assert, historyItem ) => {
@@ -329,7 +329,7 @@ jQuery( () => {
 					assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
 
 					done();
-				}, Settings.debounceDelay );
+				}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
@@ -568,7 +568,7 @@ jQuery( () => {
 				setTimeout( () => {
 					assert.equal( eButton.view.$el.find( '.button-text' ).html(), dynamicValue, 'Settings restored' );
 					done();
-				}, Settings.debounceDelay );
+				}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'Import', ( assert ) => {
