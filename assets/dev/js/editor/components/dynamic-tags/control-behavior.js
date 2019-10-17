@@ -131,6 +131,7 @@ module.exports = Marionette.Behavior.extend( {
 			const elementContainer = this.view.options.container;
 
 			tagView.options.container = new elementorModules.editor.Container( {
+				type: 'TODO: @see control-behavior.js',
 				id: id,
 				document: elementContainer.document,
 				model: tagView.model,

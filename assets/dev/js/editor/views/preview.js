@@ -33,6 +33,7 @@ Preview = BaseSectionsContainerView.extend( {
 	getContainer() {
 		if ( ! this.container ) {
 			this.container = new elementorModules.editor.Container( {
+				type: 'TODO: @see views/preview.js',
 				id: 'document',
 				model: this.model,
 				settings: elementor.settings.page.model,

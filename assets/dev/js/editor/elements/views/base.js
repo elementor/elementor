@@ -110,6 +110,7 @@ BaseElementView = BaseContainer.extend( {
 			const settingsModel = this.model.get( 'settings' );
 
 			this.container = new elementorModules.editor.Container( {
+				type: 'TODO: @see views/base.js',
 				id: this.model.id,
 				document: elementor.getPreviewContainer(),
 				model: this.model,

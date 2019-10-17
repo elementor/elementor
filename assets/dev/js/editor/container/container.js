@@ -2,14 +2,21 @@ import Panel from './panel';
 
 export default class Container {
 	/**
+	 * Container type.
+	 *
+	 * @type {string}
+	 */
+	type;
+
+	/**
 	 * Container id.
 	 *
-	 * @type {String}
+	 * @type {string}
 	 */
 	id;
 
 	/**
-	 * Container document
+	 * Container document.
 	 *
 	 * @type {Container}
 	 */
@@ -32,7 +39,7 @@ export default class Container {
 	/**
 	 * Container view.
 	 *
-	 * @type {{}}
+	 * @type {Marionette.CompositeView||BaseElementView}
 	 */
 	view;
 
@@ -60,7 +67,7 @@ export default class Container {
 	/**
 	 * Container label.
 	 *
-	 * @type {String}
+	 * @type {string}
 	 */
 	label;
 
@@ -123,7 +130,7 @@ export default class Container {
 	lookup() {
 		let result = this;
 
-		if ( ! this.view.lookup ) {
+		if ( ! this.view.isDestroyed || ! this.view.lookup ) {
 			return result;
 		}
 
@@ -143,15 +150,6 @@ export default class Container {
 	 */
 	render() {
 		if ( ! this.renderer ) {
-			return;
-		}
-
-		/**
-		 * TODO: remove, temp fix:
-		 * Steps to reproduce: Dynamic in repeater
-		 * Create a Form - change the default value of name to post-date, change the post-date format.
-		 */
-		if ( 'object' !== typeof this.renderer.view ) {
 			return;
 		}
 

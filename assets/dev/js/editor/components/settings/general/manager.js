@@ -28,6 +28,7 @@ module.exports = BaseSettings.extend( {
 		} );
 
 		const container = new elementorModules.editor.Container( {
+			type: 'TODO: @see general/manager.js',
 			id: editModel.id,
 			document: elementor.getPreviewContainer(),
 			model: editModel,
