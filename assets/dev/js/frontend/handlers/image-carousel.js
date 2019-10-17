@@ -104,11 +104,23 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
+		const elementSettings = this.getElementSettings();
+
 		if ( ! this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length ) {
 			return;
 		}
 
 		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
+
+		if ( !! elementSettings.pause_on_hover ) {
+			this.elements.$carousel.on( 'mouseenter', () => {
+				this.swiper.autoplay.stop();
+			} );
+
+			this.elements.$carousel.on( 'mouseleave', () => {
+				this.swiper.autoplay.start();
+			} );
+		}
 	}
 
 	onElementChange( propertyName ) {
