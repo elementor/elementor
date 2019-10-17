@@ -41,7 +41,6 @@ export class Delete extends Base {
 				$e.run( 'document/history/addSubItem', {
 					container,
 					type: 'sub-remove',
-					elementType: container.model.get( 'elType' ),
 					restore: this.constructor.restore,
 					data: {
 						model: container.model.toJSON(),

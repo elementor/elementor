@@ -17,7 +17,6 @@ export class Empty extends Base {
 		if ( args.force ) {
 			return {
 				type: 'remove',
-				elementType: 'section',
 				title: elementor.translate( 'all_content' ),
 				data: elementor.elements ? elementor.elements.toJSON() : null,
 				restore: this.constructor.restore,

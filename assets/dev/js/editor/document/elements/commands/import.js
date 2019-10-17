@@ -14,7 +14,6 @@ export class Import extends Base {
 			type: 'add',
 			title: elementor.translate( 'template' ),
 			subTitle: model.get( 'title' ),
-			elementType: 'template',
 		};
 	}
 

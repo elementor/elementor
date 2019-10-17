@@ -16,14 +16,10 @@ const redoValidate = ( assert, historyItem ) => {
 	assert.equal( historyItem.status, 'not_applied', 'After redo, history Item status is not_applied.' );
 };
 
-const inHistoryValidate = ( assert, historyItem, type, title, elementType = null ) => {
+const inHistoryValidate = ( assert, historyItem, type, title ) => {
 	// Exist in history.
 	assert.equal( historyItem.type, type, `History Item type is '${ type }'.` );
 	assert.equal( historyItem.title, title, `History Item title is '${ title }'.` );
-
-	if ( elementType ) {
-		assert.equal( historyItem.elementType, elementType, `History Item element is '${ elementType }'.` );
-	}
 };
 
 const destroyedValidate = ( assert, eController ) => {
@@ -80,7 +76,7 @@ jQuery( () => {
 
 				const historyItem = elementor.history.history.getItems().at( 0 );
 
-				assert.equal( historyItem, undefined, 'History was rolled back.' );
+				assert.equal( historyItem.id, 0, 'History was rolled back.' );
 			} );
 		} );
 
@@ -90,7 +86,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Section', 'section' );
+				inHistoryValidate( assert, historyItem, 'add', 'Section' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -111,7 +107,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Column', 'column' );
+				inHistoryValidate( assert, historyItem, 'add', 'Column' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -147,7 +143,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Column', 'column' );
+				inHistoryValidate( assert, historyItem, 'change', 'Column' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -169,7 +165,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'add', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -194,7 +190,7 @@ jQuery( () => {
 				eInnerSection.view.children.forEach( ( el ) => innerSectionColumnsIds.push( el.model.id ) );
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'inner_section', 'section' );
+				inHistoryValidate( assert, historyItem, 'add', 'inner_section' );
 
 				// Inner section have x columns.
 				assert.equal( eInnerSection.view.collection.length, defaultInnerSectionColumns, `InnerSection have "${ defaultInnerSectionColumns }" columns` );
@@ -227,7 +223,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'duplicate', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'duplicate', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -252,7 +248,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'add', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -278,7 +274,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'change', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -316,7 +312,7 @@ jQuery( () => {
 					assert.equal( historyDiff, 1, 'History items length is "1"' );
 
 					// Exist in history.
-					inHistoryValidate( assert, historyItem, 'change', 'Button', null );
+					inHistoryValidate( assert, historyItem, 'change', 'Button' );
 
 					// Undo.
 					undoValidate( assert, historyItem );
@@ -344,7 +340,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'paste_style', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -369,7 +365,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'reset_style', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -397,7 +393,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'move', 'Section', 'section' );
+				inHistoryValidate( assert, historyItem, 'move', 'Section' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -426,7 +422,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'move', 'Column', 'column' );
+				inHistoryValidate( assert, historyItem, 'move', 'Column' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -455,7 +451,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'move', 'Column', 'column' );
+				inHistoryValidate( assert, historyItem, 'move', 'Column' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -488,7 +484,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'move', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'move', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -513,7 +509,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'remove', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'remove', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -553,7 +549,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'change', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -581,7 +577,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'template', 'template' );
+				inHistoryValidate( assert, historyItem, 'add', 'template' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -635,7 +631,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Column', 'column' );
+				inHistoryValidate( assert, historyItem, 'add', 'Column' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -655,7 +651,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'add', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -686,7 +682,7 @@ jQuery( () => {
 				} );
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'inner_section', 'section' );
+				inHistoryValidate( assert, historyItem, 'add', 'inner_section' );
 
 				// Inner section have x columns.
 				eInnerSections.forEach( ( eInnerSection ) => assert.equal( eInnerSection.view.collection.length,
@@ -729,7 +725,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'duplicate', 'elements', null ); // TODO: Handle elementType.
+				inHistoryValidate( assert, historyItem, 'duplicate', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -756,7 +752,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Button', 'widget' );
+				inHistoryValidate( assert, historyItem, 'add', 'Button' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -781,7 +777,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'elements', null ); // TODO: Handle elementType.
+				inHistoryValidate( assert, historyItem, 'change', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -810,7 +806,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'paste_style', 'elements', null ); // TODO: Handle elementType.
+				inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -839,7 +835,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'reset_style', 'elements', null ); // TODO: Handle elementType.
+				inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -871,7 +867,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Tabs', 'widget' );
+				inHistoryValidate( assert, historyItem, 'add', 'Tabs' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -895,7 +891,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'remove', 'Tabs', 'widget' );
+				inHistoryValidate( assert, historyItem, 'remove', 'Tabs' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -927,7 +923,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Tabs', 'widget' );
+				inHistoryValidate( assert, historyItem, 'change', 'Tabs' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -950,7 +946,7 @@ jQuery( () => {
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'duplicate', 'Tabs', 'widget' );
+				inHistoryValidate( assert, historyItem, 'duplicate', 'Tabs' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -979,7 +975,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'move', 'Tabs', 'widget' );
+				inHistoryValidate( assert, historyItem, 'move', 'Tabs' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -1078,7 +1074,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'elements', 'widget' );
+				inHistoryValidate( assert, historyItem, 'add', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -1111,7 +1107,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'remove', 'elements', 'widget' );
+				inHistoryValidate( assert, historyItem, 'remove', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -1148,7 +1144,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'elements', 'widget' );
+				inHistoryValidate( assert, historyItem, 'change', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -1181,7 +1177,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'duplicate', 'elements', 'widget' );
+				inHistoryValidate( assert, historyItem, 'duplicate', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -1223,7 +1219,7 @@ jQuery( () => {
 				let count = 0;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'move', 'elements', 'widget' );
+				inHistoryValidate( assert, historyItem, 'move', 'elements' );
 
 				// Undo.
 				undoValidate( assert, historyItem );

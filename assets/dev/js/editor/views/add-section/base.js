@@ -150,7 +150,6 @@ class AddSectionBase extends Marionette.ItemView {
 			historyId = $e.run( 'document/history/startLog', {
 				type: 'add',
 				title: selectedElement.model.get( 'title' ),
-				elementType: selectedElement.model.get( 'elType' ),
 			} );
 
 		$e.run( 'document/elements/create', {

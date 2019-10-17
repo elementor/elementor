@@ -130,7 +130,7 @@ export default class Container {
 	lookup() {
 		let result = this;
 
-		if ( ! this.view.isDestroyed || ! this.view.lookup ) {
+		if ( ! this.view || ! this.view.isDestroyed || ! this.view.lookup ) {
 			return result;
 		}
 

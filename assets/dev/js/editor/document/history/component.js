@@ -89,20 +89,6 @@ export default class Component extends elementorModules.common.Component {
 			}
 		}
 
-		if ( ! args.elementType ) {
-			if ( 1 === containers.length ) {
-				args.elementType = containers[ 0 ].model.get( 'elType' );
-			} else {
-				// Most common element in array.
-				args.elementType = _.chain( containers.map( ( item ) => item.model.get( 'elType' ) ) )
-					.countBy()
-					.pairs()
-					.max( _.last )
-					.head()
-					.value();
-			}
-		}
-
 		return args;
 	}
 }

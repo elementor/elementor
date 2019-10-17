@@ -53,7 +53,6 @@ export class SectionColumns extends HookAfter {
 				$e.run( 'document/history/addSubItem', {
 					container,
 					type: 'sub-add',
-					elementType: 'column',
 					restore: Create.restore,
 					options,
 					data: {

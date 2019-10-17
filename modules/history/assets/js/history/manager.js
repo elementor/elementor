@@ -136,7 +136,6 @@ var	Manager = function() {
 				subTitle: itemData.subTitle,
 				action: getActionLabel( itemData ),
 				type: itemData.type,
-				elementType: itemData.elementType,
 			} );
 
 			self.startItemTitle = '';
@@ -183,9 +182,13 @@ var	Manager = function() {
 			const historyItem = item.get( 'items' ).first();
 
 			if ( historyItem.get( 'restore' ) ) {
-				const container = 'sub-add' === historyItem.get( 'type' ) ?
+				let container = 'sub-add' === historyItem.get( 'type' ) ?
 					historyItem.get( 'data' ).toRestoreContainer :
-					historyItem.get( 'container' ) || historyItem.get( 'containers' )[ 0 ];
+					historyItem.get( 'container' ) || historyItem.get( 'containers' );
+
+				if ( Array.isArray( container ) ) {
+					container = container[ 0 ];
+				}
 
 				if ( container ) {
 					viewToScroll = container.lookup().view;

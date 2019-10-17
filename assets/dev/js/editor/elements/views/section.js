@@ -246,7 +246,6 @@ SectionView = BaseElementView.extend( {
 				debounceHistory,
 				external: true,
 				history: {
-					elementType: 'column',
 					title: elementor.config.elements.column.controls._inline_size.label,
 				},
 			},

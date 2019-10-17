@@ -25,6 +25,7 @@ export class Create extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
+		// Avoid Backbone model & etc.
 		this.requireArgumentConstructor( 'model', Object, args );
 	}
 
@@ -36,7 +37,6 @@ export class Create extends Base {
 			model,
 			type: 'add',
 			title: elementor.history.history.getModelLabel( model ),
-			elementType: model.elType,
 		};
 	}
 
@@ -56,7 +56,6 @@ export class Create extends Base {
 				$e.run( 'document/history/addSubItem', {
 					container,
 					type: 'sub-add',
-					elementType: createdContainer.model.get( 'elType' ),
 					restore: this.constructor.restore,
 					options,
 					data: {
