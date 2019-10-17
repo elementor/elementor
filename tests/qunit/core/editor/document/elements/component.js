@@ -116,7 +116,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Widget: Custom Position', ( assert ) => {
-				const eButton = Elements.createMockButtonWidget();
+				const eButton = Elements.createAutoButton();
 
 				Elements.settings( eButton, {
 					_position: 'absolute',
@@ -162,7 +162,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
-				const eButton = Elements.createMockButtonWidget(),
+				const eButton = Elements.createAutoButton(),
 					text = 'i test it';
 
 				// Change button text.
@@ -173,8 +173,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
-				const eButtonSimple = Elements.createMockButtonWidget(),
-					eButtonStyled = Elements.createMockButtonStyled(),
+				const eButtonSimple = Elements.createAutoButton(),
+					eButtonStyled = Elements.createAutoButtonStyled(),
 					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
 
 				Elements.copy( eButtonStyled );
@@ -191,7 +191,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Reset Style', ( assert ) => {
-				const eButtonStyled = Elements.createMockButtonStyled();
+				const eButtonStyled = Elements.createAutoButtonStyled();
 
 				// Ensure editor saver.
 				elementor.saver.setFlagEditorChange( false );
@@ -344,9 +344,9 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
-				const eButtonSimple1 = Elements.createMockButtonWidget(),
-					eButtonSimple2 = Elements.createMockButtonWidget(),
-					eButtonStyled = Elements.createMockButtonStyled(),
+				const eButtonSimple1 = Elements.createAutoButton(),
+					eButtonSimple2 = Elements.createAutoButton(),
+					eButtonStyled = Elements.createAutoButtonStyled(),
 					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
 
 				Elements.copy( eButtonStyled );
@@ -361,8 +361,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Reset Style', ( assert ) => {
-				const eButtonStyled1 = Elements.createMockButtonStyled(),
-					eButtonStyled2 = Elements.createMockButtonStyled();
+				const eButtonStyled1 = Elements.createAutoButtonStyled(),
+					eButtonStyled2 = Elements.createAutoButtonStyled();
 
 				Elements.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
 

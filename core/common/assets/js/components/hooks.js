@@ -1,6 +1,7 @@
+/**
+ * TODO: merge `runDependency` & `runAfter` to `run( type , ... );`
+ */
 export default class Hooks extends elementorModules.Module {
-	static _DEBUG = false;
-
 	constructor( ...args ) {
 		super( ...args );
 

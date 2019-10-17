@@ -165,7 +165,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Widget', ( assert ) => {
-				const eWidget = Elements.createMockButtonWidget(),
+				const eWidget = Elements.createAutoButton(),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -222,7 +222,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
-				const eWidget = Elements.createMockButtonWidget(),
+				const eWidget = Elements.createAutoButton(),
 					eWidgetDuped = Elements.duplicate( eWidget ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -268,7 +268,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
-				const eWidget = Elements.createMockButtonWidget(),
+				const eWidget = Elements.createAutoButton(),
 					defaultText = eWidget.settings.attributes.text,
 					text = 'i test it';
 
@@ -294,7 +294,7 @@ jQuery( () => {
 			QUnit.test( 'Settings: Debounce', ( assert ) => {
 				const historyItems = elementor.history.history.getItems(),
 					settingsChangeCount = 10,
-					eWidget = Elements.createMockButtonWidget(),
+					eWidget = Elements.createAutoButton(),
 					historyCountBeforeDebounce = historyItems.length,
 					text = 'i test it',
 					defaultText = eWidget.settings.attributes.text;
@@ -333,8 +333,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
-				const eWidgetSimple = Elements.createMockButtonWidget(),
-					eWidgetStyled = Elements.createMockButtonStyled(),
+				const eWidgetSimple = Elements.createAutoButton(),
+					eWidgetStyled = Elements.createAutoButtonStyled(),
 					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' ),
 					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
 
@@ -360,7 +360,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Reset Style', ( assert ) => {
-				const eWidgetStyled = Elements.createMockButtonStyled(),
+				const eWidgetStyled = Elements.createAutoButtonStyled(),
 					BackgroundBeforeReset = eWidgetStyled.settings.get( 'background_color' ); // Black
 
 				Elements.resetStyle( eWidgetStyled );
@@ -506,7 +506,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Delete', ( assert ) => {
-				const eWidget = Elements.createMockButtonWidget();
+				const eWidget = Elements.createAutoButton();
 
 				Elements.delete( eWidget );
 
@@ -529,7 +529,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Dynamic', ( assert ) => {
-				const eButton = Elements.createMockButtonWidget(),
+				const eButton = Elements.createAutoButton(),
 					defaultButtonText = eButton.settings.attributes.text,
 					text = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',
@@ -651,7 +651,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Widgets', ( assert ) => {
-				const eWidgets = Elements.multiCreateMockButtonWidget(),
+				const eWidgets = Elements.multiCreateAutoButton(),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -724,7 +724,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
-				const eWidgets = Elements.multiCreateMockButtonWidget(),
+				const eWidgets = Elements.multiCreateAutoButton(),
 					eWidgetsDuped = Elements.multiDuplicate( eWidgets ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -771,7 +771,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
-				const eWidgets = Elements.multiCreateMockButtonWidget(),
+				const eWidgets = Elements.multiCreateAutoButton(),
 					text = 'i test it',
 					defaultText = eWidgets[ 0 ].settings.attributes.text;
 
@@ -799,8 +799,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
-				const eWidgetsSimple = Elements.multiCreateMockButtonWidget(),
-					eWidgetStyled = Elements.createMockButtonStyled(),
+				const eWidgetsSimple = Elements.multiCreateAutoButton(),
+					eWidgetStyled = Elements.createAutoButtonStyled(),
 					widgetSimpleBackground = eWidgetsSimple[ 0 ].settings.get( 'background_color' ),
 					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
 
@@ -830,7 +830,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Reset Style', ( assert ) => {
-				const eWidgetsStyled = Elements.multiCreateMockButtonStyled(),
+				const eWidgetsStyled = Elements.multiCreateAutoButtonStyled(),
 					backgroundBeforeReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' );
 
 				Elements.multiResetStyle( eWidgetsStyled );

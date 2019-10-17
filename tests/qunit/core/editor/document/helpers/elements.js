@@ -105,8 +105,15 @@ export default class {
 		} );
 	}
 
-	// TODO: rename function.
-	static createMockButtonWidget( eContainer = null ) {
+	static createAutoForm( eContainer ) {
+		if ( ! eContainer ) {
+			eContainer = this.createSection( 1, true );
+		}
+
+		return this.createForm( eContainer );
+	}
+
+	static createAutoButton( eContainer = null ) {
 		if ( ! eContainer ) {
 			eContainer = this.createSection( 1, true );
 		}
@@ -114,8 +121,7 @@ export default class {
 		return this.createButton( eContainer );
 	}
 
-	// TODO: rename function.
-	static multiCreateMockButtonWidget( eContainers = null ) {
+	static multiCreateAutoButton( eContainers = null ) {
 		if ( ! eContainers ) {
 			eContainers = [];
 			eContainers.push( this.createSection( 1, true ) );
@@ -125,20 +131,18 @@ export default class {
 		return this.multiCreateButton( eContainers );
 	}
 
-	// TODO: rename function.
-	static createMockButtonStyled( eContainer = null ) {
+	static createAutoButtonStyled( eContainer = null ) {
 		if ( ! eContainer ) {
 			eContainer = this.createSection( 1, true );
 		}
 
 		return this.createButton( eContainer, {
-			text: 'createMockButtonStyled',
+			text: 'createAutoButtonStyled',
 			background_color: '#000000',
 		} );
 	}
 
-	// TODO: rename function.
-	static multiCreateMockButtonStyled( eContainers = null ) {
+	static multiCreateAutoButtonStyled( eContainers = null ) {
 		if ( ! eContainers ) {
 			eContainers = [];
 			eContainers.push( this.createSection( 1, true ) );
@@ -146,7 +150,7 @@ export default class {
 		}
 
 		return this.multiCreateButton( eContainers, {
-			text: 'createMockButtonStyled',
+			text: 'createAutoButtonStyled',
 			background_color: '#000000',
 		} );
 	}
