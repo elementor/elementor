@@ -98,13 +98,15 @@ export default class Container {
 	 * Create container.
 	 *
 	 * @param {{}} args
+	 *
+	 * @throws Error
 	 */
 	constructor( args ) {
 		args = Object.entries( args );
 
 		// If empty.
 		if ( 0 === args.length ) {
-			return;
+			throw Error( 'Container cannot be empty.' );
 		}
 
 		// Set properties, if not defined - keep the defaults.
@@ -130,7 +132,7 @@ export default class Container {
 	lookup() {
 		let result = this;
 
-		if ( ! this.view || ! this.view.isDestroyed || ! this.view.lookup ) {
+		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
 			return result;
 		}
 
@@ -146,7 +148,11 @@ export default class Container {
 	/**
 	 * Function render().
 	 *
-	 * Tell the `this.renderer` view.renderOnChange.
+	 * Call view render.
+	 *
+	 * Run's `this.renderer.view.renderOnChange( this.settings ) `.
+	 * When `this.renderer` exist.
+	 *
 	 */
 	render() {
 		if ( ! this.renderer ) {

@@ -52,6 +52,10 @@ export class Create extends Base {
 
 			result.push( createdContainer );
 
+			/**
+			 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
+			 * in getHistory().
+			 */
 			if ( this.isHistoryActive() ) {
 				$e.run( 'document/history/addSubItem', {
 					container,

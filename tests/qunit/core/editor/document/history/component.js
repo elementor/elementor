@@ -69,14 +69,17 @@ jQuery( () => {
 
 			QUnit.test( 'History Rollback', ( assert ) => {
 				try {
-					$e.run( 'document/elements/settings', { container: ( new elementorModules.editor.Container( {} ) ), settings: {} } );
+					$e.run( 'document/elements/settings', {
+						container: ( new elementorModules.editor.Container( {} ) ),
+						settings: {},
+					} );
 				} catch ( e ) {
 					// Do nothing (ignore).
 				}
 
 				const historyItem = elementor.history.history.getItems().at( 0 );
 
-				assert.equal( historyItem.id, 0, 'History was rolled back.' );
+				assert.equal( historyItem, undefined, 'History was rolled back.' );
 			} );
 		} );
 

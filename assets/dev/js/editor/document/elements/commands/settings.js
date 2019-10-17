@@ -1,6 +1,15 @@
 import Debounce from '../../commands/debounce';
 
 export class Settings extends Debounce {
+	/**
+	 * Function getSubTitle().
+	 *
+	 * Get sub title by container.
+	 *
+	 * @param {{}} args
+	 *
+	 * @returns {string}
+	 */
 	static getSubTitle( args ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
 			settingsKeys = Object.keys( settings );
@@ -17,6 +26,14 @@ export class Settings extends Debounce {
 		return result;
 	}
 
+	/**
+	 * Function restore().
+	 *
+	 * Redo/Restore.
+	 *
+	 * @param {{}} historyItem
+	 * @param {boolean} isRedo
+	 */
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -107,6 +124,10 @@ export class Settings extends Debounce {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
+			/**
+			 * Settings support multi settings for each container, eg use:
+			 * settings: { '{ container-id }': { someSettingKey: someSettingValue } } etc.
+			 */
 			const newSettings = isMultiSettings ? settings[ container.id ] : settings;
 
 			// Save for debounce.
