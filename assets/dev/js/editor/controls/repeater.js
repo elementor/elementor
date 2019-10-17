@@ -37,7 +37,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			document: elementContainer.document,
 			model: rowModel,
 			settings: rowModel,
-			view: 'TODO: @see repeater.js',
+			view: elementContainer.view,
 			parent: elementContainer,
 			label: elementContainer.label + ' ' + elementor.translate( 'Item' ) + `#${ index + 1 }`,
 			controls: rowModel.options.controls,
