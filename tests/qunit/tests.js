@@ -5,6 +5,7 @@ import button from './mock/elments/button.json';
 import heading from './mock/elments/heading.json';
 import tabs from './mock/elments/tabs.json';
 import form from './mock/elments/form.json';
+import postDate from './mock/dynamic-tags/post-date';
 import postCustomField from './mock/dynamic-tags/post-custom-field';
 
 elementor.start();
@@ -22,6 +23,7 @@ elementor.config.widgets = {
 };
 
 elementor.config.dynamicTags.tags = {
+	'post-date': postDate,
 	'post-custom-field': postCustomField,
 };
 
