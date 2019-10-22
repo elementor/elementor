@@ -1,16 +1,16 @@
 import HookAfter from '../base/after';
 
-export class SectionResetLayout extends HookAfter {
+export class SectionColumnsResetLayout extends HookAfter {
 	hook() {
 		return 'document/elements/create';
 	}
 
 	id() {
-		return 'section-reset-layout';
+		return 'section-columns-reset-layout';
 	}
 
 	conditioning( args ) {
-		return ! args.model || 'column' !== args.model.elType;
+		return args.model && 'column' === args.model.elType;
 	}
 
 	/**
@@ -32,4 +32,4 @@ export class SectionResetLayout extends HookAfter {
 	}
 }
 
-export default SectionResetLayout;
+export default SectionColumnsResetLayout;

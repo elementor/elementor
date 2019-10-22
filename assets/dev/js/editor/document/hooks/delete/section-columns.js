@@ -13,7 +13,8 @@ export class SectionsColumns extends HookAfter {
 	conditioning( args ) {
 		const { containers = [ args.container ] } = args;
 
-		return ! containers.some( ( container ) =>
+		// If one of the targets is column.
+		return containers.some( ( container ) =>
 			'column' === container.model.get( 'elType' )
 		);
 	}
@@ -34,10 +35,12 @@ export class SectionsColumns extends HookAfter {
 		containers.forEach( ( /**Container*/ container ) => {
 			const parent = container.parent;
 
+			// If its not column, continue.
 			if ( 'section' !== parent.model.get( 'elType' ) ) {
 				return;
 			}
 
+			// If deleted the last column, should recreate it.
 			if ( 0 === parent.view.collection.length ) {
 				$e.run( 'document/elements/create', {
 					container: parent,
@@ -46,6 +49,7 @@ export class SectionsColumns extends HookAfter {
 					},
 				} );
 			} else {
+				// Else, just reset section layout.
 				parent.view.resetLayout();
 			}
 		} );

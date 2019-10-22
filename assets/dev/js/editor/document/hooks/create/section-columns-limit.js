@@ -10,12 +10,13 @@ export class SectionColumnsLimit extends HookDependency {
 	}
 
 	conditioning( args ) {
-		return ! args.model || 'column' !== args.model.elType;
+		return args.model && 'column' === args.model.elType;
 	}
 
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
+		// If one of the targets have maximum columns reached break the command.
 		return ! containers.some( ( /**Container*/ container ) => {
 			return container.view.isCollectionFilled();
 		} );

@@ -41,7 +41,7 @@ export default class Base {
 		this.id = this.id();
 
 		const params = [ this.command, this.id, ( ... args ) => {
-			if ( ! this.conditioning( args[ 0 ] ) ) {
+			if ( this.conditioning( args[ 0 ] ) ) {
 				if ( $e.devTools ) {
 					// TODO: avoid of using `$e.devTools.log` do same as `$e.devTools.log.command()`
 					// eg `$e.devTools.log.hook()`.

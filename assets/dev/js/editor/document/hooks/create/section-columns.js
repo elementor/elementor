@@ -11,7 +11,7 @@ export class SectionColumns extends HookAfter {
 	}
 
 	conditioning( args ) {
-		return ! args.model || 'section' !== args.model.elType || args.model.elements;
+		return args.model && 'section' === args.model.elType && ! args.model.elements;
 	}
 
 	/**

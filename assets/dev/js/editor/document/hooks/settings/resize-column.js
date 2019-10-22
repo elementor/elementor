@@ -10,7 +10,7 @@ export class ResizeColumn extends HookAfter {
 	}
 
 	conditioning( args ) {
-		return ! args.settings._inline_size || args.isMultiSettings;
+		return args.settings._inline_size && ! args.isMultiSettings;
 	}
 
 	apply( args ) {
