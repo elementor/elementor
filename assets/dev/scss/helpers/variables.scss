@@ -148,10 +148,10 @@ $editor-alert-warning: $editor-orange;
 $editor-alert-info: $editor-info;
 $editor-alert-success: $editor-success;
 
-$editor-alert-danger-bg: $editor-background-lighter;
-$editor-alert-warning-bg: $editor-background-lighter;
+$editor-alert-danger-bg: #fefbfc;
+$editor-alert-warning-bg: #fcfcfc;
 $editor-alert-info-bg: #f3fcff;
-$editor-alert-success-bg: $editor-background-lighter;
+$editor-alert-success-bg: #fcfffc;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
