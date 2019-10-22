@@ -30,58 +30,60 @@ export class PasteStyle extends Base {
 
 	apply( args ) {
 		const { containers = [ args.container ], storageKey = 'clipboard' } = args,
-			transferData = elementorCommon.storage.get( storageKey ),
-			sourceContainer = transferData.containers[ 0 ],
-			sourceSettings = sourceContainer.settings;
+			storageData = elementorCommon.storage.get( storageKey );
 
-		containers.forEach( ( container ) => {
-			const targetSettings = container.settings,
+		containers.forEach( ( targetContainer ) => {
+			const targetSettings = targetContainer.settings,
 				targetSettingsAttributes = targetSettings.attributes,
 				targetControls = targetSettings.controls,
 				diffSettings = {};
 
-			Object.entries( targetControls ).forEach( ( [ controlName, control ] ) => {
-				if ( ! container.view.isStyleTransferControl( control ) ) {
-					return;
-				}
+			storageData.forEach( ( sourceModel ) => {
+				const sourceSettings = sourceModel.settings;
 
-				const controlSourceValue = sourceSettings[ controlName ],
-					controlTargetValue = targetSettingsAttributes[ controlName ];
-
-				if ( ! this.validateControls( controlSourceValue, controlTargetValue ) ) {
-					return;
-				}
-
-				if ( 'object' === typeof controlSourceValue ) {
-					const isEqual = Object.keys( controlSourceValue ).some( ( propertyKey ) => {
-						if ( controlSourceValue[ propertyKey ] !== controlTargetValue[ propertyKey ] ) {
-							return false;
-						}
-					} );
-
-					if ( isEqual ) {
+				Object.entries( targetControls ).forEach( ( [ controlName, control ] ) => {
+					if ( ! targetContainer.view.isStyleTransferControl( control ) ) {
 						return;
 					}
-				}
 
-				if ( controlSourceValue === controlTargetValue ||
-					! elementor.getControlView( control.type ).onPasteStyle( control, controlSourceValue ) ) {
-					return;
-				}
+					const controlSourceValue = sourceSettings[ controlName ],
+						controlTargetValue = targetSettingsAttributes[ controlName ];
 
-				diffSettings[ controlName ] = controlSourceValue;
+					if ( ! this.validateControls( controlSourceValue, controlTargetValue ) ) {
+						return;
+					}
+
+					if ( 'object' === typeof controlSourceValue ) {
+						const isEqual = Object.keys( controlSourceValue ).some( ( propertyKey ) => {
+							if ( controlSourceValue[ propertyKey ] !== controlTargetValue[ propertyKey ] ) {
+								return false;
+							}
+						} );
+
+						if ( isEqual ) {
+							return;
+						}
+					}
+
+					if ( controlSourceValue === controlTargetValue ||
+						! elementor.getControlView( control.type ).onPasteStyle( control, controlSourceValue ) ) {
+						return;
+					}
+
+					diffSettings[ controlName ] = controlSourceValue;
+				} );
+
+				targetContainer.view.allowRender = false;
+
+				$e.run( 'document/elements/settings', {
+					container: targetContainer,
+					settings: diffSettings,
+				} );
+
+				targetContainer.view.allowRender = true;
+
+				targetContainer.render();
 			} );
-
-			container.view.allowRender = false;
-
-			$e.run( 'document/elements/settings', {
-				container,
-				settings: diffSettings,
-			} );
-
-			container.view.allowRender = true;
-
-			container.render();
 		} );
 	}
 }

@@ -249,13 +249,13 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isPasteEnabled() {
-		const transferData = elementorCommon.storage.get( 'clipboard' );
+		const storageData = elementorCommon.storage.get( 'clipboard' );
 
-		if ( ! transferData || this.isCollectionFilled() ) {
+		if ( ! storageData || this.isCollectionFilled() ) {
 			return false;
 		}
 
-		return this.getElementType() === transferData.elementsType;
+		return storageData.every( ( model ) => model.elType === this.getElementType() );
 	},
 
 	isStyleTransferControl( control ) {

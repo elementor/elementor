@@ -14,14 +14,12 @@ export class Copy extends Base {
 		const {
 			storageKey = 'clipboard',
 			containers = [ args.container ],
-			elementsType = containers[ 0 ].model.elType,
 		} = args;
 
-		elementorCommon.storage.set( storageKey, {
-			type: 'copy',
-			elementsType,
-			containers: containers.map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) ),
-		} );
+		elementorCommon.storage.set(
+			storageKey,
+			containers.map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
+		);
 	}
 }
 

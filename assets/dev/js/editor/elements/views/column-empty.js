@@ -26,7 +26,7 @@ module.exports = Marionette.ItemView.extend( {
 						title: elementor.translate( 'paste' ),
 						isEnabled: this.isPasteEnabled.bind( this ),
 						callback: () => $e.run( 'document/elements/paste', {
-							container: this.getContainer().parent,
+							container: this._parent.getContainer(),
 						} ),
 					},
 				],
@@ -35,17 +35,27 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	isPasteEnabled: function() {
-		var transferData = elementorCommon.storage.get( 'clipboard' );
+		const storageData = elementorCommon.storage.get( 'clipboard' );
 
-		if ( ! transferData ) {
+		if ( ! storageData ) {
 			return false;
 		}
 
-		if ( 'section' === transferData.elementsType ) {
-			return transferData.elements[ 0 ].isInner && ! this._parent.isInner();
-		}
+		// If all of thee models are section and is not inner.
+		const isAllSectionsInner = () => false === this._parent._parent.isInner() && storageData.every( ( model ) => {
+			if ( 'section' === model.elType && model.isInner ) {
+				return true;
+			}
+		} );
 
-		return 'widget' === transferData.elementsType;
+		// If all the models are widget(s)
+		const isAllElementsWidgets = () => storageData.every( ( model ) => {
+			if ( 'widget' === model.elType ) {
+				return true;
+			}
+		} );
+
+		return isAllSectionsInner() || isAllElementsWidgets();
 	},
 
 	onClickAdd: function() {
