@@ -84,6 +84,8 @@ class Module extends BaseModule {
 	 *
 	 * Retrieve formatted usage, for frontend.
 	 *
+	 * @param String format
+	 *
 	 * @return array
 	 */
 	public function get_formatted_usage( $format = 'html' ) {
