@@ -1,6 +1,3 @@
-/**
- * TODO: merge `runDependency` & `runAfter` to `run( type , ... );`
- */
 export default class Hooks extends elementorModules.Module {
 	constructor( ...args ) {
 		super( ...args );
@@ -80,62 +77,60 @@ export default class Hooks extends elementorModules.Module {
 		return this.register( 'after', command, id, callback );
 	}
 
-	runDependency( command, args, then ) {
-		const hooks = this.hooks.dependency[ command ];
+	run( event, command, args, result ) {
+		const hooks = this.hooks[ event ][ command ],
+			{ history } = elementor.documents.get();
 
-		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
-			this.onRun( command, args, 'dependency' );
-
+		if ( history.getActive() && hooks && hooks.length ) {
 			this.current = command;
+
+			this.onRun( command, args, event );
 
 			for ( const i in hooks ) {
 				const hook = hooks[ i ];
 
-				if ( undefined === this.depth.dependency[ hook.id ] ) {
-					this.depth.dependency[ hook.id ] = 0;
+				// If not exist, set zero.
+				if ( undefined === this.depth[ event ][ hook.id ] ) {
+					this.depth[ event ][ hook.id ] = 0;
 				}
 
-				this.depth.dependency[ hook.id ]++;
+				this.depth[ event ][ hook.id ]++;
 
-				if ( 1 === this.depth.dependency[ hook.id ] ) {
-					this.onCallback( command, args, 'dependency', hook.id );
+				// Prevent recursive hooks.
+				if ( 1 === this.depth[ event ][ hook.id ] ) {
+					this.onCallback( command, args, event, hook.id );
 
-					if ( ! hook.callback( args ) ) {
-						throw 'Break-Hook';
+					switch ( event ) {
+						case 'dependency': {
+							if ( ! hook.callback( args ) ) {
+								this.depth[ event ][ hook.id ]--;
+
+								throw 'Break-Hook';
+							}
+						}
+						break;
+
+						case 'after': {
+							hooks[ i ].callback( args, result );
+						}
+						break;
+
+						default:
+							throw Error( `Invalid event type: '${ event }'` );
 					}
 				}
 
-				this.depth.dependency[ hook.id ]--;
+				this.depth[ event ][ hook.id ]--;
 			}
 		}
 	}
 
+	runDependency( command, args ) {
+		this.run( 'dependency', command, args );
+	}
+
 	runAfter( command, args, result ) {
-		const hooks = this.hooks.after[ command ];
-
-		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
-			this.onRun( command, args, 'after' );
-
-			this.current = command;
-
-			for ( const i in hooks ) {
-				const hook = hooks[ i ];
-
-				if ( undefined === this.depth.after[ hook.id ] ) {
-					this.depth.after[ hook.id ] = 0;
-				}
-
-				this.depth.after[ hook.id ]++;
-
-				if ( 1 === this.depth.after[ hook.id ] ) {
-					this.onCallback( command, args, 'after', hook.id );
-
-					hooks[ i ].callback( args, result );
-				}
-
-				this.depth.after[ hook.id ]--;
-			}
-		}
+		this.run( 'after', command, args, result );
 	}
 
 	onRun( command, args, event ) {
