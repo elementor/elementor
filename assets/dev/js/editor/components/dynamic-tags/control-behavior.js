@@ -128,7 +128,8 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 
 		if ( tagView.model ) {
-			const elementContainer = this.view.options.container;
+			const elementContainer = this.view.options.container,
+				tagViewLabel = elementContainer.controls[ tagView.options.controlName ].label;
 
 			tagView.options.container = new elementorModules.editor.Container( {
 				type: 'TODO: @see control-behavior.js',
@@ -138,7 +139,7 @@ module.exports = Marionette.Behavior.extend( {
 				settings: tagView.model,
 				view: elementContainer.view,
 				parent: elementContainer,
-				label: elementContainer.label, /*' ' + tagView.model.get( 'label' ),*/
+				label: elementContainer.label + ' ' + tagViewLabel,
 				controls: tagView.model.options.controls,
 				renderer: elementContainer,
 			} );
