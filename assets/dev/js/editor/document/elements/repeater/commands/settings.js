@@ -111,7 +111,7 @@ export class Settings extends Base {
 			container.render();
 		} );
 
-		if ( elementor.history.history.getActive() ) {
+		if ( this.isHistoryActive() ) {
 			if ( options.debounceHistory ) {
 				Settings.debounceHistory( args );
 			} else {

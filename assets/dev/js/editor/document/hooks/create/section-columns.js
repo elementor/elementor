@@ -44,6 +44,9 @@ export class SectionColumns extends HookAfter {
 					elements: [],
 				};
 
+				/**
+				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.
+				 */
 				container.view.addChildModel( model, options );
 
 				/**

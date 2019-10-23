@@ -51,7 +51,7 @@ export class Remove extends Base {
 			const collection = container.settings.get( name ),
 				model = collection.at( index );
 
-			if ( elementor.history.history.getActive() ) {
+			if ( this.isHistoryActive() ) {
 				$e.run( 'document/history/addSubItem', {
 					container,
 					data: { name, model, index },
