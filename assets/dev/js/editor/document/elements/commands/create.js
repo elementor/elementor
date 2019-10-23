@@ -36,7 +36,7 @@ export class Create extends Base {
 			containers,
 			model,
 			type: 'add',
-			title: elementor.history.history.getModelLabel( model ),
+			title: elementorCommon.helpers.getModelLabel( model ),
 		};
 	}
 
@@ -49,6 +49,11 @@ export class Create extends Base {
 			container = container.lookup();
 
 			const createdContainer = container.view.addChildElement( model, options ).getContainer();
+
+			if ( options.edit && this.isHistoryActive() ) {
+				// TODO: remove trigger. run directly.
+				createdContainer.model.trigger( 'request:edit' );
+			}
 
 			result.push( createdContainer );
 

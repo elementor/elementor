@@ -6,6 +6,7 @@ import environment from '../../../../core/common/assets/js/utils/environment.js'
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
+import DocumentsManager from './document/manager';
 import ElementsComponent from './document/elements/component';
 import DynamicComponent from './document/dynamic/component';
 import RepeaterComponent from './document/elements/repeater/component.js';
@@ -267,6 +268,8 @@ const App = Marionette.Application.extend( {
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
+
+		this.documents = new DocumentsManager();
 
 		this.hooks = new EventManager();
 
@@ -752,6 +755,8 @@ const App = Marionette.Application.extend( {
 		this.initPreview();
 
 		this.logSite();
+
+		this.documents = new DocumentsManager();
 	},
 
 	onPreviewLoaded: function() {

@@ -80,11 +80,6 @@ module.exports = Marionette.CompositeView.extend( {
 			elementor.channels.data.trigger( options.trigger.afterAdd, newItem );
 		}
 
-		if ( options.edit && elementor.history.history.getActive() ) {
-			// TODO: should be directly.
-			newModel.trigger( 'request:edit' );
-		}
-
 		return newView;
 	},
 

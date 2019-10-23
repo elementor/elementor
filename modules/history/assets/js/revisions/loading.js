@@ -8,7 +8,7 @@ export default class extends Marionette.ItemView {
 	}
 
 	onRender() {
-		elementor.history.revisions.requestRevisions( () => {
+		this.options.document.revisions.requestRevisions( () => {
 			setTimeout( () => $e.routes.refreshContainer( 'panel' ) );
 		} );
 	}

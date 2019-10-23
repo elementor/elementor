@@ -6,17 +6,18 @@ export default class Component extends elementorModules.common.Component {
 	getCommands() {
 		return {
 			startLog: ( args ) => {
-				if ( elementor.history.history.isItemStarted() ) {
+				const { type, containers = [ args.container ] } = args,
+					history = elementor.documents.getCurrent().history;
+
+				if ( history.isItemStarted() ) {
 					$e.run( 'document/history/addSubItem', args );
 
 					return null;
 				}
 
-				if ( ! args.type ) {
+				if ( ! type ) {
 					throw Error( 'type is required.' );
 				}
-
-				const { containers = [ args.container ] } = args;
 
 				if ( ! containers.length ) {
 					throw Error( 'container or containers are required.' );
@@ -24,15 +25,15 @@ export default class Component extends elementorModules.common.Component {
 
 				args = this.normalizeLogArgs( args );
 
-				return elementor.history.history.startItem( args );
+				return history.startItem( args );
 			},
 
 			endLog: ( args ) => {
-				elementor.history.history.endItem( args.id );
+				elementor.documents.getCurrent().history.endItem( args.id );
 			},
 
 			deleteLog: ( args ) => {
-				elementor.history.history.deleteItem( args.id );
+				elementor.documents.getCurrent().history.deleteItem( args.id );
 			},
 
 			addItem: ( itemData ) => {
@@ -42,15 +43,17 @@ export default class Component extends elementorModules.common.Component {
 			},
 
 			addSubItem: ( args ) => {
-				if ( ! elementor.history.history.getActive() ) {
+				const history = elementor.documents.getCurrent().history;
+
+				if ( ! history.getActive() ) {
 					return;
 				}
 
-				const id = args.id || elementor.history.history.getCurrentId();
+				const id = args.id || history.getCurrentId();
 
 				args = this.normalizeLogArgs( args );
 
-				const items = elementor.history.history.getItems(),
+				const items = history.getItems(),
 					item = items.findWhere( { id } );
 
 				if ( ! item ) {
@@ -69,11 +72,11 @@ export default class Component extends elementorModules.common.Component {
 			},
 
 			undo: () => {
-				elementor.history.history.navigate();
+				elementor.documents.getCurrent().history.navigate();
 			},
 
 			redo: () => {
-				elementor.history.history.navigate( true );
+				elementor.documents.getCurrent().history.navigate( true );
 			},
 		};
 	}

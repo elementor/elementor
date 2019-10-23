@@ -23,8 +23,12 @@ module.exports = Marionette.CompositeView.extend( {
 
 	currentPreviewItem: null,
 
-	initialize: function() {
-		this.collection = elementor.history.revisions.getItems();
+	document: null,
+
+	initialize: function( options ) {
+		this.document = options.document;
+
+		this.collection = this.document.revisions.getItems();
 
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 
@@ -34,9 +38,10 @@ module.exports = Marionette.CompositeView.extend( {
 	getRevisionViewData: function( revisionView ) {
 		var self = this;
 
-		elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
+		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				elementor.history.revisions.setEditorData( data.elements );
+				self.document.revisions.setEditorData( data.elements );
+
 				elementor.settings.page.model.set( data.settings );
 
 				self.setRevisionsButtonsActive( true );
@@ -66,7 +71,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
-		elementor.history.revisions.deleteRevision( revisionView.model, {
+		this.document.revisions.deleteRevision( revisionView.model, {
 			success: function() {
 				if ( revisionView.model.get( 'id' ) === self.currentPreviewId ) {
 					self.onDiscardClick();
@@ -126,11 +131,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.currentPreviewId = null;
 
-		elementor.history.history.getItems().reset();
+		this.document.history.getItems().reset();
 	},
 
 	onDiscardClick: function() {
-		elementor.history.revisions.setEditorData( elementor.config.data );
+		this.document.revisions.setEditorData( elementor.config.data );
 
 		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
 

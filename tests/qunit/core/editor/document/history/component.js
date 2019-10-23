@@ -40,7 +40,7 @@ jQuery( () => {
 		hooks.beforeEach( () => {
 			Elements.empty();
 
-			elementor.history.history.getItems().reset();
+			elementor.documents.getCurrent().history.getItems().reset();
 		} );
 
 		QUnit.module( 'miscellaneous', () => {
@@ -49,7 +49,7 @@ jQuery( () => {
 
 				Elements.createSection( 1 );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Saver editor flag is `true`.
 				assert.equal( elementor.saver.isEditorChanged(), true, 'After create, saver editor flag is "true".' );
@@ -77,7 +77,7 @@ jQuery( () => {
 					// Do nothing (ignore).
 				}
 
-				const historyItem = elementor.history.history.getItems().at( 0 );
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 );
 
 				assert.equal( historyItem, undefined, 'History was rolled back.' );
 			} );
@@ -86,7 +86,7 @@ jQuery( () => {
 		QUnit.module( 'document/elements: Single Selection', () => {
 			QUnit.test( 'Create Section', ( assert ) => {
 				const eSection = Elements.createSection( 1 ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'Section' );
@@ -107,7 +107,7 @@ jQuery( () => {
 			QUnit.test( 'Create Column', ( assert ) => {
 				const eSection = Elements.createSection(),
 					eColumn = Elements.createColumn( eSection ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'Column' );
@@ -143,7 +143,7 @@ jQuery( () => {
 
 				Elements.resizeColumn( eColumn1, newSize );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'change', 'Column' );
@@ -165,7 +165,7 @@ jQuery( () => {
 
 			QUnit.test( 'Create Widget', ( assert ) => {
 				const eWidget = Elements.createAutoButton(),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'Button' );
@@ -186,7 +186,7 @@ jQuery( () => {
 			QUnit.test( 'Create Widget: Inner Section', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
 					eInnerSection = Elements.createInnerSection( eColumn ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes,
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes,
 					{ defaultInnerSectionColumns } = eInnerSection.view,
 					innerSectionColumnsIds = [];
 
@@ -223,7 +223,7 @@ jQuery( () => {
 			QUnit.test( 'Duplicate', ( assert ) => {
 				const eWidget = Elements.createAutoButton(),
 					eWidgetDuped = Elements.duplicate( eWidget ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'duplicate', 'Button' );
@@ -248,7 +248,7 @@ jQuery( () => {
 				Elements.copy( eWidget );
 
 				const ePastedWidget = Elements.paste( eColumn ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'Button' );
@@ -274,7 +274,7 @@ jQuery( () => {
 				// Change button text.
 				Elements.settings( eWidget, { text } );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'change', 'Button' );
@@ -291,7 +291,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Settings: Debounce', ( assert ) => {
-				const historyItems = elementor.history.history.getItems(),
+				const historyItems = elementor.documents.getCurrent().history.getItems(),
 					settingsChangeCount = 10,
 					eWidget = Elements.createAutoButton(),
 					historyCountBeforeDebounce = historyItems.length,
@@ -340,7 +340,7 @@ jQuery( () => {
 				Elements.copy( eWidgetStyled );
 				Elements.pasteStyle( eWidgetSimple );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
@@ -365,7 +365,7 @@ jQuery( () => {
 				Elements.resetStyle( eWidgetStyled );
 
 				const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
@@ -393,7 +393,7 @@ jQuery( () => {
 
 				Elements.move( eSection, elementor.getPreviewContainer(), { at: targetPosition } );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'move', 'Section' );
@@ -422,7 +422,7 @@ jQuery( () => {
 
 				Elements.move( eColumn, eSection2, { at: targetPosition } );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'move', 'Column' );
@@ -451,7 +451,7 @@ jQuery( () => {
 
 				Elements.move( eColumn2, eSection, { at: targetPosition } );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'move', 'Column' );
@@ -484,7 +484,7 @@ jQuery( () => {
 
 				Elements.move( eWidget, eColumn2, { at: targetPosition } );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'move', 'Button' );
@@ -509,7 +509,7 @@ jQuery( () => {
 
 				Elements.delete( eWidget );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'remove', 'Button' );
@@ -549,7 +549,7 @@ jQuery( () => {
 					settings: { text },
 				} );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'change', 'Button' );
@@ -577,7 +577,7 @@ jQuery( () => {
 
 				Elements.import( data, new Backbone.Model( model ) );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'template' );
@@ -631,7 +631,7 @@ jQuery( () => {
 				const eSection1 = Elements.createSection(),
 					eSection2 = Elements.createSection(),
 					eColumns = Elements.multiCreateColumn( [ eSection1, eSection2 ] ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'Column' );
@@ -651,7 +651,7 @@ jQuery( () => {
 
 			QUnit.test( 'Create Widgets', ( assert ) => {
 				const eWidgets = Elements.multiCreateAutoButton(),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'Button' );
@@ -672,7 +672,7 @@ jQuery( () => {
 				const eColumn1 = Elements.createSection( 1, true ),
 					eColumn2 = Elements.createSection( 1, true ),
 					eInnerSections = Elements.multiCreateInnerSection( [ eColumn1, eColumn2 ] ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes,
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes,
 					{ defaultInnerSectionColumns } = eInnerSections[ 0 ].view,
 					innerSectionColumnsIds = {};
 
@@ -725,7 +725,7 @@ jQuery( () => {
 			QUnit.test( 'Duplicate', ( assert ) => {
 				const eWidgets = Elements.multiCreateAutoButton(),
 					eWidgetsDuped = Elements.multiDuplicate( eWidgets ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'duplicate', 'elements' );
@@ -752,7 +752,7 @@ jQuery( () => {
 				Elements.copy( eWidget );
 
 				const ePastedWidgets = Elements.multiPaste( [ eColumn2, eColumn3 ] ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'Button' );
@@ -777,7 +777,7 @@ jQuery( () => {
 				// Change button text.
 				Elements.multiSettings( eWidgets, { text } );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'change', 'elements' );
@@ -806,7 +806,7 @@ jQuery( () => {
 				Elements.copy( eWidgetStyled );
 				Elements.multiPasteStyle( eWidgetsSimple );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );
@@ -835,7 +835,7 @@ jQuery( () => {
 				Elements.multiResetStyle( eWidgetsStyled );
 
 				const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );
@@ -867,7 +867,7 @@ jQuery( () => {
 					tab_content: 'Test Tab Content',
 				} );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'Tabs' );
@@ -891,7 +891,7 @@ jQuery( () => {
 					eTabs = Elements.createTabs( eColumn ),
 					originalItemsCount = eTabs.settings.get( 'tabs' ).length,
 					eTabModel = Elements.repeaterRemove( eTabs, 'tabs', 1 ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'remove', 'Tabs' );
@@ -923,7 +923,7 @@ jQuery( () => {
 					tab_title: tabTitle,
 				} );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'change', 'Tabs' );
@@ -946,7 +946,7 @@ jQuery( () => {
 					eTabs = Elements.createTabs( eColumn ),
 					originalItemsCount = eTabs.settings.get( 'tabs' ).length,
 					eTabModel = Elements.repeaterDuplicate( eTabs, 'tabs', 1 ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'duplicate', 'Tabs' );
@@ -975,7 +975,7 @@ jQuery( () => {
 
 				Elements.repeaterMove( eTabs, 'tabs', sourceIndex, targetIndex );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'move', 'Tabs' );
@@ -1074,7 +1074,7 @@ jQuery( () => {
 					tab_content: 'Test Tab Content',
 				} );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'add', 'elements' );
@@ -1107,7 +1107,7 @@ jQuery( () => {
 
 				Elements.multiRepeaterRemove( eMultiTabs, 'tabs', 1 );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'remove', 'elements' );
@@ -1144,7 +1144,7 @@ jQuery( () => {
 					tab_title: tabTitle,
 				} );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'change', 'elements' );
@@ -1177,7 +1177,7 @@ jQuery( () => {
 
 				Elements.multiRepeaterDuplicate( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'duplicate', 'elements' );
@@ -1218,7 +1218,7 @@ jQuery( () => {
 					targetIndex
 				);
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 				let count = 0;
 
 				// Exist in history.

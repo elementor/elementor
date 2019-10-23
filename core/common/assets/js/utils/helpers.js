@@ -57,4 +57,12 @@ export default class Helpers {
 
 		return elements ? elements[ 0 ] : false;
 	}
+
+	getModelLabel( model ) {
+		if ( ! ( model instanceof Backbone.Model ) ) {
+			model = new Backbone.Model( model );
+		}
+
+		return elementor.getElementData( model ).title;
+	}
 }

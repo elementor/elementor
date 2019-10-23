@@ -235,12 +235,12 @@ export default class Base {
 	/**
 	 * Function isHistoryActive().
 	 *
-	 * Return `elementor.history.history.getActive()`.
+	 * Return history status.
 	 *
 	 * @returns {boolean}
 	 */
 	isHistoryActive() {
-		return elementor.history.history.getActive();
+		return elementor.documents.getCurrent().history.getActive();
 	}
 
 	/**
