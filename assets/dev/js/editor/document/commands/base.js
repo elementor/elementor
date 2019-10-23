@@ -45,9 +45,7 @@ export default class Base {
 		const containers = args.containers || [ args.container ];
 
 		containers.forEach( ( container ) => {
-			if ( ! ( container instanceof elementorModules.editor.Container ) ) {
-				throw Error( 'container invalid instance.' );
-			}
+			this.requireArgumentInstance( 'container', elementorModules.editor.Container, { container } );
 		} );
 	}
 
