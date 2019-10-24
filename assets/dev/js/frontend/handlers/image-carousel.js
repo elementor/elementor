@@ -62,6 +62,10 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		if ( isSingleSlide ) {
 			swiperOptions.effect = elementSettings.effect;
+
+			if ( 'fade' === elementSettings.effect ) {
+				swiperOptions.fadeEffect = { crossFade: true };
+			}
 		} else {
 			swiperOptions.slidesPerGroup = +elementSettings.slides_to_scroll || 1;
 		}
@@ -100,7 +104,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		if ( ! this.elements.$carousel.length ) {
+		if ( ! this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length ) {
 			return;
 		}
 
