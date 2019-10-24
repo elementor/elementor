@@ -238,6 +238,12 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 					[
 						'social_icon' => [
+							'value' => 'fab fa-twitter',
+							'library' => 'fa-brands',
+						],
+					],
+					[
+						'social_icon' => [
 							'value' => 'fab fa-youtube',
 							'library' => 'fa-brands',
 						],
