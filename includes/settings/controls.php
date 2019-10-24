@@ -193,7 +193,7 @@ class Settings_Controls {
 		/**
 		 * Filters the list of post type objects used by Elementor.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param array $post_types_objects List of post type objects used by Elementor.
 		 */
