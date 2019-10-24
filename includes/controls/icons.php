@@ -65,12 +65,12 @@ class Control_Icons extends Control_Base_Multiple {
 		<# if ( 'inline' === data.skin ) { #>
 			<?php $this->render_inline_skin(); ?>
 		<# } else { #>
-			<?php $this->render_full_skin(); ?>
+			<?php $this->render_media_skin(); ?>
 		<# } #>
 		<?php
 	}
 
-	public function render_full_skin() {
+	public function render_media_skin() {
 		?>
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
