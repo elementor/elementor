@@ -118,7 +118,6 @@ class Widget_Social_Icons extends Widget_Base {
 						'github',
 						'gitlab',
 						'globe',
-						'google-plus',
 						'houzz',
 						'instagram',
 						'jsfiddle',
@@ -239,13 +238,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 					[
 						'social_icon' => [
-							'value' => 'fab fa-twitter',
-							'library' => 'fa-brands',
-						],
-					],
-					[
-						'social_icon' => [
-							'value' => 'fab fa-google-plus',
+							'value' => 'fab fa-youtube',
 							'library' => 'fa-brands',
 						],
 					],
