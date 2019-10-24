@@ -78,10 +78,9 @@ export default class Hooks extends elementorModules.Module {
 	}
 
 	run( event, command, args, result ) {
-		const hooks = this.hooks[ event ][ command ],
-			{ history } = elementor.documents.get();
+		const hooks = this.hooks[ event ][ command ];
 
-		if ( history.getActive() && hooks && hooks.length ) {
+		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
 			this.current = command;
 
 			this.onRun( command, args, event );
