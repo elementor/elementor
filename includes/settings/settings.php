@@ -298,7 +298,7 @@ class Settings extends Settings_Page {
 	 *
 	 * Output the content for the custom icons page.
 	 *
-	 * @since 2.6.0
+	 * @since 2.8.0
 	 * @access public
 	 */
 	public function elementor_custom_icons() {
