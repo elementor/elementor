@@ -150,7 +150,7 @@ class Embed {
 		$default_frame_attributes = [
 			'class' => 'elementor-video-iframe',
 			'allowfullscreen',
-			'title' => $video_properties['provider'] . ' video iFrame',
+			'title' => sprintf( __( '%s Video Player', 'elementor' ), $video_properties['provider'] ),
 		];
 
 		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
