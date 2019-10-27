@@ -690,7 +690,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'auto' => __( 'Auto', 'elementor' ),
 				'cover' => __( 'Cover', 'elementor' ),
 				'contain' => __( 'Contain', 'elementor' ),
-				'initial' => __( 'Custom', 'elementor' ),
 			],
 			'selectors' => [
 				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-size: {{VALUE}};',
@@ -716,7 +715,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'bottom left' => __( 'Bottom Left', 'elementor' ),
 				'bottom center' => __( 'Bottom Center', 'elementor' ),
 				'bottom right' => __( 'Bottom Right', 'elementor' ),
-				'initial' => __( 'Custom', 'elementor' ),
 
 			],
 			'selectors' => [
