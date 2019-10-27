@@ -73,8 +73,15 @@
 			}
 		}
 	}
-}
 
+	&.elementor-message-announcement {
+		border-color: $editor-accent;
+
+		a {
+			color: $editor-accent;
+		}
+	}
+}
 
 @media (min-width: 1200px) {
 
