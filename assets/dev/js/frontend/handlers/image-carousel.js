@@ -112,13 +112,14 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
 
-		if ( !! elementSettings.pause_on_hover ) {
-			this.elements.$carousel.on( 'mouseenter', () => {
-				this.swiper.autoplay.stop();
-			} );
-
-			this.elements.$carousel.on( 'mouseleave', () => {
-				this.swiper.autoplay.start();
+		if ( elementSettings.pause_on_hover ) {
+			this.elements.$carousel.on( {
+				mouseenter: () => {
+					this.swiper.autoplay.stop();
+				},
+				mouseleave: () => {
+					this.swiper.autoplay.start();
+				},
 			} );
 		}
 	}
