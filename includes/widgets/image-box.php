@@ -520,7 +520,7 @@ class Widget_Image_Box extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		$has_content = ! empty( $settings['title_text'] ) || ! empty( $settings['description_text'] );
+		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
 
 		$html = '<div class="elementor-image-box-wrapper">';
 
@@ -557,7 +557,7 @@ class Widget_Image_Box extends Widget_Base {
 		if ( $has_content ) {
 			$html .= '<div class="elementor-image-box-content">';
 
-			if ( ! empty( $settings['title_text'] ) ) {
+			if ( ! Utils::is_empty( $settings['title_text'] ) ) {
 				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
 
 				$this->add_inline_editing_attributes( 'title_text', 'none' );
@@ -571,7 +571,7 @@ class Widget_Image_Box extends Widget_Base {
 				$html .= sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['title_size'], $this->get_render_attribute_string( 'title_text' ), $title_html );
 			}
 
-			if ( ! empty( $settings['description_text'] ) ) {
+			if ( ! Utils::is_empty( $settings['description_text'] ) ) {
 				$this->add_render_attribute( 'description_text', 'class', 'elementor-image-box-description' );
 
 				$this->add_inline_editing_attributes( 'description_text' );

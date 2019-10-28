@@ -73,7 +73,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'finder',
-			icon: 'eicon-search',
+			icon: 'eicon-search-bold',
 			title: elementorCommon.translate( 'finder', 'finder' ),
 			callback: () => $e.route( 'finder' ),
 		}, 'go_to', 'view-page' );
