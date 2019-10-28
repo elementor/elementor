@@ -82,10 +82,10 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 
 		this.activeItemIndex = this.swiper ? this.swiper.activeIndex : this.getInitialSlide();
 
-		if ( ! this.swiper ) {
-			this.$activeImageBg = jQuery( this.elements.$mainSwiperSlides[ 0 ] ).children( '.' + settings.classes.swiperSlideInner );
-		} else {
+		if ( this.swiper ) {
 			this.$activeImageBg = jQuery( this.swiper.slides[ this.activeItemIndex ] ).children( '.' + settings.classes.swiperSlideInner );
+		} else {
+			this.$activeImageBg = jQuery( this.elements.$mainSwiperSlides[ 0 ] ).children( '.' + settings.classes.swiperSlideInner );
 		}
 
 		this.$activeImageBg.addClass( settings.classes.kenBurnsActive );
