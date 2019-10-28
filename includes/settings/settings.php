@@ -140,6 +140,15 @@ class Settings extends Settings_Page {
 
 		add_submenu_page(
 			self::PAGE_ID,
+			__( 'Custom Icons', 'elementor' ),
+			__( 'Custom Icons', 'elementor' ),
+			'manage_options',
+			'elementor_custom_icons',
+			[ $this, 'elementor_custom_icons' ]
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
 			'',
 			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . __( 'Go Pro', 'elementor' ),
 			'manage_options',
@@ -279,6 +288,27 @@ class Settings extends Settings_Page {
 				<h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
 				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the custom icons page.
+	 *
+	 * @since 2.8.0
+	 * @access public
+	 */
+	public function elementor_custom_icons() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Add Your Custom Icons', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Don\'t rely solely on the FontAwesome icons everyone else is using! Differentiate your website and your style with custom icons you can upload from your favorite icons source.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-icons&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php

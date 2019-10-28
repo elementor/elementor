@@ -139,7 +139,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	onInit() {
 		super.onInit();
 
-		this.run();
+		if ( this.getElementSettings( 'background_slideshow_gallery' ) ) {
+			this.run();
+		}
 	}
 
 	onDestroy() {
