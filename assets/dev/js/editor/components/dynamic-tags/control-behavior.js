@@ -203,9 +203,8 @@ module.exports = Marionette.Behavior.extend( {
 				},
 			} );
 		} else {
-			$e.run( 'document/dynamic/toggle', {
+			$e.run( 'document/dynamic/enable', {
 				container: this.view.options.container,
-				status: true,
 				settings: {
 					[ this.view.model.get( 'name' ) ]: this.tagViewToTagText(),
 				},
@@ -221,9 +220,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onTagViewRemove: function() {
-		$e.run( 'document/dynamic/toggle', {
+		$e.run( 'document/dynamic/disable', {
 			container: this.view.options.container,
-			status: false,
 			settings: {
 				[ this.view.model.get( 'name' ) ]: this.tagViewToTagText(),
 			},
