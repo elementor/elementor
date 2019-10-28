@@ -19,17 +19,17 @@ abstract class Base_App {
 
 	/**
 	 * @since 2.3.0
-	 * @access public
-	 * @abstract
-	 */
-	abstract public function render_admin_widget();
-
-	/**
-	 * @since 2.3.0
 	 * @access protected
 	 * @abstract
 	 */
-	abstract protected function get_slug();
+	abstract public function get_slug();
+
+	/**
+	 * @since 2.8.0
+	 * @access protected
+	 * @abstract
+	 */
+	abstract public function get_title();
 
 	/**
 	 * @since 2.3.0
@@ -45,6 +45,26 @@ abstract class Base_App {
 	 */
 	public static function get_class_name() {
 		return get_called_class();
+	}
+
+	/**
+	 * @access public
+	 * @abstract
+	 */
+	public function render_admin_widget() {
+		echo '<h2>' . $this->get_title() . '</h2>';
+
+		if ( $this->is_connected() ) {
+			$remote_user = $this->get( 'user' );
+			$title = sprintf( __( 'Connected as %s', 'elementor' ), '<strong>' . $remote_user->email . '</strong>' );
+			$label = __( 'Disconnect', 'elementor' );
+			$url = $this->get_admin_url( 'disconnect' );
+			$attr = '';
+
+			echo sprintf( '%s <a %s href="%s">%s</a>', $title, $attr, esc_attr( $url ), esc_html( $label ) );
+		} else {
+			echo 'Not Connected';
+		}
 	}
 
 	/**
@@ -65,6 +85,7 @@ abstract class Base_App {
 		if ( ! $notices ) {
 			return;
 		}
+
 		echo '<div id="message" class="updated notice is-dismissible"><p>';
 
 		foreach ( $notices as $notice ) {
@@ -258,7 +279,7 @@ abstract class Base_App {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function request( $action, $request_body = [] ) {
+	protected function request( $action, $request_body = [], $as_array = false ) {
 		$request_body = [
 			'app' => $this->get_slug(),
 			'access_token' => $this->get( 'access_token' ),
@@ -299,13 +320,16 @@ abstract class Base_App {
 			$body = true;
 		}
 
-		$body = json_decode( $body );
+		$body = json_decode( $body, $as_array );
 
 		if ( false === $body ) {
 			return new \WP_Error( 422, 'Wrong Server Response' );
 		}
 
 		if ( 200 !== $response_code ) {
+			// In case $as_array = true.
+			$body = (object) $body;
+
 			$message = $body->message ? $body->message : wp_remote_retrieve_response_message( $response );
 			$code = $body->code ? $body->code : $response_code;
 
@@ -343,7 +367,10 @@ abstract class Base_App {
 	protected function get_remote_authorize_url() {
 		$redirect_uri = $this->get_admin_url( 'get_token' );
 		if ( ! empty( $_REQUEST['mode'] ) && 'popup' === $_REQUEST['mode'] ) {
-			$redirect_uri = add_query_arg( 'mode', 'popup', $redirect_uri );
+			$redirect_uri = add_query_arg( [
+				'mode' => 'popup',
+				'callback_id' => esc_attr( $_REQUEST['callback_id'] ),
+			], $redirect_uri );
 		}
 
 		$url = add_query_arg( [
@@ -410,7 +437,7 @@ abstract class Base_App {
 		?>
 		<script>
 			if ( opener && opener !== window ) {
-				opener.jQuery( 'body' ).trigger( 'elementorConnected' );
+				opener.jQuery( 'body' ).trigger( 'elementorConnectSuccess-<?php echo esc_attr( $_REQUEST['callback_id'] ); ?>' );
 				window.close();
 				opener.focus();
 			} else {

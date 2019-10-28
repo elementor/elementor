@@ -792,6 +792,44 @@ label.elementor-template-library-order-label {
 		}
 	}
 }
+#elementor-template-library-connect {
+	background: linear-gradient(180deg, #F9FAFB 0%, #F1F3F5 100%);
+
+	.elementor-connect-popup {
+		padding: 10px 15px;
+	}
+
+	&-logo {
+		background-image: linear-gradient(-135deg, $brand-color-light, $brand-color-dark);
+		padding: 9px 13px;
+		border-radius: 4px;
+		color: #fff;
+		font-size: 20px;
+		display: inline-block;
+	}
+
+	&-content {
+		padding: 20px;
+	}
+
+	&-thumbnails {
+		margin-top:100px;
+		display: flex;
+		overflow: hidden;
+
+		.thumbnail{
+			transform: rotate(22deg) skew(-40deg);
+			-webkit-transform: rotate(18deg) skew(-38deg);
+			-moz-transform: rotate(22deg) skew(-40deg);
+			box-shadow: #c7c0c0 1px 1px 11px 1px;
+			transition: all 0.5s;
+			background-size: contain;
+			height: 200px;
+			width: 180px;
+			opacity: 0;
+		}
+	}
+}
 
 .elementor-template-library-blank-footer {
 	position: absolute;
