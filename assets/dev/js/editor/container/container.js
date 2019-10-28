@@ -118,7 +118,7 @@ export default class Container {
 			this.renderer = this;
 		}
 
-		this.dynamic = new Backbone.Model( this.model.get( '__dynamic__' ) );
+		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
 		this.panel = new Panel( this );
 	}
 

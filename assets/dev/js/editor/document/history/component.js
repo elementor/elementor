@@ -6,7 +6,7 @@ export default class Component extends elementorModules.common.Component {
 	getCommands() {
 		return {
 			startLog: ( args ) => {
-				if ( elementor.history.history.isItemStarted() ) {
+				if ( elementor.history.history.isItemStarted() || args.id ) {
 					$e.run( 'document/history/addSubItem', args );
 
 					return null;

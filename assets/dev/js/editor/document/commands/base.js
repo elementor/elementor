@@ -191,6 +191,16 @@ export default class Base {
 		let result;
 
 		if ( this.history && this.isHistoryActive() ) {
+			/**
+			 * If `historyId` was passed, assuming that is sub history item.
+			 * If so, pass `id` to `document/history/startLog` to apply history sub item.
+			 */
+			if ( this.args.histroyId ) {
+				this.history.id = this.args.histroyId;
+
+				delete this.args.histroyId;
+			}
+
 			this.historyId = $e.run( 'document/history/startLog', this.history );
 		}
 
@@ -217,9 +227,7 @@ export default class Base {
 			return false;
 		}
 
-		this.onAfterApply( this.args );
-
-		$e.hooks.runAfter( this.currentCommand, this.args, result );
+		this.onAfterApply( this.args, result );
 
 		if ( this.historyId ) {
 			$e.run( 'document/history/endLog', { id: this.historyId } );
@@ -259,5 +267,7 @@ export default class Base {
 	 *
 	 * @param {{}} args
 	 */
-	onAfterApply( args ) {}
+	onAfterApply( args, result ) {
+		$e.hooks.runAfter( this.currentCommand, args, result );
+	}
 }

@@ -61,6 +61,14 @@ export default class Debounce extends Base {
 	}
 
 	/**
+	 * Function runHookAfter().
+	 *
+	 * Run the hook after.
+	 */
+	runHookAfter() {
+		$e.hooks.runAfter( this.currentCommand, this.args );
+	}
+	/**
 	 * Function getArgsUniqueId().
 	 *
 	 * Get "snapshot" of args and return unique id.
@@ -110,9 +118,7 @@ export default class Debounce extends Base {
 			// Anyway if `options.debounceHistory` set to be true, we create timeout for saving log history.
 			Debounce.uniqueArgsStates.push( {
 				id: currentArgsUniqueId,
-				handler: setTimeout( () => {
-					this.constructor.logHistory( args, Debounce.lastHistoryId );
-				}, DEFAULT_DEBOUNCE_DELAY ),
+				handler: setTimeout( this.onDebounceTimeout.bind( this ), DEFAULT_DEBOUNCE_DELAY ),
 			} );
 
 			// Init || Update timer.
@@ -129,10 +135,21 @@ export default class Debounce extends Base {
 	onAfterApply( args ) {
 		if ( this.isHistoryActive() ) {
 			if ( 'normal' === Debounce.action ) {
+				this.runHookAfter();
 				this.constructor.logHistory( args );
 			} else if ( 'debounce' === Debounce.action && this.historyId ) {
 				Debounce.lastHistoryId = this.historyId;
 			}
 		}
+	}
+
+	/**
+	 * Function onDebounceTimeout().
+	 *
+	 * On each debounce that reached timeout.
+	 */
+	onDebounceTimeout() {
+		this.runHookAfter();
+		this.constructor.logHistory( this.args, Debounce.lastHistoryId );
 	}
 }

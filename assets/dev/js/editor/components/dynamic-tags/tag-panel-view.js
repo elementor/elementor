@@ -104,11 +104,11 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	initialize: function() {
+		this.initModel();
+
 		if ( ! this.hasSettings() ) {
 			return;
 		}
-
-		this.initModel();
 
 		this.initSettingsPopup();
 

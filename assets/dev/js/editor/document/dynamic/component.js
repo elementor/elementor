@@ -8,6 +8,7 @@ export default class Component extends elementorModules.common.Component {
 	defaultCommands() {
 		return {
 			settings: ( args ) => ( new Commands.Settings( args ) ).run(),
+			toggle: ( args ) => ( new Commands.Toggle( args ) ).run(),
 		};
 	}
 }
