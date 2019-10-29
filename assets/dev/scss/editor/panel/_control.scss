@@ -408,9 +408,10 @@
 	}
 }
 
+$item-size: 2em;
+
 .elementor-control-responsive-switchers {
 	@include margin-end(5px);
-	$item-size: 2em;
 	--selected-option: 0;
 	--pointer-position: var(--selected-option);
 
@@ -424,7 +425,7 @@
 		top: 0;
 		background-color: #fff;
 		border-radius: 3px;
-		transition: $transition-hover;
+		transition: 0.15s;
 		border: 1px transparent solid;
 	}
 
@@ -452,7 +453,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: $transition-hover;
+	transition: 0.15s;
 	position: relative;
 	z-index: 2;
 	cursor: pointer;
