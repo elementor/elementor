@@ -569,8 +569,8 @@ jQuery( () => {
 					done();
 				}, DEFAULT_DEBOUNCE_DELAY );
 			} );
-
-			QUnit.test( 'Dynamic in repeater', ( assert ) => {/*
+/*
+			QUnit.test( 'Dynamic in repeater', ( assert ) => {
 				assert.equal( 1, 2, 'TODO: complete the test' );
 				const eForm = Elements.createAutoForm(),
 					eFormItem = eForm.children[ 0 ],
@@ -599,9 +599,9 @@ jQuery( () => {
 					settings: { field_value: dynamicTag },
 				} );
 
-				done = assert.async();*/
+				done = assert.async();
 			} );
-
+*/
 			QUnit.test( 'Import', ( assert ) => {
 				// eslint-disable-next-line camelcase
 				const { model, content, page_settings } = BlockFaq;
