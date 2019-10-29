@@ -52,7 +52,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
 				delay: elementSettings.autoplay_speed,
-				disableOnInteraction: !! elementSettings.pause_on_hover,
+				disableOnInteraction: !! elementSettings.pause_on_interaction,
 			};
 		}
 
