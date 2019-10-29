@@ -5,6 +5,8 @@ export class Disable extends DisableEnable {
 		const { settings, containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			Object.keys( settings ).forEach( ( setting ) => {
 				container.dynamic.unset( setting );
 			} );

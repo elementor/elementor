@@ -127,10 +127,16 @@ export default class Container {
 	 *
 	 * If the view were destroyed, try to find it again if it exists.
 	 *
+	 * TODO: Refactor.
+	 *
 	 * @returns {Container}
 	 */
 	lookup() {
 		let result = this;
+
+		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
+			this.renderer = this.renderer.lookup();
+		}
 
 		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
 			return result;

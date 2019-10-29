@@ -5,6 +5,8 @@ export class Enable extends DisableEnable {
 		const { settings, containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			container.dynamic.set( settings );
 
 			container.settings.set( '__dynamic__', container.dynamic.toJSON() );

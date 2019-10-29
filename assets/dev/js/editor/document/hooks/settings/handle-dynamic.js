@@ -30,8 +30,9 @@ export class HandleDynamic extends HookAfter {
 					};
 
 				// Upon debounce, chain HistoryId.
-				if ( 'debounce' === Debounce.action && Debounce.lastHistoryId ) {
+				if ( Debounce.lastHistoryId ) {
 					commandArgs.histroyId = Debounce.lastHistoryId;
+
 				}
 
 				$e.run( 'document/dynamic/settings', commandArgs );

@@ -55,6 +55,8 @@ export class Settings extends Base {
 		const { settings, containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			if ( ! Object.keys( settings ).length ) {
 				container.dynamic.clear();
 			} else {
