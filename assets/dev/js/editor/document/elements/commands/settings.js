@@ -142,6 +142,10 @@ export class Settings extends Debounce {
 			container.render();
 		} );
 	}
+
+	isDataChanged() {
+		return true;
+	}
 }
 
 export default Settings;

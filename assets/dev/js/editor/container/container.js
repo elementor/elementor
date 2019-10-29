@@ -140,6 +140,12 @@ export default class Container {
 
 		if ( lookup ) {
 			result = lookup.getContainer();
+
+			// Hack For repeater item the result is the parent container.
+			if ( 'repeater' === this.type ) {
+				this.settings = result.settings.get( this.model.name ).findWhere( { _id: this.id } );
+				return this;
+			}
 		}
 
 		return result;

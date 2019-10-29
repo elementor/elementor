@@ -31,38 +31,6 @@ QUnit.module( 'Component: document/dynamic', () => {
 
 			done = assert.async();
 		} );
-
-		QUnit.test( 'In Repeater', ( assert ) => {
-			assert.equal( 1, 2, 'TODO: complete the test' );
-			/*const eForm = Elements.createAutoForm(),
-				eFormItem = eForm.children[ 0 ],
-				dynamicTag = '[elementor-tag id="d96ebd2" name="post-date" settings="%7B%22format%22%3A%22d%2Fm%2FY%22%7D"]', // post-date with non default format.
-				dynamicValue = '{ dynamic text }',
-				{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
-				tag = elementor.dynamicTags.createTag( id, name, settings ),
-				key = elementor.dynamicTags.createCacheKey( tag );
-
-			// Set fake data.
-			elementor.dynamicTags.cache[ key ] = dynamicValue;
-
-			let done;
-
-			eFormItem.view.attachElContent = function( html ) {
-				eFormItem.view.$el.empty().append( html );
-
-				done();
-
-				assert.equal( eForm.view.$el.find( '.button-text' ).html(), dynamicValue,
-					`button text changed to dynamic value: '${ dynamicValue }'` );
-			};
-
-			$e.run( 'document/dynamic/settings', {
-				container: eFormItem,
-				settings: { field_value: dynamicTag },
-			} );
-
-			done = assert.async();*/
-		} );
 	} );
 
 	QUnit.module( 'Multiple Selection', () => {
