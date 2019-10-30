@@ -18,6 +18,11 @@
 		.wp-picker-input-wrap {
 			padding-left: 10px;
 			float: $start;
+
+			.button.wp-picker-default {
+				margin: 0;
+				padding: 0;
+			}
 		}
 	}
 
