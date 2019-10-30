@@ -302,7 +302,7 @@ BaseElementView = BaseContainer.extend( {
 			jQuery.extend( model, customData );
 		}
 
-		$e.run( 'document/elements/create', {
+		return $e.run( 'document/elements/create', {
 			container: this.getContainer(),
 			model,
 			options,

@@ -250,11 +250,26 @@ var	Manager = function() {
 	};
 
 	this.getModelLabel = function( model ) {
+		// TODO: this is not the right place for the function ( should be static. ).
+		let result;
+
 		if ( ! ( model instanceof Backbone.Model ) ) {
 			model = new Backbone.Model( model );
 		}
 
-		return elementor.getElementData( model ).title;
+		if ( model.get( 'labelSuffix' ) ) {
+			result = model.get( 'title' ) + ' ' + model.get( 'labelSuffix' );
+		} else if ( 'global' === model.get( 'widgetType' ) ) {
+			if ( model.getTitle ) {
+				result = model.getTitle();
+			}
+		}
+
+		if ( ! result ) {
+			result = elementor.getElementData( model ).title;
+		}
+
+		return result;
 	};
 
 	init();
