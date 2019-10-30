@@ -541,6 +541,6 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 
-		add_action( 'admin_init', [ $this, 'add_system_info_report' ] );
+		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 50 );
 	}
 }
