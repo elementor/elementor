@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.3  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.7.4  
+**Stable tag:** 2.7.5  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -222,6 +222,13 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.7.5 - 2019-10-28 ###
+* Tweak: Changed the "Finder" icon in the Editor panel
+* Fix: Added official color support for `linkedin-in` icon in Social Icons widget ([#9298](https://github.com/elementor/elementor/issues/9298))
+* Fix: `Ctrl/CMD + Shift + L` not opening Library modal
+* Fix: Clear Log button HTML shows in System Info Copy & Paste section
+* Fix: Ken burns effect not working on the 1st slide if Infinite Loop option is turned off in Background Slideshow
 
 ### 2.7.4 - 2019-10-06 ###
 * Tweak: Improved filtering animation behavior in Gallery widget
