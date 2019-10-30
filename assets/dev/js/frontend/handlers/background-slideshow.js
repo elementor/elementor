@@ -14,9 +14,20 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		};
 	}
 
+	getDefaultElements() {
+		const classes = this.getSettings( 'classes' );
+
+		const elements = {
+			$slider: this.$element.find( '.' + classes.swiperContainer ),
+		};
+
+		elements.$mainSwiperSlides = elements.$slider.find( '.' + classes.swiperSlide );
+
+		return elements;
+	}
+
 	getSwiperOptions() {
-		const elementSettings = this.getElementSettings(),
-			kenBurnsActiveClass = this.getSettings( 'classes.kenBurnsActive' );
+		const elementSettings = this.getElementSettings();
 
 		const swiperOptions = {
 			grabCursor: false,
@@ -29,14 +40,8 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 				stopOnLastSlide: ! elementSettings.background_slideshow_loop,
 			},
 			on: {
-				slideChange: function() {
-					if ( this.$activeImage ) {
-						this.$activeImage.removeClass( kenBurnsActiveClass );
-					}
-
-					this.$activeImage = jQuery( this.slides[ this.activeIndex ] ).children();
-
-					this.$activeImage.addClass( kenBurnsActiveClass );
+				slideChange: () => {
+					this.handleKenBurns();
 				},
 			},
 		};
@@ -60,6 +65,30 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		}
 
 		return swiperOptions;
+	}
+
+	getInitialSlide() {
+		const editSettings = this.getEditSettings();
+
+		return editSettings.activeItemIndex ? editSettings.activeItemIndex - 1 : 0;
+	}
+
+	handleKenBurns() {
+		const settings = this.getSettings();
+
+		if ( this.$activeImageBg ) {
+			this.$activeImageBg.removeClass( settings.classes.kenBurnsActive );
+		}
+
+		this.activeItemIndex = this.swiper ? this.swiper.activeIndex : this.getInitialSlide();
+
+		if ( this.swiper ) {
+			this.$activeImageBg = jQuery( this.swiper.slides[ this.activeItemIndex ] ).children( '.' + settings.classes.swiperSlideInner );
+		} else {
+			this.$activeImageBg = jQuery( this.elements.$mainSwiperSlides[ 0 ] ).children( '.' + settings.classes.swiperSlideInner );
+		}
+
+		this.$activeImageBg.addClass( settings.classes.kenBurnsActive );
 	}
 
 	getSlidesCount() {
@@ -112,6 +141,8 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		}
 
 		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
+
+		this.handleKenBurns();
 	}
 
 	activate() {

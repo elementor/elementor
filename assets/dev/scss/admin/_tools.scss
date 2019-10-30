@@ -6,3 +6,14 @@
 		display: none;
 	}
 }
+
+#elementor_rollback {
+
+	> div {
+		display: flex;
+
+		select {
+			@include margin-end(6px);
+		}
+	}
+}

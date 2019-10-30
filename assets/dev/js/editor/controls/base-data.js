@@ -212,7 +212,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	onResponsiveSwitchersClick: function( event ) {
-		var device = jQuery( event.currentTarget ).data( 'device' );
+		const $switcher = jQuery( event.currentTarget ),
+			device = $switcher.data( 'device' ),
+			$switchersWrapper = this.ui.responsiveSwitchersWrapper,
+			selectedOption = $switcher.index();
+
+		$switchersWrapper.toggleClass( 'elementor-responsive-switchers-open' );
+		$switchersWrapper[ 0 ].style.setProperty( '--selected-option', selectedOption );
 
 		this.triggerMethod( 'responsive:switcher:click', device );
 
@@ -223,6 +229,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
+
+		this.ui.responsiveSwitchersWrapper = this.$el.find( '.elementor-control-responsive-switchers' );
 	},
 
 	onAfterExternalChange: function() {
