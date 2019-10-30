@@ -101,9 +101,6 @@ class Module extends BaseModule {
 			'i18n' => [
 				'connect_error' => __( 'Unable to connect', 'elementor' ),
 			],
-			'connect' => [
-				'is_connected' => $this->get_app( 'library' )->is_connected(),
-			],
 		] );
 	}
 

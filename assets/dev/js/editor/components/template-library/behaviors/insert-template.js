@@ -14,7 +14,7 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 			model: this.view.model,
 		};
 
-		if ( ! elementor.config.connect.is_connected ) {
+		if ( ! elementor.config.library_connect.is_connected ) {
 			$e.route( 'library/connect', args );
 			return;
 		}

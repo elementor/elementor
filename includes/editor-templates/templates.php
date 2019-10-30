@@ -281,6 +281,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</a>
 	</div>
 
-	<div id="elementor-template-library-connect-thumbnails"></div>
+	<div id="elementor-template-library-connect-thumbnails">
+		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2017/03/lp2-l.png);"></div>
+		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2016/08/0016.png);"></div>
+		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2016/10/0022.png);"></div>
+		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2016/08/0019.png);"></div>
+		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2016/08/0003.png);"></div>
+	</div>
 
 </script>

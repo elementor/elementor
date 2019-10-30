@@ -48,4 +48,28 @@ class Library extends Common_App {
 		return $template_content;
 	}
 
+	public function localize_settings( $settings ) {
+		return array_replace_recursive( $settings, [
+			'library_connect' => [
+				'is_connected' => $this->is_connected(),
+				'show_popup' => ! $this->is_connected() && ! get_user_meta( get_current_user_id(), 'elementor_connect_library_popup_showed', true ),
+			],
+		] );
+	}
+
+	public function library_connect_popup_showed() {
+		update_user_meta( get_current_user_id(), 'elementor_connect_library_popup_showed', true );
+	}
+
+	/**
+	 * @param \Elementor\Core\Common\Modules\Ajax\Module $ajax_manager
+	 */
+	public function register_ajax_actions( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'library_connect_popup_showed', [ $this, 'library_connect_popup_showed' ] );
+	}
+
+	protected function init() {
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+	}
 }
