@@ -23,7 +23,7 @@ class Log_Reporter extends Base_Reporter {
 	public function get_title() {
 		$title = 'Log';
 
-		if ( empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
+		if ( 'html' === $this->_properties['format'] && empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$nonce = wp_create_nonce( self::CLEAR_LOG_ACTION );
 			$url = add_query_arg( [
 				self::CLEAR_LOG_ACTION => 1,
@@ -31,9 +31,10 @@ class Log_Reporter extends Base_Reporter {
 			] );
 
 			$title .= '<a href="' . $url . '#elementor-clear-log" class="box-title-tool">' . __( 'Clear Log', 'elementor' ) . '</a>';
+			$title .= '<span id="elementor-clear-log"></span>';
 		}
 
-		return $title . '<span id="elementor-clear-log"></span>';
+		return $title;
 	}
 
 	public function get_fields() {
