@@ -617,7 +617,7 @@ class Widget_Image extends Widget_Base {
 		if ( $link ) {
 			$this->add_render_attribute( 'link', 'data-elementor-open-lightbox', $settings['open_lightbox'] );
 
-			$this->add_link_attributes( 'button', $settings['link'] );
+			$this->add_link_attributes( 'link', $settings['link'] );
 
 			if ( Plugin::$instance->editor->is_edit_mode() ) {
 				$this->add_render_attribute( 'link', [
