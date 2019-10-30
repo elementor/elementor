@@ -125,7 +125,7 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		if ( $_REQUEST['state'] !== $this->get( 'state' ) ) {
+		if ( empty( $_REQUEST['state'] ) || $_REQUEST['state'] !== $this->get( 'state' ) ) {
 			$this->add_notice( 'Get Token: Invalid Request.', 'error' );
 			$this->redirect_to_admin_page();
 		}
