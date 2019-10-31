@@ -17,11 +17,6 @@ export default class Base {
 
 		// Acknowledge self about which command it run.
 		this.currentCommand = $e.commands.getCurrent( 'document' );
-
-		// Get History from child command.
-		this.history = this.getHistory( args );
-
-		this.historyId = null;
 	}
 
 	/**
@@ -125,7 +120,6 @@ export default class Base {
 			throw Error( `${ property } invalid constructor type.` );
 		}
 	}
-
 	/**
 	 * Function initialize().
 	 *
@@ -142,21 +136,6 @@ export default class Base {
 	 * @param {{}} args
 	 */
 	validateArgs( args ) {}
-
-	/**
-	 * Function getHistory().
-	 *
-	 * Gets specify history behavior.
-	 *
-	 * @param {{}} args
-	 *
-	 * @returns {{}|Boolean}
-	 *
-	 * @throws Error
-	 */
-	getHistory( args ) {
-		throw Error( 'getHistory() should be implemented, please provide getHistory functionality.' );
-	}
 
 	/**
 	 * Function isDataChanged().
@@ -190,48 +169,17 @@ export default class Base {
 	run() {
 		let result;
 
-		if ( this.history && this.isHistoryActive() ) {
-			/**
-			 * If `historyId` was passed, assuming that is sub history item.
-			 * If so, pass `id` to `document/history/startLog` to apply history sub item.
-			 */
-			if ( this.args.histroyId ) {
-				this.history.id = this.args.histroyId;
-
-				delete this.args.histroyId;
-			}
-
-			this.historyId = $e.run( 'document/history/startLog', this.history );
-		}
-
-		this.onBeforeApply( this.args );
-
 		try {
-			$e.hooks.runDependency( this.currentCommand, this.args );
+			this.onBeforeApply( this.args );
 
 			result = this.apply( this.args );
 		} catch ( e ) {
-			// Rollback history on failure.
-			if ( $e.devTools ) {
-				$e.devTools.log.error( e );
-			}
-
-			if ( elementor.isTesting ) {
-				console.error( e );
-			}
-
-			if ( this.historyId ) {
-				$e.run( 'document/history/deleteLog', { id: this.historyId } );
-			}
+			this.onCatchApply( e );
 
 			return false;
 		}
 
 		this.onAfterApply( this.args, result );
-
-		if ( this.historyId ) {
-			$e.run( 'document/history/endLog', { id: this.historyId } );
-		}
 
 		if ( this.isDataChanged() ) {
 			elementor.saver.setFlagEditorChange( true );
@@ -241,24 +189,15 @@ export default class Base {
 	}
 
 	/**
-	 * Function isHistoryActive().
-	 *
-	 * Return `elementor.history.history.getActive()`.
-	 *
-	 * @returns {boolean}
-	 */
-	isHistoryActive() {
-		return elementor.history.history.getActive();
-	}
-
-	/**
 	 * Function onBeforeApply.
 	 *
 	 * Called before apply().
 	 *
 	 * @param {{}} args
 	 */
-	onBeforeApply( args ) {}
+	onBeforeApply( args ) {
+		$e.hooks.runDependency( this.currentCommand, this.args );
+	}
 
 	/**
 	 * Function onAfterApply.
@@ -269,5 +208,22 @@ export default class Base {
 	 */
 	onAfterApply( args, result ) {
 		$e.hooks.runAfter( this.currentCommand, args, result );
+	}
+
+	/**
+	 * Function onCatchApply.
+	 *
+	 * Called after apply() faield.
+	 *
+	 * @param {Error} e
+	 */
+	onCatchApply( e ) {
+		if ( $e.devTools ) {
+			$e.devTools.log.error( e );
+		}
+
+		if ( elementor.isTesting ) {
+			console.error( e );
+		}
 	}
 }

@@ -1,6 +1,6 @@
-import Base from '../../../commands/base';
+import History from '../../../commands/base/history';
 
-export class Remove extends Base {
+export class Remove extends History {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' );

@@ -3,7 +3,7 @@ import Introduction from './utils/introduction';
 import ControlsStack from './views/controls-stack';
 import BaseSettings from './elements/models/base-settings';
 import Container from './container/container';
-import DocumentCommandsBase from './document/commands/base';
+import CommandsBaseHistory from './document/commands/base/history';
 
 elementorModules.editor = {
 	elements: {
@@ -20,7 +20,7 @@ elementorModules.editor = {
 	},
 
 	document: {
-		CommandBase: DocumentCommandsBase,
+		CommandBaseHistory: CommandsBaseHistory,
 	},
 
 	Container: Container,

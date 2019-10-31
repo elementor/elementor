@@ -1,7 +1,7 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 import ElementsSettings from '../../elements/commands/settings';
 
-export class Settings extends Base {
+export class Settings extends History {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 

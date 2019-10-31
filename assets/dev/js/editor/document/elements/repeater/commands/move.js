@@ -1,6 +1,6 @@
-import Base from '../../../commands/base';
+import History from '../../../commands/base/history';
 
-export class Move extends Base {
+export class Move extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 

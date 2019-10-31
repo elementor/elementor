@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export class Empty extends Base {
+export class Empty extends History {
 	static restore( historyItem, isRedo ) {
 		if ( isRedo ) {
 			$e.run( 'document/elements/empty', { force: true } );

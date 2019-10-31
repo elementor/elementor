@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export class ResetStyle extends Base {
+export class ResetStyle extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}

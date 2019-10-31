@@ -1,7 +1,7 @@
-import Base from '../../../commands/base';
+import History from '../../../commands/base/history';
 import ElementsSettings from '../../../elements/commands/settings';
 
-export default class DisableEnable extends Base {
+export default class DisableEnable extends History {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 

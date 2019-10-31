@@ -1,5 +1,5 @@
 import HookAfter from '../base/after';
-import Debounce from '../../commands/debounce';
+import Debounce from '../../commands/base/debounce';
 
 export class HandleDynamic extends HookAfter {
 	hook() {

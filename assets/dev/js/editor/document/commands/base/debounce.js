@@ -1,4 +1,4 @@
-import Base from './base';
+import History from './history';
 
 /**
  * @typedef UniqueArgsState
@@ -12,7 +12,7 @@ import Base from './base';
  */
 export const DEFAULT_DEBOUNCE_DELAY = 800;
 
-export default class Debounce extends Base {
+export default class Debounce extends History {
 	/**
 	 * Last `HistoryId` since last debounce.
 	 *
@@ -68,6 +68,7 @@ export default class Debounce extends Base {
 	runHookAfter() {
 		$e.hooks.runAfter( this.currentCommand, this.args );
 	}
+
 	/**
 	 * Function getArgsUniqueId().
 	 *
@@ -132,7 +133,7 @@ export default class Debounce extends Base {
 		return !! Debounce.action;
 	}
 
-	onAfterApply( args ) {
+	onAfterApply( args, result ) {
 		if ( this.isHistoryActive() ) {
 			if ( 'normal' === Debounce.action ) {
 				this.runHookAfter();

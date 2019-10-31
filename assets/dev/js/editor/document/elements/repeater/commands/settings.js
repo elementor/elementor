@@ -1,6 +1,6 @@
-import Base from '../../../commands/base';
+import History from '../../../commands/base/history';
 
-export class Settings extends Base {
+export class Settings extends History {
 	/**
 	 * @type {function( args )}
 	 */

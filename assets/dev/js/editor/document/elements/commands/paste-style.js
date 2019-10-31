@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export class PasteStyle extends Base {
+export class PasteStyle extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
