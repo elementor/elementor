@@ -111,6 +111,9 @@ class Widget_Alert extends Widget_Base {
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'This is an Alert', 'elementor' ),
 				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -123,6 +126,9 @@ class Widget_Alert extends Widget_Base {
 				'default' => __( 'I am a description. Click the edit button to change this text.', 'elementor' ),
 				'separator' => 'none',
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
