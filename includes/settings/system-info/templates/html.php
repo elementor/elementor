@@ -62,8 +62,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 						if ( ! empty( $field['recommendation'] ) ) :
 							echo $field['recommendation'];
 						endif;
-						?>
-						</td>
+						?></td>
 					</tr>
 					<?php
 				}
