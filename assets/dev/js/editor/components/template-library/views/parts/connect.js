@@ -18,6 +18,11 @@ module.exports = Marionette.ItemView.extend( {
 					$e.run( 'library/insert-template', {
 						model: this.getOption( 'model' ),
 					} );
+				} else {
+					$e.run( 'library/close' );
+					elementor.notifications.showToast( {
+						message: elementor.translate( 'connected_successfully' ),
+					} );
 				}
 			},
 			error: () => {

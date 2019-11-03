@@ -100,6 +100,7 @@ class Module extends BaseModule {
 		return array_replace_recursive( $settings, [
 			'i18n' => [
 				'connect_error' => __( 'Unable to connect', 'elementor' ),
+				'connected_successfully' => __( 'Connected successfully', 'elementor' ),
 			],
 		] );
 	}
