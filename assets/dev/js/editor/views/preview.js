@@ -78,7 +78,7 @@ Preview = BaseSectionsContainerView.extend( {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'document/elements/copyAll' ),
+						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),

@@ -89,7 +89,7 @@ class AddSectionBase extends Marionette.ItemView {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'document/elements/copyAll' ),
+						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
@@ -147,7 +147,7 @@ class AddSectionBase extends Marionette.ItemView {
 		}
 
 		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
-			historyId = $e.run( 'document/history/startLog', {
+			historyId = $e.run( 'document/history/start-log', {
 				type: 'add',
 				title: elementor.history.history.getModelLabel( selectedElement.model ),
 			} );
@@ -160,7 +160,7 @@ class AddSectionBase extends Marionette.ItemView {
 			columns: 1,
 		} ).view.addElementFromPanel();
 
-		$e.run( 'document/history/endLog', { id: historyId } );
+		$e.run( 'document/history/end-log', { id: historyId } );
 	}
 }
 

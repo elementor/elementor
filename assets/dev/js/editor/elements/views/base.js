@@ -173,11 +173,11 @@ BaseElementView = BaseContainer.extend( {
 						isEnabled: () => {
 							return !! elementorCommon.storage.get( 'clipboard' );
 						},
-						callback: () => $e.run( 'document/elements/pasteStyle', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
 					}, {
 						name: 'resetStyle',
 						title: elementor.translate( 'reset_style' ),
-						callback: () => $e.run( 'document/elements/resetStyle', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
 					},
 				],
 			}, {

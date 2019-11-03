@@ -5,9 +5,9 @@ export default class Component extends elementorModules.common.Component {
 
 	getCommands() {
 		return {
-			startLog: ( args ) => {
+			'start-log': ( args ) => {
 				if ( elementor.history.history.isItemStarted() || args.id ) {
-					$e.run( 'document/history/addSubItem', args );
+					$e.run( 'document/history/add-sub-item', args );
 
 					return null;
 				}
@@ -27,21 +27,21 @@ export default class Component extends elementorModules.common.Component {
 				return elementor.history.history.startItem( args );
 			},
 
-			endLog: ( args ) => {
+			'end-log': ( args ) => {
 				elementor.history.history.endItem( args.id );
 			},
 
-			deleteLog: ( args ) => {
+			'delete-log': ( args ) => {
 				elementor.history.history.deleteItem( args.id );
 			},
 
-			addItem: ( itemData ) => {
-				$e.run( 'document/history/endLog', {
-					id: $e.run( 'document/history/startLog', itemData ),
+			'add-item': ( itemData ) => {
+				$e.run( 'document/history/end-log', {
+					id: $e.run( 'document/history/start-log', itemData ),
 				} );
 			},
 
-			addSubItem: ( args ) => {
+			'add-sub-item': ( args ) => {
 				if ( ! elementor.history.history.getActive() ) {
 					return;
 				}

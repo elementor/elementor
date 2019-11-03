@@ -3,11 +3,17 @@ import Base from './base';
 export default class History extends Base {
 	constructor( args ) {
 		super( args );
-
-		// Get History from child command.
+		/**
+		 * Get History from child command.
+		 *
+		 * @type {{}|boolean}
+		 */
 		this.history = this.getHistory( args );
 
-		this.historyId = null;
+		/**
+		 * @type {number|boolean}
+		 */
+		this.historyId = false;
 	}
 
 	/**
@@ -17,7 +23,7 @@ export default class History extends Base {
 	 *
 	 * @param {{}} args
 	 *
-	 * @returns {{}|Boolean}
+	 * @returns {{}|boolean}
 	 *
 	 * @throws Error
 	 */
@@ -42,7 +48,7 @@ export default class History extends Base {
 		if ( this.history && this.isHistoryActive() ) {
 			/**
 			 * If `historyId` was passed, assuming that is sub history item.
-			 * If so, pass `id` to `document/history/startLog` to apply history sub item.
+			 * If so, pass `id` to `document/history/start-log` to apply history sub item.
 			 */
 			if ( this.args.histroyId ) {
 				this.history.id = this.args.histroyId;
@@ -50,13 +56,13 @@ export default class History extends Base {
 				delete this.args.histroyId;
 			}
 
-			this.historyId = $e.run( 'document/history/startLog', this.history );
+			this.historyId = $e.run( 'document/history/start-log', this.history );
 		}
 
 		result = super.run();
 
 		if ( this.historyId ) {
-			$e.run( 'document/history/endLog', { id: this.historyId } );
+			$e.run( 'document/history/end-log', { id: this.historyId } );
 		}
 
 		return result;
@@ -67,7 +73,7 @@ export default class History extends Base {
 
 		// Rollback history on failure.
 		if ( this.historyId ) {
-			$e.run( 'document/history/deleteLog', { id: this.historyId } );
+			$e.run( 'document/history/delete-log', { id: this.historyId } );
 		}
 	}
 }

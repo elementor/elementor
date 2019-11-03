@@ -94,7 +94,7 @@ export class Settings extends Debounce {
 			historyItem = Object.assign( { id: historyId }, historyItem );
 		}
 
-		$e.run( 'document/history/addSubItem', historyItem );
+		$e.run( 'document/history/add-sub-item', historyItem );
 	}
 
 	validateArgs( args ) {

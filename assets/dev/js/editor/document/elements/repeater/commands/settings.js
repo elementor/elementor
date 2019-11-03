@@ -63,7 +63,7 @@ export class Settings extends History {
 			delete container.oldValues;
 		} );
 
-		$e.run( 'document/history/addItem', {
+		$e.run( 'document/history/add-item', {
 			containers,
 			data: {
 				changes,

@@ -53,7 +53,7 @@ export class SectionColumns extends HookAfter {
 				 * Manual history & not using of `$e.run('document/elements/create')`
 				 * For performance reasons.
 				 */
-				$e.run( 'document/history/addSubItem', {
+				$e.run( 'document/history/add-sub-item', {
 					container,
 					type: 'sub-add',
 					restore: Create.restore,

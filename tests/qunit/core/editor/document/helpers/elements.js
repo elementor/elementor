@@ -168,7 +168,7 @@ export default class {
 	}
 
 	static copyAll() {
-		$e.run( 'document/elements/copyAll' );
+		$e.run( 'document/elements/copy-all' );
 	}
 
 	static paste( eContainer, rebuild = false ) {
@@ -185,25 +185,25 @@ export default class {
 	}
 
 	static pasteStyle( eContainer ) {
-		$e.run( 'document/elements/pasteStyle', {
+		$e.run( 'document/elements/paste-style', {
 			container: eContainer,
 		} );
 	}
 
 	static multiPasteStyle( eContainers ) {
-		$e.run( 'document/elements/pasteStyle', {
+		$e.run( 'document/elements/paste-style', {
 			containers: eContainers,
 		} );
 	}
 
 	static resetStyle( eContainer ) {
-		$e.run( 'document/elements/resetStyle', {
+		$e.run( 'document/elements/reset-style', {
 			container: eContainer,
 		} );
 	}
 
 	static multiResetStyle( eContainers ) {
-		$e.run( 'document/elements/resetStyle', {
+		$e.run( 'document/elements/reset-style', {
 			containers: eContainers,
 		} );
 	}
