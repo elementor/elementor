@@ -2,6 +2,7 @@
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -141,6 +142,10 @@ abstract class Base_App {
 			$notice = 'Cannot Get Token:' . $response->get_error_message();
 			$this->add_notice( $notice, 'error' );
 			$this->redirect_to_admin_page();
+		}
+
+		if ( ! empty( $response->data_share_opted_in ) && current_user_can( 'manage_options' ) ) {
+			Tracker::set_opt_in( true );
 		}
 
 		$this->delete( 'state' );
