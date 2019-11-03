@@ -1,19 +1,6 @@
 import * as Commands from './commands/';
-import * as Hooks from '../hooks/';
 
 export default class extends elementorModules.common.Component {
-	onInit() {
-		super.onInit();
-
-		/**
-		 * TODO: Temp for now hooks loading will be here.
-		 * its not the right place for the hooks.
-		 */
-		Object.entries( Hooks ).forEach( ( [ hook, hookReference ] ) =>
-			new hookReference()
-		);
-	}
-
 	getNamespace() {
 		return 'document/elements';
 	}

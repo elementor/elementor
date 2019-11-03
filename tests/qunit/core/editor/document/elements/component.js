@@ -19,7 +19,7 @@ jQuery( () => {
 				Elements.createButton( eColumn );
 
 				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
+				$e.run( 'document/saver', { status: false } );
 
 				Elements.empty();
 
@@ -150,7 +150,7 @@ jQuery( () => {
 				Elements.copy( eButton );
 
 				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
+				$e.run( 'document/saver', { status: false } );
 
 				Elements.paste( eColumn );
 
@@ -180,7 +180,7 @@ jQuery( () => {
 				Elements.copy( eButtonStyled );
 
 				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
+				$e.run( 'document/saver', { status: false } );
 
 				Elements.pasteStyle( eButtonSimple );
 
@@ -194,7 +194,7 @@ jQuery( () => {
 				const eButtonStyled = Elements.createAutoButtonStyled();
 
 				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
+				$e.run( 'document/saver', { status: false } );
 
 				Elements.resetStyle( eButtonStyled );
 
@@ -253,7 +253,7 @@ jQuery( () => {
 				assert.equal( eColumn.view.collection.length, 1, 'Button #1 were deleted.' );
 
 				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
+				$e.run( 'document/saver', { status: false } );
 
 				Elements.delete( eButton2 );
 

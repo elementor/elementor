@@ -1,3 +1,7 @@
+/**
+ * TODO: Should we do validate function in scenarios where args are are not required.
+ * but should be validate?
+ */
 export default class Base {
 	/**
 	 * Function constructor().
@@ -182,7 +186,7 @@ export default class Base {
 		this.onAfterApply( this.args, result );
 
 		if ( this.isDataChanged() ) {
-			elementor.saver.setFlagEditorChange( true );
+			$e.run( 'document/saver', { status: true } );
 		}
 
 		return result;
@@ -213,7 +217,7 @@ export default class Base {
 	/**
 	 * Function onCatchApply.
 	 *
-	 * Called after apply() faield.
+	 * Called after apply() failed.
 	 *
 	 * @param {Error} e
 	 */

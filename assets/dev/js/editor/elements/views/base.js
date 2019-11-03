@@ -629,7 +629,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onCollectionChanged() {
-		elementor.saver.setFlagEditorChange( true );
+		$e.run( 'document/saver', { status: true } );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -637,7 +637,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onSettingsChanged( changedModel ) {
-		elementor.saver.setFlagEditorChange( true );
+		$e.run( 'document/saver', { status: true } );
 
 		this.renderOnChange( changedModel );
 	},

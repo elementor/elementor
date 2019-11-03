@@ -118,9 +118,9 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
-		elementor.saver.setFlagEditorChange( true );
+		$e.run( 'document/saver', { status: true } );
 
-		elementor.saver.saveAutoSave();
+		$e.run( 'document/auto-save' );
 
 		this.isRevisionApplied = true;
 
@@ -132,7 +132,7 @@ module.exports = Marionette.CompositeView.extend( {
 	onDiscardClick: function() {
 		elementor.history.revisions.setEditorData( elementor.config.data );
 
-		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
+		$e.run( 'document/saver', { status: this.isRevisionApplied } );
 
 		this.isRevisionApplied = false;
 

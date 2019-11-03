@@ -17,8 +17,8 @@ export default class extends elementorModules.common.Component {
 			open: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' ),
 			close: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' ),
 			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
-			save: () => elementor.saver.saveDraft(),
-			publish: () => elementor.saver.publish(),
+			save: () => $e.run( 'document/draft' ),
+			publish: () => $e.run( 'document/publish' ),
 			exit: () => $e.route( 'panel/menu' ),
 			'change-device-mode': ( args ) => {
 				const devices = [ 'desktop', 'tablet', 'mobile' ];
