@@ -40,6 +40,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		};
 
 		return {
+			view: this,
 			data: _.extend( {}, this.model.toJSON(), controlData ),
 		};
 	},
