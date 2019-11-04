@@ -133,10 +133,35 @@ export default class Debounce extends History {
 		return !! Debounce.action;
 	}
 
+	onBeforeApply( args ) {
+		try {
+			$e.hooks.runDependency( this.currentCommand, args );
+		} catch ( e ) {
+			// TODO: `Break-Hook` Should be const.
+			if ( 'Break-Hook' === e ) {
+				const currentArgsUniqueId = this.getArgsUniqueId( args );
+
+				// Clear all hooks with the same unique args state.
+				Debounce.uniqueArgsStates = Debounce.uniqueArgsStates.filter( ( uniqueArgsState ) => {
+					if ( uniqueArgsState.id === currentArgsUniqueId ) {
+						clearTimeout( uniqueArgsState.handler );
+						return false;
+					}
+
+					return true;
+				} );
+			}
+
+			// Resume Break-Hook.
+			throw e;
+		}
+	}
+
 	onAfterApply( args, result ) {
 		if ( this.isHistoryActive() ) {
 			if ( 'normal' === Debounce.action ) {
 				this.runHookAfter();
+
 				this.constructor.logHistory( args );
 			} else if ( 'debounce' === Debounce.action && this.historyId ) {
 				Debounce.lastHistoryId = this.historyId;
@@ -151,6 +176,7 @@ export default class Debounce extends History {
 	 */
 	onDebounceTimeout() {
 		this.runHookAfter();
+
 		this.constructor.logHistory( this.args, Debounce.lastHistoryId );
 	}
 }

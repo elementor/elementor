@@ -173,6 +173,8 @@ export default class Base {
 	run() {
 		let result;
 
+		this.onBeforeRun( this.args );
+
 		try {
 			this.onBeforeApply( this.args );
 
@@ -189,7 +191,32 @@ export default class Base {
 			$e.run( 'document/saver', { status: true } );
 		}
 
+		this.onAfterRun( this.args, result );
+
 		return result;
+	}
+
+	/**
+	 * Function onBeforeRun.
+	 *
+	 * Called before run().
+	 *
+	 * @param {{}} args
+	 */
+	onBeforeRun( args ) {
+		$e.events.runBefore( this.currentCommand, args );
+	}
+
+	/**
+	 * Function onAfterRun.
+	 *
+	 * Called after run().
+	 *
+	 * @param {{}} args
+	 * @param {*} result
+	 */
+	onAfterRun( args, result ) {
+		$e.events.runAfter( this.currentCommand, args, result );
 	}
 
 	/**

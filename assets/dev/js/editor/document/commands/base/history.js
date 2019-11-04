@@ -42,8 +42,8 @@ export default class History extends Base {
 		return elementor.history.history.getActive();
 	}
 
-	run() {
-		let result;
+	onBeforeRun( args ) {
+		super.onBeforeRun( args );
 
 		if ( this.history && this.isHistoryActive() ) {
 			/**
@@ -58,14 +58,14 @@ export default class History extends Base {
 
 			this.historyId = $e.run( 'document/history/start-log', this.history );
 		}
+	}
 
-		result = super.run();
+	onAfterRun( args, result ) {
+		super.onAfterRun( args, result );
 
 		if ( this.historyId ) {
 			$e.run( 'document/history/end-log', { id: this.historyId } );
 		}
-
-		return result;
 	}
 
 	onCatchApply( e ) {

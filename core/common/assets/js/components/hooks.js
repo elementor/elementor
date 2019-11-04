@@ -110,7 +110,7 @@ export default class Hooks extends elementorModules.Module {
 						break;
 
 						case 'after': {
-							hooks[ i ].callback( args, result );
+							hook.callback( args, result );
 						}
 						break;
 
@@ -143,7 +143,7 @@ export default class Hooks extends elementorModules.Module {
 		if ( ! $e.devTools ) {
 			return;
 		}
-		$e.devTools.log.log( `%c [${ event }] CALLBACK: '${ command }:${ id } ' ->`, 'color: #ff7800;font-weight: bold', args );
+		$e.devTools.log.log( `%c [${ event }] HOOK CALLBACK: '${ command }:${ id } ' ->`, 'color: #ff7800;font-weight: bold', args );
 	}
 }
 
