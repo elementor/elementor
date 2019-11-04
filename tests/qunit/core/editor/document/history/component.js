@@ -959,7 +959,7 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Tabs' );
+				inHistoryValidate( assert, historyItem, 'change', `Tabs Item#${ index + 1 }` );
 
 				// Undo.
 				undoValidate( assert, historyItem );
@@ -1040,7 +1040,7 @@ jQuery( () => {
 					field_label: 'Name',
 				} );
 
-				const currentItemIndex = eForm.settings.get( name ).length - 1;
+				const currentItemIndex = 3;
 
 				// Change field_type = 'email' for new item.
 				Elements.repeaterSettings( eForm, name, currentItemIndex, { field_type: 'email' }, {
@@ -1048,7 +1048,7 @@ jQuery( () => {
 				} );
 
 				// Change required = 'true' for new item.
-				Elements.repeaterSettings( eForm, name, currentItemIndex, { required: 'yes' }, {
+				Elements.repeaterSettings( eForm, name, currentItemIndex, { required: 'true' }, {
 					external: true,
 				} );
 
@@ -1089,7 +1089,7 @@ jQuery( () => {
 				$e.run( 'document/history/redo' );
 
 				// Validate required = 'true' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), 'yes',
+				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), 'true',
 					'Require setting was restored' );
 			} );
 		} );

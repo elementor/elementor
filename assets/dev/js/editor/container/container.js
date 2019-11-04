@@ -139,6 +139,10 @@ export default class Container {
 		}
 
 		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
+			// Hack For repeater item the result is the parent container.
+			if ( 'repeater' === this.type ) {
+				this.settings = this.parent.settings.get( this.model.name ).findWhere( { _id: this.id } );
+			}
 			return result;
 		}
 

@@ -303,21 +303,25 @@ export default class {
 		} );
 	}
 
-	static repeaterSettings( eContainer, name, index, settings ) {
-		$e.run( 'document/elements/repeater/settings', {
-			container: eContainer,
-			name,
-			index,
+	static repeaterSettings( eContainer, name, index, settings, options ) {
+		const container = eContainer.children[ index ];
+
+		$e.run( 'document/elements/settings', {
+			container,
 			settings,
+			options,
 		} );
 	}
 
-	static multiRepeaterSettings( eContainers, name, index, settings ) {
-		$e.run( 'document/elements/repeater/settings', {
+	static multiRepeaterSettings( eContainers, name, index, settings, options ) {
+		eContainers = eContainers.map( ( eContainer ) => {
+			return eContainer.children[ index ];
+		} );
+
+		$e.run( 'document/elements/settings', {
 			containers: eContainers,
-			name,
-			index,
 			settings,
+			options,
 		} );
 	}
 
