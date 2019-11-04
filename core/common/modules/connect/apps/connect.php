@@ -13,7 +13,7 @@ class Connect extends Common_App {
 
 	/**
 	 * @since 2.3.0
-	 * @access protected
+	 * @access public
 	 */
 	public function get_slug() {
 		return 'connect';

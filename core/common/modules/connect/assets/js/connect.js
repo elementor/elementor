@@ -21,8 +21,8 @@ export default class extends elementorModules.ViewModule {
 				} );
 
 				elementorCommon.elements.$window
-				.on( 'elementorConnectSuccess-' + callbackId, settings.success )
-				.on( 'elementorConnectError-' + callbackId, settings.error );
+					.on( 'elementor/connect/success/' + callbackId, settings.success )
+					.on( 'elementor/connect/error/' + callbackId, settings.error );
 			} );
 
 			return this;

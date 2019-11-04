@@ -20,14 +20,14 @@ abstract class Base_App {
 
 	/**
 	 * @since 2.3.0
-	 * @access protected
+	 * @access public
 	 * @abstract
 	 */
 	abstract public function get_slug();
 
 	/**
 	 * @since 2.8.0
-	 * @access protected
+	 * @access public
 	 * @abstract
 	 */
 	abstract public function get_title();
@@ -442,7 +442,7 @@ abstract class Base_App {
 		?>
 		<script>
 			if ( opener && opener !== window ) {
-				opener.jQuery( 'body' ).trigger( 'elementorConnectSuccess-<?php echo esc_attr( $_REQUEST['callback_id'] ); ?>' );
+				opener.jQuery( 'body' ).trigger( 'elementor/connect/success/<?php echo esc_attr( $_REQUEST['callback_id'] ); ?>' );
 				window.close();
 				opener.focus();
 			} else {
