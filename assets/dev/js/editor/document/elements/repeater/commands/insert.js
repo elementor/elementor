@@ -54,6 +54,8 @@ export class Insert extends History {
 			result = [];
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			const collection = container.settings.get( name );
 
 			result.push( collection.push( model, options ) );

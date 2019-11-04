@@ -25,12 +25,14 @@ export class Duplicate extends History {
 		containers.forEach( ( container ) => {
 			const settingsModel = container.settings,
 				collection = settingsModel.get( name ),
-				item = collection.at( index );
+				model = collection.at( index ).toJSON();
+
+			model._id = elementor.helpers.getUniqueID();
 
 			result.push( $e.run( 'document/elements/repeater/insert', {
 				container,
 				name,
-				model: item.toJSON(),
+				model,
 				options: Object.assign( {
 					at: index + 1,
 				}, options ),
