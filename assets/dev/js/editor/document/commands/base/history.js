@@ -19,7 +19,7 @@ export default class History extends Base {
 	/**
 	 * Function getHistory().
 	 *
-	 * Gets specify history behavior.
+	 * Get history object from child, do nothing if it false.
 	 *
 	 * @param {{}} args
 	 *

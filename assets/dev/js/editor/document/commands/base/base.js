@@ -68,7 +68,7 @@ export default class Base {
 	/**
 	 * Function requireArgumentType().
 	 *
-	 * Validate property in args using `typeof(args.whatever) === type`.
+	 * Validate property in args using `type === typeof(args.whatever)`.
 	 *
 	 * @param {string} property
 	 * @param {string} type
@@ -108,10 +108,10 @@ export default class Base {
 	/**
 	 * Function requireArgumentConstructor().
 	 *
-	 * Validate property in args using `args.whatever.constructor === type`.
+	 * Validate property in args using `type === args.whatever.constructor`.
 	 *
 	 * @param {string} property
-	 * @param {{}} type
+	 * @param {*} type
 	 * @param {{}} args
 	 *
 	 * @throws Error
@@ -200,7 +200,7 @@ export default class Base {
 	 * @param {{}} args
 	 */
 	onBeforeApply( args ) {
-		$e.hooks.runDependency( this.currentCommand, this.args );
+		$e.hooks.runDependency( this.currentCommand, args );
 	}
 
 	/**
@@ -209,6 +209,7 @@ export default class Base {
 	 * Called after apply().
 	 *
 	 * @param {{}} args
+	 * @param {*} result
 	 */
 	onAfterApply( args, result ) {
 		$e.hooks.runAfter( this.currentCommand, args, result );
