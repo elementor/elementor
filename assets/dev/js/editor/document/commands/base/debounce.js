@@ -49,24 +49,15 @@ export default class Debounce extends History {
 	static lastUniqueArgsId = '';
 
 	/**
-	 * Function logHistory().
+	 * Function restore().
 	 *
-	 * Do the actual history logging.
+	 * Redo/Restore.
 	 *
-	 * @param {{}} args
-	 * @param {number|boolean} historyId
+	 * @param {{}} historyItem
+	 * @param {boolean} isRedo
 	 */
-	static logHistory( args, historyId = false ) {
-		throw Error( 'static logHistory() should be implemented, please provide static logHistory functionality.' );
-	}
-
-	/**
-	 * Function runHookAfter().
-	 *
-	 * Run the hook after.
-	 */
-	runHookAfter() {
-		$e.hooks.runAfter( this.currentCommand, this.args );
+	static restore( historyItem, isRedo ) {
+		throw Error( 'static restore() should be implemented, please provide static restore functionality.' );
 	}
 
 	/**
@@ -78,12 +69,37 @@ export default class Debounce extends History {
 	 *
 	 * @returns {string}
 	 */
-	getArgsUniqueId( args = this.args ) {
+	static getArgsUniqueId( args ) {
 		const { containers = [ args.container ], settings = {} } = args;
 
 		return containers.map(
 			( container ) => container.id
 		).join( ',' ) + ',' + Object.keys( settings );
+	}
+
+	static clearUniqueArgsStates( args ) {
+		const currentArgsUniqueId = Debounce.getArgsUniqueId( args );
+
+		// Clear all hooks with the same unique args state.
+		Debounce.uniqueArgsStates = Debounce.uniqueArgsStates.filter( ( uniqueArgsState ) => {
+			if ( uniqueArgsState.id === currentArgsUniqueId ) {
+				clearTimeout( uniqueArgsState.handler );
+				return false;
+			}
+
+			return true;
+		} );
+	}
+
+	initialize( args ) {
+		super.initialize();
+
+		const { containers = [ args.container ] } = args;
+
+		// Save for later use.
+		containers.forEach( ( container ) => {
+			container.oldValues = container.oldValues || container.settings.toJSON();
+		} );
 	}
 
 	getHistory( args ) {
@@ -95,7 +111,7 @@ export default class Debounce extends History {
 		Debounce.action = '';
 
 		const { options = {} } = args,
-			currentArgsUniqueId = this.getArgsUniqueId( args );
+			currentArgsUniqueId = Debounce.getArgsUniqueId( args );
 
 		if ( options.debounceHistory ) {
 			// Get current time.
@@ -107,14 +123,7 @@ export default class Debounce extends History {
 			}
 
 			// Clear all current snapshots.
-			Debounce.uniqueArgsStates = Debounce.uniqueArgsStates.filter( ( uniqueArgsState ) => {
-				if ( uniqueArgsState.id === currentArgsUniqueId ) {
-					clearTimeout( uniqueArgsState.handler );
-					return false;
-				}
-
-				return true;
-			} );
+			Debounce.clearUniqueArgsStates( args );
 
 			// Anyway if `options.debounceHistory` set to be true, we create timeout for saving log history.
 			Debounce.uniqueArgsStates.push( {
@@ -133,23 +142,71 @@ export default class Debounce extends History {
 		return !! Debounce.action;
 	}
 
+	/**
+	 * Function logHistory().
+	 *
+	 * Do the actual history logging.
+	 *
+	 * @param {{}} args
+	 * @param {number|boolean} historyId
+	 */
+	logHistory( args, historyId = false ) {
+		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args,
+			changes = {};
+
+		containers.forEach( ( container ) => {
+			const { id } = container,
+				newSettings = isMultiSettings ? settings[ container.id ] : settings;
+
+			if ( ! changes[ id ] ) {
+				changes[ id ] = {};
+			}
+
+			if ( ! changes[ id ].old ) {
+				changes[ id ] = {
+					old: {},
+					new: {},
+				};
+			}
+
+			Object.keys( newSettings ).forEach( ( settingKey ) => {
+				if ( 'undefined' !== typeof container.oldValues[ settingKey ] ) {
+					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( container.oldValues[ settingKey ] );
+					changes[ id ].new[ settingKey ] = newSettings[ settingKey ];
+				}
+			} );
+
+			delete container.oldValues;
+		} );
+
+		let historyItem = {
+			containers,
+			data: { changes },
+			type: 'change',
+			restore: this.constructor.restore,
+		};
+
+		if ( options.history ) {
+			historyItem = Object.assign( options.history, historyItem );
+		}
+
+		if ( historyId ) {
+			historyItem = Object.assign( { id: historyId }, historyItem );
+		}
+
+		$e.run( 'document/history/add-sub-item', historyItem );
+	}
+
 	onBeforeApply( args ) {
 		try {
 			$e.hooks.runDependency( this.currentCommand, args );
 		} catch ( e ) {
 			// TODO: `Break-Hook` Should be const.
 			if ( 'Break-Hook' === e ) {
-				const currentArgsUniqueId = this.getArgsUniqueId( args );
+				const currentArgsUniqueId = Debounce.getArgsUniqueId( args );
 
 				// Clear all hooks with the same unique args state.
-				Debounce.uniqueArgsStates = Debounce.uniqueArgsStates.filter( ( uniqueArgsState ) => {
-					if ( uniqueArgsState.id === currentArgsUniqueId ) {
-						clearTimeout( uniqueArgsState.handler );
-						return false;
-					}
-
-					return true;
-				} );
+				Debounce.clearUniqueArgsStates( args );
 			}
 
 			// Resume Break-Hook.
@@ -160,9 +217,9 @@ export default class Debounce extends History {
 	onAfterApply( args, result ) {
 		if ( this.isHistoryActive() ) {
 			if ( 'normal' === Debounce.action ) {
-				this.runHookAfter();
+				super.onAfterApply( args, result );
 
-				this.constructor.logHistory( args );
+				this.logHistory( args );
 			} else if ( 'debounce' === Debounce.action && this.historyId ) {
 				Debounce.lastHistoryId = this.historyId;
 			}
@@ -175,8 +232,10 @@ export default class Debounce extends History {
 	 * On each debounce that reached timeout.
 	 */
 	onDebounceTimeout() {
-		this.runHookAfter();
+		$e.hooks.runAfter( this.currentCommand, this.args );
 
-		this.constructor.logHistory( this.args, Debounce.lastHistoryId );
+		this.logHistory( this.args, Debounce.lastHistoryId );
+
+		Debounce.clearUniqueArgsStates( this.args );
 	}
 }

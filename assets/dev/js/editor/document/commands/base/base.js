@@ -14,7 +14,7 @@ export default class Base {
 		this.args = args;
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
-		this.initialize();
+		this.initialize( args );
 
 		// Validate args before run.
 		this.validateArgs( args );
@@ -129,6 +129,7 @@ export default class Base {
 	 *
 	 * Initialize command, called after construction.
 	 *
+	 * @param {{}} args
 	 */
 	initialize() {}
 

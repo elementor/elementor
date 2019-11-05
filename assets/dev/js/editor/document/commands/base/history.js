@@ -3,6 +3,7 @@ import Base from './base';
 export default class History extends Base {
 	constructor( args ) {
 		super( args );
+
 		/**
 		 * Get History from child command.
 		 *

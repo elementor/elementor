@@ -26,14 +26,6 @@ export class Settings extends Debounce {
 		return result;
 	}
 
-	/**
-	 * Function restore().
-	 *
-	 * Redo/Restore.
-	 *
-	 * @param {{}} historyItem
-	 * @param {boolean} isRedo
-	 */
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -48,53 +40,6 @@ export class Settings extends Debounce {
 				},
 			} );
 		} );
-	}
-
-	static logHistory( args, historyId = false ) {
-		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args,
-			changes = {};
-
-		containers.forEach( ( container ) => {
-			const { id } = container,
-				newSettings = isMultiSettings ? settings[ container.id ] : settings;
-
-			if ( ! changes[ id ] ) {
-				changes[ id ] = {};
-			}
-
-			if ( ! changes[ id ].old ) {
-				changes[ id ] = {
-					old: {},
-					new: {},
-				};
-			}
-
-			Object.keys( newSettings ).forEach( ( settingKey ) => {
-				if ( 'undefined' !== typeof container.oldValues[ settingKey ] ) {
-					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( container.oldValues[ settingKey ] );
-					changes[ id ].new[ settingKey ] = newSettings[ settingKey ];
-				}
-			} );
-
-			delete container.oldValues;
-		} );
-
-		let historyItem = {
-			containers,
-			data: { changes },
-			type: 'change',
-			restore: Settings.restore,
-		};
-
-		if ( options.history ) {
-			historyItem = Object.assign( options.history, historyItem );
-		}
-
-		if ( historyId ) {
-			historyItem = Object.assign( { id: historyId }, historyItem );
-		}
-
-		$e.run( 'document/history/add-sub-item', historyItem );
 	}
 
 	validateArgs( args ) {
@@ -129,9 +74,6 @@ export class Settings extends Debounce {
 			 * settings: { '{ container-id }': { someSettingKey: someSettingValue } } etc.
 			 */
 			const newSettings = isMultiSettings ? settings[ container.id ] : settings;
-
-			// Save for debounce.
-			container.oldValues = container.oldValues || container.settings.toJSON();
 
 			if ( options.external ) {
 				container.settings.setExternalChange( newSettings );
