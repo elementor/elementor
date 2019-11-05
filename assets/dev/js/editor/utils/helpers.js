@@ -164,10 +164,7 @@ module.exports = {
 	},
 
 	isIconMigrated( settings, controlName ) {
-		if ( settings.__fa4_migrated && settings.__fa4_migrated[ controlName ] ) {
-			return true;
-		}
-		return false;
+		return settings.__fa4_migrated && settings.__fa4_migrated[ controlName ];
 	},
 
 	fetchFa4ToFa5Mapping() {
