@@ -40,8 +40,8 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			skin = this.model.get( 'skin' );
 
 		ui.controlMedia = '.elementor-control-media';
-		ui.svgUploader = 'media' === skin ? '.elementor-control-svg-uploader' : '.elementor-control-icons--inline__svg';
-		ui.iconPickers = 'media' === skin ? '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button' : '.elementor-control-icons--inline__icon';
+		ui.svgUploader = 'media' === skin ? '.elementor-control-svg-uploader' : 'elementor-control-icons--inline__svg';
+		ui.iconPickers = 'media' === skin ? '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button' : 'elementor-control-icons--inline__icon';
 		ui.deleteButton = 'media' === skin ? '.elementor-control-media__remove' : '.elementor-control-icons--inline__remove';
 		ui.previewPlaceholder = '.elementor-control-media__preview';
 		ui.previewContainer = '.elementor-control-preview-area';
