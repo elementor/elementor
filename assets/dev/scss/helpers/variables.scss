@@ -129,17 +129,29 @@ $editor-lightest: #d5dadf;
 $editor-accent: #D30C5C;
 $editor-background: $gray-bg;
 $editor-background-light: #f1f3f5;
+$editor-background-lighter: #fcfcfc;
 
 $editor-orange: #fcb92c;
+$editor-red: #d72b3f;
 
-$editor-danger: #f00;
+$editor-danger: $editor-red;
 $editor-warning: #b01b1b;
-$editor-alert: #d72b3f;
 $editor-success: #39b54a;
 $editor-info: #71d7f7;
 
 $brand-color-light: #f2295b;
 $brand-color-dark: #434363;
+
+// Panel Alert
+$editor-alert-danger: $editor-danger;
+$editor-alert-warning: $editor-orange;
+$editor-alert-info: $editor-info;
+$editor-alert-success: $editor-success;
+
+$editor-alert-danger-bg: #fefbfc;
+$editor-alert-warning-bg: #fcfcfc;
+$editor-alert-info-bg: #f3fcff;
+$editor-alert-success-bg: #fcfffc;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);

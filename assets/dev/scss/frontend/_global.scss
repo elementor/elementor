@@ -31,7 +31,7 @@
 		box-shadow: none;
 	}
 
-	.elementor-widget:not(.elementor-widget-text-editor) figure:not(.aligncentre) {
+	.elementor-widget:not(.elementor-widget-text-editor) figure {
 		margin: 0;
 	}
 
@@ -119,7 +119,6 @@
 			height: 100%;
 			background-position: center center;
 			background-size: cover;
-
 		}
 	}
 }

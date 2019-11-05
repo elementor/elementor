@@ -17,8 +17,22 @@
 		color: #fff;
 	}
 
-	&-icon svg {
-		width: 1em;
+	&-content-wrapper {
+		display: flex;
+	}
+
+	&-icon {
+		flex-grow: 0;
+		order: 5;
+		svg {
+			width: 1em;
+		}
+	}
+
+	&-text {
+		flex-grow: 1;
+		order: 10;
+		display: inline-block;
 	}
 
 	&.elementor-size- {
@@ -57,18 +71,14 @@
 	.elementor-align-icon- {
 
 		&right {
-			float: right;
 			margin-left: 5px;
+			order: getValueByDirection( 15, 5 );
 		}
 
 		&left {
-			float: left;
 			margin-right: 5px;
+			order: getValueByDirection( 5, 15 );
 		}
-	}
-
-	.elementor-button-text {
-		display: inline-block;
 	}
 
 	span {

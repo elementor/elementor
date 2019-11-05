@@ -18,6 +18,11 @@
 		.wp-picker-input-wrap {
 			padding-left: 10px;
 			float: $start;
+
+			.button.wp-picker-default {
+				margin: 0;
+				padding: 0;
+			}
 		}
 	}
 
@@ -74,6 +79,7 @@
 		font-size: 11px;
 		line-height: 12px;
 		padding: 7px 3px;
+		min-height: 12px;
 	}
 }
 
@@ -115,9 +121,16 @@
 		height: 26px;
 		width: 48px;
 		padding: 0;
+		color: $editor-dark;
 		background-color: $editor-lightest;
 		border-radius: getValueByDirection(0 3px 3px 0 , 3px 0 0 3px);
 		margin: 0;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			color: $editor-darker;
+		}
 	}
 }
 

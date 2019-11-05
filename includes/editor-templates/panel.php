@@ -238,6 +238,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 <script type="text/template" id="tmpl-elementor-control-responsive-switchers">
 	<div class="elementor-control-responsive-switchers">
+		<div class="elementor-control-responsive-switchers__holder">
 		<#
 			var devices = responsive.devices || [ 'desktop', 'tablet', 'mobile' ];
 
@@ -247,6 +248,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 				</a>
 			<# } );
 		#>
+		</div>
 	</div>
 </script>
 

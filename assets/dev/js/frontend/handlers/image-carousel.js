@@ -52,7 +52,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
 				delay: elementSettings.autoplay_speed,
-				disableOnInteraction: !! elementSettings.pause_on_hover,
+				disableOnInteraction: !! elementSettings.pause_on_interaction,
 			};
 		}
 
@@ -104,11 +104,24 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
+		const elementSettings = this.getElementSettings();
+
 		if ( ! this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length ) {
 			return;
 		}
 
 		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
+
+		if ( elementSettings.pause_on_hover ) {
+			this.elements.$carousel.on( {
+				mouseenter: () => {
+					this.swiper.autoplay.stop();
+				},
+				mouseleave: () => {
+					this.swiper.autoplay.start();
+				},
+			} );
+		}
 	}
 
 	onElementChange( propertyName ) {
