@@ -37,7 +37,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	onCollectionChanged: function() {
-		$e.run( 'document/saver', { status: true } );
+		$e.run( 'document/save/saver', { status: true } );
 	},
 
 	onPanelElementDragStart: function() {

@@ -204,7 +204,7 @@ var	Manager = function() {
 
 		if ( item.get( 'editing_started' ) ) {
 			if ( ! editorSaved ) {
-				$e.run( 'document/saver', { status: false } );
+				$e.run( 'document/save/saver', { status: false } );
 			}
 		}
 	};

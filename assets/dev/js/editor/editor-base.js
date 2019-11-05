@@ -6,7 +6,10 @@ import environment from '../../../../core/common/assets/js/utils/environment.js'
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
+
+// TODO: All components under document can be in one index file.
 import DocumentComponent from './document/component';
+import DocumentSaveComponent from './document/save/component';
 import ElementsComponent from './document/elements/component';
 import DynamicComponent from './document/dynamic/component';
 import RepeaterComponent from './document/elements/repeater/component.js';
@@ -283,7 +286,9 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
+		// TODO: eg: alternative `DocumentComponents.foreach()` then register each.
 		$e.components.register( new DocumentComponent() );
+		$e.components.register( new DocumentSaveComponent() );
 		$e.components.register( new ElementsComponent() );
 		$e.components.register( new RepeaterComponent() );
 		$e.components.register( new HistoryComponent() );

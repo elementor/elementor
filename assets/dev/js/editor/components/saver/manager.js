@@ -1,3 +1,6 @@
+/**
+ * TODO: all content of the file should move to `save/component.js` this file should exist only for BC.
+ */
 module.exports = elementorModules.Module.extend( {
 	autoSaveTimer: null,
 
@@ -15,7 +18,7 @@ module.exports = elementorModules.Module.extend( {
 		clearTimeout( this.autoSaveTimer );
 		if ( hasChanges ) {
 			this.autoSaveTimer = setTimeout( () => {
-				$e.run( 'document/auto-save', { mode: 'safe' } );
+				$e.run( 'document/save/auto', { mode: 'safe' } );
 			}, this.autosaveInterval );
 		}
 	},
@@ -34,7 +37,7 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	// TODO: function too big.
-	saveEditor: function( options ) { // document/save ?
+	saveEditor: function( options ) {
 		if ( this.isSaving ) {
 			return;
 		}
@@ -77,7 +80,7 @@ module.exports = elementorModules.Module.extend( {
 
 					// Notice: Must be after update page.model.post_status to the new status.
 					if ( ! self.isChangedDuringSave ) {
-						$e.run( 'document/saver', { status: false } );
+						$e.run( 'document/save/saver', { status: false } );
 					}
 				}
 

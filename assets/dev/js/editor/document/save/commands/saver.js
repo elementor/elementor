@@ -1,4 +1,4 @@
-import Base from './base/base';
+import Base from '../../commands/base/base';
 
 // Consider SetSaver instead of Saver
 export class Saver extends Base {

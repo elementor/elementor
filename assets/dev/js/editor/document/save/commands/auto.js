@@ -1,6 +1,6 @@
-import Base from './base/base';
+import Base from '../../commands/base/base';
 
-export class AutoSave extends Base {
+export class Auto extends Base {
 	apply( args ) {
 		const { mode = '', options = {} } = args;
 
@@ -34,4 +34,4 @@ export class AutoSave extends Base {
 	}
 }
 
-export default AutoSave;
+export default Auto;

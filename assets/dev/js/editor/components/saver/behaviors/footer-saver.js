@@ -115,7 +115,7 @@ module.exports = Marionette.Behavior.extend( {
 				elementor.saver.isSaving = false;
 			}
 
-			$e.run( 'document/auto-save', { mode: 'safe' } );
+			$e.run( 'document/save/auto', { mode: 'safe' } );
 		}
 	},
 
@@ -124,11 +124,11 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
-		$e.run( 'document/default-save' );
+		$e.run( 'document/save/default' );
 	},
 
 	onClickMenuSaveDraft: function() {
-		$e.run( 'document/draft' );
+		$e.run( 'document/save/draft' );
 	},
 
 	setMenuItems: function( postStatus ) {

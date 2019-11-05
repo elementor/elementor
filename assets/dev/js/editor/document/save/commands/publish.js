@@ -1,4 +1,4 @@
-import Base from './base/base';
+import Base from '../../commands/base/base';
 
 export class Publish extends Base {
 	apply( args ) {

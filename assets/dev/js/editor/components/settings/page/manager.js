@@ -45,7 +45,7 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			$e.run( 'document/auto-save', {
+			$e.run( 'document/save/auto', {
 				options: {
 					onSuccess: function() {
 						elementor.reloadPreview();
@@ -60,7 +60,7 @@ module.exports = BaseSettings.extend( {
 	},
 
 	onModelChange: function() {
-		$e.run( 'document/saver', { status: true } );
+		$e.run( 'document/save/saver', { status: true } );
 
 		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},
