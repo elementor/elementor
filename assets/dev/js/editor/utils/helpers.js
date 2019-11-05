@@ -1,6 +1,4 @@
-var helpers;
-
-helpers = {
+module.exports = {
 	_enqueuedFonts: [],
 	_enqueuedIconFonts: [],
 	_inlineSvg: [],
@@ -662,5 +660,3 @@ helpers = {
 		}
 	},
 };
-
-module.exports = helpers;
