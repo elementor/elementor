@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\Connect\Apps\Library;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -227,55 +229,13 @@ class Api {
 	 *
 	 * @param int $template_id The template ID.
 	 *
-	 * @return array The template content.
+	 * @return object|\WP_Error The template content.
 	 */
 	public static function get_template_content( $template_id ) {
-		$url = sprintf( self::$api_get_template_content_url, $template_id );
+		/** @var Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 
-		$body_args = [
-			// Which API version is used.
-			'api_version' => ELEMENTOR_VERSION,
-			// Which language to return.
-			'site_lang' => get_bloginfo( 'language' ),
-		];
-
-		/**
-		 * API: Template body args.
-		 *
-		 * Filters the body arguments send with the GET request when fetching the content.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array $body_args Body arguments.
-		 */
-		$body_args = apply_filters( 'elementor/api/get_templates/body_args', $body_args );
-
-		$response = wp_remote_get( $url, [
-			'timeout' => 40,
-			'body' => $body_args,
-		] );
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$response_code = (int) wp_remote_retrieve_response_code( $response );
-
-		if ( 200 !== $response_code ) {
-			return new \WP_Error( 'response_code_error', sprintf( 'The request returned with a status code of %s.', $response_code ) );
-		}
-
-		$template_content = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( isset( $template_content['error'] ) ) {
-			return new \WP_Error( 'response_error', $template_content['error'] );
-		}
-
-		if ( empty( $template_content['data'] ) && empty( $template_content['content'] ) ) {
-			return new \WP_Error( 'template_data_error', 'An invalid data was returned.' );
-		}
-
-		return $template_content;
+		return $library->get_template_content( $template_id );
 	}
 
 	/**
