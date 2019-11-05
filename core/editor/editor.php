@@ -450,6 +450,15 @@ class Editor {
 			true
 		);
 
+
+		wp_register_script(
+			'pickr',
+			ELEMENTOR_ASSETS_URL . 'lib/pickr/js/pickr.min.js',
+			[],
+			'1.4.6',
+			true
+		);
+
 		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
@@ -470,6 +479,7 @@ class Editor {
 				'ace-language-tools',
 				'jquery-hover-intent',
 				'nouislider',
+				'pickr',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -821,6 +831,13 @@ class Editor {
 		);
 
 		wp_register_style(
+			'pickr',
+			ELEMENTOR_ASSETS_URL . 'lib/pickr/css/monolith.min.css',
+			[],
+			'1.4.6'
+		);
+
+		wp_register_style(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
@@ -830,6 +847,7 @@ class Editor {
 				'wp-auth-check',
 				'google-font-roboto',
 				'flatpickr',
+				'pickr',
 			],
 			ELEMENTOR_VERSION
 		);

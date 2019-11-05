@@ -69,26 +69,9 @@ class Control_Color extends Base_Data_Control {
 	 */
 	public function content_template() {
 		?>
-		<# var defaultValue = '', dataAlpha = '';
-			if ( data.default ) {
-				defaultValue = ' data-default-color=' + data.default; // Quotes added automatically.
-			}
-
-			if ( data.alpha ) {
-				dataAlpha = ' data-alpha=true';
-			} #>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">
-				<# if ( data.label ) { #>
-					{{{ data.label }}}
-				<# } #>
-				<# if ( data.description ) { #>
-					<span class="elementor-control-field-description">{{{ data.description }}}</span>
-				<# } #>
-			</label>
-			<div class="elementor-control-input-wrapper">
-				<input data-setting="{{ name }}" type="text" placeholder="<?php echo esc_attr( 'Hex/rgba', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
-			</div>
+			<label class="elementor-control-title">{{{ data.label || '' }}}</label>
+			<div class="elementor-control-input-wrapper"></div>
 		</div>
 		<?php
 	}

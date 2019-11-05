@@ -1,40 +1,48 @@
-var ControlBaseDataView = require( 'elementor-controls/base-data' ),
-	ControlColorItemView;
+import ControlBaseDataView from './base-data';
 
-ControlColorItemView = ControlBaseDataView.extend( {
-	applySavedValue: function() {
-		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
+export default class extends ControlBaseDataView {
+	ui() {
+		const ui = super.ui();
 
-		var self = this,
-			value = self.getControlValue(),
-			colorInstance = self.ui.input.wpColorPicker( 'instance' );
+		ui.pickerContainer = '.elementor-control-input-wrapper';
 
-		if ( colorInstance ) {
-			self.ui.input.wpColorPicker( 'color', value );
+		return ui;
+	}
 
-			if ( ! value ) {
-				// Trigger `change` event manually, since it will not be triggered automatically on empty value
-				self.ui.input.data( 'a8cIris' )._change();
-			}
+	applySavedValue() {
+		if ( this.picker ) {
+			this.picker.setColor( this.getControlValue() );
 		} else {
-			elementor.helpers.wpColorPicker( self.ui.input, {
-				change: function() {
-					self.setValue( self.ui.input.wpColorPicker( 'color' ) );
-				},
-				clear: function() {
-					self.setValue( '' );
-				},
-			} );
+			this.initPicker();
 		}
-	},
+	}
 
-	onBeforeDestroy: function() {
-		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
-			this.ui.input.wpColorPicker( 'close' );
+	initPicker() {
+		const options = {
+			el: this.ui.pickerContainer[ 0 ],
+			onChange: () => this.onPickerChange(),
+			onClear: () => this.onPickerClear(),
+			opacity: this.model.get( 'alpha' ),
+		};
+
+		const value = this.getControlValue();
+
+		if ( value ) {
+			options.default = value;
 		}
 
-		this.$el.remove();
-	},
-} );
+		this.picker = elementor.helpers.colorPicker( options );
+	}
 
-module.exports = ControlColorItemView;
+	onPickerChange() {
+		this.setValue( this.picker.getColor().toRGBA().toString() );
+	}
+
+	onPickerClear() {
+		this.setValue( '' );
+	}
+
+	onBeforeDestroy() {
+		this.picker.destroyAndRemove();
+	}
+}

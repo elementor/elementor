@@ -483,6 +483,54 @@ helpers = {
 		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
 	},
 
+	getColorPickerPalette() {
+		const colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+			items = _.sortBy( colorPickerScheme.items, ( item ) => {
+				return this.getColorPickerPaletteIndex( item.key );
+			} );
+
+		return _.pluck( items, 'value' );
+	},
+
+	colorPicker( options ) {
+		const defaultOptions = {
+			theme: 'monolith',
+			swatches: this.getColorPickerPalette(),
+			position: 'bottom-start',
+			components: {
+				opacity: options.opacity,
+				hue: true,
+				interaction: {
+					input: true,
+					clear: true,
+				},
+			},
+		};
+
+		options = jQuery.extend( defaultOptions, options );
+
+		const picker = Pickr.create( options ),
+			onChange = ( ...args ) => {
+				picker.applyColor();
+
+				if ( options.onChange ) {
+					options.onChange( ...args );
+				}
+			},
+			onClear = ( ...args ) => {
+				if ( options.onClear ) {
+					options.onClear( ...args );
+				}
+			};
+
+		picker
+			.on( 'change', onChange )
+			.on( 'swatchselect', onChange )
+			.on( 'clear', onClear );
+
+		return picker;
+	},
+
 	wpColorPicker( $element, options ) {
 		const self = this,
 			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
