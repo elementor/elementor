@@ -12,6 +12,9 @@ import History from './history';
  */
 export const DEFAULT_DEBOUNCE_DELAY = 800;
 
+/**
+ * Debounce class was created since basic debounce does not handle scenarios that each args are unique flow.
+ */
 export default class Debounce extends History {
 	/**
 	 * Last `HistoryId` since last debounce.
@@ -41,12 +44,7 @@ export default class Debounce extends History {
 	 */
 	static uniqueArgsStates = [];
 
-	/**
-	 * Each stimulation we save the unique `this.args` sate id.
-	 *
-	 * @type {string}
-	 */
-	static lastUniqueArgsId = '';
+	static uniqueArgsOldValues = {};
 
 	/**
 	 * Function restore().
@@ -77,6 +75,13 @@ export default class Debounce extends History {
 		).join( ',' ) + ',' + Object.keys( settings );
 	}
 
+	/**
+	 * Function clearUniqueArgsStates().
+	 *
+	 * Clear all states & timeout for current args unique id.
+	 *
+	 * @param {{}} args
+	 */
 	static clearUniqueArgsStates( args ) {
 		const currentArgsUniqueId = Debounce.getArgsUniqueId( args );
 
@@ -91,15 +96,56 @@ export default class Debounce extends History {
 		} );
 	}
 
+	static saveOldValues( args ) {
+		const { containers = [ args.container ] } = args,
+			currentArgsUniqueId = Debounce.getArgsUniqueId( args );
+
+		// TODO: support multi containers.
+		Debounce.uniqueArgsOldValues[ currentArgsUniqueId ] =
+			Debounce.uniqueArgsOldValues[ currentArgsUniqueId ] || containers[ 0 ].settings.toJSON();
+	}
+
+	static deleteOldValues( args ) {
+		const currentArgsUniqueId = Debounce.getArgsUniqueId( args );
+
+		delete Debounce.uniqueArgsOldValues[ currentArgsUniqueId ];
+	}
+
+	static getChanges( args ) {
+		const { containers = [ args.container ], settings = {}, isMultiSettings = false } = args,
+			changes = {},
+			currentArgsUniqueId = Debounce.getArgsUniqueId( args );
+
+		containers.forEach( ( /** Container */ container ) => {
+			const { id } = container,
+				newSettings = isMultiSettings ? settings[ container.id ] : settings;
+
+			if ( ! changes[ id ] ) {
+				changes[ id ] = {};
+			}
+
+			if ( ! changes[ id ].old ) {
+				changes[ id ] = {
+					old: {},
+					new: {},
+				};
+			}
+
+			Object.keys( newSettings ).forEach( ( settingKey ) => {
+				if ( 'undefined' !== typeof Debounce.uniqueArgsOldValues[ currentArgsUniqueId ][ settingKey ] ) {
+					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( Debounce.uniqueArgsOldValues[ currentArgsUniqueId ][ settingKey ] );
+					changes[ id ].new[ settingKey ] = newSettings[ settingKey ];
+				}
+			} );
+		} );
+
+		return changes;
+	}
+
 	initialize( args ) {
 		super.initialize();
 
-		const { containers = [ args.container ] } = args;
-
-		// Save for later use.
-		containers.forEach( ( container ) => {
-			container.oldValues = container.oldValues || container.settings.toJSON();
-		} );
+		Debounce.saveOldValues( args );
 	}
 
 	getHistory( args ) {
@@ -137,8 +183,6 @@ export default class Debounce extends History {
 			Debounce.action = 'normal';
 		}
 
-		Debounce.lastUniqueArgsId = currentArgsUniqueId;
-
 		return !! Debounce.action;
 	}
 
@@ -151,33 +195,10 @@ export default class Debounce extends History {
 	 * @param {number|boolean} historyId
 	 */
 	logHistory( args, historyId = false ) {
-		const { containers = [ args.container ], settings = {}, isMultiSettings = false, options = {} } = args,
-			changes = {};
+		const { containers = [ args.container ], options = {} } = args,
+			changes = Debounce.getChanges( args );
 
-		containers.forEach( ( container ) => {
-			const { id } = container,
-				newSettings = isMultiSettings ? settings[ container.id ] : settings;
-
-			if ( ! changes[ id ] ) {
-				changes[ id ] = {};
-			}
-
-			if ( ! changes[ id ].old ) {
-				changes[ id ] = {
-					old: {},
-					new: {},
-				};
-			}
-
-			Object.keys( newSettings ).forEach( ( settingKey ) => {
-				if ( 'undefined' !== typeof container.oldValues[ settingKey ] ) {
-					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( container.oldValues[ settingKey ] );
-					changes[ id ].new[ settingKey ] = newSettings[ settingKey ];
-				}
-			} );
-
-			delete container.oldValues;
-		} );
+		Debounce.deleteOldValues( args );
 
 		let historyItem = {
 			containers,
@@ -203,8 +224,6 @@ export default class Debounce extends History {
 		} catch ( e ) {
 			// TODO: `Break-Hook` Should be const.
 			if ( 'Break-Hook' === e ) {
-				const currentArgsUniqueId = Debounce.getArgsUniqueId( args );
-
 				// Clear all hooks with the same unique args state.
 				Debounce.clearUniqueArgsStates( args );
 			}
@@ -237,5 +256,8 @@ export default class Debounce extends History {
 		this.logHistory( this.args, Debounce.lastHistoryId );
 
 		Debounce.clearUniqueArgsStates( this.args );
+		Debounce.deleteOldValues( this.args );
 	}
 }
+
+window.debounce = Debounce;
