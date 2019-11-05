@@ -572,6 +572,7 @@ class Editor {
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
+				'clear' => __( 'Clear', 'elementor' ),
 				'got_it' => __( 'Got It', 'elementor' ),
 				/* translators: %s: Element type. */
 				'add_element' => __( 'Add %s', 'elementor' ),

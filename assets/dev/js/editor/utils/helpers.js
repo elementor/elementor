@@ -491,7 +491,7 @@ module.exports = {
 		const defaultOptions = {
 			theme: 'monolith',
 			swatches: this.getColorPickerPalette(),
-			position: 'bottom-start',
+			position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
 			components: {
 				opacity: options.opacity,
 				hue: true,
@@ -499,6 +499,9 @@ module.exports = {
 					input: true,
 					clear: true,
 				},
+			},
+			strings: {
+				clear: elementor.translate( 'clear' ),
 			},
 		};
 
