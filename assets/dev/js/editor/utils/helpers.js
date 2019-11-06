@@ -493,7 +493,7 @@ module.exports = {
 			swatches: this.getColorPickerPalette(),
 			position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
 			components: {
-				opacity: options.opacity,
+				opacity: true,
 				hue: true,
 				interaction: {
 					input: true,

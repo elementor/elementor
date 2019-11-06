@@ -22,7 +22,9 @@ export default class extends ControlBaseDataView {
 			el: this.ui.pickerContainer[ 0 ],
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
-			opacity: this.model.get( 'alpha' ),
+			components: {
+				opacity: this.model.get( 'alpha' ),
+			},
 		};
 
 		const value = this.getControlValue();

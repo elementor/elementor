@@ -43,7 +43,6 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	initColors: function() {
 		this.picker = elementor.helpers.colorPicker( {
 			el: this.ui.colorPickerPlaceholder[ 0 ],
-			opacity: true,
 			default: this.getControlValue( 'color' ),
 			onChange: () => {
 				this.picker.applyColor();
