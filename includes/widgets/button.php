@@ -110,19 +110,23 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
+		$styles = [
+			'' => __( 'Default', 'elementor' ),
+			'info' => __( 'Info', 'elementor' ),
+			'success' => __( 'Success', 'elementor' ),
+			'warning' => __( 'Warning', 'elementor' ),
+			'danger' => __( 'Danger', 'elementor' ),
+		];
+
+		$styles = apply_filters( 'elementor/widgets/button/override_button_styles', $styles );
+
 		$this->add_control(
 			'button_type',
 			[
 				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'info' => __( 'Info', 'elementor' ),
-					'success' => __( 'Success', 'elementor' ),
-					'warning' => __( 'Warning', 'elementor' ),
-					'danger' => __( 'Danger', 'elementor' ),
-				],
+				'options' => $styles,
 				'prefix_class' => 'elementor-button-',
 			]
 		);
