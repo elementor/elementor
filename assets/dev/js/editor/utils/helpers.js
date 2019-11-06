@@ -505,7 +505,7 @@ module.exports = {
 			},
 		};
 
-		options = jQuery.extend( defaultOptions, options );
+		options = jQuery.extend( true, defaultOptions, options );
 
 		const picker = Pickr.create( options ),
 			onChange = ( ...args ) => {
