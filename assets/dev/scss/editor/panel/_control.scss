@@ -523,8 +523,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 }
 
-@import "controls/box-shadow";
-
 @import "controls/button";
 
 @import "controls/choose";
@@ -557,6 +555,8 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 @import "controls/section";
 
+@import "controls/shadow";
+
 @import "controls/slider";
 
 @import "controls/structure";
@@ -564,8 +564,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 @import "controls/switcher";
 
 @import "controls/tabs";
-
-@import "controls/text-shadow";
 
 @import "controls/textarea";
 

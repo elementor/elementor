@@ -24,6 +24,7 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 		this.picker = elementor.helpers.colorPicker( {
 			el: this.ui.pickerPlaceholder[ 0 ],
 			default: this.model.get( 'value' ),
+			opacity: true,
 			onClear: () => {
 				this.triggerMethod( 'value:change', '' );
 			},

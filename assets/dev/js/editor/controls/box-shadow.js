@@ -6,7 +6,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.sliders = '.elementor-slider';
-		ui.colors = '.elementor-shadow-color-picker';
+		ui.colorPickerPlaceholder = '.elementor-color-picker-placeholder';
 
 		return ui;
 	},
@@ -41,18 +41,17 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	initColors: function() {
-		var self = this;
+		this.picker = elementor.helpers.colorPicker( {
+			el: this.ui.colorPickerPlaceholder[ 0 ],
+			opacity: true,
+			default: this.getControlValue( 'color' ),
+			onChange: () => {
+				this.picker.applyColor();
 
-		elementor.helpers.wpColorPicker( this.ui.colors, {
-			change: function() {
-				var $this = jQuery( this ),
-					type = $this.data( 'setting' );
-
-				self.setValue( type, $this.wpColorPicker( 'color' ) );
+				this.setValue( 'color', this.picker.getColor().toRGBA().toString() );
 			},
-
-			clear: function() {
-				self.setValue( this.dataset.setting, '' );
+			onClear: () => {
+				this.setValue( 'color', '' );
 			},
 		} );
 	},
@@ -70,15 +69,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onBeforeDestroy: function() {
-		this.ui.colors.each( function() {
-			var $color = jQuery( this );
-
-			if ( $color.wpColorPicker( 'instance' ) ) {
-				$color.wpColorPicker( 'close' );
-			}
-		} );
-
-		this.$el.remove();
+		this.picker.destroyAndRemove();
 	},
 } );
 
