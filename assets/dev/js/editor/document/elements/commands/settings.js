@@ -12,15 +12,14 @@ export class Settings extends Debounce {
 	 */
 	static getSubTitle( args ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
-			settingsKeys = Object.keys( settings );
+			settingsKeys = Object.keys( settings ),
+			controls = containers[ 0 ].controls,
+			firstSettingKey = settingsKeys[ 0 ];
 
 		let result = '';
 
-		if ( ! isMultiSettings &&
-			1 === settingsKeys.length &&
-			containers[ 0 ].controls &&
-			containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
-			result = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
+		if ( ! isMultiSettings && 1 === settingsKeys.length && controls && controls[ firstSettingKey ] ) {
+			result = controls[ firstSettingKey ].label;
 		}
 
 		return result;
