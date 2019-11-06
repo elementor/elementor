@@ -182,15 +182,13 @@ class Tracker {
 		if ( 'opt_into' === $_GET['elementor_tracker'] ) {
 			check_admin_referer( 'opt_into' );
 
-			update_option( 'elementor_allow_tracking', 'yes' );
-			self::send_tracking_data( true );
+			self::set_opt_in( true );
 		}
 
 		if ( 'opt_out' === $_GET['elementor_tracker'] ) {
 			check_admin_referer( 'opt_out' );
 
-			update_option( 'elementor_allow_tracking', 'no' );
-			update_option( 'elementor_tracker_notice', '1' );
+			self::set_opt_in( false );
 		}
 
 		wp_redirect( remove_query_arg( 'elementor_tracker' ) );
@@ -284,6 +282,16 @@ class Tracker {
 	 */
 	public static function is_notice_shown() {
 		return self::$notice_shown;
+	}
+
+	public static function set_opt_in( $value ) {
+		if ( $value ) {
+			update_option( 'elementor_allow_tracking', 'yes' );
+			self::send_tracking_data( true );
+		} else {
+			update_option( 'elementor_allow_tracking', 'no' );
+			update_option( 'elementor_tracker_notice', '1' );
+		}
 	}
 
 	/**
