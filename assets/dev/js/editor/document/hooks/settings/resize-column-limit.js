@@ -9,7 +9,7 @@ export class ResizeColumnLimit extends HookDependency {
 		return 'resize-column-limit';
 	}
 
-	conditioning( args ) {
+	conditions( args ) {
 		return args.settings._inline_size && ! args.isMultiSettings;
 	}
 

@@ -9,7 +9,7 @@ export class SetStructure extends HookAfter {
 		return 'set-structure';
 	}
 
-	conditioning( args ) {
+	conditions( args ) {
 		return !! args.settings.structure;
 	}
 

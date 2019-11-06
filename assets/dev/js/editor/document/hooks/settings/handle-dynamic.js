@@ -10,7 +10,7 @@ export class HandleDynamic extends HookAfter {
 		return 'handle-dynamic';
 	}
 
-	conditioning( args ) {
+	conditions( args ) {
 		const { containers = [ args.container ] } = args;
 
 		return containers.some( ( /**Container*/ container ) => 'dynamic' === container.type );

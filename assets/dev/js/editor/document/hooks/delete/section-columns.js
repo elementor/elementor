@@ -10,7 +10,7 @@ export class SectionsColumns extends HookAfter {
 		return 'delete-section-columns';
 	}
 
-	conditioning( args ) {
+	conditions( args ) {
 		const { containers = [ args.container ] } = args;
 
 		// If one of the targets is column.

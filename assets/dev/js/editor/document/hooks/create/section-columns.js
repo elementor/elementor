@@ -10,7 +10,7 @@ export class SectionColumns extends HookAfter {
 		return 'create-section-columns';
 	}
 
-	conditioning( args ) {
+	conditions( args ) {
 		return args.model && 'section' === args.model.elType && ! args.model.elements;
 	}
 

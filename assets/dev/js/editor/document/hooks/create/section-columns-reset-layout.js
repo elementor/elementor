@@ -9,7 +9,7 @@ export class SectionColumnsResetLayout extends HookAfter {
 		return 'section-columns-reset-layout';
 	}
 
-	conditioning( args ) {
+	conditions( args ) {
 		return args.model && 'column' === args.model.elType;
 	}
 
