@@ -19,6 +19,21 @@ SectionView = BaseElementView.extend( {
 		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
 	},
 
+	addChildModel: function( model ) {
+		/// TODO: maybe should be part of $e.hooks.
+		const isModelInstance = model instanceof Backbone.Model,
+			isInner = this.isInner();
+
+		if ( isModelInstance ) {
+			// TODO: change to command.
+			model.set( 'isInner', isInner );
+		} else {
+			model.isInner = isInner;
+		}
+
+		return BaseElementView.prototype.addChildModel.apply( this, arguments );
+	},
+
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
