@@ -27,11 +27,12 @@ export class HandleDynamic extends HookAfter {
 						settings: {
 							[ container.view.options.controlName ]: tagText,
 						},
-					};
+					},
+					debounceHistoryId = Debounce.getHistoryId( args );
 
 				// Upon debounce, chain HistoryId.
-				if ( Debounce.lastHistoryId ) {
-					commandArgs.histroyId = Debounce.lastHistoryId;
+				if ( debounceHistoryId ) {
+					commandArgs.histroyId = debounceHistoryId;
 				}
 
 				$e.run( 'document/dynamic/settings', commandArgs );

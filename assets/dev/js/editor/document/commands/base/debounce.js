@@ -14,28 +14,37 @@ export const DEFAULT_DEBOUNCE_DELAY = 800;
 
 /**
  * Debounce class was created since basic debounce does not handle scenarios that each args are unique flow.
+ * TODO: All `uniqueArgs*` properties should be under one array.
+ * TODO: Refactor.
  */
 export default class Debounce extends History {
 	/**
-	 * Last `HistoryId` since last debounce.
+	 * History id per uniqueArgs.
 	 *
-	 * @type {number}
+	 * @type {{}.<number>}
 	 */
-	static lastHistoryId = 0;
+	static uniqueArgsHistoryId = {};
 
 	/**
-	 * Debounce timer.
+	 * Timer per uniqueArgs.
 	 *
-	 * @type {number}
+	 * @type {{}.<number>}
 	 */
-	static timer = 0;
+	static uniqueArgsTimer = {};
 
 	/**
-	 * Debounce action, how should the debounce extender act.
+	 * Action per uniqueArgs.
 	 *
-	 * @type {string}
+	 * @type {{}.<string>}
 	 */
-	static action = '';
+	static uniqueArgsAction = {};
+
+	/**
+	 * Old values per uniqueArgs.
+	 *
+	 * @type {{}}
+	 */
+	static uniqueArgsOldValues = {};
 
 	/**
 	 * Array of UniqueArgsState
@@ -43,8 +52,6 @@ export default class Debounce extends History {
 	 * @type {Array.<UniqueArgsState>}
 	 */
 	static uniqueArgsStates = [];
-
-	static uniqueArgsOldValues = {};
 
 	/**
 	 * Function restore().
@@ -96,6 +103,42 @@ export default class Debounce extends History {
 		} );
 	}
 
+	static clearUniqueArgsStatesHolders( args ) {
+		Debounce.clearUniqueArgsStates( args );
+
+		const currentArgsUniqueId = Debounce.getArgsUniqueId( args );
+
+		delete Debounce.uniqueArgsHistoryId[ currentArgsUniqueId ];
+		delete Debounce.uniqueArgsTimer[ currentArgsUniqueId ];
+		delete Debounce.uniqueArgsAction[ currentArgsUniqueId ];
+
+		Debounce.deleteOldValues( args );
+	}
+
+	static getAction( args ) {
+		return Debounce.uniqueArgsAction[ Debounce.getArgsUniqueId( args ) ];
+	}
+
+	static setAction( args, action ) {
+		Debounce.uniqueArgsAction[ Debounce.getArgsUniqueId( args ) ] = action;
+	}
+
+	static getTimer( args ) {
+		return Debounce.uniqueArgsTimer[ Debounce.getArgsUniqueId( args ) ];
+	}
+
+	static setTimer( args, timer ) {
+		Debounce.uniqueArgsTimer[ Debounce.getArgsUniqueId( args ) ] = timer;
+	}
+
+	static getHistoryId( args ) {
+		return Debounce.uniqueArgsHistoryId[ Debounce.getArgsUniqueId( args ) ];
+	}
+
+	static setHistoryId( args, historyId ) {
+		Debounce.uniqueArgsHistoryId[ Debounce.getArgsUniqueId( args ) ] = historyId;
+	}
+
 	static saveOldValues( args ) {
 		const { containers = [ args.container ] } = args,
 			currentArgsUniqueId = Debounce.getArgsUniqueId( args );
@@ -145,7 +188,9 @@ export default class Debounce extends History {
 	initialize( args ) {
 		super.initialize();
 
-		Debounce.saveOldValues( args );
+		if ( this.isHistoryActive() ) {
+			Debounce.saveOldValues( args );
+		}
 	}
 
 	getHistory( args ) {
@@ -153,19 +198,19 @@ export default class Debounce extends History {
 			return false;
 		}
 
-		// Clear the action first.
-		Debounce.action = '';
+		const { options = {} } = args;
 
-		const { options = {} } = args,
-			currentArgsUniqueId = Debounce.getArgsUniqueId( args );
+		// Clear the action first.
+		Debounce.setAction( args, '' );
 
 		if ( options.debounceHistory ) {
 			// Get current time.
-			const now = ( new Date() ).getTime();
+			const now = ( new Date() ).getTime(),
+				timer = Debounce.getTimer( args );
 
 			// If no timer or `DEFAULT_DEBOUNCE_DELAY` passed from last stimulation.
-			if ( ! Debounce.timer || now - Debounce.timer > DEFAULT_DEBOUNCE_DELAY ) {
-				Debounce.action = 'debounce';
+			if ( ! timer || now - timer > DEFAULT_DEBOUNCE_DELAY ) {
+				Debounce.setAction( args, 'debounce' );
 			}
 
 			// Clear all current snapshots.
@@ -173,17 +218,17 @@ export default class Debounce extends History {
 
 			// Anyway if `options.debounceHistory` set to be true, we create timeout for saving log history.
 			Debounce.uniqueArgsStates.push( {
-				id: currentArgsUniqueId,
+				id: Debounce.getArgsUniqueId( args ),
 				handler: setTimeout( this.onDebounceTimeout.bind( this ), DEFAULT_DEBOUNCE_DELAY ),
 			} );
 
 			// Init || Update timer.
-			Debounce.timer = now;
+			Debounce.setTimer( args, now );
 		} else {
-			Debounce.action = 'normal';
+			Debounce.setAction( args, 'normal' );
 		}
 
-		return !! Debounce.action;
+		return !! Debounce.getAction( args );
 	}
 
 	/**
@@ -225,7 +270,7 @@ export default class Debounce extends History {
 			// TODO: `Break-Hook` Should be const.
 			if ( 'Break-Hook' === e ) {
 				// Clear all hooks with the same unique args state.
-				Debounce.clearUniqueArgsStates( args );
+				Debounce.clearUniqueArgsStatesHolders( args );
 			}
 
 			// Resume Break-Hook.
@@ -235,12 +280,14 @@ export default class Debounce extends History {
 
 	onAfterApply( args, result ) {
 		if ( this.isHistoryActive() ) {
-			if ( 'normal' === Debounce.action ) {
+			const action = Debounce.getAction( args );
+
+			if ( 'normal' === action ) {
 				super.onAfterApply( args, result );
 
 				this.logHistory( args );
-			} else if ( 'debounce' === Debounce.action && this.historyId ) {
-				Debounce.lastHistoryId = this.historyId;
+			} else if ( 'debounce' === action && this.historyId ) {
+				Debounce.setHistoryId( args, this.historyId );
 			}
 		}
 	}
@@ -253,11 +300,8 @@ export default class Debounce extends History {
 	onDebounceTimeout() {
 		$e.hooks.runAfter( this.currentCommand, this.args );
 
-		this.logHistory( this.args, Debounce.lastHistoryId );
+		this.logHistory( this.args, Debounce.getHistoryId( this.args ) );
 
-		Debounce.clearUniqueArgsStates( this.args );
-		Debounce.deleteOldValues( this.args );
+		Debounce.clearUniqueArgsStatesHolders( this.args );
 	}
 }
-
-window.debounce = Debounce;
