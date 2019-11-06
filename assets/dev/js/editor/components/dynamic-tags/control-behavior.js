@@ -125,9 +125,8 @@ module.exports = Marionette.Behavior.extend( {
 			settings: settings,
 			controlName: this.view.model.get( 'name' ),
 			dynamicSettings: this.getOption( 'dynamicSettings' ),
-		} );
-
-		const elementContainer = this.view.options.container,
+		} ),
+			elementContainer = this.view.options.container,
 			tagViewLabel = elementContainer.controls[ tagView.options.controlName ].label;
 
 		tagView.options.container = new elementorModules.editor.Container( {
@@ -223,6 +222,7 @@ module.exports = Marionette.Behavior.extend( {
 		$e.run( 'document/dynamic/disable', {
 			container: this.view.options.container,
 			settings: {
+				// Set value for `undo` command.
 				[ this.view.model.get( 'name' ) ]: this.tagViewToTagText(),
 			},
 		} );

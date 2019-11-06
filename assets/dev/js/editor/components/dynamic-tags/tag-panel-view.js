@@ -104,6 +104,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	initialize: function() {
+		// The `model` should always be available.
 		this.initModel();
 
 		if ( ! this.hasSettings() ) {
