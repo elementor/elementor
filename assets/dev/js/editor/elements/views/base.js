@@ -118,7 +118,7 @@ BaseElementView = BaseContainer.extend( {
 				view: this,
 				parent: this._parent.getContainer() || {},
 				children: [],
-				label: elementor.history.history.getModelLabel( this.model ),
+				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
 		}

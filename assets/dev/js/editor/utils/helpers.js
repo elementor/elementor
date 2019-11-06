@@ -618,6 +618,28 @@ helpers = {
 			}
 		}
 	},
+
+	getModelLabel( model ) {
+		let result;
+
+		if ( ! ( model instanceof Backbone.Model ) ) {
+			model = new Backbone.Model( model );
+		}
+
+		if ( model.get( 'labelSuffix' ) ) {
+			result = model.get( 'title' ) + ' ' + model.get( 'labelSuffix' );
+		} else if ( 'global' === model.get( 'widgetType' ) ) {
+			if ( model.getTitle ) {
+				result = model.getTitle();
+			}
+		}
+
+		if ( ! result ) {
+			result = elementor.getElementData( model ).title;
+		}
+
+		return result;
+	},
 };
 
 module.exports = helpers;

@@ -149,7 +149,7 @@ class AddSectionBase extends Marionette.ItemView {
 		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
 			historyId = $e.run( 'document/history/start-log', {
 				type: 'add',
-				title: elementor.history.history.getModelLabel( selectedElement.model ),
+				title: elementor.helpers.getModelLabel( selectedElement.model ),
 			} );
 
 		$e.run( 'document/elements/create', {

@@ -183,7 +183,7 @@ var	Manager = function() {
 
 			if ( historyItem.get( 'restore' ) ) {
 				let container = 'sub-add' === historyItem.get( 'type' ) ?
-					historyItem.get( 'data' ).toRestoreContainer :
+					historyItem.get( 'data' ).containerToRestore :
 					historyItem.get( 'container' ) || historyItem.get( 'containers' );
 
 				if ( Array.isArray( container ) ) {
@@ -247,29 +247,6 @@ var	Manager = function() {
 				item.set( 'status', 'not_applied' );
 			}
 		}
-	};
-
-	this.getModelLabel = function( model ) {
-		// TODO: this is not the right place for the function ( should be static. ).
-		let result;
-
-		if ( ! ( model instanceof Backbone.Model ) ) {
-			model = new Backbone.Model( model );
-		}
-
-		if ( model.get( 'labelSuffix' ) ) {
-			result = model.get( 'title' ) + ' ' + model.get( 'labelSuffix' );
-		} else if ( 'global' === model.get( 'widgetType' ) ) {
-			if ( model.getTitle ) {
-				result = model.getTitle();
-			}
-		}
-
-		if ( ! result ) {
-			result = elementor.getElementData( model ).title;
-		}
-
-		return result;
 	};
 
 	init();

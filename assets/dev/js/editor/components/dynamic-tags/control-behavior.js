@@ -163,7 +163,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	getDynamicValue: function() {
-		return this.view.container.settings.get( '__dynamic__' )[ this.view.model.get( 'name' ) ];
+		return this.view.container.dynamic.get( this.view.model.get( 'name' ) );
 	},
 
 	destroyTagView: function() {

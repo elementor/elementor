@@ -19,10 +19,13 @@ export class Import extends History {
 
 	apply( args ) {
 		const previewContainer = elementor.getPreviewContainer(),
-			{ data } = args,
-			options = args.options || {},
-			at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at;
+			{
+				data,
+				options = args.options || {},
+				at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at,
+			} = args;
 
+		// Each `data.content`.
 		Object.entries( data.content ).forEach( ( [ index, model ] ) => {
 			$e.run( 'document/elements/create', {
 				container: elementor.getPreviewContainer(),

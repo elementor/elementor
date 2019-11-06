@@ -14,11 +14,11 @@ export class Create extends History {
 		if ( isRedo ) {
 			$e.run( 'document/elements/create', {
 				container,
-				model: data.toRestoreModel,
+				model: data.modelToRestore,
 				options,
 			} );
 		} else {
-			$e.run( 'document/elements/delete', { container: data.toRestoreContainer } );
+			$e.run( 'document/elements/delete', { container: data.containerToRestore } );
 		}
 	}
 
@@ -36,7 +36,7 @@ export class Create extends History {
 			containers,
 			model,
 			type: 'add',
-			title: elementor.history.history.getModelLabel( model ),
+			title: elementor.helpers.getModelLabel( model ),
 		};
 	}
 
@@ -63,8 +63,8 @@ export class Create extends History {
 					restore: this.constructor.restore,
 					options,
 					data: {
-						toRestoreContainer: createdContainer,
-						toRestoreModel: createdContainer.model.toJSON(),
+						containerToRestore: createdContainer,
+						modelToRestore: createdContainer.model.toJSON(),
 					},
 				} );
 			}

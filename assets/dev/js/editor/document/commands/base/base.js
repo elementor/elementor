@@ -124,6 +124,7 @@ export default class Base {
 			throw Error( `${ property } invalid constructor type.` );
 		}
 	}
+
 	/**
 	 * Function initialize().
 	 *

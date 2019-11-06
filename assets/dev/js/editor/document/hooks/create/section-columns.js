@@ -59,8 +59,8 @@ export class SectionColumns extends HookAfter {
 					restore: Create.restore,
 					options,
 					data: {
-						toRestoreContainer: container,
-						toRestoreModel: model,
+						containerToRestore: container,
+						modelToRestore: model,
 					},
 				} );
 			}
