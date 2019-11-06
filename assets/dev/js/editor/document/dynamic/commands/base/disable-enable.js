@@ -12,9 +12,9 @@ export default class DisableEnable extends History {
 
 		historyItem.get( 'containers' ).forEach( ( container ) => {
 			const settings = data.changes[ container.id ],
-				toggle = isRedo ? 'enable' : 'disable';
+				toggle = isRedo ? 'document/dynamic/enable' : 'document/dynamic/disable';
 
-			$e.run( `document/dynamic/${ toggle }`, {
+			$e.run( toggle, {
 				container,
 				settings,
 			} );
@@ -43,7 +43,9 @@ export default class DisableEnable extends History {
 			changes[ id ] = settings;
 		} );
 
-		const subTitle = ElementsSettings.getSubTitle( args );
+		const subTitle = elementor.translate( 'dynamic' ) + ' ' + ElementsSettings.getSubTitle( args ),
+			type = 'document/dynamic/enable' === this.currentCommand ?
+				'enable' : 'disable';
 
 		return {
 			containers,
@@ -52,7 +54,7 @@ export default class DisableEnable extends History {
 				changes,
 				command: this.currentCommand,
 			},
-			type: 'change',
+			type,
 			restore: this.constructor.restore,
 		};
 	}

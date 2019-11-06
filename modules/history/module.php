@@ -58,6 +58,8 @@ class Module extends BaseModule {
 				'editing_started' => __( 'Editing Started', 'elementor' ),
 				'style_pasted' => __( 'Style Pasted', 'elementor' ),
 				'style_reset' => __( 'Style Reset', 'elementor' ),
+				'enabled' => __( 'Enabled', 'elementor' ),
+				'disabled' => __( 'Disabled', 'elementor' ),
 				'all_content' => __( 'All Content', 'elementor' ),
 			],
 		] );

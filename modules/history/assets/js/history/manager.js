@@ -16,6 +16,8 @@ var	Manager = function() {
 		move: elementor.translate( 'moved' ),
 		paste_style: elementor.translate( 'style_pasted' ),
 		reset_style: elementor.translate( 'style_reset' ),
+		enable: elementor.translate( 'enabled' ),
+		disable: elementor.translate( 'disabled' ),
 	};
 
 	var getActionLabel = function( itemData ) {
