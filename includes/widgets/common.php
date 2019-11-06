@@ -248,6 +248,9 @@ class Widget_Common extends Widget_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-widget-container' => 'transition: background {{SIZE}}s',
+				],
 			]
 		);
 
