@@ -509,8 +509,6 @@ module.exports = {
 
 		const picker = Pickr.create( options ),
 			onChange = ( ...args ) => {
-				picker.applyColor();
-
 				if ( options.onChange ) {
 					options.onChange( ...args );
 				}
