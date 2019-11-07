@@ -1,6 +1,4 @@
-var helpers;
-
-helpers = {
+module.exports = {
 	_enqueuedFonts: [],
 	_enqueuedIconFonts: [],
 	_inlineSvg: [],
@@ -166,10 +164,7 @@ helpers = {
 	},
 
 	isIconMigrated( settings, controlName ) {
-		if ( settings.__fa4_migrated && settings.__fa4_migrated[ controlName ] ) {
-			return true;
-		}
-		return false;
+		return settings.__fa4_migrated && settings.__fa4_migrated[ controlName ];
 	},
 
 	fetchFa4ToFa5Mapping() {
@@ -483,22 +478,63 @@ helpers = {
 		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
 	},
 
-	wpColorPicker( $element, options ) {
-		const self = this,
-			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
-			items = _.sortBy( colorPickerScheme.items, function( item ) {
-				return self.getColorPickerPaletteIndex( item.key );
-			} ),
-			defaultOptions = {
-				width: window.innerWidth >= 1440 ? 271 : 251,
-				palettes: _.pluck( items, 'value' ),
+	getColorPickerPalette() {
+		const colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
+			items = _.sortBy( colorPickerScheme.items, ( item ) => {
+				return this.getColorPickerPaletteIndex( item.key );
+			} );
+
+		return _.pluck( items, 'value' );
+	},
+
+	colorPicker( options ) {
+		const defaultOptions = {
+			theme: 'monolith',
+			swatches: this.getColorPickerPalette(),
+			position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
+			components: {
+				opacity: true,
+				hue: true,
+				interaction: {
+					input: true,
+					clear: true,
+				},
+			},
+			strings: {
+				clear: elementor.translate( 'clear' ),
+			},
+		};
+
+		options = jQuery.extend( true, defaultOptions, options );
+
+		const picker = Pickr.create( options ),
+			onChange = ( ...args ) => {
+				if ( options.onChange ) {
+					options.onChange( ...args );
+				}
+			},
+			onClear = ( ...args ) => {
+				if ( options.onClear ) {
+					options.onClear( ...args );
+				}
 			};
 
-		if ( options ) {
-			_.extend( defaultOptions, options );
-		}
+		picker
+			.on( 'change', onChange )
+			.on( 'swatchselect', onChange )
+			.on( 'clear', onClear );
 
-		return $element.wpColorPicker( defaultOptions );
+		return picker;
+	},
+
+	wpColorPicker( $element, options ) {
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'elementor.helpers.colorPicker()' );
+
+		options = options || {};
+
+		options.el = $element;
+
+		elementor.helpers.colorPicker( options );
 	},
 
 	isInViewport( element, html ) {
@@ -614,5 +650,3 @@ helpers = {
 		}
 	},
 };
-
-module.exports = helpers;

@@ -7,25 +7,25 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 	},
 
 	ui: {
-		input: '.elementor-panel-scheme-color-value',
+		pickerPlaceholder: '.elementor-panel-scheme-color-picker-placeholder',
 	},
 
 	changeUIValue: function( newValue ) {
-		this.ui.input.wpColorPicker( 'color', newValue );
+		this.picker.setColor( newValue );
+
+		this.triggerMethod( 'value:change', this.picker.getColor().toRGBA().toString() );
 	},
 
 	onBeforeDestroy: function() {
-		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
-			this.ui.input.wpColorPicker( 'close' );
-		}
+		this.picker.destroyAndRemove();
 	},
 
 	onRender: function() {
-		var self = this;
-
-		elementor.helpers.wpColorPicker( self.ui.input, {
-			change: function( event, ui ) {
-				self.triggerMethod( 'value:change', ui.color.toString() );
+		this.picker = elementor.helpers.colorPicker( {
+			el: this.ui.pickerPlaceholder[ 0 ],
+			default: this.model.get( 'value' ),
+			onClear: () => {
+				this.triggerMethod( 'value:change', '' );
 			},
 		} );
 	},
