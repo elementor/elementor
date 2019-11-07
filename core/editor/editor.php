@@ -450,7 +450,6 @@ class Editor {
 			true
 		);
 
-
 		wp_register_script(
 			'pickr',
 			ELEMENTOR_ASSETS_URL . 'lib/pickr/js/pickr.min.js',
