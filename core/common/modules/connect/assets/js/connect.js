@@ -1,5 +1,7 @@
 export default class extends elementorModules.ViewModule {
 	addPopupPlugin() {
+		let counter = 0;
+
 		jQuery.fn.elementorConnect = function( options ) {
 			const settings = jQuery.extend( {
 				// These are the defaults.
@@ -11,9 +13,11 @@ export default class extends elementorModules.ViewModule {
 				},
 			}, options );
 
-			this.each( function( index ) {
+			this.each( function() {
+				counter++;
+
 				const $this = jQuery( this ),
-					callbackId = 'cb' + ( index + 1 );
+					callbackId = 'cb' + ( counter );
 
 				$this.attr( {
 					target: '_blank',
@@ -21,7 +25,7 @@ export default class extends elementorModules.ViewModule {
 				} );
 
 				elementorCommon.elements.$window
-					.on( 'elementor/connect/success/' + callbackId, settings.success )
+				.on( 'elementor/connect/success/' + callbackId, settings.success )
 					.on( 'elementor/connect/error/' + callbackId, settings.error );
 			} );
 
