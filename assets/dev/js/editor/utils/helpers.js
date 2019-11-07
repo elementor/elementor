@@ -528,21 +528,13 @@ module.exports = {
 	},
 
 	wpColorPicker( $element, options ) {
-		const self = this,
-			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
-			items = _.sortBy( colorPickerScheme.items, function( item ) {
-				return self.getColorPickerPaletteIndex( item.key );
-			} ),
-			defaultOptions = {
-				width: window.innerWidth >= 1440 ? 271 : 251,
-				palettes: _.pluck( items, 'value' ),
-			};
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'elementor.helpers.colorPicker()' );
 
-		if ( options ) {
-			_.extend( defaultOptions, options );
-		}
+		options = options || {};
 
-		return $element.wpColorPicker( defaultOptions );
+		options.el = $element;
+
+		elementor.helpers.colorPicker( options );
 	},
 
 	isInViewport( element, html ) {
