@@ -20,17 +20,20 @@ abstract class Base_App {
 
 	/**
 	 * @since 2.3.0
-	 * @access public
+	 * @access protected
 	 * @abstract
+	 * TODO: make it public.
 	 */
-	abstract public function get_slug();
+	abstract protected function get_slug();
 
 	/**
 	 * @since 2.8.0
 	 * @access public
-	 * @abstract
+	 * TODO: make it abstract.
 	 */
-	abstract public function get_title();
+	public function get_title() {
+		return $this->get_slug();
+	}
 
 	/**
 	 * @since 2.3.0

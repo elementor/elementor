@@ -14,7 +14,7 @@ class Library extends Common_App {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	public function get_slug() {
+	protected function get_slug() {
 		return 'library';
 	}
 
