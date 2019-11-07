@@ -111,11 +111,13 @@ export default class extends elementorModules.Module {
 	onRoute( route ) {
 		elementorCommon.elements.$body.addClass( this.getBodyClass( route ) );
 		this.activate();
+		this.trigger( 'route/open', route );
 	}
 
 	onCloseRoute( route ) {
 		elementorCommon.elements.$body.removeClass( this.getBodyClass( route ) );
 		this.inactivate();
+		this.trigger( 'route/close', route );
 	}
 
 	setDefaultRoute( route ) {

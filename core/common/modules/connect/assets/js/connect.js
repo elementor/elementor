@@ -47,16 +47,16 @@ export default class extends elementorModules.ViewModule {
 		this.elements.$connectPopup.elementorConnect();
 	}
 
-	onHideLibraryConnect() {
+	onCloseLibraryConnect() {
 		elementorCommon.ajax.addRequest( 'library_connect_popup_showed' );
-		$e.components.get( 'library' ).manager.layout.modal.off( 'hide', this.onHideLibraryConnect );
+		$e.components.get( 'library' ).off( 'route/close', this.onCloseLibraryConnect );
 	}
 
 	maybeShowLibraryConnectPopup() {
 		if ( elementor.config.library_connect.show_popup ) {
 			$e.route( 'library/connect', {
 				onAfter: () => {
-					$e.components.get( 'library' ).manager.layout.modal.on( 'hide', this.onHideLibraryConnect );
+					$e.components.get( 'library' ).on( 'route/close', this.onCloseLibraryConnect );
 				},
 			} );
 		}
