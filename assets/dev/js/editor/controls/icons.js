@@ -317,7 +317,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	setDefaultIconLibraryLabel( defaultIcon, iconContainer ) {
-		console.log( defaultIcon );
 		// Check if the control has a default icon
 		if ( '' !== defaultIcon.value && 'svg' !== defaultIcon.library ) {
 			// If the default icon is not an SVG, set the icon-library label's icon to the default icon
