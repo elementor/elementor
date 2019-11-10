@@ -141,6 +141,7 @@ class App extends BaseApp {
 
 		$this->print_config();
 
+		// Used for external plugins.
 		do_action( 'elementor/common/after_register_scripts', $this );
 	}
 

@@ -175,9 +175,11 @@ export default class Base {
 	run() {
 		let result;
 
+		// For $e.events.
 		this.onBeforeRun( this.args );
 
 		try {
+			// For $e.hooks.
 			this.onBeforeApply( this.args );
 
 			result = this.apply( this.args );
@@ -187,12 +189,14 @@ export default class Base {
 			return false;
 		}
 
+		// For $e.hooks.
 		this.onAfterApply( this.args, result );
 
 		if ( this.isDataChanged() ) {
 			$e.run( 'document/save/set-is-modified', true );
 		}
 
+		// For $e.events.
 		this.onAfterRun( this.args, result );
 
 		return result;

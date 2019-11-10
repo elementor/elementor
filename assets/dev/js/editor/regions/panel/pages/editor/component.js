@@ -62,6 +62,7 @@ export default class extends elementorModules.common.Component {
 			defaultTab = jQuery( this.getTabsWrapperSelector() ).find( '.elementor-component-tab' ).eq( 0 ).data( 'tab' );
 		}
 
+		// For unit test.
 		if ( ! defaultTab ) {
 			defaultTab = 'content';
 		}
