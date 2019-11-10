@@ -438,6 +438,12 @@ helpers = {
 		return _.isEmpty( hasFields );
 	},
 
+	cloneObject( object ) {
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+
+		return elementorCommon.helpers.cloneObject( object );
+	},
+
 	disableElementEvents( $element ) {
 		$element.each( function() {
 			const currentPointerEvents = this.style.pointerEvents;
