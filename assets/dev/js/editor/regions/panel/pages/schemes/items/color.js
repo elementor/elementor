@@ -12,8 +12,12 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 
 	changeUIValue: function( newValue ) {
 		this.picker.setColor( newValue );
+	},
+
+	triggerChange: function() {
 		this.triggerMethod( 'value:change', this.picker.getColor().toRGBA().toString( 0 ) );
 
+		this.picker.applyColor();
 	},
 
 	onBeforeDestroy: function() {
@@ -24,6 +28,11 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 		this.picker = elementor.helpers.colorPicker( {
 			el: this.ui.pickerPlaceholder[ 0 ],
 			default: this.model.get( 'value' ),
+			onChange: () => {
+				// The timeout is necessary to make sure the value has already been change in case of indirect change
+				// (e.g. clicking on colors preset in "Color Picker" settings)
+				setTimeout( () => this.triggerChange(), 0 );
+			},
 			onClear: () => {
 				this.triggerMethod( 'value:change', '' );
 			},
