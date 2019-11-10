@@ -132,7 +132,6 @@ module.exports = Marionette.Behavior.extend( {
 		tagView.options.container = new elementorModules.editor.Container( {
 			type: 'dynamic',
 			id: id,
-			document: elementContainer.document,
 			model: tagView.model,
 			settings: tagView.model,
 			view: tagView,

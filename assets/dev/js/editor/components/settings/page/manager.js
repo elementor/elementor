@@ -19,7 +19,6 @@ module.exports = BaseSettings.extend( {
 		const container = new elementorModules.editor.Container( {
 			type: 'TODO: @see page/manager.js',
 			id: editModel.id,
-			document: elementor.getPreviewContainer(),
 			model: editModel,
 			settings: editModel.get( 'settings' ),
 			view: 'TODO: @see page/manager.js',

@@ -34,7 +34,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		elementContainer.children[ index ] = new elementorModules.editor.Container( {
 			type: 'repeater',
 			id: rowModel.get( '_id' ),
-			document: elementContainer.document,
 			model: {
 				name: this.model.get( 'name' ),
 			},
