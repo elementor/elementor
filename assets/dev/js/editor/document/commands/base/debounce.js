@@ -143,9 +143,18 @@ export default class Debounce extends History {
 		const { containers = [ args.container ] } = args,
 			currentArgsUniqueId = Debounce.getArgsUniqueId( args );
 
-		// TODO: support multi containers.
-		Debounce.uniqueArgsOldValues[ currentArgsUniqueId ] =
-			Debounce.uniqueArgsOldValues[ currentArgsUniqueId ] || containers[ 0 ].settings.toJSON();
+		// If there is already old values not assign required.
+		if ( Debounce.uniqueArgsOldValues[ currentArgsUniqueId ] ) {
+			return;
+		}
+
+		containers.forEach( ( /** Container */ container ) => {
+			if ( ! Debounce.uniqueArgsOldValues[ currentArgsUniqueId ] ) {
+				Debounce.uniqueArgsOldValues[ currentArgsUniqueId ] = {};
+			}
+
+			Debounce.uniqueArgsOldValues[ currentArgsUniqueId ][ container.id ] = container.settings.toJSON();
+		} );
 	}
 
 	static deleteOldValues( args ) {
@@ -161,7 +170,7 @@ export default class Debounce extends History {
 
 		containers.forEach( ( /** Container */ container ) => {
 			const { id } = container,
-				newSettings = isMultiSettings ? settings[ container.id ] : settings;
+				newSettings = isMultiSettings ? settings[ id ] : settings;
 
 			if ( ! changes[ id ] ) {
 				changes[ id ] = {};
@@ -175,8 +184,10 @@ export default class Debounce extends History {
 			}
 
 			Object.keys( newSettings ).forEach( ( settingKey ) => {
-				if ( 'undefined' !== typeof Debounce.uniqueArgsOldValues[ currentArgsUniqueId ][ settingKey ] ) {
-					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( Debounce.uniqueArgsOldValues[ currentArgsUniqueId ][ settingKey ] );
+				const oldValues = Debounce.uniqueArgsOldValues[ currentArgsUniqueId ];
+
+				if ( 'undefined' !== typeof oldValues[ id ][ settingKey ] ) {
+					changes[ id ].old[ settingKey ] = elementorCommon.helpers.cloneObject( oldValues[ id ][ settingKey ] );
 					changes[ id ].new[ settingKey ] = newSettings[ settingKey ];
 				}
 			} );
@@ -251,10 +262,6 @@ export default class Debounce extends History {
 			type: 'change',
 			restore: this.constructor.restore,
 		};
-
-		if ( options.history ) {
-			historyItem = Object.assign( options.history, historyItem );
-		}
 
 		if ( historyId ) {
 			historyItem = Object.assign( { id: historyId }, historyItem );
