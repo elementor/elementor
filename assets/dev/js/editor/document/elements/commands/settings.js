@@ -52,14 +52,20 @@ export class Settings extends Debounce {
 			return false;
 		}
 
-		const { containers = [ args.container ] } = args,
+		const { containers = [ args.container ], options = {} } = args,
 			subTitle = this.constructor.getSubTitle( args );
 
-		return {
+		let history = {
 			containers,
 			subTitle,
 			type: 'change',
 		};
+
+		if ( options.history ) {
+			history = Object.assign( options.history, history );
+		}
+
+		return history;
 	}
 
 	apply( args ) {
