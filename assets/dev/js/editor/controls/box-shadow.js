@@ -47,7 +47,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 			onChange: () => {
 				this.picker.applyColor();
 
-				this.setValue( 'color', this.picker.getColor().toRGBA().toString() );
+				this.setValue( 'color', this.picker.getColor().toRGBA().toString( 0 ) );
 			},
 			onClear: () => {
 				this.setValue( 'color', '' );

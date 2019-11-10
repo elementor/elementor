@@ -39,7 +39,7 @@ export default class extends ControlBaseDataView {
 	onPickerChange() {
 		this.picker.applyColor();
 
-		this.setValue( this.picker.getColor().toRGBA().toString() );
+		this.setValue( this.picker.getColor().toRGBA().toString( 0 ) );
 	}
 
 	onPickerClear() {

@@ -12,8 +12,8 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 
 	changeUIValue: function( newValue ) {
 		this.picker.setColor( newValue );
+		this.triggerMethod( 'value:change', this.picker.getColor().toRGBA().toString( 0 ) );
 
-		this.triggerMethod( 'value:change', this.picker.getColor().toRGBA().toString() );
 	},
 
 	onBeforeDestroy: function() {
