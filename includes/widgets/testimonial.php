@@ -426,7 +426,6 @@ class Widget_Testimonial extends Widget_Base {
 			<?php
 			if ( $has_content ) :
 				$this->add_render_attribute( 'testimonial_content', 'class', 'elementor-testimonial-content' );
-
 				$this->add_inline_editing_attributes( 'testimonial_content' );
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'testimonial_content' ); ?>><?php echo $settings['testimonial_content']; ?></div>
@@ -452,20 +451,19 @@ class Widget_Testimonial extends Widget_Base {
 						<?php
 						if ( $has_name ) :
 							$this->add_render_attribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
-
 							$this->add_inline_editing_attributes( 'testimonial_name', 'none' );
 
 							$testimonial_name_html = $settings['testimonial_name'];
 
-							if ( ! empty( $settings['link']['url'] ) ) {
+							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
 								<a <?php echo $this->get_render_attribute_string( 'testimonial_name' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_name_html; ?></a>
 								<?php
-							} else {
+							else :
 								?>
 								<div <?php echo $this->get_render_attribute_string( 'testimonial_name' ); ?>><?php echo $testimonial_name_html; ?></div>
 								<?php
-							}
+							endif;
 						endif; ?>
 						<?php
 						if ( $has_job ) :
@@ -475,15 +473,15 @@ class Widget_Testimonial extends Widget_Base {
 
 							$testimonial_job_html = $settings['testimonial_job'];
 
-							if ( ! empty( $settings['link']['url'] ) ) {
+							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
 								<a <?php echo $this->get_render_attribute_string( 'testimonial_job' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_job_html; ?></a>
 								<?php
-							} else {
+							else :
 								?>
 								<div <?php echo $this->get_render_attribute_string( 'testimonial_job' ); ?>><?php echo $testimonial_job_html; ?></div>
 								<?php
-							}
+							endif;
 						endif; ?>
 					</div>
 					<?php endif; ?>
