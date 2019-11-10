@@ -456,12 +456,17 @@ class Widget_Testimonial extends Widget_Base {
 							$this->add_inline_editing_attributes( 'testimonial_name', 'none' );
 
 							$testimonial_name_html = $settings['testimonial_name'];
-							if ( ! empty( $settings['link']['url'] ) ) :
-								$testimonial_name_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $testimonial_name_html . '</a>';
-							endif;
-							?>
-							<div <?php echo $this->get_render_attribute_string( 'testimonial_name' ); ?>><?php echo $testimonial_name_html; ?></div>
-						<?php endif; ?>
+
+							if ( ! empty( $settings['link']['url'] ) ) {
+								?>
+								<a <?php echo $this->get_render_attribute_string( 'testimonial_name' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_name_html; ?></a>
+								<?php
+							} else {
+								?>
+								<div <?php echo $this->get_render_attribute_string( 'testimonial_name' ); ?>><?php echo $testimonial_name_html; ?></div>
+								<?php
+							}
+						endif; ?>
 						<?php
 						if ( $has_job ) :
 							$this->add_render_attribute( 'testimonial_job', 'class', 'elementor-testimonial-job' );
@@ -469,12 +474,17 @@ class Widget_Testimonial extends Widget_Base {
 							$this->add_inline_editing_attributes( 'testimonial_job', 'none' );
 
 							$testimonial_job_html = $settings['testimonial_job'];
-							if ( ! empty( $settings['link']['url'] ) ) :
-								$testimonial_job_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $testimonial_job_html . '</a>';
-							endif;
-							?>
-							<div <?php echo $this->get_render_attribute_string( 'testimonial_job' ); ?>><?php echo $testimonial_job_html; ?></div>
-						<?php endif; ?>
+
+							if ( ! empty( $settings['link']['url'] ) ) {
+								?>
+								<a <?php echo $this->get_render_attribute_string( 'testimonial_job' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_job_html; ?></a>
+								<?php
+							} else {
+								?>
+								<div <?php echo $this->get_render_attribute_string( 'testimonial_job' ); ?>><?php echo $testimonial_job_html; ?></div>
+								<?php
+							}
+						endif; ?>
 					</div>
 					<?php endif; ?>
 				</div>
@@ -528,39 +538,52 @@ class Widget_Testimonial extends Widget_Base {
 			<div class="elementor-testimonial-meta{{ hasImage }}{{ testimonial_image_position }}">
 				<div class="elementor-testimonial-meta-inner">
 					<# if ( imageUrl ) { #>
-					<div class="elementor-testimonial-image">{{{ imageHtml }}}</div>
+						<div class="elementor-testimonial-image">{{{ imageHtml }}}</div>
 					<# } #>
-
 					<div class="elementor-testimonial-details">
-						<# if ( '' !== settings.testimonial_name ) {
-							view.addRenderAttribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
-
-							view.addInlineEditingAttributes( 'testimonial_name', 'none' );
-
-							var testimonialNameHtml = settings.testimonial_name;
-							if ( settings.link.url ) {
-								testimonialNameHtml = '<a href="' + settings.link.url + '">' + testimonialNameHtml + '</a>';
-							}
-							#>
-							<div {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ testimonialNameHtml }}}</div>
-						<# } #>
-
-						<# if ( '' !== settings.testimonial_job ) {
-							view.addRenderAttribute( 'testimonial_job', 'class', 'elementor-testimonial-job' );
-
-							view.addInlineEditingAttributes( 'testimonial_job', 'none' );
-
-							var testimonialJobHtml = settings.testimonial_job;
-							if ( settings.link.url ) {
-								testimonialJobHtml = '<a href="' + settings.link.url + '">' + testimonialJobHtml + '</a>';
-							}
-							#>
-							<div {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ testimonialJobHtml }}}</div>
-						<# } #>
+						<?php $this->render_testimonial_description(); ?>
 					</div>
 				</div>
 			</div>
 		</div>
+		<?php
+	}
+
+	protected function render_testimonial_description() {
+		?>
+		<#
+		if ( '' !== settings.testimonial_name ) {
+			view.addRenderAttribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
+
+			view.addInlineEditingAttributes( 'testimonial_name', 'none' );
+
+			if ( settings.link.url ) {
+				#>
+				<a href="{{{ settings.link.url }}}" {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ settings.testimonial_name }}}</a>
+				<#
+			} else {
+				#>
+				<div {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ settings.testimonial_name }}}</div>
+				<#
+			}
+		}
+
+		if ( '' !== settings.testimonial_job ) {
+			view.addRenderAttribute( 'testimonial_job', 'class', 'elementor-testimonial-job' );
+
+			view.addInlineEditingAttributes( 'testimonial_job', 'none' );
+
+			if ( settings.link.url ) {
+				#>
+				<a href="{{{ settings.link.url }}}" {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ settings.testimonial_job }}}</a>
+				<#
+			} else {
+				#>
+				<div {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ settings.testimonial_job }}}</div>
+				<#
+			}
+		}
+		#>
 		<?php
 	}
 }
