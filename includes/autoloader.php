@@ -83,7 +83,6 @@ class Autoloader {
 
 	private static function init_classes_map() {
 		self::$classes_map = [
-			'Admin' => 'includes/admin.php',
 			'Api' => 'includes/api.php',
 			'Base_Control' => 'includes/controls/base.php',
 			'Base_Data_Control' => 'includes/controls/base-data.php',
@@ -179,10 +178,6 @@ class Autoloader {
 
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
-			'Admin' => [
-				'replacement' => 'Core\Admin\Admin',
-				'version' => '2.2.0',
-			],
 			'Core\Ajax' => [
 				'replacement' => 'Core\Common\Modules\Ajax\Module',
 				'version' => '2.3.0',
