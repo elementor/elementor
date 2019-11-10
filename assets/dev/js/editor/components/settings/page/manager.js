@@ -60,7 +60,7 @@ module.exports = BaseSettings.extend( {
 	},
 
 	onModelChange: function() {
-		$e.run( 'document/save/saver', { status: true } );
+		$e.run( 'document/save/set-is-modified', true );
 
 		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},

@@ -1,14 +1,11 @@
 import Base from '../../commands/base/base';
 
-// Consider SetSaver instead of Saver
-export class Saver extends Base {
-	validateArgs( args ) {
-		this.requireArgumentType( 'status', 'boolean', args );
+export class SetIsModified extends Base {
+	validateArgs( status ) {
+		this.requireArgumentType( 'status', 'boolean', { status } );
 	}
 
-	apply( args ) {
-		const { status } = args;
-
+	apply( status ) {
 		if ( status && elementor.saver.isSaving ) {
 			elementor.saver.isChangedDuringSave = true;
 		}
@@ -21,4 +18,4 @@ export class Saver extends Base {
 	}
 }
 
-export default Saver;
+export default SetIsModified;

@@ -190,7 +190,7 @@ export default class Base {
 		this.onAfterApply( this.args, result );
 
 		if ( this.isDataChanged() ) {
-			$e.run( 'document/save/saver', { status: true } );
+			$e.run( 'document/save/set-is-modified', true );
 		}
 
 		this.onAfterRun( this.args, result );

@@ -80,7 +80,7 @@ module.exports = elementorModules.Module.extend( {
 
 					// Notice: Must be after update page.model.post_status to the new status.
 					if ( ! self.isChangedDuringSave ) {
-						$e.run( 'document/save/saver', { status: false } );
+						$e.run( 'document/save/set-is-modified', false );
 					}
 				}
 

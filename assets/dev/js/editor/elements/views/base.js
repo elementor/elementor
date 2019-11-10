@@ -629,7 +629,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onCollectionChanged() {
-		$e.run( 'document/save/saver', { status: true } );
+		$e.run( 'document/save/set-is-modified', true );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -637,7 +637,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onSettingsChanged( changedModel ) {
-		$e.run( 'document/save/saver', { status: true } );
+		$e.run( 'document/save/set-is-modified', true );
 
 		this.renderOnChange( changedModel );
 	},

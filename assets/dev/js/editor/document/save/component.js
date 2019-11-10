@@ -13,7 +13,7 @@ export default class Component extends elementorModules.common.Component {
 			draft: ( args ) => ( new Commands.Draft( args ).run() ),
 			pending: ( args ) => ( new Commands.Pending( args ).run() ),
 			publish: ( args ) => ( new Commands.Publish( args ).run() ),
-			saver: ( args ) => ( new Commands.Saver( args ).run() ),
+			'set-is-modified': ( args ) => ( new Commands.SetIsModified( args ).run() ),
 			update: ( args ) => ( new Commands.Update( args ).run() ),
 		};
 	}
