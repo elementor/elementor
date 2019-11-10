@@ -525,15 +525,7 @@ class Widget_Image_Box extends Widget_Base {
 		$html = '<div class="elementor-image-box-wrapper">';
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
-
-			if ( $settings['link']['is_external'] ) {
-				$this->add_render_attribute( 'link', 'target', '_blank' );
-			}
-
-			if ( ! empty( $settings['link']['nofollow'] ) ) {
-				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
-			}
+			$this->add_link_attributes( 'link', $settings['link'] );
 		}
 
 		if ( ! empty( $settings['image']['url'] ) ) {

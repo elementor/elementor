@@ -561,8 +561,6 @@ class Widget_Social_Icons extends Widget_Base {
 
 				$link_key = 'link_' . $index;
 
-				$this->add_render_attribute( $link_key, 'href', $item['link']['url'] );
-
 				$this->add_render_attribute( $link_key, 'class', [
 					'elementor-icon',
 					'elementor-social-icon',
@@ -570,13 +568,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'elementor-repeater-item-' . $item['_id'],
 				] );
 
-				if ( $item['link']['is_external'] ) {
-					$this->add_render_attribute( $link_key, 'target', '_blank' );
-				}
-
-				if ( $item['link']['nofollow'] ) {
-					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
-				}
+				$this->add_link_attributes( $link_key, $item['link'] );
 
 				?>
 				<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
