@@ -136,14 +136,16 @@ export default class Hooks extends elementorModules.Module {
 		if ( ! $e.devTools ) {
 			return;
 		}
-		$e.devTools.log.log( `%c [${ event }] HOOK: '${ command } ' ->`, 'color: yellow;font-weight: bold', args );
+
+		$e.devTools.log.hookRun( command, args, event );
 	}
 
 	onCallback( command, args, event, id ) {
 		if ( ! $e.devTools ) {
 			return;
 		}
-		$e.devTools.log.log( `%c [${ event }] HOOK CALLBACK: '${ command }:${ id } ' ->`, 'color: #ff7800;font-weight: bold', args );
+
+		$e.devTools.log.hookCallback( command, args, event, id );
 	}
 }
 
