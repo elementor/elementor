@@ -62,7 +62,7 @@ export default class Debounce extends History {
 	 * @param {boolean} isRedo
 	 */
 	static restore( historyItem, isRedo ) {
-		throw Error( 'static restore() should be implemented, please provide static restore functionality.' );
+		Debounce.forceMethodImplementation( 'restore', true );
 	}
 
 	/**

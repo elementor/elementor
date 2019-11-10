@@ -99,7 +99,7 @@ export default class Container {
 	 *
 	 * @param {{}} args
 	 *
-	 * @throws Error
+	 * @throws {Error}
 	 */
 	constructor( args ) {
 		args = Object.entries( args );

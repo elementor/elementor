@@ -26,10 +26,10 @@ export default class History extends Base {
 	 *
 	 * @returns {{}|boolean}
 	 *
-	 * @throws Error
+	 * @throws {Error}
 	 */
 	getHistory( args ) {
-		throw Error( 'getHistory() should be implemented, please provide getHistory functionality.' );
+		this.constructor.forceMethodImplementation( 'getHistory' );
 	}
 
 	/**
