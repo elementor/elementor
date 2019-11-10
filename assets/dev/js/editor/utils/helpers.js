@@ -507,6 +507,9 @@ module.exports = {
 
 		options = jQuery.extend( true, defaultOptions, options );
 
+		// If `default` is empty, set it to null to make sure it's handled as an empty value
+		options.default = options.default || null;
+
 		const picker = Pickr.create( options ),
 			onChange = ( ...args ) => {
 				if ( options.onChange ) {
