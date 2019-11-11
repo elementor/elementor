@@ -175,7 +175,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		const oldIndex = ui.item.data( 'oldIndex' ),
 			newIndex = ui.item.index();
 
-		$e.run( 'document/elements/repeater/move', {
+		$e.run( 'document/repeater/move', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			sourceIndex: oldIndex,
@@ -196,7 +196,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			defaults[ key ] = field.default;
 		} );
 
-		const newModel = $e.run( 'document/elements/repeater/insert', {
+		const newModel = $e.run( 'document/repeater/insert', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			model: defaults,
@@ -211,7 +211,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			delete this.currentEditableChild;
 		}
 
-		$e.run( 'document/elements/repeater/remove', {
+		$e.run( 'document/repeater/remove', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,
@@ -224,7 +224,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
-		$e.run( 'document/elements/repeater/duplicate', {
+		$e.run( 'document/repeater/duplicate', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,

@@ -1,7 +1,7 @@
-import Elements from '../../helpers/elements';
+import Elements from '../helpers/elements';
 
 jQuery( () => {
-	QUnit.module( 'Component: document/elements/repeater', () => {
+	QUnit.module( 'Component: document/repeater', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Insert', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),

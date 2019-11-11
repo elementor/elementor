@@ -628,7 +628,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onCollectionChanged() {
-		$e.run( 'document/save/set-is-modified', true );
+		elementor.saver.setFlagEditorChange( true );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -636,7 +636,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onSettingsChanged( changedModel ) {
-		$e.run( 'document/save/set-is-modified', true );
+		elementor.saver.setFlagEditorChange( true );
 
 		this.renderOnChange( changedModel );
 	},

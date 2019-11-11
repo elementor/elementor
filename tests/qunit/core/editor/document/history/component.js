@@ -45,7 +45,7 @@ jQuery( () => {
 
 		QUnit.module( 'miscellaneous', () => {
 			QUnit.test( 'Saver Editor Flag', ( assert ) => {
-				$e.run( 'document/save/set-is-modified', false );
+				elementor.saver.setFlagEditorChange( false );
 
 				Elements.createSection( 1 );
 
@@ -889,7 +889,7 @@ jQuery( () => {
 			} );
 		} );
 
-		QUnit.module( 'document/elements/repeater: Single Selection', () => {
+		QUnit.module( 'document/repeater: Single Selection', () => {
 			QUnit.test( 'Insert', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
 					eTabs = Elements.createTabs( eColumn ),
@@ -1094,7 +1094,7 @@ jQuery( () => {
 			} );
 		} );
 
-		QUnit.module( 'document/elements/repeater: Multiple Selection', () => {
+		QUnit.module( 'document/repeater: Multiple Selection', () => {
 			QUnit.test( 'Insert', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
 					eTabs1 = Elements.createTabs( eColumn ),

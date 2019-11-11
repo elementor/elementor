@@ -1,4 +1,4 @@
-import History from '../../../commands/base/history';
+import History from '../../commands/base/history';
 
 export class Move extends History {
 	validateArgs( args ) {
@@ -27,13 +27,13 @@ export class Move extends History {
 			const collection = container.settings.get( name ),
 				model = elementorCommon.helpers.cloneObject( collection.at( sourceIndex ) );
 
-			$e.run( 'document/elements/repeater/remove', {
+			$e.run( 'document/repeater/remove', {
 				container,
 				name,
 				index: sourceIndex,
 			} );
 
-			result.push( $e.run( 'document/elements/repeater/insert', {
+			result.push( $e.run( 'document/repeater/insert', {
 				container,
 				name,
 				model,
