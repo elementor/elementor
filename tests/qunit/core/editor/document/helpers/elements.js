@@ -272,7 +272,7 @@ export default class {
 	}
 
 	static repeaterInsert( eContainer, name, item ) {
-		return $e.run( 'document/elements/repeater/insert', {
+		return $e.run( 'document/repeater/insert', {
 			container: eContainer,
 			name,
 			model: item,
@@ -280,7 +280,7 @@ export default class {
 	}
 
 	static multiRepeaterInsert( eContainers, name, item ) {
-		return $e.run( 'document/elements/repeater/insert', {
+		return $e.run( 'document/repeater/insert', {
 			containers: eContainers,
 			name,
 			model: item,
@@ -288,7 +288,7 @@ export default class {
 	}
 
 	static repeaterRemove( eContainer, name, index ) {
-		return $e.run( 'document/elements/repeater/remove', {
+		return $e.run( 'document/repeater/remove', {
 			container: eContainer,
 			name,
 			index,
@@ -296,7 +296,7 @@ export default class {
 	}
 
 	static multiRepeaterRemove( eContainers, name, index ) {
-		return $e.run( 'document/elements/repeater/remove', {
+		return $e.run( 'document/repeater/remove', {
 			containers: eContainers,
 			name,
 			index,
@@ -326,7 +326,7 @@ export default class {
 	}
 
 	static repeaterDuplicate( eContainer, name, index ) {
-		return $e.run( 'document/elements/repeater/duplicate', {
+		return $e.run( 'document/repeater/duplicate', {
 			container: eContainer,
 			name,
 			index,
@@ -334,7 +334,7 @@ export default class {
 	}
 
 	static multiRepeaterDuplicate( eContainers, name, index ) {
-		return $e.run( 'document/elements/repeater/duplicate', {
+		return $e.run( 'document/repeater/duplicate', {
 			containers: eContainers,
 			name,
 			index,
@@ -342,7 +342,7 @@ export default class {
 	}
 
 	static repeaterMove( eContainer, name, sourceIndex, targetIndex ) {
-		$e.run( 'document/elements/repeater/move', {
+		$e.run( 'document/repeater/move', {
 			container: eContainer,
 			name,
 			sourceIndex,
@@ -351,7 +351,7 @@ export default class {
 	}
 
 	static multiRepeaterMove( eContainers, name, sourceIndex, targetIndex ) {
-		$e.run( 'document/elements/repeater/move', {
+		$e.run( 'document/repeater/move', {
 			containers: eContainers,
 			name,
 			sourceIndex,

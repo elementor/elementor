@@ -1,4 +1,4 @@
-import History from '../../../commands/base/history';
+import History from '../../commands/base/history';
 
 export class Duplicate extends History {
 	validateArgs( args ) {
@@ -32,7 +32,7 @@ export class Duplicate extends History {
 				delete model._id;
 			}
 
-			result.push( $e.run( 'document/elements/repeater/insert', {
+			result.push( $e.run( 'document/repeater/insert', {
 				container,
 				name,
 				model,

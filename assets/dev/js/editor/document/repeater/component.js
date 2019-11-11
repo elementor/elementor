@@ -1,8 +1,8 @@
-import * as Commands from './commands/';
+import * as Commands from './commands';
 
 export default class Component extends elementorModules.common.Component {
 	getNamespace() {
-		return 'document/elements/repeater';
+		return 'document/repeater';
 	}
 
 	defaultCommands() {

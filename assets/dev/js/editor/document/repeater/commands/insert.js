@@ -1,4 +1,4 @@
-import History from '../../../commands/base/history';
+import History from '../../commands/base/history';
 
 export class Insert extends History {
 	static restore( historyItem, isRedo ) {
@@ -6,14 +6,14 @@ export class Insert extends History {
 			data = historyItem.get( 'data' );
 
 		if ( isRedo ) {
-			$e.run( 'document/elements/repeater/insert', {
+			$e.run( 'document/repeater/insert', {
 				containers,
 				model: data.model,
 				name: data.name,
 				options: { at: data.index },
 			} );
 		} else {
-			$e.run( 'document/elements/repeater/remove', {
+			$e.run( 'document/repeater/remove', {
 				containers,
 				name: data.name,
 				index: data.index,

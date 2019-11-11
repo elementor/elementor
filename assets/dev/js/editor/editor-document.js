@@ -2,7 +2,7 @@
 import DocumentComponent from './document/component';
 import DocumentSaveComponent from './document/save/component';
 import ElementsComponent from './document/elements/component';
-import RepeaterComponent from './document/elements/repeater/component';
+import RepeaterComponent from './document/repeater/component';
 import HistoryComponent from './document/history/component';
 import DynamicComponent from './document/dynamic/component';
 
