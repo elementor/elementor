@@ -276,7 +276,7 @@ class Revisions_Manager {
 			throw new \Exception( 'Invalid revision.' );
 		}
 
-		if ( ! current_user_can( 'delete_post', $revision->ID ) ) {
+		if ( ! current_user_can( 'delete_post', $revision->post_parent ) ) {
 			throw new \Exception( __( 'Access denied.', 'elementor' ) );
 		}
 
