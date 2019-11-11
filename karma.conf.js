@@ -61,7 +61,7 @@ module.exports = function( config ) {
 			'assets/js/editor-document.js': [ 'coverage' ],
 
 		},
-		reporters: [ 'progress', 'coverage', 'coverage-istanbul' ],
+		reporters: [ 'progress' ],
 		coverageIstanbulReporter: {
 			reports: [ 'text' ],
 			fixWebpackSourcePaths: true,
@@ -87,13 +87,9 @@ module.exports = function( config ) {
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true,
 
-		// Concurrency level
-		// how many browser should be started simultaneous
-		concurrency: Infinity,
-
 		// client configuration
 		client: {
-			clearContext: false,
+			clearContext: true,
 			qunit: {
 				showUI: false,
 				testTimeout: 5000,
