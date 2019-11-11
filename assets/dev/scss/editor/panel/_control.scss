@@ -452,7 +452,6 @@ $item-size: 2em;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: 0.15s;
 	position: relative;
 	z-index: 2;
 	cursor: pointer;
@@ -467,6 +466,7 @@ $item-size: 2em;
 
 .elementor-control a.elementor-responsive-switcher {
 	color: $gray;
+	transition: 0.15s;
 }
 
 $devices: 'desktop', 'tablet', 'mobile';
