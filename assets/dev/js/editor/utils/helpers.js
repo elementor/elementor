@@ -439,12 +439,6 @@ module.exports = {
 		return elementorCommon.helpers.cloneObject( object );
 	},
 
-	firstLetterUppercase( string ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.upperCaseWords', '2.3.0', 'elementorCommon.helpers.upperCaseWords' );
-
-		return elementorCommon.helpers.upperCaseWords( string );
-	},
-
 	disableElementEvents( $element ) {
 		$element.each( function() {
 			const currentPointerEvents = this.style.pointerEvents;
