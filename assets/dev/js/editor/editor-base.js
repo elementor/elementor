@@ -7,14 +7,6 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 
-// TODO: All components under document can be in one index file.
-import DocumentComponent from './document/component';
-import DocumentSaveComponent from './document/save/component';
-import ElementsComponent from './document/elements/component';
-import DynamicComponent from './document/dynamic/component';
-import RepeaterComponent from './document/elements/repeater/component.js';
-import HistoryComponent from './document/history/component';
-
 const App = Marionette.Application.extend( {
 	loaded: false,
 

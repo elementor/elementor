@@ -1,5 +1,5 @@
 /**
- * Grunt qunit task config
+ * Grunt karma task config
  * @package Elementor
  */
 module.exports = {

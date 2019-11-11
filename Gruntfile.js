@@ -26,7 +26,6 @@ module.exports = function( grunt ) {
 		copy: require( './.grunt-config/copy' ),
 		clean: require( './.grunt-config/clean' ),
 		webpack: require( './.grunt-config/webpack' ),
-		qunit: require( './.grunt-config/qunit' ),
 		karma: require( './.grunt-config/karma' ),
 	} );
 
