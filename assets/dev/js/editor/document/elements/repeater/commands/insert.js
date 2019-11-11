@@ -21,6 +21,14 @@ export class Insert extends History {
 		}
 	}
 
+	initialize( args ) {
+		super.initialize( args );
+
+		if ( ! args.model._id ) {
+			args.model._id = elementor.helpers.getUniqueID();
+		}
+	}
+
 	validateArgs( args ) {
 		this.requireContainer( args );
 

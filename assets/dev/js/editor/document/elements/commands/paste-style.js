@@ -73,6 +73,7 @@ export class PasteStyle extends History {
 					diffSettings[ controlName ] = controlSourceValue;
 				} );
 
+				// Moved from `editor/elements/views/base.js` `pasteStyle` function.
 				targetContainer.view.allowRender = false;
 
 				$e.run( 'document/elements/settings', {

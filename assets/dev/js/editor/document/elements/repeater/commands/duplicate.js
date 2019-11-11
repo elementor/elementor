@@ -27,7 +27,10 @@ export class Duplicate extends History {
 				collection = settingsModel.get( name ),
 				model = collection.at( index ).toJSON();
 
-			model._id = elementor.helpers.getUniqueID();
+			// Let the insert handle it, do not use the duplicated id.
+			if ( model._id ) {
+				delete model._id;
+			}
 
 			result.push( $e.run( 'document/elements/repeater/insert', {
 				container,

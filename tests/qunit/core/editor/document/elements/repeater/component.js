@@ -49,6 +49,17 @@ jQuery( () => {
 				assert.equal( eTabs.settings.get( 'tabs' ).length, 3 );
 			} );
 
+			QUnit.test( 'Duplicate: Unique ID', ( assert ) => {
+				const duplicatedIndex = 1,
+					eColumn = Elements.createSection( 1, true ),
+					eTabs = Elements.createTabs( eColumn ),
+					eItem = eTabs.settings.get( 'tabs' ).at( duplicatedIndex ),
+					eDuplicatedItem = Elements.repeaterDuplicate( eTabs, 'tabs', duplicatedIndex );
+
+				// Check ids are unique.
+				assert.notEqual( eItem.get( '_id' ), eDuplicatedItem.get( '_id' ) );
+			} );
+
 			QUnit.test( 'Move', ( assert ) => {
 				const eColumn = Elements.createSection( 1, true ),
 					eTabs = Elements.createTabs( eColumn );
