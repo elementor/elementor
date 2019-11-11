@@ -808,7 +808,20 @@ class Source_Local extends Source_Base {
 
 			$zip->open( $path );
 
-			$zip->extractTo( $temp_path );
+			$valid_entries = [];
+
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+				$zipped_file_name = $zip->getNameIndex( $i );
+				$zipped_extension = pathinfo( $zipped_file_name, PATHINFO_EXTENSION );
+				if ( 'json' === $zipped_extension ) {
+					$valid_entries[] = $zipped_file_name;
+				}
+			}
+
+			if ( ! empty( $valid_entries ) ) {
+				$zip->extractTo( $temp_path, $valid_entries );
+			}
 
 			$zip->close();
 

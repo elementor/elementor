@@ -1,7 +1,7 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "2.7.4",
+	"version": "2.7.5",
 	"prev_stable_version": "2.6.8",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
@@ -29,7 +29,7 @@
 		"eslint-plugin-react": "^7.11.1",
 		"eslint-plugin-wordpress": "git://github.com/WordPress-Coding-Standards/eslint-plugin-wordpress.git#1774343f6226052a46b081e01db3fca8793cc9f1",
 		"extract-text-webpack-plugin": "^3.0.2",
-		"grunt": "^1.0.2",
+		"grunt": "^1.0.4",
 		"grunt-banner": "~0.6.0",
 		"grunt-bumpup": "~0.6.3",
 		"grunt-checktextdomain": "~1.0.1",

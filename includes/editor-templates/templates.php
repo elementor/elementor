@@ -260,3 +260,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-preview">
 	<iframe></iframe>
 </script>
+
+<script type="text/template" id="tmpl-elementor-template-library-connect">
+	<div id="elementor-template-library-connect-logo">
+		<i class="eicon-elementor" aria-hidden="true"></i>
+	</div>
+	<div class="elementor-template-library-blank-title">
+		<?php echo __( 'Get Access to Hundreds of Elementor Templates', 'elementor' ); ?>
+	</div>
+	<div class="elementor-template-library-blank-message">
+		<?php echo __( 'Connect your account for free to download Elementor’s designer-made templates', 'elementor' ); ?>
+	</div>
+	<div id="elementor-template-library-connect-content">
+		<?php
+		$url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize' );
+		?>
+
+		<a class="elementor-button elementor-button-success elementor-connect-popup" href="<?php echo esc_attr( $url ); ?>">
+			<?php echo __( 'Connect Now', 'elementor' ); ?>
+		</a>
+	</div>
+</script>

@@ -7,6 +7,7 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import Component from './elements/component';
+import ColorControl from './controls/color';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -70,7 +71,7 @@ const App = Marionette.Application.extend( {
 			Button: require( 'elementor-controls/button' ),
 			Choose: require( 'elementor-controls/choose' ),
 			Code: require( 'elementor-controls/code' ),
-			Color: require( 'elementor-controls/color' ),
+			Color: ColorControl,
 			Date_time: DateTimeControl,
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Exit_animation: require( 'elementor-controls/select2' ),

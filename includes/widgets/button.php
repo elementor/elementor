@@ -443,16 +443,8 @@ class Widget_Button extends Widget_Base {
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'button', 'href', $settings['link']['url'] );
+			$this->add_link_attributes( 'button', $settings['link'] );
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-link' );
-
-			if ( $settings['link']['is_external'] ) {
-				$this->add_render_attribute( 'button', 'target', '_blank' );
-			}
-
-			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'button', 'rel', 'nofollow' );
-			}
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );

@@ -152,6 +152,22 @@ class Widget_Accordion extends Widget_Base {
 					'value' => 'fas fa-plus',
 					'library' => 'fa-solid',
 				],
+				'recommended' => [
+					'fa-solid' => [
+						'plus',
+						'plus-square',
+						'folder-plus',
+						'cart-plus',
+						'calendar-plus',
+						'search-plus',
+					],
+					'fa-regular' => [
+						'plus-square',
+						'plus-circle',
+						'calendar-plus',
+					],
+				],
+				'skin' => 'inline',
 			]
 		);
 
@@ -165,6 +181,21 @@ class Widget_Accordion extends Widget_Base {
 					'value' => 'fas fa-minus',
 					'library' => 'fa-solid',
 				],
+				'recommended' => [
+					'fa-solid' => [
+						'minus',
+						'minus-circle',
+						'minus-square',
+						'folder-minus',
+						'calendar-minus',
+						'search-minus',
+					],
+					'fa-regular' => [
+						'minus-square',
+						'calendar-minus',
+					],
+				],
+				'skin' => 'inline',
 				'condition' => [
 					'selected_icon[value]!' => '',
 				],

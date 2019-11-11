@@ -23,34 +23,30 @@ foreach ( $reports as $report_name => $report ) : ?>
 					foreach ( $field['value'] as $plugin ) :
 						?>
 						<tr>
-							<td>
-								<?php
-								if ( $plugin['PluginURI'] ) :
-									$plugin_name = "<a href='{$plugin['PluginURI']}'>{$plugin['Name']}</a>";
+							<td><?php
+							if ( $plugin['PluginURI'] ) :
+								$plugin_name = "<a href='{$plugin['PluginURI']}'>{$plugin['Name']}</a>";
+							else :
+								$plugin_name = $plugin['Name'];
+							endif;
+
+							if ( $plugin['Version'] ) :
+								$plugin_name .= ' - ' . $plugin['Version'];
+							endif;
+
+							echo $plugin_name;
+							?></td>
+							<td><?php
+							if ( $plugin['Author'] ) :
+								if ( $plugin['AuthorURI'] ) :
+									$author = "<a href='{$plugin['AuthorURI']}'>{$plugin['Author']}</a>";
 								else :
-									$plugin_name = $plugin['Name'];
+									$author = $plugin['Author'];
 								endif;
 
-								if ( $plugin['Version'] ) :
-									$plugin_name .= ' - ' . $plugin['Version'];
-								endif;
-
-								echo $plugin_name;
-								?>
-							</td>
-							<td>
-								<?php
-								if ( $plugin['Author'] ) :
-									if ( $plugin['AuthorURI'] ) :
-										$author = "<a href='{$plugin['AuthorURI']}'>{$plugin['Author']}</a>";
-									else :
-										$author = $plugin['Author'];
-									endif;
-
-									echo "By $author";
-								endif;
-								?>
-							</td>
+								echo "By $author";
+							endif;
+							?></td>
 							<td></td>
 						</tr>
 						<?php
@@ -66,8 +62,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 						if ( ! empty( $field['recommendation'] ) ) :
 							echo $field['recommendation'];
 						endif;
-						?>
-						</td>
+						?></td>
 					</tr>
 					<?php
 				}
