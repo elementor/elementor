@@ -1,6 +1,8 @@
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlBoxShadowItemView;
 
+import ColorPicker from '../utils/color-picker';
+
 ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
@@ -41,13 +43,11 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	initColors: function() {
-		this.picker = elementor.helpers.colorPicker( {
+		this.colorPicker = new ColorPicker( {
 			el: this.ui.colorPickerPlaceholder[ 0 ],
 			default: this.getControlValue( 'color' ),
 			onChange: () => {
-				this.picker.applyColor();
-
-				this.setValue( 'color', this.picker.getColor().toRGBA().toString( 0 ) );
+				this.setValue( 'color', this.colorPicker.getValue() );
 			},
 			onClear: () => {
 				this.setValue( 'color', '' );
@@ -68,7 +68,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onBeforeDestroy: function() {
-		this.picker.destroyAndRemove();
+		this.colorPicker.destroy();
 	},
 } );
 

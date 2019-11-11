@@ -1,6 +1,8 @@
 var PanelSchemeColorsView = require( 'elementor-panel/pages/schemes/colors' ),
 	PanelSchemeColorPickerView;
 
+import ColorPicker from '../../../../utils/color-picker';
+
 PanelSchemeColorPickerView = PanelSchemeColorsView.extend( {
 	getType: function() {
 		return 'color-picker';
@@ -17,7 +19,7 @@ PanelSchemeColorPickerView = PanelSchemeColorsView.extend( {
 	},
 
 	orderView: function( model ) {
-		return elementor.helpers.getColorPickerPaletteIndex( model.get( 'key' ) );
+		return ColorPicker.getColorPickerPaletteIndex( model.get( 'key' ) );
 	},
 } );
 

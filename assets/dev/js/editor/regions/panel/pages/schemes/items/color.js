@@ -1,7 +1,7 @@
-var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' ),
-	PanelSchemeColorView;
+var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' );
+import ColorPicker from '../../../../../utils/color-picker';
 
-PanelSchemeColorView = PanelSchemeItemView.extend( {
+module.exports = PanelSchemeItemView.extend( {
 	getUIType: function() {
 		return 'color';
 	},
@@ -11,27 +11,23 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 	},
 
 	changeUIValue: function( newValue ) {
-		this.picker.setColor( newValue );
-	},
-
-	onBeforeDestroy: function() {
-		this.picker.destroyAndRemove();
+		this.colorPicker.picker.setColor( newValue );
 	},
 
 	onRender: function() {
-		this.picker = elementor.helpers.colorPicker( {
+		this.colorPicker = new ColorPicker( {
 			el: this.ui.pickerPlaceholder[ 0 ],
 			default: this.model.get( 'value' ),
 			onChange: () => {
-				this.triggerMethod( 'value:change', this.picker.getColor().toRGBA().toString( 0 ) );
-
-				this.picker.applyColor();
+				this.triggerMethod( 'value:change', this.colorPicker.getValue() );
 			},
 			onClear: () => {
 				this.triggerMethod( 'value:change', '' );
 			},
 		} );
 	},
-} );
 
-module.exports = PanelSchemeColorView;
+	onBeforeDestroy: function() {
+		this.colorPicker.destroy();
+	},
+} );
