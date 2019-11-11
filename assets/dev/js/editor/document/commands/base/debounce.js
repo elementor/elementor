@@ -62,7 +62,7 @@ export default class Debounce extends History {
 	 * @param {boolean} isRedo
 	 */
 	static restore( historyItem, isRedo ) {
-		Debounce.forceMethodImplementation( 'restore', true );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**

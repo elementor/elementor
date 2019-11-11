@@ -29,7 +29,7 @@ export default class History extends Base {
 	 * @throws {Error}
 	 */
 	getHistory( args ) {
-		this.constructor.forceMethodImplementation( 'getHistory' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**

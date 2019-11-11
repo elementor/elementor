@@ -1,25 +1,5 @@
 export default class ArgsObject {
 	/**
-	 * Function forceMethodImplementation().
-	 *
-	 * Function throw error with custom message.
-	 *
-	 * @param {string} functionName
-	 * @param {boolean} isStatic
-	 *
-	 * @throws {Error}
-	 */
-	static forceMethodImplementation( functionName, isStatic = false ) {
-		let error = `${ functionName }() should be implemented, please provide '${ functionName }' functionality.`;
-
-		if ( isStatic ) {
-			error = 'static ' + error;
-		}
-
-		throw Error( error );
-	}
-
-	/**
 	 * Function constructor().
 	 *
 	 * Create ArgsObject.

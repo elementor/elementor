@@ -57,7 +57,7 @@ export default class Base extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	initialize() {}
+	initialize( args ) {}
 
 	/**
 	 * Function validateArgs().
@@ -87,7 +87,7 @@ export default class Base extends ArgsObject {
 	 * @param {{}}
 	 */
 	apply( args ) {
-		this.constructor.forceMethodImplementation( 'apply' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
