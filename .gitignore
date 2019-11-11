@@ -25,3 +25,4 @@ yarn.lock
 # other
 Thumbs.db
 *.DS_Store
+coverage/

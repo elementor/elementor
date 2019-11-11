@@ -286,14 +286,6 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		// TODO: eg: alternative `DocumentComponents.foreach()` then register each.
-		$e.components.register( new DocumentComponent() );
-		$e.components.register( new DocumentSaveComponent() );
-		$e.components.register( new ElementsComponent() );
-		$e.components.register( new RepeaterComponent() );
-		$e.components.register( new HistoryComponent() );
-		$e.components.register( new DynamicComponent() );
-
 		this.hotkeysScreen = new HotkeysScreen();
 
 		this.iconManager = new IconsManager();
