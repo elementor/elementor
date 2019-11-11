@@ -1,5 +1,5 @@
 // TODO: Refactor this class.
-export default class {
+export default class DocumentHelper {
 	static createSection( columns = 1, returnFirstColumn = false ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {

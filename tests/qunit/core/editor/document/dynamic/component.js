@@ -1,9 +1,9 @@
-import Elements from '../helpers/elements';
+import DocumentHelper from '../helper';
 
 QUnit.module( 'Component: document/dynamic', () => {
 	QUnit.module( 'Single Selection', () => {
 		QUnit.test( 'Settings', ( assert ) => {
-			const eButton = Elements.createAutoButton(),
+			const eButton = DocumentHelper.createAutoButton(),
 				dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 				dynamicValue = '{ dynamic text }',
 				{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
@@ -24,6 +24,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 					`button text changed to dynamic value: '${ dynamicValue }'` );
 			};
 
+			// TODO: Move to `DocumentHelper`.
 			$e.run( 'document/dynamic/settings', {
 				container: eButton,
 				settings: { text: dynamicTag },
@@ -33,7 +34,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 		} );
 
 		QUnit.test( 'Enable', ( assert ) => {
-			const eButton = Elements.createAutoButton(),
+			const eButton = DocumentHelper.createAutoButton(),
 				eButtonText = eButton.settings.get( 'text' ),
 				dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 				dynamicValue = '{ dynamic text }',
@@ -64,7 +65,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 		} );
 
 		QUnit.test( 'Disable', ( assert ) => {
-			const eButton = Elements.createAutoButton(),
+			const eButton = DocumentHelper.createAutoButton(),
 				eButtonText = eButton.settings.get( 'text' ),
 				dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 				dynamicValue = '{ dynamic text }',
@@ -90,6 +91,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 
 			doneEnable = assert.async();
 
+			// TODO: Move to `DocumentHelper`.
 			$e.run( 'document/dynamic/disable', {
 				container: eButton,
 				settings: { text: dynamicTag },
@@ -104,7 +106,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 
 	QUnit.module( 'Multiple Selection', () => {
 		QUnit.test( 'Settings', ( assert ) => {
-			const eButtons = Elements.multiCreateAutoButton(),
+			const eButtons = DocumentHelper.multiCreateAutoButton(),
 				dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 				dynamicValue = '{ dynamic text }',
 				{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
@@ -129,6 +131,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 				};
 			} );
 
+			// TODO: Move to `DocumentHelper`.
 			$e.run( 'document/dynamic/settings', {
 				containers: eButtons,
 				settings: { text: dynamicTag },

@@ -1,13 +1,13 @@
-import Elements from '../helpers/elements';
+import DocumentHelper from '../helper';
 
 jQuery( () => {
 	QUnit.module( 'Component: document/repeater', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Insert', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn );
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn );
 
-				Elements.repeaterInsert( eTabs, 'tabs', {
+				DocumentHelper.repeaterInsert( eTabs, 'tabs', {
 					tab_title: 'Test Tab Title',
 					tab_content: 'Test Tab Content',
 				} );
@@ -17,21 +17,21 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Remove', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn );
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn );
 
-				Elements.repeaterRemove( eTabs, 'tabs', 1 );
+				DocumentHelper.repeaterRemove( eTabs, 'tabs', 1 );
 
 				// Check.
 				assert.equal( eTabs.settings.get( 'tabs' ).length, 1 );
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn ),
 					tabTitle = 'This is was changed';
 
-				Elements.repeaterSettings( eTabs, 'tabs', 1, {
+				DocumentHelper.repeaterSettings( eTabs, 'tabs', 1, {
 					tab_title: tabTitle,
 				} );
 
@@ -40,10 +40,10 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn );
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn );
 
-				Elements.repeaterDuplicate( eTabs, 'tabs', 1 );
+				DocumentHelper.repeaterDuplicate( eTabs, 'tabs', 1 );
 
 				// Check.
 				assert.equal( eTabs.settings.get( 'tabs' ).length, 3 );
@@ -51,20 +51,20 @@ jQuery( () => {
 
 			QUnit.test( 'Duplicate: Unique ID', ( assert ) => {
 				const duplicatedIndex = 1,
-					eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn ),
+					eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn ),
 					eItem = eTabs.settings.get( 'tabs' ).at( duplicatedIndex ),
-					eDuplicatedItem = Elements.repeaterDuplicate( eTabs, 'tabs', duplicatedIndex );
+					eDuplicatedItem = DocumentHelper.repeaterDuplicate( eTabs, 'tabs', duplicatedIndex );
 
 				// Check ids are unique.
 				assert.notEqual( eItem.get( '_id' ), eDuplicatedItem.get( '_id' ) );
 			} );
 
 			QUnit.test( 'Move', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn );
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn );
 
-				Elements.repeaterMove( eTabs, 'tabs', 1, 0 );
+				DocumentHelper.repeaterMove( eTabs, 'tabs', 1, 0 );
 
 				// Check.
 				assert.equal( eTabs.settings.get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
@@ -73,11 +73,11 @@ jQuery( () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Insert', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn );
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn );
 
-					Elements.multiRepeaterInsert( [ eTabs1, eTabs2 ], 'tabs', {
+					DocumentHelper.multiRepeaterInsert( [ eTabs1, eTabs2 ], 'tabs', {
 						tab_title: 'Test Tab Title',
 						tab_content: 'Test Tab Content',
 				} );
@@ -88,11 +88,11 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Remove', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn );
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn );
 
-				Elements.multiRepeaterRemove( [ eTabs1, eTabs2 ], 'tabs', 1 );
+				DocumentHelper.multiRepeaterRemove( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
 				// Check.
 				assert.equal( eTabs1.settings.get( 'tabs' ).length, 1 );
@@ -100,12 +100,12 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn ),
 					tabTitle = 'This is was changed';
 
-				Elements.multiRepeaterSettings( [ eTabs1, eTabs2 ], 'tabs', 1, {
+				DocumentHelper.multiRepeaterSettings( [ eTabs1, eTabs2 ], 'tabs', 1, {
 					tab_title: tabTitle,
 				} );
 
@@ -115,11 +115,11 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn );
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn );
 
-				Elements.multiRepeaterDuplicate( [ eTabs1, eTabs2 ], 'tabs', 1 );
+				DocumentHelper.multiRepeaterDuplicate( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
 				// Check.
 				assert.equal( eTabs1.settings.get( 'tabs' ).length, 3 );
@@ -127,11 +127,11 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn );
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn );
 
-					Elements.multiRepeaterMove( [ eTabs1, eTabs2 ], 'tabs', 1, 0 );
+					DocumentHelper.multiRepeaterMove( [ eTabs1, eTabs2 ], 'tabs', 1, 0 );
 
 				// Check.
 				assert.equal( eTabs1.settings.get( 'tabs' ).at( 0 ).get( 'tab_title' ), 'Tab #2' );
