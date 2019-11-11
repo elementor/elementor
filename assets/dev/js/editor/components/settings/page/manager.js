@@ -44,22 +44,20 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			$e.run( 'document/save/auto', {
-				options: {
-					onSuccess: function() {
-						elementor.reloadPreview();
+			elementor.saver.saveAutoSave( {
+				onSuccess: function() {
+					elementor.reloadPreview();
 
-						elementor.once( 'preview:loaded', function() {
-							$e.route( 'panel/page-settings/settings' );
-						} );
-					},
+					elementor.once( 'preview:loaded', function() {
+						$e.route( 'panel/page-settings/settings' );
+					} );
 				},
 			} );
 		},
 	},
 
 	onModelChange: function() {
-		$e.run( 'document/save/set-is-modified', true );
+		elementor.saver.setFlagEditorChange( true );
 
 		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},

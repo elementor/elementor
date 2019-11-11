@@ -1,4 +1,3 @@
-import * as Commands from './commands/';
 import * as Hooks from './hooks/';
 
 export default class Component extends elementorModules.common.Component {

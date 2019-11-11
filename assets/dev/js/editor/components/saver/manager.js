@@ -1,6 +1,3 @@
-/**
- * TODO: all content of the file should move to `save/component.js` this file should exist only for BC.
- */
 module.exports = elementorModules.Module.extend( {
 	autoSaveTimer: null,
 
@@ -17,10 +14,95 @@ module.exports = elementorModules.Module.extend( {
 	startTimer: function( hasChanges ) {
 		clearTimeout( this.autoSaveTimer );
 		if ( hasChanges ) {
-			this.autoSaveTimer = setTimeout( () => {
-				$e.run( 'document/save/auto', { mode: 'safe' } );
-			}, this.autosaveInterval );
+			this.autoSaveTimer = setTimeout( _.bind( this.doAutoSave, this ), this.autosaveInterval );
 		}
+	},
+
+	saveDraft: function() {
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		if ( ! elementor.saver.isEditorChanged() && 'draft' !== postStatus ) {
+			return;
+		}
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'private':
+				this.doAutoSave();
+				break;
+			default:
+				// Update and create a revision
+				this.update();
+		}
+	},
+
+	doAutoSave: function() {
+		var editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		// Avoid auto save for Revisions Preview changes.
+		if ( 'edit' !== editorMode ) {
+			return;
+		}
+
+		this.saveAutoSave();
+	},
+
+	saveAutoSave: function( options ) {
+		if ( ! this.isEditorChanged() ) {
+			return;
+		}
+
+		options = _.extend( {
+			status: 'autosave',
+		}, options );
+
+		this.saveEditor( options );
+	},
+
+	savePending: function( options ) {
+		options = _.extend( {
+			status: 'pending',
+		}, options );
+
+		this.saveEditor( options );
+	},
+
+	discard: function() {
+		var self = this;
+		elementorCommon.ajax.addRequest( 'discard_changes', {
+			success: function() {
+				self.setFlagEditorChange( false );
+				location.href = elementor.config.document.urls.exit_to_dashboard;
+			},
+		} );
+	},
+
+	update: function( options ) {
+		options = _.extend( {
+			status: elementor.settings.page.model.get( 'post_status' ),
+		}, options );
+
+		this.saveEditor( options );
+	},
+
+	publish: function( options ) {
+		options = _.extend( {
+			status: 'publish',
+		}, options );
+
+		this.saveEditor( options );
+	},
+
+	setFlagEditorChange: function( status ) {
+		if ( status && this.isSaving ) {
+			this.isChangedDuringSave = true;
+		}
+
+		this.startTimer( status );
+
+		elementor.channels.editor
+			.reply( 'status', status )
+			.trigger( 'status:change', status );
 	},
 
 	isEditorChanged: function() {
@@ -36,13 +118,39 @@ module.exports = elementorModules.Module.extend( {
 		} );
 	},
 
-	// TODO: function too big.
+	defaultSave: function() {
+		const postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'future':
+			case 'private':
+				this.update();
+
+				break;
+			case 'draft':
+				if ( elementor.config.current_user_can_publish ) {
+					this.publish();
+				} else {
+					this.savePending();
+				}
+
+				break;
+			case 'pending': // User cannot change post status
+			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
+				if ( elementor.config.current_user_can_publish ) {
+					this.publish();
+				} else {
+					this.update();
+				}
+		}
+	},
+
 	saveEditor: function( options ) {
 		if ( this.isSaving ) {
 			return;
 		}
 
-		// TODO: Move to es6.
 		options = _.extend( {
 			status: 'draft',
 			onSuccess: null,
@@ -80,7 +188,7 @@ module.exports = elementorModules.Module.extend( {
 
 					// Notice: Must be after update page.model.post_status to the new status.
 					if ( ! self.isChangedDuringSave ) {
-						$e.run( 'document/save/set-is-modified', false );
+						self.setFlagEditorChange( false );
 					}
 				}
 

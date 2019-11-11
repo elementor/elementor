@@ -45,7 +45,7 @@ jQuery( () => {
 
 		QUnit.module( 'miscellaneous', () => {
 			QUnit.test( 'Saver Editor Flag', ( assert ) => {
-				$e.run( 'document/save/set-is-modified', false );
+				elementor.saver.setFlagEditorChange( false );
 
 				Elements.createSection( 1 );
 

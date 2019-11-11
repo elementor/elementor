@@ -118,7 +118,7 @@ export default class Base extends ArgsObject {
 		this.onAfterApply( this.args, result );
 
 		if ( this.isDataChanged() ) {
-			$e.run( 'document/save/set-is-modified', true );
+			elementor.saver.setFlagEditorChange( true );
 		}
 
 		// For $e.events.
