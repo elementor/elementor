@@ -29,15 +29,6 @@
 		&:not(.editable) {
 			display: none;
 		}
-
-		// Color Picker control
-		.wp-picker-container {
-
-			&.wp-picker-active {
-				transform: translateY(0);
-				border-width: 0;
-			}
-		}
 	}
 
 	.elementor-repeater-row-tools {

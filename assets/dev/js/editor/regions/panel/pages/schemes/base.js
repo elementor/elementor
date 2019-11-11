@@ -59,7 +59,7 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		var self = this;
 
 		_.each( schemeItems, function( value, key ) {
-			var model = self.collection.findWhere( { key: key } ),
+			const model = self.collection.findWhere( { key: key } ),
 				childView = self.children.findByModelCid( model.cid );
 
 			childView.changeUIValue( value );

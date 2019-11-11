@@ -266,10 +266,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i class="eicon-elementor" aria-hidden="true"></i>
 	</div>
 	<div class="elementor-template-library-blank-title">
-		<?php echo __( 'Welcome to Elementor Template Library', 'elementor' ); ?>
+		<?php echo __( 'Get Access to Hundreds of Elementor Templates', 'elementor' ); ?>
 	</div>
 	<div class="elementor-template-library-blank-message">
-		<?php echo __( 'Sign up to use all free, mobile responsive, gorgeous Elementor templates', 'elementor' ); ?>
+		<?php echo __( 'Connect your account for free to download Elementor’s designer-made templates', 'elementor' ); ?>
 	</div>
 	<div id="elementor-template-library-connect-content">
 		<?php
@@ -277,16 +277,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 
 		<a class="elementor-button elementor-button-success elementor-connect-popup" href="<?php echo esc_attr( $url ); ?>">
-			<?php echo __( 'Connect', 'elementor' ); ?>
+			<?php echo __( 'Connect Now', 'elementor' ); ?>
 		</a>
 	</div>
-
-	<div id="elementor-template-library-connect-thumbnails">
-		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2017/03/lp2-l.png);"></div>
-		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2016/08/0016.png);"></div>
-		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2016/10/0022.png);"></div>
-		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2016/08/0019.png);"></div>
-		<div class="thumbnail" style="background-image: url(https://library.elementor.com/wp-content/uploads/2016/08/0003.png);"></div>
-	</div>
-
 </script>
