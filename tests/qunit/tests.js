@@ -37,6 +37,9 @@ elementor.config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core
 
 
 require( './core/common/components' );
+
+require( './core/editor/container/container' );
+
 require( './core/editor/document/elements/component' );
 require( './core/editor/document/repeater/component' );
 require( './core/editor/document/dynamic/component' );
