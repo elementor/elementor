@@ -1,9 +1,15 @@
-import DocumentHelper from '../helper';
-
 /**
  * TODO: everywhere possible dont use created container
  * to check command propriety, but use: 'elementor.getPreviewContainer'
  */
+
+import DocumentHelper from '../helper';
+import * as Commands from './commands';
+
+const testCommands = ( commands ) => {
+	// eslint-disable-next-line no-unused-vars
+	Object.entries( commands ).forEach( ( [ command, reference ] ) => reference() );
+};
 
 jQuery( () => {
 	QUnit.module( 'Component: document/elements', ( hooks ) => {
@@ -11,43 +17,9 @@ jQuery( () => {
 			DocumentHelper.empty();
 		} );
 
+		testCommands( Commands );
+
 		QUnit.module( 'Single Selection', () => {
-			QUnit.test( 'Empty', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true );
-
-				DocumentHelper.createButton( eColumn );
-				DocumentHelper.createButton( eColumn );
-
-				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
-
-				DocumentHelper.empty();
-
-				// Check.
-				assert.equal( elementor.getPreviewContainer().view.collection.length, 0,
-					'all elements were removed.' );
-				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
-			} );
-
-			QUnit.test( 'Copy All', ( assert ) => {
-				const eSection = DocumentHelper.createSection( 1 ),
-					eColumn = DocumentHelper.createColumn( eSection ),
-					eButtonsCount = 2;
-
-				for ( let i = 0; i < eButtonsCount; ++i ) {
-					DocumentHelper.createButton( eColumn );
-				}
-
-				DocumentHelper.copyAll();
-
-				DocumentHelper.empty();
-
-				DocumentHelper.paste( elementor.getPreviewContainer(), true );
-
-				assert.equal( elementor.elements.at( 0 ).get( 'elements' ).at( 1 ).get( 'elements' ).length, eButtonsCount,
-					`'${ eButtonsCount }' buttons were created.` );
-			} );
-
 			QUnit.test( 'Create Section', ( assert ) => {
 				const eSection = DocumentHelper.createSection( 1 ),
 					isSectionCreated = Boolean( elementor.getPreviewContainer().view.children.findByModel( eSection.model ) );
