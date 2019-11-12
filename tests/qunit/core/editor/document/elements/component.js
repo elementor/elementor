@@ -64,6 +64,8 @@ jQuery( () => {
 					`'${ eButtonDuplicateCount }' buttons were duplicated.` );
 			} );
 
+			// This is Paste: default
+			// Should be more deeper copy test.
 			QUnit.test( 'Copy & Paste', ( assert ) => {
 				const eColumn = DocumentHelper.createSection( 1, true ),
 					eButton = DocumentHelper.createButton( eColumn );
