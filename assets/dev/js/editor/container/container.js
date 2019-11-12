@@ -98,6 +98,9 @@ export default class Container extends ArgsObject {
 	constructor( args ) {
 		super( args );
 
+		// Validate args.
+		this.validateArgs( args );
+
 		args = Object.entries( args );
 
 		// If empty.
@@ -116,6 +119,14 @@ export default class Container extends ArgsObject {
 
 		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
 		this.panel = new Panel( this );
+	}
+
+	validateArgs( args ) {
+		this.requireArgumentType( 'type', 'string', args );
+		this.requireArgumentType( 'id', 'string', args );
+
+		this.requireArgumentInstance( 'settings', Backbone.Model, args );
+		this.requireArgumentInstance( 'model', Backbone.Model, args );
 	}
 
 	/**
