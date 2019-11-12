@@ -83,9 +83,11 @@ export default class Base {
 	 * Example: 'return $e.hooks.registerDependency';
 	 *
 	 * @returns {function()}
+	 *
+	 * @throws {Errror}
 	 */
 	method() {
-		throw Error( 'method() must be implanted' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -94,9 +96,11 @@ export default class Base {
 	 * Returns the full command path to hook.
 	 *
 	 * @returns {string}
+	 *
+	 * @throws {Error}
 	 */
 	hook() {
-		throw Error( 'hook() must be implanted.' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -105,9 +109,11 @@ export default class Base {
 	 * Returns command id for the hook (should be unique).
 	 *
 	 * @returns {string}
+	 *
+	 * @throws {Error}
 	 */
 	id() {
-		throw Error( 'id() must be implanted.' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -118,9 +124,11 @@ export default class Base {
 	 * @param {{}} args
 	 *
 	 * @returns {boolean}
+	 *
+	 * @throws {Error}
 	 */
 	conditions( args ) {
-		throw Error( 'conditions() must be implanted.' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -133,6 +141,6 @@ export default class Base {
 	 * @returns {boolean}
 	 */
 	apply( args ) {
-		throw Error( 'apply() must be implanted.' );
+		elementorModules.ForceMethodImplementation();
 	}
 }
