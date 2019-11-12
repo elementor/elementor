@@ -262,7 +262,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-connect">
-	<div id="elementor-template-library-connect-logo">
+	<div id="elementor-template-library-connect-logo" class="elementor-gradient-logo">
 		<i class="eicon-elementor" aria-hidden="true"></i>
 	</div>
 	<div class="elementor-template-library-blank-title">
@@ -280,4 +280,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php echo __( 'Connect Now', 'elementor' ); ?>
 		</a>
 	</div>
+	<?php $base_images_url = $this->get_assets_base_url() . '/assets/images'; ?>
+	<img class="elementor-template-library-connect-background-image elementor-template-library-connect-background-image-left-1 animated animated-slow fadeIn" src="<?php echo $base_images_url; ?>/library-connect-background-Left01.png" />
+	<img class="elementor-template-library-connect-background-image elementor-template-library-connect-background-image-left-2 animated animated-slow fadeIn" src="<?php echo $base_images_url; ?>/library-connect-background-Left02.png" />
+	<img class="elementor-template-library-connect-background-image elementor-template-library-connect-background-image-right-1 animated animated-slow fadeIn" src="<?php echo $base_images_url; ?>/library-connect-background-Right01.png" />
+	<img class="elementor-template-library-connect-background-image elementor-template-library-connect-background-image-right-2 animated animated-slow fadeIn" src="<?php echo $base_images_url; ?>/library-connect-background-Right02.png" />
 </script>
