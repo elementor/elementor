@@ -1,6 +1,7 @@
+import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
 
-export default class Container {
+export default class Container extends ArgsObject {
 	/**
 	 * Container type.
 	 *
@@ -14,13 +15,6 @@ export default class Container {
 	 * @type {string}
 	 */
 	id;
-
-	/**
-	 * Container document.
-	 *
-	 * @type {Container}
-	 */
-	document;
 
 	/**
 	 * Container model.
@@ -102,6 +96,8 @@ export default class Container {
 	 * @throws {Error}
 	 */
 	constructor( args ) {
+		super( args );
+
 		args = Object.entries( args );
 
 		// If empty.
