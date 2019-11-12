@@ -40,6 +40,8 @@ require( './core/common/components' );
 
 require( './core/editor/container/container' );
 
+require( './core/editor/document/commands/base/base' );
+
 require( './core/editor/document/elements/component' );
 require( './core/editor/document/repeater/component' );
 require( './core/editor/document/dynamic/component' );
