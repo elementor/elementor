@@ -21,30 +21,32 @@ jQuery( () => {
 
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'ResizeColumn', ( assert ) => {
-				assert.equal( 1, 1 );
-				/*				const newSize = 20,
-									eSection = Elements.createSection( 2 ),
-									eColumn1 = eSection.view.children.findByIndex( 0 ).getContainer(),
-									eColumn2 = eSection.view.children.findByIndex( 1 ).getContainer(),
-									column2NewSize = 100 - newSize;
+				assert.equal( 1, 1, 'Test was skipped.' );
+				/*
+				const newSize = 20,
+						eSection = Elements.createSection( 2 ),
+						eColumn1 = eSection.view.children.findByIndex( 0 ).getContainer(),
+						eColumn2 = eSection.view.children.findByIndex( 1 ).getContainer(),
+						column2NewSize = 100 - newSize;
 
-								// Manual specific `_inline_size` since tests does not have real ui.
-								$e.run( 'document/elements/settings', {
-									containers: [ eColumn1, eColumn2 ],
-									settings: {
-										[ eColumn1.id ]: { _inline_size: 50 },
-										[ eColumn2.id ]: { _inline_size: 50 },
-									},
-									isMultiSettings: true,
-								} );
+					// Manual specific `_inline_size` since tests does not have real ui.
+					$e.run( 'document/elements/settings', {
+						containers: [ eColumn1, eColumn2 ],
+						settings: {
+							[ eColumn1.id ]: { _inline_size: 50 },
+							[ eColumn2.id ]: { _inline_size: 50 },
+						},
+						isMultiSettings: true,
+					} );
 
-								Elements.resizeColumn( eColumn1, newSize );
+					Elements.resizeColumn( eColumn1, newSize );
 
-								// Check values.
-								assert.equal( eColumn1.settings.attributes._inline_size, newSize,
-									`Column1 size was changed to '${ newSize }'.` );
-								assert.equal( eColumn2.settings.attributes._inline_size, ( column2NewSize ),
-									`Column2 size was changed to '${ column2NewSize }'.` );*/
+					// Check values.
+					assert.equal( eColumn1.settings.attributes._inline_size, newSize,
+						`Column1 size was changed to '${ newSize }'.` );
+					assert.equal( eColumn2.settings.attributes._inline_size, ( column2NewSize ),
+						`Column2 size was changed to '${ column2NewSize }'.` );
+					*/
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
@@ -62,26 +64,6 @@ jQuery( () => {
 				// Check duplicated button exist.
 				assert.equal( eColumn.view.children.length, ( eButtonDuplicateCount + 1 ),
 					`'${ eButtonDuplicateCount }' buttons were duplicated.` );
-			} );
-
-			// This is Paste: default
-			// Should be more deeper copy test.
-			QUnit.test( 'Copy & Paste', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eButton = DocumentHelper.createButton( eColumn );
-
-				DocumentHelper.copy( eButton );
-
-				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
-
-				DocumentHelper.paste( eColumn );
-
-				// Check.
-				assert.equal( elementor.elements.at( 0 ).get( 'elements' ).at( 0 ).get( 'elements' ).length, 2,
-					'Pasted element were created.' );
-				assert.equal( elementor.saver.isEditorChanged(), true,
-					'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'Settings', ( assert ) => {
