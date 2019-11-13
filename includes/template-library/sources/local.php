@@ -744,7 +744,7 @@ class Source_Local extends Source_Base {
 		}
 
 		// Create temporary .zip file
-		$zip_archive_filename = 'elementor-templates-' . date( 'Y-m-d' ) . '.zip';
+		$zip_archive_filename = 'elementor-templates-' . gmdate( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();
 
@@ -1396,7 +1396,7 @@ class Source_Local extends Source_Base {
 		$export_data += $template_data;
 
 		return [
-			'name' => 'elementor-' . $template_id . '-' . date( 'Y-m-d' ) . '.json',
+			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
 		];
 	}

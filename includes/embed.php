@@ -114,7 +114,7 @@ class Embed {
 			$time_text = '';
 
 			if ( ! empty( $options['start'] ) ) {
-				$time_text = date( 'H\hi\ms\s', $options['start'] );
+				$time_text = date( 'H\hi\ms\s', $options['start'] ); // PHPCS:Ignore WordPress.DateTime.RestrictedFunctions.date_date
 			}
 
 			$replacements['{TIME}'] = $time_text;
