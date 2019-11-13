@@ -134,6 +134,13 @@ Schemes = function() {
 	this.setSchemeValue = function( schemeName, itemKey, value ) {
 		schemes[ schemeName ].items[ itemKey ].value = value;
 	};
+
+	this.addSchemeItem = function( schemeName, item ) {
+		const scheme = schemes[ schemeName ],
+			lastItemKey = +Object.keys( scheme.items ).slice( -1 )[ 0 ];
+
+		scheme.items[ lastItemKey + 1 ] = item;
+	};
 };
 
 module.exports = new Schemes();
