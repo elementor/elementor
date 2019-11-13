@@ -112,21 +112,16 @@ Schemes = function() {
 	this.saveScheme = function( schemeName ) {
 		elementor.config.schemes.items[ schemeName ].items = elementorCommon.helpers.cloneObject( schemes[ schemeName ].items );
 
-		var itemsToSave = {};
+		const itemsToSave = {};
 
 		_.each( schemes[ schemeName ].items, function( item, key ) {
 			itemsToSave[ key ] = item.value;
 		} );
 
-		NProgress.start();
-
-		elementorCommon.ajax.addRequest( 'apply_scheme', {
+		return elementorCommon.ajax.addRequest( 'apply_scheme', {
 			data: {
 				scheme_name: schemeName,
 				data: JSON.stringify( itemsToSave ),
-			},
-			success: function() {
-				NProgress.done();
 			},
 		} );
 	};
