@@ -1,3 +1,5 @@
+import ColorPicker from './color-picker';
+
 module.exports = {
 	_enqueuedFonts: [],
 	_enqueuedIconFonts: [],
@@ -468,67 +470,14 @@ module.exports = {
 		} );
 	},
 
-	getColorPickerPaletteIndex( paletteKey ) {
-		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
-	},
-
-	getColorPickerPalette() {
-		const colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
-			items = _.sortBy( colorPickerScheme.items, ( item ) => {
-				return this.getColorPickerPaletteIndex( item.key );
-			} );
-
-		return _.pluck( items, 'value' );
-	},
-
-	colorPicker( options ) {
-		const defaultOptions = {
-			theme: 'monolith',
-			swatches: this.getColorPickerPalette(),
-			position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
-			components: {
-				opacity: true,
-				hue: true,
-				interaction: {
-					input: true,
-					clear: true,
-				},
-			},
-			strings: {
-				clear: elementor.translate( 'clear' ),
-			},
-		};
-
-		options = jQuery.extend( true, defaultOptions, options );
-
-		const picker = Pickr.create( options ),
-			onChange = ( ...args ) => {
-				if ( options.onChange ) {
-					options.onChange( ...args );
-				}
-			},
-			onClear = ( ...args ) => {
-				if ( options.onClear ) {
-					options.onClear( ...args );
-				}
-			};
-
-		picker
-			.on( 'change', onChange )
-			.on( 'swatchselect', onChange )
-			.on( 'clear', onClear );
-
-		return picker;
-	},
-
 	wpColorPicker( $element, options ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'elementor.helpers.colorPicker()' );
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
 		options = options || {};
 
 		options.el = $element;
 
-		elementor.helpers.colorPicker( options );
+		return new ColorPicker( options );
 	},
 
 	isInViewport( element, html ) {

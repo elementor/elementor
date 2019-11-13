@@ -67,7 +67,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return string System schemes.
+	 * @return array System schemes.
 	 */
 	final public function get_system_schemes() {
 		if ( null === $this->_system_schemes ) {

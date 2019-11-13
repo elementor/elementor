@@ -454,7 +454,7 @@ class Editor {
 			'pickr',
 			ELEMENTOR_ASSETS_URL . 'lib/pickr/js/pickr.min.js',
 			[],
-			'1.4.6',
+			'1.4.7',
 			true
 		);
 
@@ -834,7 +834,7 @@ class Editor {
 			'pickr',
 			ELEMENTOR_ASSETS_URL . 'lib/pickr/css/monolith.min.css',
 			[],
-			'1.4.6'
+			'1.4.7'
 		);
 
 		wp_register_style(
