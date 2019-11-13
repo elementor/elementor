@@ -11,10 +11,7 @@ export class Copy extends History {
 	}
 
 	apply( args ) {
-		const {
-			storageKey = 'clipboard',
-			containers = [ args.container ],
-		} = args;
+		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
 
 		elementorCommon.storage.set(
 			storageKey,
