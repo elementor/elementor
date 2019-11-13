@@ -39,7 +39,7 @@ helpers = {
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
@@ -439,13 +439,13 @@ helpers = {
 	},
 
 	cloneObject( object ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
 
 	firstLetterUppercase( string ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.upperCaseWords', '2.3.0', 'elementorCommon.helpers.upperCaseWords' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.upperCaseWords', '2.3.0', 'elementorCommon.helpers.upperCaseWords' );
 
 		return elementorCommon.helpers.upperCaseWords( string );
 	},

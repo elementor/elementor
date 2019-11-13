@@ -39,7 +39,7 @@ const App = Marionette.Application.extend( {
 	modules: {
 		// TODO: Deprecated alias since 2.3.0
 		get Module() {
-			elementorCommon.helpers.deprecatedMethod( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
+			elementorCommon.helpers.hardDeprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
 
 			return elementorModules.Module;
 		},
@@ -48,7 +48,7 @@ const App = Marionette.Application.extend( {
 				views: {
 					// TODO: Deprecated alias since 2.4.0
 					get BaseModalLayout() {
-						elementorCommon.helpers.deprecatedMethod( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
+						elementorCommon.helpers.hardDeprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
 
 						return elementorModules.common.views.modal.Layout;
 					},
@@ -102,7 +102,7 @@ const App = Marionette.Application.extend( {
 			models: {
 				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
-					elementorCommon.helpers.deprecatedMethod( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
+					elementorCommon.helpers.hardDeprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
 
 					return elementorModules.editor.elements.models.BaseSettings;
 				},
@@ -130,7 +130,7 @@ const App = Marionette.Application.extend( {
 		views: {
 			// TODO: Deprecated alias since 2.4.0
 			get ControlsStack() {
-				elementorCommon.helpers.deprecatedMethod( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
+				elementorCommon.helpers.hardDeprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
 
 				return elementorModules.editor.views.ControlsStack;
 			},
