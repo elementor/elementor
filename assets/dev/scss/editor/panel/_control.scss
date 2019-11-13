@@ -458,15 +458,15 @@ $item-size: 2em;
 	height: 0;
 	transform: scale(0);
 	opacity: 0;
+}
+
+.elementor-control a.elementor-responsive-switcher {
+	transition: 0.15s;
+	color: $gray;
 
 	&:hover {
 		color: $editor-info;
 	}
-}
-
-.elementor-control a.elementor-responsive-switcher {
-	color: $gray;
-	transition: 0.15s;
 }
 
 $devices: 'desktop', 'tablet', 'mobile';
