@@ -23,6 +23,18 @@ export default class DisableEnable extends History {
 		} );
 	}
 
+	initialize( args ) {
+		super.initialize( args );
+
+		/**
+		 * Which command is running.
+		 *
+		 * @type {string}
+		 */
+		this.type = 'document/dynamic/enable' === $e.commands.current.document ?
+			'enable' : 'disable';
+	}
+
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -44,8 +56,7 @@ export default class DisableEnable extends History {
 		} );
 
 		const subTitle = elementor.translate( 'dynamic' ) + ' ' + ElementsSettings.getSubTitle( args ),
-			type = 'document/dynamic/enable' === this.currentCommand ?
-				'enable' : 'disable';
+			type = this.type;
 
 		return {
 			containers,
