@@ -1,7 +1,7 @@
 export default class Helpers {
 	softDeprecated( name, version, replacement ) {
 		if ( elementorCommon.config.isDebug ) {
-			this.deprecatedMessage( name, version, replacement );
+			this.deprecatedMessage( 'soft', name, version, replacement );
 		}
 	}
 
