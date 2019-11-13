@@ -4,8 +4,6 @@ var ControlBaseView = require( 'elementor-controls/base' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
-	debounceHistory: false,
-
 	ui: function() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
@@ -88,7 +86,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 				[ key ]: value,
 			},
 			options: {
-				debounceHistory: this.debounceHistory,
+				debounceHistory: true,
 			},
 		} );
 
@@ -191,13 +189,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	onBaseInputTextChange: function( event ) {
-		const originalDebounceHistory = this.debounceHistory;
-
-		this.debounceHistory = true;
-
 		this.onBaseInputChange( event );
-
-		this.debounceHistory = originalDebounceHistory;
 	},
 
 	onBaseInputChange: function( event ) {
