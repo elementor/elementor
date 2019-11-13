@@ -22,7 +22,7 @@ export default class Component extends elementorModules.common.Component {
 					throw Error( 'container or containers are required.' );
 				}
 
-				args = this.normalizeLogArgs( args );
+				args = this.normalizeLogTitle( args );
 
 				return elementor.history.history.startItem( args );
 			},
@@ -48,7 +48,7 @@ export default class Component extends elementorModules.common.Component {
 
 				const id = args.id || elementor.history.history.getCurrentId();
 
-				args = this.normalizeLogArgs( args );
+				args = this.normalizeLogTitle( args );
 
 				const items = elementor.history.history.getItems(),
 					item = items.findWhere( { id } );
@@ -78,7 +78,7 @@ export default class Component extends elementorModules.common.Component {
 		};
 	}
 
-	normalizeLogArgs( args ) {
+	normalizeLogTitle( args ) {
 		const { containers = [ args.container ] } = args;
 
 		if ( ! args.title ) {
