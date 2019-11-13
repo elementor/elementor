@@ -6,7 +6,7 @@ export default class ColorPicker extends elementorModules.Module {
 	constructor( ...args ) {
 		super( ...args );
 
-		this.picker = this.createPicker();
+		this.createPicker();
 	}
 
 	getColorPickerPalette() {
@@ -61,14 +61,42 @@ export default class ColorPicker extends elementorModules.Module {
 			.on( 'swatchselect', onChange )
 			.on( 'clear', onClear );
 
-		return picker;
+		this.picker = picker;
+
+		this.addPlusButton();
 	}
 
 	getValue() {
 		return this.picker.getColor().toRGBA().toString( 0 );
 	}
 
+	addPlusButton() {
+		const $button = jQuery( '<button>', { class: 'elementor-color-picker-palette--add' } ).html( jQuery( '<i>', { class: 'eicon-plus' } ) );
+
+		$button.on( 'click', () => this.onAddButtonClick() );
+
+		this.$addButton = $button;
+
+		this.addPlusButtonToSwatches();
+	}
+
+	addPlusButtonToSwatches() {
+		jQuery( this.picker.getRoot().swatches ).append( this.$addButton );
+	}
+
 	destroy() {
 		this.picker.destroyAndRemove();
+	}
+
+	onAddButtonClick() {
+		const value = this.getValue();
+
+		elementor.schemes.addSchemeItem( 'color-picker', { value } );
+
+		this.picker.addSwatch( value );
+
+		this.addPlusButtonToSwatches();
+
+		elementor.schemes.saveScheme( 'color-picker' );
 	}
 }

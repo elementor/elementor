@@ -111,9 +111,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 	 * @param array $posted
 	 */
 	public function save_scheme( array $posted ) {
-		$scheme_value = $this->get_scheme_value();
-
-		update_option( 'elementor_scheme_' . static::get_type(), array_replace( $scheme_value, array_intersect_key( $posted, $scheme_value ) ) );
+		update_option( 'elementor_scheme_' . static::get_type(), $posted );
 
 		update_option( self::LAST_UPDATED_META, time() );
 	}
