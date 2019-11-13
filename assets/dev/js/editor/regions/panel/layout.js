@@ -65,9 +65,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			typographyScheme: {
 				view: require( 'elementor-panel/pages/schemes/typography' ),
 			},
-			colorPickerScheme: {
-				view: require( 'elementor-panel/pages/schemes/color-picker' ),
-			},
 		};
 
 		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),

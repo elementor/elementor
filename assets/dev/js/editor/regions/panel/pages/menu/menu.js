@@ -95,14 +95,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 		}, 'style' );
 
 		this.addItem( {
-			name: 'color-picker',
-			icon: 'eicon-eyedropper',
-			title: elementor.translate( 'color_picker' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/color-picker' ),
-		}, 'style' );
-
-		this.addItem( {
 			name: 'global-settings',
 			icon: 'eicon-cogs',
 			title: elementor.translate( 'global_settings' ),
