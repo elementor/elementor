@@ -107,12 +107,6 @@ class Autoloader {
 			'Posts_CSS_Manager' => 'includes/managers/css-files.php',
 			'Preview' => 'includes/preview.php',
 			'Rollback' => 'includes/rollback.php',
-			'Scheme_Base' => 'includes/schemes/base.php',
-			'Scheme_Color' => 'includes/schemes/color.php',
-			'Scheme_Color_Picker' => 'includes/schemes/color-picker.php',
-			'Scheme_Typography' => 'includes/schemes/typography.php',
-			'Scheme_Interface' => 'includes/interfaces/scheme.php',
-			'Schemes_Manager' => 'includes/managers/schemes.php',
 			'Settings' => 'includes/settings/settings.php',
 			'Settings_Controls' => 'includes/settings/controls.php',
 			'Settings_Validations' => 'includes/settings/validations.php',
@@ -185,6 +179,26 @@ class Autoloader {
 			'Editor' => [
 				'replacement' => 'Core\Editor\Editor',
 				'version' => '2.6.0',
+			],
+			'Scheme_Base' => [
+				'replacement' => 'Core\Schemes\Base',
+				'version' => '2.8.0',
+			],
+			'Scheme_Color' => [
+				'replacement' => 'Core\Schemes\Color',
+				'version' => '2.8.0',
+			],
+			'Scheme_Color_Picker' => [
+				'replacement' => 'Core\Schemes\Color_Picker',
+				'version' => '2.8.0',
+			],
+			'Schemes_Manager' => [
+				'replacement' => 'Core\Schemes\Manager',
+				'version' => '2.8.0',
+			],
+			'Scheme_Typography' => [
+				'replacement' => 'Core\Schemes\Typography',
+				'version' => '2.8.0',
 			],
 		];
 	}
