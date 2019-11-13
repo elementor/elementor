@@ -81,7 +81,7 @@ var	Manager = function() {
 	};
 
 	this.endItem = function( id ) {
-		if ( currentItemID !== id ) {
+		if ( id && currentItemID !== id ) {
 			return;
 		}
 		currentItemID = null;

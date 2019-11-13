@@ -10,11 +10,10 @@ export default class History extends Base {
 		 * @type {{}|boolean}
 		 */
 		this.history = this.getHistory( args );
+	}
 
-		/**
-		 * @type {number|boolean}
-		 */
-		this.historyId = false;
+	static endLog() {
+		$e.run( 'document/history/end-log' );
 	}
 
 	/**
@@ -47,25 +46,15 @@ export default class History extends Base {
 		super.onBeforeRun( args );
 
 		if ( this.history && this.isHistoryActive() ) {
-			/**
-			 * If `historyId` was passed, assuming that is sub history item.
-			 * If so, pass `id` to `document/history/start-log` to apply history sub item.
-			 */
-			if ( this.args.histroyId ) {
-				this.history.id = this.args.histroyId;
-
-				delete this.args.histroyId;
-			}
-
-			this.historyId = $e.run( 'document/history/start-log', this.history );
+			$e.run( 'document/history/start-log', this.history );
 		}
 	}
 
 	onAfterRun( args, result ) {
 		super.onAfterRun( args, result );
 
-		if ( this.historyId ) {
-			$e.run( 'document/history/end-log', { id: this.historyId } );
+		if ( this.isHistoryActive() ) {
+			this.constructor.endLog();
 		}
 	}
 
@@ -73,8 +62,10 @@ export default class History extends Base {
 		super.onCatchApply( e );
 
 		// Rollback history on failure.
-		if ( this.historyId ) {
-			$e.run( 'document/history/delete-log', { id: this.historyId } );
+		if ( this.history ) {
+			$e.run( 'document/history/delete-log' );
 		}
 	}
 }
+
+History.endLog = _.debounce( History.endLog, 800 );

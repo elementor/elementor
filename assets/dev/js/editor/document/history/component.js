@@ -1,34 +1,73 @@
 export default class Component extends elementorModules.common.Component {
+	transaction = [];
+
 	getNamespace() {
 		return 'document/history';
 	}
 
+	addTransactionItem( args ) {
+		if ( ! args.type ) {
+			throw Error( 'type is required.' );
+		}
+
+		const { containers = [ args.container ] } = args;
+
+		if ( ! containers.length ) {
+			throw Error( 'container or containers are required.' );
+		}
+
+		args = this.normalizeLogTitle( args );
+
+		this.transaction.push( args );
+	}
+
 	getCommands() {
 		return {
-			'start-log': ( args ) => {
-				if ( elementor.history.history.isItemStarted() || args.id ) {
-					$e.run( 'document/history/add-sub-item', args );
+			'add-log': ( args ) => this.addTransactionItem( args ),
+			'start-log': ( args ) => this.addTransactionItem( args ),
 
-					return null;
+			'end-log': () => {
+				if ( ! this.transaction.length ) {
+					return;
 				}
 
-				if ( ! args.type ) {
-					throw Error( 'type is required.' );
+				const containersIndex = {},
+					firstItem = this.transaction[ 0 ];
+
+				let { title = '', subTitle = '', type } = firstItem;
+
+				this.transaction.forEach( ( itemArgs ) => {
+					if ( ! itemArgs.container && ! itemArgs.containers ) {
+						return;
+					}
+
+					const { containers = [ itemArgs.container ] } = itemArgs;
+
+					if ( containers ) {
+						containers.forEach( ( container ) => {
+							containersIndex[ container.id ] = true; // TODO merge changes.
+						} );
+					}
+				} );
+
+				if ( containersIndex.length > 1 ) {
+					title = 'Elements'; // translate.
+					subTitle = '';
 				}
 
-				const { containers = [ args.container ] } = args;
+				elementor.history.history.startItem( {
+					title,
+					subTitle,
+					type,
+				} );
 
-				if ( ! containers.length ) {
-					throw Error( 'container or containers are required.' );
-				}
+				this.transaction.forEach( ( itemArgs ) => {
+					elementor.history.history.addItem( itemArgs );
+				} );
 
-				args = this.normalizeLogTitle( args );
+				elementor.history.history.endItem();
 
-				return elementor.history.history.startItem( args );
-			},
-
-			'end-log': ( args ) => {
-				elementor.history.history.endItem( args.id );
+				this.transaction = [];
 			},
 
 			'delete-log': ( args ) => {

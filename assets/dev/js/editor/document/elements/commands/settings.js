@@ -1,6 +1,6 @@
-import Debounce from '../../commands/base/debounce';
+import History from '../../commands/base/history';
 
-export class Settings extends Debounce {
+export class Settings extends History {
 	/**
 	 * Function getSubTitle().
 	 *
@@ -12,19 +12,28 @@ export class Settings extends Debounce {
 	 */
 	static getSubTitle( args ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
-			settingsKeys = Object.keys( settings ),
-			controls = containers[ 0 ].controls,
-			firstSettingKey = settingsKeys[ 0 ];
+			settingsKeys = Object.keys( settings );
 
 		let result = '';
 
-		if ( ! isMultiSettings && 1 === settingsKeys.length && controls && controls[ firstSettingKey ] ) {
-			result = controls[ firstSettingKey ].label;
+		if ( ! isMultiSettings &&
+			1 === settingsKeys.length &&
+			containers[ 0 ].controls &&
+			containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
+			result = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
 		}
 
 		return result;
 	}
 
+	/**
+	 * Function restore().
+	 *
+	 * Redo/Restore.
+	 *
+	 * @param {{}} historyItem
+	 * @param {boolean} isRedo
+	 */
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -41,6 +50,23 @@ export class Settings extends Debounce {
 		} );
 	}
 
+	static logHistory( container, newSettings ) {
+		const changes = {
+				[ container.id ]: {
+					old: container.settings.toJSON(),
+					new: newSettings,
+				},
+			},
+			historyItem = {
+				containers: [ container ],
+				data: { changes },
+				type: 'change',
+				restore: Settings.restore,
+			};
+
+		$e.run( 'document/history/add-log', historyItem );
+	}
+
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -48,24 +74,14 @@ export class Settings extends Debounce {
 	}
 
 	getHistory( args ) {
-		if ( ! super.getHistory( args ) ) {
-			return false;
-		}
-
-		const { containers = [ args.container ], options = {} } = args,
+		const { containers = [ args.container ] } = args,
 			subTitle = this.constructor.getSubTitle( args );
 
-		let history = {
+		return {
 			containers,
 			subTitle,
 			type: 'change',
 		};
-
-		if ( options.history ) {
-			history = Object.assign( options.history, history );
-		}
-
-		return history;
 	}
 
 	apply( args ) {
@@ -79,6 +95,9 @@ export class Settings extends Debounce {
 			 * settings: { '{ container-id }': { someSettingKey: someSettingValue } } etc.
 			 */
 			const newSettings = isMultiSettings ? settings[ container.id ] : settings;
+
+			// Save for debounce.
+			this.constructor.logHistory( container, newSettings );
 
 			if ( options.external ) {
 				container.settings.setExternalChange( newSettings );

@@ -1,5 +1,4 @@
 import DocumentHelper from '../helper';
-import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../assets/dev/js/editor/document/commands/base/debounce';
 import BlockFaq from './../../../../mock/library/blocks/faq.json';
 
 const undoValidate = ( assert, historyItem ) => {
@@ -329,7 +328,7 @@ jQuery( () => {
 					assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				}, 800 );
 			} );
 
 			QUnit.test( 'Paste Style', ( assert ) => {
@@ -568,7 +567,7 @@ jQuery( () => {
 				setTimeout( () => {
 					assert.equal( eButton.view.$el.find( '.button-text' ).html(), dynamicValue, 'Settings restored' );
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				}, 800 );
 			} );
 /*
 			QUnit.test( 'Dynamic in repeater', ( assert ) => {
