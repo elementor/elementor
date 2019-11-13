@@ -1,7 +1,7 @@
 import History from '../../../../../../../assets/dev/js/editor/document/commands/base/history';
 
 jQuery( () => {
-	QUnit.module( 'editor/document/commands/base/history', () => {
+	QUnit.module( 'File: editor/document/commands/base/history', () => {
 		QUnit.module( 'History', () => {
 			QUnit.test( 'getHistory(): force method implementation', ( assert ) => {
 				assert.throws(

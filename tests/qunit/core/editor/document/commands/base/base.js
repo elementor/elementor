@@ -1,7 +1,7 @@
 import Base from '../../../../../../../assets/dev/js/editor/document/commands/base/base';
 
 jQuery( () => {
-	QUnit.module( 'editor/document/dynamic/commands/base/base', () => {
+	QUnit.module( 'File: editor/document/dynamic/commands/base/base', () => {
 		QUnit.module( 'Base', () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(

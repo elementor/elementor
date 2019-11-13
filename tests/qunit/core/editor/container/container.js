@@ -1,5 +1,5 @@
 jQuery( () => {
-	QUnit.module( 'editor/container/container.js', () => {
+	QUnit.module( 'File: editor/container/container.js', () => {
 		QUnit.module( 'Container', () => {
 			QUnit.test( 'constructor()', ( assert ) => {
 				const fakeArgs = {

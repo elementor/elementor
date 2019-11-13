@@ -6,18 +6,13 @@
 import DocumentHelper from '../helper';
 import * as Commands from './commands';
 
-const testCommands = ( commands ) => {
-	// eslint-disable-next-line no-unused-vars
-	Object.entries( commands ).forEach( ( [ command, reference ] ) => reference() );
-};
-
 jQuery( () => {
 	QUnit.module( 'Component: document/elements', ( hooks ) => {
 		hooks.beforeEach( () => {
 			DocumentHelper.empty();
 		} );
 
-		testCommands( Commands );
+		DocumentHelper.testCommands( Commands );
 
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'ResizeColumn', ( assert ) => {

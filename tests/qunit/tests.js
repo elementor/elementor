@@ -45,7 +45,10 @@ require( './core/editor/document/commands/base/history' );
 
 require( './core/editor/document/dynamic/commands/base/disable-enable' );
 
+require( './core/editor/document/component' );
+
 require( './core/editor/document/elements/component' );
 require( './core/editor/document/repeater/component' );
 require( './core/editor/document/dynamic/component' );
 require( './core/editor/document/history/component' );
+

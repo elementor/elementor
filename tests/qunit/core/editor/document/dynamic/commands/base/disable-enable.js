@@ -2,7 +2,7 @@
 import DisableEnable from '../../../../../../../../assets/dev/js/editor/document/dynamic/commands/base/disable-enable';
 
 jQuery( () => {
-	QUnit.module( 'editor/document/dynamic/commands/base/disable-enable', () => {
+	QUnit.module( 'File: editor/document/dynamic/commands/base/disable-enable', () => {
 		QUnit.module( 'DisableEnable', () => {
 			QUnit.test( 'restore()', ( assert ) => {
 					const historyItem = {
