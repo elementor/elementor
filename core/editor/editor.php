@@ -586,7 +586,6 @@ class Editor {
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
-				'color_picker' => __( 'Color Picker', 'elementor' ),
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
