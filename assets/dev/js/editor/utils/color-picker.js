@@ -63,25 +63,49 @@ export default class ColorPicker extends elementorModules.Module {
 
 		this.picker = picker;
 
+		this.draggableSwatches( this.getSwatches().children() );
+
 		this.addPlusButton();
+
+		this.addSwatchDroppingArea();
 	}
 
 	getValue() {
 		return this.picker.getColor().toRGBA().toString( 0 );
 	}
 
+	getSwatches() {
+		return jQuery( this.picker.getRoot().swatches );
+	}
+
 	addPlusButton() {
-		const $button = jQuery( '<button>', { class: 'elementor-color-picker-palette--add' } ).html( jQuery( '<i>', { class: 'eicon-plus' } ) );
+		this.$addButton = jQuery( '<button>', { class: 'elementor-color-picker--add-swatch' } ).html( jQuery( '<i>', { class: 'eicon-plus' } ) );
 
-		$button.on( 'click', () => this.onAddButtonClick() );
-
-		this.$addButton = $button;
+		this.$addButton.on( 'click', () => this.onAddButtonClick() );
 
 		this.addPlusButtonToSwatches();
 	}
 
+	addSwatchDroppingArea() {
+		this.$droppingArea = jQuery( '<div>', { class: 'elementor-color-picker--dropping-area' } ).html( jQuery( '<i>', { class: 'eicon-trash-o' } ) );
+
+		this.getSwatches().after( this.$droppingArea );
+
+		this.$droppingArea.html5Droppable( {
+			items: '',
+			onDropping: this.onDroppingAreaDropping.bind( this ),
+		} );
+	}
+
 	addPlusButtonToSwatches() {
-		jQuery( this.picker.getRoot().swatches ).append( this.$addButton );
+		this.getSwatches().append( this.$addButton );
+	}
+
+	draggableSwatches( $swatches ) {
+		$swatches.html5Draggable( {
+			onDragStart: this.onSwatchDragStart.bind( this ),
+			onDragEnd: this.onSwatchDragEnd.bind( this ),
+		} );
 	}
 
 	destroy() {
@@ -91,12 +115,40 @@ export default class ColorPicker extends elementorModules.Module {
 	onAddButtonClick() {
 		const value = this.getValue();
 
-		elementor.schemes.addSchemeItem( 'color-picker', { value } );
-
 		this.picker.addSwatch( value );
+
+		this.draggableSwatches( this.getSwatches().children().last() );
 
 		this.addPlusButtonToSwatches();
 
+		elementor.schemes.addSchemeItem( 'color-picker', { value } );
+
 		elementor.schemes.saveScheme( 'color-picker' );
+	}
+
+	onSwatchDragStart( event ) {
+		this.$droppingArea.slideDown();
+
+		this.$draggedSwatch = jQuery( event.target );
+
+		setTimeout( () => this.$draggedSwatch.addClass( 'elementor-hidden' ), 0 );
+	}
+
+	onSwatchDragEnd( event ) {
+		this.$droppingArea.slideUp();
+
+		jQuery( event.target ).removeClass( 'elementor-hidden' );
+	}
+
+	onDroppingAreaDropping() {
+		this.$droppingArea.slideUp();
+
+		const draggedSwatchIndex = this.$draggedSwatch.index();
+
+		elementor.schemes.removeSchemeItem( 'color-picker', draggedSwatchIndex );
+
+		elementor.schemes.saveScheme( 'color-picker' );
+
+		this.$draggedSwatch.remove();
 	}
 }
