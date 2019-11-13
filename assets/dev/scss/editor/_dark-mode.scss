@@ -1,0 +1,113 @@
+
+// Dark Mode Theme
+
+
+// Variables
+
+$theme-dark-gray-darkest:  #25282C;
+$theme-dark-gray-darker:   #2A2E33;
+$theme-dark-gray-dark:     #404349;
+$theme-dark-gray:          #4C4F56;
+$theme-dark-gray-light:    #64666A;
+$theme-dark-gray-lighter:  #7D7E82;
+$theme-dark-gray-lightest: #B4B5B7;
+
+
+$theme-dark-light:         #F1F1F1;
+$theme-dark-dark:          #1D2025;
+$theme-dark-accent:        #71D7F7;
+$theme-dark-success:  $editor-success;
+
+$theme-dark-gradient-start: #36393C;
+$theme-dark-gradient-end:   #5B5D63;
+
+// Panel
+
+body {
+  color: $theme-dark-light;
+}
+
+input, select, textarea, .elementor-input-style {
+  
+  &:not(:focus) {
+    border-color: $theme-dark-gray-light;
+  }
+  
+  &:focus {
+    border-color: $theme-dark-gray-lighter;
+  }
+}
+
+.elementor-panel {
+  background-color: $theme-dark-gray-darkest;
+
+  #elementor-panel-header {
+    background-color: $theme-dark-dark;
+  }
+  
+  .elementor-panel-navigation {
+    background-color: $theme-dark-gray-dark;
+  
+    .elementor-panel-navigation-tab {
+      display: table-cell;
+  
+      &.elementor-active {
+        background-image: linear-gradient(to bottom, $theme-dark-gradient-start, $theme-dark-gradient-end);
+        border-bottom-color: $theme-dark-light
+      }
+  
+      a {
+        color: $theme-dark-light;
+      }
+    }
+  }
+  
+  #elementor-panel-elements-search-input {
+    background-color: $theme-dark-gray-dark;
+    color: $theme-dark-light;
+    
+    &:focus {
+      background-color: $theme-dark-gray;
+      color: $theme-dark-light;
+    }
+  }
+
+  .elementor-element {
+    background-color: $theme-dark-gray-dark;
+    
+    .title,
+    .icon {
+      color: $theme-dark-light;
+    }
+
+    &:hover {
+
+      .title,
+      .icon {
+        color: $theme-dark-accent;
+      }
+    }
+  }
+  
+  .elementor-panel-heading {
+    border-bottom-color: $theme-dark-gray-darkest;
+    
+    &-toggle,
+    &-title {
+      color: $theme-dark-light;
+    }
+  }
+  
+  .elementor-control {
+    background-color: $theme-dark-gray-dark;
+  
+    &.elementor-control-separator-before:before {
+      background-color: $theme-dark-gray-darkest;
+    }
+  }
+  
+  #elementor-panel-footer {
+    background-color: $theme-dark-dark;
+  }
+}
+
