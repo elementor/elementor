@@ -902,3 +902,14 @@ html.elementor-html {
 		display: none;
 	}
 }
+
+// Muted elements in the editor
+[data-elementor-device-mode="desktop"] .elementor-hidden-desktop,
+[data-elementor-device-mode="tablet"] .elementor-hidden-tablet,
+[data-elementor-device-mode="mobile"] .elementor-hidden-phone {
+	background-color: fade_out($editor-lightest, .2);
+
+	.elementor-widget-container {
+		filter: alpha(0.2) saturate(0);
+	}
+}

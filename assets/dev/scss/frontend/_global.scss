@@ -352,14 +352,3 @@
 		top: 2px;
 	}
 }
-
-// Muted elements in the editor
-body[ data-elementor-device-mode="tablet" ] .elementor-hidden-tablet,
-body[ data-elementor-device-mode="desktop" ] .elementor-hidden-desktop,
-body[ data-elementor-device-mode="mobile" ] .elementor-hidden-phone {
-	background: rgba(213, 218, 223, 0.8);
-
-	.elementor-widget-container {
-		filter: alpha(0.2) saturate(0);
-	}
-}
