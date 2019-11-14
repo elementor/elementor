@@ -44,9 +44,7 @@
 	&__title {
 		padding: 0 8px;
 		flex-grow: 1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		@include ellipsis;
 	}
 
 	&__settings,
