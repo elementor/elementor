@@ -133,8 +133,8 @@ class Manager {
 			];
 
 			if ( $scheme instanceof Base_UI ) {
-				$data[ $type ][ 'title' ] = $scheme->get_title();
-				$data[ $type ][ 'disabled_title' ] = $scheme->get_disabled_title();
+				$data[ $type ]['title'] = $scheme->get_title();
+				$data[ $type ]['disabled_title'] = $scheme->get_disabled_title();
 			}
 		}
 
@@ -162,7 +162,7 @@ class Manager {
 			];
 
 			if ( $scheme instanceof Base_UI ) {
-				$data[ $type ][ 'title' ] = $scheme->get_title();
+				$data[ $type ]['title'] = $scheme->get_title();
 			}
 		}
 
@@ -183,8 +183,9 @@ class Manager {
 		$data = [];
 
 		foreach ( $this->get_registered_schemes() as $scheme ) {
-			if ( $scheme instanceof Base_UI )
-			$data[ $scheme::get_type() ] = $scheme->get_system_schemes();
+			if ( $scheme instanceof Base_UI ) {
+				$data[ $scheme::get_type() ] = $scheme->get_system_schemes();
+			}
 		}
 
 		return $data;
@@ -284,8 +285,9 @@ class Manager {
 	 */
 	public function print_schemes_templates() {
 		foreach ( $this->get_registered_schemes() as $scheme ) {
-			if ( $scheme instanceof Base_UI )
-			$scheme->print_template();
+			if ( $scheme instanceof Base_UI ) {
+				$scheme->print_template();
+			}
 		}
 	}
 

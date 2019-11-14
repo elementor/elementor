@@ -242,9 +242,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 			_.each( devices, function( device ) {
 				var deviceLabel = device.charAt(0).toUpperCase() + device.slice(1),
-					dir = "<?php echo is_rtl() ? 'w' : 'e'; ?>";
+					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
 			#>
-				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ dir }}">
+				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
 					<i class="eicon-device-{{ device }}"></i>
 				</a>
 			<# } );
