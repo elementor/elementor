@@ -804,60 +804,44 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-connect {
+
 	&-logo {
 		font-size: 20px;
-
-		i {
-			display: block;
-		}
 	}
 
-	&-content {
-		padding: 50px;
-	}
-
-	.elementor-connect-popup {
+	&__button {
+		display: inline-block;
+		position: relative;
+		z-index: 1; // over the images
+		margin-top: 25px;
 		padding: 12px 24px;
 		font-size: 14px;
-		letter-spacing: 0.5px;
 	}
-}
 
-@keyframes fadeIn {
-	from { opacity: 0; }
-	to { opacity: 1; }
-}
-
-@keyframes mover {
-	0% { transform: translateY(0); }
-	100% { transform: translateY(-5px); }
-}
-
-@keyframes slideDown {
-	0% { transform: translateY(-30px); }
-	100% { transform: translateY(0); }
-}
-
-.elementor-template-library-connect {
-
-	&-background-image {
-		position: absolute;
+	&__background-image {
 
 		&-left-1 {
 			right: 22.4%; bottom: -29%; animation: 1.5s fadeIn, 1.5s slideDown, 3.5s mover 1.5s infinite alternate;
 		}
 
 		&-left-2 {
-			right: 46.25%; bottom: -15.5%; animation: 1.5s fadeIn, 1.5s slideDown, 2s mover 1.5s infinite alternate;
+			right: 46.25%; bottom: -15.5%; animation: 3s fadeIn, 3s slideDown, 2s mover 3s infinite alternate;
 		}
 
 		&-right-1 {
-			left: 37%; bottom: -41%; animation: 1.5s fadeIn, 1.5s slideDown, 2s mover 1.5s infinite alternate;
+			left: 37%; bottom: -41%; animation: 2.5s fadeIn, 2.5s slideDown, 2s mover 2.5s infinite alternate;
 		}
 
 		&-right-2 {
 			left: 48%; bottom: -12.5%; animation: 1.5s fadeIn, 1.5s slideDown, 1.5s mover 1.5s infinite alternate;
 		}
+	}
+}
+
+.elementor-template-library-connect {
+
+	&__background-image {
+		position: absolute;
 	}
 }
 
