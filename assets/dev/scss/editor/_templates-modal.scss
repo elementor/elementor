@@ -799,19 +799,17 @@ label.elementor-template-library-order-label {
 			max-height: 95vh;
 			padding: 100px 0 0;
 			min-height: 550px;
-			background: url( "../images/library-connect-background.png" ) bottom no-repeat;
 		}
 	}
 }
 
 #elementor-template-library-connect {
 	&-logo {
-		background-image: linear-gradient(-135deg, $brand-color-light, $brand-color-dark);
-		padding: 9px 13px;
-		border-radius: 4px;
-		color: #fff;
 		font-size: 20px;
-		display: inline-block;
+
+		i {
+			display: block;
+		}
 	}
 
 	&-content {
@@ -819,9 +817,48 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-connect-popup {
-		padding: 10px 15px;
+		padding: 12px 24px;
+		font-size: 14px;
+		letter-spacing: 0.5px;
 	}
+}
 
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes mover {
+	0% { transform: translateY(0); }
+	100% { transform: translateY(-5px); }
+}
+
+@keyframes slideDown {
+	0% { transform: translateY(-30px); }
+	100% { transform: translateY(0); }
+}
+
+.elementor-template-library-connect {
+
+	&-background-image {
+		position: absolute;
+
+		&-left-1 {
+			right: 22.4%; bottom: -29%; animation: 1.5s fadeIn, 1.5s slideDown, 3.5s mover 1.5s infinite alternate;
+		}
+
+		&-left-2 {
+			right: 46.25%; bottom: -15.5%; animation: 1.5s fadeIn, 1.5s slideDown, 2s mover 1.5s infinite alternate;
+		}
+
+		&-right-1 {
+			left: 37%; bottom: -41%; animation: 1.5s fadeIn, 1.5s slideDown, 2s mover 1.5s infinite alternate;
+		}
+
+		&-right-2 {
+			left: 48%; bottom: -12.5%; animation: 1.5s fadeIn, 1.5s slideDown, 1.5s mover 1.5s infinite alternate;
+		}
+	}
 }
 
 .elementor-template-library-blank-footer {
