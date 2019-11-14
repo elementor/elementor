@@ -1,17 +1,15 @@
-//
-// Editor
-//
-@import "../helpers/variables";
-@import "../helpers/mixins";
-@import "resizable";
+@import "../../helpers/variables";
+@import "../../helpers/mixins";
 
-@import "breakpoints";
-@import "panel/global";
-@import "panel/control";
-@import "inline-editor";
-@import "dynamic-tags";
+@import "../breakpoints";
+@import "../dynamic-tags";
+@import "../panel/global";
+@import "../panel/control";
+@import "../resizable";
+
 @import "animations";
 @import "compatibility";
+@import "inline-editor";
 
 // Hidden WP Admin Bar
 html.elementor-html {
