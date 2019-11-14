@@ -4,7 +4,7 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-connect',
 
 	ui: {
-		connect: '.elementor-connect-popup',
+		connect: '#elementor-template-library-connect__button',
 		thumbnails: '#elementor-template-library-connect-thumbnails',
 	},
 

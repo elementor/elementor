@@ -136,6 +136,24 @@ Schemes = function() {
 
 		scheme.items[ lastItemKey + 1 ] = item;
 	};
+
+	this.removeSchemeItem = function( schemeName, itemKey ) {
+		const items = schemes[ schemeName ].items;
+
+		while ( true ) {
+			itemKey++;
+
+			const nextItem = items[ itemKey + 1 ];
+
+			if ( ! nextItem ) {
+				delete items[ itemKey ];
+
+				break;
+			}
+
+			items[ itemKey ] = nextItem;
+		}
+	};
 };
 
 module.exports = new Schemes();
