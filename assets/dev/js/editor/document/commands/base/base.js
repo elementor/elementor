@@ -111,7 +111,9 @@ export default class Base extends ArgsObject {
 		} catch ( e ) {
 			this.onCatchApply( e );
 
-			return false;
+			if ( e instanceof elementorModules.common.HookBreak ) {
+				return false;
+			}
 		}
 
 		// For $e.hooks.
@@ -185,7 +187,7 @@ export default class Base extends ArgsObject {
 			$e.devTools.log.error( e );
 		}
 
-		if ( elementor.isTesting || elementorCommon.config.isDebug ) {
+		if ( ! ( e instanceof elementorModules.common.HookBreak ) ) {
 			console.error( e );
 		}
 	}

@@ -73,7 +73,7 @@ export default class History extends Base {
 		super.onCatchApply( e );
 
 		// Rollback history on failure.
-		if ( this.historyId ) {
+		if ( e instanceof elementorModules.common.HookBreak && this.historyId ) {
 			$e.run( 'document/history/delete-log', { id: this.historyId } );
 		}
 	}

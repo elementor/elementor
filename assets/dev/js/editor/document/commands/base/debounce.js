@@ -274,8 +274,7 @@ export default class Debounce extends History {
 		try {
 			$e.hooks.runDependency( this.currentCommand, args );
 		} catch ( e ) {
-			// TODO: `Break-Hook` Should be const.
-			if ( 'Break-Hook' === e ) {
+			if ( e instanceof elementorModules.common.HookBreak ) {
 				// Clear all hooks with the same unique args state.
 				Debounce.clearUniqueArgsStatesHolders( args );
 			}
