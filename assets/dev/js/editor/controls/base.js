@@ -53,7 +53,36 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		/**
 		 * @type {Container}
 		 */
-		this.container = options.container;
+
+		const label = this.model.get( 'label' );
+
+		// TODO: Temp backwards compatibility. since 2.8.0.
+		Object.defineProperty( this, 'container', {
+			get() {
+				if ( ! options.container ) {
+					const settingsModel = options.elementSettingsModel,
+						view = elementorCommon.helpers.findViewById( settingsModel.id );
+
+					// Element control.
+					if ( view && view.getContainer ) {
+						options.container = view.getContainer();
+					} else {
+						// Document/General/Other control.
+						options.container = new elementorModules.editor.Container( {
+							type: 'bc-container',
+							id: settingsModel.id,
+							settings: settingsModel,
+							label,
+							view: false,
+							renderer: false,
+							controls: settingsModel.options.controls,
+						} );
+					}
+				}
+
+				return options.container;
+			},
+		} );
 
 		// Use `defineProperty` because `get elementSettingsModel()` fails during the `Marionette.CompositeView.extend`.
 		Object.defineProperty( this, 'elementSettingsModel', {
