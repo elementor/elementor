@@ -275,16 +275,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 		Revisions_Manager::ajax_delete_revision( $args );
 	}
 
-	public function test_should_delete_revision_on_request() {
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
-		$args['id'] = $this->factory()->create_and_get_parent_and_child_posts()['child_id'];
-
-		$response = Revisions_Manager::ajax_delete_revision( $args );
-
-		$this->assertNull( $response,
-			'the function "on_delete_revision_request" should not return data' );
-	}
-
 	private function setup_revision_check() {
 		$parent_and_child_posts = $this->factory()->create_and_get_parent_and_child_posts();
 		$post_id = $parent_and_child_posts['parent_id'];
