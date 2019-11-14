@@ -18,7 +18,7 @@ module.exports = Marionette.CompositeView.extend( {
 		return this.collection.add( model, options, true );
 	},
 
-	addChildElement: function( data, options ) {
+	addElement( data, options ) {
 		if ( this.isCollectionFilled() ) {
 			return;
 		}
@@ -54,7 +54,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( -1 === childTypes.indexOf( elType ) ) {
-			return this.children.last().addChildElement( newItem, options );
+			return this.children.last().addElement( newItem, options );
 		}
 
 		if ( options.clone ) {
@@ -86,6 +86,20 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return newView;
+	},
+
+	addChildElement: function( data, options ) {
+		elementorCommon.helpers.softDeprecated( 'addChildElement', '2.8.0', "$e.run( 'document/elements/create' )" );
+
+		if ( Object !== data.constructor ) {
+			data = jQuery.extend( {}, data );
+		}
+
+		$e.run( 'document/elements/create', {
+			container: this.getContainer(),
+			model: data,
+			options,
+		} );
 	},
 
 	cloneItem: function( item ) {

@@ -185,7 +185,7 @@ export default class Base extends ArgsObject {
 			$e.devTools.log.error( e );
 		}
 
-		if ( elementor.isTesting ) {
+		if ( elementor.isTesting || elementorCommon.config.isDebug ) {
 			console.error( e );
 		}
 	}

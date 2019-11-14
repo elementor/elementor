@@ -9,31 +9,6 @@ module.exports = BaseSettings.extend( {
 		$e.components.register( new Component( { manager: this } ) );
 	},
 
-	getEditedView() {
-		const editModel = new Backbone.Model( {
-			id: 'document',
-			elType: 'document',
-			settings: elementor.settings.page.model,
-		} );
-
-		const container = new elementorModules.editor.Container( {
-			type: 'TODO: @see page/manager.js',
-			id: editModel.id,
-			model: editModel,
-			settings: editModel.get( 'settings' ),
-			view: 'TODO: @see page/manager.js',
-			label: elementor.config.document.panel.title,
-			controls: editModel.controls,
-			renderer: false,
-		} );
-
-		return {
-			getContainer: () => container,
-			getEditModel: () => editModel,
-			model: editModel,
-		};
-	},
-
 	save: function() {},
 
 	changeCallbacks: {
@@ -66,5 +41,9 @@ module.exports = BaseSettings.extend( {
 		data.id = elementor.config.document.id;
 
 		return data;
+	},
+
+	getContainerId() {
+		return 'document';
 	},
 } );

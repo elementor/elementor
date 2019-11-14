@@ -69,7 +69,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.registerValidators();
 
-		this.listenTo( this.container.settings, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
+		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+
+		this.listenTo( settings, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
 	getControlValue: function() {
