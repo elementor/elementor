@@ -354,14 +354,12 @@
 }
 
 // Muted elements in the editor
-body[ data-elementor-device-mode="tablet" ] .elementor-hidden-tablet .elementor-widget-container,
-body[ data-elementor-device-mode="desktop" ] .elementor-hidden-desktop .elementor-widget-container,
-body[ data-elementor-device-mode="mobile" ] .elementor-hidden-phone .elementor-widget-container {
-	filter: alpha(0.2) saturate(0);
-}
-
 body[ data-elementor-device-mode="tablet" ] .elementor-hidden-tablet,
 body[ data-elementor-device-mode="desktop" ] .elementor-hidden-desktop,
 body[ data-elementor-device-mode="mobile" ] .elementor-hidden-phone {
 	background: rgba(213, 218, 223, 0.8);
+
+	.elementor-widget-container {
+		filter: alpha(0.2) saturate(0);
+	}
 }
