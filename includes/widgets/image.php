@@ -5,6 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
+
 /**
  * Elementor image widget.
  *
@@ -583,7 +586,7 @@ class Widget_Image extends Widget_Base {
 					$caption = wp_get_attachment_caption( $settings['image']['id'] );
 					break;
 				case 'custom':
-					$caption = ! empty( $settings['caption'] ) ? $settings['caption'] : '';
+					$caption = ! Utils::is_empty( $settings['caption'] ) ? $settings['caption'] : '';
 			}
 		}
 		return $caption;
@@ -615,23 +618,14 @@ class Widget_Image extends Widget_Base {
 		$link = $this->get_link_url( $settings );
 
 		if ( $link ) {
-			$this->add_render_attribute( 'link', [
-				'href' => $link['url'],
-				'data-elementor-open-lightbox' => $settings['open_lightbox'],
-			] );
+			$this->add_render_attribute( 'link', 'data-elementor-open-lightbox', $settings['open_lightbox'] );
+
+			$this->add_link_attributes( 'link', $settings['link'] );
 
 			if ( Plugin::$instance->editor->is_edit_mode() ) {
 				$this->add_render_attribute( 'link', [
 					'class' => 'elementor-clickable',
 				] );
-			}
-
-			if ( ! empty( $link['is_external'] ) ) {
-				$this->add_render_attribute( 'link', 'target', '_blank' );
-			}
-
-			if ( ! empty( $link['nofollow'] ) ) {
-				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
 			}
 		} ?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>

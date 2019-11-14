@@ -6,6 +6,7 @@ import environment from '../../../../core/common/assets/js/utils/environment.js'
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
+import ColorControl from './controls/color';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -69,7 +70,7 @@ const App = Marionette.Application.extend( {
 			Button: require( 'elementor-controls/button' ),
 			Choose: require( 'elementor-controls/choose' ),
 			Code: require( 'elementor-controls/code' ),
-			Color: require( 'elementor-controls/color' ),
+			Color: ColorControl,
 			Date_time: DateTimeControl,
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Exit_animation: require( 'elementor-controls/select2' ),
@@ -572,12 +573,12 @@ const App = Marionette.Application.extend( {
 		}
 
 		$elements
-			.removeClass( 'elementor-editor-active' )
-			.addClass( 'elementor-editor-preview' );
+		.removeClass( 'elementor-editor-active' )
+		.addClass( 'elementor-editor-preview' );
 
 		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview' );
+		.removeClass( 'elementor-edit-area-active' )
+		.addClass( 'elementor-edit-area-preview' );
 
 		if ( hidePanel ) {
 			// Handle panel resize
@@ -589,12 +590,12 @@ const App = Marionette.Application.extend( {
 
 	exitPreviewMode: function() {
 		elementorFrontend.elements.$body.add( elementorCommon.elements.$body )
-			.removeClass( 'elementor-editor-preview' )
-			.addClass( 'elementor-editor-active' );
+		.removeClass( 'elementor-editor-preview' )
+		.addClass( 'elementor-editor-active' );
 
 		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-preview' )
-			.addClass( 'elementor-edit-area-active' );
+		.removeClass( 'elementor-edit-area-preview' )
+		.addClass( 'elementor-edit-area-active' );
 	},
 
 	changeEditMode: function( newMode ) {
@@ -622,13 +623,13 @@ const App = Marionette.Application.extend( {
 		}
 
 		elementorCommon.elements.$body
-			.removeClass( 'elementor-device-' + oldDeviceMode )
-			.addClass( 'elementor-device-' + newDeviceMode );
+		.removeClass( 'elementor-device-' + oldDeviceMode )
+		.addClass( 'elementor-device-' + newDeviceMode );
 
 		this.channels.deviceMode
-			.reply( 'previousMode', oldDeviceMode )
-			.reply( 'currentMode', newDeviceMode )
-			.trigger( 'change' );
+		.reply( 'previousMode', oldDeviceMode )
+		.reply( 'currentMode', newDeviceMode )
+		.trigger( 'change' );
 	},
 
 	enqueueTypographyFonts: function() {
@@ -881,7 +882,7 @@ const App = Marionette.Application.extend( {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: debugData.message + previewDebugLink,
-			onConfirm: function() {
+				onConfirm: function() {
 					open( debugData.doc_url, '_blank' );
 				} };
 
@@ -900,8 +901,8 @@ const App = Marionette.Application.extend( {
 				onConfirm: function() {
 					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
 					open( url, '_blank' );
-			},
-		} );
+				},
+			} );
 		} );
 	},
 

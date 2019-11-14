@@ -17,7 +17,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 			textarea: 'textarea[data-setting]',
 			responsiveSwitchers: '.elementor-responsive-switcher',
 			contentEditable: '[contenteditable="true"]',
-			tooltipTarget: '.tooltip-target',
 		} );
 
 		return ui;
@@ -235,7 +234,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	onResponsiveSwitchersClick: function( event ) {
-		var device = jQuery( event.currentTarget ).data( 'device' );
+		const $switcher = jQuery( event.currentTarget ),
+			device = $switcher.data( 'device' ),
+			$switchersWrapper = this.ui.responsiveSwitchersWrapper,
+			selectedOption = $switcher.index();
+
+		$switchersWrapper.toggleClass( 'elementor-responsive-switchers-open' );
+		$switchersWrapper[ 0 ].style.setProperty( '--selected-option', selectedOption );
 
 		this.triggerMethod( 'responsive:switcher:click', device );
 
@@ -246,6 +251,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
+
+		this.ui.responsiveSwitchersWrapper = this.$el.find( '.elementor-control-responsive-switchers' );
 	},
 
 	onAfterExternalChange: function() {
@@ -255,12 +262,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	addTooltip: function() {
-		if ( ! this.ui.tooltipTarget ) {
+		this.ui.tooltipTargets = this.$el.find( '.tooltip-target' );
+
+		if ( ! this.ui.tooltipTargets.length ) {
 			return;
 		}
 
 		// Create tooltip on controls
-		this.ui.tooltipTarget.tipsy( {
+		this.ui.tooltipTargets.tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
 				var gravity = jQuery( this ).data( 'tooltip-pos' );
@@ -277,8 +286,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	hideTooltip: function() {
-		if ( this.ui.tooltipTarget ) {
-			this.ui.tooltipTarget.tipsy( 'hide' );
+		if ( this.ui.tooltipTargets.length ) {
+			this.ui.tooltipTargets.tipsy( 'hide' );
 		}
 	},
 

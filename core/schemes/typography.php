@@ -1,5 +1,5 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Scheme_Typography extends Scheme_Base {
+class Typography extends Base_UI {
 
 	/**
 	 * 1st typography scheme.

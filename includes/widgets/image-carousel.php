@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
+
 /**
  * Elementor image carousel widget.
  *
@@ -249,6 +251,20 @@ class Widget_Image_Carousel extends Widget_Base {
 			'pause_on_hover',
 			[
 				'label' => __( 'Pause on Hover', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'yes',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'pause_on_interaction',
+			[
+				'label' => __( 'Pause on Interaction', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'yes',
 				'options' => [

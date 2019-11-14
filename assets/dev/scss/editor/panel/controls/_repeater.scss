@@ -29,15 +29,6 @@
 		&:not(.editable) {
 			display: none;
 		}
-
-		// Color Picker control
-		.wp-picker-container {
-
-			&.wp-picker-active {
-				transform: translateY(0);
-				border-width: 0;
-			}
-		}
 	}
 
 	.elementor-repeater-row-tools {
@@ -72,9 +63,7 @@
 		.elementor-repeater-row-item-title {
 			text-align: $start;
 			padding: 0 10px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			@include ellipsis;
 
 			.eicon,
 			i,

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Scheme_Color extends Scheme_Base {
+class Color extends Base_UI {
 
 	/**
 	 * 1st color scheme.
@@ -264,7 +264,7 @@ class Scheme_Color extends Scheme_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 *
-	 * @return string The system color schemes.
+	 * @return array The system color schemes.
 	 */
 	protected function _get_system_schemes_to_print() {
 		return $this->get_system_schemes();

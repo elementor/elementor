@@ -20,37 +20,33 @@ foreach ( $reports as $report_name => $report ) : ?>
 			<?php
 			foreach ( $report['report'] as $field_name => $field ) :
 				if ( in_array( $report_name, [ 'plugins', 'network_plugins', 'mu_plugins' ], true ) ) {
-					foreach ( $field['value'] as $plugin ) :
+					foreach ( $field['value'] as $plugin_info ) :
 						?>
 						<tr>
-							<td>
-								<?php
-								if ( $plugin['PluginURI'] ) :
-									$plugin_name = "<a href='{$plugin['PluginURI']}'>{$plugin['Name']}</a>";
+							<td><?php
+							if ( $plugin_info['PluginURI'] ) :
+								$plugin_name = "<a href='{$plugin_info['PluginURI']}'>{$plugin_info['Name']}</a>";
+							else :
+								$plugin_name = $plugin_info['Name'];
+							endif;
+
+							if ( $plugin_info['Version'] ) :
+								$plugin_name .= ' - ' . $plugin_info['Version'];
+							endif;
+
+							echo $plugin_name;
+							?></td>
+							<td><?php
+							if ( $plugin_info['Author'] ) :
+								if ( $plugin_info['AuthorURI'] ) :
+									$author = "<a href='{$plugin_info['AuthorURI']}'>{$plugin_info['Author']}</a>";
 								else :
-									$plugin_name = $plugin['Name'];
+									$author = $plugin_info['Author'];
 								endif;
 
-								if ( $plugin['Version'] ) :
-									$plugin_name .= ' - ' . $plugin['Version'];
-								endif;
-
-								echo $plugin_name;
-								?>
-							</td>
-							<td>
-								<?php
-								if ( $plugin['Author'] ) :
-									if ( $plugin['AuthorURI'] ) :
-										$author = "<a href='{$plugin['AuthorURI']}'>{$plugin['Author']}</a>";
-									else :
-										$author = $plugin['Author'];
-									endif;
-
-									echo "By $author";
-								endif;
-								?>
-							</td>
+								echo "By $author";
+							endif;
+							?></td>
 							<td></td>
 						</tr>
 						<?php
@@ -66,8 +62,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 						if ( ! empty( $field['recommendation'] ) ) :
 							echo $field['recommendation'];
 						endif;
-						?>
-						</td>
+						?></td>
 					</tr>
 					<?php
 				}

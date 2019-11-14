@@ -1,5 +1,5 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\User;
 
 /**
  * Elementor scheme manager.
@@ -16,7 +17,7 @@ use Elementor\TemplateLibrary\Source_Local;
  *
  * @since 1.0.0
  */
-class Schemes_Manager {
+class Manager {
 
 	/**
 	 * Registered schemes.
@@ -25,7 +26,7 @@ class Schemes_Manager {
 	 *
 	 * @access protected
 	 *
-	 * @var Scheme_Base[]
+	 * @var Base[]
 	 */
 	protected $_registered_schemes = [];
 
@@ -53,9 +54,9 @@ class Schemes_Manager {
 	 * @var array
 	 */
 	private static $_schemes_types = [
-		'color' => 'Scheme_Color',
-		'typography' => 'Scheme_Typography',
-		'color-picker' => 'Scheme_Color_Picker',
+		'color',
+		'typography',
+		'color-picker',
 	];
 
 	/**
@@ -71,7 +72,7 @@ class Schemes_Manager {
 	 * @param string $scheme_class Scheme class name.
 	 */
 	public function register_scheme( $scheme_class ) {
-		/** @var Scheme_Base $scheme_instance */
+		/** @var Base $scheme_instance */
 		$scheme_instance = new $scheme_class();
 
 		$this->_registered_schemes[ $scheme_instance::get_type() ] = $scheme_instance;
@@ -105,7 +106,7 @@ class Schemes_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return Scheme_Base[] Registered schemes.
+	 * @return Base[] Registered schemes.
 	 */
 	public function get_registered_schemes() {
 		return $this->_registered_schemes;
@@ -125,11 +126,16 @@ class Schemes_Manager {
 		$data = [];
 
 		foreach ( $this->get_registered_schemes() as $scheme ) {
-			$data[ $scheme::get_type() ] = [
-				'title' => $scheme->get_title(),
-				'disabled_title' => $scheme->get_disabled_title(),
+			$type = $scheme::get_type();
+
+			$data[ $type ] = [
 				'items' => $scheme->get_scheme(),
 			];
+
+			if ( $scheme instanceof Base_UI ) {
+				$data[ $type ]['title'] = $scheme->get_title();
+				$data[ $type ]['disabled_title'] = $scheme->get_disabled_title();
+			}
 		}
 
 		return $data;
@@ -149,10 +155,15 @@ class Schemes_Manager {
 		$data = [];
 
 		foreach ( $this->get_registered_schemes() as $scheme ) {
-			$data[ $scheme::get_type() ] = [
-				'title' => $scheme->get_title(),
+			$type = $scheme::get_type();
+
+			$data[ $type ] = [
 				'items' => $scheme->get_default_scheme(),
 			];
+
+			if ( $scheme instanceof Base_UI ) {
+				$data[ $type ]['title'] = $scheme->get_title();
+			}
 		}
 
 		return $data;
@@ -161,18 +172,20 @@ class Schemes_Manager {
 	/**
 	 * Get system schemes.
 	 *
-	 * Retrieve all the registered schemes with system schemes for each scheme.
+	 * Retrieve all the registered ui schemes with system schemes for each scheme.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return array Registered schemes with with system scheme for each scheme.
+	 * @return array Registered ui schemes with with system scheme for each scheme.
 	 */
 	public function get_system_schemes() {
 		$data = [];
 
 		foreach ( $this->get_registered_schemes() as $scheme ) {
-			$data[ $scheme::get_type() ] = $scheme->get_system_schemes();
+			if ( $scheme instanceof Base_UI ) {
+				$data[ $scheme::get_type() ] = $scheme->get_system_schemes();
+			}
 		}
 
 		return $data;
@@ -189,7 +202,7 @@ class Schemes_Manager {
 	 *
 	 * @param string $id Scheme ID.
 	 *
-	 * @return false|Scheme_Base Scheme instance if scheme exist, False otherwise.
+	 * @return false|Base Scheme instance if scheme exist, False otherwise.
 	 */
 	public function get_scheme( $id ) {
 		$schemes = $this->get_registered_schemes();
@@ -197,6 +210,7 @@ class Schemes_Manager {
 		if ( ! isset( $schemes[ $id ] ) ) {
 			return false;
 		}
+
 		return $schemes[ $id ];
 	}
 
@@ -233,8 +247,12 @@ class Schemes_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
 	 */
-	public function ajax_apply_scheme( $data ) {
+	public function ajax_apply_scheme( array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
 			return false;
 		}
@@ -257,21 +275,25 @@ class Schemes_Manager {
 	}
 
 	/**
-	 * Print schemes templates.
+	 * Print ui schemes templates.
 	 *
 	 * Used to generate the scheme templates on the editor using Underscore JS
-	 * template, for all the registered schemes.
+	 * template, for all the registered ui schemes.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
 	public function print_schemes_templates() {
 		foreach ( $this->get_registered_schemes() as $scheme ) {
-			$scheme->print_template();
+			if ( $scheme instanceof Base_UI ) {
+				$scheme->print_template();
+			}
 		}
 	}
 
 	/**
+	 * @param Ajax $ajax
+	 *
 	 * @since 2.3.0
 	 * @access public
 	 */
@@ -294,7 +316,7 @@ class Schemes_Manager {
 		if ( null === self::$_enabled_schemes ) {
 			$enabled_schemes = [];
 
-			foreach ( self::$_schemes_types as $schemes_type => $scheme_class ) {
+			foreach ( self::$_schemes_types as $schemes_type ) {
 				if ( 'yes' === get_option( 'elementor_disable_' . $schemes_type . '_schemes' ) ) {
 					continue;
 				}
@@ -328,8 +350,8 @@ class Schemes_Manager {
 	 * @access private
 	 */
 	private function register_default_schemes() {
-		foreach ( self::$_schemes_types as $schemes_class ) {
-			$this->register_scheme( __NAMESPACE__ . '\\' . $schemes_class );
+		foreach ( self::$_schemes_types as $scheme_type ) {
+			$this->register_scheme( __NAMESPACE__ . '\\' . str_replace( '-', '_', ucwords( $scheme_type, '-' ) ) );
 		}
 	}
 

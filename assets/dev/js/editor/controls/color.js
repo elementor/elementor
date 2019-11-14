@@ -1,42 +1,49 @@
-var ControlBaseDataView = require( 'elementor-controls/base-data' ),
-	ControlColorItemView;
+import ControlBaseDataView from './base-data';
+import ColorPicker from '../utils/color-picker';
 
-ControlColorItemView = ControlBaseDataView.extend( {
+export default class extends ControlBaseDataView {
+
 	debounceHistory: true,
 
-	applySavedValue: function() {
-		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
+	ui() {
+		const ui = super.ui();
 
-		var self = this,
-			value = self.getControlValue(),
-			colorInstance = self.ui.input.wpColorPicker( 'instance' );
+		ui.pickerContainer = '.elementor-control-input-wrapper';
 
-		if ( colorInstance ) {
-			self.ui.input.wpColorPicker( 'color', value );
+		return ui;
+	}
 
-			if ( ! value ) {
-				// Trigger `change` event manually, since it will not be triggered automatically on empty value
-				self.ui.input.data( 'a8cIris' )._change();
-			}
+	applySavedValue() {
+		if ( this.colorPicker ) {
+			this.colorPicker.picker.setColor( this.getControlValue() );
 		} else {
-			elementor.helpers.wpColorPicker( self.ui.input, {
-				change: function() {
-					self.setValue( self.ui.input.wpColorPicker( 'color' ) );
-				},
-				clear: function() {
-					self.setValue( '' );
-				},
-			} );
+			this.initPicker();
 		}
-	},
+	}
 
-	onBeforeDestroy: function() {
-		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
-			this.ui.input.wpColorPicker( 'close' );
-		}
+	initPicker() {
+		const options = {
+			el: this.ui.pickerContainer[ 0 ],
+			default: this.getControlValue(),
+			onChange: () => this.onPickerChange(),
+			onClear: () => this.onPickerClear(),
+			components: {
+				opacity: this.model.get( 'alpha' ),
+			},
+		};
 
-		this.$el.remove();
-	},
-} );
+		this.colorPicker = new ColorPicker( options );
+	}
 
-module.exports = ControlColorItemView;
+	onPickerChange() {
+		this.setValue( this.colorPicker.getValue() );
+	}
+
+	onPickerClear() {
+		this.setValue( '' );
+	}
+
+	onBeforeDestroy() {
+		this.colorPicker.destroy();
+	}
+}
