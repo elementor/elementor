@@ -456,9 +456,7 @@ label.elementor-template-library-order-label {
 		text-align: $start;
 		color: $editor-dark;
 		flex-grow: 1;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		@include ellipsis;
 		@include padding-end(5px);
 	}
 
@@ -576,9 +574,7 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-meta,
 	.elementor-template-library-template-preview,
 	.elementor-template-library-template-action {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		@include ellipsis;
 	}
 
 	.elementor-template-library-template-controls {

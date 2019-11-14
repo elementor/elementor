@@ -221,8 +221,7 @@
 				}
 
 				&:not([contenteditable="true"]) {
-					overflow: hidden;
-					text-overflow: ellipsis;
+					@include ellipsis;
 				}
 			}
 		}
