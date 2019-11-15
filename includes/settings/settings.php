@@ -464,7 +464,7 @@ class Settings extends Settings_Page {
 								],
 							],
 							'editor_ui_theme' => [
-								'label' => __( 'Editor UI Theme', 'elementor' ),
+								'label' => __( 'Theme', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'options' => [
@@ -472,7 +472,19 @@ class Settings extends Settings_Page {
 										'light' => __( 'Light', 'elementor' ),
 										'dark' => __( 'Dark', 'elementor' ),
 									],
-									'desc' => __( 'Dark Mode Desc..', 'elementor' ),
+									'desc' => __( 'Choose whether to use the editor theme in Light, Dark or Auto by browser detected.', 'elementor' ),
+								],
+							],
+							'edit_buttons' => [
+								'label' => __( 'Editing Handles', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '',
+									'options' => [
+										'' => __( 'Hide', 'elementor' ),
+										'on' => __( 'Show', 'elementor' ),
+									],
+									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
 								],
 							],
 						],
@@ -629,18 +641,6 @@ class Settings extends Settings_Page {
 										1 => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
-								],
-							],
-							'edit_buttons' => [
-								'label' => __( 'Editing Handles', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'std' => '',
-									'options' => [
-										'' => __( 'Hide', 'elementor' ),
-										'on' => __( 'Show', 'elementor' ),
-									],
-									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
 								],
 							],
 							'allow_svg' => [
