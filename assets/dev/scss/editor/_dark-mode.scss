@@ -1,11 +1,8 @@
 
-//Dark Mode Theme
-
-
 //Variables
 
 $theme-dark-gray-darkest:  #34383C;
-//$theme-dark-gray-darker:   #475158;
+$theme-dark-gray-darker:   #475158;
 $theme-dark-gray-dark:     #404349;
 $theme-dark-gray:          #4C4F56;
 $theme-dark-gray-light:    #64666A;
@@ -68,7 +65,9 @@ select {
 //Panel
 .elementor-panel {
   background-color: $theme-dark-gray-darkest;
-
+	a {
+		color: $theme-dark-accent;
+	}
   //Header
   #elementor-panel-header {
     background-color: $theme-dark-dark;
@@ -400,6 +399,116 @@ select {
   border-color: $theme-dark-gray-lighter;
 }
 
+//Library Modal
+.dialog-type-lightbox {
+	background-color: $theme-dark-gray-darkest;
+	
+	.dialog-header {
+    color: $theme-dark-light;
+  }
+  
+  .dialog-widget-content {
+    background-color: $theme-dark-gray-dark;
+  }
+	
+	.dialog-buttons-wrapper > .dialog-button:hover {
+		background-color: $theme-dark-gray;
+	}
+	
+	.dialog-buttons-wrapper,
+	.dialog-button:first-child {
+		border-color: $theme-dark-gray-darkest;
+	}
+}
+
+.elementor-templates-modal {
+	
+	&__sidebar {
+		background-color: $theme-dark-gray-dark;
+	}
+	
+	.dialog-buttons-wrapper {
+		background-color: $theme-dark-gray-darkest;
+	}
+}
+
+
+#elementor-template-library-header-menu {
+	color: $theme-dark-light;
+}
+
+.elementor-template-library-menu-item {
+	
+	&.elementor-active {
+		background-image: linear-gradient(to bottom, $theme-dark-gradient-start, $theme-dark-gradient-end);
+		border-color: $theme-dark-accent;
+	}
+}
+
+#elementor-template-library-filter {
+	border-color: $theme-dark-gray-darkest;
+	
+	&-text {
+		background-color: transparent;
+	}
+}
+
+label.elementor-template-library-order-label,
+#elementor-template-library-filter-my-favorites {
+	
+	&:hover {
+		color: $theme-dark-gray-lightest;
+	}
+}
+
+#elementor-template-library-templates[data-template-source="remote"] {
+	
+	.elementor-template-library-order-input:checked + .elementor-template-library-order-label {
+		color: $theme-dark-gray-lighter;
+	}
+}
+
+#elementor-template-library-filter-my-favorites:checked + #elementor-template-library-filter-my-favorites-label {
+	color: $theme-dark-gray-lighter;
+}
+
+#elementor-template-library-header-preview-back {
+	border-color: $theme-dark-gray;
+}
+
+.elementor-template-library-template-local {
+	background-color: $theme-dark-gray;
+	
+	&:hover {
+		background-color: $theme-dark-gray-light;
+	}
+}
+
+//Icon Modal
+#elementor-icons-manager__search input {
+	background-color: $theme-dark-gray;
+}
+
+.elementor-icons-manager__tab {
+	
+	&__item {
+		background-color: $theme-dark-gray;
+		
+		&__icon,
+		&__name {
+			color: $theme-dark-light;
+		}
+	}
+	
+	&-link {
+		color: $theme-dark-light;
+		
+		&.elementor-active {
+			background-color: $theme-dark-gray;
+		}
+	}
+}
+
 //Context Menu (Right Click)
 .elementor-context-menu {
   background-color: $theme-dark-gray-dark;
@@ -412,4 +521,66 @@ select {
 
 .elementor-context-menu-list__item:not(.elementor-context-menu-list__item--disabled):hover {
    background-color: $theme-dark-gray-light;
+}
+
+//Navigator
+#elementor-navigator {
+	background-color: $theme-dark-gray-darkest;
+	
+	&__header,
+	&__inner,
+	&__footer {
+		background-color: $theme-dark-gray-darkest;
+	}
+	
+	&__header,
+	&__footer {
+		border-color: $theme-dark-gray;
+	}
+}
+
+.elementor-navigator {
+	
+	&__element-section {
+		background-color: transparent;
+	}
+	
+	&__item {
+		background-color: $theme-dark-gray-dark;
+		border-color: $theme-dark-gray-darkest;
+	}
+	
+	&__element__indicator {
+		color: $theme-dark-light;
+		background-color: $theme-dark-gray;
+		
+		&:hover {
+			color: $theme-dark-gray-lightest;
+		}
+		
+		&:not(:first-child) {
+			border-color: $theme-dark-gray-darkest;
+		}
+	}
+	
+	&__element:not(.elementor-navigator__element--hidden) > .elementor-navigator__item.elementor-editing {
+		background-color: $theme-dark-gray;
+	}
+}
+
+//History
+#elementor-panel-history:not(.elementor-empty),
+.elementor-panel .elementor-panel-box,
+.elementor-panel .elementor-panel-scheme-buttons {
+	background-color: $theme-dark-gray-dark;
+}
+
+.elementor-revision-item__wrapper,
+.elementor-history-item {
+	background-color: $theme-dark-gray;
+	border-color: $theme-dark-gray;
+	
+	&:hover {
+		background-color: $theme-dark-gray-light;
+	}
 }
