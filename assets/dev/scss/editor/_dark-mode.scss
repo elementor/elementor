@@ -18,11 +18,40 @@ $theme-dark-gradient-end: #4C4F56;
 
 //General
 
-.ui-theme-dark {
+body.ui-theme-dark {
+	color: $theme-dark-light;
 
-	body {
-		color: $theme-dark-light;
+	//Color Picker
+	.pcr-app {
+		background-color: $theme-dark-gray;
+
+		.pcr-swatches > button {
+
+			&:after {
+				box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+			}
+		}
+
+		.pcr-clear {
+			color: $theme-dark-light;
+			background-color: $theme-dark-gray-light;
+		}
+
+		.pcr-interaction {
+
+			.pcr-result {
+				color: $theme-dark-light;
+				border-color: $theme-dark-gray-light;
+
+				&:focus {
+					border-color: $theme-dark-gray-lighter;
+				}
+			}
+		}
 	}
+}
+
+.ui-theme-dark {
 
 	input, select, textarea, .elementor-input-style {
 		color: $theme-dark-light;
@@ -289,6 +318,12 @@ $theme-dark-gradient-end: #4C4F56;
 			.elementor-switch-handle {
 				background-color: $theme-dark-light;
 			}
+		}
+
+		//Color Picker
+		.pickr {
+			background-color: $theme-dark-gray-darkest;
+			border-color: $theme-dark-gray;
 		}
 
 		//Help Link
@@ -587,6 +622,18 @@ $theme-dark-gradient-end: #4C4F56;
 
 		&:hover {
 			background-color: $theme-dark-gray-light;
+		}
+	}
+
+	//Alert
+	.elementor-panel-alert {
+		background-color: $theme-dark-gray;
+
+		&.elementor-panel-alert- {
+
+			&info {
+				background-color: $theme-dark-gray;
+			}
 		}
 	}
 }
