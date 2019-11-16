@@ -140,6 +140,9 @@ class App extends BaseApp {
 		);
 
 		$this->print_config();
+
+		// Used for external plugins.
+		do_action( 'elementor/common/after_register_scripts', $this );
 	}
 
 	/**
@@ -219,6 +222,7 @@ class App extends BaseApp {
 		return [
 			'version' => ELEMENTOR_VERSION,
 			'isRTL' => is_rtl(),
+			'isDebug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
 			'activeModules' => array_keys( $this->get_components() ),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,

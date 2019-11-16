@@ -2,6 +2,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlCodeEditorItemView;
 
 ControlCodeEditorItemView = ControlBaseDataView.extend( {
+	debounceHistory: true,
 
 	ui: function() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );

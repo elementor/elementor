@@ -79,8 +79,6 @@ ColumnView = BaseElementView.extend( {
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
 	},
 
 	attachElContent: function() {
@@ -126,31 +124,11 @@ ColumnView = BaseElementView.extend( {
 		return 'widget' === elType;
 	},
 
-	getPercentsForDisplay: function() {
-		var inlineSize = +this.model.getSetting( '_inline_size' ) || this.getPercentSize();
-
-		return inlineSize.toFixed( 1 ) + '%';
-	},
-
 	changeSizeUI: function() {
-		var self = this,
+		const self = this,
 			columnSize = self.model.getSetting( '_column_size' );
 
 		self.$el.attr( 'data-col', columnSize );
-
-		_.defer( function() { // Wait for the column size to be applied
-			if ( self.ui.percentsTooltip ) {
-				self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
-			}
-		} );
-	},
-
-	getPercentSize: function( size ) {
-		if ( ! size ) {
-			size = this.el.getBoundingClientRect().width;
-		}
-
-		return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
 	},
 
 	getSortableOptions: function() {
@@ -172,7 +150,15 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	addNewColumn: function() {
-		this.trigger( 'request:add:new' );
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'column',
+			},
+			container: this.getContainer().parent,
+			options: {
+				at: this.$el.index() + 1,
+			},
+		} );
 	},
 
 	// Events
@@ -224,32 +210,6 @@ ColumnView = BaseElementView.extend( {
 		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
 			this.changeSizeUI();
 		}
-	},
-
-	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
-		var errors = [],
-			columnSize = this.model.getSetting( '_column_size' );
-
-		// If there's only one column
-		if ( 100 === columnSize ) {
-			errors.push( 'Could not resize one column' );
-
-			return errors;
-		}
-
-		if ( ! oldValue ) {
-			oldValue = columnSize;
-		}
-
-		try {
-			this._parent.resizeChild( this, +oldValue, +newValue );
-		} catch ( e ) {
-			if ( e.message === this._parent.errors.columnWidthTooLarge ) {
-				errors.push( e.message );
-			}
-		}
-
-		return errors;
 	},
 
 	onAddButtonClick: function( event ) {

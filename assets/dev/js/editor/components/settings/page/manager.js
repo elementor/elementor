@@ -42,4 +42,8 @@ module.exports = BaseSettings.extend( {
 
 		return data;
 	},
+
+	getContainerId() {
+		return 'document';
+	},
 } );

@@ -349,6 +349,16 @@ class Editor {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_register_script(
+			'elementor-editor-document',
+			ELEMENTOR_ASSETS_URL . 'js/editor-document' . $suffix . '.js',
+			[
+				'elementor-common-modules',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
 		// Hack for waypoint with editor mode.
 		wp_register_script(
 			'elementor-waypoints',
@@ -464,6 +474,7 @@ class Editor {
 			[
 				'elementor-common',
 				'elementor-editor-modules',
+				'elementor-editor-document',
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',

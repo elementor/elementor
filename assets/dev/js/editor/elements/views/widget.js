@@ -100,7 +100,7 @@ WidgetView = BaseElementView.extend( {
 
 	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'transfer' } ) );
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
 
 		groups.splice( transferGroupIndex + 1, 0, {
 			name: 'save',
@@ -122,6 +122,10 @@ WidgetView = BaseElementView.extend( {
 
 			this.$el.addClass( 'elementor-element' );
 
+			return;
+		}
+
+		if ( elementor.isTesting && this.isDestroyed ) {
 			return;
 		}
 

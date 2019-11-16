@@ -1,12 +1,46 @@
+import Debounce from "../../document/commands/base/debounce";
+
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	SectionView;
 
 import AddSectionView from '../../views/add-section/inline';
 
 SectionView = BaseElementView.extend( {
+	// TODO: defaults should be static.
+	defaultInnerSectionColumns: 2,
+	defaultMinColumnSize: 2,
+
+	childViewContainer: '> .elementor-container > .elementor-row',
+
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
 	addSectionView: null,
+
+	childViewRequestState: {
+		state: 'none',
+		currentColumnWidth: 0,
+		nextColumnWidth: 0,
+	},
+
+	_checkIsFull: function() {
+		// TODO: should be part of $e.events.
+		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
+	},
+
+	addChildModel: function( model ) {
+		/// TODO: maybe should be part of $e.hooks.
+		const isModelInstance = model instanceof Backbone.Model,
+			isInner = this.isInner();
+
+		if ( isModelInstance ) {
+			// TODO: change to command.
+			model.set( 'isInner', isInner );
+		} else {
+			model.isInner = isInner;
+		}
+
+		return BaseElementView.prototype.addChildModel.apply( this, arguments );
+	},
 
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
@@ -18,8 +52,6 @@ SectionView = BaseElementView.extend( {
 	tagName: function() {
 		return this.model.getSetting( 'html_tag' ) || 'section';
 	},
-
-	childViewContainer: '> .elementor-container > .elementor-row',
 
 	behaviors: function() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
@@ -34,9 +66,10 @@ SectionView = BaseElementView.extend( {
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
 
-	errors: {
-		columnWidthTooLarge: 'New column width is too large',
-		columnWidthTooSmall: 'New column width is too small',
+	initialize: function() {
+		BaseElementView.prototype.initialize.apply( this, arguments );
+
+		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
 	},
 
 	getEditButtons: function() {
@@ -70,17 +103,9 @@ SectionView = BaseElementView.extend( {
 		return editTools;
 	},
 
-	initialize: function() {
-		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
-
-		this._checkIsEmpty();
-	},
-
 	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'transfer' } ) );
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
 
 		groups.splice( transferGroupIndex + 1, 0, {
 			name: 'save',
@@ -94,19 +119,6 @@ SectionView = BaseElementView.extend( {
 		} );
 
 		return groups;
-	},
-
-	addChildModel: function( model ) {
-		var isModelInstance = model instanceof Backbone.Model,
-			isInner = this.isInner();
-
-		if ( isModelInstance ) {
-			model.set( 'isInner', isInner );
-		} else {
-			model.isInner = isInner;
-		}
-
-		return BaseElementView.prototype.addChildModel.apply( this, arguments );
 	},
 
 	getSortableOptions: function() {
@@ -133,52 +145,6 @@ SectionView = BaseElementView.extend( {
 		return this.model.getSetting( 'structure' );
 	},
 
-	setStructure: function( structure ) {
-		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
-
-		if ( +parsedStructure.columnsCount !== this.collection.length ) {
-			throw new TypeError( 'The provided structure doesn\'t match the columns count.' );
-		}
-
-		this.model.setSetting( 'structure', structure );
-	},
-
-	redefineLayout: function() {
-		var preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
-
-		this.collection.each( function( model, index ) {
-			model.setSetting( '_column_size', preset.preset[ index ] );
-			model.setSetting( '_inline_size', null );
-		} );
-	},
-
-	resetLayout: function() {
-		this.setStructure( this.getDefaultStructure() );
-	},
-
-	resetColumnsCustomSize: function() {
-		this.collection.each( function( model ) {
-			model.setSetting( '_inline_size', null );
-		} );
-	},
-
-	isCollectionFilled: function() {
-		var MAX_SIZE = 10,
-			columnsCount = this.collection.length;
-
-		return ( MAX_SIZE <= columnsCount );
-	},
-
-	_checkIsFull: function() {
-		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
-	},
-
-	_checkIsEmpty: function() {
-		if ( ! this.collection.length && ! this.model.get( 'allowEmpty' ) ) {
-			this.addChildElement( null, { edit: false } );
-		}
-	},
-
 	getColumnAt: function( index ) {
 		var model = this.collection.at( index );
 
@@ -191,6 +157,64 @@ SectionView = BaseElementView.extend( {
 
 	getPreviousColumn: function( columnView ) {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
+	},
+
+	setStructure: function( structure ) {
+		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
+
+		if ( +parsedStructure.columnsCount !== this.collection.length ) {
+			throw new TypeError( 'The provided structure doesn\'t match the columns count.' );
+		}
+
+		$e.run( 'document/elements/settings', {
+			container: this.getContainer(),
+			settings: { structure },
+			options: { external: true },
+		} );
+
+		this.adjustColumns();
+	},
+
+	adjustColumns: function() {
+		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
+
+		this.children.each( ( columnView, index ) => {
+			const container = columnView.getContainer();
+
+			$e.run( 'document/elements/settings', {
+				container,
+				settings: {
+					_column_size: preset.preset[ index ],
+					_inline_size: null,
+				},
+			} );
+		} );
+	},
+
+	resetLayout: function() {
+		this.setStructure( this.getDefaultStructure() );
+	},
+
+	resetColumnsCustomSize: function() {
+		this.children.each( ( columnView ) => {
+			$e.run( 'document/elements/settings', {
+				container: columnView.getContainer(),
+				settings: {
+					_inline_size: null,
+				},
+				options: {
+					external: true,
+					debounceHistory: true,
+				},
+			} );
+		} );
+	},
+
+	isCollectionFilled: function() {
+		var MAX_SIZE = 10,
+			columnsCount = this.collection.length;
+
+		return ( MAX_SIZE <= columnsCount );
 	},
 
 	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {
@@ -209,31 +233,6 @@ SectionView = BaseElementView.extend( {
 		nextColumnView.ui.percentsTooltip.hide();
 	},
 
-	resizeChild: function( childView, currentSize, newSize ) {
-		var nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
-
-		if ( ! nextChildView ) {
-			throw new ReferenceError( 'There is not any next column' );
-		}
-
-		var minColumnSize = 2,
-			$nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		if ( nextElementNewSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooLarge );
-		}
-
-		if ( newSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooSmall );
-		}
-
-		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
-
-		return true;
-	},
-
 	destroyAddSectionView: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.destroy();
@@ -246,14 +245,6 @@ SectionView = BaseElementView.extend( {
 		this._checkIsFull();
 	},
 
-	onSettingsChanged: function( settingsModel ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		if ( settingsModel.changed.structure ) {
-			this.redefineLayout();
-		}
-	},
-
 	onAddButtonClick: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.fadeToDeath();
@@ -261,7 +252,7 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		var myIndex = this.model.collection.indexOf( this.model ),
+		const myIndex = this.model.collection.indexOf( this.model ),
 			addSectionView = new AddSectionView( {
 				at: myIndex,
 			} );
@@ -280,26 +271,8 @@ SectionView = BaseElementView.extend( {
 		this.addSectionView = addSectionView;
 	},
 
-	onAddChild: function() {
-		if ( ! this.isBuffering && ! this.model.get( 'allowEmpty' ) ) {
-			// Reset the layout just when we have really add/remove element.
-			this.resetLayout();
-		}
-	},
-
-	onRemoveChild: function() {
-		if ( ! this.isManualRemoving ) {
-			return;
-		}
-
-		// If it's the last column, please create new one.
-		this._checkIsEmpty();
-
-		this.resetLayout();
-	},
-
 	onChildviewRequestResizeStart: function( columnView ) {
-		var nextColumnView = this.getNextColumn( columnView );
+		const nextColumnView = this.getNextColumn( columnView );
 
 		if ( ! nextColumnView ) {
 			return;
@@ -307,13 +280,15 @@ SectionView = BaseElementView.extend( {
 
 		this.showChildrenPercentsTooltip( columnView, nextColumnView );
 
-		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
+		elementor.helpers.disableElementEvents(
+			columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) )
+		);
 
-		elementor.helpers.disableElementEvents( $iframes );
+		this.childViewRequestState.status = 'start';
 	},
 
 	onChildviewRequestResizeStop: function( columnView ) {
-		var nextColumnView = this.getNextColumn( columnView );
+		const nextColumnView = this.getNextColumn( columnView );
 
 		if ( ! nextColumnView ) {
 			return;
@@ -321,29 +296,91 @@ SectionView = BaseElementView.extend( {
 
 		this.hideChildrenPercentsTooltip( columnView, nextColumnView );
 
-		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
+		elementor.helpers.enableElementEvents(
+			columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) )
+		);
 
-		elementor.helpers.enableElementEvents( $iframes );
+		const columnContainer = columnView.getContainer(),
+			nextColumnContainer = nextColumnView.getContainer();
+
+		$e.run( 'document/elements/settings', {
+			// `nextColumn` must be first.
+			containers: [ columnContainer, nextColumnContainer ],
+			settings: {
+				[ columnContainer.id ]: {
+					_inline_size: this.getColumnPercentSize( columnView.$el, columnView.$el.width() ),
+				},
+				[ nextColumnContainer.id ]: {
+					_inline_size: this.getColumnPercentSize( nextColumnView.$el, nextColumnView.$el.width() ),
+				},
+			},
+			options: {
+				external: true,
+				history: {
+					title: elementor.config.elements.column.controls._inline_size.label,
+				},
+			},
+			isMultiSettings: true,
+		} );
+
+		// Reset style after save.
+		columnView.$el.removeAttr( 'style' );
+		nextColumnView.$el.removeAttr( 'style' );
+
+		this.childViewRequestState.status = 'stop';
 	},
 
 	onChildviewRequestResize: function( columnView, ui ) {
-		// Get current column details
-		var currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
+		const nextColumnView = this.getNextColumn( columnView );
 
+		if ( ! nextColumnView ) {
+			return;
+		}
+
+		let lastCurrentColumnWidth = columnView.el.getBoundingClientRect().width,
+			lastNextColumnWidth = nextColumnView.el.getBoundingClientRect().width;
+
+		if ( 'start' === this.childViewRequestState.status ) {
+			this.childViewRequestState.currentColumnWidth = lastCurrentColumnWidth;
+			this.childViewRequestState.nextColumnWidth = lastNextColumnWidth;
+		} else {
+			lastCurrentColumnWidth = this.childViewRequestState.currentColumnWidth;
+			lastNextColumnWidth = this.childViewRequestState.nextColumnWidth;
+		}
+
+		// Disable HTML column re-sizing.
 		ui.element.css( {
 			width: '',
 			left: 'initial', // Fix for RTL resizing
 		} );
 
-		var newSize = this.getColumnPercentSize( ui.element, ui.size.width );
+		/**
+		 *  If current cell is increased, next cell width equals to self width - ( how much current cell grow ).
+		 *  else, if current cell is decreased, next cell width equals to self width + ( how much current cell shrink ).
+		 */
+		const totalWidth = this.$el.find( ' > .elementor-container' )[ 0 ].getBoundingClientRect().width,
+			isGrow = ui.size.width > lastCurrentColumnWidth,
+			nextColumnNewWidth = isGrow ?
+				this.childViewRequestState.nextColumnWidth - ( ui.size.width - lastCurrentColumnWidth ) :
+				this.childViewRequestState.nextColumnWidth + ( lastCurrentColumnWidth - ui.size.width );
 
-		try {
-			this.resizeChild( columnView, currentSize, newSize );
-		} catch ( e ) {
-			return;
-		}
+		// nextColumnNewWidthPercent = ( nextColumnView.el.getBoundingClientRect().width / totalWidth * 100 );
 
-		columnView.model.setSetting( '_inline_size', newSize );
+		// Update width of next column.
+		nextColumnView.$el.width( nextColumnNewWidth );
+
+		// Update width of column which being re-sized.
+		columnView.$el.width( ui.size.width );
+
+		// Take sample after changing width(s).
+		const currentColumnPercent = ( columnView.el.getBoundingClientRect().width / totalWidth * 100 ),
+			nextColumnPercent = ( nextColumnView.el.getBoundingClientRect().width / totalWidth * 100 );
+
+		// Show percent tooltip.
+		columnView.ui.percentsTooltip.text( currentColumnPercent.toFixed( 1 ) + '%' );
+		nextColumnView.ui.percentsTooltip.text( nextColumnPercent.toFixed( 1 ) + '%' );
+
+		this.childViewRequestState.status = 'resize';
 	},
 
 	onDestroy: function() {

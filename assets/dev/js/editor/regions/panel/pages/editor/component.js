@@ -62,16 +62,21 @@ export default class extends elementorModules.common.Component {
 			defaultTab = jQuery( this.getTabsWrapperSelector() ).find( '.elementor-component-tab' ).eq( 0 ).data( 'tab' );
 		}
 
+		// For unit test.
+		if ( ! defaultTab ) {
+			defaultTab = 'content';
+		}
+
 		this.setDefaultRoute( defaultTab );
 	}
 
 	openEditor( model, view ) {
 		const title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ),
-		editor = elementor.getPanelView().setPage( 'editor', title, {
-			model: model,
-			controls: elementor.getElementControls( model ),
-			editedElementView: view,
-		} );
+			editor = elementor.getPanelView().setPage( 'editor', title, {
+				model: model,
+				controls: elementor.getElementControls( model ),
+				editedElementView: view,
+			} );
 
 		return editor;
 	}
