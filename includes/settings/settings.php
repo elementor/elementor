@@ -463,6 +463,11 @@ class Settings extends Settings_Page {
 									'sub_desc' => __( 'Checking this box will disable Elementor\'s Default Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
 								],
 							],
+						],
+					],
+					'preferences' => [
+						'label' => __( 'Preferences', 'elementor' ),
+						'fields' => [
 							'editor_ui_theme' => [
 								'label' => __( 'Theme', 'elementor' ),
 								'field_args' => [
