@@ -107,9 +107,9 @@ class Control_Icons extends Control_Base_Multiple {
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
 					<input id="<?php echo $control_uid; ?>-none" type="radio" value="none">
-					<label class="elementor-choices-label tooltip-target elementor-control-icons--inline__remove" for="<?php echo $control_uid; ?>-none" data-tooltip="<?php echo __( 'Remove', 'elementor' ); ?>" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+					<label class="elementor-choices-label tooltip-target elementor-control-icons--inline__none" for="<?php echo $control_uid; ?>-none" data-tooltip="<?php echo __( 'None', 'elementor' ); ?>" title="<?php echo __( 'None', 'elementor' ); ?>">
 						<i class="eicon-ban" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo __( 'Remove', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo __( 'None', 'elementor' ); ?></span>
 					</label>
 					<# if ( ! data.exclude_inline_options.includes( 'svg' ) ) { #>
 						<input id="<?php echo $control_uid; ?>-svg" type="radio" value="svg">

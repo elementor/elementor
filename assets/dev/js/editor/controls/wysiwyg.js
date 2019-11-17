@@ -2,6 +2,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlWysiwygItemView;
 
 ControlWysiwygItemView = ControlBaseDataView.extend( {
+	debounceHistory: true,
 
 	editor: null,
 
@@ -99,8 +100,6 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	},
 
 	saveEditor: function() {
-		this.editor.save();
-
 		this.setValue( this.editor.getContent() );
 	},
 
@@ -159,8 +158,8 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		this.ui.inputWrapper.html( $editor );
 
 		setTimeout( () => {
-			if ( ! this.isDestroyed ) {
-				this.editor.on( 'keyup change undo redo SetContent', this.saveEditor.bind( this ) );
+			if ( ! this.isDestroyed && this.editor ) {
+				this.editor.on( 'keyup change undo redo', this.saveEditor.bind( this ) );
 			}
 		}, 100 );
 	},

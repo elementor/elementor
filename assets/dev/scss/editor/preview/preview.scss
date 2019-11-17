@@ -1,17 +1,15 @@
-//
-// Editor
-//
-@import "../helpers/variables";
-@import "../helpers/mixins";
-@import "resizable";
+@import "../../helpers/variables";
+@import "../../helpers/mixins";
 
-@import "breakpoints";
-@import "panel/global";
-@import "panel/control";
-@import "inline-editor";
-@import "dynamic-tags";
+@import "../breakpoints";
+@import "../dynamic-tags";
+@import "../panel/global";
+@import "../panel/control";
+@import "../resizable";
+
 @import "animations";
 @import "compatibility";
+@import "inline-editor";
 
 // Hidden WP Admin Bar
 html.elementor-html {
@@ -902,5 +900,16 @@ html.elementor-html {
 	.elementor-element-empty,
 	.elementor-widget-empty {
 		display: none;
+	}
+}
+
+// Muted elements in the editor
+[data-elementor-device-mode="desktop"] .elementor-hidden-desktop,
+[data-elementor-device-mode="tablet"] .elementor-hidden-tablet,
+[data-elementor-device-mode="mobile"] .elementor-hidden-phone {
+	background-color: fade_out($editor-lightest, .2);
+
+	.elementor-widget-container {
+		filter: alpha(0.2) saturate(0);
 	}
 }

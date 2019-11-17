@@ -25,7 +25,7 @@ export default class extends elementorModules.ViewModule {
 				} );
 
 				elementorCommon.elements.$window
-				.on( 'elementor/connect/success/' + callbackId, settings.success )
+					.on( 'elementor/connect/success/' + callbackId, settings.success )
 					.on( 'elementor/connect/error/' + callbackId, settings.error );
 			} );
 
@@ -36,19 +36,19 @@ export default class extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				connectPopup: '.elementor-connect-popup',
+				connectButton: '#elementor-template-library-connect__button',
 			},
 		};
 	}
 
 	getDefaultElements() {
 		return {
-			$connectPopup: jQuery( this.getSettings( 'selectors.connectPopup' ) ),
+			$connectButton: jQuery( this.getSettings( 'selectors.connectButton' ) ),
 		};
 	}
 
 	applyPopup() {
-		this.elements.$connectPopup.elementorConnect();
+		this.elements.$connectButton.elementorConnect();
 	}
 
 	onCloseLibraryConnect() {

@@ -4,6 +4,7 @@ var ControlBaseView = require( 'elementor-controls/base' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
+	debounceHistory: false,
 
 	ui: function() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
@@ -31,12 +32,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	events: function() {
 		return {
-			'input @ui.input': 'onBaseInputChange',
+			'input @ui.input': 'onBaseInputTextChange',
 			'change @ui.checkbox': 'onBaseInputChange',
 			'change @ui.radio': 'onBaseInputChange',
-			'input @ui.textarea': 'onBaseInputChange',
+			'input @ui.textarea': 'onBaseInputTextChange',
 			'change @ui.select': 'onBaseInputChange',
-			'input @ui.contentEditable': 'onBaseInputChange',
+			'input @ui.contentEditable': 'onBaseInputTextChange',
 			'click @ui.responsiveSwitchers': 'onResponsiveSwitchersClick',
 		};
 	},
@@ -67,11 +68,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.registerValidators();
 
-		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
+		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+
+		this.listenTo( settings, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
 	getControlValue: function() {
-		return this.elementSettingsModel.get( this.model.get( 'name' ) );
+		return this.container.settings.get( this.model.get( 'name' ) );
 	},
 
 	setValue: function( value ) {
@@ -79,7 +83,16 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	setSettingsModel: function( value ) {
-		this.elementSettingsModel.set( this.model.get( 'name' ), value );
+		const key = this.model.get( 'name' );
+		$e.run( 'document/elements/settings', {
+			container: this.options.container,
+			settings: {
+				[ key ]: value,
+			},
+			options: {
+				debounceHistory: this.debounceHistory,
+			},
+		} );
 
 		this.triggerMethod( 'settings:change' );
 	},
@@ -179,13 +192,23 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.addTooltip();
 	},
 
+	onBaseInputTextChange: function( event ) {
+		const originalDebounceHistory = this.debounceHistory;
+
+		this.debounceHistory = true;
+
+		this.onBaseInputChange( event );
+
+		this.debounceHistory = originalDebounceHistory;
+	},
+
 	onBaseInputChange: function( event ) {
 		clearTimeout( this.correctionTimeout );
 
 		var input = event.currentTarget,
 			value = this.getInputValue( input ),
 			validators = this.validators.slice( 0 ),
-			settingsValidators = this.elementSettingsModel.validators[ this.model.get( 'name' ) ];
+			settingsValidators = this.container.settings.validators[ this.model.get( 'name' ) ];
 
 		if ( settingsValidators ) {
 			validators = validators.concat( settingsValidators );

@@ -4,6 +4,8 @@ import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
 import Components from './components/components';
+import Hooks from './components/hooks';
+import Events from './components/events';
 import Commands from './components/commands';
 import Routes from './components/routes';
 import Shortcuts from './components/shortcuts';
@@ -37,6 +39,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		window.$e = {
 			components: new Components(),
+			hooks: new Hooks(),
+			events: new Events(),
 			commands: new Commands(),
 			routes: new Routes(),
 			shortcuts: new Shortcuts( jQuery( window ) ),

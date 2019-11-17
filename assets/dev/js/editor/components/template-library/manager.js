@@ -124,12 +124,12 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( templateModel, options ) {
+	this.importTemplate = function( model, options ) {
 		options = options || {};
 
 		self.layout.showLoadingView();
 
-		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
+		self.requestTemplateContent( model.get( 'source' ), model.get( 'template_id' ), {
 			data: {
 				page_settings: options.withPageSettings,
 			},
@@ -142,15 +142,11 @@ TemplateLibraryManager = function() {
 
 				self.layout.hideModal();
 
-				elementor.channels.data.trigger( 'template:before:insert', templateModel );
-
-				elementor.getPreviewView().addChildModel( data.content, importOptions );
-
-				elementor.channels.data.trigger( 'template:after:insert', templateModel );
-
-				if ( options.withPageSettings ) {
-					elementor.settings.page.model.setExternalChange( data.page_settings );
-				}
+				$e.run( 'document/elements/import', {
+					model,
+					data,
+					options: importOptions,
+				} );
 			},
 			error: function( data ) {
 				self.showErrorDialog( data );

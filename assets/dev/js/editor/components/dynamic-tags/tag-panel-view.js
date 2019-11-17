@@ -90,6 +90,7 @@ module.exports = Marionette.ItemView.extend( {
 			controls: this.model.controls,
 			name: this.options.name,
 			controlName: this.options.controlName,
+			container: this.options.container,
 			el: this.getSettingsPopup().getElements( 'message' )[ 0 ],
 		} );
 
@@ -103,11 +104,12 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	initialize: function() {
+		// The `model` should always be available.
+		this.initModel();
+
 		if ( ! this.hasSettings() ) {
 			return;
 		}
-
-		this.initModel();
 
 		this.initSettingsPopup();
 

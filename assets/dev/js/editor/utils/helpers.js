@@ -39,7 +39,7 @@ module.exports = {
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
@@ -436,7 +436,7 @@ module.exports = {
 	},
 
 	cloneObject( object ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
@@ -506,7 +506,12 @@ module.exports = {
 		}
 
 		setTimeout( function() {
-			var parentHeight = $parent.height(),
+			// Sometimes element removed during the timeout.
+			if ( ! $element[ 0 ].isConnected ) {
+				return;
+			}
+
+			const parentHeight = $parent.height(),
 				parentScrollTop = $parent.scrollTop(),
 				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[ 0 ].offsetTop,
 				topToCheck = elementTop - parentScrollTop;
@@ -591,5 +596,27 @@ module.exports = {
 				return elementor.conditions.compare( valueA, valueB, operator );
 			}
 		}
+	},
+
+	getModelLabel( model ) {
+		let result;
+
+		if ( ! ( model instanceof Backbone.Model ) ) {
+			model = new Backbone.Model( model );
+		}
+
+		if ( model.get( 'labelSuffix' ) ) {
+			result = model.get( 'title' ) + ' ' + model.get( 'labelSuffix' );
+		} else if ( 'global' === model.get( 'widgetType' ) ) {
+			if ( model.getTitle ) {
+				result = model.getTitle();
+			}
+		}
+
+		if ( ! result ) {
+			result = elementor.getElementData( model ).title;
+		}
+
+		return result;
 	},
 };

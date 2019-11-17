@@ -1,26 +1,23 @@
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Elementor | Test</title>
-	<script>
-		const elementorCommonConfig = {"activeModules":[]};
-	</script>
-	<script type='text/javascript' src='./vendor/wp-includes/jquery.js?ver=1.12.4'></script>
-	<script type='text/javascript' src='./vendor/wp-includes/underscore.min.js?ver=1.8.3'></script>
-	<script type='text/javascript' src='./vendor/wp-includes/backbone.min.js?ver=1.2.3'></script>
-	<script type='text/javascript' src='./../../assets/lib/backbone/backbone.marionette.js?ver=2.4.5'></script>
-	<script type='text/javascript' src='./../../assets/lib/backbone/backbone.radio.js?ver=1.0.4'></script>
-	<script type='text/javascript' src='./../../assets/lib/dialog/dialog.js?ver=4.7.1'></script>
-	<script type='text/javascript' src='./../../assets/js/common-modules.js'></script>
-	<script type='text/javascript' src='./../../assets/js/common.js'></script>
-</head>
-<body>
-	<div id="qunit" style="z-index:1;position:relative;overflow:scroll;height:100%;"></div>
-	<div id="qunit-fixture"></div>
-	<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
-	<script src="https://code.jquery.com/qunit/qunit-2.9.2.js"></script>
-	<script src="./../../assets/js/qunit-tests.js"></script>
-</body>
-</html>
+<script type="text/html" id="tmpl-elementor-button-content">
+	<span class="button-text">{{{ settings.text }}}</span>
+</script>
+
+<script type="text/html" id="tmpl-elementor-tag-post-custom-field-content">
+	<span>{{{  }}}</span>
+</script>
+<div id="elementor-panel">
+	<div id="elementor-panel-inner">
+		<div id="elementor-mode-switcher"></div>
+		<header id="elementor-panel-header-wrapper"></header>
+		<main id="elementor-panel-content-wrapper">
+			<div id="elementor-panel-page-editor" class="elementor-controls-stack">
+				<div class="elementor-panel-navigation"></div>
+			</div>
+		</main>
+		<footer id="elementor-panel-footer">
+			<div class="elementor-panel-container">
+			</div>
+		</footer>
+	</div>
+</div>
+<div id="elementor-preview-iframe"></div>

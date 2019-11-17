@@ -24,11 +24,43 @@ module.exports = elementorModules.ViewModule.extend( {
 			view: elementor.settings.panelPages[ name ] || elementor.settings.panelPages.base,
 			title: this.getSettings( 'panelPage.title' ),
 			options: {
+				editedView: this.getEditedView(),
 				model: this.model,
 				controls: this.model.controls,
 				name: name,
 			},
 		} );
+	},
+
+	getContainerId() {
+		return this.getSettings( 'name' ) + '_settings';
+	},
+
+	// Emulate an element view/model structure with the parts needed for a container.
+	getEditedView() {
+		const id = this.getContainerId(),
+			editModel = new Backbone.Model( {
+				id,
+				elType: id,
+				settings: this.model,
+		} );
+
+		const container = new elementorModules.editor.Container( {
+			type: id,
+			id: editModel.id,
+			model: editModel,
+			settings: editModel.get( 'settings' ),
+			view: false,
+			label: this.getSettings( 'panelPage' ).title,
+			controls: editModel.get( 'controls' ),
+			renderer: false,
+		} );
+
+		return {
+			getContainer: () => container,
+			getEditModel: () => editModel,
+			model: editModel,
+		};
 	},
 
 	updateStylesheet: function( keepOldEntries ) {

@@ -1,12 +1,35 @@
-.elementor-color-picker-palette--add {
+.elementor-color-picker {
 
-	i {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-		color: $editor-dark;
-		font-size: 13px;
+	&--add-swatch {
+
+		i {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			color: $editor-dark;
+			font-size: 13px;
+		}
+	}
+
+	&--dropping-area {
+		margin-top: 10px;
+		padding: 15px;
+		border: 1px dashed $editor-lighter;
+		text-align: center;
+		display: none;
+
+		&.html5dnd-current-element {
+
+			i {
+				color: $editor-warning;
+			}
+		}
+
+		i {
+			color: $editor-dark;
+			font-size: 15px;
+		}
 	}
 }
 
@@ -14,7 +37,7 @@
 
 	.pcr-swatches {
 
-		.elementor-color-picker-palette--add {
+		.elementor-color-picker--add-swatch {
 			background-color: #fff;
 			background-image: none;
 			box-shadow: 0 1px 8px 0 rgba(0, 0, 0, .15);

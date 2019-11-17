@@ -91,11 +91,7 @@ export default class extends elementorModules.Module {
 			this.error( `\`${ command }\` not found.` );
 		}
 
-		if ( ! this.getComponent( command ).dependency( args ) ) {
-			return false;
-		}
-
-		return true;
+		return this.getComponent( command ).dependency( command, args );
 	}
 
 	run( command, args = {} ) {
@@ -109,11 +105,13 @@ export default class extends elementorModules.Module {
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
 
+		this.trigger( 'run', component, command, args );
+
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.commands[ command ].apply( component, [ args ] );
+		const results = this.commands[ command ].apply( component, [ args ] );
 
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args ] );
@@ -121,7 +119,11 @@ export default class extends elementorModules.Module {
 
 		this.afterRun( command, args );
 
-		return true;
+		if ( false === args.returnValue ) {
+			return true;
+		}
+
+		return results;
 	}
 
 	// It's separated in order to allow override.

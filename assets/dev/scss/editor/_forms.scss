@@ -47,7 +47,8 @@ textarea, .elementor-input-style {
 	&:not(:last-child){
 		padding-bottom: 5px;
 	}
-
+	
+	input,
 	label {
 		cursor: pointer;
 	}
@@ -119,5 +120,6 @@ input[disabled] {
 }
 
 select {
+	outline: none;
 	height: 27px;
 }
