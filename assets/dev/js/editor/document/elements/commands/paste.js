@@ -1,6 +1,6 @@
-import History from '../../commands/base/history';
+import Base from '../../commands/base/base';
 
-export class Paste extends History {
+export class Paste extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -8,11 +8,6 @@ export class Paste extends History {
 			storageData = elementorCommon.storage.get( storageKey );
 
 		this.requireArgumentType( 'storageData', 'object', { storageData } );
-	}
-
-	getHistory( args ) { // eslint-disable-line no-unused-vars
-		// History is not required.
-		return false;
 	}
 
 	apply( args ) {

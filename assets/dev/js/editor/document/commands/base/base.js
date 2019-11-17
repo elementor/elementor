@@ -57,7 +57,7 @@ export default class Base extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	initialize( args ) {} // eslint-disable-line no-unused-vars
+	initialize( args = {} ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function validateArgs().

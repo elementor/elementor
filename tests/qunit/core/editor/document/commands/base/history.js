@@ -35,7 +35,7 @@ jQuery( () => {
 
 				$e.run = orig;
 
-				assert.equal( fakeArgs.histroyId, undefined );
+				assert.equal( fakeArgs.historyId, undefined );
 			} );
 		} );
 
