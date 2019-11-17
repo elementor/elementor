@@ -1,5 +1,6 @@
 import DocumentHelper from '../helper';
 import BlockFaq from './../../../../mock/library/blocks/faq.json';
+import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../assets/dev/js/editor/document/commands/base/debounce';
 
 const undoValidate = ( assert, historyItem ) => {
 	$e.run( 'document/history/undo' );
@@ -266,123 +267,6 @@ jQuery( () => {
 				recreatedValidate( assert, ePastedWidget );
 			} );
 
-			QUnit.test( 'Settings', ( assert ) => {
-				const eWidget = DocumentHelper.createAutoButton(),
-					defaultText = eWidget.settings.attributes.text,
-					text = 'i test it';
-
-				// Change button text.
-				DocumentHelper.settings( eWidget, { text } );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				assert.equal( eWidget.settings.attributes.text, defaultText, 'Settings back to default' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
-			} );
-
-			QUnit.test( 'Settings: Debounce', ( assert ) => {
-				const historyItems = elementor.history.history.getItems(),
-					settingsChangeCount = 10,
-					eWidget = DocumentHelper.createAutoButton(),
-					historyCountBeforeDebounce = historyItems.length,
-					text = 'i test it',
-					defaultText = eWidget.settings.attributes.text;
-
-				// Change button text.
-				for ( let i = 0; i < settingsChangeCount; ++i ) {
-					DocumentHelper.settings( eWidget, { text }, {
-						debounceHistory: true,
-					} );
-				}
-
-				let done = assert.async(); // Pause the test till done.
-
-				setTimeout( () => {
-					const historyItem = historyItems.at( 0 ).attributes,
-						historyDiff = historyItems.length - historyCountBeforeDebounce;
-
-					// How many changes.
-					assert.equal( historyDiff, 1, 'History items length is "1"' );
-
-					// Exist in history.
-					inHistoryValidate( assert, historyItem, 'change', 'Button' );
-
-					// Undo.
-					undoValidate( assert, historyItem );
-
-					assert.equal( eWidget.settings.attributes.text, defaultText, 'Settings back to default' );
-
-					// Redo.
-					redoValidate( assert, historyItem );
-
-					assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
-
-					done();
-				}, 800 );
-			} );
-
-			QUnit.test( 'Paste Style', ( assert ) => {
-				const eWidgetSimple = DocumentHelper.createAutoButton(),
-					eWidgetStyled = DocumentHelper.createAutoButtonStyled(),
-					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' ),
-					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
-
-				DocumentHelper.copy( eWidgetStyled );
-				DocumentHelper.pasteStyle( eWidgetSimple );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-					'Settings back to default.' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				/*assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-					'Settings restored.' ); // TODO: in tests its not back to default color.*/
-			} );
-
-			QUnit.test( 'Reset Style', ( assert ) => {
-				const eWidgetStyled = DocumentHelper.createAutoButtonStyled(),
-					BackgroundBeforeReset = eWidgetStyled.settings.get( 'background_color' ); // Black
-
-				DocumentHelper.resetStyle( eWidgetStyled );
-
-				const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundBeforeReset,
-					'Settings back to default.' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				/*assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundAfterReset,
-					'Settings restored.' ); // TODO: in tests its not back to default color.*/
-			} );
-
 			QUnit.test( 'Move Section', ( assert ) => {
 				// Create Section at 0.
 				DocumentHelper.createSection();
@@ -549,25 +433,31 @@ jQuery( () => {
 					settings: { text },
 				} );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				assert.equal( eButton.settings.attributes.text, defaultButtonText, 'Settings back to default' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				const done = assert.async();
+				const doneSettings = assert.async();
 
 				setTimeout( () => {
-					assert.equal( eButton.view.$el.find( '.button-text' ).html(), dynamicValue, 'Settings restored' );
-					done();
-				}, 800 );
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					inHistoryValidate( assert, historyItem, 'change', 'Button' );
+
+					// Undo.
+					undoValidate( assert, historyItem );
+
+					assert.equal( eButton.settings.attributes.text, defaultButtonText, 'Settings back to default' );
+
+					// Redo.
+					redoValidate( assert, historyItem );
+
+					doneSettings();
+
+					const doneDynamic = assert.async();
+
+					setTimeout( () => {
+						assert.equal( eButton.view.$el.find( '.button-text' ).html(), dynamicValue, 'Settings restored' );
+						doneDynamic();
+					}, DEFAULT_DEBOUNCE_DELAY );
+				}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 /*
 			QUnit.test( 'Dynamic in repeater', ( assert ) => {
@@ -800,92 +690,6 @@ jQuery( () => {
 
 				ePastedWidgets.forEach( ( ePastedWidget ) => recreatedValidate( assert, ePastedWidget ) );
 			} );
-
-			QUnit.test( 'Settings', ( assert ) => {
-				const eWidgets = DocumentHelper.multiCreateAutoButton(),
-					text = 'i test it',
-					defaultText = eWidgets[ 0 ].settings.attributes.text;
-
-				// Change button text.
-				DocumentHelper.multiSettings( eWidgets, { text } );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'elements' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				eWidgets.forEach( ( eWidget ) =>
-					assert.equal( eWidget.settings.attributes.text, defaultText, 'Settings back to default.' )
-				);
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				eWidgets.forEach( ( eWidget ) =>
-					assert.equal( eWidget.settings.attributes.text, text, 'Settings restored.' )
-				);
-			} );
-
-			QUnit.test( 'Paste Style', ( assert ) => {
-				const eWidgetsSimple = DocumentHelper.multiCreateAutoButton(),
-					eWidgetStyled = DocumentHelper.createAutoButtonStyled(),
-					widgetSimpleBackground = eWidgetsSimple[ 0 ].settings.get( 'background_color' ),
-					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
-
-				DocumentHelper.copy( eWidgetStyled );
-				DocumentHelper.multiPasteStyle( eWidgetsSimple );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				eWidgetsSimple.forEach( ( eWidgetSimple ) => {
-					assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-						'Settings back to default.' );
-				} );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				eWidgetsSimple.forEach( ( eWidgetSimple ) => {
-					assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetStyledBackground,
-						'Settings restored.' );
-				} );
-			} );
-
-			QUnit.test( 'Reset Style', ( assert ) => {
-				const eWidgetsStyled = DocumentHelper.multiCreateAutoButtonStyled(),
-					backgroundBeforeReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' );
-
-				DocumentHelper.multiResetStyle( eWidgetsStyled );
-
-				const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				eWidgetsStyled.forEach( ( eWidgetStyled ) => {
-					assert.equal( eWidgetStyled.settings.get( 'background_color' ), backgroundBeforeReset, 'Settings back to default.' );
-				} );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				eWidgetsStyled.forEach( ( eWidgetStyled ) => {
-					assert.equal( eWidgetStyled.settings.get( 'background_color' ), backgroundAfterReset, 'Settings restored.' );
-				} );
-			} );
 		} );
 
 		QUnit.module( 'document/repeater: Single Selection', () => {
@@ -955,22 +759,28 @@ jQuery( () => {
 					tab_title: tabTitle,
 				} );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				let done = assert.async(); // Pause the test till done.
 
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', `Tabs Item#${ index + 1 }` );
+				setTimeout( () => {
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
-				// Undo.
-				undoValidate( assert, historyItem );
+					// Exist in history.
+					inHistoryValidate( assert, historyItem, 'change', `Tabs Item#${ index + 1 }` );
 
-				// Settings back to default.
-				assert.equal( eTab.get( 'tab_title' ), originalTitle, 'Settings back to default' );
+					// Undo.
+					undoValidate( assert, historyItem );
 
-				// Redo.
-				redoValidate( assert, historyItem );
+					// Settings back to default.
+					assert.equal( eTab.get( 'tab_title' ), originalTitle, 'Settings back to default' );
 
-				// Settings restored.
-				assert.equal( eTab.get( 'tab_title' ), tabTitle, 'Settings restored' );
+					// Redo.
+					redoValidate( assert, historyItem );
+
+					// Settings restored.
+					assert.equal( eTab.get( 'tab_title' ), tabTitle, 'Settings restored' );
+
+					done();
+				}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
@@ -1027,70 +837,70 @@ jQuery( () => {
 					eTabModel.id, 'Item restored to targetIndex' );
 			} );
 
-			QUnit.test( 'Deep', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					name = 'form_fields',
-					eForm = DocumentHelper.createForm( eColumn ),
-					beforeInsertItemsCount = eForm.settings.get( name ).length;
-
-				// Insert Item.
-				DocumentHelper.repeaterInsert( eForm, name, {
-					field_type: 'text',
-					field_label: 'Name',
-				} );
-
-				const currentItemIndex = 3;
-
-				// Change field_type = 'email' for new item.
-				DocumentHelper.repeaterSettings( eForm, name, currentItemIndex, { field_type: 'email' }, {
-					external: true,
-				} );
-
-				// Change required = 'true' for new item.
-				DocumentHelper.repeaterSettings( eForm, name, currentItemIndex, { required: 'true' }, {
-					external: true,
-				} );
-
-				// Undo
-				$e.run( 'document/history/undo' );
-
-				// Validate required = '' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), '',
-					'Require setting back to default' );
-
-				// Undo
-				$e.run( 'document/history/undo' );
-
-				// Validate field_type = 'text' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'text',
-					'field_type setting back to default' );
-
-				$e.run( 'document/history/undo' );
-
-				// Validate new inserted item removed.
-				assert.equal( eForm.settings.get( name ).length, beforeInsertItemsCount,
-					'New item was removed' );
-
-				// Redo
-				$e.run( 'document/history/redo' );
-
-				// Validate new inserted item was recreated.
-				assert.equal( eForm.settings.get( name ).length, ( beforeInsertItemsCount + 1 ),
-					'New item was recreated' );
-
-				// Redo
-				$e.run( 'document/history/redo' );
-
-				// Validate field_type = 'email' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'email',
-					'field_type setting was restored' );
-
-				$e.run( 'document/history/redo' );
-
-				// Validate required = 'true' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), 'true',
-					'Require setting was restored' );
-			} );
+			// QUnit.test( 'Deep', ( assert ) => {
+			// 	const eColumn = DocumentHelper.createSection( 1, true ),
+			// 		name = 'form_fields',
+			// 		eForm = DocumentHelper.createForm( eColumn ),
+			// 		beforeInsertItemsCount = eForm.settings.get( name ).length;
+			//
+			// 	// Insert Item.
+			// 	DocumentHelper.repeaterInsert( eForm, name, {
+			// 		field_type: 'text',
+			// 		field_label: 'Name',
+			// 	} );
+			//
+			// 	const currentItemIndex = 3;
+			//
+			// 	// Change field_type = 'email' for new item.
+			// 	DocumentHelper.repeaterSettings( eForm, name, currentItemIndex, { field_type: 'email' }, {
+			// 		external: true,
+			// 	} );
+			//
+			// 	// Change required = 'true' for new item.
+			// 	DocumentHelper.repeaterSettings( eForm, name, currentItemIndex, { required: 'true' }, {
+			// 		external: true,
+			// 	} );
+			//
+			// 	// Undo
+			// 	$e.run( 'document/history/undo' );
+			//
+			// 	// Validate required = '' for new item.
+			// 	assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), '',
+			// 		'Require setting back to default' );
+			//
+			// 	// Undo
+			// 	$e.run( 'document/history/undo' );
+			//
+			// 	// Validate field_type = 'text' for new item.
+			// 	assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'text',
+			// 		'field_type setting back to default' );
+			//
+			// 	$e.run( 'document/history/undo' );
+			//
+			// 	// Validate new inserted item removed.
+			// 	assert.equal( eForm.settings.get( name ).length, beforeInsertItemsCount,
+			// 		'New item was removed' );
+			//
+			// 	// Redo
+			// 	$e.run( 'document/history/redo' );
+			//
+			// 	// Validate new inserted item was recreated.
+			// 	assert.equal( eForm.settings.get( name ).length, ( beforeInsertItemsCount + 1 ),
+			// 		'New item was recreated' );
+			//
+			// 	// Redo
+			// 	$e.run( 'document/history/redo' );
+			//
+			// 	// Validate field_type = 'email' for new item.
+			// 	assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'email',
+			// 		'field_type setting was restored' );
+			//
+			// 	$e.run( 'document/history/redo' );
+			//
+			// 	// Validate required = 'true' for new item.
+			// 	assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), 'true',
+			// 		'Require setting was restored' );
+			// } );
 		} );
 
 		QUnit.module( 'document/repeater: Multiple Selection', () => {

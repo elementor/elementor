@@ -1,6 +1,6 @@
-import History from '../../commands/base/history';
+import Debounce from '../../commands/base/debounce';
 
-export class Settings extends History {
+export class Settings extends Debounce {
 	/**
 	 * Function getSubTitle().
 	 *
@@ -12,15 +12,14 @@ export class Settings extends History {
 	 */
 	static getSubTitle( args ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
-			settingsKeys = Object.keys( settings );
+			settingsKeys = Object.keys( settings ),
+			controls = containers[ 0 ].controls,
+			firstSettingKey = settingsKeys[ 0 ];
 
 		let result = '';
 
-		if ( ! isMultiSettings &&
-			1 === settingsKeys.length &&
-			containers[ 0 ].controls &&
-			containers[ 0 ].controls[ settingsKeys[ 0 ] ] ) {
-			result = containers[ 0 ].controls[ settingsKeys[ 0 ] ].label;
+		if ( ! isMultiSettings && 1 === settingsKeys.length && controls && controls[ firstSettingKey ] ) {
+			result = controls[ firstSettingKey ].label;
 		}
 
 		return result;
@@ -50,10 +49,16 @@ export class Settings extends History {
 		} );
 	}
 
-	static logHistory( container, newSettings ) {
+	/**
+	 * TODO:
+	 * @param container
+	 * @param newSettings
+	 * @param oldSettings
+	 */
+	addToHistory( container, newSettings, oldSettings ) {
 		const changes = {
 				[ container.id ]: {
-					old: container.settings.toJSON(),
+					old: oldSettings,
 					new: newSettings,
 				},
 			},
@@ -64,7 +69,7 @@ export class Settings extends History {
 				restore: Settings.restore,
 			};
 
-		$e.run( 'document/history/add-log', historyItem );
+		$e.run( 'document/history/add-transaction', historyItem );
 	}
 
 	validateArgs( args ) {
@@ -89,15 +94,25 @@ export class Settings extends History {
 
 		containers.forEach( ( container ) => {
 			container = container.lookup();
-
 			/**
 			 * Settings support multi settings for each container, eg use:
 			 * settings: { '{ container-id }': { someSettingKey: someSettingValue } } etc.
 			 */
-			const newSettings = isMultiSettings ? settings[ container.id ] : settings;
+			const newSettings = isMultiSettings ? settings[ container.id ] : settings,
+				oldSettings = container.settings.toJSON();
 
-			// Save for debounce.
-			this.constructor.logHistory( container, newSettings );
+			// Clear old oldValues.
+			container.oldValues = {};
+
+			// Set oldValues, For each setting is about to change save setting value.
+			Object.entries( newSettings ).forEach( ( [ key, value ] ) => {
+				container.oldValues[ key ] = oldSettings[ key ];
+			} );
+
+			// If history active, add history transaction with old and new settings.
+			if ( this.isHistoryActive() ) {
+				this.addToHistory( container, newSettings, container.oldValues );
+			}
 
 			if ( options.external ) {
 				container.settings.setExternalChange( newSettings );

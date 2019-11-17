@@ -151,6 +151,17 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
+	getNeighborContainer( container ) {
+		const parentView = container.parent.view,
+			nextView = parentView.getNextColumn( container.view ) || parentView.getPreviousColumn( container.view );
+
+		if ( ! nextView ) {
+			return false;
+		}
+
+		return nextView.getContainer();
+	},
+
 	setStructure: function( structure ) {
 		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
 
@@ -225,50 +236,6 @@ SectionView = BaseElementView.extend( {
 		nextColumnView.ui.percentsTooltip.hide();
 	},
 
-	resizeColumn: function( childView, currentSize, newSize, resizeSource = true, debounceHistory = true ) {
-		const nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
-
-		if ( ! nextChildView ) {
-			return false;
-		}
-
-		const $nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		const currentColumnContainer = childView.getContainer(),
-			nextColumnContainer = nextChildView.getContainer(),
-			containers = [ nextColumnContainer ],
-			settings = {
-				[ nextColumnContainer.id ]: {
-					_inline_size: nextElementNewSize,
-				},
-			};
-
-		if ( resizeSource ) {
-			containers.push( currentColumnContainer );
-			settings[ currentColumnContainer.id ] = {
-				_inline_size: newSize,
-			};
-		}
-
-		$e.run( 'document/elements/settings', {
-			// `nextColumn` must be first.
-			containers,
-			settings,
-			isMultiSettings: true,
-			options: {
-				debounceHistory,
-				external: true,
-				history: {
-					title: elementor.config.elements.column.controls._inline_size.label,
-				},
-			},
-		} );
-
-		return true;
-	},
-
 	destroyAddSectionView: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.destroy();
@@ -336,6 +303,8 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onChildviewRequestResize: function( columnView, ui ) {
+		window.currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
+
 		ui.element.css( {
 			width: '',
 			left: 'initial', // Fix for RTL resizing
@@ -345,9 +314,6 @@ SectionView = BaseElementView.extend( {
 			container: columnView.getContainer(),
 			settings: {
 				_inline_size: this.getColumnPercentSize( ui.element, ui.size.width ),
-			},
-			options: {
-				debounceHistory: true,
 			},
 		} );
 	},

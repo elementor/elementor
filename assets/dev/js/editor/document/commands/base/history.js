@@ -10,10 +10,12 @@ export default class History extends Base {
 		 * @type {{}|boolean}
 		 */
 		this.history = this.getHistory( args );
-	}
 
-	static endLog() {
-		$e.run( 'document/history/end-log' );
+		/**
+		 *
+		 * @type {number|boolean}
+		 */
+		this.historyId = false;
 	}
 
 	/**
@@ -46,15 +48,15 @@ export default class History extends Base {
 		super.onBeforeRun( args );
 
 		if ( this.history && this.isHistoryActive() ) {
-			$e.run( 'document/history/start-log', this.history );
+			this.historyId = $e.run( 'document/history/start-log', this.history );
 		}
 	}
 
 	onAfterRun( args, result ) {
 		super.onAfterRun( args, result );
 
-		if ( this.isHistoryActive() ) {
-			this.constructor.endLog();
+		if ( this.history && this.isHistoryActive() ) {
+			$e.run( 'document/history/end-log', { id: this.historyId } );
 		}
 	}
 
@@ -67,5 +69,3 @@ export default class History extends Base {
 		}
 	}
 }
-
-History.endLog = _.debounce( History.endLog, 800 );
