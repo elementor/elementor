@@ -105,7 +105,7 @@ export class Settings extends Debounce {
 			container.oldValues = {};
 
 			// Set oldValues, For each setting is about to change save setting value.
-			Object.entries( newSettings ).forEach( ( [ key, value ] ) => {
+			Object.entries( newSettings ).forEach( ( [ key, value ] ) => { 	// eslint-disable-line no-unused-vars
 				container.oldValues[ key ] = oldSettings[ key ];
 			} );
 

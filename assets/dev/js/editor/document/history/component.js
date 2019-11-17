@@ -53,9 +53,10 @@ export default class Component extends elementorModules.common.Component {
 		}
 
 		const transactions = {},
-			firstItem = this.transactions[ 0 ];
+			firstItem = this.transactions[ 0 ],
+			{ type } = firstItem;
 
-		let { title = '', subTitle = '', type } = firstItem;
+		let { title = '', subTitle = '' } = firstItem;
 
 		this.transactions.forEach( ( itemArgs ) => {
 			// If no containers at the current transaction.
@@ -110,7 +111,7 @@ export default class Component extends elementorModules.common.Component {
 		const historyId = $e.run( 'document/history/start-log', history );
 
 		Object.entries( transactions ).forEach( ( [ id, item ] ) => { // eslint-disable-line no-unused-vars
-			let itemArgs = item;
+			const itemArgs = item;
 
 			// If log already started chain his historyId.
 			if ( firstItem.id ) {
@@ -125,7 +126,7 @@ export default class Component extends elementorModules.common.Component {
 		this.transactions = [];
 	}
 
-	deleteTransactionItem( args ) {
+	deleteTransactionItem() {
 		const firstItem = this.transactions[ 0 ];
 
 		$e.run( 'document/history/delete-log', firstItem );
@@ -167,10 +168,11 @@ export default class Component extends elementorModules.common.Component {
 
 	getCommands() {
 		// TODO: Use alphabetical order.
+		// TODO: Use this example: `'start-transaction': this.startTransactionItem.bind( this ),`.
 		return {
 			'start-transaction': ( args ) => this.startTransactionItem( args ),
 			'add-transaction': ( args ) => this.addTransactionItem( args ),
-			'delete-transaction': ( args ) => this.deleteTransactionItem( args ),
+			'delete-transaction': () => this.deleteTransactionItem(),
 			'end-transaction': () => this.endTransactionItem(),
 
 			'start-log': ( args ) => this.startLog( args ),

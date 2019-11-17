@@ -40,8 +40,8 @@ export default class Helpers {
 
 	findViewRecursive( parent, key, value, multiple = true ) {
 		let found = [];
-		for ( let x in parent._views ) {
-			let view = parent._views[ x ];
+		for ( const x in parent._views ) {
+			const view = parent._views[ x ];
 
 			if ( value === view.model.get( key ) ) {
 				found.push( view );
