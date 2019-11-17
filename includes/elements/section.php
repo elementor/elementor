@@ -5,6 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Manager as Schemes_Manager;
+
 /**
  * Elementor section element.
  *

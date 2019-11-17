@@ -144,7 +144,7 @@ class Main {
 	public function display_page() {
 		$reports_info = self::get_allowed_reports();
 
-		$reports = $this->load_reports( $reports_info );
+		$reports = $this->load_reports( $reports_info, 'html' );
 
 		$raw_reports = $this->load_reports( $reports_info, 'raw' );
 
@@ -202,7 +202,7 @@ class Main {
 		$domain = parse_url( site_url(), PHP_URL_HOST );
 
 		header( 'Content-Type: text/plain' );
-		header( 'Content-Disposition:attachment; filename=system-info-' . $domain . '-' . date( 'd-m-Y' ) . '.txt' );
+		header( 'Content-Disposition:attachment; filename=system-info-' . $domain . '-' . gmdate( 'd-m-Y' ) . '.txt' );
 
 		$this->print_report( $reports );
 

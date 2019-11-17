@@ -35,6 +35,12 @@ export class Move extends History {
 				}
 			}
 
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			options.trigger = {
+				beforeAdd: 'drag:before:update',
+				afterAdd: 'drag:after:update',
+			};
+
 			$e.run( 'document/elements/create', {
 				container: target,
 				model,

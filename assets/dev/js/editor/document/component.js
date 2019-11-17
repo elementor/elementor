@@ -1,7 +1,10 @@
 import * as Hooks from './hooks/';
+import BackwardsCompatibility from './backwards-compatibility.js';
 
 export default class Component extends elementorModules.common.Component {
 	onInit() {
+		new BackwardsCompatibility();
+
 		super.onInit();
 
 		this.hooks = {};

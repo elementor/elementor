@@ -67,7 +67,7 @@
 			outline: 0;
 
 			&:hover {
-				background-color: lighten( $editor-background, 5%);
+				background-color: lighten($editor-background, 5%);
 			}
 
 			&.dialog-ok {

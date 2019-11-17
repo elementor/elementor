@@ -4,10 +4,10 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
+use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
-use Elementor\Schemes_Manager;
 use Elementor\Settings;
 use Elementor\Shapes;
 use Elementor\TemplateLibrary\Source_Local;
@@ -461,6 +461,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'pickr',
+			ELEMENTOR_ASSETS_URL . 'lib/pickr/js/pickr.min.js',
+			[],
+			'1.4.7',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -481,6 +489,7 @@ class Editor {
 				'ace-language-tools',
 				'jquery-hover-intent',
 				'nouislider',
+				'pickr',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -573,6 +582,7 @@ class Editor {
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
+				'clear' => __( 'Clear', 'elementor' ),
 				'got_it' => __( 'Got It', 'elementor' ),
 				/* translators: %s: Element type. */
 				'add_element' => __( 'Add %s', 'elementor' ),
@@ -587,7 +597,6 @@ class Editor {
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
-				'color_picker' => __( 'Color Picker', 'elementor' ),
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
@@ -832,6 +841,13 @@ class Editor {
 		);
 
 		wp_register_style(
+			'pickr',
+			ELEMENTOR_ASSETS_URL . 'lib/pickr/css/monolith.min.css',
+			[],
+			'1.4.7'
+		);
+
+		wp_register_style(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
@@ -841,6 +857,7 @@ class Editor {
 				'wp-auth-check',
 				'google-font-roboto',
 				'flatpickr',
+				'pickr',
 			],
 			ELEMENTOR_VERSION
 		);

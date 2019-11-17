@@ -31,10 +31,16 @@ export class ResetStyle extends History {
 				defaultValues[ controlName ] = control.default;
 			} );
 
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			elementor.channels.data.trigger( 'element:before:reset:style', container.model );
+
 			$e.run( 'document/elements/settings', {
 				container,
 				settings: defaultValues,
 			} );
+
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			elementor.channels.data.trigger( 'element:after:reset:style', container.model );
 
 			container.view.allowRender = true;
 

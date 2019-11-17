@@ -221,6 +221,7 @@ class Admin extends App {
 		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
 			$post_states['elementor'] = __( 'Elementor', 'elementor' );
 		}
+
 		return $post_states;
 	}
 
@@ -306,17 +307,39 @@ class Admin extends App {
 		return $plugin_meta;
 	}
 
+	public function admin_notices() {
+		$admin_notice = Api::get_admin_notice();
+		if ( empty( $admin_notice ) ) {
+			return;
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
+			return;
+		}
+		$notice_id = 'admin_notice_api_' . $admin_notice['notice_id'];
+		if ( User::is_user_notice_viewed( $notice_id ) ) {
+			return;
+		}
+		?>
+		<div class="notice is-dismissible updated elementor-message-dismissed elementor-message-announcement" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<p><?php echo $admin_notice['notice_text']; ?></p>
+		</div>
+		<?php
+	}
+
 	/**
-	 * Admin notices.
+	 * Admin upgrade notices.
 	 *
-	 * Add Elementor notices to WordPress admin screen.
+	 * Add Elementor upgrades notices to WordPress admin screen.
 	 *
 	 * Fired by `admin_notices` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function admin_notices() {
+	public function admin_upgrade_notices() {
 		$upgrade_notice = Api::get_upgrade_notice();
 		if ( empty( $upgrade_notice ) ) {
 			return;
@@ -756,6 +779,7 @@ class Admin extends App {
 		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 
 		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
+		add_action( 'admin_notices', [ $this, 'admin_upgrade_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 

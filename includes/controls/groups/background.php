@@ -680,6 +680,51 @@ class Group_Control_Background extends Group_Control_Base {
 			'frontend_available' => true,
 		];
 
+		$fields['slideshow_background_size'] = [
+			'label' => __( 'Background Size', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'responsive' => true,
+			'default' => '',
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'auto' => __( 'Auto', 'elementor' ),
+				'cover' => __( 'Cover', 'elementor' ),
+				'contain' => __( 'Contain', 'elementor' ),
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-size: {{VALUE}};',
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+		];
+
+		$fields['slideshow_background_position'] = [
+			'label' => __( 'Background Position', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => '',
+			'responsive' => true,
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'top left' => __( 'Top Left', 'elementor' ),
+				'top center' => __( 'Top Center', 'elementor' ),
+				'top right' => __( 'Top Right', 'elementor' ),
+				'center left' => __( 'Center Left', 'elementor' ),
+				'center center' => __( 'Center Center', 'elementor' ),
+				'center right' => __( 'Center Right', 'elementor' ),
+				'bottom left' => __( 'Bottom Left', 'elementor' ),
+				'bottom center' => __( 'Bottom Center', 'elementor' ),
+				'bottom right' => __( 'Bottom Right', 'elementor' ),
+
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-position: {{VALUE}};',
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+		];
+
 		$fields['slideshow_ken_burns'] = [
 			'label' => __( 'Ken Burns Effect', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,

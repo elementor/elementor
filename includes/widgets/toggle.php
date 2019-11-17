@@ -5,6 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
+
 /**
  * Elementor toggle widget.
  *
@@ -149,6 +152,29 @@ class Widget_Toggle extends Widget_Base {
 					'value' => 'fas fa-caret' . ( is_rtl() ? '-left' : '-right' ),
 					'library' => 'fa-solid',
 				],
+				'recommended' => [
+					'fa-solid' => [
+						'caret-right',
+						'caret-left',
+						'caret-up',
+						'caret-down',
+						'caret-square-right',
+						'caret-square-left',
+						'caret-square-up',
+						'caret-square-down',
+					],
+					'fa-regular' => [
+						'caret-right',
+						'caret-left',
+						'caret-up',
+						'caret-down',
+						'caret-square-right',
+						'caret-square-left',
+						'caret-square-up',
+						'caret-square-down',
+					],
+				],
+				'skin' => 'inline',
 			]
 		);
 
@@ -162,6 +188,29 @@ class Widget_Toggle extends Widget_Base {
 					'value' => 'fas fa-caret-up',
 					'library' => 'fa-solid',
 				],
+				'recommended' => [
+					'fa-solid' => [
+						'caret-right',
+						'caret-left',
+						'caret-up',
+						'caret-down',
+						'caret-square-right',
+						'caret-square-left',
+						'caret-square-up',
+						'caret-square-down',
+					],
+					'fa-regular' => [
+						'caret-right',
+						'caret-left',
+						'caret-up',
+						'caret-down',
+						'caret-square-right',
+						'caret-square-left',
+						'caret-square-up',
+						'caret-square-down',
+					],
+				],
+				'skin' => 'inline',
 				'condition' => [
 					'selected_icon[value]!' => '',
 				],

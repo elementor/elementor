@@ -105,11 +105,11 @@ class Control_URL extends Control_Base_Multiple {
 				</label>
 				<input id="<?php echo $more_input_control_uid; ?>" type="checkbox" class="elementor-control-url-more-input">
 				<div class="elementor-control-url-more-options">
-					<div class="elementor-control-url-option">
+					<div class="elementor-control-url-option check-wrapper">
 						<input id="<?php echo $is_external_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="is_external">
 						<label for="<?php echo $is_external_control_uid; ?>"><?php echo __( 'Open in new window', 'elementor' ); ?></label>
 					</div>
-					<div class="elementor-control-url-option">
+					<div class="elementor-control-url-option check-wrapper">
 						<input id="<?php echo $nofollow_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="nofollow">
 						<label for="<?php echo $nofollow_control_uid; ?>"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
 					</div>

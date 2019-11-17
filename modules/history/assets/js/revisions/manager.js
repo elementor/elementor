@@ -43,8 +43,6 @@ RevisionsManager = function() {
 			success: ( data ) => {
 				revisions = new RevisionsCollection( data );
 
-				revisions.on( 'update', this.onRevisionsUpdate.bind( this ) );
-
 				callback( revisions );
 			},
 		} );
@@ -112,12 +110,6 @@ RevisionsManager = function() {
 		attachEvents();
 
 		$e.components.register( new Component( { manager: self } ) );
-	};
-
-	this.onRevisionsUpdate = function() {
-		if ( $e.routes.is( 'panel/history/revisions' ) ) {
-			$e.routes.refreshContainer( 'panel' );
-		}
 	};
 };
 

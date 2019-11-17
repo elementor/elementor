@@ -158,6 +158,13 @@ class AddSectionBase extends Marionette.ItemView {
 			},
 			container: elementor.getPreviewContainer(),
 			columns: 1,
+			options: {
+				// BC: Deprecated since 2.8.0 - use `$e.events`.
+				trigger: {
+					beforeAdd: 'section:before:drop',
+					afterAdd: 'section:after:drop',
+				},
+			},
 		} ).view.addElementFromPanel();
 
 		$e.run( 'document/history/end-log', { id: historyId } );
