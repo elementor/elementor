@@ -60,7 +60,7 @@ jQuery( () => {
 
 			// Use `instance.historyId` for error.
 			try {
-				instance.onCatchApply( instance.historyId );
+				instance.onCatchApply( instance.id );
 			} catch ( e ) {
 				assert.equal( e, instance.historyId );
 			}

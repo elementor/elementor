@@ -43,10 +43,7 @@ export default class Base {
 		const params = [ this.command, this.id, ( ... args ) => {
 			if ( this.conditions( args[ 0 ] ) ) {
 				if ( $e.devTools ) {
-					// TODO: avoid of using `$e.devTools.log` do same as `$e.devTools.log.command()`
-					// eg `$e.devTools.log.hook()`.
-					$e.devTools.log.log( `%cHOOK ACTIVATED: ${ this.command }: ${ this.id } `,
-						'font-weight: bold;color: #66ffcc' );
+					$e.devTools.log.hookActive( this.command, this.id );
 				}
 
 				return this.apply( ... args );

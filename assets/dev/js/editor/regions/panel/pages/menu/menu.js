@@ -73,7 +73,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'finder',
-			icon: 'eicon-search',
+			icon: 'eicon-search-bold',
 			title: elementorCommon.translate( 'finder', 'finder' ),
 			callback: () => $e.route( 'finder' ),
 		}, 'go_to', 'view-page' );
@@ -92,14 +92,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			title: elementor.translate( 'global_fonts' ),
 			type: 'page',
 			callback: () => $e.route( 'panel/global-fonts' ),
-		}, 'style' );
-
-		this.addItem( {
-			name: 'color-picker',
-			icon: 'eicon-eyedropper',
-			title: elementor.translate( 'color_picker' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/color-picker' ),
 		}, 'style' );
 
 		this.addItem( {

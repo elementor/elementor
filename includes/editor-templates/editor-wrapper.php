@@ -23,6 +23,11 @@ if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
 	$body_classes[] = 'elementor-editor-content-only';
 }
 
+$ui_theme = get_option( 'elementor_editor_ui_theme', 'auto' );
+if ( 'dark' === $ui_theme ) {
+	$body_classes[] = 'ui-theme-dark';
+}
+
 $notice = Plugin::$instance->editor->notice_bar->get_notice();
 ?>
 <!DOCTYPE html>

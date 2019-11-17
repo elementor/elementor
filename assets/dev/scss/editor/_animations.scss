@@ -1,49 +1,26 @@
-//
-// Animations
-//
-
-$section-placeholder-size: 40px;
-$column-placeholder-size: 10px;
-$widget-placeholder-size: 10px;
-
-@keyframes placeholder-section {
+@keyframes load {
 	0% {
-		height: 0;
-		opacity: 0;
+		opacity: .3;
 	}
-	100% {
-		height: $section-placeholder-size;
-		opacity: .9;
-	}
-}
-
-@keyframes placeholder-column {
-	0% {
-		width: 0;
-		opacity: 0;
-	}
-	100% {
-		width: $column-placeholder-size;
-		opacity: .9;
-	}
-}
-
-@keyframes placeholder-widget {
-	0% {
-		height: 0;
-		opacity: 0;
-	}
-	100% {
-		height: $widget-placeholder-size;
-		opacity: .9;
-	}
-}
-
-@keyframes section-outline {
-	0% {
-		opacity: 0;
-	}
-	100% {
+	50% {
 		opacity: 1;
 	}
+	100% {
+		opacity: .3;
+	}
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes mover {
+	0% { transform: translateY(0); }
+	100% { transform: translateY(-5px); }
+}
+
+@keyframes slideDown {
+	0% { transform: translateY(-30px); }
+	100% { transform: translateY(0); }
 }

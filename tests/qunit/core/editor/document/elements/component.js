@@ -61,49 +61,6 @@ jQuery( () => {
 					`'${ eButtonDuplicateCount }' buttons were duplicated.` );
 			} );
 
-			QUnit.test( 'Settings', ( assert ) => {
-				const eButton = DocumentHelper.createAutoButton(),
-					text = 'i test it';
-
-				// Change button text.
-				DocumentHelper.settings( eButton, { text } );
-
-				// Check button text.
-				assert.equal( eButton.settings.attributes.text, text, `text setting were changed to: '${ text }'.` );
-			} );
-
-			QUnit.test( 'Paste Style', ( assert ) => {
-				const eButtonSimple = DocumentHelper.createAutoButton(),
-					eButtonStyled = DocumentHelper.createAutoButtonStyled(),
-					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
-
-				DocumentHelper.copy( eButtonStyled );
-
-				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
-
-				DocumentHelper.pasteStyle( eButtonSimple );
-
-				// Check
-				assert.equal( eButtonSimple.settings.attributes.background_color, eStyledButtonBackground,
-					`Button background color was changed to '${ eStyledButtonBackground }'.` );
-				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
-			} );
-
-			QUnit.test( 'Reset Style', ( assert ) => {
-				const eButtonStyled = DocumentHelper.createAutoButtonStyled();
-
-				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
-
-				DocumentHelper.resetStyle( eButtonStyled );
-
-				// Check pasted style exist.
-				assert.equal( eButtonStyled.settings.attributes.background_color, '',
-					'Button with custom style were (style) restored.' );
-				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
-			} );
-
 			QUnit.test( 'Move Section', ( assert ) => {
 				// Create Section at 0.
 				DocumentHelper.createSection();
@@ -177,24 +134,6 @@ jQuery( () => {
 				assert.equal( eColumn2.view.children.length, 2, 'Two buttons were duplicated.' );
 			} );
 
-			QUnit.test( 'Settings', ( assert ) => {
-				const eSection1 = DocumentHelper.createSection(),
-					eSection2 = DocumentHelper.createSection(),
-					eColumns = DocumentHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
-					eButtons = DocumentHelper.multiCreateButton( eColumns ),
-					text = 'i test it';
-
-				DocumentHelper.multiSettings( eButtons, { text } );
-
-				// Check button text.
-				let count = 1;
-				eButtons.forEach( ( eButton ) => {
-					assert.equal( eButton.model.attributes.settings.attributes.text, text,
-						`Button #${ count } text was changed to: '${ text }.'` );
-					++count;
-				} );
-			} );
-
 			QUnit.test( 'Copy & Paste', ( assert ) => {
 				const eSection1 = DocumentHelper.createSection(),
 					eSection2 = DocumentHelper.createSection(),
@@ -212,36 +151,6 @@ jQuery( () => {
 						`Button #${ count } were pasted.` );
 					++count;
 				} );
-			} );
-
-			QUnit.test( 'Paste Style', ( assert ) => {
-				const eButtonSimple1 = DocumentHelper.createAutoButton(),
-					eButtonSimple2 = DocumentHelper.createAutoButton(),
-					eButtonStyled = DocumentHelper.createAutoButtonStyled(),
-					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
-
-				DocumentHelper.copy( eButtonStyled );
-
-				DocumentHelper.multiPasteStyle( [ eButtonSimple1, eButtonSimple2 ] );
-
-				// Check pasted style exist.
-				assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
-					`Button #1 background color was changed to '${ eStyledButtonBackground }'.` );
-				assert.equal( eButtonSimple2.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
-					`Button #2 background color was changed to '${ eStyledButtonBackground }'.` );
-			} );
-
-			QUnit.test( 'Reset Style', ( assert ) => {
-				const eButtonStyled1 = DocumentHelper.createAutoButtonStyled(),
-					eButtonStyled2 = DocumentHelper.createAutoButtonStyled();
-
-				DocumentHelper.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
-
-				// Check pasted style exist.
-				assert.equal( eButtonStyled1.model.attributes.settings.attributes.background_color, '',
-					'Button #1 with custom style were (style) restored.' );
-				assert.equal( eButtonStyled2.model.attributes.settings.attributes.background_color, '',
-					'Button #2 with custom style were (style) restored.' );
 			} );
 
 			QUnit.test( 'Move Sections', ( assert ) => {

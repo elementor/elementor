@@ -53,13 +53,18 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	createItemModel: function( attrs, options ) {
+	createItemModel: function( attrs, options, controlView ) {
+		options.controls = controlView.model.get( 'fields' );
+
 		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 
 	fillCollection: function() {
+		// TODO: elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+
 		var controlName = this.model.get( 'name' );
-		this.collection = this.container.settings.get( controlName );
+		this.collection = settings.get( controlName );
 
 		// Hack for history redo/undo
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
@@ -70,11 +75,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			} );
 
 			// Set the value silent
-			this.container.settings.set( controlName, this.collection, { silent: true } );
+			settings.set( controlName, this.collection, { silent: true } );
 		}
 
 		// Reset children.
-		this.getOption( 'container' ).children = [];
+		// TODO: Temp backwards compatibility since 2.8.0.
+		if ( this.container ) {
+			this.container.children = [];
+		}
 	},
 
 	initialize: function() {

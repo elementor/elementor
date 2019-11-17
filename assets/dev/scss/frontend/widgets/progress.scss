@@ -27,9 +27,7 @@
 
 .elementor-progress-text {
 	flex-grow: 1;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	@include ellipsis;
 	@include padding-start(15px);
 }
 

@@ -8,7 +8,6 @@ export default class extends elementorModules.common.Component {
 			menu: () => this.manager.setPage( 'menu' ),
 			'global-colors': () => this.manager.setPage( 'colorScheme' ),
 			'global-fonts': () => this.manager.setPage( 'typographyScheme' ),
-			'color-picker': () => this.manager.setPage( 'colorPickerScheme' ),
 		};
 	}
 

@@ -1,5 +1,4 @@
 import HookAfter from '../base/after';
-import Debounce from '../../commands/base/debounce';
 
 export class HandleDynamic extends HookAfter {
 	hook() {
@@ -27,13 +26,7 @@ export class HandleDynamic extends HookAfter {
 						settings: {
 							[ container.view.options.controlName ]: tagText,
 						},
-					},
-					debounceHistoryId = Debounce.getHistoryId( args );
-
-				// Upon debounce, chain HistoryId.
-				if ( debounceHistoryId ) {
-					commandArgs.histroyId = debounceHistoryId;
-				}
+					};
 
 				$e.run( 'document/dynamic/settings', commandArgs );
 			}

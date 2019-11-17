@@ -32,32 +32,6 @@ class Control_Color extends Base_Data_Control {
 	}
 
 	/**
-	 * Enqueue color control scripts and styles.
-	 *
-	 * Used to register and enqueue custom scripts and styles used by the color
-	 * control.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function enqueue() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_register_script(
-			'wp-color-picker-alpha',
-			ELEMENTOR_ASSETS_URL . 'lib/wp-color-picker/wp-color-picker-alpha' . $suffix . '.js',
-			[
-				'wp-color-picker',
-			],
-			'2.0.1',
-			true
-		);
-
-		wp_enqueue_style( 'wp-color-picker' );
-		wp_enqueue_script( 'wp-color-picker-alpha' );
-	}
-
-	/**
 	 * Render color control output in the editor.
 	 *
 	 * Used to generate the control HTML in the editor using Underscore JS
@@ -69,26 +43,9 @@ class Control_Color extends Base_Data_Control {
 	 */
 	public function content_template() {
 		?>
-		<# var defaultValue = '', dataAlpha = '';
-			if ( data.default ) {
-				defaultValue = ' data-default-color=' + data.default; // Quotes added automatically.
-			}
-
-			if ( data.alpha ) {
-				dataAlpha = ' data-alpha=true';
-			} #>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title">
-				<# if ( data.label ) { #>
-					{{{ data.label }}}
-				<# } #>
-				<# if ( data.description ) { #>
-					<span class="elementor-control-field-description">{{{ data.description }}}</span>
-				<# } #>
-			</label>
-			<div class="elementor-control-input-wrapper">
-				<input data-setting="{{ name }}" type="text" placeholder="<?php echo esc_attr( 'Hex/rgba', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
-			</div>
+			<label class="elementor-control-title">{{{ data.label || '' }}}</label>
+			<div class="elementor-control-input-wrapper"></div>
 		</div>
 		<?php
 	}

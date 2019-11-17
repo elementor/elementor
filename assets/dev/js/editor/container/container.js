@@ -141,6 +141,10 @@ export default class Container extends ArgsObject {
 	lookup() {
 		let result = this;
 
+		if ( ! this.renderer ) {
+			return this;
+		}
+
 		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
 			this.renderer = this.renderer.lookup();
 		}

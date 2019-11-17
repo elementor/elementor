@@ -8,13 +8,14 @@
 			padding: 10px 15px;
 			margin-bottom: 10px;
 			font-size: 11px;
+			transition: $transition-hover;
 
 			&.current {
 				font-weight: bold;
 			}
 
 			.elementor-revision-item__tools-current {
-				color: $editor-accent;
+				color: $editor-info
 			}
 		}
 

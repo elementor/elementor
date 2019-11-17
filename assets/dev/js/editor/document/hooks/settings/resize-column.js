@@ -1,5 +1,4 @@
 import HookAfter from '../base/after';
-import Debounce from '../../commands/base/debounce';
 
 export class ResizeColumn extends HookAfter {
 	hook() {
@@ -11,59 +10,48 @@ export class ResizeColumn extends HookAfter {
 	}
 
 	conditions( args ) {
-		return args.settings._inline_size && ! args.isMultiSettings;
+		return args.settings._inline_size;
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], options = {} } = args;
-
-		if ( ! options.debounceHistory ) {
-			options.debounceHistory = false;
-		}
+		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( /**Container*/ container ) => {
-			const parentView = container.parent.view,
-				columnView = container.view,
-				changes = Debounce.getChanges( args )[ container.id ],
-				currentSize = changes.old._inline_size || container.settings.get( '_column_size' ),
-				newSize = changes.new._inline_size;
-
-			this.resizeColumn( container, currentSize, newSize );
+			this.resizeColumn( container, args.settings._inline_size );
 		} );
 
 		return true;
 	}
 
-	resizeColumn( container, currentSize, newSize ) {
-		const parentView = container.parent.view,
-			childView = container.view,
-			nextChildView = parentView.getNextColumn( childView ) || parentView.getPreviousColumn( childView );
+	resizeColumn( container, newSize ) {
+		const nextContainer = container.parent.view.getNeighborContainer( container );
 
-		if ( ! nextChildView ) {
+		if ( ! nextContainer ) {
 			return false;
 		}
 
-		const $nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || nextChildView.model.getSetting( '_column_size' ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 ),
-			nextColumnContainer = nextChildView.getContainer(),
-			containers = [ nextColumnContainer ],
-			settings = {
-				[ nextColumnContainer.id ]: {
-					_inline_size: nextElementNewSize,
-				},
-			};
+		const currentSize = container.oldValues._inline_size || container.settings.get( '_column_size' );
 
+		const nextChildView = nextContainer.view,
+			$nextElement = nextChildView.$el,
+			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) ||
+				container.parent.view.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
+			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
+
+		/**
+		 * TODO: Hook prevented ( next command will not call recursive hook ), but we didnt tell the hook to be prevented
+		 * consider: '$e.hooks.preventRecursive()'.
+		 */
 		$e.run( 'document/elements/settings', {
-			containers,
-			settings,
-			isMultiSettings: true,
+			containers: [ nextContainer ],
+			settings: {
+				_inline_size: nextElementNewSize,
+			},
 			options: {
-				debounceHistory: true,
-				external: true,
 				history: {
 					title: elementor.config.elements.column.controls._inline_size.label,
 				},
+				external: true,
 			},
 		} );
 
