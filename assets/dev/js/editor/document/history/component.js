@@ -29,11 +29,6 @@ export default class Component extends elementorModules.common.Component {
 	}
 
 	addTransactionItem( args ) {
-		// No type checking when adding item.
-		// if ( ! args.type ) {
-		// 	throw Error( 'type is required.' );
-		// }
-
 		const { containers = [ args.container ] } = args;
 
 		if ( ! containers.length ) {
@@ -52,7 +47,7 @@ export default class Component extends elementorModules.common.Component {
 		this.transactions.push( args );
 	}
 
-	endTransactionItem( args ) {
+	endTransactionItem() {
 		if ( ! this.transactions.length ) {
 			return;
 		}
@@ -101,12 +96,6 @@ export default class Component extends elementorModules.common.Component {
 			subTitle = '';
 		}
 
-		/*elementor.history.history.startItem( {
-			title,
-			subTitle,
-			type,
-		} );*/
-
 		const history = {
 			title,
 			subTitle,
@@ -120,10 +109,8 @@ export default class Component extends elementorModules.common.Component {
 
 		const historyId = $e.run( 'document/history/start-log', history );
 
-		Object.entries( transactions ).forEach( ( [ id, item ] ) => {
-
+		Object.entries( transactions ).forEach( ( [ id, item ] ) => { // eslint-disable-line no-unused-vars
 			let itemArgs = item;
-			// elementor.history.history.addItem( itemArgs );
 
 			// If log already started chain his historyId.
 			if ( firstItem.id ) {
@@ -132,8 +119,6 @@ export default class Component extends elementorModules.common.Component {
 
 			$e.run( 'document/history/log-sub-item', itemArgs );
 		} );
-
-
 
 		$e.run( 'document/history/end-log', { id: historyId } );
 
@@ -186,7 +171,7 @@ export default class Component extends elementorModules.common.Component {
 			'start-transaction': ( args ) => this.startTransactionItem( args ),
 			'add-transaction': ( args ) => this.addTransactionItem( args ),
 			'delete-transaction': ( args ) => this.deleteTransactionItem( args ),
-			'end-transaction': ( args ) => this.endTransactionItem( args ),
+			'end-transaction': () => this.endTransactionItem(),
 
 			'start-log': ( args ) => this.startLog( args ),
 			'delete-log': ( args ) => this.deleteLog( args ),

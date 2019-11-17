@@ -1,7 +1,7 @@
 import History from '../../commands/base/history';
 
 export class CopyAll extends History {
-	getHistory( args ) {
+	getHistory( args ) { // eslint-disable-line no-unused-vars
 		// No history for the command.
 		return false;
 	}

@@ -29,7 +29,7 @@ export default class History extends Base {
 	 *
 	 * @throws {Error}
 	 */
-	getHistory( args ) {
+	getHistory( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 

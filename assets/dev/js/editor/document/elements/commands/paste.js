@@ -10,7 +10,7 @@ export class Paste extends History {
 		this.requireArgumentType( 'storageData', 'object', { storageData } );
 	}
 
-	getHistory( args ) {
+	getHistory( args ) { // eslint-disable-line no-unused-vars
 		// History is not required.
 		return false;
 	}

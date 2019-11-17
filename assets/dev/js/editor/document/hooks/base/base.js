@@ -124,7 +124,7 @@ export default class Base {
 	 *
 	 * @throws {Error}
 	 */
-	conditions( args ) {
+	conditions( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -137,7 +137,7 @@ export default class Base {
 	 *
 	 * @returns {boolean}
 	 */
-	apply( args ) {
+	apply( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 }

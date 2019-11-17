@@ -5,7 +5,7 @@ export class Copy extends History {
 		this.requireContainer( args );
 	}
 
-	getHistory( args ) {
+	getHistory( args ) { // eslint-disable-line no-unused-vars
 		// No history required for the command.
 		return false;
 	}
