@@ -1323,7 +1323,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 = 1.6.3 - 2017-08-09 =
 * Fix: Lightbox for Image Carousel ([#2135](https://github.com/elementor/elementor/issues/2135))
-* Fix: Allow to dismiss message asking to share anonymous usage data ([#2136](https://github.com/elementor/elementor/issues/2136))
+* Fix: Allow to dismiss message asking to share non-sensitive usage data ([#2136](https://github.com/elementor/elementor/issues/2136))
 * Fix: Conflict with Advanced TinyMCE plugin ([Topic](https://wordpress.org/support/topic/tinymce-unbreakable-space-not-display/))
 
 = 1.6.2 - 2017-08-03 =
