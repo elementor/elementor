@@ -96,6 +96,17 @@ body.elementor-editor-preview #elementor-mode-switcher {
 		background-color: $theme-dark-gray-darkest;
 	}
 
+	.elementor-button {
+
+		&.elementor-button-default {
+			background-color: $theme-dark-gray-light;
+
+			&:hover {
+				background-color: $theme-dark-gray;
+			}
+		}
+	}
+
 	//Mode Switcher
 	#elementor-mode-switcher {
 		background-color: $theme-dark-gray-darkest;
@@ -122,12 +133,23 @@ body.elementor-editor-preview #elementor-mode-switcher {
 		}
 	}
 
+	.elementor-tag-settings-popup {
+		background-color: $theme-dark-gray-darkest;
+		box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.8);
+
+		&:before {
+			border-bottom-color: $theme-dark-gray-dark;
+		}
+	}
+
 	//Panel
 	.elementor-panel {
 		background-color: $theme-dark-gray-darkest;
+
 		a {
 			color: $theme-dark-accent;
 		}
+
 		//Header
 		#elementor-panel-header {
 			background-color: $theme-dark-dark;
@@ -179,305 +201,351 @@ body.elementor-editor-preview #elementor-mode-switcher {
 				}
 			}
 		}
+	}
 
-		.elementor-controls-popover {
-			background-color: $theme-dark-gray;
-			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+	//Controls
+	.elementor-control {
+		background-color: $theme-dark-gray-dark;
 
-			&:before {
-				border-bottom-color: $theme-dark-gray;
-			}
-
-			.elementor-control-responsive-switchers {
-
-				&__holder {
-					background-color: $theme-dark-gray;
-				}
-			}
+		&.elementor-control-separator-before:before {
+			background-color: $theme-dark-gray-darkest;
 		}
 
-		//Sections
-		.elementor-panel-heading {
-			border-bottom-color: $theme-dark-gray-darkest;
+		&.elementor-control-type-divider {
 
-			&-toggle,
-			&-title {
-				color: $theme-dark-light;
-			}
-		}
-
-		//Control
-		.elementor-control {
-			background-color: $theme-dark-gray-dark;
-
-			&.elementor-control-separator-before:before {
-				background-color: $theme-dark-gray-darkest;
-			}
-
-			&.elementor-control-type-divider {
-
-				.elementor-control-content {
-					background-color: $theme-dark-gray-dark;
-					border-color: $theme-dark-gray-darkest;
-				}
-			}
-		}
-
-		.elementor-control-responsive-switchers {
-
-			&__holder {
+			.elementor-control-content {
 				background-color: $theme-dark-gray-dark;
-			}
-
-			&.elementor-responsive-switchers-open {
-
-				.elementor-control-responsive-switchers__holder {
-					box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-				}
+				border-color: $theme-dark-gray-darkest;
 			}
 		}
+	}
 
-		.elementor-control-type-popover_toggle {
+	.elementor-control-responsive-switchers {
 
-			.elementor-control-popover-toggle-toggle-label {
-				background-color: $theme-dark-gray-darkest;
-				border-color: $theme-dark-gray-light;
-			}
+		&__holder {
+			background-color: $theme-dark-gray-dark;
+		}
+
+		&.elementor-responsive-switchers-open {
 
 			.elementor-control-responsive-switchers__holder {
-				background-color: $theme-dark-gray;
+				box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 			}
 		}
+	}
 
-		//Media Control
-		.elementor-control-media-upload-button {
-			background-color: $theme-dark-gray-darkest;
+	a.elementor-responsive-switcher {
+		color: $theme-dark-light;
+
+		&:hover {
+			color: $theme-dark-accent;
 		}
+	}
 
-		.elementor-control-type-gallery {
+	$devices: 'desktop', 'tablet', 'mobile';
 
-			.elementor-control-gallery-clear {
-
-				&:hover {
-					color: $theme-dark-danger;
+	@each $device in $devices {
+		.elementor-device-#{ $device } {
+			.elementor-responsive-switchers-open:not(:hover) {
+				.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
+					color: $theme-dark-accent;
 				}
 			}
 		}
+	}
 
-		//URL Control
-		.elementor-control-type-url {
+	.elementor-control-type-popover_toggle {
 
-			.elementor-control-url-more {
-				border-left-color: $theme-dark-gray-light;
-			}
-		}
-
-		.elementor-control-type-wysiwyg {
-
-			.wp-editor-container {
-				border-color: $theme-dark-gray-light;
-			}
-
-			.mce-menubtn button,
-			.mce-ico,
-			.wp-switch-editor {
-				color: $theme-dark-light;
-			}
-
-			#insert-media-button,
-			.html-active .switch-html,
-			.mce-toolbar-grp,
-			.quicktags-toolbar,
-			.tmce-active .switch-tmce {
-				background-color: $theme-dark-gray-light;
-			}
-
-			#insert-media-button {
-				color: $theme-dark-light;
-				border-color: $theme-dark-gray-lighter;
-			}
-
-			.mce-toolbar .mce-btn-group .mce-btn.mce-active,
-			.mce-toolbar .mce-btn-group .mce-btn:active,
-			.qt-dfw.active,
-			.mce-toolbar .mce-btn-group .mce-btn:hover,
-			.mce-toolbar .mce-btn-group .mce-btn:focus,
-			.qt-dfw:hover,
-			.qt-dfw:focus{
-				background-color: $theme-dark-gray-dark;
-				box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08), 0 1px 0 rgba(0, 0, 0, 0.08);
-			}
-
-			.mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
-				background-color: transparent;
-			}
-
-			.quicktags-toolbar {
-				border-color: $theme-dark-gray-lighter;
-			}
-
-			.wp-core-ui .button,
-			.wp-core-ui .button-secondary {
-				background-color: $theme-dark-gray;
-				color: $theme-dark-light;
-				border-color: $theme-dark-gray-lighter;
-
-				&:hover {
-					background-color: $theme-dark-gray-dark;
-					border-color: $theme-dark-gray-lighter;
-				}
-			}
-		}
-
-		//Choices Control
-		.elementor-choices {
-			background-color: $theme-dark-gray-darkest;
-
-			.elementor-choices-label {
-				border-color: $theme-dark-gray-light;
-			}
-
-			& input:checked {
-
-				+ .elementor-choices-label {
-					background-color: $theme-dark-gray-lighter;
-					border-color: $theme-dark-gray-lighter;
-				}
-			}
-		}
-
-		//Tab Control
-		.elementor-control-type-tab {
+		.elementor-control-popover-toggle-toggle-label {
 			background-color: $theme-dark-gray-darkest;
 			border-color: $theme-dark-gray-light;
+		}
 
-			&.elementor-tab-active {
+		.elementor-control-responsive-switchers__holder {
+			background-color: $theme-dark-gray;
+		}
+	}
+
+	//Media Control
+	.elementor-control-media-upload-button {
+		background-color: $theme-dark-gray-darkest;
+	}
+
+	.elementor-control-type-gallery {
+
+		.elementor-control-gallery-clear {
+
+			&:hover {
+				color: $theme-dark-danger;
+			}
+		}
+	}
+
+	//URL Control
+	.elementor-control-type-url {
+
+		.elementor-control-url-more {
+			border-left-color: $theme-dark-gray-light;
+		}
+	}
+
+	.elementor-control-type-wysiwyg {
+
+		.wp-editor-container {
+			border-color: $theme-dark-gray-light;
+		}
+
+		.mce-menubtn button,
+		.mce-ico,
+		.wp-switch-editor {
+			color: $theme-dark-light;
+		}
+
+		#insert-media-button,
+		.html-active .switch-html,
+		.mce-toolbar-grp,
+		.quicktags-toolbar,
+		.tmce-active .switch-tmce {
+			background-color: $theme-dark-gray-light;
+		}
+
+		#insert-media-button {
+			color: $theme-dark-light;
+			border-color: $theme-dark-gray-lighter;
+		}
+
+		.mce-toolbar .mce-btn-group .mce-btn.mce-active,
+		.mce-toolbar .mce-btn-group .mce-btn:active,
+		.qt-dfw.active,
+		.mce-toolbar .mce-btn-group .mce-btn:hover,
+		.mce-toolbar .mce-btn-group .mce-btn:focus,
+		.qt-dfw:hover,
+		.qt-dfw:focus{
+			background-color: $theme-dark-gray-dark;
+			box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08), 0 1px 0 rgba(0, 0, 0, 0.08);
+		}
+
+		.mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
+			background-color: transparent;
+		}
+
+		.quicktags-toolbar {
+			border-color: $theme-dark-gray-lighter;
+		}
+
+		.wp-core-ui .button,
+		.wp-core-ui .button-secondary {
+			background-color: $theme-dark-gray;
+			color: $theme-dark-light;
+			border-color: $theme-dark-gray-lighter;
+
+			&:hover {
+				background-color: $theme-dark-gray-dark;
+				border-color: $theme-dark-gray-lighter;
+			}
+		}
+	}
+
+	//Choices Control
+	.elementor-choices {
+
+		.elementor-choices-label {
+			background-color: $theme-dark-gray-darkest;
+			border-color: $theme-dark-gray-light;
+		}
+
+		& input:checked {
+
+			+ .elementor-choices-label {
 				background-color: $theme-dark-gray-lighter;
 				border-color: $theme-dark-gray-lighter;
 			}
 		}
+	}
 
-		//Slider Control
-		.elementor-slider {
-			background-color: $theme-dark-gray-lightest;
+	//Repeater Control
+	.elementor-control-type-repeater {
 
-			.noUi-handle {
-				background-color: $theme-dark-light;
+		.elementor-repeater-row-tools {
+			background-color: $theme-dark-gray-light;
+			color: $theme-dark-light;
+
+			&:hover {
+				background-color: $theme-dark-gray-lighter;
+			}
+
+			> div:not(.elementor-repeater-row-handle-sortable) {
+				background-color: $theme-dark-gray;
+
+				&:hover {
+					background-color: lighten($theme-dark-gray, 2.5%);
+				}
 			}
 		}
 
-		//Dimensions Control
-		.elementor-control-type-dimensions {
+		.elementor-repeater-row-controls {
+			border-color: $theme-dark-gray-light;
+		}
+	}
 
-			li {
+	//Tab Control
+	.elementor-control-type-tab {
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray-light;
 
-				input,
-				.elementor-link-dimensions {
-					border-color: $theme-dark-gray-light;
+		&.elementor-tab-active {
+			background-color: $theme-dark-gray-lighter;
+			border-color: $theme-dark-gray-lighter;
+		}
+	}
+
+	//Slider Control
+	.elementor-slider {
+		background-color: $theme-dark-gray-lightest;
+
+		.noUi-handle {
+			background-color: $theme-dark-light;
+		}
+	}
+
+	//Dimensions Control
+	.elementor-control-type-dimensions {
+
+		li {
+
+			input,
+			.elementor-link-dimensions {
+				border-color: $theme-dark-gray-light;
+			}
+
+			input {
+
+				&:focus {
+					border-color: $theme-dark-gray-lighter;
 				}
+			}
+
+			&:first-child {
 
 				input {
+					border-color: $theme-dark-gray-light;
 
 					&:focus {
 						border-color: $theme-dark-gray-lighter;
 					}
 				}
-
-				&:first-child {
-
-					input {
-						border-color: $theme-dark-gray-light;
-
-						&:focus {
-							border-color: $theme-dark-gray-lighter;
-						}
-					}
-				}
-			}
-
-			.elementor-link-dimensions.unlinked {
-				background-color: $theme-dark-gray-darkest;
-				color: $theme-dark-light;
-			}
-
-			.elementor-link-dimensions:not(.unlinked) {
-				background-color: $theme-dark-gray-lighter;
 			}
 		}
 
-		//Switcher Control
-		.elementor-control-type-switcher {
-
-			.elementor-switch-label {
-				background-color: $theme-dark-gray-darkest;
-
-				&:before {
-					text-shadow: 0 1px rgba(0, 0, 0, 0.8);
-				}
-			}
-
-			.elementor-switch-input:checked ~ .elementor-switch-label {
-				background-color: $theme-dark-accent;
-			}
-
-			.elementor-switch-handle {
-				background-color: $theme-dark-light;
-			}
-		}
-
-		//Color Picker
-		.pickr {
+		.elementor-link-dimensions.unlinked {
 			background-color: $theme-dark-gray-darkest;
-			border-color: $theme-dark-gray;
+			color: $theme-dark-light;
 		}
 
-		//Help Link
-		#elementor-panel__editor__help__link {
-			color: $theme-dark-gray-lightest;
+		.elementor-link-dimensions:not(.unlinked) {
+			background-color: $theme-dark-gray-lighter;
+		}
+	}
 
-			&:hover {
-				color: $theme-dark-accent;
+	//Switcher Control
+	.elementor-control-type-switcher {
+
+		.elementor-switch-label {
+			background-color: $theme-dark-gray-darkest;
+
+			&:before {
+				text-shadow: 0 1px rgba(0, 0, 0, 0.8);
 			}
 		}
 
-		//Global Widget
-		#elementor-panel-global-widget > * {
-			background-color: $theme-dark-gray-dark;
+		.elementor-switch-input:checked ~ .elementor-switch-label {
+			background-color: $theme-dark-accent;
 		}
 
-		#elementor-global-widget-locked-unlink {
-			border-top-color: $theme-dark-gray-darkest;
+		.elementor-switch-handle {
+			background-color: $theme-dark-light;
+		}
+	}
+
+	//Color Picker
+	.pickr {
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray;
+	}
+
+	//Popover Control
+	.elementor-controls-popover {
+		background-color: $theme-dark-gray;
+		box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+
+		&:before {
+			border-bottom-color: $theme-dark-gray;
 		}
 
-		//Footer
-		#elementor-panel-footer {
-			background-color: $theme-dark-dark;
-		}
+		.elementor-control-responsive-switchers {
 
-		.elementor-panel-footer-sub-menu-wrapper {
-			background-color: $theme-dark-gray-darkest;
-			border-top: 1px solid $theme-dark-gray;
-		}
-
-		.elementor-panel-footer-sub-menu-item {
-			background-color: $theme-dark-gray-dark;
-
-			&:hover {
+			&__holder {
 				background-color: $theme-dark-gray;
 			}
 		}
+	}
 
-		//Menu
-		.elementor-panel-menu-item:not(.elementor-panel-menu-item-exit-to-dashboard) {
-			background-color: $theme-dark-gray-dark;
+	//Section Control
+	.elementor-panel-heading {
+		border-bottom-color: $theme-dark-gray-darkest;
 
-			&:hover {
-				background-color: $theme-dark-gray;
-			}
+		&-toggle,
+		&-title {
+			color: $theme-dark-light;
+		}
+	}
 
-			a {
-				color: $theme-dark-light;
-			}
+	//Help Link
+	#elementor-panel__editor__help__link {
+		color: $theme-dark-gray-lightest;
+
+		&:hover {
+			color: $theme-dark-accent;
+		}
+	}
+
+	//Global Widget
+	#elementor-panel-global-widget > * {
+		background-color: $theme-dark-gray-dark;
+	}
+
+	#elementor-global-widget-locked-unlink {
+		border-top-color: $theme-dark-gray-darkest;
+	}
+
+	//Footer
+	#elementor-panel-footer {
+		background-color: $theme-dark-dark;
+	}
+
+	.elementor-panel-footer-sub-menu-wrapper {
+		background-color: $theme-dark-gray-darkest;
+		border-top: 1px solid $theme-dark-gray;
+	}
+
+	.elementor-panel-footer-sub-menu-item {
+		background-color: $theme-dark-gray-dark;
+
+		&:hover {
+			background-color: $theme-dark-gray;
+		}
+	}
+
+	//Menu
+	.elementor-panel-menu-item:not(.elementor-panel-menu-item-exit-to-dashboard) {
+		background-color: $theme-dark-gray-dark;
+
+		&:hover {
+			background-color: $theme-dark-gray;
+		}
+
+		a {
+			color: $theme-dark-light;
 		}
 	}
 
