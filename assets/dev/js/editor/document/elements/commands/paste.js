@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import History from '../../commands/base/history';
 
-export class Paste extends Base {
+export class Paste extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -8,6 +8,13 @@ export class Paste extends Base {
 			storageData = elementorCommon.storage.get( storageKey );
 
 		this.requireArgumentType( 'storageData', 'object', { storageData } );
+	}
+
+	getHistory( args ) {
+		return {
+			type: 'paste',
+			title: elementor.translate( 'elements' ),
+		};
 	}
 
 	apply( args ) {
