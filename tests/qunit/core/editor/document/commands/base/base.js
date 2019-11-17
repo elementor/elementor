@@ -54,7 +54,6 @@ jQuery( () => {
 							throw e;
 						};
 
-
 						instance.run( {} );
 					},
 					new Error( random )

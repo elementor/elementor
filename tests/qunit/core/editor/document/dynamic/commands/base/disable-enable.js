@@ -23,8 +23,9 @@ jQuery( () => {
 						},
 					};
 
-				let orig = $e.run,
-					tempCommand = '',
+				const orig = $e.run;
+
+				let tempCommand = '',
 					tempArgs = '';
 
 				$e.run = ( command, args ) => {
@@ -38,8 +39,8 @@ jQuery( () => {
 
 				assert.equal( tempCommand, 'document/dynamic/disable' );
 
-				assert.propEqual( tempArgs.settings, Object.entries(historyItem.get( 'data' ).changes )[ 0 ][ 1 ] );
-				assert.propEqual( tempArgs.container, historyItem.get('containers' )[ 0 ] );
+				assert.propEqual( tempArgs.settings, Object.entries( historyItem.get( 'data' ).changes )[ 0 ][ 1 ] );
+				assert.propEqual( tempArgs.container, historyItem.get( 'containers' )[ 0 ] );
 			} );
 		} );
 	} );

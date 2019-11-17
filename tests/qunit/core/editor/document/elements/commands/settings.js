@@ -12,7 +12,7 @@ export const Settings = () => {
 				// Change button text.
 				DocumentHelper.settings( eButton, { text } );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					// Check button text.
@@ -31,7 +31,7 @@ export const Settings = () => {
 				// Change button text.
 				DocumentHelper.settings( eWidget, { text } );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
@@ -64,7 +64,7 @@ export const Settings = () => {
 
 				DocumentHelper.multiSettings( eButtons, { text } );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					// Check button text.
@@ -87,7 +87,7 @@ export const Settings = () => {
 				// Change button text.
 				DocumentHelper.multiSettings( eWidgets, { text } );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;

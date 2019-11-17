@@ -19,6 +19,7 @@ jQuery( () => {
 					historyId: 'fake',
 				},
 					fakeHistory = class extends History {
+						// eslint-disable-next-line no-unused-vars
 						getHistory( args ) {
 							return true;
 						}
@@ -26,7 +27,7 @@ jQuery( () => {
 
 					instance = new fakeHistory( fakeArgs );
 
-				let orig = $e.run;
+				const orig = $e.run;
 
 				$e.run = () => {};
 
@@ -40,6 +41,7 @@ jQuery( () => {
 
 		QUnit.test( 'onCatchApply()`', ( assert ) => {
 			const fakeHistory = class extends History {
+				// eslint-disable-next-line no-unused-vars
 				getHistory( args ) {
 					return true;
 				}
@@ -48,15 +50,15 @@ jQuery( () => {
 
 			instance.historyId = Math.random();
 
-			let orig = $e.run,
-				tempCommand = '',
+			const orig = $e.run;
+
+			let tempCommand = '',
 				tempArgs = '';
 
 			$e.run = ( command, args ) => {
 				tempCommand = command;
 				tempArgs = args;
 			};
-
 
 			// Use `instance.historyId` for error.
 			try {
@@ -69,7 +71,6 @@ jQuery( () => {
 
 			assert.equal( tempCommand, 'document/history/delete-log' );
 			assert.equal( tempArgs.id, instance.historyId );
-
 		} );
 	} );
 } );

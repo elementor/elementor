@@ -6,7 +6,7 @@ export default class HistoryHelper {
 		assert.equal( historyItem.status, 'applied', 'After undo, history Item status is applied.' );
 	}
 
-	static redoValidate ( assert, historyItem ) {
+	static redoValidate( assert, historyItem ) {
 		$e.run( 'document/history/redo' );
 
 		// History status changed.
@@ -30,5 +30,5 @@ export default class HistoryHelper {
 		assert.notEqual( eControllerLookedUp.view.cid, eController.view.cid, 'Element was recreated and not a reference to the old one.' );
 		assert.equal( eControllerLookedUp.id, eController.id, 'Element was re-added to DOM.' );
 		assert.equal( eControllerLookedUp.view._index, eController.view._index, 'Element was re-added to correct position.' );
-	};
+	}
 }

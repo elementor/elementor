@@ -17,7 +17,7 @@ export const PasteStyle = () => {
 
 				DocumentHelper.pasteStyle( eButtonSimple );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async();
 
 				setTimeout( () => {
 					// Check
@@ -33,13 +33,14 @@ export const PasteStyle = () => {
 			QUnit.test( 'History', ( assert ) => {
 				const eWidgetSimple = DocumentHelper.createAutoButton(),
 					eWidgetStyled = DocumentHelper.createAutoButtonStyled(),
-					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' ),
-					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
+					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' );
+
+				// widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
 
 				DocumentHelper.copy( eWidgetStyled );
 				DocumentHelper.pasteStyle( eWidgetSimple );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
@@ -75,7 +76,7 @@ export const PasteStyle = () => {
 
 				DocumentHelper.multiPasteStyle( [ eButtonSimple1, eButtonSimple2 ] );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					// Check pasted style exist.
@@ -97,7 +98,7 @@ export const PasteStyle = () => {
 				DocumentHelper.copy( eWidgetStyled );
 				DocumentHelper.multiPasteStyle( eWidgetsSimple );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;

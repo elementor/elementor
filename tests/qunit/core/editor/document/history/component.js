@@ -126,7 +126,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Resize Column', ( assert ) => {
-				assert.equal(1, 1);
+				assert.equal( 1, 1, 'Test skipped.' );
 				/*const newSize = 20,
 					eSection = Elements.createSection( 2 ),
 					eColumn1 = eSection.view.children.findByIndex( 0 ).getContainer(),
@@ -327,9 +327,11 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move Column in same section', ( assert ) => {
-				const eSection = DocumentHelper.createSection(),
-					eColumn1 = DocumentHelper.createColumn( eSection ),
-					eColumn2 = DocumentHelper.createColumn( eSection ),
+				const eSection = DocumentHelper.createSection();
+
+				/* eColumn1 = */ DocumentHelper.createColumn( eSection );
+
+				const eColumn2 = DocumentHelper.createColumn( eSection ),
 					originalPosition = eColumn2.view._index,
 					targetPosition = 0;
 
@@ -637,7 +639,7 @@ jQuery( () => {
 					eInnerSection.view.children.forEach( ( el ) => innerSectionAfterRedoColumnsIds[ eInnerSection.id ].push( el.model.id ) );
 				} );
 
-				Object.entries( innerSectionAfterRedoColumnsIds ).forEach( ( [ key, ids ] ) => {
+				Object.entries( innerSectionAfterRedoColumnsIds ).forEach( ( [ key, ids ] ) => { // eslint-disable-line no-unused-vars
 					assert.equal( ids.length, defaultInnerSectionColumns, `Inner Section have "${ defaultInnerSectionColumns } columns"` );
 				} );
 
@@ -725,9 +727,11 @@ jQuery( () => {
 			QUnit.test( 'Remove', ( assert ) => {
 				const eColumn = DocumentHelper.createSection( 1, true ),
 					eTabs = DocumentHelper.createTabs( eColumn ),
-					originalItemsCount = eTabs.settings.get( 'tabs' ).length,
-					eTabModel = DocumentHelper.repeaterRemove( eTabs, 'tabs', 1 ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
+
+				DocumentHelper.repeaterRemove( eTabs, 'tabs', 1 );
+
+				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'remove', 'Tabs' );
@@ -759,7 +763,7 @@ jQuery( () => {
 					tab_title: tabTitle,
 				} );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
@@ -786,9 +790,11 @@ jQuery( () => {
 			QUnit.test( 'Duplicate', ( assert ) => {
 				const eColumn = DocumentHelper.createSection( 1, true ),
 					eTabs = DocumentHelper.createTabs( eColumn ),
-					originalItemsCount = eTabs.settings.get( 'tabs' ).length,
-					eTabModel = DocumentHelper.repeaterDuplicate( eTabs, 'tabs', 1 ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
+
+				DocumentHelper.repeaterDuplicate( eTabs, 'tabs', 1 );
+
+				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'duplicate', 'Tabs' );

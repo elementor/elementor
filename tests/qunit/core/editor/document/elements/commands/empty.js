@@ -48,9 +48,9 @@ export const Empty = () => {
 
 			const addChildModelOrig = elementor.getPreviewView().addChildModel;
 
+			// Clear.
 			orig = $e.run;
 			tempCommand = '';
-			tempArgs = '';
 
 			let tempData = '';
 
@@ -58,7 +58,6 @@ export const Empty = () => {
 
 			$e.run = ( command, args ) => {
 				tempCommand = command;
-				tempArgs = args;
 			};
 
 			// redo: `false`

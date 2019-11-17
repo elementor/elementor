@@ -13,7 +13,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 			// Set fake data.
 			elementor.dynamicTags.cache[ key ] = dynamicValue;
 
-			let done;
+			let done; // eslint-disable-line prefer-const
 
 			eButton.view.attachElContent = function( html ) {
 				eButton.view.$el.empty().append( html );
@@ -35,7 +35,6 @@ QUnit.module( 'Component: document/dynamic', () => {
 
 		QUnit.test( 'Enable', ( assert ) => {
 			const eButton = DocumentHelper.createAutoButton(),
-				eButtonText = eButton.settings.get( 'text' ),
 				dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 				dynamicValue = '{ dynamic text }',
 				{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
@@ -45,7 +44,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 			// Set fake data.
 			elementor.dynamicTags.cache[ key ] = dynamicValue;
 
-			let doneEnable;
+			let doneEnable; // eslint-disable-line prefer-const
 
 			eButton.view.attachElContent = function( html ) {
 				eButton.view.$el.empty().append( html );
@@ -76,12 +75,12 @@ QUnit.module( 'Component: document/dynamic', () => {
 			// Set fake data.
 			elementor.dynamicTags.cache[ key ] = dynamicValue;
 
-			let doneEnable;
+			let doneDisable; // eslint-disable-line prefer-const
 
 			eButton.view.attachElContent = function( html ) {
 				eButton.view.$el.empty().append( html );
 
-				doneEnable();
+				doneDisable();
 			};
 
 			$e.run( 'document/dynamic/enable', {
@@ -89,7 +88,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 				settings: { text: dynamicTag },
 			} );
 
-			doneEnable = assert.async();
+			doneDisable = assert.async();
 
 			// TODO: Move to `DocumentHelper`.
 			$e.run( 'document/dynamic/disable', {
@@ -116,7 +115,7 @@ QUnit.module( 'Component: document/dynamic', () => {
 			// Set fake data.
 			elementor.dynamicTags.cache[ key ] = dynamicValue;
 
-			let done;
+			let done; // eslint-disable-line prefer-const
 
 			eButtons.forEach( ( eButton ) => {
 				eButton.view.attachElContent = function( html ) {

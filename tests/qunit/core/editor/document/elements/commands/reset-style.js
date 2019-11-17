@@ -13,7 +13,7 @@ export const ResetStyle = () => {
 
 				DocumentHelper.resetStyle( eButtonStyled );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					// Check pasted style exist.
@@ -32,11 +32,12 @@ export const ResetStyle = () => {
 
 				DocumentHelper.resetStyle( eWidgetStyled );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
-					const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					//const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
+
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
@@ -65,7 +66,7 @@ export const ResetStyle = () => {
 
 				DocumentHelper.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					// Check pasted style exist.
@@ -84,7 +85,7 @@ export const ResetStyle = () => {
 
 				DocumentHelper.multiResetStyle( eWidgetsStyled );
 
-				let done = assert.async(); // Pause the test till done.
+				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
 					const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
