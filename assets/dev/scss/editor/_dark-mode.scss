@@ -234,6 +234,26 @@ body.elementor-editor-preview #elementor-mode-switcher {
 		}
 	}
 
+	a.elementor-responsive-switcher {
+		color: $theme-dark-light;
+
+		&:hover {
+			color: $theme-dark-accent;
+		}
+	}
+
+	$devices: 'desktop', 'tablet', 'mobile';
+
+	@each $device in $devices {
+		.elementor-device-#{ $device } {
+			.elementor-responsive-switchers-open:not(:hover) {
+				.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
+					color: $theme-dark-accent;
+				}
+			}
+		}
+	}
+
 	.elementor-control-type-popover_toggle {
 
 		.elementor-control-popover-toggle-toggle-label {
