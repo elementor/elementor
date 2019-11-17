@@ -12,18 +12,21 @@ $theme-dark-light: #E0E1E3;
 $theme-dark-dark: #1D2025;
 $theme-dark-accent: #71D7F7;
 $theme-dark-success: $editor-success;
+$theme-dark-danger: #F84343;
 
 $theme-dark-gradient-start: #34383C;
 $theme-dark-gradient-end: #4C4F56;
+$theme-dark-panel-bottom-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
 
 //General
-
 body.ui-theme-dark {
 	color: $theme-dark-light;
+
 
 	//Color Picker
 	.pcr-app {
 		background-color: $theme-dark-gray;
+		box-shadow: 0 .15em 1.5em 0 rgba(0,0,0,.5),0 0 1em 0 rgba(0,0,0,.05);
 
 		.pcr-swatches > button {
 
@@ -51,7 +54,30 @@ body.ui-theme-dark {
 	}
 }
 
+body.elementor-editor-preview #elementor-mode-switcher {
+	background-color: $theme-dark-accent;
+}
+
 .ui-theme-dark {
+
+	//Loader
+	#elementor-loading {
+		background-color: $theme-dark-gray-darkest;
+	}
+
+	.elementor-loader {
+		background-color: $theme-dark-gray;
+	}
+
+	//Safemode Toast
+	.elementor-safe-mode-toast {
+		background-color: $theme-dark-gray;
+
+		header h2,
+		.elementor-toast-content {
+			color: $theme-dark-light;
+		}
+	}
 
 	input, select, textarea, .elementor-input-style {
 		color: $theme-dark-light;
@@ -73,6 +99,10 @@ body.ui-theme-dark {
 	//Mode Switcher
 	#elementor-mode-switcher {
 		background-color: $theme-dark-gray-darkest;
+
+		&:hover {
+			background-color: $theme-dark-accent;
+		}
 	}
 
 	//Dynamic Tags
@@ -224,11 +254,78 @@ body.ui-theme-dark {
 			background-color: $theme-dark-gray-darkest;
 		}
 
+		.elementor-control-type-gallery {
+
+			.elementor-control-gallery-clear {
+
+				&:hover {
+					color: $theme-dark-danger;
+				}
+			}
+		}
+
 		//URL Control
 		.elementor-control-type-url {
 
 			.elementor-control-url-more {
 				border-left-color: $theme-dark-gray-light;
+			}
+		}
+
+		.elementor-control-type-wysiwyg {
+
+			.wp-editor-container {
+				border-color: $theme-dark-gray-light;
+			}
+
+			.mce-menubtn button,
+			.mce-ico,
+			.wp-switch-editor {
+				color: $theme-dark-light;
+			}
+
+			#insert-media-button,
+			.html-active .switch-html,
+			.mce-toolbar-grp,
+			.quicktags-toolbar,
+			.tmce-active .switch-tmce {
+				background-color: $theme-dark-gray-light;
+			}
+
+			#insert-media-button {
+				color: $theme-dark-light;
+				border-color: $theme-dark-gray-lighter;
+			}
+
+			.mce-toolbar .mce-btn-group .mce-btn.mce-active,
+			.mce-toolbar .mce-btn-group .mce-btn:active,
+			.qt-dfw.active,
+			.mce-toolbar .mce-btn-group .mce-btn:hover,
+			.mce-toolbar .mce-btn-group .mce-btn:focus,
+			.qt-dfw:hover,
+			.qt-dfw:focus{
+				background-color: $theme-dark-gray-dark;
+				box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08), 0 1px 0 rgba(0, 0, 0, 0.08);
+			}
+
+			.mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
+				background-color: transparent;
+			}
+
+			.quicktags-toolbar {
+				border-color: $theme-dark-gray-lighter;
+			}
+
+			.wp-core-ui .button,
+			.wp-core-ui .button-secondary {
+				background-color: $theme-dark-gray;
+				color: $theme-dark-light;
+				border-color: $theme-dark-gray-lighter;
+
+				&:hover {
+					background-color: $theme-dark-gray-dark;
+					border-color: $theme-dark-gray-lighter;
+				}
 			}
 		}
 
@@ -313,6 +410,14 @@ body.ui-theme-dark {
 
 			.elementor-switch-label {
 				background-color: $theme-dark-gray-darkest;
+
+				&:before {
+					text-shadow: 0 1px rgba(0, 0, 0, 0.8);
+				}
+			}
+
+			.elementor-switch-input:checked ~ .elementor-switch-label {
+				background-color: $theme-dark-accent;
 			}
 
 			.elementor-switch-handle {
@@ -442,7 +547,7 @@ body.ui-theme-dark {
 
 	//Library Modal
 	.dialog-type-lightbox {
-		background-color: $theme-dark-gray-darkest;
+		background-color: rgba(0, 0, 0, 0.65);
 
 		.dialog-header {
 			color: $theme-dark-light;
@@ -452,8 +557,16 @@ body.ui-theme-dark {
 			background-color: $theme-dark-gray-dark;
 		}
 
-		.dialog-buttons-wrapper > .dialog-button:hover {
-			background-color: $theme-dark-gray;
+		.dialog-buttons-wrapper > .dialog-button {
+			color: $theme-dark-light;
+
+			&.dialog-ok {
+				color: $theme-dark-danger;
+			}
+
+			&:hover {
+				background-color: $theme-dark-gray;
+			}
 		}
 
 		.dialog-buttons-wrapper,
@@ -463,6 +576,16 @@ body.ui-theme-dark {
 	}
 
 	.elementor-templates-modal {
+
+		.dialog-header {
+			background-color: $theme-dark-gray-darkest;
+			color: $theme-dark-light;
+			box-shadow: $theme-dark-panel-bottom-shadow;
+		}
+
+		&__header__close--normal {
+			border-color: $theme-dark-gray-lighter;
+		}
 
 		&__sidebar {
 			background-color: $theme-dark-gray-dark;
@@ -490,6 +613,10 @@ body.ui-theme-dark {
 
 		&-text {
 			background-color: transparent;
+
+			&:focus + i {
+				color: $theme-dark-light;
+			}
 		}
 	}
 
@@ -522,11 +649,24 @@ body.ui-theme-dark {
 		&:hover {
 			background-color: $theme-dark-gray-light;
 		}
+
+		.elementor-template-library-template-more {
+			background-color: $theme-dark-gray;
+
+			&:before {
+				border-bottom-color: $theme-dark-gray;
+			}
+		}
 	}
 
 	//Icon Modal
 	#elementor-icons-manager__search input {
 		background-color: $theme-dark-gray;
+		transition: $transition-hover;
+
+		&:focus {
+			background-color: $theme-dark-gray-light;
+		}
 	}
 
 	.elementor-icons-manager__tab {
@@ -613,6 +753,7 @@ body.ui-theme-dark {
 	.elementor-panel .elementor-panel-box,
 	.elementor-panel .elementor-panel-scheme-buttons {
 		background-color: $theme-dark-gray-dark;
+		box-shadow: $theme-dark-panel-bottom-shadow;
 	}
 
 	.elementor-revision-item__wrapper,
@@ -635,5 +776,47 @@ body.ui-theme-dark {
 				background-color: $theme-dark-gray;
 			}
 		}
+	}
+
+	//Finder
+	#elementor-finder {
+
+		&__search__input {
+			color: $theme-dark-light;
+		}
+	}
+
+	.elementor-finder {
+
+		&__results__category__title {
+			background-color: $theme-dark-gray-darkest;
+			color: $theme-dark-light;
+		}
+
+		&__results__item__title {
+			color: $theme-dark-light;
+		}
+	}
+
+	//Hotkeys Modal (Shortcuts)
+	.elementor-hotkeys {
+
+		&__list {
+			background-color: $theme-dark-gray;
+		}
+
+		&__item {
+			border-color: $theme-dark-gray-light;
+
+			&--shortcut span {
+				background-color: $theme-dark-gray-light;
+			}
+		}
+	}
+
+	//Schemes
+	.elementor-panel-scheme-color-system-items {
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray-light;
 	}
 }
