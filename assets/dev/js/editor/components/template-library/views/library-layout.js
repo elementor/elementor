@@ -39,8 +39,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		headerView.tools.show( new TemplateLibraryHeaderActionsView() );
 		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
-
-		this.showLogo();
 	},
 
 	showTemplatesView: function( templatesCollection ) {
