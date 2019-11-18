@@ -71,7 +71,17 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	getValue() {
-		return this.picker.getColor().toRGBA().toString( 0 );
+		const color = this.picker.getColor();
+
+		let colorRepresentation;
+
+		if ( 1 === color.a ) {
+			colorRepresentation = color.toHEXA();
+		} else {
+			colorRepresentation = color.toRGBA();
+		}
+
+		return colorRepresentation.toString( 0 );
 	}
 
 	getSwatches() {
