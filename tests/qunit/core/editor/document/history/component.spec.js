@@ -1,6 +1,7 @@
 import DocumentHelper from '../helper';
 import BlockFaq from './../../../../mock/library/blocks/faq.json';
 import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../assets/dev/js/editor/document/commands/base/debounce';
+import HistoryHelper from "./helper";
 
 const undoValidate = ( assert, historyItem ) => {
 	$e.run( 'document/history/undo' );
@@ -43,7 +44,115 @@ jQuery( () => {
 			elementor.history.history.getItems().reset();
 		} );
 
-		QUnit.module( 'miscellaneous', () => {
+		QUnit.module( 'Miscellaneous', () => {
+			QUnit.test( 'Post Settings', ( assert ) => {
+				const eDocument = elementor.getPreviewContainer(),
+					settings = {
+						padding: {
+							top: '50',
+						},
+				};
+
+				DocumentHelper.settings( eDocument, settings );
+
+				const done = assert.async();
+
+				setTimeout( () => {
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Post' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					assert.equal( eDocument.settings.attributes.padding, undefined,
+						'Settings back to default' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					assert.equal( eDocument.settings.attributes.padding.top, settings.padding.top,
+						'Settings restored' );
+
+					done();
+				}, DEFAULT_DEBOUNCE_DELAY );
+			} );
+
+			QUnit.test( 'General Settings: Style', ( assert ) => {
+				elementor.getPreviewView();
+
+				const eGeneralSettings = elementor.settings.general.getEditedView().getContainer(),
+					settings = {
+					elementor_default_generic_fonts: 'fake',
+				};
+
+				DocumentHelper.settings( eGeneralSettings, settings );
+
+				const done = assert.async();
+
+				setTimeout( () => {
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Global Settings' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					assert.equal( eGeneralSettings.settings.attributes.elementor_default_generic_fonts,
+						elementor.config.settings.general.settings.elementor_default_generic_fonts,
+						'Settings back to default' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					assert.equal( eGeneralSettings.settings.attributes.elementor_default_generic_fonts,
+						settings.elementor_default_generic_fonts,
+						'Settings restored'
+					);
+
+					done();
+				}, DEFAULT_DEBOUNCE_DELAY );
+			} );
+
+			QUnit.test( 'General Settings: Lightbox', ( assert ) => {
+				elementor.getPreviewView();
+
+				const eGeneralSettings = elementor.settings.general.getEditedView().getContainer(),
+					settings = {
+						elementor_global_image_lightbox: 'fake',
+					};
+
+				DocumentHelper.settings( eGeneralSettings, settings );
+
+				const done = assert.async();
+
+				setTimeout( () => {
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Global Settings' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					assert.equal( eGeneralSettings.settings.attributes.elementor_global_image_lightbox,
+						elementor.config.settings.general.settings.elementor_global_image_lightbox,
+						'Settings back to default' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					assert.equal( eGeneralSettings.settings.attributes.elementor_global_image_lightbox,
+						settings.elementor_global_image_lightbox,
+						'Settings restored'
+					);
+
+					done();
+				}, DEFAULT_DEBOUNCE_DELAY );
+			} );
+
 			QUnit.test( 'Saver Editor Flag', ( assert ) => {
 				elementor.saver.setFlagEditorChange( false );
 
@@ -52,19 +161,22 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Saver editor flag is `true`.
-				assert.equal( elementor.saver.isEditorChanged(), true, 'After create, saver editor flag is "true".' );
+				assert.equal( elementor.saver.isEditorChanged(), true,
+					'After create, saver editor flag is "true".' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
 
 				// Saver editor flag is `true`.
-				assert.equal( elementor.saver.isEditorChanged(), false, 'After create, saver editor flag is "false".' );
+				assert.equal( elementor.saver.isEditorChanged(), false,
+					'After create, saver editor flag is "false".' );
 
 				// Redo.
 				redoValidate( assert, historyItem );
 
 				// Saver editor flag is `true`.
-				assert.equal( elementor.saver.isEditorChanged(), true, 'After create, saver editor flag is "true".' );
+				assert.equal( elementor.saver.isEditorChanged(), true,
+					'After create, saver editor flag is "true".' );
 			} );
 
 			QUnit.test( 'History Rollback', ( assert ) => {
