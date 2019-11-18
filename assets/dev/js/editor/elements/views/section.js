@@ -207,7 +207,6 @@ SectionView = BaseElementView.extend( {
 				},
 				options: {
 					external: true,
-					debounceHistory: true,
 				},
 			} );
 		} );

@@ -87,9 +87,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 			settings: {
 				[ key ]: value,
 			},
-			options: {
-				debounceHistory: true,
-			},
 		} );
 
 		this.triggerMethod( 'settings:change' );
