@@ -19,11 +19,12 @@
 	&--dropping-area {
 		margin-top: 10px;
 		padding: 15px;
-		border: 1px dashed $editor-lighter;
+		border: 1px dashed $editor-lightest;
 		text-align: center;
 		display: none;
 
 		&.html5dnd-current-element {
+			border-color: $editor-light;
 
 			i {
 				color: $editor-warning;

@@ -5,17 +5,8 @@ export default class ColorPicker extends elementorModules.Module {
 		this.createPicker();
 	}
 
-	getColorPickerPaletteIndex( paletteKey ) {
-		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
-	}
-
 	getColorPickerPalette() {
-		const colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
-			items = _.sortBy( colorPickerScheme.items, ( item ) => {
-				return this.getColorPickerPaletteIndex( item.key );
-			} );
-
-		return _.pluck( items, 'value' );
+		return _.pluck( elementor.schemes.getScheme( 'color-picker' ).items, 'value' );
 	}
 
 	getDefaultSettings() {
@@ -42,26 +33,13 @@ export default class ColorPicker extends elementorModules.Module {
 
 		settings.default = settings.default || null;
 
-		const picker = Pickr.create( settings ),
-			onChange = ( ...args ) => {
-				picker.applyColor();
+		this.picker = Pickr.create( settings );
 
-				if ( settings.onChange ) {
-					settings.onChange( ...args );
-				}
-			},
-			onClear = ( ...args ) => {
-				if ( settings.onClear ) {
-					settings.onClear( ...args );
-				}
-			};
-
-		picker
-			.on( 'change', onChange )
-			.on( 'swatchselect', onChange )
-			.on( 'clear', onClear );
-
-		this.picker = picker;
+		this.picker
+			.on( 'change', ( ...args ) => this.onPickerChange( ...args ) )
+			.on( 'swatchselect', ( ...args ) => this.onPickerChange( ...args ) )
+			.on( 'clear', ( ...args ) => this.onPickerClear( ...args ) )
+			.on( 'show', () => this.onPickerShow() );
 
 		this.draggableSwatches( this.getSwatches().children() );
 
@@ -120,6 +98,36 @@ export default class ColorPicker extends elementorModules.Module {
 
 	destroy() {
 		this.picker.destroyAndRemove();
+
+		ColorPicker.swachesNeedUpdate = false;
+	}
+
+	onPickerChange( ...args ) {
+		this.picker.applyColor();
+
+		const onChange = this.getSettings( 'onChange' );
+
+		if ( onChange ) {
+			onChange( ...args );
+		}
+	}
+
+	onPickerClear( ...args ) {
+		const onClear = this.getSettings( 'onClear' );
+
+		if ( onClear ) {
+			onClear( ...args );
+		}
+	}
+
+	onPickerShow() {
+		if ( ColorPicker.swachesNeedUpdate ) {
+			this.getSwatches().empty();
+
+			this.getColorPickerPalette().forEach( ( swatch ) => this.picker.addSwatch( swatch ) );
+
+			this.addPlusButtonToSwatches();
+		}
 	}
 
 	onAddButtonClick() {
@@ -134,6 +142,8 @@ export default class ColorPicker extends elementorModules.Module {
 		elementor.schemes.addSchemeItem( 'color-picker', { value } );
 
 		elementor.schemes.saveScheme( 'color-picker' );
+
+		ColorPicker.swachesNeedUpdate = true;
 	}
 
 	onSwatchDragStart( event ) {
@@ -160,5 +170,9 @@ export default class ColorPicker extends elementorModules.Module {
 		elementor.schemes.saveScheme( 'color-picker' );
 
 		this.$draggedSwatch.remove();
+
+		ColorPicker.swachesNeedUpdate = true;
 	}
 }
+
+ColorPicker.swachesNeedUpdate = false;
