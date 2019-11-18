@@ -134,25 +134,6 @@ jQuery( () => {
 				assert.equal( eColumn2.view.children.length, 2, 'Two buttons were duplicated.' );
 			} );
 
-			QUnit.test( 'Copy & Paste', ( assert ) => {
-				const eSection1 = DocumentHelper.createSection(),
-					eSection2 = DocumentHelper.createSection(),
-					eColumns = DocumentHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
-					eButtons = DocumentHelper.multiCreateButton( eColumns );
-
-				DocumentHelper.copy( eButtons[ 0 ] );
-
-				DocumentHelper.multiPaste( eColumns );
-
-				// Check pasted button exist.
-				let count = 1;
-				eColumns.forEach( ( eColumn ) => {
-					assert.equal( eColumn.view.children.length, 2,
-						`Button #${ count } were pasted.` );
-					++count;
-				} );
-			} );
-
 			QUnit.test( 'Move Sections', ( assert ) => {
 				// Create Section at 0.
 				DocumentHelper.createSection();

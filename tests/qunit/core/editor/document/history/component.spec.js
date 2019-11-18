@@ -354,31 +354,6 @@ jQuery( () => {
 				recreatedValidate( assert, eWidgetDuped );
 			} );
 
-			QUnit.test( 'Copy & Paste', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eWidget = DocumentHelper.createButton( eColumn );
-
-				DocumentHelper.copy( eWidget );
-
-				const ePastedWidget = DocumentHelper.paste( eColumn ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				destroyedValidate( assert, ePastedWidget );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				// Element exist again.
-				recreatedValidate( assert, ePastedWidget );
-			} );
-
 			QUnit.test( 'Move Section', ( assert ) => {
 				// Create Section at 0.
 				DocumentHelper.createSection();
@@ -777,32 +752,6 @@ jQuery( () => {
 
 				// Element exist again.
 				eWidgetsDuped.forEach( ( eWidgetDuped ) => recreatedValidate( assert, eWidgetDuped ) );
-			} );
-
-			QUnit.test( 'Copy & Paste', ( assert ) => {
-				const eColumn1 = DocumentHelper.createSection( 1, true ),
-					eColumn2 = DocumentHelper.createSection( 1, true ),
-					eColumn3 = DocumentHelper.createSection( 1, true ),
-					eWidget = DocumentHelper.createButton( eColumn1 );
-
-				DocumentHelper.copy( eWidget );
-
-				const ePastedWidgets = DocumentHelper.multiPaste( [ eColumn2, eColumn3 ] ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				ePastedWidgets.forEach( ( ePastedWidget ) => destroyedValidate( assert, ePastedWidget ) );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				ePastedWidgets.forEach( ( ePastedWidget ) => recreatedValidate( assert, ePastedWidget ) );
 			} );
 		} );
 
