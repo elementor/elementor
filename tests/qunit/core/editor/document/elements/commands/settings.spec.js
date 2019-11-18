@@ -14,13 +14,13 @@ export const Settings = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					// Check button text.
 					assert.equal( eButton.settings.attributes.text, text,
 						`text setting were changed to: '${ text }'.` );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -33,7 +33,7 @@ export const Settings = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -50,7 +50,7 @@ export const Settings = () => {
 					assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 		} );
 
@@ -66,7 +66,7 @@ export const Settings = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					// Check button text.
 					let count = 1;
 					eButtons.forEach( ( eButton ) => {
@@ -76,7 +76,7 @@ export const Settings = () => {
 					} );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -89,7 +89,7 @@ export const Settings = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -111,7 +111,7 @@ export const Settings = () => {
 					);
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 		} );
 	} );

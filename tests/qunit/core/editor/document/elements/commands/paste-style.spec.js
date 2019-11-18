@@ -19,7 +19,7 @@ export const PasteStyle = () => {
 
 				const done = assert.async();
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					// Check
 					assert.equal( eButtonSimple.settings.attributes.background_color, eStyledButtonBackground,
 						`Button background color was changed to '${ eStyledButtonBackground }'.` );
@@ -27,7 +27,7 @@ export const PasteStyle = () => {
 						'Command applied the saver editor is changed.' );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -35,14 +35,13 @@ export const PasteStyle = () => {
 					eWidgetStyled = DocumentHelper.createAutoButtonStyled(),
 					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' );
 
-				// widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
+				//widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
 
 				DocumentHelper.copy( eWidgetStyled );
 				DocumentHelper.pasteStyle( eWidgetSimple );
 
-				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -60,8 +59,7 @@ export const PasteStyle = () => {
 					/*assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
 						'Settings restored.' ); // TODO: in tests its not back to default color.*/
 
-					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 		} );
 
@@ -78,7 +76,7 @@ export const PasteStyle = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					// Check pasted style exist.
 					assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
 						`Button #1 background color was changed to '${ eStyledButtonBackground }'.` );
@@ -86,7 +84,7 @@ export const PasteStyle = () => {
 						`Button #2 background color was changed to '${ eStyledButtonBackground }'.` );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -100,7 +98,7 @@ export const PasteStyle = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -123,7 +121,7 @@ export const PasteStyle = () => {
 					} );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 		} );
 	} );

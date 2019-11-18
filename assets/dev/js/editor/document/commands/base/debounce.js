@@ -31,9 +31,13 @@ export default class Debounce extends History {
 		Base.prototype.onAfterRun.call( this, args, result );
 
 		if ( this.isHistoryActive() ) {
-			this.constructor.debounce( () => {
+			if ( ! elementor.isTesting ) {
+				Debounce.debounce( () => {
+					$e.run( 'document/history/end-transaction' );
+				} );
+			} else {
 				$e.run( 'document/history/end-transaction' );
-			} );
+			}
 		}
 	}
 
@@ -43,6 +47,7 @@ export default class Debounce extends History {
 
 		// Rollback history on failure.
 		if ( e instanceof elementorModules.common.HookBreak && this.history ) {
+			// TODO: currently it does `delete-transaction` then `end-transaction`, will never work.
 			$e.run( 'document/history/delete-transaction' );
 		}
 	}

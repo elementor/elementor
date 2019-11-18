@@ -15,7 +15,7 @@ export const ResetStyle = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					// Check pasted style exist.
 					assert.equal( eButtonStyled.settings.attributes.background_color, '',
 						'Button with custom style were (style) restored.' );
@@ -23,7 +23,7 @@ export const ResetStyle = () => {
 						'Command applied the saver editor is changed.' );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -34,7 +34,7 @@ export const ResetStyle = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					//const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
 
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
@@ -55,7 +55,7 @@ export const ResetStyle = () => {
 						'Settings restored.' ); // TODO: in tests its not back to default color.*/
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 		} );
 
@@ -68,7 +68,7 @@ export const ResetStyle = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					// Check pasted style exist.
 					assert.equal( eButtonStyled1.model.attributes.settings.attributes.background_color, '',
 						'Button #1 with custom style were (style) restored.' );
@@ -76,7 +76,7 @@ export const ResetStyle = () => {
 						'Button #2 with custom style were (style) restored.' );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -87,7 +87,7 @@ export const ResetStyle = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
 						historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -111,7 +111,7 @@ export const ResetStyle = () => {
 					} );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 		} );
 	} );

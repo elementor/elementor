@@ -48,6 +48,9 @@ export class ResizeColumn extends HookAfter {
 				_inline_size: nextElementNewSize,
 			},
 			options: {
+				hooks: {
+					'resize-column-limit': false,
+				},
 				history: {
 					title: elementor.config.elements.column.controls._inline_size.label,
 				},

@@ -41,6 +41,13 @@ export default class Base {
 		this.id = this.id();
 
 		const params = [ this.command, this.id, ( ... args ) => {
+			const { options = {} } = args[ 0 ];
+
+			// Disable hook if requested by args.options.
+			if ( options.hooks && false === options.hooks[ this.id ] ) {
+				return true;
+			}
+
 			if ( this.conditions( args[ 0 ] ) ) {
 				if ( $e.devTools ) {
 					$e.devTools.log.hookActive( this.command, this.id );
