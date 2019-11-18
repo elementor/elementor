@@ -11,7 +11,7 @@ const elementorConfigDocument = {
 		elements_categories: {
 		},
 		messages: {
-			publish_notification: 'Hurray! Your Post is live.'
+			publish_notification: 'Hurray! Your Post is live.',
 		},
 	},
 	container: 'body',
@@ -19,7 +19,7 @@ const elementorConfigDocument = {
 		exit_to_dashboard: 'http: //localhost/elementor/wp-admin/post.php?post=1819&action=edit',
 		preview: 'http://localhost/elementor/?p=1819&elementor-preview=1819&ver=1574068998',
 		wp_preview: 'http://localhost/elementor/?p=1819&preview_id=1819&preview_nonce=d50fdce90b&preview=true',
-		permalink: 'http://localhost/elementor/?p=1819'
+		permalink: 'http://localhost/elementor/?p=1819',
 	},
 };
 
