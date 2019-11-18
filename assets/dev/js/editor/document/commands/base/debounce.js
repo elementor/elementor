@@ -31,9 +31,13 @@ export default class Debounce extends History {
 		Base.prototype.onAfterRun.call( this, args, result );
 
 		if ( this.isHistoryActive() ) {
-			this.constructor.debounce( () => {
+			if ( ! elementor.isTesting ) {
+				Debounce.debounce( () => {
+					$e.run( 'document/history/end-transaction' );
+				} );
+			} else {
 				$e.run( 'document/history/end-transaction' );
-			} );
+			}
 		}
 	}
 

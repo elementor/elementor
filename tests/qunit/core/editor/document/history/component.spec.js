@@ -57,7 +57,7 @@ jQuery( () => {
 
 				const done = assert.async();
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -76,7 +76,7 @@ jQuery( () => {
 						'Settings restored' );
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'General Settings: Style', ( assert ) => {
@@ -91,7 +91,7 @@ jQuery( () => {
 
 				const done = assert.async();
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -113,7 +113,7 @@ jQuery( () => {
 					);
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'General Settings: Lightbox', ( assert ) => {
@@ -128,7 +128,7 @@ jQuery( () => {
 
 				const done = assert.async();
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -150,7 +150,7 @@ jQuery( () => {
 					);
 
 					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 
 			QUnit.test( 'Saver Editor Flag', ( assert ) => {
@@ -524,7 +524,7 @@ jQuery( () => {
 
 				const doneSettings = assert.async();
 
-				setTimeout( () => {
+				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -546,7 +546,7 @@ jQuery( () => {
 						assert.equal( eButton.view.$el.find( '.button-text' ).html(), dynamicValue, 'Settings restored' );
 						doneDynamic();
 					}, DEFAULT_DEBOUNCE_DELAY );
-				}, DEFAULT_DEBOUNCE_DELAY );
+				//}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 /*
 			QUnit.test( 'Dynamic in repeater', ( assert ) => {
