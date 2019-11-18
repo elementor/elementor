@@ -132,9 +132,9 @@ Schemes = function() {
 
 	this.addSchemeItem = function( schemeName, item ) {
 		const scheme = schemes[ schemeName ],
-			lastItemKey = +Object.keys( scheme.items ).slice( -1 )[ 0 ];
+			lastItemKey = Object.keys( scheme.items ).slice( -1 )[ 0 ] || 0;
 
-		scheme.items[ lastItemKey + 1 ] = item;
+		scheme.items[ +lastItemKey + 1 ] = item;
 	};
 
 	this.removeSchemeItem = function( schemeName, itemKey ) {
