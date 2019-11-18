@@ -1,7 +1,10 @@
 import DocumentHelper from '../helper';
+import * as Commands from './commands/index.spec.js';
 
 jQuery( () => {
 	QUnit.module( 'Component: document/repeater', () => {
+		DocumentHelper.testCommands( Commands );
+
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Insert', ( assert ) => {
 				const eColumn = DocumentHelper.createSection( 1, true ),
@@ -24,19 +27,6 @@ jQuery( () => {
 
 				// Check.
 				assert.equal( eTabs.settings.get( 'tabs' ).length, 1 );
-			} );
-
-			QUnit.test( 'Settings', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn ),
-					tabTitle = 'This is was changed';
-
-				DocumentHelper.repeaterSettings( eTabs, 'tabs', 1, {
-					tab_title: tabTitle,
-				} );
-
-				// Check.
-				assert.equal( eTabs.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
@@ -97,21 +87,6 @@ jQuery( () => {
 				// Check.
 				assert.equal( eTabs1.settings.get( 'tabs' ).length, 1 );
 				assert.equal( eTabs2.settings.get( 'tabs' ).length, 1 );
-			} );
-
-			QUnit.test( 'Settings', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs1 = DocumentHelper.createTabs( eColumn ),
-					eTabs2 = DocumentHelper.createTabs( eColumn ),
-					tabTitle = 'This is was changed';
-
-				DocumentHelper.multiRepeaterSettings( [ eTabs1, eTabs2 ], 'tabs', 1, {
-					tab_title: tabTitle,
-				} );
-
-				// Check.
-				assert.equal( eTabs1.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
-				assert.equal( eTabs2.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
