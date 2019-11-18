@@ -1,7 +1,7 @@
 import DocumentHelper from '../helper';
+import HistoryHelper from './helper';
 import BlockFaq from './../../../../mock/library/blocks/faq.json';
 import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../assets/dev/js/editor/document/commands/base/debounce';
-import HistoryHelper from "./helper";
 
 const undoValidate = ( assert, historyItem ) => {
 	$e.run( 'document/history/undo' );
