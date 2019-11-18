@@ -1,12 +1,6 @@
 name: JS-Qunit
 
-on:
-  push:
-    paths:
-      - '*.js'
-  pull_request:
-    paths:
-      - '*.js'
+on: [push, pull_request]
 
 jobs:
   Qunit:
@@ -19,4 +13,4 @@ jobs:
       - name: "Grunt Scripts"
         run: grunt scripts
       - name: "Run Qunit"
-        run: grunt qunit
+        run: grunt karma:unit
