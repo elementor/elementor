@@ -102,6 +102,8 @@ export default class extends elementorModules.common.ComponentModal {
 			this.manager.layout = this.layout;
 		}
 
+		this.manager.layout.setHeaderDefaultParts();
+
 		return true;
 	}
 
