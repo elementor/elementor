@@ -1,5 +1,3 @@
-import HookBreak from './hook-break';
-
 export default class Hooks extends elementorModules.Module {
 	constructor( ...args ) {
 		super( ...args );
@@ -106,7 +104,7 @@ export default class Hooks extends elementorModules.Module {
 							if ( ! hook.callback( args ) ) {
 								this.depth[ event ][ hook.id ]--;
 
-								throw HookBreak();
+								throw new elementorModules.common.HookBreak;
 							}
 						}
 						break;

@@ -47,6 +47,7 @@ export default class Debounce extends History {
 
 		// Rollback history on failure.
 		if ( e instanceof elementorModules.common.HookBreak && this.history ) {
+			// TODO: currently it does `delete-transaction` then `end-transaction`, will never work.
 			$e.run( 'document/history/delete-transaction' );
 		}
 	}
