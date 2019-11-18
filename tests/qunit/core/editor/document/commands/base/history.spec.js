@@ -13,30 +13,6 @@ jQuery( () => {
 					new Error( 'History.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
 				);
 			} );
-
-			QUnit.test( 'onBeforeRun(): delete `this.args.historyId`', ( assert ) => {
-				const fakeArgs = {
-					historyId: 'fake',
-				},
-					fakeHistory = class extends History {
-						// eslint-disable-next-line no-unused-vars
-						getHistory( args ) {
-							return true;
-						}
-				},
-
-					instance = new fakeHistory( fakeArgs );
-
-				const orig = $e.run;
-
-				$e.run = () => {};
-
-				instance.onBeforeRun( fakeArgs );
-
-				$e.run = orig;
-
-				assert.equal( fakeArgs.historyId, undefined );
-			} );
 		} );
 
 		QUnit.test( 'onCatchApply()`', ( assert ) => {
