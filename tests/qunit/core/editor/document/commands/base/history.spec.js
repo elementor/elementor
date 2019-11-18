@@ -38,7 +38,7 @@ jQuery( () => {
 
 			// Use `instance.historyId` for error.
 			try {
-				instance.onCatchApply( instance.id );
+				instance.onCatchApply( new elementorModules.common.HookBreak( instance.id ) );
 			} catch ( e ) {
 				assert.equal( e, instance.historyId );
 			}
