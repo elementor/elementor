@@ -9,9 +9,9 @@ module.exports = function( config ) {
 			},
 
 			// Base Libraries.
-			'../../../wp-includes/js/jquery/jquery.js',
-			'../../../wp-includes/js/underscore.min.js',
-			'../../../wp-includes/js/backbone.min.js',
+			'tests/qunit/vendor/wp-includes/jquery.js',
+			'tests/qunit/vendor/wp-includes/underscore.min.js',
+			'tests/qunit/vendor/wp-includes/backbone.min.js',
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
 
@@ -26,19 +26,13 @@ module.exports = function( config ) {
 
 			// Editor Tinymce.
 			'tests/qunit/setup-tinymce.js',
-			'../../../wp-includes/js/quicktags.min.js',
+			'tests/qunit/vendor/wp-includes/quicktags.min.js',
 
 			// Editor Config.
 			'tests/qunit/setup-editor.js',
 
 			// Editor Dependencies.
-			'../../../wp-includes/js/jquery/ui/core.min.js',
-			'../../../wp-includes/js/jquery/ui/widget.min.js',
-			'../../../wp-includes/js/jquery/ui/mouse.min.js',
-			'../../../wp-includes/js/jquery/ui/resizable.min.js',
-			'../../../wp-includes/js/jquery/ui/autocomplete.min.js',
-			'../../../wp-includes/js/jquery/ui/sortable.min.js',
-			'../../../wp-includes/js/jquery/ui/draggable.min.js',
+			'tests/qunit/vendor/wp-includes/jquery-ui.min.js',
 			'assets/lib/tipsy/tipsy.min.js',
 			'assets/lib/perfect-scrollbar/js/perfect-scrollbar.min.js',
 			'assets/lib/nouislider/nouislider.min.js',
