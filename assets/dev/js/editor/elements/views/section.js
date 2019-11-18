@@ -254,10 +254,9 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		var myIndex = this.model.collection.indexOf( this.model ),
-			addSectionView = new AddSectionView( {
-				at: myIndex,
-			} );
+		const addSectionView = new AddSectionView( {
+			at: this.model.collection.indexOf( this.model ),
+		} );
 
 		addSectionView.render();
 

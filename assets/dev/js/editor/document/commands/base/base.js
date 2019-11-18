@@ -15,14 +15,14 @@ export default class Base extends ArgsObject {
 	constructor( args ) {
 		super( args );
 
+		// Acknowledge self about which command it run.
+		this.currentCommand = $e.commands.getCurrent( 'document' );
+
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
 
 		// Validate args before run.
 		this.validateArgs( args );
-
-		// Acknowledge self about which command it run.
-		this.currentCommand = $e.commands.getCurrent( 'document' );
 	}
 
 	/**

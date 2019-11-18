@@ -31,7 +31,7 @@ export default class DisableEnable extends History {
 		 *
 		 * @type {string}
 		 */
-		this.type = 'document/dynamic/enable' === $e.commands.current.document ?
+		this.type = 'document/dynamic/enable' === this.currentCommand ?
 			'enable' : 'disable';
 	}
 
