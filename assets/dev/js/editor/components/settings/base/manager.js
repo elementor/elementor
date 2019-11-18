@@ -52,7 +52,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			settings: editModel.get( 'settings' ),
 			view: false,
 			label: this.getSettings( 'panelPage' ).title,
-			controls: editModel.get( 'controls' ),
+			controls: this.model.controls,
 			renderer: false,
 		} );
 

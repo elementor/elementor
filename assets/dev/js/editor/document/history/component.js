@@ -155,6 +155,10 @@ export default class Component extends elementorModules.common.Component {
 
 		args = this.normalizeLogTitle( args );
 
+		if ( ! args.title ) {
+			throw Error( 'title is required.' );
+		}
+
 		return elementor.history.history.startItem( args );
 	}
 
