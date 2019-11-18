@@ -15,14 +15,14 @@ export default class Base extends ArgsObject {
 	constructor( args ) {
 		super( args );
 
+		// Acknowledge self about which command it run.
+		this.currentCommand = $e.commands.getCurrent( 'document' );
+
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
 
 		// Validate args before run.
 		this.validateArgs( args );
-
-		// Acknowledge self about which command it run.
-		this.currentCommand = $e.commands.getCurrent( 'document' );
 	}
 
 	/**
@@ -57,7 +57,7 @@ export default class Base extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	initialize( args ) {}
+	initialize( args = {} ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function validateArgs().
@@ -66,7 +66,7 @@ export default class Base extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	validateArgs( args ) {}
+	validateArgs( args ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function isDataChanged().
@@ -84,9 +84,9 @@ export default class Base extends ArgsObject {
 	 *
 	 * Do the actual command.
 	 *
-	 * @param {{}}
+	 * @param {{}} args
 	 */
-	apply( args ) {
+	apply( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -188,6 +188,7 @@ export default class Base extends ArgsObject {
 		}
 
 		if ( ! ( e instanceof elementorModules.common.HookBreak ) ) {
+			// eslint-disable-next-line no-console
 			console.error( e );
 		}
 	}

@@ -63,7 +63,9 @@ class Model extends BaseModel {
 	 * }
 	 */
 	public function get_panel_page_settings() {
-		return [];
+		return [
+			'title' => __( 'Global Settings', 'elementor' ),
+		];
 	}
 
 	/**

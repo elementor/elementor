@@ -12,6 +12,7 @@ export default class History extends Base {
 		this.history = this.getHistory( args );
 
 		/**
+		 *
 		 * @type {number|boolean}
 		 */
 		this.historyId = false;
@@ -28,7 +29,7 @@ export default class History extends Base {
 	 *
 	 * @throws {Error}
 	 */
-	getHistory( args ) {
+	getHistory( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -47,16 +48,6 @@ export default class History extends Base {
 		super.onBeforeRun( args );
 
 		if ( this.history && this.isHistoryActive() ) {
-			/**
-			 * If `historyId` was passed, assuming that is sub history item.
-			 * If so, pass `id` to `document/history/start-log` to apply history sub item.
-			 */
-			if ( this.args.histroyId ) {
-				this.history.id = this.args.histroyId;
-
-				delete this.args.histroyId;
-			}
-
 			this.historyId = $e.run( 'document/history/start-log', this.history );
 		}
 	}
@@ -64,7 +55,7 @@ export default class History extends Base {
 	onAfterRun( args, result ) {
 		super.onAfterRun( args, result );
 
-		if ( this.historyId ) {
+		if ( this.history && this.isHistoryActive() ) {
 			$e.run( 'document/history/end-log', { id: this.historyId } );
 		}
 	}

@@ -11,8 +11,10 @@ export class Paste extends History {
 	}
 
 	getHistory( args ) {
-		// History is not required.
-		return false;
+		return {
+			type: 'paste',
+			title: elementor.translate( 'elements' ),
+		};
 	}
 
 	apply( args ) {

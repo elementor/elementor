@@ -1,6 +1,7 @@
-import Elements from '../helpers/elements';
-import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../assets/dev/js/editor/document/commands/base/debounce';
+import DocumentHelper from '../helper';
+import HistoryHelper from './helper';
 import BlockFaq from './../../../../mock/library/blocks/faq.json';
+import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../assets/dev/js/editor/document/commands/base/debounce';
 
 const undoValidate = ( assert, historyItem ) => {
 	$e.run( 'document/history/undo' );
@@ -38,33 +39,144 @@ const recreatedValidate = ( assert, eController ) => {
 jQuery( () => {
 	QUnit.module( 'Component: document/history', ( hooks ) => {
 		hooks.beforeEach( () => {
-			Elements.empty();
+			DocumentHelper.empty();
 
 			elementor.history.history.getItems().reset();
 		} );
 
-		QUnit.module( 'miscellaneous', () => {
+		QUnit.module( 'Miscellaneous', () => {
+			QUnit.test( 'Post Settings', ( assert ) => {
+				const eDocument = elementor.getPreviewContainer(),
+					settings = {
+						padding: {
+							top: '50',
+						},
+				};
+
+				DocumentHelper.settings( eDocument, settings );
+
+				const done = assert.async();
+
+				setTimeout( () => {
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Post' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					assert.equal( eDocument.settings.attributes.padding, undefined,
+						'Settings back to default' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					assert.equal( eDocument.settings.attributes.padding.top, settings.padding.top,
+						'Settings restored' );
+
+					done();
+				}, DEFAULT_DEBOUNCE_DELAY );
+			} );
+
+			QUnit.test( 'General Settings: Style', ( assert ) => {
+				elementor.getPreviewView();
+
+				const eGeneralSettings = elementor.settings.general.getEditedView().getContainer(),
+					settings = {
+					elementor_default_generic_fonts: 'fake',
+				};
+
+				DocumentHelper.settings( eGeneralSettings, settings );
+
+				const done = assert.async();
+
+				setTimeout( () => {
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Global Settings' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					assert.equal( eGeneralSettings.settings.attributes.elementor_default_generic_fonts,
+						elementor.config.settings.general.settings.elementor_default_generic_fonts,
+						'Settings back to default' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					assert.equal( eGeneralSettings.settings.attributes.elementor_default_generic_fonts,
+						settings.elementor_default_generic_fonts,
+						'Settings restored'
+					);
+
+					done();
+				}, DEFAULT_DEBOUNCE_DELAY );
+			} );
+
+			QUnit.test( 'General Settings: Lightbox', ( assert ) => {
+				elementor.getPreviewView();
+
+				const eGeneralSettings = elementor.settings.general.getEditedView().getContainer(),
+					settings = {
+						elementor_global_image_lightbox: 'fake',
+					};
+
+				DocumentHelper.settings( eGeneralSettings, settings );
+
+				const done = assert.async();
+
+				setTimeout( () => {
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Global Settings' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					assert.equal( eGeneralSettings.settings.attributes.elementor_global_image_lightbox,
+						elementor.config.settings.general.settings.elementor_global_image_lightbox,
+						'Settings back to default' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					assert.equal( eGeneralSettings.settings.attributes.elementor_global_image_lightbox,
+						settings.elementor_global_image_lightbox,
+						'Settings restored'
+					);
+
+					done();
+				}, DEFAULT_DEBOUNCE_DELAY );
+			} );
+
 			QUnit.test( 'Saver Editor Flag', ( assert ) => {
 				elementor.saver.setFlagEditorChange( false );
 
-				Elements.createSection( 1 );
+				DocumentHelper.createSection( 1 );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Saver editor flag is `true`.
-				assert.equal( elementor.saver.isEditorChanged(), true, 'After create, saver editor flag is "true".' );
+				assert.equal( elementor.saver.isEditorChanged(), true,
+					'After create, saver editor flag is "true".' );
 
 				// Undo.
 				undoValidate( assert, historyItem );
 
 				// Saver editor flag is `true`.
-				assert.equal( elementor.saver.isEditorChanged(), false, 'After create, saver editor flag is "false".' );
+				assert.equal( elementor.saver.isEditorChanged(), false,
+					'After create, saver editor flag is "false".' );
 
 				// Redo.
 				redoValidate( assert, historyItem );
 
 				// Saver editor flag is `true`.
-				assert.equal( elementor.saver.isEditorChanged(), true, 'After create, saver editor flag is "true".' );
+				assert.equal( elementor.saver.isEditorChanged(), true,
+					'After create, saver editor flag is "true".' );
 			} );
 
 			QUnit.test( 'History Rollback', ( assert ) => {
@@ -85,7 +197,7 @@ jQuery( () => {
 
 		QUnit.module( 'document/elements: Single Selection', () => {
 			QUnit.test( 'Create Section', ( assert ) => {
-				const eSection = Elements.createSection( 1 ),
+				const eSection = DocumentHelper.createSection( 1 ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -105,8 +217,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Column', ( assert ) => {
-				const eSection = Elements.createSection(),
-					eColumn = Elements.createColumn( eSection ),
+				const eSection = DocumentHelper.createSection(),
+					eColumn = DocumentHelper.createColumn( eSection ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -126,7 +238,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Resize Column', ( assert ) => {
-				assert.equal(1, 1);
+				assert.equal( 1, 1, 'Test skipped.' );
 				/*const newSize = 20,
 					eSection = Elements.createSection( 2 ),
 					eColumn1 = eSection.view.children.findByIndex( 0 ).getContainer(),
@@ -165,7 +277,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Widget', ( assert ) => {
-				const eWidget = Elements.createAutoButton(),
+				const eWidget = DocumentHelper.createAutoButton(),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -185,8 +297,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Widget: Inner Section', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eInnerSection = Elements.createInnerSection( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eInnerSection = DocumentHelper.createInnerSection( eColumn ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes,
 					{ defaultInnerSectionColumns } = eInnerSection.view,
 					innerSectionColumnsIds = [];
@@ -222,8 +334,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
-				const eWidget = Elements.createAutoButton(),
-					eWidgetDuped = Elements.duplicate( eWidget ),
+				const eWidget = DocumentHelper.createAutoButton(),
+					eWidgetDuped = DocumentHelper.duplicate( eWidget ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -242,157 +354,15 @@ jQuery( () => {
 				recreatedValidate( assert, eWidgetDuped );
 			} );
 
-			QUnit.test( 'Copy & Paste', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eWidget = Elements.createButton( eColumn );
-
-				Elements.copy( eWidget );
-
-				const ePastedWidget = Elements.paste( eColumn ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				destroyedValidate( assert, ePastedWidget );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				// Element exist again.
-				recreatedValidate( assert, ePastedWidget );
-			} );
-
-			QUnit.test( 'Settings', ( assert ) => {
-				const eWidget = Elements.createAutoButton(),
-					defaultText = eWidget.settings.attributes.text,
-					text = 'i test it';
-
-				// Change button text.
-				Elements.settings( eWidget, { text } );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				assert.equal( eWidget.settings.attributes.text, defaultText, 'Settings back to default' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
-			} );
-
-			QUnit.test( 'Settings: Debounce', ( assert ) => {
-				const historyItems = elementor.history.history.getItems(),
-					settingsChangeCount = 10,
-					eWidget = Elements.createAutoButton(),
-					historyCountBeforeDebounce = historyItems.length,
-					text = 'i test it',
-					defaultText = eWidget.settings.attributes.text;
-
-				// Change button text.
-				for ( let i = 0; i < settingsChangeCount; ++i ) {
-					Elements.settings( eWidget, { text }, {
-						debounceHistory: true,
-					} );
-				}
-
-				let done = assert.async(); // Pause the test till done.
-
-				setTimeout( () => {
-					const historyItem = historyItems.at( 0 ).attributes,
-						historyDiff = historyItems.length - historyCountBeforeDebounce;
-
-					// How many changes.
-					assert.equal( historyDiff, 1, 'History items length is "1"' );
-
-					// Exist in history.
-					inHistoryValidate( assert, historyItem, 'change', 'Button' );
-
-					// Undo.
-					undoValidate( assert, historyItem );
-
-					assert.equal( eWidget.settings.attributes.text, defaultText, 'Settings back to default' );
-
-					// Redo.
-					redoValidate( assert, historyItem );
-
-					assert.equal( eWidget.settings.attributes.text, text, 'Settings restored' );
-
-					done();
-				}, DEFAULT_DEBOUNCE_DELAY );
-			} );
-
-			QUnit.test( 'Paste Style', ( assert ) => {
-				const eWidgetSimple = Elements.createAutoButton(),
-					eWidgetStyled = Elements.createAutoButtonStyled(),
-					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' ),
-					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
-
-				Elements.copy( eWidgetStyled );
-				Elements.pasteStyle( eWidgetSimple );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-					'Settings back to default.' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				/*assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-					'Settings restored.' ); // TODO: in tests its not back to default color.*/
-			} );
-
-			QUnit.test( 'Reset Style', ( assert ) => {
-				const eWidgetStyled = Elements.createAutoButtonStyled(),
-					BackgroundBeforeReset = eWidgetStyled.settings.get( 'background_color' ); // Black
-
-				Elements.resetStyle( eWidgetStyled );
-
-				const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundBeforeReset,
-					'Settings back to default.' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				/*assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundAfterReset,
-					'Settings restored.' ); // TODO: in tests its not back to default color.*/
-			} );
-
 			QUnit.test( 'Move Section', ( assert ) => {
 				// Create Section at 0.
-				Elements.createSection();
+				DocumentHelper.createSection();
 
-				const eSection = Elements.createSection( 3 ),
+				const eSection = DocumentHelper.createSection( 3 ),
 					originalPosition = eSection.view._index,
 					targetPosition = 0;
 
-				Elements.move( eSection, elementor.getPreviewContainer(), { at: targetPosition } );
+				DocumentHelper.move( eSection, elementor.getPreviewContainer(), { at: targetPosition } );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -415,13 +385,13 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move Column between sections', ( assert ) => {
-				const eSection1 = Elements.createSection(),
-					eSection2 = Elements.createSection(),
-					eColumn = Elements.createColumn( eSection1 ),
+				const eSection1 = DocumentHelper.createSection(),
+					eSection2 = DocumentHelper.createSection(),
+					eColumn = DocumentHelper.createColumn( eSection1 ),
 					originalPosition = eColumn.view._index,
 					targetPosition = 1;
 
-				Elements.move( eColumn, eSection2, { at: targetPosition } );
+				DocumentHelper.move( eColumn, eSection2, { at: targetPosition } );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -444,13 +414,15 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move Column in same section', ( assert ) => {
-				const eSection = Elements.createSection(),
-					eColumn1 = Elements.createColumn( eSection ),
-					eColumn2 = Elements.createColumn( eSection ),
+				const eSection = DocumentHelper.createSection();
+
+				/* eColumn1 = */ DocumentHelper.createColumn( eSection );
+
+				const eColumn2 = DocumentHelper.createColumn( eSection ),
 					originalPosition = eColumn2.view._index,
 					targetPosition = 0;
 
-				Elements.move( eColumn2, eSection, { at: targetPosition } );
+				DocumentHelper.move( eColumn2, eSection, { at: targetPosition } );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -473,17 +445,17 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move Widget', ( assert ) => {
-				const eSection = Elements.createSection(),
-					eColumn1 = Elements.createColumn( eSection ),
-					eColumn2 = Elements.createColumn( eSection ),
-					eWidget = Elements.createButton( eColumn1 ),
+				const eSection = DocumentHelper.createSection(),
+					eColumn1 = DocumentHelper.createColumn( eSection ),
+					eColumn2 = DocumentHelper.createColumn( eSection ),
+					eWidget = DocumentHelper.createButton( eColumn1 ),
 					originalPosition = eWidget.view._index,
 					targetPosition = 1;
 
-				Elements.createButton( eColumn2 );
-				Elements.createButton( eColumn2 );
+				DocumentHelper.createButton( eColumn2 );
+				DocumentHelper.createButton( eColumn2 );
 
-				Elements.move( eWidget, eColumn2, { at: targetPosition } );
+				DocumentHelper.move( eWidget, eColumn2, { at: targetPosition } );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -506,9 +478,9 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Delete', ( assert ) => {
-				const eWidget = Elements.createAutoButton();
+				const eWidget = DocumentHelper.createAutoButton();
 
-				Elements.delete( eWidget );
+				DocumentHelper.delete( eWidget );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -529,7 +501,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Dynamic', ( assert ) => {
-				const eButton = Elements.createAutoButton(),
+				const eButton = DocumentHelper.createAutoButton(),
 					defaultButtonText = eButton.settings.attributes.text,
 					text = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',
@@ -550,24 +522,30 @@ jQuery( () => {
 					settings: { text },
 				} );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				assert.equal( eButton.settings.attributes.text, defaultButtonText, 'Settings back to default' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				const done = assert.async();
+				const doneSettings = assert.async();
 
 				setTimeout( () => {
-					assert.equal( eButton.view.$el.find( '.button-text' ).html(), dynamicValue, 'Settings restored' );
-					done();
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					inHistoryValidate( assert, historyItem, 'change', 'Button' );
+
+					// Undo.
+					undoValidate( assert, historyItem );
+
+					assert.equal( eButton.settings.attributes.text, defaultButtonText, 'Settings back to default' );
+
+					// Redo.
+					redoValidate( assert, historyItem );
+
+					doneSettings();
+
+					const doneDynamic = assert.async();
+
+					setTimeout( () => {
+						assert.equal( eButton.view.$el.find( '.button-text' ).html(), dynamicValue, 'Settings restored' );
+						doneDynamic();
+					}, DEFAULT_DEBOUNCE_DELAY );
 				}, DEFAULT_DEBOUNCE_DELAY );
 			} );
 /*
@@ -608,7 +586,7 @@ jQuery( () => {
 				const { model, content, page_settings } = BlockFaq;
 				const data = { content, page_settings };
 
-				Elements.import( data, new Backbone.Model( model ) );
+				DocumentHelper.import( data, new Backbone.Model( model ) );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -661,9 +639,9 @@ jQuery( () => {
 
 		QUnit.module( 'document/elements: Multiple Selection', () => {
 			QUnit.test( 'Create Columns', ( assert ) => {
-				const eSection1 = Elements.createSection(),
-					eSection2 = Elements.createSection(),
-					eColumns = Elements.multiCreateColumn( [ eSection1, eSection2 ] ),
+				const eSection1 = DocumentHelper.createSection(),
+					eSection2 = DocumentHelper.createSection(),
+					eColumns = DocumentHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -683,7 +661,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Widgets', ( assert ) => {
-				const eWidgets = Elements.multiCreateAutoButton(),
+				const eWidgets = DocumentHelper.multiCreateAutoButton(),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -702,9 +680,9 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Create Widgets: Inner Section', ( assert ) => {
-				const eColumn1 = Elements.createSection( 1, true ),
-					eColumn2 = Elements.createSection( 1, true ),
-					eInnerSections = Elements.multiCreateInnerSection( [ eColumn1, eColumn2 ] ),
+				const eColumn1 = DocumentHelper.createSection( 1, true ),
+					eColumn2 = DocumentHelper.createSection( 1, true ),
+					eInnerSections = DocumentHelper.multiCreateInnerSection( [ eColumn1, eColumn2 ] ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes,
 					{ defaultInnerSectionColumns } = eInnerSections[ 0 ].view,
 					innerSectionColumnsIds = {};
@@ -748,7 +726,7 @@ jQuery( () => {
 					eInnerSection.view.children.forEach( ( el ) => innerSectionAfterRedoColumnsIds[ eInnerSection.id ].push( el.model.id ) );
 				} );
 
-				Object.entries( innerSectionAfterRedoColumnsIds ).forEach( ( [ key, ids ] ) => {
+				Object.entries( innerSectionAfterRedoColumnsIds ).forEach( ( [ key, ids ] ) => { // eslint-disable-line no-unused-vars
 					assert.equal( ids.length, defaultInnerSectionColumns, `Inner Section have "${ defaultInnerSectionColumns } columns"` );
 				} );
 
@@ -756,8 +734,8 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
-				const eWidgets = Elements.multiCreateAutoButton(),
-					eWidgetsDuped = Elements.multiDuplicate( eWidgets ),
+				const eWidgets = DocumentHelper.multiCreateAutoButton(),
+					eWidgetsDuped = DocumentHelper.multiDuplicate( eWidgets ),
 					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
@@ -775,127 +753,15 @@ jQuery( () => {
 				// Element exist again.
 				eWidgetsDuped.forEach( ( eWidgetDuped ) => recreatedValidate( assert, eWidgetDuped ) );
 			} );
-
-			QUnit.test( 'Copy & Paste', ( assert ) => {
-				const eColumn1 = Elements.createSection( 1, true ),
-					eColumn2 = Elements.createSection( 1, true ),
-					eColumn3 = Elements.createSection( 1, true ),
-					eWidget = Elements.createButton( eColumn1 );
-
-				Elements.copy( eWidget );
-
-				const ePastedWidgets = Elements.multiPaste( [ eColumn2, eColumn3 ] ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'add', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				ePastedWidgets.forEach( ( ePastedWidget ) => destroyedValidate( assert, ePastedWidget ) );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				ePastedWidgets.forEach( ( ePastedWidget ) => recreatedValidate( assert, ePastedWidget ) );
-			} );
-
-			QUnit.test( 'Settings', ( assert ) => {
-				const eWidgets = Elements.multiCreateAutoButton(),
-					text = 'i test it',
-					defaultText = eWidgets[ 0 ].settings.attributes.text;
-
-				// Change button text.
-				Elements.multiSettings( eWidgets, { text } );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'elements' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				eWidgets.forEach( ( eWidget ) =>
-					assert.equal( eWidget.settings.attributes.text, defaultText, 'Settings back to default.' )
-				);
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				eWidgets.forEach( ( eWidget ) =>
-					assert.equal( eWidget.settings.attributes.text, text, 'Settings restored.' )
-				);
-			} );
-
-			QUnit.test( 'Paste Style', ( assert ) => {
-				const eWidgetsSimple = Elements.multiCreateAutoButton(),
-					eWidgetStyled = Elements.createAutoButtonStyled(),
-					widgetSimpleBackground = eWidgetsSimple[ 0 ].settings.get( 'background_color' ),
-					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
-
-				Elements.copy( eWidgetStyled );
-				Elements.multiPasteStyle( eWidgetsSimple );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				eWidgetsSimple.forEach( ( eWidgetSimple ) => {
-					assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-						'Settings back to default.' );
-				} );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				eWidgetsSimple.forEach( ( eWidgetSimple ) => {
-					assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetStyledBackground,
-						'Settings restored.' );
-				} );
-			} );
-
-			QUnit.test( 'Reset Style', ( assert ) => {
-				const eWidgetsStyled = Elements.multiCreateAutoButtonStyled(),
-					backgroundBeforeReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' );
-
-				Elements.multiResetStyle( eWidgetsStyled );
-
-				const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				eWidgetsStyled.forEach( ( eWidgetStyled ) => {
-					assert.equal( eWidgetStyled.settings.get( 'background_color' ), backgroundBeforeReset, 'Settings back to default.' );
-				} );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				eWidgetsStyled.forEach( ( eWidgetStyled ) => {
-					assert.equal( eWidgetStyled.settings.get( 'background_color' ), backgroundAfterReset, 'Settings restored.' );
-				} );
-			} );
 		} );
 
 		QUnit.module( 'document/repeater: Single Selection', () => {
 			QUnit.test( 'Insert', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn ),
 					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
 
-				Elements.repeaterInsert( eTabs, 'tabs', {
+				DocumentHelper.repeaterInsert( eTabs, 'tabs', {
 					tab_title: 'Test Tab Title',
 					tab_content: 'Test Tab Content',
 				} );
@@ -920,11 +786,13 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Remove', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn ),
-					originalItemsCount = eTabs.settings.get( 'tabs' ).length,
-					eTabModel = Elements.repeaterRemove( eTabs, 'tabs', 1 ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn ),
+					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
+
+				DocumentHelper.repeaterRemove( eTabs, 'tabs', 1 );
+
+				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'remove', 'Tabs' );
@@ -944,42 +812,14 @@ jQuery( () => {
 					'Item was removed from the model' );
 			} );
 
-			QUnit.test( 'Settings', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn ),
-					tabTitle = 'This is was changed',
-					index = 1,
-					eTab = eTabs.settings.get( 'tabs' ).at( index ),
-					originalTitle = eTab.get( 'tab_title' );
+			QUnit.test( 'Duplicate', ( assert ) => {
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn ),
+					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
 
-				Elements.repeaterSettings( eTabs, 'tabs', index, {
-					tab_title: tabTitle,
-				} );
+				DocumentHelper.repeaterDuplicate( eTabs, 'tabs', 1 );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', `Tabs Item#${ index + 1 }` );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				// Settings back to default.
-				assert.equal( eTab.get( 'tab_title' ), originalTitle, 'Settings back to default' );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				// Settings restored.
-				assert.equal( eTab.get( 'tab_title' ), tabTitle, 'Settings restored' );
-			} );
-
-			QUnit.test( 'Duplicate', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn ),
-					originalItemsCount = eTabs.settings.get( 'tabs' ).length,
-					eTabModel = Elements.repeaterDuplicate( eTabs, 'tabs', 1 ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				inHistoryValidate( assert, historyItem, 'duplicate', 'Tabs' );
@@ -1000,13 +840,13 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs = Elements.createTabs( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs = DocumentHelper.createTabs( eColumn ),
 					sourceIndex = 1,
 					targetIndex = 0,
 					eTabModel = eTabs.settings.get( 'tabs' ).at( sourceIndex );
 
-				Elements.repeaterMove( eTabs, 'tabs', sourceIndex, targetIndex );
+				DocumentHelper.repeaterMove( eTabs, 'tabs', sourceIndex, targetIndex );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -1028,81 +868,81 @@ jQuery( () => {
 					eTabModel.id, 'Item restored to targetIndex' );
 			} );
 
-			QUnit.test( 'Deep', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					name = 'form_fields',
-					eForm = Elements.createForm( eColumn ),
-					beforeInsertItemsCount = eForm.settings.get( name ).length;
-
-				// Insert Item.
-				Elements.repeaterInsert( eForm, name, {
-					field_type: 'text',
-					field_label: 'Name',
-				} );
-
-				const currentItemIndex = 3;
-
-				// Change field_type = 'email' for new item.
-				Elements.repeaterSettings( eForm, name, currentItemIndex, { field_type: 'email' }, {
-					external: true,
-				} );
-
-				// Change required = 'true' for new item.
-				Elements.repeaterSettings( eForm, name, currentItemIndex, { required: 'true' }, {
-					external: true,
-				} );
-
-				// Undo
-				$e.run( 'document/history/undo' );
-
-				// Validate required = '' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), '',
-					'Require setting back to default' );
-
-				// Undo
-				$e.run( 'document/history/undo' );
-
-				// Validate field_type = 'text' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'text',
-					'field_type setting back to default' );
-
-				$e.run( 'document/history/undo' );
-
-				// Validate new inserted item removed.
-				assert.equal( eForm.settings.get( name ).length, beforeInsertItemsCount,
-					'New item was removed' );
-
-				// Redo
-				$e.run( 'document/history/redo' );
-
-				// Validate new inserted item was recreated.
-				assert.equal( eForm.settings.get( name ).length, ( beforeInsertItemsCount + 1 ),
-					'New item was recreated' );
-
-				// Redo
-				$e.run( 'document/history/redo' );
-
-				// Validate field_type = 'email' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'email',
-					'field_type setting was restored' );
-
-				$e.run( 'document/history/redo' );
-
-				// Validate required = 'true' for new item.
-				assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), 'true',
-					'Require setting was restored' );
-			} );
+			// QUnit.test( 'Deep', ( assert ) => {
+			// 	const eColumn = DocumentHelper.createSection( 1, true ),
+			// 		name = 'form_fields',
+			// 		eForm = DocumentHelper.createForm( eColumn ),
+			// 		beforeInsertItemsCount = eForm.settings.get( name ).length;
+			//
+			// 	// Insert Item.
+			// 	DocumentHelper.repeaterInsert( eForm, name, {
+			// 		field_type: 'text',
+			// 		field_label: 'Name',
+			// 	} );
+			//
+			// 	const currentItemIndex = 3;
+			//
+			// 	// Change field_type = 'email' for new item.
+			// 	DocumentHelper.repeaterSettings( eForm, name, currentItemIndex, { field_type: 'email' }, {
+			// 		external: true,
+			// 	} );
+			//
+			// 	// Change required = 'true' for new item.
+			// 	DocumentHelper.repeaterSettings( eForm, name, currentItemIndex, { required: 'true' }, {
+			// 		external: true,
+			// 	} );
+			//
+			// 	// Undo
+			// 	$e.run( 'document/history/undo' );
+			//
+			// 	// Validate required = '' for new item.
+			// 	assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), '',
+			// 		'Require setting back to default' );
+			//
+			// 	// Undo
+			// 	$e.run( 'document/history/undo' );
+			//
+			// 	// Validate field_type = 'text' for new item.
+			// 	assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'text',
+			// 		'field_type setting back to default' );
+			//
+			// 	$e.run( 'document/history/undo' );
+			//
+			// 	// Validate new inserted item removed.
+			// 	assert.equal( eForm.settings.get( name ).length, beforeInsertItemsCount,
+			// 		'New item was removed' );
+			//
+			// 	// Redo
+			// 	$e.run( 'document/history/redo' );
+			//
+			// 	// Validate new inserted item was recreated.
+			// 	assert.equal( eForm.settings.get( name ).length, ( beforeInsertItemsCount + 1 ),
+			// 		'New item was recreated' );
+			//
+			// 	// Redo
+			// 	$e.run( 'document/history/redo' );
+			//
+			// 	// Validate field_type = 'email' for new item.
+			// 	assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'field_type' ), 'email',
+			// 		'field_type setting was restored' );
+			//
+			// 	$e.run( 'document/history/redo' );
+			//
+			// 	// Validate required = 'true' for new item.
+			// 	assert.equal( eForm.settings.get( name ).at( currentItemIndex ).get( 'required' ), 'true',
+			// 		'Require setting was restored' );
+			// } );
 		} );
 
 		QUnit.module( 'document/repeater: Multiple Selection', () => {
 			QUnit.test( 'Insert', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					originalItemsCount = eTabs1.settings.get( 'tabs' ).length;
 
-				Elements.multiRepeaterInsert( eMultiTabs, 'tabs', {
+				DocumentHelper.multiRepeaterInsert( eMultiTabs, 'tabs', {
 					tab_title: 'Test Tab Title',
 					tab_content: 'Test Tab Content',
 				} );
@@ -1132,13 +972,13 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Remove', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					originalItemsCount = eTabs1.settings.get( 'tabs' ).length;
 
-				Elements.multiRepeaterRemove( eMultiTabs, 'tabs', 1 );
+				DocumentHelper.multiRepeaterRemove( eMultiTabs, 'tabs', 1 );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -1164,51 +1004,14 @@ jQuery( () => {
 				} );
 			} );
 
-			QUnit.test( 'Settings', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn ),
-					index = 1,
-					eMultiTabs = [ eTabs1, eTabs2 ],
-					tabTitle = 'This is was changed',
-					defaultTitle = eTabs1.settings.get( 'tabs' ).at( index ).get( 'tab_title' );
-
-				Elements.multiRepeaterSettings( eMultiTabs, 'tabs', index, {
-					tab_title: tabTitle,
-				} );
-
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'change', 'elements' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				// Check settings were changed.
-				eMultiTabs.forEach( ( eTabs ) => {
-					assert.equal( eTabs.settings.get( 'tabs' ).at( index ).get( 'tab_title' ), defaultTitle,
-						`For Tab: '${ eTabs.id }' - Setting was changed` );
-				} );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				// Check settings were restored.
-				eMultiTabs.forEach( ( eTabs ) => {
-					assert.equal( eTabs.settings.get( 'tabs' ).at( index ).get( 'tab_title' ), tabTitle,
-						`For Tab: '${ eTabs.id }' - Setting was restored` );
-				} );
-			} );
-
 			QUnit.test( 'Duplicate', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					originalItemsCount = eTabs1.settings.get( 'tabs' ).length;
 
-				Elements.multiRepeaterDuplicate( [ eTabs1, eTabs2 ], 'tabs', 1 );
+				DocumentHelper.multiRepeaterDuplicate( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
@@ -1234,9 +1037,9 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'Move', ( assert ) => {
-				const eColumn = Elements.createSection( 1, true ),
-					eTabs1 = Elements.createTabs( eColumn ),
-					eTabs2 = Elements.createTabs( eColumn ),
+				const eColumn = DocumentHelper.createSection( 1, true ),
+					eTabs1 = DocumentHelper.createTabs( eColumn ),
+					eTabs2 = DocumentHelper.createTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					sourceIndex = 1,
 					targetIndex = 0,
@@ -1244,7 +1047,7 @@ jQuery( () => {
 					eTabItem2 = eTabs2.settings.get( 'tabs' ).at( sourceIndex ),
 					eTabItems = [ eTabItem1, eTabItem2 ];
 
-				Elements.multiRepeaterMove(
+				DocumentHelper.multiRepeaterMove(
 					eMultiTabs,
 					'tabs',
 					sourceIndex,
