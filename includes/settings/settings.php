@@ -473,9 +473,9 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'select',
 									'options' => [
-										'auto' => __( 'Auto (Browser Detect)', 'elementor' ),
 										'light' => __( 'Light', 'elementor' ),
 										'dark' => __( 'Dark', 'elementor' ),
+										'auto' => __( 'Auto (Browser Detect)', 'elementor' ),
 									],
 									'desc' => __( 'Choose whether to use the editor theme in Light, Dark or Auto by browser detected.', 'elementor' ),
 								],

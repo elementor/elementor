@@ -9,6 +9,7 @@ const getBuildFiles = [
 	'!.gitignore',
 	'!.gitmodules',
 	'!.jscsrc',
+	'!karma.conf.js',
 	'!.jshintignore',
 	'!.jshintrc',
 	'!.travis.yml',

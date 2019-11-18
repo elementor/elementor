@@ -85,27 +85,6 @@ RevisionsManager = function() {
 		} );
 	};
 
-	this.deleteRevision = function( revisionModel, options ) {
-		var params = {
-			data: {
-				id: revisionModel.get( 'id' ),
-			},
-			success: () => {
-				if ( options.success ) {
-					options.success();
-				}
-
-				revisionModel.destroy();
-			},
-		};
-
-		if ( options.error ) {
-			params.error = options.error;
-		}
-
-		elementorCommon.ajax.addRequest( 'delete_revision', params );
-	};
-
 	this.init = function() {
 		attachEvents();
 
