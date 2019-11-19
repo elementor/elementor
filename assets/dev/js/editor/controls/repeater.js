@@ -31,7 +31,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	childViewOptions: function( rowModel, index ) {
 		const elementContainer = this.getOption( 'container' );
 
-		// Support backward compatibility.
+		// TODO: Temp backwards compatibility. since 2.8.0.
 		if ( 'bc-container' === elementContainer.type ) {
 			rowModel.set( '_id', 'bc-' + elementor.helpers.getUniqueID() );
 		}
