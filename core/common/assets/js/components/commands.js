@@ -1,9 +1,10 @@
-export default class extends elementorModules.Module {
+export default class Commands extends elementorModules.Module {
 	constructor( ...args ) {
 		super( ...args );
 
 		this.current = {};
 		this.currentArgs = {};
+		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
 	}
@@ -91,6 +92,8 @@ export default class extends elementorModules.Module {
 			this.error( `\`${ command }\` not found.` );
 		}
 
+		this.currentTrace.push( command );
+
 		return this.getComponent( command ).dependency( command, args );
 	}
 
@@ -107,19 +110,19 @@ export default class extends elementorModules.Module {
 
 		this.trigger( 'run', component, command, args );
 
-		if ( args && args.onBefore ) {
+		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
 		}
 
 		const results = this.commands[ command ].apply( component, [ args ] );
 
-		if ( args && args.onAfter ) {
+		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args ] );
 		}
 
 		this.afterRun( command, args );
 
-		if ( args && false === args.returnValue ) {
+		if ( false === args.returnValue ) {
 			return true;
 		}
 
@@ -134,6 +137,8 @@ export default class extends elementorModules.Module {
 	afterRun( command ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
+
+		this.currentTrace.pop();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
