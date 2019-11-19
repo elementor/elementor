@@ -167,7 +167,7 @@ class AddSectionBase extends Marionette.ItemView {
 			},
 		} ).view.addElementFromPanel();
 
-		$e.run( 'document/history/end-log', { id: historyId } );
+		$e.run( 'document/history/end-log', historyId );
 	}
 }
 

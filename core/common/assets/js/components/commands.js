@@ -107,19 +107,19 @@ export default class extends elementorModules.Module {
 
 		this.trigger( 'run', component, command, args );
 
-		if ( args.onBefore ) {
+		if ( args && args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
 		}
 
 		const results = this.commands[ command ].apply( component, [ args ] );
 
-		if ( args.onAfter ) {
+		if ( args && args.onAfter ) {
 			args.onAfter.apply( component, [ args ] );
 		}
 
 		this.afterRun( command, args );
 
-		if ( false === args.returnValue ) {
+		if ( args && false === args.returnValue ) {
 			return true;
 		}
 

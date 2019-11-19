@@ -46,7 +46,7 @@ jQuery( () => {
 			$e.run = orig;
 
 			assert.equal( tempCommand, 'document/history/delete-log' );
-			assert.equal( tempArgs.id, instance.historyId );
+			assert.equal( tempArgs, instance.historyId );
 		} );
 	} );
 } );
