@@ -266,13 +266,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i class="eicon-elementor" aria-hidden="true"></i>
 	</div>
 	<div class="elementor-template-library-blank-title">
-		<?php echo __( 'Get Access to Hundreds of Elementor Templates', 'elementor' ); ?>
+		{{{ title }}}
 	</div>
 	<div class="elementor-template-library-blank-message">
-		<?php echo __( 'Connect your account for free to download Elementor’s designer-made templates', 'elementor' ); ?>
+		{{{ message }}}
 	</div>
 	<?php $url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize' ); ?>
-	<a id="elementor-template-library-connect__button" class="elementor-button elementor-button-success" href="<?php echo esc_attr( $url ); ?>"><?php echo __( 'Connect Now', 'elementor' ); ?></a>
+	<a id="elementor-template-library-connect__button" class="elementor-button elementor-button-success" href="<?php echo esc_attr( $url ); ?>">
+		{{{ button }}}
+	</a>
 	<?php
 	$base_images_url = $this->get_assets_base_url() . '/assets/images/library-connect/';
 
