@@ -1,5 +1,5 @@
 // TODO: Refactor this class.
-export default class {
+export default class DocumentHelper {
 	static createSection( columns = 1, returnFirstColumn = false ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {
@@ -7,6 +7,23 @@ export default class {
 			},
 			container: elementor.getPreviewContainer(),
 			columns,
+		} );
+
+		if ( returnFirstColumn ) {
+			return eSection.view.children._views[ Object.keys( eSection.view.children._views )[ 0 ] ].getContainer();
+		}
+
+		return eSection;
+	}
+
+	static createSectionStructure( columns = 1, structure, returnFirstColumn = false ) {
+		const eSection = $e.run( 'document/elements/create', {
+			model: {
+				elType: 'section',
+			},
+			container: elementor.getPreviewContainer(),
+			columns,
+			structure,
 		} );
 
 		if ( returnFirstColumn ) {
@@ -357,5 +374,10 @@ export default class {
 			sourceIndex,
 			targetIndex,
 		} );
+	}
+
+	static testCommands( commands ) {
+		// eslint-disable-next-line no-unused-vars
+		Object.entries( commands ).forEach( ( [ command, reference ] ) => reference() );
 	}
 }

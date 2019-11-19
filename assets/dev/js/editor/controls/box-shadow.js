@@ -4,8 +4,6 @@ var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 import ColorPicker from '../utils/color-picker';
 
 ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
-	debounceHistory: true,
-
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 

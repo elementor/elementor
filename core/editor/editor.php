@@ -50,7 +50,7 @@ class Editor {
 	 *
 	 * @var int Post ID.
 	 */
-	private $_post_id;
+	private $post_id;
 
 	/**
 	 * Whether the edit mode is active.
@@ -62,7 +62,7 @@ class Editor {
 	 *
 	 * @var bool Whether the edit mode is active.
 	 */
-	private $_is_edit_mode;
+	private $is_edit_mode;
 
 	/**
 	 * @var Notice_Bar
@@ -87,9 +87,9 @@ class Editor {
 			return;
 		}
 
-		$this->_post_id = absint( $_REQUEST['post'] );
+		$this->post_id = absint( $_REQUEST['post'] );
 
-		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
+		if ( ! $this->is_edit_mode( $this->post_id ) ) {
 			return;
 		}
 
@@ -103,13 +103,13 @@ class Editor {
 
 		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
 		query_posts( [
-			'p' => $this->_post_id,
-			'post_type' => get_post_type( $this->_post_id ),
+			'p' => $this->post_id,
+			'post_type' => get_post_type( $this->post_id ),
 		] );
 
-		Plugin::$instance->db->switch_to_post( $this->_post_id );
+		Plugin::$instance->db->switch_to_post( $this->post_id );
 
-		$document = Plugin::$instance->documents->get( $this->_post_id );
+		$document = Plugin::$instance->documents->get( $this->post_id );
 
 		Plugin::$instance->documents->switch_to_document( $document );
 
@@ -143,11 +143,11 @@ class Editor {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $this->_post_id );
+		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
 
 		// Post Lock
-		if ( ! $this->get_locked_user( $this->_post_id ) ) {
-			$this->lock_post( $this->_post_id );
+		if ( ! $this->get_locked_user( $this->post_id ) ) {
+			$this->lock_post( $this->post_id );
 		}
 
 		// Setup default heartbeat options
@@ -180,7 +180,7 @@ class Editor {
 	 * @return int Post ID.
 	 */
 	public function get_post_id() {
-		return $this->_post_id;
+		return $this->post_id;
 	}
 
 	/**
@@ -227,12 +227,12 @@ class Editor {
 	 * @return bool Whether the edit mode is active.
 	 */
 	public function is_edit_mode( $post_id = null ) {
-		if ( null !== $this->_is_edit_mode ) {
-			return $this->_is_edit_mode;
+		if ( null !== $this->is_edit_mode ) {
+			return $this->is_edit_mode;
 		}
 
 		if ( empty( $post_id ) ) {
-			$post_id = $this->_post_id;
+			$post_id = $this->post_id;
 		}
 
 		$document = Plugin::$instance->documents->get( $post_id );
@@ -328,7 +328,7 @@ class Editor {
 		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
 
 		// Set the global data like $post, $authordata and etc
-		setup_postdata( $this->_post_id );
+		setup_postdata( $this->post_id );
 
 		global $wp_styles, $wp_scripts;
 
@@ -462,7 +462,7 @@ class Editor {
 
 		wp_register_script(
 			'pickr',
-			ELEMENTOR_ASSETS_URL . 'lib/pickr/js/pickr.min.js',
+			ELEMENTOR_ASSETS_URL . 'lib/pickr/pickr.min.js',
 			[],
 			'1.4.7',
 			true
@@ -504,7 +504,7 @@ class Editor {
 		 */
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
-		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
 
 		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
 		$editor_data = $document->get_elements_raw_data( null, true );
@@ -512,7 +512,7 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$locked_user = $this->get_locked_user( $this->_post_id );
+		$locked_user = $this->get_locked_user( $this->post_id );
 
 		if ( $locked_user ) {
 			$locked_user = $locked_user->display_name;
@@ -577,7 +577,9 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
-			'editButtons' => get_option( 'elementor_edit_buttons' ),
+			'ui' => [
+				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
+			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -602,6 +604,7 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
+				'editor_preferences' => __( 'Editor Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'go_to' => __( 'Go To', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
@@ -768,7 +771,7 @@ class Editor {
 		 * @param array $localized_settings Localized settings.
 		 * @param int   $post_id            The ID of the current post being edited.
 		 */
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings, $this->_post_id );
+		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings, $this->post_id );
 
 		if ( ! empty( $localized_settings ) ) {
 			$config = array_replace_recursive( $config, $localized_settings );
@@ -842,7 +845,7 @@ class Editor {
 
 		wp_register_style(
 			'pickr',
-			ELEMENTOR_ASSETS_URL . 'lib/pickr/css/monolith.min.css',
+			ELEMENTOR_ASSETS_URL . 'lib/pickr/themes/monolith.min.css',
 			[],
 			'1.4.7'
 		);
@@ -863,6 +866,26 @@ class Editor {
 		);
 
 		wp_enqueue_style( 'elementor-editor' );
+
+		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
+
+		if ( 'light' !== $ui_theme ) {
+			$ui_theme_media_queries = 'all';
+
+			if ( 'auto' === $ui_theme ) {
+				$ui_theme_media_queries = '(prefers-color-scheme: dark)';
+			}
+
+			wp_enqueue_style(
+				'elementor-editor-dark-mode',
+				ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
+				[
+					'elementor-editor',
+				],
+				ELEMENTOR_VERSION,
+				$ui_theme_media_queries
+			);
+		}
 
 		if ( Responsive::has_custom_breakpoints() ) {
 			$breakpoints = Responsive::get_breakpoints();
@@ -962,7 +985,7 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
-		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
+		_deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
 
 		$common = Plugin::$instance->common;
 
@@ -1018,7 +1041,7 @@ class Editor {
 	 * @param bool $edit_mode Whether the edit mode is active.
 	 */
 	public function set_edit_mode( $edit_mode ) {
-		$this->_is_edit_mode = $edit_mode;
+		$this->is_edit_mode = $edit_mode;
 	}
 
 	/**
@@ -1090,7 +1113,7 @@ class Editor {
 	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
-		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
+		_deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
@@ -1117,7 +1140,7 @@ class Editor {
 	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
-		 _deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
+		_deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
 
 		return wp_verify_nonce( $nonce );
 	}
@@ -1134,7 +1157,7 @@ class Editor {
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
-		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
+		_deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
@@ -1153,7 +1176,7 @@ class Editor {
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {
-		 _deprecated_function( __METHOD__, '2.3.0' );
+		_deprecated_function( __METHOD__, '2.3.0' );
 
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );

@@ -57,7 +57,7 @@ ColumnView = BaseElementView.extend( {
 			icon: 'column',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',
@@ -124,11 +124,31 @@ ColumnView = BaseElementView.extend( {
 		return 'widget' === elType;
 	},
 
+	getPercentsForDisplay: function() {
+		const inlineSize = +this.model.getSetting( '_inline_size' ) || this.getPercentSize();
+
+		return inlineSize.toFixed( 1 ) + '%';
+	},
+
 	changeSizeUI: function() {
 		const self = this,
 			columnSize = self.model.getSetting( '_column_size' );
 
 		self.$el.attr( 'data-col', columnSize );
+
+		_.defer( function() { // Wait for the column size to be applied
+			if ( self.ui.percentsTooltip ) {
+				self.ui.percentsTooltip.text( self.getPercentsForDisplay() );
+			}
+		} );
+	},
+
+	getPercentSize: function( size ) {
+		if ( ! size ) {
+			size = this.el.getBoundingClientRect().width;
+		}
+
+		return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
 	},
 
 	getSortableOptions: function() {

@@ -4,7 +4,7 @@ export class ForceMethodImplementation extends Error {
 
 		Error.captureStackTrace( this, ForceMethodImplementation );
 	}
-};
+}
 
 export default () => {
 	const stack = Error().stack,

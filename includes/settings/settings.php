@@ -465,35 +465,6 @@ class Settings extends Settings_Page {
 							],
 						],
 					],
-					'preferences' => [
-						'label' => __( 'Preferences', 'elementor' ),
-						'fields' => [
-							'editor_ui_theme' => [
-								'label' => __( 'Theme', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'options' => [
-										'auto' => __( 'Auto (Browser Detect)', 'elementor' ),
-										'light' => __( 'Light', 'elementor' ),
-										'dark' => __( 'Dark', 'elementor' ),
-									],
-									'desc' => __( 'Choose whether to use the editor theme in Light, Dark or Auto by browser detected.', 'elementor' ),
-								],
-							],
-							'edit_buttons' => [
-								'label' => __( 'Editing Handles', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'std' => '',
-									'options' => [
-										'' => __( 'Hide', 'elementor' ),
-										'on' => __( 'Show', 'elementor' ),
-									],
-									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
-								],
-							],
-						],
-					],
 					'usage' => [
 						'label' => __( 'Improve Elementor', 'elementor' ),
 						'fields' => [
@@ -503,7 +474,7 @@ class Settings extends Settings_Page {
 									'type' => 'checkbox',
 									'value' => 'yes',
 									'default' => '',
-									'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
+									'sub_desc' => __( 'Opt-in to our plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
 							],

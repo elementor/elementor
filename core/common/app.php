@@ -58,9 +58,9 @@ class App extends BaseApp {
 			if ( ! is_customize_preview() ) {
 				$this->add_component( 'finder', new Finder() );
 			}
-
-			$this->add_component( 'connect', new Connect() );
 		}
+
+		$this->add_component( 'connect', new Connect() );
 	}
 
 	/**

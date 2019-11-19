@@ -41,12 +41,16 @@ export default class Base {
 		this.id = this.id();
 
 		const params = [ this.command, this.id, ( ... args ) => {
+			const { options = {} } = args[ 0 ];
+
+			// Disable hook if requested by args.options.
+			if ( options.hooks && false === options.hooks[ this.id ] ) {
+				return true;
+			}
+
 			if ( this.conditions( args[ 0 ] ) ) {
 				if ( $e.devTools ) {
-					// TODO: avoid of using `$e.devTools.log` do same as `$e.devTools.log.command()`
-					// eg `$e.devTools.log.hook()`.
-					$e.devTools.log.log( `%cHOOK ACTIVATED: ${ this.command }: ${ this.id } `,
-						'font-weight: bold;color: #66ffcc' );
+					$e.devTools.log.hookActive( this.command, this.id );
 				}
 
 				return this.apply( ... args );
@@ -83,9 +87,11 @@ export default class Base {
 	 * Example: 'return $e.hooks.registerDependency';
 	 *
 	 * @returns {function()}
+	 *
+	 * @throws {Errror}
 	 */
 	method() {
-		throw Error( 'method() must be implanted' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -94,9 +100,11 @@ export default class Base {
 	 * Returns the full command path to hook.
 	 *
 	 * @returns {string}
+	 *
+	 * @throws {Error}
 	 */
 	hook() {
-		throw Error( 'hook() must be implanted.' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -105,9 +113,11 @@ export default class Base {
 	 * Returns command id for the hook (should be unique).
 	 *
 	 * @returns {string}
+	 *
+	 * @throws {Error}
 	 */
 	id() {
-		throw Error( 'id() must be implanted.' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -118,9 +128,11 @@ export default class Base {
 	 * @param {{}} args
 	 *
 	 * @returns {boolean}
+	 *
+	 * @throws {Error}
 	 */
-	conditions( args ) {
-		throw Error( 'conditions() must be implanted.' );
+	conditions( args ) { // eslint-disable-line no-unused-vars
+		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -132,7 +144,7 @@ export default class Base {
 	 *
 	 * @returns {boolean}
 	 */
-	apply( args ) {
-		throw Error( 'apply() must be implanted.' );
+	apply( args ) { // eslint-disable-line no-unused-vars
+		elementorModules.ForceMethodImplementation();
 	}
 }

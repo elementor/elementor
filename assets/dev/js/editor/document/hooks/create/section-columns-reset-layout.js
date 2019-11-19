@@ -10,7 +10,10 @@ export class SectionColumnsResetLayout extends HookAfter {
 	}
 
 	conditions( args ) {
-		return args.model && 'column' === args.model.elType;
+		// On `document/elements/move` no need for reset layout.
+		return args.model &&
+			'column' === args.model.elType &&
+			'document/elements/move' !== $e.commands.currentTrace[ 0 ];
 	}
 
 	/**

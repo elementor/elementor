@@ -257,37 +257,6 @@ class Revisions_Manager {
 	}
 
 	/**
-	 * @since 2.3.0
-	 * @access public
-	 * @static
-	 *
-	 * @param array $data
-	 *
-	 * @throws \Exception
-	 */
-	public static function ajax_delete_revision( array $data ) {
-		if ( empty( $data['id'] ) ) {
-			throw new \Exception( 'You must set the revision ID.' );
-		}
-
-		$revision = get_post( $data['id'] );
-
-		if ( empty( $revision ) ) {
-			throw new \Exception( 'Invalid revision.' );
-		}
-
-		if ( ! current_user_can( 'delete_post', $revision->ID ) ) {
-			throw new \Exception( __( 'Access denied.', 'elementor' ) );
-		}
-
-		$deleted = wp_delete_post_revision( $revision->ID );
-
-		if ( ! $deleted || is_wp_error( $deleted ) ) {
-			throw new \Exception( __( 'Cannot delete this revision.', 'elementor' ) );
-		}
-	}
-
-	/**
 	 * @since 1.7.0
 	 * @access public
 	 * @static
@@ -400,7 +369,6 @@ class Revisions_Manager {
 	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'get_revisions', [ __CLASS__, 'ajax_get_revisions' ] );
 		$ajax->register_ajax_action( 'get_revision_data', [ __CLASS__, 'ajax_get_revision_data' ] );
-		$ajax->register_ajax_action( 'delete_revision', [ __CLASS__, 'ajax_delete_revision' ] );
 	}
 
 	/**

@@ -1,5 +1,3 @@
-import Debounce from "../../document/commands/base/debounce";
-
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	SectionView;
 
@@ -15,12 +13,6 @@ SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
 	addSectionView: null,
-
-	childViewRequestState: {
-		state: 'none',
-		currentColumnWidth: 0,
-		nextColumnWidth: 0,
-	},
 
 	_checkIsFull: function() {
 		// TODO: should be part of $e.events.
@@ -88,7 +80,7 @@ SectionView = BaseElementView.extend( {
 			icon: 'handle',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',
@@ -159,6 +151,17 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
+	getNeighborContainer( container ) {
+		const parentView = container.parent.view,
+			nextView = parentView.getNextColumn( container.view ) || parentView.getPreviousColumn( container.view );
+
+		if ( ! nextView ) {
+			return false;
+		}
+
+		return nextView.getContainer();
+	},
+
 	setStructure: function( structure ) {
 		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
 
@@ -204,7 +207,6 @@ SectionView = BaseElementView.extend( {
 				},
 				options: {
 					external: true,
-					debounceHistory: true,
 				},
 			} );
 		} );
@@ -252,10 +254,9 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		const myIndex = this.model.collection.indexOf( this.model ),
-			addSectionView = new AddSectionView( {
-				at: myIndex,
-			} );
+		const addSectionView = new AddSectionView( {
+			at: this.model.collection.indexOf( this.model ),
+		} );
 
 		addSectionView.render();
 
@@ -272,7 +273,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onChildviewRequestResizeStart: function( columnView ) {
-		const nextColumnView = this.getNextColumn( columnView );
+		var nextColumnView = this.getNextColumn( columnView );
 
 		if ( ! nextColumnView ) {
 			return;
@@ -280,15 +281,13 @@ SectionView = BaseElementView.extend( {
 
 		this.showChildrenPercentsTooltip( columnView, nextColumnView );
 
-		elementor.helpers.disableElementEvents(
-			columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) )
-		);
+		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
 
-		this.childViewRequestState.status = 'start';
+		elementor.helpers.disableElementEvents( $iframes );
 	},
 
 	onChildviewRequestResizeStop: function( columnView ) {
-		const nextColumnView = this.getNextColumn( columnView );
+		var nextColumnView = this.getNextColumn( columnView );
 
 		if ( ! nextColumnView ) {
 			return;
@@ -296,91 +295,25 @@ SectionView = BaseElementView.extend( {
 
 		this.hideChildrenPercentsTooltip( columnView, nextColumnView );
 
-		elementor.helpers.enableElementEvents(
-			columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) )
-		);
+		var $iframes = columnView.$el.find( 'iframe' ).add( nextColumnView.$el.find( 'iframe' ) );
 
-		const columnContainer = columnView.getContainer(),
-			nextColumnContainer = nextColumnView.getContainer();
-
-		$e.run( 'document/elements/settings', {
-			// `nextColumn` must be first.
-			containers: [ columnContainer, nextColumnContainer ],
-			settings: {
-				[ columnContainer.id ]: {
-					_inline_size: this.getColumnPercentSize( columnView.$el, columnView.$el.width() ),
-				},
-				[ nextColumnContainer.id ]: {
-					_inline_size: this.getColumnPercentSize( nextColumnView.$el, nextColumnView.$el.width() ),
-				},
-			},
-			options: {
-				external: true,
-				history: {
-					title: elementor.config.elements.column.controls._inline_size.label,
-				},
-			},
-			isMultiSettings: true,
-		} );
-
-		// Reset style after save.
-		columnView.$el.removeAttr( 'style' );
-		nextColumnView.$el.removeAttr( 'style' );
-
-		this.childViewRequestState.status = 'stop';
+		elementor.helpers.enableElementEvents( $iframes );
 	},
 
 	onChildviewRequestResize: function( columnView, ui ) {
-		const nextColumnView = this.getNextColumn( columnView );
+		window.currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
 
-		if ( ! nextColumnView ) {
-			return;
-		}
-
-		let lastCurrentColumnWidth = columnView.el.getBoundingClientRect().width,
-			lastNextColumnWidth = nextColumnView.el.getBoundingClientRect().width;
-
-		if ( 'start' === this.childViewRequestState.status ) {
-			this.childViewRequestState.currentColumnWidth = lastCurrentColumnWidth;
-			this.childViewRequestState.nextColumnWidth = lastNextColumnWidth;
-		} else {
-			lastCurrentColumnWidth = this.childViewRequestState.currentColumnWidth;
-			lastNextColumnWidth = this.childViewRequestState.nextColumnWidth;
-		}
-
-		// Disable HTML column re-sizing.
 		ui.element.css( {
 			width: '',
 			left: 'initial', // Fix for RTL resizing
 		} );
 
-		/**
-		 *  If current cell is increased, next cell width equals to self width - ( how much current cell grow ).
-		 *  else, if current cell is decreased, next cell width equals to self width + ( how much current cell shrink ).
-		 */
-		const totalWidth = this.$el.find( ' > .elementor-container' )[ 0 ].getBoundingClientRect().width,
-			isGrow = ui.size.width > lastCurrentColumnWidth,
-			nextColumnNewWidth = isGrow ?
-				this.childViewRequestState.nextColumnWidth - ( ui.size.width - lastCurrentColumnWidth ) :
-				this.childViewRequestState.nextColumnWidth + ( lastCurrentColumnWidth - ui.size.width );
-
-		// nextColumnNewWidthPercent = ( nextColumnView.el.getBoundingClientRect().width / totalWidth * 100 );
-
-		// Update width of next column.
-		nextColumnView.$el.width( nextColumnNewWidth );
-
-		// Update width of column which being re-sized.
-		columnView.$el.width( ui.size.width );
-
-		// Take sample after changing width(s).
-		const currentColumnPercent = ( columnView.el.getBoundingClientRect().width / totalWidth * 100 ),
-			nextColumnPercent = ( nextColumnView.el.getBoundingClientRect().width / totalWidth * 100 );
-
-		// Show percent tooltip.
-		columnView.ui.percentsTooltip.text( currentColumnPercent.toFixed( 1 ) + '%' );
-		nextColumnView.ui.percentsTooltip.text( nextColumnPercent.toFixed( 1 ) + '%' );
-
-		this.childViewRequestState.status = 'resize';
+		$e.run( 'document/elements/settings', {
+			container: columnView.getContainer(),
+			settings: {
+				_inline_size: this.getColumnPercentSize( ui.element, ui.size.width ),
+			},
+		} );
 	},
 
 	onDestroy: function() {

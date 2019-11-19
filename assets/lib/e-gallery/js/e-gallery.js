@@ -330,7 +330,9 @@ function () {
         columns: 5,
         horizontalGap: 10,
         verticalGap: 10,
+        rtl: false,
         animationDuration: 350,
+        lazyLoad: false,
         classesPrefix: 'e-gallery-',
         classes: {
           container: 'container',
@@ -341,7 +343,10 @@ function () {
           overlayDescription: 'overlay__description',
           link: 'link',
           firstRowItem: 'first-row-item',
-          animated: '-animated'
+          animated: '-animated',
+          hidden: 'item--hidden',
+          lazyLoad: '-lazyload',
+          imageLoaded: 'image-loaded'
         },
         selectors: {
           items: '.e-gallery-item',
@@ -410,6 +415,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ "./src/js/utils/index.js");
+
 
 
 
@@ -417,14 +424,32 @@ var BaseGalleryType =
 /*#__PURE__*/
 function () {
   function BaseGalleryType(settings) {
+    var _this = this;
+
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BaseGalleryType);
 
     this.settings = jQuery.extend(true, this.getDefaultSettings(), settings);
     this.$container = jQuery(this.settings.container);
-    this.runGallery = this.debounce(this.runGallery.bind(this), 300);
+    this.timeouts = [];
     this.initElements();
     this.prepareGallery();
+    var oldRunGallery = this.runGallery.bind(this);
+    this.runGallery = this.debounce(function () {
+      if (_this.settings.lazyLoad) {
+        oldRunGallery();
+      } else {
+        _this.allImagesPromise.then(oldRunGallery);
+      }
+    }, 300);
+
+    if (this.settings.lazyLoad) {
+      this.handleScroll = this.debounce(function () {
+        return _this.lazyLoadImages();
+      }, 16);
+    }
+
     this.bindEvents();
+    this.runGallery();
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BaseGalleryType, [{
@@ -443,12 +468,23 @@ function () {
       this.elements = {
         $window: jQuery(window)
       };
-      this.$container.addClass(this.getItemClass(this.settings.classes.container) + ' ' + this.getItemClass(this.settings.type));
+      var directionClass = '-' + (this.settings.rtl ? 'rtl' : 'ltr');
+      var containerClasses = this.getItemClass(this.settings.classes.container) + ' ' + this.getItemClass(this.settings.type) + ' ' + this.getItemClass(directionClass);
+
+      if (this.settings.lazyLoad) {
+        containerClasses += ' ' + this.getItemClass(this.settings.classes.lazyLoad);
+      }
+
+      this.$container.addClass(containerClasses);
     }
   }, {
     key: "bindEvents",
     value: function bindEvents() {
       this.elements.$window.on('resize', this.runGallery);
+
+      if (this.settings.lazyLoad) {
+        this.elements.$window.on('scroll', this.handleScroll);
+      }
     }
   }, {
     key: "getNestedObjectData",
@@ -539,11 +575,10 @@ function () {
       return filteredItems;
     }
   }, {
-    key: "getActiveImagesData",
-    value: function getActiveImagesData(index) {
+    key: "getImageData",
+    value: function getImageData(index) {
       if (this.settings.tags.length) {
-        var itemIndex = this.getActiveItems(true)[index];
-        return this.imagesData[itemIndex];
+        index = this.getActiveItems(true)[index];
       }
 
       return this.imagesData[index];
@@ -551,10 +586,10 @@ function () {
   }, {
     key: "compileTemplate",
     value: function compileTemplate(template, args) {
-      var _this = this;
+      var _this2 = this;
 
       return template.replace(/{{([^}]+)}}/g, function (match, placeholder) {
-        return _this.getTemplateArgs(args, placeholder.trim());
+        return _this2.getTemplateArgs(args, placeholder.trim());
       });
     }
   }, {
@@ -580,8 +615,12 @@ function () {
       }),
           $image = jQuery('<div>', {
         "class": this.getItemClass(classes.image)
-      }).css('background-image', 'url(' + itemData.thumbnail + ')');
+      });
       var $overlay;
+
+      if (!this.settings.lazyLoad) {
+        $image.css('background-image', 'url(' + itemData.thumbnail + ')');
+      }
 
       if (this.settings.overlay) {
         $overlay = this.createOverlay(itemData);
@@ -608,36 +647,88 @@ function () {
   }, {
     key: "debounce",
     value: function debounce(func, wait) {
+      var _this3 = this;
+
       var timeout;
       return function () {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        var context = this;
-
-        var later = function later() {
-          timeout = null;
-          func.apply(context, args);
-        };
-
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        timeout = setTimeout(function () {
+          return func.apply(void 0, args);
+        }, wait);
+
+        _this3.timeouts.push(timeout);
       };
     }
   }, {
     key: "buildGallery",
     value: function buildGallery() {
-      var _this2 = this;
+      var _this4 = this;
 
       var items = this.settings.items;
       this.$items = jQuery();
       items.forEach(function (item) {
-        var $item = _this2.createItem(item);
+        var $item = _this4.createItem(item);
 
-        _this2.$items = _this2.$items.add($item);
+        _this4.$items = _this4.$items.add($item);
 
-        _this2.$container.append($item);
+        _this4.$container.append($item);
+      });
+    }
+  }, {
+    key: "loadImages",
+    value: function loadImages() {
+      var _this5 = this;
+
+      var allPromises = [];
+      this.settings.items.forEach(function (item, index) {
+        var image = new Image(),
+            promise = new Promise(function (resolve) {
+          image.onload = resolve;
+        });
+        allPromises.push(promise);
+        promise.then(function () {
+          return _this5.calculateImageSize(image, index);
+        });
+        image.src = item.thumbnail;
+      });
+      this.allImagesPromise = Promise.all(allPromises);
+    }
+  }, {
+    key: "lazyLoadImages",
+    value: function lazyLoadImages() {
+      var _this6 = this;
+
+      if (this.settings.lazyLoadComplete) {
+        return;
+      }
+
+      var loadedItems = 0;
+      this.$items.each(function (index, item) {
+        var $item = jQuery(item);
+
+        if (!item.loaded && !$item.hasClass(_this6.settings.classes.hidden) && Object(_utils__WEBPACK_IMPORTED_MODULE_2__["elementInView"])(item)) {
+          var image = new Image(),
+              promise = new Promise(function (resolve) {
+            image.onload = resolve;
+          });
+          promise.then(function () {
+            $item.find(_this6.settings.selectors.image).css('background-image', 'url(' + _this6.settings.items[index].thumbnail + ')').addClass(_this6.getItemClass(_this6.settings.classes.imageLoaded));
+            item.loaded = true;
+          });
+          image.src = _this6.settings.items[index].thumbnail;
+        }
+
+        if (item.loaded) {
+          loadedItems++;
+
+          if (loadedItems === _this6.settings.items.length) {
+            _this6.settings.lazyLoadComplete = true;
+          }
+        }
       });
     }
   }, {
@@ -650,54 +741,33 @@ function () {
       };
     }
   }, {
-    key: "loadImages",
-    value: function loadImages() {
-      var _this3 = this;
-
-      var allPromises = [];
-      this.imagesData = [];
-
-      if (!this.settings.items) {
-        return;
-      }
+    key: "createImagesData",
+    value: function createImagesData() {
+      var _this7 = this;
 
       this.settings.items.forEach(function (item, index) {
-        var image = new Image(),
-            promise = new Promise(function (resolve) {
-          image.onload = resolve;
-        });
-        allPromises.push(promise);
-        promise.then(function () {
-          return new Promise(function (resolve) {
-            _this3.calculateImageSize(image, index);
-
-            resolve();
-          });
-        });
-        image.src = item.thumbnail;
-      });
-      Promise.all(allPromises).then(function () {
-        return _this3.runGallery();
+        return _this7.calculateImageSize(item, index);
       });
     }
   }, {
     key: "makeGalleryFromContent",
     value: function makeGalleryFromContent() {
       var selectors = this.settings.selectors,
+          isLazyLoad = this.settings.lazyLoad,
           items = [];
       this.$items = this.$container.find(selectors.items);
-
-      if (!this.$items.length) {
-        return;
-      }
-
       this.$items.each(function (index, item) {
-        var $image = jQuery(item).find(selectors.image),
-            imageSource = $image.data('thumbnail');
-        $image.css('background-image', "url(\"".concat(imageSource, "\")"));
+        var $image = jQuery(item).find(selectors.image);
         items[index] = {
-          thumbnail: imageSource
+          thumbnail: $image.data('thumbnail')
         };
+
+        if (isLazyLoad) {
+          items[index].width = $image.data('width');
+          items[index].height = $image.data('height');
+        } else {
+          $image.css('background-image', "url(\"".concat($image.data('thumbnail'), "\")"));
+        }
       });
       this.settings.items = items;
     }
@@ -710,21 +780,32 @@ function () {
         this.makeGalleryFromContent();
       }
 
-      this.loadImages();
+      this.imagesData = [];
+
+      if (this.settings.lazyLoad) {
+        this.createImagesData();
+      } else {
+        this.loadImages();
+      }
     }
   }, {
     key: "runGallery",
     value: function runGallery(refresh) {
-      if (!this.settings.items) {
-        return;
-      }
+      var _this8 = this;
 
       var containerStyle = this.$container[0].style;
       containerStyle.setProperty('--hgap', this.getCurrentDeviceSetting('horizontalGap') + 'px');
       containerStyle.setProperty('--vgap', this.getCurrentDeviceSetting('verticalGap') + 'px');
       containerStyle.setProperty('--animation-duration', this.settings.animationDuration + 'ms');
-      this.$items.addClass('gallery-item--hidden');
-      this.getActiveItems().removeClass('gallery-item--hidden');
+      this.$items.addClass(this.getItemClass(this.settings.classes.hidden));
+      this.getActiveItems().removeClass(this.getItemClass(this.settings.classes.hidden));
+
+      if (this.settings.lazyLoad) {
+        setTimeout(function () {
+          return _this8.lazyLoadImages();
+        }, 300);
+      }
+
       this.run(refresh);
     }
   }, {
@@ -747,6 +828,9 @@ function () {
     value: function destroy() {
       this.unbindEvents();
       this.$container.empty();
+      this.timeouts.forEach(function (timeout) {
+        return clearTimeout(timeout);
+      });
     }
   }]);
 
@@ -837,9 +921,9 @@ function (_BaseGalleryType) {
       var animatedClass = this.getItemClass(this.settings.classes.animated);
       this.$container.addClass(animatedClass);
       setTimeout(function () {
-        _this.setContainerSize();
-
         _this.setItemsPosition();
+
+        _this.setContainerSize();
 
         setTimeout(function () {
           return _this.$container.removeClass(animatedClass);
@@ -924,12 +1008,7 @@ function (_BaseGalleryType) {
       var oldRowWidth = 0;
 
       for (var index = startIndex;; index++) {
-        var imageData = this.getActiveImagesData(index);
-
-        if ('undefined' === typeof imageData) {
-          break;
-        }
-
+        var imageData = this.getImageData(index);
         var itemComputedWidth = Math.round(this.getCurrentDeviceSetting('idealRowHeight') * imageData.ratio);
 
         if (itemComputedWidth > this.containerWidth) {
@@ -976,19 +1055,14 @@ function (_BaseGalleryType) {
       var aggregatedWidth = 0;
 
       for (var index = startIndex; index < endIndex; index++) {
-        var imageData = this.getActiveImagesData(index);
-
-        if ('undefined' === typeof imageData) {
-          break;
-        }
-
-        var percentWidth = imageData.computedWidth / rowWidth,
+        var imageData = this.getImageData(index),
+            percentWidth = imageData.computedWidth / rowWidth,
             item = $items.get(index),
             firstRowItemClass = this.getItemClass(this.settings.classes.firstRowItem);
         item.style.setProperty('--item-width', percentWidth);
         item.style.setProperty('--gap-count', gapCount);
         item.style.setProperty('--item-height', imageData.height / imageData.width * 100 + '%');
-        item.style.setProperty('--item-left', aggregatedWidth);
+        item.style.setProperty('--item-start', aggregatedWidth);
         item.style.setProperty('--item-row-index', index - startIndex);
         aggregatedWidth += percentWidth;
 
@@ -1099,21 +1173,12 @@ function (_BaseGalleryType) {
           horizontalGap = this.getCurrentDeviceSetting('horizontalGap'),
           itemWidth = (containerWidth - horizontalGap * (columns - 1)) / columns,
           $items = this.getActiveItems();
-
-      if (!$items) {
-        return;
-      }
-
       $items.each(function (index, item) {
         var row = Math.floor(index / columns),
             indexAtRow = index % columns,
-            imageData = _this.getActiveImagesData(index);
+            imageData = _this.getImageData(index),
+            itemHeight = itemWidth / imageData.ratio;
 
-        if ('undefined' === typeof imageData) {
-          return;
-        }
-
-        var itemHeight = itemWidth / imageData.ratio;
         item.style.setProperty('--item-height', imageData.height / imageData.width * 100 + '%');
         item.style.setProperty('--column', indexAtRow);
 
@@ -1144,6 +1209,52 @@ function (_BaseGalleryType) {
 
   return Masonry;
 }(_base__WEBPACK_IMPORTED_MODULE_5__["default"]);
+
+
+
+/***/ }),
+
+/***/ "./src/js/utils/element-in-view.js":
+/*!*****************************************!*\
+  !*** ./src/js/utils/element-in-view.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return elementInView; });
+function elementInView(element) {
+  var elementPart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'top';
+  var elementTop = element.getBoundingClientRect().top,
+      elementHeight = element.offsetHeight,
+      elementBottom = elementTop + elementHeight;
+  var elementPosition;
+
+  if ('middle' === elementPart) {
+    elementPosition = elementTop + elementHeight / 2;
+  } else if ('bottom' === elementPart) {
+    elementPosition = elementBottom;
+  } else {
+    elementPosition = elementTop;
+  }
+
+  return elementPosition <= innerHeight && elementBottom >= 0;
+}
+
+/***/ }),
+
+/***/ "./src/js/utils/index.js":
+/*!*******************************!*\
+  !*** ./src/js/utils/index.js ***!
+  \*******************************/
+/*! exports provided: elementInView */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _element_in_view__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./element-in-view */ "./src/js/utils/element-in-view.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "elementInView", function() { return _element_in_view__WEBPACK_IMPORTED_MODULE_0__["default"]; });
 
 
 
