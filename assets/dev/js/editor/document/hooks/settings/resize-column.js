@@ -30,9 +30,12 @@ export class ResizeColumn extends HookAfter {
 			return false;
 		}
 
-		const currentSize = container.oldValues._inline_size || container.settings.get( '_column_size' );
-
-		const nextChildView = nextContainer.view,
+		const parentView = container.parent.view,
+			currentColumnView = container.view,
+			totalWidth = parentView.$el.find( ' > .elementor-container' )[ 0 ].getBoundingClientRect().width,
+			currentSize = +( container.oldValues._inline_size ||
+				( currentColumnView.el.getBoundingClientRect().width / totalWidth * 100 ) ),
+			nextChildView = nextContainer.view,
 			$nextElement = nextChildView.$el,
 			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) ||
 				container.parent.view.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
