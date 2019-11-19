@@ -64,6 +64,7 @@ abstract class Manager {
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$name = $this->get_name();
+
 		$ajax_manager->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 	}
 
@@ -353,16 +354,20 @@ abstract class Manager {
 	 */
 	protected function print_editor_template_content( $name ) {
 		?>
-		<div class="elementor-panel-navigation">
-			<# _.each( elementor.config.settings.<?php echo esc_html( $name ); ?>.tabs, function( tabTitle, tabSlug ) {
-				$e.bc.ensureTab( 'panel/<?php echo esc_html( $name ); ?>-settings', tabSlug );
-			#>
-				<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-					<a href="#">{{{ tabTitle }}}</a>
-				</div>
+		<#
+		const tabs = elementor.config.settings.<?php echo $name; ?>.tabs;
+
+		if ( Object.values( tabs ).length > 1 ) { #>
+			<div class="elementor-panel-navigation">
+				<# _.each( tabs, function( tabTitle, tabSlug ) {
+					$e.bc.ensureTab( 'panel/<?php echo $name; ?>-settings', tabSlug ); #>
+					<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+						<a href="#">{{{ tabTitle }}}</a>
+					</div>
 				<# } ); #>
-		</div>
-		<div id="elementor-panel-<?php echo esc_attr( $name ); ?>-settings-controls"></div>
+			</div>
+		<# } #>
+		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
 		<?php
 	}
 
