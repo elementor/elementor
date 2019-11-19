@@ -1,6 +1,5 @@
 import DocumentHelper from '../../helper';
 import HistoryHelper from '../../history/helper';
-import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../../assets/dev/js/editor/document/commands/base/debounce';
 
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
@@ -39,8 +38,6 @@ export const PasteStyle = () => {
 
 				DocumentHelper.copy( eWidgetStyled );
 				DocumentHelper.pasteStyle( eWidgetSimple );
-
-
 				//setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 

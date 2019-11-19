@@ -50,10 +50,6 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function( options ) {
-		/**
-		 * @type {Container}
-		 */
-
 		const label = this.model.get( 'label' );
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
@@ -67,10 +63,15 @@ ControlBaseView = Marionette.CompositeView.extend( {
 					if ( view && view.getContainer ) {
 						options.container = view.getContainer();
 					} else {
+						if ( ! settingsModel.id ) {
+							settingsModel.id = 'bc-' + elementor.helpers.getUniqueID();
+						}
+
 						// Document/General/Other control.
 						options.container = new elementorModules.editor.Container( {
 							type: 'bc-container',
 							id: settingsModel.id,
+							model: settingsModel,
 							settings: settingsModel,
 							label,
 							view: false,
