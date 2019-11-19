@@ -26,18 +26,6 @@ class Model extends BaseModel {
 	}
 
 	/**
-	 * Get CSS wrapper selector.
-	 *
-	 * Retrieve the wrapper selector for the current panel.
-	 *
-	 * @since 2.8.0
-	 * @access public
-	 */
-	public function get_css_wrapper_selector() {
-		// TODO: Implement get_css_wrapper_selector() method.
-	}
-
-	/**
 	 * Get panel page settings.
 	 *
 	 * Retrieve the page setting for the current panel.
@@ -59,7 +47,7 @@ class Model extends BaseModel {
 		$this->start_controls_section( 'preferences', [
 			'tab' => Controls_Manager::TAB_SETTINGS,
 			'label' => __( 'Preferences', 'elementor' ),
-		]);
+		] );
 
 		$this->add_control(
 			'ui_theme',
