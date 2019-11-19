@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Settings;
 
+use Elementor\Core\Settings\Base\CSS_Model;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -134,11 +135,14 @@ class Manager {
 			$config[ $name ] = [
 				'name' => $manager->get_name(),
 				'panelPage' => $settings_model->get_panel_page_settings(),
-				'cssWrapperSelector' => $settings_model->get_css_wrapper_selector(),
 				'controls' => $settings_model->get_controls(),
 				'tabs' => $tabs,
 				'settings' => $settings_model->get_settings(),
 			];
+
+			if ( $settings_model instanceof CSS_Model ) {
+				$config[ $name ]['cssWrapperSelector'] = $settings_model->get_css_wrapper_selector();
+			}
 		}
 
 		return $config;
