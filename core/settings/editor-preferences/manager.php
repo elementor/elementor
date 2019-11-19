@@ -2,18 +2,18 @@
 
 namespace Elementor\Core\Settings\EditorPreferences;
 
-use Elementor\Core\Files\CSS\Base;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 
 
-if( ! defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Manager extends BaseManager {
 
 	const META_KEY = 'elementor_preferences';
+
 	/**
 	 * Get model for config.
 	 *
@@ -64,18 +64,6 @@ class Manager extends BaseManager {
 	}
 
 	/**
-	 * Get CSS file name.
-	 *
-	 * Retrieve CSS file name for the settings base manager.
-	 *
-	 * @since 2.8.0
-	 * @access protected
-	 */
-	protected function get_css_file_name() {
-		// TODO: Implement get_css_file_name() method.
-	}
-
-	/**
 	 * Save settings to DB.
 	 *
 	 * Save settings to the database.
@@ -88,33 +76,5 @@ class Manager extends BaseManager {
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
 		update_user_meta( get_current_user_id(), self::META_KEY, $settings );
-	}
-
-	/**
-	 * Get model for CSS file.
-	 *
-	 * Retrieve the model for the CSS file.
-	 *
-	 * @param Base $css_file The requested CSS file.
-	 * @since 2.8.0
-	 * @access protected
-	 *
-	 */
-	protected function get_model_for_css_file( Base $css_file ) {
-		// TODO: Implement get_model_for_css_file() method.
-	}
-
-	/**
-	 * Get CSS file for update.
-	 *
-	 * Retrieve the CSS file before updating it.
-	 *
-	 * @param int $id Post ID.
-	 * @since 2.8.0
-	 * @access protected
-	 *
-	 */
-	protected function get_css_file_for_update( $id ) {
-		// TODO: Implement get_css_file_for_update() method.
 	}
 }
