@@ -104,6 +104,9 @@ const ElementorConfig = {
 	user: { introduction: {}, restrictions: [] },
 	elements: {},
 	dynamicTags: {},
+	library_connect: {
+		show_popup: 0,
+	},
 	icons: { libraries: [] },
 	settings: elementorConfigSettings,
 	schemes: {},

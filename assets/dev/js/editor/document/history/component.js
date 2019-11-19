@@ -1,64 +1,39 @@
+import ArgsObject from '../../../modules/imports/args-object.js';
+
 export default class Component extends elementorModules.common.Component {
-	transactions = [];
+	__construct( args ) {
+		super.__construct( args );
+
+		/**
+		 * Transactions holder.
+		 *
+		 * @type {Array}
+		 */
+		this.transactions = [];
+	}
 
 	getNamespace() {
 		return 'document/history';
 	}
 
-	startTransactionItem( args ) {
-		if ( ! args.type ) {
-			throw Error( 'type is required.' );
-		}
-
+	normalizeLogTitle( args ) {
 		const { containers = [ args.container ] } = args;
 
-		if ( ! containers.length ) {
-			throw Error( 'container or containers are required.' );
+		if ( ! args.title && containers[ 0 ] ) {
+			if ( 1 === containers.length ) {
+				args.title = containers[ 0 ].label;
+			} else {
+				args.title = elementor.translate( 'elements' );
+			}
 		}
 
-		const currentId = elementor.history.history.getCurrentId();
-
-		if ( currentId ) {
-			// If log already started chain his historyId.
-			args.id = currentId;
-		}
-
-		args = this.normalizeLogTitle( args );
-
-		this.transactions.push( args );
+		return args;
 	}
 
-	addTransactionItem( args ) {
-		const { containers = [ args.container ] } = args;
+	getEfficientTransactions( transactions ) {
+		const result = {};
 
-		if ( ! containers.length ) {
-			throw Error( 'container or containers are required.' );
-		}
-
-		const currentId = elementor.history.history.getCurrentId();
-
-		if ( currentId ) {
-			// If log already started chain his historyId.
-			args.id = currentId;
-		}
-
-		args = this.normalizeLogTitle( args );
-
-		this.transactions.push( args );
-	}
-
-	endTransactionItem() {
-		if ( ! this.transactions.length ) {
-			return;
-		}
-
-		const transactions = {},
-			firstItem = this.transactions[ 0 ],
-			{ type } = firstItem;
-
-		let { title = '', subTitle = '' } = firstItem;
-
-		this.transactions.forEach( ( itemArgs ) => {
+		transactions.forEach( ( itemArgs ) => {
 			// If no containers at the current transaction.
 			if ( ! itemArgs.container && ! itemArgs.containers ) {
 				return;
@@ -72,25 +47,53 @@ export default class Component extends elementorModules.common.Component {
 						return;
 					}
 
-					if ( transactions[ container.id ] ) {
-						// Get transactions which contain for this container.
-						const availableTransactions = this.transactions.filter( ( transaction ) => {
-							if ( transaction.data && transaction.data.changes[ container.id ] ) {
-								return true;
-							}
-						} ),
-							lastTransaction = availableTransactions[ availableTransactions.length - 1 ];
-
-						transactions[ container.id ].data.changes[ container.id ].new =
-							lastTransaction.data.changes[ container.id ].new;
+					// Replace new changes by current itemArgs.
+					if ( result[ container.id ] ) {
+						result[ container.id ].data.changes[ container.id ].new =
+							itemArgs.data.changes[ container.id ].new;
 
 						return;
 					}
 
-					transactions[ container.id ] = itemArgs;
+					result[ container.id ] = itemArgs;
 				} );
 			}
 		} );
+
+		return result;
+	}
+
+	startTransaction( args ) {
+		const argsObject = new ArgsObject( args );
+
+		argsObject.requireArgumentType( 'type', 'string' );
+
+		this.addTransaction( args );
+	}
+
+	addTransaction( args ) {
+		const currentId = elementor.history.history.getCurrentId();
+
+		if ( currentId ) {
+			// If log already started chain his historyId.
+			args.id = currentId;
+		}
+
+		args = this.normalizeLogTitle( args );
+
+		this.transactions.push( args );
+	}
+
+	endTransaction() {
+		if ( ! this.transactions.length ) {
+			return;
+		}
+
+		const firstItem = this.transactions[ 0 ],
+			{ type } = firstItem,
+			transactions = this.getEfficientTransactions( this.transactions );
+
+		let { title = '', subTitle = '' } = firstItem;
 
 		if ( transactions.length > 1 ) {
 			title = 'Elements'; // translate.
@@ -108,6 +111,7 @@ export default class Component extends elementorModules.common.Component {
 			history.id = firstItem.id;
 		}
 
+		// TODO: Check if next lines are required.
 		if ( ! history.container && ! history.containers ) {
 			history.containers = firstItem.containers || [ firstItem.container ];
 		}
@@ -127,13 +131,12 @@ export default class Component extends elementorModules.common.Component {
 
 		$e.run( 'document/history/end-log', { id: historyId } );
 
+		// Clear transactions before leave.
 		this.transactions = [];
 	}
 
-	deleteTransactionItem() {
-		const firstItem = this.transactions[ 0 ];
-
-		$e.run( 'document/history/delete-log', firstItem );
+	deleteTransaction() {
+		this.transactions = [];
 	}
 
 	startLog( args ) {
@@ -143,104 +146,76 @@ export default class Component extends elementorModules.common.Component {
 			return null;
 		}
 
-		if ( ! args.type ) {
-			throw Error( 'type is required.' );
-		}
+		const argsObject = new ArgsObject( args );
 
-		const { containers = [ args.container ] } = args;
-
-		if ( ! containers.length ) {
-			throw Error( 'container or containers are required.' );
-		}
+		argsObject.requireArgumentType( 'type', 'string' );
 
 		args = this.normalizeLogTitle( args );
 
-		if ( ! args.title ) {
-			throw Error( 'title is required.' );
-		}
+		argsObject.requireArgumentType( 'title', 'string' );
 
 		return elementor.history.history.startItem( args );
 	}
 
 	deleteLog( args ) {
-		// TODO: If it uses only args.id then args.id should be passed directly without args object.
-		elementor.history.history.deleteItem( args.id );
+		if ( args.id ) {
+			elementor.history.history.deleteItem( args.id );
+		}
 	}
 
 	endLog( args ) {
-		// TODO: If it uses only args.id then args.id should be passed directly without args object.
 		if ( args.id ) {
 			elementor.history.history.endItem( args.id );
 		}
 	}
 
-	getCommands() {
-		// TODO: Use alphabetical order.
-		// TODO: Use this example: `'start-transaction': this.startTransactionItem.bind( this ),`.
-		return {
-			'start-transaction': ( args ) => this.startTransactionItem( args ),
-			'add-transaction': ( args ) => this.addTransactionItem( args ),
-			'delete-transaction': () => this.deleteTransactionItem(),
-			'end-transaction': () => this.endTransactionItem(),
+	logItem( args ) {
+		const id = $e.run( 'document/history/start-log', args );
 
-			'start-log': ( args ) => this.startLog( args ),
-			'delete-log': ( args ) => this.deleteLog( args ),
-			'end-log': ( args ) => this.endLog( args ),
-
-			'log-item': ( itemData ) => {
-				const id = $e.run( 'document/history/start-log', itemData );
-
-				$e.run( 'document/history/end-log', { id } );
-			},
-
-			'log-sub-item': ( args ) => {
-				if ( ! elementor.history.history.getActive() ) {
-					return;
-				}
-
-				const id = args.id || elementor.history.history.getCurrentId();
-
-				args = this.normalizeLogTitle( args );
-
-				const items = elementor.history.history.getItems(),
-					item = items.findWhere( { id } );
-
-				if ( ! item ) {
-					throw new Error( 'History item not found.' );
-				}
-
-				/**
-				 * Sometimes `args.id` passed to `addSubItem`, to add sub item for specific id.
-				 * this `id` should not be passed as sub-item.
-				 */
-				if ( args.id ) {
-					delete args.id;
-				}
-
-				item.get( 'items' ).unshift( args );
-			},
-
-			undo: () => {
-				elementor.history.history.navigate();
-			},
-
-			redo: () => {
-				elementor.history.history.navigate( true );
-			},
-		};
+		$e.run( 'document/history/end-log', { id } );
 	}
 
-	normalizeLogTitle( args ) {
-		const { containers = [ args.container ] } = args;
-
-		if ( ! args.title ) {
-			if ( 1 === containers.length ) {
-				args.title = containers[ 0 ].label;
-			} else {
-				args.title = elementor.translate( 'elements' );
-			}
+	logSubItem( args ) {
+		if ( ! elementor.history.history.getActive() ) {
+			return;
 		}
 
-		return args;
+		const id = args.id || elementor.history.history.getCurrentId();
+
+		args = this.normalizeLogTitle( args );
+
+		const items = elementor.history.history.getItems(),
+			item = items.findWhere( { id } );
+
+		if ( ! item ) {
+			throw new Error( 'History item not found.' );
+		}
+
+		/**
+		 * Sometimes `args.id` passed to `addSubItem`, to add sub item for specific id.
+		 * this `id` should not be passed as sub-item.
+		 */
+		if ( args.id ) {
+			delete args.id;
+		}
+
+		item.get( 'items' ).unshift( args );
+	}
+
+	getCommands() {
+		return {
+			'add-transaction': this.addTransaction.bind( this ),
+			'delete-log': this.deleteLog.bind( this ),
+			'delete-transaction': this.deleteTransaction.bind( this ),
+			'end-log': this.endLog.bind( this ),
+			'end-transaction': this.endTransaction.bind( this ),
+			'log-item': this.logItem.bind( this ),
+			'log-sub-item': this.logSubItem.bind( this ),
+			'start-log': this.startLog.bind( this ),
+			'start-transaction': this.startTransaction.bind( this ),
+
+			undo: () => elementor.history.history.navigate(),
+			redo: () => elementor.history.history.navigate( true ),
+		};
 	}
 }

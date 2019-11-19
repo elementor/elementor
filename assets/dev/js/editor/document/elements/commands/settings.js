@@ -120,7 +120,7 @@ export class Settings extends Debounce {
 				container.settings.set( newSettings );
 			}
 
-			// container.render();
+			container.render();
 		} );
 	}
 
