@@ -98,7 +98,7 @@ class Manager extends BaseManager {
 					$saved_setting = get_option( $control_name, null );
 
 					if ( null !== $saved_setting ) {
-						$settings[ $control_name ] = get_option( $control_name );
+						$settings[ $control_name ] = $saved_setting;
 					}
 				}
 			}
