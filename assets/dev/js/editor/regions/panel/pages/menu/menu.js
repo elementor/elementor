@@ -104,7 +104,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'editor-preferences',
-			icon: 'eicon-cog',
+			icon: 'eicon-wrench',
 			title: elementor.translate( 'editor_preferences' ),
 			type: 'page',
 			callback: () => elementor.getPanelView().setPage( 'editorPreferences_settings' ).activateTab( 'settings' ),
