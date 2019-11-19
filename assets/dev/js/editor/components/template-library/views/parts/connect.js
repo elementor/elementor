@@ -8,6 +8,10 @@ module.exports = Marionette.ItemView.extend( {
 		thumbnails: '#elementor-template-library-connect-thumbnails',
 	},
 
+	templateHelpers: function() {
+		return this.getOption( 'texts' );
+	},
+
 	onRender: function() {
 		this.ui.connect.elementorConnect( {
 			success: () => {

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
+use Elementor\User;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -49,23 +51,38 @@ class Library extends Common_App {
 	}
 
 	public function localize_settings( $settings ) {
+		$is_connected = $this->is_connected();
+
 		return array_replace_recursive( $settings, [
+			'i18n' => [
+				// Route: library/connect
+				'library/connect:title' => __( 'Create Account & Get Template', 'elementor' ),
+				'library/connect:message' => __( 'To get access to this template and to our entire library, you must create a free account', 'elementor' ),
+				'library/connect:button' => __( 'Connect to Insert', 'elementor' ),
+
+				// Route: library/first-connect
+				'library/first-connect:title' => __( 'Get Access to the Template Library', 'elementor' ),
+				'library/first-connect:message' => __( 'Create a free account and enjoy hundreds of designer-made templates', 'elementor' ),
+				'library/first-connect:button' => __( 'Connect Now', 'elementor' ),
+			],
 			'library_connect' => [
-				'is_connected' => $this->is_connected(),
-				'show_popup' => ! $this->is_connected() && ! get_user_meta( get_current_user_id(), 'elementor_connect_library_popup_showed', true ),
+				'is_connected' => $is_connected,
+				'show_popup' => ! $is_connected && ! User::get_introduction_meta( 'library_connect' ),
 			],
 		] );
 	}
 
-	public function library_connect_popup_showed() {
-		update_user_meta( get_current_user_id(), 'elementor_connect_library_popup_showed', true );
+	public function library_connect_popup_seen() {
+		User::set_introduction_viewed( [
+			'introductionKey' => 'library_connect',
+		] );
 	}
 
 	/**
 	 * @param \Elementor\Core\Common\Modules\Ajax\Module $ajax_manager
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'library_connect_popup_showed', [ $this, 'library_connect_popup_showed' ] );
+		$ajax_manager->register_ajax_action( 'library_connect_popup_seen', [ $this, 'library_connect_popup_seen' ] );
 	}
 
 	protected function init() {
