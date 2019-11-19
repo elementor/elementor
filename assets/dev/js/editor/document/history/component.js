@@ -116,7 +116,7 @@ export default class Component extends elementorModules.common.Component {
 			history.containers = firstItem.containers || [ firstItem.container ];
 		}
 
-		const historyId = $e.run( 'document/history/start-log', history )
+		const historyId = $e.run( 'document/history/start-log', history );
 
 		Object.entries( transactions ).forEach( ( [ id, item ] ) => { // eslint-disable-line no-unused-vars
 			const itemArgs = item;
