@@ -96,6 +96,7 @@ const elementorConfigSettings = {
 			elementor_lightbox_ui_color_hover: '',
 		},
 	},
+	editorPreferences: {},
 };
 
 /* global jQuery */
