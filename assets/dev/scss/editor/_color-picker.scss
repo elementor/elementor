@@ -1,6 +1,10 @@
 .elementor-color-picker {
 
 	&--add-swatch {
+		position: relative;
+		padding-bottom: 100%;
+		background-color: #fff;
+		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
 
 		i {
 			position: absolute;
@@ -15,11 +19,12 @@
 	&--dropping-area {
 		margin-top: 10px;
 		padding: 15px;
-		border: 1px dashed $editor-lighter;
+		border: 1px dashed $editor-lightest;
 		text-align: center;
 		display: none;
 
 		&.html5dnd-current-element {
+			border-color: $editor-light;
 
 			i {
 				color: $editor-warning;
@@ -29,23 +34,6 @@
 		i {
 			color: $editor-dark;
 			font-size: 15px;
-		}
-	}
-}
-
-.pcr-app {
-
-	.pcr-swatches {
-
-		.elementor-color-picker--add-swatch {
-			background-color: #fff;
-			background-image: none;
-			box-shadow: 0 1px 8px 0 rgba(0, 0, 0, .15);
-
-			&:after {
-				background: none;
-				border: none;
-			}
 		}
 	}
 }

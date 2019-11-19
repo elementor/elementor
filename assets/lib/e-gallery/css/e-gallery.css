@@ -1,11 +1,4 @@
 .e-gallery-container {
-  --hgap: 0;
-  --vgap: 0;
-  --columns: 0;
-  --rows: 0;
-  --gap-count: 0;
-  --container-aspect-ratio: 0;
-  --animation-duration: 0.35s;
   position: relative;
   display: flex;
   flex-wrap: wrap; }
@@ -13,10 +6,6 @@
     transition: padding-bottom var(--animation-duration); }
 
 .e-gallery-item {
-  --item-width: 0;
-  --item-height: 0;
-  --column: 0;
-  --row: 0;
   position: relative;
   flex-grow: 0;
   flex-shrink: 0;
@@ -24,14 +13,16 @@
   transition-duration: var(--animation-duration); }
   .e-gallery-item:not(:hover) .e-gallery-overlay {
     display: none; }
-  .e-gallery-item.gallery-item--hidden {
+  .e-gallery-item.e-gallery-item--hidden {
     transform: scale3d(0, 0, 0);
     opacity: 0; }
 
 .e-gallery-image {
   background-position: center center;
   background-size: cover;
-  width: 100%; }
+  width: 100%;
+  transform-origin: center top;
+  transition: var(--animation-duration); }
 
 .e-gallery-overlay {
   position: absolute;
@@ -53,17 +44,15 @@
   display: grid;
   grid-gap: var(--vgap) var(--hgap);
   grid-template-columns: repeat(var(--columns), 1fr); }
-  .e-gallery-grid:not(.e-gallery--animated) .gallery-item--hidden {
+  .e-gallery-grid:not(.e-gallery--animated) .e-gallery-item--hidden {
     position: absolute; }
 
 .e-gallery-grid.e-gallery--animated {
-  --aspect-ratio: 0;
   padding-bottom: var(--container-aspect-ratio); }
   .e-gallery-grid.e-gallery--animated .e-gallery-item {
     --item-width: calc((100% - ((var(--columns) - 1) * var(--hgap))) / var(--columns));
     position: absolute;
     top: calc(((100% / var(--rows)) + (var(--vgap) / var(--rows))) * var(--row));
-    left: calc(var(--item-width) * var(--column) + (var(--hgap) * var(--column)));
     width: var(--item-width); }
 
 .e-gallery-grid .e-gallery-image {
@@ -72,29 +61,44 @@
 .e-gallery-justified {
   padding-bottom: calc(var(--container-aspect-ratio) * 100%); }
   .e-gallery-justified .e-gallery-item {
-    --item-left: 0;
-    --item-top: 0;
-    --item-row-index: 0;
     position: absolute;
     width: calc(var(--item-width) * (100% - var(--hgap) * var(--gap-count)));
     height: var(--item-height);
-    left: calc(var(--item-left) * (100% - var(--hgap) * var(--gap-count)) + var(--hgap) * var(--item-row-index));
     top: calc(var(--item-top) + (var(--row) * var(--vgap))); }
   .e-gallery-justified .e-gallery-image {
     height: 100%; }
 
 .e-gallery-masonry {
-  --highest-column-gap-count: 0;
   height: 0;
   margin-bottom: calc(var(--highest-column-gap-count) * var(--vgap)); }
   .e-gallery-masonry .e-gallery-item {
-    --percent-height: 0;
     position: absolute;
     width: calc(100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns)));
-    left: calc((100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns))) * var(--column) + (var(--hgap) * var(--column)));
     top: calc(var(--percent-height) + (var(--row) * var(--vgap))); }
   .e-gallery-masonry .e-gallery-image {
     padding-bottom: var(--item-height); }
+
+.e-gallery--ltr.e-gallery-grid.e-gallery--animated .e-gallery-item {
+  left: calc(var(--item-width) * var(--column) + (var(--hgap) * var(--column))); }
+
+.e-gallery--ltr.e-gallery-justified .e-gallery-item {
+  left: calc(var(--item-start) * (100% - var(--hgap) * var(--gap-count)) + var(--hgap) * var(--item-row-index)); }
+
+.e-gallery--ltr.e-gallery-masonry .e-gallery-item {
+  left: calc((100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns))) * var(--column) + (var(--hgap) * var(--column))); }
+
+.e-gallery--rtl.e-gallery-grid.e-gallery--animated .e-gallery-item {
+  right: calc(var(--item-width) * var(--column) + (var(--hgap) * var(--column))); }
+
+.e-gallery--rtl.e-gallery-justified .e-gallery-item {
+  right: calc(var(--item-start) * (100% - var(--hgap) * var(--gap-count)) + var(--hgap) * var(--item-row-index)); }
+
+.e-gallery--rtl.e-gallery-masonry .e-gallery-item {
+  right: calc((100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns))) * var(--column) + (var(--hgap) * var(--column))); }
+
+.e-gallery--lazyload .e-gallery-image:not(.e-gallery-image-loaded) {
+  filter: opacity(0);
+  transform: scale(0.5); }
 
 
 /*# sourceMappingURL=e-gallery.css.map*/
