@@ -577,7 +577,9 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
-			'editButtons' => get_option( 'elementor_edit_buttons' ),
+			'ui' => [
+				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
+			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -602,6 +604,7 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
+				'editor_preferences' => __( 'Editor Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'go_to' => __( 'Go To', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
@@ -864,7 +867,8 @@ class Editor {
 
 		wp_enqueue_style( 'elementor-editor' );
 
-		$ui_theme = get_option( 'elementor_editor_ui_theme', 'light' );
+		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
+
 		if ( 'light' !== $ui_theme ) {
 			$ui_theme_media_queries = 'all';
 

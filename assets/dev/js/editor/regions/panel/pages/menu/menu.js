@@ -103,6 +103,14 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 		}, 'settings', 'elementor-settings' );
 
 		this.addItem( {
+			name: 'editor-preferences',
+			icon: 'eicon-cog',
+			title: elementor.translate( 'editor_preferences' ),
+			type: 'page',
+			callback: () => elementor.getPanelView().setPage( 'editorPreferences_settings' ).activateTab( 'settings' ),
+		}, 'settings' );
+
+		this.addItem( {
 			name: 'elementor-settings',
 			icon: 'eicon-editor-external-link',
 			title: elementor.translate( 'elementor_settings' ),
