@@ -465,35 +465,6 @@ class Settings extends Settings_Page {
 							],
 						],
 					],
-					'preferences' => [
-						'label' => __( 'Preferences', 'elementor' ),
-						'fields' => [
-							'editor_ui_theme' => [
-								'label' => __( 'Theme', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'options' => [
-										'light' => __( 'Light', 'elementor' ),
-										'dark' => __( 'Dark', 'elementor' ),
-										'auto' => __( 'Auto (Browser Detect)', 'elementor' ),
-									],
-									'desc' => __( 'Choose whether to use the editor theme in Light, Dark or Auto by browser detected.', 'elementor' ),
-								],
-							],
-							'edit_buttons' => [
-								'label' => __( 'Editing Handles', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'std' => '',
-									'options' => [
-										'' => __( 'Hide', 'elementor' ),
-										'on' => __( 'Show', 'elementor' ),
-									],
-									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
-								],
-							],
-						],
-					],
 					'usage' => [
 						'label' => __( 'Improve Elementor', 'elementor' ),
 						'fields' => [

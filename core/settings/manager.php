@@ -39,7 +39,7 @@ class Manager {
 	 *
 	 * @var array
 	 */
-	private static $builtin_settings_managers_names = [ 'page', 'general' ];
+	private static $builtin_settings_managers_names = [ 'page', 'general', 'editorPreferences' ];
 
 	/**
 	 * Add settings manager.

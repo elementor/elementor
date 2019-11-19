@@ -90,7 +90,6 @@ const elementorConfigSettings = {
 			elementor_space_between_widgets: '6',
 			elementor_stretched_section_container: '0',
 			elementor_page_title_selector: '5552222',
-			elementor_enable_lightbox_in_editor: '',
 			elementor_lightbox_color: '#383838',
 			elementor_lightbox_ui_color: '#ffffff',
 			elementor_global_image_lightbox: 'yes',
