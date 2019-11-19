@@ -2,13 +2,6 @@ import ControlBaseDataView from './base-data';
 import ColorPicker from '../utils/color-picker';
 
 export default class extends ControlBaseDataView {
-
-	constructor( ...args ) {
-		super( ...args );
-
-		this.debounceHistory = true;
-	}
-
 	ui() {
 		const ui = super.ui();
 

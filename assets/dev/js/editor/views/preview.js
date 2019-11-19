@@ -31,24 +31,7 @@ Preview = BaseSectionsContainerView.extend( {
 	},
 
 	getContainer() {
-		if ( ! this.container ) {
-			this.container = new elementorModules.editor.Container( {
-				type: 'TODO: @see views/preview.js',
-				id: 'document',
-				model: this.model,
-				settings: elementor.settings.page.model,
-				view: this,
-				children: elementor.elements,
-				label: elementor.config.document.panel.title,
-				controls: elementor.settings.page.model.controls,
-			} );
-
-			// Refer `document` to itself.
-			this.container.document = this.container;
-			this.container.parent = this.container;
-		}
-
-		return this.container;
+		return elementor.settings.page.getEditedView().getContainer();
 	},
 
 	getContextMenuGroups: function() {

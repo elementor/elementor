@@ -25,6 +25,14 @@ export class Settings extends Debounce {
 		return result;
 	}
 
+	/**
+	 * Function restore().
+	 *
+	 * Redo/Restore.
+	 *
+	 * @param {{}} historyItem
+	 * @param {boolean} isRedo
+	 */
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -41,6 +49,29 @@ export class Settings extends Debounce {
 		} );
 	}
 
+	/**
+	 * TODO:
+	 * @param container
+	 * @param newSettings
+	 * @param oldSettings
+	 */
+	addToHistory( container, newSettings, oldSettings ) {
+		const changes = {
+				[ container.id ]: {
+					old: oldSettings,
+					new: newSettings,
+				},
+			},
+			historyItem = {
+				containers: [ container ],
+				data: { changes },
+				type: 'change',
+				restore: Settings.restore,
+			};
+
+		$e.run( 'document/history/add-transaction', historyItem );
+	}
+
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -48,24 +79,14 @@ export class Settings extends Debounce {
 	}
 
 	getHistory( args ) {
-		if ( ! super.getHistory( args ) ) {
-			return false;
-		}
-
-		const { containers = [ args.container ], options = {} } = args,
+		const { containers = [ args.container ] } = args,
 			subTitle = this.constructor.getSubTitle( args );
 
-		let history = {
+		return {
 			containers,
 			subTitle,
 			type: 'change',
 		};
-
-		if ( options.history ) {
-			history = Object.assign( options.history, history );
-		}
-
-		return history;
 	}
 
 	apply( args ) {
@@ -73,12 +94,25 @@ export class Settings extends Debounce {
 
 		containers.forEach( ( container ) => {
 			container = container.lookup();
-
 			/**
 			 * Settings support multi settings for each container, eg use:
 			 * settings: { '{ container-id }': { someSettingKey: someSettingValue } } etc.
 			 */
-			const newSettings = isMultiSettings ? settings[ container.id ] : settings;
+			const newSettings = isMultiSettings ? settings[ container.id ] : settings,
+				oldSettings = container.settings.toJSON();
+
+			// Clear old oldValues.
+			container.oldValues = {};
+
+			// Set oldValues, For each setting is about to change save setting value.
+			Object.entries( newSettings ).forEach( ( [ key, value ] ) => { 	// eslint-disable-line no-unused-vars
+				container.oldValues[ key ] = oldSettings[ key ];
+			} );
+
+			// If history active, add history transaction with old and new settings.
+			if ( this.isHistoryActive() ) {
+				this.addToHistory( container, newSettings, container.oldValues );
+			}
 
 			if ( options.external ) {
 				container.settings.setExternalChange( newSettings );
@@ -86,7 +120,7 @@ export class Settings extends Debounce {
 				container.settings.set( newSettings );
 			}
 
-			container.render();
+			// container.render();
 		} );
 	}
 

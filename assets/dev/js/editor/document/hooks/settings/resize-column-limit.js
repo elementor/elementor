@@ -10,7 +10,7 @@ export class ResizeColumnLimit extends HookDependency {
 	}
 
 	conditions( args ) {
-		return args.settings._inline_size && ! args.isMultiSettings;
+		return args.settings._inline_size;
 	}
 
 	apply( args ) {
@@ -19,8 +19,8 @@ export class ResizeColumnLimit extends HookDependency {
 		return containers.some( ( /**Container*/ container ) => {
 			const parentView = container.parent.view,
 				columnView = container.view,
-				currentSize = container.settings._previousAttributes._inline_size ||
-					container.settings._previousAttributes._column_size,
+				currentSize = container.settings.get( '_inline_size' ) ||
+					container.settings.get( '_column_size' ),
 				newSize = args.settings._inline_size,
 				nextChildView = parentView.getNextColumn( columnView ) || parentView.getPreviousColumn( columnView );
 

@@ -462,7 +462,7 @@ class Editor {
 
 		wp_register_script(
 			'pickr',
-			ELEMENTOR_ASSETS_URL . 'lib/pickr/js/pickr.min.js',
+			ELEMENTOR_ASSETS_URL . 'lib/pickr/pickr.min.js',
 			[],
 			'1.4.7',
 			true
@@ -842,7 +842,7 @@ class Editor {
 
 		wp_register_style(
 			'pickr',
-			ELEMENTOR_ASSETS_URL . 'lib/pickr/css/monolith.min.css',
+			ELEMENTOR_ASSETS_URL . 'lib/pickr/themes/monolith.min.css',
 			[],
 			'1.4.7'
 		);
@@ -863,6 +863,25 @@ class Editor {
 		);
 
 		wp_enqueue_style( 'elementor-editor' );
+
+		$ui_theme = get_option( 'elementor_editor_ui_theme', 'light' );
+		if ( 'light' !== $ui_theme ) {
+			$ui_theme_media_queries = 'all';
+
+			if ( 'auto' === $ui_theme ) {
+				$ui_theme_media_queries = '(prefers-color-scheme: dark)';
+			}
+
+			wp_enqueue_style(
+				'elementor-editor-dark-mode',
+				ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
+				[
+					'elementor-editor',
+				],
+				ELEMENTOR_VERSION,
+				$ui_theme_media_queries
+			);
+		}
 
 		if ( Responsive::has_custom_breakpoints() ) {
 			$breakpoints = Responsive::get_breakpoints();
