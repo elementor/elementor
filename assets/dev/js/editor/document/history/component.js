@@ -129,7 +129,7 @@ export default class Component extends elementorModules.common.Component {
 			$e.run( 'document/history/log-sub-item', itemArgs );
 		} );
 
-		$e.run( 'document/history/end-log', historyId );
+		$e.run( 'document/history/end-log', { id: historyId } );
 
 		// Clear transactions before leave.
 		this.transactions = [];
@@ -157,22 +157,22 @@ export default class Component extends elementorModules.common.Component {
 		return elementor.history.history.startItem( args );
 	}
 
-	deleteLog( historyId ) {
-		if ( historyId ) {
-			elementor.history.history.deleteItem( historyId );
+	deleteLog( args ) {
+		if ( args.id ) {
+			elementor.history.history.deleteItem( args.id );
 		}
 	}
 
-	endLog( historyId ) {
-		if ( historyId ) {
-			elementor.history.history.endItem( historyId );
+	endLog( args ) {
+		if ( args.id ) {
+			elementor.history.history.endItem( args.id );
 		}
 	}
 
 	logItem( args ) {
 		const id = $e.run( 'document/history/start-log', args );
 
-		$e.run( 'document/history/end-log', id );
+		$e.run( 'document/history/end-log', { id } );
 	}
 
 	logSubItem( args ) {

@@ -56,7 +56,7 @@ export default class History extends Base {
 		super.onAfterRun( args, result );
 
 		if ( this.history && this.isHistoryActive() ) {
-			$e.run( 'document/history/end-log', this.historyId );
+			$e.run( 'document/history/end-log', { id: this.historyId } );
 		}
 	}
 
@@ -65,7 +65,7 @@ export default class History extends Base {
 
 		// Rollback history on failure.
 		if ( e instanceof elementorModules.common.HookBreak && this.historyId ) {
-			$e.run( 'document/history/delete-log', this.historyId );
+			$e.run( 'document/history/delete-log', { id: this.historyId } );
 		}
 	}
 }
