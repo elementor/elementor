@@ -72,10 +72,6 @@ export default class Component extends elementorModules.common.Component {
 	}
 
 	addTransaction( args ) {
-		const argsObject = new ArgsObject( args );
-
-		argsObject.requireContainer();
-
 		const currentId = elementor.history.history.getCurrentId();
 
 		if ( currentId ) {
