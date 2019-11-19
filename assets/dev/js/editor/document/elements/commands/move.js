@@ -41,13 +41,6 @@ export class Move extends History {
 				afterAdd: 'drag:after:update',
 			};
 
-			// Upon column move disable `section-columns-reset-layout`.
-			if ( 'column' === model.elType ) {
-				options.hooks = {
-					'section-columns-reset-layout': false,
-				};
-			}
-
 			$e.run( 'document/elements/create', {
 				container: target,
 				model,
