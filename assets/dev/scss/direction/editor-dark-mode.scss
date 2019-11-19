@@ -239,6 +239,18 @@ select {
 			}
 		}
 	}
+
+	//Alert
+	.elementor-panel-alert {
+		background-color: $theme-dark-gray;
+
+		&.elementor-panel-alert- {
+
+			&info {
+				background-color: $theme-dark-gray;
+			}
+		}
+	}
 }
 
 //Controls
@@ -430,8 +442,12 @@ $devices: 'desktop', 'tablet', 'mobile';
 .elementor-choices {
 
 	.elementor-choices-label {
-		background-color: $theme-dark-gray-darkest;
-		border-color: $theme-dark-gray-light;
+
+		&,
+		&:last-child {
+			background-color: $theme-dark-gray-darkest;
+			border-color: $theme-dark-gray-light;
+		}
 	}
 
 	& input:checked {
@@ -967,18 +983,6 @@ label.elementor-template-library-order-label,
 
 	&:hover {
 		background-color: $theme-dark-gray-light;
-	}
-}
-
-//Alert
-.elementor-panel-alert {
-	background-color: $theme-dark-gray;
-
-	&.elementor-panel-alert- {
-
-		&info {
-			background-color: $theme-dark-gray;
-		}
 	}
 }
 
