@@ -251,6 +251,24 @@ select {
 			}
 		}
 	}
+
+	//Help Link
+	#elementor-panel__editor__help__link {
+		color: $theme-dark-gray-lightest;
+
+		&:hover {
+			color: $theme-dark-light;
+		}
+	}
+
+	//Global Widget
+	#elementor-panel-global-widget > * {
+		background-color: $theme-dark-gray-dark;
+	}
+
+	#elementor-global-widget-locked-unlink {
+		border-top-color: $theme-dark-gray-darkest;
+	}
 }
 
 //Controls
@@ -614,24 +632,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 }
 
-//Help Link
-#elementor-panel__editor__help__link {
-	color: $theme-dark-gray-lightest;
-
-	&:hover {
-		color: $theme-dark-light;
-	}
-}
-
-//Global Widget
-#elementor-panel-global-widget > * {
-	background-color: $theme-dark-gray-dark;
-}
-
-#elementor-global-widget-locked-unlink {
-	border-top-color: $theme-dark-gray-darkest;
-}
-
 //Menu
 .elementor-panel-menu-item:not(.elementor-panel-menu-item-exit-to-dashboard) {
 	background-color: $theme-dark-gray-dark;
@@ -736,6 +736,25 @@ $devices: 'desktop', 'tablet', 'mobile';
 	.dialog-buttons-wrapper,
 	.dialog-button:first-child {
 		border-color: $theme-dark-gray;
+	}
+
+	.elementor-publish__tab {
+
+		&__title {
+			color: $theme-dark-light;
+		}
+
+		&.elementor-active {
+			background-color: $theme-dark-gray-dark;
+		}
+	}
+
+	.elementor-popup__display-settings_controls_group {
+		background-color: $theme-dark-gray-dark;
+
+		&__icon {
+			border-color: $theme-dark-gray-darkest;
+		}
 	}
 }
 
@@ -853,6 +872,43 @@ label.elementor-template-library-order-label,
 		background-color: rgba(0, 0, 0, 0.3);
 	}
 }
+
+#elementor-publish {
+
+	#elementor-theme-builder-conditions {
+
+		select,
+		input {
+			background-color: $theme-dark-gray;
+			color: $theme-dark-light;
+		}
+
+		.elementor-control-type[data-elementor-condition-type="include"],
+		.elementor-control-type[data-elementor-condition-type="exclude"] {
+			background-color: $theme-dark-gray-light;
+
+			select,
+			option {
+				background-color: $theme-dark-gray-dark;
+				color: $theme-dark-light;
+			}
+		}
+
+		.elementor-theme-builder-conditions-repeater-row-controls {
+
+			.elementor-control:not(:first-child) {
+
+
+			}
+
+			.select2-dropdown,
+			.select2-container--default .select2-selection--single {
+				background-color: $theme-dark-gray;
+			}
+		}
+	}
+}
+
 
 //Icon Modal
 #elementor-icons-manager__search input {
