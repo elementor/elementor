@@ -14,6 +14,7 @@ export default class ColorPicker extends elementorModules.Module {
 			theme: 'monolith',
 			swatches: this.getColorPickerPalette(),
 			position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
+			defaultRepresentation: 'HEX',
 			components: {
 				opacity: true,
 				hue: true,
