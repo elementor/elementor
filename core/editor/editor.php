@@ -604,9 +604,9 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'editor_preferences' => __( 'Editor Preferences', 'elementor' ),
+				'preferences' => __( 'Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
-				'go_to' => __( 'Go To', 'elementor' ),
+				'more' => __( 'More', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
 				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
