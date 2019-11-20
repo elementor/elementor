@@ -52,9 +52,9 @@ class Model extends BaseModel {
 		$this->add_control(
 			'ui_theme',
 			[
-				'label' => __( 'Theme', 'elementor' ),
+				'label' => __( 'UI Theme', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'description' => __( 'Choose whether to use the editor theme in Light, Dark or Auto according to system preferences.', 'elementor' ),
+				'description' => __( 'Set Light or Dark Editor UI Theme, or sync it with your OS setting.', 'elementor' ),
 				'default' => 'auto',
 				'options' => [
 					'auto' => __( 'Auto Detect', 'elementor' ),
