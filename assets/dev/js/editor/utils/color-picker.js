@@ -14,7 +14,6 @@ export default class ColorPicker extends elementorModules.Module {
 			theme: 'monolith',
 			swatches: this.getColorPickerPalette(),
 			position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
-			defaultRepresentation: 'HEX',
 			components: {
 				opacity: true,
 				hue: true,
@@ -35,6 +34,11 @@ export default class ColorPicker extends elementorModules.Module {
 		settings.default = settings.default || null;
 
 		this.picker = Pickr.create( settings );
+
+		if ( ! settings.default ) {
+			// Set a default palette. It doesn't affect the selected value
+			this.picker.setColor( '#000' );
+		}
 
 		this.picker
 			.on( 'change', ( ...args ) => this.onPickerChange( ...args ) )
