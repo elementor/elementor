@@ -37,7 +37,6 @@ export default class ColorPicker extends elementorModules.Module {
 
 		this.picker
 			.on( 'change', ( ...args ) => this.onPickerChange( ...args ) )
-			.on( 'swatchselect', ( ...args ) => this.onPickerChange( ...args ) )
 			.on( 'clear', ( ...args ) => this.onPickerClear( ...args ) )
 			.on( 'show', () => this.onPickerShow() );
 
