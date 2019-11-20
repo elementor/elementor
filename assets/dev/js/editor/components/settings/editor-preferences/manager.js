@@ -16,10 +16,6 @@ export default class extends BaseManager {
 		};
 	}
 
-	getContainerId() {
-		return 'editor_preferences';
-	}
-
 	createDarkModeStylesheetLink() {
 		const darkModeLinkID = this.getSettings( 'darkModeLinkID' );
 
