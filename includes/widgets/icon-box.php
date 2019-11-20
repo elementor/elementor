@@ -621,6 +621,8 @@ class Widget_Icon_Box extends Widget_Base {
 			if ( $settings['link']['nofollow'] ) {
 				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
 			}
+			
+			$this->add_render_attribute( 'link', 'aria-label', 'Link to ' . $settings['title_text']);
 		}
 
 		if ( $has_icon ) {
