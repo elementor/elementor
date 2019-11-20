@@ -80,7 +80,7 @@ SectionView = BaseElementView.extend( {
 			icon: 'handle',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',

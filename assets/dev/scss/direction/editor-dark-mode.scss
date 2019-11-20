@@ -23,7 +23,6 @@ $theme-dark-panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 body {
 	color: $theme-dark-light;
 
-
 	//Color Picker
 	.pcr-app {
 		background-color: $theme-dark-gray;
@@ -223,6 +222,35 @@ select {
 	#elementor-panel-footer-saver-options {
 		border-color: $theme-dark-dark;
 	}
+
+	//Popover Control
+	.elementor-controls-popover {
+		background-color: $theme-dark-gray;
+		box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+
+		&:before {
+			border-bottom-color: $theme-dark-gray;
+		}
+
+		.elementor-control-responsive-switchers {
+
+			&__holder {
+				background-color: $theme-dark-gray;
+			}
+		}
+	}
+
+	//Alert
+	.elementor-panel-alert {
+		background-color: $theme-dark-gray;
+
+		&.elementor-panel-alert- {
+
+			&info {
+				background-color: $theme-dark-gray;
+			}
+		}
+	}
 }
 
 //Controls
@@ -414,8 +442,12 @@ $devices: 'desktop', 'tablet', 'mobile';
 .elementor-choices {
 
 	.elementor-choices-label {
-		background-color: $theme-dark-gray-darkest;
-		border-color: $theme-dark-gray-light;
+
+		&,
+		&:last-child {
+			background-color: $theme-dark-gray-darkest;
+			border-color: $theme-dark-gray-light;
+		}
 	}
 
 	& input:checked {
@@ -464,17 +496,27 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 //Slider Control
-.elementor-slider {
-	background-color: $theme-dark-gray-lightest;
+.elementor-control-type-slider--handles-range {
 
-	.noUi-handle {
-		background-color: $theme-dark-light;
+	.elementor-slider {
 
-		&:after {
-			background-color: $theme-dark-light;
+		.noUi-handle {
+
+			&:after {
+				background-color: $theme-dark-light;
+			}
 		}
 	}
 }
+
+.elementor-slider {
+	background-color: $theme-dark-gray-light;
+
+	.noUi-handle {
+		background-color: $theme-dark-light;
+	}
+}
+
 
 //Dimensions Control
 .elementor-control-type-dimensions {
@@ -539,23 +581,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 .pickr {
 	background-color: $theme-dark-gray-darkest;
 	border-color: $theme-dark-gray;
-}
-
-//Popover Control
-.elementor-controls-popover {
-	background-color: $theme-dark-gray;
-	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
-
-	&:before {
-		border-bottom-color: $theme-dark-gray;
-	}
-
-	.elementor-control-responsive-switchers {
-
-		&__holder {
-			background-color: $theme-dark-gray;
-		}
-	}
 }
 
 //Structure Control
@@ -905,23 +930,41 @@ label.elementor-template-library-order-label,
 	&__item {
 		background-color: $theme-dark-gray-dark;
 		border-color: $theme-dark-gray-darkest;
-	}
-
-	&__element__indicator {
-		color: $theme-dark-light;
-		background-color: $theme-dark-gray;
 
 		&:hover {
-			color: $theme-dark-gray-lightest;
-		}
-
-		&:not(:first-child) {
-			border-color: $theme-dark-gray-darkest;
+			background-color: lighten($theme-dark-gray-dark, 5%);
 		}
 	}
 
-	&__element:not(.elementor-navigator__element--hidden) > .elementor-navigator__item.elementor-editing {
-		background-color: $theme-dark-gray;
+	&__element {
+
+		&__indicator {
+			color: $theme-dark-light;
+			background-color: $theme-dark-gray;
+
+			&:hover {
+				color: $theme-dark-gray-lightest;
+			}
+
+			&:not(:first-child) {
+				border-color: $theme-dark-gray-darkest;
+			}
+		}
+
+		&-column {
+			background-color: lighten($theme-dark-gray-dark, 3%);
+		}
+
+		&:not(.elementor-navigator__element--hidden) > .elementor-navigator__item.elementor-editing {
+			background-color: lighten($theme-dark-gray-dark, 5%);
+		}
+	}
+
+	&__elements {
+
+		.elementor-empty-view {
+			border-color: $theme-dark-gray-darkest;
+		}
 	}
 }
 
@@ -940,18 +983,6 @@ label.elementor-template-library-order-label,
 
 	&:hover {
 		background-color: $theme-dark-gray-light;
-	}
-}
-
-//Alert
-.elementor-panel-alert {
-	background-color: $theme-dark-gray;
-
-	&.elementor-panel-alert- {
-
-		&info {
-			background-color: $theme-dark-gray;
-		}
 	}
 }
 
@@ -1002,4 +1033,9 @@ label.elementor-template-library-order-label,
 .elementor-panel-scheme-color-system-items {
 	background-color: $theme-dark-gray-darkest;
 	border-color: $theme-dark-gray-light;
+}
+
+//WP Media Modal
+.media-modal {
+	color: $editor-dark;
 }

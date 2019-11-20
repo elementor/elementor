@@ -60,7 +60,7 @@ WidgetView = BaseElementView.extend( {
 			icon: 'edit',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',

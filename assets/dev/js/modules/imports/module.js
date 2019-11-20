@@ -146,6 +146,9 @@ const Module = function() {
 
 		if ( -1 !== callbackIndex ) {
 			delete events[ eventName ][ callbackIndex ];
+
+			// Reset array index (for next off on same event).
+			events[ eventName ] = events[ eventName ].filter( ( val ) => val );
 		}
 
 		return self;

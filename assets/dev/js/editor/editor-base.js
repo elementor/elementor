@@ -715,6 +715,16 @@ const App = Marionette.Application.extend( {
 		} );
 	},
 
+	getPreferences: function( key ) {
+		const settings = elementor.settings.editorPreferences.model.attributes;
+
+		if ( key ) {
+			return settings[ key ];
+		}
+
+		return settings;
+	},
+
 	onStart: function() {
 		this.config = ElementorConfig;
 

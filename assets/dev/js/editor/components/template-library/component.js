@@ -12,6 +12,8 @@ export default class extends elementorModules.common.ComponentModal {
 		} else {
 			this.setDefaultRoute( 'templates/pages' );
 		}
+
+		jQuery( window ).on( 'elementor:init', this.maybeShowLibraryConnectPopup.bind( this ) );
 	}
 
 	getNamespace() {
@@ -61,6 +63,31 @@ export default class extends elementorModules.common.ComponentModal {
 				this.manager.layout.showPreviewView( args.model );
 			},
 			connect: ( args ) => {
+				args.texts = {
+					title: elementor.translate( 'library/connect:title' ),
+					message: elementor.translate( 'library/connect:message' ),
+					button: elementor.translate( 'library/connect:button' ),
+				};
+
+				this.manager.layout.showConnectView( args );
+			},
+
+			'first-connect': ( args ) => {
+				args.texts = {
+					title: elementor.translate( 'library/first-connect:title' ),
+					message: elementor.translate( 'library/first-connect:message' ),
+					button: elementor.translate( 'library/first-connect:button' ),
+				};
+
+				const setSeen = () => {
+					elementorCommon.ajax.addRequest( 'library_connect_popup_seen' );
+					$e.components.get( 'library' ).off( 'route/close', setSeen );
+				};
+
+				args.onAfter = () => {
+					$e.components.get( 'library' ).on( 'route/close', setSeen );
+				};
+
 				this.manager.layout.showConnectView( args );
 			},
 		};
@@ -180,5 +207,11 @@ export default class extends elementorModules.common.ComponentModal {
 		};
 
 		return InsertTemplateHandler;
+	}
+
+	maybeShowLibraryConnectPopup() {
+		if ( elementor.config.library_connect.show_popup ) {
+			$e.route( 'library/first-connect' );
+		}
 	}
 }
