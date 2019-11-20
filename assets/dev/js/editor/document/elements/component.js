@@ -25,7 +25,7 @@ export default class extends elementorModules.common.Component {
 
 		/**
 		 * If command includes uppercase character convert it to lowercase and add `-`.
-		 * eg: by calling if the command name is `CopyAll` it will be `copy-all`.
+		 * eg: by if, calling command name is `CopyAll` it will be `copy-all`.
 		 */
 		for ( let i = 0; i < command.length; i++ ) {
 			const part = command[ i ];
