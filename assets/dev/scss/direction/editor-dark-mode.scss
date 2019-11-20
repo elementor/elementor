@@ -84,6 +84,10 @@ input, select, textarea, .elementor-input-style {
 	&:focus {
 		border-color: $theme-dark-gray-lighter;
 	}
+
+	&[disabled] {
+		background-color: $theme-dark-gray;
+	}
 }
 
 select {
@@ -572,6 +576,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 	.elementor-link-dimensions:not(.unlinked) {
 		background-color: $theme-dark-gray-lighter;
+		border-color: $theme-dark-gray-lighter;
 	}
 }
 
@@ -1020,6 +1025,15 @@ label.elementor-template-library-order-label,
 
 		.elementor-empty-view {
 			border-color: $theme-dark-gray-darkest;
+		}
+
+		.ui-sortable-helper {
+			background-color: $theme-dark-gray-darkest;
+			border-color: $theme-dark-gray-darkest;
+		}
+
+		.ui-sortable-placeholder {
+			background-color: $theme-dark-gray-darkest;
 		}
 	}
 }
