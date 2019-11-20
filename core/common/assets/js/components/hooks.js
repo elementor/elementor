@@ -1,84 +1,20 @@
-export default class Hooks extends elementorModules.Module {
-	constructor( ...args ) {
-		super( ...args );
+import Base from './events-hooks.js';
 
-		this.current = null;
+export default class Events extends Base {
+	constructor( ... args ) {
+		super( ... args );
 
-		this.hooks = {
-			dependency: {},
-			after: {},
-		};
+		this.callbacks.dependency = {};
 
-		this.usedIds = [];
-
-		this.depth = {
-			dependency: {},
-			after: {},
-		};
-	}
-
-	getAll() {
-		const result = {};
-
-		Object.keys( this.hooks ).forEach( ( event ) => {
-			if ( ! result[ event ] ) {
-				result[ event ] = [];
-			}
-
-			Object.keys( this.hooks[ event ] ).forEach( ( hook ) => {
-				result[ event ].push( {
-					command: hook,
-					callbacks: this.hooks[ event ][ hook ],
-				} );
-			} );
-		} );
-
-		return result;
-	}
-
-	getCurrent() {
-		return this.current;
-	}
-
-	checkEvent( event ) {
-		if ( -1 === Object.keys( this.hooks ).indexOf( event ) ) {
-			throw Error( `event: '${ event }' is not available.` );
-		}
-	}
-
-	checkId( id ) {
-		if ( 0 === this.usedIds.indexOf( id ) ) {
-			throw Error( `id: '${ id }' is already in use.` );
-		}
-	}
-
-	register( event, command, id, callback ) {
-		this.checkEvent( event );
-		this.checkId( id );
-
-		if ( ! this.hooks[ event ][ command ] ) {
-			this.hooks[ event ][ command ] = [];
-		}
-
-		// Save used id(s).
-		this.usedIds.push( id );
-
-		return this.hooks[ event ][ command ].push( {
-			id,
-			callback,
-		} );
+		this.depth.dependency = {};
 	}
 
 	registerDependency( command, id, callback ) {
 		return this.register( 'dependency', command, id, callback );
 	}
 
-	registerAfter( command, id, callback ) {
-		return this.register( 'after', command, id, callback );
-	}
-
 	run( event, command, args, result ) {
-		const hooks = this.hooks[ event ][ command ];
+		const hooks = this.callbacks[ event ][ command ];
 
 		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
 			this.current = command;
@@ -137,6 +73,7 @@ export default class Hooks extends elementorModules.Module {
 			return;
 		}
 
+		// TODO: $e.devTools.hooks.run
 		$e.devTools.log.hookRun( command, args, event );
 	}
 
@@ -145,6 +82,7 @@ export default class Hooks extends elementorModules.Module {
 			return;
 		}
 
+		// TODO: $e.devTools.hooks.callback
 		$e.devTools.log.hookCallback( command, args, event, id );
 	}
 }
