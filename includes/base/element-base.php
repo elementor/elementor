@@ -763,9 +763,10 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
+		$element_type = $this->get_type();
 
 		/**
-		 * Before element attribute rendered.
+		 * Before element attributes rendered.
 		 *
 		 * Fires before the attributes of the element HTML tag are rendered.
 		 *
@@ -774,6 +775,19 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( 'elementor/element/before_add_attributes', $this );
+
+		/**
+		 * Before element attributes rendered.
+		 *
+		 * Fires before the attributes of the element HTML tag are rendered.
+		 *
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( "elementor/element/{$element_type}/before_add_attributes", $this );
 
 		$id = $this->get_id();
 
@@ -820,7 +834,20 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		/**
-		 * After element attribute rendered.
+		 * After element attributes rendered.
+		 *
+		 * Fires after the attributes of the element HTML tag are rendered.
+		 *
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( "elementor/element/{$element_type}/after_add_attributes", $this );
+
+		/**
+		 * After element attributes rendered.
 		 *
 		 * Fires after the attributes of the element HTML tag are rendered.
 		 *
