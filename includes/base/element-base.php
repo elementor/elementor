@@ -763,6 +763,18 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
+
+		/**
+		 * Before element attribute rendered.
+		 *
+		 * Fires before the attributes of the element HTML tag are rendered.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/element/before_add_attributes', $this );
+
 		$id = $this->get_id();
 
 		$settings = $this->get_settings_for_display();
