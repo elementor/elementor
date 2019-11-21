@@ -125,7 +125,7 @@ WidgetView = BaseElementView.extend( {
 			return;
 		}
 
-		if ( elementor.isTesting && this.isDestroyed ) {
+		if ( elementorCommonConfig.isTesting && this.isDestroyed ) {
 			return;
 		}
 

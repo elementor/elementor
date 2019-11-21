@@ -15,7 +15,8 @@ export default class Debounce extends History {
 	 *
 	 * @param {function()}
 	 */
-	static debounce = _.debounce( ( fn ) => fn(), DEFAULT_DEBOUNCE_DELAY );
+	static debounce = _.debounce( ( fn ) => fn(), elementorCommonConfig.isTesting ? 0 : DEFAULT_DEBOUNCE_DELAY );
+
 
 	// TODO: test
 	onBeforeRun( args ) {
@@ -31,13 +32,9 @@ export default class Debounce extends History {
 		Base.prototype.onAfterRun.call( this, args, result );
 
 		if ( this.isHistoryActive() ) {
-			if ( ! elementor.isTesting ) {
-				Debounce.debounce( () => {
-					$e.run( 'document/history/end-transaction' );
-				} );
-			} else {
+			Debounce.debounce( () => {
 				$e.run( 'document/history/end-transaction' );
-			}
+			} );
 		}
 	}
 
