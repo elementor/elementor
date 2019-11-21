@@ -471,6 +471,10 @@ class Source_Local extends Source_Base {
 			return $document;
 		}
 
+		if ( ! empty( $template_data['content'] ) ) {
+			$template_data['content'] = $this->replace_elements_ids( $template_data['content'] );
+		}
+
 		$document->save( [
 			'elements' => $template_data['content'],
 			'settings' => $template_data['page_settings'],
