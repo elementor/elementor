@@ -17,6 +17,14 @@ export default class Debounce extends History {
 	 */
 	static debounce = _.debounce( ( fn ) => fn(), elementorCommonConfig.isTesting ? 0 : DEFAULT_DEBOUNCE_DELAY );
 
+	initialize( args ) {
+		super.initialize( args );
+
+		// If its head command, and not called within another command.
+		if ( 1 === $e.commands.currentTrace.length ) {
+			this.isDebounceRequired = true;
+		}
+	}
 
 	// TODO: test
 	onBeforeRun( args ) {
@@ -32,9 +40,13 @@ export default class Debounce extends History {
 		Base.prototype.onAfterRun.call( this, args, result );
 
 		if ( this.isHistoryActive() ) {
-			Debounce.debounce( () => {
+			if ( this.isDebounceRequired ) {
+				Debounce.debounce( () => {
+					$e.run( 'document/history/end-transaction' );
+				} );
+			} else {
 				$e.run( 'document/history/end-transaction' );
-			} );
+			}
 		}
 	}
 
@@ -44,10 +56,14 @@ export default class Debounce extends History {
 
 		// Rollback history on failure.
 		if ( e instanceof elementorModules.common.HookBreak && this.history ) {
-			// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
-			Debounce.debounce( () => {
+			if ( this.isDebounceRequired ) {
+				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
+				Debounce.debounce( () => {
+					$e.run( 'document/history/delete-transaction' );
+				} );
+			} else {
 				$e.run( 'document/history/delete-transaction' );
-			} );
+			}
 		}
 	}
 }
