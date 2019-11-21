@@ -184,7 +184,7 @@ export default class ColorPicker extends elementorModules.Module {
 
 		elementor.schemes.saveScheme( 'color-picker' );
 
-		this.$draggedSwatch.remove();
+		this.picker.removeSwatch( draggedSwatchIndex );
 
 		ColorPicker.swachesNeedUpdate = true;
 	}
