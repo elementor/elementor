@@ -15,34 +15,43 @@ jQuery( () => {
 		DocumentHelper.testCommands( Commands );
 
 		QUnit.module( 'Single Selection', () => {
-			QUnit.test( 'ResizeColumn', ( assert ) => {
-				assert.equal( 1, 1, 'Test was skipped.' );
-				/*
-				const newSize = 20,
-						eSection = Elements.createSection( 2 ),
-						eColumn1 = eSection.view.children.findByIndex( 0 ).getContainer(),
-						eColumn2 = eSection.view.children.findByIndex( 1 ).getContainer(),
-						column2NewSize = 100 - newSize;
-
-					// Manual specific `_inline_size` since tests does not have real ui.
-					$e.run( 'document/elements/settings', {
-						containers: [ eColumn1, eColumn2 ],
-						settings: {
-							[ eColumn1.id ]: { _inline_size: 50 },
-							[ eColumn2.id ]: { _inline_size: 50 },
-						},
-						isMultiSettings: true,
-					} );
-
-					Elements.resizeColumn( eColumn1, newSize );
-
-					// Check values.
-					assert.equal( eColumn1.settings.attributes._inline_size, newSize,
-						`Column1 size was changed to '${ newSize }'.` );
-					assert.equal( eColumn2.settings.attributes._inline_size, ( column2NewSize ),
-						`Column2 size was changed to '${ column2NewSize }'.` );
-					*/
-			} );
+			// QUnit.test( 'ResizeColumn', ( assert ) => {
+			// 	//assert.equal( 1, 1, 'Test was skipped.' );
+			//
+			// 	const newSize = 20,
+			// 			eSection = DocumentHelper.createSection( 2 ),
+			// 			eColumn1 = eSection.view.children.findByIndex( 0 ).getContainer(),
+			// 			eColumn2 = eSection.view.children.findByIndex( 1 ).getContainer(),
+			// 			column2NewSize = 100 - newSize;
+			//
+			// 		const doneSettings = assert.async();
+			//
+			// 		// Manual specific `_inline_size` since tests does not have real ui.
+			// 		$e.run( 'document/elements/settings', {
+			// 			containers: [ eColumn1, eColumn2 ],
+			// 			settings: {
+			// 				[ eColumn1.id ]: { _inline_size: 50 },
+			// 				[ eColumn2.id ]: { _inline_size: 50 },
+			// 			},
+			// 			isMultiSettings: true,
+			// 		} );
+			//
+			// 		setTimeout( () => doneSettings() );
+			//
+			// 		DocumentHelper.resizeColumn( eColumn1, newSize );
+			//
+			// 		const doneResize = assert.async();
+			//
+			// 		setTimeout( () => {
+			// 			// Check values.
+			// 			assert.equal( eColumn1.settings.attributes._inline_size, newSize,
+			// 				`Column1 size was changed to '${ newSize }'.` );
+			// 			assert.equal( eColumn2.settings.attributes._inline_size, ( column2NewSize ),
+			// 				`Column2 size was changed to '${ column2NewSize }'.` );
+			//
+			// 			doneResize();
+			// 		} );
+			// } );
 
 			QUnit.test( 'Duplicate', ( assert ) => {
 				const eColumn = DocumentHelper.createSection( 1, true ),
@@ -53,7 +62,8 @@ jQuery( () => {
 					const eDuplicatedButton = DocumentHelper.duplicate( eButton );
 
 					// Check if duplicated buttons have unique ids.
-					assert.notEqual( eDuplicatedButton.id, eButton.id, `Duplicate button # ${ i + 1 } have unique id.` );
+					assert.notEqual( eDuplicatedButton.id, eButton.id,
+						`Duplicate button # ${ i + 1 } have unique id.` );
 				}
 
 				// Check duplicated button exist.
