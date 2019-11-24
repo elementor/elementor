@@ -2,24 +2,29 @@ import Base from '../../commands/base/base';
 
 export class Paste extends Base {
 	apply( args ) {
-		const { containers = [ args.container ], storageKey = 'clipboard' } = args;
+		const selectedElement = elementor.getCurrentElement();
 
-		// If no containers it means that it calls from shortcut and if so, get current element.
-		if ( ! containers[ 0 ] ) {
-			args.containers = [ elementor.getCurrentElement().getContainer() ];
+		if ( selectedElement ) {
+			const options = {};
+
+			let container = selectedElement.getContainer();
+
+			switch ( container.model.get( 'elType' ) ) {
+				case 'section':
+					options.at = elementor.elements.findIndex( container.model );
+				case 'widget':
+				case 'column':
+					container = container.parent;
+					break;
+			}
+
+			return $e.run( 'document/elements/paste', {
+				container,
+				options,
+			} );
 		}
 
-		// If current container is widget, redirect to parent.
-		switch ( args.containers[ 0 ].model.get( 'elType' ) ) {
-			case 'section':
-				args.options.at = elementor.elements.findIndex( args.containers[ 0 ].model );
-			case 'widget':
-			case 'column':
-				args.containers = [ args.containers[ 0 ].parent ];
-			break;
-		}
-
-		return $e.run( 'document/elements/paste', args );
+		return false;
 	}
 }
 

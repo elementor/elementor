@@ -3,6 +3,8 @@ import CommonHelper from '../../../../common/helper';
 
 export const Copy = () => {
 	QUnit.test( 'Copy', ( assert ) => {
+		elementorCommon.storage.set( 'clipboard', '' );
+
 		const eButton = DocumentHelper.createAutoButton();
 
 		CommonHelper.runShortcut( { which: 67 /* c */, ctrlKey: true, metaKey: true } );
@@ -16,7 +18,7 @@ export const Copy = () => {
 			assert.equal( eButton.id, storage[ 0 ].id, 'Element copied successfully' );
 
 			done();
-		}, 0 );
+		} );
 	} );
 };
 

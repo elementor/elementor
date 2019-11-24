@@ -3,6 +3,8 @@ import CommonHelper from '../../../../common/helper';
 
 export const Paste = () => {
 	QUnit.test( 'Paste', ( assert ) => {
+		elementorCommon.storage.set( 'clipboard', '' );
+
 		const eButton = DocumentHelper.createAutoButton();
 
 		DocumentHelper.copy( eButton );
@@ -19,7 +21,7 @@ export const Paste = () => {
 				'Pasted element were created.' );
 
 			done();
-		}, 0 );
+		} );
 	} );
 };
 

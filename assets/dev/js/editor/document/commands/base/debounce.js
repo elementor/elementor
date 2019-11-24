@@ -5,8 +5,10 @@
 import Base from './base';
 import History from './history';
 
+export const DEFAULT_DEBOUNCE_DELAY = 800;
+
 export const getDefaultDebounceDelay = () => {
-	let result = 800;
+	let result = DEFAULT_DEBOUNCE_DELAY;
 
 	if ( ElementorConfig.document && undefined !== ElementorConfig.document.debounceDelay ) {
 		result = ElementorConfig.document.debounceDelay;
@@ -14,8 +16,6 @@ export const getDefaultDebounceDelay = () => {
 
 	return result;
 }
-
-export const DEFAULT_DEBOUNCE_DELAY = getDefaultDebounceDelay();
 
 export default class Debounce extends History {
 	/**
@@ -25,10 +25,14 @@ export default class Debounce extends History {
 	 *
 	 * @param {function()}
 	 */
-	static debounce = _.debounce( ( fn ) => fn(), DEFAULT_DEBOUNCE_DELAY );
+	static debounce = null;
 
 	initialize( args ) {
 		super.initialize( args );
+
+		if ( ! this.constructor.debounce ) {
+			this.constructor.debounce = _.debounce( ( fn ) => fn(), getDefaultDebounceDelay() );
+		}
 
 		// If its head command, and not called within another command.
 		if ( 1 === $e.commands.currentTrace.length ) {
@@ -51,7 +55,7 @@ export default class Debounce extends History {
 
 		if ( this.isHistoryActive() ) {
 			if ( this.isDebounceRequired ) {
-				Debounce.debounce( () => {
+				this.constructor.debounce( () => {
 					$e.run( 'document/history/end-transaction' );
 				} );
 			} else {
@@ -68,7 +72,7 @@ export default class Debounce extends History {
 		if ( e instanceof elementorModules.common.HookBreak && this.history ) {
 			if ( this.isDebounceRequired ) {
 				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
-				Debounce.debounce( () => {
+				this.constructor.debounce( () => {
 					$e.run( 'document/history/delete-transaction' );
 				} );
 			} else {
