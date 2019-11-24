@@ -31,7 +31,7 @@ export default class Base extends ArgsObject {
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
 
-		// You can edit `this.args` from `initialize`.
+		// Refresh args, maybe the changed via `initialize`.
 		args = this.args;
 
 		// Validate args before run.
