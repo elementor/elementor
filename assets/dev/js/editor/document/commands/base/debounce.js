@@ -15,7 +15,7 @@ export const getDefaultDebounceDelay = () => {
 	}
 
 	return result;
-}
+};
 
 export default class Debounce extends History {
 	/**
