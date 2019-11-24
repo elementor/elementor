@@ -1,87 +1,24 @@
-/**
- * TODO: Should we merge it with hooks?
- */
-export default class Events extends elementorModules.Module {
-	constructor( ...args ) {
-		super( ...args );
+import Base from './events-hooks.js';
 
-		this.current = null;
+export default class Events extends Base {
+	constructor( ... args ) {
+		super( ... args );
 
-		this.events = {
-			before: {},
-			after: {},
-		};
+		this.callbacks.before = {};
 
-		this.usedIds = [];
-
-		this.depth = {
-			before: {},
-			after: {},
-		};
+		this.depth.before = {};
 	}
 
-	getAll() {
-		const result = {};
-
-		Object.keys( this.events ).forEach( ( event ) => {
-			if ( ! result[ event ] ) {
-				result[ event ] = [];
-			}
-
-			Object.keys( this.events[ event ] ).forEach( ( hook ) => {
-				result[ event ].push( {
-					command: hook,
-					callbacks: this.events[ event ][ hook ],
-				} );
-			} );
-		} );
-
-		return result;
-	}
-
-	getCurrent() {
-		return this.current;
-	}
-
-	checkEvent( event ) {
-		if ( -1 === Object.keys( this.events ).indexOf( event ) ) {
-			throw Error( `event: '${ event }' is not available.` );
-		}
-	}
-
-	checkId( id ) {
-		if ( 0 === this.usedIds.indexOf( id ) ) {
-			throw Error( `id: '${ id }' is already in use.` );
-		}
-	}
-
-	register( event, command, id, callback ) {
-		this.checkEvent( event );
-		this.checkId( id );
-
-		if ( ! this.events[ event ][ command ] ) {
-			this.events[ event ][ command ] = [];
-		}
-
-		// Save used id(s).
-		this.usedIds.push( id );
-
-		return this.events[ event ][ command ].push( {
-			id,
-			callback,
-		} );
+	getType() {
+		return 'event';
 	}
 
 	registerBefore( command, id, callback ) {
 		return this.register( 'before', command, id, callback );
 	}
 
-	registerAfter( command, id, callback ) {
-		return this.register( 'after', command, id, callback );
-	}
-
 	run( event, command, args, result ) {
-		const events = this.events[ event ][ command ];
+		const events = this.callbacks[ event ][ command ];
 
 		if ( events && events.length ) {
 			this.current = command;
@@ -133,14 +70,18 @@ export default class Events extends elementorModules.Module {
 		if ( ! $e.devTools ) {
 			return;
 		}
-		$e.devTools.log.log( `%c [${ event }] EVENT: '${ command } ' ->`, 'color: #ffffe0;font-weight: bold', args );
+
+		// TODO: $e.devTools.events.run
+		$e.devTools.log.eventRun( command, args, event );
 	}
 
 	onCallback( command, args, event, id ) {
 		if ( ! $e.devTools ) {
 			return;
 		}
-		$e.devTools.log.log( `%c [${ event }] EVENT CALLBACK: '${ command }:${ id } ' ->`, 'color: #00ff80;font-weight: bold', args );
+
+		// TODO:  $e.devTools.events.callback
+		$e.devTools.log.eventCallback( command, args, event, id );
 	}
 }
 

@@ -1,7 +1,6 @@
 import DocumentHelper from '../helper';
 import HistoryHelper from './helper';
 import BlockFaq from './../../../../mock/library/blocks/faq.json';
-import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../assets/dev/js/editor/document/commands/base/debounce';
 
 const undoValidate = ( assert, historyItem ) => {
 	$e.run( 'document/history/undo' );
@@ -57,7 +56,7 @@ jQuery( () => {
 
 				const done = assert.async();
 
-				//setTimeout( () => {
+				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -76,7 +75,7 @@ jQuery( () => {
 						'Settings restored' );
 
 					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				} );
 			} );
 
 			QUnit.test( 'General Settings: Style', ( assert ) => {
@@ -91,7 +90,7 @@ jQuery( () => {
 
 				const done = assert.async();
 
-				//setTimeout( () => {
+				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -113,7 +112,7 @@ jQuery( () => {
 					);
 
 					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				} );
 			} );
 
 			QUnit.test( 'General Settings: Lightbox', ( assert ) => {
@@ -128,7 +127,7 @@ jQuery( () => {
 
 				const done = assert.async();
 
-				//setTimeout( () => {
+				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -150,7 +149,7 @@ jQuery( () => {
 					);
 
 					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				} );
 			} );
 
 			QUnit.test( 'Saver Editor Flag', ( assert ) => {
@@ -181,7 +180,7 @@ jQuery( () => {
 
 			QUnit.test( 'History Rollback', ( assert ) => {
 				try {
-					$e.run( 'document/elements/settings', {
+					$e.run( 'document/elements/create', {
 						container: ( new elementorModules.editor.Container( {} ) ),
 						settings: {},
 					} );
@@ -460,21 +459,23 @@ jQuery( () => {
 				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'move', 'Button' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Button' );
 
 				// Undo.
-				undoValidate( assert, historyItem );
+				HistoryHelper.undoValidate( assert, historyItem );
 
 				const eWidgetAfterUndo = eWidget.lookup();
 
-				assert.equal( eWidgetAfterUndo.view._index, originalPosition, 'Element has been returned to the original position' );
+				assert.equal( eWidgetAfterUndo.view._index, originalPosition,
+					'Element has been returned to the original position' );
 
 				// Redo.
-				redoValidate( assert, historyItem );
+				HistoryHelper.redoValidate( assert, historyItem );
 
 				const eWidgetAfterRedo = eWidget.lookup();
 
-				assert.equal( eWidgetAfterRedo.view._index, targetPosition, 'Element was re-added to correct position' );
+				assert.equal( eWidgetAfterRedo.view._index, targetPosition,
+					'Element was re-added to correct position' );
 			} );
 
 			QUnit.test( 'Delete', ( assert ) => {
@@ -524,7 +525,7 @@ jQuery( () => {
 
 				const doneSettings = assert.async();
 
-				//setTimeout( () => {
+				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -545,42 +546,46 @@ jQuery( () => {
 					setTimeout( () => {
 						assert.equal( eButton.view.$el.find( '.button-text' ).html(), dynamicValue, 'Settings restored' );
 						doneDynamic();
-					}, DEFAULT_DEBOUNCE_DELAY );
-				//}, DEFAULT_DEBOUNCE_DELAY );
-			} );
-/*
-			QUnit.test( 'Dynamic in repeater', ( assert ) => {
-				assert.equal( 1, 2, 'TODO: complete the test' );
-				const eForm = Elements.createAutoForm(),
-					eFormItem = eForm.children[ 0 ],
-					dynamicTag = '[elementor-tag id="d96ebd2" name="post-date" settings="%7B%22format%22%3A%22d%2Fm%2FY%22%7D"]', // post-date with non default format.
-					dynamicValue = '{ dynamic text }',
-					{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
-					tag = elementor.dynamicTags.createTag( id, name, settings ),
-					key = elementor.dynamicTags.createCacheKey( tag );
-
-				// Set fake data.
-				elementor.dynamicTags.cache[ key ] = dynamicValue;
-
-				let done;
-
-				eFormItem.view.attachElContent = function( html ) {
-					eFormItem.view.$el.empty().append( html );
-
-					done();
-
-					assert.equal( eForm.view.$el.find( '.button-text' ).html(), dynamicValue,
-						`button text changed to dynamic value: '${ dynamicValue }'` );
-				};
-
-				$e.run( 'document/dynamic/settings', {
-					container: eFormItem,
-					settings: { field_value: dynamicTag },
+					}, 1000 );
 				} );
-
-				done = assert.async();
 			} );
-*/
+
+			// QUnit.test( 'Dynamic in repeater', ( assert ) => {
+			// 	const eForm = DocumentHelper.createAutoForm(),
+			// 		eFormItem = eForm.children[ 0 ],
+			// 		dynamicTag = '[elementor-tag id="d96ebd2" name="post-date" settings="%7B%22format%22%3A%22d%2Fm%2FY%22%7D"]', // post-date with non default format.
+			// 		dynamicValue = '{ dynamic text }',
+			// 		{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
+			// 		tag = elementor.dynamicTags.createTag( id, name, settings ),
+			// 		key = elementor.dynamicTags.createCacheKey( tag );
+			//
+			// 	// Set fake data.
+			// 	elementor.dynamicTags.cache[ key ] = dynamicValue;
+			//
+			// 	const doneAttach = assert.async();
+			//
+			// 	eFormItem.view.attachElContent = function( html ) {
+			// 		debugger;
+			// 		eFormItem.view.$el.empty().append( html );
+			//
+			// 		doneAttach();
+			// 	};
+			//
+			// 	const done = assert.async();
+			//
+			// 	$e.run( 'document/dynamic/settings', {
+			// 		container: eFormItem,
+			// 		settings: { field_value: dynamicTag },
+			// 	} );
+			//
+			// 	setTimeout( () => {
+			// 		assert.equal( eForm.view.$el.find( '.button-text' ).html(), dynamicValue,
+			// 			`button text changed to dynamic value: '${ dynamicValue }'` );
+			//
+			// 		done();
+			// 	} )
+			// } );
+
 			QUnit.test( 'Import', ( assert ) => {
 				// eslint-disable-next-line camelcase
 				const { model, content, page_settings } = BlockFaq;

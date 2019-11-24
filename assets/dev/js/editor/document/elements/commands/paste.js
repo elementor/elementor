@@ -18,7 +18,7 @@ export class Paste extends History {
 	}
 
 	apply( args ) {
-		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ] } = args,
+		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ], options = {} } = args,
 			storageData = elementorCommon.storage.get( storageKey ),
 			result = [];
 
@@ -84,7 +84,7 @@ export class Paste extends History {
 				} );
 			} );
 		} else {
-			result.push( this.pasteTo( containers, storageData ) );
+			result.push( this.pasteTo( containers, storageData, options ) );
 		}
 
 		if ( 1 === result.length ) {

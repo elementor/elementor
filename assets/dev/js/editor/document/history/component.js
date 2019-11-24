@@ -30,7 +30,7 @@ export default class Component extends elementorModules.common.Component {
 		return args;
 	}
 
-	getEfficientTransactions( transactions ) {
+	mergeTransactions( transactions ) {
 		const result = {};
 
 		transactions.forEach( ( itemArgs ) => {
@@ -91,7 +91,7 @@ export default class Component extends elementorModules.common.Component {
 
 		const firstItem = this.transactions[ 0 ],
 			{ type } = firstItem,
-			transactions = this.getEfficientTransactions( this.transactions );
+			transactions = this.mergeTransactions( this.transactions );
 
 		let { title = '', subTitle = '' } = firstItem;
 
@@ -169,12 +169,6 @@ export default class Component extends elementorModules.common.Component {
 		}
 	}
 
-	logItem( args ) {
-		const id = $e.run( 'document/history/start-log', args );
-
-		$e.run( 'document/history/end-log', { id } );
-	}
-
 	logSubItem( args ) {
 		if ( ! elementor.history.history.getActive() ) {
 			return;
@@ -209,7 +203,6 @@ export default class Component extends elementorModules.common.Component {
 			'delete-transaction': this.deleteTransaction.bind( this ),
 			'end-log': this.endLog.bind( this ),
 			'end-transaction': this.endTransaction.bind( this ),
-			'log-item': this.logItem.bind( this ),
 			'log-sub-item': this.logSubItem.bind( this ),
 			'start-log': this.startLog.bind( this ),
 			'start-transaction': this.startTransaction.bind( this ),
