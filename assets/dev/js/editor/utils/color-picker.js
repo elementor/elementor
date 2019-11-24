@@ -33,7 +33,7 @@ export default class ColorPicker extends elementorModules.Module {
 
 		settings.default = settings.default || null;
 
-		this.picker = Pickr.create( settings );
+		this.picker = new Pickr( settings );
 
 		if ( ! settings.default ) {
 			// Set a default palette. It doesn't affect the selected value
@@ -74,6 +74,11 @@ export default class ColorPicker extends elementorModules.Module {
 		this.$addButton = jQuery( '<button>', { class: 'elementor-color-picker--add-swatch' } ).html( jQuery( '<i>', { class: 'eicon-plus' } ) );
 
 		this.$addButton.on( 'click', () => this.onAddButtonClick() );
+
+		this.$addButton.tipsy( {
+			title: () => elementor.translate( 'add_picked_color' ),
+			gravity: () => 's',
+		} );
 
 		this.addPlusButtonToSwatches();
 	}
@@ -131,7 +136,13 @@ export default class ColorPicker extends elementorModules.Module {
 			this.getColorPickerPalette().forEach( ( swatch ) => this.picker.addSwatch( swatch ) );
 
 			this.addPlusButtonToSwatches();
+
+			this.picker.activateSwatch();
 		}
+
+		const { result: resultInput } = this.picker.getRoot().interaction;
+
+		setTimeout( () => resultInput.select(), 100 );
 	}
 
 	onAddButtonClick() {
@@ -173,7 +184,7 @@ export default class ColorPicker extends elementorModules.Module {
 
 		elementor.schemes.saveScheme( 'color-picker' );
 
-		this.$draggedSwatch.remove();
+		this.picker.removeSwatch( draggedSwatchIndex );
 
 		ColorPicker.swachesNeedUpdate = true;
 	}
