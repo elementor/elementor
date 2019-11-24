@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
-use Elementor\Icons_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
