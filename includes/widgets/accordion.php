@@ -170,6 +170,7 @@ class Widget_Accordion extends Widget_Base {
 					],
 				],
 				'skin' => 'inline',
+				'label_block' => false,
 			]
 		);
 
@@ -198,6 +199,7 @@ class Widget_Accordion extends Widget_Base {
 					],
 				],
 				'skin' => 'inline',
+				'label_block' => false,
 				'condition' => [
 					'selected_icon[value]!' => '',
 				],
