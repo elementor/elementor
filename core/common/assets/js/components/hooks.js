@@ -9,6 +9,10 @@ export default class Events extends Base {
 		this.depth.dependency = {};
 	}
 
+	getType() {
+		return 'hook';
+	}
+
 	registerDependency( command, id, callback ) {
 		return this.register( 'dependency', command, id, callback );
 	}

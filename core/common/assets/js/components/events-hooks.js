@@ -14,6 +14,10 @@ export default class EventsHooks extends elementorModules.Module {
 		this.depth = { after: {} };
 	}
 
+	getType() {
+		elementorModules.forceMethodImplementation();
+	}
+
 	getAll() {
 		const result = {};
 
@@ -43,7 +47,7 @@ export default class EventsHooks extends elementorModules.Module {
 
 	checkEvent( event ) {
 		if ( -1 === Object.keys( this.callbacks ).indexOf( event ) ) {
-			throw Error( `event: '${ event }' is not available.` );
+			throw Error( `${ this.getType() }: '${ event }' is not available.` );
 		}
 	}
 

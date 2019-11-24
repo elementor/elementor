@@ -9,6 +9,10 @@ export default class Events extends Base {
 		this.depth.before = {};
 	}
 
+	getType() {
+		return 'event';
+	}
+
 	registerBefore( command, id, callback ) {
 		return this.register( 'before', command, id, callback );
 	}
