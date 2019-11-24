@@ -205,8 +205,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		const defaults = {};
 
 		// Get default fields.
-		Object.entries( this.model.get( 'fields' ) ).forEach( ( [ key, field ] ) => {
-			defaults[ key ] = field.default;
+		_.each( this.model.get( 'fields' ), ( field ) => {
+			defaults[ field.name ] = field.default;
 		} );
 
 		const newModel = $e.run( 'document/repeater/insert', {
