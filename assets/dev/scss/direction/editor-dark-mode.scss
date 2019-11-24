@@ -877,11 +877,34 @@ label.elementor-template-library-order-label,
 		background-color: $theme-dark-gray-light;
 	}
 
+	.elementor-template-library-template-controls {
+
+		> div {
+
+			&:not(:hover),
+			& a {
+				color: $theme-dark-gray-lightest;
+			}
+		}
+	}
+
 	.elementor-template-library-template-more {
 		background-color: $theme-dark-gray;
 
 		&:before {
 			border-bottom-color: $theme-dark-gray;
+		}
+
+		&:hover,
+		a:hover {
+			color: $theme-dark-light;
+		}
+
+		.elementor-template-library-template-delete {
+
+			&:hover {
+				color: $theme-dark-danger;
+			}
 		}
 	}
 }
