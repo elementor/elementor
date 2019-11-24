@@ -50,4 +50,4 @@ require( './core/editor/document/elements/component.spec' );
 require( './core/editor/document/repeater/component.spec' );
 require( './core/editor/document/dynamic/component.spec' );
 require( './core/editor/document/history/component.spec' );
-require( './core/editor/document/shortcut/component.spec' );
+require( './core/editor/document/shortcuts/component.spec' );

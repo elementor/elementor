@@ -2,7 +2,7 @@ import * as Commands from './commands/';
 
 export default class extends elementorModules.common.Component {
 	getNamespace() {
-		return 'document/shortcut';
+		return 'document/shortcuts';
 	}
 
 	defaultCommands() {
