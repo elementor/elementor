@@ -16,7 +16,7 @@ export const Copy = () => {
 			assert.equal( eButton.id, storage[ 0 ].id, 'Element copied successfully' );
 
 			done();
-		}, 1000 );
+		}, 0 );
 	} );
 };
 

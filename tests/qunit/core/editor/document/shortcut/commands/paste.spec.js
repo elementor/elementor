@@ -19,7 +19,7 @@ export const Paste = () => {
 				'Pasted element were created.' );
 
 			done();
-		}, 1000 );
+		}, 0 );
 	} );
 };
 
