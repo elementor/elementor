@@ -376,6 +376,7 @@ export default class DocumentHelper {
 		} );
 	}
 
+	// TODO: not the right place for the function.
 	static testCommands( commands ) {
 		// eslint-disable-next-line no-unused-vars
 		Object.entries( commands ).forEach( ( [ command, reference ] ) => reference() );

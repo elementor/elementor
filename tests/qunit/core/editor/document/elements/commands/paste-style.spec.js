@@ -16,17 +16,11 @@ export const PasteStyle = () => {
 
 				DocumentHelper.pasteStyle( eButtonSimple );
 
-				const done = assert.async();
-
-				//setTimeout( () => {
-					// Check
-					assert.equal( eButtonSimple.settings.attributes.background_color, eStyledButtonBackground,
-						`Button background color was changed to '${ eStyledButtonBackground }'.` );
-					assert.equal( elementor.saver.isEditorChanged(), true,
-						'Command applied the saver editor is changed.' );
-
-					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				// Check
+				assert.equal( eButtonSimple.settings.attributes.background_color, eStyledButtonBackground,
+					`Button background color was changed to '${ eStyledButtonBackground }'.` );
+				assert.equal( elementor.saver.isEditorChanged(), true,
+					'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -38,25 +32,23 @@ export const PasteStyle = () => {
 
 				DocumentHelper.copy( eWidgetStyled );
 				DocumentHelper.pasteStyle( eWidgetSimple );
-				//setTimeout( () => {
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
-					// Exist in history.
-					HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
+				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
-					// Undo.
-					HistoryHelper.undoValidate( assert, historyItem );
+				// Exist in history.
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
 
-					assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-						'Settings back to default.' );
+				// Undo.
+				HistoryHelper.undoValidate( assert, historyItem );
 
-					// Redo.
-					HistoryHelper.redoValidate( assert, historyItem );
+				assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
+					'Settings back to default.' );
 
-					/*assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-						'Settings restored.' ); // TODO: in tests its not back to default color.*/
+				// Redo.
+				HistoryHelper.redoValidate( assert, historyItem );
 
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				/*assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
+					'Settings restored.' ); // TODO: in tests its not back to default color.*/
 			} );
 		} );
 
@@ -71,17 +63,11 @@ export const PasteStyle = () => {
 
 				DocumentHelper.multiPasteStyle( [ eButtonSimple1, eButtonSimple2 ] );
 
-				const done = assert.async(); // Pause the test till done.
-
-				//setTimeout( () => {
-					// Check pasted style exist.
-					assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
-						`Button #1 background color was changed to '${ eStyledButtonBackground }'.` );
-					assert.equal( eButtonSimple2.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
-						`Button #2 background color was changed to '${ eStyledButtonBackground }'.` );
-
-					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				// Check pasted style exist.
+				assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
+					`Button #1 background color was changed to '${ eStyledButtonBackground }'.` );
+				assert.equal( eButtonSimple2.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
+					`Button #2 background color was changed to '${ eStyledButtonBackground }'.` );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -93,32 +79,26 @@ export const PasteStyle = () => {
 				DocumentHelper.copy( eWidgetStyled );
 				DocumentHelper.multiPasteStyle( eWidgetsSimple );
 
-				const done = assert.async(); // Pause the test till done.
+				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
-				//setTimeout( () => {
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				// Exist in history.
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );
 
-					// Exist in history.
-					HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );
+				// Undo.
+				HistoryHelper.undoValidate( assert, historyItem );
 
-					// Undo.
-					HistoryHelper.undoValidate( assert, historyItem );
+				eWidgetsSimple.forEach( ( eWidgetSimple ) => {
+					assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
+						'Settings back to default.' );
+				} );
 
-					eWidgetsSimple.forEach( ( eWidgetSimple ) => {
-						assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
-							'Settings back to default.' );
-					} );
+				// Redo.
+				HistoryHelper.redoValidate( assert, historyItem );
 
-					// Redo.
-					HistoryHelper.redoValidate( assert, historyItem );
-
-					eWidgetsSimple.forEach( ( eWidgetSimple ) => {
-						assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetStyledBackground,
-							'Settings restored.' );
-					} );
-
-					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				eWidgetsSimple.forEach( ( eWidgetSimple ) => {
+					assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetStyledBackground,
+						'Settings restored.' );
+				} );
 			} );
 		} );
 	} );

@@ -21,6 +21,7 @@ const elementorConfigDocument = {
 		wp_preview: 'http://localhost/elementor/?p=1819&preview_id=1819&preview_nonce=d50fdce90b&preview=true',
 		permalink: 'http://localhost/elementor/?p=1819',
 	},
+	debounceDelay: 0,
 };
 
 const elementorConfigSettings = {

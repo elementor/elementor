@@ -606,6 +606,26 @@ $devices: 'desktop', 'tablet', 'mobile';
 	border-color: $theme-dark-gray;
 }
 
+.elementor-color-picker {
+
+	&--dropping-area {
+		border: 1px dashed $theme-dark-gray-lighter;
+
+		&.html5dnd-current-element {
+			border-color: $theme-dark-gray-lightest;
+
+			i {
+				color: $theme-dark-danger;
+			}
+		}
+
+		i {
+			color: $theme-dark-gray-lightest;
+		}
+	}
+}
+
+
 //Structure Control
 .elementor-control-type-structure {
 

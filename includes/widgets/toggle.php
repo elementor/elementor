@@ -174,6 +174,7 @@ class Widget_Toggle extends Widget_Base {
 						'caret-square-down',
 					],
 				],
+				'label_block' => false,
 				'skin' => 'inline',
 			]
 		);
@@ -211,6 +212,7 @@ class Widget_Toggle extends Widget_Base {
 					],
 				],
 				'skin' => 'inline',
+				'label_block' => false,
 				'condition' => [
 					'selected_icon[value]!' => '',
 				],

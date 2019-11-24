@@ -154,6 +154,12 @@ const App = Marionette.Application.extend( {
 				$elementsToHide.removeClass( 'elementor-open' );
 			},
 		},
+		panelResponsiveSwitchers: {
+			element: '.elementor-control-responsive-switchers',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
+			},
+		},
 	},
 
 	userCan: function( capability ) {

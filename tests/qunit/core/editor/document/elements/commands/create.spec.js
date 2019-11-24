@@ -51,8 +51,13 @@ export const Create = () => {
 					_position: 'absolute',
 				} );
 
-				assert.equal( eButton.view.$el.hasClass( 'elementor-absolute' ), true, '',
-					'Widget have "elementor-absolute" class.' );
+				const done = assert.async();
+
+				setTimeout( () => {
+					assert.equal( eButton.view.$el.hasClass( 'elementor-absolute' ), true, '',
+						'Widget have "elementor-absolute" class.' );
+					done();
+				} );
 			} );
 		} );
 

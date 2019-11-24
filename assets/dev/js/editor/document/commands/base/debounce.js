@@ -1,12 +1,22 @@
+/**
+ * TODO: maybe file should be under history/debounce.js
+ * TODO: Check if instance does not stuck in debounce memory and cause memory leaks.
+ */
 import Base from './base';
 import History from './history';
 
 export const DEFAULT_DEBOUNCE_DELAY = 800;
 
-/**
- * TODO: maybe file should be under history/debounce.js
- * TODO: Check if instance does not stuck in debounce memory and cause memory leaks.
- */
+export const getDefaultDebounceDelay = () => {
+	let result = DEFAULT_DEBOUNCE_DELAY;
+
+	if ( ElementorConfig.document && undefined !== ElementorConfig.document.debounceDelay ) {
+		result = ElementorConfig.document.debounceDelay;
+	}
+
+	return result;
+};
+
 export default class Debounce extends History {
 	/**
 	 * Function debounce().
@@ -15,7 +25,20 @@ export default class Debounce extends History {
 	 *
 	 * @param {function()}
 	 */
-	static debounce = _.debounce( ( fn ) => fn(), DEFAULT_DEBOUNCE_DELAY );
+	static debounce = null;
+
+	initialize( args ) {
+		super.initialize( args );
+
+		if ( ! this.constructor.debounce ) {
+			this.constructor.debounce = _.debounce( ( fn ) => fn(), getDefaultDebounceDelay() );
+		}
+
+		// If its head command, and not called within another command.
+		if ( 1 === $e.commands.currentTrace.length ) {
+			this.isDebounceRequired = true;
+		}
+	}
 
 	// TODO: test
 	onBeforeRun( args ) {
@@ -31,8 +54,8 @@ export default class Debounce extends History {
 		Base.prototype.onAfterRun.call( this, args, result );
 
 		if ( this.isHistoryActive() ) {
-			if ( ! elementor.isTesting ) {
-				Debounce.debounce( () => {
+			if ( this.isDebounceRequired ) {
+				this.constructor.debounce( () => {
 					$e.run( 'document/history/end-transaction' );
 				} );
 			} else {
@@ -47,10 +70,14 @@ export default class Debounce extends History {
 
 		// Rollback history on failure.
 		if ( e instanceof elementorModules.common.HookBreak && this.history ) {
-			// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
-			Debounce.debounce( () => {
+			if ( this.isDebounceRequired ) {
+				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
+				this.constructor.debounce( () => {
+					$e.run( 'document/history/delete-transaction' );
+				} );
+			} else {
 				$e.run( 'document/history/delete-transaction' );
-			} );
+			}
 		}
 	}
 }
