@@ -45,7 +45,7 @@ module.exports = {
 
 	fetchInlineSvg( svgUrl, callback = false ) {
 		fetch( svgUrl )
-			.then( ( response ) => response.text() )
+			.then( ( response ) => response.ok ? response.text() : '' )
 			.then( ( data ) => {
 				if ( callback ) {
 					callback( data );

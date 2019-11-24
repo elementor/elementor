@@ -54,7 +54,7 @@ class Model extends BaseModel {
 			[
 				'label' => __( 'UI Theme', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'description' => __( 'Set Light or Dark Editor UI Theme, or sync it with your OS setting.', 'elementor' ),
+				'description' => __( 'Set light or dark mode, or use Auto Detect to sync it with your OS setting.', 'elementor' ),
 				'default' => 'auto',
 				'options' => [
 					'auto' => __( 'Auto Detect', 'elementor' ),
