@@ -1,12 +1,22 @@
-import Base from './base';
-import History from './history';
-
-export const DEFAULT_DEBOUNCE_DELAY = 800;
-
 /**
  * TODO: maybe file should be under history/debounce.js
  * TODO: Check if instance does not stuck in debounce memory and cause memory leaks.
  */
+import Base from './base';
+import History from './history';
+
+export const getDefaultDebounceDelay = () => {
+	let result = 800;
+
+	if ( ElementorConfig.document && undefined !== ElementorConfig.document.debounceDelay ) {
+		result = ElementorConfig.document.debounceDelay;
+	}
+
+	return result;
+}
+
+export const DEFAULT_DEBOUNCE_DELAY = getDefaultDebounceDelay();
+
 export default class Debounce extends History {
 	/**
 	 * Function debounce().
@@ -15,7 +25,7 @@ export default class Debounce extends History {
 	 *
 	 * @param {function()}
 	 */
-	static debounce = _.debounce( ( fn ) => fn(), elementorCommonConfig.isTesting ? 0 : DEFAULT_DEBOUNCE_DELAY );
+	static debounce = _.debounce( ( fn ) => fn(), DEFAULT_DEBOUNCE_DELAY );
 
 	initialize( args ) {
 		super.initialize( args );
