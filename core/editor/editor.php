@@ -596,6 +596,7 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
+				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
@@ -604,9 +605,9 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'editor_preferences' => __( 'Editor Preferences', 'elementor' ),
+				'preferences' => __( 'Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
-				'go_to' => __( 'Go To', 'elementor' ),
+				'more' => __( 'More', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
 				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
