@@ -142,7 +142,11 @@ export default class ColorPicker extends elementorModules.Module {
 
 		const { result: resultInput } = this.picker.getRoot().interaction;
 
-		setTimeout( () => resultInput.select(), 100 );
+		setTimeout( () => {
+			resultInput.select();
+
+			this.picker._recalc = true;
+		}, 100 );
 	}
 
 	onAddButtonClick() {
