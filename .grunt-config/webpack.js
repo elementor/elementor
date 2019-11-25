@@ -24,6 +24,7 @@ const aliasList = {
 		'elementor-utils': path.resolve( __dirname, '../assets/dev/js/utils' ),
 		'elementor-admin': path.resolve( __dirname, '../assets/dev/js/admin' ),
 		'elementor-modules': path.resolve( __dirname, '../modules' ),
+		'elementor-document': path.resolve( __dirname, '../assets/dev/js/editor/document' ),
 		'elementor': path.resolve( __dirname, '../' ),
 	}
 };
