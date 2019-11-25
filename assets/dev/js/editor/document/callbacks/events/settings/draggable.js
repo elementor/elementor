@@ -1,12 +1,12 @@
 import HookAfter from '../base/after';
 
-export class CustomPosition extends HookAfter {
+export class Draggable extends HookAfter {
 	command() {
 		return 'document/elements/settings';
 	}
 
 	id() {
-		return 'custom-position';
+		return 'draggable';
 	}
 
 	conditions( args ) {
@@ -24,4 +24,4 @@ export class CustomPosition extends HookAfter {
 	}
 }
 
-export default CustomPosition;
+export default Draggable;
