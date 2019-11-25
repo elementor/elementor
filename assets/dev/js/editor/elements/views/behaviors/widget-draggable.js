@@ -11,14 +11,8 @@ export default class extends Marionette.Behavior {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.toggle );
 
-		// TODO: Work with this.listenTo( this.view.getContainer().settings ).
-		this.view.on( 'initialize', () => {
-			this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', ( settings ) => {
-				if ( undefined !== settings.changed._position ) {
-					this.toggle();
-				}
-			} );
-		} );
+		// Save this instance for external use eg: ( hooks ).
+		this.view.options.draggable = this;
 	}
 
 	activate() {
