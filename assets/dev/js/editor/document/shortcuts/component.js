@@ -35,9 +35,6 @@ export default class extends elementorModules.common.Component {
 			'paste-style': {
 				keys: 'ctrl+shift+v',
 				exclude: [ 'input' ],
-				dependency: () => {
-					return elementor.getCurrentElement().pasteStyle && elementorCommon.storage.get( 'clipboard' );
-				},
 			},
 		};
 	}
