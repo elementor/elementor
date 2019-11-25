@@ -77,10 +77,6 @@ export default class Component extends elementorModules.common.Component {
 		this.transactions.push( args );
 	}
 
-	deleteTransaction() {
-		this.transactions = [];
-	}
-
 	deleteLog( args ) {
 		if ( args.id ) {
 			elementor.history.history.deleteItem( args.id );
