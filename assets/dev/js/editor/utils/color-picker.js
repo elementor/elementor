@@ -163,6 +163,12 @@ export default class ColorPicker extends elementorModules.Module {
 		elementor.schemes.saveScheme( 'color-picker' );
 
 		ColorPicker.swachesNeedUpdate = true;
+
+		// There's a bug in FireFox about hiding the tooltip after the `$addButton` was clicked,
+		// So let's force it to hide
+		const tipsyInstance = this.$addButton.data( 'tipsy' );
+
+		tipsyInstance.hide();
 	}
 
 	onSwatchDragStart( event ) {
