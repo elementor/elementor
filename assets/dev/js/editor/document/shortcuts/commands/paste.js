@@ -5,21 +5,27 @@ export class Paste extends Base {
 		const selectedElement = elementor.getCurrentElement();
 
 		if ( selectedElement ) {
+			let selectedContainer = selectedElement.getContainer();
+
+			const storage = elementorCommon.storage.get( 'clipboard' );
+
+			if ( ! storage[ 0 ] ) {
+				return false;
+			}
+
 			const options = {};
 
-			let container = selectedElement.getContainer();
-
-			switch ( container.model.get( 'elType' ) ) {
+			switch ( selectedContainer.model.get( 'elType' ) ) {
 				case 'section':
-					options.at = elementor.elements.findIndex( container.model );
+					options.at = elementor.elements.findIndex( selectedContainer.model );
 				case 'widget':
 				case 'column':
-					container = container.parent;
+					selectedContainer = selectedContainer.parent;
 					break;
 			}
 
 			return $e.run( 'document/elements/paste', {
-				container,
+				container: selectedContainer,
 				options,
 			} );
 		}
