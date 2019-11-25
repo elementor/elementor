@@ -18,7 +18,7 @@ export default class Events extends Base {
 	}
 
 	run( event, command, args, result ) {
-		const events = this.callbacks[ event ][ command ];
+		const events = this.getCallback( event, command );
 
 		if ( events && events.length ) {
 			this.current = command;
@@ -48,7 +48,7 @@ export default class Events extends Base {
 							eventObject.callback( args, result );
 							break;
 
-						default:
+						default: // TODO: merge to base.
 							throw Error( `Invalid event type: '${ event }'` );
 					}
 				}

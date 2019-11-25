@@ -1,5 +1,6 @@
 /**
  * TODO: onRun, onCallback should be at base.
+ * TODO: rename to callbacks.js
  */
 export default class EventsHooks extends elementorModules.Module {
 	constructor( ...args ) {
@@ -45,6 +46,19 @@ export default class EventsHooks extends elementorModules.Module {
 		return this.usedIds;
 	}
 
+	getCallback( event, command ) {
+		for ( const _command in this.callbacks[ event ] ) {
+			// In case of multi command hooking.
+			if ( _command.includes( ',' ) ) {
+				if ( _command.split( ',' ).some( ( _multiCommand ) => _multiCommand === command ) ) {
+					return this.callbacks[ event ][ _command ];
+				}
+			}
+		}
+
+		return this.callbacks[ event ][ command ];
+	}
+
 	checkEvent( event ) {
 		if ( -1 === Object.keys( this.callbacks ).indexOf( event ) ) {
 			throw Error( `${ this.getType() }: '${ event }' is not available.` );
@@ -75,6 +89,7 @@ export default class EventsHooks extends elementorModules.Module {
 	}
 
 	registerAfter( command, id, callback ) {
+		// After is common callback.
 		return this.register( 'after', command, id, callback );
 	}
 }

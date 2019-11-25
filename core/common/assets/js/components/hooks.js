@@ -18,7 +18,7 @@ export default class Events extends Base {
 	}
 
 	run( event, command, args, result ) {
-		const hooks = this.callbacks[ event ][ command ];
+		const hooks = this.getCallback( event, command );
 
 		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
 			this.current = command;
@@ -54,8 +54,8 @@ export default class Events extends Base {
 						}
 						break;
 
-						default:
-							throw Error( `Invalid event type: '${ event }'` );
+						default: // TODO: merge to base.
+							throw Error( `Invalid hook type: '${ event }'` );
 					}
 				}
 
