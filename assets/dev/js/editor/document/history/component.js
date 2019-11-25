@@ -77,57 +77,6 @@ export default class Component extends elementorModules.common.Component {
 		this.transactions.push( args );
 	}
 
-	endTransaction() {
-		if ( ! this.transactions.length ) {
-			return;
-		}
-
-		const firstItem = this.transactions[ 0 ],
-			{ type } = firstItem,
-			transactions = this.mergeTransactions( this.transactions );
-
-		let { title = '', subTitle = '' } = firstItem;
-
-		if ( transactions.length > 1 ) {
-			title = 'Elements'; // translate.
-			subTitle = '';
-		}
-
-		const history = {
-			title,
-			subTitle,
-			type,
-		};
-
-		// If firstItem have id already it means that log already started for that transaction.
-		if ( firstItem.id ) {
-			history.id = firstItem.id;
-		}
-
-		// TODO: Check if next lines are required.
-		if ( ! history.container && ! history.containers ) {
-			history.containers = firstItem.containers || [ firstItem.container ];
-		}
-
-		const historyId = $e.run( 'document/history/start-log', history );
-
-		Object.entries( transactions ).forEach( ( [ id, item ] ) => { // eslint-disable-line no-unused-vars
-			const itemArgs = item;
-
-			// If log already started chain his historyId.
-			if ( firstItem.id ) {
-				itemArgs.id = firstItem.id;
-			}
-
-			$e.run( 'document/history/log-sub-item', itemArgs );
-		} );
-
-		$e.run( 'document/history/end-log', { id: historyId } );
-
-		// Clear transactions before leave.
-		this.transactions = [];
-	}
-
 	deleteTransaction() {
 		this.transactions = [];
 	}
@@ -150,7 +99,7 @@ export default class Component extends elementorModules.common.Component {
 			'delete-log': this.deleteLog.bind( this ),
 			'delete-transaction': this.deleteTransaction.bind( this ),
 			'end-log': this.endLog.bind( this ),
-			'end-transaction': this.endTransaction.bind( this ),
+			'end-transaction': ( args ) => ( new Commands.EndTransaction( args ).run() ),
 			'log-sub-item': ( args ) => ( new Commands.LogSubItem( args ).run() ),
 			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
 			'start-transaction': ( args ) => ( new Commands.StartTransaction( args ).run() ),
