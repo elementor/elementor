@@ -90,27 +90,6 @@ jQuery( () => {
 				assert.equal( eColumn1.view.collection.length, 0, 'Widget were removed from first column.' );
 				assert.equal( eColumn2.view.collection.length, 1, 'Widget were moved/created at the second column.' );
 			} );
-
-			QUnit.test( 'Delete', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eButton1 = DocumentHelper.createButton( eColumn ),
-					eButton2 = DocumentHelper.createButton( eColumn );
-
-				DocumentHelper.delete( eButton1 );
-
-				// Validate.
-				assert.equal( eColumn.view.collection.length, 1, 'Button #1 were deleted.' );
-
-				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
-
-				DocumentHelper.delete( eButton2 );
-
-				// Validate.
-				assert.equal( eColumn.view.collection.length, 0, 'Button #2 were deleted.' );
-
-				assert.equal( elementor.saver.isEditorChanged(), true, 'Command applied the saver editor is changed.' );
-			} );
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
@@ -159,17 +138,6 @@ jQuery( () => {
 				// Validate.
 				assert.equal( eColumn1.view.collection.length, 0, 'Widgets were removed from the first column.' );
 				assert.equal( eColumn2.view.collection.length, 2, 'Widgets were moved/create at the second column.' );
-			} );
-
-			QUnit.test( 'Delete', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-				eButton1 = DocumentHelper.createButton( eColumn ),
-				eButton2 = DocumentHelper.createButton( eColumn );
-
-				DocumentHelper.multiDelete( [ eButton1, eButton2 ] );
-
-				// Validate.
-				assert.equal( eColumn.view.collection.length, 0, 'Buttons were deleted.' );
 			} );
 		} );
 	} );
