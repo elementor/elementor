@@ -1,7 +1,7 @@
 import HookDependency from '../base/dependency';
 
 export class SectionColumnsLimit extends HookDependency {
-	hook() {
+	command() {
 		return 'document/elements/create';
 	}
 

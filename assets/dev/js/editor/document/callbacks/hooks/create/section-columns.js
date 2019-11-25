@@ -1,8 +1,8 @@
 import HookAfter from '../base/after';
-import Create from '../../elements/commands/create';
+import Create from '../../../elements/commands/create';
 
 export class SectionColumns extends HookAfter {
-	hook() {
+	command() {
 		return 'document/elements/create';
 	}
 

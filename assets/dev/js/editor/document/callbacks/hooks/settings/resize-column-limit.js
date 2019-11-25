@@ -1,7 +1,7 @@
 import HookDependency from '../base/dependency';
 
 export class ResizeColumnLimit extends HookDependency {
-	hook() {
+	command() {
 		return 'document/elements/settings';
 	}
 

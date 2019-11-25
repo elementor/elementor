@@ -1,4 +1,4 @@
-import * as Hooks from './hooks/';
+import * as Hooks from './callbacks/hooks/';
 import BackwardsCompatibility from './backwards-compatibility.js';
 
 export default class Component extends elementorModules.common.Component {

@@ -1,56 +1,27 @@
 export default class Base {
 	/**
-	 * Hold all hooks that were created within this class.
-	 *
-	 * @type {object[]}
-	 */
-	static hooks = [];
-
-	/**
-	 * Function getAll().
-	 *
-	 * Returns all hooks that were created within this class.
-	 *
-	 * @returns {object[]}
-	 */
-	static getAll() {
-		return constructor.hooks;
-	}
-
-	/**
 	 * Function constructor().
 	 *
 	 * Create hook base.
 	 */
 	constructor() {
-		this.action = '';
-		this.command = '';
-
-		this.load();
-	}
-
-	/**
-	 * Function load().
-	 *
-	 * Load the hook.
-	 */
-	load() {
 		this.initialize();
 
-		this.command = this.hook();
-		this.id = this.id();
+		this._type = this.type()
+		this._command = this.command();
+		this._id = this.id();
 
-		const params = [ this.command, this.id, ( ... args ) => {
+		const params = [ this._command, this._id, ( ... args ) => {
 			const { options = {} } = args[ 0 ];
 
 			// Disable hook if requested by args.options.
-			if ( options.hooks && false === options.hooks[ this.id ] ) {
+			if ( $e.hooks === this._type && options.hooks && false === options.hooks[ this._id ] ) {
 				return true;
 			}
 
 			if ( this.conditions( args[ 0 ] ) ) {
-				if ( $e.devTools ) {
-					$e.devTools.log.hookActive( this.command, this.id );
+				if ( $e.hooks === this._type && $e.devTools ) {
+					$e.devTools.log.hookActive( this._command, this._id );
 				}
 
 				return this.apply( ... args );
@@ -59,16 +30,7 @@ export default class Base {
 			return true;
 		} ];
 
-		// Save all hooks.
-		this.constructor.hooks.push( {
-			id: this.id,
-			action: this.action,
-			command: this.command,
-			instance: this,
-			params,
-		} );
-
-		this.method().apply( $e.hooks, params );
+		this.method().apply( this._type, params );
 	}
 
 	/**
@@ -80,6 +42,32 @@ export default class Base {
 	initialize() {}
 
 	/**
+	 * Function type().
+	 *
+	 * Callback mechanism ( $e.hooks, $e.events, etc... ).
+	 *
+	 * @returns {Object}
+	 *
+	 * @throws {Error}
+	 */
+	type() {
+		elementorModules.ForceMethodImplementation();
+	}
+
+	/**
+	 * Function command().
+	 *
+	 * Returns the full command path for callback binding.
+	 *
+	 * @returns {string}
+	 *
+	 * @throws {Error}
+	 */
+	command() {
+		elementorModules.ForceMethodImplementation();
+	}
+
+	/**
 	 * Function method().
 	 *
 	 * Function should return `$e.hooks` register method.
@@ -88,22 +76,9 @@ export default class Base {
 	 *
 	 * @returns {function()}
 	 *
-	 * @throws {Errror}
-	 */
-	method() {
-		elementorModules.ForceMethodImplementation();
-	}
-
-	/**
-	 * Function hook().
-	 *
-	 * Returns the full command path to hook.
-	 *
-	 * @returns {string}
-	 *
 	 * @throws {Error}
 	 */
-	hook() {
+	method() {
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -138,7 +113,7 @@ export default class Base {
 	/**
 	 * Function apply().
 	 *
-	 * Apply the hook.
+	 * Apply the callback.
 	 *
 	 * @param {{}} args
 	 *

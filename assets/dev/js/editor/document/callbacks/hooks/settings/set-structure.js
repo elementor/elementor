@@ -1,7 +1,7 @@
 import HookAfter from '../base/after';
 
 export class SetStructure extends HookAfter {
-	hook() {
+	command() {
 		return 'document/elements/settings';
 	}
 
