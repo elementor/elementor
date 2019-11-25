@@ -788,7 +788,8 @@ label.elementor-template-library-order-label {
 	}
 }
 
-.e-route-library-connect {
+.e-route-library-connect,
+.e-route-library-first-connect {
 	#elementor-template-library-modal {
 		.dialog-message {
 			max-height: 95vh;
