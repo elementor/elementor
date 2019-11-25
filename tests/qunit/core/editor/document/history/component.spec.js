@@ -234,27 +234,6 @@ jQuery( () => {
 					'Column2 restored' );*/
 			} );
 
-			QUnit.test( 'Duplicate', ( assert ) => {
-				const eWidget = DocumentHelper.createAutoButton(),
-					eWidgetDuped = DocumentHelper.duplicate( eWidget ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'duplicate', 'Button' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				destroyedValidate( assert, eWidgetDuped );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				// Element exist again.
-				recreatedValidate( assert, eWidgetDuped );
-			} );
-
 			QUnit.test( 'Move Section', ( assert ) => {
 				// Create Section at 0.
 				DocumentHelper.createSection();
@@ -541,29 +520,6 @@ jQuery( () => {
 
 					count.L1++;
 				} );
-			} );
-		} );
-
-		QUnit.module( 'document/elements: Multiple Selection', () => {
-			QUnit.test( 'Duplicate', ( assert ) => {
-				const eWidgets = DocumentHelper.multiCreateAutoButton(),
-					eWidgetsDuped = DocumentHelper.multiDuplicate( eWidgets ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
-
-				// Exist in history.
-				inHistoryValidate( assert, historyItem, 'duplicate', 'elements' );
-
-				// Undo.
-				undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				eWidgetsDuped.forEach( ( eWidgetDuped ) => destroyedValidate( assert, eWidgetDuped ) );
-
-				// Redo.
-				redoValidate( assert, historyItem );
-
-				// Element exist again.
-				eWidgetsDuped.forEach( ( eWidgetDuped ) => recreatedValidate( assert, eWidgetDuped ) );
 			} );
 		} );
 
