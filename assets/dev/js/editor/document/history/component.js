@@ -77,17 +77,11 @@ export default class Component extends elementorModules.common.Component {
 		this.transactions.push( args );
 	}
 
-	deleteLog( args ) {
-		if ( args.id ) {
-			elementor.history.history.deleteItem( args.id );
-		}
-	}
-
 	getCommands() {
 		return {
 			'add-transaction': this.addTransaction.bind( this ),
-			'delete-log': this.deleteLog.bind( this ),
-			'delete-transaction': this.deleteTransaction.bind( this ),
+			'delete-log': ( args ) => ( new Commands.DeleteLog( args ).run() ),
+			'delete-transaction': ( args ) => ( new Commands.DeleteTransaction( args ).run() ),
 			'end-log': ( args ) => ( new Commands.EndLog( args ).run() ),
 			'end-transaction': ( args ) => ( new Commands.EndTransaction( args ).run() ),
 			'log-sub-item': ( args ) => ( new Commands.LogSubItem( args ).run() ),

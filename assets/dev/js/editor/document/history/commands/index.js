@@ -1,5 +1,6 @@
 // Alphabetical order.
 
+export { DeleteLog } from './delete-log';
 export { DeleteTransaction } from './delete-transaction';
 export { EndLog } from './end-log';
 export { EndTransaction } from './end-transaction';
