@@ -131,7 +131,7 @@ export default class ColorPicker extends elementorModules.Module {
 
 	onPickerShow() {
 		if ( ColorPicker.swachesNeedUpdate ) {
-			this.getSwatches().empty();
+			this.getSwatches().children( '.pcr-swatch' ).remove();
 
 			this.getColorPickerPalette().forEach( ( swatch ) => this.picker.addSwatch( swatch ) );
 
