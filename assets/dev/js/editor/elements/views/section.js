@@ -60,8 +60,6 @@ SectionView = BaseElementView.extend( {
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
 	},
 
 	getEditButtons: function() {

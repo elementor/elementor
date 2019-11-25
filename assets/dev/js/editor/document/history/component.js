@@ -1,4 +1,5 @@
 import ArgsObject from '../../../modules/imports/args-object.js';
+import * as Commands from './commands/';
 
 export default class Component extends elementorModules.common.Component {
 	__construct( args ) {
@@ -139,24 +140,6 @@ export default class Component extends elementorModules.common.Component {
 		this.transactions = [];
 	}
 
-	startLog( args ) {
-		if ( elementor.history.history.isItemStarted() || args.id ) {
-			$e.run( 'document/history/log-sub-item', args );
-
-			return null;
-		}
-
-		const argsObject = new ArgsObject( args );
-
-		argsObject.requireArgumentType( 'type', 'string' );
-
-		args = this.normalizeLogTitle( args );
-
-		argsObject.requireArgumentType( 'title', 'string' );
-
-		return elementor.history.history.startItem( args );
-	}
-
 	deleteLog( args ) {
 		if ( args.id ) {
 			elementor.history.history.deleteItem( args.id );
@@ -204,7 +187,7 @@ export default class Component extends elementorModules.common.Component {
 			'end-log': this.endLog.bind( this ),
 			'end-transaction': this.endTransaction.bind( this ),
 			'log-sub-item': this.logSubItem.bind( this ),
-			'start-log': this.startLog.bind( this ),
+			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
 			'start-transaction': this.startTransaction.bind( this ),
 
 			undo: () => elementor.history.history.navigate(),

@@ -2,7 +2,7 @@ export default class Base {
 	/**
 	 * Function constructor().
 	 *
-	 * Create hook base.
+	 * Create callback base.
 	 */
 	constructor() {
 		this.initialize();
@@ -59,7 +59,7 @@ export default class Base {
 	 *
 	 * Returns the full command path for callback binding.
 	 *
-	 * @returns {string}
+	 * @returns {([].string|string)}
 	 *
 	 * @throws {Error}
 	 */
