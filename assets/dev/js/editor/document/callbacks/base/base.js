@@ -7,7 +7,7 @@ export default class Base {
 	constructor() {
 		this.initialize();
 
-		this._type = this.type()
+		this._type = this.type();
 		this._command = this.command();
 		this._id = this.id();
 
