@@ -7,7 +7,7 @@ export const Copy = () => {
 
 		const eButton = DocumentHelper.createAutoButton();
 
-		CommonHelper.runShortcut( { which: 67 /* c */, ctrlKey: true, metaKey: true } );
+		CommonHelper.runShortcut( 67 /* c */, true );
 
 		const done = assert.async();
 

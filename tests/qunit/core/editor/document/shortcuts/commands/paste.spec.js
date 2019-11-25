@@ -11,7 +11,7 @@ export const Paste = () => {
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', elementor.getPreviewContainer().view );
 
-		CommonHelper.runShortcut( { which: 86 /* v */, ctrlKey: true, metaKey: true } );
+		CommonHelper.runShortcut( 86 /* v */, true );
 
 		const done = assert.async();
 

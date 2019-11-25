@@ -7,7 +7,7 @@ export const Duplicate = () => {
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', eButton.view );
 
-		CommonHelper.runShortcut( { which: 68 /* d */, ctrlKey: true, metaKey: true } );
+		CommonHelper.runShortcut( 68 /* d */, true );
 
 		// Check
 		assert.equal( elementor.elements.at( -1 ).get( 'elements' ).at( 0 ).get( 'elements' ).length, 2,
