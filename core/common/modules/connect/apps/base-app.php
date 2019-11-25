@@ -398,6 +398,7 @@ abstract class Base_App {
 			'auth_secret' => $this->get( 'auth_secret' ),
 			'state' => $this->get( 'state' ),
 			'redirect_uri' => rawurlencode( $redirect_uri ),
+			'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
 			'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
 		], $this->get_remote_site_url() );
 
