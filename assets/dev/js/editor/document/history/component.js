@@ -87,18 +87,12 @@ export default class Component extends elementorModules.common.Component {
 		}
 	}
 
-	endLog( args ) {
-		if ( args.id ) {
-			elementor.history.history.endItem( args.id );
-		}
-	}
-
 	getCommands() {
 		return {
 			'add-transaction': this.addTransaction.bind( this ),
 			'delete-log': this.deleteLog.bind( this ),
 			'delete-transaction': this.deleteTransaction.bind( this ),
-			'end-log': this.endLog.bind( this ),
+			'end-log': ( args ) => ( new Commands.EndLog( args ).run() ),
 			'end-transaction': ( args ) => ( new Commands.EndTransaction( args ).run() ),
 			'log-sub-item': ( args ) => ( new Commands.LogSubItem( args ).run() ),
 			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
