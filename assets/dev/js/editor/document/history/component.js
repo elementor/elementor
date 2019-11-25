@@ -64,14 +64,6 @@ export default class Component extends elementorModules.common.Component {
 		return result;
 	}
 
-	startTransaction( args ) {
-		const argsObject = new ArgsObject( args );
-
-		argsObject.requireArgumentType( 'type', 'string' );
-
-		this.addTransaction( args );
-	}
-
 	addTransaction( args ) {
 		const currentId = elementor.history.history.getCurrentId();
 
@@ -188,7 +180,7 @@ export default class Component extends elementorModules.common.Component {
 			'end-transaction': this.endTransaction.bind( this ),
 			'log-sub-item': this.logSubItem.bind( this ),
 			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
-			'start-transaction': this.startTransaction.bind( this ),
+			'start-transaction': ( args ) => ( new Commands.StartTransaction( args ).run() ),
 
 			undo: () => elementor.history.history.navigate(),
 			redo: () => elementor.history.history.navigate( true ),
