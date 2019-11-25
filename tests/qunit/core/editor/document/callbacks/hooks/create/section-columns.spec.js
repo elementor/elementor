@@ -1,4 +1,4 @@
-import DocumentHelper from '../../helper';
+import DocumentHelper from '../../../helper';
 
 export const SectionColumns = () => {
 	QUnit.module( 'SectionColumns', () => {
