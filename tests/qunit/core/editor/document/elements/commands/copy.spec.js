@@ -12,6 +12,21 @@ export const Copy = () => {
 
 			assert.equal( eButton.id, storage[ 0 ].id, 'Element copied successfully' );
 		} );
+
+		QUnit.test( 'Multiple Selection', ( assert ) => {
+			const columnsCount = 2,
+				eColumns = [];
+
+			for ( let i = 0; i < columnsCount; i++ ) {
+				eColumns.push( DocumentHelper.createAutoButton() );
+			}
+
+			DocumentHelper.multiCopy( eColumns );
+
+			const storage = elementorCommon.storage.get( 'clipboard' );
+
+			assert.equal( storage.length, columnsCount, `'${ columnsCount }' elements were copied` );
+		} );
 	} );
 };
 
