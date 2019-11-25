@@ -144,33 +144,6 @@ export default class Component extends elementorModules.common.Component {
 		}
 	}
 
-	logSubItem( args ) {
-		if ( ! elementor.history.history.getActive() ) {
-			return;
-		}
-
-		const id = args.id || elementor.history.history.getCurrentId();
-
-		args = this.normalizeLogTitle( args );
-
-		const items = elementor.history.history.getItems(),
-			item = items.findWhere( { id } );
-
-		if ( ! item ) {
-			throw new Error( 'History item not found.' );
-		}
-
-		/**
-		 * Sometimes `args.id` passed to `addSubItem`, to add sub item for specific id.
-		 * this `id` should not be passed as sub-item.
-		 */
-		if ( args.id ) {
-			delete args.id;
-		}
-
-		item.get( 'items' ).unshift( args );
-	}
-
 	getCommands() {
 		return {
 			'add-transaction': this.addTransaction.bind( this ),
@@ -178,7 +151,7 @@ export default class Component extends elementorModules.common.Component {
 			'delete-transaction': this.deleteTransaction.bind( this ),
 			'end-log': this.endLog.bind( this ),
 			'end-transaction': this.endTransaction.bind( this ),
-			'log-sub-item': this.logSubItem.bind( this ),
+			'log-sub-item': ( args ) => ( new Commands.LogSubItem( args ).run() ),
 			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
 			'start-transaction': ( args ) => ( new Commands.StartTransaction( args ).run() ),
 
