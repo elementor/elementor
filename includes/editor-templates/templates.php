@@ -281,6 +281,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	$images = [ 'left-1', 'left-2', 'right-1', 'right-2' ];
 
 	foreach ( $images as $image ) : ?>
-		<img id="elementor-template-library-connect__background-image-<?php echo $image; ?>" class="elementor-template-library-connect__background-image" src="<?php echo $base_images_url . $image; ?>.png" />
+		<img id="elementor-template-library-connect__background-image-<?php echo $image; ?>" class="elementor-template-library-connect__background-image" src="<?php echo $base_images_url . $image; ?>.png" draggable="false"/>
 	<?php endforeach; ?>
 </script>
