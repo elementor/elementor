@@ -1,4 +1,3 @@
-import ArgsObject from '../../../modules/imports/args-object.js';
 import * as Commands from './commands/';
 
 export default class Component extends elementorModules.common.Component {
@@ -64,22 +63,9 @@ export default class Component extends elementorModules.common.Component {
 		return result;
 	}
 
-	addTransaction( args ) {
-		const currentId = elementor.history.history.getCurrentId();
-
-		if ( currentId ) {
-			// If log already started chain his historyId.
-			args.id = currentId;
-		}
-
-		args = this.normalizeLogTitle( args );
-
-		this.transactions.push( args );
-	}
-
 	getCommands() {
 		return {
-			'add-transaction': this.addTransaction.bind( this ),
+			'add-transaction': ( args ) => ( new Commands.AddTransaction( args ).run() ),
 			'delete-log': ( args ) => ( new Commands.DeleteLog( args ).run() ),
 			'delete-transaction': ( args ) => ( new Commands.DeleteTransaction( args ).run() ),
 			'end-log': ( args ) => ( new Commands.EndLog( args ).run() ),
