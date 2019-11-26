@@ -1,6 +1,6 @@
-import HookAfter from '../base/after';
+import EventAfter from '../base/after';
 
-export class Resizeable extends HookAfter {
+export class Resizeable extends EventAfter {
 	command() {
 		return 'document/elements/settings';
 	}

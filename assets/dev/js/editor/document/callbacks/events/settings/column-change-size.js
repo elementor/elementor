@@ -1,27 +1,25 @@
 import EventAfter from '../base/after';
 
-export class Draggable extends EventAfter {
+export class ColumnChangeSize extends EventAfter {
 	command() {
 		return 'document/elements/settings';
 	}
 
 	id() {
-		return 'draggable';
+		return 'column-change-size';
 	}
 
 	conditions( args ) {
-		return undefined !== args.settings._position;
+		return undefined !== args.settings._inline_size || undefined !== args.settings._column_size;
 	}
 
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( /* Container */ container ) => {
-			if ( container.view.options.draggable ) {
-				container.view.options.draggable.toggle();
-			}
+			container.view.changeSizeUI();
 		} );
 	}
 }
 
-export default Draggable;
+export default ColumnChangeSize;
