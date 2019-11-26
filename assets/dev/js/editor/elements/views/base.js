@@ -201,10 +201,6 @@ BaseElementView = BaseContainer.extend( {
 	initialize() {
 		BaseContainer.prototype.initialize.apply( this, arguments );
 
-		if ( this.collection ) {
-			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
-		}
-
 		const editModel = this.getEditModel();
 
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged )
@@ -680,18 +676,8 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	onCollectionChanged() {
-		elementor.saver.setFlagEditorChange( true );
-	},
-
 	onEditSettingsChanged( changedModel ) {
 		elementor.channels.editor.trigger( 'change:editSettings', changedModel, this );
-	},
-
-	onSettingsChanged( changedModel ) {
-		elementor.saver.setFlagEditorChange( true );
-
-		this.renderOnChange( changedModel );
 	},
 
 	onEditButtonClick() {

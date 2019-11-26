@@ -159,7 +159,7 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	changeChildContainerClasses: function() {
-		var emptyClass = 'elementor-element-empty',
+		const emptyClass = 'elementor-element-empty',
 			populatedClass = 'elementor-element-populated';
 
 		if ( this.collection.isEmpty() ) {
@@ -179,13 +179,6 @@ ColumnView = BaseElementView.extend( {
 				at: this.$el.index() + 1,
 			},
 		} );
-	},
-
-	// Events
-	onCollectionChanged: function() {
-		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
-
-		this.changeChildContainerClasses();
 	},
 
 	onRender: function() {
