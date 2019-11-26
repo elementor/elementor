@@ -66,7 +66,7 @@ export default class EventsHooks extends elementorModules.Module {
 	}
 
 	checkId( id ) {
-		if ( 0 === this.usedIds.indexOf( id ) ) {
+		if ( this.usedIds.indexOf( id ) > 0 ) {
 			throw Error( `id: '${ id }' is already in use.` );
 		}
 	}
