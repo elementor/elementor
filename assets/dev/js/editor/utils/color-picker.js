@@ -11,18 +11,21 @@ export default class ColorPicker extends elementorModules.Module {
 
 	getDefaultSettings() {
 		return {
-			theme: 'monolith',
-			position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
-			components: {
-				opacity: true,
-				hue: true,
-				interaction: {
-					input: true,
-					clear: true,
+			picker: {
+				theme: 'monolith',
+				position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
+				components: {
+					opacity: true,
+					hue: true,
+					interaction: {
+						input: true,
+						clear: true,
+					},
+				},
+				strings: {
+					clear: elementor.translate( 'clear' ),
 				},
 			},
-			strings: {
-				clear: elementor.translate( 'clear' ),
 			},
 		};
 	}
