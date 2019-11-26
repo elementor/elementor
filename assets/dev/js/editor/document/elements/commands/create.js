@@ -84,6 +84,10 @@ export class Create extends History {
 
 		return result;
 	}
+
+	isDataChanged() {
+		return true;
+	}
 }
 
 export default Create;

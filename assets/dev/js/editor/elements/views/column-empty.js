@@ -41,7 +41,7 @@ module.exports = Marionette.ItemView.extend( {
 			return false;
 		}
 
-		// If all of thee models are section and is not inner.
+		// If all of the models are section and is not inner.
 		const isAllSectionsInner = () => false === this._parent._parent.isInner() && storageData.every( ( model ) => {
 			if ( 'section' === model.elType && model.isInner ) {
 				return true;

@@ -7,7 +7,7 @@ export const Delete = () => {
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', eButton.view );
 
-		CommonHelper.runShortcut( { which: 46 /* Delete */ } );
+		CommonHelper.runShortcut( 46 /* Delete */ );
 
 		const done = assert.async();
 

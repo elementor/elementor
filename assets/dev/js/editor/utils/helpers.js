@@ -6,10 +6,12 @@ module.exports = {
 	_inlineSvg: [],
 
 	elementsHierarchy: {
-		section: {
-			column: {
-				widget: null,
-				section: null,
+		document: {
+			section: {
+				column: {
+					widget: null,
+					section: null,
+				},
 			},
 		},
 	},

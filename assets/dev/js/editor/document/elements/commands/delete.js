@@ -67,6 +67,10 @@ export class Delete extends History {
 
 		return containers;
 	}
+
+	isDataChanged() {
+		return true;
+	}
 }
 
 export default Delete;
