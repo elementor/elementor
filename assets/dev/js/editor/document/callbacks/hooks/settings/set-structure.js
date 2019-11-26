@@ -1,15 +1,15 @@
 import HookAfter from '../base/after';
 
 export class SetStructure extends HookAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/settings';
 	}
 
-	id() {
+	getId() {
 		return 'set-structure';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		return !! args.settings.structure;
 	}
 

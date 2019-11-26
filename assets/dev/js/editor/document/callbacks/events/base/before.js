@@ -1,7 +1,7 @@
 import Base from './base';
 
 export default class Before extends Base {
-	method() {
-		return $e.events.registerBefore;
+	register( command, id, callback ) {
+		$e.events.registerBefore( command, id, callback );
 	}
 }

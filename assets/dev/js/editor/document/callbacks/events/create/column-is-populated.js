@@ -1,15 +1,15 @@
 import EventAfter from '../base/after';
 
 export class ColumnIsPopulated extends EventAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/create';
 	}
 
-	id() {
+	getId() {
 		return 'column-is-populated';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 
 		// If the created element, was created at column.

@@ -1,7 +1,7 @@
 import Base from './base';
 
 export default class Dependency extends Base {
-	method() {
-		return $e.hooks.registerDependency;
+	register( command, id, callback ) {
+		$e.hooks.registerDependency( command, id, callback );
 	}
 }

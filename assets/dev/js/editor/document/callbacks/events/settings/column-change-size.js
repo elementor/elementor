@@ -1,15 +1,15 @@
 import EventAfter from '../base/after';
 
 export class ColumnChangeSize extends EventAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/settings';
 	}
 
-	id() {
+	getId() {
 		return 'column-change-size';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		return undefined !== args.settings._inline_size || undefined !== args.settings._column_size;
 	}
 

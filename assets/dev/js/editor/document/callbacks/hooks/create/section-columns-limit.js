@@ -1,15 +1,15 @@
 import HookDependency from '../base/dependency';
 
 export class SectionColumnsLimit extends HookDependency {
-	command() {
+	getCommand() {
 		return 'document/elements/create';
 	}
 
-	id() {
+	getId() {
 		return 'section-columns-limit';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		return args.model && 'column' === args.model.elType;
 	}
 

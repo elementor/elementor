@@ -2,15 +2,15 @@ import HookDependency from '../base/dependency';
 import DocumentUtils from 'elementor-document/utils/helpers';
 
 export class IsValidChild extends HookDependency {
-	command() {
+	getCommand() {
 		return 'document/elements/create';
 	}
 
-	id() {
+	getId() {
 		return 'is-valid-child';
 	}
 
-	conditions() {
+	getConditions() {
 		return true;
 	}
 

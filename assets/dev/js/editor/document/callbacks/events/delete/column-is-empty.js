@@ -1,15 +1,15 @@
 import EventAfter from '../base/after';
 
 export class ColumnIsEmpty extends EventAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/delete';
 	}
 
-	id() {
+	getId() {
 		return 'column-is-empty';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 
 		// If the deleted element, was deleted from column.

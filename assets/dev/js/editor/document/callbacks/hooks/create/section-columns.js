@@ -2,15 +2,15 @@ import HookAfter from '../base/after';
 import Create from '../../../elements/commands/create';
 
 export class SectionColumns extends HookAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/create';
 	}
 
-	id() {
+	getId() {
 		return 'create-section-columns';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		return args.model && 'section' === args.model.elType && ! args.model.elements;
 	}
 

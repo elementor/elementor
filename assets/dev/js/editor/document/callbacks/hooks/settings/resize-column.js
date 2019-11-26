@@ -1,15 +1,15 @@
 import HookAfter from '../base/after';
 
 export class ResizeColumn extends HookAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/settings';
 	}
 
-	id() {
+	getId() {
 		return 'resize-column';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		return args.settings._inline_size;
 	}
 
@@ -51,7 +51,7 @@ export class ResizeColumn extends HookAfter {
 				_inline_size: nextElementNewSize,
 			},
 			options: {
-				hooks: {
+				callbacks: {
 					'resize-column-limit': false,
 				},
 				history: {

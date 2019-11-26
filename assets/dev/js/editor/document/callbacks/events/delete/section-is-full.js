@@ -1,15 +1,15 @@
 import HookAfter from '../base/after';
 
 export class DeleteSectionIsFull extends HookAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/delete';
 	}
 
-	id() {
+	getId() {
 		return 'delete-section-is-full';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 
 		return containers.some( ( /* Container */ container ) =>

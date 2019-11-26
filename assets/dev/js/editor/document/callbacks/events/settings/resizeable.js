@@ -1,15 +1,15 @@
 import EventAfter from '../base/after';
 
 export class Resizeable extends EventAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/settings';
 	}
 
-	id() {
+	getId() {
 		return 'resizeable';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		return undefined !== args.settings._position || undefined !== args.settings._element_width;
 	}
 

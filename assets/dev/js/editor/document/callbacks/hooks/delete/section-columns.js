@@ -1,15 +1,15 @@
 import HookAfter from '../base/after';
 
 export class SectionsColumns extends HookAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/delete';
 	}
 
-	id() {
+	getId() {
 		return 'delete-section-columns';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 
 		// If one of the targets is column.

@@ -1,15 +1,15 @@
 import HookAfter from '../base/after';
 
 export class HandleDynamic extends HookAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/settings';
 	}
 
-	id() {
+	getId() {
 		return 'handle-dynamic';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 
 		return containers.some( ( /**Container*/ container ) => 'dynamic' === container.type );

@@ -1,15 +1,15 @@
 import HookDependency from '../base/dependency';
 
 export class IsPasteEnabled extends HookDependency {
-	command() {
+	getCommand() {
 		return 'document/elements/paste';
 	}
 
-	id() {
+	getId() {
 		return 'is-paste-enabled';
 	}
 
-	conditions() {
+	getConditions() {
 		return true;
 	}
 

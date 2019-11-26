@@ -7,30 +7,13 @@ export default class Base {
 	constructor() {
 		this.initialize();
 
-		this._type = this.type();
-		this._command = this.command();
-		this._id = this.id();
+		this.type = this.getType();
+		this.command = this.getCommand();
+		this.id = this.getId();
 
-		const params = [ this._command, this._id, ( ... args ) => {
-			const { options = {} } = args[ 0 ];
+		const params = [ this.command, this.id, ( ... args ) => this.run( args ) ];
 
-			// Disable hook if requested by args.options.
-			if ( $e.hooks === this._type && options.hooks && false === options.hooks[ this._id ] ) {
-				return true;
-			}
-
-			if ( this.conditions( args[ 0 ] ) ) {
-				if ( $e.hooks === this._type && $e.devTools ) {
-					$e.devTools.log.hookActive( this._command, this._id );
-				}
-
-				return this.apply( ... args );
-			}
-
-			return true;
-		} ];
-
-		this.method().apply( this._type, params );
+		this.register.apply( this, params );
 	}
 
 	/**
@@ -42,20 +25,31 @@ export default class Base {
 	initialize() {}
 
 	/**
-	 * Function type().
+	 * Function register().
 	 *
-	 * Callback mechanism ( $e.hooks, $e.events, etc... ).
-	 *
-	 * @returns {Object}
+	 * @param {string} command
+	 * @param {string} id
+	 * @param {function()} callback
 	 *
 	 * @throws {Error}
 	 */
-	type() {
+	register( command, id, callback ) {
 		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
-	 * Function command().
+	 * Function getType().
+	 *
+	 * @returns {string}
+	 *
+	 * @throws {Error}
+	 */
+	getType() {
+		elementorModules.ForceMethodImplementation();
+	}
+
+	/**
+	 * Function getCommand().
 	 *
 	 * Returns the full command path for callback binding.
 	 *
@@ -63,27 +57,12 @@ export default class Base {
 	 *
 	 * @throws {Error}
 	 */
-	command() {
+	getCommand() {
 		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
-	 * Function method().
-	 *
-	 * Function should return `$e.hooks` register method.
-	 *
-	 * Example: 'return $e.hooks.registerDependency';
-	 *
-	 * @returns {function()}
-	 *
-	 * @throws {Error}
-	 */
-	method() {
-		elementorModules.ForceMethodImplementation();
-	}
-
-	/**
-	 * Function id().
+	 * Function getId().
 	 *
 	 * Returns command id for the hook (should be unique).
 	 *
@@ -91,12 +70,12 @@ export default class Base {
 	 *
 	 * @throws {Error}
 	 */
-	id() {
+	getId() {
 		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
-	 * Function conditions().
+	 * Function getConditions().
 	 *
 	 * Condition for apply.
 	 *
@@ -106,7 +85,7 @@ export default class Base {
 	 *
 	 * @throws {Error}
 	 */
-	conditions( args ) { // eslint-disable-line no-unused-vars
+	getConditions( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -122,4 +101,33 @@ export default class Base {
 	apply( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
+
+	/**
+	 * Function run().
+	 *
+	 * Run the actual callback.
+	 *
+	 * @param {*} args
+	 *
+	 * @returns {boolean}
+	 */
+	run( args ) {
+		const { options = {} } = args[ 0 ];
+
+		// Disable callback if requested by args.options.
+		if ( options.callbacks && false === options.callbacks[ this.id ] ) {
+			return true;
+		}
+
+		if ( this.getConditions( args[ 0 ] ) ) {
+			if ( $e.devTools ) {
+				$e.devTools.log.callbacks().active( this.type, this.command, this.id );
+			}
+
+			return this.apply( ... args );
+		}
+
+		return true;
+	}
+
 }

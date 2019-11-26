@@ -1,15 +1,15 @@
 import EventAfter from '../base/after';
 
 export class Draggable extends EventAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/settings';
 	}
 
-	id() {
+	getId() {
 		return 'draggable';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		return undefined !== args.settings._position;
 	}
 

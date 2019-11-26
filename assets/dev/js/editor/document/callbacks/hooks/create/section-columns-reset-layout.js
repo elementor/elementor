@@ -1,15 +1,15 @@
 import HookAfter from '../base/after';
 
 export class SectionColumnsResetLayout extends HookAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/create';
 	}
 
-	id() {
+	getId() {
 		return 'section-columns-reset-layout';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		// On `document/elements/move` no need for reset layout.
 		return args.model &&
 			'column' === args.model.elType &&

@@ -1,15 +1,15 @@
 import HookAfter from '../base/after';
 
 export class CreateSectionIsFull extends HookAfter {
-	command() {
+	getCommand() {
 		return 'document/elements/create';
 	}
 
-	id() {
+	getId() {
 		return 'create-section-is-full';
 	}
 
-	conditions( args ) {
+	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 
 		return containers.some( ( /* Container */ container ) =>
