@@ -20,6 +20,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		const langTools = ace.require( 'ace/ext/language_tools' ),
 			uiTheme = elementor.settings.editorPreferences.model.get( 'ui_theme' ),
 			userPrefersDark = window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
+
 		self.editor = ace.edit( this.ui.editor[ 0 ] );
 
 		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
