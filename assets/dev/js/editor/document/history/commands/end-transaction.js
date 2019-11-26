@@ -13,7 +13,7 @@ export class EndTransaction extends Base {
 		let { title = '', subTitle = '' } = firstItem;
 
 		if ( transactions.length > 1 ) {
-			title = 'Elements'; // TODO: translate.
+			title = elementor.translate( 'elements' );
 			subTitle = '';
 		}
 

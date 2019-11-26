@@ -62,7 +62,7 @@ export default class Callbacks extends elementorModules.Module {
 	}
 
 	checkId( id ) {
-		if ( this.usedIds.indexOf( id ) > 0 ) {
+		if ( -1 !== this.usedIds.indexOf( id ) ) {
 			throw Error( `id: '${ id }' is already in use.` );
 		}
 	}
