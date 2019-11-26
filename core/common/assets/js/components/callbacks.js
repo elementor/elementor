@@ -1,8 +1,4 @@
-/**
- * TODO: onRun, onCallback should be at base.
- * TODO: rename to callbacks.js
- */
-export default class EventsHooks extends elementorModules.Module {
+export default class Callbacks extends elementorModules.Module {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -88,8 +84,55 @@ export default class EventsHooks extends elementorModules.Module {
 		} );
 	}
 
-	registerAfter( command, id, callback ) {
-		// After is common callback.
-		return this.register( 'after', command, id, callback );
+	run( event, command, args, result ) {
+		const callbacks = this.getCallback( event, command );
+
+		if ( this.isShouldRun( callbacks ) ) {
+			this.current = command;
+
+			this.onRun( command, args, event );
+
+			this.runCallbacks( event, command, callbacks, args, result );
+		}
+	}
+
+	runCallbacks( event, command, callbacks, args, result ) {
+		for ( const i in callbacks ) {
+			const callback = callbacks[ i ];
+
+			// If not exist, set zero.
+			if ( undefined === this.depth[ event ][ callback.id ] ) {
+				this.depth[ event ][ callback.id ] = 0;
+			}
+
+			this.depth[ event ][ callback.id ]++;
+
+			// Prevent recursive hooks.
+			if ( 1 === this.depth[ event ][ callback.id ] ) {
+				this.onCallback( command, args, event, callback.id );
+
+				if ( ! this.runCallback( event, callback, args, result ) ) {
+					throw Error( `Callback failed, event: '${ event }'` );
+				}
+			}
+
+			this.depth[ event ][ callback.id ]--;
+		}
+	}
+
+	runCallback( event, callback, args, result ) {
+		elementorModules.forceMethodImplementation();
+	}
+
+	isShouldRun( callbacks ) {
+		elementorModules.forceMethodImplementation();
+	}
+
+	onRun( command, args, event ) {
+		elementorModules.forceMethodImplementation();
+	}
+
+	onCallback( command, args, event, id ) {
+		elementorModules.forceMethodImplementation();
 	}
 }

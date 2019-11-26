@@ -1,6 +1,6 @@
-import Base from './events-hooks.js';
+import Callbacks from './callbacks';
 
-export default class Events extends Base {
+export default class Events extends Callbacks {
 	constructor( ... args ) {
 		super( ... args );
 
@@ -13,49 +13,29 @@ export default class Events extends Base {
 		return 'event';
 	}
 
+	registerAfter( command, id, callback ) {
+		return this.register( 'after', command, id, callback );
+	}
+
 	registerBefore( command, id, callback ) {
 		return this.register( 'before', command, id, callback );
 	}
 
-	run( event, command, args, result ) {
-		const events = this.getCallback( event, command );
+	runCallback( event, callback, args, result ) {
+		switch ( event ) {
+			case 'before':
+				callback.callback( args );
+				break;
 
-		if ( events && events.length ) {
-			this.current = command;
+			case 'after':
+				callback.callback( args, result );
+				break;
 
-			this.onRun( command, args, event );
-
-			for ( const i in events ) {
-				const eventObject = events[ i ];
-
-				// If not exist, set zero.
-				if ( undefined === this.depth[ event ][ eventObject.id ] ) {
-					this.depth[ event ][ eventObject.id ] = 0;
-				}
-
-				this.depth[ event ][ eventObject.id ]++;
-
-				// Prevent recursive events.
-				if ( 1 === this.depth[ event ][ eventObject.id ] ) {
-					this.onCallback( command, args, event, eventObject.id );
-
-					switch ( event ) {
-						case 'before':
-							eventObject.callback( args );
-							break;
-
-						case 'after':
-							eventObject.callback( args, result );
-							break;
-
-						default: // TODO: merge to base.
-							throw Error( `Invalid event type: '${ event }'` );
-					}
-				}
-
-				this.depth[ event ][ eventObject.id ]--;
-			}
+			default:
+				return false;
 		}
+
+		return true;
 	}
 
 	runBefore( command, args ) {
@@ -64,6 +44,10 @@ export default class Events extends Base {
 
 	runAfter( command, args, result ) {
 		this.run( 'after', command, args, result );
+	}
+
+	isShouldRun( callbacks ) {
+		return callbacks && callbacks.length;
 	}
 
 	onRun( command, args, event ) {
