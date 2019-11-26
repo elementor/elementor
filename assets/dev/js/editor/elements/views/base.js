@@ -357,6 +357,7 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
+	// TODO: Unused function.
 	addControlValidator( controlName, validationCallback ) {
 		validationCallback = validationCallback.bind( this );
 

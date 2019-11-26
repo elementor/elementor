@@ -40,10 +40,10 @@ export default class Helpers {
 		const childTypes = elementor.helpers.getElementChildType( parentModel.get( 'elType' ) ),
 			draggedElType = childModel.get( 'elType' );
 
-		if ( 'section' === draggedElType && ! childModel.get( 'isInner' ) ) {
-			return true;
+		if ( 'section' === draggedElType && ! childModel.get( 'isInner' ) && 'column' === parentModel.get( 'elType' ) ) {
+			return false;
 		}
 
-		return ! childTypes || -1 === childTypes.indexOf( childModel.get( 'elType' ) );
+		return childTypes && -1 !== childTypes.indexOf( childModel.get( 'elType' ) );
 	}
 }
