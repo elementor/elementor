@@ -25,7 +25,7 @@ export default class extends elementorModules.common.Component {
 
 		/**
 		 * If command includes uppercase character convert it to lowercase and add `-`.
-		 * eg: by calling if the command name is `CopyAll` it will be `copy-all`.
+		 * e.g: `CopyAll` is converted to `copy-all`.
 		 */
 		for ( let i = 0; i < command.length; i++ ) {
 			const part = command[ i ];
@@ -38,35 +38,5 @@ export default class extends elementorModules.common.Component {
 		}
 
 		return temp;
-	}
-
-	defaultShortcuts() {
-		return {
-			copy: {
-				keys: 'ctrl+c',
-				exclude: [ 'input' ],
-			},
-			duplicate: {
-				keys: 'ctrl+d',
-			},
-			delete: {
-				keys: 'del',
-				exclude: [ 'input' ],
-			},
-			paste: {
-				keys: 'ctrl+v',
-				exclude: [ 'input' ],
-				dependency: () => {
-					return elementor.getCurrentElement().isPasteEnabled();
-				},
-			},
-			pasteStyle: {
-				keys: 'ctrl+shift+v',
-				exclude: [ 'input' ],
-				dependency: () => {
-					return elementor.getCurrentElement().pasteStyle && elementorCommon.storage.get( 'clipboard' );
-				},
-			},
-		};
 	}
 }

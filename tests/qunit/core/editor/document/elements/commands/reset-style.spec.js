@@ -1,6 +1,5 @@
 import DocumentHelper from '../../helper';
 import HistoryHelper from '../../history/helper';
-import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../../assets/dev/js/editor/document/commands/base/debounce';
 
 export const ResetStyle = () => {
 	QUnit.module( 'ResetStyle', () => {
@@ -13,17 +12,11 @@ export const ResetStyle = () => {
 
 				DocumentHelper.resetStyle( eButtonStyled );
 
-				const done = assert.async(); // Pause the test till done.
-
-				//setTimeout( () => {
-					// Check pasted style exist.
-					assert.equal( eButtonStyled.settings.attributes.background_color, '',
-						'Button with custom style were (style) restored.' );
-					assert.equal( elementor.saver.isEditorChanged(), true,
-						'Command applied the saver editor is changed.' );
-
-					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				// Check pasted style exist.
+				assert.equal( eButtonStyled.settings.attributes.background_color, '',
+					'Button with custom style were (style) restored.' );
+				assert.equal( elementor.saver.isEditorChanged(), true,
+					'Command applied the saver editor is changed.' );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -32,30 +25,24 @@ export const ResetStyle = () => {
 
 				DocumentHelper.resetStyle( eWidgetStyled );
 
-				const done = assert.async(); // Pause the test till done.
+				//const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
 
-				//setTimeout( () => {
-					//const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
+				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				// Exist in history.
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
 
-					// Exist in history.
-					HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
+				// Undo.
+				HistoryHelper.undoValidate( assert, historyItem );
 
-					// Undo.
-					HistoryHelper.undoValidate( assert, historyItem );
+				assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundBeforeReset,
+					'Settings back to default.' );
 
-					assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundBeforeReset,
-						'Settings back to default.' );
+				// Redo.
+				HistoryHelper.redoValidate( assert, historyItem );
 
-					// Redo.
-					HistoryHelper.redoValidate( assert, historyItem );
-
-					/*assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundAfterReset,
-						'Settings restored.' ); // TODO: in tests its not back to default color.*/
-
-					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				/*assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundAfterReset,
+					'Settings restored.' ); // TODO: in tests its not back to default color.*/
 			} );
 		} );
 
@@ -66,17 +53,11 @@ export const ResetStyle = () => {
 
 				DocumentHelper.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
 
-				const done = assert.async(); // Pause the test till done.
-
-				//setTimeout( () => {
-					// Check pasted style exist.
-					assert.equal( eButtonStyled1.model.attributes.settings.attributes.background_color, '',
-						'Button #1 with custom style were (style) restored.' );
-					assert.equal( eButtonStyled2.model.attributes.settings.attributes.background_color, '',
-						'Button #2 with custom style were (style) restored.' );
-
-					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				// Check pasted style exist.
+				assert.equal( eButtonStyled1.model.attributes.settings.attributes.background_color, '',
+					'Button #1 with custom style were (style) restored.' );
+				assert.equal( eButtonStyled2.model.attributes.settings.attributes.background_color, '',
+					'Button #2 with custom style were (style) restored.' );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -85,33 +66,27 @@ export const ResetStyle = () => {
 
 				DocumentHelper.multiResetStyle( eWidgetsStyled );
 
-				const done = assert.async(); // Pause the test till done.
+				const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
+					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
-				//setTimeout( () => {
-					const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				// Exist in history.
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );
 
-					// Exist in history.
-					HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );
+				// Undo.
+				HistoryHelper.undoValidate( assert, historyItem );
 
-					// Undo.
-					HistoryHelper.undoValidate( assert, historyItem );
+				eWidgetsStyled.forEach( ( eWidgetStyled ) => {
+					assert.equal( eWidgetStyled.settings.get( 'background_color' ), backgroundBeforeReset,
+						'Settings back to default.' );
+				} );
 
-					eWidgetsStyled.forEach( ( eWidgetStyled ) => {
-						assert.equal( eWidgetStyled.settings.get( 'background_color' ), backgroundBeforeReset,
-							'Settings back to default.' );
-					} );
+				// Redo.
+				HistoryHelper.redoValidate( assert, historyItem );
 
-					// Redo.
-					HistoryHelper.redoValidate( assert, historyItem );
-
-					eWidgetsStyled.forEach( ( eWidgetStyled ) => {
-						assert.equal( eWidgetStyled.settings.get( 'background_color' ), backgroundAfterReset,
-							'Settings restored.' );
-					} );
-
-					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				eWidgetsStyled.forEach( ( eWidgetStyled ) => {
+					assert.equal( eWidgetStyled.settings.get( 'background_color' ), backgroundAfterReset,
+						'Settings restored.' );
+				} );
 			} );
 		} );
 	} );

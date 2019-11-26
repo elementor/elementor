@@ -582,13 +582,14 @@ label.elementor-template-library-order-label {
 		display: flex;
 		align-items: center;
 
+		&,
+		& a {
+			color: $editor-light;
+		}
+
 		> div {
 			cursor: pointer;
 			transition: color .5s;
-
-			&:not(:hover) {
-				color: $editor-light;
-			}
 		}
 	}
 
@@ -603,19 +604,17 @@ label.elementor-template-library-order-label {
 		@include margin-start(6px);
 	}
 
-	.elementor-template-library-template-delete {
+	.elementor-template-library-template-more {
 
-		&:hover {
-			color: $editor-danger;
+		&:hover,
+		a:hover {
+			color: $editor-darker;
 		}
-	}
 
-	.elementor-template-library-template-export {
+		.elementor-template-library-template-delete {
 
-		&:hover {
-
-			i {
-				color: $editor-darker;
+			&:hover {
+				color: $editor-danger;
 			}
 		}
 	}
@@ -789,7 +788,8 @@ label.elementor-template-library-order-label {
 	}
 }
 
-.e-route-library-connect {
+.e-route-library-connect,
+.e-route-library-first-connect {
 	#elementor-template-library-modal {
 		.dialog-message {
 			max-height: 95vh;

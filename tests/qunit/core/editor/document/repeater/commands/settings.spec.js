@@ -1,6 +1,5 @@
 import DocumentHelper from '../../helper';
 import HistoryHelper from '../../history/helper';
-import { DEFAULT_DEBOUNCE_DELAY } from '../../../../../../../assets/dev/js/editor/document/commands/base/debounce';
 
 export const Settings = () => {
 	QUnit.module( 'Settings', () => {
@@ -14,8 +13,14 @@ export const Settings = () => {
 					tab_title: tabTitle,
 				} );
 
-				// Check.
-				assert.equal( eTabs.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+				const done = assert.async();
+
+				setTimeout( () => {
+					// Check.
+					assert.equal( eTabs.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+
+					done();
+				} );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -32,7 +37,7 @@ export const Settings = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				//setTimeout( () => {
+				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -51,7 +56,7 @@ export const Settings = () => {
 					assert.equal( eTab.get( 'tab_title' ), tabTitle, 'Settings restored' );
 
 					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				} );
 			} );
 		} );
 
@@ -66,9 +71,15 @@ export const Settings = () => {
 					tab_title: tabTitle,
 				} );
 
-				// Check.
-				assert.equal( eTabs1.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
-				assert.equal( eTabs2.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+				const done = assert.async();
+
+				setTimeout( () => {
+					// Check.
+					assert.equal( eTabs1.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+					assert.equal( eTabs2.settings.get( 'tabs' ).at( 1 ).get( 'tab_title' ), tabTitle );
+
+					done();
+				} );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
@@ -86,7 +97,7 @@ export const Settings = () => {
 
 				const done = assert.async(); // Pause the test till done.
 
-				//setTimeout( () => {
+				setTimeout( () => {
 					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
@@ -111,7 +122,7 @@ export const Settings = () => {
 					} );
 
 					done();
-				//}, DEFAULT_DEBOUNCE_DELAY );
+				} );
 			} );
 		} );
 	} );

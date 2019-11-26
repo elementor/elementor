@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes\Typography as Scheme_Typography;
+use Elementor\Core\Schemes;
 
 /**
  * Elementor image carousel widget.
@@ -651,7 +651,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 			]
 		);

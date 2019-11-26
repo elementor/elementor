@@ -131,7 +131,7 @@ export default class ColorPicker extends elementorModules.Module {
 
 	onPickerShow() {
 		if ( ColorPicker.swachesNeedUpdate ) {
-			this.getSwatches().empty();
+			this.getSwatches().children( '.pcr-swatch' ).remove();
 
 			this.getColorPickerPalette().forEach( ( swatch ) => this.picker.addSwatch( swatch ) );
 
@@ -142,7 +142,11 @@ export default class ColorPicker extends elementorModules.Module {
 
 		const { result: resultInput } = this.picker.getRoot().interaction;
 
-		setTimeout( () => resultInput.select(), 100 );
+		setTimeout( () => {
+			resultInput.select();
+
+			this.picker._recalc = true;
+		}, 100 );
 	}
 
 	onAddButtonClick() {
@@ -159,6 +163,12 @@ export default class ColorPicker extends elementorModules.Module {
 		elementor.schemes.saveScheme( 'color-picker' );
 
 		ColorPicker.swachesNeedUpdate = true;
+
+		// There's a bug in FireFox about hiding the tooltip after the `$addButton` was clicked,
+		// So let's force it to hide
+		const tipsyInstance = this.$addButton.data( 'tipsy' );
+
+		tipsyInstance.hide();
 	}
 
 	onSwatchDragStart( event ) {

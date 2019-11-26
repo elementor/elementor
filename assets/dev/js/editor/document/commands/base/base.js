@@ -6,6 +6,13 @@ import ArgsObject from './../../../../modules/imports/args-object';
 
 export default class Base extends ArgsObject {
 	/**
+	 * Current component (elementorModules.Module ).
+	 *
+	 * @type {{}}
+	 */
+	component = {};
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create Commands Base.
@@ -18,8 +25,14 @@ export default class Base extends ArgsObject {
 		// Acknowledge self about which command it run.
 		this.currentCommand = $e.commands.getCurrent( 'document' );
 
+		// Assign instance of current component.
+		this.component = $e.commands.getComponent( this.currentCommand );
+
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
+
+		// Refresh args, maybe the changed via `initialize`.
+		args = this.args;
 
 		// Validate args before run.
 		this.validateArgs( args );
@@ -85,6 +98,8 @@ export default class Base extends ArgsObject {
 	 * Do the actual command.
 	 *
 	 * @param {{}} args
+	 *
+	 * @returns {*}
 	 */
 	apply( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();

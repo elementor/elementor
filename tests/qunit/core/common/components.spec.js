@@ -1,3 +1,5 @@
+import CommonHelper from './helper';
+
 jQuery( () => {
 	QUnit.module( 'Components' );
 
@@ -849,10 +851,6 @@ jQuery( () => {
 
 	QUnit.module( 'Shortcuts' );
 
-	const runShortcut = ( args ) => {
-		jQuery( document ).trigger( jQuery.Event( 'keydown', args ) );
-	};
-
 	QUnit.test( 'Run shortcut', ( assert ) => {
 		const namespace = 'run-shortcut';
 
@@ -882,7 +880,8 @@ jQuery( () => {
 
 		$e.components.register( new Component() );
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
+		// Simulate `CTRL+Z`.
+		CommonHelper.runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'afterRun' );
 	} );
@@ -924,14 +923,14 @@ jQuery( () => {
 		$e.components.register( new Component() );
 
 		// Outside scope.
-		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
+		CommonHelper.runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
 
 		// Inside scope.
 		$e.route( namespace + '/routeA' );
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
+		CommonHelper.runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
 
@@ -940,7 +939,7 @@ jQuery( () => {
 
 		commandStatus = 'beforeRunInScope';
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
+		CommonHelper.runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran after close scope' );
 
@@ -974,14 +973,14 @@ jQuery( () => {
 		// Activate the first component.
 		$e.route( namespace + '/routeA' );
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
+		CommonHelper.runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
 
 		// Close the first component.
 		$e.components.get( namespace ).close();
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
+		CommonHelper.runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
 	} );
@@ -1026,7 +1025,7 @@ jQuery( () => {
 
 		$e.route( namespace );
 
-		runShortcut( { which: 27 /* esc */ } );
+		CommonHelper.runShortcut( { which: 27 /* esc */ } );
 
 		assert.equal( $e.routes.is( namespace ), false, 'Component is closed by `esc` key.' );
 
@@ -1062,13 +1061,13 @@ jQuery( () => {
 		assert.equal( component.isOpen, true );
 		assert.equal( secondComponent.isOpen, true );
 
-		runShortcut( { which: 27 /* esc */ } );
+		CommonHelper.runShortcut( { which: 27 /* esc */ } );
 
 		// Modals should be closed in LIFO order.
 		assert.equal( component.isOpen, false, 'First Component is closed first' );
 		assert.equal( secondComponent.isOpen, true );
 
-		runShortcut( { which: 27 /* esc */ } );
+		CommonHelper.runShortcut( { which: 27 /* esc */ } );
 
 		assert.equal( secondComponent.isOpen, false, 'Second Component is closed too' );
 	} );

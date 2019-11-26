@@ -176,6 +176,16 @@ abstract class Base_App {
 	}
 
 	/**
+	 * @since 2.8.0
+	 * @access public
+	 */
+	public function action_reconnect() {
+		$this->disconnect();
+
+		wp_redirect( $this->get_remote_authorize_url() );
+	}
+
+	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
@@ -388,6 +398,8 @@ abstract class Base_App {
 			'auth_secret' => $this->get( 'auth_secret' ),
 			'state' => $this->get( 'state' ),
 			'redirect_uri' => rawurlencode( $redirect_uri ),
+			'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
+			'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
 		], $this->get_remote_site_url() );
 
 		return $url;
