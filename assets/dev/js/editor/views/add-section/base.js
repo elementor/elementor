@@ -150,22 +150,24 @@ class AddSectionBase extends Marionette.ItemView {
 			historyId = $e.run( 'document/history/start-log', {
 				type: 'add',
 				title: elementor.helpers.getModelLabel( selectedElement.model ),
+			} ),
+			eSection = $e.run( 'document/elements/create', {
+				model: {
+					elType: 'section',
+				},
+				container: elementor.getPreviewContainer(),
+				columns: 1,
+				options: {
+					// BC: Deprecated since 2.8.0 - use `$e.events`.
+					trigger: {
+						beforeAdd: 'section:before:drop',
+						afterAdd: 'section:after:drop',
+					},
+				},
 			} );
 
-		$e.run( 'document/elements/create', {
-			model: {
-				elType: 'section',
-			},
-			container: elementor.getPreviewContainer(),
-			columns: 1,
-			options: {
-				// BC: Deprecated since 2.8.0 - use `$e.events`.
-				trigger: {
-					beforeAdd: 'section:before:drop',
-					afterAdd: 'section:after:drop',
-				},
-			},
-		} ).view.addElementFromPanel();
+		// Create the element in column.
+		eSection.view.children.findByIndex( 0 ).addElementFromPanel();
 
 		$e.run( 'document/history/end-log', { id: historyId } );
 	}

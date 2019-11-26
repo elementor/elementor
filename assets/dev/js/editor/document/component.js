@@ -1,4 +1,5 @@
-import * as Hooks from './hooks/';
+import * as Hooks from './callbacks/hooks/';
+import * as Events from './callbacks/events/';
 import BackwardsCompatibility from './backwards-compatibility.js';
 
 export default class Component extends elementorModules.common.Component {
@@ -7,12 +8,8 @@ export default class Component extends elementorModules.common.Component {
 
 		super.onInit();
 
-		this.hooks = {};
-
-		// Load hooks.
-		Object.entries( Hooks ).forEach( ( [ hook, hookReference ] ) =>
-			this.hooks[ hook ] = new hookReference()
-		);
+		Object.values( Hooks ).forEach( ( hook ) => new hook() );
+		Object.values( Events ).forEach( ( event ) => new event() );
 	}
 
 	getNamespace() {

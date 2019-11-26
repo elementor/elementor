@@ -35,6 +35,12 @@ export class Empty extends History {
 
 		elementor.getClearPageDialog().show();
 	}
+
+	isDataChanged() {
+		if ( this.args.force ) {
+			return true;
+		}
+	}
 }
 
 export default Empty;
