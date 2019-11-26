@@ -39,3 +39,13 @@
 		}
 	}
 }
+
+.pcr-swatch.pcr-active ~ .elementor-color-picker--add-swatch {
+	background-color: $editor-lighter;
+	box-shadow: none;
+	pointer-events: none;
+
+	i {
+		color: #fff;
+	}
+}
