@@ -17,8 +17,9 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			return;
 		}
 
-		var langTools = ace.require( 'ace/ext/language_tools' );
-
+		const langTools = ace.require( 'ace/ext/language_tools' ),
+			uiTheme = elementor.settings.editorPreferences.model.get( 'ui_theme' ),
+			userPrefersDark = window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
 		self.editor = ace.edit( this.ui.editor[ 0 ] );
 
 		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
@@ -32,6 +33,10 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			enableBasicAutocompletion: true,
 			enableLiveAutocompletion: true,
 		} );
+
+		if ( 'dark' === uiTheme || ( 'auto' === uiTheme && userPrefersDark ) ) {
+			self.editor.setTheme( 'ace/theme/merbivore_soft' );
+		}
 
 		self.editor.getSession().setUseWrapMode( true );
 
