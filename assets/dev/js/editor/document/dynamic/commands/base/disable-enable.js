@@ -69,4 +69,8 @@ export default class DisableEnable extends History {
 			restore: this.constructor.restore,
 		};
 	}
+
+	isDataChanged() {
+		return true;
+	}
 }
