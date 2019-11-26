@@ -1530,7 +1530,7 @@ class Element_Section extends Element_Base {
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
 		?>
 		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php echo var_export( $negative ); ?>">
-			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ); ?>
+			<?php echo file_get_contents( Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ) ); ?>
 		</div>
 		<?php
 	}
