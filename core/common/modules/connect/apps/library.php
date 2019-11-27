@@ -59,15 +59,9 @@ class Library extends Common_App {
 				'library/connect:title' => __( 'Create Account & Get Template', 'elementor' ),
 				'library/connect:message' => __( 'To get access to this template and to our entire library, you must create a free account', 'elementor' ),
 				'library/connect:button' => __( 'Connect to Insert', 'elementor' ),
-
-				// Route: library/first-connect
-				'library/first-connect:title' => __( 'Get Access to the Template Library', 'elementor' ),
-				'library/first-connect:message' => __( 'Create a free account and enjoy hundreds of designer-made templates', 'elementor' ),
-				'library/first-connect:button' => __( 'Connect Now', 'elementor' ),
 			],
 			'library_connect' => [
 				'is_connected' => $is_connected,
-				'show_popup' => ! $is_connected && ! User::get_introduction_meta( 'library_connect' ),
 			],
 		] );
 	}
