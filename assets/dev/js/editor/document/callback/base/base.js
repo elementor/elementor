@@ -1,4 +1,25 @@
-export default class Base {
+export default class CallbackBase {
+	/**
+	 * Callback type, eg ( hook, event ).
+	 *
+	 * @type {string}
+	 */
+	type;
+
+	/**
+	 * Full command address, that will hook the callback.
+	 *
+	 * @type ([].string|string)
+	 */
+	command;
+
+	/**
+	 * Unique id of the callback.
+	 *
+	 * @type {string}
+	 */
+	id;
+
 	/**
 	 * Function constructor().
 	 *
@@ -11,9 +32,7 @@ export default class Base {
 		this.command = this.getCommand();
 		this.id = this.getId();
 
-		const params = [ this.command, this.id, ( ... args ) => this.run( args ) ];
-
-		this.register.apply( this, params );
+		this.register();
 	}
 
 	/**
@@ -27,18 +46,18 @@ export default class Base {
 	/**
 	 * Function register().
 	 *
-	 * @param {string} command
-	 * @param {string} id
-	 * @param {function()} callback
+	 * Used to register the callback.
 	 *
 	 * @throws {Error}
 	 */
-	register( command, id, callback ) {
+	register() {
 		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
 	 * Function getType().
+	 *
+	 * Get type eg: ( hook, event, etc ... ).
 	 *
 	 * @returns {string}
 	 *
@@ -52,6 +71,8 @@ export default class Base {
 	 * Function getCommand().
 	 *
 	 * Returns the full command path for callback binding.
+	 *
+	 * Supports array of strings ( commands ).
 	 *
 	 * @returns {([].string|string)}
 	 *
@@ -77,7 +98,7 @@ export default class Base {
 	/**
 	 * Function getConditions().
 	 *
-	 * Condition for apply.
+	 * Condition for running the callback, if true, call to apply().
 	 *
 	 * @param {{}} args
 	 *
@@ -92,7 +113,7 @@ export default class Base {
 	/**
 	 * Function apply().
 	 *
-	 * Apply the callback.
+	 * Apply the callback, ( The actual affect of the callback ).
 	 *
 	 * @param {{}} args
 	 *
@@ -105,13 +126,13 @@ export default class Base {
 	/**
 	 * Function run().
 	 *
-	 * Run the actual callback.
+	 * Run the callback.
 	 *
 	 * @param {*} args
 	 *
 	 * @returns {boolean}
 	 */
-	run( args ) {
+	run( ... args ) {
 		const { options = {} } = args[ 0 ];
 
 		// Disable callback if requested by args.options.

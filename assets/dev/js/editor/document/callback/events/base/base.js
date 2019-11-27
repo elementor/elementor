@@ -12,7 +12,7 @@ export default class Base extends CallbackBase {
 	 *
 	 * @returns {*}
 	 */
-	apply( args ) { // eslint-disable-line no-unused-vars
+	apply( args ) {
 		super.apply( args );
 	}
 }
