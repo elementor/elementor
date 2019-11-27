@@ -1,5 +1,23 @@
 .elementor-color-picker {
 
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
+	&__saved-colors-title {
+		font-size: 11px;
+		color: $editor-light;
+	}
+
+	&__saved-colors-edit {
+		font-size: 11px;
+		color: $editor-dark;
+		font-weight: 500;
+		cursor: pointer;
+	}
+
 	&__swatch-tool {
 		position: relative;
 		padding-bottom: 100%;
@@ -18,8 +36,44 @@
 		}
 	}
 
-	&__remove-swatch {
-		display: none;
+	&--dropping-area {
+		margin-top: 10px;
+		padding: 15px;
+		border: 1px dashed $editor-lightest;
+		text-align: center;
+
+		&.html5dnd-current-element {
+			border-color: $editor-light;
+
+			i {
+				color: $editor-warning;
+			}
+		}
+
+		i {
+			color: $editor-dark;
+			font-size: 15px;
+		}
+	}
+}
+
+.pcr-app {
+
+	&.elementor-color-picker--edit-mode {
+
+		.elementor-color-picker__saved-colors-edit {
+			color: $editor-success;
+		}
+	}
+
+	&:not(.elementor-color-picker--edit-mode) {
+
+		.elementor-color-picker {
+
+			&--dropping-area {
+				display: none;
+			}
+		}
 	}
 }
 
@@ -29,10 +83,6 @@
 
 		~ .elementor-color-picker__add-swatch {
 			display: none;
-		}
-
-		~ .elementor-color-picker__remove-swatch {
-			display: block;
 		}
 	}
 }

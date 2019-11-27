@@ -582,9 +582,11 @@ class Editor {
 			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
+				'edit' => __( 'Edit', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
 				'clear' => __( 'Clear', 'elementor' ),
+				'done' => __( 'Done', 'elementor' ),
 				'got_it' => __( 'Got It', 'elementor' ),
 				/* translators: %s: Element type. */
 				'add_element' => __( 'Add %s', 'elementor' ),
@@ -597,7 +599,7 @@ class Editor {
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
 				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
-				'remove_color' => __( 'Remove Color', 'elementor' ),
+				'saved_colors' => __( 'Saved Colors', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
