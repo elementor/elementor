@@ -96,8 +96,10 @@
 			}
 
 			+ .elementor-control-type-tabs,
-			+ .elementor-control-separator-default {
-				padding-top: 15px;
+			&:not(.elementor-hidden-control) {
+				+ .elementor-control-separator-default {
+					padding-top: 15px;
+				}
 			}
 		}
 	}
