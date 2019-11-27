@@ -52,7 +52,6 @@ export default class Events extends Callbacks {
 		$e.devTools.log.eventCallback( command, args, event, id );
 	}
 
-
 	/**
 	 * Function registerAfter().
 	 *
