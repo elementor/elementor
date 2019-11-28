@@ -35,7 +35,8 @@ elementor.config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core
 	'<div id="wp-elementorwpeditor-editor-container" class="wp-editor-container"><div id="qt_elementorwpeditor_toolbar" class="quicktags-toolbar"></div><textarea class="elementor-wp-editor wp-editor-area" style="height: 250px" autocomplete="off" cols="40" name="elementorwpeditor" id="elementorwpeditor">%%EDITORCONTENT%%</textarea></div>\n' +
 	'</div>\n';
 
-require( './core/common/components.spec' );
+require( './core/common/components/components.spec' );
+require( './core/common/components/base/callbacks.spec.js' );
 
 require( './core/editor/container/container.spec' );
 
