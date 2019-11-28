@@ -62,6 +62,7 @@ export class ResizeColumn extends HookAfter {
 					title: elementor.config.elements.column.controls._inline_size.label,
 				},
 				external: true,
+				debounce: true,
 			},
 		} );
 

@@ -10,7 +10,7 @@ export class SectionColumnsLimit extends HookDependency {
 	}
 
 	bindContainerType() {
-		return 'document';
+		return 'section';
 	}
 
 	getConditions( args ) {
