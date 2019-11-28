@@ -1,5 +1,4 @@
-// TODO: Getting rid of relative paths in imports using webpack alias.
-import DisableEnable from '../../../../../../../../assets/dev/js/editor/document/dynamic/commands/base/disable-enable';
+import DisableEnable from 'elementor-document/dynamic/commands/base/disable-enable';
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/dynamic/commands/base/disable-enable', () => {
