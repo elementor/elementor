@@ -22,7 +22,7 @@ class Library extends Common_App {
 
 	public function get_template_content( $id ) {
 		if ( ! $this->is_connected() ) {
-			return new \WP_Error( '401', __( 'Not connected', 'elementor' ) . ', ' . __( 'Try reload the page', 'elementor' ) );
+			return new \WP_Error( '401', __( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
 		}
 
 		$body_args = [
