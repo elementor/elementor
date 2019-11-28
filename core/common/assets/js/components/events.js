@@ -31,7 +31,10 @@ export default class Events extends Callbacks {
 	}
 
 	shouldRun( callbacks ) {
-		return callbacks && callbacks.length;
+		if ( ! super.shouldRun( callbacks ) ) {
+			return false;
+		}
+
 	}
 
 	onRun( command, args, event ) {

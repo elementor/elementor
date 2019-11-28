@@ -9,6 +9,10 @@ export class SectionColumnsLimit extends HookDependency {
 		return 'section-columns-limit';
 	}
 
+	bindContainerType() {
+		return 'document';
+	}
+
 	getConditions( args ) {
 		return args.model && 'column' === args.model.elType;
 	}

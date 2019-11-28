@@ -9,10 +9,6 @@ export class IsPasteStyleEnabled extends HookDependency {
 		return 'is-paste-style-enabled';
 	}
 
-	getConditions() {
-		return true;
-	}
-
 	apply() {
 		return elementor.getCurrentElement().pasteStyle && elementorCommon.storage.get( 'clipboard' );
 	}

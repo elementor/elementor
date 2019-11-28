@@ -9,10 +9,6 @@ export class IsPasteEnabled extends HookDependency {
 		return 'is-paste-enabled';
 	}
 
-	getConditions() {
-		return true;
-	}
-
 	apply() {
 		return elementor.getCurrentElement().isPasteEnabled();
 	}

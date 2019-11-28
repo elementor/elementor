@@ -9,6 +9,10 @@ export class SectionColumnsResetLayout extends HookAfter {
 		return 'section-columns-reset-layout';
 	}
 
+	bindContainerType() {
+		return 'section';
+	}
+
 	getConditions( args ) {
 		// On `document/elements/move` no need for reset layout.
 		return args.model &&

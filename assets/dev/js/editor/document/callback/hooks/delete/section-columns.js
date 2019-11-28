@@ -9,6 +9,10 @@ export class SectionsColumns extends HookAfter {
 		return 'delete-section-columns';
 	}
 
+	bindContainerType() {
+		return 'column';
+	}
+
 	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 

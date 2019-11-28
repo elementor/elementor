@@ -9,6 +9,10 @@ export class HandleDynamic extends HookAfter {
 		return 'handle-dynamic';
 	}
 
+	bindContainerType() {
+		return 'dynamic';
+	}
+
 	getConditions( args ) {
 		const { containers = [ args.container ] } = args;
 

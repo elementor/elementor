@@ -10,6 +10,10 @@ export class SectionColumns extends HookAfter {
 		return 'create-section-columns';
 	}
 
+	bindContainerType() {
+		return 'document';
+	}
+
 	getConditions( args ) {
 		return args.model && 'section' === args.model.elType && ! args.model.elements;
 	}

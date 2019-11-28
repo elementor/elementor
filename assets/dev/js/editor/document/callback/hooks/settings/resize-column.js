@@ -9,6 +9,10 @@ export class ResizeColumn extends HookAfter {
 		return 'resize-column';
 	}
 
+	bindContainerType() {
+		return 'column';
+	}
+
 	getConditions( args ) {
 		return args.settings._inline_size;
 	}
