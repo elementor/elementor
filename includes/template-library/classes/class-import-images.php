@@ -113,7 +113,7 @@ class Import_Images {
 		$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
 
 		if ( empty( $file_content ) ) {
-			return false;
+			return $attachment;
 		}
 
 		$upload = wp_upload_bits(
