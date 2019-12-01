@@ -34,7 +34,6 @@ export default class Events extends Callbacks {
 		if ( ! super.shouldRun( callbacks ) ) {
 			return false;
 		}
-
 	}
 
 	onRun( command, args, event ) {
