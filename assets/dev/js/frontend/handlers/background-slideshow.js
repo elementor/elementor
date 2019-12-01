@@ -41,7 +41,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			},
 			on: {
 				slideChange: () => {
-					this.handleKenBurns();
+					if ( elementSettings.background_slideshow_ken_burns ) {
+						this.handleKenBurns();
+					}
 				},
 			},
 		};
@@ -140,9 +142,13 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			return;
 		}
 
+		const elementSettings = this.getElementSettings();
+
 		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
 
-		this.handleKenBurns();
+		if ( elementSettings.background_slideshow_ken_burns ) {
+			this.handleKenBurns();
+		}
 	}
 
 	activate() {
