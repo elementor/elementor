@@ -1,5 +1,5 @@
-import * as Hooks from './callbacks/hooks/';
-import * as Events from './callbacks/events/';
+import * as Hooks from './callback/hooks/';
+import * as Events from './callback/events/';
 import BackwardsCompatibility from './backwards-compatibility.js';
 
 export default class Component extends elementorModules.common.Component {
