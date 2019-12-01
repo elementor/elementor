@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor testimonial widget.
  *
@@ -227,8 +229,8 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 				'default' => '',
 				'selectors' => [
@@ -241,7 +243,7 @@ class Widget_Testimonial extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .elementor-testimonial-content',
 			]
 		);
@@ -316,8 +318,8 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 				'default' => '',
 				'selectors' => [
@@ -330,7 +332,7 @@ class Widget_Testimonial extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'name_typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .elementor-testimonial-name',
 			]
 		);
@@ -352,8 +354,8 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_2,
 				],
 				'default' => '',
 				'selectors' => [
@@ -366,7 +368,7 @@ class Widget_Testimonial extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'job_typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 			]
 		);

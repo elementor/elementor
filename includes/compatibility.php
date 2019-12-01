@@ -149,18 +149,6 @@ class Compatibility {
 			} );
 		}
 
-		// Hack for Ninja Forms.
-		if ( class_exists( '\Ninja_Forms' ) && class_exists( '\NF_Display_Render' ) ) {
-			add_action( 'elementor/preview/enqueue_styles', function() {
-				ob_start();
-				\NF_Display_Render::localize( 0 );
-
-				ob_clean();
-
-				wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
-			} );
-		}
-
 		// Exclude our Library from Yoast SEO plugin.
 		add_filter( 'wpseo_sitemaps_supported_post_types', [ __CLASS__, 'filter_library_post_type' ] );
 		add_filter( 'wpseo_accessible_post_types', [ __CLASS__, 'filter_library_post_type' ] );

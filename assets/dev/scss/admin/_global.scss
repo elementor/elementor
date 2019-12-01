@@ -13,7 +13,13 @@
 
 		// Menu Go Pro
 		a[href="admin.php?page=go_elementor_pro"] {
-			color: #d54e21;
+			color:  lighten($editor-accent, 10%);
+			font-weight: 700;
+			text-shadow: 1px 1px 1px #000;
+
+			&:hover {
+				color: lighten($editor-accent, 15%);
+			}
 		}
 
 		.dashicons.dashicons-star-filled {
@@ -35,7 +41,8 @@
 }
 
 .elementor-plugins-gopro {
-	color: $editor-success;
+	color: $editor-accent;
+	text-shadow: 1px 1px 1px #eee;
 	font-weight: bold;
 }
 
@@ -250,7 +257,6 @@ body {
 	}
 
 	h2 {
-		font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
 		font-size: 32px;
 		font-weight: 300;
 		color: inherit;

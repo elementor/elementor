@@ -42,4 +42,37 @@ module.exports = BaseSettings.extend( {
 
 		return data;
 	},
+
+	// Emulate an element view/model structure with the parts needed for a container.
+	getEditedView() {
+		const id = this.getContainerId(),
+			editModel = new Backbone.Model( {
+				id,
+				elType: id,
+				settings: this.model,
+				elements: elementor.elements,
+			} );
+
+		const container = new elementorModules.editor.Container( {
+			type: id,
+			id: editModel.id,
+			model: editModel,
+			settings: editModel.get( 'settings' ),
+			view: elementor.getPreviewView(),
+			label: elementor.config.document.panel.title,
+			controls: this.model.controls,
+			renderer: false,
+			children: elementor.elements,
+		} );
+
+		return {
+			getContainer: () => container,
+			getEditModel: () => editModel,
+			model: editModel,
+		};
+	},
+
+	getContainerId() {
+		return 'document';
+	},
 } );

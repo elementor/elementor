@@ -145,9 +145,12 @@ class Embed {
 	 * @return string The embed HTML.
 	 */
 	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [], array $frame_attributes = [] ) {
+		$video_properties = self::get_video_properties( $video_url );
+
 		$default_frame_attributes = [
 			'class' => 'elementor-video-iframe',
 			'allowfullscreen',
+			'title' => sprintf( __( '%s Video Player', 'elementor' ), $video_properties['provider'] ),
 		];
 
 		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );

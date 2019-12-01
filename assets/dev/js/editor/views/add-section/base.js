@@ -42,10 +42,6 @@ class AddSectionBase extends Marionette.ItemView {
 		return 'elementor-add-section elementor-visible-desktop';
 	}
 
-	addSection( properties, options ) {
-		return elementor.getPreviewView().addChildElement( properties, jQuery.extend( {}, this.options, options ) );
-	}
-
 	setView( view ) {
 		this.$el.attr( 'data-view', view );
 	}
@@ -78,8 +74,12 @@ class AddSectionBase extends Marionette.ItemView {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						callback: this.paste.bind( this ),
 						isEnabled: this.isPasteEnabled.bind( this ),
+						callback: () => $e.run( 'document/elements/paste', {
+							container: elementor.getPreviewContainer(),
+							at: this.getOption( 'at' ),
+							rebuild: true,
+						} ),
 					},
 				],
 			}, {
@@ -88,29 +88,21 @@ class AddSectionBase extends Marionette.ItemView {
 					{
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
-						callback: this.copy.bind( this ),
 						isEnabled: hasContent,
+						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
-						callback: elementor.clearPage.bind( elementor ),
 						isEnabled: hasContent,
+						callback: () => $e.run( 'document/elements/empty' ),
 					},
 				],
 			},
 		];
 	}
 
-	copy() {
-		elementor.getPreviewView().copy();
-	}
-
-	paste() {
-		elementor.getPreviewView().paste( this.getOption( 'at' ) );
-	}
-
 	isPasteEnabled() {
-		return elementorCommon.storage.get( 'transfer' );
+		return elementorCommon.storage.get( 'clipboard' );
 	}
 
 	onAddSectionButtonClick() {
@@ -136,43 +128,48 @@ class AddSectionBase extends Marionette.ItemView {
 		this.closeSelectPresets();
 
 		const selectedStructure = event.currentTarget.dataset.structure,
-			parsedStructure = elementor.presetsFactory.getParsedStructure( selectedStructure ),
-			elements = [];
+			parsedStructure = elementor.presetsFactory.getParsedStructure( selectedStructure );
 
-		let loopIndex;
-
-		for ( loopIndex = 0; loopIndex < parsedStructure.columnsCount; loopIndex++ ) {
-			elements.push( {
-				id: elementor.helpers.getUniqueID(),
-				elType: 'column',
-				settings: {},
-				elements: [],
-			} );
-		}
-
-		elementor.channels.data.trigger( 'element:before:add', {
-			elType: 'section',
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'section',
+			},
+			container: elementor.getPreviewContainer(),
+			columns: parsedStructure.columnsCount,
+			structure: selectedStructure,
+			options: Object.assign( {}, this.options ),
 		} );
-
-		const newSection = this.addSection( { elements: elements }, { edit: false } );
-
-		newSection.setStructure( selectedStructure );
-
-		newSection.getEditModel().trigger( 'request:edit' );
-
-		elementor.channels.data.trigger( 'element:after:add' );
 	}
 
 	onDropping() {
-		elementor.channels.data.trigger( 'section:before:drop' );
-
 		if ( elementor.helpers.maybeDisableWidget() ) {
 			return;
 		}
 
-		this.addSection().addElementFromPanel();
+		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
+			historyId = $e.run( 'document/history/start-log', {
+				type: 'add',
+				title: elementor.helpers.getModelLabel( selectedElement.model ),
+			} ),
+			eSection = $e.run( 'document/elements/create', {
+				model: {
+					elType: 'section',
+				},
+				container: elementor.getPreviewContainer(),
+				columns: 1,
+				options: {
+					// BC: Deprecated since 2.8.0 - use `$e.events`.
+					trigger: {
+						beforeAdd: 'section:before:drop',
+						afterAdd: 'section:after:drop',
+					},
+				},
+			} );
 
-		elementor.channels.data.trigger( 'section:after:drop' );
+		// Create the element in column.
+		eSection.view.children.findByIndex( 0 ).addElementFromPanel();
+
+		$e.run( 'document/history/end-log', { id: historyId } );
 	}
 }
 

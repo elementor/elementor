@@ -32,10 +32,18 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 		this.groups = new Backbone.Collection( [] );
 
 		this.groups.add( {
-			name: 'go_to',
-			title: elementor.translate( 'go_to' ),
+			name: 'more',
+			title: elementor.translate( 'more' ),
 			items: [],
 		} );
+
+		this.addItem( {
+			name: 'editor-preferences',
+			icon: 'eicon-wrench',
+			title: elementor.translate( 'preferences' ),
+			type: 'page',
+			callback: () => $e.route( 'panel/editor-preferences' ),
+		}, 'more' );
 
 		this.addItem( {
 			name: 'view-page',
@@ -43,7 +51,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			title: elementor.translate( 'view_page' ),
 			type: 'link',
 			link: elementor.config.document.urls.permalink,
-		}, 'go_to' );
+		}, 'more' );
 
 		this.addItem( {
 			name: 'exit-to-dashboard',
@@ -51,7 +59,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			title: elementor.translate( 'exit_to_dashboard' ),
 			type: 'link',
 			link: elementor.config.document.urls.exit_to_dashboard,
-		}, 'go_to' );
+		}, 'more' );
 
 		if ( elementor.config.user.is_administrator ) {
 			this.addAdminMenu();
@@ -76,7 +84,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			icon: 'eicon-search-bold',
 			title: elementorCommon.translate( 'finder', 'finder' ),
 			callback: () => $e.route( 'finder' ),
-		}, 'go_to', 'view-page' );
+		}, 'more', 'view-page' );
 
 		this.addItem( {
 			name: 'global-colors',
@@ -92,14 +100,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			title: elementor.translate( 'global_fonts' ),
 			type: 'page',
 			callback: () => $e.route( 'panel/global-fonts' ),
-		}, 'style' );
-
-		this.addItem( {
-			name: 'color-picker',
-			icon: 'eicon-eyedropper',
-			title: elementor.translate( 'color_picker' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/color-picker' ),
 		}, 'style' );
 
 		this.addItem( {

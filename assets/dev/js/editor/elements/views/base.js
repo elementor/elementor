@@ -105,6 +105,25 @@ BaseElementView = BaseContainer.extend( {
 		return this.model;
 	},
 
+	getContainer() {
+		if ( ! this.container ) {
+			const settingsModel = this.model.get( 'settings' );
+
+			this.container = new elementorModules.editor.Container( {
+				type: 'TODO: @see views/base.js',
+				id: this.model.id,
+				model: this.model,
+				settings: settingsModel,
+				view: this,
+				parent: this._parent.getContainer() || {},
+				children: [],
+				label: elementor.helpers.getModelLabel( this.model ),
+				controls: settingsModel.options.controls,
+			} );
+		}
+		return this.container;
+	},
+
 	getContextMenuGroups() {
 		const controlSign = environment.mac ? '⌘' : '^';
 
@@ -116,41 +135,48 @@ BaseElementView = BaseContainer.extend( {
 						name: 'edit',
 						icon: 'eicon-edit',
 						title: elementor.translate( 'edit_element', [ this.options.model.getTitle() ] ),
-						callback: this.options.model.trigger.bind( this.options.model, 'request:edit' ),
+						callback: () => $e.run( 'panel/editor/open', {
+								model: this.options.model, // Todo: remove on merge router
+								view: this, // Todo: remove on merge router
+								container: this.getContainer(),
+							} ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
 						title: elementor.translate( 'duplicate' ),
 						shortcut: controlSign + '+D',
-						callback: this.duplicate.bind( this ),
+						callback: () => $e.run( 'document/elements/duplicate', { container: this.getContainer() } ),
 					},
 				],
 			}, {
-				name: 'transfer',
+				name: 'clipboard',
 				actions: [
 					{
 						name: 'copy',
 						title: elementor.translate( 'copy' ),
 						shortcut: controlSign + '+C',
-						callback: this.copy.bind( this ),
+						callback: () => $e.run( 'document/elements/copy', { container: this.getContainer() } ),
 					}, {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
-						callback: this.paste.bind( this ),
 						isEnabled: this.isPasteEnabled.bind( this ),
+						callback: () => $e.run( 'document/elements/paste', {
+							container: this.getContainer().parent,
+							at: this._parent.collection.indexOf( this.model ),
+						} ),
 					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
 						shortcut: controlSign + '+⇧+V',
-						callback: this.pasteStyle.bind( this ),
 						isEnabled: () => {
-							return !! elementorCommon.storage.get( 'transfer' );
+							return !! elementorCommon.storage.get( 'clipboard' );
 						},
+						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
 					}, {
 						name: 'resetStyle',
 						title: elementor.translate( 'reset_style' ),
-						callback: this.resetStyle.bind( this ),
+						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
 					},
 				],
 			}, {
@@ -161,7 +187,7 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-trash',
 						title: elementor.translate( 'delete' ),
 						shortcut: '⌦',
-						callback: this.removeElement.bind( this ),
+						callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
 					},
 				],
 			},
@@ -175,14 +201,19 @@ BaseElementView = BaseContainer.extend( {
 	initialize() {
 		BaseContainer.prototype.initialize.apply( this, arguments );
 
-		if ( this.collection ) {
+		const editModel = this.getEditModel();
+
+		if ( this.collection && this.onCollectionChanged ) {
+			elementorCommon.helpers.softDeprecated( 'onCollectionChanged', '2.8.0', '$e.events || $e.hooks' );
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
-		const editModel = this.getEditModel();
+		if ( this.onSettingsChanged ) {
+			elementorCommon.helpers.softDeprecated( 'onSettingsChanged', '2.8.0', '$e.events || $e.hooks' );
+			this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged );
+		}
 
-		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged )
-			.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
+		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
 			.listenTo( this.model, 'request:edit', this.onEditRequest )
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
@@ -214,34 +245,67 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
-	startTransport( type ) {
-		elementorCommon.storage.set( 'transfer', {
-			type: type,
-			elementsType: this.getElementType(),
-			elements: [ this.model.toJSON( { copyHtmlCache: true } ) ],
+	startTransport() {
+		elementorCommon.helpers.softDeprecated( 'element.startTransport', '2.8.0', "$e.run( 'document/elements/copy' )" );
+
+		$e.run( 'document/elements/copy', {
+			container: this.getContainer(),
 		} );
 	},
 
 	copy() {
-		this.startTransport( 'copy' );
+		elementorCommon.helpers.softDeprecated( 'element.copy', '2.8.0', "$e.run( 'document/elements/copy' )" );
+
+		$e.run( 'document/elements/copy', {
+			container: this.getContainer(),
+		} );
 	},
 
 	cut() {
-		this.startTransport( 'cut' );
+		elementorCommon.helpers.softDeprecated( 'element.cut', '2.8.0' );
 	},
 
 	paste() {
-		this.trigger( 'request:paste' );
+		elementorCommon.helpers.softDeprecated( 'element.paste', '2.8.0', "$e.run( 'document/elements/paste' )" );
+
+		$e.run( 'document/elements/paste', {
+			container: this.getContainer().parent,
+			at: this._parent.collection.indexOf( this.model ),
+		} );
+	},
+
+	duplicate() {
+		elementorCommon.helpers.softDeprecated( 'element.duplicate', '2.8.0', "$e.run( 'document/elements/duplicate' )" );
+
+		$e.run( 'document/elements/duplicate', {
+			container: this.getContainer(),
+		} );
+	},
+
+	pasteStyle() {
+		elementorCommon.helpers.softDeprecated( 'element.pasteStyle', '2.8.0', "$e.run( 'document/elements/paste-style' )" );
+
+		$e.run( 'document/elements/paste-style', {
+			container: this.getContainer(),
+		} );
+	},
+
+	resetStyle() {
+		elementorCommon.helpers.softDeprecated( 'element.resetStyle', '2.8.0', "$e.run( 'document/elements/reset-style' )" );
+
+		$e.run( 'document/elements/reset-style', {
+			container: this.getContainer(),
+		} );
 	},
 
 	isPasteEnabled() {
-		const transferData = elementorCommon.storage.get( 'transfer' );
+		const storageData = elementorCommon.storage.get( 'clipboard' );
 
-		if ( ! transferData || this.isCollectionFilled() ) {
+		if ( ! storageData || this.isCollectionFilled() ) {
 			return false;
 		}
 
-		return this.getElementType() === transferData.elementsType;
+		return storageData.every( ( model ) => model.elType === this.getElementType() );
 	},
 
 	isStyleTransferControl( control ) {
@@ -250,109 +314,6 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return 'content' !== control.tab || control.selectors || control.prefix_class;
-	},
-
-	duplicate() {
-		const oldTransport = elementorCommon.storage.get( 'transfer' );
-
-		this.copy();
-
-		this.paste();
-
-		elementorCommon.storage.set( 'transfer', oldTransport );
-	},
-
-	pasteStyle() {
-		var self = this,
-			transferData = elementorCommon.storage.get( 'transfer' ),
-			sourceElement = transferData.elements[ 0 ],
-			sourceSettings = sourceElement.settings,
-			editModel = self.getEditModel(),
-			settings = editModel.get( 'settings' ),
-			settingsAttributes = settings.attributes,
-			controls = settings.controls,
-			diffSettings = {};
-
-		jQuery.each( controls, ( controlName, control ) => {
-			if ( ! self.isStyleTransferControl( control ) ) {
-				return;
-			}
-
-			const sourceValue = sourceSettings[ controlName ],
-				targetValue = settingsAttributes[ controlName ];
-
-			if ( undefined === sourceValue || undefined === targetValue ) {
-				return;
-			}
-
-			if ( 'object' === typeof sourceValue ^ 'object' === typeof targetValue ) {
-				return;
-			}
-
-			if ( 'object' === typeof sourceValue ) {
-				let isEqual = true;
-
-				jQuery.each( sourceValue, function( propertyKey ) {
-					if ( sourceValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
-						return isEqual = false;
-					}
-				} );
-
-				if ( isEqual ) {
-					return;
-				}
-			}
-			if ( sourceValue === targetValue ) {
-				return;
-			}
-
-			const ControlView = elementor.getControlView( control.type );
-
-			if ( ! ControlView.onPasteStyle( control, sourceValue ) ) {
-				return;
-			}
-
-			diffSettings[ controlName ] = sourceValue;
-		} );
-
-		self.allowRender = false;
-
-		elementor.channels.data.trigger( 'element:before:paste:style', editModel );
-
-		editModel.setSetting( diffSettings );
-
-		elementor.channels.data.trigger( 'element:after:paste:style', editModel );
-
-		self.allowRender = true;
-
-		self.renderOnChange();
-	},
-
-	resetStyle() {
-		const self = this,
-			editModel = self.getEditModel(),
-			controls = editModel.get( 'settings' ).controls,
-			defaultValues = {};
-
-		self.allowRender = false;
-
-		elementor.channels.data.trigger( 'element:before:reset:style', editModel );
-
-		jQuery.each( controls, ( controlName, control ) => {
-			if ( ! self.isStyleTransferControl( control ) ) {
-				return;
-			}
-
-			defaultValues[ controlName ] = control.default;
-		} );
-
-		editModel.setSetting( defaultValues );
-
-		elementor.channels.data.trigger( 'element:after:reset:style', editModel );
-
-		self.allowRender = true;
-
-		self.renderOnChange();
 	},
 
 	toggleVisibility() {
@@ -368,20 +329,19 @@ BaseElementView = BaseContainer.extend( {
 	addElementFromPanel( options ) {
 		options = options || {};
 
-		const elementView = elementor.channels.panelElements.request( 'element:selected' );
-
-		const itemData = {
-			elType: elementView.model.get( 'elType' ),
-		};
+		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
+			model = {
+				elType: elementView.model.get( 'elType' ),
+			};
 
 		if ( elementor.helpers.maybeDisableWidget() ) {
 			return;
 		}
 
-		if ( 'widget' === itemData.elType ) {
-			itemData.widgetType = elementView.model.get( 'widgetType' );
-		} else if ( 'section' === itemData.elType ) {
-			itemData.isInner = true;
+		if ( 'widget' === model.elType ) {
+			model.widgetType = elementView.model.get( 'widgetType' );
+		} else if ( 'section' === model.elType ) {
+			model.isInner = true;
 		} else {
 			return;
 		}
@@ -389,23 +349,17 @@ BaseElementView = BaseContainer.extend( {
 		const customData = elementView.model.get( 'custom' );
 
 		if ( customData ) {
-			jQuery.extend( itemData, customData );
+			jQuery.extend( model, customData );
 		}
 
-		options.trigger = {
-			beforeAdd: 'element:before:add',
-			afterAdd: 'element:after:add',
-		};
-
-		options.onAfterAdd = function( newModel, newView ) {
-			if ( 'section' === newView.getElementType() && newView.isInner() ) {
-				newView.addChildElement();
-			}
-		};
-
-		this.addChildElement( itemData, options );
+		return $e.run( 'document/elements/create', {
+			container: this.getContainer(),
+			model,
+			options,
+		} );
 	},
 
+	// TODO: Unused function.
 	addControlValidator( controlName, validationCallback ) {
 		validationCallback = validationCallback.bind( this );
 
@@ -608,6 +562,19 @@ BaseElementView = BaseContainer.extend( {
 		return 'elementor-element-' + this.getID();
 	},
 
+	renderHTML: function() {
+		const templateType = this.getTemplateType(),
+			editModel = this.getEditModel();
+
+		if ( 'js' === templateType ) {
+			this.getEditModel().setHtmlCache();
+			this.render();
+			editModel.renderOnLeave = true;
+		} else {
+			editModel.renderRemoteServer();
+		}
+	},
+
 	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
@@ -657,16 +624,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Re-render the template
-		const templateType = this.getTemplateType(),
-			editModel = this.getEditModel();
-
-		if ( 'js' === templateType ) {
-			this.getEditModel().setHtmlCache();
-			this.render();
-			editModel.renderOnLeave = true;
-		} else {
-			editModel.renderRemoteServer();
-		}
+		this.renderHTML();
 	},
 
 	getDynamicParsingSettings() {
@@ -698,20 +656,6 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	removeElement() {
-		elementor.channels.data.trigger( 'element:before:remove', this.model );
-
-		const parent = this._parent;
-
-		parent.isManualRemoving = true;
-
-		this.model.destroy();
-
-		parent.isManualRemoving = false;
-
-		elementor.channels.data.trigger( 'element:after:remove', this.model );
-	},
-
 	onBeforeRender() {
 		this.renderAttributes = {};
 	},
@@ -724,26 +668,19 @@ BaseElementView = BaseContainer.extend( {
 		if ( this.toggleEditTools ) {
 			const editButton = this.ui.editButton;
 
-			this.ui.tools.hoverIntent( function() {
-				editButton.addClass( 'elementor-active' );
-			}, function() {
-				editButton.removeClass( 'elementor-active' );
-			}, { timeout: 500 } );
+			// Since this.ui.tools does not exist while testing.
+			if ( this.ui.tools ) {
+				this.ui.tools.hoverIntent( function() {
+					editButton.addClass( 'elementor-active' );
+				}, function() {
+					editButton.removeClass( 'elementor-active' );
+				}, { timeout: 500 } );
+			}
 		}
-	},
-
-	onCollectionChanged() {
-		elementor.saver.setFlagEditorChange( true );
 	},
 
 	onEditSettingsChanged( changedModel ) {
 		elementor.channels.editor.trigger( 'change:editSettings', changedModel, this );
-	},
-
-	onSettingsChanged( changedModel ) {
-		elementor.saver.setFlagEditorChange( true );
-
-		this.renderOnChange( changedModel );
 	},
 
 	onEditButtonClick() {
@@ -775,13 +712,13 @@ BaseElementView = BaseContainer.extend( {
 	onDuplicateButtonClick( event ) {
 		event.stopPropagation();
 
-		this.duplicate();
+		$e.run( 'document/elements/duplicate', { container: this.getContainer() } );
 	},
 
 	onRemoveButtonClick( event ) {
 		event.stopPropagation();
 
-		this.removeElement();
+		$e.run( 'document/elements/delete', { container: this.getContainer() } );
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`

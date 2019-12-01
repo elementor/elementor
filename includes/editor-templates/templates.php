@@ -260,3 +260,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-preview">
 	<iframe></iframe>
 </script>
+
+<script type="text/template" id="tmpl-elementor-template-library-connect">
+	<div id="elementor-template-library-connect-logo" class="elementor-gradient-logo">
+		<i class="eicon-elementor" aria-hidden="true"></i>
+	</div>
+	<div class="elementor-template-library-blank-title">
+		{{{ title }}}
+	</div>
+	<div class="elementor-template-library-blank-message">
+		{{{ message }}}
+	</div>
+	<?php $url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize' ); ?>
+	<a id="elementor-template-library-connect__button" class="elementor-button elementor-button-success" href="<?php echo esc_attr( $url ); ?>">
+		{{{ button }}}
+	</a>
+	<?php
+	$base_images_url = $this->get_assets_base_url() . '/assets/images/library-connect/';
+
+	$images = [ 'left-1', 'left-2', 'right-1', 'right-2' ];
+
+	foreach ( $images as $image ) : ?>
+		<img id="elementor-template-library-connect__background-image-<?php echo $image; ?>" class="elementor-template-library-connect__background-image" src="<?php echo $base_images_url . $image; ?>.png" draggable="false"/>
+	<?php endforeach; ?>
+</script>

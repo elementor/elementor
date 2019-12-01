@@ -60,12 +60,22 @@ export default class extends elementorModules.common.ComponentModal {
 			preview: ( args ) => {
 				this.manager.layout.showPreviewView( args.model );
 			},
+			connect: ( args ) => {
+				args.texts = {
+					title: elementor.translate( 'library/connect:title' ),
+					message: elementor.translate( 'library/connect:message' ),
+					button: elementor.translate( 'library/connect:button' ),
+				};
+
+				this.manager.layout.showConnectView( args );
+			},
 		};
 	}
 
 	defaultCommands() {
 		return Object.assign( super.defaultCommands(), {
 			open: this.show,
+			'insert-template': this.insertTemplate,
 		} );
 	}
 
@@ -98,6 +108,8 @@ export default class extends elementorModules.common.ComponentModal {
 			this.manager.layout = this.layout;
 		}
 
+		this.manager.layout.setHeaderDefaultParts();
+
 		return true;
 	}
 
@@ -117,5 +129,62 @@ export default class extends elementorModules.common.ComponentModal {
 		if ( args.toDefault || ! $e.routes.restoreState( 'library' ) ) {
 			$e.route( this.getDefaultRoute() );
 		}
+	}
+
+	insertTemplate( args ) {
+		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings;
+
+		if ( ! autoImportSettings && args.model.get( 'hasPageSettings' ) ) {
+			const insertTemplateHandler = this.getImportSettingsDialog();
+
+			insertTemplateHandler.showImportDialog( args.model );
+
+			return;
+		}
+
+		elementor.templates.importTemplate( args.model, { withPageSettings: autoImportSettings } );
+	}
+
+	getImportSettingsDialog() {
+		// Moved from ./behaviors/insert-template.js
+		const InsertTemplateHandler = {
+			dialog: null,
+
+			showImportDialog: function( model ) {
+				var dialog = InsertTemplateHandler.getDialog();
+
+				dialog.onConfirm = function() {
+					elementor.templates.importTemplate( model, { withPageSettings: true } );
+				};
+
+				dialog.onCancel = function() {
+					elementor.templates.importTemplate( model );
+				};
+
+				dialog.show();
+			},
+
+			initDialog: function() {
+				InsertTemplateHandler.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
+					id: 'elementor-insert-template-settings-dialog',
+					headerMessage: elementor.translate( 'import_template_dialog_header' ),
+					message: elementor.translate( 'import_template_dialog_message' ) + '<br>' + elementor.translate( 'import_template_dialog_message_attention' ),
+					strings: {
+						confirm: elementor.translate( 'yes' ),
+						cancel: elementor.translate( 'no' ),
+					},
+				} );
+			},
+
+			getDialog: function() {
+				if ( ! InsertTemplateHandler.dialog ) {
+					InsertTemplateHandler.initDialog();
+				}
+
+				return InsertTemplateHandler.dialog;
+			},
+		};
+
+		return InsertTemplateHandler;
 	}
 }

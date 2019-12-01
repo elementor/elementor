@@ -59,6 +59,12 @@
 	border-radius: 3px;
 	background-color: #fff;
 	cursor: move;
+	
+	.icon,
+	.title {
+		color: $editor-darker;
+		transition: $transition-hover;
+	}
 
 	&:hover {
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
@@ -71,7 +77,6 @@
 	.icon {
 		font-size: 28px;
 		padding-top: 15px;
-		color: $editor-darker;
 	}
 
 	.elementor-element-title-wrapper {
@@ -81,7 +86,6 @@
 
 	.title {
 		font-size: 11px;
-		color: $editor-darker;
 		display: table-cell;
 		vertical-align: middle;
 		height: 40px;

@@ -1,0 +1,38 @@
+.elementor-color-picker {
+
+	&__swatch-tool {
+		position: relative;
+		padding-bottom: 100%;
+		cursor: pointer;
+		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
+		border-radius: 3px;
+		background-color: #fff;
+
+		i {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			color: $editor-dark;
+			font-size: 13px;
+		}
+	}
+
+	&__remove-swatch {
+		display: none;
+	}
+}
+
+.pcr-swatch {
+
+	&.pcr-active {
+
+		~ .elementor-color-picker__add-swatch {
+			display: none;
+		}
+
+		~ .elementor-color-picker__remove-swatch {
+			display: block;
+		}
+	}
+}

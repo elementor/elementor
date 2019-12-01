@@ -10,51 +10,16 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 	},
 
 	onInsertButtonClick: function() {
-		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings;
+		const args = {
+			model: this.view.model,
+		};
 
-		if ( ! autoImportSettings && this.view.model.get( 'hasPageSettings' ) ) {
-			InsertTemplateHandler.showImportDialog( this.view.model );
-
+		if ( 'remote' === args.model.get( 'source' ) && ! elementor.config.library_connect.is_connected ) {
+			$e.route( 'library/connect', args );
 			return;
 		}
 
-		elementor.templates.importTemplate( this.view.model, { withPageSettings: autoImportSettings } );
-	},
-}, {
-	dialog: null,
-
-	showImportDialog: function( model ) {
-		var dialog = InsertTemplateHandler.getDialog();
-
-		dialog.onConfirm = function() {
-			elementor.templates.importTemplate( model, { withPageSettings: true } );
-		};
-
-		dialog.onCancel = function() {
-			elementor.templates.importTemplate( model );
-		};
-
-		dialog.show();
-	},
-
-	initDialog: function() {
-		InsertTemplateHandler.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
-			id: 'elementor-insert-template-settings-dialog',
-			headerMessage: elementor.translate( 'import_template_dialog_header' ),
-			message: elementor.translate( 'import_template_dialog_message' ) + '<br>' + elementor.translate( 'import_template_dialog_message_attention' ),
-			strings: {
-				confirm: elementor.translate( 'yes' ),
-				cancel: elementor.translate( 'no' ),
-			},
-		} );
-	},
-
-	getDialog: function() {
-		if ( ! InsertTemplateHandler.dialog ) {
-			InsertTemplateHandler.initDialog();
-		}
-
-		return InsertTemplateHandler.dialog;
+		$e.run( 'library/insert-template', args );
 	},
 } );
 

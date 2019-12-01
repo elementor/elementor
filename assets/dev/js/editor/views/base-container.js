@@ -1,3 +1,5 @@
+import DocumentUtils from 'elementor-document/utils/helpers';
+
 module.exports = Marionette.CompositeView.extend( {
 
 	templateHelpers: function() {
@@ -18,7 +20,7 @@ module.exports = Marionette.CompositeView.extend( {
 		return this.collection.add( model, options, true );
 	},
 
-	addChildElement: function( data, options ) {
+	addElement( data, options ) {
 		if ( this.isCollectionFilled() ) {
 			return;
 		}
@@ -54,7 +56,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( -1 === childTypes.indexOf( elType ) ) {
-			return this.children.last().addChildElement( newItem, options );
+			return this.children.last().addElement( newItem, options );
 		}
 
 		if ( options.clone ) {
@@ -80,11 +82,26 @@ module.exports = Marionette.CompositeView.extend( {
 			elementor.channels.data.trigger( options.trigger.afterAdd, newItem );
 		}
 
-		if ( options.edit ) {
+		if ( options.edit && elementor.history.history.getActive() ) {
+			// TODO: should be directly.
 			newModel.trigger( 'request:edit' );
 		}
 
 		return newView;
+	},
+
+	addChildElement: function( data, options ) {
+		elementorCommon.helpers.softDeprecated( 'addChildElement', '2.8.0', "$e.run( 'document/elements/create' )" );
+
+		if ( Object !== data.constructor ) {
+			data = jQuery.extend( {}, data );
+		}
+
+		$e.run( 'document/elements/create', {
+			container: this.getContainer(),
+			model: data,
+			options,
+		} );
 	},
 
 	cloneItem: function( item ) {
@@ -105,38 +122,17 @@ module.exports = Marionette.CompositeView.extend( {
 		return item;
 	},
 
-	isCollectionFilled: function() {
-		return false;
-	},
+	lookup: function() {
+		let element = this;
 
-	onChildviewRequestAddNew: function( childView ) {
-		this.addChildElement( {}, {
-			at: childView.$el.index() + 1,
-			trigger: {
-				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add',
-			},
-		} );
-	},
-
-	onChildviewRequestPaste: function( childView ) {
-		var self = this;
-
-		if ( self.isCollectionFilled() ) {
-			return;
+		if ( element.isDestroyed ) {
+			element = DocumentUtils.findViewById( element.model.id );
 		}
 
-		var elements = elementorCommon.storage.get( 'transfer' ).elements,
-			index = self.collection.indexOf( childView.model );
+		return element;
+	},
 
-		elementor.channels.data.trigger( 'element:before:add', elements[ 0 ] );
-
-		elements.forEach( function( item ) {
-			index++;
-
-			self.addChildElement( item, { at: index, clone: true } );
-		} );
-
-		elementor.channels.data.trigger( 'element:after:add', elements[ 0 ] );
+	isCollectionFilled: function() {
+		return false;
 	},
 } );

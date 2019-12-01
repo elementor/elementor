@@ -1,12 +1,14 @@
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlBoxShadowItemView;
 
+import ColorPicker from '../utils/color-picker';
+
 ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.sliders = '.elementor-slider';
-		ui.colors = '.elementor-shadow-color-picker';
+		ui.colorPickerPlaceholder = '.elementor-color-picker-placeholder';
 
 		return ui;
 	},
@@ -41,18 +43,16 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	initColors: function() {
-		var self = this;
-
-		elementor.helpers.wpColorPicker( this.ui.colors, {
-			change: function() {
-				var $this = jQuery( this ),
-					type = $this.data( 'setting' );
-
-				self.setValue( type, $this.wpColorPicker( 'color' ) );
+		this.colorPicker = new ColorPicker( {
+			picker: {
+				el: this.ui.colorPickerPlaceholder[ 0 ],
+				default: this.getControlValue( 'color' ),
 			},
-
-			clear: function() {
-				self.setValue( this.dataset.setting, '' );
+			onChange: () => {
+				this.setValue( 'color', this.colorPicker.getValue() );
+			},
+			onClear: () => {
+				this.setValue( 'color', '' );
 			},
 		} );
 	},
@@ -70,15 +70,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onBeforeDestroy: function() {
-		this.ui.colors.each( function() {
-			var $color = jQuery( this );
-
-			if ( $color.wpColorPicker( 'instance' ) ) {
-				$color.wpColorPicker( 'close' );
-			}
-		} );
-
-		this.$el.remove();
+		this.colorPicker.destroy();
 	},
 } );
 

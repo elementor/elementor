@@ -40,26 +40,76 @@ textarea, .elementor-input-style {
 	resize: vertical;
 }
 
-input[type="checkbox"],
-input[type="radio"] {
-	border: 1px solid $editor-lightest;
-	background: #fff;
-	color: #555;
-	clear: none;
-	cursor: pointer;
-	display: inline-block;
-	line-height: 0;
-	height: 16px;
-	margin: -4px 4px 0 0;
-	outline: 0;
-	text-align: center;
-	vertical-align: middle;
-	width: 16px;
-	min-width: 16px;
-	transition: .05s border-color ease-in-out;
+.check-wrapper {
+	display: flex;
+	align-items: center;
 
-	&:focus {
-		border-color: $editor-light;
+	&:not(:last-child){
+		padding-bottom: 5px;
+	}
+	
+	input,
+	label {
+		cursor: pointer;
+	}
+
+	input {
+		&[type="checkbox"],
+		&[type="radio"] {
+			margin: 0;
+			padding: 0;
+			@include margin-end(5px);
+
+			//hidden the browser input style
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			outline: none;
+			content: none;
+
+			//instead of the original style
+			height: 16px;
+			width: 16px;
+			border: 1px solid $editor-lightest;
+
+			//align the mark in the input
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+
+			&:checked  {
+				background: $editor-info;
+				border: none;
+
+				&:before  {
+					display: block;
+					content: "";
+				}
+			}
+		}
+
+		&[type="checkbox"] {
+			border-radius: 2px;
+
+			// check mark
+			&:checked:before {
+				width: 4px;
+				height: 7px;
+				border: solid white;
+				border-width: 0 2px 2px 0;
+				transform: rotate(45deg);
+			}
+		}
+
+		&[type="radio"] {
+			border-radius: 50%;
+
+			&:checked:before  {
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: white;
+			}
+		}
 	}
 }
 
@@ -70,5 +120,6 @@ input[disabled] {
 }
 
 select {
+	outline: none;
 	height: 27px;
 }
