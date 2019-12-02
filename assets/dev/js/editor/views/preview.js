@@ -1,10 +1,10 @@
-var BaseSectionsContainerView = require( 'elementor-views/base-sections-container' ),
-	Preview;
-
 import AddSectionView from './add-section/independent';
 import RightClickIntroductionBehavior from '../elements/views/behaviors/right-click-introduction';
+import DocumentUtils from 'elementor-document/utils/helpers';
 
-Preview = BaseSectionsContainerView.extend( {
+const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
+
+const Preview = BaseSectionsContainerView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-preview' ),
 
 	className: 'elementor-inner',
@@ -46,11 +46,13 @@ Preview = BaseSectionsContainerView.extend( {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						isEnabled: this.isPasteEnabled.bind( this ),
+						isEnabled: () => DocumentUtils.isPasteEnabled( this.getContainer() ),
 						callback: ( at ) => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
-							at: at,
-							rebuild: true,
+							options: {
+								at: at,
+								rebuild: true,
+							},
 						} ),
 					},
 				],
@@ -71,9 +73,6 @@ Preview = BaseSectionsContainerView.extend( {
 				],
 			},
 		];
-	},
-	isPasteEnabled: function() {
-		return elementorCommon.storage.get( 'clipboard' );
 	},
 
 	onRender: function() {
