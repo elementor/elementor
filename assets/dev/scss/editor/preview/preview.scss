@@ -910,7 +910,7 @@ html.elementor-html {
 [data-elementor-device-mode="mobile"] .elementor-section.elementor-hidden-phone {
 
 	> .elementor-element-overlay {
-		background-color: #ddd;
+		background-color: $editor-lightest;
 		mix-blend-mode: color;
 	}
 
