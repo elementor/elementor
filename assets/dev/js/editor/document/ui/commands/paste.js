@@ -42,8 +42,8 @@ export class Paste extends Base {
 					}
 
 					container = container.parent;
-				} else if ( pasteOptions.isValidGrantChild ) {
-					options.rebuild = options.rebuild || true;
+				} else if ( pasteOptions.isValidGrandChild ) {
+					options.rebuild = true;
 				}
 			}
 

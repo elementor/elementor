@@ -57,7 +57,7 @@ export default class Helpers {
 		return childTypes && -1 !== childTypes.indexOf( childModel.get( 'elType' ) );
 	}
 
-	static isValidGrantChild( childModel, targetContainer ) {
+	static isValidGrandChild( childModel, targetContainer ) {
 		let result;
 
 		const childElType = childModel.get( 'elType' );
@@ -98,7 +98,7 @@ export default class Helpers {
 
 		result.isValidChild = Helpers.isValidChild( sourceModel, targetContainer.model );
 		result.isSameElement = Helpers.isSameElement( sourceModel, targetContainer );
-		result.isValidGrantChild = Helpers.isValidGrantChild( sourceModel, targetContainer );
+		result.isValidGrandChild = Helpers.isValidGrandChild( sourceModel, targetContainer );
 
 		return result;
 	}
