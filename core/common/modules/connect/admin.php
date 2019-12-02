@@ -23,7 +23,7 @@ class Admin {
 			Settings::PAGE_ID,
 			__( 'Connect', 'elementor' ),
 			__( 'Connect', 'elementor' ),
-			'manage_options',
+			'edit_posts',
 			self::PAGE_ID,
 			[ $this, 'render_page' ]
 		);

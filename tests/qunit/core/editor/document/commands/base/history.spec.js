@@ -1,4 +1,4 @@
-import History from '../../../../../../../assets/dev/js/editor/document/commands/base/history';
+import History from 'elementor-document/commands/base/history';
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/commands/base/history', () => {

@@ -37,13 +37,88 @@ export default class Helpers {
 	}
 
 	static isValidChild( childModel, parentModel ) {
-		const childTypes = elementor.helpers.getElementChildType( parentModel.get( 'elType' ) ),
+		const parentElType = parentModel.get( 'elType' ),
 			draggedElType = childModel.get( 'elType' );
 
-		if ( 'section' === draggedElType && ! childModel.get( 'isInner' ) && 'column' === parentModel.get( 'elType' ) ) {
+		if ( childModel.get( 'isInner' ) && parentModel.get( 'isInner' ) ) {
 			return false;
 		}
 
+		if ( draggedElType === parentElType ) {
+			return false;
+		}
+
+		if ( 'section' === draggedElType && ! childModel.get( 'isInner' ) && 'column' === parentElType ) {
+			return false;
+		}
+
+		const childTypes = elementor.helpers.getElementChildType( parentElType );
+
 		return childTypes && -1 !== childTypes.indexOf( childModel.get( 'elType' ) );
+	}
+
+	static isValidGrandChild( childModel, targetContainer ) {
+		let result;
+
+		const childElType = childModel.get( 'elType' );
+
+		switch ( targetContainer.model.get( 'elType' ) ) {
+			case 'document':
+				result = true;
+				break;
+
+			case 'section':
+				result = 'widget' === childElType;
+				break;
+
+			default:
+				result = false;
+		}
+
+		return result;
+	}
+
+	static isSameElement( sourceModel, targetContainer ) {
+		const targetElType = targetContainer.model.get( 'elType' ),
+			sourceElType = sourceModel.get( 'elType' );
+
+		if ( targetElType !== sourceElType ) {
+			return false;
+		}
+
+		if ( 'column' === targetElType && 'column' === sourceElType ) {
+			return true;
+		}
+
+		return targetContainer.model.get( 'isInner' ) === sourceModel.get( 'isInner' );
+	}
+
+	static getPasteOptions( sourceModel, targetContainer ) {
+		const result = {};
+
+		result.isValidChild = Helpers.isValidChild( sourceModel, targetContainer.model );
+		result.isSameElement = Helpers.isSameElement( sourceModel, targetContainer );
+		result.isValidGrandChild = Helpers.isValidGrandChild( sourceModel, targetContainer );
+
+		return result;
+	}
+
+	static isPasteEnabled( targetContainer ) {
+		const storage = elementorCommon.storage.get( 'clipboard' );
+
+		// No storage? no paste.
+		if ( ! storage[ 0 ] ) {
+			return false;
+		}
+
+		if ( ! ( storage[ 0 ] instanceof Backbone.Model ) ) {
+			storage[ 0 ] = new Backbone.Model( storage[ 0 ] );
+		}
+
+		const pasteOptions = Helpers.getPasteOptions( storage[ 0 ], targetContainer );
+
+		return Object.values( pasteOptions ).some(
+			( opt ) => !! opt
+		);
 	}
 }

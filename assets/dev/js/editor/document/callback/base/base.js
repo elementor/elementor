@@ -107,7 +107,7 @@ export default class CallbackBase {
 	 * @throws {Error}
 	 */
 	getConditions( args ) { // eslint-disable-line no-unused-vars
-		elementorModules.ForceMethodImplementation();
+		return true;
 	}
 
 	/**
@@ -150,4 +150,15 @@ export default class CallbackBase {
 
 		return true;
 	}
+
+	/**
+	 * Function bindContainerType().
+	 *
+	 * Bind eElement type to callback.
+	 *
+	 * Used to gain performance.
+	 *
+	 * @return {string} type
+	 */
+	bindContainerType() {}
 }

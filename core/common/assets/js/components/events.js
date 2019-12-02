@@ -30,10 +30,6 @@ export default class Events extends Callbacks {
 		return true;
 	}
 
-	shouldRun( callbacks ) {
-		return callbacks && callbacks.length;
-	}
-
 	onRun( command, args, event ) {
 		if ( ! $e.devTools ) {
 			return;

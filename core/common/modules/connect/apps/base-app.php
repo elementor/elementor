@@ -182,7 +182,7 @@ abstract class Base_App {
 	public function action_reconnect() {
 		$this->disconnect();
 
-		wp_redirect( $this->get_remote_authorize_url() );
+		$this->action_authorize();
 	}
 
 	/**
