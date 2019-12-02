@@ -299,8 +299,6 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onChildviewRequestResize: function( columnView, ui ) {
-		window.currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
-
 		ui.element.css( {
 			width: '',
 			left: 'initial', // Fix for RTL resizing
