@@ -99,7 +99,7 @@ const validateType = ( assert, target, targetElType, source, sourceElType, isAll
 	assert.equal( copiedSuccess && passed, isAllowed,
 		`Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"` );
-}
+};
 
 export const Paste = () => {
 	QUnit.module( 'Paste', () => {
@@ -130,7 +130,6 @@ export const Paste = () => {
 
 						if ( 'object' === typeof isAllowed ) {
 							Object.keys( isAllowed ).some( ( _targetElType ) => {
-
 								validateType( assert,
 									target,
 									_targetElType,

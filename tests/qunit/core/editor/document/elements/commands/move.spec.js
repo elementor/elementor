@@ -1,5 +1,5 @@
 import DocumentHelper from '../../helper';
-import HistoryHelper from "elementor/tests/qunit/core/editor/document/history/helper";
+import HistoryHelper from 'elementor/tests/qunit/core/editor/document/history/helper';
 
 export const Move = () => {
 	QUnit.module( 'Move', () => {

@@ -42,7 +42,6 @@ export const Move = () => {
 				assert.equal( eTabs.settings.get( 'tabs' ).at( targetIndex ).id,
 					eTabModel.id, 'Item restored to targetIndex' );
 			} );
-
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
@@ -104,7 +103,6 @@ export const Move = () => {
 					++count;
 				} );
 			} );
-
 		} );
 	} );
 };
