@@ -63,27 +63,38 @@ export class Paste extends History {
 						break;
 
 						default:
-							// In other words if the given model is not section or column then.
-							// Create section with one column for element.
-							const section = $e.run( 'document/elements/create', {
-								container: targetContainer,
-								model: {
-									elType: 'section',
-								},
-								columns: 1,
-								options: {
-									at: index,
-								},
-							} );
+							// In case it widget:
+							let target;
 
-							// Create the element in the column that just was created.
-							const target = [ section.view.children.first().getContainer() ];
+							// If you trying to paste widget on section, then paste should be at the first column.
+							if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+								target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
+							} else {
+								// Else, create section with one column for element.
+								const section = $e.run( 'document/elements/create', {
+									container: targetContainer,
+									model: {
+										elType: 'section',
+									},
+									columns: 1,
+									options: {
+										at: index,
+									},
+								} );
+
+								// Create the element in the column that just was created.
+								target = [ section.view.children.first().getContainer() ];
+							}
 
 							result.push( this.pasteTo( target, [ model ] ) );
 					}
 				} );
 			} );
 		} else {
+			if ( undefined !== at ) {
+				options.at = at;
+			}
+
 			result.push( this.pasteTo( containers, storageData, options ) );
 		}
 

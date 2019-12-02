@@ -1,4 +1,5 @@
-import environment from '../../../../../../core/common/assets/js/utils/environment';
+import environment from 'elementor-common/utils/environment';
+import DocumentUtils from 'elementor-document/utils/helpers';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -110,7 +111,7 @@ BaseElementView = BaseContainer.extend( {
 			const settingsModel = this.model.get( 'settings' );
 
 			this.container = new elementorModules.editor.Container( {
-				type: 'TODO: @see views/base.js',
+				type: this.model.get( 'elType' ),
 				id: this.model.id,
 				model: this.model,
 				settings: settingsModel,
@@ -160,18 +161,18 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
-						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'document/elements/paste', {
-							container: this.getContainer().parent,
-							at: this._parent.collection.indexOf( this.model ),
+						isEnabled: () => DocumentUtils.isPasteEnabled( this.getContainer() ),
+						callback: () => $e.run( 'document/ui/paste', {
+							container: this.getContainer(),
+							options: {
+								at: this._parent.collection.indexOf( this.model ),
+							},
 						} ),
 					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
 						shortcut: controlSign + '+⇧+V',
-						isEnabled: () => {
-							return !! elementorCommon.storage.get( 'clipboard' );
-						},
+						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
 					}, {
 						name: 'resetStyle',
@@ -269,7 +270,7 @@ BaseElementView = BaseContainer.extend( {
 		elementorCommon.helpers.softDeprecated( 'element.paste', '2.8.0', "$e.run( 'document/elements/paste' )" );
 
 		$e.run( 'document/elements/paste', {
-			container: this.getContainer().parent,
+			container: this.getContainer(),
 			at: this._parent.collection.indexOf( this.model ),
 		} );
 	},
@@ -296,16 +297,6 @@ BaseElementView = BaseContainer.extend( {
 		$e.run( 'document/elements/reset-style', {
 			container: this.getContainer(),
 		} );
-	},
-
-	isPasteEnabled() {
-		const storageData = elementorCommon.storage.get( 'clipboard' );
-
-		if ( ! storageData || this.isCollectionFilled() ) {
-			return false;
-		}
-
-		return storageData.every( ( model ) => model.elType === this.getElementType() );
 	},
 
 	isStyleTransferControl( control ) {

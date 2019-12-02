@@ -1,5 +1,5 @@
 import DocumentHelper from '../../helper';
-import CommonHelper from '../../../../common/helper';
+import CommonHelper from '../../../../common/components/helper';
 
 export const Duplicate = () => {
 	QUnit.test( 'Duplicate', ( assert ) => {

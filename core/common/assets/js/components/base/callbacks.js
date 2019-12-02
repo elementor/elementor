@@ -24,9 +24,7 @@ export default class Callbacks extends elementorModules.Module {
 		this.usedIds = [];
 
 		/**
-		 * Object of callbacks.
-		 *
-		 * TODO: Create full jsdoc of the object.
+		 * Object of callbacks that was bound by container type.
 		 *
 		 * @type {{}}
 		 */
@@ -56,9 +54,15 @@ export default class Callbacks extends elementorModules.Module {
 	 *
 	 * Return all possible callbacks.
 	 *
+	 * @param {boolean} generic
+	 *
 	 * @returns {{}}
 	 */
-	getAll() {
+	getAll( generic = false ) {
+		if ( generic ) {
+			return this.callbacks;
+		}
+
 		const result = {};
 
 		Object.keys( this.callbacks ).forEach( ( event ) => {
@@ -107,19 +111,31 @@ export default class Callbacks extends elementorModules.Module {
 	 * @param {string} event
 	 * @param {string} command
 	 *
-	 * @returns {array} callbacks
+	 * @returns {(array|boolean)} callbacks
 	 */
-	getCallbacks( event, command ) {
-		for ( const _command in this.callbacks[ event ] ) {
-			// In case of multi command hooking.
-			if ( _command.includes( ',' ) ) {
-				if ( _command.split( ',' ).some( ( _multiCommand ) => _multiCommand === command ) ) {
-					return this.callbacks[ event ][ _command ];
+	getCallbacks( event, command, args ) {
+		const { containers = [ args.container ] } = args,
+			elType = containers[ 0 ] ? containers[ 0 ].type : false;
+
+		if ( elType ) {
+			let callbacks = [];
+
+			if ( this.callbacks[ event ] && this.callbacks[ event ][ command ] ) {
+				if ( this.callbacks[ event ][ command ][ elType ] ) {
+					callbacks = callbacks.concat( this.callbacks[ event ][ command ][ elType ] );
 				}
+
+				if ( this.callbacks[ event ][ command ].all ) {
+					callbacks = callbacks.concat( this.callbacks[ event ][ command ].all );
+				}
+			}
+
+			if ( callbacks.length ) {
+				return callbacks;
 			}
 		}
 
-		return this.callbacks[ event ][ command ];
+		return false;
 	}
 
 	/**
@@ -162,6 +178,21 @@ export default class Callbacks extends elementorModules.Module {
 	}
 
 	/**
+	 * Function shouldRun().
+	 *
+	 * Determine if the event should run.
+	 *
+	 * @param {array} callbacks
+	 *
+	 * @return {boolean}
+	 *
+	 * @throw {Error}
+	 */
+	shouldRun( callbacks ) {
+		return !! callbacks && callbacks.length;
+	}
+
+	/**
 	 * Function register().
 	 *
 	 * Register the callback instance.
@@ -173,7 +204,8 @@ export default class Callbacks extends elementorModules.Module {
 	 */
 	register( event, instance ) {
 		const command = instance.getCommand(),
-			id = instance.getId();
+			id = instance.getId(),
+			containerType = instance.bindContainerType();
 
 		this.checkEvent( event );
 		this.checkInstance( instance );
@@ -186,10 +218,30 @@ export default class Callbacks extends elementorModules.Module {
 		// Save used id(s).
 		this.usedIds.push( id );
 
-		return this.callbacks[ event ][ command ].push( {
+		if ( ! this.callbacks[ event ][ command ] ) {
+			this.callbacks[ event ][ command ] = {};
+		}
+
+		const callback = {
 			id,
 			callback: instance.run.bind( instance ),
-		} );
+		};
+
+		if ( containerType ) {
+			if ( ! this.callbacks[ event ][ command ][ containerType ] ) {
+				this.callbacks[ event ][ command ][ containerType ] = [];
+			}
+
+			this.callbacks[ event ][ command ][ containerType ].push( callback );
+		} else {
+			if ( ! this.callbacks[ event ][ command ].all ) {
+				this.callbacks[ event ][ command ].all = [];
+			}
+
+			this.callbacks[ event ][ command ].all.push( callback );
+		}
+
+		return callback;
 	}
 
 	/**
@@ -203,7 +255,7 @@ export default class Callbacks extends elementorModules.Module {
 	 * @param {*} result
 	 */
 	run( event, command, args, result = undefined ) {
-		const callbacks = this.getCallbacks( event, command );
+		const callbacks = this.getCallbacks( event, command, args );
 
 		if ( this.shouldRun( callbacks ) ) {
 			this.current = command;
@@ -264,19 +316,6 @@ export default class Callbacks extends elementorModules.Module {
 	 * @throw {Error}
 	 */
 	runCallback( event, callback, args, result ) {
-		elementorModules.forceMethodImplementation();
-	}
-
-	/**
-	 * Function shouldRun().
-	 *
-	 * Determine if the event should run.
-	 *
-	 * @param {array} callbacks
-	 *
-	 * @throw {Error}
-	 */
-	shouldRun( callbacks ) {
 		elementorModules.forceMethodImplementation();
 	}
 

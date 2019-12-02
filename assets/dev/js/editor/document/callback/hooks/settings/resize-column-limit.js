@@ -9,6 +9,10 @@ export class ResizeColumnLimit extends HookDependency {
 		return 'resize-column-limit';
 	}
 
+	bindContainerType() {
+		return 'column';
+	}
+
 	getConditions( args ) {
 		return args.settings._inline_size;
 	}

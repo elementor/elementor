@@ -1,21 +1,21 @@
 import HookAfter from '../base/after';
 import Create from '../../../elements/commands/create';
 
-export class SectionColumns extends HookAfter {
+export class InnerSectionColumns extends HookAfter {
 	getCommand() {
 		return 'document/elements/create';
 	}
 
 	getId() {
-		return 'create-section-columns';
+		return 'create-inner-section-columns';
 	}
 
 	bindContainerType() {
-		return 'document';
+		return 'column';
 	}
 
 	getConditions( args ) {
-		return ! args.model.elements;
+		return args.model.isInner && ! args.model.elements;
 	}
 
 	/**
@@ -33,12 +33,9 @@ export class SectionColumns extends HookAfter {
 			containers = [ containers ];
 		}
 
-		let { columns = 1 } = args;
+		const columns = containers[ 0 ].view.defaultInnerSectionColumns;
 
-		if ( args.model.isInner && 1 === columns ) {
-			columns = containers[ 0 ].view.defaultInnerSectionColumns;
-		}
-
+		// TODO: Next code is duplicate, avoid this:
 		containers.forEach( ( /**Container*/ container ) => {
 			for ( let loopIndex = 0; loopIndex < columns; loopIndex++ ) {
 				const model = {
@@ -81,4 +78,4 @@ export class SectionColumns extends HookAfter {
 	}
 }
 
-export default SectionColumns;
+export default InnerSectionColumns;
