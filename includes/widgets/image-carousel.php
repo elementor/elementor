@@ -568,6 +568,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 				'frontend_available' => true,
 				'render_type' => 'none',
+				'separator' => 'after',
 			]
 		);
 
@@ -576,7 +577,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .swiper-slide-image',
-				'separator' => 'before',
 			]
 		);
 
