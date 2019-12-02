@@ -40,6 +40,12 @@ textarea, .elementor-input-style {
 	resize: vertical;
 }
 
+input[type="checkbox"],
+input[type="radio"] {
+	height: auto;
+	width: auto;
+}
+
 .check-wrapper {
 	display: flex;
 	align-items: center;
