@@ -13,10 +13,6 @@ export class SectionColumnsLimit extends HookDependency {
 		return 'section';
 	}
 
-	getConditions( args ) {
-		return args.model && 'column' === args.model.elType;
-	}
-
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 

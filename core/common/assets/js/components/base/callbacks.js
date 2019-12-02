@@ -28,15 +28,6 @@ export default class Callbacks extends elementorModules.Module {
 		 *
 		 * @type {{}}
 		 */
-		this.containerTypeCallbacks = {};
-
-		/**
-		 * Object of callbacks.
-		 *
-		 * TODO: Create full jsdoc of the object.
-		 *
-		 * @type {{}}
-		 */
 		this.callbacks = { after: {} };
 
 		/**
@@ -63,9 +54,15 @@ export default class Callbacks extends elementorModules.Module {
 	 *
 	 * Return all possible callbacks.
 	 *
+	 * @param {boolean} generic
+	 *
 	 * @returns {{}}
 	 */
-	getAll() {
+	getAll( generic = false ) {
+		if ( generic ) {
+			return this.callbacks;
+		}
+
 		const result = {};
 
 		Object.keys( this.callbacks ).forEach( ( event ) => {
@@ -120,26 +117,25 @@ export default class Callbacks extends elementorModules.Module {
 		const { containers = [ args.container ] } = args,
 			elType = containers[ 0 ] ? containers[ 0 ].type : false;
 
-		let boundCallbacks = false;
+		if ( elType ) {
+			let callbacks = [];
 
-		if ( elType && this.containerTypeCallbacks[ event ] && this.containerTypeCallbacks[ event ][ command ] ) {
-			boundCallbacks = this.containerTypeCallbacks[ event ][ command ][ elType ];
-		}
-
-		if ( boundCallbacks ) {
-			return boundCallbacks;
-		}
-
-		for ( const _command in this.callbacks[ event ] ) {
-			// In case of multi command hooking.
-			if ( _command.includes( ',' ) ) {
-				if ( _command.split( ',' ).some( ( _multiCommand ) => _multiCommand === command ) ) {
-					return this.callbacks[ event ][ _command ];
+			if ( this.callbacks[ event ] && this.callbacks[ event ][ command ] ) {
+				if ( this.callbacks[ event ][ command ][ elType ] ) {
+					callbacks = callbacks.concat( this.callbacks[ event ][ command ][ elType ] );
 				}
+
+				if ( this.callbacks[ event ][ command ].all ) {
+					callbacks = callbacks.concat( this.callbacks[ event ][ command ].all );
+				}
+			}
+
+			if ( callbacks.length ) {
+				return callbacks;
 			}
 		}
 
-		return this.callbacks[ event ][ command ];
+		return false;
 	}
 
 	/**
@@ -222,13 +218,8 @@ export default class Callbacks extends elementorModules.Module {
 		// Save used id(s).
 		this.usedIds.push( id );
 
-		// TODO: can be at initialize.
-		if ( ! this.containerTypeCallbacks[ event ] ) {
-			this.containerTypeCallbacks[ event ] = {};
-		}
-
-		if ( ! this.containerTypeCallbacks[ event ][ command ] ) {
-			this.containerTypeCallbacks[ event ][ command ] = {};
+		if ( ! this.callbacks[ event ][ command ] ) {
+			this.callbacks[ event ][ command ] = {};
 		}
 
 		const callback = {
@@ -237,14 +228,20 @@ export default class Callbacks extends elementorModules.Module {
 		};
 
 		if ( containerType ) {
-			if ( ! this.containerTypeCallbacks[ event ][ command ][ containerType ] ) {
-				this.containerTypeCallbacks[ event ][ command ][ containerType ] = [];
+			if ( ! this.callbacks[ event ][ command ][ containerType ] ) {
+				this.callbacks[ event ][ command ][ containerType ] = [];
 			}
 
-			this.containerTypeCallbacks[ event ][ command ][ containerType ].push( callback );
+			this.callbacks[ event ][ command ][ containerType ].push( callback );
+		} else {
+			if ( ! this.callbacks[ event ][ command ].all ) {
+				this.callbacks[ event ][ command ].all = [];
+			}
+
+			this.callbacks[ event ][ command ].all.push( callback );
 		}
 
-		return this.callbacks[ event ][ command ].push( callback );
+		return callback;
 	}
 
 	/**
