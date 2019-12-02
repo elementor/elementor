@@ -927,22 +927,12 @@ html.elementor-html {
 	}
 }
 
-[data-elementor-device-mode="desktop"] .elementor-column.elementor-hidden-desktop,
-[data-elementor-device-mode="tablet"] .elementor-column.elementor-hidden-tablet,
-[data-elementor-device-mode="mobile"] .elementor-column.elementor-hidden-phone {
+[data-elementor-device-mode="desktop"] .elementor-hidden-desktop,
+[data-elementor-device-mode="tablet"] .elementor-hidden-tablet,
+[data-elementor-device-mode="mobile"] .elementor-hidden-phone {
 	background-color: fade_out($editor-lightest, .2);
 
-	> .elementor-column-wrap {
-		filter: alpha(0.4) saturate(0);
-	}
-}
-
-[data-elementor-device-mode="desktop"] .elementor-widget.elementor-hidden-desktop,
-[data-elementor-device-mode="tablet"] .elementor-widget.elementor-hidden-tablet,
-[data-elementor-device-mode="mobile"] .elementor-widget.elementor-hidden-phone {
-	background-color: fade_out($editor-lightest, .2);
-
-	.elementor-widget-container {
+	> .elementor-widget-container, > .elementor-column-wrap {
 		filter: alpha(0.4) saturate(0);
 	}
 }
