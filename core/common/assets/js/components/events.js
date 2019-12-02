@@ -1,6 +1,6 @@
-import Base from './events-hooks.js';
+import Callbacks from './base/callbacks';
 
-export default class Events extends Base {
+export default class Events extends Callbacks {
 	constructor( ... args ) {
 		super( ... args );
 
@@ -13,57 +13,21 @@ export default class Events extends Base {
 		return 'event';
 	}
 
-	registerBefore( command, id, callback ) {
-		return this.register( 'before', command, id, callback );
-	}
+	runCallback( event, callback, args, result ) {
+		switch ( event ) {
+			case 'before':
+				callback.callback( args );
+				break;
 
-	run( event, command, args, result ) {
-		const events = this.callbacks[ event ][ command ];
+			case 'after':
+				callback.callback( args, result );
+				break;
 
-		if ( events && events.length ) {
-			this.current = command;
-
-			this.onRun( command, args, event );
-
-			for ( const i in events ) {
-				const eventObject = events[ i ];
-
-				// If not exist, set zero.
-				if ( undefined === this.depth[ event ][ eventObject.id ] ) {
-					this.depth[ event ][ eventObject.id ] = 0;
-				}
-
-				this.depth[ event ][ eventObject.id ]++;
-
-				// Prevent recursive events.
-				if ( 1 === this.depth[ event ][ eventObject.id ] ) {
-					this.onCallback( command, args, event, eventObject.id );
-
-					switch ( event ) {
-						case 'before':
-							eventObject.callback( args );
-							break;
-
-						case 'after':
-							eventObject.callback( args, result );
-							break;
-
-						default:
-							throw Error( `Invalid event type: '${ event }'` );
-					}
-				}
-
-				this.depth[ event ][ eventObject.id ]--;
-			}
+			default:
+				return false;
 		}
-	}
 
-	runBefore( command, args ) {
-		this.run( 'before', command, args );
-	}
-
-	runAfter( command, args, result ) {
-		this.run( 'after', command, args, result );
+		return true;
 	}
 
 	onRun( command, args, event ) {
@@ -82,6 +46,57 @@ export default class Events extends Base {
 
 		// TODO:  $e.devTools.events.callback
 		$e.devTools.log.eventCallback( command, args, event, id );
+	}
+
+	/**
+	 * Function registerAfter().
+	 *
+	 * Register the event in after event.
+	 *
+	 * @param {CallbackBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerAfter( instance ) {
+		return this.register( 'after', instance );
+	}
+
+	/**
+	 * Function registerBefore().
+	 *
+	 * Register the event in before event.
+	 *
+	 * @param {CallbackBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerBefore( instance ) {
+		return this.register( 'before', instance );
+	}
+
+	/**
+	 * Function runBefore().
+	 *
+	 * Run the event as before.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runBefore( command, args ) {
+		this.run( 'before', command, args );
+	}
+
+	/**
+	 * Function runAfter().
+	 *
+	 * Run the event as after.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} result
+	 */
+	runAfter( command, args, result ) {
+		this.run( 'after', command, args, result );
 	}
 }
 

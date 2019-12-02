@@ -37,41 +37,4 @@ export default class Helpers {
 			return $1.toUpperCase();
 		} );
 	}
-
-	findViewRecursive( parent, key, value, multiple = true ) {
-		let found = [];
-		for ( const x in parent._views ) {
-			const view = parent._views[ x ];
-
-			if ( value === view.model.get( key ) ) {
-				found.push( view );
-				if ( ! multiple ) {
-					return found;
-				}
-			}
-
-			if ( view.children ) {
-				const views = this.findViewRecursive( view.children, key, value, multiple );
-				if ( views.length ) {
-					found = found.concat( views );
-					if ( ! multiple ) {
-						return found;
-					}
-				}
-			}
-		}
-
-		return found;
-	}
-
-	findViewById( id ) {
-		const elements = this.findViewRecursive(
-			elementor.getPreviewView().children,
-			'id',
-			id,
-		false
-		);
-
-		return elements ? elements[ 0 ] : false;
-	}
 }

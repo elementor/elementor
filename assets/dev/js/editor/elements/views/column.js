@@ -159,7 +159,7 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	changeChildContainerClasses: function() {
-		var emptyClass = 'elementor-element-empty',
+		const emptyClass = 'elementor-element-empty',
 			populatedClass = 'elementor-element-populated';
 
 		if ( this.collection.isEmpty() ) {
@@ -179,13 +179,6 @@ ColumnView = BaseElementView.extend( {
 				at: this.$el.index() + 1,
 			},
 		} );
-	},
-
-	// Events
-	onCollectionChanged: function() {
-		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
-
-		this.changeChildContainerClasses();
 	},
 
 	onRender: function() {
@@ -220,16 +213,6 @@ ColumnView = BaseElementView.extend( {
 				self.addElementFromPanel( { at: newIndex } );
 			},
 		} );
-	},
-
-	onSettingsChanged: function( settings ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		var changedAttributes = settings.changedAttributes();
-
-		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
-			this.changeSizeUI();
-		}
 	},
 
 	onAddButtonClick: function( event ) {

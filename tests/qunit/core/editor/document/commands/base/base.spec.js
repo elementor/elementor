@@ -1,4 +1,4 @@
-import Base from '../../../../../../../assets/dev/js/editor/document/commands/base/base';
+import Base from 'elementor-document/commands/base/base';
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/dynamic/commands/base/base', () => {

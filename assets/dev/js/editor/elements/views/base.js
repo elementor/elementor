@@ -1,4 +1,5 @@
-import environment from '../../../../../../core/common/assets/js/utils/environment';
+import environment from 'elementor-common/utils/environment';
+import DocumentUtils from 'elementor-document/utils/helpers';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -110,7 +111,7 @@ BaseElementView = BaseContainer.extend( {
 			const settingsModel = this.model.get( 'settings' );
 
 			this.container = new elementorModules.editor.Container( {
-				type: 'TODO: @see views/base.js',
+				type: this.model.get( 'elType' ),
 				id: this.model.id,
 				model: this.model,
 				settings: settingsModel,
@@ -160,18 +161,18 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
-						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'document/elements/paste', {
-							container: this.getContainer().parent,
-							at: this._parent.collection.indexOf( this.model ),
+						isEnabled: () => DocumentUtils.isPasteEnabled( this.getContainer() ),
+						callback: () => $e.run( 'document/ui/paste', {
+							container: this.getContainer(),
+							options: {
+								at: this._parent.collection.indexOf( this.model ),
+							},
 						} ),
 					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
 						shortcut: controlSign + '+⇧+V',
-						isEnabled: () => {
-							return !! elementorCommon.storage.get( 'clipboard' );
-						},
+						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
 					}, {
 						name: 'resetStyle',
@@ -201,25 +202,23 @@ BaseElementView = BaseContainer.extend( {
 	initialize() {
 		BaseContainer.prototype.initialize.apply( this, arguments );
 
-		if ( this.collection ) {
+		const editModel = this.getEditModel();
+
+		if ( this.collection && this.onCollectionChanged ) {
+			elementorCommon.helpers.softDeprecated( 'onCollectionChanged', '2.8.0', '$e.events || $e.hooks' );
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
-		const editModel = this.getEditModel();
+		if ( this.onSettingsChanged ) {
+			elementorCommon.helpers.softDeprecated( 'onSettingsChanged', '2.8.0', '$e.events || $e.hooks' );
+			this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged );
+		}
 
-		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged )
-			.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
+		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
 			.listenTo( this.model, 'request:edit', this.onEditRequest )
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
-
-		/**
-		 * Created for `behaviors/widget-draggable.js` to listen changes in settings model.
-		 * toggle is needed for `widget-draggable` when `settings.changed._position` changes.
-		 * example: Custom Position.
-		 */
-		this.trigger( 'initialize' );
 	},
 
 	getHandlesOverlay: function() {
@@ -271,7 +270,7 @@ BaseElementView = BaseContainer.extend( {
 		elementorCommon.helpers.softDeprecated( 'element.paste', '2.8.0', "$e.run( 'document/elements/paste' )" );
 
 		$e.run( 'document/elements/paste', {
-			container: this.getContainer().parent,
+			container: this.getContainer(),
 			at: this._parent.collection.indexOf( this.model ),
 		} );
 	},
@@ -298,16 +297,6 @@ BaseElementView = BaseContainer.extend( {
 		$e.run( 'document/elements/reset-style', {
 			container: this.getContainer(),
 		} );
-	},
-
-	isPasteEnabled() {
-		const storageData = elementorCommon.storage.get( 'clipboard' );
-
-		if ( ! storageData || this.isCollectionFilled() ) {
-			return false;
-		}
-
-		return storageData.every( ( model ) => model.elType === this.getElementType() );
 	},
 
 	isStyleTransferControl( control ) {
@@ -361,6 +350,7 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
+	// TODO: Unused function.
 	addControlValidator( controlName, validationCallback ) {
 		validationCallback = validationCallback.bind( this );
 
@@ -680,18 +670,8 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	onCollectionChanged() {
-		elementor.saver.setFlagEditorChange( true );
-	},
-
 	onEditSettingsChanged( changedModel ) {
 		elementor.channels.editor.trigger( 'change:editSettings', changedModel, this );
-	},
-
-	onSettingsChanged( changedModel ) {
-		elementor.saver.setFlagEditorChange( true );
-
-		this.renderOnChange( changedModel );
 	},
 
 	onEditButtonClick() {

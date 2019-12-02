@@ -1,6 +1,6 @@
-import Base from './events-hooks.js';
+import Callbacks from './base/callbacks.js';
 
-export default class Events extends Base {
+export default class Events extends Callbacks {
 	constructor( ... args ) {
 		super( ... args );
 
@@ -13,63 +13,31 @@ export default class Events extends Base {
 		return 'hook';
 	}
 
-	registerDependency( command, id, callback ) {
-		return this.register( 'dependency', command, id, callback );
-	}
+	runCallback( event, callback, args, result ) {
+		switch ( event ) {
+			case 'dependency': {
+				if ( ! callback.callback( args ) ) {
+					this.depth[ event ][ callback.id ]--;
 
-	run( event, command, args, result ) {
-		const hooks = this.callbacks[ event ][ command ];
-
-		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
-			this.current = command;
-
-			this.onRun( command, args, event );
-
-			for ( const i in hooks ) {
-				const hook = hooks[ i ];
-
-				// If not exist, set zero.
-				if ( undefined === this.depth[ event ][ hook.id ] ) {
-					this.depth[ event ][ hook.id ] = 0;
+					throw new elementorModules.common.HookBreak;
 				}
-
-				this.depth[ event ][ hook.id ]++;
-
-				// Prevent recursive hooks.
-				if ( 1 === this.depth[ event ][ hook.id ] ) {
-					this.onCallback( command, args, event, hook.id );
-
-					switch ( event ) {
-						case 'dependency': {
-							if ( ! hook.callback( args ) ) {
-								this.depth[ event ][ hook.id ]--;
-
-								throw new elementorModules.common.HookBreak;
-							}
-						}
-						break;
-
-						case 'after': {
-							hook.callback( args, result );
-						}
-						break;
-
-						default:
-							throw Error( `Invalid event type: '${ event }'` );
-					}
-				}
-
-				this.depth[ event ][ hook.id ]--;
 			}
+			break;
+
+			case 'after': {
+				callback.callback( args, result );
+			}
+			break;
+
+			default:
+				return false;
 		}
+
+		return true;
 	}
 
-	runDependency( command, args ) {
-		this.run( 'dependency', command, args );
-	}
-
-	runAfter( command, args, result ) {
-		this.run( 'after', command, args, result );
+	shouldRun( callbacks ) {
+		return super.shouldRun( callbacks ) && elementor.history.history.getActive();
 	}
 
 	onRun( command, args, event ) {
@@ -88,6 +56,57 @@ export default class Events extends Base {
 
 		// TODO: $e.devTools.hooks.callback
 		$e.devTools.log.hookCallback( command, args, event, id );
+	}
+
+	/**
+	 * Function registerAfter().
+	 *
+	 * Register the hook in after event.
+	 *
+	 * @param {CallbackBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerAfter( instance ) {
+		return this.register( 'after', instance );
+	}
+
+	/**
+	 * Function registerDependency().
+	 *
+	 * Register the hook in dependency event.
+	 *
+	 * @param {CallbackBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerDependency( instance ) {
+		return this.register( 'dependency', instance );
+	}
+
+	/**
+	 * Function runDependency().
+	 *
+	 * Run the hook as dependency.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runDependency( command, args ) {
+		this.run( 'dependency', command, args );
+	}
+
+	/**
+	 * Function runAfter().
+	 *
+	 * Run the hook as after.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} result
+	 */
+	runAfter( command, args, result ) {
+		this.run( 'after', command, args, result );
 	}
 }
 

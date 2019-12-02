@@ -62,6 +62,7 @@ class Module extends BaseModule {
 				'enabled' => __( 'Enabled', 'elementor' ),
 				'disabled' => __( 'Disabled', 'elementor' ),
 				'all_content' => __( 'All Content', 'elementor' ),
+				'elements' => __( 'Elements', 'elementor' ),
 			],
 		] );
 
