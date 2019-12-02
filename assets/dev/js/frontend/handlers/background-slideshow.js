@@ -74,6 +74,8 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	}
 
 	handleKenBurns() {
+		const elementSettings = this.getElementSettings();
+
 		if ( ! elementSettings.background_slideshow_ken_burns ) {
 			return;
 		}
@@ -143,8 +145,6 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		if ( 1 >= this.getSlidesCount() ) {
 			return;
 		}
-
-		const elementSettings = this.getElementSettings();
 
 		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
 
