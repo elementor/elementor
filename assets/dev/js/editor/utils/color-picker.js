@@ -31,6 +31,7 @@ export default class ColorPicker extends elementorModules.Module {
 				savedColorsTitle: 'elementor-color-picker__saved-colors-title',
 				editButton: 'elementor-color-picker__saved-colors-edit',
 				swatchTool: 'elementor-color-picker__swatch-tool',
+				swatchPlaceholder: 'elementor-color-picker__swatch-placeholder',
 				addSwatch: 'elementor-color-picker__add-swatch',
 				droppingArea: 'elementor-color-picker--dropping-area',
 				plusIcon: 'eicon-plus',
@@ -232,11 +233,11 @@ export default class ColorPicker extends elementorModules.Module {
 
 		this.$draggedSwatch = jQuery( event.target );
 
-		setTimeout( () => this.$draggedSwatch.addClass( 'elementor-hidden' ), 0 );
+		setTimeout( () => this.$draggedSwatch.addClass( this.getSettings( 'classes.swatchPlaceholder' ) ), 0 );
 	}
 
 	onSwatchDragEnd( event ) {
-		jQuery( event.target ).removeClass( 'elementor-hidden' );
+		jQuery( event.target ).removeClass( this.getSettings( 'classes.swatchPlaceholder' ) );
 	}
 
 	onDroppingAreaDropping() {
