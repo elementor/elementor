@@ -107,9 +107,8 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	addHeader() {
-		const { classes } = this.getSettings();
-
-		const $header = jQuery( '<div>', { class: classes.header } ),
+		const { classes } = this.getSettings(),
+			$header = jQuery( '<div>', { class: classes.header } ),
 			$savedColorsTitle = jQuery( '<div>', { class: classes.savedColorsTitle } ).text( elementor.translate( 'saved_colors' ) ),
 			$editButton = jQuery( '<div>', { class: classes.editButton } ).text( elementor.translate( 'edit' ) );
 
