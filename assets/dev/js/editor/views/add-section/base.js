@@ -75,7 +75,7 @@ class AddSectionBase extends Marionette.ItemView {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'document/elements/paste', {
+						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
 							at: this.getOption( 'at' ),
 							rebuild: true,

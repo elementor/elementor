@@ -47,7 +47,7 @@ Preview = BaseSectionsContainerView.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: ( at ) => $e.run( 'document/elements/paste', {
+						callback: ( at ) => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 							at: at,
 							rebuild: true,

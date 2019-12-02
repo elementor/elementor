@@ -161,7 +161,7 @@ BaseElementView = BaseContainer.extend( {
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
 						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'document/elements/paste', {
+						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer().parent,
 							at: this._parent.collection.indexOf( this.model ),
 						} ),
