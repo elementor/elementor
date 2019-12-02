@@ -1152,3 +1152,24 @@ label.elementor-template-library-order-label,
 .media-modal {
 	color: $editor-dark;
 }
+
+//WP Link Modal
+#wp-link {
+	color: $editor-dark;
+
+	input,
+	select,
+	textarea,
+	.elementor-input-style {
+		color: $editor-dark;
+		background-color: transparent;
+
+		&:not(:focus) {
+			border-color: $editor-lightest;
+		}
+
+		&:focus {
+			border-color: $editor-light;
+		}
+	}
+}
