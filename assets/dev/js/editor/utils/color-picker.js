@@ -101,6 +101,8 @@ export default class ColorPicker extends elementorModules.Module {
 	addSwatches() {
 		this.getSwatches().children( this.getSettings( 'selectors.swatch' ) ).remove();
 
+		this.picker._swatchColors = [];
+
 		this.getColorPickerPalette().forEach( ( swatch ) => this.addSwatch( swatch ) );
 
 		this.addToolsToSwatches();
