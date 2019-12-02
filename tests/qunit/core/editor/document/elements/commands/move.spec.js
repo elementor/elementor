@@ -1,4 +1,5 @@
 import DocumentHelper from '../../helper';
+import HistoryHelper from "elementor/tests/qunit/core/editor/document/history/helper";
 
 export const Move = () => {
 	QUnit.module( 'Move', () => {
@@ -41,6 +42,139 @@ export const Move = () => {
 					'Widget were removed from first column.' );
 				assert.equal( eColumn2.view.collection.length, 1,
 					'Widget were moved/created at the second column.' );
+			} );
+
+			QUnit.module( 'History', () => {
+				QUnit.test( 'Section', ( assert ) => {
+					// Create Section at 0.
+					DocumentHelper.createSection();
+
+					const eSection = DocumentHelper.createSection( 3 ),
+						originalPosition = eSection.view._index,
+						targetPosition = 0;
+
+					DocumentHelper.move( eSection, elementor.getPreviewContainer(), { at: targetPosition } );
+
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Section' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					const eSectionAfterUndo = eSection.lookup();
+
+					assert.equal( eSectionAfterUndo.view._index, originalPosition,
+						'Element has been returned to the original position' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					const eSectionAfterRedo = eSection.lookup();
+
+					assert.equal( eSectionAfterRedo.view._index, targetPosition,
+						'Element was re-added to correct position' );
+				} );
+
+				QUnit.test( 'Column between sections', ( assert ) => {
+					const eSection1 = DocumentHelper.createSection(),
+						eSection2 = DocumentHelper.createSection(),
+						eColumn = DocumentHelper.createColumn( eSection1 ),
+						originalPosition = eColumn.view._index,
+						targetPosition = 1;
+
+					DocumentHelper.move( eColumn, eSection2, { at: targetPosition } );
+
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Column' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					const eColumnAfterUndo = eColumn.lookup();
+
+					assert.equal( eColumnAfterUndo.view._index, originalPosition,
+						'Element has been returned to the original position' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					const eColumnAfterRedo = eColumn.lookup();
+
+					assert.equal( eColumnAfterRedo.view._index, targetPosition,
+						'Element was re-added to correct position' );
+				} );
+
+				QUnit.test( 'Column in same section', ( assert ) => {
+					const eSection = DocumentHelper.createSection();
+
+					/* eColumn1 = */ DocumentHelper.createColumn( eSection );
+
+					const eColumn2 = DocumentHelper.createColumn( eSection ),
+						originalPosition = eColumn2.view._index,
+						targetPosition = 0;
+
+					DocumentHelper.move( eColumn2, eSection, { at: targetPosition } );
+
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Column' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					const eColumnAfterUndo = eColumn2.lookup();
+
+					assert.equal( eColumnAfterUndo.view._index, originalPosition,
+						'Element has been returned to the original position' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					const eColumnAfterRedo = eColumn2.lookup();
+
+					assert.equal( eColumnAfterRedo.view._index, targetPosition,
+						'Element was re-added to correct position' );
+				} );
+
+				QUnit.test( 'Widget', ( assert ) => {
+					const eSection = DocumentHelper.createSection(),
+						eColumn1 = DocumentHelper.createColumn( eSection ),
+						eColumn2 = DocumentHelper.createColumn( eSection ),
+						eWidget = DocumentHelper.createButton( eColumn1 ),
+						originalPosition = eWidget.view._index,
+						targetPosition = 1;
+
+					DocumentHelper.createButton( eColumn2 );
+					DocumentHelper.createButton( eColumn2 );
+
+					DocumentHelper.move( eWidget, eColumn2, { at: targetPosition } );
+
+					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+
+					// Exist in history.
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Button' );
+
+					// Undo.
+					HistoryHelper.undoValidate( assert, historyItem );
+
+					const eWidgetAfterUndo = eWidget.lookup();
+
+					assert.equal( eWidgetAfterUndo.view._index, originalPosition,
+						'Element has been returned to the original position' );
+
+					// Redo.
+					HistoryHelper.redoValidate( assert, historyItem );
+
+					const eWidgetAfterRedo = eWidget.lookup();
+
+					assert.equal( eWidgetAfterRedo.view._index, targetPosition,
+						'Element was re-added to correct position' );
+				} );
 			} );
 		} );
 

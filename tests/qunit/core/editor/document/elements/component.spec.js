@@ -5,6 +5,8 @@ jQuery( () => {
 	QUnit.module( 'Component: document/elements', ( hooks ) => {
 		hooks.beforeEach( () => {
 			DocumentHelper.empty();
+
+			elementor.history.history.getItems().reset();
 		} );
 
 		DocumentHelper.testCommands( Commands );
