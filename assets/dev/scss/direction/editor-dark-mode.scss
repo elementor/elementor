@@ -107,6 +107,10 @@ select {
 	&.elementor-button-success[disabled] {
 		background-color: $theme-dark-gray-light;
 	}
+
+	&.elementor-button-danger {
+		background-color: $theme-dark-danger;
+	}
 }
 
 //Mode Switcher
@@ -273,6 +277,32 @@ select {
 	#elementor-global-widget-locked-unlink {
 		border-top-color: $theme-dark-gray-darkest;
 	}
+
+	//Schemes
+	.elementor-panel-scheme-color-system-items {
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray-light;
+	}
+
+	//Menu
+	.elementor-panel-menu-item {
+
+		&:not(.elementor-panel-menu-item-exit-to-dashboard) {
+			background-color: $theme-dark-gray-dark;
+
+			&:hover {
+				background-color: $theme-dark-gray;
+			}
+
+			a {
+				color: $theme-dark-light;
+			}
+		}
+
+		&-icon {
+			color: $theme-dark-gray-lightest;
+		}
+	}
 }
 
 //Controls
@@ -362,6 +392,10 @@ $devices: 'desktop', 'tablet', 'mobile';
 	&-area {
 		background-image: linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest), linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest);
 		background-color: $theme-dark-gray-light;
+	}
+
+	.elementor-control-media__tool {
+		background-color: $theme-dark-gray-lighter;
 	}
 }
 
@@ -625,7 +659,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 }
 
-
 //Structure Control
 .elementor-control-type-structure {
 
@@ -653,19 +686,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 	&-toggle,
 	&-title {
-		color: $theme-dark-light;
-	}
-}
-
-//Menu
-.elementor-panel-menu-item:not(.elementor-panel-menu-item-exit-to-dashboard) {
-	background-color: $theme-dark-gray-dark;
-
-	&:hover {
-		background-color: $theme-dark-gray;
-	}
-
-	a {
 		color: $theme-dark-light;
 	}
 }
@@ -1023,6 +1043,14 @@ label.elementor-template-library-order-label,
 	&__footer {
 		border-color: $theme-dark-gray;
 	}
+
+	&__header {
+
+		#elementor-navigator__close,
+		#elementor-navigator__toggle-all {
+			color: $theme-dark-gray-lightest;
+		}
+	}
 }
 
 .elementor-navigator {
@@ -1061,6 +1089,10 @@ label.elementor-template-library-order-label,
 
 		&:not(.elementor-navigator__element--hidden) > .elementor-navigator__item.elementor-editing {
 			background-color: lighten($theme-dark-gray-dark, 5%);
+
+			.elementor-navigator__element__toggle {
+				color: $theme-dark-accent;
+			}
 		}
 	}
 
@@ -1086,7 +1118,6 @@ label.elementor-template-library-order-label,
 .elementor-panel .elementor-panel-box,
 .elementor-panel .elementor-panel-scheme-buttons {
 	background-color: $theme-dark-gray-dark;
-	box-shadow: $theme-dark-panel-bottom-shadow;
 }
 
 .elementor-revision-item__wrapper,
@@ -1142,13 +1173,32 @@ label.elementor-template-library-order-label,
 	}
 }
 
-//Schemes
-.elementor-panel-scheme-color-system-items {
-	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray-light;
-}
-
 //WP Media Modal
 .media-modal {
+	color: $editor-dark;
+}
+
+//WP Link Modal
+#wp-link {
+	color: $editor-dark;
+
+	input,
+	select,
+	textarea,
+	.elementor-input-style {
+		color: $editor-dark;
+		background-color: transparent;
+
+		&:not(:focus) {
+			border-color: $editor-lightest;
+		}
+
+		&:focus {
+			border-color: $editor-light;
+		}
+	}
+}
+
+.ui-autocomplete {
 	color: $editor-dark;
 }
