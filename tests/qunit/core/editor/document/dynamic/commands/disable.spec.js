@@ -56,7 +56,6 @@ export const Disable = () => {
 
 				let doneDisable; // eslint-disable-line prefer-const
 
-
 				eButtons.forEach( ( eButton ) => {
 					eButton.view.attachElContent = function( html ) {
 						eButton.view.$el.empty().append( html );
