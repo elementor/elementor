@@ -1,11 +1,26 @@
 .elementor-color-picker {
 
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
+	&__saved-colors-title {
+		font-size: 11px;
+		color: $editor-light;
+	}
+
+	&__saved-colors-edit {
+		font-size: 11px;
+		color: $editor-dark;
+		font-weight: 500;
+		cursor: pointer;
+	}
+
 	&__swatch-tool {
 		position: relative;
-		padding-bottom: 100%;
-		cursor: pointer;
 		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
-		border-radius: 3px;
 		background-color: #fff;
 
 		i {
@@ -18,8 +33,52 @@
 		}
 	}
 
-	&__remove-swatch {
-		display: none;
+	&__swatch-placeholder {
+		border: 1px dashed $editor-lighter;
+	}
+
+	&__dropping-area {
+		margin-top: 10px;
+		padding: 15px;
+		border: 1px dashed $editor-lightest;
+		text-align: center;
+
+		&.elementor-active {
+			border-color: $editor-light;
+
+			i {
+				color: $editor-warning;
+			}
+		}
+
+		i {
+			color: $editor-dark;
+			font-size: 15px;
+		}
+
+		.elementor-color-picker__swatch-placeholder {
+			display: none;
+		}
+	}
+}
+
+.pcr-app {
+
+	&.elementor-color-picker--edit-mode {
+
+		.elementor-color-picker__saved-colors-edit {
+			color: $editor-success;
+		}
+	}
+
+	&:not(.elementor-color-picker--edit-mode) {
+
+		.elementor-color-picker {
+
+			&__dropping-area {
+				display: none;
+			}
+		}
 	}
 }
 
@@ -29,10 +88,6 @@
 
 		~ .elementor-color-picker__add-swatch {
 			display: none;
-		}
-
-		~ .elementor-color-picker__remove-swatch {
-			display: block;
 		}
 	}
 }
