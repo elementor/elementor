@@ -1,4 +1,4 @@
-import ElementsHelper from './elements/helper';
+import ElementsHelper from './elements/helper.js';
 
 export default class DocumentHelper {
 	static UICopyPaste( source, target ) {
