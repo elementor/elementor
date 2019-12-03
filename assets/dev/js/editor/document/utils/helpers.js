@@ -107,7 +107,7 @@ export default class Helpers {
 		const storage = elementorCommon.storage.get( 'clipboard' );
 
 		// No storage? no paste.
-		if ( ! storage[ 0 ] ) {
+		if ( ! storage || ! storage[ 0 ] ) {
 			return false;
 		}
 
