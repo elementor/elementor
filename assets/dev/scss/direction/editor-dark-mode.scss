@@ -642,10 +642,10 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 .elementor-color-picker {
 
-	&--dropping-area {
+	&__dropping-area {
 		border: 1px dashed $theme-dark-gray-lighter;
 
-		&.html5dnd-current-element {
+		&.elementor-active {
 			border-color: $theme-dark-gray-lightest;
 
 			i {

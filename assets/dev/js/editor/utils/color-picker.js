@@ -27,16 +27,17 @@ export default class ColorPicker extends elementorModules.Module {
 				},
 			},
 			classes: {
+				active: 'elementor-active',
 				header: 'elementor-color-picker__header',
 				savedColorsTitle: 'elementor-color-picker__saved-colors-title',
 				editButton: 'elementor-color-picker__saved-colors-edit',
 				swatchTool: 'elementor-color-picker__swatch-tool',
 				swatchPlaceholder: 'elementor-color-picker__swatch-placeholder',
 				addSwatch: 'elementor-color-picker__add-swatch',
-				droppingArea: 'elementor-color-picker--dropping-area',
+				droppingArea: 'elementor-color-picker__dropping-area',
 				plusIcon: 'eicon-plus',
 				trashIcon: 'eicon-trash-o',
-				editMode: 'elementor-color-picker--edit-mode',
+				isEditMode: 'elementor-color-picker--edit-mode',
 			},
 			selectors: {
 				swatch: '.pcr-swatch',
@@ -90,20 +91,26 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	addSwatch( color ) {
-		const $swatch = jQuery( this.picker.addSwatch( color ) );
-
-		$swatch.html5Draggable( {
-			onDragStart: this.onSwatchDragStart.bind( this ),
-			onDragEnd: this.onSwatchDragEnd.bind( this ),
-		} );
+		jQuery( this.picker.addSwatch( color ) );
 	}
 
 	addSwatches() {
-		this.getSwatches().children( this.getSettings( 'selectors.swatch' ) ).remove();
+		const settings = this.getSettings();
+
+		this.getSwatches().children( settings.selectors.swatch ).remove();
 
 		this.picker._swatchColors = [];
 
 		this.getColorPickerPalette().forEach( ( swatch ) => this.addSwatch( swatch ) );
+
+		this.getSwatches().sortable( {
+			items: '.pcr-swatch',
+			placeholder: settings.classes.swatchPlaceholder,
+			connectWith: this.$droppingArea,
+			disabled: true,
+			start: ( ...args ) => this.onSwatchesSortStart( ...args ),
+			update: ( ...args ) => this.onSwatchesSortUpdate( ...args ),
+		} );
 
 		this.addToolsToSwatches();
 	}
@@ -143,9 +150,11 @@ export default class ColorPicker extends elementorModules.Module {
 
 		this.getSwatches().after( this.$droppingArea );
 
-		this.$droppingArea.html5Droppable( {
-			items: '',
-			onDropping: this.onDroppingAreaDropping.bind( this ),
+		this.$droppingArea.sortable( {
+			cancel: '.eicon-trash-o',
+			placeholder: classes.swatchPlaceholder,
+			over: () => this.onDroppingAreaOver(),
+			out: () => this.onDroppingAreaOut(),
 		} );
 	}
 
@@ -218,36 +227,42 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	onEditButtonClick() {
-		this.editMode = ! this.editMode;
+		this.isEditMode = ! this.isEditMode;
 
-		this.$editButton.text( elementor.translate( this.editMode ? 'done' : 'edit' ) );
+		this.$editButton.text( elementor.translate( this.isEditMode ? 'done' : 'edit' ) );
 
-		jQuery( this.picker.getRoot().app ).toggleClass( this.getSettings( 'classes.editMode' ), this.editMode );
+		jQuery( this.picker.getRoot().app ).toggleClass( this.getSettings( 'classes.isEditMode' ), this.isEditMode );
+
+		this.getSwatches().sortable( this.isEditMode ? 'enable' : 'disable' );
 	}
 
-	onSwatchDragStart( event ) {
-		if ( ! this.editMode ) {
-			event.preventDefault();
+	onDroppingAreaOver() {
+		this.$droppingArea.addClass( this.getSettings( 'classes.active' ) );
+	}
 
-			return false;
+	onDroppingAreaOut() {
+		this.$droppingArea.removeClass( this.getSettings( 'classes.active' ) );
+	}
+
+	onSwatchesSortStart( event ) {
+		this.sortedSwatchIndex = jQuery( event.srcElement ).index();
+	}
+
+	onSwatchesSortUpdate( event ) {
+		const sortedScheme = elementor.schemes.getSchemeValue( 'color-picker', this.sortedSwatchIndex + 1 );
+
+		elementor.schemes.removeSchemeItem( 'color-picker', this.sortedSwatchIndex );
+
+		const $sortedSwatch = jQuery( event.srcElement );
+
+		if ( $sortedSwatch.parent().is( this.$droppingArea ) ) {
+			this.picker._swatchColors.splice( this.sortedSwatchIndex, 1 );
+
+			$sortedSwatch.remove();
+		} else {
+			elementor.schemes.addSchemeItem( 'color-picker', sortedScheme, $sortedSwatch.index() );
 		}
 
-		this.$draggedSwatch = jQuery( event.target );
-
-		setTimeout( () => this.$draggedSwatch.addClass( this.getSettings( 'classes.swatchPlaceholder' ) ), 0 );
-	}
-
-	onSwatchDragEnd( event ) {
-		jQuery( event.target ).removeClass( this.getSettings( 'classes.swatchPlaceholder' ) );
-	}
-
-	onDroppingAreaDropping() {
-		const draggedSwatchIndex = this.$draggedSwatch.index();
-
-		elementor.schemes.removeSchemeItem( 'color-picker', draggedSwatchIndex );
-
 		elementor.schemes.saveScheme( 'color-picker' );
-
-		this.picker.removeSwatch( draggedSwatchIndex );
 	}
 }

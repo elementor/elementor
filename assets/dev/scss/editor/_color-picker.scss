@@ -20,10 +20,7 @@
 
 	&__swatch-tool {
 		position: relative;
-		padding-bottom: 100%;
-		cursor: pointer;
 		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
-		border-radius: 3px;
 		background-color: #fff;
 
 		i {
@@ -37,20 +34,16 @@
 	}
 
 	&__swatch-placeholder {
-
-		&:after, &.pcr-active:after {
-			border: 1px dashed $editor-lighter;
-			background: none;
-		}
+		border: 1px dashed $editor-lighter;
 	}
 
-	&--dropping-area {
+	&__dropping-area {
 		margin-top: 10px;
 		padding: 15px;
 		border: 1px dashed $editor-lightest;
 		text-align: center;
 
-		&.html5dnd-current-element {
+		&.elementor-active {
 			border-color: $editor-light;
 
 			i {
@@ -61,6 +54,10 @@
 		i {
 			color: $editor-dark;
 			font-size: 15px;
+		}
+
+		.elementor-color-picker__swatch-placeholder {
+			display: none;
 		}
 	}
 }
@@ -78,7 +75,7 @@
 
 		.elementor-color-picker {
 
-			&--dropping-area {
+			&__dropping-area {
 				display: none;
 			}
 		}
