@@ -31,4 +31,12 @@ export default class HistoryHelper {
 		assert.equal( eControllerLookedUp.id, eController.id, 'Element was re-added to DOM.' );
 		assert.equal( eControllerLookedUp.view._index, eController.view._index, 'Element was re-added to correct position.' );
 	}
+
+	static resetItems() {
+		elementor.history.history.getItems().reset();
+	}
+
+	static getFirstItem() {
+		return elementor.history.history.getItems().at( 0 );
+	}
 }

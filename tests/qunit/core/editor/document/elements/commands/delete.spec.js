@@ -1,15 +1,15 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 
 export const Delete = () => {
 	QUnit.module( 'Delete', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eButton1 = DocumentHelper.createButton( eColumn ),
-					eButton2 = DocumentHelper.createButton( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eButton1 = ElementsHelper.createButton( eColumn ),
+					eButton2 = ElementsHelper.createButton( eColumn );
 
-				DocumentHelper.delete( eButton1 );
+				ElementsHelper.delete( eButton1 );
 
 				// Validate.
 				assert.equal( eColumn.view.collection.length, 1, 'Button #1 were deleted.' );
@@ -17,7 +17,7 @@ export const Delete = () => {
 				// Ensure editor saver.
 				elementor.saver.setFlagEditorChange( false );
 
-				DocumentHelper.delete( eButton2 );
+				ElementsHelper.delete( eButton2 );
 
 				// Validate.
 				assert.equal( eColumn.view.collection.length, 0, 'Button #2 were deleted.' );
@@ -27,11 +27,11 @@ export const Delete = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidget = DocumentHelper.createAutoButton();
+				const eWidget = ElementsHelper.createAutoButton();
 
-				DocumentHelper.delete( eWidget );
+				ElementsHelper.delete( eWidget );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'remove', 'Button' );
@@ -51,11 +51,11 @@ export const Delete = () => {
 		} );
 
 		QUnit.test( 'Multiple Selection', ( assert ) => {
-			const eColumn = DocumentHelper.createSection( 1, true ),
-				eButton1 = DocumentHelper.createButton( eColumn ),
-				eButton2 = DocumentHelper.createButton( eColumn );
+			const eColumn = ElementsHelper.createSection( 1, true ),
+				eButton1 = ElementsHelper.createButton( eColumn ),
+				eButton2 = ElementsHelper.createButton( eColumn );
 
-			DocumentHelper.multiDelete( [ eButton1, eButton2 ] );
+			ElementsHelper.multiDelete( [ eButton1, eButton2 ] );
 
 			// Validate.
 			assert.equal( eColumn.view.collection.length, 0, 'Buttons were deleted.' );

@@ -1,10 +1,11 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
+import DynamicHelper from '../helper';
 
 export const Disable = () => {
 	QUnit.module( 'Disable', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButton = DocumentHelper.createAutoButton(),
+				const eButton = ElementsHelper.createAutoButton(),
 					eButtonText = eButton.settings.get( 'text' ),
 					dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',
@@ -23,17 +24,14 @@ export const Disable = () => {
 					doneDisable();
 				};
 
-				$e.run( 'document/dynamic/enable', {
-					container: eButton,
-					settings: { text: dynamicTag },
+				DynamicHelper.enable( eButton, {
+					text: dynamicTag,
 				} );
 
 				doneDisable = assert.async();
 
-				// TODO: Move to `DocumentHelper`.
-				$e.run( 'document/dynamic/disable', {
-					container: eButton,
-					settings: { text: dynamicTag },
+				DynamicHelper.disable( eButton, {
+					text: dynamicTag,
 				} );
 
 				setTimeout( () => {

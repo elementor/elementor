@@ -1,4 +1,4 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 import BlockFaq from 'elementor/tests/qunit/mock/library/blocks/faq';
 
@@ -10,9 +10,9 @@ export const Import = () => {
 				const { model, content, page_settings } = BlockFaq;
 				const data = { content, page_settings };
 
-				DocumentHelper.import( data, new Backbone.Model( model ) );
+				ElementsHelper.import( data, new Backbone.Model( model ) );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'template' );

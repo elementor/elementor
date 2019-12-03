@@ -1,14 +1,14 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import CommonHelper from '../../../../common/components/helper';
 
 export const PasteStyle = () => {
 	QUnit.test( 'PasteStyle', ( assert ) => {
 		elementorCommon.storage.set( 'clipboard', '' );
 
-		const eSimpleButton = DocumentHelper.createAutoButton(),
-			eStyleButton = DocumentHelper.createAutoButtonStyled();
+		const eSimpleButton = ElementsHelper.createAutoButton(),
+			eStyleButton = ElementsHelper.createAutoButtonStyled();
 
-		DocumentHelper.copy( eStyleButton );
+		ElementsHelper.copy( eStyleButton );
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', eSimpleButton.view );
 

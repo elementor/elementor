@@ -1,18 +1,18 @@
 import { Empty as _Empty } from 'elementor-document/elements/commands';
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 
 export const Empty = () => {
 	QUnit.module( 'Empty', () => {
 		QUnit.test( 'Single Selection', ( assert ) => {
-			const eColumn = DocumentHelper.createSection( 1, true );
+			const eColumn = ElementsHelper.createSection( 1, true );
 
-			DocumentHelper.createButton( eColumn );
-			DocumentHelper.createButton( eColumn );
+			ElementsHelper.createButton( eColumn );
+			ElementsHelper.createButton( eColumn );
 
 			// Ensure editor saver.
 			elementor.saver.setFlagEditorChange( false );
 
-			DocumentHelper.empty();
+			ElementsHelper.empty();
 
 			// Check.
 			assert.equal( elementor.getPreviewContainer().view.collection.length, 0,

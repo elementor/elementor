@@ -1,10 +1,11 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
+import DynamicHelper from '../helper';
 
 export const Enable = () => {
 	QUnit.module( 'Enable', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButton = DocumentHelper.createAutoButton(),
+				const eButton = ElementsHelper.createAutoButton(),
 					dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',
 					{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
@@ -25,9 +26,8 @@ export const Enable = () => {
 					doneEnable();
 				};
 
-				$e.run( 'document/dynamic/enable', {
-					container: eButton,
-					settings: { text: dynamicTag },
+				DynamicHelper.enable( eButton, {
+					text: dynamicTag,
 				} );
 
 				doneEnable = assert.async();
