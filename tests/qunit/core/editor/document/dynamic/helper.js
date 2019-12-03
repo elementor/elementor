@@ -13,6 +13,20 @@ export default class DynamicHelper {
 		} );
 	}
 
+	static multiEnable( eContainers, settings = {} ) {
+		return $e.run( 'document/dynamic/enable', {
+			containers: eContainers,
+			settings,
+		} );
+	}
+
+	static multiDisable( eContainers, settings ) {
+		return $e.run( 'document/dynamic/disable', {
+			containers: eContainers,
+			settings,
+		} );
+	}
+
 	static settings( eContainer, settings ) {
 		return $e.run( 'document/dynamic/settings', {
 			container: eContainer,
