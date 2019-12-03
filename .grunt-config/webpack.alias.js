@@ -20,6 +20,7 @@ module.exports = {
 			'elementor-admin': path.resolve( __dirname, '../assets/dev/js/admin' ),
 			'elementor-modules': path.resolve( __dirname, '../modules' ),
 			'elementor-document': path.resolve( __dirname, '../assets/dev/js/editor/document' ),
+			'elementor-common': path.resolve( __dirname, '../core/common/assets/js' ),
 			'elementor': path.resolve( __dirname, '../' ),
 		},
 	},

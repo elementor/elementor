@@ -74,6 +74,12 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	}
 
 	handleKenBurns() {
+		const elementSettings = this.getElementSettings();
+
+		if ( ! elementSettings.background_slideshow_ken_burns ) {
+			return;
+		}
+
 		const settings = this.getSettings();
 
 		if ( this.$activeImageBg ) {

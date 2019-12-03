@@ -1,4 +1,4 @@
-import { Empty as _Empty } from '../../../../../../../assets/dev/js/editor/document/elements/commands';
+import { Empty as _Empty } from 'elementor-document/elements/commands';
 import DocumentHelper from '../../helper';
 
 export const Empty = () => {

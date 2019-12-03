@@ -133,7 +133,7 @@ export default class Commands extends elementorModules.Module {
 
 	// It's separated in order to allow override.
 	runShortcut( command, event ) {
-		this.run( command, event );
+		return this.run( command, event );
 	}
 
 	afterRun( command ) {

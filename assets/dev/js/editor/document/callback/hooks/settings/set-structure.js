@@ -9,6 +9,10 @@ export class SetStructure extends HookAfter {
 		return 'set-structure';
 	}
 
+	bindContainerType() {
+		return 'column';
+	}
+
 	getConditions( args ) {
 		return !! args.settings.structure;
 	}

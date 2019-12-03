@@ -9,11 +9,13 @@ export class SectionColumnsResetLayout extends HookAfter {
 		return 'section-columns-reset-layout';
 	}
 
+	bindContainerType() {
+		return 'section';
+	}
+
 	getConditions( args ) {
 		// On `document/elements/move` no need for reset layout.
-		return args.model &&
-			'column' === args.model.elType &&
-			'document/elements/move' !== $e.commands.currentTrace[ 0 ];
+		return 'document/elements/move' !== $e.commands.currentTrace[ 0 ];
 	}
 
 	/**

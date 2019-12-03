@@ -10,10 +10,6 @@ export class IsValidChild extends HookDependency {
 		return 'is-valid-child';
 	}
 
-	getConditions() {
-		return true;
-	}
-
 	apply( args ) {
 		const { containers = [ args.container ], model = {} } = args,
 			modelToCreate = new Backbone.Model( model );

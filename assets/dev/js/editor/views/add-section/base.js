@@ -1,3 +1,5 @@
+import DocumentUtils from 'elementor-document/utils/helpers';
+
 class AddSectionBase extends Marionette.ItemView {
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
@@ -74,11 +76,13 @@ class AddSectionBase extends Marionette.ItemView {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'document/elements/paste', {
+						isEnabled: () => DocumentUtils.isPasteEnabled( elementor.getPreviewContainer() ),
+						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
-							at: this.getOption( 'at' ),
-							rebuild: true,
+							options: {
+								at: this.getOption( 'at' ),
+								rebuild: true,
+							},
 						} ),
 					},
 				],
@@ -99,10 +103,6 @@ class AddSectionBase extends Marionette.ItemView {
 				],
 			},
 		];
-	}
-
-	isPasteEnabled() {
-		return elementorCommon.storage.get( 'clipboard' );
 	}
 
 	onAddSectionButtonClick() {

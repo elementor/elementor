@@ -9,6 +9,10 @@ export class ResizeColumn extends HookAfter {
 		return 'resize-column';
 	}
 
+	bindContainerType() {
+		return 'column';
+	}
+
 	getConditions( args ) {
 		return args.settings._inline_size;
 	}
@@ -32,10 +36,19 @@ export class ResizeColumn extends HookAfter {
 
 		const parentView = container.parent.view,
 			currentColumnView = container.view,
-			totalWidth = parentView.$el.find( ' > .elementor-container' )[ 0 ].getBoundingClientRect().width,
+			totalWidth = parentView.$el.find( ' > .elementor-container' )[ 0 ].getBoundingClientRect().width;
+
+		let currentSize = null;
+
+		if ( null === container.oldValues._inline_size ) {
+			// Mean, that it was not set before ( first time ).
+			currentSize = container.settings.get( '_column_size' );
+		} else {
 			currentSize = +( container.oldValues._inline_size ||
-				( currentColumnView.el.getBoundingClientRect().width / totalWidth * 100 ) ),
-			nextChildView = nextContainer.view,
+				( currentColumnView.el.getBoundingClientRect().width / totalWidth * 100 ) );
+		}
+
+		const nextChildView = nextContainer.view,
 			$nextElement = nextChildView.$el,
 			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) ||
 				container.parent.view.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
@@ -58,6 +71,7 @@ export class ResizeColumn extends HookAfter {
 					title: elementor.config.elements.column.controls._inline_size.label,
 				},
 				external: true,
+				debounce: true,
 			},
 		} );
 

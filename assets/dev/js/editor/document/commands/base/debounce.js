@@ -28,6 +28,8 @@ export default class Debounce extends History {
 	static debounce = null;
 
 	initialize( args ) {
+		const { options = {} } = args;
+
 		super.initialize( args );
 
 		if ( ! this.constructor.debounce ) {
@@ -35,7 +37,7 @@ export default class Debounce extends History {
 		}
 
 		// If its head command, and not called within another command.
-		if ( 1 === $e.commands.currentTrace.length ) {
+		if ( 1 === $e.commands.currentTrace.length || options.debounce ) {
 			this.isDebounceRequired = true;
 		}
 	}
