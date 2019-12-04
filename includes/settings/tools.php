@@ -294,9 +294,9 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => __( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
+							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
 							$intro_text = '<p>' . $intro_text . '</p>';
-							$newsletter_opt_in_text = sprintf( __( 'Click <a id="beta-tester-first-to-know" href="%s">here</a> to join our First-To-Know email updates', 'elementor' ), '#' );
+							$newsletter_opt_in_text = sprintf( __( '<a id="beta-tester-first-to-know" href="%s">Click here</a> to join our first-to-know email updates.', 'elementor' ), '#' );
 
 							echo $intro_text;
 							echo $newsletter_opt_in_text;
