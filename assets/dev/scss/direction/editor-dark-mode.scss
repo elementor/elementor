@@ -52,6 +52,21 @@ body {
 			}
 		}
 	}
+
+	.pcr-swatch {
+
+		&.pcr-active {
+
+			~ .elementor-color-picker__add-swatch {
+				background-color: $theme-dark-gray-light;
+
+				i {
+					color: $theme-dark-light;
+				}
+			}
+		}
+	}
+
 }
 
 //Loader
@@ -1201,4 +1216,12 @@ label.elementor-template-library-order-label,
 
 .ui-autocomplete {
 	color: $editor-dark;
+}
+
+.elementor-color-picker__swatch-tool {
+	background-color: $theme-dark-light;
+
+	i {
+		color: $theme-dark-gray-light;
+	}
 }

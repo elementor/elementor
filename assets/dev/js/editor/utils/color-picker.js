@@ -28,20 +28,15 @@ export default class ColorPicker extends elementorModules.Module {
 			},
 			classes: {
 				active: 'elementor-active',
-				header: 'elementor-color-picker__header',
-				savedColorsTitle: 'elementor-color-picker__saved-colors-title',
-				editButton: 'elementor-color-picker__saved-colors-edit',
 				swatchTool: 'elementor-color-picker__swatch-tool',
 				swatchPlaceholder: 'elementor-color-picker__swatch-placeholder',
 				addSwatch: 'elementor-color-picker__add-swatch',
 				droppingArea: 'elementor-color-picker__dropping-area',
 				plusIcon: 'eicon-plus',
 				trashIcon: 'eicon-trash-o',
-				isEditMode: 'elementor-color-picker--edit-mode',
 			},
 			selectors: {
 				swatch: '.pcr-swatch',
-				activeSwatch: '.pcr-active',
 			},
 		};
 	}
@@ -62,8 +57,6 @@ export default class ColorPicker extends elementorModules.Module {
 			.on( 'change', ( ...args ) => this.onPickerChange( ...args ) )
 			.on( 'clear', ( ...args ) => this.onPickerClear( ...args ) )
 			.on( 'show', () => this.onPickerShow() );
-
-		this.addHeader();
 
 		this.addPlusButton();
 
@@ -91,7 +84,7 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	addSwatch( color ) {
-		jQuery( this.picker.addSwatch( color ) );
+		this.picker.addSwatch( color );
 	}
 
 	addSwatches() {
@@ -107,27 +100,12 @@ export default class ColorPicker extends elementorModules.Module {
 			items: '.pcr-swatch',
 			placeholder: settings.classes.swatchPlaceholder,
 			connectWith: this.$droppingArea,
-			disabled: true,
 			start: ( ...args ) => this.onSwatchesSortStart( ...args ),
+			stop: () => this.onSwatchesSortStop(),
 			update: ( ...args ) => this.onSwatchesSortUpdate( ...args ),
 		} );
 
 		this.addToolsToSwatches();
-	}
-
-	addHeader() {
-		const { classes } = this.getSettings(),
-			$header = jQuery( '<div>', { class: classes.header } ),
-			$savedColorsTitle = jQuery( '<div>', { class: classes.savedColorsTitle } ).text( elementor.translate( 'saved_colors' ) ),
-			$editButton = jQuery( '<div>', { class: classes.editButton } ).text( elementor.translate( 'edit' ) );
-
-		$editButton.on( 'click', () => this.onEditButtonClick() );
-
-		$header.append( $savedColorsTitle, $editButton );
-
-		this.$editButton = $editButton;
-
-		this.getSwatches().before( $header );
 	}
 
 	addPlusButton() {
@@ -162,14 +140,6 @@ export default class ColorPicker extends elementorModules.Module {
 		this.getSwatches().append( this.$addButton );
 
 		this.picker.activateSwatch();
-	}
-
-	removeSwatch( index ) {
-		elementor.schemes.removeSchemeItem( 'color-picker', index );
-
-		elementor.schemes.saveScheme( 'color-picker' );
-
-		this.picker.removeSwatch( index );
 	}
 
 	destroy() {
@@ -226,16 +196,6 @@ export default class ColorPicker extends elementorModules.Module {
 		this.fixTipsyForFF( this.$addButton );
 	}
 
-	onEditButtonClick() {
-		this.isEditMode = ! this.isEditMode;
-
-		this.$editButton.text( elementor.translate( this.isEditMode ? 'done' : 'edit' ) );
-
-		jQuery( this.picker.getRoot().app ).toggleClass( this.getSettings( 'classes.isEditMode' ), this.isEditMode );
-
-		this.getSwatches().sortable( this.isEditMode ? 'enable' : 'disable' );
-	}
-
 	onDroppingAreaOver() {
 		this.$droppingArea.addClass( this.getSettings( 'classes.active' ) );
 	}
@@ -246,9 +206,16 @@ export default class ColorPicker extends elementorModules.Module {
 
 	onSwatchesSortStart( event ) {
 		this.sortedSwatchIndex = jQuery( event.srcElement ).index();
+
+		this.$droppingArea.slideDown( () => this.$droppingArea.sortable( 'refresh' ) );
+	}
+
+	onSwatchesSortStop() {
+		this.$droppingArea.slideUp();
 	}
 
 	onSwatchesSortUpdate( event ) {
+		// Sample the scheme before removing
 		const sortedScheme = elementor.schemes.getSchemeValue( 'color-picker', this.sortedSwatchIndex + 1 );
 
 		elementor.schemes.removeSchemeItem( 'color-picker', this.sortedSwatchIndex );
