@@ -208,7 +208,7 @@ var	Manager = function() {
 
 		if ( item.get( 'editing_started' ) ) {
 			if ( ! editorSaved ) {
-				elementor.saver.setFlagEditorChange( false );
+				$e.run( 'document/save/set-is-modified', false );
 			}
 		}
 	};

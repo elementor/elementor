@@ -19,20 +19,22 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			elementor.saver.saveAutoSave( {
-				onSuccess: function() {
-					elementor.reloadPreview();
+			$e.run( 'document/save/auto', {
+				options: {
+					onSuccess: function() {
+						elementor.reloadPreview();
 
-					elementor.once( 'preview:loaded', function() {
-						$e.route( 'panel/page-settings/settings' );
-					} );
+						elementor.once( 'preview:loaded', function() {
+							$e.route( 'panel/page-settings/settings' );
+						} );
+					},
 				},
 			} );
 		},
 	},
 
 	onModelChange: function() {
-		elementor.saver.setFlagEditorChange( true );
+		$e.run( 'document/save/set-is-modified', true );
 
 		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},
