@@ -99,7 +99,7 @@ module.exports = Marionette.CompositeView.extend( {
 	onApplyClick: function() {
 		$e.run( 'document/save/set-is-modified', { status: true } );
 
-		$e.run( 'document/save/auto' );
+		$e.run( 'document/save/auto', { force: true } );
 
 		this.isRevisionApplied = true;
 

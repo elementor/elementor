@@ -115,7 +115,7 @@ module.exports = Marionette.Behavior.extend( {
 				elementor.saver.isSaving = false;
 			}
 
-			$e.run( 'document/save/auto', { mode: 'safe' } );
+			$e.run( 'document/save/auto' );
 		}
 	},
 

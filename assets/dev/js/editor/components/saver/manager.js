@@ -15,7 +15,7 @@ module.exports = elementorModules.Module.extend( {
 		clearTimeout( this.autoSaveTimer );
 		if ( hasChanges ) {
 			this.autoSaveTimer = setTimeout( () => {
-				$e.run( 'document/save/auto', { mode: 'safe' } );
+				$e.run( 'document/save/auto' );
 			}, this.autosaveInterval );
 		}
 	},

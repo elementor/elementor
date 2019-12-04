@@ -2,24 +2,13 @@ import Base from '../../commands/base/base';
 
 export class Auto extends Base {
 	apply( args ) {
-		const { mode = '', options = {} } = args;
+		const { force = false, options = {} } = args;
 
-		if ( 'safe' === mode ) {
-			this.safeSave();
-		} else {
-			this.save( options );
-		}
-	}
-
-	safeSave() {
-		const editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		// Avoid auto save for revisions preview changes.
-		if ( 'edit' !== editorMode ) {
+		if ( ! force && 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
 
-		this.save();
+		this.save( options );
 	}
 
 	save( options ) {

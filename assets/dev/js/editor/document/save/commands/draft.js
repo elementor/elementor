@@ -11,7 +11,7 @@ export class Draft extends Base {
 		switch ( postStatus ) {
 			case 'publish':
 			case 'private':
-				$e.run( 'document/save/auto', { mode: 'safe' } );
+				$e.run( 'document/save/auto' );
 				break;
 			default:
 				// Update and create a revision
