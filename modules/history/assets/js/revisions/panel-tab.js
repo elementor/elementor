@@ -99,7 +99,7 @@ module.exports = Marionette.CompositeView.extend( {
 	onApplyClick: function() {
 		$e.run( 'document/save/set-is-modified', { status: true } );
 
-		$e.run( 'document/save/auto' );
+		$e.run( 'document/save/auto', { force: true } );
 
 		this.isRevisionApplied = true;
 
@@ -161,7 +161,7 @@ module.exports = Marionette.CompositeView.extend( {
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
 		if ( elementor.saver.isEditorChanged() && ( null === self.currentPreviewId || elementor.config.current_revision_id === self.currentPreviewId ) ) {
-			elementor.saver.saveEditor( {
+			$e.run( 'document/save/save', {
 				status: 'autosave',
 				onSuccess: function() {
 					self.getRevisionViewData( childView );

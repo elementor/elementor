@@ -6,5 +6,6 @@ export { Discard } from './discard';
 export { Draft } from './draft';
 export { Pending } from './pending';
 export { Publish } from './publish';
+export { Save } from './save';
 export { SetIsModified } from './set-is-modified';
 export { Update } from './update';

@@ -1,8 +1,10 @@
+import ComponentModal from 'elementor-common/components/component-modal';
+
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
-export default class extends elementorModules.common.ComponentModal {
+export default class Component extends ComponentModal {
 	__construct( args ) {
-		// Before contruct because it's used in defaultTabs().
+		// Before construct because it's used in defaultTabs().
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;
 
 		super.__construct( args );
@@ -16,10 +18,6 @@ export default class extends elementorModules.common.ComponentModal {
 
 	getNamespace() {
 		return 'library';
-	}
-
-	getModalLayout() {
-		return TemplateLibraryLayoutView;
 	}
 
 	defaultTabs() {
@@ -85,10 +83,6 @@ export default class extends elementorModules.common.ComponentModal {
 				keys: 'ctrl+shift+l',
 			},
 		};
-	}
-
-	getTabsWrapperSelector() {
-		return '#elementor-template-library-header-menu';
 	}
 
 	renderTab( tab ) {
@@ -186,5 +180,13 @@ export default class extends elementorModules.common.ComponentModal {
 		};
 
 		return InsertTemplateHandler;
+	}
+
+	getTabsWrapperSelector() {
+		return '#elementor-template-library-header-menu';
+	}
+
+	getModalLayout() {
+		return TemplateLibraryLayoutView;
 	}
 }

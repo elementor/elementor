@@ -1,6 +1,7 @@
+import BaseComponent from 'elementor-common/components/component';
 import * as Commands from './commands/';
 
-export default class Component extends elementorModules.common.Component {
+export default class Component extends BaseComponent {
 	getNamespace() {
 		return 'document/dynamic';
 	}

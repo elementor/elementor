@@ -21,6 +21,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	initialize: function() {
+		// TODO: $e.
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
@@ -115,7 +116,7 @@ module.exports = Marionette.Behavior.extend( {
 				elementor.saver.isSaving = false;
 			}
 
-			$e.run( 'document/save/auto', { mode: 'safe' } );
+			$e.run( 'document/save/auto' );
 		}
 	},
 

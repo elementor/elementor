@@ -1,4 +1,6 @@
-export default class extends elementorModules.common.Component {
+import BaseComponent from 'elementor-common/components/component';
+
+export default class Component extends BaseComponent {
 	getNamespace() {
 		return 'panel/history';
 	}
@@ -18,6 +20,10 @@ export default class extends elementorModules.common.Component {
 		};
 	}
 
+	renderTab( tab ) {
+		elementor.getPanelView().setPage( 'historyPage' ).showView( tab );
+	}
+
 	activate() {
 		// Activate the tab component itself.
 		$e.components.activate( this.getTabRoute( this.currentTab ) );
@@ -25,9 +31,5 @@ export default class extends elementorModules.common.Component {
 
 	getTabsWrapperSelector() {
 		return '#elementor-panel-elements-navigation';
-	}
-
-	renderTab( tab ) {
-		elementor.getPanelView().setPage( 'historyPage' ).showView( tab );
 	}
 }

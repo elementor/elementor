@@ -1,9 +1,11 @@
+import BaseComponent from 'elementor-common/components/component';
+
 export default class BackwardsCompatibility {
 	ensureTab( namespace, tabSlug, page = '' ) {
 		let component = $e.components.get( namespace );
 
 		if ( ! component ) {
-			const Component = class extends elementorModules.common.Component {
+			const Component = class extends BaseComponent {
 				getNamespace() {
 					return namespace;
 				}

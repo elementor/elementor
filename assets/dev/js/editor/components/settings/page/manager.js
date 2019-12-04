@@ -20,6 +20,7 @@ module.exports = BaseSettings.extend( {
 
 		template: function() {
 			$e.run( 'document/save/auto', {
+				force: true,
 				options: {
 					onSuccess: function() {
 						elementor.reloadPreview();

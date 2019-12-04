@@ -9,6 +9,6 @@ export class Update extends Base {
 			status: elementor.settings.page.model.get( 'post_status' ),
 		}, options );
 
-		elementor.saver.saveEditor( options );
+		$e.run( 'document/save/save', options );
 	}
 }
