@@ -19,7 +19,7 @@ class Heartbeat {
 			'heartbeat-tick': ( event, response ) => {
 				if ( response.locked_user ) {
 					if ( elementor.saver.isEditorChanged() ) {
-						elementor.saver.saveEditor( {
+						$e.run( 'document/save/save', {
 							status: 'autosave',
 						} );
 					}

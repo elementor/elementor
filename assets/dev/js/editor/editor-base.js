@@ -265,15 +265,12 @@ const App = Marionette.Application.extend( {
 	},
 
 	initComponents: function() {
-		var EventManager = require( 'elementor-utils/hooks' ),
+		const EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
-			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
 		this.hooks = new EventManager();
-
-		this.saver = new Saver();
 
 		this.settings = new Settings();
 
@@ -757,6 +754,8 @@ const App = Marionette.Application.extend( {
 
 		elementorCommon.elements.$window.trigger( 'elementor:init' );
 
+		this.saver = $e.components.get( 'document/save' );
+		
 		this.initPreview();
 
 		this.logSite();

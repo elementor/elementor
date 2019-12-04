@@ -12,13 +12,13 @@ export class Auto extends Base {
 	}
 
 	save( options ) {
-		if ( elementor.saver.isEditorChanged() ) {
+		if ( this.component.isEditorChanged() ) {
 			// TODO: Move to es6.
 			options = _.extend( {
 				status: 'autosave',
 			}, options );
 
-			elementor.saver.saveEditor( options );
+			$e.run( 'document/save/save', options );
 		}
 	}
 }

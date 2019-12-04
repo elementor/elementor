@@ -8,11 +8,11 @@ export class SetIsModified extends Base {
 	apply( args ) {
 		const { status } = args;
 
-		if ( status && elementor.saver.isSaving ) {
-			elementor.saver.isChangedDuringSave = true;
+		if ( status && this.component.isSaving ) {
+			this.component.isChangedDuringSave = true;
 		}
 
-		elementor.saver.startTimer( status );
+		this.component.startTimer( status );
 
 		elementor.channels.editor
 			.reply( 'status', status )

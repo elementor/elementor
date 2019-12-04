@@ -4,7 +4,7 @@ export class Draft extends Base {
 	apply() {
 		const postStatus = elementor.settings.page.model.get( 'post_status' );
 
-		if ( ! elementor.saver.isEditorChanged() && 'draft' !== postStatus ) {
+		if ( ! this.component.isEditorChanged() && 'draft' !== postStatus ) {
 			return;
 		}
 

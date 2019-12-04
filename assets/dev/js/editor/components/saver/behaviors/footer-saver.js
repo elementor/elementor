@@ -21,6 +21,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	initialize: function() {
+		// TODO: $e.
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )

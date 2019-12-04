@@ -29,3 +29,5 @@ export class Default extends Base {
 		}
 	}
 }
+
+export default Default;

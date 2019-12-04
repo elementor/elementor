@@ -9,6 +9,6 @@ export class Publish extends Base {
 			status: 'publish',
 		}, options );
 
-		elementor.saver.saveEditor( options );
+		$e.run( 'document/save/save', options );
 	}
 }
