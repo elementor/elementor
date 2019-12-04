@@ -8,13 +8,14 @@
 			padding: 10px 15px;
 			margin-bottom: 10px;
 			font-size: 11px;
+			transition: $transition-hover;
 
 			&.current {
 				font-weight: bold;
 			}
 
 			.elementor-revision-item__tools-current {
-				color: $editor-accent;
+				color: $editor-info
 			}
 		}
 
@@ -22,20 +23,9 @@
 			background-color: fade_out($editor-background, 0.7) ;
 		}
 
-		&:not(:hover), &.elementor-revision-current-preview {
-
-			.elementor-revision-item__tools-delete {
-				display: none;
-			}
-		}
-
 		&-loading {
 
 			.elementor-revision-item__tools-current {
-				display: none;
-			}
-
-			.elementor-revision-item__tools-delete {
 				display: none;
 			}
 		}
@@ -59,10 +49,6 @@
 		&__details {
 			@include padding-start(15px);
 			flex-grow: 1;
-			cursor: pointer;
-		}
-
-		&__tools-delete {
 			cursor: pointer;
 		}
 	}

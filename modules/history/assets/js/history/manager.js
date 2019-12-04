@@ -8,16 +8,18 @@ var	Manager = function() {
 		editorSaved = false,
 		active = true;
 
-	var translations = {
+	const translations = {
+		// Alphabetical order.
 		add: elementor.translate( 'added' ),
-		duplicate: elementor.translate( 'duplicate' ),
-		remove: elementor.translate( 'removed' ),
 		change: elementor.translate( 'edited' ),
-		move: elementor.translate( 'moved' ),
-		paste_style: elementor.translate( 'style_pasted' ),
-		reset_style: elementor.translate( 'style_reset' ),
-		enable: elementor.translate( 'enabled' ),
 		disable: elementor.translate( 'disabled' ),
+		duplicate: elementor.translate( 'duplicate' ),
+		enable: elementor.translate( 'enabled' ),
+		move: elementor.translate( 'moved' ),
+		paste: elementor.translate( 'pasted' ),
+		paste_style: elementor.translate( 'style_pasted' ),
+		remove: elementor.translate( 'removed' ),
+		reset_style: elementor.translate( 'style_reset' ),
 	};
 
 	var getActionLabel = function( itemData ) {
@@ -81,7 +83,7 @@ var	Manager = function() {
 	};
 
 	this.endItem = function( id ) {
-		if ( currentItemID !== id ) {
+		if ( id && currentItemID !== id ) {
 			return;
 		}
 		currentItemID = null;
@@ -206,7 +208,7 @@ var	Manager = function() {
 
 		if ( item.get( 'editing_started' ) ) {
 			if ( ! editorSaved ) {
-				elementor.saver.setFlagEditorChange( false );
+				$e.run( 'document/save/set-is-modified', false );
 			}
 		}
 	};

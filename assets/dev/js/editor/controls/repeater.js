@@ -31,12 +31,17 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	childViewOptions: function( rowModel, index ) {
 		const elementContainer = this.getOption( 'container' );
 
+		// TODO: Temp backwards compatibility. since 2.8.0.
+		if ( 'bc-container' === elementContainer.type ) {
+			rowModel.set( '_id', 'bc-' + elementor.helpers.getUniqueID() );
+		}
+
 		elementContainer.children[ index ] = new elementorModules.editor.Container( {
 			type: 'repeater',
 			id: rowModel.get( '_id' ),
-			model: {
+			model: new Backbone.Model( {
 				name: this.model.get( 'name' ),
-			},
+			} ),
 			settings: rowModel,
 			view: elementContainer.view,
 			parent: elementContainer,
@@ -53,13 +58,18 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	createItemModel: function( attrs, options ) {
+	createItemModel: function( attrs, options, controlView ) {
+		options.controls = controlView.model.get( 'fields' );
+
 		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 
 	fillCollection: function() {
+		// TODO: elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+
 		var controlName = this.model.get( 'name' );
-		this.collection = this.container.settings.get( controlName );
+		this.collection = settings.get( controlName );
 
 		// Hack for history redo/undo
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
@@ -70,11 +80,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			} );
 
 			// Set the value silent
-			this.container.settings.set( controlName, this.collection, { silent: true } );
+			settings.set( controlName, this.collection, { silent: true } );
 		}
 
 		// Reset children.
-		this.getOption( 'container' ).children = [];
+		// TODO: Temp backwards compatibility since 2.8.0.
+		if ( this.container ) {
+			this.container.children = [];
+		}
 	},
 
 	initialize: function() {
@@ -192,8 +205,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		const defaults = {};
 
 		// Get default fields.
-		Object.entries( this.model.get( 'fields' ) ).forEach( ( [ key, field ] ) => {
-			defaults[ key ] = field.default;
+		_.each( this.model.get( 'fields' ), ( field ) => {
+			defaults[ field.name ] = field.default;
 		} );
 
 		const newModel = $e.run( 'document/repeater/insert', {

@@ -9,6 +9,7 @@
 		font-size: 11px;
 		line-height: 1.4;
 		cursor: pointer;
+		transition: $transition-hover;
 
 		&:hover {
 			background-color: fade_out($editor-background, 0.7) ;

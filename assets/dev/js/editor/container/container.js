@@ -1,6 +1,7 @@
+import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
 
-export default class Container {
+export default class Container extends ArgsObject {
 	/**
 	 * Container type.
 	 *
@@ -14,13 +15,6 @@ export default class Container {
 	 * @type {string}
 	 */
 	id;
-
-	/**
-	 * Container document.
-	 *
-	 * @type {Container}
-	 */
-	document;
 
 	/**
 	 * Container model.
@@ -102,6 +96,11 @@ export default class Container {
 	 * @throws {Error}
 	 */
 	constructor( args ) {
+		super( args );
+
+		// Validate args.
+		this.validateArgs( args );
+
 		args = Object.entries( args );
 
 		// If empty.
@@ -122,6 +121,14 @@ export default class Container {
 		this.panel = new Panel( this );
 	}
 
+	validateArgs( args ) {
+		this.requireArgumentType( 'type', 'string', args );
+		this.requireArgumentType( 'id', 'string', args );
+
+		this.requireArgumentInstance( 'settings', Backbone.Model, args );
+		this.requireArgumentInstance( 'model', Backbone.Model, args );
+	}
+
 	/**
 	 * Function lookup().
 	 *
@@ -134,6 +141,10 @@ export default class Container {
 	lookup() {
 		let result = this;
 
+		if ( ! this.renderer ) {
+			return this;
+		}
+
 		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
 			this.renderer = this.renderer.lookup();
 		}
@@ -141,7 +152,7 @@ export default class Container {
 		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
 			// Hack For repeater item the result is the parent container.
 			if ( 'repeater' === this.type ) {
-				this.settings = this.parent.settings.get( this.model.name ).findWhere( { _id: this.id } );
+				this.settings = this.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
 			}
 			return result;
 		}
@@ -153,7 +164,7 @@ export default class Container {
 
 			// Hack For repeater item the result is the parent container.
 			if ( 'repeater' === this.type ) {
-				this.settings = result.settings.get( this.model.name ).findWhere( { _id: this.id } );
+				this.settings = result.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
 				return this;
 			}
 		}

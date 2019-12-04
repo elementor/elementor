@@ -45,10 +45,18 @@ export class Create extends History {
 
 		let result = [];
 
+		// BC: Deprecated since 2.8.0 - use `$e.events`.
+		if ( ! options.trigger ) {
+			options.trigger = {
+				beforeAdd: 'element:before:add',
+				afterAdd: 'element:after:add',
+			};
+		}
+
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			const createdContainer = container.view.addChildElement( model, options ).getContainer();
+			const createdContainer = container.view.addElement( model, options ).getContainer();
 
 			result.push( createdContainer );
 
@@ -57,7 +65,7 @@ export class Create extends History {
 			 * in getHistory().
 			 */
 			if ( this.isHistoryActive() ) {
-				$e.run( 'document/history/add-sub-item', {
+				$e.run( 'document/history/log-sub-item', {
 					container,
 					type: 'sub-add',
 					restore: this.constructor.restore,
@@ -75,6 +83,10 @@ export class Create extends History {
 		}
 
 		return result;
+	}
+
+	isDataChanged() {
+		return true;
 	}
 }
 

@@ -1,135 +1,43 @@
-export default class Hooks extends elementorModules.Module {
-	constructor( ...args ) {
-		super( ...args );
+import Callbacks from './base/callbacks.js';
 
-		this.current = null;
+export default class Events extends Callbacks {
+	constructor( ... args ) {
+		super( ... args );
 
-		this.hooks = {
-			dependency: {},
-			after: {},
-		};
+		this.callbacks.dependency = {};
 
-		this.usedIds = [];
-
-		this.depth = {
-			dependency: {},
-			after: {},
-		};
+		this.depth.dependency = {};
 	}
 
-	getAll() {
-		const result = {};
-
-		Object.keys( this.hooks ).forEach( ( event ) => {
-			if ( ! result[ event ] ) {
-				result[ event ] = [];
-			}
-
-			Object.keys( this.hooks[ event ] ).forEach( ( hook ) => {
-				result[ event ].push( {
-					command: hook,
-					callbacks: this.hooks[ event ][ hook ],
-				} );
-			} );
-		} );
-
-		return result;
+	getType() {
+		return 'hook';
 	}
 
-	getCurrent() {
-		return this.current;
-	}
+	runCallback( event, callback, args, result ) {
+		switch ( event ) {
+			case 'dependency': {
+				if ( ! callback.callback( args ) ) {
+					this.depth[ event ][ callback.id ]--;
 
-	checkEvent( event ) {
-		if ( -1 === Object.keys( this.hooks ).indexOf( event ) ) {
-			throw Error( `event: '${ event }' is not available.` );
-		}
-	}
-
-	checkId( id ) {
-		if ( 0 === this.usedIds.indexOf( id ) ) {
-			throw Error( `id: '${ id }' is already in use.` );
-		}
-	}
-
-	register( event, command, id, callback ) {
-		this.checkEvent( event );
-		this.checkId( id );
-
-		if ( ! this.hooks[ event ][ command ] ) {
-			this.hooks[ event ][ command ] = [];
-		}
-
-		// Save used id(s).
-		this.usedIds.push( id );
-
-		return this.hooks[ event ][ command ].push( {
-			id,
-			callback,
-		} );
-	}
-
-	registerDependency( command, id, callback ) {
-		return this.register( 'dependency', command, id, callback );
-	}
-
-	registerAfter( command, id, callback ) {
-		return this.register( 'after', command, id, callback );
-	}
-
-	run( event, command, args, result ) {
-		const hooks = this.hooks[ event ][ command ];
-
-		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
-			this.current = command;
-
-			this.onRun( command, args, event );
-
-			for ( const i in hooks ) {
-				const hook = hooks[ i ];
-
-				// If not exist, set zero.
-				if ( undefined === this.depth[ event ][ hook.id ] ) {
-					this.depth[ event ][ hook.id ] = 0;
+					throw new elementorModules.common.HookBreak;
 				}
-
-				this.depth[ event ][ hook.id ]++;
-
-				// Prevent recursive hooks.
-				if ( 1 === this.depth[ event ][ hook.id ] ) {
-					this.onCallback( command, args, event, hook.id );
-
-					switch ( event ) {
-						case 'dependency': {
-							if ( ! hook.callback( args ) ) {
-								this.depth[ event ][ hook.id ]--;
-
-								throw 'Break-Hook';
-							}
-						}
-						break;
-
-						case 'after': {
-							hook.callback( args, result );
-						}
-						break;
-
-						default:
-							throw Error( `Invalid event type: '${ event }'` );
-					}
-				}
-
-				this.depth[ event ][ hook.id ]--;
 			}
+			break;
+
+			case 'after': {
+				callback.callback( args, result );
+			}
+			break;
+
+			default:
+				return false;
 		}
+
+		return true;
 	}
 
-	runDependency( command, args ) {
-		this.run( 'dependency', command, args );
-	}
-
-	runAfter( command, args, result ) {
-		this.run( 'after', command, args, result );
+	shouldRun( callbacks ) {
+		return super.shouldRun( callbacks ) && elementor.history.history.getActive();
 	}
 
 	onRun( command, args, event ) {
@@ -137,6 +45,7 @@ export default class Hooks extends elementorModules.Module {
 			return;
 		}
 
+		// TODO: $e.devTools.hooks.run
 		$e.devTools.log.hookRun( command, args, event );
 	}
 
@@ -145,7 +54,59 @@ export default class Hooks extends elementorModules.Module {
 			return;
 		}
 
+		// TODO: $e.devTools.hooks.callback
 		$e.devTools.log.hookCallback( command, args, event, id );
+	}
+
+	/**
+	 * Function registerAfter().
+	 *
+	 * Register the hook in after event.
+	 *
+	 * @param {CallbackBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerAfter( instance ) {
+		return this.register( 'after', instance );
+	}
+
+	/**
+	 * Function registerDependency().
+	 *
+	 * Register the hook in dependency event.
+	 *
+	 * @param {CallbackBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerDependency( instance ) {
+		return this.register( 'dependency', instance );
+	}
+
+	/**
+	 * Function runDependency().
+	 *
+	 * Run the hook as dependency.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runDependency( command, args ) {
+		this.run( 'dependency', command, args );
+	}
+
+	/**
+	 * Function runAfter().
+	 *
+	 * Run the hook as after.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} result
+	 */
+	runAfter( command, args, result ) {
+		this.run( 'after', command, args, result );
 	}
 }
 

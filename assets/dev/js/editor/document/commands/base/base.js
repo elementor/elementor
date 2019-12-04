@@ -6,6 +6,13 @@ import ArgsObject from './../../../../modules/imports/args-object';
 
 export default class Base extends ArgsObject {
 	/**
+	 * Current component (elementorModules.Module ).
+	 *
+	 * @type {{}}
+	 */
+	component = {};
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create Commands Base.
@@ -15,14 +22,20 @@ export default class Base extends ArgsObject {
 	constructor( args ) {
 		super( args );
 
+		// Acknowledge self about which command it run.
+		this.currentCommand = $e.commands.getCurrent( 'document' );
+
+		// Assign instance of current component.
+		this.component = $e.commands.getComponent( this.currentCommand );
+
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
 
+		// Refresh args, maybe the changed via `initialize`.
+		args = this.args;
+
 		// Validate args before run.
 		this.validateArgs( args );
-
-		// Acknowledge self about which command it run.
-		this.currentCommand = $e.commands.getCurrent( 'document' );
 	}
 
 	/**
@@ -57,7 +70,7 @@ export default class Base extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	initialize( args ) {}
+	initialize( args = {} ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function validateArgs().
@@ -66,7 +79,7 @@ export default class Base extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	validateArgs( args ) {}
+	validateArgs( args ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function isDataChanged().
@@ -84,9 +97,11 @@ export default class Base extends ArgsObject {
 	 *
 	 * Do the actual command.
 	 *
-	 * @param {{}}
+	 * @param {{}} args
+	 *
+	 * @returns {*}
 	 */
-	apply( args ) {
+	apply( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -111,14 +126,16 @@ export default class Base extends ArgsObject {
 		} catch ( e ) {
 			this.onCatchApply( e );
 
-			return false;
+			if ( e instanceof elementorModules.common.HookBreak ) {
+				return false;
+			}
 		}
 
 		// For $e.hooks.
 		this.onAfterApply( this.args, result );
 
 		if ( this.isDataChanged() ) {
-			elementor.saver.setFlagEditorChange( true );
+			$e.run( 'document/save/set-is-modified', true );
 		}
 
 		// For $e.events.
@@ -185,7 +202,8 @@ export default class Base extends ArgsObject {
 			$e.devTools.log.error( e );
 		}
 
-		if ( elementor.isTesting ) {
+		if ( ! ( e instanceof elementorModules.common.HookBreak ) ) {
+			// eslint-disable-next-line no-console
 			console.error( e );
 		}
 	}

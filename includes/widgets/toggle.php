@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor toggle widget.
  *
@@ -149,6 +151,30 @@ class Widget_Toggle extends Widget_Base {
 					'value' => 'fas fa-caret' . ( is_rtl() ? '-left' : '-right' ),
 					'library' => 'fa-solid',
 				],
+				'recommended' => [
+					'fa-solid' => [
+						'caret-right',
+						'caret-left',
+						'caret-up',
+						'caret-down',
+						'caret-square-right',
+						'caret-square-left',
+						'caret-square-up',
+						'caret-square-down',
+					],
+					'fa-regular' => [
+						'caret-right',
+						'caret-left',
+						'caret-up',
+						'caret-down',
+						'caret-square-right',
+						'caret-square-left',
+						'caret-square-up',
+						'caret-square-down',
+					],
+				],
+				'label_block' => false,
+				'skin' => 'inline',
 			]
 		);
 
@@ -162,6 +188,30 @@ class Widget_Toggle extends Widget_Base {
 					'value' => 'fas fa-caret-up',
 					'library' => 'fa-solid',
 				],
+				'recommended' => [
+					'fa-solid' => [
+						'caret-right',
+						'caret-left',
+						'caret-up',
+						'caret-down',
+						'caret-square-right',
+						'caret-square-left',
+						'caret-square-up',
+						'caret-square-down',
+					],
+					'fa-regular' => [
+						'caret-right',
+						'caret-left',
+						'caret-up',
+						'caret-down',
+						'caret-square-right',
+						'caret-square-left',
+						'caret-square-up',
+						'caret-square-down',
+					],
+				],
+				'skin' => 'inline',
+				'label_block' => false,
 				'condition' => [
 					'selected_icon[value]!' => '',
 				],
@@ -282,8 +332,8 @@ class Widget_Toggle extends Widget_Base {
 					'{{WRAPPER}} .elementor-toggle .elementor-tab-title' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 			]
 		);
@@ -297,8 +347,8 @@ class Widget_Toggle extends Widget_Base {
 					'{{WRAPPER}} .elementor-toggle .elementor-tab-title.elementor-active' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_4,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_4,
 				],
 			]
 		);
@@ -308,7 +358,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-title',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -430,8 +480,8 @@ class Widget_Toggle extends Widget_Base {
 					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 			]
 		);
@@ -441,7 +491,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-content',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 

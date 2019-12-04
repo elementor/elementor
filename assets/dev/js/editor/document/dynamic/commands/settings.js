@@ -1,7 +1,12 @@
-import History from '../../commands/base/history';
+import Debounce from '../../commands/base/debounce';
 import ElementsSettings from '../../elements/commands/settings';
 
-export class Settings extends History {
+/**
+ * The difference between 'document/elements/settings` and `document/dynamic/settings` is:
+ * that `document/elements/settings` apply settings to `container.settings` and `document/dynamic/settings` affect
+ * `container.settings.__dynamic__`, also clearing the dynamic if `args.settings` is empty.
+ */
+export class Settings extends Debounce {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 

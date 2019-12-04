@@ -390,7 +390,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.0.1',
+			'1.1.0',
 			true
 		);
 
@@ -448,7 +448,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.4.0'
+			'5.5.0'
 		);
 
 		wp_register_style(
@@ -469,7 +469,7 @@ class Frontend extends App {
 			'elementor-gallery',
 			$this->get_css_assets_url( 'e-gallery', 'assets/lib/e-gallery/css/' ),
 			[],
-			'1.0.1'
+			'1.0.2'
 		);
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';

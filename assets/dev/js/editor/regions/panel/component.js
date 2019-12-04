@@ -8,7 +8,7 @@ export default class extends elementorModules.common.Component {
 			menu: () => this.manager.setPage( 'menu' ),
 			'global-colors': () => this.manager.setPage( 'colorScheme' ),
 			'global-fonts': () => this.manager.setPage( 'typographyScheme' ),
-			'color-picker': () => this.manager.setPage( 'colorPickerScheme' ),
+			'editor-preferences': () => this.manager.setPage( 'editorPreferences_settings' ).activateTab( 'settings' ),
 		};
 	}
 
@@ -17,8 +17,8 @@ export default class extends elementorModules.common.Component {
 			open: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' ),
 			close: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' ),
 			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
-			save: () => elementor.saver.saveDraft(),
-			publish: () => elementor.saver.publish(),
+			save: () => $e.run( 'document/save/draft' ),
+			publish: () => $e.run( 'document/save/publish' ),
 			exit: () => $e.route( 'panel/menu' ),
 			'change-device-mode': ( args ) => {
 				const devices = [ 'desktop', 'tablet', 'mobile' ];

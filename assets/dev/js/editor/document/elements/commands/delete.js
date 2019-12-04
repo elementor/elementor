@@ -38,7 +38,7 @@ export class Delete extends History {
 			container = container.lookup();
 
 			if ( this.isHistoryActive() ) {
-				$e.run( 'document/history/add-sub-item', {
+				$e.run( 'document/history/log-sub-item', {
 					container,
 					type: 'sub-remove',
 					restore: this.constructor.restore,
@@ -50,7 +50,13 @@ export class Delete extends History {
 				} );
 			}
 
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			elementor.channels.data.trigger( 'element:before:remove', container.model );
+
 			container.model.destroy();
+
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			elementor.channels.data.trigger( 'element:after:remove', container.model );
 
 			container.panel.refresh();
 		} );
@@ -60,6 +66,10 @@ export class Delete extends History {
 		}
 
 		return containers;
+	}
+
+	isDataChanged() {
+		return true;
 	}
 }
 

@@ -6,6 +6,7 @@ import environment from '../../../../core/common/assets/js/utils/environment.js'
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
+import ColorControl from './controls/color';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -39,7 +40,7 @@ const App = Marionette.Application.extend( {
 	modules: {
 		// TODO: Deprecated alias since 2.3.0
 		get Module() {
-			elementorCommon.helpers.deprecatedMethod( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
+			elementorCommon.helpers.hardDeprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
 
 			return elementorModules.Module;
 		},
@@ -48,7 +49,7 @@ const App = Marionette.Application.extend( {
 				views: {
 					// TODO: Deprecated alias since 2.4.0
 					get BaseModalLayout() {
-						elementorCommon.helpers.deprecatedMethod( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
+						elementorCommon.helpers.hardDeprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
 
 						return elementorModules.common.views.modal.Layout;
 					},
@@ -69,7 +70,7 @@ const App = Marionette.Application.extend( {
 			Button: require( 'elementor-controls/button' ),
 			Choose: require( 'elementor-controls/choose' ),
 			Code: require( 'elementor-controls/code' ),
-			Color: require( 'elementor-controls/color' ),
+			Color: ColorControl,
 			Date_time: DateTimeControl,
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Exit_animation: require( 'elementor-controls/select2' ),
@@ -102,7 +103,7 @@ const App = Marionette.Application.extend( {
 			models: {
 				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
-					elementorCommon.helpers.deprecatedMethod( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
+					elementorCommon.helpers.hardDeprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
 
 					return elementorModules.editor.elements.models.BaseSettings;
 				},
@@ -130,7 +131,7 @@ const App = Marionette.Application.extend( {
 		views: {
 			// TODO: Deprecated alias since 2.4.0
 			get ControlsStack() {
-				elementorCommon.helpers.deprecatedMethod( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
+				elementorCommon.helpers.hardDeprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
 
 				return elementorModules.editor.views.ControlsStack;
 			},
@@ -151,6 +152,12 @@ const App = Marionette.Application.extend( {
 			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
 			callback: ( $elementsToHide ) => {
 				$elementsToHide.removeClass( 'elementor-open' );
+			},
+		},
+		panelResponsiveSwitchers: {
+			element: '.elementor-control-responsive-switchers',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
 			},
 		},
 	},
@@ -374,7 +381,7 @@ const App = Marionette.Application.extend( {
 	getCurrentElement: function() {
 		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 
-		if ( ! isPreview ) {
+		if ( ! isPreview && ! elementorCommonConfig.isTesting ) {
 			return false;
 		}
 
@@ -572,12 +579,12 @@ const App = Marionette.Application.extend( {
 		}
 
 		$elements
-			.removeClass( 'elementor-editor-active' )
-			.addClass( 'elementor-editor-preview' );
+		.removeClass( 'elementor-editor-active' )
+		.addClass( 'elementor-editor-preview' );
 
 		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview' );
+		.removeClass( 'elementor-edit-area-active' )
+		.addClass( 'elementor-edit-area-preview' );
 
 		if ( hidePanel ) {
 			// Handle panel resize
@@ -589,12 +596,12 @@ const App = Marionette.Application.extend( {
 
 	exitPreviewMode: function() {
 		elementorFrontend.elements.$body.add( elementorCommon.elements.$body )
-			.removeClass( 'elementor-editor-preview' )
-			.addClass( 'elementor-editor-active' );
+		.removeClass( 'elementor-editor-preview' )
+		.addClass( 'elementor-editor-active' );
 
 		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-preview' )
-			.addClass( 'elementor-edit-area-active' );
+		.removeClass( 'elementor-edit-area-preview' )
+		.addClass( 'elementor-edit-area-active' );
 	},
 
 	changeEditMode: function( newMode ) {
@@ -622,13 +629,13 @@ const App = Marionette.Application.extend( {
 		}
 
 		elementorCommon.elements.$body
-			.removeClass( 'elementor-device-' + oldDeviceMode )
-			.addClass( 'elementor-device-' + newDeviceMode );
+		.removeClass( 'elementor-device-' + oldDeviceMode )
+		.addClass( 'elementor-device-' + newDeviceMode );
 
 		this.channels.deviceMode
-			.reply( 'previousMode', oldDeviceMode )
-			.reply( 'currentMode', newDeviceMode )
-			.trigger( 'change' );
+		.reply( 'previousMode', oldDeviceMode )
+		.reply( 'currentMode', newDeviceMode )
+		.trigger( 'change' );
 	},
 
 	enqueueTypographyFonts: function() {
@@ -712,6 +719,16 @@ const App = Marionette.Application.extend( {
 				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
 			},
 		} );
+	},
+
+	getPreferences: function( key ) {
+		const settings = elementor.settings.editorPreferences.model.attributes;
+
+		if ( key ) {
+			return settings[ key ];
+		}
+
+		return settings;
 	},
 
 	onStart: function() {
@@ -881,7 +898,7 @@ const App = Marionette.Application.extend( {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: debugData.message + previewDebugLink,
-			onConfirm: function() {
+				onConfirm: function() {
 					open( debugData.doc_url, '_blank' );
 				} };
 
@@ -900,8 +917,8 @@ const App = Marionette.Application.extend( {
 				onConfirm: function() {
 					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
 					open( url, '_blank' );
-			},
-		} );
+				},
+			} );
 		} );
 	},
 

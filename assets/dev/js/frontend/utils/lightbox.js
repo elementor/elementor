@@ -408,7 +408,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		event.preventDefault();
 
-		if ( editMode && ! elementorFrontend.getGeneralSettings( 'elementor_enable_lightbox_in_editor' ) ) {
+		if ( editMode && ! elementor.getPreferences( 'lightbox_in_editor' ) ) {
 			return;
 		}
 

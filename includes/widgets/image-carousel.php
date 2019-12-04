@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor image carousel widget.
  *
@@ -249,6 +251,20 @@ class Widget_Image_Carousel extends Widget_Base {
 			'pause_on_hover',
 			[
 				'label' => __( 'Pause on Hover', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'yes',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'pause_on_interaction',
+			[
+				'label' => __( 'Pause on Interaction', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'yes',
 				'options' => [
@@ -552,6 +568,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 				'frontend_available' => true,
 				'render_type' => 'none',
+				'separator' => 'after',
 			]
 		);
 
@@ -560,7 +577,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .swiper-slide-image',
-				'separator' => 'before',
 			]
 		);
 
@@ -635,7 +651,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 			]
 		);

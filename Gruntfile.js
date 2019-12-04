@@ -121,6 +121,6 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'test', [
-		'qunit',
+		'karma:unit',
 	] );
 };

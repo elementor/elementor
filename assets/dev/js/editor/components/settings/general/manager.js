@@ -20,28 +20,7 @@ module.exports = BaseSettings.extend( {
 		},
 	},
 
-	getEditedView() {
-		const editModel = new Backbone.Model( {
-			id: 'general_settings',
-			elType: 'general_settings',
-			settings: elementor.settings.general.model,
-		} );
-
-		const container = new elementorModules.editor.Container( {
-			type: 'TODO: @see general/manager.js',
-			id: editModel.id,
-			model: editModel,
-			settings: editModel.get( 'settings' ),
-			view: 'TODO: @see general/manager.js',
-			label: elementor.translate( 'global_settings' ),
-			controls: editModel.controls,
-			renderer: false,
-		} );
-
-		return {
-			getContainer: () => container,
-			getEditModel: () => editModel,
-			model: editModel,
-		};
+	getContainerId() {
+		return 'general_settings';
 	},
 } );
