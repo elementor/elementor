@@ -8,7 +8,7 @@ export const ResetStyle = () => {
 				const eButtonStyled = ElementsHelper.createAutoButtonStyled();
 
 				// Ensure editor saver.
-				$e.run( 'document/save/set-is-modified', false );
+				$e.run( 'document/save/set-is-modified', { status: false } );
 
 				ElementsHelper.resetStyle( eButtonStyled );
 

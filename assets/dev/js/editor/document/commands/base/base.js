@@ -135,7 +135,7 @@ export default class Base extends ArgsObject {
 		this.onAfterApply( this.args, result );
 
 		if ( this.isDataChanged() ) {
-			$e.run( 'document/save/set-is-modified', true );
+			$e.run( 'document/save/set-is-modified', { status: true } );
 		}
 
 		// For $e.events.

@@ -10,7 +10,7 @@ export const Empty = () => {
 			ElementsHelper.createButton( eColumn );
 
 			// Ensure editor saver.
-			$e.run( 'document/save/set-is-modified', false );
+			$e.run( 'document/save/set-is-modified', { status: false } );
 
 			ElementsHelper.empty();
 

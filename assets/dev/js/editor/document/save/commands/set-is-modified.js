@@ -1,11 +1,13 @@
 import Base from '../../commands/base/base';
 
 export class SetIsModified extends Base {
-	validateArgs( status ) {
-		this.requireArgumentType( 'status', 'boolean', { status } );
+	validateArgs( args ) {
+		this.requireArgumentType( 'status', 'boolean', args );
 	}
 
-	apply( status ) {
+	apply( args ) {
+		const { status } = args;
+
 		if ( status && elementor.saver.isSaving ) {
 			elementor.saver.isChangedDuringSave = true;
 		}
