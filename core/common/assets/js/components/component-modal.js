@@ -1,10 +1,6 @@
-import Component from './component';
+import BaseComponent from './component';
 
-export default class extends Component {
-	getModalLayout() {
-		this.forceMethodImplementation( 'getModalLayout' );
-	}
-
+export default class ComponentModal extends BaseComponent {
 	onInit() {
 		super.onInit();
 
@@ -55,5 +51,9 @@ export default class extends Component {
 		this.layout.getModal().hide();
 
 		return true;
+	}
+
+	getModalLayout() {
+		elementorModules.ForceMethodImplementation();
 	}
 }
