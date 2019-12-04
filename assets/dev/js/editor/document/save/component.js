@@ -1,6 +1,7 @@
+import BaseComponent from 'elementor-common/components/component';
 import * as Commands from './commands';
 
-export default class Component extends elementorModules.common.Component {
+export default class Component extends BaseComponent {
 	__construct( args = {} ) {
 		super.__construct( args );
 
@@ -21,20 +22,6 @@ export default class Component extends elementorModules.common.Component {
 		return 'document/save';
 	}
 
-	startTimer( hasChanges ) {
-		clearTimeout( this.autoSaveTimer );
-
-		if ( hasChanges ) {
-			this.autoSaveTimer = setTimeout( () => {
-				$e.run( 'document/save/auto' );
-			}, this.autoSaveInterval );
-		}
-	}
-
-	isEditorChanged() {
-		return ( true === elementor.channels.editor.request( 'status' ) );
-	}
-
 	defaultCommands() {
 		return {
 			auto: ( args ) => ( new Commands.Auto( args ).run() ),
@@ -47,5 +34,19 @@ export default class Component extends elementorModules.common.Component {
 			'set-is-modified': ( args ) => ( new Commands.SetIsModified( args ).run() ),
 			update: ( args ) => ( new Commands.Update( args ).run() ),
 		};
+	}
+
+	startTimer( hasChanges ) {
+		clearTimeout( this.autoSaveTimer );
+
+		if ( hasChanges ) {
+			this.autoSaveTimer = setTimeout( () => {
+				$e.run( 'document/save/auto' );
+			}, this.autoSaveInterval );
+		}
+	}
+
+	isEditorChanged() {
+		return ( true === elementor.channels.editor.request( 'status' ) );
 	}
 }
