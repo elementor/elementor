@@ -86,7 +86,7 @@ jQuery( () => {
 
 		// TODO: Temp next tests are not in the right place.
 		QUnit.test( 'Saver Editor Flag', ( assert ) => {
-			elementor.saver.setFlagEditorChange( false );
+			$e.run( 'document/save/set-is-modified', false );
 
 			ElementsHelper.createSection( 1 );
 
