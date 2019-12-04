@@ -1,7 +1,7 @@
-import BaseComponent from 'elementor-common/components/component';
+import BackwardsCompatibility from './backwards-compatibility';
 import * as Commands from './commands';
 
-export default class Component extends BaseComponent {
+export default class Component extends BackwardsCompatibility {
 	__construct( args = {} ) {
 		super.__construct( args );
 
