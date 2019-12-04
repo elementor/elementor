@@ -97,7 +97,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
-		$e.run( 'document/save/set-is-modified', true );
+		$e.run( 'document/save/set-is-modified', { status: true } );
 
 		$e.run( 'document/save/auto' );
 
@@ -111,7 +111,7 @@ module.exports = Marionette.CompositeView.extend( {
 	onDiscardClick: function() {
 		elementor.history.revisions.setEditorData( elementor.config.data );
 
-		$e.run( 'document/save/set-is-modified', this.isRevisionApplied );
+		$e.run( 'document/save/set-is-modified', { status: this.isRevisionApplied } );
 
 		this.isRevisionApplied = false;
 

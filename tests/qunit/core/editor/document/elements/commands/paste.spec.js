@@ -12,7 +12,7 @@ export const Paste = () => {
 				ElementsHelper.copy( eButton );
 
 				// Ensure editor saver.
-				$e.run( 'document/save/set-is-modified', false );
+				$e.run( 'document/save/set-is-modified', { status: false } );
 
 				ElementsHelper.paste( eColumn );
 

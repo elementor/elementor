@@ -130,11 +130,21 @@ Schemes = function() {
 		schemes[ schemeName ].items[ itemKey ].value = value;
 	};
 
-	this.addSchemeItem = function( schemeName, item ) {
+	this.addSchemeItem = function( schemeName, item, at ) {
 		const scheme = schemes[ schemeName ],
-			lastItemKey = Object.keys( scheme.items ).slice( -1 )[ 0 ] || 0;
+			schemeKeys = Object.keys( scheme.items ),
+			hasAt = undefined !== at,
+			targetIndex = hasAt ? at : +( schemeKeys.slice( -1 )[ 0 ] ) || 0;
 
-		scheme.items[ +lastItemKey + 1 ] = item;
+		if ( hasAt ) {
+			let itemIndex = schemeKeys.length + 1;
+
+			for ( ; itemIndex > at; itemIndex-- ) {
+				scheme.items[ itemIndex ] = scheme.items[ itemIndex - 1 ];
+			}
+		}
+
+		scheme.items[ targetIndex + 1 ] = item;
 	};
 
 	this.removeSchemeItem = function( schemeName, itemKey ) {

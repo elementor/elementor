@@ -208,7 +208,7 @@ var	Manager = function() {
 
 		if ( item.get( 'editing_started' ) ) {
 			if ( ! editorSaved ) {
-				$e.run( 'document/save/set-is-modified', false );
+				$e.run( 'document/save/set-is-modified', { status: false } );
 			}
 		}
 	};
