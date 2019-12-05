@@ -693,6 +693,10 @@ $devices: 'desktop', 'tablet', 'mobile';
 			}
 		}
 	}
+
+	.elementor-control-structure-reset {
+		border-top-color: $theme-dark-gray-darkest;
+	}
 }
 
 //Section Control
