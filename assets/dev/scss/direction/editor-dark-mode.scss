@@ -57,6 +57,10 @@ body {
 
 		&.pcr-active {
 
+			&:after {
+				box-shadow: 0 0 0 1px #71d7f7, inset 0 0 0 1px $theme-dark-gray;
+			}
+
 			~ .elementor-color-picker__add-swatch {
 				background-color: $theme-dark-gray-light;
 
@@ -66,7 +70,6 @@ body {
 			}
 		}
 	}
-
 }
 
 //Loader

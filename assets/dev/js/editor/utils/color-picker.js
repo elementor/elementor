@@ -100,6 +100,7 @@ export default class ColorPicker extends elementorModules.Module {
 			items: '.pcr-swatch',
 			placeholder: settings.classes.swatchPlaceholder,
 			connectWith: this.$droppingArea,
+			delay: 200,
 			start: ( ...args ) => this.onSwatchesSortStart( ...args ),
 			stop: () => this.onSwatchesSortStop(),
 			update: ( ...args ) => this.onSwatchesSortUpdate( ...args ),
