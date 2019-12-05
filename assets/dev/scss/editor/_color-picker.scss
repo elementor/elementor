@@ -1,11 +1,14 @@
 .elementor-color-picker {
 
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
 	&__swatch-tool {
 		position: relative;
-		padding-bottom: 100%;
-		cursor: pointer;
 		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
-		border-radius: 3px;
 		background-color: #fff;
 
 		i {
@@ -18,8 +21,37 @@
 		}
 	}
 
-	&__remove-swatch {
+	&__swatch-placeholder {
+		border: 1px dashed $editor-lighter;
+	}
+
+	&__dropping-area {
+		margin-top: 10px;
+		padding: 15px;
+		border: 1px dashed $editor-lightest;
+		text-align: center;
+		color: $editor-dark;
 		display: none;
+
+		&.elementor-active {
+			border-color: $editor-light;
+
+			i {
+				color: $editor-warning;
+			}
+		}
+
+		i {
+			font-size: 15px;
+		}
+
+		&__drag-to-delete {
+			margin-top: 10px;
+		}
+
+		.elementor-color-picker__swatch-placeholder {
+			display: none;
+		}
 	}
 }
 
@@ -28,11 +60,13 @@
 	&.pcr-active {
 
 		~ .elementor-color-picker__add-swatch {
-			display: none;
-		}
+			background-color: $editor-lightest;
+			pointer-events: none;
+			box-shadow: none;
 
-		~ .elementor-color-picker__remove-swatch {
-			display: block;
+			i {
+				color: #fff;
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from 'elementor/tests/qunit/core/editor/document/history/helper';
 
 export const Move = () => {
@@ -6,11 +6,11 @@ export const Move = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Section', ( assert ) => {
 				// Create Section at 0.
-				DocumentHelper.createSection();
+				ElementsHelper.createSection();
 
-				const eSection = DocumentHelper.createSection( 3 );
+				const eSection = ElementsHelper.createSection( 3 );
 
-				DocumentHelper.move( eSection, elementor.getPreviewContainer(), { at: 0 } );
+				ElementsHelper.move( eSection, elementor.getPreviewContainer(), { at: 0 } );
 
 				// Validate first section have 3 columns.
 				assert.equal( elementor.getPreviewContainer().children.first().attributes.elements.length, 3, 3,
@@ -18,11 +18,11 @@ export const Move = () => {
 			} );
 
 			QUnit.test( 'Column', ( assert ) => {
-				const eSection1 = DocumentHelper.createSection(),
-					eSection2 = DocumentHelper.createSection(),
-					eColumn = DocumentHelper.createColumn( eSection1 );
+				const eSection1 = ElementsHelper.createSection(),
+					eSection2 = ElementsHelper.createSection(),
+					eColumn = ElementsHelper.createColumn( eSection1 );
 
-				DocumentHelper.move( eColumn, eSection2 );
+				ElementsHelper.move( eColumn, eSection2 );
 
 				// Validate.
 				assert.equal( eSection2.view.collection.length, 2,
@@ -30,12 +30,12 @@ export const Move = () => {
 			} );
 
 			QUnit.test( 'Widget', ( assert ) => {
-				const eSection = DocumentHelper.createSection(),
-					eColumn1 = DocumentHelper.createColumn( eSection ),
-					eColumn2 = DocumentHelper.createColumn( eSection ),
-					eButton = DocumentHelper.createButton( eColumn1 );
+				const eSection = ElementsHelper.createSection(),
+					eColumn1 = ElementsHelper.createColumn( eSection ),
+					eColumn2 = ElementsHelper.createColumn( eSection ),
+					eButton = ElementsHelper.createButton( eColumn1 );
 
-				DocumentHelper.move( eButton, eColumn2 );
+				ElementsHelper.move( eButton, eColumn2 );
 
 				// Validate.
 				assert.equal( eColumn1.view.collection.length, 0,
@@ -47,15 +47,15 @@ export const Move = () => {
 			QUnit.module( 'History', () => {
 				QUnit.test( 'Section', ( assert ) => {
 					// Create Section at 0.
-					DocumentHelper.createSection();
+					ElementsHelper.createSection();
 
-					const eSection = DocumentHelper.createSection( 3 ),
+					const eSection = ElementsHelper.createSection( 3 ),
 						originalPosition = eSection.view._index,
 						targetPosition = 0;
 
-					DocumentHelper.move( eSection, elementor.getPreviewContainer(), { at: targetPosition } );
+					ElementsHelper.move( eSection, elementor.getPreviewContainer(), { at: targetPosition } );
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Section' );
@@ -78,15 +78,15 @@ export const Move = () => {
 				} );
 
 				QUnit.test( 'Column between sections', ( assert ) => {
-					const eSection1 = DocumentHelper.createSection(),
-						eSection2 = DocumentHelper.createSection(),
-						eColumn = DocumentHelper.createColumn( eSection1 ),
+					const eSection1 = ElementsHelper.createSection(),
+						eSection2 = ElementsHelper.createSection(),
+						eColumn = ElementsHelper.createColumn( eSection1 ),
 						originalPosition = eColumn.view._index,
 						targetPosition = 1;
 
-					DocumentHelper.move( eColumn, eSection2, { at: targetPosition } );
+					ElementsHelper.move( eColumn, eSection2, { at: targetPosition } );
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Column' );
@@ -109,17 +109,17 @@ export const Move = () => {
 				} );
 
 				QUnit.test( 'Column in same section', ( assert ) => {
-					const eSection = DocumentHelper.createSection();
+					const eSection = ElementsHelper.createSection();
 
-					/* eColumn1 = */ DocumentHelper.createColumn( eSection );
+					/* eColumn1 = */ ElementsHelper.createColumn( eSection );
 
-					const eColumn2 = DocumentHelper.createColumn( eSection ),
+					const eColumn2 = ElementsHelper.createColumn( eSection ),
 						originalPosition = eColumn2.view._index,
 						targetPosition = 0;
 
-					DocumentHelper.move( eColumn2, eSection, { at: targetPosition } );
+					ElementsHelper.move( eColumn2, eSection, { at: targetPosition } );
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Column' );
@@ -142,19 +142,19 @@ export const Move = () => {
 				} );
 
 				QUnit.test( 'Widget', ( assert ) => {
-					const eSection = DocumentHelper.createSection(),
-						eColumn1 = DocumentHelper.createColumn( eSection ),
-						eColumn2 = DocumentHelper.createColumn( eSection ),
-						eWidget = DocumentHelper.createButton( eColumn1 ),
+					const eSection = ElementsHelper.createSection(),
+						eColumn1 = ElementsHelper.createColumn( eSection ),
+						eColumn2 = ElementsHelper.createColumn( eSection ),
+						eWidget = ElementsHelper.createButton( eColumn1 ),
 						originalPosition = eWidget.view._index,
 						targetPosition = 1;
 
-					DocumentHelper.createButton( eColumn2 );
-					DocumentHelper.createButton( eColumn2 );
+					ElementsHelper.createButton( eColumn2 );
+					ElementsHelper.createButton( eColumn2 );
 
-					DocumentHelper.move( eWidget, eColumn2, { at: targetPosition } );
+					ElementsHelper.move( eWidget, eColumn2, { at: targetPosition } );
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Button' );
@@ -181,14 +181,14 @@ export const Move = () => {
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Sections', ( assert ) => {
 				// Create Section at 0.
-				DocumentHelper.createSection();
+				ElementsHelper.createSection();
 
 				const section1ColumnsCount = 3,
 					section2ColumnsCount = 4,
-					eSection1 = DocumentHelper.createSection( section1ColumnsCount ),
-					eSection2 = DocumentHelper.createSection( section2ColumnsCount );
+					eSection1 = ElementsHelper.createSection( section1ColumnsCount ),
+					eSection2 = ElementsHelper.createSection( section2ColumnsCount );
 
-				DocumentHelper.multiMove( [ eSection1, eSection2 ], elementor.getPreviewContainer(), { at: 0 } );
+				ElementsHelper.multiMove( [ eSection1, eSection2 ], elementor.getPreviewContainer(), { at: 0 } );
 
 				// Validate first section have 3 columns.
 				assert.equal( elementor.getPreviewContainer().model.attributes.elements.first().attributes.elements.length,
@@ -202,12 +202,12 @@ export const Move = () => {
 			} );
 
 			QUnit.test( 'Columns', ( assert ) => {
-				const eSection1 = DocumentHelper.createSection(),
-					eSection2 = DocumentHelper.createSection(),
-					eColumn1 = DocumentHelper.createColumn( eSection1 ),
-					eColumn2 = DocumentHelper.createColumn( eSection1 );
+				const eSection1 = ElementsHelper.createSection(),
+					eSection2 = ElementsHelper.createSection(),
+					eColumn1 = ElementsHelper.createColumn( eSection1 ),
+					eColumn2 = ElementsHelper.createColumn( eSection1 );
 
-				DocumentHelper.multiMove( [ eColumn1, eColumn2 ], eSection2 );
+				ElementsHelper.multiMove( [ eColumn1, eColumn2 ], eSection2 );
 
 				// Validate.
 				assert.equal( eSection2.view.collection.length, 3,
@@ -215,13 +215,13 @@ export const Move = () => {
 			} );
 
 			QUnit.test( 'Widgets', ( assert ) => {
-				const eSection = DocumentHelper.createSection(),
-					eColumn1 = DocumentHelper.createColumn( eSection ),
-					eColumn2 = DocumentHelper.createColumn( eSection ),
-					eButton1 = DocumentHelper.createButton( eColumn1 ),
-					eButton2 = DocumentHelper.createButton( eColumn1 );
+				const eSection = ElementsHelper.createSection(),
+					eColumn1 = ElementsHelper.createColumn( eSection ),
+					eColumn2 = ElementsHelper.createColumn( eSection ),
+					eButton1 = ElementsHelper.createButton( eColumn1 ),
+					eButton2 = ElementsHelper.createButton( eColumn1 );
 
-				DocumentHelper.multiMove( [ eButton1, eButton2 ], eColumn2 );
+				ElementsHelper.multiMove( [ eButton1, eButton2 ], eColumn2 );
 
 				// Validate.
 				assert.equal( eColumn1.view.collection.length, 0,

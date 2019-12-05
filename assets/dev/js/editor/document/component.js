@@ -1,8 +1,13 @@
+import BaseComponent from 'elementor-common/components/component';
+import BackwardsCompatibility from './backwards-compatibility.js';
 import * as Hooks from './callback/hooks/';
 import * as Events from './callback/events/';
-import BackwardsCompatibility from './backwards-compatibility.js';
 
-export default class Component extends elementorModules.common.Component {
+export default class Component extends BaseComponent {
+	getNamespace() {
+		return 'document';
+	}
+
 	onInit() {
 		new BackwardsCompatibility();
 
@@ -10,10 +15,6 @@ export default class Component extends elementorModules.common.Component {
 
 		Object.values( Hooks ).forEach( ( hook ) => new hook() );
 		Object.values( Events ).forEach( ( event ) => new event() );
-	}
-
-	getNamespace() {
-		return 'document';
 	}
 
 	defaultCommands() {

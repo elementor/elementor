@@ -45,6 +45,8 @@ export class Paste extends Base {
 				} else if ( pasteOptions.isValidGrandChild ) {
 					options.rebuild = true;
 				}
+			} else if ( 'column' === container.type ) {
+				options.at = container.model.get( 'elements' ).length;
 			}
 
 			if ( Object.values( pasteOptions ).some( ( opt ) => !! opt ) ) {

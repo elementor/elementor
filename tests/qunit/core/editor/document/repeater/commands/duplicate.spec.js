@@ -1,14 +1,15 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
+import RepeaterHelper from '../helper';
 import HistoryHelper from '../../history/helper';
 
 export const Duplicate = () => {
 	QUnit.module( 'Duplicate', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn );
 
-				DocumentHelper.repeaterDuplicate( eTabs, 'tabs', 1 );
+				RepeaterHelper.duplicate( eTabs, 'tabs', 1 );
 
 				// Check.
 				assert.equal( eTabs.settings.get( 'tabs' ).length, 3 );
@@ -16,23 +17,23 @@ export const Duplicate = () => {
 
 			QUnit.test( 'Unique ID', ( assert ) => {
 				const duplicatedIndex = 1,
-					eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn ),
+					eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn ),
 					eItem = eTabs.settings.get( 'tabs' ).at( duplicatedIndex ),
-					eDuplicatedItem = DocumentHelper.repeaterDuplicate( eTabs, 'tabs', duplicatedIndex );
+					eDuplicatedItem = RepeaterHelper.duplicate( eTabs, 'tabs', duplicatedIndex );
 
 				// Check ids are unique.
 				assert.notEqual( eItem.get( '_id' ), eDuplicatedItem.get( '_id' ) );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn ),
 					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
 
-				DocumentHelper.repeaterDuplicate( eTabs, 'tabs', 1 );
+				RepeaterHelper.duplicate( eTabs, 'tabs', 1 );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'duplicate', 'Tabs' );
@@ -55,15 +56,15 @@ export const Duplicate = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs1 = DocumentHelper.createTabs( eColumn ),
-					eTabs2 = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs1 = ElementsHelper.createTabs( eColumn ),
+					eTabs2 = ElementsHelper.createTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					originalItemsCount = eTabs1.settings.get( 'tabs' ).length;
 
-				DocumentHelper.multiRepeaterDuplicate( [ eTabs1, eTabs2 ], 'tabs', 1 );
+				RepeaterHelper.multiDuplicate( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'duplicate', 'elements' );

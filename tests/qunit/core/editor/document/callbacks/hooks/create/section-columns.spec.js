@@ -1,21 +1,21 @@
-import DocumentHelper from '../../../helper';
+import ElementsHelper from '../../../elements/helper';
 
 export const SectionColumns = () => {
 	QUnit.module( 'SectionColumns', () => {
 		QUnit.test( 'apply(): with structure', ( assert ) => {
 			const structure = 10,
-				eSection = DocumentHelper.createSectionStructure( 1, structure );
+				eSection = ElementsHelper.createSectionStructure( 1, structure );
 
 			assert.equal( eSection.settings.get( 'structure' ), structure );
 		} );
 
-		// TODO: Handle it somehow cause failure of many tests.
+		// TODO: I don't know why but this cause of mass tests failure.
 		// QUnit.test( 'apply(): with invalid structure', ( assert ) => {
 		// 	const structure = 120;
 		//
 		// 	assert.throws(
 		// 		() => {
-		// 			DocumentHelper.createSectionStructure( 1, structure );
+		// 			ElementsHelper.createSectionStructure( 1, structure );
 		// 		},
 		// 		new TypeError( 'The provided structure doesn\'t match the columns count.' )
 		// 	);

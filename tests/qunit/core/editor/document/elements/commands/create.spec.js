@@ -1,11 +1,11 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 
 export const Create = () => {
 	QUnit.module( 'Create', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Section', ( assert ) => {
-				const eSection = DocumentHelper.createSection( 1 ),
+				const eSection = ElementsHelper.createSection( 1 ),
 					isSectionCreated = Boolean( elementor.getPreviewContainer().view.children.findByModel( eSection.model ) );
 
 				// Check.
@@ -14,7 +14,7 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Column', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
 					isColumnCreated = elementor.getPreviewContainer().view.children.some( ( a ) => {
 						return a.children.findByModel( eColumn.model );
 					} );
@@ -25,8 +25,8 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Widget', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eButton = DocumentHelper.createButton( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eButton = ElementsHelper.createButton( eColumn ),
 					isButtonCreated = Boolean( eColumn.view.children.findByModel( eButton.model ) );
 
 				// Check button exist.
@@ -34,10 +34,10 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Widget: Inner Section', ( assert ) => {
-				const eSection = DocumentHelper.createSection( 1 ),
+				const eSection = ElementsHelper.createSection( 1 ),
 					{ defaultInnerSectionColumns } = eSection.view,
 					eColumn = eSection.view.children.findByIndex( 0 ).getContainer(),
-					eInnerSection = DocumentHelper.createInnerSection( eColumn ),
+					eInnerSection = ElementsHelper.createInnerSection( eColumn ),
 					isInnerSectionCreated = Boolean( eColumn.view.children.findByModel( eInnerSection.model ) );
 
 				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
@@ -46,9 +46,9 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Widget: Custom Position', ( assert ) => {
-				const eButton = DocumentHelper.createAutoButton();
+				const eButton = ElementsHelper.createAutoButton();
 
-				DocumentHelper.settings( eButton, {
+				ElementsHelper.settings( eButton, {
 					_position: 'absolute',
 				} );
 
@@ -63,8 +63,8 @@ export const Create = () => {
 
 			QUnit.module( 'History', () => {
 				QUnit.test( 'Section', ( assert ) => {
-					const eSection = DocumentHelper.createSection( 1 ),
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const eSection = ElementsHelper.createSection( 1 ),
+						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Section' );
@@ -83,9 +83,9 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Column', ( assert ) => {
-					const eSection = DocumentHelper.createSection(),
-						eColumn = DocumentHelper.createColumn( eSection ),
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const eSection = ElementsHelper.createSection(),
+						eColumn = ElementsHelper.createColumn( eSection ),
+						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Column' );
@@ -104,8 +104,8 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widget', ( assert ) => {
-					const eWidget = DocumentHelper.createAutoButton(),
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const eWidget = ElementsHelper.createAutoButton(),
+						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Button' );
@@ -124,9 +124,9 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widget: Inner Section', ( assert ) => {
-					const eColumn = DocumentHelper.createSection( 1, true ),
-						eInnerSection = DocumentHelper.createInnerSection( eColumn ),
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes,
+					const eColumn = ElementsHelper.createSection( 1, true ),
+						eInnerSection = ElementsHelper.createInnerSection( eColumn ),
+						historyItem = HistoryHelper.getFirstItem().attributes,
 						{ defaultInnerSectionColumns } = eInnerSection.view,
 						innerSectionColumnsIds = [];
 
@@ -167,9 +167,9 @@ export const Create = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Columns', ( assert ) => {
-				const eSection1 = DocumentHelper.createSection(),
-					eSection2 = DocumentHelper.createSection(),
-					eColumns = DocumentHelper.multiCreateColumn( [ eSection1, eSection2 ] );
+				const eSection1 = ElementsHelper.createSection(),
+					eSection2 = ElementsHelper.createSection(),
+					eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] );
 
 				// Check columns exist.
 				let count = 1;
@@ -184,9 +184,9 @@ export const Create = () => {
 			} );
 
 			QUnit.test( 'Widgets', ( assert ) => {
-				const eColumn1 = DocumentHelper.createSection( 1, true ),
-					eColumn2 = DocumentHelper.createSection( 1, true ),
-					eButtons = DocumentHelper.multiCreateButton( [ eColumn1, eColumn2 ] ),
+				const eColumn1 = ElementsHelper.createSection( 1, true ),
+					eColumn2 = ElementsHelper.createSection( 1, true ),
+					eButtons = ElementsHelper.multiCreateButton( [ eColumn1, eColumn2 ] ),
 					isButton1Created = Boolean( eColumn1.view.children.findByModel( eButtons[ 0 ].model ) ),
 					isButton2Created = Boolean( eColumn2.view.children.findByModel( eButtons[ 1 ].model ) );
 
@@ -197,10 +197,10 @@ export const Create = () => {
 
 			QUnit.module( 'History', () => {
 				QUnit.test( 'Columns', ( assert ) => {
-					const eSection1 = DocumentHelper.createSection(),
-						eSection2 = DocumentHelper.createSection(),
-						eColumns = DocumentHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const eSection1 = ElementsHelper.createSection(),
+						eSection2 = ElementsHelper.createSection(),
+						eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
+						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Column' );
@@ -219,8 +219,8 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widgets', ( assert ) => {
-					const eWidgets = DocumentHelper.multiCreateAutoButton(),
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const eWidgets = ElementsHelper.multiCreateAutoButton(),
+						historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Button' );
@@ -238,10 +238,10 @@ export const Create = () => {
 				} );
 
 				QUnit.test( 'Widgets: Inner Section', ( assert ) => {
-					const eColumn1 = DocumentHelper.createSection( 1, true ),
-						eColumn2 = DocumentHelper.createSection( 1, true ),
-						eInnerSections = DocumentHelper.multiCreateInnerSection( [ eColumn1, eColumn2 ] ),
-						historyItem = elementor.history.history.getItems().at( 0 ).attributes,
+					const eColumn1 = ElementsHelper.createSection( 1, true ),
+						eColumn2 = ElementsHelper.createSection( 1, true ),
+						eInnerSections = ElementsHelper.multiCreateInnerSection( [ eColumn1, eColumn2 ] ),
+						historyItem = HistoryHelper.getFirstItem().attributes,
 						{ defaultInnerSectionColumns } = eInnerSections[ 0 ].view,
 						innerSectionColumnsIds = {};
 

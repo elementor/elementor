@@ -1,4 +1,4 @@
-import elementor from './js/editor.js';
+import elementor from './js/editor-base.spec.js';
 import section from './mock/elments/section.json';
 import column from './mock/elments/column.json';
 import button from './mock/elments/button.json';

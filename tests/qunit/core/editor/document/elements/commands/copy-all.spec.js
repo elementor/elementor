@@ -1,21 +1,21 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 
 export const CopyAll = () => {
 	QUnit.module( 'CopyAll', () => {
 		QUnit.test( 'Single Selection', ( assert ) => {
-			const eSection = DocumentHelper.createSection( 1 ),
-				eColumn = DocumentHelper.createColumn( eSection ),
+			const eSection = ElementsHelper.createSection( 1 ),
+				eColumn = ElementsHelper.createColumn( eSection ),
 				eButtonsCount = 2;
 
 			for ( let i = 0; i < eButtonsCount; ++i ) {
-				DocumentHelper.createButton( eColumn );
+				ElementsHelper.createButton( eColumn );
 			}
 
-			DocumentHelper.copyAll();
+			ElementsHelper.copyAll();
 
-			DocumentHelper.empty();
+			ElementsHelper.empty();
 
-			DocumentHelper.paste( elementor.getPreviewContainer(), true );
+			ElementsHelper.paste( elementor.getPreviewContainer(), true );
 
 			assert.equal( elementor.elements.at( 0 ).get( 'elements' ).at( 1 ).get( 'elements' ).length, eButtonsCount,
 				`'${ eButtonsCount }' buttons were created.` );

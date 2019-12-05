@@ -1,6 +1,7 @@
+import BaseComponent from 'elementor-common/components/component';
 import * as Commands from './commands/';
 
-export default class Component extends elementorModules.common.Component {
+export default class Component extends BaseComponent {
 	__construct( args ) {
 		super.__construct( args );
 
@@ -14,6 +15,22 @@ export default class Component extends elementorModules.common.Component {
 
 	getNamespace() {
 		return 'document/history';
+	}
+
+	getCommands() {
+		return {
+			'add-transaction': ( args ) => ( new Commands.AddTransaction( args ).run() ),
+			'delete-log': ( args ) => ( new Commands.DeleteLog( args ).run() ),
+			'delete-transaction': ( args ) => ( new Commands.DeleteTransaction( args ).run() ),
+			'end-log': ( args ) => ( new Commands.EndLog( args ).run() ),
+			'end-transaction': ( args ) => ( new Commands.EndTransaction( args ).run() ),
+			'log-sub-item': ( args ) => ( new Commands.LogSubItem( args ).run() ),
+			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
+			'start-transaction': ( args ) => ( new Commands.StartTransaction( args ).run() ),
+
+			undo: () => elementor.history.history.navigate(),
+			redo: () => elementor.history.history.navigate( true ),
+		};
 	}
 
 	normalizeLogTitle( args ) {
@@ -61,21 +78,5 @@ export default class Component extends elementorModules.common.Component {
 		} );
 
 		return result;
-	}
-
-	getCommands() {
-		return {
-			'add-transaction': ( args ) => ( new Commands.AddTransaction( args ).run() ),
-			'delete-log': ( args ) => ( new Commands.DeleteLog( args ).run() ),
-			'delete-transaction': ( args ) => ( new Commands.DeleteTransaction( args ).run() ),
-			'end-log': ( args ) => ( new Commands.EndLog( args ).run() ),
-			'end-transaction': ( args ) => ( new Commands.EndTransaction( args ).run() ),
-			'log-sub-item': ( args ) => ( new Commands.LogSubItem( args ).run() ),
-			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
-			'start-transaction': ( args ) => ( new Commands.StartTransaction( args ).run() ),
-
-			undo: () => elementor.history.history.navigate(),
-			redo: () => elementor.history.history.navigate( true ),
-		};
 	}
 }

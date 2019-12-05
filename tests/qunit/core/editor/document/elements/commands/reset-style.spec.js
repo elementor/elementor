@@ -1,16 +1,16 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 
 export const ResetStyle = () => {
 	QUnit.module( 'ResetStyle', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonStyled = DocumentHelper.createAutoButtonStyled();
+				const eButtonStyled = ElementsHelper.createAutoButtonStyled();
 
 				// Ensure editor saver.
 				elementor.saver.setFlagEditorChange( false );
 
-				DocumentHelper.resetStyle( eButtonStyled );
+				ElementsHelper.resetStyle( eButtonStyled );
 
 				// Check pasted style exist.
 				assert.equal( eButtonStyled.settings.attributes.background_color, '',
@@ -20,14 +20,14 @@ export const ResetStyle = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetStyled = DocumentHelper.createAutoButtonStyled(),
+				const eWidgetStyled = ElementsHelper.createAutoButtonStyled(),
 					BackgroundBeforeReset = eWidgetStyled.settings.get( 'background_color' ); // Black
 
-				DocumentHelper.resetStyle( eWidgetStyled );
+				ElementsHelper.resetStyle( eWidgetStyled );
 
 				//const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
@@ -48,10 +48,10 @@ export const ResetStyle = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonStyled1 = DocumentHelper.createAutoButtonStyled(),
-					eButtonStyled2 = DocumentHelper.createAutoButtonStyled();
+				const eButtonStyled1 = ElementsHelper.createAutoButtonStyled(),
+					eButtonStyled2 = ElementsHelper.createAutoButtonStyled();
 
-				DocumentHelper.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
+				ElementsHelper.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
 
 				// Check pasted style exist.
 				assert.equal( eButtonStyled1.model.attributes.settings.attributes.background_color, '',
@@ -61,13 +61,13 @@ export const ResetStyle = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetsStyled = DocumentHelper.multiCreateAutoButtonStyled(),
+				const eWidgetsStyled = ElementsHelper.multiCreateAutoButtonStyled(),
 					backgroundBeforeReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' );
 
-				DocumentHelper.multiResetStyle( eWidgetsStyled );
+				ElementsHelper.multiResetStyle( eWidgetsStyled );
 
 				const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );

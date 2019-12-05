@@ -1,11 +1,11 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import CommonHelper from '../../../../common/components/helper';
 
 export const Copy = () => {
 	QUnit.test( 'Copy', ( assert ) => {
 		elementorCommon.storage.set( 'clipboard', '' );
 
-		const eButton = DocumentHelper.createAutoButton();
+		const eButton = ElementsHelper.createAutoButton();
 
 		CommonHelper.runShortcut( 67 /* c */, true );
 
