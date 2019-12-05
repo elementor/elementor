@@ -58,11 +58,6 @@ export class Create extends History {
 
 			const createdContainer = container.view.addElement( model, options ).getContainer();
 
-			if ( options.edit && this.isHistoryActive() ) {
-				// TODO: remove trigger. run directly.
-				createdContainer.model.trigger( 'request:edit' );
-			}
-
 			result.push( createdContainer );
 
 			/**

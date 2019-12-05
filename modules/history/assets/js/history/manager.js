@@ -2,6 +2,8 @@ import ItemModel from './item-model';
 
 /**
  * TODO: consider refactor this class.
+ * TODO: should be `Document/History` component.
+ * TODO: should be attached to elementor.history.history + BC.
  */
 export default class HistoryManager {
 	currentItemID = null;
@@ -203,7 +205,7 @@ export default class HistoryManager {
 		}
 
 		if ( item.get( 'editing_started' ) ) {
-			if ( ! editorSaved ) {
+			if ( ! this.editorSaved ) {
 				$e.run( 'document/save/set-is-modified', { status: false } );
 			}
 		}
