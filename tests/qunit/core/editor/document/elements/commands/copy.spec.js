@@ -1,12 +1,12 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 
 export const Copy = () => {
 	QUnit.module( 'Copy', () => {
 		QUnit.test( 'Single Selection', ( assert ) => {
-			const eColumn = DocumentHelper.createSection( 1, true ),
-				eButton = DocumentHelper.createButton( eColumn );
+			const eColumn = ElementsHelper.createSection( 1, true ),
+				eButton = ElementsHelper.createButton( eColumn );
 
-			DocumentHelper.copy( eButton );
+			ElementsHelper.copy( eButton );
 
 			const storage = elementorCommon.storage.get( 'clipboard' );
 
@@ -18,10 +18,10 @@ export const Copy = () => {
 				eColumns = [];
 
 			for ( let i = 0; i < columnsCount; i++ ) {
-				eColumns.push( DocumentHelper.createAutoButton() );
+				eColumns.push( ElementsHelper.createAutoButton() );
 			}
 
-			DocumentHelper.multiCopy( eColumns );
+			ElementsHelper.multiCopy( eColumns );
 
 			const storage = elementorCommon.storage.get( 'clipboard' );
 

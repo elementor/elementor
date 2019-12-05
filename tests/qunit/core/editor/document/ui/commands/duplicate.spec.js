@@ -1,9 +1,9 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import CommonHelper from '../../../../common/components/helper';
 
 export const Duplicate = () => {
 	QUnit.test( 'Duplicate', ( assert ) => {
-		const eButton = DocumentHelper.createAutoButton();
+		const eButton = ElementsHelper.createAutoButton();
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', eButton.view );
 

@@ -1,15 +1,16 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
+import RepeaterHelper from '../helper';
 import HistoryHelper from '../../history/helper';
 
 export const Settings = () => {
 	QUnit.module( 'Settings', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn ),
 					tabTitle = 'This is was changed';
 
-				DocumentHelper.repeaterSettings( eTabs, 'tabs', 1, {
+				RepeaterHelper.settings( eTabs, 'tabs', 1, {
 					tab_title: tabTitle,
 				} );
 
@@ -24,21 +25,21 @@ export const Settings = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn ),
 					tabTitle = 'This is was changed',
 					index = 1,
 					eTab = eTabs.settings.get( 'tabs' ).at( index ),
 					originalTitle = eTab.get( 'tab_title' );
 
-				DocumentHelper.repeaterSettings( eTabs, 'tabs', index, {
+				RepeaterHelper.settings( eTabs, 'tabs', index, {
 					tab_title: tabTitle,
 				} );
 
 				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', `Tabs Item#${ index + 1 }` );
@@ -62,12 +63,12 @@ export const Settings = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs1 = DocumentHelper.createTabs( eColumn ),
-					eTabs2 = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs1 = ElementsHelper.createTabs( eColumn ),
+					eTabs2 = ElementsHelper.createTabs( eColumn ),
 					tabTitle = 'This is was changed';
 
-				DocumentHelper.multiRepeaterSettings( [ eTabs1, eTabs2 ], 'tabs', 1, {
+				RepeaterHelper.multiSettings( [ eTabs1, eTabs2 ], 'tabs', 1, {
 					tab_title: tabTitle,
 				} );
 
@@ -83,22 +84,22 @@ export const Settings = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs1 = DocumentHelper.createTabs( eColumn ),
-					eTabs2 = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs1 = ElementsHelper.createTabs( eColumn ),
+					eTabs2 = ElementsHelper.createTabs( eColumn ),
 					index = 1,
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					tabTitle = 'This is was changed',
 					defaultTitle = eTabs1.settings.get( 'tabs' ).at( index ).get( 'tab_title' );
 
-				DocumentHelper.multiRepeaterSettings( eMultiTabs, 'tabs', index, {
+				RepeaterHelper.multiSettings( eMultiTabs, 'tabs', index, {
 					tab_title: tabTitle,
 				} );
 
 				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'elements' );

@@ -1,20 +1,9 @@
+import ComponentModal from 'elementor-common/components/component-modal';
 import FinderLayout from './modal-layout';
 
-export default class extends elementorModules.common.ComponentModal {
+export default class Component extends ComponentModal {
 	getNamespace() {
 		return 'finder';
-	}
-
-	getModalLayout() {
-		return FinderLayout;
-	}
-
-	defaultCommands() {
-		return Object.assign( super.defaultCommands(), {
-			'navigate/down': () => this.getItemsView().activateNextItem(),
-			'navigate/up': () => this.getItemsView().activateNextItem( true ),
-			'navigate/select': ( event ) => this.getItemsView().goToActiveItem( event ),
-		} );
 	}
 
 	defaultShortcuts() {
@@ -45,6 +34,18 @@ export default class extends elementorModules.common.ComponentModal {
 
 			},
 		};
+	}
+
+	defaultCommands() {
+		return Object.assign( super.defaultCommands(), {
+			'navigate/down': () => this.getItemsView().activateNextItem(),
+			'navigate/up': () => this.getItemsView().activateNextItem( true ),
+			'navigate/select': ( event ) => this.getItemsView().goToActiveItem( event ),
+		} );
+	}
+
+	getModalLayout() {
+		return FinderLayout;
 	}
 
 	getItemsView() {

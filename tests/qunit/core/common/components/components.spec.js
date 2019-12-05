@@ -1,10 +1,12 @@
 import CommonHelper from './helper';
+import BaseComponent from 'elementor-common/components/component';
+import BaseComponentModal from 'elementor-common/components/component-modal';
 
 jQuery( () => {
 	QUnit.module( 'Components' );
 
 	QUnit.test( 'Register Component', ( assert ) => {
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 				getNamespace() {
 					return 'test';
 				}
@@ -19,7 +21,7 @@ jQuery( () => {
 	QUnit.test( 'Register routes', ( assert ) => {
 		const namespace = 'register-routes';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -41,7 +43,7 @@ jQuery( () => {
 	} );
 
 	QUnit.test( 'Register routes via tabs', ( assert ) => {
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return 'test';
 			}
@@ -63,19 +65,19 @@ jQuery( () => {
 	} );
 
 	QUnit.test( 'Register without namespace', ( assert ) => {
-		const Component = class extends elementorModules.common.Component {};
+		const Component = class extends BaseComponent {};
 
 		assert.throws(
 			() => {
 				const instance = new Component();
 				instance.getNamespace();
 			},
-			new Error( 'getNamespace must be override.' )
+			new Error( 'Component.getNamespace() should be implemented, please provide \'getNamespace\' functionality.' )
 		);
 	} );
 
 	QUnit.test( 'Register commands', ( assert ) => {
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return 'test-commands';
 			}
@@ -97,7 +99,7 @@ jQuery( () => {
 	QUnit.test( 'Register shortcuts', ( assert ) => {
 		const namespace = 'register-shortcuts';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -126,7 +128,7 @@ jQuery( () => {
 	} );
 
 	QUnit.test( 'Register shortcuts missing command', ( assert ) => {
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return 'test-shortcuts-no-command';
 			}
@@ -162,7 +164,7 @@ jQuery( () => {
 	QUnit.test( 'Error on re-register command', ( assert ) => {
 		const namespace = 're-register-command';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -199,7 +201,7 @@ jQuery( () => {
 		const namespace = 'run-command',
 			command = namespace + '/commandA';
 		let commandStatus = 'beforeRun';
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -228,7 +230,7 @@ jQuery( () => {
 
 		const namespace = 'run-command-with-args';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -257,7 +259,7 @@ jQuery( () => {
 		let onBeforeStatus = 'beforeRun',
 			onAfterStatus = 'beforeRun';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -287,7 +289,7 @@ jQuery( () => {
 	QUnit.test( 'Check if route to is activate the component', ( assert ) => {
 		const namespace = 'route-to-activate-component';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -311,7 +313,7 @@ jQuery( () => {
 	QUnit.test( 'Ensure that run command is not activate the component', ( assert ) => {
 		const namespace = 'run-command-not-activate-component';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -335,7 +337,7 @@ jQuery( () => {
 	QUnit.test( 'Run command with dependency', ( assert ) => {
 		let commandStatus = 'beforeRun';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return 'run-command-with-dependency';
 			}
@@ -388,7 +390,7 @@ jQuery( () => {
 		let routeAStatus = 'beforeRouteA',
 			routeBStatus = 'beforeRouteA';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -429,7 +431,7 @@ jQuery( () => {
 		const namespace = 'route-with-args',
 			routeA = namespace + '/routeA';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -462,7 +464,7 @@ jQuery( () => {
 		let onBeforeStatus = 'beforeRoute',
 			onAfterStatus = 'beforeRoute';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -492,7 +494,7 @@ jQuery( () => {
 	QUnit.test( 'Route to tab & activate tab', ( assert ) => {
 		const namespace = 'route-to-tab';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -534,7 +536,7 @@ jQuery( () => {
 	QUnit.test( 'Add tab', ( assert ) => {
 		const namespace = 'add-tab';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			__construct( args ) {
 				super.__construct( args );
 
@@ -582,7 +584,7 @@ jQuery( () => {
 	QUnit.test( 'Check if route.to is activate the component', ( assert ) => {
 		const namespace = 'route-activate-component';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -606,7 +608,7 @@ jQuery( () => {
 	QUnit.test( 'Route with dependency', ( assert ) => {
 		const namespace = 'route-with-dependency';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -634,7 +636,7 @@ jQuery( () => {
 
 		let routeCount = 0;
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -661,7 +663,7 @@ jQuery( () => {
 
 		let openCount = 0;
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -692,7 +694,7 @@ jQuery( () => {
 
 		let openCount = 0;
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -728,7 +730,7 @@ jQuery( () => {
 
 		let routeStatus = 'notChanged';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -759,7 +761,7 @@ jQuery( () => {
 
 		let routeStatus = 'beforeRoute';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -790,7 +792,7 @@ jQuery( () => {
 			argsA: 1,
 		};
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -828,7 +830,7 @@ jQuery( () => {
 			argsA: 1,
 		};
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -856,7 +858,7 @@ jQuery( () => {
 
 		let commandStatus = 'beforeRun';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -891,7 +893,7 @@ jQuery( () => {
 
 		let commandStatus = 'beforeRunInScope';
 
-		const Component = class extends elementorModules.common.Component {
+		const Component = class extends BaseComponent {
 			getNamespace() {
 				return namespace;
 			}
@@ -946,7 +948,7 @@ jQuery( () => {
 		// Second component with same shortcut.
 		let secondCommandStatus = 'beforeRun';
 
-		const SecondComponent = class extends elementorModules.common.Component {
+		const SecondComponent = class extends BaseComponent {
 			getNamespace() {
 				return 'second-' + namespace;
 			}
@@ -988,7 +990,7 @@ jQuery( () => {
 	QUnit.test( 'Modal component without a modal layout', ( assert ) => {
 		const namespace = 'modal-component-without-a-modal-layout';
 
-		const Component = class extends elementorModules.common.ComponentModal {
+		const Component = class extends BaseComponentModal {
 			getNamespace() {
 				return namespace;
 			}
@@ -1000,14 +1002,14 @@ jQuery( () => {
 			() => {
 				instance.getModalLayout();
 			},
-			new Error( instance.getErrorMessage( 'forceMethodImplementation', 'getModalLayout' ) )
+			new Error( "Component.getModalLayout() should be implemented, please provide 'getModalLayout' functionality." )
 		);
 	} );
 
 	QUnit.test( 'Modal component with esc shortcut', ( assert ) => {
 		const namespace = 'modal-component-with-esc-shortcut';
 
-		const Component = class extends elementorModules.common.ComponentModal {
+		const Component = class extends BaseComponentModal {
 			getNamespace() {
 				return namespace;
 			}
@@ -1032,7 +1034,7 @@ jQuery( () => {
 		// Second component.
 		const secondNamespace = 'second-' + namespace;
 
-		const SecondComponent = class extends elementorModules.common.ComponentModal {
+		const SecondComponent = class extends BaseComponentModal {
 			getNamespace() {
 				return secondNamespace;
 			}

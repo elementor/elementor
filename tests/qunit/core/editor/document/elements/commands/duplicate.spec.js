@@ -1,16 +1,16 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 
 export const Duplicate = () => {
 	QUnit.module( 'Duplicate', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eButton = DocumentHelper.createButton( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eButton = ElementsHelper.createButton( eColumn ),
 					eButtonDuplicateCount = 2;
 
 				for ( let i = 0; i < eButtonDuplicateCount; ++i ) {
-					const eDuplicatedButton = DocumentHelper.duplicate( eButton );
+					const eDuplicatedButton = ElementsHelper.duplicate( eButton );
 
 					// Check if duplicated buttons have unique ids.
 					assert.notEqual( eDuplicatedButton.id, eButton.id,
@@ -23,9 +23,9 @@ export const Duplicate = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidget = DocumentHelper.createAutoButton(),
-					eWidgetDuped = DocumentHelper.duplicate( eWidget ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const eWidget = ElementsHelper.createAutoButton(),
+					eWidgetDuped = ElementsHelper.duplicate( eWidget ),
+					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'duplicate', 'Button' );
@@ -46,11 +46,11 @@ export const Duplicate = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn1 = DocumentHelper.createSection( 1, true ),
-					eColumn2 = DocumentHelper.createSection( 1, true ),
-					eButtons = DocumentHelper.multiCreateButton( [ eColumn1, eColumn2 ] );
+				const eColumn1 = ElementsHelper.createSection( 1, true ),
+					eColumn2 = ElementsHelper.createSection( 1, true ),
+					eButtons = ElementsHelper.multiCreateButton( [ eColumn1, eColumn2 ] );
 
-				DocumentHelper.multiDuplicate( eButtons );
+				ElementsHelper.multiDuplicate( eButtons );
 
 				// Check duplicated button exist.
 				assert.equal( eColumn1.view.children.length, 2, 'Two buttons were created.' );
@@ -58,9 +58,9 @@ export const Duplicate = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgets = DocumentHelper.multiCreateAutoButton(),
-					eWidgetsDuped = DocumentHelper.multiDuplicate( eWidgets ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const eWidgets = ElementsHelper.multiCreateAutoButton(),
+					eWidgetsDuped = ElementsHelper.multiDuplicate( eWidgets ),
+					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'duplicate', 'elements' );
