@@ -6,18 +6,6 @@
 		margin-bottom: 10px;
 	}
 
-	&__saved-colors-title {
-		font-size: 11px;
-		color: $editor-light;
-	}
-
-	&__saved-colors-edit {
-		font-size: 11px;
-		color: $editor-dark;
-		font-weight: 500;
-		cursor: pointer;
-	}
-
 	&__swatch-tool {
 		position: relative;
 		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
@@ -42,6 +30,7 @@
 		padding: 15px;
 		border: 1px dashed $editor-lightest;
 		text-align: center;
+		display: none;
 
 		&.elementor-active {
 			border-color: $editor-light;
@@ -62,32 +51,18 @@
 	}
 }
 
-.pcr-app {
-
-	&.elementor-color-picker--edit-mode {
-
-		.elementor-color-picker__saved-colors-edit {
-			color: $editor-success;
-		}
-	}
-
-	&:not(.elementor-color-picker--edit-mode) {
-
-		.elementor-color-picker {
-
-			&__dropping-area {
-				display: none;
-			}
-		}
-	}
-}
-
 .pcr-swatch {
 
 	&.pcr-active {
 
 		~ .elementor-color-picker__add-swatch {
-			display: none;
+			background-color: $editor-lightest;
+			pointer-events: none;
+			box-shadow: none;
+
+			i {
+				color: #fff;
+			}
 		}
 	}
 }

@@ -90,6 +90,8 @@ export class PasteStyle extends History {
 				targetContainer.view.allowRender = true;
 
 				targetContainer.render();
+
+				targetContainer.panel.refresh();
 			} );
 		} );
 	}
