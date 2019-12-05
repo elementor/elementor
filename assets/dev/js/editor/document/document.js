@@ -24,14 +24,23 @@ export default class Document {
 	revisions = null;
 
 	/**
+	 * Current container.
+	 *
+	 * @type {Container}
+	 */
+	container = null;
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create document.
 	 *
 	 * @param {number} id
+	 * @param {Container} container
 	 */
-	constructor( id ) {
+	constructor( id, container ) {
 		this.id = id;
+		this.container = container;
 
 		this.initialize();
 	}

@@ -11,9 +11,10 @@ export class Save extends Base {
 			onSuccess: null,
 		}, args );
 
-		const elements = elementor.elements.toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
-			settings = elementor.settings.page.model.toJSON( { remove: [ 'default' ] } ),
-			oldStatus = elementor.settings.page.model.get( 'post_status' ),
+		const container = elementor.documents.getCurrent().container,
+			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
+			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
+			oldStatus = container.settings.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
 
 		this.component.trigger( 'before:save', options )

@@ -30,7 +30,7 @@ export default class Manager {
 	initialize() {
 		// Get current document id.
 		const { id } = elementor.config.document,
-			document = new Document( id );
+			document = new Document( id, elementor.getPreviewContainer() );
 
 		// Add new document to manager.
 		this.currentDocument = this.add( document );

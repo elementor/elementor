@@ -756,12 +756,10 @@ const App = Marionette.Application.extend( {
 		elementorCommon.elements.$window.trigger( 'elementor:init' );
 
 		this.saver = $e.components.get( 'document/save' );
-		
+
 		this.initPreview();
 
 		this.logSite();
-
-		this.documents = new DocumentsManager();
 	},
 
 	onPreviewLoaded: function() {
@@ -839,6 +837,8 @@ const App = Marionette.Application.extend( {
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
+
+		this.documents = new DocumentsManager();
 
 		this.loaded = true;
 	},
