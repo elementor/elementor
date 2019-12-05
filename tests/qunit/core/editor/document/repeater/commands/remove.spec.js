@@ -1,27 +1,28 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
+import RepeaterHelper from '../helper';
 import HistoryHelper from '../../history/helper';
 
 export const Remove = () => {
 	QUnit.module( 'Remove', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn );
 
-				DocumentHelper.repeaterRemove( eTabs, 'tabs', 1 );
+				RepeaterHelper.remove( eTabs, 'tabs', 1 );
 
 				// Check.
 				assert.equal( eTabs.settings.get( 'tabs' ).length, 1 );
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn ),
 					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
 
-				DocumentHelper.repeaterRemove( eTabs, 'tabs', 1 );
+				RepeaterHelper.remove( eTabs, 'tabs', 1 );
 
-				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'remove', 'Tabs' );
@@ -44,11 +45,11 @@ export const Remove = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs1 = DocumentHelper.createTabs( eColumn ),
-					eTabs2 = DocumentHelper.createTabs( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs1 = ElementsHelper.createTabs( eColumn ),
+					eTabs2 = ElementsHelper.createTabs( eColumn );
 
-				DocumentHelper.multiRepeaterRemove( [ eTabs1, eTabs2 ], 'tabs', 1 );
+				RepeaterHelper.multiRemove( [ eTabs1, eTabs2 ], 'tabs', 1 );
 
 				// Check.
 				assert.equal( eTabs1.settings.get( 'tabs' ).length, 1 );
@@ -56,15 +57,15 @@ export const Remove = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs1 = DocumentHelper.createTabs( eColumn ),
-					eTabs2 = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs1 = ElementsHelper.createTabs( eColumn ),
+					eTabs2 = ElementsHelper.createTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					originalItemsCount = eTabs1.settings.get( 'tabs' ).length;
 
-				DocumentHelper.multiRepeaterRemove( eMultiTabs, 'tabs', 1 );
+				RepeaterHelper.multiRemove( eMultiTabs, 'tabs', 1 );
 
-				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'remove', 'elements' );

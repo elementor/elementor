@@ -1,4 +1,5 @@
 import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 
 export const DEFAULT_PASTE_RULES = {
 	section: {
@@ -109,8 +110,8 @@ export const Paste = () => {
 			};
 
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eButton = DocumentHelper.createButton( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eButton = ElementsHelper.createButton( eColumn );
 
 				DocumentHelper.UICopyPaste( eButton, eColumn );
 
@@ -122,7 +123,7 @@ export const Paste = () => {
 			QUnit.test( 'Rules', ( assert ) => {
 				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
 					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
-						DocumentHelper.empty();
+						ElementsHelper.empty();
 
 						const source = DocumentHelper.autoCreate( sourceElType ),
 							target = DocumentHelper.autoCreate( targetElType ),

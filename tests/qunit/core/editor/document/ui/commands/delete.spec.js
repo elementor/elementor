@@ -1,9 +1,9 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import CommonHelper from '../../../../common/components/helper';
 
 export const Delete = () => {
 	QUnit.test( 'Delete', ( assert ) => {
-		const eButton = DocumentHelper.createAutoButton();
+		const eButton = ElementsHelper.createAutoButton();
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', eButton.view );
 

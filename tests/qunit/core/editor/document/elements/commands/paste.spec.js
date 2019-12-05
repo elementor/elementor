@@ -1,4 +1,4 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 
 // TODO: Check code coverage and add required tests.
@@ -6,15 +6,15 @@ export const Paste = () => {
 	QUnit.module( 'Paste', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eButton = DocumentHelper.createButton( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eButton = ElementsHelper.createButton( eColumn );
 
-				DocumentHelper.copy( eButton );
+				ElementsHelper.copy( eButton );
 
 				// Ensure editor saver.
 				elementor.saver.setFlagEditorChange( false );
 
-				DocumentHelper.paste( eColumn );
+				ElementsHelper.paste( eColumn );
 
 				// Check.
 				assert.equal( elementor.elements.at( 0 ).get( 'elements' ).at( 0 ).get( 'elements' ).length, 2,
@@ -24,13 +24,13 @@ export const Paste = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eWidget = DocumentHelper.createButton( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eWidget = ElementsHelper.createButton( eColumn );
 
-				DocumentHelper.copy( eWidget );
+				ElementsHelper.copy( eWidget );
 
-				const ePastedWidget = DocumentHelper.paste( eColumn ),
-					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+				const ePastedWidget = ElementsHelper.paste( eColumn ),
+					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'elements' );
@@ -51,14 +51,14 @@ export const Paste = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eSection1 = DocumentHelper.createSection(),
-					eSection2 = DocumentHelper.createSection(),
-					eColumns = DocumentHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
-					eButtons = DocumentHelper.multiCreateButton( eColumns );
+				const eSection1 = ElementsHelper.createSection(),
+					eSection2 = ElementsHelper.createSection(),
+					eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
+					eButtons = ElementsHelper.multiCreateButton( eColumns );
 
-				DocumentHelper.copy( eButtons[ 0 ] );
+				ElementsHelper.copy( eButtons[ 0 ] );
 
-				DocumentHelper.multiPaste( eColumns );
+				ElementsHelper.multiPaste( eColumns );
 
 				// Check pasted button exist.
 				let count = 1;
@@ -70,13 +70,13 @@ export const Paste = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eWidget = DocumentHelper.createButton( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eWidget = ElementsHelper.createButton( eColumn );
 
-				DocumentHelper.copy( eWidget );
+				ElementsHelper.copy( eWidget );
 
-				const ePastedWidget = DocumentHelper.paste( eColumn ),
-					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+				const ePastedWidget = ElementsHelper.paste( eColumn ),
+					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'elements' );

@@ -1,15 +1,15 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 
 export const Settings = () => {
 	QUnit.module( 'Settings', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButton = DocumentHelper.createAutoButton(),
+				const eButton = ElementsHelper.createAutoButton(),
 					text = 'i test it';
 
 				// Change button text.
-				DocumentHelper.settings( eButton, { text } );
+				ElementsHelper.settings( eButton, { text } );
 
 				const done = assert.async(); // Pause the test till done.
 
@@ -24,17 +24,17 @@ export const Settings = () => {
 
 			QUnit.module( 'History', () => {
 				QUnit.test( 'Simple', ( assert ) => {
-					const eWidget = DocumentHelper.createAutoButton(),
+					const eWidget = ElementsHelper.createAutoButton(),
 						defaultText = eWidget.settings.attributes.text,
 						text = 'i test it';
 
 					// Change button text.
-					DocumentHelper.settings( eWidget, { text } );
+					ElementsHelper.settings( eWidget, { text } );
 
 					const done = assert.async(); // Pause the test till done.
 
 					setTimeout( () => {
-						const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+						const historyItem = HistoryHelper.getFirstItem().attributes;
 
 						// Exist in history.
 						HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Button' );
@@ -61,12 +61,12 @@ export const Settings = () => {
 							},
 						};
 
-					DocumentHelper.settings( eDocument, settings );
+					ElementsHelper.settings( eDocument, settings );
 
 					const done = assert.async();
 
 					setTimeout( () => {
-						const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+						const historyItem = HistoryHelper.getFirstItem().attributes;
 
 						// Exist in history.
 						HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Post' );
@@ -95,12 +95,12 @@ export const Settings = () => {
 							elementor_default_generic_fonts: 'fake',
 						};
 
-					DocumentHelper.settings( eGeneralSettings, settings );
+					ElementsHelper.settings( eGeneralSettings, settings );
 
 					const done = assert.async();
 
 					setTimeout( () => {
-						const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+						const historyItem = HistoryHelper.getFirstItem().attributes;
 
 						// Exist in history.
 						HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Global Settings' );
@@ -132,12 +132,12 @@ export const Settings = () => {
 							elementor_global_image_lightbox: 'fake',
 						};
 
-					DocumentHelper.settings( eGeneralSettings, settings );
+					ElementsHelper.settings( eGeneralSettings, settings );
 
 					const done = assert.async();
 
 					setTimeout( () => {
-						const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+						const historyItem = HistoryHelper.getFirstItem().attributes;
 
 						// Exist in history.
 						HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Global Settings' );
@@ -165,13 +165,13 @@ export const Settings = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eSection1 = DocumentHelper.createSection(),
-					eSection2 = DocumentHelper.createSection(),
-					eColumns = DocumentHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
-					eButtons = DocumentHelper.multiCreateButton( eColumns ),
+				const eSection1 = ElementsHelper.createSection(),
+					eSection2 = ElementsHelper.createSection(),
+					eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
+					eButtons = ElementsHelper.multiCreateButton( eColumns ),
 					text = 'i test it';
 
-				DocumentHelper.multiSettings( eButtons, { text } );
+				ElementsHelper.multiSettings( eButtons, { text } );
 
 				const done = assert.async(); // Pause the test till done.
 
@@ -189,17 +189,17 @@ export const Settings = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgets = DocumentHelper.multiCreateAutoButton(),
+				const eWidgets = ElementsHelper.multiCreateAutoButton(),
 					text = 'i test it',
 					defaultText = eWidgets[ 0 ].settings.attributes.text;
 
 				// Change button text.
-				DocumentHelper.multiSettings( eWidgets, { text } );
+				ElementsHelper.multiSettings( eWidgets, { text } );
 
 				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
-					const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'elements' );

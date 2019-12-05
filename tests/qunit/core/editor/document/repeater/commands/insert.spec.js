@@ -1,14 +1,15 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
+import RepeaterHelper from '../helper';
 import HistoryHelper from '../../history/helper';
 
 export const Insert = () => {
 	QUnit.module( 'Insert', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn );
 
-				DocumentHelper.repeaterInsert( eTabs, 'tabs', {
+				RepeaterHelper.insert( eTabs, 'tabs', {
 					tab_title: 'Test Tab Title',
 					tab_content: 'Test Tab Content',
 				} );
@@ -18,16 +19,16 @@ export const Insert = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs = ElementsHelper.createTabs( eColumn ),
 					originalItemsCount = eTabs.settings.get( 'tabs' ).length;
 
-				DocumentHelper.repeaterInsert( eTabs, 'tabs', {
+				RepeaterHelper.insert( eTabs, 'tabs', {
 					tab_title: 'Test Tab Title',
 					tab_content: 'Test Tab Content',
 				} );
 
-				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Tabs' );
@@ -49,11 +50,11 @@ export const Insert = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs1 = DocumentHelper.createTabs( eColumn ),
-					eTabs2 = DocumentHelper.createTabs( eColumn );
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs1 = ElementsHelper.createTabs( eColumn ),
+					eTabs2 = ElementsHelper.createTabs( eColumn );
 
-				DocumentHelper.multiRepeaterInsert( [ eTabs1, eTabs2 ], 'tabs', {
+				RepeaterHelper.multiInsert( [ eTabs1, eTabs2 ], 'tabs', {
 					tab_title: 'Test Tab Title',
 					tab_content: 'Test Tab Content',
 				} );
@@ -64,18 +65,18 @@ export const Insert = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eColumn = DocumentHelper.createSection( 1, true ),
-					eTabs1 = DocumentHelper.createTabs( eColumn ),
-					eTabs2 = DocumentHelper.createTabs( eColumn ),
+				const eColumn = ElementsHelper.createSection( 1, true ),
+					eTabs1 = ElementsHelper.createTabs( eColumn ),
+					eTabs2 = ElementsHelper.createTabs( eColumn ),
 					eMultiTabs = [ eTabs1, eTabs2 ],
 					originalItemsCount = eTabs1.settings.get( 'tabs' ).length;
 
-				DocumentHelper.multiRepeaterInsert( eMultiTabs, 'tabs', {
+				RepeaterHelper.multiInsert( eMultiTabs, 'tabs', {
 					tab_title: 'Test Tab Title',
 					tab_content: 'Test Tab Content',
 				} );
 
-				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'elements' );

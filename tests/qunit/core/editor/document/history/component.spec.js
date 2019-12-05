@@ -1,12 +1,12 @@
-import DocumentHelper from '../helper';
+import ElementsHelper from '../elements/helper';
 import HistoryHelper from './helper';
 
 jQuery( () => {
 	QUnit.module( 'Component: document/history', ( hooks ) => {
 		hooks.beforeEach( () => {
-			DocumentHelper.empty();
+			ElementsHelper.empty();
 
-			elementor.documents.getCurrent().history.getItems().reset();
+			HistoryHelper.resetItems();
 		} );
 
 		// QUnit.test( 'Resize Column', ( assert ) => {
@@ -28,7 +28,7 @@ jQuery( () => {
 		//
 		// 	Elements.resizeColumn( eColumn1, newSize );
 		//
-		// 	const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+		// 	const historyItem = HistoryHelper.getFirstItem().attributes;
 		//
 		// 	// Exist in history.
 		// 	inHistoryValidate( assert, historyItem, 'change', 'Column' );
@@ -88,9 +88,9 @@ jQuery( () => {
 		QUnit.test( 'Saver Editor Flag', ( assert ) => {
 			elementor.saver.setFlagEditorChange( false );
 
-			DocumentHelper.createSection( 1 );
+			ElementsHelper.createSection( 1 );
 
-			const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+			const historyItem = HistoryHelper.getFirstItem().attributes;
 
 			// Saver editor flag is `true`.
 			assert.equal( elementor.saver.isEditorChanged(), true,
@@ -121,7 +121,7 @@ jQuery( () => {
 				// Do nothing (ignore).
 			}
 
-			const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 );
+			const historyItem = HistoryHelper.getFirstItem();
 
 			assert.equal( historyItem, undefined, 'History was rolled back.' );
 		} );

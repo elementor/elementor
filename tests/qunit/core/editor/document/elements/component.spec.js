@@ -1,12 +1,14 @@
 import DocumentHelper from '../helper';
+import ElementsHelper from '../elements/helper';
+import HistoryHelper from '../history/helper';
 import * as Commands from './commands/index.spec.js';
 
 jQuery( () => {
 	QUnit.module( 'Component: document/elements', ( hooks ) => {
 		hooks.beforeEach( () => {
-			DocumentHelper.empty();
+			ElementsHelper.empty();
 
-			elementor.documents.getCurrent().history.getItems().reset();
+			HistoryHelper.resetItems();
 		} );
 
 		DocumentHelper.testCommands( Commands );

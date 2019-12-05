@@ -1,10 +1,10 @@
-import DocumentHelper from '../../../helper';
+import ElementsHelper from '../../../elements/helper';
 
 export const SectionColumns = () => {
 	QUnit.module( 'SectionColumns', () => {
 		QUnit.test( 'apply(): with structure', ( assert ) => {
 			const structure = 10,
-				eSection = DocumentHelper.createSectionStructure( 1, structure );
+				eSection = ElementsHelper.createSectionStructure( 1, structure );
 
 			assert.equal( eSection.settings.get( 'structure' ), structure );
 		} );

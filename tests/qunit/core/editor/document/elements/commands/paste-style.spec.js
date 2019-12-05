@@ -1,20 +1,20 @@
-import DocumentHelper from '../../helper';
+import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonSimple = DocumentHelper.createAutoButton(),
-					eButtonStyled = DocumentHelper.createAutoButtonStyled(),
+				const eButtonSimple = ElementsHelper.createAutoButton(),
+					eButtonStyled = ElementsHelper.createAutoButtonStyled(),
 					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
 
-				DocumentHelper.copy( eButtonStyled );
+				ElementsHelper.copy( eButtonStyled );
 
 				// Ensure editor saver.
 				elementor.saver.setFlagEditorChange( false );
 
-				DocumentHelper.pasteStyle( eButtonSimple );
+				ElementsHelper.pasteStyle( eButtonSimple );
 
 				// Check
 				assert.equal( eButtonSimple.settings.attributes.background_color, eStyledButtonBackground,
@@ -24,16 +24,16 @@ export const PasteStyle = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetSimple = DocumentHelper.createAutoButton(),
-					eWidgetStyled = DocumentHelper.createAutoButtonStyled(),
+				const eWidgetSimple = ElementsHelper.createAutoButton(),
+					eWidgetStyled = ElementsHelper.createAutoButtonStyled(),
 					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' );
 
 				//widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
 
-				DocumentHelper.copy( eWidgetStyled );
-				DocumentHelper.pasteStyle( eWidgetSimple );
+				ElementsHelper.copy( eWidgetStyled );
+				ElementsHelper.pasteStyle( eWidgetSimple );
 
-				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
@@ -54,14 +54,14 @@ export const PasteStyle = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonSimple1 = DocumentHelper.createAutoButton(),
-					eButtonSimple2 = DocumentHelper.createAutoButton(),
-					eButtonStyled = DocumentHelper.createAutoButtonStyled(),
+				const eButtonSimple1 = ElementsHelper.createAutoButton(),
+					eButtonSimple2 = ElementsHelper.createAutoButton(),
+					eButtonStyled = ElementsHelper.createAutoButtonStyled(),
 					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
 
-				DocumentHelper.copy( eButtonStyled );
+				ElementsHelper.copy( eButtonStyled );
 
-				DocumentHelper.multiPasteStyle( [ eButtonSimple1, eButtonSimple2 ] );
+				ElementsHelper.multiPasteStyle( [ eButtonSimple1, eButtonSimple2 ] );
 
 				// Check pasted style exist.
 				assert.equal( eButtonSimple1.model.attributes.settings.attributes.background_color, eStyledButtonBackground,
@@ -71,15 +71,15 @@ export const PasteStyle = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetsSimple = DocumentHelper.multiCreateAutoButton(),
-					eWidgetStyled = DocumentHelper.createAutoButtonStyled(),
+				const eWidgetsSimple = ElementsHelper.multiCreateAutoButton(),
+					eWidgetStyled = ElementsHelper.createAutoButtonStyled(),
 					widgetSimpleBackground = eWidgetsSimple[ 0 ].settings.get( 'background_color' ),
 					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
 
-				DocumentHelper.copy( eWidgetStyled );
-				DocumentHelper.multiPasteStyle( eWidgetsSimple );
+				ElementsHelper.copy( eWidgetStyled );
+				ElementsHelper.multiPasteStyle( eWidgetsSimple );
 
-				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
+				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );

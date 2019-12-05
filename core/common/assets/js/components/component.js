@@ -1,4 +1,4 @@
-export default class extends elementorModules.Module {
+export default class BaseComponent extends elementorModules.Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
 			this.manager = args.manager;
@@ -22,7 +22,7 @@ export default class extends elementorModules.Module {
 	}
 
 	getNamespace() {
-		throw Error( 'getNamespace must be override.' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	getRootContainer() {
@@ -30,7 +30,7 @@ export default class extends elementorModules.Module {
 		return parts[ 0 ];
 	}
 
-	defaultCommands() {
+	defaultTabs() {
 		return {};
 	}
 
@@ -38,7 +38,7 @@ export default class extends elementorModules.Module {
 		return {};
 	}
 
-	defaultTabs() {
+	defaultCommands() {
 		return {};
 	}
 
