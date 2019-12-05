@@ -45,4 +45,10 @@ export default class extends ControlBaseDataView {
 	onBeforeDestroy() {
 		this.colorPicker.destroy();
 	}
+
+	onAfterExternalChange() {
+		this.applySavedValue();
+
+		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
+	}
 }
