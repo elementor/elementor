@@ -55,7 +55,7 @@ export const Move = () => {
 
 					DocumentHelper.move( eSection, elementor.getPreviewContainer(), { at: targetPosition } );
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Section' );
@@ -86,7 +86,7 @@ export const Move = () => {
 
 					DocumentHelper.move( eColumn, eSection2, { at: targetPosition } );
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Column' );
@@ -119,7 +119,7 @@ export const Move = () => {
 
 					DocumentHelper.move( eColumn2, eSection, { at: targetPosition } );
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Column' );
@@ -154,7 +154,7 @@ export const Move = () => {
 
 					DocumentHelper.move( eWidget, eColumn2, { at: targetPosition } );
 
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Button' );

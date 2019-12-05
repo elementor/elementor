@@ -1,5 +1,6 @@
 /* global ElementorConfig */
 import editorBase from './../../../assets/dev/js/editor/editor-base';
+import DocumentsManager from 'elementor-document/manager';
 
 const App = editorBase.extend();
 
@@ -57,6 +58,8 @@ window.elementor = new App( {
 		this.addBackgroundClickArea( document );
 
 		elementorCommon.elements.$window.trigger( 'elementor:init' );
+
+		this.documents = new DocumentsManager();
 
 		this.initPreview();
 

@@ -12,7 +12,7 @@ export const Import = () => {
 
 				DocumentHelper.import( data, new Backbone.Model( model ) );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'template' );

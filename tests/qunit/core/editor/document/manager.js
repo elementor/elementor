@@ -1,4 +1,4 @@
-import Elements from './helpers/elements'
+import ElementsHelper from './helper';
 
 jQuery( () => {
 	QUnit.module( 'Document Manager', () => {
@@ -14,7 +14,7 @@ jQuery( () => {
 			elementor.documents.setCurrentId( documentIdMaster );
 
 			// Create button and save it under master document.
-			const eButton = Elements.createAutoButton();
+			const eButton = ElementsHelper.createAutoButton();
 
 			// Validate the button was saved to history of master document.
 			assert.equal( elementor.documents.getCurrent().history.getItems().length, 3,
@@ -28,7 +28,7 @@ jQuery( () => {
 				'Slave document does not have items in history.' );
 
 			// Do change under slave document.
-			Elements.settings( eButton, {
+			ElementsHelper.settings( eButton, {
 				text: 'Some other value',
 			} );
 

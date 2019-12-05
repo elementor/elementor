@@ -30,7 +30,7 @@ export const Paste = () => {
 				DocumentHelper.copy( eWidget );
 
 				const ePastedWidget = DocumentHelper.paste( eColumn ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'elements' );
@@ -76,7 +76,7 @@ export const Paste = () => {
 				DocumentHelper.copy( eWidget );
 
 				const ePastedWidget = DocumentHelper.paste( eColumn ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'elements' );

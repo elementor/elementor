@@ -2,7 +2,7 @@ import Base from '../../commands/base/base';
 
 export class AddTransaction extends Base {
 	apply( args ) {
-		const currentId = elementor.history.history.getCurrentId();
+		const currentId = elementor.documents.getCurrent().history.getCurrentId();
 
 		if ( currentId ) {
 			// If log already started chain his historyId.

@@ -23,7 +23,7 @@ export const Move = () => {
 
 				DocumentHelper.repeaterMove( eTabs, 'tabs', sourceIndex, targetIndex );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Tabs' );
@@ -75,7 +75,7 @@ export const Move = () => {
 					targetIndex
 				);
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 				let count = 0;
 
 				// Exist in history.

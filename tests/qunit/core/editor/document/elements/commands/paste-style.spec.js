@@ -33,7 +33,7 @@ export const PasteStyle = () => {
 				DocumentHelper.copy( eWidgetStyled );
 				DocumentHelper.pasteStyle( eWidgetSimple );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'Button' );
@@ -79,7 +79,7 @@ export const PasteStyle = () => {
 				DocumentHelper.copy( eWidgetStyled );
 				DocumentHelper.multiPasteStyle( eWidgetsSimple );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );

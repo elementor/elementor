@@ -60,7 +60,7 @@ export const Settings = () => {
 				const doneSettings = assert.async();
 
 				setTimeout( () => {
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Button' );

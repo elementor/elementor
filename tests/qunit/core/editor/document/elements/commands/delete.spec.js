@@ -31,7 +31,7 @@ export const Delete = () => {
 
 				DocumentHelper.delete( eWidget );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'remove', 'Button' );

@@ -38,7 +38,7 @@ export const Settings = () => {
 				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', `Tabs Item#${ index + 1 }` );
@@ -98,7 +98,7 @@ export const Settings = () => {
 				const done = assert.async(); // Pause the test till done.
 
 				setTimeout( () => {
-					const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 					// Exist in history.
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'elements' );

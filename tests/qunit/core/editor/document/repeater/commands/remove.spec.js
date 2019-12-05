@@ -21,7 +21,7 @@ export const Remove = () => {
 
 				DocumentHelper.repeaterRemove( eTabs, 'tabs', 1 );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'remove', 'Tabs' );
@@ -64,7 +64,7 @@ export const Remove = () => {
 
 				DocumentHelper.multiRepeaterRemove( eMultiTabs, 'tabs', 1 );
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'remove', 'elements' );

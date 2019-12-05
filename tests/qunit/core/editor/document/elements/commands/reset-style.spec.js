@@ -27,7 +27,7 @@ export const ResetStyle = () => {
 
 				//const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
 
-				const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+				const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'Button' );
@@ -67,7 +67,7 @@ export const ResetStyle = () => {
 				DocumentHelper.multiResetStyle( eWidgetsStyled );
 
 				const backgroundAfterReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' ),
-					historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+					historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 				// Exist in history.
 				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );

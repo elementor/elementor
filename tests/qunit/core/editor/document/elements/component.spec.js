@@ -6,7 +6,7 @@ jQuery( () => {
 		hooks.beforeEach( () => {
 			DocumentHelper.empty();
 
-			elementor.history.history.getItems().reset();
+			elementor.documents.getCurrent().history.getItems().reset();
 		} );
 
 		DocumentHelper.testCommands( Commands );

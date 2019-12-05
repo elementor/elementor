@@ -6,7 +6,7 @@ jQuery( () => {
 		hooks.beforeEach( () => {
 			DocumentHelper.empty();
 
-			elementor.history.history.getItems().reset();
+			elementor.documents.getCurrent().history.getItems().reset();
 		} );
 
 		// QUnit.test( 'Resize Column', ( assert ) => {
@@ -28,7 +28,7 @@ jQuery( () => {
 		//
 		// 	Elements.resizeColumn( eColumn1, newSize );
 		//
-		// 	const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+		// 	const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 		//
 		// 	// Exist in history.
 		// 	inHistoryValidate( assert, historyItem, 'change', 'Column' );
@@ -90,7 +90,7 @@ jQuery( () => {
 
 			DocumentHelper.createSection( 1 );
 
-			const historyItem = elementor.history.history.getItems().at( 0 ).attributes;
+			const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 ).attributes;
 
 			// Saver editor flag is `true`.
 			assert.equal( elementor.saver.isEditorChanged(), true,
@@ -121,7 +121,7 @@ jQuery( () => {
 				// Do nothing (ignore).
 			}
 
-			const historyItem = elementor.history.history.getItems().at( 0 );
+			const historyItem = elementor.documents.getCurrent().history.getItems().at( 0 );
 
 			assert.equal( historyItem, undefined, 'History was rolled back.' );
 		} );
