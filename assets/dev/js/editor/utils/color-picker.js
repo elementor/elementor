@@ -34,6 +34,7 @@ export default class ColorPicker extends elementorModules.Module {
 				droppingArea: 'elementor-color-picker__dropping-area',
 				plusIcon: 'eicon-plus',
 				trashIcon: 'eicon-trash-o',
+				dragToDelete: 'elementor-color-picker__dropping-area__drag-to-delete',
 			},
 			selectors: {
 				swatch: '.pcr-swatch',
@@ -135,6 +136,20 @@ export default class ColorPicker extends elementorModules.Module {
 			over: () => this.onDroppingAreaOver(),
 			out: () => this.onDroppingAreaOut(),
 		} );
+
+		if ( ! this.introductionViewed() ) {
+			const $dragToDelete = jQuery( '<div>', { class: classes.dragToDelete } ).text( elementor.translate( 'drag_to_delete' ) );
+
+			this.$droppingArea.append( $dragToDelete ).slideDown();
+
+			elementorCommon.ajax.addRequest( 'introduction_viewed', {
+				data: {
+					introductionKey: 'colorPickerDropping',
+				},
+			} );
+
+			ColorPicker.droppingIntroductionViewed = true;
+		}
 	}
 
 	addToolsToSwatches() {
@@ -151,6 +166,10 @@ export default class ColorPicker extends elementorModules.Module {
 		// There's a bug in FireFox about hiding the tooltip after the button was clicked,
 		// So let's force it to hide
 		$button.data( 'tipsy' ).hide();
+	}
+
+	introductionViewed() {
+		return ColorPicker.droppingIntroductionViewed || elementor.config.user.introduction.colorPickerDropping;
 	}
 
 	onPickerChange( ...args ) {
