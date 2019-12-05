@@ -662,6 +662,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 	&__dropping-area {
 		border: 1px dashed $theme-dark-gray-lighter;
+		color: $theme-dark-gray-lightest;
 
 		&.elementor-active {
 			border-color: $theme-dark-gray-lightest;
@@ -669,10 +670,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 			i {
 				color: $theme-dark-danger;
 			}
-		}
-
-		i {
-			color: $theme-dark-gray-lightest;
 		}
 	}
 }
