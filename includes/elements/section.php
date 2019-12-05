@@ -1529,7 +1529,7 @@ class Element_Section extends Element_Base {
 		$base_setting_key = "shape_divider_$side";
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
 		$shape_path = Shapes::get_shape_path( $settings[ $base_setting_key ], $negative );
-		if ( ! file_exists( $shape_path ) ) {
+		if ( ! is_file( $shape_path ) || ! file_exists( $shape_path ) ) {
 			return;
 		}
 		?>
