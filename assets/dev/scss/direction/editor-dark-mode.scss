@@ -52,6 +52,21 @@ body {
 			}
 		}
 	}
+
+	.pcr-swatch {
+
+		&.pcr-active {
+
+			~ .elementor-color-picker__add-swatch {
+				background-color: $theme-dark-gray-light;
+
+				i {
+					color: $theme-dark-light;
+				}
+			}
+		}
+	}
+
 }
 
 //Loader
@@ -389,14 +404,14 @@ $devices: 'desktop', 'tablet', 'mobile';
 		color: $theme-dark-light;
 	}
 
-	&-area {
-		background-image: linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest), linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest);
-		background-color: $theme-dark-gray-light;
-	}
-
 	.elementor-control-media__tool {
 		background-color: $theme-dark-gray-lighter;
 	}
+}
+
+.elementor-control-media-area, .pcr-app[data-theme=monolith] .pcr-color-palette, .pcr-button {
+	background-image: linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest), linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest);
+	background-color: $theme-dark-gray-light;
 }
 
 .elementor-control-type-icons {
@@ -642,10 +657,10 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 .elementor-color-picker {
 
-	&--dropping-area {
+	&__dropping-area {
 		border: 1px dashed $theme-dark-gray-lighter;
 
-		&.html5dnd-current-element {
+		&.elementor-active {
 			border-color: $theme-dark-gray-lightest;
 
 			i {
@@ -1201,4 +1216,12 @@ label.elementor-template-library-order-label,
 
 .ui-autocomplete {
 	color: $editor-dark;
+}
+
+.elementor-color-picker__swatch-tool {
+	background-color: $theme-dark-light;
+
+	i {
+		color: $theme-dark-gray-light;
+	}
 }
