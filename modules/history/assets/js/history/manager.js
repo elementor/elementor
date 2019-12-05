@@ -203,8 +203,8 @@ export default class HistoryManager {
 		}
 
 		if ( item.get( 'editing_started' ) ) {
-			if ( ! this.editorSaved ) {
-				elementor.saver.setFlagEditorChange( false );
+			if ( ! editorSaved ) {
+				$e.run( 'document/save/set-is-modified', { status: false } );
 			}
 		}
 	}

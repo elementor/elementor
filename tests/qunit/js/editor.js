@@ -61,6 +61,9 @@ window.elementor = new App( {
 
 		this.documents = new DocumentsManager();
 
+		// TODO: Should be avoided, Useless management in tests.
+		this.saver = $e.components.get( 'document/save' );
+
 		this.initPreview();
 
 		this.logSite();

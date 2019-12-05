@@ -123,9 +123,9 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
-		elementor.saver.setFlagEditorChange( true );
+		$e.run( 'document/save/set-is-modified', { status: true } );
 
-		elementor.saver.saveAutoSave();
+		$e.run( 'document/save/auto', { force: true } );
 
 		this.isRevisionApplied = true;
 
@@ -137,7 +137,7 @@ module.exports = Marionette.CompositeView.extend( {
 	onDiscardClick: function() {
 		this.document.revisions.setEditorData( elementor.config.data );
 
-		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
+		$e.run( 'document/save/set-is-modified', { status: this.isRevisionApplied } );
 
 		this.isRevisionApplied = false;
 
@@ -187,7 +187,7 @@ module.exports = Marionette.CompositeView.extend( {
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
 		if ( elementor.saver.isEditorChanged() && ( null === self.currentPreviewId || elementor.config.current_revision_id === self.currentPreviewId ) ) {
-			elementor.saver.saveEditor( {
+			$e.run( 'document/save/save', {
 				status: 'autosave',
 				onSuccess: function() {
 					self.getRevisionViewData( childView );
