@@ -10,7 +10,7 @@ export class SetStructure extends HookAfter {
 	}
 
 	bindContainerType() {
-		return 'column';
+		return 'section';
 	}
 
 	getConditions( args ) {

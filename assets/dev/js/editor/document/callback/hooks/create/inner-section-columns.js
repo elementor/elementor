@@ -27,7 +27,7 @@ export class InnerSectionColumns extends HookAfter {
 	 * @returns {boolean}
 	 */
 	apply( args, containers ) {
-		const { structure = false, options = {} } = args;
+		const { structure = '20', options = {} } = args;
 
 		if ( ! Array.isArray( containers ) ) {
 			containers = [ containers ];
