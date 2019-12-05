@@ -2,7 +2,7 @@
 import editorBase from './editor-base';
 
 const App = editorBase.extend( {
-	onStart: function() {
+	onStart() {
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
@@ -16,4 +16,4 @@ if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
 	elementor.start();
 }
 
-module.exports = elementor;
+export default window.elementor;

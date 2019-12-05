@@ -2,8 +2,6 @@ var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlSliderItemView;
 
 ControlSliderItemView = ControlBaseUnitsItemView.extend( {
-	debounceHistory: true,
-
 	ui: function() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
 

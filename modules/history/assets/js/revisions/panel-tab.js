@@ -201,24 +201,4 @@ module.exports = Marionette.CompositeView.extend( {
 
 		self.currentPreviewId = revisionID;
 	},
-
-	onChildviewDeleteClick: function( childView ) {
-		var self = this,
-			type = childView.model.get( 'type' );
-
-		var removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
-			message: elementor.translate( 'dialog_confirm_delete', [ type ] ),
-			headerMessage: elementor.translate( 'delete_element', [ type ] ),
-			strings: {
-				confirm: elementor.translate( 'delete' ),
-				cancel: elementor.translate( 'cancel' ),
-			},
-			defaultOption: 'confirm',
-			onConfirm: function() {
-				self.deleteRevision( childView );
-			},
-		} );
-
-		removeDialog.show();
-	},
 } );

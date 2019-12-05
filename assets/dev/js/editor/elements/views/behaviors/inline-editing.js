@@ -188,8 +188,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 	onInlineEditingUpdate: function() {
 		let key = this.getEditingSettingKey(),
-			parts = key.split( '.' ),
 			container = this.view.getContainer();
+
+		const parts = key.split( '.' );
 
 		// Is it repeater?
 		if ( 3 === parts.length ) {
@@ -204,7 +205,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			},
 			options: {
 				external: true,
-				debounceHistory: true,
 			},
 		} );
 	},

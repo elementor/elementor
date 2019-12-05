@@ -32,3 +32,15 @@
 	width: 0;
 	height: 0;
 }
+
+.elementor-gradient-logo {
+	background-image: linear-gradient(-135deg, $brand-color-light, $brand-color-dark);
+	display: inline-block;
+	padding: 0.6em;
+	border-radius: 0.2em;
+
+	i {
+		color: #fff;
+		display: block;
+	}
+}

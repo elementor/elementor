@@ -43,9 +43,48 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Get doc type count.
+	 *
+	 * Get count of documents based on doc type
+	 *
+	 * Remove 'wp-' from $doc_type for BC, support doc type change since 2.7.0.
+	 *
+	 * @param \Elementor\Core\Documents_Manager $doc_class
+	 * @param String $doc_type
+	 *
+	 * @return int
+	 */
+	public function get_doc_type_count( $doc_class, $doc_type ) {
+		static $posts = null;
+		static $library = null;
+
+		if ( null === $posts ) {
+			$posts = \Elementor\Tracker::get_posts_usage();
+		}
+
+		if ( null === $library ) {
+			$library = \Elementor\Tracker::get_library_usage();
+		}
+
+		$posts_usage = $posts;
+
+		if ( $doc_class::get_property( 'show_in_library' ) ) {
+			$posts_usage = $library;
+		}
+
+		$doc_type_common = str_replace( 'wp-', '', $doc_type );
+
+		$doc_usage = isset( $posts_usage[ $doc_type_common ] ) ? $posts_usage[ $doc_type_common ] : 0;
+
+		return is_array( $doc_usage ) ? $doc_usage['publish'] : $doc_usage;
+	}
+
+	/**
 	 * Get formatted usage.
 	 *
 	 * Retrieve formatted usage, for frontend.
+	 *
+	 * @param String format
 	 *
 	 * @return array
 	 */
@@ -60,6 +99,8 @@ class Module extends BaseModule {
 			} else {
 				$doc_title = $doc_type;
 			}
+
+			$doc_count = $this->get_doc_type_count( $doc_class, $doc_type );
 
 			$tab_group = $doc_class::get_property( 'admin_tab_group' );
 
@@ -92,6 +133,7 @@ class Module extends BaseModule {
 			$usage[ $doc_type ] = [
 				'title' => $doc_title,
 				'elements' => $elements,
+				'count' => $doc_count,
 			];
 
 			// Sort usage by title.
@@ -541,6 +583,6 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 
-		add_action( 'admin_init', [ $this, 'add_system_info_report' ] );
+		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 50 );
 	}
 }

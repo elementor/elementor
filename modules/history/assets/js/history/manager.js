@@ -14,11 +14,14 @@ export default class HistoryManager {
 
 	translations = {
 		add: elementor.translate( 'added' ),
-		duplicate: elementor.translate( 'duplicate' ),
-		remove: elementor.translate( 'removed' ),
 		change: elementor.translate( 'edited' ),
+		disable: elementor.translate( 'disabled' ),
+		duplicate: elementor.translate( 'duplicate' ),
+		enable: elementor.translate( 'enabled' ),
 		move: elementor.translate( 'moved' ),
+		paste: elementor.translate( 'pasted' ),
 		paste_style: elementor.translate( 'style_pasted' ),
+		remove: elementor.translate( 'removed' ),
 		reset_style: elementor.translate( 'style_reset' ),
 	};
 
@@ -180,7 +183,7 @@ export default class HistoryManager {
 
 			if ( historyItem.get( 'restore' ) ) {
 				let container = 'sub-add' === historyItem.get( 'type' ) ?
-					historyItem.get( 'data' ).toRestoreContainer :
+					historyItem.get( 'data' ).containerToRestore :
 					historyItem.get( 'container' ) || historyItem.get( 'containers' );
 
 				if ( Array.isArray( container ) ) {

@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor progress widget.
  *
@@ -181,8 +183,8 @@ class Widget_Progress extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-bar' => 'background-color: {{VALUE}};',
@@ -274,8 +276,8 @@ class Widget_Progress extends Widget_Base {
 					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 			]
 		);
@@ -285,7 +287,7 @@ class Widget_Progress extends Widget_Base {
 			[
 				'name' => 'typography',
 				'selector' => '{{WRAPPER}} .elementor-title',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -333,7 +335,7 @@ class Widget_Progress extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'inner_text' );
 
-		if ( ! empty( $settings['title'] ) ) { ?>
+		if ( ! Utils::is_empty( $settings['title'] ) ) { ?>
 			<span class="elementor-title"><?php echo $settings['title']; ?></span>
 		<?php } ?>
 

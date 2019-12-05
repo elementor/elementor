@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export class Create extends Base {
+export class Create extends History {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' ),
@@ -14,11 +14,11 @@ export class Create extends Base {
 		if ( isRedo ) {
 			$e.run( 'document/elements/create', {
 				container,
-				model: data.toRestoreModel,
+				model: data.modelToRestore,
 				options,
 			} );
 		} else {
-			$e.run( 'document/elements/delete', { container: data.toRestoreContainer } );
+			$e.run( 'document/elements/delete', { container: data.containerToRestore } );
 		}
 	}
 
@@ -36,7 +36,7 @@ export class Create extends Base {
 			containers,
 			model,
 			type: 'add',
-			title: elementorCommon.helpers.getModelLabel( model ),
+			title: elementor.helpers.getModelLabel( model ),
 		};
 	}
 
@@ -45,10 +45,18 @@ export class Create extends Base {
 
 		let result = [];
 
+		// BC: Deprecated since 2.8.0 - use `$e.events`.
+		if ( ! options.trigger ) {
+			options.trigger = {
+				beforeAdd: 'element:before:add',
+				afterAdd: 'element:after:add',
+			};
+		}
+
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			const createdContainer = container.view.addChildElement( model, options ).getContainer();
+			const createdContainer = container.view.addElement( model, options ).getContainer();
 
 			if ( options.edit && this.isHistoryActive() ) {
 				// TODO: remove trigger. run directly.
@@ -62,14 +70,14 @@ export class Create extends Base {
 			 * in getHistory().
 			 */
 			if ( this.isHistoryActive() ) {
-				$e.run( 'document/history/addSubItem', {
+				$e.run( 'document/history/log-sub-item', {
 					container,
 					type: 'sub-add',
 					restore: this.constructor.restore,
 					options,
 					data: {
-						toRestoreContainer: createdContainer,
-						toRestoreModel: createdContainer.model.toJSON(),
+						containerToRestore: createdContainer,
+						modelToRestore: createdContainer.model.toJSON(),
 					},
 				} );
 			}
@@ -80,6 +88,10 @@ export class Create extends Base {
 		}
 
 		return result;
+	}
+
+	isDataChanged() {
+		return true;
 	}
 }
 

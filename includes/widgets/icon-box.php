@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor icon box widget.
  *
@@ -265,8 +267,8 @@ class Widget_Icon_Box extends Widget_Base {
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 				'default' => '',
 				'selectors' => [
@@ -536,8 +538,8 @@ class Widget_Icon_Box extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 			]
 		);
@@ -547,7 +549,7 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -570,8 +572,8 @@ class Widget_Icon_Box extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 			]
 		);
@@ -581,7 +583,7 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -659,7 +661,7 @@ class Widget_Icon_Box extends Widget_Base {
 				<<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
 					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?><?php echo $this->get_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
 				</<?php echo $settings['title_size']; ?>>
-				<?php if ( ! empty( $settings['description_text'] ) ) : ?>
+				<?php if ( ! Utils::is_empty( $settings['description_text'] ) ) : ?>
 				<p <?php echo $this->get_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
 				<?php endif; ?>
 			</div>

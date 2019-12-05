@@ -13,7 +13,6 @@ module.exports = elementorModules.editor.views.ControlsStack.extend( {
 
 	childViewOptions: function() {
 		return {
-			// TODO elementSettingsModel: this.model,
 			container: this.getOption( 'editedView' ).getContainer(),
 		};
 	},

@@ -441,7 +441,7 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-button-go-pro {
-		color: $editor-orange;
+		color: $editor-accent;
 	}
 
 	.elementor-template-library-template-footer {
@@ -456,9 +456,7 @@ label.elementor-template-library-order-label {
 		text-align: $start;
 		color: $editor-dark;
 		flex-grow: 1;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		@include ellipsis;
 		@include padding-end(5px);
 	}
 
@@ -576,9 +574,7 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-meta,
 	.elementor-template-library-template-preview,
 	.elementor-template-library-template-action {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		@include ellipsis;
 	}
 
 	.elementor-template-library-template-controls {
@@ -586,13 +582,14 @@ label.elementor-template-library-order-label {
 		display: flex;
 		align-items: center;
 
+		&,
+		& a {
+			color: $editor-light;
+		}
+
 		> div {
 			cursor: pointer;
 			transition: color .5s;
-
-			&:not(:hover) {
-				color: $editor-light;
-			}
 		}
 	}
 
@@ -607,19 +604,17 @@ label.elementor-template-library-order-label {
 		@include margin-start(6px);
 	}
 
-	.elementor-template-library-template-delete {
+	.elementor-template-library-template-more {
 
-		&:hover {
-			color: $editor-danger;
+		&:hover,
+		a:hover {
+			color: $editor-darker;
 		}
-	}
 
-	.elementor-template-library-template-export {
+		.elementor-template-library-template-delete {
 
-		&:hover {
-
-			i {
-				color: $editor-darker;
+			&:hover {
+				color: $editor-danger;
 			}
 		}
 	}
@@ -790,6 +785,58 @@ label.elementor-template-library-order-label {
 		&-message {
 			margin-top: 20px;
 		}
+	}
+}
+
+.e-route-library-connect {
+	#elementor-template-library-modal {
+		.dialog-message {
+			max-height: 95vh;
+			padding: 100px 0 0;
+			min-height: 550px;
+		}
+	}
+}
+
+#elementor-template-library-connect {
+
+	&-logo {
+		font-size: 20px;
+	}
+
+	&__button {
+		display: inline-block;
+		position: relative;
+		z-index: 1; // over the images
+		margin-top: 25px;
+		padding: 12px 24px;
+		font-size: 14px;
+	}
+
+	&__background-image {
+
+		&-left-1 {
+			right: 22.4%; bottom: -29%; animation: 1.5s fadeIn, 1.5s slideDown, 3.5s mover 1.5s infinite alternate;
+		}
+
+		&-left-2 {
+			right: 46.25%; bottom: -15.5%; animation: 3s fadeIn, 3s slideDown, 2s mover 3s infinite alternate;
+		}
+
+		&-right-1 {
+			left: 37%; bottom: -41%; animation: 2.5s fadeIn, 2.5s slideDown, 2s mover 2.5s infinite alternate;
+		}
+
+		&-right-2 {
+			left: 48%; bottom: -12.5%; animation: 1.5s fadeIn, 1.5s slideDown, 1.5s mover 1.5s infinite alternate;
+		}
+	}
+}
+
+.elementor-template-library-connect {
+
+	&__background-image {
+		position: absolute;
 	}
 }
 

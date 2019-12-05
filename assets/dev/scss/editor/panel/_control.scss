@@ -38,7 +38,7 @@
 	&.elementor-control-type-divider {
 		padding: 0;
 		background-color: transparent;
-		
+
 		.elementor-control-content {
 			border-width: 0;
 			border-color: $editor-background;
@@ -96,8 +96,10 @@
 			}
 
 			+ .elementor-control-type-tabs,
-			+ .elementor-control-separator-default {
-				padding-top: 15px;
+			&:not(.elementor-hidden-control) {
+				+ .elementor-control-separator-default {
+					padding-top: 15px;
+				}
 			}
 		}
 	}
@@ -187,57 +189,6 @@
 				pointer-events: none;
 			}
 		}
-	}
-
-	// select2
-	.select2-container {
-		width: 100% !important;
-		outline: none;
-
-		&.select2-container--default {
-
-			.select2-selection--single {
-
-				.select2-selection__rendered {
-					color: $editor-dark;
-				}
-			}
-
-			.select2-selection--multiple {
-
-				.select2-selection__clear {
-					display: none;
-				}
-
-				.select2-selection__choice {
-					line-height: 1.5;
-					font-size: 0.9em;
-					border: none;
-					border-radius: 0;
-				}
-			}
-
-			.select2-selection__rendered {
-				line-height: 27px;
-			}
-		}
-	}
-
-	.select2-selection {
-		outline: none;
-
-		&--single {
-			height: 27px;
-		}
-	}
-
-	.select2-selection__rendered {
-		line-height: 27px;
-	}
-
-	.select2-selection__arrow {
-		height: 27px;
-		top: 0;
 	}
 }
 
@@ -359,7 +310,6 @@
 
 .elementor-control-field-description {
 	@extend .elementor-descriptor;
-
 	margin-top: 10px;
 }
 
@@ -408,68 +358,82 @@
 	}
 }
 
+$item-size: 2em;
+
 .elementor-control-responsive-switchers {
-	display: flex;
 	@include margin-end(5px);
+	--selected-option: 0;
+	--pointer-position: var(--selected-option);
 
-	.elementor-responsive-switcher {
-		$icon-size: 18px;
+	position: relative;
+	width: $item-size;
+	height: $item-size;
 
-		display: inline-block;
-		border-radius: 50%;
-		height: $icon-size;
-		width: $icon-size;
-		background-color: $editor-light;
-		cursor: pointer;
-		position: relative;
-		color: #fff;
-		font-size: 8px;
-		text-align: center;
-		transition: background-color .5s;
+	&__holder {
+		position: absolute;
+		width: 100%;
+		top: 0;
+		background-color: #fff;
+		border-radius: 3px;
+		transition: 0.15s;
+		border: 1px transparent solid;
+	}
 
-		&:not(:first-child) {
-			@include margin-start(5px);
-		}
+	&.elementor-responsive-switchers-open {
+		z-index: 11000;
 
-		&:hover {
-			background-color: $editor-lighter;
-		}
+		.elementor-responsive-switcher {
+			height: $item-size;
+			transform: scale(1);
+			opacity: 1;
 
-		i {
-			position: relative;
-			display: block;
-			line-height: $icon-size;
-
-			&:before {
-				height: $icon-size;
-				width: $icon-size;
-				position: absolute;
-				left: 50%;
-				transform: translateX(-50%);
+			&:hover {
+				color: $editor-info;
 			}
 		}
+
+		.elementor-control-responsive-switchers__holder {
+			top: calc(-1 * var(--selected-option) * #{$item-size});
+			box-shadow: 0 0 3px rgba(0,0,0,0.2);
+		}
 	}
 }
 
-.elementor-device-desktop #elementor-panel .elementor-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
-	background: $editor-lighter;
+.elementor-responsive-switcher {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	z-index: 2;
+	cursor: pointer;
+	height: 0;
+	transform: scale(0);
+	opacity: 0;
+}
 
-	&:not(.elementor-responsive-switcher-desktop) {
-		display: none;
+a.elementor-responsive-switcher {
+	transition: 0.15s;
+	color: $gray;
+
+	&:hover {
+		color: $editor-info;
 	}
 }
 
-.elementor-responsive-switcher-mobile {
+$devices: 'desktop', 'tablet', 'mobile';
 
-	.elementor-device-mobile & {
-		background-color: $editor-info;
-	}
-}
-
-.elementor-responsive-switcher-tablet {
-
-	.elementor-device-tablet & {
-		background-color: $editor-info;
+@each $device in $devices {
+	.elementor-device-#{ $device } {
+		.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device } {
+			height: $item-size;
+			transform: scale(1);
+			opacity: 1;
+		}
+		.elementor-responsive-switchers-open:not(:hover) {
+			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
+				color: $editor-info;
+			}
+		}
 	}
 }
 
@@ -510,8 +474,6 @@
 	}
 }
 
-@import "controls/box-shadow";
-
 @import "controls/button";
 
 @import "controls/choose";
@@ -544,6 +506,8 @@
 
 @import "controls/section";
 
+@import "controls/shadow";
+
 @import "controls/slider";
 
 @import "controls/structure";
@@ -551,8 +515,6 @@
 @import "controls/switcher";
 
 @import "controls/tabs";
-
-@import "controls/text-shadow";
 
 @import "controls/textarea";
 

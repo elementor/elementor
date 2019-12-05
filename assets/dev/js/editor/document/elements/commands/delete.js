@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export class Delete extends Base {
+export class Delete extends History {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );
@@ -38,7 +38,7 @@ export class Delete extends Base {
 			container = container.lookup();
 
 			if ( this.isHistoryActive() ) {
-				$e.run( 'document/history/addSubItem', {
+				$e.run( 'document/history/log-sub-item', {
 					container,
 					type: 'sub-remove',
 					restore: this.constructor.restore,
@@ -50,7 +50,13 @@ export class Delete extends Base {
 				} );
 			}
 
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			elementor.channels.data.trigger( 'element:before:remove', container.model );
+
 			container.model.destroy();
+
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			elementor.channels.data.trigger( 'element:after:remove', container.model );
 
 			container.panel.refresh();
 		} );
@@ -60,6 +66,10 @@ export class Delete extends Base {
 		}
 
 		return containers;
+	}
+
+	isDataChanged() {
+		return true;
 	}
 }
 

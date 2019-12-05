@@ -278,6 +278,23 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( $doc_name, $global_usage );
 	}
 
+	public function test_doc_type_count() {
+		/** @var Module $module */
+		$module = Module::instance();
+
+		// Get doc type.
+		$doc_type = self::$document->get_name();
+
+		// Get doc class.
+		$doc_class = Plugin::$instance->documents->get_document_type( $doc_type );
+
+		// Get doc count.
+		$doc_count = $module->get_doc_type_count( $doc_class, $doc_type );
+
+		// Check doc count.
+		$this->assertEquals( 1, $doc_count );
+	}
+
 	public function test_formatted_usage() {
 		$doc_name = self::$document->get_name();
 		/** @var Module $module */
@@ -405,6 +422,8 @@ class Test_Module extends Elementor_Test_Base {
 			'post_author' => $admin->ID,
 			'post_type' => 'post',
 		] );
+
+		add_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
 
 		$document = self::elementor()->documents->get( $post->ID );
 

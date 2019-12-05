@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export class PasteStyle extends Base {
+export class PasteStyle extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -73,12 +73,19 @@ export class PasteStyle extends Base {
 					diffSettings[ controlName ] = controlSourceValue;
 				} );
 
+				// Moved from `editor/elements/views/base.js` `pasteStyle` function.
 				targetContainer.view.allowRender = false;
+
+				// BC: Deprecated since 2.8.0 - use `$e.events`.
+				elementor.channels.data.trigger( 'element:before:paste:style', targetContainer.model );
 
 				$e.run( 'document/elements/settings', {
 					container: targetContainer,
 					settings: diffSettings,
 				} );
+
+				// BC: Deprecated since 2.8.0 - use `$e.events`.
+				elementor.channels.data.trigger( 'element:after:paste:style', targetContainer.model );
 
 				targetContainer.view.allowRender = true;
 

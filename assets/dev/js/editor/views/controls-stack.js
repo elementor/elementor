@@ -21,7 +21,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	childViewOptions: function() {
 		return {
-			// TODO elementSettingsModel: this.model,
+			// TODO: elementSettingsModel is deprecated since 2.8.0.
+			elementSettingsModel: this.model,
 		};
 	},
 

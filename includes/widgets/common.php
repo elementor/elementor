@@ -248,6 +248,9 @@ class Widget_Common extends Widget_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-widget-container' => 'transition: background {{SIZE}}s',
+				],
 			]
 		);
 
@@ -366,7 +369,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_position',
 			[
-				'label' => __( 'Custom Positioning', 'elementor' ),
+				'label' => __( 'Positioning', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);

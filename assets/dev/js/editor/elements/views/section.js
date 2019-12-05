@@ -19,6 +19,21 @@ SectionView = BaseElementView.extend( {
 		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
 	},
 
+	addChildModel: function( model ) {
+		/// TODO: maybe should be part of $e.hooks.
+		const isModelInstance = model instanceof Backbone.Model,
+			isInner = this.isInner();
+
+		if ( isModelInstance ) {
+			// TODO: change to command.
+			model.set( 'isInner', isInner );
+		} else {
+			model.isInner = isInner;
+		}
+
+		return BaseElementView.prototype.addChildModel.apply( this, arguments );
+	},
+
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
@@ -45,8 +60,6 @@ SectionView = BaseElementView.extend( {
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
 	},
 
 	getEditButtons: function() {
@@ -65,7 +78,7 @@ SectionView = BaseElementView.extend( {
 			icon: 'handle',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',
@@ -136,6 +149,17 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
+	getNeighborContainer( container ) {
+		const parentView = container.parent.view,
+			nextView = parentView.getNextColumn( container.view ) || parentView.getPreviousColumn( container.view );
+
+		if ( ! nextView ) {
+			return false;
+		}
+
+		return nextView.getContainer();
+	},
+
 	setStructure: function( structure ) {
 		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
 
@@ -181,7 +205,6 @@ SectionView = BaseElementView.extend( {
 				},
 				options: {
 					external: true,
-					debounceHistory: true,
 				},
 			} );
 		} );
@@ -210,50 +233,6 @@ SectionView = BaseElementView.extend( {
 		nextColumnView.ui.percentsTooltip.hide();
 	},
 
-	resizeColumn: function( childView, currentSize, newSize, resizeSource = true, debounceHistory = true ) {
-		const nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
-
-		if ( ! nextChildView ) {
-			return false;
-		}
-
-		const $nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		const currentColumnContainer = childView.getContainer(),
-			nextColumnContainer = nextChildView.getContainer(),
-			containers = [ nextColumnContainer ],
-			settings = {
-				[ nextColumnContainer.id ]: {
-					_inline_size: nextElementNewSize,
-				},
-			};
-
-		if ( resizeSource ) {
-			containers.push( currentColumnContainer );
-			settings[ currentColumnContainer.id ] = {
-				_inline_size: newSize,
-			};
-		}
-
-		$e.run( 'document/elements/settings', {
-			// `nextColumn` must be first.
-			containers,
-			settings,
-			isMultiSettings: true,
-			options: {
-				debounceHistory,
-				external: true,
-				history: {
-					title: elementor.config.elements.column.controls._inline_size.label,
-				},
-			},
-		} );
-
-		return true;
-	},
-
 	destroyAddSectionView: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.destroy();
@@ -273,10 +252,9 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		var myIndex = this.model.collection.indexOf( this.model ),
-			addSectionView = new AddSectionView( {
-				at: myIndex,
-			} );
+		const addSectionView = new AddSectionView( {
+			at: this.model.collection.indexOf( this.model ),
+		} );
 
 		addSectionView.render();
 
@@ -330,9 +308,6 @@ SectionView = BaseElementView.extend( {
 			container: columnView.getContainer(),
 			settings: {
 				_inline_size: this.getColumnPercentSize( ui.element, ui.size.width ),
-			},
-			options: {
-				debounceHistory: true,
 			},
 		} );
 	},

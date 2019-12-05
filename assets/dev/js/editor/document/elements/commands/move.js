@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export class Move extends Base {
+export class Move extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -34,6 +34,12 @@ export class Move extends Base {
 					options.at += count;
 				}
 			}
+
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			options.trigger = {
+				beforeAdd: 'drag:before:update',
+				afterAdd: 'drag:after:update',
+			};
 
 			$e.run( 'document/elements/create', {
 				container: target,

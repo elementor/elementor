@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.4.0");
-  src: url("../fonts/eicons.eot?5.4.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.4.0") format("woff2"), url("../fonts/eicons.woff?5.4.0") format("woff"), url("../fonts/eicons.ttf?5.4.0") format("truetype"), url("../fonts/eicons.svg?5.4.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.5.0");
+  src: url("../fonts/eicons.eot?5.5.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.5.0") format("woff2"), url("../fonts/eicons.woff?5.5.0") format("woff"), url("../fonts/eicons.ttf?5.5.0") format("truetype"), url("../fonts/eicons.svg?5.5.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1031,3 +1031,33 @@
 
 .eicon-t-letter-bold:before {
   content: '\e94e'; }
+
+.eicon-preferences:before {
+  content: '\e94f'; }
+
+.eicon-table-of-contents:before {
+  content: '\e950'; }
+
+.eicon-tv:before {
+  content: '\e951'; }
+
+.eicon-upload:before {
+  content: '\e952'; }
+
+.eicon-instagram-comments:before {
+  content: '\e953'; }
+
+.eicon-instagram-nested-gallery:before {
+  content: '\e954'; }
+
+.eicon-instagram-post:before {
+  content: '\e955'; }
+
+.eicon-instagram-video:before {
+  content: '\e956'; }
+
+.eicon-instagram-gallery:before {
+  content: '\e957'; }
+
+.eicon-instagram-likes:before {
+  content: '\e958'; }

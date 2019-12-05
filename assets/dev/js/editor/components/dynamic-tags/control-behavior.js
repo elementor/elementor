@@ -125,32 +125,27 @@ module.exports = Marionette.Behavior.extend( {
 			settings: settings,
 			controlName: this.view.model.get( 'name' ),
 			dynamicSettings: this.getOption( 'dynamicSettings' ),
+		} ),
+			elementContainer = this.view.options.container,
+			tagViewLabel = elementContainer.controls[ tagView.options.controlName ].label;
+
+		tagView.options.container = new elementorModules.editor.Container( {
+			type: 'dynamic',
+			id: id,
+			model: tagView.model,
+			settings: tagView.model,
+			view: tagView,
+			parent: elementContainer,
+			label: elementContainer.label + ' ' + tagViewLabel,
+			controls: tagView.model.options.controls,
+			renderer: elementContainer,
 		} );
-
-		if ( tagView.model ) {
-			const elementContainer = this.view.options.container,
-				tagViewLabel = elementContainer.controls[ tagView.options.controlName ].label;
-
-			tagView.options.container = new elementorModules.editor.Container( {
-				type: 'TODO: @see control-behavior.js',
-				id: id,
-				document: elementContainer.document,
-				model: tagView.model,
-				settings: tagView.model,
-				view: elementContainer.view,
-				parent: elementContainer,
-				label: elementContainer.label + ' ' + tagViewLabel,
-				controls: tagView.model.options.controls,
-				renderer: elementContainer,
-			} );
-		}
 
 		tagView.render();
 
 		this.ui.tagArea.after( tagView.el );
 
-		this.listenTo( tagView.model, 'change', this.onTagViewModelChange.bind( this ) )
-			.listenTo( tagView, 'remove', this.onTagViewRemove.bind( this ) );
+		this.listenTo( tagView, 'remove', this.onTagViewRemove.bind( this ) );
 	},
 
 	setDefaultTagView: function() {
@@ -166,27 +161,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	getDynamicValue: function() {
-		return this.view.container.settings.get( '__dynamic__' )[ this.view.model.get( 'name' ) ];
-	},
-
-	getDynamicControlSettings: function() {
-		return {
-			control: {
-				name: '__dynamic__',
-				label: this.view.model.get( 'label' ),
-			},
-		};
-	},
-
-	setDynamicValue: function( value ) {
-		$e.run( 'document/dynamic/settings', {
-			container: this.view.options.container,
-			settings: {
-				[ this.view.model.get( 'name' ) ]: value,
-			},
-		} );
-
-		this.toggleDynamicClass();
+		return this.view.container.dynamic.get( this.view.model.get( 'name' ) );
 	},
 
 	destroyTagView: function() {
@@ -214,12 +189,27 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onTagsListItemClick: function( event ) {
-		var $tag = jQuery( event.currentTarget );
+		const $tag = jQuery( event.currentTarget );
 
 		this.setTagView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
 
-		this.setDynamicValue( this.tagViewToTagText() );
+		if ( this.isDynamicMode() ) {
+			$e.run( 'document/dynamic/settings', {
+				container: this.view.options.container,
+				settings: {
+					[ this.view.model.get( 'name' ) ]: this.tagViewToTagText(),
+				},
+			} );
+		} else {
+			$e.run( 'document/dynamic/enable', {
+				container: this.view.options.container,
+				settings: {
+					[ this.view.model.get( 'name' ) ]: this.tagViewToTagText(),
+				},
+			} );
+		}
 
+		this.toggleDynamicClass();
 		this.toggleTagsList();
 
 		if ( this.tagView.getTagConfig().settings_required ) {
@@ -227,23 +217,14 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onTagViewModelChange: function() {
-		this.setDynamicValue( this.tagViewToTagText() );
-	},
-
 	onTagViewRemove: function() {
-		var settingKey = this.view.model.get( 'name' ),
-			dynamicSettings = this.view.container.settings.get( '__dynamic__' );
-
-		dynamicSettings = elementorCommon.helpers.cloneObject( dynamicSettings );
-
-		delete dynamicSettings[ settingKey ];
-
-		if ( Object.keys( dynamicSettings ).length ) {
-			this.view.container.settings.set( '__dynamic__', dynamicSettings, this.getDynamicControlSettings( settingKey ) );
-		} else {
-			this.view.container.settings.unset( '__dynamic__', this.getDynamicControlSettings( settingKey ) );
-		}
+		$e.run( 'document/dynamic/disable', {
+			container: this.view.options.container,
+			settings: {
+				// Set value for `undo` command.
+				[ this.view.model.get( 'name' ) ]: this.tagViewToTagText(),
+			},
+		} );
 
 		this.toggleDynamicClass();
 	},

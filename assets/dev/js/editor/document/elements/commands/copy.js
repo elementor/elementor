@@ -1,20 +1,12 @@
-import Base from '../../commands/base';
+import Base from '../../commands/base/base';
 
 export class Copy extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
 
-	getHistory( args ) {
-		// No history required for the command.
-		return false;
-	}
-
 	apply( args ) {
-		const {
-			storageKey = 'clipboard',
-			containers = [ args.container ],
-		} = args;
+		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
 
 		elementorCommon.storage.set(
 			storageKey,

@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export class Paste extends Base {
+export class Paste extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -11,12 +11,14 @@ export class Paste extends Base {
 	}
 
 	getHistory( args ) {
-		// History is not required.
-		return false;
+		return {
+			type: 'paste',
+			title: elementor.translate( 'elements' ),
+		};
 	}
 
 	apply( args ) {
-		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ] } = args,
+		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ], options = {} } = args,
 			storageData = elementorCommon.storage.get( storageKey ),
 			result = [];
 
@@ -61,28 +63,39 @@ export class Paste extends Base {
 						break;
 
 						default:
-							// In other words if the given model is not section or column then.
-							// Create section with one column for element.
-							const section = $e.run( 'document/elements/create', {
-								container: targetContainer,
-								model: {
-									elType: 'section',
-								},
-								columns: 1,
-								options: {
-									at: index,
-								},
-							} );
+							// In case it widget:
+							let target;
 
-							// Create the element in the column that just was created.
-							const target = [ section.view.children.first().getContainer() ];
+							// If you trying to paste widget on section, then paste should be at the first column.
+							if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+								target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
+							} else {
+								// Else, create section with one column for element.
+								const section = $e.run( 'document/elements/create', {
+									container: targetContainer,
+									model: {
+										elType: 'section',
+									},
+									columns: 1,
+									options: {
+										at: index,
+									},
+								} );
+
+								// Create the element in the column that just was created.
+								target = [ section.view.children.first().getContainer() ];
+							}
 
 							result.push( this.pasteTo( target, [ model ] ) );
 					}
 				} );
 			} );
 		} else {
-			result.push( this.pasteTo( containers, storageData ) );
+			if ( undefined !== at ) {
+				options.at = at;
+			}
+
+			result.push( this.pasteTo( containers, storageData, options ) );
 		}
 
 		if ( 1 === result.length ) {

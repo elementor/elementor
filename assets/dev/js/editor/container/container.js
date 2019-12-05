@@ -1,6 +1,7 @@
+import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
 
-export default class Container {
+export default class Container extends ArgsObject {
 	/**
 	 * Container type.
 	 *
@@ -14,13 +15,6 @@ export default class Container {
 	 * @type {string}
 	 */
 	id;
-
-	/**
-	 * Container document.
-	 *
-	 * @type {Container}
-	 */
-	document;
 
 	/**
 	 * Container model.
@@ -99,9 +93,14 @@ export default class Container {
 	 *
 	 * @param {{}} args
 	 *
-	 * @throws Error
+	 * @throws {Error}
 	 */
 	constructor( args ) {
+		super( args );
+
+		// Validate args.
+		this.validateArgs( args );
+
 		args = Object.entries( args );
 
 		// If empty.
@@ -118,8 +117,16 @@ export default class Container {
 			this.renderer = this;
 		}
 
-		this.dynamic = new Backbone.Model( this.model.get( '__dynamic__' ) );
+		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
 		this.panel = new Panel( this );
+	}
+
+	validateArgs( args ) {
+		this.requireArgumentType( 'type', 'string', args );
+		this.requireArgumentType( 'id', 'string', args );
+
+		this.requireArgumentInstance( 'settings', Backbone.Model, args );
+		this.requireArgumentInstance( 'model', Backbone.Model, args );
 	}
 
 	/**
@@ -127,12 +134,26 @@ export default class Container {
 	 *
 	 * If the view were destroyed, try to find it again if it exists.
 	 *
+	 * TODO: Refactor.
+	 *
 	 * @returns {Container}
 	 */
 	lookup() {
 		let result = this;
 
+		if ( ! this.renderer ) {
+			return this;
+		}
+
+		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
+			this.renderer = this.renderer.lookup();
+		}
+
 		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
+			// Hack For repeater item the result is the parent container.
+			if ( 'repeater' === this.type ) {
+				this.settings = this.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
+			}
 			return result;
 		}
 
@@ -140,6 +161,12 @@ export default class Container {
 
 		if ( lookup ) {
 			result = lookup.getContainer();
+
+			// Hack For repeater item the result is the parent container.
+			if ( 'repeater' === this.type ) {
+				this.settings = result.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
+				return this;
+			}
 		}
 
 		return result;

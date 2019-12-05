@@ -10,6 +10,7 @@ use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Core\Files\Assets\Manager as Assets_Manager;
 use Elementor\Core\Modules_Manager;
+use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Modules\History\Revisions_Manager;

@@ -1,34 +1,35 @@
-var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' ),
-	PanelSchemeColorView;
+var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' );
+import ColorPicker from '../../../../../utils/color-picker';
 
-PanelSchemeColorView = PanelSchemeItemView.extend( {
+module.exports = PanelSchemeItemView.extend( {
 	getUIType: function() {
 		return 'color';
 	},
 
 	ui: {
-		input: '.elementor-panel-scheme-color-value',
+		pickerPlaceholder: '.elementor-panel-scheme-color-picker-placeholder',
 	},
 
 	changeUIValue: function( newValue ) {
-		this.ui.input.wpColorPicker( 'color', newValue );
-	},
-
-	onBeforeDestroy: function() {
-		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
-			this.ui.input.wpColorPicker( 'close' );
-		}
+		this.colorPicker.picker.setColor( newValue );
 	},
 
 	onRender: function() {
-		var self = this;
-
-		elementor.helpers.wpColorPicker( self.ui.input, {
-			change: function( event, ui ) {
-				self.triggerMethod( 'value:change', ui.color.toString() );
+		this.colorPicker = new ColorPicker( {
+			picker: {
+				el: this.ui.pickerPlaceholder[ 0 ],
+				default: this.model.get( 'value' ),
+			},
+			onChange: () => {
+				this.triggerMethod( 'value:change', this.colorPicker.getValue() );
+			},
+			onClear: () => {
+				this.triggerMethod( 'value:change', '' );
 			},
 		} );
 	},
-} );
 
-module.exports = PanelSchemeColorView;
+	onBeforeDestroy: function() {
+		this.colorPicker.destroy();
+	},
+} );
