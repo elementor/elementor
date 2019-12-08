@@ -50,7 +50,7 @@ const Preview = BaseSectionsContainerView.extend( {
 						callback: ( at ) => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 							options: {
-								at: at,
+								at,
 								rebuild: true,
 							},
 						} ),
