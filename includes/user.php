@@ -249,7 +249,7 @@ class User {
 
 	public static function register_as_beta_tester( array $data ) {
 		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
-		wp_safe_remote_post(
+		$response = wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
 			[
 				'timeout' => 25,
@@ -260,6 +260,13 @@ class User {
 				],
 			]
 		);
+
+		$body = wp_remote_retrieve_body( $response );
+		if ( 'success' === $body ) {
+			self::set_introduction_viewed( [
+				'introductionKey' => 'beta_tester_signup',
+			] );
+		}
 	}
 
 	/**
