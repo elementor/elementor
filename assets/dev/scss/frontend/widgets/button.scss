@@ -87,6 +87,10 @@
 	}
 }
 
+.elementor-menu-cart__toggle .elementor-button-icon {
+		order: 15;
+}
+
 .elementor-element.elementor-button- {
 
 	@include button-types( '.elementor-button' );
