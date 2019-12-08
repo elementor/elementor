@@ -10,15 +10,16 @@ export class IsPasteEnabled extends HookDependency {
 		return 'is-paste-enabled';
 	}
 
-	apply( args ) {
-		if ( args.rebuild ) { // TODO: move to conditions.
-			return true;
-		}
+	getConditions( args ) {
+		return ! args.rebuild;
+	}
 
+	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		// TODO: use containers.some. ( multi selection ).
-		return DocumentUtils.isPasteEnabled( containers[ 0 ] );
+		return containers.some( ( container ) =>
+			DocumentUtils.isPasteEnabled( container )
+		);
 	}
 }
 
