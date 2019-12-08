@@ -4,12 +4,14 @@ const EditorModule = elementorModules.Module.extend( {
 		jQuery( window ).on( 'elementor:init', this.onElementorReady );
 	},
 
+	// TODO: Delete as soon as possible.
 	getEditorControlView: function( name ) {
 		const editor = elementor.getPanelView().getCurrentPageView();
 
 		return editor.children.findByModelCid( this.getEditorControlModel( name ).cid );
 	},
 
+	// TODO: Delete as soon as possible.
 	getEditorControlModel: function( name ) {
 		const editor = elementor.getPanelView().getCurrentPageView();
 

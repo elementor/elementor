@@ -9,7 +9,7 @@ export default class CallbackBase {
 	/**
 	 * Full command address, that will hook the callback.
 	 *
-	 * @type ([].string|string)
+	 * @type (string)
 	 */
 	command;
 
@@ -74,7 +74,7 @@ export default class CallbackBase {
 	 *
 	 * Supports array of strings ( commands ).
 	 *
-	 * @returns {([].string|string)}
+	 * @returns {string}
 	 *
 	 * @throws {Error}
 	 */

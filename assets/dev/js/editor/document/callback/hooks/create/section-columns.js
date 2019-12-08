@@ -1,5 +1,6 @@
 import HookAfter from '../base/after';
-import Create from '../../../elements/commands/create';
+import Helper from '../helper';
+import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
 export class SectionColumns extends HookAfter {
 	getCommand() {
@@ -36,48 +37,10 @@ export class SectionColumns extends HookAfter {
 		let { columns = 1 } = args;
 
 		if ( args.model.isInner && 1 === columns ) {
-			columns = containers[ 0 ].view.defaultInnerSectionColumns;
+			columns = DEFAULT_INNER_SECTION_COLUMNS;
 		}
 
-		containers.forEach( ( /**Container*/ container ) => {
-			for ( let loopIndex = 0; loopIndex < columns; loopIndex++ ) {
-				const model = {
-					id: elementor.helpers.getUniqueID(),
-					elType: 'column',
-					settings: {},
-					elements: [],
-				};
-
-				/**
-				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.
-				 */
-				container.view.addChildModel( model, options );
-
-				/**
-				 * Manual history & not using of `$e.run('document/elements/create')`
-				 * For performance reasons.
-				 */
-				$e.run( 'document/history/log-sub-item', {
-					container,
-					type: 'sub-add',
-					restore: Create.restore,
-					options,
-					data: {
-						containerToRestore: container,
-						modelToRestore: model,
-					},
-				} );
-			}
-		} );
-
-		if ( structure ) {
-			containers.forEach( ( container ) => {
-				container.view.setStructure( structure );
-
-				// Focus on last container.
-				container.model.trigger( 'request:edit' );
-			} );
-		}
+		Helper.createSectionColumns( containers, columns, options, structure );
 	}
 }
 

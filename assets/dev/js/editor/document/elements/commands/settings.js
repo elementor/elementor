@@ -50,10 +50,11 @@ export class Settings extends Debounce {
 	}
 
 	/**
-	 * TODO:
-	 * @param container
-	 * @param newSettings
-	 * @param oldSettings
+	 * Function addToHistory().
+	 *
+	 * @param {Container} container
+	 * @param {{}} newSettings
+	 * @param {{}} oldSettings
 	 */
 	addToHistory( container, newSettings, oldSettings ) {
 		const changes = {
