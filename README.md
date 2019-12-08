@@ -223,6 +223,11 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.7.6 - 2019-12-08 ###
+* Fix: Transition Duration option not applying to elements background
+* Fix: Hide Beta Testers signup form if the user already subscribed
+* Fix: Added HTML escaping to `Admin` class and to System Info
+
 ### 2.7.5 - 2019-10-28 ###
 * Tweak: Changed the "Finder" icon in the Editor panel
 * Fix: Added official color support for `linkedin-in` icon in Social Icons widget ([#9298](https://github.com/elementor/elementor/issues/9298))
