@@ -1528,9 +1528,13 @@ class Element_Section extends Element_Base {
 		$settings = $this->get_active_settings();
 		$base_setting_key = "shape_divider_$side";
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
+		$shape_path = Shapes::get_shape_path( $settings[ $base_setting_key ], $negative );
+		if ( ! is_file( $shape_path ) || ! is_readable( $shape_path ) ) {
+			return;
+		}
 		?>
 		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php echo var_export( $negative ); ?>">
-			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ); ?>
+			<?php echo file_get_contents( $shape_path ); ?>
 		</div>
 		<?php
 	}
