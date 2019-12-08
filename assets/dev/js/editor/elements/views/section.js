@@ -1,13 +1,11 @@
-var BaseElementView = require( 'elementor-elements/views/base' ),
-	SectionView;
-
 import AddSectionView from '../../views/add-section/inline';
 
-SectionView = BaseElementView.extend( {
-	// TODO: defaults should be static.
-	defaultInnerSectionColumns: 2,
-	defaultMinColumnSize: 2,
+const BaseElementView = require( 'elementor-elements/views/base' );
 
+const DEFAULT_INNER_SECTION_COLUMNS = 2;
+const DEFAULT_MIN_COLUMN_SIZE = 2;
+
+const SectionView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-container > .elementor-row',
 
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
@@ -320,3 +318,5 @@ SectionView = BaseElementView.extend( {
 } );
 
 module.exports = SectionView;
+module.exports.DEFAULT_INNER_SECTION_COLUMNS = DEFAULT_INNER_SECTION_COLUMNS;
+module.exports.DEFAULT_MIN_COLUMN_SIZE = DEFAULT_MIN_COLUMN_SIZE;

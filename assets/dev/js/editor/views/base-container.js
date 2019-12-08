@@ -1,7 +1,6 @@
 import DocumentUtils from 'elementor-document/utils/helpers';
 
 module.exports = Marionette.CompositeView.extend( {
-
 	templateHelpers: function() {
 		return {
 			view: this,
@@ -83,7 +82,6 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( options.edit && elementor.history.history.getActive() ) {
-			// TODO: should be directly.
 			newModel.trigger( 'request:edit' );
 		}
 

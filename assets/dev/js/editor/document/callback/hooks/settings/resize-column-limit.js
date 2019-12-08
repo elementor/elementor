@@ -1,4 +1,5 @@
 import HookDependency from '../base/dependency';
+import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
 export class ResizeColumnLimit extends HookDependency {
 	getCommand() {
@@ -40,14 +41,14 @@ export class ResizeColumnLimit extends HookDependency {
 					parentView.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
 				nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
 
-			if ( nextElementNewSize < parentView.defaultMinColumnSize ) {
+			if ( nextElementNewSize < DEFAULT_INNER_SECTION_COLUMNS ) {
 				if ( $e.devTools ) {
 					$e.devTools.log.error( 'New column width is too large' );
 				}
 				return false;
 			}
 
-			if ( newSize < parentView.defaultMinColumnSize ) {
+			if ( newSize < DEFAULT_INNER_SECTION_COLUMNS ) {
 				if ( $e.devTools ) {
 					$e.devTools.log.error( 'New column width is too small' );
 				}

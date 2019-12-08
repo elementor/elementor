@@ -1,5 +1,6 @@
 import HookAfter from '../base/after';
 import Helper from '../helper';
+import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
 export class InnerSectionColumns extends HookAfter {
 	getCommand() {
@@ -33,9 +34,7 @@ export class InnerSectionColumns extends HookAfter {
 			containers = [ containers ];
 		}
 
-		const columns = containers[ 0 ].view.defaultInnerSectionColumns;
-
-		Helper.createSectionColumns( containers, columns, options, structure );
+		Helper.createSectionColumns( containers, DEFAULT_INNER_SECTION_COLUMNS, options, structure );
 	}
 }
 
