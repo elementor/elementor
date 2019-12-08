@@ -51,7 +51,7 @@ class Admin {
 			$nonce_action = $_GET['app'] . $_GET['action'];
 
 			if ( ! $app ) {
-				wp_die( 'Unknown app: ' . $app_slug );
+				wp_die( 'Unknown app: ' . esc_attr( $app_slug ) );
 			}
 
 			if ( empty( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], $nonce_action ) ) {

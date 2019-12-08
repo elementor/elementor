@@ -75,6 +75,10 @@ class Manager extends BaseModule {
 			wp_send_json_error();
 		}
 
+		array_walk_recursive( $_POST['data'], function( &$value ) {
+			$value = sanitize_text_field( $value );
+		} );
+
 		foreach ( $_POST['data'] as $error ) {
 			$error['type'] = Logger_Interface::LEVEL_ERROR;
 
