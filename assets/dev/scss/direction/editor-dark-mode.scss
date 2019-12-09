@@ -57,6 +57,10 @@ body {
 
 		&.pcr-active {
 
+			&:after {
+				box-shadow: 0 0 0 1px #71d7f7, inset 0 0 0 1px $theme-dark-gray;
+			}
+
 			~ .elementor-color-picker__add-swatch {
 				background-color: $theme-dark-gray-light;
 
@@ -66,7 +70,6 @@ body {
 			}
 		}
 	}
-
 }
 
 //Loader
@@ -659,6 +662,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 	&__dropping-area {
 		border: 1px dashed $theme-dark-gray-lighter;
+		color: $theme-dark-gray-lightest;
 
 		&.elementor-active {
 			border-color: $theme-dark-gray-lightest;
@@ -666,10 +670,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 			i {
 				color: $theme-dark-danger;
 			}
-		}
-
-		i {
-			color: $theme-dark-gray-lightest;
 		}
 	}
 }
@@ -692,6 +692,10 @@ $devices: 'desktop', 'tablet', 'mobile';
 				fill: $theme-dark-gray-light;
 			}
 		}
+	}
+
+	.elementor-control-structure-reset {
+		border-top-color: $theme-dark-gray-darkest;
 	}
 }
 

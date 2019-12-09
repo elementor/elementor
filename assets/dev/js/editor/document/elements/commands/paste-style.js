@@ -82,6 +82,7 @@ export class PasteStyle extends History {
 				$e.run( 'document/elements/settings', {
 					container: targetContainer,
 					settings: diffSettings,
+					options: { external: true },
 				} );
 
 				// BC: Deprecated since 2.8.0 - use `$e.events`.
@@ -90,8 +91,6 @@ export class PasteStyle extends History {
 				targetContainer.view.allowRender = true;
 
 				targetContainer.render();
-
-				targetContainer.panel.refresh();
 			} );
 		} );
 	}

@@ -9,13 +9,13 @@ export const SectionColumns = () => {
 			assert.equal( eSection.settings.get( 'structure' ), structure );
 		} );
 
-		// TODO: Handle it somehow cause failure of many tests.
+		// TODO: this cause a mass tests failure.
 		// QUnit.test( 'apply(): with invalid structure', ( assert ) => {
 		// 	const structure = 120;
 		//
 		// 	assert.throws(
 		// 		() => {
-		// 			DocumentHelper.createSectionStructure( 1, structure );
+		// 			ElementsHelper.createSectionStructure( 1, structure );
 		// 		},
 		// 		new TypeError( 'The provided structure doesn\'t match the columns count.' )
 		// 	);

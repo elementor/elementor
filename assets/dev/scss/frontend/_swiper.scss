@@ -317,7 +317,6 @@ button.swiper-pagination-bullet {
 
 .swiper-container-cube .swiper-slide, .swiper-container-flip .swiper-slide {
 	pointer-events: none;
-	backface-visibility: hidden;
 	z-index: 1;
 }
 
