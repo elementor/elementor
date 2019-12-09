@@ -23,8 +23,12 @@ module.exports = Marionette.CompositeView.extend( {
 
 	currentPreviewItem: null,
 
-	initialize: function() {
-		this.collection = elementor.history.revisions.getItems();
+	document: null,
+
+	initialize: function( options ) {
+		this.document = options.document;
+
+		this.collection = this.document.revisions.getItems();
 
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 
@@ -34,9 +38,10 @@ module.exports = Marionette.CompositeView.extend( {
 	getRevisionViewData: function( revisionView ) {
 		var self = this;
 
-		elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
+		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				elementor.history.revisions.setEditorData( data.elements );
+				self.document.revisions.setEditorData( data.elements );
+
 				elementor.settings.page.model.set( data.settings );
 
 				self.setRevisionsButtonsActive( true );
@@ -59,6 +64,27 @@ module.exports = Marionette.CompositeView.extend( {
 
 	setRevisionsButtonsActive: function( active ) {
 		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+	},
+
+	deleteRevision: function( revisionView ) {
+		var self = this;
+
+		revisionView.$el.addClass( 'elementor-revision-item-loading' );
+
+		this.document.revisions.deleteRevision( revisionView.model, {
+			success: function() {
+				if ( revisionView.model.get( 'id' ) === self.currentPreviewId ) {
+					self.onDiscardClick();
+				}
+
+				self.currentPreviewId = null;
+			},
+			error: function() {
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
+
+				alert( 'An error occurred' );
+			},
+		} );
 	},
 
 	enterReviewMode: function() {
@@ -97,21 +123,21 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
-		elementor.saver.setFlagEditorChange( true );
+		$e.run( 'document/save/set-is-modified', { status: true } );
 
-		elementor.saver.saveAutoSave();
+		$e.run( 'document/save/auto', { force: true } );
 
 		this.isRevisionApplied = true;
 
 		this.currentPreviewId = null;
 
-		elementor.history.history.getItems().reset();
+		this.document.history.getItems().reset();
 	},
 
 	onDiscardClick: function() {
-		elementor.history.revisions.setEditorData( elementor.config.data );
+		this.document.revisions.setEditorData( elementor.config.data );
 
-		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
+		$e.run( 'document/save/set-is-modified', { status: this.isRevisionApplied } );
 
 		this.isRevisionApplied = false;
 
@@ -161,7 +187,7 @@ module.exports = Marionette.CompositeView.extend( {
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
 		if ( elementor.saver.isEditorChanged() && ( null === self.currentPreviewId || elementor.config.current_revision_id === self.currentPreviewId ) ) {
-			elementor.saver.saveEditor( {
+			$e.run( 'document/save/save', {
 				status: 'autosave',
 				onSuccess: function() {
 					self.getRevisionViewData( childView );

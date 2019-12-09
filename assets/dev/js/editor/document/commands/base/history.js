@@ -36,12 +36,12 @@ export default class History extends Base {
 	/**
 	 * Function isHistoryActive().
 	 *
-	 * Return `elementor.history.history.getActive()`.
+	 * Return `elementor.documents.getCurrent().history.getActive()`.
 	 *
 	 * @returns {boolean}
 	 */
 	isHistoryActive() {
-		return elementor.history.history.getActive();
+		return elementor.documents.getCurrent().history.getActive();
 	}
 
 	onBeforeRun( args ) {

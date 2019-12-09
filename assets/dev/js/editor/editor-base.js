@@ -7,6 +7,7 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
+import DocumentsManager from './document/manager';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -265,15 +266,12 @@ const App = Marionette.Application.extend( {
 	},
 
 	initComponents: function() {
-		var EventManager = require( 'elementor-utils/hooks' ),
+		const EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
-			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
 		this.hooks = new EventManager();
-
-		this.saver = new Saver();
 
 		this.settings = new Settings();
 
@@ -757,6 +755,8 @@ const App = Marionette.Application.extend( {
 
 		elementorCommon.elements.$window.trigger( 'elementor:init' );
 
+		this.saver = $e.components.get( 'document/save' );
+
 		this.initPreview();
 
 		this.logSite();
@@ -837,6 +837,8 @@ const App = Marionette.Application.extend( {
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
+
+		this.documents = new DocumentsManager();
 
 		this.loaded = true;
 	},

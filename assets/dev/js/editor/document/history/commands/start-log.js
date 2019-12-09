@@ -2,7 +2,9 @@ import Base from '../../commands/base/base';
 
 export class StartLog extends Base {
 	initialize( args ) {
-		if ( elementor.history.history.isItemStarted() || args.id ) {
+		this.history = elementor.documents.getCurrent().history;
+
+		if ( this.history.isItemStarted() || args.id ) {
 			this.isSubItem = true;
 
 			return;
@@ -25,7 +27,7 @@ export class StartLog extends Base {
 			return null;
 		}
 
-		return elementor.history.history.startItem( args );
+		return this.history.startItem( args );
 	}
 }
 
