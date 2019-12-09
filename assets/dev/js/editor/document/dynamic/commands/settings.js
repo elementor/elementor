@@ -1,4 +1,4 @@
-import Debounce from '../../commands/base/debounce';
+import Debounce from '../../commands/base/history/debounce';
 import ElementsSettings from '../../elements/commands/settings';
 
 /**
