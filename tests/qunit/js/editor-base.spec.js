@@ -27,6 +27,8 @@ window.elementor = new App( {
 			this.sections.show( new Preview( { model: this.elementsModel } ) );
 
 			this.previewLoaded = true;
+
+			this.documents = new DocumentsManager();
 		}
 
 		return this.sections.currentView;
@@ -58,8 +60,6 @@ window.elementor = new App( {
 		this.addBackgroundClickArea( document );
 
 		elementorCommon.elements.$window.trigger( 'elementor:init' );
-
-		this.documents = new DocumentsManager();
 
 		// TODO: Should be avoided, Useless management in tests.
 		this.saver = $e.components.get( 'document/save' );
