@@ -150,7 +150,7 @@ export default class Component extends ComponentModal {
 				with_page_settings: withPageSettings,
 			},
 			success: ( data ) => {
-				// Clone `self.modalConfig` because it deleted during the closing.
+				// Clone the `modalConfig.importOptions` because it deleted during the closing.
 				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
 
 				importOptions.withPageSettings = withPageSettings;
