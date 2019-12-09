@@ -81,7 +81,7 @@
 @mixin absolute-center {
 	position: absolute;
 	top: 50%;
-	left: 50%; //reset when the parent has set text-align: center;
-	transform: translateX(-50%) translateY(-50%);
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 //End
