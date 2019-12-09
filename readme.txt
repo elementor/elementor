@@ -232,7 +232,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Tweak: Added dynamic capabilities to alert widget ([#9436](https://github.com/elementor/elementor/issues/9436))
 * Tweak: Added "Play on Mobile" option to allow iOS autoplay to Video widget ([#3442](https://github.com/elementor/elementor/issues/3442))
 * Tweak: Added inline skin for Icon control
-* Tweak: Added `elementor/settings/controls/checkbox_list_cpt/post_type_objects` filter to control over displayed CPT in WordPress Dashboard UI (thanks @sc0ttkclark)
+* Tweak: Added `elementor/settings/controls/checkbox_list_cpt/post_type_objects` filter to control over displayed CPT in WordPress Dashboard UI (Props [@sc0ttkclark](https://github.com/sc0ttkclark))
 * Tweak: Moved "Editing Handles" and "Lightbox in editor" options to the new "Preferences" section
 * Tweak: Added `playsinline` attribute to Vimeo and YouTube sources to allow autoplay on iOS devices in Background Video
 * Tweak: Added Documents count to System Info
