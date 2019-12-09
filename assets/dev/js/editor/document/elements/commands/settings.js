@@ -1,4 +1,4 @@
-import Debounce from '../../commands/base/debounce';
+import Debounce from '../../commands/base/history/debounce';
 
 export class Settings extends Debounce {
 	/**

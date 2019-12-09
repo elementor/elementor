@@ -35,8 +35,13 @@ export class Import extends History {
 		} );
 
 		if ( options.withPageSettings ) {
-			// TODO: use settings command.
-			elementor.settings.page.model.setExternalChange( data.page_settings );
+			$e.run( 'document/elements/settings', {
+				container: elementor.settings.page.getEditedView().getContainer(),
+				settings: data.page_settings,
+				options: {
+					external: true,
+				},
+			} );
 		}
 	}
 }

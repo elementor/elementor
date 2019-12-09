@@ -1,3 +1,5 @@
+import { DEFAULT_MAX_COLUMNS } from 'elementor-elements/views/section';
+
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' ),
 	ColumnView;
@@ -90,7 +92,8 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+		const self = this,
+			groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
 			generalGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
 
 		groups.splice( generalGroupIndex + 1, 0, {
@@ -101,6 +104,7 @@ ColumnView = BaseElementView.extend( {
                     icon: 'eicon-plus',
 					title: elementor.translate( 'new_column' ),
 					callback: this.addNewColumn.bind( this ),
+					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS,
 				},
 			],
 		} );
