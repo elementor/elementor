@@ -31,6 +31,24 @@ export class Paste extends History {
 				storageData.forEach( ( model ) => {
 					switch ( model.elType ) {
 						case 'section': {
+							// If is inner create section for `inner-section`.
+							if ( model.isInner ) {
+								const section = $e.run( 'document/elements/create', {
+									container: targetContainer,
+									model: {
+										elType: 'section',
+									},
+									columns: 1,
+									options: {
+										at: index,
+										edit: false,
+									},
+								} );
+
+								// `targetContainer` = first column at `section`.
+								targetContainer = section.view.children.findByIndex( 0 ).getContainer();
+							}
+
 							// Will be not affected by hook since it always have `model.elements`.
 							result.push( this.pasteTo(
 								[ targetContainer ],
