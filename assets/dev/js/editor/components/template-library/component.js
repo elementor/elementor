@@ -126,10 +126,10 @@ export default class Component extends ComponentModal {
 	}
 
 	insertTemplate( args ) {
-		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings;
+		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings,
+			model = args.model;
 
-		// eslint-disable-next-line prefer-const
-		let { model, withPageSettings = null } = args;
+		let { withPageSettings = null } = args;
 
 		if ( autoImportSettings ) {
 			withPageSettings = true;
