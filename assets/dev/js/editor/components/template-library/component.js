@@ -128,15 +128,51 @@ export default class Component extends ComponentModal {
 	insertTemplate( args ) {
 		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings;
 
-		if ( ! autoImportSettings && args.model.get( 'hasPageSettings' ) ) {
+		// eslint-disable-next-line prefer-const
+		let { model, withPageSettings = null } = args;
+
+		if ( autoImportSettings ) {
+			withPageSettings = true;
+		}
+
+		if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
 			const insertTemplateHandler = this.getImportSettingsDialog();
 
-			insertTemplateHandler.showImportDialog( args.model );
+			insertTemplateHandler.showImportDialog( model );
 
 			return;
 		}
 
-		elementor.templates.importTemplate( args.model, { withPageSettings: autoImportSettings } );
+		this.manager.layout.showLoadingView();
+
+		this.manager.requestTemplateContent( model.get( 'source' ), model.get( 'template_id' ), {
+			data: {
+				with_page_settings: withPageSettings,
+			},
+			success: ( data ) => {
+				// Clone `self.modalConfig` because it deleted during the closing.
+				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
+
+				importOptions.withPageSettings = withPageSettings;
+
+				// Hide for next open.
+				this.manager.layout.hideLoadingView();
+
+				this.manager.layout.hideModal();
+
+				$e.run( 'document/elements/import', {
+					model,
+					data,
+					options: importOptions,
+				} );
+			},
+			error: ( data ) => {
+				this.manager.showErrorDialog( data );
+			},
+			complete: () => {
+				this.manager.layout.hideLoadingView();
+			},
+		} );
 	}
 
 	getImportSettingsDialog() {
@@ -148,11 +184,17 @@ export default class Component extends ComponentModal {
 				var dialog = InsertTemplateHandler.getDialog();
 
 				dialog.onConfirm = function() {
-					elementor.templates.importTemplate( model, { withPageSettings: true } );
+					$e.run( 'library/insert-template', {
+						model,
+						withPageSettings: true,
+					} );
 				};
 
 				dialog.onCancel = function() {
-					elementor.templates.importTemplate( model );
+					$e.run( 'library/insert-template', {
+						model,
+						withPageSettings: false,
+					} );
 				};
 
 				dialog.show();
