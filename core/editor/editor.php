@@ -101,18 +101,6 @@ class Editor {
 		// Temp: Allow plugins to know that the editor route is ready. TODO: Remove on 2.7.3.
 		define( 'ELEMENTOR_EDITOR_USE_ROUTER', true );
 
-		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
-		query_posts( [
-			'p' => $this->post_id,
-			'post_type' => get_post_type( $this->post_id ),
-		] );
-
-		Plugin::$instance->db->switch_to_post( $this->post_id );
-
-		$document = Plugin::$instance->documents->get( $this->post_id );
-
-		Plugin::$instance->documents->switch_to_document( $document );
-
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		// Remove all WordPress actions
@@ -142,13 +130,7 @@ class Editor {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 999999 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 
-		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
-
-		// Post Lock
-		if ( ! $this->get_locked_user( $this->post_id ) ) {
-			$this->lock_post( $this->post_id );
-		}
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'init_document' ] );
 
 		// Setup default heartbeat options
 		add_filter( 'heartbeat_settings', function( $settings ) {
@@ -167,6 +149,61 @@ class Editor {
 		if ( false !== $die ) {
 			die;
 		}
+	}
+
+	public function init_document() {
+		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
+		query_posts( [
+			'p' => $this->post_id,
+			'post_type' => get_post_type( $this->post_id ),
+		] );
+
+		Plugin::$instance->db->switch_to_post( $this->post_id );
+
+		$document = Plugin::$instance->documents->get( $this->post_id );
+
+		Plugin::$instance->documents->switch_to_document( $document );
+
+		// Change mode to Builder
+		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
+
+		// Post Lock
+		if ( ! $this->get_locked_user( $this->post_id ) ) {
+			$this->lock_post( $this->post_id );
+		}
+
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
+
+		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
+		$editor_data = $document->get_elements_raw_data( null, true );
+
+		$locked_user = $this->get_locked_user( $this->post_id );
+
+		if ( $locked_user ) {
+			$locked_user = $locked_user->display_name;
+		}
+
+		$post_type_object = get_post_type_object( $document->get_main_post()->post_type );
+		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
+
+		// Set the global data like $post, $authordata and etc
+		setup_postdata( $this->post_id );
+
+		$doc_config = [
+			'data' => $editor_data,
+			'document' => $document->get_config(),
+			'current_user_can_publish' => $current_user_can_publish,
+			'locked_user' => $locked_user,
+			'settings' => SettingsManager::get_settings_managers_config(),
+		];
+
+		$additional_config = apply_filters( 'elementor/editor/document/config', [], $this->post_id );
+
+		if ( ! empty( $additional_config ) ) {
+			$doc_config = array_replace_recursive( $doc_config, $additional_config );
+		}
+
+		Utils::print_js_config( 'elementor-editor', 'ElementorDocsConfig', $doc_config );
 	}
 
 	/**
@@ -326,9 +363,6 @@ class Editor {
 	 */
 	public function enqueue_scripts() {
 		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
-
-		// Set the global data like $post, $authordata and etc
-		setup_postdata( $this->post_id );
 
 		global $wp_styles, $wp_scripts;
 
@@ -504,19 +538,8 @@ class Editor {
 		 */
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
-		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
-
-		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
-		$editor_data = $document->get_elements_raw_data( null, true );
-
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
-
-		$locked_user = $this->get_locked_user( $this->post_id );
-
-		if ( $locked_user ) {
-			$locked_user = $locked_user->display_name;
-		}
 
 		$page_title_selector = get_option( 'elementor_page_title_selector' );
 
@@ -524,16 +547,10 @@ class Editor {
 			$page_title_selector = 'h1.entry-title';
 		}
 
-		$post_type_object = get_post_type_object( $document->get_main_post()->post_type );
-		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
-
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
-			'data' => $editor_data,
-			'document' => $document->get_config(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
-			'current_user_can_publish' => $current_user_can_publish,
 			'tabs' => $plugin->controls_manager->get_tabs(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
@@ -548,7 +565,6 @@ class Editor {
 			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
-			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->get_wp_editor_config(),
 			'settings_page_link' => Settings::get_url(),
@@ -559,7 +575,6 @@ class Editor {
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
-			'locked_user' => $locked_user,
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
@@ -764,6 +779,8 @@ class Editor {
 			],
 		];
 
+		$this->bc_move_document_filters();
+
 		$localized_settings = [];
 
 		/**
@@ -776,7 +793,7 @@ class Editor {
 		 * @param array $localized_settings Localized settings.
 		 * @param int   $post_id            The ID of the current post being edited.
 		 */
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings, $this->post_id );
+		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings );
 
 		if ( ! empty( $localized_settings ) ) {
 			$config = array_replace_recursive( $config, $localized_settings );
@@ -1212,6 +1229,30 @@ class Editor {
 
 		foreach ( $template_names as $template_name ) {
 			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/$template_name.php" );
+		}
+	}
+
+	private function bc_move_document_filters() {
+		global $wp_filter;
+
+		$old_tag = 'elementor/editor/localize_settings';
+		$new_tag = 'elementor/editor/document/config';
+
+		if ( ! has_filter( $old_tag ) ) {
+			return;
+		}
+
+		foreach ( $wp_filter[ $old_tag ] as $priority => $filters ) {
+			foreach ( $filters as $filter_id => $filter_args ) {
+				if ( 2 === $filter_args['accepted_args'] ) {
+					remove_filter( $old_tag, $filter_id, $priority );
+
+					add_filter( $new_tag, $filter_args['function'], $priority, 2 );
+
+					// TODO: Hard deprecation
+					// _deprecated_hook( '`' . $old_tag . ` is no longer using post_id', '2.9.0', $new_tag' );
+				}
+			}
 		}
 	}
 }

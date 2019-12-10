@@ -424,6 +424,7 @@ abstract class Document extends Controls_Stack {
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
 			'container' => 'body',
+			'post_type_title' => $this->get_post_type_title(),
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),

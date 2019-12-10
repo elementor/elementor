@@ -1,4 +1,4 @@
-/* global ElementorConfig */
+/* global ElementorConfig, ElementorDocsConfig */
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -734,6 +734,8 @@ const App = Marionette.Application.extend( {
 	onStart: function() {
 		this.config = ElementorConfig;
 
+		this.initDocument();
+
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
@@ -968,6 +970,12 @@ const App = Marionette.Application.extend( {
 
 	compileTemplate: function( template, data ) {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
+	},
+
+	initDocument() {
+		this.config = jQuery.extend( this.config, ElementorDocsConfig );
+
+		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
 	},
 } );
 
