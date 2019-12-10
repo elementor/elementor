@@ -237,7 +237,25 @@ export default class ElementsHelper {
 		$e.run( 'document/elements/import', { data, model } );
 	}
 
-	static createAutoForm( eContainer ) {
+	static createAutoColumn( eContainer = null ) {
+		if ( ! eContainer ) {
+			return this.createSection( 1, true );
+		}
+
+		return this.createColumn( eContainer );
+	}
+
+	static createAutoColumnStyled( eContainer = null ) {
+		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
+
+		this.settings( eContainer, {
+			background_color: '#D51D1D',
+		} );
+
+		return eContainer;
+	}
+
+	static createAutoForm( eContainer = null ) {
 		if ( ! eContainer ) {
 			eContainer = this.createSection( 1, true );
 		}
