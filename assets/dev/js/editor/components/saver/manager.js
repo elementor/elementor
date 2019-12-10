@@ -196,7 +196,7 @@ module.exports = elementorModules.Module.extend( {
 					jQuery.extend( true, elementor.config, data.config );
 				}
 
-				elementor.config.data = elements;
+				elementor.config.document.elements = elements;
 
 				elementor.channels.editor.trigger( 'saved', data );
 

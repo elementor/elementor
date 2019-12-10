@@ -188,27 +188,11 @@ class Editor {
 
 		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
 
-		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
-		$editor_data = $document->get_elements_raw_data( null, true );
-
-		$locked_user = $this->get_locked_user( $this->post_id );
-
-		if ( $locked_user ) {
-			$locked_user = $locked_user->display_name;
-		}
-
-		$post_type_object = get_post_type_object( $document->get_main_post()->post_type );
-		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
-
 		// Set the global data like $post, $authordata and etc
 		setup_postdata( $this->post_id );
 
 		$doc_config = [
-			'data' => $editor_data,
 			'document' => $document->get_config(),
-			'current_user_can_publish' => $current_user_can_publish,
-			'locked_user' => $locked_user,
-			'settings' => SettingsManager::get_settings_managers_config(),
 		];
 
 		$additional_config = apply_filters( 'elementor/editor/document/config', [], $this->post_id );
@@ -561,6 +545,10 @@ class Editor {
 			$page_title_selector = 'h1.entry-title';
 		}
 
+		$settings = SettingsManager::get_settings_managers_config();
+		// Moved to document since 2.9.0.
+		unset( $settings['page'] );
+
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
@@ -568,7 +556,6 @@ class Editor {
 			'tabs' => $plugin->controls_manager->get_tabs(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
-			'widgets' => $plugin->widgets_manager->get_widget_types_config(),
 			'schemes' => [
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
@@ -579,6 +566,7 @@ class Editor {
 			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
+			'settings' => $settings,
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->get_wp_editor_config(),
 			'settings_page_link' => Settings::get_url(),

@@ -182,17 +182,17 @@ const App = Marionette.Application.extend( {
 		if ( 'widget' === elType ) {
 			const widgetType = model.get( 'widgetType' );
 
-			if ( ! this.config.widgets[ widgetType ] ) {
+			if ( ! this.config.document.widgets[ widgetType ] ) {
 				return false;
 			}
 
-			if ( ! this.config.widgets[ widgetType ].commonMerged ) {
-				jQuery.extend( this.config.widgets[ widgetType ].controls, this.config.widgets.common.controls );
+			if ( ! this.config.document.widgets[ widgetType ].commonMerged ) {
+				jQuery.extend( this.config.document.widgets[ widgetType ].controls, this.config.document.widgets.common.controls );
 
-				this.config.widgets[ widgetType ].commonMerged = true;
+				this.config.document.widgets[ widgetType ].commonMerged = true;
 			}
 
-			return this.config.widgets[ widgetType ];
+			return this.config.document.widgets[ widgetType ];
 		}
 
 		if ( ! this.config.elements[ elType ] ) {
@@ -694,7 +694,7 @@ const App = Marionette.Application.extend( {
 	requestWidgetsConfig: function() {
 		const excludeWidgets = {};
 
-		jQuery.each( this.config.widgets, ( widgetName, widgetConfig ) => {
+		jQuery.each( this.config.document.widgets, ( widgetName, widgetConfig ) => {
 			if ( widgetConfig.controls ) {
 				excludeWidgets[ widgetName ] = true;
 			}
@@ -706,7 +706,7 @@ const App = Marionette.Application.extend( {
 			},
 			success: ( data ) => {
 				jQuery.each( data, ( widgetName, controlsConfig ) => {
-					const widgetConfig = this.config.widgets[ widgetName ];
+					const widgetConfig = this.config.document.widgets[ widgetName ];
 
 					widgetConfig.controls = controlsConfig.controls;
 					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
@@ -975,7 +975,51 @@ const App = Marionette.Application.extend( {
 	initDocument() {
 		this.config = jQuery.extend( this.config, ElementorDocsConfig );
 
+		this.addDeprecatedConfigProperties();
+
 		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
+	},
+
+	addDeprecatedConfigProperties() {
+		// Use `defineProperty` because `get property()` fails during the `Marionette...extend`.
+
+		Object.defineProperty( this.config, 'data', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.config.data', '2.9.0', 'elementor.config.document.elements' );
+				return elementor.config.document.elements;
+			},
+		} );
+
+		Object.defineProperty( this.config, 'widgets', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.config.document.widgets' );
+				return elementor.config.document.widgets;
+			},
+		} );
+
+		Object.defineProperty( this.config, 'current_user_can_publish', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.config.current_user_can_publish', '2.9.0', 'elementor.config.document.user.can_publish' );
+				return elementor.config.document.user.can_publish;
+			},
+		} );
+
+		Object.defineProperty( this.config, 'locked_user', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.config.locked_user', '2.9.0', 'elementor.config.document.user.locked' );
+				return elementor.config.document.user.locked;
+			},
+		} );
+
+		// Set the page setting for settings manager.
+		elementor.config.settings.page = elementor.config.document.settings;
+
+		Object.defineProperty( this.config.settings, 'page', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
+				return elementor.config.document.settings;
+			},
+		} );
 	},
 } );
 
