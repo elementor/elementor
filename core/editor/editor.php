@@ -98,9 +98,6 @@ class Editor {
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
-		// Temp: Allow plugins to know that the editor route is ready. TODO: Remove on 2.7.3.
-		define( 'ELEMENTOR_EDITOR_USE_ROUTER', true );
-
 		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
 		query_posts( [
 			'p' => $this->post_id,
