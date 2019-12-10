@@ -35,15 +35,15 @@ export class ResizeColumn extends HookAfter {
 		}
 
 		const parentView = container.parent.view,
-			currentColumnView = container.view,
-			totalWidth = parentView.$el.find( ' > .elementor-container' )[ 0 ].getBoundingClientRect().width;
+			currentColumnView = container.view;
 
 		let currentSize = null;
 
-		if ( null === container.oldValues._inline_size ) {
+		if ( undefined === container.oldValues || null === container.oldValues._inline_size ) {
 			// Mean, that it was not set before ( first time ).
 			currentSize = container.settings.get( '_column_size' );
 		} else {
+			const totalWidth = parentView.$el.find( ' > .elementor-container' )[ 0 ].getBoundingClientRect().width;
 			currentSize = +( container.oldValues._inline_size ||
 				( currentColumnView.el.getBoundingClientRect().width / totalWidth * 100 ) );
 		}
