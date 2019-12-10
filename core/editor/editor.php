@@ -93,6 +93,20 @@ class Editor {
 			return;
 		}
 
+		// BC: From 2.9.0, the editor shouldn't handle the global post / current document.
+		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
+		query_posts( [
+			'p' => $this->post_id,
+			'post_type' => get_post_type( $this->post_id ),
+		] );
+
+		Plugin::$instance->db->switch_to_post( $this->post_id );
+
+		$document = Plugin::$instance->documents->get( $this->post_id );
+
+		Plugin::$instance->documents->switch_to_document( $document );
+		// End BC.
+
 		Loading_Inspection_Manager::instance()->register_inspections();
 
 		// Send MIME Type header like WP admin-header.
