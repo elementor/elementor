@@ -25,7 +25,7 @@ export class SectionColumnsSetStructure extends HookAfter {
 
 		containers.forEach( ( /* Container */ container ) => container.parent.view.resetLayout() );
 
-		target.view.resetLayout()
+		target.view.resetLayout();
 
 		return true;
 	}
