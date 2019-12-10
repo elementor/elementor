@@ -6,8 +6,7 @@
 **Requires at least:** 5.0  
 **Tested up to:** 5.3  
 **Requires PHP:** 5.6  
-**Beta tag:** 2.8.0-beta2  
-**Stable tag:** 2.7.5  
+**Stable tag:** 2.7.6  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -223,6 +222,60 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.8.0 - 2019-12-09 ###
+* New: Introducing new Color Picker control with Saved Colors built-in ([#6968](https://github.com/elementor/elementor/issues/6968), [#8982](https://github.com/elementor/elementor/issues/8982), [Developers Blog Post](https://developers.elementor.com/elementor-2-8-new-color-picker/]))
+* New: Introducing Dark Mode UI theme ([#9263](https://github.com/elementor/elementor/issues/9263), [#8249](https://github.com/elementor/elementor/issues/8249), [#9125](https://github.com/elementor/elementor/issues/9125))
+* New: User Preferences section in Editor Panel menu
+* Tweak: Better responsive visibility indication ([#8020](https://github.com/elementor/elementor/issues/8020), [#4775](https://github.com/elementor/elementor/issues/4775))
+* Tweak: Added `background-size` and `background-position` controls to Background Slideshow ([#9199](https://github.com/elementor/elementor/issues/9199))
+* Tweak: Removed Google+ network from "Recommended" tab in Social Icons widget ([#9393](https://github.com/elementor/elementor/issues/9393))
+* Tweak: Replaced default Google+ network icon with YouTube icon in Social Icons widget
+* Tweak: Added dynamic capabilities to alert widget ([#9436](https://github.com/elementor/elementor/issues/9436))
+* Tweak: Added "Play on Mobile" option to allow iOS autoplay to Video widget ([#3442](https://github.com/elementor/elementor/issues/3442))
+* Tweak: Added inline skin for Icon control
+* Tweak: Added `elementor/settings/controls/checkbox_list_cpt/post_type_objects` filter to control over displayed CPT in WordPress Dashboard UI (Props [@sc0ttkclark](https://github.com/sc0ttkclark))
+* Tweak: Moved "Editing Handles" and "Lightbox in editor" options to the new "Preferences" section
+* Tweak: Added `playsinline` attribute to Vimeo and YouTube sources to allow autoplay on iOS devices in Background Video
+* Tweak: Added Documents count to System Info
+* Tweak: Added global utility function for adding link attributes in Button widget
+* Tweak: Re-designed responsive mode switcher control
+* Tweak: Re-designed alerts and notices in the Editor Panel
+* Tweak: Improved styling of checkboxes and radio inputs
+* Tweak: Changed "Custom Positioning" section label to "Positioning"
+* Tweak: Allow access to Templates Library for connected users only
+* Tweak: Changed icon control skin to "Inline" in Toggle and Accordion widgets
+* Tweak: Added Icon Manager "Recommended" tab in Toggle and Accordion widgets
+* Tweak: Changed all occurrences of `text-overflow: ellipsis` to a single `mixin`
+* Tweak: Added "Pause On Interaction" option to Image Carousel widget
+* Tweak: Updated `e-icons` library to v5.5.0
+* Tweak: Updated `e-gallery` library to v1.1.0
+* Tweak: Dropped Support for WP v4.9, now supporting WP v5.0+
+* Tweak: Dropped delete revision option in Revisions Panel since WordPress v5.3 ([Topic](http://core.trac.wordpress.org/ticket/43709))
+* Tweak: Added compatibility with WordPress v5.3
+* Fix: Use CSS Flex to align and order button icon ([#561](https://github.com/elementor/elementor/issues/561))
+* Fix: Remove Ninja Forms compatibility script which causes server issues ([#8267](https://github.com/elementor/elementor/issues/8267))
+* Fix: Added `title` attribute to embedded iframes ([#9374](https://github.com/elementor/elementor/issues/9374), Props [@shipley-dcc](https://github.com/shipley-dcc))
+* Fix: Reset style in a button doesn't work on colors ([#8454](https://github.com/elementor/elementor/issues/8454))
+* Fix: No fallback when SVG file doesn't exist ([#9481](https://github.com/elementor/elementor/issues/9481))
+* Fix: Custom shapes "negative" support fix ([#9761](https://github.com/elementor/elementor/issues/9761))
+* Fix : Shapes SVG include PHP Parse Error If the uploaded SVG file contain `<?xml version="1.0" encoding="UTF-8"?>` ([#9693](https://github.com/elementor/elementor/issues/9693), Props [@MarieComet](https://github.com/MarieComet))
+* Fix: Added better output escaping in the attributes for checkbox lists in Admin forms (Props [@MarieComet](https://github.com/MarieComet))
+* Fix: Adding a link overrides the Title and Description colors in Testimonial widget
+* Fix: Removed redundant Editor Panel Spacer in Image Carousel widget
+* Fix: "Delete All Content" doesn't close current widget editing options
+* Fix: Pause on hover option doesn't work in Image Carousel widget
+* Fix: Limit transition duration in Ken Burns CSS only to `transform` property
+* Fix: Recommended tab icons don't change when there's more than one `Icons` control per widget
+* Fix: Hidden sticky section generates redundant scroll offset when using Anchors
+* Fix: Inserting a saved section as a template uses the same `ID`
+* Fix: Double rendering of elements in Editor
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v2-8-0-planned-deprecations/)
+
+### 2.7.6 - 2019-12-08 ###
+* Fix: Transition Duration option not applying to elements background
+* Fix: Hide Beta Testers signup form if the user already subscribed
+* Fix: Added HTML escaping to `Admin` class and to System Info
 
 ### 2.7.5 - 2019-10-28 ###
 * Tweak: Changed the "Finder" icon in the Editor panel

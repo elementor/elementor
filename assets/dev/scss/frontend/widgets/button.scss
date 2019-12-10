@@ -19,6 +19,7 @@
 
 	&-content-wrapper {
 		display: flex;
+		justify-content: center;
 	}
 
 	&-icon {
@@ -84,6 +85,11 @@
 	span {
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
 	}
+}
+
+/* TODO: REMOVE THIS EXCEPTION AFTER PRO 2.8 RELEASES */
+.elementor-menu-cart__toggle .elementor-button-icon {
+	order: 15;
 }
 
 .elementor-element.elementor-button- {
