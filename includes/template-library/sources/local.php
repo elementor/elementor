@@ -471,6 +471,10 @@ class Source_Local extends Source_Base {
 			return $document;
 		}
 
+		if ( ! empty( $template_data['content'] ) ) {
+			$template_data['content'] = $this->replace_elements_ids( $template_data['content'] );
+		}
+
 		$document->save( [
 			'elements' => $template_data['content'],
 			'settings' => $template_data['page_settings'],
@@ -633,7 +637,7 @@ class Source_Local extends Source_Base {
 			'content' => $content,
 		];
 
-		if ( ! empty( $args['page_settings'] ) ) {
+		if ( ! empty( $args['with_page_settings'] ) ) {
 			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['template_id'] );
 
 			$data['page_settings'] = $page->get_data( 'settings' );
@@ -744,7 +748,7 @@ class Source_Local extends Source_Base {
 		}
 
 		// Create temporary .zip file
-		$zip_archive_filename = 'elementor-templates-' . date( 'Y-m-d' ) . '.zip';
+		$zip_archive_filename = 'elementor-templates-' . gmdate( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();
 
@@ -1396,7 +1400,7 @@ class Source_Local extends Source_Base {
 		$export_data += $template_data;
 
 		return [
-			'name' => 'elementor-' . $template_id . '-' . date( 'Y-m-d' ) . '.json',
+			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
 		];
 	}

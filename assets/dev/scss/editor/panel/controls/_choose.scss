@@ -1,18 +1,9 @@
-
 .elementor-control-type-choose {
 
 	&.elementor-label-block {
 
 		.elementor-choices {
 			width: 100%;
-		}
-	}
-
-	&.elementor-label-inline {
-
-		.elementor-control-input-wrapper {
-			display: inline-flex;
-			justify-content: flex-end;
 		}
 	}
 }
@@ -57,6 +48,13 @@
 			background-color: $editor-light;
 			border-color: $editor-light;
 		}
+	}
+}
+
+.elementor-label-inline {
+
+	.elementor-choices {
+		justify-content: flex-end;
 	}
 }
 

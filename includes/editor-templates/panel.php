@@ -240,8 +240,11 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<#
 			var devices = responsive.devices || [ 'desktop', 'tablet', 'mobile' ];
 
-			_.each( devices, function( device ) { #>
-				<a class="elementor-responsive-switcher elementor-responsive-switcher-{{ device }}" data-device="{{ device }}">
+			_.each( devices, function( device ) {
+				var deviceLabel = device.charAt(0).toUpperCase() + device.slice(1),
+					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
+			#>
+				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
 					<i class="eicon-device-{{ device }}"></i>
 				</a>
 			<# } );

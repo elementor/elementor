@@ -83,7 +83,9 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	},
 
 	saveScheme: function() {
-		elementor.schemes.saveScheme( this.getType() );
+		NProgress.start();
+
+		elementor.schemes.saveScheme( this.getType() ).done( NProgress.done );
 
 		this.ui.saveButton.prop( 'disabled', true );
 

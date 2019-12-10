@@ -1,7 +1,7 @@
-var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' ),
-	PanelSchemeColorView;
+var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' );
+import ColorPicker from '../../../../../utils/color-picker';
 
-PanelSchemeColorView = PanelSchemeItemView.extend( {
+module.exports = PanelSchemeItemView.extend( {
 	getUIType: function() {
 		return 'color';
 	},
@@ -11,24 +11,25 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 	},
 
 	changeUIValue: function( newValue ) {
-		this.picker.setColor( newValue );
-
-		this.triggerMethod( 'value:change', this.picker.getColor().toRGBA().toString() );
-	},
-
-	onBeforeDestroy: function() {
-		this.picker.destroyAndRemove();
+		this.colorPicker.picker.setColor( newValue );
 	},
 
 	onRender: function() {
-		this.picker = elementor.helpers.colorPicker( {
-			el: this.ui.pickerPlaceholder[ 0 ],
-			default: this.model.get( 'value' ),
+		this.colorPicker = new ColorPicker( {
+			picker: {
+				el: this.ui.pickerPlaceholder[ 0 ],
+				default: this.model.get( 'value' ),
+			},
+			onChange: () => {
+				this.triggerMethod( 'value:change', this.colorPicker.getValue() );
+			},
 			onClear: () => {
 				this.triggerMethod( 'value:change', '' );
 			},
 		} );
 	},
-} );
 
-module.exports = PanelSchemeColorView;
+	onBeforeDestroy: function() {
+		this.colorPicker.destroy();
+	},
+} );

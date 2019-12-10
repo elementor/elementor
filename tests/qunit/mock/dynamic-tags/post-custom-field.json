@@ -1,0 +1,64 @@
+{
+	"name": "post-custom-field",
+	"title": "Post Custom Field",
+	"panel_template": "<#\n\t\tvar key = key;\n\n\t\tif ( key ) {\n\t\t\tvar settingsKey = \"key\";\n\n\t\t\t/*\n\t\t\t * If the tag has controls,\n\t\t\t * and key is an existing control (and not an old one),\n\t\t\t * and the control has options (select/select2),\n\t\t\t * and the key is an existing option (and not in a group or an old one).\n\t\t\t */\n\t\t\tif ( controls && controls[settingsKey] ) {\n\t\t\t\tvar controlSettings = controls[settingsKey];\n\n\t\t\t\tif ( controlSettings.options && controlSettings.options[ key ] ) {\n\t\t\t\t\tkey = controlSettings.options[ key ];\n\t\t\t\t} else if ( controlSettings.groups ) {\n\t\t\t\t\tvar label = _.filter( _.pluck( _.pluck( controls.key.groups, 'options' ), key ) );\n\n\t\t\t\t\tif ( label[0] ) {\n\t\t\t\t\t\tkey = label[0];\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\n\t\t\tprint( '(' + key + ')' );\n\t\t}\n\t\t#>\n\t\t",
+	"categories": [
+		"text",
+		"url",
+		"post_meta"
+	],
+	"group": "post",
+	"controls": {
+		"settings": {
+			"type": "section",
+			"tab": "content",
+			"label": "Settings",
+			"name": "settings"
+		},
+		"key": {
+			"type": "select",
+			"tab": "content",
+			"section": "settings",
+			"label": "Key",
+			"options": {
+				"": "Select...",
+				"demo": "demo"
+			},
+			"name": "key",
+			"default": ""
+		},
+		"advanced": {
+			"type": "section",
+			"tab": "content",
+			"label": "Advanced",
+			"name": "advanced"
+		},
+		"before": {
+			"type": "text",
+			"tab": "content",
+			"section": "advanced",
+			"label": "Before",
+			"name": "before",
+			"default": ""
+		},
+		"after": {
+			"type": "text",
+			"tab": "content",
+			"section": "advanced",
+			"label": "After",
+			"name": "after",
+			"default": ""
+		},
+		"fallback": {
+			"type": "text",
+			"tab": "content",
+			"section": "advanced",
+			"label": "Fallback",
+			"name": "fallback",
+			"default": ""
+		}
+	},
+	"content_type": "ui",
+	"settings_required": true,
+	"wrapped_tag": false
+}

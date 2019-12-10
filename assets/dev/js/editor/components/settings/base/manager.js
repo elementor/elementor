@@ -24,11 +24,43 @@ module.exports = elementorModules.ViewModule.extend( {
 			view: elementor.settings.panelPages[ name ] || elementor.settings.panelPages.base,
 			title: this.getSettings( 'panelPage.title' ),
 			options: {
+				editedView: this.getEditedView(),
 				model: this.model,
 				controls: this.model.controls,
 				name: name,
 			},
 		} );
+	},
+
+	getContainerId() {
+		return this.getSettings( 'name' ) + '_settings';
+	},
+
+	// Emulate an element view/model structure with the parts needed for a container.
+	getEditedView() {
+		const id = this.getContainerId(),
+			editModel = new Backbone.Model( {
+				id,
+				elType: id,
+				settings: this.model,
+		} );
+
+		const container = new elementorModules.editor.Container( {
+			type: id,
+			id: editModel.id,
+			model: editModel,
+			settings: editModel.get( 'settings' ),
+			view: false,
+			label: this.getSettings( 'panelPage' ).title,
+			controls: this.model.controls,
+			renderer: false,
+		} );
+
+		return {
+			getContainer: () => container,
+			getEditModel: () => editModel,
+			model: editModel,
+		};
 	},
 
 	updateStylesheet: function( keepOldEntries ) {
@@ -80,12 +112,16 @@ module.exports = elementorModules.ViewModule.extend( {
 				data: settings,
 			} );
 
-		NProgress.start();
+		if ( ! elementorCommonConfig.isTesting ) {
+			NProgress.start();
+		}
 
 		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
-				NProgress.done();
+				if ( ! elementorCommonConfig.isTesting ) {
+					NProgress.done();
+				}
 
 				self.setSettings( 'settings', settings );
 

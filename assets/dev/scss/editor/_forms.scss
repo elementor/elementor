@@ -40,6 +40,12 @@ textarea, .elementor-input-style {
 	resize: vertical;
 }
 
+input[type="checkbox"],
+input[type="radio"] {
+	height: auto;
+	width: auto;
+}
+
 .check-wrapper {
 	display: flex;
 	align-items: center;
@@ -47,7 +53,8 @@ textarea, .elementor-input-style {
 	&:not(:last-child){
 		padding-bottom: 5px;
 	}
-
+	
+	input,
 	label {
 		cursor: pointer;
 	}
@@ -119,5 +126,6 @@ input[disabled] {
 }
 
 select {
+	outline: none;
 	height: 27px;
 }

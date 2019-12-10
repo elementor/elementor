@@ -1,3 +1,5 @@
+import { DEFAULT_MAX_COLUMNS } from 'elementor-elements/views/section';
+
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' ),
 	ColumnView;
@@ -57,7 +59,7 @@ ColumnView = BaseElementView.extend( {
 			icon: 'column',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',
@@ -79,8 +81,6 @@ ColumnView = BaseElementView.extend( {
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
 	},
 
 	attachElContent: function() {
@@ -92,7 +92,8 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+		const self = this,
+			groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
 			generalGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
 
 		groups.splice( generalGroupIndex + 1, 0, {
@@ -103,6 +104,7 @@ ColumnView = BaseElementView.extend( {
                     icon: 'eicon-plus',
 					title: elementor.translate( 'new_column' ),
 					callback: this.addNewColumn.bind( this ),
+					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS,
 				},
 			],
 		} );
@@ -127,13 +129,13 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	getPercentsForDisplay: function() {
-		var inlineSize = +this.model.getSetting( '_inline_size' ) || this.getPercentSize();
+		const inlineSize = +this.model.getSetting( '_inline_size' ) || this.getPercentSize();
 
 		return inlineSize.toFixed( 1 ) + '%';
 	},
 
 	changeSizeUI: function() {
-		var self = this,
+		const self = this,
 			columnSize = self.model.getSetting( '_column_size' );
 
 		self.$el.attr( 'data-col', columnSize );
@@ -161,7 +163,7 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	changeChildContainerClasses: function() {
-		var emptyClass = 'elementor-element-empty',
+		const emptyClass = 'elementor-element-empty',
 			populatedClass = 'elementor-element-populated';
 
 		if ( this.collection.isEmpty() ) {
@@ -172,14 +174,15 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	addNewColumn: function() {
-		this.trigger( 'request:add:new' );
-	},
-
-	// Events
-	onCollectionChanged: function() {
-		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
-
-		this.changeChildContainerClasses();
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'column',
+			},
+			container: this.getContainer().parent,
+			options: {
+				at: this.$el.index() + 1,
+			},
+		} );
 	},
 
 	onRender: function() {
@@ -214,42 +217,6 @@ ColumnView = BaseElementView.extend( {
 				self.addElementFromPanel( { at: newIndex } );
 			},
 		} );
-	},
-
-	onSettingsChanged: function( settings ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		var changedAttributes = settings.changedAttributes();
-
-		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
-			this.changeSizeUI();
-		}
-	},
-
-	onEditorInlineSizeInputChange: function( newValue, oldValue ) {
-		var errors = [],
-			columnSize = this.model.getSetting( '_column_size' );
-
-		// If there's only one column
-		if ( 100 === columnSize ) {
-			errors.push( 'Could not resize one column' );
-
-			return errors;
-		}
-
-		if ( ! oldValue ) {
-			oldValue = columnSize;
-		}
-
-		try {
-			this._parent.resizeChild( this, +oldValue, +newValue );
-		} catch ( e ) {
-			if ( e.message === this._parent.errors.columnWidthTooLarge ) {
-				errors.push( e.message );
-			}
-		}
-
-		return errors;
 	},
 
 	onAddButtonClick: function( event ) {

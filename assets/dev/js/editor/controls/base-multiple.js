@@ -18,7 +18,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	},
 
 	getControlValue: function( key ) {
-		var values = this.elementSettingsModel.get( this.model.get( 'name' ) );
+		var values = this.container.settings.get( this.model.get( 'name' ) );
 
 		if ( ! jQuery.isPlainObject( values ) ) {
 			return {};

@@ -87,9 +87,10 @@ export default class extends elementorModules.Module {
 
 		if ( iconManagerConfig.recommended ) {
 			let hasRecommended = false;
-			icons.forEach( ( library ) => {
+			icons.forEach( ( library, index ) => {
 				if ( 'recommended' === library.name ) {
 					hasRecommended = true;
+					icons[ index ].icons = iconManagerConfig.recommended;
 				}
 			} );
 			if ( ! hasRecommended ) {

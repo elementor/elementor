@@ -55,10 +55,14 @@ class Module extends BaseModule {
 				'removed' => __( 'Removed', 'elementor' ),
 				'edited' => __( 'Edited', 'elementor' ),
 				'moved' => __( 'Moved', 'elementor' ),
+				'pasted' => __( 'Pasted', 'elementor' ),
 				'editing_started' => __( 'Editing Started', 'elementor' ),
 				'style_pasted' => __( 'Style Pasted', 'elementor' ),
 				'style_reset' => __( 'Style Reset', 'elementor' ),
+				'enabled' => __( 'Enabled', 'elementor' ),
+				'disabled' => __( 'Disabled', 'elementor' ),
 				'all_content' => __( 'All Content', 'elementor' ),
+				'elements' => __( 'Elements', 'elementor' ),
 			],
 		] );
 

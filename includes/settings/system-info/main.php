@@ -202,7 +202,7 @@ class Main {
 		$domain = parse_url( site_url(), PHP_URL_HOST );
 
 		header( 'Content-Type: text/plain' );
-		header( 'Content-Disposition:attachment; filename=system-info-' . $domain . '-' . date( 'd-m-Y' ) . '.txt' );
+		header( 'Content-Disposition:attachment; filename=system-info-' . $domain . '-' . gmdate( 'd-m-Y' ) . '.txt' );
 
 		$this->print_report( $reports );
 

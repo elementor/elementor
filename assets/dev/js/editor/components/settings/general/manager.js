@@ -19,4 +19,8 @@ module.exports = BaseSettings.extend( {
 			elementor.settings.page.updateStylesheet();
 		},
 	},
+
+	getContainerId() {
+		return 'general_settings';
+	},
 } );

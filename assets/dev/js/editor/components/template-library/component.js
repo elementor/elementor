@@ -1,8 +1,10 @@
+import ComponentModal from 'elementor-common/components/component-modal';
+
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
-export default class extends elementorModules.common.ComponentModal {
+export default class Component extends ComponentModal {
 	__construct( args ) {
-		// Before contruct because it's used in defaultTabs().
+		// Before construct because it's used in defaultTabs().
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;
 
 		super.__construct( args );
@@ -16,10 +18,6 @@ export default class extends elementorModules.common.ComponentModal {
 
 	getNamespace() {
 		return 'library';
-	}
-
-	getModalLayout() {
-		return TemplateLibraryLayoutView;
 	}
 
 	defaultTabs() {
@@ -61,6 +59,12 @@ export default class extends elementorModules.common.ComponentModal {
 				this.manager.layout.showPreviewView( args.model );
 			},
 			connect: ( args ) => {
+				args.texts = {
+					title: elementor.translate( 'library/connect:title' ),
+					message: elementor.translate( 'library/connect:message' ),
+					button: elementor.translate( 'library/connect:button' ),
+				};
+
 				this.manager.layout.showConnectView( args );
 			},
 		};
@@ -81,10 +85,6 @@ export default class extends elementorModules.common.ComponentModal {
 		};
 	}
 
-	getTabsWrapperSelector() {
-		return '#elementor-template-library-header-menu';
-	}
-
 	renderTab( tab ) {
 		this.manager.setScreen( this.tabs[ tab ].filter );
 	}
@@ -101,6 +101,8 @@ export default class extends elementorModules.common.ComponentModal {
 		if ( ! this.manager.layout ) {
 			this.manager.layout = this.layout;
 		}
+
+		this.manager.layout.setHeaderDefaultParts();
 
 		return true;
 	}
@@ -124,17 +126,53 @@ export default class extends elementorModules.common.ComponentModal {
 	}
 
 	insertTemplate( args ) {
-		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings;
+		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings,
+			model = args.model;
 
-		if ( ! autoImportSettings && args.model.get( 'hasPageSettings' ) ) {
+		let { withPageSettings = null } = args;
+
+		if ( autoImportSettings ) {
+			withPageSettings = true;
+		}
+
+		if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
 			const insertTemplateHandler = this.getImportSettingsDialog();
 
-			insertTemplateHandler.showImportDialog( args.model );
+			insertTemplateHandler.showImportDialog( model );
 
 			return;
 		}
 
-		elementor.templates.importTemplate( args.model, { withPageSettings: autoImportSettings } );
+		this.manager.layout.showLoadingView();
+
+		this.manager.requestTemplateContent( model.get( 'source' ), model.get( 'template_id' ), {
+			data: {
+				with_page_settings: withPageSettings,
+			},
+			success: ( data ) => {
+				// Clone the `modalConfig.importOptions` because it deleted during the closing.
+				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
+
+				importOptions.withPageSettings = withPageSettings;
+
+				// Hide for next open.
+				this.manager.layout.hideLoadingView();
+
+				this.manager.layout.hideModal();
+
+				$e.run( 'document/elements/import', {
+					model,
+					data,
+					options: importOptions,
+				} );
+			},
+			error: ( data ) => {
+				this.manager.showErrorDialog( data );
+			},
+			complete: () => {
+				this.manager.layout.hideLoadingView();
+			},
+		} );
 	}
 
 	getImportSettingsDialog() {
@@ -146,11 +184,17 @@ export default class extends elementorModules.common.ComponentModal {
 				var dialog = InsertTemplateHandler.getDialog();
 
 				dialog.onConfirm = function() {
-					elementor.templates.importTemplate( model, { withPageSettings: true } );
+					$e.run( 'library/insert-template', {
+						model,
+						withPageSettings: true,
+					} );
 				};
 
 				dialog.onCancel = function() {
-					elementor.templates.importTemplate( model );
+					$e.run( 'library/insert-template', {
+						model,
+						withPageSettings: false,
+					} );
 				};
 
 				dialog.show();
@@ -178,5 +222,13 @@ export default class extends elementorModules.common.ComponentModal {
 		};
 
 		return InsertTemplateHandler;
+	}
+
+	getTabsWrapperSelector() {
+		return '#elementor-template-library-header-menu';
+	}
+
+	getModalLayout() {
+		return TemplateLibraryLayoutView;
 	}
 }

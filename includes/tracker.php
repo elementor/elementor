@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Base\Document;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -10,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor tracker.
  *
- * Elementor tracker handler class is responsible for sending anonymous plugin
+ * Elementor tracker handler class is responsible for sending non-sensitive plugin
  * data to Elementor servers for users that actively allowed data tracking.
  *
  * @since 1.0.0
@@ -244,12 +242,12 @@ class Tracker {
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
-		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
+		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our non-sensitive plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
 
 		/**
 		 * Tracker admin description text.
 		 *
-		 * Filters the admin notice text for anonymous data collection.
+		 * Filters the admin notice text for non-sensitive data collection.
 		 *
 		 * @since 1.0.0
 		 *

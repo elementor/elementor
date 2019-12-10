@@ -1,3 +1,5 @@
+import DocumentUtils from 'elementor-document/utils/helpers';
+
 var ControlBaseView;
 
 ControlBaseView = Marionette.CompositeView.extend( {
@@ -40,6 +42,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		};
 
 		return {
+			view: this,
 			data: _.extend( {}, this.model.toJSON(), controlData ),
 		};
 	},
@@ -49,18 +52,66 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function( options ) {
-		this.elementSettingsModel = options.elementSettingsModel;
+		const label = this.model.get( 'label' );
+
+		// TODO: Temp backwards compatibility. since 2.8.0.
+		Object.defineProperty( this, 'container', {
+			get() {
+				if ( ! options.container ) {
+					const settingsModel = options.elementSettingsModel,
+						view = DocumentUtils.findViewById( settingsModel.id );
+
+					// Element control.
+					if ( view && view.getContainer ) {
+						options.container = view.getContainer();
+					} else {
+						if ( ! settingsModel.id ) {
+							settingsModel.id = 'bc-' + elementor.helpers.getUniqueID();
+						}
+
+						// Document/General/Other control.
+						options.container = new elementorModules.editor.Container( {
+							type: 'bc-container',
+							id: settingsModel.id,
+							model: settingsModel,
+							settings: settingsModel,
+							label,
+							view: false,
+							renderer: false,
+							controls: settingsModel.options.controls,
+						} );
+					}
+				}
+
+				return options.container;
+			},
+		} );
+
+		// Use `defineProperty` because `get elementSettingsModel()` fails during the `Marionette.CompositeView.extend`.
+		Object.defineProperty( this, 'elementSettingsModel', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementSettingsModel', '2.8.0', 'container.settings' );
+
+				return options.container ? options.container.settings : options.elementSettingsModel;
+			},
+		} );
 
 		var controlType = this.model.get( 'type' ),
 			controlSettings = jQuery.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 
 		this.model.set( controlSettings );
 
-		this.listenTo( this.elementSettingsModel, 'change', this.toggleControlVisibility );
+		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+
+		this.listenTo( settings, 'change', this.toggleControlVisibility );
 	},
 
 	toggleControlVisibility: function() {
-		var isVisible = elementor.helpers.isActiveControl( this.model, this.elementSettingsModel.attributes );
+		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+
+		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes );
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 

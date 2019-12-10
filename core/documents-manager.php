@@ -634,7 +634,7 @@ class Documents_Manager {
 	 * @return array
 	 */
 	public function get_groups() {
-		// _deprecated_function( __METHOD__, '2.4.0' );
+		_deprecated_function( __METHOD__, '2.4.0' );
 
 		return [];
 	}

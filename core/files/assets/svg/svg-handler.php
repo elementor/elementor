@@ -113,11 +113,19 @@ class Svg_Handler {
 	 */
 	public static function get_inline_svg( $attachment_id ) {
 		$svg = get_post_meta( $attachment_id, self::META_KEY, true );
+
 		if ( ! empty( $svg ) ) {
 			return $svg;
 		}
 
-		$svg = file_get_contents( get_attached_file( $attachment_id ) );
+		$attachment_file = get_attached_file( $attachment_id );
+
+		if ( ! $attachment_file ) {
+			return '';
+		}
+
+		$svg = file_get_contents( $attachment_file );
+
 		if ( ! empty( $svg ) ) {
 			update_post_meta( $attachment_id, self::META_KEY, $svg );
 		}
@@ -677,6 +685,7 @@ class Svg_Handler {
 		}
 
 		$svg = self::get_inline_svg( $attachment->ID );
+
 		if ( ! $svg ) {
 			return $attachment_data;
 		}

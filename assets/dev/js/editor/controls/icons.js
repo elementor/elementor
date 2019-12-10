@@ -40,9 +40,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			skin = this.model.get( 'skin' );
 
 		ui.controlMedia = '.elementor-control-media';
-		ui.svgUploader = 'media' === skin ? '.elementor-control-svg-uploader' : 'elementor-control-icons--inline__svg';
-		ui.iconPickers = 'media' === skin ? '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button' : 'elementor-control-icons--inline__icon';
-		ui.deleteButton = 'media' === skin ? '.elementor-control-media__remove' : '.elementor-control-icons--inline__remove';
+		ui.svgUploader = 'media' === skin ? '.elementor-control-svg-uploader' : '.elementor-control-icons--inline__svg';
+		ui.iconPickers = 'media' === skin ? '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button' : '.elementor-control-icons--inline__icon';
+		ui.deleteButton = 'media' === skin ? '.elementor-control-media__remove' : '.elementor-control-icons--inline__none';
 		ui.previewPlaceholder = '.elementor-control-media__preview';
 		ui.previewContainer = '.elementor-control-preview-area';
 		ui.inlineDisplayedIcon = '.elementor-control-icons--inline__displayed-icon';
@@ -114,7 +114,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		// Check if there is a value to migrate
-		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		const valueToMigrate = this.container.settings.get( controlToMigrate );
 		if ( valueToMigrate ) {
 			return valueToMigrate;
 		}
@@ -307,9 +307,11 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			} );
 		}
 
-		const previewHTML = '<i class="' + iconValue + '"></i>';
+		if ( 'media' === skin || 'svg' !== iconType ) {
+			const previewHTML = '<i class="' + iconValue + '"></i>';
 
-		iconContainer.html( previewHTML );
+			iconContainer.html( previewHTML );
+		}
 
 		this.enqueueIconFonts( iconType );
 	}
@@ -331,7 +333,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.ui.radioInputs.filter( ':checked' ).prop( 'checked', false );
 
 		if ( ! iconType ) {
-			return this.ui.radioInputs.filter( '[value="none"]' ).prop( 'checked', false );
+			return this.ui.radioInputs.filter( '[value="none"]' ).prop( 'checked', true );
 		}
 
 		if ( 'svg' !== iconType ) {

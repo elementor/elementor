@@ -21,7 +21,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 			defaults = {};
 
 		_.each( self.controls, function( control ) {
-			var isUIControl = -1 !== control.features.indexOf( 'ui' );
+			// Check features since they does not exist in tests.
+			var isUIControl = control.features && -1 !== control.features.indexOf( 'ui' );
 
 			if ( isUIControl ) {
 				return;
@@ -74,15 +75,20 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 	handleRepeaterData: function( attrs ) {
 		_.each( this.controls, function( field ) {
-			if ( field.is_repeater ) {
+			if ( 'repeater' === field.type ) {
 				// TODO: Apply defaults on each field in repeater fields
 				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
 					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
 						model: function( attributes, options ) {
 							options = options || {};
 
-							options.controls = field.fields;
+							options.controls = {};
 
+							Object.entries( field.fields ).map( ( [ key, item ] ) => {
+								options.controls[ item.name ] = item;
+							} );
+
+							// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
 							if ( ! attributes._id ) {
 								attributes._id = elementor.helpers.getUniqueID();
 							}

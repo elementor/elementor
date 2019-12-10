@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor image widget.
  *
@@ -498,8 +500,8 @@ class Widget_Image extends Widget_Base {
 					'{{WRAPPER}} .widget-image-caption' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 			]
 		);
@@ -520,7 +522,7 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'caption_typography',
 				'selector' => '{{WRAPPER}} .widget-image-caption',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -617,7 +619,7 @@ class Widget_Image extends Widget_Base {
 		if ( $link ) {
 			$this->add_render_attribute( 'link', 'data-elementor-open-lightbox', $settings['open_lightbox'] );
 
-			$this->add_link_attributes( 'link', $settings['link'] );
+			$this->add_link_attributes( 'link', $link );
 
 			if ( Plugin::$instance->editor->is_edit_mode() ) {
 				$this->add_render_attribute( 'link', [
@@ -763,6 +765,7 @@ class Widget_Image extends Widget_Base {
 			if ( empty( $settings['link']['url'] ) ) {
 				return false;
 			}
+
 			return $settings['link'];
 		}
 

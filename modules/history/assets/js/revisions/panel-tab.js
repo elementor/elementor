@@ -61,27 +61,6 @@ module.exports = Marionette.CompositeView.extend( {
 		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
 	},
 
-	deleteRevision: function( revisionView ) {
-		var self = this;
-
-		revisionView.$el.addClass( 'elementor-revision-item-loading' );
-
-		elementor.history.revisions.deleteRevision( revisionView.model, {
-			success: function() {
-				if ( revisionView.model.get( 'id' ) === self.currentPreviewId ) {
-					self.onDiscardClick();
-				}
-
-				self.currentPreviewId = null;
-			},
-			error: function() {
-				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
-
-				alert( 'An error occurred' );
-			},
-		} );
-	},
-
 	enterReviewMode: function() {
 		elementor.changeEditMode( 'review' );
 	},
@@ -195,25 +174,5 @@ module.exports = Marionette.CompositeView.extend( {
 		self.currentPreviewItem = childView;
 
 		self.currentPreviewId = revisionID;
-	},
-
-	onChildviewDeleteClick: function( childView ) {
-		var self = this,
-			type = childView.model.get( 'type' );
-
-		var removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
-			message: elementor.translate( 'dialog_confirm_delete', [ type ] ),
-			headerMessage: elementor.translate( 'delete_element', [ type ] ),
-			strings: {
-				confirm: elementor.translate( 'delete' ),
-				cancel: elementor.translate( 'cancel' ),
-			},
-			defaultOption: 'confirm',
-			onConfirm: function() {
-				self.deleteRevision( childView );
-			},
-		} );
-
-		removeDialog.show();
 	},
 } );

@@ -19,6 +19,7 @@
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
 
+@import "animations";
 @import "devices";
 @import "tipsy";
 @import "templates-modal";
@@ -33,3 +34,4 @@
 @import "notice-bar";
 @import "preview-loading-error";
 @import "icons-manager";
+@import "color-picker";

@@ -2,7 +2,6 @@ module.exports = Backbone.Model.extend( {
 	defaults: {
 		id: 0,
 		type: '',
-		elementType: '',
 		status: 'not_applied',
 		title: '',
 		subTitle: '',

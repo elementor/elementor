@@ -1,9 +1,10 @@
-export default class extends elementorModules.Module {
+export default class Commands extends elementorModules.Module {
 	constructor( ...args ) {
 		super( ...args );
 
 		this.current = {};
 		this.currentArgs = {};
+		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
 	}
@@ -91,11 +92,9 @@ export default class extends elementorModules.Module {
 			this.error( `\`${ command }\` not found.` );
 		}
 
-		if ( ! this.getComponent( command ).dependency( args ) ) {
-			return false;
-		}
+		this.currentTrace.push( command );
 
-		return true;
+		return this.getComponent( command ).dependency( command, args );
 	}
 
 	run( command, args = {} ) {
@@ -109,11 +108,15 @@ export default class extends elementorModules.Module {
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
 
+		this.trigger( 'run', component, command, args );
+
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.commands[ command ].apply( component, [ args ] );
+		const results = this.commands[ command ].apply( component, [ args ] );
+
+		// TODO: Consider add results to `$e.devTools`.
 
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args ] );
@@ -121,17 +124,23 @@ export default class extends elementorModules.Module {
 
 		this.afterRun( command, args );
 
-		return true;
+		if ( false === args.returnValue ) {
+			return true;
+		}
+
+		return results;
 	}
 
 	// It's separated in order to allow override.
 	runShortcut( command, event ) {
-		this.run( command, event );
+		return this.run( command, event );
 	}
 
 	afterRun( command ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
+
+		this.currentTrace.pop();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];

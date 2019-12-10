@@ -12,6 +12,12 @@ module.exports = elementorModules.editor.views.ControlsStack.extend( {
 		return this.collection.length < 2;
 	},
 
+	childViewOptions: function() {
+		return {
+			container: this.options.container,
+		};
+	},
+
 	getNamespaceArray: function() {
 		var currentPageView = elementor.getPanelView().getCurrentPageView(),
 			eventNamespace = currentPageView.getNamespaceArray();

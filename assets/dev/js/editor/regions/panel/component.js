@@ -1,4 +1,6 @@
-export default class extends elementorModules.common.Component {
+import BaseComponent from 'elementor-common/components/component';
+
+export default class Component extends BaseComponent {
 	getNamespace() {
 		return 'panel';
 	}
@@ -8,7 +10,7 @@ export default class extends elementorModules.common.Component {
 			menu: () => this.manager.setPage( 'menu' ),
 			'global-colors': () => this.manager.setPage( 'colorScheme' ),
 			'global-fonts': () => this.manager.setPage( 'typographyScheme' ),
-			'color-picker': () => this.manager.setPage( 'colorPickerScheme' ),
+			'editor-preferences': () => this.manager.setPage( 'editorPreferences_settings' ).activateTab( 'settings' ),
 		};
 	}
 

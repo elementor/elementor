@@ -1,13 +1,17 @@
+import ColorPicker from './color-picker';
+
 module.exports = {
 	_enqueuedFonts: [],
 	_enqueuedIconFonts: [],
 	_inlineSvg: [],
 
 	elementsHierarchy: {
-		section: {
-			column: {
-				widget: null,
-				section: null,
+		document: {
+			section: {
+				column: {
+					widget: null,
+					section: null,
+				},
 			},
 		},
 	},
@@ -37,13 +41,13 @@ module.exports = {
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
 	fetchInlineSvg( svgUrl, callback = false ) {
 		fetch( svgUrl )
-			.then( ( response ) => response.text() )
+			.then( ( response ) => response.ok ? response.text() : '' )
 			.then( ( data ) => {
 				if ( callback ) {
 					callback( data );
@@ -434,15 +438,9 @@ module.exports = {
 	},
 
 	cloneObject( object ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
-	},
-
-	firstLetterUppercase( string ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.upperCaseWords', '2.3.0', 'elementorCommon.helpers.upperCaseWords' );
-
-		return elementorCommon.helpers.upperCaseWords( string );
 	},
 
 	disableElementEvents( $element ) {
@@ -474,67 +472,10 @@ module.exports = {
 		} );
 	},
 
-	getColorPickerPaletteIndex( paletteKey ) {
-		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
-	},
+	wpColorPicker( $element ) {
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
-	getColorPickerPalette() {
-		const colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
-			items = _.sortBy( colorPickerScheme.items, ( item ) => {
-				return this.getColorPickerPaletteIndex( item.key );
-			} );
-
-		return _.pluck( items, 'value' );
-	},
-
-	colorPicker( options ) {
-		const defaultOptions = {
-			theme: 'monolith',
-			swatches: this.getColorPickerPalette(),
-			position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
-			components: {
-				opacity: true,
-				hue: true,
-				interaction: {
-					input: true,
-					clear: true,
-				},
-			},
-			strings: {
-				clear: elementor.translate( 'clear' ),
-			},
-		};
-
-		options = jQuery.extend( true, defaultOptions, options );
-
-		const picker = Pickr.create( options ),
-			onChange = ( ...args ) => {
-				if ( options.onChange ) {
-					options.onChange( ...args );
-				}
-			},
-			onClear = ( ...args ) => {
-				if ( options.onClear ) {
-					options.onClear( ...args );
-				}
-			};
-
-		picker
-			.on( 'change', onChange )
-			.on( 'swatchselect', onChange )
-			.on( 'clear', onClear );
-
-		return picker;
-	},
-
-	wpColorPicker( $element, options ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'elementor.helpers.colorPicker()' );
-
-		options = options || {};
-
-		options.el = $element;
-
-		elementor.helpers.colorPicker( options );
+		return new ColorPicker( { picker: { el: $element } } );
 	},
 
 	isInViewport( element, html ) {
@@ -563,7 +504,12 @@ module.exports = {
 		}
 
 		setTimeout( function() {
-			var parentHeight = $parent.height(),
+			// Sometimes element removed during the timeout.
+			if ( ! $element[ 0 ].isConnected ) {
+				return;
+			}
+
+			const parentHeight = $parent.height(),
 				parentScrollTop = $parent.scrollTop(),
 				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[ 0 ].offsetTop,
 				topToCheck = elementTop - parentScrollTop;
@@ -648,5 +594,27 @@ module.exports = {
 				return elementor.conditions.compare( valueA, valueB, operator );
 			}
 		}
+	},
+
+	getModelLabel( model ) {
+		let result;
+
+		if ( ! ( model instanceof Backbone.Model ) ) {
+			model = new Backbone.Model( model );
+		}
+
+		if ( model.get( 'labelSuffix' ) ) {
+			result = model.get( 'title' ) + ' ' + model.get( 'labelSuffix' );
+		} else if ( 'global' === model.get( 'widgetType' ) ) {
+			if ( model.getTitle ) {
+				result = model.getTitle();
+			}
+		}
+
+		if ( ! result ) {
+			result = elementor.getElementData( model ).title;
+		}
+
+		return result;
 	},
 };

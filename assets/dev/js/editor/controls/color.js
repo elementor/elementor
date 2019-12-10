@@ -1,4 +1,5 @@
 import ControlBaseDataView from './base-data';
+import ColorPicker from '../utils/color-picker';
 
 export default class extends ControlBaseDataView {
 	ui() {
@@ -10,8 +11,8 @@ export default class extends ControlBaseDataView {
 	}
 
 	applySavedValue() {
-		if ( this.picker ) {
-			this.picker.setColor( this.getControlValue() );
+		if ( this.colorPicker ) {
+			this.colorPicker.picker.setColor( this.getControlValue() );
 		} else {
 			this.initPicker();
 		}
@@ -19,27 +20,22 @@ export default class extends ControlBaseDataView {
 
 	initPicker() {
 		const options = {
-			el: this.ui.pickerContainer[ 0 ],
+			picker: {
+				el: this.ui.pickerContainer[ 0 ],
+				default: this.getControlValue(),
+				components: {
+					opacity: this.model.get( 'alpha' ),
+				},
+			},
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
-			components: {
-				opacity: this.model.get( 'alpha' ),
-			},
 		};
 
-		const value = this.getControlValue();
-
-		if ( value ) {
-			options.default = value;
-		}
-
-		this.picker = elementor.helpers.colorPicker( options );
+		this.colorPicker = new ColorPicker( options );
 	}
 
 	onPickerChange() {
-		this.picker.applyColor();
-
-		this.setValue( this.picker.getColor().toRGBA().toString() );
+		this.setValue( this.colorPicker.getValue() );
 	}
 
 	onPickerClear() {
@@ -47,6 +43,6 @@ export default class extends ControlBaseDataView {
 	}
 
 	onBeforeDestroy() {
-		this.picker.destroyAndRemove();
+		this.colorPicker.destroy();
 	}
 }

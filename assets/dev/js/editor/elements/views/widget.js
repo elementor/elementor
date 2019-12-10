@@ -60,7 +60,7 @@ WidgetView = BaseElementView.extend( {
 			icon: 'edit',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',
@@ -100,7 +100,7 @@ WidgetView = BaseElementView.extend( {
 
 	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'transfer' } ) );
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
 
 		groups.splice( transferGroupIndex + 1, 0, {
 			name: 'save',
@@ -122,6 +122,10 @@ WidgetView = BaseElementView.extend( {
 
 			this.$el.addClass( 'elementor-element' );
 
+			return;
+		}
+
+		if ( elementorCommonConfig.isTesting && this.isDestroyed ) {
 			return;
 		}
 

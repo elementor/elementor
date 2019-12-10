@@ -1,12 +1,14 @@
-export default class extends elementorModules.common.Component {
+import BaseComponent from 'elementor-common/components/component';
+
+export default class Component extends BaseComponent {
 	getNamespace() {
 		return 'panel/history/actions';
 	}
 
 	defaultCommands() {
 		return {
-			undo: () => this.manager.navigate(),
-			redo: () => this.manager.navigate( true ),
+			undo: () => $e.run( 'document/history/undo' ),
+			redo: () => $e.run( 'document/history/redo' ),
 		};
 	}
 

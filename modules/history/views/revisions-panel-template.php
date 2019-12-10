@@ -51,9 +51,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<# if ( 'current' === type ) { #>
 				<i class="elementor-revision-item__tools-current eicon-star" aria-hidden="true"></i>
 				<span class="elementor-screen-only"><?php echo __( 'Current', 'elementor' ); ?></span>
-			<# } else { #>
-				<i class="elementor-revision-item__tools-delete eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php echo __( 'Delete', 'elementor' ); ?></span>
 			<# } #>
 
 			<i class="elementor-revision-item__tools-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>

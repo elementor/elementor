@@ -29,6 +29,14 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 
 		this.$el.remove();
 	},
+
+	onAfterExternalChange: function() {
+		this.ui.select.select2( 'destroy' );
+
+		this.onReady();
+
+		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
+	},
 } );
 
 module.exports = ControlSelect2ItemView;

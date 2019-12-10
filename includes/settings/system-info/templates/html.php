@@ -20,28 +20,28 @@ foreach ( $reports as $report_name => $report ) : ?>
 			<?php
 			foreach ( $report['report'] as $field_name => $field ) :
 				if ( in_array( $report_name, [ 'plugins', 'network_plugins', 'mu_plugins' ], true ) ) {
-					foreach ( $field['value'] as $plugin ) :
+					foreach ( $field['value'] as $plugin_info ) :
 						?>
 						<tr>
 							<td><?php
-							if ( $plugin['PluginURI'] ) :
-								$plugin_name = "<a href='{$plugin['PluginURI']}'>{$plugin['Name']}</a>";
+							if ( $plugin_info['PluginURI'] ) :
+								$plugin_name = "<a href='{$plugin_info['PluginURI']}'>{$plugin_info['Name']}</a>";
 							else :
-								$plugin_name = $plugin['Name'];
+								$plugin_name = $plugin_info['Name'];
 							endif;
 
-							if ( $plugin['Version'] ) :
-								$plugin_name .= ' - ' . $plugin['Version'];
+							if ( $plugin_info['Version'] ) :
+								$plugin_name .= ' - ' . $plugin_info['Version'];
 							endif;
 
 							echo $plugin_name;
 							?></td>
 							<td><?php
-							if ( $plugin['Author'] ) :
-								if ( $plugin['AuthorURI'] ) :
-									$author = "<a href='{$plugin['AuthorURI']}'>{$plugin['Author']}</a>";
+							if ( $plugin_info['Author'] ) :
+								if ( $plugin_info['AuthorURI'] ) :
+									$author = "<a href='{$plugin_info['AuthorURI']}'>{$plugin_info['Author']}</a>";
 								else :
-									$author = $plugin['Author'];
+									$author = $plugin_info['Author'];
 								endif;
 
 								echo "By $author";

@@ -112,27 +112,57 @@ Schemes = function() {
 	this.saveScheme = function( schemeName ) {
 		elementor.config.schemes.items[ schemeName ].items = elementorCommon.helpers.cloneObject( schemes[ schemeName ].items );
 
-		var itemsToSave = {};
+		const itemsToSave = {};
 
 		_.each( schemes[ schemeName ].items, function( item, key ) {
 			itemsToSave[ key ] = item.value;
 		} );
 
-		NProgress.start();
-
-		elementorCommon.ajax.addRequest( 'apply_scheme', {
+		return elementorCommon.ajax.addRequest( 'apply_scheme', {
 			data: {
 				scheme_name: schemeName,
 				data: JSON.stringify( itemsToSave ),
-			},
-			success: function() {
-				NProgress.done();
 			},
 		} );
 	};
 
 	this.setSchemeValue = function( schemeName, itemKey, value ) {
 		schemes[ schemeName ].items[ itemKey ].value = value;
+	};
+
+	this.addSchemeItem = function( schemeName, item, at ) {
+		const scheme = schemes[ schemeName ],
+			schemeKeys = Object.keys( scheme.items ),
+			hasAt = undefined !== at,
+			targetIndex = hasAt ? at : +( schemeKeys.slice( -1 )[ 0 ] ) || 0;
+
+		if ( hasAt ) {
+			let itemIndex = schemeKeys.length + 1;
+
+			for ( ; itemIndex > at; itemIndex-- ) {
+				scheme.items[ itemIndex ] = scheme.items[ itemIndex - 1 ];
+			}
+		}
+
+		scheme.items[ targetIndex + 1 ] = item;
+	};
+
+	this.removeSchemeItem = function( schemeName, itemKey ) {
+		const items = schemes[ schemeName ].items;
+
+		while ( true ) {
+			itemKey++;
+
+			const nextItem = items[ itemKey + 1 ];
+
+			if ( ! nextItem ) {
+				delete items[ itemKey ];
+
+				break;
+			}
+
+			items[ itemKey ] = nextItem;
+		}
 	};
 };
 

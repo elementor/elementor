@@ -148,15 +148,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.editor.destroy();
 
 		this.view.allowRender = true;
-
-		/**
-		 * Inline editing has several toolbar types (advanced, basic and none). When editing is stopped,
-		 * we need to rerender the area. To prevent multiple renderings, we will render only areas that
-		 * use advanced toolbars.
-		 */
-		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
-			this.view.getEditModel().renderRemoteServer();
-		}
 	},
 
 	onInlineEditingClick: function( event ) {
@@ -196,7 +187,26 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
+		let key = this.getEditingSettingKey(),
+			container = this.view.getContainer();
+
+		const parts = key.split( '.' );
+
+		// Is it repeater?
+		if ( 3 === parts.length ) {
+			container = container.children[ parts[ 1 ] ];
+			key = parts[ 2 ];
+		}
+
+		$e.run( 'document/elements/settings', {
+			container,
+			settings: {
+				[ key ]: this.editor.getContent(),
+			},
+			options: {
+				external: true,
+			},
+		} );
 	},
 } );
 

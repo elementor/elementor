@@ -11,14 +11,8 @@ export default class extends Marionette.Behavior {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.toggle );
 
-		const view = this.view,
-			viewSettingsChangedMethod = view.onSettingsChanged;
-
-		view.onSettingsChanged = ( ...args ) => {
-			viewSettingsChangedMethod.call( view, ...args );
-
-			this.onSettingsChanged.call( this, ...args );
-		};
+		// Save this instance for external use eg: ( hooks ).
+		this.view.options.draggable = this;
 	}
 
 	activate() {
@@ -105,7 +99,13 @@ export default class extends Marionette.Behavior {
 		settingToChange[ offsetX + deviceSuffix ] = { size: xPos, unit: offsetXUnit };
 		settingToChange[ offsetY + deviceSuffix ] = { size: yPos, unit: offsetYUnit };
 
-		editModel.get( 'settings' ).setExternalChange( settingToChange );
+		$e.run( 'document/elements/settings', {
+			container: this.view.container,
+			settings: settingToChange,
+			options: {
+				external: true,
+			},
+		} );
 
 		setTimeout( () => {
 			this.$el.css( {
@@ -117,15 +117,5 @@ export default class extends Marionette.Behavior {
 				height: '',
 			} );
 		}, 250 );
-	}
-
-	onSettingsChanged( changed ) {
-		if ( changed.changed ) {
-			changed = changed.changed;
-		}
-
-		if ( undefined !== changed._position ) {
-			this.toggle();
-		}
 	}
 }
