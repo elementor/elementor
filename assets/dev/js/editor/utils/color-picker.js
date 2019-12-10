@@ -54,9 +54,11 @@ export default class ColorPicker extends elementorModules.Module {
 			this.picker.setColor( '#000' );
 		}
 
+		this.color = this.processColor();
+
 		this.picker
-			.on( 'change', ( ...args ) => this.onPickerChange( ...args ) )
-			.on( 'clear', ( ...args ) => this.onPickerClear( ...args ) )
+			.on( 'change', () => this.onPickerChange() )
+			.on( 'clear', () => this.onPickerClear() )
 			.on( 'show', () => this.onPickerShow() );
 
 		this.addPlusButton();
@@ -66,7 +68,7 @@ export default class ColorPicker extends elementorModules.Module {
 		this.addToolsToSwatches();
 	}
 
-	getValue() {
+	processColor() {
 		const color = this.picker.getColor();
 
 		let colorRepresentation;
@@ -78,6 +80,10 @@ export default class ColorPicker extends elementorModules.Module {
 		}
 
 		return colorRepresentation.toString( 0 );
+	}
+
+	getColor() {
+		return this.color;
 	}
 
 	getSwatches() {
@@ -172,21 +178,31 @@ export default class ColorPicker extends elementorModules.Module {
 		return ColorPicker.droppingIntroductionViewed || elementor.config.user.introduction.colorPickerDropping;
 	}
 
-	onPickerChange( ...args ) {
+	onPickerChange() {
 		this.picker.applyColor();
+
+		const newColor = this.processColor();
+
+		if ( newColor === this.color ) {
+			return;
+		}
+
+		this.color = newColor;
 
 		const onChange = this.getSettings( 'onChange' );
 
 		if ( onChange ) {
-			onChange( ...args );
+			onChange();
 		}
 	}
 
-	onPickerClear( ...args ) {
+	onPickerClear() {
+		this.color = '';
+
 		const onClear = this.getSettings( 'onClear' );
 
 		if ( onClear ) {
-			onClear( ...args );
+			onClear();
 		}
 	}
 
@@ -203,13 +219,11 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	onAddButtonClick() {
-		const value = this.getValue();
-
-		this.addSwatch( value );
+		this.addSwatch( this.color );
 
 		this.addToolsToSwatches();
 
-		elementor.schemes.addSchemeItem( 'color-picker', { value } );
+		elementor.schemes.addSchemeItem( 'color-picker', { value: this.color } );
 
 		elementor.schemes.saveScheme( 'color-picker' );
 
