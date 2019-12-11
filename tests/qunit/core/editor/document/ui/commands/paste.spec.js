@@ -77,42 +77,42 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 	const targetIsInner = target.model.get( 'isInner' ),
 		sourceIsInner = source.model.get( 'isInner' );
 
-    let isForce = false,
+	let isForce = false,
 		copiedContainer = DocumentHelper.UICopyPaste( source, target ),
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
 
 	// Handle situation when source is inner.
-    if ( sourceIsInner ) {
-        if ( 'column' === sourceElType ) {
-            source = Object.values( source.view.children._views )[ 0 ].getContainer();
-            sourceElType = 'column';
-            isForce = true;
-        } else {
-            sourceElType = 'section';
-        }
-    }
+	if ( sourceIsInner ) {
+		if ( 'column' === sourceElType ) {
+			source = Object.values( source.view.children._views )[ 0 ].getContainer();
+			sourceElType = 'column';
+			isForce = true;
+		} else {
+			sourceElType = 'section';
+		}
+	}
 
 	// Handle situation when target is inner.
-    if ( targetIsInner ) {
-        if ( 'column' === targetElType ) {
-            target = Object.values( target.view.children._views )[ 0 ].getContainer();
-            targetElType = 'column';
-            isForce = true;
-        } else {
-            targetElType = 'section';
-        }
-    }
+	if ( targetIsInner ) {
+		if ( 'column' === targetElType ) {
+			target = Object.values( target.view.children._views )[ 0 ].getContainer();
+			targetElType = 'column';
+			isForce = true;
+		} else {
+			targetElType = 'section';
+		}
+	}
 
 	// When target or source is inner-section column, re-paste to the right depth.
 	if ( isForce ) {
 		copiedContainer = DocumentHelper.UICopyPaste( source, target );
 	}
 
-    // There is no point in checking what was not successful copied.
-    if ( copiedContainer ) {
-        switch ( targetElType ) {
-            case 'document': {
+	// There is no point in checking what was not successful copied.
+	if ( copiedContainer ) {
+		switch ( targetElType ) {
+			case 'document': {
 				// Target is document.
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
@@ -129,10 +129,10 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				}
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
-            }
-            break;
+			}
+			break;
 
-            case 'section': {
+			case 'section': {
 				let searchTarget = target;
 
 				if ( 'widget' === sourceElType && targetIsInner ) {
@@ -146,10 +146,10 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				}
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
-            }
-            break;
+			}
+			break;
 
-            case 'column': {
+			case 'column': {
 				let searchTarget = target;
 
 				if ( 'column' === sourceElType ) {
@@ -157,14 +157,14 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				}
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
-            }
-            break;
+			}
+			break;
 
-            case 'widget': {
+			case 'widget': {
 				passed = !! findChildrenContainer( target.parent, copiedContainer );
-            }
-            break;
-        }
+			}
+			break;
+		}
 	}
 
 	if ( copiedContainer ) {
@@ -173,11 +173,11 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		message += ' copy failed';
 	}
 
-    if ( copiedContainer && isAllowed && passed ) {
-        passed = true;
-    } else if ( ! isAllowed && ! copiedContainer ) {
-        passed = true;
-    }
+	if ( copiedContainer && isAllowed && passed ) {
+		passed = true;
+	} else if ( ! isAllowed && ! copiedContainer ) {
+		passed = true;
+	}
 
 	// Check.
 	assert.equal( passed, true, message );
@@ -210,8 +210,7 @@ export const Paste = () => {
 
 						const source = DocumentHelper.autoCreate( sourceElType ),
 							target = DocumentHelper.autoCreate( targetElType );
-
-                        // Handle inner-section.
+						// Handle inner-section.
 						if ( 'object' === typeof isAllowed ) {
 							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
 								validateRule( assert,
