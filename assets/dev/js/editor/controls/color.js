@@ -35,7 +35,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerChange() {
-		this.setValue( this.colorPicker.getValue() );
+		this.setValue( this.colorPicker.getColor() );
 	}
 
 	onPickerClear() {
@@ -44,11 +44,5 @@ export default class extends ControlBaseDataView {
 
 	onBeforeDestroy() {
 		this.colorPicker.destroy();
-	}
-
-	onAfterExternalChange() {
-		this.applySavedValue();
-
-		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
 	}
 }

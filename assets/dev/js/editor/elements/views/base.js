@@ -164,9 +164,6 @@ BaseElementView = BaseContainer.extend( {
 						isEnabled: () => DocumentUtils.isPasteEnabled( this.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
-							options: {
-								at: this._parent.collection.indexOf( this.model ),
-							},
 						} ),
 					}, {
 						name: 'pasteStyle',

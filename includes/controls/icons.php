@@ -114,7 +114,7 @@ class Control_Icons extends Control_Base_Multiple {
 					<# if ( ! data.exclude_inline_options.includes( 'svg' ) ) { #>
 						<input id="<?php echo $control_uid; ?>-svg" type="radio" value="svg">
 						<label class="elementor-choices-label tooltip-target elementor-control-icons--inline__svg" for="<?php echo $control_uid; ?>-svg" data-tooltip="<?php echo __( 'Upload SVG', 'elementor' ); ?>" title="<?php echo __( 'Upload SVG', 'elementor' ); ?>">
-							<span aria-hidden="true">SVG</span>
+							<i class="eicon-upload" aria-hidden="true"></i>
 							<span class="elementor-screen-only"><?php echo __( 'Upload SVG', 'elementor' ); ?></span>
 						</label>
 					<# }

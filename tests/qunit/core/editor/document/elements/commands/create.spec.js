@@ -1,5 +1,6 @@
 import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
+import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
 export const Create = () => {
 	QUnit.module( 'Create', () => {
@@ -35,14 +36,13 @@ export const Create = () => {
 
 			QUnit.test( 'Widget: Inner Section', ( assert ) => {
 				const eSection = ElementsHelper.createSection( 1 ),
-					{ defaultInnerSectionColumns } = eSection.view,
 					eColumn = eSection.view.children.findByIndex( 0 ).getContainer(),
 					eInnerSection = ElementsHelper.createInnerSection( eColumn ),
 					isInnerSectionCreated = Boolean( eColumn.view.children.findByModel( eInnerSection.model ) );
 
 				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
-				assert.equal( eInnerSection.view.collection.length, defaultInnerSectionColumns,
-					`'${ defaultInnerSectionColumns }' columns were created in the inner section.` );
+				assert.equal( eInnerSection.view.collection.length, DEFAULT_INNER_SECTION_COLUMNS,
+					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
 			} );
 
 			QUnit.test( 'Widget: Custom Position', ( assert ) => {
@@ -127,7 +127,6 @@ export const Create = () => {
 					const eColumn = ElementsHelper.createSection( 1, true ),
 						eInnerSection = ElementsHelper.createInnerSection( eColumn ),
 						historyItem = HistoryHelper.getFirstItem().attributes,
-						{ defaultInnerSectionColumns } = eInnerSection.view,
 						innerSectionColumnsIds = [];
 
 					eInnerSection.view.children.forEach( ( el ) => innerSectionColumnsIds.push( el.model.id ) );
@@ -136,8 +135,8 @@ export const Create = () => {
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'inner_section' );
 
 					// Inner section have x columns.
-					assert.equal( eInnerSection.view.collection.length, defaultInnerSectionColumns,
-						`InnerSection have "${ defaultInnerSectionColumns }" columns` );
+					assert.equal( eInnerSection.view.collection.length, DEFAULT_INNER_SECTION_COLUMNS,
+						`InnerSection have "${ DEFAULT_INNER_SECTION_COLUMNS }" columns` );
 
 					// Undo.
 					HistoryHelper.undoValidate( assert, historyItem );
@@ -157,8 +156,8 @@ export const Create = () => {
 					eInnerSectionAfterRedo.view.children.forEach( ( el ) => innerSectionAfterRedoColumnsIds.push( el.model.id ) );
 
 					// Does two columns with the same ids as before.
-					assert.equal( innerSectionAfterRedoColumnsIds.length, defaultInnerSectionColumns,
-						`Inner Section have "${ defaultInnerSectionColumns } columns"` );
+					assert.equal( innerSectionAfterRedoColumnsIds.length, DEFAULT_INNER_SECTION_COLUMNS,
+						`Inner Section have "${ DEFAULT_INNER_SECTION_COLUMNS } columns"` );
 					assert.deepEqual( innerSectionAfterRedoColumnsIds, innerSectionColumnsIds,
 						'Inner section columns have the same ids as before.' );
 				} );
@@ -242,7 +241,6 @@ export const Create = () => {
 						eColumn2 = ElementsHelper.createSection( 1, true ),
 						eInnerSections = ElementsHelper.multiCreateInnerSection( [ eColumn1, eColumn2 ] ),
 						historyItem = HistoryHelper.getFirstItem().attributes,
-						{ defaultInnerSectionColumns } = eInnerSections[ 0 ].view,
 						innerSectionColumnsIds = {};
 
 					eInnerSections.forEach( ( eInnerSection ) => {
@@ -258,7 +256,7 @@ export const Create = () => {
 
 					// Inner section have x columns.
 					eInnerSections.forEach( ( eInnerSection ) => assert.equal( eInnerSection.view.collection.length,
-						defaultInnerSectionColumns, `InnerSection have "${ defaultInnerSectionColumns }" columns` ) );
+						DEFAULT_INNER_SECTION_COLUMNS, `InnerSection have "${ DEFAULT_INNER_SECTION_COLUMNS }" columns` ) );
 
 					// Undo.
 					HistoryHelper.undoValidate( assert, historyItem );
@@ -287,8 +285,8 @@ export const Create = () => {
 					} );
 
 					Object.entries( innerSectionAfterRedoColumnsIds ).forEach( ( [ key, ids ] ) => { // eslint-disable-line no-unused-vars
-						assert.equal( ids.length, defaultInnerSectionColumns,
-							`Inner Section have "${ defaultInnerSectionColumns } columns"` );
+						assert.equal( ids.length, DEFAULT_INNER_SECTION_COLUMNS,
+							`Inner Section have "${ DEFAULT_INNER_SECTION_COLUMNS } columns"` );
 					} );
 
 					assert.deepEqual( innerSectionAfterRedoColumnsIds, innerSectionColumnsIds,

@@ -37,10 +37,9 @@ export class Paste extends Base {
 
 			if ( ! pasteOptions.isValidChild ) {
 				if ( pasteOptions.isSameElement ) {
-					if ( 'document' === container.parent.type ) {
-						options.at = container.parent.model.get( 'elements' ).findIndex( container.model );
-					}
+					options.at = container.parent.model.get( 'elements' ).findIndex( container.model ) + 1;
 
+					// For same element always paste on his parent.
 					container = container.parent;
 				} else if ( pasteOptions.isValidGrandChild ) {
 					options.rebuild = true;

@@ -47,7 +47,7 @@ export const DEFAULT_PASTE_RULES = {
 	},
 };
 
-const validateType = ( assert, target, targetElType, source, sourceElType, isAllowed, copiedSuccess = false ) => {
+const validateRule = ( assert, target, targetElType, source, sourceElType, isAllowed, copiedSuccess = false ) => {
 	let passed = false;
 
 	const targetIsInner = target.model.get( 'isInner' ),
@@ -106,6 +106,8 @@ export const Paste = () => {
 	QUnit.module( 'Paste', () => {
 		QUnit.module( 'Single Selection', ( hooks ) => {
 			hooks.beforeEach = () => {
+				ElementsHelper.empty();
+
 				elementorCommon.storage.set( 'clipboard', '' );
 			};
 
@@ -131,7 +133,7 @@ export const Paste = () => {
 
 						if ( 'object' === typeof isAllowed ) {
 							Object.keys( isAllowed ).some( ( _targetElType ) => {
-								validateType( assert,
+								validateRule( assert,
 									target,
 									_targetElType,
 									source,
@@ -145,8 +147,67 @@ export const Paste = () => {
 							return;
 						}
 
-						validateType( assert, target, targetElType, source, sourceElType, isAllowed, copiedSuccess );
+						validateRule( assert, target, targetElType, source, sourceElType, isAllowed, copiedSuccess );
 					} );
+				} );
+			} );
+
+			QUnit.module( 'Positions', () => {
+				QUnit.test( 'Section => Section', ( assert ) => {
+					const source = DocumentHelper.autoCreate( 'section' );
+
+					// To make it more complex.
+					DocumentHelper.autoCreate( 'section' );
+
+					const target = DocumentHelper.autoCreate( 'section' ),
+						copiedSuccess = DocumentHelper.UICopyPaste( source, target );
+
+					assert.equal( copiedSuccess, true, 'Element were pasted.' );
+
+					const elements = elementor.getPreviewContainer().model.get( 'elements' ),
+						sourcePos = elements.findIndex( source.model ),
+						targetPos = elements.findIndex( target.model );
+
+					assert.equal( sourcePos + 2, targetPos,
+						'Element were pasted at the correct location.' );
+				} );
+
+				QUnit.test( 'Column => Column', ( assert ) => {
+					const source = DocumentHelper.autoCreate( 'column' );
+
+					// To make it more complex.
+					DocumentHelper.autoCreate( 'section' );
+
+					const target = DocumentHelper.autoCreate( 'column' ),
+						copiedSuccess = DocumentHelper.UICopyPaste( source, target );
+
+					assert.equal( copiedSuccess, true, 'Element were pasted.' );
+
+					const elements = elementor.getPreviewContainer().model.get( 'elements' ),
+						sourcePos = elements.findIndex( source.parent.model ),
+						targetPos = elements.findIndex( target.parent.model );
+
+					assert.equal( sourcePos + 2, targetPos,
+						'Element were pasted at the correct location.' );
+				} );
+
+				QUnit.test( 'Widget => Widget', ( assert ) => {
+					const source = DocumentHelper.autoCreate( 'widget' );
+
+					// To make it more complex.
+					DocumentHelper.autoCreate( 'section' );
+
+					const target = DocumentHelper.autoCreate( 'widget' ),
+						copiedSuccess = DocumentHelper.UICopyPaste( source, target );
+
+					assert.equal( copiedSuccess, true, 'Element were pasted.' );
+
+					const elements = elementor.getPreviewContainer().model.get( 'elements' ),
+						sourcePos = elements.findIndex( source.parent.parent.model ),
+						targetPos = elements.findIndex( target.parent.parent.model );
+
+					assert.equal( sourcePos + 2, targetPos,
+						'Element were pasted at the correct location.' );
 				} );
 			} );
 		} );

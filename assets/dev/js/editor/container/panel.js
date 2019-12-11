@@ -29,4 +29,16 @@ export default class Panel {
 	closeEditor() {
 		$e.route( 'panel/elements/categories' );
 	}
+
+	getControlView( name ) {
+		const editor = elementor.getPanelView().getCurrentPageView();
+
+		return editor.children.findByModelCid( this.getControlModel( name ).cid );
+	}
+
+	getControlModel( name ) {
+		const editor = elementor.getPanelView().getCurrentPageView();
+
+		return editor.collection.findWhere( { name: name } );
+	}
 }
