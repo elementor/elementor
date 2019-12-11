@@ -1,6 +1,11 @@
 import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
 
+/**
+ * TODO: ViewsOptions
+ * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView)} ViewsOptions
+ */
+
 export default class Container extends ArgsObject {
 	/**
 	 * Container type.
@@ -33,12 +38,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container view.
 	 *
-	 * @type {(
-	 * Marionette.View|
-	 * Marionette.CompositeView|
-	 * BaseElementView|
-	 * SectionView
-	 * )}
+	 * @type {ViewsOptions}
 	 */
 	view;
 
