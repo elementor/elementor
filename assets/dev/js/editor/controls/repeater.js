@@ -31,14 +31,17 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	childViewOptions: function( rowModel, index ) {
 		const elementContainer = this.getOption( 'container' );
 
+		let rowId = rowModel.get( '_id' );
+
 		// TODO: Temp backwards compatibility. since 2.8.0.
-		if ( 'bc-container' === elementContainer.type ) {
-			rowModel.set( '_id', 'bc-' + elementor.helpers.getUniqueID() );
+		if ( ! rowId ) {
+			rowId = 'bc-' + elementor.helpers.getUniqueID();
+			rowModel.set( '_id', rowId );
 		}
 
 		elementContainer.children[ index ] = new elementorModules.editor.Container( {
 			type: 'repeater',
-			id: rowModel.get( '_id' ),
+			id: rowId,
 			model: new Backbone.Model( {
 				name: this.model.get( 'name' ),
 			} ),

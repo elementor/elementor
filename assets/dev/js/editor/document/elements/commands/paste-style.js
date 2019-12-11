@@ -9,6 +9,8 @@ export class PasteStyle extends History {
 		let result = true;
 
 		if (
+			null === source ||
+			null === target ||
 			undefined === source ||
 			undefined === target ||
 			( 'object' === typeof source ^ 'object' === typeof target )
