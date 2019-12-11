@@ -117,6 +117,7 @@ class Library extends \WP_CLI_Command {
 
 	/**
 	 * Connect site to Elementor Library.
+	 * (Network is not supported)
 	 *
 	 * --user
 	 *      The user to connect <id|login|email>
@@ -124,16 +125,11 @@ class Library extends \WP_CLI_Command {
 	 * --token
 	 *      A connect token from Elementor Account Dashboard.
 	 *
-	 * [--network]
-	 *      Connect user to all sites in the network.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor library connect --user=admin --token=<connect-cli-token>
 	 *      - This will connect the admin to Elementor library.
-	 *
-	 *  2. wp elementor library connect --user=admin --token=<connect-cli-token> --network
-	 *      - This will connect the admin to Elementor library in each site in the network.
 	 *
 	 * @param $args
 	 * @param $assoc_args
@@ -150,29 +146,7 @@ class Library extends \WP_CLI_Command {
 			\WP_CLI::error( 'Please set connect token.' );
 		}
 
-		$network = isset( $assoc_args['network'] ) && is_multisite();
-
-		if ( $network ) {
-			/** @var \WP_Site[] $sites */
-			$sites = get_sites();
-
-			foreach ( $sites as $keys => $blog ) {
-				// Cast $blog as an array instead of  object
-				$blog_id = $blog->blog_id;
-
-				switch_to_blog( $blog_id );
-
-				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . get_option( 'blogname' ) );
-
-				$this->do_connect( $assoc_args['token'] );
-
-				\WP_CLI::success( 'Done! - ' . get_option( 'home' ) );
-
-				restore_current_blog();
-			}
-		} else {
-			$this->do_connect( $assoc_args['token'] );
-		}
+		$this->do_connect( $assoc_args['token'] );
 	}
 
 	/**
