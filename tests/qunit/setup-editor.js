@@ -1,6 +1,22 @@
 elementorCommon.ajax.send = ( action, options ) => {};
 
 const elementorConfigDocument = {
+	settings: {
+		name: 'page',
+		panelPage: {
+			title: 'Post Settings',
+		},
+		controls: {
+			padding: {
+				unit: 'px',
+				top: '',
+				right: '',
+				bottom: '',
+				left: '',
+				isLinked: true,
+			},
+		},
+	},
 	remoteLibrary: {
 		type: 'page',
 		category: '',
@@ -25,22 +41,6 @@ const elementorConfigDocument = {
 };
 
 const elementorConfigSettings = {
-	page: {
-		name: 'page',
-		panelPage: {
-			title: 'Post Settings',
-		},
-		controls: {
-			padding: {
-				unit: 'px',
-				top: '',
-				right: '',
-				bottom: '',
-				left: '',
-				isLinked: true,
-			},
-		},
-	},
 	general: {
 		name: 'general',
 		panelPage: {

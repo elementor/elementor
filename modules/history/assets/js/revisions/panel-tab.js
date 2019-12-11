@@ -109,7 +109,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDiscardClick: function() {
-		elementor.history.revisions.setEditorData( elementor.config.data );
+		elementor.history.revisions.setEditorData( elementor.config.document.elements );
 
 		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
 

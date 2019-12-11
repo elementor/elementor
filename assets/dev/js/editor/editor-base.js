@@ -299,7 +299,7 @@ const App = Marionette.Application.extend( {
 
 	initElements: function() {
 		var ElementCollection = require( 'elementor-elements/collections/elements' ),
-			config = this.config.data;
+			config = this.config.document.elements;
 
 		// If it's an reload, use the not-saved data
 		if ( this.elements ) {
@@ -973,7 +973,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	initDocument() {
-		this.config = jQuery.extend( this.config, ElementorDocsConfig );
+		this.config = jQuery.extend( true, this.config, ElementorDocsConfig );
 
 		this.addDeprecatedConfigProperties();
 
@@ -1010,9 +1010,6 @@ const App = Marionette.Application.extend( {
 				return elementor.config.document.user.locked;
 			},
 		} );
-
-		// Set the page setting for settings manager.
-		elementor.config.settings.page = elementor.config.document.settings;
 
 		Object.defineProperty( this.config.settings, 'page', {
 			get() {

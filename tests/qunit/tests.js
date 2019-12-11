@@ -15,7 +15,7 @@ elementor.config.elements = {
 	column,
 };
 
-elementor.config.widgets = {
+elementor.config.document.widgets = {
 	button,
 	heading,
 	tabs,
