@@ -755,7 +755,7 @@ const App = Marionette.Application.extend( {
 		elementorCommon.elements.$window.trigger( 'elementor:init' );
 
 		this.saver = $e.components.get( 'document/save' );
-		
+
 		this.initPreview();
 
 		this.logSite();
