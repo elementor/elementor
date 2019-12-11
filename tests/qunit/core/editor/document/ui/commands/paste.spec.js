@@ -160,7 +160,7 @@ export const Paste = () => {
 					DocumentHelper.autoCreate( 'section' );
 
 					const target = DocumentHelper.autoCreate( 'section' ),
-						copiedSuccess = DocumentHelper.UICopyPaste( source, target );
+						copiedSuccess = !! DocumentHelper.UICopyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 
@@ -179,7 +179,7 @@ export const Paste = () => {
 					DocumentHelper.autoCreate( 'section' );
 
 					const target = DocumentHelper.autoCreate( 'column' ),
-						copiedSuccess = DocumentHelper.UICopyPaste( source, target );
+						copiedSuccess = !! DocumentHelper.UICopyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 
@@ -198,7 +198,7 @@ export const Paste = () => {
 					DocumentHelper.autoCreate( 'section' );
 
 					const target = DocumentHelper.autoCreate( 'widget' ),
-						copiedSuccess = DocumentHelper.UICopyPaste( source, target );
+						copiedSuccess = !! DocumentHelper.UICopyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 
