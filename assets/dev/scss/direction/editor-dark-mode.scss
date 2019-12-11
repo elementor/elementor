@@ -1,7 +1,4 @@
 //Variables
-$direction: ltr;
-
-@import "../helpers/direction";
 @import "../helpers/variables";
 
 $theme-dark-gray-darkest: #34383C;
@@ -572,7 +569,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 	border-color: $theme-dark-gray-light;
 
 	&:first-child {
-		@include border-start(1px solid $theme-dark-gray-light);
+		border-color: $theme-dark-gray-light;
 	}
 
 	&.elementor-tab-active {
