@@ -56,6 +56,9 @@ export default class ElementsHelper {
 			settings: {
 				_inline_size: width,
 			},
+			options: {
+				debounce: false,
+			},
 		} );
 	}
 
@@ -237,7 +240,28 @@ export default class ElementsHelper {
 		$e.run( 'document/elements/import', { data, model } );
 	}
 
-	static createAutoForm( eContainer ) {
+	static createAutoColumn( eContainer = null ) {
+		if ( ! eContainer ) {
+			return this.createSection( 1, true );
+		}
+
+		return this.createColumn( eContainer );
+	}
+
+	static createAutoColumnStyled( eContainer = null ) {
+		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
+
+		this.settings( eContainer, {
+			background_background: 'gradient',
+			background_color: '#D51D1D',
+		}, {
+			debounce: false,
+		} );
+
+		return eContainer;
+	}
+
+	static createAutoForm( eContainer = null ) {
 		if ( ! eContainer ) {
 			eContainer = this.createSection( 1, true );
 		}

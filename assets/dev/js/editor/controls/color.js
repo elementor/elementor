@@ -35,7 +35,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerChange() {
-		this.setValue( this.colorPicker.getValue() );
+		this.setValue( this.colorPicker.getColor() );
 	}
 
 	onPickerClear() {

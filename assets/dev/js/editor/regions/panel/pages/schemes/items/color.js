@@ -21,7 +21,7 @@ module.exports = PanelSchemeItemView.extend( {
 				default: this.model.get( 'value' ),
 			},
 			onChange: () => {
-				this.triggerMethod( 'value:change', this.colorPicker.getValue() );
+				this.triggerMethod( 'value:change', this.colorPicker.getColor() );
 			},
 			onClear: () => {
 				this.triggerMethod( 'value:change', '' );
