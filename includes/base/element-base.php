@@ -867,7 +867,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array The initial config.
 	 */
-	protected function _get_initial_config() {
+	protected function get_initial_config() {
 		$config = [
 			'name' => $this->get_name(),
 			'elType' => $this->get_type(),

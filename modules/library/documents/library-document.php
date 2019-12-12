@@ -44,8 +44,8 @@ abstract class Library_Document extends Document {
 		return $properties;
 	}
 
-	public function _get_initial_config() {
-		$config = parent::_get_initial_config();
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
 
 		$config['library'] = [
 			'save_as_same_type' => true,

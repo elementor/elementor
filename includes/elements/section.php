@@ -204,8 +204,8 @@ class Element_Section extends Element_Base {
 	 *
 	 * @return array The initial config.
 	 */
-	protected function _get_initial_config() {
-		$config = parent::_get_initial_config();
+	protected function get_initial_config() {
+		$config = parent::get_initial_config();
 
 		$config['presets'] = self::get_presets();
 		$config['controls'] = $this->get_controls();

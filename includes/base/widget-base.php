@@ -303,7 +303,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @return array The initial widget config.
 	 */
-	protected function _get_initial_config() {
+	protected function get_initial_config() {
 		$config = [
 			'widget_type' => $this->get_name(),
 			'keywords' => $this->get_keywords(),
@@ -319,7 +319,7 @@ abstract class Widget_Base extends Element_Base {
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
 
-		return array_merge( parent::_get_initial_config(), $config );
+		return array_merge( parent::get_initial_config(), $config );
 	}
 
 	/**

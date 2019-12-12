@@ -957,7 +957,7 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	final public function get_config() {
 		if ( null === $this->config ) {
-			$this->config = $this->_get_initial_config();
+			$this->config = $this->get_initial_config();
 		}
 
 		return $this->config;
@@ -1766,7 +1766,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @deprecated 2.9.0 Implement `register_controls()` instead
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		_deprecated_function( __METHOD__, '2.9.0', 'register_controls' );
 
 		$this->register_controls();
@@ -1817,15 +1817,33 @@ abstract class Controls_Stack extends Base_Object {
 	 * Retrieve the current element initial configuration - controls list and
 	 * the tabs assigned to the control.
 	 *
+	 * @since 2.9.0
+	 * @access protected
+	 *
+	 * @return array The initial config.
+	 */
+	protected function get_initial_config() {
+		return [
+			'controls' => $this->get_controls(),
+		];
+	}
+
+	/**
+	 * Get initial config.
+	 *
+	 * Retrieve the current element initial configuration - controls list and
+	 * the tabs assigned to the control.
+	 *
 	 * @since 1.4.0
+	 * @deprecated 2.9.0 Implement `get_initial_config()` instead
 	 * @access protected
 	 *
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		return [
-			'controls' => $this->get_controls(),
-		];
+		_deprecated_function( __METHOD__, '2.9.0', 'get_initial_config' );
+
+		return $this->get_initial_config();
 	}
 
 	/**
