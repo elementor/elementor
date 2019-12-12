@@ -347,7 +347,7 @@ class Widget_Divider extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$styles = $this->get_separator_styles();
 		$this->start_controls_section(
 			'section_divider',

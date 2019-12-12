@@ -80,7 +80,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_rating',
 			[
