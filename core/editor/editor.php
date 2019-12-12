@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
+use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
@@ -87,7 +88,7 @@ class Editor {
 			return;
 		}
 
-		$this->post_id = absint( $_REQUEST['post'] );
+		$this->set_post_id( absint( $_REQUEST['post'] ) );
 
 		if ( ! $this->is_edit_mode( $this->post_id ) ) {
 			return;
@@ -144,8 +145,6 @@ class Editor {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 999999 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'init_document' ] );
-
 		// Setup default heartbeat options
 		add_filter( 'heartbeat_settings', function( $settings ) {
 			$settings['interval'] = 15;
@@ -163,45 +162,6 @@ class Editor {
 		if ( false !== $die ) {
 			die;
 		}
-	}
-
-	public function init_document() {
-		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
-		query_posts( [
-			'p' => $this->post_id,
-			'post_type' => get_post_type( $this->post_id ),
-		] );
-
-		Plugin::$instance->db->switch_to_post( $this->post_id );
-
-		$document = Plugin::$instance->documents->get( $this->post_id );
-
-		Plugin::$instance->documents->switch_to_document( $document );
-
-		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
-
-		// Post Lock
-		if ( ! $this->get_locked_user( $this->post_id ) ) {
-			$this->lock_post( $this->post_id );
-		}
-
-		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
-
-		// Set the global data like $post, $authordata and etc
-		setup_postdata( $this->post_id );
-
-		$doc_config = [
-			'document' => $document->get_config(),
-		];
-
-		$additional_config = apply_filters( 'elementor/editor/document/config', [], $this->post_id );
-
-		if ( ! empty( $additional_config ) ) {
-			$doc_config = array_replace_recursive( $doc_config, $additional_config );
-		}
-
-		Utils::print_js_config( 'elementor-editor', 'ElementorDocsConfig', $doc_config );
 	}
 
 	/**
@@ -274,6 +234,14 @@ class Editor {
 
 		if ( ! $document || ! $document->is_editable_by_current_user() ) {
 			return false;
+		}
+
+
+		/** @var Module ajax */
+		$ajax_data = Plugin::$instance->common->get_component( 'ajax' )->get_current_action_data();
+
+		if ( ! empty( $ajax_data ) && 'get_document_config' === $ajax_data['action'] ) {
+			return true;
 		}
 
 		// Ajax request as Editor mode
@@ -550,6 +518,7 @@ class Editor {
 		unset( $settings['page'] );
 
 		$config = [
+			'document_id' => $this->post_id,
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
@@ -1256,5 +1225,9 @@ class Editor {
 				}
 			}
 		}
+	}
+
+	public function set_post_id( $post_id ) {
+		$this->post_id = $post_id;
 	}
 }

@@ -129,7 +129,7 @@ module.exports = elementorModules.Module.extend( {
 
 				break;
 			case 'draft':
-				if ( elementor.config.current_user_can_publish ) {
+				if ( elementor.config.document.user.can_publish ) {
 					this.publish();
 				} else {
 					this.savePending();
@@ -138,7 +138,7 @@ module.exports = elementorModules.Module.extend( {
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( elementor.config.current_user_can_publish ) {
+				if ( elementor.config.document.user.can_publish ) {
 					this.publish();
 				} else {
 					this.update();

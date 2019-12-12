@@ -28,7 +28,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 
-		this.currentPreviewId = elementor.config.current_revision_id;
+		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	getRevisionViewData: function( revisionView ) {
@@ -93,7 +93,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.setRevisionsButtonsActive( false );
 
-		this.currentPreviewId = elementor.config.current_revision_id;
+		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	onApplyClick: function() {
@@ -127,7 +127,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.current_revision_id ) {
+		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.document.revisions.current_id ) {
 			this.onDiscardClick();
 		}
 	},
@@ -160,7 +160,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
-		if ( elementor.saver.isEditorChanged() && ( null === self.currentPreviewId || elementor.config.current_revision_id === self.currentPreviewId ) ) {
+		if ( elementor.saver.isEditorChanged() && ( null === self.currentPreviewId || elementor.config.document.revisions.current_id === self.currentPreviewId ) ) {
 			elementor.saver.saveEditor( {
 				status: 'autosave',
 				onSuccess: function() {

@@ -11,6 +11,10 @@ export default class extends elementorModules.Module {
 	}
 
 	register( component ) {
+		if ( this.components[ component.getNamespace() ] ) {
+			return;
+		}
+
 		this.components[ component.getNamespace() ] = component;
 
 		return component;

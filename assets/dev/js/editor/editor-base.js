@@ -9,6 +9,8 @@ import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 
 const App = Marionette.Application.extend( {
+	documents: {},
+
 	loaded: false,
 
 	previewLoadedOnce: false,
@@ -279,8 +281,6 @@ const App = Marionette.Application.extend( {
 
 		this.dynamicTags = new DynamicTags();
 
-		this.templates.init();
-
 		this.initDialogsManager();
 
 		this.notifications = new Notifications();
@@ -423,7 +423,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	setAjax: function() {
-		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
+		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document_id );
 
 		elementorCommon.ajax.on( 'request:unhandledError', function( xmlHttpRequest ) {
 			elementor.notifications.showToast( {
@@ -547,7 +547,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	checkPageStatus: function() {
-		if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
+		if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
 			this.notifications.showToast( {
 				message: this.translate( 'working_on_draft_notification' ),
 				buttons: [
@@ -734,8 +734,6 @@ const App = Marionette.Application.extend( {
 	onStart: function() {
 		this.config = ElementorConfig;
 
-		this.initDocument();
-
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
@@ -745,10 +743,6 @@ const App = Marionette.Application.extend( {
 			this.onEnvNotCompatible();
 		}
 
-		this.setAjax();
-
-		this.requestWidgetsConfig();
-
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -757,11 +751,29 @@ const App = Marionette.Application.extend( {
 
 		this.addBackgroundClickArea( document );
 
-		elementorCommon.elements.$window.trigger( 'elementor:init' );
+		this.addDeprecatedConfigProperties();
 
-		this.initPreview();
+		this.initDocument();
 
 		this.logSite();
+	},
+
+	initDocument( id ) {
+		id = id || this.config.document_id;
+
+		this.requestDocument( id ).then( () => {
+			this.setAjax();
+
+			this.templates.init();
+
+			elementorCommon.elements.$window.trigger( 'elementor:init' );
+
+			this.initPreview();
+
+			if ( this.loaded ) {
+				this.$preview.trigger( 'load' );
+			}
+		} );
 	},
 
 	onPreviewLoaded: function() {
@@ -972,43 +984,81 @@ const App = Marionette.Application.extend( {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	},
 
-	initDocument() {
-		this.config = jQuery.extend( true, this.config, ElementorDocsConfig );
+	requestDocument( id ) {
+		return elementorCommon.ajax.addRequest( 'get_document_config', {
+			data: { id },
+			success: ( config ) => {
+				this.documents[ id ] = config;
+				this.config.document = this.documents[ id ];
 
-		this.addDeprecatedConfigProperties();
+				this.settings.page = new this.settings.modules.page( this.documents[ id ].settings );
 
-		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
+				if ( this.loaded ) {
+					this.schemes.printSchemesStyle();
+				}
+
+				elementorCommon.elements.$body.addClass( `elementor-controls-ready elementor-editor-${ this.config.document.type }` );
+			},
+			error: ( data ) => {
+				let message;
+
+				if ( _.isString( data ) ) {
+					message = data;
+				} else if ( data.statusText ) {
+					message = elementor.createAjaxErrorMessage( data );
+
+					if ( 0 === data.readyState ) {
+						message += ' ' + elementor.translate( 'Cannot load editor' );
+					}
+				} else if ( data[ 0 ] && data[ 0 ].code ) {
+					message = elementor.translate( 'server_error' ) + ' ' + data[ 0 ].code;
+				}
+
+				alert( message );
+			},
+		}, true );
 	},
 
 	addDeprecatedConfigProperties() {
-		// Use `defineProperty` because `get property()` fails during the `Marionette...extend`.
-
-		Object.defineProperty( this.config, 'data', {
-			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.data', '2.9.0', 'elementor.config.document.elements' );
-				return elementor.config.document.elements;
+		const map = {
+			data: {
+				replacement: 'elements',
+				value: () => elementor.config.document.elements,
 			},
-		} );
 
-		Object.defineProperty( this.config, 'widgets', {
-			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.config.document.widgets' );
-				return elementor.config.document.widgets;
+			widgets: {
+				replacement: 'widgets',
+				value: () => elementor.config.document.widgets,
 			},
-		} );
+			current_user_can_publish: {
+				replacement: 'user.can_publish',
+				value: () => elementor.config.document.user.can_publish,
+			},
+			locked_user: {
+				replacement: 'user.locked',
+				value: () => elementor.config.document.user.locked,
+			},
+			revisions_enabled: {
+				replacement: 'revisions.enabled',
+				value: () => elementor.config.document.revisions.enabled,
+			},
+			current_revision_id: {
+				replacement: 'revisions.current_id',
+				value: () => elementor.config.document.revisions.current_id,
+			},
+		};
 
-		Object.defineProperty( this.config, 'current_user_can_publish', {
-			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.current_user_can_publish', '2.9.0', 'elementor.config.document.user.can_publish' );
-				return elementor.config.document.user.can_publish;
-			},
-		} );
+		// replacement `defineProperty` because `get property()` fails during the `Marionette...extend`.
 
-		Object.defineProperty( this.config, 'locked_user', {
-			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.locked_user', '2.9.0', 'elementor.config.document.user.locked' );
-				return elementor.config.document.user.locked;
-			},
+		jQuery.each( map, ( key, data ) => {
+			// elementor.config[ key ] = data.value;
+			Object.defineProperty( this.config, key, {
+				get() {
+					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
+					// return from current document.
+					return data.value();
+				},
+			} );
 		} );
 
 		Object.defineProperty( this.config.settings, 'page', {

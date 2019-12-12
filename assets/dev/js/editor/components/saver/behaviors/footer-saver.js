@@ -139,13 +139,13 @@ module.exports = Marionette.Behavior.extend( {
 			case 'private':
 				publishLabel = 'update';
 
-				if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
+				if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
 					this.activateSaveButtons( true );
 				}
 
 				break;
 			case 'draft':
-				if ( ! elementor.config.current_user_can_publish ) {
+				if ( ! elementor.config.document.user.can_publish ) {
 					publishLabel = 'submit';
 				}
 
@@ -153,7 +153,7 @@ module.exports = Marionette.Behavior.extend( {
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( ! elementor.config.current_user_can_publish ) {
+				if ( ! elementor.config.document.user.can_publish ) {
 					publishLabel = 'update';
 				}
 				break;
