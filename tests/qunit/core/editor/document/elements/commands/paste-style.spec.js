@@ -23,6 +23,19 @@ export const PasteStyle = () => {
 					'Command applied the saver editor is changed.' );
 			} );
 
+			QUnit.test( 'On column', ( assert ) => {
+				const eColumnSimple = ElementsHelper.createAutoColumn(),
+					eColumnStyled = ElementsHelper.createAutoColumnStyled(),
+					eStyledButtonBackground = eColumnStyled.settings.attributes.background_color;
+
+				ElementsHelper.copy( eColumnStyled );
+				ElementsHelper.pasteStyle( eColumnSimple );
+
+				// Check
+				assert.equal( eColumnSimple.settings.attributes.background_color, eStyledButtonBackground,
+					`Button background color was changed to '${ eStyledButtonBackground }'.` );
+			} );
+
 			QUnit.test( 'History', ( assert ) => {
 				const eWidgetSimple = ElementsHelper.createAutoButton(),
 					eWidgetStyled = ElementsHelper.createAutoButtonStyled(),

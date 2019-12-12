@@ -33,7 +33,12 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container view.
 	 *
-	 * @type {Marionette.CompositeView||BaseElementView}
+	 * @type {(
+	 * Marionette.View|
+	 * Marionette.CompositeView|
+	 * BaseElementView|
+	 * SectionView
+	 * )}
 	 */
 	view;
 
