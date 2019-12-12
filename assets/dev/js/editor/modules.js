@@ -4,6 +4,7 @@ import ControlsStack from './views/controls-stack';
 import BaseSettings from './elements/models/base-settings';
 import Container from './container/container';
 import CommandsBaseHistory from './document/commands/base/history';
+import DocumentUtils from './document/utils/helpers';
 
 elementorModules.editor = {
 	elements: {
@@ -18,8 +19,11 @@ elementorModules.editor = {
 	views: {
 		ControlsStack: ControlsStack,
 	},
+
 	document: {
 		CommandBaseHistory: CommandsBaseHistory,
+
+		Utils: DocumentUtils,
 	},
 
 	Container: Container,
