@@ -1914,7 +1914,7 @@ abstract class Controls_Stack extends Base_Object {
 		if ( is_null( $settings ) ) {
 			$settings = [];
 		}
-		
+
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
 		}
