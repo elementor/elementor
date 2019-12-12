@@ -56,6 +56,9 @@ export default class ElementsHelper {
 			settings: {
 				_inline_size: width,
 			},
+			options: {
+				debounce: false,
+			},
 		} );
 	}
 

@@ -226,6 +226,11 @@ select {
 		}
 	}
 
+	//WordPress Widgets
+	.widget-inside {
+		background-color: inherit;
+	}
+
 	//Footer
 	#elementor-panel-footer {
 		background-color: $theme-dark-dark;
@@ -562,6 +567,10 @@ $devices: 'desktop', 'tablet', 'mobile';
 .elementor-control-type-tab {
 	background-color: $theme-dark-gray-darkest;
 	border-color: $theme-dark-gray-light;
+
+	&:first-child {
+		border-color: $theme-dark-gray-light;
+	}
 
 	&.elementor-tab-active {
 		background-color: $theme-dark-gray-lighter;

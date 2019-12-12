@@ -1,3 +1,6 @@
+/**
+ * TODO: Full JSDOC.
+ */
 export default class Commands extends elementorModules.Module {
 	constructor( ...args ) {
 		super( ...args );
@@ -63,6 +66,10 @@ export default class Commands extends elementorModules.Module {
 		return command === this.current[ component.getRootContainer() ];
 	}
 
+	isCurrentFirstTrace( command ) {
+		return command === this.getCurrentFirstTrace();
+	}
+
 	getCurrent( container = '' ) {
 		if ( container ) {
 			if ( ! this.current[ container ] ) {
@@ -85,6 +92,10 @@ export default class Commands extends elementorModules.Module {
 		}
 
 		return this.currentArgs;
+	}
+
+	getCurrentFirstTrace() {
+		return this.currentTrace[ 0 ];
 	}
 
 	beforeRun( command, args = {} ) {
