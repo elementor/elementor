@@ -423,7 +423,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	setAjax: function() {
-		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document_id );
+		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
 
 		elementorCommon.ajax.on( 'request:unhandledError', function( xmlHttpRequest ) {
 			elementor.notifications.showToast( {
