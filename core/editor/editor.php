@@ -236,7 +236,6 @@ class Editor {
 			return false;
 		}
 
-
 		/** @var Module ajax */
 		$ajax_data = Plugin::$instance->common->get_component( 'ajax' )->get_current_action_data();
 
