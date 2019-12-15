@@ -458,15 +458,15 @@ const App = Marionette.Application.extend( {
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
-				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
+				isClickInsideElementor = !! $target.closest( '.elementor-edit-area, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[ 0 ] );
-
-			if ( ( isClickInsideElementor && 'edit' === editMode ) || ! isTargetInsideDocument ) {
-				return;
-			}
 
 			if ( $target.closest( 'a:not(.elementor-clickable)' ).length ) {
 				event.preventDefault();
+			}
+
+			if ( ( isClickInsideElementor && 'edit' === editMode ) || ! isTargetInsideDocument ) {
+				return;
 			}
 
 			if ( ! isClickInsideElementor ) {
@@ -768,10 +768,36 @@ const App = Marionette.Application.extend( {
 
 			elementorCommon.elements.$window.trigger( 'elementor:init' );
 
+			this.on( 'preview:loaded', () => {
+				this.$previewContents.find( '.elementor-edit-button' ).remove();
+				this.$previewContents.find( '.elementor-inner' ).not( '.elementor-edit-area > .elementor-inner' ).prepend( '<span class="elementor-edit-button">' +
+					'<i class="eicon-edit"></i>' +
+					'</span>' );
+
+				this.$previewContents.find( '.elementor-edit-button' ).on( 'click', ( event ) => {
+					this.enterPreviewMode();
+
+					jQuery( event.target ).addClass( 'loading' );
+
+					jQuery( event.target ).parents( '.elementor-inner' ).addClass( 'loading' );
+
+					const docId = jQuery( event.target ).parents( '[data-elementor-id]' ).data( 'elementor-id' );
+					this.initDocument( docId );
+
+				} );
+			} );
+
 			this.initPreview();
 
 			if ( this.loaded ) {
 				this.$preview.trigger( 'load' );
+				this.$previewContents.find( `#elementor-post-${ id }-css` ).remove();
+
+				const previewRevisionID = elementor.config.document.revisions.current_id;
+
+				this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
+
+				elementor.helpers.scrollToView( this.$previewElementorEl );
 			}
 		} );
 	},
@@ -788,13 +814,15 @@ const App = Marionette.Application.extend( {
 		}
 
 		this.$previewContents = this.$preview.contents();
-		this.$previewElementorEl = this.$previewContents.find( '#elementor' );
+		this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );
 
 		if ( ! this.$previewElementorEl.length ) {
 			this.onPreviewElNotFound();
 
 			return;
 		}
+
+		this.$previewElementorEl.addClass( 'elementor-edit-area' );
 
 		this.initFrontend();
 

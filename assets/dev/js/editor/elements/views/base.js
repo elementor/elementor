@@ -459,7 +459,12 @@ BaseElementView = BaseContainer.extend( {
 
 		this.controlsCSSParser.stylesheet.empty();
 
-		this.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, this.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ this.getID(), '#elementor .' + this.getElementUniqueID() ] );
+		this.controlsCSSParser.addStyleRules(
+			settings.getStyleControls(),
+			settings.attributes,
+			this.getEditModel().get( 'settings' ).controls,
+			[ /{{ID}}/g, /{{WRAPPER}}/g ],
+			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
 

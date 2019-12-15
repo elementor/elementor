@@ -16,8 +16,42 @@ html.elementor-html {
 	margin-top: 0 !important;
 }
 
-#elementor {
+.elementor-edit-area {
 	position: relative;
+}
+
+.elementor-inner {
+	&.loading{
+		opacity: 0.5;
+	}
+}
+
+
+.elementor-edit-button{
+	display: none;
+
+	&.loading i:before {
+		content: "\f463";
+	}
+
+	&.loading i {
+		-webkit-animation: rotation 1s infinite linear;
+		animation: rotation 1s infinite linear;
+	}
+
+	.elementor-inner:hover & {
+		width: 25px;
+		height: 25px;
+		background: $elementor;
+		color: white;
+		font-size: 10px;
+		text-align: center;
+		line-height: 25px;
+		cursor: pointer;
+		display: inline-block;
+		z-index: 1;
+		position: absolute;
+	}
 }
 
 .elementor-editor-active {
