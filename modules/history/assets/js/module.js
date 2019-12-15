@@ -2,26 +2,30 @@ import Component from './component';
 import HistoryComponent from './history/component';
 import RevisionsComponent from './revisions/component';
 
-const HistoryPageView = require( './panel-page' ),
-	Manager = function() {
-		const self = this;
+import PanelPage from './panel-page';
 
-		const addPanelPage = function() {
+export default class Manager {
+	static loadedOnce = false;
+
+	constructor() {
+		$e.components.register( new Component() );
+
+		$e.components.register( new HistoryComponent() );
+		$e.components.register( new RevisionsComponent() );
+
+		if ( ! this.constructor.loadedOnce ) {
 			elementor.getPanelView().addPage( 'historyPage', {
-				view: HistoryPageView,
+				view: PanelPage,
 				title: elementor.translate( 'history' ),
 			} );
-		};
+		}
 
-		const init = function() {
-			elementor.on( 'preview:loaded', addPanelPage );
+		// Backward compatibility.
+		const currentDocument = elementor.documents.getCurrent();
 
-			$e.components.register( new Component() );
-			$e.components.register( new HistoryComponent() );
-			$e.components.register( new RevisionsComponent() );
-		};
+		this.history = currentDocument.history;
+		this.revisions = currentDocument.revisions;
 
-		jQuery( window ).on( 'elementor:init', init );
-	};
-
-module.exports = new Manager();
+		this.constructor.loadedOnce = true;
+	}
+}
