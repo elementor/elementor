@@ -15,6 +15,8 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
+		component.registerAPI();
+
 		this.components[ component.getNamespace() ] = component;
 
 		return component;

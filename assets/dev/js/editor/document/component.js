@@ -8,10 +8,10 @@ export default class Component extends BaseComponent {
 		return 'document';
 	}
 
-	onInit() {
+	registerAPI() {
 		new BackwardsCompatibility();
 
-		super.onInit();
+		super.registerAPI();
 
 		Object.values( Hooks ).forEach( ( hook ) => new hook() );
 		Object.values( Events ).forEach( ( event ) => new event() );

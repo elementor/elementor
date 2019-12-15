@@ -13,7 +13,7 @@ export default class BaseComponent extends elementorModules.Module {
 		this.currentTab = '';
 	}
 
-	onInit() {
+	registerAPI() {
 		jQuery.each( this.getTabs(), ( tab ) => this.registerTabRoute( tab ) );
 
 		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
