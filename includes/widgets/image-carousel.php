@@ -248,6 +248,20 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'autoplay',
+			[
+				'label' => __( 'Autoplay', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'yes',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
 			'pause_on_hover',
 			[
 				'label' => __( 'Pause on Hover', 'elementor' ),
@@ -256,6 +270,9 @@ class Widget_Image_Carousel extends Widget_Base {
 				'options' => [
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'autoplay' => 'yes',
 				],
 				'frontend_available' => true,
 			]
@@ -271,19 +288,8 @@ class Widget_Image_Carousel extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'autoplay',
-			[
-				'label' => __( 'Autoplay', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'yes',
-				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
+				'condition' => [
+					'autoplay' => 'yes',
 				],
 				'frontend_available' => true,
 			]
@@ -295,6 +301,9 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Autoplay Speed', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 5000,
+				'condition' => [
+					'autoplay' => 'yes',
+				],
 				'frontend_available' => true,
 			]
 		);
