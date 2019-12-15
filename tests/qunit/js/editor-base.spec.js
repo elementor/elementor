@@ -1,67 +1,53 @@
-/* global ElementorConfig */
-import editorBase from './../../../assets/dev/js/editor/editor-base';
+import EditorBase from './../../../assets/dev/js/editor/editor-base';
 
-const App = editorBase.extend();
+export default class EditorBaseTest extends EditorBase {
+	getPreviewView() {
+		return super.getPreviewView();
+	}
 
-window.elementor = new App( {
-	$previewContents: jQuery( document ),
+	initPreview() {
+		this.$preview = jQuery( '#elementor-preview-iframe' );
 
-	getPreviewView: function() {
-		if ( ! this.previewLoaded ) {
-			var iframeRegion = new Marionette.Region( {
-				// Make sure you get the DOM object out of the jQuery object
-				el: document.querySelector( '#elementor-preview-iframe' ),
-			} );
+		jQuery( document ).ready( () => {
+			this.$preview.trigger( 'load' );
+		} );
 
-			this.addRegions( {
-				sections: iframeRegion,
-			} );
+		super.initPreview();
+	}
 
-			this.initElements();
+	initFrontend() {
+		elementorFrontend.init = () => console.log( 'initFrontend' );
 
-			this.initPanel();
+		elementorFrontend.elements.$body = jQuery( '#elementor-fake' );
 
-			var Preview = require( 'elementor-views/preview' );
+		super.initFrontend();
+	}
 
-			this.sections.show( new Preview( { model: this.elementsModel } ) );
+	onPreviewLoaded() {
+		this.$preview = jQuery( '#elementor-preview-iframe' );
 
-			this.previewLoaded = true;
-		}
+		this.$preview[ 0 ].contentWindow.elementorFrontend = {
+			init: () => console.log( 'elementorFrontend::init' ),
+		};
 
-		return this.sections.currentView;
-	},
+		this.$previewContents = this.$preview.contents();
 
-	onStart: function() {
-		this.config = ElementorConfig;
+		this.$previewContents.find( 'body' ).append( '<div id="elementor"></div>' );
 
-		Backbone.Radio.DEBUG = false;
+		// Shortcut bind.
+		elementorFrontend.elements.$window = jQuery( '#elementor-preview-iframe' );
 
-		Backbone.Radio.tuneIn( 'ELEMENTOR' );
+		super.onPreviewLoaded();
+	}
 
-		this.initComponents();
+	onFirstPreviewLoaded() {
+		this.initPanel();
+		// do nothing
+		this.previewLoadedOnce = true;
+	}
 
-		if ( ! this.checkEnvCompatibility() ) {
-			this.onEnvNotCompatible();
-		}
+	enqueueTypographyFonts() {
 
-		this.setAjax();
+	}
+}
 
-		this.requestWidgetsConfig();
-
-		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
-
-		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-
-		this.initClearPageDialog();
-
-		this.addBackgroundClickArea( document );
-
-		elementorCommon.elements.$window.trigger( 'elementor:init' );
-
-		this.initPreview();
-
-		this.logSite();
-	},
-} );
-
-module.exports = elementor;
