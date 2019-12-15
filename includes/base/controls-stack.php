@@ -1766,7 +1766,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @deprecated 2.9.0 Implement `register_controls()` instead
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function _register_controls() {
 		_deprecated_function( __METHOD__, '2.9.0', 'register_controls' );
 
 		$this->register_controls();
