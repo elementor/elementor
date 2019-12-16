@@ -65,11 +65,12 @@ export default class Manager {
 	 * Add document to manager by id.
 	 *
 	 * @param {number} id
+	 * @param {Container} container
 	 *
 	 * @returns {Document}
 	 */
-	addDocumentById( id ) {
-		return this.add( new Document( id ) );
+	addDocumentById( id, container ) {
+		return this.add( new Document( id, container ) );
 	}
 
 	/**

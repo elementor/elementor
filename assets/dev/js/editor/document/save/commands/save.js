@@ -1,4 +1,4 @@
-import Base from '../../commands/base/base';
+import Base from './base/base';
 
 export class Save extends Base {
 	apply( args ) {
@@ -11,7 +11,7 @@ export class Save extends Base {
 			onSuccess: null,
 		}, args );
 
-		const container = elementor.documents.getCurrent().container,
+		const container = this.document.container,
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
 			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
 			oldStatus = container.settings.get( 'post_status' ),
