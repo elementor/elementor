@@ -222,7 +222,7 @@ export default class EditorBase extends Marionette.Application {
 		const isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
-		_.each( elementData.controls, function(  controlData, controlKey ) {
+		_.each( elementData.controls, function( controlData, controlKey ) {
 			if ( ( isInner && controlData.hide_in_inner ) || ( ! isInner && controlData.hide_in_top ) ) {
 				return;
 			}
