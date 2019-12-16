@@ -1,4 +1,4 @@
-import elementor from './js/editor-base.spec.js';
+import EditorBase from './js/editor-base.spec.js';
 import section from './mock/elments/section.json';
 import column from './mock/elments/column.json';
 import button from './mock/elments/button.json';
@@ -7,48 +7,73 @@ import tabs from './mock/elments/tabs.json';
 import form from './mock/elments/form.json';
 import postDate from './mock/dynamic-tags/post-date';
 import postCustomField from './mock/dynamic-tags/post-custom-field';
+import SchemeItems from './mock/schemes/items';
 
-elementor.start();
+jQuery( document ).ready( () => {
+	const $body = jQuery( 'body' ).append( '<div id="elementor-fake"></div>' ),
+		$elementorFake = $body.find( '#elementor-fake' );
 
-elementor.config.elements = {
-	section,
-	column,
-};
+	$elementorFake.append( window.__html__[ 'tests/qunit/index.html' ] );
 
-elementor.config.widgets = {
-	button,
-	heading,
-	tabs,
-	form,
-};
+	const elementor = new EditorBase();
 
-elementor.config.dynamicTags.tags = {
-	'post-date': postDate,
-	'post-custom-field': postCustomField,
-};
+	window.elementor = elementor;
+	window.NProgress = {
+		start: () => {},
+		done: () => {},
+	};
 
-elementor.config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core-ui wp-editor-wrap tmce-active"><div id="wp-elementorwpeditor-editor-tools" class="wp-editor-tools hide-if-no-js"><div id="wp-elementorwpeditor-media-buttons" class="wp-media-buttons"><button type="button" id="insert-media-button" class="button insert-media add_media" data-editor="elementorwpeditor"><span class="wp-media-buttons-icon"></span> Add Media</button></div>\n' +
-	'<div class="wp-editor-tabs"><button type="button" id="elementorwpeditor-tmce" class="wp-switch-editor switch-tmce" data-wp-editor-id="elementorwpeditor">Visual</button>\n' +
-	'<button type="button" id="elementorwpeditor-html" class="wp-switch-editor switch-html" data-wp-editor-id="elementorwpeditor">Text</button>\n' +
-	'</div>\n' +
-	'</div>\n' +
-	'<div id="wp-elementorwpeditor-editor-container" class="wp-editor-container"><div id="qt_elementorwpeditor_toolbar" class="quicktags-toolbar"></div><textarea class="elementor-wp-editor wp-editor-area" style="height: 250px" autocomplete="off" cols="40" name="elementorwpeditor" id="elementorwpeditor">%%EDITORCONTENT%%</textarea></div>\n' +
-	'</div>\n';
+	elementor.start();
 
-require( './core/common/components/components.spec' );
-require( './core/common/components/base/callbacks.spec.js' );
+	elementor.config.schemes = {
+		items: SchemeItems,
+		enabled_schemes: [ 'color', 'typography', 'color-picker' ],
+	};
 
-require( './core/editor/container/container.spec' );
+	elementor.config.elements = {
+		section,
+		column,
+	};
 
-require( './core/editor/document/commands/base/base.spec' );
-require( './core/editor/document/commands/base/history.spec' );
+	elementor.config.widgets = {
+		button,
+		heading,
+		tabs,
+		form,
+	};
 
-require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
+	elementor.config.dynamicTags.tags = {
+		'post-date': postDate,
+		'post-custom-field': postCustomField,
+	};
 
-require( './core/editor/document/component.spec' );
+	elementor.config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core-ui wp-editor-wrap tmce-active"><div id="wp-elementorwpeditor-editor-tools" class="wp-editor-tools hide-if-no-js"><div id="wp-elementorwpeditor-media-buttons" class="wp-media-buttons"><button type="button" id="insert-media-button" class="button insert-media add_media" data-editor="elementorwpeditor"><span class="wp-media-buttons-icon"></span> Add Media</button></div>\n' +
+		'<div class="wp-editor-tabs"><button type="button" id="elementorwpeditor-tmce" class="wp-switch-editor switch-tmce" data-wp-editor-id="elementorwpeditor">Visual</button>\n' +
+		'<button type="button" id="elementorwpeditor-html" class="wp-switch-editor switch-html" data-wp-editor-id="elementorwpeditor">Text</button>\n' +
+		'</div>\n' +
+		'</div>\n' +
+		'<div id="wp-elementorwpeditor-editor-container" class="wp-editor-container"><div id="qt_elementorwpeditor_toolbar" class="quicktags-toolbar"></div><textarea class="elementor-wp-editor wp-editor-area" style="height: 250px" autocomplete="off" cols="40" name="elementorwpeditor" id="elementorwpeditor">%%EDITORCONTENT%%</textarea></div>\n' +
+		'</div>\n';
 
-require( './core/editor/document/elements/component.spec' );
-require( './core/editor/document/repeater/component.spec' );
-require( './core/editor/document/dynamic/component.spec' );
-require( './core/editor/document/history/component.spec' );
-require( './core/editor/document/ui/component.spec' );
+	elementor.on( 'preview:loaded', () => {
+		setTimeout( () => {
+			require( './core/common/components/components.spec' );
+			require( './core/common/components/base/callbacks.spec.js' );
+
+			require( './core/editor/container/container.spec' );
+
+			require( './core/editor/document/commands/base/base.spec' );
+			require( './core/editor/document/commands/base/history.spec' );
+
+			require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
+
+			require( './core/editor/document/component.spec' );
+
+			require( './core/editor/document/elements/component.spec' );
+			require( './core/editor/document/repeater/component.spec' );
+			require( './core/editor/document/dynamic/component.spec' );
+			require( './core/editor/document/history/component.spec' );
+			require( './core/editor/document/ui/component.spec' );
+		} );
+	} );
+} );
