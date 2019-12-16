@@ -1939,15 +1939,32 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Set the raw data, the ID and the parsed settings.
 	 *
+	 * @since 2.9.0
+	 * @access protected
+	 *
+	 * @param array $data Initial data.
+	 */
+	protected function init( $data ) {
+		$this->data = array_merge( $this->get_default_data(), $data );
+
+		$this->id = $data['id'];
+	}
+
+	/**
+	 * Initialize the class.
+	 *
+	 * Set the raw data, the ID and the parsed settings.
+	 *
 	 * @since 1.4.0
+	 * @deprecated 2.9.0 Implement `init()` instead
 	 * @access protected
 	 *
 	 * @param array $data Initial data.
 	 */
 	protected function _init( $data ) {
-		$this->data = array_merge( $this->get_default_data(), $data );
+		_deprecated_function( __METHOD__, '2.9.0', 'init' );
 
-		$this->id = $data['id'];
+		$this->init( $data );
 	}
 
 	/**
@@ -2015,7 +2032,7 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
-			$this->_init( $data );
+			$this->init( $data );
 		}
 	}
 }
