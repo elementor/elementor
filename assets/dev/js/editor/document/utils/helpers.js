@@ -51,7 +51,7 @@ export default class Helpers {
 			return false;
 		}
 
-		if ( 'section' === draggedElType && ! childModel.get( 'isInner' ) && 'column' === parentElType ) {
+		if ( 'section' === draggedElType && ! draggedIsInner && 'column' === parentElType ) {
 			return false;
 		}
 
