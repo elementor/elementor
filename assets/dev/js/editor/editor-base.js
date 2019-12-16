@@ -7,8 +7,12 @@ import NoticeBar from './utils/notice-bar';
 import DateTimeControl from 'elementor-controls/date-time';
 import ColorControl from 'elementor-controls/color';
 
+/* global ElementorConfig */
+
+export const DEFAULT_DEVICE_MODE = 'desktop';
+
 export default class EditorBase extends Marionette.Application {
-	_defaultDeviceMode ='desktop';
+	config = {};
 
 	loaded = false;
 
@@ -20,6 +24,7 @@ export default class EditorBase extends Marionette.Application {
 	schemes = require( 'elementor-editor-utils/schemes' );
 	presetsFactory = require( 'elementor-editor-utils/presets-factory' );
 	templates = require( 'elementor-templates/manager' );
+
 	// TODO = BC Since 2.3.0
 	ajax = elementorCommon.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
@@ -36,7 +41,7 @@ export default class EditorBase extends Marionette.Application {
 
 	/**
 	 * Exporting modules that can be used externally
-	 * @TODO: All of the following entries should move to `elementorModules.editor`
+	 * TODO: All of the following entries should move to `elementorModules.editor`
 	 */
 	modules = {
 		// TODO: Deprecated alias since 2.3.0
@@ -217,7 +222,7 @@ export default class EditorBase extends Marionette.Application {
 		const isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
-		_.each( elementData.controls, function( controlData, controlKey ) {
+		_.each( elementData.controls, function(  controlData, controlKey ) {
 			if ( ( isInner && controlData.hide_in_inner ) || ( ! isInner && controlData.hide_in_top ) ) {
 				return;
 			}
@@ -237,7 +242,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getControlView( controlID ) {
-		const capitalizedControlName = elementorCommon.helpers.upperCaseWords( controlID )
+		const capitalizedControlName = elementorCommon.helpers.upperCaseWords( controlID );
 		let View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
@@ -497,7 +502,7 @@ export default class EditorBase extends Marionette.Application {
 			},
 			onConfirm: null,
 			onCancel: function() {
-				window.history.go( -1 );
+				window.parent.history.go( -1 );
 			},
 			hide: {
 				onBackgroundClick: false,
@@ -817,7 +822,7 @@ export default class EditorBase extends Marionette.Application {
 			$frontendBody.addClass( 'elementor-editor-content-only' );
 		}
 
-		this.changeDeviceMode( this._defaultDeviceMode );
+		this.changeDeviceMode( DEFAULT_DEVICE_MODE );
 
 		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 

@@ -107,7 +107,7 @@ const elementorConfigSettings = {
 				type: 'section',
 				tab: 'settings',
 				label: 'Preferences',
-				name: 'preferences'
+				name: 'preferences',
 			},
 			ui_theme: {
 				type: 'select',
@@ -152,7 +152,6 @@ const elementorConfigSettings = {
 	},
 };
 
-/* global jQuery */
 const ElementorConfig = {
 	document: elementorConfigDocument,
 	user: { introduction: {}, restrictions: [] },
