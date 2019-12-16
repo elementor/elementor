@@ -1641,7 +1641,7 @@ abstract class Controls_Stack extends Base_Object {
 	public function print_template() {
 		ob_start();
 
-		$this->_content_template();
+		$this->content_template();
 
 		$template_content = ob_get_clean();
 
@@ -1900,10 +1900,25 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Used to generate the live preview, using a Backbone JavaScript template.
 	 *
-	 * @since 2.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {}
+	protected function content_template() {}
+
+	/**
+	 * Render element output in the editor.
+	 *
+	 * Used to generate the live preview, using a Backbone JavaScript template.
+	 *
+	 * @since 2.0.0
+	 * @deprecated 2.9.0 Implement `content_template()` instead
+	 * @access protected
+	 */
+	protected function _content_template() {
+		_deprecated_function( __METHOD__, '2.9.0', 'content_template' );
+
+		return $this->content_template();
+	}
 
 	/**
 	 * Initialize controls.

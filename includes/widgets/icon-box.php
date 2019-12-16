@@ -677,7 +677,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 		var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',

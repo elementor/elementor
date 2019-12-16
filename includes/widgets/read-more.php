@@ -125,7 +125,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<!--more {{ settings.link_text }}-->
 		<?php

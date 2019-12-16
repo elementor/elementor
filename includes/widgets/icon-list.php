@@ -610,7 +610,7 @@ class Widget_Icon_List extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 			view.addRenderAttribute( 'icon_list', 'class', 'elementor-icon-list-items' );

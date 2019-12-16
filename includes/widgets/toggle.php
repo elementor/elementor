@@ -595,7 +595,7 @@ class Widget_Toggle extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<div class="elementor-toggle" role="tablist">
 			<#

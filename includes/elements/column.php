@@ -915,7 +915,7 @@ class Element_Column extends Element_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<div class="elementor-column-wrap">
 			<div class="elementor-background-overlay"></div>

@@ -1350,7 +1350,7 @@ class Element_Section extends Element_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 		if ( settings.background_video_link ) {

@@ -158,7 +158,7 @@ class Widget_Spacer extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<div class="elementor-spacer">
 			<div class="elementor-spacer-inner"></div>
