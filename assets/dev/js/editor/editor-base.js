@@ -347,10 +347,9 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initClearPageDialog() {
-		const self = this;
 		let dialog;
 
-		self.getClearPageDialog = function() {
+		this.getClearPageDialog = function() {
 			if ( dialog ) {
 				return dialog;
 			}
@@ -451,7 +450,7 @@ export default class EditorBase extends Marionette.Application {
 			event.preventDefault();
 		} );
 
-		this.$previewContents.on( 'click', function( event ) {
+		this.$previewContents.on( 'click', ( event ) => {
 			const $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
@@ -498,7 +497,7 @@ export default class EditorBase extends Marionette.Application {
 			},
 			onConfirm: null,
 			onCancel: function() {
-				parent.history.go( -1 );
+				window.history.go( -1 );
 			},
 			hide: {
 				onBackgroundClick: false,
@@ -636,13 +635,12 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	enqueueTypographyFonts() {
-		const self = this,
-			typographyScheme = this.schemes.getScheme( 'typography' );
+		const typographyScheme = this.schemes.getScheme( 'typography' );
 
-		self.helpers.resetEnqueuedFontsCache();
+		this.helpers.resetEnqueuedFontsCache();
 
-		_.each( typographyScheme.items, function( item ) {
-			self.helpers.enqueueFont( item.value.font_family );
+		_.each( typographyScheme.items, ( item ) => {
+			this.helpers.enqueueFont( item.value.font_family );
 		} );
 	}
 
@@ -883,9 +881,8 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onPreviewLoadingError() {
-		const self = this,
-			debugUrl = self.config.document.urls.preview + '&preview-debug',
-			previewDebugLinkText = self.config.i18n.preview_debug_link_text,
+		const debugUrl = this.config.document.urls.preview + '&preview-debug',
+			previewDebugLinkText = this.config.i18n.preview_debug_link_text,
 			previewDebugLink = '<div id="elementor-preview-debug-link-text"><a href="' + debugUrl + '" target="_blank">' + previewDebugLinkText + '</a></div>',
 			debugData = elementor.config.preview.debug_data,
 			dialogOptions = {
@@ -897,14 +894,14 @@ export default class EditorBase extends Marionette.Application {
 				} };
 
 		if ( debugData.error ) {
-			self.showFatalErrorDialog( dialogOptions );
+			this.showFatalErrorDialog( dialogOptions );
 			return;
 		}
 
-		jQuery.get( debugUrl, function() {
-			self.showFatalErrorDialog( dialogOptions );
-		} ).fail( function( response ) { //Iframe can't be loaded
-			self.showFatalErrorDialog( {
+		jQuery.get( debugUrl, () => {
+			this.showFatalErrorDialog( dialogOptions );
+		} ).fail( ( response ) => { //Iframe can't be loaded
+			this.showFatalErrorDialog( {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: response.statusText + ' ' + response.status + ' ' + previewDebugLink,
@@ -935,7 +932,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onBackgroundClick( event ) {
-		jQuery.each( this.backgroundClickListeners, function() {
+		jQuery.each( this.backgroundClickListeners, () => {
 			let $clickedTarget = jQuery( event.target );
 
 			// If it's a label that associated with an input
