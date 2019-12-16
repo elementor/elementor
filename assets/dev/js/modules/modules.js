@@ -4,7 +4,7 @@ import ArgsObject from './imports/args-object';
 import Masonry from './imports/utils/masonry';
 import ForceMethodImplementation from './imports/force-method-implementation';
 
-const elementorModules = {
+export default window.elementorModules = {
 	Module,
 	ViewModule,
 	ArgsObject,
@@ -14,5 +14,3 @@ const elementorModules = {
 		Masonry: Masonry,
 	},
 };
-
-export default window.elementorModules = elementorModules;
