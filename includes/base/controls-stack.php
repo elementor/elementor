@@ -1917,7 +1917,7 @@ abstract class Controls_Stack extends Base_Object {
 	protected function _content_template() {
 		_deprecated_function( __METHOD__, '2.9.0', 'content_template' );
 
-		return $this->content_template();
+		$this->content_template();
 	}
 
 	/**
