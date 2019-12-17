@@ -20,7 +20,7 @@
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	top: 0;
+	bottom: 0;
 	left: 0;
 	background-color: rgba(0, 0, 0, 0.8);
 	z-index: 9999;
@@ -41,6 +41,9 @@
 	.dialog-message {
 		padding: 0 30px 30px;
 		min-height: 50px;
+		&.dialog-lightbox-message {
+			padding: 0;
+		}
 	}
 
 	&:not(.elementor-popup-modal) {
@@ -92,8 +95,9 @@
 .dialog-close-button {
 	cursor: pointer;
 	position: absolute;
-	top: 30px;
-	@include end(30px);
+	top: var(--adminbar-height);
+	margin-top: 15px;
+	@include end(15px);
 	font-size: 15px;
 	line-height: 1;
 
@@ -127,17 +131,16 @@
 	max-height: 100vh;
 }
 
-@media (max-width: $editor-screen-sm-max) {
-
-	.dialog-close-button {
-		top: 15px;
-		right: 15px;
+body.admin-bar {
+	.dialog-type-lightbox {
+		height: calc(100% - 32px);
 	}
+}
 
+@media (max-width: $editor-screen-md-max) {
 	body.admin-bar {
-
-		.dialog-close-button {
-			top: 40px;
+		.dialog-type-lightbox {
+			height: calc(100% - 46px);
 		}
 	}
 }
