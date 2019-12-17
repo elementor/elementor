@@ -957,7 +957,13 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	final public function get_config() {
 		if ( null === $this->config ) {
-			$this->config = $this->get_initial_config();
+			// TODO: This is for backwards compatibility starting from 2.9.0
+			// This if statement should be removed when the method is hard-deprecated
+			if ( method_exists( '_get_initial_config' ) ) {
+				$this->config = $this->_get_initial_config();
+			} else {
+				$this->config = $this->get_initial_config();
+			}
 		}
 
 		return $this->config;
