@@ -1767,7 +1767,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-		_deprecated_function( __METHOD__, '2.9.0', 'register_controls' );
+		// _deprecated_function( __METHOD__, '2.9.0', 'register_controls' );
 
 		$this->register_controls();
 	}
@@ -1841,7 +1841,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		_deprecated_function( __METHOD__, '2.9.0', 'get_initial_config' );
+		// _deprecated_function( __METHOD__, '2.9.0', 'get_initial_config' );
 
 		return $this->get_initial_config();
 	}
@@ -1915,7 +1915,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access protected
 	 */
 	protected function _content_template() {
-		_deprecated_function( __METHOD__, '2.9.0', 'content_template' );
+		// _deprecated_function( __METHOD__, '2.9.0', 'content_template' );
 
 		$this->content_template();
 	}
@@ -1931,7 +1931,13 @@ abstract class Controls_Stack extends Base_Object {
 	protected function init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
-		$this->register_controls();
+		// TODO: This is for backwards compatibility starting from 2.9.0
+		// This `if` statement should be removed when the method is removed
+		if ( method_exists( $this, '_register_controls' ) ) {
+			$this->_register_controls();
+		} else {
+			$this->register_controls();
+		}
 	}
 
 	/**
@@ -1962,9 +1968,15 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param array $data Initial data.
 	 */
 	protected function _init( $data ) {
-		_deprecated_function( __METHOD__, '2.9.0', 'init' );
+		// _deprecated_function( __METHOD__, '2.9.0', 'init' );
 
-		$this->init( $data );
+		// TODO: This is for backwards compatibility starting from 2.9.0
+		// This `if` statement should be removed when the method is removed
+		if ( method_exists( $this, '_init' ) ) {
+			$this->_init( $data );
+		} else {
+			$this->init( $data );
+		}
 	}
 
 	/**
