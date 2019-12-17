@@ -171,7 +171,7 @@ abstract class Base_Tag extends Controls_Stack {
 		] );
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
-		// This if statement should be removed when the method is hard-deprecated, in version 3.3.0
+		// This if statement should be removed when the method is hard-deprecated
 		if ( method_exists( $this, '_register_controls' ) ) {
 			$this->_register_controls();
 		} else {
