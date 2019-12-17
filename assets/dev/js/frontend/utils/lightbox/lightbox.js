@@ -1,3 +1,5 @@
+import screenfull from './screenfull';
+
 module.exports = elementorModules.ViewModule.extend( {
 	oldAspectRatio: null,
 
@@ -26,9 +28,20 @@ module.exports = elementorModules.ViewModule.extend( {
 					slidesWrapper: 'swiper-wrapper',
 					prevButton: 'elementor-swiper-button elementor-swiper-button-prev',
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',
+					pagination: 'elementor-swiper-fraction-pagination swiper-pagination',
 					prevButtonIcon: 'eicon-chevron-left',
 					nextButtonIcon: 'eicon-chevron-right',
 					slide: 'swiper-slide',
+					header: 'elementor-slideshow__header',
+					footer: 'elementor-slideshow__footer',
+					title: 'elementor-slideshow__title',
+					description: 'elementor-slideshow__description',
+					counter: 'elementor-slideshow__counter',
+					icon: 'elementor-slideshow__header-icon',
+					iconExpand: 'eicon-expand',
+					iconShrink: 'eicon-shrink',
+					iconZoom: 'eicon-zoom-in',
+					iconShare: 'eicon-forward',
 				},
 			},
 			selectors: {
@@ -109,7 +122,6 @@ module.exports = elementorModules.ViewModule.extend( {
 				break;
 			case 'slideshow':
 				self.setSlideshowContent( options.slideshow );
-
 				break;
 			default:
 				self.setHTMLContent( options.html );
@@ -167,6 +179,52 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
+	getSlideshoHeader: function() {
+		var self = this,
+			$ = jQuery,
+			classes = self.getSettings( 'classes' ),
+			$header = $( '<header>', { class: classes.slideshow.header + ' ' + classes.preventClose } ),
+			$counter = $( '<span>', { class: classes.slideshow.counter } ),
+			$iconExpand = $( '<i>', { class: classes.slideshow.iconExpand } ),
+			$iconZoom = $( '<i>', { class: classes.slideshow.iconZoom } ),
+			$iconShare = $( '<i>', { class: classes.slideshow.iconShare } );
+
+		$iconExpand.on( 'click', function() {
+			if ( screenfull.isEnabled ) {
+				screenfull.request();
+			}
+		} );
+
+		$iconZoom.on( 'click', function() {
+			self.swiper.zoom.enable();
+			self.swiper.zoom.in();
+		} );
+
+		$header.append(
+			$counter,
+			$iconExpand,
+			$iconZoom,
+			$iconShare,
+		);
+
+		return $header;
+	},
+
+	getSlideshowFooter: function() {
+		const $ = jQuery,
+			classes = this.getSettings( 'classes' ),
+			$footer = $( '<footer>', { class: classes.slideshow.footer + ' ' + classes.preventClose } ),
+			$title = $( '<h2>', { class: classes.slideshow.title } ),
+			$description = $( '<div>', { class: classes.slideshow.description } );
+
+		$footer.append(
+			$title,
+			$description,
+		);
+
+		return $footer;
+	},
+
 	setSlideshowContent: function( options ) {
 		var $ = jQuery,
 			self = this,
@@ -175,7 +233,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			$container = $( '<div>', { class: slideshowClasses.container } ),
 			$slidesWrapper = $( '<div>', { class: slideshowClasses.slidesWrapper } ),
 			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) ),
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) ),
+			$pagination = $( '<div>', { class: slideshowClasses.pagination + ' ' + classes.preventClose } );
 
 		options.slides.forEach( function( slide ) {
 			var slideClass = slideshowClasses.slide + ' ' + classes.item;
@@ -189,25 +248,35 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				var $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon } ) );
+				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon } ) );
 
 				$slide.append( $playIcon );
 			} else {
-				var $zoomContainer = $( '<div>', { class: 'swiper-zoom-container' } ),
-					$slideImage = $( '<img>', { class: classes.image + ' ' + classes.preventClose, src: slide.image } );
+				const $zoomContainer = $( '<div>', { class: 'swiper-zoom-container' } ),
+					$slideImage = $( '<img>', {
+						class: classes.image + ' ' + classes.preventClose,
+						src: slide.image,
+						'data-title': slide.title,
+						'data-description': slide.description,
+					} );
 
 				$zoomContainer.append( $slideImage );
-
 				$slide.append( $zoomContainer );
 			}
 
 			$slidesWrapper.append( $slide );
 		} );
 
+		this.elements.$header = self.getSlideshoHeader();
+		this.elements.$footer = self.getSlideshowFooter();
+
+		$container.prepend( this.elements.$header );
 		$container.append(
 			$slidesWrapper,
 			$prevButton,
-			$nextButton
+			$nextButton,
+			$pagination,
+			this.elements.$footer,
 		);
 
 		var modal = self.getModal();
@@ -225,7 +294,8 @@ module.exports = elementorModules.ViewModule.extend( {
 					nextEl: $nextButton,
 				},
 				pagination: {
-					clickable: true,
+					el: '.swiper-pagination',
+					type: 'fraction',
 				},
 				on: {
 					slideChangeTransitionEnd: self.onSlideChange,
@@ -245,6 +315,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			self.setVideoAspectRatio();
 
 			self.playSlideVideo();
+
+			self.updateFooterText();
 		};
 	},
 
@@ -268,6 +340,18 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	getSlide: function( slideState ) {
 		return jQuery( this.swiper.slides ).filter( this.getSettings( 'selectors.slideshow.' + slideState + 'Slide' ) );
+	},
+
+	updateFooterText: function() {
+		const classes = this.getSettings( 'classes' ),
+			$activeSlide = this.getSlide( 'active' ),
+			titleText = $activeSlide.find( '.elementor-lightbox-image' ).data( 'title' ),
+			descriptionText = $activeSlide.find( '.elementor-lightbox-image' ).data( 'description' ),
+			$title = this.elements.$footer.find( '.' + classes.slideshow.title ),
+			$description = this.elements.$footer.find( '.' + classes.slideshow.description );
+		console.log( $title );
+		$title.empty().text( titleText );
+		$description.empty().text( descriptionText );
 	},
 
 	playSlideVideo: function() {
@@ -396,7 +480,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		var element = event.currentTarget,
 			$target = jQuery( event.target ),
 			editMode = elementorFrontend.isEditMode(),
-			isClickInsideElementor = !! $target.closest( '#elementor' ).length;
+			isClickInsideElementor = ! ! $target.closest( '#elementor' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {
 			if ( editMode && isClickInsideElementor ) {
@@ -455,6 +539,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			var slideData = {
 				image: this.href,
 				index: slideIndex,
+				title: jQuery( this ).data( 'elementor-lightbox-title' ),
+				description: jQuery( this ).data( 'elementor-lightbox-description' ),
 			};
 
 			if ( slideVideo ) {
@@ -501,5 +587,6 @@ module.exports = elementorModules.ViewModule.extend( {
 			.remove();
 
 		this.playSlideVideo();
+		this.updateFooterText();
 	},
 } );
