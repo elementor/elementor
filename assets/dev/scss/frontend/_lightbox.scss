@@ -24,7 +24,7 @@
 		&lightbox-close-button {
 			cursor: pointer;
 			position: absolute;
-			font-size: 25px;
+			font-size: 20px;
 			padding: 5px;
 			z-index: 2;
 			line-height: 1;
@@ -59,7 +59,7 @@
 		align-items: center;
 		justify-content: center;
 		position: relative;
-		padding: 70px 80px;
+		padding: 70px;
 		box-sizing: border-box;
 		height: 100%;
 		margin: auto;
@@ -116,5 +116,45 @@
 				right: 10px;
 			}
 		}
+	}
+
+	.elementor-swiper-fraction-pagination {
+		display: flex;
+		align-items: center;
+		top: 0;
+		left: 30px;
+		width: auto;
+		bottom: auto;
+		height: 60px;
+		color: #fff;
+	}
+}
+
+.elementor-slideshow {
+
+	&__header, &__footer {
+		position: absolute;
+		z-index: 5;
+		left: 0;
+		width: 100%;
+		padding: 15px;
+		color: #fff;
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+
+	&__header {
+		@include padding-end( 50px );
+		text-align: $end;
+		top: 0;
+		i {
+			font-size: 20px;
+			cursor: pointer;
+			padding: 5px;
+			margin: 0 7px;
+		}
+	}
+
+	&__footer {
+		bottom: 0;
 	}
 }
