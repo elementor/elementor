@@ -915,7 +915,7 @@ class Controls_Manager {
 	}
 
 	/**
-	 * Add custom Attributes controls.
+	 * Add custom attributes controls.
 	 *
 	 * This method adds a new control for the "Custom Attributes" feature. The free
 	 * version of elementor uses this method to display an upgrade message to
