@@ -1755,7 +1755,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @access protected
 	 */
-	protected function register_controls() {}
+	protected function _register_controls() {}
 
 	/**
 	 * Get default data.
