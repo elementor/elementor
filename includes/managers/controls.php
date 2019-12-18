@@ -921,7 +921,7 @@ class Controls_Manager {
 	 * version of elementor uses this method to display an upgrade message to
 	 * Elementor Pro.
 	 *
-	 * @since 1.0.0
+	 * @since 2.8.3
 	 * @access public
 	 *
 	 * @param Controls_Stack $controls_stack.
