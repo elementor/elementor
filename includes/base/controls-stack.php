@@ -341,7 +341,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Register a single control to allow the user to set/update data.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1328,7 +1328,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * registered controls from this point will be assigned to this section,
 	 * until you close the section using `end_controls_section()` method.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1414,7 +1414,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to close an existing open controls section. When you use this method
 	 * it stops adding new controls to this section.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1494,7 +1494,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tabs()` method.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1532,7 +1532,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to close an existing open controls tabs. When you use this method it
 	 * stops adding new controls to this tabs.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1549,7 +1549,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tab()` method.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1580,7 +1580,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to close an existing open controls tab. When you use this method it
 	 * stops adding new controls to this tab.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1596,7 +1596,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * all the registered controls from this point will be assigned to this
 	 * popover, until you close the popover using `end_popover()` method.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -1613,7 +1613,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to close an existing open popover. When you use this method it stops
 	 * adding new controls to this popover.
 	 *
-	 * This method should be used inside `register_controls()`.
+	 * This method should be used inside `_register_controls()`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -1752,31 +1752,10 @@ abstract class Controls_Stack extends Base_Object {
 	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
 	 * `start_controls_tab()`.
 	 *
-	 * @since 2.9.0
+	 * @since 1.4.0
 	 * @access protected
 	 */
 	protected function register_controls() {}
-
-	/**
-	 * Register controls.
-	 *
-	 * Used to add new controls to any element type. For example, external
-	 * developers use this method to register controls in a widget.
-	 *
-	 * Should be inherited and register new controls using `add_control()`,
-	 * `add_responsive_control()` and `add_group_control()`, inside control
-	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
-	 * `start_controls_tab()`.
-	 *
-	 * @since 1.4.0
-	 * @deprecated 2.9.0 Implement `register_controls()` instead
-	 * @access protected
-	 */
-	protected function register_controls() {
-		_deprecated_function( __METHOD__, '2.9.0', 'register_controls' );
-
-		$this->register_controls();
-	}
 
 	/**
 	 * Get default data.
@@ -1929,7 +1908,7 @@ abstract class Controls_Stack extends Base_Object {
 	/**
 	 * Initialize controls.
 	 *
-	 * Register the all controls added by `register_controls()`.
+	 * Register the all controls added by `_register_controls()`.
 	 *
 	 * @since 2.0.0
 	 * @access protected
@@ -1942,7 +1921,7 @@ abstract class Controls_Stack extends Base_Object {
 		if ( method_exists( $this, '_register_controls' ) ) {
 			$this->_register_controls();
 		} else {
-			$this->register_controls();
+			$this->_register_controls();
 		}
 	}
 

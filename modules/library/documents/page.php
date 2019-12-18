@@ -77,8 +77,8 @@ class Page extends Library_Document {
 	 * @since 2.0.0
 	 * @access protected
 	 */
-	protected function register_controls() {
-		parent::register_controls();
+	protected function _register_controls() {
+		parent::_register_controls();
 
 		Post::register_hide_title_control( $this );
 

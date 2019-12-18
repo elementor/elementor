@@ -78,7 +78,7 @@ class Widget_Sidebar extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function _register_controls() {
 		global $wp_registered_sidebars;
 
 		$options = [];

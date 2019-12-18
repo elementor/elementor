@@ -222,7 +222,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function _register_controls() {
 		$this->add_control(
 			'wp',
 			[

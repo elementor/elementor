@@ -81,7 +81,7 @@ class Widget_Tabs extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_tabs',
 			[

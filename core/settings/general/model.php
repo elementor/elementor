@@ -175,7 +175,7 @@ class Model extends CSS_Model {
 	 * @since 1.6.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function _register_controls() {
 		$controls_list = self::get_controls_list();
 
 		foreach ( $controls_list as $tab_name => $sections ) {

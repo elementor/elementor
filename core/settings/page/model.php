@@ -164,7 +164,7 @@ class Model extends CSS_Model {
 	 * @since 1.6.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function _register_controls() {
 		// Check if it's a real model, or abstract (for example - on import )
 		if ( $this->post->ID ) {
 			$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post->ID );
