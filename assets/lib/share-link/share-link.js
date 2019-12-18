@@ -74,7 +74,7 @@
 
 	ShareLink.networkTemplates = {
 		twitter: 'https://twitter.com/intent/tweet?url={url}&text={text}',
-		pinterest: 'https://www.pinterest.com/pin/create/button/?url={url}',
+		pinterest: 'https://www.pinterest.com/pin/create/button/?url={url}&media={image}',
 		facebook: 'https://www.facebook.com/sharer.php?u={url}',
 		vk: 'https://vkontakte.ru/share.php?url={url}&title={title}&description={text}&image={image}',
 		linkedin: 'https://www.linkedin.com/shareArticle?mini=true&url={url}&title={title}&summary={text}&source={url}',
