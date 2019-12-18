@@ -1,0 +1,10 @@
+diff a/includes/base/controls-stack.php b/includes/base/controls-stack.php	(rejected hunks)
+@@ -1766,7 +1766,7 @@
+ 	 * @deprecated 2.9.0 Implement `register_controls()` instead
+ 	 * @access protected
+ 	 */
+-	protected function register_controls() {
++	protected function _register_controls() {
+ 		_deprecated_function( __METHOD__, '2.9.0', 'register_controls' );
+ 
+ 		$this->register_controls();
