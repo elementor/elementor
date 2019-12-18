@@ -1142,7 +1142,7 @@ class Frontend extends App {
 				'id' => $post->ID,
 				'title' => $post->post_title,
 				'excerpt' => $post->post_excerpt,
-				'featured_image' => get_the_post_thumbnail_url(),
+				'featuredImage' => get_the_post_thumbnail_url(),
 			];
 		} else {
 			$settings['post'] = [
