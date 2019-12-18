@@ -913,4 +913,50 @@ class Controls_Manager {
 
 		$controls_stack->end_controls_section();
 	}
+
+	/**
+	 * Add custom Attributes controls.
+	 *
+	 * This method adds a new control for the "Custom Attributes" feature. The free
+	 * version of elementor uses this method to display an upgrade message to
+	 * Elementor Pro.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param Controls_Stack $controls_stack.
+	 */
+	public function add_custom_attributes_controls( Controls_Stack $controls_stack ) {
+		$controls_stack->start_controls_section(
+			'section_custom_attributes_pro',
+			[
+				'label' => __( 'Attributes', 'elementor' ),
+				'tab' => self::TAB_ADVANCED,
+			]
+		);
+
+		$controls_stack->add_control(
+			'custom_attributes_pro',
+			[
+				'type' => self::RAW_HTML,
+				'raw' => '<div class="elementor-nerd-box">' .
+					'<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
+						<div class="elementor-nerd-box-title">' .
+					__( 'Meet Our Attributes', 'elementor' ) .
+					'</div>
+						<div class="elementor-nerd-box-message">' .
+					__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ) .
+					'</div>
+						<div class="elementor-nerd-box-message">' .
+					__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
+					'</div>
+						<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-custom-attributes&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
+					__( 'Go Pro', 'elementor' ) .
+					'</a>
+						</div>',
+			]
+		);
+
+		$controls_stack->end_controls_section();
+	}
 }
