@@ -3,4 +3,9 @@
 	.elementor-control-title {
 		flex-grow: 1;
 	}
+
+	.elementor-control-input-wrapper {
+		display: flex;
+		justify-content: flex-end;
+	}
 }

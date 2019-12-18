@@ -395,6 +395,16 @@ class Frontend extends App {
 		);
 
 		wp_register_script(
+			'share-link',
+			$this->get_js_assets_url( 'share-link', 'assets/lib/share-link/' ),
+			[
+				'jquery',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
 			[
@@ -402,6 +412,7 @@ class Frontend extends App {
 				'elementor-dialog',
 				'elementor-waypoints',
 				'swiper',
+				'share-link',
 			],
 			ELEMENTOR_VERSION,
 			true

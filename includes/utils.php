@@ -633,11 +633,23 @@ class Utils {
 		}
 	}
 
-	/*
+	/**
 	 * Checks a control value for being empty, including a string of '0' not covered by PHP's empty().
-	 * @param string $control_value
+	 *
+	 * @param mixed $source
+	 * @param bool|string $key
+	 *
+	 * @return bool
 	 */
-	public static function is_empty( $control_value ) {
-		return '0' !== $control_value && empty( $control_value );
+	public static function is_empty( $source, $key = false ) {
+		if ( is_array( $source ) ) {
+			if ( ! isset( $source[ $key ] ) ) {
+				return true;
+			}
+
+			$source = $source[ $key ];
+		}
+
+		return '0' !== $source && empty( $source );
 	}
 }
