@@ -893,25 +893,38 @@ class Controls_Manager {
 			'custom_css_pro',
 			[
 				'type' => self::RAW_HTML,
-				'raw' => '<div class="elementor-nerd-box">' .
-						'<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
-						<div class="elementor-nerd-box-title">' .
-							__( 'Meet Our Custom CSS', 'elementor' ) .
-						'</div>
-						<div class="elementor-nerd-box-message">' .
-							__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ) .
-						'</div>
-						<div class="elementor-nerd-box-message">' .
-							__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
-						'</div>
-						<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
-							__( 'Go Pro', 'elementor' ) .
-						'</a>
-						</div>',
+				'raw' => $this->get_teaser_template( [
+					'title' => __( 'Meet Our Custom CSS', 'elementor' ),
+					'messages' => [
+						__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ),
+						__( 'This feature is only available on Elementor Pro.', 'elementor' ),
+					],
+					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash',
+				] ),
 			]
 		);
 
 		$controls_stack->end_controls_section();
+	}
+
+	public function get_teaser_template( $texts ) {
+		$content = '<div class="elementor-nerd-box">';
+		$content .= '<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>';
+		$content .= '<div class="elementor-nerd-box-title">' . $texts['title'] . '</div>';
+
+		foreach ( $texts['messages'] as $message ) {
+			$content .= '<div class="elementor-nerd-box-message">' . $message . '</div>';
+		}
+
+		if ( $texts['link'] ) {
+			$content .= '<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( $texts['link'] ) . '" target="_blank">';
+			$content .= __( 'Go Pro', 'elementor' );
+			$content .= '</a>';
+		}
+
+		$content .= '</div>'; // Closes "elementor-nerd-box" div
+
+		return $content;
 	}
 
 	/**
@@ -939,21 +952,14 @@ class Controls_Manager {
 			'custom_attributes_pro',
 			[
 				'type' => self::RAW_HTML,
-				'raw' => '<div class="elementor-nerd-box">' .
-					'<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
-						<div class="elementor-nerd-box-title">' .
-					__( 'Meet Our Attributes', 'elementor' ) .
-					'</div>
-						<div class="elementor-nerd-box-message">' .
-					__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ) .
-					'</div>
-						<div class="elementor-nerd-box-message">' .
-					__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
-					'</div>
-						<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-custom-attributes&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
-					__( 'Go Pro', 'elementor' ) .
-					'</a>
-						</div>',
+				'raw' => $this->get_teaser_template( [
+					'title' => __( 'Meet Our Attributes', 'elementor' ),
+					'messages' => [
+						__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
+						__( 'This feature is only available on Elementor Pro.', 'elementor' ),
+					],
+					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-attributes&utm_campaign=gopro&utm_medium=wp-dash',
+				] ),
 			]
 		);
 
