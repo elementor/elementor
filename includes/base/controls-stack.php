@@ -1900,7 +1900,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to generate the live preview, using a Backbone JavaScript template.
 	 *
 	 * @since 2.0.0
-	 * @deprecated 2.9.0 Implement `content_template()` instead
+	 * @deprecated 2.9.0 use `content_template()` instead
 	 * @access protected
 	 */
 	protected function _content_template() {

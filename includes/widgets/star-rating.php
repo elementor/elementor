@@ -405,7 +405,7 @@ class Widget_Star_Rating extends Widget_Base {
 	}
 
 	/**
-	 * @since 2.3.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
 	protected function content_template() {

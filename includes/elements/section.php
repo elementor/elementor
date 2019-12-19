@@ -1347,7 +1347,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * Used to generate the live preview, using a Backbone JavaScript template.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
 	protected function content_template() {

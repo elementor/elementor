@@ -94,7 +94,7 @@ abstract class Base_Control extends Base_Object {
 	 *
 	 * Note that the content template is wrapped by Base_Control::print_template().
 	 *
-	 * @since 1.5.0
+	 * @since 2.9.0
 	 * @access public
 	 * @abstract
 	 */
