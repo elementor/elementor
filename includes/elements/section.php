@@ -1339,6 +1339,8 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
+
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
