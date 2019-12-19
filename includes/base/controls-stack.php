@@ -1925,7 +1925,7 @@ abstract class Controls_Stack extends Base_Object {
 		if ( method_exists( $this, '_register_controls' ) ) {
 			$this->_register_controls();
 		} else {
-			$this->_register_controls();
+			$this->register_controls();
 		}
 	}
 
