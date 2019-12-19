@@ -1647,7 +1647,11 @@ abstract class Controls_Stack extends Base_Object {
 	public function print_template() {
 		ob_start();
 
-		$this->content_template();
+		if ( method_exists( $this, '_content_template' ) ) {
+			$this->_content_template();
+		} else {
+			$this->content_template();
+		}
 
 		$template_content = ob_get_clean();
 
@@ -1955,13 +1959,7 @@ abstract class Controls_Stack extends Base_Object {
 	protected function _init( $data ) {
 		// _deprecated_function( __METHOD__, '2.9.0', 'init' );
 
-		// TODO: This is for backwards compatibility starting from 2.9.0
-		// This `if` statement should be removed when the method is removed
-		if ( method_exists( $this, '_init' ) ) {
-			$this->_init( $data );
-		} else {
-			$this->init( $data );
-		}
+		$this->init( $data );
 	}
 
 	/**
@@ -2029,7 +2027,13 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
-			$this->init( $data );
+			// TODO: This is for backwards compatibility starting from 2.9.0
+			// This if statement should be removed when the method is hard-deprecated
+			if ( method_exists( $this, '_init' ) ) {
+				$this->_init( $data );
+			} else {
+				$this->init( $data );
+			}
 		}
 	}
 }
