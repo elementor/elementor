@@ -11,6 +11,8 @@ import ColorControl from './controls/color';
 const App = Marionette.Application.extend( {
 	documents: {},
 
+	widgetsCache: {},
+
 	loaded: false,
 
 	previewLoadedOnce: false,
@@ -184,17 +186,17 @@ const App = Marionette.Application.extend( {
 		if ( 'widget' === elType ) {
 			const widgetType = model.get( 'widgetType' );
 
-			if ( ! this.config.document.widgets[ widgetType ] ) {
+			if ( ! this.widgetsCache[ widgetType ] ) {
 				return false;
 			}
 
-			if ( ! this.config.document.widgets[ widgetType ].commonMerged ) {
-				jQuery.extend( this.config.document.widgets[ widgetType ].controls, this.config.document.widgets.common.controls );
+			if ( ! this.widgetsCache[ widgetType ].commonMerged ) {
+				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
 
-				this.config.document.widgets[ widgetType ].commonMerged = true;
+				this.widgetsCache[ widgetType ].commonMerged = true;
 			}
 
-			return this.config.document.widgets[ widgetType ];
+			return this.widgetsCache[ widgetType ];
 		}
 
 		if ( ! this.config.elements[ elType ] ) {
@@ -326,7 +328,7 @@ const App = Marionette.Application.extend( {
 		if ( ! this.$preview ) {
 			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
-				src: this.config.document.urls.preview,
+				src: this.config.document_preview_url,
 				allowfullscreen: 1,
 			} );
 
@@ -694,7 +696,7 @@ const App = Marionette.Application.extend( {
 	requestWidgetsConfig: function() {
 		const excludeWidgets = {};
 
-		jQuery.each( this.config.document.widgets, ( widgetName, widgetConfig ) => {
+		jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
 			if ( widgetConfig.controls ) {
 				excludeWidgets[ widgetName ] = true;
 			}
@@ -706,10 +708,7 @@ const App = Marionette.Application.extend( {
 			},
 			success: ( data ) => {
 				jQuery.each( data, ( widgetName, controlsConfig ) => {
-					const widgetConfig = this.config.document.widgets[ widgetName ];
-
-					widgetConfig.controls = controlsConfig.controls;
-					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
+					this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], controlsConfig );
 				} );
 
 				if ( this.loaded ) {
@@ -743,6 +742,10 @@ const App = Marionette.Application.extend( {
 			this.onEnvNotCompatible();
 		}
 
+		this.initPreview();
+
+		this.requestWidgetsConfig();
+
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -764,6 +767,10 @@ const App = Marionette.Application.extend( {
 		this.requestDocument( id ).then( () => {
 			this.setAjax();
 
+			jQuery.each( this.config.document.widgets, ( widgetName, widgetConfig ) => {
+				this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], widgetConfig );
+			} );
+
 			this.templates.init();
 
 			elementorCommon.elements.$window.trigger( 'elementor:init' );
@@ -783,11 +790,8 @@ const App = Marionette.Application.extend( {
 
 					const docId = jQuery( event.target ).parents( '[data-elementor-id]' ).data( 'elementor-id' );
 					this.initDocument( docId );
-
 				} );
 			} );
-
-			this.initPreview();
 
 			if ( this.loaded ) {
 				this.$preview.trigger( 'load' );
@@ -1025,7 +1029,7 @@ const App = Marionette.Application.extend( {
 					this.schemes.printSchemesStyle();
 				}
 
-				elementorCommon.elements.$body.addClass( `elementor-controls-ready elementor-editor-${ this.config.document.type }` );
+				elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
 			},
 			error: ( data ) => {
 				let message;
@@ -1056,7 +1060,7 @@ const App = Marionette.Application.extend( {
 
 			widgets: {
 				replacement: 'widgets',
-				value: () => elementor.config.document.widgets,
+				value: () => elementor.widgetsCache,
 			},
 			current_user_can_publish: {
 				replacement: 'user.can_publish',

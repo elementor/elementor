@@ -329,7 +329,7 @@ module.exports = {
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			widgetType = elementView.model.get( 'widgetType' ),
-			widgetData = elementor.config.document.widgets[ widgetType ],
+			widgetData = elementor.widgetsCache[ widgetType ],
 			hasControlOfType = ( controls, type ) => {
 				let has = false;
 				jQuery.each( controls, ( controlName, controlData ) => {

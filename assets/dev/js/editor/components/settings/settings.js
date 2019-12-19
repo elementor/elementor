@@ -24,5 +24,5 @@ module.exports = elementorModules.Module.extend( {
 
 			self[ name ] = new Manager( config );
 		} );
-		},
+	},
 } );
