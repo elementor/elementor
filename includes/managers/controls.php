@@ -908,23 +908,24 @@ class Controls_Manager {
 	}
 
 	public function get_teaser_template( $texts ) {
-		$content = '<div class="elementor-nerd-box">';
-		$content .= '<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>';
-		$content .= '<div class="elementor-nerd-box-title">' . $texts['title'] . '</div>';
+		ob_start();
+		?>
+		<div class="elementor-nerd-box">
+			<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
+			<div class="elementor-nerd-box-title"><?php echo $texts['title']; ?></div>
+			<?php foreach ( $texts['messages'] as $message ) { ?>
+				<div class="elementor-nerd-box-message"><?php echo $message; ?></div>
+			<?php }
 
-		foreach ( $texts['messages'] as $message ) {
-			$content .= '<div class="elementor-nerd-box-message">' . $message . '</div>';
-		}
+			if ( $texts['link'] ) { ?>
+				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="<?php echo Utils::get_pro_link( $texts['link'] ); ?>" target="_blank">
+					<?php echo __( 'Go Pro', 'elementor' ); ?>
+				</a>
+			<?php } ?>
+		</div>
+		<?php
 
-		if ( $texts['link'] ) {
-			$content .= '<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( $texts['link'] ) . '" target="_blank">';
-			$content .= __( 'Go Pro', 'elementor' );
-			$content .= '</a>';
-		}
-
-		$content .= '</div>'; // Closes "elementor-nerd-box" div
-
-		return $content;
+		return ob_get_clean();
 	}
 
 	/**
