@@ -1824,7 +1824,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * the tabs assigned to the control.
 	 *
 	 * @since 1.4.0
-	 * @deprecated 2.9.0 Implement `get_initial_config()` instead
+	 * @deprecated 2.9.0 use `get_initial_config()` instead
 	 * @access protected
 	 *
 	 * @return array The initial config.

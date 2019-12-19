@@ -83,7 +83,7 @@ class Element_Column extends Element_Base {
 	 * the control, element name, type, icon and more. This method also adds
 	 * section presets.
 	 *
-	 * @since 2.5.0
+	 * @since 2.9.0
 	 * @access protected
 	 *
 	 * @return array The initial config.

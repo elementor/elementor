@@ -862,7 +862,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * Adds more configuration on top of the controls list and the tabs assigned
 	 * to the control. This method also adds element name, type, icon and more.
 	 *
-	 * @since 1.0.10
+	 * @since 2.9.0
 	 * @access protected
 	 *
 	 * @return array The initial config.
