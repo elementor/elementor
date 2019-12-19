@@ -1647,6 +1647,8 @@ abstract class Controls_Stack extends Base_Object {
 	public function print_template() {
 		ob_start();
 
+		// TODO: This is for backwards compatibility starting from 2.9.0
+		// This `if` statement should be removed when the method is removed
 		if ( method_exists( $this, '_content_template' ) ) {
 			$this->_content_template();
 		} else {
