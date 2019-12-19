@@ -39,7 +39,7 @@ class Control_Tabs extends Base_UI_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @since 2.9.0
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function content_template() {}
