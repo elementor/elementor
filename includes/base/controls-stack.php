@@ -1951,7 +1951,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Set the raw data, the ID and the parsed settings.
 	 *
 	 * @since 1.4.0
-	 * @deprecated 2.9.0 Implement `init()` instead
+	 * @deprecated 2.9.0 use `init()` instead
 	 * @access protected
 	 *
 	 * @param array $data Initial data.
