@@ -263,7 +263,7 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background',
 				'types' => [ 'classic', 'gradient', 'slideshow' ],
-				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-element-populated, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
+				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-column-wrap, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
