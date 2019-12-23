@@ -422,8 +422,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	setAjax() {
-		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
-
 		elementorCommon.ajax.on( 'request:unhandledError', function( xmlHttpRequest ) {
 			elementor.notifications.showToast( {
 				message: elementor.createAjaxErrorMessage( xmlHttpRequest ),
