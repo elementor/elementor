@@ -9,7 +9,7 @@ export const SectionColumns = () => {
 			assert.equal( eSection.settings.get( 'structure' ), structure );
 		} );
 
-		// TODO: I don't know why but this cause of mass tests failure.
+		// TODO: this cause a mass tests failure.
 		// QUnit.test( 'apply(): with invalid structure', ( assert ) => {
 		// 	const structure = 120;
 		//

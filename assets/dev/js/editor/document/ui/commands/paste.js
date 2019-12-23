@@ -31,22 +31,21 @@ export class Paste extends Base {
 			return false;
 		}
 
-		return this.target.some( ( /* Container */ container ) => {
+		const result = [];
+
+		this.target.forEach( ( /* Container */ container ) => {
 			const { options = {} } = args,
 				pasteOptions = DocumentUtils.getPasteOptions( this.storage[ 0 ], container );
 
 			if ( ! pasteOptions.isValidChild ) {
 				if ( pasteOptions.isSameElement ) {
-					if ( 'document' === container.parent.type ) {
-						options.at = container.parent.model.get( 'elements' ).findIndex( container.model );
-					}
+					options.at = container.parent.model.get( 'elements' ).findIndex( container.model ) + 1;
 
+					// For same element always paste on his parent.
 					container = container.parent;
 				} else if ( pasteOptions.isValidGrandChild ) {
 					options.rebuild = true;
 				}
-			} else if ( 'column' === container.type ) {
-				options.at = container.model.get( 'elements' ).length;
 			}
 
 			if ( Object.values( pasteOptions ).some( ( opt ) => !! opt ) ) {
@@ -60,11 +59,17 @@ export class Paste extends Base {
 					commandArgs.at = options.at;
 				}
 
-				return $e.run( 'document/elements/paste', commandArgs );
+				result.push( $e.run( 'document/elements/paste', commandArgs ) );
 			}
-
-			return false;
 		} );
+
+		if ( 0 === result.length ) {
+			return false;
+		} else if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 }
 

@@ -83,6 +83,7 @@ class AddSectionBase extends Marionette.ItemView {
 								at: this.getOption( 'at' ),
 								rebuild: true,
 							},
+							onAfter: () => this.onAfterPaste(),
 						} ),
 					},
 				],
@@ -171,6 +172,8 @@ class AddSectionBase extends Marionette.ItemView {
 
 		$e.run( 'document/history/end-log', { id: historyId } );
 	}
+
+	onAfterPaste() {}
 }
 
 export default AddSectionBase;

@@ -5,7 +5,7 @@ export default class extends ControlBaseDataView {
 	ui() {
 		const ui = super.ui();
 
-		ui.pickerContainer = '.elementor-control-input-wrapper';
+		ui.pickerContainer = '.elementor-color-picker-placeholder';
 
 		return ui;
 	}
@@ -35,7 +35,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerChange() {
-		this.setValue( this.colorPicker.getValue() );
+		this.setValue( this.colorPicker.getColor() );
 	}
 
 	onPickerClear() {

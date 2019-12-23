@@ -1,4 +1,4 @@
-import Debounce from '../../commands/base/debounce';
+import Debounce from '../../commands/base/history/debounce';
 
 export class Settings extends Debounce {
 	/**
@@ -50,10 +50,11 @@ export class Settings extends Debounce {
 	}
 
 	/**
-	 * TODO:
-	 * @param container
-	 * @param newSettings
-	 * @param oldSettings
+	 * Function addToHistory().
+	 *
+	 * @param {Container} container
+	 * @param {{}} newSettings
+	 * @param {{}} oldSettings
 	 */
 	addToHistory( container, newSettings, oldSettings ) {
 		const changes = {
