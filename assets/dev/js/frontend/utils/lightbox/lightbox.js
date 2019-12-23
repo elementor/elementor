@@ -28,7 +28,6 @@ module.exports = elementorModules.ViewModule.extend( {
 					slidesWrapper: 'swiper-wrapper',
 					prevButton: 'elementor-swiper-button elementor-swiper-button-prev',
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',
-					pagination: 'elementor-swiper-fraction-pagination swiper-pagination',
 					prevButtonIcon: 'eicon-chevron-left',
 					nextButtonIcon: 'eicon-chevron-right',
 					slide: 'swiper-slide',
@@ -38,10 +37,13 @@ module.exports = elementorModules.ViewModule.extend( {
 					description: 'elementor-slideshow__description',
 					counter: 'elementor-slideshow__counter',
 					icon: 'elementor-slideshow__header-icon',
-					iconExpand: 'eicon-expand',
-					iconShrink: 'eicon-shrink',
-					iconZoom: 'eicon-zoom-in',
-					iconShare: 'eicon-forward',
+					iconExpand: 'jicon-fullscreen',
+					iconShrink: 'shrink',
+					iconZoomIn: 'eicon-zoom-in-bold',
+					iconZoomOut: 'eicon-zoom-out-bold',
+					iconShare: 'elementor-slideshow__share-icon jicon-share',
+					shareMenu: 'elementor-slideshow__share-menu',
+					hideUiVisibility: 'elementor-slideshow--ui-hidden',
 				},
 			},
 			selectors: {
@@ -184,20 +186,44 @@ module.exports = elementorModules.ViewModule.extend( {
 			$ = jQuery,
 			classes = self.getSettings( 'classes' ),
 			$header = $( '<header>', { class: classes.slideshow.header + ' ' + classes.preventClose } ),
-			$counter = $( '<span>', { class: classes.slideshow.counter } ),
-			$iconExpand = $( '<i>', { class: classes.slideshow.iconExpand } ),
-			$iconZoom = $( '<i>', { class: classes.slideshow.iconZoom } ),
-			$iconShare = $( '<i>', { class: classes.slideshow.iconShare } );
+			$counter = $( '<span>', { class: classes.slideshow.counter + ' ' + classes.preventClose } ),
+			$iconExpand = $( '<i>', { class: classes.slideshow.iconExpand } ).append( '<span>', '<span>' ),
+			$iconZoom = $( '<i>', { class: classes.slideshow.iconZoomIn } ),
+			$iconShare = $( '<i>', { class: classes.slideshow.iconShare } ).append( '<span>' ),
+			$shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' ),
+			$shareMenu = $( '<div>', { class: classes.slideshow.shareMenu } ).append( $shareLinks );
 
 		$iconExpand.on( 'click', function() {
-			if ( screenfull.isEnabled ) {
-				screenfull.request();
+			if ( screenfull.isFullscreen ) {
+				screenfull.exit();
+				$iconExpand.removeClass( classes.slideshow.iconShrink );
+			} else if ( screenfull.isEnabled ) {
+				screenfull.request( self.elements.$container.parents( '.dialog-widget' )[ 0 ] );
+				$iconExpand.addClass( classes.slideshow.iconShrink );
 			}
 		} );
 
 		$iconZoom.on( 'click', function() {
-			self.swiper.zoom.enable();
-			self.swiper.zoom.in();
+			const zoom = self.swiper.zoom;
+			if ( 1 !== zoom.scale ) {
+				zoom.out();
+				self.elements.$container.removeClass( 'zoom-mode' );
+				$iconZoom.removeClass( classes.slideshow.iconZoomOut ).addClass( classes.slideshow.iconZoomIn );
+			} else {
+				zoom.enable();
+				zoom.in();
+				self.elements.$container.addClass( 'zoom-mode' );
+				$iconZoom.removeClass( classes.slideshow.iconZoomIn ).addClass( classes.slideshow.iconZoomOut );
+			}
+		} );
+
+		$iconShare.on( 'click', function() {
+			const $container = self.elements.$container;
+			if ( ! $container.hasClass( 'share-mode' ) ) {
+				$container.addClass( 'share-mode' );
+			} else {
+				$container.removeClass( 'share-mode' );
+			}
 		} );
 
 		$header.append(
@@ -205,6 +231,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			$iconExpand,
 			$iconZoom,
 			$iconShare,
+			$shareMenu,
 		);
 
 		return $header;
@@ -233,8 +260,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			$container = $( '<div>', { class: slideshowClasses.container } ),
 			$slidesWrapper = $( '<div>', { class: slideshowClasses.slidesWrapper } ),
 			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) ),
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) ),
-			$pagination = $( '<div>', { class: slideshowClasses.pagination + ' ' + classes.preventClose } );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
 		options.slides.forEach( function( slide ) {
 			var slideClass = slideshowClasses.slide + ' ' + classes.item;
@@ -267,6 +293,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			$slidesWrapper.append( $slide );
 		} );
 
+		this.elements.$container = $container;
 		this.elements.$header = self.getSlideshoHeader();
 		this.elements.$footer = self.getSlideshowFooter();
 
@@ -275,9 +302,18 @@ module.exports = elementorModules.ViewModule.extend( {
 			$slidesWrapper,
 			$prevButton,
 			$nextButton,
-			$pagination,
 			this.elements.$footer,
 		);
+
+		let hideUi = '';
+
+		$container.on( 'mouseenter mouseover mousedown mousemove keyup keypress swipe tap vmousedown vmouseover vmousemove', function() {
+			clearTimeout( hideUi );
+			$container.removeClass( slideshowClasses.hideUiVisibility );
+			hideUi = setTimeout( function() {
+				$container.addClass( slideshowClasses.hideUiVisibility );
+			}, 2500 );
+		} );
 
 		var modal = self.getModal();
 
@@ -294,12 +330,13 @@ module.exports = elementorModules.ViewModule.extend( {
 					nextEl: $nextButton,
 				},
 				pagination: {
-					el: '.swiper-pagination',
+					el: '.' + slideshowClasses.counter,
 					type: 'fraction',
 				},
 				on: {
 					slideChangeTransitionEnd: self.onSlideChange,
 				},
+				spaceBetween: 100,
 				grabCursor: true,
 				runCallbacksOnInit: false,
 				loop: true,
@@ -349,7 +386,6 @@ module.exports = elementorModules.ViewModule.extend( {
 			descriptionText = $activeSlide.find( '.elementor-lightbox-image' ).data( 'description' ),
 			$title = this.elements.$footer.find( '.' + classes.slideshow.title ),
 			$description = this.elements.$footer.find( '.' + classes.slideshow.description );
-		console.log( $title );
 		$title.empty().text( titleText );
 		$description.empty().text( descriptionText );
 	},
