@@ -7,8 +7,8 @@ jQuery( () => {
 				documentIdSlave = 3;
 
 			// Add fake documents.
-			elementor.documents.addDocumentById( documentIdMaster );
-			elementor.documents.addDocumentById( documentIdSlave );
+			elementor.documents.addDocumentById( documentIdMaster, elementor.getPreviewContainer() );
+			elementor.documents.addDocumentById( documentIdSlave, elementor.getPreviewContainer() );
 
 			// Set current document to master.
 			elementor.documents.setCurrentId( documentIdMaster );
