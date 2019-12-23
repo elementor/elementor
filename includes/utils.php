@@ -574,6 +574,10 @@ class Utils {
 		$rendered_attributes = [];
 
 		foreach ( $attributes as $attribute_key => $attribute_values ) {
+			if ( empty( $attribute_key ) ) {
+				return '';
+			}
+			
 			if ( is_array( $attribute_values ) ) {
 				$attribute_values = implode( ' ', $attribute_values );
 			}
