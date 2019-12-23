@@ -1,14 +1,13 @@
-/* global ElementorConfig */
-import editorBase from './editor-base';
+import EditorBase from './editor-base';
 
-const App = editorBase.extend( {
-	onStart() {
+class App extends EditorBase {
+	onStart( options ) {
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
-		editorBase.prototype.onStart.apply( this, arguments );
-	},
-} );
+		super.onStart( options );
+	}
+}
 
 window.elementor = new App();
 

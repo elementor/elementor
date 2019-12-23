@@ -9,8 +9,12 @@ import ColorControl from 'elementor-controls/color';
 import HistoryManager from 'elementor-modules/history/assets/js/module';
 import DocumentsManager from './document/manager';
 
+/* global ElementorConfig */
+
+export const DEFAULT_DEVICE_MODE = 'desktop';
+
 export default class EditorBase extends Marionette.Application {
-	_defaultDeviceMode ='desktop';
+	config = {};
 
 	loaded = false;
 
@@ -22,9 +26,11 @@ export default class EditorBase extends Marionette.Application {
 	schemes = require( 'elementor-editor-utils/schemes' );
 	presetsFactory = require( 'elementor-editor-utils/presets-factory' );
 	templates = require( 'elementor-templates/manager' );
+
 	// TODO = BC Since 2.3.0
 	ajax = elementorCommon.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
+	history = require( 'elementor-modules/history/assets/js/module' );
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -37,7 +43,7 @@ export default class EditorBase extends Marionette.Application {
 
 	/**
 	 * Exporting modules that can be used externally
-	 * @TODO: All of the following entries should move to `elementorModules.editor`
+	 * TODO: All of the following entries should move to `elementorModules.editor`
 	 */
 	modules = {
 		// TODO: Deprecated alias since 2.3.0
@@ -238,7 +244,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getControlView( controlID ) {
-		const capitalizedControlName = elementorCommon.helpers.upperCaseWords( controlID )
+		const capitalizedControlName = elementorCommon.helpers.upperCaseWords( controlID );
 		let View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
@@ -345,10 +351,9 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initClearPageDialog() {
-		const self = this;
 		let dialog;
 
-		self.getClearPageDialog = function() {
+		this.getClearPageDialog = function() {
 			if ( dialog ) {
 				return dialog;
 			}
@@ -496,7 +501,7 @@ export default class EditorBase extends Marionette.Application {
 			},
 			onConfirm: null,
 			onCancel: function() {
-				parent.history.go( -1 );
+				window.parent.history.go( -1 );
 			},
 			hide: {
 				onBackgroundClick: false,
@@ -634,13 +639,12 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	enqueueTypographyFonts() {
-		const self = this,
-			typographyScheme = this.schemes.getScheme( 'typography' );
+		const typographyScheme = this.schemes.getScheme( 'typography' );
 
-		self.helpers.resetEnqueuedFontsCache();
+		this.helpers.resetEnqueuedFontsCache();
 
-		_.each( typographyScheme.items, function( item ) {
-			self.helpers.enqueueFont( item.value.font_family );
+		_.each( typographyScheme.items, ( item ) => {
+			this.helpers.enqueueFont( item.value.font_family );
 		} );
 	}
 
@@ -819,7 +823,7 @@ export default class EditorBase extends Marionette.Application {
 			$frontendBody.addClass( 'elementor-editor-content-only' );
 		}
 
-		this.changeDeviceMode( this._defaultDeviceMode );
+		this.changeDeviceMode( DEFAULT_DEVICE_MODE );
 
 		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
@@ -886,9 +890,8 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onPreviewLoadingError() {
-		const self = this,
-			debugUrl = self.config.document.urls.preview + '&preview-debug',
-			previewDebugLinkText = self.config.i18n.preview_debug_link_text,
+		const debugUrl = this.config.document.urls.preview + '&preview-debug',
+			previewDebugLinkText = this.config.i18n.preview_debug_link_text,
 			previewDebugLink = '<div id="elementor-preview-debug-link-text"><a href="' + debugUrl + '" target="_blank">' + previewDebugLinkText + '</a></div>',
 			debugData = elementor.config.preview.debug_data,
 			dialogOptions = {
@@ -900,14 +903,14 @@ export default class EditorBase extends Marionette.Application {
 				} };
 
 		if ( debugData.error ) {
-			self.showFatalErrorDialog( dialogOptions );
+			this.showFatalErrorDialog( dialogOptions );
 			return;
 		}
 
-		jQuery.get( debugUrl, function() {
-			self.showFatalErrorDialog( dialogOptions );
-		} ).fail( function( response ) { //Iframe can't be loaded
-			self.showFatalErrorDialog( {
+		jQuery.get( debugUrl, () => {
+			this.showFatalErrorDialog( dialogOptions );
+		} ).fail( ( response ) => { //Iframe can't be loaded
+			this.showFatalErrorDialog( {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: response.statusText + ' ' + response.status + ' ' + previewDebugLink,
@@ -938,7 +941,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onBackgroundClick( event ) {
-		jQuery.each( this.backgroundClickListeners, function() {
+		jQuery.each( this.backgroundClickListeners, () => {
 			let $clickedTarget = jQuery( event.target );
 
 			// If it's a label that associated with an input
