@@ -95,7 +95,6 @@
 .dialog-close-button {
 	cursor: pointer;
 	position: absolute;
-	top: var(--adminbar-height);
 	margin-top: 15px;
 	@include end(15px);
 	font-size: 15px;
@@ -131,16 +130,19 @@
 	max-height: 100vh;
 }
 
-body.admin-bar {
-	.dialog-type-lightbox {
-		height: calc(100% - 32px);
+@media (min-width: $editor-screen-md-max) {
+	body.admin-bar {
+		.dialog-lightbox-widget {
+			height: calc(100vh - 32px);
+		}
 	}
 }
 
 @media (max-width: $editor-screen-md-max) {
 	body.admin-bar {
 		.dialog-type-lightbox {
-			height: calc(100% - 46px);
+			position: sticky;
+			height: 100vh;
 		}
 	}
 }

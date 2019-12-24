@@ -44,6 +44,8 @@ module.exports = elementorModules.ViewModule.extend( {
 					iconShare: 'elementor-slideshow__share-icon jicon-share',
 					shareMenu: 'elementor-slideshow__share-menu',
 					hideUiVisibility: 'elementor-slideshow--ui-hidden',
+					shareMode: 'share-mode',
+					zoomMode: 'zoom-mode',
 				},
 			},
 			selectors: {
@@ -185,45 +187,50 @@ module.exports = elementorModules.ViewModule.extend( {
 		var self = this,
 			$ = jQuery,
 			classes = self.getSettings( 'classes' ),
-			$header = $( '<header>', { class: classes.slideshow.header + ' ' + classes.preventClose } ),
-			$counter = $( '<span>', { class: classes.slideshow.counter + ' ' + classes.preventClose } ),
-			$iconExpand = $( '<i>', { class: classes.slideshow.iconExpand } ).append( '<span>', '<span>' ),
-			$iconZoom = $( '<i>', { class: classes.slideshow.iconZoomIn } ),
-			$iconShare = $( '<i>', { class: classes.slideshow.iconShare } ).append( '<span>' ),
+			slideshowClasses = classes.slideshow,
+			$header = $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } ),
+			$counter = $( '<span>', { class: slideshowClasses.counter + ' ' + classes.preventClose } ),
+			$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand } ).append( '<span>', '<span>' ),
+			$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn } ),
+			$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( '<span>' ),
 			$shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' ),
-			$shareMenu = $( '<div>', { class: classes.slideshow.shareMenu } ).append( $shareLinks );
+			$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
 
 		$iconExpand.on( 'click', function() {
 			if ( screenfull.isFullscreen ) {
 				screenfull.exit();
-				$iconExpand.removeClass( classes.slideshow.iconShrink );
+				$iconExpand.removeClass( slideshowClasses.iconShrink );
 			} else if ( screenfull.isEnabled ) {
 				screenfull.request( self.elements.$container.parents( '.dialog-widget' )[ 0 ] );
-				$iconExpand.addClass( classes.slideshow.iconShrink );
+				$iconExpand.addClass( slideshowClasses.iconShrink );
 			}
 		} );
 
 		$iconZoom.on( 'click', function() {
-			const zoom = self.swiper.zoom;
+			const swiper = self.swiper,
+				zoom = swiper.zoom;
+
 			if ( 1 !== zoom.scale ) {
 				zoom.out();
-				self.elements.$container.removeClass( 'zoom-mode' );
-				$iconZoom.removeClass( classes.slideshow.iconZoomOut ).addClass( classes.slideshow.iconZoomIn );
+				swiper.allowSlideNext = true;
+				swiper.allowSlidePrev = true;
+				swiper.allowTouchMove = true;
+				self.elements.$container.removeClass( slideshowClasses.zoomMode );
+				$iconZoom.removeClass( slideshowClasses.iconZoomOut ).addClass( slideshowClasses.iconZoomIn );
 			} else {
 				zoom.enable();
 				zoom.in();
-				self.elements.$container.addClass( 'zoom-mode' );
-				$iconZoom.removeClass( classes.slideshow.iconZoomIn ).addClass( classes.slideshow.iconZoomOut );
+				swiper.allowSlideNext = false;
+				swiper.allowSlidePrev = false;
+				swiper.allowTouchMove = false;
+				self.elements.$container.addClass( slideshowClasses.zoomMode );
+				$iconZoom.removeClass( slideshowClasses.iconZoomIn ).addClass( slideshowClasses.iconZoomOut );
 			}
 		} );
 
-		$iconShare.on( 'click', function() {
-			const $container = self.elements.$container;
-			if ( ! $container.hasClass( 'share-mode' ) ) {
-				$container.addClass( 'share-mode' );
-			} else {
-				$container.removeClass( 'share-mode' );
-			}
+		$iconShare.add( $shareMenu ).on( 'click', self.toggleShareMenu );
+		$shareLinks.on( 'click', function( e ) {
+			e.stopPropagation();
 		} );
 
 		$header.append(
@@ -235,6 +242,18 @@ module.exports = elementorModules.ViewModule.extend( {
 		);
 
 		return $header;
+	},
+
+	toggleShareMenu: function() {
+		const classes = this.getSettings( 'classes' ),
+			$container = this.elements.$container;
+		if ( ! $container.hasClass( classes.slideshow.shareMode ) ) {
+			$container.addClass( classes.slideshow.shareMode );
+			this.swiper.detachEvents();
+		} else {
+			$container.removeClass( classes.slideshow.shareMode );
+			this.swiper.attachEvents();
+		}
 	},
 
 	getSlideshowFooter: function() {
@@ -305,14 +324,16 @@ module.exports = elementorModules.ViewModule.extend( {
 			this.elements.$footer,
 		);
 
-		let hideUi = '';
+		this.setSettings( 'hideUiTimeout', '' );
 
 		$container.on( 'mouseenter mouseover mousedown mousemove keyup keypress swipe tap vmousedown vmouseover vmousemove', function() {
-			clearTimeout( hideUi );
+			clearTimeout( self.getSettings( 'hideUiTimeout' ) );
 			$container.removeClass( slideshowClasses.hideUiVisibility );
-			hideUi = setTimeout( function() {
-				$container.addClass( slideshowClasses.hideUiVisibility );
-			}, 2500 );
+			self.setSettings( 'hideUiTimeout', setTimeout( function() {
+				if ( ! $container.hasClass( 'share-mode' ) ) {
+					$container.addClass( slideshowClasses.hideUiVisibility );
+				}
+			}, 2500 ) );
 		} );
 
 		var modal = self.getModal();

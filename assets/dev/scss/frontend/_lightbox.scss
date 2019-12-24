@@ -139,7 +139,6 @@
 
 	&__header, &__footer {
 		position: absolute;
-		z-index: 5;
 		left: 0;
 		width: 100%;
 		padding: 15px 20px;
@@ -152,6 +151,7 @@
 		@include padding-end( 50px );
 		top: 0;
 		align-items: center;
+		z-index: 10;
 
 		> i {
 			font-size: 20px;
@@ -175,7 +175,7 @@
 		height: 0;
 		position: absolute;
 		overflow: hidden;
-		transition: background-color 100ms;
+		transition: background-color 200ms 20ms;
 
 		ul {
 			list-style: none;
@@ -191,8 +191,15 @@
 			padding: 20px;
 			margin: 0;
 			transform: scale(0);
+			opacity: 0;
 			transform-origin: 90% 10%;
-			transition: 200ms;
+			transition: 250ms;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+			li {
+				opacity: 0;
+				transition: opacity 500ms 100ms;
+			}
 
 			&:before {
 				content: '';
@@ -209,6 +216,8 @@
 
 	&__footer {
 		bottom: 0;
+		z-index: 5;
+		position: fixed;
 	}
 
 	&__title, &__description {
@@ -246,6 +255,13 @@
 			background-color: rgba(0, 0, 0, 0.5);
 		}
 	}
+
+	.elementor-swiper-button {
+		&-prev, &-next {
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
 }
 
 .share-mode {
@@ -256,9 +272,14 @@
 			width: 100vw;
 			height: 100vh;
 			opacity: 1;
+			cursor: default;
 
 			ul {
 				transform: scale(1);
+
+				&, & li {
+					opacity: 1;
+				}
 			}
 		}
 	}
