@@ -1,6 +1,6 @@
 import CallableBase from 'elementor-api/modules/callable-base';
 
-export default class Base extends CallableBase {
+export default class HookBase extends CallableBase {
 	getType() {
 		return 'hook';
 	}

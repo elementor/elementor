@@ -1,4 +1,4 @@
-import HookDependency from '../base/dependency';
+import HookDependency from 'elementor-api/modules/hook-base/dependency';
 
 export class SectionColumnsLimit extends HookDependency {
 	getCommand() {

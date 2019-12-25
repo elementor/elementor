@@ -1,4 +1,4 @@
-import HookDependency from '../base/dependency';
+import HookDependency from 'elementor-api/modules/hook-base/dependency';
 import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
 export class ResizeColumnLimit extends HookDependency {

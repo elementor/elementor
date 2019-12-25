@@ -1,4 +1,4 @@
-import HookDependency from '../base/dependency';
+import HookDependency from 'elementor-api/modules/hook-base/dependency';
 import DocumentUtils from 'elementor-api/utils/document';
 
 export class IsValidChild extends HookDependency {

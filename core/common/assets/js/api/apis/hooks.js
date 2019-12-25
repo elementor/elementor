@@ -1,6 +1,6 @@
 import Callbacks from '../modules/callbacks.js';
 
-export default class Events extends Callbacks {
+export default class Hooks extends Callbacks {
 	constructor( ... args ) {
 		super( ... args );
 

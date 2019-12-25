@@ -1,4 +1,4 @@
-import HookAfter from '../base/after';
+import HookAfter from 'elementor-api/modules/hook-base/after';
 
 export class HandleDynamic extends HookAfter {
 	getCommand() {

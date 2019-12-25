@@ -1,4 +1,4 @@
-import HookAfter from '../base/after';
+import HookAfter from 'elementor-api/modules/hook-base/after';
 import Helper from '../helper';
 import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
