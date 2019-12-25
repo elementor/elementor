@@ -1,4 +1,4 @@
-import EventAfter from '../base/after';
+import EventAfter from 'elementor-api/modules/event-base/after';
 
 export class Resizeable extends EventAfter {
 	getCommand() {
