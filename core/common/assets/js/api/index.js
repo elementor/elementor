@@ -69,4 +69,7 @@ export default class API {
 	route( ...args ) {
 		return $e.routes.to.apply( $e.routes, args );
 	}
+
+	// TODO: shortcut();
+	// TODO: util();
 }
