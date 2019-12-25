@@ -48,14 +48,42 @@ The components are extensible so a 3rd party plugin can add some routes, command
 	| **isActive** | `$e.components.isActive()` | `{String}` *namespace* | `{Boolean}` *isActive* | Is component active.
 
 * **Examples**:
-```javascript
-// Example register components.
-import DocumentComponent from './document/component';
-
-elementorCommon.elements.$window.on( 'elementor:init', () => {
-   $e.components.register( new DocumentComponent() );
-} );
-```
+    ```javascript
+    // Example create and register new component.
+    class CustomCommand extends $e.modules.CommandBase {
+        apply( args ) {
+            console.log( args );
+    
+            return {
+                example: 'whatever you wish',
+            };
+        }
+    }
+    
+    class CustomComponent extends elementorModules.common.Component {
+        getNamespace() {
+            return 'custom-component';
+        }
+    
+        defaultCommands() {
+            return {
+                example: ( args ) => ( new CustomCommand( args ) ).run(),
+            };
+        }
+    }
+    
+    elementorCommon.elements.$window.on( 'elementor:init', () => {
+        $e.components.register( new CustomComponent() );
+    
+        setTimeout( () => {
+            const result = $e.run( 'custom-component/example', {
+                property: 'value',
+            } );
+    
+            console.log( 'result: ', result );
+        } );
+    } );
+    ```
 
 ## API - `$e.hooks`
 *  **Description**: `$e.hooks` component is a manager of `$e` _hooks_, allow you to create custom **data manipulation** of *elementor* data model, and create a dependencies, the events attached to  `$e.commands`  and each  _hook_ being fired after/before  running commands, that runs by  `$e.run()`
