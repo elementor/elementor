@@ -35,7 +35,7 @@ jQuery( () => {
 
 						instance.apply( {} );
 					},
-					new Error( 'Base.apply() should be implemented, please provide \'apply\' functionality.' )
+					new Error( 'CommandBase.apply() should be implemented, please provide \'apply\' functionality.' )
 				);
 			} );
 
