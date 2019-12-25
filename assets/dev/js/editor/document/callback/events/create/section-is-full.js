@@ -1,6 +1,6 @@
-import HookAfter from 'elementor-api/modules/hook-base/after';
+import EventAfter from 'elementor-api/modules/event-base/after';
 
-export class CreateSectionIsFull extends HookAfter {
+export class CreateSectionIsFull extends EventAfter {
 	getCommand() {
 		return 'document/elements/create';
 	}

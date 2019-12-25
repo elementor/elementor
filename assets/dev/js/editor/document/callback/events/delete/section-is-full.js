@@ -1,6 +1,6 @@
-import HookAfter from 'elementor-api/modules/hook-base/after';
+import EventAfter from 'elementor-api/modules/event-base/after';
 
-export class DeleteSectionIsFull extends HookAfter {
+export class DeleteSectionIsFull extends EventAfter {
 	getCommand() {
 		return 'document/elements/delete';
 	}
