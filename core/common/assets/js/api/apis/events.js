@@ -75,18 +75,6 @@ export default class Events extends Callbacks {
 	}
 
 	/**
-	 * Function runBefore().
-	 *
-	 * Run the event as before.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 */
-	runBefore( command, args ) {
-		this.run( 'before', command, args );
-	}
-
-	/**
 	 * Function runAfter().
 	 *
 	 * Run the event as after.
@@ -97,6 +85,18 @@ export default class Events extends Callbacks {
 	 */
 	runAfter( command, args, result ) {
 		this.run( 'after', command, args, result );
+	}
+
+	/**
+	 * Function runBefore().
+	 *
+	 * Run the event as before.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runBefore( command, args ) {
+		this.run( 'before', command, args );
 	}
 }
 

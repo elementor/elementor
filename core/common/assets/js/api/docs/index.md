@@ -93,7 +93,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
 to  `$e.commands`  and each  **hook** being fired after/before running a command, that runs by  `$e.run()`
 *  **Location**: *core/common/assets/js/api/apis/hooks.js*
 *  **Parent**: [`{Callbacks}`](#Callbacks)
-*  **Register Methods**:
+*  **Methods**:
 
 	| Name                   | Access                          | Params                                                   |  Returns              | Description                                              
 	|------------------------|---------------------------------|----------------------------------------------------------|-----------------------|-----------------------------------------------------------
@@ -197,26 +197,25 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
 
 ## API -  `$e.events`
 *  **Description**: `$e.events` component is a manager of `$e` _events_, allow you to create custom **logic** that runs *after/before* the command without effect the data *elementor* data model,  history, etc...
-the events attached to  `$e.commands`  and each  _event_ being fired after/before  running a command, that runs by  `$e.run()`, Mainly used for UI manipulation.
-*  **Location**: *core/common/assets/js/components/events.js*
-* **Parent**: [`{Callbacks}`](#Callbacks)
-*  **Get Methods**:
-*  **Register Methods**:
+the events attached to  `$e.commands`  and each  _event_ being fired after/before  running a command, that runs by  `$e.run()`, Mainly used for UI/View manipulation without affecting the data model.
+*  **Location**: *core/common/assets/js/api/apis/events.js*
+*  **Parent**: [`{Callbacks}`](#Callbacks)
+*  **Methods**:
 
-	| Name               | Access                       | Params                      | Returns                | Description
-	|--------------------|------------------------------|-----------------------------|------------------------|----------------------------------------------------------------|
-	| **registerAfter**  | `$e.events.registerAfter()`  | `{CallableBase}` *instance* | `{Object}` *callback*  | Register a event that being fired after the command runs.
-	| **registerBefore** | `$e.events.registerBefore()` | `{CallableBase}` *instance* | `{Object}` *callback*  | Register a event that being fired before the command runs.
+	| Name               | Access                       | Params                                                   | Returns                | Description
+	|--------------------|------------------------------|----------------------------------------------------------|------------------------|----------------------------------------------------------------|
+	| **registerAfter**  | `$e.events.registerAfter()`  | `{CallableBase}` *instance*                              | `{Object}` *callback*  | Register a event that being fired after the command runs.
+	| **registerBefore** | `$e.events.registerBefore()` | `{CallableBase}` *instance*                              | `{Object}` *callback*  | Register a event that being fired before the command runs.
+	| **runAfter**       | `$e.events.runAfter()`       | `{string}` *command*, `{Object}` *args*, *result*        |                        | Runs event after.
+	| **runAfter**       | `$e.events.runBefore()`      | `{string}` *command*, `{Object}` *args*                  |                        | Runs before dependency.
 
 	> **Note:** Please look at class parent: `{Callbacks}` for all the methods.
-
-* ***Important***: All hooks should be created by extending [`{CallableBase}`](#CallableBase) located at:
-  * `assets/dev/js/editor/document/callback/base/base.js`
-  * `assets/dev/js/editor/document/callback/events/base/after.js`
-  * `assets/dev/js/editor/document/callback/events/base/dependency.js`
-
-*  **Examples**:
-   * Built in events ( Please take a look at this folder ):  *`assets/dev/js/editor/document/callback/events`*
+ 
+  * ***Important***: All hooks should be created by extending [`{( EventAfter | EventBefore )}`](#EventAfter-EventBefore) located at:
+    * `core/common/assets/js/api/modules/event-base/after.js`
+    * `core/common/assets/js/api/modules/event-base/dependency.js`
+ * **Examples**:
+   * Built in events:  *`assets/dev/js/editor/document/callback/events`*
    * **registerAfter**:
 
 		```javascript
