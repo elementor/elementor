@@ -427,20 +427,11 @@ label.elementor-template-library-order-label {
 		}
 	}
 
-	.elementor-template-library-template-action {
-		background-color: transparent;
-		text-transform: none;
-
-		i {
-			@include margin-end(0);
-		}
-	}
-
 	.elementor-template-library-template-insert {
 		color: $editor-success;
 	}
 
-	.elementor-button-go-pro {
+	.elementor-go-pro {
 		color: $editor-accent;
 	}
 
