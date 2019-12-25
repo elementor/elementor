@@ -9,6 +9,9 @@ import CommandsBase from './modules/command-base';
 import HookBase from './modules/hook-base/base';
 import HookAfter from './modules/hook-base/after';
 import HookDependency from './modules/hook-base/dependency';
+import EventBase from './modules/event-base/base';
+import EventAfter from './modules/event-base/after';
+import EventBefore from './modules/event-base/before';
 
 export default class API {
 	static initialize() {
@@ -25,9 +28,15 @@ export default class API {
 				CommandBase: CommandsBase,
 
 				HookBase: {
-					Base: HookBase,
+					Base: HookBase, // TODO: consider remove.
 					After: HookAfter,
 					Dependency: HookDependency,
+				},
+
+				EventBase: {
+					Base: EventBase, // TODO: consider remove.
+					After: EventAfter,
+					Before: EventBefore;
 				},
 			},
 
