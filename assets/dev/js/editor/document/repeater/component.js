@@ -1,4 +1,4 @@
-import BaseComponent from 'elementor-common/components/component';
+import BaseComponent from 'elementor-api/modules/component';
 import * as Commands from './commands';
 
 export default class Component extends BaseComponent {

@@ -1,4 +1,4 @@
-import BaseComponent from 'elementor-common/components/component';
+import BaseComponent from 'elementor-api/modules/component';
 
 export default class Component extends BaseComponent {
 	__construct( args ) {

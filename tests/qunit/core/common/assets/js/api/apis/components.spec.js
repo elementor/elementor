@@ -1,6 +1,6 @@
 import CommonHelper from './helper';
-import BaseComponent from 'elementor-common/components/component';
-import BaseComponentModal from 'elementor-common/components/component-modal';
+import BaseComponent from 'elementor-api/modules/component';
+import BaseComponentModal from 'elementor-api/modules/component-modal';
 
 jQuery( () => {
 	QUnit.module( 'Components' );

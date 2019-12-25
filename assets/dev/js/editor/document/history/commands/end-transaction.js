@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class EndTransaction extends Base {
+export class EndTransaction extends CommandBase {
 	apply( args ) {
 		if ( ! this.component.transactions.length ) {
 			return;

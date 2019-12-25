@@ -1,4 +1,4 @@
-import ComponentModal from 'elementor-common/components/component-modal';
+import ComponentModal from 'elementor-api/modules/component-modal';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 

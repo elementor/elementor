@@ -3,13 +3,7 @@ import Storage from './utils/storage';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
-import Components from './components/components';
-import Hooks from './components/hooks';
-import Events from './components/events';
-import Commands from './components/commands';
-import Routes from './components/routes';
-import Shortcuts from './components/shortcuts';
-import BackwardsCompatibility from './components/backwards-compatibility';
+import API from './api/';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -37,25 +31,9 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.storage = new Storage();
 
-		window.$e = {
-			components: new Components(),
-			hooks: new Hooks(),
-			events: new Events(),
-			commands: new Commands(),
-			routes: new Routes(),
-			shortcuts: new Shortcuts( jQuery( window ) ),
-			bc: new BackwardsCompatibility(),
-
-			run: ( ...args ) => {
-				return $e.commands.run.apply( $e.commands, args );
-			},
-
-			route: ( ...args ) => {
-				return $e.routes.to.apply( $e.routes, args );
-			},
-		};
-
 		this.dialogsManager = new DialogsManager.Instance();
+
+		API.initialize();
 
 		this.initModules();
 	}

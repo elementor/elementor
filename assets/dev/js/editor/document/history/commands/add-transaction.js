@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class AddTransaction extends Base {
+export class AddTransaction extends CommandBase {
 	apply( args ) {
 		const currentId = elementor.history.history.getCurrentId();
 

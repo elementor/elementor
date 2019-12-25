@@ -1,4 +1,4 @@
-export default class CallbackBase {
+export default class CallableBase {
 	/**
 	 * Callback type, eg ( hook, event ).
 	 *

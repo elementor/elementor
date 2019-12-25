@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class StartLog extends Base {
+export class StartLog extends CommandBase {
 	initialize( args ) {
 		if ( elementor.history.history.isItemStarted() || args.id ) {
 			this.isSubItem = true;

@@ -156,7 +156,7 @@ export default class Callbacks extends elementorModules.Module {
 	 *
 	 * Validate given instance.
 	 *
-	 * @param {CallbackBase} instance
+	 * @param {CallableBase} instance
 	 */
 	checkInstance( instance ) {
 		if ( instance.getType() !== this.getType() ) {
@@ -198,7 +198,7 @@ export default class Callbacks extends elementorModules.Module {
 	 * Register the callback instance.
 	 *
 	 * @param {string} event
-	 * @param {CallbackBase} instance
+	 * @param {CallableBase} instance
 	 *
 	 * @returns {{}} Current callback
 	 */

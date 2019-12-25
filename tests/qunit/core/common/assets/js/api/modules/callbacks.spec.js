@@ -1,5 +1,5 @@
-import Callbacks from 'elementor-common/components/base/callbacks';
-import CallbackBase from 'elementor-document/callback/base/base';
+import Callbacks from 'elementor-api/modules/callbacks';
+import CallableBase from 'elementor-api/modules/callable-base';
 
 jQuery( () => {
 	QUnit.module( 'File: common/assets/js/components/base/callbacks.js', () => {
@@ -11,7 +11,7 @@ jQuery( () => {
 							return 'hook';
 						}
 					},
-					fakeCallback = class extends CallbackBase {
+					fakeCallback = class extends CallableBase {
 						getType() {
 							return 'hook';
 						}
@@ -27,12 +27,12 @@ jQuery( () => {
 						register() {}
 					},
 					callbacks = new fakeCallbacks(),
-					callbackBase = new fakeCallback();
+					callableBase = new fakeCallback();
 
 				assert.throws(
 					() => {
-						callbacks.register( 'after', callbackBase );
-						callbacks.register( 'after', callbackBase );
+						callbacks.register( 'after', callableBase );
+						callbacks.register( 'after', callableBase );
 					},
 					new Error( `id: '${ random.toString() }' is already in use.` )
 				);

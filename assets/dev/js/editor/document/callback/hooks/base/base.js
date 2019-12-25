@@ -1,6 +1,6 @@
-import CallbackBase from '../../base/base';
+import CallableBase from 'elementor-api/modules/callable-base';
 
-export default class Base extends CallbackBase {
+export default class Base extends CallableBase {
 	getType() {
 		return 'hook';
 	}

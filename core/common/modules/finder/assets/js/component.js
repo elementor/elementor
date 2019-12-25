@@ -1,4 +1,4 @@
-import ComponentModal from 'elementor-common/components/component-modal';
+import ComponentModal from 'elementor-api/modules/component-modal';
 import FinderLayout from './modal-layout';
 
 export default class Component extends ComponentModal {

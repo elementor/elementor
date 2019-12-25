@@ -1,5 +1,5 @@
 import ElementsHelper from '../../elements/helper';
-import CommonHelper from '../../../../common/components/helper';
+import CommonHelper from '../../../../common/assets/js/api/apis/helper';
 
 export const PasteStyle = () => {
 	QUnit.test( 'PasteStyle', ( assert ) => {

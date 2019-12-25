@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class DeleteLog extends Base {
+export class DeleteLog extends CommandBase {
 	apply( args ) {
 		if ( args.id ) {
 			elementor.history.history.deleteItem( args.id );

@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class CopyAll extends Base {
+export class CopyAll extends CommandBase {
 	apply() {
 		$e.run( 'document/elements/copy', {
 			containers: Object.values( elementor.getPreviewView().children._views ).map( ( view ) => view.getContainer() ),

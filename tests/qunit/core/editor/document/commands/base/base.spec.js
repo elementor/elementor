@@ -1,4 +1,4 @@
-import Base from 'elementor-document/commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/dynamic/commands/base/base', () => {
@@ -6,7 +6,7 @@ jQuery( () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new Base( { } );
+						const instance = new CommandBase( { } );
 
 						instance.requireContainer();
 					},
@@ -17,7 +17,7 @@ jQuery( () => {
 			QUnit.test( 'constructor(): with container & containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new Base( {
+						const instance = new CommandBase( {
 							container: {},
 							containers: [],
 						} );
@@ -31,7 +31,7 @@ jQuery( () => {
 			QUnit.test( 'apply(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new Base( {} );
+						const instance = new CommandBase( {} );
 
 						instance.apply( {} );
 					},
@@ -44,7 +44,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new Base( {} );
+						const instance = new CommandBase( {} );
 
 						instance.onBeforeApply = () => {
 							throw new Error( random );
@@ -65,7 +65,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new Base( {} );
+						const instance = new CommandBase( {} );
 
 						instance.onBeforeApply = () => {
 							throw new Error( random );

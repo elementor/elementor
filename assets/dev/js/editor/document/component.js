@@ -1,4 +1,4 @@
-import BaseComponent from 'elementor-common/components/component';
+import BaseComponent from 'elementor-api/modules/component';
 import BackwardsCompatibility from './backwards-compatibility.js';
 import * as Hooks from './callback/hooks/';
 import * as Events from './callback/events/';

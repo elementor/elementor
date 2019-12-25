@@ -2,9 +2,9 @@
  * TODO: Should we do validate function in scenarios where args are are not required.
  * but should be validate?
  */
-import ArgsObject from './../../../../modules/imports/args-object';
+import ArgsObject from 'elementor-dev-modules/imports/args-object';
 
-export default class Base extends ArgsObject {
+export default class CommandBase extends ArgsObject {
 	/**
 	 * Current component (elementorModules.Module ).
 	 *

@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class StartTransaction extends Base {
+export class StartTransaction extends CommandBase {
 	validateArgs( args ) {
 		this.requireArgumentType( 'type', 'string', args );
 	}

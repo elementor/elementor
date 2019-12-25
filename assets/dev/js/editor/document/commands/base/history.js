@@ -1,6 +1,6 @@
-import Base from './base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export default class History extends Base {
+export default class History extends CommandBase {
 	constructor( args ) {
 		super( args );
 

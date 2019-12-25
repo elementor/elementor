@@ -1,4 +1,4 @@
-import environment from '../utils/environment';
+import environment from '../../utils/environment';
 
 export default class Shortcuts {
 	constructor( $window ) {

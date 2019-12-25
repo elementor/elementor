@@ -1,4 +1,7 @@
-export default class Helpers {
+// TODO: Access `via $e.utils.this.findViewById`.
+// TODO: or `$e.util('document').findViewById();`.
+
+export default class Document {
 	static findViewRecursive( parent, key, value, multiple = true ) {
 		let found = [];
 		for ( const x in parent._views ) {
@@ -12,7 +15,7 @@ export default class Helpers {
 			}
 
 			if ( view.children ) {
-				const views = Helpers.findViewRecursive( view.children, key, value, multiple );
+				const views = this.findViewRecursive( view.children, key, value, multiple );
 				if ( views.length ) {
 					found = found.concat( views );
 					if ( ! multiple ) {
@@ -26,7 +29,7 @@ export default class Helpers {
 	}
 
 	static findViewById( id ) {
-		const elements = Helpers.findViewRecursive(
+		const elements = this.findViewRecursive(
 			elementor.getPreviewView().children,
 			'id',
 			id,
@@ -99,9 +102,9 @@ export default class Helpers {
 	static getPasteOptions( sourceModel, targetContainer ) {
 		const result = {};
 
-		result.isValidChild = Helpers.isValidChild( sourceModel, targetContainer.model );
-		result.isSameElement = Helpers.isSameElement( sourceModel, targetContainer );
-		result.isValidGrandChild = Helpers.isValidGrandChild( sourceModel, targetContainer );
+		result.isValidChild = this.isValidChild( sourceModel, targetContainer.model );
+		result.isSameElement = this.isSameElement( sourceModel, targetContainer );
+		result.isValidGrandChild = this.isValidGrandChild( sourceModel, targetContainer );
 
 		return result;
 	}
@@ -118,7 +121,7 @@ export default class Helpers {
 			storage[ 0 ] = new Backbone.Model( storage[ 0 ] );
 		}
 
-		const pasteOptions = Helpers.getPasteOptions( storage[ 0 ], targetContainer );
+		const pasteOptions = this.getPasteOptions( storage[ 0 ], targetContainer );
 
 		return Object.values( pasteOptions ).some(
 			( opt ) => !! opt

@@ -1,5 +1,5 @@
 import HookDependency from '../base/dependency';
-import DocumentUtils from 'elementor-document/utils/helpers';
+import DocumentUtils from 'elementor-api/utils/document';
 
 export class IsValidChild extends HookDependency {
 	getCommand() {

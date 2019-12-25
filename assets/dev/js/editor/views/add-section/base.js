@@ -1,4 +1,4 @@
-import DocumentUtils from 'elementor-document/utils/helpers';
+import DocumentUtils from 'elementor-api/utils/document';
 
 class AddSectionBase extends Marionette.ItemView {
 	template() {

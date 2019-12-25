@@ -1,6 +1,6 @@
 import AddSectionView from './add-section/independent';
 import RightClickIntroductionBehavior from '../elements/views/behaviors/right-click-introduction';
-import DocumentUtils from 'elementor-document/utils/helpers';
+import DocumentUtils from 'elementor-api/utils/document';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 

@@ -1,4 +1,4 @@
-import Callbacks from './base/callbacks';
+import Callbacks from '../modules/callbacks';
 
 export default class Events extends Callbacks {
 	constructor( ... args ) {
@@ -53,7 +53,7 @@ export default class Events extends Callbacks {
 	 *
 	 * Register the event in after event.
 	 *
-	 * @param {CallbackBase} instance
+	 * @param {CallableBase} instance
 	 *
 	 * @returns {{}}
 	 */
@@ -66,7 +66,7 @@ export default class Events extends Callbacks {
 	 *
 	 * Register the event in before event.
 	 *
-	 * @param {CallbackBase} instance
+	 * @param {CallableBase} instance
 	 *
 	 * @returns {{}}
 	 */

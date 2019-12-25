@@ -1,5 +1,5 @@
 import environment from 'elementor-common/utils/environment';
-import DocumentUtils from 'elementor-document/utils/helpers';
+import DocumentUtils from 'elementor-api/utils/document';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),

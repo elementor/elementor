@@ -1,6 +1,6 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
-import DocumentUtils from 'elementor-document/utils/helpers';
+import DocumentUtils from 'elementor-api/utils/document';
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
