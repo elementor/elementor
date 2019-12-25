@@ -49,74 +49,69 @@ The components are extensible so a 3rd party plugin can add some routes, command
 
 * **Examples**:
     ```javascript
-    // Example create and register new component.
-    class ExampleCommand extends $e.modules.CommandBase {
+     // Example create and register new component.
+     class ExampleCommand extends $e.modules.CommandBase {
         apply( args ) {
             // Output command args to console.
-            console.log( args );
-    
+            console.log( 'ExampleCommand: ', args );
+     
             // Return object as example.
             return {
-                example: 'whatever you wish',
+                example: 'result from ExampleCommand',
             };
         }
-    }
-    
-    class CustomComponent extends elementorModules.common.Component {
+     }
+     
+     class CustomComponent extends elementorModules.common.Component {
         getNamespace() {
             return 'custom-component';
         }
-    
+     
         defaultCommands() {
             // Object of all the component commands.
             return {
                 example: ( args ) => ( new ExampleCommand( args ) ).run(),
             };
         }
-    }
-    
-    elementorCommon.elements.$window.on( 'elementor:init', () => {
-        // Register the new component.
-        $e.components.register( new CustomComponent() );
-    
-        setTimeout( () => {
-            // Run's 'example' command from 'custom-component'.
-            const result = $e.run( 'custom-component/example', {
-                property: 'value',
-            } );
-    
-            // Output command run result.
-            console.log( 'result: ', result );
-        } );
-    } );
+     }
+     
+     // Register the new component.
+     $e.components.register( new CustomComponent() );
+     
+     // Run's 'example' command from 'custom-component'.
+     result = $e.run( 'custom-component/example', {
+        property: 'value',
+     } );
+     
+     // Output command run result.
+     console.log( 'e-components-eg-1-result: ', result );
+
     ```
 
 ## API - `$e.hooks`
-*  **Description**: `$e.hooks` component is a manager of `$e` _hooks_, allow you to create custom **data manipulation** of *elementor* data model, and create a dependencies, the events attached to  `$e.commands`  and each  _hook_ being fired after/before  running commands, that runs by  `$e.run()`
-*  **Location**: *core/common/assets/js/components/hooks.js*
-* **Parent**: [`{Callbacks}`](#Callbacks)
+*  **Description**: `$e.hooks` api is a manager of `$e.hooks`, allow you to create custom **data manipulation** of *elementor* data model, and create a dependencies, the _hooks_ attached 
+to  `$e.commands`  and each  **hook** being fired after/before running a command, that runs by  `$e.run()`
+*  **Location**: *core/common/assets/js/api/apis/hooks.js*
+*  **Parent**: [`{Callbacks}`](#Callbacks)
 *  **Register Methods**:
 
 	| Name                   | Access                          | Params                      |  Returns              | Description                                               | Breakable |
 	|------------------------|---------------------------------|-----------------------------|-----------------------|-----------------------------------------------------------|-----------|
-	| **registerAfter**      | `$e.hooks.registerAfter()`      | `{CallbackBase}` *instance* | `{Object}` *callback* | Register a hook that being fired after the command runs.  | false
-	| **registerDependency** | `$e.hooks.registerDependency()` | `{CallbackBase}` *instance* | `{Object}` *callback* | Register a hook that being fired before the command runs. | true
+	| **registerAfter**      | `$e.hooks.registerAfter()`      | `{CallableBase}` *instance* | `{Object}` *callback* | Register a hook that being fired after the command runs.  | false
+	| **registerDependency** | `$e.hooks.registerDependency()` | `{CallableBase}` *instance* | `{Object}` *callback* | Register a hook that being fired before the command runs. | true
 
 	> **Note:** Please look at class parent: `{Callbacks}` for all the methods.
-* ***Important***: All hooks should be created by extending [`{CallbackBase}`](#CallbackBase) located at:
-  * `assets/dev/js/editor/document/callback/base/base.js`
-  * `assets/dev/js/editor/document/callback/hooks/base/after.js`
-  * `assets/dev/js/editor/document/callback/hooks/base/dependency.js`
+  * ***Important***: All hooks should be created by extending [`{( HookAfter | HookDependency )}`](#HookAfter-HookDependency) located at:
+    * `core/common/assets/js/api/modules/hook-base/after.js`
+    * `core/common/assets/js/api/modules/hook-base/dependency.js`
 
 *  **Examples**:
-   * Built in hooks ( Please take a look at this folder ):  *`assets/dev/js/editor/document/callback/hooks`*
+   * Built in hooks: *`assets/dev/js/editor/document/callback/hooks`*
 
    * **registerAfter**:
 		```javascript
-		// Eaxmple of hook that create columns for section.
+		// Example of hook after.
 		import HookAfter from '../base/after';
-		import Helper from '../helper';
-		import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
 		class SectionColumns extends HookAfter {
 		   getCommand() {
@@ -192,11 +187,11 @@ The components are extensible so a 3rd party plugin can add some routes, command
 		   }
 		}
 		```
+        > **Note:** further information about [`{CallableBase}`](#CallableBase)**class**.
 
-> **Note:** further information about [`{CallbackBase}`](#CallbackBase)**class**.
 ## API -  `$e.events`
 *  **Description**: `$e.events` component is a manager of `$e` _events_, allow you to create custom **logic** that runs *after/before* the command without effect the data *elementor* data model,  history, etc...
-the events attached to  `$e.commands`  and each  _event_ being fired after/before  running commands, that runs by  `$e.run()`, Mainly used for UI manipulation.
+the events attached to  `$e.commands`  and each  _event_ being fired after/before  running a command, that runs by  `$e.run()`, Mainly used for UI manipulation.
 *  **Location**: *core/common/assets/js/components/events.js*
 * **Parent**: [`{Callbacks}`](#Callbacks)
 *  **Get Methods**:
@@ -204,12 +199,12 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
 
 	| Name               | Access                       | Params                      | Returns                | Description
 	|--------------------|------------------------------|-----------------------------|------------------------|----------------------------------------------------------------|
-	| **registerAfter**  | `$e.events.registerAfter()`  | `{CallbackBase}` *instance* | `{Object}` *callback*  | Register a event that being fired after the command runs.
-	| **registerBefore** | `$e.events.registerBefore()` | `{CallbackBase}` *instance* | `{Object}` *callback*  | Register a event that being fired before the command runs.
+	| **registerAfter**  | `$e.events.registerAfter()`  | `{CallableBase}` *instance* | `{Object}` *callback*  | Register a event that being fired after the command runs.
+	| **registerBefore** | `$e.events.registerBefore()` | `{CallableBase}` *instance* | `{Object}` *callback*  | Register a event that being fired before the command runs.
 
 	> **Note:** Please look at class parent: `{Callbacks}` for all the methods.
 
-* ***Important***: All hooks should be created by extending [`{CallbackBase}`](#CallbackBase) located at:
+* ***Important***: All hooks should be created by extending [`{CallableBase}`](#CallableBase) located at:
   * `assets/dev/js/editor/document/callback/base/base.js`
   * `assets/dev/js/editor/document/callback/events/base/after.js`
   * `assets/dev/js/editor/document/callback/events/base/dependency.js`
@@ -280,14 +275,14 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
 		   }
 		}
 		```
-> **Note:** further information about [`{CallbackBase}`](#CallbackBase)**class**.
+> **Note:** further information about [`{CallableBase}`](#CallableBase)**class**.
 
 ## API --  `$e.commands`
 The new Commands API (since 2.7.0), provides a simple and convenient way to run something the the editor, create a widget, as well as show a notice or undo changes, using JS commands.
 
 The full list of commands, including custom & 3rd commands, is available via: `$e.commands.getAll();`
 
-*  **Description**: `$e.commands` component is a manager of `$e` _commands_, allow you to create custom **commands** that runs by  `$e.run()`.
+*  **Description**: `$e.commands` component is a manager of `$e.commands`, allow you to create custom **commands** that runs by  `$e.run()`.
 
 *  **Location**: */core/common/assets/js/components/commands.js*
 
