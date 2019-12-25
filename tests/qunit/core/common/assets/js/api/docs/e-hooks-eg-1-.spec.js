@@ -27,8 +27,8 @@ class CustomHook extends $e.modules.HookBase.After {
 	/*
 	 * The actual hook logic.
 	 */
-	apply( args, containers ) {
-		console.log( 'My hook custom logic', 'args: ', args, 'containers: ', containers );
+	apply( args, result ) {
+		console.log( 'My hook custom logic', 'args: ', args, 'result: ', result );
 	}
 }
 
@@ -41,7 +41,7 @@ console.log( myHook );
 // Output all hooks after.
 console.log( $e.hooks.getAll().after );
 
-// Test the hook
+// Test the hook.
 result = $e.run( 'custom-component/example', {
 	property: 'value', // The conditions for the hook to be run.
 } );
