@@ -108,7 +108,7 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
 *  **Examples**:
    * Built in hooks: *`assets/dev/js/editor/document/callback/hooks`*
 
-   * **registerAfter**:
+   * Register hook **_after_** command runs:
         ```javascript
         // Example of hook after the command runs.
         class CustomHook extends $e.modules.HookBase.After {
@@ -162,13 +162,10 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
         console.log( 'e-hooks-eg-1-result:', result );
 		```
 
-   * **registerDependency**:
-
+    * Register hook **dependency** that applies before the command runs:
 		```javascript
 		// Example of hook that blooks column creation, if it reach maximum columns count.
-		import HookDependency from '../base/dependency';
-
-		class SectionColumnsLimit extends HookDependency {
+		class SectionColumnsLimit extends $e.modules.HookBase.Dependency {
 		   getCommand() {
 		      return 'document/elements/create';
 		   }
