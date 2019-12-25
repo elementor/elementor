@@ -117,22 +117,20 @@ export default class Callbacks extends elementorModules.Module {
 		const { containers = [ args.container ] } = args,
 			elType = containers[ 0 ] ? containers[ 0 ].type : false;
 
-		if ( elType ) {
-			let callbacks = [];
+		let callbacks = [];
 
-			if ( this.callbacks[ event ] && this.callbacks[ event ][ command ] ) {
-				if ( this.callbacks[ event ][ command ][ elType ] ) {
-					callbacks = callbacks.concat( this.callbacks[ event ][ command ][ elType ] );
-				}
-
-				if ( this.callbacks[ event ][ command ].all ) {
-					callbacks = callbacks.concat( this.callbacks[ event ][ command ].all );
-				}
+		if ( this.callbacks[ event ] && this.callbacks[ event ][ command ] ) {
+			if ( elType && this.callbacks[ event ][ command ][ elType ] ) {
+				callbacks = callbacks.concat( this.callbacks[ event ][ command ][ elType ] );
 			}
 
-			if ( callbacks.length ) {
-				return callbacks;
+			if ( this.callbacks[ event ][ command ].all ) {
+				callbacks = callbacks.concat( this.callbacks[ event ][ command ].all );
 			}
+		}
+
+		if ( callbacks.length ) {
+			return callbacks;
 		}
 
 		return false;
