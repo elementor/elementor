@@ -33,7 +33,7 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.dialogsManager = new DialogsManager.Instance();
 
-		API.initialize();
+		this.api = new API();
 
 		this.initModules();
 	}

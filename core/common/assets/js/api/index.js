@@ -14,39 +14,59 @@ import EventAfter from './modules/event-base/after';
 import EventBefore from './modules/event-base/before';
 
 export default class API {
-	static initialize() {
-		window.$e = {
-			bc: new BackwardsCompatibility(),
+	/**
+	 * Function constructor().
+	 *
+	 * Create's 'elementor' api.
+	 */
+	constructor() {
+		this.bc = new BackwardsCompatibility();
+		this.components = new Components();
+		this.hooks = new Hooks();
+		this.events = new Events();
+		this.commands = new Commands();
+		this.routes = new Routes();
+		this.shortcuts = new Shortcuts( jQuery( window ) );
 
-			components: new Components(),
-			hooks: new Hooks(),
-			events: new Events(),
-			commands: new Commands(),
-			routes: new Routes(),
-			shortcuts: new Shortcuts( jQuery( window ) ),
-			modules: {
-				CommandBase: CommandsBase,
+		this.modules = {
+			CommandBase: CommandsBase,
 
-				HookBase: {
-					Base: HookBase, // TODO: consider remove.
-					After: HookAfter,
-					Dependency: HookDependency,
-				},
-
-				EventBase: {
-					Base: EventBase, // TODO: consider remove.
-					After: EventAfter,
-					Before: EventBefore;
-				},
+			HookBase: {
+				Base: HookBase, // TODO: consider remove.
+				After: HookAfter,
+				Dependency: HookDependency,
 			},
 
-			run: ( ...args ) => {
-				return $e.commands.run.apply( $e.commands, args );
-			},
-
-			route: ( ...args ) => {
-				return $e.routes.to.apply( $e.routes, args );
+			EventBase: {
+				Base: EventBase, // TODO: consider remove.
+				After: EventAfter,
+				Before: EventBefore,
 			},
 		};
+
+		window.$e = this;
+	}
+
+	/**
+	 * Function run().
+	 *
+	 * Alias of `$e.commands.run()`.
+	 *
+	 * @param {{}} args
+	 * @returns {boolean}
+	 */
+	run( ...args ) {
+		return $e.commands.run.apply( $e.commands, args );
+	}
+
+	/**
+	 * Function route().
+	 *
+	 * Alias of `$e.routes.to()`.
+	 *
+	 * @param {{}} args
+	 */
+	route( ...args ) {
+		return $e.routes.to.apply( $e.routes, args );
 	}
 }
