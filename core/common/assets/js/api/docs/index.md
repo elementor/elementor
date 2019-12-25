@@ -109,52 +109,57 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
    * Built in hooks: *`assets/dev/js/editor/document/callback/hooks`*
 
    * **registerAfter**:
-		```javascript
-		// Example of hook after.
-		import HookAfter from '../base/after';
-
-		class SectionColumns extends HookAfter {
-		   getCommand() {
-		      return 'document/elements/create';  // Which command to listen.
-		   }
-
-		   getId() {
-		      return 'create-section-columns';  // Unique id for the hook.
-		   }
-
-		   /*
-		    * Optional function, used for optimization, if the container type is known in advance,
-		    * you can pass it here.
-		    */
-		   bindContainerType() {
-		      // Note: The container type is always document, since section can be create only on document.
-		      return 'document';
-		   }
-
-		   /* Optional function, the conditions for hook to be run. */
-		   getConditions( args ) {
-		      return ! args.model.elements;
-		   }
-
-		   /*
-		    * The actual hook logic.
-		    */
-		   apply( args, containers ) {
-		      const { structure = false, options = {} } = args;
-
-		      if ( ! Array.isArray( containers ) ) {
-		         containers = [ containers ];
-		      }
-
-		      let { columns = 1 } = args;
-
-		      if ( args.model.isInner && 1 === columns ) {
-		         columns = DEFAULT_INNER_SECTION_COLUMNS;
-		      }
-
-		      Helper.createSectionColumns( containers, columns, options, structure );
-		   }
-		}
+        ```javascript
+        // Example of hook after the command runs.
+        class CustomHook extends $e.modules.HookBase.After {
+            getCommand() {
+                // Command to hook.
+                return 'custom-component/example';
+            }
+        
+            getId() {
+                // Unique id for the hook.
+                return 'custom-component-example-hook';
+            }
+        
+            /*
+             * Recommended function, used for optimization, if the container type is known in advance,
+             * you can pass it here.
+             */
+            // bindContainerType() {
+            // If `args.container.type` is always the same for the hook return it:
+            // return 'container_type';
+            // }
+        
+            /* Optional function, the conditions for hook to be run. */
+            getConditions( args ) {
+                return 'value' === args.property;
+            }
+        
+            /*
+             * The actual hook logic.
+             */
+            apply( args, containers ) {
+                console.log( 'My hook custom logic', 'args: ', args, 'containers: ', containers );
+            }
+        }
+        
+        // Add new hook to `$e.hooks`;
+        const myHook = new CustomHook();
+        
+        // Output new hook.
+        console.log( myHook );
+        
+        // Output all hooks after.
+        console.log( $e.hooks.getAll().after );
+        
+        // Test the hook
+        result = $e.run( 'custom-component/example', {
+            property: 'value', // The conditions for the hook to be run.
+        } );
+        
+        // Output command run result.
+        console.log( 'e-hooks-eg-1-result:', result );
 		```
 
    * **registerDependency**:
