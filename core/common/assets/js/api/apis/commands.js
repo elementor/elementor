@@ -82,6 +82,10 @@ export default class Commands extends elementorModules.Module {
 		return this.current;
 	}
 
+	getCurrentFirst() {
+		return Object.values( this.current )[ 0 ];
+	}
+
 	getCurrentArgs( container = '' ) {
 		if ( container ) {
 			if ( ! this.currentArgs[ container ] ) {
