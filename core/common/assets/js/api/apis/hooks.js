@@ -85,18 +85,6 @@ export default class Hooks extends Callbacks {
 	}
 
 	/**
-	 * Function runDependency().
-	 *
-	 * Run the hook as dependency.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 */
-	runDependency( command, args ) {
-		this.run( 'dependency', command, args );
-	}
-
-	/**
 	 * Function runAfter().
 	 *
 	 * Run the hook as after.
@@ -107,6 +95,18 @@ export default class Hooks extends Callbacks {
 	 */
 	runAfter( command, args, result ) {
 		this.run( 'after', command, args, result );
+	}
+
+	/**
+	 * Function runDependency().
+	 *
+	 * Run the hook as dependency.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runDependency( command, args ) {
+		this.run( 'dependency', command, args );
 	}
 }
 

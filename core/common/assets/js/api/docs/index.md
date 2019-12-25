@@ -95,12 +95,15 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
 *  **Parent**: [`{Callbacks}`](#Callbacks)
 *  **Register Methods**:
 
-	| Name                   | Access                          | Params                      |  Returns              | Description                                               | Breakable |
-	|------------------------|---------------------------------|-----------------------------|-----------------------|-----------------------------------------------------------|-----------|
-	| **registerAfter**      | `$e.hooks.registerAfter()`      | `{CallableBase}` *instance* | `{Object}` *callback* | Register a hook that being fired after the command runs.  | false
-	| **registerDependency** | `$e.hooks.registerDependency()` | `{CallableBase}` *instance* | `{Object}` *callback* | Register a hook that being fired before the command runs. | true
+	| Name                   | Access                          | Params                                                   |  Returns              | Description                                              
+	|------------------------|---------------------------------|----------------------------------------------------------|-----------------------|-----------------------------------------------------------
+	| **registerAfter**      | `$e.hooks.registerAfter()`      | `{CallableBase}` *instance*                              | `{Object}` *callback* | Register a hook that being fired after the command runs.  
+	| **registerDependency** | `$e.hooks.registerDependency()` | `{CallableBase}` *instance*                              | `{Object}` *callback* | Register a hook that being fired before the command runs.
+	| **runAfter**           | `$e.hooks.runAfter()`           | `{string}` *command*, `{Object}` *args*, *result*        |                       | Runs hook after.
+	| **runAfter**           | `$e.hooks.runDependency()`      | `{string}` *command*, `{Object}` *args*                  |                       | Runs hook dependency.
 
 	> **Note:** Please look at class parent: `{Callbacks}` for all the methods.
+ 
   * ***Important***: All hooks should be created by extending [`{( HookAfter | HookDependency )}`](#HookAfter-HookDependency) located at:
     * `core/common/assets/js/api/modules/hook-base/after.js`
     * `core/common/assets/js/api/modules/hook-base/dependency.js`
@@ -162,7 +165,8 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
         console.log( 'e-hooks-eg-1-result:', result );
 		```
 
-    * Register hook **dependency** that applies before the command runs:
+    * Register hook **dependency** that applies before the command runs
+    * **Note**: Dependency is breakable hook.
 		```javascript
 		// Example of hook that blooks column creation, if it reach maximum columns count.
 		class SectionColumnsLimit extends $e.modules.HookBase.Dependency {
@@ -178,10 +182,10 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
 		      return 'section';
 		   }
 
-		   /* NOTE: This is a dependncy hook and its breakable, when apply returns false */
+		   /* NOTE: This is a Dependency hook and its breakable, when apply returns false */
 		   apply( args ) {
 		      const { containers = [ args.container ] } = args;
-
+  
 		      // If one of the targets have maximum columns reached break the command.
 		      return ! containers.some( ( /**Container*/ container ) => {
 		         return container.view.isCollectionFilled();
