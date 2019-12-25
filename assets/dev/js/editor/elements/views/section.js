@@ -13,8 +13,7 @@ const SectionView = BaseElementView.extend( {
 
 	addSectionView: null,
 
-	_checkIsFull: function() {
-		// TODO: should be part of $e.events.
+	toggleSectionIsFull: function() {
 		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
 	},
 
@@ -238,7 +237,7 @@ const SectionView = BaseElementView.extend( {
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		this._checkIsFull();
+		this.toggleSectionIsFull();
 	},
 
 	onAddButtonClick: function() {

@@ -22,7 +22,7 @@ export class DeleteSectionIsFull extends EventAfter {
 
 		containers.forEach( ( /* Container */ container ) => {
 			if ( 'column' === container.model.get( 'elType' ) ) {
-				container.parent.view._checkIsFull();
+				container.parent.view.toggleSectionIsFull();
 			}
 		} );
 	}

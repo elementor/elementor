@@ -22,7 +22,7 @@ export class CreateSectionIsFull extends EventAfter {
 
 		containers.forEach( ( /* Container */ container ) => {
 			if ( 'section' === container.model.get( 'elType' ) ) {
-				container.view._checkIsFull();
+				container.view.toggleSectionIsFull();
 			}
 		} );
 	}
