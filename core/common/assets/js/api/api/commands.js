@@ -1,7 +1,11 @@
-/**
- * TODO: Full JSDOC.
- */
 export default class Commands extends elementorModules.Module {
+	/**
+	 * Function constructor().
+	 *
+	 * Create `$e.commands` API.
+	 *
+	 * @param {{}} args
+	 */
 	constructor( ...args ) {
 		super( ...args );
 
@@ -12,12 +16,23 @@ export default class Commands extends elementorModules.Module {
 		this.components = {};
 	}
 
+	/**
+	 * Function getAll().
+	 *
+	 * Receive all loaded commands.
+	 *
+	 * @returns {string[]}
+	 */
 	getAll() {
 		return Object.keys( this.commands ).sort();
 	}
 
 	/**
-	 * @param {(BaseComponent|string)} component
+	 * Function register().
+	 *
+	 * Register new command.
+	 *
+	 * @param {BaseComponent|string} component
 	 * @param {string} command
 	 * @param {function()} callback
 	 *
@@ -58,9 +73,13 @@ export default class Commands extends elementorModules.Module {
 	}
 
 	/**
+	 * Function getComponent().
+	 *
+	 * Receive Component of the command.
+	 *
 	 * @param {string} command
 	 *
-	 * @returns {BaseComponent)
+	 * @returns {BaseComponent}
 	 */
 	getComponent( command ) {
 		const namespace = this.components[ command ];
@@ -68,6 +87,15 @@ export default class Commands extends elementorModules.Module {
 		return $e.components.get( namespace );
 	}
 
+	/**
+	 * Function is().
+	 *
+	 * Checks if current running command is the same parameter command.
+	 *
+	 * @param {string} command
+	 *
+	 * @returns {boolean}
+	 */
 	is( command ) {
 		const component = this.getComponent( command );
 
@@ -78,10 +106,28 @@ export default class Commands extends elementorModules.Module {
 		return command === this.current[ component.getRootContainer() ];
 	}
 
+	/**
+	 * Function isCurrentFirstTrace().
+	 *
+	 * Checks if parameter command is the first command in trace that currently running.
+	 *
+	 * @param {string} command
+	 *
+	 * @returns {boolean}
+	 */
 	isCurrentFirstTrace( command ) {
 		return command === this.getCurrentFirstTrace();
 	}
 
+	/**
+	 * Function getCurrent().
+	 *
+	 * Receive currently running components and its commands.
+	 *
+	 * @param {string} container
+	 *
+	 * @returns {{}|boolean|*}
+	 */
 	getCurrent( container = '' ) {
 		if ( container ) {
 			if ( ! this.current[ container ] ) {
@@ -94,10 +140,15 @@ export default class Commands extends elementorModules.Module {
 		return this.current;
 	}
 
-	getCurrentFirst() {
-		return Object.values( this.current )[ 0 ];
-	}
-
+	/**
+	 * Function getCurrentArgs().
+	 *
+	 * Receive currently running command args.
+	 *
+	 * @param {string} container
+	 *
+	 * @returns {{}|boolean|*}
+	 */
 	getCurrentArgs( container = '' ) {
 		if ( container ) {
 			if ( ! this.currentArgs[ container ] ) {
@@ -110,10 +161,36 @@ export default class Commands extends elementorModules.Module {
 		return this.currentArgs;
 	}
 
+	/**
+	 * Function getCurrentFirst().
+	 *
+	 * Receive first command that currently running.
+	 *
+	 * @returns {string}
+	 */
+	getCurrentFirst() {
+		return Object.values( this.current )[ 0 ];
+	}
+
+	/**
+	 * Function getCurrentFirstTrace().
+	 *
+	 * Receive first command in trace that currently running
+	 *
+	 * @returns {{}}
+	 */
 	getCurrentFirstTrace() {
 		return this.currentTrace[ 0 ];
 	}
 
+	/**
+	 * Function beforeRun().
+	 *
+	 * @param {string} command
+	 * @param {} args
+	 *
+	 * @returns {boolean} dependency result
+	 */
 	beforeRun( command, args = {} ) {
 		if ( ! this.commands[ command ] ) {
 			this.error( `\`${ command }\` not found.` );
@@ -124,6 +201,16 @@ export default class Commands extends elementorModules.Module {
 		return this.getComponent( command ).dependency( command, args );
 	}
 
+	/**
+	 * Function run().
+	 *
+	 * Runs a command.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 *
+	 * @returns {boolean|*} results
+	 */
 	run( command, args = {} ) {
 		if ( ! this.beforeRun( command, args ) ) {
 			return false;
@@ -158,11 +245,29 @@ export default class Commands extends elementorModules.Module {
 		return results;
 	}
 
-	// It's separated in order to allow override.
+	/**
+	 * Function runShortcut().
+	 *
+	 * Run shortcut.
+	 *
+	 * It's separated in order to allow override.
+	 *
+	 * @param {string} command
+	 * @param {*} event
+	 *
+	 * @returns {boolean|*}
+	 */
 	runShortcut( command, event ) {
 		return this.run( command, event );
 	}
 
+	/**
+	 * Function afterRun().
+	 *
+	 * Method fired before the command runs.
+	 *
+	 * @param {string} command
+	 */
 	afterRun( command ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
@@ -173,6 +278,15 @@ export default class Commands extends elementorModules.Module {
 		delete this.currentArgs[ container ];
 	}
 
+	/**
+	 * Function error().
+	 *
+	 * Throws error.
+	 *
+	 * @throw {Error}
+	 *
+	 * @param {string} message
+	 */
 	error( message ) {
 		throw Error( `Commands: ${ message }` );
 	}
