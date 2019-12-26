@@ -32,6 +32,8 @@ The full list of commands, including custom & 3rd commands, is available via: `$
 *  **Examples**:
     ```javascript
      // Example create and register new command.
+     // Important: Available to run in the console does not depends on anything else.
+
      class ExampleCommand extends $e.modules.CommandBase {
         apply( args ) {
             // Output command args to console.

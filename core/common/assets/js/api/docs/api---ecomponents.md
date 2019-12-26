@@ -24,7 +24,9 @@ The components are extensible so a 3rd party plugin can add some routes, command
 
 * **Examples**:
     ```javascript
-     // Example create and register new component.
+     // Example create and register new component..
+     // Important: Available to run in the console does not depends on anything else``.
+
      class ExampleCommand extends $e.modules.CommandBase {
         apply( args ) {
             // Output command args to console.
