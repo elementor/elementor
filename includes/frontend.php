@@ -1138,9 +1138,10 @@ class Frontend extends App {
 
 		if ( is_singular() ) {
 			$post = get_post();
+
 			$settings['post'] = [
 				'id' => $post->ID,
-				'title' => $post->post_title,
+				'title' => wp_get_document_title(),
 				'excerpt' => $post->post_excerpt,
 				'featuredImage' => get_the_post_thumbnail_url(),
 			];
@@ -1148,7 +1149,7 @@ class Frontend extends App {
 			$settings['post'] = [
 				'id' => 0,
 				'title' => wp_get_document_title(),
-				'excerpt' => '',
+				'excerpt' => get_the_archive_description(),
 			];
 		}
 
