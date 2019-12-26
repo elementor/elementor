@@ -9,6 +9,8 @@ The full list of commands, including custom & 3rd commands, is available via: `$
 
 *  **Parent**: `elementorModules.Module`
 
+* **Available commands:** for further information about **all** the commands, please visit [`{$e.commands.getAll()}`](method---ecommands-get-all.md)**method**.
+
 *  **Methods**:
 
     | Method                               | Params                                                                                | Returns                            | Description                                                                         |
@@ -26,6 +28,10 @@ The full list of commands, including custom & 3rd commands, is available via: `$
     | `$e.commands.runShortcut()`          | `{string}` *command*, *event*                                                         | `{}` *results*                     | Run shortcut.
     | `$e.commands.afterRun()`             |                                                                                       |                                    | Function fired after the command runs.
     | `$e.commands.error()`                | `{string}` *message*                                                                  |                                    | Throws error.
-    > **Note:** further information about **all** the commands [`{$e.commands.getAll()}`](method---ecommands-get-all.md)**method**.
 
+*  **Examples**:
+    ```javascript
+    ```
+   
+TODO: Add explaining of creating new command + link to CommandBase doc.
 ### [Back](index.md) 
