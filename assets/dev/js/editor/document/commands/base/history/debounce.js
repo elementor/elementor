@@ -71,7 +71,7 @@ export default class Debounce extends History {
 		CommandBase.prototype.onCatchApply.call( this, e );
 
 		// Rollback history on failure.
-		if ( e instanceof elementorModules.common.HookBreak && this.history ) {
+		if ( e instanceof $e.modules.HookBreak && this.history ) {
 			if ( this.isDebounceRequired ) {
 				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
 				this.constructor.debounce( () => {

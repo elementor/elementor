@@ -126,7 +126,7 @@ export default class CommandBase extends ArgsObject {
 		} catch ( e ) {
 			this.onCatchApply( e );
 
-			if ( e instanceof elementorModules.common.HookBreak ) {
+			if ( e instanceof $e.modules.HookBreak ) {
 				return false;
 			}
 		}
@@ -202,7 +202,7 @@ export default class CommandBase extends ArgsObject {
 			$e.devTools.log.error( e );
 		}
 
-		if ( ! ( e instanceof elementorModules.common.HookBreak ) ) {
+		if ( ! ( e instanceof $e.modules.HookBreak ) ) {
 			// eslint-disable-next-line no-console
 			console.error( e );
 		}

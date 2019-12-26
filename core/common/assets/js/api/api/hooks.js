@@ -19,7 +19,7 @@ export default class Hooks extends Callbacks {
 				if ( ! callback.callback( args ) ) {
 					this.depth[ event ][ callback.id ]--;
 
-					throw new elementorModules.common.HookBreak;
+					throw new $e.modules.HookBreak;
 				}
 			}
 			break;
