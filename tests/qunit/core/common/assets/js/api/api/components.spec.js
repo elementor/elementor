@@ -1,4 +1,4 @@
-import CommonHelper from './helper';
+import CommonHelper from '../../../../helper';
 import BaseComponent from 'elementor-api/modules/component';
 import BaseComponentModal from 'elementor-api/modules/component-modal';
 

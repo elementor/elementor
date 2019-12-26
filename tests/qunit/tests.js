@@ -35,18 +35,18 @@ elementor.config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core
 	'<div id="wp-elementorwpeditor-editor-container" class="wp-editor-container"><div id="qt_elementorwpeditor_toolbar" class="quicktags-toolbar"></div><textarea class="elementor-wp-editor wp-editor-area" style="height: 250px" autocomplete="off" cols="40" name="elementorwpeditor" id="elementorwpeditor">%%EDITORCONTENT%%</textarea></div>\n' +
 	'</div>\n';
 
-require( './core/common/assets/js/api/apis/components.spec' );
 require( './core/common/assets/js/api/modules/callbacks.spec.js' );
+require( './core/common/assets/js/api/modules/command-base.spec.js' )
+
+require( './core/common/assets/js/api/api/components.spec' );
 
 require( './core/editor/container/container.spec' );
 
-require( './core/editor/document/commands/base/base.spec' );
 require( './core/editor/document/commands/base/history.spec' );
 
 require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
 
 require( './core/editor/document/component.spec' );
-
 require( './core/editor/document/elements/component.spec' );
 require( './core/editor/document/repeater/component.spec' );
 require( './core/editor/document/dynamic/component.spec' );

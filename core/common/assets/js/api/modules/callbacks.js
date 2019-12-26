@@ -158,7 +158,7 @@ export default class Callbacks extends elementorModules.Module {
 	 */
 	checkInstance( instance ) {
 		if ( instance.getType() !== this.getType() ) {
-			throw new Error( `invalid instance, please use: 'elementor-document/callback/base/base'. ` );
+			throw new Error( `invalid instance, please use: 'elementor-api/modules/callable-base'. ` );
 		}
 	}
 

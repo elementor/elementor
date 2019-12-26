@@ -2,7 +2,7 @@ import Callbacks from 'elementor-api/modules/callbacks';
 import CallableBase from 'elementor-api/modules/callable-base';
 
 jQuery( () => {
-	QUnit.module( 'File: common/assets/js/components/base/callbacks.js', () => {
+	QUnit.module( 'File: core/common/assets/js/api/modules/callbacks.js', () => {
 		QUnit.module( 'Callbacks', () => {
 			QUnit.test( 'checkId()', ( assert ) => {
 				const random = Math.random(),

@@ -1,5 +1,5 @@
 import ElementsHelper from '../../elements/helper';
-import CommonHelper from '../../../../common/assets/js/api/apis/helper';
+import CommonHelper from '../../../../common/helper';
 
 export const Copy = () => {
 	QUnit.test( 'Copy', ( assert ) => {

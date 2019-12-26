@@ -1,8 +1,8 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 jQuery( () => {
-	QUnit.module( 'File: editor/document/dynamic/commands/base/base', () => {
-		QUnit.module( 'Base', () => {
+	QUnit.module( 'File: core/common/assets/js/api/modules/command-base.js', () => {
+		QUnit.module( 'CommandBase', () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
 					() => {
@@ -71,8 +71,12 @@ jQuery( () => {
 							throw new Error( random );
 						};
 
+						const origDevTools = $e.devTools;
+
+						// Use `$e.devTools` as a hack.
 						$e.devTools = {
 							log: { error: ( e ) => {
+									$e.devTools = origDevTools;
 									throw e;
 								} },
 						};
