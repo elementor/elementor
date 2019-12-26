@@ -12,7 +12,7 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
 	| `$e.hooks.runAfter()`           | `{string}` *command*, `{object}` *args*, *result*        |                       | Runs hook after.
 	| `$e.hooks.runDependency()`      | `{string}` *command*, `{object}` *args*                  |                       | Runs hook dependency.
 
-	> **Note:** Please look at class parent: `{Callbacks}` for all the methods.
+	> **Note:** Please look at parent: `{Callbacks}` for all the methods.
  
   * ***Important***: All hooks should be created by extending [`{( HookAfter | HookDependency )}`](#HookAfter-HookDependency) located at:
     * `core/common/assets/js/api/modules/hook-base/after.js`

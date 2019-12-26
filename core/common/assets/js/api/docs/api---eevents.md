@@ -12,7 +12,7 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
     | `$e.events.runAfter()`       | `{string}` *command*, `{object}` *args*, *result*        |                        | Runs event after.
     | `$e.events.runBefore()`      | `{string}` *command*, `{object}` *args*                  |                        | Runs before dependency.
 
-	> **Note:** Please look at class parent: `{Callbacks}` for all the methods.
+	> **Note:** Please look at parent: `{Callbacks}` for all the methods.
  
   * ***Important***: All hooks should be created by extending [`{( EventAfter | EventBefore )}`](#EventAfter-EventBefore) located at:
     * `core/common/assets/js/api/modules/event-base/after.js`
