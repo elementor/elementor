@@ -186,4 +186,4 @@ Called after apply() failed.
 | --- | --- |
 | e | <code>Error</code> | 
 
-### [Back](api---ecommands.md) 
+### [Back to index](readme.md) 
