@@ -21,6 +21,8 @@ export default class Commands extends elementorModules.Module {
 	 *
 	 * Receive all loaded commands.
 	 *
+	 * @notice List of command available [here](method---ecommands-get-all.md)
+	 *
 	 * @returns {string[]}
 	 */
 	getAll() {

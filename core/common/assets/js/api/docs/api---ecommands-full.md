@@ -67,6 +67,7 @@ Function getAll().
 Receive all loaded commands.
 
 **Kind**: global function  
+**Notice**: List of command available [here](method---ecommands-get-all.md)  
 <a name="register"></a>
 
 ## register(component, command, callback) ⇒ <code>Commands</code>
