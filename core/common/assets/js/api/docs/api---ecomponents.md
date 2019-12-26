@@ -60,7 +60,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
      
      // Output command run result.
      console.log( 'e-components-eg-1-result: ', result );
-
+    
     ```
   
 ### [Back](readme.md) 

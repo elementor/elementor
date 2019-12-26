@@ -24,6 +24,8 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
    * Register hook **_after_** command runs:
         ```javascript
         // Example of hook after the command runs.
+        // Important: Available to run in the console but depends on $e.components example#1.
+        
         class CustomHook extends $e.modules.HookBase.After {
             getCommand() {
                 // Command to hook.
@@ -73,7 +75,7 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
         
         // Output command run result.
         console.log( 'e-hooks-eg-1-result:', result );
-		```
+        ```
 
     * Register hook **dependency** that applies before the command runs
     * **Note**: Dependency is breakable hook.

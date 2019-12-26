@@ -19,43 +19,45 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
     * `core/common/assets/js/api/modules/event-base/dependency.js`
  * **Examples**:
    * Built in events:  *`assets/dev/js/editor/document/callback/events`*
-   * Register event that runs **_after_** command runs
+   * Register event that runs **_after_** command runs:
 
-		```javascript
+        ```javascript
         // Example of event after the command runs and change ( CSS Class ) of all div elements.
+        // Important: Available to run in the console but depends on $e.components example#1.
+        
         class CustomEvent extends $e.modules.EventBase.After {
-            getCommand() {
-                // Command to listen.
-                return 'custom-component/example';
-            }
+           getCommand() {
+               // Command to listen.
+               return 'custom-component/example';
+           }
         
-            getId() {
-                // Unique id for the event.
-                return 'custom-component-example-event';
-            }
+           getId() {
+               // Unique id for the event.
+               return 'custom-component-example-event';
+           }
         
-            getConditions( args ) {
-                // Conditions for the event to be applied.
-                if ( args.toggleClass ) {
-                    return true;
-                }
+           getConditions( args ) {
+               // Conditions for the event to be applied.
+               if ( args.toggleClass ) {
+                   return true;
+               }
         
-                return false;
-            }
+               return false;
+           }
         
-            /*
-             * The actual event logic.
-             */
-            apply( args, result ) {
-                console.log( 'My event custom logic', 'args: ', args, 'result: ', result );
+           /*
+            * The actual event logic.
+            */
+           apply( args, result ) {
+               console.log( 'My event custom logic', 'args: ', args, 'result: ', result );
         
-                // Add 'custom-component' class for all div elements.
-                jQuery.find( 'div' ).forEach( ( $div ) => {
-                    $div = jQuery( $div );
+               // Add 'custom-component' class for all div elements.
+               jQuery.find( 'div' ).forEach( ( $div ) => {
+                   $div = jQuery( $div );
         
-                    $div.addClass( 'custom-component' );
-                } );
-            }
+                   $div.addClass( 'custom-component' );
+               } );
+           }
         }
         
         // Add new event to `$e.events`;
@@ -69,44 +71,44 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
         
         // Test the event.
         result = $e.run( 'custom-component/example', {
-            toggleClass: true,
+           toggleClass: true,
         } );
         
         // Output command run result.
         console.log( 'e-events-eg-1-result:', result );
-		```
+        ```
 
    * Register event that runs **_before_** command runs
-		```javascript
-		// Example of event that toggle the section HTML class.
-        export class CreateSectionIsFull extends $e.modules.EventBase.Before {
-            getCommand() {
-                return 'document/elements/create';
-            }
-        
-            getId() {
-                return 'create-section-is-full';
-            }
-        
-            getConditions( args ) {
-                const { containers = [ args.container ] } = args;
-        
-                return containers.some( ( /* Container */ container ) =>
-                    'section' === container.model.get( 'elType' )
-                );
-            }
-        
-            apply( args ) {
-                const { containers = [ args.container ] } = args;
-        
-                containers.forEach( ( /* Container */ container ) => {
-                    if ( 'section' === container.model.get( 'elType' ) ) {
-                        container.view.toggleSectionIsFull();
-                    }
-                } );
-            }
+    ```javascript
+    // Example of event that toggle the section HTML class.
+    export class CreateSectionIsFull extends $e.modules.EventBase.Before {
+        getCommand() {
+            return 'document/elements/create';
         }
-		```
+    
+        getId() {
+            return 'create-section-is-full';
+        }
+    
+        getConditions( args ) {
+            const { containers = [ args.container ] } = args;
+    
+            return containers.some( ( /* Container */ container ) =>
+                'section' === container.model.get( 'elType' )
+            );
+        }
+    
+        apply( args ) {
+            const { containers = [ args.container ] } = args;
+    
+            containers.forEach( ( /* Container */ container ) => {
+                if ( 'section' === container.model.get( 'elType' ) ) {
+                    container.view.toggleSectionIsFull();
+                }
+            } );
+        }
+    }
+    ```
 > **Note:** further information about [`{CallableBase}`](#CallableBase)**class**.
   
 ### [Back](readme.md) 
