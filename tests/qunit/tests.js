@@ -36,7 +36,7 @@ elementor.config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core
 	'</div>\n';
 
 require( './core/common/assets/js/api/modules/callbacks.spec.js' );
-require( './core/common/assets/js/api/modules/command-base.spec.js' )
+require( './core/common/assets/js/api/modules/command-base.spec.js' );
 
 require( './core/common/assets/js/api/api/components.spec' );
 
