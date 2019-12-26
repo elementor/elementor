@@ -12,6 +12,9 @@ import HookDependency from './modules/hook-base/dependency';
 import EventBase from './modules/event-base/base';
 import EventAfter from './modules/event-base/after';
 import EventBefore from './modules/event-base/before';
+import Component from './modules/component';
+import ComponentModal from './modules/component-modal';
+import HookBreak from './modules/hook-break';
 
 export default class API {
 	/**
@@ -30,6 +33,11 @@ export default class API {
 
 		this.modules = {
 			CommandBase: CommandsBase,
+
+			Component: Component,
+			ComponentModal: ComponentModal,
+
+			HookBreak: HookBreak,
 
 			HookBase: {
 				Base: HookBase, // TODO: consider remove.

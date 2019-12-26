@@ -5,9 +5,9 @@ import ComponentModal from './api/modules/component-modal';
 import HookBreak from './api/modules/hook-break';
 
 elementorModules.common = {
-	Component: Component, // TODO: move to `$e.modules.Component`.
-	ComponentModal: ComponentModal, // TODO: move to `$e.modules.ComponentModal`.
-	HookBreak: HookBreak, // TODO: move to `$e.modules.HookBreak`.
+	Component: Component, // TODO: remove use `$e.modules.Component`.
+	ComponentModal: ComponentModal, // TODO: remove use `$e.modules.ComponentModal`.
+	HookBreak: HookBreak, // TODO: remove use `$e.modules.HookBreak`.
 	views: {
 		modal: {
 			Layout: ModalLayout,

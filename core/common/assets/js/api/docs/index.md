@@ -62,7 +62,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
         }
      }
      
-     class CustomComponent extends elementorModules.common.Component {
+     class CustomComponent extends $e.modules.Component {
         getNamespace() {
             return 'custom-component';
         }

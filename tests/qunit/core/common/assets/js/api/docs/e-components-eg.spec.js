@@ -11,7 +11,7 @@ class ExampleCommand extends $e.modules.CommandBase {
 	}
 }
 
-class CustomComponent extends elementorModules.common.Component {
+class CustomComponent extends $e.modules.Component {
 	getNamespace() {
 		return 'custom-component';
 	}
