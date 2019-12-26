@@ -39,13 +39,13 @@ The components are extensible so a 3rd party plugin can add some routes, command
 
 	| Method                       | Parameters                     | Returns                                       | Description
 	|------------------------------|--------------------------------|-----------------------------------------------|------------------------------|
-	| `$e.components.getAll()`     |                                | `{Array.<String>}`                            | Receive all components.
+	| `$e.components.getAll()`     |                                | `{array.<string>}`                            | Receive all components.
 	| `$e.components.register()`   | `{BaseComponent}` *component*  | `{BaseComponent}` *component*                 | Register a component.
-	| `$e.components.get()`        | `{String}` *id*                | `{BaseComponent}` *component*                 | Get component instance by id.
+	| `$e.components.get()`        | `{string}` *id*                | `{BaseComponent}` *component*                 | Get component instance by id.
 	| `$e.components.getActive()`  |                                | `{Object.<BaseComponent>}` *activeComponents* | Get active components.
-	| `$e.components.activate()`   | `{String}` *namespace*         |                                               | Activate component.
-	| `$e.components.inactivate()` | `{String}` *namespace*         |                                               | Deactivate component.
-	| `$e.components.isActive()`   | `{String}` *namespace*         | `{Boolean}` *isActive*                        | Is component active.
+	| `$e.components.activate()`   | `{string}` *namespace*         |                                               | Activate component.
+	| `$e.components.inactivate()` | `{string}` *namespace*         |                                               | Deactivate component.
+	| `$e.components.isActive()`   | `{string}` *namespace*         | `{boolean}` *isActive*                        | Is component active.
 
 * **Examples**:
     ```javascript
@@ -97,10 +97,10 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
 
 	| Method                          | Params                                                   |  Returns              | Description                                              
 	|---------------------------------|----------------------------------------------------------|-----------------------|-----------------------------------------------------------
-	| `$e.hooks.registerAfter()`      | `{CallableBase}` *instance*                              | `{Object}` *callback* | Register a hook that being fired after the command runs.  
-	| `$e.hooks.registerDependency()` | `{CallableBase}` *instance*                              | `{Object}` *callback* | Register a hook that being fired before the command runs.
-	| `$e.hooks.runAfter()`           | `{string}` *command*, `{Object}` *args*, *result*        |                       | Runs hook after.
-	| `$e.hooks.runDependency()`      | `{string}` *command*, `{Object}` *args*                  |                       | Runs hook dependency.
+	| `$e.hooks.registerAfter()`      | `{CallableBase}` *instance*                              | `{object}` *callback* | Register a hook that being fired after the command runs.  
+	| `$e.hooks.registerDependency()` | `{CallableBase}` *instance*                              | `{object}` *callback* | Register a hook that being fired before the command runs.
+	| `$e.hooks.runAfter()`           | `{string}` *command*, `{object}` *args*, *result*        |                       | Runs hook after.
+	| `$e.hooks.runDependency()`      | `{string}` *command*, `{object}` *args*                  |                       | Runs hook dependency.
 
 	> **Note:** Please look at class parent: `{Callbacks}` for all the methods.
  
@@ -204,10 +204,10 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
 
     | Access                       | Params                                                   | Returns                | Description
     |------------------------------|----------------------------------------------------------|------------------------|----------------------------------------------------------------|
-    | `$e.events.registerAfter()`  | `{CallableBase}` *instance*                              | `{Object}` *callback*  | Register a event that being fired after the command runs.
-    | `$e.events.registerBefore()` | `{CallableBase}` *instance*                              | `{Object}` *callback*  | Register a event that being fired before the command runs.
-    | `$e.events.runAfter()`       | `{string}` *command*, `{Object}` *args*, *result*        |                        | Runs event after.
-    | `$e.events.runBefore()`      | `{string}` *command*, `{Object}` *args*                  |                        | Runs before dependency.
+    | `$e.events.registerAfter()`  | `{CallableBase}` *instance*                              | `{object}` *callback*  | Register a event that being fired after the command runs.
+    | `$e.events.registerBefore()` | `{CallableBase}` *instance*                              | `{object}` *callback*  | Register a event that being fired before the command runs.
+    | `$e.events.runAfter()`       | `{string}` *command*, `{object}` *args*, *result*        |                        | Runs event after.
+    | `$e.events.runBefore()`      | `{string}` *command*, `{object}` *args*                  |                        | Runs before dependency.
 
 	> **Note:** Please look at class parent: `{Callbacks}` for all the methods.
  
@@ -311,7 +311,7 @@ The new Commands API (since 2.7.0), provides a simple and convenient way to run 
 
 The full list of commands, including custom & 3rd commands, is available via: `$e.commands.getAll();`
 
-*  **Description**: `$e.commands` component is a manager of `$e.commands`, allow you to create custom **commands** that runs by `$e.run()`.
+*  **Description**: `$e.commands` API is a manager of `$e.commands`, allow you to create custom **commands** that runs by `$e.run()`, each components have his own unique commands, and all the commands are managed by this **API**.
 
 *  **Location**: */core/common/assets/js/components/commands.js*
 
@@ -319,15 +319,21 @@ The full list of commands, including custom & 3rd commands, is available via: `$
 
 *  **Methods**:
 
-    | Access                               | Params                                  | Returns | Description                                                                         |
-    |--------------------------------------|-----------------------------------------|---------|-------------------------------------------------------------------------------------|
-    | `$e.commands.getAll()`               | `{String}` *command*                    |         | Receive all loaded commands.
-    | `$e.commands.register()`             |                                         |         |
-    | `$e.commands.getCurrent()`           |                                         |         | Receive currently running command.
-    | `$e.commands.getCurrentArgs()`       |                                         |         | Receive currently running command args.
-    | `$e.commands.getCurrentFirstTrace()` |                                         |         | Receive first command in trace that currently running.
-    | `$e.commands.isCurrentFirstTrace()`  |                                         |         | Checks if *passed parameter* is the first command in trace that currently running.
-    | `$e.commands.run()`                  | `{string}` *command*, `{Object}` *args* |         | Runs a command
+    | Method                               | Params                                                                                | Returns                            | Description                                                                         |
+    |--------------------------------------|---------------------------------------------------------------------------------------|------------------------------------|-------------------------------------------------------------------------------------|
+    | `$e.commands.getAll()`               |                                                                                       |                                    | Receive all loaded commands.
+    | `$e.commands.register()`             | `{(BaseComponent⎮string)}` *component*, `{string}` command, `{function()}` *callback* | `{Commands}` *$e.commands*         | Register new command.
+    | `$e.commands.getComponent()`         | `{string}` *command*                                                                  | `{BaseComponent)`                  | Receive Component of the command.
+    | `$e.commands.is()`                   | `{string}` *command*                                                                  | `{boolean}`                        | Checks if current running command is the same passed command.
+    | `$e.commands.isCurrentFirstTrace()`  | `{string}` *command*                                                                  | `{boolean}`                        | Checks if passed command is the first command in trace that currently running.  
+    | `$e.commands.getCurrent()`           |                                                                                       | `{object}`                         | Receive currently running components and its commands.
+    | `$e.commands.getCurrentArgs()`       |                                                                                       | `{object}`                         | Receive currently running command args.
+    | `$e.commands.getCurrentFirstTrace()` |                                                                                       | `{string}`                         | Receive first command in trace that currently running.
+    | `$e.commands.run()`                  | `{string}` *command*, `{object}` *args*                                               | `{}` *results*                     | Runs a command.
+    | `$e.commands.beforeRun()`            | `{string}` *command*, `{object}` *args*                                               |                                    | Function fired before the command runs.
+    | `$e.commands.runShortcut()`          | `{string}` *command*, *event*                                                         | `{}` *results*                     | Run shortcut.
+    | `$e.commands.afterRun()`             |                                                                                       |                                    | Function fired after the command runs.
+    | `$e.commands.error()`                | `{string}` *message*                                                                  |                                    | Throws error.
 
 
 # Quickstart

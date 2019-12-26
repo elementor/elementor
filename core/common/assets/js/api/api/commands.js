@@ -16,6 +16,13 @@ export default class Commands extends elementorModules.Module {
 		return Object.keys( this.commands ).sort();
 	}
 
+	/**
+	 * @param {(BaseComponent|string)} component
+	 * @param {string} command
+	 * @param {function()} callback
+	 *
+	 * @returns {Commands}
+	 */
 	register( component, command, callback ) {
 		let namespace;
 		if ( 'string' === typeof component ) {
@@ -50,6 +57,11 @@ export default class Commands extends elementorModules.Module {
 		return this;
 	}
 
+	/**
+	 * @param {string} command
+	 *
+	 * @returns {BaseComponent)
+	 */
 	getComponent( command ) {
 		const namespace = this.components[ command ];
 
