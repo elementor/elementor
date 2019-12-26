@@ -70,6 +70,6 @@ The full list of commands, including custom & 3rd commands, is available via: `$
      // Output command run result.
      console.log( 'e-commands-eg-1-result: ', result );
     ```
-   
-TODO: Add explaining of creating new command + link to CommandBase doc.
+> **Note:** further information about [`{$e.modules.CommandBase}`](module---emodules-commandbase.md)**class**.
+
 ### [Back](readme.md) 
