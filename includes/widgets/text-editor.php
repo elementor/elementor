@@ -262,9 +262,6 @@ class Widget_Text_Editor extends Widget_Base {
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-drop-cap-view-',
-				'condition' => [
-					'drop_cap' => 'yes',
-				],
 			]
 		);
 
@@ -280,9 +277,6 @@ class Widget_Text_Editor extends Widget_Base {
 				'scheme' => [
 					'type' => Schemes\Color::get_type(),
 					'value' => Schemes\Color::COLOR_1,
-				],
-				'condition' => [
-					'drop_cap' => 'yes',
 				],
 			]
 		);
@@ -384,9 +378,6 @@ class Widget_Text_Editor extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-drop-cap-letter',
 				'exclude' => [
 					'letter_spacing',
-				],
-				'condition' => [
-					'drop_cap' => 'yes',
 				],
 			]
 		);
