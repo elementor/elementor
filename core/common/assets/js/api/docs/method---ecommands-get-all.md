@@ -1,4 +1,4 @@
-## API -- `$e.commands` -- [`$e.commands.getAll()`](api---ecommands-full.md#getAll)
+## API -- `$e.commands` -- [`$e.commands.getAll()`](api/api/ecommands-full.md#getAll)
 *  **Description**: `$e.commands.getAll()` returns all available commands
 
 *  **Returns**: `{array.<string>}` Array of commands.
@@ -15,4 +15,4 @@
 
 > **Note:** Each command has it own component, to find the commands please navigate by components.
 
-### [Back](api---ecommands.md) 
+### [Back](api/api/ecommands.md) 

@@ -25,7 +25,7 @@
 * **Examples**:
     Assuming we have a widget with dynamic tag for *title*, and want to disable it.
     
-    ![Example1](images/edocument-dynamic/1.jpg)
+    ![edocument-dynamic-1](images/edocument-dynamic/1.jpg)
 
     ```javascript
       // Get the view by id, then get the container.
@@ -71,7 +71,7 @@
     ```
     Will enable dynamic tag: 'post-date' for heading title:
     
-    ![Example3](images/edocument-dynamic/3.jpg)
+    ![edocument-dynamic-3](images/edocument-dynamic/3.jpg)
 
 
 ## Settings _Command_ -- `$e.run.get('document/dynamic/settings')`
@@ -90,7 +90,7 @@
     Example change dynamic settings for title with dynamic tag *post-date*.
     Assuming you have a heading with 'post-date' dynamic tag for title.
     
-    ![Example3](images/edocument-dynamic/3.jpg)
+    ![edocument-dynamic-3](images/edocument-dynamic/3.jpg)
     
     And you want to change the format to human readable format. use next example:
     
@@ -109,7 +109,7 @@
     ```
     The result will be:
     
-    ![Example4](images/edocument-dynamic/4.jpg)
+    ![edocument-dynamic-4](images/edocument-dynamic/4.jpg)
 
 
 
