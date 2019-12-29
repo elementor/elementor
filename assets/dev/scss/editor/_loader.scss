@@ -1,9 +1,6 @@
 .elementor-loader-wrapper {
-	position: absolute;
+	@include absolute-center;
 	width: 300px;
-	left: 50%;
-	top: 50%;
-	transform: translateX(-50%) translateY(-50%);
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;

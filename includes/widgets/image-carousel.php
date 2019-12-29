@@ -699,7 +699,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				$link_key = 'link_' . $index;
 
 				$this->add_render_attribute( $link_key, [
-					'href' => $link['url'],
 					'data-elementor-open-lightbox' => $settings['open_lightbox'],
 					'data-elementor-lightbox-slideshow' => $this->get_id(),
 					'data-elementor-lightbox-index' => $index,
@@ -711,13 +710,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					] );
 				}
 
-				if ( ! empty( $link['is_external'] ) ) {
-					$this->add_render_attribute( $link_key, 'target', '_blank' );
-				}
-
-				if ( ! empty( $link['nofollow'] ) ) {
-					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
-				}
+				$this->add_link_attributes( $link_key, $link );
 
 				$link_tag = '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 			}
