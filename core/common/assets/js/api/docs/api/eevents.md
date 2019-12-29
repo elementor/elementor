@@ -109,6 +109,6 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
         }
     }
     ```
-> **Note:** further information about [`{CallableBase}`](../module---internal-callable-base.md)**class**.
+> **Note:** further information about [`{CallableBase}`](../module/module---internal-callable-base.md)**class**.
   
 ### [Back](../readme.md) 

@@ -9,7 +9,7 @@ The full list of commands, including custom & 3rd commands, is available via: `$
 
 *  **Parent**: `elementorModules.Module`
 
-* **Available commands:** for further information about **all** the commands, please visit [`{$e.commands.getAll()}`](../method---ecommands-get-all.md)**method**.
+* **Available commands:** for further information about **all** the commands, please visit [`{$e.commands.getAll()}`](../method/method---ecommands-get-all.md)**method**.
 
 *  **Methods**:
 
@@ -71,6 +71,6 @@ The full list of commands, including custom & 3rd commands, is available via: `$
      // Output command run result.
      console.log( 'e-commands-eg-1-result: ', result );
     ```
-> **Note:** further information about [`{$e.modules.CommandBase}`](../module---emodules-commandbase.md)**class**.
+> **Note:** further information about [`{$e.modules.CommandBase}`](../module/module---emodules-commandbase.md)**class**.
 
 ### [Back](../readme.md) 
