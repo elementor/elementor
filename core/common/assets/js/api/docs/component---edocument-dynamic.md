@@ -6,7 +6,7 @@
 ## All **Document/Dynamic** Commands
 | Command               | Access                                  | Description         
 |-----------------------|-----------------------------------------|-----------------------------------
-| [Disable](#disable)   | `$e.run('document/dynamic/disable')`    | Disable dynamic. 
+| [Disable](#disable-command----erungetdocumentdynamicdisable)    | `$e.run('document/dynamic/disable')`    | Disable dynamic. 
 | [Enable](#enable)     | `$e.run('document/dynamic/enable')`     | Enable dynamic.
 | [Settings](#settings) | `$e.run('document/dynamic/settings')`   | Change dynamic.
 
@@ -39,3 +39,46 @@
       } );
     ```
     Will disable dynamic tag for title.
+
+### Enable _Command_ -- `$e.run.get('document/dynamic/enable')`
+*  **Name**: Enable.
+*  **Description**: Enable dynamic settings.
+*  **Returns**: `{void}`
+*  **Arguments**: 
+
+    |               |                           |                   |   |
+    |---            |---                        |---                |---|
+    | `{Container}` | _container OR containers_ | **required**      | 
+    | `{object}`    | _settings_                | **required**      | Dynamic settings to enable
+
+* **Examples**:
+    Enable dynamic title for heading, assuming you have simple widget like this:
+    ![Example2](images/edocument-dynamic/2.jpg)
+    ```javascript
+    // Get heading container.
+    eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer();
+    // Enable dynamic tag `post-date` for title.
+    $e.run( 'document/dynamic/enable', {
+          container: eWidget,
+          settings: {
+              title: '[elementor-tag id="47a0ad1" name="post-date" settings="%7B%7D"]',
+          },
+    } );
+    ```
+    Will enable dynamic tag: 'post-date' for heading title:
+    
+    ![Example3](images/edocument-dynamic/3.jpg)
+
+
+### Settings _Command_ -- `$e.run.get('document/dynamic/settings')`
+*  **Name**: Settings.
+*  **Description**: Change dynamic settings.
+*  **Returns**: `{void}`
+*  **Arguments**: 
+
+    |               |                           |                   |   |
+    |---            |---                        |---                |---|
+    | `{Container}` | _container OR containers_ | **required**      | 
+    | `{object}`    | _settings_                | **required**      | Dynamic settings to enable
+
+* **Examples**:
