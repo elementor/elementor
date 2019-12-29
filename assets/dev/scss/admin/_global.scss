@@ -13,9 +13,7 @@
 
 		// Menu Go Pro
 		a[href="admin.php?page=go_elementor_pro"] {
-			color:  lighten($editor-accent, 10%);
 			font-weight: 700;
-			text-shadow: 1px 1px 1px #000;
 
 			&:hover {
 				color: lighten($editor-accent, 15%);
@@ -40,6 +38,20 @@
 	}
 }
 
+body.admin-color-fresh {
+
+	#adminmenu {
+
+		#toplevel_page_elementor {
+
+			// Menu Go Pro
+			a[href="admin.php?page=go_elementor_pro"] {
+				color: lighten($editor-accent, 10%);
+			}
+		}
+	}
+}
+
 .elementor-plugins-gopro {
 	color: $editor-accent;
 	text-shadow: 1px 1px 1px #eee;
@@ -59,7 +71,6 @@
 		font-size: 1em;
 	}
 }
-
 
 // Switcher Editor
 #elementor-switch-mode {

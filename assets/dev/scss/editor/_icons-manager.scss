@@ -88,7 +88,7 @@
 	&__tab {
 
 		&__wrapper {
-			overflow: scroll;
+			overflow: auto;
 			margin: 25px -15px 0;
 			padding: 0 15px 15px;
 		}
@@ -148,9 +148,7 @@
 		}
 
 		&__link {
-			color: $editor-accent;
-			padding-top: 20px;
-			font-size: 15px;
+			margin-top: 20px;
 		}
 	}
 }
