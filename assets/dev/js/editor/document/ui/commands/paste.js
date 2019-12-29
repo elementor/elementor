@@ -31,7 +31,9 @@ export class Paste extends Base {
 			return false;
 		}
 
-		return this.target.some( ( /* Container */ container ) => {
+		const result = [];
+
+		this.target.forEach( ( /* Container */ container ) => {
 			const { options = {} } = args,
 				pasteOptions = DocumentUtils.getPasteOptions( this.storage[ 0 ], container );
 
@@ -57,11 +59,17 @@ export class Paste extends Base {
 					commandArgs.at = options.at;
 				}
 
-				return $e.run( 'document/elements/paste', commandArgs );
+				result.push( $e.run( 'document/elements/paste', commandArgs ) );
 			}
-
-			return false;
 		} );
+
+		if ( 0 === result.length ) {
+			return false;
+		} else if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 }
 

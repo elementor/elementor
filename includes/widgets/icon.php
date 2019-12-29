@@ -406,16 +406,9 @@ class Widget_Icon extends Widget_Base {
 		$icon_tag = 'div';
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'icon-wrapper', 'href', $settings['link']['url'] );
+			$this->add_link_attributes( 'icon-wrapper', $settings['link'] );
+
 			$icon_tag = 'a';
-
-			if ( ! empty( $settings['link']['is_external'] ) ) {
-				$this->add_render_attribute( 'icon-wrapper', 'target', '_blank' );
-			}
-
-			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'icon-wrapper', 'rel', 'nofollow' );
-			}
 		}
 
 		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
@@ -449,10 +442,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
