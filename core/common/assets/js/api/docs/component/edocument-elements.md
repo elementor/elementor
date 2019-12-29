@@ -49,12 +49,30 @@
 * **Examples**:
     Create Heading widget 
     ```javascript
-      // Create section.
-      const eSection = $e.run( 'document/elements/create', {
-          container: elementor.getPreviewContainer(),
-          columns: 1,
-          model: { elType: 'section' },
-      } );  
+    // Create section.
+    const eSection = $e.run( 'document/elements/create', {
+      container: elementor.getPreviewContainer(),
+      columns: 1,
+      model: { elType: 'section' },
+    } );  
     ```
-    Result: ![Example5](../images/edocument-elements/1.jpg)
-    
+    Result: ![edocument-elements-1](../images/edocument-elements/1.jpg)
+    Now to create widget, we need column, here is two examples how to reach column:
+    ```javascript
+    const eColumn = eSection.view.children.findByIndex( 0 ).getContainer();
+    ```
+    OR
+    ```javascript
+    const eColumn = $e.utils.document.findViewById('9bb43ed').getContainer();
+    ```
+    Then let create heading widget at the column we reach above:
+    ```javascript
+    $e.run( 'document/elements/create', {
+        container: eColumn,
+        model: { 
+          elType: 'widget',
+          widgetType: 'heading',
+        },
+    } );
+    ```
+    Result: ![edocument-elements-2](../images/edocument-elements/2.jpg)

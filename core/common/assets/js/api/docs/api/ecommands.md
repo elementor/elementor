@@ -9,7 +9,7 @@ The full list of commands, including custom & 3rd commands, is available via: `$
 
 *  **Parent**: `elementorModules.Module`
 
-* **Available commands:** for further information about **all** the commands, please visit [`{$e.commands.getAll()}`](../method/method---ecommands-get-all.md)**method**.
+* **Available commands:** for further information about **all** the commands, please visit [`{$e.commands.getAll()}`](../method/ecommands-get-all.md)**method**.
 
 *  **Methods**:
 
