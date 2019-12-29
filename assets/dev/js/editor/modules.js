@@ -3,7 +3,6 @@ import Introduction from './utils/introduction';
 import ControlsStack from './views/controls-stack';
 import BaseSettings from './elements/models/base-settings';
 import Container from './container/container';
-import DocumentUtils from './document/utils/helpers';
 
 elementorModules.editor = {
 	elements: {
@@ -17,11 +16,6 @@ elementorModules.editor = {
 	},
 	views: {
 		ControlsStack: ControlsStack,
-	},
-
-	document: {
-
-		Utils: DocumentUtils,
 	},
 
 	Container: Container,
