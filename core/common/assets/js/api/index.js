@@ -15,6 +15,7 @@ import EventBefore from './modules/event-base/before';
 import Component from './modules/component';
 import ComponentModal from './modules/component-modal';
 import HookBreak from './modules/hook-break';
+import DocumentUtils from 'elementor-api/utils/document';
 
 export default class API {
 	/**
@@ -50,6 +51,10 @@ export default class API {
 				After: EventAfter,
 				Before: EventBefore,
 			},
+		};
+
+		this.utils = {
+			document: DocumentUtils,
 		};
 
 		window.$e = this;
