@@ -17,7 +17,7 @@
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
-    |               |                           |                   |   |
+    | Type          | Property                  | Requirement       | Description |
     |---            |---                        |---                |---|
     | `{Container}` | _container OR containers_ | **required**      | 
     | `{object}`    | _settings_                | **required**      | Dynamic settings to disable
@@ -46,7 +46,7 @@
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
-    |               |                           |                   |   |
+    | Type          | Property                  | Requirement       | Description |
     |---            |---                        |---                |---|
     | `{Container}` | _container OR containers_ | **required**      | 
     | `{object}`    | _settings_                | **required**      | Dynamic settings to enable
@@ -57,6 +57,7 @@
     ```javascript
     // Get heading container.
     eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer();
+    
     // Enable dynamic tag `post-date` for title.
     $e.run( 'document/dynamic/enable', {
           container: eWidget,
@@ -76,9 +77,33 @@
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
-    |               |                           |                   |   |
-    |---            |---                        |---                |---|
-    | `{Container}` | _container OR containers_ | **required**      | 
-    | `{object}`    | _settings_                | **required**      | Dynamic settings to enable
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{Container}` | _container OR containers_          | **required**      | 
+    | `{object}`    | _settings_                         | **required**      | Dynamic settings to enable
+    | `{object}`    | _options_ { debounce: `{boolean}`} | **optional**      | Use debounce? default: `true`
 
 * **Examples**:
+    Example change dynamic settings for title with dynamic tag *post-date*.
+    Assuming you have a heading with 'post-date' dynamic tag for title.
+    
+    ![Example3](images/edocument-dynamic/3.jpg)
+    
+    And you want to change the format to human readable format. use next example:
+    
+    ```javascript
+    // Get heading container.
+    eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer();
+    
+    // Change dynamic settings.
+    $e.run( 'document/dynamic/settings', {
+          container: eWidget,
+          settings: {
+              title: '[elementor-tag id="47a0ad1" name="post-date" settings="%7B%22format%22%3A%22human%22%7D"]',
+          },
+    } );
+    ```
+    The result will be:
+    
+    ![Example4](images/edocument-dynamic/4.jpg)
+
