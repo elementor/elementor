@@ -6,7 +6,7 @@
 ## All commands
 | Component Name                           | Access Component                 | Description         
 |------------------------------------------|--------------------------------- |-----------------------
-| [Document](../component/component---edocument.md)     | `$e.components.get('document')`  | Document manipulation. 
+| [Document](../component/edocument.md)     | `$e.components.get('document')`  | Document manipulation. 
 | [Finder](#component---efinder.md)        | `$e.components.get('finder')`    |    
 | [Library](#component---elibrary.md)      | `$e.components.get('library')`   |  
 | [Navigator](#component---enavigaitor.md) | `$e.components.get('navigitor')` |    

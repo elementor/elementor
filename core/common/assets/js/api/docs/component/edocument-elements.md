@@ -56,5 +56,5 @@
           model: { elType: 'section' },
       } );  
     ```
-    Result: ![Example5](edocument-elements/1.jpg)
+    Result: ![Example5](../images/edocument-elements/1.jpg)
     
