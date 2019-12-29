@@ -373,7 +373,7 @@ class Widget_Progress extends Widget_Base {
 		}
 
 		view.addRenderAttribute( 'title', {
-		'class': 'elementor-title'
+			'class': 'elementor-title'
 		} );
 
 		view.addInlineEditingAttributes( 'title' );
