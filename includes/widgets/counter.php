@@ -295,7 +295,7 @@ class Widget_Counter extends Widget_Base {
 	protected function content_template() {
 		?>
 		<# view.addRenderAttribute( 'counter-title', {
-		'class': 'elementor-counter-title'
+			'class': 'elementor-counter-title'
 		} );
 
 		view.addInlineEditingAttributes( 'counter-title' );
