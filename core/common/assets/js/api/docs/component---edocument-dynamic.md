@@ -7,7 +7,7 @@
 | Command               | Access                                  | Description         
 |-----------------------|-----------------------------------------|-----------------------------------------
 | [Disable](#disable-command----erungetdocumentdynamicdisable)    | `$e.run('document/dynamic/disable')`    | Disable dynamic. 
-| [Enable](#enable-command----erungetdocumentdynamicenable)       | `$e.run('document/dynamic/enable')`     | Enable dynamic.
+| [Enable](#enable-command----erungetdocumentdynamicenable)       | `$e.rtbhun('document/dynamic/enable')`     | Enable dynamic.
 | [Settings](#settings-command----erungetdocumentdynamicsettings) | `$e.run('document/dynamic/settings')`   | Change dynamic.
 
 
@@ -24,6 +24,7 @@
 
 * **Examples**:
     Assuming we have a widget with dynamic tag for *title*, and want to disable it.
+    
     ![Example1](images/edocument-dynamic/1.jpg)
 
     ```javascript
@@ -53,6 +54,7 @@
 
 * **Examples**:
     Enable dynamic title for heading, assuming you have simple widget like this:
+    
     ![Example2](images/edocument-dynamic/2.jpg)
     ```javascript
     // Get heading container.

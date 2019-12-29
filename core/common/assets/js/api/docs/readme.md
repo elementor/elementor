@@ -22,5 +22,13 @@
 | `$e.run()`   | `$e.commands.run()` | Run command.              |
 | `$e.route()` | `$e.routes.run()`   | Run route ( open route ). |
 
+# Legend
+![base-1](images/base/1.jpg)
+
+* Yellow `label`: _Section *Id*_.
+* Green `label`: _Column *Id*_.
+* Blue `label`: _Widget *Id*_.
+
 # Quickstart
     TODO
+
