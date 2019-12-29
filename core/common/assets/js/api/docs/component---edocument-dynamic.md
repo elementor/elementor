@@ -5,13 +5,13 @@
 
 ## All **Document/Dynamic** Commands
 | Command               | Access                                  | Description         
-|-----------------------|-----------------------------------------|-----------------------------------
+|-----------------------|-----------------------------------------|-----------------------------------------
 | [Disable](#disable-command----erungetdocumentdynamicdisable)    | `$e.run('document/dynamic/disable')`    | Disable dynamic. 
-| [Enable](#enable)     | `$e.run('document/dynamic/enable')`     | Enable dynamic.
-| [Settings](#settings) | `$e.run('document/dynamic/settings')`   | Change dynamic.
+| [Enable](#enable-command----erungetdocumentdynamicenable)       | `$e.run('document/dynamic/enable')`     | Enable dynamic.
+| [Settings](#settings-command----erungetdocumentdynamicsettings) | `$e.run('document/dynamic/settings')`   | Change dynamic.
 
 
-### Disable _Command_ -- `$e.run.get('document/dynamic/disable')`
+## Disable _Command_ -- `$e.run.get('document/dynamic/disable')`
 *  **Name**: Disable.
 *  **Description**: Disable dynamic settings.
 *  **Returns**: `{void}`
@@ -20,7 +20,7 @@
     | Type          | Property                  | Requirement       | Description |
     |---            |---                        |---                |---|
     | `{Container}` | _container OR containers_ | **required**      | 
-    | `{object}`    | _settings_                | **required**      | Dynamic settings to disable
+    | `{object}`    | _settings_                | **required**      | Dynamic settings to disable <TODO EXPLAIN WHY>
 
 * **Examples**:
     Assuming we have a widget with dynamic tag for *title*, and want to disable it.
@@ -40,7 +40,7 @@
     ```
     Will disable dynamic tag for title.
 
-### Enable _Command_ -- `$e.run.get('document/dynamic/enable')`
+## Enable _Command_ -- `$e.run.get('document/dynamic/enable')`
 *  **Name**: Enable.
 *  **Description**: Enable dynamic settings.
 *  **Returns**: `{void}`
@@ -56,13 +56,14 @@
     ![Example2](images/edocument-dynamic/2.jpg)
     ```javascript
     // Get heading container.
-    eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer();
-    
+    const eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer(),
+      postDateTag = elementor.dynamicTags.tagDataToTagText( elementor.helpers.getUniqueID(), 'post-date', new Backbone.Model( {} ));
+  
     // Enable dynamic tag `post-date` for title.
     $e.run( 'document/dynamic/enable', {
           container: eWidget,
           settings: {
-              title: '[elementor-tag id="47a0ad1" name="post-date" settings="%7B%7D"]',
+              title: postDateTag,
           },
     } );
     ```
@@ -71,7 +72,7 @@
     ![Example3](images/edocument-dynamic/3.jpg)
 
 
-### Settings _Command_ -- `$e.run.get('document/dynamic/settings')`
+## Settings _Command_ -- `$e.run.get('document/dynamic/settings')`
 *  **Name**: Settings.
 *  **Description**: Change dynamic settings.
 *  **Returns**: `{void}`
@@ -93,13 +94,14 @@
     
     ```javascript
     // Get heading container.
-    eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer();
+    const eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer(),
+      postDateTag = elementor.dynamicTags.tagDataToTagText( elementor.helpers.getUniqueID(), 'post-date', new Backbone.Model( { format: 'human'} ));
     
     // Change dynamic settings.
     $e.run( 'document/dynamic/settings', {
           container: eWidget,
           settings: {
-              title: '[elementor-tag id="47a0ad1" name="post-date" settings="%7B%22format%22%3A%22human%22%7D"]',
+              title: postDateTag,
           },
     } );
     ```
