@@ -52,17 +52,30 @@
 
 			&-options {
 				padding-top: 10px;
+
+				.elementor-control-field-description {
+					margin-top: 2px;
+				}
 			}
 		}
-	}
 
-	.elementor-control-url-autocomplete-spinner {
-		display: none;
-		position: absolute;
-		width: 12px;
-		height: 12px;
-		top: 7px;
-		@include start(44px);
+		&-autocomplete-spinner {
+			display: none;
+			position: absolute;
+			width: 12px;
+			height: 12px;
+			top: 7px;
+			@include start(44px);
+		}
+
+		&__custom-attributes {
+			margin-top: 4px;
+
+			label {
+				width: 57%;
+				font-size: 0.9em;
+			}
+		}
 	}
 
 	.elementor-input {
