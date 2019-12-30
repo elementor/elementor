@@ -12,11 +12,11 @@
 | [Delete](#)                               | `$e.run('document/elements/delete')`               | Delete container. 
 | [Duplicate](#)                            | `$e.run('document/elements/duplicate')`            | Duplicate container. 
 | [Empty](#)                                | `$e.run('document/elements/empty')`                | Empty document. 
-| [Import](#)                               | `$e.run('document/elements/import')`               | Import. 
-| [Paste](#)                                | `$e.run('document/elements/paste')`                | Paste. 
-| [Paste-Style](#)                          | `$e.run('document/elements/paste-style')`          | Disable dynamic. 
-| [Reset-Style](#)                          | `$e.run('document/elements/reset-style')`          | Disable dynamic. 
-| [Settings](#)                             | `$e.run('document/elements/settings')`             | Disable dynamic. 
+| [Import](#)                               | `$e.run('document/elements/import')`               | Import to document. 
+| [Paste](#)                                | `$e.run('document/elements/paste')`                | Paste to container. 
+| [Paste-Style](#)                          | `$e.run('document/elements/paste-style')`          | Paste style to container. 
+| [Reset-Style](#)                          | `$e.run('document/elements/reset-style')`          | Reset style to container. 
+| [Settings](#)                             | `$e.run('document/elements/settings')`             | Change settings of container. 
 
 ## Copy _Command_ -- `$e.run('document/elements/copy')`
 *  **Name**: Copy.
@@ -259,5 +259,7 @@
       container: eWidget
     } );
     ```
-    Result:![widget-heading-pasted](../images/base/widget-heading-pasted.png)
+    Result:
+    
+    ![widget-heading-pasted](../images/base/widget-heading-pasted.png)
 
