@@ -57,7 +57,7 @@
 * **Examples**:
     Enable dynamic title for heading, assuming you have simple widget like this:
     
-    ![Example2](../images/edocument-dynamic/widget-heading.png)
+    ![widget-heading](../images/base/widget-heading.png)
     ```javascript
     // Get heading container.
     const eWidget = $e.utils.document.findViewById( '0b9da89' ).getContainer(),
