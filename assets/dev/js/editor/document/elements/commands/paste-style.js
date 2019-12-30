@@ -8,6 +8,7 @@ export class PasteStyle extends History {
 	validateControls( source, target ) {
 		let result = true;
 
+		// Cannot use `_.isEmpty()` does not pass paste style test.
 		if (
 			null === source ||
 			null === target ||

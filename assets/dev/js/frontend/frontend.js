@@ -4,6 +4,7 @@ import Storage from '../../../../core/common/assets/js/utils/storage';
 import environment from '../../../../core/common/assets/js/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
+import URLActions from './utils/url-actions';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
@@ -132,6 +133,7 @@ class Frontend extends elementorModules.ViewModule {
 			vimeo: new VimeoApiLoader(),
 			anchors: new AnchorsModule(),
 			lightbox: new LightboxModule(),
+			urlActions: new URLActions(),
 		};
 
 		// TODO: BC since 2.4.0
