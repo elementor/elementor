@@ -145,26 +145,34 @@
     | `{boolean}`   | force                              | **optional**      | default: `{false}`, if true will delete all elements without confirmation.
 
 
-## Import _Command_ -- `$e.run('document/elements/import')` TODO
+## Import _Command_ -- `$e.run('document/elements/import')`
 *  **Name**: Import.
 *  **Description**: Import elements to the document.
 *  **Returns**: `{void}`
-*  **Arguments**: TODO.
+*  **Arguments**:
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{boolean}`   | model                              | **f**      | default: `{false}`, if true will delete all elements without confirmation.
-    | `{boolean}`   | data                              | **f**      | default: `{false}`, if true will delete all elements without confirmation.
-    | `{object}`    | options                            | **optional**      | 
+    | Type                 | Property                             | Requirement       | Description |
+    |---                   |---                                   |---                |---|
+    | `{Backbone.Model}`   | model                                | **required**      | Template model.
+    | `{object}`           | data                                 | **required**      | Data.
+    | `{object}`           | options                              | **optional**      | 
 
+    *data:*
+    ```javascript
+    {
+       content: {array},           // The content of the template to import.
+       page_settings: {array},     // Custom page_settings to import ( only if options.withPageSettings = true ).
+    }
+    ```
     *options:*
     ```javascript
     {
+        at: {integer},                               // Position ( Automatically increased ).
         clone: {boolean},                            // Generate unique id for the model.
         trigger: {boolean},                          // TODO: Mati help.
         edit: {boolean},                             // Is turn edit panel for the new element.
         onBeforeAdd: {function()},                   // Run callback before add.
         onAfterAdd: {function( newModel, newView )}, // Run callback after add.
-        withPageSettings
+        withPageSettings: {boolean},                 // Apply data.page_settings to page_settings document.
     }
     ```
