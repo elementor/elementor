@@ -47,6 +47,7 @@ class Control_URL extends Control_Base_Multiple {
 			'url' => '',
 			'is_external' => '',
 			'nofollow' => '',
+			'custom_attributes' => '',
 		];
 	}
 
@@ -64,13 +65,15 @@ class Control_URL extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'show_external' => true,
 			'placeholder' => __( 'Paste URL or type', 'elementor' ),
 			'autocomplete' => true,
+			'options' => [ 'is_external', 'nofollow', 'custom_attributes' ],
 			'dynamic' => [
 				'categories' => [ TagsModule::URL_CATEGORY ],
 				'property' => 'url',
 			],
+			'custom_attributes_description' => __( 'Set custom attributes for the anchor element. Separate attribute keys from values 
+			using the | (pipe) character. Separate key-value pairs with a comma. Do not use spaces.', 'elementor' ),
 		];
 	}
 
@@ -86,14 +89,19 @@ class Control_URL extends Control_Base_Multiple {
 	 */
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
-
 		$more_input_control_uid = $this->get_control_uid( 'more-input' );
-
 		$is_external_control_uid = $this->get_control_uid( 'is_external' );
-
 		$nofollow_control_uid = $this->get_control_uid( 'nofollow' );
+		$custom_attributes_uid = $this->get_control_uid( 'custom_attributes' );
 		?>
-		<div class="elementor-control-field elementor-control-url-external-{{{ data.show_external ? 'show' : 'hide' }}}">
+		<#
+		let showOptions = false;
+
+		if ( data.options ) {
+			showOptions = true;
+		}
+		#>
+		<div class="elementor-control-field elementor-control-url-external-{{{ showOptions ? 'show' : 'hide' }}}">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<i class="elementor-control-url-autocomplete-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
@@ -113,6 +121,15 @@ class Control_URL extends Control_Base_Multiple {
 						<input id="<?php echo $nofollow_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="nofollow">
 						<label for="<?php echo $nofollow_control_uid; ?>"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
 					</div>
+					<div class="elementor-control-url-option elementor-control-url__custom-attributes check-wrapper">
+						<label for="<?php echo $custom_attributes_uid; ?>" style="width: 65%;"><?php echo __( 'Custom Attributes', 'elementor' ); ?></label>
+						<div class="elementor-control-input-wrapper">
+							<input id="<?php echo $custom_attributes_uid; ?>" type="text" placeholder="key|value,..." data-setting="custom_attributes">
+						</div>
+					</div>
+					<# if ( ( -1 !== data.options.indexOf( 'custom_attributes' ) ) && data.custom_attributes_description ) { #>
+					<div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>
+					<# } #>
 				</div>
 			</div>
 		</div>
