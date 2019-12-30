@@ -67,6 +67,7 @@
 
 	.elementor-lightbox-image {
 		max-height: 100%;
+		user-select: none;
 	}
 
 	.elementor-video-container {
@@ -163,10 +164,10 @@
 				color: #fff;
 			}
 		}
-	}
 
-	&__share-icon {
-		z-index: 5;
+		.elementor-icon-share {
+			z-index: 5;
+		}
 	}
 
 	&__share-menu {
