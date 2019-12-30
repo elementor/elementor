@@ -25,7 +25,9 @@
 * **Examples**:
     Assuming we have a widget with dynamic tag for *title*, and want to disable it.
     
-    ![edocument-dynamic-1](../images/edocument-dynamic/1.jpg)
+    |    |    |
+    |---:|:---|
+    | ![edit-heading-with-dynamic-title-date](../images/edocument-dynamic/edit-heading-with-dynamic-title-date.png) | ![widget-heading-with-dynamic-title-date](../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
 
     ```javascript
       // Get the view by id, then get the container.

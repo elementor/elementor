@@ -142,4 +142,29 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{boolean}`   | force                              | **optional**      | default: `{false}`, if true will delete all elements without confirm.
+    | `{boolean}`   | force                              | **optional**      | default: `{false}`, if true will delete all elements without confirmation.
+
+
+## Import _Command_ -- `$e.run('document/elements/import')` TODO
+*  **Name**: Import.
+*  **Description**: Import elements to the document.
+*  **Returns**: `{void}`
+*  **Arguments**: TODO.
+
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{boolean}`   | model                              | **f**      | default: `{false}`, if true will delete all elements without confirmation.
+    | `{boolean}`   | data                              | **f**      | default: `{false}`, if true will delete all elements without confirmation.
+    | `{object}`    | options                            | **optional**      | 
+
+    *options:*
+    ```javascript
+    {
+        clone: {boolean},                            // Generate unique id for the model.
+        trigger: {boolean},                          // TODO: Mati help.
+        edit: {boolean},                             // Is turn edit panel for the new element.
+        onBeforeAdd: {function()},                   // Run callback before add.
+        onAfterAdd: {function( newModel, newView )}, // Run callback after add.
+        withPageSettings
+    }
+    ```
