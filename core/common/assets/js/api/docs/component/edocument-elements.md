@@ -29,7 +29,7 @@
     | `{Container}` | _container OR containers_          | **required**      | 
     | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
 
-## Copy _Command_ -- `$e.run('document/elements/copy-all')`
+## CopyAll _Command_ -- `$e.run('document/elements/copy-all')`
 *  **Name**: Copy-All.
 *  **Description**: Copy all containers.
 *  **Returns**: `{void}`
@@ -176,3 +176,32 @@
         withPageSettings: {boolean},                 // Apply data.page_settings to page_settings document.
     }
     ```
+
+## Paste _Command_ -- `$e.run('document/elements/paste')`
+*  **Name**: Paste.
+*  **Description**: Paste to container.
+*  **Returns**: `{Container | Array.<Container>}` *Pasted container(s)*.
+*  **Arguments**: 
+
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{Container}` | _container OR containers_          | **required**      | 
+    | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+* **Examples**:
+    Copy widget and paste it into column.
+
+    ```javascript
+    const eColumn = $e.utils.document.findViewById('cb70e3c').getContainer(),
+        eWidget = $e.utils.document.findViewById('2e4b783').getContainer();
+    
+    $e.run('document/elements/copy', { 
+        container: eWidget
+    } );
+    
+    const pastedContainers = $e.run('document/elements/paste', { 
+        container: eColumn
+    } );
+    
+    console.log( pastedContainers );
+    ```
+    Result:![widget-heading-pasted](../images/base/widget-heading-pasted.png)
