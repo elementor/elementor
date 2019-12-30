@@ -24,10 +24,10 @@
 
 # Legend
 ![base-1](images/base/1.jpg)
+- ![#ffd29b](https://placehold.it/15/ffd29b/000000?text=+) label - `Section ID`
+- ![#93ff8b](https://placehold.it/15/93ff8b/000000?text=+) label - `Column ID`
+- ![#43f7ff](https://placehold.it/15/43f7ff/000000?text=+) label - `Widget ID`
 
-* Yellow `label`: _Section *Id*_.
-* Green `label`: _Column *Id*_.
-* Blue `label`: _Widget *Id*_.
 
 # Quickstart
     TODO
