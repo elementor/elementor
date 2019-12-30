@@ -11,7 +11,7 @@
 | [Settings](#settings-command----erungetdocumentdynamicsettings) | `$e.run('document/dynamic/settings')`   | Change dynamic.
 
 
-## Disable _Command_ -- `$e.run.get('document/dynamic/disable')`
+## Disable _Command_ -- `$e.run('document/dynamic/disable')`
 *  **Name**: Disable.
 *  **Description**: Disable dynamic settings.
 *  **Returns**: `{void}`
@@ -41,7 +41,7 @@
     ```
     Will disable dynamic tag for title.
 
-## Enable _Command_ -- `$e.run.get('document/dynamic/enable')`
+## Enable _Command_ -- `$e.run('document/dynamic/enable')`
 *  **Name**: Enable.
 *  **Description**: Enable dynamic settings.
 *  **Returns**: `{void}`
@@ -74,7 +74,7 @@
     ![edocument-dynamic-3](../images/edocument-dynamic/3.jpg)
 
 
-## Settings _Command_ -- `$e.run.get('document/dynamic/settings')`
+## Settings _Command_ -- `$e.run('document/dynamic/settings')`
 *  **Name**: Settings.
 *  **Description**: Change dynamic settings.
 *  **Returns**: `{void}`

@@ -18,7 +18,7 @@
 | [Reset-Style](#)                          | `$e.run('document/elements/reset-style')`          | Disable dynamic. 
 | [Settings](#)                             | `$e.run('document/elements/settings')`             | Disable dynamic. 
 
-## Copy _Command_ -- `$e.run.get('document/elements/copy')`
+## Copy _Command_ -- `$e.run('document/elements/copy')`
 *  **Name**: Copy.
 *  **Description**: Copy container.
 *  **Returns**: `{void}`
@@ -29,13 +29,13 @@
     | `{Container}` | _container OR containers_          | **required**      | 
     | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
 
-## Copy _Command_ -- `$e.run.get('document/elements/copy-all')`
+## Copy _Command_ -- `$e.run('document/elements/copy-all')`
 *  **Name**: Copy-All.
 *  **Description**: Copy all containers.
 *  **Returns**: `{void}`
 *  **Arguments**: None.
 
-## Create _Command_ -- `$e.run.get('document/elements/create')`
+## Create _Command_ -- `$e.run('document/elements/create')`
 *  **Name**: Create.
 *  **Description**: Create element from model.
 *  **Returns**: `{Container | Array.<Container>}` *Created container(s)*.
@@ -89,7 +89,7 @@
     ```
     Result: ![edocument-elements-2](../images/edocument-elements/2.jpg)
 
-## Create _Delete_ -- `$e.run.get('document/elements/delete')`
+## Create _Delete_ -- `$e.run('document/elements/delete')`
 *  **Name**: Delete.
 *  **Description**: Delete container.
 *  **Returns**: `{Container | Array.<Container>}` *Deleted container(s)*.
@@ -111,7 +111,7 @@
     ```
     result: section deleted and all children elements.
 
-## Duplicate _Command_ -- `$e.run.get('document/elements/duplicate')`
+## Duplicate _Command_ -- `$e.run('document/elements/duplicate')`
 *  **Name**: Duplicate.
 *  **Description**: Duplicate container.
 *  **Returns**: `{Container | Array.<Container>}` *Created container(s)*.
@@ -133,3 +133,13 @@
     ```
     Result: 
     ![edocument-elements-3](../images/edocument-elements/3.jpg)
+
+## Empty _Command_ -- `$e.run('document/elements/empty')`
+*  **Name**: Empty.
+*  **Description**: Delete all elements from the document.
+*  **Returns**: `{void}`
+*  **Arguments**: None.
+
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{boolean}`   | force                              | **optional**      | default: `{false}`, if true will delete all elements without confirm.
