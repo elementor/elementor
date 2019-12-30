@@ -94,14 +94,7 @@ class Control_URL extends Control_Base_Multiple {
 		$nofollow_control_uid = $this->get_control_uid( 'nofollow' );
 		$custom_attributes_uid = $this->get_control_uid( 'custom_attributes' );
 		?>
-		<#
-		let showOptions = false;
-
-		if ( data.options ) {
-			showOptions = true;
-		}
-		#>
-		<div class="elementor-control-field elementor-control-url-external-{{{ showOptions ? 'show' : 'hide' }}}">
+		<div class="elementor-control-field elementor-control-url-external-{{{ data.options ? 'show' : 'hide' }}}">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<i class="elementor-control-url-autocomplete-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
