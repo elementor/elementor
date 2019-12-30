@@ -15,7 +15,7 @@ export class SectionColumnsResetLayout extends HookAfter {
 
 	getConditions( args ) {
 		// On `document/elements/move` do not fire the hook!.
-		return 'document/elements/move' !== $e.commands.getCurrentFirstTrace();
+		return ! $e.commands.isCurrentFirstTrace( 'document/elements/move' );
 	}
 
 	/**
