@@ -7,10 +7,10 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
 
 	| Method                          | Params                                                   |  Returns              | Description                                              
 	|---------------------------------|----------------------------------------------------------|-----------------------|-----------------------------------------------------------
-	| `$e.hooks.registerAfter()`      | `{CallableBase}` *instance*                              | `{object}` *callback* | Register a hook that being fired after the command runs.  
-	| `$e.hooks.registerDependency()` | `{CallableBase}` *instance*                              | `{object}` *callback* | Register a hook that being fired before the command runs.
-	| `$e.hooks.runAfter()`           | `{string}` *command*, `{object}` *args*, *result*        |                       | Runs hook after.
-	| `$e.hooks.runDependency()`      | `{string}` *command*, `{object}` *args*                  |                       | Runs hook dependency.
+	| `$e.hooks.registerAfter()`      | `{CallableBase}` *instance*                              | `{Object}` *callback* | Register a hook that being fired after the command runs.  
+	| `$e.hooks.registerDependency()` | `{CallableBase}` *instance*                              | `{Object}` *callback* | Register a hook that being fired before the command runs.
+	| `$e.hooks.runAfter()`           | `{String}` *command*, `{Object}` *args*, *result*        |                       | Runs hook after.
+	| `$e.hooks.runDependency()`      | `{String}` *command*, `{Object}` *args*                  |                       | Runs hook dependency.
 
 	> **Note:** Please look at parent: `{Callbacks}` for all the methods.
  

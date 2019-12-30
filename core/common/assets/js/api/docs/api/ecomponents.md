@@ -16,11 +16,11 @@ The components are extensible so a 3rd party plugin can add some routes, command
 	|------------------------------|--------------------------------|-----------------------------------------------|------------------------------|
 	| `$e.components.getAll()`     |                                | `{array.<string>}`                            | Receive all components.
 	| `$e.components.register()`   | `{BaseComponent}` *component*  | `{BaseComponent}` *component*                 | Register a component.
-	| `$e.components.get()`        | `{string}` *id*                | `{BaseComponent}` *component*                 | Get component instance by id.
+	| `$e.components.get()`        | `{String}` *id*                | `{BaseComponent}` *component*                 | Get component instance by id.
 	| `$e.components.getActive()`  |                                | `{Object.<BaseComponent>}` *activeComponents* | Get active components.
-	| `$e.components.activate()`   | `{string}` *namespace*         |                                               | Activate component.
-	| `$e.components.inactivate()` | `{string}` *namespace*         |                                               | Deactivate component.
-	| `$e.components.isActive()`   | `{string}` *namespace*         | `{boolean}` *isActive*                        | Is component active.
+	| `$e.components.activate()`   | `{String}` *namespace*         |                                               | Activate component.
+	| `$e.components.inactivate()` | `{String}` *namespace*         |                                               | Deactivate component.
+	| `$e.components.isActive()`   | `{String}` *namespace*         | `{Boolean}` *isActive*                        | Is component active.
      > **Note:** to see all the components please. please visit [`{$e.commands.getAll()}`](../method/ecommands-get-all.md)**method**
 
 * **Examples**:

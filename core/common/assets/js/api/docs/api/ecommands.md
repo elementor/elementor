@@ -16,19 +16,19 @@ The full list of commands, including custom & 3rd commands, is available via: `$
     | Method                               | Params                                                                                | Returns                            | Description                                                                         |
     |--------------------------------------|---------------------------------------------------------------------------------------|------------------------------------|-------------------------------------------------------------------------------------|
     | `$e.commands.getAll()`               |                                                                                       |                                    | Receive all loaded commands.
-    | `$e.commands.register()`             | `{(BaseComponent⎮string)}` *component*, `{string}` command, `{function()}` *callback* | `{Commands}` *$e.commands*         | Register new command.
-    | `$e.commands.getComponent()`         | `{string}` *command*                                                                  | `{BaseComponent)`                  | Receive Component of the command.
-    | `$e.commands.is()`                   | `{string}` *command*                                                                  | `{boolean}`                        | Checks if current running command is the same parameter command.
-    | `$e.commands.isCurrentFirstTrace()`  | `{string}` *command*                                                                  | `{boolean}`                        | Checks if parameter command is the first command in trace that currently running.  
-    | `$e.commands.getCurrent()`           |                                                                                       | `{object}`                         | Receive currently running components and its commands.
-    | `$e.commands.getCurrentArgs()`       |                                                                                       | `{object}`                         | Receive currently running command args.
-    | `$e.commands.getCurrentFirst()`      |                                                                                       | `{string}`                         | Receive first command that currently running.
-    | `$e.commands.getCurrentFirstTrace()` |                                                                                       | `{object}`                         | Receive first command in trace that currently running.
-    | `$e.commands.beforeRun()`            | `{string}` *command*, `{object}` *args*                                               | `{boolean}` *dependency result*    | Method fired before the command runs.
-    | `$e.commands.run()`                  | `{string}` *command*, `{object}` *args*                                               | `{}` *results*                     | Runs a command.
-    | `$e.commands.runShortcut()`          | `{string}` *command*, *event*                                                         | `{}` *results*                     | Run shortcut.
+    | `$e.commands.register()`             | `{(BaseComponent⎮string)}` *component*, `{String}` command, `{function()}` *callback* | `{Commands}` *$e.commands*         | Register new command.
+    | `$e.commands.getComponent()`         | `{String}` *command*                                                                  | `{BaseComponent)`                  | Receive Component of the command.
+    | `$e.commands.is()`                   | `{String}` *command*                                                                  | `{Boolean}`                        | Checks if current running command is the same parameter command.
+    | `$e.commands.isCurrentFirstTrace()`  | `{String}` *command*                                                                  | `{Boolean}`                        | Checks if parameter command is the first command in trace that currently running.  
+    | `$e.commands.getCurrent()`           |                                                                                       | `{Object}`                         | Receive currently running components and its commands.
+    | `$e.commands.getCurrentArgs()`       |                                                                                       | `{Object}`                         | Receive currently running command args.
+    | `$e.commands.getCurrentFirst()`      |                                                                                       | `{String}`                         | Receive first command that currently running.
+    | `$e.commands.getCurrentFirstTrace()` |                                                                                       | `{Object}`                         | Receive first command in trace that currently running.
+    | `$e.commands.beforeRun()`            | `{String}` *command*, `{Object}` *args*                                               | `{Boolean}` *dependency result*    | Method fired before the command runs.
+    | `$e.commands.run()`                  | `{String}` *command*, `{Object}` *args*                                               | `{}` *results*                     | Runs a command.
+    | `$e.commands.runShortcut()`          | `{String}` *command*, *event*                                                         | `{}` *results*                     | Run shortcut.
     | `$e.commands.afterRun()`             |                                                                                       |                                    | Method fired after the command runs.
-    | `$e.commands.error()`                | `{string}` *message*                                                                  |                                    | Throws error.
+    | `$e.commands.error()`                | `{String}` *message*                                                                  |                                    | Throws error.
 
 *  **Examples**:
     ```javascript

@@ -27,7 +27,7 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+    | `{String}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
 
 ## CopyAll _Command_ -- `$e.run('document/elements/copy-all')`
 *  **Name**: Copy-All.
@@ -43,16 +43,16 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{object}`    | model                              | **required**      | 
-    | `{object}`    | options                            | **optional**      | 
+    | `{Object}`    | model                              | **required**      | 
+    | `{Object}`    | options                            | **optional**      | 
 
     *options:*
     ```javascript
     {
-        at: {integer},                               // Position.
-        clone: {boolean},                            // Generate unique id for the model.
-        trigger: {boolean},                          // TODO: Mati help.
-        edit: {boolean},                             // Is turn edit panel for the new element.
+        at: {Number},                                // Position.
+        clone: {Boolean},                            // Generate unique id for the model.
+        trigger: {Boolean},                          // TODO: Mati help.
+        edit: {Boolean},                             // Is turn edit panel for the new element.
         onBeforeAdd: {function()},                   // Run callback before add.
         onAfterAdd: {function( newModel, newView )}, // Run callback after add.
     }
@@ -142,7 +142,7 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{boolean}`   | force                              | **optional**      | default: `{false}`, if true will delete all elements without confirmation.
+    | `{Boolean}`   | force                              | **optional**      | default: `{false}`, if true will delete all elements without confirmation.
 
 
 ## Import _Command_ -- `$e.run('document/elements/import')`
@@ -154,26 +154,26 @@
     | Type                 | Property                             | Requirement       | Description |
     |---                   |---                                   |---                |---|
     | `{Backbone.Model}`   | model                                | **required**      | Template model.
-    | `{object}`           | data                                 | **required**      | Data.
-    | `{object}`           | options                              | **optional**      | 
+    | `{Object}`           | data                                 | **required**      | Data.
+    | `{Object}`           | options                              | **optional**      | 
 
     *data:*
     ```javascript
     {
-       content: {array},           // The content of the template to import.
-       page_settings: {array},     // Custom page_settings to import ( only if options.withPageSettings = true ).
+       content: {Array},           // The content of the template to import.
+       page_settings: {Array},     // Custom page_settings to import ( only if options.withPageSettings = true ).
     }
     ```
     *options:*
     ```javascript
     {
-        at: {integer},                               // Position ( Automatically increased ).
-        clone: {boolean},                            // Generate unique id for the model.
-        trigger: {boolean},                          // TODO: Mati help.
-        edit: {boolean},                             // Is turn edit panel for the new element.
+        at: {Number},                                // Position ( Automatically increased ).
+        clone: {Boolean},                            // Generate unique id for the model.
+        trigger: {Boolean},                          // TODO: Mati help.
+        edit: {Boolean},                             // Is turn edit panel for the new element.
         onBeforeAdd: {function()},                   // Run callback before add.
         onAfterAdd: {function( newModel, newView )}, // Run callback after add.
-        withPageSettings: {boolean},                 // Apply data.page_settings to page_settings document.
+        withPageSettings: {Boolean},                 // Apply data.page_settings to page_settings document.
     }
     ```
 
@@ -186,7 +186,7 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+    | `{String}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
 * **Examples**:
     Copy widget and paste it into column.
 
@@ -215,7 +215,7 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+    | `{String}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
 * **Examples**:
     Copy style from one widget and paste it into another.
     Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the speical one, to restore him to default.
@@ -246,7 +246,7 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+    | `{String}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
 * **Examples**:
     Reset style of widget.
     Assuming we have a widget with special style.

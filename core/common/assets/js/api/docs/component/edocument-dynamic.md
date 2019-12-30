@@ -20,7 +20,7 @@
     | Type          | Property                  | Requirement       | Description |
     |---            |---                        |---                |---|
     | `{Container}` | _container OR containers_ | **required**      | 
-    | `{object}`    | _settings_                | **required**      | Dynamic settings to disable <TODO EXPLAIN WHY>
+    | `{Object}`    | _settings_                | **required**      | Dynamic settings to disable <TODO EXPLAIN WHY>
 
 * **Examples**:
     Assuming we have a widget with dynamic tag for *title*, and want to disable it.
@@ -52,7 +52,7 @@
     | Type          | Property                  | Requirement       | Description |
     |---            |---                        |---                |---|
     | `{Container}` | _container OR containers_ | **required**      | 
-    | `{object}`    | _settings_                | **required**      | Dynamic settings to enable
+    | `{Object}`    | _settings_                | **required**      | Dynamic settings to enable
 
 * **Examples**:
     Enable dynamic title for heading, assuming you have simple widget like this:
@@ -85,8 +85,8 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{object}`    | _settings_                         | **required**      | Dynamic settings to enable
-    | `{object}`    | _options_ { debounce: `{boolean}`} | **optional**      | Use debounce? default: `true`
+    | `{Object}`    | _settings_                         | **required**      | Dynamic settings to enable
+    | `{Object}`    | _options_ { debounce: `{Boolean}`} | **optional**      | Use debounce? default: `true`
 
 * **Examples**:
     Example change dynamic settings for title with dynamic tag *post-date*.

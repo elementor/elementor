@@ -7,10 +7,10 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
 
     | Access                       | Params                                                   | Returns                | Description
     |------------------------------|----------------------------------------------------------|------------------------|----------------------------------------------------------------|
-    | `$e.events.registerAfter()`  | `{CallableBase}` *instance*                              | `{object}` *callback*  | Register a event that being fired after the command runs.
-    | `$e.events.registerBefore()` | `{CallableBase}` *instance*                              | `{object}` *callback*  | Register a event that being fired before the command runs.
-    | `$e.events.runAfter()`       | `{string}` *command*, `{object}` *args*, *result*        |                        | Runs event after.
-    | `$e.events.runBefore()`      | `{string}` *command*, `{object}` *args*                  |                        | Runs before dependency.
+    | `$e.events.registerAfter()`  | `{CallableBase}` *instance*                              | `{Object}` *callback*  | Register a event that being fired after the command runs.
+    | `$e.events.registerBefore()` | `{CallableBase}` *instance*                              | `{Object}` *callback*  | Register a event that being fired before the command runs.
+    | `$e.events.runAfter()`       | `{String}` *command*, `{Object}` *args*, *result*        |                        | Runs event after.
+    | `$e.events.runBefore()`      | `{String}` *command*, `{Object}` *args*                  |                        | Runs before dependency.
 
 	> **Note:** Please look at parent: `{Callbacks}` for all the methods.
  
