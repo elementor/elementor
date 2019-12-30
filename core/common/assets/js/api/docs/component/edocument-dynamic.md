@@ -31,7 +31,7 @@
 
     ```javascript
       // Get the view by id, then get the container.
-      const eWidget = $e.utils.document.findViewById( '04c56e0' ).getContainer();
+      const eWidget = $e.utils.document.findViewById( '0b9da89' ).getContainer();
   
       // Disable dynamic tag 'date'.
       $e.run( 'document/dynamic/disable', {
@@ -57,10 +57,10 @@
 * **Examples**:
     Enable dynamic title for heading, assuming you have simple widget like this:
     
-    ![Example2](../images/edocument-dynamic/2.jpg)
+    ![Example2](../images/edocument-dynamic/widget-heading.png)
     ```javascript
     // Get heading container.
-    const eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer(),
+    const eWidget = $e.utils.document.findViewById( '0b9da89' ).getContainer(),
       postDateTag = elementor.dynamicTags.tagDataToTagText( elementor.helpers.getUniqueID(), 'post-date', new Backbone.Model( {} ));
   
     // Enable dynamic tag `post-date` for title.
@@ -73,7 +73,7 @@
     ```
     Will enable dynamic tag: 'post-date' for heading title:
     
-    ![edocument-dynamic-3](../images/edocument-dynamic/3.jpg)
+    ![widget-heading-with-dynamic-title-date](../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
 
 
 ## Settings _Command_ -- `$e.run('document/dynamic/settings')`
