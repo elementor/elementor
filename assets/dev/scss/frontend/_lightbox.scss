@@ -247,46 +247,45 @@
 			}
 		}
 	}
-}
 
-.zoom-mode {
-	.elementor-slideshow {
-		&__header, &__footer {
-			background-color: rgba(0, 0, 0, 0.5);
+	&--zoom-mode {
+		.elementor-slideshow {
+			&__header, &__footer {
+				background-color: rgba(0, 0, 0, 0.5);
+			}
+		}
+
+		.elementor-swiper-button {
+			&-prev, &-next {
+				opacity: 0;
+				pointer-events: none;
+			}
 		}
 	}
 
-	.elementor-swiper-button {
-		&-prev, &-next {
-			opacity: 0;
-			pointer-events: none;
-		}
-	}
-}
+	&--share-mode {
+		.elementor-slideshow {
+			&__share-menu {
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				opacity: 1;
+				cursor: default;
 
-.share-mode {
-	.elementor-slideshow {
-		&__share-menu {
-			top: 0;
-			left: 0;
-			width: 100vw;
-			height: 100vh;
-			opacity: 1;
-			cursor: default;
+				ul {
+					transform: scale(1);
 
-			ul {
-				transform: scale(1);
-
-				&, & li {
-					opacity: 1;
+					&, & li {
+						opacity: 1;
+					}
 				}
 			}
 		}
 	}
 }
 
-
-.jicon-fullscreen {
+.elementor-icon-fullscreen {
 	$shape-size: .3em;
 	display: inline-flex;
 	width: 1em;
@@ -346,7 +345,7 @@
 	}
 }
 
-.jicon-share {
+.elementor-icon-share {
 	span {
 		display: block;
 		position: relative;
