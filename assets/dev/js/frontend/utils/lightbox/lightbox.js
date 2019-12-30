@@ -36,16 +36,15 @@ module.exports = elementorModules.ViewModule.extend( {
 					title: 'elementor-slideshow__title',
 					description: 'elementor-slideshow__description',
 					counter: 'elementor-slideshow__counter',
-					icon: 'elementor-slideshow__header-icon',
-					iconExpand: 'jicon-fullscreen',
+					iconExpand: 'elementor-icon-fullscreen',
 					iconShrink: 'shrink',
 					iconZoomIn: 'eicon-zoom-in-bold',
 					iconZoomOut: 'eicon-zoom-out-bold',
-					iconShare: 'elementor-slideshow__share-icon jicon-share',
+					iconShare: 'elementor-icon-share',
 					shareMenu: 'elementor-slideshow__share-menu',
 					hideUiVisibility: 'elementor-slideshow--ui-hidden',
-					shareMode: 'share-mode',
-					zoomMode: 'zoom-mode',
+					shareMode: 'elementor-slideshow--share-mode',
+					zoomMode: 'elementor-slideshow--zoom-mode',
 				},
 			},
 			selectors: {
@@ -183,65 +182,82 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	getSlideshoHeader: function() {
-		var self = this,
-			$ = jQuery,
-			classes = self.getSettings( 'classes' ),
+	getSlideshowHeader: function() {
+		const $ = jQuery,
+			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
-			$header = $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } ),
-			$counter = $( '<span>', { class: slideshowClasses.counter + ' ' + classes.preventClose } ),
-			$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand } ).append( '<span>', '<span>' ),
-			$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn } ),
-			$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( '<span>' ),
-			$shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' ),
-			$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
+			headerElements = {
+				$header: $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } ),
+				$counter: $( '<span>', { class: slideshowClasses.counter } ),
+				$iconExpand: $( '<i>', { class: slideshowClasses.iconExpand } ).append( '<span>', '<span>' ),
+				$iconZoom: $( '<i>', { class: slideshowClasses.iconZoomIn } ),
+				$iconShare: $( '<i>', { class: slideshowClasses.iconShare } ).append( '<span>' ),
+			};
+		this.elements = { ...this.elements, ...headerElements };
+		const $shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' );
+		this.elements.$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
+		const elements = this.elements;
 
-		$iconExpand.on( 'click', function() {
-			if ( screenfull.isFullscreen ) {
-				screenfull.exit();
-				$iconExpand.removeClass( slideshowClasses.iconShrink );
-			} else if ( screenfull.isEnabled ) {
-				screenfull.request( self.elements.$container.parents( '.dialog-widget' )[ 0 ] );
-				$iconExpand.addClass( slideshowClasses.iconShrink );
-			}
-		} );
-
-		$iconZoom.on( 'click', function() {
-			const swiper = self.swiper,
-				zoom = swiper.zoom;
-
-			if ( 1 !== zoom.scale ) {
-				zoom.out();
-				swiper.allowSlideNext = true;
-				swiper.allowSlidePrev = true;
-				swiper.allowTouchMove = true;
-				self.elements.$container.removeClass( slideshowClasses.zoomMode );
-				$iconZoom.removeClass( slideshowClasses.iconZoomOut ).addClass( slideshowClasses.iconZoomIn );
-			} else {
-				zoom.enable();
-				zoom.in();
-				swiper.allowSlideNext = false;
-				swiper.allowSlidePrev = false;
-				swiper.allowTouchMove = false;
-				self.elements.$container.addClass( slideshowClasses.zoomMode );
-				$iconZoom.removeClass( slideshowClasses.iconZoomIn ).addClass( slideshowClasses.iconZoomOut );
-			}
-		} );
-
-		$iconShare.add( $shareMenu ).on( 'click', self.toggleShareMenu );
-		$shareLinks.on( 'click', function( e ) {
+		elements.$iconExpand.on( 'click', this.toggleFullscreen );
+		elements.$iconZoom.on( 'click', this.toggleZoomMode );
+		elements.$iconShare.add( elements.$shareMenu ).on( 'click', this.toggleShareMenu );
+		$shareLinks.on( 'click', ( e ) => {
 			e.stopPropagation();
 		} );
 
-		$header.append(
-			$counter,
-			$iconExpand,
-			$iconZoom,
-			$iconShare,
-			$shareMenu,
+		elements.$header.append(
+			elements.$counter,
+			elements.$iconExpand,
+			elements.$iconZoom,
+			elements.$iconShare,
+			elements.$shareMenu,
 		);
 
-		return $header;
+		return elements.$header;
+	},
+
+	toggleFullscreen: function() {
+		const classes = this.getSettings( 'classes' );
+		if ( screenfull.isFullscreen ) {
+			screenfull.exit();
+			this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink );
+		} else if ( screenfull.isEnabled ) {
+			screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
+			this.elements.$iconExpand.addClass( classes.slideshow.iconShrink );
+		}
+	},
+
+	toggleZoomMode: function() {
+		if ( 1 !== this.swiper.zoom.scale ) {
+			this.deactivateZoom();
+			return;
+		}
+		this.activateZoom();
+	},
+
+	activateZoom: function() {
+		const swiper = this.swiper,
+			elements = this.elements,
+			classes = this.getSettings( 'classes' );
+		swiper.zoom.enable();
+		swiper.zoom.in();
+		swiper.allowSlideNext = false;
+		swiper.allowSlidePrev = false;
+		swiper.allowTouchMove = false;
+		elements.$container.addClass( classes.slideshow.zoomMode );
+		elements.$iconZoom.removeClass( classes.slideshow.iconZoomIn ).addClass( classes.slideshow.iconZoomOut );
+	},
+
+	deactivateZoom: function() {
+		const swiper = this.swiper,
+			elements = this.elements,
+			classes = this.getSettings( 'classes' );
+		swiper.zoom.out();
+		swiper.allowSlideNext = true;
+		swiper.allowSlidePrev = true;
+		swiper.allowTouchMove = true;
+		elements.$container.removeClass( classes.slideshow.zoomMode );
+		elements.$iconZoom.removeClass( classes.slideshow.iconZoomOut ).addClass( classes.slideshow.iconZoomIn );
 	},
 
 	toggleShareMenu: function() {
@@ -250,10 +266,10 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( ! $container.hasClass( classes.slideshow.shareMode ) ) {
 			$container.addClass( classes.slideshow.shareMode );
 			this.swiper.detachEvents();
-		} else {
-			$container.removeClass( classes.slideshow.shareMode );
-			this.swiper.attachEvents();
+			return;
 		}
+		$container.removeClass( classes.slideshow.shareMode );
+		this.swiper.attachEvents();
 	},
 
 	getSlideshowFooter: function() {
@@ -262,17 +278,12 @@ module.exports = elementorModules.ViewModule.extend( {
 			$footer = $( '<footer>', { class: classes.slideshow.footer + ' ' + classes.preventClose } ),
 			$title = $( '<h2>', { class: classes.slideshow.title } ),
 			$description = $( '<div>', { class: classes.slideshow.description } );
-
-		$footer.append(
-			$title,
-			$description,
-		);
-
+		$footer.append( $title, $description );
 		return $footer;
 	},
 
 	setSlideshowContent: function( options ) {
-		var $ = jQuery,
+		const $ = jQuery,
 			self = this,
 			classes = self.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
@@ -282,13 +293,13 @@ module.exports = elementorModules.ViewModule.extend( {
 			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
 		options.slides.forEach( function( slide ) {
-			var slideClass = slideshowClasses.slide + ' ' + classes.item;
+			let slideClass = slideshowClasses.slide + ' ' + classes.item;
 
 			if ( slide.video ) {
 				slideClass += ' ' + classes.video;
 			}
 
-			var $slide = $( '<div>', { class: slideClass } );
+			const $slide = $( '<div>', { class: slideClass } );
 
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
@@ -313,7 +324,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 
 		this.elements.$container = $container;
-		this.elements.$header = self.getSlideshoHeader();
+		this.elements.$header = self.getSlideshowHeader();
 		this.elements.$footer = self.getSlideshowFooter();
 
 		$container.prepend( this.elements.$header );
@@ -336,16 +347,16 @@ module.exports = elementorModules.ViewModule.extend( {
 			}, 2500 ) );
 		} );
 
-		var modal = self.getModal();
+		const modal = self.getModal();
 
 		modal.setMessage( $container );
 
-		var onShowMethod = modal.onShow;
+		const onShowMethod = modal.onShow;
 
 		modal.onShow = function() {
 			onShowMethod();
 
-			var swiperOptions = {
+			const swiperOptions = {
 				navigation: {
 					prevEl: $prevButton,
 					nextEl: $nextButton,
