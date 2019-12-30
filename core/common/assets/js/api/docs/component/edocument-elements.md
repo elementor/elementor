@@ -46,6 +46,18 @@
     | `{object}`    | model                              | **required**      | 
     | `{object}`    | options                            | **optional**      | 
 
+    *options:*
+    ```javascript
+    {
+        at: {integer},                               // Position.
+        clone: {boolean},                            // Generate unique id for the model.
+        trigger: {boolean},                          // TODO: Mati help.
+        edit: {boolean},                             // Is turn edit panel for the new element.
+        onBeforeAdd: {function()},                   // Run callback before add.
+        onAfterAdd: {function( newModel, newView )}, // Run callback after add.
+    }
+    ```
+   
 * **Examples**:
     Create Heading widget 
     ```javascript
@@ -76,3 +88,22 @@
     } );
     ```
     Result: ![edocument-elements-2](../images/edocument-elements/2.jpg)
+
+## Create _Delete_ -- `$e.run.get('document/elements/delete')`
+*  **Name**: Create.
+*  **Description**: Create element from model.
+*  **Returns**: `{Container | Array.<Container>}` *Created container*.
+
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{Container}` | _container OR containers_          | **required**      | 
+    | `{object}`    | options                            | **optional**      | 
+
+    *options:*
+    ```
+    {
+        at: {integer},
+    }
+    ```
+
+* **Examples**:
