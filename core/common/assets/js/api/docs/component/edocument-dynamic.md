@@ -3,7 +3,7 @@
 *  **Name**: Dynamic.
 *  **Description**: Dynamic enable, disable and change.
 
-## `document/dynamic/` -- Commands
+## Component `document/dynamic/` -- Commands
 | Command               | Access                                  | Description         
 |-----------------------|-----------------------------------------|-----------------------------------------
 | [Disable](#disable-command----erungetdocumentdynamicdisable)    | `$e.run('document/dynamic/disable')`    | Disable dynamic. 

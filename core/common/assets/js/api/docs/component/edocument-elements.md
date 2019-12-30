@@ -3,7 +3,7 @@
 *  **Name**: Elements.
 *  **Description**: Provide a way to manage elements, create, edit, delete. copy, paste, etc...
 
-## `document/elements/` -- Commands
+## Component `document/elements/` -- Commands
 | Command                                   | Access                                             | Description         
 |-------------------------------------------|----------------------------------------------------|-----------------------------------------
 | [Copy](#)                                 | `$e.run('document/elements/copy')`                 | Copy container. 
@@ -205,3 +205,59 @@
     console.log( pastedContainers );
     ```
     Result:![widget-heading-pasted](../images/base/widget-heading-pasted.png)
+
+## Paste-Style _Command_ -- `$e.run('document/elements/paste-style')`
+*  **Name**: Paste-Style.
+*  **Description**: Paste style to container.
+*  **Returns**: `{void}`.
+*  **Arguments**: 
+
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{Container}` | _container OR containers_          | **required**      | 
+    | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+* **Examples**:
+    Copy style from one widget and paste it into another.
+    Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the speical one, to restore him to default.
+    ## TODO: Example does not work, since is-paste-style-enabled, does dont know about selected element.
+    ### `Document/Selection` ?
+    ![widget-heading-another-heading-with-special-style](../images/edocument-elements/widget-heading-another-heading-with-special-style.png)
+
+    ```javascript
+    const eSpecialWidget = $e.utils.document.findContainerById('2e4b783'),
+        eDefaultWidget = $e.utils.document.findContainerById('192125b');
+    
+    $e.run('document/elements/copy', { 
+        container: eDefaultWidget
+    } );
+    
+    $e.run('document/elements/paste-style', { 
+        container: eSpecialWidget
+    } );
+    ```
+    Result:![widget-heading-pasted](../images/base/widget-heading-pasted.png)
+
+## Reset-Style _Command_ -- `$e.run('document/elements/reset-style')`
+*  **Name**: Reset-Style.
+*  **Description**: Rest style of container.
+*  **Returns**: `{void}`.
+*  **Arguments**: 
+
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{Container}` | _container OR containers_          | **required**      | 
+    | `{string}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+* **Examples**:
+    Reset style of widget.
+    Assuming we have a widget with special style.
+    ![widget-heading-another-heading-with-special-style](../images/edocument-elements/widget-heading-another-heading-with-special-style.png)
+
+    ```javascript
+    const eWidget = $e.utils.document.findContainerById('2e4b783');
+    
+    $e.run('document/elements/reset-style', { 
+      container: eWidget
+    } );
+    ```
+    Result:![widget-heading-pasted](../images/base/widget-heading-pasted.png)
+

@@ -13,4 +13,7 @@
 | [Save](edocument-save.md)         | `$e.components.get('document/save')`     | Responsible for saving, publish, draft, of the document.
 | [UI](edocument-ui.md)             | `$e.components.get('document/ui')`       | Irregular component for handling UI shortcuts.
 
+## Component `document/` -- Commands
+No commands.
+
 ### [Back](../method/ecommands-get-all.md) 
