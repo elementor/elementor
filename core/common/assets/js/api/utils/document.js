@@ -1,6 +1,3 @@
-// TODO: Access `via $e.utils.this.findViewById`.
-// TODO: or `$e.util('document').findViewById();`.
-
 export default class Document {
 	static findViewRecursive( parent, key, value, multiple = true ) {
 		let found = [];
@@ -39,7 +36,15 @@ export default class Document {
 		return elements ? elements[ 0 ] : false;
 	}
 
-	// TODO Add findContainerById
+	static findContainerById( id ) {
+		let result = this.findViewById( id );
+
+		if ( result ) {
+			result = result.getContainer();
+		}
+
+		return result;
+	}
 
 	static isValidChild( childModel, parentModel ) {
 		const parentElType = parentModel.get( 'elType' ),
