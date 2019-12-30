@@ -7,7 +7,7 @@
 | Command               | Access                                  | Description         
 |-----------------------|-----------------------------------------|-----------------------------------------
 | [Disable](#disable-command----erungetdocumentdynamicdisable)    | `$e.run('document/dynamic/disable')`    | Disable dynamic. 
-| [Enable](#enable-command----erungetdocumentdynamicenable)       | `$e.rtbhun('document/dynamic/enable')`     | Enable dynamic.
+| [Enable](#enable-command----erungetdocumentdynamicenable)       | `$e.run('document/dynamic/enable')`     | Enable dynamic.
 | [Settings](#settings-command----erungetdocumentdynamicsettings) | `$e.run('document/dynamic/settings')`   | Change dynamic.
 
 
@@ -92,13 +92,13 @@
     Example change dynamic settings for title with dynamic tag *post-date*.
     Assuming you have a heading with 'post-date' dynamic tag for title.
     
-    ![edocument-dynamic-3](../images/edocument-dynamic/3.jpg)
+    ![widget-heading-with-dynamic-title-date](../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
     
     And you want to change the format to human readable format. use next example:
     
     ```javascript
     // Get heading container.
-    const eWidget = $e.utils.document.findViewById( '2de40c2' ).getContainer(),
+    const eWidget = $e.utils.document.findViewById( '0b9da89' ).getContainer(),
       postDateTag = elementor.dynamicTags.tagDataToTagText( elementor.helpers.getUniqueID(), 'post-date', new Backbone.Model( { format: 'human'} ));
     
     // Change dynamic settings.
@@ -111,7 +111,7 @@
     ```
     The result will be:
     
-    ![edocument-dynamic-4](../images/edocument-dynamic/4.jpg)
+    ![widget-heading-with-dynamic-title-date-human-readable](../images/edocument-dynamic/widget-heading-with-dynamic-title-date-human-readable.png)
 
 
 
