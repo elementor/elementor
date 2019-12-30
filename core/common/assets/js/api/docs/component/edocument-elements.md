@@ -4,19 +4,19 @@
 *  **Description**: Provide a way to manage elements, create, edit, delete. copy, paste, etc...
 
 ## `document/elements/` -- Commands
-| Command                                   | Access                                            | Description         
-|-------------------------------------------|---------------------------------------------------|-----------------------------------------
-| [Copy](#)                                 | `$e.run('document/dynamic/copy')`                 | Copy container. 
-| [Copy-All](#)                             | `$e.run('document/dynamic/copy-all')`             | Copy all containers. 
-| [Create](#)                               | `$e.run('document/dynamic/create')`               | Create element. 
-| [Delete](#)                               | `$e.run('document/dynamic/delete')`               | Delete container. 
-| [Duplicate](#)                            | `$e.run('document/dynamic/duplicate')`            | Duplicate container. 
-| [Empty](#)                                | `$e.run('document/dynamic/empty')`                | Empty document. 
-| [Import](#)                               | `$e.run('document/dynamic/import')`               | Import. 
-| [Paste](#)                                | `$e.run('document/dynamic/paste')`                | Paste. 
-| [Paste-Style](#)                          | `$e.run('document/dynamic/paste-style')`          | Disable dynamic. 
-| [Reset-Style](#)                          | `$e.run('document/dynamic/reset-style')`          | Disable dynamic. 
-| [Settings](#)                             | `$e.run('document/dynamic/settings')`             | Disable dynamic. 
+| Command                                   | Access                                             | Description         
+|-------------------------------------------|----------------------------------------------------|-----------------------------------------
+| [Copy](#)                                 | `$e.run('document/elements/copy')`                 | Copy container. 
+| [Copy-All](#)                             | `$e.run('document/elements/copy-all')`             | Copy all containers. 
+| [Create](#)                               | `$e.run('document/elements/create')`               | Create element. 
+| [Delete](#)                               | `$e.run('document/elements/delete')`               | Delete container. 
+| [Duplicate](#)                            | `$e.run('document/elements/duplicate')`            | Duplicate container. 
+| [Empty](#)                                | `$e.run('document/elements/empty')`                | Empty document. 
+| [Import](#)                               | `$e.run('document/elements/import')`               | Import. 
+| [Paste](#)                                | `$e.run('document/elements/paste')`                | Paste. 
+| [Paste-Style](#)                          | `$e.run('document/elements/paste-style')`          | Disable dynamic. 
+| [Reset-Style](#)                          | `$e.run('document/elements/reset-style')`          | Disable dynamic. 
+| [Settings](#)                             | `$e.run('document/elements/settings')`             | Disable dynamic. 
 
 ## Copy _Command_ -- `$e.run.get('document/elements/copy')`
 *  **Name**: Copy.
@@ -110,3 +110,26 @@
     } );
     ```
     result: section deleted and all children elements.
+
+## Duplicate _Command_ -- `$e.run.get('document/elements/duplicate')`
+*  **Name**: Duplicate.
+*  **Description**: Duplicate container.
+*  **Returns**: `{Container | Array.<Container>}` *Created container(s)*.
+
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{Container}` | _container OR containers_          | **required**      | 
+
+* **Examples**:
+    Duplicate a section, Assuming we have this section, and want to duplicate it.
+    ![edocument-elements-2](../images/edocument-elements/2.jpg)
+    ```javascript
+    // Get section container.
+    const eSection = $e.utils.document.findViewById('847332a').getContainer();
+    
+    $e.run( 'document/elements/duplicate', { 
+        container: eSection,
+    } );
+    ```
+    Result: 
+    ![edocument-elements-3](../images/edocument-elements/3.jpg)
