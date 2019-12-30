@@ -75,7 +75,7 @@
     ```
     OR
     ```javascript
-    const eColumn = $e.utils.document.findViewById('cb70e3c').getContainer();
+    const eColumn = $e.utils.document.findContainerById('cb70e3c');
     ```
     Then let create heading widget at the column we reach above:
     ```javascript
@@ -103,7 +103,7 @@
     ![widget-heading](../images/base/widget-heading.png)
     ```javascript
     // Get section container.
-    const eSection = $e.utils.document.findViewById('886643f').getContainer();
+    const eSection = $e.utils.document.findContainerById('886643f');
     
     $e.run( 'document/elements/delete', { 
         container: eSection,
@@ -125,7 +125,7 @@
     ![widget-heading](../images/base/widget-heading.png)
     ```javascript
     // Get section container.
-    const eSection = $e.utils.document.findViewById('886643f').getContainer();
+    const eSection = $e.utils.document.findContainerById('886643f');
     
     $e.run( 'document/elements/duplicate', { 
         container: eSection,
@@ -191,8 +191,8 @@
     Copy widget and paste it into column.
 
     ```javascript
-    const eColumn = $e.utils.document.findViewById('cb70e3c').getContainer(),
-        eWidget = $e.utils.document.findViewById('2e4b783').getContainer();
+    const eColumn = $e.utils.document.findContainerById('cb70e3c'),
+        eWidget = $e.utils.document.findContainerById('2e4b783');
     
     $e.run('document/elements/copy', { 
         container: eWidget
