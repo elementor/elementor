@@ -68,14 +68,14 @@
       model: { elType: 'section' },
     } );  
     ```
-    Result: ![edocument-elements-1](../images/edocument-elements/1.jpg)
+    Result: ![empty-column](../images/base/empty-column.png)
     Now to create widget, we need column, here is two examples how to reach column:
     ```javascript
     const eColumn = eSection.view.children.findByIndex( 0 ).getContainer();
     ```
     OR
     ```javascript
-    const eColumn = $e.utils.document.findViewById('9bb43ed').getContainer();
+    const eColumn = $e.utils.document.findViewById('cb70e3c').getContainer();
     ```
     Then let create heading widget at the column we reach above:
     ```javascript
@@ -87,7 +87,7 @@
         },
     } );
     ```
-    Result: ![edocument-elements-2](../images/edocument-elements/2.jpg)
+    Result: ![widget-heading](../images/base/widget-heading.png)
 
 ## Create _Delete_ -- `$e.run('document/elements/delete')`
 *  **Name**: Delete.
@@ -100,10 +100,10 @@
 
 * **Examples**:
     Delete a section, Assuming we have this section, and want to delete it.
-    ![edocument-elements-2](../images/edocument-elements/2.jpg)
+    ![widget-heading](../images/base/widget-heading.png)
     ```javascript
     // Get section container.
-    const eSection = $e.utils.document.findViewById('847332a').getContainer();
+    const eSection = $e.utils.document.findViewById('886643f').getContainer();
     
     $e.run( 'document/elements/delete', { 
         container: eSection,
@@ -122,17 +122,17 @@
 
 * **Examples**:
     Duplicate a section, Assuming we have this section, and want to duplicate it.
-    ![edocument-elements-2](../images/edocument-elements/2.jpg)
+    ![widget-heading](../images/base/widget-heading.png)
     ```javascript
     // Get section container.
-    const eSection = $e.utils.document.findViewById('847332a').getContainer();
+    const eSection = $e.utils.document.findViewById('886643f').getContainer();
     
     $e.run( 'document/elements/duplicate', { 
         container: eSection,
     } );
     ```
     Result: 
-    ![edocument-elements-3](../images/edocument-elements/3.jpg)
+    ![widget-heading-duplicated](../images/base/widget-heading-duplicated.png)
 
 ## Empty _Command_ -- `$e.run('document/elements/empty')`
 *  **Name**: Empty.
