@@ -3,7 +3,7 @@
 *  **Name**: Elements.
 *  **Description**: Provide a way to manage elements, create, edit, delete. copy, paste, etc...
 
-## All **Document/Elements** Commands
+## `document/elements/` -- Commands
 | Command                                   | Access                                            | Description         
 |-------------------------------------------|---------------------------------------------------|-----------------------------------------
 | [Copy](#)                                 | `$e.run('document/dynamic/copy')`                 | Copy container. 
@@ -38,7 +38,7 @@
 ## Create _Command_ -- `$e.run.get('document/elements/create')`
 *  **Name**: Create.
 *  **Description**: Create element from model.
-*  **Returns**: `{Container | Array.<Container>}` *Created container*.
+*  **Returns**: `{Container | Array.<Container>}` *Created container(s)*.
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
@@ -90,20 +90,23 @@
     Result: ![edocument-elements-2](../images/edocument-elements/2.jpg)
 
 ## Create _Delete_ -- `$e.run.get('document/elements/delete')`
-*  **Name**: Create.
-*  **Description**: Create element from model.
-*  **Returns**: `{Container | Array.<Container>}` *Created container*.
+*  **Name**: Delete.
+*  **Description**: Delete container.
+*  **Returns**: `{Container | Array.<Container>}` *Deleted container(s)*.
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{object}`    | options                            | **optional**      | 
-
-    *options:*
-    ```
-    {
-        at: {integer},
-    }
-    ```
 
 * **Examples**:
+    Delete a section, Assuming we have this section, and want to delete it.
+    ![edocument-elements-2](../images/edocument-elements/2.jpg)
+    ```javascript
+    // Get section container.
+    const eSection = $e.utils.document.findViewById('847332a').getContainer();
+    
+    $e.run( 'document/elements/delete', { 
+        container: eSection,
+    } );
+    ```
+    result: section deleted and all children elements.

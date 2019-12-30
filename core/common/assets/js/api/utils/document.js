@@ -39,6 +39,8 @@ export default class Document {
 		return elements ? elements[ 0 ] : false;
 	}
 
+	// TODO Add findContainerById
+
 	static isValidChild( childModel, parentModel ) {
 		const parentElType = parentModel.get( 'elType' ),
 			draggedElType = childModel.get( 'elType' ),
