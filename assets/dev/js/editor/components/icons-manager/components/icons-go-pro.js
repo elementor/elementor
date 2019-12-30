@@ -9,7 +9,7 @@ class IconsGoPro extends Component {
 				<a
 					href={ elementor.config.icons.goProURL }
 					id="elementor-icons-manager__promotion__link"
-					className="elementor-button elementor-button-default elementor-button-go-pro"
+					class="elementor-button elementor-button-default elementor-button-go-pro"
 					target="_blank"
 					rel="noopener noreferrer"
 				>{ elementor.translate( 'go_pro' ) }</a>
