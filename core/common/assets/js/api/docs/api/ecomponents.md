@@ -25,21 +25,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
 
 * **Examples**:
     ```javascript
-     // Example create and register new component..
-     // Important: Available to run in the console does not depends on anything else``.
-
-     class ExampleCommand extends $e.modules.CommandBase {
-        apply( args ) {
-            // Output command args to console.
-            console.log( 'ExampleCommand: ', args );
-     
-            // Return object as example.
-            return {
-                example: 'result from ExampleCommand',
-            };
-        }
-     }
-     
+     // Example create and register new component, available to run in the console does not depends on anything else.
      class CustomComponent extends $e.modules.Component {
         getNamespace() {
             return 'custom-component';
@@ -48,7 +34,16 @@ The components are extensible so a 3rd party plugin can add some routes, command
         defaultCommands() {
             // Object of all the component commands.
             return {
-                example: ( args ) => ( new ExampleCommand( args ) ).run(),
+              // 'example' command.   
+              example: ( args ) => {
+                  // Output command args to console.
+                  console.log( 'ExampleCommand: ', args );
+           
+                  // Return object as example.
+                  return {
+                      example: 'result from ExampleCommand',
+                  };
+              },
             };
         }
      }
