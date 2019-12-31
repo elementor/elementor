@@ -862,12 +862,12 @@ abstract class Element_Base extends Controls_Stack {
 	 * Adds more configuration on top of the controls list and the tabs assigned
 	 * to the control. This method also adds element name, type, icon and more.
 	 *
-	 * @since 1.0.10
+	 * @since 2.9.0
 	 * @access protected
 	 *
 	 * @return array The initial config.
 	 */
-	protected function _get_initial_config() {
+	protected function get_initial_config() {
 		$config = [
 			'name' => $this->get_name(),
 			'elType' => $this->get_type(),

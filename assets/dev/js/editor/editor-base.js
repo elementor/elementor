@@ -1,13 +1,13 @@
-import Environment from 'elementor-common/utils/environment';
+/* global ElementorConfig */
+
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
-import IconsManager from './components/icons-manager/icons-manager';
-import NoticeBar from './utils/notice-bar';
+import Environment from 'elementor-common/utils/environment';
 import DateTimeControl from 'elementor-controls/date-time';
-import ColorControl from 'elementor-controls/color';
-
-/* global ElementorConfig */
+import NoticeBar from './utils/notice-bar';
+import IconsManager from './components/icons-manager/icons-manager';
+import ColorControl from './controls/color';
 
 export const DEFAULT_DEVICE_MODE = 'desktop';
 
