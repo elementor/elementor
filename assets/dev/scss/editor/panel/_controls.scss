@@ -407,11 +407,12 @@ $item-size: 2em;
 	height: 0;
 	transform: scale(0);
 	opacity: 0;
+	transition: 0.15s;
+	font-size: 12px;
 }
 
 a.elementor-responsive-switcher {
-	transition: 0.15s;
-	color: $gray;
+	color: $editor-light;
 
 	&:hover {
 		color: $editor-info;
