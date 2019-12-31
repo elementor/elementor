@@ -440,8 +440,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			descriptionText = $image.data( 'description' ),
 			$title = this.elements.$footer.find( '.' + classes.slideshow.title ),
 			$description = this.elements.$footer.find( '.' + classes.slideshow.description );
-		$title.empty().text( titleText );
-		$description.empty().text( descriptionText );
+		$title.text( titleText );
+		$description.text( descriptionText );
 	},
 
 	playSlideVideo: function() {
@@ -617,7 +617,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		const slides = [];
 
 		$allSlideshowLinks.each( function() {
-			const slideVideo = this.dataset.elementorLightboxVideo;
+			const $this = jQuery( this ),
+				slideVideo = this.dataset.elementorLightboxVideo;
 
 			let slideIndex = this.dataset.elementorLightboxIndex;
 
@@ -628,8 +629,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			const slideData = {
 				image: this.href,
 				index: slideIndex,
-				title: jQuery( this ).data( 'elementor-lightbox-title' ),
-				description: jQuery( this ).data( 'elementor-lightbox-description' ),
+				title: $this.data( 'elementor-lightbox-title' ),
+				description: $this.data( 'elementor-lightbox-description' ),
 			};
 
 			if ( slideVideo ) {

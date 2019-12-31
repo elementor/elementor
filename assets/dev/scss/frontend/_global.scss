@@ -343,19 +343,3 @@
 		top: 2px;
 	}
 }
-
-
-
-:root {
-	--adminbar-height: 0;
-}
-
-body.admin-bar {
-	--adminbar-height: 32px;
-}
-
-@media (max-width: $editor-screen-md-max) {
-	body.admin-bar {
-		--adminbar-height: 46px;
-	}
-}
