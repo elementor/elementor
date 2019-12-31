@@ -39,6 +39,7 @@
 *  **Name**: Create.
 *  **Description**: Create element from model.
 *  **Returns**: `{Container | Array.<Container>}` *Created container(s)*.
+*  **Arguments**: 
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
@@ -92,6 +93,7 @@
 *  **Name**: Delete.
 *  **Description**: Delete container.
 *  **Returns**: `{Container | Array.<Container>}` *Deleted container(s)*.
+*  **Arguments**: 
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
@@ -114,6 +116,7 @@
 *  **Name**: Duplicate.
 *  **Description**: Duplicate container.
 *  **Returns**: `{Container | Array.<Container>}` *Created container(s)*.
+*  **Arguments**: 
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
@@ -137,7 +140,6 @@
 *  **Name**: Empty.
 *  **Description**: Delete all elements from the document.
 *  **Returns**: `{void}`
-*  **Arguments**: None.
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
