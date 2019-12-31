@@ -4,6 +4,7 @@ export class Paste extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
+		// Validate if storage have data.
 		const { storageKey = 'clipboard' } = args,
 			storageData = elementorCommon.storage.get( storageKey );
 

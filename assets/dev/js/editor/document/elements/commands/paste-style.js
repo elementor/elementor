@@ -3,6 +3,12 @@ import History from '../../commands/base/history';
 export class PasteStyle extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
+
+		// Validate if storage have data.
+		const { storageKey = 'clipboard' } = args,
+			storageData = elementorCommon.storage.get( storageKey );
+
+		this.requireArgumentType( 'storageData', 'object', { storageData } );
 	}
 
 	validateControls( source, target ) {
