@@ -75,7 +75,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	initModal: function() {
-		var modal = module.exports.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
+		const modal = module.exports.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
 			closeButtonClass: 'eicon-close',
@@ -225,7 +225,6 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	toggleFullscreen: function() {
-		const classes = this.getSettings( 'classes' );
 		if ( screenfull.isFullscreen ) {
 			this.deactivateFullscreen();
 		} else if ( screenfull.isEnabled ) {
@@ -242,11 +241,13 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	activateFullscreen: function() {
+		const classes = this.getSettings( 'classes' );
 		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
 		this.elements.$iconExpand.addClass( classes.slideshow.iconShrink );
 	},
 
 	deactivateFullscreen: function() {
+		const classes = this.getSettings( 'classes' );
 		screenfull.exit();
 		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink );
 	},
@@ -413,7 +414,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	setVideoAspectRatio: function( aspectRatio ) {
 		aspectRatio = aspectRatio || this.getSettings( 'modalOptions.videoAspectRatio' );
 
-		var $widgetContent = this.getModal().getElements( 'widgetContent' ),
+		const $widgetContent = this.getModal().getElements( 'widgetContent' ),
 			oldAspectRatio = this.oldAspectRatio,
 			aspectRatioClass = this.getSettings( 'classes.aspectRatio' );
 
