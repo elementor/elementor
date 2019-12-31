@@ -130,7 +130,6 @@ class Widget_Progress extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'label_block' => true,
 			]
 		);
 
