@@ -138,14 +138,13 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	setImageContent: function( imageURL ) {
-		var self = this,
-			classes = self.getSettings( 'classes' ),
+		const classes = this.getSettings( 'classes' ),
 			$item = jQuery( '<div>', { class: classes.item } ),
 			$image = jQuery( '<img>', { src: imageURL, class: classes.image } );
 
 		$item.append( $image );
 
-		self.getModal().setMessage( $item );
+		this.getModal().setMessage( $item );
 	},
 
 	setVideoContent: function( options ) {
@@ -228,11 +227,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	toggleFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		if ( screenfull.isFullscreen ) {
-			screenfull.exit();
-			this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink );
+			this.deactivateFullscreen();
 		} else if ( screenfull.isEnabled ) {
-			screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
-			this.elements.$iconExpand.addClass( classes.slideshow.iconShrink );
+			this.activateFullscreen();
 		}
 	},
 
@@ -242,6 +239,16 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 		this.activateZoom();
+	},
+
+	activateFullscreen: function() {
+		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
+		this.elements.$iconExpand.addClass( classes.slideshow.iconShrink );
+	},
+
+	deactivateFullscreen: function() {
+		screenfull.exit();
+		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink );
 	},
 
 	activateZoom: function() {
@@ -294,15 +301,14 @@ module.exports = elementorModules.ViewModule.extend( {
 	setSlideshowContent: function( options ) {
 		const $ = jQuery,
 			showFooter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ),
-			self = this,
-			classes = self.getSettings( 'classes' ),
+			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
 			$container = $( '<div>', { class: slideshowClasses.container } ),
 			$slidesWrapper = $( '<div>', { class: slideshowClasses.slidesWrapper } ),
 			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) ),
 			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
-		options.slides.forEach( function( slide ) {
+		options.slides.forEach( ( slide ) => {
 			let slideClass = slideshowClasses.slide + ' ' + classes.item;
 
 			if ( slide.video ) {
@@ -334,7 +340,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 
 		this.elements.$container = $container;
-		this.elements.$header = self.getSlideshowHeader();
+		this.elements.$header = this.getSlideshowHeader();
 
 		$container.prepend( this.elements.$header );
 		$container.append(
@@ -344,29 +350,29 @@ module.exports = elementorModules.ViewModule.extend( {
 		);
 
 		if ( showFooter ) {
-			this.elements.$footer = self.getSlideshowFooter();
+			this.elements.$footer = this.getSlideshowFooter();
 			$container.append( this.elements.$footer );
 		}
 
 		this.setSettings( 'hideUiTimeout', '' );
 
-		$container.on( 'mouseenter mouseover mousedown mousemove keyup keypress swipe tap vmousedown vmouseover vmousemove', function() {
-			clearTimeout( self.getSettings( 'hideUiTimeout' ) );
+		$container.on( 'mousedown mousemove keypress', () => {
+			clearTimeout( this.getSettings( 'hideUiTimeout' ) );
 			$container.removeClass( slideshowClasses.hideUiVisibility );
-			self.setSettings( 'hideUiTimeout', setTimeout( function() {
+			this.setSettings( 'hideUiTimeout', setTimeout( () => {
 				if ( ! $container.hasClass( 'share-mode' ) ) {
 					$container.addClass( slideshowClasses.hideUiVisibility );
 				}
 			}, 2500 ) );
 		} );
 
-		const modal = self.getModal();
+		const modal = this.getModal();
 
 		modal.setMessage( $container );
 
 		const onShowMethod = modal.onShow;
 
-		modal.onShow = function() {
+		modal.onShow = () => {
 			onShowMethod();
 
 			const swiperOptions = {
@@ -379,7 +385,7 @@ module.exports = elementorModules.ViewModule.extend( {
 					type: 'fraction',
 				},
 				on: {
-					slideChangeTransitionEnd: self.onSlideChange,
+					slideChangeTransitionEnd: this.onSlideChange,
 				},
 				spaceBetween: 100,
 				grabCursor: true,
@@ -392,14 +398,14 @@ module.exports = elementorModules.ViewModule.extend( {
 				$.extend( swiperOptions, options.swiper );
 			}
 
-			self.swiper = new Swiper( $container, swiperOptions );
+			this.swiper = new Swiper( $container, swiperOptions );
 
-			self.setVideoAspectRatio();
+			this.setVideoAspectRatio();
 
-			self.playSlideVideo();
+			this.playSlideVideo();
 
 			if ( showFooter ) {
-				self.updateFooterText();
+				this.updateFooterText();
 			}
 		};
 	},
@@ -429,8 +435,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	updateFooterText: function() {
 		const classes = this.getSettings( 'classes' ),
 			$activeSlide = this.getSlide( 'active' ),
-			titleText = $activeSlide.find( '.elementor-lightbox-image' ).data( 'title' ),
-			descriptionText = $activeSlide.find( '.elementor-lightbox-image' ).data( 'description' ),
+			$image = $activeSlide.find( '.elementor-lightbox-image' ),
+			titleText = $image.data( 'title' ),
+			descriptionText = $image.data( 'description' ),
 			$title = this.elements.$footer.find( '.' + classes.slideshow.title ),
 			$description = this.elements.$footer.find( '.' + classes.slideshow.description );
 		$title.empty().text( titleText );
