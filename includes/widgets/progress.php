@@ -311,6 +311,12 @@ class Widget_Progress extends Widget_Base {
 			$progress_percentage = 100;
 		}
 
+		$this->add_render_attribute( 'title', [
+			'class' => 'elementor-title',
+		]);
+
+		$this->add_inline_editing_attributes( 'title' );
+
 		$this->add_render_attribute( 'wrapper', [
 			'class' => 'elementor-progress-wrapper',
 			'role' => 'progressbar',
@@ -336,7 +342,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_inline_editing_attributes( 'inner_text' );
 
 		if ( ! Utils::is_empty( $settings['title'] ) ) { ?>
-			<span class="elementor-title"><?php echo $settings['title']; ?></span>
+			<span <?php echo $this->get_render_attribute_string( 'title' ); ?>><?php echo $settings['title']; ?></span>
 		<?php } ?>
 
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
@@ -366,6 +372,12 @@ class Widget_Progress extends Widget_Base {
 			progress_percentage = 100 < settings.percent.size ? 100 : settings.percent.size;
 		}
 
+		view.addRenderAttribute( 'title', {
+			'class': 'elementor-title'
+		} );
+
+		view.addInlineEditingAttributes( 'title' );
+
 		view.addRenderAttribute( 'progressWrapper', {
 			'class': [ 'elementor-progress-wrapper', 'progress-' + settings.progress_type ],
 			'role': 'progressbar',
@@ -382,7 +394,7 @@ class Widget_Progress extends Widget_Base {
 		view.addInlineEditingAttributes( 'inner_text' );
 		#>
 		<# if ( settings.title ) { #>
-			<span class="elementor-title">{{{ settings.title }}}</span><#
+			<span {{{ view.getRenderAttributeString( 'title' ) }}}>{{{ settings.title }}}</span><#
 		} #>
 		<div {{{ view.getRenderAttributeString( 'progressWrapper' ) }}}>
 			<div class="elementor-progress-bar" data-max="{{ progress_percentage }}">
