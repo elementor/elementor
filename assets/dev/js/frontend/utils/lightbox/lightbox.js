@@ -93,12 +93,12 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	showModal: function( options ) {
-		var self = this,
+		const self = this,
 			defaultOptions = self.getDefaultSettings().modalOptions;
 
 		self.setSettings( 'modalOptions', jQuery.extend( defaultOptions, options.modalOptions ) );
 
-		var modal = self.getModal();
+		const modal = self.getModal();
 
 		modal.setID( self.getSettings( 'modalOptions.id' ) );
 
@@ -125,6 +125,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				break;
 			case 'slideshow':
 				self.setSlideshowContent( options.slideshow );
+
 				break;
 			default:
 				self.setHTMLContent( options.html );
@@ -183,34 +184,38 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	getSlideshowHeader: function() {
 		const $ = jQuery,
-			showCounter = elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_counter' ),
-			showFullscreen = elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_fullscreen' ),
-			showZoom = elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_zoom' ),
-			showShare = elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_share' ),
+			showCounter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_counter' ),
+			showFullscreen = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_fullscreen' ),
+			showZoom = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_zoom' ),
+			showShare = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_share' ),
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
 			elements = this.elements;
 
-		if ( 'yes' !== showCounter && 'yes' !== showFullscreen && 'yes' !== showZoom && 'yes' !== showShare ) {
+		if ( ! ( showCounter || showFullscreen || showZoom || showShare ) ) {
 			return;
 		}
 
 		elements.$header = $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } );
-		if ( 'yes' === showCounter ) {
+
+		if ( showCounter ) {
 			elements.$counter = $( '<span>', { class: slideshowClasses.counter } );
 			elements.$header.append( elements.$counter );
 		}
-		if ( 'yes' === showFullscreen ) {
+
+		if ( showFullscreen ) {
 			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand } ).append( '<span>', '<span>' );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
 		}
-		if ( 'yes' === showZoom ) {
+
+		if ( showZoom ) {
 			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn } );
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
 			elements.$header.append( elements.$iconZoom );
 		}
-		if ( 'yes' === showShare ) {
+
+		if ( showShare ) {
 			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( '<span>' );
 			const $shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' );
 			$shareLinks.on( 'click', ( e ) => {
