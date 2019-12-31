@@ -46,18 +46,17 @@
     | `{Object}`    | _model_                            | **required**      | 
     | `{Object}`    | _options_                          | **optional**      | 
 
-    *options:*
-    ```javascript
-    {
-        at: {Number},                                // Position.
-        clone: {Boolean},                            // Generate unique id for the model.
-        edit: {Boolean},                             // Is turn edit panel for the new element.
-        onBeforeAdd: {function()},                   // Run callback before add.
-        onAfterAdd: {function( newModel, newView )}, // Run callback after add.
-        trigger: {Boolean},                          // Deprecated.
-    }
-    ```
+    **_options:_**
    
+    | Property    | Type                              | Default   | Description                            |
+    |-------------|-----------------------------------|-----------|----------------------------------------|
+    | at          | `{Number}`                        | `{null}`  | Position (null means last). 
+    | clone       | `{Boolean}`                       | `{false}` | Generate unique id for the model
+    | edit        | `{Boolean}`                       | `{false}` | Is turn edit panel for the new element
+    | onBeforeAdd | `{function()}`                    |           | Run callback before add
+    | onAfterAdd  | `{function( newModel, newView )}` |           | Run callback after add
+    | trigger     | `{Boolean}`                       | `{false}` | *Deprecated*
+
 * **Examples**:
     Create Heading widget 
     ```javascript
