@@ -142,7 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<img src="{{ thumbnail }}">
 		<# } #>
 		<div class="elementor-template-library-template-preview">
-			<i class="eicon-zoom-in" aria-hidden="true"></i>
+			<i class="eicon-zoom-in-bold" aria-hidden="true"></i>
 		</div>
 	</div>
 	<div class="elementor-template-library-template-footer">
