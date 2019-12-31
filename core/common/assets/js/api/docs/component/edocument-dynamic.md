@@ -4,11 +4,11 @@
 *  **Description**: Dynamic enable, disable and change.
 
 ## Component `document/dynamic/` -- Commands
-| Command               | Access                                  | Description         
-|-----------------------|-----------------------------------------|-----------------------------------------
-| [Disable](#disable-command----erungetdocumentdynamicdisable)    | `$e.run('document/dynamic/disable')`    | Disable dynamic of container. 
-| [Enable](#enable-command----erungetdocumentdynamicenable)       | `$e.run('document/dynamic/enable')`     | Enable dynamic of container.
-| [Settings](#settings-command----erungetdocumentdynamicsettings) | `$e.run('document/dynamic/settings')`   | Change dynamic settings of container.
+| Command                                                         | Access                                  | Description         
+|-----------------------------------------------------------------|-----------------------------------------|-----------------------------------------
+| [Disable](#disable-command----erundocumentdynamicdisable)       | `$e.run('document/dynamic/disable')`    | Disable dynamic of container. 
+| [Enable](#enable-command----erundocumentdynamicenable)          | `$e.run('document/dynamic/enable')`     | Enable dynamic of container.
+| [Settings](#settings-command----erundocumentdynamicsettings)    | `$e.run('document/dynamic/settings')`   | Change dynamic settings of container.
 
 
 ## Disable _Command_ -- `$e.run('document/dynamic/disable')`
