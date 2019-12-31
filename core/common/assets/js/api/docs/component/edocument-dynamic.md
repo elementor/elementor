@@ -6,9 +6,9 @@
 ## Component `document/dynamic/` -- Commands
 | Command               | Access                                  | Description         
 |-----------------------|-----------------------------------------|-----------------------------------------
-| [Disable](#disable-command----erungetdocumentdynamicdisable)    | `$e.run('document/dynamic/disable')`    | Disable dynamic. 
-| [Enable](#enable-command----erungetdocumentdynamicenable)       | `$e.run('document/dynamic/enable')`     | Enable dynamic.
-| [Settings](#settings-command----erungetdocumentdynamicsettings) | `$e.run('document/dynamic/settings')`   | Change dynamic.
+| [Disable](#disable-command----erungetdocumentdynamicdisable)    | `$e.run('document/dynamic/disable')`    | Disable dynamic of container. 
+| [Enable](#enable-command----erungetdocumentdynamicenable)       | `$e.run('document/dynamic/enable')`     | Enable dynamic of container.
+| [Settings](#settings-command----erungetdocumentdynamicsettings) | `$e.run('document/dynamic/settings')`   | Change dynamic settings of container.
 
 
 ## Disable _Command_ -- `$e.run('document/dynamic/disable')`
@@ -78,7 +78,7 @@
 
 ## Settings _Command_ -- `$e.run('document/dynamic/settings')`
 *  **Name**: Settings.
-*  **Description**: Change dynamic settings.
+*  **Description**: Change dynamic settings of container.
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
@@ -112,7 +112,6 @@
     The result will be:
     
     ![widget-heading-with-dynamic-title-date-human-readable](../images/edocument-dynamic/widget-heading-with-dynamic-title-date-human-readable.png)
-
 
 
 ### [Back](edocument.md) 

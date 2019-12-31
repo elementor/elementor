@@ -27,7 +27,7 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{String}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`
 
 ## CopyAll _Command_ -- `$e.run('document/elements/copy-all')`
 *  **Name**: Copy-All.
@@ -43,8 +43,8 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{Object}`    | model                              | **required**      | 
-    | `{Object}`    | options                            | **optional**      | 
+    | `{Object}`    | _model_                            | **required**      | 
+    | `{Object}`    | _options_                          | **optional**      | 
 
     *options:*
     ```javascript
@@ -142,7 +142,7 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Boolean}`   | force                              | **optional**      | default: `{false}`, if true will delete all elements without confirmation.
+    | `{Boolean}`   | _force_                            | **optional**      | default: `{false}`, if true will delete all elements without confirmation.
 
 
 ## Import _Command_ -- `$e.run('document/elements/import')`
@@ -153,9 +153,9 @@
 
     | Type                 | Property                             | Requirement       | Description |
     |---                   |---                                   |---                |---|
-    | `{Backbone.Model}`   | model                                | **required**      | Template model.
-    | `{Object}`           | data                                 | **required**      | Data.
-    | `{Object}`           | options                              | **optional**      | 
+    | `{Backbone.Model}`   | _model_                              | **required**      | Template model.
+    | `{Object}`           | _data_                               | **required**      | Data.
+    | `{Object}`           | _options_                            | **optional**      | 
 
     *data:*
     ```javascript
@@ -186,7 +186,7 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{String}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`
 * **Examples**:
     Copy widget and paste it into column.
 
@@ -215,7 +215,7 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{String}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`
 * **Examples**:
     Copy style from one widget and paste it into another.
     Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the speical one, to restore him to default.
@@ -244,7 +244,7 @@
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
     | `{Container}` | _container OR containers_          | **required**      | 
-    | `{String}`    | storageKey                         | **optional**      | default: `{'clipboard'}`
+    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`
 * **Examples**:
     Reset style of widget.
     Assuming we have a widget with special style.
@@ -261,3 +261,43 @@
     
     ![widget-heading-pasted](../images/base/widget-heading-pasted.png)
 
+## Settings _Command_ -- `$e.run('document/elemtns/settings')`
+*  **Name**: Settings.
+*  **Description**: Change container settings.
+*  **Returns**: `{void}`
+*  **Arguments**: 
+
+    | Type          | Property                           | Requirement       | Description |
+    |---            |---                                 |---                |---|
+    | `{Container}` | _container OR containers_          | **required**      | 
+    | `{Object}`    | _settings_                         | **required**      | Settings
+    | `{Boolean}`   | _isMultiSettings_                  | **optional**      | default: `{false}`, enable settings for multi containers (each container).
+    | `{Object}`    | _options_                          | **optional**      |
+
+    *options:*
+    ```javascript
+    {
+        external: {Boolean}, // default: `false`, Re-render panel with new settings.
+        debounce: {Boolean}, // default: `true`.
+    }
+    ```
+* **Examples**:
+   * Change settings of widget, assuming we have widget heading, let change title color.
+        ![widget-heading](../images/base/widget-heading.png)
+    
+        ```javascript
+        const eWidget = $e.utils.document.findContainerById('2e4b783');
+        
+        $e.run('document/elements/settings', { 
+          container: eWidget,
+          settings: {
+              title_color: 'black',
+          }
+        } );
+        ```
+        Result:
+        ![widget-heading](../images/edocument-elements/widget-heading-title-color-black.png)
+    
+    * TODO: Add example with multi containers.
+
+### [Back](edocument.md) 
