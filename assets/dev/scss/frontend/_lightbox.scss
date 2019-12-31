@@ -133,8 +133,6 @@
 	&__counter {
 		color: currentColor;
 		font-size: 16px;
-		margin-right: auto;
-		@include margin-end( auto );
 		width: max-content;
 	}
 
@@ -162,6 +160,10 @@
 
 			&:hover {
 				color: #fff;
+			}
+
+			&:first-of-type {
+				@include margin-start( auto );
 			}
 		}
 
@@ -246,6 +248,12 @@
 			&-prev, &-next {
 				opacity: 0;
 			}
+		}
+	}
+
+	&--fullscreen-mode {
+		.elementor-video-container {
+			width: 100%;
 		}
 	}
 

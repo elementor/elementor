@@ -44,6 +44,7 @@ module.exports = elementorModules.ViewModule.extend( {
 					shareMenu: 'elementor-slideshow__share-menu',
 					hideUiVisibility: 'elementor-slideshow--ui-hidden',
 					shareMode: 'elementor-slideshow--share-mode',
+					fullscreenMode: 'elementor-slideshow--fullscreen-mode',
 					zoomMode: 'elementor-slideshow--zoom-mode',
 				},
 			},
@@ -204,7 +205,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showFullscreen ) {
-			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand } ).append( '<span>', '<span>' );
+			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand } ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
 		}
@@ -216,7 +217,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showShare ) {
-			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( '<span>' );
+			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( $( '<span>' ) );
 			const $shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' );
 			$shareLinks.on( 'click', ( e ) => {
 				e.stopPropagation();
@@ -249,12 +250,14 @@ module.exports = elementorModules.ViewModule.extend( {
 		const classes = this.getSettings( 'classes' );
 		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
 		this.elements.$iconExpand.addClass( classes.slideshow.iconShrink );
+		this.elements.$container.addClass( classes.slideshow.fullscreenMode );
 	},
 
 	deactivateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.exit();
 		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink );
+		this.elements.$container.removeClass( classes.slideshow.fullscreenMode );
 	},
 
 	activateZoom: function() {
@@ -337,7 +340,9 @@ module.exports = elementorModules.ViewModule.extend( {
 						'data-title': slide.title,
 						'data-description': slide.description,
 					} );
-
+				$slideImage[ 0 ].ondragstart = () => {
+					return false;
+				};
 				$zoomContainer.append( $slideImage );
 				$slide.append( $zoomContainer );
 			}
