@@ -4,19 +4,19 @@
 *  **Description**: Provide a way to manage elements, create, edit, delete. copy, paste, etc...
 
 ## Component `document/elements/` -- Commands
-| Command                                   | Access                                             | Description         
-|-------------------------------------------|----------------------------------------------------|-----------------------------------------
-| [Copy](#)                                 | `$e.run('document/elements/copy')`                 | Copy container. 
-| [Copy-All](#)                             | `$e.run('document/elements/copy-all')`             | Copy all containers. 
-| [Create](#)                               | `$e.run('document/elements/create')`               | Create element. 
-| [Delete](#)                               | `$e.run('document/elements/delete')`               | Delete container. 
-| [Duplicate](#)                            | `$e.run('document/elements/duplicate')`            | Duplicate container. 
-| [Empty](#)                                | `$e.run('document/elements/empty')`                | Empty document. 
-| [Import](#)                               | `$e.run('document/elements/import')`               | Import to document. 
-| [Paste](#)                                | `$e.run('document/elements/paste')`                | Paste to container. 
-| [Paste-Style](#)                          | `$e.run('document/elements/paste-style')`          | Paste style to container. 
-| [Reset-Style](#)                          | `$e.run('document/elements/reset-style')`          | Reset style to container. 
-| [Settings](#)                             | `$e.run('document/elements/settings')`             | Change settings of container. 
+| Command                                                                | Access                                             | Description         
+|------------------------------------------------------------------------|----------------------------------------------------|-----------------------------------------
+| [Copy](#copy-command----erundocumentelementscopy)                      | `$e.run('document/elements/copy')`                 | Copy container. 
+| [Copy-All](#copyall-command----erundocumentelementscopy-all)           | `$e.run('document/elements/copy-all')`             | Copy all containers. 
+| [Create](#create-command----erundocumentelementscreate)                | `$e.run('document/elements/create')`               | Create element. 
+| [Delete](#delete-command----erundocumentelementsdelete)                | `$e.run('document/elements/delete')`               | Delete container. 
+| [Duplicate](#duplicate-command----erundocumentelementsduplicate)       | `$e.run('document/elements/duplicate')`            | Duplicate container. 
+| [Empty](#empty-command----erundocumentelementsempty)                   | `$e.run('document/elements/empty')`                | Empty document. 
+| [Import](#import-command----erundocumentelementsimport)                | `$e.run('document/elements/import')`               | Import to document. 
+| [Paste](#paste-command----erundocumentelementspaste)                   | `$e.run('document/elements/paste')`                | Paste to container. 
+| [Paste-Style](#paste-style-command----erundocumentelementspaste-style) | `$e.run('document/elements/paste-style')`          | Paste style to container. 
+| [Reset-Style](#reset-style-command----erundocumentelementsreset-style) | `$e.run('document/elements/reset-style')`          | Reset style to container. 
+| [Settings](#settings-command----erundocumentelemtnssettings)           | `$e.run('document/elements/settings')`             | Change settings of container. 
 
 ## Copy _Command_ -- `$e.run('document/elements/copy')`
 *  **Name**: Copy.
@@ -89,7 +89,7 @@
     ```
     Result: ![widget-heading](../images/base/widget-heading.png)
 
-## Create _Delete_ -- `$e.run('document/elements/delete')`
+## Delete _Command_ -- `$e.run('document/elements/delete')`
 *  **Name**: Delete.
 *  **Description**: Delete container.
 *  **Returns**: `{Container | Array.<Container>}` *Deleted container(s)*.
