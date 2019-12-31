@@ -241,9 +241,30 @@ module.exports = elementorModules.ViewModule.extend( {
 	toggleZoomMode: function() {
 		if ( 1 !== this.swiper.zoom.scale ) {
 			this.deactivateZoom();
-			return;
+		} else {
+			this.activateZoom();
 		}
-		this.activateZoom();
+	},
+
+	toggleShareMenu: function() {
+		const classes = this.getSettings( 'classes' );
+		if ( $container.hasClass( classes.slideshow.shareMode ) ) {
+			this.deactivateShareMode();
+		} else {
+			this.activateShareMode();
+		}
+	},
+
+	activateShareMode: function() {
+		const classes = this.getSettings( 'classes' );
+		this.elements.$container.addClass( classes.slideshow.shareMode );
+		this.swiper.detachEvents();
+	},
+
+	deactivateShareMode: function() {
+		const classes = this.getSettings( 'classes' );
+		this.elements.$container.removeClass( classes.slideshow.shareMode );
+		this.swiper.attachEvents();
 	},
 
 	activateFullscreen: function() {
@@ -283,18 +304,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		swiper.allowTouchMove = true;
 		elements.$container.removeClass( classes.slideshow.zoomMode );
 		elements.$iconZoom.removeClass( classes.slideshow.iconZoomOut ).addClass( classes.slideshow.iconZoomIn );
-	},
-
-	toggleShareMenu: function() {
-		const classes = this.getSettings( 'classes' ),
-			$container = this.elements.$container;
-		if ( ! $container.hasClass( classes.slideshow.shareMode ) ) {
-			$container.addClass( classes.slideshow.shareMode );
-			this.swiper.detachEvents();
-			return;
-		}
-		$container.removeClass( classes.slideshow.shareMode );
-		this.swiper.attachEvents();
 	},
 
 	getSlideshowFooter: function() {
