@@ -219,8 +219,6 @@
 * **Examples**:
     Copy style from one widget and paste it into another.
     Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the speical one, to restore him to default.
-    ## TODO: Example does not work, since is-paste-style-enabled, does dont know about selected element.
-    ### `Document/Selection` ?
     ![widget-heading-another-heading-with-special-style](../images/edocument-elements/widget-heading-another-heading-with-special-style.png)
 
     ```javascript
