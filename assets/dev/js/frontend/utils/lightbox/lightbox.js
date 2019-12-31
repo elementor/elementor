@@ -248,7 +248,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	toggleShareMenu: function() {
 		const classes = this.getSettings( 'classes' );
-		if ( $container.hasClass( classes.slideshow.shareMode ) ) {
+		if ( this.elements.$container.hasClass( classes.slideshow.shareMode ) ) {
 			this.deactivateShareMode();
 		} else {
 			this.activateShareMode();
