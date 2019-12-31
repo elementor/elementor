@@ -184,34 +184,43 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	getSlideshowHeader: function() {
 		const $ = jQuery,
+			showCounter = elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_counter' ),
+			showFullscreen = elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_fullscreen' ),
+			showZoom = elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_zoom' ),
+			showShare = elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_share' ),
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
-			headerElements = {
-				$header: $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } ),
-				$counter: $( '<span>', { class: slideshowClasses.counter } ),
-				$iconExpand: $( '<i>', { class: slideshowClasses.iconExpand } ).append( '<span>', '<span>' ),
-				$iconZoom: $( '<i>', { class: slideshowClasses.iconZoomIn } ),
-				$iconShare: $( '<i>', { class: slideshowClasses.iconShare } ).append( '<span>' ),
-			};
-		this.elements = { ...this.elements, ...headerElements };
-		const $shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' );
-		this.elements.$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
-		const elements = this.elements;
+			elements = this.elements;
 
-		elements.$iconExpand.on( 'click', this.toggleFullscreen );
-		elements.$iconZoom.on( 'click', this.toggleZoomMode );
-		elements.$iconShare.add( elements.$shareMenu ).on( 'click', this.toggleShareMenu );
-		$shareLinks.on( 'click', ( e ) => {
-			e.stopPropagation();
-		} );
+		if ( 'yes' !== showCounter && 'yes' !== showFullscreen && 'yes' !== showZoom && 'yes' !== showShare ) {
+			return;
+		}
 
-		elements.$header.append(
-			elements.$counter,
-			elements.$iconExpand,
-			elements.$iconZoom,
-			elements.$iconShare,
-			elements.$shareMenu,
-		);
+		elements.$header = $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } );
+		if ( 'yes' === showCounter ) {
+			elements.$counter = $( '<span>', { class: slideshowClasses.counter } );
+			elements.$header.append( elements.$counter );
+		}
+		if ( 'yes' === showFullscreen ) {
+			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand } ).append( '<span>', '<span>' );
+			elements.$iconExpand.on( 'click', this.toggleFullscreen );
+			elements.$header.append( elements.$iconExpand );
+		}
+		if ( 'yes' === showZoom ) {
+			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn } );
+			elements.$iconZoom.on( 'click', this.toggleZoomMode );
+			elements.$header.append( elements.$iconZoom );
+		}
+		if ( 'yes' === showShare ) {
+			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( '<span>' );
+			const $shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' );
+			$shareLinks.on( 'click', ( e ) => {
+				e.stopPropagation();
+			} );
+			elements.$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
+			elements.$iconShare.add( elements.$shareMenu ).on( 'click', this.toggleShareMenu );
+			elements.$header.append( elements.$iconShare, elements.$shareMenu );
+		}
 
 		return elements.$header;
 	},
@@ -284,6 +293,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	setSlideshowContent: function( options ) {
 		const $ = jQuery,
+			showFooter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ),
 			self = this,
 			classes = self.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
@@ -325,15 +335,18 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.elements.$container = $container;
 		this.elements.$header = self.getSlideshowHeader();
-		this.elements.$footer = self.getSlideshowFooter();
 
 		$container.prepend( this.elements.$header );
 		$container.append(
 			$slidesWrapper,
 			$prevButton,
 			$nextButton,
-			this.elements.$footer,
 		);
+
+		if ( showFooter ) {
+			this.elements.$footer = self.getSlideshowFooter();
+			$container.append( this.elements.$footer );
+		}
 
 		this.setSettings( 'hideUiTimeout', '' );
 
@@ -385,7 +398,9 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			self.playSlideVideo();
 
-			self.updateFooterText();
+			if ( showFooter ) {
+				self.updateFooterText();
+			}
 		};
 	},
 
@@ -520,7 +535,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	setEntranceAnimation: function( animation ) {
 		animation = animation || elementorFrontend.getCurrentDeviceSetting( this.getSettings( 'modalOptions' ), 'entranceAnimation' );
 
-		var $widgetMessage = this.getModal().getElements( 'message' );
+		const $widgetMessage = this.getModal().getElements( 'message' );
 
 		if ( this.oldAnimation ) {
 			$widgetMessage.removeClass( this.oldAnimation );
@@ -538,14 +553,14 @@ module.exports = elementorModules.ViewModule.extend( {
 			return false;
 		}
 
-		var generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
+		const generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
 			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
 
 		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
 	},
 
 	openLink: function( event ) {
-		var element = event.currentTarget,
+		const element = event.currentTarget,
 			$target = jQuery( event.target ),
 			editMode = elementorFrontend.isEditMode(),
 			isClickInsideElementor = ! ! $target.closest( '#elementor' ).length;
@@ -564,7 +579,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		var lightboxData = {};
+		let lightboxData = {};
 
 		if ( element.dataset.elementorLightbox ) {
 			lightboxData = JSON.parse( element.dataset.elementorLightbox );
@@ -585,11 +600,10 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		var slideshowID = element.dataset.elementorLightboxSlideshow;
+		const slideshowID = element.dataset.elementorLightboxSlideshow;
 
-		var $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( function() {
+		const $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( function() {
 			const $this = jQuery( this );
-
 			return slideshowID === this.dataset.elementorLightboxSlideshow && ! $this.parent( '.swiper-slide-duplicate' ).length && ! $this.parents( '.slick-cloned' ).length;
 		} );
 
@@ -604,7 +618,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				slideIndex = $allSlideshowLinks.index( this );
 			}
 
-			var slideData = {
+			const slideData = {
 				image: this.href,
 				index: slideIndex,
 				title: jQuery( this ).data( 'elementor-lightbox-title' ),
@@ -622,7 +636,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return a.index - b.index;
 		} );
 
-		var initialSlide = element.dataset.elementorLightboxIndex;
+		let initialSlide = element.dataset.elementorLightboxIndex;
 
 		if ( undefined === initialSlide ) {
 			initialSlide = $allSlideshowLinks.index( element );
@@ -655,6 +669,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			.remove();
 
 		this.playSlideVideo();
-		this.updateFooterText();
+
+		if ( 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ) ) {
+			this.updateFooterText();
+		}
 	},
 } );
