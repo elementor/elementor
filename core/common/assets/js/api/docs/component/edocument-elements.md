@@ -51,10 +51,10 @@
     {
         at: {Number},                                // Position.
         clone: {Boolean},                            // Generate unique id for the model.
-        trigger: {Boolean},                          // TODO: Mati help.
         edit: {Boolean},                             // Is turn edit panel for the new element.
         onBeforeAdd: {function()},                   // Run callback before add.
         onAfterAdd: {function( newModel, newView )}, // Run callback after add.
+        trigger: {Boolean},                          // Deprecated.
     }
     ```
    
@@ -169,11 +169,11 @@
     {
         at: {Number},                                // Position ( Automatically increased ).
         clone: {Boolean},                            // Generate unique id for the model.
-        trigger: {Boolean},                          // TODO: Mati help.
         edit: {Boolean},                             // Is turn edit panel for the new element.
         onBeforeAdd: {function()},                   // Run callback before add.
         onAfterAdd: {function( newModel, newView )}, // Run callback after add.
         withPageSettings: {Boolean},                 // Apply data.page_settings to page_settings document.
+        trigger: {Boolean},                          // Deprecated.
     }
     ```
 
