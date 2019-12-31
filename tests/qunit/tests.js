@@ -1,4 +1,4 @@
-import EditorBase from './js/editor-base.spec.js';
+import EditorTest from './js/editor-test';
 import section from './mock/elments/section.json';
 import column from './mock/elments/column.json';
 import button from './mock/elments/button.json';
@@ -9,13 +9,13 @@ import postDate from './mock/dynamic-tags/post-date';
 import postCustomField from './mock/dynamic-tags/post-custom-field';
 import SchemeItems from './mock/schemes/items';
 
-jQuery( document ).ready( () => {
+function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-fake"></div>' ),
 		$elementorFake = $body.find( '#elementor-fake' );
 
 	$elementorFake.append( window.__html__[ 'tests/qunit/index.html' ] );
 
-	const elementor = new EditorBase();
+	const elementor = new EditorTest();
 
 	window.elementor = elementor;
 	window.NProgress = {
@@ -76,4 +76,8 @@ jQuery( document ).ready( () => {
 			require( './core/editor/document/ui/component.spec' );
 		} );
 	} );
+}
+
+jQuery( document ).ready( () => {
+	initialize();
 } );

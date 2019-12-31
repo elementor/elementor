@@ -1,7 +1,7 @@
 module.exports = function( config ) {
 	config.set( {
 		basePath: './',
-		frameworks: [ 'qunit', 'fixture' ],
+		frameworks: [ 'qunit' ],
 		files: [
 			{
 				pattern: 'assets/js/**/*.js.map',

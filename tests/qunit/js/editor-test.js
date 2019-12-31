@@ -1,6 +1,18 @@
 import EditorBase from './../../../assets/dev/js/editor/editor-base';
 
-export default class EditorBaseTest extends EditorBase {
+export default class EditorTest extends EditorBase {
+	constructor( options ) {
+		super( options );
+
+		QUnit.testStart( ( { module, name } ) => {
+			console.log( 'Testing: ', module, name );
+		} );
+
+		QUnit.testDone( ( { module, name } ) => {
+			this.$elementor.empty();
+		} );
+	}
+
 	getPreviewView() {
 		return super.getPreviewView();
 	}
@@ -32,9 +44,13 @@ export default class EditorBaseTest extends EditorBase {
 
 		this.$previewContents = this.$preview.contents();
 
-		this.$previewContents.find( 'body' ).append( '<div id="elementor"></div>' );
+		const $previewContentsBody = this.$previewContents.find( 'body' );
 
-		// Shortcut bind.
+		$previewContentsBody.append( '<div id="elementor"></div>' );
+
+		this.$elementor = $previewContentsBody.find( '#elementor' );
+
+		// Shortcut bind, in other words make shortcuts listen to iframe.
 		elementorFrontend.elements.$window = jQuery( '#elementor-preview-iframe' );
 
 		super.onPreviewLoaded();
@@ -42,12 +58,14 @@ export default class EditorBaseTest extends EditorBase {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
-		// do nothing
+
 		this.previewLoadedOnce = true;
+
+		// Do nothing, else.
 	}
 
 	enqueueTypographyFonts() {
-
+		// Do nothing, bypass parent function.
 	}
 }
 
