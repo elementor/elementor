@@ -383,7 +383,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				if ( ! $container.hasClass( 'share-mode' ) ) {
 					$container.addClass( slideshowClasses.hideUiVisibility );
 				}
-			}, 2500 ) );
+			}, 3500 ) );
 		} );
 
 		const modal = this.getModal();
@@ -586,6 +586,60 @@ module.exports = elementorModules.ViewModule.extend( {
 		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
 	},
 
+	openSlideshow: function( slideshowID, initialSlideURL ) {
+		const $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( ( index, element ) => {
+			const $element = jQuery( element );
+
+			return slideshowID === element.dataset.elementorLightboxSlideshow && ! $element.parent( '.swiper-slide-duplicate' ).length && ! $element.parents( '.slick-cloned' ).length;
+		} );
+
+		const slides = [];
+
+		let initialSlideIndex = 0;
+
+		$allSlideshowLinks.each( function() {
+			const slideVideo = this.dataset.elementorLightboxVideo;
+
+			let slideIndex = this.dataset.elementorLightboxIndex;
+
+			if ( undefined === slideIndex ) {
+				slideIndex = $allSlideshowLinks.index( this );
+			}
+
+			if ( initialSlideURL === this.href ) {
+				initialSlideIndex = slideIndex;
+			}
+
+			const slideData = {
+				image: this.href,
+				index: slideIndex,
+				title: this.dataset.elementorLightboxTitle,
+				description: this.dataset.elementorLightboxDescription,
+			};
+
+			if ( slideVideo ) {
+				slideData.video = slideVideo;
+			}
+
+			slides.push( slideData );
+		} );
+
+		slides.sort( ( a, b ) => a.index - b.index );
+
+		this.showModal( {
+			type: 'slideshow',
+			modalOptions: {
+				id: 'elementor-lightbox-slideshow-' + slideshowID,
+			},
+			slideshow: {
+				slides: slides,
+				swiper: {
+					initialSlide: +initialSlideIndex,
+				},
+			},
+		} );
+	},
+
 	openLink: function( event ) {
 		const element = event.currentTarget,
 			$target = jQuery( event.target ),
@@ -627,61 +681,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		const slideshowID = element.dataset.elementorLightboxSlideshow;
-
-		const $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( function() {
-			const $this = jQuery( this );
-			return slideshowID === this.dataset.elementorLightboxSlideshow && ! $this.parent( '.swiper-slide-duplicate' ).length && ! $this.parents( '.slick-cloned' ).length;
-		} );
-
-		const slides = [];
-
-		$allSlideshowLinks.each( function() {
-			const $this = jQuery( this ),
-				slideVideo = this.dataset.elementorLightboxVideo;
-
-			let slideIndex = this.dataset.elementorLightboxIndex;
-
-			if ( undefined === slideIndex ) {
-				slideIndex = $allSlideshowLinks.index( this );
-			}
-
-			const slideData = {
-				image: this.href,
-				index: slideIndex,
-				title: $this.data( 'elementor-lightbox-title' ),
-				description: $this.data( 'elementor-lightbox-description' ),
-			};
-
-			if ( slideVideo ) {
-				slideData.video = slideVideo;
-			}
-
-			slides.push( slideData );
-		} );
-
-		slides.sort( function( a, b ) {
-			return a.index - b.index;
-		} );
-
-		let initialSlide = element.dataset.elementorLightboxIndex;
-
-		if ( undefined === initialSlide ) {
-			initialSlide = $allSlideshowLinks.index( element );
-		}
-
-		this.showModal( {
-			type: 'slideshow',
-			modalOptions: {
-				id: 'elementor-lightbox-slideshow-' + slideshowID,
-			},
-			slideshow: {
-				slides: slides,
-				swiper: {
-					initialSlide: +initialSlide,
-				},
-			},
-		} );
+		this.openSlideshow( element.dataset.elementorLightboxSlideshow, element.href );
 	},
 
 	bindEvents: function() {
