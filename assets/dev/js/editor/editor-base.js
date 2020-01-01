@@ -328,7 +328,7 @@ const App = Marionette.Application.extend( {
 		if ( ! this.$preview ) {
 			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
-				src: this.config.document_preview_url,
+				src: this.config.initial_document.preview_url,
 				allowfullscreen: 1,
 			} );
 
@@ -762,7 +762,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	initDocument( id ) {
-		id = id || this.config.document_id;
+		id = id || this.config.initial_document.id;
 
 		this.requestDocument( id ).then( () => {
 			this.setAjax();
