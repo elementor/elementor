@@ -285,7 +285,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		const swiper = this.swiper,
 			elements = this.elements,
 			classes = this.getSettings( 'classes' );
-		swiper.zoom.enable();
 		swiper.zoom.in();
 		swiper.allowSlideNext = false;
 		swiper.allowSlidePrev = false;
