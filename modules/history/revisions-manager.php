@@ -336,13 +336,13 @@ class Revisions_Manager {
 	 *
 	 * Add new localized settings for the revisions manager.
 	 *
-	 * Fired by `elementor/editor/localize_settings` filter.
+	 * Fired by `elementor/editor/editor_settings` filter.
 	 *
 	 * @since 1.7.0
 	 * @access public
 	 * @static
 	 */
-	public static function localize_settings( $settings ) {
+	public static function editor_settings( $settings ) {
 		$settings = array_replace_recursive( $settings, [
 			'i18n' => [
 				'edit_draft' => __( 'Edit Draft', 'elementor' ),
@@ -389,7 +389,7 @@ class Revisions_Manager {
 	private static function register_actions() {
 		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
 		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
-		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'localize_settings' ] );
+		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'editor_settings' ] );
 		add_filter( 'elementor/editor/document/config', [ __CLASS__, 'document_config' ], 10, 2 );
 		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
 		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
