@@ -141,4 +141,21 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		$this->assertNull( \Elementor\Embed::get_video_properties( 'https://www.youtube.com/' ) );
 	}
+
+	public function test_is_empty() {
+		$this->assertEquals( false, Utils::is_empty('0' ),
+			"'0' is not empty" );
+
+		$this->assertEquals( true, Utils::is_empty('' ),
+			"'' is empty" );
+
+		$this->assertEquals( true, Utils::is_empty( [], 'key' ),
+			"[] with undefined key, is empty" );
+
+		$this->assertEquals( true, Utils::is_empty( [ 'key' => '' ], 'key' ),
+			"[ 'key' => '' ] is empty" );
+
+		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
+			"[ 'key' => '0' ] is empty" );
+	}
 }

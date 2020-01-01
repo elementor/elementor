@@ -23,7 +23,7 @@ export default class Shapes extends elementorModules.frontend.handlers.Base {
 		let svgURL = this.getSettings( 'svgURL' ) + fileName + '.svg';
 		if ( elementor.config.additional_shapes && shapeType in elementor.config.additional_shapes ) {
 			svgURL = elementor.config.additional_shapes[ shapeType ];
-			if ( -1 < filename.indexOf( '-negative' ) ) {
+			if ( -1 < fileName.indexOf( '-negative' ) ) {
 				svgURL = svgURL.replace( '.svg', '-negative.svg' );
 			}
 		}

@@ -412,10 +412,10 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _get_initial_config() {
+	protected function get_initial_config() {
 		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
 
 		$locked_user = Plugin::$instance->editor->get_locked_user( $this->get_main_id() );

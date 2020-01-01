@@ -83,6 +83,7 @@ WidgetView = BaseElementView.extend( {
 		editModel.on( {
 			'before:remote:render': this.onModelBeforeRemoteRender.bind( this ),
 			'remote:render': this.onModelRemoteRender.bind( this ),
+			'settings:loaded': () => setTimeout( this.render.bind( this ) ),
 		} );
 
 		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
