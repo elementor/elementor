@@ -304,7 +304,7 @@ const App = Marionette.Application.extend( {
 			config = this.config.document.elements;
 
 		// If it's an reload, use the not-saved data
-		if ( this.elements ) {
+		if ( this.elements && this.config.document.id === this.config.initial_document.id ) {
 			config = this.elements.toJSON();
 		}
 
