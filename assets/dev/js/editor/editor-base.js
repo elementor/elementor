@@ -802,6 +802,8 @@ const App = Marionette.Application.extend( {
 				this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
 
 				elementor.helpers.scrollToView( this.$previewElementorEl );
+
+				this.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}
 		} );
 	},

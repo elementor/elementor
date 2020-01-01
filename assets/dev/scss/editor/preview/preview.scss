@@ -875,6 +875,18 @@ html.elementor-html {
 	}
 }
 
+.elementor-embedded-editor {
+	.elementor-section-wrap {
+
+		&:not(:empty) {
+
+			+ #elementor-add-new-section {
+				display: none;
+			}
+		}
+	}
+}
+
 .elementor-add-section-inline {
 	margin: 10px auto;
 }
