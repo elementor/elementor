@@ -693,7 +693,10 @@ class Settings extends Settings_Page {
 			'elementor-getting-started',
 			'elementor-role-manager',
 			'elementor_custom_fonts',
+			'elementor_custom_icons',
 			'elementor-license',
+			'popup_templates',
+			'theme_templates',
 		];
 
 		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {

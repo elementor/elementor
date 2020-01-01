@@ -505,6 +505,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::STRUCTURE,
 				'default' => '10',
 				'render_type' => 'none',
+				'style_transfer' => false,
 			]
 		);
 
