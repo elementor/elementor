@@ -103,6 +103,12 @@ const elementorConfigSettings = {
 /* global jQuery */
 const ElementorConfig = {
 	document: elementorConfigDocument,
+	initial_document: {
+		id: 1,
+		urls: {
+			preview: 'http://localhost/elementor/?p=1&elementor-preview=1&ver=1574068998',
+		},
+	},
 	user: { introduction: {}, restrictions: [] },
 	elements: {},
 	dynamicTags: {},

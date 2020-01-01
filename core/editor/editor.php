@@ -519,7 +519,9 @@ class Editor {
 		$config = [
 			'initial_document' => [
 				'id' => $this->post_id,
-				'preview_url' => Plugin::$instance->documents->get( $this->post_id )->get_preview_url(),
+				'urls' => [
+					'preview' => Plugin::$instance->documents->get( $this->post_id )->get_preview_url(),
+				],
 			],
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),

@@ -328,7 +328,7 @@ const App = Marionette.Application.extend( {
 		if ( ! this.$preview ) {
 			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
-				src: this.config.initial_document.preview_url,
+				src: this.config.initial_document.urls.preview,
 				allowfullscreen: 1,
 			} );
 
