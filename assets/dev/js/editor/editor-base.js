@@ -1082,10 +1082,8 @@ const App = Marionette.Application.extend( {
 			},
 		};
 
-		// replacement `defineProperty` because `get property()` fails during the `Marionette...extend`.
-
 		jQuery.each( map, ( key, data ) => {
-			// elementor.config[ key ] = data.value;
+			// Use `defineProperty` because `get property()` fails during the `Marionette...extend`.
 			Object.defineProperty( this.config, key, {
 				get() {
 					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
