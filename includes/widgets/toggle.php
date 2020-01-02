@@ -153,23 +153,13 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'recommended' => [
 					'fa-solid' => [
-						'caret-right',
-						'caret-left',
-						'caret-up',
+						'chevron-down',
+						'angle-down',
+						'angle-double-down',
 						'caret-down',
-						'caret-square-right',
-						'caret-square-left',
-						'caret-square-up',
 						'caret-square-down',
 					],
 					'fa-regular' => [
-						'caret-right',
-						'caret-left',
-						'caret-up',
-						'caret-down',
-						'caret-square-right',
-						'caret-square-left',
-						'caret-square-up',
 						'caret-square-down',
 					],
 				],
@@ -190,24 +180,14 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'recommended' => [
 					'fa-solid' => [
-						'caret-right',
-						'caret-left',
+						'chevron-up',
+						'angle-up',
+						'angle-double-up',
 						'caret-up',
-						'caret-down',
-						'caret-square-right',
-						'caret-square-left',
 						'caret-square-up',
-						'caret-square-down',
 					],
 					'fa-regular' => [
-						'caret-right',
-						'caret-left',
-						'caret-up',
-						'caret-down',
-						'caret-square-right',
-						'caret-square-left',
 						'caret-square-up',
-						'caret-square-down',
 					],
 				],
 				'skin' => 'inline',
@@ -592,10 +572,10 @@ class Widget_Toggle extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<div class="elementor-toggle" role="tablist">
 			<#

@@ -420,19 +420,7 @@ label.elementor-template-library-order-label {
 		i {
 			font-size: 20px;
 			color: $editor-lightest;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
-		}
-	}
-
-	.elementor-template-library-template-action {
-		background-color: transparent;
-		text-transform: none;
-
-		i {
-			@include margin-end(0);
+			@include absolute-center;
 		}
 	}
 
@@ -440,7 +428,7 @@ label.elementor-template-library-order-label {
 		color: $editor-success;
 	}
 
-	.elementor-button-go-pro {
+	.elementor-go-pro {
 		color: $editor-accent;
 	}
 

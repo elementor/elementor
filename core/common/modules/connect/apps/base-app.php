@@ -18,6 +18,8 @@ abstract class Base_App {
 
 	protected $data = [];
 
+	protected $auth_mode = '';
+
 	/**
 	 * @since 2.3.0
 	 * @access protected
@@ -90,25 +92,32 @@ abstract class Base_App {
 			return;
 		}
 
-		echo '<div id="message" class="updated notice is-dismissible"><p>';
-
-		foreach ( $notices as $notice ) {
-			echo wp_kses_post( sprintf( '<div class="%s"><p>%s</p></div>', $notice['type'], wpautop( $notice['content'] ) ) );
-		}
-
-		echo '</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">' .
-			__( 'Dismiss', 'elementor' ) .
-			'</span></button></div>';
+		$this->print_notices( $notices );
 
 		$this->delete( 'notices' );
 	}
 
+
+	public function get_app_token_from_cli_token( $cli_token ) {
+		$response = $this->request( 'get_app_token_from_cli_token', [
+			'cli_token' => $cli_token,
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			wp_die( $response, $response->get_error_message() );
+		}
+
+		// Use state as usual.
+		$_REQUEST['state'] = $this->get( 'state' );
+		$_REQUEST['code'] = $response->code;
+	}
 	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
 	public function action_authorize() {
 		if ( $this->is_connected() ) {
+			$this->add_notice( __( 'Already connected.', 'elementor' ), 'info' );
 			$this->redirect_to_admin_page();
 			return;
 		}
@@ -116,8 +125,7 @@ abstract class Base_App {
 		$this->set_client_id();
 		$this->set_request_state();
 
-		wp_redirect( $this->get_remote_authorize_url() );
-		die;
+		$this->redirect_to_remote_authorize_url();
 	}
 
 	/**
@@ -383,13 +391,7 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function get_remote_authorize_url() {
-		$redirect_uri = $this->get_admin_url( 'get_token' );
-		if ( ! empty( $_REQUEST['mode'] ) && 'popup' === $_REQUEST['mode'] ) {
-			$redirect_uri = add_query_arg( [
-				'mode' => 'popup',
-				'callback_id' => esc_attr( $_REQUEST['callback_id'] ),
-			], $redirect_uri );
-		}
+		$redirect_uri = $this->get_auth_redirect_uri();
 
 		$url = add_query_arg( [
 			'action' => 'authorize',
@@ -414,11 +416,18 @@ abstract class Base_App {
 			$url = Admin::$url;
 		}
 
-		if ( ! empty( $_REQUEST['mode'] ) && 'popup' === $_REQUEST['mode'] ) {
-			$this->print_popup_close_script( $url );
-		} else {
-			wp_safe_redirect( $url );
-			die;
+		switch ( $this->auth_mode ) {
+			case 'popup':
+				$this->print_popup_close_script( $url );
+				break;
+
+			case 'cli':
+				$this->admin_notice();
+				die;
+
+			default:
+				wp_safe_redirect( $url );
+				die;
 		}
 	}
 
@@ -496,12 +505,73 @@ abstract class Base_App {
 		return $site_key;
 	}
 
+	protected function redirect_to_remote_authorize_url() {
+		switch ( $this->auth_mode ) {
+			case 'cli':
+				$this->get_app_token_from_cli_token( $_REQUEST['token'] );
+				return;
+			default:
+				wp_redirect( $this->get_remote_authorize_url() );
+				die;
+		}
+	}
+
+	protected function get_auth_redirect_uri() {
+		$redirect_uri = $this->get_admin_url( 'get_token' );
+
+		switch ( $this->auth_mode ) {
+			case 'popup':
+				$redirect_uri = add_query_arg( [
+					'mode' => 'popup',
+					'callback_id' => esc_attr( $_REQUEST['callback_id'] ),
+				], $redirect_uri );
+				break;
+		}
+
+		return $redirect_uri;
+	}
+
+
+	protected function print_notices( $notices ) {
+		switch ( $this->auth_mode ) {
+			case 'cli':
+				foreach ( $notices as $notice ) {
+					printf( '[%s] %s', $notice['type'], $notice['content'] );
+				}
+				break;
+			default:
+				echo '<div id="message" class="updated notice is-dismissible"><p>';
+
+				foreach ( $notices as $notice ) {
+					echo wp_kses_post( sprintf( '<div class="%s"><p>%s</p></div>', $notice['type'], wpautop( $notice['content'] ) ) );
+				}
+
+				echo '</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">' . __( 'Dismiss', 'elementor' ) . '</span></button></div>';
+		}
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+
+		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
+			$allowed_auth_modes = [
+				'popup',
+			];
+
+			if ( defined( 'WP_CLI' ) && WP_CLI ) {
+				$allowed_auth_modes[] = 'cli';
+			}
+
+			$mode = $_REQUEST['mode']; // phpcs:ignore -- nonce validation is not require here.
+
+			if ( in_array( $mode, $allowed_auth_modes, true ) ) {
+				$this->auth_mode = $mode;
+			}
+		}
 
 		/**
 		 * Allow extended apps to customize the __construct without call parent::__construct.

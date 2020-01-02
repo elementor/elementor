@@ -907,7 +907,8 @@ html.elementor-html {
 [data-elementor-device-mode="desktop"] .elementor-hidden-desktop,
 [data-elementor-device-mode="tablet"] .elementor-hidden-tablet,
 [data-elementor-device-mode="mobile"] .elementor-hidden-phone {
-	background-color: fade_out($editor-lightest, .2);
+	background: repeating-linear-gradient(125deg,rgba(0, 0, 0, 0.05),rgba(0, 0, 0, 0.05) 1px,transparent 2px,transparent 9px);
+	border: 1px solid rgba(0, 0, 0, 0.02);
 
 	&.elementor-section {
 

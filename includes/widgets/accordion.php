@@ -155,17 +155,14 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'recommended' => [
 					'fa-solid' => [
-						'plus',
-						'plus-square',
-						'folder-plus',
-						'cart-plus',
-						'calendar-plus',
-						'search-plus',
+						'chevron-down',
+						'angle-down',
+						'angle-double-down',
+						'caret-down',
+						'caret-square-down',
 					],
 					'fa-regular' => [
-						'plus-square',
-						'plus-circle',
-						'calendar-plus',
+						'caret-square-down',
 					],
 				],
 				'skin' => 'inline',
@@ -185,16 +182,14 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'recommended' => [
 					'fa-solid' => [
-						'minus',
-						'minus-circle',
-						'minus-square',
-						'folder-minus',
-						'calendar-minus',
-						'search-minus',
+						'chevron-up',
+						'angle-up',
+						'angle-double-up',
+						'caret-up',
+						'caret-square-up',
 					],
 					'fa-regular' => [
-						'minus-square',
-						'calendar-minus',
+						'caret-square-up',
 					],
 				],
 				'skin' => 'inline',
@@ -554,10 +549,10 @@ class Widget_Accordion extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<div class="elementor-accordion" role="tablist">
 			<#

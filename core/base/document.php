@@ -412,10 +412,10 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _get_initial_config() {
+	protected function get_initial_config() {
 		return [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),

@@ -44,8 +44,21 @@ abstract class Library_Document extends Document {
 		return $properties;
 	}
 
-	public function _get_initial_config() {
-		$config = parent::_get_initial_config();
+	/**
+	 * Get initial config.
+	 *
+	 * Retrieve the current element initial configuration.
+	 *
+	 * Adds more configuration on top of the controls list and the tabs assigned
+	 * to the control. This method also adds element name, type, icon and more.
+	 *
+	 * @since 2.9.0
+	 * @access protected
+	 *
+	 * @return array The initial config.
+	 */
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
 
 		$config['library'] = [
 			'save_as_same_type' => true,
