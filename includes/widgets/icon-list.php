@@ -148,7 +148,6 @@ class Widget_Icon_List extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'label_block' => true,
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 			]
 		);

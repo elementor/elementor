@@ -169,7 +169,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'label_block' => true,
 				'default' => [
 					'is_external' => 'true',
 				],
