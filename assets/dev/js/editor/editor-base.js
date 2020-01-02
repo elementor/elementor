@@ -453,7 +453,8 @@ export default class EditorBase extends Marionette.Application {
 			event.preventDefault()
 		);
 
-		this.$previewContents.on( 'click', ( event ) => {
+		// Cannot use arrow function here since it use `this.contains`.
+		this.$previewContents.on( 'click', function( event ) {
 			const $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,

@@ -7,7 +7,6 @@ import tabs from './mock/elments/tabs.json';
 import form from './mock/elments/form.json';
 import postDate from './mock/dynamic-tags/post-date';
 import postCustomField from './mock/dynamic-tags/post-custom-field';
-import SchemeItems from './mock/schemes/items';
 
 function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-fake"></div>' ),
@@ -20,11 +19,6 @@ function initialize() {
 	window.elementor = elementor;
 
 	elementor.start();
-
-	elementor.config.schemes = {
-		items: SchemeItems,
-		enabled_schemes: [ 'color', 'typography', 'color-picker' ],
-	};
 
 	elementor.config.elements = {
 		section,
@@ -74,6 +68,4 @@ function initialize() {
 	} );
 }
 
-jQuery( document ).ready( () => {
-	initialize();
-} );
+initialize();

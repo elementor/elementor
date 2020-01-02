@@ -1,7 +1,6 @@
 import EditorBase from 'elementor-editor/editor-base';
-import EditorElementor from 'elementor-editor/editor-elementor';
 
-export default class EditorTest extends EditorElementor {
+export default class EditorTest extends EditorBase {
 	constructor( options ) {
 		super( options );
 
@@ -12,7 +11,7 @@ export default class EditorTest extends EditorElementor {
 		QUnit.testDone( ( { module, name } ) => {
 			console.log( 'Testing done', module, name );
 
-			this.$elementor.empty();
+			this.$previewElementorEl.empty();
 		} );
 	}
 
@@ -32,6 +31,9 @@ export default class EditorTest extends EditorElementor {
 		elementorFrontend.elements.$body = jQuery( '#elementor-fake' );
 
 		super.initFrontend();
+
+		// Shortcut bind, in other words make shortcuts listen to iframe.
+		elementorFrontend.elements.$window = jQuery( '#elementor-preview-iframe' );
 	}
 
 	onPreviewLoaded() {
@@ -47,32 +49,35 @@ export default class EditorTest extends EditorElementor {
 
 		$previewContentsBody.append( '<div id="elementor"></div>' );
 
-		this.$elementor = $previewContentsBody.find( '#elementor' );
+		this.$previewElementorEl = $previewContentsBody.find( '#elementor' );
 
-		// Shortcut bind, in other words make shortcuts listen to iframe.
-		elementorFrontend.elements.$window = jQuery( '#elementor-preview-iframe' );
+		this.initFrontend();
 
-		super.onPreviewLoaded();
+		this.initElements();
+
+		const iframeRegion = new Marionette.Region( {
+			// Make sure you get the DOM object out of the jQuery object
+			el: this.$previewElementorEl[ 0 ],
+		} );
+
+		this.onFirstPreviewLoaded();
+
+		this.addRegions( {
+			sections: iframeRegion,
+		} );
+
+		const Preview = require( 'elementor-views/preview' );
+
+		this.sections.show( new Preview( { model: this.elementsModel } ) );
+
+		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
+
+		this.loaded = true;
 	}
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
 
 		this.previewLoadedOnce = true;
-	}
-
-	onStart( options ) {
-		const NProgress = {
-			done: () => console.log( 'NProgress::done()' ),
-		};
-
-		window.NProgress = NProgress;
-
-		// Call editor-base, used to disable NProgress.
-		EditorBase.prototype.onStart.call( this, options );
-	}
-
-	enqueueTypographyFonts() {
-		// Bypass editor-base.
 	}
 }
