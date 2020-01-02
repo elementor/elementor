@@ -3,7 +3,7 @@
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
-import Environment from 'elementor-common/utils/environment';
+import environment from 'elementor-common/utils/environment';
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
@@ -175,7 +175,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	checkEnvCompatibility() {
-		return Environment.firefox || Environment.webkit;
+		return environment.firefox || environment.webkit;
 	}
 
 	getElementData( model ) {
@@ -660,7 +660,7 @@ export default class EditorBase extends Marionette.Application {
 		let text = '',
 			style = '';
 
-		if ( Environment.firefox ) {
+		if ( environment.firefox ) {
 			const asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',
