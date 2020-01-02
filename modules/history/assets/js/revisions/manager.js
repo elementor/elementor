@@ -78,7 +78,7 @@ export default class RevisionsManager {
 
 	addRevisions( items ) {
 		this.requestRevisions( () => {
-			items.forEach( function( item ) {
+			items.forEach( ( item ) => {
 				const existedModel = this.revisions.findWhere( {
 					id: item.id,
 				} );
