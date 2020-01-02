@@ -220,7 +220,7 @@ export default class EditorBase extends Marionette.Application {
 		const isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
-		_.each( elementData.controls, function( controlData, controlKey ) {
+		_.each( elementData.controls, ( controlData, controlKey ) => {
 			if ( ( isInner && controlData.hide_in_inner ) || ( ! isInner && controlData.hide_in_top ) ) {
 				return;
 			}
@@ -352,7 +352,7 @@ export default class EditorBase extends Marionette.Application {
 	initClearPageDialog() {
 		let dialog;
 
-		this.getClearPageDialog = function() {
+		this.getClearPageDialog = () => {
 			if ( dialog ) {
 				return dialog;
 			}
@@ -423,7 +423,7 @@ export default class EditorBase extends Marionette.Application {
 	setAjax() {
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
 
-		elementorCommon.ajax.on( 'request:unhandledError', function( xmlHttpRequest ) {
+		elementorCommon.ajax.on( 'request:unhandledError', ( xmlHttpRequest ) => {
 			elementor.notifications.showToast( {
 				message: elementor.createAjaxErrorMessage( xmlHttpRequest ),
 			} );
@@ -449,11 +449,11 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	preventClicksInsideEditor() {
-		this.$previewContents.on( 'submit', function( event ) {
-			event.preventDefault();
-		} );
+		this.$previewContents.on( 'submit', ( event ) =>
+			event.preventDefault()
+		);
 
-		this.$previewContents.on( 'click', function( event ) {
+		this.$previewContents.on( 'click', ( event ) => {
 			const $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
@@ -499,9 +499,7 @@ export default class EditorBase extends Marionette.Application {
 				cancel: this.translate( 'go_back' ),
 			},
 			onConfirm: null,
-			onCancel: function() {
-				window.parent.history.go( -1 );
-			},
+			onCancel: () => parent.history.go( -1 ),
 			hide: {
 				onBackgroundClick: false,
 				onButtonClick: false,
@@ -552,9 +550,7 @@ export default class EditorBase extends Marionette.Application {
 					{
 						name: 'view_revisions',
 						text: elementor.translate( 'view_all_revisions' ),
-						callback: function() {
-							$e.route( 'panel/history/revisions' );
-						},
+						callback: () => $e.route( 'panel/history/revisions' ),
 					},
 				],
 			} );
@@ -815,9 +811,8 @@ export default class EditorBase extends Marionette.Application {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: debugData.message + previewDebugLink,
-				onConfirm: function() {
-					open( debugData.doc_url, '_blank' );
-				} };
+				onConfirm: () => open( debugData.doc_url, '_blank' ),
+			};
 
 		if ( debugData.error ) {
 			this.showFatalErrorDialog( dialogOptions );
@@ -831,7 +826,7 @@ export default class EditorBase extends Marionette.Application {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: response.statusText + ' ' + response.status + ' ' + previewDebugLink,
-				onConfirm: function() {
+				onConfirm: () => {
 					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
 					open( url, '_blank' );
 				},
@@ -850,9 +845,7 @@ export default class EditorBase extends Marionette.Application {
 			};
 		}
 
-		args.onConfirm = function() {
-			open( args.confirmURL, '_blank' );
-		};
+		args.onConfirm = () => open( args.confirmURL, '_blank' );
 
 		this.showFatalErrorDialog( args );
 	}
