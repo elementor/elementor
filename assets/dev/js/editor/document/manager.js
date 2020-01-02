@@ -82,7 +82,7 @@ export default class Manager {
 	 *
 	 * @returns {Document}
 	 */
-	get( id = this.currentDocument.id ) {
+	get( id ) {
 		if ( undefined !== this.documents[ id ] ) {
 			return this.documents[ id ];
 		}
@@ -127,24 +127,5 @@ export default class Manager {
 		this.currentDocument = this.documents[ document.id ];
 
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', document.id );
-	}
-
-	/**
-	 * Function setCurrentId().
-	 *
-	 * Set current document by id.
-	 *
-	 * TODO: This function is duplicated.
-	 *
-	 * @param {number} id
-	 */
-	setCurrentId( id ) {
-		if ( undefined === this.documents[ id ] ) {
-			throw Error( `The document with id: '${ id }' does not exist/loaded` );
-		}
-
-		elementorCommon.ajax.addRequestConstant( 'editor_post_id', id );
-
-		this.currentDocument = this.documents[ id ];
 	}
 }
