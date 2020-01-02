@@ -19,8 +19,6 @@ module.exports = Marionette.LayoutView.extend( {
 
 	currentTab: null,
 
-	documentId: null,
-
 	/**
 	 * @type {Document}
 	 */
