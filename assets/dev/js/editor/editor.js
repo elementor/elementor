@@ -1,18 +1,20 @@
 import EditorBase from './editor-base';
 
-class App extends EditorBase {
+export class Editor extends EditorBase {
 	onStart( options ) {
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
 		super.onStart( options );
 	}
+
+	onPreviewLoaded() {
+		NProgress.done();
+
+		super.onPreviewLoaded();
+	}
 }
 
-window.elementor = new App();
+window.elementor = new Editor();
 
-if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
-	elementor.start();
-}
-
-export default window.elementor;
+elementor.start();

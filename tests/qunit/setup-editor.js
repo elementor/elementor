@@ -1,5 +1,6 @@
-elementorCommon.ajax.send = ( action, options ) => {
-};
+/* global jQuery */
+
+elementorCommon.ajax.send = ( action, options ) => {};
 
 const elementorConfigDocument = {
 	remoteLibrary: {

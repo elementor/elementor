@@ -1,17 +1,17 @@
-import Environment from 'elementor-common/utils/environment';
+/* global ElementorConfig */
+
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
-import IconsManager from './components/icons-manager/icons-manager';
-import NoticeBar from './utils/notice-bar';
+import environment from 'elementor-common/utils/environment';
 import DateTimeControl from 'elementor-controls/date-time';
-import ColorControl from 'elementor-controls/color';
+import NoticeBar from './utils/notice-bar';
+import IconsManager from './components/icons-manager/icons-manager';
+import ColorControl from './controls/color';
 import HistoryManager from 'elementor-modules/history/assets/js/module';
 import DocumentsManager from './document/manager';
 
-/* global ElementorConfig */
-
-export const DEFAULT_DEVICE_MODE = 'desktop';
+const DEFAULT_DEVICE_MODE = 'desktop';
 
 export default class EditorBase extends Marionette.Application {
 	config = {};
@@ -179,7 +179,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	checkEnvCompatibility() {
-		return Environment.firefox || Environment.webkit;
+		return environment.firefox || environment.webkit;
 	}
 
 	getElementData( model ) {
@@ -224,7 +224,7 @@ export default class EditorBase extends Marionette.Application {
 		const isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
-		_.each( elementData.controls, function( controlData, controlKey ) {
+		_.each( elementData.controls, ( controlData, controlKey ) => {
 			if ( ( isInner && controlData.hide_in_inner ) || ( ! isInner && controlData.hide_in_top ) ) {
 				return;
 			}
@@ -353,7 +353,7 @@ export default class EditorBase extends Marionette.Application {
 	initClearPageDialog() {
 		let dialog;
 
-		this.getClearPageDialog = function() {
+		this.getClearPageDialog = () => {
 			if ( dialog ) {
 				return dialog;
 			}
@@ -422,7 +422,9 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	setAjax() {
-		elementorCommon.ajax.on( 'request:unhandledError', function( xmlHttpRequest ) {
+		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
+
+		elementorCommon.ajax.on( 'request:unhandledError', ( xmlHttpRequest ) => {
 			elementor.notifications.showToast( {
 				message: elementor.createAjaxErrorMessage( xmlHttpRequest ),
 			} );
@@ -448,10 +450,11 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	preventClicksInsideEditor() {
-		this.$previewContents.on( 'submit', function( event ) {
-			event.preventDefault();
-		} );
+		this.$previewContents.on( 'submit', ( event ) =>
+			event.preventDefault()
+		);
 
+		// Cannot use arrow function here since it use `this.contains`.
 		this.$previewContents.on( 'click', function( event ) {
 			const $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
@@ -498,9 +501,7 @@ export default class EditorBase extends Marionette.Application {
 				cancel: this.translate( 'go_back' ),
 			},
 			onConfirm: null,
-			onCancel: function() {
-				window.parent.history.go( -1 );
-			},
+			onCancel: () => parent.history.go( -1 ),
 			hide: {
 				onBackgroundClick: false,
 				onButtonClick: false,
@@ -551,9 +552,7 @@ export default class EditorBase extends Marionette.Application {
 					{
 						name: 'view_revisions',
 						text: elementor.translate( 'view_all_revisions' ),
-						callback: function() {
-							$e.route( 'panel/history/revisions' );
-						},
+						callback: () => $e.route( 'panel/history/revisions' ),
 					},
 				],
 			} );
@@ -659,7 +658,7 @@ export default class EditorBase extends Marionette.Application {
 		let text = '',
 			style = '';
 
-		if ( Environment.firefox ) {
+		if ( environment.firefox ) {
 			const asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',
@@ -762,8 +761,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onPreviewLoaded() {
-		NProgress.done();
-
 		const previewWindow = this.$preview[ 0 ].contentWindow;
 
 		if ( ! previewWindow.elementorFrontend ) {
@@ -896,9 +893,8 @@ export default class EditorBase extends Marionette.Application {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: debugData.message + previewDebugLink,
-				onConfirm: function() {
-					open( debugData.doc_url, '_blank' );
-				} };
+				onConfirm: () => open( debugData.doc_url, '_blank' ),
+			};
 
 		if ( debugData.error ) {
 			this.showFatalErrorDialog( dialogOptions );
@@ -912,7 +908,7 @@ export default class EditorBase extends Marionette.Application {
 				className: 'elementor-preview-loading-error',
 				headerMessage: debugData.header,
 				message: response.statusText + ' ' + response.status + ' ' + previewDebugLink,
-				onConfirm: function() {
+				onConfirm: () => {
 					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
 					open( url, '_blank' );
 				},
@@ -931,9 +927,7 @@ export default class EditorBase extends Marionette.Application {
 			};
 		}
 
-		args.onConfirm = function() {
-			open( args.confirmURL, '_blank' );
-		};
+		args.onConfirm = () => open( args.confirmURL, '_blank' );
 
 		this.showFatalErrorDialog( args );
 	}
