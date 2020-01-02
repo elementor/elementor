@@ -1,6 +1,6 @@
 import EditorBase from './editor-base';
 
-export const DEFAULT_DEVICE_MODE = 'desktop';
+const DEFAULT_DEVICE_MODE = 'desktop';
 
 export class EditorElementor extends EditorBase {
 	onStart( options ) {
