@@ -36,26 +36,25 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getRevisionViewData: function( revisionView ) {
-		var self = this;
 
 		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
-			success: function( data ) {
-				self.document.revisions.setEditorData( data.elements );
+			success: ( data ) => {
+				this.document.revisions.setEditorData( data.elements );
 
 				elementor.settings.page.model.set( data.settings );
 
-				self.setRevisionsButtonsActive( true );
+				this.setRevisionsButtonsActive( true );
 
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
-				self.enterReviewMode();
+				this.enterReviewMode();
 			},
-			error: function( errorMessage ) {
+			error: ( errorMessage ) => {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
-				self.currentPreviewItem = null;
+				this.currentPreviewItem = null;
 
-				self.currentPreviewId = null;
+				this.currentPreviewId = null;
 
 				alert( errorMessage );
 			},
@@ -67,19 +66,17 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	deleteRevision: function( revisionView ) {
-		var self = this;
-
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
 		this.document.revisions.deleteRevision( revisionView.model, {
-			success: function() {
-				if ( revisionView.model.get( 'id' ) === self.currentPreviewId ) {
-					self.onDiscardClick();
+			success: () => {
+				if ( revisionView.model.get( 'id' ) === this.currentPreviewId ) {
+					this.onDiscardClick();
 				}
 
-				self.currentPreviewId = null;
+				this.currentPreviewId = null;
 			},
-			error: function() {
+			error: () => {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				alert( 'An error occurred' );
@@ -173,32 +170,31 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewDetailsAreaClick: function( childView ) {
-		var self = this,
-			revisionID = childView.model.get( 'id' );
+		const revisionID = childView.model.get( 'id' );
 
-		if ( revisionID === self.currentPreviewId ) {
+		if ( revisionID === this.currentPreviewId ) {
 			return;
 		}
 
-		if ( self.currentPreviewItem ) {
-			self.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
+		if ( this.currentPreviewItem ) {
+			this.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 		}
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
-		if ( elementor.saver.isEditorChanged() && ( null === self.currentPreviewId || elementor.config.current_revision_id === self.currentPreviewId ) ) {
+		if ( elementor.saver.isEditorChanged() && ( null === this.currentPreviewId || elementor.config.current_revision_id === this.currentPreviewId ) ) {
 			elementor.saver.saveEditor( {
 				status: 'autosave',
-				onSuccess: function() {
-					self.getRevisionViewData( childView );
+				onSuccess: () => {
+					this.getRevisionViewData( childView );
 				},
 			} );
 		} else {
-			self.getRevisionViewData( childView );
+			this.getRevisionViewData( childView );
 		}
 
-		self.currentPreviewItem = childView;
+		this.currentPreviewItem = childView;
 
-		self.currentPreviewId = revisionID;
+		this.currentPreviewId = revisionID;
 	},
 } );
