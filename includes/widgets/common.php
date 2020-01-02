@@ -117,7 +117,6 @@ class Widget_Common extends Widget_Base {
 				],
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
 				'style_transfer' => false,
 				'classes' => 'elementor-control-direction-ltr',
 			]
