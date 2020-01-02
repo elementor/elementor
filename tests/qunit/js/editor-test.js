@@ -28,7 +28,7 @@ export default class EditorTest extends EditorBase {
 	initFrontend() {
 		elementorFrontend.init = () => console.log( 'initFrontend' );
 
-		elementorFrontend.elements.$body = jQuery( '#elementor-fake' );
+		elementorFrontend.elements.$body = jQuery( '#elementor-test' );
 
 		super.initFrontend();
 

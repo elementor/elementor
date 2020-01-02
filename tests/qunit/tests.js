@@ -9,8 +9,8 @@ import postDate from './mock/dynamic-tags/post-date';
 import postCustomField from './mock/dynamic-tags/post-custom-field';
 
 function initialize() {
-	const $body = jQuery( 'body' ).append( '<div id="elementor-fake"></div>' ),
-		$elementorFake = $body.find( '#elementor-fake' );
+	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
+		$elementorFake = $body.find( '#elementor-test' );
 
 	$elementorFake.append( window.__html__[ 'tests/qunit/index.html' ] );
 
