@@ -1,18 +1,5 @@
-import EditorBase from './editor-base';
+import EditorElementor from './editor-elementor';
 
-class App extends EditorBase {
-	onStart( options ) {
-		NProgress.start();
-		NProgress.inc( 0.2 );
+window.elementor = new EditorElementor();
 
-		super.onStart( options );
-	}
-}
-
-window.elementor = new App();
-
-if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
-	elementor.start();
-}
-
-export default window.elementor;
+elementor.start();

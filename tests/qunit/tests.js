@@ -18,10 +18,6 @@ function initialize() {
 	const elementor = new EditorTest();
 
 	window.elementor = elementor;
-	window.NProgress = {
-		start: () => {},
-		done: () => {},
-	};
 
 	elementor.start();
 

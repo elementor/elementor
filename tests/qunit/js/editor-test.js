@@ -1,20 +1,19 @@
-import EditorBase from './../../../assets/dev/js/editor/editor-base';
+import EditorBase from 'elementor-editor/editor-base';
+import EditorElementor from 'elementor-editor/editor-elementor';
 
-export default class EditorTest extends EditorBase {
+export default class EditorTest extends EditorElementor {
 	constructor( options ) {
 		super( options );
 
 		QUnit.testStart( ( { module, name } ) => {
-			console.log( 'Testing: ', module, name );
+			console.log( 'Testing', module, name );
 		} );
 
 		QUnit.testDone( ( { module, name } ) => {
+			console.log( 'Testing done', module, name );
+
 			this.$elementor.empty();
 		} );
-	}
-
-	getPreviewView() {
-		return super.getPreviewView();
 	}
 
 	initPreview() {
@@ -60,12 +59,20 @@ export default class EditorTest extends EditorBase {
 		this.initPanel();
 
 		this.previewLoadedOnce = true;
+	}
 
-		// Do nothing, else.
+	onStart( options ) {
+		const NProgress = {
+			done: () => console.log( 'NProgress::done()' ),
+		};
+
+		window.NProgress = NProgress;
+
+		// Call editor-base, used to disable NProgress.
+		EditorBase.prototype.onStart.call( this, options );
 	}
 
 	enqueueTypographyFonts() {
-		// Do nothing, bypass parent function.
+		// Bypass editor-base.
 	}
 }
-
