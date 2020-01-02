@@ -49,7 +49,7 @@ export class Save extends Base {
 
 			// Notice: Must be after update page.model.post_status to the new status.
 			if ( ! this.component.isChangedDuringSave ) {
-				$e.run( 'document/save/set-is-modified', { status: false } );
+				elementor.saver.setFlagEditorChange( false );
 			}
 		}
 

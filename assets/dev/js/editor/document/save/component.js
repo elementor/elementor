@@ -31,7 +31,6 @@ export default class Component extends BackwardsCompatibility {
 			pending: ( args ) => ( new Commands.Pending( args ).run() ),
 			publish: ( args ) => ( new Commands.Publish( args ).run() ),
 			save: ( args ) => ( new Commands.Save( args ).run() ),
-			'set-is-modified': ( args ) => ( new Commands.SetIsModified( args ).run() ),
 			update: ( args ) => ( new Commands.Update( args ).run() ),
 		};
 	}
@@ -46,7 +45,20 @@ export default class Component extends BackwardsCompatibility {
 		}
 	}
 
+	setFlagEditorChange( status ) {
+		if ( status && this.isSaving ) {
+			this.isChangedDuringSave = true;
+		}
+
+		this.startTimer( status );
+
+		elementor.channels.editor
+			.reply( 'status', status )
+			.trigger( 'status:change', status );
+	}
+
 	isEditorChanged() {
 		return ( true === elementor.channels.editor.request( 'status' ) );
 	}
+
 }

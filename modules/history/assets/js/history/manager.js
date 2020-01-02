@@ -206,7 +206,7 @@ export default class HistoryManager {
 
 		if ( item.get( 'editing_started' ) ) {
 			if ( ! this.editorSaved ) {
-				$e.run( 'document/save/set-is-modified', { status: false } );
+				elementor.saver.setFlagEditorChange( false );
 			}
 		}
 	}

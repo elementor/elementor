@@ -51,12 +51,6 @@ export default class BackwardsCompatibility extends BaseComponent {
 		return $e.run( 'document/save/pending' );
 	}
 
-	setFlagEditorChange( status ) {
-		elementorCommon.helpers.softDeprecated( 'setFlagEditorChange', '2.8.0', "$e.run( 'document/save/set-is-modified', { status } )" );
-
-		return $e.run( 'document/save/set-is-modified', { status } );
-	}
-
 	update( options ) {
 		elementorCommon.helpers.softDeprecated( 'update', '2.8.0', "$e.run( 'document/save/update' )" );
 
