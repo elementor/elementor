@@ -132,7 +132,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-				'label_block' => true,
 				'default' => [
 					'value' => 'fas fa-check',
 					'library' => 'fa-solid',
