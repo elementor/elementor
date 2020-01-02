@@ -9,7 +9,7 @@ export default class EditorTest extends EditorBase {
 		} );
 
 		QUnit.testDone( ( { module, name } ) => {
-			console.log( 'Testing done', module, name );
+			console.log( 'Done Testing', module, name );
 
 			this.$previewElementorEl.empty();
 		} );
@@ -31,9 +31,6 @@ export default class EditorTest extends EditorBase {
 		elementorFrontend.elements.$body = jQuery( '#elementor-test' );
 
 		super.initFrontend();
-
-		// Shortcut bind, in other words make shortcuts listen to iframe.
-		elementorFrontend.elements.$window = jQuery( '#elementor-preview-iframe' );
 	}
 
 	onPreviewLoaded() {
@@ -44,35 +41,12 @@ export default class EditorTest extends EditorBase {
 		};
 
 		this.$previewContents = this.$preview.contents();
+		this.$previewContents.find( 'body' ).append( '<div id="elementor"></div>' );
 
-		const $previewContentsBody = this.$previewContents.find( 'body' );
+		// Shortcut bind, in other words make shortcuts listen to iframe.
+		elementorFrontend.elements.$window = jQuery( '#elementor-preview-iframe' );
 
-		$previewContentsBody.append( '<div id="elementor"></div>' );
-
-		this.$previewElementorEl = $previewContentsBody.find( '#elementor' );
-
-		this.initFrontend();
-
-		this.initElements();
-
-		const iframeRegion = new Marionette.Region( {
-			// Make sure you get the DOM object out of the jQuery object
-			el: this.$previewElementorEl[ 0 ],
-		} );
-
-		this.onFirstPreviewLoaded();
-
-		this.addRegions( {
-			sections: iframeRegion,
-		} );
-
-		const Preview = require( 'elementor-views/preview' );
-
-		this.sections.show( new Preview( { model: this.elementsModel } ) );
-
-		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
-
-		this.loaded = true;
+		super.onPreviewLoaded();
 	}
 
 	onFirstPreviewLoaded() {
@@ -80,4 +54,9 @@ export default class EditorTest extends EditorBase {
 
 		this.previewLoadedOnce = true;
 	}
+
+	enqueueTypographyFonts() {
+		// Do nothing, bypass parent function.
+	}
 }
+
