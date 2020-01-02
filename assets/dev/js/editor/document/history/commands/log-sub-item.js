@@ -1,10 +1,6 @@
-import Base from '../../commands/base/base';
+import Base from './base/base';
 
 export class LogSubItem extends Base {
-	initialize( args = {} ) {
-		this.history = elementor.documents.getCurrent().history;
-	}
-
 	apply( args ) {
 		if ( ! this.history.getActive() ) {
 			return;

@@ -1,8 +1,8 @@
-import Base from '../../commands/base/base';
+import Base from './base/base';
 
 export class AddTransaction extends Base {
 	apply( args ) {
-		const currentId = elementor.documents.getCurrent().history.getCurrentId();
+		const currentId = this.history.getCurrentId();
 
 		if ( currentId ) {
 			// If log already started chain his historyId.

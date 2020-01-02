@@ -1,8 +1,8 @@
-import Base from '../../commands/base/base';
+import Base from './base/base';
 
 export class StartLog extends Base {
 	initialize( args ) {
-		this.history = elementor.documents.getCurrent().history;
+		super.initialize( args );
 
 		if ( this.history.isItemStarted() || args.id ) {
 			this.isSubItem = true;
