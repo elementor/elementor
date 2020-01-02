@@ -735,7 +735,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
-				'label_block' => false,
 			]
 		);
 

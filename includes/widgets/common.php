@@ -103,7 +103,6 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
-				'label_block' => false,
 				'separator' => 'before',
 			]
 		);

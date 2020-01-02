@@ -1159,7 +1159,6 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
-				'label_block' => false,
 			]
 		);
 
