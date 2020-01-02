@@ -42,6 +42,7 @@ module.exports = elementorModules.ViewModule.extend( {
 					iconZoomOut: 'eicon-zoom-out-bold',
 					iconShare: 'elementor-icon-share',
 					shareMenu: 'elementor-slideshow__share-menu',
+					shareLinks: 'elementor-slideshow__share-links',
 					hideUiVisibility: 'elementor-slideshow--ui-hidden',
 					shareMode: 'elementor-slideshow--share-mode',
 					fullscreenMode: 'elementor-slideshow--fullscreen-mode',
@@ -96,6 +97,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	showModal: function( options ) {
 		const self = this,
 			defaultOptions = self.getDefaultSettings().modalOptions;
+
+		self.id = options.id;
 
 		self.setSettings( 'modalOptions', jQuery.extend( defaultOptions, options.modalOptions ) );
 
@@ -183,6 +186,50 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
+	getShareLinks: function() {
+		const socialNetworks = {
+			facebook: 'Share on facebook',
+			twitter: 'Share on Twitter',
+			pinterest: 'Pin it',
+		},
+			$ = jQuery,
+			classes = this.getSettings( 'classes' ),
+			$linkList = $( '<div>', { class: classes.slideshow.shareLinks } ),
+			$activeSlide = this.getSlide( 'active' ),
+			$image = $activeSlide.find( '.elementor-lightbox-image' ),
+			videoUrl = $activeSlide.data( 'elementor-slideshow-video' );
+
+		let itemUrl = '';
+
+		if ( $image.length ) {
+			itemUrl = $image.attr( 'src' );
+		} else if ( videoUrl ) {
+			itemUrl = videoUrl;
+		}
+
+		for ( const network in socialNetworks ) {
+			if ( socialNetworks.hasOwnProperty( network ) ) {
+				const $link = $( '<a>', { href: this.createShareLink( network, itemUrl ) } ).text( socialNetworks[ network ] );
+				$linkList.append( $link );
+			}
+		}
+
+		$linkList.append( $( '<a>', { href: itemUrl } ).text( 'Download Image' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
+		return $linkList;
+	},
+
+	createShareLink: function( networkName, itemUrl ) {
+		const hash = elementorFrontend.utils.urlActions.createActionURL( 'lightbox', {
+			id: this.id,
+			url: itemUrl,
+		} );
+
+		const url = location.href.replace( /#.*/, '' ) + hash,
+			networkURL = ShareLink.getNetworkLink( networkName, { url: url } );
+
+		return networkURL;
+	},
+
 	getSlideshowHeader: function() {
 		const $ = jQuery,
 			showCounter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_counter' ),
@@ -218,7 +265,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		if ( showShare ) {
 			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( $( '<span>' ) );
-			const $shareLinks = $( '<ul><li>Share on Facebook</li><li>Share on Facebook</li></ul>' );
+			const $shareLinks = $( '<div>' );
 			$shareLinks.on( 'click', ( e ) => {
 				e.stopPropagation();
 			} );
@@ -251,6 +298,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( this.elements.$container.hasClass( classes.slideshow.shareMode ) ) {
 			this.deactivateShareMode();
 		} else {
+			const $shareMenu = this.elements.$header.find( '.' + classes.slideshow.shareMenu );
+				$shareMenu.html( this.getShareLinks() );
 			this.activateShareMode();
 		}
 	},
@@ -379,7 +428,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			clearTimeout( this.getSettings( 'hideUiTimeout' ) );
 			$container.removeClass( slideshowClasses.hideUiVisibility );
 			this.setSettings( 'hideUiTimeout', setTimeout( () => {
-				if ( ! $container.hasClass( 'share-mode' ) ) {
+				if ( ! $container.hasClass( slideshowClasses.shareMode ) ) {
 					$container.addClass( slideshowClasses.hideUiVisibility );
 				}
 			}, 3500 ) );
@@ -406,6 +455,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				on: {
 					slideChangeTransitionEnd: this.onSlideChange,
 				},
+				zoom: true,
 				spaceBetween: 100,
 				grabCursor: true,
 				runCallbacksOnInit: false,
@@ -605,7 +655,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				slideIndex = $allSlideshowLinks.index( this );
 			}
 
-			if ( initialSlideURL === this.href ) {
+			if ( initialSlideURL === this.href || ( slideVideo && initialSlideURL === slideVideo ) ) {
 				initialSlideIndex = slideIndex;
 			}
 
@@ -627,6 +677,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.showModal( {
 			type: 'slideshow',
+			id: slideshowID,
 			modalOptions: {
 				id: 'elementor-lightbox-slideshow-' + slideshowID,
 			},
