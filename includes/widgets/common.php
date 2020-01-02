@@ -438,7 +438,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
 				'options' => [
 					'flex-start' => [
 						'title' => __( 'Start', 'elementor' ),
@@ -500,7 +499,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Horizontal Orientation', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
 				'toggle' => false,
 				'default' => 'start',
 				'options' => [
@@ -604,7 +602,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Vertical Orientation', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
 				'toggle' => false,
 				'default' => 'start',
 				'options' => [

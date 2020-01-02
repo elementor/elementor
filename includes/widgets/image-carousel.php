@@ -517,7 +517,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
 				'options' => [
 					'flex-start' => [
 						'title' => __( 'Start', 'elementor' ),
