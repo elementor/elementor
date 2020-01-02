@@ -33,14 +33,14 @@ class Test_Module extends Elementor_Test_Base {
 							'id' => 'a2e9b68',
 							'elType' => 'column',
 							'isInner' => false,
-							'settings' => [ '_column_size' => 100, ],
+							'settings' => ['_column_size' => 100, ],
 							'elements' =>
 								[
 									[
 										'id' => '5a1e8e5',
 										'elType' => 'widget',
 										'isInner' => false,
-										'settings' => [ 'text' => 'I\'m not a default', ],
+										'settings' => ['text' => 'I\'m not a default', ],
 										'elements' => [],
 										'widgetType' => 'button',
 									],
@@ -79,7 +79,7 @@ class Test_Module extends Elementor_Test_Base {
 		'id' => 'a2e9b68',
 		'elType' => 'column',
 		'isInner' => false,
-		'settings' => [ '_column_size' => 100, ],
+		'settings' => ['_column_size' => 100, ],
 		'elements' => [],
 	];
 
@@ -90,7 +90,7 @@ class Test_Module extends Elementor_Test_Base {
 		'id' => '5a1e8e5',
 		'elType' => 'widget',
 		'isInner' => false,
-		'settings' => [ 'text' => 'I\'m not a default', ],
+		'settings' => ['text' => 'I\'m not a default', ],
 		'elements' => [],
 		'widgetType' => 'button',
 	];
@@ -276,6 +276,40 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Check global.
 		$this->assertArrayNotHasKey( $doc_name, $global_usage );
+	}
+
+	public function test_autosave_and_publish() {
+		// Cover issue: 'Widgets count shows negative values in some cases'.
+		/** @var Module $module */
+		$module = Module::instance();
+
+		// Create additional document in order that after remove from global the usage will not be empty.
+		$this->create_post()->save( self::$document_mock_default );
+
+		// Add another button.
+		$elements_with_two_buttons = self::$document_mock_default;
+		$elements_with_two_buttons['elements'][0]['elements'][0]['elements'][] = self::$element_mock;
+
+		// Publish.
+		self::$document->save( $elements_with_two_buttons );
+
+		// Get global usage.
+		$usage = get_option( Module::OPTION_NAME );
+
+		// 2 from current, 1 one from first document.
+		$this->assertEquals( 3, $usage['wp-post']['button']['count'] );
+
+		// Create empty autosave ( Draft ).
+		self::$document->get_autosave( 0, true )->save( self::$document_mock_default );
+
+		// Publish.
+		self::$document->save( self::$document_mock_default );
+
+		// Get global usage.
+		$usage = get_option( Module::OPTION_NAME );
+
+		// Validate.
+		$this->assertEquals( 2, $usage['wp-post']['button']['count'] );
 	}
 
 	public function test_doc_type_count() {
