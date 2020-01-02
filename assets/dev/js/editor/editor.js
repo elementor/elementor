@@ -1,19 +1,20 @@
-/* global ElementorConfig */
-import editorBase from './editor-base';
+import EditorBase from './editor-base';
 
-const App = editorBase.extend( {
-	onStart() {
+export class Editor extends EditorBase {
+	onStart( options ) {
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
-		editorBase.prototype.onStart.apply( this, arguments );
-	},
-} );
+		super.onStart( options );
+	}
 
-window.elementor = new App();
+	onPreviewLoaded() {
+		NProgress.done();
 
-if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
-	elementor.start();
+		super.onPreviewLoaded();
+	}
 }
 
-export default window.elementor;
+window.elementor = new Editor();
+
+elementor.start();
