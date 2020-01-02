@@ -20,26 +20,16 @@ html.elementor-html {
 	position: relative;
 }
 
-.elementor-inner {
+.elementor {
 	&.loading{
 		opacity: 0.5;
 	}
 }
 
-
 .elementor-edit-button{
 	display: none;
 
-	&.loading i:before {
-		content: "\f463";
-	}
-
-	&.loading i {
-		-webkit-animation: rotation 1s infinite linear;
-		animation: rotation 1s infinite linear;
-	}
-
-	.elementor-inner:hover & {
+	.elementor-editor-active .elementor:hover:not(.elementor-edit-area) & {
 		width: 25px;
 		height: 25px;
 		background: $elementor;
@@ -54,31 +44,28 @@ html.elementor-html {
 	}
 }
 
-.elementor-editor-active {
+.elementor-edit-area-active {
 
-	.elementor.elementor-edit-area-active {
+	.elementor-top-section {
 
-		.elementor-top-section {
+		> .elementor-container {
 
-			> .elementor-container {
-
-				> .elementor-row {
-					min-height: 40px;
-				}
+			> .elementor-row {
+				min-height: 40px;
 			}
 		}
+	}
 
-		.elementor-inner-section {
+	.elementor-inner-section {
 
-			&:first-child {
-				margin-top: 15px;
-			}
+		&:first-child {
+			margin-top: 15px;
+		}
 
-			> .elementor-container {
+		> .elementor-container {
 
-				> .elementor-row {
-					min-height: 40px;
-				}
+			> .elementor-row {
+				min-height: 40px;
 			}
 		}
 	}

@@ -681,7 +681,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditRequest( options = {} ) {
-		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) || 'open' !== elementor.config.document.editorStatus ) {
 			return;
 		}
 

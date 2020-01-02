@@ -7,6 +7,7 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
+import Component from './component';
 
 const App = Marionette.Application.extend( {
 	documents: {},
@@ -733,6 +734,8 @@ const App = Marionette.Application.extend( {
 	onStart: function() {
 		this.config = ElementorConfig;
 
+		$e.components.register( new Component() );
+
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
@@ -756,15 +759,13 @@ const App = Marionette.Application.extend( {
 
 		this.addDeprecatedConfigProperties();
 
-		this.initDocument();
+		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } );
 
 		this.logSite();
 	},
 
 	initDocument( id ) {
-		id = id || this.config.initial_document.id;
-
-		this.requestDocument( id ).then( () => {
+		return this.requestDocument( id ).then( () => {
 			this.setAjax();
 
 			jQuery.each( this.config.document.widgets, ( widgetName, widgetConfig ) => {
@@ -774,24 +775,6 @@ const App = Marionette.Application.extend( {
 			this.templates.init();
 
 			elementorCommon.elements.$window.trigger( 'elementor:init' );
-
-			this.on( 'preview:loaded', () => {
-				this.$previewContents.find( '.elementor-edit-button' ).remove();
-				this.$previewContents.find( '.elementor-inner' ).not( '.elementor-edit-area > .elementor-inner' ).prepend( '<span class="elementor-edit-button">' +
-					'<i class="eicon-edit"></i>' +
-					'</span>' );
-
-				this.$previewContents.find( '.elementor-edit-button' ).on( 'click', ( event ) => {
-					this.enterPreviewMode();
-
-					jQuery( event.target ).addClass( 'loading' );
-
-					jQuery( event.target ).parents( '.elementor-inner' ).addClass( 'loading' );
-
-					const docId = jQuery( event.target ).parents( '[data-elementor-id]' ).data( 'elementor-id' );
-					this.initDocument( docId );
-				} );
-			} );
 
 			if ( this.loaded ) {
 				this.$preview.trigger( 'load' );
@@ -881,6 +864,17 @@ const App = Marionette.Application.extend( {
 		this.enqueueTypographyFonts();
 
 		this.onEditModeSwitched();
+
+		this.$previewContents.find( '.elementor' ).not( '.elementor .elementor' ).prepend( '<span class="elementor-edit-button">' +
+			'<i class="eicon-edit"></i>' +
+			'</span>' );
+
+		this.$previewContents.find( '.elementor-edit-button' ).on( 'click', ( event ) => {
+			const id = jQuery( event.target ).parents( '.elementor' ).data( 'elementor-id' );
+
+			$e.run( 'editor/documents/close', { id: elementor.config.document.id } );
+			$e.run( 'editor/documents/open', { id } );
+		} );
 
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
