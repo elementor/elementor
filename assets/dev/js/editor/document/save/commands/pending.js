@@ -7,6 +7,7 @@ export class Pending extends Base {
 		// TODO: Move to es6.
 		options = _.extend( {
 			status: 'pending',
+			document: this.document,
 		}, options );
 
 		elementor.saver.saveEditor( options );

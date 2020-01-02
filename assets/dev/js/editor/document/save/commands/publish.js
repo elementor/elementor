@@ -7,8 +7,9 @@ export class Publish extends Base {
 		// TODO: Move to es6.
 		options = _.extend( {
 			status: 'publish',
+			document: this.document,
 		}, options );
 
-		$e.run( 'document/save/save', options );
+		elementor.saver.saveEditor( options );
 	}
 }

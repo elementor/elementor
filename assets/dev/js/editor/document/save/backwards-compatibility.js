@@ -39,12 +39,6 @@ export default class BackwardsCompatibility extends BaseComponent {
 		return $e.run( 'document/save/draft' );
 	}
 
-	saveEditor( options ) {
-		elementorCommon.helpers.softDeprecated( 'saveEditor', '2.8.0', "$e.run( 'document/save/save')" );
-
-		return $e.run( 'document/save/save', options );
-	}
-
 	savePending( options ) {
 		elementorCommon.helpers.softDeprecated( 'savePending', '2.8.0', "$e.run( 'document/save/pending' )" );
 
