@@ -463,7 +463,6 @@ export default class EditorBase extends Marionette.Application {
 		// Cannot use arrow function here since it use `this.contains`.
 		this.$previewContents.on( 'click', function( event ) {
 			const $target = jQuery( event.target ),
-				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '.elementor-edit-area, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[ 0 ] );
 
@@ -471,7 +470,7 @@ export default class EditorBase extends Marionette.Application {
 				event.preventDefault();
 			}
 
-			if ( ( isClickInsideElementor && 'edit' === editMode ) || ! isTargetInsideDocument ) {
+			if ( ( isClickInsideElementor && elementor.getPreviewContainer().isEditable() ) || ! isTargetInsideDocument ) {
 				return;
 			}
 

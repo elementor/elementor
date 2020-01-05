@@ -37,10 +37,8 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	doAutoSave: function() {
-		var editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
 		// Avoid auto save for Revisions Preview changes.
-		if ( 'edit' !== editorMode ) {
+		if ( ! elementor.getPreviewContainer().isEditable() ) {
 			return;
 		}
 

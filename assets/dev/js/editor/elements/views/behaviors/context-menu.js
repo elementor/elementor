@@ -66,11 +66,11 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenu: function( event ) {
-		if ( $e.shortcuts.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
+		if ( $e.shortcuts.isControlEvent( event ) ) {
 			return;
 		}
 
-		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if ( ! this.view.container.isDesignable() ) {
 			return;
 		}
 

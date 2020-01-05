@@ -29,7 +29,7 @@ export default class Component extends BaseComponent {
 		return {
 			toggle: {
 				keys: 'ctrl+i',
-				dependency: () => 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
+				dependency: () => elementor.getPreviewContainer().isEditable(),
 			},
 		};
 	}

@@ -30,12 +30,11 @@ export default class extends Marionette.Behavior {
 	}
 
 	toggle() {
-		const isEditMode = 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
-			isAbsolute = this.view.getEditModel().getSetting( '_position' );
+		const isAbsolute = this.view.getEditModel().getSetting( '_position' );
 
 		this.deactivate();
 
-		if ( isEditMode && isAbsolute && elementor.userCan( 'design' ) ) {
+		if ( isAbsolute && this.view.container.isDesignable() ) {
 			this.activate();
 		}
 	}
