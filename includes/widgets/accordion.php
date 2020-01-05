@@ -363,7 +363,6 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'default' => is_rtl() ? 'right' : 'left',
 				'toggle' => false,
-				'label_block' => false,
 			]
 		);
 

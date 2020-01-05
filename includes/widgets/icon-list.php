@@ -106,7 +106,6 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'render_type' => 'template',
 				'classes' => 'elementor-control-start-end',
-				'label_block' => false,
 				'style_transfer' => true,
 				'prefix_class' => 'elementor-icon-list--layout-',
 			]
@@ -133,7 +132,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-				'label_block' => true,
 				'default' => [
 					'value' => 'fas fa-check',
 					'library' => 'fa-solid',
@@ -150,7 +148,6 @@ class Widget_Icon_List extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'label_block' => true,
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 			]
 		);
