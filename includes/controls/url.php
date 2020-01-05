@@ -115,7 +115,7 @@ class Control_URL extends Control_Base_Multiple {
 						<label for="<?php echo $nofollow_control_uid; ?>"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
 					</div>
 					<div class="elementor-control-url-option elementor-control-url__custom-attributes check-wrapper">
-						<label for="<?php echo $custom_attributes_uid; ?>" style="width: 65%;"><?php echo __( 'Custom Attributes', 'elementor' ); ?></label>
+						<label for="<?php echo $custom_attributes_uid; ?>" class="elementor-control-url__custom-attributes-label"><?php echo __( 'Custom Attributes', 'elementor' ); ?></label>
 						<div class="elementor-control-input-wrapper">
 							<input id="<?php echo $custom_attributes_uid; ?>" type="text" placeholder="key|value,..." data-setting="custom_attributes">
 						</div>
