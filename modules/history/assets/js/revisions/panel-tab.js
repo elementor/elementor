@@ -36,7 +36,6 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getRevisionViewData: function( revisionView ) {
-
 		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: ( data ) => {
 				this.document.revisions.setEditorData( data.elements );
