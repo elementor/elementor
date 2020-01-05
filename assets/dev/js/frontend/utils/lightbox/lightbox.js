@@ -214,7 +214,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			}
 		}
 
-		$linkList.append( $( '<a>', { href: itemUrl } ).text( 'Download Image' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
+		if ( $image.length ) {
+			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( 'Download Image' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
+		}
 		return $linkList;
 	},
 
