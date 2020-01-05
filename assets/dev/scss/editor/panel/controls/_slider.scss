@@ -51,17 +51,14 @@
 		}
 	}
 
-	&:not(.elementor-control-type-slider--multiple) {
-
-		.elementor-slider {
-			display: inline-block;
-			width: 70%;
-		}
+	.elementor-control-input-wrapper {
+		display: flex;
+		align-items: center;
 	}
 }
 
 .elementor-slider {
-	margin: 10px auto;
+	flex-grow: 1;
 	height: 4px;
 	background-color: $editor-lightest;
 	border-radius: 5px;
@@ -69,14 +66,7 @@
 	cursor: pointer;
 
 	&-input {
-		width: 30%;
-		float: $end;
-
-		input {
-			max-width: 80%;
-			float: $end;
-			padding: 5px 5px;
-		}
+		@include margin-start(10px);
 	}
 
 	&__extra {

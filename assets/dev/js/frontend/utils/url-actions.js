@@ -64,8 +64,8 @@ export default class extends elementorModules.ViewModule {
 		}
 	}
 
-	createActionURL( action, settings ) {
-		return '#' + encodeURIComponent( `elementor-action:action=${ action } settings=${ btoa( JSON.stringify( settings ) ) }` );
+	createActionHash( action, settings ) {
+		return encodeURIComponent( `#elementor-action:action=${ action } settings=${ btoa( JSON.stringify( settings ) ) }` );
 	}
 
 	onInit() {
