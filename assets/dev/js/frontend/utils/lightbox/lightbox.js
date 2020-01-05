@@ -301,7 +301,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			this.deactivateShareMode();
 		} else {
 			const $shareMenu = this.elements.$header.find( '.' + classes.slideshow.shareMenu );
-				$shareMenu.html( this.getShareLinks() );
+			$shareMenu.html( this.getShareLinks() );
 			this.activateShareMode();
 		}
 	},
