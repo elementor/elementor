@@ -219,7 +219,6 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'autocomplete' => false,
 				'show_external' => false,
-				'label_block' => true,
 				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
