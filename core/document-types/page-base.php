@@ -154,8 +154,6 @@ abstract class PageBase extends Document {
 
 		$document->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_attributes_controls( $document );
-
 		Plugin::$instance->controls_manager->add_custom_css_controls( $document );
 	}
 
