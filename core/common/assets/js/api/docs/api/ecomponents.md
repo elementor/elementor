@@ -26,7 +26,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
 * **Examples**:
     ```javascript
      // Example create and register new component, available to run in the console does not depends on anything else.
-     class CustomComponent extends $e.modules.Component {
+     class CustomComponent extends $e.modules.ComponentBase {
         getNamespace() {
             return 'custom-component';
         }

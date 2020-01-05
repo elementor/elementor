@@ -1,17 +1,17 @@
-import Callbacks from 'elementor-api/modules/callbacks';
-import CallableBase from 'elementor-api/modules/callable-base';
+import Base from 'elementor-api/api/hooks/base';
+import HookBase from 'elementor-api/modules/hook-base';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/modules/callbacks.js', () => {
+	QUnit.module( 'File: core/common/assets/js/api/api/hooks/base.js', () => {
 		QUnit.module( 'Callbacks', () => {
 			QUnit.test( 'checkId()', ( assert ) => {
 				const random = Math.random(),
-					fakeCallbacks = class extends Callbacks {
+					fakeCallbacks = class extends Base {
 						getType() {
 							return 'hook';
 						}
 					},
-					fakeCallback = class extends CallableBase {
+					fakeCallback = class extends HookBase {
 						getType() {
 							return 'hook';
 						}

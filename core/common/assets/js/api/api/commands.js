@@ -34,7 +34,7 @@ export default class Commands extends elementorModules.Module {
 	 *
 	 * Register new command.
 	 *
-	 * @param {BaseComponent|string} component
+	 * @param {ComponentBase|string} component
 	 * @param {string} command
 	 * @param {function()} callback
 	 *
@@ -81,7 +81,7 @@ export default class Commands extends elementorModules.Module {
 	 *
 	 * @param {string} command
 	 *
-	 * @returns {BaseComponent}
+	 * @returns {ComponentBase}
 	 */
 	getComponent( command ) {
 		const namespace = this.components[ command ];

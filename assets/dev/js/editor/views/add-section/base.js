@@ -1,4 +1,4 @@
-import DocumentUtils from 'elementor-api/utils/document';
+import DocumentHelpers from 'elementor-document/helpers';
 
 class AddSectionBase extends Marionette.ItemView {
 	template() {
@@ -76,7 +76,7 @@ class AddSectionBase extends Marionette.ItemView {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						isEnabled: () => DocumentUtils.isPasteEnabled( elementor.getPreviewContainer() ),
+						isEnabled: () => DocumentHelpers.isPasteEnabled( elementor.getPreviewContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
 							options: {

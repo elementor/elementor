@@ -1,6 +1,6 @@
-import BaseComponent from './component';
+import ComponentBase from './component-base';
 
-export default class ComponentModal extends BaseComponent {
+export default class ComponentModal extends ComponentBase {
 	onInit() {
 		super.onInit();
 

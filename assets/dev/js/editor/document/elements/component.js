@@ -1,7 +1,7 @@
-import BaseComponent from 'elementor-api/modules/component';
+import ComponentBase from 'elementor-api/modules/component-base';
 import * as Commands from './commands/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'document/elements';
 	}
@@ -9,7 +9,7 @@ export default class Component extends BaseComponent {
 	defaultCommands() {
 		const commands = {};
 
-		// Convert `Commands` to `BaseComponent` workable format.
+		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( Commands ).forEach( ( [ command, classReference ] ) => {
 			command = this.normalizeCommand( command );
 			commands[ command ] = ( args ) => ( new classReference( args ) ).run();

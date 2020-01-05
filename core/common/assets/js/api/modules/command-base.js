@@ -152,7 +152,7 @@ export default class CommandBase extends ArgsObject {
 	 * @param {{}} args
 	 */
 	onBeforeRun( args ) {
-		$e.events.runBefore( this.currentCommand, args );
+		$e.hooks.runUIBefore( this.currentCommand, args );
 	}
 
 	/**
@@ -164,7 +164,7 @@ export default class CommandBase extends ArgsObject {
 	 * @param {*} result
 	 */
 	onAfterRun( args, result ) {
-		$e.events.runAfter( this.currentCommand, args, result );
+		$e.hooks.runUIAfter( this.currentCommand, args, result );
 	}
 
 	/**
@@ -175,7 +175,7 @@ export default class CommandBase extends ArgsObject {
 	 * @param {{}} args
 	 */
 	onBeforeApply( args ) {
-		$e.hooks.runDependency( this.currentCommand, args );
+		$e.hooks.runDataDependency( this.currentCommand, args );
 	}
 
 	/**
@@ -187,7 +187,7 @@ export default class CommandBase extends ArgsObject {
 	 * @param {*} result
 	 */
 	onAfterApply( args, result ) {
-		$e.hooks.runAfter( this.currentCommand, args, result );
+		$e.hooks.runDataAfter( this.currentCommand, args, result );
 	}
 
 	/**

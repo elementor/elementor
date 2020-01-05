@@ -47,7 +47,7 @@ The full list of commands, including custom & 3rd commands, is available via: `$
         }
      }
      
-     class CustomComponent extends $e.modules.Component {
+     class CustomComponent extends $e.modules.ComponentBase {
         getNamespace() {
             return 'custom-component';
         }

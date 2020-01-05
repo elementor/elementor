@@ -1,21 +1,19 @@
 import Components from './api/components';
 import Hooks from './api/hooks';
-import Events from './api/events';
 import Commands from './api/commands';
 import Routes from './api/routes';
 import Shortcuts from './api/shortcuts';
 import BackwardsCompatibility from './api/backwards-compatibility';
 import CommandsBase from './modules/command-base';
-import HookBase from './modules/hook-base/base';
-import HookAfter from './modules/hook-base/after';
-import HookDependency from './modules/hook-base/dependency';
-import EventBase from './modules/event-base/base';
-import EventAfter from './modules/event-base/after';
-import EventBefore from './modules/event-base/before';
-import Component from './modules/component';
+import DataBase from './modules/hooks/data-base/base';
+import DataAfter from './modules/hooks/data-base/after';
+import DataDependency from './modules/hooks/data-base/dependency';
+import UIBase from './modules/hooks/ui-base/base';
+import UIAfter from './modules/hooks/ui-base/after';
+import UIBefore from './modules/hooks/ui-base/before';
+import ComponentBase from './modules/component-base';
 import ComponentModal from './modules/component-modal';
 import HookBreak from './modules/hook-break';
-import DocumentUtils from 'elementor-api/utils/document';
 
 export default class API {
 	/**
@@ -26,35 +24,31 @@ export default class API {
 	constructor() {
 		this.bc = new BackwardsCompatibility();
 		this.components = new Components();
+
 		this.hooks = new Hooks();
-		this.events = new Events();
 		this.commands = new Commands();
 		this.routes = new Routes();
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 
 		this.modules = {
-			CommandBase: CommandsBase,
-
-			Component: Component,
+			ComponentBase: ComponentBase,
 			ComponentModal: ComponentModal,
+
+			CommandBase: CommandsBase,
 
 			HookBreak: HookBreak,
 
-			HookBase: {
-				Base: HookBase, // TODO: consider remove.
-				After: HookAfter,
-				Dependency: HookDependency,
+			DataHook: {
+				Base: DataBase, // TODO: consider remove.
+				After: DataAfter,
+				Dependency: DataDependency,
 			},
 
-			EventBase: {
-				Base: EventBase, // TODO: consider remove.
-				After: EventAfter,
-				Before: EventBefore,
+			UIHook: {
+				Base: UIBase, // TODO: consider remove.
+				After: UIAfter,
+				Before: UIBefore,
 			},
-		};
-
-		this.utils = {
-			document: DocumentUtils,
 		};
 
 		window.$e = this;
@@ -84,5 +78,4 @@ export default class API {
 	}
 
 	// TODO: shortcut();
-	// TODO: util();
 }

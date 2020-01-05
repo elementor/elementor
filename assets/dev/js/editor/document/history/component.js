@@ -1,7 +1,7 @@
-import BaseComponent from 'elementor-api/modules/component';
+import ComponentBase from 'elementor-api/modules/component-base';
 import * as Commands from './commands/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	__construct( args ) {
 		super.__construct( args );
 

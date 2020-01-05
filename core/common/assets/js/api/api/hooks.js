@@ -1,112 +1,98 @@
-import Callbacks from '../modules/callbacks.js';
+import DataHooks from './hooks/data.js';
+import UIHooks from './hooks/ui.js';
 
-export default class Hooks extends Callbacks {
-	constructor( ... args ) {
-		super( ... args );
-
-		this.callbacks.dependency = {};
-
-		this.depth.dependency = {};
+export default class Hooks {
+	constructor() {
+		this.data = new DataHooks();
+		this.ui = new UIHooks();
 	}
 
-	getType() {
-		return 'hook';
-	}
-
-	runCallback( event, callback, args, result ) {
-		switch ( event ) {
-			case 'dependency': {
-				if ( ! callback.callback( args ) ) {
-					this.depth[ event ][ callback.id ]--;
-
-					throw new $e.modules.HookBreak;
-				}
-			}
-			break;
-
-			case 'after': {
-				callback.callback( args, result );
-			}
-			break;
-
-			default:
-				return false;
-		}
-
-		return true;
-	}
-
-	shouldRun( callbacks ) {
-		return super.shouldRun( callbacks ) && elementor.history.history.getActive();
-	}
-
-	onRun( command, args, event ) {
-		if ( ! $e.devTools ) {
-			return;
-		}
-
-		// TODO: $e.devTools.hooks.run
-		$e.devTools.log.hookRun( command, args, event );
-	}
-
-	onCallback( command, args, event, id ) {
-		if ( ! $e.devTools ) {
-			return;
-		}
-
-		// TODO: $e.devTools.hooks.callback
-		$e.devTools.log.hookCallback( command, args, event, id );
+	getAll() {
+		return {
+			data: this.data.getAll(),
+			ui: this.ui.getAll(),
+		};
 	}
 
 	/**
-	 * Function registerAfter().
 	 *
-	 * Register the hook in after event.
-	 *
-	 * @param {CallableBase} instance
+	 * @param {HookBase} instance
 	 *
 	 * @returns {{}}
 	 */
-	registerAfter( instance ) {
-		return this.register( 'after', instance );
+	registerDataAfter( instance ) {
+		return this.data.registerAfter( instance );
 	}
 
 	/**
-	 * Function registerDependency().
 	 *
-	 * Register the hook in dependency event.
-	 *
-	 * @param {CallableBase} instance
+	 * @param {HookBase} instance
 	 *
 	 * @returns {{}}
 	 */
-	registerDependency( instance ) {
-		return this.register( 'dependency', instance );
+	registerDataDependency( instance ) {
+		return this.data.registerDependency( instance );
 	}
 
 	/**
-	 * Function runAfter().
 	 *
-	 * Run the hook as after.
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerUIAfter( instance ) {
+		return this.ui.registerAfter( instance );
+	}
+
+	/**
+	 *
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerUIBefore( instance ) {
+		return this.ui.registerBefore( instance );
+	}
+
+	/**
+	 * Function runDataAfter().
 	 *
 	 * @param {string} command
 	 * @param {{}} args
 	 * @param {*} result
 	 */
-	runAfter( command, args, result ) {
-		this.run( 'after', command, args, result );
+	runDataAfter( command, args, result ) {
+		this.data.runAfter( command, args, result );
 	}
 
 	/**
 	 * Function runDependency().
 	 *
-	 * Run the hook as dependency.
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runDataDependency( command, args ) {
+		this.data.runDependency( command, args );
+	}
+
+	/**
+	 * Function runUIAfter().
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} result
+	 */
+	runUIAfter( command, args, result ) {
+		this.ui.run( 'after', command, args, result );
+	}
+
+	/**
+	 * Function runUIBefore().
 	 *
 	 * @param {string} command
 	 * @param {{}} args
 	 */
-	runDependency( command, args ) {
-		this.run( 'dependency', command, args );
+	runUIBefore( command, args ) {
+		this.ui.run( 'before', command, args );
 	}
 }
-

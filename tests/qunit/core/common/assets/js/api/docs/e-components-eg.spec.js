@@ -11,7 +11,7 @@ class ExampleCommand extends $e.modules.CommandBase {
 	}
 }
 
-class CustomComponent extends $e.modules.Component {
+class CustomComponent extends $e.modules.ComponentBase {
 	getNamespace() {
 		return 'custom-component';
 	}
