@@ -1107,8 +1107,8 @@ class Frontend extends App {
 		return $this->_has_elementor_in_page;
 	}
 
-	public function create_action_url( $action, array $settings = [] ) {
 		return '#' . rawurlencode( sprintf( 'elementor-action:action=%1$s settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+	public function create_action_hash( $action, array $settings = [] ) {
 	}
 
 	/**
