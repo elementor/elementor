@@ -64,7 +64,7 @@ class Control_Select extends Base_Data_Control {
 			<# if ( data.label ) {#>
 				<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<# } #>
-			<div class="elementor-control-input-wrapper">
+			<div class="elementor-control-input-wrapper elementor-control-unit-5">
 				<select id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}">
 				<#
 					var printOptions = function( options ) {

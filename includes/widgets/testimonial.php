@@ -198,7 +198,6 @@ class Widget_Testimonial extends Widget_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 				],
-				'label_block' => false,
 				'style_transfer' => true,
 			]
 		);
