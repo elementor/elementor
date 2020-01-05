@@ -1,3 +1,4 @@
+
 ## Component -- `$e.components.get('document/elements')`
 
 *  **Name**: Elements.
@@ -26,8 +27,8 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
-    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`
+    | `{Container}` | _container OR containers_          | **required**      | Container to copy.
+    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`.
 
 ## CopyAll _Command_ -- `$e.run('document/elements/copy-all')`
 *  **Name**: Copy-All.
@@ -43,8 +44,8 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
-    | `{Object}`    | _model_                            | **required**      | 
+    | `{Container}` | _container OR containers_          | **required**      | Container target.
+    | `{Object}`    | _model_                            | **required**      | Model to create.
     | `{Object}`    | _options_                          | **optional**      | 
 
     **_options:_**
@@ -52,11 +53,11 @@
     | Property    | Type                              | Default   | Description                            |
     |-------------|-----------------------------------|-----------|----------------------------------------|
     | at          | `{Number}`                        | `{null}`  | Position (null means last). 
-    | clone       | `{Boolean}`                       | `{false}` | Generate unique id for the model
-    | edit        | `{Boolean}`                       | `{false}` | Is turn edit panel for the new element
-    | onBeforeAdd | `{function()}`                    |           | Run callback before add
-    | onAfterAdd  | `{function( newModel, newView )}` |           | Run callback after add
-    | trigger     | `{Boolean}`                       | `{false}` | *Deprecated*
+    | clone       | `{Boolean}`                       | `{false}` | Generate unique id for the model.
+    | edit        | `{Boolean}`                       | `{false}` | Is turn edit panel for the new element.
+    | onBeforeAdd | `{function()}`                    |           | Run callback before add.
+    | onAfterAdd  | `{function( newModel, newView )}` |           | Run callback after add.
+    | trigger     | `{Boolean}`                       | `{false}` | *Deprecated*.
 
 * **Examples**:
     Create Heading widget 
@@ -97,7 +98,7 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
+    | `{Container}` | _container OR containers_          | **required**      | Container to delete.
 
 * **Examples**:
     Delete a section, Assuming we have this section, and want to delete it.
@@ -120,7 +121,7 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
+    | `{Container}` | _container OR containers_          | **required**      | Container to duplicate.
 
 * **Examples**:
     Duplicate a section, Assuming we have this section, and want to duplicate it.
@@ -158,25 +159,24 @@
     | `{Object}`           | _data_                               | **required**      | Data.
     | `{Object}`           | _options_                            | **optional**      | 
 
-    *data:*
-    ```javascript
-    {
-       content: {Array},           // The content of the template to import.
-       page_settings: {Array},     // Custom page_settings to import ( only if options.withPageSettings = true ).
-    }
-    ```
-    *options:*
-    ```javascript
-    {
-        at: {Number},                                // Position ( Automatically increased ).
-        clone: {Boolean},                            // Generate unique id for the model.
-        edit: {Boolean},                             // Is turn edit panel for the new element.
-        onBeforeAdd: {function()},                   // Run callback before add.
-        onAfterAdd: {function( newModel, newView )}, // Run callback after add.
-        withPageSettings: {Boolean},                 // Apply data.page_settings to page_settings document.
-        trigger: {Boolean},                          // Deprecated.
-    }
-    ```
+    **_data:_**
+   
+    | Property      | Type                              | Default   | Description                            |
+    |---------------|-----------------------------------|-----------|----------------------------------------|
+    | content       | `{Object}`                        |           | Template content. 
+    | page_settings | `{Object}`                        |           | Template page settings.
+    
+    **_options:_**
+   
+    | Property         | Type                              | Default   | Description                            |
+    |------------------|-----------------------------------|-----------|----------------------------------------|
+    | withPageSettings | `{Boolean}`                       | `{false}` | Should set page settings of `args.page_settings`.
+    | at               | `{Number}`                        | `{null}`  | Position ( Automatically increased ).
+    | clone            | `{Boolean}`                       | `{false}` | Generate unique id for the model.
+    | edit             | `{Boolean}`                       | `{false}` | Is turn edit panel for the new element.
+    | onBeforeAdd      | `{function()}`                    |           | Run callback before add.
+    | onAfterAdd       | `{function( newModel, newView )}` |           | Run callback after add.
+    | trigger          | `{Boolean}`                       | `{false}` | *Deprecated*.
 
 ## Paste _Command_ -- `$e.run('document/elements/paste')`
 *  **Name**: Paste.
@@ -186,8 +186,8 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
-    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`
+    | `{Container}` | _container OR containers_          | **required**      | Container target.
+    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`.
 * **Examples**:
     Copy widget and paste it into column.
 
@@ -215,8 +215,8 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
-    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`
+    | `{Container}` | _container OR containers_          | **required**      | Container target.
+    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`.
 * **Examples**:
     Copy style from one widget and paste it into another.
     Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the speical one, to restore him to default.
@@ -244,8 +244,8 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
-    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`
+    | `{Container}` | _container OR containers_          | **required**      | Container target.
+    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`.
 * **Examples**:
     Reset style of widget.
     Assuming we have a widget with special style.
@@ -270,18 +270,18 @@
 
     | Type          | Property                           | Requirement       | Description |
     |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
-    | `{Object}`    | _settings_                         | **required**      | Settings
+    | `{Container}` | _container OR containers_          | **required**      | Container target.
+    | `{Object}`    | _settings_                         | **required**      | Settings.
     | `{Boolean}`   | _isMultiSettings_                  | **optional**      | default: `{false}`, enable settings for multi containers (each container).
     | `{Object}`    | _options_                          | **optional**      |
 
-    *options:*
-    ```javascript
-    {
-        external: {Boolean}, // default: `false`, Re-render panel with new settings.
-        debounce: {Boolean}, // default: `true`.
-    }
-    ```
+    **_options:_**
+   
+    | Property         | Type                              | Default   | Description                            |
+    |------------------|-----------------------------------|-----------|----------------------------------------|
+    | external         | `{Boolean}`                       | `{false}` | Re-render panel with new settings.
+    | debounce         | `{Boolean}`                       | `{true}`  | Enable\Disable debounce.
+
 * **Examples**:
    * Change settings of widget, assuming we have widget heading, let change title color.
         ![widget-heading](../images/base/widget-heading.png)
