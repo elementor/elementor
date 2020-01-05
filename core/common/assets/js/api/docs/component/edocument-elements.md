@@ -25,10 +25,11 @@
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | Container to copy.
-    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`.
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container to copy.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers to copy.
+    | _storageKey_ | `{String}`            | **optional**  | default: `{'clipboard'}`.
 
 ## CopyAll _Command_ -- `$e.run('document/elements/copy-all')`
 *  **Name**: Copy-All.
@@ -42,11 +43,12 @@
 *  **Returns**: `{Container | Array.<Container>}` *Created container(s)*.
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | Container target.
-    | `{Object}`    | _model_                            | **required**      | Model to create.
-    | `{Object}`    | _options_                          | **optional**      | 
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container target.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers target.
+    | _model_      | `{Object}`            | **required**  | Model to create.
+    | _options_    | `{Object}`            | **optional**  | 
 
     **_options:_**
    
@@ -96,10 +98,11 @@
 *  **Returns**: `{Container | Array.<Container>}` *Deleted container(s)*.
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | Container to delete.
-
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container to delete.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers to delete.
+    
 * **Examples**:
     Delete a section, Assuming we have this section, and want to delete it.
     ![widget-heading](../images/base/widget-heading.png)
@@ -119,10 +122,11 @@
 *  **Returns**: `{Container | Array.<Container>}` *Created container(s)*.
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | Container to duplicate.
-
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container to duplicate.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers to duplicate.
+    
 * **Examples**:
     Duplicate a section, Assuming we have this section, and want to duplicate it.
     ![widget-heading](../images/base/widget-heading.png)
@@ -142,9 +146,9 @@
 *  **Description**: Delete all elements from the document.
 *  **Returns**: `{void}`
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Boolean}`   | _force_                            | **optional**      | default: `{false}`, if true will delete all elements without confirmation.
+    | Property | Type        | Requirement       | Description |
+    |---       |---          |---                |---|
+    | _force_  | `{Boolean}` | **optional**      | default: `{false}`, if true will delete all elements without confirmation.
 
 
 ## Import _Command_ -- `$e.run('document/elements/import')`
@@ -153,18 +157,18 @@
 *  **Returns**: `{void}`
 *  **Arguments**:
 
-    | Type                 | Property                             | Requirement       | Description |
-    |---                   |---                                   |---                |---|
-    | `{Backbone.Model}`   | _model_                              | **required**      | Template model.
-    | `{Object}`           | _data_                               | **required**      | Data.
-    | `{Object}`           | _options_                            | **optional**      | 
+    | Property  | Type               | Requirement       | Description |
+    |---        |---                 |---                |---|
+    | _model_   | `{Backbone.Model}` | **required**      | Template model.
+    | _data_    | `{Object}`         | **required**      | Data.
+    | _options_ | `{Object}`         | **optional**      | 
 
     **_data:_**
    
-    | Property      | Type                              | Default   | Description                            |
-    |---------------|-----------------------------------|-----------|----------------------------------------|
-    | content       | `{Object}`                        |           | Template content. 
-    | page_settings | `{Object}`                        |           | Template page settings.
+    | Property      | Type       | Default   | Description                            |
+    |---------------|------------|-----------|----------------------------------------|
+    | content       | `{Object}` |           | Template content. 
+    | page_settings | `{Object}` |           | Template page settings.
     
     **_options:_**
    
@@ -184,10 +188,12 @@
 *  **Returns**: `{Container | Array.<Container>}` *Pasted container(s)*.
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | Container target.
-    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`.
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container target.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers target.
+    | _storageKey_ | `{String}`            | **optional**  | default: `{'clipboard'}`.
+
 * **Examples**:
     Copy widget and paste it into column.
 
@@ -213,10 +219,12 @@
 *  **Returns**: `{void}`.
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | Container target.
-    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`.
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container target.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers target.
+    | _storageKey_ | `{String}`            | **optional**  | default: `{'clipboard'}`.
+
 * **Examples**:
     Copy style from one widget and paste it into another.
     Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the speical one, to restore him to default.
@@ -242,10 +250,12 @@
 *  **Returns**: `{void}`.
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | Container target.
-    | `{String}`    | _storageKey_                       | **optional**      | default: `{'clipboard'}`.
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container target.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers target.
+    | _storageKey_ | `{String}`            | **optional**  | default: `{'clipboard'}`.
+
 * **Examples**:
     Reset style of widget.
     Assuming we have a widget with special style.
@@ -268,19 +278,20 @@
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | Container target.
-    | `{Object}`    | _settings_                         | **required**      | Settings.
-    | `{Boolean}`   | _isMultiSettings_                  | **optional**      | default: `{false}`, enable settings for multi containers (each container).
-    | `{Object}`    | _options_                          | **optional**      |
+    | Property          | Type                  | Requirement   | Description |
+    |---                |---                    |---            |---|
+    | _container_       | `{Container}`         | **required**  | Container target.
+    | _containers_      | `{Array.<Container>}` | **required**  | Containers target.
+    | _settings_        | `{Object}`            | **required**  | Settings.
+    | _isMultiSettings_ | `{Boolean}`           | **optional**  | default: `{false}`, settings for multi containers (each container).
+    | _options_         | `{Object}`            | **optional**  |
 
     **_options:_**
    
-    | Property         | Type                              | Default   | Description                            |
-    |------------------|-----------------------------------|-----------|----------------------------------------|
-    | external         | `{Boolean}`                       | `{false}` | Re-render panel with new settings.
-    | debounce         | `{Boolean}`                       | `{true}`  | Enable\Disable debounce.
+    | Property         | Type        | Default   | Description                            |
+    |------------------|------------ |-----------|----------------------------------------|
+    | external         | `{Boolean}` | `{false}` | Re-render panel with new settings.
+    | debounce         | `{Boolean}` | `{true}`  | Enable\Disable debounce.
 
 * **Examples**:
    * Change settings of widget, assuming we have widget heading, let change title color.
