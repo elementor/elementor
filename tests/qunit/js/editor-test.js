@@ -1,8 +1,18 @@
-import EditorBase from './../../../assets/dev/js/editor/editor-base';
+import EditorBase from 'elementor-editor/editor-base';
 
-export default class EditorBaseTest extends EditorBase {
-	getPreviewView() {
-		return super.getPreviewView();
+export default class EditorTest extends EditorBase {
+	constructor( options ) {
+		super( options );
+
+		QUnit.testStart( ( { module, name } ) => {
+			console.log( 'Testing', module, name );
+		} );
+
+		QUnit.testDone( ( { module, name } ) => {
+			console.log( 'Done Testing', module, name );
+
+			this.$previewElementorEl.empty();
+		} );
 	}
 
 	initPreview() {
@@ -18,7 +28,7 @@ export default class EditorBaseTest extends EditorBase {
 	initFrontend() {
 		elementorFrontend.init = () => console.log( 'initFrontend' );
 
-		elementorFrontend.elements.$body = jQuery( '#elementor-fake' );
+		elementorFrontend.elements.$body = jQuery( '#elementor-test' );
 
 		super.initFrontend();
 	}
@@ -31,10 +41,9 @@ export default class EditorBaseTest extends EditorBase {
 		};
 
 		this.$previewContents = this.$preview.contents();
-
 		this.$previewContents.find( 'body' ).append( '<div id="elementor"></div>' );
 
-		// Shortcut bind.
+		// Shortcut bind, in other words make shortcuts listen to iframe.
 		elementorFrontend.elements.$window = jQuery( '#elementor-preview-iframe' );
 
 		super.onPreviewLoaded();
@@ -42,12 +51,12 @@ export default class EditorBaseTest extends EditorBase {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
-		// do nothing
+
 		this.previewLoadedOnce = true;
 	}
 
 	enqueueTypographyFonts() {
-
+		// Do nothing, bypass parent function.
 	}
 }
 
