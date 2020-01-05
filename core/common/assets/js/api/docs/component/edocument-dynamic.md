@@ -17,10 +17,11 @@
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
-    | Type          | Property                  | Requirement       | Description |
-    |---            |---                        |---                |---|
-    | `{Container}` | _container OR containers_ | **required**      | 
-    | `{Object}`    | _settings_                | **required**      | Dynamic settings to disable <TODO EXPLAIN WHY>
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container to disable.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers to disable.
+    | _settings_   | `{Object}             | **required**  | Dynamic settings to disable <TODO EXPLAIN WHY>
 
 * **Examples**:
     Assuming we have a widget with dynamic tag for *title*, and want to disable it.
@@ -49,10 +50,11 @@
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
-    | Type          | Property                  | Requirement       | Description |
-    |---            |---                        |---                |---|
-    | `{Container}` | _container OR containers_ | **required**      | 
-    | `{Object}`    | _settings_                | **required**      | Dynamic settings to enable
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container to enable.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers to enable.
+    | _settings_   | `{Object}`            | **required**  | Dynamic settings to enable
 
 * **Examples**:
     Enable dynamic title for heading, assuming you have simple widget like this:
@@ -82,12 +84,12 @@
 *  **Returns**: `{void}`
 *  **Arguments**: 
 
-    | Type          | Property                           | Requirement       | Description |
-    |---            |---                                 |---                |---|
-    | `{Container}` | _container OR containers_          | **required**      | 
-    | `{Object}`    | _settings_                         | **required**      | Dynamic settings to enable
-    | `{Object}`    | _options_ { debounce: `{Boolean}`} | **optional**      | Use debounce? default: `true`
-
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **required**  | Container target.
+    | _containers_ | `{Array.<Container>}` | **required**  | Containers target.
+    | _settings_   | `{Object}`            | **required**  | Dynamic settings to change.
+    
 * **Examples**:
     Example change dynamic settings for title with dynamic tag *post-date*.
     Assuming you have a heading with 'post-date' dynamic tag for title.
