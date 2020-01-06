@@ -19,7 +19,7 @@ export class ResetStyle extends History {
 
 		containers.forEach( ( container ) => {
 			const controls = container.settings.controls,
-				defaultProps = [];
+				settingsKeys = [];
 
 			container.view.allowRender = false;
 
@@ -28,7 +28,7 @@ export class ResetStyle extends History {
 					return;
 				}
 
-				defaultProps.push( controlName );
+				settingsKeys.push( controlName );
 			} );
 
 			// BC: Deprecated since 2.8.0 - use `$e.events`.
@@ -36,7 +36,7 @@ export class ResetStyle extends History {
 
 			$e.run( 'document/elements/reset-settings', {
 				container,
-				settings: defaultProps,
+				settings: settingsKeys,
 			} );
 
 			// BC: Deprecated since 2.8.0 - use `$e.events`.

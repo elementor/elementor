@@ -24,7 +24,7 @@ export class ResetSettings extends History {
 			controls.forEach( ( [ controlName, control ] ) => {
 				// If settings were specific, restore only them.
 				if ( settings && settings.length ) {
-					if ( ! settings.find( ( prop ) => prop === controlName ) ) {
+					if ( ! settings.find( ( key ) => key === controlName ) ) {
 						return;
 					}
 				}
