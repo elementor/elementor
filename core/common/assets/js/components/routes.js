@@ -53,7 +53,7 @@ export default class extends Commands {
 			return false;
 		}
 
-		if ( this.is( route, args ) ) {
+		if ( this.is( route, args ) && ! args.refresh ) {
 			return false;
 		}
 

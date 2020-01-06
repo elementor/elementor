@@ -22,6 +22,10 @@ export class Open extends Base {
 				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
 
 				elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );
+
+				$e.route( 'panel/elements/categories', {
+					refresh: true,
+				} );
 			}
 		} );
 	}

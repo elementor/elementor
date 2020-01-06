@@ -825,9 +825,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
-		if ( this.previewLoadedOnce ) {
-			$e.route( 'panel/elements/categories' );
-		} else {
+		if ( ! this.previewLoadedOnce ) {
 			this.onFirstPreviewLoaded();
 		}
 
