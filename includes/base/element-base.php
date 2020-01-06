@@ -467,9 +467,7 @@ abstract class Element_Base extends Controls_Stack {
 
 			foreach ( $custom_attributes as $attribute ) {
 				// Trim in case users inserted unwanted spaces
-				$attribute = trim( $attribute );
-
-				list( $attr_key, $attr_value ) = explode( '|', $attribute );
+				list( $attr_key, $attr_value ) = explode( '|', trim( $attribute ) );
 
 				$attributes[ $attr_key ] = $attr_value;
 			}
