@@ -1,8 +1,8 @@
-import Base from 'elementor-api/api/hooks/base';
+import Base from 'elementor-api/core/hooks/base';
 import HookBase from 'elementor-api/modules/hook-base';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/api/hooks/base.js', () => {
+	QUnit.module( 'File: core/common/assets/js/api/core/hooks/base.js', () => {
 		QUnit.module( 'Callbacks', () => {
 			QUnit.test( 'checkId()', ( assert ) => {
 				const random = Math.random(),

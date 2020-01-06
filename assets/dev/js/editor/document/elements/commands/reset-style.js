@@ -1,4 +1,4 @@
-import History from '../../commands/base/history';
+import History from 'elementor-document/commands/base/history';
 
 export class ResetStyle extends History {
 	validateArgs( args ) {
@@ -31,7 +31,7 @@ export class ResetStyle extends History {
 				defaultValues[ controlName ] = control.default;
 			} );
 
-			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 			elementor.channels.data.trigger( 'element:before:reset:style', container.model );
 
 			$e.run( 'document/elements/settings', {
@@ -39,7 +39,7 @@ export class ResetStyle extends History {
 				settings: defaultValues,
 			} );
 
-			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 			elementor.channels.data.trigger( 'element:after:reset:style', container.model );
 
 			container.view.allowRender = true;

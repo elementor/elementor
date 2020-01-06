@@ -1,6 +1,6 @@
-import UIAfter from 'elementor-api/modules/hooks/ui-base/after';
+import After from 'elementor-api/modules/hooks/ui/after';
 
-export class Resizeable extends UIAfter {
+export class Resizeable extends After {
 	getCommand() {
 		return 'document/elements/settings';
 	}

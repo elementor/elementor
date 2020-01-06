@@ -1,18 +1,18 @@
-import Components from './api/components';
-import Hooks from './api/hooks';
-import Commands from './api/commands';
-import Routes from './api/routes';
-import Shortcuts from './api/shortcuts';
-import BackwardsCompatibility from './api/backwards-compatibility';
+import Components from './core/components';
+import Hooks from './core/hooks';
+import Commands from './core/commands';
+import Routes from './core/routes';
+import Shortcuts from './core/shortcuts';
+import BackwardsCompatibility from './core/backwards-compatibility';
 import CommandsBase from './modules/command-base';
-import DataBase from './modules/hooks/data-base/base';
-import DataAfter from './modules/hooks/data-base/after';
-import DataDependency from './modules/hooks/data-base/dependency';
-import UIBase from './modules/hooks/ui-base/base';
-import UIAfter from './modules/hooks/ui-base/after';
-import UIBefore from './modules/hooks/ui-base/before';
+import DataBase from './modules/hooks/data/base';
+import DataAfter from './modules/hooks/data/after';
+import DataDependency from './modules/hooks/data/dependency';
+import UIBase from './modules/hooks/ui/base';
+import UIAfter from './modules/hooks/ui/after';
+import UIBefore from './modules/hooks/ui/before';
 import ComponentBase from './modules/component-base';
-import ComponentModal from './modules/component-modal';
+import ComponentModalBase from './modules/component-modal-base';
 import HookBreak from './modules/hook-break';
 
 export default class API {
@@ -32,19 +32,19 @@ export default class API {
 
 		this.modules = {
 			ComponentBase: ComponentBase,
-			ComponentModal: ComponentModal,
+			ComponentModal: ComponentModalBase,
 
 			CommandBase: CommandsBase,
 
 			HookBreak: HookBreak,
 
-			DataHook: {
+			hookData: {
 				Base: DataBase, // TODO: consider remove.
 				After: DataAfter,
 				Dependency: DataDependency,
 			},
 
-			UIHook: {
+			hookUI: {
 				Base: UIBase, // TODO: consider remove.
 				After: UIAfter,
 				Before: UIBefore,

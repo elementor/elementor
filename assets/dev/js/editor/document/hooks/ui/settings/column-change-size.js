@@ -1,6 +1,6 @@
-import UIAfter from 'elementor-api/modules/hooks/ui-base/after';
+import After from 'elementor-api/modules/hooks/ui/after';
 
-export class ColumnChangeSize extends UIAfter {
+export class ColumnChangeSize extends After {
 	getCommand() {
 		return 'document/elements/settings';
 	}

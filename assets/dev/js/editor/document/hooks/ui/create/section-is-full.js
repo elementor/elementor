@@ -1,6 +1,6 @@
-import UIAfter from 'elementor-api/modules/hooks/ui-base/after';
+import After from 'elementor-api/modules/hooks/ui/after';
 
-export class CreateSectionIsFull extends UIAfter {
+export class CreateSectionIsFull extends After {
 	getCommand() {
 		return 'document/elements/create';
 	}

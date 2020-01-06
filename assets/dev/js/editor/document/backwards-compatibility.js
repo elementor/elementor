@@ -31,7 +31,7 @@ export default class BackwardsCompatibility {
 
 		deprecatedEvents.forEach( ( event ) => {
 			if ( elementorDataEvents[ event ] && elementorDataEvents[ event ].length ) {
-				elementorCommon.helpers.softDeprecated( `event: ${ event }`, '2.8.0', '$e.events' );
+				elementorCommon.helpers.softDeprecated( `event: ${ event }`, '2.8.0', '$e.hooks' );
 			}
 		} );
 	}

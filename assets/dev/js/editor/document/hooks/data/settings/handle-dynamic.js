@@ -1,6 +1,6 @@
-import DataAfter from 'elementor-api/modules/hooks/data-base/after';
+import After from 'elementor-api/modules/hooks/data/after';
 
-export class HandleDynamic extends DataAfter {
+export class HandleDynamic extends After {
 	getCommand() {
 		return 'document/elements/settings';
 	}

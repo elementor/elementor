@@ -53,10 +53,10 @@ function initialize() {
 		'</div>\n';
 
 	elementor.on( 'preview:loaded', () => {
-		require( './core/common/assets/js/api/api/hooks/base.spec.js' );
-		require( './core/common/assets/js/api/modules/command-base.spec.js' );
+		require( './core/common/assets/js/api/core/components.spec.js' );
+		require( './core/common/assets/js/api/core/hooks/base.spec.js' );
 
-		require( './core/common/assets/js/api/api/components.spec' );
+		require( './core/common/assets/js/api/modules/command-base.spec.js' );
 
 		require( './core/editor/container/container.spec' );
 

@@ -1,13 +1,28 @@
-import elementorModules from '../../../../assets/dev/js/modules/modules';
+import elementorModules from 'elementor-assets-js/modules/modules';
 import ModalLayout from './views/modal/layout';
-import Component from './api/modules/component-base';
-import ComponentModal from './api/modules/component-modal';
+import ComponentBase from './api/modules/component-base';
+import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import HookBreak from './api/modules/hook-break';
 
 elementorModules.common = {
-	Component: Component, // TODO: remove use `$e.modules.ComponentBase`.
-	ComponentModal: ComponentModal, // TODO: remove use `$e.modules.ComponentModal`.
-	HookBreak: HookBreak, // TODO: remove use `$e.modules.HookBreak`.
+	get Component() {
+		elementorCommon.helpers.softDeprecated( 'elementorModules.common.Component', '2.9.0',
+			'$e.modules.ComponentBase' );
+		return ComponentBase;
+	},
+
+	get ComponentModal() {
+		elementorCommon.helpers.softDeprecated( 'elementorModules.common.ComponentModal', '2.9.0',
+			'$e.modules.ComponentModalBase' );
+		return ComponentModalBase;
+	},
+
+	get HookBreak() {
+		elementorCommon.helpers.softDeprecated( 'elementorModules.common.HookBreak', '2.9.0',
+			'$e.modules.HookBreak' );
+		return HookBreak;
+	},
+
 	views: {
 		modal: {
 			Layout: ModalLayout,

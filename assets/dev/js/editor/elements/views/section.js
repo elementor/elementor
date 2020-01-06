@@ -13,6 +13,13 @@ const SectionView = BaseElementView.extend( {
 
 	addSectionView: null,
 
+	_checkIsFull: function() {
+		this.toggleSectionIsFull();
+
+		elementorCommon.helpers.softDeprecated( '_checkIsFull', '2.9.0',
+			'toggleSectionIsFull()' );
+	},
+
 	toggleSectionIsFull: function() {
 		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
 	},

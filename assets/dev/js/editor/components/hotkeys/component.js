@@ -1,7 +1,7 @@
-import ComponentModal from 'elementor-api/modules/component-modal';
+import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import ModalLayout from './modal-layout';
 
-export default class Component extends ComponentModal {
+export default class Component extends ComponentModalBase {
 	getNamespace() {
 		return 'shortcuts';
 	}

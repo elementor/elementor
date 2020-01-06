@@ -1,6 +1,6 @@
-import DataAfter from 'elementor-api/modules/hooks/data-base/after';
+import After from 'elementor-api/modules/hooks/data/after';
 
-export class SectionsColumns extends DataAfter {
+export class SectionsColumns extends After {
 	getCommand() {
 		return 'document/elements/delete';
 	}

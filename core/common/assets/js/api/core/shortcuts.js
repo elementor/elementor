@@ -1,4 +1,4 @@
-import environment from '../../utils/environment';
+import environment from 'elementor-common/utils/environment';
 
 export default class Shortcuts {
 	constructor( $window ) {
