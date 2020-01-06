@@ -185,4 +185,24 @@ export default class BaseComponent extends elementorModules.Module {
 	getBodyClass( route ) {
 		return 'e-route-' + route.replace( /\//g, '-' );
 	}
+
+	/**
+	 * If command includes uppercase character convert it to lowercase and add `-`.
+	 * e.g: `CopyAll` is converted to `copy-all`.
+	 */
+	normalizeCommandName( commandName ) {
+		return commandName.replace( /[A-Z]/g, ( match, offset ) => ( offset > 0 ? '-' : '' ) + match.toLowerCase() );
+	}
+
+	importCommands( commandsFromImport ) {
+		const commands = {};
+
+		// Convert `Commands` to `ComponentBase` workable format.
+		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
+			const command = this.normalizeCommandName( className );
+			commands[ command ] = ( args ) => ( new Class( args ) ).run();
+		} );
+
+		return commands;
+	}
 }
