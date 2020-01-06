@@ -859,6 +859,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.onEditModeSwitched();
 
+		// find elementor parts, but not nested parts.
 		this.$previewContents.find( '.elementor' ).not( '.elementor .elementor' ).prepend( '<span class="elementor-edit-button">' +
 			'<i class="eicon-edit"></i>' +
 			'</span>' );

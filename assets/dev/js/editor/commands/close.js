@@ -19,7 +19,7 @@ export class Close extends Base {
 			return;
 		}
 
-		switch ( args.mode ) {
+		switch ( mode ) {
 			case 'save':
 				elementor.saver.update();
 				break;

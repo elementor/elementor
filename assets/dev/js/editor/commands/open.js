@@ -8,7 +8,12 @@ export class Open extends Base {
 	apply( args ) {
 		const { id } = args;
 
-			// TODO: move to an event.
+		// Already opened.
+		if ( elementor.documents[ id ] && 'open' === elementor.documents[ id ].editorStatus ) {
+			return;
+		}
+
+		// TODO: move to an event.
 		if ( elementor.loaded ) {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
