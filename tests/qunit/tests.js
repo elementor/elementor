@@ -16,12 +16,13 @@ function initialize() {
 	// Load the template to `#elementor-test`.
 	$elementorFake.append( window.__html__[ 'tests/qunit/index.html' ] );
 
-elementor.config.document.widgets = {
-	button,
-	heading,
-	tabs,
-	form,
-};
+	elementor.config.document.widgets = {
+		button,
+		heading,
+		tabs,
+		form,
+	};
+
 	const elementor = new EditorTest();
 
 	window.elementor = elementor;
