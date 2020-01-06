@@ -1,10 +1,10 @@
-import DataHooks from './hooks/data.js';
-import UIHooks from './hooks/ui.js';
+import HooksData from './hooks/data.js';
+import HooksUI from './hooks/ui.js';
 
 export default class Hooks {
 	constructor() {
-		this.data = new DataHooks();
-		this.ui = new UIHooks();
+		this.data = new HooksData();
+		this.ui = new HooksUI();
 	}
 
 	getAll() {

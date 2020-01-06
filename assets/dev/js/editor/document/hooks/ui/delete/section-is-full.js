@@ -1,6 +1,6 @@
-import UIAfter from 'elementor-api/modules/hooks/ui-base/after';
+import After from 'elementor-api/modules/hooks/ui/after';
 
-export class DeleteSectionIsFull extends UIAfter {
+export class DeleteSectionIsFull extends After {
 	getCommand() {
 		return 'document/elements/delete';
 	}

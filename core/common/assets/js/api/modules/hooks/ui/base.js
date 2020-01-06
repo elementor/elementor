@@ -1,6 +1,6 @@
 import HookBase from 'elementor-api/modules/hook-base';
 
-export default class UIBase extends HookBase {
+export default class Base extends HookBase {
 	getType() {
 		return 'event';
 	}

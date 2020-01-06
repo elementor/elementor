@@ -85,7 +85,7 @@ export class PasteStyle extends History {
 				// Moved from `editor/elements/views/base.js` `pasteStyle` function.
 				targetContainer.view.allowRender = false;
 
-				// BC: Deprecated since 2.8.0 - use `$e.events`.
+				// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 				elementor.channels.data.trigger( 'element:before:paste:style', targetContainer.model );
 
 				$e.run( 'document/elements/settings', {
@@ -94,7 +94,7 @@ export class PasteStyle extends History {
 					options: { external: true },
 				} );
 
-				// BC: Deprecated since 2.8.0 - use `$e.events`.
+				// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 				elementor.channels.data.trigger( 'element:after:paste:style', targetContainer.model );
 
 				targetContainer.view.allowRender = true;

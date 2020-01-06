@@ -1,7 +1,7 @@
-import DataDependency from 'elementor-api/modules/hooks/data-base/dependency';
+import Dependency from 'elementor-api/modules/hooks/data/dependency';
 import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
-export class ResizeColumnLimit extends DataDependency {
+export class ResizeColumnLimit extends Dependency {
 	getCommand() {
 		return 'document/elements/settings';
 	}
