@@ -6,7 +6,7 @@ export class Close extends Base {
 	}
 
 	apply( args ) {
-		const { id, mode } = args;
+		const { id, mode, onClose } = args;
 
 		// Already closed.
 		if ( 'close' === elementor.documents[ id ].editorStatus ) {
@@ -37,6 +37,10 @@ export class Close extends Base {
 			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
 
 		elementor.documents[ id ].editorStatus = 'close';
+
+		if ( onClose ) {
+			onClose();
+		}
 	}
 
 	getConfirmDialog() {
@@ -57,16 +61,16 @@ export class Close extends Base {
 				cancel: elementor.translate( 'Discard' ),
 			},
 			onConfirm: () => {
-				$e.run( 'editor/documents/close', {
-					id: this.args.id,
-					mode: 'save',
-				} );
+				this.args.mode = 'save';
+
+				// Re-run with same args.
+				$e.run( 'editor/documents/close', this.args );
 			},
 			onCancel: () => {
-				$e.run( 'editor/documents/close', {
-					id: this.args.id,
-					mode: 'discard',
-				} );
+				this.args.mode = 'discard';
+
+				// Re-run with same args.
+				$e.run( 'editor/documents/close', this.args );
 			},
 		} );
 

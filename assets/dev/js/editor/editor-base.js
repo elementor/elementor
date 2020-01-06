@@ -866,8 +866,7 @@ export default class EditorBase extends Marionette.Application {
 		this.$previewContents.find( '.elementor-edit-button' ).on( 'click', ( event ) => {
 			const id = jQuery( event.target ).parents( '.elementor' ).data( 'elementor-id' );
 
-			$e.run( 'editor/documents/close', { id: elementor.config.document.id } );
-			$e.run( 'editor/documents/open', { id } );
+			$e.run( 'editor/documents/switch', { id } );
 		} );
 
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
