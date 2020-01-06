@@ -60,7 +60,7 @@
 	.elementor-panel-scheme-items {
 		position: relative;
 		display: grid;
-		grid-template-columns: repeat(4, 50px);
+		grid-template-columns: repeat(4, $control-unit);
 		justify-content: space-between;
 	}
 }

@@ -1,3 +1,5 @@
+/* global jQuery */
+
 elementorCommon.ajax.send = ( action, options ) => {};
 
 const elementorConfigDocument = {
@@ -8,8 +10,7 @@ const elementorConfigDocument = {
 	panel: {
 		title: 'Post',
 		widgets_settings: [],
-		elements_categories: {
-		},
+		elements_categories: {},
 		messages: {
 			publish_notification: 'Hurray! Your Post is live.',
 		},
@@ -97,10 +98,61 @@ const elementorConfigSettings = {
 			elementor_lightbox_ui_color_hover: '',
 		},
 	},
-	editorPreferences: {},
+	editorPreferences: {
+		name: 'editorPreferences',
+		panelPage: {
+			title: 'Editor Preferences',
+		},
+		controls: {
+			preferences: {
+				type: 'section',
+				tab: 'settings',
+				label: 'Preferences',
+				name: 'preferences',
+			},
+			ui_theme: {
+				type: 'select',
+				tab: 'settings',
+				section: 'preferences',
+				label: 'UI Theme',
+				description: 'Set light or dark mode, or use Auto Detect to sync it with your OS setting.',
+				default: 'auto',
+				options: {
+					auto: 'Auto Detect',
+					light: 'Light',
+					dark: 'Dark',
+				},
+				name: 'ui_theme',
+			},
+			edit_buttons: {
+				type: 'switcher',
+				tab: 'settings',
+				section: 'preferences',
+				label: 'Editing Handles',
+				description: 'Show editing handles when hovering over the element edit button.',
+				name: 'edit_buttons',
+				default: '',
+			},
+			lightbox_in_editor: {
+				type: 'switcher',
+				tab: 'settings',
+				section: 'preferences',
+				label: 'Enable Lightbox In Editor',
+				default: 'yes',
+				name: 'lightbox_in_editor',
+			},
+		},
+		tabs: {
+			settings: 'Settings',
+		},
+		settings: {
+			ui_theme: 'dark',
+			edit_buttons: '',
+			lightbox_in_editor: 'yes',
+		},
+	},
 };
 
-/* global jQuery */
 const ElementorConfig = {
 	document: elementorConfigDocument,
 	user: { introduction: {}, restrictions: [] },
@@ -153,16 +205,8 @@ Marionette.Region.prototype.attachHtml = () => {
 
 Marionette.CompositeView.prototype.getChildViewContainer = ( containerView ) => {
 	containerView.$childViewContainer = jQuery( '<div />' );
-	containerView.$childViewContainer.appendTo( '#qunit-fixture' );
+	containerView.$childViewContainer.appendTo(
+		jQuery( '#elementor-preview-iframe' ).contents().find( '#elementor' )
+	);
 	return containerView.$childViewContainer;
 };
-
-fixture.setBase( 'tests/qunit' );
-
-QUnit.testStart( ( { module, name } ) => {
-	fixture.load( 'index.html' );
-} );
-
-QUnit.testDone( ( { module, name } ) => {
-	fixture.cleanup();
-} );

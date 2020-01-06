@@ -106,7 +106,6 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'render_type' => 'template',
 				'classes' => 'elementor-control-start-end',
-				'label_block' => false,
 				'style_transfer' => true,
 				'prefix_class' => 'elementor-icon-list--layout-',
 			]
@@ -133,7 +132,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-				'label_block' => true,
 				'default' => [
 					'value' => 'fas fa-check',
 					'library' => 'fa-solid',
@@ -150,7 +148,6 @@ class Widget_Icon_List extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'label_block' => true,
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 			]
 		);
@@ -559,15 +556,7 @@ class Widget_Icon_List extends Widget_Base {
 					if ( ! empty( $item['link']['url'] ) ) {
 						$link_key = 'link_' . $index;
 
-						$this->add_render_attribute( $link_key, 'href', $item['link']['url'] );
-
-						if ( $item['link']['is_external'] ) {
-							$this->add_render_attribute( $link_key, 'target', '_blank' );
-						}
-
-						if ( $item['link']['nofollow'] ) {
-							$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
-						}
+						$this->add_link_attributes( $link_key, $item['link'] );
 
 						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 					}
@@ -607,10 +596,10 @@ class Widget_Icon_List extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 			view.addRenderAttribute( 'icon_list', 'class', 'elementor-icon-list-items' );

@@ -17,7 +17,7 @@ export class SectionsColumns extends HookAfter {
 		const { containers = [ args.container ] } = args;
 
 		// On `document/elements/move` do not fire the hook!.
-		return 'document/elements/move' !== $e.commands.getCurrentFirstTrace() && containers.some( ( container ) =>
+		return ! $e.commands.isCurrentFirstTrace( 'document/elements/move' ) && containers.some( ( container ) =>
 			// If one of the targets is column.
 			'column' === container.model.get( 'elType' )
 		);

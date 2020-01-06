@@ -420,10 +420,7 @@ label.elementor-template-library-order-label {
 		i {
 			font-size: 20px;
 			color: $editor-lightest;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
+			@include absolute-center;
 		}
 	}
 
