@@ -73,7 +73,7 @@ class Control_URL extends Control_Base_Multiple {
 				'property' => 'url',
 			],
 			'custom_attributes_description' => __( 'Set custom attributes for the anchor element. Separate attribute keys from values 
-			using the | (pipe) character. Separate key-value pairs with a comma. Do not use spaces.', 'elementor' ),
+			using the | (pipe) character. Separate key-value pairs with a comma.', 'elementor' ),
 		];
 	}
 
