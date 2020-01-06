@@ -110,6 +110,9 @@ class Widget_Accordion extends Widget_Base {
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => __( 'Accordion Content', 'elementor' ),
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
