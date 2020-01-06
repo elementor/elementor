@@ -1,8 +1,8 @@
-import DataAfter from 'elementor-api/modules/hooks/data-base/after';
+import After from 'elementor-api/modules/hooks/data/after';
 import Helper from '../helper';
 import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 
-export class InnerSectionColumns extends DataAfter {
+export class InnerSectionColumns extends After {
 	getCommand() {
 		return 'document/elements/create';
 	}

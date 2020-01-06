@@ -2,7 +2,7 @@
  * TODO: Should we do validate function in scenarios where args are are not required.
  * but should be validate?
  */
-import ArgsObject from 'elementor-dev-modules/imports/args-object';
+import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
 	/**
@@ -115,11 +115,11 @@ export default class CommandBase extends ArgsObject {
 	run() {
 		let result;
 
-		// For $e.events.
+		// For UI Hooks.
 		this.onBeforeRun( this.args );
 
 		try {
-			// For $e.hooks.
+			// For Data hooks.
 			this.onBeforeApply( this.args );
 
 			result = this.apply( this.args );
@@ -131,14 +131,14 @@ export default class CommandBase extends ArgsObject {
 			}
 		}
 
-		// For $e.hooks.
+		// For Data hooks.
 		this.onAfterApply( this.args, result );
 
 		if ( this.isDataChanged() ) {
 			elementor.saver.setFlagEditorChange( true );
 		}
 
-		// For $e.events.
+		// For UI hooks.
 		this.onAfterRun( this.args, result );
 
 		return result;

@@ -1,6 +1,6 @@
-import DataDependency from 'elementor-api/modules/hooks/data-base/dependency';
+import Dependency from 'elementor-api/modules/hooks/data/dependency';
 
-export class SectionColumnsLimit extends DataDependency {
+export class SectionColumnsLimit extends Dependency {
 	getCommand() {
 		return 'document/elements/create';
 	}

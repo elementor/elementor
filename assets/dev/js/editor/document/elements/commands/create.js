@@ -45,7 +45,7 @@ export class Create extends History {
 
 		let result = [];
 
-		// BC: Deprecated since 2.8.0 - use `$e.events`.
+		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 		if ( ! options.trigger ) {
 			options.trigger = {
 				beforeAdd: 'element:before:add',

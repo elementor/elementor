@@ -115,13 +115,13 @@ export default class Base extends elementorModules.Module {
 	 */
 	getCallbacks( event, command, args ) {
 		const { containers = [ args.container ] } = args,
-			elType = containers[ 0 ] ? containers[ 0 ].type : false;
+			containerType = containers[ 0 ] ? containers[ 0 ].type : false;
 
 		let callbacks = [];
 
 		if ( this.callbacks[ event ] && this.callbacks[ event ][ command ] ) {
-			if ( elType && this.callbacks[ event ][ command ][ elType ] ) {
-				callbacks = callbacks.concat( this.callbacks[ event ][ command ][ elType ] );
+			if ( containerType && this.callbacks[ event ][ command ][ containerType ] ) {
+				callbacks = callbacks.concat( this.callbacks[ event ][ command ][ containerType ] );
 			}
 
 			if ( this.callbacks[ event ][ command ].all ) {
@@ -158,7 +158,7 @@ export default class Base extends elementorModules.Module {
 	 */
 	checkInstance( instance ) {
 		if ( instance.getType() !== this.getType() ) {
-			throw new Error( `invalid instance, please use: 'elementor-api/modules/callable-base'. ` );
+			throw new Error( `invalid instance, please use: 'elementor-api/modules/hook-base.js'. ` );
 		}
 	}
 

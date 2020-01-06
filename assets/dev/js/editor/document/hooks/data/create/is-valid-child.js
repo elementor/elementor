@@ -1,7 +1,7 @@
-import DataDependency from 'elementor-api/modules/hooks/data-base/dependency';
+import Dependency from 'elementor-api/modules/hooks/data/dependency';
 import DocumentHelpers from 'elementor-document/helpers';
 
-export class IsValidChild extends DataDependency {
+export class IsValidChild extends Dependency {
 	getCommand() {
 		return 'document/elements/create';
 	}

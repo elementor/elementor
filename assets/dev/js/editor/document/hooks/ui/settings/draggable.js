@@ -1,6 +1,6 @@
-import UIAfter from 'elementor-api/modules/hooks/ui-base/after';
+import After from 'elementor-api/modules/hooks/ui/after';
 
-export class Draggable extends UIAfter {
+export class Draggable extends After {
 	getCommand() {
 		return 'document/elements/settings';
 	}
