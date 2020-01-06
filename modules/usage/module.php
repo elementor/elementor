@@ -156,9 +156,15 @@ class Module extends BaseModule {
 	 * Called on elementor/document/before_save, remove document from global & set saving flag.
 	 *
 	 * @param Document $document
+	 * @param array $data new settings to save.
 	 */
-	public function before_document_save( $document ) {
-		$this->remove_from_global( $document );
+	public function before_document_save( $document, $data ) {
+		$current_status = get_post_status( $document->get_post() );
+		$new_status = isset( $data['settings']['post_status'] ) ? $data['settings']['post_status'] : '';
+
+		if ( $current_status === $new_status ) {
+			$this->remove_from_global( $document );
+		}
 
 		$this->is_document_saving = true;
 	}
@@ -171,7 +177,7 @@ class Module extends BaseModule {
 	 * @param Document $document
 	 */
 	public function after_document_save( $document ) {
-		if ( DB::STATUS_PUBLISH === $document->get_post()->post_status ) {
+		if ( DB::STATUS_PUBLISH === $document->get_post()->post_status || DB::STATUS_PRIVATE === $document->get_post()->post_status ) {
 			$this->save_document_usage( $document );
 		}
 
@@ -227,6 +233,11 @@ class Module extends BaseModule {
 	 */
 	public function on_before_delete_post( $post_id ) {
 		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( $document->get_id() !== $document->get_main_id() ) {
+			return;
+		}
+
 		$this->remove_from_global( $document );
 	}
 
@@ -281,6 +292,9 @@ class Module extends BaseModule {
 
 			$this->after_document_save( $document );
 		}
+
+		// Clear query memory before leave.
+		wp_cache_flush();
 
 		return count( $query->posts );
 	}
@@ -578,7 +592,7 @@ class Module extends BaseModule {
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
 		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );
 
-		add_action( 'elementor/document/before_save', [ $this, 'before_document_save' ] );
+		add_action( 'elementor/document/before_save', [ $this, 'before_document_save' ], 10, 2 );
 		add_action( 'elementor/document/after_save', [ $this, 'after_document_save' ] );
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
