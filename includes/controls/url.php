@@ -99,8 +99,7 @@ class Control_URL extends Control_Base_Multiple {
 				<i class="elementor-control-url-autocomplete-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 				<input id="<?php echo $control_uid; ?>" class="elementor-control-tag-area elementor-input" data-setting="url" placeholder="{{ data.placeholder }}" />
 				<input id="_ajax_linking_nonce" type="hidden" value="<?php echo wp_create_nonce( 'internal-linking' ); ?>" />
-
-				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target" data-tooltip="<?php echo __( 'Link Options', 'elementor' ); ?>">
+				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target elementor-control-unit-1" data-tooltip="<?php echo __( 'Link Options', 'elementor' ); ?>">
 					<i class="eicon-cog" aria-hidden="true"></i>
 				</label>
 				<input id="<?php echo $more_input_control_uid; ?>" type="checkbox" class="elementor-control-url-more-input">

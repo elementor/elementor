@@ -51,7 +51,7 @@ export default class ColorPicker extends elementorModules.Module {
 
 		if ( ! pickerSettings.default ) {
 			// Set a default palette. It doesn't affect the selected value
-			this.picker.setColor( '#000' );
+			this.picker.setColor( '#020101' );
 		}
 
 		this.color = this.processColor();

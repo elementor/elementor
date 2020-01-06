@@ -970,24 +970,22 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onBackgroundClick( event ) {
-		jQuery.each( this.backgroundClickListeners, () => {
+		jQuery.each( this.backgroundClickListeners, ( index, config ) => {
 			let $clickedTarget = jQuery( event.target );
-
 			// If it's a label that associated with an input
 			if ( $clickedTarget[ 0 ].control ) {
 				$clickedTarget = $clickedTarget.add( $clickedTarget[ 0 ].control );
 			}
 
-			if ( this.ignore && $clickedTarget.closest( this.ignore ).length ) {
+			if ( config.ignore && $clickedTarget.closest( config.ignore ).length ) {
 				return;
 			}
 
-			const $clickedTargetClosestElement = $clickedTarget.closest( this.element ),
-				$elementsToHide = jQuery( this.element ).not( $clickedTargetClosestElement );
+			const $clickedTargetClosestElement = $clickedTarget.closest( config.element ),
+				$elementsToHide = jQuery( config.element ).not( $clickedTargetClosestElement );
 
-			if ( this.callback ) {
-				this.callback( $elementsToHide );
-
+			if ( config.callback ) {
+				config.callback( $elementsToHide );
 				return;
 			}
 

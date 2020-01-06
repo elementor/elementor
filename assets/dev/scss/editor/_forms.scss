@@ -33,7 +33,7 @@ input, select, textarea, .elementor-input-style {
 }
 
 input, textarea, .elementor-input-style {
-	padding: 5px 8px;
+	padding: 5px;
 }
 
 textarea, .elementor-input-style {
@@ -53,7 +53,7 @@ input[type="radio"] {
 	&:not(:last-child){
 		padding-bottom: 5px;
 	}
-	
+
 	input,
 	label {
 		cursor: pointer;
@@ -127,5 +127,5 @@ input[disabled] {
 
 select {
 	outline: none;
-	height: 27px;
+	height: $control-unit;
 }

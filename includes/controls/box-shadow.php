@@ -102,7 +102,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 		<div class="elementor-shadow-box">
 			<div class="elementor-control-field elementor-color-picker-wrapper">
 				<label class="elementor-control-title"><?php echo __( 'Color', 'elementor' ); ?></label>
-				<div class="elementor-control-input-wrapper">
+				<div class="elementor-control-input-wrapper elementor-control-unit-1">
 					<div class="elementor-color-picker-placeholder"></div>
 				</div>
 			</div>
@@ -114,7 +114,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 					<label for="<?php echo esc_attr( $control_uid ); ?>" class="elementor-control-title"><?php echo $slider['label']; ?></label>
 					<div class="elementor-control-input-wrapper">
 						<div class="elementor-slider" data-input="<?php echo esc_attr( $slider_name ); ?>"></div>
-						<div class="elementor-slider-input">
+						<div class="elementor-slider-input elementor-control-unit-2">
 							<input id="<?php echo esc_attr( $control_uid ); ?>" type="number" min="<?php echo esc_attr( $slider['min'] ); ?>" max="<?php echo esc_attr( $slider['max'] ); ?>" data-setting="<?php echo esc_attr( $slider_name ); ?>"/>
 						</div>
 					</div>
