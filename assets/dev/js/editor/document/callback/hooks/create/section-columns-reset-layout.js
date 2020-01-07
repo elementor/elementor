@@ -32,7 +32,7 @@ export class SectionColumnsResetLayout extends HookAfter {
 		}
 
 		containers.forEach( ( /**Container*/ container ) =>
-			container.parent.view.resetLayout()
+			container.parent.view.resetLayout( false )
 		);
 	}
 }
