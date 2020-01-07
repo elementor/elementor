@@ -54,7 +54,7 @@ export default class HistoryHelper {
 				modelAttribute = modelItem.attributes,
 				subItemModels = modelAttribute.items.models;
 
-			console.log( `History item #${ model[ 0 ] }: type: '${ modelAttribute.type }', title: ${ modelAttribute.title } ->`);
+			console.log( `History item #${ model[ 0 ] }: type: '${ modelAttribute.type }', title: ${ modelAttribute.title } ->` );
 
 			subItemModels.forEach( ( subItemModel ) => {
 				const subModelAttribute = subItemModel.attributes;

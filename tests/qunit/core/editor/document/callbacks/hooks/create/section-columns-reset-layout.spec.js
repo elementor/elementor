@@ -29,7 +29,7 @@ export const SectionColumnsResetLayout = () => {
 		} );
 
 		QUnit.test( 'Deep', ( assert ) => {
-			// Covers issue when u create section then add column, then undo column, undo section,
+			// Covers issue when creating a section then add column, then undo column, undo section.
 			// redo section redo column, undo column, wrong columns size.
 
 			const eSection = ElementsHelper.createSection( 2 );
