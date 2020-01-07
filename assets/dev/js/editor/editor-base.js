@@ -1000,18 +1000,7 @@ export default class EditorBase extends Marionette.Application {
 	requestDocument( id ) {
 		return elementorCommon.ajax.addRequest( 'get_document_config', {
 			data: { id },
-			success: ( config ) => {
-				this.documents[ id ] = config;
-				this.config.document = this.documents[ id ];
-
-				this.settings.page = new this.settings.modules.page( this.documents[ id ].settings );
-
-				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
-				}
-
-				elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
-			},
+			success: ( config ) => this.onDocumentConfigLoaded( id, config ),
 			error: ( data ) => {
 				let message;
 
@@ -1030,6 +1019,19 @@ export default class EditorBase extends Marionette.Application {
 				alert( message );
 			},
 		}, true );
+	}
+
+	onDocumentConfigLoaded( id, config ) {
+		this.documents[ id ] = config;
+		this.config.document = this.documents[ id ];
+
+		this.settings.page = new this.settings.modules.page( this.documents[ id ].settings );
+
+		if ( this.loaded ) {
+			this.schemes.printSchemesStyle();
+		}
+
+		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
 	}
 
 	addDeprecatedConfigProperties() {
