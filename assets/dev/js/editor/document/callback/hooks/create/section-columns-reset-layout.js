@@ -9,7 +9,7 @@ export class SectionColumnsResetLayout extends HookAfter {
 		return 'section-columns-reset-layout';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'section';
 	}
 

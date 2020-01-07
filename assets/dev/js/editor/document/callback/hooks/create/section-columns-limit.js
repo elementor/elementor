@@ -9,7 +9,7 @@ export class SectionColumnsLimit extends HookDependency {
 		return 'section-columns-limit';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'section';
 	}
 
