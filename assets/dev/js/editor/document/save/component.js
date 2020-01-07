@@ -39,11 +39,10 @@ export default class Component extends BackwardsCompatibility {
 			return;
 		}
 
-		// TODO: Move to es6.
-		options = _.extend( {
+		options = Object.assign( options, {
 			status: 'draft',
 			onSuccess: null,
-		}, options );
+		} );
 
 		const container = options.document.container || elementor.document.getCurrent(),
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),

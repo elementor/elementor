@@ -4,11 +4,10 @@ export class Publish extends Base {
 	apply( args ) {
 		let { options = {} } = args;
 
-		// TODO: Move to es6.
-		options = _.extend( {
+		options = Object.assign( options, {
 			status: 'publish',
 			document: this.document,
-		}, options );
+		} );
 
 		elementor.saver.saveEditor( options );
 	}
