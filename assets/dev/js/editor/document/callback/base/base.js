@@ -96,6 +96,17 @@ export default class CallbackBase {
 	}
 
 	/**
+	 * Function getContainerType().
+	 *
+	 * Bind eContainer type to callback.
+	 *
+	 * Used to gain performance.
+	 *
+	 * @return {string} type
+	 */
+	getContainerType() {}
+
+	/**
 	 * Function getConditions().
 	 *
 	 * Condition for running the callback, if true, call to apply().
@@ -150,15 +161,4 @@ export default class CallbackBase {
 
 		return true;
 	}
-
-	/**
-	 * Function bindContainerType().
-	 *
-	 * Bind eElement type to callback.
-	 *
-	 * Used to gain performance.
-	 *
-	 * @return {string} type
-	 */
-	bindContainerType() {}
 }
