@@ -73,6 +73,10 @@ class Widgets_Manager {
 			'read-more',
 		];
 
+		if ( defined( 'RANK_MATH_FILE' ) ) {
+			$build_widgets_filename[] = 'breadcrumbs';
+		}
+
 		$this->_widget_types = [];
 
 		foreach ( $build_widgets_filename as $widget_filename ) {

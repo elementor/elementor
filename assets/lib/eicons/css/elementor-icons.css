@@ -573,6 +573,12 @@
 .eicon-yoast:before {
   content: '\e8b5'; }
 
+  .eicon-rank-math {
+    width: 20px;
+    height: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 462.03 462.03' xmlns='http://www.w3.org/2000/svg' width='20' class='rank-math-icon'%3E%3Cg fill='%23000'%3E%3Cpath d='m462 234.84-76.17 3.43 13.43 21-127 81.18-126-52.93-146.26 60.97 10.14 24.34 136.1-56.71 128.57 54 138.69-88.61 13.43 21z'/%3E%3Cpath d='m54.1 312.78 92.18-38.41 4.49 1.89v-54.58h-96.67zm210.9-223.57v235.05l7.26 3 89.43-57.05v-181zm-105.44 190.79 96.67 40.62v-165.19h-96.67z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
 .eicon-nerd-chuckle:before {
   content: '\e8b6'; }
 
