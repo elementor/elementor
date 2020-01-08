@@ -1002,7 +1002,9 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	requestDocument( id ) {
-		return elementorCommon.ajax.addRequest( 'get_document_config', {
+		return elementorCommon.ajax.load( {
+			action: 'get_document_config',
+			unique_id: `document-${ id }`,
 			data: { id },
 			success: ( config ) => this.onDocumentConfigLoaded( id, config ),
 			error: ( data ) => {

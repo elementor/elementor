@@ -63,7 +63,7 @@ export default class extends elementorModules.Module {
 		jQuery.when.apply( jQuery, deferredArray ).done( () => options.success( dataCollection ) );
 	}
 
-	load( request ) {
+	load( request, immediately ) {
 		if ( ! request.unique_id ) {
 			request.unique_id = request.action;
 		}
@@ -85,7 +85,7 @@ export default class extends elementorModules.Module {
 				data: request.data,
 				unique_id: request.unique_id,
 				success: ( data ) => this.cache[ cacheKey ] = data,
-			} ).done( request.success );
+			}, immediately ).done( request.success );
 		}
 
 		return deferred;
