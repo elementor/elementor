@@ -44,17 +44,17 @@ export default class Manager {
 	}
 
 	/**
-	 * Function addDocumentById().
+	 * Function addDocumentByConfig().
 	 *
-	 * Add document to manager by id.
+	 * Add document to manager by config.
 	 *
-	 * @param {number} id
+	 * @param {{}} config
 	 * @param {Container} container
 	 *
 	 * @returns {Document}
 	 */
-	addDocumentById( id, container ) {
-		return this.add( new Document( id, container ) );
+	addDocumentByConfig( config, container ) {
+		return this.add( new Document( config, container ) );
 	}
 
 	/**

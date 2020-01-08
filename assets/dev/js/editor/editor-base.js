@@ -995,6 +995,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.on( 'preview:loaded', () => {
 			document.container.view = elementor.getPreviewView();
+			document.container.children = elementor.elements;
+			document.container.model.attributes.elements = elementor.elements;
 		} );
 
 		elementor.documents.add( document );

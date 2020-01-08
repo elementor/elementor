@@ -3,12 +3,12 @@ import ElementsHelper from './elements/helper.js';
 jQuery( () => {
 	QUnit.module( 'File: editor/document/manager', () => {
 		QUnit.test( 'History per document', ( assert ) => {
-			const documentIdMaster = 2,
-				documentIdSlave = 3;
+			const documentConfigMaster = { id: 2 },
+				documentConfigSlave = { id: 3 };
 
 			// Add fake documents.
-			const documentMaster = elementor.documents.addDocumentById( documentIdMaster, elementor.getPreviewContainer() ),
-				documentSlave = elementor.documents.addDocumentById( documentIdSlave, elementor.getPreviewContainer() );
+			const documentMaster = elementor.documents.addDocumentByConfig( documentConfigMaster, elementor.getPreviewContainer() ),
+				documentSlave = elementor.documents.addDocumentByConfig( documentConfigSlave, elementor.getPreviewContainer() );
 
 			// Set current document to master.
 			elementor.documents.setCurrent( documentMaster );
