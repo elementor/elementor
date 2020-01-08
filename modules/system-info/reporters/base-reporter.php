@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\System_Info\Classes\Abstracts;
+namespace Elementor\Modules\System_Info\Reporters;
 
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
 

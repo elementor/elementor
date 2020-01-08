@@ -1,8 +1,8 @@
 <?php
-namespace Elementor\Modules\SystemInfo;
+namespace Elementor\Modules\System_Info;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\System_Info\Classes\Abstracts\Base_Reporter;
+use Elementor\Modules\System_Info\Reporters\Base_Reporter;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
