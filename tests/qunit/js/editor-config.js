@@ -14,6 +14,14 @@ import SchemeItems from '../mock/schemes/items';
 // Document.
 config.document = document;
 
+// Widgets.
+config.document.widgets = {
+	button,
+	heading,
+	tabs,
+	form,
+};
+
 // Settings.
 config.settings = settings;
 
@@ -21,14 +29,6 @@ config.settings = settings;
 config.elements = {
 	section,
 	column,
-};
-
-// Widgets.
-config.widgetsCache = {
-	button,
-	heading,
-	tabs,
-	form,
 };
 
 // Schemes.

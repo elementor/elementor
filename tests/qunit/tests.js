@@ -37,6 +37,4 @@ function initialize() {
 	elementor.$preview.trigger( 'load' );
 }
 
-jQuery( document ).ready( function() {
-	initialize();
-} );
+jQuery( initialize );
