@@ -6,16 +6,18 @@ jQuery( () => {
 	QUnit.module( 'Components' );
 
 	QUnit.test( 'Register Component', ( assert ) => {
+		const namespace = 'register-component';
+
 		const Component = class extends BaseComponent {
 				getNamespace() {
-					return 'test';
+					return namespace;
 				}
 			},
 			instance = new Component();
 
 		$e.components.register( instance );
 
-		assert.equal( $e.components.get( 'test' ), instance );
+		assert.equal( $e.components.get( namespace ), instance );
 	} );
 
 	QUnit.test( 'Register routes', ( assert ) => {
@@ -43,9 +45,11 @@ jQuery( () => {
 	} );
 
 	QUnit.test( 'Register routes via tabs', ( assert ) => {
+		const namespace = 'register-routes-via-tabs';
+
 		const Component = class extends BaseComponent {
 			getNamespace() {
-				return 'test';
+				return namespace;
 			}
 
 			defaultTabs() {
@@ -58,7 +62,7 @@ jQuery( () => {
 
 		$e.components.register( new Component() );
 
-		const component = $e.components.get( 'test' );
+		const component = $e.components.get( namespace );
 
 		assert.equal( typeof $e.routes.commands[ component.getNamespace() + '/tabA' ], 'function' );
 		assert.equal( typeof $e.routes.commands[ component.getNamespace() + '/tabB' ], 'function' );
