@@ -8,6 +8,8 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
+import HistoryManager from 'elementor-modules/history/assets/js/module';
+import DocumentsManager from './document/manager';
 import Component from './component';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
@@ -278,12 +280,9 @@ export default class EditorBase extends Marionette.Application {
 		const EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
-			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
 		this.hooks = new EventManager();
-
-		this.saver = new Saver();
 
 		this.settings = new Settings();
 
@@ -408,6 +407,8 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPanel() {
+		this.saver = $e.components.get( 'document/save' );
+
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
 		// Set default page to elements.
@@ -877,6 +878,9 @@ export default class EditorBase extends Marionette.Application {
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
+
+		this.documents = new DocumentsManager();
+		this.history = new HistoryManager();
 
 		this.loaded = true;
 	}

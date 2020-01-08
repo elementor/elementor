@@ -37,7 +37,7 @@ export default class Events extends Callbacks {
 	}
 
 	shouldRun( callbacks ) {
-		return super.shouldRun( callbacks ) && elementor.history.history.getActive();
+		return super.shouldRun( callbacks ) && elementor.documents.getCurrent().history.getActive();
 	}
 
 	onRun( command, args, event ) {
