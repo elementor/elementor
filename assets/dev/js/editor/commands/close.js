@@ -6,10 +6,11 @@ export class Close extends Base {
 	}
 
 	apply( args ) {
-		const { id, mode, onClose } = args;
+		const { id, mode, onClose } = args,
+			document = elementor.documents.get( id );
 
 		// Already closed.
-		if ( 'close' === elementor.documents[ id ].editorStatus ) {
+		if ( 'closed' === document.editorStatus ) {
 			return;
 		}
 
@@ -36,7 +37,9 @@ export class Close extends Base {
 			.removeClass( 'elementor-edit-area-active' )
 			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
 
-		elementor.documents[ id ].editorStatus = 'close';
+		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
+
+		document.editorStatus = 'closed';
 
 		if ( onClose ) {
 			onClose();

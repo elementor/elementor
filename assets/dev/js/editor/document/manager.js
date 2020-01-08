@@ -18,22 +18,6 @@ export default class Manager {
 		 * @type {Document}
 		 */
 		this.currentDocument = null;
-
-		this.initialize();
-	}
-
-	/**
-	 * Function initialize().
-	 *
-	 * Initialize manager, add current document.
-	 */
-	initialize() {
-		// Get current document id.
-		const { id } = elementor.config.document,
-			document = new Document( id, elementor.getPreviewContainer() );
-
-		// Add new document to manager.
-		this.currentDocument = this.add( document );
 	}
 
 	/**
@@ -80,14 +64,14 @@ export default class Manager {
 	 *
 	 * @param {number} id
 	 *
-	 * @returns {Document}
+	 * @returns {Document|boolean}
 	 */
 	get( id ) {
 		if ( undefined !== this.documents[ id ] ) {
 			return this.documents[ id ];
 		}
 
-		throw Error( `Invalid document id: ${ id }` );
+		return false;
 	}
 
 	/**
@@ -124,8 +108,39 @@ export default class Manager {
 			throw Error( `The document with id: '${ document.id }' does not exist/loaded` );
 		}
 
+		if ( this.currentDocument ) {
+			this.currentDocument.editorStatus = 'closed';
+		}
+
 		this.currentDocument = this.documents[ document.id ];
+		this.currentDocument.editorStatus = 'open';
 
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', document.id );
+	}
+
+	request( id ) {
+		return elementorCommon.ajax.load( {
+			action: 'get_document_config',
+			unique_id: `document-${ id }`,
+			data: { id },
+			success: ( config ) => config,
+			error: ( data ) => {
+				let message;
+
+				if ( _.isString( data ) ) {
+					message = data;
+				} else if ( data.statusText ) {
+					message = elementor.createAjaxErrorMessage( data );
+
+					if ( 0 === data.readyState ) {
+						message += ' ' + elementor.translate( 'Cannot load editor' );
+					}
+				} else if ( data[ 0 ] && data[ 0 ].code ) {
+					message = elementor.translate( 'server_error' ) + ' ' + data[ 0 ].code;
+				}
+
+				alert( message );
+			},
+		}, true );
 	}
 }

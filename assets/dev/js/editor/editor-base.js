@@ -11,15 +11,12 @@ import ColorControl from './controls/color';
 import HistoryManager from 'elementor-modules/history/assets/js/module';
 import DocumentsManager from './document/manager';
 import Component from './component';
+import Document from 'elementor-document/document';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
 export default class EditorBase extends Marionette.Application {
-	documents = {};
-
 	widgetsCache = {};
-
-	loaded = false;
 
 	config = {};
 
@@ -737,6 +734,8 @@ export default class EditorBase extends Marionette.Application {
 	onStart() {
 		this.config = this.getConfig();
 
+		this.documents = new DocumentsManager();
+
 		$e.components.register( new Component() );
 
 		Backbone.Radio.DEBUG = false;
@@ -765,33 +764,6 @@ export default class EditorBase extends Marionette.Application {
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } );
 
 		this.logSite();
-	}
-
-	initDocument( id ) {
-		return this.requestDocument( id ).then( () => {
-			this.setAjax();
-
-			jQuery.each( this.config.document.widgets, ( widgetName, widgetConfig ) => {
-				this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], widgetConfig );
-			} );
-
-			this.templates.init();
-
-			elementorCommon.elements.$window.trigger( 'elementor:init' );
-
-			if ( this.loaded ) {
-				this.$preview.trigger( 'load' );
-				this.$previewContents.find( `#elementor-post-${ id }-css` ).remove();
-
-				const previewRevisionID = elementor.config.document.revisions.current_id;
-
-				this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
-
-				elementor.helpers.scrollToView( this.$previewElementorEl );
-
-				this.$previewElementorEl.addClass( 'elementor-embedded-editor' );
-			}
-		} );
 	}
 
 	onPreviewLoaded() {
@@ -879,7 +851,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
-		this.documents = new DocumentsManager();
+		// TODO: Add BC.
 		this.history = new HistoryManager();
 
 		this.loaded = true;
@@ -1005,43 +977,61 @@ export default class EditorBase extends Marionette.Application {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	}
 
-	requestDocument( id ) {
-		return elementorCommon.ajax.load( {
-			action: 'get_document_config',
-			unique_id: `document-${ id }`,
-			data: { id },
-			success: ( config ) => this.onDocumentConfigLoaded( id, config ),
-			error: ( data ) => {
-				let message;
+	/**
+	 * @param {{}} config
+	 */
+	loadDocument( config ) {
+		this.config.document = config;
 
-				if ( _.isString( data ) ) {
-					message = data;
-				} else if ( data.statusText ) {
-					message = elementor.createAjaxErrorMessage( data );
+		this.setAjax();
 
-					if ( 0 === data.readyState ) {
-						message += ' ' + elementor.translate( 'Cannot load editor' );
-					}
-				} else if ( data[ 0 ] && data[ 0 ].code ) {
-					message = elementor.translate( 'server_error' ) + ' ' + data[ 0 ].code;
-				}
+		this.addWidgetsCache( config.widgets );
 
-				alert( message );
-			},
-		}, true );
-	}
+		this.templates.init();
 
-	onDocumentConfigLoaded( id, config ) {
-		this.documents[ id ] = config;
-		this.config.document = this.documents[ id ];
+		this.settings.page = new this.settings.modules.page( config.settings );
 
-		this.settings.page = new this.settings.modules.page( this.documents[ id ].settings );
+		const document = new Document( config, this.settings.page.getEditedView().getContainer() );
+
+		this.on( 'preview:loaded', () => {
+			document.container.view = elementor.getPreviewView();
+		} );
+
+		elementor.documents.add( document );
+
+		elementor.documents.setCurrent( document );
+
+		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
+
+		elementorCommon.elements.$window.trigger( 'elementor:init' );
 
 		if ( this.loaded ) {
 			this.schemes.printSchemesStyle();
-		}
 
-		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
+			this.$preview.trigger( 'load' );
+
+			this.$previewContents.find( `#elementor-post-${ config.id }-css` ).remove();
+
+			const previewRevisionID = config.revisions.current_id;
+
+			this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
+
+			this.helpers.scrollToView( this.$previewElementorEl );
+
+			this.$previewElementorEl
+				.addClass( 'elementor-edit-area-active elementor-embedded-editor' )
+				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
+
+			$e.route( 'panel/elements/categories', {
+				refresh: true,
+			} );
+		}
+	}
+
+	addWidgetsCache( widgets ) {
+		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
+			this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], widgetConfig );
+		} );
 	}
 
 	addDeprecatedConfigProperties() {

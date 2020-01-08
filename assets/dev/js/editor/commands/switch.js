@@ -9,7 +9,7 @@ export class Switch extends Base {
 		const { id } = args;
 
 		$e.run( 'editor/documents/close', {
-			id: elementor.config.document.id,
+			id: elementor.documents.getCurrentId(),
 			onClose: () => {
 				$e.run( 'editor/documents/open', { id } );
 			},

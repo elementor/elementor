@@ -6,31 +6,26 @@ export class Open extends Base {
 	}
 
 	apply( args ) {
-		const { id } = args;
+		const { id } = args,
+			currentDocument = elementor.documents.getCurrent();
 
 		// Already opened.
-		if ( elementor.documents[ id ] && 'open' === elementor.documents[ id ].editorStatus ) {
+		if ( currentDocument && id === currentDocument.id ) {
 			return;
 		}
 
-		// TODO: move to an event.
+		// TODO: move to $e.hooks.ui.
 		if ( elementor.loaded ) {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
-		elementor.initDocument( id ).then( () => {
-			elementor.config.document.editorStatus = 'open';
+		elementor.documents.request( id ).then( ( config ) => {
+			// Tell the editor to load the document.
+			elementor.loadDocument( config );
 
+			// TODO: move to $e.hooks.ui.
 			if ( elementor.loaded ) {
-				elementor.$previewElementorEl
-				.addClass( 'elementor-edit-area-active' )
-				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
 				elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );
-
-				$e.route( 'panel/elements/categories', {
-					refresh: true,
-				} );
 			}
 		} );
 	}

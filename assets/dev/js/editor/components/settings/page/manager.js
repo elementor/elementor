@@ -1,4 +1,5 @@
 import Component from './component';
+import Document from 'elementor-document/document';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
@@ -48,6 +49,10 @@ module.exports = BaseSettings.extend( {
 
 	// Emulate an element view/model structure with the parts needed for a container.
 	getEditedView() {
+		if ( this.editedView ) {
+			return this.editedView;
+		}
+
 		const id = this.getContainerId(),
 			editModel = new Backbone.Model( {
 				id,
@@ -61,18 +66,19 @@ module.exports = BaseSettings.extend( {
 			id: editModel.id,
 			model: editModel,
 			settings: editModel.get( 'settings' ),
-			view: elementor.getPreviewView(),
 			label: elementor.config.document.panel.title,
 			controls: this.model.controls,
 			renderer: false,
 			children: elementor.elements,
 		} );
 
-		return {
+		this.editedView = {
 			getContainer: () => container,
 			getEditModel: () => editModel,
 			model: editModel,
 		};
+
+		return this.editedView;
 	},
 
 	getContainerId() {
