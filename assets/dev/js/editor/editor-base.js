@@ -729,8 +729,12 @@ export default class EditorBase extends Marionette.Application {
 		return settings;
 	}
 
-	onStart( options ) {
-		this.config = ElementorConfig;
+	getConfig() {
+		return ElementorConfig;
+	}
+
+	onStart() {
+		this.config = this.getConfig();
 
 		$e.components.register( new Component() );
 
