@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class User_Reporter extends Base_Reporter {
+class User extends Base_Reporter {
 
 	/**
 	 * Get user reporter title.

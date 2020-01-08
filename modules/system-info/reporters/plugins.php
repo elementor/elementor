@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Plugins_Reporter extends Base_Reporter {
+class Plugins extends Base_Reporter {
 
 	/**
 	 * Active plugins.

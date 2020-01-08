@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class WordPress_Reporter extends Base_Reporter {
+class WordPress extends Base_Reporter {
 
 	/**
 	 * Get WordPress environment reporter title.

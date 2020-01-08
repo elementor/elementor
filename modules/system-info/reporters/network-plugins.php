@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Network_Plugins_Reporter extends Base_Reporter {
+class Network_Plugins extends Base_Reporter {
 
 	/**
 	 * Network plugins.
