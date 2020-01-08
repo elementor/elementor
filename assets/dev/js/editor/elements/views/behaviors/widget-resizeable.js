@@ -69,11 +69,18 @@ export default class extends Marionette.Behavior {
 		settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
 		settingToChange[ '_element_custom_width' + deviceSuffix ] = { unit: unit, size: width };
 
-		editModel.get( 'settings' ).setExternalChange( settingToChange );
+		$e.run( 'document/elements/settings', {
+			container: this.view.container,
+			settings: settingToChange,
+			options: {
+				external: true,
+			},
+		} );
 
 		this.$el.css( {
 			width: '',
 			height: '',
+			left: '',
 		} );
 	}
 

@@ -25,6 +25,7 @@ export default class HistoryManager {
 		paste_style: elementor.translate( 'style_pasted' ),
 		remove: elementor.translate( 'removed' ),
 		reset_style: elementor.translate( 'style_reset' ),
+		reset_settings: elementor.translate( 'settings_reset' ),
 	};
 
 	static updatePanelPageCurrentItem() {
