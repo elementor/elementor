@@ -1,0 +1,44 @@
+{
+  "id": 1,
+  "type": "wp-post",
+  "version": "2.8.2",
+  "settings": {
+	"name": "page",
+	"panelPage": {
+	  "title": "Post Settings"
+	},
+	"controls": {
+	  "padding": {
+		"unit": "px",
+		"top": "",
+		"right": "",
+		"bottom": "",
+		"left": "",
+		"isLinked": true
+	  }
+	}
+  },
+  "remoteLibrary": {
+	"type": "page",
+	"category": ""
+  },
+  "panel": {
+	"title": "Post",
+	"widgets_settings": [],
+	"elements_categories": {},
+	"messages": {
+	  "publish_notification": "Hurray! Your Post is live."
+	}
+  },
+  "container": "body",
+  "urls": {
+	"exit_to_dashboard": "http: //localhost/elementor/wp-admin/post.php?post=1819&action=edit",
+	"preview": "http://localhost/elementor/?p=1819&elementor-preview=1819&ver=1574068998",
+	"wp_preview": "http://localhost/elementor/?p=1819&preview_id=1819&preview_nonce=d50fdce90b&preview=true",
+	"permalink": "http://localhost/elementor/?p=1819"
+  },
+  "debounceDelay": 0,
+  "user": {
+	"can_publish": true
+  }
+}
