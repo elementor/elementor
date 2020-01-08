@@ -45,6 +45,8 @@ module.exports = function( config ) {
 			'assets/js/editor-modules.js',
 			'assets/js/editor-document.js',
 
+			{ pattern: '../elementor-dev-tools/modules/dev-tools/assets/js/*.js', type: 'module' },
+
 			// Tests.
 			'assets/js/qunit-tests.js',
 		],
