@@ -45,18 +45,6 @@ class Module extends BaseModule {
 	private $capability = 'manage_options';
 
 	/**
-	 * System info settings.
-	 *
-	 * Holds the settings required for Elementor system info page.
-	 *
-	 * @since 2.9.0
-	 * @access private
-	 *
-	 * @var array
-	 */
-	private $settings = [];
-
-	/**
 	 * Elementor system info reports.
 	 *
 	 * Holds an array of available reports in Elementor system info page.
@@ -85,21 +73,7 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		//$this->require_files();
-		$this->init_settings();
 		$this->add_actions();
-	}
-
-	/**
-	 * Init settings.
-	 *
-	 * Initialize Elementor system info page by setting default settings.
-	 *
-	 * @since 2.9.0
-	 * @access private
-	 */
-	private function init_settings() {
-		$this->settings = $this->get_default_settings();
 	}
 
 	/**
@@ -113,7 +87,7 @@ class Module extends BaseModule {
 	 *
 	 * @return array Default settings.
 	 */
-	protected function get_default_settings() {
+	protected function get_init_settings() {
 		$settings = [];
 
 		$reporter_properties = Base_Reporter::get_properties_keys();
@@ -122,18 +96,9 @@ class Module extends BaseModule {
 
 		$settings['reporter_properties'] = $reporter_properties;
 
-		$base_lib_dir = ELEMENTOR_PATH . 'includes/settings/system-info/';
-
-		$settings['dirs'] = [
-			'lib'       => $base_lib_dir,
-			'templates' => $base_lib_dir . 'templates/',
-			'classes'   => $base_lib_dir . 'classes/',
-			'helpers'   => $base_lib_dir . 'helpers/',
-		];
-
 		$settings['namespaces'] = [
 			'namespace' => __NAMESPACE__,
-			'classes_namespace' => __NAMESPACE__ . '\Classes',
+			'reporters_namespace' => __NAMESPACE__ . '\Reporters',
 		];
 
 		$settings['reportFilePrefix'] = '';
@@ -265,7 +230,7 @@ class Module extends BaseModule {
 	 * @return string The class of the report.
 	 */
 	public function get_reporter_class( $reporter_type ) {
-		return $this->get_settings( 'namespaces.classes_namespace' ) . '\\' . ucfirst( $reporter_type ) . '_Reporter';
+		return __NAMESPACE__ . '\Reporters\\' . ucfirst( $reporter_type );
 	}
 
 	/**
@@ -284,17 +249,7 @@ class Module extends BaseModule {
 	public function load_reports( $reports, $format = '' ) {
 		$result = [];
 
-		$settings = $this->get_settings();
-
 		foreach ( $reports as $report_name => $report_info ) {
-			if ( ! empty( $report_info['file_name'] ) ) {
-				$file_name = $report_info['file_name'];
-			} else {
-				$file_name = $settings['dirs']['classes'] . $settings['reportFilePrefix'] . str_replace( '_', '-', $report_name ) . '.php';
-			}
-
-			require_once $file_name;
-
 			$reporter_params = [
 				'name' => $report_name,
 				'format' => $format,
@@ -374,7 +329,7 @@ class Module extends BaseModule {
 			'Author',
 		];
 
-		$template_path = $this->get_settings( 'dirs.templates' ) . $template . '.php';
+		$template_path = __DIR__ . '/templates/' . $template . '.php';
 
 		require $template_path;
 	}
