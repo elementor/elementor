@@ -6,20 +6,26 @@ import HookBreak from './api/modules/hook-break';
 
 elementorModules.common = {
 	get Component() {
-		elementorCommon.helpers.softDeprecated( 'elementorModules.common.Component', '2.9.0',
-			'$e.modules.ComponentBase' );
+		setTimeout( () => {
+			elementorCommon.helpers.softDeprecated( 'elementorModules.common.Component', '2.9.0',
+				'$e.modules.ComponentBase' );
+		} );
 		return ComponentBase;
 	},
 
 	get ComponentModal() {
-		elementorCommon.helpers.softDeprecated( 'elementorModules.common.ComponentModal', '2.9.0',
-			'$e.modules.ComponentModalBase' );
+		setTimeout( () => {
+			elementorCommon.helpers.softDeprecated( 'elementorModules.common.ComponentModal', '2.9.0',
+				'$e.modules.ComponentModalBase' );
+		} );
 		return ComponentModalBase;
 	},
 
 	get HookBreak() {
-		elementorCommon.helpers.softDeprecated( 'elementorModules.common.HookBreak', '2.9.0',
-			'$e.modules.HookBreak' );
+		setTimeout( () => {
+			elementorCommon.helpers.softDeprecated( 'elementorModules.common.HookBreak', '2.9.0',
+				'$e.modules.HookBreak' );
+		} );
 		return HookBreak;
 	},
 
