@@ -74,6 +74,9 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element' => 'color: {{VALUE}};',
 				],
+				'dynamic' => [
+					'active' => false,
+				]
 			],
 		];
 
