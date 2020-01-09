@@ -32,7 +32,7 @@ export default class EditorBase extends Marionette.Application {
 	// TODO = BC Since 2.3.0
 	ajax = elementorCommon.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
-	history = require( 'elementor-modules/history/assets/js/module' );
+	history = require( 'elementor/modules/history/assets/js/module' );
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),

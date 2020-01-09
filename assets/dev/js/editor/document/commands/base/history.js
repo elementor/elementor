@@ -1,6 +1,6 @@
-import Base from './base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export default class History extends Base {
+export default class History extends CommandBase {
 	constructor( args ) {
 		super( args );
 
@@ -64,7 +64,7 @@ export default class History extends Base {
 		super.onCatchApply( e );
 
 		// Rollback history on failure.
-		if ( e instanceof elementorModules.common.HookBreak && this.historyId ) {
+		if ( e instanceof $e.modules.HookBreak && this.historyId ) {
 			$e.run( 'document/history/delete-log', { id: this.historyId } );
 		}
 	}

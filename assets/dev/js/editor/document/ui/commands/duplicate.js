@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Duplicate extends Base {
+export class Duplicate extends CommandBase {
 	apply( args ) {
 		const selectedElement = elementor.getCurrentElement();
 

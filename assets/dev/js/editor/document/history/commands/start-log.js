@@ -1,6 +1,6 @@
-import Base from './base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class StartLog extends Base {
+export class StartLog extends CommandBase {
 	initialize( args ) {
 		super.initialize( args );
 

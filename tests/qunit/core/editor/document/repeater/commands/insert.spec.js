@@ -1,6 +1,6 @@
 import ElementsHelper from '../../elements/helper';
-import RepeaterHelper from '../helper';
 import HistoryHelper from '../../history/helper';
+import RepeaterHelper from '../helper';
 
 export const Insert = () => {
 	QUnit.module( 'Insert', () => {

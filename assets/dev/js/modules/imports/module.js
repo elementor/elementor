@@ -104,7 +104,7 @@ const Module = function() {
 		return message;
 	};
 
-	// TODO: This function should be deleted.
+	// TODO: This function should be deleted ?.
 	this.forceMethodImplementation = function( functionName ) {
 		throw new Error( this.getErrorMessage( 'forceMethodImplementation', functionName ) );
 	};

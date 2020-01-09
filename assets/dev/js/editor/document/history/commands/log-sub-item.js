@@ -1,6 +1,6 @@
-import Base from './base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class LogSubItem extends Base {
+export class LogSubItem extends CommandBase {
 	apply( args ) {
 		if ( ! this.history.getActive() ) {
 			return;
