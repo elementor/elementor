@@ -10,8 +10,7 @@ export class Auto extends Base {
 		}
 
 		if ( this.component.isEditorChanged() ) {
-			// TODO: Move to es6.
-			options = _.extend( {
+			options = Object.assign( {
 				status: 'autosave',
 				document: this.document,
 			}, options );
