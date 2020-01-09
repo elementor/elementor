@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class MU_Plugins extends Base_Reporter {
+class MU_Plugins extends Base {
 
 	/**
 	 * Must-Use plugins.

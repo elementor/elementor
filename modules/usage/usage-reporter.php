@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\Usage;
 
-use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
+use Elementor\Modules\System_Info\Reporters\Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor system report handler class responsible for generating a report for
  * the user.
  */
-class Usage_Reporter extends Base_Reporter {
+class Usage_Reporter extends Base {
 
 	const RECALC_ACTION = 'elementor_usage_recalc';
 

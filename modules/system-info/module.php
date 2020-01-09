@@ -2,7 +2,7 @@
 namespace Elementor\Modules\System_Info;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\System_Info\Reporters\Base_Reporter;
+use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -90,7 +90,7 @@ class Module extends BaseModule {
 	protected function get_init_settings() {
 		$settings = [];
 
-		$reporter_properties = Base_Reporter::get_properties_keys();
+		$reporter_properties = Base::get_properties_keys();
 
 		array_push( $reporter_properties, 'category', 'name', 'class_name' );
 
@@ -259,7 +259,7 @@ class Module extends BaseModule {
 
 			$reporter = $this->create_reporter( $reporter_params );
 
-			if ( ! $reporter instanceof Base_Reporter ) {
+			if ( ! $reporter instanceof Base ) {
 				continue;
 			}
 
@@ -283,7 +283,7 @@ class Module extends BaseModule {
 	 *
 	 * @param array $properties Report properties.
 	 *
-	 * @return \WP_Error|false|Base_Reporter Base_Reporter instance if the report was created,
+	 * @return \WP_Error|false|Base Base instance if the report was created,
 	 *                                       False or WP_Error otherwise.
 	 *@since 2.9.0
 	 * @access public
@@ -296,8 +296,8 @@ class Module extends BaseModule {
 
 		$reporter = new $reporter_class( $properties );
 
-		if ( ! ( $reporter instanceof Base_Reporter ) ) {
-			return new \WP_Error( 'Each reporter must to be an instance or sub-instance of `Base_Reporter` class.' );
+		if ( ! ( $reporter instanceof Base ) ) {
+			return new \WP_Error( 'Each reporter must to be an instance or sub-instance of `Base` class.' );
 		}
 
 		if ( ! $reporter->is_enabled() ) {

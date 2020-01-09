@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Server extends Base_Reporter {
+class Server extends Base {
 
 	/**
 	 * Get server environment reporter title.

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Theme extends Base_Reporter {
+class Theme extends Base {
 
 	/**
 	 * Theme.
