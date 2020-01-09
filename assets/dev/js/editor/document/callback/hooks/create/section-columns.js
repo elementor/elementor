@@ -11,7 +11,7 @@ export class SectionColumns extends HookAfter {
 		return 'create-section-columns';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'document';
 	}
 

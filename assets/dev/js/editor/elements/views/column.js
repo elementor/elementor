@@ -166,10 +166,12 @@ ColumnView = BaseElementView.extend( {
 		const emptyClass = 'elementor-element-empty',
 			populatedClass = 'elementor-element-populated';
 
-		if ( this.collection.isEmpty() ) {
-			this.ui.columnInner.removeClass( populatedClass ).addClass( emptyClass );
-		} else {
-			this.ui.columnInner.removeClass( emptyClass ).addClass( populatedClass );
+		if ( this.ui.columnInner ) {
+			if ( this.collection.isEmpty() ) {
+				this.ui.columnInner.removeClass( populatedClass ).addClass( emptyClass );
+			} else {
+				this.ui.columnInner.removeClass( emptyClass ).addClass( populatedClass );
+			}
 		}
 	},
 

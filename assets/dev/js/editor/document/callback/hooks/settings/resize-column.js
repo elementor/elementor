@@ -9,7 +9,7 @@ export class ResizeColumn extends HookAfter {
 		return 'resize-column';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'column';
 	}
 
