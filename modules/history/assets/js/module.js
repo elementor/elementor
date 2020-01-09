@@ -1,30 +1,31 @@
 import Component from './component';
-var HistoryPageView = require( './panel-page' ),
-	Manager;
+import HistoryComponent from './history/component';
+import RevisionsComponent from './revisions/component';
 
-Manager = function() {
-	var self = this;
+import PanelPage from './panel-page';
 
-	var addPanelPage = function() {
-		elementor.getPanelView().addPage( 'historyPage', {
-			view: HistoryPageView,
-			title: elementor.translate( 'history' ),
-		} );
-	};
+export default class Manager {
+	static loadedOnce = false;
 
-	var init = function() {
-		elementor.on( 'preview:loaded', addPanelPage );
+	constructor() {
+		$e.components.register( new Component() );
 
-		$e.components.register( new Component( { manager: self } ) );
+		$e.components.register( new HistoryComponent() );
+		$e.components.register( new RevisionsComponent() );
 
-		self.history = require( './history/manager' );
+		if ( ! this.constructor.loadedOnce ) {
+			elementor.getPanelView().addPage( 'historyPage', {
+				view: PanelPage,
+				title: elementor.translate( 'history' ),
+			} );
+		}
 
-		self.revisions = require( './revisions/manager' );
+		// Backward compatibility.
+		const currentDocument = elementor.documents.getCurrent();
 
-		self.revisions.init();
-	};
+		this.history = currentDocument.history;
+		this.revisions = currentDocument.revisions;
 
-	jQuery( window ).on( 'elementor:init', init );
-};
-
-module.exports = new Manager();
+		this.constructor.loadedOnce = true;
+	}
+}

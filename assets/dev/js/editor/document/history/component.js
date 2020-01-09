@@ -28,8 +28,8 @@ export default class Component extends BaseComponent {
 			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
 			'start-transaction': ( args ) => ( new Commands.StartTransaction( args ).run() ),
 
-			undo: () => elementor.history.history.navigate(),
-			redo: () => elementor.history.history.navigate( true ),
+			undo: () => elementor.documents.getCurrent().history.navigate(),
+			redo: () => elementor.documents.getCurrent().history.navigate( true ),
 		};
 	}
 

@@ -54,6 +54,7 @@ function initialize() {
 
 	elementor.on( 'preview:loaded', () => {
 		require( './core/common/components/components.spec' );
+
 		require( './core/common/components/base/callbacks.spec.js' );
 
 		require( './core/editor/container/container.spec' );
@@ -64,6 +65,7 @@ function initialize() {
 		require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
 
 		require( './core/editor/document/component.spec' );
+		require( './core/editor/document/manager.spec' );
 
 		require( './core/editor/document/elements/component.spec' );
 		require( './core/editor/document/repeater/component.spec' );

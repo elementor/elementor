@@ -26,7 +26,7 @@ export default class Component extends BaseComponent {
 	}
 
 	navigate( up ) {
-		if ( this.manager.getItems().length > 1 ) {
+		if ( elementor.documents.getCurrent().revisions.getItems().length > 1 ) {
 			elementor.getPanelView().getCurrentPageView().currentTab.navigate( up );
 		}
 	}
