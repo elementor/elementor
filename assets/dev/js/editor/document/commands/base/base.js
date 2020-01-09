@@ -23,7 +23,7 @@ export default class Base extends ArgsObject {
 		super( args );
 
 		// Acknowledge self about which command it run.
-		this.currentCommand = $e.commands.getCurrent( 'document' );
+		this.currentCommand = Object.values( $e.commands.getCurrent() )[ 0 ];
 
 		// Assign instance of current component.
 		this.component = $e.commands.getComponent( this.currentCommand );
