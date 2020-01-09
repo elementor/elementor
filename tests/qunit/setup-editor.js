@@ -19,7 +19,7 @@ Marionette.Region.prototype.attachHtml = () => {
 };
 
 Marionette.CompositeView.prototype.getChildViewContainer = ( containerView ) => {
-	containerView.$childViewContainer = jQuery( '<div />' );
+	containerView.$childViewContainer = jQuery( containerView.el );
 	containerView.$childViewContainer.appendTo(
 		jQuery( '#elementor-preview-iframe' ).contents().find( '.elementor.elementor-1' )
 	);
