@@ -1,5 +1,19 @@
+let isDebug = false;
+
+if ( process.argv[ 4 ] ) {
+	const gruntParams = process.argv[ 4 ].split( ':' );
+
+	if ( gruntParams ) {
+		if ( 'karma' === gruntParams[ 0 ] ) {
+			if ( 'debug' === gruntParams[ 1 ] ) {
+				isDebug = true;
+			}
+		}
+	}
+}
+
 module.exports = function( config ) {
-	config.set( {
+	const karmaConfig = {
 		basePath: './',
 		frameworks: [ 'qunit' ],
 		files: [
@@ -45,8 +59,6 @@ module.exports = function( config ) {
 			'assets/js/editor-modules.js',
 			'assets/js/editor-document.js',
 
-			{ pattern: '../elementor-dev-tools/modules/dev-tools/assets/js/*.js', type: 'module' },
-
 			// Tests.
 			'assets/js/qunit-tests.js',
 		],
@@ -91,5 +103,15 @@ module.exports = function( config ) {
 				testTimeout: 5000,
 			},
 		},
-	} );
+	};
+
+	if ( isDebug ) {
+		const last = karmaConfig.files.pop();
+
+		karmaConfig.files.push( { pattern: '../elementor-dev-tools/modules/dev-tools/assets/js/*.js', type: 'module' } );
+
+		karmaConfig.files.push( last );
+	}
+
+	config.set( karmaConfig );
 };
