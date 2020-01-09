@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor system info module.
  *
  * Elementor system info module handler class is responsible for registering and
- * managing Elementor system info modules.
+ * managing Elementor system info reports.
  *
  * @since 2.9.0
  */
@@ -95,11 +95,6 @@ class Module extends BaseModule {
 		array_push( $reporter_properties, 'category', 'name', 'class_name' );
 
 		$settings['reporter_properties'] = $reporter_properties;
-
-		$settings['namespaces'] = [
-			'namespace' => __NAMESPACE__,
-			'reporters_namespace' => __NAMESPACE__ . '\Reporters',
-		];
 
 		$settings['reportFilePrefix'] = '';
 
@@ -333,39 +328,6 @@ class Module extends BaseModule {
 
 		require $template_path;
 	}
-
-	// TODO: Check whether the base_object get_settings is enough or this is necessary
-	/**
-	 * Get settings.
-	 *
-	 * Retrieve the settings from any given container.
-	 *
-	 * @since 2.9.0
-	 * @access public
-	 *
-	 * @param array $setting   Optional. Settings required for Elementor system
-	 *                         info page. Default is null.
-	 * @param array $container Optional. Container. Default is null.
-	 *
-	 * @return mixed
-	 */
-	/*final public function get_settings( $setting = null, array $container = null ) {
-		if ( ! $container ) {
-			$container = $this->settings;
-		}
-
-		if ( $setting ) {
-			$setting_thread = explode( '.', $setting );
-			$parent_thread = array_shift( $setting_thread );
-
-			if ( $setting_thread ) {
-				return $this->get_settings( implode( '.', $setting_thread ), $container[ $parent_thread ] );
-			}
-
-			return $container[ $parent_thread ];
-		}
-		return $container;
-	}*/
 
 	/**
 	 * Get allowed reports.
