@@ -1,7 +1,7 @@
 let isDebug = false;
 
-if ( process.argv[ 4 ] ) {
-	const gruntParams = process.argv[ 4 ].split( ':' );
+if ( process.argv[ process.argv.length - 1 ] ) {
+	const gruntParams = process.argv[ process.argv.length - 1 ].split( ':' );
 
 	if ( gruntParams ) {
 		if ( 'karma' === gruntParams[ 0 ] ) {
@@ -106,11 +106,15 @@ module.exports = function( config ) {
 	};
 
 	if ( isDebug ) {
-		const last = karmaConfig.files.pop();
+		const fs = require( 'fs' );
 
-		karmaConfig.files.push( { pattern: '../elementor-dev-tools/modules/dev-tools/assets/js/*.js', type: 'module' } );
+		if ( fs.existsSync( '../elementor-dev-tools' ) ) {
+			const last = karmaConfig.files.pop();
 
-		karmaConfig.files.push( last );
+			karmaConfig.files.push( { pattern: '../elementor-dev-tools/modules/dev-tools/assets/js/*.js', type: 'module' } );
+
+			karmaConfig.files.push( last );
+		}
 	}
 
 	config.set( karmaConfig );
