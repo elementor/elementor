@@ -202,7 +202,7 @@ class Autoloader {
 				'version' => '2.9.0',
 			],
 			'System_Info\Classes\Abstracts\Base_Reporter' => [
-				'replacement' => 'Modules\System_Info\Reporters\Base_Reporter',
+				'replacement' => 'Modules\System_Info\Reporters\Base',
 				'version' => '2.9.0',
 			],
 			'System_Info\Classes\Server_Reporter' => [
