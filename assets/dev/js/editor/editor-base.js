@@ -1075,6 +1075,11 @@ export default class EditorBase extends Marionette.Application {
 					// return from current document.
 					return data.value();
 				},
+				set() {
+					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
+					// return from current document.
+					throw Error( 'deprecated' );
+				},
 			} );
 		} );
 
