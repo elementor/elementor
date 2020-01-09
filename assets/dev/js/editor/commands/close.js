@@ -1,6 +1,6 @@
-import Base from '../document/commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Close extends Base {
+export class Close extends CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
