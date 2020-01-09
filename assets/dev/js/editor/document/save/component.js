@@ -1,5 +1,5 @@
 import BackwardsCompatibility from './backwards-compatibility';
-import * as Commands from './commands';
+import * as commands from './commands/';
 
 export default class Component extends BackwardsCompatibility {
 	__construct( args = {} ) {
@@ -19,13 +19,13 @@ export default class Component extends BackwardsCompatibility {
 
 	defaultCommands() {
 		return {
-			auto: ( args ) => ( new Commands.Auto( args ).run() ),
-			default: ( args ) => ( new Commands.Default( args ).run() ),
-			discard: ( args ) => ( new Commands.Discard( args ).run() ),
-			draft: ( args ) => ( new Commands.Draft( args ).run() ),
-			pending: ( args ) => ( new Commands.Pending( args ).run() ),
-			publish: ( args ) => ( new Commands.Publish( args ).run() ),
-			update: ( args ) => ( new Commands.Update( args ).run() ),
+			auto: ( args ) => ( new commands.Auto( args ).run() ),
+			default: ( args ) => ( new commands.Default( args ).run() ),
+			discard: ( args ) => ( new commands.Discard( args ).run() ),
+			draft: ( args ) => ( new commands.Draft( args ).run() ),
+			pending: ( args ) => ( new commands.Pending( args ).run() ),
+			publish: ( args ) => ( new commands.Publish( args ).run() ),
+			update: ( args ) => ( new commands.Update( args ).run() ),
 		};
 	}
 
@@ -67,8 +67,6 @@ export default class Component extends BackwardsCompatibility {
 		} );
 
 		this.trigger( 'save', options );
-
-
 	}
 
 	setFlagEditorChange( status ) {

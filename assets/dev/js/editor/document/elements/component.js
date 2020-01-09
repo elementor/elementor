@@ -1,5 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import * as Commands from './commands/';
+import * as commands from './commands/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
