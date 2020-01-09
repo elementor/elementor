@@ -745,7 +745,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.saver = $e.components.get( 'document/save' );
 
-
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
 		}
