@@ -1022,6 +1022,8 @@ export default class EditorBase extends Marionette.Application {
 				refresh: true,
 			} );
 		}
+
+		return document;
 	}
 
 	addWidgetsCache( widgets ) {

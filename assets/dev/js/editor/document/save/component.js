@@ -5,11 +5,9 @@ export default class Component extends BackwardsCompatibility {
 	__construct( args = {} ) {
 		super.__construct( args );
 
-		this.autoSaveTimer = null;
-		this.autoSaveInterval = elementor.config.autosave_interval * 1000;
-
 		elementorCommon.elements.$window.on( 'beforeunload', () => {
 			if ( this.isEditorChanged() ) {
+				// Returns a message to confirm dialog.
 				return elementor.translate( 'before_unload_alert' );
 			}
 		} );
@@ -69,16 +67,8 @@ export default class Component extends BackwardsCompatibility {
 		} );
 
 		this.trigger( 'save', options );
-	}
 
-	startTimer( hasChanges ) {
-		clearTimeout( this.autoSaveTimer );
 
-		if ( hasChanges ) {
-			this.autoSaveTimer = setTimeout( () => {
-				$e.run( 'document/save/auto' );
-			}, this.autoSaveInterval );
-		}
 	}
 
 	setFlagEditorChange( status ) {
@@ -87,8 +77,6 @@ export default class Component extends BackwardsCompatibility {
 		if ( status && document.isSaving ) {
 			document.isChangedDuringSave = true;
 		}
-
-		this.startTimer( status );
 
 		elementor.channels.editor
 			.reply( 'status', status )

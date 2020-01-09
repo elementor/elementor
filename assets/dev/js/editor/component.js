@@ -7,6 +7,20 @@ export default class Component extends BaseComponent {
 		super.__construct( args );
 
 		/**
+		 * Auto save timer handlers.
+		 *
+		 * @type {Object}
+		 */
+		this.autoSaveTimers = {};
+
+		/**
+		 * Auto save interval.
+		 *
+		 * @type {number}
+		 */
+		this.autoSaveInterval = elementor.config.autosave_interval * 1000;
+
+		/**
 		 * All the documents.
 		 *
 		 * @type {Object.<Document>}
@@ -27,6 +41,31 @@ export default class Component extends BaseComponent {
 
 	defaultCommands() {
 		return this.importCommands( commands );
+	}
+
+	/**
+	 * TODO: test
+	 * @param {Document} document
+	 */
+	startAutoSave( document ) {
+		this.stopAutoSave( document );
+
+		this.autoSaveTimers[ document.id ] = setInterval( () => {
+			// No document specify, means current.
+			$e.run( 'document/save/auto', { document } );
+		}, this.autoSaveInterval );
+	}
+
+	/**
+	 * TODO: test
+	 * @param {Document} document
+	 */
+	stopAutoSave( document ) {
+		if ( this.autoSaveTimers[ document.id ] ) {
+			clearInterval( this.autoSaveTimers[ document.id ] );
+
+			delete this.autoSaveTimers[ document.id ];
+		}
 	}
 
 	/**

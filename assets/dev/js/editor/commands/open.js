@@ -19,9 +19,13 @@ export class Open extends Base {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
+		const startAutoSave = this.component.startAutoSave;
+
 		elementor.documents.request( id ).then( ( config ) => {
 			// Tell the editor to load the document.
-			elementor.loadDocument( config );
+			const document = elementor.loadDocument( config );
+
+			this.component.startAutoSave( document );
 
 			// TODO: move to $e.hooks.ui.
 			if ( elementor.loaded ) {
