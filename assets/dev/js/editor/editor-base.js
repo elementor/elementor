@@ -9,9 +9,8 @@ import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import HistoryManager from 'elementor-modules/history/assets/js/module';
-import DocumentsManager from './document/manager';
-import Component from './component';
-import Document from 'elementor-document/document';
+import EditorsDocument from './component';
+import Document from './document';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -739,9 +738,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initComponents();
 
-		$e.components.register( new Component() );
-
-		this.documents = new DocumentsManager();
+		this.documents = $e.components.register( new EditorsDocument() );
 
 		this.saver = $e.components.get( 'document/save' );
 
