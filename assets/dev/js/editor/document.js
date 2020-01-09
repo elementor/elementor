@@ -37,6 +37,10 @@ export default class Document {
 	 */
 	editorStatus;
 
+	isSaving = false;
+
+	isChangedDuringSave = false;
+
 	/**
 	 * Function constructor().
 	 *

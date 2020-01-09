@@ -9,9 +9,8 @@ import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import HistoryManager from 'elementor-modules/history/assets/js/module';
-import DocumentsManager from './document/manager';
-import Component from './component';
-import Document from 'elementor-document/document';
+import EditorsDocument from './component';
+import Document from './document';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
@@ -296,6 +295,8 @@ export default class EditorBase extends Marionette.Application {
 		this.iconManager = new IconsManager();
 
 		this.noticeBar = new NoticeBar();
+
+		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
 	// TODO: BC method since 2.3.0
@@ -406,8 +407,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPanel() {
-		this.saver = $e.components.get( 'document/save' );
-
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
 		// Set default page to elements.
@@ -736,14 +735,14 @@ export default class EditorBase extends Marionette.Application {
 	onStart() {
 		this.config = this.getConfig();
 
-		this.documents = new DocumentsManager();
-
-		$e.components.register( new Component() );
-
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
+
+		this.documents = $e.components.register( new EditorsDocument() );
+
+		this.saver = $e.components.get( 'document/save' );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
@@ -1076,6 +1075,10 @@ export default class EditorBase extends Marionette.Application {
 					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
 					// return from current document.
 					return data.value();
+				},
+				set() {
+					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
+					throw Error( 'Deprecated' );
 				},
 			} );
 		} );
