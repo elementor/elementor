@@ -24,7 +24,7 @@ class Manager {
 		return $id;
 	}
 
-	public function get_active() {
+	public function get_active_kit() {
 		$id = $this->get_active_id();
 
 		return Plugin::$instance->documents->get( $id );
@@ -48,7 +48,7 @@ class Manager {
 
 	public function localize_settings( $settings ) {
 		$settings = array_replace_recursive( $settings, [
-			'kit' => $this->get_kit_config(),
+			'kit_id' => $this->get_active_id(),
 			'i18n' => [
 				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'global_styles' => __( 'Global Styles', 'elementor' ),
@@ -60,21 +60,11 @@ class Manager {
 		return $settings;
 	}
 
-	private function get_kit_config() {
-		$kit = Plugin::$instance->documents->get_doc_for_frontend( $this->get_active_id() );
+	public function frontend_before_enqueue_styles() {
+		$kit = $this->get_kit_for_frontend();
 
-		if ( $kit->is_autosave() ) {
-			$kit->set_settings( 'post_status', $kit->get_main_post()->post_status );
-		}
-
-		return $kit->get_config();
-	}
-
-	public function before_enqueue_styles() {
-		$document = $this->get_kit_for_frontend();
-
-		if ( $document ) {
-			$css = Post::create( $document->get_main_id() );
+		if ( $kit ) {
+			$css = Post::create( $kit->get_main_id() );
 			$css->enqueue();
 		}
 	}
@@ -91,10 +81,10 @@ class Manager {
 		if ( $preview_id ) {
 			$kit = Plugin::$instance->documents->get( $preview_id );
 		} else {
-			$active = $this->get_active();
+			$active_kit = $this->get_active_kit();
 
-			if ( 'publish' === $active->get_main_post()->post_status ) {
-				$kit = $active;
+			if ( 'publish' === $active_kit->get_main_post()->post_status ) {
+				$kit = $active_kit;
 			}
 		}
 
@@ -109,6 +99,6 @@ class Manager {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
-		add_action( 'elementor/frontend/before_enqueue_styles', [ $this, 'before_enqueue_styles' ] );
+		add_action( 'elementor/frontend/before_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ] );
 	}
 }

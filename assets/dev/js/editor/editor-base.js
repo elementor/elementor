@@ -993,7 +993,9 @@ export default class EditorBase extends Marionette.Application {
 
 		this.settings.page = new this.settings.modules.page( config.settings );
 
-		const document = new Document( config, this.settings.page.getEditedView().getContainer() );
+		const document = new Document( config );
+
+		document.container = this.settings.page.getEditedView().getContainer();
 
 		this.on( 'preview:loaded', () => {
 			document.container.view = elementor.getPreviewView();

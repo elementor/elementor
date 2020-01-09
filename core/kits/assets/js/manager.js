@@ -1,5 +1,6 @@
 import Component from './component';
 import panelView from './panel';
+import Document from 'elementor-document/document'
 
 const ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
@@ -15,7 +16,13 @@ export default class Settings extends elementorModules.ViewModule {
 			controlsCSS.stylesheet.empty();
 		}
 
-		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
+		controlsCSS.addStyleRules(
+			this.model.getStyleControls(),
+			this.model.attributes,
+			this.model.controls,
+			[ /{{WRAPPER}}/g ],
+			[ this.getSettings( 'cssWrapperSelector' ) ]
+		);
 
 		controlsCSS.addStyleToDocument();
 	}
@@ -33,7 +40,7 @@ export default class Settings extends elementorModules.ViewModule {
 		return this.controlsCSS;
 	};
 
-	getContainer() {
+	getContainer( document ) {
 		if ( ! this.container ) {
 			this.model = new elementorModules.editor.elements.models.BaseSettings( this.getSettings( 'settings' ), {
 				controls: this.getSettings( 'controls' ),
@@ -49,12 +56,13 @@ export default class Settings extends elementorModules.ViewModule {
 
 			this.container = new elementorModules.editor.Container( {
 				id: editModel.id,
-				document: elementor.config.kit,
+				type: 'kit',
+				document: document,
 				children: new Backbone.Model(),
 				model: editModel,
 				settings: editModel.get( 'settings' ),
 				view: 'TODO: @see kits/assets/js/component.js',
-				label: elementor.config.kit.panel.title,
+				label: document.config.panel.title,
 				controls: editModel.controls,
 				renderer: false,
 			} );
@@ -64,19 +72,27 @@ export default class Settings extends elementorModules.ViewModule {
 	}
 
 	addPanelPage() {
-		const container = this.getContainer();
+		elementor.documents.request( elementor.config.kit_id ).then( ( config ) => {
 
-		elementor.getPanelView().addPage( 'kit_settings', {
-			view: panelView,
-			title: container.label,
-			name: 'kit_settings',
-			fullPage: true,
-			options: {
-				container,
-				model: container.model,
-				controls: container.settings.controls,
-				name: 'kit',
-			},
+			const document = new Document( config ),
+				container = this.getContainer( document );
+
+			document.container = container;
+
+			elementor.documents.add( document );
+
+			elementor.getPanelView().addPage( 'kit_settings', {
+				view: panelView,
+				title: 'global_theme_style',
+				name: 'kit_settings',
+				fullPage: true,
+				options: {
+					container,
+					model: container.model,
+					controls: container.settings.controls,
+					name: 'kit',
+				},
+			} );
 		} );
 	}
 
@@ -90,28 +106,28 @@ export default class Settings extends elementorModules.ViewModule {
 		}, { at: 0 } );
 
 		menu.addItem( {
-			name: 'global-style',
+			name: 'theme-style',
 			icon: 'eicon-paint-brush',
-			title: elementor.translate( 'global_styles' ),
+			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
 			callback: () => $e.route( 'panel/global/style' ),
 		}, 'global' );
 
-		menu.addItem( {
-			name: 'theme-templates',
-			icon: 'eicon-font',
-			title: elementor.translate( 'theme_templates' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/global/theme-templates' ),
-		}, 'global' );
-
-		menu.addItem( {
-			name: 'site-settings',
-			icon: 'eicon-cogs',
-			title: elementor.translate( 'site_settings' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/global/site-settings' ),
-		}, 'global' );
+		// menu.addItem( {
+		// 	name: 'theme-templates',
+		// 	icon: 'eicon-font',
+		// 	title: elementor.translate( 'theme_templates' ),
+		// 	type: 'page',
+		// 	callback: () => $e.route( 'panel/global/theme-templates' ),
+		// }, 'global' );
+		//
+		// menu.addItem( {
+		// 	name: 'site-settings',
+		// 	icon: 'eicon-cogs',
+		// 	title: elementor.translate( 'site_settings' ),
+		// 	type: 'page',
+		// 	callback: () => $e.route( 'panel/global/site-settings' ),
+		// }, 'global' );
 	}
 
 	onModelChange() {

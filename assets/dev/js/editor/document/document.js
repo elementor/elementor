@@ -45,10 +45,9 @@ export default class Document {
 	 * @param {{}} config
 	 * @param {Container} container
 	 */
-	constructor( config, container ) {
+	constructor( config ) {
 		this.config = config;
 		this.id = config.id;
-		this.container = container;
 
 		this.initialize();
 	}

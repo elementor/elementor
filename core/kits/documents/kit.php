@@ -2,10 +2,11 @@
 namespace Elementor\Core\Kits\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
+use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Typography;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -71,6 +72,29 @@ class Kit extends PageBase {
 		$this->register_document_controls();
 
 		$this->start_controls_section(
+			'section_body',
+			[
+				'label' => __( 'Body', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'body_background',
+				'types' => [ 'classic', 'gradient' ],
+				'fields_options' => [
+					'background' => [
+						'frontend_available' => true,
+					],
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_typography',
 			[
 				'label' => __( 'Typography', 'elementor' ),
@@ -94,7 +118,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Body', 'elementor' ),
 				'name' => 'typography_body',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}}',
 			]
 		);
@@ -104,7 +128,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'H1', 'elementor' ),
 				'name' => 'typography_h1',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} h1',
 			]
 		);
@@ -114,7 +138,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'H2', 'elementor' ),
 				'name' => 'typography_h2',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} h2',
 			]
 		);
@@ -124,7 +148,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'H3', 'elementor' ),
 				'name' => 'typography_h3',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} h3',
 			]
 		);
@@ -134,7 +158,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'H4', 'elementor' ),
 				'name' => 'typography_h4',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} h4',
 			]
 		);
@@ -144,7 +168,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'H5', 'elementor' ),
 				'name' => 'typography_h5',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} h5',
 			]
 		);
@@ -154,7 +178,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'H6', 'elementor' ),
 				'name' => 'typography_h6',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} h6',
 			]
 		);

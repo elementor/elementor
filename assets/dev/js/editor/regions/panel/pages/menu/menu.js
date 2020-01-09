@@ -67,6 +67,18 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	},
 
 	addAdminMenu: function() {
+		this.groups.add( {
+			name: 'style',
+			title: elementor.translate( 'global_style' ),
+			items: [],
+		}, { at: 0 } );
+
+		this.groups.add( {
+			name: 'settings',
+			title: elementor.translate( 'settings' ),
+			items: [],
+		}, { at: 1 } );
+
 		this.addItem( {
 			name: 'finder',
 			icon: 'eicon-search-bold',
