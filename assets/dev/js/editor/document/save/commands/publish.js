@@ -4,10 +4,10 @@ export class Publish extends Base {
 	apply( args ) {
 		let { options = {} } = args;
 
-		options = Object.assign( options, {
+		options = Object.assign( {
 			status: 'publish',
 			document: this.document,
-		} );
+		}, options );
 
 		elementor.saver.saveEditor( options );
 	}

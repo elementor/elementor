@@ -8,14 +8,16 @@ export class Draft extends Base {
 			return;
 		}
 
+		const document = this.document;
+
 		switch ( postStatus ) {
 			case 'publish':
 			case 'private':
-				$e.run( 'document/save/auto' );
+				$e.run( 'document/save/auto', { document } );
 				break;
 			default:
 				// Update and create a revision
-				$e.run( 'document/save/update' );
+				$e.run( 'document/save/update', { document } );
 		}
 	}
 }

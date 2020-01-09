@@ -5,9 +5,6 @@ export default class Component extends BackwardsCompatibility {
 	__construct( args = {} ) {
 		super.__construct( args );
 
-		this.isSaving = false;
-		this.isChangedDuringSave = false;
-
 		this.autoSaveTimer = null;
 		this.autoSaveInterval = elementor.config.autosave_interval * 1000;
 
@@ -35,16 +32,18 @@ export default class Component extends BackwardsCompatibility {
 	}
 
 	saveEditor( options ) {
-		if ( this.isSaving ) {
+		const document = options.document || elementor.documents.getCurrent();
+
+		if ( document.isSaving ) {
 			return;
 		}
 
-		options = Object.assign( options, {
+		options = Object.assign( {
 			status: 'draft',
 			onSuccess: null,
-		} );
+		}, options );
 
-		const container = options.document.container || elementor.document.getCurrent(),
+		const container = document.container,
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
 			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
 			oldStatus = container.settings.get( 'post_status' ),
@@ -53,8 +52,8 @@ export default class Component extends BackwardsCompatibility {
 		this.trigger( 'before:save', options )
 			.trigger( 'before:save:' + options.status, options );
 
-		this.isSaving = true;
-		this.isChangedDuringSave = false;
+		document.isSaving = true;
+		document.isChangedDuringSave = false;
 
 		settings.post_status = options.status;
 
@@ -65,8 +64,8 @@ export default class Component extends BackwardsCompatibility {
 				settings: settings,
 			},
 
-			success: ( data ) => this.onSaveSuccess( data, oldStatus, statusChanged, elements, options ),
-			error: ( data ) => this.onSaveError( data, options ),
+			success: ( data ) => this.onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ),
+			error: ( data ) => this.onSaveError( data, options, document ),
 		} );
 
 		this.trigger( 'save', options );
@@ -83,8 +82,10 @@ export default class Component extends BackwardsCompatibility {
 	}
 
 	setFlagEditorChange( status ) {
-		if ( status && this.isSaving ) {
-			this.isChangedDuringSave = true;
+		const document = elementor.documents.getCurrent();
+
+		if ( status && document.isSaving ) {
+			document.isChangedDuringSave = true;
 		}
 
 		this.startTimer( status );
@@ -98,8 +99,8 @@ export default class Component extends BackwardsCompatibility {
 		return ( true === elementor.channels.editor.request( 'status' ) );
 	}
 
-	onSaveSuccess( data, oldStatus, statusChanged, elements, options ) {
-		this.onAfterAjax();
+	onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ) {
+		this.onAfterAjax( document );
 
 		if ( 'autosave' !== options.status ) {
 			if ( statusChanged ) {
@@ -107,17 +108,17 @@ export default class Component extends BackwardsCompatibility {
 			}
 
 			// Notice: Must be after update page.model.post_status to the new status.
-			if ( ! this.isChangedDuringSave ) {
+			if ( ! document.isChangedDuringSave ) {
 				elementor.saver.setFlagEditorChange( false );
 			}
 		}
 
 		if ( data.config ) {
 			// TODO: Move to es6
-			jQuery.extend( true, elementor.config, data.config );
+			jQuery.extend( true, elementor.config.document, data.config );
 		}
 
-		elementor.config.data = elements;
+		elementor.config.document.elements = elements;
 
 		elementor.channels.editor.trigger( 'saved', data );
 
@@ -133,8 +134,8 @@ export default class Component extends BackwardsCompatibility {
 		}
 	}
 
-	onSaveError( data, options ) {
-		this.onAfterAjax();
+	onSaveError( data, options, document ) {
+		this.onAfterAjax( document );
 
 		this.trigger( 'after:saveError', data )
 			.trigger( 'after:saveError:' + options.status, data );
@@ -158,7 +159,7 @@ export default class Component extends BackwardsCompatibility {
 		} );
 	}
 
-	onAfterAjax() {
-		this.isSaving = false;
+	onAfterAjax( document ) {
+		document.isSaving = false;
 	}
 }
