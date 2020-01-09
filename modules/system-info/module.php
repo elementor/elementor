@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor system info module.
  *
  * Elementor system info module handler class is responsible for registering and
- * managing Elementor system info modules.
+ * managing Elementor system info reports.
  *
  * @since 2.9.0
  */
