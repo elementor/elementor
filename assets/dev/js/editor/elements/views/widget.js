@@ -60,7 +60,7 @@ WidgetView = BaseElementView.extend( {
 			icon: 'edit',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',
@@ -83,6 +83,7 @@ WidgetView = BaseElementView.extend( {
 		editModel.on( {
 			'before:remote:render': this.onModelBeforeRemoteRender.bind( this ),
 			'remote:render': this.onModelRemoteRender.bind( this ),
+			'settings:loaded': () => setTimeout( this.render.bind( this ) ),
 		} );
 
 		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
@@ -125,9 +126,7 @@ WidgetView = BaseElementView.extend( {
 			return;
 		}
 
-		// Fix long history restore bug.
-		// Does not render destroyed view.
-		if ( this.isDestroyed ) {
+		if ( elementorCommonConfig.isTesting && this.isDestroyed ) {
 			return;
 		}
 

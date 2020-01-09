@@ -45,7 +45,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		var scrollTop = $anchor.offset().top,
 			$wpAdminBar = elementorFrontend.elements.$wpAdminBar,
-			$activeStickies = jQuery( '.elementor-section.elementor-sticky--active' ),
+			$activeStickies = jQuery( '.elementor-section.elementor-sticky--active:visible' ),
 			maxStickyHeight = 0;
 
 		if ( $wpAdminBar.length > 0 ) {

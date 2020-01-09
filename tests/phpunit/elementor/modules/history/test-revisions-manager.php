@@ -176,7 +176,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 
 		$settings = Revisions_Manager::editor_settings( [], $parent_and_child_posts['parent_id'] );
 
-		$settings_keys = [ 'revisions_enabled', 'current_revision_id', 'i18n' ];
+		$settings_keys = [ 'i18n' ];
 		$this->assertArrayHaveKeys( $settings_keys, $settings );
 
 		$settings_i18n_keys = [
@@ -233,56 +233,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 		$revision_data = Revisions_Manager::ajax_get_revision_data( $args );
 
 		$this->assertArrayHaveKeys( [ 'settings', 'elements' ], $revision_data );
-	}
-
-	/**
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage You must set the revision ID.
-	 */
-	public function test_should_not_delete_revision_on_request_because_of_unset_revision_ID() {
-		Revisions_Manager::ajax_delete_revision( [] );
-	}
-
-	/**
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage Invalid revision.
-	 */
-	public function test_should_not_delete_revision_on_request_because_of_invalid_revision() {
-		$args['id'] = $this->fake_post_id;
-
-		Revisions_Manager::ajax_delete_revision( $args );
-	}
-
-	/**
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage Access denied.
-	 */
-	public function test_should_not_delete_revision_on_request_because_of_access_denied() {
-		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
-		$args['id'] = $this->factory()->get_default_post();
-
-		Revisions_Manager::ajax_delete_revision( $args );
-	}
-
-	/**
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage Cannot delete this revision.
-	 */
-	public function test_should_not_delete_revision_on_request_because_the_method_cannot_delete_given_revision() {
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
-		$args['id'] = $this->factory()->create_and_get_default_post();
-
-		Revisions_Manager::ajax_delete_revision( $args );
-	}
-
-	public function test_should_delete_revision_on_request() {
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
-		$args['id'] = $this->factory()->create_and_get_parent_and_child_posts()['child_id'];
-
-		$response = Revisions_Manager::ajax_delete_revision( $args );
-
-		$this->assertNull( $response,
-			'the function "on_delete_revision_request" should not return data' );
 	}
 
 	private function setup_revision_check() {

@@ -1,26 +1,18 @@
-import Base from '../../commands/base';
+import Base from '../../commands/base/base';
 
-// Copy.
-export default class extends Base {
+export class Copy extends Base {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
 
-	getHistory( args ) {
-		// No history required for the command.
-		return false;
-	}
-
 	apply( args ) {
-		const { storageKey = 'clipboard', containers = [ args.container ], elementsType = containers[ 0 ].model.elType } = args,
-			cloneContainers = containers.map( ( container ) => {
-			return container.model.toJSON( { copyHtmlCache: true } );
-		} );
+		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
 
-		elementorCommon.storage.set( storageKey, {
-			type: 'copy',
-			containers: cloneContainers,
-			elementsType,
-		} );
+		elementorCommon.storage.set(
+			storageKey,
+			containers.map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
+		);
 	}
 }
+
+export default Copy;

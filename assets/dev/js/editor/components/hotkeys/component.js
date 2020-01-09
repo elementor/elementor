@@ -1,12 +1,9 @@
+import ComponentModal from 'elementor-common/components/component-modal';
 import ModalLayout from './modal-layout';
 
-export default class extends elementorModules.common.ComponentModal {
+export default class Component extends ComponentModal {
 	getNamespace() {
 		return 'shortcuts';
-	}
-
-	getModalLayout() {
-		return ModalLayout;
 	}
 
 	defaultShortcuts() {
@@ -15,5 +12,9 @@ export default class extends elementorModules.common.ComponentModal {
 				keys: 'ctrl+?',
 			},
 		};
+	}
+
+	getModalLayout() {
+		return ModalLayout;
 	}
 }

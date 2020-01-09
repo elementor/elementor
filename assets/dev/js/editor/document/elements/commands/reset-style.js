@@ -1,7 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-// ResetStyle.
-export default class extends Base {
+export class ResetStyle extends History {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -20,7 +19,7 @@ export default class extends Base {
 
 		containers.forEach( ( container ) => {
 			const controls = container.settings.controls,
-				defaultValues = {};
+				settingsKeys = [];
 
 			container.view.allowRender = false;
 
@@ -29,13 +28,19 @@ export default class extends Base {
 					return;
 				}
 
-				defaultValues[ controlName ] = control.default;
+				settingsKeys.push( controlName );
 			} );
 
-			$e.run( 'document/elements/settings', {
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			elementor.channels.data.trigger( 'element:before:reset:style', container.model );
+
+			$e.run( 'document/elements/reset-settings', {
 				container,
-				settings: defaultValues,
+				settings: settingsKeys,
 			} );
+
+			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			elementor.channels.data.trigger( 'element:after:reset:style', container.model );
 
 			container.view.allowRender = true;
 
@@ -43,3 +48,5 @@ export default class extends Base {
 		} );
 	}
 }
+
+export default ResetStyle;

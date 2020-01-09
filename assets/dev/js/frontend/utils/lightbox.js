@@ -392,11 +392,63 @@ module.exports = elementorModules.ViewModule.extend( {
 		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
 	},
 
+	openSlideshow: function( slideshowID, initialSlideURL ) {
+		const $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( ( index, element ) => {
+			const $element = jQuery( element );
+
+			return slideshowID === element.dataset.elementorLightboxSlideshow && ! $element.parent( '.swiper-slide-duplicate' ).length && ! $element.parents( '.slick-cloned' ).length;
+		} );
+
+		const slides = [];
+
+		let initialSlideIndex = 0;
+
+		$allSlideshowLinks.each( function() {
+			const slideVideo = this.dataset.elementorLightboxVideo;
+
+			let slideIndex = this.dataset.elementorLightboxIndex;
+
+			if ( undefined === slideIndex ) {
+				slideIndex = $allSlideshowLinks.index( this );
+			}
+
+			if ( initialSlideURL === this.href ) {
+				initialSlideIndex = slideIndex;
+			}
+
+			const slideData = {
+				image: this.href,
+				index: slideIndex,
+			};
+
+			if ( slideVideo ) {
+				slideData.video = slideVideo;
+			}
+
+			slides.push( slideData );
+		} );
+
+		slides.sort( ( a, b ) => a.index - b.index );
+
+		this.showModal( {
+			type: 'slideshow',
+			modalOptions: {
+				id: 'elementor-lightbox-slideshow-' + slideshowID,
+			},
+			slideshow: {
+				slides: slides,
+				swiper: {
+					initialSlide: +initialSlideIndex,
+				},
+			},
+		} );
+	},
+
 	openLink: function( event ) {
 		var element = event.currentTarget,
 			$target = jQuery( event.target ),
 			editMode = elementorFrontend.isEditMode(),
-			isClickInsideElementor = !! $target.closest( '#elementor' ).length;
+			isClickInsideElementor = !! $target.closest( '.elementor-edit-area' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {
 			if ( editMode && isClickInsideElementor ) {
@@ -408,7 +460,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		event.preventDefault();
 
-		if ( editMode && ! elementorFrontend.getGeneralSettings( 'elementor_enable_lightbox_in_editor' ) ) {
+		if ( editMode && ! elementor.getPreferences( 'lightbox_in_editor' ) ) {
 			return;
 		}
 
@@ -433,59 +485,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		var slideshowID = element.dataset.elementorLightboxSlideshow;
-
-		var $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( function() {
-			const $this = jQuery( this );
-
-			return slideshowID === this.dataset.elementorLightboxSlideshow && ! $this.parent( '.swiper-slide-duplicate' ).length && ! $this.parents( '.slick-cloned' ).length;
-		} );
-
-		const slides = [];
-
-		$allSlideshowLinks.each( function() {
-			const slideVideo = this.dataset.elementorLightboxVideo;
-
-			let slideIndex = this.dataset.elementorLightboxIndex;
-
-			if ( undefined === slideIndex ) {
-				slideIndex = $allSlideshowLinks.index( this );
-			}
-
-			var slideData = {
-				image: this.href,
-				index: slideIndex,
-			};
-
-			if ( slideVideo ) {
-				slideData.video = slideVideo;
-			}
-
-			slides.push( slideData );
-		} );
-
-		slides.sort( function( a, b ) {
-			return a.index - b.index;
-		} );
-
-		var initialSlide = element.dataset.elementorLightboxIndex;
-
-		if ( undefined === initialSlide ) {
-			initialSlide = $allSlideshowLinks.index( element );
-		}
-
-		this.showModal( {
-			type: 'slideshow',
-			modalOptions: {
-				id: 'elementor-lightbox-slideshow-' + slideshowID,
-			},
-			slideshow: {
-				slides: slides,
-				swiper: {
-					initialSlide: +initialSlide,
-				},
-			},
-		} );
+		this.openSlideshow( element.dataset.elementorLightboxSlideshow, element.href );
 	},
 
 	bindEvents: function() {

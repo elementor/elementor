@@ -1,4 +1,5 @@
-import environment from '../../../../../../core/common/assets/js/utils/environment';
+import environment from 'elementor-common/utils/environment';
+import DocumentUtils from 'elementor-document/utils/helpers';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -110,14 +111,14 @@ BaseElementView = BaseContainer.extend( {
 			const settingsModel = this.model.get( 'settings' );
 
 			this.container = new elementorModules.editor.Container( {
+				type: this.model.get( 'elType' ),
 				id: this.model.id,
-				document: elementor.getPreviewContainer(),
 				model: this.model,
 				settings: settingsModel,
 				view: this,
-				parent: this._parent.getContainer() || {},
+				parent: this._parent ? this._parent.getContainer() : {},
 				children: [],
-				label: elementor.history.history.getModelLabel( this.model ),
+				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
 		}
@@ -160,23 +161,20 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
-						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'document/elements/paste', {
-							container: this.getContainer().parent,
-							at: this._parent.collection.indexOf( this.model ),
+						isEnabled: () => DocumentUtils.isPasteEnabled( this.getContainer() ),
+						callback: () => $e.run( 'document/ui/paste', {
+							container: this.getContainer(),
 						} ),
 					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
 						shortcut: controlSign + '+⇧+V',
-						isEnabled: () => {
-							return !! elementorCommon.storage.get( 'clipboard' );
-						},
-						callback: () => $e.run( 'document/elements/pasteStyle', { container: this.getContainer() } ),
+						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
+						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
 					}, {
 						name: 'resetStyle',
 						title: elementor.translate( 'reset_style' ),
-						callback: () => $e.run( 'document/elements/resetStyle', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
 					},
 				],
 			}, {
@@ -201,20 +199,28 @@ BaseElementView = BaseContainer.extend( {
 	initialize() {
 		BaseContainer.prototype.initialize.apply( this, arguments );
 
-		if ( this.collection ) {
+		const editModel = this.getEditModel();
+
+		if ( this.collection && this.onCollectionChanged ) {
+			elementorCommon.helpers.softDeprecated( 'onCollectionChanged', '2.8.0', '$e.events || $e.hooks' );
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
-		const editModel = this.getEditModel();
+		if ( this.onSettingsChanged ) {
+			elementorCommon.helpers.softDeprecated( 'onSettingsChanged', '2.8.0', '$e.events || $e.hooks' );
+			this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged );
+		}
 
-		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged )
-			.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
+		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
 			.listenTo( this.model, 'request:edit', this.onEditRequest )
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
 
-		this.trigger( 'initialize' );
+		_.defer( () => {
+			// Init container. Defer - in order to init the container after the element is fully initialized, and properties like `_parent` are available.
+			this.getContainer();
+		} );
 	},
 
 	getHandlesOverlay: function() {
@@ -242,14 +248,57 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
-	isPasteEnabled() {
-		const transferData = elementorCommon.storage.get( 'clipboard' );
+	startTransport() {
+		elementorCommon.helpers.softDeprecated( 'element.startTransport', '2.8.0', "$e.run( 'document/elements/copy' )" );
 
-		if ( ! transferData || this.isCollectionFilled() ) {
-			return false;
-		}
+		$e.run( 'document/elements/copy', {
+			container: this.getContainer(),
+		} );
+	},
 
-		return this.getElementType() === transferData.elementsType;
+	copy() {
+		elementorCommon.helpers.softDeprecated( 'element.copy', '2.8.0', "$e.run( 'document/elements/copy' )" );
+
+		$e.run( 'document/elements/copy', {
+			container: this.getContainer(),
+		} );
+	},
+
+	cut() {
+		elementorCommon.helpers.softDeprecated( 'element.cut', '2.8.0' );
+	},
+
+	paste() {
+		elementorCommon.helpers.softDeprecated( 'element.paste', '2.8.0', "$e.run( 'document/elements/paste' )" );
+
+		$e.run( 'document/elements/paste', {
+			container: this.getContainer(),
+			at: this._parent.collection.indexOf( this.model ),
+		} );
+	},
+
+	duplicate() {
+		elementorCommon.helpers.softDeprecated( 'element.duplicate', '2.8.0', "$e.run( 'document/elements/duplicate' )" );
+
+		$e.run( 'document/elements/duplicate', {
+			container: this.getContainer(),
+		} );
+	},
+
+	pasteStyle() {
+		elementorCommon.helpers.softDeprecated( 'element.pasteStyle', '2.8.0', "$e.run( 'document/elements/paste-style' )" );
+
+		$e.run( 'document/elements/paste-style', {
+			container: this.getContainer(),
+		} );
+	},
+
+	resetStyle() {
+		elementorCommon.helpers.softDeprecated( 'element.resetStyle', '2.8.0', "$e.run( 'document/elements/reset-style' )" );
+
+		$e.run( 'document/elements/reset-style', {
+			container: this.getContainer(),
+		} );
 	},
 
 	isStyleTransferControl( control ) {
@@ -296,13 +345,14 @@ BaseElementView = BaseContainer.extend( {
 			jQuery.extend( model, customData );
 		}
 
-		$e.run( 'document/elements/create', {
+		return $e.run( 'document/elements/create', {
 			container: this.getContainer(),
 			model,
 			options,
 		} );
 	},
 
+	// TODO: Unused function.
 	addControlValidator( controlName, validationCallback ) {
 		validationCallback = validationCallback.bind( this );
 
@@ -414,7 +464,12 @@ BaseElementView = BaseContainer.extend( {
 
 		this.controlsCSSParser.stylesheet.empty();
 
-		this.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, this.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ this.getID(), '#elementor .' + this.getElementUniqueID() ] );
+		this.controlsCSSParser.addStyleRules(
+			settings.getStyleControls(),
+			settings.attributes,
+			this.getEditModel().get( 'settings' ).controls,
+			[ /{{ID}}/g, /{{WRAPPER}}/g ],
+			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
 
@@ -622,18 +677,8 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	onCollectionChanged() {
-		elementor.saver.setFlagEditorChange( true );
-	},
-
 	onEditSettingsChanged( changedModel ) {
 		elementor.channels.editor.trigger( 'change:editSettings', changedModel, this );
-	},
-
-	onSettingsChanged( changedModel ) {
-		elementor.saver.setFlagEditorChange( true );
-
-		this.renderOnChange( changedModel );
 	},
 
 	onEditButtonClick() {
@@ -641,7 +686,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditRequest( options = {} ) {
-		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if ( ! this.container.isEditable() ) {
 			return;
 		}
 

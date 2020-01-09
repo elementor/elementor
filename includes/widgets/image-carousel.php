@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor image carousel widget.
  *
@@ -246,20 +248,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'pause_on_hover',
-			[
-				'label' => __( 'Pause on Hover', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'yes',
-				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
-				],
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
 			'autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
@@ -274,11 +262,48 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'pause_on_hover',
+			[
+				'label' => __( 'Pause on Hover', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'yes',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'autoplay' => 'yes',
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'pause_on_interaction',
+			[
+				'label' => __( 'Pause on Interaction', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'yes',
+				'options' => [
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'autoplay' => 'yes',
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
 			'autoplay_speed',
 			[
 				'label' => __( 'Autoplay Speed', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 5000,
+				'condition' => [
+					'autoplay' => 'yes',
+				],
 				'frontend_available' => true,
 			]
 		);
@@ -492,7 +517,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
 				'options' => [
 					'flex-start' => [
 						'title' => __( 'Start', 'elementor' ),
@@ -552,6 +576,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 				'frontend_available' => true,
 				'render_type' => 'none',
+				'separator' => 'after',
 			]
 		);
 
@@ -560,7 +585,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .swiper-slide-image',
-				'separator' => 'before',
 			]
 		);
 
@@ -635,7 +659,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 			]
 		);
@@ -674,7 +698,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				$link_key = 'link_' . $index;
 
 				$this->add_render_attribute( $link_key, [
-					'href' => $link['url'],
 					'data-elementor-open-lightbox' => $settings['open_lightbox'],
 					'data-elementor-lightbox-slideshow' => $this->get_id(),
 					'data-elementor-lightbox-index' => $index,
@@ -686,13 +709,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					] );
 				}
 
-				if ( ! empty( $link['is_external'] ) ) {
-					$this->add_render_attribute( $link_key, 'target', '_blank' );
-				}
-
-				if ( ! empty( $link['nofollow'] ) ) {
-					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
-				}
+				$this->add_link_attributes( $link_key, $link );
 
 				$link_tag = '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 			}

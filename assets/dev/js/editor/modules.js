@@ -17,5 +17,6 @@ elementorModules.editor = {
 	views: {
 		ControlsStack: ControlsStack,
 	},
+
 	Container: Container,
 };

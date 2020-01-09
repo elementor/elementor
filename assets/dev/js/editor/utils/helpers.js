@@ -1,15 +1,17 @@
-var helpers;
+import ColorPicker from './color-picker';
 
-helpers = {
+module.exports = {
 	_enqueuedFonts: [],
 	_enqueuedIconFonts: [],
 	_inlineSvg: [],
 
 	elementsHierarchy: {
-		section: {
-			column: {
-				widget: null,
-				section: null,
+		document: {
+			section: {
+				column: {
+					widget: null,
+					section: null,
+				},
 			},
 		},
 	},
@@ -39,13 +41,13 @@ helpers = {
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
 	fetchInlineSvg( svgUrl, callback = false ) {
 		fetch( svgUrl )
-			.then( ( response ) => response.text() )
+			.then( ( response ) => response.ok ? response.text() : '' )
 			.then( ( data ) => {
 				if ( callback ) {
 					callback( data );
@@ -75,7 +77,7 @@ helpers = {
 	},
 
 	enqueueIconFonts( iconType ) {
-		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! ElementorConfig[ 'icons_update_needed' ] ) {
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config[ 'icons_update_needed' ] ) {
 			return;
 		}
 
@@ -166,17 +168,14 @@ helpers = {
 	},
 
 	isIconMigrated( settings, controlName ) {
-		if ( settings.__fa4_migrated && settings.__fa4_migrated[ controlName ] ) {
-			return true;
-		}
-		return false;
+		return settings.__fa4_migrated && settings.__fa4_migrated[ controlName ];
 	},
 
 	fetchFa4ToFa5Mapping() {
 		const storageKey = 'fa4Tofa5Mapping';
 		let mapping = elementorCommon.storage.get( storageKey );
 		if ( ! mapping ) {
-			jQuery.getJSON( ElementorConfig.fa4_to_fa5_mapping_url, ( data ) => {
+			jQuery.getJSON( elementor.config.fa4_to_fa5_mapping_url, ( data ) => {
 				mapping = data;
 				elementorCommon.storage.set( storageKey, data );
 			} );
@@ -324,13 +323,13 @@ helpers = {
 	},
 
 	maybeDisableWidget() {
-		if ( ! ElementorConfig[ 'icons_update_needed' ] ) {
+		if ( ! elementor.config[ 'icons_update_needed' ] ) {
 			return false;
 		}
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			widgetType = elementView.model.get( 'widgetType' ),
-			widgetData = elementor.config.widgets[ widgetType ],
+			widgetData = elementor.widgetsCache[ widgetType ],
 			hasControlOfType = ( controls, type ) => {
 				let has = false;
 				jQuery.each( controls, ( controlName, controlData ) => {
@@ -352,7 +351,7 @@ helpers = {
 			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
 			if ( hasIconsControl ) {
 				const onConfirm = () => {
-					window.location.href = ElementorConfig.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+					window.location.href = elementor.config.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
 				};
 				elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
@@ -439,15 +438,9 @@ helpers = {
 	},
 
 	cloneObject( object ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
-	},
-
-	firstLetterUppercase( string ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.upperCaseWords', '2.3.0', 'elementorCommon.helpers.upperCaseWords' );
-
-		return elementorCommon.helpers.upperCaseWords( string );
 	},
 
 	disableElementEvents( $element ) {
@@ -479,26 +472,10 @@ helpers = {
 		} );
 	},
 
-	getColorPickerPaletteIndex( paletteKey ) {
-		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
-	},
+	wpColorPicker( $element ) {
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
-	wpColorPicker( $element, options ) {
-		const self = this,
-			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
-			items = _.sortBy( colorPickerScheme.items, function( item ) {
-				return self.getColorPickerPaletteIndex( item.key );
-			} ),
-			defaultOptions = {
-				width: window.innerWidth >= 1440 ? 271 : 251,
-				palettes: _.pluck( items, 'value' ),
-			};
-
-		if ( options ) {
-			_.extend( defaultOptions, options );
-		}
-
-		return $element.wpColorPicker( defaultOptions );
+		return new ColorPicker( { picker: { el: $element } } );
 	},
 
 	isInViewport( element, html ) {
@@ -618,6 +595,26 @@ helpers = {
 			}
 		}
 	},
-};
 
-module.exports = helpers;
+	getModelLabel( model ) {
+		let result;
+
+		if ( ! ( model instanceof Backbone.Model ) ) {
+			model = new Backbone.Model( model );
+		}
+
+		if ( model.get( 'labelSuffix' ) ) {
+			result = model.get( 'title' ) + ' ' + model.get( 'labelSuffix' );
+		} else if ( 'global' === model.get( 'widgetType' ) ) {
+			if ( model.getTitle ) {
+				result = model.getTitle();
+			}
+		}
+
+		if ( ! result ) {
+			result = elementor.getElementData( model ).title;
+		}
+
+		return result;
+	},
+};

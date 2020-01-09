@@ -75,6 +75,10 @@ class Manager extends BaseModule {
 			wp_send_json_error();
 		}
 
+		array_walk_recursive( $_POST['data'], function( &$value ) {
+			$value = sanitize_text_field( $value );
+		} );
+
 		foreach ( $_POST['data'] as $error ) {
 			$error['type'] = Logger_Interface::LEVEL_ERROR;
 
@@ -206,7 +210,7 @@ class Manager extends BaseModule {
 	public function __construct() {
 		register_shutdown_function( [ $this, 'shutdown' ] );
 
-		add_action( 'admin_init', [ $this, 'add_system_info_report' ] );
+		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 80 );
 
 		add_action( 'wp_ajax_elementor_js_log', [ $this, 'js_log' ] );
 

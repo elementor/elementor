@@ -31,12 +31,11 @@
 
 	.elementor-control-popover-toggle-reset-label {
 		color: $editor-lighter;
-		@include padding-end(5px);
+		@include margin-end(5px);
 	}
 
 	.elementor-control-popover-toggle-toggle-label {
-		width: 50px;
-		height: 27px;
+		height: $control-unit;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;

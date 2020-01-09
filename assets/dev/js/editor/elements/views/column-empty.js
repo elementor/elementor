@@ -1,3 +1,5 @@
+import DocumentUtils from 'elementor-document/utils/helpers';
+
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-empty-preview',
 
@@ -24,28 +26,14 @@ module.exports = Marionette.ItemView.extend( {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'document/elements/paste', {
-							container: this.getContainer().parent,
+						isEnabled: () => DocumentUtils.isPasteEnabled( this._parent.getContainer() ),
+						callback: () => $e.run( 'document/ui/paste', {
+							container: this._parent.getContainer(),
 						} ),
 					},
 				],
 			},
 		];
-	},
-
-	isPasteEnabled: function() {
-		var transferData = elementorCommon.storage.get( 'clipboard' );
-
-		if ( ! transferData ) {
-			return false;
-		}
-
-		if ( 'section' === transferData.elementsType ) {
-			return transferData.elements[ 0 ].isInner && ! this._parent.isInner();
-		}
-
-		return 'widget' === transferData.elementsType;
 	},
 
 	onClickAdd: function() {

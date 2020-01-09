@@ -103,7 +103,6 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				autoplay: true,
 				loop: ! elementSettings.background_play_once,
 				transparent: false,
-				playsinline: false,
 				background: true,
 				muted: true,
 			};
@@ -111,7 +110,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
 
 		// Handle user-defined start/end times
-		this.handleVimeoStartEndTimes( elementSettings, startTime );
+		this.handleVimeoStartEndTimes( elementSettings );
 
 		this.player.ready().then( () => {
 			jQuery( this.player.element ).addClass( 'elementor-background-video-embed' );
@@ -119,25 +118,25 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		} );
 	}
 
-	handleVimeoStartEndTimes( elementSettings, startTime ) {
+	handleVimeoStartEndTimes( elementSettings ) {
 		// If a start time is defined, set the start time
-		if ( startTime ) {
+		if ( elementSettings.background_video_start ) {
 			this.player.on( 'play', ( data ) => {
 				if ( 0 === data.seconds ) {
-					this.player.setCurrentTime( startTime );
+					this.player.setCurrentTime( elementSettings.background_video_start );
 				}
 			} );
 		}
 
-		// If an end time is defined, handle ending the video
 		this.player.on( 'timeupdate', ( data ) => {
+			// If an end time is defined, handle ending the video
 			if ( elementSettings.background_video_end && elementSettings.background_video_end < data.seconds ) {
 				if ( elementSettings.background_play_once ) {
 					// Stop at user-defined end time if not loop
 					this.player.pause();
 				} else {
 					// Go to start time if loop
-					this.player.setCurrentTime( startTime );
+					this.player.setCurrentTime( elementSettings.background_video_start );
 				}
 			}
 
@@ -145,8 +144,8 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			// Vimeo JS API has an 'ended' event, but it never fires when infinite loop is defined, so we
 			// get the video duration (returns a promise) then use duration-0.5s as end time
 			this.player.getDuration().then( ( duration ) => {
-				if ( startTime && ! elementSettings.background_video_end && data.seconds > duration - 0.5 ) {
-					this.player.setCurrentTime( startTime );
+				if ( elementSettings.background_video_start && ! elementSettings.background_video_end && data.seconds > duration - 0.5 ) {
+					this.player.setCurrentTime( elementSettings.background_video_start );
 				}
 			} );
 		} );
@@ -193,6 +192,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			playerVars: {
 				controls: 0,
 				rel: 0,
+				playsinline: 1,
 			},
 		} );
 	}

@@ -1,3 +1,5 @@
+import DocumentUtils from 'elementor-document/utils/helpers';
+
 class AddSectionBase extends Marionette.ItemView {
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
@@ -74,11 +76,14 @@ class AddSectionBase extends Marionette.ItemView {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						isEnabled: this.isPasteEnabled.bind( this ),
-						callback: () => $e.run( 'document/elements/paste', {
+						isEnabled: () => DocumentUtils.isPasteEnabled( elementor.getPreviewContainer() ),
+						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
-							at: this.getOption( 'at' ),
-							rebuild: true,
+							options: {
+								at: this.getOption( 'at' ),
+								rebuild: true,
+							},
+							onAfter: () => this.onAfterPaste(),
 						} ),
 					},
 				],
@@ -89,7 +94,7 @@ class AddSectionBase extends Marionette.ItemView {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'document/elements/copyAll' ),
+						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
@@ -99,10 +104,6 @@ class AddSectionBase extends Marionette.ItemView {
 				],
 			},
 		];
-	}
-
-	isPasteEnabled() {
-		return elementorCommon.storage.get( 'clipboard' );
 	}
 
 	onAddSectionButtonClick() {
@@ -147,22 +148,33 @@ class AddSectionBase extends Marionette.ItemView {
 		}
 
 		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
-			historyId = $e.run( 'document/history/startLog', {
+			historyId = $e.run( 'document/history/start-log', {
 				type: 'add',
-				title: selectedElement.model.get( 'title' ),
-				elementType: selectedElement.model.get( 'elType' ),
+				title: elementor.helpers.getModelLabel( selectedElement.model ),
+			} ),
+			eSection = $e.run( 'document/elements/create', {
+				model: {
+					elType: 'section',
+				},
+				container: elementor.getPreviewContainer(),
+				columns: 1,
+				options: {
+					at: this.getOption( 'at' ),
+					// BC: Deprecated since 2.8.0 - use `$e.events`.
+					trigger: {
+						beforeAdd: 'section:before:drop',
+						afterAdd: 'section:after:drop',
+					},
+				},
 			} );
 
-		$e.run( 'document/elements/create', {
-			model: {
-				elType: 'section',
-			},
-			container: elementor.getPreviewContainer(),
-			columns: 1,
-		} ).view.addElementFromPanel();
+		// Create the element in column.
+		eSection.view.children.findByIndex( 0 ).addElementFromPanel();
 
-		$e.run( 'document/history/endLog', { id: historyId } );
+		$e.run( 'document/history/end-log', { id: historyId } );
 	}
+
+	onAfterPaste() {}
 }
 
 export default AddSectionBase;

@@ -1,12 +1,12 @@
 # Elementor Page Builder [![Build Status](https://travis-ci.org/pojome/elementor.svg?branch=master)](https://travis-ci.org/pojome/elementor) [![Coverage Status](https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master)](https://coveralls.io/github/pojome/elementor?branch=pojome/elementor) [![Dependency Status](https://david-dm.org/pojome/elementor/dev-status.svg)](https://david-dm.org/pojome/elementor#info=devDependencies) [![WordPress](https://img.shields.io/wordpress/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/)
 
 
-**Contributors:** [elemntor](https://profiles.wordpress.org/elemntor), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet), [ramiy](https://profiles.wordpress.org/ramiy), [yehudah](https://profiles.wordpress.org/yehudah)  
+**Contributors:** [elemntor](https://profiles.wordpress.org/elemntor), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet)  
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
-**Requires at least:** 4.7  
-**Tested up to:** 5.2  
-**Requires PHP:** 5.4  
-**Stable tag:** 2.7.3  
+**Requires at least:** 5.0  
+**Tested up to:** 5.3  
+**Requires PHP:** 5.6  
+**Stable tag:** 2.8.3  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -163,8 +163,8 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 ### Minimum Requirements ###
 
-* WordPress 4.7 or greater
-* PHP version 5.4 or greater
+* WordPress 5.0 or greater
+* PHP version 5.6 or greater
 * MySQL version 5.0 or greater
 
 ### We recommend your host supports: ###
@@ -209,7 +209,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 ## Screenshots ##
 
@@ -222,6 +222,106 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.8.3 - 2020-01-01 ###
+* Tweak: Improved accessibility to "Go Pro" menu item ([#9021](https://github.com/elementor/elementor/issues/9021))
+* Tweak: Added new CLI command - User Connect
+* Tweak: Updated Recommended Icons tab in Toggle and Accordion widgets
+* Fix: Placement glitch when dragging a widget to a new section ([#9954](https://github.com/elementor/elementor/issues/9954))
+* Fix: Controls popover closes when picking a color in it
+* Fix: Dark mode style glitches in edge cases
+* Fix: Correct calculation of usage data
+* Fix: Pasting style of one Section to other changes the structure
+* Fix: Long text overflow issue in Divider widget
+* Fix: Scroll bars visible when not needed in Icon Library
+
+### 2.8.2 - 2019-12-16 ###
+* Tweak: Improved hidden responsive elements visibility
+* Fix: Autoplay not working in Image Carousel widget ([#9872](https://github.com/elementor/elementor/issues/9872))
+* Fix: Logger fatal error on upgrade ([#9872](https://github.com/elementor/elementor/issues/9872))
+* Fix: Negative custom shapes in Editor ([#9850](https://github.com/elementor/elementor/issues/9850))
+* Fix: Render correct widget data in Global widgets
+* Fix: `0` value in Dynamic Tags causes Undefined Index error
+
+### 2.8.1 - 2019-12-11 ###
+* Fix: Style pasting issue on Columns ([#9811](https://github.com/elementor/elementor/issues/9811))
+* Fix: Column duplication not working for Inner Section widget ([#9824](https://github.com/elementor/elementor/issues/9824))
+* Fix: Redundant renders when changing colors in Color control
+* Fix: Dark Mode glitches in WordPress widgets ([#9829](https://github.com/elementor/elementor/issues/9829))
+* Fix: Repeater rows doesn't have `_id` in edge cases
+* Fix: Connect issue for Multisite users
+* Fix: Dynamic tag fallback does not handle '0' character
+
+### 2.8.0 - 2019-12-09 ###
+* New: Introducing new Color Picker control with Saved Colors built-in ([#6968](https://github.com/elementor/elementor/issues/6968), [#8982](https://github.com/elementor/elementor/issues/8982), [Developers Blog Post](https://developers.elementor.com/elementor-2-8-new-color-picker/]))
+* New: Introducing Dark Mode UI theme ([#9263](https://github.com/elementor/elementor/issues/9263), [#8249](https://github.com/elementor/elementor/issues/8249), [#9125](https://github.com/elementor/elementor/issues/9125))
+* New: User Preferences section in Editor Panel menu
+* Tweak: Better responsive visibility indication ([#8020](https://github.com/elementor/elementor/issues/8020), [#4775](https://github.com/elementor/elementor/issues/4775))
+* Tweak: Added `background-size` and `background-position` controls to Background Slideshow ([#9199](https://github.com/elementor/elementor/issues/9199))
+* Tweak: Removed Google+ network from "Recommended" tab in Social Icons widget ([#9393](https://github.com/elementor/elementor/issues/9393))
+* Tweak: Replaced default Google+ network icon with YouTube icon in Social Icons widget
+* Tweak: Added dynamic capabilities to alert widget ([#9436](https://github.com/elementor/elementor/issues/9436))
+* Tweak: Added "Play on Mobile" option to allow iOS autoplay to Video widget ([#3442](https://github.com/elementor/elementor/issues/3442))
+* Tweak: Added inline skin for Icon control
+* Tweak: Added `elementor/settings/controls/checkbox_list_cpt/post_type_objects` filter to control over displayed CPT in WordPress Dashboard UI (Props [@sc0ttkclark](https://github.com/sc0ttkclark))
+* Tweak: Moved "Editing Handles" and "Lightbox in editor" options to the new "Preferences" section
+* Tweak: Added `playsinline` attribute to Vimeo and YouTube sources to allow autoplay on iOS devices in Background Video
+* Tweak: Added Documents count to System Info
+* Tweak: Added global utility function for adding link attributes in Button widget
+* Tweak: Re-designed responsive mode switcher control
+* Tweak: Re-designed alerts and notices in the Editor Panel
+* Tweak: Improved styling of checkboxes and radio inputs
+* Tweak: Changed "Custom Positioning" section label to "Positioning"
+* Tweak: Allow access to Templates Library for connected users only
+* Tweak: Changed icon control skin to "Inline" in Toggle and Accordion widgets
+* Tweak: Added Icon Manager "Recommended" tab in Toggle and Accordion widgets
+* Tweak: Changed all occurrences of `text-overflow: ellipsis` to a single `mixin`
+* Tweak: Added "Pause On Interaction" option to Image Carousel widget
+* Tweak: Updated `e-icons` library to v5.5.0
+* Tweak: Updated `e-gallery` library to v1.1.0
+* Tweak: Dropped Support for WP v4.9, now supporting WP v5.0+
+* Tweak: Dropped delete revision option in Revisions Panel since WordPress v5.3 ([Topic](http://core.trac.wordpress.org/ticket/43709))
+* Tweak: Added compatibility with WordPress v5.3
+* Fix: Use CSS Flex to align and order button icon ([#561](https://github.com/elementor/elementor/issues/561))
+* Fix: Remove Ninja Forms compatibility script which causes server issues ([#8267](https://github.com/elementor/elementor/issues/8267))
+* Fix: Added `title` attribute to embedded iframes ([#9374](https://github.com/elementor/elementor/issues/9374), Props [@shipley-dcc](https://github.com/shipley-dcc))
+* Fix: Reset style in a button doesn't work on colors ([#8454](https://github.com/elementor/elementor/issues/8454))
+* Fix: No fallback when SVG file doesn't exist ([#9481](https://github.com/elementor/elementor/issues/9481))
+* Fix: Custom shapes "negative" support fix ([#9761](https://github.com/elementor/elementor/issues/9761))
+* Fix : Shapes SVG include PHP Parse Error If the uploaded SVG file contain `<?xml version="1.0" encoding="UTF-8"?>` ([#9693](https://github.com/elementor/elementor/issues/9693), Props [@MarieComet](https://github.com/MarieComet))
+* Fix: Added better output escaping in the attributes for checkbox lists in Admin forms (Props [@MarieComet](https://github.com/MarieComet))
+* Fix: Adding a link overrides the Title and Description colors in Testimonial widget
+* Fix: Removed redundant Editor Panel Spacer in Image Carousel widget
+* Fix: "Delete All Content" doesn't close current widget editing options
+* Fix: Pause on hover option doesn't work in Image Carousel widget
+* Fix: Limit transition duration in Ken Burns CSS only to `transform` property
+* Fix: Recommended tab icons don't change when there's more than one `Icons` control per widget
+* Fix: Hidden sticky section generates redundant scroll offset when using Anchors
+* Fix: Inserting a saved section as a template uses the same `ID`
+* Fix: Double rendering of elements in Editor
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v2-8-0-planned-deprecations/)
+
+### 2.7.6 - 2019-12-08 ###
+* Fix: Transition Duration option not applying to elements background
+* Fix: Hide Beta Testers signup form if the user already subscribed
+* Fix: Added HTML escaping to `Admin` class and to System Info
+
+### 2.7.5 - 2019-10-28 ###
+* Tweak: Changed the "Finder" icon in the Editor panel
+* Fix: Added official color support for `linkedin-in` icon in Social Icons widget ([#9298](https://github.com/elementor/elementor/issues/9298))
+* Fix: `Ctrl/CMD + Shift + L` not opening Library modal
+* Fix: Clear Log button HTML shows in System Info Copy & Paste section
+* Fix: Ken burns effect not working on the 1st slide if Infinite Loop option is turned off in Background Slideshow
+
+### 2.7.4 - 2019-10-06 ###
+* Tweak: Improved filtering animation behavior in Gallery widget
+* Fix: Icon custom colors being overridden by styling custom colors in Social Icons widget
+* Fix: Added `SVG` custom color support for Social Icons widget
+* Fix: Elements not being displayed when it has the value `0`
+* Fix: Pagination glitch in image carousel widget
+* Fix: Select2 throws JS console error when trying to unset a dropdown value in Templates modal
+* Fix: Background Slideshow overrides the Columns' border-radius
+* Fix: Tabs not working after previewing a template in Templates modal
 
 ### 2.7.3 - 2019-09-24 ###
 * Tweak: Updated E-gallery library to v1.0.1
@@ -1308,7 +1408,7 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ### 1.6.3 - 2017-08-09 ###
 * Fix: Lightbox for Image Carousel ([#2135](https://github.com/elementor/elementor/issues/2135))
-* Fix: Allow to dismiss message asking to share anonymous usage data ([#2136](https://github.com/elementor/elementor/issues/2136))
+* Fix: Allow to dismiss message asking to share non-sensitive usage data ([#2136](https://github.com/elementor/elementor/issues/2136))
 * Fix: Conflict with Advanced TinyMCE plugin ([Topic](https://wordpress.org/support/topic/tinymce-unbreakable-space-not-display/))
 
 ### 1.6.2 - 2017-08-03 ###

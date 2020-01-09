@@ -103,7 +103,6 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
-				'label_block' => false,
 				'separator' => 'before',
 			]
 		);
@@ -118,7 +117,6 @@ class Widget_Common extends Widget_Base {
 				],
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
 				'style_transfer' => false,
 				'classes' => 'elementor-control-direction-ltr',
 			]
@@ -248,6 +246,9 @@ class Widget_Common extends Widget_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-widget-container' => 'transition: background {{SIZE}}s',
+				],
 			]
 		);
 
@@ -366,7 +367,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_position',
 			[
-				'label' => __( 'Custom Positioning', 'elementor' ),
+				'label' => __( 'Positioning', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -435,7 +436,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
 				'options' => [
 					'flex-start' => [
 						'title' => __( 'Start', 'elementor' ),
@@ -497,7 +497,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Horizontal Orientation', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
 				'toggle' => false,
 				'default' => 'start',
 				'options' => [
@@ -601,7 +600,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Vertical Orientation', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
 				'toggle' => false,
 				'default' => 'start',
 				'options' => [
@@ -756,6 +754,8 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}

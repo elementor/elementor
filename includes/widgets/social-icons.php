@@ -94,7 +94,6 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'social',
-				'label_block' => true,
 				'default' => [
 					'value' => 'fab fa-wordpress',
 					'library' => 'fa-brands',
@@ -118,7 +117,6 @@ class Widget_Social_Icons extends Widget_Base {
 						'github',
 						'gitlab',
 						'globe',
-						'google-plus',
 						'houzz',
 						'instagram',
 						'jsfiddle',
@@ -171,7 +169,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'label_block' => true,
 				'default' => [
 					'is_external' => 'true',
 				],
@@ -245,7 +242,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 					[
 						'social_icon' => [
-							'value' => 'fab fa-google-plus',
+							'value' => 'fab fa-youtube',
 							'library' => 'fa-brands',
 						],
 					],
@@ -562,8 +559,6 @@ class Widget_Social_Icons extends Widget_Base {
 
 				$link_key = 'link_' . $index;
 
-				$this->add_render_attribute( $link_key, 'href', $item['link']['url'] );
-
 				$this->add_render_attribute( $link_key, 'class', [
 					'elementor-icon',
 					'elementor-social-icon',
@@ -571,13 +566,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'elementor-repeater-item-' . $item['_id'],
 				] );
 
-				if ( $item['link']['is_external'] ) {
-					$this->add_render_attribute( $link_key, 'target', '_blank' );
-				}
-
-				if ( $item['link']['nofollow'] ) {
-					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
-				}
+				$this->add_link_attributes( $link_key, $item['link'] );
 
 				?>
 				<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
@@ -599,10 +588,10 @@ class Widget_Social_Icons extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<# var iconsHTML = {}; #>
 		<div class="elementor-social-icons-wrapper">

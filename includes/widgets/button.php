@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor button widget.
  *
@@ -199,7 +201,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-				'label_block' => true,
 				'fa4compatibility' => 'icon',
 			]
 		);
@@ -256,7 +257,6 @@ class Widget_Button extends Widget_Base {
 				],
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
 				'description' => __( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor' ),
 				'separator' => 'before',
 
@@ -277,7 +277,7 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button',
 			]
 		);
@@ -317,8 +317,8 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_4,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_4,
 				],
 				'selectors' => [
 					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
@@ -443,16 +443,8 @@ class Widget_Button extends Widget_Base {
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'button', 'href', $settings['link']['url'] );
+			$this->add_link_attributes( 'button', $settings['link'] );
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-link' );
-
-			if ( $settings['link']['is_external'] ) {
-				$this->add_render_attribute( 'button', 'target', '_blank' );
-			}
-
-			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'button', 'rel', 'nofollow' );
-			}
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );
@@ -484,10 +476,10 @@ class Widget_Button extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );

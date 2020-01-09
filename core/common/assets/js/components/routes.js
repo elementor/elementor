@@ -32,7 +32,7 @@ export default class extends Commands {
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
 
-		this.getComponent( route ).onCloseRoute();
+		this.getComponent( route ).onCloseRoute( route );
 	}
 
 	saveState( container ) {
@@ -59,15 +59,16 @@ export default class extends Commands {
 			return false;
 		}
 
-		if ( this.is( route, args ) ) {
+		if ( this.is( route, args ) && ! args.refresh ) {
 			return false;
 		}
 
 		const component = this.getComponent( route ),
-			container = component.getRootContainer();
+			container = component.getRootContainer(),
+			oldRoute = this.current[ container ];
 
-		if ( this.current[ container ] ) {
-			this.getComponent( this.current[ container ] ).onCloseRoute();
+		if ( oldRoute ) {
+			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
 		}
 
 		if ( ! component.isOpen || args.reOpen ) {
@@ -113,7 +114,7 @@ export default class extends Commands {
 
 	// Don't clear current route.
 	afterRun( route, args ) {
-		this.getComponent( route ).onRoute( args );
+		this.getComponent( route ).onRoute( route, args );
 	}
 
 	is( route, args = {} ) {

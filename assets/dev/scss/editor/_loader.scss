@@ -1,9 +1,6 @@
 .elementor-loader-wrapper {
-	position: absolute;
+	@include absolute-center;
 	width: 300px;
-	left: 50%;
-	top: 50%;
-	transform: translateX(-50%) translateY(-50%);
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -58,18 +55,6 @@
 	&:nth-of-type(4) {
 		bottom: 0;
 		animation-delay: -($animation-time / 4 )*3;
-	}
-}
-
-@keyframes load {
-	0% {
-		opacity: .3;
-	}
-	50% {
-		opacity: 1;
-	}
-	100% {
-		opacity: .3;
 	}
 }
 

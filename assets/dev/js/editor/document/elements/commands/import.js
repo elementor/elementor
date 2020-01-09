@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export default class extends Base {
+export class Import extends History {
 	validateArgs( args ) {
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
 
@@ -14,16 +14,18 @@ export default class extends Base {
 			type: 'add',
 			title: elementor.translate( 'template' ),
 			subTitle: model.get( 'title' ),
-			elementType: 'template',
 		};
 	}
 
 	apply( args ) {
 		const previewContainer = elementor.getPreviewContainer(),
-			{ data } = args,
-			options = args.options || {},
-			at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at;
+			{
+				data,
+				options = args.options || {},
+				at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at,
+			} = args;
 
+		// Each `data.content`.
 		Object.entries( data.content ).forEach( ( [ index, model ] ) => {
 			$e.run( 'document/elements/create', {
 				container: elementor.getPreviewContainer(),
@@ -33,8 +35,15 @@ export default class extends Base {
 		} );
 
 		if ( options.withPageSettings ) {
-			// TODO: use settings command.
-			elementor.settings.page.model.setExternalChange( data.page_settings );
+			$e.run( 'document/elements/settings', {
+				container: elementor.settings.page.getEditedView().getContainer(),
+				settings: data.page_settings,
+				options: {
+					external: true,
+				},
+			} );
 		}
 	}
 }
+
+export default Import;

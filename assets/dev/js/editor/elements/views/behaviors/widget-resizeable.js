@@ -12,14 +12,8 @@ export default class extends Marionette.Behavior {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.toggle );
 
-		const view = this.view,
-			viewSettingsChangedMethod = view.onSettingsChanged;
-
-		view.onSettingsChanged = ( ...args ) => {
-			viewSettingsChangedMethod.call( view, ...args );
-
-			this.onSettingsChanged.call( this, ...args );
-		};
+		// Save this instance for external use eg: ( hooks ).
+		this.view.options.resizeable = this;
 	}
 
 	activate() {
@@ -38,13 +32,12 @@ export default class extends Marionette.Behavior {
 
 	toggle() {
 		const editModel = this.view.getEditModel(),
-			isEditMode = 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
 			isAbsolute = editModel.getSetting( '_position' ),
 			isInline = 'initial' === editModel.getSetting( '_element_width' );
 
 		this.deactivate();
 
-		if ( isEditMode && ( isAbsolute || isInline ) && elementor.userCan( 'design' ) ) {
+		if ( ( isAbsolute || isInline ) && this.view.container.isDesignable() ) {
 			this.activate();
 		}
 	}
@@ -76,25 +69,22 @@ export default class extends Marionette.Behavior {
 		settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
 		settingToChange[ '_element_custom_width' + deviceSuffix ] = { unit: unit, size: width };
 
-		editModel.get( 'settings' ).setExternalChange( settingToChange );
+		$e.run( 'document/elements/settings', {
+			container: this.view.container,
+			settings: settingToChange,
+			options: {
+				external: true,
+			},
+		} );
 
 		this.$el.css( {
 			width: '',
 			height: '',
+			left: '',
 		} );
 	}
 
 	onResize( event ) {
 		event.stopPropagation();
-	}
-
-	onSettingsChanged( changed ) {
-		if ( changed.changed ) {
-			changed = changed.changed;
-		}
-
-		if ( undefined !== changed._position || undefined !== changed._element_width ) {
-			this.toggle();
-		}
 	}
 }

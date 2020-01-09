@@ -1,7 +1,12 @@
-import Base from '../../commands/base';
-import Settings from '../../elements/commands/settings';
+import Debounce from '../../commands/base/history/debounce';
+import ElementsSettings from '../../elements/commands/settings';
 
-export default class extends Base {
+/**
+ * The difference between 'document/elements/settings` and `document/dynamic/settings` is:
+ * that `document/elements/settings` apply settings to `container.settings` and `document/dynamic/settings` affect
+ * `container.settings.__dynamic__`, also clearing the dynamic if `args.settings` is empty.
+ */
+export class Settings extends Debounce {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
@@ -40,7 +45,7 @@ export default class extends Base {
 			};
 		} );
 
-		const subTitle = Settings.getSubTitle( args );
+		const subTitle = ElementsSettings.getSubTitle( args );
 
 		return {
 			containers,
@@ -55,6 +60,8 @@ export default class extends Base {
 		const { settings, containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			if ( ! Object.keys( settings ).length ) {
 				container.dynamic.clear();
 			} else {
@@ -67,3 +74,5 @@ export default class extends Base {
 		} );
 	}
 }
+
+export default Settings;

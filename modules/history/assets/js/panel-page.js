@@ -19,25 +19,33 @@ module.exports = Marionette.LayoutView.extend( {
 
 	currentTab: null,
 
-	initialize: function() {
+	/**
+	 * @type {Document}
+	 */
+	document: null,
+
+	initialize: function( options ) {
+		this.document = options.document || elementor.documents.getCurrent();
+
 		this.initRegionViews();
 	},
 
 	initRegionViews: function() {
-		const historyItems = elementor.history.history.getItems();
+		const historyItems = this.document.history.getItems();
 
 		this.regionViews = {
 			actions: {
-				view: function() {
+				view: () => {
 					return TabHistoryView;
 				},
 				options: {
 					collection: historyItems,
+					history: this.document.history,
 				},
 			},
 			revisions: {
 				view: () => {
-					const revisionsItems = elementor.history.revisions.getItems();
+					const revisionsItems = this.document.revisions.getItems();
 
 					if ( ! revisionsItems ) {
 						return TabRevisionsLoadingView;
@@ -48,6 +56,9 @@ module.exports = Marionette.LayoutView.extend( {
 					}
 
 					return TabRevisionsView;
+				},
+				options: {
+					document: this.document,
 				},
 			},
 		};

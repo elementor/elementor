@@ -124,37 +124,13 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( model, options ) {
-		options = options || {};
+	this.importTemplate = function( model, args = {} ) {
+		elementorCommon.helpers.softDeprecated( 'importTemplate', '2.8.0',
+			"$e.run( 'library/insert-template' )" );
 
-		self.layout.showLoadingView();
+		args.model = model;
 
-		self.requestTemplateContent( model.get( 'source' ), model.get( 'template_id' ), {
-			data: {
-				page_settings: options.withPageSettings,
-			},
-			success: function( data ) {
-				// Clone `self.modalConfig` because it deleted during the closing.
-				const importOptions = jQuery.extend( {}, self.modalConfig.importOptions );
-
-				// Hide for next open.
-				self.layout.hideLoadingView();
-
-				self.layout.hideModal();
-
-				$e.run( 'document/elements/import', {
-					model,
-					data,
-					options: importOptions,
-				} );
-			},
-			error: function( data ) {
-				self.showErrorDialog( data );
-			},
-			complete: function() {
-				self.layout.hideLoadingView();
-			},
-		} );
+		$e.run( 'library/insert-template', args );
 	};
 
 	this.saveTemplate = function( type, data ) {

@@ -1,12 +1,8 @@
-import Component from './component';
+import BaseComponent from './component';
 
-export default class extends Component {
-	getModalLayout() {
-		this.forceMethodImplementation( 'getModalLayout' );
-	}
-
-	onInit() {
-		super.onInit();
+export default class ComponentModal extends BaseComponent {
+	registerAPI() {
+		super.registerAPI();
 
 		$e.shortcuts.register( 'esc', {
 			scopes: [ this.getNamespace() ],
@@ -55,5 +51,9 @@ export default class extends Component {
 		this.layout.getModal().hide();
 
 		return true;
+	}
+
+	getModalLayout() {
+		elementorModules.ForceMethodImplementation();
 	}
 }

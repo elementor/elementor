@@ -5,6 +5,7 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryCollectionView = require( 'elementor-templates/views/parts/templates' ),
 	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
+	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
@@ -52,6 +53,12 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.getHeaderView().menuArea.reset();
 
 		this.modalContent.show( new TemplateLibraryImportView() );
+	},
+
+	showConnectView: function( args ) {
+		this.getHeaderView().menuArea.reset();
+
+		this.modalContent.show( new TemplateLibraryConnectView( args ) );
 	},
 
 	showSaveTemplateView: function( elementModel ) {

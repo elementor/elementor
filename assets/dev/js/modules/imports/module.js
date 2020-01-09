@@ -104,6 +104,7 @@ const Module = function() {
 		return message;
 	};
 
+	// TODO: This function should be deleted.
 	this.forceMethodImplementation = function( functionName ) {
 		throw new Error( this.getErrorMessage( 'forceMethodImplementation', functionName ) );
 	};
@@ -145,6 +146,9 @@ const Module = function() {
 
 		if ( -1 !== callbackIndex ) {
 			delete events[ eventName ][ callbackIndex ];
+
+			// Reset array index (for next off on same event).
+			events[ eventName ] = events[ eventName ].filter( ( val ) => val );
 		}
 
 		return self;

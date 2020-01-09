@@ -1,71 +1,119 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-// Paste.
-export default class extends Base {
+export class Paste extends History {
 	validateArgs( args ) {
-		const { storageKey = 'clipboard' } = args,
-			transferData = elementorCommon.storage.get( storageKey );
-
 		this.requireContainer( args );
 
-		if ( ! transferData.hasOwnProperty( 'containers' ) ) {
-			throw Error( `storage with key: '${ storageKey }' does not have containers` );
-		}
+		const { storageKey = 'clipboard' } = args,
+			storageData = elementorCommon.storage.get( storageKey );
+
+		this.requireArgumentType( 'storageData', 'object', { storageData } );
 	}
 
 	getHistory( args ) {
-		// History is not required.
-		return false;
+		return {
+			type: 'paste',
+			title: elementor.translate( 'elements' ),
+		};
 	}
 
 	apply( args ) {
-		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ] } = args,
-			transferData = elementorCommon.storage.get( storageKey ),
+		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ], options = {} } = args,
+			storageData = elementorCommon.storage.get( storageKey ),
 			result = [];
 
 		// Paste on "Add Section" area.
 		if ( rebuild ) {
-			containers.forEach( ( currentContainer ) => {
-				const index = 'undefined' === typeof at ? currentContainer.view.collection.length : at;
+			// Paste at each target.
+			containers.forEach( ( targetContainer ) => {
+				let index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
 
-				if ( 'section' === transferData.elementsType ) {
-					result.push( this.pasteTo( transferData, [ currentContainer ], {
-						at: index,
-						edit: false,
-					} ) );
-				} else if ( 'column' === transferData.elementsType ) {
-					const section = $e.run( 'document/elements/create', {
-						container: currentContainer,
-						model: {
-							elType: 'column',
-						},
-						options: {
-							at: index,
-							edit: false,
-						},
-					} );
+				storageData.forEach( ( model ) => {
+					switch ( model.elType ) {
+						case 'section': {
+							// If is inner create section for `inner-section`.
+							if ( model.isInner ) {
+								const section = $e.run( 'document/elements/create', {
+									container: targetContainer,
+									model: {
+										elType: 'section',
+									},
+									columns: 1,
+									options: {
+										at: index,
+										edit: false,
+									},
+								} );
 
-					result.push( this.pasteTo( transferData, [ section ] ) );
+								// `targetContainer` = first column at `section`.
+								targetContainer = section.view.children.findByIndex( 0 ).getContainer();
+							}
 
-					section.adjustColumns();
-				} else {
-					// Next code changed from original since `_checkIsEmpty()` was removed.
-					const section = $e.run( 'document/elements/create', {
-						container: currentContainer,
-						model: {
-							elType: 'section',
-						},
-						columns: 1,
-						options: {
-							at: index,
-						},
-					} );
+							// Will be not affected by hook since it always have `model.elements`.
+							result.push( this.pasteTo(
+								[ targetContainer ],
+								[ model ],
+								{
+									at: index,
+									edit: false,
+								} )
+							);
+							index++;
+						}
+						break;
 
-					result.push( this.pasteTo( transferData, [ section.view.children.first().getContainer() ] ) );
-				}
+						case 'column': {
+							// Next code changed from original since `_checkIsEmpty()` was removed.
+							const section = $e.run( 'document/elements/create', {
+								container: targetContainer,
+								model: {
+									elType: 'section',
+								},
+								columns: 0, // section with no columns.
+								options: {
+									at: index,
+									edit: false,
+								},
+							} );
+
+							result.push( this.pasteTo( [ section ], [ model ] ) );
+						}
+						break;
+
+						default:
+							// In case it widget:
+							let target;
+
+							// If you trying to paste widget on section, then paste should be at the first column.
+							if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+								target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
+							} else {
+								// Else, create section with one column for element.
+								const section = $e.run( 'document/elements/create', {
+									container: targetContainer,
+									model: {
+										elType: 'section',
+									},
+									columns: 1,
+									options: {
+										at: index,
+									},
+								} );
+
+								// Create the element in the column that just was created.
+								target = [ section.view.children.first().getContainer() ];
+							}
+
+							result.push( this.pasteTo( target, [ model ] ) );
+					}
+				} );
 			} );
 		} else {
-			result.push( this.pasteTo( transferData, containers ) );
+			if ( undefined !== at ) {
+				options.at = at;
+			}
+
+			result.push( this.pasteTo( containers, storageData, options ) );
 		}
 
 		if ( 1 === result.length ) {
@@ -75,14 +123,14 @@ export default class extends Base {
 		return result;
 	}
 
-	pasteTo( transferData, containers, options = {} ) {
+	pasteTo( targetContainers, models, options = {} ) {
 		options = Object.assign( { at: null, clone: true }, options );
 
 		const result = [];
 
-		transferData.containers.forEach( function( model ) {
+		models.forEach( ( model ) => {
 			result.push( $e.run( 'document/elements/create', {
-				containers,
+				containers: targetContainers,
 				model,
 				options,
 			} ) );
@@ -100,3 +148,5 @@ export default class extends Base {
 		return result;
 	}
 }
+
+export default Paste;

@@ -1,17 +1,30 @@
+import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
 
-export default class Container {
+/**
+ * TODO: ViewsOptions
+ * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView)} ViewsOptions
+ */
+
+export default class Container extends ArgsObject {
+	/**
+	 * Container type.
+	 *
+	 * @type {string}
+	 */
+	type;
+
 	/**
 	 * Container id.
 	 *
-	 * @type {String}
+	 * @type {string}
 	 */
 	id;
 
 	/**
-	 * Container document
+	 * Document Object.
 	 *
-	 * @type {Container}
+	 * @type  {{}}
 	 */
 	document;
 
@@ -32,7 +45,7 @@ export default class Container {
 	/**
 	 * Container view.
 	 *
-	 * @type {{}}
+	 * @type {ViewsOptions}
 	 */
 	view;
 
@@ -60,7 +73,7 @@ export default class Container {
 	/**
 	 * Container label.
 	 *
-	 * @type {String}
+	 * @type {string}
 	 */
 	label;
 
@@ -91,13 +104,20 @@ export default class Container {
 	 * Create container.
 	 *
 	 * @param {{}} args
+	 *
+	 * @throws {Error}
 	 */
 	constructor( args ) {
+		super( args );
+
+		// Validate args.
+		this.validateArgs( args );
+
 		args = Object.entries( args );
 
 		// If empty.
 		if ( 0 === args.length ) {
-			return;
+			throw Error( 'Container cannot be empty.' );
 		}
 
 		// Set properties, if not defined - keep the defaults.
@@ -109,8 +129,17 @@ export default class Container {
 			this.renderer = this;
 		}
 
-		this.dynamic = new Backbone.Model( this.model.get( '__dynamic__' ) );
+		this.document = elementor.config.document;
+		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
 		this.panel = new Panel( this );
+	}
+
+	validateArgs( args ) {
+		this.requireArgumentType( 'type', 'string', args );
+		this.requireArgumentType( 'id', 'string', args );
+
+		this.requireArgumentInstance( 'settings', Backbone.Model, args );
+		this.requireArgumentInstance( 'model', Backbone.Model, args );
 	}
 
 	/**
@@ -118,12 +147,26 @@ export default class Container {
 	 *
 	 * If the view were destroyed, try to find it again if it exists.
 	 *
+	 * TODO: Refactor.
+	 *
 	 * @returns {Container}
 	 */
 	lookup() {
 		let result = this;
 
-		if ( ! this.view.lookup ) {
+		if ( ! this.renderer ) {
+			return this;
+		}
+
+		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
+			this.renderer = this.renderer.lookup();
+		}
+
+		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
+			// Hack For repeater item the result is the parent container.
+			if ( 'repeater' === this.type ) {
+				this.settings = this.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
+			}
 			return result;
 		}
 
@@ -131,6 +174,12 @@ export default class Container {
 
 		if ( lookup ) {
 			result = lookup.getContainer();
+
+			// Hack For repeater item the result is the parent container.
+			if ( 'repeater' === this.type ) {
+				this.settings = result.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
+				return this;
+			}
 		}
 
 		return result;
@@ -139,22 +188,25 @@ export default class Container {
 	/**
 	 * Function render().
 	 *
-	 * Tell the `this.renderer` view.renderOnChange.
+	 * Call view render.
+	 *
+	 * Run's `this.renderer.view.renderOnChange( this.settings ) `.
+	 * When `this.renderer` exist.
+	 *
 	 */
 	render() {
 		if ( ! this.renderer ) {
 			return;
 		}
 
-		/**
-		 * TODO: remove, temp fix:
-		 * Steps to reproduce: Dynamic in repeater
-		 * Create a Form - change the default value of name to post-date, change the post-date format.
-		 */
-		if ( 'object' !== typeof this.renderer.view ) {
-			return;
-		}
-
 		this.renderer.view.renderOnChange( this.settings );
+	}
+
+	isEditable() {
+		return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ) && 'open' === this.document.editorStatus;
+	}
+
+	isDesignable() {
+		return elementor.userCan( 'design' ) && this.isEditable();
 	}
 }

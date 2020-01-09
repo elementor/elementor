@@ -1,4 +1,4 @@
-export default class extends elementorModules.Module {
+export default class BaseComponent extends elementorModules.Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
 			this.manager = args.manager;
@@ -14,7 +14,7 @@ export default class extends elementorModules.Module {
 		this.history = [];
 	}
 
-	onInit() {
+	registerAPI() {
 		jQuery.each( this.getTabs(), ( tab ) => this.registerTabRoute( tab ) );
 
 		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
@@ -23,7 +23,7 @@ export default class extends elementorModules.Module {
 	}
 
 	getNamespace() {
-		throw Error( 'getNamespace must be override.' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	getRootContainer() {
@@ -31,7 +31,7 @@ export default class extends elementorModules.Module {
 		return parts[ 0 ];
 	}
 
-	defaultCommands() {
+	defaultTabs() {
 		return {};
 	}
 
@@ -39,7 +39,7 @@ export default class extends elementorModules.Module {
 		return {};
 	}
 
-	defaultTabs() {
+	defaultCommands() {
 		return {};
 	}
 
@@ -111,12 +111,16 @@ export default class extends elementorModules.Module {
 		return $e.components.isActive( this.getNamespace() );
 	}
 
-	onRoute() {
+	onRoute( route ) {
+		elementorCommon.elements.$body.addClass( this.getBodyClass( route ) );
 		this.activate();
+		this.trigger( 'route/open', route );
 	}
 
-	onCloseRoute() {
+	onCloseRoute( route ) {
+		elementorCommon.elements.$body.removeClass( this.getBodyClass( route ) );
 		this.inactivate();
+		this.trigger( 'route/close', route );
 	}
 
 	setDefaultRoute( route ) {
@@ -179,5 +183,29 @@ export default class extends elementorModules.Module {
 			.removeClass( 'elementor-active' )
 			.filter( '[data-tab="' + tab + '"]' )
 			.addClass( 'elementor-active' );
+	}
+
+	getBodyClass( route ) {
+		return 'e-route-' + route.replace( /\//g, '-' );
+	}
+
+	/**
+	 * If command includes uppercase character convert it to lowercase and add `-`.
+	 * e.g: `CopyAll` is converted to `copy-all`.
+	 */
+	normalizeCommandName( commandName ) {
+		return commandName.replace( /[A-Z]/g, ( match, offset ) => ( offset > 0 ? '-' : '' ) + match.toLowerCase() );
+	}
+
+	importCommands( commandsFromImport ) {
+		const commands = {};
+
+		// Convert `Commands` to `ComponentBase` workable format.
+		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
+			const command = this.normalizeCommandName( className );
+			commands[ command ] = ( args ) => ( new Class( args ) ).run();
+		} );
+
+		return commands;
 	}
 }

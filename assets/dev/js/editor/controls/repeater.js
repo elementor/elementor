@@ -31,12 +31,22 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	childViewOptions: function( rowModel, index ) {
 		const elementContainer = this.getOption( 'container' );
 
+		let rowId = rowModel.get( '_id' );
+
+		// TODO: Temp backwards compatibility. since 2.8.0.
+		if ( ! rowId ) {
+			rowId = 'bc-' + elementor.helpers.getUniqueID();
+			rowModel.set( '_id', rowId );
+		}
+
 		elementContainer.children[ index ] = new elementorModules.editor.Container( {
-			id: rowModel.get( '_id' ),
-			document: elementContainer.document,
-			model: rowModel,
+			type: 'repeater',
+			id: rowId,
+			model: new Backbone.Model( {
+				name: this.model.get( 'name' ),
+			} ),
 			settings: rowModel,
-			view: 'TODO: @see repeater.js',
+			view: elementContainer.view,
 			parent: elementContainer,
 			label: elementContainer.label + ' ' + elementor.translate( 'Item' ) + `#${ index + 1 }`,
 			controls: rowModel.options.controls,
@@ -52,12 +62,17 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	createItemModel: function( attrs, options, controlView ) {
+		options.controls = controlView.model.get( 'fields' );
+
 		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 
 	fillCollection: function() {
+		// TODO: elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+
 		var controlName = this.model.get( 'name' );
-		this.collection = this.elementSettingsModel.get( controlName );
+		this.collection = settings.get( controlName );
 
 		// Hack for history redo/undo
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
@@ -68,11 +83,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			} );
 
 			// Set the value silent
-			this.elementSettingsModel.set( controlName, this.collection, { silent: true } );
+			settings.set( controlName, this.collection, { silent: true } );
 		}
 
 		// Reset children.
-		this.getOption( 'container' ).children = [];
+		// TODO: Temp backwards compatibility since 2.8.0.
+		if ( this.container ) {
+			this.container.children = [];
+		}
 	},
 
 	initialize: function() {
@@ -173,7 +191,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		const oldIndex = ui.item.data( 'oldIndex' ),
 			newIndex = ui.item.index();
 
-		$e.run( 'document/elements/repeater/move', {
+		$e.run( 'document/repeater/move', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			sourceIndex: oldIndex,
@@ -190,11 +208,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		const defaults = {};
 
 		// Get default fields.
-		Object.entries( this.model.get( 'fields' ) ).forEach( ( [ key, field ] ) => {
-			defaults[ key ] = field.default;
+		_.each( this.model.get( 'fields' ), ( field ) => {
+			defaults[ field.name ] = field.default;
 		} );
 
-		const newModel = $e.run( 'document/elements/repeater/insert', {
+		const newModel = $e.run( 'document/repeater/insert', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			model: defaults,
@@ -209,7 +227,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			delete this.currentEditableChild;
 		}
 
-		$e.run( 'document/elements/repeater/remove', {
+		$e.run( 'document/repeater/remove', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,
@@ -222,7 +240,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
-		$e.run( 'document/elements/repeater/duplicate', {
+		$e.run( 'document/repeater/duplicate', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,

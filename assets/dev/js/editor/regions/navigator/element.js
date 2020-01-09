@@ -1,5 +1,6 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
+import DocumentUtils from 'elementor-document/utils/helpers';
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -193,14 +194,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	dragShouldBeIgnored( draggedModel ) {
-		const childTypes = elementor.helpers.getElementChildType( this.model.get( 'elType' ) ),
-			draggedElType = draggedModel.get( 'elType' );
-
-		if ( 'section' === draggedElType && ! draggedModel.get( 'isInner' ) ) {
-			return true;
-		}
-
-		return ! childTypes || -1 === childTypes.indexOf( draggedModel.get( 'elType' ) );
+		return ! DocumentUtils.isValidChild( draggedModel, this.model );
 	}
 
 	addEditingClass() {
@@ -273,7 +267,7 @@ export default class extends Marionette.CompositeView {
 			this.ui.indicators.append( $indicator );
 
 			// Added delay of 500ms because the indicators bar has a CSS transition attribute of .5s
-			$indicator.tipsy( { delayIn: 300 } );
+			$indicator.tipsy( { delayIn: 300, gravity: 's' } );
 		} );
 	}
 

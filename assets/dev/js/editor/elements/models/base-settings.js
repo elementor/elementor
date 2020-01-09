@@ -21,6 +21,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			defaults = {};
 
 		_.each( self.controls, function( control ) {
+			// Check features since they does not exist in tests.
 			var isUIControl = control.features && -1 !== control.features.indexOf( 'ui' );
 
 			if ( isUIControl ) {
@@ -87,6 +88,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 								options.controls[ item.name ] = item;
 							} );
 
+							// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
 							if ( ! attributes._id ) {
 								attributes._id = elementor.helpers.getUniqueID();
 							}

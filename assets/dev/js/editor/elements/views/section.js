@@ -1,19 +1,13 @@
-var BaseElementView = require( 'elementor-elements/views/base' ),
-	SectionView;
-
 import AddSectionView from '../../views/add-section/inline';
 
-SectionView = BaseElementView.extend( {
-	// TODO: defaults should be static.
-	defaultInnerSectionColumns: 2,
-	defaultMinColumnSize: 2,
+const BaseElementView = require( 'elementor-elements/views/base' );
 
+const DEFAULT_INNER_SECTION_COLUMNS = 2,
+	DEFAULT_MIN_COLUMN_SIZE = 2,
+	DEFAULT_MAX_COLUMNS = 10;
+
+const SectionView = BaseElementView.extend( {
 	childViewContainer: '> .elementor-container > .elementor-row',
-
-	errors: {
-		columnWidthTooLarge: 'New column width is too large',
-		columnWidthTooSmall: 'New column width is too small',
-	},
 
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
@@ -22,6 +16,21 @@ SectionView = BaseElementView.extend( {
 	_checkIsFull: function() {
 		// TODO: should be part of $e.events.
 		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
+	},
+
+	addChildModel: function( model ) {
+		/// TODO: maybe should be part of $e.hooks.
+		const isModelInstance = model instanceof Backbone.Model,
+			isInner = this.isInner();
+
+		if ( isModelInstance ) {
+			// TODO: change to command.
+			model.set( 'isInner', isInner );
+		} else {
+			model.isInner = isInner;
+		}
+
+		return BaseElementView.prototype.addChildModel.apply( this, arguments );
 	},
 
 	className: function() {
@@ -50,8 +59,6 @@ SectionView = BaseElementView.extend( {
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
-
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
 	},
 
 	getEditButtons: function() {
@@ -70,7 +77,7 @@ SectionView = BaseElementView.extend( {
 			icon: 'handle',
 		};
 
-		if ( elementor.config.editButtons ) {
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
 				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
 				icon: 'clone',
@@ -141,7 +148,18 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
-	setStructure: function( structure ) {
+	getNeighborContainer( container ) {
+		const parentView = container.parent.view,
+			nextView = parentView.getNextColumn( container.view ) || parentView.getPreviousColumn( container.view );
+
+		if ( ! nextView ) {
+			return false;
+		}
+
+		return nextView.getContainer();
+	},
+
+	setStructure: function( structure, shouldAdjustColumns = true ) {
 		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
 
 		if ( +parsedStructure.columnsCount !== this.collection.length ) {
@@ -154,7 +172,9 @@ SectionView = BaseElementView.extend( {
 			options: { external: true },
 		} );
 
-		this.adjustColumns();
+		if ( shouldAdjustColumns ) {
+			this.adjustColumns();
+		}
 	},
 
 	adjustColumns: function() {
@@ -173,8 +193,8 @@ SectionView = BaseElementView.extend( {
 		} );
 	},
 
-	resetLayout: function() {
-		this.setStructure( this.getDefaultStructure() );
+	resetLayout: function( shouldAdjustColumns = true ) {
+		this.setStructure( this.getDefaultStructure(), shouldAdjustColumns );
 	},
 
 	resetColumnsCustomSize: function() {
@@ -186,17 +206,13 @@ SectionView = BaseElementView.extend( {
 				},
 				options: {
 					external: true,
-					debounceHistory: true,
 				},
 			} );
 		} );
 	},
 
 	isCollectionFilled: function() {
-		var MAX_SIZE = 10,
-			columnsCount = this.collection.length;
-
-		return ( MAX_SIZE <= columnsCount );
+		return ( DEFAULT_MAX_COLUMNS <= this.collection.length );
 	},
 
 	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {
@@ -213,57 +229,6 @@ SectionView = BaseElementView.extend( {
 		columnView.ui.percentsTooltip.hide();
 
 		nextColumnView.ui.percentsTooltip.hide();
-	},
-
-	resizeColumn: function( childView, currentSize, newSize, resizeSource = true, debounceHistory = true ) {
-		const nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
-
-		if ( ! nextChildView ) {
-			throw new ReferenceError( 'There is not any next column' );
-		}
-
-		const $nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[ 0 ].getBoundingClientRect().width ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		if ( nextElementNewSize < this.defaultMinColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooLarge );
-		}
-
-		if ( newSize < this.defaultMinColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooSmall );
-		}
-
-		const currentColumnContainer = childView.getContainer(),
-			nextColumnContainer = nextChildView.getContainer(),
-			containers = [ nextColumnContainer ],
-			settings = {
-				[ nextColumnContainer.id ]: {
-					_inline_size: nextElementNewSize,
-				},
-			};
-
-		if ( resizeSource ) {
-			containers.push( currentColumnContainer );
-			settings[ currentColumnContainer.id ] = {
-				_inline_size: newSize,
-			};
-		}
-
-		$e.run( 'document/elements/settings', {
-			// `nextColumn` must be first.
-			containers,
-			settings,
-			isMultiSettings: true,
-			options: {
-				debounceHistory,
-				external: true,
-				history: {
-					elementType: 'column',
-					title: elementor.config.elements.column.controls._inline_size.label,
-				},
-			},
-		} );
 	},
 
 	destroyAddSectionView: function() {
@@ -285,10 +250,9 @@ SectionView = BaseElementView.extend( {
 			return;
 		}
 
-		var myIndex = this.model.collection.indexOf( this.model ),
-			addSectionView = new AddSectionView( {
-				at: myIndex,
-			} );
+		const addSectionView = new AddSectionView( {
+			at: this.model.collection.indexOf( this.model ),
+		} );
 
 		addSectionView.render();
 
@@ -343,9 +307,6 @@ SectionView = BaseElementView.extend( {
 			settings: {
 				_inline_size: this.getColumnPercentSize( ui.element, ui.size.width ),
 			},
-			options: {
-				debounceHistory: true,
-			},
 		} );
 	},
 
@@ -357,3 +318,7 @@ SectionView = BaseElementView.extend( {
 } );
 
 module.exports = SectionView;
+
+module.exports.DEFAULT_INNER_SECTION_COLUMNS = DEFAULT_INNER_SECTION_COLUMNS;
+module.exports.DEFAULT_MIN_COLUMN_SIZE = DEFAULT_MIN_COLUMN_SIZE;
+module.exports.DEFAULT_MAX_COLUMNS = DEFAULT_MAX_COLUMNS;

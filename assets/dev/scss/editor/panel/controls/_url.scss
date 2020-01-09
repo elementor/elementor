@@ -25,8 +25,7 @@
 			position: absolute;
 			top: 0;
 			right: 0;
-			height: 27px;
-			width: 40px;
+			height: $control-unit;
 			border-left: 1px solid $editor-lightest;
 			cursor: pointer;
 			font-size: 10px;
@@ -52,15 +51,6 @@
 
 			&-options {
 				padding-top: 10px;
-			}
-		}
-
-		&-option {
-			font-size: 12px;
-			line-height: 1.2;
-
-			&:not(:first-child) {
-				padding-top: 5px;
 			}
 		}
 	}

@@ -123,7 +123,6 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['background'] = [
 			'label' => _x( 'Background Type', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
-			'label_block' => false,
 			'render_type' => 'ui',
 		];
 
@@ -268,14 +267,14 @@ class Group_Control_Background extends Group_Control_Base {
 			'responsive' => true,
 			'options' => [
 				'' => _x( 'Default', 'Background Control', 'elementor' ),
-				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
-				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
-				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
-				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
 				'center center' => _x( 'Center Center', 'Background Control', 'elementor' ),
+				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
 				'center right' => _x( 'Center Right', 'Background Control', 'elementor' ),
-				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
+				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
+				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
+				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
 				'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
+				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
 				'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
 				'initial' => _x( 'Custom', 'Background Control', 'elementor' ),
 
@@ -610,7 +609,6 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'description' => __( 'This cover image will replace the background video in case that the video could not be loaded.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
-			'label_block' => true,
 			'condition' => [
 				'background' => [ 'video' ],
 			],
@@ -678,6 +676,50 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'slideshow' ],
 			],
 			'frontend_available' => true,
+		];
+
+		$fields['slideshow_background_size'] = [
+			'label' => __( 'Background Size', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'responsive' => true,
+			'default' => '',
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'auto' => __( 'Auto', 'elementor' ),
+				'cover' => __( 'Cover', 'elementor' ),
+				'contain' => __( 'Contain', 'elementor' ),
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-size: {{VALUE}};',
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+		];
+
+		$fields['slideshow_background_position'] = [
+			'label' => __( 'Background Position', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => '',
+			'responsive' => true,
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'center center' => _x( 'Center Center', 'Background Control', 'elementor' ),
+				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
+				'center right' => _x( 'Center Right', 'Background Control', 'elementor' ),
+				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
+				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
+				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
+				'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
+				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
+				'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-position: {{VALUE}};',
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
 		];
 
 		$fields['slideshow_ken_burns'] = [

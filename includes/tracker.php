@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Base\Document;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -10,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor tracker.
  *
- * Elementor tracker handler class is responsible for sending anonymous plugin
+ * Elementor tracker handler class is responsible for sending non-sensitive plugin
  * data to Elementor servers for users that actively allowed data tracking.
  *
  * @since 1.0.0
@@ -182,15 +180,13 @@ class Tracker {
 		if ( 'opt_into' === $_GET['elementor_tracker'] ) {
 			check_admin_referer( 'opt_into' );
 
-			update_option( 'elementor_allow_tracking', 'yes' );
-			self::send_tracking_data( true );
+			self::set_opt_in( true );
 		}
 
 		if ( 'opt_out' === $_GET['elementor_tracker'] ) {
 			check_admin_referer( 'opt_out' );
 
-			update_option( 'elementor_allow_tracking', 'no' );
-			update_option( 'elementor_tracker_notice', '1' );
+			self::set_opt_in( false );
 		}
 
 		wp_redirect( remove_query_arg( 'elementor_tracker' ) );
@@ -246,12 +242,12 @@ class Tracker {
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
-		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
+		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our non-sensitive plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
 
 		/**
 		 * Tracker admin description text.
 		 *
-		 * Filters the admin notice text for anonymous data collection.
+		 * Filters the admin notice text for non-sensitive data collection.
 		 *
 		 * @since 1.0.0
 		 *
@@ -284,6 +280,16 @@ class Tracker {
 	 */
 	public static function is_notice_shown() {
 		return self::$notice_shown;
+	}
+
+	public static function set_opt_in( $value ) {
+		if ( $value ) {
+			update_option( 'elementor_allow_tracking', 'yes' );
+			self::send_tracking_data( true );
+		} else {
+			update_option( 'elementor_allow_tracking', 'no' );
+			update_option( 'elementor_tracker_notice', '1' );
+		}
 	}
 
 	/**
@@ -346,13 +352,13 @@ class Tracker {
 	 * Retrieve the number of posts using Elementor.
 	 *
 	 * @since 2.0.0
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @return array The number of posts using Elementor grouped by post types
 	 *               and post status.
 	 */
-	private static function get_posts_usage() {
+	public static function get_posts_usage() {
 		global $wpdb;
 
 		$usage = [];
@@ -382,13 +388,13 @@ class Tracker {
 	 * Retrieve the number of Elementor library items saved.
 	 *
 	 * @since 2.0.0
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @return array The number of Elementor library items grouped by post types
 	 *               and meta value.
 	 */
-	private static function get_library_usage() {
+	public static function get_library_usage() {
 		global $wpdb;
 
 		$usage = [];

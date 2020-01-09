@@ -123,9 +123,10 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<!--more {{ settings.link_text }}-->
 		<?php

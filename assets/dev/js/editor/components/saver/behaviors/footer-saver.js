@@ -21,6 +21,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	initialize: function() {
+		// TODO: $e.
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
@@ -115,7 +116,7 @@ module.exports = Marionette.Behavior.extend( {
 				elementor.saver.isSaving = false;
 			}
 
-			elementor.saver.doAutoSave();
+			$e.run( 'document/save/auto' );
 		}
 	},
 
@@ -124,11 +125,11 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
-		elementor.saver.defaultSave();
+		$e.run( 'document/save/default' );
 	},
 
 	onClickMenuSaveDraft: function() {
-		elementor.saver.saveDraft();
+		$e.run( 'document/save/draft' );
 	},
 
 	setMenuItems: function( postStatus ) {
@@ -139,13 +140,13 @@ module.exports = Marionette.Behavior.extend( {
 			case 'private':
 				publishLabel = 'update';
 
-				if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
+				if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
 					this.activateSaveButtons( true );
 				}
 
 				break;
 			case 'draft':
-				if ( ! elementor.config.current_user_can_publish ) {
+				if ( ! elementor.config.document.user.can_publish ) {
 					publishLabel = 'submit';
 				}
 
@@ -153,7 +154,7 @@ module.exports = Marionette.Behavior.extend( {
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( ! elementor.config.current_user_can_publish ) {
+				if ( ! elementor.config.document.user.can_publish ) {
 					publishLabel = 'update';
 				}
 				break;

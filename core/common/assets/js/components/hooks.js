@@ -1,115 +1,112 @@
-export default class extends elementorModules.Module {
-	constructor( ...args ) {
-		super( ...args );
+import Callbacks from './base/callbacks.js';
 
-		this.current = null;
+export default class Events extends Callbacks {
+	constructor( ... args ) {
+		super( ... args );
 
-		this.hooks = {
-			dependency: {},
-			after: {},
-		};
+		this.callbacks.dependency = {};
+
+		this.depth.dependency = {};
 	}
 
-	getAll() {
-		const result = {};
-
-		Object.keys( this.hooks ).forEach( ( event ) => {
-			if ( ! result[ event ] ) {
-				result[ event ] = [];
-			}
-
-			Object.keys( this.hooks[ event ] ).forEach( ( hook ) => {
-				result[ event ].push( {
-					command: hook,
-					callbacks: this.hooks[ event ][ hook ],
-				} );
-			} );
-		} );
-
-		return result;
+	getType() {
+		return 'hook';
 	}
 
-	getCurrent() {
-		return this.current;
-	}
+	runCallback( event, callback, args, result ) {
+		switch ( event ) {
+			case 'dependency': {
+				if ( ! callback.callback( args ) ) {
+					this.depth[ event ][ callback.id ]--;
 
-	checkEvent( event ) {
-		if ( -1 === Object.keys( this.hooks ).indexOf( event ) ) {
-			throw Error( `event: '${ event }' is not available.` );
-		}
-	}
-
-	register( event, command, id, callback ) {
-		this.checkEvent( event );
-
-		if ( ! this.hooks[ event ][ command ] ) {
-			this.hooks[ event ][ command ] = [];
-		}
-
-		return this.hooks[ event ][ command ].push( {
-			id,
-			callback,
-		} );
-	}
-
-	registerDependency( command, id, callback ) {
-		return this.register( 'dependency', command, id, callback );
-	}
-
-	registerAfter( command, id, callback ) {
-		return this.register( 'after', command, id, callback );
-	}
-
-	runDependency( command, args, then ) {
-		const hooks = this.hooks.dependency[ command ];
-
-		let isBreak = false;
-
-		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
-			this.onRun( command, args, 'dependency' );
-
-			this.current = command;
-
-			for ( const i in hooks ) {
-				const hook = hooks[ i ];
-
-				this.onCallback( command, args, 'dependency', hook.id );
-
-				if ( ! hook.callback( args ) ) {
-					throw 'Break-Hook';
+					throw new elementorModules.common.HookBreak;
 				}
 			}
+			break;
+
+			case 'after': {
+				callback.callback( args, result );
+			}
+			break;
+
+			default:
+				return false;
 		}
+
+		return true;
 	}
 
-	runAfter( command, args, result ) {
-		const hooks = this.hooks.after[ command ];
-
-		if ( elementor.history.history.getActive() && hooks && hooks.length ) {
-			this.onRun( command, args, 'after' );
-
-			this.current = command;
-
-			for ( const i in hooks ) {
-				this.onCallback( command, args, 'after', hooks[ i ].id );
-
-				hooks[ i ].callback( args, result );
-			}
-		}
+	shouldRun( callbacks ) {
+		return super.shouldRun( callbacks ) && elementor.documents.getCurrent().history.getActive();
 	}
 
 	onRun( command, args, event ) {
 		if ( ! $e.devTools ) {
 			return;
 		}
-		$e.devTools.log.log( `%c [${ event }] HOOK: '${ command } ' ->`, 'color: yellow;font-weight: bold', args );
+
+		// TODO: $e.devTools.hooks.run
+		$e.devTools.log.hookRun( command, args, event );
 	}
 
 	onCallback( command, args, event, id ) {
 		if ( ! $e.devTools ) {
 			return;
 		}
-		$e.devTools.log.log( `%c [${ event }] CALLBACK: '${ command }:${ id } ' ->`, 'color: #ff7800;font-weight: bold', args );
+
+		// TODO: $e.devTools.hooks.callback
+		$e.devTools.log.hookCallback( command, args, event, id );
+	}
+
+	/**
+	 * Function registerAfter().
+	 *
+	 * Register the hook in after event.
+	 *
+	 * @param {CallbackBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerAfter( instance ) {
+		return this.register( 'after', instance );
+	}
+
+	/**
+	 * Function registerDependency().
+	 *
+	 * Register the hook in dependency event.
+	 *
+	 * @param {CallbackBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerDependency( instance ) {
+		return this.register( 'dependency', instance );
+	}
+
+	/**
+	 * Function runDependency().
+	 *
+	 * Run the hook as dependency.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runDependency( command, args ) {
+		this.run( 'dependency', command, args );
+	}
+
+	/**
+	 * Function runAfter().
+	 *
+	 * Run the hook as after.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} result
+	 */
+	runAfter( command, args, result ) {
+		this.run( 'after', command, args, result );
 	}
 }
 

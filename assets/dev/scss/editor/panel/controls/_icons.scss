@@ -3,10 +3,7 @@
 	.elementor-control-media__preview {
 
 		> * {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
+			@include absolute-center;
 		}
 
 		i {
@@ -16,6 +13,13 @@
 
 		svg {
 			height: 75%;
+		}
+	}
+
+	.elementor-control-icons--inline__svg {
+
+		i.eicon-upload {
+			font-size: 15px;
 		}
 	}
 }

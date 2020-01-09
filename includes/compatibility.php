@@ -62,8 +62,10 @@ class Compatibility {
 			return;
 		}
 
-		$replacement = "`elementor/element/wp-post/{$section_id}/{$current_sub_action}` or `elementor/element/wp-page/{$section_id}/{$current_sub_action}`";
-		_deprecated_hook( $deprecated_action, '2.7.0', $replacement );
+		// TODO: Hard deprecation on 3.1.0.
+		// $replacement = "`elementor/element/wp-post/{$section_id}/{$current_sub_action}` or `elementor/element/wp-page/{$section_id}/{$current_sub_action}`";
+		// _deprecated_hook( $deprecated_action, '2.7.0', $replacement );
+
 		do_action( $deprecated_action, $instance, $section_id, $args );
 	}
 
@@ -144,18 +146,6 @@ class Compatibility {
 		if ( defined( 'NGG_PLUGIN_VERSION' ) ) {
 			add_filter( 'elementor/document/urls/edit', function( $edit_link ) {
 				return add_query_arg( 'display_gallery_iframe', '', $edit_link );
-			} );
-		}
-
-		// Hack for Ninja Forms.
-		if ( class_exists( '\Ninja_Forms' ) && class_exists( '\NF_Display_Render' ) ) {
-			add_action( 'elementor/preview/enqueue_styles', function() {
-				ob_start();
-				\NF_Display_Render::localize( 0 );
-
-				ob_clean();
-
-				wp_add_inline_script( 'nf-front-end', 'var nfForms = nfForms || [];' );
 			} );
 		}
 

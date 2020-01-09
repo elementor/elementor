@@ -20,14 +20,14 @@ class Usage_Reporter extends Base_Reporter {
 	public function get_title() {
 		$title = 'Elements Usage';
 
-		if ( 'raw' !== $this->_properties['format'] && empty( $_GET[ self::RECALC_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
+		if ( 'html' === $this->_properties['format'] && empty( $_GET[ self::RECALC_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$nonce = wp_create_nonce( self::RECALC_ACTION );
 			$url = add_query_arg( [
 				self::RECALC_ACTION => 1,
 				'_wpnonce' => $nonce,
 			] );
 
-			$title .= '<a id="elementor-usage-recalc" href="' . $url . '#elementor-usage-recalc" class="box-title-tool">Recalc</a>';
+			$title .= '<a id="elementor-usage-recalc" href="' . $url . '#elementor-usage-recalc" class="box-title-tool">Recalculate</a>';
 		}
 
 		return $title;
@@ -51,12 +51,16 @@ class Usage_Reporter extends Base_Reporter {
 			}
 
 			$module->recalc_usage();
+
+			wp_safe_redirect( remove_query_arg( self::RECALC_ACTION ) );
+
+			die;
 		}
 
 		$usage = '';
 
 		foreach ( $module->get_formatted_usage() as $doc_type => $data ) {
-			$usage .= '<tr><td>' . $data['title'] . '</td><td>';
+			$usage .= '<tr><td>' . $data['title'] . ' ( ' . $data['count'] . ' )</td><td>';
 
 			foreach ( $data['elements'] as $element => $count ) {
 				$usage .= $element . ': ' . $count . PHP_EOL;
@@ -76,7 +80,7 @@ class Usage_Reporter extends Base_Reporter {
 		$usage = PHP_EOL;
 
 		foreach ( $module->get_formatted_usage( 'raw' ) as $doc_type => $data ) {
-			$usage .= "\t{$data['title']}" . PHP_EOL;
+			$usage .= "\t{$data['title']} : " . $data['count'] . PHP_EOL;
 
 			foreach ( $data['elements'] as $element => $count ) {
 				$usage .= "\t\t{$element} : {$count}" . PHP_EOL;

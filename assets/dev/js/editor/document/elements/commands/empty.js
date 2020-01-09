@@ -1,6 +1,6 @@
-import Base from '../../commands/base';
+import History from '../../commands/base/history';
 
-export default class extends Base {
+export class Empty extends History {
 	static restore( historyItem, isRedo ) {
 		if ( isRedo ) {
 			$e.run( 'document/elements/empty', { force: true } );
@@ -17,7 +17,6 @@ export default class extends Base {
 		if ( args.force ) {
 			return {
 				type: 'remove',
-				elementType: 'section',
 				title: elementor.translate( 'all_content' ),
 				data: elementor.elements ? elementor.elements.toJSON() : null,
 				restore: this.constructor.restore,
@@ -36,4 +35,12 @@ export default class extends Base {
 
 		elementor.getClearPageDialog().show();
 	}
+
+	isDataChanged() {
+		if ( this.args.force ) {
+			return true;
+		}
+	}
 }
+
+export default Empty;

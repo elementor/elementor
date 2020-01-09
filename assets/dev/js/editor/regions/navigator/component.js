@@ -1,4 +1,6 @@
-export default class extends elementorModules.common.Component {
+import BaseComponent from 'elementor-common/components/component';
+
+export default class Component extends BaseComponent {
 	getNamespace() {
 		return 'navigator';
 	}
@@ -27,7 +29,7 @@ export default class extends elementorModules.common.Component {
 		return {
 			toggle: {
 				keys: 'ctrl+i',
-				dependency: () => 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
+				dependency: () => elementor.getPreviewContainer().isEditable(),
 			},
 		};
 	}

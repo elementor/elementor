@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor image box widget.
  *
@@ -457,8 +459,8 @@ class Widget_Image_Box extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 			]
 		);
@@ -468,7 +470,7 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -491,8 +493,8 @@ class Widget_Image_Box extends Widget_Base {
 					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 			]
 		);
@@ -502,7 +504,7 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -520,20 +522,12 @@ class Widget_Image_Box extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		$has_content = ! empty( $settings['title_text'] ) || ! empty( $settings['description_text'] );
+		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
 
 		$html = '<div class="elementor-image-box-wrapper">';
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
-
-			if ( $settings['link']['is_external'] ) {
-				$this->add_render_attribute( 'link', 'target', '_blank' );
-			}
-
-			if ( ! empty( $settings['link']['nofollow'] ) ) {
-				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
-			}
+			$this->add_link_attributes( 'link', $settings['link'] );
 		}
 
 		if ( ! empty( $settings['image']['url'] ) ) {
@@ -557,7 +551,7 @@ class Widget_Image_Box extends Widget_Base {
 		if ( $has_content ) {
 			$html .= '<div class="elementor-image-box-content">';
 
-			if ( ! empty( $settings['title_text'] ) ) {
+			if ( ! Utils::is_empty( $settings['title_text'] ) ) {
 				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
 
 				$this->add_inline_editing_attributes( 'title_text', 'none' );
@@ -571,7 +565,7 @@ class Widget_Image_Box extends Widget_Base {
 				$html .= sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['title_size'], $this->get_render_attribute_string( 'title_text' ), $title_html );
 			}
 
-			if ( ! empty( $settings['description_text'] ) ) {
+			if ( ! Utils::is_empty( $settings['description_text'] ) ) {
 				$this->add_render_attribute( 'description_text', 'class', 'elementor-image-box-description' );
 
 				$this->add_inline_editing_attributes( 'description_text' );
@@ -592,10 +586,10 @@ class Widget_Image_Box extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 		var html = '<div class="elementor-image-box-wrapper">';

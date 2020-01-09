@@ -1,4 +1,5 @@
 import Component from './component';
+import Document from 'elementor-document/document';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
@@ -7,31 +8,6 @@ module.exports = BaseSettings.extend( {
 		BaseSettings.prototype.onInit.apply( this );
 
 		$e.components.register( new Component( { manager: this } ) );
-	},
-
-	getEditedView() {
-		const editModel = new Backbone.Model( {
-			id: 'document',
-			elType: 'document',
-			settings: elementor.settings.page.model,
-		} );
-
-		const container = new elementorModules.editor.Container( {
-			id: editModel.id,
-			document: elementor.getPreviewContainer(),
-			model: editModel,
-			settings: editModel.get( 'settings' ),
-			view: 'TODO: @see page/manager.js',
-			label: elementor.config.document.panel.title,
-			controls: editModel.controls,
-			renderer: false,
-		} );
-
-		return {
-			getContainer: () => container,
-			getEditModel: () => editModel,
-			model: editModel,
-		};
 	},
 
 	save: function() {},
@@ -44,13 +20,16 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			elementor.saver.saveAutoSave( {
-				onSuccess: function() {
-					elementor.reloadPreview();
+			$e.run( 'document/save/auto', {
+				force: true,
+				options: {
+					onSuccess: function() {
+						elementor.reloadPreview();
 
-					elementor.once( 'preview:loaded', function() {
-						$e.route( 'panel/page-settings/settings' );
-					} );
+						elementor.once( 'preview:loaded', function() {
+							$e.route( 'panel/page-settings/settings' );
+						} );
+					},
 				},
 			} );
 		},
@@ -66,5 +45,43 @@ module.exports = BaseSettings.extend( {
 		data.id = elementor.config.document.id;
 
 		return data;
+	},
+
+	// Emulate an element view/model structure with the parts needed for a container.
+	getEditedView() {
+		if ( this.editedView ) {
+			return this.editedView;
+		}
+
+		const id = this.getContainerId(),
+			editModel = new Backbone.Model( {
+				id,
+				elType: id,
+				settings: this.model,
+				elements: elementor.elements,
+			} );
+
+		const container = new elementorModules.editor.Container( {
+			type: id,
+			id: editModel.id,
+			model: editModel,
+			settings: editModel.get( 'settings' ),
+			label: elementor.config.document.panel.title,
+			controls: this.model.controls,
+			renderer: false,
+			children: elementor.elements,
+		} );
+
+		this.editedView = {
+			getContainer: () => container,
+			getEditModel: () => editModel,
+			model: editModel,
+		};
+
+		return this.editedView;
+	},
+
+	getContainerId() {
+		return 'document';
 	},
 } );

@@ -219,7 +219,6 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'autocomplete' => false,
 				'show_external' => false,
-				'label_block' => true,
 				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
@@ -276,6 +275,17 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+			]
+		);
+
+		$this->add_control(
+			'play_on_mobile',
+			[
+				'label' => __( 'Play on Mobile', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'autoplay' => 'yes',
+				],
 			]
 		);
 
@@ -908,6 +918,10 @@ class Widget_Video extends Widget_Base {
 
 		if ( $settings['autoplay'] && ! $this->has_image_overlay() ) {
 			$params['autoplay'] = '1';
+
+			if ( $settings['play_on_mobile'] ) {
+				$params['playsinline'] = '1';
+			}
 		}
 
 		$params_dictionary = [];

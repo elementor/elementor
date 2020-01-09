@@ -1,4 +1,6 @@
-export default class extends elementorModules.common.Component {
+import BaseComponent from 'elementor-common/components/component';
+
+export default class Component extends BaseComponent {
 	__construct( args ) {
 		super.__construct( args );
 
@@ -62,6 +64,7 @@ export default class extends elementorModules.common.Component {
 			defaultTab = jQuery( this.getTabsWrapperSelector() ).find( '.elementor-component-tab' ).eq( 0 ).data( 'tab' );
 		}
 
+		// For unit test.
 		if ( ! defaultTab ) {
 			defaultTab = 'content';
 		}

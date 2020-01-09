@@ -11,14 +11,8 @@ export default class extends Marionette.Behavior {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.toggle );
 
-		// TODO: Work with this.listenTo( this.view.getContainer().settings ).
-		this.view.on( 'initialize', () => {
-			this.listenTo( this.view.getEditModel().get( 'settings' ), 'change', ( settings ) => {
-				if ( undefined !== settings.changed._position ) {
-					this.toggle();
-				}
-			} );
-		} );
+		// Save this instance for external use eg: ( hooks ).
+		this.view.options.draggable = this;
 	}
 
 	activate() {
@@ -36,12 +30,11 @@ export default class extends Marionette.Behavior {
 	}
 
 	toggle() {
-		const isEditMode = 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
-			isAbsolute = this.view.getEditModel().getSetting( '_position' );
+		const isAbsolute = this.view.getEditModel().getSetting( '_position' );
 
 		this.deactivate();
 
-		if ( isEditMode && isAbsolute && elementor.userCan( 'design' ) ) {
+		if ( isAbsolute && this.view.container.isDesignable() ) {
 			this.activate();
 		}
 	}

@@ -390,7 +390,17 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.0.1',
+			'1.1.0',
+			true
+		);
+
+		wp_register_script(
+			'share-link',
+			$this->get_js_assets_url( 'share-link', 'assets/lib/share-link/' ),
+			[
+				'jquery',
+			],
+			ELEMENTOR_VERSION,
 			true
 		);
 
@@ -402,6 +412,7 @@ class Frontend extends App {
 				'elementor-dialog',
 				'elementor-waypoints',
 				'swiper',
+				'share-link',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -448,7 +459,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.4.0'
+			'5.5.0'
 		);
 
 		wp_register_style(
@@ -469,7 +480,7 @@ class Frontend extends App {
 			'elementor-gallery',
 			$this->get_css_assets_url( 'e-gallery', 'assets/lib/e-gallery/css/' ),
 			[],
-			'1.0.1'
+			'1.0.2'
 		);
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
@@ -1096,6 +1107,10 @@ class Frontend extends App {
 		return $this->_has_elementor_in_page;
 	}
 
+	public function create_action_hash( $action, array $settings = [] ) {
+		return rawurlencode( sprintf( '#elementor-action:action=%1$s settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+	}
+
 	/**
 	 * Get Init Settings
 	 *
@@ -1127,16 +1142,18 @@ class Frontend extends App {
 
 		if ( is_singular() ) {
 			$post = get_post();
+
 			$settings['post'] = [
 				'id' => $post->ID,
-				'title' => $post->post_title,
+				'title' => wp_get_document_title(),
 				'excerpt' => $post->post_excerpt,
+				'featuredImage' => get_the_post_thumbnail_url(),
 			];
 		} else {
 			$settings['post'] = [
 				'id' => 0,
 				'title' => wp_get_document_title(),
-				'excerpt' => '',
+				'excerpt' => get_the_archive_description(),
 			];
 		}
 
