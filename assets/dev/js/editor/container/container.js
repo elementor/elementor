@@ -129,7 +129,7 @@ export default class Container extends ArgsObject {
 			this.renderer = this;
 		}
 
-		this.document = elementor.config.document;
+		this.document = elementor.documents.getCurrent();
 		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
 		this.panel = new Panel( this );
 	}
