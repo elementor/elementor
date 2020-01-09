@@ -294,6 +294,8 @@ export default class EditorBase extends Marionette.Application {
 		this.iconManager = new IconsManager();
 
 		this.noticeBar = new NoticeBar();
+
+		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
 	// TODO: BC method since 2.3.0
@@ -404,8 +406,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPanel() {
-		this.saver = $e.components.get( 'document/save' );
-
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
 		// Set default page to elements.
@@ -734,14 +734,17 @@ export default class EditorBase extends Marionette.Application {
 	onStart() {
 		this.config = this.getConfig();
 
-		this.documents = new DocumentsManager();
-
-		$e.components.register( new Component() );
-
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
+
+		$e.components.register( new Component() );
+
+		this.documents = new DocumentsManager();
+
+		this.saver = $e.components.get( 'document/save' );
+
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();

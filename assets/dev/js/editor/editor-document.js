@@ -7,7 +7,7 @@ import RepeaterComponent from './document/repeater/component';
 import HistoryComponent from './document/history/component';
 import DynamicComponent from './document/dynamic/component';
 
-elementorCommon.elements.$window.on( 'elementor:init', () => {
+elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 	$e.components.register( new DocumentComponent() );
 	$e.components.register( new SaveComponent() );
 	$e.components.register( new UIComponent() );
