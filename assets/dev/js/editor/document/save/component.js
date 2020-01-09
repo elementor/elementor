@@ -39,10 +39,10 @@ export default class Component extends BackwardsCompatibility {
 			return;
 		}
 
-		options = Object.assign( options, {
+		options = Object.assign( {
 			status: 'draft',
 			onSuccess: null,
-		} );
+		}, options );
 
 		const container = options.document.container || elementor.document.getCurrent(),
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
@@ -114,10 +114,10 @@ export default class Component extends BackwardsCompatibility {
 
 		if ( data.config ) {
 			// TODO: Move to es6
-			jQuery.extend( true, elementor.config, data.config );
+			jQuery.extend( true, elementor.config.document, data.config );
 		}
 
-		elementor.config.data = elements;
+		elementor.config.document.elements = elements;
 
 		elementor.channels.editor.trigger( 'saved', data );
 
