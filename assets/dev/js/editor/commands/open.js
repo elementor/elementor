@@ -19,7 +19,7 @@ export class Open extends CommandsBase {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
-		elementor.documents.request( id ).then( ( config ) => {
+		return elementor.documents.request( id ).then( ( config ) => {
 			elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
 
 			// Tell the editor to load the document.
