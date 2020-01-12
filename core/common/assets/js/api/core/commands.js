@@ -79,7 +79,7 @@ export default class Commands extends elementorModules.Module {
 	 *
 	 * @param {string} command
 	 *
-	 * @returns {ComponentBase}
+	 * @returns {Component}
 	 */
 	getComponent( command ) {
 		const namespace = this.components[ command ];
