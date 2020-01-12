@@ -33,7 +33,7 @@ export default class extends Marionette.ItemView {
 	}
 
 	onClickClose() {
-		$e.components.components[ 'panel/global' ].close();
+		$e.run( 'panel/global/close' );
 	}
 
 	onClickBack() {

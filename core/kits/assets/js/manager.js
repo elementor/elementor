@@ -1,6 +1,6 @@
 import Component from './component';
 import panelView from './panel';
-import Document from 'elementor-document/document'
+import Document from 'elementor-editor/document';
 
 const ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
@@ -21,7 +21,7 @@ export default class Settings extends elementorModules.ViewModule {
 			this.model.attributes,
 			this.model.controls,
 			[ /{{WRAPPER}}/g ],
-			[ this.getSettings( 'cssWrapperSelector' ) ]
+			[ this.document.config.cssWrapperSelector ]
 		);
 
 		controlsCSS.addStyleToDocument();
@@ -42,8 +42,8 @@ export default class Settings extends elementorModules.ViewModule {
 
 	getContainer( document ) {
 		if ( ! this.container ) {
-			this.model = new elementorModules.editor.elements.models.BaseSettings( this.getSettings( 'settings' ), {
-				controls: this.getSettings( 'controls' ),
+			this.model = new elementorModules.editor.elements.models.BaseSettings( document.config.settings, {
+				controls: document.config.controls,
 			} );
 
 			this.model.on( 'change', this.onModelChange.bind( this ) );
@@ -73,13 +73,13 @@ export default class Settings extends elementorModules.ViewModule {
 
 	addPanelPage() {
 		elementor.documents.request( elementor.config.kit_id ).then( ( config ) => {
+			this.document = new Document( config );
 
-			const document = new Document( config ),
-				container = this.getContainer( document );
+			const container = this.getContainer( this.document );
 
-			document.container = container;
+			this.document.container = container;
 
-			elementor.documents.add( document );
+			elementor.documents.add( this.document );
 
 			elementor.getPanelView().addPage( 'kit_settings', {
 				view: panelView,
@@ -110,7 +110,7 @@ export default class Settings extends elementorModules.ViewModule {
 			icon: 'eicon-paint-brush',
 			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
-			callback: () => $e.route( 'panel/global/style' ),
+			callback: () => $e.run( 'panel/global/open' ),
 		}, 'global' );
 
 		// menu.addItem( {

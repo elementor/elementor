@@ -18,6 +18,6 @@ module.exports = Marionette.LayoutView.extend( {
 
 		this.showChildView( 'content', new PanelContent( this.options ) );
 
-		this.showChildView( 'footer', new PanelFooter( this.options) );
+		this.showChildView( 'footer', new PanelFooter( this.options ) );
 	},
 } );
