@@ -6,12 +6,12 @@ export default class EditorTest extends EditorBase {
 
 		QUnit.testStart( ( { module, name } ) => {
 			console.log( 'Testing', module, name );
+
+			this.$previewElementorEl.empty();
 		} );
 
 		QUnit.testDone( ( { module, name } ) => {
 			console.log( 'Done Testing', module, name );
-
-			this.$previewElementorEl.empty();
 		} );
 	}
 

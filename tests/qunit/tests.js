@@ -53,13 +53,13 @@ function initialize() {
 		'</div>\n';
 
 	elementor.on( 'preview:loaded', () => {
-		require( './core/common/components/components.spec' );
+		require( './core/common/assets/js/api/core/components.spec.js' );
+		require( './core/common/assets/js/api/core/hooks/base.spec.js' );
 
-		require( './core/common/components/base/callbacks.spec.js' );
+		require( './core/common/assets/js/api/modules/command-base.spec.js' );
 
 		require( './core/editor/container/container.spec' );
 
-		require( './core/editor/document/commands/base/base.spec' );
 		require( './core/editor/document/commands/base/history.spec' );
 
 		require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );

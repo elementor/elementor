@@ -1,4 +1,4 @@
-import History from '../../commands/base/history';
+import History from 'elementor-document/commands/base/history';
 
 export class Create extends History {
 	static restore( historyItem, isRedo ) {
@@ -45,7 +45,7 @@ export class Create extends History {
 
 		let result = [];
 
-		// BC: Deprecated since 2.8.0 - use `$e.events`.
+		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 		if ( ! options.trigger ) {
 			options.trigger = {
 				beforeAdd: 'element:before:add',

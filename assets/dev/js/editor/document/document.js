@@ -1,5 +1,5 @@
-import HistoryManager from 'elementor-modules/history/assets/js/history/manager';
-import RevisionsManager from 'elementor-modules/history/assets/js/revisions/manager';
+import HistoryManager from 'elementor/modules/history/assets/js/history/manager';
+import RevisionsManager from 'elementor/modules/history/assets/js/revisions/manager';
 
 export default class Document {
 	/**

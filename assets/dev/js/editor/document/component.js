@@ -1,9 +1,9 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
 import BackwardsCompatibility from './backwards-compatibility.js';
-import * as Hooks from './callback/hooks/';
-import * as Events from './callback/events/';
+import * as hooksData from './hooks/data/';
+import * as hooksUI from './hooks/ui/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'document';
 	}
@@ -13,8 +13,8 @@ export default class Component extends BaseComponent {
 
 		super.onInit();
 
-		Object.values( Hooks ).forEach( ( hook ) => new hook() );
-		Object.values( Events ).forEach( ( event ) => new event() );
+		Object.values( hooksData ).forEach( ( Hook ) => new Hook() );
+		Object.values( hooksUI ).forEach( ( Hook ) => new Hook() );
 	}
 
 	defaultCommands() {
