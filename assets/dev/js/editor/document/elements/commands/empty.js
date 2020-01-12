@@ -10,6 +10,8 @@ export class Empty extends History {
 			if ( data ) {
 				elementor.getPreviewView().addChildModel( data );
 			}
+
+			elementor.saver.setFlagEditorChange( true );
 		}
 	}
 
