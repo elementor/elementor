@@ -744,9 +744,6 @@ export default class EditorBase extends Marionette.Application {
 
 		elementor.documents = $e.components.register( new EditorDocuments() );
 
-		// TODO: Remove, BC Since 2.9.0.
-		elementor.saver = $e.components.get( 'document/save' );
-
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
 		}

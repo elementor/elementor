@@ -31,7 +31,7 @@ export class Close extends CommandsBase {
 				break;
 		}
 
-		this.component.stopAutoSave( document );
+		elementor.saver.stopAutoSave( document );
 
 		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 
