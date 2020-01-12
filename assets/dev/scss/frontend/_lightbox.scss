@@ -1,45 +1,54 @@
+:root {
+}
+
 .elementor-lightbox {
 
-	.dialog- {
+	--lightbox-ui-color: #{$slides_gui};
+	--lightbox-ui-color-hover: #fff;
+	--lightbox-text-color: var(--lightbox-ui-color);
+	--lightbox-header-icons-size: 20px;
+	--lightbox-navigation-icons-size: 25px;
 
-		&header {
+	.dialog {
+
+		&-header {
 			display: none;
 		}
 
-		&widget-content {
+		&-widget-content {
 			background: none;
 			box-shadow: none;
 			width: 100%;
 			height: 100%;
 		}
 
-		&message {
-			animation-duration: .4s; // Open lightbox transition
+		&-message {
+			animation-duration: .3s; // Open lightbox transition
 
 			&:not(.elementor-fit-aspect-ratio) {
 				height: 100%;
 			}
 		}
 
-		&lightbox-close-button {
+		&-lightbox-close-button {
 			cursor: pointer;
 			position: absolute;
-			font-size: 20px;
-			padding: 5px;
+			font-size: var(--lightbox-header-icons-size);
+			#{$end}: 0.75em;
+			padding: .25em;
 			z-index: 2;
 			line-height: 1;
 		}
 	}
 
-	//UI Colors
 	.dialog-lightbox-close-button,
 	.elementor-swiper-button {
-		color: $slides_gui;
+		color: var(--lightbox-ui-color);
 		transition: $transition-hover;
 		opacity: 1;
 
 		&:hover {
-			color: #ffffff;
+			color:  var(--lightbox-ui-color-hover);
 		}
 	}
 
@@ -70,6 +79,11 @@
 		user-select: none;
 	}
 
+	.elementor-lightbox-image, .elementor-video-container {
+		box-shadow: 0 0 30px rgba( 0,0,0,0.3 ), 0 0 8px -5px rgba( 0,0,0,0.3 );
+		border-radius: 2px;
+	}
+
 	.elementor-video-container {
 		@include absolute-center;
 
@@ -97,6 +111,7 @@
 			align-items: center;
 			width: 15%;
 			justify-content: center;
+			font-size: var(--lightbox-navigation-icons-size);
 		}
 
 		&-prev {
@@ -129,10 +144,9 @@
 }
 
 .elementor-slideshow {
-
 	&__counter {
 		color: currentColor;
-		font-size: 16px;
+		font-size: .75em;
 		width: max-content;
 	}
 
@@ -141,25 +155,31 @@
 		left: 0;
 		width: 100%;
 		padding: 15px 20px;
-		color: #D5DADF;
 		transition: 0.3s;
 	}
 
+	&__footer {
+		color: var(--lightbox-text-color);
+	}
+
 	&__header {
+		color: var(--lightbox-ui-color);
 		display: flex;
-		@include padding-end( 50px );
+		font-size: var(--lightbox-header-icons-size);
+		@include padding-start( 1em );
+		@include padding-end( 2.25em );
 		top: 0;
 		align-items: center;
 		z-index: 10;
 
 		> i {
-			font-size: 20px;
+			font-size: inherit;
 			cursor: pointer;
-			padding: 5px;
-			margin: 0 7px;
+			padding: .25em;
+			margin: 0 .35em;
 
 			&:hover {
-				color: #fff;
+				color: var(--lightbox-ui-color-hover);
 			}
 
 			&:first-of-type {
@@ -184,8 +204,8 @@
 	&__share-links {
 		display: block;
 		position: absolute;
-		width: 200px;
-		#{$end}: 50px;
+		min-width: 200px;
+		#{$end}: 2.25em;
 		top: 70px;
 		background-color: #fff;
 		color: $gray-darkest;
@@ -201,9 +221,19 @@
 		a {
 			text-align: $start;
 			color: $gray-dark;
+			font-size: 12px;
+			line-height: 2.5;
 			display: block;
 			opacity: 0;
 			transition: opacity 500ms 100ms;
+
+			&:hover {
+				color: #000;
+			}
+
+			i {
+				@include margin-end(10px);
+			}
 		}
 
 		&:before {
