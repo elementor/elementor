@@ -7,7 +7,9 @@ export default class EditorTest extends EditorBase {
 		super( options );
 
 		QUnit.testStart( ( { module, name } ) => {
-			this.$previewElementorEl.empty();
+			if ( this.$previewElementorEl ) {
+				this.$previewElementorEl.empty();
+			}
 
 			console.log( `Test: ${ module } -> ${ name }` );
 		} );
