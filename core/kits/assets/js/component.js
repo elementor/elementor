@@ -17,16 +17,17 @@ export default class extends elementorModules.common.Component {
 	defaultCommands() {
 		return {
 			open: () => {
+				elementor.once( 'document:loaded', () => {
+					$e.route( 'panel/global/style' );
+				} );
+
 				$e.run( 'editor/documents/open', {
 					id: elementor.config.kit_id,
-					onAfter: () => {
-						$e.route( 'panel/global/style' );
-					},
 				} );
 			},
 			close: () => {
-				$e.run( 'editor/documents/close', {
-					id: elementor.config.kit_id,
+				$e.run( 'editor/documents/switch', {
+					id: elementor.config.initial_document.id,
 					onClose: () => {
 						$e.components.get( 'panel/global' ).close();
 						$e.route( 'panel/menu' );

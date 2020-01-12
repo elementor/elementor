@@ -619,6 +619,10 @@ export default class EditorBase extends Marionette.Application {
 		// TODO: Should be command?
 		jQuery( '#elementor-preview-loading' ).show();
 
+		this.once( 'preview:loaded', () => {
+			this.onDocumentLoaded( this.documents.getCurrent() );
+		} );
+
 		this.$preview[ 0 ].contentWindow.location.reload( true );
 	}
 
@@ -762,6 +766,10 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
+		this.once( 'document:loaded', () => {
+			elementorCommon.elements.$window.trigger( 'elementor:init' );
+		} );
+
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } );
 
 		this.logSite();
@@ -836,8 +844,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.heartbeat = new Heartbeat();
-
-		this.checkPageStatus();
 
 		this.openLibraryOnStart();
 
@@ -950,35 +956,53 @@ export default class EditorBase extends Marionette.Application {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	}
 
-	onDocumentLoaded() {
-		this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );
+	onDocumentLoaded( document ) {
+		this.checkPageStatus();
 
-		if ( ! this.$previewElementorEl.length ) {
-			this.onPreviewElNotFound();
+		if ( document.config.elements ) {
+			this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );
 
-			return;
+			if ( ! this.$previewElementorEl.length ) {
+				this.onPreviewElNotFound();
+
+				return;
+			}
+
+			this.$previewElementorEl.addClass( 'elementor-edit-area' );
+
+			this.initElements();
+
+			const iframeRegion = new Marionette.Region( {
+				// Make sure you get the DOM object out of the jQuery object
+				el: this.$previewElementorEl[ 0 ],
+			} );
+
+			this.addRegions( {
+				sections: iframeRegion,
+			} );
+
+			const Preview = require( 'elementor-views/preview' );
+
+			this.sections.show( new Preview( { model: this.elementsModel } ) );
+
+			this.initNavigator();
+
+			this.onEditModeSwitched();
+
+			document.container.view = elementor.getPreviewView();
+			document.container.children = elementor.elements;
+			document.container.model.attributes.elements = elementor.elements;
+
+			this.helpers.scrollToView( this.$previewElementorEl );
+
+			this.$previewElementorEl
+			.addClass( 'elementor-edit-area-active elementor-embedded-editor' )
+			.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
+
+			$e.route( 'panel/elements/categories', {
+				refresh: true,
+			} );
 		}
-
-		this.$previewElementorEl.addClass( 'elementor-edit-area' );
-
-		this.initElements();
-
-		const iframeRegion = new Marionette.Region( {
-			// Make sure you get the DOM object out of the jQuery object
-			el: this.$previewElementorEl[ 0 ],
-		} );
-
-		this.addRegions( {
-			sections: iframeRegion,
-		} );
-
-		const Preview = require( 'elementor-views/preview' );
-
-		this.sections.show( new Preview( { model: this.elementsModel } ) );
-
-		this.initNavigator();
-
-		this.onEditModeSwitched();
 
 		this.trigger( 'document:loaded' );
 	}
@@ -1006,17 +1030,9 @@ export default class EditorBase extends Marionette.Application {
 
 		document.container = this.settings.page.getEditedView().getContainer();
 
-		this.on( 'preview:loaded', () => {
-			this.onDocumentLoaded();
-
-			document.container.view = elementor.getPreviewView();
-			document.container.children = elementor.elements;
-			document.container.model.attributes.elements = elementor.elements;
-		} );
+		this.once( 'preview:loaded', () => this.onDocumentLoaded( document ) );
 
 		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
-
-		elementorCommon.elements.$window.trigger( 'elementor:init' );
 
 		if ( this.loaded ) {
 			this.schemes.printSchemesStyle();
@@ -1028,16 +1044,6 @@ export default class EditorBase extends Marionette.Application {
 			const previewRevisionID = config.revisions.current_id;
 
 			this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
-
-			this.helpers.scrollToView( this.$previewElementorEl );
-
-			this.$previewElementorEl
-				.addClass( 'elementor-edit-area-active elementor-embedded-editor' )
-				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-			$e.route( 'panel/elements/categories', {
-				refresh: true,
-			} );
 		}
 	}
 

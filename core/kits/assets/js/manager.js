@@ -147,7 +147,7 @@ export default class Settings extends elementorModules.ViewModule {
 	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
-		jQuery( window ).on( 'elementor:init', () => elementor.on( 'preview:loaded', this.onElementorPreviewLoaded.bind( this ) ) );
+		jQuery( window ).on( 'elementor:init', () => this.onElementorPreviewLoaded() );
 
 		$e.components.register( new Component( { manager: this } ) );
 	}
