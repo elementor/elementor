@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\System_Info\Classes\Abstracts;
+namespace Elementor\Modules\System_Info\Reporters;
 
-use Elementor\System_Info\Helpers\Model_Helper;
+use Elementor\Modules\System_Info\Helpers\Model_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,10 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base abstract class that provides the needed properties and methods to
  * manage and handle reporter in inheriting classes.
  *
- * @since 1.0.0
+ * @since 2.9.0
  * @abstract
  */
-abstract class Base_Reporter {
+abstract class Base {
 
 	/**
 	 * Reporter properties.
@@ -35,7 +35,7 @@ abstract class Base_Reporter {
 	 *
 	 * Retrieve the title of the report.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access public
 	 * @abstract
 	 */
@@ -46,7 +46,7 @@ abstract class Base_Reporter {
 	 *
 	 * Retrieve the required fields for the report.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access public
 	 * @abstract
 	 */
@@ -57,7 +57,7 @@ abstract class Base_Reporter {
 	 *
 	 * Whether the report is enabled.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access public
 	 *
 	 * @return bool Whether the report is enabled.
@@ -71,7 +71,7 @@ abstract class Base_Reporter {
 	 *
 	 * Retrieve the report with all it's containing fields.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access public
 	 *
 	 * @return \WP_Error | array {
@@ -114,7 +114,7 @@ abstract class Base_Reporter {
 	 *
 	 * Retrieve the keys of the properties.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access public
 	 * @static
 	 *
@@ -138,7 +138,7 @@ abstract class Base_Reporter {
 	 *
 	 * Retrieve possible properties filtered by property keys.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access public
 	 * @static
 	 *
@@ -155,7 +155,7 @@ abstract class Base_Reporter {
 	 *
 	 * Add/update properties to the report.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access public
 	 *
 	 * @param array $key   Property key.
@@ -184,7 +184,7 @@ abstract class Base_Reporter {
 	 *
 	 * Initializing the reporter base class.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access public
 	 *
 	 * @param array $properties Optional. Properties to filter. Default is `null`.
