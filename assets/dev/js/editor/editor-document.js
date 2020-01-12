@@ -1,4 +1,3 @@
-// TODO: All components under document can be in one index file.
 import DocumentComponent from './document/component';
 import SaveComponent from './document/save/component';
 import UIComponent from './document/ui/component';

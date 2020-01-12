@@ -8,8 +8,9 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
+import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
-import EditorsDocument from './component';
+import EditorDocuments from 'elementor-editor/component';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -741,9 +742,10 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initComponents();
 
-		this.documents = $e.components.register( new EditorsDocument() );
+		elementor.documents = $e.components.register( new EditorDocuments() );
 
-		this.saver = $e.components.get( 'document/save' );
+		// TODO: Remove, BC Since 2.9.0.
+		elementor.saver = $e.components.get( 'document/save' );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
@@ -1049,6 +1051,8 @@ export default class EditorBase extends Marionette.Application {
 
 			this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
 		}
+
+		return document;
 	}
 
 	addWidgetsCache( widgets ) {

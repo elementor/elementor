@@ -23,7 +23,9 @@ export class Open extends CommandsBase {
 			elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
 
 			// Tell the editor to load the document.
-			elementor.loadDocument( config );
+			const document = elementor.loadDocument( config );
+
+			this.component.startAutoSave( document );
 
 			// TODO: move to $e.hooks.ui.
 			if ( elementor.loaded ) {
