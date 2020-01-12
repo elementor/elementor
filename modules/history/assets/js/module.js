@@ -1,31 +1,33 @@
 import Component from './component';
 import HistoryComponent from './history/component';
 import RevisionsComponent from './revisions/component';
-
 import PanelPage from './panel-page';
 
 export default class Manager {
-	static loadedOnce = false;
-
 	constructor() {
-		$e.components.register( new Component() );
+		elementorCommon.elements.$window.on( 'elementor:init', this.init );
+	}
 
-		$e.components.register( new HistoryComponent() );
-		$e.components.register( new RevisionsComponent() );
+	init() {
+		elementor.on( 'preview:loaded', () => {
+			$e.components.register( new Component() );
+			$e.components.register( new HistoryComponent() );
+			$e.components.register( new RevisionsComponent() );
 
-		if ( ! this.constructor.loadedOnce ) {
 			elementor.getPanelView().addPage( 'historyPage', {
 				view: PanelPage,
 				title: elementor.translate( 'history' ),
 			} );
-		}
+		} );
+	}
 
-		// Backward compatibility.
-		const currentDocument = elementor.documents.getCurrent();
+	get history() {
+		elementorCommon.helpers.softDeprecated( 'elementor.history.history', '2.9.0', 'elementor.documents.getCurrent().history' );
+		return elementor.documents.getCurrent().history;
+	}
 
-		this.history = currentDocument.history;
-		this.revisions = currentDocument.revisions;
-
-		this.constructor.loadedOnce = true;
+	get revisions() {
+		elementorCommon.helpers.softDeprecated( 'elementor.history.revisions', '2.9.0', 'elementor.documents.getCurrent().revisions' );
+		return elementor.documents.getCurrent().revisions;
 	}
 }

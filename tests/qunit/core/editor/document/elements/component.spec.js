@@ -1,7 +1,7 @@
 import DocumentHelper from '../helper';
 import ElementsHelper from '../elements/helper';
 import HistoryHelper from '../history/helper';
-import * as Commands from './commands/index.spec.js';
+import * as commands from './commands/index.spec.js';
 
 jQuery( () => {
 	QUnit.module( 'Component: document/elements', ( hooks ) => {
@@ -11,7 +11,7 @@ jQuery( () => {
 			HistoryHelper.resetItems();
 		} );
 
-		DocumentHelper.testCommands( Commands );
+		DocumentHelper.testCommands( commands );
 
 		// QUnit.test( 'ResizeColumn', ( assert ) => {
 		// 	//assert.equal( 1, 1, 'Test was skipped.' );

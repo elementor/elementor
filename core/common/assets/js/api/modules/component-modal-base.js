@@ -1,8 +1,8 @@
 import ComponentBase from './component-base';
 
 export default class ComponentModalBase extends ComponentBase {
-	onInit() {
-		super.onInit();
+	registerAPI() {
+		super.registerAPI();
 
 		$e.shortcuts.register( 'esc', {
 			scopes: [ this.getNamespace() ],

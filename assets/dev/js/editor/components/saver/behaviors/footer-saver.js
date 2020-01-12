@@ -1,7 +1,7 @@
-module.exports = Marionette.Behavior.extend( {
-	previewWindow: null,
+module.exports = class FooterSaver extends Marionette.Behavior {
+	previewWindow = null;
 
-	ui: function() {
+	ui() {
 		return {
 			buttonPreview: '#elementor-panel-footer-saver-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
@@ -10,43 +10,49 @@ module.exports = Marionette.Behavior.extend( {
 			menuSaveDraft: '#elementor-panel-footer-sub-menu-item-save-draft',
 			lastEditedWrapper: '.elementor-last-edited-wrapper',
 		};
-	},
+	}
 
-	events: function() {
+	events() {
 		return {
 			'click @ui.buttonPreview': 'onClickButtonPreview',
 			'click @ui.buttonPublish': 'onClickButtonPublish',
 			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
 		};
-	},
+	}
 
-	initialize: function() {
-		// TODO: $e.
-		elementor.saver
+	initialize() {
+		/**
+		 * @type {Component}
+		 */
+		this.saver = $e.components.get( 'document/save' );
+
+		this.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) )
 			.on( 'page:status:change', this.onPageStatusChange );
 
-		elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
+		elementor.on( 'document:loaded', () => {
+			elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
+		} );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButtons.bind( this ) );
-	},
+	}
 
-	activateSaveButtons: function( hasChanges ) {
+	activateSaveButtons( hasChanges ) {
 		hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
 
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', ! hasChanges );
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
-	},
+	}
 
-	onRender: function() {
+	onRender() {
 		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
 		this.addTooltip();
-	},
+	}
 
-	onPageSettingsChange: function( settings ) {
-		var changed = settings.changed;
+	onPageSettingsChange( settings ) {
+		const changed = settings.changed;
 
 		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
@@ -58,9 +64,9 @@ module.exports = Marionette.Behavior.extend( {
 				$e.routes.refreshContainer( 'panel' );
 			}
 		}
-	},
+	}
 
-	onPageStatusChange: function( newStatus ) {
+	onPageStatusChange( newStatus ) {
 		if ( 'publish' === newStatus ) {
 			elementor.notifications.showToast( {
 				message: elementor.config.document.panel.messages.publish_notification,
@@ -68,45 +74,45 @@ module.exports = Marionette.Behavior.extend( {
 					{
 						name: 'view_page',
 						text: elementor.translate( 'have_a_look' ),
-						callback: function() {
+						callback() {
 							open( elementor.config.document.urls.permalink );
 						},
 					},
 				],
 			} );
 		}
-	},
+	}
 
-	onBeforeSave: function( options ) {
+	onBeforeSave( options ) {
 		NProgress.start();
 		if ( 'autosave' === options.status ) {
 			this.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
 		} else {
 			this.ui.buttonPublish.addClass( 'elementor-button-state' );
 		}
-	},
+	}
 
-	onAfterSave: function( data ) {
+	onAfterSave( data ) {
 		NProgress.done();
 		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
 		this.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
 		this.refreshWpPreview();
 		this.setLastEdited( data );
-	},
+	}
 
-	setLastEdited: function( data ) {
+	setLastEdited( data ) {
 		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
 			.find( '.elementor-last-edited' )
 			.html( data.config.document.last_edited );
-	},
+	}
 
-	onAfterSaveError: function() {
+	onAfterSaveError() {
 		NProgress.done();
 		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
-	},
+	}
 
-	onClickButtonPreview: function() {
+	onClickButtonPreview() {
 		// Open immediately in order to avoid popup blockers.
 		this.previewWindow = open( elementor.config.document.urls.wp_preview, 'wp-preview-' + elementor.config.document.id );
 
@@ -118,35 +124,35 @@ module.exports = Marionette.Behavior.extend( {
 
 			$e.run( 'document/save/auto' );
 		}
-	},
+	}
 
-	onClickButtonPublish: function() {
+	onClickButtonPublish() {
 		if ( this.ui.buttonPublish.hasClass( 'elementor-disabled' ) ) {
 			return;
 		}
 
 		$e.run( 'document/save/default' );
-	},
+	}
 
-	onClickMenuSaveDraft: function() {
+	onClickMenuSaveDraft() {
 		$e.run( 'document/save/draft' );
-	},
+	}
 
-	setMenuItems: function( postStatus ) {
-		var publishLabel = 'publish';
+	setMenuItems( postStatus ) {
+		let publishLabel = 'publish';
 
 		switch ( postStatus ) {
 			case 'publish':
 			case 'private':
 				publishLabel = 'update';
 
-				if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
+				if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
 					this.activateSaveButtons( true );
 				}
 
 				break;
 			case 'draft':
-				if ( ! elementor.config.current_user_can_publish ) {
+				if ( ! elementor.config.document.user.can_publish ) {
 					publishLabel = 'submit';
 				}
 
@@ -154,27 +160,27 @@ module.exports = Marionette.Behavior.extend( {
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( ! elementor.config.current_user_can_publish ) {
+				if ( ! elementor.config.document.user.can_publish ) {
 					publishLabel = 'update';
 				}
 				break;
 		}
 
 		this.ui.buttonPublishLabel.html( elementor.translate( publishLabel ) );
-	},
+	}
 
-	addTooltip: function() {
+	addTooltip() {
 		// Create tooltip on controls
 		this.$el.find( '.tooltip-target' ).tipsy( {
 			// `n` for down, `s` for up
 			gravity: 's',
-			title: function() {
+			title() {
 				return this.getAttribute( 'data-tooltip' );
 			},
 		} );
-	},
+	}
 
-	refreshWpPreview: function() {
+	refreshWpPreview() {
 		if ( this.previewWindow ) {
 			// Refresh URL form updated config.
 			try {
@@ -184,5 +190,5 @@ module.exports = Marionette.Behavior.extend( {
 				// Do nothing.
 			}
 		}
-	},
-} );
+	}
+};

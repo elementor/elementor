@@ -116,7 +116,7 @@ BaseElementView = BaseContainer.extend( {
 				model: this.model,
 				settings: settingsModel,
 				view: this,
-				parent: this._parent.getContainer() || {},
+				parent: this._parent ? this._parent.getContainer() : {},
 				children: [],
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
@@ -216,6 +216,11 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
+
+		_.defer( () => {
+			// Init container. Defer - in order to init the container after the element is fully initialized, and properties like `_parent` are available.
+			this.getContainer();
+		} );
 	},
 
 	getHandlesOverlay: function() {
@@ -459,7 +464,12 @@ BaseElementView = BaseContainer.extend( {
 
 		this.controlsCSSParser.stylesheet.empty();
 
-		this.controlsCSSParser.addStyleRules( settings.getStyleControls(), settings.attributes, this.getEditModel().get( 'settings' ).controls, [ /{{ID}}/g, /{{WRAPPER}}/g ], [ this.getID(), '#elementor .' + this.getElementUniqueID() ] );
+		this.controlsCSSParser.addStyleRules(
+			settings.getStyleControls(),
+			settings.attributes,
+			this.getEditModel().get( 'settings' ).controls,
+			[ /{{ID}}/g, /{{WRAPPER}}/g ],
+			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
 
@@ -676,7 +686,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditRequest( options = {} ) {
-		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+		if ( ! this.container.isEditable() ) {
 			return;
 		}
 

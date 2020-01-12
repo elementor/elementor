@@ -80,7 +80,7 @@ module.exports = {
 	},
 
 	enqueueIconFonts( iconType ) {
-		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! ElementorConfig[ 'icons_update_needed' ] ) {
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config[ 'icons_update_needed' ] ) {
 			return;
 		}
 
@@ -178,7 +178,7 @@ module.exports = {
 		const storageKey = 'fa4Tofa5Mapping';
 		let mapping = elementorCommon.storage.get( storageKey );
 		if ( ! mapping ) {
-			jQuery.getJSON( ElementorConfig.fa4_to_fa5_mapping_url, ( data ) => {
+			jQuery.getJSON( elementor.config.fa4_to_fa5_mapping_url, ( data ) => {
 				mapping = data;
 				elementorCommon.storage.set( storageKey, data );
 			} );
@@ -326,13 +326,13 @@ module.exports = {
 	},
 
 	maybeDisableWidget() {
-		if ( ! ElementorConfig[ 'icons_update_needed' ] ) {
+		if ( ! elementor.config[ 'icons_update_needed' ] ) {
 			return false;
 		}
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			widgetType = elementView.model.get( 'widgetType' ),
-			widgetData = elementor.config.widgets[ widgetType ],
+			widgetData = elementor.widgetsCache[ widgetType ],
 			hasControlOfType = ( controls, type ) => {
 				let has = false;
 				jQuery.each( controls, ( controlName, controlData ) => {
@@ -354,7 +354,7 @@ module.exports = {
 			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
 			if ( hasIconsControl ) {
 				const onConfirm = () => {
-					window.location.href = ElementorConfig.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+					window.location.href = elementor.config.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
 				};
 				elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',

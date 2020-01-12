@@ -13,7 +13,7 @@ export default class ComponentBase extends elementorModules.Module {
 		this.currentTab = '';
 	}
 
-	onInit() {
+	registerAPI() {
 		jQuery.each( this.getTabs(), ( tab ) => this.registerTabRoute( tab ) );
 
 		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
@@ -184,5 +184,25 @@ export default class ComponentBase extends elementorModules.Module {
 
 	getBodyClass( route ) {
 		return 'e-route-' + route.replace( /\//g, '-' );
+	}
+
+	/**
+	 * If command includes uppercase character convert it to lowercase and add `-`.
+	 * e.g: `CopyAll` is converted to `copy-all`.
+	 */
+	normalizeCommandName( commandName ) {
+		return commandName.replace( /[A-Z]/g, ( match, offset ) => ( offset > 0 ? '-' : '' ) + match.toLowerCase() );
+	}
+
+	importCommands( commandsFromImport ) {
+		const commands = {};
+
+		// Convert `Commands` to `ComponentBase` workable format.
+		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
+			const command = this.normalizeCommandName( className );
+			commands[ command ] = ( args ) => ( new Class( args ) ).run();
+		} );
+
+		return commands;
 	}
 }

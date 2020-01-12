@@ -1,18 +1,27 @@
 import BackwardsCompatibility from './backwards-compatibility';
-import * as Commands from './commands';
+import * as commands from './commands/';
 
 export default class Component extends BackwardsCompatibility {
 	__construct( args = {} ) {
 		super.__construct( args );
 
-		this.isSaving = false;
-		this.isChangedDuringSave = false;
+		/**
+		 * Auto save timer handlers.
+		 *
+		 * @type {Object}
+		 */
+		this.autoSaveTimers = {};
 
-		this.autoSaveTimer = null;
+		/**
+		 * Auto save interval.
+		 *
+		 * @type {number}
+		 */
 		this.autoSaveInterval = elementor.config.autosave_interval * 1000;
 
 		elementorCommon.elements.$window.on( 'beforeunload', () => {
 			if ( this.isEditorChanged() ) {
+				// Returns a message to confirm dialog.
 				return elementor.translate( 'before_unload_alert' );
 			}
 		} );
@@ -22,29 +31,56 @@ export default class Component extends BackwardsCompatibility {
 		return 'document/save';
 	}
 
+	/**
+	 * TODO: test
+	 * @param {Document} document
+	 */
+	startAutoSave( document ) {
+		this.stopAutoSave( document );
+
+		this.autoSaveTimers[ document.id ] = setInterval( () => {
+			// No document specify, means current.
+			$e.run( 'document/save/auto', { document } );
+		}, this.autoSaveInterval );
+	}
+
+	/**
+	 * TODO: test
+	 * @param {Document} document
+	 */
+	stopAutoSave( document ) {
+		if ( this.autoSaveTimers[ document.id ] ) {
+			clearInterval( this.autoSaveTimers[ document.id ] );
+
+			delete this.autoSaveTimers[ document.id ];
+		}
+	}
+
 	defaultCommands() {
 		return {
-			auto: ( args ) => ( new Commands.Auto( args ).run() ),
-			default: ( args ) => ( new Commands.Default( args ).run() ),
-			discard: ( args ) => ( new Commands.Discard( args ).run() ),
-			draft: ( args ) => ( new Commands.Draft( args ).run() ),
-			pending: ( args ) => ( new Commands.Pending( args ).run() ),
-			publish: ( args ) => ( new Commands.Publish( args ).run() ),
-			update: ( args ) => ( new Commands.Update( args ).run() ),
+			auto: ( args ) => ( new commands.Auto( args ).run() ),
+			default: ( args ) => ( new commands.Default( args ).run() ),
+			discard: ( args ) => ( new commands.Discard( args ).run() ),
+			draft: ( args ) => ( new commands.Draft( args ).run() ),
+			pending: ( args ) => ( new commands.Pending( args ).run() ),
+			publish: ( args ) => ( new commands.Publish( args ).run() ),
+			update: ( args ) => ( new commands.Update( args ).run() ),
 		};
 	}
 
 	saveEditor( options ) {
-		if ( this.isSaving ) {
+		const document = options.document || elementor.documents.getCurrent();
+
+		if ( document.isSaving ) {
 			return;
 		}
 
-		options = Object.assign( options, {
+		options = Object.assign( {
 			status: 'draft',
 			onSuccess: null,
-		} );
+		}, options );
 
-		const container = options.document.container || elementor.document.getCurrent(),
+		const container = document.container,
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
 			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
 			oldStatus = container.settings.get( 'post_status' ),
@@ -53,8 +89,8 @@ export default class Component extends BackwardsCompatibility {
 		this.trigger( 'before:save', options )
 			.trigger( 'before:save:' + options.status, options );
 
-		this.isSaving = true;
-		this.isChangedDuringSave = false;
+		document.isSaving = true;
+		document.isChangedDuringSave = false;
 
 		settings.post_status = options.status;
 
@@ -65,29 +101,19 @@ export default class Component extends BackwardsCompatibility {
 				settings: settings,
 			},
 
-			success: ( data ) => this.onSaveSuccess( data, oldStatus, statusChanged, elements, options ),
-			error: ( data ) => this.onSaveError( data, options ),
+			success: ( data ) => this.onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ),
+			error: ( data ) => this.onSaveError( data, options, document ),
 		} );
 
 		this.trigger( 'save', options );
 	}
 
-	startTimer( hasChanges ) {
-		clearTimeout( this.autoSaveTimer );
-
-		if ( hasChanges ) {
-			this.autoSaveTimer = setTimeout( () => {
-				$e.run( 'document/save/auto' );
-			}, this.autoSaveInterval );
-		}
-	}
-
 	setFlagEditorChange( status ) {
-		if ( status && this.isSaving ) {
-			this.isChangedDuringSave = true;
-		}
+		const document = elementor.documents.getCurrent();
 
-		this.startTimer( status );
+		if ( status && document.isSaving ) {
+			document.isChangedDuringSave = true;
+		}
 
 		elementor.channels.editor
 			.reply( 'status', status )
@@ -98,8 +124,8 @@ export default class Component extends BackwardsCompatibility {
 		return ( true === elementor.channels.editor.request( 'status' ) );
 	}
 
-	onSaveSuccess( data, oldStatus, statusChanged, elements, options ) {
-		this.onAfterAjax();
+	onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ) {
+		this.onAfterAjax( document );
 
 		if ( 'autosave' !== options.status ) {
 			if ( statusChanged ) {
@@ -107,17 +133,17 @@ export default class Component extends BackwardsCompatibility {
 			}
 
 			// Notice: Must be after update page.model.post_status to the new status.
-			if ( ! this.isChangedDuringSave ) {
+			if ( ! document.isChangedDuringSave ) {
 				elementor.saver.setFlagEditorChange( false );
 			}
 		}
 
 		if ( data.config ) {
 			// TODO: Move to es6
-			jQuery.extend( true, elementor.config, data.config );
+			jQuery.extend( true, elementor.config.document, data.config );
 		}
 
-		elementor.config.data = elements;
+		elementor.config.document.elements = elements;
 
 		elementor.channels.editor.trigger( 'saved', data );
 
@@ -133,8 +159,8 @@ export default class Component extends BackwardsCompatibility {
 		}
 	}
 
-	onSaveError( data, options ) {
-		this.onAfterAjax();
+	onSaveError( data, options, document ) {
+		this.onAfterAjax( document );
 
 		this.trigger( 'after:saveError', data )
 			.trigger( 'after:saveError:' + options.status, data );
@@ -158,7 +184,7 @@ export default class Component extends BackwardsCompatibility {
 		} );
 	}
 
-	onAfterAjax() {
-		this.isSaving = false;
+	onAfterAjax( document ) {
+		document.isSaving = false;
 	}
 }

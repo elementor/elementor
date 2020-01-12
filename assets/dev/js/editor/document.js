@@ -31,15 +31,27 @@ export default class Document {
 	container = null;
 
 	/**
+	 * Editor status.
+	 *
+	 * @type {'open'|'closed'}
+	 */
+	editorStatus;
+
+	isSaving = false;
+
+	isChangedDuringSave = false;
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create document.
 	 *
-	 * @param {number} id
+	 * @param {{}} config
 	 * @param {Container} container
 	 */
-	constructor( id, container ) {
-		this.id = id;
+	constructor( config, container ) {
+		this.config = config;
+		this.id = config.id;
 		this.container = container;
 
 		this.initialize();

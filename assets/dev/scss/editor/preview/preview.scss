@@ -17,35 +17,56 @@ html.elementor-html {
 	margin-top: 0 !important;
 }
 
-#elementor {
+.elementor-edit-area {
 	position: relative;
 }
 
-.elementor-editor-active {
+.elementor {
+	&.loading{
+		opacity: 0.5;
+	}
+}
 
-	.elementor.elementor-edit-area-active {
+.elementor-edit-button{
+	display: none;
 
-		.elementor-top-section {
+	.elementor-editor-active .elementor:hover:not(.elementor-edit-area) & {
+		width: 25px;
+		height: 25px;
+		background: $elementor;
+		color: white;
+		font-size: 10px;
+		text-align: center;
+		line-height: 25px;
+		cursor: pointer;
+		display: inline-block;
+		z-index: 1;
+		position: absolute;
+	}
+}
 
-			> .elementor-container {
+.elementor-edit-area-active {
 
-				> .elementor-row {
-					min-height: 40px;
-				}
+	.elementor-top-section {
+
+		> .elementor-container {
+
+			> .elementor-row {
+				min-height: 40px;
 			}
 		}
+	}
 
-		.elementor-inner-section {
+	.elementor-inner-section {
 
-			&:first-child {
-				margin-top: 15px;
-			}
+		&:first-child {
+			margin-top: 15px;
+		}
 
-			> .elementor-container {
+		> .elementor-container {
 
-				> .elementor-row {
-					min-height: 40px;
-				}
+			> .elementor-row {
+				min-height: 40px;
 			}
 		}
 	}
@@ -838,6 +859,19 @@ html.elementor-html {
 
 		.elementor-add-section-close {
 			display: none;
+		}
+	}
+}
+
+.elementor-embedded-editor {
+
+	.elementor-section-wrap {
+
+		&:not(:empty) {
+
+			+ #elementor-add-new-section {
+				display: none;
+			}
 		}
 	}
 }

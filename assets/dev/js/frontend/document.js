@@ -49,7 +49,9 @@ export default class extends elementorModules.ViewModule {
 		this.isEdit = this.$element.hasClass( this.getSettings( 'classes.editMode' ) );
 
 		if ( this.isEdit ) {
-			elementor.settings.page.model.on( 'change', this.onSettingsChange.bind( this ) );
+			elementor.on( 'document:loaded', () => {
+				elementor.settings.page.model.on( 'change', this.onSettingsChange.bind( this ) );
+			} );
 		} else {
 			this.runElementsHandlers();
 		}
