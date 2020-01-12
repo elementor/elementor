@@ -19,8 +19,6 @@ export class Open extends CommandBase {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
-		const startAutoSave = this.component.startAutoSave;
-
 		elementor.documents.request( id ).then( ( config ) => {
 			// Tell the editor to load the document.
 			const document = elementor.loadDocument( config );
