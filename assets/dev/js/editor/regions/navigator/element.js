@@ -2,7 +2,7 @@ import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 import DocumentHelpers from 'elementor-document/helpers';
 
-export default class extends Marionette.CompositeView {
+export default class Element extends Marionette.CompositeView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}

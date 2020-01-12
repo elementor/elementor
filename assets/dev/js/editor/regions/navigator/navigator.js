@@ -4,7 +4,7 @@ const BaseRegion = require( 'elementor-regions/base' );
 
 import NavigatorLayout from './layout';
 
-export default class extends BaseRegion {
+export default class Navigator extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
