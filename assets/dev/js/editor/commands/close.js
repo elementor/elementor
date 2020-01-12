@@ -22,10 +22,10 @@ export class Close extends CommandsBase {
 
 		switch ( mode ) {
 			case 'save':
-				elementor.saver.update();
+				$e.run( 'document/save/update' );
 				break;
 			case 'discard':
-				elementor.saver.discard();
+				$e.run( 'document/save/discard' );
 
 				// TODO: Discard local changes.
 				break;
