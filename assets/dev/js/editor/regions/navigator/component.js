@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -13,15 +14,10 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return {
-			open: () => $e.route( this.getNamespace() ),
-			close: () => this.close(),
-			toggle: () => {
-				if ( this.isOpen ) {
-					this.close();
-				} else {
-					$e.route( this.getNamespace() );
-				}
-			},
+			close: ( args ) => ( new commands.Close( args ) ).run(),
+			open: ( args ) => ( new commands.Open( args ) ).run(),
+			toggle: ( args ) => ( new commands.Toggle( args ) ).run(),
+			'toggle-all': ( args ) => ( new commands.ToggleAll( args ) ).run(),
 		};
 	}
 
@@ -38,15 +34,6 @@ export default class Component extends ComponentBase {
 		const { model = false } = args;
 
 		this.manager.open( model );
-		return true;
-	}
-
-	close() {
-		if ( ! super.close() ) {
-			return false;
-		}
-
-		this.manager.close();
 
 		return true;
 	}
