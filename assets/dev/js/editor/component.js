@@ -41,11 +41,6 @@ export default class Component extends ComponentBase {
 	add( document ) {
 		const { id } = document;
 
-		// Validate document is not already in use.
-		if ( this.documents[ id ] ) {
-			throw new Error( `Document with id: '${ id }', is already exist` );
-		}
-
 		// Save the document.
 		this.documents[ id ] = document;
 
