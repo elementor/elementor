@@ -1,4 +1,4 @@
-import Base from '../base';
+import CommandBase from 'elementor-api/modules/command-base';
 import History from '../history';
 
 export const DEFAULT_DEBOUNCE_DELAY = 800;
@@ -46,7 +46,7 @@ export default class Debounce extends History {
 	}
 
 	onBeforeRun( args ) {
-		Base.prototype.onBeforeRun.call( this, args );
+		CommandBase.prototype.onBeforeRun.call( this, args );
 
 		if ( this.history && this.isHistoryActive() ) {
 			$e.run( 'document/history/start-transaction', this.history );
@@ -54,7 +54,7 @@ export default class Debounce extends History {
 	}
 
 	onAfterRun( args, result ) {
-		Base.prototype.onAfterRun.call( this, args, result );
+		CommandBase.prototype.onAfterRun.call( this, args, result );
 
 		if ( this.isHistoryActive() ) {
 			if ( this.isDebounceRequired ) {
@@ -68,10 +68,10 @@ export default class Debounce extends History {
 	}
 
 	onCatchApply( e ) {
-		Base.prototype.onCatchApply.call( this, e );
+		CommandBase.prototype.onCatchApply.call( this, e );
 
 		// Rollback history on failure.
-		if ( e instanceof elementorModules.common.HookBreak && this.history ) {
+		if ( e instanceof $e.modules.HookBreak && this.history ) {
 			if ( this.isDebounceRequired ) {
 				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
 				this.constructor.debounce( () => {

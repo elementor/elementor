@@ -1,5 +1,5 @@
 import environment from 'elementor-common/utils/environment';
-import DocumentUtils from 'elementor-document/utils/helpers';
+import DocumentHelpers from 'elementor-document/helpers';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -161,7 +161,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => DocumentUtils.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => DocumentHelpers.isPasteEnabled( this.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),
@@ -202,12 +202,12 @@ BaseElementView = BaseContainer.extend( {
 		const editModel = this.getEditModel();
 
 		if ( this.collection && this.onCollectionChanged ) {
-			elementorCommon.helpers.softDeprecated( 'onCollectionChanged', '2.8.0', '$e.events || $e.hooks' );
+			elementorCommon.helpers.softDeprecated( 'onCollectionChanged', '2.8.0', '$e.hooks' );
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
 		if ( this.onSettingsChanged ) {
-			elementorCommon.helpers.softDeprecated( 'onSettingsChanged', '2.8.0', '$e.events || $e.hooks' );
+			elementorCommon.helpers.softDeprecated( 'onSettingsChanged', '2.8.0', '$e.hooks' );
 			this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged );
 		}
 
