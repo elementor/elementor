@@ -20,6 +20,7 @@ var	Manager = function() {
 		paste_style: elementor.translate( 'style_pasted' ),
 		remove: elementor.translate( 'removed' ),
 		reset_style: elementor.translate( 'style_reset' ),
+		reset_settings: elementor.translate( 'settings_reset' ),
 	};
 
 	var getActionLabel = function( itemData ) {

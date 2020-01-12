@@ -94,7 +94,6 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'social',
-				'label_block' => true,
 				'default' => [
 					'value' => 'fab fa-wordpress',
 					'library' => 'fa-brands',
@@ -170,7 +169,6 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'label_block' => true,
 				'default' => [
 					'is_external' => 'true',
 				],

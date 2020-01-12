@@ -201,7 +201,6 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-				'label_block' => true,
 				'fa4compatibility' => 'icon',
 			]
 		);
@@ -258,7 +257,6 @@ class Widget_Button extends Widget_Base {
 				],
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
 				'description' => __( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor' ),
 				'separator' => 'before',
 
