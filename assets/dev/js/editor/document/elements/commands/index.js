@@ -11,5 +11,6 @@ export { Import } from './import';
 export { Paste } from './paste';
 export { Move } from './move';
 export { PasteStyle } from './paste-style';
+export { ResetSettings } from './reset-settings';
 export { ResetStyle } from './reset-style';
 export { Settings } from './settings';

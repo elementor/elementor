@@ -36,7 +36,7 @@ export class Settings extends Debounce {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 
-		historyItem.get( 'containers' ).forEach( ( container ) => {
+		historyItem.get( 'containers' ).forEach( ( /* Container */ container ) => {
 			const changes = data.changes[ container.id ];
 
 			$e.run( 'document/elements/settings', {

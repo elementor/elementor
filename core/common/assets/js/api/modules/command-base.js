@@ -8,9 +8,9 @@ export default class CommandBase extends ArgsObject {
 	/**
 	 * Current component (elementorModules.Module ).
 	 *
-	 * @type {{}}
+	 * @type {Component}
 	 */
-	component = {};
+	component;
 
 	/**
 	 * Function constructor().

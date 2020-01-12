@@ -9,7 +9,7 @@ export class SectionColumnsSetStructure extends After {
 		return 'section-columns-set-structure';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'column';
 	}
 

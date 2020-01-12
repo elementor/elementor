@@ -10,7 +10,7 @@ export class ResizeColumnLimit extends Dependency {
 		return 'resize-column-limit';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'column';
 	}
 

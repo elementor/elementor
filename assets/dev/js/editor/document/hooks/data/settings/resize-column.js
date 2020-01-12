@@ -9,7 +9,7 @@ export class ResizeColumn extends After {
 		return 'resize-column';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'column';
 	}
 

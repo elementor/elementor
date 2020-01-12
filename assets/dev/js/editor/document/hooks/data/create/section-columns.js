@@ -11,7 +11,7 @@ export class SectionColumns extends After {
 		return 'create-section-columns';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'document';
 	}
 

@@ -203,7 +203,7 @@ export default class Base extends elementorModules.Module {
 	register( event, instance ) {
 		const command = instance.getCommand(),
 			id = instance.getId(),
-			containerType = instance.bindContainerType();
+			containerType = instance.getContainerType();
 
 		this.checkEvent( event );
 		this.checkInstance( instance );

@@ -1,8 +1,8 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Base from './base/base';
 
-export class AddTransaction extends CommandBase {
+export class AddTransaction extends Base {
 	apply( args ) {
-		const currentId = elementor.history.history.getCurrentId();
+		const currentId = this.history.getCurrentId();
 
 		if ( currentId ) {
 			// If log already started chain his historyId.

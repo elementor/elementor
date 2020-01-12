@@ -9,7 +9,7 @@ export class SectionColumnsResetLayout extends After {
 		return 'section-columns-reset-layout';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'section';
 	}
 
@@ -32,7 +32,7 @@ export class SectionColumnsResetLayout extends After {
 		}
 
 		containers.forEach( ( /**Container*/ container ) =>
-			container.parent.view.resetLayout()
+			container.parent.view.resetLayout( false )
 		);
 	}
 }

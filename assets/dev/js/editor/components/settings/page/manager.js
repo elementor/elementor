@@ -19,13 +19,16 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			elementor.saver.saveAutoSave( {
-				onSuccess: function() {
-					elementor.reloadPreview();
+			$e.run( 'document/save/auto', {
+				force: true,
+				options: {
+					onSuccess: function() {
+						elementor.reloadPreview();
 
-					elementor.once( 'preview:loaded', function() {
-						$e.route( 'panel/page-settings/settings' );
-					} );
+						elementor.once( 'preview:loaded', function() {
+							$e.route( 'panel/page-settings/settings' );
+						} );
+					},
 				},
 			} );
 		},

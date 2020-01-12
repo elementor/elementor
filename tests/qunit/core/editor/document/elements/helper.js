@@ -165,6 +165,13 @@ export default class ElementsHelper {
 		} );
 	}
 
+	static resetSettings( eContainer, settings = null ) {
+		$e.run( 'document/elements/reset-settings', {
+			container: eContainer,
+			settings,
+		} );
+	}
+
 	static resetStyle( eContainer ) {
 		$e.run( 'document/elements/reset-style', {
 			container: eContainer,
@@ -174,6 +181,13 @@ export default class ElementsHelper {
 	static multiResetStyle( eContainers ) {
 		$e.run( 'document/elements/reset-style', {
 			containers: eContainers,
+		} );
+	}
+
+	static multiResetSettings( eContainers, settings = null ) {
+		$e.run( 'document/elements/reset-settings', {
+			containers: eContainers,
+			settings,
 		} );
 	}
 

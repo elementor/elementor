@@ -58,6 +58,6 @@ module.exports = Marionette.CompositeView.extend( {
 		var collection = event.model.collection,
 			itemIndex = collection.findIndex( event.model );
 
-		elementor.history.history.doItem( itemIndex );
+		this.options.history.doItem( itemIndex );
 	},
 } );

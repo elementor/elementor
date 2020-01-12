@@ -9,7 +9,7 @@ export class SectionsColumns extends After {
 		return 'delete-section-columns';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'column';
 	}
 
