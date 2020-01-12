@@ -119,15 +119,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 
 		switch ( options.type ) {
-			case 'image':
-				self.setImageContent( options.url );
-
-				break;
 			case 'video':
 				self.setVideoContent( options );
 
 				break;
 			case 'slideshow':
+			case 'image':
 				self.setSlideshowContent( options.slideshow );
 
 				break;
@@ -216,17 +213,23 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		if ( $image.length ) {
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( 'Download Image' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
+
+			const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
+				id: this.id,
+				url: itemUrl,
+			} );
+			$linkList.append( $( '<a>', { href: hash, download: '' } ).text( 'Hash' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
 		}
 		return $linkList;
 	},
 
 	createShareLink: function( networkName, itemUrl ) {
-		const hash = elementorFrontend.utils.urlActions.createActionURL( 'lightbox', {
+		const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
 			id: this.id,
 			url: itemUrl,
 		} );
 
-		const url = location.href.replace( /#.*/, '' ) + hash,
+		const url = encodeURIComponent( location.href.replace( /#.*/, '' ) + hash ),
 			networkURL = ShareLink.getNetworkLink( networkName, { url: url } );
 
 		return networkURL;
@@ -368,13 +371,14 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	setSlideshowContent: function( options ) {
 		const $ = jQuery,
+			isSingleSlide = 1 === options.slides.length,
 			showFooter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ),
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
 			$container = $( '<div>', { class: slideshowClasses.container } ),
-			$slidesWrapper = $( '<div>', { class: slideshowClasses.slidesWrapper } ),
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) ),
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+			$slidesWrapper = $( '<div>', { class: slideshowClasses.slidesWrapper } );
+
+		let $prevButton, $nextButton;
 
 		options.slides.forEach( ( slide ) => {
 			let slideClass = slideshowClasses.slide + ' ' + classes.item;
@@ -412,12 +416,19 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.elements.$container = $container;
 		this.elements.$header = this.getSlideshowHeader();
 
-		$container.prepend( this.elements.$header );
-		$container.append(
-			$slidesWrapper,
-			$prevButton,
-			$nextButton,
-		);
+		$container
+			.prepend( this.elements.$header )
+			.append( $slidesWrapper );
+
+		if ( ! isSingleSlide ) {
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+
+			$container.append(
+				$prevButton,
+				$nextButton,
+			);
+		}
 
 		if ( showFooter ) {
 			this.elements.$footer = this.getSlideshowFooter();
@@ -426,7 +437,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.setSettings( 'hideUiTimeout', '' );
 
-		$container.on( 'mousedown mousemove keypress', () => {
+		$container.on( 'click mousemove keypress', () => {
 			clearTimeout( this.getSettings( 'hideUiTimeout' ) );
 			$container.removeClass( slideshowClasses.hideUiVisibility );
 			this.setSettings( 'hideUiTimeout', setTimeout( () => {
@@ -446,10 +457,6 @@ module.exports = elementorModules.ViewModule.extend( {
 			onShowMethod();
 
 			const swiperOptions = {
-				navigation: {
-					prevEl: $prevButton,
-					nextEl: $nextButton,
-				},
 				pagination: {
 					el: '.' + slideshowClasses.counter,
 					type: 'fraction',
@@ -464,6 +471,13 @@ module.exports = elementorModules.ViewModule.extend( {
 				loop: true,
 				keyboard: true,
 			};
+
+			if ( ! isSingleSlide ) {
+				swiperOptions.navigation = {
+					prevEl: $prevButton,
+					nextEl: $nextButton,
+				};
+			}
 
 			if ( options.swiper ) {
 				$.extend( swiperOptions, options.swiper );
@@ -725,9 +739,26 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( ! element.dataset.elementorLightboxSlideshow ) {
+			const slides = [ {
+				image: element.href,
+				index: 0,
+				title: element.dataset.elementorLightboxTitle,
+				description: element.dataset.elementorLightboxDescription,
+			} ],
+				slideshowID = 'single-img';
 			this.showModal( {
-				type: 'image',
-				url: element.href,
+				type: 'slideshow',
+				id: slideshowID,
+				modalOptions: {
+					id: 'elementor-lightbox-slideshow-' + slideshowID,
+				},
+				slideshow: {
+					slides: slides,
+					swiper: {
+						loop: false,
+						pagination: false,
+					},
+				},
 			} );
 
 			return;
