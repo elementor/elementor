@@ -57,6 +57,8 @@ class Kit extends PageBase {
 		$config['tabs'] = $this->get_tabs_controls();
 		$config['settings'] = $this->get_settings();
 
+		unset( $config['elements'] );
+
 		return $config;
 	}
 

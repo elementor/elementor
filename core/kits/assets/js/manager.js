@@ -72,27 +72,11 @@ export default class Settings extends elementorModules.ViewModule {
 	}
 
 	addPanelPage() {
-		elementor.documents.request( elementor.config.kit_id ).then( ( config ) => {
-			this.document = new Document( config );
-
-			const container = this.getContainer( this.document );
-
-			this.document.container = container;
-
-			elementor.documents.add( this.document );
-
-			elementor.getPanelView().addPage( 'kit_settings', {
-				view: panelView,
-				title: 'global_theme_style',
-				name: 'kit_settings',
-				fullPage: true,
-				options: {
-					container,
-					model: container.model,
-					controls: container.settings.controls,
-					name: 'kit',
-				},
-			} );
+		elementor.getPanelView().addPage( 'kit_settings', {
+			view: panelView,
+			title: 'global_theme_style',
+			name: 'kit_settings',
+			fullPage: true,
 		} );
 	}
 

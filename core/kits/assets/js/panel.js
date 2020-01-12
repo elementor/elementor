@@ -14,10 +14,18 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	onBeforeShow() {
-		this.showChildView( 'header', new PanelHeader( this.options ) );
+		const	container = elementor.documents.getCurrent().container,
+			options = {
+				container,
+				model: container.model,
+				controls: container.settings.controls,
+				name: 'kit',
+		};
 
-		this.showChildView( 'content', new PanelContent( this.options ) );
+		this.showChildView( 'header', new PanelHeader( options ) );
 
-		this.showChildView( 'footer', new PanelFooter( this.options ) );
+		this.showChildView( 'content', new PanelContent( options ) );
+
+		this.showChildView( 'footer', new PanelFooter( options ) );
 	},
 } );
