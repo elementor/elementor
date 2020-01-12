@@ -15,7 +15,6 @@ jQuery( () => {
 
 			$e.components.register( instance );
 
-
 			assert.equal( $e.components.get( namespace ), instance );
 		} );
 
