@@ -850,8 +850,16 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
-		// TODO: Add BC.
-		this.history = new HistoryManager();
+		this.history = {
+			get history() {
+				elementorCommon.helpers.softDeprecated( 'elementor.history.history', '2.9.0', 'elementor.documents.getCurrent().history' );
+				return elementor.documents.getCurrent().history;
+			},
+			get revisions() {
+				elementorCommon.helpers.softDeprecated( 'elementor.history.revisions', '2.9.0', 'elementor.documents.getCurrent().revisions' );
+				return elementor.documents.getCurrent().revisions;
+			},
+		};
 
 		this.loaded = true;
 	}
