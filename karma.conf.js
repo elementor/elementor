@@ -1,5 +1,19 @@
+let isDebug = false;
+
+if ( process.argv[ process.argv.length - 1 ] ) {
+	const gruntParams = process.argv[ process.argv.length - 1 ].split( ':' );
+
+	if ( gruntParams ) {
+		if ( 'karma' === gruntParams[ 0 ] ) {
+			if ( 'debug' === gruntParams[ 1 ] ) {
+				isDebug = true;
+			}
+		}
+	}
+}
+
 module.exports = function( config ) {
-	config.set( {
+	const karmaConfig = {
 		basePath: './',
 		frameworks: [ 'qunit' ],
 		files: [
@@ -89,5 +103,19 @@ module.exports = function( config ) {
 				testTimeout: 5000,
 			},
 		},
-	} );
+	};
+
+	if ( isDebug ) {
+		const fs = require( 'fs' );
+
+		if ( fs.existsSync( '../elementor-dev-tools' ) ) {
+			const last = karmaConfig.files.pop();
+
+			karmaConfig.files.push( { pattern: '../elementor-dev-tools/modules/dev-tools/assets/js/*.js', type: 'module' } );
+
+			karmaConfig.files.push( last );
+		}
+	}
+
+	config.set( karmaConfig );
 };
