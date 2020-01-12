@@ -294,6 +294,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.noticeBar = new NoticeBar();
 
+		this.history = new HistoryManager();
+
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
@@ -830,17 +832,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
-		this.history = {
-			get history() {
-				elementorCommon.helpers.softDeprecated( 'elementor.history.history', '2.9.0', 'elementor.documents.getCurrent().history' );
-				return elementor.documents.getCurrent().history;
-			},
-			get revisions() {
-				elementorCommon.helpers.softDeprecated( 'elementor.history.revisions', '2.9.0', 'elementor.documents.getCurrent().revisions' );
-				return elementor.documents.getCurrent().revisions;
-			},
-		};
-
 		this.loaded = true;
 	}
 
@@ -1064,11 +1055,6 @@ export default class EditorBase extends Marionette.Application {
 				replacement: 'elements',
 				value: () => elementor.config.document.elements,
 			},
-
-			widgets: {
-				replacement: 'widgets',
-				value: () => elementor.widgetsCache,
-			},
 			current_user_can_publish: {
 				replacement: 'user.can_publish',
 				value: () => elementor.config.document.user.can_publish,
@@ -1106,6 +1092,13 @@ export default class EditorBase extends Marionette.Application {
 			get() {
 				elementorCommon.helpers.softDeprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
 				return elementor.config.document.settings;
+			},
+		} );
+
+		Object.defineProperty( this.config, 'widgets', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
+				return elementor.widgetsCache;
 			},
 		} );
 	}
