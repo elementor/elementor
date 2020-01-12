@@ -1,6 +1,6 @@
 import Commands from './commands';
 
-export default class extends Commands {
+export default class Routes extends Commands {
 	constructor( ...args ) {
 		super( ...args );
 
