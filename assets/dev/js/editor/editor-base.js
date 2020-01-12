@@ -1026,14 +1026,14 @@ export default class EditorBase extends Marionette.Application {
 
 		this.templates.init();
 
-		this.settings.page = new this.settings.modules.page( config.settings );
-
 		const document = new Document( config );
 
 		elementor.documents.add( document );
 
 		// Must set current before create a container.
 		elementor.documents.setCurrent( document );
+
+		this.settings.page = new this.settings.modules.page( config.settings );
 
 		document.container = this.settings.page.getEditedView().getContainer();
 
