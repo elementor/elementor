@@ -20,6 +20,8 @@ export class Open extends CommandsBase {
 		}
 
 		elementor.documents.request( id ).then( ( config ) => {
+			elementorCommon.elements.$body.addClass( `elementor-editor-${ config.document.type }` );
+
 			// Tell the editor to load the document.
 			elementor.loadDocument( config );
 

@@ -783,24 +783,8 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		this.$previewContents = this.$preview.contents();
-		this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );
-
-		if ( ! this.$previewElementorEl.length ) {
-			this.onPreviewElNotFound();
-
-			return;
-		}
-
-		this.$previewElementorEl.addClass( 'elementor-edit-area' );
 
 		this.initFrontend();
-
-		this.initElements();
-
-		const iframeRegion = new Marionette.Region( {
-			// Make sure you get the DOM object out of the jQuery object
-			el: this.$previewElementorEl[ 0 ],
-		} );
 
 		this.schemes.init();
 		this.schemes.printSchemesStyle();
@@ -812,14 +796,6 @@ export default class EditorBase extends Marionette.Application {
 		if ( ! this.previewLoadedOnce ) {
 			this.onFirstPreviewLoaded();
 		}
-
-		this.addRegions( {
-			sections: iframeRegion,
-		} );
-
-		const Preview = require( 'elementor-views/preview' );
-
-		this.sections.show( new Preview( { model: this.elementsModel } ) );
 
 		this.$previewContents.children().addClass( 'elementor-html' );
 
@@ -840,8 +816,6 @@ export default class EditorBase extends Marionette.Application {
 		} );
 
 		this.enqueueTypographyFonts();
-
-		this.onEditModeSwitched();
 
 		// find elementor parts, but not nested parts.
 		this.$previewContents.find( '.elementor' ).not( '.elementor .elementor' ).prepend( '<span class="elementor-edit-button">' +
@@ -884,8 +858,6 @@ export default class EditorBase extends Marionette.Application {
 		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
 			this.showFlexBoxAttentionDialog();
 		}
-
-		this.initNavigator();
 
 		this.previewLoadedOnce = true;
 	}
@@ -1056,15 +1028,16 @@ export default class EditorBase extends Marionette.Application {
 
 		this.settings.page = new this.settings.modules.page( config.settings );
 
-		const document = new Document( config, this.settings.page.getEditedView().getContainer() );
-
-		this.once( 'preview:loaded', () => this.onDocumentLoaded( document ) );
+		const document = new Document( config );
 
 		elementor.documents.add( document );
 
+		// Must set current before create a container.
 		elementor.documents.setCurrent( document );
 
-		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
+		document.container = this.settings.page.getEditedView().getContainer();
+
+		this.once( 'preview:loaded', () => this.onDocumentLoaded( document ) );
 
 		if ( this.loaded ) {
 			this.schemes.printSchemesStyle();

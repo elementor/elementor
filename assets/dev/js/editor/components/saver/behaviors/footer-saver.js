@@ -28,7 +28,9 @@ module.exports = Marionette.Behavior.extend( {
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) )
 			.on( 'page:status:change', this.onPageStatusChange );
 
-		elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
+		elementor.on( 'document:loaded', () => {
+			elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
+		} );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButtons.bind( this ) );
 	},
