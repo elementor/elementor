@@ -9,6 +9,8 @@ import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import Document from './document';
+import EditorsDocument from './component';
+import HistoryManager from 'elementor/modules/history/assets/js/history/manager';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
