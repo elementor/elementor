@@ -1,8 +1,8 @@
-import ComponentModal from 'elementor-common/components/component-modal';
+import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
-export default class Component extends ComponentModal {
+export default class Component extends ComponentModalBase {
 	__construct( args ) {
 		// Before construct because it's used in defaultTabs().
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;

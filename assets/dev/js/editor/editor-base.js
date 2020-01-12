@@ -8,9 +8,9 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
-import HistoryManager from 'elementor-modules/history/assets/js/module';
-import EditorsDocument from './component';
 import Document from './document';
+import EditorsDocument from './component';
+import HistoryManager from 'elementor/modules/history/assets/js/history/manager';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -33,7 +33,7 @@ export default class EditorBase extends Marionette.Application {
 	// TODO = BC Since 2.3.0
 	ajax = elementorCommon.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
-	history = require( 'elementor-modules/history/assets/js/module' );
+	history = require( 'elementor/modules/history/assets/js/module' );
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),

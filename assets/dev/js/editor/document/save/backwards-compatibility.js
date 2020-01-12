@@ -1,6 +1,6 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
 
-export default class BackwardsCompatibility extends BaseComponent {
+export default class BackwardsCompatibility extends ComponentBase {
 	defaultSave() {
 		elementorCommon.helpers.softDeprecated( 'saveDraft', '2.9.0', "$e.run( 'document/save/default' )" );
 

@@ -1,5 +1,5 @@
-import Debounce from '../../commands/base/history/debounce';
-import ElementsSettings from '../../elements/commands/settings';
+import Debounce from 'elementor-document/commands/base/history/debounce';
+import ElementsSettings from 'elementor-document/elements/commands/settings';
 
 /**
  * The difference between 'document/elements/settings` and `document/dynamic/settings` is:
