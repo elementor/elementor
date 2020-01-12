@@ -119,7 +119,7 @@ class Control_URL extends Control_Base_Multiple {
 							<input id="<?php echo $custom_attributes_uid; ?>" type="text" placeholder="key|value,..." data-setting="custom_attributes">
 						</div>
 					</div>
-					<# if ( ( -1 !== data.options.indexOf( 'custom_attributes' ) ) && data.custom_attributes_description ) { #>
+					<# if ( ( data.options && -1 !== data.options.indexOf( 'custom_attributes' ) ) && data.custom_attributes_description ) { #>
 					<div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>
 					<# } #>
 				</div>
