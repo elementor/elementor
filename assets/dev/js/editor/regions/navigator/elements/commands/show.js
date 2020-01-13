@@ -10,8 +10,6 @@ export class Show extends CommandBase {
 
 		containers.forEach( ( /* Container */ container ) => {
 			container.model.set( 'hidden', false );
-
-			container.view.toggleVisibilityClass();
 		} );
 	}
 }

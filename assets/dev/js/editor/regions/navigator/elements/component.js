@@ -1,7 +1,14 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
+import * as hooksUI from './hooks/ui/';
 
 export default class Component extends ComponentBase {
+	onInit() {
+		super.onInit();
+
+		Object.values( hooksUI ).forEach( ( Hook ) => new Hook() );
+	}
+
 	getNamespace() {
 		return 'navigator/elements';
 	}
