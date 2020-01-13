@@ -71,7 +71,7 @@ export default class Component extends BackwardsCompatibility {
 	saveEditor( options ) {
 		const document = options.document || elementor.documents.getCurrent();
 
-		if ( document.isSaving ) {
+		if ( document.editor.isSaving ) {
 			return;
 		}
 
@@ -89,8 +89,8 @@ export default class Component extends BackwardsCompatibility {
 		this.trigger( 'before:save', options )
 			.trigger( 'before:save:' + options.status, options );
 
-		document.isSaving = true;
-		document.isChangedDuringSave = false;
+		document.editor.isSaving = true;
+		document.editor.isChangedDuringSave = false;
 
 		settings.post_status = options.status;
 
@@ -111,8 +111,8 @@ export default class Component extends BackwardsCompatibility {
 	setFlagEditorChange( status ) {
 		const document = elementor.documents.getCurrent();
 
-		if ( status && document.isSaving ) {
-			document.isChangedDuringSave = true;
+		if ( status && document.editor.isSaving ) {
+			document.editor.isChangedDuringSave = true;
 		}
 
 		elementor.channels.editor
@@ -133,7 +133,7 @@ export default class Component extends BackwardsCompatibility {
 			}
 
 			// Notice: Must be after update page.model.post_status to the new status.
-			if ( ! document.isChangedDuringSave ) {
+			if ( ! document.editor.isChangedDuringSave ) {
 				elementor.saver.setFlagEditorChange( false );
 			}
 		}
@@ -185,6 +185,6 @@ export default class Component extends BackwardsCompatibility {
 	}
 
 	onAfterAjax( document ) {
-		document.isSaving = false;
+		document.editor.isSaving = false;
 	}
 }
