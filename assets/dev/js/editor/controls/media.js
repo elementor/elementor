@@ -46,12 +46,12 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.frame.open();
 
 		const selectedId = this.getControlValue( 'id' );
+
 		if ( ! selectedId ) {
 			return;
 		}
 
-		const selection = this.frame.state().get( 'selection' );
-		selection.add( wp.media.attachment( selectedId ) );
+		this.frame.state().get( 'selection' ).add( wp.media.attachment( selectedId ) );
 	},
 
 	deleteImage: function( event ) {

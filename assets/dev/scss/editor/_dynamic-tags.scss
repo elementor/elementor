@@ -101,40 +101,27 @@
 
 .elementor-control-dynamic {
 
-	&.elementor-label-inline {
-
-		.elementor-control-field {
-			flex-wrap: wrap;
-		}
-	}
-
 	&-switcher {
-		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		height: $control-unit;
 		font-size: 9px;
-
-		i {
-			@include padding-start(5px);
-		}
+		cursor: pointer;
+		border: 1px solid $editor-lightest;
+		border-radius: 3px;
 
 		&-wrapper {
 			display: flex;
-			justify-content: flex-end;
-			flex-grow: 1;
-
-			.elementor-label-inline > .elementor-control-content > .elementor-control-field > & {
-				width: 100%;
-				padding-bottom: 10px;
-			}
 		}
 	}
 
 	&-value {
-		.elementor-control-tag-area {
-			display: none;
-		}
 
+		.elementor-control-tag-area,
 		.elementor-control-dynamic-switcher {
-			color: $editor-info;
+			display: none;
 		}
 	}
 }
