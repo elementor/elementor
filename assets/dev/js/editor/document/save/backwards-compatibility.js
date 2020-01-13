@@ -76,4 +76,11 @@ export default class BackwardsCompatibility extends ComponentBase {
 
 		throw Error( 'Deprecated' );
 	}
+
+	saveEditor( options ) {
+		elementorCommon.helpers.softDeprecated( 'saveEditor', '2.9.0',
+			"$e.internal( 'document/save/save' )" );
+
+		$e.internal( 'document/save/save', { options } );
+	}
 }

@@ -1,3 +1,8 @@
+import HookUIBefore from 'elementor-api/modules/hooks/ui/before';
+import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
+
+
+
 module.exports = class FooterSaver extends Marionette.Behavior {
 	previewWindow = null;
 

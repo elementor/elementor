@@ -19,14 +19,14 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	constructor( args ) {
+	constructor( args, manager = $e.commands ) {
 		super( args );
 
 		// Acknowledge self about which command it run.
-		this.currentCommand = $e.commands.getCurrentFirst();
+		this.currentCommand = manager.getCurrentFirst();
 
 		// Assign instance of current component.
-		this.component = $e.commands.getComponent( this.currentCommand );
+		this.component = manager.getComponent( this.currentCommand );
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
