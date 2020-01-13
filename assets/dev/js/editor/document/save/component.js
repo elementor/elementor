@@ -127,6 +127,11 @@ export default class Component extends BackwardsCompatibility {
 	onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ) {
 		this.onAfterAjax( document );
 
+		// Document is switched doring the save, do nothing.
+		if ( document !== elementor.documents.getCurrent() ) {
+			return;
+		}
+
 		if ( 'autosave' !== options.status ) {
 			if ( statusChanged ) {
 				elementor.settings.page.model.set( 'post_status', options.status );
