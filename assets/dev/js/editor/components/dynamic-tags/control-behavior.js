@@ -230,5 +230,9 @@ module.exports = Marionette.Behavior.extend( {
 
 	onDestroy: function() {
 		this.destroyTagView();
+
+		if ( this.ui.tagsList ) {
+			this.ui.tagsList.remove();
+		}
 	},
 } );
