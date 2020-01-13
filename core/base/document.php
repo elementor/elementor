@@ -85,6 +85,7 @@ abstract class Document extends Controls_Stack {
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
+			'default_route' => 'panel/elements/categories',
 			'messages' => [
 				/* translators: %s: the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),

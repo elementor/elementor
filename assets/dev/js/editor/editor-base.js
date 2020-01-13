@@ -998,11 +998,11 @@ export default class EditorBase extends Marionette.Application {
 			this.$previewElementorEl
 			.addClass( 'elementor-edit-area-active elementor-embedded-editor' )
 			.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-			$e.route( 'panel/elements/categories', {
-				refresh: true,
-			} );
 		}
+
+		$e.route( document.config.panel.default_route, {
+			refresh: true,
+		} );
 
 		this.trigger( 'document:loaded' );
 	}
