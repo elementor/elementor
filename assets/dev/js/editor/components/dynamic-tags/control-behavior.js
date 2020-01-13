@@ -173,7 +173,9 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onDynamicSwitcherClick: function() {
+	onDynamicSwitcherClick: function( event ) {
+		event.stopPropagation();
+
 		this.toggleTagsList();
 	},
 
