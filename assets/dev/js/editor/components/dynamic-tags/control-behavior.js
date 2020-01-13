@@ -7,7 +7,6 @@ module.exports = Marionette.Behavior.extend( {
 	listenerAttached: false,
 
 	ui: {
-		tagArea: '.elementor-control-tag-area',
 		dynamicSwitcher: '.elementor-control-dynamic-switcher',
 	},
 
@@ -133,7 +132,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		tagView.render();
 
-		this.ui.tagArea.after( tagView.el );
+		this.$el.find( '.elementor-control-tag-area' ).after( tagView.el );
 
 		this.listenTo( tagView, 'remove', this.onTagViewRemove.bind( this ) );
 	},
