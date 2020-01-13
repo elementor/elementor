@@ -9,7 +9,7 @@ import URLActions from './utils/url-actions';
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
-	LightboxModule = require( 'elementor-frontend/utils/lightbox' );
+	LightboxModule = require( 'elementor-frontend/utils/lightbox/lightbox' );
 
 class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
