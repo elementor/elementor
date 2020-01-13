@@ -81,10 +81,11 @@ export default class Component extends BackwardsCompatibility {
 		}, options );
 
 		const container = document.container,
-			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
 			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
 			oldStatus = container.settings.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
+
+		let elements = [];
 
 		this.trigger( 'before:save', options )
 			.trigger( 'before:save:' + options.status, options );
@@ -93,6 +94,10 @@ export default class Component extends BackwardsCompatibility {
 		document.isChangedDuringSave = false;
 
 		settings.post_status = options.status;
+
+		if ( elementor.config.document.panel.has_elements ) {
+			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
+		}
 
 		elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
@@ -143,7 +148,9 @@ export default class Component extends BackwardsCompatibility {
 			jQuery.extend( true, elementor.config.document, data.config );
 		}
 
-		elementor.config.document.elements = elements;
+		if ( document.config.elements ) {
+			document.config.elements = elements;
+		}
 
 		elementor.channels.editor.trigger( 'saved', data );
 
