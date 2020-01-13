@@ -113,25 +113,19 @@ export default class Element extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		if ( ! this.hasChildren() || this.isRoot() ) {
-			return;
+		const args = {
+			element: this,
+		};
+
+		if ( state ) {
+			args.state = state;
 		}
 
-		const isActive = this.ui.item.hasClass( 'elementor-active' );
-
-		if ( isActive === state ) {
-			return;
+		if ( callback ) {
+			args.callback = callback;
 		}
 
-		this.ui.item.toggleClass( 'elementor-active', state );
-
-		let slideMethod = 'slideToggle';
-
-		if ( undefined !== state ) {
-			slideMethod = 'slide' + ( state ? 'Down' : 'Up' );
-		}
-
-		this.ui.elements[ slideMethod ]( 300, callback );
+		$e.run( 'navigator/elements/toggle-folding', args );
 	}
 
 	toggleHiddenClass() {
