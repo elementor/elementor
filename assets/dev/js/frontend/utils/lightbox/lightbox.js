@@ -403,9 +403,9 @@ module.exports = elementorModules.ViewModule.extend( {
 						'data-title': slide.title,
 						'data-description': slide.description,
 					} );
-				$slideImage[ 0 ].ondragstart = () => {
+				$slideImage.on( 'ondragstart', () => {
 					return false;
-				};
+				} );
 				$zoomContainer.append( $slideImage );
 				$slide.append( $zoomContainer );
 			}
