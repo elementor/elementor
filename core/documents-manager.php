@@ -106,6 +106,7 @@ class Documents_Manager {
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
 		$ajax_manager->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
+		$ajax_manager->register_ajax_action( 'get_document_config', [ $this, 'ajax_get_document_config' ] );
 	}
 
 	/**
@@ -564,6 +565,40 @@ class Documents_Manager {
 		}
 
 		return $success;
+	}
+
+	public function ajax_get_document_config( $request ) {
+		$post_id = absint( $request['id'] );
+
+		Plugin::$instance->editor->set_post_id( $post_id );
+
+		$document = $this->get_doc_or_auto_save( $post_id );
+
+		// Set the global data like $post, $authordata and etc
+		Plugin::$instance->db->switch_to_post( $post_id );
+
+		$this->switch_to_document( $document );
+
+		// Change mode to Builder
+		Plugin::$instance->db->set_is_elementor_page( $post_id );
+
+		// Post Lock
+		if ( ! Plugin::$instance->editor->get_locked_user( $post_id ) ) {
+			Plugin::$instance->editor->lock_post( $post_id );
+		}
+
+		$doc_config = $document->get_config();
+
+		$additional_config = apply_filters( 'elementor/editor/document/config', [], $post_id );
+
+		if ( ! empty( $additional_config ) ) {
+			$doc_config = array_replace_recursive( $doc_config, $additional_config );
+		}
+
+		return $doc_config;
+
+		Utils::print_js_config( 'elementor-editor', 'ElementorDocsConfig', $doc_config );
+
 	}
 
 	/**

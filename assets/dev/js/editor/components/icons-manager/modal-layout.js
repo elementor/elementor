@@ -1,4 +1,4 @@
-import BaseModalLayout from '../../../../../../core/common/assets/js/views/modal/layout';
+import BaseModalLayout from 'elementor-common/views/modal/layout';
 
 export default class extends BaseModalLayout {
 	getModalOptions() {

@@ -1,6 +1,6 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'panel/history/revisions';
 	}
@@ -26,7 +26,7 @@ export default class Component extends BaseComponent {
 	}
 
 	navigate( up ) {
-		if ( this.manager.getItems().length > 1 ) {
+		if ( elementor.documents.getCurrent().revisions.getItems().length > 1 ) {
 			elementor.getPanelView().getCurrentPageView().currentTab.navigate( up );
 		}
 	}

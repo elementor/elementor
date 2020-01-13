@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Logger;
 
-use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
+use Elementor\Modules\System_Info\Reporters\Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.4.0
  */
-class Log_Reporter extends Base_Reporter {
+class Log_Reporter extends Base {
 
 	const MAX_ENTRIES = 20;
 	const CLEAR_LOG_ACTION = 'elementor-clear-log';

@@ -1,6 +1,6 @@
-import Base from '../../commands/base/base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Delete extends Base {
+export class Delete extends CommandBase {
 	apply( args ) {
 		const selectedElement = elementor.getCurrentElement();
 

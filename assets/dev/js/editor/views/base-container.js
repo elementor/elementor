@@ -1,4 +1,4 @@
-import DocumentUtils from 'elementor-document/utils/helpers';
+import DocumentHelpers from 'elementor-document/helpers';
 
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
@@ -81,7 +81,9 @@ module.exports = Marionette.CompositeView.extend( {
 			elementor.channels.data.trigger( options.trigger.afterAdd, newItem );
 		}
 
-		if ( options.edit && elementor.history.history.getActive() ) {
+		if ( options.edit && elementor.documents.getCurrent().history.getActive() ) {
+			// Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
+			newView.getContainer();
 			newModel.trigger( 'request:edit' );
 		}
 
@@ -124,7 +126,7 @@ module.exports = Marionette.CompositeView.extend( {
 		let element = this;
 
 		if ( element.isDestroyed ) {
-			element = DocumentUtils.findViewById( element.model.id );
+			element = DocumentHelpers.findViewById( element.model.id );
 		}
 
 		return element;

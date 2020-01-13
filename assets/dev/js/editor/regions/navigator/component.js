@@ -1,6 +1,6 @@
-import BaseComponent from 'elementor-common/components/component';
+import ComponentBase from 'elementor-api/modules/component-base';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'navigator';
 	}
@@ -29,7 +29,7 @@ export default class Component extends BaseComponent {
 		return {
 			toggle: {
 				keys: 'ctrl+i',
-				dependency: () => 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
+				dependency: () => elementor.getPreviewContainer().isEditable(),
 			},
 		};
 	}
