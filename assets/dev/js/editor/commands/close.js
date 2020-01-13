@@ -10,7 +10,7 @@ export class Close extends CommandsBase {
 			document = elementor.documents.get( id );
 
 		// Already closed.
-		if ( 'closed' === document.editorStatus ) {
+		if ( 'closed' === document.editor.status ) {
 			return;
 		}
 
@@ -31,8 +31,6 @@ export class Close extends CommandsBase {
 				break;
 		}
 
-		elementor.saver.stopAutoSave( document );
-
 		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 
 		elementor.$previewContents.find( `.elementor-${ id }` )
@@ -41,7 +39,9 @@ export class Close extends CommandsBase {
 
 		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
 
-		document.editorStatus = 'closed';
+		document.editor.status = 'closed';
+
+		this.component.stopAutoSave( document );
 
 		if ( onClose ) {
 			onClose();
