@@ -49,13 +49,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 				return _.intersection( tag.categories, dynamicSettings.categories ).length;
 			} );
 
-			if ( tags.length ) {
-				behaviors.tags = {
-					behaviorClass: TagsBehavior,
-					tags: tags,
-					dynamicSettings: dynamicSettings,
-				};
-			}
+			behaviors.tags = {
+				behaviorClass: TagsBehavior,
+				tags: tags,
+				dynamicSettings: dynamicSettings,
+			};
 		}
 
 		return behaviors;
