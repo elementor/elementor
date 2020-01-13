@@ -1,6 +1,7 @@
 import Components from './core/components';
 import Hooks from './core/hooks';
 import Commands from './core/commands';
+import CommandsInternal from './core/commands-internal';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
 import BackwardsCompatibility from './core/backwards-compatibility';
@@ -25,8 +26,10 @@ export default class API {
 		this.bc = new BackwardsCompatibility();
 		this.components = new Components();
 
-		this.hooks = new Hooks();
 		this.commands = new Commands();
+		this.commandsInternal = new CommandsInternal();
+
+		this.hooks = new Hooks();
 		this.routes = new Routes();
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 
@@ -60,10 +63,24 @@ export default class API {
 	 * Alias of `$e.commands.run()`.
 	 *
 	 * @param {{}} args
+	 *
 	 * @returns {boolean}
 	 */
 	run( ...args ) {
 		return $e.commands.run.apply( $e.commands, args );
+	}
+
+	/**
+	 * Function internal().
+	 *
+	 * Alias of `$e.commandsInternal.run()`.
+	 *
+	 * @param {{}} args
+	 *
+	 * @returns {boolean}
+	 */
+	internal( ...args ) {
+		return $e.commandsInternal.run.apply( $e.commandsInternal, args );
 	}
 
 	/**
