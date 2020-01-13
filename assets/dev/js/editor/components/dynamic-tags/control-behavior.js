@@ -27,21 +27,11 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
+		const $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
 
-		if ( this.view.model.get( 'label_block' ) ) {
-			this.ui.controlTitle.after( $dynamicSwitcher );
+		this.$el.find( '.elementor-control-dynamic-switcher-wrapper' ).append( $dynamicSwitcher );
 
-			const $responsiveSwitchers = $dynamicSwitcher.next( '.elementor-control-responsive-switchers' );
-
-			if ( $responsiveSwitchers.length ) {
-				$responsiveSwitchers.after( $dynamicSwitcher );
-			}
-		} else {
-			this.ui.controlTitle.before( $dynamicSwitcher );
-		}
-
-		this.ui.dynamicSwitcher = this.$el.find( this.ui.dynamicSwitcher.selector );
+		this.ui.dynamicSwitcher = $dynamicSwitcher;
 	},
 
 	toggleDynamicClass: function() {
