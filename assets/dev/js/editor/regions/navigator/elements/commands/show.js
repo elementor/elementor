@@ -2,15 +2,13 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Show extends CommandBase {
 	validateArgs( args ) {
-		this.requireContainer( args );
+		this.requireArgument( 'element', args );
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ] } = args;
+		const { element } = args;
 
-		containers.forEach( ( /* Container */ container ) => {
-			container.model.set( 'hidden', false );
-		} );
+		element.model.set( 'hidden', false );
 	}
 }
 

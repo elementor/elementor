@@ -312,9 +312,7 @@ export default class Element extends Marionette.CompositeView {
 	onToggleClick( event ) {
 		event.stopPropagation();
 
-		const container = DocumentHelpers.findContainerById( this.model.get( 'id' ) );
-
-		$e.run( 'navigator/elements/toggle-visibility', { container } );
+		$e.run( 'navigator/elements/toggle-visibility', { element: this } );
 	}
 
 	onTitleDoubleClick() {

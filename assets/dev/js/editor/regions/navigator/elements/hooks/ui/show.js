@@ -1,4 +1,5 @@
 import After from 'elementor-api/modules/hooks/ui/after';
+import Helper from './helper';
 
 export class Show extends After {
 	getCommand() {
@@ -10,11 +11,9 @@ export class Show extends After {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ] } = args;
+		const { element } = args;
 
-		containers.forEach( ( /* Container */ container ) => {
-			container.view.toggleVisibilityClass();
-		} );
+		Helper.toggleVisibilityClass( element.model.get( 'id' ) );
 	}
 }
 
