@@ -1,6 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
-export class ToggleAll extends CommandBase {
+export class ToggleFoldingAll extends CommandBase {
 	apply( args ) {
 		const layout = this.component.manager.manager.getLayout(),
 			state = 'expand' === layout.ui.toggleAll.data( 'elementor-action' ),
@@ -15,4 +15,4 @@ export class ToggleAll extends CommandBase {
 	}
 }
 
-export default ToggleAll;
+export default ToggleFoldingAll;

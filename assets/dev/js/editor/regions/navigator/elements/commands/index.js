@@ -2,5 +2,5 @@
 
 export { Hide } from './hide';
 export { Show } from './show';
-export { ToggleAll } from './toggle-all';
+export { ToggleFoldingAll } from './toggle-folding-all';
 export { ToggleVisibility } from './toggle-visibility';

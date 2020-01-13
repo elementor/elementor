@@ -18,7 +18,7 @@ export default class Layout extends Marionette.LayoutView {
 
 	events() {
 		return {
-			'click @ui.toggleAll': () => $e.run( 'navigator/elements/toggle-all' ),
+			'click @ui.toggleAll': () => $e.run( 'navigator/elements/toggle-folding-all' ),
 			'click @ui.close': () => $e.run( 'navigator/close' ),
 		};
 	}
