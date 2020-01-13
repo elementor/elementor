@@ -956,6 +956,9 @@ export default class EditorBase extends Marionette.Application {
 	onDocumentLoaded( document ) {
 		this.checkPageStatus();
 
+		// Reference container back to document.
+		document.container.document = document;
+
 		if ( document.config.elements ) {
 			this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );
 
@@ -986,7 +989,6 @@ export default class EditorBase extends Marionette.Application {
 
 			this.onEditModeSwitched();
 
-			document.container.document = document;
 			document.container.view = elementor.getPreviewView();
 			document.container.children = elementor.elements;
 			document.container.model.attributes.elements = elementor.elements;
