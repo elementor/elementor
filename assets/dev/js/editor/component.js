@@ -113,11 +113,11 @@ export default class Component extends ComponentBase {
 		}
 
 		if ( this.currentDocument ) {
-			this.currentDocument.editorStatus = 'closed';
+			this.currentDocument.editor.status = 'closed';
 		}
 
 		this.currentDocument = this.documents[ document.id ];
-		this.currentDocument.editorStatus = 'open';
+		this.currentDocument.editor.status = 'open';
 
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', document.id );
 	}
