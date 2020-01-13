@@ -99,7 +99,7 @@ export default class Component extends BackwardsCompatibility {
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
 		}
 
-		elementorCommon.ajax.addRequest( 'save_builder', {
+		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
 				status: options.status,
 				elements: elements,
@@ -111,6 +111,8 @@ export default class Component extends BackwardsCompatibility {
 		} );
 
 		this.trigger( 'save', options );
+
+		return deferred;
 	}
 
 	setFlagEditorChange( status ) {
