@@ -1,4 +1,4 @@
-import History from '../../commands/base/history';
+import History from 'elementor-document/commands/base/history';
 
 export class Move extends History {
 	validateArgs( args ) {
@@ -35,7 +35,7 @@ export class Move extends History {
 				}
 			}
 
-			// BC: Deprecated since 2.8.0 - use `$e.events`.
+			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 			options.trigger = {
 				beforeAdd: 'drag:before:update',
 				afterAdd: 'drag:after:update',

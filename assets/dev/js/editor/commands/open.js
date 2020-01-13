@@ -1,6 +1,6 @@
-import Base from '../document/commands/base/base';
+import CommandsBase from 'elementor-api/modules/command-base';
 
-export class Open extends Base {
+export class Open extends CommandsBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
@@ -19,9 +19,13 @@ export class Open extends Base {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
-		elementor.documents.request( id ).then( ( config ) => {
+		return elementor.documents.request( id ).then( ( config ) => {
+			elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
+
 			// Tell the editor to load the document.
-			elementor.loadDocument( config );
+			const document = elementor.loadDocument( config );
+
+			elementor.saver.startAutoSave( document );
 
 			// TODO: move to $e.hooks.ui.
 			if ( elementor.loaded ) {

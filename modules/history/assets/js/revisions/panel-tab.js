@@ -61,7 +61,10 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	setRevisionsButtonsActive: function( active ) {
-		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+		// Check the tab is open.
+		if ( ! this.isDestroyed ) {
+			this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+		}
 	},
 
 	deleteRevision: function( revisionView ) {

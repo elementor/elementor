@@ -1,6 +1,6 @@
-import Base from '../document/commands/base/base';
+import CommandsBase from 'elementor-api/modules/command-base';
 
-export class Close extends Base {
+export class Close extends CommandsBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
@@ -22,14 +22,16 @@ export class Close extends Base {
 
 		switch ( mode ) {
 			case 'save':
-				elementor.saver.update();
+				$e.run( 'document/save/update' );
 				break;
 			case 'discard':
-				elementor.saver.discard();
+				$e.run( 'document/save/discard' );
 
 				// TODO: Discard local changes.
 				break;
 		}
+
+		elementor.saver.stopAutoSave( document );
 
 		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 

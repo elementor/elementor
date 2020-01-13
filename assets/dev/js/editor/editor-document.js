@@ -1,4 +1,3 @@
-// TODO: All components under document can be in one index file.
 import DocumentComponent from './document/component';
 import SaveComponent from './document/save/component';
 import UIComponent from './document/ui/component';
@@ -15,4 +14,7 @@ elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 	$e.components.register( new RepeaterComponent() );
 	$e.components.register( new HistoryComponent() );
 	$e.components.register( new DynamicComponent() );
+
+	// TODO: Remove, BC Since 2.9.0.
+	elementor.saver = $e.components.get( 'document/save' );
 } );

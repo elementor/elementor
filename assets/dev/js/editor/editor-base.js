@@ -8,9 +8,9 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
-import HistoryManager from 'elementor-modules/history/assets/js/module';
-import EditorsDocument from './component';
+import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
+import EditorDocuments from 'elementor-editor/component';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
@@ -34,7 +34,7 @@ export default class EditorBase extends Marionette.Application {
 	// TODO = BC Since 2.3.0
 	ajax = elementorCommon.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
-	history = require( 'elementor-modules/history/assets/js/module' );
+	history = require( 'elementor/modules/history/assets/js/module' );
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -295,6 +295,8 @@ export default class EditorBase extends Marionette.Application {
 		this.iconManager = new IconsManager();
 
 		this.noticeBar = new NoticeBar();
+
+		this.history = new HistoryManager();
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
@@ -744,9 +746,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initComponents();
 
-		this.documents = $e.components.register( new EditorsDocument() );
-
-		this.saver = $e.components.get( 'document/save' );
+		elementor.documents = $e.components.register( new EditorDocuments() );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
@@ -766,11 +766,9 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		this.once( 'document:loaded', () => {
+		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } ).then( () => {
 			elementorCommon.elements.$window.trigger( 'elementor:init' );
 		} );
-
-		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } );
 
 		this.logSite();
 	}
@@ -833,9 +831,6 @@ export default class EditorBase extends Marionette.Application {
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
-
-		// TODO: Add BC.
-		this.history = new HistoryManager();
 
 		this.loaded = true;
 	}
@@ -989,6 +984,7 @@ export default class EditorBase extends Marionette.Application {
 
 			this.onEditModeSwitched();
 
+			document.container.document = document;
 			document.container.view = elementor.getPreviewView();
 			document.container.children = elementor.elements;
 			document.container.model.attributes.elements = elementor.elements;
@@ -1019,8 +1015,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.templates.init();
 
-		this.settings.page = new this.settings.modules.page( config.settings );
-
 		const document = new Document( config );
 
 		elementor.documents.add( document );
@@ -1028,11 +1022,11 @@ export default class EditorBase extends Marionette.Application {
 		// Must set current before create a container.
 		elementor.documents.setCurrent( document );
 
+		this.settings.page = new this.settings.modules.page( config.settings );
+
 		document.container = this.settings.page.getEditedView().getContainer();
 
 		this.once( 'preview:loaded', () => this.onDocumentLoaded( document ) );
-
-		elementorCommon.elements.$body.addClass( `elementor-editor-${ this.config.document.type }` );
 
 		if ( this.loaded ) {
 			this.schemes.printSchemesStyle();
@@ -1045,6 +1039,8 @@ export default class EditorBase extends Marionette.Application {
 
 			this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
 		}
+
+		return document;
 	}
 
 	addWidgetsCache( widgets ) {
@@ -1058,11 +1054,6 @@ export default class EditorBase extends Marionette.Application {
 			data: {
 				replacement: 'elements',
 				value: () => elementor.config.document.elements,
-			},
-
-			widgets: {
-				replacement: 'widgets',
-				value: () => elementor.widgetsCache,
 			},
 			current_user_can_publish: {
 				replacement: 'user.can_publish',
@@ -1101,6 +1092,13 @@ export default class EditorBase extends Marionette.Application {
 			get() {
 				elementorCommon.helpers.softDeprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
 				return elementor.config.document.settings;
+			},
+		} );
+
+		Object.defineProperty( this.config, 'widgets', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
+				return elementor.widgetsCache;
 			},
 		} );
 	}

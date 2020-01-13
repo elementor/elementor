@@ -2,6 +2,10 @@
   "id": 1,
   "type": "wp-post",
   "version": "2.8.2",
+  "revisions":{
+	"current_id": 1
+  },
+  "elements": [],
   "settings": {
 	"name": "page",
 	"panelPage": {
