@@ -9,6 +9,6 @@ export class Publish extends Base {
 			document: this.document,
 		}, options );
 
-		elementor.saver.saveEditor( options );
+		return elementor.saver.saveEditor( options );
 	}
 }

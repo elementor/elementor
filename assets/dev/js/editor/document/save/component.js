@@ -94,7 +94,7 @@ export default class Component extends BackwardsCompatibility {
 
 		settings.post_status = options.status;
 
-		elementorCommon.ajax.addRequest( 'save_builder', {
+		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
 				status: options.status,
 				elements: elements,
@@ -106,6 +106,8 @@ export default class Component extends BackwardsCompatibility {
 		} );
 
 		this.trigger( 'save', options );
+
+		return deferred;
 	}
 
 	setFlagEditorChange( status ) {
