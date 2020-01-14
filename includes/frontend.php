@@ -1130,6 +1130,12 @@ class Frontend extends App {
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 			],
+			'i18n' => [
+				'share_on_facebook' => __( 'Share on Facebook', 'elementor' ),
+				'share_on_twitter' => __( 'Share on Twitter', 'elementor' ),
+				'pin_it' => __( 'Pin it', 'elementor' ),
+				'download_image' => __( 'Download image', 'elementor' ),
+			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
