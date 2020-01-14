@@ -25,8 +25,6 @@ export class Open extends CommandsBase {
 			// Tell the editor to load the document.
 			const document = elementor.loadDocument( config );
 
-			elementor.saver.startAutoSave( document );
-
 			// TODO: move to $e.hooks.ui.
 			if ( elementor.loaded ) {
 				elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );

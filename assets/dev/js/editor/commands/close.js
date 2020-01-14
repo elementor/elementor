@@ -10,7 +10,7 @@ export class Close extends CommandsBase {
 			document = elementor.documents.get( id );
 
 		// Already closed.
-		if ( 'closed' === document.editorStatus ) {
+		if ( 'closed' === document.editor.status ) {
 			return jQuery.Deferred().resolve();
 		}
 
@@ -45,7 +45,7 @@ export class Close extends CommandsBase {
 
 		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
 
-		document.editorStatus = 'closed';
+		document.editor.status = 'closed';
 
 		if ( onClose ) {
 			onClose();

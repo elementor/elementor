@@ -5,6 +5,7 @@ export default class ComponentBase extends elementorModules.Module {
 		}
 
 		this.commands = this.defaultCommands();
+		this.commandsInternal = this.defaultCommandsInternal();
 		this.routes = this.defaultRoutes();
 		this.tabs = this.defaultTabs();
 		this.shortcuts = this.defaultShortcuts();
@@ -20,6 +21,8 @@ export default class ComponentBase extends elementorModules.Module {
 		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
 
 		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
+
+		jQuery.each( this.getCommandsInternal(), ( command, callback ) => this.registerCommandInternal( command, callback ) );
 	}
 
 	getNamespace() {
@@ -43,12 +46,20 @@ export default class ComponentBase extends elementorModules.Module {
 		return {};
 	}
 
+	defaultCommandsInternal() {
+		return {};
+	}
+
 	defaultShortcuts() {
 		return {};
 	}
 
 	getCommands() {
 		return this.commands;
+	}
+
+	getCommandsInternal() {
+		return this.commandsInternal;
 	}
 
 	getRoutes() {
@@ -65,6 +76,10 @@ export default class ComponentBase extends elementorModules.Module {
 
 	registerCommand( command, callback ) {
 		$e.commands.register( this, command, callback );
+	}
+
+	registerCommandInternal( command, callback ) {
+		$e.commandsInternal.register( this, command, callback );
 	}
 
 	registerRoute( route, callback ) {
