@@ -10,7 +10,7 @@ export default class Data extends Base {
 	}
 
 	getType() {
-		return 'hook';
+		return 'data';
 	}
 
 	runCallback( event, callback, args, result ) {

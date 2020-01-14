@@ -19,14 +19,14 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	constructor( args, manager = $e.commands ) {
+	constructor( args, commandsAPI = $e.commands ) {
 		super( args );
 
 		// Acknowledge self about which command it run.
-		this.currentCommand = manager.getCurrentFirst();
+		this.currentCommand = commandsAPI.getCurrentFirst();
 
 		// Assign instance of current component.
-		this.component = manager.getComponent( this.currentCommand );
+		this.component = commandsAPI.getComponent( this.currentCommand );
 
 		// TODO: if `this.component` not found, throw error !.
 
@@ -144,7 +144,7 @@ export default class CommandBase extends ArgsObject {
 			this.onAfterRun( this.args, _result );
 		};
 
-		// TODO: Temp code determine if a jQuery object is deferred.
+		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
 			result.fail( this.onCatchApply.bind( this ) );
 			result.done( onAfter );
