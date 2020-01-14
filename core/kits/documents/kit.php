@@ -49,13 +49,8 @@ class Kit extends PageBase {
 		return $config;
 	}
 
-	public function _get_initial_config() {
-		$config = parent::_get_initial_config();
-
-		$config['cssWrapperSelector'] = $this->get_css_wrapper_selector();
-		$config['controls'] = $this->get_controls();
-		$config['tabs'] = $this->get_tabs_controls();
-		$config['settings'] = $this->get_settings();
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
 
 		unset( $config['elements'] );
 

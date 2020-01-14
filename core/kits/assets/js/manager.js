@@ -1,76 +1,9 @@
 import Component from './component';
 import panelView from './panel';
-import Document from 'elementor-editor/document';
 
 const ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
-export default class Settings extends elementorModules.ViewModule {
-	model = null;
-
-	hasChange = false;
-
-	updateStylesheet( keepOldEntries ) {
-		var controlsCSS = this.getControlsCSS();
-
-		if ( ! keepOldEntries ) {
-			controlsCSS.stylesheet.empty();
-		}
-
-		controlsCSS.addStyleRules(
-			this.model.getStyleControls(),
-			this.model.attributes,
-			this.model.controls,
-			[ /{{WRAPPER}}/g ],
-			[ this.document.config.cssWrapperSelector ]
-		);
-
-		controlsCSS.addStyleToDocument();
-	}
-
-	getControlsCSS = function() {
-		if ( ! this.controlsCSS ) {
-			const container = this.getContainer();
-
-			this.controlsCSS = new ControlsCSSParser( {
-				id: container.id,
-				settingsModel: container.settings,
-			} );
-		}
-
-		return this.controlsCSS;
-	};
-
-	getContainer( document ) {
-		if ( ! this.container ) {
-			this.model = new elementorModules.editor.elements.models.BaseSettings( document.config.settings, {
-				controls: document.config.controls,
-			} );
-
-			this.model.on( 'change', this.onModelChange.bind( this ) );
-
-			const editModel = new Backbone.Model( {
-				id: 'kit',
-				elType: 'kit',
-				settings: this.model,
-			} );
-
-			this.container = new elementorModules.editor.Container( {
-				id: editModel.id,
-				type: 'kit',
-				document: document,
-				children: new Backbone.Model(),
-				model: editModel,
-				settings: editModel.get( 'settings' ),
-				view: 'TODO: @see kits/assets/js/component.js',
-				label: document.config.panel.title,
-				controls: editModel.controls,
-				renderer: false,
-			} );
-		}
-
-		return this.container;
-	}
-
+export default class Settings extends elementorModules.editor.utils.Module {
 	addPanelPage() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: panelView,
@@ -114,24 +47,16 @@ export default class Settings extends elementorModules.ViewModule {
 		// }, 'global' );
 	}
 
-	onModelChange() {
-		this.hasChange = true;
-
-		this.getControlsCSS().stylesheet.empty();
-
-		this.updateStylesheet( true );
-	}
-
-	onElementorPreviewLoaded() {
-		this.addPanelPage();
-
-		this.addPanelMenuItem();
-	}
-
 	onInit() {
-		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
+		super.onInit();
 
-		jQuery( window ).on( 'elementor:init', () => this.onElementorPreviewLoaded() );
+		jQuery( window ).on( 'elementor:init', () => {
+			elementor.on( 'panel:init', () => {
+				this.addPanelPage();
+
+				this.addPanelMenuItem();
+			} );
+		} );
 
 		$e.components.register( new Component( { manager: this } ) );
 	}
