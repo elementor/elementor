@@ -146,7 +146,7 @@ class Control_Media extends Control_Base_Multiple {
 						<i class="eicon-video-camera"></i>
 						<# } #>
 					</div>
-					<div class="elementor-control-media__tools">
+					<div class="elementor-control-media__tools elementor-control-dynamic-switcher-wrapper">
 						<# if( 'image' === data.media_type ) { #>
 						<div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
 						<# } else if( 'video' === data.media_type ) { #>

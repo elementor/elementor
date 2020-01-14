@@ -9,10 +9,19 @@
 
 		&-gallery-status {
 			font-size: 12px;
-			padding: 7px 10px;
+			height: 27px;
+			@include padding-start(10px);
 			border-bottom: 1px solid $editor-lightest;
 			display: flex;
-			justify-content: space-between;
+
+			> * {
+				display: flex;
+				align-items: center;
+			}
+
+			&-title {
+				flex-grow: 1;
+			}
 		}
 
 		&-gallery-content {
@@ -112,11 +121,24 @@
 		}
 	}
 
+	&.elementor-control-dynamic {
+
+		.elementor-control-gallery-clear {
+			border: solid $editor-lightest;
+			border-width: 0 1px;
+		}
+	}
+
 	.elementor-control-gallery-clear {
 		cursor: pointer;
+		justify-content: center;
 
 		&:hover {
 			color: $editor-warning;
 		}
+	}
+
+	.elementor-control-dynamic-switcher {
+		border: none;
 	}
 }

@@ -34,15 +34,17 @@ export default class Component extends BackwardsCompatibility {
 
 	/**
 	 * TODO: test
+	 * @param {boolean} hasChanged
 	 * @param {Document} document
 	 */
-	startAutoSave( document ) {
+	startAutoSave( hasChanged, document ) {
 		this.stopAutoSave( document );
 
-		this.autoSaveTimers[ document.id ] = setInterval( () => {
-			// No document specify, means current.
-			$e.run( 'document/save/auto', { document } );
-		}, this.autoSaveInterval );
+		if ( hasChanged ) {
+			this.autoSaveTimers[ document.id ] = setTimeout( () => {
+				$e.run( 'document/save/auto', { document } );
+			}, this.autoSaveInterval );
+		}
 	}
 
 	/**
@@ -51,7 +53,7 @@ export default class Component extends BackwardsCompatibility {
 	 */
 	stopAutoSave( document ) {
 		if ( this.autoSaveTimers[ document.id ] ) {
-			clearInterval( this.autoSaveTimers[ document.id ] );
+			clearTimeout( this.autoSaveTimers[ document.id ] );
 
 			delete this.autoSaveTimers[ document.id ];
 		}
@@ -78,8 +80,8 @@ export default class Component extends BackwardsCompatibility {
 	setFlagEditorChange( status ) {
 		const document = elementor.documents.getCurrent();
 
-		if ( status && document.isSaving ) {
-			document.isChangedDuringSave = true;
+		if ( status && document.editor.isSaving ) {
+			document.editor.isChangedDuringSave = true;
 		}
 
 		elementor.channels.editor

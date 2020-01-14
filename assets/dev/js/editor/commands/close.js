@@ -10,8 +10,7 @@ export class Close extends CommandsBase {
 			document = elementor.documents.get( id );
 
 		// Already closed.
-		if ( 'closed' === document.editorStatus ) {
-			return jQuery.Deferred().resolve();
+		if ( 'closed' === document.editor.status ) {
 		}
 
 		// TODO: Move to an hook.
@@ -35,7 +34,7 @@ export class Close extends CommandsBase {
 				deferred = jQuery.Deferred().resolve();
 		}
 
-		elementor.saver.stopAutoSave( document );
+		this.component.stopAutoSave( document );
 
 		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 
@@ -45,7 +44,7 @@ export class Close extends CommandsBase {
 
 		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
 
-		document.editorStatus = 'closed';
+		document.editor.status = 'closed';
 
 		if ( onClose ) {
 			onClose();
