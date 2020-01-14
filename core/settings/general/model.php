@@ -176,11 +176,11 @@ class Model extends CSS_Model {
 							'label' => __( 'Title', 'elementor' ),
 							'type' => Controls_Manager::SELECT,
 							'options' => [
-								'' => __( 'None', 'elementor-pro' ),
-								'title' => __( 'Title', 'elementor-pro' ),
-								'caption' => __( 'Caption', 'elementor-pro' ),
-								'alt' => __( 'Alt', 'elementor-pro' ),
-								'description' => __( 'Description', 'elementor-pro' ),
+								'' => __( 'None', 'elementor' ),
+								'title' => __( 'Title', 'elementor' ),
+								'caption' => __( 'Caption', 'elementor' ),
+								'alt' => __( 'Alt', 'elementor' ),
+								'description' => __( 'Description', 'elementor' ),
 							],
 							'default' => 'title',
 							'condition' => [
@@ -192,11 +192,11 @@ class Model extends CSS_Model {
 							'label' => __( 'Description', 'elementor' ),
 							'type' => Controls_Manager::SELECT,
 							'options' => [
-								'' => __( 'None', 'elementor-pro' ),
-								'title' => __( 'Title', 'elementor-pro' ),
-								'caption' => __( 'Caption', 'elementor-pro' ),
-								'alt' => __( 'Alt', 'elementor-pro' ),
-								'description' => __( 'Description', 'elementor-pro' ),
+								'' => __( 'None', 'elementor' ),
+								'title' => __( 'Title', 'elementor' ),
+								'caption' => __( 'Caption', 'elementor' ),
+								'alt' => __( 'Alt', 'elementor' ),
+								'description' => __( 'Description', 'elementor' ),
 							],
 							'default' => 'description',
 							'condition' => [
