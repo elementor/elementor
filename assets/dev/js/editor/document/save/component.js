@@ -152,7 +152,7 @@ export default class Component extends BackwardsCompatibility {
 
 		if ( data.config ) {
 			// TODO: Move to es6
-			jQuery.extend( true, elementor.config.document, data.config );
+			jQuery.extend( true, document.config, data.config.document );
 		}
 
 		if ( document.config.elements ) {
