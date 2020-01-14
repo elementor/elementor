@@ -34,7 +34,7 @@ export default class extends Marionette.ItemView {
 
 	onClickClose() {
 		// The kit is opened directly.
-		if ( elementor.config.initial_document.id === elementor.config.document.id ) {
+		if ( elementor.config.initial_document.id === elementor.config.kit_id ) {
 			$e.run( 'panel/global/exit' );
 		} else {
 			$e.run( 'panel/global/close' );

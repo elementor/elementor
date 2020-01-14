@@ -17,6 +17,14 @@ export default class extends elementorModules.common.Component {
 	defaultCommands() {
 		return {
 			open: () => {
+				const kit = elementor.documents.get( elementor.config.kit_id );
+
+				if ( kit && 'open' === kit.editor.status ) {
+					$e.route( 'panel/global/style' );
+					return;
+				}
+
+				// Load from server
 				elementor.once( 'document:loaded', () => {
 					$e.route( 'panel/global/style' );
 				} );
