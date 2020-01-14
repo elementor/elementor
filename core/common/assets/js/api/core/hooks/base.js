@@ -243,6 +243,32 @@ export default class Base extends elementorModules.Module {
 	}
 
 	/**
+	 * Function registerAfter().
+	 *
+	 * Register the hook in after event.
+	 *
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerAfter( instance ) {
+		return this.register( 'after', instance );
+	}
+
+	/**
+	 * Function registerAfter().
+	 *
+	 * Register the hook in catch event.
+	 *
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerCatch( instance ) {
+		return this.register( 'catch', instance );
+	}
+
+	/**
 	 * Function run().
 	 *
 	 * Run the callbacks.
@@ -262,6 +288,32 @@ export default class Base extends elementorModules.Module {
 
 			this.runCallbacks( event, command, callbacks, args, result );
 		}
+	}
+
+	/**
+	 * Function runAfter().
+	 *
+	 * Run the event as after.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} result
+	 */
+	runAfter( command, args, result ) {
+		this.run( 'after', command, args, result );
+	}
+
+	/**
+	 * Function runCatch().
+	 *
+	 * Run the event as catch.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} e
+	 */
+	runCatch( command, args, e ) {
+		this.run( 'catch', command, args, e );
 	}
 
 	/**

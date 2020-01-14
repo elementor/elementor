@@ -59,19 +59,6 @@ export default class Data extends Base {
 	}
 
 	/**
-	 * Function registerAfter().
-	 *
-	 * Register the hook in after event.
-	 *
-	 * @param {HookBase} instance
-	 *
-	 * @returns {{}}
-	 */
-	registerAfter( instance ) {
-		return this.register( 'after', instance );
-	}
-
-	/**
 	 * Function registerDependency().
 	 *
 	 * Register the hook in dependency event.
@@ -82,19 +69,6 @@ export default class Data extends Base {
 	 */
 	registerDependency( instance ) {
 		return this.register( 'dependency', instance );
-	}
-
-	/**
-	 * Function runAfter().
-	 *
-	 * Run the hook as after.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} result
-	 */
-	runAfter( command, args, result ) {
-		this.run( 'after', command, args, result );
 	}
 
 	/**
