@@ -34,6 +34,14 @@ export default class extends elementorModules.common.Component {
 					},
 				} );
 			},
+			exit: () => {
+				$e.run( 'editor/documents/close', {
+					id: elementor.config.kit_id,
+				} )
+					.then( () => {
+						location = elementor.config.document.urls.exit_to_dashboard;
+				} );
+			},
 		};
 	}
 
