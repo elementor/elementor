@@ -74,19 +74,8 @@ export default class Component extends BackwardsCompatibility {
 	defaultCommandsInternal() {
 		return {
 			save: ( args ) => ( new commandsInternal.Save( args ).run() ),
+			'set-is-modified': ( args ) => ( new commandsInternal.SetIsModified( args ).run() ),
 		};
-	}
-
-	setFlagEditorChange( status ) {
-		const document = elementor.documents.getCurrent();
-
-		if ( status && document.editor.isSaving ) {
-			document.editor.isChangedDuringSave = true;
-		}
-
-		elementor.channels.editor
-			.reply( 'status', status )
-			.trigger( 'status:change', status );
 	}
 
 	isEditorChanged() {

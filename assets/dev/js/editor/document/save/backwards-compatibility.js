@@ -83,4 +83,11 @@ export default class BackwardsCompatibility extends ComponentBase {
 
 		$e.internal( 'document/save/save', { options } );
 	}
+
+	setFlagEditorChange( status ) {
+		elementorCommon.helpers.softDeprecated( 'setFlagEditorChange', '2.9.0',
+			"$e.internal( 'document/save/set-is-modified' )" );
+
+		$e.internal( 'document/save/set-is-modified', { status } );
+	}
 }
