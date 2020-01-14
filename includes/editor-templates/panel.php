@@ -119,7 +119,6 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 				</span>
 				<span class="elementor-last-edited">
-					{{{ elementor.config.document.last_edited }}}
 				</span>
 			</p>
 			<div class="elementor-panel-footer-sub-menu">
