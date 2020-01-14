@@ -4,8 +4,8 @@ export class Discard extends Base {
 	apply() {
 		return elementorCommon.ajax.addRequest( 'discard_changes', {
 			success: () => {
+
 				elementor.saver.setFlagEditorChange( false );
-				location.href = elementor.config.document.urls.exit_to_dashboard;
 			},
 		} );
 	}
