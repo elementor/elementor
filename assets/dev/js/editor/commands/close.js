@@ -11,24 +11,28 @@ export class Close extends CommandsBase {
 
 		// Already closed.
 		if ( 'closed' === document.editorStatus ) {
-			return;
+			return jQuery.Deferred().resolve();
 		}
 
 		// TODO: Move to an hook.
 		if ( ! mode && elementor.saver.isEditorChanged() ) {
 			this.getConfirmDialog().show();
-			return;
+			return jQuery.Deferred().reject();
 		}
+
+		let deferred;
 
 		switch ( mode ) {
 			case 'save':
-				$e.run( 'document/save/update' );
+				deferred = $e.run( 'document/save/update' );
 				break;
 			case 'discard':
-				$e.run( 'document/save/discard' );
+				deferred = $e.run( 'document/save/discard' );
 
 				// TODO: Discard local changes.
 				break;
+			default:
+				deferred = jQuery.Deferred().resolve();
 		}
 
 		elementor.saver.stopAutoSave( document );
@@ -46,6 +50,8 @@ export class Close extends CommandsBase {
 		if ( onClose ) {
 			onClose();
 		}
+
+		return deferred;
 	}
 
 	getConfirmDialog() {
