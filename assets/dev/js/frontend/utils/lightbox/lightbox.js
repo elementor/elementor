@@ -185,9 +185,9 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	getShareLinks: function() {
 		const socialNetworks = {
-			facebook: 'Share on facebook',
-			twitter: 'Share on Twitter',
-			pinterest: 'Pin it',
+			facebook: elementorFrontendConfig.i18n.share_on_facebook,
+			twitter: elementorFrontendConfig.i18n.share_on_twitter,
+			pinterest: elementorFrontendConfig.i18n.pin_it,
 		},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -196,29 +196,22 @@ module.exports = elementorModules.ViewModule.extend( {
 			$image = $activeSlide.find( '.elementor-lightbox-image' ),
 			videoUrl = $activeSlide.data( 'elementor-slideshow-video' );
 
-		let itemUrl = '';
+		let itemUrl;
 
-		if ( $image.length ) {
-			itemUrl = $image.attr( 'src' );
-		} else if ( videoUrl ) {
+		if ( videoUrl ) {
 			itemUrl = videoUrl;
+		} else {
+			itemUrl = $image.attr( 'src' );
 		}
 
-		for ( const network in socialNetworks ) {
-			if ( socialNetworks.hasOwnProperty( network ) ) {
-				const $link = $( '<a>', { href: this.createShareLink( network, itemUrl ) } ).text( socialNetworks[ network ] );
-				$linkList.append( $link );
-			}
-		}
+		$.each( socialNetworks, ( key, networkLabel ) => {
+			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ) } ).text( networkLabel );
+			$linkList.append( $link );
+		} );
 
-		if ( $image.length ) {
-			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( 'Download Image' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
-
-			const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
-				id: this.id,
-				url: itemUrl,
-			} );
-			$linkList.append( $( '<a>', { href: hash, download: '' } ).text( 'Hash' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
+		if ( ! videoUrl ) {
+			const downloadImage = elementorFrontendConfig.i18n.download_image;
+			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
 		}
 		return $linkList;
 	},
@@ -229,10 +222,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			url: itemUrl,
 		} );
 
-		const url = encodeURIComponent( location.href.replace( /#.*/, '' ) + hash ),
-			networkURL = ShareLink.getNetworkLink( networkName, { url: url } );
-
-		return networkURL;
+		const url = encodeURIComponent( location.href.replace( /#.*/, '' ) + hash );
+		return ShareLink.getNetworkLink( networkName, { url: url } );
 	},
 
 	getSlideshowHeader: function() {
