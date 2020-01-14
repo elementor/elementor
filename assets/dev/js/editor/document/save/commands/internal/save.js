@@ -57,7 +57,7 @@ export class Save extends CommandInternalBase {
 
 			// Notice: Must be after update page.model.post_status to the new status.
 			if ( ! document.isChangedDuringSave ) {
-				elementor.saver.setFlagEditorChange( false );
+				$e.internal( 'document/save/set-is-modified' , { status: false } );
 			}
 		}
 

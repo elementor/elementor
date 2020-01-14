@@ -36,7 +36,7 @@ module.exports = BaseSettings.extend( {
 	},
 
 	onModelChange: function() {
-		elementor.saver.setFlagEditorChange( true );
+		$e.internal( 'document/save/set-is-modified' , { status: true } );
 
 		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},

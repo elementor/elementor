@@ -10,7 +10,7 @@ export const Empty = () => {
 			ElementsHelper.createButton( eColumn );
 
 			// Ensure editor saver.
-			elementor.saver.setFlagEditorChange( false );
+			$e.internal( 'document/save/set-is-modified' , { status: false } );
 
 			ElementsHelper.empty();
 

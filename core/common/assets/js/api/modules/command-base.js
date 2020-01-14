@@ -137,7 +137,7 @@ export default class CommandBase extends ArgsObject {
 			this.onAfterApply( this.args, _result );
 
 			if ( this.isDataChanged() ) {
-				elementor.saver.setFlagEditorChange( true );
+				$e.internal( 'document/save/set-is-modified' , { status: true } );
 			}
 
 			// For UI hooks.
