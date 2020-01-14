@@ -1,107 +1,15 @@
-import HookUIBefore from 'elementor-api/modules/hooks/ui/before';
-import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
-import HookUICatch from 'elementor-api/modules/hooks/ui/catch';
-
-class onBeforeSave extends HookUIBefore {
-	getCommand() {
-		return 'document/save/save';
-	}
-
-	getId() {
-		return 'footer-saver-on-before-save';
-	}
-
-	apply( args ) {
-		const { options = {} } = args;
-
-		NProgress.start();
-
-		if ( 'autosave' === options.status ) {
-			elementor.footerSaver.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
-		} else {
-			elementor.footerSaver.ui.buttonPublish.addClass( 'elementor-button-state' );
-		}
-	}
-}
-
-class onAfterSave extends HookUIAfter {
-	getCommand() {
-		return 'document/save/save';
-	}
-
-	getId() {
-		return 'footer-saver-on-after-save';
-	}
-
-	apply( args, result ) {
-		const { options } = args,
-			{ data } = result;
-
-		NProgress.done();
-
-		elementor.footerSaver.ui.buttonPublish.removeClass( 'elementor-button-state' );
-		elementor.footerSaver.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
-
-		elementor.footerSaver.refreshWpPreview();
-		elementor.footerSaver.setLastEdited( data );
-
-		if ( result.statusChanged ) {
-			this.onPageStatusChange( options.status );
-		}
-	}
-
-	onPageStatusChange( newStatus ) {
-		if ( 'publish' === newStatus ) {
-			elementor.notifications.showToast( {
-				message: elementor.config.document.panel.messages.publish_notification,
-				buttons: [
-					{
-						name: 'view_page',
-						text: elementor.translate( 'have_a_look' ),
-						callback() {
-							open( elementor.config.document.urls.permalink );
-						},
-					},
-				],
-			} );
-		}
-	}
-}
-
-class onCatchSave extends HookUICatch {
-	getCommand() {
-		return 'document/save/save';
-	}
-
-	getId() {
-		return 'footer-saver-on-after-catch';
-	}
-
-	apply( args, e ) {
-		NProgress.done();
-
-		elementor.footerSaver.buttonPublish.removeClass( 'elementor-button-state' );
-	}
-}
-
-class onAfterSetIsModified extends HookUIAfter {
-	getCommand() {
-		return 'document/save/set-is-modified';
-	}
-
-	getId() {
-		return 'footer-saver-on-set-is-modified';
-	}
-
-	apply( args ) {
-		const { status } = args;
-
-		elementor.footerSaver.activateSaveButtons( status );
-	}
-}
+import * as hooksUI from '../hooks/ui/';
 
 module.exports = class FooterSaver extends Marionette.Behavior {
 	previewWindow = null;
+
+	static initOnce = false;
+
+	static initHooks() {
+		Object.values( hooksUI ).forEach(
+			( Hook ) => new Hook()
+		);
+	}
 
 	ui() {
 		return {
@@ -129,21 +37,15 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			document = elementor.documents.getCurrent();
 		}
 
-		/**
-		 * @type {Document}
-		 */
 		this.document = document;
-
-		elementor.on( 'document:loaded', () => {
-			elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
-		} );
 
 		elementor.footerSaver = this;
 
-		new onBeforeSave();
-		new onAfterSave();
-		new onCatchSave();
-		new onAfterSetIsModified();
+		if ( ! FooterSaver.initOnce ) {
+			FooterSaver.initHooks();
+
+			FooterSaver.initOnce = true;
+		}
 	}
 
 	activateSaveButtons( status ) {
@@ -156,21 +58,6 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	onRender() {
 		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
 		this.addTooltip();
-	}
-
-	onPageSettingsChange( settings ) {
-		const changed = settings.changed;
-
-		if ( ! _.isUndefined( changed.post_status ) ) {
-			this.setMenuItems( changed.post_status );
-
-			this.refreshWpPreview();
-
-			// Refresh page-settings post-status value.
-			if ( $e.routes.isPartOf( 'panel/page-settings' ) ) {
-				$e.routes.refreshContainer( 'panel' );
-			}
-		}
 	}
 
 	setLastEdited( data ) {

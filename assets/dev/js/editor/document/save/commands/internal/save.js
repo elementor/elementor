@@ -52,12 +52,20 @@ export class Save extends CommandInternalBase {
 
 		if ( 'autosave' !== options.status ) {
 			if ( statusChanged ) {
-				elementor.settings.page.model.set( 'post_status', options.status );
+				$e.run( 'document/elements/settings', {
+					container: elementor.settings.page.getEditedView().getContainer(),
+					settings: {
+						post_status: options.status,
+					},
+					options: {
+						external: true,
+					},
+				} );
 			}
 
 			// Notice: Must be after update page.model.post_status to the new status.
 			if ( ! document.isChangedDuringSave ) {
-				$e.internal( 'document/save/set-is-modified' , { status: false } );
+				$e.internal( 'document/save/set-is-modified', { status: false } );
 			}
 		}
 
@@ -78,14 +86,16 @@ export class Save extends CommandInternalBase {
 			elementor.saver.trigger( 'page:status:change', options.status, oldStatus );
 		}
 
-		if ( _.isFunction( options.onSuccess ) ) {
-			options.onSuccess.call( this, data );
-		}
-
-		return {
+		const result = {
 			data,
 			statusChanged,
 		};
+
+		if ( _.isFunction( options.onSuccess ) ) {
+			options.onSuccess.call( this, result );
+		}
+
+		return result;
 	}
 
 	onSaveError( data, options, document ) {

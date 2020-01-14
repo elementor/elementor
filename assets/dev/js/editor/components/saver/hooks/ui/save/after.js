@@ -1,0 +1,47 @@
+import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
+
+export class FooterSaverAfterSave extends HookUIAfter {
+	getCommand() {
+		return 'document/save/save';
+	}
+
+	getId() {
+		return 'footer-saver-after-save';
+	}
+
+	apply( args, result ) {
+		const { options } = args,
+			{ data } = result;
+
+		NProgress.done();
+
+		elementor.footerSaver.ui.buttonPublish.removeClass( 'elementor-button-state' );
+		elementor.footerSaver.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
+
+		elementor.footerSaver.refreshWpPreview();
+		elementor.footerSaver.setLastEdited( data );
+
+		if ( result.statusChanged ) {
+			this.onPageStatusChange( options.status );
+		}
+	}
+
+	onPageStatusChange( newStatus ) {
+		if ( 'publish' === newStatus ) {
+			elementor.notifications.showToast( {
+				message: elementor.config.document.panel.messages.publish_notification,
+				buttons: [
+					{
+						name: 'view_page',
+						text: elementor.translate( 'have_a_look' ),
+						callback() {
+							open( elementor.config.document.urls.permalink );
+						},
+					},
+				],
+			} );
+		}
+	}
+}
+
+export default FooterSaverAfterSave;
