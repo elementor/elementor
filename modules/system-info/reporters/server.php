@@ -1,8 +1,7 @@
 <?php
-namespace Elementor\System_Info\Classes;
+namespace Elementor\Modules\System_Info\Reporters;
 
 use Elementor\Api;
-use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Server_Reporter extends Base_Reporter {
+class Server extends Base {
 
 	/**
 	 * Get server environment reporter title.

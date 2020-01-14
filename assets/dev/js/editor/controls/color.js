@@ -32,6 +32,8 @@ export default class extends ControlBaseDataView {
 		};
 
 		this.colorPicker = new ColorPicker( options );
+
+		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
 	}
 
 	onPickerChange() {

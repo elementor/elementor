@@ -1,7 +1,5 @@
 <?php
-namespace Elementor\System_Info\Classes;
-
-use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
+namespace Elementor\Modules\System_Info\Reporters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class MU_Plugins_Reporter extends Base_Reporter {
+class MU_Plugins extends Base {
 
 	/**
 	 * Must-Use plugins.
