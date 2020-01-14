@@ -24,6 +24,7 @@ export default class Data extends Base {
 			}
 			break;
 
+			case 'catch':
 			case 'after': {
 				callback.callback( args, result );
 			}

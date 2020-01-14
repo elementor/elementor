@@ -28,14 +28,20 @@ export default class Base extends elementorModules.Module {
 		 *
 		 * @type {{}}
 		 */
-		this.callbacks = { after: {} };
+		this.callbacks = {
+			after: {},
+			catch: {},
+		};
 
 		/**
 		 * Object of depth.
 		 *
 		 * @type {{}}
 		 */
-		this.depth = { after: {} };
+		this.depth = {
+			after: {},
+			catch: {},
+		};
 	}
 
 	/**
