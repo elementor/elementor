@@ -10,7 +10,7 @@ export default class Ui extends Base {
 	}
 
 	getType() {
-		return 'event';
+		return 'ui';
 	}
 
 	runCallback( event, callback, args, result ) {
