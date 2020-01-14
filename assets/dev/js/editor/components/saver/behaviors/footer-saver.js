@@ -84,6 +84,22 @@ class onCatchSave extends HookUICatch {
 	}
 }
 
+class onAfterSetIsModified extends HookUIAfter {
+	getCommand() {
+		return 'document/save/set-is-modified';
+	}
+
+	getId() {
+		return 'footer-saver-on-set-is-modified';
+	}
+
+	apply( args ) {
+		const { status } = args;
+
+		elementor.footerSaver.activateSaveButtons( status );
+	}
+}
+
 module.exports = class FooterSaver extends Marionette.Behavior {
 	previewWindow = null;
 
@@ -122,17 +138,16 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
 		} );
 
-		elementor.channels.editor.on( 'status:change', this.activateSaveButtons.bind( this ) );
-
 		elementor.footerSaver = this;
 
 		new onBeforeSave();
 		new onAfterSave();
 		new onCatchSave();
+		new onAfterSetIsModified();
 	}
 
-	activateSaveButtons( hasChanges ) {
-		hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
+	activateSaveButtons( status ) {
+		const hasChanges = status || 'draft' === elementor.settings.page.model.get( 'post_status' );
 
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', ! hasChanges );
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
