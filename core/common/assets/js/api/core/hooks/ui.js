@@ -19,6 +19,7 @@ export default class Ui extends Base {
 				callback.callback( args );
 				break;
 
+			case 'catch':
 			case 'after':
 				callback.callback( args, result );
 				break;
