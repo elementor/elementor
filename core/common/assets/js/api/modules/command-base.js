@@ -209,6 +209,8 @@ export default class CommandBase extends ArgsObject {
 	 * @param {Error} e
 	 */
 	onCatchApply( e ) {
+		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
+
 		if ( $e.devTools ) {
 			$e.devTools.log.error( e );
 		}
@@ -217,5 +219,7 @@ export default class CommandBase extends ArgsObject {
 			// eslint-disable-next-line no-console
 			console.error( e );
 		}
+
+		$e.hooks.runUICatch( this.currentCommand, this.args, e );
 	}
 }

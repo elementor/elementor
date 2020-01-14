@@ -15,6 +15,9 @@ export default class Hooks {
 	}
 
 	/**
+	 * Function registerDataAfter().
+	 *
+	 * Register data hook that's run after the command.
 	 *
 	 * @param {HookBase} instance
 	 *
@@ -25,6 +28,9 @@ export default class Hooks {
 	}
 
 	/**
+	 * Function registerDataDependency().
+	 *
+	 * Register data hook that's run before the command as dependency.
 	 *
 	 * @param {HookBase} instance
 	 *
@@ -35,6 +41,22 @@ export default class Hooks {
 	}
 
 	/**
+	 * Function registerDataCatch().
+	 *
+	 * Register data hook that's run when the command fails.
+	 *
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerDataCatch( instance ) {
+		return this.data.registerCatch( instance );
+	}
+
+	/**
+	 * Function registerUIAfter().
+	 *
+	 * Register UI hook that's run after the commands run.
 	 *
 	 * @param {HookBase} instance
 	 *
@@ -45,6 +67,9 @@ export default class Hooks {
 	}
 
 	/**
+	 * Function registerUIBefore().
+	 *
+	 * Register UI hook that's run before the command.
 	 *
 	 * @param {HookBase} instance
 	 *
@@ -55,6 +80,19 @@ export default class Hooks {
 	}
 
 	/**
+	 * Function registerUICatch().
+	 *
+	 * Register UI hook that's run when the command fails.
+	 *
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerUICatch( instance ) {
+		return this.data.registerCatch( instance );
+	}
+
+	/**
 	 * Function runDataAfter().
 	 *
 	 * @param {string} command
@@ -62,17 +100,28 @@ export default class Hooks {
 	 * @param {*} result
 	 */
 	runDataAfter( command, args, result ) {
-		this.data.runAfter( command, args, result );
+		return this.data.runAfter( command, args, result );
 	}
 
 	/**
-	 * Function runDependency().
+	 * Function runDataDependency().
 	 *
 	 * @param {string} command
 	 * @param {{}} args
 	 */
 	runDataDependency( command, args ) {
 		this.data.runDependency( command, args );
+	}
+
+	/**
+	 * Function runDataCatch().
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} e
+	 */
+	runDataCatch( command, args, e ) {
+		this.data.runCatch( command, args, e );
 	}
 
 	/**
@@ -94,5 +143,16 @@ export default class Hooks {
 	 */
 	runUIBefore( command, args ) {
 		this.ui.run( 'before', command, args );
+	}
+
+	/**
+	 * Function runUICatch().
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} e
+	 */
+	runUICatch( command, args, e ) {
+		this.ui.runCatch( command, args, e );
 	}
 }
