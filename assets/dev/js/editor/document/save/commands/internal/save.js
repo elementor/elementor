@@ -16,8 +16,8 @@ export class Save extends CommandInternalBase {
 		}, options );
 
 		const container = document.container,
-			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
-			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
+			elements = container.model.get( 'elements' ).toJSON( { remove: ['default', 'editSettings', 'defaultEditSettings'] } ),
+			settings = container.settings.toJSON( { remove: ['default'] } ),
 			oldStatus = container.settings.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
 
@@ -37,9 +37,9 @@ export class Save extends CommandInternalBase {
 				settings: settings,
 			},
 
-			success: ( data ) => this.onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ),
 			error: ( data ) => this.onSaveError( data, options, document ),
-		} );
+		} ).then( ( data ) => this.onSaveSuccess( data, oldStatus, statusChanged, elements, options, document )
+		);
 
 		// TODO: BC.
 		elementor.saver.trigger( 'save', options );
@@ -82,7 +82,10 @@ export class Save extends CommandInternalBase {
 			options.onSuccess.call( this, data );
 		}
 
-		return data;
+		return {
+			data,
+			statusChanged,
+		};
 	}
 
 	onSaveError( data, options, document ) {

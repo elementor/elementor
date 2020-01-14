@@ -34,14 +34,37 @@ class onAfterSave extends HookUIAfter {
 	}
 
 	apply( args, result ) {
-		debugger;
+		const { options } = args,
+			{ data } = result;
+
 		NProgress.done();
 
 		elementor.footerSaver.ui.buttonPublish.removeClass( 'elementor-button-state' );
 		elementor.footerSaver.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
 
 		elementor.footerSaver.refreshWpPreview();
-		elementor.footerSaver.setLastEdited( result );
+		elementor.footerSaver.setLastEdited( data );
+
+		if ( result.statusChanged ) {
+			this.onPageStatusChange( options.status );
+		}
+	}
+
+	onPageStatusChange( newStatus ) {
+		if ( 'publish' === newStatus ) {
+			elementor.notifications.showToast( {
+				message: elementor.config.document.panel.messages.publish_notification,
+				buttons: [
+					{
+						name: 'view_page',
+						text: elementor.translate( 'have_a_look' ),
+						callback() {
+							open( elementor.config.document.urls.permalink );
+						},
+					},
+				],
+			} );
+		}
 	}
 }
 
@@ -95,17 +118,6 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		 */
 		this.document = document;
 
-		/**
-		 * @type {Component}
-		 */
-		this.saver = $e.components.get( 'document/save' );
-
-		this.saver
-			//.on( 'before:save', this.onBeforeSave.bind( this ) )
-			//.on( 'after:save', this.onAfterSave.bind( this ) )
-			//.on( 'after:saveError', this.onAfterSaveError.bind( this ) )
-			.on( 'page:status:change', this.onPageStatusChange );
-
 		elementor.on( 'document:loaded', () => {
 			elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
 		} );
@@ -143,23 +155,6 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			if ( $e.routes.isPartOf( 'panel/page-settings' ) ) {
 				$e.routes.refreshContainer( 'panel' );
 			}
-		}
-	}
-
-	onPageStatusChange( newStatus ) {
-		if ( 'publish' === newStatus ) {
-			elementor.notifications.showToast( {
-				message: elementor.config.document.panel.messages.publish_notification,
-				buttons: [
-					{
-						name: 'view_page',
-						text: elementor.translate( 'have_a_look' ),
-						callback() {
-							open( elementor.config.document.urls.permalink );
-						},
-					},
-				],
-			} );
 		}
 	}
 
