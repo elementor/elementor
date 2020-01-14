@@ -35,7 +35,7 @@ export class Close extends CommandsBase {
 				deferred = jQuery.Deferred().resolve();
 		}
 
-		this.component.stopAutoSave( document );
+		elementor.saver.stopAutoSave( document );
 
 		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 
