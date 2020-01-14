@@ -1,5 +1,6 @@
 import HookUIBefore from 'elementor-api/modules/hooks/ui/before';
 import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
+import HookUICatch from 'elementor-api/modules/hooks/ui/catch';
 
 class onBeforeSave extends HookUIBefore {
 	getCommand() {
@@ -23,7 +24,42 @@ class onBeforeSave extends HookUIBefore {
 	}
 }
 
-class onAfterSave extends HookUIAfter {}
+class onAfterSave extends HookUIAfter {
+	getCommand() {
+		return 'document/save/save';
+	}
+
+	getId() {
+		return 'footer-saver-on-after-save';
+	}
+
+	apply( args, result ) {
+		debugger;
+		NProgress.done();
+
+		elementor.footerSaver.ui.buttonPublish.removeClass( 'elementor-button-state' );
+		elementor.footerSaver.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
+
+		elementor.footerSaver.refreshWpPreview();
+		elementor.footerSaver.setLastEdited( result );
+	}
+}
+
+class onCatchSave extends HookUICatch {
+	getCommand() {
+		return 'document/save/save';
+	}
+
+	getId() {
+		return 'footer-saver-on-after-catch';
+	}
+
+	apply( args, e ) {
+		NProgress.done();
+
+		elementor.footerSaver.buttonPublish.removeClass( 'elementor-button-state' );
+	}
+}
 
 module.exports = class FooterSaver extends Marionette.Behavior {
 	previewWindow = null;
@@ -66,8 +102,8 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 		this.saver
 			//.on( 'before:save', this.onBeforeSave.bind( this ) )
-			.on( 'after:save', this.onAfterSave.bind( this ) )
-			.on( 'after:saveError', this.onAfterSaveError.bind( this ) )
+			//.on( 'after:save', this.onAfterSave.bind( this ) )
+			//.on( 'after:saveError', this.onAfterSaveError.bind( this ) )
 			.on( 'page:status:change', this.onPageStatusChange );
 
 		elementor.on( 'document:loaded', () => {
@@ -79,6 +115,8 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		elementor.footerSaver = this;
 
 		new onBeforeSave();
+		new onAfterSave();
+		new onCatchSave();
 	}
 
 	activateSaveButtons( hasChanges ) {
@@ -125,33 +163,11 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		}
 	}
 
-	onBeforeSave( options ) {
-		NProgress.start();
-		if ( 'autosave' === options.status ) {
-			this.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
-		} else {
-			this.ui.buttonPublish.addClass( 'elementor-button-state' );
-		}
-	}
-
-	onAfterSave( data ) {
-		NProgress.done();
-		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
-		this.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
-		this.refreshWpPreview();
-		this.setLastEdited( data );
-	}
-
 	setLastEdited( data ) {
 		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
 			.find( '.elementor-last-edited' )
 			.html( data.config.document.last_edited );
-	}
-
-	onAfterSaveError() {
-		NProgress.done();
-		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
 	}
 
 	onClickButtonPreview() {
