@@ -28,6 +28,8 @@ export default class CommandBase extends ArgsObject {
 		// Assign instance of current component.
 		this.component = manager.getComponent( this.currentCommand );
 
+		// TODO: if `this.component` not found, throw error !.
+
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
 

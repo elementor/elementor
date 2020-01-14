@@ -1,7 +1,29 @@
 import HookUIBefore from 'elementor-api/modules/hooks/ui/before';
 import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
 
+class onBeforeSave extends HookUIBefore {
+	getCommand() {
+		return 'document/save/save';
+	}
 
+	getId() {
+		return 'footer-saver-on-before-save';
+	}
+
+	apply( args ) {
+		const { options = {} } = args;
+
+		NProgress.start();
+
+		if ( 'autosave' === options.status ) {
+			elementor.footerSaver.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
+		} else {
+			elementor.footerSaver.ui.buttonPublish.addClass( 'elementor-button-state' );
+		}
+	}
+}
+
+class onAfterSave extends HookUIAfter {}
 
 module.exports = class FooterSaver extends Marionette.Behavior {
 	previewWindow = null;
@@ -25,14 +47,25 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		};
 	}
 
-	initialize() {
+	initialize( options ) {
+		let document = options.document;
+
+		if ( ! document ) {
+			document = elementor.documents.getCurrent();
+		}
+
+		/**
+		 * @type {Document}
+		 */
+		this.document = document;
+
 		/**
 		 * @type {Component}
 		 */
 		this.saver = $e.components.get( 'document/save' );
 
 		this.saver
-			.on( 'before:save', this.onBeforeSave.bind( this ) )
+			//.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) )
 			.on( 'page:status:change', this.onPageStatusChange );
@@ -42,6 +75,10 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		} );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButtons.bind( this ) );
+
+		elementor.footerSaver = this;
+
+		new onBeforeSave();
 	}
 
 	activateSaveButtons( hasChanges ) {

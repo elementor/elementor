@@ -1,6 +1,5 @@
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
-// TODO: Should not be CommandBase, should not work with CommandBase, print error.
 export class Save extends CommandInternalBase {
 	apply( args ) {
 		let { options = {} } = args;
@@ -31,7 +30,7 @@ export class Save extends CommandInternalBase {
 
 		settings.post_status = options.status;
 
-		elementorCommon.ajax.addRequest( 'save_builder', {
+		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
 				status: options.status,
 				elements: elements,
@@ -44,6 +43,8 @@ export class Save extends CommandInternalBase {
 
 		// TODO: BC.
 		elementor.saver.trigger( 'save', options );
+
+		return deferred;
 	}
 
 	onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ) {
@@ -61,7 +62,7 @@ export class Save extends CommandInternalBase {
 		}
 
 		if ( data.config ) {
-			// TODO: Move to es6
+			// TODO: Move to es6.
 			jQuery.extend( true, elementor.config.document, data.config );
 		}
 
@@ -69,6 +70,7 @@ export class Save extends CommandInternalBase {
 
 		elementor.channels.editor.trigger( 'saved', data );
 
+		// TODO: BC.
 		elementor.saver.trigger( 'after:save', data )
 			.trigger( 'after:save:' + options.status, data );
 
@@ -84,6 +86,7 @@ export class Save extends CommandInternalBase {
 	onSaveError( data, options, document ) {
 		this.onAfterAjax( document );
 
+		// TODO: BC.
 		elementor.saver.trigger( 'after:saveError', data )
 			.trigger( 'after:saveError:' + options.status, data );
 
