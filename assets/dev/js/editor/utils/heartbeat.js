@@ -46,8 +46,8 @@ class Heartbeat {
 			},
 		} );
 
-		if ( elementor.config.locked_user ) {
-			this.showLockMessage( elementor.config.locked_user );
+		if ( elementor.config.document.user.locked ) {
+			this.showLockMessage( elementor.config.document.user.locked );
 		}
 	}
 

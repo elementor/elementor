@@ -1,4 +1,4 @@
-import Debounce from '../../commands/base/history/debounce';
+import Debounce from 'elementor-document/commands/base/history/debounce';
 
 export class Settings extends Debounce {
 	/**

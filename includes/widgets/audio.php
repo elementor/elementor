@@ -112,7 +112,7 @@ class Widget_Audio extends Widget_Base {
 				'default' => [
 					'url' => 'https://soundcloud.com/shchxango/john-coltrane-1963-my-favorite',
 				],
-				'show_external' => false,
+				'options' => false,
 			]
 		);
 

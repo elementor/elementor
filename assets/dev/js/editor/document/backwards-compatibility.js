@@ -31,7 +31,7 @@ export default class BackwardsCompatibility {
 
 		deprecatedEvents.forEach( ( event ) => {
 			if ( elementorDataEvents[ event ] && elementorDataEvents[ event ].length ) {
-				elementorCommon.helpers.softDeprecated( `event: ${ event }`, '2.8.0', '$e.events' );
+				elementorCommon.helpers.softDeprecated( `event: ${ event }`, '2.8.0', '$e.hooks' );
 			}
 		} );
 	}
@@ -39,7 +39,7 @@ export default class BackwardsCompatibility {
 	startInsertTemplate( model ) {
 		elementorCommon.helpers.softDeprecated( 'event: template:before:insert', '2.8.0', "$e.run( 'document/import' )" );
 
-		elementor.history.history.startItem( {
+		elementor.documents.getCurrent().history.startItem( {
 				type: 'add',
 				title: elementor.translate( 'template' ),
 				subTitle: model.get( 'title' ),
@@ -48,6 +48,6 @@ export default class BackwardsCompatibility {
 	}
 
 	endItem() {
-		elementor.history.history.endItem();
+		elementor.documents.getCurrent().history.endItem();
 	}
 }

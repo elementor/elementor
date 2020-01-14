@@ -1,16 +1,16 @@
-import Base from '../../commands/base/base';
+import Base from './base/base';
 
 export class LogSubItem extends Base {
 	apply( args ) {
-		if ( ! elementor.history.history.getActive() ) {
+		if ( ! this.history.getActive() ) {
 			return;
 		}
 
-		const id = args.id || elementor.history.history.getCurrentId();
+		const id = args.id || this.history.getCurrentId();
 
 		args = this.component.normalizeLogTitle( args );
 
-		const items = elementor.history.history.getItems(),
+		const items = this.history.getItems(),
 			item = items.findWhere( { id } );
 
 		if ( ! item ) {

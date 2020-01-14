@@ -223,7 +223,6 @@ class Element_Section extends Element_Base {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-
 		$this->start_controls_section(
 			'section_layout',
 			[

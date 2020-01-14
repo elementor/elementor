@@ -218,7 +218,8 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'URL', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'autocomplete' => false,
-				'show_external' => false,
+				'options' => false,
+				'label_block' => true,
 				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
