@@ -89,7 +89,7 @@ export default class Hooks {
 	 * @returns {{}}
 	 */
 	registerUICatch( instance ) {
-		return this.data.registerCatch( instance );
+		return this.ui.registerCatch( instance );
 	}
 
 	/**
