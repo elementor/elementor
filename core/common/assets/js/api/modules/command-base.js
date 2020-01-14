@@ -149,7 +149,7 @@ export default class CommandBase extends ArgsObject {
 			result.fail( this.onCatchApply.bind( this ) );
 			result.done( onAfter );
 		} else {
-			onAfter();
+			onAfter( result );
 		}
 
 		return result;
