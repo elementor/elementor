@@ -5,20 +5,24 @@ export class Draft extends Base {
 		const postStatus = elementor.settings.page.model.get( 'post_status' );
 
 		if ( ! this.component.isEditorChanged() && 'draft' !== postStatus ) {
-			return;
+			return jQuery.Deferred().reject();
 		}
 
 		const document = this.document;
 
+		let deferred;
+
 		switch ( postStatus ) {
 			case 'publish':
 			case 'private':
-				$e.run( 'document/save/auto', { document } );
+				deferred = $e.run( 'document/save/auto', { document } );
 				break;
 			default:
 				// Update and create a revision
-				$e.run( 'document/save/update', { document } );
+				deferred = $e.run( 'document/save/update', { document } );
 		}
+
+		return deferred;
 	}
 }
 

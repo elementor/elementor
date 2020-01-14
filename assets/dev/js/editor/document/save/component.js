@@ -96,7 +96,7 @@ export default class Component extends BackwardsCompatibility {
 
 		settings.post_status = options.status;
 
-		elementorCommon.ajax.addRequest( 'save_builder', {
+		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
 				status: options.status,
 				elements: elements,
@@ -108,6 +108,8 @@ export default class Component extends BackwardsCompatibility {
 		} );
 
 		this.trigger( 'save', options );
+
+		return deferred;
 	}
 
 	setFlagEditorChange( status ) {
@@ -129,6 +131,11 @@ export default class Component extends BackwardsCompatibility {
 	onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ) {
 		this.onAfterAjax( document );
 
+		// Document is switched doring the save, do nothing.
+		if ( document !== elementor.documents.getCurrent() ) {
+			return;
+		}
+
 		if ( 'autosave' !== options.status ) {
 			if ( statusChanged ) {
 				elementor.settings.page.model.set( 'post_status', options.status );
@@ -142,7 +149,7 @@ export default class Component extends BackwardsCompatibility {
 
 		if ( data.config ) {
 			// TODO: Move to es6
-			jQuery.extend( true, elementor.config.document, data.config );
+			jQuery.extend( true, document.config, data.config.document );
 		}
 
 		elementor.config.document.elements = elements;
