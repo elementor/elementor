@@ -81,6 +81,8 @@ export class Save extends CommandInternalBase {
 		if ( _.isFunction( options.onSuccess ) ) {
 			options.onSuccess.call( this, data );
 		}
+
+		return data;
 	}
 
 	onSaveError( data, options, document ) {
