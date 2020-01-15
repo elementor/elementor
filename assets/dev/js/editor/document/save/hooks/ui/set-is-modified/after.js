@@ -1,12 +1,12 @@
 import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
 
-export class FooterSaverAfterSetIsModified extends HookUIAfter {
+export class FooterSaverActiveSaveButtons extends HookUIAfter {
 	getCommand() {
 		return 'document/save/set-is-modified';
 	}
 
 	getId() {
-		return 'footer-saver-after-set-is-modified';
+		return 'footer-saver-activate-save-buttons';
 	}
 
 	apply( args ) {
@@ -16,4 +16,4 @@ export class FooterSaverAfterSetIsModified extends HookUIAfter {
 	}
 }
 
-export default FooterSaverAfterSetIsModified;
+export default FooterSaverActiveSaveButtons;

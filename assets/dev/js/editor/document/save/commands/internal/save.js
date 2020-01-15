@@ -6,7 +6,7 @@ export class Save extends CommandInternalBase {
 
 		const document = options.document || elementor.documents.getCurrent();
 
-		if ( document.isSaving ) {
+		if ( document.editor.isSaving ) {
 			return;
 		}
 
@@ -25,8 +25,8 @@ export class Save extends CommandInternalBase {
 		elementor.saver.trigger( 'before:save', options )
 			.trigger( 'before:save:' + options.status, options );
 
-		document.isSaving = true;
-		document.isChangedDuringSave = false;
+		document.editor.isSaving = true;
+		document.editor.isChangedDuringSave = false;
 
 		settings.post_status = options.status;
 
@@ -64,7 +64,7 @@ export class Save extends CommandInternalBase {
 			}
 
 			// Notice: Must be after update page.model.post_status to the new status.
-			if ( ! document.isChangedDuringSave ) {
+			if ( ! document.editor.isChangedDuringSave ) {
 				$e.internal( 'document/save/set-is-modified', { status: false } );
 			}
 		}
@@ -125,7 +125,7 @@ export class Save extends CommandInternalBase {
 	}
 
 	onAfterAjax( document ) {
-		document.isSaving = false;
+		document.editor.isSaving = false;
 	}
 }
 
