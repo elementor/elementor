@@ -473,7 +473,7 @@ export default class EditorBase extends Marionette.Application {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				$e.route( 'panel/elements/categories' );
+				$e.internal( 'panel/open-default' );
 			}
 		} );
 	}
@@ -990,7 +990,7 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
 		}
 
-		$e.route( document.config.panel.default_route, {
+		$e.internal( 'panel/open-default', {
 			refresh: true,
 		} );
 
