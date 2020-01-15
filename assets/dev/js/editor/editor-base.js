@@ -816,17 +816,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.enqueueTypographyFonts();
 
-		// find elementor parts, but not nested parts.
-		this.$previewContents.find( '.elementor' ).not( '.elementor .elementor' ).prepend( '<span class="elementor-edit-button">' +
-			'<i class="eicon-edit"></i>' +
-			'</span>' );
-
-		this.$previewContents.find( '.elementor-edit-button' ).on( 'click', ( event ) => {
-			const id = jQuery( event.target ).parents( '.elementor' ).data( 'elementor-id' );
-
-			$e.run( 'editor/documents/switch', { id } );
-		} );
-
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
