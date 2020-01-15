@@ -123,7 +123,15 @@ export default class Component extends ComponentBase {
 	}
 
 	request( id ) {
-		return elementorCommon.ajax.load( {
+		return elementorCommon.ajax.load( this.getRequestArgs( id ), true );
+	}
+
+	invalidateCache( id ) {
+		elementorCommon.ajax.invalidateCache( this.getRequestArgs( id ) );
+	}
+
+	getRequestArgs( id ) {
+		return {
 			action: 'get_document_config',
 			unique_id: `document-${ id }`,
 			data: { id },
@@ -145,6 +153,6 @@ export default class Component extends ComponentBase {
 
 				alert( message );
 			},
-		}, true );
+		};
 	}
 }
