@@ -1,0 +1,31 @@
+{
+  "initial_document": {
+	"id": 1,
+	"urls": {
+	  "preview": ""
+	}
+  },
+  "user": {
+	"introduction": {},
+	"restrictions": []
+  },
+  "elements": {},
+  "dynamicTags": {},
+  "library_connect": {
+	"show_popup": 0
+  },
+  "icons": {
+	"libraries": []
+  },
+  "controls": {
+	"repeater": {
+	  "item_actions": {
+		"add": true,
+		"duplicate": true,
+		"remove": true,
+		"sort": true
+	  }
+	}
+  },
+  "autosave_interval": 1000
+}

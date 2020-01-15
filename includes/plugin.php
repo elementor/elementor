@@ -16,6 +16,7 @@ use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
+use Elementor\Modules\System_Info\Module as System_Info_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -564,7 +565,7 @@ class Plugin {
 		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
-		$this->system_info = new System_Info\Main();
+		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
 
 		User::init();

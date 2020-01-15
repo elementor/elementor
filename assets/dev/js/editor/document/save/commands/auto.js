@@ -6,18 +6,19 @@ export class Auto extends Base {
 		let { options } = args;
 
 		if ( ! force && 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
-			return;
+			return jQuery.Deferred().reject();
 		}
 
-		if ( this.component.isEditorChanged() ) {
-			// TODO: Move to es6.
-			options = _.extend( {
-				status: 'autosave',
-				document: this.document,
-			}, options );
-
-			elementor.saver.saveEditor( options );
+		if ( ! this.component.isEditorChanged() ) {
+			return jQuery.Deferred().reject();
 		}
+
+		options = Object.assign( {
+			status: 'autosave',
+			document: this.document,
+		}, options );
+
+		return elementor.saver.saveEditor( options );
 	}
 }
 

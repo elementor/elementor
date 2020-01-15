@@ -47,7 +47,7 @@ Schemes = function() {
 	};
 
 	var fetchAllWidgetsSchemesStyle = function() {
-		_.each( elementor.config.widgets, function( widget ) {
+		_.each( elementor.widgetsCache, function( widget ) {
 			fetchWidgetControlsStyles( widget );
 		} );
 	};

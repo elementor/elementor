@@ -10,7 +10,7 @@ export default class Ui extends Base {
 	}
 
 	getType() {
-		return 'event';
+		return 'ui';
 	}
 
 	runCallback( event, callback, args, result ) {
@@ -19,6 +19,7 @@ export default class Ui extends Base {
 				callback.callback( args );
 				break;
 
+			case 'catch':
 			case 'after':
 				callback.callback( args, result );
 				break;
@@ -49,19 +50,6 @@ export default class Ui extends Base {
 	}
 
 	/**
-	 * Function registerAfter().
-	 *
-	 * Register the event in after event.
-	 *
-	 * @param {HookBase} instance
-	 *
-	 * @returns {{}}
-	 */
-	registerAfter( instance ) {
-		return this.register( 'after', instance );
-	}
-
-	/**
 	 * Function registerBefore().
 	 *
 	 * Register the event in before event.
@@ -72,19 +60,6 @@ export default class Ui extends Base {
 	 */
 	registerBefore( instance ) {
 		return this.register( 'before', instance );
-	}
-
-	/**
-	 * Function runAfter().
-	 *
-	 * Run the event as after.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} result
-	 */
-	runAfter( command, args, result ) {
-		this.run( 'after', command, args, result );
 	}
 
 	/**

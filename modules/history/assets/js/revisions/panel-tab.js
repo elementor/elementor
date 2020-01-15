@@ -32,7 +32,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 
-		this.currentPreviewId = elementor.config.current_revision_id;
+		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	getRevisionViewData: function( revisionView ) {
@@ -61,7 +61,10 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	setRevisionsButtonsActive: function( active ) {
-		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+		// Check the tab is open.
+		if ( ! this.isDestroyed ) {
+			this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+		}
 	},
 
 	deleteRevision: function( revisionView ) {
@@ -115,7 +118,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.setRevisionsButtonsActive( false );
 
-		this.currentPreviewId = elementor.config.current_revision_id;
+		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	onApplyClick: function() {
@@ -131,7 +134,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDiscardClick: function() {
-		this.document.revisions.setEditorData( elementor.config.data );
+		this.document.revisions.setEditorData( elementor.config.document.elements );
 
 		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
 
@@ -149,7 +152,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.current_revision_id ) {
+		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.document.revisions.current_id ) {
 			this.onDiscardClick();
 		}
 	},

@@ -3,8 +3,8 @@ import * as commands from './commands/';
 import * as hooksUI from './hooks/ui/';
 
 export default class Component extends ComponentBase {
-	onInit() {
-		super.onInit();
+	registerAPI() {
+		super.registerAPI();
 
 		Object.values( hooksUI ).forEach( ( Hook ) => new Hook() );
 	}

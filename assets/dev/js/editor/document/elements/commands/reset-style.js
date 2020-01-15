@@ -37,6 +37,9 @@ export class ResetStyle extends History {
 			$e.run( 'document/elements/reset-settings', {
 				container,
 				settings: settingsKeys,
+				options: {
+					external: true,
+				},
 			} );
 
 			// BC: Deprecated since 2.8.0 - use `$e.hooks`.

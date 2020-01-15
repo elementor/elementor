@@ -13,8 +13,8 @@ export const DEFAULT_DEBOUNCE_DELAY = 800;
 export const getDefaultDebounceDelay = () => {
 	let result = DEFAULT_DEBOUNCE_DELAY;
 
-	if ( ElementorConfig.document && undefined !== ElementorConfig.document.debounceDelay ) {
-		result = ElementorConfig.document.debounceDelay;
+	if ( elementor.config.document && undefined !== elementor.config.document.debounceDelay ) {
+		result = elementor.config.document.debounceDelay;
 	}
 
 	return result;

@@ -1,7 +1,9 @@
 import HookBase from 'elementor-api/modules/hook-base';
 
-export default class DataBase extends HookBase {
+export class Base extends HookBase {
 	getType() {
-		return 'hook';
+		return 'data';
 	}
 }
+
+export default Base;

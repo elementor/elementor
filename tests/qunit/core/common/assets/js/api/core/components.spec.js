@@ -3,1074 +3,1076 @@ import ComponentBase from 'elementor-api/modules/component-base';
 import ComponentBaseModal from 'elementor-api/modules/component-modal-base';
 
 jQuery( () => {
-	QUnit.module( 'Components' );
+	QUnit.module( 'File: core/common/assets/js/api/core/modules/component-*.js', () => {
+		QUnit.test( 'Register Component', ( assert ) => {
+			const namespace = 'register',
+				Component = class extends ComponentBase {
+					getNamespace() {
+						return namespace;
+					}
+				},
+				instance = new Component();
 
-	QUnit.test( 'Register Component', ( assert ) => {
-		const Component = class extends ComponentBase {
+			$e.components.register( instance );
+
+			assert.equal( $e.components.get( namespace ), instance );
+		} );
+
+		QUnit.test( 'Register routes', ( assert ) => {
+			const namespace = 'register-routes';
+
+			const Component = class extends ComponentBase {
 				getNamespace() {
-					return 'test';
+					return namespace;
 				}
-			},
-			instance = new Component();
 
-		$e.components.register( instance );
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+						routeB: () => {},
+					};
+				}
+			};
 
-		assert.equal( $e.components.get( 'test' ), instance );
-	} );
+			$e.components.register( new Component() );
 
-	QUnit.test( 'Register routes', ( assert ) => {
-		const namespace = 'register-routes';
+			const routes = $e.routes.getAll();
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-					routeB: () => {},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const routes = $e.routes.getAll();
-
-		assert.notEqual( routes.indexOf( namespace + '/routeA' ), -1 );
-		assert.notEqual( routes.indexOf( namespace + '/routeB' ), -1 );
-	} );
-
-	QUnit.test( 'Register routes via tabs', ( assert ) => {
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return 'test';
-			}
-
-			defaultTabs() {
-				return {
-					tabA: { title: 'tabA' },
-					tabB: { title: 'tabB' },
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const component = $e.components.get( 'test' );
-
-		assert.equal( typeof $e.routes.commands[ component.getNamespace() + '/tabA' ], 'function' );
-		assert.equal( typeof $e.routes.commands[ component.getNamespace() + '/tabB' ], 'function' );
-	} );
-
-	QUnit.test( 'Register without namespace', ( assert ) => {
-		const Component = class extends ComponentBase {};
-
-		assert.throws(
-			() => {
-				const instance = new Component();
-				instance.getNamespace();
-			},
-			new Error( 'Component.getNamespace() should be implemented, please provide \'getNamespace\' functionality.' )
-		);
-	} );
-
-	QUnit.test( 'Register commands', ( assert ) => {
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return 'test-commands';
-			}
-
-			defaultCommands() {
-				return {
-					commandA: () => {},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const component = $e.components.get( 'test-commands' );
-
-		assert.equal( typeof $e.commands.commands[ component.getNamespace() + '/commandA' ], 'function' );
-	} );
-
-	QUnit.test( 'Register shortcuts', ( assert ) => {
-		const namespace = 'register-shortcuts';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultCommands() {
-				return {
-					commandA: () => {},
-				};
-			}
-
-			defaultShortcuts() {
-				return {
-					commandA: {
-						keys: 'ctrl+a',
-					},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const handlers = $e.shortcuts.handlers[ 'ctrl+a' ],
-			keys = Object.keys( handlers );
-
-		assert.equal( handlers[ keys[ 0 ] ].command, namespace + '/commandA' );
-	} );
-
-	QUnit.test( 'Register shortcuts missing command', ( assert ) => {
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return 'test-shortcuts-no-command';
-			}
-
-			defaultShortcuts() {
-				return {
-					notExistCommand: {
-						keys: 'ctrl+a',
-					},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const component = $e.components.get( 'test-shortcuts-no-command' ),
-			handlers = $e.shortcuts.getAll();
-
-		assert.equal( typeof handlers[ component.getNamespace() + '/notExistCommand' ], 'undefined' );
-	} );
-
-	QUnit.module( 'Commands' );
-
-	QUnit.test( 'Error on register command without component', ( assert ) => {
-		assert.throws(
-			() => {
-				$e.commands.register( '', 'save', () => {} );
-			},
-			new Error( "Commands: '' component is not exist." )
-		);
-	} );
-
-	QUnit.test( 'Error on re-register command', ( assert ) => {
-		const namespace = 're-register-command';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultCommands() {
-				return {
-					commandA: () => {},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		assert.throws(
-			() => {
-				$e.commands.register( namespace, 'commandA', () => {} );
-			},
-			new Error( `Commands: \`${ namespace + '/commandA' }\` is already registered.` )
-		);
-	} );
-
-	QUnit.test( 'Error on run non exited command', ( assert ) => {
-		assert.throws(
-			() => {
-				$e.run( 'not-existing-command' );
-			},
-			new Error( 'Commands: `not-existing-command` not found.' )
-		);
-	} );
-
-	QUnit.test( 'Run command', ( assert ) => {
-		assert.expect( 3 );
-
-		const namespace = 'run-command',
-			command = namespace + '/commandA';
-		let commandStatus = 'beforeRun';
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultCommands() {
-				return {
-					commandA: () => {
-						assert.equal( $e.commands.is( command ), true );
-						commandStatus = 'afterRun';
-					},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		$e.run( command );
-
-		assert.equal( commandStatus, 'afterRun' );
-
-		assert.equal( $e.commands.is( command ), false );
-	} );
-
-	QUnit.test( 'Run command with args', ( assert ) => {
-		assert.expect( 3 );
-
-		const namespace = 'run-command-with-args';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultCommands() {
-				return {
-					commandA: ( args ) => {
-						assert.equal( args.argA, 1 );
-						assert.equal( $e.commands.getCurrentArgs( namespace ), args );
-					},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		$e.run( namespace + '/commandA', {
-			argA: 1,
+			assert.notEqual( routes.indexOf( namespace + '/routeA' ), -1 );
+			assert.notEqual( routes.indexOf( namespace + '/routeB' ), -1 );
 		} );
 
-		assert.equal( $e.commands.getCurrentArgs( namespace ), false );
-	} );
+		QUnit.test( 'Register routes via tabs', ( assert ) => {
+			const namespace = 'register-via-tabs',
+				Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-	QUnit.test( 'Run command with events args', ( assert ) => {
-		const namespace = 'run-command-with-events-args';
-		let onBeforeStatus = 'beforeRun',
-			onAfterStatus = 'beforeRun';
+				defaultTabs() {
+					return {
+						tabA: { title: 'tabA' },
+						tabB: { title: 'tabB' },
+					};
+				}
+			};
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			$e.components.register( new Component() );
 
-			defaultCommands() {
-				return {
-					commandA: () => {},
-				};
-			}
-		};
+			const component = $e.components.get( namespace );
 
-		$e.components.register( new Component() );
-
-		$e.run( namespace + '/commandA', {
-			onBefore: () => {
-				onBeforeStatus = 'afterRun';
-			},
-			onAfter: () => {
-				onAfterStatus = 'afterRun';
-			},
+			assert.equal( typeof $e.routes.commands[ component.getNamespace() + '/tabA' ], 'function' );
+			assert.equal( typeof $e.routes.commands[ component.getNamespace() + '/tabB' ], 'function' );
 		} );
 
-		assert.equal( onBeforeStatus, 'afterRun' );
-		assert.equal( onAfterStatus, 'afterRun' );
-	} );
+		QUnit.test( 'Register without namespace', ( assert ) => {
+			const Component = class extends ComponentBase {};
 
-	QUnit.test( 'Check if route to is activate the component', ( assert ) => {
-		const namespace = 'route-to-activate-component';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		$e.route( namespace + '/routeA' );
-
-		const activeComponent = Object.keys( $e.components.activeComponents ).pop();
-
-		assert.equal( activeComponent, namespace );
-	} );
-
-	QUnit.test( 'Ensure that run command is not activate the component', ( assert ) => {
-		const namespace = 'run-command-not-activate-component';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultCommands() {
-				return {
-					commandA: () => {},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		$e.run( namespace + '/commandA' );
-
-		const activeComponent = Object.keys( $e.components.activeComponents ).pop();
-
-		assert.notEqual( activeComponent, namespace );
-	} );
-
-	QUnit.test( 'Run command with dependency', ( assert ) => {
-		let commandStatus = 'beforeRun';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return 'run-command-with-dependency';
-			}
-
-			dependency() {
-				return false;
-			}
-
-			defaultCommands() {
-				return {
-					commandA: () => commandStatus = 'afterRun',
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const component = $e.components.get( 'run-command-with-dependency' );
-
-		$e.run( component.getNamespace() + '/commandA' );
-
-		assert.equal( commandStatus, 'beforeRun' );
-	} );
-
-	QUnit.module( 'Routes' );
-
-	QUnit.test( 'Error on register route without component', ( assert ) => {
-		assert.throws(
-			() => {
-				$e.routes.register( '', 'panel', () => {} );
-			},
-			new Error( "Routes: '' component is not exist." )
-		);
-	} );
-
-	QUnit.test( 'Error on run non exited command', ( assert ) => {
-		assert.throws(
-			() => {
-				$e.route( 'not-existing-route' );
-			},
-			new Error( 'Routes: `not-existing-route` not found.' )
-		);
-	} );
-
-	QUnit.test( 'Route to, is, isPartOf', ( assert ) => {
-		const namespace = 'route-to',
-			routeA = namespace + '/routeA',
-			routeB = namespace + '/routeB';
-
-		let routeAStatus = 'beforeRouteA',
-			routeBStatus = 'beforeRouteA';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultRoutes() {
-				return {
-					routeA: () => {
-						routeAStatus = 'afterRoute';
-					},
-					routeB: () => {
-						routeBStatus = 'afterRoute';
-					},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		$e.route( routeA );
-
-		assert.equal( $e.routes.is( routeA ), true );
-		assert.equal( $e.routes.is( routeB ), false );
-		assert.equal( routeAStatus, 'afterRoute' );
-
-		$e.route( routeB );
-
-		assert.equal( $e.routes.is( routeB ), true );
-		assert.equal( $e.routes.is( routeA ), false );
-		assert.equal( routeBStatus, 'afterRoute' );
-
-		assert.equal( $e.routes.isPartOf( namespace ), true );
-		assert.equal( $e.routes.isPartOf( 'notPartOf' ), false );
-	} );
-
-	QUnit.test( 'Route with args', ( assert ) => {
-		assert.expect( 4 );
-
-		const namespace = 'route-with-args',
-			routeA = namespace + '/routeA';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultRoutes() {
-				return {
-					routeA: ( args ) => {
-						assert.equal( args.argA, 1 );
-					},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const args = {
-			argA: 1,
-		};
-
-		$e.route( namespace + '/routeA', args );
-
-		assert.equal( $e.routes.is( namespace + '/routeA', args ), true );
-		assert.equal( $e.routes.is( routeA ), false );
-
-		assert.equal( $e.routes.getCurrentArgs( namespace ), args );
-	} );
-
-	QUnit.test( 'Route with events args', ( assert ) => {
-		const namespace = 'route-with-events-args';
-		let onBeforeStatus = 'beforeRoute',
-			onAfterStatus = 'beforeRoute';
-
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
-
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-				};
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		$e.route( namespace + '/routeA', {
-			onBefore: () => {
-				onBeforeStatus = 'afterRoute';
-			},
-			onAfter: () => {
-				onAfterStatus = 'afterRoute';
-			},
+			assert.throws(
+				() => {
+					const instance = new Component();
+					instance.getNamespace();
+				},
+				new Error( 'Component.getNamespace() should be implemented, please provide \'getNamespace\' functionality.' )
+			);
 		} );
 
-		assert.equal( onBeforeStatus, 'afterRoute' );
-		assert.equal( onAfterStatus, 'afterRoute' );
-	} );
+		QUnit.test( 'Register commands', ( assert ) => {
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return 'test-commands';
+				}
 
-	QUnit.test( 'Route to tab & activate tab', ( assert ) => {
-		const namespace = 'route-to-tab';
+				defaultCommands() {
+					return {
+						commandA: () => {},
+					};
+				}
+			};
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			$e.components.register( new Component() );
 
-			defaultTabs() {
-				return {
-					tabA: { title: 'tabA' },
-					tabB: { title: 'tabB' },
-				};
-			}
+			const component = $e.components.get( 'test-commands' );
 
-			getTabsWrapperSelector() {
-				return '#' + namespace;
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const $fixture = jQuery(
-			'<div id="' + namespace + '">' +
-			'<div class="elementor-component-tab" data-tab="tabA"></div>' +
-			'<div class="elementor-component-tab" data-tab="tabB"></div>' +
-			'</div>'
-		);
-
-		jQuery( 'body' ).append( $fixture );
-
-		$e.route( namespace + '/tabA' );
-
-		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabA' );
-
-		$e.route( namespace + '/tabB' );
-
-		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
-
-		$fixture.remove();
-	} );
-
-	QUnit.test( 'Add tab', ( assert ) => {
-		const namespace = 'add-tab';
-
-		const Component = class extends ComponentBase {
-			__construct( args ) {
-				super.__construct( args );
-
-				this.tabs = {
-					tabA: { title: 'tabA' },
-					tabC: { title: 'tabC' },
-				};
-			}
-
-			getNamespace() {
-				return namespace;
-			}
-
-			getTabsWrapperSelector() {
-				return '#' + namespace;
-			}
-		};
-
-		$e.components.register( new Component() );
-
-		const component = $e.components.get( namespace ),
-			newTabIndex = 1;
-
-		component.addTab( 'tabB', {}, newTabIndex );
-
-		const $fixture = jQuery(
-			'<div id="' + namespace + '"></div>'
-		);
-
-		jQuery.each( component.getTabs(), ( tab ) => {
-			$fixture.append( '<div class="elementor-component-tab" data-tab="' + tab + '"></div>' );
+			assert.equal( typeof $e.commands.commands[ component.getNamespace() + '/commandA' ], 'function' );
 		} );
 
-		jQuery( 'body' ).append( $fixture );
+		QUnit.test( 'Register shortcuts', ( assert ) => {
+			const namespace = 'register-shortcuts';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultCommands() {
+					return {
+						commandA: () => {},
+					};
+				}
+
+				defaultShortcuts() {
+					return {
+						commandA: {
+							keys: 'ctrl+a',
+						},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			const handlers = $e.shortcuts.handlers[ 'ctrl+a' ],
+				keys = Object.keys( handlers );
+
+			assert.equal( handlers[ keys[ 0 ] ].command, namespace + '/commandA' );
+		} );
+
+		QUnit.test( 'Register shortcuts missing command', ( assert ) => {
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return 'test-shortcuts-no-command';
+				}
+
+				defaultShortcuts() {
+					return {
+						notExistCommand: {
+							keys: 'ctrl+a',
+						},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			const component = $e.components.get( 'test-shortcuts-no-command' ),
+				handlers = $e.shortcuts.getAll();
+
+			assert.equal( typeof handlers[ component.getNamespace() + '/notExistCommand' ], 'undefined' );
+		} );
+
+		QUnit.module( 'Commands' );
+
+		QUnit.test( 'Error on register command without component', ( assert ) => {
+			assert.throws(
+				() => {
+					$e.commands.register( '', 'save', () => {} );
+				},
+				new Error( "Commands: '' component is not exist." )
+			);
+		} );
+
+		QUnit.test( 'Error on re-register command', ( assert ) => {
+			const namespace = 're-register-command';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultCommands() {
+					return {
+						commandA: () => {},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			assert.throws(
+				() => {
+					$e.commands.register( namespace, 'commandA', () => {} );
+				},
+				new Error( `Commands: \`${ namespace + '/commandA' }\` is already registered.` )
+			);
+		} );
+
+		QUnit.test( 'Error on run non exited command', ( assert ) => {
+			assert.throws(
+				() => {
+					$e.run( 'not-existing-command' );
+				},
+				new Error( 'Commands: `not-existing-command` not found.' )
+			);
+		} );
+
+		QUnit.test( 'Run command', ( assert ) => {
+			assert.expect( 3 );
+
+			const namespace = 'run-command',
+				command = namespace + '/commandA';
+			let commandStatus = 'beforeRun';
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultCommands() {
+					return {
+						commandA: () => {
+							assert.equal( $e.commands.is( command ), true );
+							commandStatus = 'afterRun';
+						},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			$e.run( command );
+
+			assert.equal( commandStatus, 'afterRun' );
+
+			assert.equal( $e.commands.is( command ), false );
+		} );
+
+		QUnit.test( 'Run command with args', ( assert ) => {
+			assert.expect( 3 );
+
+			const namespace = 'run-command-with-args';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultCommands() {
+					return {
+						commandA: ( args ) => {
+							assert.equal( args.argA, 1 );
+							assert.equal( $e.commands.getCurrentArgs( namespace ), args );
+						},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			$e.run( namespace + '/commandA', {
+				argA: 1,
+			} );
+
+			assert.equal( $e.commands.getCurrentArgs( namespace ), false );
+		} );
+
+		QUnit.test( 'Run command with events args', ( assert ) => {
+			const namespace = 'run-command-with-events-args';
+			let onBeforeStatus = 'beforeRun',
+				onAfterStatus = 'beforeRun';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-		$e.route( namespace + '/tabB' );
+				defaultCommands() {
+					return {
+						commandA: () => {},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			$e.run( namespace + '/commandA', {
+				onBefore: () => {
+					onBeforeStatus = 'afterRun';
+				},
+				onAfter: () => {
+					onAfterStatus = 'afterRun';
+				},
+			} );
+
+			assert.equal( onBeforeStatus, 'afterRun' );
+			assert.equal( onAfterStatus, 'afterRun' );
+		} );
+
+		QUnit.test( 'Check if route to is activate the component', ( assert ) => {
+			const namespace = 'route-to-activate-component';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			$e.route( namespace + '/routeA' );
+
+			const activeComponent = Object.keys( $e.components.activeComponents ).pop();
+
+			assert.equal( activeComponent, namespace );
+		} );
+
+		QUnit.test( 'Ensure that run command is not activate the component', ( assert ) => {
+			const namespace = 'run-command-not-activate-component';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultCommands() {
+					return {
+						commandA: () => {},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			$e.run( namespace + '/commandA' );
+
+			const activeComponent = Object.keys( $e.components.activeComponents ).pop();
+
+			assert.notEqual( activeComponent, namespace );
+		} );
+
+		QUnit.test( 'Run command with dependency', ( assert ) => {
+			let commandStatus = 'beforeRun';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return 'run-command-with-dependency';
+				}
+
+				dependency() {
+					return false;
+				}
+
+				defaultCommands() {
+					return {
+						commandA: () => commandStatus = 'afterRun',
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			const component = $e.components.get( 'run-command-with-dependency' );
+
+			$e.run( component.getNamespace() + '/commandA' );
+
+			assert.equal( commandStatus, 'beforeRun' );
+		} );
+
+		QUnit.module( 'Routes' );
+
+		QUnit.test( 'Error on register route without component', ( assert ) => {
+			assert.throws(
+				() => {
+					$e.routes.register( '', 'panel', () => {} );
+				},
+				new Error( "Routes: '' component is not exist." )
+			);
+		} );
+
+		QUnit.test( 'Error on run non exited command', ( assert ) => {
+			assert.throws(
+				() => {
+					$e.route( 'not-existing-route' );
+				},
+				new Error( 'Routes: `not-existing-route` not found.' )
+			);
+		} );
+
+		QUnit.test( 'Route to, is, isPartOf', ( assert ) => {
+			const namespace = 'route-to',
+				routeA = namespace + '/routeA',
+				routeB = namespace + '/routeB';
+
+			let routeAStatus = 'beforeRouteA',
+				routeBStatus = 'beforeRouteA';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultRoutes() {
+					return {
+						routeA: () => {
+							routeAStatus = 'afterRoute';
+						},
+						routeB: () => {
+							routeBStatus = 'afterRoute';
+						},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			$e.route( routeA );
+
+			assert.equal( $e.routes.is( routeA ), true );
+			assert.equal( $e.routes.is( routeB ), false );
+			assert.equal( routeAStatus, 'afterRoute' );
+
+			$e.route( routeB );
+
+			assert.equal( $e.routes.is( routeB ), true );
+			assert.equal( $e.routes.is( routeA ), false );
+			assert.equal( routeBStatus, 'afterRoute' );
+
+			assert.equal( $e.routes.isPartOf( namespace ), true );
+			assert.equal( $e.routes.isPartOf( 'notPartOf' ), false );
+		} );
+
+		QUnit.test( 'Route with args', ( assert ) => {
+			assert.expect( 4 );
+
+			const namespace = 'route-with-args',
+				routeA = namespace + '/routeA';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultRoutes() {
+					return {
+						routeA: ( args ) => {
+							assert.equal( args.argA, 1 );
+						},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			const args = {
+				argA: 1,
+			};
+
+			$e.route( namespace + '/routeA', args );
+
+			assert.equal( $e.routes.is( namespace + '/routeA', args ), true );
+			assert.equal( $e.routes.is( routeA ), false );
+
+			assert.equal( $e.routes.getCurrentArgs( namespace ), args );
+		} );
+
+		QUnit.test( 'Route with events args', ( assert ) => {
+			const namespace = 'route-with-events-args';
+			let onBeforeStatus = 'beforeRoute',
+				onAfterStatus = 'beforeRoute';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
+
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+					};
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			$e.route( namespace + '/routeA', {
+				onBefore: () => {
+					onBeforeStatus = 'afterRoute';
+				},
+				onAfter: () => {
+					onAfterStatus = 'afterRoute';
+				},
+			} );
 
-		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
+			assert.equal( onBeforeStatus, 'afterRoute' );
+			assert.equal( onAfterStatus, 'afterRoute' );
+		} );
 
-		assert.equal( $fixture.find( '[data-tab=tabB]' ).index(), newTabIndex );
+		QUnit.test( 'Route to tab & activate tab', ( assert ) => {
+			const namespace = 'route-to-tab';
+
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-		$fixture.remove();
-	} );
+				defaultTabs() {
+					return {
+						tabA: { title: 'tabA' },
+						tabB: { title: 'tabB' },
+					};
+				}
 
-	QUnit.test( 'Check if route.to is activate the component', ( assert ) => {
-		const namespace = 'route-activate-component';
+				getTabsWrapperSelector() {
+					return '#' + namespace;
+				}
+			};
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			$e.components.register( new Component() );
 
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-				};
-			}
-		};
+			const $fixture = jQuery(
+				'<div id="' + namespace + '">' +
+				'<div class="elementor-component-tab" data-tab="tabA"></div>' +
+				'<div class="elementor-component-tab" data-tab="tabB"></div>' +
+				'</div>'
+			);
 
-		$e.components.register( new Component() );
+			jQuery( 'body' ).append( $fixture );
 
-		$e.route( namespace + '/routeA' );
+			$e.route( namespace + '/tabA' );
 
-		const activeComponent = Object.keys( $e.components.activeComponents ).pop();
+			assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabA' );
 
-		assert.equal( activeComponent, namespace );
-	} );
+			$e.route( namespace + '/tabB' );
 
-	QUnit.test( 'Route with dependency', ( assert ) => {
-		const namespace = 'route-with-dependency';
+			assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			$fixture.remove();
+		} );
 
-			dependency() {
-				return false;
-			}
+		QUnit.test( 'Add tab', ( assert ) => {
+			const namespace = 'add-tab';
 
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-				};
-			}
-		};
+			const Component = class extends ComponentBase {
+				__construct( args ) {
+					super.__construct( args );
 
-		$e.components.register( new Component() );
+					this.tabs = {
+						tabA: { title: 'tabA' },
+						tabC: { title: 'tabC' },
+					};
+				}
 
-		$e.route( namespace + '/routeA' );
+				getNamespace() {
+					return namespace;
+				}
 
-		assert.equal( $e.routes.is( namespace + '/routeA' ), false );
-	} );
+				getTabsWrapperSelector() {
+					return '#' + namespace;
+				}
+			};
 
-	QUnit.test( 'Re-route is avoided', ( assert ) => {
-		const namespace = 're-route-is-avoided';
+			$e.components.register( new Component() );
 
-		let routeCount = 0;
+			const component = $e.components.get( namespace ),
+				newTabIndex = 1;
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			component.addTab( 'tabB', {}, newTabIndex );
 
-			defaultRoutes() {
-				return {
-					routeA: () => {
-						routeCount++;
-					},
-				};
-			}
-		};
+			const $fixture = jQuery(
+				'<div id="' + namespace + '"></div>'
+			);
 
-		$e.components.register( new Component() );
+			jQuery.each( component.getTabs(), ( tab ) => {
+				$fixture.append( '<div class="elementor-component-tab" data-tab="' + tab + '"></div>' );
+			} );
 
-		$e.route( namespace + '/routeA' );
-		assert.equal( routeCount, 1 );
-		$e.route( namespace + '/routeA' );
-		assert.equal( routeCount, 1 );
-	} );
+			jQuery( 'body' ).append( $fixture );
 
-	QUnit.test( 'Open component dependency', ( assert ) => {
-		const namespace = 'open-component-dependency';
+			$e.route( namespace + '/tabB' );
 
-		let openCount = 0;
+			assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			assert.equal( $fixture.find( '[data-tab=tabB]' ).index(), newTabIndex );
 
-			open() {
-				openCount++;
-				return false;
-			}
+			$fixture.remove();
+		} );
 
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-				};
-			}
-		};
+		QUnit.test( 'Check if route.to is activate the component', ( assert ) => {
+			const namespace = 'route-activate-component';
 
-		$e.components.register( new Component() );
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-		$e.route( namespace + '/routeA' );
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+					};
+				}
+			};
 
-		assert.equal( openCount, 1 );
+			$e.components.register( new Component() );
 
-		assert.equal( $e.routes.is( namespace + '/routeA' ), false );
-	} );
+			$e.route( namespace + '/routeA' );
 
-	QUnit.test( 'Re-open component is avoided', ( assert ) => {
-		const namespace = 're-open-is-avoided';
+			const activeComponent = Object.keys( $e.components.activeComponents ).pop();
 
-		let openCount = 0;
+			assert.equal( activeComponent, namespace );
+		} );
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+		QUnit.test( 'Route with dependency', ( assert ) => {
+			const namespace = 'route-with-dependency';
 
-			open() {
-				openCount++;
-				return true;
-			}
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-					routeB: () => {},
-				};
-			}
-		};
+				dependency() {
+					return false;
+				}
 
-		$e.components.register( new Component() );
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+					};
+				}
+			};
 
-		$e.route( namespace + '/routeA' );
-		assert.equal( openCount, 1 );
-		$e.route( namespace + '/routeB' );
-		assert.equal( openCount, 1 );
+			$e.components.register( new Component() );
 
-		$e.components.get( namespace ).close();
+			$e.route( namespace + '/routeA' );
 
-		$e.route( namespace + '/routeA' );
-		assert.equal( openCount, 2 );
-	} );
+			assert.equal( $e.routes.is( namespace + '/routeA' ), false );
+		} );
 
-	QUnit.test( 'On close route', ( assert ) => {
-		const namespace = 'on-close-route';
+		QUnit.test( 'Re-route is avoided', ( assert ) => {
+			const namespace = 're-route-is-avoided';
 
-		let routeStatus = 'notChanged';
+			let routeCount = 0;
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-			onCloseRoute() {
-				routeStatus = 'closed';
-			}
+				defaultRoutes() {
+					return {
+						routeA: () => {
+							routeCount++;
+						},
+					};
+				}
+			};
 
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-					routeB: () => {},
-				};
-			}
-		};
+			$e.components.register( new Component() );
 
-		$e.components.register( new Component() );
+			$e.route( namespace + '/routeA' );
+			assert.equal( routeCount, 1 );
+			$e.route( namespace + '/routeA' );
+			assert.equal( routeCount, 1 );
+		} );
 
-		$e.route( namespace + '/routeA' );
-		assert.equal( routeStatus, 'notChanged' );
+		QUnit.test( 'Open component dependency', ( assert ) => {
+			const namespace = 'open-component-dependency';
 
-		$e.route( namespace + '/routeB' );
-		assert.equal( routeStatus, 'closed' );
-	} );
+			let openCount = 0;
 
-	QUnit.test( 'On route', ( assert ) => {
-		const namespace = 'on-route';
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-		let routeStatus = 'beforeRoute';
+				open() {
+					openCount++;
+					return false;
+				}
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+					};
+				}
+			};
 
-			onRoute() {
-				routeStatus = 'afterRoute';
-			}
+			$e.components.register( new Component() );
 
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-				};
-			}
-		};
+			$e.route( namespace + '/routeA' );
 
-		$e.components.register( new Component() );
+			assert.equal( openCount, 1 );
 
-		$e.route( namespace + '/routeA' );
-		assert.equal( routeStatus, 'afterRoute' );
-	} );
+			assert.equal( $e.routes.is( namespace + '/routeA' ), false );
+		} );
 
-	QUnit.test( 'State: save & restore', ( assert ) => {
-		assert.expect( 6 ); // `restoreState` is expected to run `routeA` again.
+		QUnit.test( 'Re-open component is avoided', ( assert ) => {
+			const namespace = 're-open-is-avoided';
 
-		const namespace = 'state-save-restore';
+			let openCount = 0;
 
-		const routeArgs = {
-			argsA: 1,
-		};
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+				open() {
+					openCount++;
+					return true;
+				}
 
-			defaultRoutes() {
-				return {
-					routeA: ( args ) => {
-						assert.equal( args, routeArgs );
-					},
-				};
-			}
-		};
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+						routeB: () => {},
+					};
+				}
+			};
 
-		$e.components.register( new Component() );
+			$e.components.register( new Component() );
 
-		$e.route( namespace + '/routeA', routeArgs );
-		$e.routes.saveState( namespace );
-		$e.components.get( namespace ).close();
+			$e.route( namespace + '/routeA' );
+			assert.equal( openCount, 1 );
+			$e.route( namespace + '/routeB' );
+			assert.equal( openCount, 1 );
 
-		assert.equal( $e.routes.getCurrent( namespace ), false );
-		assert.equal( $e.routes.getCurrentArgs( namespace ), false );
+			$e.components.get( namespace ).close();
 
-		$e.routes.restoreState( namespace );
+			$e.route( namespace + '/routeA' );
+			assert.equal( openCount, 2 );
+		} );
 
-		assert.equal( $e.routes.getCurrent( namespace ), namespace + '/routeA' );
-		assert.equal( $e.routes.getCurrentArgs( namespace ), routeArgs );
-	} );
-
-	QUnit.test( 'Refresh container', ( assert ) => {
-		assert.expect( 2 ); // `refreshContainer` is expected to run `routeA` again.
-
-		const namespace = 'refresh-container';
+		QUnit.test( 'On close route', ( assert ) => {
+			const namespace = 'on-close-route';
 
-		const routeArgs = {
-			argsA: 1,
-		};
+			let routeStatus = 'notChanged';
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-			defaultRoutes() {
-				return {
-					routeA: ( args ) => {
-						assert.equal( args, routeArgs );
-					},
-				};
-			}
-		};
+				onCloseRoute() {
+					routeStatus = 'closed';
+				}
 
-		$e.components.register( new Component() );
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+						routeB: () => {},
+					};
+				}
+			};
 
-		$e.route( namespace + '/routeA', routeArgs );
+			$e.components.register( new Component() );
 
-		$e.routes.refreshContainer( namespace );
-	} );
+			$e.route( namespace + '/routeA' );
+			assert.equal( routeStatus, 'notChanged' );
 
-	QUnit.module( 'Shortcuts' );
+			$e.route( namespace + '/routeB' );
+			assert.equal( routeStatus, 'closed' );
+		} );
 
-	QUnit.test( 'Run shortcut', ( assert ) => {
-		const namespace = 'run-shortcut';
+		QUnit.test( 'On route', ( assert ) => {
+			const namespace = 'on-route';
 
-		let commandStatus = 'beforeRun';
+			let routeStatus = 'beforeRoute';
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-			defaultCommands() {
-				return {
-					commandA: () => {
-						commandStatus = 'afterRun';
-					},
-				};
-			}
+				onRoute() {
+					routeStatus = 'afterRoute';
+				}
 
-			defaultShortcuts() {
-				return {
-					commandA: {
-						keys: 'ctrl+z',
-					},
-				};
-			}
-		};
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+					};
+				}
+			};
 
-		$e.components.register( new Component() );
+			$e.components.register( new Component() );
 
-		// Simulate `CTRL+Z`.
-		CommonHelper.runShortcut( 90 /* z */, true );
+			$e.route( namespace + '/routeA' );
+			assert.equal( routeStatus, 'afterRoute' );
+		} );
 
-		assert.equal( commandStatus, 'afterRun' );
-	} );
+		QUnit.test( 'State: save & restore', ( assert ) => {
+			assert.expect( 6 ); // `restoreState` is expected to run `routeA` again.
 
-	QUnit.test( 'Run shortcut with scope', ( assert ) => {
-		const namespace = 'run-shortcut-with-scope';
+			const namespace = 'state-save-restore';
 
-		let commandStatus = 'beforeRunInScope';
+			const routeArgs = {
+				argsA: 1,
+			};
 
-		const Component = class extends ComponentBase {
-			getNamespace() {
-				return namespace;
-			}
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-			defaultCommands() {
-				return {
-					commandA: () => {
-						commandStatus = 'afterRunInScope';
-					},
-				};
-			}
+				defaultRoutes() {
+					return {
+						routeA: ( args ) => {
+							assert.equal( args, routeArgs );
+						},
+					};
+				}
+			};
 
-			defaultRoutes() {
-				return {
-					routeA: () => {},
-				};
-			}
+			$e.components.register( new Component() );
 
-			defaultShortcuts() {
-				return {
-					commandA: {
-						keys: 'ctrl+z',
-						scopes: [ namespace ],
-					},
-				};
-			}
-		};
+			$e.route( namespace + '/routeA', routeArgs );
+			$e.routes.saveState( namespace );
+			$e.components.get( namespace ).close();
 
-		$e.components.register( new Component() );
+			assert.equal( $e.routes.getCurrent( namespace ), false );
+			assert.equal( $e.routes.getCurrentArgs( namespace ), false );
 
-		// Outside scope.
-		CommonHelper.runShortcut( 90 /* z */, true );
+			$e.routes.restoreState( namespace );
 
-		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
+			assert.equal( $e.routes.getCurrent( namespace ), namespace + '/routeA' );
+			assert.equal( $e.routes.getCurrentArgs( namespace ), routeArgs );
+		} );
 
-		// Inside scope.
-		$e.route( namespace + '/routeA' );
+		QUnit.test( 'Refresh container', ( assert ) => {
+			assert.expect( 2 ); // `refreshContainer` is expected to run `routeA` again.
 
-		CommonHelper.runShortcut( 90 /* z */, true );
+			const namespace = 'refresh-container';
 
-		assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
+			const routeArgs = {
+				argsA: 1,
+			};
 
-		// Closed scope.
-		$e.components.get( namespace ).close();
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-		commandStatus = 'beforeRunInScope';
+				defaultRoutes() {
+					return {
+						routeA: ( args ) => {
+							assert.equal( args, routeArgs );
+						},
+					};
+				}
+			};
 
-		CommonHelper.runShortcut( 90 /* z */, true );
+			$e.components.register( new Component() );
 
-		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran after close scope' );
+			$e.route( namespace + '/routeA', routeArgs );
 
-		// Second component with same shortcut.
-		let secondCommandStatus = 'beforeRun';
+			$e.routes.refreshContainer( namespace );
+		} );
 
-		const SecondComponent = class extends ComponentBase {
-			getNamespace() {
-				return 'second-' + namespace;
-			}
+		QUnit.module( 'Shortcuts' );
 
-			defaultCommands() {
-				return {
-					commandA: () => {
-						secondCommandStatus = 'afterRun';
-					},
-				};
-			}
+		QUnit.test( 'Run shortcut', ( assert ) => {
+			const namespace = 'run-shortcut';
 
-			defaultShortcuts() {
-				return {
-					commandA: {
-						keys: 'ctrl+z',
-					},
-				};
-			}
-		};
+			let commandStatus = 'beforeRun';
 
-		$e.components.register( new SecondComponent() );
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-		// Activate the first component.
-		$e.route( namespace + '/routeA' );
+				defaultCommands() {
+					return {
+						commandA: () => {
+							commandStatus = 'afterRun';
+						},
+					};
+				}
 
-		CommonHelper.runShortcut( 90 /* z */, true );
+				defaultShortcuts() {
+					return {
+						commandA: {
+							keys: 'ctrl+z',
+						},
+					};
+				}
+			};
 
-		assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
+			$e.components.register( new Component() );
 
-		// Close the first component.
-		$e.components.get( namespace ).close();
+			// Simulate `CTRL+Z`.
+			CommonHelper.runShortcut( 90 /* z */, true );
 
-		CommonHelper.runShortcut( 90 /* z */, true );
+			assert.equal( commandStatus, 'afterRun' );
+		} );
 
-		assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
-	} );
+		QUnit.test( 'Run shortcut with scope', ( assert ) => {
+			const namespace = 'run-shortcut-with-scope';
 
-	QUnit.test( 'Modal component without a modal layout', ( assert ) => {
-		const namespace = 'modal-component-without-a-modal-layout';
+			let commandStatus = 'beforeRunInScope';
 
-		const Component = class extends ComponentBaseModal {
-			getNamespace() {
-				return namespace;
-			}
-		};
+			const Component = class extends ComponentBase {
+				getNamespace() {
+					return namespace;
+				}
 
-		const instance = new Component();
+				defaultCommands() {
+					return {
+						commandA: () => {
+							commandStatus = 'afterRunInScope';
+						},
+					};
+				}
 
-		assert.throws(
-			() => {
-				instance.getModalLayout();
-			},
-			new Error( "Component.getModalLayout() should be implemented, please provide 'getModalLayout' functionality." )
-		);
-	} );
+				defaultRoutes() {
+					return {
+						routeA: () => {},
+					};
+				}
 
-	QUnit.test( 'Modal component with esc shortcut', ( assert ) => {
-		const namespace = 'modal-component-with-esc-shortcut';
+				defaultShortcuts() {
+					return {
+						commandA: {
+							keys: 'ctrl+z',
+							scopes: [ namespace ],
+						},
+					};
+				}
+			};
 
-		const Component = class extends ComponentBaseModal {
-			getNamespace() {
-				return namespace;
-			}
+			$e.components.register( new Component() );
 
-			getModalLayout() {
-				const layout = class extends elementorModules.common.views.modal.Layout {
-					initialize() { /* do not render */ }
-				};
+			// Outside scope.
+			CommonHelper.runShortcut( 90 /* z */, true );
 
-				return layout;
-			}
-		};
+			assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
 
-		$e.components.register( new Component() );
+			// Inside scope.
+			$e.route( namespace + '/routeA' );
 
-		$e.route( namespace );
+			CommonHelper.runShortcut( 90 /* z */, true );
 
-		CommonHelper.runShortcut( 27 /* esc */ );
+			assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
 
-		assert.equal( $e.routes.is( namespace ), false, 'Component is closed by `esc` key.' );
+			// Closed scope.
+			$e.components.get( namespace ).close();
 
-		// Second component.
-		const secondNamespace = 'second-' + namespace;
+			commandStatus = 'beforeRunInScope';
 
-		const SecondComponent = class extends ComponentBaseModal {
-			getNamespace() {
-				return secondNamespace;
-			}
+			CommonHelper.runShortcut( 90 /* z */, true );
 
-			getModalLayout() {
-				const layout = class extends elementorModules.common.views.modal.Layout {
-					initialize() { /* do not render */ }
-				};
+			assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran after close scope' );
 
-				return layout;
-			}
-		};
+			// Second component with same shortcut.
+			let secondCommandStatus = 'beforeRun';
 
-		$e.components.register( new SecondComponent() );
+			const SecondComponent = class extends ComponentBase {
+				getNamespace() {
+					return 'second-' + namespace;
+				}
 
-		const component = $e.components.get( namespace ),
-			secondComponent = $e.components.get( secondNamespace );
+				defaultCommands() {
+					return {
+						commandA: () => {
+							secondCommandStatus = 'afterRun';
+						},
+					};
+				}
 
-		// Activate the second component.
-		$e.route( secondNamespace );
+				defaultShortcuts() {
+					return {
+						commandA: {
+							keys: 'ctrl+z',
+						},
+					};
+				}
+			};
 
-		// Activate the first component.
-		$e.route( namespace );
+			$e.components.register( new SecondComponent() );
 
-		// Ensure tow components are open.
-		assert.equal( component.isOpen, true );
-		assert.equal( secondComponent.isOpen, true );
+			// Activate the first component.
+			$e.route( namespace + '/routeA' );
 
-		CommonHelper.runShortcut( 27 /* esc */ );
+			CommonHelper.runShortcut( 90 /* z */, true );
 
-		// Modals should be closed in LIFO order.
-		assert.equal( component.isOpen, false, 'First Component is closed first' );
-		assert.equal( secondComponent.isOpen, true );
+			assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
 
-		CommonHelper.runShortcut( 27 /* esc */ );
+			// Close the first component.
+			$e.components.get( namespace ).close();
 
-		assert.equal( secondComponent.isOpen, false, 'Second Component is closed too' );
+			CommonHelper.runShortcut( 90 /* z */, true );
+
+			assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
+		} );
+
+		QUnit.test( 'Modal component without a modal layout', ( assert ) => {
+			const namespace = 'modal-component-without-a-modal-layout';
+
+			const Component = class extends ComponentBaseModal {
+				getNamespace() {
+					return namespace;
+				}
+			};
+
+			const instance = new Component();
+
+			assert.throws(
+				() => {
+					instance.getModalLayout();
+				},
+				new Error( "Component.getModalLayout() should be implemented, please provide 'getModalLayout' functionality." )
+			);
+		} );
+
+		QUnit.test( 'Modal component with esc shortcut', ( assert ) => {
+			const namespace = 'modal-component-with-esc-shortcut';
+
+			const Component = class extends ComponentBaseModal {
+				getNamespace() {
+					return namespace;
+				}
+
+				getModalLayout() {
+					const layout = class extends elementorModules.common.views.modal.Layout {
+						initialize() { /* do not render */ }
+					};
+
+					return layout;
+				}
+			};
+
+			$e.components.register( new Component() );
+
+			$e.route( namespace );
+
+			CommonHelper.runShortcut( 27 /* esc */ );
+
+			assert.equal( $e.routes.is( namespace ), false, 'Component is closed by `esc` key.' );
+
+			// Second component.
+			const secondNamespace = 'second-' + namespace;
+
+			const SecondComponent = class extends ComponentBaseModal {
+				getNamespace() {
+					return secondNamespace;
+				}
+
+				getModalLayout() {
+					const layout = class extends elementorModules.common.views.modal.Layout {
+						initialize() { /* do not render */ }
+					};
+
+					return layout;
+				}
+			};
+
+			$e.components.register( new SecondComponent() );
+
+			const component = $e.components.get( namespace ),
+				secondComponent = $e.components.get( secondNamespace );
+
+			// Activate the second component.
+			$e.route( secondNamespace );
+
+			// Activate the first component.
+			$e.route( namespace );
+
+			// Ensure tow components are open.
+			assert.equal( component.isOpen, true );
+			assert.equal( secondComponent.isOpen, true );
+
+			CommonHelper.runShortcut( 27 /* esc */ );
+
+			// Modals should be closed in LIFO order.
+			assert.equal( component.isOpen, false, 'First Component is closed first' );
+			assert.equal( secondComponent.isOpen, true );
+
+			CommonHelper.runShortcut( 27 /* esc */ );
+
+			assert.equal( secondComponent.isOpen, false, 'Second Component is closed too' );
+		} );
 	} );
 } );

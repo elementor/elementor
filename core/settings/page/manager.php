@@ -172,6 +172,29 @@ class Manager extends CSS_Manager {
 	}
 
 	/**
+	 * @inheritDoc
+	 *
+	 * Override parent because the page setting moved to document.settings.
+	 */
+	protected function print_editor_template_content( $name ) {
+		?>
+		<#
+		const tabs = elementor.config.document.settings.tabs;
+
+		if ( Object.values( tabs ).length > 1 ) { #>
+		<div class="elementor-panel-navigation">
+			<# _.each( tabs, function( tabTitle, tabSlug ) { #>
+			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
+			</div>
+			<# } ); #>
+		</div>
+		<# } #>
+		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<?php
+	}
+
+	/**
 	 * Save settings to DB.
 	 *
 	 * Save page settings to the database, as post meta data.

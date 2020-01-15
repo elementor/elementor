@@ -1,6 +1,19 @@
 import HistoryManager from 'elementor/modules/history/assets/js/history/manager';
 import RevisionsManager from 'elementor/modules/history/assets/js/revisions/manager';
 
+class Editor {
+	/**
+	 * Editor status.
+	 *
+	 * @type {'open'|'closed'}
+	 */
+	status = 'closed';
+
+	isSaving = false;
+
+	isChangedDuringSave = false;
+}
+
 export default class Document {
 	/**
 	 * Document id.
@@ -31,15 +44,23 @@ export default class Document {
 	container = null;
 
 	/**
+	 * Editor Settings.
+	 *
+	 * @type {Editor}
+	 */
+	editor = new Editor();
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create document.
 	 *
-	 * @param {number} id
+	 * @param {{}} config
 	 * @param {Container} container
 	 */
-	constructor( id, container ) {
-		this.id = id;
+	constructor( config, container ) {
+		this.config = config;
+		this.id = config.id;
 		this.container = container;
 
 		this.initialize();

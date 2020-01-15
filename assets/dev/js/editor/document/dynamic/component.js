@@ -1,5 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import * as Commands from './commands/';
+import * as commands from './commands/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -8,9 +8,9 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return {
-			disable: ( args ) => ( new Commands.Disable( args ) ).run(),
-			enable: ( args ) => ( new Commands.Enable( args ) ).run(),
-			settings: ( args ) => ( new Commands.Settings( args ) ).run(),
+			disable: ( args ) => ( new commands.Disable( args ) ).run(),
+			enable: ( args ) => ( new commands.Enable( args ) ).run(),
+			settings: ( args ) => ( new commands.Settings( args ) ).run(),
 		};
 	}
 }

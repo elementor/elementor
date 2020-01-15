@@ -1,6 +1,6 @@
 import Commands from './commands';
 
-export default class extends Commands {
+export default class Routes extends Commands {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -53,7 +53,7 @@ export default class extends Commands {
 			return false;
 		}
 
-		if ( this.is( route, args ) ) {
+		if ( this.is( route, args ) && ! args.refresh ) {
 			return false;
 		}
 

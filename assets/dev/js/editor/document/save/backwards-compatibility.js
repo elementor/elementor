@@ -1,6 +1,25 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 
 export default class BackwardsCompatibility extends ComponentBase {
+	__construct( args = {} ) {
+		super.__construct( args );
+
+		Object.defineProperty( this, 'autoSaveTimer', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
+					"$e.components.get('editor/documents').autoSaveTimers" );
+				return $e.components.get( 'editor/documents' ).autoSaveTimers;
+			},
+
+			set() {
+				elementorCommon.helpers.softDeprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
+					"$e.components.get('editor/documents').autoSaveTimers" );
+
+				throw Error( 'Deprecated' );
+			},
+		} );
+	}
+
 	defaultSave() {
 		elementorCommon.helpers.softDeprecated( 'saveDraft', '2.9.0', "$e.run( 'document/save/default' )" );
 
@@ -49,5 +68,12 @@ export default class BackwardsCompatibility extends ComponentBase {
 		elementorCommon.helpers.softDeprecated( 'update', '2.9.0', "$e.run( 'document/save/update' )" );
 
 		return $e.run( 'document/save/update', { options } );
+	}
+
+	startTimer( hasChanged ) {
+		elementorCommon.helpers.softDeprecated( 'startTimer', '2.9.0',
+			"$e.components.get( 'editor/documents' ).startAutoSave" );
+
+		throw Error( 'Deprecated' );
 	}
 }
