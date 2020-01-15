@@ -94,7 +94,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	</div>
 	<div id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
 		<span id="elementor-panel-footer-saver-preview-label">
-			<i class="eicon-eye" aria-hidden="true"></i>
+			<i class="eicon-preview-medium" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo __( 'Preview Changes', 'elementor' ); ?></span>
 		</span>
 	</div>
