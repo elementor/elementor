@@ -16,8 +16,8 @@ export class Save extends CommandInternalBase {
 		}, options );
 
 		const container = document.container,
-			elements = container.model.get( 'elements' ).toJSON( { remove: ['default', 'editSettings', 'defaultEditSettings'] } ),
-			settings = container.settings.toJSON( { remove: ['default'] } ),
+			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
+			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
 			oldStatus = container.settings.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
 

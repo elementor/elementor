@@ -15,7 +15,7 @@ export class Close extends CommandsBase {
 		}
 
 		// TODO: Move to an hook.
-		if ( ! mode && this.component.isEditorChanged() ) {
+		if ( ! mode && elementor.saver.isEditorChanged() ) {
 			this.getConfirmDialog().show();
 			return jQuery.Deferred().reject();
 		}
@@ -35,7 +35,7 @@ export class Close extends CommandsBase {
 				deferred = jQuery.Deferred().resolve();
 		}
 
-		this.component.stopAutoSave( document );
+		elementor.saver.stopAutoSave( document );
 
 		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 
