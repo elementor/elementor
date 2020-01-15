@@ -31,6 +31,7 @@ function initialize() {
 		require( './core/editor/document/dynamic/component.spec' );
 		require( './core/editor/document/history/component.spec' );
 		require( './core/editor/document/ui/component.spec' );
+		require( './core/editor/document/save/component.spec' );
 	} );
 
 	elementor.start();
