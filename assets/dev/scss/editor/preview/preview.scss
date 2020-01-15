@@ -27,24 +27,6 @@ html.elementor-html {
 	}
 }
 
-.elementor-edit-button{
-	display: none;
-
-	.elementor-editor-active .elementor:hover:not(.elementor-edit-area) & {
-		width: 25px;
-		height: 25px;
-		background: $elementor;
-		color: white;
-		font-size: 10px;
-		text-align: center;
-		line-height: 25px;
-		cursor: pointer;
-		display: inline-block;
-		z-index: 1;
-		position: absolute;
-	}
-}
-
 .elementor-edit-area-active {
 
 	.elementor-top-section {
