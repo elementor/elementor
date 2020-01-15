@@ -980,7 +980,7 @@ export default class EditorBase extends Marionette.Application {
 			this.helpers.scrollToView( this.$previewElementorEl );
 
 			this.$previewElementorEl
-			.addClass( 'elementor-edit-area-active elementor-embedded-editor' )
+			.addClass( 'elementor-edit-area-active' )
 			.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
 
 			$e.route( 'panel/elements/categories', {
