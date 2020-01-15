@@ -34,6 +34,8 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 		elementor.on( 'document:loaded', () => {
 			elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
+			this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
+			this.setLastEdited( elementor.config.document.last_edited );
 		} );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButtons.bind( this ) );
@@ -47,8 +49,6 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	}
 
 	onRender() {
-		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
-		this.setLastEdited( elementor.config.document.last_edited );
 		this.addTooltip();
 	}
 
