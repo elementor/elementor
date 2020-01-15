@@ -105,6 +105,10 @@
 	}
 
 	.elementor-swiper-button {
+		&:focus {
+			outline: none;
+		}
+
 		&-prev, &-next {
 			height: 100%;
 			display: flex;
@@ -124,6 +128,7 @@
 
 		@media (max-width: $screen-sm-max) {
 			&-prev, &-next {
+				width: 20%;
 				i {
 					padding: 10px;
 					background-color: rgba(0, 0, 0, 0.5);
