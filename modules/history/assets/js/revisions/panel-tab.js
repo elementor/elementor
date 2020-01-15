@@ -184,13 +184,14 @@ module.exports = Marionette.CompositeView.extend( {
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
-		if ( elementor.saver.isEditorChanged() && ( null === this.currentPreviewId || elementor.config.current_revision_id === this.currentPreviewId ) ) {
+		const revision = ( null === this.currentPreviewId || elementor.config.current_revision_id === this.currentPreviewId );
+
+		if ( revision && elementor.saver.isEditorChanged() ) {
+			// TODO: Change to 'document/save/auto' ?.
 			$e.internal( 'document/save/save', {
-				options: {
-					status: 'autosave',
-					onSuccess: () => {
-						this.getRevisionViewData( childView );
-					},
+				status: 'autosave',
+				onSuccess: () => {
+					this.getRevisionViewData( childView );
 				},
 			} );
 		} else {
@@ -198,7 +199,6 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		this.currentPreviewItem = childView;
-
 		this.currentPreviewId = revisionID;
 	},
 } );

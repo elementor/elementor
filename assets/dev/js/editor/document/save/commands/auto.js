@@ -2,8 +2,7 @@ import Base from './base/base';
 
 export class Auto extends Base {
 	apply( args ) {
-		const { force = false } = args;
-		let { options } = args;
+		const { status = 'autosave', force = false, document = this.document } = args;
 
 		if ( ! force && 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return jQuery.Deferred().reject();
@@ -13,12 +12,10 @@ export class Auto extends Base {
 			return jQuery.Deferred().reject();
 		}
 
-		options = Object.assign( {
-			status: 'autosave',
-			document: this.document,
-		}, options );
-
-		return $e.internal( 'document/save/save', { options } );
+		return $e.internal( 'document/save/save', {
+			status,
+			document,
+		} );
 	}
 }
 

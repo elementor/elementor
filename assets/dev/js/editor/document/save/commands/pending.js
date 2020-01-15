@@ -2,14 +2,12 @@ import Base from './base/base';
 
 export class Pending extends Base {
 	apply( args ) {
-		let { options } = args;
+		const { status = 'pending', document = this.document } = args;
 
-		options = Object.assign( {
-			status: 'pending',
-			document: this.document,
-		}, options );
-
-		return $e.internal( 'document/save/save', { options } );
+		return $e.internal( 'document/save/save', {
+			status,
+			document,
+		} );
 	}
 }
 
