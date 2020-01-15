@@ -144,7 +144,13 @@ class Frontend extends elementorModules.ViewModule {
 
 		this.elementsHandler = new ElementsHandler( jQuery );
 
-		this.documentsManager = new DocumentsManager();
+		if ( this.isEditMode() ) {
+			elementor.on( 'document:loaded', () => {
+				this.documentsManager = new DocumentsManager();
+			} );
+		} else {
+			this.documentsManager = new DocumentsManager();
+		}
 
 		this.trigger( 'components:init' );
 	}

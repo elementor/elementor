@@ -5,6 +5,7 @@
   "revisions":{
 	"current_id": 1
   },
+  "last_edited": "",
   "elements": [],
   "settings": {
 	"name": "page",
@@ -28,6 +29,7 @@
   },
   "panel": {
 	"title": "Post",
+	"default_route": "panel/elements/categories",
 	"widgets_settings": [],
 	"elements_categories": {},
 	"messages": {
