@@ -1,6 +1,5 @@
 import PanelHeader from './panel-header';
 import PanelContent from './panel-content';
-import PanelFooter from './panel-footer';
 
 module.exports = Marionette.LayoutView.extend( {
 	id: 'elementor-kit-panel',
@@ -22,10 +21,9 @@ module.exports = Marionette.LayoutView.extend( {
 				name: 'kit',
 		};
 
+
 		this.showChildView( 'header', new PanelHeader( options ) );
 
 		this.showChildView( 'content', new PanelContent( options ) );
-
-		this.showChildView( 'footer', new PanelFooter( options ) );
 	},
 } );
