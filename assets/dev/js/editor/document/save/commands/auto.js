@@ -18,7 +18,7 @@ export class Auto extends Base {
 			document: this.document,
 		}, options );
 
-		return elementor.saver.saveEditor( options );
+		return $e.internal( 'document/save/save', { options } );
 	}
 }
 

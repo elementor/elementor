@@ -63,8 +63,10 @@ export default class Heartbeat {
 	onTick( event, response ) {
 		if ( response.locked_user ) {
 			if ( elementor.saver.isEditorChanged() ) {
-				elementor.saver.saveEditor( {
-					status: 'autosave',
+				$e.internal( 'document/save/save', {
+					options: {
+						status: 'autosave',
+					},
 				} );
 			}
 

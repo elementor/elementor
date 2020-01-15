@@ -1,5 +1,4 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import Component from './component.js';
 
 export default class BackwardsCompatibility extends ComponentBase {
 	__construct( args = {} ) {
