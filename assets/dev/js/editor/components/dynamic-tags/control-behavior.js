@@ -74,16 +74,9 @@ module.exports = Marionette.Behavior.extend( {
 
 		// Create and inject pro dynamic teaser template if Pro is not installed
 		if ( ! elementor.helpers.hasPro() && Object.keys( tags ).length ) {
-			const $proTeaser = jQuery( '<div>', { class: 'elementor-tags-list__teaser' } ),
-				$proTeaserTitle = jQuery( '<div>', { class: 'elementor-tags-list__group-title elementor-tags-list__teaser-title' } )
-					.html( '<i class="eicon-info-circle"></i>Elementor Dynamic Content' ),
-				$proTeaserText = jQuery( '<div>', { class: 'elementor-tags-list__teaser-text' } )
-					.html( 'You’re missing out!<br />' +
-						'Get more dynamic capabilities by incorporating dozens of Elementor’s native dynamic tags. ' +
-						'<a href="' + elementor.config.dynamicTagsGoProURL + '" class="elementor-tags-list__teaser-link" target="_blank">See it in action</a>'
-					);
+			const proTeaser = Marionette.Renderer.render( '#tmpl-elementor-dynamic-tags-promo' );
 
-			$proTeaser.append( $proTeaserTitle, $proTeaserText ).appendTo( $tagsListInner );
+			$tagsListInner.append( proTeaser );
 		}
 
 		$tagsListInner.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );

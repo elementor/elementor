@@ -269,3 +269,18 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		</div>
 	<# } #>
 </script>
+
+<script type="text/template" id="tmpl-elementor-dynamic-tags-promo">
+	<div class="elementor-tags-list__teaser">
+		<div class="elementor-tags-list__group-title elementor-tags-list__teaser-title">
+			<i class="eicon-info-circle"></i><?php echo __( 'Elementor Dynamic Content', 'elementor' ); ?>
+		</div>
+		<div class="elementor-tags-list__teaser-text">
+			<?php echo __( 'You’re missing out!', 'elementor' ); ?><br />
+			<?php echo __( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
+			<a href="{{{ elementor.config.dynamicTagsGoProURL }}}" class="elementor-tags-list__teaser-link" target="_blank">
+				<?php echo __( 'See it in action', 'elementor' ); ?>
+			</a>
+		</div>
+	</div>
+</script>
