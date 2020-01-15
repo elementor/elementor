@@ -4,8 +4,7 @@ export class Discard extends Base {
 	apply() {
 		return elementorCommon.ajax.addRequest( 'discard_changes', {
 			success: () => {
-
-				elementor.saver.setFlagEditorChange( false );
+				$e.internal( 'document/save/set-is-modified', { status: false } );
 			},
 		} );
 	}

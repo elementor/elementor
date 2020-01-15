@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import Component from './component.js';
 
 export default class BackwardsCompatibility extends ComponentBase {
 	__construct( args = {} ) {
@@ -17,6 +18,22 @@ export default class BackwardsCompatibility extends ComponentBase {
 
 				throw Error( 'Deprecated' );
 			},
+		} );
+
+		const onOrig = this.on;
+
+		this.on = ( eventName, callback, context ) => {
+			elementorCommon.helpers.softDeprecated( 'elementor.saver.on', '2.9.0',
+				'$e.hooks' );
+
+			onOrig( eventName, callback, context );
+		};
+
+		elementor.on( 'document:loaded', () => {
+			if ( elementor.channels.editor._events.saved ) {
+				elementorCommon.helpers.softDeprecated( "elementor.channels.editor.on( 'saved', ... )", '2.9.0',
+					'$e.hooks' );
+			}
 		} );
 	}
 
@@ -72,8 +89,22 @@ export default class BackwardsCompatibility extends ComponentBase {
 
 	startTimer( hasChanged ) {
 		elementorCommon.helpers.softDeprecated( 'startTimer', '2.9.0',
-			"$e.components.get( 'editor/documents' ).startAutoSave" );
+			"$e.components.get( 'document/save' ).startAutoSave" );
 
 		throw Error( 'Deprecated' );
+	}
+
+	saveEditor( options ) {
+		elementorCommon.helpers.softDeprecated( 'saveEditor', '2.9.0',
+			"$e.internal( 'document/save/save' )" );
+
+		$e.internal( 'document/save/save', { options } );
+	}
+
+	setFlagEditorChange( status ) {
+		elementorCommon.helpers.softDeprecated( 'setFlagEditorChange', '2.9.0',
+			"$e.internal( 'document/save/set-is-modified' )" );
+
+		$e.internal( 'document/save/set-is-modified', { status } );
 	}
 }
