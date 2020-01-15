@@ -11,16 +11,17 @@
 	z-index: $first-layer;
 
 	&__group-title {
-		color: $editor-dark;
+		color: $editor-darkest;
 		font-weight: bold;
 		font-size: 12px;
 		padding: 10px 15px;
+		display: flex;
+		align-items: center;
 
-		i.eicon-info-circle {
+		.eicon-info-circle {
 			@include padding-end(5px);
-			color: #71d7f7;
+			color: $editor-info;
 			font-size: 14px;
-			vertical-align: text-bottom;
 		}
 	}
 
@@ -43,10 +44,14 @@
 	&__teaser {
 		border-top: 2px solid $editor-lightest;
 		padding-top: 4px;
-		margin-top: 2px;
+		margin-top: 4px;
+
+		&-title {
+			color: $editor-dark;
+		}
 
 		&-text {
-			padding: 2px 15px 8px 15px;
+			padding: 2px 15px 8px;
 			line-height: 1.5;
 			font-size: 12px;
 		}
