@@ -11,10 +11,17 @@
 	z-index: $first-layer;
 
 	&__group-title {
-		color: $editor-darkest;
+		color: $editor-dark;
 		font-weight: bold;
 		font-size: 12px;
 		padding: 10px 15px;
+
+		i.eicon-info-circle {
+			@include padding-end(5px);
+			color: #71d7f7;
+			font-size: 14px;
+			vertical-align: text-bottom;
+		}
 	}
 
 	&__item {
@@ -30,6 +37,25 @@
 
 		&:hover {
 			background-color: $editor-background;
+		}
+	}
+
+	&__teaser {
+		border-top: 2px solid $editor-lightest;
+		padding-top: 4px;
+		margin-top: 2px;
+
+		&-text {
+			padding: 2px 15px 8px 15px;
+			line-height: 1.5;
+			font-size: 12px;
+		}
+
+		&-link {
+			color: $editor-accent;
+			text-decoration: underline;
+			font-style: italic;
+			font-weight: bold;
 		}
 	}
 }
