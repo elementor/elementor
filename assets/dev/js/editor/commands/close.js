@@ -27,7 +27,7 @@ export class Close extends CommandsBase {
 				deferred = $e.run( 'document/save/update' );
 				break;
 			case 'discard':
-				deferred = $e.run( 'document/save/discard' );
+				deferred = $e.run( 'document/save/discard', { document } );
 
 				// TODO: Discard local changes.
 				break;

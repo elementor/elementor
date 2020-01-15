@@ -1,12 +1,16 @@
 import Base from './base/base';
 
 export class Discard extends Base {
-	apply() {
-		return elementorCommon.ajax.addRequest( 'discard_changes', {
-			success: () => {
-				$e.internal( 'document/save/set-is-modified', { status: false } );
-			},
-		} );
+	apply( args ) {
+		const { document = elementor.documents.getCurrent() } = args;
+
+		// Start server request before undo, because the undo can take time.
+		const deferred = elementorCommon.ajax.addRequest( 'discard_changes' );
+
+		$e.run( 'document/history/undo-all', { document } );
+
+		// Discard autosave revision if exist.
+		return deferred;
 	}
 }
 
