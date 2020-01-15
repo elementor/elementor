@@ -73,7 +73,7 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 
 		// Create and inject pro dynamic teaser template if Pro is not installed
-		if ( ! window.elementorPro && Object.keys( tags ).length ) {
+		if ( ! elementor.helpers.hasPro() && Object.keys( tags ).length ) {
 			const $proTeaser = jQuery( '<div>', { class: 'elementor-tags-list__teaser' } ),
 				$proTeaserTitle = jQuery( '<div>', { class: 'elementor-tags-list__group-title elementor-tags-list__teaser-title' } )
 					.html( '<i class="eicon-info-circle"></i>Elementor Dynamic Content' ),
