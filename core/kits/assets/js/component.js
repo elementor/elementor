@@ -29,7 +29,7 @@ export default class extends elementorModules.common.Component {
 					$e.route( 'panel/global/style' );
 				} );
 
-				$e.run( 'editor/documents/open', {
+				$e.run( 'editor/documents/switch', {
 					id: elementor.config.kit_id,
 				} );
 			},
