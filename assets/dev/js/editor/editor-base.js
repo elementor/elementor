@@ -68,7 +68,7 @@ export default class EditorBase extends Marionette.Application {
 			},
 			saver: {
 				behaviors: {
-					FooterSaver: require( './components/saver/behaviors/footer-saver' ),
+					FooterSaver: require( './document/save/behaviors/footer-saver' ),
 				},
 			},
 		},

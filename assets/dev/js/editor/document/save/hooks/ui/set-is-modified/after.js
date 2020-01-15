@@ -12,7 +12,7 @@ export class FooterSaverAfterSetIsModified extends HookUIAfter {
 	apply( args ) {
 		const { status } = args;
 
-		elementor.footerSaver.activateSaveButtons( status );
+		$e.components.get( 'document/save' ).footerSaver.activateSaveButtons( status );
 	}
 }
 

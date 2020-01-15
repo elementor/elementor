@@ -1,8 +1,16 @@
 import BackwardsCompatibility from './backwards-compatibility';
 import * as commands from './commands/';
 import * as commandsInternal from './commands/internal';
+import * as hooksUI from './hooks/ui/';
 
 export default class Component extends BackwardsCompatibility {
+	/**
+	 * Footer saver behavior.
+	 *
+	 * @type {FooterSaver}
+	 */
+	footerSaver;
+
 	__construct( args = {} ) {
 		super.__construct( args );
 
@@ -26,6 +34,11 @@ export default class Component extends BackwardsCompatibility {
 				return elementor.translate( 'before_unload_alert' );
 			}
 		} );
+
+		// Load UI hooks.
+		Object.values( hooksUI ).forEach(
+			( Hook ) => new Hook()
+		);
 	}
 
 	getNamespace() {

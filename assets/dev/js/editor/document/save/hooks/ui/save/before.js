@@ -10,14 +10,15 @@ export class FooterSaverBeforeSave extends HookUIBefore {
 	}
 
 	apply( args ) {
-		const { options = {} } = args;
+		const { options = {} } = args,
+			{ footerSaver } = $e.components.get( 'document/save' );
 
 		NProgress.start();
 
 		if ( 'autosave' === options.status ) {
-			elementor.footerSaver.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
+			footerSaver.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
 		} else {
-			elementor.footerSaver.ui.buttonPublish.addClass( 'elementor-button-state' );
+			footerSaver.ui.buttonPublish.addClass( 'elementor-button-state' );
 		}
 	}
 }

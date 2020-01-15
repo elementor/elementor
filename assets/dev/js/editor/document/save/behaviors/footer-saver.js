@@ -1,15 +1,5 @@
-import * as hooksUI from '../hooks/ui/';
-
 module.exports = class FooterSaver extends Marionette.Behavior {
 	previewWindow = null;
-
-	static initOnce = false;
-
-	static initHooks() {
-		Object.values( hooksUI ).forEach(
-			( Hook ) => new Hook()
-		);
-	}
 
 	ui() {
 		return {
@@ -33,13 +23,8 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	initialize( options ) {
 		this.document = options.document || elementor.documents.getCurrent();
 
-		elementor.footerSaver = this;
-
-		if ( ! FooterSaver.initOnce ) {
-			FooterSaver.initHooks();
-
-			FooterSaver.initOnce = true;
-		}
+		// TODO: Temp, footerSaver should be removed.
+		$e.components.get( 'document/save' ).footerSaver = this;
 	}
 
 	activateSaveButtons( status ) {
@@ -51,8 +36,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 	onRender() {
 		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
-		// TODO: Check with mati.
-		//this.setLastEdited( elementor.config.document.last_edited );
+		this.setLastEdited( elementor.config.document.last_edited );
 		this.addTooltip();
 	}
 

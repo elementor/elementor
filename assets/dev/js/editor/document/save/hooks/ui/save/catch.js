@@ -12,7 +12,8 @@ export class FooterSaverCatchSave extends HookUICatch {
 	apply( args, e ) {
 		NProgress.done();
 
-		elementor.footerSaver.buttonPublish.removeClass( 'elementor-button-state' );
+		$e.components.get( 'document/save' )
+			.footerSaver.ui.buttonPublish.removeClass( 'elementor-button-state' );
 	}
 }
 
