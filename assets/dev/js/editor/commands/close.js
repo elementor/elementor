@@ -11,6 +11,7 @@ export class Close extends CommandsBase {
 
 		// Already closed.
 		if ( 'closed' === document.editor.status ) {
+			return jQuery.Deferred().resolve();
 		}
 
 		// TODO: Move to an hook.
@@ -34,7 +35,7 @@ export class Close extends CommandsBase {
 				deferred = jQuery.Deferred().resolve();
 		}
 
-		this.component.stopAutoSave( document );
+		elementor.saver.stopAutoSave( document );
 
 		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 
