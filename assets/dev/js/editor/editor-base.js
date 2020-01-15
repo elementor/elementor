@@ -11,6 +11,7 @@ import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
+import Promotion from './utils/promotion';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -295,6 +296,8 @@ export default class EditorBase extends Marionette.Application {
 		this.noticeBar = new NoticeBar();
 
 		this.history = new HistoryManager();
+
+		this.promotion = new Promotion();
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
@@ -706,7 +709,9 @@ export default class EditorBase extends Marionette.Application {
 				exclude: excludeWidgets,
 			},
 			success: ( data ) => {
-				jQuery.each( data, ( widgetName, controlsConfig ) => {
+				elementor.config.promotionWidgets = data.promotionWidgets;
+
+				jQuery.each( data.widgets, ( widgetName, controlsConfig ) => {
 					this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], controlsConfig );
 				} );
 

@@ -278,7 +278,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<div class="elementor-tags-list__teaser-text">
 			<?php echo __( 'You’re missing out!', 'elementor' ); ?><br />
 			<?php echo __( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
-			<a href="{{{ elementor.config.dynamicTagsGoProURL }}}" class="elementor-tags-list__teaser-link" target="_blank">
+			<a href="{{{ elementor.config.dynamicPromotionURL }}}" class="elementor-tags-list__teaser-link" target="_blank">
 				<?php echo __( 'See it in action', 'elementor' ); ?>
 			</a>
 		</div>

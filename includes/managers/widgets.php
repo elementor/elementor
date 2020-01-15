@@ -263,14 +263,17 @@ class Widgets_Manager {
 	}
 
 	public function ajax_get_widget_types_controls_config( array $data ) {
-		$config = [];
+		$config = [
+			'promotionWidgets' => Api::get_promotion_widgets(),
+			'widgets' => [],
+		];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
 			if ( isset( $data['exclude'][ $widget_key ] ) ) {
 				continue;
 			}
 
-			$config[ $widget_key ] = [
+			$config['widgets'][ $widget_key ] = [
 				'controls' => $widget->get_stack( false )['controls'],
 				'tabs_controls' => $widget->get_tabs_controls(),
 			];

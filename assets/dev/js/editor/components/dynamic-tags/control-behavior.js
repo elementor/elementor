@@ -168,6 +168,16 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	showPromotion: function() {
+		elementor.promotion.showDialog( {
+			headerMessage: elementor.translate( 'dynamic_content' ),
+			message: elementor.translate( 'dynamic_promotion_message' ),
+			top: '-10',
+			element: this.ui.dynamicSwitcher,
+			actionURL: elementor.config.dynamicPromotionURL,
+		} );
+	},
+
 	onRender: function() {
 		this.$el.addClass( 'elementor-control-dynamic' );
 
@@ -183,7 +193,11 @@ module.exports = Marionette.Behavior.extend( {
 	onDynamicSwitcherClick: function( event ) {
 		event.stopPropagation();
 
-		this.toggleTagsList();
+		if ( this.getOption( 'tags' ).length ) {
+			this.toggleTagsList();
+		} else {
+			this.showPromotion();
+		}
 	},
 
 	onTagsListItemClick: function( event ) {

@@ -94,6 +94,15 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		jQuery.each( elementor.config.promotionWidgets, ( index, widget ) => {
+			elementsCollection.add( {
+				title: widget.title,
+				icon: widget.icon,
+				categories: JSON.parse( widget.categories ),
+				editable: false,
+			} );
+		} );
+
 		this.elementsCollection = elementsCollection;
 	},
 
