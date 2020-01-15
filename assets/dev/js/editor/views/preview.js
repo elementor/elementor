@@ -30,6 +30,12 @@ const Preview = BaseSectionsContainerView.extend( {
 		return jQuery.extend( parentBehaviors, behaviors );
 	},
 
+	initialize: function() {
+		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
+
+		elementor.on( 'document:loaded', this.renderAddSectionView.bind( this ) );
+	},
+
 	getContainer() {
 		return elementor.settings.page.getEditedView().getContainer();
 	},
@@ -75,7 +81,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		];
 	},
 
-	onRender: function() {
+	renderAddSectionView: function() {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
