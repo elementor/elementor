@@ -31,6 +31,13 @@ module.exports = Marionette.Behavior.extend( {
 		this.$el.find( '.elementor-control-dynamic-switcher-wrapper' ).append( $dynamicSwitcher );
 
 		this.ui.dynamicSwitcher = $dynamicSwitcher;
+
+		// Add a Tipsy Tooltip to the Dynamic Switcher
+		this.ui.dynamicSwitcher.tipsy( {
+			title() {
+				return this.getAttribute( 'data-tooltip' );
+			},
+		} );
 	},
 
 	toggleDynamicClass: function() {
