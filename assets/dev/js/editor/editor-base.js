@@ -409,9 +409,6 @@ export default class EditorBase extends Marionette.Application {
 	initPanel() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
-		// Set default page to elements.
-		$e.route( 'panel/elements/categories' );
-
 		this.trigger( 'panel:init' );
 	}
 
@@ -836,15 +833,7 @@ export default class EditorBase extends Marionette.Application {
 	onFirstPreviewLoaded() {
 		this.initPanel();
 
-		this.heartbeat = new Heartbeat();
-
 		this.openLibraryOnStart();
-
-		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
-
-		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
-			this.showFlexBoxAttentionDialog();
-		}
 
 		this.previewLoadedOnce = true;
 	}
@@ -951,6 +940,18 @@ export default class EditorBase extends Marionette.Application {
 
 	onDocumentLoaded( document ) {
 		this.checkPageStatus();
+
+		if ( this.heartbeat ) {
+			this.heartbeat.destroy();
+		}
+
+		this.heartbeat = new Heartbeat();
+
+		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
+
+		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
+			this.showFlexBoxAttentionDialog();
+		}
 
 		if ( document.config.elements ) {
 			this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );

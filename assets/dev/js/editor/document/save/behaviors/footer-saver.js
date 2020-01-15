@@ -35,8 +35,6 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	}
 
 	onRender() {
-		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
-		this.setLastEdited( elementor.config.document.last_edited );
 		this.addTooltip();
 	}
 
