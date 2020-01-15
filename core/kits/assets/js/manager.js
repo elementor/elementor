@@ -30,21 +30,6 @@ export default class Settings extends elementorModules.editor.utils.Module {
 			callback: () => $e.run( 'panel/global/open' ),
 		}, 'global' );
 
-		// menu.addItem( {
-		// 	name: 'theme-templates',
-		// 	icon: 'eicon-font',
-		// 	title: elementor.translate( 'theme_templates' ),
-		// 	type: 'page',
-		// 	callback: () => $e.route( 'panel/global/theme-templates' ),
-		// }, 'global' );
-		//
-		// menu.addItem( {
-		// 	name: 'site-settings',
-		// 	icon: 'eicon-cogs',
-		// 	title: elementor.translate( 'site_settings' ),
-		// 	type: 'page',
-		// 	callback: () => $e.route( 'panel/global/site-settings' ),
-		// }, 'global' );
 	}
 
 	onInit() {
