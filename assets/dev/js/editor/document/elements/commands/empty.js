@@ -11,7 +11,7 @@ export class Empty extends History {
 				elementor.getPreviewView().addChildModel( data );
 			}
 
-			$e.internal( 'document/save/set-is-modified' , { status: true } );
+			$e.internal( 'document/save/set-is-modified', { status: true } );
 		}
 	}
 

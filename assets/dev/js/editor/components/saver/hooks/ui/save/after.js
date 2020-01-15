@@ -19,7 +19,7 @@ export class FooterSaverAfterSave extends HookUIAfter {
 		elementor.footerSaver.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
 
 		elementor.footerSaver.refreshWpPreview();
-		elementor.footerSaver.setLastEdited( data );
+		elementor.footerSaver.setLastEdited( data.config.document.last_edited );
 
 		if ( result.statusChanged ) {
 			this.onPageStatusChange( options.status );

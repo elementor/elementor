@@ -57,11 +57,12 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 	onRender() {
 		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
-		this.setLastEdited( elementor.config.document.last_edited );
+		// TODO: Check with mati.
+		//this.setLastEdited( elementor.config.document.last_edited );
 		this.addTooltip();
 	}
 
-	setLastEdited( data ) {
+	setLastEdited( lastEdited ) {
 		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
 			.find( '.elementor-last-edited' )

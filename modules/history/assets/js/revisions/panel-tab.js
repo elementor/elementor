@@ -122,7 +122,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
-		$e.internal( 'document/save/set-is-modified' , { status: true } );
+		$e.internal( 'document/save/set-is-modified', { status: true } );
 
 		$e.run( 'document/save/auto', { force: true } );
 

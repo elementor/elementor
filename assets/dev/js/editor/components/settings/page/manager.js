@@ -36,7 +36,7 @@ module.exports = BaseSettings.extend( {
 	},
 
 	onModelChange: function() {
-		$e.internal( 'document/save/set-is-modified' , { status: true } );
+		$e.internal( 'document/save/set-is-modified', { status: true } );
 
 		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},
