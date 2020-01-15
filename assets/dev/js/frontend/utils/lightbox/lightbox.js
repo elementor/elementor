@@ -36,11 +36,11 @@ module.exports = elementorModules.ViewModule.extend( {
 					title: 'elementor-slideshow__title',
 					description: 'elementor-slideshow__description',
 					counter: 'elementor-slideshow__counter',
-					iconExpand: 'elementor-icon-fullscreen',
-					iconShrink: 'shrink',
+					iconExpand: 'eicon-frame-expand',
+					iconShrink: 'eicon-frame-minimize',
 					iconZoomIn: 'eicon-zoom-in-bold',
 					iconZoomOut: 'eicon-zoom-out-bold',
-					iconShare: 'elementor-icon-share',
+					iconShare: 'eicon-share-arrow',
 					shareMenu: 'elementor-slideshow__share-menu',
 					shareLinks: 'elementor-slideshow__share-links',
 					hideUiVisibility: 'elementor-slideshow--ui-hidden',
@@ -315,14 +315,14 @@ module.exports = elementorModules.ViewModule.extend( {
 	activateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
-		this.elements.$iconExpand.addClass( classes.slideshow.iconShrink );
+		this.elements.$iconExpand.removeClass( classes.slideshow.iconExpand ).addClass( classes.slideshow.iconShrink );
 		this.elements.$container.addClass( classes.slideshow.fullscreenMode );
 	},
 
 	deactivateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.exit();
-		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink );
+		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink ).addClass( classes.slideshow.iconExpand );
 		this.elements.$container.removeClass( classes.slideshow.fullscreenMode );
 	},
 
