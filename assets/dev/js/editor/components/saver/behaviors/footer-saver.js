@@ -31,13 +31,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	}
 
 	initialize( options ) {
-		let document = options.document;
-
-		if ( ! document ) {
-			document = elementor.documents.getCurrent();
-		}
-
-		this.document = document;
+		this.document = options.document || elementor.documents.getCurrent();
 
 		elementor.footerSaver = this;
 
