@@ -1,7 +1,5 @@
 import Component from './component';
 import panelView from './panel';
-
-const ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 import PanelHeaderBehavior from './panel-header-behavior';
 
 export default class Settings extends elementorModules.editor.utils.Module {

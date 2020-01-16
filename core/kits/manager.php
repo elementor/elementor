@@ -50,10 +50,6 @@ class Manager {
 		$settings = array_replace_recursive( $settings, [
 			'kit_id' => $this->get_active_id(),
 			'i18n' => [
-				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'global_styles' => __( 'Global Styles', 'elementor' ),
-				'theme_templates' => __( 'Theme Templates', 'elementor' ),
-				'site_settings' => __( 'Site Settings', 'elementor' ),
 				'Close' => __( 'Close', 'elementor' ),
 				'Back' => __( 'Back', 'elementor' ),
 				'Theme Style' => __( 'Theme Style', 'elementor' ),
