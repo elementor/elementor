@@ -3,15 +3,66 @@ import HooksUI from './hooks/ui.js';
 
 export default class Hooks {
 	constructor() {
-		this.data = new HooksData();
-		this.ui = new HooksUI();
+		this.hooks = {
+			data: new HooksData(),
+			ui: new HooksUI(),
+		};
+	}
+
+	activate() {
+		Object.values( this.hooks ).forEach( ( hooksType ) => {
+			hooksType.activate();
+		} );
+	}
+
+	deactivate() {
+		Object.values( this.hooks ).forEach( ( hooksType ) => {
+			hooksType.deactivate();
+		} );
 	}
 
 	getAll() {
-		return {
-			data: this.data.getAll(),
-			ui: this.ui.getAll(),
-		};
+		return Object.values( this.hooks ).sort();
+	}
+
+	/**
+	 * Function register().
+	 *
+	 * Register hook.
+	 *
+	 * @param {string} type
+	 * @param {string} event
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	register( type, event, instance ) {
+		const hooksType = Object.values( this.hooks ).find(
+			( hooks ) => type === hooks.getType()
+		);
+
+		return hooksType.register( event, instance );
+	}
+
+	/**
+	 * Function run().
+	 *
+	 * Run's a hook.
+	 *
+	 * @param {string} type
+	 * @param {string} event
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} result
+	 *
+	 * @returns {boolean}
+	 */
+	run( type, event, command, args, result = undefined ) {
+		const hooksType = Object.values( this.hooks ).find(
+			( hooks ) => type === hooks.getType()
+		);
+
+		return hooksType.run( event, command, args, result );
 	}
 
 	/**
@@ -24,20 +75,7 @@ export default class Hooks {
 	 * @returns {{}}
 	 */
 	registerDataAfter( instance ) {
-		return this.data.registerAfter( instance );
-	}
-
-	/**
-	 * Function registerDataDependency().
-	 *
-	 * Register data hook that's run before the command as dependency.
-	 *
-	 * @param {HookBase} instance
-	 *
-	 * @returns {{}}
-	 */
-	registerDataDependency( instance ) {
-		return this.data.registerDependency( instance );
+		return this.register( 'data', 'after', instance );
 	}
 
 	/**
@@ -50,7 +88,20 @@ export default class Hooks {
 	 * @returns {{}}
 	 */
 	registerDataCatch( instance ) {
-		return this.data.registerCatch( instance );
+		return this.register( 'data', 'catch', instance );
+	}
+
+	/**
+	 * Function registerDataDependency().
+	 *
+	 * Register data hook that's run before the command as dependency.
+	 *
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerDataDependency( instance ) {
+		return this.register( 'data', 'dependency', instance );
 	}
 
 	/**
@@ -63,20 +114,7 @@ export default class Hooks {
 	 * @returns {{}}
 	 */
 	registerUIAfter( instance ) {
-		return this.ui.registerAfter( instance );
-	}
-
-	/**
-	 * Function registerUIBefore().
-	 *
-	 * Register UI hook that's run before the command.
-	 *
-	 * @param {HookBase} instance
-	 *
-	 * @returns {{}}
-	 */
-	registerUIBefore( instance ) {
-		return this.ui.registerBefore( instance );
+		return this.register( 'ui', 'after', instance );
 	}
 
 	/**
@@ -89,7 +127,20 @@ export default class Hooks {
 	 * @returns {{}}
 	 */
 	registerUICatch( instance ) {
-		return this.ui.registerCatch( instance );
+		return this.register( 'ui', 'catch', instance );
+	}
+
+	/**
+	 * Function registerUIBefore().
+	 *
+	 * Register UI hook that's run before the command.
+	 *
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerUIBefore( instance ) {
+		return this.register( 'ui', 'before', instance );
 	}
 
 	/**
@@ -100,17 +151,7 @@ export default class Hooks {
 	 * @param {*} result
 	 */
 	runDataAfter( command, args, result ) {
-		return this.data.runAfter( command, args, result );
-	}
-
-	/**
-	 * Function runDataDependency().
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 */
-	runDataDependency( command, args ) {
-		this.data.runDependency( command, args );
+		return this.run( 'data', 'after', command, args, result );
 	}
 
 	/**
@@ -121,7 +162,17 @@ export default class Hooks {
 	 * @param {*} e
 	 */
 	runDataCatch( command, args, e ) {
-		this.data.runCatch( command, args, e );
+		return this.run( 'data', 'catch', command, args, e );
+	}
+
+	/**
+	 * Function runDataDependency().
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runDataDependency( command, args ) {
+		return this.run( 'data', 'dependency', command, args );
 	}
 
 	/**
@@ -132,17 +183,7 @@ export default class Hooks {
 	 * @param {*} result
 	 */
 	runUIAfter( command, args, result ) {
-		this.ui.run( 'after', command, args, result );
-	}
-
-	/**
-	 * Function runUIBefore().
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 */
-	runUIBefore( command, args ) {
-		this.ui.run( 'before', command, args );
+		return this.run( 'ui', 'after', command, args, result );
 	}
 
 	/**
@@ -153,6 +194,16 @@ export default class Hooks {
 	 * @param {*} e
 	 */
 	runUICatch( command, args, e ) {
-		this.ui.runCatch( command, args, e );
+		return this.run( 'ui', 'catch', command, args );
+	}
+
+	/**
+	 * Function runUIBefore().
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
+	runUIBefore( command, args ) {
+		return this.run( 'ui', 'before', command, args );
 	}
 }

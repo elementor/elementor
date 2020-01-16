@@ -1,5 +1,4 @@
 /* global jQuery */
-elementorCommon.ajax.send = () => {};
 
 const originalGet = Marionette.TemplateCache.get;
 

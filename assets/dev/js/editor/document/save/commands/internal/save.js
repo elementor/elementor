@@ -2,34 +2,26 @@ import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 export class Save extends CommandInternalBase {
 	apply( args ) {
-		let { options = {} } = args;
-
-		const document = options.document || elementor.documents.getCurrent();
+		const { status = 'draft', onSuccess = null, document = elementor.documents.getCurrent() } = args;
 
 		if ( document.editor.isSaving ) {
 			return;
 		}
 
-		options = Object.assign( {
-			status: 'draft',
-			onSuccess: null,
-		}, options );
-
 		const container = document.container,
 			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
-			oldStatus = container.settings.get( 'post_status' ),
-			statusChanged = oldStatus !== options.status;
+			oldStatus = container.settings.get( 'post_status' );
 
-		let elements = [];
-
-		// TODO: BC.
-		elementor.saver.trigger( 'before:save', options )
-		.trigger( 'before:save:' + options.status, options );
+		// TODO: Remove - Backwards compatibility.
+		elementor.saver.trigger( 'before:save', args )
+			.trigger( 'before:save:' + status, args );
 
 		document.editor.isSaving = true;
 		document.editor.isChangedDuringSave = false;
 
-		settings.post_status = options.status;
+		settings.post_status = status;
+
+		let elements = [];
 
 		if ( elementor.config.document.panel.has_elements ) {
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
@@ -37,24 +29,21 @@ export class Save extends CommandInternalBase {
 
 		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
-				status: options.status,
+				status,
 				elements: elements,
 				settings: settings,
 			},
+			error: ( data ) => this.onSaveError( data, status, document ),
+		} ).then( ( data ) => this.onSaveSuccess( data, status, oldStatus, elements, document, onSuccess ) );
 
-			error: ( data ) => this.onSaveError( data, options, document ),
-		} ).then( ( data ) => this.onSaveSuccess( data, oldStatus, statusChanged, elements, options, document )
-		);
-
-		// TODO: BC.
-		elementor.saver.trigger( 'save', options );
+		// TODO: Remove - Backwards compatibility
+		elementor.saver.trigger( 'save', args );
 
 		return deferred;
 	}
 
-	onSaveSuccess( data, oldStatus, statusChanged, elements, options, document ) {
+	onSaveSuccess( data, status, oldStatus, elements, document, callback = null ) {
 		this.onAfterAjax( document );
-
 		elementor.documents.invalidateCache( document.id );
 
 		// Document is switched doring the save, do nothing.
@@ -62,12 +51,14 @@ export class Save extends CommandInternalBase {
 			return;
 		}
 
-		if ( 'autosave' !== options.status ) {
+		const statusChanged = status !== oldStatus;
+
+		if ( 'autosave' !== status ) {
 			if ( statusChanged ) {
 				$e.run( 'document/elements/settings', {
 					container: elementor.settings.page.getEditedView().getContainer(),
 					settings: {
-						post_status: options.status,
+						post_status: status,
 					},
 					options: {
 						external: true,
@@ -90,14 +81,16 @@ export class Save extends CommandInternalBase {
 			document.config.elements = elements;
 		}
 
+		// TODO: Remove - Backwards compatibility
 		elementor.channels.editor.trigger( 'saved', data );
 
-		// TODO: BC.
+		// TODO: Remove - Backwards compatibility
 		elementor.saver.trigger( 'after:save', data )
-			.trigger( 'after:save:' + options.status, data );
+			.trigger( 'after:save:' + status, data );
 
+		// TODO: Remove - Backwards compatibility
 		if ( statusChanged ) {
-			elementor.saver.trigger( 'page:status:change', options.status, oldStatus );
+			elementor.saver.trigger( 'page:status:change', status, oldStatus );
 		}
 
 		if ( _.isFunction( options.onSuccess ) ) {
@@ -108,14 +101,20 @@ export class Save extends CommandInternalBase {
 			data,
 			statusChanged,
 		};
+
+		if ( _.isFunction( callback ) ) {
+			callback.call( this, result );
+		}
+
+		return result;
 	}
 
-	onSaveError( data, options, document ) {
+	onSaveError( data, status, document ) {
 		this.onAfterAjax( document );
 
-		// TODO: BC.
+		// TODO: Remove - Backwards compatibility
 		elementor.saver.trigger( 'after:saveError', data )
-			.trigger( 'after:saveError:' + options.status, data );
+			.trigger( 'after:saveError:' + status, data );
 
 		let message;
 

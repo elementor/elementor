@@ -1,5 +1,4 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import Component from './component.js';
 
 export default class BackwardsCompatibility extends ComponentBase {
 	__construct( args = {} ) {
@@ -84,7 +83,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 	update( options ) {
 		elementorCommon.helpers.softDeprecated( 'update', '2.9.0', "$e.run( 'document/save/update' )" );
 
-		return $e.run( 'document/save/update', { options } );
+		return $e.run( 'document/save/update', options );
 	}
 
 	startTimer( hasChanged ) {
@@ -98,7 +97,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 		elementorCommon.helpers.softDeprecated( 'saveEditor', '2.9.0',
 			"$e.internal( 'document/save/save' )" );
 
-		$e.internal( 'document/save/save', { options } );
+		$e.internal( 'document/save/save', options );
 	}
 
 	setFlagEditorChange( status ) {
