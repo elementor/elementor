@@ -126,13 +126,15 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	onRoute( route ) {
-		elementorCommon.elements.$body.addClass( this.getBodyClass( route ) );
+		this.toggleRouteClass( route, true );
+
 		this.activate();
 		this.trigger( 'route/open', route );
 	}
 
 	onCloseRoute( route ) {
-		elementorCommon.elements.$body.removeClass( this.getBodyClass( route ) );
+		this.toggleRouteClass( route, false );
+
 		this.inactivate();
 		this.trigger( 'route/close', route );
 	}
@@ -221,5 +223,9 @@ export default class ComponentBase extends elementorModules.Module {
 		} );
 
 		return commands;
+	}
+
+	toggleRouteClass( route, state ) {
+		elementorCommon.elements.$body.toggleClass( this.getBodyClass( route ), state );
 	}
 }
