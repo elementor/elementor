@@ -161,7 +161,7 @@ export default class extends elementorModules.Module {
 		} );
 	}
 
-	send( action, options ) {
+	prepareSend( action, options ) {
 		const settings = this.getSettings(),
 			ajaxParams = elementorCommon.helpers.cloneObject( settings.ajaxParams );
 
@@ -210,6 +210,10 @@ export default class extends elementorModules.Module {
 			}
 		}
 
-		return jQuery.ajax( ajaxParams );
+		return ajaxParams;
+	}
+
+	send( action, options ) {
+		return jQuery.ajax( this.prepareSend( action, options ) );
 	}
 }
