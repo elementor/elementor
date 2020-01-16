@@ -9,7 +9,6 @@ module.exports = Marionette.LayoutView.extend( {
 	regions: {
 		header: '#elementor-kit__panel-header__wrapper',
 		content: '#elementor-kit__panel-content__wrapper',
-		footer: '#elementor-kit__panel-footer__wrapper',
 	},
 
 	onBeforeShow() {
