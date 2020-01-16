@@ -139,31 +139,23 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.getModal().setMessage( html );
 	},
 
-	setImageContent: function( imageURL ) {
-		const classes = this.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { class: classes.item } ),
-			$image = jQuery( '<img>', { src: imageURL, class: classes.image } );
-
-		$item.append( $image );
-
-		this.getModal().setMessage( $item );
-	},
-
 	setVideoContent: function( options ) {
-		var classes = this.getSettings( 'classes' ),
-			$videoContainer = jQuery( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
-			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
-			$videoElement,
+		const $ = jQuery,
+			classes = this.getSettings( 'classes' ),
+			$videoContainer = $( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
+			$videoWrapper = $( '<div>', { class: classes.videoWrapper } ),
 			modal = this.getModal();
 
+		let $videoElement;
+
 		if ( 'hosted' === options.videoType ) {
-			var videoParams = jQuery.extend( { src: options.url, autoplay: '' }, options.videoParams );
+			const videoParams = $.extend( { src: options.url, autoplay: '' }, options.videoParams );
 
-			$videoElement = jQuery( '<video>', videoParams );
+			$videoElement = $( '<video>', videoParams );
 		} else {
-			var videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+			const videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
 
-			$videoElement = jQuery( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
+			$videoElement = $( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
 		}
 
 		$videoContainer.append( $videoWrapper );
@@ -174,7 +166,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.setVideoAspectRatio();
 
-		var onHideMethod = modal.onHide;
+		const onHideMethod = modal.onHide;
 
 		modal.onHide = function() {
 			onHideMethod();
@@ -184,7 +176,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getShareLinks: function() {
-		const i18n = elementorFrontend.config.i18n,
+		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
 			facebook: i18n.share_on_facebook,
 			twitter: i18n.share_on_twitter,
