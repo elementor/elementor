@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Schemes;
+use Elementor\Core\Settings\Manager;
 
 /**
  * Elementor image widget.
@@ -625,6 +626,23 @@ class Widget_Image extends Widget_Base {
 		$link = $this->get_link_url( $settings );
 
 		if ( $link ) {
+			$lightbox_title_src = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_lightbox_title_src' );
+			$lightbox_description_src = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_lightbox_description_src' );
+			$attachment = get_post( $settings['image']['id'] );
+			$image_data = [
+				'caption' => $attachment->post_excerpt,
+				'description' => $attachment->post_content,
+				'title' => $attachment->post_title,
+			];
+
+			if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
+				$this->add_render_attribute( 'link', 'data-elementor-lightbox-title', $image_data[ $lightbox_title_src ] );
+			}
+
+			if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
+				$this->add_render_attribute( 'link', 'data-elementor-lightbox-description', $image_data[ $lightbox_description_src ] );
+			}
+
 			$this->add_render_attribute( 'link', 'data-elementor-open-lightbox', $settings['open_lightbox'] );
 
 			$this->add_link_attributes( 'link', $link );
