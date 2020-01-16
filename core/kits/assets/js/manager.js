@@ -21,6 +21,11 @@ export default class Settings extends elementorModules.editor.utils.Module {
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open' ),
 		}, 'style', 'global-colors' );
+	}
+
+	loadKitDocument() {
+		elementor.documents.request( elementor.config.kit_id );
+	}
 
 	addHeaderBehavior( behaviors ) {
 			behaviors.kit = {
@@ -40,6 +45,9 @@ export default class Settings extends elementorModules.editor.utils.Module {
 				this.addPanelPage();
 
 				this.addPanelMenuItem();
+
+				// Cache.
+				this.loadKitDocument();
 			} );
 		} );
 
