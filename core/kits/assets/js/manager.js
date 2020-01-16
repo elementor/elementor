@@ -14,19 +14,13 @@ export default class Settings extends elementorModules.editor.utils.Module {
 	addPanelMenuItem() {
 		const menu = elementor.modules.layouts.panel.pages.menu.Menu;
 
-		menu.getGroups().add( {
-			name: 'global',
-			title: elementor.translate( 'global_settings' ),
-			items: [],
-		}, { at: 0 } );
-
 		menu.addItem( {
 			name: 'theme-style',
 			icon: 'eicon-paint-brush',
 			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open' ),
-		}, 'global' );
+		}, 'style', 'global-colors' );
 
 	addHeaderBehavior( behaviors ) {
 			behaviors.kit = {
