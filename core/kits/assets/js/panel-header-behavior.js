@@ -19,8 +19,8 @@ export default class extends Marionette.Behavior {
 	}
 
 	onBeforeShow() {
-		this.$el.prepend( buttonBack );
-		this.$el.append( buttonClose );
+		this.$el.prepend( elementor.compileTemplate( buttonBack, elementor.config.i18n ) );
+		this.$el.append( elementor.compileTemplate( buttonClose, elementor.config.i18n ) );
 	}
 
 	onClickClose() {
