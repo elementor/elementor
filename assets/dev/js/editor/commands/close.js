@@ -17,7 +17,7 @@ export class Close extends CommandsBase {
 		// TODO: Move to an hook.
 		if ( ! mode && elementor.saver.isEditorChanged() ) {
 			this.getConfirmDialog().show();
-			return jQuery.Deferred().reject();
+			return jQuery.Deferred().reject( new $e.modules.HookBreak() );
 		}
 
 		let deferred;
