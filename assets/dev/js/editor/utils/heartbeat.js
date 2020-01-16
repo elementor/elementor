@@ -1,55 +1,25 @@
-class Heartbeat {
+export default class Heartbeat {
+	modal = null;
+
 	constructor() {
-		let modal;
+		this.onSend = this.onSend.bind( this );
+		this.onTick = this.onTick.bind( this );
+		this.onRefreshNonce = this.onRefreshNonce.bind( this );
 
-		this.getModal = () => {
-			if ( ! modal ) {
-				modal = this.initModal();
-			}
+		this.bindEvents();
 
-			return modal;
-		};
-
-		jQuery( document ).on( {
-			'heartbeat-send': ( event, data ) => {
-				data.elementor_post_lock = {
-					post_ID: elementor.config.document.id,
-				};
-			},
-			'heartbeat-tick': ( event, response ) => {
-				if ( response.locked_user ) {
-					if ( elementor.saver.isEditorChanged() ) {
-						elementor.saver.saveEditor( {
-							status: 'autosave',
-						} );
-					}
-
-					this.showLockMessage( response.locked_user );
-				} else {
-					this.getModal().hide();
-				}
-
-				elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
-			},
-			'heartbeat-tick.wp-refresh-nonces': ( event, response ) => {
-				const nonces = response[ 'elementor-refresh-nonces' ];
-
-				if ( nonces ) {
-					if ( nonces.heartbeatNonce ) {
-						elementorCommon.ajax.addRequestConstant( '_nonce', nonces.elementorNonce );
-					}
-
-					if ( nonces.heartbeatNonce ) {
-						window.heartbeatSettings.nonce = nonces.heartbeatNonce;
-					}
-				}
-			},
-		} );
-
-		if ( elementor.config.locked_user ) {
-			this.showLockMessage( elementor.config.locked_user );
+		if ( elementor.config.document.user.locked ) {
+			this.showLockMessage( elementor.config.document.user.locked );
 		}
 	}
+
+	getModal = () => {
+		if ( ! this.modal ) {
+			this.modal = this.initModal();
+		}
+
+		return this.modal;
+	};
 
 	initModal() {
 		const modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
@@ -83,6 +53,56 @@ class Heartbeat {
 			.setMessage( elementor.translate( 'dialog_user_taken_over', [ lockedUser ] ) )
 			.show();
 	}
-}
 
-export default Heartbeat;
+	onSend( event, data ) {
+		data.elementor_post_lock = {
+			post_ID: elementor.config.document.id,
+		};
+	}
+
+	onTick( event, response ) {
+		if ( response.locked_user ) {
+			if ( elementor.saver.isEditorChanged() ) {
+				elementor.saver.saveEditor( {
+					status: 'autosave',
+				} );
+			}
+
+			this.showLockMessage( response.locked_user );
+		} else {
+			this.getModal().hide();
+		}
+
+		elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
+	}
+
+	onRefreshNonce( event, response ) {
+		const nonces = response[ 'elementor-refresh-nonces' ];
+
+		if ( nonces ) {
+			if ( nonces.heartbeatNonce ) {
+				elementorCommon.ajax.addRequestConstant( '_nonce', nonces.elementorNonce );
+			}
+
+			if ( nonces.heartbeatNonce ) {
+				window.heartbeatSettings.nonce = nonces.heartbeatNonce;
+			}
+		}
+	}
+
+	bindEvents() {
+		jQuery( document ).on( {
+			'heartbeat-send': this.onSend,
+			'heartbeat-tick': this.onTick,
+			'heartbeat-tick.wp-refresh-nonces': this.onRefreshNonce,
+		} );
+	}
+
+	destroy() {
+		jQuery( document ).off( {
+			'heartbeat-send': this.onSend,
+			'heartbeat-tick': this.onTick,
+			'heartbeat-tick.wp-refresh-nonces': this.onRefreshNonce,
+		} );
+	}
+}

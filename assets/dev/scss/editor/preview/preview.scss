@@ -17,35 +17,38 @@ html.elementor-html {
 	margin-top: 0 !important;
 }
 
-#elementor {
+.elementor-edit-area {
 	position: relative;
 }
 
-.elementor-editor-active {
+.elementor {
+	&.loading{
+		opacity: 0.5;
+	}
+}
 
-	.elementor.elementor-edit-area-active {
+.elementor-edit-area-active {
 
-		.elementor-top-section {
+	.elementor-top-section {
 
-			> .elementor-container {
+		> .elementor-container {
 
-				> .elementor-row {
-					min-height: 40px;
-				}
+			> .elementor-row {
+				min-height: 40px;
 			}
 		}
+	}
 
-		.elementor-inner-section {
+	.elementor-inner-section {
 
-			&:first-child {
-				margin-top: 15px;
-			}
+		&:first-child {
+			margin-top: 15px;
+		}
 
-			> .elementor-container {
+		> .elementor-container {
 
-				> .elementor-row {
-					min-height: 40px;
-				}
+			> .elementor-row {
+				min-height: 40px;
 			}
 		}
 	}
@@ -838,6 +841,19 @@ html.elementor-html {
 
 		.elementor-add-section-close {
 			display: none;
+		}
+	}
+}
+
+.elementor-embedded-editor {
+
+	.elementor-section-wrap {
+
+		&:not(:empty) {
+
+			+ #elementor-add-new-section {
+				display: none;
+			}
 		}
 	}
 }

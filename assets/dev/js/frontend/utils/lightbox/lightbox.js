@@ -403,9 +403,9 @@ module.exports = elementorModules.ViewModule.extend( {
 						'data-title': slide.title,
 						'data-description': slide.description,
 					} );
-				$slideImage[ 0 ].ondragstart = () => {
+				$slideImage.on( 'ondragstart', () => {
 					return false;
-				};
+				} );
 				$zoomContainer.append( $slideImage );
 				$slide.append( $zoomContainer );
 			}
@@ -710,7 +710,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const element = event.currentTarget,
 			$target = jQuery( event.target ),
 			editMode = elementorFrontend.isEditMode(),
-			isClickInsideElementor = ! ! $target.closest( '#elementor' ).length;
+			isClickInsideElementor = ! ! $target.closest( '.elementor-edit-area' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {
 			if ( editMode && isClickInsideElementor ) {

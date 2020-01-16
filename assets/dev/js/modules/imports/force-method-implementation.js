@@ -1,3 +1,5 @@
+// TODO: Wrong location used as `elementorModules.ForceMethodImplementation(); should be` `elementorUtils.ForceMethodImplementation()`;
+
 export class ForceMethodImplementation extends Error {
 	constructor( info = {} ) {
 		super( `${ info.isStatic ? 'static ' : '' }${ info.fullName }() should be implemented, please provide '${ info.functionName || info.fullName }' functionality.` );

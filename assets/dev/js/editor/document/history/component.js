@@ -1,7 +1,7 @@
-import BaseComponent from 'elementor-common/components/component';
-import * as Commands from './commands/';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	__construct( args ) {
 		super.__construct( args );
 
@@ -19,17 +19,17 @@ export default class Component extends BaseComponent {
 
 	getCommands() {
 		return {
-			'add-transaction': ( args ) => ( new Commands.AddTransaction( args ).run() ),
-			'delete-log': ( args ) => ( new Commands.DeleteLog( args ).run() ),
-			'delete-transaction': ( args ) => ( new Commands.DeleteTransaction( args ).run() ),
-			'end-log': ( args ) => ( new Commands.EndLog( args ).run() ),
-			'end-transaction': ( args ) => ( new Commands.EndTransaction( args ).run() ),
-			'log-sub-item': ( args ) => ( new Commands.LogSubItem( args ).run() ),
-			'start-log': ( args ) => ( new Commands.StartLog( args ).run() ),
-			'start-transaction': ( args ) => ( new Commands.StartTransaction( args ).run() ),
+			'add-transaction': ( args ) => ( new commands.AddTransaction( args ).run() ),
+			'delete-log': ( args ) => ( new commands.DeleteLog( args ).run() ),
+			'delete-transaction': ( args ) => ( new commands.DeleteTransaction( args ).run() ),
+			'end-log': ( args ) => ( new commands.EndLog( args ).run() ),
+			'end-transaction': ( args ) => ( new commands.EndTransaction( args ).run() ),
+			'log-sub-item': ( args ) => ( new commands.LogSubItem( args ).run() ),
+			'start-log': ( args ) => ( new commands.StartLog( args ).run() ),
+			'start-transaction': ( args ) => ( new commands.StartTransaction( args ).run() ),
 
-			undo: () => elementor.history.history.navigate(),
-			redo: () => elementor.history.history.navigate( true ),
+			undo: () => elementor.documents.getCurrent().history.navigate(),
+			redo: () => elementor.documents.getCurrent().history.navigate( true ),
 		};
 	}
 

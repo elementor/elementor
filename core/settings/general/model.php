@@ -176,11 +176,11 @@ class Model extends CSS_Model {
 							'label' => __( 'Title', 'elementor' ),
 							'type' => Controls_Manager::SELECT,
 							'options' => [
-								'' => __( 'None', 'elementor-pro' ),
-								'title' => __( 'Title', 'elementor-pro' ),
-								'caption' => __( 'Caption', 'elementor-pro' ),
-								'alt' => __( 'Alt', 'elementor-pro' ),
-								'description' => __( 'Description', 'elementor-pro' ),
+								'' => __( 'None', 'elementor' ),
+								'title' => __( 'Title', 'elementor' ),
+								'caption' => __( 'Caption', 'elementor' ),
+								'alt' => __( 'Alt', 'elementor' ),
+								'description' => __( 'Description', 'elementor' ),
 							],
 							'default' => 'title',
 							'condition' => [
@@ -192,17 +192,61 @@ class Model extends CSS_Model {
 							'label' => __( 'Description', 'elementor' ),
 							'type' => Controls_Manager::SELECT,
 							'options' => [
-								'' => __( 'None', 'elementor-pro' ),
-								'title' => __( 'Title', 'elementor-pro' ),
-								'caption' => __( 'Caption', 'elementor-pro' ),
-								'alt' => __( 'Alt', 'elementor-pro' ),
-								'description' => __( 'Description', 'elementor-pro' ),
+								'' => __( 'None', 'elementor' ),
+								'title' => __( 'Title', 'elementor' ),
+								'caption' => __( 'Caption', 'elementor' ),
+								'alt' => __( 'Alt', 'elementor' ),
+								'description' => __( 'Description', 'elementor' ),
 							],
 							'default' => 'description',
 							'condition' => [
 								'elementor_lightbox_enable_footer' => 'yes',
 							],
 							'frontend_available' => true,
+						],
+						'elementor_lightbox_color' => [
+							'label' => __( 'Background Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox' => 'background-color: {{VALUE}}',
+							],
+						],
+						'elementor_lightbox_ui_color' => [
+							'label' => __( 'UI Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-ui-color: {{VALUE}}',
+							],
+						],
+						'elementor_lightbox_ui_color_hover' => [
+							'label' => __( 'UI Hover Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-ui-color-hover: {{VALUE}}',
+							],
+						],
+						'elementor_lightbox_text_color' => [
+							'label' => __( 'Text Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-text-color: {{VALUE}}',
+							],
+						],
+						'lightbox_icons_size' => [
+							'label' => __( 'Toolbar Icons Size', 'elementor' ),
+							'type' => Controls_Manager::SLIDER,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-header-icons-size: {{SIZE}}{{UNIT}}',
+							],
+							'separator' => 'before',
+						],
+						'lightbox_slider_icons_size' => [
+							'label' => __( 'Navigation Icons Size', 'elementor' ),
+							'type' => Controls_Manager::SLIDER,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-navigation-icons-size: {{SIZE}}{{UNIT}}',
+							],
+							'separator' => 'before',
 						],
 					],
 				],
@@ -239,115 +283,5 @@ class Model extends CSS_Model {
 				$this->end_controls_section();
 			}
 		}
-
-		$this->start_controls_section(
-			'lightbox_style',
-			[
-				'label' => __( 'Style', 'elementor' ),
-				'tab' => Manager::PANEL_TAB_LIGHTBOX,
-			]
-		);
-
-		$this->add_control('elementor_lightbox_color',
-			[
-				'label' => __( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'.elementor-lightbox' => 'background-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control( 'elementor_lightbox_ui_color',
-			[
-				'label' => __( 'UI Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'.elementor-lightbox' => '--lightbox-ui-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control( 'elementor_lightbox_ui_color_hover',
-			[
-				'label' => __( 'UI Hover Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'.elementor-lightbox' => '--lightbox-ui-color-hover: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control( 'elementor_lightbox_text_color',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'.elementor-lightbox' => '--lightbox-text-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'heading_title_style',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'lightbox_title_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
-				'selector' => '.elementor-lightbox .elementor-slideshow__title',
-			]
-		);
-
-		$this->add_control(
-			'heading_description_style',
-			[
-				'label' => __( 'Description', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'lightbox_description_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
-				'selector' => '.elementor-lightbox .elementor-slideshow__description',
-			]
-		);
-
-		$this->add_responsive_control(
-			'lightbox_icons_size',
-			[
-				'label' => __( 'Toolbar Icons Size', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'.elementor-lightbox' => '--lightbox-header-icons-size: {{SIZE}}{{UNIT}}',
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_responsive_control(
-			'lightbox_slider_icons_size',
-			[
-				'label' => __( 'Navigation Icons Size', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'.elementor-lightbox' => '--lightbox-navigation-icons-size: {{SIZE}}{{UNIT}}',
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->end_controls_section();
 	}
 }

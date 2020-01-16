@@ -119,7 +119,6 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 				</span>
 				<span class="elementor-last-edited">
-					{{{ elementor.config.document.last_edited }}}
 				</span>
 			</p>
 			<div class="elementor-panel-footer-sub-menu">
@@ -254,11 +253,8 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
-	<div class="elementor-control-dynamic-switcher-wrapper">
-		<div class="elementor-control-dynamic-switcher">
-			<?php echo __( 'Dynamic', 'elementor' ); ?>
-			<i class="eicon-database"></i>
-		</div>
+	<div class="elementor-control-dynamic-switcher elementor-control-unit-1">
+		<i class="eicon-database"></i>
 	</div>
 </script>
 

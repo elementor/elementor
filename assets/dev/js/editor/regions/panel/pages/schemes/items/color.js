@@ -1,5 +1,5 @@
 var PanelSchemeItemView = require( 'elementor-panel/pages/schemes/items/base' );
-import ColorPicker from '../../../../../utils/color-picker';
+import ColorPicker from 'elementor-editor/utils/color-picker';
 
 module.exports = PanelSchemeItemView.extend( {
 	getUIType: function() {

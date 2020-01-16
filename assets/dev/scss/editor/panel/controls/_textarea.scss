@@ -1,6 +1,30 @@
 .elementor-control-type-textarea {
 
+	&.elementor-control-dynamic-value {
+
+		.elementor-control-dynamic-switcher {
+			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			@include border-start-property(width, 0);
+		}
+	}
+
+	&:not(.elementor-control-dynamic-value) {
+
+		.elementor-control-dynamic-switcher {
+			position: absolute;
+			top: 0;
+			@include end(0);
+		}
+	}
+
 	textarea {
 		display: block;
+
+		&:focus {
+
+			+ .elementor-control-dynamic-switcher {
+				display: none;
+			}
+		}
 	}
 }

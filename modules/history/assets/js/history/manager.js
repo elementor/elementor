@@ -1,15 +1,20 @@
 import ItemModel from './item-model';
-import Component from './component';
 
-var	Manager = function() {
-	var self = this,
-		currentItemID = null,
-		items = new Backbone.Collection( [], { model: ItemModel } ),
-		editorSaved = false,
-		active = true;
+/**
+ * TODO: consider refactor this class.
+ * TODO: should be `Document/History` component.
+ * TODO: should be attached to elementor.history.history + BC.
+ */
+export default class HistoryManager {
+	currentItemID = null;
 
-	const translations = {
-		// Alphabetical order.
+	items = new Backbone.Collection( [], { model: ItemModel } );
+
+	editorSaved = false;
+
+	active = true;
+
+	translations = {
 		add: elementor.translate( 'added' ),
 		change: elementor.translate( 'edited' ),
 		disable: elementor.translate( 'disabled' ),
@@ -23,98 +28,90 @@ var	Manager = function() {
 		reset_settings: elementor.translate( 'settings_reset' ),
 	};
 
-	var getActionLabel = function( itemData ) {
-		if ( translations[ itemData.type ] ) {
-			return translations[ itemData.type ];
-		}
-
-		return itemData.type;
-	};
-
-	this.navigate = function( isRedo ) {
-		var currentItem = items.find( function( model ) {
-				return 'not_applied' === model.get( 'status' );
-			} ),
-			currentItemIndex = items.indexOf( currentItem ),
-			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex + 1;
-
-		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0 || requiredIndex >= items.length ) {
-			return;
-		}
-
-		self.doItem( requiredIndex );
-	};
-
-	var updatePanelPageCurrentItem = function() {
+	static updatePanelPageCurrentItem() {
 		if ( $e.routes.is( 'panel/history/actions' ) ) {
 			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
 		}
-	};
+	}
 
-	var onPanelSave = function() {
-		if ( items.length >= 2 ) {
-			// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
-			var firstEditItem = items.at( items.length - 2 );
-			editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+	initialize() {
+		elementor.channels.editor.on( 'saved', this.onPanelSave.bind( this ) );
+	}
+
+	getActionLabel( itemData ) {
+		// TODO: this function should be static.
+		if ( this.translations[ itemData.type ] ) {
+			return this.translations[ itemData.type ];
 		}
-	};
 
-	var init = function() {
-		$e.components.register( new Component( { manager: self } ) );
+		return itemData.type;
+	}
 
-		elementor.channels.editor.on( 'saved', onPanelSave );
-	};
+	navigate( isRedo ) {
+		const currentItem = this.items.find( ( model ) => {
+				return 'not_applied' === model.get( 'status' );
+			} ),
+			currentItemIndex = this.items.indexOf( currentItem ),
+			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex + 1;
 
-	this.setActive = function( value ) {
-		active = value;
-	};
-
-	this.getActive = function() {
-		return active;
-	};
-
-	this.getItems = function() {
-		return items;
-	};
-
-	this.startItem = function( itemData ) {
-		currentItemID = this.addItem( itemData );
-
-		return currentItemID;
-	};
-
-	this.endItem = function( id ) {
-		if ( id && currentItemID !== id ) {
+		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0 || requiredIndex >= this.items.length ) {
 			return;
 		}
-		currentItemID = null;
-	};
 
-	this.deleteItem = function( id ) {
-		const item = items.findWhere( {
+		this.doItem( requiredIndex );
+	}
+
+	setActive( value ) {
+		this.active = value;
+	}
+
+	getActive( value ) {
+		return this.active;
+	}
+
+	getItems() {
+		return this.items;
+	}
+
+	startItem( itemData ) {
+		this.currentItemID = this.addItem( itemData );
+
+		return this.currentItemID;
+	}
+
+	endItem( id ) {
+		if ( this.currentItemID !== id ) {
+			return;
+		}
+
+		this.currentItemID = null;
+	}
+
+	deleteItem( id ) {
+		const item = this.items.findWhere( {
 			id: id,
 		} );
 
-		items.remove( item );
+		this.items.remove( item );
 
-		currentItemID = null;
-	};
+		this.currentItemID = null;
+	}
 
-	this.isItemStarted = function() {
-		return null !== currentItemID;
-	};
+	isItemStarted() {
+		return null !== this.currentItemID;
+	}
 
-	this.getCurrentId = function() {
-		return currentItemID;
-	};
+	getCurrentId() {
+		return this.currentItemID;
+	}
 
-	this.addItem = function( itemData ) {
+	addItem( itemData ) {
 		if ( ! this.getActive() ) {
 			return;
 		}
 
-		if ( ! items.length ) {
-			items.add( {
+		if ( ! this.items.length ) {
+			this.items.add( {
 				status: 'not_applied',
 				title: elementor.translate( 'editing_started' ),
 				subTitle: '',
@@ -124,13 +121,13 @@ var	Manager = function() {
 		}
 
 		// Remove old applied items from top of list
-		while ( items.length && 'applied' === items.first().get( 'status' ) ) {
-			items.shift();
+		while ( this.items.length && 'applied' === this.items.first().get( 'status' ) ) {
+			this.items.shift();
 		}
 
-		var id = currentItemID ? currentItemID : new Date().getTime();
+		const id = this.currentItemID ? this.currentItemID : new Date().getTime();
 
-		var	currentItem = items.findWhere( {
+		let currentItem = this.items.findWhere( {
 			id: id,
 		} );
 
@@ -139,28 +136,28 @@ var	Manager = function() {
 				id: id,
 				title: itemData.title,
 				subTitle: itemData.subTitle,
-				action: getActionLabel( itemData ),
+				action: this.getActionLabel( itemData ),
 				type: itemData.type,
 			} );
 
-			self.startItemTitle = '';
-			self.startItemAction = '';
+			this.startItemTitle = '';
+			this.startItemAction = '';
 		}
 
 		currentItem.get( 'items' ).add( itemData, { at: 0 } );
 
-		items.add( currentItem, { at: 0 } );
+		this.items.add( currentItem, { at: 0 } );
 
-		updatePanelPageCurrentItem();
+		this.constructor.updatePanelPageCurrentItem();
 
 		return id;
-	};
+	}
 
-	this.doItem = function( index ) {
+	doItem( index ) {
 		// Don't track while restoring the item
 		this.setActive( false );
 
-		var item = items.at( index );
+		const item = this.items.at( index );
 
 		if ( 'not_applied' === item.get( 'status' ) ) {
 			this.undoItem( index );
@@ -170,10 +167,11 @@ var	Manager = function() {
 
 		this.setActive( true );
 
-		var panel = elementor.getPanelView(),
+		const panel = elementor.getPanelView(),
 			panelPage = panel.getCurrentPageView(),
-			editedElementView = panelPage.getOption( 'editedElementView' ),
-			viewToScroll;
+			editedElementView = panelPage.getOption( 'editedElementView' );
+
+		let viewToScroll;
 
 		if ( $e.routes.isPartOf( 'panel/editor' ) && editedElementView ) {
 			if ( editedElementView.isDestroyed ) {
@@ -201,24 +199,22 @@ var	Manager = function() {
 			}
 		}
 
-		updatePanelPageCurrentItem();
+		this.constructor.updatePanelPageCurrentItem();
 
 		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );
 		}
 
 		if ( item.get( 'editing_started' ) ) {
-			if ( ! editorSaved ) {
+			if ( ! this.editorSaved ) {
 				elementor.saver.setFlagEditorChange( false );
 			}
 		}
-	};
+	}
 
-	this.undoItem = function( index ) {
-		var item;
-
-		for ( var stepNum = 0; stepNum < index; stepNum++ ) {
-			item = items.at( stepNum );
+	undoItem( index ) {
+		for ( let stepNum = 0; stepNum < index; stepNum++ ) {
+			const item = this.items.at( stepNum );
 
 			if ( 'not_applied' === item.get( 'status' ) ) {
 				item.get( 'items' ).each( function( subItem ) {
@@ -232,11 +228,11 @@ var	Manager = function() {
 				item.set( 'status', 'applied' );
 			}
 		}
-	};
+	}
 
-	this.redoItem = function( index ) {
-		for ( var stepNum = items.length - 1; stepNum >= index; stepNum-- ) {
-			var item = items.at( stepNum );
+	redoItem( index ) {
+		for ( let stepNum = this.items.length - 1; stepNum >= index; stepNum-- ) {
+			const item = this.items.at( stepNum );
 
 			if ( 'applied' === item.get( 'status' ) ) {
 				var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
@@ -252,9 +248,14 @@ var	Manager = function() {
 				item.set( 'status', 'not_applied' );
 			}
 		}
-	};
+	}
 
-	init();
-};
+	onPanelSave() {
+		if ( this.items.length >= 2 ) {
+			// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
+			const firstEditItem = items.at( items.length - 2 );
 
-module.exports = new Manager();
+			this.editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+		}
+	}
+}
