@@ -416,14 +416,34 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function get_initial_config() {
+		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
+
+		$locked_user = Plugin::$instance->editor->get_locked_user( $this->get_main_id() );
+
+		if ( $locked_user ) {
+			$locked_user = $locked_user->display_name;
+		}
+
+		$post_type_object = get_post_type_object( $this->get_main_post()->post_type );
+
+		$settings = SettingsManager::get_settings_managers_config();
+
 		return [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
 			'version' => $this->get_main_meta( '_elementor_version' ),
+			'settings' => $settings['page'],
+			'elements' => $this->get_elements_raw_data( null, true ),
+			'widgets' => Plugin::$instance->widgets_manager->get_widget_types_config(),
 			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
 			'container' => 'body',
+			'post_type_title' => $this->get_post_type_title(),
+			'user' => [
+				'can_publish' => current_user_can( $post_type_object->cap->publish_posts ),
+				'locked' => $locked_user,
+			],
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),

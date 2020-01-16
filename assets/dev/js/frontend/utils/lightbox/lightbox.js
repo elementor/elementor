@@ -695,7 +695,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const element = event.currentTarget,
 			$target = jQuery( event.target ),
 			editMode = elementorFrontend.isEditMode(),
-			isClickInsideElementor = ! ! $target.closest( '#elementor' ).length;
+			isClickInsideElementor = ! ! $target.closest( '.elementor-edit-area' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {
 			if ( editMode && isClickInsideElementor ) {

@@ -39,11 +39,11 @@ export default class HistoryHelper {
 	}
 
 	static resetItems() {
-		elementor.history.history.getItems().reset();
+		elementor.documents.getCurrent().history.getItems().reset();
 	}
 
 	static getFirstItem() {
-		return elementor.history.history.getItems().at( 0 );
+		return elementor.documents.getCurrent().history.getItems().at( 0 );
 	}
 
 	static printHumanReadable() {

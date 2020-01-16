@@ -7,11 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $wp_version;
 
-$document = Plugin::$instance->documents->get_current();
-
 $body_classes = [
 	'elementor-editor-active',
-	'elementor-editor-' . $document->get_template_type(),
 	'wp-version-' . str_replace( '.', '-', $wp_version ),
 ];
 

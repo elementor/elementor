@@ -1,16 +1,16 @@
-import BaseComponent from 'elementor-common/components/component';
-import * as Commands from './commands/';
+import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
 
-export default class Component extends BaseComponent {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'document/dynamic';
 	}
 
 	defaultCommands() {
 		return {
-			disable: ( args ) => ( new Commands.Disable( args ) ).run(),
-			enable: ( args ) => ( new Commands.Enable( args ) ).run(),
-			settings: ( args ) => ( new Commands.Settings( args ) ).run(),
+			disable: ( args ) => ( new commands.Disable( args ) ).run(),
+			enable: ( args ) => ( new commands.Enable( args ) ).run(),
+			settings: ( args ) => ( new commands.Settings( args ) ).run(),
 		};
 	}
 }

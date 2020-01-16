@@ -461,6 +461,18 @@ abstract class Element_Base extends Controls_Stack {
 			$attributes['rel'] = 'nofollow';
 		}
 
+		if ( ! empty( $url_control['custom_attributes'] ) ) {
+			// Custom URL attributes should come as a string of comma-delimited key|value pairs
+			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
+
+			foreach ( $custom_attributes as $attribute ) {
+				// Trim in case users inserted unwanted spaces
+				list( $attr_key, $attr_value ) = explode( '|', $attribute );
+
+				$attributes[ trim( $attr_key ) ] = trim( $attr_value );
+			}
+		}
+
 		if ( $attributes ) {
 			$this->add_render_attribute( $element, $attributes, $overwrite );
 		}

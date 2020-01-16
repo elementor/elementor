@@ -4,7 +4,7 @@ namespace Elementor\Modules\Usage;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
-use Elementor\System_Info\Main as System_Info;
+use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\DB;
 use Elementor\Plugin;
 

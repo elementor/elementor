@@ -12,7 +12,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementor.on( 'preview:loaded', this.onElementorPreviewLoaded );
+		elementor.on( 'document:loaded', this.onElementorPreviewLoaded );
 
 		this.model.on( 'change', this.onModelChange );
 	},

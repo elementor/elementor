@@ -1,7 +1,7 @@
 /* global elementorFrontendConfig */
 import DocumentsManager from './documents-manager';
-import Storage from '../../../../core/common/assets/js/utils/storage';
-import environment from '../../../../core/common/assets/js/utils/environment';
+import Storage from 'elementor-common/utils/storage';
+import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import URLActions from './utils/url-actions';
@@ -144,7 +144,13 @@ class Frontend extends elementorModules.ViewModule {
 
 		this.elementsHandler = new ElementsHandler( jQuery );
 
-		this.documentsManager = new DocumentsManager();
+		if ( this.isEditMode() ) {
+			elementor.on( 'document:loaded', () => {
+				this.documentsManager = new DocumentsManager();
+			} );
+		} else {
+			this.documentsManager = new DocumentsManager();
+		}
 
 		this.trigger( 'components:init' );
 	}
