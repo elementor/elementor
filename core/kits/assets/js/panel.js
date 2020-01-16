@@ -1,5 +1,4 @@
 import PanelContent from './panel-content';
-import { buttonBack, buttonClose } from './panel-header-buttons';
 
 module.exports = Marionette.LayoutView.extend( {
 	id: 'elementor-kit-panel',
