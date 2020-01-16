@@ -253,7 +253,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
-	<div class="elementor-control-dynamic-switcher elementor-control-unit-1">
+	<div class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo __( 'Dynamic Tags', 'elementor' ); ?>">
 		<i class="eicon-database"></i>
 	</div>
 </script>
