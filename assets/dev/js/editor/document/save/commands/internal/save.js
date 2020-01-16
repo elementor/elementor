@@ -37,7 +37,7 @@ export class Save extends CommandInternalBase {
 		return deferred;
 	}
 
-	onSaveSuccess( data, status, oldStatus, elements, options, document ) {
+	onSaveSuccess( data, status, oldStatus, elements, document ) {
 		this.onAfterAjax( document );
 
 		const statusChanged = status !== oldStatus;
