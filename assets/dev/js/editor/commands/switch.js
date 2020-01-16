@@ -6,15 +6,14 @@ export class Switch extends CommandsBase {
 	}
 
 	apply( args ) {
-		const { id, onClose } = args;
+		const { id } = args;
 
-		return $e.run( 'editor/documents/close', {
+		$e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),
-			onClose,
-		} )
-			.then( () => {
+			onClose: () => {
 				$e.run( 'editor/documents/open', { id } );
-			} );
+			},
+		} );
 	}
 }
 
