@@ -12,7 +12,6 @@ export default class ComponentBase extends elementorModules.Module {
 
 		this.defaultRoute = '';
 		this.currentTab = '';
-		this.history = [];
 	}
 
 	registerAPI() {
@@ -109,7 +108,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 		$e.routes.clearCurrent( this.getNamespace() );
 
-		$e.routes.clearHistory( this.getNamespace() );
+		$e.routes.clearHistory( this.getRootContainer() );
 
 		return true;
 	}

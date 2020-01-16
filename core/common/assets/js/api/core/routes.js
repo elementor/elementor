@@ -18,8 +18,16 @@ export default class Routes extends Commands {
 		this.to( currentRoute, currentArgs );
 	}
 
-	clearHistory( container ) {
-		delete this.historyPerComponent[ container ];
+	getHistory( namespaceRoot = '' ) {
+		if ( namespaceRoot ) {
+			return this.historyPerComponent[ namespaceRoot ] || [];
+		}
+
+		return this.historyPerComponent;
+	}
+
+	clearHistory( namespaceRoot ) {
+		delete this.historyPerComponent[ namespaceRoot ];
 	}
 
 	clearCurrent( container ) {
@@ -79,26 +87,22 @@ export default class Routes extends Commands {
 	}
 
 	to( route, args ) {
-		this.trigger( 'routes/to/before', route, args );
-
 		this.run( route, args );
 
-		const namespace = this.getComponent( route ).getNamespace();
+		const namespaceRoot = this.getComponent( route ).getRootContainer();
 
-		if ( ! this.historyPerComponent[ namespace ] ) {
-			this.historyPerComponent[ namespace ] = [];
+		if ( ! this.historyPerComponent[ namespaceRoot ] ) {
+			this.historyPerComponent[ namespaceRoot ] = [];
 		}
 
-		this.historyPerComponent[ namespace ].push( {
+		this.historyPerComponent[ namespaceRoot ].push( {
 			route,
 			args,
 		} );
-
-		this.trigger( 'routes/to/after', route, args );
 	}
 
-	back( namespace ) {
-		const history = this.historyPerComponent[ namespace ];
+	back( namespaceRoot ) {
+		const history = this.getHistory( namespaceRoot );
 
 		// Remove current;
 		history.pop();
