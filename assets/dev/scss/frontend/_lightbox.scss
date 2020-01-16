@@ -105,6 +105,10 @@
 	}
 
 	.elementor-swiper-button {
+		&:focus {
+			outline: none;
+		}
+
 		&-prev, &-next {
 			height: 100%;
 			display: flex;
@@ -124,6 +128,7 @@
 
 		@media (max-width: $screen-sm-max) {
 			&-prev, &-next {
+				width: 20%;
 				i {
 					padding: 10px;
 					background-color: rgba(0, 0, 0, 0.5);
@@ -167,7 +172,7 @@
 		display: flex;
 		font-size: var(--lightbox-header-icons-size);
 		@include padding-start( 1em );
-		@include padding-end( 2.25em );
+		@include padding-end( 2.6em );
 		top: 0;
 		align-items: center;
 		z-index: 10;
@@ -322,98 +327,6 @@
 					opacity: 1;
 				}
 			}
-		}
-	}
-}
-
-.elementor-icon-fullscreen {
-	$shape-size: .3em;
-	display: inline-flex;
-	width: 1em;
-	height: 1em;
-	box-sizing: content-box;
-	flex-wrap: wrap;
-	align-content: space-between;
-
-	span:before, span:after {
-		display: block;
-	}
-
-	span {
-		height: $shape-size;
-		width: 1em;
-		display: flex;
-		margin: 2px 2px 1px;
-		justify-content: space-between;
-
-		&:before, &:after {
-			content: '';
-			width: $shape-size;
-			height: 100%;
-			border: solid currentcolor;
-			border-width: 0.1em 0 0 0.1em;
-			transition: margin 0.1s;
-		}
-
-		&:after {
-			transform: rotate(90deg);
-		}
-
-		+ span {
-			transform: rotate(180deg);
-		}
-	}
-
-	&:hover span {
-		&:before, &:after {
-			margin: -1px;
-		}
-	}
-
-	&.shrink {
-		span {
-			&:before, &:after {
-				border-width: 0 0.12em 0.12em 0;
-				margin: -1px;
-			}
-		}
-
-		&:hover span {
-			&:before, &:after {
-				margin: 0;
-			}
-		}
-	}
-}
-
-.elementor-icon-share {
-	span {
-		display: block;
-		position: relative;
-		width: 1em;
-		height: 1em;
-
-		&:before, &:after {
-			content: '';
-			position: absolute;
-		}
-
-		&:before {
-			width: .7em;
-			height: .7em;
-			border-width: .3em 0 0 0.025em;
-			border-style: solid;
-			border-color: currentcolor;
-			border-radius: 90% 0 0 / 100% 0 0;
-			top: .25em;
-			left: -0.025em;
-		}
-
-		&:after {
-			border-color: transparent currentcolor;
-			border-width: .4em 0 .4em .4em;
-			right: 0;
-			border-style: solid;
 		}
 	}
 }
