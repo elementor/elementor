@@ -184,10 +184,11 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getShareLinks: function() {
-		const socialNetworks = {
-			facebook: elementorFrontendConfig.i18n.share_on_facebook,
-			twitter: elementorFrontendConfig.i18n.share_on_twitter,
-			pinterest: elementorFrontendConfig.i18n.pin_it,
+		const i18n = elementorFrontend.config.i18n,
+			socialNetworks = {
+			facebook: i18n.share_on_facebook,
+			twitter: i18n.share_on_twitter,
+			pinterest: i18n.pin_it,
 		},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -211,7 +212,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 
 		if ( ! videoUrl ) {
-			const downloadImage = elementorFrontendConfig.i18n.download_image;
+			const downloadImage = i18n.download_image;
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
 		}
 		return $linkList;
