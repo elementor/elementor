@@ -131,6 +131,8 @@ export default class Component extends ComponentBase {
 	}
 
 	getRequestArgs( id ) {
+		id = parseInt( id );
+
 		return {
 			action: 'get_document_config',
 			unique_id: `document-${ id }`,
