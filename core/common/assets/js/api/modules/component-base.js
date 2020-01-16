@@ -127,6 +127,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 	onRoute( route ) {
 		this.toggleRouteClass( route, true );
+		this.toggleHistoryClass();
 
 		this.activate();
 		this.trigger( 'route/open', route );
@@ -227,5 +228,9 @@ export default class ComponentBase extends elementorModules.Module {
 
 	toggleRouteClass( route, state ) {
 		elementorCommon.elements.$body.toggleClass( this.getBodyClass( route ), state );
+	}
+
+	toggleHistoryClass() {
+		elementorCommon.elements.$body.toggleClass( 'e-routes-has-history', !! $e.routes.getHistory( this.getRootContainer() ).length );
 	}
 }
