@@ -93,15 +93,6 @@ export class Save extends CommandInternalBase {
 			elementor.saver.trigger( 'page:status:change', status, oldStatus );
 		}
 
-		if ( _.isFunction( options.onSuccess ) ) {
-			options.onSuccess.call( this, data );
-		}
-
-		return {
-			data,
-			statusChanged,
-		};
-
 		if ( _.isFunction( callback ) ) {
 			callback.call( this, result );
 		}
