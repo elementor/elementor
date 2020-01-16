@@ -516,6 +516,7 @@ class Documents_Manager {
 		$document = $this->get( $document->get_post()->ID, false );
 
 		$return_data = [
+			'status' => $document->get_post()->post_status,
 			'config' => [
 				'document' => [
 					'last_edited' => $document->get_last_edited(),
