@@ -39,7 +39,7 @@ class Kit extends PageBase {
 	public function get_preview_url() {
 		$url = parent::get_preview_url();
 		if ( isset( $_GET['elementor-location'] ) ) {
-			$url = add_query_arg( 'elementor-location', $_GET['elementor-location'] , $url );
+			$url = add_query_arg( 'elementor-location', $_GET['elementor-location'], $url );
 		}
 
 		return $url;
@@ -98,19 +98,19 @@ class Kit extends PageBase {
 			[
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => '<div class="elementor-nerd-box">' .
-				         '<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>' .
-				         '<div class="elementor-nerd-box-title">' .
-				         __( 'Meet Our Theme Builder', 'elementor' ) .
-				         '</div>' .
-				         '<div class="elementor-nerd-box-message">' .
-				         __( 'Theme Builder allows you to build your own theme', 'elementor' ) .
-				         '</div>' .
-				         '<div class="elementor-nerd-box-message">' .
-				         __( 'This feature is only available on Elementor Pro.', 'elementor' ) .
-				         '</div>
+							'<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>' .
+							'<div class="elementor-nerd-box-title">' .
+							__( 'Meet Our Theme Builder', 'elementor' ) .
+							'</div>' .
+							'<div class="elementor-nerd-box-message">' .
+							__( 'Theme Builder allows you to build your own theme', 'elementor' ) .
+							'</div>' .
+							'<div class="elementor-nerd-box-message">' .
+							__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
+							'</div>
 							<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
-				         __( 'Go Pro', 'elementor' ) .
-				         '</a>
+								__( 'Go Pro', 'elementor' ) .
+								'</a>
 							</div>',
 			]
 		);

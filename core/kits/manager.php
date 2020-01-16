@@ -91,7 +91,7 @@ class Manager {
 	}
 
 	public function get_kit_preview_id() {
-		return empty( $_GET['kit_preview_id' ] ) ? false : $_GET['kit_preview_id'];
+		return empty( $_GET['kit_preview_id'] ) ? false : $_GET['kit_preview_id'];
 	}
 
 	public function __construct() {
