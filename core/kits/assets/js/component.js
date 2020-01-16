@@ -36,7 +36,6 @@ export default class extends elementorModules.common.Component {
 					id: elementor.config.initial_document.id,
 					onClose: () => {
 						$e.components.get( 'panel/global' ).close();
-						$e.route( 'panel/menu' );
 						$e.routes.clearHistory( this.getRootContainer() );
 					},
 				} );

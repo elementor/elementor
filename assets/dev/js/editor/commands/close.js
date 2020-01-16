@@ -5,7 +5,7 @@ export class Close extends CommandsBase {
 		this.requireArgument( 'id', args );
 	}
 
-	apply( args ) {
+	async apply( args ) {
 		const { id, mode, onClose } = args,
 			document = elementor.documents.get( id );
 
@@ -20,17 +20,13 @@ export class Close extends CommandsBase {
 			return jQuery.Deferred().reject( new $e.modules.HookBreak() );
 		}
 
-		let deferred;
-
 		switch ( mode ) {
 			case 'save':
-				deferred = $e.run( 'document/save/update' );
+				await $e.run( 'document/save/update' );
 				break;
 			case 'discard':
-				deferred = $e.run( 'document/save/discard', { document } );
+				await $e.run( 'document/save/discard', { document } );
 				break;
-			default:
-				deferred = jQuery.Deferred().resolve();
 		}
 
 		elementor.saver.stopAutoSave( document );
@@ -49,7 +45,7 @@ export class Close extends CommandsBase {
 			onClose();
 		}
 
-		return deferred;
+		return jQuery.Deferred().resolve();
 	}
 
 	getConfirmDialog() {
