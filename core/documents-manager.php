@@ -105,6 +105,7 @@ class Documents_Manager {
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
+		$ajax_manager->register_ajax_action( 'save_document', [ $this, 'ajax_save_document' ] );
 		$ajax_manager->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
 		$ajax_manager->register_ajax_action( 'get_document_config', [ $this, 'ajax_get_document_config' ] );
 	}
@@ -138,7 +139,7 @@ class Documents_Manager {
 	 * @access public
 	 *
 	 * @param string $type  Document type name.
-	 * @param Document $class The name of the class that registers the document type.
+	 * @param string $class The name of the class that registers the document type.
 	 *                      Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
@@ -516,6 +517,7 @@ class Documents_Manager {
 		$document = $this->get( $document->get_post()->ID, false );
 
 		$return_data = [
+			'status' => $document->get_post()->post_status,
 			'config' => [
 				'document' => [
 					'last_edited' => $document->get_last_edited(),
@@ -537,6 +539,83 @@ class Documents_Manager {
 		 * @param Document $document    The document instance.
 		 */
 		$return_data = apply_filters( 'elementor/documents/ajax_save/return_data', $return_data, $document );
+
+		return $return_data;
+	}
+
+	/**
+	 * Save document data using ajax.
+	 *
+	 * Save the document on the builder using ajax, when saving the changes, and refresh the editor.
+	 *
+	 * @access public
+	 *
+	 * @param $request Post ID.
+	 *
+	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
+	 *
+	 * @return array The document data after saving.
+	 */
+	public function ajax_save_document( $request ) {
+		$document = $this->get( $request['id'] );
+
+		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		$this->switch_to_document( $document );
+
+		// Set the post as global post.
+		Plugin::$instance->db->switch_to_post( $document->get_post()->ID );
+
+		$status = DB::STATUS_DRAFT;
+
+		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ], true ) ) {
+			$status = $request['status'];
+		}
+
+		if ( DB::STATUS_AUTOSAVE === $status ) {
+			// If the post is a draft - save the `autosave` to the original draft.
+			// Allow a revision only if the original post is already published.
+			if ( in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
+				$document = $document->get_autosave( 0, true );
+			}
+		}
+
+		// Set default page template because the footer-saver doesn't send default values,
+		// But if the template was changed from canvas to default - it needed to save.
+		if ( Utils::is_cpt_custom_templates_supported() && ! isset( $request['settings']['template'] ) ) {
+			$request['settings']['template'] = 'default';
+		}
+
+		$data = [
+			'elements' => $request['elements'],
+			'settings' => $request['settings'],
+		];
+
+		$document->save( $data );
+
+		// Refresh after save.
+		$document = $this->get( $document->get_post()->ID, false );
+
+		$return_data = [
+			'document' => [
+				'last_edited' => $document->get_last_edited(),
+				'urls' => [
+					'wp_preview' => $document->get_wp_preview_url(),
+				],
+			],
+		];
+
+		/**
+		 * Returned documents ajax saved data.
+		 *
+		 * Filters the ajax data returned when saving the post on the builder.
+		 *
+		 * @param array    $return_data The returned data.
+		 * @param Document $document    The document instance.
+		 */
+		$return_data = apply_filters( 'elementor/documents/ajax_save_document/return_data', $return_data, $document );
 
 		return $return_data;
 	}

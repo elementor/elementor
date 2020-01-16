@@ -1,4 +1,5 @@
 import EditorTest from './js/editor-test';
+import * as Ajax from './ajax/';
 
 function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
@@ -17,6 +18,8 @@ function initialize() {
 		cacheKey = elementorCommon.ajax.getCacheKey( request );
 	elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
+	Ajax.silence();
+
 	elementor.on( 'preview:loaded', () => {
 		require( './core/common/assets/js/api/core/components.spec.js' );
 		require( './core/common/assets/js/api/core/hooks/base.spec.js' );
@@ -31,6 +34,7 @@ function initialize() {
 		require( './core/editor/document/dynamic/component.spec' );
 		require( './core/editor/document/history/component.spec' );
 		require( './core/editor/document/ui/component.spec' );
+		require( './core/editor/document/save/component.spec' );
 	} );
 
 	elementor.start();
