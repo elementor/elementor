@@ -28,8 +28,6 @@ export class Close extends CommandsBase {
 				break;
 			case 'discard':
 				deferred = $e.run( 'document/save/discard', { document } );
-
-				// TODO: Discard local changes.
 				break;
 			default:
 				deferred = jQuery.Deferred().resolve();
