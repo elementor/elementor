@@ -54,6 +54,9 @@ class Manager {
 				'global_styles' => __( 'Global Styles', 'elementor' ),
 				'theme_templates' => __( 'Theme Templates', 'elementor' ),
 				'site_settings' => __( 'Site Settings', 'elementor' ),
+				'Close' => __( 'Close', 'elementor' ),
+				'Back' => __( 'Back', 'elementor' ),
+				'Theme Style' => __( 'Theme Style', 'elementor' ),
 			],
 		] );
 

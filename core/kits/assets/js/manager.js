@@ -2,14 +2,14 @@ import Component from './component';
 import panelView from './panel';
 
 const ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
+import PanelHeaderBehavior from './panel-header-behavior';
 
 export default class Settings extends elementorModules.editor.utils.Module {
 	addPanelPage() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: panelView,
-			title: 'global_theme_style',
+			title: elementor.translate( 'Theme Style' ),
 			name: 'kit_settings',
-			fullPage: true,
 		} );
 	}
 
@@ -30,12 +30,20 @@ export default class Settings extends elementorModules.editor.utils.Module {
 			callback: () => $e.run( 'panel/global/open' ),
 		}, 'global' );
 
+	addHeaderBehavior( behaviors ) {
+			behaviors.kit = {
+				behaviorClass: PanelHeaderBehavior,
+			};
+
+			return behaviors;
 	}
 
 	onInit() {
 		super.onInit();
 
 		jQuery( window ).on( 'elementor:init', () => {
+			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
+
 			elementor.on( 'panel:init', () => {
 				this.addPanelPage();
 

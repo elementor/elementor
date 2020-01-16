@@ -1,5 +1,5 @@
-import PanelHeader from './panel-header';
 import PanelContent from './panel-content';
+import { buttonBack, buttonClose } from './panel-header-buttons';
 
 module.exports = Marionette.LayoutView.extend( {
 	id: 'elementor-kit-panel',
@@ -7,7 +7,6 @@ module.exports = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-kit-panel',
 
 	regions: {
-		header: '#elementor-kit__panel-header__wrapper',
 		content: '#elementor-kit__panel-content__wrapper',
 	},
 
@@ -19,9 +18,6 @@ module.exports = Marionette.LayoutView.extend( {
 				controls: container.settings.controls,
 				name: 'kit',
 		};
-
-
-		this.showChildView( 'header', new PanelHeader( options ) );
 
 		this.showChildView( 'content', new PanelContent( options ) );
 	},

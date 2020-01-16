@@ -100,9 +100,14 @@ export default class Routes extends Commands {
 	back( namespace ) {
 		const history = this.historyPerComponent[ namespace ];
 
+		// Remove current;
 		history.pop();
 
 		const last = history.pop();
+
+		if ( ! last ) {
+			return;
+		}
 
 		this.to( last.route, last.args );
 	}
