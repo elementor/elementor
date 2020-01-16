@@ -47,7 +47,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'view-page',
-			icon: 'eicon-preview',
+			icon: 'eicon-preview-medium',
 			title: elementor.translate( 'view_page' ),
 			type: 'link',
 			link: elementor.config.document.urls.permalink,

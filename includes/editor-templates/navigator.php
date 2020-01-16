@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<span class="elementor-navigator__element__title__text">{{{ title }}}</span>
 			</div>
 			<div class="elementor-navigator__element__toggle">
-				<i class="eicon-eye"></i>
+				<i class="eicon-preview-medium"></i>
 			</div>
 			<div class="elementor-navigator__element__indicators"></div>
 		</div>
