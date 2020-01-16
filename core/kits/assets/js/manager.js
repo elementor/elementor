@@ -2,7 +2,7 @@ import Component from './component';
 import panelView from './panel';
 import PanelHeaderBehavior from './panel-header-behavior';
 
-export default class Settings extends elementorModules.editor.utils.Module {
+export default class extends elementorModules.editor.utils.Module {
 	addPanelPage() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: panelView,
