@@ -10,7 +10,7 @@ export class FooterSaverAfterSave extends HookUIAfter {
 	}
 
 	apply( args, result ) {
-		const { options } = args,
+		const { status } = args,
 			{ data } = result,
 			{ footerSaver } = $e.components.get( 'document/save' );
 
@@ -23,7 +23,7 @@ export class FooterSaverAfterSave extends HookUIAfter {
 		footerSaver.setLastEdited( data.config.document.last_edited );
 
 		if ( result.statusChanged ) {
-			this.onPageStatusChange( options.status );
+			this.onPageStatusChange( status );
 		}
 	}
 

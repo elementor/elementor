@@ -29,7 +29,7 @@ export class Save extends CommandInternalBase {
 				settings: settings,
 			},
 			error: ( data ) => this.onSaveError( data, status, document ),
-		} ).then( ( data ) => this.onSaveSuccess( data, status, oldStatus, elements, document ) );
+		} ).then( ( data ) => this.onSaveSuccess( data, status, oldStatus, elements, document, onSuccess ) );
 
 		// TODO: Remove - Backwards compatibility
 		elementor.saver.trigger( 'save', args );
@@ -37,7 +37,7 @@ export class Save extends CommandInternalBase {
 		return deferred;
 	}
 
-	onSaveSuccess( data, status, oldStatus, elements, document ) {
+	onSaveSuccess( data, status, oldStatus, elements, document, callback = null ) {
 		this.onAfterAjax( document );
 
 		const statusChanged = status !== oldStatus;
@@ -85,8 +85,8 @@ export class Save extends CommandInternalBase {
 			statusChanged,
 		};
 
-		if ( _.isFunction( options.onSuccess ) ) {
-			options.onSuccess.call( this, result );
+		if ( _.isFunction( callback ) ) {
+			callback.call( this, result );
 		}
 
 		return result;
