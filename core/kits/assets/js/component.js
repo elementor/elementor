@@ -24,10 +24,8 @@ export default class extends elementorModules.common.Component {
 					return;
 				}
 
-				// Load from server
-				elementor.once( 'document:loaded', () => {
-					$e.route( 'panel/global/style' );
-				} );
+				$e.routes.clearHistory( this.getRootContainer() );
+				this.toggleHistoryClass();
 
 				$e.run( 'editor/documents/switch', {
 					id: elementor.config.kit_id,
@@ -39,6 +37,7 @@ export default class extends elementorModules.common.Component {
 					onClose: () => {
 						$e.components.get( 'panel/global' ).close();
 						$e.route( 'panel/menu' );
+						$e.routes.clearHistory( this.getRootContainer() );
 					},
 				} );
 			},

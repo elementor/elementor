@@ -12,11 +12,15 @@
 	#elementor-panel-header {
 		background-color: #4AB7F4;
 
-			#elementor-panel-header-kit-close,
-			#elementor-panel-header-kit-back {
+			#elementor-panel-header-kit-close {
 				display: table-cell;
 			}
 
+			$this: &;
+
+			@at-root .e-routes-has-history#{$this} #elementor-panel-header-kit-back {
+				display: table-cell;
+			}
 		}
 
 		#elementor-panel-page-settings {
