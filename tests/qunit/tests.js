@@ -1,7 +1,6 @@
 import EditorTest from './js/editor-test';
 import * as Ajax from './ajax/';
 
-
 function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
 		$elementorFake = $body.find( '#elementor-test' );

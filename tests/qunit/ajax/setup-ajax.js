@@ -50,12 +50,12 @@ export const mock = () => {
 
 		return params;
 	};
-}
+};
 
 export const silence = () => {
 	elementorCommon.ajax.send = () => {};
-}
+};
 
 export const free = () => {
 	elementorCommon.ajax.send = sendOriginal;
-}
+};
