@@ -165,7 +165,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
 	<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
 		<div class="elementor-template-library-template-preview">
-			<i class="eicon-eye" aria-hidden="true"></i>
+			<i class="eicon-preview-medium" aria-hidden="true"></i>
 			<span class="elementor-template-library-template-control-title"><?php echo __( 'Preview', 'elementor' ); ?></span>
 		</div>
 		<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button elementor-button-success">
