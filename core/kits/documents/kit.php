@@ -75,6 +75,7 @@ class Kit extends PageBase {
 		$this->add_typography_section();
 		$this->add_buttons_section();
 		$this->add_form_fields_section();
+		$this->add_images_section();
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
@@ -435,6 +436,27 @@ class Kit extends PageBase {
 
 		$this->add_control(
 			'section_form_fields_notice',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Coming Soon', 'elementor' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	private function add_images_section() {
+		$this->start_controls_section(
+			'section_images',
+			[
+				'label' => __( 'Images', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'section_images_notice',
 			[
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => __( 'Coming Soon', 'elementor' ),
