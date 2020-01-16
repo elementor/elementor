@@ -1,3 +1,5 @@
 export * from './save-builder/';
 
-export { initialize as default } from './setup-ajax';
+export { mock } from './setup-ajax';
+export { free } from './setup-ajax';
+export { silence } from './setup-ajax';

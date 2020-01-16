@@ -1,5 +1,6 @@
 import EditorTest from './js/editor-test';
-import AjaxMockInitialize from './ajax/';
+import * as Ajax from './ajax/';
+
 
 function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
@@ -18,8 +19,7 @@ function initialize() {
 		cacheKey = elementorCommon.ajax.getCacheKey( request );
 	elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
-	// Hook `elementorCommon.ajax.send`.
-	AjaxMockInitialize();
+	Ajax.silence();
 
 	elementor.on( 'preview:loaded', () => {
 		require( './core/common/assets/js/api/core/components.spec.js' );

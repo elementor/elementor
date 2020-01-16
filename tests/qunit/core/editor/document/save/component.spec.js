@@ -3,7 +3,7 @@ import DocumentHelper from '../helper';
 import * as commandsInternal from './commands/internal/index.spec.js';
 
 jQuery( () => {
-	QUnit.module( 'Component: document/save', () => {
+	QUnit.module( 'Component: document/save', ( hooks ) => {
 		DocumentHelper.testCommands( commandsInternal );
 	} );
 } );

@@ -38,7 +38,7 @@ export const handleSend = ( params ) => {
 	}
 };
 
-export const initialize = () => {
+export const mock = () => {
 	elementorCommon.ajax.send = ( action, options ) => {
 		const params = elementorCommon.ajax.prepareSend( action, options );
 
@@ -50,4 +50,12 @@ export const initialize = () => {
 
 		return params;
 	};
+}
+
+export const silence = () => {
+	elementorCommon.ajax.send = () => {};
+}
+
+export const free = () => {
+	elementorCommon.ajax.send = sendOriginal;
 }
