@@ -263,10 +263,7 @@ class Widgets_Manager {
 	}
 
 	public function ajax_get_widget_types_controls_config( array $data ) {
-		$config = [
-			'promotionWidgets' => Api::get_promotion_widgets(),
-			'widgets' => [],
-		];
+		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
 			if ( isset( $data['exclude'][ $widget_key ] ) ) {

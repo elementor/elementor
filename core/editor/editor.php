@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
+use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
@@ -761,6 +762,10 @@ class Editor {
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
+
+		if ( ! Utils::has_pro() ) {
+			$config['promotionWidgets'] = Api::get_promotion_widgets();
+		}
 
 		$this->bc_move_document_filters();
 
