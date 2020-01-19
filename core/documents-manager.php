@@ -583,11 +583,6 @@ class Documents_Manager {
 		// Change mode to Builder
 		Plugin::$instance->db->set_is_elementor_page( $post_id );
 
-		// Post Lock
-		if ( ! Plugin::$instance->editor->get_locked_user( $post_id ) ) {
-			Plugin::$instance->editor->lock_post( $post_id );
-		}
-
 		$doc_config = $document->get_config();
 
 		$additional_config = apply_filters( 'elementor/editor/document/config', [], $post_id );
