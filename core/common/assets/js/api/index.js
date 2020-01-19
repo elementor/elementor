@@ -64,7 +64,7 @@ export default class API {
 	 *
 	 * @param {{}} args
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
 	run( ...args ) {
 		return $e.commands.run.apply( $e.commands, args );
