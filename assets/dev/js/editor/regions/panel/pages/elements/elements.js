@@ -97,6 +97,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		jQuery.each( elementor.config.promotionWidgets, ( index, widget ) => {
 			elementsCollection.add( {
+				name: widget.name,
 				title: widget.title,
 				icon: widget.icon,
 				categories: JSON.parse( widget.categories ),
