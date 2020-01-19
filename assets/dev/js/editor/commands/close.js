@@ -11,13 +11,13 @@ export class Close extends CommandsBase {
 
 		// Already closed.
 		if ( 'closed' === document.editor.status ) {
-			return jQuery.Deferred().resolve();
+			return;
 		}
 
 		// TODO: Move to an hook.
 		if ( ! mode && elementor.saver.isEditorChanged() ) {
 			this.getConfirmDialog().show();
-			return jQuery.Deferred().reject( new $e.modules.HookBreak() );
+			return;
 		}
 
 		switch ( mode ) {
@@ -44,8 +44,6 @@ export class Close extends CommandsBase {
 		if ( onClose ) {
 			onClose();
 		}
-
-		return jQuery.Deferred().resolve();
 	}
 
 	getConfirmDialog() {

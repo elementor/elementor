@@ -2,7 +2,7 @@ import Component from './component';
 import panelView from './panel';
 import PanelHeaderBehavior from './panel-header-behavior';
 
-export default class Settings extends elementorModules.editor.utils.Module {
+export default class extends elementorModules.editor.utils.Module {
 	addPanelPage() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: panelView,
@@ -38,7 +38,7 @@ export default class Settings extends elementorModules.editor.utils.Module {
 	onInit() {
 		super.onInit();
 
-		jQuery( window ).on( 'elementor:init', () => {
+		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
 			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
 
 			elementor.on( 'panel:init', () => {

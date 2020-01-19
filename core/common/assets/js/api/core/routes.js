@@ -5,7 +5,6 @@ export default class Routes extends Commands {
 		super( ...args );
 
 		this.savedStates = {};
-		this.history = [];
 		this.historyPerComponent = {};
 	}
 

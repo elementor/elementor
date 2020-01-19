@@ -12,7 +12,7 @@ import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
-import KitManager from '../../../../core/kits/assets/js/manager.js';
+import KitManager from 'elementor/core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -290,7 +290,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.notifications = new Notifications();
 
-		this.kitManager = new KitManager( elementor.config.kit );
+		this.kitManager = new KitManager();
+
 		this.hotkeysScreen = new HotkeysScreen();
 
 		this.iconManager = new IconsManager();
@@ -714,7 +715,7 @@ export default class EditorBase extends Marionette.Application {
 			},
 			success: ( data ) => {
 				jQuery.each( data, ( widgetName, controlsConfig ) => {
-					this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], controlsConfig );
+					this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], controlsConfig );
 				} );
 
 				if ( this.loaded ) {
@@ -771,6 +772,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } ).then( () => {
 			elementorCommon.elements.$window.trigger( 'elementor:init' );
 		} );
+
+		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
 		this.logSite();
 	}
@@ -997,7 +1000,7 @@ export default class EditorBase extends Marionette.Application {
 			refresh: true,
 		} );
 
-		this.trigger( 'document:loaded' );
+		this.trigger( 'document:loaded', document );
 	}
 
 	/**

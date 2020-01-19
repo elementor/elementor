@@ -11,6 +11,8 @@ class Editor {
 
 	isSaving = false;
 
+	isChanged = false;
+
 	isChangedDuringSave = false;
 }
 

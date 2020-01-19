@@ -3,8 +3,8 @@ import Base from './base/base';
 export class Update extends Base {
 	apply( args ) {
 		const {
-			status = elementor.settings.page.model.get( 'post_status' ),
 			document = this.document,
+			status = document.container.settings.get( 'post_status' ),
 		} = args;
 
 		return $e.internal( 'document/save/save', {

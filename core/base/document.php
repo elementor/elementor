@@ -87,7 +87,7 @@ abstract class Document extends Controls_Stack {
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
 			'default_route' => 'panel/elements/categories',
-			'has_elements' => self::get_property( 'has_elements' ),
+			'has_elements' => static::get_property( 'has_elements' ),
 			'messages' => [
 				/* translators: %s: the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
