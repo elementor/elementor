@@ -1,7 +1,7 @@
 /* global jQuery */
 import * as Ajax from './';
 
-const getWidgetsConfig = ( action, fullParams ) => {
+const fakeActionFailed = ( action, fullParams ) => {
 	return {
 		success: false,
 	};
@@ -10,7 +10,9 @@ const getWidgetsConfig = ( action, fullParams ) => {
 const mockActions = {
 	save_builder: Ajax.saveBuilder,
 	discard_changes: Ajax.discardChanges,
-	get_widgets_config: getWidgetsConfig,
+
+	get_widgets_config: fakeActionFailed,
+	get_revisions: fakeActionFailed,
 };
 
 export const sendOriginal = elementorCommon.ajax.send;
@@ -36,6 +38,7 @@ export const handleSend = ( params ) => {
 				},
 			} );
 		} else {
+			debugger;
 			params.error( `One of the mock actions is missing, please check 'setup-ajax.js'` );
 		}
 	} else {
