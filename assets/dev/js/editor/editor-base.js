@@ -11,6 +11,7 @@ import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
+import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
@@ -297,6 +298,8 @@ export default class EditorBase extends Marionette.Application {
 		this.noticeBar = new NoticeBar();
 
 		this.history = new HistoryManager();
+
+		this.promotion = new Promotion();
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}

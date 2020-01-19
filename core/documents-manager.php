@@ -675,9 +675,6 @@ class Documents_Manager {
 		}
 
 		return $doc_config;
-
-		Utils::print_js_config( 'elementor-editor', 'ElementorDocsConfig', $doc_config );
-
 	}
 
 	/**
