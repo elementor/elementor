@@ -14,7 +14,6 @@ export default class extends elementorModules.Module {
 			},
 			position: {
 				my: ( elementorCommon.config.isRTL ? 'right' : 'left' ) + '+10 top',
-				at: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + ' top+20',
 			},
 		} );
 
