@@ -459,7 +459,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.6.0'
+			'5.6.1'
 		);
 
 		wp_register_style(
@@ -1129,6 +1129,12 @@ class Frontend extends App {
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
+			],
+			'i18n' => [
+				'share_on_facebook' => __( 'Share on Facebook', 'elementor' ),
+				'share_on_twitter' => __( 'Share on Twitter', 'elementor' ),
+				'pin_it' => __( 'Pin it', 'elementor' ),
+				'download_image' => __( 'Download image', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),

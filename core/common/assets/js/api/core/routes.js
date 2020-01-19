@@ -5,6 +5,8 @@ export default class Routes extends Commands {
 		super( ...args );
 
 		this.savedStates = {};
+		this.history = [];
+		this.historyPerComponent = {};
 	}
 
 	refreshContainer( container ) {
@@ -14,6 +16,18 @@ export default class Routes extends Commands {
 		this.clearCurrent( container );
 
 		this.to( currentRoute, currentArgs );
+	}
+
+	getHistory( namespaceRoot = '' ) {
+		if ( namespaceRoot ) {
+			return this.historyPerComponent[ namespaceRoot ] || [];
+		}
+
+		return this.historyPerComponent;
+	}
+
+	clearHistory( namespaceRoot ) {
+		delete this.historyPerComponent[ namespaceRoot ];
 	}
 
 	clearCurrent( container ) {
@@ -74,6 +88,32 @@ export default class Routes extends Commands {
 
 	to( route, args ) {
 		this.run( route, args );
+
+		const namespaceRoot = this.getComponent( route ).getRootContainer();
+
+		if ( ! this.historyPerComponent[ namespaceRoot ] ) {
+			this.historyPerComponent[ namespaceRoot ] = [];
+		}
+
+		this.historyPerComponent[ namespaceRoot ].push( {
+			route,
+			args,
+		} );
+	}
+
+	back( namespaceRoot ) {
+		const history = this.getHistory( namespaceRoot );
+
+		// Remove current;
+		history.pop();
+
+		const last = history.pop();
+
+		if ( ! last ) {
+			return;
+		}
+
+		this.to( last.route, last.args );
 	}
 
 	// Don't use the event object.

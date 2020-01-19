@@ -28,7 +28,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 			onOrig( eventName, callback, context );
 		};
 
-		elementor.on( 'preview:loaded', () => {
+		elementor.on( 'document:loaded', () => {
 			if ( elementor.channels.editor._events.saved ) {
 				elementorCommon.helpers.softDeprecated( "elementor.channels.editor.on( 'saved', ... )", '2.9.0',
 					'$e.hooks' );

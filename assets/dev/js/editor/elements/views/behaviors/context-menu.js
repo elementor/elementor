@@ -70,7 +70,7 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
-		if ( ! this.view.container.isDesignable() ) {
+		if ( ! this.view.container || ! this.view.container.isDesignable() ) {
 			return;
 		}
 

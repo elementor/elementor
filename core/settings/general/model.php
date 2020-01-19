@@ -3,8 +3,6 @@ namespace Elementor\Core\Settings\General;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\CSS_Model;
-use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

@@ -9,7 +9,6 @@ export class Save extends CommandInternalBase {
 		}
 
 		const container = document.container,
-			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
 			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
 			oldStatus = container.settings.get( 'post_status' );
 
@@ -21,6 +20,12 @@ export class Save extends CommandInternalBase {
 		document.editor.isChangedDuringSave = false;
 
 		settings.post_status = status;
+
+		let elements = [];
+
+		if ( elementor.config.document.panel.has_elements ) {
+			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
+		}
 
 		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
@@ -39,6 +44,12 @@ export class Save extends CommandInternalBase {
 
 	onSaveSuccess( data, status, oldStatus, elements, document, callback = null ) {
 		this.onAfterAjax( document );
+		elementor.documents.invalidateCache( document.id );
+
+		// Document is switched doring the save, do nothing.
+		if ( document !== elementor.documents.getCurrent() ) {
+			return;
+		}
 
 		const statusChanged = status !== oldStatus;
 
@@ -63,10 +74,12 @@ export class Save extends CommandInternalBase {
 
 		if ( data.config ) {
 			// TODO: Move to es6.
-			jQuery.extend( true, elementor.config.document, data.config );
+			jQuery.extend( true, document.config, data.config.document );
 		}
 
-		elementor.config.document.elements = elements;
+		if ( document.config.elements ) {
+			document.config.elements = elements;
+		}
 
 		// TODO: Remove - Backwards compatibility
 		elementor.channels.editor.trigger( 'saved', data );
