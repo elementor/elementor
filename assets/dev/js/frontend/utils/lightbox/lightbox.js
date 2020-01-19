@@ -510,8 +510,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			descriptionText = $image.data( 'description' ),
 			$title = this.elements.$footer.find( '.' + classes.slideshow.title ),
 			$description = this.elements.$footer.find( '.' + classes.slideshow.description );
-		$title.text( titleText );
-		$description.text( descriptionText );
+		$title.text( titleText || '' );
+		$description.text( descriptionText || '' );
 	},
 
 	playSlideVideo: function() {
