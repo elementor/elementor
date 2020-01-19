@@ -8,6 +8,9 @@
   "last_edited": "",
   "elements": [],
   "settings": {
+	"settings": {
+		"post_status": "draft"
+	},
 	"name": "page",
 	"panelPage": {
 	  "title": "Post Settings"
