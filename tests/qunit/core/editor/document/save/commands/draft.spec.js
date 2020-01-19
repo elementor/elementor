@@ -53,7 +53,7 @@ export const Draft = () => {
 
 			// Ensure rejected.
 			assert.rejects( $e.run( 'document/save/draft', { document } ),
-				'Document is not editable' )
+				'Document is not editable' );
 
 			// Put back as it was before.
 			document.editor.status = defaultStatus;
