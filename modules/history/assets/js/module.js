@@ -5,15 +5,15 @@ import PanelPage from './panel-page';
 
 export default class Manager {
 	constructor() {
-		elementorCommon.elements.$window.on( 'elementor:init', this.init );
+		elementorCommon.elements.$window.on( 'elementor:loaded', this.init );
 	}
 
 	init() {
-		elementor.on( 'preview:loaded', () => {
-			$e.components.register( new Component() );
-			$e.components.register( new HistoryComponent() );
-			$e.components.register( new RevisionsComponent() );
+		$e.components.register( new Component() );
+		$e.components.register( new HistoryComponent() );
+		$e.components.register( new RevisionsComponent() );
 
+		elementor.on( 'panel:init', () => {
 			elementor.getPanelView().addPage( 'historyPage', {
 				view: PanelPage,
 				title: elementor.translate( 'history' ),
