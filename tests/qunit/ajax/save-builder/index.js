@@ -8,6 +8,9 @@ export const saveBuilder = ( action, fullParams ) => {
 		case 'autosave':
 			return mock.autosave;
 
+		case 'publish':
+			return mock.publish;
+
 		default: return {
 			success: false,
 			code: 500,
