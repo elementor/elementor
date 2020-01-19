@@ -709,8 +709,6 @@ export default class EditorBase extends Marionette.Application {
 				exclude: excludeWidgets,
 			},
 			success: ( data ) => {
-				elementor.config.promotionWidgets = data.promotionWidgets;
-
 				jQuery.each( data.widgets, ( widgetName, controlsConfig ) => {
 					this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], controlsConfig );
 				} );
