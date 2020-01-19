@@ -9,6 +9,7 @@ const getWidgetsConfig = ( action, fullParams ) => {
 
 const mockActions = {
 	save_builder: Ajax.saveBuilder,
+	discard_changes: Ajax.discardChanges,
 	get_widgets_config: getWidgetsConfig,
 };
 
@@ -27,12 +28,16 @@ export const handleSend = ( params ) => {
 			} );
 		} );
 
-		params.success( {
-			success: true,
-			data: {
-				responses,
-			},
-		} );
+		if ( Object.entries( responses ).length === Object.entries( params.data.actions ).length ) {
+			params.success( {
+				success: true,
+				data: {
+					responses,
+				},
+			} );
+		} else {
+			params.error( `One of the mock actions is missing, please check 'setup-ajax.js'` );
+		}
 	} else {
 		params.error( `Unknown action: '${ params.data.action }'` );
 	}
