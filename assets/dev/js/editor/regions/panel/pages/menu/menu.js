@@ -156,7 +156,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 		var items = group.get( 'items' ),
 			beforeItem;
 
-
 		// Remove if exist.
 		const exists = _.findWhere( items, { name: itemData.name } );
 
