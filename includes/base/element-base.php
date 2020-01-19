@@ -290,6 +290,10 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
+	public function is_editable() {
+		return true;
+	}
+
 	/**
 	 * @since 2.3.1
 	 * @access protected
@@ -892,6 +896,10 @@ abstract class Element_Base extends Controls_Stack {
 			$config['help_url'] = $this->get_help_url();
 		} else {
 			$config['help_url'] = $this->get_custom_help_url();
+		}
+
+		if ( ! $this->is_editable() ) {
+			$config['editable'] = false;
 		}
 
 		return $config;

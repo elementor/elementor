@@ -91,6 +91,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				icon: widget.icon,
 				widgetType: widget.widget_type,
 				custom: widget.custom,
+				editable: widget.editable,
 			} );
 		} );
 
