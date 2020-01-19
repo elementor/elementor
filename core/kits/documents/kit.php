@@ -48,7 +48,6 @@ class Kit extends PageBase {
 	public static function get_editor_panel_config() {
 		$config = parent::get_editor_panel_config();
 		$config['default_route'] = 'panel/global/style';
-		$config['has_elements'] = self::get_property( 'has_elements' );
 
 		return $config;
 	}
@@ -62,7 +61,7 @@ class Kit extends PageBase {
 	}
 
 	public function get_css_wrapper_selector() {
-		return 'body';//.elementor-kit-' . $this->get_main_id();
+		return 'body';
 	}
 
 	/**
@@ -76,73 +75,9 @@ class Kit extends PageBase {
 		$this->add_typography_section();
 		$this->add_buttons_section();
 		$this->add_form_fields_section();
-		$this->add_theme_template_controls();
+		$this->add_images_section();
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
-	}
-
-	public function add_theme_template_controls() {
-		Plugin::$instance->controls_manager->add_tab( 'theme_templates', __( 'Theme Template', 'elementor' ) );
-		Plugin::$instance->controls_manager->add_tab( 'site_settings', __( 'Site Settings', 'elementor' ) );
-
-		$this->start_controls_section(
-			'section_theme_template_pro',
-			[
-				'label' => __( 'Theme Templates', 'elementor' ),
-				'tab' => 'theme_templates',
-			]
-		);
-
-		$this->add_control(
-			'theme_template_pro',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => '<div class="elementor-nerd-box">' .
-							'<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>' .
-							'<div class="elementor-nerd-box-title">' .
-							__( 'Meet Our Theme Builder', 'elementor' ) .
-							'</div>' .
-							'<div class="elementor-nerd-box-message">' .
-							__( 'Theme Builder allows you to build your own theme', 'elementor' ) .
-							'</div>' .
-							'<div class="elementor-nerd-box-message">' .
-							__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
-							'</div>
-							<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
-								__( 'Go Pro', 'elementor' ) .
-								'</a>
-							</div>',
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_site_settings',
-			[
-				'label' => __( 'Site Identity', 'elementor' ),
-				'tab' => 'site_settings',
-			]
-		);
-
-		$this->add_control(
-			'site_name',
-			[
-				'label' => __( 'Site Name', 'elementor' ),
-				'default' => get_option( 'blogname' ),
-			]
-		);
-
-		$this->add_control(
-			'site_description',
-			[
-				'label' => __( 'Site Description', 'elementor' ),
-				'default' => get_option( 'blogdescription' ),
-				'label_block' => true,
-			]
-		);
-
-		$this->end_controls_section();
 	}
 
 	private function add_element_controls( $label, $prefix, $selector ) {
@@ -501,6 +436,27 @@ class Kit extends PageBase {
 
 		$this->add_control(
 			'section_form_fields_notice',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Coming Soon', 'elementor' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	private function add_images_section() {
+		$this->start_controls_section(
+			'section_images',
+			[
+				'label' => __( 'Images', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'section_images_notice',
 			[
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => __( 'Coming Soon', 'elementor' ),

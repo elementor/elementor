@@ -8,9 +8,6 @@ export default class extends elementorModules.common.Component {
 	defaultRoutes() {
 		return {
 			style: () => this.renderContent( 'style' ),
-			'theme-templates': () => this.renderContent( 'theme_templates' ),
-			'site-settings': () => this.renderContent( 'site_settings' ),
-			'kit-settings': () => this.renderContent( 'settings' ),
 		};
 	}
 
@@ -43,9 +40,9 @@ export default class extends elementorModules.common.Component {
 			exit: () => {
 				$e.run( 'editor/documents/close', {
 					id: elementor.config.kit_id,
-				} )
-					.then( () => {
+					onClose: () => {
 						location = elementor.config.document.urls.exit_to_dashboard;
+					},
 				} );
 			},
 		};

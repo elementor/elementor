@@ -23,6 +23,11 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	initialize( options ) {
 		this.document = options.document || elementor.documents.getCurrent();
 
+		elementor.on( 'document:loaded', ( document ) => {
+			this.setMenuItems( document );
+			this.setLastEdited( document.config.last_edited );
+		} );
+
 		// TODO: Temp, footerSaver should be removed.
 		$e.components.get( 'document/save' ).footerSaver = this;
 	}
@@ -71,7 +76,9 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		$e.run( 'document/save/draft' );
 	}
 
-	setMenuItems( postStatus ) {
+	setMenuItems( document ) {
+		const postStatus = document.container.settings.get( 'post_status' );
+
 		let publishLabel = 'publish';
 
 		switch ( postStatus ) {
@@ -79,13 +86,13 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			case 'private':
 				publishLabel = 'update';
 
-				if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
+				if ( document.config.revisions.current_id !== document.id ) {
 					this.activateSaveButtons( true );
 				}
 
 				break;
 			case 'draft':
-				if ( ! elementor.config.document.user.can_publish ) {
+				if ( ! document.config.user.can_publish ) {
 					publishLabel = 'submit';
 				}
 
@@ -93,7 +100,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( ! elementor.config.document.user.can_publish ) {
+				if ( ! document.config.user.can_publish ) {
 					publishLabel = 'update';
 				}
 				break;
