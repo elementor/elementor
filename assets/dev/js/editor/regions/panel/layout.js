@@ -146,8 +146,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 		this.currentPageView = new View( viewOptions );
 
-		this.$el.toggleClass( 'full-page', ! ! pageData.fullPage );
-
 		this.showChildView( 'content', this.currentPageView );
 
 		this.getHeaderView().setTitle( title || pageData.title );

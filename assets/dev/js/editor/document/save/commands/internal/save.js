@@ -2,9 +2,9 @@ import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 export class Save extends CommandInternalBase {
 	apply( args ) {
-		const { status = 'draft', onSuccess = null, document = elementor.documents.getCurrent() } = args;
+		const { status = 'draft', force = false, onSuccess = null, document = elementor.documents.getCurrent() } = args;
 
-		if ( document.editor.isSaving ) {
+		if ( ! force && document.editor.isSaving ) {
 			return;
 		}
 

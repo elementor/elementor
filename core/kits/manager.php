@@ -5,6 +5,7 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -32,6 +33,7 @@ class Manager {
 
 	private function create_default() {
 		$kit = Plugin::$instance->documents->create( 'kit', [
+			'post_type' => Source_Local::CPT,
 			'post_title' => __( 'Default Kit', 'elementor' ),
 			'post_status' => 'publish',
 		] );

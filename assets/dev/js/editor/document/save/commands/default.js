@@ -3,7 +3,7 @@ import Base from './base/base';
 export class Default extends Base {
 	apply( args ) {
 		const document = this.document,
-			postStatus = elementor.settings.page.model.get( 'post_status' );
+			postStatus = document.container.settings.get( 'post_status' );
 
 		let deferred;
 
