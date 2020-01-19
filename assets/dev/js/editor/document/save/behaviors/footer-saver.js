@@ -20,29 +20,15 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		};
 	}
 
-	initialize() {
-		/**
-		 * @type {Component}
-		 */
-		this.saver = $e.components.get( 'document/save' );
+	initialize( options ) {
+		this.document = options.document || elementor.documents.getCurrent();
 
-		this.saver
-			.on( 'before:save', this.onBeforeSave.bind( this ) )
-			.on( 'after:save', this.onAfterSave.bind( this ) )
-			.on( 'after:saveError', this.onAfterSaveError.bind( this ) )
-			.on( 'page:status:change', this.onPageStatusChange );
-
-		elementor.on( 'document:loaded', () => {
-			elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
-			this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
-			this.setLastEdited( elementor.config.document.last_edited );
-		} );
-
-		elementor.channels.editor.on( 'status:change', this.activateSaveButtons.bind( this ) );
+		// TODO: Temp, footerSaver should be removed.
+		$e.components.get( 'document/save' ).footerSaver = this;
 	}
 
-	activateSaveButtons( hasChanges ) {
-		hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
+	activateSaveButtons( status ) {
+		const hasChanges = status || 'draft' === elementor.settings.page.model.get( 'post_status' );
 
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', ! hasChanges );
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
@@ -52,65 +38,11 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		this.addTooltip();
 	}
 
-	onPageSettingsChange( settings ) {
-		const changed = settings.changed;
-
-		if ( ! _.isUndefined( changed.post_status ) ) {
-			this.setMenuItems( changed.post_status );
-
-			this.refreshWpPreview();
-
-			// Refresh page-settings post-status value.
-			if ( $e.routes.isPartOf( 'panel/page-settings' ) ) {
-				$e.routes.refreshContainer( 'panel' );
-			}
-		}
-	}
-
-	onPageStatusChange( newStatus ) {
-		if ( 'publish' === newStatus ) {
-			elementor.notifications.showToast( {
-				message: elementor.config.document.panel.messages.publish_notification,
-				buttons: [
-					{
-						name: 'view_page',
-						text: elementor.translate( 'have_a_look' ),
-						callback() {
-							open( elementor.config.document.urls.permalink );
-						},
-					},
-				],
-			} );
-		}
-	}
-
-	onBeforeSave( options ) {
-		NProgress.start();
-		if ( 'autosave' === options.status ) {
-			this.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
-		} else {
-			this.ui.buttonPublish.addClass( 'elementor-button-state' );
-		}
-	}
-
-	onAfterSave( data ) {
-		NProgress.done();
-		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
-		this.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
-		this.refreshWpPreview();
-		this.setLastEdited( data.config.document.last_edited );
-	}
-
 	setLastEdited( lastEdited ) {
 		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
 			.find( '.elementor-last-edited' )
 			.html( lastEdited );
-	}
-
-	onAfterSaveError() {
-		NProgress.done();
-		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
 	}
 
 	onClickButtonPreview() {

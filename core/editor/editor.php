@@ -600,7 +600,7 @@ class Editor {
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
-				'global_style' => __( 'Style', 'elementor' ),
+				'global_style' => __( 'Global Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'preferences' => __( 'Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
