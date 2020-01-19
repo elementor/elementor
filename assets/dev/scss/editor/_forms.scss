@@ -28,6 +28,11 @@ input, select, textarea, .elementor-input-style {
 	}
 }
 
+// Normalize form elements in WP's core media management modal
+.media-modal select {
+	width: initial;
+}
+
 .elementor-error {
 
 	input, select, textarea {
