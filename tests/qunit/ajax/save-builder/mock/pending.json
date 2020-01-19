@@ -1,0 +1,37 @@
+{
+	"success": true,
+	"code": 200,
+	"data": {
+		"status": "pending",
+		"config": {
+			"document": {
+				"last_edited": "Last edited on <time>Jan 19, 13:06<\/time> by admin",
+				"urls": {
+					"wp_preview": "http:\/\/localhost\/elementor\/?p=2900&preview_id=2900&preview_nonce=7049a20c79&preview=true"
+				},
+				"revisions": {
+					"current_id": 2900
+				}
+			}
+		},
+		"latest_revisions": [
+			{
+				"id": 2900,
+				"author": "admin",
+				"timestamp": 1579439218,
+				"date": "1 second ago (Jan 19 @ 13:06)",
+				"type": "current",
+				"gravatar": "<img alt='' src='http:\/\/1.gravatar.com\/avatar\/17336320003f5b4e757461202407d3ae?s=22&#038;d=mm&#038;r=g' srcset='http:\/\/1.gravatar.com\/avatar\/17336320003f5b4e757461202407d3ae?s=44&#038;d=mm&#038;r=g 2x' class='avatar avatar-22 photo' height='22' width='22' \/>"
+			},
+			{
+				"id": 4078,
+				"author": "admin",
+				"timestamp": 1579433053,
+				"date": "2 hours ago (Jan 19 @ 11:24)",
+				"type": "revision",
+				"gravatar": "<img alt='' src='http:\/\/1.gravatar.com\/avatar\/17336320003f5b4e757461202407d3ae?s=22&#038;d=mm&#038;r=g' srcset='http:\/\/1.gravatar.com\/avatar\/17336320003f5b4e757461202407d3ae?s=44&#038;d=mm&#038;r=g 2x' class='avatar avatar-22 photo' height='22' width='22' \/>"
+			}
+		],
+		"revisions_ids": []
+	}
+}

@@ -11,6 +11,9 @@ export const saveBuilder = ( action, fullParams ) => {
 		case 'publish':
 			return mock.publish;
 
+		case 'pending':
+			return mock.pending;
+
 		default: return {
 			success: false,
 			code: 500,
