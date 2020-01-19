@@ -5,6 +5,9 @@ export const saveBuilder = ( action, fullParams ) => {
 		case 'draft':
 			return mock.draft;
 
+		case 'autosave':
+			return mock.autosave;
+
 		default: return {
 			success: false,
 			code: 500,
