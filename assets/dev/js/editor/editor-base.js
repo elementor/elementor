@@ -713,7 +713,7 @@ export default class EditorBase extends Marionette.Application {
 				exclude: excludeWidgets,
 			},
 			success: ( data ) => {
-				jQuery.each( data.widgets, ( widgetName, controlsConfig ) => {
+				jQuery.each( data, ( widgetName, controlsConfig ) => {
 					this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], controlsConfig );
 				} );
 

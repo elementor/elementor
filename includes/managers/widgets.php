@@ -270,7 +270,7 @@ class Widgets_Manager {
 				continue;
 			}
 
-			$config['widgets'][ $widget_key ] = [
+			$config[ $widget_key ] = [
 				'controls' => $widget->get_stack( false )['controls'],
 				'tabs_controls' => $widget->get_tabs_controls(),
 			];
