@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-element-library-element">
 	<div class="elementor-element">
 		<# if ( false === obj.editable ) { #>
-			<i class="eicon-lock-user"></i>
+			<i class="eicon-lock"></i>
 		<# } #>
 		<div class="icon">
 			<i class="{{ icon }}" aria-hidden="true"></i>
