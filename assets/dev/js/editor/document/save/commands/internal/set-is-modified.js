@@ -8,6 +8,8 @@ export class SetIsModified extends CommandInternalBase {
 	apply( args ) {
 		const { status, document = elementor.documents.getCurrent() } = args;
 
+		document.editor.isChanged = status;
+
 		if ( status && document.editor.isSaving ) {
 			document.editor.isChangedDuringSave = true;
 		}
