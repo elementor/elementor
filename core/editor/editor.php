@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
+use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
@@ -549,6 +550,8 @@ class Editor {
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
+			'elementPromotionURL' => 'https://go.elementor.com/go-pro-',
+			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
@@ -597,7 +600,7 @@ class Editor {
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
-				'global_style' => __( 'Style', 'elementor' ),
+				'global_style' => __( 'Global Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'preferences' => __( 'Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
@@ -743,6 +746,12 @@ class Editor {
 				'go_pro' => __( 'Go Pro', 'elementor' ),
 				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
+				'element_promotion_dialog_header' => __( '%s Widget', 'elementor' ),
+				'element_promotion_dialog_message' => __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ),
+				'see_it_in_action' => __( 'See it in action', 'elementor' ),
+				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
+				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
+
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),
@@ -753,6 +762,10 @@ class Editor {
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
+
+		if ( ! Utils::has_pro() ) {
+			$config['promotionWidgets'] = Api::get_promotion_widgets();
+		}
 
 		$this->bc_move_document_filters();
 

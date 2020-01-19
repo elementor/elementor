@@ -1,0 +1,44 @@
+{
+	"success": true,
+	"code": 200,
+	"data": {
+		"status": "draft",
+		"config": {
+			"document": {
+				"last_edited": "Last edited on <time>Jan 16, 11:53<\/time> by test",
+				"urls": {
+					"wp_preview": "http:\/\/localhost\/elementor\/?p=1&preview_id=1&preview_nonce=24f70c2bf&preview=true"
+				},
+				"revisions": {
+					"current_id": 2900
+				}
+			}
+		},
+		"latest_revisions": [
+			{
+				"id": 2900,
+				"author": "test",
+				"timestamp": 1579175607,
+				"date": "1 second ago (Jan 16 @ 11:53)",
+				"type": "current",
+				"gravatar": ""
+			},
+			{
+				"id": 4074,
+				"author": "test",
+				"timestamp": 1579172458,
+				"date": "52 mins ago (Jan 16 @ 11:00)",
+				"type": "revision",
+				"gravatar": ""
+			}
+		],
+		"revisions_ids": [
+			2900,
+			4074,
+			4073,
+			4072,
+			4071
+		]
+	}
+}
+

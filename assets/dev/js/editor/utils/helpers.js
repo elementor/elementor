@@ -620,4 +620,8 @@ module.exports = {
 
 		return result;
 	},
+
+	hasPro() {
+		return !! window.elementorPro;
+	},
 };

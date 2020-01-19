@@ -11,6 +11,8 @@ import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
+import Promotion from './utils/promotion';
+import KitManager from '../../../../core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -68,7 +70,7 @@ export default class EditorBase extends Marionette.Application {
 			},
 			saver: {
 				behaviors: {
-					FooterSaver: require( './components/saver/behaviors/footer-saver' ),
+					FooterSaver: require( './document/save/behaviors/footer-saver' ),
 				},
 			},
 		},
@@ -288,6 +290,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.notifications = new Notifications();
 
+		this.kitManager = new KitManager( elementor.config.kit );
 		this.hotkeysScreen = new HotkeysScreen();
 
 		this.iconManager = new IconsManager();
@@ -295,6 +298,8 @@ export default class EditorBase extends Marionette.Application {
 		this.noticeBar = new NoticeBar();
 
 		this.history = new HistoryManager();
+
+		this.promotion = new Promotion();
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
@@ -471,7 +476,7 @@ export default class EditorBase extends Marionette.Application {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				$e.route( 'panel/elements/categories' );
+				$e.internal( 'panel/open-default' );
 			}
 		} );
 	}
@@ -596,9 +601,11 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
-		this.$previewElementorEl
+		if ( elementor.config.document.panel.has_elements ) {
+			this.$previewElementorEl
 			.removeClass( 'elementor-edit-area-preview' )
 			.addClass( 'elementor-edit-area-active' );
+		}
 	}
 
 	changeEditMode( newMode ) {
@@ -930,6 +937,9 @@ export default class EditorBase extends Marionette.Application {
 	onDocumentLoaded( document ) {
 		this.checkPageStatus();
 
+		// Reference container back to document.
+		document.container.document = document;
+
 		if ( this.heartbeat ) {
 			this.heartbeat.destroy();
 		}
@@ -972,7 +982,6 @@ export default class EditorBase extends Marionette.Application {
 
 			this.onEditModeSwitched();
 
-			document.container.document = document;
 			document.container.view = elementor.getPreviewView();
 			document.container.children = elementor.elements;
 			document.container.model.attributes.elements = elementor.elements;
@@ -982,11 +991,11 @@ export default class EditorBase extends Marionette.Application {
 			this.$previewElementorEl
 			.addClass( 'elementor-edit-area-active' )
 			.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-			$e.route( 'panel/elements/categories', {
-				refresh: true,
-			} );
 		}
+
+		$e.internal( 'panel/open-default', {
+			refresh: true,
+		} );
 
 		this.trigger( 'document:loaded' );
 	}

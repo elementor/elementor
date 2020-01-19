@@ -51,9 +51,6 @@
     // Header
     @import "header";
 
-    // Elements
-    @import "elements";
-
     // Categories
     @import "categories";
 
@@ -73,6 +70,9 @@
     @import "footer";
 }
 
+// Panel Elements
+@import "elements";
+
 #elementor-panel-inner {
 	position: relative;
 	height: 100%;
@@ -82,10 +82,15 @@
 // Main Panel
 #elementor-panel-content-wrapper {
 	position: absolute;
-	bottom: 40px;
-	top: 40px;
+	top: 0;
+	bottom: 0;
 	left: 0;
 	width: 100%;
+}
+
+#elementor-panel-inner:not(.full-page) #elementor-panel-content-wrapper {
+	top: 40px;
+	bottom: 40px;
 }
 
 .elementor-panel-container {

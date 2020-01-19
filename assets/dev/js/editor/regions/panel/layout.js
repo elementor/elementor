@@ -146,6 +146,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 		this.currentPageView = new View( viewOptions );
 
+		this.$el.toggleClass( 'full-page', ! ! pageData.fullPage );
+
 		this.showChildView( 'content', this.currentPageView );
 
 		this.getHeaderView().setTitle( title || pageData.title );
@@ -153,6 +155,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this
 			.trigger( 'set:page', this.currentPageView )
 			.trigger( 'set:page:' + page, this.currentPageView );
+
+		if ( elementor.promotion.dialog ) {
+			elementor.promotion.dialog.hide();
+		}
 
 		return this.currentPageView;
 	},

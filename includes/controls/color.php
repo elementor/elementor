@@ -47,7 +47,7 @@ class Control_Color extends Base_Data_Control {
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label || '' }}}</label>
-			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper">
+			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper elementor-control-unit-5">
 				<div class="elementor-color-picker-placeholder"></div>
 			</div>
 		</div>

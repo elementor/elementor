@@ -177,7 +177,7 @@ export default class Commands extends elementorModules.Module {
 	 *
 	 * Receive first command in trace that currently running
 	 *
-	 * @returns {{}}
+	 * @returns {string}
 	 */
 	getCurrentFirstTrace() {
 		return this.currentTrace[ 0 ];
