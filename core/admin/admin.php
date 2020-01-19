@@ -650,7 +650,7 @@ class Admin extends App {
 		if ( empty( $_GET['template_type'] ) ) {
 			$type = 'post';
 		} else {
-			$type = $_GET['template_type']; // XSS ok.
+			$type = sanitize_text_field( $_GET['template_type'] );
 		}
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];

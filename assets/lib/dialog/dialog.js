@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.7.3
+ * Dialogs Manager v4.7.4
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -589,7 +589,7 @@
 
 			self.getElements('header').html(message);
 
-			return this;
+			return self;
 		};
 
 		this.setMessage = function(message) {

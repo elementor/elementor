@@ -154,6 +154,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			.trigger( 'set:page', this.currentPageView )
 			.trigger( 'set:page:' + page, this.currentPageView );
 
+		if ( elementor.promotion.dialog ) {
+			elementor.promotion.dialog.hide();
+		}
+
 		return this.currentPageView;
 	},
 
