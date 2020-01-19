@@ -2,7 +2,7 @@ import ElementsHelper from '../../elements/helper';
 import DocumentHelpers from 'elementor-document/helpers';
 
 export const Discard = () => {
-	QUnit.only( 'Discard', async ( assert ) => {
+	QUnit.test( 'Discard', async ( assert ) => {
 		const eSections = [];
 
 		// Remove all elements.
