@@ -995,7 +995,7 @@ export default class EditorBase extends Marionette.Application {
 			refresh: true,
 		} );
 
-		this.trigger( 'document:loaded' );
+		this.trigger( 'document:loaded', document );
 	}
 
 	/**

@@ -23,9 +23,9 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	initialize( options ) {
 		this.document = options.document || elementor.documents.getCurrent();
 
-		elementor.on( 'document:loaded', () => {
-			this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
-			this.setLastEdited( elementor.config.document.last_edited );
+		elementor.on( 'document:loaded', ( document ) => {
+			this.setMenuItems( document.container.settings.get( 'post_status' ) );
+			this.setLastEdited( document.config.last_edited );
 		} );
 
 		// TODO: Temp, footerSaver should be removed.

@@ -2,13 +2,13 @@ import Base from './base/base';
 
 export class Draft extends Base {
 	apply() {
-		const postStatus = elementor.settings.page.model.get( 'post_status' );
+		const document = this.document,
+			postStatus = document.container.settings.get( 'post_status' );
 
-		if ( ! this.component.isEditorChanged() && 'draft' !== postStatus ) {
+		// If no changes - don't save but allow un-publish.
+		if ( ! document.editor.isChanged && 'draft' !== postStatus ) {
 			return jQuery.Deferred().reject();
 		}
-
-		const document = this.document;
 
 		let deferred;
 
