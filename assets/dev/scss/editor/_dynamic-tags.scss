@@ -15,6 +15,14 @@
 		font-weight: bold;
 		font-size: 12px;
 		padding: 10px 15px;
+		display: flex;
+		align-items: center;
+
+		.eicon-info-circle {
+			@include padding-end(5px);
+			color: $editor-info;
+			font-size: 14px;
+		}
 	}
 
 	&__item {
@@ -30,6 +38,29 @@
 
 		&:hover {
 			background-color: $editor-background;
+		}
+	}
+
+	&__teaser {
+		border-top: 2px solid $editor-lightest;
+		padding-top: 4px;
+		margin-top: 4px;
+
+		&-title {
+			color: $editor-dark;
+		}
+
+		&-text {
+			padding: 2px 15px 8px;
+			line-height: 1.5;
+			font-size: 12px;
+		}
+
+		&-link {
+			color: $editor-accent;
+			text-decoration: underline;
+			font-style: italic;
+			font-weight: bold;
 		}
 	}
 }

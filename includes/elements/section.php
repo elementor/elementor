@@ -1389,7 +1389,6 @@ class Element_Section extends Element_Base {
 	 */
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
-
 		?>
 		<<?php echo esc_html( $this->get_html_tag() ); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<?php

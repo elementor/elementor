@@ -38,7 +38,7 @@ export default class extends elementorModules.editor.utils.Module {
 	onInit() {
 		super.onInit();
 
-		jQuery( window ).on( 'elementor:init', () => {
+		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
 			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
 
 			elementor.on( 'panel:init', () => {

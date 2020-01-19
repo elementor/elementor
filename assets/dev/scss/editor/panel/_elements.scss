@@ -47,51 +47,6 @@
 	}
 }
 
-.elementor-element-wrapper {
-	float: $start;
-	width: 50%;
-	padding: 5px;
-	text-align: center;
-	box-sizing: border-box;
-}
-
-.elementor-element {
-	border-radius: 3px;
-	background-color: #fff;
-	cursor: move;
-	
-	.icon,
-	.title {
-		color: $editor-darker;
-		transition: $transition-hover;
-	}
-
-	&:hover {
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-
-		.icon, .title {
-			color: $editor-accent;
-		}
-	}
-
-	.icon {
-		font-size: 28px;
-		padding-top: 15px;
-	}
-
-	.elementor-element-title-wrapper {
-		display: table;
-		width: 100%;
-	}
-
-	.title {
-		font-size: 11px;
-		display: table-cell;
-		vertical-align: middle;
-		height: 40px;
-	}
-}
-
 #elementor-panel-elements-search-wrapper {
 	position: relative;
 	margin: 10px 10px 5px;
@@ -121,5 +76,123 @@
 	&:focus {
 		background-color: rgba(255,255,255,1);
 		@include padding-end(15px);
+	}
+}
+
+.elementor-panel {
+
+	.elementor-element {
+		border-radius: 3px;
+		background-color: #fff;
+		cursor: move;
+		position: relative;
+
+		&-wrapper {
+			float: $start;
+			width: 50%;
+			padding: 5px;
+			text-align: center;
+			box-sizing: border-box;
+		}
+
+		&--promotion {
+
+			.elementor-element {
+				cursor: pointer;
+			}
+		}
+
+		.icon,
+		.title {
+			color: $editor-darker;
+			transition: $transition-hover;
+		}
+
+		&:hover {
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+			.icon, .title {
+				color: $editor-accent;
+			}
+		}
+
+		.icon {
+			font-size: 28px;
+			padding-top: 15px;
+		}
+
+		.elementor-element-title-wrapper {
+			display: table;
+			width: 100%;
+		}
+
+		.title {
+			font-size: 11px;
+			display: table-cell;
+			vertical-align: middle;
+			height: 40px;
+		}
+
+		> .eicon-lock {
+			position: absolute;
+			top: 5px;
+			@include end(5px);
+			color: $editor-light;
+		}
+	}
+}
+
+.elementor-element--promotion__dialog {
+	position: absolute;
+	width: 300px;
+	z-index: 1;
+	background-color: #fff;
+	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.1);
+
+	&:after {
+		content: '';
+		position: absolute;
+		top: 15px;
+		@include end(100%);
+		border: 10px solid transparent;
+		@include border-end-property(color, #fff);
+	}
+
+	.dialog {
+
+		&-header {
+			display: flex;
+			padding: 20px;
+			color: $editor-darkest;
+			border-bottom: 1px solid $editor-background;
+			font-weight: 500;
+
+			i {
+				color: $editor-light;
+			}
+
+			.eicon-pro-icon {
+				flex-grow: 1;
+				@include margin-start(10px);
+			}
+
+			.eicon-close {
+				cursor: pointer;
+			}
+		}
+
+		&-message {
+			padding: 20px;
+		}
+
+		&-buttons-wrapper {
+			padding: 0 20px 20px 20px;
+		}
+
+		&-button {
+			width: 100%;
+			padding: 6px;
+			font-size: 11px;
+		}
 	}
 }

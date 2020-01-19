@@ -79,6 +79,13 @@ module.exports = Marionette.Behavior.extend( {
 			} );
 		} );
 
+		// Create and inject pro dynamic teaser template if Pro is not installed
+		if ( ! elementor.helpers.hasPro() && Object.keys( tags ).length ) {
+			const proTeaser = Marionette.Renderer.render( '#tmpl-elementor-dynamic-tags-promo' );
+
+			$tagsListInner.append( proTeaser );
+		}
+
 		$tagsListInner.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );
 
 		elementorCommon.elements.$body.append( $tagsList );
@@ -168,6 +175,16 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	showPromotion: function() {
+		elementor.promotion.showDialog( {
+			headerMessage: elementor.translate( 'dynamic_content' ),
+			message: elementor.translate( 'dynamic_promotion_message' ),
+			top: '-10',
+			element: this.ui.dynamicSwitcher,
+			actionURL: elementor.config.dynamicPromotionURL,
+		} );
+	},
+
 	onRender: function() {
 		this.$el.addClass( 'elementor-control-dynamic' );
 
@@ -183,7 +200,11 @@ module.exports = Marionette.Behavior.extend( {
 	onDynamicSwitcherClick: function( event ) {
 		event.stopPropagation();
 
-		this.toggleTagsList();
+		if ( this.getOption( 'tags' ).length ) {
+			this.toggleTagsList();
+		} else {
+			this.showPromotion();
+		}
 	},
 
 	onTagsListItemClick: function( event ) {

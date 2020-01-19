@@ -32,8 +32,8 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		$e.components.get( 'document/save' ).footerSaver = this;
 	}
 
-	activateSaveButtons( status ) {
-		const hasChanges = status || 'draft' === elementor.settings.page.model.get( 'post_status' );
+	activateSaveButtons( document, status ) {
+		const hasChanges = status || 'draft' === document.container.settings.get( 'post_status' );
 
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', ! hasChanges );
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
@@ -50,18 +50,18 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			.html( lastEdited );
 	}
 
-	onClickButtonPreview() {
-		// Open immediately in order to avoid popup blockers.
-		this.previewWindow = open( elementor.config.document.urls.wp_preview, 'wp-preview-' + elementor.config.document.id );
+	async onClickButtonPreview() {
+		const document = elementor.documents.getCurrent();
 
-		if ( elementor.saver.isEditorChanged() ) {
+		if ( document.editor.isChanged ) {
 			// Force save even if it's saving now.
-			if ( elementor.saver.isSaving ) {
-				elementor.saver.isSaving = false;
-			}
-
-			$e.run( 'document/save/auto' );
+			await $e.run( 'document/save/auto', {
+				force: true,
+			} );
 		}
+
+		// Open immediately in order to avoid popup blockers.
+		this.previewWindow = open( document.config.urls.wp_preview, `wp-preview-${ document.id }` );
 	}
 
 	onClickButtonPublish() {
@@ -87,7 +87,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 				publishLabel = 'update';
 
 				if ( document.config.revisions.current_id !== document.id ) {
-					this.activateSaveButtons( true );
+					this.activateSaveButtons( document, true );
 				}
 
 				break;
@@ -96,7 +96,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 					publishLabel = 'submit';
 				}
 
-				this.activateSaveButtons( true );
+				this.activateSaveButtons( document, true );
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.

@@ -10,9 +10,9 @@ export class FooterSaverActiveSaveButtons extends HookUIAfter {
 	}
 
 	apply( args ) {
-		const { status } = args;
+		const { status, document } = args;
 
-		$e.components.get( 'document/save' ).footerSaver.activateSaveButtons( status );
+		$e.components.get( 'document/save' ).footerSaver.activateSaveButtons( document, status );
 	}
 }
 

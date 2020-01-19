@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 2.8.3
+Stable tag: 2.8.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,15 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.8.4 - 2020-01-19 =
+* Tweak: Changed default color in Color Picker
+* Fix: Curved edge with background color in Toggle widget ([#5156](https://github.com/elementor/elementor/issues/5156))
+* Fix: Added sanitize data on create new template
+* Fix: Inconsistent panel view when deleting all content
+* Fix: Empty Typography control after Reset Style
+* Fix: Inline sizing delay when position is set to Absolute/Fixed in Image widget
+* Fix: Wrong sizing on undo/redo to Section element columns
 
 = 2.8.3 - 2020-01-01 =
 * Tweak: Improved accessibility to "Go Pro" menu item ([#9021](https://github.com/elementor/elementor/issues/9021))
