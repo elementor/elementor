@@ -5,11 +5,11 @@ export class Auto extends Base {
 		const { force = false, document = this.document } = args;
 
 		if ( ! force && ! document.container.isEditable() ) {
-			return jQuery.Deferred().reject();
+			return jQuery.Deferred().reject( 'Document is not editable' );
 		}
 
 		if ( ! document.editor.isChanged ) {
-			return jQuery.Deferred().reject();
+			return jQuery.Deferred().reject( 'Document is not changed' );
 		}
 
 		args.status = 'autosave';
