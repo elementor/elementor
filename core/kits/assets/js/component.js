@@ -1,8 +1,16 @@
+import EnqueueFonts from './hooks/ui/enqueue-fonts';
+
 export default class extends elementorModules.common.Component {
 	pages = {};
 
 	getNamespace() {
 		return 'panel/global';
+	}
+
+	registerAPI() {
+		super.registerAPI();
+
+		new EnqueueFonts();
 	}
 
 	defaultRoutes() {
