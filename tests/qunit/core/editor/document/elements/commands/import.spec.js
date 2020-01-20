@@ -1,14 +1,15 @@
 import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
 import BlockFaq from 'elementor/tests/qunit/mock/library/blocks/faq';
+import PageLandingPageHotel from 'elementor/tests/qunit/mock/library/pages/landing-page-hotel';
 
 export const Import = () => {
 	QUnit.module( 'Import', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'History', ( assert ) => {
 				// eslint-disable-next-line camelcase
-				const { model, content, page_settings } = BlockFaq;
-				const data = { content, page_settings };
+				const { model, content, page_settings } = BlockFaq,
+					data = { content, page_settings };
 
 				ElementsHelper.import( data, new Backbone.Model( model ) );
 
@@ -25,6 +26,34 @@ export const Import = () => {
 
 				// Redo.
 				HistoryHelper.redoValidate( assert, historyItem );
+			} );
+
+			QUnit.test( 'Validate positions', ( assert ) => {
+				// eslint-disable-next-line camelcase
+				const { model, content, page_settings } = BlockFaq,
+					data = { content, page_settings },
+					importPosition = 1;
+
+				// Create sections as separators ( index 0, 1, 2 ).
+				ElementsHelper.createSection( 1 );
+				ElementsHelper.createSection( 1 );
+				ElementsHelper.createSection( 1 );
+
+				// Import new block between the the first section and second.
+				const imported = ElementsHelper.import( data, new Backbone.Model( model ), { at: importPosition } );
+
+				// Validate imported block is in the right position.
+				assert.equal( elementor.getPreviewContainer().model.get( 'elements' ).findIndex( imported[ 0 ].model ),
+					importPosition );
+			} );
+
+			QUnit.test( 'Deep validation', ( assert ) => {
+				// Covers issue 'template inserted upside down'.
+				ElementsHelper.import( BlockFaq, new Backbone.Model( BlockFaq.model ) );
+				ElementsHelper.import( PageLandingPageHotel,
+					new Backbone.Model( PageLandingPageHotel.model ),
+					{ at: 0 }
+				);
 
 				// Level depth.
 				const count = {
@@ -34,7 +63,7 @@ export const Import = () => {
 				};
 
 				// Deep Validation ( base on `data.content` & `elementor.elements` ).
-				data.content.forEach( ( section ) => {
+				PageLandingPageHotel.content.forEach( ( section ) => {
 					const _section = elementor.elements.at( count.L1 );
 
 					assert.equal( _section.id, section.id, `Section L0#${ count.L1 } were created` );
@@ -53,9 +82,11 @@ export const Import = () => {
 							count.L3++;
 						} );
 
+						count.L3 = 0;
 						count.L2++;
 					} );
 
+					count.L2 = 0;
 					count.L1++;
 				} );
 			} );
