@@ -224,6 +224,10 @@ select {
 				color: $theme-dark-accent;
 			}
 		}
+
+		& > .eicon-lock {
+			color: $theme-dark-gray-lightest;
+		}
 	}
 
 	//WordPress Widgets
@@ -781,6 +785,45 @@ $devices: 'desktop', 'tablet', 'mobile';
 	background-color: $theme-dark-gray-darkest;
 	border-color: $theme-dark-gray-lighter;
 }
+
+// Widget Pro Promotion Tooltip
+.elementor-element--promotion__dialog {
+	background-color: $theme-dark-gray-darker;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+
+	&:after {
+		border-right-color: $theme-dark-gray-darker;
+	}
+
+	.dialog {
+
+		&-header {
+			color: $theme-dark-light;
+			border-bottom: 1px solid $theme-dark-gray-light;
+
+			.eicon-pro-icon {
+				color: $theme-dark-gray-lighter;
+
+				&:before {
+					background-color: white;
+					border-radius: 4px;
+				}
+			}
+
+			.eicon-close {
+				color: $theme-dark-gray-lightest;
+			}
+		}
+	}
+}
+
+body.rtl .elementor-element--promotion__dialog {
+
+	&:after {
+		border-left-color: $theme-dark-gray-darker;
+	}
+}
+
 
 //Library Modal
 .dialog-type-lightbox {
