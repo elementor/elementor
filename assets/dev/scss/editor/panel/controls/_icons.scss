@@ -1,18 +1,35 @@
 .elementor-control-type-icons {
 
-	.elementor-control-media__preview {
+	.elementor-control-media {
 
-		> * {
-			@include absolute-center;
+		&__preview {
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 100%;
+			width: 100%;
+
+			> * {
+				@include absolute-center;
+			}
+
+			i {
+				font-size: 70px;
+				color: $editor-dark;
+			}
+
+			svg {
+				height: 75%;
+			}
 		}
 
-		i {
-			font-size: 70px;
-			color: $editor-dark;
-		}
-
-		svg {
-			height: 75%;
+		&-area,
+		&-upload-button {
+			position:absolute;
+			left:0;
+			top:0;
+			height:100%;
+			width:100%;
 		}
 	}
 
