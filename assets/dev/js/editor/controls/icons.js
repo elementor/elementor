@@ -45,6 +45,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		ui.deleteButton = 'media' === skin ? '.elementor-control-media__remove' : '.elementor-control-icons--inline__none';
 		ui.previewPlaceholder = '.elementor-control-media__preview';
 		ui.previewContainer = '.elementor-control-preview-area';
+		ui.inlineIconContainer = '.elementor-control-inline-icon';
 		ui.inlineDisplayedIcon = '.elementor-control-icons--inline__displayed-icon';
 		ui.radioInputs = '[type="radio"]';
 
@@ -124,8 +125,13 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	onReady() {
 		// is migration allowed from fa4
 		if ( ! this.isMigrationAllowed() ) {
-			this.ui.previewContainer[ 0 ].addEventListener( 'click', ( event ) => {
+			const migrationPopupTrigger = 'media' === this.model.get( 'skin' ) ? this.ui.previewContainer[ 0 ] : this.ui.inlineIconContainer[ 0 ];
+
+			migrationPopupTrigger.addEventListener( 'click', ( event ) => {
+				// Prevent default to prevent marking the inline icons as selected on click when migration is not allowed
+				event.preventDefault();
 				event.stopPropagation();
+
 				const onConfirm = () => {
 					window.location.href = ElementorConfig.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
 				};
