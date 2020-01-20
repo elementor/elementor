@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Settings\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -413,6 +415,56 @@ abstract class Widget_Base extends Element_Base {
 		$settings = $this->get_settings();
 
 		$this->add_render_attribute( '_wrapper', 'data-widget_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
+	}
+
+	/**
+	 * Add Light-Box attributes.
+	 *
+	 * Used to add Light-Box-related data attributes to links that open images.
+	 *
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 * @param array|string $element         The HTML element.
+	 * @param string $id                    The ID of the element
+	 * @param string $lightbox_setting_key  The setting key that dictates weather to open the image in a lightbox
+	 * @param bool $overwrite               Optional. Whether to overwrite existing
+	 *                                      attribute. Default is false, not to overwrite.
+	 *
+	 * @return Widget_Base Current instance of the widget.
+	 */
+	public function add_lightbox_data_attributes( $element, $id, $lightbox_setting_key = null, $overwrite = false ) {
+		if ( 'no' === $lightbox_setting_key ) {
+			return $this;
+		}
+
+		$global_image_lightbox = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_global_image_lightbox' );
+
+		if ( 'default' === $lightbox_setting_key && ! $global_image_lightbox ) {
+			return $this;
+		}
+
+		$this->add_render_attribute( $element, 'data-elementor-open-lightbox', $lightbox_setting_key );
+
+		$attachment = get_post( $id );
+		$lightbox_title_src = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_lightbox_title_src' );
+		$lightbox_description_src = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_lightbox_description_src' );
+		$image_data = [
+			'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+			'caption' => $attachment->post_excerpt,
+			'description' => $attachment->post_content,
+			'title' => $attachment->post_title,
+		];
+
+		if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
+			$this->add_render_attribute( $element, 'data-elementor-lightbox-title', $image_data[ $lightbox_title_src ], $overwrite );
+		}
+
+		if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
+			$this->add_render_attribute( $element, 'data-elementor-lightbox-description', $image_data[ $lightbox_description_src ], $overwrite );
+		}
+
+		return $this;
 	}
 
 	/**
