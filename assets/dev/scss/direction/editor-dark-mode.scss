@@ -141,6 +141,11 @@ select {
 }
 
 //Dynamic Tags
+.elementor-control-dynamic-switcher {
+	background-color: $theme-dark-gray-darkest;
+	border-color: $theme-dark-gray-light;
+}
+
 .elementor-tags-list {
 	background-color: $theme-dark-gray;
 	border-color: $theme-dark-gray-light;
@@ -456,7 +461,15 @@ $devices: 'desktop', 'tablet', 'mobile';
 .elementor-control-type-url {
 
 	.elementor-control-url-more {
-		border-left-color: $theme-dark-gray-light;
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray-light;
+	}
+
+	.elementor-input {
+
+		&:focus ~ div {
+			border-color: $theme-dark-gray-lighter;
+		}
 	}
 }
 
