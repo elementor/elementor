@@ -7,6 +7,7 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
+use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Core\Schemes\Typography;
@@ -522,15 +523,160 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+		$this->start_controls_tabs( 'tabs_image_style' );
 
-		$this->add_control(
-			'section_images_notice',
+		$this->start_controls_tab(
+			'tab_image_normal',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Coming Soon', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'image_border',
+				'selector' => '{{WRAPPER}} img',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'image_opacity',
+			[
+				'label' => __( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_box_shadow',
+				'exclude' => [
+					'box_shadow_position',
+				],
+				'selector' => '{{WRAPPER}} img',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'image_css_filters',
+				'selector' => '{{WRAPPER}} img',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_image_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'image_hover_border',
+				'selector' => '{{WRAPPER}} img:hover',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_hover_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} img:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'image_hover_opacity',
+			[
+				'label' => __( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} img:hover' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'image_hover_css_filters',
+				'selector' => '{{WRAPPER}} img:hover',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_hover_box_shadow',
+				'exclude' => [
+					'box_shadow_position',
+				],
+				'selector' => '{{WRAPPER}} img:hover',
+			]
+		);
+
+		$this->add_control(
+			'image_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} img' => 'transition-duration: {{SIZE}}s',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}
