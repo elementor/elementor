@@ -38,7 +38,6 @@ export const handleSend = ( params ) => {
 				},
 			} );
 		} else {
-			debugger;
 			params.error( `One of the mock actions is missing, please check 'setup-ajax.js'` );
 		}
 	} else {
