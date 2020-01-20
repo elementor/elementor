@@ -799,7 +799,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 		&-header {
 			color: $theme-dark-light;
-			border-bottom: 1px solid $theme-dark-gray-light;
+			border-bottom-color: $theme-dark-gray-light;
 
 			.eicon-pro-icon {
 				color: $theme-dark-gray-lighter;
