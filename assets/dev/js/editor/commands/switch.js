@@ -1,6 +1,6 @@
-import CommandsBase from 'elementor-api/modules/command-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Switch extends CommandsBase {
+export class Switch extends CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
