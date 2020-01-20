@@ -5,7 +5,7 @@ import CommandsInternal from './core/commands-internal';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
 import BackwardsCompatibility from './core/backwards-compatibility';
-import CommandsBase from './modules/command-base';
+import CommandBase from './modules/command-base';
 import DataBase from './modules/hooks/data/base';
 import DataAfter from './modules/hooks/data/after';
 import DataDependency from './modules/hooks/data/dependency';
@@ -35,9 +35,9 @@ export default class API {
 
 		this.modules = {
 			ComponentBase: ComponentBase,
-			ComponentModal: ComponentModalBase,
+			ComponentModalBase,
 
-			CommandBase: CommandsBase,
+			CommandBase,
 
 			HookBreak: HookBreak,
 
