@@ -518,12 +518,7 @@ class Editor {
 		unset( $settings['page'] );
 
 		$config = [
-			'initial_document' => [
-				'id' => $this->post_id,
-				'urls' => [
-					'preview' => Plugin::$instance->documents->get( $this->post_id )->get_preview_url(),
-				],
-			],
+			'initial_document' => Plugin::$instance->documents->get( $this->post_id )->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,

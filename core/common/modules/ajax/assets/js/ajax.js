@@ -217,6 +217,11 @@ export default class extends elementorModules.Module {
 		return jQuery.ajax( this.prepareSend( action, options ) );
 	}
 
+	addRequestCache( request, data ) {
+		const cacheKey = this.getCacheKey( request );
+		this.cache[ cacheKey ] = data;
+	}
+
 	invalidateCache( request ) {
 		const cacheKey = this.getCacheKey( request );
 		delete this.cache[ cacheKey ];
