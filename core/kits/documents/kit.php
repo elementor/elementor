@@ -112,7 +112,48 @@ class Kit extends PageBase {
 		);
 	}
 
-	private function add_link_style_controls() {
+	private function add_body_section() {
+		$this->start_controls_section(
+			'section_body',
+			[
+				'label' => __( 'Body', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'body_background',
+				'types' => [ 'classic', 'gradient' ],
+				'fields_options' => [
+					'background' => [
+						'frontend_available' => true,
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'body_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'body_typography',
+				'selector' => '{{WRAPPER}}',
+			]
+		);
+
 		$this->add_control(
 			'link_heading',
 			[
@@ -147,7 +188,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_normal_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} a',
 			]
 		);
@@ -177,7 +217,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_hover_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} a:hover',
 			]
 		);
@@ -185,27 +224,22 @@ class Kit extends PageBase {
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
-	}
 
-	private function add_body_section() {
-		$this->start_controls_section(
-			'section_body',
+		$this->add_control(
+			'paragraph_spacing',
 			[
-				'label' => __( 'Body', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'body_background',
-				'types' => [ 'classic', 'gradient' ],
-				'fields_options' => [
-					'background' => [
-						'frontend_available' => true,
+				'label' => __( 'Paragraph Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
 					],
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -378,7 +412,7 @@ class Kit extends PageBase {
 		$this->start_controls_section(
 			'section_typography',
 			[
-				'label' => __( 'Typography', 'elementor' ),
+				'label' => __( 'Headings', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -391,28 +425,6 @@ class Kit extends PageBase {
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
-
-		$this->add_element_controls( __( 'Body', 'elementor' ), 'body', '{{WRAPPER}}' );
-
-		$this->add_control(
-			'paragraph_spacing',
-			[
-				'label' => __( 'Paragraph Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
-			]
-		);
-
-		// Links.
-		$this->add_link_style_controls();
 
 		// Headings.
 		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
