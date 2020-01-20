@@ -2,10 +2,10 @@
 	"success": true,
 	"code": 200,
 	"data": {
-		"status": "draft",
+		"status": "pending",
 		"config": {
 			"document": {
-				"last_edited": "Last edited on <time>Jan 16, 11:53<\/time> by test",
+				"last_edited": "Last edited on <time>Jan 19, 13:06<\/time> by test",
 				"urls": {
 				},
 				"revisions": {
@@ -16,4 +16,3 @@
 		"revisions_ids": []
 	}
 }
-

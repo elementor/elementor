@@ -445,6 +445,8 @@ abstract class Document extends Controls_Stack {
 			'post_type_title' => $this->get_post_type_title(),
 			'user' => [
 				'can_publish' => current_user_can( $post_type_object->cap->publish_posts ),
+
+				// Deprecated config since 2.9.0.
 				'locked' => $locked_user,
 			],
 			'urls' => [

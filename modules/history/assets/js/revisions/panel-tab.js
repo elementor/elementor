@@ -38,7 +38,9 @@ module.exports = Marionette.CompositeView.extend( {
 	getRevisionViewData: function( revisionView ) {
 		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: ( data ) => {
-				this.document.revisions.setEditorData( data.elements );
+				if ( this.document.config.panel.has_elements ) {
+					this.document.revisions.setEditorData( data.elements );
+				}
 
 				elementor.settings.page.model.set( data.settings );
 
@@ -134,7 +136,9 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDiscardClick: function() {
-		this.document.revisions.setEditorData( elementor.config.document.elements );
+		if ( this.document.config.panel.has_elements ) {
+			this.document.revisions.setEditorData( elementor.config.document.elements );
+		}
 
 		$e.internal( 'document/save/set-is-modified', { status: this.isRevisionApplied } );
 

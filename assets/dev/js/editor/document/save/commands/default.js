@@ -15,7 +15,7 @@ export class Default extends Base {
 
 				break;
 			case 'draft':
-				if ( elementor.config.current_user_can_publish ) {
+				if ( document.config.user.can_publish ) {
 					deferred = $e.run( 'document/save/publish', { document } );
 				} else {
 					deferred = $e.run( 'document/save/pending', { document } );
@@ -24,7 +24,7 @@ export class Default extends Base {
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( elementor.config.current_user_can_publish ) {
+				if ( document.config.user.can_publish ) {
 					deferred = $e.run( 'document/save/publish', { document } );
 				} else {
 					deferred = $e.run( 'document/save/update', { document } );

@@ -7,7 +7,7 @@ export class Draft extends Base {
 
 		// If no changes - don't save but allow un-publish.
 		if ( ! document.editor.isChanged && 'draft' !== postStatus ) {
-			return jQuery.Deferred().reject();
+			return jQuery.Deferred().reject( 'Document is not editable' );
 		}
 
 		let deferred;
