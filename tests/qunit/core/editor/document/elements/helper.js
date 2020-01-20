@@ -236,8 +236,8 @@ export default class ElementsHelper {
 		$e.run( 'document/elements/empty', { force: true } );
 	}
 
-	static import( data, model ) {
-		$e.run( 'document/elements/import', { data, model } );
+	static import( data, model, options = {} ) {
+		$e.run( 'document/elements/import', { data, model, options } );
 	}
 
 	static createAutoColumn( eContainer = null ) {
