@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Schemes;
+use Elementor\Core\Settings\Manager;
 
 /**
  * Elementor image gallery widget.
@@ -81,10 +82,28 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @access public
 	 *
 	 * @param string $link_html Image link HTML.
+	 * @param string $id Attachment id.
 	 *
 	 * @return string Image link HTML with lightbox data attributes.
 	 */
-	public function add_lightbox_data_to_image_link( $link_html ) {
+	public function add_lightbox_data_to_image_link( $link_html, $id ) {
+		$attachment = get_post( $id );
+		$lightbox_title_src = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_lightbox_title_src' );
+		$lightbox_description_src = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_lightbox_description_src' );
+		$image_data = [
+			'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+			'caption' => $attachment->post_excerpt,
+			'description' => $attachment->post_content,
+			'title' => $attachment->post_title,
+		];
+
+		if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
+			$this->add_render_attribute( 'link', 'data-elementor-lightbox-title', $image_data[ $lightbox_title_src ] );
+		}
+
+		if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
+			$this->add_render_attribute( 'link', 'data-elementor-lightbox-description', $image_data[ $lightbox_description_src ] );
+		}
 		return preg_replace( '/^<a/', '<a ' . $this->get_render_attribute_string( 'link' ), $link_html );
 	}
 
