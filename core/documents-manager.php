@@ -589,12 +589,6 @@ class Documents_Manager {
 
 		$doc_config = $document->get_config();
 
-		$additional_config = apply_filters( 'elementor/editor/document/config', [], $post_id );
-
-		if ( ! empty( $additional_config ) ) {
-			$doc_config = array_replace_recursive( $doc_config, $additional_config );
-		}
-
 		return $doc_config;
 	}
 

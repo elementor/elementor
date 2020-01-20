@@ -1224,7 +1224,7 @@ class Editor {
 		global $wp_filter;
 
 		$old_tag = 'elementor/editor/localize_settings';
-		$new_tag = 'elementor/editor/document/config';
+		$new_tag = 'elementor/document/config';
 
 		if ( ! has_filter( $old_tag ) ) {
 			return;
