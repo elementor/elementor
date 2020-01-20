@@ -19,6 +19,8 @@ export default class Component extends ComponentBase {
 		 * @type {Document}
 		 */
 		this.currentDocument = null;
+
+		this.saveInitialDocumentToCache();
 	}
 
 	getNamespace() {
@@ -156,5 +158,14 @@ export default class Component extends ComponentBase {
 				alert( message );
 			},
 		};
+	}
+
+	/**
+	 * Temp: Don't request initial document via ajax.
+	 * Keep the event `elementor:init` before `preview:loaded`.
+	 */
+	saveInitialDocumentToCache() {
+		const document = elementor.config.initial_document;
+		elementorCommon.ajax.addRequestCache( this.getRequestArgs( document.id ), document );
 	}
 }
