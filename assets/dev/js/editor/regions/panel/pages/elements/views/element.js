@@ -53,7 +53,7 @@ module.exports = Marionette.ItemView.extend( {
 		elementor.promotion.showDialog( {
 			headerMessage: elementor.translate( 'element_promotion_dialog_header', [ this.model.get( 'title' ) ] ),
 			message: elementor.translate( 'element_promotion_dialog_message', [ this.model.get( 'title' ) ] ),
-			top: '+20',
+			top: '-7',
 			element: this.el,
 			actionURL: elementor.config.elementPromotionURL + this.model.get( 'name' ),
 		} );

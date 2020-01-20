@@ -13,7 +13,7 @@ export default class extends elementorModules.Module {
 				hide: 'hide',
 			},
 			position: {
-				my: ( elementorCommon.config.isRTL ? 'right' : 'left' ) + '+10 top',
+				my: ( elementorCommon.config.isRTL ? 'right' : 'left' ) + '+5 top',
 			},
 		} );
 
