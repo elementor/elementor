@@ -131,9 +131,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 			if ( control.fields ) {
 				var styleFields = [];
 
-				self.attributes[ control.name ].each( function( item ) {
-					styleFields.push( self.getStyleControls( control.fields, item.attributes ) );
-				} );
+				// Avoid this when control is a Fields_Map
+				if ( typeof self.attributes[ control.name ].each !== 'undefined' ){
+					self.attributes[ control.name ].each( function( item ) {
+						styleFields.push( self.getStyleControls( control.fields, item.attributes ) );
+					} );
+				}
 
 				control.styleFields = styleFields;
 			}
