@@ -748,7 +748,7 @@ class Editor {
 
 				'element_promotion_dialog_header' => __( '%s Widget', 'elementor' ),
 				'element_promotion_dialog_message' => __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ),
-				'see_it_in_action' => __( 'See it in action', 'elementor' ),
+				'see_it_in_action' => __( 'See it in Action', 'elementor' ),
 				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
 				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
 

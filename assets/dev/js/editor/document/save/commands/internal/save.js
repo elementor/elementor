@@ -46,7 +46,7 @@ export class Save extends CommandInternalBase {
 		this.onAfterAjax( document );
 		elementor.documents.invalidateCache( document.id );
 
-		// Document is switched doring the save, do nothing.
+		// Document is switched during the save, do nothing.
 		if ( document !== elementor.documents.getCurrent() ) {
 			return;
 		}
