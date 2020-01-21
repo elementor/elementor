@@ -343,6 +343,11 @@ button.swiper-pagination-bullet {
 		height: 100%;
 	}
 
+	.elementor-swiper-button {
+		// Fix for Safari - Navigation arrows don't appear in cube mode without adding a 1px translateZ
+		transform: translate3d( 0, -50%, 1px );
+	}
+
 	&.swiper-container-rtl .swiper-slide {
 		transform-origin: 100% 0;
 	}
