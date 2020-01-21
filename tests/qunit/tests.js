@@ -21,6 +21,9 @@ function initialize() {
 	Ajax.silence();
 
 	elementor.on( 'preview:loaded', () => {
+		// Disable UI Hooks.
+		$e.hooks.ui.deactivate();
+
 		require( './core/common/assets/js/api/core/components.spec.js' );
 		require( './core/common/assets/js/api/core/hooks/base.spec.js' );
 		require( './core/common/assets/js/api/modules/command-base.spec.js' );
