@@ -44,6 +44,7 @@ export class Save extends CommandInternalBase {
 
 	onSaveSuccess( data, status, oldStatus, elements, document, callback = null ) {
 		this.onAfterAjax( document );
+
 		elementor.documents.invalidateCache( document.id );
 
 		// Document is switched during the save, do nothing.
@@ -70,6 +71,10 @@ export class Save extends CommandInternalBase {
 			if ( ! document.editor.isChangedDuringSave ) {
 				$e.internal( 'document/save/set-is-modified', { status: false } );
 			}
+		}
+
+		if ( ! document.editor.isChangedDuringSave ) {
+			document.editor.isSaved = true;
 		}
 
 		if ( data.config ) {
