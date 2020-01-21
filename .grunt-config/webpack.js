@@ -6,27 +6,7 @@ const path = require( 'path' );
 
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
-const aliasList = {
-	alias: {
-		'elementor-editor': path.resolve( __dirname, '../assets/dev/js/editor' ),
-		'elementor-behaviors': path.resolve( __dirname, '../assets/dev/js/editor/elements/views/behaviors' ),
-		'elementor-regions': path.resolve( __dirname, '../assets/dev/js/editor/regions' ),
-		'elementor-controls': path.resolve( __dirname, '../assets/dev/js/editor/controls' ),
-		'elementor-elements': path.resolve( __dirname, '../assets/dev/js/editor/elements' ),
-		'elementor-views': path.resolve( __dirname, '../assets/dev/js/editor/views' ),
-		'elementor-editor-utils': path.resolve( __dirname, '../assets/dev/js/editor/utils' ),
-		'elementor-panel': path.resolve( __dirname, '../assets/dev/js/editor/regions/panel' ),
-		'elementor-templates': path.resolve( __dirname, '../assets/dev/js/editor/components/template-library' ),
-		'elementor-dynamic-tags': path.resolve( __dirname, '../assets/dev/js/editor/components/dynamic-tags' ),
-		'elementor-frontend': path.resolve( __dirname, '../assets/dev/js/frontend' ),
-		'elementor-revisions': path.resolve( __dirname, '../assets/dev/js/editor/components/revisions' ),
-		'elementor-validator': path.resolve( __dirname, '../assets/dev/js/editor/components/validator' ),
-		'elementor-utils': path.resolve( __dirname, '../assets/dev/js/utils' ),
-		'elementor-admin': path.resolve( __dirname, '../assets/dev/js/admin' ),
-		'elementor-modules': path.resolve( __dirname, '../modules' ),
-		'elementor': path.resolve( __dirname, '../' ),
-	}
-};
+const aliasList = require('./webpack.alias.js').resolve;
 
 const moduleRules = {
 	rules: [
@@ -76,6 +56,7 @@ const entry = {
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
+	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/tests.js' ),
 };

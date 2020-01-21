@@ -30,14 +30,8 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	initialize: function() {
 		BaseContainer.prototype.initialize.apply( this, arguments );
 
-		this
-			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
-			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
+		this.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
 			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
-	},
-
-	onCollectionChanged: function() {
-		elementor.saver.setFlagEditorChange( true );
 	},
 
 	onPanelElementDragStart: function() {

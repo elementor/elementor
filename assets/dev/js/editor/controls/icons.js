@@ -36,14 +36,17 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	ui() {
-		const ui = super.ui();
+		const ui = super.ui(),
+			skin = this.model.get( 'skin' );
 
 		ui.controlMedia = '.elementor-control-media';
-		ui.svgUploader = '.elementor-control-svg-uploader';
-		ui.iconPickers = '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button';
-		ui.deleteButton = '.elementor-control-media__remove';
+		ui.svgUploader = 'media' === skin ? '.elementor-control-svg-uploader' : '.elementor-control-icons--inline__svg';
+		ui.iconPickers = 'media' === skin ? '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button' : '.elementor-control-icons--inline__icon';
+		ui.deleteButton = 'media' === skin ? '.elementor-control-media__remove' : '.elementor-control-icons--inline__none';
 		ui.previewPlaceholder = '.elementor-control-media__preview';
 		ui.previewContainer = '.elementor-control-preview-area';
+		ui.inlineDisplayedIcon = '.elementor-control-icons--inline__displayed-icon';
+		ui.radioInputs = '[type="radio"]';
 
 		return ui;
 	}
@@ -52,6 +55,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		return jQuery.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.iconPickers': 'openPicker',
 			'click @ui.svgUploader': 'openFrame',
+			'click @ui.radioInputs': 'onClickInput',
 			'click @ui.deleteButton': 'deleteIcon',
 		} );
 	}
@@ -110,7 +114,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		// Check if there is a value to migrate
-		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		const valueToMigrate = this.container.settings.get( controlToMigrate );
 		if ( valueToMigrate ) {
 			return valueToMigrate;
 		}
@@ -268,7 +272,11 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	applySavedValue() {
-		const controlValue = this.getControlValue();
+		const controlValue = this.getControlValue(),
+			skin = this.model.get( 'skin' ),
+			iconContainer = 'inline' === skin ? this.ui.inlineDisplayedIcon : this.ui.previewPlaceholder,
+			defaultIcon = this.model.get( 'default' );
+
 		let iconValue = controlValue.value,
 			iconType = controlValue.library;
 
@@ -277,22 +285,66 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			iconType = '';
 		}
 
-		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
+		if ( 'media' === skin ) {
+			this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
+		} else {
+			this.markChecked( iconType );
+		}
 
 		if ( ! iconValue ) {
+			if ( 'inline' === skin ) {
+				this.setDefaultIconLibraryLabel( defaultIcon, iconContainer );
+				return;
+			}
+
 			this.ui.previewPlaceholder.html( '' );
 			return;
 		}
 
-		if ( 'svg' === iconType ) {
+		if ( 'svg' === iconType && 'inline' !== skin ) {
 			return elementor.helpers.fetchInlineSvg( iconValue.url, ( data ) => {
 				this.ui.previewPlaceholder.html( data );
 			} );
 		}
 
-		const previewHTML = '<i class="' + iconValue + '"></i>';
-		this.ui.previewPlaceholder.html( previewHTML );
+		if ( 'media' === skin || 'svg' !== iconType ) {
+			const previewHTML = '<i class="' + iconValue + '"></i>';
+
+			iconContainer.html( previewHTML );
+		}
+
 		this.enqueueIconFonts( iconType );
+	}
+
+	setDefaultIconLibraryLabel( defaultIcon, iconContainer ) {
+		// Check if the control has a default icon
+		if ( '' !== defaultIcon.value && 'svg' !== defaultIcon.library ) {
+			// If the default icon is not an SVG, set the icon-library label's icon to the default icon
+			iconContainer.html( '<i class="' + defaultIcon.value + '"></i>' );
+		} else {
+			// If (1) the control does NOT have a default icon,
+			// OR (2) the control DOES have a default icon BUT the default icon is an SVG,
+			// set the default icon-library label's icon to a simple circle
+			iconContainer.html( '<i class="eicon-circle"></i>' );
+		}
+	}
+
+	markChecked( iconType ) {
+		this.ui.radioInputs.filter( ':checked' ).prop( 'checked', false );
+
+		if ( ! iconType ) {
+			return this.ui.radioInputs.filter( '[value="none"]' ).prop( 'checked', true );
+		}
+
+		if ( 'svg' !== iconType ) {
+			iconType = 'icon';
+		}
+
+		this.ui.radioInputs.filter( '[value="' + iconType + '"]' ).prop( 'checked', true );
+	}
+
+	onClickInput() {
+		this.markChecked( this.getControlValue().library );
 	}
 
 	deleteIcon( event ) {

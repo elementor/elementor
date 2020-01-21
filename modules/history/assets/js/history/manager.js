@@ -1,6 +1,3 @@
-var ElementHistoryBehavior = require( './element-behavior' ),
-	CollectionHistoryBehavior = require( './collection-behavior' );
-
 import ItemModel from './item-model';
 import Component from './component';
 
@@ -11,33 +8,18 @@ var	Manager = function() {
 		editorSaved = false,
 		active = true;
 
-	var translations = {
+	const translations = {
+		// Alphabetical order.
 		add: elementor.translate( 'added' ),
-		remove: elementor.translate( 'removed' ),
 		change: elementor.translate( 'edited' ),
+		disable: elementor.translate( 'disabled' ),
+		duplicate: elementor.translate( 'duplicate' ),
+		enable: elementor.translate( 'enabled' ),
 		move: elementor.translate( 'moved' ),
+		paste: elementor.translate( 'pasted' ),
 		paste_style: elementor.translate( 'style_pasted' ),
+		remove: elementor.translate( 'removed' ),
 		reset_style: elementor.translate( 'style_reset' ),
-	};
-
-	var addBehaviors = function( behaviors ) {
-		behaviors.ElementHistory = {
-			behaviorClass: ElementHistoryBehavior,
-		};
-
-		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior,
-		};
-
-		return behaviors;
-	};
-
-	var addCollectionBehavior = function( behaviors ) {
-		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior,
-		};
-
-		return behaviors;
 	};
 
 	var getActionLabel = function( itemData ) {
@@ -79,31 +61,6 @@ var	Manager = function() {
 	var init = function() {
 		$e.components.register( new Component( { manager: self } ) );
 
-		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
-
-		elementor.channels.data
-			.on( 'drag:before:update', self.startMovingItem )
-			.on( 'drag:after:update', self.endItem )
-
-			.on( 'element:before:add', self.startAddElement )
-			.on( 'element:after:add', self.endItem )
-
-			.on( 'element:before:remove', self.startRemoveElement )
-			.on( 'element:after:remove', self.endItem )
-
-			.on( 'element:before:paste:style', self.startPasteStyle )
-			.on( 'element:after:paste:style', self.endItem )
-
-			.on( 'element:before:reset:style', self.startResetStyle )
-			.on( 'element:after:reset:style', self.endItem )
-
-			.on( 'section:before:drop', self.startDropElement )
-			.on( 'section:after:drop', self.endItem )
-
-			.on( 'template:before:insert', self.startInsertTemplate )
-			.on( 'template:after:insert', self.endItem );
-
 		elementor.channels.editor.on( 'saved', onPanelSave );
 	};
 
@@ -121,14 +78,33 @@ var	Manager = function() {
 
 	this.startItem = function( itemData ) {
 		currentItemID = this.addItem( itemData );
+
+		return currentItemID;
 	};
 
-	this.endItem = function() {
+	this.endItem = function( id ) {
+		if ( id && currentItemID !== id ) {
+			return;
+		}
+		currentItemID = null;
+	};
+
+	this.deleteItem = function( id ) {
+		const item = items.findWhere( {
+			id: id,
+		} );
+
+		items.remove( item );
+
 		currentItemID = null;
 	};
 
 	this.isItemStarted = function() {
 		return null !== currentItemID;
+	};
+
+	this.getCurrentId = function() {
+		return currentItemID;
 	};
 
 	this.addItem = function( itemData ) {
@@ -164,25 +140,13 @@ var	Manager = function() {
 				subTitle: itemData.subTitle,
 				action: getActionLabel( itemData ),
 				type: itemData.type,
-				elementType: itemData.elementType,
 			} );
 
 			self.startItemTitle = '';
 			self.startItemAction = '';
 		}
 
-		var position = 0;
-
-		// Temp fix. On move a column - insert the `remove` subItem before the section changes subItem.
-		// In a multi columns section - the structure has been changed,
-		// In a one column section - it's filled with an empty column,
-		// The order is important for the `redoItem`, that needed to change the section first
-		// and only after that - to remove the column.
-		if ( 'column' === itemData.elementType && 'remove' === itemData.type && 'column' === currentItem.get( 'elementType' ) ) {
-			position = 1;
-		}
-
-		currentItem.get( 'items' ).add( itemData, { at: position } );
+		currentItem.get( 'items' ).add( itemData, { at: 0 } );
 
 		items.add( currentItem, { at: 0 } );
 
@@ -207,23 +171,34 @@ var	Manager = function() {
 
 		var panel = elementor.getPanelView(),
 			panelPage = panel.getCurrentPageView(),
+			editedElementView = panelPage.getOption( 'editedElementView' ),
 			viewToScroll;
 
-		if ( $e.routes.isPartOf( 'panel/editor' ) ) {
-			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
+		if ( $e.routes.isPartOf( 'panel/editor' ) && editedElementView ) {
+			if ( editedElementView.isDestroyed ) {
 				// If the the element isn't exist - show the history panel
 				$e.route( 'panel/history/actions' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
-				viewToScroll = panelPage.getOption( 'editedElementView' );
+				viewToScroll = editedElementView;
 			}
 		} else if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
-			const history = item.get( 'items' ).first().get( 'history' );
+			const historyItem = item.get( 'items' ).first();
 
-				if ( history && history.behavior.view.model ) {
-					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
+			if ( historyItem.get( 'restore' ) ) {
+				let container = 'sub-add' === historyItem.get( 'type' ) ?
+					historyItem.get( 'data' ).containerToRestore :
+					historyItem.get( 'container' ) || historyItem.get( 'containers' );
+
+				if ( Array.isArray( container ) ) {
+					container = container[ 0 ];
+				}
+
+				if ( container ) {
+					viewToScroll = container.lookup().view;
 				}
 			}
+		}
 
 		updatePanelPageCurrentItem();
 
@@ -246,10 +221,10 @@ var	Manager = function() {
 
 			if ( 'not_applied' === item.get( 'status' ) ) {
 				item.get( 'items' ).each( function( subItem ) {
-					var history = subItem.get( 'history' );
+					const restore = subItem.get( 'restore' );
 
-					if ( history ) { /* type duplicate first items hasn't history */
-						history.behavior.restore( subItem );
+					if ( restore ) {
+						restore( subItem );
 					}
 				} );
 
@@ -266,106 +241,16 @@ var	Manager = function() {
 				var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
 
 				_( reversedSubItems ).each( function( subItem ) {
-					var history = subItem.get( 'history' );
+					const restore = subItem.get( 'restore' );
 
-					if ( history ) { /* type duplicate first items hasn't history */
-						history.behavior.restore( subItem, true );
+					if ( restore ) {
+						restore( subItem, true );
 					}
 				} );
 
 				item.set( 'status', 'not_applied' );
 			}
 		}
-	};
-
-	this.getModelLabel = function( model ) {
-		if ( ! ( model instanceof Backbone.Model ) ) {
-			model = new Backbone.Model( model );
-		}
-
-		return elementor.getElementData( model ).title;
-	};
-
-	this.findView = function( modelID, views ) {
-		var founded = false;
-
-		if ( ! views ) {
-			views = elementor.getPreviewView().children;
-		}
-
-		_.each( views._views, ( view ) => {
-			if ( founded ) {
-				return;
-			}
-			// Widget global used getEditModel
-			var model = view.getEditModel ? view.getEditModel() : view.model;
-
-			if ( modelID === model.get( 'id' ) ) {
-				founded = view;
-			} else if ( view.children && view.children.length ) {
-				founded = this.findView( modelID, view.children );
-			}
-		} );
-
-		return founded;
-	};
-
-	this.startMovingItem = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'move',
-			title: self.getModelLabel( model ),
-			elementType: model.elType || model.get( 'elType' ),
-		} );
-	};
-
-	this.startInsertTemplate = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: elementor.translate( 'template' ),
-			subTitle: model.get( 'title' ),
-			elementType: 'template',
-		} );
-	};
-
-	this.startDropElement = function() {
-		var elementView = elementor.channels.panelElements.request( 'element:selected' );
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: self.getModelLabel( elementView.model ),
-			elementType: elementView.model.get( 'widgetType' ) || elementView.model.get( 'elType' ),
-		} );
-	};
-
-	this.startAddElement = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: self.getModelLabel( model ),
-			elementType: model.elType,
-		} );
-	};
-
-	this.startPasteStyle = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'paste_style',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
-	};
-
-	this.startResetStyle = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'reset_style',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
-	};
-
-	this.startRemoveElement = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'remove',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
 	};
 
 	init();

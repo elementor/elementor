@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -36,11 +38,11 @@ abstract class Tag extends Base_Tag {
 
 		if ( $value ) {
 			// TODO: fix spaces in `before`/`after` if WRAPPED_TAG ( conflicted with .elementor-tag { display: inline-flex; } );
-			if ( ! empty( $settings['before'] ) ) {
+			if ( ! Utils::is_empty( $settings, 'before' ) ) {
 				$value = wp_kses_post( $settings['before'] ) . $value;
 			}
 
-			if ( ! empty( $settings['after'] ) ) {
+			if ( ! Utils::is_empty( $settings, 'after' ) ) {
 				$value .= wp_kses_post( $settings['after'] );
 			}
 
@@ -48,7 +50,7 @@ abstract class Tag extends Base_Tag {
 				$value = '<span id="elementor-tag-' . esc_attr( $this->get_id() ) . '" class="elementor-tag">' . $value . '</span>';
 			endif;
 
-		} elseif ( ! empty( $settings['fallback'] ) ) {
+		} elseif ( ! Utils::is_empty( $settings, 'fallback' ) ) {
 			$value = $settings['fallback'];
 		}
 

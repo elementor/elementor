@@ -2,7 +2,6 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlCodeEditorItemView;
 
 ControlCodeEditorItemView = ControlBaseDataView.extend( {
-
 	ui: function() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
@@ -18,7 +17,9 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			return;
 		}
 
-		var langTools = ace.require( 'ace/ext/language_tools' );
+		const langTools = ace.require( 'ace/ext/language_tools' ),
+			uiTheme = elementor.settings.editorPreferences.model.get( 'ui_theme' ),
+			userPrefersDark = matchMedia( '(prefers-color-scheme: dark)' ).matches;
 
 		self.editor = ace.edit( this.ui.editor[ 0 ] );
 
@@ -33,6 +34,10 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			enableBasicAutocompletion: true,
 			enableLiveAutocompletion: true,
 		} );
+
+		if ( 'dark' === uiTheme || ( 'auto' === uiTheme && userPrefersDark ) ) {
+			self.editor.setTheme( 'ace/theme/merbivore_soft' );
+		}
 
 		self.editor.getSession().setUseWrapMode( true );
 

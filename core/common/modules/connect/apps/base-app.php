@@ -2,6 +2,7 @@
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -17,19 +18,24 @@ abstract class Base_App {
 
 	protected $data = [];
 
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 * @abstract
-	 */
-	abstract public function render_admin_widget();
+	protected $auth_mode = '';
 
 	/**
 	 * @since 2.3.0
 	 * @access protected
 	 * @abstract
+	 * TODO: make it public.
 	 */
 	abstract protected function get_slug();
+
+	/**
+	 * @since 2.8.0
+	 * @access public
+	 * TODO: make it abstract.
+	 */
+	public function get_title() {
+		return $this->get_slug();
+	}
 
 	/**
 	 * @since 2.3.0
@@ -45,6 +51,26 @@ abstract class Base_App {
 	 */
 	public static function get_class_name() {
 		return get_called_class();
+	}
+
+	/**
+	 * @access public
+	 * @abstract
+	 */
+	public function render_admin_widget() {
+		echo '<h2>' . $this->get_title() . '</h2>';
+
+		if ( $this->is_connected() ) {
+			$remote_user = $this->get( 'user' );
+			$title = sprintf( __( 'Connected as %s', 'elementor' ), '<strong>' . $remote_user->email . '</strong>' );
+			$label = __( 'Disconnect', 'elementor' );
+			$url = $this->get_admin_url( 'disconnect' );
+			$attr = '';
+
+			echo sprintf( '%s <a %s href="%s">%s</a>', $title, $attr, esc_attr( $url ), esc_html( $label ) );
+		} else {
+			echo 'Not Connected';
+		}
 	}
 
 	/**
@@ -65,25 +91,33 @@ abstract class Base_App {
 		if ( ! $notices ) {
 			return;
 		}
-		echo '<div id="message" class="updated notice is-dismissible"><p>';
 
-		foreach ( $notices as $notice ) {
-			echo wp_kses_post( sprintf( '<div class="%s"><p>%s</p></div>', $notice['type'], wpautop( $notice['content'] ) ) );
-		}
-
-		echo '</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">' .
-			__( 'Dismiss', 'elementor' ) .
-			'</span></button></div>';
+		$this->print_notices( $notices );
 
 		$this->delete( 'notices' );
 	}
 
+
+	public function get_app_token_from_cli_token( $cli_token ) {
+		$response = $this->request( 'get_app_token_from_cli_token', [
+			'cli_token' => $cli_token,
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			wp_die( $response, $response->get_error_message() );
+		}
+
+		// Use state as usual.
+		$_REQUEST['state'] = $this->get( 'state' );
+		$_REQUEST['code'] = $response->code;
+	}
 	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
 	public function action_authorize() {
 		if ( $this->is_connected() ) {
+			$this->add_notice( __( 'Already connected.', 'elementor' ), 'info' );
 			$this->redirect_to_admin_page();
 			return;
 		}
@@ -91,8 +125,7 @@ abstract class Base_App {
 		$this->set_client_id();
 		$this->set_request_state();
 
-		wp_redirect( $this->get_remote_authorize_url() );
-		die;
+		$this->redirect_to_remote_authorize_url();
 	}
 
 	/**
@@ -104,7 +137,7 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		if ( $_REQUEST['state'] !== $this->get( 'state' ) ) {
+		if ( empty( $_REQUEST['state'] ) || $_REQUEST['state'] !== $this->get( 'state' ) ) {
 			$this->add_notice( 'Get Token: Invalid Request.', 'error' );
 			$this->redirect_to_admin_page();
 		}
@@ -120,6 +153,10 @@ abstract class Base_App {
 			$notice = 'Cannot Get Token:' . $response->get_error_message();
 			$this->add_notice( $notice, 'error' );
 			$this->redirect_to_admin_page();
+		}
+
+		if ( ! empty( $response->data_share_opted_in ) && current_user_can( 'manage_options' ) ) {
+			Tracker::set_opt_in( true );
 		}
 
 		$this->delete( 'state' );
@@ -144,6 +181,16 @@ abstract class Base_App {
 		}
 
 		$this->redirect_to_admin_page();
+	}
+
+	/**
+	 * @since 2.8.0
+	 * @access public
+	 */
+	public function action_reconnect() {
+		$this->disconnect();
+
+		$this->action_authorize();
 	}
 
 	/**
@@ -258,7 +305,7 @@ abstract class Base_App {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function request( $action, $request_body = [] ) {
+	protected function request( $action, $request_body = [], $as_array = false ) {
 		$request_body = [
 			'app' => $this->get_slug(),
 			'access_token' => $this->get( 'access_token' ),
@@ -299,13 +346,16 @@ abstract class Base_App {
 			$body = true;
 		}
 
-		$body = json_decode( $body );
+		$body = json_decode( $body, $as_array );
 
 		if ( false === $body ) {
 			return new \WP_Error( 422, 'Wrong Server Response' );
 		}
 
 		if ( 200 !== $response_code ) {
+			// In case $as_array = true.
+			$body = (object) $body;
+
 			$message = $body->message ? $body->message : wp_remote_retrieve_response_message( $response );
 			$code = $body->code ? $body->code : $response_code;
 
@@ -341,10 +391,7 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function get_remote_authorize_url() {
-		$redirect_uri = $this->get_admin_url( 'get_token' );
-		if ( ! empty( $_REQUEST['mode'] ) && 'popup' === $_REQUEST['mode'] ) {
-			$redirect_uri = add_query_arg( 'mode', 'popup', $redirect_uri );
-		}
+		$redirect_uri = $this->get_auth_redirect_uri();
 
 		$url = add_query_arg( [
 			'action' => 'authorize',
@@ -353,6 +400,8 @@ abstract class Base_App {
 			'auth_secret' => $this->get( 'auth_secret' ),
 			'state' => $this->get( 'state' ),
 			'redirect_uri' => rawurlencode( $redirect_uri ),
+			'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
+			'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
 		], $this->get_remote_site_url() );
 
 		return $url;
@@ -367,11 +416,18 @@ abstract class Base_App {
 			$url = Admin::$url;
 		}
 
-		if ( ! empty( $_REQUEST['mode'] ) && 'popup' === $_REQUEST['mode'] ) {
-			$this->print_popup_close_script( $url );
-		} else {
-			wp_safe_redirect( $url );
-			die;
+		switch ( $this->auth_mode ) {
+			case 'popup':
+				$this->print_popup_close_script( $url );
+				break;
+
+			case 'cli':
+				$this->admin_notice();
+				die;
+
+			default:
+				wp_safe_redirect( $url );
+				die;
 		}
 	}
 
@@ -410,7 +466,7 @@ abstract class Base_App {
 		?>
 		<script>
 			if ( opener && opener !== window ) {
-				opener.jQuery( 'body' ).trigger( 'elementorConnected' );
+				opener.jQuery( 'body' ).trigger( 'elementor/connect/success/<?php echo esc_attr( $_REQUEST['callback_id'] ); ?>' );
 				window.close();
 				opener.focus();
 			} else {
@@ -449,12 +505,73 @@ abstract class Base_App {
 		return $site_key;
 	}
 
+	protected function redirect_to_remote_authorize_url() {
+		switch ( $this->auth_mode ) {
+			case 'cli':
+				$this->get_app_token_from_cli_token( $_REQUEST['token'] );
+				return;
+			default:
+				wp_redirect( $this->get_remote_authorize_url() );
+				die;
+		}
+	}
+
+	protected function get_auth_redirect_uri() {
+		$redirect_uri = $this->get_admin_url( 'get_token' );
+
+		switch ( $this->auth_mode ) {
+			case 'popup':
+				$redirect_uri = add_query_arg( [
+					'mode' => 'popup',
+					'callback_id' => esc_attr( $_REQUEST['callback_id'] ),
+				], $redirect_uri );
+				break;
+		}
+
+		return $redirect_uri;
+	}
+
+
+	protected function print_notices( $notices ) {
+		switch ( $this->auth_mode ) {
+			case 'cli':
+				foreach ( $notices as $notice ) {
+					printf( '[%s] %s', $notice['type'], $notice['content'] );
+				}
+				break;
+			default:
+				echo '<div id="message" class="updated notice is-dismissible"><p>';
+
+				foreach ( $notices as $notice ) {
+					echo wp_kses_post( sprintf( '<div class="%s"><p>%s</p></div>', $notice['type'], wpautop( $notice['content'] ) ) );
+				}
+
+				echo '</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">' . __( 'Dismiss', 'elementor' ) . '</span></button></div>';
+		}
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+
+		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
+			$allowed_auth_modes = [
+				'popup',
+			];
+
+			if ( defined( 'WP_CLI' ) && WP_CLI ) {
+				$allowed_auth_modes[] = 'cli';
+			}
+
+			$mode = $_REQUEST['mode']; // phpcs:ignore -- nonce validation is not require here.
+
+			if ( in_array( $mode, $allowed_auth_modes, true ) ) {
+				$this->auth_mode = $mode;
+			}
+		}
 
 		/**
 		 * Allow extended apps to customize the __construct without call parent::__construct.

@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor button widget.
  *
@@ -277,7 +279,7 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button',
 			]
 		);
@@ -317,8 +319,8 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_4,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_4,
 				],
 				'selectors' => [
 					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
@@ -443,16 +445,8 @@ class Widget_Button extends Widget_Base {
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'button', 'href', $settings['link']['url'] );
+			$this->add_link_attributes( 'button', $settings['link'] );
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-link' );
-
-			if ( $settings['link']['is_external'] ) {
-				$this->add_render_attribute( 'button', 'target', '_blank' );
-			}
-
-			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'button', 'rel', 'nofollow' );
-			}
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );

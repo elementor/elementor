@@ -183,9 +183,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
-	<div class="elementor-panel-scheme-color-input-wrapper">
-		<input type="text" class="elementor-panel-scheme-color-value" value="{{ value }}" data-alpha="true" />
-	</div>
+	<div class="elementor-panel-scheme-color-picker-placeholder"></div>
 	<div class="elementor-panel-scheme-color-title">{{{ title }}}</div>
 </script>
 
@@ -207,9 +205,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 		foreach ( $scheme_fields as $option_name => $option ) :
 			?>
-			<div class="elementor-panel-scheme-typography-item">
+			<div class="elementor-panel-scheme-typography-item elementor-control elementor-control-type-select">
 				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo $option['label']; ?></div>
-				<div class="elementor-panel-scheme-typography-item-value">
+				<div class="elementor-panel-scheme-typography-item-value elementor-control-input-wrapper">
 					<?php if ( 'select' === $option['type'] ) : ?>
 						<select name="<?php echo esc_attr( $option_name ); ?>" class="elementor-panel-scheme-typography-item-field">
 							<?php foreach ( $option['options'] as $field_key => $field_value ) : ?>
@@ -238,15 +236,20 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 <script type="text/template" id="tmpl-elementor-control-responsive-switchers">
 	<div class="elementor-control-responsive-switchers">
+		<div class="elementor-control-responsive-switchers__holder">
 		<#
 			var devices = responsive.devices || [ 'desktop', 'tablet', 'mobile' ];
 
-			_.each( devices, function( device ) { #>
-				<a class="elementor-responsive-switcher elementor-responsive-switcher-{{ device }}" data-device="{{ device }}">
+			_.each( devices, function( device ) {
+				var deviceLabel = device.charAt(0).toUpperCase() + device.slice(1),
+					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
+			#>
+				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
 					<i class="eicon-device-{{ device }}"></i>
 				</a>
 			<# } );
 		#>
+		</div>
 	</div>
 </script>
 

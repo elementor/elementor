@@ -95,34 +95,24 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		elementor.channels.data
 			.reply( 'dragging:model', model )
+			.reply( 'dragging:view', this.view.children.findByModel( model ) )
 			.reply( 'dragging:parent:view', this.view )
 			.trigger( 'drag:start', model )
 			.trigger( model.get( 'elType' ) + ':drag:start' );
 	},
 
+	// Move section.
 	updateSort: function( ui ) {
-		var model = elementor.channels.data.request( 'dragging:model' ),
-			$childElement = ui.item,
-			collection = this.view.collection,
-			newIndex = $childElement.parent().children().index( $childElement ),
-			child = this.view.children.findByModelCid( model.cid );
+		const at = ui.item.parent().children().index( ui.item );
 
-		this.view.addChildElement( model.clone(), {
-			at: newIndex,
-			trigger: {
-				beforeAdd: 'drag:before:update',
-				afterAdd: 'drag:after:update',
-			},
-			onBeforeAdd: function() {
-				child._isRendering = true;
-
-				collection.remove( model );
-			},
+		$e.run( 'document/elements/move', {
+			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
+			target: this.view.getContainer(),
+			options: { at },
 		} );
-
-		elementor.saver.setFlagEditorChange( true );
 	},
 
+	// Move Column/Widget.
 	receiveSort: function( event, ui ) {
 		event.stopPropagation();
 
@@ -143,23 +133,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var newIndex = ui.item.index(),
-			modelData = model.toJSON( { copyHtmlCache: true } );
-
-		this.view.addChildElement( modelData, {
-			at: newIndex,
-			trigger: {
-				beforeAdd: 'drag:before:update',
-				afterAdd: 'drag:after:update',
-			},
-			onAfterAdd: function() {
-				var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
-
-				senderSection.isManualRemoving = true;
-
-				model.destroy();
-
-				senderSection.isManualRemoving = false;
+		$e.run( 'document/elements/move', {
+			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
+			target: this.view.getContainer(),
+			options: {
+				at: ui.item.index(),
 			},
 		} );
 	},

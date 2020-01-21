@@ -1,4 +1,4 @@
-export default class extends elementorModules.Module {
+export default class BaseComponent extends elementorModules.Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
 			this.manager = args.manager;
@@ -22,7 +22,7 @@ export default class extends elementorModules.Module {
 	}
 
 	getNamespace() {
-		throw Error( 'getNamespace must be override.' );
+		elementorModules.ForceMethodImplementation();
 	}
 
 	getRootContainer() {
@@ -30,7 +30,7 @@ export default class extends elementorModules.Module {
 		return parts[ 0 ];
 	}
 
-	defaultCommands() {
+	defaultTabs() {
 		return {};
 	}
 
@@ -38,7 +38,7 @@ export default class extends elementorModules.Module {
 		return {};
 	}
 
-	defaultTabs() {
+	defaultCommands() {
 		return {};
 	}
 
@@ -108,12 +108,16 @@ export default class extends elementorModules.Module {
 		return $e.components.isActive( this.getNamespace() );
 	}
 
-	onRoute() {
+	onRoute( route ) {
+		elementorCommon.elements.$body.addClass( this.getBodyClass( route ) );
 		this.activate();
+		this.trigger( 'route/open', route );
 	}
 
-	onCloseRoute() {
+	onCloseRoute( route ) {
+		elementorCommon.elements.$body.removeClass( this.getBodyClass( route ) );
 		this.inactivate();
+		this.trigger( 'route/close', route );
 	}
 
 	setDefaultRoute( route ) {
@@ -176,5 +180,9 @@ export default class extends elementorModules.Module {
 			.removeClass( 'elementor-active' )
 			.filter( '[data-tab="' + tab + '"]' )
 			.addClass( 'elementor-active' );
+	}
+
+	getBodyClass( route ) {
+		return 'e-route-' + route.replace( /\//g, '-' );
 	}
 }

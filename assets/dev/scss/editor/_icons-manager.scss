@@ -88,7 +88,7 @@
 	&__tab {
 
 		&__wrapper {
-			overflow: scroll;
+			overflow: auto;
 			margin: 25px -15px 0;
 			padding: 0 15px 15px;
 		}
@@ -142,15 +142,12 @@
 
 		&__text {
 			width: 300px;
-			color: $editor-darker;
 			font-size: 16px;
 			padding-top: 25px;
 		}
 
 		&__link {
-			color: $editor-accent;
-			padding-top: 20px;
-			font-size: 15px;
+			margin-top: 20px;
 		}
 	}
 }
@@ -247,10 +244,8 @@
 			color: $editor-lighter;
 			font-size: 11px;
 			padding: 13px 20px 0;
-			white-space: nowrap;
 			max-width: 100%;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			@include ellipsis;
 		}
 	}
 }

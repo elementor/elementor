@@ -632,4 +632,24 @@ class Utils {
 			_deprecated_file( $item, $version, $replacement );
 		}
 	}
+
+	/**
+	 * Checks a control value for being empty, including a string of '0' not covered by PHP's empty().
+	 *
+	 * @param mixed $source
+	 * @param bool|string $key
+	 *
+	 * @return bool
+	 */
+	public static function is_empty( $source, $key = false ) {
+		if ( is_array( $source ) ) {
+			if ( ! isset( $source[ $key ] ) ) {
+				return true;
+			}
+
+			$source = $source[ $key ];
+		}
+
+		return '0' !== $source && empty( $source );
+	}
 }

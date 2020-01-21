@@ -10,7 +10,11 @@ EditorView = ControlsStack.extend( {
 
 	childViewOptions: function() {
 		return {
+			element: this.getOption( 'editedElementView' ),
+			container: this.getOption( 'editedElementView' ).getContainer(),
+			// TODO: elementSettingsModel is deprecated since 2.8.0.
 			elementSettingsModel: this.model.get( 'settings' ),
+
 			elementEditSettings: this.model.get( 'editSettings' ),
 		};
 	},

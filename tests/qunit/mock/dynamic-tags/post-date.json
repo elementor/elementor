@@ -1,0 +1,166 @@
+{
+	"name": "post-date",
+	"title": "Post Date",
+	"panel_template": "",
+	"categories": [
+		"text"
+	],
+	"group": "post",
+	"controls": {
+		"settings": {
+			"label": "Settings",
+			"description": "",
+			"show_label": true,
+			"label_block": false,
+			"separator": "none",
+			"features": [
+				"ui"
+			],
+			"type": "section",
+			"tab": "content",
+			"name": "settings"
+		},
+		"type": {
+			"label": "Type",
+			"description": "",
+			"show_label": true,
+			"label_block": false,
+			"separator": "default",
+			"options": {
+				"post_date_gmt": "Post Published",
+				"post_modified_gmt": "Post Modified"
+			},
+			"features": [],
+			"type": "select",
+			"tab": "content",
+			"section": "settings",
+			"default": "post_date_gmt",
+			"name": "type"
+		},
+		"format": {
+			"label": "Format",
+			"description": "",
+			"show_label": true,
+			"label_block": false,
+			"separator": "default",
+			"options": {
+				"default": "Default",
+				"F j, Y": "October 17, 2019",
+				"Y-m-d": "2019-10-17",
+				"m/d/Y": "10/17/2019",
+				"d/m/Y": "17/10/2019",
+				"human": "Human Readable",
+				"custom": "Custom"
+			},
+			"features": [],
+			"type": "select",
+			"tab": "content",
+			"section": "settings",
+			"default": "default",
+			"name": "format"
+		},
+		"custom_format": {
+			"label": "Custom Format",
+			"description": "<a href=\"https://codex.wordpress.org/Formatting_Date_and_Time\" target=\"_blank\">Documentation on date and time formatting</a>",
+			"show_label": true,
+			"label_block": false,
+			"separator": "default",
+			"input_type": "text",
+			"placeholder": "",
+			"title": "",
+			"dynamic": {
+				"categories": [
+					"text"
+				]
+			},
+			"features": [],
+			"type": "text",
+			"tab": "content",
+			"section": "settings",
+			"default": "",
+			"condition": {
+				"format": "custom"
+			},
+			"name": "custom_format"
+		},
+		"advanced": {
+			"label": "Advanced",
+			"description": "",
+			"show_label": true,
+			"label_block": false,
+			"separator": "none",
+			"features": [
+				"ui"
+			],
+			"type": "section",
+			"tab": "content",
+			"name": "advanced"
+		},
+		"before": {
+			"label": "Before",
+			"description": "",
+			"show_label": true,
+			"label_block": false,
+			"separator": "default",
+			"input_type": "text",
+			"placeholder": "",
+			"title": "",
+			"dynamic": {
+				"categories": [
+					"text"
+				]
+			},
+			"features": [],
+			"type": "text",
+			"tab": "content",
+			"section": "advanced",
+			"name": "before",
+			"default": ""
+		},
+		"after": {
+			"label": "After",
+			"description": "",
+			"show_label": true,
+			"label_block": false,
+			"separator": "default",
+			"input_type": "text",
+			"placeholder": "",
+			"title": "",
+			"dynamic": {
+				"categories": [
+					"text"
+				]
+			},
+			"features": [],
+			"type": "text",
+			"tab": "content",
+			"section": "advanced",
+			"name": "after",
+			"default": ""
+		},
+		"fallback": {
+			"label": "Fallback",
+			"description": "",
+			"show_label": true,
+			"label_block": false,
+			"separator": "default",
+			"input_type": "text",
+			"placeholder": "",
+			"title": "",
+			"dynamic": {
+				"categories": [
+					"text"
+				]
+			},
+			"features": [],
+			"type": "text",
+			"tab": "content",
+			"section": "advanced",
+			"name": "fallback",
+			"default": ""
+		}
+	},
+	"content_type": "ui",
+	"settings_required": false,
+	"wrapped_tag": false
+}

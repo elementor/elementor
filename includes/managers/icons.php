@@ -185,6 +185,7 @@ class Icons_Manager {
 		if ( ! isset( $value['id'] ) ) {
 			return '';
 		}
+
 		return Svg_Handler::get_inline_svg( $value['id'] );
 	}
 
@@ -227,7 +228,9 @@ class Icons_Manager {
 		} else {
 			$output = self::render_icon_html( $icon, $attributes, $tag );
 		}
+
 		echo $output;
+
 		return true;
 	}
 

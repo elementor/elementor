@@ -4,7 +4,6 @@ var ControlBaseView = require( 'elementor-controls/base' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
-
 	ui: function() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
@@ -16,7 +15,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 			textarea: 'textarea[data-setting]',
 			responsiveSwitchers: '.elementor-responsive-switcher',
 			contentEditable: '[contenteditable="true"]',
-			tooltipTarget: '.tooltip-target',
 		} );
 
 		return ui;
@@ -32,12 +30,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	events: function() {
 		return {
-			'input @ui.input': 'onBaseInputChange',
+			'input @ui.input': 'onBaseInputTextChange',
 			'change @ui.checkbox': 'onBaseInputChange',
 			'change @ui.radio': 'onBaseInputChange',
-			'input @ui.textarea': 'onBaseInputChange',
+			'input @ui.textarea': 'onBaseInputTextChange',
 			'change @ui.select': 'onBaseInputChange',
-			'input @ui.contentEditable': 'onBaseInputChange',
+			'input @ui.contentEditable': 'onBaseInputTextChange',
 			'click @ui.responsiveSwitchers': 'onResponsiveSwitchersClick',
 		};
 	},
@@ -68,11 +66,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.registerValidators();
 
-		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
+		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+
+		this.listenTo( settings, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
 	getControlValue: function() {
-		return this.elementSettingsModel.get( this.model.get( 'name' ) );
+		return this.container.settings.get( this.model.get( 'name' ) );
 	},
 
 	setValue: function( value ) {
@@ -80,7 +81,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	setSettingsModel: function( value ) {
-		this.elementSettingsModel.set( this.model.get( 'name' ), value );
+		const key = this.model.get( 'name' );
+		$e.run( 'document/elements/settings', {
+			container: this.options.container,
+			settings: {
+				[ key ]: value,
+			},
+		} );
 
 		this.triggerMethod( 'settings:change' );
 	},
@@ -180,13 +187,17 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.addTooltip();
 	},
 
+	onBaseInputTextChange: function( event ) {
+		this.onBaseInputChange( event );
+	},
+
 	onBaseInputChange: function( event ) {
 		clearTimeout( this.correctionTimeout );
 
 		var input = event.currentTarget,
 			value = this.getInputValue( input ),
 			validators = this.validators.slice( 0 ),
-			settingsValidators = this.elementSettingsModel.validators[ this.model.get( 'name' ) ];
+			settingsValidators = this.container.settings.validators[ this.model.get( 'name' ) ];
 
 		if ( settingsValidators ) {
 			validators = validators.concat( settingsValidators );
@@ -212,7 +223,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	onResponsiveSwitchersClick: function( event ) {
-		var device = jQuery( event.currentTarget ).data( 'device' );
+		const $switcher = jQuery( event.currentTarget ),
+			device = $switcher.data( 'device' ),
+			$switchersWrapper = this.ui.responsiveSwitchersWrapper,
+			selectedOption = $switcher.index();
+
+		$switchersWrapper.toggleClass( 'elementor-responsive-switchers-open' );
+		$switchersWrapper[ 0 ].style.setProperty( '--selected-option', selectedOption );
 
 		this.triggerMethod( 'responsive:switcher:click', device );
 
@@ -223,6 +240,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
+
+		this.ui.responsiveSwitchersWrapper = this.$el.find( '.elementor-control-responsive-switchers' );
 	},
 
 	onAfterExternalChange: function() {
@@ -232,12 +251,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	addTooltip: function() {
-		if ( ! this.ui.tooltipTarget ) {
+		this.ui.tooltipTargets = this.$el.find( '.tooltip-target' );
+
+		if ( ! this.ui.tooltipTargets.length ) {
 			return;
 		}
 
 		// Create tooltip on controls
-		this.ui.tooltipTarget.tipsy( {
+		this.ui.tooltipTargets.tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
 				var gravity = jQuery( this ).data( 'tooltip-pos' );
@@ -254,8 +275,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	hideTooltip: function() {
-		if ( this.ui.tooltipTarget ) {
-			this.ui.tooltipTarget.tipsy( 'hide' );
+		if ( this.ui.tooltipTargets.length ) {
+			this.ui.tooltipTargets.tipsy( 'hide' );
 		}
 	},
 

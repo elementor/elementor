@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Core\Schemes\Manager as Schemes_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

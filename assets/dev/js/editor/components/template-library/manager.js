@@ -124,41 +124,13 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( templateModel, options ) {
-		options = options || {};
+	this.importTemplate = function( model, args = {} ) {
+		elementorCommon.helpers.softDeprecated( 'importTemplate', '2.8.0',
+			"$e.run( 'library/insert-template' )" );
 
-		self.layout.showLoadingView();
+		args.model = model;
 
-		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
-			data: {
-				page_settings: options.withPageSettings,
-			},
-			success: function( data ) {
-				// Clone `self.modalConfig` because it deleted during the closing.
-				const importOptions = jQuery.extend( {}, self.modalConfig.importOptions );
-
-				// Hide for next open.
-				self.layout.hideLoadingView();
-
-				self.layout.hideModal();
-
-				elementor.channels.data.trigger( 'template:before:insert', templateModel );
-
-				elementor.getPreviewView().addChildModel( data.content, importOptions );
-
-				elementor.channels.data.trigger( 'template:after:insert', templateModel );
-
-				if ( options.withPageSettings ) {
-					elementor.settings.page.model.setExternalChange( data.page_settings );
-				}
-			},
-			error: function( data ) {
-				self.showErrorDialog( data );
-			},
-			complete: function() {
-				self.layout.hideLoadingView();
-			},
-		} );
+		$e.run( 'library/insert-template', args );
 	};
 
 	this.saveTemplate = function( type, data ) {
