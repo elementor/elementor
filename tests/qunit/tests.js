@@ -3,10 +3,10 @@ import * as Ajax from './ajax/';
 
 function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
-		$elementorFake = $body.find( '#elementor-test' );
+		$elementorTest = $body.find( '#elementor-test' );
 
 	// Load the template to `#elementor-test`.
-	$elementorFake.append( window.__html__[ 'tests/qunit/index.html' ] );
+	$elementorTest.append( window.__html__[ 'tests/qunit/index.html' ] );
 
 	window.elementor = new EditorTest();
 
