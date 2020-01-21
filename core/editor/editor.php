@@ -107,10 +107,11 @@ class Editor {
 		$document = Plugin::$instance->documents->get( $this->post_id );
 
 		Plugin::$instance->documents->switch_to_document( $document );
-		// End BC.
 
 		// Change mode to Builder
 		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
+
+		// End BC.
 
 		Loading_Inspection_Manager::instance()->register_inspections();
 
