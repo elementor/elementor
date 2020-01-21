@@ -21,6 +21,10 @@ export class SetIsModified extends CommandInternalBase {
 		elementor.channels.editor
 			.reply( 'status', status )
 			.trigger( 'status:change', status );
+
+		if ( document.editor.isChanged ) {
+			this.component.startAutoSave( document );
+		}
 	}
 }
 

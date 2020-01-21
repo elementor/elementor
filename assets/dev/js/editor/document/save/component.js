@@ -47,17 +47,16 @@ export default class Component extends BackwardsCompatibility {
 
 	/**
 	 * TODO: test
-	 * @param {boolean} hasChanged
 	 * @param {Document} document
 	 */
-	startAutoSave( hasChanged, document ) {
+	startAutoSave( document ) {
 		this.stopAutoSave( document );
 
-		if ( hasChanged ) {
-			this.autoSaveTimers[ document.id ] = setTimeout( () => {
-				$e.run( 'document/save/auto', { document } );
-			}, this.autoSaveInterval );
-		}
+		this.autoSaveTimers[ document.id ] = setTimeout( () => {
+			$e.run( 'document/save/auto', { document } );
+
+			delete this.autoSaveTimers[ document.id ];
+		}, this.autoSaveInterval );
 	}
 
 	/**
