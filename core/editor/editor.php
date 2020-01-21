@@ -109,6 +109,9 @@ class Editor {
 		Plugin::$instance->documents->switch_to_document( $document );
 		// End BC.
 
+		// Change mode to Builder
+		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
+
 		Loading_Inspection_Manager::instance()->register_inspections();
 
 		// Send MIME Type header like WP admin-header.
