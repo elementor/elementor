@@ -43,7 +43,7 @@ export default class Base extends elementorModules.Module {
 			catch: {},
 		};
 
-		this.primitiveCallbacks = [];
+		this.plainCallbacks = [];
 	}
 
 	activate() {
@@ -74,13 +74,13 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * Return all possible callbacks.
 	 *
-	 * @param {boolean} primitive
+	 * @param {boolean} plain
 	 *
 	 * @returns {{}}
 	 */
-	getAll( primitive = false ) {
-		if ( primitive ) {
-			return this.primitiveCallbacks;
+	getAll( plain = false ) {
+		if ( plain ) {
+			return this.plainCallbacks;
 		}
 
 		const result = {};
@@ -229,6 +229,24 @@ export default class Base extends elementorModules.Module {
 		this.checkInstance( instance );
 		this.checkId( id );
 
+		return this.registerCallback( id, event, command, instance, containerType );
+	}
+
+	/**
+	 * Function registerCallback().
+	 *
+	 * Register callback.
+	 *
+	 * @param {string} id
+	 * @param {string} event
+	 * @param {string} command
+	 * @param {HookBase} instance
+	 * @param {string} containerType
+	 *
+	 * TODO: Consider replace with typedef.
+	 * @returns {{callback: *, id: *, isActive: boolean}}
+	 */
+	registerCallback( id, event, command, instance, containerType ) {
 		if ( ! this.callbacks[ event ][ command ] ) {
 			this.callbacks[ event ][ command ] = [];
 		}
@@ -236,7 +254,6 @@ export default class Base extends elementorModules.Module {
 		// Save used id(s).
 		this.usedIds.push( id );
 
-		// TODO: Next lines can be extracted to new method.
 		if ( ! this.callbacks[ event ][ command ] ) {
 			this.callbacks[ event ][ command ] = {};
 		}
@@ -261,7 +278,7 @@ export default class Base extends elementorModules.Module {
 			this.callbacks[ event ][ command ].all.push( callback );
 		}
 
-		this.primitiveCallbacks.push( callback );
+		this.plainCallbacks.push( callback );
 
 		return callback;
 	}
