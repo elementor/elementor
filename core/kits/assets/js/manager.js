@@ -16,7 +16,7 @@ export default class extends elementorModules.editor.utils.Module {
 
 		menu.addItem( {
 			name: 'theme-style',
-			icon: 'eicon-paint-brush',
+			icon: 'eicon-theme-style',
 			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open' ),

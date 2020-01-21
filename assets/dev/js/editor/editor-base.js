@@ -1003,6 +1003,28 @@ export default class EditorBase extends Marionette.Application {
 		this.trigger( 'document:loaded', document );
 	}
 
+	unloadDocument( document ) {
+		if ( document.id !== this.config.document.id ) {
+			return;
+		}
+
+		this.saver.stopAutoSave( document );
+
+		this.channels.dataEditMode.trigger( 'switch', 'preview' );
+
+		this.$previewContents.find( `.elementor-${ document.id }` )
+			.removeClass( 'elementor-edit-area-active' )
+			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
+
+		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
+
+		document.editor.status = 'closed';
+
+		this.config.document = {};
+
+		this.documents.unsetCurrent();
+	}
+
 	/**
 	 * @param {{}} config
 	 */

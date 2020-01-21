@@ -35,6 +35,12 @@ input, select, textarea, .elementor-input-style {
 	}
 }
 
+input {
+	// This fixes an issue in Firefox, in cases where a container with `display: flex` has a defined width,
+	// an input element inside this container cannot be given its own defined width.
+	min-width: 0;
+}
+
 input, textarea, .elementor-input-style {
 	padding: 5px;
 }

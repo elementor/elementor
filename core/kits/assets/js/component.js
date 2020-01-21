@@ -1,8 +1,16 @@
+import EnqueueFonts from './hooks/ui/enqueue-fonts';
+
 export default class extends elementorModules.common.Component {
 	pages = {};
 
 	getNamespace() {
 		return 'panel/global';
+	}
+
+	registerAPI() {
+		super.registerAPI();
+
+		new EnqueueFonts();
 	}
 
 	defaultRoutes() {
@@ -40,8 +48,8 @@ export default class extends elementorModules.common.Component {
 			exit: () => {
 				$e.run( 'editor/documents/close', {
 					id: elementor.config.kit_id,
-					onClose: () => {
-						location = elementor.config.document.urls.exit_to_dashboard;
+					onClose: ( document ) => {
+						location = document.config.urls.exit_to_dashboard;
 					},
 				} );
 			},

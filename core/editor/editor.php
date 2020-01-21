@@ -107,6 +107,10 @@ class Editor {
 		$document = Plugin::$instance->documents->get( $this->post_id );
 
 		Plugin::$instance->documents->switch_to_document( $document );
+
+		// Change mode to Builder
+		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
+
 		// End BC.
 
 		Loading_Inspection_Manager::instance()->register_inspections();
@@ -518,12 +522,7 @@ class Editor {
 		unset( $settings['page'] );
 
 		$config = [
-			'initial_document' => [
-				'id' => $this->post_id,
-				'urls' => [
-					'preview' => Plugin::$instance->documents->get( $this->post_id )->get_preview_url(),
-				],
-			],
+			'initial_document' => Plugin::$instance->documents->get( $this->post_id )->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
@@ -748,7 +747,7 @@ class Editor {
 
 				'element_promotion_dialog_header' => __( '%s Widget', 'elementor' ),
 				'element_promotion_dialog_message' => __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ),
-				'see_it_in_action' => __( 'See it in action', 'elementor' ),
+				'see_it_in_action' => __( 'See it in Action', 'elementor' ),
 				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
 				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
 
@@ -1224,7 +1223,7 @@ class Editor {
 		global $wp_filter;
 
 		$old_tag = 'elementor/editor/localize_settings';
-		$new_tag = 'elementor/editor/document/config';
+		$new_tag = 'elementor/document/config';
 
 		if ( ! has_filter( $old_tag ) ) {
 			return;
