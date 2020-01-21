@@ -49,7 +49,7 @@ export default class extends elementorModules.common.Component {
 				$e.run( 'editor/documents/close', {
 					id: elementor.config.kit_id,
 					onClose: ( document ) => {
-						location = document.urls.exit_to_dashboard;
+						location = document.config.urls.exit_to_dashboard;
 					},
 				} );
 			},
