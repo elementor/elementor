@@ -43,7 +43,7 @@ export default class Base extends elementorModules.Module {
 			catch: {},
 		};
 
-		this.plainCallbacks = [];
+		this.callbacksFlatList = [];
 	}
 
 	activate() {
@@ -74,13 +74,13 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * Return all possible callbacks.
 	 *
-	 * @param {boolean} plain
+	 * @param {boolean} flat
 	 *
 	 * @returns {{}}
 	 */
-	getAll( plain = false ) {
-		if ( plain ) {
-			return this.plainCallbacks;
+	getAll( flat = false ) {
+		if ( flat ) {
+			return this.callbacksFlatList;
 		}
 
 		const result = {};
@@ -278,7 +278,7 @@ export default class Base extends elementorModules.Module {
 			this.callbacks[ event ][ command ].all.push( callback );
 		}
 
-		this.plainCallbacks.push( callback );
+		this.callbacksFlatList.push( callback );
 
 		return callback;
 	}

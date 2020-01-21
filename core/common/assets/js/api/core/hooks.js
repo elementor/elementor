@@ -17,11 +17,11 @@ export default class Hooks {
 		} );
 	}
 
-	getAll( plain = false ) {
+	getAll( flat = false ) {
 		const result = {};
 
 		this.getTypes().forEach( ( hooksType ) => {
-			result[ hooksType.getType() ] = hooksType.getAll( plain );
+			result[ hooksType.getType() ] = hooksType.getAll( flat );
 		} );
 
 		return result;
