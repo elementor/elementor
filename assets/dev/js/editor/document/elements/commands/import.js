@@ -22,7 +22,7 @@ export class Import extends History {
 			previewContainer = elementor.getPreviewContainer(),
 			result = [];
 
-		let { at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at } = args;
+		let at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at;
 
 		// Each `data.content`.
 		Object.entries( data.content ).forEach( ( [ index, model ] ) => {

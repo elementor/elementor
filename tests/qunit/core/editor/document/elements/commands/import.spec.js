@@ -57,37 +57,37 @@ export const Import = () => {
 
 				// Level depth.
 				const count = {
-					L1: 0,
-					L2: 0,
-					L3: 0,
+					level1: 0,
+					level2: 0,
+					level3: 0,
 				};
 
 				// Deep Validation ( base on `data.content` & `elementor.elements` ).
 				PageLandingPageHotel.content.forEach( ( section ) => {
-					const _section = elementor.elements.at( count.L1 );
+					const _section = elementor.elements.at( count.level1 );
 
-					assert.equal( _section.id, section.id, `Section L0#${ count.L1 } were created` );
+					assert.equal( _section.id, section.id, `Section level0 #${ count.level1 } were created` );
 
 					section.elements.forEach( ( column ) => {
-						const _column = _section.get( 'elements' ).at( count.L2 );
+						const _column = _section.get( 'elements' ).at( count.level2 );
 
 						assert.equal( _column.id, column.id,
-							`Column L1#${ count.L2 } were created` );
+							`Column level1 #${ count.level2 } were created` );
 
 						column.elements.forEach( ( widget ) => {
-							const _widget = _column.get( 'elements' ).at( count.L3 );
+							const _widget = _column.get( 'elements' ).at( count.level3 );
 
-							assert.equal( _widget.id, widget.id, `Widget L3#${ count.L3 } were created` );
+							assert.equal( _widget.id, widget.id, `Widget level3 #${ count.level3 } were created` );
 
-							count.L3++;
+							count.level3++;
 						} );
 
-						count.L3 = 0;
-						count.L2++;
+						count.level3 = 0;
+						count.level2++;
 					} );
 
-					count.L2 = 0;
-					count.L1++;
+					count.level2 = 0;
+					count.level1++;
 				} );
 			} );
 		} );
