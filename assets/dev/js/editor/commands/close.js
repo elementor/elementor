@@ -29,20 +29,10 @@ export class Close extends CommandBase {
 				break;
 		}
 
-		elementor.saver.stopAutoSave( document );
-
-		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
-
-		elementor.$previewContents.find( `.elementor-${ id }` )
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
-
-		document.editor.status = 'closed';
+		elementor.unloadDocument( document );
 
 		if ( onClose ) {
-			onClose();
+			onClose( document );
 		}
 	}
 
