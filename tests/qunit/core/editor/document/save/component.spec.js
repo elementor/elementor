@@ -23,8 +23,6 @@ jQuery( () => {
 			const saveComponent = $e.components.get( 'document/save' ),
 				defaultAutoSaveInterval = saveComponent.autoSaveInterval;
 
-			$e.hooks.deactivate();
-
 			// Make it quick.
 			saveComponent.autoSaveInterval = 0;
 
@@ -49,8 +47,6 @@ jQuery( () => {
 
 						// Restore defaults.
 						saveComponent.autoSaveInterval = defaultAutoSaveInterval;
-
-						$e.hooks.activate();
 
 						// Resume.
 						done();

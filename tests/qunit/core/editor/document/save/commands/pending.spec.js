@@ -1,13 +1,5 @@
 export const Pending = () => {
-	QUnit.module( 'Pending', ( hooks ) => {
-		hooks.before( () => {
-			$e.hooks.deactivate();
-		} );
-
-		hooks.after( () => {
-			$e.hooks.activate();
-		} );
-
+	QUnit.module( 'Pending', () => {
 		QUnit.test( 'Simple', async ( assert ) => {
 			const response = await $e.run( 'document/save/pending' );
 
