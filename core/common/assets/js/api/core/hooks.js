@@ -2,17 +2,8 @@ import HooksData from './hooks/data.js';
 import HooksUI from './hooks/ui.js';
 
 export default class Hooks {
-	/**
-	 * Function constructor().
-	 *
-	 * Create `$e.hooks` API.
-	 */
-	constructor() {
-		this.hooks = {
-			data: new HooksData(),
-			ui: new HooksUI(),
-		};
-	}
+	data = new HooksData();
+	ui = new HooksUI();
 
 	/**
 	 * Function activate().
@@ -20,7 +11,7 @@ export default class Hooks {
 	 * Activate all hooks.
 	 */
 	activate() {
-		Object.values( this.hooks ).forEach( ( hooksType ) => {
+		this.getTypes().forEach( ( hooksType ) => {
 			hooksType.activate();
 		} );
 	}
@@ -31,20 +22,32 @@ export default class Hooks {
 	 * Deactivate all hooks.
 	 */
 	deactivate() {
-		Object.values( this.hooks ).forEach( ( hooksType ) => {
+		this.getTypes().forEach( ( hooksType ) => {
 			hooksType.deactivate();
 		} );
 	}
 
-	/**
-	 * Function getAll().
-	 *
-	 * Receive all loaded hooks.
-	 *
-	 * @returns {[]}
-	 */
-	getAll() {
-		return Object.values( this.hooks ).sort();
+	getAll( flat = false ) {
+		const result = {};
+
+		this.getTypes().forEach( ( hooksType ) => {
+			result[ hooksType.getType() ] = hooksType.getAll( flat );
+		} );
+
+		return result;
+	}
+
+	getTypes() {
+		return [
+			this.data,
+			this.ui,
+		];
+	}
+
+	getType( type ) {
+		return this.getTypes().find(
+			( hooks ) => type === hooks.getType()
+		);
 	}
 
 	/**
@@ -59,11 +62,7 @@ export default class Hooks {
 	 * @returns {{}} Created callback
 	 */
 	register( type, event, instance ) {
-		const hooksType = Object.values( this.hooks ).find(
-			( hooks ) => type === hooks.getType()
-		);
-
-		return hooksType.register( event, instance );
+		return this.getType( type ).register( event, instance );
 	}
 
 	/**
@@ -80,11 +79,7 @@ export default class Hooks {
 	 * @returns {boolean}
 	 */
 	run( type, event, command, args, result = undefined ) {
-		const hooksType = Object.values( this.hooks ).find(
-			( hooks ) => type === hooks.getType()
-		);
-
-		return hooksType.run( event, command, args, result );
+		return this.getType( type ).run( event, command, args, result );
 	}
 
 	/**

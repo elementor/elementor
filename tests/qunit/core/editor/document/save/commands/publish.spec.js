@@ -1,13 +1,5 @@
 export const Publish = () => {
-	QUnit.module( 'Publish', ( hooks ) => {
-		hooks.before( () => {
-			$e.hooks.deactivate();
-		} );
-
-		hooks.after( () => {
-			$e.hooks.activate();
-		} );
-
+	QUnit.module( 'Publish', () => {
 		QUnit.test( 'Simple', async ( assert ) => {
 			const response = await $e.run( 'document/save/publish' );
 
