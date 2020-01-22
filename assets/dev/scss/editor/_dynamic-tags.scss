@@ -141,6 +141,7 @@
 		cursor: pointer;
 		border: 1px solid $editor-lightest;
 		border-radius: 3px;
+		background: #fff;
 
 		&-wrapper {
 			display: flex;
@@ -153,5 +154,12 @@
 		.elementor-control-dynamic-switcher {
 			display: none;
 		}
+	}
+}
+
+.elementor-control-type-textarea {
+
+	.elementor-control-dynamic-switcher {
+		border-radius: 0px 3px;
 	}
 }
