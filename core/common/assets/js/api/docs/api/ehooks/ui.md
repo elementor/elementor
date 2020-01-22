@@ -30,12 +30,12 @@ Mainly used for UI/View manipulation.
            }
         
            getId() {
-               // Unique id for the event.
-               return 'custom-component-example-event';
+               // Unique id for the hook.
+               return 'custom-component-example-ui-hook';
            }
         
            getConditions( args ) {
-               // Conditions for the event to be applied.
+               // Conditions for the hook to be applied.
                if ( args.toggleClass ) {
                    return true;
                }
@@ -44,10 +44,10 @@ Mainly used for UI/View manipulation.
            }
         
            /*
-            * The actual event logic.
+            * The actual hook logic.
             */
            apply( args, result ) {
-               console.log( 'My event custom logic', 'args: ', args, 'result: ', result );
+               console.log( 'My hook custom logic', 'args: ', args, 'result: ', result );
         
                // Add 'custom-component' class for all div elements.
                jQuery.find( 'div' ).forEach( ( $div ) => {
@@ -58,22 +58,22 @@ Mainly used for UI/View manipulation.
            }
         }
         
-        // Add new event to `$e.hooks.ui`;
+        // Add new hook to `$e.hooks.ui`;
         const myHook = new CustomUIHook();
         
-        // Output new event.
+        // Output new hook.
         console.log( myHook );
         
-        // Output all events after.
+        // Output all ui hooks after.
         console.log( $e.hooks.ui.getAll().after );
         
-        // Test the event.
+        // Test the hook.
         result = $e.run( 'custom-component/example', {
            toggleClass: true,
         } );
         
         // Output command run result.
-        console.log( 'e-events-eg-1-result:', result );
+        console.log( 'e-hooks-ui-eg-1-result:', result );
         ```
 
    * Register UI hook that runs **_before_** command runs
