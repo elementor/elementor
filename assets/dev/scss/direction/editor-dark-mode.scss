@@ -226,7 +226,7 @@ select {
 		}
 
 		& > .eicon-lock {
-			color: $theme-dark-gray-lightest;
+			color: $theme-dark-gray-light;
 		}
 	}
 
@@ -788,11 +788,11 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 // Widget Pro Promotion Tooltip
 .elementor-element--promotion__dialog {
-	background-color: $theme-dark-gray-darker;
+	background-color: $theme-dark-gray-dark;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
 
 	&:after {
-		border-right-color: $theme-dark-gray-darker;
+		border-right-color: $theme-dark-gray-dark;
 	}
 
 	.dialog {
@@ -802,7 +802,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 			border-bottom-color: $theme-dark-gray-light;
 
 			.eicon-pro-icon {
-				color: $theme-dark-gray-lighter;
+				color: $theme-dark-gray-lightest;
 			}
 
 			.eicon-close {
