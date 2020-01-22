@@ -698,11 +698,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			if ( $link ) {
 				$link_key = 'link_' . $index;
 
-				$this->add_render_attribute( $link_key, [
-					'data-elementor-open-lightbox' => $settings['open_lightbox'],
-					'data-elementor-lightbox-slideshow' => $this->get_id(),
-					'data-elementor-lightbox-index' => $index,
-				] );
+				$this->add_lightbox_data_attributes( $link_key, $attachment['id'], $settings['open_lightbox'], $this->get_id() );
 
 				if ( Plugin::$instance->editor->is_edit_mode() ) {
 					$this->add_render_attribute( $link_key, [
@@ -711,24 +707,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				}
 
 				$this->add_link_attributes( $link_key, $link );
-
-				$img_post = get_post( $attachment['id'] );
-				$lightbox_title_src = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_lightbox_title_src' );
-				$lightbox_description_src = Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_lightbox_description_src' );
-				$image_data = [
-					'alt' => get_post_meta( $img_post->ID, '_wp_attachment_image_alt', true ),
-					'caption' => $img_post->post_excerpt,
-					'description' => $img_post->post_content,
-					'title' => $img_post->post_title,
-				];
-
-				if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
-					$this->add_render_attribute( $link_key, 'data-elementor-lightbox-title', $image_data[ $lightbox_title_src ] );
-				}
-
-				if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
-					$this->add_render_attribute( $link_key, 'data-elementor-lightbox-description', $image_data[ $lightbox_description_src ] );
-				}
 
 				$link_tag = '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 			}
