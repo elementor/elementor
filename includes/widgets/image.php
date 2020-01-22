@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Schemes;
-use Elementor\Core\Settings\Manager;
 
 /**
  * Elementor image widget.
@@ -634,11 +633,8 @@ class Widget_Image extends Widget_Base {
 				] );
 			}
 
-			// Add lightbox data attributes
 			if ( 'custom' !== $settings['link_to'] ) {
-				if ( $settings['image']['id'] ) {
-					$this->add_lightbox_data_attributes( 'link', $settings['image']['id'], $settings['open_lightbox'] );
-				}
+				$this->add_lightbox_data_attributes( 'link', $settings['image']['id'], $settings['open_lightbox'] );
 			}
 		} ?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
