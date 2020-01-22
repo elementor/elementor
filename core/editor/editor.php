@@ -107,6 +107,10 @@ class Editor {
 		$document = Plugin::$instance->documents->get( $this->post_id );
 
 		Plugin::$instance->documents->switch_to_document( $document );
+
+		// Change mode to Builder
+		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
+
 		// End BC.
 
 		Loading_Inspection_Manager::instance()->register_inspections();
@@ -518,12 +522,7 @@ class Editor {
 		unset( $settings['page'] );
 
 		$config = [
-			'initial_document' => [
-				'id' => $this->post_id,
-				'urls' => [
-					'preview' => Plugin::$instance->documents->get( $this->post_id )->get_preview_url(),
-				],
-			],
+			'initial_document' => Plugin::$instance->documents->get( $this->post_id )->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
@@ -1224,7 +1223,7 @@ class Editor {
 		global $wp_filter;
 
 		$old_tag = 'elementor/editor/localize_settings';
-		$new_tag = 'elementor/editor/document/config';
+		$new_tag = 'elementor/document/config';
 
 		if ( ! has_filter( $old_tag ) ) {
 			return;

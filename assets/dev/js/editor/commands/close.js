@@ -1,6 +1,6 @@
-import CommandsBase from 'elementor-api/modules/command-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Close extends CommandsBase {
+export class Close extends CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
@@ -29,20 +29,10 @@ export class Close extends CommandsBase {
 				break;
 		}
 
-		elementor.saver.stopAutoSave( document );
-
-		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
-
-		elementor.$previewContents.find( `.elementor-${ id }` )
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
-
-		document.editor.status = 'closed';
+		elementor.unloadDocument( document );
 
 		if ( onClose ) {
-			onClose();
+			onClose( document );
 		}
 	}
 

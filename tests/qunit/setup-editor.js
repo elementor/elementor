@@ -1,4 +1,10 @@
-/* global jQuery */
+/* global jQuery, wp */
+
+wp = {
+	heartbeat: {
+		connectNow: () => {},
+	},
+};
 
 const originalGet = Marionette.TemplateCache.get;
 

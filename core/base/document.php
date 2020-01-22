@@ -431,7 +431,7 @@ abstract class Document extends Controls_Stack {
 
 		$settings = SettingsManager::get_settings_managers_config();
 
-		return [
+		$config = [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
 			'version' => $this->get_main_meta( '_elementor_version' ),
@@ -445,6 +445,8 @@ abstract class Document extends Controls_Stack {
 			'post_type_title' => $this->get_post_type_title(),
 			'user' => [
 				'can_publish' => current_user_can( $post_type_object->cap->publish_posts ),
+
+				// Deprecated config since 2.9.0.
 				'locked' => $locked_user,
 			],
 			'urls' => [
@@ -454,6 +456,14 @@ abstract class Document extends Controls_Stack {
 				'permalink' => $this->get_permalink(),
 			],
 		];
+
+		$additional_config = apply_filters( 'elementor/document/config', [], $this->get_main_id() );
+
+		if ( ! empty( $additional_config ) ) {
+			$config = array_replace_recursive( $config, $additional_config );
+		}
+
+		return $config;
 	}
 
 	/**

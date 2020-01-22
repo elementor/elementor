@@ -947,7 +947,7 @@ export default class EditorBase extends Marionette.Application {
 			this.heartbeat.destroy();
 		}
 
-		this.heartbeat = new Heartbeat();
+		this.heartbeat = new Heartbeat( document );
 
 		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
 
@@ -1001,6 +1001,28 @@ export default class EditorBase extends Marionette.Application {
 		} );
 
 		this.trigger( 'document:loaded', document );
+	}
+
+	unloadDocument( document ) {
+		if ( document.id !== this.config.document.id ) {
+			return;
+		}
+
+		this.saver.stopAutoSave( document );
+
+		this.channels.dataEditMode.trigger( 'switch', 'preview' );
+
+		this.$previewContents.find( `.elementor-${ document.id }` )
+			.removeClass( 'elementor-edit-area-active' )
+			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
+
+		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
+
+		document.editor.status = 'closed';
+
+		this.config.document = {};
+
+		this.documents.unsetCurrent();
 	}
 
 	/**
@@ -1060,7 +1082,7 @@ export default class EditorBase extends Marionette.Application {
 				value: () => elementor.config.document.user.can_publish,
 			},
 			locked_user: {
-				replacement: 'user.locked',
+				replacement: '',
 				value: () => elementor.config.document.user.locked,
 			},
 			revisions_enabled: {
@@ -1077,7 +1099,8 @@ export default class EditorBase extends Marionette.Application {
 			// Use `defineProperty` because `get property()` fails during the `Marionette...extend`.
 			Object.defineProperty( this.config, key, {
 				get() {
-					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
+					const replacement = data.replacement ? 'elementor.config.document.' + data.replacement : '';
+					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', replacement );
 					// return from current document.
 					return data.value();
 				},

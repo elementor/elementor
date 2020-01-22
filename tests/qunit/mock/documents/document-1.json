@@ -8,6 +8,9 @@
   "last_edited": "",
   "elements": [],
   "settings": {
+	"settings": {
+		"post_status": "draft"
+	},
 	"name": "page",
 	"panelPage": {
 	  "title": "Post Settings"
@@ -39,10 +42,10 @@
   },
   "container": "body",
   "urls": {
-	"exit_to_dashboard": "http: //localhost/elementor/wp-admin/post.php?post=1819&action=edit",
-	"preview": "http://localhost/elementor/?p=1819&elementor-preview=1819&ver=1574068998",
-	"wp_preview": "http://localhost/elementor/?p=1819&preview_id=1819&preview_nonce=d50fdce90b&preview=true",
-	"permalink": "http://localhost/elementor/?p=1819"
+	"exit_to_dashboard": "http: //localhost/elementor/wp-admin/post.php?post=1&action=edit",
+	"preview": "",
+	"wp_preview": "http://localhost/elementor/?p=1&preview_id=1&preview_nonce=d50fde90b&preview=true",
+	"permalink": "http://localhost/elementor/?p=1"
   },
   "debounceDelay": 0,
   "user": {

@@ -7,6 +7,7 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
+use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Core\Schemes\Typography;
@@ -112,7 +113,48 @@ class Kit extends PageBase {
 		);
 	}
 
-	private function add_link_style_controls() {
+	private function add_body_section() {
+		$this->start_controls_section(
+			'section_body',
+			[
+				'label' => __( 'Body', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'body_background',
+				'types' => [ 'classic', 'gradient' ],
+				'fields_options' => [
+					'background' => [
+						'frontend_available' => true,
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'body_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'body_typography',
+				'selector' => '{{WRAPPER}}',
+			]
+		);
+
 		$this->add_control(
 			'link_heading',
 			[
@@ -147,7 +189,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_normal_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} a',
 			]
 		);
@@ -177,7 +218,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_hover_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} a:hover',
 			]
 		);
@@ -185,27 +225,22 @@ class Kit extends PageBase {
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
-	}
 
-	private function add_body_section() {
-		$this->start_controls_section(
-			'section_body',
+		$this->add_control(
+			'paragraph_spacing',
 			[
-				'label' => __( 'Body', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'body_background',
-				'types' => [ 'classic', 'gradient' ],
-				'fields_options' => [
-					'background' => [
-						'frontend_available' => true,
+				'label' => __( 'Paragraph Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
 					],
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -213,7 +248,6 @@ class Kit extends PageBase {
 	}
 
 	private function add_buttons_section() {
-
 		$this->start_controls_section(
 			'section_buttons',
 			[
@@ -346,6 +380,8 @@ class Kit extends PageBase {
 
 		$this->end_controls_tab();
 
+		$this->end_controls_tabs();
+
 		$this->add_control(
 			'button_border_radius',
 			[
@@ -378,7 +414,7 @@ class Kit extends PageBase {
 		$this->start_controls_section(
 			'section_typography',
 			[
-				'label' => __( 'Typography', 'elementor' ),
+				'label' => __( 'Headings', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -391,28 +427,6 @@ class Kit extends PageBase {
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
-
-		$this->add_element_controls( __( 'Body', 'elementor' ), 'body', '{{WRAPPER}}' );
-
-		$this->add_control(
-			'paragraph_spacing',
-			[
-				'label' => __( 'Paragraph Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
-			]
-		);
-
-		// Links.
-		$this->add_link_style_controls();
 
 		// Headings.
 		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
@@ -434,14 +448,69 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_element_controls( __( 'Label', 'elementor' ), 'form_label', '{{WRAPPER}} label' );
+
 		$this->add_control(
-			'section_form_fields_notice',
+			'form_field_heading',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Coming Soon', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Field', 'elementor' ),
+				'separator' => 'before',
 			]
 		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'form_field_typography',
+				'selector' => '{{WRAPPER}} input, {{WRAPPER}} textarea',
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_form_field_style' );
+
+		$this->start_controls_tab(
+			'tab_form_field_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_form_field_state_tab_controls( 'form_field', '{{WRAPPER}} input, {{WRAPPER}} textarea' );
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_form_field_focus',
+			[
+				'label' => __( 'Focus', 'elementor' ),
+			]
+		);
+
+		$this->add_form_field_state_tab_controls( 'form_field_focus', '{{WRAPPER}} input:focus, {{WRAPPER}} textarea:focus' );
+
+		$this->add_control(
+			'form_field_focus_transition_duration',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} input, {{WRAPPER}} textarea' => 'transition: {{SIZE}}ms',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3000,
+					],
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}
@@ -454,16 +523,227 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+		$this->start_controls_tabs( 'tabs_image_style' );
 
-		$this->add_control(
-			'section_images_notice',
+		$this->start_controls_tab(
+			'tab_image_normal',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Coming Soon', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'image_border',
+				'selector' => '{{WRAPPER}} img',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'image_opacity',
+			[
+				'label' => __( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_box_shadow',
+				'exclude' => [
+					'box_shadow_position',
+				],
+				'selector' => '{{WRAPPER}} img',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'image_css_filters',
+				'selector' => '{{WRAPPER}} img',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_image_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'image_hover_border',
+				'selector' => '{{WRAPPER}} img:hover',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_hover_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} img:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'image_hover_opacity',
+			[
+				'label' => __( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} img:hover' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'image_hover_css_filters',
+				'selector' => '{{WRAPPER}} img:hover',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_hover_box_shadow',
+				'exclude' => [
+					'box_shadow_position',
+				],
+				'selector' => '{{WRAPPER}} img:hover',
+			]
+		);
+
+		$this->add_control(
+			'image_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} img' => 'transition-duration: {{SIZE}}s',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->end_controls_section();
+	}
+
+	private function add_form_field_state_tab_controls( $prefix, $selector ) {
+		$this->add_control(
+			$prefix . '_text_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					$selector => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			$prefix . '_background_color',
+			[
+				'label' => __( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					$selector => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => $prefix . '_border',
+				'selector' => $selector,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			$prefix . '_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					$selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			$prefix . '_padding',
+			[
+				'label' => __( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%' ],
+				'selectors' => [
+					$selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => $prefix . '_box_shadow',
+				'selector' => $selector,
+			]
+		);
 	}
 }

@@ -216,7 +216,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			url: itemUrl,
 		} );
 
-		const url = encodeURIComponent( location.href.replace( /#.*/, '' ) + hash );
+		const url = location.href.replace( /#.*/, '' ) + hash;
 		return ShareLink.getNetworkLink( networkName, { url: url } );
 	},
 
