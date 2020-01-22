@@ -76,37 +76,37 @@ Mainly used for UI/View manipulation.
         console.log( 'e-events-eg-1-result:', result );
         ```
 
-   * Register event that runs **_before_** command runs
-    ```javascript
-    // Example of event that toggle the section HTML class.
-    class CreateSectionIsFull extends $e.modules.hookUI.Before {
-        getCommand() {
-            return 'document/elements/create';
+   * Register UI hook that runs **_before_** command runs
+        ```javascript
+        // Example of event that toggle the section HTML class.
+        class CreateSectionIsFull extends $e.modules.hookUI.Before {
+            getCommand() {
+                return 'document/elements/create';
+            }
+        
+            getId() {
+                return 'create-section-is-full';
+            }
+        
+            getConditions( args ) {
+                const { containers = [ args.container ] } = args;
+        
+                return containers.some( ( /* Container */ container ) =>
+                    'section' === container.model.get( 'elType' )
+                );
+            }
+        
+            apply( args ) {
+                const { containers = [ args.container ] } = args;
+        
+                containers.forEach( ( /* Container */ container ) => {
+                    if ( 'section' === container.model.get( 'elType' ) ) {
+                        container.view.toggleSectionIsFull();
+                    }
+                } );
+            }
         }
-    
-        getId() {
-            return 'create-section-is-full';
-        }
-    
-        getConditions( args ) {
-            const { containers = [ args.container ] } = args;
-    
-            return containers.some( ( /* Container */ container ) =>
-                'section' === container.model.get( 'elType' )
-            );
-        }
-    
-        apply( args ) {
-            const { containers = [ args.container ] } = args;
-    
-            containers.forEach( ( /* Container */ container ) => {
-                if ( 'section' === container.model.get( 'elType' ) ) {
-                    container.view.toggleSectionIsFull();
-                }
-            } );
-        }
-    }
-    ```
+        ```
 > **Note:** further information about [`{CallableBase}`](../module/module---internal-callable-base.md)**class**.
   
 ### [Back](../readme.md) 
