@@ -218,7 +218,7 @@ export default class Base extends elementorModules.Module {
 	 * @param {string} event
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}} Current callback
+	 * @returns {{}} Created callback
 	 */
 	register( event, instance ) {
 		const command = instance.getCommand(),
