@@ -422,57 +422,57 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used to add Light-Box-related data attributes to links that open media files.
 	 *
-	 * @since 2.9.0
-	 * @access public
-	 *
 	 * @param array|string $element         The link HTML element.
 	 * @param int $id                       The ID of the image
 	 * @param string $lightbox_setting_key  The setting key that dictates weather to open the image in a lightbox
-	 * @param string $slideshow_id          Unique ID for a group of lightbox images
+	 * @param string $group_id              Unique ID for a group of lightbox images
 	 * @param bool $overwrite               Optional. Whether to overwrite existing
 	 *                                      attribute. Default is false, not to overwrite.
 	 *
 	 * @return Widget_Base Current instance of the widget.
+	 * @since 2.9.0
+	 * @access public
+	 *
 	 */
-	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $slideshow_id = null, $overwrite = false ) {
+	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false ) {
 		if ( 'no' === $lightbox_setting_key ) {
 			return $this;
 		}
 
 		$general_settings_model = Manager::get_settings_managers( 'general' )->get_model();
-		$global_image_lightbox = 'yes' === $general_settings_model->get_settings( 'elementor_global_image_lightbox' );
+		$is_global_image_lightbox_enabled = 'yes' === $general_settings_model->get_settings( 'elementor_global_image_lightbox' );
 
-		if ( ( 'default' === $lightbox_setting_key || ! $lightbox_setting_key ) && ! $global_image_lightbox ) {
+		if ( 'yes' !== $lightbox_setting_key && ! $is_global_image_lightbox_enabled ) {
 			return $this;
 		}
 
-		$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'yes', $overwrite );
+		$attributes['data-elementor-open-lightbox'] = 'yes';
 
-		if ( $slideshow_id ) {
-			$this->add_render_attribute( $element, 'data-elementor-lightbox-slideshow', $slideshow_id, $overwrite );
+		if ( $group_id ) {
+			$attributes['data-elementor-lightbox'] = $group_id;
 		}
 
-		if ( ! $id ) {
-			return $this;
+		if ( $id ) {
+			$attachment = get_post( $id );
+			$lightbox_title_src = $general_settings_model->get_settings( 'elementor_lightbox_title_src' );
+			$lightbox_description_src = $general_settings_model->get_settings( 'elementor_lightbox_description_src' );
+			$image_data = [
+				'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+				'caption' => $attachment->post_excerpt,
+				'description' => $attachment->post_content,
+				'title' => $attachment->post_title,
+			];
+
+			if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
+				$attributes['data-elementor-lightbox-title'] = $image_data[ $lightbox_title_src ];
+			}
+
+			if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
+				$attributes['data-elementor-lightbox-description'] = $image_data[ $lightbox_description_src ];
+			}
 		}
 
-		$attachment = get_post( $id );
-		$lightbox_title_src = $general_settings_model->get_settings( 'elementor_lightbox_title_src' );
-		$lightbox_description_src = $general_settings_model->get_settings( 'elementor_lightbox_description_src' );
-		$image_data = [
-			'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
-			'caption' => $attachment->post_excerpt,
-			'description' => $attachment->post_content,
-			'title' => $attachment->post_title,
-		];
-
-		if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
-			$this->add_render_attribute( $element, 'data-elementor-lightbox-title', $image_data[ $lightbox_title_src ], $overwrite );
-		}
-
-		if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
-			$this->add_render_attribute( $element, 'data-elementor-lightbox-description', $image_data[ $lightbox_description_src ], $overwrite );
-		}
+		$this->add_render_attribute( $element, $attributes, $overwrite );
 
 		return $this;
 	}
