@@ -65,7 +65,7 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	createActionHash( action, settings ) {
-		return encodeURIComponent( `#elementor-action:action=${ action } settings=${ btoa( JSON.stringify( settings ) ) }` );
+		return `#elementor-action:action=${ action } settings=${ btoa( JSON.stringify( settings ) ) }`;
 	}
 
 	onInit() {
