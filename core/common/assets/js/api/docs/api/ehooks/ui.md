@@ -1,18 +1,19 @@
 ## API -  `$e.hooks.ui`
-*  **Description**: `$e.hooks.ui` api is manager of _UI_ hooks, allow you to create custom **logic** that runs *after/before/catch* the command without effect the data *elementor* data model and history,
+*  **Description**: `$e.hooks.ui` api is manager of _UI_ hooks, allow you to create custom **logic** 
+that runs *after/before/catch* the command without effect the data *elementor* data model and history,
 the hooks attached to `$e.commands` and each  _event_ being fired when command is running.
 Mainly used for UI/View manipulation.
 *  **Location**: *core/common/assets/js/api/core/hooks/ui.js*
 *  **Parent**: [`{HooksBase}`](#HooksBase)
 *  **Methods**: Please look at parent: `{HooksBase}` for all the methods.
-* ***Important***: All hooks should be created by extending [`{( $e.modules.hookUI )}`](#e-modules-hooks-ui) located at:
+* ***Important***: All hooks should be created by extending [`{( $e.modules.hookUI )}`](#e-modules-hooks-ui) located at: `core/common/assets/js/api/modules/hooks/ui/`.
 	
-	| Class                           | Description  &nbsp; &nbsp; &nbsp;  &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Location                                              
-	|---------------------------------|------------------------------------------------------------|-----------------------------------------------------------
-	| `$e.modules.hookUI.Base`        | Naked base for creating custom UI hooks.                   | `core/common/assets/js/api/modules/hooks/ui/base.js`
-	| `$e.modules.hookUI.After`       | Used to create a hook, runs after command being executed.  | `core/common/assets/js/api/modules/hooks/ui/after.js`
-	| `$e.modules.hookUI.Before`      | Used to create a hook, runs before command being executed. | `core/common/assets/js/api/modules/hooks/ui/before.js`
-	| `$e.modules.hookUI.Catch`       | Used to create a hook, runs when command failed.           | `core/common/assets/js/api/modules/hooks/ui/catch.js`
+	| Class                           | Description                                                                                            
+	|---------------------------------|--------------------------------------------------------------------------------
+	| `$e.modules.hookUI.Base`        | Naked base for creating custom UI hooks.                   
+	| `$e.modules.hookUI.After`       | Used to create a hook, runs after command being executed.
+	| `$e.modules.hookUI.Before`      | Used to create a hook, runs before command being executed.
+	| `$e.modules.hookUI.Catch`       | Used to create a hook, runs when command failed.
  
  * **Examples**:
    * Built in hooks:  *`assets/dev/js/editor/document/hooks/data`*
