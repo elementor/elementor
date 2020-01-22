@@ -76,7 +76,7 @@
 
 		&__template-type.elementor-form-field__select {
 			// Override new wp-core-ui class <select> width starting WP v5.3/5.4
-			max-width: 100%;
+			max-width: initial;
 		}
 
 		.elementor-form-field {
