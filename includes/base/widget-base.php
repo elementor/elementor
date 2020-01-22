@@ -449,7 +449,7 @@ abstract class Widget_Base extends Element_Base {
 		$attributes['data-elementor-open-lightbox'] = 'yes';
 
 		if ( $group_id ) {
-			$attributes['data-elementor-lightbox'] = $group_id;
+			$attributes['data-elementor-lightbox-slideshow'] = $group_id;
 		}
 
 		if ( $id ) {
