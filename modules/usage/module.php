@@ -557,27 +557,27 @@ class Module extends BaseModule {
 	 */
 	private function get_settings_usage() {
 		$result = [];
-		$settings_tabs = \Elementor\Plugin::$instance->settings->get_tabs();
+		$settings_tabs = Plugin::$instance->settings->get_tabs();
 
-		foreach ( $settings_tabs as $tab ) {
-			$label = strtolower( $tab['label'] );
-
-			foreach ( $tab['sections'] as $section ) {
+		foreach ( $settings_tabs as $tab_name => $tab_data ) {
+			foreach ( $tab_data['sections'] as $section ) {
 				if ( ! isset( $section['fields'] ) ) {
 					continue;
 				}
-				foreach ( $section['fields'] as $field_name => $field_values ) {
-					if ( ! strstr( $field_name, 'elementor_' ) ) {
-						$value = get_option( 'elementor_' . $field_name );
-					} else {
-						$value = get_option( $field_name );
+				foreach ( $section['fields'] as $field_name => $field_data ) {
+					if ( isset( $field_data['field_args'] ) && isset( $field_data['field_args']['type'] ) ) {
+						if ( 'hidden' === $field_data['field_args']['type'] ) {
+							continue;
+						}
 					}
 
-					if ( ! isset( $result[ $label ] ) ) {
-						$result[ $label ] = [];
+					$value = get_option( 'elementor_' . $field_name );
+
+					if ( ! isset( $result[ $tab_name ] ) ) {
+						$result[ $tab_name ] = [];
 					}
 
-					$result[ $label ][ $field_name ] = $value;
+					$result[ $tab_name ][ $field_name ] = $value;
 				}
 			}
 		}
