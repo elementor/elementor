@@ -1,31 +1,28 @@
-## API -  `$e.events`
-*  **Description**: `$e.events` component is a manager of `$e` _events_, allow you to create custom **logic** that runs *after/before* the command without effect the data *elementor* data model,  history, etc...
-the events attached to  `$e.commands`  and each  _event_ being fired after/before  running a command, that runs by  `$e.run()`, Mainly used for UI/View manipulation without affecting the data model.
-*  **Location**: *core/common/assets/js/api/apis/events.js*
-*  **Parent**: [`{Callbacks}`](#Callbacks)
-*  **Methods**:
-
-    | Access                       | Params                                                   | Returns                | Description
-    |------------------------------|----------------------------------------------------------|------------------------|----------------------------------------------------------------|
-    | `$e.events.registerAfter()`  | `{CallableBase}` *instance*                              | `{Object}` *callback*  | Register a event that being fired after the command runs.
-    | `$e.events.registerBefore()` | `{CallableBase}` *instance*                              | `{Object}` *callback*  | Register a event that being fired before the command runs.
-    | `$e.events.runAfter()`       | `{String}` *command*, `{Object}` *args*, *result*        |                        | Runs event after.
-    | `$e.events.runBefore()`      | `{String}` *command*, `{Object}` *args*                  |                        | Runs before dependency.
-
-	> **Note:** Please look at parent: `{Callbacks}` for all the methods.
+## API -  `$e.hooks.ui`
+*  **Description**: `$e.hooks.ui` api is manager of _UI_ hooks, allow you to create custom **logic** that runs *after/before/catch* the command without effect the data *elementor* data model and history,
+the hooks attached to `$e.commands` and each  _event_ being fired when command is running.
+Mainly used for UI/View manipulation.
+*  **Location**: *core/common/assets/js/api/core/hooks/ui.js*
+*  **Parent**: [`{HooksBase}`](#HooksBase)
+*  **Methods**: Please look at parent: `{HooksBase}` for all the methods.
+* ***Important***: All hooks should be created by extending [`{( $e.modules.hookUI )}`](#e-modules-hooks-ui) located at:
+	
+	| Class                           | Description  &nbsp; &nbsp; &nbsp;  &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Location                                              
+	|---------------------------------|------------------------------------------------------------|-----------------------------------------------------------
+	| `$e.modules.hookUI.Base`        | Naked base for creating custom UI hooks.                   | `core/common/assets/js/api/modules/hooks/ui/base.js`
+	| `$e.modules.hookUI.After`       | Used to create a hook, runs after command being executed.  | `core/common/assets/js/api/modules/hooks/ui/after.js`
+	| `$e.modules.hookUI.Before`      | Used to create a hook, runs before command being executed. | `core/common/assets/js/api/modules/hooks/ui/before.js`
+	| `$e.modules.hookUI.Catch`       | Used to create a hook, runs when command failed.           | `core/common/assets/js/api/modules/hooks/ui/catch.js`
  
-  * ***Important***: All hooks should be created by extending [`{( EventAfter | EventBefore )}`](#EventAfter-EventBefore) located at:
-    * `core/common/assets/js/api/modules/event-base/after.js`
-    * `core/common/assets/js/api/modules/event-base/dependency.js`
  * **Examples**:
-   * Built in events:  *`assets/dev/js/editor/document/callback/events`*
-   * Register event that runs **_after_** command runs:
+   * Built in hooks:  *`assets/dev/js/editor/document/hooks/data`*
+   * Register UI hook that runs **_after_** command runs:
 
         ```javascript
-        // Example of event after the command runs and change ( CSS Class ) of all div elements.
-        // Important: Available to run in the console but depends on $e.components example#1.
+        // Example of UI hook, fired after the command runs and change ( CSS Class ) of all div elements.
+        // Important: Available to run in the console but depends on $e.components example#1. ( TODO ADD LINK )
         
-        class CustomEvent extends $e.modules.EventBase.After {
+        class CustomUIHook extends $e.modules.hookUI.After {
            getCommand() {
                // Command to listen.
                return 'custom-component/example';
@@ -60,14 +57,14 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
            }
         }
         
-        // Add new event to `$e.events`;
-        const myEvent = new CustomEvent();
+        // Add new event to `$e.hooks.ui`;
+        const myHook = new CustomUIHook();
         
         // Output new event.
-        console.log( myEvent );
+        console.log( myHook );
         
         // Output all events after.
-        console.log( $e.events.getAll().after );
+        console.log( $e.hooks.ui.getAll().after );
         
         // Test the event.
         result = $e.run( 'custom-component/example', {
@@ -81,7 +78,7 @@ the events attached to  `$e.commands`  and each  _event_ being fired after/befor
    * Register event that runs **_before_** command runs
     ```javascript
     // Example of event that toggle the section HTML class.
-    export class CreateSectionIsFull extends $e.modules.EventBase.Before {
+    class CreateSectionIsFull extends $e.modules.hookUI.Before {
         getCommand() {
             return 'document/elements/create';
         }
