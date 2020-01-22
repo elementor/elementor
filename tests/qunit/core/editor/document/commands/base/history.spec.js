@@ -31,6 +31,7 @@ jQuery( () => {
 			let tempCommand = '',
 				tempArgs = '';
 
+			// TODO: Do not override '$e.run', use 'on' method instead.
 			$e.run = ( command, args ) => {
 				tempCommand = command;
 				tempArgs = args;
