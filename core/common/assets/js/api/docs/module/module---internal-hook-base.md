@@ -23,6 +23,11 @@ Without expending constructor.</p>
 <dd><p>Function getId().</p>
 <p>Returns command id for the hook (should be unique).</p>
 </dd>
+<dt><a href="#getContainerType">getContainerType()</a> ⇒ <code>string</code></dt>
+<dd><p>Function getContainerType().</p>
+<p>Bind eContainer type to callback.</p>
+<p>Used to gain performance.</p>
+</dd>
 <dt><a href="#getConditions">getConditions(args)</a> ⇒ <code>boolean</code></dt>
 <dd><p>Function getConditions().</p>
 <p>Condition for running the callback, if true, call to apply().</p>
@@ -34,11 +39,6 @@ Without expending constructor.</p>
 <dt><a href="#run">run(...args)</a> ⇒ <code>boolean</code></dt>
 <dd><p>Function run().</p>
 <p>Run the callback.</p>
-</dd>
-<dt><a href="#bindContainerType">bindContainerType()</a> ⇒ <code>string</code></dt>
-<dd><p>Function bindContainerType().</p>
-<p>Bind eElement type to callback.</p>
-<p>Used to gain performance.</p>
 </dd>
 </dl>
 
@@ -101,6 +101,17 @@ Returns command id for the hook (should be unique).
 
 - <code>Error</code> 
 
+<a name="getContainerType"></a>
+
+## getContainerType() ⇒ <code>string</code>
+Function getContainerType().
+
+Bind eContainer type to callback.
+
+Used to gain performance.
+
+**Kind**: global function  
+**Returns**: <code>string</code> - type  
 <a name="getConditions"></a>
 
 ## getConditions(args) ⇒ <code>boolean</code>
@@ -144,15 +155,4 @@ Run the callback.
 | --- | --- |
 | ...args | <code>\*</code> | 
 
-<a name="bindContainerType"></a>
-
-## bindContainerType() ⇒ <code>string</code>
-Function bindContainerType().
-
-Bind eElement type to callback.
-
-Used to gain performance.
-
-**Kind**: global function  
-**Returns**: <code>string</code> - type  
-### [Back](../api/ecommands.md) 
+### [Back to index](readme.md) 
