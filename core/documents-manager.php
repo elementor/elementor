@@ -575,6 +575,10 @@ class Documents_Manager {
 
 		$document = $this->get_doc_or_auto_save( $post_id );
 
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		// Set the global data like $post, $authordata and etc
 		Plugin::$instance->db->switch_to_post( $post_id );
 
@@ -583,18 +587,7 @@ class Documents_Manager {
 		// Change mode to Builder
 		Plugin::$instance->db->set_is_elementor_page( $post_id );
 
-		// Post Lock
-		if ( ! Plugin::$instance->editor->get_locked_user( $post_id ) ) {
-			Plugin::$instance->editor->lock_post( $post_id );
-		}
-
 		$doc_config = $document->get_config();
-
-		$additional_config = apply_filters( 'elementor/editor/document/config', [], $post_id );
-
-		if ( ! empty( $additional_config ) ) {
-			$doc_config = array_replace_recursive( $doc_config, $additional_config );
-		}
 
 		return $doc_config;
 	}

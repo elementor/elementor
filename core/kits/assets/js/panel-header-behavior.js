@@ -25,7 +25,7 @@ export default class extends Marionette.Behavior {
 
 	onClickClose() {
 		// The kit is opened directly.
-		if ( elementor.config.initial_document.id === elementor.config.kit_id ) {
+		if ( elementor.config.initial_document.id === parseInt( elementor.config.kit_id ) ) {
 			$e.run( 'panel/global/exit' );
 		} else {
 			$e.run( 'panel/global/close' );

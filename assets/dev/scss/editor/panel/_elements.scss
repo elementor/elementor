@@ -137,7 +137,7 @@
 			position: absolute;
 			top: 5px;
 			@include end(5px);
-			color: $editor-light;
+			color: $editor-background;
 		}
 	}
 }
@@ -147,13 +147,15 @@
 	width: 300px;
 	z-index: 1;
 	background-color: #fff;
-	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
 
 	&:after {
 		content: '';
 		position: absolute;
 		top: 15px;
 		@include end(100%);
+		transform: scaleY(0.7);
 		border: 10px solid transparent;
 		@include border-end-property(color, #fff);
 	}
@@ -174,6 +176,7 @@
 			.eicon-pro-icon {
 				flex-grow: 1;
 				@include margin-start(10px);
+				font-size: 14px;
 			}
 
 			.eicon-close {
@@ -191,8 +194,12 @@
 
 		&-button {
 			width: 100%;
-			padding: 6px;
-			font-size: 11px;
+			padding: 6.5px;
+			font-size: 12px;
 		}
 	}
+}
+
+#elementor-element--promotion__dialog__title {
+	font-size: 14px;
 }

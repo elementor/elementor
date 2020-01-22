@@ -7,15 +7,17 @@ export default class BackwardsCompatibility extends ComponentBase {
 		Object.defineProperty( this, 'autoSaveTimer', {
 			get() {
 				elementorCommon.helpers.softDeprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
-					"$e.components.get('editor/documents').autoSaveTimers" );
+					"$e.components.get( 'editor/documents' ).autoSaveTimers" );
 				return $e.components.get( 'editor/documents' ).autoSaveTimers;
 			},
 
-			set() {
+			set( value ) {
 				elementorCommon.helpers.softDeprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
-					"$e.components.get('editor/documents').autoSaveTimers" );
+					"$e.components.get( 'editor/documents' ).autoSaveTimers[ documentId ]" );
 
-				throw Error( 'Deprecated' );
+				const documentId = elementor.documents.getCurrent();
+
+				$e.components.get( 'editor/documents' ).autoSaveTimers[ documentId ] = value;
 			},
 		} );
 

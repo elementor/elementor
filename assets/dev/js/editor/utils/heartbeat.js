@@ -1,16 +1,17 @@
 export default class Heartbeat {
 	modal = null;
+	document = null;
 
-	constructor() {
+	constructor( document ) {
+		this.document = document;
+
 		this.onSend = this.onSend.bind( this );
 		this.onTick = this.onTick.bind( this );
 		this.onRefreshNonce = this.onRefreshNonce.bind( this );
 
 		this.bindEvents();
 
-		if ( elementor.config.document.user.locked ) {
-			this.showLockMessage( elementor.config.document.user.locked );
-		}
+		wp.heartbeat.connectNow();
 	}
 
 	getModal = () => {
@@ -56,15 +57,16 @@ export default class Heartbeat {
 
 	onSend( event, data ) {
 		data.elementor_post_lock = {
-			post_ID: elementor.config.document.id,
+			post_ID: this.document.id,
 		};
 	}
 
 	onTick( event, response ) {
 		if ( response.locked_user ) {
-			if ( elementor.saver.isEditorChanged() ) {
-				// TODO: Change to 'document/save/auto' ?.
-				$e.internal( 'document/save/save', { status: 'autosave' } );
+			if ( this.document.editor.isChanged ) {
+				$e.run( 'document/save/auto', {
+					document: this.document,
+				} );
 			}
 
 			this.showLockMessage( response.locked_user );

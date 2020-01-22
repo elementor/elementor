@@ -5,6 +5,18 @@ export const saveBuilder = ( action, fullParams ) => {
 		case 'draft':
 			return mock.draft;
 
+		case 'autosave':
+			return mock.autosave;
+
+		case 'publish':
+			return mock.publish;
+
+		case 'pending':
+			return mock.pending;
+
+		case 'private':
+			return mock.private;
+
 		default: return {
 			success: false,
 			code: 500,

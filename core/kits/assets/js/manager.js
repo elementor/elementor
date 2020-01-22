@@ -16,7 +16,7 @@ export default class extends elementorModules.editor.utils.Module {
 
 		menu.addItem( {
 			name: 'theme-style',
-			icon: 'eicon-paint-brush',
+			icon: 'eicon-theme-style',
 			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open' ),
@@ -39,6 +39,12 @@ export default class extends elementorModules.editor.utils.Module {
 		super.onInit();
 
 		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
+			if ( ! elementor.config.user.is_administrator ) {
+				return;
+			}
+
+			$e.components.register( new Component( { manager: this } ) );
+
 			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
 
 			elementor.on( 'panel:init', () => {
@@ -50,7 +56,5 @@ export default class extends elementorModules.editor.utils.Module {
 				this.loadKitDocument();
 			} );
 		} );
-
-		$e.components.register( new Component( { manager: this } ) );
 	}
 }
