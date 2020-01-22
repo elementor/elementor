@@ -33,6 +33,6 @@ export default class extends Marionette.Behavior {
 	}
 
 	onClickBack() {
-		$e.routes.back( 'panel' );
+		$e.run( 'panel/global/back' );
 	}
 }

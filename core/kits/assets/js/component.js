@@ -53,6 +53,18 @@ export default class extends elementorModules.common.Component {
 					},
 				} );
 			},
+			back: () => {
+				$e.routes.back( 'panel' );
+			},
+		};
+	}
+
+	defaultShortcuts() {
+		return {
+			back: {
+				keys: 'esc',
+				scopes: [ 'panel/global' ],
+			},
 		};
 	}
 
