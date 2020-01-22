@@ -15,8 +15,8 @@ $theme-dark-accent: #71D7F7;
 $theme-dark-success: $editor-success;
 $theme-dark-danger: #F84343;
 
-$theme-dark-gradient-start: #34383C;
-$theme-dark-gradient-end: #4C4F56;
+$theme-dark-gradient-start: $theme-dark-gray-dark;
+$theme-dark-gradient-end: $theme-dark-gray-darkest;
 $theme-dark-panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 
 //General
