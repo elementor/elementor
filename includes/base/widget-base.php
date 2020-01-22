@@ -472,7 +472,7 @@ abstract class Widget_Base extends Element_Base {
 			}
 		}
 
-		$this->add_render_attribute( $element, $attributes, $overwrite );
+		$this->add_render_attribute( $element, $attributes, null, $overwrite );
 
 		return $this;
 	}
