@@ -444,6 +444,23 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 0, count( $global_usage[ $doc_name ]['heading']['controls'] ) );
 	}
 
+	public function test_settings_usage() {
+		/** @var Module $module */
+		$module = Module::instance();
+
+		$tracking_data = $module->add_tracking_data( [
+			'usages' => [],
+		] );
+
+		// Validate tracking_data have settings.
+		$this->assertArrayHasKey( 'settings', $tracking_data[ 'usages' ] );
+
+		$settings = $tracking_data['usages']['settings'];
+
+		// Validate settings have general, style, and advanced.
+		$this->assertArrayHaveKeys( ['general', 'style', 'advanced'], $settings );
+	}
+
 	/**
 	 * @return Document|false
 	 */

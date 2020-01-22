@@ -252,6 +252,7 @@ class Module extends BaseModule {
 	 */
 	public function add_tracking_data( $params ) {
 		$params['usages']['elements'] = get_option( self::OPTION_NAME );
+		$params['usages']['settings'] = $this->get_settings_usage();
 
 		return $params;
 	}
@@ -545,6 +546,43 @@ class Module extends BaseModule {
 		} );
 
 		return $usage;
+	}
+
+	/**
+	 * Get settings usage.
+	 *
+	 * Get's the current settings usage.
+	 *
+	 * @return array
+	 */
+	private function get_settings_usage() {
+		$result = [];
+		$settings_tabs = \Elementor\Plugin::$instance->settings->get_tabs();
+
+		foreach ( $settings_tabs as $tab ) {
+			$label = strtolower( $tab['label'] );
+
+			foreach ( $tab['sections'] as $section ) {
+				if ( ! isset( $section['fields'] ) ) {
+					continue;
+				}
+				foreach ( $section['fields'] as $field_name => $field_values ) {
+					if ( ! strstr( $field_name, 'elementor_' ) ) {
+						$value = get_option( 'elementor_' . $field_name );
+					} else {
+						$value = get_option( $field_name );
+					}
+
+					if ( ! isset( $result[ $label ] ) ) {
+						$result[ $label ] = [];
+					}
+
+					$result[ $label ][ $field_name ] = $value;
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
