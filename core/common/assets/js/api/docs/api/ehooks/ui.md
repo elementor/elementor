@@ -16,7 +16,7 @@ Mainly used for UI/View manipulation.
 	| `$e.modules.hookUI.Catch`       | Used to create a hook, runs when command failed.
  
  * **Examples**:
-   * Built in hooks:  *`assets/dev/js/editor/document/hooks/data`*
+   * Built in hooks:  *`assets/dev/js/editor/document/hooks/ui`*
    * Register UI hook that runs **_after_** command runs:
 
         ```javascript

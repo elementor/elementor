@@ -1,32 +1,26 @@
-## API - `$e.hooks`
-*  **Description**: `$e.hooks` api is a manager of `$e.hooks`, allow you to create custom **data manipulation** of *elementor* data model, and create a dependencies, the _hooks_ attached 
-to  `$e.commands`  and each  **hook** being fired after/before running a command, that runs by  `$e.run()`
-*  **Location**: *core/common/assets/js/api/apis/hooks.js*
-*  **Parent**: [`{Callbacks}`](#Callbacks)
-*  **Methods**:
-
-	| Method                          | Params                                                   |  Returns              | Description                                              
-	|---------------------------------|----------------------------------------------------------|-----------------------|-----------------------------------------------------------
-	| `$e.hooks.registerAfter()`      | `{CallableBase}` *instance*                              | `{Object}` *callback* | Register a hook that being fired after the command runs.  
-	| `$e.hooks.registerDependency()` | `{CallableBase}` *instance*                              | `{Object}` *callback* | Register a hook that being fired before the command runs.
-	| `$e.hooks.runAfter()`           | `{String}` *command*, `{Object}` *args*, *result*        |                       | Runs hook after.
-	| `$e.hooks.runDependency()`      | `{String}` *command*, `{Object}` *args*                  |                       | Runs hook dependency.
-
-	> **Note:** Please look at parent: `{Callbacks}` for all the methods.
- 
-  * ***Important***: All hooks should be created by extending [`{( HookAfter | HookDependency )}`](#HookAfter-HookDependency) located at:
-    * `core/common/assets/js/api/modules/hook-base/after.js`
-    * `core/common/assets/js/api/modules/hook-base/dependency.js`
+## API - `$e.hooks.data`
+*  **Description**: `$e.hooks.data` api is a manager of _DATA_ hooks, allow you to create custom **data manipulation** 
+of *elementor* data model, and create a dependencies, the _hooks_ attached 
+to  `$e.commands`  and each  **hook** being fired after/before/catch a command, that runs by  `$e.run()`
+*  **Location**: *core/common/assets/js/api/core/hooks/data.js*
+*  **Parent**: [`{HooksBase}`](#HooksBase)
+*  **Methods**: Please look at parent: `{HooksBase}` for all the methods.
+* ***Important***: All hooks should be created by extending [`{( $e.modules.hookData )}`](#e-modules-hooks-data) located at: `core/common/assets/js/api/modules/hooks/data/`.
+	
+	| Class                             | Description                                                                                            
+	|-----------------------------------|--------------------------------------------------------------------------------
+	| `$e.modules.hookData.Base`        | Naked base for creating custom data hooks.                   
+	| `$e.modules.hookData.After`       | Used to create a hook, runs after command being executed.
+	| `$e.modules.hookData.Dependency`  | Used to create a hook, runs before command being executed and used as dependency.
+	| `$e.modules.hookData.Catch`       | Used to create a hook, runs when command failed.
 
 *  **Examples**:
-   * Built in hooks: *`assets/dev/js/editor/document/callback/hooks`*
-
-   * Register hook **_after_** command runs:
+   * Built in hooks:  *`assets/dev/js/editor/document/hooks/data`*
+   * Register data hook that runs **_after_** command runs:
         ```javascript
-        // Example of hook after the command runs.
-        // Important: Available to run in the console but depends on $e.components example#1.
-        
-        class CustomHook extends $e.modules.HookBase.After {
+        // Example of data hook, fired after the command runs.
+        // Important: Available to run in the console but depends on $e.components example#1. ( TODO ADD LINK )
+        class CustomDataHook extends $e.modules.hookData.After {
             getCommand() {
                 // Command to hook.
                 return 'custom-component/example';
@@ -34,13 +28,12 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
         
             getId() {
                 // Unique id for the hook.
-                return 'custom-component-example-hook';
+                return 'custom-component-example-data-hook';
             }
-        
-            /*
-             * Recommended function, used for optimization, if the container type is known in advance,
-             * you can pass it here.
-             */
+
+            // Recommended function, used for optimization, if the container type is known in advance,
+            // you can pass it here.
+            //
             // bindContainerType() {
             // If `args.container.type` is always the same for the hook return it:
             // return 'container_type';
@@ -59,14 +52,14 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
             }
         }
         
-        // Add new hook to `$e.hooks`;
-        const myHook = new CustomHook();
+        // Add new hook to `$e.hooks.data`;
+        const myHook = new CustomDataHook();
         
         // Output new hook.
         console.log( myHook );
         
-        // Output all hooks after.
-        console.log( $e.hooks.getAll().after );
+        // Output all data hooks after.
+        console.log( $e.hooks.data.getAll().after );
         
         // Test the hook
         result = $e.run( 'custom-component/example', {
@@ -74,14 +67,14 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
         } );
         
         // Output command run result.
-        console.log( 'e-hooks-eg-1-result:', result );
+        console.log( 'e-hooks-data-eg-1-result:', result );
         ```
 
     * Register hook **dependency** that applies before the command runs
     * **Note**: Dependency is breakable hook.
 		```javascript
-		// Example of hook that blooks column creation, if it reach maximum columns count.
-		class SectionColumnsLimit extends $e.modules.HookBase.Dependency {
+		// Example of hook that block column creation, if it reach maximum columns count.
+		class SectionColumnsLimit extends $e.modules.hookData.Dependency {
 		   getCommand() {
 		      return 'document/elements/create';
 		   }
@@ -105,6 +98,6 @@ to  `$e.commands`  and each  **hook** being fired after/before running a command
 		   }
 		}
 		```
-        > **Note:** further information about [`{CallableBase}`](../module/module---internal-callable-base.md)**class**.
+> **Note:** further information about [`{HookBase}`](../../module/module---internal-hook-base.md)**class**.
   
-### [Back](../readme.md) 
+### [Back](../ehooks.md) 
