@@ -1,4 +1,4 @@
-import DocumentHelpers from 'elementor-document/helpers';
+import DocumentHelpers from 'elementor-document/helper';
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-empty-preview',

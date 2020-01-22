@@ -1,5 +1,5 @@
 import ColorPicker from './color-picker';
-import DocumentHelpers from 'elementor-editor/document/helpers';
+import DocumentHelpers from 'elementor-editor/document/helper';
 
 module.exports = {
 	document: DocumentHelpers,

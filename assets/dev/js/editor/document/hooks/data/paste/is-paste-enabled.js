@@ -1,5 +1,5 @@
 import Dependency from 'elementor-api/modules/hooks/data/dependency';
-import DocumentHelpers from 'elementor-document/helpers';
+import DocumentHelpers from 'elementor-document/helper';
 
 export class IsPasteEnabled extends Dependency {
 	getCommand() {

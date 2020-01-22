@@ -1,4 +1,4 @@
-import DocumentHelpers from 'elementor-document/helpers';
+import DocumentHelpers from 'elementor-document/helper';
 
 class AddSectionBase extends Marionette.ItemView {
 	template() {
