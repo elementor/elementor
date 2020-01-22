@@ -141,6 +141,11 @@ select {
 }
 
 //Dynamic Tags
+.elementor-control-dynamic-switcher {
+	background-color: $theme-dark-gray-darkest;
+	border-color: $theme-dark-gray-light;
+}
+
 .elementor-tags-list {
 	background-color: $theme-dark-gray;
 	border-color: $theme-dark-gray-light;
@@ -223,6 +228,10 @@ select {
 			.icon {
 				color: $theme-dark-accent;
 			}
+		}
+
+		& > .eicon-lock {
+			color: $theme-dark-gray-lightest;
 		}
 	}
 
@@ -456,7 +465,15 @@ $devices: 'desktop', 'tablet', 'mobile';
 .elementor-control-type-url {
 
 	.elementor-control-url-more {
-		border-left-color: $theme-dark-gray-light;
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray-light;
+	}
+
+	.elementor-input {
+
+		&:focus ~ div {
+			border-color: $theme-dark-gray-lighter;
+		}
 	}
 }
 
@@ -781,6 +798,40 @@ $devices: 'desktop', 'tablet', 'mobile';
 	background-color: $theme-dark-gray-darkest;
 	border-color: $theme-dark-gray-lighter;
 }
+
+// Widget Pro Promotion Tooltip
+.elementor-element--promotion__dialog {
+	background-color: $theme-dark-gray-darker;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+
+	&:after {
+		border-right-color: $theme-dark-gray-darker;
+	}
+
+	.dialog {
+
+		&-header {
+			color: $theme-dark-light;
+			border-bottom-color: $theme-dark-gray-light;
+
+			.eicon-pro-icon {
+				color: $theme-dark-gray-lighter;
+			}
+
+			.eicon-close {
+				color: $theme-dark-gray-lightest;
+			}
+		}
+	}
+}
+
+body.rtl .elementor-element--promotion__dialog {
+
+	&:after {
+		border-left-color: $theme-dark-gray-darker;
+	}
+}
+
 
 //Library Modal
 .dialog-type-lightbox {

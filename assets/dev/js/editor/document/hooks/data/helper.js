@@ -34,12 +34,16 @@ export default class Helper {
 		} );
 
 		if ( structure ) {
-			containers.forEach( ( container ) => {
-				container.view.setStructure( structure );
-
-				// Focus on last container.
-				container.model.trigger( 'request:edit' );
+			containers.forEach( ( /* Container */ container ) => {
+				container.view.setStructure( structure, false );
 			} );
+		} else if ( columns ) {
+			containers.forEach( ( /* Container */ container ) =>
+				container.view.resetLayout()
+			);
+
+			// Focus on last container.
+			containers[ containers.length - 1 ].model.trigger( 'request:edit' );
 		}
 	}
 }

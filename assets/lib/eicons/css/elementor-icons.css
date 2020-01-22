@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.5.0");
-  src: url("../fonts/eicons.eot?5.5.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.5.0") format("woff2"), url("../fonts/eicons.woff?5.5.0") format("woff"), url("../fonts/eicons.ttf?5.5.0") format("truetype"), url("../fonts/eicons.svg?5.5.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.6.1");
+  src: url("../fonts/eicons.eot?5.6.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.6.1") format("woff2"), url("../fonts/eicons.woff?5.6.1") format("woff"), url("../fonts/eicons.ttf?5.6.1") format("truetype"), url("../fonts/eicons.svg?5.6.1#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -543,7 +543,7 @@
 .eicon-insert:before {
   content: '\e8ab'; }
 
-.eicon-preview:before {
+.eicon-preview-medium:before {
   content: '\e8ac'; }
 
 .eicon-sort-down:before {
@@ -738,7 +738,7 @@
 .eicon-exchange:before {
   content: '\e8ec'; }
 
-.eicon-eye:before {
+.eicon-preview-thin:before {
   content: '\e8ed'; }
 
 .eicon-device-laptop:before {
@@ -1061,3 +1061,72 @@
 
 .eicon-instagram-likes:before {
   content: '\e958'; }
+
+.eicon-facebook:before {
+  content: '\e959'; }
+
+.eicon-twitter:before {
+  content: '\e95a'; }
+
+.eicon-pinterest:before {
+  content: '\e95b'; }
+
+.eicon-frame-expand:before {
+  content: '\e95c'; }
+
+.eicon-frame-minimize:before {
+  content: '\e95d'; }
+
+.eicon-archive:before {
+  content: '\e95e'; }
+
+.eicon-colors-typography:before {
+  content: '\e95f'; }
+
+.eicon-custom:before {
+  content: '\e960'; }
+
+.eicon-footer:before {
+  content: '\e961'; }
+
+.eicon-header:before {
+  content: '\e962'; }
+
+.eicon-layout-settings:before {
+  content: '\e963'; }
+
+.eicon-lightbox-expand:before {
+  content: '\e964'; }
+
+.eicon-error-404:before {
+  content: '\e965'; }
+
+.eicon-theme-style:before {
+  content: '\e966'; }
+
+.eicon-search-results:before {
+  content: '\e967'; }
+
+.eicon-single-post:before {
+  content: '\e968'; }
+
+.eicon-site-identity:before {
+  content: '\e969'; }
+
+.eicon-theme-builder:before {
+  content: '\e96a'; }
+
+.eicon-download-bold:before {
+  content: '\e96b'; }
+
+.eicon-share-arrow:before {
+  content: '\e96c'; }
+
+.eicon-global-settings:before {
+  content: '\e96d'; }
+
+.eicon-user-preferences:before {
+  content: '\e96e'; }
+
+.eicon-lock:before {
+  content: '\e96f'; }

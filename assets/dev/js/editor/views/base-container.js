@@ -81,7 +81,9 @@ module.exports = Marionette.CompositeView.extend( {
 			elementor.channels.data.trigger( options.trigger.afterAdd, newItem );
 		}
 
-		if ( options.edit && elementor.history.history.getActive() ) {
+		if ( options.edit && elementor.documents.getCurrent().history.getActive() ) {
+			// Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
+			newView.getContainer();
 			newModel.trigger( 'request:edit' );
 		}
 

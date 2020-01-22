@@ -8,13 +8,13 @@ export default class Component extends ComponentBase {
 		return 'document';
 	}
 
-	onInit() {
+	registerAPI() {
 		new BackwardsCompatibility();
 
-		super.onInit();
+		super.registerAPI();
 
-		Object.values( hooksData ).forEach( ( hook ) => new hook() );
-		Object.values( hooksUI ).forEach( ( hook ) => new hook() );
+		Object.values( hooksData ).forEach( ( Hook ) => new Hook() );
+		Object.values( hooksUI ).forEach( ( Hook ) => new Hook() );
 	}
 
 	defaultCommands() {

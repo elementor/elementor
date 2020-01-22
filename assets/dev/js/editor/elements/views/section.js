@@ -165,7 +165,7 @@ const SectionView = BaseElementView.extend( {
 		return nextView.getContainer();
 	},
 
-	setStructure: function( structure ) {
+	setStructure: function( structure, shouldAdjustColumns = true ) {
 		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
 
 		if ( +parsedStructure.columnsCount !== this.collection.length ) {
@@ -178,7 +178,9 @@ const SectionView = BaseElementView.extend( {
 			options: { external: true },
 		} );
 
-		this.adjustColumns();
+		if ( shouldAdjustColumns ) {
+			this.adjustColumns();
+		}
 	},
 
 	adjustColumns: function() {
@@ -197,8 +199,8 @@ const SectionView = BaseElementView.extend( {
 		} );
 	},
 
-	resetLayout: function() {
-		this.setStructure( this.getDefaultStructure() );
+	resetLayout: function( shouldAdjustColumns = true ) {
+		this.setStructure( this.getDefaultStructure(), shouldAdjustColumns );
 	},
 
 	resetColumnsCustomSize: function() {

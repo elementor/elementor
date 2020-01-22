@@ -918,7 +918,7 @@ class Controls_Manager {
 			<?php }
 
 			if ( $texts['link'] ) { ?>
-				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="<?php echo Utils::get_pro_link( $texts['link'] ); ?>" target="_blank">
+				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo Utils::get_pro_link( $texts['link'] ); ?>" target="_blank">
 					<?php echo __( 'Go Pro', 'elementor' ); ?>
 				</a>
 			<?php } ?>

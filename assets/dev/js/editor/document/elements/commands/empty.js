@@ -1,4 +1,4 @@
-import History from '../../commands/base/history';
+import History from 'elementor-document/commands/base/history';
 
 export class Empty extends History {
 	static restore( historyItem, isRedo ) {
@@ -10,6 +10,8 @@ export class Empty extends History {
 			if ( data ) {
 				elementor.getPreviewView().addChildModel( data );
 			}
+
+			$e.internal( 'document/save/set-is-modified', { status: true } );
 		}
 	}
 

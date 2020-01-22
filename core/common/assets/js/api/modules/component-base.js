@@ -5,6 +5,7 @@ export default class ComponentBase extends elementorModules.Module {
 		}
 
 		this.commands = this.defaultCommands();
+		this.commandsInternal = this.defaultCommandsInternal();
 		this.routes = this.defaultRoutes();
 		this.tabs = this.defaultTabs();
 		this.shortcuts = this.defaultShortcuts();
@@ -13,12 +14,14 @@ export default class ComponentBase extends elementorModules.Module {
 		this.currentTab = '';
 	}
 
-	onInit() {
+	registerAPI() {
 		jQuery.each( this.getTabs(), ( tab ) => this.registerTabRoute( tab ) );
 
 		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
 
 		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
+
+		jQuery.each( this.getCommandsInternal(), ( command, callback ) => this.registerCommandInternal( command, callback ) );
 	}
 
 	getNamespace() {
@@ -42,12 +45,20 @@ export default class ComponentBase extends elementorModules.Module {
 		return {};
 	}
 
+	defaultCommandsInternal() {
+		return {};
+	}
+
 	defaultShortcuts() {
 		return {};
 	}
 
 	getCommands() {
 		return this.commands;
+	}
+
+	getCommandsInternal() {
+		return this.commandsInternal;
 	}
 
 	getRoutes() {
@@ -64,6 +75,10 @@ export default class ComponentBase extends elementorModules.Module {
 
 	registerCommand( command, callback ) {
 		$e.commands.register( this, command, callback );
+	}
+
+	registerCommandInternal( command, callback ) {
+		$e.commandsInternal.register( this, command, callback );
 	}
 
 	registerRoute( route, callback ) {
@@ -93,6 +108,8 @@ export default class ComponentBase extends elementorModules.Module {
 
 		$e.routes.clearCurrent( this.getNamespace() );
 
+		$e.routes.clearHistory( this.getRootContainer() );
+
 		return true;
 	}
 
@@ -109,13 +126,16 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	onRoute( route ) {
-		elementorCommon.elements.$body.addClass( this.getBodyClass( route ) );
+		this.toggleRouteClass( route, true );
+		this.toggleHistoryClass();
+
 		this.activate();
 		this.trigger( 'route/open', route );
 	}
 
 	onCloseRoute( route ) {
-		elementorCommon.elements.$body.removeClass( this.getBodyClass( route ) );
+		this.toggleRouteClass( route, false );
+
 		this.inactivate();
 		this.trigger( 'route/close', route );
 	}
@@ -184,5 +204,33 @@ export default class ComponentBase extends elementorModules.Module {
 
 	getBodyClass( route ) {
 		return 'e-route-' + route.replace( /\//g, '-' );
+	}
+
+	/**
+	 * If command includes uppercase character convert it to lowercase and add `-`.
+	 * e.g: `CopyAll` is converted to `copy-all`.
+	 */
+	normalizeCommandName( commandName ) {
+		return commandName.replace( /[A-Z]/g, ( match, offset ) => ( offset > 0 ? '-' : '' ) + match.toLowerCase() );
+	}
+
+	importCommands( commandsFromImport ) {
+		const commands = {};
+
+		// Convert `Commands` to `ComponentBase` workable format.
+		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
+			const command = this.normalizeCommandName( className );
+			commands[ command ] = ( args ) => ( new Class( args ) ).run();
+		} );
+
+		return commands;
+	}
+
+	toggleRouteClass( route, state ) {
+		elementorCommon.elements.$body.toggleClass( this.getBodyClass( route ), state );
+	}
+
+	toggleHistoryClass() {
+		elementorCommon.elements.$body.toggleClass( 'e-routes-has-history', !! $e.routes.getHistory( this.getRootContainer() ).length );
 	}
 }

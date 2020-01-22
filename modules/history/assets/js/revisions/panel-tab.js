@@ -23,34 +23,39 @@ module.exports = Marionette.CompositeView.extend( {
 
 	currentPreviewItem: null,
 
-	initialize: function() {
-		this.collection = elementor.history.revisions.getItems();
+	document: null,
+
+	initialize: function( options ) {
+		this.document = options.document;
+
+		this.collection = this.document.revisions.getItems();
 
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 
-		this.currentPreviewId = elementor.config.current_revision_id;
+		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	getRevisionViewData: function( revisionView ) {
-		var self = this;
+		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
+			success: ( data ) => {
+				if ( this.document.config.panel.has_elements ) {
+					this.document.revisions.setEditorData( data.elements );
+				}
 
-		elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
-			success: function( data ) {
-				elementor.history.revisions.setEditorData( data.elements );
 				elementor.settings.page.model.set( data.settings );
 
-				self.setRevisionsButtonsActive( true );
+				this.setRevisionsButtonsActive( true );
 
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
-				self.enterReviewMode();
+				this.enterReviewMode();
 			},
-			error: function( errorMessage ) {
+			error: ( errorMessage ) => {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
-				self.currentPreviewItem = null;
+				this.currentPreviewItem = null;
 
-				self.currentPreviewId = null;
+				this.currentPreviewId = null;
 
 				alert( errorMessage );
 			},
@@ -58,7 +63,29 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	setRevisionsButtonsActive: function( active ) {
-		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+		// Check the tab is open.
+		if ( ! this.isDestroyed ) {
+			this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+		}
+	},
+
+	deleteRevision: function( revisionView ) {
+		revisionView.$el.addClass( 'elementor-revision-item-loading' );
+
+		this.document.revisions.deleteRevision( revisionView.model, {
+			success: () => {
+				if ( revisionView.model.get( 'id' ) === this.currentPreviewId ) {
+					this.onDiscardClick();
+				}
+
+				this.currentPreviewId = null;
+			},
+			error: () => {
+				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
+
+				alert( 'An error occurred' );
+			},
+		} );
 	},
 
 	enterReviewMode: function() {
@@ -93,25 +120,27 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.setRevisionsButtonsActive( false );
 
-		this.currentPreviewId = elementor.config.current_revision_id;
+		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	onApplyClick: function() {
-		elementor.saver.setFlagEditorChange( true );
+		$e.internal( 'document/save/set-is-modified', { status: true } );
 
-		elementor.saver.saveAutoSave();
+		$e.run( 'document/save/auto', { force: true } );
 
 		this.isRevisionApplied = true;
 
 		this.currentPreviewId = null;
 
-		elementor.history.history.getItems().reset();
+		this.document.history.getItems().reset();
 	},
 
 	onDiscardClick: function() {
-		elementor.history.revisions.setEditorData( elementor.config.data );
+		if ( this.document.config.panel.has_elements ) {
+			this.document.revisions.setEditorData( elementor.config.document.elements );
+		}
 
-		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
+		$e.internal( 'document/save/set-is-modified', { status: this.isRevisionApplied } );
 
 		this.isRevisionApplied = false;
 
@@ -127,7 +156,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.current_revision_id ) {
+		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.document.revisions.current_id ) {
 			this.onDiscardClick();
 		}
 	},
@@ -147,32 +176,33 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewDetailsAreaClick: function( childView ) {
-		var self = this,
-			revisionID = childView.model.get( 'id' );
+		const revisionID = childView.model.get( 'id' );
 
-		if ( revisionID === self.currentPreviewId ) {
+		if ( revisionID === this.currentPreviewId ) {
 			return;
 		}
 
-		if ( self.currentPreviewItem ) {
-			self.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
+		if ( this.currentPreviewItem ) {
+			this.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 		}
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
-		if ( elementor.saver.isEditorChanged() && ( null === self.currentPreviewId || elementor.config.current_revision_id === self.currentPreviewId ) ) {
-			elementor.saver.saveEditor( {
+		const revision = ( null === this.currentPreviewId || elementor.config.current_revision_id === this.currentPreviewId );
+
+		if ( revision && elementor.saver.isEditorChanged() ) {
+			// TODO: Change to 'document/save/auto' ?.
+			$e.internal( 'document/save/save', {
 				status: 'autosave',
-				onSuccess: function() {
-					self.getRevisionViewData( childView );
+				onSuccess: () => {
+					this.getRevisionViewData( childView );
 				},
 			} );
 		} else {
-			self.getRevisionViewData( childView );
+			this.getRevisionViewData( childView );
 		}
 
-		self.currentPreviewItem = childView;
-
-		self.currentPreviewId = revisionID;
+		this.currentPreviewItem = childView;
+		this.currentPreviewId = revisionID;
 	},
 } );

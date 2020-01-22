@@ -74,7 +74,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
-		_.each( elementor.config.widgets, function( widget ) {
+		_.each( elementor.widgetsCache, function( widget ) {
 			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {
 				widget = _.extend( widget, elementor.config.document.panel.widgets_settings[ widget.widget_type ] );
 			}
@@ -91,6 +91,17 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				icon: widget.icon,
 				widgetType: widget.widget_type,
 				custom: widget.custom,
+				editable: widget.editable,
+			} );
+		} );
+
+		jQuery.each( elementor.config.promotionWidgets, ( index, widget ) => {
+			elementsCollection.add( {
+				name: widget.name,
+				title: widget.title,
+				icon: widget.icon,
+				categories: JSON.parse( widget.categories ),
+				editable: false,
 			} );
 		} );
 

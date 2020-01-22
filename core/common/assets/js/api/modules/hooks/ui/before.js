@@ -1,7 +1,9 @@
 import Base from './base';
 
-export default class Before extends Base {
+export class Before extends Base {
 	register() {
 		$e.hooks.registerUIBefore( this );
 	}
 }
+
+export default Before;

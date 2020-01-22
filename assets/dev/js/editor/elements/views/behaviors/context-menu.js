@@ -1,3 +1,5 @@
+import AddSectionBase	from 'elementor-views/add-section/base';
+
 var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 
 module.exports = Marionette.Behavior.extend( {
@@ -66,12 +68,13 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenu: function( event ) {
-		if ( $e.shortcuts.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
+		if ( $e.shortcuts.isControlEvent( event ) ) {
 			return;
 		}
 
-		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
-			return;
+		const isAddSectionView = this.view instanceof AddSectionBase;
+		if ( ! isAddSectionView && ( ! this.view.container || ! this.view.container.isDesignable() ) ) {
+				return;
 		}
 
 		event.preventDefault();

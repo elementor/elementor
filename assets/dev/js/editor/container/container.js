@@ -22,6 +22,13 @@ export default class Container extends ArgsObject {
 	id;
 
 	/**
+	 * Document Object.
+	 *
+	 * @type  {{}}
+	 */
+	document;
+
+	/**
 	 * Container model.
 	 *
 	 * @type {Backbone.Model}
@@ -122,6 +129,10 @@ export default class Container extends ArgsObject {
 			this.renderer = this;
 		}
 
+		if ( ! this.document ) {
+			this.document = elementor.documents.getCurrent();
+		}
+
 		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
 		this.panel = new Panel( this );
 	}
@@ -192,5 +203,13 @@ export default class Container extends ArgsObject {
 		}
 
 		this.renderer.view.renderOnChange( this.settings );
+	}
+
+	isEditable() {
+		return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ) && 'open' === this.document.editor.status;
+	}
+
+	isDesignable() {
+		return elementor.userCan( 'design' ) && this.isEditable();
 	}
 }

@@ -14,13 +14,19 @@ export default class Component extends ComponentBase {
 		};
 	}
 
+	defaultCommandsInternal() {
+		return {
+			'open-default': () => $e.route( elementor.documents.getCurrent().config.panel.default_route ),
+		};
+	}
+
 	defaultCommands() {
 		return {
 			open: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' ),
 			close: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' ),
 			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
-			save: () => elementor.saver.saveDraft(),
-			publish: () => elementor.saver.publish(),
+			save: () => $e.run( 'document/save/draft' ),
+			publish: () => $e.run( 'document/save/publish' ),
 			exit: () => $e.route( 'panel/menu' ),
 			'change-device-mode': ( args ) => {
 				const devices = [ 'desktop', 'tablet', 'mobile' ];

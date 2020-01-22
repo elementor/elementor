@@ -71,6 +71,7 @@ abstract class Document extends Controls_Stack {
 	 */
 	public static function get_properties() {
 		return [
+			'has_elements' => true,
 			'is_editable' => true,
 		];
 	}
@@ -85,6 +86,8 @@ abstract class Document extends Controls_Stack {
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
+			'default_route' => 'panel/elements/categories',
+			'has_elements' => static::get_property( 'has_elements' ),
 			'messages' => [
 				/* translators: %s: the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
@@ -416,14 +419,36 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function get_initial_config() {
-		return [
+		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
+
+		$locked_user = Plugin::$instance->editor->get_locked_user( $this->get_main_id() );
+
+		if ( $locked_user ) {
+			$locked_user = $locked_user->display_name;
+		}
+
+		$post_type_object = get_post_type_object( $this->get_main_post()->post_type );
+
+		$settings = SettingsManager::get_settings_managers_config();
+
+		$config = [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
 			'version' => $this->get_main_meta( '_elementor_version' ),
+			'settings' => $settings['page'],
+			'elements' => $this->get_elements_raw_data( null, true ),
+			'widgets' => Plugin::$instance->widgets_manager->get_widget_types_config(),
 			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
 			'container' => 'body',
+			'post_type_title' => $this->get_post_type_title(),
+			'user' => [
+				'can_publish' => current_user_can( $post_type_object->cap->publish_posts ),
+
+				// Deprecated config since 2.9.0.
+				'locked' => $locked_user,
+			],
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),
@@ -431,6 +456,14 @@ abstract class Document extends Controls_Stack {
 				'permalink' => $this->get_permalink(),
 			],
 		];
+
+		$additional_config = apply_filters( 'elementor/document/config', [], $this->get_main_id() );
+
+		if ( ! empty( $additional_config ) ) {
+			$config = array_replace_recursive( $config, $additional_config );
+		}
+
+		return $config;
 	}
 
 	/**
@@ -438,50 +471,7 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-		$this->start_controls_section(
-			'document_settings',
-			[
-				'label' => __( 'General Settings', 'elementor' ),
-				'tab' => Controls_Manager::TAB_SETTINGS,
-			]
-		);
-
-		$this->add_control(
-			'post_title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => $this->post->post_title,
-				'label_block' => true,
-				'separator' => 'none',
-			]
-		);
-
-		$post_type_object = get_post_type_object( $this->post->post_type );
-
-		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
-		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
-
-		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
-
-			$statuses = get_post_statuses();
-			if ( 'future' === $this->get_main_post()->post_status ) {
-				$statuses['future'] = __( 'Future', 'elementor' );
-			}
-
-			$this->add_control(
-				'post_status',
-				[
-					'label' => __( 'Status', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => $this->get_main_post()->post_status,
-					'options' => $statuses,
-				]
-			);
-		}
-
-		$this->end_controls_section();
-
+		$this->register_document_controls();
 		/**
 		 * Register document controls.
 		 *
@@ -1162,5 +1152,51 @@ abstract class Document extends Controls_Stack {
 
 			$element->print_element();
 		}
+	}
+
+	protected function register_document_controls() {
+		$this->start_controls_section(
+			'document_settings',
+			[
+				'label' => __( 'General Settings', 'elementor' ),
+				'tab' => Controls_Manager::TAB_SETTINGS,
+			]
+		);
+
+		$this->add_control(
+			'post_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => $this->post->post_title,
+				'label_block' => true,
+				'separator' => 'none',
+			]
+		);
+
+		$post_type_object = get_post_type_object( $this->post->post_type );
+
+		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
+		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
+
+		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
+
+			$statuses = get_post_statuses();
+			if ( 'future' === $this->get_main_post()->post_status ) {
+				$statuses['future'] = __( 'Future', 'elementor' );
+			}
+
+			$this->add_control(
+				'post_status',
+				[
+					'label' => __( 'Status', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => $this->get_main_post()->post_status,
+					'options' => $statuses,
+				]
+			);
+		}
+
+		$this->end_controls_section();
 	}
 }

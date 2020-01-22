@@ -94,7 +94,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	</div>
 	<div id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
 		<span id="elementor-panel-footer-saver-preview-label">
-			<i class="eicon-eye" aria-hidden="true"></i>
+			<i class="eicon-preview-medium" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo __( 'Preview Changes', 'elementor' ); ?></span>
 		</span>
 	</div>
@@ -119,7 +119,6 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 				</span>
 				<span class="elementor-last-edited">
-					{{{ elementor.config.document.last_edited }}}
 				</span>
 			</p>
 			<div class="elementor-panel-footer-sub-menu">
@@ -254,11 +253,8 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
-	<div class="elementor-control-dynamic-switcher-wrapper">
-		<div class="elementor-control-dynamic-switcher">
-			<?php echo __( 'Dynamic', 'elementor' ); ?>
-			<i class="eicon-database"></i>
-		</div>
+	<div class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo __( 'Dynamic Tags', 'elementor' ); ?>">
+		<i class="eicon-database"></i>
 	</div>
 </script>
 
@@ -272,4 +268,19 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			<i class="eicon-close-circle"></i>
 		</div>
 	<# } #>
+</script>
+
+<script type="text/template" id="tmpl-elementor-dynamic-tags-promo">
+	<div class="elementor-tags-list__teaser">
+		<div class="elementor-tags-list__group-title elementor-tags-list__teaser-title">
+			<i class="eicon-info-circle"></i><?php echo __( 'Elementor Dynamic Content', 'elementor' ); ?>
+		</div>
+		<div class="elementor-tags-list__teaser-text">
+			<?php echo __( 'You’re missing out!', 'elementor' ); ?><br />
+			<?php echo __( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
+			<a href="{{{ elementor.config.dynamicPromotionURL }}}" class="elementor-tags-list__teaser-link" target="_blank">
+				<?php echo __( 'See it in action', 'elementor' ); ?>
+			</a>
+		</div>
+	</div>
 </script>

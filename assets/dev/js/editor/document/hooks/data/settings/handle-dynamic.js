@@ -9,7 +9,7 @@ export class HandleDynamic extends After {
 		return 'handle-dynamic';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'dynamic';
 	}
 

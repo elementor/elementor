@@ -1,55 +1,26 @@
-class Heartbeat {
-	constructor() {
-		let modal;
+export default class Heartbeat {
+	modal = null;
+	document = null;
 
-		this.getModal = () => {
-			if ( ! modal ) {
-				modal = this.initModal();
-			}
+	constructor( document ) {
+		this.document = document;
 
-			return modal;
-		};
+		this.onSend = this.onSend.bind( this );
+		this.onTick = this.onTick.bind( this );
+		this.onRefreshNonce = this.onRefreshNonce.bind( this );
 
-		jQuery( document ).on( {
-			'heartbeat-send': ( event, data ) => {
-				data.elementor_post_lock = {
-					post_ID: elementor.config.document.id,
-				};
-			},
-			'heartbeat-tick': ( event, response ) => {
-				if ( response.locked_user ) {
-					if ( elementor.saver.isEditorChanged() ) {
-						elementor.saver.saveEditor( {
-							status: 'autosave',
-						} );
-					}
+		this.bindEvents();
 
-					this.showLockMessage( response.locked_user );
-				} else {
-					this.getModal().hide();
-				}
-
-				elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
-			},
-			'heartbeat-tick.wp-refresh-nonces': ( event, response ) => {
-				const nonces = response[ 'elementor-refresh-nonces' ];
-
-				if ( nonces ) {
-					if ( nonces.heartbeatNonce ) {
-						elementorCommon.ajax.addRequestConstant( '_nonce', nonces.elementorNonce );
-					}
-
-					if ( nonces.heartbeatNonce ) {
-						window.heartbeatSettings.nonce = nonces.heartbeatNonce;
-					}
-				}
-			},
-		} );
-
-		if ( elementor.config.locked_user ) {
-			this.showLockMessage( elementor.config.locked_user );
-		}
+		wp.heartbeat.connectNow();
 	}
+
+	getModal = () => {
+		if ( ! this.modal ) {
+			this.modal = this.initModal();
+		}
+
+		return this.modal;
+	};
 
 	initModal() {
 		const modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
@@ -83,6 +54,56 @@ class Heartbeat {
 			.setMessage( elementor.translate( 'dialog_user_taken_over', [ lockedUser ] ) )
 			.show();
 	}
-}
 
-export default Heartbeat;
+	onSend( event, data ) {
+		data.elementor_post_lock = {
+			post_ID: this.document.id,
+		};
+	}
+
+	onTick( event, response ) {
+		if ( response.locked_user ) {
+			if ( this.document.editor.isChanged ) {
+				$e.run( 'document/save/auto', {
+					document: this.document,
+				} );
+			}
+
+			this.showLockMessage( response.locked_user );
+		} else {
+			this.getModal().hide();
+		}
+
+		elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
+	}
+
+	onRefreshNonce( event, response ) {
+		const nonces = response[ 'elementor-refresh-nonces' ];
+
+		if ( nonces ) {
+			if ( nonces.heartbeatNonce ) {
+				elementorCommon.ajax.addRequestConstant( '_nonce', nonces.elementorNonce );
+			}
+
+			if ( nonces.heartbeatNonce ) {
+				window.heartbeatSettings.nonce = nonces.heartbeatNonce;
+			}
+		}
+	}
+
+	bindEvents() {
+		jQuery( document ).on( {
+			'heartbeat-send': this.onSend,
+			'heartbeat-tick': this.onTick,
+			'heartbeat-tick.wp-refresh-nonces': this.onRefreshNonce,
+		} );
+	}
+
+	destroy() {
+		jQuery( document ).off( {
+			'heartbeat-send': this.onSend,
+			'heartbeat-tick': this.onTick,
+			'heartbeat-tick.wp-refresh-nonces': this.onRefreshNonce,
+		} );
+	}
+}

@@ -19,14 +19,16 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * @param {{}} args
 	 */
-	constructor( args ) {
+	constructor( args, commandsAPI = $e.commands ) {
 		super( args );
 
 		// Acknowledge self about which command it run.
-		this.currentCommand = $e.commands.getCurrentFirst();
+		this.currentCommand = commandsAPI.getCurrentFirst();
 
 		// Assign instance of current component.
-		this.component = $e.commands.getComponent( this.currentCommand );
+		this.component = commandsAPI.getComponent( this.currentCommand );
+
+		// TODO: if `this.component` not found, throw error !.
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
@@ -131,15 +133,24 @@ export default class CommandBase extends ArgsObject {
 			}
 		}
 
-		// For Data hooks.
-		this.onAfterApply( this.args, result );
+		const onAfter = ( _result ) => {
+			this.onAfterApply( this.args, _result );
 
-		if ( this.isDataChanged() ) {
-			elementor.saver.setFlagEditorChange( true );
+			if ( this.isDataChanged() ) {
+				$e.internal( 'document/save/set-is-modified', { status: true } );
+			}
+
+			// For UI hooks.
+			this.onAfterRun( this.args, _result );
+		};
+
+		// TODO: Temp code determine if it's a jQuery deferred object.
+		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
+			result.fail( this.onCatchApply.bind( this ) );
+			result.done( onAfter );
+		} else {
+			onAfter( result );
 		}
-
-		// For UI hooks.
-		this.onAfterRun( this.args, result );
 
 		return result;
 	}
@@ -198,6 +209,8 @@ export default class CommandBase extends ArgsObject {
 	 * @param {Error} e
 	 */
 	onCatchApply( e ) {
+		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
+
 		if ( $e.devTools ) {
 			$e.devTools.log.error( e );
 		}
@@ -206,5 +219,7 @@ export default class CommandBase extends ArgsObject {
 			// eslint-disable-next-line no-console
 			console.error( e );
 		}
+
+		$e.hooks.runUICatch( this.currentCommand, this.args, e );
 	}
 }

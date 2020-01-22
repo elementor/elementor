@@ -380,7 +380,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.3',
+			'4.7.4',
 			true
 		);
 
@@ -459,7 +459,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.5.0'
+			'5.6.1'
 		);
 
 		wp_register_style(
@@ -1107,8 +1107,8 @@ class Frontend extends App {
 		return $this->_has_elementor_in_page;
 	}
 
-	public function create_action_url( $action, array $settings = [] ) {
-		return '#' . rawurlencode( sprintf( 'elementor-action:action=%1$s settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+	public function create_action_hash( $action, array $settings = [] ) {
+		return rawurlencode( sprintf( '#elementor-action:action=%1$s settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
 	}
 
 	/**
@@ -1129,6 +1129,12 @@ class Frontend extends App {
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
+			],
+			'i18n' => [
+				'share_on_facebook' => __( 'Share on Facebook', 'elementor' ),
+				'share_on_twitter' => __( 'Share on Twitter', 'elementor' ),
+				'pin_it' => __( 'Pin it', 'elementor' ),
+				'download_image' => __( 'Download image', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),

@@ -1,4 +1,4 @@
-import History from '../../commands/base/history';
+import History from 'elementor-document/commands/base/history';
 
 export class Delete extends History {
 	static restore( historyItem, isRedo ) {

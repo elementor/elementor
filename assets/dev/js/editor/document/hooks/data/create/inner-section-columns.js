@@ -11,7 +11,7 @@ export class InnerSectionColumns extends After {
 		return 'create-inner-section-columns';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'column';
 	}
 

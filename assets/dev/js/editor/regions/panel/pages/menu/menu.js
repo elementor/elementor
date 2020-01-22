@@ -12,6 +12,11 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 	initialize: function() {
 		this.collection = PanelMenuPageView.getGroups();
+
+		this.registerDocumentItems();
+
+		// On switch a document, re create document items.
+		elementor.once( 'document:loaded', this.registerDocumentItems );
 	},
 
 	getArrowClass: function() {
@@ -24,6 +29,26 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 	onDestroy: function() {
 		elementor.getPanelView().getHeaderView().ui.menuIcon.removeClass( this.getArrowClass() ).addClass( 'eicon-menu-bar' );
+	},
+
+	registerDocumentItems() {
+		// Todo: internal command.
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
+			name: 'view-page',
+			icon: 'eicon-preview-medium',
+			title: elementor.translate( 'view_page' ),
+			type: 'link',
+			link: elementor.config.document.urls.permalink,
+		}, 'more' );
+
+		// Todo: internal command.
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
+			name: 'exit-to-dashboard',
+			icon: 'eicon-wordpress',
+			title: elementor.translate( 'exit_to_dashboard' ),
+			type: 'link',
+			link: elementor.config.document.urls.exit_to_dashboard,
+		}, 'more' );
 	},
 }, {
 	groups: null,
@@ -43,22 +68,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			title: elementor.translate( 'preferences' ),
 			type: 'page',
 			callback: () => $e.route( 'panel/editor-preferences' ),
-		}, 'more' );
-
-		this.addItem( {
-			name: 'view-page',
-			icon: 'eicon-preview',
-			title: elementor.translate( 'view_page' ),
-			type: 'link',
-			link: elementor.config.document.urls.permalink,
-		}, 'more' );
-
-		this.addItem( {
-			name: 'exit-to-dashboard',
-			icon: 'eicon-wordpress',
-			title: elementor.translate( 'exit_to_dashboard' ),
-			type: 'link',
-			link: elementor.config.document.urls.exit_to_dashboard,
 		}, 'more' );
 
 		if ( elementor.config.user.is_administrator ) {
@@ -146,6 +155,13 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		var items = group.get( 'items' ),
 			beforeItem;
+
+		// Remove if exist.
+		const exists = _.findWhere( items, { name: itemData.name } );
+
+		if ( exists ) {
+			items.splice( items.indexOf( exists ), 1 );
+		}
 
 		if ( before ) {
 			beforeItem = _.findWhere( items, { name: before } );

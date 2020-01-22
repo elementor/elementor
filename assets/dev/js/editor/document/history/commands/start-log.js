@@ -1,8 +1,10 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Base from './base/base';
 
-export class StartLog extends CommandBase {
+export class StartLog extends Base {
 	initialize( args ) {
-		if ( elementor.history.history.isItemStarted() || args.id ) {
+		super.initialize( args );
+
+		if ( this.history.isItemStarted() || args.id ) {
 			this.isSubItem = true;
 
 			return;
@@ -25,7 +27,7 @@ export class StartLog extends CommandBase {
 			return null;
 		}
 
-		return elementor.history.history.startItem( args );
+		return this.history.startItem( args );
 	}
 }
 

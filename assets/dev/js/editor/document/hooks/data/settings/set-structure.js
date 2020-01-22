@@ -9,7 +9,7 @@ export class SetStructure extends After {
 		return 'set-structure';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'section';
 	}
 

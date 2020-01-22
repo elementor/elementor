@@ -7,7 +7,7 @@ use Elementor\Core\Logger\Loggers\Logger_Interface;
 use Elementor\Core\Logger\Items\PHP;
 use Elementor\Core\Logger\Items\JS;
 use Elementor\Plugin;
-use Elementor\System_Info\Main as System_Info;
+use Elementor\Modules\System_Info\Module as System_Info;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

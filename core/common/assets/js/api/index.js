@@ -1,19 +1,22 @@
-import Components from './api/components';
-import Hooks from './api/hooks';
-import Commands from './api/commands';
-import Routes from './api/routes';
-import Shortcuts from './api/shortcuts';
-import BackwardsCompatibility from './api/backwards-compatibility';
-import CommandsBase from './modules/command-base';
-import DataBase from './modules/hooks/data/base';
-import DataAfter from './modules/hooks/data/after';
-import DataDependency from './modules/hooks/data/dependency';
-import UIBase from './modules/hooks/ui/base';
-import UIAfter from './modules/hooks/ui/after';
-import UIBefore from './modules/hooks/ui/before';
+/* Alphabetical order */
+import BackwardsCompatibility from './core/backwards-compatibility';
+import CommandBase from './modules/command-base';
+import CommandInternalBase from './modules/command-internal-base';
+import Commands from './core/commands';
+import CommandsInternal from './core/commands-internal';
 import ComponentBase from './modules/component-base';
-import ComponentModal from './modules/component-modal';
+import ComponentModalBase from './modules/component-modal-base';
+import Components from './core/components';
+import DataAfter from './modules/hooks/data/after';
+import DataBase from './modules/hooks/data/base';
+import DataDependency from './modules/hooks/data/dependency';
 import HookBreak from './modules/hook-break';
+import Hooks from './core/hooks';
+import Routes from './core/routes';
+import Shortcuts from './core/shortcuts';
+import UIAfter from './modules/hooks/ui/after';
+import UIBase from './modules/hooks/ui/base';
+import UIBefore from './modules/hooks/ui/before';
 
 export default class API {
 	/**
@@ -25,25 +28,26 @@ export default class API {
 		this.bc = new BackwardsCompatibility();
 		this.components = new Components();
 
-		this.hooks = new Hooks();
 		this.commands = new Commands();
+		this.commandsInternal = new CommandsInternal();
+
+		this.hooks = new Hooks();
 		this.routes = new Routes();
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 
 		this.modules = {
-			ComponentBase: ComponentBase,
-			ComponentModal: ComponentModal,
+			CommandBase,
+			CommandInternalBase,
 
-			CommandBase: CommandsBase,
+			ComponentBase,
+			ComponentModalBase,
 
-			HookBreak: HookBreak,
-
+			HookBreak,
 			hookData: {
 				Base: DataBase, // TODO: consider remove.
 				After: DataAfter,
 				Dependency: DataDependency,
 			},
-
 			hookUI: {
 				Base: UIBase, // TODO: consider remove.
 				After: UIAfter,
@@ -60,10 +64,24 @@ export default class API {
 	 * Alias of `$e.commands.run()`.
 	 *
 	 * @param {{}} args
-	 * @returns {boolean}
+	 *
+	 * @returns {*}
 	 */
 	run( ...args ) {
 		return $e.commands.run.apply( $e.commands, args );
+	}
+
+	/**
+	 * Function internal().
+	 *
+	 * Alias of `$e.commandsInternal.run()`.
+	 *
+	 * @param {{}} args
+	 *
+	 * @returns {boolean}
+	 */
+	internal( ...args ) {
+		return $e.commandsInternal.run.apply( $e.commandsInternal, args );
 	}
 
 	/**

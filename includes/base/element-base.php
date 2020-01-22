@@ -290,6 +290,10 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
+	public function is_editable() {
+		return true;
+	}
+
 	/**
 	 * @since 2.3.1
 	 * @access protected
@@ -459,6 +463,18 @@ abstract class Element_Base extends Controls_Stack {
 
 		if ( ! empty( $url_control['nofollow'] ) ) {
 			$attributes['rel'] = 'nofollow';
+		}
+
+		if ( ! empty( $url_control['custom_attributes'] ) ) {
+			// Custom URL attributes should come as a string of comma-delimited key|value pairs
+			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
+
+			foreach ( $custom_attributes as $attribute ) {
+				// Trim in case users inserted unwanted spaces
+				list( $attr_key, $attr_value ) = explode( '|', $attribute );
+
+				$attributes[ trim( $attr_key ) ] = trim( $attr_value );
+			}
 		}
 
 		if ( $attributes ) {
@@ -880,6 +896,10 @@ abstract class Element_Base extends Controls_Stack {
 			$config['help_url'] = $this->get_help_url();
 		} else {
 			$config['help_url'] = $this->get_custom_help_url();
+		}
+
+		if ( ! $this->is_editable() ) {
+			$config['editable'] = false;
 		}
 
 		return $config;

@@ -1,16 +1,34 @@
-var BaseMultiple = require( 'elementor-controls/base-multiple' );
+const BaseMultiple = require( 'elementor-controls/base-multiple' );
 
-module.exports = BaseMultiple.extend( {
+class URL extends BaseMultiple {
+	ui() {
+		const ui = super.ui();
 
-	onReady: function() {
-		var self = this,
-			positionBase = elementorCommon.config.isRTL ? 'right' : 'left',
-			last, cache;
+		ui.mainInput = '.elementor-input';
+		ui.moreOptionsToggle = '.elementor-control-url-more';
+		ui.moreOptions = '.elementor-control-url-more-options';
+
+		return ui;
+	}
+
+	events() {
+		const events = super.events();
+
+		events[ 'click @ui.moreOptionsToggle' ] = 'onMoreOptionsToggleClick';
+
+		return events;
+	}
+
+	autoComplete() {
+		const $mainInput = this.ui.mainInput,
+			positionBase = elementorCommon.config.isRTL ? 'right' : 'left';
+
+		let last, cache;
 
 		// Based on /wp-includes/js/tinymce/plugins/wplink/plugin.js.
-		this.ui.input.autocomplete( {
-			source: function( request, response ) {
-				if ( ! self.options.model.attributes.autocomplete ) {
+		$mainInput.autocomplete( {
+			source: ( request, response ) => {
+				if ( ! this.options.model.attributes.autocomplete ) {
 					return;
 				}
 
@@ -24,7 +42,7 @@ module.exports = BaseMultiple.extend( {
 				}
 
 				// Show Spinner.
-				self.ui.input.prev().show();
+				$mainInput.prev().show();
 
 				jQuery.post( window.ajaxurl, {
 					editor: 'elementor',
@@ -32,30 +50,29 @@ module.exports = BaseMultiple.extend( {
 					page: 1,
 					search: request.term,
 					_ajax_linking_nonce: jQuery( '#_ajax_linking_nonce' ).val(),
-				}, function( data ) {
+				}, ( data ) => {
 					cache = data;
 					response( data );
 				}, 'json' )
-					.always( function() {
-						// Hide Spinner.
-						self.ui.input.prev().hide();
-					} );
+					.always( () => $mainInput.prev().hide() );
 
 				last = request.term;
 			},
-			focus: function( event ) {
+			focus: ( event ) => {
 				/*
 				 * Don't empty the URL input field, when using the arrow keys to
 				 * highlight items. See api.jqueryui.com/autocomplete/#event-focus
 				 */
 				event.preventDefault();
 			},
-			select: function( event, ui ) {
-				self.ui.input.val( ui.item.permalink );
-				self.setValue( 'url', ui.item.permalink );
+			select: ( event, ui ) => {
+				$mainInput.val( ui.item.permalink );
+
+				this.setValue( 'url', ui.item.permalink );
+
 				return false;
 			},
-			open: function( event ) {
+			open: ( event ) => {
 				jQuery( event.target ).data( 'uiAutocomplete' ).menu.activeMenu.addClass( 'elementor-autocomplete-menu' );
 			},
 			minLength: 2,
@@ -63,23 +80,34 @@ module.exports = BaseMultiple.extend( {
 				my: positionBase + ' top+2',
 				at: positionBase + ' bottom',
 			},
-		} )
-		// The `_renderItem` cannot be override via the arguments.
-			.autocomplete( 'instance' )._renderItem = function( ul, item ) {
-				var fallbackTitle = window.wpLinkL10n ? window.wpLinkL10n.noTitle : '',
-					title = item.title ? item.title : fallbackTitle;
+		} );
 
-				return jQuery( '<li role="option" id="mce-wp-autocomplete-' + item.ID + '">' )
-					.append( '<span>' + title + '</span>&nbsp;<span class="elementor-autocomplete-item-info">' + item.info + '</span>' )
-					.appendTo( ul );
-			};
-		},
+			// The `_renderItem` cannot be override via the arguments.
+		$mainInput.autocomplete( 'instance' )._renderItem = ( ul, item ) => {
+			const fallbackTitle = window.wpLinkL10n ? window.wpLinkL10n.noTitle : '',
+				title = item.title ? item.title : fallbackTitle;
 
-	onBeforeDestroy: function() {
-		if ( this.ui.input.data( 'autocomplete' ) ) {
-			this.ui.input.autocomplete( 'destroy' );
+			return jQuery( '<li role="option" id="mce-wp-autocomplete-' + item.ID + '">' )
+				.append( '<span>' + title + '</span>&nbsp;<span class="elementor-autocomplete-item-info">' + item.info + '</span>' )
+				.appendTo( ul );
+		};
+	}
+
+	onReady() {
+		this.autoComplete();
+	}
+
+	onMoreOptionsToggleClick() {
+		this.ui.moreOptions.slideToggle();
+	}
+
+	onBeforeDestroy() {
+		if ( this.ui.mainInput.data( 'autocomplete' ) ) {
+			this.ui.mainInput.autocomplete( 'destroy' );
 		}
 
 		this.$el.remove();
-	},
-} );
+	}
+}
+
+module.exports = URL;

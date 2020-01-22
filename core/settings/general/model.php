@@ -140,6 +140,68 @@ class Model extends CSS_Model {
 							'description' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
 							'frontend_available' => true,
 						],
+						'elementor_lightbox_enable_counter' => [
+							'label' => __( 'Counter', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_enable_fullscreen' => [
+							'label' => __( 'Fullscreen', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_enable_zoom' => [
+							'label' => __( 'Zoom', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_enable_share' => [
+							'label' => __( 'Share', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_enable_footer' => [
+							'label' => __( 'Footer Text', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_title_src' => [
+							'label' => __( 'Title', 'elementor' ),
+							'type' => Controls_Manager::SELECT,
+							'options' => [
+								'' => __( 'None', 'elementor' ),
+								'title' => __( 'Title', 'elementor' ),
+								'caption' => __( 'Caption', 'elementor' ),
+								'alt' => __( 'Alt', 'elementor' ),
+								'description' => __( 'Description', 'elementor' ),
+							],
+							'default' => 'title',
+							'condition' => [
+								'elementor_lightbox_enable_footer' => 'yes',
+							],
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_description_src' => [
+							'label' => __( 'Description', 'elementor' ),
+							'type' => Controls_Manager::SELECT,
+							'options' => [
+								'' => __( 'None', 'elementor' ),
+								'title' => __( 'Title', 'elementor' ),
+								'caption' => __( 'Caption', 'elementor' ),
+								'alt' => __( 'Alt', 'elementor' ),
+								'description' => __( 'Description', 'elementor' ),
+							],
+							'default' => 'description',
+							'condition' => [
+								'elementor_lightbox_enable_footer' => 'yes',
+							],
+							'frontend_available' => true,
+						],
 						'elementor_lightbox_color' => [
 							'label' => __( 'Background Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
@@ -151,15 +213,38 @@ class Model extends CSS_Model {
 							'label' => __( 'UI Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
-								'.elementor-lightbox .dialog-lightbox-close-button, .elementor-lightbox .elementor-swiper-button' => 'color: {{VALUE}}',
+								'.elementor-lightbox' => '--lightbox-ui-color: {{VALUE}}',
 							],
 						],
 						'elementor_lightbox_ui_color_hover' => [
 							'label' => __( 'UI Hover Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
-								'.elementor-lightbox .dialog-lightbox-close-button:hover, .elementor-lightbox .elementor-swiper-button:hover' => 'color: {{VALUE}}',
+								'.elementor-lightbox' => '--lightbox-ui-color-hover: {{VALUE}}',
 							],
+						],
+						'elementor_lightbox_text_color' => [
+							'label' => __( 'Text Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-text-color: {{VALUE}}',
+							],
+						],
+						'lightbox_icons_size' => [
+							'label' => __( 'Toolbar Icons Size', 'elementor' ),
+							'type' => Controls_Manager::SLIDER,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-header-icons-size: {{SIZE}}{{UNIT}}',
+							],
+							'separator' => 'before',
+						],
+						'lightbox_slider_icons_size' => [
+							'label' => __( 'Navigation Icons Size', 'elementor' ),
+							'type' => Controls_Manager::SLIDER,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-navigation-icons-size: {{SIZE}}{{UNIT}}',
+							],
+							'separator' => 'before',
 						],
 					],
 				],

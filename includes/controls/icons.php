@@ -85,7 +85,7 @@ class Control_Icons extends Control_Base_Multiple {
 						</div>
 						<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
 					</div>
-					<div class="elementor-control-media__tools">
+					<div class="elementor-control-media__tools elementor-control-dynamic-switcher-wrapper">
 						<div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo __( 'Icon Library', 'elementor' ); ?></div>
 						<div class="elementor-control-svg-uploader elementor-control-media__tool"><?php echo __( 'Upload SVG', 'elementor' ); ?></div>
 					</div>
@@ -102,7 +102,7 @@ class Control_Icons extends Control_Base_Multiple {
 	public function render_inline_skin() {
 		$control_uid = $this->get_control_uid();
 		?>
-		<div class="elementor-control-field">
+		<div class="elementor-control-field elementor-control-inline-icon">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">

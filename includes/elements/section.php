@@ -223,7 +223,6 @@ class Element_Section extends Element_Base {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-
 		$this->start_controls_section(
 			'section_layout',
 			[
@@ -1390,7 +1389,6 @@ class Element_Section extends Element_Base {
 	 */
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
-
 		?>
 		<<?php echo esc_html( $this->get_html_tag() ); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<?php

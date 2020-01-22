@@ -106,6 +106,7 @@ class Documents_Manager {
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
 		$ajax_manager->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
+		$ajax_manager->register_ajax_action( 'get_document_config', [ $this, 'ajax_get_document_config' ] );
 	}
 
 	/**
@@ -137,7 +138,7 @@ class Documents_Manager {
 	 * @access public
 	 *
 	 * @param string $type  Document type name.
-	 * @param Document $class The name of the class that registers the document type.
+	 * @param string $class The name of the class that registers the document type.
 	 *                      Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
@@ -515,6 +516,7 @@ class Documents_Manager {
 		$document = $this->get( $document->get_post()->ID, false );
 
 		$return_data = [
+			'status' => $document->get_post()->post_status,
 			'config' => [
 				'document' => [
 					'last_edited' => $document->get_last_edited(),
@@ -564,6 +566,30 @@ class Documents_Manager {
 		}
 
 		return $success;
+	}
+
+	public function ajax_get_document_config( $request ) {
+		$post_id = absint( $request['id'] );
+
+		Plugin::$instance->editor->set_post_id( $post_id );
+
+		$document = $this->get_doc_or_auto_save( $post_id );
+
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		// Set the global data like $post, $authordata and etc
+		Plugin::$instance->db->switch_to_post( $post_id );
+
+		$this->switch_to_document( $document );
+
+		// Change mode to Builder
+		Plugin::$instance->db->set_is_elementor_page( $post_id );
+
+		$doc_config = $document->get_config();
+
+		return $doc_config;
 	}
 
 	/**

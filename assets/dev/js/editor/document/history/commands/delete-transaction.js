@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Base from './base/base';
 
-export class DeleteTransaction extends CommandBase {
+export class DeleteTransaction extends Base {
 	apply( args ) {
 		this.component.transactions = [];
 	}
