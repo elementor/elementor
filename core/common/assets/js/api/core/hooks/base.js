@@ -1,4 +1,4 @@
-export default class Base extends elementorModules.Module {
+export default class HooksBase extends elementorModules.Module {
 	/**
 	 * Function constructor().
 	 *
