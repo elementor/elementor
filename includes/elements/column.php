@@ -901,7 +901,7 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		if ( ! defined( 'ELEMENTOR_PRO_VERSION' ) ) {
+		if ( ! Utils::has_pro() ) {
 			Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 		}
 
