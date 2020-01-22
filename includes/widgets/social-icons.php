@@ -554,7 +554,7 @@ class Widget_Social_Icons extends Widget_Base {
 					}
 				}
 				if ( 'svg' === $item['social_icon']['library'] ) {
-					$social = '';
+					$social = get_post_meta( $item['social_icon']['value']['id'], '_wp_attachment_image_alt', true );
 				}
 
 				$link_key = 'link_' . $index;
