@@ -8,16 +8,16 @@ On route to a component route, the component becomes “active” that mean that
 The components are extensible so a 3rd party plugin can add some routes, command and shortcuts to an existing component.
 
 *  **Description**: `$e.components` API is a manager, for whole **api** components.
-*  **Location**: *core/common/assets/js/api/apis/components.js*
+*  **Location**: *core/common/assets/js/api/core/components.js*
 *  **Parent**: `elementorModules.Module`
 *  **Methods**:
 
 	| Method                       | Parameters                     | Returns                                       | Description
 	|------------------------------|--------------------------------|-----------------------------------------------|------------------------------|
 	| `$e.components.getAll()`     |                                | `{array.<string>}`                            | Receive all components.
-	| `$e.components.register()`   | `{BaseComponent}` *component*  | `{BaseComponent}` *component*                 | Register a component.
-	| `$e.components.get()`        | `{String}` *id*                | `{BaseComponent}` *component*                 | Get component instance by id.
-	| `$e.components.getActive()`  |                                | `{Object.<BaseComponent>}` *activeComponents* | Get active components.
+	| `$e.components.register()`   | `{ComponentBase}` *component*  | `{ComponentBase}` *component*                 | Register a component.
+	| `$e.components.get()`        | `{String}` *id*                | `{ComponentBase}` *component*                 | Get component instance by id.
+	| `$e.components.getActive()`  |                                | `{Object.<ComponentBase>}` *activeComponents* | Get active components.
 	| `$e.components.activate()`   | `{String}` *namespace*         |                                               | Activate component.
 	| `$e.components.inactivate()` | `{String}` *namespace*         |                                               | Deactivate component.
 	| `$e.components.isActive()`   | `{String}` *namespace*         | `{Boolean}` *isActive*                        | Is component active.
