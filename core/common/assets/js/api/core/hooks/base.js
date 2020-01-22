@@ -2,7 +2,7 @@ export default class HooksBase extends elementorModules.Module {
 	/**
 	 * Function constructor().
 	 *
-	 * Create Callbacks base.
+	 * Create hooks base.
 	 *
 	 * @param {{}} args
 	 */
