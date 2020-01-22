@@ -7,12 +7,11 @@
 # Overview
 | API Name                           | Access          | Description                    |
 |------------------------------------|-----------------|--------------------------------|
-| [Components](api/ecomponents.md)   | `$e.components` | Components management 
-| [Hooks](api/ehooks.md)             | `$e.hooks`      | Data oriented hooks   
-| [Events](api/eevents.md)           | `$e.events`     | UI oriented events    
-| [Commands](api/ecommands.md)       | `$e.commands`   | Commands management   
-| Routes                             | `$e.routes`     | Routes management      
-| Shortcuts                          | `$e.shortcuts`  | Shortcuts component      
+| [Components](api/ecomponents.md)   | `$e.components` | Components management.
+| [Hooks](api/ehooks.md)             | `$e.hooks`      | Hooks   
+| [Commands](api/ecommands.md)       | `$e.commands`   | Commands management.
+| Routes                             | `$e.routes`     | Routes management.   
+| Shortcuts                          | `$e.shortcuts`  | Shortcuts component.      
 | DevTools                           | `$e.devTools`   | External plugin for developers. 
 
 
