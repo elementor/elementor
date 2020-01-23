@@ -1,3 +1,10 @@
+# Legend
+* Example:
+![legend-section-widget-tabs](../../../../../images/base/legend-section-widget-tabs.png)
+- ![#ffd29b](https://placehold.it/15/ffd29b/000000?text=+)  `Section ID` - `98c3441`
+- ![#93ff8b](https://placehold.it/15/93ff8b/000000?text=+) `Column ID` &nbsp;&nbsp;- `18f2ab4`, `4b957d9`
+- ![#43f7ff](https://placehold.it/15/43f7ff/000000?text=+)  `Widget ID` &nbsp;&nbsp;- `5412776`
+
 ## Component -- `$e.components.get('document')`
 
 *  **Name**: Document.
@@ -15,5 +22,8 @@
 
 ## Component `document/` -- Commands
 No commands.
+
+## Component `document/` -- Utils
+TODO
 
 ### [Back](../../../../../core/common/assets/js/api/core/commands-methods/getall.md) 
