@@ -98,6 +98,6 @@ to  `$e.commands`  and each  **hook** being fired after/before/catch a command, 
 		   }
 		}
 		```
-> **Note:** further information about [`{HookBase}`](../../module/module---internal-hook-base.md)**class**.
+> **Note:** further information about [`{HookBase}`](../../modules/hook-base.full.md)**class**.
   
-### [Back](../ehooks.md) 
+### [Back](../hooks.md) 

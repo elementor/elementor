@@ -9,7 +9,7 @@
 <dd><p>Function register().</p>
 <p>Register new command.</p>
 </dd>
-<dt><a href="#getComponent">getComponent(command)</a> ⇒ <code>BaseComponent</code></dt>
+<dt><a href="#getComponent">getComponent(command)</a> ⇒ <code>Component</code></dt>
 <dd><p>Function getComponent().</p>
 <p>Receive Component of the command.</p>
 </dd>
@@ -33,7 +33,7 @@
 <dd><p>Function getCurrentFirst().</p>
 <p>Receive first command that currently running.</p>
 </dd>
-<dt><a href="#getCurrentFirstTrace">getCurrentFirstTrace()</a> ⇒ <code>Object</code></dt>
+<dt><a href="#getCurrentFirstTrace">getCurrentFirstTrace()</a> ⇒ <code>string</code></dt>
 <dd><p>Function getCurrentFirstTrace().</p>
 <p>Receive first command in trace that currently running</p>
 </dd>
@@ -67,7 +67,6 @@ Function getAll().
 Receive all loaded commands.
 
 **Kind**: global function  
-**Notice**: List of command available [here](../method/ecommands-get-all.md)  
 <a name="register"></a>
 
 ## register(component, command, callback) ⇒ <code>Commands</code>
@@ -79,13 +78,13 @@ Register new command.
 
 | Param | Type |
 | --- | --- |
-| component | <code>BaseComponent</code> \| <code>string</code> | 
+| component | <code>ComponentBase</code> \| <code>string</code> | 
 | command | <code>string</code> | 
 | callback | <code>function</code> | 
 
 <a name="getComponent"></a>
 
-## getComponent(command) ⇒ <code>BaseComponent</code>
+## getComponent(command) ⇒ <code>Component</code>
 Function getComponent().
 
 Receive Component of the command.
@@ -158,7 +157,7 @@ Receive first command that currently running.
 **Kind**: global function  
 <a name="getCurrentFirstTrace"></a>
 
-## getCurrentFirstTrace() ⇒ <code>Object</code>
+## getCurrentFirstTrace() ⇒ <code>string</code>
 Function getCurrentFirstTrace().
 
 Receive first command in trace that currently running
@@ -235,4 +234,4 @@ Throws error.
 | --- | --- |
 | message | <code>string</code> | 
 
-### [Back](ecommands.md) 
+### [Back](commands.md) 

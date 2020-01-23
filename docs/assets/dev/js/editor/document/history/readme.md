@@ -54,13 +54,13 @@ TODO
     ```
     Result:
     
-    ![history-with-custom-title](../images/edocument-history/history-with-custom-title.png)
+    ![history-with-custom-title](../../../../../../images/edocument-history/history-with-custom-title.png)
     ```javascript
     $e.run( 'document/history/delete-log', { id } ); 
     ```
     Result:
     
-    ![history-empty](../images/edocument-history/history-empty.png)
+    ![history-empty](../../../../../../images/edocument-history/history-empty.png)
     
 ## _Command_ -- `$e.run('document/histroy/delete-transaction')`
 *  **Name**: Delete-Transaction.

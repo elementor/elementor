@@ -23,7 +23,7 @@ the hooks attached to $e.commands and each hook being fired after/before running
 	| `$e.hooks.runUIAfter()`              | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run UI hook that's run after the commands run.
 	| `$e.hooks.runUICatch()`              | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run UI hook that's run when the command fails.
 	| `$e.hooks.runUIBefore()`             | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run UI hook that's run before the command.
-    > **Note:** further information about can be found at [`{$e.hooks.ui}`](ehooks/ui.md) and [`{$e.hooks.data}`](ehooks/data.md)
+    > **Note:** further information about can be found at [`{$e.hooks.ui}`](hooks/ui.md) and [`{$e.hooks.data}`](hooks/data.md)
 
   
 ### [Back](../readme.md) 

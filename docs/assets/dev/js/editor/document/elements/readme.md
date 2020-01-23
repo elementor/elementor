@@ -71,7 +71,7 @@
       model: { elType: 'section' },
     } );  
     ```
-    Result: ![empty-column](../images/base/empty-column.png)
+    Result: ![empty-column](../../../../../../images/base/empty-column.png)
     Now to create widget, we need column, here is two examples how to reach column:
     ```javascript
     const eColumn = eSection.view.children.findByIndex( 0 ).getContainer();
@@ -90,7 +90,7 @@
         },
     } );
     ```
-    Result: ![widget-heading](../images/base/widget-heading.png)
+    Result: ![widget-heading](../../../../../../images/base/widget-heading.png)
 
 ## Delete _Command_ -- `$e.run('document/elements/delete')`
 *  **Name**: Delete.
@@ -105,7 +105,7 @@
     
 * **Examples**:
     Delete a section, Assuming we have this section, and want to delete it.
-    ![widget-heading](../images/base/widget-heading.png)
+    ![widget-heading](../../../../../../images/base/widget-heading.png)
     ```javascript
     // Get section container.
     const eSection = $e.components.get( 'document' ).utils.findContainerById('886643f');
@@ -129,7 +129,7 @@
     
 * **Examples**:
     Duplicate a section, Assuming we have this section, and want to duplicate it.
-    ![widget-heading](../images/base/widget-heading.png)
+    ![widget-heading](../../../../../../images/base/widget-heading.png)
     ```javascript
     // Get section container.
     const eSection = $e.components.get( 'document' ).utils.findContainerById('886643f');
@@ -139,7 +139,7 @@
     } );
     ```
     Result: 
-    ![widget-heading-duplicated](../images/base/widget-heading-duplicated.png)
+    ![widget-heading-duplicated](../../../../../../images/base/widget-heading-duplicated.png)
 
 ## Empty _Command_ -- `$e.run('document/elements/empty')`
 *  **Name**: Empty.
@@ -211,7 +211,7 @@
     
     console.log( pastedContainers );
     ```
-    Result:![widget-heading-pasted](../images/base/widget-heading-pasted.png)
+    Result:![widget-heading-pasted](../../../../../../images/base/widget-heading-pasted.png)
 
 ## Paste-Style _Command_ -- `$e.run('document/elements/paste-style')`
 *  **Name**: Paste-Style.
@@ -228,7 +228,7 @@
 * **Examples**:
     Copy style from one widget and paste it into another.
     Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the speical one, to restore him to default.
-    ![widget-heading-another-heading-with-special-style](../images/edocument-elements/widget-heading-another-heading-with-special-style.png)
+    ![widget-heading-another-heading-with-special-style](../../../../../../images/edocument-elements/widget-heading-another-heading-with-special-style.png)
 
     ```javascript
     const eSpecialWidget = $e.components.get( 'document' ).utils.findContainerById('2e4b783'),
@@ -242,7 +242,7 @@
         container: eSpecialWidget
     } );
     ```
-    Result:![widget-heading-pasted](../images/base/widget-heading-pasted.png)
+    Result:![widget-heading-pasted](../../../../../../images/base/widget-heading-pasted.png)
 
 ## Reset-Style _Command_ -- `$e.run('document/elements/reset-style')`
 *  **Name**: Reset-Style.
@@ -259,7 +259,7 @@
 * **Examples**:
     Reset style of widget.
     Assuming we have a widget with special style.
-    ![widget-heading-another-heading-with-special-style](../images/edocument-elements/widget-heading-another-heading-with-special-style.png)
+    ![widget-heading-another-heading-with-special-style](../../../../../../images/edocument-elements/widget-heading-another-heading-with-special-style.png)
 
     ```javascript
     const eWidget = $e.components.get( 'document' ).utils.findContainerById('2e4b783');
@@ -270,7 +270,7 @@
     ```
     Result:
     
-    ![widget-heading-pasted](../images/base/widget-heading-pasted.png)
+    ![widget-heading-pasted](../../../../../../images/base/widget-heading-pasted.png)
 
 ## Settings _Command_ -- `$e.run('document/elements/settings')`
 *  **Name**: Settings.
@@ -295,7 +295,7 @@
 
 * **Examples**:
    * Change settings of widget, assuming we have widget heading, let change title color.
-        ![widget-heading](../images/base/widget-heading.png)
+        ![widget-heading](../../../../../../images/base/widget-heading.png)
     
         ```javascript
         const eWidget = $e.components.get( 'document' ).utils.findContainerById('2e4b783');
@@ -308,8 +308,8 @@
         } );
         ```
         Result:
-        ![widget-heading](../images/edocument-elements/widget-heading-title-color-black.png)
+        ![widget-heading](../../../../../../images/edocument-elements/widget-heading-title-color-black.png)
     
     * TODO: Add example with multi containers.
 
-### [Back](edocument.md) 
+### [Back](../readme.md) 

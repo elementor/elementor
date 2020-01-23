@@ -107,6 +107,6 @@ Mainly used for UI/View manipulation.
             }
         }
         ```
-> **Note:** further information about [`{HookBase}`](../../module/module---internal-hook-base.md)**class**.
-  
-### [Back](../ehooks.md) 
+> **Note:** further information about [`{HookBase}`](../../modules/hook-base.full.md)**class**.
+>  
+### [Back](../hooks.md) 

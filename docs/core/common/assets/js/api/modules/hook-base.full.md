@@ -155,4 +155,4 @@ Run the callback.
 | --- | --- |
 | ...args | <code>\*</code> | 
 
-### [Back to index](../readme.md) 
+### [Back](../readme.md) 

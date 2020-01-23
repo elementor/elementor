@@ -28,7 +28,7 @@
     
     |    |    |
     |---:|:---|
-    | ![edit-heading-with-dynamic-title-date](../images/edocument-dynamic/edit-heading-with-dynamic-title-date.png) | ![widget-heading-with-dynamic-title-date](../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
+    | ![edit-heading-with-dynamic-title-date](../../../../../../images/edocument-dynamic/edit-heading-with-dynamic-title-date.png) | ![widget-heading-with-dynamic-title-date](../../../../../../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
 
     ```javascript
       // Get the view by id, then get the container.
@@ -59,7 +59,7 @@
 * **Examples**:
     Enable dynamic title for heading, assuming you have simple widget like this:
     
-    ![widget-heading](../images/base/widget-heading.png)
+    ![widget-heading](../../../../../../images/base/widget-heading.png)
     ```javascript
     // Get heading container.
     const eWidget = $e.components.get( 'document' ).utils.findContainerById( '0b9da89' ),
@@ -75,7 +75,7 @@
     ```
     Will enable dynamic tag: 'post-date' for heading title:
     
-    ![widget-heading-with-dynamic-title-date](../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
+    ![widget-heading-with-dynamic-title-date](../../../../../../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
 
 
 ## Settings _Command_ -- `$e.run('document/dynamic/settings')`
@@ -94,7 +94,7 @@
     Example change dynamic settings for title with dynamic tag *post-date*.
     Assuming you have a heading with 'post-date' dynamic tag for title.
     
-    ![widget-heading-with-dynamic-title-date](../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
+    ![widget-heading-with-dynamic-title-date](../../../../../../images/edocument-dynamic/widget-heading-with-dynamic-title-date.png)
     
     And you want to change the format to human readable format. use next example:
     
@@ -113,7 +113,7 @@
     ```
     The result will be:
     
-    ![widget-heading-with-dynamic-title-date-human-readable](../images/edocument-dynamic/widget-heading-with-dynamic-title-date-human-readable.png)
+    ![widget-heading-with-dynamic-title-date-human-readable](../../../../../../images/edocument-dynamic/widget-heading-with-dynamic-title-date-human-readable.png)
 
 
-### [Back](edocument.md) 
+### [Back](../readme.md) 

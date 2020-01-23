@@ -21,7 +21,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
 	| `$e.components.activate()`   | `{String}` *namespace*         |                                               | Activate component.
 	| `$e.components.inactivate()` | `{String}` *namespace*         |                                               | Deactivate component.
 	| `$e.components.isActive()`   | `{String}` *namespace*         | `{Boolean}` *isActive*                        | Is component active.
-     > **Note:** to see all the components please. please visit [`{$e.commands.getAll()}`](../method/ecommands-get-all.md)**method**
+     > **Note:** to see all the components please. please visit [`{$e.commands.getAll()}`](commands-methods/getall.md)**method**
 
 * **Examples**:
     ```javascript
