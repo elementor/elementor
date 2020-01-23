@@ -154,7 +154,7 @@
 ## Import _Command_ -- `$e.run('document/elements/import')`
 *  **Name**: Import.
 *  **Description**: Import elements to the document.
-*  **Returns**: `{void}`
+*  **Returns**: `{Container | Array.<Container>}` *Imported container(s)*.
 *  **Arguments**:
 
     | Property  | Type               | Requirement       | Description |
