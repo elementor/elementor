@@ -58,28 +58,38 @@ export default class Shortcuts {
 			return;
 		}
 
-		jQuery.each( handlers, ( key, handler ) => {
+		const filteredHandlers = handlers.filter( ( handler ) => {
 			if ( handler.exclude && -1 !== handler.exclude.indexOf( 'input' ) ) {
 				const $target = jQuery( event.target );
 
 				if ( $target.is( ':input, .elementor-input' ) || $target.closest( '[contenteditable="true"]' ).length ) {
-					return;
+					return false;
 				}
 			}
 
 			if ( handler.dependency && ! handler.dependency( event ) ) {
-				return;
+				return false;
 			}
 
 			// Fix for some keyboard sources that consider alt key as ctrl key
 			if ( ! handler.allowAltKey && event.altKey ) {
-				return;
+				return false;
 			}
 
-			event.preventDefault();
-
-			handler.callback( event );
+			return true;
 		} );
+
+		if ( ! filteredHandlers.length ) {
+			return;
+		}
+
+		if ( 1 < filteredHandlers.length && elementorCommon.config.isDebug ) {
+			elementorCommon.helpers.consoleWarn( 'Multiple handlers for shortcut.', filteredHandlers, event );
+		}
+
+		event.preventDefault();
+
+		filteredHandlers[ 0 ].callback( event );
 	}
 
 	isControlEvent( event ) {
