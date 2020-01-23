@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Settings\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -413,6 +415,66 @@ abstract class Widget_Base extends Element_Base {
 		$settings = $this->get_settings();
 
 		$this->add_render_attribute( '_wrapper', 'data-widget_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
+	}
+
+	/**
+	 * Add Light-Box attributes.
+	 *
+	 * Used to add Light-Box-related data attributes to links that open media files.
+	 *
+	 * @param array|string $element         The link HTML element.
+	 * @param int $id                       The ID of the image
+	 * @param string $lightbox_setting_key  The setting key that dictates weather to open the image in a lightbox
+	 * @param string $group_id              Unique ID for a group of lightbox images
+	 * @param bool $overwrite               Optional. Whether to overwrite existing
+	 *                                      attribute. Default is false, not to overwrite.
+	 *
+	 * @return Widget_Base Current instance of the widget.
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 */
+	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false ) {
+		if ( 'no' === $lightbox_setting_key ) {
+			return $this;
+		}
+
+		$general_settings_model = Manager::get_settings_managers( 'general' )->get_model();
+		$is_global_image_lightbox_enabled = 'yes' === $general_settings_model->get_settings( 'elementor_global_image_lightbox' );
+
+		if ( 'yes' !== $lightbox_setting_key && ! $is_global_image_lightbox_enabled ) {
+			return $this;
+		}
+
+		$attributes['data-elementor-open-lightbox'] = 'yes';
+
+		if ( $group_id ) {
+			$attributes['data-elementor-lightbox-slideshow'] = $group_id;
+		}
+
+		if ( $id ) {
+			$attachment = get_post( $id );
+			$lightbox_title_src = $general_settings_model->get_settings( 'elementor_lightbox_title_src' );
+			$lightbox_description_src = $general_settings_model->get_settings( 'elementor_lightbox_description_src' );
+			$image_data = [
+				'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+				'caption' => $attachment->post_excerpt,
+				'description' => $attachment->post_content,
+				'title' => $attachment->post_title,
+			];
+
+			if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
+				$attributes['data-elementor-lightbox-title'] = $image_data[ $lightbox_title_src ];
+			}
+
+			if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
+				$attributes['data-elementor-lightbox-description'] = $image_data[ $lightbox_description_src ];
+			}
+		}
+
+		$this->add_render_attribute( $element, $attributes, null, $overwrite );
+
+		return $this;
 	}
 
 	/**
