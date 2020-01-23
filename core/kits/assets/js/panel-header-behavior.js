@@ -1,7 +1,7 @@
 import {
 	buttonBack,
 	buttonClose,
-} from 'elementor/core/kits/assets/js/panel-header-buttons';
+} from './panel-header-buttons';
 
 export default class extends Marionette.Behavior {
 	ui() {

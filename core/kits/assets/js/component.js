@@ -1,4 +1,4 @@
-import EnqueueFonts from './hooks/ui/enqueue-fonts';
+import EnqueueFonts from './hooks/ui/settings/enqueue-fonts';
 import * as commands from './commands/';
 
 export default class extends elementorModules.common.Component {
