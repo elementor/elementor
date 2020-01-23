@@ -130,10 +130,19 @@ export default class Shortcuts {
 		}
 
 		const namespace = component.getNamespace(),
-			rootScope = component.getRootContainer();
+			namespaceRoot = component.getRootContainer();
 
+		const filteredByNamespace = scopes.some( ( scope ) => {
+			return namespace === scope;
+		} );
+
+		if ( filteredByNamespace ) {
+			return true;
+		}
+
+		// Else filter by namespaceRoot.
 		return scopes.some( ( scope ) => {
-			return namespace === scope || rootScope === scope;
+			return namespaceRoot === scope;
 		} );
 	}
 
