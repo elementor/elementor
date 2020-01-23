@@ -264,7 +264,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 				if ( undefined !== gravity ) {
 					return gravity;
 				}
-				return 'n';
+				return 's';
 			},
 			title: function() {
 				return this.getAttribute( 'data-tooltip' );
