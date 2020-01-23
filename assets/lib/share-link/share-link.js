@@ -106,7 +106,7 @@
 
 	ShareLink.getNetworkLink = function( networkName, settings ) {
 		var link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
-			return encodeURIComponent( settings[ pureMatch ] );
+			return settings[ pureMatch ] || '';
 		} );
 
 		if ( 'email' === networkName ) {
@@ -114,7 +114,7 @@
 				var emailSafeSettings = {
 					text: settings['text'].replace( new RegExp('&', 'g'), '%26' ),
 					title: settings['title'].replace( new RegExp('&', 'g'), '%26' ),
-					url: encodeURIComponent( settings['url'] ),
+					url: settings['url'],
 				};
 
 				link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
@@ -125,6 +125,7 @@
 			if ( link.indexOf( '?subject=&body') ) {
 				link = link.replace( 'subject=&', '' );
 			}
+
 			return link;
 		}
 
