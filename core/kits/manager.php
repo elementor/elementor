@@ -66,6 +66,9 @@ class Manager {
 
 		if ( $kit ) {
 			Plugin::$instance->frontend->print_fonts_links();
+
+			// On preview, the global style is not enqueued.
+			$this->frontend_before_enqueue_styles();
 		}
 	}
 
