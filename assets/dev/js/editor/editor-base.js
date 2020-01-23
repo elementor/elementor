@@ -720,9 +720,12 @@ export default class EditorBase extends Marionette.Application {
 
 				if ( this.loaded ) {
 					this.schemes.printSchemesStyle();
+				$e.internal( 'panel/state-ready' );
+				} else {
+					this.once( 'panel:init', () => {
+						$e.internal( 'panel/state-ready' );
+					} );
 				}
-
-				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
 			},
 		} );
 	}
