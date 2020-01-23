@@ -453,9 +453,9 @@ class Test_Module extends Elementor_Test_Base {
 		] );
 
 		// Validate tracking_data have settings.
-		$this->assertArrayHasKey( 'settings', $tracking_data[ 'usages' ] );
+		$this->assertArrayHasKey( 'elementor_settings', $tracking_data[ 'usages' ] );
 
-		$settings = $tracking_data['usages']['settings'];
+		$settings = $tracking_data['usages']['elementor_settings'];
 
 		// Validate settings have general, style, and advanced.
 		$this->assertArrayHaveKeys( ['general', 'style', 'advanced'], $settings );

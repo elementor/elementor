@@ -252,7 +252,7 @@ class Module extends BaseModule {
 	 */
 	public function add_tracking_data( $params ) {
 		$params['usages']['elements'] = get_option( self::OPTION_NAME );
-		$params['usages']['settings'] = $this->get_settings_usage();
+		$params['usages']['elementor_settings'] = $this->get_settings_usage();
 
 		return $params;
 	}
