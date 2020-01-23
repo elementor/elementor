@@ -32,7 +32,7 @@
 
     ```javascript
       // Get the view by id, then get the container.
-      const eWidget = $e.utils.document.findContainerById( '0b9da89' );
+      const eWidget = $e.components.get( 'document' ).utils.findContainerById( '0b9da89' );
   
       // Disable dynamic tag 'date'.
       $e.run( 'document/dynamic/disable', {
@@ -62,7 +62,7 @@
     ![widget-heading](../images/base/widget-heading.png)
     ```javascript
     // Get heading container.
-    const eWidget = $e.utils.document.findContainerById( '0b9da89' ),
+    const eWidget = $e.components.get( 'document' ).utils.findContainerById( '0b9da89' ),
       postDateTag = elementor.dynamicTags.tagDataToTagText( elementor.helpers.getUniqueID(), 'post-date', new Backbone.Model( {} ));
   
     // Enable dynamic tag `post-date` for title.
@@ -100,7 +100,7 @@
     
     ```javascript
     // Get heading container.
-    const eWidget = $e.utils.document.findContainerById( '0b9da89' ),
+    const eWidget = $e.components.get( 'document' ).utils.findContainerById( '0b9da89' ),
       postDateTag = elementor.dynamicTags.tagDataToTagText( elementor.helpers.getUniqueID(), 'post-date', new Backbone.Model( { format: 'human'} ));
     
     // Change dynamic settings.
