@@ -81,6 +81,13 @@ class Kit extends PageBase {
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
+	protected function get_post_statuses() {
+		return [
+			'draft'   => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
+			'publish' => __( 'Published', 'elementor' ),
+		];
+	}
+
 	private function add_element_controls( $label, $prefix, $selector ) {
 		$this->add_control(
 			$prefix . '_heading',
