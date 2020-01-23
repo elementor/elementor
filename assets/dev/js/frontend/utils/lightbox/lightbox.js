@@ -178,10 +178,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	getShareLinks: function() {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
-			facebook: i18n.share_on_facebook,
-			twitter: i18n.share_on_twitter,
-			pinterest: i18n.pin_it,
-		},
+				twitter: i18n.share_on_twitter,
+			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
 			$linkList = $( '<div>', { class: classes.slideshow.shareLinks } ),
@@ -198,7 +196,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		$.each( socialNetworks, ( key, networkLabel ) => {
-			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ) } ).text( networkLabel );
+			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel );
 			$link.prepend( $( '<i>', { class: 'eicon-' + key } ) );
 			$linkList.append( $link );
 		} );

@@ -1108,7 +1108,7 @@ class Frontend extends App {
 	}
 
 	public function create_action_hash( $action, array $settings = [] ) {
-		return rawurlencode( sprintf( '#elementor-action:action=%1$s settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+		return rawurlencode( sprintf( '#elementor-action:action=%1$s&settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
 	}
 
 	/**
