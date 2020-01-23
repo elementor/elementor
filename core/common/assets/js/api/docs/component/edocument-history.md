@@ -18,8 +18,16 @@
 | [Undo-All](#)                                                          | `$e.run('document/history/undo-all')`              | 
 | [Redo](#)                                                              | `$e.run('document/history/redo')`                  | 
 
-## AddTransaction _Command_ -- `$e.run('document/histroy/add-transaction')`
+## _Command_ -- `$e.run('document/histroy/add-transaction')`
 *  **Name**: Add-Transaction.
 *  **Description**: Add item to transactions.
 *  **Returns**: `{void}`
 *  **Arguments**: 
+
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **optional**  | Container to log.
+    | _containers_ | `{Array.<Container>}` | **optional**  | Containers to log.
+    | _title_      | `{String}`            | **optional**  | Title.
+    | _subTitle_   | `{String}`            | **optional**  | Sub title.
+    | _restore_   | `{function()}`         | **optional**  | Restore function.
