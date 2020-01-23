@@ -1027,8 +1027,8 @@ class Element_Section extends Element_Base {
 				'colors_warning',
 				[
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following colors won\'t work if Default Colors are enabled.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+					'raw' => __( 'Note: The following set of controls has been deprecated. Those controls are only visible if they were previously populated.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
 				]
 			);
 		}
@@ -1041,6 +1041,9 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'heading_color!' => '',
 				],
 				'separator' => 'none',
 			]
@@ -1055,6 +1058,9 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
+				'condition' => [
+					'color_text!' => '',
+				],
 			]
 		);
 
@@ -1067,6 +1073,9 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} a' => 'color: {{VALUE}};',
 				],
+				'condition' => [
+					'color_link!' => '',
+				],
 			]
 		);
 
@@ -1078,6 +1087,9 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'color_link_hover!' => '',
 				],
 			]
 		);
@@ -1103,6 +1115,9 @@ class Element_Section extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
+				],
+				'condition' => [
+					'text_align!' => '',
 				],
 			]
 		);
