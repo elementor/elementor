@@ -10,9 +10,6 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Utils;
-use Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -114,7 +111,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => $prefix . '_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => $selector,
 			]
 		);
@@ -159,7 +155,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'button_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} button',
 			]
 		);
@@ -197,10 +192,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
-				],
 				'selectors' => [
 					'{{WRAPPER}} button' => 'background-color: {{VALUE}};',
 				],
@@ -248,10 +239,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
-				],
 				'selectors' => [
 					'{{WRAPPER}} button:hover, {{WRAPPER}} button:focus' => 'background-color: {{VALUE}};',
 				],
