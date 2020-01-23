@@ -1,4 +1,5 @@
-import EnqueueFonts from './hooks/ui/enqueue-fonts';
+import EnqueueFonts from './hooks/ui/settings/enqueue-fonts';
+import * as commands from './commands/';
 
 export default class extends elementorModules.common.Component {
 	pages = {};
@@ -20,38 +21,17 @@ export default class extends elementorModules.common.Component {
 	}
 
 	defaultCommands() {
+		return this.importCommands( commands );
+	}
+
+	defaultShortcuts() {
 		return {
-			open: () => {
-				const kit = elementor.documents.get( elementor.config.kit_id );
-
-				if ( kit && 'open' === kit.editor.status ) {
-					$e.route( 'panel/global/style' );
-					return;
-				}
-
-				$e.routes.clearHistory( this.getRootContainer() );
-				this.toggleHistoryClass();
-
-				$e.run( 'editor/documents/switch', {
-					id: elementor.config.kit_id,
-				} );
-			},
-			close: () => {
-				$e.run( 'editor/documents/switch', {
-					id: elementor.config.initial_document.id,
-					onClose: () => {
-						$e.components.get( 'panel/global' ).close();
-						$e.routes.clearHistory( this.getRootContainer() );
-					},
-				} );
-			},
-			exit: () => {
-				$e.run( 'editor/documents/close', {
-					id: elementor.config.kit_id,
-					onClose: ( document ) => {
-						location = document.config.urls.exit_to_dashboard;
-					},
-				} );
+			back: {
+				keys: 'esc',
+				scopes: [ 'panel' ],
+				dependency: () => {
+					return elementor.documents.isCurrent( elementor.config.kit_id ) && ! jQuery( '.dialog-widget:visible' ).length;
+				},
 			},
 		};
 	}

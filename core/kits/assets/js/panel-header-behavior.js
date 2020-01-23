@@ -1,7 +1,7 @@
 import {
 	buttonBack,
 	buttonClose,
-} from 'elementor/core/kits/assets/js/panel-header-buttons';
+} from './panel-header-buttons';
 
 export default class extends Marionette.Behavior {
 	ui() {
@@ -24,15 +24,10 @@ export default class extends Marionette.Behavior {
 	}
 
 	onClickClose() {
-		// The kit is opened directly.
-		if ( elementor.config.initial_document.id === parseInt( elementor.config.kit_id ) ) {
-			$e.run( 'panel/global/exit' );
-		} else {
 			$e.run( 'panel/global/close' );
-		}
 	}
 
 	onClickBack() {
-		$e.routes.back( 'panel' );
+		$e.run( 'panel/global/back' );
 	}
 }

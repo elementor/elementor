@@ -1,3 +1,5 @@
+$editor-kit-accent: #4ab7f4;
+
 .elementor-panel {
 	#elementor-panel-header {
 		#elementor-panel-header-kit-close,
@@ -10,7 +12,7 @@
 .elementor-editor-kit {
 	.elementor-panel {
 		#elementor-panel-header {
-			background-color: #4ab7f4;
+			background-color: $editor-kit-accent;
 
 			#elementor-panel-header-kit-close {
 				display: table-cell;
@@ -23,6 +25,14 @@
 			}
 		}
 
+		.elementor-panel-navigation {
+			.elementor-panel-navigation-tab{
+				&.elementor-active{
+					border-bottom-color: $editor-kit-accent;
+				}
+			}
+		}
+
 		#elementor-panel-page-settings {
 			.elementor-panel-navigation {
 				display: none;
@@ -32,7 +42,7 @@
 		#elementor-panel-saver-button-publish,
 		#elementor-panel-saver-button-save-options {
 			&.elementor-button.elementor-button-success:not(.elementor-disabled) {
-				background-color: #4ab7f4;
+				background-color: $editor-kit-accent;
 			}
 		}
 	}
