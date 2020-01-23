@@ -435,6 +435,9 @@ class Kit extends PageBase {
 	}
 
 	private function add_form_fields_section() {
+		$input_selector = '{{WRAPPER}} input:not([type="button"]):not([type="submit"]), {{WRAPPER}} textarea';
+		$input_focus_selector = '{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"]), {{WRAPPER}} textarea';
+
 		$this->start_controls_section(
 			'section_form_fields',
 			[
@@ -485,7 +488,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
-				'selector' => '{{WRAPPER}} input, {{WRAPPER}} textarea',
+				'selector' => $input_selector,
 			]
 		);
 
@@ -498,7 +501,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field', '{{WRAPPER}} input, {{WRAPPER}} textarea' );
+		$this->add_form_field_state_tab_controls( 'form_field', $input_selector );
 
 		$this->end_controls_tab();
 
@@ -509,7 +512,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field_focus', '{{WRAPPER}} input:focus, {{WRAPPER}} textarea:focus' );
+		$this->add_form_field_state_tab_controls( 'form_field_focus', $input_focus_selector );
 
 		$this->add_control(
 			'form_field_focus_transition_duration',
@@ -517,7 +520,7 @@ class Kit extends PageBase {
 				'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} input, {{WRAPPER}} textarea' => 'transition: {{SIZE}}ms',
+					$input_selector => 'transition: {{SIZE}}ms',
 				],
 				'range' => [
 					'px' => [
