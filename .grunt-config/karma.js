@@ -5,10 +5,7 @@
 module.exports = {
 	unit: {
 		configFile: 'karma.conf.js',
-	},
-	failFast: {
-		configFile: 'karma.conf.js',
-		reporters: [ 'progress', 'fail-fast']
+		reporters: [ 'dots', 'fail-fast']
 	},
 	coverage: {
 		configFile: 'karma.conf.js',
