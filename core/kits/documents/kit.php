@@ -10,9 +10,6 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Utils;
-use Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -114,7 +111,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => $prefix . '_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => $selector,
 			]
 		);
@@ -146,6 +142,9 @@ class Kit extends PageBase {
 	}
 
 	private function add_buttons_section() {
+		$button_selector = '{{WRAPPER}} button, {{WRAPPER}} input[type="button"], {{WRAPPER}} input[type="submit"]';
+		$button_hover_selector = '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus, {{WRAPPER}} input[type="submit"]:hover, {{WRAPPER}} input[type="submit"]:focus, {{WRAPPER}} input[type="button"]:hover, {{WRAPPER}} input[type="button"]:focus';
+
 		$this->start_controls_section(
 			'section_buttons',
 			[
@@ -159,8 +158,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'button_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
-				'selector' => '{{WRAPPER}} button',
+				'selector' => $button_selector,
 			]
 		);
 
@@ -168,7 +166,7 @@ class Kit extends PageBase {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'button_text_shadow',
-				'selector' => '{{WRAPPER}} button',
+				'selector' => $button_selector,
 			]
 		);
 
@@ -187,7 +185,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button' => 'color: {{VALUE}};',
+					$button_selector => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -197,12 +195,8 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
-				],
 				'selectors' => [
-					'{{WRAPPER}} button' => 'background-color: {{VALUE}};',
+					$button_selector => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -211,7 +205,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'button_border',
-				'selector' => '{{WRAPPER}} button',
+				'selector' => $button_selector,
 			]
 		);
 
@@ -219,7 +213,7 @@ class Kit extends PageBase {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} button',
+				'selector' => $button_selector,
 			]
 		);
 
@@ -238,7 +232,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button:hover, {{WRAPPER}} button:focus' => 'color: {{VALUE}};',
+					$button_hover_selector => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -248,12 +242,8 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
-				],
 				'selectors' => [
-					'{{WRAPPER}} button:hover, {{WRAPPER}} button:focus' => 'background-color: {{VALUE}};',
+					$button_hover_selector => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -262,7 +252,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'button_hover_border',
-				'selector' => '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus',
+				'selector' => $button_hover_selector,
 				'separator' => 'before',
 			]
 		);
@@ -271,7 +261,7 @@ class Kit extends PageBase {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'button_hover_box_shadow',
-				'selector' => '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus',
+				'selector' => $button_hover_selector,
 			]
 		);
 
@@ -286,7 +276,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$button_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -298,7 +288,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$button_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'separator' => 'before',
 			]
@@ -445,6 +435,9 @@ class Kit extends PageBase {
 	}
 
 	private function add_form_fields_section() {
+		$input_selector = '{{WRAPPER}} input:not([type="button"]):not([type="submit"]), {{WRAPPER}} textarea';
+		$input_focus_selector = '{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"]), {{WRAPPER}} textarea';
+
 		$this->start_controls_section(
 			'section_form_fields',
 			[
@@ -495,7 +488,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
-				'selector' => '{{WRAPPER}} input, {{WRAPPER}} textarea',
+				'selector' => $input_selector,
 			]
 		);
 
@@ -508,7 +501,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field', '{{WRAPPER}} input, {{WRAPPER}} textarea' );
+		$this->add_form_field_state_tab_controls( 'form_field', $input_selector );
 
 		$this->end_controls_tab();
 
@@ -519,7 +512,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field_focus', '{{WRAPPER}} input:focus, {{WRAPPER}} textarea:focus' );
+		$this->add_form_field_state_tab_controls( 'form_field_focus', $input_focus_selector );
 
 		$this->add_control(
 			'form_field_focus_transition_duration',
@@ -527,7 +520,7 @@ class Kit extends PageBase {
 				'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} input, {{WRAPPER}} textarea' => 'transition: {{SIZE}}ms',
+					$input_selector => 'transition: {{SIZE}}ms',
 				],
 				'range' => [
 					'px' => [
