@@ -61,3 +61,8 @@ TODO
     Result:
     
     ![history-empty](../images/edocument-history/history-empty.png)
+    
+## _Command_ -- `$e.run('document/histroy/delete-transaction')`
+*  **Name**: Delete-Transaction.
+*  **Description**: Delete transaction.
+*  **Returns**: `{void}`
