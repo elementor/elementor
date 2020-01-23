@@ -37,6 +37,7 @@ module.exports = Marionette.Behavior.extend( {
 			title() {
 				return this.getAttribute( 'data-tooltip' );
 			},
+			gravity: 's',
 		} );
 	},
 
