@@ -32,12 +32,17 @@ export default class extends elementorModules.common.Component {
 				$e.routes.clearHistory( this.getRootContainer() );
 				this.toggleHistoryClass();
 
-				$e.run( 'editor/documents/switch', {
+				return $e.run( 'editor/documents/switch', {
 					id: elementor.config.kit_id,
 				} );
 			},
 			close: () => {
-				$e.run( 'editor/documents/switch', {
+				// The kit is opened directly.
+				if ( elementor.config.initial_document.id === parseInt( elementor.config.kit_id ) ) {
+					return $e.run( 'panel/global/exit' );
+				}
+
+				return $e.run( 'editor/documents/switch', {
 					id: elementor.config.initial_document.id,
 					onClose: () => {
 						$e.components.get( 'panel/global' ).close();
@@ -46,15 +51,23 @@ export default class extends elementorModules.common.Component {
 				} );
 			},
 			exit: () => {
-				$e.run( 'editor/documents/close', {
+				return $e.run( 'editor/documents/close', {
 					id: elementor.config.kit_id,
 					onClose: ( document ) => {
 						location = document.config.urls.exit_to_dashboard;
 					},
 				} );
 			},
-			back: () => {
-				$e.routes.back( 'panel' );
+			back: ( event ) => {
+				const panelHistory = $e.routes.getHistory( 'panel' );
+
+				// Don't go back if no where.
+				if ( 1 === panelHistory.length ) {
+					this.getCloseConfirmDialog( event ).show();
+					return;
+				}
+
+				return $e.routes.back( 'panel' );
 			},
 		};
 	}
@@ -63,9 +76,41 @@ export default class extends elementorModules.common.Component {
 		return {
 			back: {
 				keys: 'esc',
-				scopes: [ 'panel/global' ],
+				scopes: [ 'panel' ],
+				dependency: () => {
+					return elementor.documents.isCurrent( elementor.config.kit_id ) && ! jQuery( '.dialog-widget:visible' ).length;
+				},
 			},
 		};
+	}
+
+	getCloseConfirmDialog( event ) {
+		if ( ! this.confirmDialog ) {
+			const modalOptions = {
+				id: 'elementor-kit-warn-on-close',
+				headerMessage: elementor.translate( 'Exit' ),
+				message: elementor.translate( 'Would you like to exit?' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: elementor.translate( 'Exit' ),
+					cancel: elementor.translate( 'Cancel' ),
+				},
+				onConfirm: () => {
+					$e.run( 'panel/global/close' );
+				},
+			};
+
+			this.confirmDialog = elementorCommon.dialogsManager.createWidget( 'confirm', modalOptions );
+		}
+
+		this.confirmDialog.setSettings( 'hide', {
+			onEscKeyPress: ! event,
+		} );
+
+		return this.confirmDialog;
 	}
 
 	renderContent( tab ) {
