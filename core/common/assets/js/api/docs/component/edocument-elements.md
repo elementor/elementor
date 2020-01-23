@@ -17,7 +17,7 @@
 | [Paste](#paste-command----erundocumentelementspaste)                   | `$e.run('document/elements/paste')`                | Paste to container. 
 | [Paste-Style](#paste-style-command----erundocumentelementspaste-style) | `$e.run('document/elements/paste-style')`          | Paste style to container. 
 | [Reset-Style](#reset-style-command----erundocumentelementsreset-style) | `$e.run('document/elements/reset-style')`          | Reset style to container. 
-| [Settings](#settings-command----erundocumentelemtnssettings)           | `$e.run('document/elements/settings')`             | Change settings of container. 
+| [Settings](#settings-command----erundocumentelementssettings)          | `$e.run('document/elements/settings')`             | Change settings of container. 
 
 ## Copy _Command_ -- `$e.run('document/elements/copy')`
 *  **Name**: Copy.
@@ -272,7 +272,7 @@
     
     ![widget-heading-pasted](../images/base/widget-heading-pasted.png)
 
-## Settings _Command_ -- `$e.run('document/elemtns/settings')`
+## Settings _Command_ -- `$e.run('document/elements/settings')`
 *  **Name**: Settings.
 *  **Description**: Change container settings.
 *  **Returns**: `{void}`
