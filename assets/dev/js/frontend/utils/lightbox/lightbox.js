@@ -198,7 +198,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		$.each( socialNetworks, ( key, networkLabel ) => {
-			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ) } ).text( networkLabel );
+			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel );
 			$link.prepend( $( '<i>', { class: 'eicon-' + key } ) );
 			$linkList.append( $link );
 		} );
