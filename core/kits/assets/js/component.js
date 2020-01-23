@@ -30,10 +30,15 @@ export default class extends elementorModules.common.Component {
 				}
 
 				$e.routes.clearHistory( this.getRootContainer() );
+
 				this.toggleHistoryClass();
+
+				$e.internal( 'panel/state-loading' );
 
 				return $e.run( 'editor/documents/switch', {
 					id: elementor.config.kit_id,
+				} ).then( () => {
+					$e.internal( 'panel/state-ready' );
 				} );
 			},
 			close: () => {
@@ -42,12 +47,16 @@ export default class extends elementorModules.common.Component {
 					return $e.run( 'panel/global/exit' );
 				}
 
+				$e.internal( 'panel/state-loading' );
+
 				return $e.run( 'editor/documents/switch', {
 					id: elementor.config.initial_document.id,
 					onClose: () => {
 						$e.components.get( 'panel/global' ).close();
 						$e.routes.clearHistory( this.getRootContainer() );
 					},
+				} ).then( () => {
+					$e.internal( 'panel/state-ready' );
 				} );
 			},
 			exit: () => {
