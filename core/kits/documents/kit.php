@@ -124,7 +124,7 @@ class Kit extends PageBase {
 		$this->start_controls_section(
 			'section_body',
 			[
-				'label' => __( 'Body', 'elementor' ),
+				'label' => __( 'Background', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -139,115 +139,6 @@ class Kit extends PageBase {
 						'frontend_available' => true,
 					],
 				],
-			]
-		);
-
-		$this->add_control(
-			'body_color',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}}' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'name' => 'body_typography',
-				'selector' => '{{WRAPPER}}',
-			]
-		);
-
-		$this->add_control(
-			'link_heading',
-			[
-				'type' => Controls_Manager::HEADING,
-				'label' => __( 'Link', 'elementor' ),
-				'separator' => 'before',
-			]
-		);
-
-		$this->start_controls_tabs( 'tabs_link_style' );
-
-		$this->start_controls_tab(
-			'tab_link_normal',
-			[
-				'label' => __( 'Normal', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'link_normal_color',
-			[
-				'label' => __( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} a' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'name' => 'link_normal_typography',
-				'selector' => '{{WRAPPER}} a',
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->start_controls_tab(
-			'tab_link_hover',
-			[
-				'label' => __( 'Hover', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'link_hover_color',
-			[
-				'label' => __( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'name' => 'link_hover_typography',
-				'selector' => '{{WRAPPER}} a:hover',
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
-
-		$this->add_control(
-			'paragraph_spacing',
-			[
-				'label' => __( 'Paragraph Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
-				'separator' => 'before',
 			]
 		);
 
@@ -321,7 +212,6 @@ class Kit extends PageBase {
 			[
 				'name' => 'button_border',
 				'selector' => '{{WRAPPER}} button',
-				'separator' => 'before',
 			]
 		);
 
@@ -421,19 +311,127 @@ class Kit extends PageBase {
 		$this->start_controls_section(
 			'section_typography',
 			[
-				'label' => __( 'Headings', 'elementor' ),
+				'label' => __( 'Typography', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		$this->add_control(
-			'section_typography_notice',
+			'body_color',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'This action will reset typography elements that their source is external to Elementor', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
 			]
 		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'body_typography',
+				'selector' => '{{WRAPPER}}',
+			]
+		);
+
+		$this->add_responsive_control(
+			'paragraph_spacing',
+			[
+				'label' => __( 'Paragraph Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ 'px', 'vh', 'vw' ],
+			]
+		);
+
+		$this->add_control(
+			'link_heading',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Link', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_link_style' );
+
+		$this->start_controls_tab(
+			'tab_link_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'link_normal_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} a' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'link_normal_typography',
+				'selector' => '{{WRAPPER}} a',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_link_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'link_hover_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'link_hover_typography',
+				'selector' => '{{WRAPPER}} a:hover',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		// Headings.
 		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
@@ -455,7 +453,33 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_element_controls( __( 'Label', 'elementor' ), 'form_label', '{{WRAPPER}} label' );
+		$this->add_control(
+			'form_label_heading',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Label', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'form_label_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} label' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'form_label_typography',
+				'selector' => '{{WRAPPER}} label',
+			]
+		);
 
 		$this->add_control(
 			'form_field_heading',
@@ -544,7 +568,6 @@ class Kit extends PageBase {
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} img',
-				'separator' => 'before',
 			]
 		);
 
@@ -716,7 +739,6 @@ class Kit extends PageBase {
 			[
 				'name' => $prefix . '_border',
 				'selector' => $selector,
-				'separator' => 'before',
 			]
 		);
 
