@@ -32,7 +32,7 @@ TODO: All arguments are optional that is not logical, write explanation of how i
     | _title_      | `{String}`            | **optional**  | Title.
     | _subTitle_   | `{String}`            | **optional**  | Sub title.
     | _restore_    | `{function()}`         | **optional** | Restore function.
-* **Examples**:
+*  **Examples**:
 TODO
 
 ## _Command_ -- `$e.run('document/histroy/delete-log')`
@@ -45,7 +45,7 @@ TODO
     |---           |---                    |---            |---|
     | _id_         | `{Number}`            | **required**  | Id of logged history to delete.
 
-* **Examples**:
+*  **Examples**:
     ```javascript
     id = $e.run( 'document/history/start-log', { 
       type: 'custom',
@@ -66,3 +66,10 @@ TODO
 *  **Name**: Delete-Transaction.
 *  **Description**: Delete transaction.
 *  **Returns**: `{void}`
+
+## _Command_ -- `$e.run('document/histroy/end-transaction')`
+*  **Name**: End-Transaction.
+*  **Description**: End transaction, will log the first and the last transaction, as new logged history.
+*  **Returns**: `{void}`
+*  **Arguments**: None.
+*  **Examples**:
