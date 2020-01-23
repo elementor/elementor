@@ -231,9 +231,8 @@ export default class Commands extends elementorModules.Module {
 		const results = this.commands[ command ].apply( component, [ args ] );
 
 		// TODO: Consider add results to `$e.devTools`.
-
 		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args ] );
+			args.onAfter.apply( component, [ args, results ] );
 		}
 
 		this.afterRun( command, args );

@@ -5,15 +5,11 @@ export const Default = () => {
 		hooks.before( () => {
 			// Save the 'post_status' before the test, to put it back later.
 			tempPostStatus = elementor.documents.getCurrent().config.settings.settings.post_status;
-
-			$e.hooks.deactivate();
 		} );
 
 		hooks.after( () => {
 			// Put back as it was before.
 			elementor.documents.getCurrent().container.settings.set( 'post_status', tempPostStatus );
-
-			$e.hooks.activate();
 		} );
 
 		QUnit.test( 'Document post_status is "draft"', async ( assert ) => {

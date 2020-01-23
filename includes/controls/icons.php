@@ -102,7 +102,7 @@ class Control_Icons extends Control_Base_Multiple {
 	public function render_inline_skin() {
 		$control_uid = $this->get_control_uid();
 		?>
-		<div class="elementor-control-field">
+		<div class="elementor-control-field elementor-control-inline-icon">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
