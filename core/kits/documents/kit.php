@@ -142,6 +142,9 @@ class Kit extends PageBase {
 	}
 
 	private function add_buttons_section() {
+		$button_selector = '{{WRAPPER}} button, {{WRAPPER}} input[type="button"], {{WRAPPER}} input[type="submit"]';
+		$button_hover_selector = '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus, {{WRAPPER}} input[type="submit"]:hover, {{WRAPPER}} input[type="submit"]:focus, {{WRAPPER}} input[type="button"]:hover, {{WRAPPER}} input[type="button"]:focus';
+
 		$this->start_controls_section(
 			'section_buttons',
 			[
@@ -155,7 +158,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'button_typography',
-				'selector' => '{{WRAPPER}} button',
+				'selector' => $button_selector,
 			]
 		);
 
@@ -163,7 +166,7 @@ class Kit extends PageBase {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'button_text_shadow',
-				'selector' => '{{WRAPPER}} button',
+				'selector' => $button_selector,
 			]
 		);
 
@@ -182,7 +185,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button' => 'color: {{VALUE}};',
+					$button_selector => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -193,7 +196,7 @@ class Kit extends PageBase {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button' => 'background-color: {{VALUE}};',
+					$button_selector => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -202,7 +205,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'button_border',
-				'selector' => '{{WRAPPER}} button',
+				'selector' => $button_selector,
 			]
 		);
 
@@ -210,7 +213,7 @@ class Kit extends PageBase {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} button',
+				'selector' => $button_selector,
 			]
 		);
 
@@ -229,7 +232,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button:hover, {{WRAPPER}} button:focus' => 'color: {{VALUE}};',
+					$button_hover_selector => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -240,7 +243,7 @@ class Kit extends PageBase {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button:hover, {{WRAPPER}} button:focus' => 'background-color: {{VALUE}};',
+					$button_hover_selector => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -249,7 +252,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'button_hover_border',
-				'selector' => '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus',
+				'selector' => $button_hover_selector,
 				'separator' => 'before',
 			]
 		);
@@ -258,7 +261,7 @@ class Kit extends PageBase {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'button_hover_box_shadow',
-				'selector' => '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus',
+				'selector' => $button_hover_selector,
 			]
 		);
 
@@ -273,7 +276,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$button_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -285,7 +288,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$button_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'separator' => 'before',
 			]
