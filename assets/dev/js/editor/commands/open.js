@@ -11,7 +11,7 @@ export class Open extends CommandBase {
 
 		// Already opened.
 		if ( currentDocument && id === currentDocument.id ) {
-			return;
+			return jQuery.Deferred().resolve();
 		}
 
 		// TODO: move to $e.hooks.ui.

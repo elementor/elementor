@@ -8,15 +8,11 @@ export class Switch extends CommandBase {
 	apply( args ) {
 		const { id, onClose } = args;
 
-		$e.run( 'editor/documents/close', {
+		return $e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),
-			onClose: () => {
-				if ( onClose ) {
-					onClose();
-				}
-
-				$e.run( 'editor/documents/open', { id } );
-			},
+			onClose,
+		} ).then( () => {
+				return $e.run( 'editor/documents/open', { id } );
 		} );
 	}
 }

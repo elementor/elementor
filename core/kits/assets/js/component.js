@@ -26,7 +26,7 @@ export default class extends elementorModules.common.Component {
 
 				if ( kit && 'open' === kit.editor.status ) {
 					$e.route( 'panel/global/style' );
-					return;
+					return jQuery.Deferred().resolve();
 				}
 
 				$e.routes.clearHistory( this.getRootContainer() );
