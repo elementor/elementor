@@ -489,7 +489,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
-				'selector' => 'input,textarea',
+				'selector' => 'input,textarea,.elementor-field-textual,.elementor-field-textual.elementor-size-sm',
 			]
 		);
 
@@ -502,7 +502,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field', 'input,textarea' );
+		$this->add_form_field_state_tab_controls( 'form_field', 'input,textarea,.elementor-field-textual,.elementor-field-textual.elementor-size-sm' );
 
 		$this->end_controls_tab();
 
@@ -513,7 +513,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field_focus', 'input:focus,textarea:focus' );
+		$this->add_form_field_state_tab_controls( 'form_field_focus', 'input:focus,textarea:focus,.elementor-field-textual:focus,.elementor-field-textual.elementor-size-sm:focus' );
 
 		$this->add_control(
 			'form_field_focus_transition_duration',
@@ -521,7 +521,7 @@ class Kit extends PageBase {
 				'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'input,textarea' => 'transition: {{SIZE}}ms',
+					'input,textarea,.elementor-field-textual,.elementor-field-textual.elementor-size-sm' => 'transition: {{SIZE}}ms',
 				],
 				'range' => [
 					'px' => [
@@ -536,6 +536,19 @@ class Kit extends PageBase {
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'form_field__padding',
+			[
+				'label' => __( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%' ],
+				'selectors' => [
+					'input,textarea,.elementor-field-textual,.elementor-field-textual.elementor-size-sm' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+			]
+		);
 
 		$this->end_controls_section();
 	}
@@ -745,19 +758,6 @@ class Kit extends PageBase {
 				'selectors' => [
 					$selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_responsive_control(
-			$prefix . '_padding',
-			[
-				'label' => __( 'Padding', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
-				'selectors' => [
-					$selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-				'separator' => 'before',
 			]
 		);
 
