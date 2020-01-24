@@ -124,6 +124,7 @@ class Kit extends PageBase {
 			[
 				'name' => 'body_background',
 				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}}',
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -255,7 +256,8 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'button_hover_border',
-				'selector' => '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus,.elementor-button:hover,.elementor-button:focus, .elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus',
+				'selector' => 'button:hover,button:focus,.elementor-button:hover,.elementor-button:focus, .elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus',
+				'separator' => 'before',
 			]
 		);
 
@@ -263,7 +265,7 @@ class Kit extends PageBase {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'button_hover_box_shadow',
-				'selector' => '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus,.elementor-button:hover,.elementor-button:focus,.elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus',
+				'selector' => 'button:hover,button:focus,.elementor-button:hover,.elementor-button:focus,.elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus',
 			]
 		);
 
@@ -274,7 +276,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} button:hover,.elementor-button:hover,.elementor-button.elementor-size-sm:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'button:hover,.elementor-button:hover,.elementor-button.elementor-size-sm:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -290,7 +292,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} button,.elementor-button,.elementor-button.elementor-size-sm' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'button,.elementor-button,.elementor-button.elementor-size-sm' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'separator' => 'before',
 			]
@@ -334,7 +336,7 @@ class Kit extends PageBase {
 				'label' => __( 'Paragraph Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],
 				'range' => [
 					'px' => [
@@ -378,7 +380,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a' => 'color: {{VALUE}};',
+					'a' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -388,7 +390,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_normal_typography',
-				'selector' => '{{WRAPPER}} a',
+				'selector' => 'a',
 			]
 		);
 
@@ -407,7 +409,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+					'a:hover' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -417,7 +419,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_hover_typography',
-				'selector' => '{{WRAPPER}} a:hover',
+				'selector' => 'a:hover',
 			]
 		);
 
@@ -426,12 +428,12 @@ class Kit extends PageBase {
 		$this->end_controls_tabs();
 
 		// Headings.
-		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1,.elementor-widget-heading h1.elementor-heading-title' );
-		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2,.elementor-widget-heading h2.elementor-heading-title' );
-		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3,.elementor-widget-heading h3.elementor-heading-title' );
-		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4,.elementor-widget-heading h4.elementor-heading-title' );
-		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5,.elementor-widget-heading h5.elementor-heading-title' );
-		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6,.elementor-widget-heading h6.elementor-heading-title' );
+		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', 'h1,.elementor-widget-heading h1.elementor-heading-title' );
+		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', 'h2,.elementor-widget-heading h2.elementor-heading-title' );
+		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', 'h3,.elementor-widget-heading h3.elementor-heading-title' );
+		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', 'h4,.elementor-widget-heading h4.elementor-heading-title' );
+		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', 'h5,.elementor-widget-heading h5.elementor-heading-title' );
+		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', 'h6,.elementor-widget-heading h6.elementor-heading-title' );
 
 		$this->end_controls_section();
 	}
@@ -459,7 +461,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} label' => 'color: {{VALUE}};',
+					'label' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -469,7 +471,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
-				'selector' => '{{WRAPPER}} label',
+				'selector' => 'label',
 			]
 		);
 
@@ -487,7 +489,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
-				'selector' => '{{WRAPPER}} input, {{WRAPPER}} textarea',
+				'selector' => 'input,textarea',
 			]
 		);
 
@@ -500,7 +502,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field', '{{WRAPPER}} input, {{WRAPPER}} textarea' );
+		$this->add_form_field_state_tab_controls( 'form_field', 'input,textarea' );
 
 		$this->end_controls_tab();
 
@@ -511,7 +513,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field_focus', '{{WRAPPER}} input:focus, {{WRAPPER}} textarea:focus' );
+		$this->add_form_field_state_tab_controls( 'form_field_focus', 'input:focus,textarea:focus' );
 
 		$this->add_control(
 			'form_field_focus_transition_duration',
@@ -519,7 +521,7 @@ class Kit extends PageBase {
 				'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} input, {{WRAPPER}} textarea' => 'transition: {{SIZE}}ms',
+					'input,textarea' => 'transition: {{SIZE}}ms',
 				],
 				'range' => [
 					'px' => [
@@ -559,7 +561,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'selector' => '{{WRAPPER}} img',
+				'selector' => 'img',
 			]
 		);
 
@@ -570,7 +572,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -588,7 +590,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'opacity: {{SIZE}};',
+					'img' => 'opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -600,7 +602,7 @@ class Kit extends PageBase {
 				'exclude' => [
 					'box_shadow_position',
 				],
-				'selector' => '{{WRAPPER}} img',
+				'selector' => 'img',
 			]
 		);
 
@@ -608,7 +610,7 @@ class Kit extends PageBase {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'image_css_filters',
-				'selector' => '{{WRAPPER}} img',
+				'selector' => 'img',
 			]
 		);
 
@@ -625,7 +627,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_hover_border',
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => 'img:hover',
 				'separator' => 'before',
 			]
 		);
@@ -637,7 +639,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} img:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'img:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -655,7 +657,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img:hover' => 'opacity: {{SIZE}};',
+					'img:hover' => 'opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -664,7 +666,7 @@ class Kit extends PageBase {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'image_hover_css_filters',
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => 'img:hover',
 			]
 		);
 
@@ -675,7 +677,7 @@ class Kit extends PageBase {
 				'exclude' => [
 					'box_shadow_position',
 				],
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => 'img:hover',
 			]
 		);
 
@@ -691,7 +693,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'transition-duration: {{SIZE}}s',
+					'img' => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
