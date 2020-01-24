@@ -150,7 +150,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'button_typography',
-				'selector' => '{{WRAPPER}} button, .elementor-button, .elementor-button.elementor-size-sm',
+				'selector' => 'button, .elementor-button, .elementor-button.elementor-size-sm',
 			]
 		);
 
@@ -158,7 +158,7 @@ class Kit extends PageBase {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'button_text_shadow',
-				'selector' => '{{WRAPPER}} button, .elementor-button',
+				'selector' => 'button, .elementor-button',
 			]
 		);
 
@@ -177,7 +177,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button,.elementor-button,.elementor-button.elementor-size-sm' => 'color: {{VALUE}};',
+					'button,.elementor-button,.elementor-button.elementor-size-sm' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -188,7 +188,7 @@ class Kit extends PageBase {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button,.elementor-button,.elementor-button.elementor-size-sm' => 'background-color: {{VALUE}};',
+					'button,.elementor-button,.elementor-button.elementor-size-sm' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -197,7 +197,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'button_border',
-				'selector' => '{{WRAPPER}} button, .elementor-button,.elementor-button.elementor-size-sm',
+				'selector' => 'button, .elementor-button,.elementor-button.elementor-size-sm',
 			]
 		);
 
@@ -205,7 +205,7 @@ class Kit extends PageBase {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} button, .elementor-button',
+				'selector' => 'button, .elementor-button',
 			]
 		);
 
@@ -216,7 +216,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} button,.elementor-button,.elementor-button.elementor-size-sm' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'button,.elementor-button,.elementor-button.elementor-size-sm' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -236,7 +236,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button:hover,{{WRAPPER}} button:focus,.elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus,.elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus' => 'color: {{VALUE}};',
+					'button:hover,button:focus,.elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus,.elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -247,7 +247,7 @@ class Kit extends PageBase {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} button:hover, {{WRAPPER}} button:focus,.elementor-button:hover,.elementor-button:focus,.elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus' => 'background-color: {{VALUE}};',
+					'button:hover,button:focus,.elementor-button:hover,.elementor-button:focus,.elementor-button.elementor-size-sm:hover,.elementor-button.elementor-size-sm:focus' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -461,7 +461,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'label' => 'color: {{VALUE}};',
+					'label,.elementor-widget-form .elementor-field-group > label' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -471,7 +471,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
-				'selector' => 'label',
+				'selector' => 'label,.elementor-widget-form .elementor-field-group > label',
 			]
 		);
 
