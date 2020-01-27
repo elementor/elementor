@@ -149,7 +149,6 @@ class Kit extends PageBase {
 			'{{WRAPPER}} input[type="button"]',
 			'{{WRAPPER}} input[type="submit"]',
 			'{{WRAPPER}} .elementor-button',
-			'{{WRAPPER}} .elementor-button.elementor-size-sm',
 		];
 
 		$button_hover_selectors = [
@@ -161,8 +160,6 @@ class Kit extends PageBase {
 			'{{WRAPPER}} input[type="submit"]:focus',
 			'{{WRAPPER}} .elementor-button:hover',
 			'{{WRAPPER}} .elementor-button:focus',
-			'{{WRAPPER}} .elementor-button.elementor-size-sm:hover',
-			'{{WRAPPER}} .elementor-button.elementor-size-sm:focus',
 		];
 
 		$button_selector = implode( ',', $button_selectors );
@@ -480,14 +477,12 @@ class Kit extends PageBase {
 			'{{WRAPPER}} input:not([type="button"]):not([type="submit"])',
 			'{{WRAPPER}} textarea',
 			'{{WRAPPER}} .elementor-field-textual',
-			'{{WRAPPER}} .elementor-field-textual.elementor-size-sm',
 		];
 
 		$input_focus_selectors = [
 			'{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"])',
 			'{{WRAPPER}} textarea:focus',
 			'{{WRAPPER}} .elementor-field-textual:focus',
-			'{{WRAPPER}} .elementor-field-textual.elementor-size-sm:focus',
 		];
 
 		$label_selector = implode( ',', $label_selectors );
