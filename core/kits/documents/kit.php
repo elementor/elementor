@@ -10,9 +10,6 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Utils;
-use Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -81,6 +78,13 @@ class Kit extends PageBase {
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
+	protected function get_post_statuses() {
+		return [
+			'draft'   => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
+			'publish' => __( 'Published', 'elementor' ),
+		];
+	}
+
 	private function add_element_controls( $label, $prefix, $selector ) {
 		$this->add_control(
 			$prefix . '_heading',
@@ -107,7 +111,6 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => $prefix . '_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => $selector,
 			]
 		);
@@ -117,7 +120,7 @@ class Kit extends PageBase {
 		$this->start_controls_section(
 			'section_body',
 			[
-				'label' => __( 'Body', 'elementor' ),
+				'label' => __( 'Background', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -132,6 +135,174 @@ class Kit extends PageBase {
 						'frontend_available' => true,
 					],
 				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	private function add_buttons_section() {
+		$button_selector = '{{WRAPPER}} button, {{WRAPPER}} input[type="button"], {{WRAPPER}} input[type="submit"]';
+		$button_hover_selector = '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus, {{WRAPPER}} input[type="submit"]:hover, {{WRAPPER}} input[type="submit"]:focus, {{WRAPPER}} input[type="button"]:hover, {{WRAPPER}} input[type="button"]:focus';
+
+		$this->start_controls_section(
+			'section_buttons',
+			[
+				'label' => __( 'Buttons', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'button_typography',
+				'selector' => $button_selector,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'button_text_shadow',
+				'selector' => $button_selector,
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_button_style' );
+
+		$this->start_controls_tab(
+			'tab_button_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'button_text_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					$button_selector => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'button_background_color',
+			[
+				'label' => __( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					$button_selector => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'button_border',
+				'selector' => $button_selector,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_box_shadow',
+				'selector' => $button_selector,
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_button_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'button_hover_text_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					$button_hover_selector => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'button_hover_background_color',
+			[
+				'label' => __( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					$button_hover_selector => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'button_hover_border',
+				'selector' => $button_hover_selector,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_hover_box_shadow',
+				'selector' => $button_hover_selector,
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->add_control(
+			'button_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					$button_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'button_padding',
+			[
+				'label' => __( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%' ],
+				'selectors' => [
+					$button_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	private function add_typography_section() {
+		$this->start_controls_section(
+			'section_typography',
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -152,6 +323,32 @@ class Kit extends PageBase {
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'body_typography',
 				'selector' => '{{WRAPPER}}',
+			]
+		);
+
+		$this->add_responsive_control(
+			'paragraph_spacing',
+			[
+				'label' => __( 'Paragraph Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ 'px', 'vh', 'vw' ],
 			]
 		);
 
@@ -226,208 +423,6 @@ class Kit extends PageBase {
 
 		$this->end_controls_tabs();
 
-		$this->add_control(
-			'paragraph_spacing',
-			[
-				'label' => __( 'Paragraph Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	private function add_buttons_section() {
-		$this->start_controls_section(
-			'section_buttons',
-			[
-				'label' => __( 'Buttons', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'name' => 'button_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
-				'selector' => '{{WRAPPER}} button',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Text_Shadow::get_type(),
-			[
-				'name' => 'button_text_shadow',
-				'selector' => '{{WRAPPER}} button',
-			]
-		);
-
-		$this->start_controls_tabs( 'tabs_button_style' );
-
-		$this->start_controls_tab(
-			'tab_button_normal',
-			[
-				'label' => __( 'Normal', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'button_text_color',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} button' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'button_background_color',
-			[
-				'label' => __( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
-				],
-				'selectors' => [
-					'{{WRAPPER}} button' => 'background-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => 'button_border',
-				'selector' => '{{WRAPPER}} button',
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} button',
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->start_controls_tab(
-			'tab_button_hover',
-			[
-				'label' => __( 'Hover', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'button_hover_text_color',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} button:hover, {{WRAPPER}} button:focus' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'button_hover_background_color',
-			[
-				'label' => __( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
-				],
-				'selectors' => [
-					'{{WRAPPER}} button:hover, {{WRAPPER}} button:focus' => 'background-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => 'button_hover_border',
-				'selector' => '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus',
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'button_hover_box_shadow',
-				'selector' => '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus',
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
-
-		$this->add_control(
-			'button_border_radius',
-			[
-				'label' => __( 'Border Radius', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
-				'selectors' => [
-					'{{WRAPPER}} button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'button_padding',
-			[
-				'label' => __( 'Padding', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
-				'selectors' => [
-					'{{WRAPPER}} button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	private function add_typography_section() {
-		$this->start_controls_section(
-			'section_typography',
-			[
-				'label' => __( 'Headings', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'section_typography_notice',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'This action will reset typography elements that their source is external to Elementor', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-			]
-		);
-
 		// Headings.
 		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
 		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2' );
@@ -440,6 +435,9 @@ class Kit extends PageBase {
 	}
 
 	private function add_form_fields_section() {
+		$input_selector = '{{WRAPPER}} input:not([type="button"]):not([type="submit"]), {{WRAPPER}} textarea';
+		$input_focus_selector = '{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"]), {{WRAPPER}} textarea';
+
 		$this->start_controls_section(
 			'section_form_fields',
 			[
@@ -448,7 +446,33 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_element_controls( __( 'Label', 'elementor' ), 'form_label', '{{WRAPPER}} label' );
+		$this->add_control(
+			'form_label_heading',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Label', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'form_label_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} label' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'form_label_typography',
+				'selector' => '{{WRAPPER}} label',
+			]
+		);
 
 		$this->add_control(
 			'form_field_heading',
@@ -464,7 +488,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
-				'selector' => '{{WRAPPER}} input, {{WRAPPER}} textarea',
+				'selector' => $input_selector,
 			]
 		);
 
@@ -477,7 +501,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field', '{{WRAPPER}} input, {{WRAPPER}} textarea' );
+		$this->add_form_field_state_tab_controls( 'form_field', $input_selector );
 
 		$this->end_controls_tab();
 
@@ -488,7 +512,7 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->add_form_field_state_tab_controls( 'form_field_focus', '{{WRAPPER}} input:focus, {{WRAPPER}} textarea:focus' );
+		$this->add_form_field_state_tab_controls( 'form_field_focus', $input_focus_selector );
 
 		$this->add_control(
 			'form_field_focus_transition_duration',
@@ -496,7 +520,7 @@ class Kit extends PageBase {
 				'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} input, {{WRAPPER}} textarea' => 'transition: {{SIZE}}ms',
+					$input_selector => 'transition: {{SIZE}}ms',
 				],
 				'range' => [
 					'px' => [
@@ -537,7 +561,6 @@ class Kit extends PageBase {
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} img',
-				'separator' => 'before',
 			]
 		);
 
@@ -709,7 +732,6 @@ class Kit extends PageBase {
 			[
 				'name' => $prefix . '_border',
 				'selector' => $selector,
-				'separator' => 'before',
 			]
 		);
 

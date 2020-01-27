@@ -714,15 +714,16 @@ export default class EditorBase extends Marionette.Application {
 				exclude: excludeWidgets,
 			},
 			success: ( data ) => {
-				jQuery.each( data, ( widgetName, controlsConfig ) => {
-					this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], controlsConfig );
-				} );
+				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
 					this.schemes.printSchemesStyle();
+					$e.internal( 'panel/state-ready' );
+				} else {
+					this.once( 'panel:init', () => {
+						$e.internal( 'panel/state-ready' );
+					} );
 				}
-
-				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
 			},
 		} );
 	}
@@ -1067,7 +1068,7 @@ export default class EditorBase extends Marionette.Application {
 
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
-			this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], widgetConfig );
+			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
 		} );
 	}
 

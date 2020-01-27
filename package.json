@@ -50,6 +50,7 @@
 		"karma-chrome-launcher": "^3.1.0",
 		"karma-coverage": "^2.0.1",
 		"karma-coverage-istanbul-reporter": "^2.1.0",
+		"karma-fail-fast-reporter": "^1.0.5",
 		"karma-fixture": "^0.2.6",
 		"karma-html2js-preprocessor": "^1.1.0",
 		"karma-qunit": "^4.0.0",

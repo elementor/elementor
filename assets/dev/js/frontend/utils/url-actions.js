@@ -2,7 +2,7 @@ export default class extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				links: 'a[href^="#elementor-action"]',
+				links: 'a[href^="%23elementor-action"]',
 			},
 		};
 	}
@@ -30,7 +30,7 @@ export default class extends elementorModules.ViewModule {
 	runAction( url, ...restArgs ) {
 		url = decodeURIComponent( url );
 
-		const actionMatch = url.match( /action=(.+?) / ),
+		const actionMatch = url.match( /action=(.+?)&/ ),
 			settingsMatch = url.match( /settings=(.+)/ );
 
 		if ( ! actionMatch ) {
@@ -55,7 +55,7 @@ export default class extends elementorModules.ViewModule {
 	runLinkAction( event ) {
 		event.preventDefault();
 
-		this.runAction( event.currentTarget.hash, event );
+		this.runAction( jQuery( event.currentTarget ).attr( 'href' ), event );
 	}
 
 	runHashAction() {
@@ -65,7 +65,7 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	createActionHash( action, settings ) {
-		return `#elementor-action:action=${ action } settings=${ btoa( JSON.stringify( settings ) ) }`;
+		return encodeURIComponent( `#elementor-action:action=${ action }&settings=${ btoa( JSON.stringify( settings ) ) }` );
 	}
 
 	onInit() {

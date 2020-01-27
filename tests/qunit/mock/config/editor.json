@@ -18,6 +18,9 @@
 	"libraries": []
   },
   "controls": {
+	"font": {
+	  "options": {}
+	},
 	"repeater": {
 	  "item_actions": {
 		"add": true,

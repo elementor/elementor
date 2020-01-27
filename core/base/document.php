@@ -1181,7 +1181,7 @@ abstract class Document extends Controls_Stack {
 
 		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
 
-			$statuses = get_post_statuses();
+			$statuses = $this->get_post_statuses();
 			if ( 'future' === $this->get_main_post()->post_status ) {
 				$statuses['future'] = __( 'Future', 'elementor' );
 			}
@@ -1198,5 +1198,9 @@ abstract class Document extends Controls_Stack {
 		}
 
 		$this->end_controls_section();
+	}
+
+	protected function get_post_statuses() {
+		return get_post_statuses();
 	}
 }

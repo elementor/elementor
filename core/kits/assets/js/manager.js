@@ -23,10 +23,6 @@ export default class extends elementorModules.editor.utils.Module {
 		}, 'style', 'global-colors' );
 	}
 
-	loadKitDocument() {
-		elementor.documents.request( elementor.config.kit_id );
-	}
-
 	addHeaderBehavior( behaviors ) {
 			behaviors.kit = {
 				behaviorClass: PanelHeaderBehavior,
@@ -51,9 +47,6 @@ export default class extends elementorModules.editor.utils.Module {
 				this.addPanelPage();
 
 				this.addPanelMenuItem();
-
-				// Cache.
-				this.loadKitDocument();
 			} );
 		} );
 	}

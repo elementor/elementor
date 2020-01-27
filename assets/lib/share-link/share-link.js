@@ -73,7 +73,7 @@
 	};
 
 	ShareLink.networkTemplates = {
-		twitter: 'https://twitter.com/intent/tweet?url={url}&text={text}',
+		twitter: 'https://twitter.com/intent/tweet?text={text}{url}',
 		pinterest: 'https://www.pinterest.com/pin/create/button/?url={url}&media={image}',
 		facebook: 'https://www.facebook.com/sharer.php?u={url}',
 		vk: 'https://vkontakte.ru/share.php?url={url}&title={title}&description={text}&image={image}',
@@ -106,7 +106,7 @@
 
 	ShareLink.getNetworkLink = function( networkName, settings ) {
 		var link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
-			return encodeURIComponent( settings[ pureMatch ] );
+			return settings[ pureMatch ] || '';
 		} );
 
 		if ( 'email' === networkName ) {
@@ -114,7 +114,7 @@
 				var emailSafeSettings = {
 					text: settings['text'].replace( new RegExp('&', 'g'), '%26' ),
 					title: settings['title'].replace( new RegExp('&', 'g'), '%26' ),
-					url: encodeURIComponent( settings['url'] ),
+					url: settings['url'],
 				};
 
 				link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
@@ -125,6 +125,7 @@
 			if ( link.indexOf( '?subject=&body') ) {
 				link = link.replace( 'subject=&', '' );
 			}
+
 			return link;
 		}
 
