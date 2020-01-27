@@ -3,8 +3,22 @@
 
 *  **Name**: History.
 *  **Description**: Provide a way to manage history...
-
-TODO: Add history types.
+*  **Built in history types**:
+```javascript
+historyTypes = {
+	"add": "Added",
+	"change": "Edited",
+	"disable": "Disabled",
+	"duplicate": "Duplicate",
+	"enable": "Enabled",
+	"move": "Moved",
+	"paste": "Pasted",
+	"paste_style": "Style Pasted",
+	"remove": "Removed",
+	"reset_style": "Style Reset",
+	"reset_settings": "Settings Reset"
+}
+```
 
 ## Component `document/history/` -- Commands
 | Command                                                                | Access                                             | Description         
