@@ -189,6 +189,10 @@
 			width: 100%;
 			padding: 6.5px;
 			font-size: 12px;
+
+			&::-moz-focus-inner {
+				border: 0;
+			}
 		}
 	}
 }
