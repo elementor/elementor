@@ -1,6 +1,6 @@
 import ItemModel from './item/model';
 
-export default class HistoryCore {
+export default class HistoryModule {
 	static translations = null;
 
 	currentItemID = null;
@@ -10,8 +10,8 @@ export default class HistoryCore {
 	active = true;
 
 	constructor() {
-		if ( ! HistoryCore.translations ) {
-			HistoryCore.translations = {
+		if ( ! HistoryModule.translations ) {
+			HistoryModule.translations = {
 				add: elementor.translate( 'added' ),
 				change: elementor.translate( 'edited' ),
 				disable: elementor.translate( 'disabled' ),
@@ -28,8 +28,8 @@ export default class HistoryCore {
 	}
 
 	getActionLabel( itemData ) {
-		if ( HistoryCore.translations[ itemData.type ] ) {
-			return HistoryCore.translations[ itemData.type ];
+		if ( HistoryModule.translations[ itemData.type ] ) {
+			return HistoryModule.translations[ itemData.type ];
 		}
 
 		return itemData.type;

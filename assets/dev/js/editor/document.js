@@ -1,4 +1,4 @@
-import HistoryCore from './document/history/core';
+import HistoryModule from './document/history/module';
 import RevisionsManager from 'elementor/modules/history/assets/js/revisions/manager';
 
 /**
@@ -52,7 +52,7 @@ export default class Document {
 	/**
 	 * History of the document.
 	 *
-	 * @type {HistoryCore}
+	 * @type {HistoryModule}
 	 */
 	history = null;
 
@@ -89,7 +89,7 @@ export default class Document {
 		this.config = config;
 		this.id = config.id;
 
-		this.history = new HistoryCore();
+		this.history = new HistoryModule();
 		this.revisions = new RevisionsManager( this );
 	}
 }
