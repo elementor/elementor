@@ -9,7 +9,7 @@ export class SetStructure extends HookAfter {
 		return 'set-structure';
 	}
 
-	bindContainerType() {
+	getContainerType() {
 		return 'section';
 	}
 

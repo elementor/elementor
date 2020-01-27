@@ -45,4 +45,32 @@ export default class HistoryHelper {
 	static getFirstItem() {
 		return elementor.history.history.getItems().at( 0 );
 	}
+
+	static printHumanReadable() {
+		console.log( '--------------------------------------------------------------' );
+
+		Object.entries( elementor.history.history.getItems().models ).forEach( ( model ) => {
+			const modelItem = model[ 1 ],
+				modelAttribute = modelItem.attributes,
+				subItemModels = modelAttribute.items.models;
+
+			console.log( `History item #${ model[ 0 ] }: type: '${ modelAttribute.type }', title: ${ modelAttribute.title } ->` );
+
+			subItemModels.forEach( ( subItemModel ) => {
+				const subModelAttribute = subItemModel.attributes;
+
+				console.log( `\t SubItem: type: '${ subModelAttribute.type }', title: ${ subModelAttribute.title }` );
+
+				if ( subModelAttribute.data ) {
+					console.log( '\t\t data', ( subModelAttribute.data.changes ) );
+				}
+
+				if ( subModelAttribute.options ) {
+					console.log( '\t\t options', ( subModelAttribute.options ) );
+				}
+			} );
+		} );
+
+		console.log( '--------------------------------------------------------------' );
+	}
 }
