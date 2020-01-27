@@ -79,4 +79,8 @@ export default class Component extends ComponentBase {
 
 		return result;
 	}
+
+	isTransactionStarted() {
+		return Boolean( this.transactions.length );
+	}
 }
