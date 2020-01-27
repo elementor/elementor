@@ -1,6 +1,6 @@
 import Base from './base/base';
 
-export class DeleteTransaction extends Base {
+export class ClearTransaction extends Base {
 	initialize() {
 		if ( $e.devTools && ! this.component.isTransactionStarted() ) {
 			$e.devTools.log.warn( 'Transaction is already started' );
@@ -12,4 +12,4 @@ export class DeleteTransaction extends Base {
 	}
 }
 
-export default DeleteTransaction;
+export default ClearTransaction;

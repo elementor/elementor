@@ -20,8 +20,8 @@ export default class Component extends ComponentBase {
 	getCommands() {
 		return {
 			'add-transaction': ( args ) => ( new commands.AddTransaction( args ).run() ),
+			'clear-transaction': ( args ) => ( new commands.ClearTransaction( args ).run() ),
 			'delete-log': ( args ) => ( new commands.DeleteLog( args ).run() ),
-			'delete-transaction': ( args ) => ( new commands.DeleteTransaction( args ).run() ),
 			'end-log': ( args ) => ( new commands.EndLog( args ).run() ),
 			'end-transaction': ( args ) => ( new commands.EndTransaction( args ).run() ),
 			'log-sub-item': ( args ) => ( new commands.LogSubItem( args ).run() ),

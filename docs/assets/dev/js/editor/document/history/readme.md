@@ -4,16 +4,18 @@
 *  **Name**: History.
 *  **Description**: Provide a way to manage history...
 
+TODO: Add history types.
+
 ## Component `document/history/` -- Commands
 | Command                                                                | Access                                             | Description         
 |------------------------------------------------------------------------|----------------------------------------------------|-----------------------------------------
 | [Add-Transaction](#)                                                   | `$e.run('document/history/add-transaction')`       | 
+| [Clear-Transaction](#)                                                 | `$e.run('document/history/clear-transaction')`     | 
 | [Delete-Log](#)                                                        | `$e.run('document/history/delete-log')`            | 
-| [Delete-Transaction](#)                                                | `$e.run('document/history/delete-transaction')`    | 
+| [End-Log](#)                                                           | `$e.run('document/history/end-log')`               | 
 | [End-Transaction](#)                                                   | `$e.run('document/history/end-transaction')`       | 
 | [Log-Sub-Item](#)                                                      | `$e.run('document/history/log-sub-item')`          | 
 | [Start-Log](#)                                                         | `$e.run('document/history/start-log')`             | 
-| [Start-Transaction](#)                                                 | `$e.run('document/history/start-transaction')`     | 
 | [Undo](#)                                                              | `$e.run('document/history/undo')`                  | 
 | [Undo-All](#)                                                          | `$e.run('document/history/undo-all')`              | 
 | [Redo](#)                                                              | `$e.run('document/history/redo')`                  | 
@@ -23,17 +25,21 @@
 *  **Description**: Add item to transactions.
 *  **Returns**: `{void}`
 *  **Arguments**: 
-TODO: All arguments are optional that is not logical, write explanation of how it works.
 
     | Property     | Type                  | Requirement   | Description |
     |---           |---                    |---            |---|
-    | _container_  | `{Container}`         | **optional**  | Container log.
-    | _containers_ | `{Array.<Container>}` | **optional**  | Containers log.
+    | _container_  | `{Container}`         | **require**   | Container log.
+    | _containers_ | `{Array.<Container>}` | **require**   | Containers log.
+    | _type_       | `{String}`            | **require**   | Type
     | _title_      | `{String}`            | **optional**  | Title.
     | _subTitle_   | `{String}`            | **optional**  | Sub title.
     | _restore_    | `{function()}`         | **optional** | Restore function.
-*  **Examples**:
-TODO
+
+## _Command_ -- `$e.run('document/histroy/clear-transaction')`
+*  **Name**: Delete-Transaction.
+*  **Description**: Clear transactions list.
+*  **Returns**: `{void}`
+*  **Arguments**: None.
 
 ## _Command_ -- `$e.run('document/histroy/delete-log')`
 *  **Name**: Delete-Log.
@@ -62,14 +68,9 @@ TODO
     
     ![history-empty](../../../../../../images/edocument-history/history-empty.png)
     
-## _Command_ -- `$e.run('document/histroy/delete-transaction')`
-*  **Name**: Delete-Transaction.
-*  **Description**: Delete transaction.
-*  **Returns**: `{void}`
-
 ## _Command_ -- `$e.run('document/histroy/end-transaction')`
 *  **Name**: End-Transaction.
 *  **Description**: End transaction, will log the first and the last transaction, as new logged history.
+title, subTitle will be taken from the first transaction item.
 *  **Returns**: `{void}`
 *  **Arguments**: None.
-*  **Examples**:

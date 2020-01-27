@@ -51,7 +51,7 @@ export class EndTransaction extends Base {
 		$e.run( 'document/history/end-log', { id: historyId } );
 
 		// Clear transactions before leave.
-		this.component.transactions = [];
+		$e.run( 'document/history/clear-transaction' );
 	}
 }
 
