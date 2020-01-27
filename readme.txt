@@ -221,6 +221,12 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.8.5 - 2020-01-27 =
+* Fix: Handle corrupted DB log
+* Fix: Template inserted upside down in edge cases
+* Fix: Added data sanitization on System Info
+* Fix: Error when trying to edit widgets with `inline` Icons control before Font Awesome 5 migration
+
 = 2.8.4 - 2020-01-19 =
 * Tweak: Changed default color in Color Picker
 * Fix: Curved edge with background color in Toggle widget ([#5156](https://github.com/elementor/elementor/issues/5156))
