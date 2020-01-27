@@ -59,7 +59,7 @@ class Kit extends PageBase {
 	}
 
 	public function get_css_wrapper_selector() {
-		return 'body';
+		return 'body.elementor-kit-' . $this->get_main_id();
 	}
 
 	/**

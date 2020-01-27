@@ -78,6 +78,7 @@ class Manager {
 		if ( $kit ) {
 			$css = Post::create( $kit->get_main_id() );
 			$css->enqueue();
+			Plugin::$instance->frontend->add_body_class( 'elementor-kit-' . $kit->get_main_id() );
 		}
 	}
 
