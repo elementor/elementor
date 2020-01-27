@@ -74,3 +74,19 @@ TODO: Add history types.
 title, subTitle will be taken from the first transaction item.
 *  **Returns**: `{void}`
 *  **Arguments**: None.
+
+## _Command_ -- `$e.run('document/histroy/log-sub-item')`
+*  **Name**: Log-Sub-Item.
+*  **Description**: Log sub item, Each history item can have sub items ( non visual at history panel ).
+*  **Returns**: `{void}`
+*  **Arguments**: 
+
+    | Property     | Type                  | Requirement    | Description |
+    |---           |---                    |---             |---|
+    | _id_         | `{Number}`            | **optional**   | Id of history item, to be sub item of. default: `{elementor.documents.currentDocument.history.getCurrentId()}`.
+    | _container_  | `{Container}`         | **optional**   | Container log.
+    | _containers_ | `{Array.<Container>}` | **optional**   | Containers log.
+    | _type_       | `{String}`            | **optional**   | Type
+    | _title_      | `{String}`            | **optional**   | Title.
+    | _subTitle_   | `{String}`            | **optional**   | Sub title.
+    | _restore_    | `{function()}`        | **optional**   | Restore function.
