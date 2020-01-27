@@ -521,8 +521,10 @@ class Editor {
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
 
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
+
 		$config = [
-			'initial_document' => Plugin::$instance->documents->get( $this->post_id )->get_config(),
+			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,

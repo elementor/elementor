@@ -66,6 +66,9 @@ class Manager {
 
 		if ( $kit ) {
 			Plugin::$instance->frontend->print_fonts_links();
+
+			// On preview, the global style is not enqueued.
+			$this->frontend_before_enqueue_styles();
 		}
 	}
 
@@ -108,7 +111,7 @@ class Manager {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
-		add_action( 'elementor/frontend/before_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
+		add_action( 'elementor/frontend/after_enqueue_global', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 	}
 }

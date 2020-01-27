@@ -49,11 +49,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 				return _.intersection( tag.categories, dynamicSettings.categories ).length;
 			} );
 
-			behaviors.tags = {
-				behaviorClass: TagsBehavior,
-				tags: tags,
-				dynamicSettings: dynamicSettings,
-			};
+			if ( ! elementor.helpers.hasPro() || Object.keys( tags ).length ) {
+				behaviors.tags = {
+					behaviorClass: TagsBehavior,
+					tags: tags,
+					dynamicSettings: dynamicSettings,
+				};
+			}
 		}
 
 		return behaviors;
@@ -264,7 +266,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 				if ( undefined !== gravity ) {
 					return gravity;
 				}
-				return 'n';
+				return 's';
 			},
 			title: function() {
 				return this.getAttribute( 'data-tooltip' );

@@ -11,6 +11,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-mode-switcher"></div>
+	<div id="elementor-panel-state-loading">
+		<i class="eicon-loading eicon-animation-spin"></i>
+	</div>
 	<header id="elementor-panel-header-wrapper"></header>
 	<main id="elementor-panel-content-wrapper"></main>
 	<footer id="elementor-panel-footer">
