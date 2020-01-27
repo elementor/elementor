@@ -51,7 +51,7 @@
 		}
 	}
 
-	.elementor-control-input-wrapper {
+	&:not(.elementor-control-type-slider--multiple) .elementor-control-input-wrapper {
 		display: flex;
 		align-items: center;
 	}
