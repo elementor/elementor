@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Core\Kits;
 
+use Elementor\Plugin;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
