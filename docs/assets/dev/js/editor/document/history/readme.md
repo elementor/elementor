@@ -64,23 +64,6 @@ historyTypes = {
     | Property     | Type                  | Requirement   | Description |
     |---           |---                    |---            |---|
     | _id_         | `{Number}`            | **required**  | Id of logged history to delete.
-
-*  **Examples**:
-    ```javascript
-    id = $e.run( 'document/history/start-log', { 
-      type: 'custom',
-      title: 'My custom title'
-    } );
-    ```
-    Result:
-    
-    ![history-with-custom-title](../../../../../../images/edocument-history/history-with-custom-title.png)
-    ```javascript
-    $e.run( 'document/history/delete-log', { id } ); 
-    ```
-    Result:
-    
-    ![history-empty](../../../../../../images/edocument-history/history-empty.png)
     
 ## _Command_ -- `$e.run('document/histroy/end-transaction')`
 *  **Name**: End-Transaction.
@@ -104,3 +87,54 @@ title, subTitle will be taken from the first transaction item.
     | _title_      | `{String}`            | **optional**   | Title.
     | _subTitle_   | `{String}`            | **optional**   | Sub title.
     | _restore_    | `{function()}`        | **optional**   | Restore function.
+
+## _Command_ -- `$e.run('document/histroy/start-log')`
+*  **Name**: Start-Log.
+*  **Description**: Start log item.
+*  **Returns**: `{Number}` *log id*.
+*  **Arguments**: 
+
+    | Property     | Type                  | Requirement   | Description |
+    |---           |---                    |---            |---|
+    | _container_  | `{Container}`         | **require**   | Container log.
+    | _containers_ | `{Array.<Container>}` | **require**   | Containers log.
+    | _type_       | `{String}`            | **require**   | Type
+    | _title_      | `{String}`            | **require**   | Title.
+    | _subTitle_   | `{String}`            | **optional**  | Sub title.
+    | _restore_    | `{function()}`        | **optional**  | Restore function.
+*  **Examples**:
+    ```javascript
+    id = $e.run( 'document/history/start-log', { 
+      type: 'custom',
+      title: 'My custom title'
+    } );
+    ```
+    Result:
+    
+    ![history-with-custom-title](../../../../../../images/edocument-history/history-with-custom-title.png)
+    ```javascript
+    $e.run( 'document/history/delete-log', { id } ); 
+    ```
+    Result:
+    
+    ![history-empty](../../../../../../images/edocument-history/history-empty.png)
+
+## _Command_ -- `$e.run('document/histroy/undo')`
+*  **Name**: Undo.
+*  **Description**: Undo history step.
+*  **Returns**: `{void}`
+*  **Arguments**: None.
+
+## _Command_ -- `$e.run('document/histroy/undo-all')`
+*  **Name**: Undo-All.
+*  **Description**: Undo all history step.
+*  **Returns**: `{void}`
+*  **Arguments**: None.
+
+## _Command_ -- `$e.run('document/histroy/redo')`
+*  **Name**: Redo.
+*  **Description**: Redo history step.
+*  **Returns**: `{void}`
+*  **Arguments**: None.
+
+### [Back](../readme.md) 
