@@ -610,8 +610,8 @@ class Element_Column extends Element_Base {
 				'colors_warning',
 				[
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following colors won\'t work if Default Colors are enabled.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+					'raw' => __( 'Note: The following set of controls has been deprecated. Those controls are only visible if they were previously populated.', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
 				]
 			);
 		}
@@ -626,6 +626,9 @@ class Element_Column extends Element_Base {
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 				'separator' => 'none',
+				'condition' => [
+					'heading_color!' => '',
+				],
 			]
 		);
 
@@ -637,6 +640,9 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'color_text!' => '',
 				],
 			]
 		);
@@ -650,6 +656,9 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
 				],
+				'condition' => [
+					'color_link!' => '',
+				],
 			]
 		);
 
@@ -661,6 +670,9 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'color_link_hover!' => '',
 				],
 			]
 		);
@@ -686,6 +698,9 @@ class Element_Column extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
+				],
+				'condition' => [
+					'text_align!' => '',
 				],
 			]
 		);
