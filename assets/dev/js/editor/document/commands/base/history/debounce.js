@@ -21,6 +21,8 @@ export const getDefaultDebounceDelay = () => {
 };
 
 export default class Debounce extends History {
+	static isTransactionStarted = false;
+
 	/**
 	 * Function debounce().
 	 *
@@ -45,11 +47,38 @@ export default class Debounce extends History {
 		}
 	}
 
+	addTransaction() {
+		if ( Debounce.isTransactionStarted ) {
+			delete this.history.title;
+			delete this.history.subTitle;
+		}
+
+		$e.run( 'document/history/add-transaction', this.history );
+
+		if ( ! Debounce.isTransactionStarted ) {
+			Debounce.isTransactionStarted = true;
+		}
+	}
+
+	deleteTransaction() {
+		$e.run( 'document/history/delete-transaction' );
+
+		Debounce.isTransactionStarted = false;
+	}
+
+	endTransaction() {
+		if ( Debounce.isTransactionStarted ) {
+			$e.run( 'document/history/end-transaction' );
+		}
+
+		Debounce.isTransactionStarted = false;
+	}
+
 	onBeforeRun( args ) {
 		CommandBase.prototype.onBeforeRun.call( this, args );
 
 		if ( this.history && this.isHistoryActive() ) {
-			$e.run( 'document/history/start-transaction', this.history );
+			this.addTransaction();
 		}
 	}
 
@@ -58,11 +87,9 @@ export default class Debounce extends History {
 
 		if ( this.isHistoryActive() ) {
 			if ( this.isDebounceRequired ) {
-				this.constructor.debounce( () => {
-					$e.run( 'document/history/end-transaction' );
-				} );
+				this.constructor.debounce( this.endTransaction.bind( this ) );
 			} else {
-				$e.run( 'document/history/end-transaction' );
+				this.endTransaction();
 			}
 		}
 	}
@@ -74,11 +101,9 @@ export default class Debounce extends History {
 		if ( e instanceof $e.modules.HookBreak && this.history ) {
 			if ( this.isDebounceRequired ) {
 				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
-				this.constructor.debounce( () => {
-					$e.run( 'document/history/delete-transaction' );
-				} );
+				this.constructor.debounce( this.deleteTransaction.bind( this ) );
 			} else {
-				$e.run( 'document/history/delete-transaction' );
+				this.deleteTransaction();
 			}
 		}
 	}
