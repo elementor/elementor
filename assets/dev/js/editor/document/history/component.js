@@ -26,7 +26,6 @@ export default class Component extends ComponentBase {
 			'end-transaction': ( args ) => ( new commands.EndTransaction( args ).run() ),
 			'log-sub-item': ( args ) => ( new commands.LogSubItem( args ).run() ),
 			'start-log': ( args ) => ( new commands.StartLog( args ).run() ),
-			'start-transaction': ( args ) => ( new commands.StartTransaction( args ).run() ),
 			'undo-all': ( args ) => args.document.history.doItem( args.document.history.getItems().length - 1 ),
 			undo: () => elementor.documents.getCurrent().history.navigate(),
 			redo: () => elementor.documents.getCurrent().history.navigate( true ),
