@@ -1,5 +1,5 @@
-import ItemView from './item-view';
-import EmptyView from './empty';
+import ItemView from '../item/view';
+import EmptyView from '../item/empty-view';
 
 module.exports = Marionette.CompositeView.extend( {
 	id: 'elementor-panel-history',

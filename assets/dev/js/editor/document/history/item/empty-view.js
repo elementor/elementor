@@ -1,4 +1,4 @@
-export default class extends Marionette.ItemView {
+export default class EmptyView extends Marionette.ItemView {
 	getTemplate() {
 		return '#tmpl-elementor-panel-history-no-items';
 	}

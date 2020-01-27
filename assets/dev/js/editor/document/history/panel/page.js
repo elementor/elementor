@@ -1,9 +1,12 @@
-var TabHistoryView = require( './history/panel-tab' );
+const TabHistoryView = require( './tab' );
 
-import TabRevisionsLoadingView from './revisions/loading';
-import TabRevisionsView from './revisions/panel-tab';
-import TabRevisionsEmptyView from './revisions/empty';
+import TabRevisionsLoadingView from 'elementor/modules/history/assets/js/revisions/loading';
+import TabRevisionsView from 'elementor/modules/history/assets/js/revisions/panel-tab';
+import TabRevisionsEmptyView from 'elementor/modules/history/assets/js/revisions/empty';
 
+/**
+ * TODO: Move to es6.
+ */
 module.exports = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-history-page',
 

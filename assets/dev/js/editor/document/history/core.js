@@ -1,47 +1,35 @@
-import ItemModel from './item-model';
+import ItemModel from './item/model';
 
-/**
- * TODO: consider refactor this class.
- * TODO: should be `Document/History` component.
- * TODO: should be attached to elementor.history.history + BC.
- */
-export default class HistoryManager {
+export default class HistoryCore {
+	static translations = null;
+
 	currentItemID = null;
 
 	items = new Backbone.Collection( [], { model: ItemModel } );
 
-	editorSaved = false;
-
 	active = true;
 
-	translations = {
-		add: elementor.translate( 'added' ),
-		change: elementor.translate( 'edited' ),
-		disable: elementor.translate( 'disabled' ),
-		duplicate: elementor.translate( 'duplicate' ),
-		enable: elementor.translate( 'enabled' ),
-		move: elementor.translate( 'moved' ),
-		paste: elementor.translate( 'pasted' ),
-		paste_style: elementor.translate( 'style_pasted' ),
-		remove: elementor.translate( 'removed' ),
-		reset_style: elementor.translate( 'style_reset' ),
-		reset_settings: elementor.translate( 'settings_reset' ),
-	};
-
-	static updatePanelPageCurrentItem() {
-		if ( $e.routes.is( 'panel/history/actions' ) ) {
-			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
+	constructor() {
+		if ( ! HistoryCore.translations ) {
+			HistoryCore.translations = {
+				add: elementor.translate( 'added' ),
+				change: elementor.translate( 'edited' ),
+				disable: elementor.translate( 'disabled' ),
+				duplicate: elementor.translate( 'duplicate' ),
+				enable: elementor.translate( 'enabled' ),
+				move: elementor.translate( 'moved' ),
+				paste: elementor.translate( 'pasted' ),
+				paste_style: elementor.translate( 'style_pasted' ),
+				remove: elementor.translate( 'removed' ),
+				reset_style: elementor.translate( 'style_reset' ),
+				reset_settings: elementor.translate( 'settings_reset' ),
+			};
 		}
 	}
 
-	initialize() {
-		elementor.channels.editor.on( 'saved', this.onPanelSave.bind( this ) );
-	}
-
 	getActionLabel( itemData ) {
-		// TODO: this function should be static.
-		if ( this.translations[ itemData.type ] ) {
-			return this.translations[ itemData.type ];
+		if ( HistoryCore.translations[ itemData.type ] ) {
+			return HistoryCore.translations[ itemData.type ];
 		}
 
 		return itemData.type;
@@ -65,7 +53,7 @@ export default class HistoryManager {
 		this.active = value;
 	}
 
-	getActive( value ) {
+	getActive() {
 		return this.active;
 	}
 
@@ -139,16 +127,13 @@ export default class HistoryManager {
 				action: this.getActionLabel( itemData ),
 				type: itemData.type,
 			} );
-
-			this.startItemTitle = '';
-			this.startItemAction = '';
 		}
 
 		currentItem.get( 'items' ).add( itemData, { at: 0 } );
 
 		this.items.add( currentItem, { at: 0 } );
 
-		this.constructor.updatePanelPageCurrentItem();
+		this.updatePanelPageCurrentItem();
 
 		return id;
 	}
@@ -199,16 +184,14 @@ export default class HistoryManager {
 			}
 		}
 
-		this.constructor.updatePanelPageCurrentItem();
+		this.updatePanelPageCurrentItem();
 
 		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );
 		}
 
 		if ( item.get( 'editing_started' ) ) {
-			if ( ! this.editorSaved ) {
-				$e.internal( 'document/save/set-is-modified', { status: false } );
-			}
+			$e.internal( 'document/save/set-is-modified', { status: false } );
 		}
 	}
 
@@ -235,7 +218,7 @@ export default class HistoryManager {
 			const item = this.items.at( stepNum );
 
 			if ( 'applied' === item.get( 'status' ) ) {
-				var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
+				const reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
 
 				_( reversedSubItems ).each( function( subItem ) {
 					const restore = subItem.get( 'restore' );
@@ -250,12 +233,9 @@ export default class HistoryManager {
 		}
 	}
 
-	onPanelSave() {
-		if ( this.items.length >= 2 ) {
-			// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
-			const firstEditItem = items.at( items.length - 2 );
-
-			this.editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+	updatePanelPageCurrentItem() {
+		if ( $e.routes.is( 'panel/history/actions' ) ) {
+			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
 		}
 	}
 }

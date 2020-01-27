@@ -1,4 +1,9 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import HistoryPanelComponent from './panel/component';
+import HistoryActionsComponent from './panel/actions/component';
+import RevisionsComponent from 'elementor/modules/history/assets/js/revisions/component';
+import PanelPage from './panel/page';
+
 import * as commands from './commands/';
 
 export default class Component extends ComponentBase {
@@ -11,6 +16,17 @@ export default class Component extends ComponentBase {
 		 * @type {Array}
 		 */
 		this.transactions = [];
+
+		$e.components.register( new HistoryPanelComponent() );
+		$e.components.register( new HistoryActionsComponent() );
+		$e.components.register( new RevisionsComponent() );
+
+		elementor.on( 'panel:init', () => {
+			elementor.getPanelView().addPage( 'historyPage', {
+				view: PanelPage,
+				title: elementor.translate( 'history' ),
+			} );
+		} );
 	}
 
 	getNamespace() {
