@@ -123,8 +123,22 @@ module.exports = elementorModules.ViewModule.extend( {
 				self.setVideoContent( options );
 
 				break;
-			case 'slideshow':
 			case 'image':
+				const slides = [ {
+					image: options.url,
+					index: 0,
+					title: options.title,
+					description: options.description,
+				} ];
+
+				options.slideshow = {
+					slides,
+					swiper: {
+						loop: false,
+						pagination: false,
+					},
+				};
+			case 'slideshow':
 				self.setSlideshowContent( options.slideshow );
 
 				break;
@@ -722,25 +736,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( ! element.dataset.elementorLightboxSlideshow ) {
-			const slides = [ {
-				image: element.href,
-				index: 0,
-				title: element.dataset.elementorLightboxTitle,
-				description: element.dataset.elementorLightboxDescription,
-			} ],
-				slideshowID = 'single-img';
+			const slideshowID = 'single-img';
+
 			this.showModal( {
-				type: 'slideshow',
+				type: 'image',
 				id: slideshowID,
 				modalOptions: {
 					id: 'elementor-lightbox-slideshow-' + slideshowID,
-				},
-				slideshow: {
-					slides: slides,
-					swiper: {
-						loop: false,
-						pagination: false,
-					},
 				},
 			} );
 
