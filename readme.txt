@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 2.8.0
+Stable tag: 2.8.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,50 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.8.5 - 2020-01-27 =
+* Fix: Handle corrupted DB log
+* Fix: Template inserted upside down in edge cases
+* Fix: Added data sanitization on System Info
+* Fix: Error when trying to edit widgets with `inline` Icons control before Font Awesome 5 migration
+
+= 2.8.4 - 2020-01-19 =
+* Tweak: Changed default color in Color Picker
+* Fix: Curved edge with background color in Toggle widget ([#5156](https://github.com/elementor/elementor/issues/5156))
+* Fix: Added sanitize data on create new template
+* Fix: Inconsistent panel view when deleting all content
+* Fix: Empty Typography control after Reset Style
+* Fix: Inline sizing delay when position is set to Absolute/Fixed in Image widget
+* Fix: Wrong sizing on undo/redo to Section element columns
+
+= 2.8.3 - 2020-01-01 =
+* Tweak: Improved accessibility to "Go Pro" menu item ([#9021](https://github.com/elementor/elementor/issues/9021))
+* Tweak: Added new CLI command - User Connect
+* Tweak: Updated Recommended Icons tab in Toggle and Accordion widgets
+* Fix: Placement glitch when dragging a widget to a new section ([#9954](https://github.com/elementor/elementor/issues/9954))
+* Fix: Controls popover closes when picking a color in it
+* Fix: Dark mode style glitches in edge cases
+* Fix: Correct calculation of usage data
+* Fix: Pasting style of one Section to other changes the structure
+* Fix: Long text overflow issue in Divider widget
+* Fix: Scroll bars visible when not needed in Icon Library
+
+= 2.8.2 - 2019-12-16 =
+* Tweak: Improved hidden responsive elements visibility
+* Fix: Autoplay not working in Image Carousel widget ([#9872](https://github.com/elementor/elementor/issues/9872))
+* Fix: Logger fatal error on upgrade ([#9872](https://github.com/elementor/elementor/issues/9872))
+* Fix: Negative custom shapes in Editor ([#9850](https://github.com/elementor/elementor/issues/9850))
+* Fix: Render correct widget data in Global widgets
+* Fix: `0` value in Dynamic Tags causes Undefined Index error
+
+= 2.8.1 - 2019-12-11 =
+* Fix: Style pasting issue on Columns ([#9811](https://github.com/elementor/elementor/issues/9811))
+* Fix: Column duplication not working for Inner Section widget ([#9824](https://github.com/elementor/elementor/issues/9824))
+* Fix: Redundant renders when changing colors in Color control
+* Fix: Dark Mode glitches in WordPress widgets ([#9829](https://github.com/elementor/elementor/issues/9829))
+* Fix: Repeater rows doesn't have `_id` in edge cases
+* Fix: Connect issue for Multisite users
+* Fix: Dynamic tag fallback does not handle '0' character
 
 = 2.8.0 - 2019-12-09 =
 * New: Introducing new Color Picker control with Saved Colors built-in ([#6968](https://github.com/elementor/elementor/issues/6968), [#8982](https://github.com/elementor/elementor/issues/8982), [Developers Blog Post](https://developers.elementor.com/elementor-2-8-new-color-picker/]))

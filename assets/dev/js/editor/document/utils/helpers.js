@@ -38,9 +38,12 @@ export default class Helpers {
 
 	static isValidChild( childModel, parentModel ) {
 		const parentElType = parentModel.get( 'elType' ),
-			draggedElType = childModel.get( 'elType' );
+			draggedElType = childModel.get( 'elType' ),
+			parentIsInner = parentModel.get( 'isInner' ),
+			draggedIsInner = childModel.get( 'isInner' );
 
-		if ( childModel.get( 'isInner' ) && parentModel.get( 'isInner' ) ) {
+		// Block's inner-section at inner-section column.
+		if ( draggedIsInner && 'section' === draggedElType && parentIsInner && 'column' === parentElType ) {
 			return false;
 		}
 
@@ -48,7 +51,7 @@ export default class Helpers {
 			return false;
 		}
 
-		if ( 'section' === draggedElType && ! childModel.get( 'isInner' ) && 'column' === parentElType ) {
+		if ( 'section' === draggedElType && ! draggedIsInner && 'column' === parentElType ) {
 			return false;
 		}
 

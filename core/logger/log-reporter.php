@@ -30,7 +30,7 @@ class Log_Reporter extends Base_Reporter {
 				'_wpnonce' => $nonce,
 			] );
 
-			$title .= '<a href="' . $url . '#elementor-clear-log" class="box-title-tool">' . __( 'Clear Log', 'elementor' ) . '</a>';
+			$title .= '<a href="' . esc_url( $url ) . '#elementor-clear-log" class="box-title-tool">' . __( 'Clear Log', 'elementor' ) . '</a>';
 			$title .= '<span id="elementor-clear-log"></span>';
 		}
 
