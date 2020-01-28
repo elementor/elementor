@@ -455,11 +455,11 @@ abstract class Widget_Base extends Element_Base {
 		if ( $id ) {
 			$lightbox_image_attributes = Plugin::$instance->images_manager->get_lightbox_image_attributes( $id );
 
-			if ( array_key_exists( 'title', $lightbox_image_attributes ) ) {
+			if ( isset( $lightbox_image_attributes['title'] ) ) {
 				$attributes['data-elementor-lightbox-title'] = $lightbox_image_attributes['title'];
 			}
 
-			if ( array_key_exists( 'description', $lightbox_image_attributes ) ) {
+			if ( isset( $lightbox_image_attributes['description'] ) ) {
 				$attributes['data-elementor-lightbox-description'] = $lightbox_image_attributes['description'];
 			}
 		}
