@@ -192,7 +192,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	getShareLinks: function() {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
-				twitter: i18n.share_on_twitter,
+				twitter: i18n.shareOnTwitter,
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -216,7 +216,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 
 		if ( ! videoUrl ) {
-			const downloadImage = i18n.download_image;
+			const downloadImage = i18n.downloadImage;
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
 		}
 		return $linkList;
