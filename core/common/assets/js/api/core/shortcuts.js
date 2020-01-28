@@ -132,18 +132,14 @@ export default class Shortcuts {
 		const namespace = component.getNamespace(),
 			namespaceRoot = component.getRootContainer();
 
-		const filteredByNamespace = scopes.some( ( scope ) => {
-			return namespace === scope;
-		} );
+		const filteredByNamespace = scopes.some( ( scope ) => namespace === scope );
 
 		if ( filteredByNamespace ) {
 			return true;
 		}
 
 		// Else filter by namespaceRoot.
-		return scopes.some( ( scope ) => {
-			return namespaceRoot === scope;
-		} );
+		return scopes.some( ( scope ) => namespaceRoot === scope );
 	}
 
 	getHandlersByPriority( event ) {
@@ -153,6 +149,7 @@ export default class Shortcuts {
 			return false;
 		}
 
+		// TODO: Prioritize current scope before roo scope.
 		const inCurrentScope = handlers.filter( ( handler ) => {
 			return handler.scopes && this.isActiveScope( handler.scopes );
 		} );
