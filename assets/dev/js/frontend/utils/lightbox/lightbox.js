@@ -193,6 +193,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
 				twitter: i18n.shareOnTwitter,
+				facebook: i18n.shareOnFacebook,
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
