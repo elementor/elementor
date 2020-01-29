@@ -1,9 +1,16 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import BackwardsCompatibility from './backwards-compatibility.js';
+import CommandHistoryBase from './commands/base/history';
+import CommandHistoryDebounceBase from './commands/base/history/debounce';
 import * as hooksData from './hooks/data/';
 import * as hooksUI from './hooks/ui/';
 
 export default class Component extends ComponentBase {
+	modules = {
+		CommandHistoryBase,
+		CommandHistoryDebounceBase,
+	};
+
 	getNamespace() {
 		return 'document';
 	}
