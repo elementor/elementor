@@ -753,6 +753,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			this.showModal( {
 				type: 'image',
 				id: slideshowID,
+				url: element.href,
 				modalOptions: {
 					id: 'elementor-lightbox-slideshow-' + slideshowID,
 				},
