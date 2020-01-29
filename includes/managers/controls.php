@@ -910,7 +910,7 @@ class Controls_Manager {
 		ob_start();
 		?>
 		<div class="elementor-nerd-box">
-			<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; ?>" />
+			<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; ?>" />
 			<div class="elementor-nerd-box-title"><?php echo $texts['title']; ?></div>
 			<?php foreach ( $texts['messages'] as $message ) { ?>
 				<div class="elementor-nerd-box-message"><?php echo $message; ?></div>
