@@ -192,7 +192,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	getShareLinks: function() {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
-				twitter: i18n.share_on_twitter,
+				twitter: i18n.shareOnTwitter,
+				facebook: i18n.shareOnFacebook,
+				pinterest: i18n.pinIt,
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -211,25 +213,35 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		$.each( socialNetworks, ( key, networkLabel ) => {
 			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel );
+
 			$link.prepend( $( '<i>', { class: 'eicon-' + key } ) );
 			$linkList.append( $link );
 		} );
 
 		if ( ! videoUrl ) {
-			const downloadImage = i18n.download_image;
+			const downloadImage = i18n.downloadImage;
+
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
 		}
+
 		return $linkList;
 	},
 
 	createShareLink: function( networkName, itemUrl ) {
-		const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
-			id: this.id,
-			url: itemUrl,
-		} );
+		const options = {};
 
-		const url = location.href.replace( /#.*/, '' ) + hash;
-		return ShareLink.getNetworkLink( networkName, { url: url } );
+		if ( 'pinterest' === networkName ) {
+			options.image = encodeURIComponent( itemUrl );
+		} else {
+			const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
+				id: this.id,
+				url: itemUrl,
+			} );
+
+			options.url = encodeURIComponent( location.href.replace( /#.*/, '' ) ) + hash;
+		}
+
+		return ShareLink.getNetworkLink( networkName, options );
 	},
 
 	getSlideshowHeader: function() {
@@ -336,6 +348,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const swiper = this.swiper,
 			elements = this.elements,
 			classes = this.getSettings( 'classes' );
+
 		swiper.zoom.in();
 		swiper.allowSlideNext = false;
 		swiper.allowSlidePrev = false;
@@ -348,6 +361,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const swiper = this.swiper,
 			elements = this.elements,
 			classes = this.getSettings( 'classes' );
+
 		swiper.zoom.out();
 		swiper.allowSlideNext = true;
 		swiper.allowSlidePrev = true;
@@ -400,9 +414,7 @@ module.exports = elementorModules.ViewModule.extend( {
 						'data-title': slide.title,
 						'data-description': slide.description,
 					} );
-				$slideImage.on( 'ondragstart', () => {
-					return false;
-				} );
+
 				$zoomContainer.append( $slideImage );
 				$slide.append( $zoomContainer );
 			}
@@ -641,7 +653,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	isLightboxLink: function( element ) {
-		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /\.(png|jpe?g|gif|svg)(\?.*)?$/i.test( element.href ) ) ) {
+		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg)(\?.*)?$/i.test( element.href ) ) ) {
 			return false;
 		}
 
@@ -744,6 +756,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			this.showModal( {
 				type: 'image',
 				id: slideshowID,
+				url: element.href,
 				modalOptions: {
 					id: 'elementor-lightbox-slideshow-' + slideshowID,
 				},
