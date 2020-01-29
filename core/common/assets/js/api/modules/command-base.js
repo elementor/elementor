@@ -1,6 +1,10 @@
 /**
  * TODO: Should we do validate function in scenarios where args are are not required.
  * but should be validate?
+ *
+ * TODO: Consider create a 'strict' handler for development mode.
+ * if development process, we create a 'strict' validator, if passed arg is unknown by the command,
+ * then error will be thrown.
  */
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
@@ -8,9 +12,9 @@ export default class CommandBase extends ArgsObject {
 	/**
 	 * Current component (elementorModules.Module ).
 	 *
-	 * @type {{}}
+	 * @type {Component}
 	 */
-	component = {};
+	component;
 
 	/**
 	 * Function constructor().

@@ -1,6 +1,11 @@
 import Base from './base/base';
 
 export class AddTransaction extends Base {
+	validateArgs( args ) {
+		this.requireContainer();
+		this.requireArgumentType( 'type', 'string', args );
+	}
+
 	apply( args ) {
 		const currentId = this.history.getCurrentId();
 

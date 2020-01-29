@@ -1,51 +1,5 @@
-export default class Helpers {
-	static findViewRecursive( parent, key, value, multiple = true ) {
-		let found = [];
-		for ( const x in parent._views ) {
-			const view = parent._views[ x ];
-
-			if ( value === view.model.get( key ) ) {
-				found.push( view );
-				if ( ! multiple ) {
-					return found;
-				}
-			}
-
-			if ( view.children ) {
-				const views = this.findViewRecursive( view.children, key, value, multiple );
-				if ( views.length ) {
-					found = found.concat( views );
-					if ( ! multiple ) {
-						return found;
-					}
-				}
-			}
-		}
-
-		return found;
-	}
-
-	static findViewById( id ) {
-		const elements = this.findViewRecursive(
-			elementor.getPreviewView().children,
-			'id',
-			id,
-			false
-		);
-
-		return elements ? elements[ 0 ] : false;
-	}
-
-	static findContainerById( id ) {
-		let result = this.findViewById( id );
-
-		if ( result ) {
-			result = result.getContainer();
-		}
-
-		return result;
-	}
-
+// TODO: this file should be deleted.
+export default class Helper {
 	// TODO: This is not the right place for this function
 	static isValidChild( childModel, parentModel ) {
 		const parentElType = parentModel.get( 'elType' ),

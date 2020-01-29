@@ -9,6 +9,7 @@ export default class ComponentBase extends elementorModules.Module {
 		this.routes = this.defaultRoutes();
 		this.tabs = this.defaultTabs();
 		this.shortcuts = this.defaultShortcuts();
+		this.utils = this.defaultUtils();
 
 		this.defaultRoute = '';
 		this.currentTab = '';
@@ -50,6 +51,10 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	defaultShortcuts() {
+		return {};
+	}
+
+	defaultUtils() {
 		return {};
 	}
 
