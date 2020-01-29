@@ -456,12 +456,12 @@ class Kit extends PageBase {
 		$this->end_controls_tabs();
 
 		// Headings.
-		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1,{{WRAPPER}} .elementor-widget-heading h1.elementor-heading-title' );
-		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2,{{WRAPPER}} .elementor-widget-heading h2.elementor-heading-title' );
-		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3,{{WRAPPER}} .elementor-widget-heading h3.elementor-heading-title' );
-		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4,{{WRAPPER}} .elementor-widget-heading h4.elementor-heading-title' );
-		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5,{{WRAPPER}} .elementor-widget-heading h5.elementor-heading-title' );
-		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6,{{WRAPPER}} .elementor-widget-heading h6.elementor-heading-title' );
+		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1,{{WRAPPER}} h1.elementor-heading-title' );
+		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2,{{WRAPPER}} h2.elementor-heading-title' );
+		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3,{{WRAPPER}} h3.elementor-heading-title' );
+		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4,{{WRAPPER}} h4.elementor-heading-title' );
+		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5,{{WRAPPER}} h5.elementor-heading-title' );
+		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6,{{WRAPPER}} h6.elementor-heading-title' );
 
 		$this->end_controls_section();
 	}

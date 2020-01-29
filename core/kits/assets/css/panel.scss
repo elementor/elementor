@@ -14,14 +14,21 @@ $editor-kit-accent: #4ab7f4;
 		#elementor-panel-header {
 			background-color: $editor-kit-accent;
 
-			#elementor-panel-header-kit-close {
+			#elementor-panel-header-kit-close,
+			#elementor-panel-header-kit-back {
 				display: table-cell;
 			}
 
-			$this: &;
+			@at-root body:not(.e-routes-has-history) #elementor-panel-header-kit-back {
+				pointer-events: none;
+				opacity: 0.4;
 
-			@at-root .e-routes-has-history#{$this} #elementor-panel-header-kit-back {
-				display: table-cell;
+				&:hover {
+					.elementor-icon {
+						cursor: inherit;
+						color: inherit;
+					}
+				}
 			}
 		}
 
