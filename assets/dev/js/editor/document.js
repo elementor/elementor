@@ -92,6 +92,10 @@ export default class Document {
 		this.initialize();
 	}
 
+	isDraft() {
+		return this.config.revisions.current_id !== this.config.id;
+	}
+
 	/**
 	 * Function initialize().
 	 *
