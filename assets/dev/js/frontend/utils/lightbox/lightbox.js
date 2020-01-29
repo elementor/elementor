@@ -482,6 +482,9 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			this.swiper = new Swiper( $container, swiperOptions );
 
+			// Expose the swiper instance in the frontend
+			$container.data( 'swiper', this.swiper );
+
 			this.setVideoAspectRatio();
 
 			this.playSlideVideo();

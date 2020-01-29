@@ -112,6 +112,9 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
 
+		// Expose the swiper instance in the frontend
+		this.elements.$carousel.data( 'swiper', this.swiper );
+
 		if ( elementSettings.pause_on_hover ) {
 			this.elements.$carousel.on( {
 				mouseenter: () => {
