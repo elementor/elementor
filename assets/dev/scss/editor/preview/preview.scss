@@ -688,6 +688,9 @@ html.elementor-html {
 
 // Add new Section
 .elementor-add-section {
+	// Avoid theme conflicts.
+	all: initial;
+
 	max-width: 1160px;
 	position: relative;
 
