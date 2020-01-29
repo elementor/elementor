@@ -1,5 +1,7 @@
+import BackwardsCompatibility from 'elementor-document/helper-bc';
+
 // TODO: this file should be deleted.
-export default class Helper {
+export default class Helper extends BackwardsCompatibility {
 	// TODO: This is not the right place for this function
 	static isValidChild( childModel, parentModel ) {
 		const parentElType = parentModel.get( 'elType' ),
