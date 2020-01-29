@@ -3,9 +3,15 @@ export default class ComponentBase extends elementorModules.Module {
 		if ( args.manager ) {
 			this.manager = args.manager;
 		}
+		/**
+		 * TODO: Consider... manage 'commandsInternal' is not the best way, it would be better if:
+		 * 'commandsInternal' && 'registerCommandInternal' was handled by 'defaultCommands' and 'registerCommand'.
+		 */
 
+		// TODO: reorder as 'registerAPI'.
 		this.commands = this.defaultCommands();
 		this.commandsInternal = this.defaultCommandsInternal();
+		this.hooks = this.defaultHooks();
 		this.routes = this.defaultRoutes();
 		this.tabs = this.defaultTabs();
 		this.shortcuts = this.defaultShortcuts();
@@ -23,6 +29,8 @@ export default class ComponentBase extends elementorModules.Module {
 		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
 
 		jQuery.each( this.getCommandsInternal(), ( command, callback ) => this.registerCommandInternal( command, callback ) );
+
+		Object.values( this.defaultHooks() ).forEach( ( hook ) => this.registerHook( hook ) );
 	}
 
 	getNamespace() {
@@ -47,6 +55,10 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	defaultCommandsInternal() {
+		return {};
+	}
+
+	defaultHooks() {
 		return {};
 	}
 
@@ -80,6 +92,10 @@ export default class ComponentBase extends elementorModules.Module {
 
 	registerCommand( command, callback ) {
 		$e.commands.register( this, command, callback );
+	}
+
+	registerHook( hook ) {
+		return new hook();
 	}
 
 	registerCommandInternal( command, callback ) {

@@ -12,14 +12,18 @@ export default class Component extends ComponentBase {
 		new BackwardsCompatibility();
 
 		super.registerAPI();
-
-		Object.values( hooksData ).forEach( ( Hook ) => new Hook() );
-		Object.values( hooksUI ).forEach( ( Hook ) => new Hook() );
 	}
 
 	defaultCommands() {
 		return {
 			//example: ( args ) => ( new Commands.Example( args ).run() ),
+		};
+	}
+
+	defaultHooks() {
+		return {
+			... hooksData,
+			... hooksUI,
 		};
 	}
 
