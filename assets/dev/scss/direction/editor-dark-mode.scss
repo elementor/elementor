@@ -1289,3 +1289,52 @@ label.elementor-template-library-order-label,
 		color: $theme-dark-gray-light;
 	}
 }
+
+// Nerd box icons
+#elementor-template-library-footer-banner {
+
+	img {
+		filter: contrast(0.8);
+	}
+}
+#elementor-navigator__elements {
+
+	.elementor-nerd-box {
+
+		img {
+			filter: contrast(0.8);
+		}
+	}
+}
+.elementor-control {
+
+	&-custom_css_pro,
+	&-custom_attributes_pro {
+
+		img {
+			filter: contrast(0.8);
+		}
+	}
+}
+#elementor-panel {
+
+	&-global {
+
+		.elementor-nerd-box {
+
+			img {
+				filter: contrast(0.8);
+			}
+		}
+	}
+
+	&-get-pro-elements,
+	&-schemes-disabled,
+	&-history-no-items,
+	&-revisions-no-revisions {
+
+		img {
+			filter: contrast(0.8);
+		}
+	}
+}
