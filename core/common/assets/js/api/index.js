@@ -12,8 +12,8 @@ import Hooks from './core/hooks';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
 
-import * as hooksData from './modules/hooks/data/';
-import * as hooksUI from './modules/hooks/ui';
+import * as hookData from './modules/hooks/data/';
+import * as hookUI from './modules/hooks/ui';
 
 export default class API {
 	/**
@@ -41,8 +41,8 @@ export default class API {
 
 			HookBreak,
 
-			hookData: hooksData,
-			hookUI: hooksUI,
+			hookData,
+			hookUI,
 		};
 
 		window.$e = this;
