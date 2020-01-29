@@ -126,12 +126,17 @@
 
 		&__custom-attributes {
 			display: flex;
-			align-items: center;
+			flex-direction: column;
 			margin-top: 10px;
 
 			&-label {
 				width: 65%;
 				font-size: 0.9em;
+			}
+
+			input {
+				width: 100%;
+				margin-top: 10px;
 			}
 		}
 	}
