@@ -116,6 +116,10 @@ module.exports = elementorModules.ViewModule.extend( {
 			DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( modal, arguments );
 
 			modal.getElements( 'message' ).removeClass( 'animated' );
+
+			if ( screenfull.isFullscreen ) {
+				self.deactivateFullscreen();
+			}
 		};
 
 		switch ( options.type ) {

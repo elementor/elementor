@@ -144,6 +144,18 @@ class Plugin {
 	public $revisions_manager;
 
 	/**
+	 * Images manager.
+	 *
+	 * Holds the plugin images manager.
+	 *
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 * @var Images_Manager
+	 */
+	public $images_manager;
+
+	/**
 	 * Maintenance mode.
 	 *
 	 * Holds the plugin maintenance mode.
@@ -574,6 +586,7 @@ class Plugin {
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
+		$this->images_manager = new Images_Manager();
 
 		User::init();
 		Api::init();
@@ -586,10 +599,6 @@ class Plugin {
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
-
-			if ( wp_doing_ajax() ) {
-				new Images_Manager();
-			}
 		}
 	}
 
