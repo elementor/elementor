@@ -348,6 +348,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const swiper = this.swiper,
 			elements = this.elements,
 			classes = this.getSettings( 'classes' );
+
 		swiper.zoom.in();
 		swiper.allowSlideNext = false;
 		swiper.allowSlidePrev = false;
@@ -360,6 +361,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const swiper = this.swiper,
 			elements = this.elements,
 			classes = this.getSettings( 'classes' );
+
 		swiper.zoom.out();
 		swiper.allowSlideNext = true;
 		swiper.allowSlidePrev = true;
@@ -412,9 +414,7 @@ module.exports = elementorModules.ViewModule.extend( {
 						'data-title': slide.title,
 						'data-description': slide.description,
 					} );
-				$slideImage.on( 'ondragstart', () => {
-					return false;
-				} );
+
 				$zoomContainer.append( $slideImage );
 				$slide.append( $zoomContainer );
 			}
