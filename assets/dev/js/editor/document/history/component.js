@@ -19,15 +19,10 @@ export default class Component extends ComponentBase {
 
 	getCommands() {
 		return {
-			'add-transaction': ( args ) => ( new commands.AddTransaction( args ).run() ),
-			'clear-transaction': ( args ) => ( new commands.ClearTransaction( args ).run() ),
-			'delete-log': ( args ) => ( new commands.DeleteLog( args ).run() ),
-			'end-log': ( args ) => ( new commands.EndLog( args ).run() ),
-			'end-transaction': ( args ) => ( new commands.EndTransaction( args ).run() ),
-			'log-sub-item': ( args ) => ( new commands.LogSubItem( args ).run() ),
-			'start-log': ( args ) => ( new commands.StartLog( args ).run() ),
-			'undo-all': ( args ) => args.document.history.doItem( args.document.history.getItems().length - 1 ),
+			... this.importCommands( commands ),
+
 			undo: () => elementor.documents.getCurrent().history.navigate(),
+			'undo-all': ( args ) => args.document.history.doItem( args.document.history.getItems().length - 1 ),
 			redo: () => elementor.documents.getCurrent().history.navigate( true ),
 		};
 	}
