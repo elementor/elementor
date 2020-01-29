@@ -128,16 +128,20 @@
 	}
 }
 
-#elementor-panel-get-pro-elements {
-
-	.elementor-nerd-box-message {
-		text-transform: uppercase;
-	}
-}
-
 // Pojo Theme Support
 #elementor-controls {
 	.pojo-widget-button-collapse {
 		display: none;
+	}
+}
+
+#elementor-panel-global {
+
+	.elementor-nerd-box {
+
+		img {
+			width: 100px;
+			margin-top: 20px;
+		}
 	}
 }

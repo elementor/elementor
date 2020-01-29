@@ -81,6 +81,13 @@
 	}
 }
 
-#elementor-panel-history-no-items {
+#elementor-panel-history-no-items,
+#elementor-panel-revisions-no-revisions {
 	text-align: center;
+
+	img {
+		width: 100px;
+		margin-right: 10px;
+		margin-top: 20px;
+	}
 }
