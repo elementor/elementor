@@ -125,9 +125,11 @@
 		}
 
 		&__custom-attributes {
-			display: flex;
-			flex-direction: column;
 			margin-top: 10px;
+
+			label {
+				display: block;
+			}
 
 			input {
 				width: 100%;
