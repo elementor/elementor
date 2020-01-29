@@ -1,7 +1,7 @@
 import EnqueueFonts from './hooks/ui/settings/enqueue-fonts';
 import * as commands from './commands/';
 
-export default class extends elementorModules.common.Component {
+export default class extends $e.modules.ComponentBase {
 	pages = {};
 
 	getNamespace() {
