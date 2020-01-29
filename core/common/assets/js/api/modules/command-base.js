@@ -1,16 +1,8 @@
-/**
- * TODO: Should we do validate function in scenarios where args are are not required.
- * but should be validate?
- *
- * TODO: Consider create a 'strict' handler for development mode.
- * if development process, we create a 'strict' validator, if passed arg is unknown by the command,
- * then error will be thrown.
- */
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
 	/**
-	 * Current component (elementorModules.Module ).
+	 * Current component.
 	 *
 	 * @type {Component}
 	 */
@@ -31,8 +23,6 @@ export default class CommandBase extends ArgsObject {
 
 		// Assign instance of current component.
 		this.component = commandsAPI.getComponent( this.currentCommand );
-
-		// TODO: if `this.component` not found, throw error !.
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
