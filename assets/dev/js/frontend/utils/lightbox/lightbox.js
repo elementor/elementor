@@ -194,6 +194,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			socialNetworks = {
 				twitter: i18n.shareOnTwitter,
 				facebook: i18n.shareOnFacebook,
+				pinterest: i18n.pinIt,
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -212,25 +213,35 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		$.each( socialNetworks, ( key, networkLabel ) => {
 			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel );
+
 			$link.prepend( $( '<i>', { class: 'eicon-' + key } ) );
 			$linkList.append( $link );
 		} );
 
 		if ( ! videoUrl ) {
 			const downloadImage = i18n.downloadImage;
+
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
 		}
+
 		return $linkList;
 	},
 
 	createShareLink: function( networkName, itemUrl ) {
-		const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
-			id: this.id,
-			url: itemUrl,
-		} );
+		const options = {};
 
-		const url = location.href.replace( /#.*/, '' ) + hash;
-		return ShareLink.getNetworkLink( networkName, { url: url } );
+		if ( 'pinterest' === networkName ) {
+			options.image = encodeURIComponent( itemUrl );
+		} else {
+			const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
+				id: this.id,
+				url: itemUrl,
+			} );
+
+			options.url = encodeURIComponent( location.href.replace( /#.*/, '' ) ) + hash;
+		}
+
+		return ShareLink.getNetworkLink( networkName, options );
 	},
 
 	getSlideshowHeader: function() {
