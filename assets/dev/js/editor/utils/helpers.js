@@ -1,8 +1,8 @@
 import ColorPicker from './color-picker';
-import DocumentHelpers from 'elementor-editor/document/helper';
+import DocumentHelper from 'elementor-editor/document/helper';
 
 module.exports = {
-	document: DocumentHelpers,
+	document: DocumentHelper,
 
 	_enqueuedFonts: [],
 	_enqueuedIconFonts: [],

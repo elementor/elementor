@@ -1,5 +1,5 @@
 import environment from 'elementor-common/utils/environment';
-import DocumentHelpers from 'elementor-document/helper';
+import DocumentHelper from 'elementor-document/helper';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -161,7 +161,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => DocumentHelpers.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),

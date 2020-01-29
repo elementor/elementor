@@ -1,5 +1,5 @@
 import ElementsHelper from '../../elements/helper';
-import DocumentHelpers from 'elementor-document/helper';
+import DocumentHelper from 'elementor-document/helper';
 
 export const Discard = () => {
 	QUnit.test( 'Discard', async ( assert ) => {

@@ -1,6 +1,6 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
-import DocumentHelpers from 'elementor-document/helper';
+import DocumentHelper from 'elementor-document/helper';
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -194,7 +194,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	dragShouldBeIgnored( draggedModel ) {
-		return ! DocumentHelpers.isValidChild( draggedModel, this.model );
+		return ! DocumentHelper.isValidChild( draggedModel, this.model );
 	}
 
 	addEditingClass() {

@@ -1,6 +1,6 @@
 import AddSectionView from './add-section/independent';
 import RightClickIntroductionBehavior from '../elements/views/behaviors/right-click-introduction';
-import DocumentHelpers from 'elementor-document/helper';
+import DocumentHelper from 'elementor-document/helper';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
@@ -46,7 +46,7 @@ const Preview = BaseSectionsContainerView.extend( {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						isEnabled: () => DocumentHelpers.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
 						callback: ( at ) => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 							options: {
