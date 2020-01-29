@@ -34,11 +34,6 @@ export default class Component extends BackwardsCompatibility {
 				return elementor.translate( 'before_unload_alert' );
 			}
 		} );
-
-		// Load UI hooks.
-		Object.values( hooksUI ).forEach(
-			( Hook ) => new Hook()
-		);
 	}
 
 	getNamespace() {
@@ -88,6 +83,10 @@ export default class Component extends BackwardsCompatibility {
 			save: ( args ) => ( new commandsInternal.Save( args ).run() ),
 			'set-is-modified': ( args ) => ( new commandsInternal.SetIsModified( args ).run() ),
 		};
+	}
+
+	defaultHooks() {
+		return hooksUI;
 	}
 
 	isEditorChanged() {
