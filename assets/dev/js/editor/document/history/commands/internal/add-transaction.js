@@ -1,4 +1,4 @@
-import Base from './base/base';
+import Base from '../base/base';
 
 export class AddTransaction extends Base {
 	validateArgs( args ) {

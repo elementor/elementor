@@ -53,7 +53,7 @@ export default class Debounce extends History {
 			delete this.history.subTitle;
 		}
 
-		$e.run( 'document/history/add-transaction', this.history );
+		$e.internal( 'document/history/add-transaction', this.history );
 
 		if ( ! Debounce.isTransactionStarted ) {
 			Debounce.isTransactionStarted = true;
@@ -61,14 +61,14 @@ export default class Debounce extends History {
 	}
 
 	deleteTransaction() {
-		$e.run( 'document/history/delete-transaction' );
+		$e.internal( 'document/history/delete-transaction' );
 
 		Debounce.isTransactionStarted = false;
 	}
 
 	endTransaction() {
 		if ( Debounce.isTransactionStarted ) {
-			$e.run( 'document/history/end-transaction' );
+			$e.internal( 'document/history/end-transaction' );
 		}
 
 		Debounce.isTransactionStarted = false;

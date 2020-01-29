@@ -1,5 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import * as commands from './commands/';
+import * as commandsInternal from './commands/internal';
 
 export default class Component extends ComponentBase {
 	__construct( args ) {
@@ -19,12 +19,14 @@ export default class Component extends ComponentBase {
 
 	getCommands() {
 		return {
-			... this.importCommands( commands ),
-
 			undo: () => elementor.documents.getCurrent().history.navigate(),
 			'undo-all': ( args ) => args.document.history.doItem( args.document.history.getItems().length - 1 ),
 			redo: () => elementor.documents.getCurrent().history.navigate( true ),
 		};
+	}
+
+	getCommandsInternal() {
+		return this.importCommands( commandsInternal );
 	}
 
 	normalizeLogTitle( args ) {

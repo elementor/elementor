@@ -148,7 +148,7 @@ class AddSectionBase extends Marionette.ItemView {
 		}
 
 		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
-			historyId = $e.run( 'document/history/start-log', {
+			historyId = $e.internal( 'document/history/start-log', {
 				type: 'add',
 				title: elementor.helpers.getModelLabel( selectedElement.model ),
 			} ),
@@ -171,7 +171,7 @@ class AddSectionBase extends Marionette.ItemView {
 		// Create the element in column.
 		eSection.view.children.findByIndex( 0 ).addElementFromPanel();
 
-		$e.run( 'document/history/end-log', { id: historyId } );
+		$e.internal( 'document/history/end-log', { id: historyId } );
 	}
 
 	onAfterPaste() {}

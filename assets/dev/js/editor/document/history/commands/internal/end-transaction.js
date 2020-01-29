@@ -1,4 +1,4 @@
-import Base from './base/base';
+import Base from '../base/base';
 
 export class EndTransaction extends Base {
 	initialize() {
@@ -35,7 +35,7 @@ export class EndTransaction extends Base {
 			history.id = firstItem.id;
 		}
 
-		const historyId = $e.run( 'document/history/start-log', history );
+		const historyId = $e.internal( 'document/history/start-log', history );
 
 		Object.values( transactions ).forEach( ( item ) => {
 			const itemArgs = item;
@@ -45,13 +45,13 @@ export class EndTransaction extends Base {
 				itemArgs.id = firstItem.id;
 			}
 
-			$e.run( 'document/history/log-sub-item', itemArgs );
+			$e.internal( 'document/history/log-sub-item', itemArgs );
 		} );
 
-		$e.run( 'document/history/end-log', { id: historyId } );
+		$e.internal( 'document/history/end-log', { id: historyId } );
 
 		// Clear transactions before leave.
-		$e.run( 'document/history/clear-transaction' );
+		$e.internal( 'document/history/clear-transaction' );
 	}
 }
 

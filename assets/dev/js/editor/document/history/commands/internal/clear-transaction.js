@@ -1,4 +1,4 @@
-import Base from './base/base';
+import Base from '../base/base';
 
 export class ClearTransaction extends Base {
 	initialize() {
