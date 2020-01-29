@@ -473,7 +473,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 		&-option {
 
-			input {
+			&-input {
 				border-color: $theme-dark-gray-light;
 
 				&:checked {
