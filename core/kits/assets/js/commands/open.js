@@ -17,7 +17,8 @@ export class Open extends CommandBase {
 
 		return $e.run( 'editor/documents/switch', {
 			id: elementor.config.kit_id,
-		} ).then( () => {
+		} )
+		.finally( () => {
 			$e.internal( 'panel/state-ready' );
 		} );
 	}
