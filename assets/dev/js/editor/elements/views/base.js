@@ -469,7 +469,7 @@ BaseElementView = BaseContainer.extend( {
 			settings.attributes,
 			this.getEditModel().get( 'settings' ).controls,
 			[ /{{ID}}/g, /{{WRAPPER}}/g ],
-			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .' + this.getElementUniqueID() ] );
+			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
 

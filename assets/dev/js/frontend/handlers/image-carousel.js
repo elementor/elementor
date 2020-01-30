@@ -39,12 +39,12 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		swiperOptions.breakpoints = {};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.md ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.md - 1 ] = {
 			slidesPerView: +elementSettings.slides_to_show_mobile || 1,
 			slidesPerGroup: +elementSettings.slides_to_scroll_mobile || 1,
 		};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.lg ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.lg - 1 ] = {
 			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
 			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
 		};
@@ -111,6 +111,9 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		}
 
 		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
+
+		// Expose the swiper instance in the frontend
+		this.elements.$carousel.data( 'swiper', this.swiper );
 
 		if ( elementSettings.pause_on_hover ) {
 			this.elements.$carousel.on( {
