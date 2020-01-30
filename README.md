@@ -7,7 +7,7 @@
 **Tested up to:** 5.3  
 **Requires PHP:** 5.6  
 **Stable tag:** 2.8.5  
-**Beta tag:** 2.9.0-beta1  
+**Beta tag:** 2.9.0-beta2  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
