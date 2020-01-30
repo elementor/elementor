@@ -770,8 +770,6 @@ class Editor {
 
 		$this->bc_move_document_filters();
 
-		$localized_settings = [];
-
 		/**
 		 * Localize editor settings.
 		 *
@@ -779,14 +777,10 @@ class Editor {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $localized_settings Localized settings.
-		 * @param int   $post_id            The ID of the current post being edited.
+		 * @param array $config  Editor configuration.
+		 * @param int   $post_id The ID of the current post being edited.
 		 */
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings );
-
-		if ( ! empty( $localized_settings ) ) {
-			$config = array_replace_recursive( $config, $localized_settings );
-		}
+		$config = apply_filters( 'elementor/editor/localize_settings', $config );
 
 		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
