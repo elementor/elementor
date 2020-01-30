@@ -56,6 +56,14 @@ export class Close extends CommandBase {
 				confirm: elementor.translate( 'Save' ),
 				cancel: elementor.translate( 'Discard' ),
 			},
+			onHide: () => {
+				// If still not action chosen. use `defer` because onHide is called before onConfirm/onCancel.
+				_.defer( () => {
+					if ( ! this.args.mode ) {
+						deferred.reject( 'Close document has been canceled.' );
+					}
+				} );
+			},
 			onConfirm: () => {
 				this.args.mode = 'save';
 
