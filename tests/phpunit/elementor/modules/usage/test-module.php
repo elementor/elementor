@@ -160,7 +160,7 @@ class Test_Module extends Elementor_Test_Base {
 		$usage_meta_after = self::$document->get_meta( Module::META_KEY );
 
 		// Check meta.
-		$this->assertArrayNotHasKey( 'button', $usage_meta_after );
+		$this->assertEquals( '', $usage_meta_after );
 
 		// Get global.
 		$global_usage = get_option( Module::OPTION_NAME, [] );
