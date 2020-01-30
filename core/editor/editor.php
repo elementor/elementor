@@ -551,7 +551,7 @@ class Editor {
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
-			'elementPromotionURL' => 'https://go.elementor.com/go-pro-',
+			'elementPromotionURL' => 'https://go.elementor.com/go-pro-%s',
 			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
 			'user' => [
