@@ -83,7 +83,6 @@ export default class Document {
 	 * Create document.
 	 *
 	 * @param {{}} config
-	 * @param {Container} container
 	 */
 	constructor( config ) {
 		this.config = config;
