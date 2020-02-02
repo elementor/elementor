@@ -781,7 +781,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					$image_hover_selectors=> 'transition-duration: {{SIZE}}s',
+					$image_hover_selectors => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
