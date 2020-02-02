@@ -624,7 +624,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'selector' => '{{WRAPPER}} img',
+				'selector' => '{{WRAPPER}} img:not(.elementor-lightbox-image)',
 			]
 		);
 
@@ -635,7 +635,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} img:not(.elementor-lightbox-image)' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -653,7 +653,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'opacity: {{SIZE}};',
+					'{{WRAPPER}} img:not(.elementor-lightbox-image)' => 'opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -665,7 +665,7 @@ class Kit extends PageBase {
 				'exclude' => [
 					'box_shadow_position',
 				],
-				'selector' => '{{WRAPPER}} img',
+				'selector' => '{{WRAPPER}} img:not(.elementor-lightbox-image)',
 			]
 		);
 
@@ -673,7 +673,7 @@ class Kit extends PageBase {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'image_css_filters',
-				'selector' => '{{WRAPPER}} img',
+				'selector' => '{{WRAPPER}} img:not(.elementor-lightbox-image)',
 			]
 		);
 
@@ -690,7 +690,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_hover_border',
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => '{{WRAPPER}} img:hover:not(.elementor-lightbox-image)',
 				'separator' => 'before',
 			]
 		);
@@ -702,7 +702,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} img:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} img:hover:not(.elementor-lightbox-image)' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -720,7 +720,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img:hover' => 'opacity: {{SIZE}};',
+					'{{WRAPPER}} img:hover:not(.elementor-lightbox-image)' => 'opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -729,7 +729,7 @@ class Kit extends PageBase {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'image_hover_css_filters',
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => '{{WRAPPER}} img:hover:not(.elementor-lightbox-image)',
 			]
 		);
 
@@ -740,7 +740,7 @@ class Kit extends PageBase {
 				'exclude' => [
 					'box_shadow_position',
 				],
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => '{{WRAPPER}} img:hover:not(.elementor-lightbox-image)',
 			]
 		);
 
@@ -756,7 +756,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'transition-duration: {{SIZE}}s',
+					'{{WRAPPER}} img:not(.elementor-lightbox-image)' => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
