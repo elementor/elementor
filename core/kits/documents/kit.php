@@ -372,8 +372,8 @@ class Kit extends PageBase {
 						'max' => 100,
 					],
 					'em' => [
-						'min' => 0,
-						'max' => 100,
+						'min' => 0.1,
+						'max' => 20,
 					],
 					'vh' => [
 						'min' => 0,

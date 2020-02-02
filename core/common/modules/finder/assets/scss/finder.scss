@@ -41,6 +41,7 @@
 			flex-grow: 1;
 			font-size: 14px;
 			color: $editor-darkest;
+			box-shadow: none;
 
 			&::placeholder {
 				color: $editor-light;
