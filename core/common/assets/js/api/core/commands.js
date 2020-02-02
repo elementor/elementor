@@ -173,6 +173,19 @@ export default class Commands extends elementorModules.Module {
 	}
 
 	/**
+	 * Function getCurrentLast().
+	 *
+	 * Receive last command that currently running.
+	 *
+	 * @returns {string}
+	 */
+	getCurrentLast() {
+		const current = Object.values( this.current );
+
+		return current[ current.length - 1 ];
+	}
+
+	/**
 	 * Function getCurrentFirstTrace().
 	 *
 	 * Receive first command in trace that currently running

@@ -19,7 +19,7 @@ export default class CommandBase extends ArgsObject {
 		super( args );
 
 		// Acknowledge self about which command it run.
-		this.currentCommand = commandsAPI.getCurrentFirst();
+		this.currentCommand = commandsAPI.getCurrentLast();
 
 		// Assign instance of current component.
 		this.component = commandsAPI.getComponent( this.currentCommand );
