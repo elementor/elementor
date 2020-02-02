@@ -49,8 +49,13 @@ class Manager {
 	}
 
 	public function localize_settings( $settings ) {
+		$kit = $this->get_active_kit();
+
 		$settings = array_replace_recursive( $settings, [
-			'kit_id' => $this->get_active_id(),
+			'kit_id' => $kit->get_main_id(),
+			'user' => [
+				'can_edit_kit' => $kit->is_editable_by_current_user(),
+			],
 			'i18n' => [
 				'Close' => __( 'Close', 'elementor' ),
 				'Back' => __( 'Back', 'elementor' ),
