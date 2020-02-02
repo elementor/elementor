@@ -464,9 +464,23 @@ $devices: 'desktop', 'tablet', 'mobile';
 //URL Control
 .elementor-control-type-url {
 
-	.elementor-control-url-more {
-		background-color: $theme-dark-gray-darkest;
-		border-color: $theme-dark-gray-light;
+	.elementor-control-url {
+
+		&-more {
+			background-color: $theme-dark-gray-darkest;
+			border-color: $theme-dark-gray-light;
+		}
+
+		&-option {
+
+			&-input {
+				border-color: $theme-dark-gray-light;
+
+				&:checked {
+					background-color: $theme-dark-gray-light;
+				}
+			}
+		}
 	}
 
 	.elementor-input {
