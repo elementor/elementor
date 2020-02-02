@@ -408,7 +408,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a:not(.elementor-button)' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -418,7 +418,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_normal_typography',
-				'selector' => '{{WRAPPER}} a',
+				'selector' => '{{WRAPPER}} a:not(.elementor-button)',
 			]
 		);
 
@@ -437,7 +437,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a:hover:not(.elementor-button)' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -447,7 +447,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_hover_typography',
-				'selector' => '{{WRAPPER}} a:hover',
+				'selector' => '{{WRAPPER}} a:hover:not(.elementor-button)',
 			]
 		);
 
