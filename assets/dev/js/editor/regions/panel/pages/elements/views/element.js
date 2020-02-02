@@ -55,7 +55,7 @@ module.exports = Marionette.ItemView.extend( {
 			message: elementor.translate( 'element_promotion_dialog_message', [ this.model.get( 'title' ) ] ),
 			top: '-7',
 			element: this.el,
-			actionURL: elementor.config.elementPromotionURL + this.model.get( 'name' ),
+			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) ),
 		} );
 	},
 } );
