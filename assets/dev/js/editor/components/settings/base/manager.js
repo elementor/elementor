@@ -81,13 +81,17 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
+	getStyleId: function() {
+		return this.getSettings( 'name' );
+	},
+
 	initControlsCSSParser: function() {
 		var controlsCSS;
 
 		this.getControlsCSS = function() {
 			if ( ! controlsCSS ) {
 				controlsCSS = new ControlsCSSParser( {
-					id: this.getSettings( 'name' ),
+					id: this.getStyleId(),
 					settingsModel: this.model,
 				} );
 			}
