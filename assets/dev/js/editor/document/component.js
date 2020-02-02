@@ -6,10 +6,12 @@ import * as hooksData from './hooks/data/';
 import * as hooksUI from './hooks/ui/';
 
 export default class Component extends ComponentBase {
-	modules = {
-		CommandHistoryBase,
-		CommandHistoryDebounceBase,
-	};
+	static getModules() {
+		return {
+			CommandHistoryBase,
+			CommandHistoryDebounceBase,
+		};
+	}
 
 	getNamespace() {
 		return 'document';
