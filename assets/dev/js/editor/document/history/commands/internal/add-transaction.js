@@ -1,6 +1,15 @@
 import Base from '../base/base';
 
 export class AddTransaction extends Base {
+	initialize( args ) {
+		super.initialize( args );
+
+		if ( this.component.isTransactionStarted() ) {
+			delete args.title;
+			delete args.subTitle;
+		}
+	}
+
 	validateArgs( args ) {
 		this.requireContainer();
 		this.requireArgumentType( 'type', 'string', args );

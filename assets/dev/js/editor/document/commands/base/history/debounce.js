@@ -21,8 +21,6 @@ export const getDefaultDebounceDelay = () => {
 };
 
 export default class Debounce extends History {
-	static isTransactionStarted = false;
-
 	/**
 	 * Function debounce().
 	 *
@@ -47,38 +45,11 @@ export default class Debounce extends History {
 		}
 	}
 
-	addTransaction() {
-		if ( Debounce.isTransactionStarted ) {
-			delete this.history.title;
-			delete this.history.subTitle;
-		}
-
-		$e.internal( 'document/history/add-transaction', this.history );
-
-		if ( ! Debounce.isTransactionStarted ) {
-			Debounce.isTransactionStarted = true;
-		}
-	}
-
-	deleteTransaction() {
-		$e.internal( 'document/history/delete-transaction' );
-
-		Debounce.isTransactionStarted = false;
-	}
-
-	endTransaction() {
-		if ( Debounce.isTransactionStarted ) {
-			$e.internal( 'document/history/end-transaction' );
-		}
-
-		Debounce.isTransactionStarted = false;
-	}
-
 	onBeforeRun( args ) {
 		CommandBase.prototype.onBeforeRun.call( this, args );
 
 		if ( this.history && this.isHistoryActive() ) {
-			this.addTransaction();
+			$e.internal( 'document/history/add-transaction', this.history );
 		}
 	}
 
@@ -87,9 +58,9 @@ export default class Debounce extends History {
 
 		if ( this.isHistoryActive() ) {
 			if ( this.isDebounceRequired ) {
-				this.constructor.debounce( this.endTransaction.bind( this ) );
+				this.constructor.debounce( () => $e.internal( 'document/history/end-transaction' ) );
 			} else {
-				this.endTransaction();
+				$e.internal( 'document/history/end-transaction' );
 			}
 		}
 	}
@@ -101,9 +72,9 @@ export default class Debounce extends History {
 		if ( e instanceof $e.modules.HookBreak && this.history ) {
 			if ( this.isDebounceRequired ) {
 				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
-				this.constructor.debounce( this.deleteTransaction.bind( this ) );
+				this.constructor.debounce( () => $e.internal( 'document/history/delete-transaction' ) );
 			} else {
-				this.deleteTransaction();
+				$e.internal( 'document/history/delete-transaction' );
 			}
 		}
 	}

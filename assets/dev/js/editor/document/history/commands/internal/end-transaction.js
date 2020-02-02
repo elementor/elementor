@@ -1,12 +1,6 @@
 import Base from '../base/base';
 
 export class EndTransaction extends Base {
-	initialize() {
-		if ( $e.devTools && ! this.component.isTransactionStarted() ) {
-			$e.devTools.log.warn( 'Transaction is already started' );
-		}
-	}
-
 	apply( args ) {
 		if ( ! this.component.isTransactionStarted() ) {
 			return;

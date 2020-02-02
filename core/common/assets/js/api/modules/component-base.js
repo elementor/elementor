@@ -3,12 +3,7 @@ export default class ComponentBase extends elementorModules.Module {
 		if ( args.manager ) {
 			this.manager = args.manager;
 		}
-		/**
-		 * TODO: Consider... manage 'commandsInternal' is not the best way, it would be better if:
-		 * 'commandsInternal' && 'registerCommandInternal' was handled by 'defaultCommands' and 'registerCommand'.
-		 */
 
-		// TODO: reorder as 'registerAPI'.
 		this.commands = this.defaultCommands();
 		this.commandsInternal = this.defaultCommandsInternal();
 		this.hooks = this.defaultHooks();
@@ -22,13 +17,13 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	registerAPI() {
-		jQuery.each( this.getTabs(), ( tab ) => this.registerTabRoute( tab ) );
+		Object.entries( this.getTabs() ).forEach( ( tab ) => this.registerTabRoute( tab[ 0 ] ) );
 
-		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
+		Object.entries( this.getRoutes() ).forEach( ( [ route, callback ] ) => this.registerRoute( route, callback ) );
 
-		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
+		Object.entries( this.getCommands() ).forEach( ( [ command, callback ] ) => this.registerCommand( command, callback ) );
 
-		jQuery.each( this.getCommandsInternal(), ( command, callback ) => this.registerCommandInternal( command, callback ) );
+		Object.entries( this.getCommandsInternal() ).forEach( ( [ command, callback ] ) => this.registerCommandInternal( command, callback ) );
 
 		Object.values( this.defaultHooks() ).forEach( ( hook ) => this.registerHook( hook ) );
 	}
