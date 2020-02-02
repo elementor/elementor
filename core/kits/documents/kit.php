@@ -781,7 +781,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					$image_hover_selectorshttps://www.youtube.com/watch?v=6U_5KhaH6IM=> 'transition-duration: {{SIZE}}s',
+					$image_hover_selectors=> 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
