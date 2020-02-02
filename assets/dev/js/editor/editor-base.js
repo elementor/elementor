@@ -552,7 +552,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	checkPageStatus() {
-		if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
+		if ( elementor.documents.getCurrent().isDraft() ) {
 			this.notifications.showToast( {
 				message: this.translate( 'working_on_draft_notification' ),
 				buttons: [

@@ -15,7 +15,8 @@ export class Close extends CommandBase {
 				$e.components.get( 'panel/global' ).close();
 				$e.routes.clearHistory( this.component.getRootContainer() );
 			},
-		} ).then( () => {
+		} )
+		.finally( () => {
 			$e.internal( 'panel/state-ready' );
 		} );
 	}
