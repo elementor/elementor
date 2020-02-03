@@ -384,6 +384,18 @@ class Kit extends PageBase {
 			]
 		);
 
+		//Link Selectors
+		$link_selectors = [
+			'{{WRAPPER}} a',
+		];
+
+		$link_hover_selectors = [
+			'{{WRAPPER}} a:hover',
+		];
+
+		$link_selectors = implode( ',', $link_selectors );
+		$link_hover_selectors = implode( ',', $link_hover_selectors );
+
 		$this->add_control(
 			'link_heading',
 			[
@@ -408,7 +420,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a' => 'color: {{VALUE}};',
+					$link_selectors => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -418,7 +430,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_normal_typography',
-				'selector' => '{{WRAPPER}} a',
+				'selector' => $link_selectors,
 			]
 		);
 
@@ -437,7 +449,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+					$link_hover_selectors => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -447,7 +459,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_hover_typography',
-				'selector' => '{{WRAPPER}} a:hover',
+				'selector' => $link_hover_selectors,
 			]
 		);
 
@@ -604,6 +616,19 @@ class Kit extends PageBase {
 	}
 
 	private function add_images_section() {
+
+		//Image Selectors
+		$image_selectors = [
+			'{{WRAPPER}} img',
+		];
+
+		$image_hover_selectors = [
+			'{{WRAPPER}} img:hover',
+		];
+
+		$image_selectors = implode( ',', $image_selectors );
+		$image_hover_selectors = implode( ',', $image_hover_selectors );
+
 		$this->start_controls_section(
 			'section_images',
 			[
@@ -624,7 +649,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'selector' => '{{WRAPPER}} img',
+				'selector' => $image_selectors,
 			]
 		);
 
@@ -635,7 +660,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$image_selectors => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -653,7 +678,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'opacity: {{SIZE}};',
+					$image_selectors => 'opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -665,7 +690,7 @@ class Kit extends PageBase {
 				'exclude' => [
 					'box_shadow_position',
 				],
-				'selector' => '{{WRAPPER}} img',
+				'selector' => $image_selectors,
 			]
 		);
 
@@ -702,7 +727,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} img:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$image_hover_selectors => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -720,7 +745,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img:hover' => 'opacity: {{SIZE}};',
+					$image_hover_selectors => 'opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -729,7 +754,7 @@ class Kit extends PageBase {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'image_hover_css_filters',
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => $image_hover_selectors,
 			]
 		);
 
@@ -740,7 +765,7 @@ class Kit extends PageBase {
 				'exclude' => [
 					'box_shadow_position',
 				],
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => $image_hover_selectors,
 			]
 		);
 
@@ -756,7 +781,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'transition-duration: {{SIZE}}s',
+					$image_selectors => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
