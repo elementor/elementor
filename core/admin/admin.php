@@ -762,8 +762,8 @@ class Admin extends App {
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
-
 		$this->add_component( 'canary-deployment', new Canary_Deployment() );
+		$this->add_component( 'admin-notices', new Admin_Notices() );
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
@@ -778,8 +778,10 @@ class Admin extends App {
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 
-		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
-		add_action( 'admin_notices', [ $this, 'admin_upgrade_notices' ] );
+		// TODO: DELETE
+		//add_action( 'admin_notices', [ $this, 'admin_notices' ] );
+		//add_action( 'admin_notices', [ $this, 'admin_upgrade_notices' ] );
+
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 

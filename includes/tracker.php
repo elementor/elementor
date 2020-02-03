@@ -41,7 +41,9 @@ class Tracker {
 	public static function init() {
 		add_action( 'elementor/tracker/send_event', [ __CLASS__, 'send_tracking_data' ] );
 		add_action( 'admin_init', [ __CLASS__, 'handle_tracker_actions' ] );
-		add_action( 'admin_notices', [ __CLASS__, 'admin_notices' ] );
+
+		// TODO: REMOVE
+		//add_action( 'admin_notices', [ __CLASS__, 'admin_notices' ] );
 	}
 
 	/**

@@ -31,7 +31,8 @@ class Feedback extends Module {
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
 
 		// Review Plugin
-		add_action( 'admin_notices', [ $this, 'admin_notices' ], 20 );
+		// TODO: REMOVE
+		// add_action( 'admin_notices', [ $this, 'admin_notices' ], 20 );
 	}
 
 	/**
