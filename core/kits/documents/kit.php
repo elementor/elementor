@@ -21,7 +21,7 @@ class Kit extends PageBase {
 		$properties = parent::get_properties();
 
 		$properties['has_elements'] = false;
-		$properties['user_role'] = 'design';
+		$properties['edit_capability'] = 'edit_theme_options';
 
 		return $properties;
 	}

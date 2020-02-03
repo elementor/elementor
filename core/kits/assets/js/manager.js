@@ -35,7 +35,7 @@ export default class extends elementorModules.editor.utils.Module {
 		super.onInit();
 
 		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
-			if ( ! elementor.config.user.is_administrator ) {
+			if ( ! elementor.config.user.can_edit_kit ) {
 				return;
 			}
 

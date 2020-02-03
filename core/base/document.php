@@ -73,6 +73,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'has_elements' => true,
 			'is_editable' => true,
+			'edit_capability' => '',
 		];
 	}
 
@@ -411,6 +412,11 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function is_editable_by_current_user() {
+		$edit_capability = static::get_property( 'edit_capability' );
+		if ( $edit_capability && ! current_user_can( $edit_capability ) ) {
+			return false;
+		}
+
 		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
