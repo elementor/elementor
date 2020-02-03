@@ -183,6 +183,7 @@ select {
 	#elementor-panel-header {
 		background-color: $theme-dark-dark;
 	}
+
 	//Kit Editor
 	@at-root {
 		.elementor-editor-kit {
@@ -195,7 +196,7 @@ select {
 			}
 		}
 	}
-	
+
 	.elementor-panel-navigation {
 		background-color: $theme-dark-gray-dark;
 
