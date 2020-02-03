@@ -23,9 +23,9 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	},
 
 	onBeforeDestroy: function() {
-		if ( this.ui.select.data( 'select2' ) ) {
-			this.ui.select.select2( 'destroy' );
-		}
+		// We always destroy the select2 instance because there are cases where the DOM element's data cache
+		// itself has been destroyed but the select2 instance on it still exists
+		this.ui.select.select2( 'destroy' );
 
 		this.$el.remove();
 	},
