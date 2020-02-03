@@ -3,7 +3,7 @@ namespace Elementor\Core\Kits;
 
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\CSS\Post_Preview_CSS;
+use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
@@ -78,7 +78,7 @@ class Manager {
 
 		if ( $kit ) {
 			if ( $kit->is_autosave() ) {
-				$css_file = Post_Preview_CSS::create( $kit->get_id() );
+				$css_file = Post_Preview::create( $kit->get_id() );
 			} else {
 				$css_file = Post_CSS::create( $kit->get_id() );
 			}
