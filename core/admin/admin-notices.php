@@ -294,7 +294,7 @@ class Admin_Notices extends Module {
 				<div class="elementor-message-content">
 					<p><?php _e( 'Not sure where to begin? Why don\'t you start with one of our designer-made templates.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/admin-review/" target="_blank" class="button button-primary"><?php _e( 'Open template library', 'elementor' ); ?></a>
+						<a href="https://library.elementor.com/" target="_blank" class="button button-primary"><?php _e( 'Open template library', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
