@@ -1059,11 +1059,7 @@ export default class EditorBase extends Marionette.Application {
 
 			this.$preview.trigger( 'load' );
 
-			this.$previewContents.find( `#elementor-post-${ config.id }-css` ).remove();
-
-			const previewRevisionID = config.revisions.current_id;
-
-			this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
+			this.toggleDocumentCssFiles( document, false );
 		}
 
 		return document;
@@ -1128,5 +1124,16 @@ export default class EditorBase extends Marionette.Application {
 				return elementor.widgetsCache;
 			},
 		} );
+	}
+
+	toggleDocumentCssFiles( document, state ) {
+		const selectors = [
+			`#elementor-post-${ document.config.id }-css`,
+			`#elementor-preview-${ document.config.revisions.current_id }`,
+		],
+			$files = this.$previewContents.find( selectors.join( ',' ) ),
+			type = state ? 'text/css' : 'elementor/disabled-css';
+
+		$files.attr( { type } );
 	}
 }
