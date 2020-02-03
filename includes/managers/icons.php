@@ -356,6 +356,8 @@ class Icons_Manager {
 				'</p><p><strong>' .
 				esc_html__( 'Please note that the upgrade process may cause some of the previously used Font Awesome 4 icons to look a bit different due to minor design changes made by Font Awesome.', 'elementor' ) .
 				'</strong></p><p>' .
+				esc_html__( 'The upgrade process includes a database update.', 'elementor' ) .
+				'</p>' .
 				esc_html__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) .
 				'</p>';
 			},
