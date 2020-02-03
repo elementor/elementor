@@ -371,16 +371,16 @@ class Kit extends PageBase {
 						'min' => 0,
 						'max' => 100,
 					],
+					'em' => [
+						'min' => 0.1,
+						'max' => 20,
+					],
 					'vh' => [
 						'min' => 0,
 						'max' => 100,
 					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
-				'size_units' => [ 'px', 'vh', 'vw' ],
+				'size_units' => [ 'px', 'em', 'vh' ],
 			]
 		);
 
