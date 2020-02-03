@@ -556,6 +556,24 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function get_settings_usage() {
+		static $whitelist = [
+			'cpt_support',
+			'disable_color_schemes',
+			'disable_typography_schemes',
+			'allow_tracking',
+			'default_generic_fonts',
+			'container_width',
+			'space_between_widgets',
+			'stretched_section_container',
+			'page_title_selector',
+			'viewport_lg',
+			'viewport_md',
+			'global_image_lightbox',
+			'css_print_method',
+			'editor_break_lines',
+			'allow_svg',
+		];
+
 		$result = [];
 		$settings_tabs = Plugin::$instance->settings->get_tabs();
 
@@ -565,6 +583,10 @@ class Module extends BaseModule {
 					continue;
 				}
 				foreach ( $section['fields'] as $field_name => $field_data ) {
+					if ( ! in_array( $field_name, $whitelist ) ) {
+						continue; // 'field_name' not whitelisted.
+					}
+
 					if ( isset( $field_data['field_args'] ) && isset( $field_data['field_args']['type'] ) ) {
 						if ( 'hidden' === $field_data['field_args']['type'] ) {
 							continue;
