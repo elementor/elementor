@@ -827,7 +827,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 // Widget Pro Promotion Tooltip
-.elementor-element--promotion__dialog {
+#elementor-element--promotion__dialog {
 	background-color: $theme-dark-gray-darker;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
 
@@ -852,7 +852,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 }
 
-body.rtl .elementor-element--promotion__dialog {
+body.rtl #elementor-element--promotion__dialog {
 
 	&:after {
 		border-left-color: $theme-dark-gray-darker;

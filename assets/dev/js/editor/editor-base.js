@@ -173,6 +173,16 @@ export default class EditorBase extends Marionette.Application {
 				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
 			},
 		},
+		promotion: {
+			ignore: '.elementor-panel-category-items',
+			callback: () => {
+				const dialog = elementor.promotion.dialog;
+
+				if ( dialog ) {
+					dialog.hide();
+				}
+			},
+		},
 	};
 
 	userCan( capability ) {
