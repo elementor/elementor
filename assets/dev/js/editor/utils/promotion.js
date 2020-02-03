@@ -12,6 +12,9 @@ export default class extends elementorModules.Module {
 				show: 'show',
 				hide: 'hide',
 			},
+			hide: {
+				onOutsideClick: false,
+			},
 			position: {
 				my: ( elementorCommon.config.isRTL ? 'right' : 'left' ) + '+5 top',
 			},
