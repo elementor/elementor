@@ -28,6 +28,10 @@
 			&:not(.elementor-fit-aspect-ratio) {
 				height: 100%;
 			}
+
+			&.dialog-lightbox-message {
+				padding: 0;
+			}
 		}
 
 		&-lightbox-close-button {
