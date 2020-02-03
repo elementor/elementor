@@ -1,4 +1,3 @@
-$editor-kit-accent: #4ab7f4;
 
 .elementor-panel {
 	#elementor-panel-header {
@@ -10,7 +9,9 @@ $editor-kit-accent: #4ab7f4;
 }
 
 .elementor-editor-kit {
+
 	.elementor-panel {
+
 		#elementor-panel-header {
 			background-color: $editor-kit-accent;
 
@@ -24,6 +25,7 @@ $editor-kit-accent: #4ab7f4;
 				opacity: 0.4;
 
 				&:hover {
+
 					.elementor-icon {
 						cursor: inherit;
 						color: inherit;
@@ -33,6 +35,7 @@ $editor-kit-accent: #4ab7f4;
 		}
 
 		.elementor-panel-navigation {
+
 			.elementor-panel-navigation-tab{
 				&.elementor-active{
 					border-bottom-color: $editor-kit-accent;
@@ -48,6 +51,7 @@ $editor-kit-accent: #4ab7f4;
 
 		#elementor-panel-saver-button-publish,
 		#elementor-panel-saver-button-save-options {
+
 			&.elementor-button.elementor-button-success:not(.elementor-disabled) {
 				background-color: $editor-kit-accent;
 			}
