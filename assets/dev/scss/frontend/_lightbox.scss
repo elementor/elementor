@@ -9,6 +9,14 @@
 	--lightbox-header-icons-size: 20px;
 	--lightbox-navigation-icons-size: 25px;
 
+	.elementor-lightbox-image {
+
+		&,
+		&:hover {
+			all: initial;
+		}
+	}
+
 	.dialog {
 
 		&-header {
