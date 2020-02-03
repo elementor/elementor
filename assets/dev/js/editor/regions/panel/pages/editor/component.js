@@ -24,9 +24,9 @@ export default class Component extends ComponentBase {
 	defaultCommands() {
 		return {
 			open: ( args ) => {
-				this.openEditor( args.model, args.view );
-
 				this.setDefaultTab( args );
+
+				this.openEditor( args.model, args.view );
 
 				$e.route( this.getDefaultRoute(), args );
 
@@ -57,9 +57,14 @@ export default class Component extends ComponentBase {
 	}
 
 	setDefaultTab( args ) {
+		const editSettings = args.model.get( 'editSettings' );
+
 		let defaultTab;
+
 		if ( this.activeTabs[ args.model.id ] ) {
 			defaultTab = this.activeTabs[ args.model.id ];
+		} else if ( editSettings && editSettings.get( 'editTab' ) ) {
+			defaultTab = editSettings.get( 'editTab' );
 		} else {
 			defaultTab = jQuery( this.getTabsWrapperSelector() ).find( '.elementor-component-tab' ).eq( 0 ).data( 'tab' );
 		}
