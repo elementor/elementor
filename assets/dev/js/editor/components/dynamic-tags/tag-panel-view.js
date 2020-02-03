@@ -132,5 +132,9 @@ module.exports = Marionette.ItemView.extend( {
 		if ( this.hasSettings() ) {
 			this.getSettingsPopup().destroy();
 		}
+
+		if ( this.tagControlsStack ) {
+			this.tagControlsStack.destroy();
+		}
 	},
 } );
