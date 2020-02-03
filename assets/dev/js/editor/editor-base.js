@@ -1020,6 +1020,8 @@ export default class EditorBase extends Marionette.Application {
 
 		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
 
+		this.settings.page.destroy();
+
 		document.editor.status = 'closed';
 
 		this.config.document = {};
