@@ -7,7 +7,7 @@ export default class extends elementorModules.Module {
 
 	initDialog() {
 		this.dialog = elementor.dialogsManager.createWidget( 'buttons', {
-			className: 'elementor-element--promotion__dialog',
+			id: 'elementor-element--promotion__dialog',
 			effects: {
 				show: 'show',
 				hide: 'hide',
