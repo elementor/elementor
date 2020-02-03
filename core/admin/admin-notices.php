@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
 use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,6 +19,11 @@ class Admin_Notices extends Module {
 		'api_upgrade_plugin',
 		'tracker',
 		'rate_us_feedback',
+		'get_started',
+		'woocommerce_promote',
+		'cf7_promote',
+		'mc4wp_promote',
+		'popup_maker_promote',
 	];
 
 	private $elementor_pages_count = null;
@@ -171,7 +177,7 @@ class Admin_Notices extends Module {
 		}
 
 		// Show tracker notice after 24 hours from installed time.
-		if ( $this->get_install_time() > strtotime( '-24 hours' ) ) {
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -266,6 +272,194 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
+	private function notice_get_started() {
+		$notice_id = 'get_started_notice';
+
+		if ( strtotime( '+5 days', $this->get_install_time() ) < time() ) {
+			return false;
+		}
+
+		if ( 1 <= $this->get_elementor_pages_count() || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		?>
+		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<p><?php _e( 'Not sure where to begin? Why don\'t you start with one of our designer-made templates.', 'elementor' ); ?></p>
+					<p class="elementor-message-actions">
+						<a href="https://go.elementor.com/admin-review/" target="_blank" class="button button-primary"><?php _e( 'Open template library', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return true;
+	}
+
+	private function notice_woocommerce_promote() {
+		$notice_id = 'woocommerce_promote';
+
+		if ( Utils::has_pro() || ! function_exists( 'WC' ) ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return false;
+		}
+
+		if ( ! in_array( $this->current_screen_id, [ 'edit-product', 'woocommerce_page_wc-settings', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		?>
+		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<p><?php _e( 'Using WooCommerce? With Elementor\'s WooCommerce Builder, you\'ll be able to design your store without coding!', 'elementor' ); ?></p>
+					<p class="elementor-message-actions">
+						<a href="https://go.elementor.com/plugin-promotion-woocommerce/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return true;
+	}
+
+	private function notice_cf7_promote() {
+		$notice_id = 'cf7_promote';
+
+		if ( Utils::has_pro() || ! defined( 'WPCF7_VERSION' ) ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return false;
+		}
+
+		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_wpcf7', 'contact_page_wpcf7-integration', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		?>
+		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<p><?php _e( 'Did you know? Forms convert better when you design them visually. Try out Elementor Forms now.', 'elementor' ); ?></p>
+					<p class="elementor-message-actions">
+						<a href="https://go.elementor.com/plugin-promotion-contactform7/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return true;
+	}
+
+	private function notice_mc4wp_promote() {
+		$notice_id = 'mc4wp_promote';
+
+		if ( Utils::has_pro() || ! defined( 'MC4WP_VERSION' ) ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return false;
+		}
+
+		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_mailchimp-for-wp', 'mc4wp_page_mailchimp-for-wp-forms', 'mc4wp_page_mailchimp-for-wp-integrations', 'mc4wp_page_mailchimp-for-wp-other', 'mc4wp_page_mailchimp-for-wp-extensions', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		?>
+		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<p><?php _e( 'Did you know? Forms convert better when you design them visually. Try out Elementor Forms now.', 'elementor' ); ?></p>
+					<p class="elementor-message-actions">
+						<a href="https://go.elementor.com/plugin-promotion-mc4wp/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return true;
+	}
+
+	private function notice_popup_maker_promote() {
+		$notice_id = 'popup_maker_promote';
+
+		if ( Utils::has_pro() || ! class_exists( 'Popup_Maker' ) ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return false;
+		}
+
+		if ( ! in_array( $this->current_screen_id, [ 'edit-popup', 'popup_page_pum-settings', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		?>
+		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<p><?php _e( 'Using a popup plugin? Avoid the patchwork and build your popups directly on Elementor.', 'elementor' ); ?></p>
+					<p class="elementor-message-actions">
+						<a href="https://go.elementor.com/plugin-promotion-popupmaker/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return true;
+	}
+
+	public function admin_notices() {
+		$this->install_time = Plugin::$instance->get_install_time();
+		$this->current_screen_id = get_current_screen()->id;
+
+		foreach ( $this->notices as $notice ) {
+			$method_callback = "notice_{$notice}";
+			if ( $this->$method_callback() ) {
+				return;
+			}
+		}
+	}
+
 	/**
 	 * @since 2.9.0
 	 * @access public
@@ -286,17 +480,5 @@ class Admin_Notices extends Module {
 	 */
 	public function get_name() {
 		return 'admin-notices';
-	}
-
-	public function admin_notices() {
-		$this->install_time = Plugin::$instance->get_install_time();
-		$this->current_screen_id = get_current_screen()->id;
-
-		foreach ( $this->notices as $notice ) {
-			$method_callback = "notice_{$notice}";
-			if ( $this->$method_callback() ) {
-				return;
-			}
-		}
 	}
 }
