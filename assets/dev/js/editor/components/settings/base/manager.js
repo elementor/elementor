@@ -94,6 +94,10 @@ module.exports = elementorModules.ViewModule.extend( {
 	initControlsCSSParser: function() {
 		var controlsCSS;
 
+		this.destroyControlsCSS = function() {
+			controlsCSS.removeStyleFromDocument();
+		};
+
 		this.getControlsCSS = function() {
 			if ( ! controlsCSS ) {
 				controlsCSS = new ControlsCSSParser( {

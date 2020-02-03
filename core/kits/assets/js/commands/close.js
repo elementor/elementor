@@ -11,7 +11,13 @@ export class Close extends CommandBase {
 
 		return $e.run( 'editor/documents/switch', {
 			id: elementor.config.initial_document.id,
-			onClose: () => {
+			onClose: ( document ) => {
+				if ( document.isDraft() ) {
+					// Restore published style.
+					elementor.toggleDocumentCssFiles( document, true );
+					elementor.settings.page.destroyControlsCSS();
+				}
+
 				$e.components.get( 'panel/global' ).close();
 				$e.routes.clearHistory( this.component.getRootContainer() );
 			},
