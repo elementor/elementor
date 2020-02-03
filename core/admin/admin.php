@@ -307,122 +307,6 @@ class Admin extends App {
 		return $plugin_meta;
 	}
 
-	public function admin_notices() {
-		$admin_notice = Api::get_admin_notice();
-		if ( empty( $admin_notice ) ) {
-			return;
-		}
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
-			return;
-		}
-		$notice_id = 'admin_notice_api_' . $admin_notice['notice_id'];
-		if ( User::is_user_notice_viewed( $notice_id ) ) {
-			return;
-		}
-		?>
-		<div class="notice is-dismissible updated elementor-message-dismissed elementor-message-announcement" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<p><?php echo $admin_notice['notice_text']; ?></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Admin upgrade notices.
-	 *
-	 * Add Elementor upgrades notices to WordPress admin screen.
-	 *
-	 * Fired by `admin_notices` action.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function admin_upgrade_notices() {
-		$upgrade_notice = Api::get_upgrade_notice();
-		if ( empty( $upgrade_notice ) ) {
-			return;
-		}
-
-		if ( ! current_user_can( 'update_plugins' ) ) {
-			return;
-		}
-
-		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
-			return;
-		}
-
-		// Check if have any upgrades.
-		$update_plugins = get_site_transient( 'update_plugins' );
-
-		$has_remote_update_package = ! ( empty( $update_plugins ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ] ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ]->package ) );
-
-		if ( ! $has_remote_update_package && empty( $upgrade_notice['update_link'] ) ) {
-			return;
-		}
-
-		if ( $has_remote_update_package ) {
-			$product = $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ];
-
-			$details_url = self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $product->slug . '&section=changelog&TB_iframe=true&width=600&height=800' );
-			$upgrade_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . ELEMENTOR_PLUGIN_BASE ), 'upgrade-plugin_' . ELEMENTOR_PLUGIN_BASE );
-			$new_version = $product->new_version;
-		} else {
-			$upgrade_url = $upgrade_notice['update_link'];
-			$details_url = $upgrade_url;
-
-			$new_version = $upgrade_notice['version'];
-		}
-
-		// Check if have upgrade notices to show.
-		if ( version_compare( ELEMENTOR_VERSION, $upgrade_notice['version'], '>=' ) ) {
-			return;
-		}
-
-		$notice_id = 'upgrade_notice_' . $upgrade_notice['version'];
-		if ( User::is_user_notice_viewed( $notice_id ) ) {
-			return;
-		}
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<strong><?php echo __( 'Update Notification', 'elementor' ); ?></strong>
-					<p>
-						<?php
-						printf(
-							/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text */
-							__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
-							esc_url( $details_url ),
-							esc_attr( sprintf(
-								/* translators: %s: Elementor version */
-								__( 'View Elementor version %s details', 'elementor' ),
-								$new_version
-							) ),
-							$new_version,
-							esc_url( $upgrade_url ),
-							esc_attr( __( 'Update Elementor Now', 'elementor' ) )
-						);
-						?>
-					</p>
-				</div>
-				<div class="elementor-message-action">
-					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>">
-						<i class="dashicons dashicons-update" aria-hidden="true"></i>
-						<?php echo __( 'Update Now', 'elementor' ); ?>
-					</a>
-				</div>
-			</div>
-		</div>
-		<?php
-	}
-
 	/**
 	 * Admin footer text.
 	 *
@@ -762,8 +646,8 @@ class Admin extends App {
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
-
 		$this->add_component( 'canary-deployment', new Canary_Deployment() );
+		$this->add_component( 'admin-notices', new Admin_Notices() );
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
@@ -778,8 +662,6 @@ class Admin extends App {
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 
-		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
-		add_action( 'admin_notices', [ $this, 'admin_upgrade_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 
