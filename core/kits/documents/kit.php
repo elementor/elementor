@@ -34,11 +34,15 @@ class Kit extends PageBase {
 		return __( 'Kit', 'elementor' );
 	}
 
-	public function get_preview_url() {
-		$url = parent::get_preview_url();
-		if ( isset( $_GET['elementor-location'] ) ) {
-			$url = add_query_arg( 'elementor-location', $_GET['elementor-location'], $url );
-		}
+	public function get_wp_preview_url() {
+		$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
+		$url = $document->get_wp_preview_url();
+		$id = $this->get_main_id();
+
+		$url = add_query_arg( [
+			'preview_id' => $id,
+			'preview_nonce' => wp_create_nonce( 'post_preview_' . $id ),
+		], $url );
 
 		return $url;
 	}
