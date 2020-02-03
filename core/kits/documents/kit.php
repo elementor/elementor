@@ -54,14 +54,6 @@ class Kit extends PageBase {
 		return $config;
 	}
 
-	public function get_initial_config() {
-		$config = parent::get_initial_config();
-
-		unset( $config['elements'] );
-
-		return $config;
-	}
-
 	public function get_css_wrapper_selector() {
 		return 'body.elementor-kit-' . $this->get_main_id();
 	}
