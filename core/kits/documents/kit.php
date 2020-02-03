@@ -386,11 +386,11 @@ class Kit extends PageBase {
 
 		//Link Selectors
 		$link_selectors = [
-			'{{WRAPPER}} a:not(.elementor-button)',
+			'{{WRAPPER}} a',
 		];
 
 		$link_hover_selectors = [
-			'{{WRAPPER}} a:hover:not(.elementor-button)',
+			'{{WRAPPER}} a:hover',
 		];
 
 		$link_selectors = implode( ',', $link_selectors );
@@ -619,11 +619,11 @@ class Kit extends PageBase {
 
 		//Image Selectors
 		$image_selectors = [
-			'{{WRAPPER}} img:not(.elementor-lightbox-image)',
+			'{{WRAPPER}} img',
 		];
 
 		$image_hover_selectors = [
-			'{{WRAPPER}} img:hover:not(.elementor-lightbox-image)',
+			'{{WRAPPER}} img:hover',
 		];
 
 		$image_selectors = implode( ',', $image_selectors );
@@ -781,7 +781,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					$image_hover_selectors => 'transition-duration: {{SIZE}}s',
+					$image_selectors => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
