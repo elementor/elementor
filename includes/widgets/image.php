@@ -630,6 +630,7 @@ class Widget_Image extends Widget_Base {
 			if ( Plugin::$instance->editor->is_edit_mode() ) {
 				$this->add_render_attribute( 'link', [
 					'class' => 'elementor-clickable',
+					'data-elementor-open-lightbox' => $settings['open_lightbox'],
 				] );
 			}
 
