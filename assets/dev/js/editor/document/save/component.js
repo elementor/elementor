@@ -1,7 +1,7 @@
 import BackwardsCompatibility from './backwards-compatibility';
 import * as commands from './commands/';
 import * as commandsInternal from './commands/internal';
-import * as hooksUI from './hooks/ui/';
+import * as hooks from './hooks/';
 
 export default class Component extends BackwardsCompatibility {
 	/**
@@ -86,7 +86,7 @@ export default class Component extends BackwardsCompatibility {
 	}
 
 	defaultHooks() {
-		return this.importHooks( hooksUI );
+		return this.importHooks( hooks );
 	}
 
 	isEditorChanged() {
