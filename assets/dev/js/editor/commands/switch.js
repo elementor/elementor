@@ -11,7 +11,8 @@ export class Switch extends CommandBase {
 		return $e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),
 			onClose,
-		} ).then( () => {
+		} )
+		.then( () => {
 				return $e.run( 'editor/documents/open', { id } );
 		} );
 	}

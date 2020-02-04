@@ -68,17 +68,19 @@ export class Close extends CommandBase {
 				this.args.mode = 'save';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args ).then( () => {
-					deferred.resolve();
-				} );
+				$e.run( 'editor/documents/close', this.args )
+					.then( () => {
+						deferred.resolve();
+					} );
 			},
 			onCancel: () => {
 				this.args.mode = 'discard';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args ).then( () => {
-					deferred.resolve();
-				} );
+				$e.run( 'editor/documents/close', this.args )
+					.then( () => {
+						deferred.resolve();
+					} );
 			},
 		} );
 
