@@ -1,6 +1,9 @@
 const EditorModule = elementorModules.Module.extend( {
 
 	onInit: function() {
+		elementorCommon.elements.$window.on( 'elementor:init-components',
+			this.onElementorInitComponents.bind( this ) );
+
 		jQuery( window ).on( 'elementor:init', this.onElementorReady );
 	},
 
@@ -32,5 +35,7 @@ EditorModule.prototype.onElementorInit = function() {};
 EditorModule.prototype.onElementorPreviewLoaded = function() {};
 
 EditorModule.prototype.onElementorFrontendInit = function() {};
+
+EditorModule.prototype.onElementorInitComponents = function() {};
 
 module.exports = EditorModule;

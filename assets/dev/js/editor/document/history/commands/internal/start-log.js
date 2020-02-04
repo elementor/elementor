@@ -1,4 +1,4 @@
-import Base from './base/base';
+import Base from '../base/base';
 
 export class StartLog extends Base {
 	initialize( args ) {
@@ -22,7 +22,7 @@ export class StartLog extends Base {
 
 	apply( args ) {
 		if ( this.isSubItem ) {
-			$e.run( 'document/history/log-sub-item', args );
+			$e.internal( 'document/history/log-sub-item', args );
 
 			return null;
 		}
