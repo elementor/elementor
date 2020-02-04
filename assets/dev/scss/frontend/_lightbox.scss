@@ -35,6 +35,7 @@
 			position: absolute;
 			font-size: var(--lightbox-header-icons-size);
 			#{$end}: 0.75em;
+			margin-top: 13px;
 			padding: .25em;
 			z-index: 2;
 			line-height: 1;
@@ -349,6 +350,10 @@
 					}
 				}
 			}
+		}
+
+		.eicon-share-arrow {
+			z-index: 2;
 		}
 	}
 }
