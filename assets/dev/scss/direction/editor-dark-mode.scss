@@ -503,6 +503,14 @@ $devices: 'desktop', 'tablet', 'mobile';
 		color: $theme-dark-light;
 	}
 
+	.wp-editor-tabs {
+		border-color: $theme-dark-gray-lighter;
+	}
+
+	.switch-html {
+		border-color: $theme-dark-gray-lighter;
+	}
+
 	#insert-media-button,
 	.html-active .switch-html,
 	.mce-toolbar-grp,
@@ -528,7 +536,9 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
-		background-color: transparent;
+		background-color: $theme-dark-gray-dark;
+		border-color: $theme-dark-gray-lighter;
+		border-radius: 3px;
 	}
 
 	.quicktags-toolbar {
