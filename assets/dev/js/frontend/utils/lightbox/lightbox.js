@@ -378,7 +378,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const $ = jQuery,
 			classes = this.getSettings( 'classes' ),
 			$footer = $( '<footer>', { class: classes.slideshow.footer + ' ' + classes.preventClose } ),
-			$title = $( '<h2>', { class: classes.slideshow.title } ),
+			$title = $( '<div>', { class: classes.slideshow.title } ),
 			$description = $( '<div>', { class: classes.slideshow.description } );
 		$footer.append( $title, $description );
 		return $footer;
