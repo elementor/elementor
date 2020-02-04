@@ -15,7 +15,7 @@ export class Close extends CommandBase {
 		}
 
 		// TODO: Move to an hook.
-		if ( ! mode && elementor.saver.isEditorChanged() ) {
+		if ( ! mode && ( document.editor.isChanged || document.isDraft() ) ) {
 			const deferred = jQuery.Deferred();
 			this.getConfirmDialog( deferred ).show();
 			return deferred.promise();
