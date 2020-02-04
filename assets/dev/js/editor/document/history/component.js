@@ -19,6 +19,7 @@ export default class Component extends ComponentBase {
 
 	getCommands() {
 		return {
+			do: ( args ) => elementor.documents.getCurrent().history.doItem( args.index ),
 			undo: () => elementor.documents.getCurrent().history.navigate(),
 			'undo-all': ( args ) => args.document.history.doItem( args.document.history.getItems().length - 1 ),
 			redo: () => elementor.documents.getCurrent().history.navigate( true ),
