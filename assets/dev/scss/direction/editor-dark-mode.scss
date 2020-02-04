@@ -184,19 +184,6 @@ select {
 		background-color: $theme-dark-dark;
 	}
 
-	//Kit Editor
-	@at-root {
-		.elementor-editor-kit {
-
-			.elementor-panel {
-
-				#elementor-panel-header {
-					background-color: $theme-dark-dark;
-				}
-			}
-		}
-	}
-
 	.elementor-panel-navigation {
 		background-color: $theme-dark-gray-dark;
 
