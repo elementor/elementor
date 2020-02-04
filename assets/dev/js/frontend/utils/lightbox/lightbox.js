@@ -387,7 +387,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	setSlideshowContent: function( options ) {
 		const $ = jQuery,
 			isSingleSlide = 1 === options.slides.length,
-			showFooter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ),
+			hasTitle = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_title_src' ),
+			hasDescription = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_description_src' ),
+			showFooter = hasTitle || hasDescription,
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
 			$container = $( '<div>', { class: slideshowClasses.container } ),
