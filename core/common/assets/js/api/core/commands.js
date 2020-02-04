@@ -248,7 +248,7 @@ export default class Commands extends elementorModules.Module {
 			args.onAfter.apply( component, [ args, results ] );
 		}
 
-		this.afterRun( command, args );
+		this.afterRun( command );
 
 		if ( false === args.returnValue ) {
 			return true;

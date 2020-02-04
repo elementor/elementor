@@ -86,7 +86,7 @@ export default class Component extends BackwardsCompatibility {
 	}
 
 	defaultHooks() {
-		return hooksUI;
+		return this.importHooks( hooksUI );
 	}
 
 	isEditorChanged() {

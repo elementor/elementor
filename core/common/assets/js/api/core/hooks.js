@@ -231,7 +231,7 @@ export default class Hooks {
 	 * @returns {boolean}
 	 */
 	runUICatch( command, args, e ) {
-		return this.run( 'ui', 'catch', command, args );
+		return this.run( 'ui', 'catch', command, args, e );
 	}
 
 	/**

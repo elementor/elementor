@@ -25,7 +25,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 		Object.entries( this.getCommandsInternal() ).forEach( ( [ command, callback ] ) => this.registerCommandInternal( command, callback ) );
 
-		Object.values( this.defaultHooks() ).forEach( ( hook ) => this.registerHook( hook ) );
+		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) );
 	}
 
 	getNamespace() {
@@ -73,6 +73,10 @@ export default class ComponentBase extends elementorModules.Module {
 		return this.commandsInternal;
 	}
 
+	getHooks() {
+		return this.hooks;
+	}
+
 	getRoutes() {
 		return this.routes;
 	}
@@ -89,8 +93,11 @@ export default class ComponentBase extends elementorModules.Module {
 		$e.commands.register( this, command, callback );
 	}
 
-	registerHook( hook ) {
-		return new hook();
+	/**
+	 * @param {HookBase} instance
+	 */
+	registerHook( instance ) {
+		return instance.register();
 	}
 
 	registerCommandInternal( command, callback ) {
@@ -240,6 +247,18 @@ export default class ComponentBase extends elementorModules.Module {
 		} );
 
 		return commands;
+	}
+
+	importHooks( hooksFromImport ) {
+		const hooks = {};
+
+		for ( const key in hooksFromImport ) {
+			const hook = new hooksFromImport[ key ];
+
+			hooks[ hook.getId() ] = hook;
+		}
+
+		return hooks;
 	}
 
 	toggleRouteClass( route, state ) {
