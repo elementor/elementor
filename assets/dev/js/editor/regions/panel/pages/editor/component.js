@@ -24,9 +24,9 @@ export default class Component extends ComponentBase {
 	defaultCommands() {
 		return {
 			open: ( args ) => {
-				this.setDefaultTab( args );
-
 				this.openEditor( args.model, args.view );
+
+				this.setDefaultTab( args );
 
 				$e.route( this.getDefaultRoute(), args );
 
