@@ -1,6 +1,6 @@
-import Base from './base';
+import HooksBase from './base';
 
-export default class Ui extends Base {
+export default class Ui extends HooksBase {
 	constructor( ... args ) {
 		super( ... args );
 

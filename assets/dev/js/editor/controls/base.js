@@ -1,5 +1,3 @@
-import DocumentHelpers from 'elementor-document/helpers';
-
 var ControlBaseView;
 
 ControlBaseView = Marionette.CompositeView.extend( {
@@ -59,7 +57,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 			get() {
 				if ( ! options.container ) {
 					const settingsModel = options.elementSettingsModel,
-						view = DocumentHelpers.findViewById( settingsModel.id );
+						view = $e.components.get( 'document' ).utils.findViewById( settingsModel.id );
 
 					// Element control.
 					if ( view && view.getContainer ) {

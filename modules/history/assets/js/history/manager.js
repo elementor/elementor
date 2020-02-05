@@ -28,12 +28,6 @@ export default class HistoryManager {
 		reset_settings: elementor.translate( 'settings_reset' ),
 	};
 
-	static updatePanelPageCurrentItem() {
-		if ( $e.routes.is( 'panel/history/actions' ) ) {
-			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
-		}
-	}
-
 	initialize() {
 		elementor.channels.editor.on( 'saved', this.onPanelSave.bind( this ) );
 	}
@@ -148,7 +142,7 @@ export default class HistoryManager {
 
 		this.items.add( currentItem, { at: 0 } );
 
-		this.constructor.updatePanelPageCurrentItem();
+		this.updatePanelPageCurrentItem();
 
 		return id;
 	}
@@ -199,7 +193,7 @@ export default class HistoryManager {
 			}
 		}
 
-		this.constructor.updatePanelPageCurrentItem();
+		this.updatePanelPageCurrentItem();
 
 		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );
@@ -247,6 +241,12 @@ export default class HistoryManager {
 
 				item.set( 'status', 'not_applied' );
 			}
+		}
+	}
+
+	updatePanelPageCurrentItem() {
+		if ( $e.routes.is( 'panel/history/actions' ) ) {
+			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
 		}
 	}
 
