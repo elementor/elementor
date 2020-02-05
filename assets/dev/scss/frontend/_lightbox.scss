@@ -9,6 +9,14 @@
 	--lightbox-header-icons-size: 20px;
 	--lightbox-navigation-icons-size: 25px;
 
+	.elementor-lightbox-image {
+
+		&,
+		&:hover {
+			all: initial;
+		}
+	}
+
 	.dialog {
 
 		&-header {
@@ -28,6 +36,10 @@
 			&:not(.elementor-fit-aspect-ratio) {
 				height: 100%;
 			}
+
+			&.dialog-lightbox-message {
+				padding: 0;
+			}
 		}
 
 		&-lightbox-close-button {
@@ -35,6 +47,7 @@
 			position: absolute;
 			font-size: var(--lightbox-header-icons-size);
 			#{$end}: 0.75em;
+			margin-top: 13px;
 			padding: .25em;
 			z-index: 2;
 			line-height: 1;
@@ -210,13 +223,13 @@
 		display: block;
 		position: absolute;
 		min-width: 200px;
-		#{$end}: 2.25em;
-		top: 70px;
+		@include end(67px);
+		top: 60px;
 		background-color: #fff;
 		color: $gray-darkest;
 		border-radius: 3px;
 		font-size: 16px;
-		padding: 20px;
+		padding: 14px 20px;
 		transform: scale(0);
 		opacity: 0;
 		transform-origin: 90% 10%;
@@ -238,6 +251,7 @@
 
 			i {
 				@include margin-end(10px);
+				font-size: 15px;
 			}
 		}
 
@@ -247,9 +261,9 @@
 			position: absolute;
 			top: 0;
 			#{$end}: 15px;
-			border: 6px solid;
-			border-color: #fff #fff transparent transparent;
-			transform: rotate(-45deg) translateY(-50%);
+			border: 9px solid;
+			border-color: transparent transparent #fff transparent;
+			transform: translateY(-100%) scaleX(0.7);
 		}
 	}
 
@@ -309,7 +323,9 @@
 	}
 
 	&--share-mode {
+
 		.elementor-slideshow {
+
 			&__share-menu {
 				top: 0;
 				left: 0;
@@ -326,7 +342,30 @@
 				&, & a {
 					opacity: 1;
 				}
+
+				.eicon {
+
+					&-twitter {
+						color: $twitter;
+					}
+
+					&-facebook {
+						color: $facebook;
+					}
+
+					&-pinterest {
+						color: $pinterest;
+					}
+
+					&-download-bold {
+						color: $editor-light;
+					}
+				}
 			}
+		}
+
+		.eicon-share-arrow {
+			z-index: 2;
 		}
 	}
 }

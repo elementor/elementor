@@ -503,6 +503,14 @@ $devices: 'desktop', 'tablet', 'mobile';
 		color: $theme-dark-light;
 	}
 
+	.wp-editor-tabs {
+		border-color: $theme-dark-gray-lighter;
+	}
+
+	.switch-html {
+		border-color: $theme-dark-gray-lighter;
+	}
+
 	#insert-media-button,
 	.html-active .switch-html,
 	.mce-toolbar-grp,
@@ -528,7 +536,9 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
-		background-color: transparent;
+		background-color: $theme-dark-gray-dark;
+		border-color: $theme-dark-gray-lighter;
+		border-radius: 3px;
 	}
 
 	.quicktags-toolbar {
@@ -814,7 +824,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 // Widget Pro Promotion Tooltip
-.elementor-element--promotion__dialog {
+#elementor-element--promotion__dialog {
 	background-color: $theme-dark-gray-darker;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
 
@@ -839,7 +849,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 }
 
-body.rtl .elementor-element--promotion__dialog {
+body.rtl #elementor-element--promotion__dialog {
 
 	&:after {
 		border-left-color: $theme-dark-gray-darker;
@@ -1302,4 +1312,9 @@ label.elementor-template-library-order-label,
 	i {
 		color: $theme-dark-gray-light;
 	}
+}
+
+// Nerd box icons
+.elementor-nerd-box-icon {
+	filter: contrast(0.8);
 }

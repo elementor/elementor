@@ -897,7 +897,6 @@ class Controls_Manager {
 					'title' => __( 'Meet Our Custom CSS', 'elementor' ),
 					'messages' => [
 						__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ),
-						__( 'This feature is only available on Elementor Pro.', 'elementor' ),
 					],
 					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash',
 				] ),
@@ -911,7 +910,7 @@ class Controls_Manager {
 		ob_start();
 		?>
 		<div class="elementor-nerd-box">
-			<i class="elementor-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
+			<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; ?>" />
 			<div class="elementor-nerd-box-title"><?php echo $texts['title']; ?></div>
 			<?php foreach ( $texts['messages'] as $message ) { ?>
 				<div class="elementor-nerd-box-message"><?php echo $message; ?></div>
@@ -957,7 +956,6 @@ class Controls_Manager {
 					'title' => __( 'Meet Our Attributes', 'elementor' ),
 					'messages' => [
 						__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
-						__( 'This feature is only available on Elementor Pro.', 'elementor' ),
 					],
 					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-attributes&utm_campaign=gopro&utm_medium=wp-dash',
 				] ),

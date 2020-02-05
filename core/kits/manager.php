@@ -3,7 +3,7 @@ namespace Elementor\Core\Kits;
 
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\CSS\Post_Preview_CSS;
+use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
@@ -50,8 +50,13 @@ class Manager {
 	}
 
 	public function localize_settings( $settings ) {
+		$kit = $this->get_active_kit();
+
 		$settings = array_replace_recursive( $settings, [
-			'kit_id' => $this->get_active_id(),
+			'kit_id' => $kit->get_main_id(),
+			'user' => [
+				'can_edit_kit' => $kit->is_editable_by_current_user(),
+			],
 			'i18n' => [
 				'Close' => __( 'Close', 'elementor' ),
 				'Back' => __( 'Back', 'elementor' ),
@@ -78,7 +83,7 @@ class Manager {
 
 		if ( $kit ) {
 			if ( $kit->is_autosave() ) {
-				$css_file = Post_Preview_CSS::create( $kit->get_id() );
+				$css_file = Post_Preview::create( $kit->get_id() );
 			} else {
 				$css_file = Post_CSS::create( $kit->get_id() );
 			}
