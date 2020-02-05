@@ -352,7 +352,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}' => 'color: {{VALUE}};',
+					'{{WRAPPER}}, {{WRAPPER}} .elementor-widget-text-editor' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -362,7 +362,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'body_typography',
-				'selector' => '{{WRAPPER}}',
+				'selector' => '{{WRAPPER}}, {{WRAPPER}} .elementor-widget-text-editor',
 			]
 		);
 
