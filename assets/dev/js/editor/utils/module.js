@@ -1,10 +1,12 @@
 const EditorModule = elementorModules.Module.extend( {
 
 	onInit: function() {
-		elementorCommon.elements.$window.on( 'elementor:init-components',
+		const $window = jQuery( window );
+
+		$window.on( 'elementor:init-components',
 			this.onElementorInitComponents.bind( this ) );
 
-		jQuery( window ).on( 'elementor:init', this.onElementorReady );
+		$window.on( 'elementor:init', this.onElementorReady );
 	},
 
 	// TODO: Delete as soon as possible.
