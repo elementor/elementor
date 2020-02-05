@@ -76,11 +76,11 @@ export default class Component extends ComponentModalBase {
 
 		return {
 			... layoutCommands,
-			open: () => new class Open extends CommandBase {
-				apply = () => self.show();
+			open: ( args ) => new class Open extends CommandBase {
+				apply = () => self.show( args );
 			},
-			'insert-template': () => new class Open extends CommandBase {
-				apply = () => self.insertTemplate();
+			'insert-template': ( args ) => new class Open extends CommandBase {
+				apply = () => self.insertTemplate( args );
 			},
 		};
 	}
