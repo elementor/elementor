@@ -1,9 +1,7 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export default class History extends CommandBase {
-	constructor( args ) {
-		super( args );
-
+	initialize( args ) {
 		/**
 		 * Get History from child command.
 		 *
@@ -16,6 +14,8 @@ export default class History extends CommandBase {
 		 * @type {number|boolean}
 		 */
 		this.historyId = false;
+
+		super.initialize( args );
 	}
 
 	/**
