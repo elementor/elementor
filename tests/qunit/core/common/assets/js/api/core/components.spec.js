@@ -272,7 +272,9 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new CommandBase,
+						commandA: () => new class extends CommandBase {
+							apply = () => {};
+						},
 					};
 				}
 			};
@@ -326,7 +328,9 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new CommandBase,
+						commandA: () => new class extends CommandBase {
+							apply = () => {};
+						},
 					};
 				}
 			};
