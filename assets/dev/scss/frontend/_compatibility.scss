@@ -18,3 +18,8 @@
 .elementor-edit-area .elementor-element ul.elementor-icon-list-items {
 	padding: 0;
 }
+
+//Reset WP Admin for Theme Style support
+#wpadminbar * {
+	font-style: normal;
+}

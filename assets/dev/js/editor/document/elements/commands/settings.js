@@ -70,7 +70,7 @@ export class Settings extends Debounce {
 				restore: Settings.restore,
 			};
 
-		$e.run( 'document/history/add-transaction', historyItem );
+		$e.internal( 'document/history/add-transaction', historyItem );
 	}
 
 	validateArgs( args ) {

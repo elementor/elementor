@@ -13,12 +13,22 @@ export class Open extends CommandBase {
 
 		this.component.toggleHistoryClass();
 
-		$e.internal( 'panel/state-loading' );
+		elementor.enterPreviewMode( true );
 
-		return $e.run( 'editor/documents/switch', {
-			id: elementor.config.kit_id,
-		} ).then( () => {
-			$e.internal( 'panel/state-ready' );
+		return new Promise( ( resolve ) => {
+			setTimeout( () => {
+				elementor.exitPreviewMode();
+
+				$e.internal( 'panel/state-loading' );
+
+				$e.run( 'editor/documents/switch', {
+					id: elementor.config.kit_id,
+				} ).finally( () => {
+					resolve();
+
+					$e.internal( 'panel/state-ready' );
+				} );
+			}, 500 );
 		} );
 	}
 }

@@ -14,9 +14,11 @@ export default class extends $e.modules.ComponentBase {
 		new EnqueueFonts();
 	}
 
-	defaultRoutes() {
+	defaultTabs() {
 		return {
-			style: () => this.renderContent( 'style' ),
+			style: {
+				helpUrl: 'http://go.elementor.com/panel-theme-style',
+			},
 		};
 	}
 
@@ -36,7 +38,7 @@ export default class extends $e.modules.ComponentBase {
 		};
 	}
 
-	renderContent( tab ) {
+	renderTab( tab ) {
 		elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
 	}
 }

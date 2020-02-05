@@ -9,14 +9,28 @@ export class Close extends CommandBase {
 
 		$e.internal( 'panel/state-loading' );
 
-		return $e.run( 'editor/documents/switch', {
-			id: elementor.config.initial_document.id,
-			onClose: () => {
-				$e.components.get( 'panel/global' ).close();
-				$e.routes.clearHistory( this.component.getRootContainer() );
-			},
-		} ).then( () => {
-			$e.internal( 'panel/state-ready' );
+		elementor.enterPreviewMode( true );
+
+		return new Promise( ( resolve ) => {
+			setTimeout( () => {
+				return $e.run( 'editor/documents/switch', {
+					id: elementor.config.initial_document.id,
+					onClose: ( document ) => {
+						if ( document.isDraft() ) {
+							// Restore published style.
+							elementor.toggleDocumentCssFiles( document, true );
+							elementor.settings.page.destroyControlsCSS();
+						}
+
+						$e.components.get( 'panel/global' ).close();
+						$e.routes.clearHistory( this.component.getRootContainer() );
+					},
+				} ).finally( () => {
+					resolve();
+
+					$e.internal( 'panel/state-ready' );
+				} );
+			}, 500 );
 		} );
 	}
 }
