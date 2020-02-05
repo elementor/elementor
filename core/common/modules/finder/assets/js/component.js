@@ -1,5 +1,6 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import FinderLayout from './modal-layout';
+import CommandBase from 'elementor-api/modules/command-base';
 
 export default class Component extends ComponentModalBase {
 	getNamespace() {
@@ -37,11 +38,25 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultCommands() {
-		return Object.assign( super.defaultCommands(), {
-			'navigate/down': () => this.getItemsView().activateNextItem(),
-			'navigate/up': () => this.getItemsView().activateNextItem( true ),
-			'navigate/select': ( event ) => this.getItemsView().goToActiveItem( event ),
-		} );
+		const self = this,
+			layoutCommands = super.defaultCommands();
+
+		return {
+			... layoutCommands,
+			'navigate/down': () => new class NavigateDown extends CommandBase {
+				apply = ( args ) => self.getItemsView().activateNextItem();
+			},
+			'navigate/up': () => new class NavigateUp extends CommandBase {
+				apply( args ) {
+					return self.getItemsView().activateNextItem( true );
+				}
+			},
+			'navigate/select': ( event ) => new class NavigateSelect extends CommandBase {
+				apply( args ) {
+					return self.getItemsView().goToActiveItem( event );
+				}
+			}( event ),
+		};
 	}
 
 	getModalLayout() {

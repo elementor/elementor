@@ -1,4 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import CommandBase from 'elementor-api/modules/command-base';
+import * as commandsInternal from './commands/internal/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -15,38 +17,48 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommandsInternal() {
-		return {
-			'open-default': () => $e.route( elementor.documents.getCurrent().config.panel.default_route ),
-			'state-loading': () => elementorCommon.elements.$body.addClass( 'elementor-panel-loading' ),
-			'state-ready': () => elementorCommon.elements.$body.removeClass( 'elementor-panel-loading' ),
-		};
+		return this.importCommands( commandsInternal );
 	}
 
 	defaultCommands() {
 		return {
-			open: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' ),
-			close: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' ),
-			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
-			save: () => $e.run( 'document/save/draft' ),
-			publish: () => $e.run( 'document/save/publish' ),
-			exit: () => $e.route( 'panel/menu' ),
-			'change-device-mode': ( args ) => {
-				const devices = [ 'desktop', 'tablet', 'mobile' ];
-				if ( ! args.device ) {
-					const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-					let modeIndex = devices.indexOf( currentDeviceMode );
+			open: () => new class Open extends CommandBase {
+				apply = () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' );
+			},
+			close: () => new class Close extends CommandBase {
+				apply = () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' );
+			},
+			toggle: () => new class Toggle extends CommandBase {
+				apply = () => elementor.getPanelView().modeSwitcher.currentView.toggleMode();
+			},
+			exit: () => new class Toggle extends CommandBase {
+				apply = () => $e.route( 'panel/menu' );
+			},
 
-					modeIndex++;
+			save: () => $e.command( 'document/save/draft' ),
+			publish: () => $e.command( 'document/save/publish' ),
 
-					if ( modeIndex >= devices.length ) {
-						modeIndex = 0;
+			'change-device-mode': ( _args ) => new class ChangeDeviceMode extends CommandBase {
+				apply( args ) {
+					const { device } = args,
+						devices = [ 'desktop', 'tablet', 'mobile' ];
+
+					if ( ! device ) {
+						const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+						let modeIndex = devices.indexOf( currentDeviceMode );
+
+						modeIndex++;
+
+						if ( modeIndex >= devices.length ) {
+							modeIndex = 0;
+						}
+
+						args.device = devices[ modeIndex ];
 					}
 
-					args.device = devices[ modeIndex ];
+					elementor.changeDeviceMode( device );
 				}
-
-				elementor.changeDeviceMode( args.device );
-			},
+			}( _args ),
 		};
 	}
 

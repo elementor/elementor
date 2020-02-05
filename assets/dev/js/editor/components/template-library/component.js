@@ -1,4 +1,5 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -51,7 +52,6 @@ export default class Component extends ComponentModalBase {
 			import: () => {
 				this.manager.layout.showImportView();
 			},
-
 			'save-template': ( args ) => {
 				this.manager.layout.showSaveTemplateView( args.model );
 			},
@@ -71,10 +71,18 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultCommands() {
-		return Object.assign( super.defaultCommands(), {
-			open: this.show,
-			'insert-template': this.insertTemplate,
-		} );
+		const self = this,
+			layoutCommands = super.defaultCommands();
+
+		return {
+			... layoutCommands,
+			open: () => new class Open extends CommandBase {
+				apply = () => self.show();
+			},
+			'insert-template': () => new class Open extends CommandBase {
+				apply = () => self.insertTemplate();
+			},
+		};
 	}
 
 	defaultShortcuts() {

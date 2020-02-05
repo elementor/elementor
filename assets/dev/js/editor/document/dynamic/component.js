@@ -7,10 +7,6 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			disable: ( args ) => ( new commands.Disable( args ) ).run(),
-			enable: ( args ) => ( new commands.Enable( args ) ).run(),
-			settings: ( args ) => ( new commands.Settings( args ) ).run(),
-		};
+		return this.importCommands( commands );
 	}
 }

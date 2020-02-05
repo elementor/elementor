@@ -1,4 +1,5 @@
 import ComponentBase from './component-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
 export default class ComponentModalBase extends ComponentBase {
 	registerAPI() {
@@ -11,14 +12,22 @@ export default class ComponentModalBase extends ComponentBase {
 	}
 
 	defaultCommands() {
+		const self = this;
+
 		return {
-			open: () => $e.route( this.getNamespace() ),
-			close: () => this.close(),
-			toggle: () => {
-				if ( this.isOpen ) {
-					this.close();
-				} else {
-					$e.route( this.getNamespace() );
+			open: () => new class Open extends CommandBase {
+				apply = () => $e.route( self.getNamespace() )
+			},
+			close: () => new class Close extends CommandBase {
+				apply = () => self.close();
+			},
+			toggle: () => new class Toggle extends CommandBase {
+				apply() {
+					if ( self.isOpen ) {
+						self.close();
+					} else {
+						$e.route( self.getNamespace() );
+					}
 				}
 			},
 		};

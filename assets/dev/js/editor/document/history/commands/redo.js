@@ -1,9 +1,9 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
-export class Undo extends CommandBase {
+export class Redo extends CommandBase {
 	apply( args ) {
-		elementor.documents.getCurrent().history.navigate();
+		elementor.documents.getCurrent().history.navigate( true );
 	}
 }
 
-export default Undo;
+export default Redo;

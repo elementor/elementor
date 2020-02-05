@@ -67,22 +67,11 @@ export default class Component extends BackwardsCompatibility {
 	}
 
 	defaultCommands() {
-		return {
-			auto: ( args ) => ( new commands.Auto( args ).run() ),
-			default: ( args ) => ( new commands.Default( args ).run() ),
-			discard: ( args ) => ( new commands.Discard( args ).run() ),
-			draft: ( args ) => ( new commands.Draft( args ).run() ),
-			pending: ( args ) => ( new commands.Pending( args ).run() ),
-			publish: ( args ) => ( new commands.Publish( args ).run() ),
-			update: ( args ) => ( new commands.Update( args ).run() ),
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultCommandsInternal() {
-		return {
-			save: ( args ) => ( new commandsInternal.Save( args ).run() ),
-			'set-is-modified': ( args ) => ( new commandsInternal.SetIsModified( args ).run() ),
-		};
+		return this.importCommands( commandsInternal );
 	}
 
 	defaultHooks() {
