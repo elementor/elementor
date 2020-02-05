@@ -41,9 +41,6 @@
 	.dialog-message {
 		padding: 0 30px 30px;
 		min-height: 50px;
-		&.dialog-lightbox-message {
-			padding: 0;
-		}
 	}
 
 	&:not(.elementor-popup-modal) {

@@ -435,12 +435,16 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 */
 	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false ) {
-		if ( 'no' === $lightbox_setting_key ) {
-			return $this;
-		}
-
 		$general_settings_model = SettingsManager::get_settings_managers( 'general' )->get_model();
 		$is_global_image_lightbox_enabled = 'yes' === $general_settings_model->get_settings( 'elementor_global_image_lightbox' );
+
+		if ( 'no' === $lightbox_setting_key ) {
+			if ( $is_global_image_lightbox_enabled ) {
+				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no' );
+			}
+
+			return $this;
+		}
 
 		if ( 'yes' !== $lightbox_setting_key && ! $is_global_image_lightbox_enabled ) {
 			return $this;

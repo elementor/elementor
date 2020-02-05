@@ -139,8 +139,8 @@
 	text-align: center;
 
 	&-icon {
-		font-size: 52px;
-		color: $editor-light;
+		width: 100px;
+		margin-right: 10px;
 	}
 
 	&-title {
@@ -151,7 +151,7 @@
 	}
 
 	&-message {
-		margin-top: 20px;
+		margin-top: 5px;
 		line-height: 1.8;
 		font-size: 11px;
 	}

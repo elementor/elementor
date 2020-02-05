@@ -83,13 +83,16 @@ export default class Document {
 	 * Create document.
 	 *
 	 * @param {{}} config
-	 * @param {Container} container
 	 */
 	constructor( config ) {
 		this.config = config;
 		this.id = config.id;
 
 		this.initialize();
+	}
+
+	isDraft() {
+		return this.config.revisions.current_id !== this.config.id;
 	}
 
 	/**

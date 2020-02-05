@@ -135,9 +135,14 @@
 #elementor-panel-schemes-disabled {
 
 	a {
+		color: $editor-success;
 
 		&:hover {
 			text-decoration: underline;
 		}
+	}
+
+	.elementor-nerd-box-icon {
+		margin-top: 20px;
 	}
 }

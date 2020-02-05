@@ -41,7 +41,6 @@ class Tracker {
 	public static function init() {
 		add_action( 'elementor/tracker/send_event', [ __CLASS__, 'send_tracking_data' ] );
 		add_action( 'admin_init', [ __CLASS__, 'handle_tracker_actions' ] );
-		add_action( 'admin_notices', [ __CLASS__, 'admin_notices' ] );
 	}
 
 	/**
@@ -191,86 +190,6 @@ class Tracker {
 
 		wp_redirect( remove_query_arg( 'elementor_tracker' ) );
 		exit;
-	}
-
-	/**
-	 * Admin notices.
-	 *
-	 * Add Elementor notices to WordPress admin screen to show tracker notice.
-	 *
-	 * Fired by `admin_notices` action.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 */
-	public static function admin_notices() {
-		// Show tracker notice after 24 hours from installed time.
-		if ( Plugin::$instance->get_install_time() > strtotime( '-24 hours' ) ) {
-			return;
-		}
-
-		if ( '1' === get_option( 'elementor_tracker_notice' ) ) {
-			return;
-		}
-
-		if ( self::is_allow_track() ) {
-			return;
-		}
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		$elementor_pages = new \WP_Query( [
-			'post_type' => 'any',
-			'post_status' => 'publish',
-			'fields' => 'ids',
-			'update_post_meta_cache' => false,
-			'update_post_term_cache' => false,
-			'meta_key' => '_elementor_edit_mode',
-			'meta_value' => 'builder',
-		] );
-
-		if ( 2 > $elementor_pages->post_count ) {
-			return;
-		}
-
-		self::$notice_shown = true;
-
-		// TODO: Skip for development env.
-		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
-		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
-
-		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our non-sensitive plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
-
-		/**
-		 * Tracker admin description text.
-		 *
-		 * Filters the admin notice text for non-sensitive data collection.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string $tracker_description_text Description text displayed in admin notice.
-		 */
-		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
-		?>
-		<div class="notice updated elementor-message">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
-					<p class="elementor-message-actions">
-						<a href="<?php echo $optin_url; ?>" class="button button-primary"><?php echo __( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php echo __( 'No thanks', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
 	}
 
 	/**
