@@ -1,21 +1,10 @@
-:root {
-}
-
 .elementor-lightbox {
-
 	--lightbox-ui-color: #{$slides_gui};
 	--lightbox-ui-color-hover: #fff;
 	--lightbox-text-color: var(--lightbox-ui-color);
 	--lightbox-header-icons-size: 20px;
 	--lightbox-navigation-icons-size: 25px;
 
-	.elementor-lightbox-image {
-
-		&,
-		&:hover {
-			all: initial;
-		}
-	}
 
 	.dialog {
 
@@ -90,6 +79,13 @@
 	.elementor-lightbox-image {
 		max-height: 100%;
 		user-select: none;
+
+		// Override theme style settings
+		&, &:hover {
+			opacity: 1;
+			filter: none;
+			border: none;
+		}
 	}
 
 	.elementor-lightbox-image, .elementor-video-container {
