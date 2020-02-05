@@ -31,8 +31,6 @@ export default class HookBase {
 		this.type = this.getType();
 		this.command = this.getCommand();
 		this.id = this.getId();
-
-		this.register();
 	}
 
 	/**

@@ -26,16 +26,13 @@ jQuery( () => {
 
 			instance.historyId = Math.random();
 
-			const orig = $e.run;
-
 			let tempCommand = '',
 				tempArgs = '';
 
-			// TODO: Do not override '$e.run', use 'on' method instead.
-			$e.run = ( command, args ) => {
+			$e.commandsInternal.on( 'run', ( component, command, args ) => {
 				tempCommand = command;
 				tempArgs = args;
-			};
+			} );
 
 			// Use `instance.historyId` for error.
 			try {
@@ -43,8 +40,6 @@ jQuery( () => {
 			} catch ( e ) {
 				assert.equal( e, instance.historyId );
 			}
-
-			$e.run = orig;
 
 			assert.equal( tempCommand, 'document/history/delete-log' );
 			assert.equal( tempArgs.id, instance.historyId );

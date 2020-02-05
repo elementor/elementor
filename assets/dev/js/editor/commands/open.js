@@ -19,17 +19,19 @@ export class Open extends CommandBase {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
-		return elementor.documents.request( id ).then( ( config ) => {
-			elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
+		return elementor.documents.request( id )
+			.then( ( config ) => {
+				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
 
-			// Tell the editor to load the document.
-			elementor.loadDocument( config );
-
-			// TODO: move to $e.hooks.ui.
-			if ( elementor.loaded ) {
-				elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );
-			}
-		} );
+				// Tell the editor to load the document.
+				elementor.loadDocument( config );
+			} )
+			.always( () => {
+				// TODO: move to $e.hooks.ui.
+				if ( elementor.loaded ) {
+					elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );
+				}
+			} );
 	}
 }
 

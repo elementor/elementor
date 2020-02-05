@@ -1,5 +1,3 @@
-import DocumentHelpers from 'elementor-document/helpers';
-
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
@@ -126,7 +124,7 @@ module.exports = Marionette.CompositeView.extend( {
 		let element = this;
 
 		if ( element.isDestroyed ) {
-			element = DocumentHelpers.findViewById( element.model.id );
+			element = $e.components.get( 'document' ).utils.findViewById( element.model.id );
 		}
 
 		return element;

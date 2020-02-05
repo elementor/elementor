@@ -1,8 +1,8 @@
-import Base from './base/base';
+import Base from '../base/base';
 
 export class EndTransaction extends Base {
 	apply( args ) {
-		if ( ! this.component.transactions.length ) {
+		if ( ! this.component.isTransactionStarted() ) {
 			return;
 		}
 
@@ -12,6 +12,7 @@ export class EndTransaction extends Base {
 
 		let { title = '', subTitle = '' } = firstItem;
 
+		// 'elements' title for multiple containers.
 		if ( transactions.length > 1 ) {
 			title = elementor.translate( 'elements' );
 			subTitle = '';
@@ -28,14 +29,9 @@ export class EndTransaction extends Base {
 			history.id = firstItem.id;
 		}
 
-		// TODO: Check if next lines are required.
-		if ( ! history.container && ! history.containers ) {
-			history.containers = firstItem.containers || [ firstItem.container ];
-		}
+		const historyId = $e.internal( 'document/history/start-log', history );
 
-		const historyId = $e.run( 'document/history/start-log', history );
-
-		Object.entries( transactions ).forEach( ( [ id, item ] ) => { // TODO: Use `Object.values`.
+		Object.values( transactions ).forEach( ( item ) => {
 			const itemArgs = item;
 
 			// If log already started chain his historyId.
@@ -43,13 +39,13 @@ export class EndTransaction extends Base {
 				itemArgs.id = firstItem.id;
 			}
 
-			$e.run( 'document/history/log-sub-item', itemArgs );
+			$e.internal( 'document/history/log-sub-item', itemArgs );
 		} );
 
-		$e.run( 'document/history/end-log', { id: historyId } );
+		$e.internal( 'document/history/end-log', { id: historyId } );
 
 		// Clear transactions before leave.
-		this.component.transactions = [];
+		$e.internal( 'document/history/clear-transaction' );
 	}
 }
 

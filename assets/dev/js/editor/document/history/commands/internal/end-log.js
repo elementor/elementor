@@ -1,4 +1,4 @@
-import Base from './base/base';
+import Base from '../base/base';
 
 export class EndLog extends Base {
 	apply( args ) {

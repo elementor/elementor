@@ -16,11 +16,11 @@ export default class extends elementorModules.editor.utils.Module {
 
 		menu.addItem( {
 			name: 'theme-style',
-			icon: 'eicon-theme-style',
+			icon: 'eicon-adjust',
 			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open' ),
-		}, 'style', 'global-colors' );
+		}, 'style' );
 	}
 
 	addHeaderBehavior( behaviors ) {
