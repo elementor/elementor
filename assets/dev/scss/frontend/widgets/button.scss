@@ -6,6 +6,9 @@
 	display: inline-block;
 	line-height: 1;
 	background-color: $gray;
+	font-size: 15px; //size-sm
+	padding: 12px 24px; //size-sm
+	border-radius: 3px; //size-sm
 	color: #fff;
 	fill: #fff;
 	text-align: center;
@@ -45,9 +48,7 @@
 		}
 
 		&sm {
-			font-size: 15px;
-			padding: 12px 24px;
-			border-radius: 3px;
+			//default size
 		}
 
 		&md {

@@ -202,6 +202,10 @@ export default class ComponentBase extends elementorModules.Module {
 			.addClass( 'elementor-active' );
 	}
 
+	getActiveTabConfig() {
+		return this.tabs[ this.currentTab ] || {};
+	}
+
 	getBodyClass( route ) {
 		return 'e-route-' + route.replace( /\//g, '-' );
 	}

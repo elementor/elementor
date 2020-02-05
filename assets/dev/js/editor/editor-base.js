@@ -438,6 +438,7 @@ export default class EditorBase extends Marionette.Application {
 
 	setAjax() {
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
+		elementorCommon.ajax.addRequestConstant( 'initial_document_id', this.config.initial_document.id );
 
 		elementorCommon.ajax.on( 'request:unhandledError', ( xmlHttpRequest ) => {
 			elementor.notifications.showToast( {
@@ -559,7 +560,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	checkPageStatus() {
-		if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
+		if ( elementor.documents.getCurrent().isDraft() ) {
 			this.notifications.showToast( {
 				message: this.translate( 'working_on_draft_notification' ),
 				buttons: [

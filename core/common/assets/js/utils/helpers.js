@@ -22,8 +22,7 @@ export default class Helpers {
 	consoleWarn( ...args ) {
 		const style = `font-size: 12px; background-image: url("${ elementorCommon.config.urls.assets }images/logo-icon.png"); background-repeat: no-repeat; background-size: contain;`;
 
-		args.push( style );
-		args.push( '' );
+		args.push( style, '' );
 
 		console.warn( ...args ); // eslint-disable-line no-console
 	}

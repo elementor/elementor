@@ -278,7 +278,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'name' => 'typography',
 				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
-				'selector' => '{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button',
+				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
 
@@ -286,7 +286,7 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'text_shadow',
-				'selector' => '{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button',
+				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
 
@@ -306,7 +306,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
 				],
 			]
 		);
@@ -321,7 +321,7 @@ class Widget_Button extends Widget_Base {
 					'value' => Schemes\Color::COLOR_4,
 				],
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -341,8 +341,8 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button:hover, {{WRAPPER}} .elementor-button:hover, {{WRAPPER}} a.elementor-button:focus, {{WRAPPER}} .elementor-button:focus' => 'color: {{VALUE}};',
-					'{{WRAPPER}} a.elementor-button:hover svg, {{WRAPPER}} .elementor-button:hover svg, {{WRAPPER}} a.elementor-button:focus svg, {{WRAPPER}} .elementor-button:focus svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button:hover svg, {{WRAPPER}} .elementor-button:focus svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -353,7 +353,7 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button:hover, {{WRAPPER}} .elementor-button:hover, {{WRAPPER}} a.elementor-button:focus, {{WRAPPER}} .elementor-button:focus' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -367,7 +367,7 @@ class Widget_Button extends Widget_Base {
 					'border_border!' => '',
 				],
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button:hover, {{WRAPPER}} .elementor-button:hover, {{WRAPPER}} a.elementor-button:focus, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -400,7 +400,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -420,7 +420,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'separator' => 'before',
 			]

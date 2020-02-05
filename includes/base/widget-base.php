@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -439,7 +439,7 @@ abstract class Widget_Base extends Element_Base {
 			return $this;
 		}
 
-		$general_settings_model = Manager::get_settings_managers( 'general' )->get_model();
+		$general_settings_model = SettingsManager::get_settings_managers( 'general' )->get_model();
 		$is_global_image_lightbox_enabled = 'yes' === $general_settings_model->get_settings( 'elementor_global_image_lightbox' );
 
 		if ( 'yes' !== $lightbox_setting_key && ! $is_global_image_lightbox_enabled ) {
@@ -453,22 +453,14 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		if ( $id ) {
-			$attachment = get_post( $id );
-			$lightbox_title_src = $general_settings_model->get_settings( 'elementor_lightbox_title_src' );
-			$lightbox_description_src = $general_settings_model->get_settings( 'elementor_lightbox_description_src' );
-			$image_data = [
-				'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
-				'caption' => $attachment->post_excerpt,
-				'description' => $attachment->post_content,
-				'title' => $attachment->post_title,
-			];
+			$lightbox_image_attributes = Plugin::$instance->images_manager->get_lightbox_image_attributes( $id );
 
-			if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
-				$attributes['data-elementor-lightbox-title'] = $image_data[ $lightbox_title_src ];
+			if ( isset( $lightbox_image_attributes['title'] ) ) {
+				$attributes['data-elementor-lightbox-title'] = $lightbox_image_attributes['title'];
 			}
 
-			if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
-				$attributes['data-elementor-lightbox-description'] = $image_data[ $lightbox_description_src ];
+			if ( isset( $lightbox_image_attributes['description'] ) ) {
+				$attributes['data-elementor-lightbox-description'] = $lightbox_image_attributes['description'];
 			}
 		}
 

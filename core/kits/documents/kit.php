@@ -21,7 +21,7 @@ class Kit extends PageBase {
 		$properties = parent::get_properties();
 
 		$properties['has_elements'] = false;
-		$properties['user_role'] = 'design';
+		$properties['edit_capability'] = 'edit_theme_options';
 
 		return $properties;
 	}
@@ -34,11 +34,15 @@ class Kit extends PageBase {
 		return __( 'Kit', 'elementor' );
 	}
 
-	public function get_preview_url() {
-		$url = parent::get_preview_url();
-		if ( isset( $_GET['elementor-location'] ) ) {
-			$url = add_query_arg( 'elementor-location', $_GET['elementor-location'], $url );
-		}
+	public function get_wp_preview_url() {
+		$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
+		$url = $document->get_wp_preview_url();
+		$id = $this->get_main_id();
+
+		$url = add_query_arg( [
+			'preview_id' => $id,
+			'preview_nonce' => wp_create_nonce( 'post_preview_' . $id ),
+		], $url );
 
 		return $url;
 	}
@@ -50,16 +54,8 @@ class Kit extends PageBase {
 		return $config;
 	}
 
-	public function get_initial_config() {
-		$config = parent::get_initial_config();
-
-		unset( $config['elements'] );
-
-		return $config;
-	}
-
 	public function get_css_wrapper_selector() {
-		return 'body';
+		return 'body.elementor-kit-' . $this->get_main_id();
 	}
 
 	/**
@@ -130,6 +126,7 @@ class Kit extends PageBase {
 			[
 				'name' => 'body_background',
 				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}}',
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -142,8 +139,27 @@ class Kit extends PageBase {
 	}
 
 	private function add_buttons_section() {
-		$button_selector = '{{WRAPPER}} button, {{WRAPPER}} input[type="button"], {{WRAPPER}} input[type="submit"]';
-		$button_hover_selector = '{{WRAPPER}} button:hover, {{WRAPPER}} button:focus, {{WRAPPER}} input[type="submit"]:hover, {{WRAPPER}} input[type="submit"]:focus, {{WRAPPER}} input[type="button"]:hover, {{WRAPPER}} input[type="button"]:focus';
+		// Use an array for better readability.
+		$button_selectors = [
+			'{{WRAPPER}} button',
+			'{{WRAPPER}} input[type="button"]',
+			'{{WRAPPER}} input[type="submit"]',
+			'{{WRAPPER}} .elementor-button',
+		];
+
+		$button_hover_selectors = [
+			'{{WRAPPER}} button:hover',
+			'{{WRAPPER}} button:focus',
+			'{{WRAPPER}} input[type="button"]:hover',
+			'{{WRAPPER}} input[type="button"]:focus',
+			'{{WRAPPER}} input[type="submit"]:hover',
+			'{{WRAPPER}} input[type="submit"]:focus',
+			'{{WRAPPER}} .elementor-button:hover',
+			'{{WRAPPER}} .elementor-button:focus',
+		];
+
+		$button_selector = implode( ',', $button_selectors );
+		$button_hover_selector = implode( ',', $button_hover_selectors );
 
 		$this->start_controls_section(
 			'section_buttons',
@@ -217,6 +233,18 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_control(
+			'button_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					$button_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
@@ -265,12 +293,8 @@ class Kit extends PageBase {
 			]
 		);
 
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
-
 		$this->add_control(
-			'button_border_radius',
+			'button_hover_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
@@ -280,6 +304,10 @@ class Kit extends PageBase {
 				],
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->add_responsive_control(
 			'button_padding',
@@ -339,18 +367,30 @@ class Kit extends PageBase {
 						'min' => 0,
 						'max' => 100,
 					],
+					'em' => [
+						'min' => 0.1,
+						'max' => 20,
+					],
 					'vh' => [
 						'min' => 0,
 						'max' => 100,
 					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
-				'size_units' => [ 'px', 'vh', 'vw' ],
+				'size_units' => [ 'px', 'em', 'vh' ],
 			]
 		);
+
+		//Link Selectors
+		$link_selectors = [
+			'{{WRAPPER}} a',
+		];
+
+		$link_hover_selectors = [
+			'{{WRAPPER}} a:hover',
+		];
+
+		$link_selectors = implode( ',', $link_selectors );
+		$link_hover_selectors = implode( ',', $link_hover_selectors );
 
 		$this->add_control(
 			'link_heading',
@@ -376,7 +416,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a' => 'color: {{VALUE}};',
+					$link_selectors => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -386,7 +426,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_normal_typography',
-				'selector' => '{{WRAPPER}} a',
+				'selector' => $link_selectors,
 			]
 		);
 
@@ -405,7 +445,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+					$link_hover_selectors => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -415,7 +455,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'link_hover_typography',
-				'selector' => '{{WRAPPER}} a:hover',
+				'selector' => $link_hover_selectors,
 			]
 		);
 
@@ -424,19 +464,38 @@ class Kit extends PageBase {
 		$this->end_controls_tabs();
 
 		// Headings.
-		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
-		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2' );
-		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3' );
-		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4' );
-		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5' );
-		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6' );
+		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1,{{WRAPPER}} h1.elementor-heading-title' );
+		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2,{{WRAPPER}} h2.elementor-heading-title' );
+		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3,{{WRAPPER}} h3.elementor-heading-title' );
+		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4,{{WRAPPER}} h4.elementor-heading-title' );
+		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5,{{WRAPPER}} h5.elementor-heading-title' );
+		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6,{{WRAPPER}} h6.elementor-heading-title' );
 
 		$this->end_controls_section();
 	}
 
 	private function add_form_fields_section() {
-		$input_selector = '{{WRAPPER}} input:not([type="button"]):not([type="submit"]), {{WRAPPER}} textarea';
-		$input_focus_selector = '{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"]), {{WRAPPER}} textarea';
+		// Use an array for better readability.
+		$label_selectors = [
+			'{{WRAPPER}} label',
+			'{{WRAPPER}} .elementor-widget-form .elementor-field-group > label',
+		];
+
+		$input_selectors = [
+			'{{WRAPPER}} input:not([type="button"]):not([type="submit"])',
+			'{{WRAPPER}} textarea',
+			'{{WRAPPER}} .elementor-field-textual',
+		];
+
+		$input_focus_selectors = [
+			'{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"])',
+			'{{WRAPPER}} textarea:focus',
+			'{{WRAPPER}} .elementor-field-textual:focus',
+		];
+
+		$label_selector = implode( ',', $label_selectors );
+		$input_selector = implode( ',', $input_selectors );
+		$input_focus_selector = implode( ',', $input_focus_selectors );
 
 		$this->start_controls_section(
 			'section_form_fields',
@@ -460,7 +519,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} label' => 'color: {{VALUE}};',
+					$label_selector => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -470,7 +529,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
-				'selector' => '{{WRAPPER}} label',
+				'selector' => $label_selector,
 			]
 		);
 
@@ -536,10 +595,36 @@ class Kit extends PageBase {
 
 		$this->end_controls_tabs();
 
+		$this->add_responsive_control(
+			'form_field_padding',
+			[
+				'label' => __( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%' ],
+				'selectors' => [
+					$input_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
 	private function add_images_section() {
+
+		//Image Selectors
+		$image_selectors = [
+			'{{WRAPPER}} img',
+		];
+
+		$image_hover_selectors = [
+			'{{WRAPPER}} img:hover',
+		];
+
+		$image_selectors = implode( ',', $image_selectors );
+		$image_hover_selectors = implode( ',', $image_hover_selectors );
+
 		$this->start_controls_section(
 			'section_images',
 			[
@@ -560,7 +645,7 @@ class Kit extends PageBase {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'selector' => '{{WRAPPER}} img',
+				'selector' => $image_selectors,
 			]
 		);
 
@@ -571,7 +656,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$image_selectors => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -589,7 +674,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'opacity: {{SIZE}};',
+					$image_selectors => 'opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -601,7 +686,7 @@ class Kit extends PageBase {
 				'exclude' => [
 					'box_shadow_position',
 				],
-				'selector' => '{{WRAPPER}} img',
+				'selector' => $image_selectors,
 			]
 		);
 
@@ -638,7 +723,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} img:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$image_hover_selectors => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -656,7 +741,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img:hover' => 'opacity: {{SIZE}};',
+					$image_hover_selectors => 'opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -665,7 +750,7 @@ class Kit extends PageBase {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'image_hover_css_filters',
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => $image_hover_selectors,
 			]
 		);
 
@@ -676,7 +761,7 @@ class Kit extends PageBase {
 				'exclude' => [
 					'box_shadow_position',
 				],
-				'selector' => '{{WRAPPER}} img:hover',
+				'selector' => $image_hover_selectors,
 			]
 		);
 
@@ -692,7 +777,7 @@ class Kit extends PageBase {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} img' => 'transition-duration: {{SIZE}}s',
+					$image_selectors => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
@@ -744,19 +829,6 @@ class Kit extends PageBase {
 				'selectors' => [
 					$selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_responsive_control(
-			$prefix . '_padding',
-			[
-				'label' => __( 'Padding', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
-				'selectors' => [
-					$selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-				'separator' => 'before',
 			]
 		);
 

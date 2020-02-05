@@ -184,6 +184,19 @@ select {
 		background-color: $theme-dark-dark;
 	}
 
+	//Kit Editor
+	@at-root {
+		.elementor-editor-kit {
+
+			.elementor-panel {
+
+				#elementor-panel-header {
+					background-color: $theme-dark-dark;
+				}
+			}
+		}
+	}
+
 	.elementor-panel-navigation {
 		background-color: $theme-dark-gray-dark;
 
@@ -464,9 +477,23 @@ $devices: 'desktop', 'tablet', 'mobile';
 //URL Control
 .elementor-control-type-url {
 
-	.elementor-control-url-more {
-		background-color: $theme-dark-gray-darkest;
-		border-color: $theme-dark-gray-light;
+	.elementor-control-url {
+
+		&-more {
+			background-color: $theme-dark-gray-darkest;
+			border-color: $theme-dark-gray-light;
+		}
+
+		&-option {
+
+			&-input {
+				border-color: $theme-dark-gray-light;
+
+				&:checked {
+					background-color: $theme-dark-gray-light;
+				}
+			}
+		}
 	}
 
 	.elementor-input {
@@ -681,7 +708,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 //Color Picker
 .pickr {
 	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray;
+	border-color: $theme-dark-gray-light;
 }
 
 .elementor-color-picker {
@@ -1288,4 +1315,9 @@ label.elementor-template-library-order-label,
 	i {
 		color: $theme-dark-gray-light;
 	}
+}
+
+// Nerd box icons
+.elementor-nerd-box-icon {
+	filter: contrast(0.8);
 }
