@@ -9,7 +9,16 @@ export default class HistoryModule {
 
 	active = true;
 
-	constructor() {
+	constructor( document ) {
+		/**
+		 * @type {Document}
+		 */
+		this.document = document;
+
+		this.selected = new Backbone.Model( {
+			id: 0,
+		} );
+
 		if ( ! HistoryModule.translations ) {
 			HistoryModule.translations = {
 				add: elementor.translate( 'added' ),
@@ -189,6 +198,12 @@ export default class HistoryModule {
 		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );
 		}
+
+		$e.internal( 'document/save/set-is-modified', {
+			status: item.get( 'id' ) === this.document.editor.lastSaveHistoryId,
+		} );
+
+		this.selected = item;
 	}
 
 	undoItem( index ) {
