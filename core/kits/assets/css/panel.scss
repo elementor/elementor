@@ -1,7 +1,8 @@
-$editor-kit-accent: #4ab7f4;
 
 .elementor-panel {
+
 	#elementor-panel-header {
+
 		#elementor-panel-header-kit-close,
 		#elementor-panel-header-kit-back {
 			display: none;
@@ -10,7 +11,9 @@ $editor-kit-accent: #4ab7f4;
 }
 
 .elementor-editor-kit {
+
 	.elementor-panel {
+
 		#elementor-panel-header {
 			background-color: $editor-kit-accent;
 
@@ -33,7 +36,9 @@ $editor-kit-accent: #4ab7f4;
 		}
 
 		.elementor-panel-navigation {
+
 			.elementor-panel-navigation-tab{
+				
 				&.elementor-active{
 					border-bottom-color: $editor-kit-accent;
 				}
@@ -41,6 +46,7 @@ $editor-kit-accent: #4ab7f4;
 		}
 
 		#elementor-panel-page-settings {
+
 			.elementor-panel-navigation {
 				display: none;
 			}
@@ -48,6 +54,7 @@ $editor-kit-accent: #4ab7f4;
 
 		#elementor-panel-saver-button-publish,
 		#elementor-panel-saver-button-save-options {
+
 			&.elementor-button.elementor-button-success:not(.elementor-disabled) {
 				background-color: $editor-kit-accent;
 			}

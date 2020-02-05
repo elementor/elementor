@@ -128,7 +128,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-template-library-templates-container"></div>
 	<# if ( 'remote' === activeSource ) { #>
 		<div id="elementor-template-library-footer-banner">
-			<i class="eicon-nerd" aria-hidden="true"></i>
+			<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; ?>" />
 			<div class="elementor-excerpt"><?php echo __( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
 		</div>
 	<# } #>
@@ -247,7 +247,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
 	<div class="elementor-template-library-blank-icon">
-		<i class="eicon-nerd" aria-hidden="true"></i>
+		<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/no-search-results.svg'; ?>" class="elementor-template-library-no-results" />
 	</div>
 	<div class="elementor-template-library-blank-title"></div>
 	<div class="elementor-template-library-blank-message"></div>
