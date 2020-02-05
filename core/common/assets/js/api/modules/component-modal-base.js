@@ -16,7 +16,7 @@ export default class ComponentModalBase extends ComponentBase {
 
 		return {
 			open: () => new class Open extends CommandBase {
-				apply = () => $e.route( self.getNamespace() )
+				apply = () => $e.route( self.getNamespace() );
 			},
 			close: () => new class Close extends CommandBase {
 				apply = () => self.close();

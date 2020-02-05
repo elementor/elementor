@@ -1,5 +1,5 @@
 export const Save = () => {
-	QUnit.module( 'Save', ( hooks ) => {
+	QUnit.module( 'Save', () => {
 		QUnit.test( 'Simple', async ( assert ) => {
 			const response = await $e.internal( 'document/save/save' );
 

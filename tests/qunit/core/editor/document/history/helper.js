@@ -47,6 +47,7 @@ export default class HistoryHelper {
 	}
 
 	static printHumanReadable() {
+		// eslint-disable-next-line no-console
 		console.log( '--------------------------------------------------------------' );
 
 		Object.entries( elementor.history.history.getItems().models ).forEach( ( model ) => {
@@ -54,23 +55,28 @@ export default class HistoryHelper {
 				modelAttribute = modelItem.attributes,
 				subItemModels = modelAttribute.items.models;
 
+			// eslint-disable-next-line no-console
 			console.log( `History item #${ model[ 0 ] }: type: '${ modelAttribute.type }', title: ${ modelAttribute.title } ->` );
 
 			subItemModels.forEach( ( subItemModel ) => {
 				const subModelAttribute = subItemModel.attributes;
 
+				// eslint-disable-next-line no-console
 				console.log( `\t SubItem: type: '${ subModelAttribute.type }', title: ${ subModelAttribute.title }` );
 
 				if ( subModelAttribute.data ) {
+					// eslint-disable-next-line no-console
 					console.log( '\t\t data', ( subModelAttribute.data.changes ) );
 				}
 
 				if ( subModelAttribute.options ) {
+					// eslint-disable-next-line no-console
 					console.log( '\t\t options', ( subModelAttribute.options ) );
 				}
 			} );
 		} );
 
+		// eslint-disable-next-line no-console
 		console.log( '--------------------------------------------------------------' );
 	}
 }

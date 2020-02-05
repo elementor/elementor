@@ -63,7 +63,7 @@ export default class API {
 
 	// function create command instance from given command.
 	command( command, args ) {
-		let component = $e.commands.getComponent( command );
+		const component = $e.commands.getComponent( command );
 
 		if ( ! component ) {
 			throw Error( `cannot get component for command: '${ command }''` );

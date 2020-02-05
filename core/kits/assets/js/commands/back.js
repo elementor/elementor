@@ -3,7 +3,7 @@ import CommandBase from 'elementor-api/modules/command-base';
 export class Back extends CommandBase {
 	confirmDialog = null;
 
-	apply( args ) {
+	apply() {
 		const panelHistory = $e.routes.getHistory( 'panel' );
 
 		// Don't go back if no where.

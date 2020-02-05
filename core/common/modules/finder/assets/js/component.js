@@ -44,17 +44,13 @@ export default class Component extends ComponentModalBase {
 		return {
 			... layoutCommands,
 			'navigate/down': () => new class NavigateDown extends CommandBase {
-				apply = ( args ) => self.getItemsView().activateNextItem();
+				apply = () => self.getItemsView().activateNextItem();
 			},
 			'navigate/up': () => new class NavigateUp extends CommandBase {
-				apply( args ) {
-					return self.getItemsView().activateNextItem( true );
-				}
+				apply = () => self.getItemsView().activateNextItem( true );
 			},
 			'navigate/select': ( event ) => new class NavigateSelect extends CommandBase {
-				apply( args ) {
-					return self.getItemsView().goToActiveItem( event );
-				}
+				apply = () => self.getItemsView().goToActiveItem( event );
 			}( event ),
 		};
 	}

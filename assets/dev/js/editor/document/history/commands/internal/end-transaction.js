@@ -1,7 +1,7 @@
 import Base from '../base/base';
 
 export class EndTransaction extends Base {
-	apply( args ) {
+	apply() {
 		if ( ! this.component.isTransactionStarted() ) {
 			return;
 		}

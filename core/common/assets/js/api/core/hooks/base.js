@@ -364,7 +364,7 @@ export default class HooksBase extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	runCallback( event, callback, args, result ) {
+	runCallback( event, callback, args, result ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 
@@ -379,7 +379,7 @@ export default class HooksBase extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	onRun( command, args, event ) {
+	onRun( command, args, event ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 
@@ -395,7 +395,7 @@ export default class HooksBase extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	onCallback( command, args, event, id ) {
+	onCallback( command, args, event, id ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 }

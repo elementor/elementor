@@ -1,5 +1,4 @@
 import Component from './component';
-import Document from 'elementor-editor/document';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 

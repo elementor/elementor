@@ -1,7 +1,7 @@
 import Base from '../base/base';
 
 export class ClearTransaction extends Base {
-	apply( args ) {
+	apply() {
 		this.component.transactions = [];
 	}
 }

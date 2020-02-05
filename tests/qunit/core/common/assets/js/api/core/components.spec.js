@@ -884,7 +884,7 @@ jQuery( () => {
 						return {
 							commandA: () => new class extends CommandBase {
 								apply = () => commandStatus = 'afterRun';
-							}
+							},
 						};
 					}
 
@@ -919,7 +919,7 @@ jQuery( () => {
 						return {
 							commandA: () => new class extends CommandBase {
 								apply = () => commandStatus = 'afterRunInScope';
-							}
+							},
 						};
 					}
 
@@ -974,7 +974,7 @@ jQuery( () => {
 						return {
 							commandA: () => new class extends CommandBase {
 								apply = () => secondCommandStatus = 'afterRun';
-							}
+							},
 						};
 					}
 
