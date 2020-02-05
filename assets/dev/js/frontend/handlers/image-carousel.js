@@ -39,12 +39,12 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		swiperOptions.breakpoints = {};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.md - 1 ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.md ] = {
 			slidesPerView: +elementSettings.slides_to_show_mobile || 1,
 			slidesPerGroup: +elementSettings.slides_to_scroll_mobile || 1,
 		};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.lg - 1 ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.lg ] = {
 			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
 			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
 		};
