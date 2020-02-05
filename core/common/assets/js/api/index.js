@@ -53,14 +53,27 @@ export default class API {
 	 *
 	 * Alias of `$e.commands.run()`.
 	 *
-	 * @param {{}} args
-	 *
-	 * @returns {*}
+	 * @param {string} command
+	 * @param [args={}]
+	 * @returns {boolean|*}
 	 */
-	run( ...args ) {
-		return $e.commands.run.apply( $e.commands, args );
+	run( command, args = {} ) {
+		return $e.commands.run( command, args );
 	}
 
+	// function create command instance from given command.
+	command( command, args ) {
+		let component = $e.commands.getComponent( command );
+
+		if ( ! component ) {
+			throw Error( `cannot get component for command: '${ command }''` );
+		}
+
+		const shortCommand = command.replace( component.getNamespace() + '/', '' );
+		const CommandClass = component.getCommands()[ shortCommand ];
+
+		return new CommandClass( args );
+	}
 	/**
 	 * Function internal().
 	 *
