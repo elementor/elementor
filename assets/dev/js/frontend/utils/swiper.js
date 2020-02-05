@@ -4,7 +4,9 @@ export default class Swiper {
 	constructor( container, config ) {
 		this.config = config;
 
-		this.adjustConfig();
+		if ( this.config.breakpoints ) {
+			this.adjustConfig();
+		}
 
 		return new originalSwiper( container, this.config );
 	}
@@ -12,36 +14,29 @@ export default class Swiper {
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)
 	// In Swiper 5.0.0 and up, breakpoints changed from acting as max-width to acting as min-width
 	adjustConfig() {
-		if ( this.config.breakpoints ) {
-			const elementorBPs = elementorFrontend.config.breakpoints;
+		const elementorBPs = elementorFrontend.config.breakpoints,
+			elementorBPValues = Object.values( elementorBPs );
 
-			// If the user configured a mobile breakpoint, change it to start from screen width of 0 pixels
-			if ( this.config.breakpoints[ elementorBPs.sm ] ) {
-				this.config.breakpoints[ 0 ] = this.config.breakpoints[ elementorBPs.sm ];
+		Object.keys( this.config.breakpoints ).forEach( ( configBPKey ) => {
+			if ( parseInt( configBPKey ) === elementorBPs.md ) {
+				// This handles the mobile breakpoint. Elementor's default sm breakpoint is never actually used,
+				// so the mobile breakpoint (md) needs to be handled separately and set to the 0 breakpoint (xs)
+				this.config.breakpoints[ elementorBPs.xs ] = this.config.breakpoints[ configBPKey ];
+			} else {
+				// Find the index of the current config breakpoint in the Elementor Breakpoints array
+				const currentBPIndexInElementorBPs = elementorBPValues.findIndex( ( elementorBP ) => parseInt( configBPKey ) === elementorBP );
 
-				// If a user configured a mobile breakpoint and did not configure a tablet breakpoint
-				if ( ! this.config.breakpoints[ elementorBPs.md ] ) {
-					// Set the tablet breakpoint from the default/desktop setting
-					this.config.breakpoints[ elementorBPs.md ] = {
-						slidesPerView: this.config.slidesPerView,
-						slidesPerGroup: this.config.slidesPerGroup,
-					};
-				}
+				// For all other Swiper config breakpoints, move them one breakpoint down on the breakpoint list,
+				// according to the array of Elementor-defined breakpoints
+				this.config.breakpoints[ elementorBPValues[ currentBPIndexInElementorBPs - 1 ] ] = this.config.breakpoints[ configBPKey ];
 			}
 
-			// If the user configured a tablet breakpoint, set it to start from the mobile breakpoint
-			if ( this.config.breakpoints[ elementorBPs.md ] ) {
-				this.config.breakpoints[ elementorBPs.sm ] = this.config.breakpoints[ elementorBPs.md ];
-			}
-
-			if ( this.config.breakpoints[ elementorBPs.sm ] || this.config.breakpoints[ elementorBPs.md ] ) {
-				// If a mobile or tablet breakpoint was set, we need to manually set a desktop breakpoint
-				this.config.breakpoints[ elementorBPs.lg ] = {
-					slidesPerView: this.config.slidesPerView,
-					slidesPerGroup: this.config.slidesPerGroup,
-				};
-			}
-		}
+			// Then reset the settings in the original breakpoint key to the default values
+			this.config.breakpoints[ configBPKey ] = {
+				slidesPerView: this.config.slidesPerView,
+				slidesPerGroup: this.config.slidesPerGroup,
+			};
+		} );
 	}
 }
 
