@@ -158,6 +158,8 @@ export default class Routes extends Commands {
 		return match;
 	}
 
+	validateInstance( instance, component, command ) {}
+
 	error( message ) {
 		throw Error( 'Routes: ' + message );
 	}

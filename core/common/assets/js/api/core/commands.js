@@ -235,13 +235,19 @@ export default class Commands extends elementorModules.Module {
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
 
+		const instance = this.commands[ command ].apply( component, [ args ] );
+
+		this.validateInstance( instance, component, command );
+
 		this.trigger( 'run', component, command, args );
 
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		const results = this.commands[ command ].apply( component, [ args ] );
+		// If not instance or is not run-able instance ( CommandBase ), results equal to instance ( eg route )
+		// else results are from run().
+		const results = ! instance || 'undefined' === typeof instance.run ? instance : instance.run();
 
 		// TODO: Consider add results to `$e.devTools`.
 		if ( args.onAfter ) {
@@ -290,6 +296,11 @@ export default class Commands extends elementorModules.Module {
 		delete this.currentArgs[ container ];
 	}
 
+	validateInstance( instance, component, command ) {
+		if ( ! instance || component !== instance.component ) {
+			this.error( `invalid instance, command: '${ command }' ` );
+		}
+	}
 	/**
 	 * Function error().
 	 *
