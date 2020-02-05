@@ -575,6 +575,10 @@ class Documents_Manager {
 
 		$document = $this->get_doc_or_auto_save( $post_id );
 
+		if ( ! $document ) {
+			throw new \Exception( 'Not Found.' );
+		}
+
 		if ( ! $document->is_editable_by_current_user() ) {
 			throw new \Exception( 'Access denied.' );
 		}

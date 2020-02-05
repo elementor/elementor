@@ -18,8 +18,13 @@ class Manager {
 
 	public function get_active_id() {
 		$id = get_option( self::OPTION_ACTIVE );
+		$kit_post = null;
 
-		if ( ! $id ) {
+		if ( $id ) {
+			$kit_post = get_post( $id );
+		}
+
+		if ( ! $id || ! $kit_post || 'trash' === $kit_post->post_status ) {
 			$id = $this->create_default();
 			update_option( self::OPTION_ACTIVE, $id );
 		}
