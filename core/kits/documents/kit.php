@@ -35,14 +35,19 @@ class Kit extends PageBase {
 	}
 
 	public function get_wp_preview_url() {
-		$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
-		$url = $document->get_wp_preview_url();
-		$id = $this->get_main_id();
+		// Ajax request from editor.
+		if ( ! empty( $_POST['initial_document_id'] ) ) {
+			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
+			$url = $document->get_wp_preview_url();
+			$id = $this->get_main_id();
 
-		$url = add_query_arg( [
-			'preview_id' => $id,
-			'preview_nonce' => wp_create_nonce( 'post_preview_' . $id ),
-		], $url );
+			$url = add_query_arg( [
+				'preview_id' => $id,
+				'preview_nonce' => wp_create_nonce( 'post_preview_' . $id ),
+			], $url );
+		} else {
+			$url = parent::get_wp_preview_url();
+		}
 
 		return $url;
 	}
@@ -218,17 +223,17 @@ class Kit extends PageBase {
 		);
 
 		$this->add_group_control(
-			Group_Control_Border::get_type(),
+			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'button_border',
+				'name' => 'button_box_shadow',
 				'selector' => $button_selector,
 			]
 		);
 
 		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
+			Group_Control_Border::get_type(),
 			[
-				'name' => 'button_box_shadow',
+				'name' => 'button_border',
 				'selector' => $button_selector,
 			]
 		);
@@ -277,18 +282,17 @@ class Kit extends PageBase {
 		);
 
 		$this->add_group_control(
-			Group_Control_Border::get_type(),
+			Group_Control_Box_Shadow::get_type(),
 			[
-				'name' => 'button_hover_border',
+				'name' => 'button_hover_box_shadow',
 				'selector' => $button_hover_selector,
-				'separator' => 'before',
 			]
 		);
 
 		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
+			Group_Control_Border::get_type(),
 			[
-				'name' => 'button_hover_box_shadow',
+				'name' => 'button_hover_border',
 				'selector' => $button_hover_selector,
 			]
 		);
@@ -331,6 +335,14 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'body_heading',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Body', 'elementor' ),
 			]
 		);
 
@@ -587,7 +599,6 @@ class Kit extends PageBase {
 						'max' => 3000,
 					],
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -712,7 +723,6 @@ class Kit extends PageBase {
 			[
 				'name' => 'image_hover_border',
 				'selector' => '{{WRAPPER}} img:hover',
-				'separator' => 'before',
 			]
 		);
 
@@ -747,14 +757,6 @@ class Kit extends PageBase {
 		);
 
 		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'image_hover_css_filters',
-				'selector' => $image_hover_selectors,
-			]
-		);
-
-		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'image_hover_box_shadow',
@@ -765,10 +767,18 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'image_hover_css_filters',
+				'selector' => $image_hover_selectors,
+			]
+		);
+
 		$this->add_control(
 			'image_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => __( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -813,6 +823,14 @@ class Kit extends PageBase {
 		);
 
 		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => $prefix . '_box_shadow',
+				'selector' => $selector,
+			]
+		);
+
+		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => $prefix . '_border',
@@ -829,14 +847,6 @@ class Kit extends PageBase {
 				'selectors' => [
 					$selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => $prefix . '_box_shadow',
-				'selector' => $selector,
 			]
 		);
 	}
