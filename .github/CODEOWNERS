@@ -84,9 +84,9 @@
 
 # Widgets
 /includes/widgets                                       @kingyes @matipojo @kobizz
-/includes/widgets/accordion @kobizz
-/includes/widgets/tabs @kobizz
-/includes/widgets/toggle @kobizz
+/includes/widgets/accordion								@kobizz
+/includes/widgets/tabs									@kobizz
+/includes/widgets/toggle								@kobizz
 
 # Modules
 /modules                                                @matipojo
