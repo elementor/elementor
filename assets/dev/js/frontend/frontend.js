@@ -5,6 +5,7 @@ import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import URLActions from './utils/url-actions';
+import Swiper from './utils/swiper';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
@@ -134,6 +135,7 @@ class Frontend extends elementorModules.ViewModule {
 			anchors: new AnchorsModule(),
 			lightbox: new LightboxModule(),
 			urlActions: new URLActions(),
+			swiper: Swiper,
 		};
 
 		// TODO: BC since 2.4.0
