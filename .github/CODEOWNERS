@@ -83,10 +83,7 @@
 /includes/template-library                              @kingyes @kobizz
 
 # Widgets
-/includes/widgets                                       @kingyes @matipojo @kobizz
-/includes/widgets/accordion								@kobizz
-/includes/widgets/tabs									@kobizz
-/includes/widgets/toggle								@kobizz
+/includes/widgets                                       @kingyes @kobizz
 
 # Modules
 /modules                                                @matipojo
