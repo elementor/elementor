@@ -13,6 +13,8 @@ export class FooterSaverBeforeSave extends HookUIBefore {
 		const { status } = args,
 			{ footerSaver } = $e.components.get( 'document/save' );
 
+		footerSaver.toggleSaveButtons( true );
+
 		NProgress.start();
 
 		if ( 'autosave' === status ) {

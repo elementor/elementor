@@ -35,8 +35,12 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	activateSaveButtons( document, status ) {
 		const hasChanges = status || 'draft' === document.container.settings.get( 'post_status' );
 
-		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', ! hasChanges );
-		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
+		this.toggleSaveButtons( ! hasChanges );
+	}
+
+	toggleSaveButtons( status ) {
+		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', status );
+		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', status );
 	}
 
 	onRender() {
