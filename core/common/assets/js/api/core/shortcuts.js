@@ -58,28 +58,38 @@ export default class Shortcuts {
 			return;
 		}
 
-		jQuery.each( handlers, ( key, handler ) => {
+		const filteredHandlers = handlers.filter( ( handler ) => {
 			if ( handler.exclude && -1 !== handler.exclude.indexOf( 'input' ) ) {
 				const $target = jQuery( event.target );
 
 				if ( $target.is( ':input, .elementor-input' ) || $target.closest( '[contenteditable="true"]' ).length ) {
-					return;
+					return false;
 				}
 			}
 
 			if ( handler.dependency && ! handler.dependency( event ) ) {
-				return;
+				return false;
 			}
 
 			// Fix for some keyboard sources that consider alt key as ctrl key
 			if ( ! handler.allowAltKey && event.altKey ) {
-				return;
+				return false;
 			}
 
-			event.preventDefault();
-
-			handler.callback( event );
+			return true;
 		} );
+
+		if ( ! filteredHandlers.length ) {
+			return;
+		}
+
+		if ( 1 < filteredHandlers.length && elementorCommon.config.isDebug ) {
+			elementorCommon.helpers.consoleWarn( 'Multiple handlers for shortcut.', filteredHandlers, event );
+		}
+
+		event.preventDefault();
+
+		filteredHandlers[ 0 ].callback( event );
 	}
 
 	isControlEvent( event ) {
@@ -120,11 +130,16 @@ export default class Shortcuts {
 		}
 
 		const namespace = component.getNamespace(),
-			rootScope = component.getRootContainer();
+			namespaceRoot = component.getRootContainer();
 
-		return scopes.some( ( scope ) => {
-			return namespace === scope || rootScope === scope;
-		} );
+		const filteredByNamespace = scopes.some( ( scope ) => namespace === scope );
+
+		if ( filteredByNamespace ) {
+			return true;
+		}
+
+		// Else filter by namespaceRoot.
+		return scopes.some( ( scope ) => namespaceRoot === scope );
 	}
 
 	getHandlersByPriority( event ) {
@@ -134,6 +149,7 @@ export default class Shortcuts {
 			return false;
 		}
 
+		// TODO: Prioritize current scope before roo scope.
 		const inCurrentScope = handlers.filter( ( handler ) => {
 			return handler.scopes && this.isActiveScope( handler.scopes );
 		} );

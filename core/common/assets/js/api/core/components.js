@@ -22,6 +22,9 @@ export default class extends elementorModules.Module {
 		return component;
 	}
 
+	/**
+	 * @returns {Component}
+	 */
 	get( id ) {
 		return this.components[ id ];
 	}

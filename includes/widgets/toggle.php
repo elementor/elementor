@@ -98,6 +98,9 @@ class Widget_Toggle extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Toggle Title', 'elementor' ),
 				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 

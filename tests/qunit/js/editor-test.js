@@ -11,11 +11,15 @@ export default class EditorTest extends EditorBase {
 				this.$previewElementorEl.empty();
 			}
 
-			console.log( `Test: ${ module } -> ${ name }` );
+			if ( QUnit.config.showUI ) {
+				console.log( `Test: ${ module } -> ${ name }` );
+			}
 		} );
 
 		QUnit.testDone( ( { module, name } ) => {
-			console.log( `Done: ${ module } -> ${ name }` );
+			if ( QUnit.config.showUI ) {
+				console.log( `Done: ${ module } -> ${ name }` );
+			}
 		} );
 	}
 

@@ -16,15 +16,11 @@ export default class extends elementorModules.editor.utils.Module {
 
 		menu.addItem( {
 			name: 'theme-style',
-			icon: 'eicon-theme-style',
+			icon: 'eicon-adjust',
 			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open' ),
-		}, 'style', 'global-colors' );
-	}
-
-	loadKitDocument() {
-		elementor.documents.request( elementor.config.kit_id );
+		}, 'style' );
 	}
 
 	addHeaderBehavior( behaviors ) {
@@ -39,7 +35,7 @@ export default class extends elementorModules.editor.utils.Module {
 		super.onInit();
 
 		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
-			if ( ! elementor.config.user.is_administrator ) {
+			if ( ! elementor.config.user.can_edit_kit ) {
 				return;
 			}
 
@@ -51,9 +47,6 @@ export default class extends elementorModules.editor.utils.Module {
 				this.addPanelPage();
 
 				this.addPanelMenuItem();
-
-				// Cache.
-				this.loadKitDocument();
 			} );
 		} );
 	}

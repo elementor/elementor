@@ -7,7 +7,9 @@ ElementModel = Backbone.Model.extend( {
 		elType: '',
 		isInner: false,
 		settings: {},
-		defaultEditSettings: {},
+		defaultEditSettings: {
+			editTab: 'content',
+		},
 	},
 
 	remoteRender: false,

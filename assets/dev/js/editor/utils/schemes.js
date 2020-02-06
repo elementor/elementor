@@ -53,6 +53,11 @@ Schemes = function() {
 	};
 
 	this.init = function() {
+		// Already built.
+		if ( elements.$style ) {
+			return;
+		}
+
 		initElements();
 		buildUI();
 		initSchemes();

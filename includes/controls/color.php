@@ -73,7 +73,6 @@ class Control_Color extends Base_Data_Control {
 				'categories' => [
 					TagsModule::COLOR_CATEGORY,
 				],
-				'active' => true,
 			],
 		];
 	}

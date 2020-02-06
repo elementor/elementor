@@ -755,7 +755,9 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
+		if ( ! Utils::has_pro() ) {
+			Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
+		}
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}

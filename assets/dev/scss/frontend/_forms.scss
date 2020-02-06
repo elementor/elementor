@@ -149,6 +149,10 @@
 // Keep the following out from another parent selector!
 .elementor-field-textual {
 	line-height: 1.4;
+	font-size: 15px; //size-sm
+	min-height: 40px; //size-sm
+	padding: 5px 14px; //size-sm
+	border-radius: 3px; //size-sm
 
 	&.elementor-size- {
 
@@ -160,10 +164,7 @@
 		}
 
 		&sm {
-			font-size: 15px;
-			min-height: 40px;
-			padding: 5px 14px;
-			border-radius: 3px;
+			//default size
 		}
 
 		&md {

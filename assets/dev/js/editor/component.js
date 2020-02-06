@@ -124,6 +124,10 @@ export default class Component extends ComponentBase {
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', document.id );
 	}
 
+	isCurrent( id ) {
+		return parseInt( id ) === this.currentDocument.id;
+	}
+
 	unsetCurrent() {
 		this.currentDocument = null;
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', null );

@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Schemes;
+use Elementor\Core\Settings\Manager;
 
 /**
  * Elementor image gallery widget.
@@ -81,10 +82,18 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @access public
 	 *
 	 * @param string $link_html Image link HTML.
+	 * @param string $id Attachment id.
 	 *
 	 * @return string Image link HTML with lightbox data attributes.
 	 */
-	public function add_lightbox_data_to_image_link( $link_html ) {
+	public function add_lightbox_data_to_image_link( $link_html, $id ) {
+		$settings = $this->get_settings_for_display();
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$this->add_render_attribute( 'link', 'class', 'elementor-clickable', true );
+		}
+
+		$this->add_lightbox_data_attributes( 'link', $id, $settings['open_lightbox'], $this->get_id(), true );
 		return preg_replace( '/^<a/', '<a ' . $this->get_render_attribute_string( 'link' ), $link_html );
 	}
 
@@ -386,18 +395,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		?>
 		<div class="elementor-image-gallery">
 			<?php
-			$this->add_render_attribute( 'link', [
-				'data-elementor-open-lightbox' => $settings['open_lightbox'],
-				'data-elementor-lightbox-slideshow' => $this->get_id(),
-			] );
-
-			if ( Plugin::$instance->editor->is_edit_mode() ) {
-				$this->add_render_attribute( 'link', [
-					'class' => 'elementor-clickable',
-				] );
-			}
-
-			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ] );
+			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ], 10, 2 );
 
 			echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' );
 

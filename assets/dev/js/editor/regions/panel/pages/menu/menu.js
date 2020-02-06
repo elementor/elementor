@@ -20,7 +20,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	},
 
 	getArrowClass: function() {
-		return 'eicon-arrow-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
+		return 'eicon-chevron-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
 	},
 
 	onRender: function() {

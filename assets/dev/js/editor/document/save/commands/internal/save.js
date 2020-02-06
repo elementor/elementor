@@ -34,7 +34,8 @@ export class Save extends CommandInternalBase {
 				settings: settings,
 			},
 			error: ( data ) => this.onSaveError( data, status, document ),
-		} ).then( ( data ) => this.onSaveSuccess( data, status, oldStatus, elements, document, onSuccess ) );
+		} )
+		.then( ( data ) => this.onSaveSuccess( data, status, oldStatus, elements, document, onSuccess ) );
 
 		// TODO: Remove - Backwards compatibility
 		elementor.saver.trigger( 'save', args );

@@ -81,6 +81,11 @@
 	}
 }
 
-#elementor-panel-history-no-items {
+#elementor-panel-history-no-items,
+#elementor-panel-revisions-no-revisions {
 	text-align: center;
+
+	.elementor-nerd-box-icon {
+		margin-top: 20px;
+	}
 }

@@ -15,7 +15,7 @@ module.exports = Marionette.ItemView.extend( {
 		const events = {};
 
 		if ( ! this.isEditable() ) {
-			events.click = 'onClick';
+			events.mousedown = 'onMouseDown';
 		}
 
 		return events;
@@ -49,13 +49,13 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onClick: function() {
+	onMouseDown: function() {
 		elementor.promotion.showDialog( {
 			headerMessage: elementor.translate( 'element_promotion_dialog_header', [ this.model.get( 'title' ) ] ),
 			message: elementor.translate( 'element_promotion_dialog_message', [ this.model.get( 'title' ) ] ),
 			top: '-7',
 			element: this.el,
-			actionURL: elementor.config.elementPromotionURL + this.model.get( 'name' ),
+			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) ),
 		} );
 	},
 } );

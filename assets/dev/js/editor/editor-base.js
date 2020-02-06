@@ -173,6 +173,16 @@ export default class EditorBase extends Marionette.Application {
 				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
 			},
 		},
+		promotion: {
+			ignore: '.elementor-panel-category-items',
+			callback: () => {
+				const dialog = elementor.promotion.dialog;
+
+				if ( dialog ) {
+					dialog.hide();
+				}
+			},
+		},
 	};
 
 	userCan( capability ) {
@@ -431,6 +441,7 @@ export default class EditorBase extends Marionette.Application {
 
 	setAjax() {
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
+		elementorCommon.ajax.addRequestConstant( 'initial_document_id', this.config.initial_document.id );
 
 		elementorCommon.ajax.on( 'request:unhandledError', ( xmlHttpRequest ) => {
 			elementor.notifications.showToast( {
@@ -552,7 +563,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	checkPageStatus() {
-		if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
+		if ( elementor.documents.getCurrent().isDraft() ) {
 			this.notifications.showToast( {
 				message: this.translate( 'working_on_draft_notification' ),
 				buttons: [
@@ -714,15 +725,16 @@ export default class EditorBase extends Marionette.Application {
 				exclude: excludeWidgets,
 			},
 			success: ( data ) => {
-				jQuery.each( data, ( widgetName, controlsConfig ) => {
-					this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], controlsConfig );
-				} );
+				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
 					this.schemes.printSchemesStyle();
+					$e.internal( 'panel/state-ready' );
+				} else {
+					this.once( 'panel:init', () => {
+						$e.internal( 'panel/state-ready' );
+					} );
 				}
-
-				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
 			},
 		} );
 	}
@@ -769,9 +781,10 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } ).then( () => {
-			elementorCommon.elements.$window.trigger( 'elementor:init' );
-		} );
+		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
+			.then( () => {
+				elementorCommon.elements.$window.trigger( 'elementor:init' );
+			} );
 
 		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
@@ -1018,6 +1031,8 @@ export default class EditorBase extends Marionette.Application {
 
 		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
 
+		this.settings.page.destroy();
+
 		document.editor.status = 'closed';
 
 		this.config.document = {};
@@ -1055,11 +1070,7 @@ export default class EditorBase extends Marionette.Application {
 
 			this.$preview.trigger( 'load' );
 
-			this.$previewContents.find( `#elementor-post-${ config.id }-css` ).remove();
-
-			const previewRevisionID = config.revisions.current_id;
-
-			this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
+			this.toggleDocumentCssFiles( document, false );
 		}
 
 		return document;
@@ -1067,7 +1078,7 @@ export default class EditorBase extends Marionette.Application {
 
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
-			this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], widgetConfig );
+			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
 		} );
 	}
 
@@ -1124,5 +1135,16 @@ export default class EditorBase extends Marionette.Application {
 				return elementor.widgetsCache;
 			},
 		} );
+	}
+
+	toggleDocumentCssFiles( document, state ) {
+		const selectors = [
+			`#elementor-post-${ document.config.id }-css`,
+			`#elementor-preview-${ document.config.revisions.current_id }`,
+		],
+			$files = this.$previewContents.find( selectors.join( ',' ) ),
+			type = state ? 'text/css' : 'elementor/disabled-css';
+
+		$files.attr( { type } );
 	}
 }

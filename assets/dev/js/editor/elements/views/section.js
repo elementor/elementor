@@ -268,7 +268,10 @@ const SectionView = BaseElementView.extend( {
 
 		// Delaying the slide down for slow-render browsers (such as FF)
 		setTimeout( function() {
-			addSectionView.$el.slideDown();
+			addSectionView.$el.slideDown( null, function() {
+				// Remove inline style, for preview mode.
+				jQuery( this ).css( 'display', '' );
+			} );
 		} );
 
 		this.addSectionView = addSectionView;

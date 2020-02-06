@@ -468,7 +468,7 @@ class Editor {
 			'pickr',
 			ELEMENTOR_ASSETS_URL . 'lib/pickr/pickr.min.js',
 			[],
-			'1.4.7',
+			'1.5.0',
 			true
 		);
 
@@ -521,8 +521,10 @@ class Editor {
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
 
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
+
 		$config = [
-			'initial_document' => Plugin::$instance->documents->get( $this->post_id )->get_config(),
+			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
@@ -549,7 +551,7 @@ class Editor {
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
-			'elementPromotionURL' => 'https://go.elementor.com/go-pro-',
+			'elementPromotionURL' => 'https://go.elementor.com/go-pro-%s',
 			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
 			'user' => [
@@ -768,8 +770,6 @@ class Editor {
 
 		$this->bc_move_document_filters();
 
-		$localized_settings = [];
-
 		/**
 		 * Localize editor settings.
 		 *
@@ -777,14 +777,10 @@ class Editor {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $localized_settings Localized settings.
-		 * @param int   $post_id            The ID of the current post being edited.
+		 * @param array $config  Editor configuration.
+		 * @param int   $post_id The ID of the current post being edited.
 		 */
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings );
-
-		if ( ! empty( $localized_settings ) ) {
-			$config = array_replace_recursive( $config, $localized_settings );
-		}
+		$config = apply_filters( 'elementor/editor/localize_settings', $config );
 
 		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
@@ -856,7 +852,7 @@ class Editor {
 			'pickr',
 			ELEMENTOR_ASSETS_URL . 'lib/pickr/themes/monolith.min.css',
 			[],
-			'1.4.7'
+			'1.5.0'
 		);
 
 		wp_register_style(

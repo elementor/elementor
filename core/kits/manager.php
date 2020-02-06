@@ -1,10 +1,11 @@
 <?php
 namespace Elementor\Core\Kits;
 
-use Elementor\Core\Documents_Manager;
-use Elementor\Core\Files\CSS\Post;
-use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
+use Elementor\Core\Documents_Manager;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,8 +18,13 @@ class Manager {
 
 	public function get_active_id() {
 		$id = get_option( self::OPTION_ACTIVE );
+		$kit_post = null;
 
-		if ( ! $id ) {
+		if ( $id ) {
+			$kit_post = get_post( $id );
+		}
+
+		if ( ! $id || ! $kit_post || 'trash' === $kit_post->post_status ) {
 			$id = $this->create_default();
 			update_option( self::OPTION_ACTIVE, $id );
 		}
@@ -49,8 +55,13 @@ class Manager {
 	}
 
 	public function localize_settings( $settings ) {
+		$kit = $this->get_active_kit();
+
 		$settings = array_replace_recursive( $settings, [
-			'kit_id' => $this->get_active_id(),
+			'kit_id' => $kit->get_main_id(),
+			'user' => [
+				'can_edit_kit' => $kit->is_editable_by_current_user(),
+			],
 			'i18n' => [
 				'Close' => __( 'Close', 'elementor' ),
 				'Back' => __( 'Back', 'elementor' ),
@@ -66,6 +77,9 @@ class Manager {
 
 		if ( $kit ) {
 			Plugin::$instance->frontend->print_fonts_links();
+
+			// On preview, the global style is not enqueued.
+			$this->frontend_before_enqueue_styles();
 		}
 	}
 
@@ -73,8 +87,14 @@ class Manager {
 		$kit = $this->get_kit_for_frontend();
 
 		if ( $kit ) {
-			$css = Post::create( $kit->get_main_id() );
-			$css->enqueue();
+			if ( $kit->is_autosave() ) {
+				$css_file = Post_Preview::create( $kit->get_id() );
+			} else {
+				$css_file = Post_CSS::create( $kit->get_id() );
+			}
+
+			$css_file->enqueue();
+			Plugin::$instance->frontend->add_body_class( 'elementor-kit-' . $kit->get_main_id() );
 		}
 	}
 
@@ -84,31 +104,23 @@ class Manager {
 
 	public function get_kit_for_frontend() {
 		$kit = false;
+		$active_kit = $this->get_active_kit();
+		$is_kit_preview = is_preview() && isset( $_GET['preview_id'] ) && $active_kit->get_main_id() === (int) $_GET['preview_id'];
 
-		$preview_id = $this->get_kit_preview_id();
-
-		if ( $preview_id ) {
-			$kit = Plugin::$instance->documents->get( $preview_id );
-		} else {
-			$active_kit = $this->get_active_kit();
-
-			if ( 'publish' === $active_kit->get_main_post()->post_status ) {
-				$kit = $active_kit;
-			}
+		if ( $is_kit_preview ) {
+			$kit = Plugin::$instance->documents->get_doc_or_auto_save( $active_kit->get_main_id(), get_current_user_id() );
+		} elseif ( 'publish' === $active_kit->get_main_post()->post_status ) {
+			$kit = $active_kit;
 		}
 
 		return $kit;
-	}
-
-	public function get_kit_preview_id() {
-		return empty( $_GET['kit_preview_id'] ) ? false : $_GET['kit_preview_id'];
 	}
 
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
-		add_action( 'elementor/frontend/before_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
+		add_action( 'elementor/frontend/after_enqueue_global', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 	}
 }

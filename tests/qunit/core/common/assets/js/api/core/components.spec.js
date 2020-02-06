@@ -852,227 +852,237 @@ jQuery( () => {
 			$e.routes.refreshContainer( namespace );
 		} );
 
-		QUnit.module( 'Shortcuts' );
+		QUnit.module( 'Shortcuts', ( hooks ) => {
+			const originalShortcuts = $e.shortcuts.handlers;
 
-		QUnit.test( 'Run shortcut', ( assert ) => {
-			const namespace = 'run-shortcut';
+			hooks.beforeEach( () => {
+				$e.shortcuts.handlers = {};
+			} );
 
-			let commandStatus = 'beforeRun';
+			hooks.afterEach( () => {
+				$e.shortcuts.handlers = originalShortcuts;
+			} );
 
-			const Component = class extends ComponentBase {
-				getNamespace() {
-					return namespace;
-				}
+			QUnit.test( 'Run shortcut', ( assert ) => {
+				const namespace = 'run-shortcut';
 
-				defaultCommands() {
-					return {
-						commandA: () => {
-							commandStatus = 'afterRun';
-						},
-					};
-				}
+				let commandStatus = 'beforeRun';
 
-				defaultShortcuts() {
-					return {
-						commandA: {
-							keys: 'ctrl+z',
-						},
-					};
-				}
-			};
+				const Component = class extends ComponentBase {
+					getNamespace() {
+						return namespace;
+					}
 
-			$e.components.register( new Component() );
+					defaultCommands() {
+						return {
+							commandA: () => {
+								commandStatus = 'afterRun';
+							},
+						};
+					}
 
-			// Simulate `CTRL+Z`.
-			CommonHelper.runShortcut( 90 /* z */, true );
+					defaultShortcuts() {
+						return {
+							commandA: {
+								keys: 'ctrl+z',
+							},
+						};
+					}
+				};
 
-			assert.equal( commandStatus, 'afterRun' );
-		} );
+				$e.components.register( new Component() );
 
-		QUnit.test( 'Run shortcut with scope', ( assert ) => {
-			const namespace = 'run-shortcut-with-scope';
+				// Simulate `CTRL+Z`.
+				CommonHelper.runShortcut( 90 /* z */, true );
 
-			let commandStatus = 'beforeRunInScope';
+				assert.equal( commandStatus, 'afterRun' );
+			} );
 
-			const Component = class extends ComponentBase {
-				getNamespace() {
-					return namespace;
-				}
+			QUnit.test( 'Run shortcut with scope', ( assert ) => {
+				const namespace = 'run-shortcut-with-scope';
 
-				defaultCommands() {
-					return {
-						commandA: () => {
-							commandStatus = 'afterRunInScope';
-						},
-					};
-				}
+				let commandStatus = 'beforeRunInScope';
 
-				defaultRoutes() {
-					return {
-						routeA: () => {},
-					};
-				}
+				const Component = class extends ComponentBase {
+					getNamespace() {
+						return namespace;
+					}
 
-				defaultShortcuts() {
-					return {
-						commandA: {
-							keys: 'ctrl+z',
-							scopes: [ namespace ],
-						},
-					};
-				}
-			};
+					defaultCommands() {
+						return {
+							commandA: () => {
+								commandStatus = 'afterRunInScope';
+							},
+						};
+					}
 
-			$e.components.register( new Component() );
+					defaultRoutes() {
+						return {
+							routeA: () => {},
+						};
+					}
 
-			// Outside scope.
-			CommonHelper.runShortcut( 90 /* z */, true );
+					defaultShortcuts() {
+						return {
+							commandA: {
+								keys: 'ctrl+z',
+								scopes: [ namespace ],
+							},
+						};
+					}
+				};
 
-			assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
+				$e.components.register( new Component() );
 
-			// Inside scope.
-			$e.route( namespace + '/routeA' );
+				// Outside scope.
+				CommonHelper.runShortcut( 90 /* z */, true );
 
-			CommonHelper.runShortcut( 90 /* z */, true );
+				assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
 
-			assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
+				// Inside scope.
+				$e.route( namespace + '/routeA' );
 
-			// Closed scope.
-			$e.components.get( namespace ).close();
+				CommonHelper.runShortcut( 90 /* z */, true );
 
-			commandStatus = 'beforeRunInScope';
+				assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
 
-			CommonHelper.runShortcut( 90 /* z */, true );
+				// Closed scope.
+				$e.components.get( namespace ).close();
 
-			assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran after close scope' );
+				commandStatus = 'beforeRunInScope';
 
-			// Second component with same shortcut.
-			let secondCommandStatus = 'beforeRun';
+				CommonHelper.runShortcut( 90 /* z */, true );
 
-			const SecondComponent = class extends ComponentBase {
-				getNamespace() {
-					return 'second-' + namespace;
-				}
+				assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran after close scope' );
 
-				defaultCommands() {
-					return {
-						commandA: () => {
-							secondCommandStatus = 'afterRun';
-						},
-					};
-				}
+				// Second component with same shortcut.
+				let secondCommandStatus = 'beforeRun';
 
-				defaultShortcuts() {
-					return {
-						commandA: {
-							keys: 'ctrl+z',
-						},
-					};
-				}
-			};
+				const SecondComponent = class extends ComponentBase {
+					getNamespace() {
+						return 'second-' + namespace;
+					}
 
-			$e.components.register( new SecondComponent() );
+					defaultCommands() {
+						return {
+							commandA: () => {
+								secondCommandStatus = 'afterRun';
+							},
+						};
+					}
 
-			// Activate the first component.
-			$e.route( namespace + '/routeA' );
+					defaultShortcuts() {
+						return {
+							commandA: {
+								keys: 'ctrl+z',
+							},
+						};
+					}
+				};
 
-			CommonHelper.runShortcut( 90 /* z */, true );
+				$e.components.register( new SecondComponent() );
 
-			assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
+				// Activate the first component.
+				$e.route( namespace + '/routeA' );
 
-			// Close the first component.
-			$e.components.get( namespace ).close();
+				CommonHelper.runShortcut( 90 /* z */, true );
 
-			CommonHelper.runShortcut( 90 /* z */, true );
+				assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
 
-			assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
-		} );
+				// Close the first component.
+				$e.components.get( namespace ).close();
 
-		QUnit.test( 'Modal component without a modal layout', ( assert ) => {
-			const namespace = 'modal-component-without-a-modal-layout';
+				CommonHelper.runShortcut( 90 /* z */, true );
 
-			const Component = class extends ComponentBaseModal {
-				getNamespace() {
-					return namespace;
-				}
-			};
+				assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
+			} );
 
-			const instance = new Component();
+			QUnit.test( 'Modal component without a modal layout', ( assert ) => {
+				const namespace = 'modal-component-without-a-modal-layout';
 
-			assert.throws(
-				() => {
-					instance.getModalLayout();
-				},
-				new Error( "Component.getModalLayout() should be implemented, please provide 'getModalLayout' functionality." )
-			);
-		} );
+				const Component = class extends ComponentBaseModal {
+					getNamespace() {
+						return namespace;
+					}
+				};
 
-		QUnit.test( 'Modal component with esc shortcut', ( assert ) => {
-			const namespace = 'modal-component-with-esc-shortcut';
+				const instance = new Component();
 
-			const Component = class extends ComponentBaseModal {
-				getNamespace() {
-					return namespace;
-				}
+				assert.throws(
+					() => {
+						instance.getModalLayout();
+					},
+					new Error( "Component.getModalLayout() should be implemented, please provide 'getModalLayout' functionality." )
+				);
+			} );
 
-				getModalLayout() {
-					const layout = class extends elementorModules.common.views.modal.Layout {
-						initialize() { /* do not render */ }
-					};
+			QUnit.test( 'Modal component with esc shortcut', ( assert ) => {
+				const namespace = 'modal-component-with-esc-shortcut';
 
-					return layout;
-				}
-			};
+				const Component = class extends ComponentBaseModal {
+					getNamespace() {
+						return namespace;
+					}
 
-			$e.components.register( new Component() );
+					getModalLayout() {
+						const layout = class extends elementorModules.common.views.modal.Layout {
+							initialize() { /* do not render */ }
+						};
 
-			$e.route( namespace );
+						return layout;
+					}
+				};
 
-			CommonHelper.runShortcut( 27 /* esc */ );
+				$e.components.register( new Component() );
 
-			assert.equal( $e.routes.is( namespace ), false, 'Component is closed by `esc` key.' );
+				$e.route( namespace );
 
-			// Second component.
-			const secondNamespace = 'second-' + namespace;
+				CommonHelper.runShortcut( 27 /* esc */ );
 
-			const SecondComponent = class extends ComponentBaseModal {
-				getNamespace() {
-					return secondNamespace;
-				}
+				assert.equal( $e.routes.is( namespace ), false, 'Component is closed by `esc` key.' );
 
-				getModalLayout() {
-					const layout = class extends elementorModules.common.views.modal.Layout {
-						initialize() { /* do not render */ }
-					};
+				// Second component.
+				const secondNamespace = 'second-' + namespace;
 
-					return layout;
-				}
-			};
+				const SecondComponent = class extends ComponentBaseModal {
+					getNamespace() {
+						return secondNamespace;
+					}
 
-			$e.components.register( new SecondComponent() );
+					getModalLayout() {
+						const layout = class extends elementorModules.common.views.modal.Layout {
+							initialize() { /* do not render */ }
+						};
 
-			const component = $e.components.get( namespace ),
-				secondComponent = $e.components.get( secondNamespace );
+						return layout;
+					}
+				};
 
-			// Activate the second component.
-			$e.route( secondNamespace );
+				$e.components.register( new SecondComponent() );
 
-			// Activate the first component.
-			$e.route( namespace );
+				const component = $e.components.get( namespace ),
+					secondComponent = $e.components.get( secondNamespace );
 
-			// Ensure tow components are open.
-			assert.equal( component.isOpen, true );
-			assert.equal( secondComponent.isOpen, true );
+				// Activate the second component.
+				$e.route( secondNamespace );
 
-			CommonHelper.runShortcut( 27 /* esc */ );
+				// Activate the first component.
+				$e.route( namespace );
 
-			// Modals should be closed in LIFO order.
-			assert.equal( component.isOpen, false, 'First Component is closed first' );
-			assert.equal( secondComponent.isOpen, true );
+				// Ensure tow components are open.
+				assert.equal( component.isOpen, true );
+				assert.equal( secondComponent.isOpen, true );
 
-			CommonHelper.runShortcut( 27 /* esc */ );
+				CommonHelper.runShortcut( 27 /* esc */ );
 
-			assert.equal( secondComponent.isOpen, false, 'Second Component is closed too' );
+				// Modals should be closed in LIFO order.
+				assert.equal( component.isOpen, false, 'First Component is closed first' );
+				assert.equal( secondComponent.isOpen, true );
+
+				CommonHelper.runShortcut( 27 /* esc */ );
+
+				assert.equal( secondComponent.isOpen, false, 'Second Component is closed too' );
+			} );
 		} );
 	} );
 } );

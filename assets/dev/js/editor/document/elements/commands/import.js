@@ -18,20 +18,20 @@ export class Import extends History {
 	}
 
 	apply( args ) {
-		const previewContainer = elementor.getPreviewContainer(),
-			{
-				data,
-				options = args.options || {},
-				at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at,
-			} = args;
+		const { data, options = args.options || {} } = args,
+			previewContainer = elementor.getPreviewContainer(),
+			result = [];
+
+		let at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at;
 
 		// Each `data.content`.
 		Object.entries( data.content ).forEach( ( [ index, model ] ) => {
-			$e.run( 'document/elements/create', {
+			result.push( $e.run( 'document/elements/create', {
 				container: elementor.getPreviewContainer(),
 				model,
-				options: Object.assign( { at: at + index }, options ),
-			} );
+				options: Object.assign( options, { at } ),
+			} ) );
+			at++;
 		} );
 
 		if ( options.withPageSettings ) {
@@ -43,6 +43,8 @@ export class Import extends History {
 				},
 			} );
 		}
+
+		return result;
 	}
 }
 

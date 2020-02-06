@@ -1,8 +1,8 @@
-export default class Base extends elementorModules.Module {
+export default class HooksBase extends elementorModules.Module {
 	/**
 	 * Function constructor().
 	 *
-	 * Create Callbacks base.
+	 * Create hooks base.
 	 *
 	 * @param {{}} args
 	 */
@@ -218,7 +218,7 @@ export default class Base extends elementorModules.Module {
 	 * @param {string} event
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}} Current callback
+	 * @returns {{}} Created callback
 	 */
 	register( event, instance ) {
 		const command = instance.getCommand(),

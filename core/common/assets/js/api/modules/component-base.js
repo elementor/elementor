@@ -6,22 +6,26 @@ export default class ComponentBase extends elementorModules.Module {
 
 		this.commands = this.defaultCommands();
 		this.commandsInternal = this.defaultCommandsInternal();
+		this.hooks = this.defaultHooks();
 		this.routes = this.defaultRoutes();
 		this.tabs = this.defaultTabs();
 		this.shortcuts = this.defaultShortcuts();
+		this.utils = this.defaultUtils();
 
 		this.defaultRoute = '';
 		this.currentTab = '';
 	}
 
 	registerAPI() {
-		jQuery.each( this.getTabs(), ( tab ) => this.registerTabRoute( tab ) );
+		Object.entries( this.getTabs() ).forEach( ( tab ) => this.registerTabRoute( tab[ 0 ] ) );
 
-		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
+		Object.entries( this.getRoutes() ).forEach( ( [ route, callback ] ) => this.registerRoute( route, callback ) );
 
-		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
+		Object.entries( this.getCommands() ).forEach( ( [ command, callback ] ) => this.registerCommand( command, callback ) );
 
-		jQuery.each( this.getCommandsInternal(), ( command, callback ) => this.registerCommandInternal( command, callback ) );
+		Object.entries( this.getCommandsInternal() ).forEach( ( [ command, callback ] ) => this.registerCommandInternal( command, callback ) );
+
+		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) );
 	}
 
 	getNamespace() {
@@ -49,7 +53,15 @@ export default class ComponentBase extends elementorModules.Module {
 		return {};
 	}
 
+	defaultHooks() {
+		return {};
+	}
+
 	defaultShortcuts() {
+		return {};
+	}
+
+	defaultUtils() {
 		return {};
 	}
 
@@ -59,6 +71,10 @@ export default class ComponentBase extends elementorModules.Module {
 
 	getCommandsInternal() {
 		return this.commandsInternal;
+	}
+
+	getHooks() {
+		return this.hooks;
 	}
 
 	getRoutes() {
@@ -75,6 +91,13 @@ export default class ComponentBase extends elementorModules.Module {
 
 	registerCommand( command, callback ) {
 		$e.commands.register( this, command, callback );
+	}
+
+	/**
+	 * @param {HookBase} instance
+	 */
+	registerHook( instance ) {
+		return instance.register();
 	}
 
 	registerCommandInternal( command, callback ) {
@@ -202,6 +225,10 @@ export default class ComponentBase extends elementorModules.Module {
 			.addClass( 'elementor-active' );
 	}
 
+	getActiveTabConfig() {
+		return this.tabs[ this.currentTab ] || {};
+	}
+
 	getBodyClass( route ) {
 		return 'e-route-' + route.replace( /\//g, '-' );
 	}
@@ -224,6 +251,18 @@ export default class ComponentBase extends elementorModules.Module {
 		} );
 
 		return commands;
+	}
+
+	importHooks( hooksFromImport ) {
+		const hooks = {};
+
+		for ( const key in hooksFromImport ) {
+			const hook = new hooksFromImport[ key ];
+
+			hooks[ hook.getId() ] = hook;
+		}
+
+		return hooks;
 	}
 
 	toggleRouteClass( route, state ) {

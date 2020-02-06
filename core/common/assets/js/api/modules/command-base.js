@@ -1,16 +1,12 @@
-/**
- * TODO: Should we do validate function in scenarios where args are are not required.
- * but should be validate?
- */
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
 	/**
-	 * Current component (elementorModules.Module ).
+	 * Current component.
 	 *
-	 * @type {{}}
+	 * @type {Component}
 	 */
-	component = {};
+	component;
 
 	/**
 	 * Function constructor().
@@ -23,12 +19,10 @@ export default class CommandBase extends ArgsObject {
 		super( args );
 
 		// Acknowledge self about which command it run.
-		this.currentCommand = commandsAPI.getCurrentFirst();
+		this.currentCommand = commandsAPI.getCurrentLast();
 
 		// Assign instance of current component.
 		this.component = commandsAPI.getComponent( this.currentCommand );
-
-		// TODO: if `this.component` not found, throw error !.
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );

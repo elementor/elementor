@@ -1,4 +1,4 @@
-const arrowIconClass = 'eicon-arrow-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
+const arrowIconClass = 'eicon-chevron-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
 
 const buttonBack = `
 <div id="elementor-panel-header-kit-back" class="elementor-header-button">

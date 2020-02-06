@@ -39,6 +39,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	initialize: function() {
 		$e.components.register( new PanelComponent( { manager: this } ) );
 
+		$e.internal( 'panel/state-loading' );
+
 		$e.components.register( new ElementsComponent( { manager: this } ) );
 
 		$e.components.register( new EditorComponent( { manager: this } ) );

@@ -39,7 +39,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 	}
 
 	defaultSave() {
-		elementorCommon.helpers.softDeprecated( 'saveDraft', '2.9.0', "$e.run( 'document/save/default' )" );
+		elementorCommon.helpers.softDeprecated( 'defaultSave', '2.9.0', "$e.run( 'document/save/default' )" );
 
 		return $e.run( 'document/save/default' );
 	}

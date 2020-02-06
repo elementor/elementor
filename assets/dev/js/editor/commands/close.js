@@ -11,13 +11,14 @@ export class Close extends CommandBase {
 
 		// Already closed.
 		if ( 'closed' === document.editor.status ) {
-			return;
+			return jQuery.Deferred().resolve();
 		}
 
 		// TODO: Move to an hook.
-		if ( ! mode && elementor.saver.isEditorChanged() ) {
-			this.getConfirmDialog().show();
-			return;
+		if ( ! mode && ( document.editor.isChanged || document.isDraft() ) ) {
+			const deferred = jQuery.Deferred();
+			this.getConfirmDialog( deferred ).show();
+			return deferred.promise();
 		}
 
 		switch ( mode ) {
@@ -32,11 +33,13 @@ export class Close extends CommandBase {
 		elementor.unloadDocument( document );
 
 		if ( onClose ) {
-			onClose( document );
+			await onClose( document );
 		}
+
+		return jQuery.Deferred().resolve();
 	}
 
-	getConfirmDialog() {
+	getConfirmDialog( deferred ) {
 		if ( this.confirmDialog ) {
 			return this.confirmDialog;
 		}
@@ -53,17 +56,31 @@ export class Close extends CommandBase {
 				confirm: elementor.translate( 'Save' ),
 				cancel: elementor.translate( 'Discard' ),
 			},
+			onHide: () => {
+				// If still not action chosen. use `defer` because onHide is called before onConfirm/onCancel.
+				_.defer( () => {
+					if ( ! this.args.mode ) {
+						deferred.reject( 'Close document has been canceled.' );
+					}
+				} );
+			},
 			onConfirm: () => {
 				this.args.mode = 'save';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args );
+				$e.run( 'editor/documents/close', this.args )
+					.then( () => {
+						deferred.resolve();
+					} );
 			},
 			onCancel: () => {
 				this.args.mode = 'discard';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args );
+				$e.run( 'editor/documents/close', this.args )
+					.then( () => {
+						deferred.resolve();
+					} );
 			},
 		} );
 
