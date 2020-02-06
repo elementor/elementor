@@ -23,6 +23,7 @@ export class Open extends CommandBase {
 
 				$e.run( 'editor/documents/switch', {
 					id: elementor.config.kit_id,
+					mode: 'autosave',
 				} ).finally( () => {
 					resolve();
 
