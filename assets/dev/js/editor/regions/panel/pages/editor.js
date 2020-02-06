@@ -39,12 +39,16 @@ EditorView = ControlsStack.extend( {
 	initialize: function() {
 		ControlsStack.prototype.initialize.apply( this, arguments );
 
-		var panelSettings = this.model.get( 'editSettings' ).get( 'panel' );
+		const editSettings = this.model.get( 'editSettings' );
 
-		if ( panelSettings ) {
-			this.activeTab = panelSettings.activeTab;
+		if ( editSettings ) {
+			const panelSettings = editSettings.get( 'panel' );
 
-			this.activeSection = panelSettings.activeSection;
+			if ( panelSettings ) {
+				this.activeTab = panelSettings.activeTab;
+
+				this.activeSection = panelSettings.activeSection;
+			}
 		}
 	},
 
