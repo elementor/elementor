@@ -25,8 +25,7 @@ export default class Component extends ComponentBase {
 		return {
 			open: ( args ) => {
 				if ( ! this.setDefaultTab( args ) ) {
-					elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0',
-						'editSettings.defaultEditRoute' );
+					elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
 
 					args.model.trigger( 'request:edit' );
 				} else {
