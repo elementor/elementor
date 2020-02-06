@@ -8,7 +8,7 @@ ElementModel = Backbone.Model.extend( {
 		isInner: false,
 		settings: {},
 		defaultEditSettings: {
-			editTab: 'content',
+			defaultEditRoute: 'content',
 		},
 	},
 
