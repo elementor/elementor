@@ -25,7 +25,6 @@ export default class Component extends ComponentBase {
 		return {
 			open: ( args ) => {
 				if ( ! this.setDefaultTab( args ) ) {
-					// TODO: Remove - Backwards compatibility.
 					elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0',
 						'editSettings.defaultEditRoute' );
 
