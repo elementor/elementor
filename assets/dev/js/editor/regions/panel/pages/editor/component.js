@@ -47,18 +47,17 @@ export default class Component extends ComponentBase {
 
 		if ( this.activeTabs[ args.model.id ] ) {
 			defaultTab = this.activeTabs[ args.model.id ];
-		} else if ( editSettings && editSettings.get( 'editTab' ) ) {
-			defaultTab = editSettings.get( 'editTab' );
-		} else {
-			defaultTab = jQuery( this.getTabsWrapperSelector() ).find( '.elementor-component-tab' ).eq( 0 ).data( 'tab' );
+		} else if ( editSettings && editSettings.get( 'defaultEditRoute' ) ) {
+			defaultTab = editSettings.get( 'defaultEditRoute' );
 		}
 
-		// For unit test.
-		if ( ! defaultTab ) {
-			defaultTab = 'content';
+		if ( defaultTab ) {
+			this.setDefaultRoute( defaultTab );
+
+			return true;
 		}
 
-		this.setDefaultRoute( defaultTab );
+		return false;
 	}
 
 	openEditor( model, view ) {
