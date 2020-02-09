@@ -488,6 +488,11 @@ class Kit extends PageBase {
 
 	private function add_form_fields_section() {
 		// Use an array for better readability.
+		$label_selectors = [
+			'{{WRAPPER}} label',
+			'{{WRAPPER}} .elementor-widget-form .elementor-field-group > label',
+		];
+
 		$input_selectors = [
 			'{{WRAPPER}} input:not([type="button"]):not([type="submit"])',
 			'{{WRAPPER}} textarea',
@@ -500,6 +505,7 @@ class Kit extends PageBase {
 			'{{WRAPPER}} .elementor-field-textual:focus',
 		];
 
+		$label_selector = implode( ',', $label_selectors );
 		$input_selector = implode( ',', $input_selectors );
 		$input_focus_selector = implode( ',', $input_focus_selectors );
 
@@ -525,7 +531,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} label' => 'color: {{VALUE}};',
+					$label_selector => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -535,7 +541,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
-				'selector' => '{{WRAPPER}} label',
+				'selector' => $label_selector,
 			]
 		);
 
