@@ -138,7 +138,7 @@ class Kit extends PageBase {
 				[
 					'name' => $current_section['section'] . '_schemes_notice',
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'In order for Theme Style to affect Elementor elements, please disable Elementor\'s Default Colors and Fonts from <a href="' . Settings::get_url() . '" target="_blank">Elementor Settings.</a>', 'elementor' ),
+					'raw' => sprintf( __( 'In order for Theme Style to affect Elementor elements, please disable Elementor\'s Default Colors and Fonts from <a href="%s" target="_blank">Elementor Settings.</a>', 'elementor' ), Settings::get_url() ),
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 					'render_type' => 'ui',
 				]
