@@ -188,7 +188,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
-		const revision = ( null === this.currentPreviewId || elementor.config.current_revision_id === this.currentPreviewId );
+		const revision = ( null === this.currentPreviewId || elementor.config.document.revisions.current_id === this.currentPreviewId );
 
 		if ( revision && elementor.saver.isEditorChanged() ) {
 			// TODO: Change to 'document/save/auto' ?.
