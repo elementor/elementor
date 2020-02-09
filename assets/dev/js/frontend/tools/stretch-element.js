@@ -16,6 +16,11 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	stretch: function() {
+		// On change Page Layout to Canvas maybe the element is not exist.
+		if ( this.elements.$element.length ) {
+			return;
+		}
+
 		var containerSelector = this.getSettings( 'selectors.container' ),
 			$container;
 
