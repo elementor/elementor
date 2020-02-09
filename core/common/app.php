@@ -120,7 +120,7 @@ class App extends BaseApp {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.4',
+			'4.7.5',
 			true
 		);
 
