@@ -129,14 +129,14 @@ class Kit extends PageBase {
 	}
 
 	private function add_schemes_notice() {
-		// Get the current section to use for unique the control ID
-		$section_id = $this->get_current_section();
+		// Get the current section config (array - section id and tab) to use for creating a unique control ID and name
+		$current_section = $this->get_current_section();
 
 		if ( ! $this->custom_colors_disabled || ! $this->typography_schemes_disabled ) {
 			$this->add_control(
-				$section_id['section'] . '_schemes_notice',
+				$current_section['section'] . '_schemes_notice',
 				[
-					'name' => $section_id['section'] . '_schemes_notice',
+					'name' => $current_section['section'] . '_schemes_notice',
 					'type' => Controls_Manager::RAW_HTML,
 					'raw' => __( 'In order for Theme Style to affect Elementor elements, please disable Elementor\'s Default Colors and Fonts from <a href="' . Settings::get_url() . '" target="_blank">Elementor Settings.</a>', 'elementor' ),
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
