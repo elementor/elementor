@@ -490,7 +490,6 @@ class Kit extends PageBase {
 		// Use an array for better readability.
 		$label_selectors = [
 			'{{WRAPPER}} label',
-			'{{WRAPPER}} .elementor-widget-form .elementor-field-group > label',
 		];
 
 		$input_selectors = [
