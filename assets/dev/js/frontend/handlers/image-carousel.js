@@ -52,7 +52,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
 				delay: elementSettings.autoplay_speed,
-				disableOnInteraction: !! elementSettings.pause_on_interaction,
+				disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
 			};
 		}
 
@@ -115,7 +115,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		// Expose the swiper instance in the frontend
 		this.elements.$carousel.data( 'swiper', this.swiper );
 
-		if ( elementSettings.pause_on_hover ) {
+		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.elements.$carousel.on( {
 				mouseenter: () => {
 					this.swiper.autoplay.stop();
