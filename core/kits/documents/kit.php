@@ -352,7 +352,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}, {{WRAPPER}} .elementor-widget-text-editor' => 'color: {{VALUE}};',
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -362,7 +362,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'body_typography',
-				'selector' => '{{WRAPPER}}, {{WRAPPER}} .elementor-widget-text-editor',
+				'selector' => '{{WRAPPER}}',
 			]
 		);
 
@@ -476,23 +476,18 @@ class Kit extends PageBase {
 		$this->end_controls_tabs();
 
 		// Headings.
-		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1,{{WRAPPER}} h1.elementor-heading-title' );
-		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2,{{WRAPPER}} h2.elementor-heading-title' );
-		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3,{{WRAPPER}} h3.elementor-heading-title' );
-		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4,{{WRAPPER}} h4.elementor-heading-title' );
-		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5,{{WRAPPER}} h5.elementor-heading-title' );
-		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6,{{WRAPPER}} h6.elementor-heading-title' );
+		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
+		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2' );
+		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3' );
+		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4' );
+		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5' );
+		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6' );
 
 		$this->end_controls_section();
 	}
 
 	private function add_form_fields_section() {
 		// Use an array for better readability.
-		$label_selectors = [
-			'{{WRAPPER}} label',
-			'{{WRAPPER}} .elementor-widget-form .elementor-field-group > label',
-		];
-
 		$input_selectors = [
 			'{{WRAPPER}} input:not([type="button"]):not([type="submit"])',
 			'{{WRAPPER}} textarea',
@@ -505,7 +500,6 @@ class Kit extends PageBase {
 			'{{WRAPPER}} .elementor-field-textual:focus',
 		];
 
-		$label_selector = implode( ',', $label_selectors );
 		$input_selector = implode( ',', $input_selectors );
 		$input_focus_selector = implode( ',', $input_focus_selectors );
 
@@ -531,7 +525,7 @@ class Kit extends PageBase {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					$label_selector => 'color: {{VALUE}};',
+					'{{WRAPPER}} label' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -541,7 +535,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
-				'selector' => $label_selector,
+				'selector' => '{{WRAPPER}} label',
 			]
 		);
 
