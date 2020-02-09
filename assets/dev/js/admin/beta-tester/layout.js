@@ -18,6 +18,9 @@ export default class BetaTesterLayout extends elementorModules.common.views.moda
 	getModalOptions() {
 		return {
 			id: 'elementor-beta-tester-modal',
+			hide: {
+				onBackgroundClick: false,
+			},
 		};
 	}
 

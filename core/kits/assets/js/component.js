@@ -1,4 +1,4 @@
-import EnqueueFonts from './hooks/ui/settings/enqueue-fonts';
+import * as hooks from './hooks';
 import * as commands from './commands/';
 
 export default class extends $e.modules.ComponentBase {
@@ -6,12 +6,6 @@ export default class extends $e.modules.ComponentBase {
 
 	getNamespace() {
 		return 'panel/global';
-	}
-
-	registerAPI() {
-		super.registerAPI();
-
-		new EnqueueFonts();
 	}
 
 	defaultTabs() {
@@ -36,6 +30,10 @@ export default class extends $e.modules.ComponentBase {
 				},
 			},
 		};
+	}
+
+	defaultHooks() {
+		return this.importHooks( hooks );
 	}
 
 	renderTab( tab ) {
