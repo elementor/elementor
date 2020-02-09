@@ -199,10 +199,15 @@ export default class HistoryModule {
 			elementor.helpers.scrollToView( viewToScroll.$el );
 		}
 
+		/**
+		 * Originally it was change modified state only when selected item was 'Editing Started',
+		 * and the set modified status was based on editorSaved.
+		 */
 		$e.internal( 'document/save/set-is-modified', {
-			status: item.get( 'id' ) === this.document.editor.lastSaveHistoryId,
+			status: item.get( 'id' ) !== this.document.editor.lastSaveHistoryId,
 		} );
 
+		// Save last selected item.
 		this.selected = item;
 	}
 
