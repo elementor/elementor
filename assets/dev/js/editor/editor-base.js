@@ -635,10 +635,6 @@ export default class EditorBase extends Marionette.Application {
 		// TODO: Should be command?
 		jQuery( '#elementor-preview-loading' ).show();
 
-		this.once( 'preview:loaded', () => {
-			this.onDocumentLoaded( this.documents.getCurrent() );
-		} );
-
 		this.$preview[ 0 ].contentWindow.location.reload( true );
 	}
 
@@ -805,6 +801,7 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
+
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
@@ -838,6 +835,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
+
+		$e.internal( 'editor/documents/attach-preview' );
 
 		this.loaded = true;
 	}
@@ -950,72 +949,6 @@ export default class EditorBase extends Marionette.Application {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	}
 
-	onDocumentLoaded( document ) {
-		this.checkPageStatus();
-
-		// Reference container back to document.
-		document.container.document = document;
-
-		if ( this.heartbeat ) {
-			this.heartbeat.destroy();
-		}
-
-		this.heartbeat = new Heartbeat( document );
-
-		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
-
-		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
-			this.showFlexBoxAttentionDialog();
-		}
-
-		if ( document.config.elements ) {
-			this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );
-
-			if ( ! this.$previewElementorEl.length ) {
-				this.onPreviewElNotFound();
-
-				return;
-			}
-
-			this.$previewElementorEl.addClass( 'elementor-edit-area' );
-
-			this.initElements();
-
-			const iframeRegion = new Marionette.Region( {
-				// Make sure you get the DOM object out of the jQuery object
-				el: this.$previewElementorEl[ 0 ],
-			} );
-
-			this.addRegions( {
-				sections: iframeRegion,
-			} );
-
-			const Preview = require( 'elementor-views/preview' );
-
-			this.sections.show( new Preview( { model: this.elementsModel } ) );
-
-			this.initNavigator();
-
-			this.onEditModeSwitched();
-
-			document.container.view = elementor.getPreviewView();
-			document.container.children = elementor.elements;
-			document.container.model.attributes.elements = elementor.elements;
-
-			this.helpers.scrollToView( this.$previewElementorEl );
-
-			this.$previewElementorEl
-			.addClass( 'elementor-edit-area-active' )
-			.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
-		}
-
-		$e.internal( 'panel/open-default', {
-			refresh: true,
-		} );
-
-		this.trigger( 'document:loaded', document );
-	}
-
 	unloadDocument( document ) {
 		if ( document.id !== this.config.document.id ) {
 			return;
@@ -1063,14 +996,27 @@ export default class EditorBase extends Marionette.Application {
 
 		document.container = this.settings.page.getEditedView().getContainer();
 
-		this.once( 'preview:loaded', () => this.onDocumentLoaded( document ) );
+		// Reference container back to document.
+		document.container.document = document;
+
+		if ( this.heartbeat ) {
+			this.heartbeat.destroy();
+		}
+
+		this.heartbeat = new Heartbeat( document );
+
+		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
+
+		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
+			this.showFlexBoxAttentionDialog();
+		}
+
+		if ( document.config.elements ) {
+			this.initNavigator();
+		}
 
 		if ( this.loaded ) {
-			this.schemes.printSchemesStyle();
-
-			this.$preview.trigger( 'load' );
-
-			this.toggleDocumentCssFiles( document, false );
+			$e.internal( 'editor/documents/attach-preview' );
 		}
 
 		return document;
