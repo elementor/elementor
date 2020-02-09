@@ -10,12 +10,23 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Kit extends PageBase {
+
+	private $custom_colors_disabled;
+	private $typography_schemes_disabled;
+
+	public function __construct( array $data = [] ) {
+		parent::__construct( $data );
+
+		$this->custom_colors_disabled = get_option( 'elementor_disable_color_schemes' );
+		$this->typography_schemes_disabled = get_option( 'elementor_disable_typography_schemes' );
+	}
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -117,6 +128,24 @@ class Kit extends PageBase {
 		);
 	}
 
+	private function add_schemes_notice() {
+		// Get the current section to use for unique the control ID
+		$section_id = $this->get_current_section();
+
+		if ( ! $this->custom_colors_disabled || ! $this->typography_schemes_disabled ) {
+			$this->add_control(
+				$section_id['section'] . '_schemes_notice',
+				[
+					'name' => $section_id['section'] . '_schemes_notice',
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => __( 'In order for Theme Style to affect Elementor elements, please disable Elementor\'s Default Colors and Fonts from <a href="' . Settings::get_url() . '" target="_blank">Elementor Settings.</a>', 'elementor' ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+					'render_type' => 'ui',
+				]
+			);
+		}
+	}
+
 	private function add_body_section() {
 		$this->start_controls_section(
 			'section_body',
@@ -125,6 +154,8 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
@@ -173,6 +204,8 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
@@ -337,6 +370,8 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
 
 		$this->add_control(
 			'body_heading',
@@ -517,6 +552,8 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_schemes_notice();
+
 		$this->add_control(
 			'form_label_heading',
 			[
@@ -643,6 +680,9 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
+
 		$this->start_controls_tabs( 'tabs_image_style' );
 
 		$this->start_controls_tab(
