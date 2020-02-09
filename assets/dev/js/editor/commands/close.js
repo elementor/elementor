@@ -22,6 +22,9 @@ export class Close extends CommandBase {
 		}
 
 		switch ( mode ) {
+			case 'autosave':
+				await $e.run( 'document/save/auto' );
+				break;
 			case 'save':
 				await $e.run( 'document/save/update' );
 				break;
