@@ -636,7 +636,7 @@ export default class EditorBase extends Marionette.Application {
 		jQuery( '#elementor-preview-loading' ).show();
 
 		this.once( 'preview:loaded', () => {
-			this.onDocumentLoaded( this.documents.getCurrent() );
+			this.onDocumentLoaded( this.documents.getCurrent(), true );
 		} );
 
 		this.$preview[ 0 ].contentWindow.location.reload( true );
@@ -950,8 +950,10 @@ export default class EditorBase extends Marionette.Application {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	}
 
-	onDocumentLoaded( document ) {
-		this.checkPageStatus();
+	onDocumentLoaded( document, isReloaded = false ) {
+		if ( ! isReloaded ) {
+			this.checkPageStatus();
+		}
 
 		// Reference container back to document.
 		document.container.document = document;
