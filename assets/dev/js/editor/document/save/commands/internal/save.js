@@ -5,7 +5,7 @@ export class Save extends CommandInternalBase {
 		const { status = 'draft', force = false, onSuccess = null, document = elementor.documents.getCurrent() } = args;
 
 		if ( ! force && document.editor.isSaving ) {
-			return;
+			return jQuery.Deferred().reject( 'Document already in save progress' );
 		}
 
 		const container = document.container,
