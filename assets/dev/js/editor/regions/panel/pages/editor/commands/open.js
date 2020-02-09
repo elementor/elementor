@@ -2,11 +2,15 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Open extends CommandBase {
 	apply( args ) {
-		this.component.openEditor( args.model, args.view );
+		if ( ! this.component.setDefaultTab( args ) ) {
+			elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
 
-		this.component.setDefaultTab( args );
+			args.model.trigger( 'request:edit' );
+		} else {
+			this.component.openEditor( args.model, args.view );
 
-		$e.route( this.component.getDefaultRoute(), args );
+			$e.route( this.component.getDefaultRoute(), args );
+		}
 
 		// BC: Run hooks after the route render's the view.
 		const action = 'panel/open_editor/' + args.model.get( 'elType' );
@@ -15,7 +19,11 @@ export class Open extends CommandBase {
 		elementor.hooks.doAction( action, this.component.manager, args.model, args.view );
 
 		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + args.model.get( 'widgetType' ), this.component.manager, args.model, args.view );
+		elementor.hooks.doAction( action + '/' + args.model.get( 'widgetType' ),
+			this.component.manager,
+			args.model,
+			args.view
+		);
 	}
 }
 

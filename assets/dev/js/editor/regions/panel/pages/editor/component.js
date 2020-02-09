@@ -41,9 +41,9 @@ export default class Component extends ComponentBase {
 	}
 
 	setDefaultTab( args ) {
-		const editSettings = args.model.get( 'editSettings' );
-
 		let defaultTab;
+
+		const editSettings = args.model.get( 'editSettings' );
 
 		if ( this.activeTabs[ args.model.id ] ) {
 			defaultTab = this.activeTabs[ args.model.id ];
