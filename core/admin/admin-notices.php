@@ -19,7 +19,6 @@ class Admin_Notices extends Module {
 		'api_upgrade_plugin',
 		'tracker',
 		'rate_us_feedback',
-		//'get_started',
 		'woocommerce_promote',
 		'cf7_promote',
 		'mc4wp_promote',
@@ -264,38 +263,6 @@ class Admin_Notices extends Module {
 					<p class="elementor-message-actions">
 						<a href="https://go.elementor.com/admin-review/" target="_blank" class="button button-primary"><?php _e( 'Happy To Help', 'elementor' ); ?></a>
 						<a href="<?php echo esc_url_raw( $dismiss_url ); ?>" class="button elementor-button-notice-dismiss"><?php _e( 'Hide Notification', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
-
-		return true;
-	}
-
-	private function notice_get_started() {
-		$notice_id = 'get_started_notice';
-
-		if ( strtotime( '+5 days', $this->get_install_time() ) > time() ) {
-			return false;
-		}
-
-		if ( 1 <= $this->get_elementor_pages_count() || User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
-
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php _e( 'Not sure where to begin? Why don\'t you start with one of our designer-made templates.', 'elementor' ); ?></p>
-					<p class="elementor-message-actions">
-						<a href="https://library.elementor.com/" target="_blank" class="button button-primary"><?php _e( 'Open template library', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
