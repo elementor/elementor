@@ -19,8 +19,8 @@ jQuery( () => {
 				documentConfigSlave = { id: 3 };
 
 			// Add fake documents.
-			const documentMaster = elementor.documents.addDocumentByConfig( documentConfigMaster, elementor.getPreviewContainer() ),
-				documentSlave = elementor.documents.addDocumentByConfig( documentConfigSlave, elementor.getPreviewContainer() );
+			const documentMaster = elementor.documents.addDocumentByConfig( documentConfigMaster ),
+				documentSlave = elementor.documents.addDocumentByConfig( documentConfigSlave );
 
 			// Set current document to master.
 			elementor.documents.setCurrent( documentMaster );

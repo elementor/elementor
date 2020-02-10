@@ -88,20 +88,11 @@ export default class Document {
 		this.config = config;
 		this.id = config.id;
 
-		this.initialize();
+		this.history = new HistoryManager();
+		this.revisions = new RevisionsManager( this );
 	}
 
 	isDraft() {
 		return this.config.revisions.current_id !== this.config.id;
-	}
-
-	/**
-	 * Function initialize().
-	 *
-	 * Initialize document.
-	 */
-	initialize() {
-		this.history = new HistoryManager();
-		this.revisions = new RevisionsManager( this );
 	}
 }
