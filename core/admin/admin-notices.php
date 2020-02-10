@@ -316,11 +316,15 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'edit-product', 'woocommerce_page_wc-settings', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ! in_array( $this->current_screen_id, [ 'edit-product', 'woocommerce_page_wc-settings' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
-		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+			return false;
+		}
+
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -356,11 +360,15 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_wpcf7', 'contact_page_wpcf7-integration', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_wpcf7', 'contact_page_wpcf7-integration' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
-		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+			return false;
+		}
+
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -396,11 +404,15 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_mailchimp-for-wp', 'mc4wp_page_mailchimp-for-wp-forms', 'mc4wp_page_mailchimp-for-wp-integrations', 'mc4wp_page_mailchimp-for-wp-other', 'mc4wp_page_mailchimp-for-wp-extensions', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_mailchimp-for-wp', 'mc4wp_page_mailchimp-for-wp-forms', 'mc4wp_page_mailchimp-for-wp-integrations', 'mc4wp_page_mailchimp-for-wp-other', 'mc4wp_page_mailchimp-for-wp-extensions' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
-		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+			return false;
+		}
+
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -436,11 +448,15 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'edit-popup', 'popup_page_pum-settings', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ! in_array( $this->current_screen_id, [ 'edit-popup', 'popup_page_pum-settings' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
-		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+			return false;
+		}
+
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -485,7 +501,7 @@ class Admin_Notices extends Module {
 			'number' => 10,
 		] );
 
-		if ( 5 >= $users->get_total() ) {
+		if ( 5 > $users->get_total() ) {
 			return false;
 		}
 
