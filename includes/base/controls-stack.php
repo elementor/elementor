@@ -209,6 +209,16 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_editable() {
+		return true;
+	}
+
+	/**
 	 * Get items.
 	 *
 	 * Utility method that receives an array with a needle and returns all the
