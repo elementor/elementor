@@ -333,9 +333,9 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Using WooCommerce? With Elementor\'s WooCommerce Builder, you\'ll be able to design your store without coding!', 'elementor' ); ?></p>
+					<p><?php _e( 'Using WooCommerce? With Elementor Pro’s WooCommerce Builder, you’ll be able to design your store without coding!', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-woocommerce/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/plugin-promotion-woocommerce/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -373,9 +373,9 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Did you know? Forms convert better when you design them visually. Try out Elementor Forms now.', 'elementor' ); ?></p>
+					<p><?php _e( 'Using Elementor & Contact Form 7? Try out Elementor Pro and design your forms visually with one powerful tool.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-contactform7/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/plugin-promotion-contactform7/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -413,9 +413,9 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Did you know? Forms convert better when you design them visually. Try out Elementor Forms now.', 'elementor' ); ?></p>
+					<p><?php _e( 'Want to design better MailChimp forms? Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-mc4wp/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/plugin-promotion-mc4wp/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -453,9 +453,9 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Using a popup plugin? Avoid the patchwork and build your popups directly on Elementor.', 'elementor' ); ?></p>
+					<p><?php _e( 'Using popups on your site? Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-popupmaker/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/plugin-promotion-popupmaker/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -498,9 +498,9 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Managing several users logging into your site? Control their access using Elementor\'s role manager.', 'elementor' ); ?></p>
+					<p><?php _e( 'Managing a multi-user site? With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/go-pro/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/promotion-role-manager/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
