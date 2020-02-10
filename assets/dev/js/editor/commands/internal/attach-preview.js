@@ -4,7 +4,7 @@ export class AttachPreview extends CommandBase {
 	apply() {
 		const document = elementor.documents.getCurrent();
 
-		this.attachDocumentToPreview( document )
+		return this.attachDocumentToPreview( document )
 			.then( () => {
 				elementor.toggleDocumentCssFiles( document, false );
 
