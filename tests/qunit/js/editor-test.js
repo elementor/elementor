@@ -12,12 +12,14 @@ export default class EditorTest extends EditorBase {
 			}
 
 			if ( QUnit.config.showUI ) {
+				// eslint-disable-next-line no-console
 				console.log( `Test: ${ module } -> ${ name }` );
 			}
 		} );
 
 		QUnit.testDone( ( { module, name } ) => {
 			if ( QUnit.config.showUI ) {
+				// eslint-disable-next-line no-console
 				console.log( `Done: ${ module } -> ${ name }` );
 			}
 		} );

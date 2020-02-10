@@ -25,7 +25,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 		Object.entries( this.getCommandsInternal() ).forEach( ( [ command, callback ] ) => this.registerCommandInternal( command, callback ) );
 
-		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) );
+		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) ); // eslint-disable-line no-unused-vars
 	}
 
 	getNamespace() {
