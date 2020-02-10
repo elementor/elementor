@@ -6,24 +6,24 @@ export const Save = () => {
 			assert.equal( response.data.status, 'draft', 'The response status is: "draft"' );
 		} );
 
-		QUnit.only( 'Multiple documents', async ( assert ) => {
-			$e.hooks.deactivate();
-
+		QUnit.test( 'Multiple documents', async ( assert ) => {
 			const container = elementor.getPreviewContainer(),
-				documentConfigMaster = { id: 2, container },
-				documentConfigSlave = { id: 3, container };
+				documentConfigs = [
+					{ id: 2, container },
+					{ id: 3, container },
+				],
+				documents = [];
 
 			// Add fake documents.
-			const documentMaster = elementor.documents.addDocumentByConfig( documentConfigMaster ),
-				documentSlave = elementor.documents.addDocumentByConfig( documentConfigSlave );
-
-			let response = await $e.internal( 'document/save/save', {
-				document: documentMaster,
+			documentConfigs.forEach( ( config ) => {
+				documents.push( elementor.documents.addDocumentByConfig( config ) );
 			} );
 
-			debugger;
+			for ( const document of documents ) {
+				const response = await $e.internal( 'document/save/save', { document } );
 
-			$e.hooks.activate();
+				assert.equal( response.data.status, 'draft', 'The response status is: "draft"' );
+			}
 		} );
 	} );
 };
