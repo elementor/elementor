@@ -74,6 +74,15 @@ export default class EditorBase extends Marionette.Application {
 				},
 			},
 		},
+		saver: {
+			get footerBehavior() {
+				elementorCommon.helpers.softDeprecated( 'elementor.modules.saver.footerBehavior.',
+					'2.9.0',
+					'elementor.modules.components.saver.behaviors.FooterSaver' );
+
+				return elementor.modules.components.saver.behaviors.FooterSaver;
+			},
+		},
 		controls: {
 			Animation: require( 'elementor-controls/select2' ),
 			Base: require( 'elementor-controls/base' ),
