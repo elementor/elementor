@@ -1020,10 +1020,6 @@ export default class EditorBase extends Marionette.Application {
 			this.showFlexBoxAttentionDialog();
 		}
 
-		if ( document.config.elements ) {
-			this.initNavigator();
-		}
-
 		if ( this.loaded ) {
 			$e.internal( 'editor/documents/attach-preview' );
 		}

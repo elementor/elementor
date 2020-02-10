@@ -4,7 +4,7 @@ export class AttachPreview extends CommandBase {
 	apply() {
 		const document = elementor.documents.getCurrent();
 
-		this.attachDocumentToPreview( document )
+		return this.attachDocumentToPreview( document )
 			.then( () => {
 				elementor.toggleDocumentCssFiles( document, false );
 
@@ -65,6 +65,8 @@ export class AttachPreview extends CommandBase {
 			elementor.$previewElementorEl
 				.addClass( 'elementor-edit-area-active' )
 				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
+
+			elementor.initNavigator();
 
 			resolve();
 		} );
