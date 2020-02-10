@@ -32,7 +32,6 @@ export default class HistoryManager {
 		this.currentItem = new Backbone.Model( {
 			id: 0,
 		} );
-
 	}
 
 	getActionLabel( itemData ) {
@@ -196,10 +195,6 @@ export default class HistoryManager {
 			}
 		}
 
-		/**
-		 * Originally it was change modified state only when selected item was 'Editing Started',
-		 * and the set modified status was based on editorSaved.
-		 */
 		$e.internal( 'document/save/set-is-modified', {
 			status: item.get( 'id' ) !== this.document.editor.lastSaveHistoryId,
 		} );

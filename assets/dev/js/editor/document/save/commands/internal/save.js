@@ -32,7 +32,7 @@ export class Save extends CommandInternalBase {
 			oldStatus,
 			elements,
 			document,
-			lastSaveHistoryId: document.history.currentItem.get( 'id' ),
+			currentHistoryId: document.history.currentItem.get( 'id' ),
 		};
 
 		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
@@ -51,11 +51,11 @@ export class Save extends CommandInternalBase {
 	}
 
 	onSaveSuccess( data, args, callback = null ) {
-		const { status, oldStatus, elements, document, lastSaveHistoryId } = args;
+		const { status, oldStatus, elements, document, currentHistoryId } = args;
 
 		this.onAfterAjax( document );
 
-		document.editor.lastSaveHistoryId = lastSaveHistoryId;
+		document.editor.lastSaveHistoryId = currentHistoryId;
 
 		// Remove document cache.
 		elementor.documents.invalidateCache( document.id );
