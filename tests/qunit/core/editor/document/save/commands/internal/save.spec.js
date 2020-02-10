@@ -7,10 +7,9 @@ export const Save = () => {
 		} );
 
 		QUnit.test( 'Multiple documents', async ( assert ) => {
-			const container = elementor.getPreviewContainer(),
-				documentConfigs = [
-					{ id: 2, container },
-					{ id: 3, container },
+				const documentConfigs = [
+					{ id: 2 },
+					{ id: 3 },
 				],
 				documents = [];
 
@@ -20,6 +19,8 @@ export const Save = () => {
 			} );
 
 			for ( const document of documents ) {
+				document.container = elementor.getPreviewContainer();
+
 				const response = await $e.internal( 'document/save/save', { document } );
 
 				assert.equal( response.data.status, 'draft', 'The response status is: "draft"' );

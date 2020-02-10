@@ -88,10 +88,6 @@ export default class Document {
 		this.config = config;
 		this.id = config.id;
 
-		if ( config.container ) {
-			this.container = config.container;
-		}
-
 		this.history = new HistoryManager();
 		this.revisions = new RevisionsManager( this );
 	}
