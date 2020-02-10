@@ -84,6 +84,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 							options.controls = {};
 
+							// eslint-disable-next-line no-unused-vars
 							Object.entries( field.fields ).map( ( [ key, item ] ) => {
 								options.controls[ item.name ] = item;
 							} );

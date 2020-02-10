@@ -9,7 +9,7 @@ export class FooterSaverCatchSave extends HookUICatch {
 		return 'footer-saver-catch-save';
 	}
 
-	apply( args, e ) {
+	apply() {
 		NProgress.done();
 
 		$e.components.get( 'document/save' )

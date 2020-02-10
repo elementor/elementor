@@ -109,13 +109,11 @@ export default class HookBase {
 	 *
 	 * Condition for running the callback, if true, call to apply().
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 *
 	 * @returns {boolean}
-	 *
-	 * @throws {Error}
 	 */
-	getConditions( args ) { // eslint-disable-line no-unused-vars
+	getConditions( args = {} ) { // eslint-disable-line no-unused-vars
 		return true;
 	}
 
@@ -124,9 +122,9 @@ export default class HookBase {
 	 *
 	 * Apply the callback, ( The actual affect of the callback ).
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
 	apply( args ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();

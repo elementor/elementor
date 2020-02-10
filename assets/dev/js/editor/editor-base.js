@@ -1,4 +1,4 @@
-/* global ElementorConfig, ElementorDocsConfig */
+/* global ElementorConfig */
 
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
