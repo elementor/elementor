@@ -24,6 +24,7 @@ class Admin_Notices extends Module {
 		'cf7_promote',
 		'mc4wp_promote',
 		'popup_maker_promote',
+		'role_manager_promote',
 	];
 
 	private $elementor_pages_count = null;
@@ -439,6 +440,51 @@ class Admin_Notices extends Module {
 					<p><?php _e( 'Using a popup plugin? Avoid the patchwork and build your popups directly on Elementor.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
 						<a href="https://go.elementor.com/plugin-promotion-popupmaker/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return true;
+	}
+
+	private function notice_role_manager_promote() {
+		$notice_id = 'role_manager_promote';
+
+		if ( Utils::has_pro() ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		if ( 'elementor_page_elementor-role-manager' !== $this->current_screen_id || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$users = new \WP_User_Query( [
+			'fields' => 'ID',
+			'number' => 10,
+		] );
+
+		if ( 5 >= $users->get_total() ) {
+			return false;
+		}
+
+		?>
+		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<p><?php _e( 'Managing several users logging into your site? Control their access using Elementor\'s role manager.', 'elementor' ); ?></p>
+					<p class="elementor-message-actions">
+						<a href="https://go.elementor.com/go-pro/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
