@@ -66,6 +66,8 @@ export class AttachPreview extends CommandBase {
 				.addClass( 'elementor-edit-area-active' )
 				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
 
+			elementor.initNavigator();
+
 			resolve();
 		} );
 	}
