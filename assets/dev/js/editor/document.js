@@ -39,6 +39,13 @@ class Editor {
 	 * @type {boolean}
 	 */
 	isSaved = true;
+
+	/**
+	 * Last save history id.
+	 *
+	 * @type {number}
+	 */
+	lastSaveHistoryId = 0;
 }
 
 export default class Document {
@@ -88,7 +95,7 @@ export default class Document {
 		this.config = config;
 		this.id = config.id;
 
-		this.history = new HistoryManager();
+		this.history = new HistoryManager( this );
 		this.revisions = new RevisionsManager( this );
 	}
 
