@@ -60,12 +60,11 @@ export default class Component extends ComponentBase {
 	 * Add document to manager by config.
 	 *
 	 * @param {{}} config
-	 * @param {Container} container
 	 *
 	 * @returns {Document}
 	 */
-	addDocumentByConfig( config, container ) {
-		return this.add( new Document( config, container ) );
+	addDocumentByConfig( config ) {
+		return this.add( new Document( config ) );
 	}
 
 	/**

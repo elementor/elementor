@@ -57,15 +57,25 @@ export class Save extends CommandInternalBase {
 
 		document.editor.lastSaveHistoryId = lastSaveHistoryId;
 
+		// Remove document cache.
 		elementor.documents.invalidateCache( document.id );
+
+		const statusChanged = status !== oldStatus,
+			result = {
+				data,
+				statusChanged,
+			};
 
 		// Document is switched during the save, do nothing.
 		if ( document !== elementor.documents.getCurrent() ) {
-			return;
+			return result;
 		}
 
-		const statusChanged = status !== oldStatus;
+		if ( ! document.editor.isChangedDuringSave ) {
+			document.editor.isSaved = true;
+		}
 
+		// TODO: Move to hook.
 		if ( 'autosave' !== status ) {
 			if ( statusChanged ) {
 				$e.run( 'document/elements/settings', {
@@ -83,10 +93,6 @@ export class Save extends CommandInternalBase {
 			if ( ! document.editor.isChangedDuringSave ) {
 				$e.internal( 'document/save/set-is-modified', { status: false } );
 			}
-		}
-
-		if ( ! document.editor.isChangedDuringSave ) {
-			document.editor.isSaved = true;
 		}
 
 		if ( data.config ) {
@@ -109,11 +115,6 @@ export class Save extends CommandInternalBase {
 		if ( statusChanged ) {
 			elementor.saver.trigger( 'page:status:change', status, oldStatus );
 		}
-
-		const result = {
-			data,
-			statusChanged,
-		};
 
 		if ( _.isFunction( callback ) ) {
 			callback.call( this, result );

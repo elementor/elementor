@@ -19,7 +19,7 @@ class Admin_Notices extends Module {
 		'api_upgrade_plugin',
 		'tracker',
 		'rate_us_feedback',
-		'get_started',
+		//'get_started',
 		'woocommerce_promote',
 		'cf7_promote',
 		'mc4wp_promote',
@@ -276,7 +276,7 @@ class Admin_Notices extends Module {
 	private function notice_get_started() {
 		$notice_id = 'get_started_notice';
 
-		if ( strtotime( '+5 days', $this->get_install_time() ) < time() ) {
+		if ( strtotime( '+5 days', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -320,6 +320,10 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+			return false;
+		}
+
 		?>
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<div class="elementor-message-inner">
@@ -353,6 +357,10 @@ class Admin_Notices extends Module {
 		}
 
 		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_wpcf7', 'contact_page_wpcf7-integration', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -392,6 +400,10 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+			return false;
+		}
+
 		?>
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<div class="elementor-message-inner">
@@ -425,6 +437,10 @@ class Admin_Notices extends Module {
 		}
 
 		if ( ! in_array( $this->current_screen_id, [ 'edit-popup', 'popup_page_pum-settings', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
