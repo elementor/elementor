@@ -320,7 +320,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+		if ( strtotime( '1 February, 2019' ) < $this->get_install_time() ) {
 			return false;
 		}
 
@@ -360,7 +360,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+		if ( strtotime( '1 February, 2019' ) < $this->get_install_time() ) {
 			return false;
 		}
 
@@ -400,7 +400,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+		if ( strtotime( '1 February, 2019' ) < $this->get_install_time() ) {
 			return false;
 		}
 
@@ -440,7 +440,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( strtotime( '+30 days', $this->get_install_time() ) > time() ) {
+		if ( strtotime( '1 February, 2019' ) < $this->get_install_time() ) {
 			return false;
 		}
 
