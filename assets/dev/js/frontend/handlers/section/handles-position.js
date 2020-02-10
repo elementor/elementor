@@ -17,6 +17,12 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 	}
 
 	setHandlesPosition() {
+		const document = elementor.documents.getCurrent();
+
+		if ( ! document || ! document.container.isEditable() ) {
+			return;
+		}
+
 		const isOverflowHidden = this.isOverflowHidden();
 
 		if ( ! isOverflowHidden && ! this.isFirstSection() ) {
