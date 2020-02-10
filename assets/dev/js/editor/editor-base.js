@@ -966,6 +966,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.settings.page.destroy();
 
+		this.heartbeat.destroy();
+
 		document.editor.status = 'closed';
 
 		this.config.document = {};
@@ -998,10 +1000,6 @@ export default class EditorBase extends Marionette.Application {
 
 		// Reference container back to document.
 		document.container.document = document;
-
-		if ( this.heartbeat ) {
-			this.heartbeat.destroy();
-		}
 
 		this.heartbeat = new Heartbeat( document );
 
