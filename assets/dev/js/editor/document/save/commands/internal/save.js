@@ -27,15 +27,22 @@ export class Save extends CommandInternalBase {
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
 		}
 
+		const successArgs = {
+			status,
+			oldStatus,
+			elements,
+			document,
+			lastSaveHistoryId: document.history.currentItem.get( 'id' ),
+		};
+
 		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
-			data: {
-				status,
-				elements: elements,
-				settings: settings,
-			},
-			error: ( data ) => this.onSaveError( data, status, document ),
-		} )
-		.then( ( data ) => this.onSaveSuccess( data, status, oldStatus, elements, document, onSuccess ) );
+				data: {
+					status,
+					elements: elements,
+					settings: settings,
+				},
+				error: ( data ) => this.onSaveError( data, status, document ),
+			} ).then( ( data ) => this.onSaveSuccess( data, successArgs, onSuccess ) );
 
 		// TODO: Remove - Backwards compatibility
 		elementor.saver.trigger( 'save', args );
@@ -43,8 +50,12 @@ export class Save extends CommandInternalBase {
 		return deferred;
 	}
 
-	onSaveSuccess( data, status, oldStatus, elements, document, callback = null ) {
+	onSaveSuccess( data, args, callback = null ) {
+		const { status, oldStatus, elements, document, lastSaveHistoryId } = args;
+
 		this.onAfterAjax( document );
+
+		document.editor.lastSaveHistoryId = lastSaveHistoryId;
 
 		elementor.documents.invalidateCache( document.id );
 
