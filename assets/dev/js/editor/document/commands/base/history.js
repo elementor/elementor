@@ -12,7 +12,6 @@ export default class History extends CommandBase {
 		this.history = this.getHistory( args );
 
 		/**
-		 *
 		 * @type {number|boolean}
 		 */
 		this.historyId = false;
@@ -23,13 +22,11 @@ export default class History extends CommandBase {
 	 *
 	 * Get history object from child, do nothing if it false.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 *
-	 * @returns {{}|boolean}
-	 *
-	 * @throws {Error}
+	 * @returns {({}|boolean)}
 	 */
-	getHistory( args ) { // eslint-disable-line no-unused-vars
+	getHistory( args = {} ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 

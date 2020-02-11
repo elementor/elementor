@@ -5,7 +5,7 @@ Requires at least: 5.0
 Tested up to: 5.3
 Requires PHP: 5.6
 Stable tag: 2.8.5
-Beta tag: 2.9.0-beta4
+Beta tag: 2.9.0-beta5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -221,6 +221,62 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.9.0 - 2020-02-10 =
+* New: Introducing Theme Style - set your default HTML tags styling using Elementor ([#534](https://github.com/elementor/elementor/issues/534))
+* New: Added Custom Link Attributes to Link Options to allow adding custom attributes to `<a>` tags ([#5716](https://github.com/elementor/elementor/issues/5716), [#3642](https://github.com/elementor/elementor/issues/3642), [#9225](https://github.com/elementor/elementor/issues/9225), [#9079](https://github.com/elementor/elementor/issues/9079))
+* Tweak: Added Title & Description to Lightbox ([#9826](https://github.com/elementor/elementor/issues/9826), [#2502](https://github.com/elementor/elementor/issues/2502))
+* Tweak: Added Full Screen option in Lightbox ([#5260](https://github.com/elementor/elementor/issues/5260))
+* Tweak: Added direct sharing options in Lightbox ([#2502](https://github.com/elementor/elementor/issues/2502))
+* Tweak: Added Zoom option in Lightbox ([#9399](https://github.com/elementor/elementor/issues/9399))
+* Tweak: Moved `social-share.js` to Core instead of Pro ([Developers Blog Post](https://developers.elementor.com/migration-of-modules-to-core-in-2-9/))
+* Tweak: Moved `link-actions.js` to Core instead of Pro and changed its name to `url-actions.js` ([Developers Blog Post](https://developers.elementor.com/migration-of-modules-to-core-in-2-9/))
+* Tweak: Added dynamic capabilities to Title control in Toggle widget ([#10070](https://github.com/elementor/elementor/issues/10070))
+* Tweak: Disabled autocomplete feature from the Color Picker ([#10030](https://github.com/elementor/elementor/issues/10030))
+* Tweak: Added Mix social network to recommended tab in Social Icons widget ([#10099](https://github.com/elementor/elementor/issues/10099))
+* Tweak: Removed StumbleUpon social network from recommended tab in Social Icons widget ([#10099](https://github.com/elementor/elementor/issues/10099))
+* Tweak: Added `i18n` function to translation string in DB upgrades manager (Props [@ramiy](https://github.com/ramiy))
+* Tweak: Added `vh` and `em` size units to Max Width control in Image widget ([#5376](https://github.com/elementor/elementor/issues/5376))
+* Tweak: Added `vh` and `em` size units to Spacer widget
+* Tweak: Exposed external API for Swiper instances ([Developers Blog Post](https://developers.elementor.com/expose-swiper-in-elementor/))
+* Tweak: Updated Pickr library to v1.5.0
+* Tweak: Updated Dialogs Manager library to v4.7.5
+* Tweak: Added URL hash routing capability to Lightbox
+* Tweak: Refactored panel controls UI
+* Tweak: Updated Font Awesome library to v5.12.0
+* Tweak: Converted `add_render_attributes` for custom links to `add_link_attributes()`
+* Tweak: Added a mixin for `absolute-center` positioning
+* Tweak: Updated `eicons` library to v5.6.1
+* Tweak: Changed `eicon-zoom-in` icon to `eicon-zoom-in-bold` in Template Library
+* Tweak: Allow background image and color being displayed in empty column
+* Tweak: Converted `editor-base.js` to ES6
+* Tweak: Added `featured_image` URL to frontend config
+* Tweak: Made minor UI tweaks to "Recalc" button in System Info
+* Tweak: Added inline editing capability to Progress Bar widget Title
+* Tweak: Removed redundant display conditions from Drop Cap section in Text Editor widget
+* Tweak: Remove redundant `label_block` parameters from control instances
+* Tweak: Added 'alt' property when using SVG icons in Social Icons widget
+* Tweak: Added translators comment explaining the `%s` placeholder in Video Provider control
+* Tweak: Added Pro features descriptive promotions to Editor panel
+* Tweak: Added Dynamic capabilities to be active by default in WYSIWYG Control
+* Tweak: Changed the position of all panel tooltips to appear above the controls
+* Tweak: Replaced nerd icons with new Elementor emojis
+* Tweak: Added descriptive message suggesting backing up the Database before upgrading to Font Awesome 5
+* Tweak: Changed panel arrow icon to chevron
+* Tweak: Deprecated Typography section in Section & Column elements for users who didn't place values
+* Fix: `playsinline` attribute missing when setting self-hosted video to Play on Mobile in Video widget ([#9892](https://github.com/elementor/elementor/issues/9892))
+* Fix: Beta sign-up modal closes unexpectedly ([#10355](https://github.com/elementor/elementor/issues/10355))
+* Fix: "Slides to Show" option doesn't work on Tablet view in Image Carousel widget ([#10227](https://github.com/elementor/elementor/issues/10227))
+* Fix: Previous and Next buttons are not displaying on Safari in Media Carousel's Cube mode ([#9725](https://github.com/elementor/elementor/issues/9725))
+* Fix: Post Title and Archive Excerpt wrong values in edge cases
+* Fix: Wrong `<select>` field width in "Add New" dialog
+* Fix: Gap created by the "Add Media" button in Text Editor widget
+* Fix: "Insert Template" library button glitch
+* Fix: WordPress Media 'Image Details' fields are 100% width instead of contained
+* Fix: Pause on hover can't be disabled in Image Carousel widget
+* Fix: Aligned Dark UI Theme gradients in panel and library tabs
+* Fix: Category Select2 dropdown stays above the view on scroll in Template Library modal
+* Deprecated: See all deprecations to this version in our ([Developers Deprecations Post](https://developers.elementor.com/v2-9-0-planned-deprecations/))
 
 = 2.8.5 - 2020-01-27 =
 * Fix: Handle corrupted DB log

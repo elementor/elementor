@@ -9,7 +9,7 @@ export class Auto extends Base {
 		}
 
 		if ( ! document.editor.isChanged ) {
-			return jQuery.Deferred().reject( 'Document is not changed' );
+			return jQuery.Deferred().resolve( 'Document is not changed' );
 		}
 
 		args.status = 'autosave';

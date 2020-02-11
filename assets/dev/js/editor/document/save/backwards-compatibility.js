@@ -31,7 +31,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 		};
 
 		elementor.on( 'document:loaded', () => {
-			if ( elementor.channels.editor._events.saved ) {
+			if ( elementor.channels.editor._events && elementor.channels.editor._events.saved ) {
 				elementorCommon.helpers.softDeprecated( "elementor.channels.editor.on( 'saved', ... )", '2.9.0',
 					'$e.hooks' );
 			}
@@ -76,7 +76,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 		return $e.run( 'document/save/draft' );
 	}
 
-	savePending( options ) {
+	savePending() {
 		elementorCommon.helpers.softDeprecated( 'savePending', '2.9.0', "$e.run( 'document/save/pending' )" );
 
 		return $e.run( 'document/save/pending' );
@@ -88,7 +88,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 		return $e.run( 'document/save/update', options );
 	}
 
-	startTimer( hasChanged ) {
+	startTimer() {
 		elementorCommon.helpers.softDeprecated( 'startTimer', '2.9.0',
 			"$e.components.get( 'document/save' ).startAutoSave" );
 

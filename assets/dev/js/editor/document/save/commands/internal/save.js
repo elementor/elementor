@@ -27,15 +27,22 @@ export class Save extends CommandInternalBase {
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
 		}
 
+		const successArgs = {
+			status,
+			oldStatus,
+			elements,
+			document,
+			currentHistoryId: document.history.currentItem.get( 'id' ),
+		};
+
 		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
-			data: {
-				status,
-				elements: elements,
-				settings: settings,
-			},
-			error: ( data ) => this.onSaveError( data, status, document ),
-		} )
-		.then( ( data ) => this.onSaveSuccess( data, status, oldStatus, elements, document, onSuccess ) );
+				data: {
+					status,
+					elements: elements,
+					settings: settings,
+				},
+				error: ( data ) => this.onSaveError( data, status, document ),
+			} ).then( ( data ) => this.onSaveSuccess( data, successArgs, onSuccess ) );
 
 		// TODO: Remove - Backwards compatibility
 		elementor.saver.trigger( 'save', args );
@@ -43,18 +50,32 @@ export class Save extends CommandInternalBase {
 		return deferred;
 	}
 
-	onSaveSuccess( data, status, oldStatus, elements, document, callback = null ) {
+	onSaveSuccess( data, args, callback = null ) {
+		const { status, oldStatus, elements, document, currentHistoryId } = args;
+
 		this.onAfterAjax( document );
 
+		document.editor.lastSaveHistoryId = currentHistoryId;
+
+		// Remove document cache.
 		elementor.documents.invalidateCache( document.id );
+
+		const statusChanged = status !== oldStatus,
+			result = {
+				data,
+				statusChanged,
+			};
 
 		// Document is switched during the save, do nothing.
 		if ( document !== elementor.documents.getCurrent() ) {
-			return;
+			return result;
 		}
 
-		const statusChanged = status !== oldStatus;
+		if ( ! document.editor.isChangedDuringSave ) {
+			document.editor.isSaved = true;
+		}
 
+		// TODO: Move to hook.
 		if ( 'autosave' !== status ) {
 			if ( statusChanged ) {
 				$e.run( 'document/elements/settings', {
@@ -72,10 +93,6 @@ export class Save extends CommandInternalBase {
 			if ( ! document.editor.isChangedDuringSave ) {
 				$e.internal( 'document/save/set-is-modified', { status: false } );
 			}
-		}
-
-		if ( ! document.editor.isChangedDuringSave ) {
-			document.editor.isSaved = true;
 		}
 
 		if ( data.config ) {
@@ -98,11 +115,6 @@ export class Save extends CommandInternalBase {
 		if ( statusChanged ) {
 			elementor.saver.trigger( 'page:status:change', status, oldStatus );
 		}
-
-		const result = {
-			data,
-			statusChanged,
-		};
 
 		if ( _.isFunction( callback ) ) {
 			callback.call( this, result );

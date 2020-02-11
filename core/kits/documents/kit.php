@@ -10,12 +10,23 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Kit extends PageBase {
+
+	private $custom_colors_disabled;
+	private $typography_schemes_disabled;
+
+	public function __construct( array $data = [] ) {
+		parent::__construct( $data );
+
+		$this->custom_colors_disabled = get_option( 'elementor_disable_color_schemes' );
+		$this->typography_schemes_disabled = get_option( 'elementor_disable_typography_schemes' );
+	}
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -117,6 +128,24 @@ class Kit extends PageBase {
 		);
 	}
 
+	private function add_schemes_notice() {
+		// Get the current section config (array - section id and tab) to use for creating a unique control ID and name
+		$current_section = $this->get_current_section();
+
+		if ( ! $this->custom_colors_disabled || ! $this->typography_schemes_disabled ) {
+			$this->add_control(
+				$current_section['section'] . '_schemes_notice',
+				[
+					'name' => $current_section['section'] . '_schemes_notice',
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => sprintf( __( 'In order for Theme Style to affect all relevant Elementor elements, please disable Default Colors and Fonts from the <a href="%s" target="_blank">Settings Page</a>.', 'elementor' ), Settings::get_url() ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+					'render_type' => 'ui',
+				]
+			);
+		}
+	}
+
 	private function add_body_section() {
 		$this->start_controls_section(
 			'section_body',
@@ -125,6 +154,8 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
@@ -173,6 +204,8 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
@@ -338,6 +371,8 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_schemes_notice();
+
 		$this->add_control(
 			'body_heading',
 			[
@@ -352,7 +387,7 @@ class Kit extends PageBase {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}, {{WRAPPER}} .elementor-widget-text-editor' => 'color: {{VALUE}};',
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -362,7 +397,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'body_typography',
-				'selector' => '{{WRAPPER}}, {{WRAPPER}} .elementor-widget-text-editor',
+				'selector' => '{{WRAPPER}}',
 			]
 		);
 
@@ -476,12 +511,12 @@ class Kit extends PageBase {
 		$this->end_controls_tabs();
 
 		// Headings.
-		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1,{{WRAPPER}} h1.elementor-heading-title' );
-		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2,{{WRAPPER}} h2.elementor-heading-title' );
-		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3,{{WRAPPER}} h3.elementor-heading-title' );
-		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4,{{WRAPPER}} h4.elementor-heading-title' );
-		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5,{{WRAPPER}} h5.elementor-heading-title' );
-		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6,{{WRAPPER}} h6.elementor-heading-title' );
+		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
+		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2' );
+		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3' );
+		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4' );
+		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5' );
+		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6' );
 
 		$this->end_controls_section();
 	}
@@ -490,7 +525,6 @@ class Kit extends PageBase {
 		// Use an array for better readability.
 		$label_selectors = [
 			'{{WRAPPER}} label',
-			'{{WRAPPER}} .elementor-widget-form .elementor-field-group > label',
 		];
 
 		$input_selectors = [
@@ -516,6 +550,8 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
 
 		$this->add_control(
 			'form_label_heading',
@@ -643,6 +679,9 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
+
 		$this->start_controls_tabs( 'tabs_image_style' );
 
 		$this->start_controls_tab(

@@ -290,10 +290,6 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
-	public function is_editable() {
-		return true;
-	}
-
 	/**
 	 * @since 2.3.1
 	 * @access protected
