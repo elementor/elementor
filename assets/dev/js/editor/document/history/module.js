@@ -15,7 +15,7 @@ export default class HistoryModule {
 		 */
 		this.document = document;
 
-		this.selected = new Backbone.Model( {
+		this.currentItem = new Backbone.Model( {
 			id: 0,
 		} );
 
@@ -142,7 +142,7 @@ export default class HistoryModule {
 
 		this.items.add( currentItem, { at: 0 } );
 
-		this.updatePanelPageCurrentItem();
+		this.updateCurrentItem( currentItem );
 
 		return id;
 	}
@@ -193,22 +193,15 @@ export default class HistoryModule {
 			}
 		}
 
-		this.updatePanelPageCurrentItem();
-
-		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
-			elementor.helpers.scrollToView( viewToScroll.$el );
-		}
-
-		/**
-		 * Originally it was change modified state only when selected item was 'Editing Started',
-		 * and the set modified status was based on editorSaved.
-		 */
 		$e.internal( 'document/save/set-is-modified', {
 			status: item.get( 'id' ) !== this.document.editor.lastSaveHistoryId,
 		} );
 
-		// Save last selected item.
-		this.selected = item;
+		this.updateCurrentItem( item );
+
+		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
+			elementor.helpers.scrollToView( viewToScroll.$el );
+		}
 	}
 
 	undoItem( index ) {
@@ -247,6 +240,13 @@ export default class HistoryModule {
 				item.set( 'status', 'not_applied' );
 			}
 		}
+	}
+
+	updateCurrentItem( item ) {
+		// Save last selected item.
+		this.currentItem = item;
+
+		this.updatePanelPageCurrentItem();
 	}
 
 	updatePanelPageCurrentItem() {
