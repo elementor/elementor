@@ -222,7 +222,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
-= 2.9.0 (Beta) - 2020-02-10 - [Become a beta tester!](https://my.elementor.com/beta/) =
+= 2.9.0 - 2020-02-10 =
 * New: Introducing Theme Style - set your default HTML tags styling using Elementor ([#534](https://github.com/elementor/elementor/issues/534))
 * New: Added Custom Link Attributes to Link Options to allow adding custom attributes to `<a>` tags ([#5716](https://github.com/elementor/elementor/issues/5716), [#3642](https://github.com/elementor/elementor/issues/3642), [#9225](https://github.com/elementor/elementor/issues/9225), [#9079](https://github.com/elementor/elementor/issues/9079))
 * Tweak: Added Title & Description to Lightbox ([#9826](https://github.com/elementor/elementor/issues/9826), [#2502](https://github.com/elementor/elementor/issues/2502))
