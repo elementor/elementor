@@ -10,5 +10,5 @@ export default {
 	elementsHandler: {
 		runReadyTrigger: () => {},
 	},
-	init: () => console.log( 'elementorFrontend::init' ),
+	init: () => console.log( 'elementorFrontend::init' ), // eslint-disable-line no-console
 };

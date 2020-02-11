@@ -1,6 +1,6 @@
-import Base from './base.js';
+import HooksBase from './base.js';
 
-export default class Data extends Base {
+export default class Data extends HooksBase {
 	constructor( ... args ) {
 		super( ... args );
 

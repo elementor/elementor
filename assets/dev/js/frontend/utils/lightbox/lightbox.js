@@ -543,6 +543,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			descriptionText = $image.data( 'description' ),
 			$title = this.elements.$footer.find( '.' + classes.slideshow.title ),
 			$description = this.elements.$footer.find( '.' + classes.slideshow.description );
+
 		$title.text( titleText || '' );
 		$description.text( descriptionText || '' );
 	},
@@ -790,8 +791,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.playSlideVideo();
 
-		if ( 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ) ) {
-			this.updateFooterText();
-		}
+		this.updateFooterText();
 	},
 } );

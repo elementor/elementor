@@ -19,11 +19,11 @@ class Admin_Notices extends Module {
 		'api_upgrade_plugin',
 		'tracker',
 		'rate_us_feedback',
-		'get_started',
 		'woocommerce_promote',
 		'cf7_promote',
 		'mc4wp_promote',
 		'popup_maker_promote',
+		'role_manager_promote',
 	];
 
 	private $elementor_pages_count = null;
@@ -272,38 +272,6 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
-	private function notice_get_started() {
-		$notice_id = 'get_started_notice';
-
-		if ( strtotime( '+5 days', $this->get_install_time() ) < time() ) {
-			return false;
-		}
-
-		if ( 1 <= $this->get_elementor_pages_count() || User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
-
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php _e( 'Not sure where to begin? Why don\'t you start with one of our designer-made templates.', 'elementor' ); ?></p>
-					<p class="elementor-message-actions">
-						<a href="https://library.elementor.com/" target="_blank" class="button button-primary"><?php _e( 'Open template library', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
-
-		return true;
-	}
-
 	private function notice_woocommerce_promote() {
 		$notice_id = 'woocommerce_promote';
 
@@ -315,7 +283,15 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'edit-product', 'woocommerce_page_wc-settings', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ! in_array( $this->current_screen_id, [ 'edit-product', 'woocommerce_page_wc-settings' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+			return false;
+		}
+
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -328,9 +304,9 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Using WooCommerce? With Elementor\'s WooCommerce Builder, you\'ll be able to design your store without coding!', 'elementor' ); ?></p>
+					<p><?php _e( 'Using WooCommerce? With Elementor Pro’s WooCommerce Builder, you’ll be able to design your store without coding!', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-woocommerce/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/plugin-promotion-woocommerce/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -351,7 +327,15 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_wpcf7', 'contact_page_wpcf7-integration', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_wpcf7', 'contact_page_wpcf7-integration' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+			return false;
+		}
+
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -364,9 +348,9 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Did you know? Forms convert better when you design them visually. Try out Elementor Forms now.', 'elementor' ); ?></p>
+					<p><?php _e( 'Using Elementor & Contact Form 7? Try out Elementor Pro and design your forms visually with one powerful tool.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-contactform7/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/plugin-promotion-contactform7/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -387,7 +371,15 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_mailchimp-for-wp', 'mc4wp_page_mailchimp-for-wp-forms', 'mc4wp_page_mailchimp-for-wp-integrations', 'mc4wp_page_mailchimp-for-wp-other', 'mc4wp_page_mailchimp-for-wp-extensions', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_mailchimp-for-wp', 'mc4wp_page_mailchimp-for-wp-forms', 'mc4wp_page_mailchimp-for-wp-integrations', 'mc4wp_page_mailchimp-for-wp-other', 'mc4wp_page_mailchimp-for-wp-extensions' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+			return false;
+		}
+
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -400,9 +392,9 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Did you know? Forms convert better when you design them visually. Try out Elementor Forms now.', 'elementor' ); ?></p>
+					<p><?php _e( 'Want to design better MailChimp forms? Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-mc4wp/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/plugin-promotion-mc4wp/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -423,7 +415,15 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'edit-popup', 'popup_page_pum-settings', 'dashboard' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ! in_array( $this->current_screen_id, [ 'edit-popup', 'popup_page_pum-settings' ], true ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+			return false;
+		}
+
+		if ( strtotime( '+24 hours', $this->get_install_time() ) > time() ) {
 			return false;
 		}
 
@@ -436,9 +436,54 @@ class Admin_Notices extends Module {
 					</div>
 				</div>
 				<div class="elementor-message-content">
-					<p><?php _e( 'Using a popup plugin? Avoid the patchwork and build your popups directly on Elementor.', 'elementor' ); ?></p>
+					<p><?php _e( 'Using popups on your site? Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-popupmaker/" target="_blank" class="button button-primary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/plugin-promotion-popupmaker/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return true;
+	}
+
+	private function notice_role_manager_promote() {
+		$notice_id = 'role_manager_promote';
+
+		if ( Utils::has_pro() ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		if ( 'elementor_page_elementor-role-manager' !== $this->current_screen_id || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$users = new \WP_User_Query( [
+			'fields' => 'ID',
+			'number' => 10,
+		] );
+
+		if ( 5 > $users->get_total() ) {
+			return false;
+		}
+
+		?>
+		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<p><?php _e( 'Managing a multi-user site? With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ); ?></p>
+					<p class="elementor-message-actions">
+						<a href="https://go.elementor.com/promotion-role-manager/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>

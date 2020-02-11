@@ -357,7 +357,7 @@ class Frontend extends App {
 			'swiper',
 			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
 			[],
-			'4.4.6',
+			'5.3.0',
 			true
 		);
 

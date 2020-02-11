@@ -25,7 +25,7 @@ export const Auto = () => {
 			document.editor.status = defaultStatus;
 		} );
 
-		QUnit.test( 'rejected: "Document is not changed"', async ( assert ) => {
+		QUnit.test( 'Resolved: "Document is not changed"', async ( assert ) => {
 			// Create fake document.
 			const document = elementor.documents.getCurrent(),
 				defaultIsChanged = document.editor.isChanged;
@@ -33,12 +33,15 @@ export const Auto = () => {
 			// Editor is not changed.
 			$e.internal( 'document/save/set-is-modified', { status: false } );
 
-			// Ensure rejected.
-			assert.rejects( $e.run( 'document/save/auto', { document } ),
-				'Document is not changed' );
-
-			// Put back as it was before.
-			$e.internal( 'document/save/set-is-modified', { status: defaultIsChanged } );
+			$e.run( 'document/save/auto', { document } )
+				.then( ( data ) => {
+					assert.equal( data, 'Document is not changed',
+						'Resolved without a request to the server' );
+				} )
+				.always( () => {
+					// Put back as it was before.
+					$e.internal( 'document/save/set-is-modified', { status: defaultIsChanged } );
+				} );
 		} );
 	} );
 };

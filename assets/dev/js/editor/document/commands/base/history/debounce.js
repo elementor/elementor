@@ -49,7 +49,7 @@ export default class Debounce extends History {
 		CommandBase.prototype.onBeforeRun.call( this, args );
 
 		if ( this.history && this.isHistoryActive() ) {
-			$e.run( 'document/history/start-transaction', this.history );
+			$e.internal( 'document/history/add-transaction', this.history );
 		}
 	}
 
@@ -58,11 +58,9 @@ export default class Debounce extends History {
 
 		if ( this.isHistoryActive() ) {
 			if ( this.isDebounceRequired ) {
-				this.constructor.debounce( () => {
-					$e.run( 'document/history/end-transaction' );
-				} );
+				this.constructor.debounce( () => $e.internal( 'document/history/end-transaction' ) );
 			} else {
-				$e.run( 'document/history/end-transaction' );
+				$e.internal( 'document/history/end-transaction' );
 			}
 		}
 	}
@@ -74,11 +72,9 @@ export default class Debounce extends History {
 		if ( e instanceof $e.modules.HookBreak && this.history ) {
 			if ( this.isDebounceRequired ) {
 				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
-				this.constructor.debounce( () => {
-					$e.run( 'document/history/delete-transaction' );
-				} );
+				this.constructor.debounce( () => $e.internal( 'document/history/delete-transaction' ) );
 			} else {
-				$e.run( 'document/history/delete-transaction' );
+				$e.internal( 'document/history/delete-transaction' );
 			}
 		}
 	}

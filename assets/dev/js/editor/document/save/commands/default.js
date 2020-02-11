@@ -1,7 +1,7 @@
 import Base from './base/base';
 
 export class Default extends Base {
-	apply( args ) {
+	apply() {
 		const document = this.document,
 			postStatus = document.container.settings.get( 'post_status' );
 

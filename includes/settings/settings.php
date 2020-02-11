@@ -691,7 +691,6 @@ class Settings extends Settings_Page {
 	private function maybe_remove_all_admin_notices() {
 		$elementor_pages = [
 			'elementor-getting-started',
-			'elementor-role-manager',
 			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',

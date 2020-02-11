@@ -1,4 +1,4 @@
-import Base from 'elementor-api/core/hooks/base';
+import HooksBase from 'elementor-api/core/hooks/base';
 import HookBase from 'elementor-api/modules/hook-base';
 
 jQuery( () => {
@@ -6,7 +6,7 @@ jQuery( () => {
 		QUnit.module( 'Callbacks', () => {
 			QUnit.test( 'checkId()', ( assert ) => {
 				const random = Math.random(),
-					fakeCallbacks = class extends Base {
+					fakeCallbacks = class extends HooksBase {
 						getType() {
 							return 'hook';
 						}

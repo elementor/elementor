@@ -157,6 +157,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			placeholder: elementor.translate( 'category' ),
 			allowClear: true,
 			width: 150,
+			dropdownParent: this.$el,
 		} );
 	},
 

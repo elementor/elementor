@@ -25,7 +25,7 @@ export class Import extends History {
 		let at = isNaN( options.at ) ? previewContainer.view.collection.length : options.at;
 
 		// Each `data.content`.
-		Object.entries( data.content ).forEach( ( [ index, model ] ) => {
+		Object.entries( data.content ).forEach( ( [ index, model ] ) => { // eslint-disable-line no-unused-vars
 			result.push( $e.run( 'document/elements/create', {
 				container: elementor.getPreviewContainer(),
 				model,

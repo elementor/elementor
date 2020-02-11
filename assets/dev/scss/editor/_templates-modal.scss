@@ -15,6 +15,10 @@ $remote-templates-items-space: 30px;
 	.dialog-buttons-wrapper {
 		display: none;
 	}
+
+	.select2-container {
+		z-index: 0;
+	}
 }
 
 #elementor-template-library-header-menu {

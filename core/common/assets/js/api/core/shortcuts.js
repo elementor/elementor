@@ -34,7 +34,7 @@ export default class Shortcuts {
 
 	/**
 	 * @param shortcuts
-	 * @param {Object} args
+	 * @param {{callback: (function(): boolean), scopes: [void]}} args
 	 * @param {callback} args.callback Required
 	 * @param {string} args.component Optional
 	 * @param {callback} args.dependency Optional

@@ -1,5 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import DocumentHelpers from 'elementor-document/helpers';
+import DocumentHelper from 'elementor-document/helper';
 
 export class Paste extends CommandBase {
 	initialize( args ) {
@@ -21,11 +21,6 @@ export class Paste extends CommandBase {
 		}
 	}
 
-	validateArgs( args ) {
-		this.requireArgumentType( 'storage', 'object', this );
-		//this.requireArgumentType( 'target', 'array', this );
-	}
-
 	apply( args ) {
 		if ( ! this.target ) {
 			return false;
@@ -35,7 +30,7 @@ export class Paste extends CommandBase {
 
 		this.target.forEach( ( /* Container */ container ) => {
 			const { options = {} } = args,
-				pasteOptions = DocumentHelpers.getPasteOptions( this.storage[ 0 ], container );
+				pasteOptions = DocumentHelper.getPasteOptions( this.storage[ 0 ], container );
 
 			if ( ! pasteOptions.isValidChild ) {
 				if ( pasteOptions.isSameElement ) {

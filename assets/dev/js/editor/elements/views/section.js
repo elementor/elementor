@@ -65,6 +65,8 @@ const SectionView = BaseElementView.extend( {
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
+
+		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 	},
 
 	getEditButtons: function() {

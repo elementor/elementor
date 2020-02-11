@@ -1,6 +1,6 @@
 import DocumentHelper from './helper';
 import ElementsHelper from './elements/helper';
-import * as Hooks from './callbacks/hooks/index.spec';
+import * as hooksData from './hooks/data/index.spec';
 
 QUnit.module( 'Component: document', () => {
 	QUnit.module( `Hooks`, ( hooks ) => {
@@ -8,7 +8,7 @@ QUnit.module( 'Component: document', () => {
 			ElementsHelper.empty();
 		} );
 
-		Object.entries( Hooks ).forEach( ( [ hookNamespace, hook ] ) => {
+		Object.entries( hooksData ).forEach( ( [ hookNamespace, hook ] ) => {
 			QUnit.module( hookNamespace, () => {
 				DocumentHelper.testCommands( hook );
 			} );
