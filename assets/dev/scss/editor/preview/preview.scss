@@ -690,7 +690,7 @@ html.elementor-html {
 .elementor-add-section {
 	// Avoid theme conflicts.
 	all: initial;
-	display: block;
+	display: flex;
 	max-width: 1160px;
 	position: relative;
 
@@ -728,6 +728,7 @@ html.elementor-html {
 	text-align: center;
 	margin: 20px;
 	padding: 40px 0;
+	flex-grow: 1;
 }
 
 .elementor-add-new-section {
@@ -778,7 +779,7 @@ html.elementor-html {
 .elementor-add-section-close {
 	position: absolute;
 	right: 40px;
-	top: 20px;
+	top: 40px;
 	font-size: 20px;
 	cursor: pointer;
 	line-height: 1;

@@ -1,5 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandBase from 'elementor-api/modules/command-base';
+import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -17,6 +18,10 @@ export default class Component extends ComponentBase {
 				apply = () => self.navigate();
 			},
 		};
+	}
+
+	defaultHooks() {
+		return this.importHooks( hooks );
 	}
 
 	defaultShortcuts() {
