@@ -363,18 +363,6 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'color',
-			[
-				'label' => __( 'Controls Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'condition' => [
-					'video_type' => [ 'vimeo', 'dailymotion' ],
-				],
-			]
-		);
-
 		// YouTube.
 		$this->add_control(
 			'yt_privacy',
@@ -442,6 +430,18 @@ class Widget_Video extends Widget_Base {
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'vimeo',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color',
+			[
+				'label' => __( 'Controls Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'condition' => [
+					'video_type' => [ 'vimeo', 'dailymotion' ],
 				],
 			]
 		);
