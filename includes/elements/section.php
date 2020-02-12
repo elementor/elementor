@@ -637,6 +637,21 @@ class Element_Section extends Element_Base {
 			[
 				'name' => 'css_filters',
 				'selector' => '{{WRAPPER}} .elementor-background-overlay',
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'background_overlay_image[url]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'background_overlay_color',
+							'operator' => '!==',
+							'value' => '',
+						],
+					],
+				],
 			]
 		);
 
@@ -659,6 +674,21 @@ class Element_Section extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
+				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'background_overlay_image[url]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'background_overlay_color',
+							'operator' => '!==',
+							'value' => '',
+						],
+					],
 				],
 			]
 		);
