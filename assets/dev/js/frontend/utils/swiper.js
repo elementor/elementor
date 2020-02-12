@@ -39,7 +39,7 @@ export default class Swiper {
 			// Then reset the settings in the original breakpoint key to the default values
 			this.config.breakpoints[ configBPKey ] = {
 				slidesPerView: this.config.slidesPerView,
-				slidesPerGroup: this.config.slidesPerGroup,
+				slidesPerGroup: this.config.slidesPerGroup ? this.config.slidesPerGroup : 1,
 			};
 		} );
 	}
