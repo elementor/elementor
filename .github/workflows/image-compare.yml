@@ -37,7 +37,7 @@ jobs:
           git clone ${{ secrets.BACKSTOP_CONFIG_REPO_URL }} backstop-config
           mkdir -p backstop_data_en_US/
           cp -r backstop-config/reference/ backstop_data_en_US/bitmaps_reference/
-          ./node_modules/backstopjs/cli/index.js test --config=backstop-config/backstop.js --count=2 --siteUrl=https://${{ secrets.BACKSTOP_EMULATOR_DOMAIN }} --coreVersion=${BUILD_PATH}
+          ./node_modules/backstopjs/cli/index.js test --config=backstop-config/backstop.js --count=1 --siteUrl=https://${{ secrets.BACKSTOP_EMULATOR_DOMAIN }} --coreVersion=${BUILD_PATH}
       - name: Before upload..
         run: |
           find backstop_data_en_US -type f -name "*.json" -o -name "*.js" -print0 | xargs -0 sed -i -e 's/${{ secrets.BACKSTOP_EMULATOR_DOMAIN }}/localhost/g'
