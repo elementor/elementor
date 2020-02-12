@@ -76,10 +76,10 @@ class Manager {
 		$kit = $this->get_kit_for_frontend();
 
 		if ( $kit ) {
-			Plugin::$instance->frontend->print_fonts_links();
-
 			// On preview, the global style is not enqueued.
 			$this->frontend_before_enqueue_styles();
+
+			Plugin::$instance->frontend->print_fonts_links();
 		}
 	}
 
