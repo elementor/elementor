@@ -55,9 +55,9 @@ module.exports = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		var collection = event.model.collection,
-			itemIndex = collection.findIndex( event.model );
+		const collection = event.model.collection,
+			index = collection.findIndex( event.model );
 
-		this.options.history.doItem( itemIndex );
+		$e.run( 'panel/history/actions/do', { index } );
 	},
 } );

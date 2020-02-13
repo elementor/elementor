@@ -691,7 +691,7 @@ html.elementor-html {
 .elementor-add-section {
 	// Avoid theme conflicts.
 	all: initial;
-
+	display: flex;
 	max-width: 1160px;
 	position: relative;
 
@@ -729,6 +729,7 @@ html.elementor-html {
 	text-align: center;
 	margin: 20px;
 	padding: 40px 0;
+	flex-grow: 1;
 }
 
 .elementor-add-new-section {
@@ -779,7 +780,7 @@ html.elementor-html {
 .elementor-add-section-close {
 	position: absolute;
 	right: 40px;
-	top: 20px;
+	top: 40px;
 	font-size: 20px;
 	cursor: pointer;
 	line-height: 1;
@@ -919,7 +920,7 @@ html.elementor-html {
 	.elementor-empty,
 	.elementor-add-section,
 	.elementor-add-section-inline,
-	.elementor-element-empty,
+	.elementor-empty-view,
 	.elementor-widget-empty {
 		display: none;
 	}

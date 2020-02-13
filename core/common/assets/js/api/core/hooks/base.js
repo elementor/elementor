@@ -1,8 +1,8 @@
-export default class Base extends elementorModules.Module {
+export default class HooksBase extends elementorModules.Module {
 	/**
 	 * Function constructor().
 	 *
-	 * Create Callbacks base.
+	 * Create hooks base.
 	 *
 	 * @param {{}} args
 	 */
@@ -218,7 +218,7 @@ export default class Base extends elementorModules.Module {
 	 * @param {string} event
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}} Current callback
+	 * @returns {{}} Created callback
 	 */
 	register( event, instance ) {
 		const command = instance.getCommand(),
@@ -364,7 +364,7 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	runCallback( event, callback, args, result ) {
+	runCallback( event, callback, args, result ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 
@@ -379,7 +379,7 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	onRun( command, args, event ) {
+	onRun( command, args, event ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 
@@ -395,7 +395,7 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	onCallback( command, args, event, id ) {
+	onCallback( command, args, event, id ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 }

@@ -357,7 +357,7 @@ class Frontend extends App {
 			'swiper',
 			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
 			[],
-			'4.4.6',
+			'5.3.0',
 			true
 		);
 
@@ -380,7 +380,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.4',
+			'4.7.6',
 			true
 		);
 
@@ -390,7 +390,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.1.0',
+			'1.1.1',
 			true
 		);
 

@@ -1,9 +1,12 @@
 import Component from './component';
-import Document from 'elementor-editor/document';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
+	getStyleId: function() {
+		return this.getSettings( 'name' ) + '-' + elementor.documents.getCurrent().id;
+	},
+
 	onInit: function() {
 		BaseSettings.prototype.onInit.apply( this );
 

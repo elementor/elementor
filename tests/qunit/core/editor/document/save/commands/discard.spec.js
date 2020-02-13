@@ -1,5 +1,4 @@
 import ElementsHelper from '../../elements/helper';
-import DocumentHelpers from 'elementor-document/helpers';
 
 export const Discard = () => {
 	QUnit.test( 'Discard', async ( assert ) => {
@@ -21,7 +20,7 @@ export const Discard = () => {
 		// Validate that two sections is not available.
 		eSections.forEach( ( eSection ) =>
 			assert.equal(
-				Boolean( DocumentHelpers.findViewById( eSection.id ) ),
+				Boolean( $e.components.get( 'document' ).utils.findViewById( eSection.id ) ),
 				false
 			)
 		);

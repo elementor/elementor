@@ -15,8 +15,8 @@ $theme-dark-accent: #71D7F7;
 $theme-dark-success: $editor-success;
 $theme-dark-danger: #F84343;
 
-$theme-dark-gradient-start: #34383C;
-$theme-dark-gradient-end: #4C4F56;
+$theme-dark-gradient-start: $theme-dark-gray-darkest;
+$theme-dark-gradient-end: $theme-dark-gray;
 $theme-dark-panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 
 //General
@@ -231,7 +231,7 @@ select {
 		}
 
 		& > .eicon-lock {
-			color: $theme-dark-gray-lightest;
+			color: $theme-dark-gray-light;
 		}
 	}
 
@@ -464,9 +464,23 @@ $devices: 'desktop', 'tablet', 'mobile';
 //URL Control
 .elementor-control-type-url {
 
-	.elementor-control-url-more {
-		background-color: $theme-dark-gray-darkest;
-		border-color: $theme-dark-gray-light;
+	.elementor-control-url {
+
+		&-more {
+			background-color: $theme-dark-gray-darkest;
+			border-color: $theme-dark-gray-light;
+		}
+
+		&-option {
+
+			&-input {
+				border-color: $theme-dark-gray-light;
+
+				&:checked {
+					background-color: $theme-dark-gray-light;
+				}
+			}
+		}
 	}
 
 	.elementor-input {
@@ -487,6 +501,14 @@ $devices: 'desktop', 'tablet', 'mobile';
 	.mce-ico,
 	.wp-switch-editor {
 		color: $theme-dark-light;
+	}
+
+	.wp-editor-tabs {
+		border-color: $theme-dark-gray-lighter;
+	}
+
+	.switch-html {
+		border-color: $theme-dark-gray-lighter;
 	}
 
 	#insert-media-button,
@@ -514,7 +536,9 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
-		background-color: transparent;
+		background-color: $theme-dark-gray-dark;
+		border-color: $theme-dark-gray-lighter;
+		border-radius: 3px;
 	}
 
 	.quicktags-toolbar {
@@ -681,7 +705,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 //Color Picker
 .pickr {
 	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray;
+	border-color: $theme-dark-gray-light;
 }
 
 .elementor-color-picker {
@@ -800,12 +824,12 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 // Widget Pro Promotion Tooltip
-.elementor-element--promotion__dialog {
-	background-color: $theme-dark-gray-darker;
+#elementor-element--promotion__dialog {
+	background-color: $theme-dark-gray-dark;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
 
 	&:after {
-		border-right-color: $theme-dark-gray-darker;
+		border-right-color: $theme-dark-gray-dark;
 	}
 
 	.dialog {
@@ -815,7 +839,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 			border-bottom-color: $theme-dark-gray-light;
 
 			.eicon-pro-icon {
-				color: $theme-dark-gray-lighter;
+				color: $theme-dark-gray-lightest;
 			}
 
 			.eicon-close {
@@ -825,7 +849,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 }
 
-body.rtl .elementor-element--promotion__dialog {
+body.rtl #elementor-element--promotion__dialog {
 
 	&:after {
 		border-left-color: $theme-dark-gray-darker;
@@ -914,7 +938,7 @@ body.rtl .elementor-element--promotion__dialog {
 .elementor-template-library-menu-item {
 
 	&.elementor-active {
-		background-image: linear-gradient(to bottom, $theme-dark-dark, $theme-dark-gradient-end);
+		background-image: linear-gradient(to bottom, $theme-dark-dark, $theme-dark-gradient-start);
 		border-color: $theme-dark-accent;
 	}
 }
@@ -1288,4 +1312,9 @@ label.elementor-template-library-order-label,
 	i {
 		color: $theme-dark-gray-light;
 	}
+}
+
+// Nerd box icons
+.elementor-nerd-box-icon {
+	filter: contrast(0.8);
 }

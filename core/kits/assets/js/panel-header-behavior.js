@@ -24,7 +24,7 @@ export default class extends Marionette.Behavior {
 	}
 
 	onClickClose() {
-			$e.run( 'panel/global/close' );
+		$e.run( 'panel/global/close' );
 	}
 
 	onClickBack() {

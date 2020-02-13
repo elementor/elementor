@@ -351,12 +351,15 @@ class Icons_Manager {
 			'callback' => function() {
 				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
 				echo '<p>' .
-				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' .
-				esc_html__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) .
+				__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' .
+				__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) .
 				'</p><p><strong>' .
-				esc_html__( 'Please note that the upgrade process may cause some of the previously used Font Awesome 4 icons to look a bit different due to minor design changes made by Font Awesome.', 'elementor' ) .
+				__( 'Please note that the upgrade process may cause some of the previously used Font Awesome 4 icons to look a bit different due to minor design changes made by Font Awesome.', 'elementor' ) .
 				'</strong></p><p>' .
-				esc_html__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) .
+				__( 'The upgrade process includes a database update', 'elementor' ) . ' - ' .
+				__( 'We highly recommend backing up your database before performing this upgrade.', 'elementor' ) .
+				'</p>' .
+				__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) .
 				'</p>';
 			},
 			'fields' => [

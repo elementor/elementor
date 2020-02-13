@@ -52,7 +52,7 @@ export class Remove extends History {
 				model = collection.at( index );
 
 			if ( this.isHistoryActive() ) {
-				$e.run( 'document/history/log-sub-item', {
+				$e.internal( 'document/history/log-sub-item', {
 					container,
 					data: { name, model, index },
 					restore: this.constructor.restore,

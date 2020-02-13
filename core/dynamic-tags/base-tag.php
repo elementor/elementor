@@ -100,6 +100,7 @@ abstract class Base_Tag extends Controls_Stack {
 			'controls' => $this->get_controls(),
 			'content_type' => $this->get_content_type(),
 			'settings_required' => $this->is_settings_required(),
+			'editable' => $this->is_editable(),
 		];
 	}
 

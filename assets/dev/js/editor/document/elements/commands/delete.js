@@ -38,7 +38,7 @@ export class Delete extends History {
 			container = container.lookup();
 
 			if ( this.isHistoryActive() ) {
-				$e.run( 'document/history/log-sub-item', {
+				$e.internal( 'document/history/log-sub-item', {
 					container,
 					type: 'sub-remove',
 					restore: this.constructor.restore,

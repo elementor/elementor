@@ -39,6 +39,13 @@ class Editor {
 	 * @type {boolean}
 	 */
 	isSaved = true;
+
+	/**
+	 * Last save history id.
+	 *
+	 * @type {number}
+	 */
+	lastSaveHistoryId = 0;
 }
 
 export default class Document {
@@ -83,22 +90,16 @@ export default class Document {
 	 * Create document.
 	 *
 	 * @param {{}} config
-	 * @param {Container} container
 	 */
 	constructor( config ) {
 		this.config = config;
 		this.id = config.id;
 
-		this.initialize();
+		this.history = new HistoryManager( this );
+		this.revisions = new RevisionsManager( this );
 	}
 
-	/**
-	 * Function initialize().
-	 *
-	 * Initialize document.
-	 */
-	initialize() {
-		this.history = new HistoryManager();
-		this.revisions = new RevisionsManager( this );
+	isDraft() {
+		return this.config.revisions.current_id !== this.config.id;
 	}
 }

@@ -196,8 +196,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	getShareLinks: function() {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
-				twitter: i18n.shareOnTwitter,
 				facebook: i18n.shareOnFacebook,
+				twitter: i18n.shareOnTwitter,
 				pinterest: i18n.pinIt,
 			},
 			$ = jQuery,
@@ -225,7 +225,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( ! videoUrl ) {
 			const downloadImage = i18n.downloadImage;
 
-			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
+			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold' } ) ) );
 		}
 
 		return $linkList;
@@ -378,7 +378,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const $ = jQuery,
 			classes = this.getSettings( 'classes' ),
 			$footer = $( '<footer>', { class: classes.slideshow.footer + ' ' + classes.preventClose } ),
-			$title = $( '<h2>', { class: classes.slideshow.title } ),
+			$title = $( '<div>', { class: classes.slideshow.title } ),
 			$description = $( '<div>', { class: classes.slideshow.description } );
 		$footer.append( $title, $description );
 		return $footer;
@@ -387,7 +387,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	setSlideshowContent: function( options ) {
 		const $ = jQuery,
 			isSingleSlide = 1 === options.slides.length,
-			showFooter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ),
+			hasTitle = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_title_src' ),
+			hasDescription = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_description_src' ),
+			showFooter = hasTitle || hasDescription,
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
 			$container = $( '<div>', { class: slideshowClasses.container } ),
@@ -541,6 +543,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			descriptionText = $image.data( 'description' ),
 			$title = this.elements.$footer.find( '.' + classes.slideshow.title ),
 			$description = this.elements.$footer.find( '.' + classes.slideshow.description );
+
 		$title.text( titleText || '' );
 		$description.text( descriptionText || '' );
 	},
@@ -761,6 +764,8 @@ module.exports = elementorModules.ViewModule.extend( {
 				type: 'image',
 				id: slideshowID,
 				url: element.href,
+				title: element.dataset.elementorLightboxTitle,
+				description: element.dataset.elementorLightboxDescription,
 				modalOptions: {
 					id: 'elementor-lightbox-slideshow-' + slideshowID,
 				},
@@ -786,8 +791,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.playSlideVideo();
 
-		if ( 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ) ) {
-			this.updateFooterText();
-		}
+		this.updateFooterText();
 	},
 } );

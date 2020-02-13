@@ -73,6 +73,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'has_elements' => true,
 			'is_editable' => true,
+			'edit_capability' => '',
 		];
 	}
 
@@ -411,6 +412,11 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function is_editable_by_current_user() {
+		$edit_capability = static::get_property( 'edit_capability' );
+		if ( $edit_capability && ! current_user_can( $edit_capability ) ) {
+			return false;
+		}
+
 		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
@@ -436,8 +442,6 @@ abstract class Document extends Controls_Stack {
 			'type' => $this->get_name(),
 			'version' => $this->get_main_meta( '_elementor_version' ),
 			'settings' => $settings['page'],
-			'elements' => $this->get_elements_raw_data( null, true ),
-			'widgets' => Plugin::$instance->widgets_manager->get_widget_types_config(),
 			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
@@ -456,6 +460,11 @@ abstract class Document extends Controls_Stack {
 				'permalink' => $this->get_permalink(),
 			],
 		];
+
+		if ( static::get_property( 'has_elements' ) ) {
+			$config['elements'] = $this->get_elements_raw_data( null, true );
+			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
+		}
 
 		$additional_config = apply_filters( 'elementor/document/config', [], $this->get_main_id() );
 
@@ -669,6 +678,10 @@ abstract class Document extends Controls_Stack {
 	 * @return array
 	 */
 	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
+		if ( ! static::get_property( 'has_elements' ) ) {
+			return [];
+		}
+
 		if ( is_null( $data ) ) {
 			$data = $this->get_elements_data();
 		}

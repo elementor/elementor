@@ -1,4 +1,4 @@
-import EnqueueFonts from './hooks/ui/settings/enqueue-fonts';
+import * as hooks from './hooks';
 import * as commands from './commands/';
 
 export default class extends $e.modules.ComponentBase {
@@ -8,15 +8,11 @@ export default class extends $e.modules.ComponentBase {
 		return 'panel/global';
 	}
 
-	registerAPI() {
-		super.registerAPI();
-
-		new EnqueueFonts();
-	}
-
-	defaultRoutes() {
+	defaultTabs() {
 		return {
-			style: () => this.renderContent( 'style' ),
+			style: {
+				helpUrl: 'http://go.elementor.com/panel-theme-style',
+			},
 		};
 	}
 
@@ -36,7 +32,11 @@ export default class extends $e.modules.ComponentBase {
 		};
 	}
 
-	renderContent( tab ) {
+	defaultHooks() {
+		return this.importHooks( hooks );
+	}
+
+	renderTab( tab ) {
 		elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
 	}
 }

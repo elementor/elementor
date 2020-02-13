@@ -1,7 +1,7 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export class Open extends CommandBase {
-	apply( args ) {
+	apply() {
 		const kit = elementor.documents.get( elementor.config.kit_id );
 
 		if ( kit && 'open' === kit.editor.status ) {
@@ -13,12 +13,23 @@ export class Open extends CommandBase {
 
 		this.component.toggleHistoryClass();
 
-		$e.internal( 'panel/state-loading' );
+		elementor.enterPreviewMode( true );
 
-		return $e.run( 'editor/documents/switch', {
-			id: elementor.config.kit_id,
-		} ).then( () => {
-			$e.internal( 'panel/state-ready' );
+		return new Promise( ( resolve ) => {
+			setTimeout( () => {
+				elementor.exitPreviewMode();
+
+				$e.internal( 'panel/state-loading' );
+
+				$e.run( 'editor/documents/switch', {
+					id: elementor.config.kit_id,
+					mode: 'autosave',
+				} ).finally( () => {
+					resolve();
+
+					$e.internal( 'panel/state-ready' );
+				} );
+			}, 500 );
 		} );
 	}
 }

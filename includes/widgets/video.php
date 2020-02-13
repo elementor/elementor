@@ -1044,6 +1044,10 @@ class Widget_Video extends Widget_Base {
 			$video_params['muted'] = 'muted';
 		}
 
+		if ( $settings['play_on_mobile'] ) {
+			$video_params['playsinline'] = '';
+		}
+
 		if ( ! $settings['download_button'] ) {
 			$video_params['controlsList'] = 'nodownload';
 		}

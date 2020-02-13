@@ -13,7 +13,7 @@ export class SectionColumnsResetLayout extends After {
 		return 'section';
 	}
 
-	getConditions( args ) {
+	getConditions() {
 		// On `document/elements/move` do not fire the hook!.
 		return ! $e.commands.isCurrentFirstTrace( 'document/elements/move' );
 	}

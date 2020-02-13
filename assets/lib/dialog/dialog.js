@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.7.4
+ * Dialogs Manager v4.7.6
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -467,6 +467,10 @@
 		};
 
 		this.hide = function() {
+
+			if (! self.isVisible()) {
+				return;
+			}
 
 			clearTimeout(hideTimeOut);
 
