@@ -32,6 +32,7 @@ class Kit extends PageBase {
 		$properties = parent::get_properties();
 
 		$properties['has_elements'] = false;
+		$properties['show_in_finder'] = false;
 		$properties['edit_capability'] = 'edit_theme_options';
 
 		return $properties;
