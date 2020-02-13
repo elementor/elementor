@@ -4,7 +4,7 @@
 	width: 240px;
 	height: 339px;
 	@include end(30px);
-	background-color: #fff;
+	background-color: $editor-color-level-0;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
@@ -23,7 +23,7 @@
 
 	&__inner {
 		height: 100%;
-		background-color: $editor-background;
+		background-color: $editor-color-level-30;
 	}
 
 	&__header {
@@ -31,8 +31,8 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 12px 10px;
-		background-color: #fff;
-		border-bottom: 1px solid $editor-background;
+		background-color: $editor-color-level-0;
+		border-bottom: 1px solid $editor-color-level-30;
 		cursor: move;
 	}
 
@@ -42,7 +42,7 @@
 		cursor: pointer;
 
 		&:not(:hover) {
-			color: $editor-light;
+			color: $editor-color-level-60;
 		}
 	}
 
@@ -70,9 +70,9 @@
 		left: 0;
 		bottom: 0;
 		text-align: center;
-		background-color: #fff;
-		border-top: 1px solid $editor-background;
-		color: $editor-light;
+		background-color: $editor-color-level-0;
+		border-top: 1px solid $editor-color-level-30;
+		color: $editor-color-level-60;
 
 		.elementor-navigator-docked & {
 			display: none;
@@ -87,7 +87,7 @@
 		display: flex;
 		height: 30px;
 		font-size: 11px;
-		border-bottom: 1px solid $editor-background;
+		border-bottom: 1px solid $editor-color-level-30;
 		cursor: pointer;
 		transition: padding .5s linear;
 		overflow: hidden;
@@ -116,26 +116,26 @@
 
 		.elementor-empty-view {
 			padding: 10px;
-			border-bottom: 1px solid $editor-background;
+			border-bottom: 1px solid $editor-color-level-30;
 
 			&__title {
 				@include margin-start(23px);
-				color: $editor-lighter;
+				color: $editor-color-level-50;
 				font-size: 10px;
 				font-style: italic;
 			}
 		}
 
 		.ui-sortable-helper {
-			background-color: #fff;
+			background-color: $editor-color-level-0;
 			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
 			transform: rotate(4deg);
-			border: 1px solid $editor-background;
+			border: 1px solid $editor-color-level-30;
 			pointer-events: none;
 		}
 
 		.ui-sortable-placeholder {
-			background-color: $editor-background-light;
+			background-color: $editor-color-level-20;
 		}
 	}
 
@@ -188,7 +188,7 @@
 					background-color: $editor-info;
 
 					> * {
-						color: #fff;
+						color: $editor-color-level-0;
 					}
 				}
 			}
@@ -197,7 +197,7 @@
 		&__list-toggle {
 			@include margin-end(7px);
 			transition: transform .3s;
-			color: $editor-light;
+			color: $editor-color-level-60;
 		}
 
 		&__element-type {
@@ -214,8 +214,8 @@
 
 				&[contenteditable="true"] {
 					outline: none;
-					color: $editor-dark;
-					background-color: #fff;
+					color: $editor-color-level-70;
+					background-color: $editor-color-level-0;
 					padding: 2px 3px;
 					box-shadow: 0 0 4px rgba(0,0,0,0.2);
 				}
@@ -253,9 +253,9 @@
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
-			color: $editor-dark;
-			background-color: #fff;
-			@include border-start(1px solid $editor-background);
+			color: $editor-color-level-70;
+			background-color: $editor-color-level-0;
+			@include border-start(1px solid $editor-color-level-30);
 
 			&:first-child {
 				@include border-start(3px solid $editor-info);
@@ -266,7 +266,7 @@
 			}
 
 			&:hover {
-				color: $editor-darkest;
+				color: $editor-color-level-90;
 			}
 		}
 
@@ -279,18 +279,18 @@
 		}
 
 		&-column {
-			background-color: lighten($editor-background-light, 3%);
+			//background-color: lighten($editor-color-level-20, 3%);
 
 			> .elementor-navigator__item {
 
 				.elementor-navigator__element__element-type {
-					color: $editor-light;
+					color: $editor-color-level-60;
 				}
 			}
 		}
 
 		&-section {
-			background-color: #fff;
+			background-color: $editor-color-level-0;
 		}
 	}
 }

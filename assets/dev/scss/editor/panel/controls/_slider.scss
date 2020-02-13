@@ -27,7 +27,7 @@
 						height: 12px;
 						width: 11px;
 						transform: rotate(45deg);
-						background-color: #fff;
+						background-color: $editor-color-level-0;
 						border-radius: 3px;
 					}
 
@@ -63,7 +63,7 @@
 .elementor-slider {
 	flex-grow: 1;
 	height: 4px;
-	background-color: $editor-lightest;
+	background-color: $editor-color-level-40;
 	border-radius: 5px;
 	position: relative;
 	cursor: pointer;
@@ -83,7 +83,7 @@
 
 	&__label {
 		font-size: 9px;
-		color: $editor-lighter;
+		color: $editor-color-level-50;
 	}
 
 	&__scales {
@@ -97,7 +97,7 @@
 	&__scale {
 		width: 1px;
 		height: 21px;
-		background-color: $editor-light;
+		background-color: $editor-color-level-60;
 	}
 
 	.noUi {
@@ -105,7 +105,7 @@
 		&-handle {
 			height: 16px;
 			width: 16px;
-			background-color: #fff;
+			background: $theme-color-slider-handle;
 			@include end(0);
 			transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(8px, -8px));
 			position: absolute;
@@ -128,7 +128,7 @@
 			width: 100%;
 			will-change: transform;
 			transform-origin: 0 0;
-			background-color: $editor-light;
+			background-color: $editor-color-level-60;
 		}
 
 		&-tooltip {
