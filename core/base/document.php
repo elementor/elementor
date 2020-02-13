@@ -74,6 +74,7 @@ abstract class Document extends Controls_Stack {
 			'has_elements' => true,
 			'is_editable' => true,
 			'edit_capability' => '',
+			'support_kit' => false,
 		];
 	}
 
@@ -89,6 +90,7 @@ abstract class Document extends Controls_Stack {
 			'elements_categories' => static::get_editor_panel_categories(),
 			'default_route' => 'panel/elements/categories',
 			'has_elements' => static::get_property( 'has_elements' ),
+			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
 				/* translators: %s: the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
