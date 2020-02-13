@@ -127,7 +127,7 @@ class Edit extends Base_Category {
 					[
 						'name' => 'view',
 						'url' => $document->get_permalink(),
-						'icon' => 'eye',
+						'icon' => 'preview-medium',
 					],
 				],
 			];
