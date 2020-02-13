@@ -34,6 +34,7 @@ class Kit extends PageBase {
 		$properties['has_elements'] = false;
 		$properties['show_in_finder'] = false;
 		$properties['edit_capability'] = 'edit_theme_options';
+		$properties['support_kit'] = true;
 
 		return $properties;
 	}

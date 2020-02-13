@@ -19,9 +19,7 @@ export default class Component extends ComponentBase {
 		try {
 			elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
 		} catch ( e ) {
-			setTimeout( () => {
-				elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
-			}, 1000 );
+			$e.route( 'panel/elements/categories' );
 		}
 	}
 
