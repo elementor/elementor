@@ -20,7 +20,7 @@ export default class Component extends ComponentBase {
 			elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
 		} catch ( e ) {
 			setTimeout( () => {
-				elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
+				$e.route( this.getNamespace() + '/' + tab );
 			}, 1000 );
 		}
 	}
