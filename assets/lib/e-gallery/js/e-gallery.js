@@ -1,3 +1,4 @@
+/*! E-Gallery by Elementor v1.1.1 */
 var EGallery =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -246,30 +247,16 @@ module.exports = _setPrototypeOf;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-function _typeof3(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof3 = function _typeof3(obj) { return typeof obj; }; } else { _typeof3 = function _typeof3(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof3(obj); }
-
-function _typeof2(obj) {
-  if (typeof Symbol === "function" && _typeof3(Symbol.iterator) === "symbol") {
-    _typeof2 = function _typeof2(obj) {
-      return _typeof3(obj);
-    };
-  } else {
-    _typeof2 = function _typeof2(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof3(obj);
-    };
-  }
-
-  return _typeof2(obj);
-}
-
 function _typeof(obj) {
-  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     module.exports = _typeof = function _typeof(obj) {
-      return _typeof2(obj);
+      return typeof obj;
     };
   } else {
     module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
@@ -716,7 +703,7 @@ function () {
             image.onload = resolve;
           });
           promise.then(function () {
-            $item.find(_this6.settings.selectors.image).css('background-image', 'url(' + _this6.settings.items[index].thumbnail + ')').addClass(_this6.getItemClass(_this6.settings.classes.imageLoaded));
+            $item.find(_this6.settings.selectors.image).css('background-image', 'url("' + _this6.settings.items[index].thumbnail + '")').addClass(_this6.getItemClass(_this6.settings.classes.imageLoaded));
             item.loaded = true;
           });
           image.src = _this6.settings.items[index].thumbnail;
