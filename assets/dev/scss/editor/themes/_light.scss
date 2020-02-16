@@ -73,9 +73,12 @@
 	--theme-color-units-choices: var(--editor-color-level-60);
 	--theme-color-units-choices-active: var(--editor-color-level-80);
 	--theme-color-popover-bg: var(--theme-color-panel-front-bg);
+	--theme-color-select2-highlighted-option-bg: inherit;
 
 
 	--theme-gradient-navigation-tab: linear-gradient(to bottom, var(--editor-color-level-20), var(--editor-color-level-10));
+	--theme-color-checkersboard-bg: var(--editor-color-level-0);
+	--theme-color-checkersboard-front: var(--editor-color-level-30);
 }
 
 

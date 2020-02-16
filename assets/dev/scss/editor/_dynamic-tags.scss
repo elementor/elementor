@@ -139,9 +139,9 @@
 		flex-shrink: 0;
 		height: $control-unit;
 		cursor: pointer;
-		border: 1px solid $editor-color-level-40;
+		border: 1px solid $theme-color-input-border;
 		border-radius: 3px;
-		background: #fff;
+		background: $theme-color-input-bg;
 
 		&-wrapper {
 			display: flex;

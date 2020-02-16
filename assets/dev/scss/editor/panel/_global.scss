@@ -117,7 +117,7 @@
 		top: -$triangle-size * 2;
 		@include end(22px);
 		border: $triangle-size solid transparent;
-		border-bottom-color: $editor-color-level-0;
+		border-bottom-color: $theme-color-popover-bg;
 	}
 
 	div.elementor-control { // Harder selector to override default settings

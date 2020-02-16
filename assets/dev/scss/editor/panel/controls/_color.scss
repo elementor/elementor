@@ -25,3 +25,10 @@
 body .pcr-app {
 	background-color: $theme-color-popover-bg;
 }
+
+.pcr-button {
+	background-image:
+		linear-gradient(45deg, $theme-color-checkersboard-front 25%, transparent 0, transparent 75%, $theme-color-checkersboard-front 0, $theme-color-checkersboard-front),
+		linear-gradient(45deg, $theme-color-checkersboard-front 25%, transparent 0, transparent 75%, $theme-color-checkersboard-front 0, $theme-color-checkersboard-front);
+	background-color: $theme-color-checkersboard-bg;
+}

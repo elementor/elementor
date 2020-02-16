@@ -27,7 +27,8 @@
 			align-items: center;
 			justify-content: center;
 			flex-shrink: 0;
-			border: 1px solid $editor-color-level-40;
+			border: 1px solid $theme-color-input-border;
+			background: $theme-color-input-bg;
 			border-left: none;
 			cursor: pointer;
 

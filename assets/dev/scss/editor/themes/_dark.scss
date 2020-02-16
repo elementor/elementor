@@ -111,8 +111,11 @@ $editor-danger: $theme-dark-danger;
 	--theme-color-units-choices: var(--editor-color-level-50);
 	--theme-color-units-choices-active: var(--theme-color-panel-highlight);
 	--theme-color-popover-bg: var(--editor-color-level-35);
+	--theme-color-select2-highlighted-option-bg: var(--theme-color-popover-bg);
 
 	--theme-gradient-navigation-tab: linear-gradient(to bottom, var(--editor-color-level-20), var(--editor-color-level-35));
+	--theme-color-checkersboard-bg: var(--editor-color-level-40);
+	--theme-color-checkersboard-front: var(--editor-color-level-20);
 }
 
 /*
