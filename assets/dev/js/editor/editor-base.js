@@ -12,7 +12,7 @@ import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
-import KitManager from 'elementor/core/kits/assets/js/manager.js';
+import KitManager from '../../../../core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 

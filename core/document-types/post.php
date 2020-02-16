@@ -6,6 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Post extends PageBase {
+
+	public static function get_properties() {
+		$properties = parent::get_properties();
+
+		$properties['support_kit'] = true;
+
+		return $properties;
+	}
+
 	/**
 	 * @access public
 	 */

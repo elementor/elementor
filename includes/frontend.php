@@ -380,7 +380,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.5',
+			'4.7.6',
 			true
 		);
 
@@ -459,7 +459,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.6.1'
+			'5.6.2'
 		);
 
 		wp_register_style(

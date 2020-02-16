@@ -32,6 +32,7 @@ class Page extends Library_Document {
 		$properties = parent::get_properties();
 
 		$properties['support_wp_page_templates'] = true;
+		$properties['support_kit'] = true;
 
 		return $properties;
 	}

@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.6.1");
-  src: url("../fonts/eicons.eot?5.6.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.6.1") format("woff2"), url("../fonts/eicons.woff?5.6.1") format("woff"), url("../fonts/eicons.ttf?5.6.1") format("truetype"), url("../fonts/eicons.svg?5.6.1#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.6.2");
+  src: url("../fonts/eicons.eot?5.6.2#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.6.2") format("woff2"), url("../fonts/eicons.woff?5.6.2") format("woff"), url("../fonts/eicons.ttf?5.6.2") format("truetype"), url("../fonts/eicons.svg?5.6.2#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1130,3 +1130,6 @@
 
 .eicon-lock:before {
   content: '\e96f'; }
+
+.eicon-eye:before {
+  content: '\e8ac'; }

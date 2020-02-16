@@ -32,7 +32,9 @@ class Kit extends PageBase {
 		$properties = parent::get_properties();
 
 		$properties['has_elements'] = false;
+		$properties['show_in_finder'] = false;
 		$properties['edit_capability'] = 'edit_theme_options';
+		$properties['support_kit'] = true;
 
 		return $properties;
 	}
@@ -337,7 +339,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					$button_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$button_hover_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
