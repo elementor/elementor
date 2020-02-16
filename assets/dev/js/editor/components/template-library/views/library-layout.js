@@ -50,9 +50,9 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	showImportView: function() {
-		this.getHeaderView().menuArea.reset();
-
 		this.modalContent.show( new TemplateLibraryImportView() );
+
+		this.showBackToLibraryView();
 	},
 
 	showConnectView: function( args ) {
@@ -72,13 +72,17 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 			url: templateModel.get( 'url' ),
 		} ) );
 
-		var headerView = this.getHeaderView();
-
-		headerView.menuArea.reset();
+		this.showBackToLibraryView();
 
 		headerView.tools.show( new TemplateLibraryHeaderPreviewView( {
 			model: templateModel,
 		} ) );
+	},
+
+	showBackToLibraryView: function() {
+		const headerView = this.getHeaderView();
+
+		headerView.menuArea.reset();
 
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 	},
