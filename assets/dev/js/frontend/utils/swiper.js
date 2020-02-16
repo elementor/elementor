@@ -21,7 +21,8 @@ export default class Swiper {
 			const configBPKeyInt = parseInt( configBPKey );
 			let breakpointToUpdate;
 
-			if ( configBPKeyInt === elementorBreakpoints.md ) {
+			// The `configBPKeyInt + 1` is a BC Fix for Elementor Pro Carousels from 2.8.0-2.8.3 used with Elementor >= 2.9.0
+			if ( configBPKeyInt === elementorBreakpoints.md || ( configBPKeyInt + 1 ) === elementorBreakpoints.md ) {
 				// This handles the mobile breakpoint. Elementor's default sm breakpoint is never actually used,
 				// so the mobile breakpoint (md) needs to be handled separately and set to the 0 breakpoint (xs)
 				breakpointToUpdate = elementorBreakpoints.xs;
