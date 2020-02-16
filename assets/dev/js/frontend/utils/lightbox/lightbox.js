@@ -380,7 +380,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			$footer = $( '<footer>', { class: classes.slideshow.footer + ' ' + classes.preventClose } ),
 			$title = $( '<div>', { class: classes.slideshow.title } ),
 			$description = $( '<div>', { class: classes.slideshow.description } );
+
 		$footer.append( $title, $description );
+
 		return $footer;
 	},
 
@@ -536,6 +538,10 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	updateFooterText: function() {
+		if ( ! this.elements.$footer ) {
+			return;
+		}
+
 		const classes = this.getSettings( 'classes' ),
 			$activeSlide = this.getSlide( 'active' ),
 			$image = $activeSlide.find( '.elementor-lightbox-image' ),
