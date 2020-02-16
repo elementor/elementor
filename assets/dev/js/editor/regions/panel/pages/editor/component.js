@@ -72,6 +72,14 @@ export default class Component extends ComponentBase {
 		}
 
 		if ( defaultTab ) {
+			// Ensure tab is exist.
+			const controlsTabs = elementor.getElementData( args.model ).tabs_controls;
+
+			// Fallback to first tab.
+			if ( ! controlsTabs[ defaultTab ] ) {
+				defaultTab = Object.keys( controlsTabs )[ 0 ];
+			}
+
 			this.setDefaultRoute( defaultTab );
 
 			return true;

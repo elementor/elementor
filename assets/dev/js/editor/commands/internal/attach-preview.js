@@ -12,11 +12,11 @@ export class AttachPreview extends CommandBase {
 
 				elementor.checkPageStatus();
 
+				elementor.trigger( 'document:loaded', document );
+
 				$e.internal( 'panel/open-default', {
 					refresh: true,
 				} );
-
-				elementor.trigger( 'document:loaded', document );
 		} );
 	}
 
