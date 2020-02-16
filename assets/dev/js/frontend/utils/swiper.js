@@ -27,7 +27,10 @@ export default class Swiper {
 				breakpointToUpdate = elementorBreakpoints.xs;
 			} else {
 				// Find the index of the current config breakpoint in the Elementor Breakpoints array
-				const currentBPIndexInElementorBPs = elementorBreakpointValues.findIndex( ( elementorBP ) => configBPKeyInt === elementorBP );
+				const currentBPIndexInElementorBPs = elementorBreakpointValues.findIndex( ( elementorBP ) => {
+					// BC Fix for Elementor Pro Carousels from 2.8.0-2.8.3 used with Elementor >= 2.9.0
+					return configBPKeyInt === elementorBP || ( configBPKeyInt + 1 ) === elementorBP;
+				} );
 
 				// For all other Swiper config breakpoints, move them one breakpoint down on the breakpoint list,
 				// according to the array of Elementor's global breakpoints
