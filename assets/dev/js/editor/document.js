@@ -1,6 +1,52 @@
 import HistoryModule from './document/history/module';
 import RevisionsManager from 'elementor/modules/history/assets/js/revisions/manager';
-import Editor from './model/editor';
+
+/**
+ * TODO: Wrong class name + location, conflict with 'editor.js'.
+ */
+class Editor {
+	/**
+	 * Editor status.
+	 *
+	 * @type {'open'|'closed'}
+	 */
+	status = 'closed';
+
+	/**
+	 * Is document still saving?.
+	 *
+	 * @type {boolean}
+	 */
+	isSaving = false;
+
+	/**
+	 * Is document changed?.
+	 *
+	 * @type {boolean}
+	 */
+	isChanged = false;
+
+	/**
+	 * Is document changed during save?.
+	 *
+	 * @type {boolean}
+	 */
+	isChangedDuringSave = false;
+
+	/**
+	 * Is document saved?
+	 *
+	 * @type {boolean}
+	 */
+	isSaved = true;
+
+	/**
+	 * Last save history id.
+	 *
+	 * @type {number}
+	 */
+	lastSaveHistoryId = 0;
+}
 
 export default class Document {
 	/**
