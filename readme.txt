@@ -222,6 +222,10 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.2 - 2020-02-16 =
+* Fix: Responsive issue when using Slides to Show control in carousel widgets ([#10540](https://github.com/elementor/elementor/issues/10540))
+* Fix: Title and Description causes JS error in Lightbox in edge cases
+
 = 2.9.1 - 2020-02-13 =
 * Tweak: Added Native WordPress Gallery support for lightbox pagination
 * Tweak: Updated eicons library to v5.6.2
