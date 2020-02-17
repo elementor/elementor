@@ -18,5 +18,6 @@ elementorModules.editor = {
 		ControlsStack: ControlsStack,
 	},
 
+	// TODO Should be `$e.modules.document.Container`.
 	Container: Container,
 };
