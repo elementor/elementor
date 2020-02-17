@@ -15,6 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Section extends Library_Document {
 
+	public static function get_properties() {
+		$properties = parent::get_properties();
+
+		$properties['support_kit'] = true;
+
+		return $properties;
+	}
+
 	/**
 	 * Get document name.
 	 *

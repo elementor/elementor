@@ -60,6 +60,7 @@ class Library extends \WP_CLI_Command {
 			}
 		} else {
 			$this->do_sync( isset( $assoc_args['force'] ) );
+			\WP_CLI::success( 'Done!' );
 		}
 	}
 
@@ -161,6 +162,14 @@ class Library extends \WP_CLI_Command {
 		$_REQUEST['mode'] = 'cli';
 
 		$this->get_library_app()->action_disconnect();
+	}
+
+	private function do_sync() {
+		$data = Api::get_library_data( true );
+
+		if ( empty( $data ) ) {
+			\WP_CLI::error( 'Cannot sync library.' );
+		}
 	}
 
 	/**

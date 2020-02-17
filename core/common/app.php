@@ -120,7 +120,7 @@ class App extends BaseApp {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.5',
+			'4.7.6',
 			true
 		);
 
@@ -158,7 +158,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.6.1'
+			'5.6.2'
 		);
 
 		wp_enqueue_style(

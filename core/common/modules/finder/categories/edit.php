@@ -63,6 +63,7 @@ class Edit extends Base_Category {
 
 		$document_types = Plugin::$instance->documents->get_document_types( [
 			'is_editable' => true,
+			'show_in_finder' => true,
 		] );
 
 		// TODO: Remove on 2.4.0.
@@ -126,7 +127,7 @@ class Edit extends Base_Category {
 					[
 						'name' => 'view',
 						'url' => $document->get_permalink(),
-						'icon' => 'eye',
+						'icon' => 'preview-medium',
 					],
 				],
 			];
