@@ -51,6 +51,16 @@ export default class Shortcuts {
 		} );
 	}
 
+	unregister( shortcuts, args ) {
+		shortcuts.replace( ' ', '' ).split( ',' ).forEach( ( shortcut ) => {
+			this.handlers[ shortcut ].forEach( ( index, handler ) => {
+				if ( args === handler ) {
+					delete this.handlers[ shortcut ][ index ];
+				}
+			} );
+		} );
+	}
+
 	handle( event ) {
 		const handlers = this.getHandlersByPriority( event );
 
