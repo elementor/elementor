@@ -6,6 +6,8 @@ const EditorModule = elementorModules.Module.extend( {
 		$window.on( 'elementor:init-components',
 			this.onElementorInitComponents.bind( this ) );
 
+		$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
+
 		$window.on( 'elementor:init', this.onElementorReady );
 	},
 
@@ -31,6 +33,8 @@ const EditorModule = elementorModules.Module.extend( {
 			.on( 'preview:loaded', this.onElementorPreviewLoaded.bind( this ) );
 	},
 } );
+
+EditorModule.prototype.onElementorLoaded = function() {};
 
 EditorModule.prototype.onElementorInit = function() {};
 
