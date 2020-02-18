@@ -261,9 +261,9 @@ class User {
 			]
 		);
 
-		$body = wp_remote_retrieve_body( $response );
+		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
-		if ( 'success' === $body ) {
+		if ( 200 === $response_code ) {
 			self::set_introduction_viewed( [
 				'introductionKey' => Beta_Testers::BETA_TESTER_SIGNUP,
 			] );
