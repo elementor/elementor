@@ -16,7 +16,7 @@
 			.elementor-slider {
 
 				.noUi-handle {
-					border-radius: 3px;
+					border-radius: 0;
 					width: 10px;
 					transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(4px, -4px));
 
@@ -34,7 +34,7 @@
 					&-lower {
 
 						&:after {
-							left: 3px;
+							left: 5px;
 							box-shadow: 2px -2px 3px 0px rgba(0,0,0,.1);
 						}
 					}
@@ -42,7 +42,7 @@
 					&-upper {
 
 						&:after {
-							right: 3px;
+							right: 5px;
 							box-shadow: -2px 2px 3px 0px rgba(0,0,0,.1);
 						}
 					}
