@@ -460,6 +460,13 @@ $devices: 'desktop', 'tablet', 'mobile';
 		border-color: $theme-dark-gray-light;
 	}
 
+	&.elementor-control-dynamic {
+
+		.elementor-control-gallery-clear {
+			border-color: $theme-dark-gray-light;
+		}
+	}
+
 	.elementor-control-dynamic-switcher {
 		border-bottom: 1px solid $theme-dark-gray-light;
 		border-left: 1px solid $theme-dark-gray-light;
