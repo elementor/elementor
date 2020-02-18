@@ -148,6 +148,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.editor.destroy();
 
 		this.view.allowRender = true;
+
+		this.view.getEditModel().renderRemoteServer();
 	},
 
 	onInlineEditingClick: function( event ) {
