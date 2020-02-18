@@ -298,6 +298,19 @@
 			}
 		}
 	}
+
+	&.elementor-control-hidden-label.elementor-label-block {
+
+		> .elementor-control-content {
+
+			> .elementor-control-field {
+
+				> .elementor-control-input-wrapper {
+					margin-top: 0;
+				}
+			}
+		}
+	}
 }
 
 .elementor-label-inline {
