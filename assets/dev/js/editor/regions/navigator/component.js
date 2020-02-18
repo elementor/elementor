@@ -20,11 +20,7 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			close: ( args ) => ( new commands.Close( args ) ).run(),
-			open: ( args ) => ( new commands.Open( args ) ).run(),
-			toggle: ( args ) => ( new commands.Toggle( args ) ).run(),
-		};
+		this.importCommands( commands );
 	}
 
 	defaultShortcuts() {
