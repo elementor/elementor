@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Schemes;
+use Elementor\Core\Settings\Manager;
 
 /**
  * Elementor image carousel widget.
@@ -697,11 +698,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			if ( $link ) {
 				$link_key = 'link_' . $index;
 
-				$this->add_render_attribute( $link_key, [
-					'data-elementor-open-lightbox' => $settings['open_lightbox'],
-					'data-elementor-lightbox-slideshow' => $this->get_id(),
-					'data-elementor-lightbox-index' => $index,
-				] );
+				$this->add_lightbox_data_attributes( $link_key, $attachment['id'], $settings['open_lightbox'], $this->get_id() );
 
 				if ( Plugin::$instance->editor->is_edit_mode() ) {
 					$this->add_render_attribute( $link_key, [

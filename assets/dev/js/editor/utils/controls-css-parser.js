@@ -13,8 +13,16 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	getDefaultElements: function() {
+		const id = `elementor-style-${ this.getSettings( 'id' ) }`;
+
+		let $stylesheet = elementor.$previewContents.find( `#${ id }` );
+
+		if ( ! $stylesheet.length ) {
+			$stylesheet = jQuery( '<style>', { id } );
+		}
+
 		return {
-			$stylesheetElement: jQuery( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } ),
+			$stylesheetElement: $stylesheet,
 		};
 	},
 

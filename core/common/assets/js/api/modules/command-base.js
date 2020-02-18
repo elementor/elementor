@@ -1,34 +1,29 @@
-/**
- * TODO: Should we do validate function in scenarios where args are are not required.
- * but should be validate?
- */
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
 	/**
-	 * Current component (elementorModules.Module ).
+	 * Current component.
 	 *
-	 * @type {{}}
+	 * @type {Component}
 	 */
-	component = {};
+	component;
 
 	/**
 	 * Function constructor().
 	 *
 	 * Create Commands Base.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
+	 * @param [commandsAPI={}]
 	 */
 	constructor( args, commandsAPI = $e.commands ) {
 		super( args );
 
 		// Acknowledge self about which command it run.
-		this.currentCommand = commandsAPI.getCurrentFirst();
+		this.currentCommand = commandsAPI.getCurrentLast();
 
 		// Assign instance of current component.
 		this.component = commandsAPI.getComponent( this.currentCommand );
-
-		// TODO: if `this.component` not found, throw error !.
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
@@ -70,7 +65,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Initialize command, called after construction.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 */
 	initialize( args = {} ) {} // eslint-disable-line no-unused-vars
 
@@ -79,9 +74,9 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Validate command arguments.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 */
-	validateArgs( args ) {} // eslint-disable-line no-unused-vars
+	validateArgs( args = {} ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function isDataChanged().
@@ -99,11 +94,11 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Do the actual command.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 *
 	 * @returns {*}
 	 */
-	apply( args ) { // eslint-disable-line no-unused-vars
+	apply( args = {} ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -137,7 +132,7 @@ export default class CommandBase extends ArgsObject {
 			this.onAfterApply( this.args, _result );
 
 			if ( this.isDataChanged() ) {
-				elementor.saver.setFlagEditorChange( true );
+				$e.internal( 'document/save/set-is-modified', { status: true } );
 			}
 
 			// For UI hooks.
@@ -160,9 +155,9 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called before run().
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 */
-	onBeforeRun( args ) {
+	onBeforeRun( args = {} ) {
 		$e.hooks.runUIBefore( this.currentCommand, args );
 	}
 
@@ -171,10 +166,10 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called after run().
 	 *
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param [args={}]
+	 * @param [result={*}]
 	 */
-	onAfterRun( args, result ) {
+	onAfterRun( args = {}, result ) {
 		$e.hooks.runUIAfter( this.currentCommand, args, result );
 	}
 
@@ -183,9 +178,9 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called before apply().
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 */
-	onBeforeApply( args ) {
+	onBeforeApply( args = {} ) {
 		$e.hooks.runDataDependency( this.currentCommand, args );
 	}
 
@@ -194,10 +189,10 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called after apply().
 	 *
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param [args={}]
+	 * @param [result={*}]
 	 */
-	onAfterApply( args, result ) {
+	onAfterApply( args = {}, result ) {
 		$e.hooks.runDataAfter( this.currentCommand, args, result );
 	}
 

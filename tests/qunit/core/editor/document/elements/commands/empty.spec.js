@@ -10,7 +10,7 @@ export const Empty = () => {
 			ElementsHelper.createButton( eColumn );
 
 			// Ensure editor saver.
-			elementor.saver.setFlagEditorChange( false );
+			$e.internal( 'document/save/set-is-modified', { status: false } );
 
 			ElementsHelper.empty();
 
@@ -34,6 +34,7 @@ export const Empty = () => {
 				tempCommand = '',
 				tempArgs = '';
 
+			// TODO: Do not override '$e.run', use 'on' method instead.
 			$e.run = ( command, args ) => {
 				tempCommand = command;
 				tempArgs = args;
@@ -56,6 +57,7 @@ export const Empty = () => {
 
 			elementor.getPreviewView().addChildModel = ( data ) => tempData = data;
 
+			// TODO: Do not override '$e.run', use 'on' method instead.
 			$e.run = ( command, args ) => {
 				tempCommand = command;
 			};

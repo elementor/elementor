@@ -1,20 +1,19 @@
-import Components from './core/components';
-import Hooks from './core/hooks';
+/* Alphabetical order */
+import BackwardsCompatibility from './core/backwards-compatibility';
+import CommandBase from './modules/command-base';
+import CommandInternalBase from './modules/command-internal-base';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
-import Routes from './core/routes';
-import Shortcuts from './core/shortcuts';
-import BackwardsCompatibility from './core/backwards-compatibility';
-import CommandsBase from './modules/command-base';
-import DataBase from './modules/hooks/data/base';
-import DataAfter from './modules/hooks/data/after';
-import DataDependency from './modules/hooks/data/dependency';
-import UIBase from './modules/hooks/ui/base';
-import UIAfter from './modules/hooks/ui/after';
-import UIBefore from './modules/hooks/ui/before';
 import ComponentBase from './modules/component-base';
 import ComponentModalBase from './modules/component-modal-base';
+import Components from './core/components';
 import HookBreak from './modules/hook-break';
+import Hooks from './core/hooks';
+import Routes from './core/routes';
+import Shortcuts from './core/shortcuts';
+
+import * as hookData from './modules/hooks/data/';
+import * as hookUI from './modules/hooks/ui';
 
 export default class API {
 	/**
@@ -34,24 +33,16 @@ export default class API {
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 
 		this.modules = {
-			ComponentBase: ComponentBase,
-			ComponentModal: ComponentModalBase,
+			CommandBase,
+			CommandInternalBase,
 
-			CommandBase: CommandsBase,
+			ComponentBase,
+			ComponentModalBase,
 
-			HookBreak: HookBreak,
+			HookBreak,
 
-			hookData: {
-				Base: DataBase, // TODO: consider remove.
-				After: DataAfter,
-				Dependency: DataDependency,
-			},
-
-			hookUI: {
-				Base: UIBase, // TODO: consider remove.
-				After: UIAfter,
-				Before: UIBefore,
-			},
+			hookData,
+			hookUI,
 		};
 
 		window.$e = this;
@@ -64,7 +55,7 @@ export default class API {
 	 *
 	 * @param {{}} args
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
 	run( ...args ) {
 		return $e.commands.run.apply( $e.commands, args );

@@ -2,23 +2,20 @@ import Base from './base/base';
 
 export class Auto extends Base {
 	apply( args ) {
-		const { force = false } = args;
-		let { options } = args;
+		const { force = false, document = this.document } = args;
 
-		if ( ! force && 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
-			return jQuery.Deferred().reject();
+		if ( ! force && ! document.container.isEditable() ) {
+			return jQuery.Deferred().reject( 'Document is not editable' );
 		}
 
-		if ( ! this.component.isEditorChanged() ) {
-			return jQuery.Deferred().reject();
+		if ( ! document.editor.isChanged ) {
+			return jQuery.Deferred().resolve( 'Document is not changed' );
 		}
 
-		options = Object.assign( {
-			status: 'autosave',
-			document: this.document,
-		}, options );
+		args.status = 'autosave';
+		args.document = document;
 
-		return elementor.saver.saveEditor( options );
+		return $e.internal( 'document/save/save', args );
 	}
 }
 

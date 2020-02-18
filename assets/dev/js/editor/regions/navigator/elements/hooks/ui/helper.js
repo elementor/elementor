@@ -1,8 +1,6 @@
-import DocumentHelpers from 'elementor-document/helpers';
-
 export default class Helper {
 	static toggleVisibilityClass( elementId ) {
-		const view = DocumentHelpers.findViewById( elementId );
+		const view = $e.components.get( 'document' ).utils.findViewById( elementId );
 
 		if ( view ) {
 			view.toggleVisibilityClass();

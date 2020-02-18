@@ -36,11 +36,11 @@ module.exports = elementorModules.ViewModule.extend( {
 					title: 'elementor-slideshow__title',
 					description: 'elementor-slideshow__description',
 					counter: 'elementor-slideshow__counter',
-					iconExpand: 'elementor-icon-fullscreen',
-					iconShrink: 'shrink',
+					iconExpand: 'eicon-frame-expand',
+					iconShrink: 'eicon-frame-minimize',
 					iconZoomIn: 'eicon-zoom-in-bold',
 					iconZoomOut: 'eicon-zoom-out-bold',
-					iconShare: 'elementor-icon-share',
+					iconShare: 'eicon-share-arrow',
 					shareMenu: 'elementor-slideshow__share-menu',
 					shareLinks: 'elementor-slideshow__share-links',
 					hideUiVisibility: 'elementor-slideshow--ui-hidden',
@@ -116,6 +116,10 @@ module.exports = elementorModules.ViewModule.extend( {
 			DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( modal, arguments );
 
 			modal.getElements( 'message' ).removeClass( 'animated' );
+
+			if ( screenfull.isFullscreen ) {
+				self.deactivateFullscreen();
+			}
 		};
 
 		switch ( options.type ) {
@@ -123,8 +127,22 @@ module.exports = elementorModules.ViewModule.extend( {
 				self.setVideoContent( options );
 
 				break;
-			case 'slideshow':
 			case 'image':
+				const slides = [ {
+					image: options.url,
+					index: 0,
+					title: options.title,
+					description: options.description,
+				} ];
+
+				options.slideshow = {
+					slides,
+					swiper: {
+						loop: false,
+						pagination: false,
+					},
+				};
+			case 'slideshow':
 				self.setSlideshowContent( options.slideshow );
 
 				break;
@@ -139,31 +157,23 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.getModal().setMessage( html );
 	},
 
-	setImageContent: function( imageURL ) {
-		const classes = this.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { class: classes.item } ),
-			$image = jQuery( '<img>', { src: imageURL, class: classes.image } );
-
-		$item.append( $image );
-
-		this.getModal().setMessage( $item );
-	},
-
 	setVideoContent: function( options ) {
-		var classes = this.getSettings( 'classes' ),
-			$videoContainer = jQuery( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
-			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
-			$videoElement,
+		const $ = jQuery,
+			classes = this.getSettings( 'classes' ),
+			$videoContainer = $( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
+			$videoWrapper = $( '<div>', { class: classes.videoWrapper } ),
 			modal = this.getModal();
 
+		let $videoElement;
+
 		if ( 'hosted' === options.videoType ) {
-			var videoParams = jQuery.extend( { src: options.url, autoplay: '' }, options.videoParams );
+			const videoParams = $.extend( { src: options.url, autoplay: '' }, options.videoParams );
 
-			$videoElement = jQuery( '<video>', videoParams );
+			$videoElement = $( '<video>', videoParams );
 		} else {
-			var videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+			const videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
 
-			$videoElement = jQuery( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
+			$videoElement = $( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
 		}
 
 		$videoContainer.append( $videoWrapper );
@@ -174,7 +184,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.setVideoAspectRatio();
 
-		var onHideMethod = modal.onHide;
+		const onHideMethod = modal.onHide;
 
 		modal.onHide = function() {
 			onHideMethod();
@@ -184,11 +194,12 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getShareLinks: function() {
-		const socialNetworks = {
-			facebook: 'Share on facebook',
-			twitter: 'Share on Twitter',
-			pinterest: 'Pin it',
-		},
+		const { i18n } = elementorFrontend.config,
+			socialNetworks = {
+				facebook: i18n.shareOnFacebook,
+				twitter: i18n.shareOnTwitter,
+				pinterest: i18n.pinIt,
+			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
 			$linkList = $( '<div>', { class: classes.slideshow.shareLinks } ),
@@ -196,43 +207,45 @@ module.exports = elementorModules.ViewModule.extend( {
 			$image = $activeSlide.find( '.elementor-lightbox-image' ),
 			videoUrl = $activeSlide.data( 'elementor-slideshow-video' );
 
-		let itemUrl = '';
+		let itemUrl;
 
-		if ( $image.length ) {
-			itemUrl = $image.attr( 'src' );
-		} else if ( videoUrl ) {
+		if ( videoUrl ) {
 			itemUrl = videoUrl;
+		} else {
+			itemUrl = $image.attr( 'src' );
 		}
 
-		for ( const network in socialNetworks ) {
-			if ( socialNetworks.hasOwnProperty( network ) ) {
-				const $link = $( '<a>', { href: this.createShareLink( network, itemUrl ) } ).text( socialNetworks[ network ] );
-				$linkList.append( $link );
-			}
+		$.each( socialNetworks, ( key, networkLabel ) => {
+			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel );
+
+			$link.prepend( $( '<i>', { class: 'eicon-' + key } ) );
+			$linkList.append( $link );
+		} );
+
+		if ( ! videoUrl ) {
+			const downloadImage = i18n.downloadImage;
+
+			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold' } ) ) );
 		}
 
-		if ( $image.length ) {
-			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( 'Download Image' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
-
-			const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
-				id: this.id,
-				url: itemUrl,
-			} );
-			$linkList.append( $( '<a>', { href: hash, download: '' } ).text( 'Hash' ).prepend( $( '<i>', { class: 'eicon-file-download' } ) ) );
-		}
 		return $linkList;
 	},
 
 	createShareLink: function( networkName, itemUrl ) {
-		const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
-			id: this.id,
-			url: itemUrl,
-		} );
+		const options = {};
 
-		const url = encodeURIComponent( location.href.replace( /#.*/, '' ) + hash ),
-			networkURL = ShareLink.getNetworkLink( networkName, { url: url } );
+		if ( 'pinterest' === networkName ) {
+			options.image = encodeURIComponent( itemUrl );
+		} else {
+			const hash = elementorFrontend.utils.urlActions.createActionHash( 'lightbox', {
+				id: this.id,
+				url: itemUrl,
+			} );
 
-		return networkURL;
+			options.url = encodeURIComponent( location.href.replace( /#.*/, '' ) ) + hash;
+		}
+
+		return ShareLink.getNetworkLink( networkName, options );
 	},
 
 	getSlideshowHeader: function() {
@@ -324,14 +337,14 @@ module.exports = elementorModules.ViewModule.extend( {
 	activateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
-		this.elements.$iconExpand.addClass( classes.slideshow.iconShrink );
+		this.elements.$iconExpand.removeClass( classes.slideshow.iconExpand ).addClass( classes.slideshow.iconShrink );
 		this.elements.$container.addClass( classes.slideshow.fullscreenMode );
 	},
 
 	deactivateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.exit();
-		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink );
+		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink ).addClass( classes.slideshow.iconExpand );
 		this.elements.$container.removeClass( classes.slideshow.fullscreenMode );
 	},
 
@@ -339,6 +352,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const swiper = this.swiper,
 			elements = this.elements,
 			classes = this.getSettings( 'classes' );
+
 		swiper.zoom.in();
 		swiper.allowSlideNext = false;
 		swiper.allowSlidePrev = false;
@@ -351,6 +365,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const swiper = this.swiper,
 			elements = this.elements,
 			classes = this.getSettings( 'classes' );
+
 		swiper.zoom.out();
 		swiper.allowSlideNext = true;
 		swiper.allowSlidePrev = true;
@@ -363,7 +378,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const $ = jQuery,
 			classes = this.getSettings( 'classes' ),
 			$footer = $( '<footer>', { class: classes.slideshow.footer + ' ' + classes.preventClose } ),
-			$title = $( '<h2>', { class: classes.slideshow.title } ),
+			$title = $( '<div>', { class: classes.slideshow.title } ),
 			$description = $( '<div>', { class: classes.slideshow.description } );
 		$footer.append( $title, $description );
 		return $footer;
@@ -372,7 +387,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	setSlideshowContent: function( options ) {
 		const $ = jQuery,
 			isSingleSlide = 1 === options.slides.length,
-			showFooter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ),
+			hasTitle = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_title_src' ),
+			hasDescription = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_description_src' ),
+			showFooter = hasTitle || hasDescription,
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
 			$container = $( '<div>', { class: slideshowClasses.container } ),
@@ -403,9 +420,7 @@ module.exports = elementorModules.ViewModule.extend( {
 						'data-title': slide.title,
 						'data-description': slide.description,
 					} );
-				$slideImage.on( 'ondragstart', () => {
-					return false;
-				} );
+
 				$zoomContainer.append( $slideImage );
 				$slide.append( $zoomContainer );
 			}
@@ -485,6 +500,9 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			this.swiper = new Swiper( $container, swiperOptions );
 
+			// Expose the swiper instance in the frontend
+			$container.data( 'swiper', this.swiper );
+
 			this.setVideoAspectRatio();
 
 			this.playSlideVideo();
@@ -525,8 +543,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			descriptionText = $image.data( 'description' ),
 			$title = this.elements.$footer.find( '.' + classes.slideshow.title ),
 			$description = this.elements.$footer.find( '.' + classes.slideshow.description );
-		$title.text( titleText );
-		$description.text( descriptionText );
+
+		$title.text( titleText || '' );
+		$description.text( descriptionText || '' );
 	},
 
 	playSlideVideo: function() {
@@ -641,7 +660,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	isLightboxLink: function( element ) {
-		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /\.(png|jpe?g|gif|svg)(\?.*)?$/i.test( element.href ) ) ) {
+		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg)(\?.*)?$/i.test( element.href ) ) ) {
 			return false;
 		}
 
@@ -739,25 +758,16 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( ! element.dataset.elementorLightboxSlideshow ) {
-			const slides = [ {
-				image: element.href,
-				index: 0,
+			const slideshowID = 'single-img';
+
+			this.showModal( {
+				type: 'image',
+				id: slideshowID,
+				url: element.href,
 				title: element.dataset.elementorLightboxTitle,
 				description: element.dataset.elementorLightboxDescription,
-			} ],
-				slideshowID = 'single-img';
-			this.showModal( {
-				type: 'slideshow',
-				id: slideshowID,
 				modalOptions: {
 					id: 'elementor-lightbox-slideshow-' + slideshowID,
-				},
-				slideshow: {
-					slides: slides,
-					swiper: {
-						loop: false,
-						pagination: false,
-					},
 				},
 			} );
 
@@ -781,8 +791,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.playSlideVideo();
 
-		if ( 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_footer' ) ) {
-			this.updateFooterText();
-		}
+		this.updateFooterText();
 	},
 } );

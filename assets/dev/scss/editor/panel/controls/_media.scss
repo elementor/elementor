@@ -14,6 +14,10 @@
 		}
 	}
 
+	.elementor-control-input-wrapper {
+		border: 1px solid $editor-lightest;
+	}
+
 	.eicon-plus-circle {
 		@include absolute-center;
 		color: #fff;
@@ -78,7 +82,6 @@
 
 	&__content {
 		transition: all .2s ease-in-out;
-		border: 1px solid $editor-lightest;
 	}
 
 	&__tools {
@@ -143,6 +146,16 @@
 
 		&:hover {
 			background-color: rgba($editor-dark, .95);
+		}
+	}
+}
+
+.elementor-control-type-media {
+
+	&.elementor-control-dynamic-value {
+
+		.elementor-control-input-wrapper {
+			border: none;
 		}
 	}
 }

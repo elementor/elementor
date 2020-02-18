@@ -16,9 +16,13 @@ Schemes = function() {
 	};
 
 	var initElements = function() {
-		elements.$style = jQuery( '<style>', {
-			id: 'elementor-style-scheme',
-		} );
+		const id = 'elementor-style-scheme';
+
+		elements.$style = elementor.$previewContents.find( `#${ id }` );
+
+		if ( ! elements.$style.length ) {
+			elements.$style = jQuery( '<style>', { id } );
+		}
 
 		elements.$previewHead = elementor.$previewContents.find( 'head' );
 	};

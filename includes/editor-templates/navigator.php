@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<span class="elementor-navigator__element__title__text">{{{ title }}}</span>
 			</div>
 			<div class="elementor-navigator__element__toggle">
-				<i class="eicon-eye"></i>
+				<i class="eicon-preview-medium"></i>
 			</div>
 			<div class="elementor-navigator__element__indicators"></div>
 		</div>
@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-navigator__root--empty">
-	<i class="elementor-nerd-box-icon eicon-nerd" aria-hidden="true"></i>
+	<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; ?>" />
 	<div class="elementor-nerd-box-title"><?php echo __( 'Easy Navigation is Here!', 'elementor' ); ?></div>
 	<div class="elementor-nerd-box-message"><?php echo __( 'Once you fill your page with content, this window will give you an overview display of all the page elements. This way, you can easily move around any section, column, or widget.', 'elementor' ); ?></div>
 </script>

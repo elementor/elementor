@@ -1,6 +1,7 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import Document from './document';
 import * as commands from './commands/';
+import * as internalCommands from './commands/internal';
 
 export default class Component extends ComponentBase {
 	__construct( args = {} ) {
@@ -19,6 +20,8 @@ export default class Component extends ComponentBase {
 		 * @type {Document}
 		 */
 		this.currentDocument = null;
+
+		this.saveInitialDocumentToCache();
 	}
 
 	getNamespace() {
@@ -27,6 +30,10 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return this.importCommands( commands );
+	}
+
+	defaultCommandsInternal() {
+		return this.importCommands( internalCommands );
 	}
 
 	/**
@@ -53,12 +60,11 @@ export default class Component extends ComponentBase {
 	 * Add document to manager by config.
 	 *
 	 * @param {{}} config
-	 * @param {Container} container
 	 *
 	 * @returns {Document}
 	 */
-	addDocumentByConfig( config, container ) {
-		return this.add( new Document( config, container ) );
+	addDocumentByConfig( config ) {
+		return this.add( new Document( config ) );
 	}
 
 	/**
@@ -122,8 +128,27 @@ export default class Component extends ComponentBase {
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', document.id );
 	}
 
+	isCurrent( id ) {
+		return parseInt( id ) === this.currentDocument.id;
+	}
+
+	unsetCurrent() {
+		this.currentDocument = null;
+		elementorCommon.ajax.addRequestConstant( 'editor_post_id', null );
+	}
+
 	request( id ) {
-		return elementorCommon.ajax.load( {
+		return elementorCommon.ajax.load( this.getRequestArgs( id ), true );
+	}
+
+	invalidateCache( id ) {
+		elementorCommon.ajax.invalidateCache( this.getRequestArgs( id ) );
+	}
+
+	getRequestArgs( id ) {
+		id = parseInt( id );
+
+		return {
 			action: 'get_document_config',
 			unique_id: `document-${ id }`,
 			data: { id },
@@ -145,6 +170,15 @@ export default class Component extends ComponentBase {
 
 				alert( message );
 			},
-		}, true );
+		};
+	}
+
+	/**
+	 * Temp: Don't request initial document via ajax.
+	 * Keep the event `elementor:init` before `preview:loaded`.
+	 */
+	saveInitialDocumentToCache() {
+		const document = elementor.config.initial_document;
+		elementorCommon.ajax.addRequestCache( this.getRequestArgs( document.id ), document );
 	}
 }

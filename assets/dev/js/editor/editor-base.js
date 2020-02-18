@@ -1,4 +1,4 @@
-/* global ElementorConfig, ElementorDocsConfig */
+/* global ElementorConfig */
 
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
@@ -11,6 +11,8 @@ import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
+import Promotion from './utils/promotion';
+import KitManager from 'elementor/core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -68,8 +70,17 @@ export default class EditorBase extends Marionette.Application {
 			},
 			saver: {
 				behaviors: {
-					FooterSaver: require( './components/saver/behaviors/footer-saver' ),
+					FooterSaver: require( './document/save/behaviors/footer-saver' ),
 				},
+			},
+		},
+		saver: {
+			get footerBehavior() {
+				elementorCommon.helpers.softDeprecated( 'elementor.modules.saver.footerBehavior.',
+					'2.9.0',
+					'elementor.modules.components.saver.behaviors.FooterSaver' );
+
+				return elementor.modules.components.saver.behaviors.FooterSaver;
 			},
 		},
 		controls: {
@@ -169,6 +180,16 @@ export default class EditorBase extends Marionette.Application {
 			element: '.elementor-control-responsive-switchers',
 			callback: ( $elementsToHide ) => {
 				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
+			},
+		},
+		promotion: {
+			ignore: '.elementor-panel-category-items',
+			callback: () => {
+				const dialog = elementor.promotion.dialog;
+
+				if ( dialog ) {
+					dialog.hide();
+				}
 			},
 		},
 	};
@@ -288,6 +309,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.notifications = new Notifications();
 
+		this.kitManager = new KitManager();
+
 		this.hotkeysScreen = new HotkeysScreen();
 
 		this.iconManager = new IconsManager();
@@ -295,6 +318,8 @@ export default class EditorBase extends Marionette.Application {
 		this.noticeBar = new NoticeBar();
 
 		this.history = new HistoryManager();
+
+		this.promotion = new Promotion();
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
@@ -409,9 +434,6 @@ export default class EditorBase extends Marionette.Application {
 	initPanel() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
-		// Set default page to elements.
-		$e.route( 'panel/elements/categories' );
-
 		this.trigger( 'panel:init' );
 	}
 
@@ -428,6 +450,7 @@ export default class EditorBase extends Marionette.Application {
 
 	setAjax() {
 		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
+		elementorCommon.ajax.addRequestConstant( 'initial_document_id', this.config.initial_document.id );
 
 		elementorCommon.ajax.on( 'request:unhandledError', ( xmlHttpRequest ) => {
 			elementor.notifications.showToast( {
@@ -474,7 +497,7 @@ export default class EditorBase extends Marionette.Application {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				$e.route( 'panel/elements/categories' );
+				$e.internal( 'panel/open-default' );
 			}
 		} );
 	}
@@ -549,7 +572,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	checkPageStatus() {
-		if ( elementor.config.document.revisions.current_id !== elementor.config.document.id ) {
+		if ( elementor.documents.getCurrent().isDraft() ) {
 			this.notifications.showToast( {
 				message: this.translate( 'working_on_draft_notification' ),
 				buttons: [
@@ -599,9 +622,11 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
-		this.$previewElementorEl
+		if ( elementor.config.document.panel.has_elements ) {
+			this.$previewElementorEl
 			.removeClass( 'elementor-edit-area-preview' )
 			.addClass( 'elementor-edit-area-active' );
+		}
 	}
 
 	changeEditMode( newMode ) {
@@ -618,10 +643,6 @@ export default class EditorBase extends Marionette.Application {
 	reloadPreview() {
 		// TODO: Should be command?
 		jQuery( '#elementor-preview-loading' ).show();
-
-		this.once( 'preview:loaded', () => {
-			this.onDocumentLoaded( this.documents.getCurrent() );
-		} );
 
 		this.$preview[ 0 ].contentWindow.location.reload( true );
 	}
@@ -709,15 +730,16 @@ export default class EditorBase extends Marionette.Application {
 				exclude: excludeWidgets,
 			},
 			success: ( data ) => {
-				jQuery.each( data, ( widgetName, controlsConfig ) => {
-					this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], controlsConfig );
-				} );
+				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
 					this.schemes.printSchemesStyle();
+					$e.internal( 'panel/state-ready' );
+				} else {
+					this.once( 'panel:init', () => {
+						$e.internal( 'panel/state-ready' );
+					} );
 				}
-
-				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
 			},
 		} );
 	}
@@ -764,9 +786,12 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } ).then( () => {
-			elementorCommon.elements.$window.trigger( 'elementor:init' );
-		} );
+		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
+			.then( () => {
+				elementorCommon.elements.$window.trigger( 'elementor:init' );
+			} );
+
+		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
 		this.logSite();
 	}
@@ -785,6 +810,7 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
+
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
@@ -815,20 +841,11 @@ export default class EditorBase extends Marionette.Application {
 
 		this.enqueueTypographyFonts();
 
-		// find elementor parts, but not nested parts.
-		this.$previewContents.find( '.elementor' ).not( '.elementor .elementor' ).prepend( '<span class="elementor-edit-button">' +
-			'<i class="eicon-edit"></i>' +
-			'</span>' );
-
-		this.$previewContents.find( '.elementor-edit-button' ).on( 'click', ( event ) => {
-			const id = jQuery( event.target ).parents( '.elementor' ).data( 'elementor-id' );
-
-			$e.run( 'editor/documents/switch', { id } );
-		} );
-
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
+
+		$e.internal( 'editor/documents/attach-preview' );
 
 		this.loaded = true;
 	}
@@ -836,15 +853,7 @@ export default class EditorBase extends Marionette.Application {
 	onFirstPreviewLoaded() {
 		this.initPanel();
 
-		this.heartbeat = new Heartbeat();
-
 		this.openLibraryOnStart();
-
-		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
-
-		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
-			this.showFlexBoxAttentionDialog();
-		}
 
 		this.previewLoadedOnce = true;
 	}
@@ -949,56 +958,30 @@ export default class EditorBase extends Marionette.Application {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	}
 
-	onDocumentLoaded( document ) {
-		this.checkPageStatus();
-
-		if ( document.config.elements ) {
-			this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );
-
-			if ( ! this.$previewElementorEl.length ) {
-				this.onPreviewElNotFound();
-
-				return;
-			}
-
-			this.$previewElementorEl.addClass( 'elementor-edit-area' );
-
-			this.initElements();
-
-			const iframeRegion = new Marionette.Region( {
-				// Make sure you get the DOM object out of the jQuery object
-				el: this.$previewElementorEl[ 0 ],
-			} );
-
-			this.addRegions( {
-				sections: iframeRegion,
-			} );
-
-			const Preview = require( 'elementor-views/preview' );
-
-			this.sections.show( new Preview( { model: this.elementsModel } ) );
-
-			this.initNavigator();
-
-			this.onEditModeSwitched();
-
-			document.container.document = document;
-			document.container.view = elementor.getPreviewView();
-			document.container.children = elementor.elements;
-			document.container.model.attributes.elements = elementor.elements;
-
-			this.helpers.scrollToView( this.$previewElementorEl );
-
-			this.$previewElementorEl
-			.addClass( 'elementor-edit-area-active elementor-embedded-editor' )
-			.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-			$e.route( 'panel/elements/categories', {
-				refresh: true,
-			} );
+	unloadDocument( document ) {
+		if ( document.id !== this.config.document.id ) {
+			return;
 		}
 
-		this.trigger( 'document:loaded' );
+		this.saver.stopAutoSave( document );
+
+		this.channels.dataEditMode.trigger( 'switch', 'preview' );
+
+		this.$previewContents.find( `.elementor-${ document.id }` )
+			.removeClass( 'elementor-edit-area-active' )
+			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
+
+		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
+
+		this.settings.page.destroy();
+
+		this.heartbeat.destroy();
+
+		document.editor.status = 'closed';
+
+		this.config.document = {};
+
+		this.documents.unsetCurrent();
 	}
 
 	/**
@@ -1024,18 +1007,19 @@ export default class EditorBase extends Marionette.Application {
 
 		document.container = this.settings.page.getEditedView().getContainer();
 
-		this.once( 'preview:loaded', () => this.onDocumentLoaded( document ) );
+		// Reference container back to document.
+		document.container.document = document;
+
+		this.heartbeat = new Heartbeat( document );
+
+		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
+
+		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
+			this.showFlexBoxAttentionDialog();
+		}
 
 		if ( this.loaded ) {
-			this.schemes.printSchemesStyle();
-
-			this.$preview.trigger( 'load' );
-
-			this.$previewContents.find( `#elementor-post-${ config.id }-css` ).remove();
-
-			const previewRevisionID = config.revisions.current_id;
-
-			this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
+			$e.internal( 'editor/documents/attach-preview' );
 		}
 
 		return document;
@@ -1043,7 +1027,7 @@ export default class EditorBase extends Marionette.Application {
 
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
-			this.widgetsCache[ widgetName ] = jQuery.extend( {}, this.widgetsCache[ widgetName ], widgetConfig );
+			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
 		} );
 	}
 
@@ -1058,7 +1042,7 @@ export default class EditorBase extends Marionette.Application {
 				value: () => elementor.config.document.user.can_publish,
 			},
 			locked_user: {
-				replacement: 'user.locked',
+				replacement: '',
 				value: () => elementor.config.document.user.locked,
 			},
 			revisions_enabled: {
@@ -1075,7 +1059,8 @@ export default class EditorBase extends Marionette.Application {
 			// Use `defineProperty` because `get property()` fails during the `Marionette...extend`.
 			Object.defineProperty( this.config, key, {
 				get() {
-					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
+					const replacement = data.replacement ? 'elementor.config.document.' + data.replacement : '';
+					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', replacement );
 					// return from current document.
 					return data.value();
 				},
@@ -1099,5 +1084,16 @@ export default class EditorBase extends Marionette.Application {
 				return elementor.widgetsCache;
 			},
 		} );
+	}
+
+	toggleDocumentCssFiles( document, state ) {
+		const selectors = [
+			`#elementor-post-${ document.config.id }-css`,
+			`#elementor-preview-${ document.config.revisions.current_id }`,
+		],
+			$files = this.$previewContents.find( selectors.join( ',' ) ),
+			type = state ? 'text/css' : 'elementor/disabled-css';
+
+		$files.attr( { type } );
 	}
 }

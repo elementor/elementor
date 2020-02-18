@@ -17,6 +17,10 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 		'click @ui.menuButton': 'onClickMenu',
 	},
 
+	behaviors: function() {
+		return elementor.hooks.applyFilters( 'panel/header/behaviors', {}, this );
+	},
+
 	setTitle: function( title ) {
 		this.ui.title.html( title );
 	},

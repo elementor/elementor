@@ -1,18 +1,20 @@
-import CommandsBase from 'elementor-api/modules/command-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Switch extends CommandsBase {
+export class Switch extends CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
 
 	apply( args ) {
-		const { id } = args;
+		const { id, mode, onClose } = args;
 
-		$e.run( 'editor/documents/close', {
+		return $e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),
-			onClose: () => {
-				$e.run( 'editor/documents/open', { id } );
-			},
+			mode,
+			onClose,
+		} )
+		.then( () => {
+			return $e.run( 'editor/documents/open', { id } );
 		} );
 	}
 }

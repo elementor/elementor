@@ -1,6 +1,6 @@
-import Base from './base';
+import HooksBase from './base';
 
-export default class Ui extends Base {
+export default class Ui extends HooksBase {
 	constructor( ... args ) {
 		super( ... args );
 
@@ -47,31 +47,6 @@ export default class Ui extends Base {
 
 		// TODO:  $e.devTools.events.callback
 		$e.devTools.log.eventCallback( command, args, event, id );
-	}
-
-	/**
-	 * Function registerBefore().
-	 *
-	 * Register the event in before event.
-	 *
-	 * @param {HookBase} instance
-	 *
-	 * @returns {{}}
-	 */
-	registerBefore( instance ) {
-		return this.register( 'before', instance );
-	}
-
-	/**
-	 * Function runBefore().
-	 *
-	 * Run the event as before.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 */
-	runBefore( command, args ) {
-		this.run( 'before', command, args );
 	}
 }
 

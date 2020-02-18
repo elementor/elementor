@@ -1,7 +1,12 @@
 const EditorModule = elementorModules.Module.extend( {
 
 	onInit: function() {
-		jQuery( window ).on( 'elementor:init', this.onElementorReady );
+		const $window = jQuery( window );
+
+		$window.on( 'elementor:init-components',
+			this.onElementorInitComponents.bind( this ) );
+
+		$window.on( 'elementor:init', this.onElementorReady );
 	},
 
 	// TODO: Delete as soon as possible.
@@ -32,5 +37,7 @@ EditorModule.prototype.onElementorInit = function() {};
 EditorModule.prototype.onElementorPreviewLoaded = function() {};
 
 EditorModule.prototype.onElementorFrontendInit = function() {};
+
+EditorModule.prototype.onElementorInitComponents = function() {};
 
 module.exports = EditorModule;

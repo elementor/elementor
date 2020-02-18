@@ -148,6 +148,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 
 		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
 
+		// Expose the swiper instance in the frontend
+		this.elements.$backgroundSlideShowContainer.data( 'swiper', this.swiper );
+
 		this.handleKenBurns();
 	}
 

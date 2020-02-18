@@ -1,9 +1,12 @@
 import Component from './component';
-import Document from 'elementor-editor/document';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
+	getStyleId: function() {
+		return this.getSettings( 'name' ) + '-' + elementor.documents.getCurrent().id;
+	},
+
 	onInit: function() {
 		BaseSettings.prototype.onInit.apply( this );
 
@@ -22,21 +25,19 @@ module.exports = BaseSettings.extend( {
 		template: function() {
 			$e.run( 'document/save/auto', {
 				force: true,
-				options: {
-					onSuccess: function() {
-						elementor.reloadPreview();
+				onSuccess: function() {
+					elementor.reloadPreview();
 
-						elementor.once( 'preview:loaded', function() {
-							$e.route( 'panel/page-settings/settings' );
-						} );
-					},
+					elementor.once( 'preview:loaded', function() {
+						$e.route( 'panel/page-settings/settings' );
+					} );
 				},
 			} );
 		},
 	},
 
 	onModelChange: function() {
-		elementor.saver.setFlagEditorChange( true );
+		$e.internal( 'document/save/set-is-modified', { status: true } );
 
 		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},

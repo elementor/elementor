@@ -1,11 +1,12 @@
 import EditorTest from './js/editor-test';
+import * as Ajax from './ajax/';
 
 function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
-		$elementorFake = $body.find( '#elementor-test' );
+		$elementorTest = $body.find( '#elementor-test' );
 
 	// Load the template to `#elementor-test`.
-	$elementorFake.append( window.__html__[ 'tests/qunit/index.html' ] );
+	$elementorTest.append( window.__html__[ 'tests/qunit/index.html' ] );
 
 	window.elementor = new EditorTest();
 
@@ -17,7 +18,12 @@ function initialize() {
 		cacheKey = elementorCommon.ajax.getCacheKey( request );
 	elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
+	Ajax.silence();
+
 	elementor.on( 'preview:loaded', () => {
+		// Disable UI Hooks.
+		$e.hooks.ui.deactivate();
+
 		require( './core/common/assets/js/api/core/components.spec.js' );
 		require( './core/common/assets/js/api/core/hooks/base.spec.js' );
 		require( './core/common/assets/js/api/modules/command-base.spec.js' );
@@ -31,6 +37,7 @@ function initialize() {
 		require( './core/editor/document/dynamic/component.spec' );
 		require( './core/editor/document/history/component.spec' );
 		require( './core/editor/document/ui/component.spec' );
+		require( './core/editor/document/save/component.spec' );
 	} );
 
 	elementor.start();

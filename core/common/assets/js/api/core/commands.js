@@ -173,11 +173,24 @@ export default class Commands extends elementorModules.Module {
 	}
 
 	/**
+	 * Function getCurrentLast().
+	 *
+	 * Receive last command that currently running.
+	 *
+	 * @returns {string}
+	 */
+	getCurrentLast() {
+		const current = Object.values( this.current );
+
+		return current[ current.length - 1 ];
+	}
+
+	/**
 	 * Function getCurrentFirstTrace().
 	 *
 	 * Receive first command in trace that currently running
 	 *
-	 * @returns {{}}
+	 * @returns {string}
 	 */
 	getCurrentFirstTrace() {
 		return this.currentTrace[ 0 ];
@@ -231,12 +244,11 @@ export default class Commands extends elementorModules.Module {
 		const results = this.commands[ command ].apply( component, [ args ] );
 
 		// TODO: Consider add results to `$e.devTools`.
-
 		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args ] );
+			args.onAfter.apply( component, [ args, results ] );
 		}
 
-		this.afterRun( command, args );
+		this.afterRun( command );
 
 		if ( false === args.returnValue ) {
 			return true;

@@ -1,6 +1,6 @@
-import Base from './base.js';
+import HooksBase from './base.js';
 
-export default class Data extends Base {
+export default class Data extends HooksBase {
 	constructor( ... args ) {
 		super( ... args );
 
@@ -57,31 +57,6 @@ export default class Data extends Base {
 
 		// TODO: $e.devTools.hooks.callback
 		$e.devTools.log.hookCallback( command, args, event, id );
-	}
-
-	/**
-	 * Function registerDependency().
-	 *
-	 * Register the hook in dependency event.
-	 *
-	 * @param {HookBase} instance
-	 *
-	 * @returns {{}}
-	 */
-	registerDependency( instance ) {
-		return this.register( 'dependency', instance );
-	}
-
-	/**
-	 * Function runDependency().
-	 *
-	 * Run the hook as dependency.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 */
-	runDependency( command, args ) {
-		this.run( 'dependency', command, args );
 	}
 }
 

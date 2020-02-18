@@ -24,11 +24,15 @@ export default class Component extends ComponentBase {
 	defaultCommands() {
 		return {
 			open: ( args ) => {
-				this.openEditor( args.model, args.view );
+				if ( ! this.setDefaultTab( args ) ) {
+					elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
 
-				this.setDefaultTab( args );
+					args.model.trigger( 'request:edit' );
+				} else {
+					this.openEditor( args.model, args.view );
 
-				$e.route( this.getDefaultRoute(), args );
+					$e.route( this.getDefaultRoute(), args );
+				}
 
 				// BC: Run hooks after the route render's the view.
 				const action = 'panel/open_editor/' + args.model.get( 'elType' );
@@ -58,18 +62,22 @@ export default class Component extends ComponentBase {
 
 	setDefaultTab( args ) {
 		let defaultTab;
+
+		const editSettings = args.model.get( 'editSettings' );
+
 		if ( this.activeTabs[ args.model.id ] ) {
 			defaultTab = this.activeTabs[ args.model.id ];
-		} else {
-			defaultTab = jQuery( this.getTabsWrapperSelector() ).find( '.elementor-component-tab' ).eq( 0 ).data( 'tab' );
+		} else if ( editSettings && editSettings.get( 'defaultEditRoute' ) ) {
+			defaultTab = editSettings.get( 'defaultEditRoute' );
 		}
 
-		// For unit test.
-		if ( ! defaultTab ) {
-			defaultTab = 'content';
+		if ( defaultTab ) {
+			this.setDefaultRoute( defaultTab );
+
+			return true;
 		}
 
-		this.setDefaultRoute( defaultTab );
+		return false;
 	}
 
 	openEditor( model, view ) {

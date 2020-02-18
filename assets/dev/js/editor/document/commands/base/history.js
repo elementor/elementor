@@ -12,7 +12,6 @@ export default class History extends CommandBase {
 		this.history = this.getHistory( args );
 
 		/**
-		 *
 		 * @type {number|boolean}
 		 */
 		this.historyId = false;
@@ -23,13 +22,11 @@ export default class History extends CommandBase {
 	 *
 	 * Get history object from child, do nothing if it false.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 *
-	 * @returns {{}|boolean}
-	 *
-	 * @throws {Error}
+	 * @returns {({}|boolean)}
 	 */
-	getHistory( args ) { // eslint-disable-line no-unused-vars
+	getHistory( args = {} ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -48,7 +45,7 @@ export default class History extends CommandBase {
 		super.onBeforeRun( args );
 
 		if ( this.history && this.isHistoryActive() ) {
-			this.historyId = $e.run( 'document/history/start-log', this.history );
+			this.historyId = $e.internal( 'document/history/start-log', this.history );
 		}
 	}
 
@@ -56,7 +53,7 @@ export default class History extends CommandBase {
 		super.onAfterRun( args, result );
 
 		if ( this.history && this.isHistoryActive() ) {
-			$e.run( 'document/history/end-log', { id: this.historyId } );
+			$e.internal( 'document/history/end-log', { id: this.historyId } );
 		}
 	}
 
@@ -65,7 +62,7 @@ export default class History extends CommandBase {
 
 		// Rollback history on failure.
 		if ( e instanceof $e.modules.HookBreak && this.historyId ) {
-			$e.run( 'document/history/delete-log', { id: this.historyId } );
+			$e.internal( 'document/history/delete-log', { id: this.historyId } );
 		}
 	}
 }

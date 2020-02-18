@@ -265,7 +265,7 @@ class User {
 
 		if ( 'success' === $body ) {
 			self::set_introduction_viewed( [
-				'introductionKey' => 'beta_tester_signup',
+				'introductionKey' => Beta_Testers::BETA_TESTER_SIGNUP,
 			] );
 		}
 	}

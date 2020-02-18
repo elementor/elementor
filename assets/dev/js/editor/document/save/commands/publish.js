@@ -2,13 +2,11 @@ import Base from './base/base';
 
 export class Publish extends Base {
 	apply( args ) {
-		let { options = {} } = args;
+		const { status = 'publish', document = this.document } = args;
 
-		options = Object.assign( {
-			status: 'publish',
-			document: this.document,
-		}, options );
-
-		return elementor.saver.saveEditor( options );
+		return $e.internal( 'document/save/save', {
+			status,
+			document,
+		} );
 	}
 }

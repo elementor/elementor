@@ -7,21 +7,39 @@ export default class BackwardsCompatibility extends ComponentBase {
 		Object.defineProperty( this, 'autoSaveTimer', {
 			get() {
 				elementorCommon.helpers.softDeprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
-					"$e.components.get('editor/documents').autoSaveTimers" );
+					"$e.components.get( 'editor/documents' ).autoSaveTimers" );
 				return $e.components.get( 'editor/documents' ).autoSaveTimers;
 			},
 
-			set() {
+			set( value ) {
 				elementorCommon.helpers.softDeprecated( 'elementor.saver.autoSaveTimer', '2.9.0',
-					"$e.components.get('editor/documents').autoSaveTimers" );
+					"$e.components.get( 'editor/documents' ).autoSaveTimers[ documentId ]" );
 
-				throw Error( 'Deprecated' );
+				const documentId = elementor.documents.getCurrent();
+
+				$e.components.get( 'editor/documents' ).autoSaveTimers[ documentId ] = value;
 			},
+		} );
+
+		const onOrig = this.on;
+
+		this.on = ( eventName, callback, context ) => {
+			elementorCommon.helpers.softDeprecated( 'elementor.saver.on', '2.9.0',
+				'$e.hooks' );
+
+			onOrig( eventName, callback, context );
+		};
+
+		elementor.on( 'document:loaded', () => {
+			if ( elementor.channels.editor._events && elementor.channels.editor._events.saved ) {
+				elementorCommon.helpers.softDeprecated( "elementor.channels.editor.on( 'saved', ... )", '2.9.0',
+					'$e.hooks' );
+			}
 		} );
 	}
 
 	defaultSave() {
-		elementorCommon.helpers.softDeprecated( 'saveDraft', '2.9.0', "$e.run( 'document/save/default' )" );
+		elementorCommon.helpers.softDeprecated( 'defaultSave', '2.9.0', "$e.run( 'document/save/default' )" );
 
 		return $e.run( 'document/save/default' );
 	}
@@ -58,7 +76,7 @@ export default class BackwardsCompatibility extends ComponentBase {
 		return $e.run( 'document/save/draft' );
 	}
 
-	savePending( options ) {
+	savePending() {
 		elementorCommon.helpers.softDeprecated( 'savePending', '2.9.0', "$e.run( 'document/save/pending' )" );
 
 		return $e.run( 'document/save/pending' );
@@ -67,13 +85,27 @@ export default class BackwardsCompatibility extends ComponentBase {
 	update( options ) {
 		elementorCommon.helpers.softDeprecated( 'update', '2.9.0', "$e.run( 'document/save/update' )" );
 
-		return $e.run( 'document/save/update', { options } );
+		return $e.run( 'document/save/update', options );
 	}
 
-	startTimer( hasChanged ) {
+	startTimer() {
 		elementorCommon.helpers.softDeprecated( 'startTimer', '2.9.0',
-			"$e.components.get( 'editor/documents' ).startAutoSave" );
+			"$e.components.get( 'document/save' ).startAutoSave" );
 
 		throw Error( 'Deprecated' );
+	}
+
+	saveEditor( options ) {
+		elementorCommon.helpers.softDeprecated( 'saveEditor', '2.9.0',
+			"$e.internal( 'document/save/save' )" );
+
+		$e.internal( 'document/save/save', options );
+	}
+
+	setFlagEditorChange( status ) {
+		elementorCommon.helpers.softDeprecated( 'setFlagEditorChange', '2.9.0',
+			"$e.internal( 'document/save/set-is-modified' )" );
+
+		$e.internal( 'document/save/set-is-modified', { status } );
 	}
 }

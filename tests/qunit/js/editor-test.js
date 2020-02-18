@@ -11,11 +11,17 @@ export default class EditorTest extends EditorBase {
 				this.$previewElementorEl.empty();
 			}
 
-			console.log( `Test: ${ module } -> ${ name }` );
+			if ( QUnit.config.showUI ) {
+				// eslint-disable-next-line no-console
+				console.log( `Test: ${ module } -> ${ name }` );
+			}
 		} );
 
 		QUnit.testDone( ( { module, name } ) => {
-			console.log( `Done: ${ module } -> ${ name }` );
+			if ( QUnit.config.showUI ) {
+				// eslint-disable-next-line no-console
+				console.log( `Done: ${ module } -> ${ name }` );
+			}
 		} );
 	}
 

@@ -10,8 +10,6 @@ export default class HistoryManager {
 
 	items = new Backbone.Collection( [], { model: ItemModel } );
 
-	editorSaved = false;
-
 	active = true;
 
 	translations = {
@@ -28,14 +26,12 @@ export default class HistoryManager {
 		reset_settings: elementor.translate( 'settings_reset' ),
 	};
 
-	static updatePanelPageCurrentItem() {
-		if ( $e.routes.is( 'panel/history/actions' ) ) {
-			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
-		}
-	}
+	constructor( document ) {
+		this.document = document;
 
-	initialize() {
-		elementor.channels.editor.on( 'saved', this.onPanelSave.bind( this ) );
+		this.currentItem = new Backbone.Model( {
+			id: 0,
+		} );
 	}
 
 	getActionLabel( itemData ) {
@@ -148,7 +144,7 @@ export default class HistoryManager {
 
 		this.items.add( currentItem, { at: 0 } );
 
-		this.constructor.updatePanelPageCurrentItem();
+		this.updateCurrentItem( currentItem );
 
 		return id;
 	}
@@ -199,16 +195,14 @@ export default class HistoryManager {
 			}
 		}
 
-		this.constructor.updatePanelPageCurrentItem();
+		$e.internal( 'document/save/set-is-modified', {
+			status: item.get( 'id' ) !== this.document.editor.lastSaveHistoryId,
+		} );
+
+		this.updateCurrentItem( item );
 
 		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );
-		}
-
-		if ( item.get( 'editing_started' ) ) {
-			if ( ! this.editorSaved ) {
-				elementor.saver.setFlagEditorChange( false );
-			}
 		}
 	}
 
@@ -250,12 +244,16 @@ export default class HistoryManager {
 		}
 	}
 
-	onPanelSave() {
-		if ( this.items.length >= 2 ) {
-			// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
-			const firstEditItem = items.at( items.length - 2 );
+	updateCurrentItem( item ) {
+		// Save last selected item.
+		this.currentItem = item;
 
-			this.editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+		this.updatePanelPageCurrentItem();
+	}
+
+	updatePanelPageCurrentItem() {
+		if ( $e.routes.is( 'panel/history/actions' ) ) {
+			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
 		}
 	}
 }

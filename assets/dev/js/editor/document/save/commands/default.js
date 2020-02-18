@@ -1,9 +1,9 @@
 import Base from './base/base';
 
 export class Default extends Base {
-	apply( args ) {
+	apply() {
 		const document = this.document,
-			postStatus = elementor.settings.page.model.get( 'post_status' );
+			postStatus = document.container.settings.get( 'post_status' );
 
 		let deferred;
 
@@ -15,7 +15,7 @@ export class Default extends Base {
 
 				break;
 			case 'draft':
-				if ( elementor.config.current_user_can_publish ) {
+				if ( document.config.user.can_publish ) {
 					deferred = $e.run( 'document/save/publish', { document } );
 				} else {
 					deferred = $e.run( 'document/save/pending', { document } );
@@ -24,7 +24,7 @@ export class Default extends Base {
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( elementor.config.current_user_can_publish ) {
+				if ( document.config.user.can_publish ) {
 					deferred = $e.run( 'document/save/publish', { document } );
 				} else {
 					deferred = $e.run( 'document/save/update', { document } );

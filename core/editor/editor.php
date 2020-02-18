@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
+use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
@@ -106,6 +107,10 @@ class Editor {
 		$document = Plugin::$instance->documents->get( $this->post_id );
 
 		Plugin::$instance->documents->switch_to_document( $document );
+
+		// Change mode to Builder
+		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
+
 		// End BC.
 
 		Loading_Inspection_Manager::instance()->register_inspections();
@@ -463,7 +468,7 @@ class Editor {
 			'pickr',
 			ELEMENTOR_ASSETS_URL . 'lib/pickr/pickr.min.js',
 			[],
-			'1.4.7',
+			'1.5.0',
 			true
 		);
 
@@ -516,13 +521,10 @@ class Editor {
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
 
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
+
 		$config = [
-			'initial_document' => [
-				'id' => $this->post_id,
-				'urls' => [
-					'preview' => Plugin::$instance->documents->get( $this->post_id )->get_preview_url(),
-				],
-			],
+			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
@@ -549,6 +551,8 @@ class Editor {
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
+			'elementPromotionURL' => 'https://go.elementor.com/go-pro-%s',
+			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
@@ -597,7 +601,7 @@ class Editor {
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
-				'global_style' => __( 'Style', 'elementor' ),
+				'global_style' => __( 'Global Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'preferences' => __( 'Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
@@ -743,6 +747,12 @@ class Editor {
 				'go_pro' => __( 'Go Pro', 'elementor' ),
 				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
+				'element_promotion_dialog_header' => __( '%s Widget', 'elementor' ),
+				'element_promotion_dialog_message' => __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ),
+				'see_it_in_action' => __( 'See it in Action', 'elementor' ),
+				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
+				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
+
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),
@@ -754,9 +764,11 @@ class Editor {
 			],
 		];
 
-		$this->bc_move_document_filters();
+		if ( ! Utils::has_pro() ) {
+			$config['promotionWidgets'] = Api::get_promotion_widgets();
+		}
 
-		$localized_settings = [];
+		$this->bc_move_document_filters();
 
 		/**
 		 * Localize editor settings.
@@ -765,14 +777,10 @@ class Editor {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $localized_settings Localized settings.
-		 * @param int   $post_id            The ID of the current post being edited.
+		 * @param array $config  Editor configuration.
+		 * @param int   $post_id The ID of the current post being edited.
 		 */
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings );
-
-		if ( ! empty( $localized_settings ) ) {
-			$config = array_replace_recursive( $config, $localized_settings );
-		}
+		$config = apply_filters( 'elementor/editor/localize_settings', $config );
 
 		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
@@ -844,7 +852,7 @@ class Editor {
 			'pickr',
 			ELEMENTOR_ASSETS_URL . 'lib/pickr/themes/monolith.min.css',
 			[],
-			'1.4.7'
+			'1.5.0'
 		);
 
 		wp_register_style(
@@ -1211,7 +1219,7 @@ class Editor {
 		global $wp_filter;
 
 		$old_tag = 'elementor/editor/localize_settings';
-		$new_tag = 'elementor/editor/document/config';
+		$new_tag = 'elementor/document/config';
 
 		if ( ! has_filter( $old_tag ) ) {
 			return;

@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Core\Files\Assets\Manager as Assets_Manager;
@@ -141,6 +142,18 @@ class Plugin {
 	 * @var Revisions_Manager
 	 */
 	public $revisions_manager;
+
+	/**
+	 * Images manager.
+	 *
+	 * Holds the plugin images manager.
+	 *
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 * @var Images_Manager
+	 */
+	public $images_manager;
 
 	/**
 	 * Maintenance mode.
@@ -410,6 +423,11 @@ class Plugin {
 	public $upgrade;
 
 	/**
+	 * @var Core\Kits\Manager
+	 */
+	public $kits_manager;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -544,6 +562,7 @@ class Plugin {
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
 		$this->documents = new Documents_Manager();
+		$this->kits_manager = new Kits_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
@@ -567,6 +586,7 @@ class Plugin {
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
+		$this->images_manager = new Images_Manager();
 
 		User::init();
 		Api::init();
@@ -579,10 +599,6 @@ class Plugin {
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
-
-			if ( wp_doing_ajax() ) {
-				new Images_Manager();
-			}
 		}
 	}
 

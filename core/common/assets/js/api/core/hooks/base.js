@@ -1,8 +1,8 @@
-export default class Base extends elementorModules.Module {
+export default class HooksBase extends elementorModules.Module {
 	/**
 	 * Function constructor().
 	 *
-	 * Create Callbacks base.
+	 * Create hooks base.
 	 *
 	 * @param {{}} args
 	 */
@@ -42,6 +42,20 @@ export default class Base extends elementorModules.Module {
 			after: {},
 			catch: {},
 		};
+
+		this.callbacksFlatList = [];
+	}
+
+	activate() {
+		this.getAll( true ).forEach( ( callback ) => {
+			callback.isActive = true;
+		} );
+	}
+
+	deactivate() {
+		this.getAll( true ).forEach( ( callback ) => {
+			callback.isActive = false;
+		} );
 	}
 
 	/**
@@ -60,13 +74,13 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * Return all possible callbacks.
 	 *
-	 * @param {boolean} generic
+	 * @param {boolean} flat
 	 *
 	 * @returns {{}}
 	 */
-	getAll( generic = false ) {
-		if ( generic ) {
-			return this.callbacks;
+	getAll( flat = false ) {
+		if ( flat ) {
+			return this.callbacksFlatList;
 		}
 
 		const result = {};
@@ -204,7 +218,7 @@ export default class Base extends elementorModules.Module {
 	 * @param {string} event
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}} Current callback
+	 * @returns {{}} Created callback
 	 */
 	register( event, instance ) {
 		const command = instance.getCommand(),
@@ -215,6 +229,24 @@ export default class Base extends elementorModules.Module {
 		this.checkInstance( instance );
 		this.checkId( id );
 
+		return this.registerCallback( id, event, command, instance, containerType );
+	}
+
+	/**
+	 * Function registerCallback().
+	 *
+	 * Register callback.
+	 *
+	 * @param {string} id
+	 * @param {string} event
+	 * @param {string} command
+	 * @param {HookBase} instance
+	 * @param {string} containerType
+	 *
+	 * TODO: Consider replace with typedef.
+	 * @returns {{callback: *, id: *, isActive: boolean}}
+	 */
+	registerCallback( id, event, command, instance, containerType ) {
 		if ( ! this.callbacks[ event ][ command ] ) {
 			this.callbacks[ event ][ command ] = [];
 		}
@@ -229,6 +261,7 @@ export default class Base extends elementorModules.Module {
 		const callback = {
 			id,
 			callback: instance.run.bind( instance ),
+			isActive: true,
 		};
 
 		if ( containerType ) {
@@ -245,33 +278,9 @@ export default class Base extends elementorModules.Module {
 			this.callbacks[ event ][ command ].all.push( callback );
 		}
 
+		this.callbacksFlatList.push( callback );
+
 		return callback;
-	}
-
-	/**
-	 * Function registerAfter().
-	 *
-	 * Register the hook in after event.
-	 *
-	 * @param {HookBase} instance
-	 *
-	 * @returns {{}}
-	 */
-	registerAfter( instance ) {
-		return this.register( 'after', instance );
-	}
-
-	/**
-	 * Function registerAfter().
-	 *
-	 * Register the hook in catch event.
-	 *
-	 * @param {HookBase} instance
-	 *
-	 * @returns {{}}
-	 */
-	registerCatch( instance ) {
-		return this.register( 'catch', instance );
 	}
 
 	/**
@@ -283,6 +292,8 @@ export default class Base extends elementorModules.Module {
 	 * @param {string} command
 	 * @param {{}} args
 	 * @param {*} result
+	 *
+	 * @returns {boolean}
 	 */
 	run( event, command, args, result = undefined ) {
 		const callbacks = this.getCallbacks( event, command, args );
@@ -293,33 +304,11 @@ export default class Base extends elementorModules.Module {
 			this.onRun( command, args, event );
 
 			this.runCallbacks( event, command, callbacks, args, result );
+
+			return true;
 		}
-	}
 
-	/**
-	 * Function runAfter().
-	 *
-	 * Run the event as after.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} result
-	 */
-	runAfter( command, args, result ) {
-		this.run( 'after', command, args, result );
-	}
-
-	/**
-	 * Function runCatch().
-	 *
-	 * Run the event as catch.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} e
-	 */
-	runCatch( command, args, e ) {
-		this.run( 'catch', command, args, e );
+		return false;
 	}
 
 	/**
@@ -336,6 +325,10 @@ export default class Base extends elementorModules.Module {
 	runCallbacks( event, command, callbacks, args, result ) {
 		for ( const i in callbacks ) {
 			const callback = callbacks[ i ];
+
+			if ( ! callback.isActive ) {
+				continue;
+			}
 
 			// If not exist, set zero.
 			if ( undefined === this.depth[ event ][ callback.id ] ) {
@@ -371,7 +364,7 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	runCallback( event, callback, args, result ) {
+	runCallback( event, callback, args, result ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 
@@ -386,7 +379,7 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	onRun( command, args, event ) {
+	onRun( command, args, event ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 
@@ -402,7 +395,7 @@ export default class Base extends elementorModules.Module {
 	 *
 	 * @throw {Error}
 	 */
-	onCallback( command, args, event, id ) {
+	onCallback( command, args, event, id ) { // eslint-disable-line no-unused-vars
 		elementorModules.forceMethodImplementation();
 	}
 }

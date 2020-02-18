@@ -39,6 +39,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	initialize: function() {
 		$e.components.register( new PanelComponent( { manager: this } ) );
 
+		$e.internal( 'panel/state-loading' );
+
 		$e.components.register( new ElementsComponent( { manager: this } ) );
 
 		$e.components.register( new EditorComponent( { manager: this } ) );
@@ -153,6 +155,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this
 			.trigger( 'set:page', this.currentPageView )
 			.trigger( 'set:page:' + page, this.currentPageView );
+
+		if ( elementor.promotion.dialog ) {
+			elementor.promotion.dialog.hide();
+		}
 
 		return this.currentPageView;
 	},

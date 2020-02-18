@@ -65,7 +65,7 @@ export class Create extends History {
 			 * in getHistory().
 			 */
 			if ( this.isHistoryActive() ) {
-				$e.run( 'document/history/log-sub-item', {
+				$e.internal( 'document/history/log-sub-item', {
 					container,
 					type: 'sub-add',
 					restore: this.constructor.restore,

@@ -15,6 +15,10 @@ $remote-templates-items-space: 30px;
 	.dialog-buttons-wrapper {
 		display: none;
 	}
+
+	.select2-container {
+		z-index: 0;
+	}
 }
 
 #elementor-template-library-header-menu {
@@ -55,6 +59,11 @@ $remote-templates-items-space: 30px;
 	.elementor-template-library-template-insert {
 		color: #fff;
 		background-color: $editor-success;
+	}
+
+	.elementor-go-pro {
+		background-color: $editor-accent;
+		color: #fff;
 	}
 }
 
@@ -676,6 +685,10 @@ label.elementor-template-library-order-label {
 	img {
 		width: 70px;
 	}
+
+	.elementor-template-library-no-results {
+		width: 200px;
+	}
 }
 
 .elementor-template-library-blank-title {
@@ -847,6 +860,10 @@ label.elementor-template-library-order-label {
 		color: $editor-lighter;
 		font-size: 56px;
 		margin-top: 40px;
+	}
+
+	.elementor-nerd-box-icon {
+		margin-top: 70px;
 	}
 
 	.elementor-excerpt {

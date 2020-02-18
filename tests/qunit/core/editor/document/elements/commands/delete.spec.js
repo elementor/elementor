@@ -15,7 +15,7 @@ export const Delete = () => {
 				assert.equal( eColumn.view.collection.length, 1, 'Button #1 were deleted.' );
 
 				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
+				$e.internal( 'document/save/set-is-modified', { status: false } );
 
 				ElementsHelper.delete( eButton2 );
 

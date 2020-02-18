@@ -464,12 +464,20 @@ abstract class Element_Base extends Controls_Stack {
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
 			// Custom URL attributes should come as a string of comma-delimited key|value pairs
 			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
+			$blacklist = [ 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup' ];
 
 			foreach ( $custom_attributes as $attribute ) {
 				// Trim in case users inserted unwanted spaces
 				list( $attr_key, $attr_value ) = explode( '|', $attribute );
 
-				$attributes[ trim( $attr_key ) ] = trim( $attr_value );
+				// Cover cases where key/value have spaces both before and/or after the actual value
+				$attr_key = trim( $attr_key );
+				$attr_value = trim( $attr_value );
+
+				// Implement attribute blacklist
+				if ( ! in_array( strtolower( $attr_key ), $blacklist, true ) ) {
+					$attributes[ $attr_key ] = $attr_value;
+				}
 			}
 		}
 
@@ -892,6 +900,10 @@ abstract class Element_Base extends Controls_Stack {
 			$config['help_url'] = $this->get_help_url();
 		} else {
 			$config['help_url'] = $this->get_custom_help_url();
+		}
+
+		if ( ! $this->is_editable() ) {
+			$config['editable'] = false;
 		}
 
 		return $config;

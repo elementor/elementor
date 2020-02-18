@@ -209,6 +209,16 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_editable() {
+		return true;
+	}
+
+	/**
 	 * Get items.
 	 *
 	 * Utility method that receives an array with a needle and returns all the
@@ -1168,11 +1178,15 @@ abstract class Controls_Stack extends Base_Object {
 				continue;
 			}
 
-			if ( empty( $control['dynamic'] ) || ! isset( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ] ) ) {
-				continue;
+			$dynamic_settings = $control_obj->get_settings( 'dynamic' );
+
+			if ( ! empty( $control['dynamic'] ) ) {
+				$dynamic_settings = array_merge( $dynamic_settings, $control['dynamic'] );
 			}
 
-			$dynamic_settings = array_merge( $control_obj->get_settings( 'dynamic' ), $control['dynamic'] );
+			if ( empty( $dynamic_settings ) || ! isset( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ] ) ) {
+				continue;
+			}
 
 			if ( ! empty( $dynamic_settings['active'] ) && ! empty( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ] ) ) {
 				$parsed_value = $control_obj->parse_tags( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ], $dynamic_settings );

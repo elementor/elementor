@@ -46,7 +46,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		if ( dynamicSettings && dynamicSettings.active ) {
 			const tags = _.filter( elementor.dynamicTags.getConfig( 'tags' ), function( tag ) {
-				return _.intersection( tag.categories, dynamicSettings.categories ).length;
+				return tag.editable && _.intersection( tag.categories, dynamicSettings.categories ).length;
 			} );
 
 			behaviors.tags = {
@@ -264,7 +264,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 				if ( undefined !== gravity ) {
 					return gravity;
 				}
-				return 'n';
+				return 's';
 			},
 			title: function() {
 				return this.getAttribute( 'data-tooltip' );

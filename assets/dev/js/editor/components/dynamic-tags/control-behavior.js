@@ -31,6 +31,14 @@ module.exports = Marionette.Behavior.extend( {
 		this.$el.find( '.elementor-control-dynamic-switcher-wrapper' ).append( $dynamicSwitcher );
 
 		this.ui.dynamicSwitcher = $dynamicSwitcher;
+
+		// Add a Tipsy Tooltip to the Dynamic Switcher
+		this.ui.dynamicSwitcher.tipsy( {
+			title() {
+				return this.getAttribute( 'data-tooltip' );
+			},
+			gravity: 's',
+		} );
 	},
 
 	toggleDynamicClass: function() {
@@ -71,6 +79,13 @@ module.exports = Marionette.Behavior.extend( {
 				$tagsListInner.append( $tag );
 			} );
 		} );
+
+		// Create and inject pro dynamic teaser template if Pro is not installed
+		if ( ! elementor.helpers.hasPro() && Object.keys( tags ).length ) {
+			const proTeaser = Marionette.Renderer.render( '#tmpl-elementor-dynamic-tags-promo' );
+
+			$tagsListInner.append( proTeaser );
+		}
 
 		$tagsListInner.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );
 
@@ -161,6 +176,16 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	showPromotion: function() {
+		elementor.promotion.showDialog( {
+			headerMessage: elementor.translate( 'dynamic_content' ),
+			message: elementor.translate( 'dynamic_promotion_message' ),
+			top: '-10',
+			element: this.ui.dynamicSwitcher,
+			actionURL: elementor.config.dynamicPromotionURL,
+		} );
+	},
+
 	onRender: function() {
 		this.$el.addClass( 'elementor-control-dynamic' );
 
@@ -176,7 +201,11 @@ module.exports = Marionette.Behavior.extend( {
 	onDynamicSwitcherClick: function( event ) {
 		event.stopPropagation();
 
-		this.toggleTagsList();
+		if ( this.getOption( 'tags' ).length ) {
+			this.toggleTagsList();
+		} else {
+			this.showPromotion();
+		}
 	},
 
 	onTagsListItemClick: function( event ) {

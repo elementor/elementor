@@ -1,11 +1,11 @@
-import CommandsBase from 'elementor-api/modules/command-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Close extends CommandsBase {
+export class Close extends CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
 
-	apply( args ) {
+	async apply( args ) {
 		const { id, mode, onClose } = args,
 			document = elementor.documents.get( id );
 
@@ -15,46 +15,34 @@ export class Close extends CommandsBase {
 		}
 
 		// TODO: Move to an hook.
-		if ( ! mode && elementor.saver.isEditorChanged() ) {
-			this.getConfirmDialog().show();
-			return jQuery.Deferred().reject();
+		if ( ! mode && ( document.editor.isChanged || document.isDraft() ) ) {
+			const deferred = jQuery.Deferred();
+			this.getConfirmDialog( deferred ).show();
+			return deferred.promise();
 		}
-
-		let deferred;
 
 		switch ( mode ) {
+			case 'autosave':
+				await $e.run( 'document/save/auto' );
+				break;
 			case 'save':
-				deferred = $e.run( 'document/save/update' );
+				await $e.run( 'document/save/update' );
 				break;
 			case 'discard':
-				deferred = $e.run( 'document/save/discard' );
-
-				// TODO: Discard local changes.
+				await $e.run( 'document/save/discard', { document } );
 				break;
-			default:
-				deferred = jQuery.Deferred().resolve();
 		}
 
-		elementor.saver.stopAutoSave( document );
-
-		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
-
-		elementor.$previewContents.find( `.elementor-${ id }` )
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
-
-		document.editor.status = 'closed';
+		elementor.unloadDocument( document );
 
 		if ( onClose ) {
-			onClose();
+			await onClose( document );
 		}
 
-		return deferred;
+		return jQuery.Deferred().resolve();
 	}
 
-	getConfirmDialog() {
+	getConfirmDialog( deferred ) {
 		if ( this.confirmDialog ) {
 			return this.confirmDialog;
 		}
@@ -71,17 +59,31 @@ export class Close extends CommandsBase {
 				confirm: elementor.translate( 'Save' ),
 				cancel: elementor.translate( 'Discard' ),
 			},
+			onHide: () => {
+				// If still not action chosen. use `defer` because onHide is called before onConfirm/onCancel.
+				_.defer( () => {
+					if ( ! this.args.mode ) {
+						deferred.reject( 'Close document has been canceled.' );
+					}
+				} );
+			},
 			onConfirm: () => {
 				this.args.mode = 'save';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args );
+				$e.run( 'editor/documents/close', this.args )
+					.then( () => {
+						deferred.resolve();
+					} );
 			},
 			onCancel: () => {
 				this.args.mode = 'discard';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args );
+				$e.run( 'editor/documents/close', this.args )
+					.then( () => {
+						deferred.resolve();
+					} );
 			},
 		} );
 

@@ -12,6 +12,7 @@ import tabs from '../mock/elments/tabs';
 import SchemeItems from '../mock/schemes/items';
 
 // Document.
+config.initial_document = document;
 config.document = document;
 
 // Widgets.

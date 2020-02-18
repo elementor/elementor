@@ -1,5 +1,5 @@
 import environment from 'elementor-common/utils/environment';
-import DocumentHelpers from 'elementor-document/helpers';
+import DocumentHelper from 'elementor-document/helper';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -161,7 +161,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => DocumentHelpers.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),
@@ -418,7 +418,7 @@ BaseElementView = BaseContainer.extend( {
 
 	initControlsCSSParser() {
 		this.controlsCSSParser = new ControlsCSSParser( {
-			id: this.model.cid,
+			id: this.model.get( 'id' ),
 			settingsModel: this.getEditModel().get( 'settings' ),
 			dynamicParsing: this.getDynamicParsingSettings(),
 		} );
@@ -462,7 +462,7 @@ BaseElementView = BaseContainer.extend( {
 			settings.attributes,
 			this.getEditModel().get( 'settings' ).controls,
 			[ /{{ID}}/g, /{{WRAPPER}}/g ],
-			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .' + this.getElementUniqueID() ] );
+			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
 

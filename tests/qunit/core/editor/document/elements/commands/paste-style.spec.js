@@ -12,7 +12,7 @@ export const PasteStyle = () => {
 				ElementsHelper.copy( eButtonStyled );
 
 				// Ensure editor saver.
-				elementor.saver.setFlagEditorChange( false );
+				$e.internal( 'document/save/set-is-modified', { status: false } );
 
 				ElementsHelper.pasteStyle( eButtonSimple );
 
