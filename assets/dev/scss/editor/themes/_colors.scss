@@ -39,6 +39,7 @@ $theme-color-header-bg: var(--theme-color-header-bg);
 $theme-color-header-text: var(--theme-color-header-text);
 $theme-color-header-text-hover: var(--theme-color-header-text-hover);
 $theme-color-footer-bg: var(--theme-color-footer-bg);
+$theme-color-footer-icons: var(--theme-color-footer-icons);
 $theme-color-widget-tile-bg: var(--theme-color-widget-tile-bg);
 $theme-color-repeater-bg: var(--theme-color-repeater-bg);
 $theme-color-repeater-border: var(--theme-color-repeater-border);
@@ -49,6 +50,8 @@ $theme-color-btn-default-text: var(--theme-color-btn-default-text);
 $theme-color-btn-success-text: var(--theme-color-btn-success-text);
 $theme-color-btn-update-disabled-bg: var(--theme-color-btn-update-disabled-bg);
 $theme-color-btn-update-disabled-text: var(--theme-color-btn-update-disabled-text);
+$theme-color-slider-track: var(--theme-color-slider-track);
+$theme-color-slider-track-highlight: var(--theme-color-slider-track-highlight);
 $theme-color-slider-handle: var(--theme-color-slider-handle);
 $theme-color-switch-handle: var(--theme-color-switch-handle);
 $theme-color-dimensions-label: var(--theme-color-dimensions-label);
@@ -60,7 +63,11 @@ $theme-color-units-choices: var(--theme-color-units-choices);
 $theme-color-units-choices-active: var(--theme-color-units-choices-active);
 $theme-color-popover-bg: var(--theme-color-popover-bg);
 $theme-color-select2-highlighted-option-bg: var(--theme-color-select2-highlighted-option-bg);
+$theme-color-select2-multiple-selection-choice-bg: var(--theme-color-select2-multiple-selection-choice-bg);
 
 $theme-gradient-navigation-tab: var(--theme-gradient-navigation-tab);
 $theme-color-checkersboard-bg: var(--theme-color-checkersboard-bg);
 $theme-color-checkersboard-front: var(--theme-color-checkersboard-front);
+$theme-checkersboard-pattern:
+	linear-gradient(45deg, $theme-color-checkersboard-front 25%, transparent 0, transparent 75%, $theme-color-checkersboard-front 0, $theme-color-checkersboard-front),
+	linear-gradient(45deg, $theme-color-checkersboard-front 25%, transparent 0, transparent 75%, $theme-color-checkersboard-front 0, $theme-color-checkersboard-front);

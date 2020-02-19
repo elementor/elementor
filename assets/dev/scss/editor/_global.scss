@@ -62,6 +62,7 @@
 		}
 
 		.select2-selection--multiple {
+			background: $theme-color-input-bg;
 
 			.select2-selection__clear {
 				display: none;
@@ -72,6 +73,11 @@
 				font-size: 0.9em;
 				border: none;
 				border-radius: 0;
+				background-color: $theme-color-select2-multiple-selection-choice-bg;
+			}
+
+			.select2-search__field {
+				background: transparent;
 			}
 		}
 	}

@@ -53,6 +53,7 @@
 	--theme-color-header-bg: #{$editor-accent};
 	--theme-color-header-text: var(--editor-color-level-10);
 	--theme-color-footer-bg: var(--editor-color-level-90);
+	--theme-color-footer-icons: var(--editor-color-level-60);
 	--theme-color-widget-tile-bg: var(--theme-color-panel-front-bg);
 	--theme-color-repeater-bg: var(--theme-color-panel-front-bg);
 	--theme-color-repeater-border: var(--editor-color-level-40);
@@ -63,6 +64,8 @@
 	--theme-color-btn-success-text: var(--editor-color-level-0);
 	--theme-color-btn-update-disabled-bg: var(--editor-color-level-80);
 	--theme-color-btn-update-disabled-text: var(--editor-color-level-60);
+	--theme-color-slider-track: var(--editor-color-level-40);
+	--theme-color-slider-track-highlight: var(--editor-color-level-60);
 	--theme-color-slider-handle: var(--editor-color-level-80);
 	--theme-color-switch-handle: var(--editor-color-level-10);
 	--theme-color-dimensions-label: var(--editor-color-level-40);
@@ -74,10 +77,10 @@
 	--theme-color-units-choices-active: var(--editor-color-level-80);
 	--theme-color-popover-bg: var(--theme-color-panel-front-bg);
 	--theme-color-select2-highlighted-option-bg: inherit;
-
+	--theme-color-select2-multiple-selection-choice-bg: var(--editor-color-level-30);
 
 	--theme-gradient-navigation-tab: linear-gradient(to bottom, var(--editor-color-level-20), var(--editor-color-level-10));
-	--theme-color-checkersboard-bg: var(--editor-color-level-0);
+	--theme-color-checkersboard-bg: var(--editor-color-level-10);
 	--theme-color-checkersboard-front: var(--editor-color-level-30);
 }
 

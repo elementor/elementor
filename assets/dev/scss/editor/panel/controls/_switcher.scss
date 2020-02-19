@@ -84,8 +84,7 @@
 	}
 
 	.elementor-switch-input:checked ~ .elementor-switch-handle {
-		left: initial;
-		right: 1px;
+		left: calc(100% - 19px);
 		box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
 	}
 }

@@ -35,10 +35,10 @@
 	}
 
 	&-area {
-		background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
+		background-image: $theme-checkersboard-pattern;
 		background-size: 16px 16px;
 		background-position: 0 0, 8px 8px;
-		background-color: #f6f6f6;
+		background-color: $theme-color-checkersboard-bg;
 
 		&:not(:hover) {
 

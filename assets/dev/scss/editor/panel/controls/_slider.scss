@@ -15,6 +15,19 @@
 
 			.elementor-slider {
 
+				.noUi-origin {
+
+					.noUi-handle {
+						border-radius: 1px 3px 3px 1px;
+					}
+
+					& + .noUi-origin {
+						.noUi-handle {
+							border-radius: 3px 1px 1px 3px;
+						}
+					}
+				}
+
 				.noUi-handle {
 					border-radius: 0;
 					width: 10px;
@@ -27,14 +40,14 @@
 						height: 12px;
 						width: 11px;
 						transform: rotate(45deg);
-						background-color: $editor-color-level-0;
-						border-radius: 3px;
+						background-color: $theme-color-slider-handle;
+						border-radius: 2px;
 					}
 
 					&-lower {
 
 						&:after {
-							left: 5px;
+							left: 3px;
 							box-shadow: 2px -2px 3px 0px rgba(0,0,0,.1);
 						}
 					}
@@ -42,7 +55,7 @@
 					&-upper {
 
 						&:after {
-							right: 5px;
+							right: 3px;
 							box-shadow: -2px 2px 3px 0px rgba(0,0,0,.1);
 						}
 					}
@@ -63,7 +76,7 @@
 .elementor-slider {
 	flex-grow: 1;
 	height: 4px;
-	background-color: $editor-color-level-40;
+	background-color: $theme-color-slider-track;
 	border-radius: 5px;
 	position: relative;
 	cursor: pointer;
@@ -128,7 +141,7 @@
 			width: 100%;
 			will-change: transform;
 			transform-origin: 0 0;
-			background-color: $editor-color-level-60;
+			background-color: $theme-color-slider-track-highlight;
 		}
 
 		&-tooltip {
@@ -140,3 +153,4 @@
 		}
 	}
 }
+

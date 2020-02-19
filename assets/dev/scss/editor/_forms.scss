@@ -4,7 +4,6 @@
 
 input, select, textarea, .select2-selection, .elementor-input-style {
 	border-radius: 3px;
-	font-size: 12px;
 	width: 100%;
 	background: $theme-color-input-bg;
 	box-shadow: none;
@@ -26,6 +25,10 @@ input, select, textarea, .select2-selection, .elementor-input-style {
 	&::placeholder {
 		color: $theme-color-input-placeholder;
 	}
+}
+
+input, select, textarea, .elementor-input-style {
+	font-size: 12px;
 }
 
 .elementor-error {
