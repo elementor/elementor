@@ -4,7 +4,7 @@ import HistoryHelper from 'elementor/tests/qunit/core/editor/document/history/he
 export const Move = () => {
 	QUnit.module( 'Move', () => {
 		QUnit.module( 'Single Selection', () => {
-			QUnit.test( 'Section', ( assert ) => {
+			QUnit.only( 'Section', ( assert ) => {
 				// Create Section at 0.
 				ElementsHelper.createSection();
 
@@ -12,9 +12,15 @@ export const Move = () => {
 
 				ElementsHelper.move( eSection, elementor.getPreviewContainer(), { at: 0 } );
 
+				const done = assert.async();
+
 				// Validate first section have 3 columns.
-				assert.equal( elementor.getPreviewContainer().children.first().attributes.elements.length, 3, 3,
-					'Section were moved.' );
+				setTimeout( () => {
+					assert.equal( elementor.getPreviewContainer().children[ 0 ].children.length, 3, 3,
+						'Section were moved.' );
+
+					done();
+				} );
 			} );
 
 			QUnit.test( 'Column', ( assert ) => {
