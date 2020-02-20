@@ -139,6 +139,10 @@ class Preview extends App {
 	 * @return bool Whether preview mode is active.
 	 */
 	public function is_preview_mode( $post_id = 0 ) {
+		if ( ! isset( $_GET['elementor-preview'] ) ) {
+			return false;
+		}
+
 		if ( empty( $post_id ) ) {
 			$post_id = get_the_ID();
 		}
@@ -147,7 +151,7 @@ class Preview extends App {
 			return false;
 		}
 
-		if ( ! isset( $_GET['elementor-preview'] ) || $post_id !== (int) $_GET['elementor-preview'] ) {
+		if ( $post_id !== (int) $_GET['elementor-preview'] ) {
 			return false;
 		}
 
