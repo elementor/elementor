@@ -471,13 +471,8 @@ BaseElementView = BaseContainer.extend( {
 			[ /{{ID}}/g, /{{WRAPPER}}/g ],
 			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
-		this.controlsCSSParser.addStyleToDocument();
-
-		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
-
-		if ( extraCSS ) {
-			this.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
-		}
+		// TODO: Change 'view' to 'container' at 3.0.0.
+		this.controlsCSSParser.addStyleToDocument( this );
 	},
 
 	renderCustomClasses() {

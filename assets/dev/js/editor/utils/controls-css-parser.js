@@ -120,10 +120,17 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	addStyleToDocument: function() {
+	// TODO: Change 'view' to 'container' at 3.0.0.
+	addStyleToDocument: function( view = null ) {
+		let extraCSS = '';
+
+		if ( view ) {
+			extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', view );
+		}
+
 		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
 
-		this.elements.$stylesheetElement.text( this.stylesheet );
+		this.elements.$stylesheetElement.text( this.stylesheet + extraCSS );
 	},
 
 	removeStyleFromDocument: function() {
