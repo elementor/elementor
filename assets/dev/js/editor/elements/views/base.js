@@ -426,6 +426,7 @@ BaseElementView = BaseContainer.extend( {
 	initControlsCSSParser() {
 		this.controlsCSSParser = new ControlsCSSParser( {
 			id: this.model.get( 'id' ),
+			context: this,
 			settingsModel: this.getEditModel().get( 'settings' ),
 			dynamicParsing: this.getDynamicParsingSettings(),
 		} );
@@ -472,12 +473,6 @@ BaseElementView = BaseContainer.extend( {
 			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
-
-		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
-
-		if ( extraCSS ) {
-			this.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
-		}
 	},
 
 	renderCustomClasses() {
