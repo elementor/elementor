@@ -105,7 +105,7 @@
 	right: 0;
 	margin: -4px auto 5px;
 	padding-top: 15px;
-	width: 90%;
+	width: calc(100% - 30px);
 	z-index: $super-layer; // Above the select2 select boxes
 	background-color: $theme-color-popover-bg;
 
@@ -115,7 +115,7 @@
 		content: '';
 		position: absolute;
 		top: -$triangle-size * 2;
-		@include end(22px);
+		@include end(10px);
 		border: $triangle-size solid transparent;
 		border-bottom-color: $theme-color-popover-bg;
 	}

@@ -63,7 +63,7 @@
 
 		&-exit-to-dashboard {
 			background-color: $wp-primary;
-			color: $editor-color-level-0;
+			color: #fff;
 			text-transform: uppercase;
 			font-size: 12px;
 
@@ -73,7 +73,7 @@
 
 			.elementor-panel-menu-item-title,
 			.elementor-panel-menu-item-icon {
-				color: $editor-color-level-0;
+				color: #fff;
 			}
 		}
 	}
