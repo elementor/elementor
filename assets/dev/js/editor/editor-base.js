@@ -375,6 +375,8 @@ export default class EditorBase extends Marionette.Application {
 
 		frontendWindow.elementor = this;
 
+		frontendWindow.elementorCommon = elementorCommon;
+
 		elementorFrontend.init();
 
 		this.trigger( 'frontend:init' );
