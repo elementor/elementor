@@ -76,8 +76,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
-		// TODO: Change 'this.getEditedView()' to 'this.getEditedView().getContainer()' at 3.0.0.
-		controlsCSS.addStyleToDocument( this.getEditedView() );
+		controlsCSS.addStyleToDocument();
 	},
 
 	initModel: function() {
@@ -102,6 +101,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				controlsCSS = new ControlsCSSParser( {
 					id: this.getStyleId(),
 					settingsModel: this.model,
+					context: this.getEditedView(),
 				} );
 			}
 

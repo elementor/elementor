@@ -7,6 +7,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			id: 0,
+			context: null,
 			settingsModel: null,
 			dynamicParsing: {},
 		};
@@ -120,15 +121,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	// TODO: Change 'view' to 'container' at 3.0.0.
-	addStyleToDocument: function( view = null ) {
-		let extraCSS = '';
-
-		if ( view ) {
-			extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', view );
-		}
-
+	addStyleToDocument: function() {
 		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
+
+		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this.getSettings( 'context' ) );
 
 		this.elements.$stylesheetElement.text( this.stylesheet + extraCSS );
 	},

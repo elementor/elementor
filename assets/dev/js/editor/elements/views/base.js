@@ -426,6 +426,7 @@ BaseElementView = BaseContainer.extend( {
 	initControlsCSSParser() {
 		this.controlsCSSParser = new ControlsCSSParser( {
 			id: this.model.get( 'id' ),
+			context: this,
 			settingsModel: this.getEditModel().get( 'settings' ),
 			dynamicParsing: this.getDynamicParsingSettings(),
 		} );
@@ -471,8 +472,7 @@ BaseElementView = BaseContainer.extend( {
 			[ /{{ID}}/g, /{{WRAPPER}}/g ],
 			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
-		// TODO: Change 'view' to 'container' at 3.0.0.
-		this.controlsCSSParser.addStyleToDocument( this );
+		this.controlsCSSParser.addStyleToDocument();
 	},
 
 	renderCustomClasses() {
