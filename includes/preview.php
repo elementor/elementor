@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\App;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -13,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Preview {
+class Preview extends App {
 
 	/**
 	 * Post ID.
@@ -26,6 +28,21 @@ class Preview {
 	 * @var int Post ID.
 	 */
 	private $post_id;
+
+	/**
+	 * Get module name.
+	 *
+	 * Retrieve the module name.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 * @abstract
+	 *
+	 * @return string Module name.
+	 */
+	public function get_name() {
+		return 'preview';
+	}
 
 	/**
 	 * Init.
