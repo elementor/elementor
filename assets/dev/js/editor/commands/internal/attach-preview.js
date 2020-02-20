@@ -57,7 +57,6 @@ export class AttachPreview extends CommandBase {
 			elementor.sections.show( new Preview( { model: elementor.elementsModel } ) );
 
 			document.container.view = elementor.getPreviewView();
-			document.container.children = elementor.elements;
 			document.container.model.attributes.elements = elementor.elements;
 
 			elementor.helpers.scrollToView( elementor.$previewElementorEl );

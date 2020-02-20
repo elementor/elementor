@@ -12,9 +12,15 @@ export const Move = () => {
 
 				ElementsHelper.move( eSection, elementor.getPreviewContainer(), { at: 0 } );
 
+				const done = assert.async();
+
 				// Validate first section have 3 columns.
-				assert.equal( elementor.getPreviewContainer().children.first().attributes.elements.length, 3, 3,
-					'Section were moved.' );
+				setTimeout( () => {
+					assert.equal( elementor.getPreviewContainer().children[ 0 ].children.length, 3, 3,
+						'Section were moved.' );
+
+					done();
+				} );
 			} );
 
 			QUnit.test( 'Column', ( assert ) => {
