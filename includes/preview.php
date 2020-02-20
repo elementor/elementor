@@ -177,7 +177,6 @@ class Preview extends App {
 
 			$attributes = $document->get_container_attributes();
 
-			$attributes['id'] = 'elementor';
 			$attributes['class'] .= ' elementor-' . $this->post_id;
 
 			$content = '<div ' . Utils::render_html_attributes( $attributes ) . '></div>';
