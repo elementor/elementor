@@ -157,8 +157,6 @@ class Preview {
 			$attributes = $document->get_container_attributes();
 
 			$attributes['id'] = 'elementor';
-
-			$attributes['class'] .= ' elementor-edit-mode';
 			$attributes['class'] .= ' elementor-' . $this->post_id;
 
 			$content = '<div ' . Utils::render_html_attributes( $attributes ) . '></div>';
