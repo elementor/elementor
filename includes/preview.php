@@ -235,6 +235,16 @@ class Preview {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script(
+			'elementor-preview',
+			$this->get_js_assets_url( 'preview' ),
+			[
+				'elementor-frontend',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_enqueue_script(
 			'elementor-inline-editor',
 			ELEMENTOR_ASSETS_URL . 'lib/inline-editor/js/inline-editor' . $suffix . '.js',
 			[],
