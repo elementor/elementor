@@ -15,6 +15,14 @@ import Shortcuts from './core/shortcuts';
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
 
+// sources:
+// command -> means the source is another command? ( default for all commands ).
+// start -> on start.
+// contextmenu ->
+// panel ->
+// dialog ->
+// preview ->
+
 export default class API {
 	/**
 	 * Function constructor().

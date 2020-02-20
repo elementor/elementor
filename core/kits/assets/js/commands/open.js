@@ -1,8 +1,9 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export class Open extends CommandBase {
-	apply() {
-		const kit = elementor.documents.get( elementor.config.kit_id );
+	apply( args ) {
+		const { source = 'command' } = args,
+			kit = elementor.documents.get( elementor.config.kit_id );
 
 		if ( kit && 'open' === kit.editor.status ) {
 			$e.route( 'panel/global/style' );
@@ -24,6 +25,7 @@ export class Open extends CommandBase {
 				$e.run( 'editor/documents/switch', {
 					id: elementor.config.kit_id,
 					mode: 'autosave',
+					source,
 				} ).finally( () => {
 					resolve();
 
