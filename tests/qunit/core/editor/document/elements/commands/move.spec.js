@@ -4,7 +4,7 @@ import HistoryHelper from 'elementor/tests/qunit/core/editor/document/history/he
 export const Move = () => {
 	QUnit.module( 'Move', () => {
 		QUnit.module( 'Single Selection', () => {
-			QUnit.only( 'Section', ( assert ) => {
+			QUnit.test( 'Section', ( assert ) => {
 				// Create Section at 0.
 				ElementsHelper.createSection();
 
