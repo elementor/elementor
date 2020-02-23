@@ -13,6 +13,12 @@ export default class Preview extends elementorModules.ViewModule {
 				return;
 			}
 
+			const $existingHandle = document.$element.children( '.elementor-document-handle' );
+
+			if ( $existingHandle.length ) {
+				return;
+			}
+
 			const $handle = jQuery( '<div>', { class: 'elementor-document-handle' } ),
 				$handleIcon = jQuery( '<i>', { class: 'eicon-edit' } ),
 				documentTitle = $documentElement.data( 'elementor-title' ),
