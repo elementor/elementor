@@ -149,7 +149,14 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		this.view.allowRender = true;
 
-		this.view.getEditModel().renderRemoteServer();
+		/**
+		 * Inline editing has several toolbar types (advanced, basic and none). When editing is stopped,
+		 * we need to rerender the area. To prevent multiple renderings, we will render only areas that
+		 * use advanced toolbars.
+		 */
+		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
+			this.view.getEditModel().renderRemoteServer();
+		}
 	},
 
 	onInlineEditingClick: function( event ) {
