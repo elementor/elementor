@@ -72,6 +72,38 @@ export default class Commands extends elementorModules.Module {
 		return this;
 	}
 
+	unregister( component, command ) {
+		let namespace;
+		if ( 'string' === typeof component ) {
+			namespace = component;
+			component = $e.components.get( namespace );
+
+			if ( ! component ) {
+				this.error( `'${ namespace }' component is not exist.` );
+			}
+		} else {
+			namespace = component.getNamespace();
+		}
+
+		const fullCommand = namespace + ( command ? '/' + command : '' );
+
+		if ( ! this.commands[ fullCommand ] ) {
+			this.error( `\`${ fullCommand }\` not exist.` );
+		}
+
+		delete this.commands[ fullCommand ];
+		delete this.components[ fullCommand ];
+
+		const shortcuts = component.getShortcuts(),
+			shortcut = shortcuts[ command ];
+
+		if ( shortcut ) {
+			$e.shortcuts.unregister( shortcut.keys, shortcut );
+		}
+
+		return this;
+	}
+
 	/**
 	 * Function getComponent().
 	 *

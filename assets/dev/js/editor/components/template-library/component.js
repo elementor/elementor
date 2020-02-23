@@ -10,11 +10,7 @@ export default class Component extends ComponentModalBase {
 
 		super.__construct( args );
 
-		if ( 'block' === this.docLibraryConfig.type ) {
-			this.setDefaultRoute( 'templates/blocks' );
-		} else {
-			this.setDefaultRoute( 'templates/pages' );
-		}
+		this.setDefaultRoute( this.docLibraryConfig.default_route );
 	}
 
 	getNamespace() {

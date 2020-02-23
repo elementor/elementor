@@ -226,6 +226,7 @@ abstract class PageBase extends Document {
 
 		$config['category'] = '';
 		$config['type'] = 'page';
+		$config['default_route'] = 'templates/pages';
 
 		return $config;
 	}
