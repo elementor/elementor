@@ -196,6 +196,14 @@ export default class Commands extends elementorModules.Module {
 		return this.currentTrace[ 0 ];
 	}
 
+	validateRun( command, args = {} ) {
+		if ( ! this.commands[ command ] ) {
+			this.error( `\`${ command }\` not found.` );
+		}
+
+		return this.getComponent( command ).dependency( command, args );
+	}
+
 	/**
 	 * Function beforeRun().
 	 *
@@ -205,13 +213,19 @@ export default class Commands extends elementorModules.Module {
 	 * @returns {boolean} dependency result
 	 */
 	beforeRun( command, args = {} ) {
-		if ( ! this.commands[ command ] ) {
-			this.error( `\`${ command }\` not found.` );
-		}
+		const component = this.getComponent( command ),
+			container = component.getRootContainer();
 
 		this.currentTrace.push( command );
 
-		return this.getComponent( command ).dependency( command, args );
+		this.current[ container ] = command;
+		this.currentArgs[ container ] = args;
+
+		if ( args.onBefore ) {
+			args.onBefore.apply( component, [ args ] );
+		}
+
+		this.trigger( 'run', component, command, args );
 	}
 
 	/**
@@ -225,34 +239,15 @@ export default class Commands extends elementorModules.Module {
 	 * @returns {boolean|*} results
 	 */
 	run( command, args = {} ) {
-		if ( ! this.beforeRun( command, args ) ) {
+		if ( ! this.validateRun( command, args ) ) {
 			return false;
 		}
 
-		const component = this.getComponent( command ),
-			container = component.getRootContainer();
+		this.beforeRun( command, args )
 
-		this.current[ container ] = command;
-		this.currentArgs[ container ] = args;
+		const results = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
 
-		this.trigger( 'run', component, command, args );
-
-		if ( args.onBefore ) {
-			args.onBefore.apply( component, [ args ] );
-		}
-
-		const results = this.commands[ command ].apply( component, [ args ] );
-
-		// TODO: Consider add results to `$e.devTools`.
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args, results ] );
-		}
-
-		this.afterRun( command );
-
-		if ( false === args.returnValue ) {
-			return true;
-		}
+		this.afterRun( command, args, results );
 
 		return results;
 	}
@@ -279,10 +274,17 @@ export default class Commands extends elementorModules.Module {
 	 * Method fired before the command runs.
 	 *
 	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} results
 	 */
-	afterRun( command ) {
+	afterRun( command, args, results ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
+
+		// TODO: Consider add results to `$e.devTools`.
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args, results ] );
+		}
 
 		this.currentTrace.pop();
 
