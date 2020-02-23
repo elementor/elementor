@@ -341,8 +341,12 @@ export default class HooksBase extends elementorModules.Module {
 			if ( 1 === this.depth[ event ][ callback.id ] ) {
 				this.onCallback( command, args, event, callback.id );
 
-				if ( ! this.runCallback( event, callback, args, result ) ) {
-					throw Error( `Callback failed, event: '${ event }'` );
+				try {
+					if ( ! this.runCallback( event, callback, args, result ) ) {
+						throw Error( `Callback failed, event: '${ event }'` );
+					}
+				} catch ( e ) {
+					elementorCommon.helpers.consoleError( e );
 				}
 			}
 

@@ -1137,6 +1137,7 @@ abstract class Document extends Controls_Stack {
 	protected function get_remote_library_config() {
 		$config = [
 			'type' => 'block',
+			'default_route' => 'templates/blocks',
 			'category' => $this->get_name(),
 			'autoImportSettings' => false,
 		];

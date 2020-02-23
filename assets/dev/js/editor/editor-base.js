@@ -293,6 +293,14 @@ export default class EditorBase extends Marionette.Application {
 		return this.getPreviewView().getContainer();
 	}
 
+	getContainer( id ) {
+		if ( 'document' === id ) {
+			return this.getPreviewContainer();
+		}
+
+		return $e.components.get( 'document' ).utils.findContainerById( id );
+	}
+
 	initComponents() {
 		const EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
@@ -788,12 +796,12 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
+		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
-
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
 		this.logSite();
 	}

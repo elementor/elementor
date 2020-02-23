@@ -101,6 +101,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				controlsCSS = new ControlsCSSParser( {
 					id: this.getStyleId(),
 					settingsModel: this.model,
+					context: this.getEditedView(),
 				} );
 			}
 
