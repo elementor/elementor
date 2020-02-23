@@ -15,13 +15,12 @@ import Shortcuts from './core/shortcuts';
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
 
-// sources:
-// command -> means the source is another command? ( default for all commands ).
-// start -> on start.
-// contextmenu ->
-// panel ->
-// dialog ->
-// preview ->
+/**
+ * @typedef {{}} Args
+ * @property {('command'|'start'|'contextmenu'|'panel'|'dialog'|'preview')} source
+ * @property {Container} container
+ * @property {Array.<Container>} containers
+ */
 
 export default class API {
 	/**
@@ -61,12 +60,13 @@ export default class API {
 	 *
 	 * Alias of `$e.commands.run()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} command
+	 * @param {(Args|{})} [args={}]
 	 *
 	 * @returns {*}
 	 */
-	run( ...args ) {
-		return $e.commands.run.apply( $e.commands, args );
+	run( command, args = {} ) {
+		return $e.commands.run( command, args );
 	}
 
 	/**
@@ -74,12 +74,13 @@ export default class API {
 	 *
 	 * Alias of `$e.commandsInternal.run()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} command
+	 * @param {(Args|{})} [args={}]
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
-	internal( ...args ) {
-		return $e.commandsInternal.run.apply( $e.commandsInternal, args );
+	internal( command, args  ) {
+		return $e.commandsInternal.run( command, args );
 	}
 
 	/**

@@ -786,10 +786,14 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		$e.run( 'editor/documents/open', { id: this.config.initial_document.id, source: 'start' } )
-			.then( () => {
-				elementorCommon.elements.$window.trigger( 'elementor:init' );
-			} );
+		const open = $e.run( 'editor/documents/open', {
+			id: this.config.initial_document.id,
+			source: 'start',
+		} );
+
+		open.then( () => {
+			elementorCommon.elements.$window.trigger( 'elementor:init' );
+		} );
 
 		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
