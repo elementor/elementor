@@ -1,4 +1,6 @@
 export default class Commands extends elementorModules.Module {
+	static globalTrace = [];
+
 	/**
 	 * Function constructor().
 	 *
@@ -277,32 +279,56 @@ export default class Commands extends elementorModules.Module {
 
 		this.beforeRun( command, args )
 
-		const results = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
-
-		this.afterRun( command, args, results );
-		const instance = this.commands[ command ].apply( component, [ args ] );
-
-		this.validateInstance( instance, component, command );
-
-		this.trigger( 'run', component, command, args );
-
-		if ( args.onBefore ) {
-			args.onBefore.apply( component, [ args ] );
-		}
+		/**
+		 * @type {(CommandBase)|*}
+		 */
+		const instance = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
+		let results;
 
 		// If not instance or is not run-able instance ( CommandBase ), results equal to instance ( eg route )
 		// else results are from run().
-		const results = ! instance || 'undefined' === typeof instance.run ? instance : instance.run();
+		if ( ! instance || 'undefined' === typeof instance.run ) {
+			results = instance;
 
-		// TODO: Consider add results to `$e.devTools`.
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args, results ] );
-		}
+			this.afterRun( command, args, results );
+		} else {
+			this.validateInstance( instance, command )
+			// For UI Hooks.
+			instance.onBeforeRun( instance.args );
 
-		this.afterRun( command );
+			try {
+				instance.onBeforeApply( instance.args );
 
-		if ( false === args.returnValue ) {
-			return true;
+				results = instance.run();
+			} catch ( e ) {
+				instance.onCatchApply( e );
+
+				if ( e instanceof $e.modules.HookBreak ) {
+					this.afterRun( command, args, e ); // To clear current.
+					return false;
+				}
+			}
+
+			const onAfter = ( _results ) => {
+				instance.onAfterApply( instance.args, _results );
+
+				if ( instance.isDataChanged() ) {
+					$e.internal( 'document/save/set-is-modified', { status: true } );
+				}
+
+				// For UI hooks.
+				instance.onAfterRun( instance.args, _results );
+
+				this.afterRun( command, args, results );
+			};
+
+			// TODO: Temp code determine if it's a jQuery deferred object.
+			if ( results && 'object' === typeof results && results.promise && results.then && results.fail ) {
+				results.fail( instance.onCatchApply.bind( instance ) );
+				results.done( onAfter );
+			} else {
+				onAfter( results );
+			}
 		}
 
 		return results;
@@ -348,7 +374,9 @@ export default class Commands extends elementorModules.Module {
 		delete this.currentArgs[ container ];
 	}
 
-	validateInstance( instance, component, command ) {
+	validateInstance( instance, command ) {
+		const component = this.getComponent( command );
+
 		if ( ! instance || component !== instance.component ) {
 			this.error( `invalid instance, command: '${ command }' ` );
 		}

@@ -117,44 +117,7 @@ export default class CommandBase extends ArgsObject {
 	 * @returns {*}
 	 */
 	run() {
-		let result;
-
-		// For UI Hooks.
-		this.onBeforeRun( this.args );
-
-		try {
-			// For Data hooks.
-			this.onBeforeApply( this.args );
-
-			result = this.apply( this.args );
-		} catch ( e ) {
-			this.onCatchApply( e );
-
-			if ( e instanceof $e.modules.HookBreak ) {
-				return false;
-			}
-		}
-
-		const onAfter = ( _result ) => {
-			this.onAfterApply( this.args, _result );
-
-			if ( this.isDataChanged() ) {
-				$e.internal( 'document/save/set-is-modified', { status: true } );
-			}
-
-			// For UI hooks.
-			this.onAfterRun( this.args, _result );
-		};
-
-		// TODO: Temp code determine if it's a jQuery deferred object.
-		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
-			result.fail( this.onCatchApply.bind( this ) );
-			result.done( onAfter );
-		} else {
-			onAfter( result );
-		}
-
-		return result;
+		return this.apply( this.args );
 	}
 
 	/**
