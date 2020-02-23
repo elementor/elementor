@@ -22,8 +22,62 @@ html.elementor-html {
 }
 
 .elementor {
+	position: relative;
+
+	&:not(.elementor-edit-mode) {
+
+		&:hover {
+			border: 1px solid $editor-orange;
+		}
+
+		&:not(:hover) {
+
+			.elementor-document-handle {
+				display: none;
+			}
+		}
+	}
+
 	&.loading{
 		opacity: 0.5;
+	}
+}
+
+.elementor-document-handle {
+	display: flex;
+	align-items: center;
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: $editor-orange;
+	padding: 5px 10px;
+	font-size: 11px;
+	color: #fff;
+	border-radius: 0 0 3px 3px;
+	cursor: pointer;
+
+	&:before, &:after {
+		content: '';
+		position: absolute;
+		border: solid transparent;
+	}
+
+	&:before {
+		@include end(calc(100% - 1px));
+		@include border-end-property(color, $editor-orange);
+		border-width: 0 15px 26px 0;
+	}
+
+	&:after {
+		@include start(calc(100% - 1px));
+		@include border-start-property(color, $editor-orange);
+		border-width: 0 0 26px 15px;
+	}
+
+	.eicon-edit {
+		@include margin-end(5px);
 	}
 }
 
