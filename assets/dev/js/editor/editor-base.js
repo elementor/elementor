@@ -794,12 +794,12 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
+		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
-
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
 		this.logSite();
 	}
