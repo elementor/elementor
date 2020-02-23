@@ -89,7 +89,26 @@ export default class ComponentBase extends elementorModules.Module {
 		return this.shortcuts;
 	}
 
+	/**
+	 * @param {string} command
+	 * @param {function()} callback
+	 */
 	registerCommand( command, callback ) {
+		const fullCommand = this.getNamespace() + '/' + command;
+
+		let instance;
+
+		try {
+			// Try get instance.
+			instance = callback();
+
+			if ( ! instance.isCommandBase ) {
+				throw Error( 'Command should inherent command base.' );
+			}
+		} catch ( e ) {
+			$e.commands.error( `invalid command: '${ fullCommand }'` );
+		}
+
 		$e.commands.register( this, command, callback );
 	}
 
@@ -106,6 +125,10 @@ export default class ComponentBase extends elementorModules.Module {
 
 	registerRoute( route, callback ) {
 		$e.routes.register( this, route, callback );
+	}
+
+	unregisterRoute( route ) {
+		$e.routes.unregister( this, route );
 	}
 
 	registerTabRoute( tab ) {
@@ -173,6 +196,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 	removeTab( tab ) {
 		delete this.tabs[ tab ];
+		this.unregisterRoute( tab );
 	}
 
 	hasTab( tab ) {
@@ -247,7 +271,11 @@ export default class ComponentBase extends elementorModules.Module {
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
 			const command = this.normalizeCommandName( className );
-			commands[ command ] = ( args ) => ( new Class( args ) ).run();
+			const callback = ( args ) => new Class( args );
+
+			callback.class = Class;
+
+			commands[ command ] = callback;
 		} );
 
 		return commands;

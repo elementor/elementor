@@ -72,6 +72,38 @@ export default class Commands extends elementorModules.Module {
 		return this;
 	}
 
+	unregister( component, command ) {
+		let namespace;
+		if ( 'string' === typeof component ) {
+			namespace = component;
+			component = $e.components.get( namespace );
+
+			if ( ! component ) {
+				this.error( `'${ namespace }' component is not exist.` );
+			}
+		} else {
+			namespace = component.getNamespace();
+		}
+
+		const fullCommand = namespace + ( command ? '/' + command : '' );
+
+		if ( ! this.commands[ fullCommand ] ) {
+			this.error( `\`${ fullCommand }\` not exist.` );
+		}
+
+		delete this.commands[ fullCommand ];
+		delete this.components[ fullCommand ];
+
+		const shortcuts = component.getShortcuts(),
+			shortcut = shortcuts[ command ];
+
+		if ( shortcut ) {
+			$e.shortcuts.unregister( shortcut.keys, shortcut );
+		}
+
+		return this;
+	}
+
 	/**
 	 * Function getComponent().
 	 *
@@ -248,6 +280,30 @@ export default class Commands extends elementorModules.Module {
 		const results = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
 
 		this.afterRun( command, args, results );
+		const instance = this.commands[ command ].apply( component, [ args ] );
+
+		this.validateInstance( instance, component, command );
+
+		this.trigger( 'run', component, command, args );
+
+		if ( args.onBefore ) {
+			args.onBefore.apply( component, [ args ] );
+		}
+
+		// If not instance or is not run-able instance ( CommandBase ), results equal to instance ( eg route )
+		// else results are from run().
+		const results = ! instance || 'undefined' === typeof instance.run ? instance : instance.run();
+
+		// TODO: Consider add results to `$e.devTools`.
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args, results ] );
+		}
+
+		this.afterRun( command );
+
+		if ( false === args.returnValue ) {
+			return true;
+		}
 
 		return results;
 	}
@@ -292,6 +348,11 @@ export default class Commands extends elementorModules.Module {
 		delete this.currentArgs[ container ];
 	}
 
+	validateInstance( instance, component, command ) {
+		if ( ! instance || component !== instance.component ) {
+			this.error( `invalid instance, command: '${ command }' ` );
+		}
+	}
 	/**
 	 * Function error().
 	 *

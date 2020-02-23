@@ -90,6 +90,7 @@ class Page extends Library_Document {
 		$config = parent::get_remote_library_config();
 
 		$config['type'] = 'page';
+		$config['default_route'] = 'templates/pages';
 
 		return $config;
 	}

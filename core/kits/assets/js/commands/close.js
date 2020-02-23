@@ -33,7 +33,8 @@ export class Close extends CommandBase {
 
 					$e.internal( 'panel/state-ready' );
 				} )
-				.catch( () => {
+				.catch( ( error ) => {
+					console.log( error ); // eslint-disable-line
 					elementor.exitPreviewMode();
 				} );
 			}, 500 );

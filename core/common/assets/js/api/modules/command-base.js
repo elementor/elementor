@@ -1,6 +1,8 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
+	isCommandBase = true;
+
 	/**
 	 * Current component.
 	 *
@@ -16,8 +18,13 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 * @param [commandsAPI={}]
 	 */
-	constructor( args, commandsAPI = $e.commands ) {
+	constructor( args = {}, commandsAPI = $e.commands ) {
 		super( args );
+
+		// TODO: is better to check if register process is done.
+		if ( ! commandsAPI.currentTrace.length ) {
+			return;
+		}
 
 		// Acknowledge self about which command it run.
 		this.currentCommand = commandsAPI.getCurrentLast();

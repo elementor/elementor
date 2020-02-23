@@ -24,15 +24,11 @@ export default class DisableEnable extends History {
 	}
 
 	initialize( args ) {
-		super.initialize( args );
-
-		/**
-		 * Which command is running.
-		 *
-		 * @type {string}
-		 */
+		// Which command is running.
 		this.type = 'document/dynamic/enable' === this.currentCommand ?
 			'enable' : 'disable';
+
+		super.initialize( args );
 	}
 
 	validateArgs( args ) {

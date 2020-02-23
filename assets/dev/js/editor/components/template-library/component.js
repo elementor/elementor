@@ -1,4 +1,5 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
+import CommandBase from 'elementor-api/modules/command-base';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -9,11 +10,7 @@ export default class Component extends ComponentModalBase {
 
 		super.__construct( args );
 
-		if ( 'block' === this.docLibraryConfig.type ) {
-			this.setDefaultRoute( 'templates/blocks' );
-		} else {
-			this.setDefaultRoute( 'templates/pages' );
-		}
+		this.setDefaultRoute( this.docLibraryConfig.default_route );
 	}
 
 	getNamespace() {
@@ -51,7 +48,6 @@ export default class Component extends ComponentModalBase {
 			import: () => {
 				this.manager.layout.showImportView();
 			},
-
 			'save-template': ( args ) => {
 				this.manager.layout.showSaveTemplateView( args.model );
 			},
@@ -71,10 +67,18 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultCommands() {
-		return Object.assign( super.defaultCommands(), {
-			open: this.show,
-			'insert-template': this.insertTemplate,
-		} );
+		const self = this,
+			layoutCommands = super.defaultCommands();
+
+		return {
+			... layoutCommands,
+			open: ( args ) => new class Open extends CommandBase {
+				apply = () => self.show( args );
+			},
+			'insert-template': ( args ) => new class Open extends CommandBase {
+				apply = () => self.insertTemplate( args );
+			},
+		};
 	}
 
 	defaultShortcuts() {
