@@ -408,7 +408,7 @@ export default class EditorBase extends Marionette.Application {
 					confirm: elementor.translate( 'delete' ),
 					cancel: elementor.translate( 'cancel' ),
 				},
-				onConfirm: () => $e.run( 'document/elements/empty', { force: true } ),
+				onConfirm: () => $e.run( 'document/elements/empty', { force: true, source: 'dialog' } ),
 			} );
 
 			return dialog;
@@ -794,12 +794,16 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+		const open = $e.run( 'editor/documents/open', {
+			id: this.config.initial_document.id,
+			source: 'start',
+		} );
 
-		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
-			.then( () => {
-				elementorCommon.elements.$window.trigger( 'elementor:init' );
-			} );
+		open.then( () => {
+			elementorCommon.elements.$window.trigger( 'elementor:init' );
+		} );
+
+		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
 		this.logSite();
 	}

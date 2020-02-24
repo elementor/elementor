@@ -24,10 +24,10 @@ export default class extends Marionette.Behavior {
 	}
 
 	onClickClose() {
-		$e.run( 'panel/global/close' );
+		$e.run( 'panel/global/close', { source: 'panel' } );
 	}
 
 	onClickBack() {
-		$e.run( 'panel/global/back' );
+		$e.run( 'panel/global/back', { source: 'panel' } );
 	}
 }
