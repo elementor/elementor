@@ -29,6 +29,9 @@
 /core                             		@kingyes
 /core/admin                       		@kingyes
 /core/base                        		@kingyes @matipojo @kobizz
+/core/base/db-upgrades-manager.php		@kingyes @matipojo
+/core/base/background-task.php			@kingyes @matipojo
+/core/base/background-task-manager.php	@kingyes @matipojo
 /core/common                      		@kobizz
 /core/common/modules/ajax         		@kobizz @matipojo
 /core/common/modules/connect      		@matipojo
