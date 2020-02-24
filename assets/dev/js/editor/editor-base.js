@@ -506,7 +506,7 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor ) {
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent() ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );
