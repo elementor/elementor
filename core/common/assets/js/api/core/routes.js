@@ -62,10 +62,6 @@ export default class Routes extends Commands {
 	}
 
 	beforeRun( route, args ) {
-		if ( ! super.beforeRun( route, args ) ) {
-			return false;
-		}
-
 		if ( this.is( route, args ) && ! args.refresh ) {
 			return false;
 		}
@@ -73,6 +69,9 @@ export default class Routes extends Commands {
 		const component = this.getComponent( route ),
 			container = component.getRootContainer(),
 			oldRoute = this.current[ container ];
+
+		this.current[ container ] = route;
+		this.currentArgs[ container ] = args;
 
 		if ( oldRoute ) {
 			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
