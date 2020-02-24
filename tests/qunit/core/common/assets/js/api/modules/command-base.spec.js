@@ -46,7 +46,7 @@ jQuery( () => {
 					() => {
 						const instance = new CommandBase( {} );
 
-						instance.onBeforeApply = () => {
+						instance.apply = () => {
 							throw new Error( random );
 						};
 
@@ -67,7 +67,7 @@ jQuery( () => {
 					() => {
 						const instance = new CommandBase( {} );
 
-						instance.onBeforeApply = () => {
+						instance.apply = () => {
 							throw new Error( random );
 						};
 
