@@ -243,8 +243,6 @@ export default class Commands extends elementorModules.Module {
 	 *
 	 * @param {string} command
 	 * @param {} args
-	 *
-	 * @returns {boolean} dependency result
 	 */
 	beforeRun( command, args = {} ) {
 		const component = this.getComponent( command ),
@@ -286,52 +284,55 @@ export default class Commands extends elementorModules.Module {
 		 * @type {(CommandBase)|*}
 		 */
 		const instance = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
-		let results;
 
 		// If not instance or is not run-able instance ( CommandBase ), results equal to instance ( eg route )
 		// else results are from run().
 		if ( ! instance || 'undefined' === typeof instance.run ) {
-			results = instance;
+			this.afterRun( command, args, instance );
+
+			return instance;
+		}
+
+		let results;
+
+		this.validateInstance( instance, command )
+		// For UI Hooks.
+		instance.onBeforeRun( instance.args );
+
+		try {
+			// For data hooks.
+			instance.onBeforeApply( instance.args );
+
+			results = instance.run();
+		} catch ( e ) {
+			instance.onCatchApply( e );
+
+			if ( e instanceof $e.modules.HookBreak ) {
+				this.afterRun( command, args, e ); // To clear current.
+				return false;
+			}
+		}
+
+		const onAfter = ( _results ) => {
+			// For data hooks.
+			instance.onAfterApply( instance.args, _results );
+
+			if ( instance.isDataChanged() ) {
+				$e.internal( 'document/save/set-is-modified', { status: true } );
+			}
+
+			// For UI hooks.
+			instance.onAfterRun( instance.args, _results );
 
 			this.afterRun( command, args, results );
+		};
+
+		// TODO: Temp code determine if it's a jQuery deferred object.
+		if ( results && 'object' === typeof results && results.promise && results.then && results.fail ) {
+			results.fail( instance.onCatchApply.bind( instance ) );
+			results.done( onAfter );
 		} else {
-			this.validateInstance( instance, command )
-			// For UI Hooks.
-			instance.onBeforeRun( instance.args );
-
-			try {
-				instance.onBeforeApply( instance.args );
-
-				results = instance.run();
-			} catch ( e ) {
-				instance.onCatchApply( e );
-
-				if ( e instanceof $e.modules.HookBreak ) {
-					this.afterRun( command, args, e ); // To clear current.
-					return false;
-				}
-			}
-
-			const onAfter = ( _results ) => {
-				instance.onAfterApply( instance.args, _results );
-
-				if ( instance.isDataChanged() ) {
-					$e.internal( 'document/save/set-is-modified', { status: true } );
-				}
-
-				// For UI hooks.
-				instance.onAfterRun( instance.args, _results );
-
-				this.afterRun( command, args, results );
-			};
-
-			// TODO: Temp code determine if it's a jQuery deferred object.
-			if ( results && 'object' === typeof results && results.promise && results.then && results.fail ) {
-				results.fail( instance.onCatchApply.bind( instance ) );
-				results.done( onAfter );
-			} else {
-				onAfter( results );
-			}
+			onAfter( results );
 		}
 
 		return results;
@@ -365,6 +366,10 @@ export default class Commands extends elementorModules.Module {
 	afterRun( command, args, results ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
+
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args, results ] );
+		}
 
 		this.currentTrace.pop();
 		Commands.trace.pop();
