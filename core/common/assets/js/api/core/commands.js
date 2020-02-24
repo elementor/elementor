@@ -332,6 +332,9 @@ export default class Commands extends elementorModules.Module {
 		if ( results && 'object' === typeof results && results.promise && results.then && results.fail ) {
 			results.fail( instance.onCatchApply.bind( instance ) );
 			results.done( onAfter );
+		} else if ( results instanceof Promise ) {
+			results.catch( instance.onCatchApply.bind( instance ) );
+			results.then( onAfter );
 		} else {
 			onAfter( results );
 		}
