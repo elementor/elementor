@@ -65,6 +65,10 @@ class Kit extends PageBase {
 		return $url;
 	}
 
+	protected function get_have_a_look_url() {
+		return '';
+	}
+
 	public static function get_editor_panel_config() {
 		$config = parent::get_editor_panel_config();
 		$config['default_route'] = 'panel/global/style';
