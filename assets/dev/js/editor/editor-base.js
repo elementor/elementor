@@ -343,7 +343,7 @@ export default class EditorBase extends Marionette.Application {
 		let config = this.config.document.elements;
 
 		// If it's an reload, use the not-saved data
-		if ( this.elements && this.config.document.id === this.config.initial_document.id ) {
+		if ( this.elements && this.elements.length && this.config.document.id === this.config.initial_document.id ) {
 			config = this.elements.toJSON();
 		}
 
@@ -972,6 +972,8 @@ export default class EditorBase extends Marionette.Application {
 		if ( document.id !== this.config.document.id ) {
 			return;
 		}
+
+		this.elements = [];
 
 		this.saver.stopAutoSave( document );
 
