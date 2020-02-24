@@ -39,7 +39,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 				return reject();
 			}
 
-			elementor.$previewElementorEl.addClass( 'elementor-edit-area' );
+			elementor.$previewElementorEl.addClass( 'elementor-edit-area elementor-edit-mode' );
 
 			elementor.initElements();
 
