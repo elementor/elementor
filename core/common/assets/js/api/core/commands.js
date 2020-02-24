@@ -1,5 +1,5 @@
 export default class Commands extends elementorModules.Module {
-	static globalTrace = [];
+	static trace = [];
 
 	/**
 	 * Function constructor().
@@ -252,6 +252,9 @@ export default class Commands extends elementorModules.Module {
 
 		this.currentTrace.push( command );
 
+		Commands.trace.push( command );
+		//Commands.trace.push( this.commands[ command ] );
+
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
 
@@ -363,12 +366,8 @@ export default class Commands extends elementorModules.Module {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
 
-		// TODO: Consider add results to `$e.devTools`.
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args, results ] );
-		}
-
 		this.currentTrace.pop();
+		Commands.trace.pop();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
