@@ -106,7 +106,9 @@ export default class ComponentBase extends elementorModules.Module {
 				throw Error( 'Command should inherent command base.' );
 			}
 		} catch ( e ) {
-			$e.commands.error( `invalid command: '${ fullCommand }'` );
+			if ( $e.devTools ) {
+				$e.devTools.log.error( `invalid command base: '${ fullCommand }'` );
+			}
 		}
 
 		$e.commands.register( this, command, callback );
