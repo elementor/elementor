@@ -485,6 +485,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				runCallbacksOnInit: false,
 				loop: true,
 				keyboard: true,
+				handleElementorBreakpoints: true,
 			};
 
 			if ( ! isSingleSlide ) {
