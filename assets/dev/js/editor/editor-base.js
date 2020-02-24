@@ -383,6 +383,8 @@ export default class EditorBase extends Marionette.Application {
 
 		frontendWindow.elementor = this;
 
+		frontendWindow.elementorCommon = elementorCommon;
+
 		elementorFrontend.init();
 
 		this.trigger( 'frontend:init' );
@@ -980,7 +982,7 @@ export default class EditorBase extends Marionette.Application {
 		this.channels.dataEditMode.trigger( 'switch', 'preview' );
 
 		this.$previewContents.find( `.elementor-${ document.id }` )
-			.removeClass( 'elementor-edit-area-active' )
+			.removeClass( 'elementor-edit-area-active elementor-edit-mode' )
 			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
 
 		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
