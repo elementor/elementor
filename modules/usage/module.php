@@ -6,7 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\DB;
-use ElementorPro\Plugin;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
