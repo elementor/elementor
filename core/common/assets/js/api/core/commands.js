@@ -278,7 +278,7 @@ export default class Commands extends elementorModules.Module {
 			return false;
 		}
 
-		this.beforeRun( command, args )
+		this.beforeRun( command, args );
 
 		/**
 		 * @type {(CommandBase)|*}
@@ -295,7 +295,8 @@ export default class Commands extends elementorModules.Module {
 
 		let results;
 
-		this.validateInstance( instance, command )
+		this.validateInstance( instance, command );
+
 		// For UI Hooks.
 		instance.onBeforeRun( instance.args );
 
