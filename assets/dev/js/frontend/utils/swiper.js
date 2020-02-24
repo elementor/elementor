@@ -4,7 +4,7 @@ export default class Swiper {
 	constructor( container, config ) {
 		this.config = config;
 
-		if ( this.config.breakpoints ) {
+		if ( this.config.breakpoints && this.config.handleElementorBreakpoints ) {
 			this.adjustConfig();
 		}
 
