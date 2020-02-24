@@ -89,7 +89,7 @@ class Kit extends PageBase {
 		$this->add_form_fields_section();
 		$this->add_images_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, Controls_Manager::TAB_STYLE );
 	}
 
 	protected function get_post_statuses() {
