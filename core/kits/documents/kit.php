@@ -65,6 +65,10 @@ class Kit extends PageBase {
 		return $url;
 	}
 
+	protected function get_have_a_look_url() {
+		return '';
+	}
+
 	public static function get_editor_panel_config() {
 		$config = parent::get_editor_panel_config();
 		$config['default_route'] = 'panel/global/style';
@@ -89,7 +93,7 @@ class Kit extends PageBase {
 		$this->add_form_fields_section();
 		$this->add_images_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, Controls_Manager::TAB_STYLE );
 	}
 
 	protected function get_post_statuses() {
