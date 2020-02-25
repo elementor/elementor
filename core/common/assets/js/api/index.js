@@ -92,7 +92,7 @@ export default class API {
 	 *
 	 * @returns {*}
 	 */
-	internal( command, args ) {
+	internal( command, args  ) {
 		return $e.commandsInternal.run( command, args );
 	}
 
