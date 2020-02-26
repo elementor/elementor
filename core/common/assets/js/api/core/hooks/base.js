@@ -346,6 +346,11 @@ export default class HooksBase extends elementorModules.Module {
 						throw Error( `Callback failed, event: '${ event }'` );
 					}
 				} catch ( e ) {
+					// If its 'Hook-Break' then parent `try {}` will handle it.
+					if ( e instanceof $e.modules.HookBreak ) {
+						throw e;
+					}
+
 					elementorCommon.helpers.consoleError( e );
 				}
 			}
