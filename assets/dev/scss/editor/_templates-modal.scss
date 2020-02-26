@@ -221,7 +221,7 @@ label.elementor-template-library-order-label {
 
 	.select2 {
 		text-align: $start;
-		@include margin-end(25px);
+		width: calc(#{$control-unit} * 5) !important;
 	}
 
 	.select2-selection__rendered {
