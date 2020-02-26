@@ -6,7 +6,7 @@
 **Requires at least:** 5.0  
 **Tested up to:** 5.3  
 **Requires PHP:** 5.6  
-**Stable tag:** 2.9.2  
+**Stable tag:** 2.9.3  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -228,6 +228,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Tweak: Show Database update notice only for users with `update_plugins` capability
 * Tweak: Added Custom CSS promotion section in Theme Style
 * Tweak: Added compatibility for Pro v2.9 features
+* Tweak: Added sanitization to Custom Link Attributes control to avoid security issue
 * Fix: Warning in `/base/controls-stack.php` when a control doesn't have a dynamic capability ([#10578](https://github.com/elementor/elementor/issues/10578))
 * Fix: Beta Tester sign up modal pops up multiple times after signing up
 * Fix: `<a>` Links appear with `underline` text-decoration
