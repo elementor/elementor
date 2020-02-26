@@ -233,6 +233,8 @@ label.elementor-template-library-order-label {
 
 	.select2-results__option {
 		text-transform: capitalize;
+		text-align: $start;
+		@include padding-start(5px);
 	}
 }
 
