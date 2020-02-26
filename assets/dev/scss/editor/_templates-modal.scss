@@ -218,7 +218,6 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-filter {
-	@include border-end(1px solid $editor-lightest);
 
 	.select2 {
 		text-align: $start;
