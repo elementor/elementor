@@ -46,4 +46,5 @@ export default class Preview extends elementorModules.ViewModule {
 	}
 }
 
-window.elementorPreview = new Preview();
+// Temporarily disabled preview app
+// window.elementorPreview = new Preview();
