@@ -27,7 +27,8 @@ html.elementor-html {
 	&:not(.elementor-edit-mode) {
 
 		&:hover {
-			box-shadow: 0 0 0 1px $editor-orange;
+			// Temporarily disabled
+			// box-shadow: 0 0 0 1px $editor-orange;
 		}
 
 		&:not(:hover) {
