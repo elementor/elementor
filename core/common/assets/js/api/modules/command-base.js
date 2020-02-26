@@ -123,7 +123,9 @@ export default class CommandBase extends ArgsObject {
 		} catch ( e ) {
 			this.onCatchApply( e );
 
+			// Catch 'Hook-Break' that comes from hooks base.
 			if ( e instanceof $e.modules.HookBreak ) {
+				// Bypass.
 				return false;
 			}
 		}
