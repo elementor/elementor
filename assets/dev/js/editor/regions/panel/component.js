@@ -16,7 +16,7 @@ export default class Component extends ComponentBase {
 
 	defaultCommandsInternal() {
 		return {
-			'open-default': () => $e.route( elementor.documents.getCurrent().config.panel.default_route ),
+			'open-default': () => $e.route( elementor.documents.getCurrent().config.panel.default_route, { refresh: true } ),
 			'state-loading': () => elementorCommon.elements.$body.addClass( 'elementor-panel-loading' ),
 			'state-ready': () => elementorCommon.elements.$body.removeClass( 'elementor-panel-loading' ),
 		};
