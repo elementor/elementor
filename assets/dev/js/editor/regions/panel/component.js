@@ -24,8 +24,12 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return {
-			open: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' ),
-			close: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' ),
+			open: () => new class Open extends $e.modules.CommandBase {
+				apply = () => {
+					elementor.changeEditMode( 'edit' );
+				};
+			}().run(),
+			close: () => elementor.changeEditMode( 'preview' ),
 			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
 			save: () => $e.run( 'document/save/draft' ),
 			publish: () => $e.run( 'document/save/publish' ),

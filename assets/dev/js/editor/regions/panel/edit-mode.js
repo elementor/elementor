@@ -38,7 +38,15 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onPreviewButtonChange: function() {
-		elementor.changeEditMode( this.getCurrentMode() );
+		const mode = this.getCurrentMode();
+
+		if ( 'edit' === mode ) {
+			$e.run( 'panel/open' );
+		} else if ( 'preview' === mode ) {
+			$e.run( 'panel/close' );
+		} else {
+			throw Error( `Invalid mode: '${ mode }'` );
+		}
 	},
 
 	onEditModeChanged: function( activeMode ) {
