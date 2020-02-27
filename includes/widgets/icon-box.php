@@ -613,16 +613,9 @@ class Widget_Icon_Box extends Widget_Base {
 		$has_icon = ! empty( $settings['icon'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
 			$icon_tag = 'a';
 
-			if ( $settings['link']['is_external'] ) {
-				$this->add_render_attribute( 'link', 'target', '_blank' );
-			}
-
-			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
-			}
+			$this->add_link_attributes( 'link', $settings['link'] );
 		}
 
 		if ( $has_icon ) {
