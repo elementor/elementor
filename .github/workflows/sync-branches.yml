@@ -10,7 +10,7 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
-        run: git clone "https://${ secrets.MAINTAIN_USERNAME }:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" .
+        run: git clone "https://${ secrets.MAINTAIN_USERNAME }:${{ secrets.MAINTAIN_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" .
       - name: Syncing..
         run: |
           export PACKAGE_VERSION=$(cat package.json \
