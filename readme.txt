@@ -221,6 +221,20 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.3 - 2020-02-26 =
+* Tweak: Don't show the "Have a look" link after successful Theme Style publish
+* Tweak: Show Database update notice only for users with `update_plugins` capability
+* Tweak: Added Custom CSS promotion section in Theme Style
+* Tweak: Added compatibility for Pro v2.9 features
+* Fix: Warning in `/base/controls-stack.php` when a control doesn't have a dynamic capability ([#10578](https://github.com/elementor/elementor/issues/10578))
+* Fix: Beta Tester sign up modal pops up multiple times after signing up
+* Fix: `<a>` Links appear with `underline` text-decoration
+* Fix: Shortcode doesn't render when exiting inline edit
+* Fix: Whatsapp not sharing the link of the page in Share buttons widget
+* Fix: Whatsapp share doesn't include line breaks between the page title and the URL in Share buttons widget
+* Fix: Box Shadow doesn't display properly in Toggle widget
+* Fix: Custom Link Attributes are not being applied in Icon Box widget
+
 = 2.9.2 - 2020-02-16 =
 * Fix: Responsive issue when using Slides to Show control in carousel widgets ([#10540](https://github.com/elementor/elementor/issues/10540))
 * Fix: Title and Description causes JS error in Lightbox in edge cases

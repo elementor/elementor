@@ -463,6 +463,7 @@ abstract class Document extends Controls_Stack {
 				'preview' => $this->get_preview_url(),
 				'wp_preview' => $this->get_wp_preview_url(),
 				'permalink' => $this->get_permalink(),
+				'have_a_look' => $this->get_have_a_look_url(),
 			],
 		];
 
@@ -1221,5 +1222,9 @@ abstract class Document extends Controls_Stack {
 
 	protected function get_post_statuses() {
 		return get_post_statuses();
+	}
+
+	protected function get_have_a_look_url() {
+		return $this->get_permalink();
 	}
 }

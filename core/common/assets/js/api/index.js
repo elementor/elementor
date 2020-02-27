@@ -53,12 +53,13 @@ export default class API {
 	 *
 	 * Alias of `$e.commands.run()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} command
+	 * @param [args={}]
 	 *
 	 * @returns {*}
 	 */
-	run( ...args ) {
-		return $e.commands.run.apply( $e.commands, args );
+	run( command, args = {} ) {
+		return $e.commands.run( command, args );
 	}
 
 	/**
@@ -66,12 +67,13 @@ export default class API {
 	 *
 	 * Alias of `$e.commandsInternal.run()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} command
+	 * @param [args={}]
 	 *
 	 * @returns {boolean}
 	 */
-	internal( ...args ) {
-		return $e.commandsInternal.run.apply( $e.commandsInternal, args );
+	internal( command, args = {} ) {
+		return $e.commandsInternal.run( command, args );
 	}
 
 	/**
@@ -79,10 +81,11 @@ export default class API {
 	 *
 	 * Alias of `$e.routes.to()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} route
+	 * @param [args={}]
 	 */
-	route( ...args ) {
-		return $e.routes.to.apply( $e.routes, args );
+	route( route, args = {} ) {
+		return $e.routes.to( route, args );
 	}
 
 	// TODO: shortcut();
