@@ -255,7 +255,7 @@
 			display: block;
 			position: absolute;
 			top: 1px;
-			#{$end}: 0.5em;
+			@include end(0.5em);
 			border: .45em solid;
 			border-color: transparent transparent #fff transparent;
 			transform: translateY(-100%) scaleX(0.7);
