@@ -7,7 +7,7 @@
 	left: 0;
 	bottom: 0;
 	right: 0;
-	background: $editor-color-level-20;
+	background: $theme-color-loading-screen-bg;
 	z-index: $editor-layer;
 }
 
@@ -22,10 +22,10 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: $editor-color-level-0;
+	background-color: $theme-color-loading-preview-bg;
 
 	i {
-		color: $editor-color-level-40;
+		color: $theme-color-loading-preview-icon;
 		font-size: 50px;
 	}
 }

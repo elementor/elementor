@@ -45,13 +45,13 @@
 	}
 
 	&.elementor-open {
-		color: $editor-color-level-0;
+		color: $theme-color-footer-icons-open;
 	}
 
 	&:not(.elementor-open) {
 
 		&:hover {
-			color: $editor-color-level-40;
+			color: $theme-color-footer-icons-hover;
 		}
 
 		.elementor-panel-footer-sub-menu-wrapper {
@@ -65,7 +65,7 @@
 	bottom: 100%;
 	left: 0;
 	width: 100%;
-	background-color: $editor-color-level-80;
+	background-color: $theme-color-footer-submenu-bg;
 	padding: 10px;
 	box-shadow: $panel-top-shadow;
 	cursor: default;
@@ -78,7 +78,7 @@
 }
 
 .elementor-panel-footer-sub-menu-item {
-	background-color: $editor-color-level-90;
+	background-color: $theme-color-footer-submenu-item-bg;
 	display: table;
 	table-layout: fixed;
 	width: 100%;
@@ -97,11 +97,11 @@
 	}
 
 	&:hover {
-		background-color: rgba(0, 0, 0, 0.2);
+		background-color: $theme-color-footer-submenu-item-bg-hover;
 	}
 
 	&.active {
-		background-color: rgba(0, 0, 0, 0.3);
+		background-color: $theme-color-footer-submenu-item-bg-hover;
 	}
 
 	> * {
@@ -112,12 +112,12 @@
 
 	.elementor-icon {
 		width: 40px;
-		color: $editor-color-level-60;
+		color: $theme-color-footer-submenu-item-icon;
 	}
 
 	.elementor-title {
 		text-align: $start;
-		color: $editor-color-level-40;
+		color: $theme-color-footer-submenu-item-text;
 	}
 
 	.elementor-description {
@@ -125,7 +125,7 @@
 		text-align: $start;
 		font-size: 11px;
 		font-style: italic;
-		color: $editor-color-level-60;
+		color: $theme-color-footer-submenu-item-description;
 	}
 }
 

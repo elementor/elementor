@@ -98,7 +98,7 @@
 
 		.icon,
 		.title {
-			color: $editor-color-level-80;
+			color: $theme-color-widget-tile-text;
 			transition: $transition-hover;
 		}
 
@@ -131,7 +131,7 @@
 			position: absolute;
 			top: 5px;
 			@include end(5px);
-			color: $editor-color-level-30;
+			color: $theme-color-widget-tile-lock;
 		}
 	}
 }
@@ -140,7 +140,7 @@
 	position: absolute;
 	width: 300px;
 	z-index: 1;
-	background-color: $editor-color-level-0;
+	background-color: $theme-color-panel-front-bg;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 	border-radius: 3px;
 
@@ -151,7 +151,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, $editor-color-level-0);
+		@include border-end-property(color, $theme-color-panel-front-bg);
 	}
 
 	&__title {
@@ -167,12 +167,12 @@
 		&-header {
 			display: flex;
 			padding: 20px;
-			color: $editor-color-level-90;
-			border-bottom: 1px solid $editor-color-level-30;
+			color: $theme-color-dialog-highlight;
+			border-bottom: 1px solid $theme-color-dialog-header-border;
 			font-weight: 500;
 
 			i {
-				color: $editor-color-level-60;
+				color: $theme-color-panel-neutral;
 			}
 
 			.eicon-pro-icon {
