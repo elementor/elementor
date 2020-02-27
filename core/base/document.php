@@ -1225,6 +1225,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	protected function get_have_a_look_url() {
-		$this->get_permalink();
+		return $this->get_permalink();
 	}
 }
