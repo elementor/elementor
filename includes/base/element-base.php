@@ -468,16 +468,27 @@ abstract class Element_Base extends Controls_Stack {
 
 			foreach ( $custom_attributes as $attribute ) {
 				// Trim in case users inserted unwanted spaces
-				list( $attr_key, $attr_value ) = explode( '|', $attribute );
+				$attr_key_value = explode( '|', $attribute );
+
+				$attr_key = $attr_key_value[0];
 
 				// Cover cases where key/value have spaces both before and/or after the actual value
-				$attr_key = trim( $attr_key );
-				$attr_value = trim( $attr_value );
+				preg_match( '/[^=]+/', $attr_key, $attr_key_matches );
+
+				$attr_key = trim( $attr_key_matches[0] );
 
 				// Implement attribute blacklist
-				if ( ! in_array( strtolower( $attr_key ), $blacklist, true ) ) {
-					$attributes[ $attr_key ] = $attr_value;
+				if ( in_array( strtolower( $attr_key ), $blacklist, true ) ) {
+					continue;
 				}
+
+				if ( isset( $attr_key_value[1] ) ) {
+					$attr_value = trim( $attr_key_value[1] );
+				} else {
+					$attr_value = '';
+				}
+
+				$attributes[ $attr_key ] = $attr_value;
 			}
 		}
 

@@ -27,7 +27,7 @@ html.elementor-html {
 	&:not(.elementor-edit-mode) {
 
 		&:hover {
-			border: 1px solid $editor-orange;
+			box-shadow: 0 0 0 1px $editor-orange;
 		}
 
 		&:not(:hover) {
