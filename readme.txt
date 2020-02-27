@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 2.9.2
+Stable tag: 2.9.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -234,6 +234,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Fix: Whatsapp share doesn't include line breaks between the page title and the URL in Share buttons widget
 * Fix: Box Shadow doesn't display properly in Toggle widget
 * Fix: Custom Link Attributes are not being applied in Icon Box widget
+* Fix: Added sanitization to Custom Link Attributes control to avoid security issue
 
 = 2.9.2 - 2020-02-16 =
 * Fix: Responsive issue when using Slides to Show control in carousel widgets ([#10540](https://github.com/elementor/elementor/issues/10540))

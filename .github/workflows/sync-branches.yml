@@ -2,7 +2,7 @@ name: Sync Branches
 
 on:
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: '0 */2 * * *'
 
 jobs:
   run:
@@ -10,7 +10,7 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
-        run: git clone "https://${ secrets.MAINTAIN_USERNAME }:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" .
+        run: git clone "https://${{ secrets.MAINTAIN_USERNAME }}:${{ secrets.MAINTAIN_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" .
       - name: Syncing..
         run: |
           export PACKAGE_VERSION=$(cat package.json \
@@ -22,7 +22,7 @@ jobs:
           npm install semver --no-save
           export NEXT_PACKAGE_VERSION=$(./node_modules/semver/bin/semver.js $PACKAGE_VERSION -i major)
           git config --local user.email "${{ secrets.MAINTAIN_EMAIL }}"
-          git config --local user.name "${ secrets.MAINTAIN_USERNAME }"
+          git config --local user.name "${{ secrets.MAINTAIN_USERNAME }}"
           git checkout "release/${NEXT_PACKAGE_VERSION}"
           git merge origin/develop
           git push
