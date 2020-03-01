@@ -11,11 +11,19 @@ export class EnqueueFonts extends $e.modules.hookUI.After {
 		return 'document';
 	}
 
+	getConditions() {
+		return 'kit' === elementor.documents.getCurrent().config.type;
+	}
+
 	apply( args ) {
-		Object.entries( args.settings ).forEach( ( [ key, value ] ) => {
-			if ( 'font' === args.container.controls[ key ].type && value ) {
-				elementor.helpers.enqueueFont( value );
-			}
+		const { containers = [ args.container ], settings } = args;
+
+		containers.forEach( ( /* Container */ container ) => {
+			Object.entries( settings ).forEach( ( [ key, value ] ) => {
+				if ( 'font' === container.controls[ key ].type && value ) {
+					elementor.helpers.enqueueFont( value );
+				}
+			} );
 		} );
 	}
 }
