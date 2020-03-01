@@ -123,7 +123,9 @@ export default class CommandBase extends ArgsObject {
 		} catch ( e ) {
 			this.onCatchApply( e );
 
+			// Catch 'Hook-Break' that comes from hooks base.
 			if ( e instanceof $e.modules.HookBreak ) {
+				// Bypass.
 				return false;
 			}
 		}
@@ -206,14 +208,7 @@ export default class CommandBase extends ArgsObject {
 	onCatchApply( e ) {
 		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
 
-		if ( $e.devTools ) {
-			$e.devTools.log.error( e );
-		}
-
-		if ( ! ( e instanceof $e.modules.HookBreak ) ) {
-			// eslint-disable-next-line no-console
-			console.error( e );
-		}
+		elementorCommon.helpers.consoleError( e );
 
 		$e.hooks.runUICatch( this.currentCommand, this.args, e );
 	}

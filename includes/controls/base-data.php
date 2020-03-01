@@ -44,7 +44,7 @@ abstract class Base_Data_Control extends Base_Control {
 	protected function get_default_settings() {
 		$default_settings = parent::get_default_settings();
 
-		$default_settings['dynamic'] = false;
+		$default_settings['dynamic'] = [];
 
 		return $default_settings;
 	}

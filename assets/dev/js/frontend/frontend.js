@@ -147,14 +147,10 @@ class Frontend extends elementorModules.ViewModule {
 		this.elementsHandler = new ElementsHandler( jQuery );
 
 		if ( this.isEditMode() ) {
-			elementor.on( 'document:loaded', () => {
-				this.documentsManager = new DocumentsManager();
-			} );
+			elementor.once( 'document:loaded', () => this.onDocumentLoaded() );
 		} else {
-			this.documentsManager = new DocumentsManager();
+			this.onDocumentLoaded();
 		}
-
-		this.trigger( 'components:init' );
 	}
 
 	initOnReadyElements() {
@@ -292,6 +288,12 @@ class Frontend extends elementorModules.ViewModule {
 		this.initOnReadyElements();
 
 		this.initOnReadyComponents();
+	}
+
+	onDocumentLoaded() {
+		this.documentsManager = new DocumentsManager();
+
+		this.trigger( 'components:init' );
 	}
 }
 
