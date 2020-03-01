@@ -74,30 +74,6 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
-	 * Add lightbox data to image link.
-	 *
-	 * Used to add lightbox data attributes to image link HTML.
-	 *
-	 * @since 1.6.0
-	 * @access public
-	 *
-	 * @param string $link_html Image link HTML.
-	 * @param string $id Attachment id.
-	 *
-	 * @return string Image link HTML with lightbox data attributes.
-	 */
-	public function add_lightbox_data_to_image_link( $link_html, $id ) {
-		$settings = $this->get_settings_for_display();
-
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			$this->add_render_attribute( 'link', 'class', 'elementor-clickable', true );
-		}
-
-		$this->add_lightbox_data_attributes( 'link', $id, $settings['open_lightbox'], $this->get_id(), true );
-		return preg_replace( '/^<a/', '<a ' . $this->get_render_attribute_string( 'link' ), $link_html );
-	}
-
-	/**
 	 * Register image gallery widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.

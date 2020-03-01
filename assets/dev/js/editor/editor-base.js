@@ -12,7 +12,7 @@ import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
-import KitManager from 'elementor/core/kits/assets/js/manager.js';
+import KitManager from '../../../../core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -293,6 +293,14 @@ export default class EditorBase extends Marionette.Application {
 		return this.getPreviewView().getContainer();
 	}
 
+	getContainer( id ) {
+		if ( 'document' === id ) {
+			return this.getPreviewContainer();
+		}
+
+		return $e.components.get( 'document' ).utils.findContainerById( id );
+	}
+
 	initComponents() {
 		const EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
@@ -335,7 +343,7 @@ export default class EditorBase extends Marionette.Application {
 		let config = this.config.document.elements;
 
 		// If it's an reload, use the not-saved data
-		if ( this.elements && this.config.document.id === this.config.initial_document.id ) {
+		if ( this.elements && this.elements.length && this.config.document.id === this.config.initial_document.id ) {
 			config = this.elements.toJSON();
 		}
 
@@ -374,6 +382,8 @@ export default class EditorBase extends Marionette.Application {
 		window.elementorFrontend = frontendWindow.elementorFrontend;
 
 		frontendWindow.elementor = this;
+
+		frontendWindow.elementorCommon = elementorCommon;
 
 		elementorFrontend.init();
 
@@ -496,7 +506,7 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor ) {
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent() ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );
@@ -786,12 +796,12 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
+		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
-
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
 		this.logSite();
 	}
@@ -963,12 +973,14 @@ export default class EditorBase extends Marionette.Application {
 			return;
 		}
 
+		this.elements = [];
+
 		this.saver.stopAutoSave( document );
 
 		this.channels.dataEditMode.trigger( 'switch', 'preview' );
 
 		this.$previewContents.find( `.elementor-${ document.id }` )
-			.removeClass( 'elementor-edit-area-active' )
+			.removeClass( 'elementor-edit-area-active elementor-edit-mode' )
 			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
 
 		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );

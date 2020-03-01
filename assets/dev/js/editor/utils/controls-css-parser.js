@@ -7,6 +7,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			id: 0,
+			context: null,
 			settingsModel: null,
 			dynamicParsing: {},
 		};
@@ -123,7 +124,9 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	addStyleToDocument: function() {
 		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
 
-		this.elements.$stylesheetElement.text( this.stylesheet );
+		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this.getSettings( 'context' ) );
+
+		this.elements.$stylesheetElement.text( this.stylesheet + extraCSS );
 	},
 
 	removeStyleFromDocument: function() {

@@ -14,7 +14,13 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab ) {
-		elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
+		// Temp: If `page_settings` is not available, try after 1 second.
+		// TODO: remove on 2.9.1.
+		try {
+			elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
+		} catch ( e ) {
+			$e.route( 'panel/elements/categories' );
+		}
 	}
 
 	getTabsWrapperSelector() {

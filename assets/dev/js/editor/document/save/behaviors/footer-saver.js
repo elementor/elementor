@@ -50,18 +50,8 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			.html( lastEdited );
 	}
 
-	async onClickButtonPreview() {
-		const document = elementor.documents.getCurrent();
-
-		if ( document.editor.isChanged ) {
-			// Force save even if it's saving now.
-			await $e.run( 'document/save/auto', {
-				force: true,
-			} );
-		}
-
-		// Open immediately in order to avoid popup blockers.
-		this.previewWindow = open( document.config.urls.wp_preview, `wp-preview-${ document.id }` );
+	onClickButtonPreview() {
+		$e.run( 'editor/documents/preview', { id: elementor.documents.getCurrent().id } );
 	}
 
 	onClickButtonPublish() {
@@ -120,6 +110,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		} );
 	}
 
+	// TODO: Consider $e.internal( 'editor/documents/preview-refresh' ); ?.
 	refreshWpPreview() {
 		if ( this.previewWindow ) {
 			// Refresh URL form updated config.
