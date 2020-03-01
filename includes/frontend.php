@@ -390,7 +390,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.1.0',
+			'1.1.1',
 			true
 		);
 
