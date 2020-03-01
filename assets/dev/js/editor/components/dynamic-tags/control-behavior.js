@@ -177,9 +177,15 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion: function() {
+		let message = elementor.translate( 'dynamic_promotion_message' );
+
+		if ( 'color' === this.view.model.get( 'type' ) ) {
+			message += '<br>' + elementor.translate( 'available_in_pro_v29' );
+		}
+
 		elementor.promotion.showDialog( {
 			headerMessage: elementor.translate( 'dynamic_content' ),
-			message: elementor.translate( 'dynamic_promotion_message' ),
+			message: message,
 			top: '-10',
 			element: this.ui.dynamicSwitcher,
 			actionURL: elementor.config.dynamicPromotionURL,
