@@ -221,6 +221,14 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.4 - 2020-03-04 =
+* Tweak: Added support for Elementor Pro v2.9.0
+* Tweak: Updated Swiper.js library to v5.3.6
+* Tweak: Added version expected release date for Theme Style Custom CSS and Dynamic Color promotions
+* Fix: Warning in `/base/controls-stack.php` when a 3rd party controls doesn’t have a default dynamic value ([#10578](https://github.com/elementor/elementor/issues/10578))
+* Fix: Alignment issue on drag when not set to Infinite Loop in Image Carousel widget
+* Fix: Title Color change both title and link color in Accordion widget
+
 = 2.9.3 - 2020-02-26 =
 * Tweak: Don't show the "Have a look" link after successful Theme Style publish
 * Tweak: Show Database update notice only for users with `update_plugins` capability
