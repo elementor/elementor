@@ -94,21 +94,26 @@ export default class ComponentBase extends elementorModules.Module {
 	 * @param {function()} callback
 	 */
 	registerCommand( command, callback ) {
-		const fullCommand = this.getNamespace() + '/' + command;
+		const fullCommand = this.getNamespace() + '/' + command,
+			isCallbackNewClass = callback.toString().includes( 'new' );
 
 		let instance;
 
-		try {
-			// Try get instance.
-			instance = callback();
+		if ( isCallbackNewClass ) {
+			try {
+				// Try get instance.
+				instance = callback();
 
-			if ( ! instance.isCommandBase ) {
-				throw Error( 'Command should inherent command base.' );
+				if ( ! instance.isCommandBase ) {
+					throw Error( 'Command should inherent command base.' );
+				}
+			} catch ( e ) {
+				if ( $e.devTools ) {
+					$e.devTools.log.error( `invalid command base: '${ fullCommand }'` );
+				}
 			}
-		} catch ( e ) {
-			if ( $e.devTools ) {
-				$e.devTools.log.error( `invalid command base: '${ fullCommand }'` );
-			}
+		} else {
+			$e.devTools.log.error( `non command base: '${ fullCommand }'` );
 		}
 
 		$e.commands.register( this, command, callback );
