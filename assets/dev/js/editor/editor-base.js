@@ -596,14 +596,6 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
-	openLibraryOnStart() {
-		if ( '#library' === location.hash ) {
-			$e.run( 'library/open' );
-
-			location.hash = '';
-		}
-	}
-
 	enterPreviewMode( hidePanel ) {
 		let $elements = elementorFrontend.elements.$body;
 
@@ -862,8 +854,6 @@ export default class EditorBase extends Marionette.Application {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
-
-		this.openLibraryOnStart();
 
 		this.previewLoadedOnce = true;
 	}
