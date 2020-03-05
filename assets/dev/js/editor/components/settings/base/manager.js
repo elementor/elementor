@@ -57,6 +57,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			view: false,
 			label: this.getSettings( 'panelPage' ).title,
 			controls: this.model.controls,
+			document: this.getDocument(),
 			renderer: false,
 		} );
 
@@ -65,6 +66,10 @@ module.exports = elementorModules.ViewModule.extend( {
 			getEditModel: () => editModel,
 			model: editModel,
 		};
+	},
+
+	getDocument() {
+		return false;
 	},
 
 	updateStylesheet: function( keepOldEntries ) {
