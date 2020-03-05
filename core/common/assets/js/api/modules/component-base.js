@@ -112,7 +112,7 @@ export default class ComponentBase extends elementorModules.Module {
 					$e.devTools.log.error( `invalid command base: '${ fullCommand }'` );
 				}
 			}
-		} else {
+		} else if ( $e.devTools ) {
 			$e.devTools.log.error( `non command base: '${ fullCommand }'` );
 		}
 
