@@ -1152,10 +1152,9 @@ class Frontend extends App {
 			$post = get_post();
 			$title = wp_get_document_title();
 
-			if ( false !== strpos( $title, '&#8211' ) ) {
-				// Convert WP's core N-dash separator's HTMLEntity code to a regular dash character
-				$title = html_entity_decode( $title, ENT_NOQUOTES, 'UTF-8' );
-			}
+			// Convert WP's core N-dash separator's HTMLEntity code to a regular dash character,
+			// then encode the title to escape problematic characters
+			$title = rawurlencode( html_entity_decode( $title, ENT_QUOTES, 'UTF-8' ) );
 
 			$settings['post'] = [
 				'id' => $post->ID,
