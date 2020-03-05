@@ -145,6 +145,9 @@ export default class CommandBase extends ArgsObject {
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
 			result.fail( this.onCatchApply.bind( this ) );
 			result.done( onAfter );
+		} else if ( result instanceof Promise ) {
+			result.catch( this.onCatchApply.bind( this ) );
+			result.then( onAfter );
 		} else {
 			onAfter( result );
 		}

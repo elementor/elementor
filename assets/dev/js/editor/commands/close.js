@@ -21,25 +21,7 @@ export class Close extends CommandBase {
 			return deferred.promise();
 		}
 
-		switch ( mode ) {
-			case 'autosave':
-				await $e.run( 'document/save/auto' );
-				break;
-			case 'save':
-				await $e.run( 'document/save/update' );
-				break;
-			case 'discard':
-				await $e.run( 'document/save/discard', { document } );
-				break;
-		}
-
-		elementor.unloadDocument( document );
-
-		if ( onClose ) {
-			await onClose( document );
-		}
-
-		return jQuery.Deferred().resolve();
+		return $e.internal( 'editor/documents/close-force', args );
 	}
 
 	getConfirmDialog( deferred ) {
@@ -71,7 +53,7 @@ export class Close extends CommandBase {
 				this.args.mode = 'save';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args )
+				$e.internal( 'editor/documents/close-force', this.args )
 					.then( () => {
 						deferred.resolve();
 					} );
@@ -80,7 +62,7 @@ export class Close extends CommandBase {
 				this.args.mode = 'discard';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args )
+				$e.internal( 'editor/documents/close-force', this.args )
 					.then( () => {
 						deferred.resolve();
 					} );
