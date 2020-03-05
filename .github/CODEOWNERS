@@ -22,13 +22,16 @@
 
 # Tools
 /bin                              		@kingyes
-/Gruntfile.js                     		@kingyes @bainternet
-/.grunt-config                    		@kingyes @bainternet
+/Gruntfile.js                     		@kingyes
+/.grunt-config                    		@kingyes
 
 # Core
 /core                             		@kingyes
 /core/admin                       		@kingyes
 /core/base                        		@kingyes @matipojo @kobizz
+/core/base/db-upgrades-manager.php		@kingyes @matipojo
+/core/base/background-task.php			@kingyes @matipojo
+/core/base/background-task-manager.php	@kingyes @matipojo
 /core/common                      		@kobizz
 /core/common/modules/ajax         		@kobizz @matipojo
 /core/common/modules/connect      		@matipojo
@@ -41,13 +44,10 @@
 /core/files                       		@kobizz @matipojo
 /core/logger                      		@matipojo
 /core/responsive                  		@kobizz
-/core/role-manager                		@bainternet
+/core/role-manager                		@kobizz
 /core/settings                    		@matipojo
 /core/upgrade                     		@kingyes @matipojo
 /core/utils                       		@kingyes @matipojo @kobizz
-
-# Documentation
-/docs                             		@bainternet
 
 # Includes
 /includes/admin-templates         		@kingyes @kobizz
@@ -97,7 +97,7 @@
 # Modules
 /modules                          		@matipojo
 /modules/dynamic-tags             		@matipojo @kobizz
-/modules/gutenberg                		@kingyes @bainternet
+/modules/gutenberg                		@kingyes
 
 # Tests
 /tests                            		@kingyes @matipojo

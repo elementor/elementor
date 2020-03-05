@@ -41,6 +41,11 @@ export class AttachPreview extends CommandInternalBaseBase {
 
 			elementor.$previewElementorEl.addClass( 'elementor-edit-area elementor-edit-mode' );
 
+			// If not the same document.
+			if ( document.id !== elementor.config.initial_document.id ) {
+				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
+			}
+
 			elementor.initElements();
 
 			const iframeRegion = new Marionette.Region( {

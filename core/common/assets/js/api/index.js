@@ -101,10 +101,11 @@ export default class API {
 	 *
 	 * Alias of `$e.routes.to()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} route
+	 * @param [args={}]
 	 */
-	route( ...args ) {
-		return $e.routes.to.apply( $e.routes, args );
+	route( route, args = {} ) {
+		return $e.routes.to( route, args );
 	}
 
 	// TODO: shortcut();

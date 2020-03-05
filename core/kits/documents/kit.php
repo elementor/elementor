@@ -47,22 +47,8 @@ class Kit extends PageBase {
 		return __( 'Kit', 'elementor' );
 	}
 
-	public function get_wp_preview_url() {
-		// Ajax request from editor.
-		if ( ! empty( $_POST['initial_document_id'] ) ) {
-			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
-			$url = $document->get_wp_preview_url();
-			$id = $this->get_main_id();
-
-			$url = add_query_arg( [
-				'preview_id' => $id,
-				'preview_nonce' => wp_create_nonce( 'post_preview_' . $id ),
-			], $url );
-		} else {
-			$url = parent::get_wp_preview_url();
-		}
-
-		return $url;
+	protected function get_have_a_look_url() {
+		return '';
 	}
 
 	public static function get_editor_panel_config() {
@@ -89,7 +75,7 @@ class Kit extends PageBase {
 		$this->add_form_fields_section();
 		$this->add_images_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, Controls_Manager::TAB_STYLE, [ __( 'Available in Pro v2.9.', 'elementor' ) ] );
 	}
 
 	protected function get_post_statuses() {
