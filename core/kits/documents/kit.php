@@ -100,7 +100,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$selector => 'color: {{VALUE}};',
 				],
@@ -227,7 +227,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$button_selector => 'color: {{VALUE}};',
 				],
@@ -239,7 +239,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$button_selector => 'background-color: {{VALUE}};',
 				],
@@ -288,7 +288,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$button_hover_selector => 'color: {{VALUE}};',
 				],
@@ -300,7 +300,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$button_hover_selector => 'background-color: {{VALUE}};',
 				],
@@ -379,7 +379,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
@@ -456,7 +456,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$link_selectors => 'color: {{VALUE}};',
 				],
@@ -486,7 +486,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$link_hover_selectors => 'color: {{VALUE}};',
 				],
@@ -562,7 +562,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$label_selector => 'color: {{VALUE}};',
 				],
@@ -841,7 +841,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$selector => 'color: {{VALUE}};',
 				],
@@ -853,7 +853,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => false,
+				'dynamic' => [],
 				'selectors' => [
 					$selector => 'background-color: {{VALUE}};',
 				],
