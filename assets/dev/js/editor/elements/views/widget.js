@@ -147,7 +147,15 @@ WidgetView = BaseElementView.extend( {
 			var editModel = this.getEditModel(),
 				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
 
-			this._templateType = $template.length ? 'js' : 'remote';
+			/**
+			 * In other words: If widget just get dragged to the preview for the first time...
+			 * and it has dynamics then request from remote.
+			 */
+			if ( elementor.previewAttachedOnce && editModel.get( 'settings' ).get( '__dynamic__' ) ) {
+				this._templateType = 'remote';
+			} else {
+				this._templateType = $template.length ? 'js' : 'remote';
+			}
 		}
 
 		return this._templateType;
