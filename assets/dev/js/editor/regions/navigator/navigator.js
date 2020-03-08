@@ -32,6 +32,9 @@ export default class extends BaseRegion {
 				$e.route( 'navigator' );
 			}
 		} );
+
+		// TODO: Move to hook on 'editor/documents/load'.
+		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
 	}
 
 	getStorageKey() {
@@ -89,7 +92,7 @@ export default class extends BaseRegion {
 		};
 	}
 
-	beforeFirstOpen() {
+	initLayout() {
 		this.show( new NavigatorLayout() );
 
 		this.$el.draggable( this.getDraggableOptions() );
@@ -98,8 +101,9 @@ export default class extends BaseRegion {
 	}
 
 	open( model ) {
+		// If open once.
 		if ( ! this.opened ) {
-			this.beforeFirstOpen();
+			this.initLayout();
 
 			this.opened = true;
 		}
@@ -276,6 +280,14 @@ export default class extends BaseRegion {
 			this.open();
 		} else {
 			this.close( true );
+		}
+	}
+
+	onDocumentLoaded() {
+		this.initLayout();
+
+		if ( ! this.isOpen() ) {
+			this.open();
 		}
 	}
 }

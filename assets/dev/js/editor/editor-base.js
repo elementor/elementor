@@ -803,6 +803,11 @@ export default class EditorBase extends Marionette.Application {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
 
+		// Navigator is static instance, and not created from template.
+		this.once( 'document:loaded', () => {
+			this.initNavigator();
+		} );
+
 		this.logSite();
 	}
 
