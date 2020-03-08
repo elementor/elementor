@@ -20,7 +20,7 @@ export default class Component extends ComponentBase {
 		 * @type {Document}
 		 */
 		this.currentDocument = null;
-		
+
 		this.saveInitialDocumentToCache();
 	}
 
