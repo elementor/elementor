@@ -39,6 +39,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 				delay: elementSettings.background_slideshow_slide_duration,
 				stopOnLastSlide: ! elementSettings.background_slideshow_loop,
 			},
+			handleElementorBreakpoints: true,
 			on: {
 				slideChange: () => {
 					this.handleKenBurns();
