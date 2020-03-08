@@ -8,7 +8,7 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		this.importCommands( commands );
+		return this.importCommands( commands );
 	}
 
 	defaultHooks() {
