@@ -25,10 +25,15 @@ export class Close extends CommandBase {
 						$e.components.get( 'panel/global' ).close();
 						$e.routes.clearHistory( this.component.getRootContainer() );
 					},
-				} ).finally( () => {
+				} )
+				.finally( () => {
 					resolve();
 
 					$e.internal( 'panel/state-ready' );
+				} )
+				.catch( ( error ) => {
+					console.log( error ); // eslint-disable-line
+					elementor.exitPreviewMode();
 				} );
 			}, 500 );
 		} );

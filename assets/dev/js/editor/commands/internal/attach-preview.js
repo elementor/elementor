@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
 
-export class AttachPreview extends CommandBase {
+export class AttachPreview extends CommandInternalBaseBase {
 	apply() {
 		const document = elementor.documents.getCurrent();
 
@@ -12,11 +12,11 @@ export class AttachPreview extends CommandBase {
 
 				elementor.checkPageStatus();
 
+				elementor.trigger( 'document:loaded', document );
+
 				$e.internal( 'panel/open-default', {
 					refresh: true,
 				} );
-
-				elementor.trigger( 'document:loaded', document );
 		} );
 	}
 
@@ -39,7 +39,12 @@ export class AttachPreview extends CommandBase {
 				return reject();
 			}
 
-			elementor.$previewElementorEl.addClass( 'elementor-edit-area' );
+			elementor.$previewElementorEl.addClass( 'elementor-edit-area elementor-edit-mode' );
+
+			// If not the same document.
+			if ( document.id !== elementor.config.initial_document.id ) {
+				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
+			}
 
 			elementor.initElements();
 
@@ -57,7 +62,6 @@ export class AttachPreview extends CommandBase {
 			elementor.sections.show( new Preview( { model: elementor.elementsModel } ) );
 
 			document.container.view = elementor.getPreviewView();
-			document.container.children = elementor.elements;
 			document.container.model.attributes.elements = elementor.elements;
 
 			elementor.helpers.scrollToView( elementor.$previewElementorEl );

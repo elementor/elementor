@@ -4,8 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 2.8.5
-Beta tag: 2.9.0-beta5
+Stable tag: 2.9.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -222,6 +221,46 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.4 - 2020-03-04 =
+* Tweak: Added support for Elementor Pro v2.9.0
+* Tweak: Updated Swiper.js library to v5.3.6
+* Tweak: Added version expected release date for Theme Style Custom CSS and Dynamic Color promotions
+* Fix: Warning in `/base/controls-stack.php` when a 3rd party controls doesn’t have a default dynamic value ([#10578](https://github.com/elementor/elementor/issues/10578))
+* Fix: Alignment issue on drag when not set to Infinite Loop in Image Carousel widget
+* Fix: Title Color change both title and link color in Accordion widget
+
+= 2.9.3 - 2020-02-26 =
+* Tweak: Don't show the "Have a look" link after successful Theme Style publish
+* Tweak: Show Database update notice only for users with `update_plugins` capability
+* Tweak: Added Custom CSS promotion section in Theme Style
+* Tweak: Added compatibility for Pro v2.9 features
+* Fix: Warning in `/base/controls-stack.php` when a control doesn't have a dynamic capability ([#10578](https://github.com/elementor/elementor/issues/10578))
+* Fix: Beta Tester sign up modal pops up multiple times after signing up
+* Fix: `<a>` Links appear with `underline` text-decoration
+* Fix: Shortcode doesn't render when exiting inline edit
+* Fix: Whatsapp not sharing the link of the page in Share buttons widget
+* Fix: Whatsapp share doesn't include line breaks between the page title and the URL in Share buttons widget
+* Fix: Box Shadow doesn't display properly in Toggle widget
+* Fix: Custom Link Attributes are not being applied in Icon Box widget
+* Fix: Added sanitization to Custom Link Attributes control to avoid security issue (Props [@yzy9951](https://github.com/yzy9951))
+
+= 2.9.2 - 2020-02-16 =
+* Fix: Responsive issue when using Slides to Show control in carousel widgets ([#10540](https://github.com/elementor/elementor/issues/10540))
+* Fix: Title and Description causes JS error in Lightbox in edge cases
+
+= 2.9.1 - 2020-02-13 =
+* Tweak: Added Native WordPress Gallery support for lightbox pagination
+* Tweak: Updated eicons library to v5.6.2
+* Fix: Popup builder not accessible when Pro plugin is active ([#10502](https://github.com/elementor/elementor/issues/10502))
+* Fix: Pagination not working when one item is visible in carousel widgets ([#10508](https://github.com/elementor/elementor/issues/10508), [Topic](https://wordpress.org/support/topic/carrousel-is-blocked-with-version-2-9/))
+* Fix: Empty panel after dragging a widget in edge cases
+* Fix: Theme Style button being added in Theme Builder documents
+* Fix: Google fonts enqueuing issue
+* Fix: Preview mode not changing when dismissing the exit prompt
+* Fix: Kit showing up in Finder results
+* Fix: Missing preview icon in Finder
+* Fix: Missing preview icon in Theme Builder footer
+
 = 2.9.0 - 2020-02-10 =
 * New: Introducing Theme Style - set your default HTML tags styling using Elementor ([#534](https://github.com/elementor/elementor/issues/534))
 * New: Added Custom Link Attributes to Link Options to allow adding custom attributes to `<a>` tags ([#5716](https://github.com/elementor/elementor/issues/5716), [#3642](https://github.com/elementor/elementor/issues/3642), [#9225](https://github.com/elementor/elementor/issues/9225), [#9079](https://github.com/elementor/elementor/issues/9079))
@@ -268,6 +307,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Fix: Beta sign-up modal closes unexpectedly ([#10355](https://github.com/elementor/elementor/issues/10355))
 * Fix: "Slides to Show" option doesn't work on Tablet view in Image Carousel widget ([#10227](https://github.com/elementor/elementor/issues/10227))
 * Fix: Previous and Next buttons are not displaying on Safari in Media Carousel's Cube mode ([#9725](https://github.com/elementor/elementor/issues/9725))
+* Fix: Form style being reset adding MailChimp/Getresponse action in Form widget ([#9313](https://github.com/elementor/elementor/issues/9313))
 * Fix: Post Title and Archive Excerpt wrong values in edge cases
 * Fix: Wrong `<select>` field width in "Add New" dialog
 * Fix: Gap created by the "Add Media" button in Text Editor widget

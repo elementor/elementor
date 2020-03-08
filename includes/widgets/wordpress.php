@@ -261,9 +261,18 @@ class Widget_WordPress extends Widget_Base {
 		 * @param array            $default_widget_args Default widget arguments.
 		 * @param Widget_WordPress $this                The WordPress widget.
 		 */
-		$default_widget_args = apply_filters( 'elementor/widgets/wordpress/widget_args', $default_widget_args, $this ); // WPCS: spelling ok.
+		$default_widget_args = apply_filters( 'elementor/widgets/wordpress/widget_args', $default_widget_args, $this );
+		$is_gallery_widget = 'wp-widget-media_gallery' === $this->get_name();
+
+		if ( $is_gallery_widget ) {
+			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ], 10, 2 );
+		}
 
 		$this->get_widget_instance()->widget( $default_widget_args, $this->get_settings( 'wp' ) );
+
+		if ( $is_gallery_widget ) {
+			remove_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ] );
+		}
 	}
 
 	/**

@@ -19,8 +19,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	unbindEvents: function() {
 		elementor.off( 'document:loaded', this.onElementorDocumentLoaded );
-
-		this.model.off( 'change', this.onModelChange );
 	},
 
 	addPanelPage: function() {
@@ -103,6 +101,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				controlsCSS = new ControlsCSSParser( {
 					id: this.getStyleId(),
 					settingsModel: this.model,
+					context: this.getEditedView(),
 				} );
 			}
 
@@ -217,5 +216,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	destroy: function() {
 		this.unbindEvents();
+
+		this.model.destroy();
 	},
 } );
