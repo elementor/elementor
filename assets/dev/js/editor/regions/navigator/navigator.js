@@ -283,10 +283,11 @@ export default class extends BaseRegion {
 		}
 	}
 
-	onDocumentLoaded() {
-		this.initLayout();
+	onDocumentLoaded( document ) {
+		const hasElements = document.config.elements && document.config.elements.length;
 
-		if ( ! this.isOpen() ) {
+		if ( hasElements && ! this.isOpen() ) {
+			this.initLayout();
 			this.open();
 		}
 	}
