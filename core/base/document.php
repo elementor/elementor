@@ -255,7 +255,7 @@ abstract class Document extends Controls_Stack {
 			$attributes['class'] .= ' elementor-bc-flex-widget';
 		}
 
-		if ( Plugin::$instance->preview->is_preview_mode() ) {
+		if ( Plugin::$instance->preview->is_preview() ) {
 			$attributes['data-elementor-title'] = static::get_title();
 		} else {
 			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
