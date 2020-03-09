@@ -1,4 +1,4 @@
-/*! E-Gallery by Elementor v1.1.2 */
+/*! E-Gallery v1.1.2 by Elementor */
 var EGallery =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
