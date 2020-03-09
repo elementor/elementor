@@ -20,7 +20,6 @@ export class DynamicRenderRemoteServer extends After {
 			container.model.renderRemoteServer();
 		} );
 	}
-
 }
 
 export default DynamicRenderRemoteServer;
