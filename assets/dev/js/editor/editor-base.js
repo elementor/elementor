@@ -795,6 +795,8 @@ export default class EditorBase extends Marionette.Application {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
 
+		this.initNavigator();
+
 		this.logSite();
 	}
 

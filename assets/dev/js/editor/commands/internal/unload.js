@@ -34,6 +34,8 @@ export class Unload extends CommandInternalBase {
 		elementor.config.document = {};
 
 		elementor.documents.unsetCurrent();
+
+		elementor.trigger( 'document:unloaded', document );
 	}
 }
 
