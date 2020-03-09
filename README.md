@@ -4,7 +4,7 @@
 **Contributors:** [elemntor](https://profiles.wordpress.org/elemntor), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet)  
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 5.0  
-**Tested up to:** 5.3  
+**Tested up to:** 5.4  
 **Requires PHP:** 5.6  
 **Stable tag:** 2.9.4  
 **License:** GPLv3  
@@ -244,7 +244,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Fix: Whatsapp share doesn't include line breaks between the page title and the URL in Share buttons widget
 * Fix: Box Shadow doesn't display properly in Toggle widget
 * Fix: Custom Link Attributes are not being applied in Icon Box widget
-* Fix: Added sanitization to Custom Link Attributes control to avoid security issue
+* Fix: Added sanitization to Custom Link Attributes control to avoid security issue (Props [@yzy9951](https://github.com/yzy9951))
 
 ### 2.9.2 - 2020-02-16 ###
 * Fix: Responsive issue when using Slides to Show control in carousel widgets ([#10540](https://github.com/elementor/elementor/issues/10540))
