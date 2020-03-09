@@ -765,7 +765,7 @@ class Editor {
 			],
 		];
 
-		if ( ! Utils::has_pro() ) {
+		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
 			$config['promotionWidgets'] = Api::get_promotion_widgets();
 		}
 
