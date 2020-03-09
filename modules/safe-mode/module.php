@@ -20,7 +20,7 @@ class Module extends \Elementor\Core\Base\Module {
 	const DOCS_MU_PLUGINS_URL = 'https://go.elementor.com/safe-mode-mu-plugins/';
 	const DOCS_TRY_SAFE_MODE_URL = 'https://go.elementor.com/safe-mode/';
 
-	const EDITOR_NOTICE_TIMEOUT = 10000; /* ms */
+	const EDITOR_NOTICE_TIMEOUT = 30000; /* ms */
 
 	public function get_name() {
 		return 'safe-mode';
