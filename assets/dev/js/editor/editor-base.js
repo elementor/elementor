@@ -607,9 +607,13 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		this.documents.getCurrent().$element
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview' );
+		const $element = this.documents.getCurrent().$element;
+
+		if ( $element ) {
+			$element
+				.removeClass( 'elementor-edit-area-active' )
+				.addClass( 'elementor-edit-area-preview' );
+		}
 
 		if ( hidePanel ) {
 			// Handle panel resize
