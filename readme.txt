@@ -221,6 +221,17 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.5 - 2020-03-09 =
+* Tweak: Added new parameter to Swiper wrapper to limit breakpoint intervention ([#10525](https://github.com/elementor/elementor/issues/10525))
+* Tweak: Updated E-Gallery library to v1.1.2
+* Tweak: Show descriptive Pro Promotions only for Administrator role
+* Fix: Inconsistent responsive display issue in the Editor when using Custom Breakpoints ([#10540](https://github.com/elementor/elementor/issues/10540))
+* Fix: Editor not loading when the Library launches on load ([Topic](https://wordpress.org/support/topic/editor-broken-in-2-9-4/))
+* Fix: Gallery Columns does not update immediately in the preview when in Masonry layout
+* Fix: Navigator does not update according to the current site part being edited
+* Fix: Hidden responsive indicator missing in editor
+* Fix: Tabs widget title color not working on mobile
+
 = 2.9.4 - 2020-03-04 =
 * Tweak: Added support for Elementor Pro v2.9.0
 * Tweak: Updated Swiper.js library to v5.3.6
