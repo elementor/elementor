@@ -19,7 +19,7 @@ export class Unload extends CommandInternalBase {
 
 		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 
-		elementor.$previewContents.find( `.elementor-${ document.id }` )
+		document.$element
 			.removeClass( 'elementor-edit-area-active elementor-edit-mode' )
 			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
 

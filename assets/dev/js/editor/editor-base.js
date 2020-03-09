@@ -607,7 +607,7 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		this.$previewElementorEl
+		this.documents.getCurrent().$element
 			.removeClass( 'elementor-edit-area-active' )
 			.addClass( 'elementor-edit-area-preview' );
 
@@ -625,9 +625,9 @@ export default class EditorBase extends Marionette.Application {
 			.addClass( 'elementor-editor-active' );
 
 		if ( elementor.config.document.panel.has_elements ) {
-			this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-preview' )
-			.addClass( 'elementor-edit-area-active' );
+			this.documents.getCurrent().$element
+				.removeClass( 'elementor-edit-area-preview' )
+				.addClass( 'elementor-edit-area-active' );
 		}
 	}
 
@@ -1017,6 +1017,14 @@ export default class EditorBase extends Marionette.Application {
 			get() {
 				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
 				return elementor.widgetsCache;
+			},
+		} );
+
+		Object.defineProperty( this, '$previewElementorEl', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
+
+				return elementor.documents.getCurrent().$element;
 			},
 		} );
 	}
