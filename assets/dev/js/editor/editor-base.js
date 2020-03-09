@@ -803,10 +803,7 @@ export default class EditorBase extends Marionette.Application {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
 
-		// Navigator is static instance, and not created from template.
-		this.once( 'document:loaded', () => {
-			this.initNavigator();
-		} );
+		this.initNavigator();
 
 		this.logSite();
 	}
@@ -999,6 +996,8 @@ export default class EditorBase extends Marionette.Application {
 		this.config.document = {};
 
 		this.documents.unsetCurrent();
+
+		elementor.trigger( 'document:unloaded', document );
 	}
 
 	/**

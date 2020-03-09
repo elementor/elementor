@@ -8,7 +8,7 @@ export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
-		$e.components.register( new Component( { manager: this } ) );
+		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
 
@@ -27,14 +27,9 @@ export default class extends BaseRegion {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		elementor.on( 'navigator:init', () => {
-			if ( this.storage.visible ) {
-				$e.route( 'navigator' );
-			}
-		} );
-
 		// TODO: Move to hook on 'editor/documents/load'.
 		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+		elementor.on( 'document:unloaded', this.onDocumentUnloaded.bind( this ) );
 	}
 
 	getStorageKey() {
@@ -284,11 +279,18 @@ export default class extends BaseRegion {
 	}
 
 	onDocumentLoaded( document ) {
-		const hasElements = document.config.elements && document.config.elements.length;
-
-		if ( hasElements && ! this.isOpen() ) {
+		if ( document.config.panel.has_elements ) {
 			this.initLayout();
-			this.open();
+		}
+
+		if ( this.storage.visible ) {
+			$e.route( 'navigator' );
+		}
+	}
+
+	onDocumentUnloaded() {
+		if ( this.component.isOpen ) {
+			this.component.close( true );
 		}
 	}
 }
