@@ -72,8 +72,6 @@ export class AttachPreview extends CommandInternalBaseBase {
 
 			elementor.initNavigator();
 
-			elementor.previewAttachedOnce = true;
-
 			resolve();
 		} );
 	}

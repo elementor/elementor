@@ -24,7 +24,6 @@ export default class EditorBase extends Marionette.Application {
 	loaded = false;
 
 	previewLoadedOnce = false;
-	previewAttachedOnce = false;
 
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.

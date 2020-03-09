@@ -110,10 +110,11 @@ export default class HookBase {
 	 * Condition for running the callback, if true, call to apply().
 	 *
 	 * @param [args={}]
+	 * @param [result=null]
 	 *
 	 * @returns {boolean}
 	 */
-	getConditions( args = {} ) { // eslint-disable-line no-unused-vars
+	getConditions( args = {}, result = null ) { // eslint-disable-line no-unused-vars
 		return true;
 	}
 
@@ -123,10 +124,11 @@ export default class HookBase {
 	 * Apply the callback, ( The actual affect of the callback ).
 	 *
 	 * @param [args={}]
+	 * @param [result=null]
 	 *
 	 * @returns {*}
 	 */
-	apply( args ) { // eslint-disable-line no-unused-vars
+	apply( args, result = null ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -147,7 +149,7 @@ export default class HookBase {
 			return true;
 		}
 
-		if ( this.getConditions( args[ 0 ] ) ) {
+		if ( this.getConditions( ... args ) ) {
 			if ( $e.devTools ) {
 				$e.devTools.log.callbacks().active( this.type, this.command, this.id );
 			}
