@@ -156,6 +156,12 @@ class Kit extends PageBase {
 					'background' => [
 						'frontend_available' => true,
 					],
+					'color' => [
+						'dynamic' => [],
+					],
+					'color_b' => [
+						'dynamic' => [],
+					],
 				],
 			]
 		);
@@ -259,6 +265,11 @@ class Kit extends PageBase {
 			[
 				'name' => 'button_border',
 				'selector' => $button_selector,
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
@@ -320,6 +331,11 @@ class Kit extends PageBase {
 			[
 				'name' => 'button_hover_border',
 				'selector' => $button_hover_selector,
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
@@ -693,6 +709,11 @@ class Kit extends PageBase {
 			[
 				'name' => 'image_border',
 				'selector' => $image_selectors,
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
@@ -759,6 +780,11 @@ class Kit extends PageBase {
 			[
 				'name' => 'image_hover_border',
 				'selector' => '{{WRAPPER}} img:hover',
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
@@ -873,6 +899,11 @@ class Kit extends PageBase {
 			[
 				'name' => $prefix . '_border',
 				'selector' => $selector,
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
