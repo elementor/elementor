@@ -255,7 +255,7 @@ abstract class Document extends Controls_Stack {
 			$attributes['class'] .= ' elementor-bc-flex-widget';
 		}
 
-		if ( Plugin::$instance->preview->is_preview_mode() ) {
+		if ( Plugin::$instance->preview->is_preview() ) {
 			$attributes['data-elementor-title'] = static::get_title();
 		} else {
 			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
@@ -270,9 +270,15 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function get_wp_preview_url() {
 		$main_post_id = $this->get_main_id();
+		$document = $this;
+
+		// Ajax request from editor.
+		if ( ! empty( $_POST['initial_document_id'] ) ) {
+			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
+		}
 
 		$url = get_preview_post_link(
-			$main_post_id,
+			$document->get_main_id(),
 			[
 				'preview_id' => $main_post_id,
 				'preview_nonce' => wp_create_nonce( 'post_preview_' . $main_post_id ),

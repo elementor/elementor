@@ -31,21 +31,26 @@ export class AttachPreview extends CommandInternalBaseBase {
 				return resolve();
 			}
 
-			elementor.$previewElementorEl = elementor.$previewContents.find( '.elementor-' + document.id );
+			document.$element = elementor.$previewContents.find( '.elementor-' + document.id );
 
-			if ( ! elementor.$previewElementorEl.length ) {
+			if ( ! document.$element.length ) {
 				elementor.onPreviewElNotFound();
 
 				return reject();
 			}
 
-			elementor.$previewElementorEl.addClass( 'elementor-edit-area elementor-edit-mode' );
+			document.$element.addClass( 'elementor-edit-area elementor-edit-mode' );
+
+			// If not the same document.
+			if ( document.id !== elementor.config.initial_document.id ) {
+				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
+			}
 
 			elementor.initElements();
 
 			const iframeRegion = new Marionette.Region( {
 				// Make sure you get the DOM object out of the jQuery object
-				el: elementor.$previewElementorEl[ 0 ],
+				el: document.$element[ 0 ],
 			} );
 
 			elementor.addRegions( {
@@ -59,13 +64,11 @@ export class AttachPreview extends CommandInternalBaseBase {
 			document.container.view = elementor.getPreviewView();
 			document.container.model.attributes.elements = elementor.elements;
 
-			elementor.helpers.scrollToView( elementor.$previewElementorEl );
+			elementor.helpers.scrollToView( document.$element );
 
-			elementor.$previewElementorEl
+			document.$element
 				.addClass( 'elementor-edit-area-active' )
 				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-			elementor.initNavigator();
 
 			resolve();
 		} );

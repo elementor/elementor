@@ -1,4 +1,4 @@
-/*! E-Gallery by Elementor v1.1.1 */
+/*! E-Gallery v1.1.2 by Elementor */
 var EGallery =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -422,10 +422,16 @@ function () {
     this.prepareGallery();
     var oldRunGallery = this.runGallery.bind(this);
     this.runGallery = this.debounce(function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
       if (_this.settings.lazyLoad) {
-        oldRunGallery();
+        oldRunGallery.apply(void 0, args);
       } else {
-        _this.allImagesPromise.then(oldRunGallery);
+        _this.allImagesPromise.then(function () {
+          return oldRunGallery.apply(void 0, args);
+        });
       }
     }, 300);
 
@@ -638,8 +644,8 @@ function () {
 
       var timeout;
       return function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
         }
 
         clearTimeout(timeout);

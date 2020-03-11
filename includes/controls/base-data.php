@@ -31,25 +31,6 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	/**
-	 * Retrieve default control settings.
-	 *
-	 * Get the default settings of the control. Used to return the default
-	 * settings while initializing the control.
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 *
-	 * @return array Control default settings.
-	 */
-	protected function get_default_settings() {
-		$default_settings = parent::get_default_settings();
-
-		$default_settings['dynamic'] = [];
-
-		return $default_settings;
-	}
-
-	/**
 	 * Get data control value.
 	 *
 	 * Retrieve the value of the data control from a specific Controls_Stack settings.

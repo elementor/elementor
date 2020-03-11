@@ -230,7 +230,9 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onClickEdit: function() {
-		this.model.trigger( 'request:edit' );
+		if ( this.container.isEditable() ) {
+			this.model.trigger( 'request:edit' );
+		}
 	},
 } );
 

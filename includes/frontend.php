@@ -357,7 +357,7 @@ class Frontend extends App {
 			'swiper',
 			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
 			[],
-			'5.3.0',
+			'5.3.6',
 			true
 		);
 
@@ -390,7 +390,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.1.1',
+			'1.1.2',
 			true
 		);
 
@@ -480,7 +480,7 @@ class Frontend extends App {
 			'elementor-gallery',
 			$this->get_css_assets_url( 'e-gallery', 'assets/lib/e-gallery/css/' ),
 			[],
-			'1.0.2'
+			'1.1.2'
 		);
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
