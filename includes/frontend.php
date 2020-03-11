@@ -1150,11 +1150,8 @@ class Frontend extends App {
 
 		if ( is_singular() ) {
 			$post = get_post();
-			$title = wp_get_document_title();
 
-			// Convert WP's core N-dash separator's HTMLEntity code to a regular dash character,
-			// then encode the title to escape problematic characters
-			$title = rawurlencode( html_entity_decode( $title, ENT_QUOTES, 'UTF-8' ) );
+			$title = Utils::urlencode_htmlentities( wp_get_document_title() );
 
 			$settings['post'] = [
 				'id' => $post->ID,

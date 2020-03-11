@@ -656,4 +656,31 @@ class Utils {
 	public static function has_pro() {
 		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
+
+	/**
+	 * Convert HTMLEntities to UTF-8 characters,
+	 * then encode the title to escape problematic characters in URLs
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	public static function urlencode_htmlentities( $string ) {
+		$entities_dictionary = [
+			'&#145;' => "'", // Opening single quote
+			'&#146;' => "'", // Closing single quote
+			'&#147;' => '"', // Closing double quote
+			'&#148;' => '"', // Opening double quote
+			'&#8216;' => "'", // Closing single quote
+			'&#8217;' => "'", // Opening single quote
+			'&#8218;' => "'", // Single low quote
+			'&#8220;' => '"', // Closing double quote
+			'&#8221;' => '"', // Opening double quote
+			'&#8222;' => '"', // Double low quote
+		];
+
+		// Decode decimal entities
+		$string = str_replace( array_keys( $entities_dictionary ), array_values( $entities_dictionary ), $string );
+
+		return rawurlencode( html_entity_decode( $string, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+	}
 }
