@@ -122,10 +122,12 @@
 		&-autocomplete-spinner {
 			display: none;
 			position: absolute;
-			width: 12px;
-			height: 12px;
-			top: 7px;
-			@include start(44px);
+			top: 46px;
+			right: 82px;
+			width: 10px;
+			height: 10px;
+			font-size: 10px;
+			color: #D4D4D4;
 		}
 
 		&__custom-attributes {
