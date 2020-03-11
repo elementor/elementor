@@ -15,6 +15,7 @@ $theme-dark-gray-darkest: #34383C;
 
 	X - control-type-tab
 */
+
 $theme-dark-gray-darker: #475158;
 $theme-dark-gray-dark: #404349;
 $theme-dark-gray: #4C4F56;
@@ -75,6 +76,8 @@ $editor-danger: $theme-dark-danger;
 	--theme-color-dialog-highlight: 			var(--theme-color-panel-highlight);
 	--theme-color-dialog-header-border: 		var(--editor-color-level-40);
 
+	--theme-color-dialog-bg: 					var(--editor-color-level-20);
+	--theme-color-dialog-header-bg: 			var(--editor-color-level-10);
 	--theme-color-loading-screen-bg: 			var(--editor-color-level-20);
 	--theme-color-loading-loader-bg: 			var(--editor-color-level-35);
 	--theme-color-loading-loader-boxes: 		var(--editor-color-level-80);
@@ -132,13 +135,19 @@ $editor-danger: $theme-dark-danger;
 	--theme-color-footer-submenu-item-text: 	var(--theme-color-panel-menu-item-text);
 	--theme-color-footer-submenu-item-icon: 	var(--theme-color-panel-menu-item-icon);
 	--theme-color-footer-submenu-item-description: var(--editor-color-level-50);
+	--theme-color-footer-submenu-item-disabled: var(--editor-color-level-45);
 	--theme-color-units-choices: 				var(--theme-color-panel-neutral);
 	--theme-color-units-choices-active: 		var(--theme-color-panel-highlight);
-	--theme-color-popover-bg: 					var(--editor-color-level-35);
-	--theme-color-select2-highlighted-option-bg: var(--editor-color-level-35);
-	--theme-color-select2-multiple-selection-choice-bg: var(--editor-color-level-35);
+	--theme-color-popover-bg: 					var(--theme-color-panel-highlight-bg);
+	--theme-color-select2-highlighted-option-bg: var(--theme-color-panel-highlight-bg);
+	--theme-color-select2-multiple-selection-choice-bg: var(--theme-color-panel-highlight-bg);
+	--theme-color-navigator-header-footer-bg: 	var(--theme-color-panel-back-bg);
+	--theme-color-navigator-item-icon: 			var(--editor-color-level-100);
+	--theme-color-navigator-item-editing-bg: 	var(--theme-color-panel-highlight-bg);
+	--theme-color-navigator-item-editing-text: 	var(--editor-color-level-100);
 
 	--theme-gradient-navigation-tab: linear-gradient(to bottom, var(--editor-color-level-20), var(--editor-color-level-35));
+	--theme-gradient-modal-tab: linear-gradient(to bottom, var(--editor-color-level-10), var(--editor-color-level-20));
 	--theme-color-checkersboard-bg:				var(--editor-color-level-40);
 	--theme-color-checkersboard-front:			var(--editor-color-level-20);
 }

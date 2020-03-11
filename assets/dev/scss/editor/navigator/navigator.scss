@@ -4,7 +4,7 @@
 	width: 240px;
 	height: 339px;
 	@include end(30px);
-	background-color: $editor-color-level-0;
+	background-color: $theme-color-panel-back-bg;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
@@ -23,7 +23,6 @@
 
 	&__inner {
 		height: 100%;
-		background-color: $editor-color-level-30;
 	}
 
 	&__header {
@@ -31,9 +30,26 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 12px 10px;
-		background-color: $editor-color-level-0;
-		border-bottom: 1px solid $editor-color-level-30;
+		border-bottom: 1px solid $theme-color-panel-highlight-bg;
 		cursor: move;
+	}
+
+	&__footer {
+		position: absolute;
+		width: 100%;
+		left: 0;
+		bottom: 0;
+		text-align: center;
+		border-top: 1px solid $theme-color-panel-highlight-bg;
+		color: $theme-color-panel-neutral;
+
+		.elementor-navigator-docked & {
+			display: none;
+		}
+	}
+
+	&__header, &__footer {
+		background-color: $theme-color-navigator-header-footer-bg;
 	}
 
 	&__close,
@@ -67,21 +83,6 @@
 			padding: 25px;
 		}
 	}
-
-	&__footer {
-		position: absolute;
-		width: 100%;
-		left: 0;
-		bottom: 0;
-		text-align: center;
-		background-color: $editor-color-level-0;
-		border-top: 1px solid $editor-color-level-30;
-		color: $editor-color-level-60;
-
-		.elementor-navigator-docked & {
-			display: none;
-		}
-	}
 }
 
 .elementor-navigator {
@@ -91,10 +92,15 @@
 		display: flex;
 		height: 30px;
 		font-size: 11px;
-		border-bottom: 1px solid $editor-color-level-30;
+		border-bottom: 1px solid $theme-color-panel-back-bg;
+		background: $theme-color-panel-front-bg;
 		cursor: pointer;
 		transition: padding .5s linear;
 		overflow: hidden;
+
+		&:hover, .elementor-empty-view {
+			background: $theme-color-panel-highlight-bg;
+		}
 
 		&:not(.elementor-active) {
 
@@ -120,11 +126,11 @@
 
 		.elementor-empty-view {
 			padding: 10px;
-			border-bottom: 1px solid $editor-color-level-30;
+			border-bottom: 1px solid $theme-color-panel-back-bg;
 
 			&__title {
 				@include margin-start(23px);
-				color: $editor-color-level-50;
+				color: $theme-color-panel-neutral;
 				font-size: 10px;
 				font-style: italic;
 			}
@@ -189,10 +195,10 @@
 			> .elementor-navigator__item {
 
 				&.elementor-editing {
-					background-color: $editor-info;
+					background-color: $theme-color-navigator-item-editing-bg;
 
 					> * {
-						color: $editor-color-level-0;
+						color: $theme-color-navigator-item-editing-text;
 					}
 				}
 			}
@@ -283,12 +289,12 @@
 		}
 
 		&-column {
-			//background-color: lighten($editor-color-level-20, 3%);
+			background-color: $theme-color-panel-highlight-bg;
 
 			> .elementor-navigator__item {
 
 				.elementor-navigator__element__element-type {
-					color: $editor-color-level-60;
+					color: $theme-color-panel-neutral;
 				}
 			}
 		}

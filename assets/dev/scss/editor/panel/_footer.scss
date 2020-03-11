@@ -88,7 +88,7 @@
 
 		.elementor-icon,
 		.elementor-title {
-			color: $editor-color-level-70;
+			color: $theme-color-footer-submenu-item-disabled;
 		}
 	}
 
@@ -159,7 +159,7 @@
 	.elementor-last-edited-wrapper {
 		font-size: 11px;
 		font-style: italic;
-		color: $editor-color-level-60;
+		color: $theme-color-panel-neutral;
 		padding: 5px 0 15px;
 
 		&:not(.elementor-state-active) {

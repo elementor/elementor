@@ -1,5 +1,3 @@
-@import "light";
-
 $editor-color-level-0:  var(--editor-color-level-0);
 $editor-color-level-10: var(--editor-color-level-10);
 $editor-color-level-20: var(--editor-color-level-20);
@@ -22,6 +20,8 @@ $theme-color-panel-highlight-bg: var(--theme-color-panel-highlight-bg);
 $theme-color-dialog-highlight: var(--theme-color-dialog-highlight);
 $theme-color-dialog-header-border: var(--theme-color-dialog-header-border);
 
+$theme-color-dialog-bg:  var(--theme-color-dialog-bg);
+$theme-color-dialog-header-bg: var(--theme-color-dialog-header-bg);
 $theme-color-loading-screen-bg: var(--theme-color-loading-screen-bg);
 $theme-color-loading-loader-bg: var(--theme-color-loading-loader-bg);
 $theme-color-loading-loader-boxes: var(--theme-color-loading-loader-boxes);
@@ -81,13 +81,18 @@ $theme-color-footer-submenu-item-bg-hover: var(--theme-color-footer-submenu-item
 $theme-color-footer-submenu-item-text: var(--theme-color-footer-submenu-item-text);
 $theme-color-footer-submenu-item-icon: var(--theme-color-footer-submenu-item-icon);
 $theme-color-footer-submenu-item-description: var(--theme-color-footer-submenu-item-description);
+$theme-color-footer-submenu-item-disabled: var(--theme-color-footer-submenu-item-disabled);
 $theme-color-units-choices: var(--theme-color-units-choices);
 $theme-color-units-choices-active: var(--theme-color-units-choices-active);
 $theme-color-popover-bg: var(--theme-color-popover-bg);
 $theme-color-select2-highlighted-option-bg: var(--theme-color-select2-highlighted-option-bg);
 $theme-color-select2-multiple-selection-choice-bg: var(--theme-color-select2-multiple-selection-choice-bg);
+$theme-color-navigator-header-footer-bg: var(--theme-color-navigator-header-footer-bg);
+$theme-color-navigator-item-editing-bg: var(--theme-color-navigator-item-editing-bg);
+$theme-color-navigator-item-editing-text: var(--theme-color-navigator-item-editing-text);
 
 $theme-gradient-navigation-tab: var(--theme-gradient-navigation-tab);
+$theme-gradient-modal-tab: var(--theme-gradient-modal-tab);
 $theme-color-checkersboard-bg: var(--theme-color-checkersboard-bg);
 $theme-color-checkersboard-front: var(--theme-color-checkersboard-front);
 $theme-checkersboard-pattern:

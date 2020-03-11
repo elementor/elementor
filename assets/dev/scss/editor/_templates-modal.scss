@@ -34,8 +34,8 @@ $remote-templates-items-space: 30px;
 	cursor: pointer;
 
 	&.elementor-active {
-		background-image: linear-gradient(to bottom, $editor-color-level-20, $editor-color-level-0);
-		border-bottom: 3px solid $editor-accent;
+		background-image: $theme-gradient-modal-tab;
+		border-bottom: 3px solid $theme-color-editor-accent;
 	}
 }
 
@@ -324,7 +324,7 @@ label.elementor-template-library-order-label {
 .elementor-template-library-template-remote {
 	margin: $remote-templates-items-space / 2;
 	padding: 8px;
-	background-color: $editor-color-level-0;
+	background-color: $theme-color-panel-front-bg;
 	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
 	border-radius: 3px;
 

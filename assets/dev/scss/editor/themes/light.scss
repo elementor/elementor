@@ -1,5 +1,8 @@
-:root {
+// TODO: remove these variables from the variables .scss file.
+$editor-accent: #D30C5C;
+$editor-info: #71d7f7;
 
+:root {
 	--editor-lightness-100:  100%;
 	--editor-lightness-200:  95%;
 	--editor-lightness-300:  90%;
@@ -39,6 +42,8 @@
 	--theme-color-dialog-highlight: 			var(--editor-color-level-90);
 	--theme-color-dialog-header-border: 		var(--editor-color-level-30);
 
+	--theme-color-dialog-bg: 					var(--editor-color-level-20);
+	--theme-color-dialog-header-bg: 			var(--editor-color-level-10);
 	--theme-color-loading-screen-bg: 			var(--editor-color-level-20);
 	--theme-color-loading-loader-bg: 			var(--editor-color-level-0);
 	--theme-color-loading-loader-boxes: 		var(--editor-color-level-40);
@@ -96,17 +101,21 @@
 	--theme-color-footer-submenu-item-text: 	var(--editor-color-level-40);
 	--theme-color-footer-submenu-item-icon: 	var(--editor-color-level-60);
 	--theme-color-footer-submenu-item-description: var(--editor-color-level-60);
+	--theme-color-footer-submenu-item-disabled: var(--editor-color-level-70);
 	--theme-color-units-choices: 				var(--theme-color-panel-neutral);
 	--theme-color-units-choices-active: 		var(--editor-color-level-80);
 	--theme-color-popover-bg: 					var(--theme-color-panel-front-bg);
 	--theme-color-select2-highlighted-option-bg: inherit;
 	--theme-color-select2-multiple-selection-choice-bg: var(--editor-color-level-30);
+	--theme-color-navigator-header-footer-bg: 	var(--theme-color-panel-front-bg);
+	--theme-color-navigator-item-editing-bg: 	#{$editor-info};
+	--theme-color-navigator-item-editing-text: 	var(--editor-color-level-0);
 
 	--theme-gradient-navigation-tab: linear-gradient(to bottom, var(--editor-color-level-20), var(--editor-color-level-10));
+	--theme-gradient-modal-tab: var(--theme-gradient-navigation-tab);
 	--theme-color-checkersboard-bg: 			var(--editor-color-level-10);
 	--theme-color-checkersboard-front: 			var(--editor-color-level-30);
 }
-
 
 /*
 	$editor-accent
