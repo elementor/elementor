@@ -60,16 +60,6 @@ export default class BackwardsCompatibility {
 	 */
 	createDeprecateComponent( ComponentClass, componentName, version ) {
 		class ComponentBackwardsCompatibility extends ComponentClass {
-			__construct( args = {} ) {
-				super.__construct( args );
-
-				elementorCommon.helpers.softDeprecated(
-					`$e.components.get( '${ componentName }' )`,
-					version,
-					`$e.components.get( '${ this.getNewNamespace() }' )`,
-				);
-			}
-
 			getNewNamespace() {
 				return super.getNamespace();
 			}
