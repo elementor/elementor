@@ -42,7 +42,7 @@ export class Load extends CommandInternalBase {
 		}
 
 		if ( elementor.loaded ) {
-			$e.internal( 'editor/documents/attach-preview' );
+			$e.internal( 'documents/attach-preview' );
 		}
 
 		return document;

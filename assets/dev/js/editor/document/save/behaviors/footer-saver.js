@@ -51,7 +51,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	}
 
 	onClickButtonPreview() {
-		$e.run( 'editor/documents/preview', { id: elementor.documents.getCurrent().id } );
+		$e.run( 'documents/preview', { id: elementor.documents.getCurrent().id } );
 	}
 
 	onClickButtonPublish() {
@@ -110,7 +110,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		} );
 	}
 
-	// TODO: Consider $e.internal( 'editor/documents/preview-refresh' ); ?.
+	// TODO: Consider $e.internal( 'documents/preview-refresh' ); ?.
 	refreshWpPreview() {
 		if ( this.previewWindow ) {
 			// Refresh URL form updated config.

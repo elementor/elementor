@@ -33,7 +33,7 @@ export class Close extends CommandBase {
 				break;
 		}
 
-		$e.internal( 'editor/documents/unload', { document } );
+		$e.internal( 'documents/unload', { document } );
 
 		if ( onClose ) {
 			await onClose( document );
@@ -71,7 +71,7 @@ export class Close extends CommandBase {
 				this.args.mode = 'save';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args )
+				$e.run( 'documents/close', this.args )
 					.then( () => {
 						deferred.resolve();
 					} );
@@ -80,7 +80,7 @@ export class Close extends CommandBase {
 				this.args.mode = 'discard';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args )
+				$e.run( 'documents/close', this.args )
 					.then( () => {
 						deferred.resolve();
 					} );

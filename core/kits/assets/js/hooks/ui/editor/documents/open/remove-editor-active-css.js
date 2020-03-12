@@ -1,6 +1,6 @@
 export class KitRemoveEditorActiveCSSDocumentsOpen extends $e.modules.hookUI.After {
 	getCommand() {
-		return 'editor/documents/open';
+		return 'documents/open';
 	}
 
 	getId() {

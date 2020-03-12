@@ -796,7 +796,7 @@ export default class EditorBase extends Marionette.Application {
 
 		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
-		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
+		$e.run( 'documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
@@ -855,7 +855,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
-		$e.internal( 'editor/documents/attach-preview' );
+		$e.internal( 'documents/attach-preview' );
 
 		this.loaded = true;
 	}

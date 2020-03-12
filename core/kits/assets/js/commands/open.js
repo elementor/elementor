@@ -21,7 +21,7 @@ export class Open extends CommandBase {
 
 				$e.internal( 'panel/state-loading' );
 
-				$e.run( 'editor/documents/switch', {
+				$e.run( 'documents/switch', {
 					id: elementor.config.kit_id,
 					mode: 'autosave',
 				} ).finally( () => {

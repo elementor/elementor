@@ -27,7 +27,7 @@ export default class extends BaseRegion {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		// TODO: Move to hook on 'editor/documents/load'.
+		// TODO: Move to hook on 'documents/load'.
 		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
 		elementor.on( 'document:unloaded', this.onDocumentUnloaded.bind( this ) );
 	}

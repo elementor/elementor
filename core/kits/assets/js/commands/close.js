@@ -13,7 +13,7 @@ export class Close extends CommandBase {
 
 		return new Promise( ( resolve ) => {
 			setTimeout( () => {
-				return $e.run( 'editor/documents/switch', {
+				return $e.run( 'documents/switch', {
 					id: elementor.config.initial_document.id,
 					onClose: ( document ) => {
 						if ( document.isDraft() ) {
