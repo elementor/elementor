@@ -10,7 +10,7 @@ import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
-import EditorDocuments from 'elementor-editor/component';
+import Documents from 'elementor-editor/documents/component';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 
@@ -772,7 +772,9 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initComponents();
 
-		elementor.documents = $e.components.register( new EditorDocuments() );
+		elementor.documents = $e.components.register( new Documents() );
+
+		$e.bc.createDeprecateComponent( Documents, 'editor/documents', '3.0.0' );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();

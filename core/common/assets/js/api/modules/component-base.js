@@ -28,6 +28,9 @@ export default class ComponentBase extends elementorModules.Module {
 		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) ); // eslint-disable-line no-unused-vars
 	}
 
+	/**
+	 * @returns {string}
+	 */
 	getNamespace() {
 		elementorModules.ForceMethodImplementation();
 	}
