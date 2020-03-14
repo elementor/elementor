@@ -282,6 +282,8 @@ export default class Commands extends elementorModules.Module {
 
 		this.afterRun( command );
 
+		this.trigger( 'run:after', component, command, args );
+
 		if ( false === args.returnValue ) {
 			return true;
 		}
