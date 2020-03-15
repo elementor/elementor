@@ -92,7 +92,9 @@ export default class extends BaseRegion {
 
 		this.$el.draggable( this.getDraggableOptions() );
 
-		this.$el.resizable( this.getResizableOptions() );
+		setTimeout( () => {
+			this.$el.resizable( this.getResizableOptions() );
+		} );
 	}
 
 	open( model ) {
