@@ -1,4 +1,6 @@
-export default class Commands extends elementorModules.Module {
+import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
+
+export default class Commands extends CommandsBackwardsCompatibility {
 	/**
 	 * Function constructor().
 	 *
