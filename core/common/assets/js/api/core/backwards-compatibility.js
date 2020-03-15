@@ -2,7 +2,8 @@ import ComponentBase from 'elementor-api/modules/component-base';
 
 export default class BackwardsCompatibility {
 	constructor() {
-		const onOrig = $e.commands.on;
+		const eCommandsOnOrig = $e.commands.on,
+			eCommandsInternalOnOrig = $e.commandsInternal.on;
 
 		$e.commands.on = ( eventName, callback, context ) => {
 			if ( 'run' === eventName ) {
@@ -12,12 +13,28 @@ export default class BackwardsCompatibility {
 					"$e.commands.on( 'run:before', ... )"
 				);
 
-				onOrig( 'run:before', callback, context );
+				eCommandsOnOrig( 'run:before', callback, context );
 
 				return;
 			}
 
-			onOrig( eventName, callback, context );
+			eCommandsOnOrig( eventName, callback, context );
+		};
+
+		$e.commandsInternal.on = ( eventName, callback, context ) => {
+			if ( 'run' === eventName ) {
+				elementorCommon.helpers.softDeprecated(
+					"$e.commandsInternal.on( 'run', ... )",
+					'3.0.0',
+					"$e.commandsInternal.on( 'run:before', ... )"
+				);
+
+				eCommandsInternalOnOrig( 'run:before', callback, context );
+
+				return;
+			}
+
+			eCommandsInternalOnOrig( eventName, callback, context );
 		};
 	}
 
