@@ -29,7 +29,7 @@ jQuery( () => {
 			let tempCommand = '',
 				tempArgs = '';
 
-			$e.commandsInternal.on( 'run', ( component, command, args ) => {
+			$e.commandsInternal.on( 'run:before', ( component, command, args ) => {
 				tempCommand = command;
 				tempArgs = args;
 			} );
