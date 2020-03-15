@@ -145,9 +145,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	/**
 	 * Test Should Return a URL-Encoded String
 	 *
-	 * This tests the urlencode_htmlentities() utility method, to see that it properly decodes HTML Entities and then correctly URL-encodes them to be used in URLs, such as social media sharing
+	 * This tests the decode_htmlentities() utility method, to see that it properly decodes HTML Entities and then correctly URL-encodes them to be used in URLs, such as social media sharing
 	 */
-	public function test_should_return_urlencoded_string() {
+	public function test_should_return_decoded_string() {
 		// This is a filter from the WordPress core wp_get_document_title() function.
 		// The filter is used here to make the wp_get_document_title() function return our test title.
 		add_filter( 'document_title_parts', function () {
@@ -158,10 +158,10 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		$before_encoding = wp_get_document_title();
 
-		$valid_encoding = '%22This%20is%20a%20string%22%20with%20a%20variety%20of%20%E2%80%98HTML%20entities%E2%80%99.%20%27What%3F%27%20%26%20%28more%29%20%23stupid%20%E2%80%9Cthings%E2%80%9D';
-		$after_encoding = Utils::urlencode_htmlentities( $before_encoding );
+		$valid_encoding = '"This is a string" with a variety of ‘HTML entities’. \'What?\' & (more) #stupid “things”';
+		$after_encoding = Utils::decode_htmlentities( $before_encoding );
 
-		$this->assertSame( $after_encoding, $valid_encoding );
+		$this->assertSame( $valid_encoding, $after_encoding );
 	}
 
 	public function test_is_empty() {
