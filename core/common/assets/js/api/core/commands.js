@@ -1,6 +1,4 @@
-import ModuleBackwardsCompatibility from './module/backwards-compatibility';
-
-export default class Commands extends ModuleBackwardsCompatibility {
+export default class Commands extends elementorModules.Module {
 	/**
 	 * Function constructor().
 	 *
@@ -16,10 +14,6 @@ export default class Commands extends ModuleBackwardsCompatibility {
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
-	}
-
-	getModuleName() {
-		return 'commands';
 	}
 
 	/**
