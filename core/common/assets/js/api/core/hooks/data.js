@@ -16,9 +16,11 @@ export default class Data extends HooksBase {
 	runCallback( event, callback, args, result ) {
 		switch ( event ) {
 			case 'dependency': {
+				// If callback returns false and its dependency, then 'Hook-Break'.
 				if ( ! callback.callback( args ) ) {
 					this.depth[ event ][ callback.id ]--;
 
+					// Throw custom break to be catch by the base for 'Safe' exit.
 					throw new $e.modules.HookBreak;
 				}
 			}

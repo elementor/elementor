@@ -22,6 +22,7 @@ html.elementor-html {
 }
 
 .elementor {
+
 	&.loading{
 		opacity: 0.5;
 	}
@@ -849,19 +850,6 @@ html.elementor-html {
 	}
 }
 
-.elementor-embedded-editor {
-
-	.elementor-section-wrap {
-
-		&:not(:empty) {
-
-			+ #elementor-add-new-section {
-				display: none;
-			}
-		}
-	}
-}
-
 .elementor-add-section-inline {
 	margin: 10px auto;
 }
@@ -926,9 +914,10 @@ html.elementor-html {
 }
 
 // Muted elements in the editor
-[data-elementor-device-mode="desktop"] .elementor-hidden-desktop,
-[data-elementor-device-mode="tablet"] .elementor-hidden-tablet,
-[data-elementor-device-mode="mobile"] .elementor-hidden-phone {
+[data-elementor-device-mode="desktop"] .elementor-edit-area-active .elementor-hidden-desktop,
+[data-elementor-device-mode="tablet"] .elementor-edit-area-active .elementor-hidden-tablet,
+[data-elementor-device-mode="mobile"] .elementor-edit-area-active .elementor-hidden-phone {
+	display: inherit;
 	background: repeating-linear-gradient(125deg,rgba(0, 0, 0, 0.05),rgba(0, 0, 0, 0.05) 1px,transparent 2px,transparent 9px);
 	border: 1px solid rgba(0, 0, 0, 0.02);
 

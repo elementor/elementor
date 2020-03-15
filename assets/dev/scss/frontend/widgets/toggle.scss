@@ -2,15 +2,6 @@
 // Toggle
 //
 
-.elementor-widget-toggle {
-
-	.elementor-widget-container {
-		// This overflow: hidden prevents the overflow of backgrounds on widget elements (like toggle tab title)
-		// in case where a border radius is applied to the widget container in the Advanced > Border section
-		overflow: hidden;
-	}
-}
-
 .elementor-toggle {
 	text-align: $start;
 

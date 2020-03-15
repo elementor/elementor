@@ -752,6 +752,7 @@ class Editor {
 				'see_it_in_action' => __( 'See it in Action', 'elementor' ),
 				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
 				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
+				'available_in_pro_v29' => __( 'Available in Pro V2.9.', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -764,7 +765,7 @@ class Editor {
 			],
 		];
 
-		if ( ! Utils::has_pro() ) {
+		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
 			$config['promotionWidgets'] = Api::get_promotion_widgets();
 		}
 
