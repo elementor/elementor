@@ -1,6 +1,26 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 
 export default class BackwardsCompatibility {
+	constructor() {
+		const onOrig = $e.commands.on;
+
+		$e.commands.on = ( eventName, callback, context ) => {
+			if ( 'run' === eventName ) {
+				elementorCommon.helpers.softDeprecated(
+					"$e.commands.on( 'run', ... )",
+					'3.0.0',
+					"$e.commands.on( 'run:before', ... )"
+				);
+
+				onOrig( 'run:before', callback, context );
+
+				return;
+			}
+
+			onOrig( eventName, callback, context );
+		};
+	}
+
 	ensureTab( namespace, tabSlug, page = '' ) {
 		let component = $e.components.get( namespace );
 
