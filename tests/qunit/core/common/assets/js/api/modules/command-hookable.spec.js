@@ -25,11 +25,11 @@ jQuery( () => {
 						};
 
 						instance.run( {} );
+
+						$e.devTools = origDevTools;
 					},
 					new Error( random )
 				);
-
-				$e.devTools = undefined;
 			} );
 
 			QUnit.test( 'run(): on catch apply', ( assert ) => {
