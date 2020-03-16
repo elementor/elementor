@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export class Back extends CommandBase {
+export class Back extends CommandHookable {
 	confirmDialog = null;
 
 	apply() {

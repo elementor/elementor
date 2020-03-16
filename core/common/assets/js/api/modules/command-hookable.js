@@ -1,6 +1,6 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
-export default class CommandBase extends ArgsObject {
+export default class CommandHookable extends ArgsObject {
 	/**
 	 * Current component.
 	 *

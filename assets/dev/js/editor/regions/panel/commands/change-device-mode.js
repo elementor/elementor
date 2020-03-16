@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export class ChangeDeviceMode extends CommandBase {
+export class ChangeDeviceMode extends CommandHookable {
 	apply( args = {} ) {
 		const devices = [ 'desktop', 'tablet', 'mobile' ];
 		let { device } = args;

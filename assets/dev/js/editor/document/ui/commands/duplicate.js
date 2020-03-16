@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export class Duplicate extends CommandBase {
+export class Duplicate extends CommandHookable {
 	apply() {
 		const selectedElement = elementor.getCurrentElement();
 

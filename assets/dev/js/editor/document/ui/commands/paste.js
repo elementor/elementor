@@ -1,7 +1,7 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 import DocumentHelper from 'elementor-document/helper';
 
-export class Paste extends CommandBase {
+export class Paste extends CommandHookable {
 	initialize( args ) {
 		const { containers = [ args.container ] } = args;
 

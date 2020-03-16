@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export default class Base extends CommandBase {
+export default class Base extends CommandHookable {
 	initialize( args ) {
 		super.initialize( args );
 

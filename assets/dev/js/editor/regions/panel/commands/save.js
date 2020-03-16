@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export class Save extends CommandBase {
+export class Save extends CommandHookable {
 	apply() {
 		$e.run( 'document/save/draft' );
 	}

@@ -1,12 +1,12 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/modules/command-base.js', () => {
+	QUnit.module( 'File: core/common/assets/js/api/modules/command-hookable.js', () => {
 		QUnit.module( 'CommandBase', () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandBase( { } );
+						const instance = new CommandHookable( { } );
 
 						instance.requireContainer();
 					},
@@ -17,7 +17,7 @@ jQuery( () => {
 			QUnit.test( 'constructor(): with container & containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {
+						const instance = new CommandHookable( {
 							container: {},
 							containers: [],
 						} );
@@ -31,7 +31,7 @@ jQuery( () => {
 			QUnit.test( 'apply(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new CommandHookable( {} );
 
 						instance.apply( {} );
 					},
@@ -44,7 +44,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new CommandHookable( {} );
 
 						instance.onBeforeApply = () => {
 							throw new Error( random );
@@ -65,7 +65,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new CommandHookable( {} );
 
 						instance.onBeforeApply = () => {
 							throw new Error( random );

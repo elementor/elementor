@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export class Copy extends CommandBase {
+export class Copy extends CommandHookable {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
