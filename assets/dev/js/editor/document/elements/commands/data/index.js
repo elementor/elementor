@@ -1,11 +1,12 @@
 import CommandData from 'elementor-api/modules/command-data';
 
 class Index extends CommandData {
-	apply( args = {} ) {
-		debugger;
-	}
-	applyGet( args = {} ) {
-		debugger;
+	applyAfterGet( data, args = {} ) {
+		if ( args.test ) {
+			return { fake: 'data' };
+		}
+
+		return data;
 	}
 }
 

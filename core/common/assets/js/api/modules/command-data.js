@@ -11,55 +11,110 @@ export default class CommandData extends CommandBase {
 	 */
 	constructor( args, commandsAPI = $e.data ) {
 		super( args, commandsAPI );
+
+		/**
+		 * Data returned from remote.
+		 *
+		 * @type {{}}
+		 */
+		this.data = {};
 	}
 
 	/**
 	 * @param [args={}]
+	 * @returns {{}} filtered args
 	 */
-	applyCreate( args = {} ) {
-		elementorModules.ForceMethodImplementation();
+	applyBeforeCreate( args = {} ) {
+		return args;
+	}
+
+	/**
+	 * @param {{}} data
+	 * @param [args={}]
+	 * @returns {{}} filtered result
+	 */
+	applyAfterCreate( data, args = {} ) {
+		return data;
 	}
 
 	/**
 	 * @param [args={}]
+	 * @returns {{}} filtered args
 	 */
-	applyDelete( args = {} ) {
-		elementorModules.ForceMethodImplementation();
+	applyBeforeDelete( args = {} ) {
+		return args;
+	}
+
+	/**
+	 * @param {{}} data
+	 * @param [args={}]
+	 * @returns {{}} filtered result
+	 */
+	applyAfterDelete( data, args = {} ) {
+		return data;
 	}
 
 	/**
 	 * @param [args={}]
+	 * @returns {{}} filtered args
 	 */
-	applyGet( args = {} ) {
-		elementorModules.ForceMethodImplementation();
+	applyBeforeGet( args = {} ) {
+		return args;
+	}
+
+	/**
+	 * @param {{}} data
+	 * @param [args={}]
+	 * @returns {{}} filtered result
+	 */
+	applyAfterGet( data, args = {} ) {
+		return data;
 	}
 
 	/**
 	 * @param [args={}]
+	 * @returns {{}} filtered args
 	 */
-	applyUpdate( args = {} ) {
-		elementorModules.ForceMethodImplementation();
+	applyBeforeUpdate( args = {} ) {
+		return args;
+	}
+
+	/**
+	 * @param {{}} data
+	 * @param [args={}]
+	 * @returns {{}} filtered result
+	 */
+	applyAfterUpdate( data, args = {} ) {
+		return data;
+	}
+
+	apply( args = {}, result ) {
+		return result;
 	}
 
 	run() {
-		let method;
+		let methodBefore, methodAfter;
 
 		switch ( this.args.dataType ) {
 			case 'create':
-				method = this.applyCreate;
+				methodBefore = this.applyBeforeCreate;
+				methodAfter = this.applyAfterCreate;
 			break;
 
 			case 'delete':
-				method = this.applyDelete;
-			break;
+				methodBefore = this.applyBeforeDelete;
+				methodAfter = this.applyAfterDelete;
+				break;
 
 			case 'get':
-				method = this.applyGet;
-			break;
+				methodBefore = this.applyBeforeGet;
+				methodAfter = this.applyAfterGet;
+				break;
 
 			case 'update':
-				method = this.applyUpdate;
-			break;
+				methodBefore = this.applyBeforeUpdate;
+				methodAfter = this.applyAfterUpdate;
+				break;
 
 			default:
 				throw Error( `Invalid type: ' ${ this.args.type } '` );
@@ -67,6 +122,30 @@ export default class CommandData extends CommandBase {
 
 		delete this.args.dataType;
 
-		return method( this.args );
+		this.args = methodBefore( this.args );
+
+		return new Promise( ( resolve, reject ) => {
+			elementorCommon.ajax.addRequest( 'command-data', {
+				data: {
+					command: this.currentCommand,
+					component: this.component.getNamespace(),
+				},
+				error: ( e ) => {
+					this.onCatchApply( e );
+
+					reject( e );
+				},
+				success: ( data ) => {
+					this.data = methodAfter( data, this.args );
+					this.data = this.apply( this.args, this.data );
+
+					return this.data;
+				},
+			} );
+		} );
+	}
+
+	onCatchApply( e ) {
+		elementorCommon.helpers.consoleError( e );
 	}
 }
