@@ -143,9 +143,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * Test Should Return a URL-Encoded String
+	 * Test Should Receive a string with HTML entities and return the string with the HTML Entities decoded
 	 *
-	 * This tests the decode_htmlentities() utility method, to see that it properly decodes HTML Entities and then correctly URL-encodes them to be used in URLs, such as social media sharing
+	 * This tests the decode_html_entities() utility method, to see that it properly decodes HTML Entities and then correctly URL-encodes them to be used in URLs, such as social media sharing
 	 */
 	public function test_should_return_decoded_string() {
 		// This is a filter from the WordPress core wp_get_document_title() function.
@@ -159,7 +159,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$before_encoding = wp_get_document_title();
 
 		$valid_encoding = '"This is a string" with a variety of ‘HTML entities’. \'What?\' & (more) #stupid “things”';
-		$after_encoding = Utils::decode_htmlentities( $before_encoding );
+		$after_encoding = Utils::decode_html_entities( $before_encoding );
 
 		$this->assertSame( $valid_encoding, $after_encoding );
 	}

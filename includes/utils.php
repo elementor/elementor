@@ -663,7 +663,7 @@ class Utils {
 	 * @param $string
 	 * @return string
 	 */
-	public static function decode_htmlentities( $string ) {
+	public static function decode_html_entities( $string ) {
 		$entities_dictionary = [
 			'&#145;' => "'", // Opening single quote
 			'&#146;' => "'", // Closing single quote
