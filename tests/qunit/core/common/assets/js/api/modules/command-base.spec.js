@@ -87,7 +87,7 @@ jQuery( () => {
 					new Error( random )
 				);
 
-				$e.devToolsOrig = undefined;
+				$e.devTools = devToolsOrig;
 			} );
 		} );
 	} );

@@ -1,7 +1,6 @@
 import Commands from './commands.js';
 
 export default class Data extends Commands {
-
 	run( command, args = {} ) {
 		// Assuming the command maybe index.
 		if ( ! this.commands[ command ] ) {
