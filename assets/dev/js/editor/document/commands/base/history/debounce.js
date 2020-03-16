@@ -71,10 +71,10 @@ export default class Debounce extends History {
 		// Rollback history on failure.
 		if ( e instanceof $e.modules.HookBreak && this.history ) {
 			if ( this.isDebounceRequired ) {
-				// `delete-transaction` is under debounce, because it should `delete-transaction` after `end-transaction`.
-				this.constructor.debounce( () => $e.internal( 'document/history/delete-transaction' ) );
+				// `clear-transaction` is under debounce, because it should `clear-transaction` after `end-transaction`.
+				this.constructor.debounce( () => $e.internal( 'document/history/clear-transaction' ) );
 			} else {
-				$e.internal( 'document/history/delete-transaction' );
+				$e.internal( 'document/history/clear-transaction' );
 			}
 		}
 	}

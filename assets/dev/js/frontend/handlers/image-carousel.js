@@ -35,6 +35,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			slidesPerView: slidesToShow,
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
+			handleElementorBreakpoints: true,
 		};
 
 		swiperOptions.breakpoints = {};

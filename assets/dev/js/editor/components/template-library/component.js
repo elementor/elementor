@@ -89,6 +89,8 @@ export default class Component extends ComponentModalBase {
 
 	onDocumentLoaded( document ) {
 		this.setDefaultRoute( document.config.remoteLibrary.default_route );
+
+		this.maybeOpenLibrary();
 	}
 
 	renderTab( tab ) {
@@ -239,5 +241,13 @@ export default class Component extends ComponentModalBase {
 
 	getModalLayout() {
 		return TemplateLibraryLayoutView;
+	}
+
+	maybeOpenLibrary() {
+		if ( '#library' === location.hash ) {
+			$e.run( 'library/open' );
+
+			location.hash = '';
+		}
 	}
 }

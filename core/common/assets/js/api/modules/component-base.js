@@ -99,6 +99,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 		let instance;
 
+		// TODO: Remove when all commands have CommandBase as parent.
 		if ( isCallbackNewClass ) {
 			try {
 				// Try get instance.

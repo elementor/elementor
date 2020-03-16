@@ -1,5 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandBase from 'elementor-api/modules/command-base';
+import * as commands from './commands/';
 import * as commandsInternal from './commands/internal/';
 
 export default class Component extends ComponentBase {
@@ -21,45 +22,7 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			open: () => new class Open extends CommandBase {
-				apply = () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' );
-			},
-			close: () => new class Close extends CommandBase {
-				apply = () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' );
-			},
-			toggle: () => new class Toggle extends CommandBase {
-				apply = () => elementor.getPanelView().modeSwitcher.currentView.toggleMode();
-			},
-			exit: () => new class Toggle extends CommandBase {
-				apply = () => $e.route( 'panel/menu' );
-			},
-
-			save: () => $e.command( 'document/save/draft' ),
-			publish: () => $e.command( 'document/save/publish' ),
-
-			'change-device-mode': ( _args ) => new class ChangeDeviceMode extends CommandBase {
-				apply( args ) {
-					const { device } = args,
-						devices = [ 'desktop', 'tablet', 'mobile' ];
-
-					if ( ! device ) {
-						const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-						let modeIndex = devices.indexOf( currentDeviceMode );
-
-						modeIndex++;
-
-						if ( modeIndex >= devices.length ) {
-							modeIndex = 0;
-						}
-
-						args.device = devices[ modeIndex ];
-					}
-
-					elementor.changeDeviceMode( device );
-				}
-			}( _args ),
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultShortcuts() {

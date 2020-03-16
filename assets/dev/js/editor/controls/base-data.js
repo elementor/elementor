@@ -49,11 +49,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 				return tag.editable && _.intersection( tag.categories, dynamicSettings.categories ).length;
 			} );
 
-			behaviors.tags = {
-				behaviorClass: TagsBehavior,
-				tags: tags,
-				dynamicSettings: dynamicSettings,
-			};
+			if ( tags.length || elementor.config.user.is_administrator ) {
+				behaviors.tags = {
+					behaviorClass: TagsBehavior,
+					tags: tags,
+					dynamicSettings: dynamicSettings,
+				};
+			}
 		}
 
 		return behaviors;
