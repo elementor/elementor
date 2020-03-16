@@ -318,6 +318,7 @@ export default class Commands extends elementorModules.Module {
 			// For data hooks.
 			instance.onAfterApply( instance.args, _results );
 
+			// TODO: Remove should not be here.
 			if ( instance.isDataChanged() ) {
 				$e.internal( 'document/save/set-is-modified', { status: true } );
 			}

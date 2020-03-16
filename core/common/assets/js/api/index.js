@@ -2,6 +2,7 @@
 import BackwardsCompatibility from './core/backwards-compatibility';
 import CommandHookable from './modules/command-hookable';
 import CommandInternal from './modules/command-internal';
+import CommandData from './modules/command-data';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
 import ComponentBase from './modules/component-base';
@@ -11,6 +12,7 @@ import HookBreak from './modules/hook-break';
 import Hooks from './core/hooks';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
+import Data from './core/data.js';
 
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
@@ -39,10 +41,12 @@ export default class API {
 		this.hooks = new Hooks();
 		this.routes = new Routes();
 		this.shortcuts = new Shortcuts( jQuery( window ) );
+		this.data = new Data();
 
 		this.modules = {
 			CommandHookable,
 			CommandInternal,
+			CommandData,
 
 			ComponentBase,
 			ComponentModalBase,
