@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export class Delete extends CommandBase {
+export class Delete extends CommandHookable {
 	apply() {
 		const selectedElement = elementor.getCurrentElement();
 

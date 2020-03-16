@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export default class History extends CommandBase {
+export default class History extends CommandHookable {
 	constructor( args ) {
 		super( args );
 

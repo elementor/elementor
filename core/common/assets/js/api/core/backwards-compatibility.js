@@ -1,6 +1,27 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 
 export default class BackwardsCompatibility {
+	/**
+	 * @param {API} api
+	 */
+	constructor( api ) {
+		this.api = api;
+
+		this.addDeprecatedModules();
+	}
+
+	addDeprecatedModules() {
+		const { modules } = this.api;
+
+		Object.defineProperty( modules, 'CommandBase', {
+				get() {
+					elementorCommon.helpers.softDeprecated( '$e.modules.CommandBase', '2.9.0',
+						'$e.modules.CommandHookable' );
+					return modules.CommandHookable;
+				},
+		} );
+	}
+
 	ensureTab( namespace, tabSlug, page = '' ) {
 		let component = $e.components.get( namespace );
 

@@ -1,6 +1,6 @@
-import CommandBase from './command-base';
+import CommandHookable from './command-hookable';
 
-export default class CommandInternalBase extends CommandBase {
+export default class CommandInternalBase extends CommandHookable {
 	constructor( args, commandsAPI = $e.commandsInternal ) {
 		super( args, commandsAPI );
 	}

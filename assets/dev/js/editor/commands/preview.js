@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export class Preview extends CommandBase {
+export class Preview extends CommandHookable {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}

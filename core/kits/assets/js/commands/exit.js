@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
-export class Exit extends CommandBase {
+export class Exit extends CommandHookable {
 	apply() {
 		return $e.run( 'editor/documents/close', {
 			id: elementor.config.kit_id,

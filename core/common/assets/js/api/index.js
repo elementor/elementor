@@ -1,6 +1,6 @@
 /* Alphabetical order */
 import BackwardsCompatibility from './core/backwards-compatibility';
-import CommandBase from './modules/command-base';
+import CommandHookable from './modules/command-hookable';
 import CommandInternalBase from './modules/command-internal-base';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
@@ -22,7 +22,8 @@ export default class API {
 	 * Create's 'elementor' api.
 	 */
 	constructor() {
-		this.bc = new BackwardsCompatibility();
+		window.$e = this;
+
 		this.components = new Components();
 
 		this.commands = new Commands();
@@ -33,7 +34,7 @@ export default class API {
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 
 		this.modules = {
-			CommandBase,
+			CommandHookable,
 			CommandInternalBase,
 
 			ComponentBase,
@@ -45,7 +46,7 @@ export default class API {
 			hookUI,
 		};
 
-		window.$e = this;
+		this.bc = new BackwardsCompatibility( this );
 	}
 
 	/**
