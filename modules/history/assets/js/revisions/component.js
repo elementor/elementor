@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import CommandHookable from 'elementor-api/modules/command-base';
 import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
@@ -7,9 +8,15 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
+		const self = this;
+
 		return {
-			up: () => this.navigate( true ),
-			down: () => this.navigate(),
+			up: () => new class Up extends CommandHookable {
+				apply = () => self.navigate( true );
+			},
+			down: () => new class Down extends CommandHookable {
+				apply = () => self.navigate();
+			},
 		};
 	}
 

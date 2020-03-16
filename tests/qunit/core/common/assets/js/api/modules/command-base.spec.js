@@ -38,7 +38,57 @@ jQuery( () => {
 					new Error( 'CommandBase.apply() should be implemented, please provide \'apply\' functionality.' )
 				);
 			} );
+
+			QUnit.test( 'run(): on catch apply', ( assert ) => {
+				const random = Math.random().toString();
+
+				assert.throws(
+					() => {
+						const instance = new CommandBase( {} );
+
+						instance.apply = () => {
+							throw new Error( random );
+						};
+
+						instance.onCatchApply = ( e ) => {
+							throw e;
+						};
+
+						instance.run( {} );
+					},
+					new Error( random )
+				);
+			} );
+
+			QUnit.test( 'onCatchApply()', ( assert ) => {
+				const devToolsOrig = $e.devTools,
+					random = Math.random().toString();
+
+				assert.throws(
+					() => {
+						const instance = new CommandBase( {} );
+
+						instance.apply = () => {
+							throw new Error( random );
+						};
+
+						const origDevTools = $e.devTools;
+
+						// Use `$e.devTools` as a hack.
+						$e.devTools = {
+							log: { error: ( e ) => {
+									$e.devTools = origDevTools;
+									throw e;
+								} },
+						};
+
+						instance.run( {} );
+					},
+					new Error( random )
+				);
+
+				$e.devToolsOrig = undefined;
+			} );
 		} );
 	} );
 } );
-

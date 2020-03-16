@@ -7,13 +7,7 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			copy: ( args ) => ( new commands.Copy( args ) ).run(),
-			delete: ( args ) => ( new commands.Delete( args ) ).run(),
-			duplicate: ( args ) => ( new commands.Duplicate( args ) ).run(),
-			paste: ( args ) => ( new commands.Paste( args ) ).run(),
-			'paste-style': ( args ) => ( new commands.PasteStyle( args ) ).run(),
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultShortcuts() {

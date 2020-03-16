@@ -1,5 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import * as commandsInternal from './commands/internal';
+import * as commands from './commands/';
+import * as commandsInternal from './commands/internal/';
 
 export default class Component extends ComponentBase {
 	__construct( args ) {
@@ -17,23 +18,11 @@ export default class Component extends ComponentBase {
 		return 'document/history';
 	}
 
-	getCommands() {
-		return {
-			do: ( args ) => elementor.documents.getCurrent().history.doItem( args.index ),
-			undo: () => elementor.documents.getCurrent().history.navigate(),
-			'undo-all': ( args ) => {
-				const itemsLength = args.document.history.getItems().length;
-				if ( ! itemsLength ) {
-					return;
-				}
-
-				args.document.history.doItem( itemsLength - 1 );
-			},
-			redo: () => elementor.documents.getCurrent().history.navigate( true ),
-		};
+	defaultCommands() {
+		return this.importCommands( commands );
 	}
 
-	getCommandsInternal() {
+	defaultCommandsInternal() {
 		return this.importCommands( commandsInternal );
 	}
 

@@ -1,7 +1,9 @@
 import CommandHookable from 'elementor-api/modules/command-hookable';
 
 export class Close extends CommandHookable {
-	apply() {
+	apply( args ) {
+		const { source = 'command' } = args;
+
 		// The kit is opened directly.
 		if ( elementor.config.initial_document.id === parseInt( elementor.config.kit_id ) ) {
 			return $e.run( 'panel/global/exit' );
@@ -21,10 +23,10 @@ export class Close extends CommandHookable {
 							elementor.toggleDocumentCssFiles( document, true );
 							elementor.settings.page.destroyControlsCSS();
 						}
-
 						$e.components.get( 'panel/global' ).close();
 						$e.routes.clearHistory( this.component.getRootContainer() );
 					},
+					source,
 				} )
 				.finally( () => {
 					resolve();

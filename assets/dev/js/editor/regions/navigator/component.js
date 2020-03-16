@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import CommandHookable from 'elementor-api/modules/command-hookable';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -12,14 +13,22 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
+		const self = this;
+
 		return {
-			open: () => $e.route( this.getNamespace() ),
-			close: () => this.close(),
-			toggle: () => {
-				if ( this.isOpen ) {
-					this.close();
-				} else {
-					$e.route( this.getNamespace() );
+			open: () => new class Open extends CommandHookable {
+				apply = () => $e.route( self.getNamespace() );
+			},
+			close: () => new class Open extends CommandHookable {
+				apply = () => self.close();
+			},
+			toggle: () => new class Open extends CommandHookable {
+				apply() {
+					if ( self.isOpen ) {
+						$e.run( 'navigator/close' );
+					} else {
+						$e.run( 'navigator/open' );
+					}
 				}
 			},
 		};
@@ -38,6 +47,7 @@ export default class Component extends ComponentBase {
 		const { model = false } = args;
 
 		this.manager.open( model );
+
 		return true;
 	}
 

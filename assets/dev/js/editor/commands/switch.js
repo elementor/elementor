@@ -6,15 +6,16 @@ export class Switch extends CommandHookable {
 	}
 
 	apply( args ) {
-		const { id, mode, onClose } = args;
+		const { id, mode, onClose, source = 'command' } = args;
 
 		return $e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),
 			mode,
 			onClose,
+			source,
 		} )
 		.then( () => {
-			return $e.run( 'editor/documents/open', { id } );
+			return $e.run( 'editor/documents/open', { id, source } );
 		} );
 	}
 }

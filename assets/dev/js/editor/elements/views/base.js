@@ -359,6 +359,7 @@ BaseElementView = BaseContainer.extend( {
 			container: this.getContainer(),
 			model,
 			options,
+			source: 'panel',
 		} );
 	},
 

@@ -15,6 +15,13 @@ import Shortcuts from './core/shortcuts';
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
 
+/**
+ * @typedef {{}} Args
+ * @property {('command'|'start'|'contextmenu'|'panel'|'dialog'|'preview')} source
+ * @property {Container} container
+ * @property {Array.<Container>} containers
+ */
+
 export default class API {
 	/**
 	 * Function constructor().
@@ -55,7 +62,7 @@ export default class API {
 	 * Alias of `$e.commands.run()`.
 	 *
 	 * @param {string} command
-	 * @param [args={}]
+	 * @param {(Args|{})} [args={}]
 	 *
 	 * @returns {*}
 	 */
@@ -63,17 +70,30 @@ export default class API {
 		return $e.commands.run( command, args );
 	}
 
+	// function create command instance from given command.
+	command( command, args ) {
+		const component = $e.commands.getComponent( command );
+
+		if ( ! component ) {
+			throw Error( `cannot get component for command: '${ command }''` );
+		}
+
+		const shortCommand = command.replace( component.getNamespace() + '/', '' );
+		const CommandClass = component.getCommands()[ shortCommand ];
+
+		return new CommandClass( args );
+	}
 	/**
 	 * Function internal().
 	 *
 	 * Alias of `$e.commandsInternal.run()`.
 	 *
 	 * @param {string} command
-	 * @param [args={}]
+	 * @param {(Args|{})} [args={}]
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
-	internal( command, args = {} ) {
+	internal( command, args ) {
 		return $e.commandsInternal.run( command, args );
 	}
 

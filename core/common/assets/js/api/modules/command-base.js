@@ -1,6 +1,8 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
+	isCommandBase = true;
+
 	/**
 	 * Current component.
 	 *
@@ -16,8 +18,13 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 * @param [commandsAPI={}]
 	 */
-	constructor( args, commandsAPI = $e.commands ) {
+	constructor( args = {}, commandsAPI = $e.commands ) {
 		super( args );
+
+		// TODO: is better to check if register process is done.
+		if ( ! commandsAPI.currentTrace.length ) {
+			return;
+		}
 
 		// Acknowledge self about which command it run.
 		this.currentCommand = commandsAPI.getCurrentLast();
@@ -99,7 +106,20 @@ export default class CommandBase extends ArgsObject {
 	 * @returns {*}
 	 */
 	run() {
-		elementorModules.ForceMethodImplementation();
+		return this.apply( this.args );
+	}
+
+	/**
+	 * Function isDataChanged().
+	 *
+	 * Determine if data is changed after the command runs.
+	 *
+	 * on editor for example: sets change editor flag on/off.
+	 *
+	 * @returns {boolean}
+	 */
+	isDataChanged() {
+		return false;
 	}
 
 	/**
@@ -110,7 +130,6 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 */
 	onBeforeRun( args = {} ) { // eslint-disable-line no-unused-vars
-		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -122,7 +141,6 @@ export default class CommandBase extends ArgsObject {
 	 * @param [result={*}]
 	 */
 	onAfterRun( args = {}, result ) { // eslint-disable-line no-unused-vars
-		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -133,7 +151,6 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 */
 	onBeforeApply( args = {} ) { // eslint-disable-line no-unused-vars
-		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -145,7 +162,6 @@ export default class CommandBase extends ArgsObject {
 	 * @param [result={*}]
 	 */
 	onAfterApply( args = {}, result ) { // eslint-disable-line no-unused-vars
-		elementorModules.ForceMethodImplementation();
 	}
 
 	/**
@@ -156,6 +172,5 @@ export default class CommandBase extends ArgsObject {
 	 * @param {Error} e
 	 */
 	onCatchApply( e ) { // eslint-disable-line no-unused-vars
-		elementorModules.ForceMethodImplementation();
 	}
 }

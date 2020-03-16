@@ -1,9 +1,7 @@
 import CommandHookable from 'elementor-api/modules/command-hookable';
 
 export default class History extends CommandHookable {
-	constructor( args ) {
-		super( args );
-
+	initialize( args ) {
 		/**
 		 * Get History from child command.
 		 *
@@ -15,6 +13,8 @@ export default class History extends CommandHookable {
 		 * @type {number|boolean}
 		 */
 		this.historyId = false;
+
+		super.initialize( args );
 	}
 
 	/**

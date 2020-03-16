@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
 
 export default class Component extends ComponentBase {
 	__construct( args ) {
@@ -22,28 +23,7 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			open: ( args ) => {
-				if ( ! this.setDefaultTab( args ) ) {
-					elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
-
-					args.model.trigger( 'request:edit' );
-				} else {
-					this.openEditor( args.model, args.view );
-
-					$e.route( this.getDefaultRoute(), args );
-				}
-
-				// BC: Run hooks after the route render's the view.
-				const action = 'panel/open_editor/' + args.model.get( 'elType' );
-
-				// Example: panel/open_editor/widget
-				elementor.hooks.doAction( action, this.manager, args.model, args.view );
-
-				// Example: panel/open_editor/widget/heading
-				elementor.hooks.doAction( action + '/' + args.model.get( 'widgetType' ), this.manager, args.model, args.view );
-			},
-		};
+		return this.importCommands( commands );
 	}
 
 	getTabsWrapperSelector() {
