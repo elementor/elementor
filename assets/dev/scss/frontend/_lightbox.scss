@@ -213,6 +213,11 @@
 		position: absolute;
 		overflow: hidden;
 		transition: background-color 400ms;
+
+		// This is to overcome a specificity override by Theme Style
+		.elementor-slideshow__share-links a {
+			color: $gray-darkest;
+		}
 	}
 
 	&__share-links {
@@ -222,7 +227,6 @@
 		@include end(67px);
 		top: 60px;
 		background-color: #fff;
-		color: $gray-darkest;
 		border-radius: 3px;
 		font-size: 16px;
 		padding: 14px 20px;
