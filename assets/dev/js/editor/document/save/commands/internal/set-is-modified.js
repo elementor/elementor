@@ -1,6 +1,6 @@
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
+import CommandInternal from 'elementor-api/modules/command-internal';
 
-export class SetIsModified extends CommandInternalBase {
+export class SetIsModified extends CommandInternal {
 	validateArgs( args ) {
 		this.requireArgumentType( 'status', 'boolean', args );
 	}

@@ -1,7 +1,7 @@
 /* Alphabetical order */
 import BackwardsCompatibility from './core/backwards-compatibility';
 import CommandHookable from './modules/command-hookable';
-import CommandInternalBase from './modules/command-internal-base';
+import CommandInternal from './modules/command-internal';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
 import ComponentBase from './modules/component-base';
@@ -35,7 +35,7 @@ export default class API {
 
 		this.modules = {
 			CommandHookable,
-			CommandInternalBase,
+			CommandInternal,
 
 			ComponentBase,
 			ComponentModalBase,

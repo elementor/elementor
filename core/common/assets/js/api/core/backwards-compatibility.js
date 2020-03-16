@@ -20,6 +20,14 @@ export default class BackwardsCompatibility {
 					return modules.CommandHookable;
 				},
 		} );
+
+		Object.defineProperty( modules, 'CommandInternalBase', {
+			get() {
+				elementorCommon.helpers.softDeprecated( '$e.modules.CommandInternalBase', '2.9.0',
+					'$e.modules.CommandInternal' );
+				return modules.CommandInternal;
+			},
+		} );
 	}
 
 	ensureTab( namespace, tabSlug, page = '' ) {
