@@ -135,7 +135,7 @@ export default class Routes extends Commands {
 	afterRun( route, args ) {
 		const component = this.getComponent( route );
 
-		this.getComponent( route ).onRoute( route, args );
+		component.onRoute( route, args );
 
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args ] );
