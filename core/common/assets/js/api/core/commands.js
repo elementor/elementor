@@ -1,3 +1,5 @@
+import CommandBase from "elementor-api/modules/command-base";
+
 export default class Commands extends elementorModules.Module {
 	static trace = [];
 
@@ -279,14 +281,12 @@ export default class Commands extends elementorModules.Module {
 
 		this.beforeRun( command, args );
 
-		/**
-		 * @type {(CommandBase)|*}
-		 */
+		// Call to new command or callback.
 		const instance = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
 
-		// If not instance or is not run-able instance ( CommandBase ), results equal to instance ( eg route )
-		// else results are from run().
-		if ( ! instance || 'undefined' === typeof instance.run ) {
+		// TODO: Remove after all commands inheritance CommandBase.
+		if ( ! instance || ! ( instance instanceof CommandBase ) ) {
+			// Means instance is a result from callback and not command.
 			this.afterRun( command, args, instance );
 
 			return instance;
