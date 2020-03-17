@@ -1,5 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import CommandBase from 'elementor-api/modules/command-base';
+import * as commands from './commands/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -13,25 +13,7 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		const self = this;
-
-		return {
-			open: () => new class Open extends CommandBase {
-				apply = () => $e.route( self.getNamespace() );
-			},
-			close: () => new class Open extends CommandBase {
-				apply = () => self.close();
-			},
-			toggle: () => new class Open extends CommandBase {
-				apply() {
-					if ( self.isOpen ) {
-						$e.run( 'navigator/close' );
-					} else {
-						$e.run( 'navigator/open' );
-					}
-				}
-			},
-		};
+		this.importCommands( commands );
 	}
 
 	defaultShortcuts() {
