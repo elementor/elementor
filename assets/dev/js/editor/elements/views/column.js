@@ -81,6 +81,8 @@ ColumnView = BaseElementView.extend( {
 
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
+
+		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 	},
 
 	attachElContent: function() {
@@ -113,6 +115,11 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	isDroppingAllowed: function() {
+		// Don't allow dragging items to document which is not editable.
+		if ( ! this.getContainer().isEditable() ) {
+			return false;
+		}
+
 		var elementView = elementor.channels.panelElements.request( 'element:selected' );
 
 		if ( ! elementView ) {

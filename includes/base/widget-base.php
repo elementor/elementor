@@ -418,6 +418,31 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Add lightbox data to image link.
+	 *
+	 * Used to add lightbox data attributes to image link HTML.
+	 *
+	 * @since 2.9.1
+	 * @access public
+	 *
+	 * @param string $link_html Image link HTML.
+	 * @param string $id Attachment id.
+	 *
+	 * @return string Image link HTML with lightbox data attributes.
+	 */
+	public function add_lightbox_data_to_image_link( $link_html, $id ) {
+		$settings = $this->get_settings_for_display();
+		$open_lightbox = isset( $settings['open_lightbox'] ) ? $settings['open_lightbox'] : null;
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$this->add_render_attribute( 'link', 'class', 'elementor-clickable', true );
+		}
+
+		$this->add_lightbox_data_attributes( 'link', $id, $open_lightbox, $this->get_id(), true );
+		return preg_replace( '/^<a/', '<a ' . $this->get_render_attribute_string( 'link' ), $link_html );
+	}
+
+	/**
 	 * Add Light-Box attributes.
 	 *
 	 * Used to add Light-Box-related data attributes to links that open media files.
@@ -435,12 +460,16 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 */
 	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false ) {
-		if ( 'no' === $lightbox_setting_key ) {
-			return $this;
-		}
-
 		$general_settings_model = SettingsManager::get_settings_managers( 'general' )->get_model();
 		$is_global_image_lightbox_enabled = 'yes' === $general_settings_model->get_settings( 'elementor_global_image_lightbox' );
+
+		if ( 'no' === $lightbox_setting_key ) {
+			if ( $is_global_image_lightbox_enabled ) {
+				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no' );
+			}
+
+			return $this;
+		}
 
 		if ( 'yes' !== $lightbox_setting_key && ! $is_global_image_lightbox_enabled ) {
 			return $this;

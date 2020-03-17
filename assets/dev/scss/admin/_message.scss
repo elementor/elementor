@@ -5,9 +5,8 @@
 .notice {
 
 	&.elementor-message {
-		border: none;
 		padding: 20px;
-
+		@include border-start-property(color, $editor-accent);
 		.elementor-message-inner {
 			display: flex;
 			align-items: center;

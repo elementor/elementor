@@ -11,7 +11,7 @@ export class Paste extends History {
 		this.requireArgumentType( 'storageData', 'object', { storageData } );
 	}
 
-	getHistory( args ) {
+	getHistory() {
 		return {
 			type: 'paste',
 			title: elementor.translate( 'elements' ),

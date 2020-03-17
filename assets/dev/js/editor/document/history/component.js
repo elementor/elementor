@@ -21,7 +21,14 @@ export default class Component extends ComponentBase {
 		return {
 			do: ( args ) => elementor.documents.getCurrent().history.doItem( args.index ),
 			undo: () => elementor.documents.getCurrent().history.navigate(),
-			'undo-all': ( args ) => args.document.history.doItem( args.document.history.getItems().length - 1 ),
+			'undo-all': ( args ) => {
+				const itemsLength = args.document.history.getItems().length;
+				if ( ! itemsLength ) {
+					return;
+				}
+
+				args.document.history.doItem( itemsLength - 1 );
+			},
 			redo: () => elementor.documents.getCurrent().history.navigate( true ),
 		};
 	}

@@ -10,6 +10,7 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -17,11 +18,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Kit extends PageBase {
 
+	private $custom_colors_disabled;
+	private $typography_schemes_disabled;
+
+	public function __construct( array $data = [] ) {
+		parent::__construct( $data );
+
+		$this->custom_colors_disabled = get_option( 'elementor_disable_color_schemes' );
+		$this->typography_schemes_disabled = get_option( 'elementor_disable_typography_schemes' );
+	}
+
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
 		$properties['has_elements'] = false;
+		$properties['show_in_finder'] = false;
 		$properties['edit_capability'] = 'edit_theme_options';
+		$properties['support_kit'] = true;
 
 		return $properties;
 	}
@@ -34,17 +47,8 @@ class Kit extends PageBase {
 		return __( 'Kit', 'elementor' );
 	}
 
-	public function get_wp_preview_url() {
-		$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
-		$url = $document->get_wp_preview_url();
-		$id = $this->get_main_id();
-
-		$url = add_query_arg( [
-			'preview_id' => $id,
-			'preview_nonce' => wp_create_nonce( 'post_preview_' . $id ),
-		], $url );
-
-		return $url;
+	protected function get_have_a_look_url() {
+		return '';
 	}
 
 	public static function get_editor_panel_config() {
@@ -71,7 +75,7 @@ class Kit extends PageBase {
 		$this->add_form_fields_section();
 		$this->add_images_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, Controls_Manager::TAB_STYLE, [ __( 'Available in Pro v2.9.', 'elementor' ) ] );
 	}
 
 	protected function get_post_statuses() {
@@ -96,6 +100,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$selector => 'color: {{VALUE}};',
 				],
@@ -112,6 +117,24 @@ class Kit extends PageBase {
 		);
 	}
 
+	private function add_schemes_notice() {
+		// Get the current section config (array - section id and tab) to use for creating a unique control ID and name
+		$current_section = $this->get_current_section();
+
+		if ( ! $this->custom_colors_disabled || ! $this->typography_schemes_disabled ) {
+			$this->add_control(
+				$current_section['section'] . '_schemes_notice',
+				[
+					'name' => $current_section['section'] . '_schemes_notice',
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => sprintf( __( 'In order for Theme Style to affect all relevant Elementor elements, please disable Default Colors and Fonts from the <a href="%s" target="_blank">Settings Page</a>.', 'elementor' ), Settings::get_url() ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+					'render_type' => 'ui',
+				]
+			);
+		}
+	}
+
 	private function add_body_section() {
 		$this->start_controls_section(
 			'section_body',
@@ -120,6 +143,8 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
@@ -130,6 +155,12 @@ class Kit extends PageBase {
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
+					],
+					'color' => [
+						'dynamic' => [],
+					],
+					'color_b' => [
+						'dynamic' => [],
 					],
 				],
 			]
@@ -169,6 +200,8 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_schemes_notice();
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -200,6 +233,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$button_selector => 'color: {{VALUE}};',
 				],
@@ -211,17 +245,10 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$button_selector => 'background-color: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => 'button_border',
-				'selector' => $button_selector,
 			]
 		);
 
@@ -230,6 +257,19 @@ class Kit extends PageBase {
 			[
 				'name' => 'button_box_shadow',
 				'selector' => $button_selector,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'button_border',
+				'selector' => $button_selector,
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
@@ -259,6 +299,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$button_hover_selector => 'color: {{VALUE}};',
 				],
@@ -270,18 +311,10 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$button_hover_selector => 'background-color: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => 'button_hover_border',
-				'selector' => $button_hover_selector,
-				'separator' => 'before',
 			]
 		);
 
@@ -293,6 +326,19 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'button_hover_border',
+				'selector' => $button_hover_selector,
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
+			]
+		);
+
 		$this->add_control(
 			'button_hover_border_radius',
 			[
@@ -300,7 +346,7 @@ class Kit extends PageBase {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					$button_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$button_hover_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -334,11 +380,22 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_schemes_notice();
+
+		$this->add_control(
+			'body_heading',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Body', 'elementor' ),
+			]
+		);
+
 		$this->add_control(
 			'body_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
@@ -415,6 +472,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$link_selectors => 'color: {{VALUE}};',
 				],
@@ -444,6 +502,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$link_hover_selectors => 'color: {{VALUE}};',
 				],
@@ -464,12 +523,12 @@ class Kit extends PageBase {
 		$this->end_controls_tabs();
 
 		// Headings.
-		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1,{{WRAPPER}} h1.elementor-heading-title' );
-		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2,{{WRAPPER}} h2.elementor-heading-title' );
-		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3,{{WRAPPER}} h3.elementor-heading-title' );
-		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4,{{WRAPPER}} h4.elementor-heading-title' );
-		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5,{{WRAPPER}} h5.elementor-heading-title' );
-		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6,{{WRAPPER}} h6.elementor-heading-title' );
+		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
+		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2' );
+		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3' );
+		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4' );
+		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5' );
+		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6' );
 
 		$this->end_controls_section();
 	}
@@ -478,7 +537,6 @@ class Kit extends PageBase {
 		// Use an array for better readability.
 		$label_selectors = [
 			'{{WRAPPER}} label',
-			'{{WRAPPER}} .elementor-widget-form .elementor-field-group > label',
 		];
 
 		$input_selectors = [
@@ -505,6 +563,8 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_schemes_notice();
+
 		$this->add_control(
 			'form_label_heading',
 			[
@@ -518,6 +578,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$label_selector => 'color: {{VALUE}};',
 				],
@@ -587,7 +648,6 @@ class Kit extends PageBase {
 						'max' => 3000,
 					],
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -632,6 +692,9 @@ class Kit extends PageBase {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$this->add_schemes_notice();
+
 		$this->start_controls_tabs( 'tabs_image_style' );
 
 		$this->start_controls_tab(
@@ -646,6 +709,11 @@ class Kit extends PageBase {
 			[
 				'name' => 'image_border',
 				'selector' => $image_selectors,
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
@@ -712,7 +780,11 @@ class Kit extends PageBase {
 			[
 				'name' => 'image_hover_border',
 				'selector' => '{{WRAPPER}} img:hover',
-				'separator' => 'before',
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
@@ -747,14 +819,6 @@ class Kit extends PageBase {
 		);
 
 		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'image_hover_css_filters',
-				'selector' => $image_hover_selectors,
-			]
-		);
-
-		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'image_hover_box_shadow',
@@ -765,10 +829,18 @@ class Kit extends PageBase {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'image_hover_css_filters',
+				'selector' => $image_hover_selectors,
+			]
+		);
+
 		$this->add_control(
 			'image_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => __( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -795,6 +867,7 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$selector => 'color: {{VALUE}};',
 				],
@@ -806,9 +879,18 @@ class Kit extends PageBase {
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
 				'selectors' => [
 					$selector => 'background-color: {{VALUE}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => $prefix . '_box_shadow',
+				'selector' => $selector,
 			]
 		);
 
@@ -817,6 +899,11 @@ class Kit extends PageBase {
 			[
 				'name' => $prefix . '_border',
 				'selector' => $selector,
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
 			]
 		);
 
@@ -829,14 +916,6 @@ class Kit extends PageBase {
 				'selectors' => [
 					$selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => $prefix . '_box_shadow',
-				'selector' => $selector,
 			]
 		);
 	}

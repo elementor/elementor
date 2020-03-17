@@ -1,4 +1,4 @@
-/* global ElementorConfig, ElementorDocsConfig */
+/* global ElementorConfig */
 
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
@@ -12,7 +12,7 @@ import HistoryManager from 'elementor/modules/history/assets/js/module';
 import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
-import KitManager from 'elementor/core/kits/assets/js/manager.js';
+import KitManager from '../../../../core/kits/assets/js/manager.js';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -72,6 +72,15 @@ export default class EditorBase extends Marionette.Application {
 				behaviors: {
 					FooterSaver: require( './document/save/behaviors/footer-saver' ),
 				},
+			},
+		},
+		saver: {
+			get footerBehavior() {
+				elementorCommon.helpers.softDeprecated( 'elementor.modules.saver.footerBehavior.',
+					'2.9.0',
+					'elementor.modules.components.saver.behaviors.FooterSaver' );
+
+				return elementor.modules.components.saver.behaviors.FooterSaver;
 			},
 		},
 		controls: {
@@ -171,6 +180,16 @@ export default class EditorBase extends Marionette.Application {
 			element: '.elementor-control-responsive-switchers',
 			callback: ( $elementsToHide ) => {
 				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
+			},
+		},
+		promotion: {
+			ignore: '.elementor-panel-category-items',
+			callback: () => {
+				const dialog = elementor.promotion.dialog;
+
+				if ( dialog ) {
+					dialog.hide();
+				}
 			},
 		},
 	};
@@ -274,6 +293,14 @@ export default class EditorBase extends Marionette.Application {
 		return this.getPreviewView().getContainer();
 	}
 
+	getContainer( id ) {
+		if ( 'document' === id ) {
+			return this.getPreviewContainer();
+		}
+
+		return $e.components.get( 'document' ).utils.findContainerById( id );
+	}
+
 	initComponents() {
 		const EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
@@ -316,7 +343,7 @@ export default class EditorBase extends Marionette.Application {
 		let config = this.config.document.elements;
 
 		// If it's an reload, use the not-saved data
-		if ( this.elements && this.config.document.id === this.config.initial_document.id ) {
+		if ( this.elements && this.elements.length && this.config.document.id === this.config.initial_document.id ) {
 			config = this.elements.toJSON();
 		}
 
@@ -355,6 +382,8 @@ export default class EditorBase extends Marionette.Application {
 		window.elementorFrontend = frontendWindow.elementorFrontend;
 
 		frontendWindow.elementor = this;
+
+		frontendWindow.elementorCommon = elementorCommon;
 
 		elementorFrontend.init();
 
@@ -477,7 +506,7 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor ) {
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent() ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );
@@ -567,14 +596,6 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
-	openLibraryOnStart() {
-		if ( '#library' === location.hash ) {
-			$e.run( 'library/open' );
-
-			location.hash = '';
-		}
-	}
-
 	enterPreviewMode( hidePanel ) {
 		let $elements = elementorFrontend.elements.$body;
 
@@ -586,9 +607,13 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview' );
+		const $element = this.documents.getCurrent().$element;
+
+		if ( $element ) {
+			$element
+				.removeClass( 'elementor-edit-area-active' )
+				.addClass( 'elementor-edit-area-preview' );
+		}
 
 		if ( hidePanel ) {
 			// Handle panel resize
@@ -604,9 +629,9 @@ export default class EditorBase extends Marionette.Application {
 			.addClass( 'elementor-editor-active' );
 
 		if ( elementor.config.document.panel.has_elements ) {
-			this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-preview' )
-			.addClass( 'elementor-edit-area-active' );
+			this.documents.getCurrent().$element
+				.removeClass( 'elementor-edit-area-preview' )
+				.addClass( 'elementor-edit-area-active' );
 		}
 	}
 
@@ -624,10 +649,6 @@ export default class EditorBase extends Marionette.Application {
 	reloadPreview() {
 		// TODO: Should be command?
 		jQuery( '#elementor-preview-loading' ).show();
-
-		this.once( 'preview:loaded', () => {
-			this.onDocumentLoaded( this.documents.getCurrent() );
-		} );
 
 		this.$preview[ 0 ].contentWindow.location.reload( true );
 	}
@@ -771,11 +792,14 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } ).then( () => {
-			elementorCommon.elements.$window.trigger( 'elementor:init' );
-		} );
-
 		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+
+		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
+			.then( () => {
+				elementorCommon.elements.$window.trigger( 'elementor:init' );
+			} );
+
+		this.initNavigator();
 
 		this.logSite();
 	}
@@ -794,6 +818,7 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
+
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
@@ -828,13 +853,13 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
+		$e.internal( 'editor/documents/attach-preview' );
+
 		this.loaded = true;
 	}
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
-
-		this.openLibraryOnStart();
 
 		this.previewLoadedOnce = true;
 	}
@@ -939,134 +964,6 @@ export default class EditorBase extends Marionette.Application {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	}
 
-	onDocumentLoaded( document ) {
-		this.checkPageStatus();
-
-		// Reference container back to document.
-		document.container.document = document;
-
-		if ( this.heartbeat ) {
-			this.heartbeat.destroy();
-		}
-
-		this.heartbeat = new Heartbeat( document );
-
-		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
-
-		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
-			this.showFlexBoxAttentionDialog();
-		}
-
-		if ( document.config.elements ) {
-			this.$previewElementorEl = this.$previewContents.find( '.elementor-' + this.config.document.id );
-
-			if ( ! this.$previewElementorEl.length ) {
-				this.onPreviewElNotFound();
-
-				return;
-			}
-
-			this.$previewElementorEl.addClass( 'elementor-edit-area' );
-
-			this.initElements();
-
-			const iframeRegion = new Marionette.Region( {
-				// Make sure you get the DOM object out of the jQuery object
-				el: this.$previewElementorEl[ 0 ],
-			} );
-
-			this.addRegions( {
-				sections: iframeRegion,
-			} );
-
-			const Preview = require( 'elementor-views/preview' );
-
-			this.sections.show( new Preview( { model: this.elementsModel } ) );
-
-			this.initNavigator();
-
-			this.onEditModeSwitched();
-
-			document.container.view = elementor.getPreviewView();
-			document.container.children = elementor.elements;
-			document.container.model.attributes.elements = elementor.elements;
-
-			this.helpers.scrollToView( this.$previewElementorEl );
-
-			this.$previewElementorEl
-			.addClass( 'elementor-edit-area-active' )
-			.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
-		}
-
-		$e.internal( 'panel/open-default', {
-			refresh: true,
-		} );
-
-		this.trigger( 'document:loaded', document );
-	}
-
-	unloadDocument( document ) {
-		if ( document.id !== this.config.document.id ) {
-			return;
-		}
-
-		this.saver.stopAutoSave( document );
-
-		this.channels.dataEditMode.trigger( 'switch', 'preview' );
-
-		this.$previewContents.find( `.elementor-${ document.id }` )
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
-
-		document.editor.status = 'closed';
-
-		this.config.document = {};
-
-		this.documents.unsetCurrent();
-	}
-
-	/**
-	 * @param {{}} config
-	 */
-	loadDocument( config ) {
-		this.config.document = config;
-
-		this.setAjax();
-
-		this.addWidgetsCache( config.widgets );
-
-		this.templates.init();
-
-		const document = new Document( config );
-
-		elementor.documents.add( document );
-
-		// Must set current before create a container.
-		elementor.documents.setCurrent( document );
-
-		this.settings.page = new this.settings.modules.page( config.settings );
-
-		document.container = this.settings.page.getEditedView().getContainer();
-
-		this.once( 'preview:loaded', () => this.onDocumentLoaded( document ) );
-
-		if ( this.loaded ) {
-			this.schemes.printSchemesStyle();
-
-			this.$preview.trigger( 'load' );
-
-			this.$previewContents.find( `#elementor-post-${ config.id }-css` ).remove();
-
-			const previewRevisionID = config.revisions.current_id;
-
-			this.$previewContents.find( `#elementor-preview-${ previewRevisionID }` ).remove();
-		}
-
-		return document;
-	}
-
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
 			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
@@ -1126,5 +1023,24 @@ export default class EditorBase extends Marionette.Application {
 				return elementor.widgetsCache;
 			},
 		} );
+
+		Object.defineProperty( this, '$previewElementorEl', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
+
+				return elementor.documents.getCurrent().$element;
+			},
+		} );
+	}
+
+	toggleDocumentCssFiles( document, state ) {
+		const selectors = [
+			`#elementor-post-${ document.config.id }-css`,
+			`#elementor-preview-${ document.config.revisions.current_id }`,
+		],
+			$files = this.$previewContents.find( selectors.join( ',' ) ),
+			type = state ? 'text/css' : 'elementor/disabled-css';
+
+		$files.attr( { type } );
 	}
 }

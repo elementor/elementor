@@ -16,11 +16,11 @@ export default class extends elementorModules.editor.utils.Module {
 
 		menu.addItem( {
 			name: 'theme-style',
-			icon: 'eicon-theme-style',
+			icon: 'eicon-adjust',
 			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open' ),
-		}, 'style', 'global-colors' );
+		}, 'style' );
 	}
 
 	addHeaderBehavior( behaviors ) {
@@ -35,6 +35,10 @@ export default class extends elementorModules.editor.utils.Module {
 		super.onInit();
 
 		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
+			if ( ! elementor.config.initial_document.panel.support_kit ) {
+				return;
+			}
+
 			if ( ! elementor.config.user.can_edit_kit ) {
 				return;
 			}

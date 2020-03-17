@@ -75,7 +75,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 	handleRepeaterData: function( attrs ) {
 		_.each( this.controls, function( field ) {
-			if ( 'repeater' === field.type ) {
+			if ( field.is_repeater ) {
 				// TODO: Apply defaults on each field in repeater fields
 				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
 					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
@@ -84,6 +84,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 							options.controls = {};
 
+							// eslint-disable-next-line no-unused-vars
 							Object.entries( field.fields ).map( ( [ key, item ] ) => {
 								options.controls[ item.name ] = item;
 							} );

@@ -555,19 +555,23 @@ class Module extends BaseModule {
 	 * @param Document $document
 	 */
 	private function save_document_usage( Document $document ) {
-		if ( ! $document::get_property( 'is_editable' ) ) {
+		if ( ! $document::get_property( 'is_editable' ) && ! $document->is_built_with_elementor() ) {
 			return;
 		}
 
 		// Get data manually to avoid conflict with `\Elementor\Core\Base\Document::get_elements_data... convert_to_elementor`.
 		$data = $document->get_json_meta( '_elementor_data' );
 
-		if ( is_array( $data ) ) {
-			$usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
+		if ( ! empty( $data ) ) {
+			try {
+				$usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
-			$document->update_meta( self::META_KEY, $usage );
+				$document->update_meta( self::META_KEY, $usage );
 
-			$this->add_to_global( $document->get_name(), $usage );
+				$this->add_to_global( $document->get_name(), $usage );
+			} catch ( \Exception $exception ) {
+				return; // Do nothing.
+			};
 		}
 	}
 

@@ -164,12 +164,6 @@ class Model extends CSS_Model {
 							'default' => 'yes',
 							'frontend_available' => true,
 						],
-						'elementor_lightbox_enable_footer' => [
-							'label' => __( 'Footer Text', 'elementor' ),
-							'type' => Controls_Manager::SWITCHER,
-							'default' => 'yes',
-							'frontend_available' => true,
-						],
 						'elementor_lightbox_title_src' => [
 							'label' => __( 'Title', 'elementor' ),
 							'type' => Controls_Manager::SELECT,
@@ -181,9 +175,6 @@ class Model extends CSS_Model {
 								'description' => __( 'Description', 'elementor' ),
 							],
 							'default' => 'title',
-							'condition' => [
-								'elementor_lightbox_enable_footer' => 'yes',
-							],
 							'frontend_available' => true,
 						],
 						'elementor_lightbox_description_src' => [
@@ -197,9 +188,6 @@ class Model extends CSS_Model {
 								'description' => __( 'Description', 'elementor' ),
 							],
 							'default' => 'description',
-							'condition' => [
-								'elementor_lightbox_enable_footer' => 'yes',
-							],
 							'frontend_available' => true,
 						],
 						'elementor_lightbox_color' => [

@@ -15,13 +15,16 @@ export class Close extends CommandBase {
 		}
 
 		// TODO: Move to an hook.
-		if ( ! mode && elementor.saver.isEditorChanged() ) {
+		if ( ! mode && ( document.editor.isChanged || document.isDraft() ) ) {
 			const deferred = jQuery.Deferred();
 			this.getConfirmDialog( deferred ).show();
 			return deferred.promise();
 		}
 
 		switch ( mode ) {
+			case 'autosave':
+				await $e.run( 'document/save/auto' );
+				break;
 			case 'save':
 				await $e.run( 'document/save/update' );
 				break;
@@ -30,7 +33,7 @@ export class Close extends CommandBase {
 				break;
 		}
 
-		elementor.unloadDocument( document );
+		$e.internal( 'editor/documents/unload', { document } );
 
 		if ( onClose ) {
 			await onClose( document );
@@ -68,17 +71,19 @@ export class Close extends CommandBase {
 				this.args.mode = 'save';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args ).then( () => {
-					deferred.resolve();
-				} );
+				$e.run( 'editor/documents/close', this.args )
+					.then( () => {
+						deferred.resolve();
+					} );
 			},
 			onCancel: () => {
 				this.args.mode = 'discard';
 
 				// Re-run with same args.
-				$e.run( 'editor/documents/close', this.args ).then( () => {
-					deferred.resolve();
-				} );
+				$e.run( 'editor/documents/close', this.args )
+					.then( () => {
+						deferred.resolve();
+					} );
 			},
 		} );
 

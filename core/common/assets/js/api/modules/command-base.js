@@ -13,7 +13,8 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Create Commands Base.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
+	 * @param [commandsAPI={}]
 	 */
 	constructor( args, commandsAPI = $e.commands ) {
 		super( args );
@@ -64,7 +65,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Initialize command, called after construction.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 */
 	initialize( args = {} ) {} // eslint-disable-line no-unused-vars
 
@@ -73,9 +74,9 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Validate command arguments.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 */
-	validateArgs( args ) {} // eslint-disable-line no-unused-vars
+	validateArgs( args = {} ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function isDataChanged().
@@ -93,11 +94,11 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Do the actual command.
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 *
 	 * @returns {*}
 	 */
-	apply( args ) { // eslint-disable-line no-unused-vars
+	apply( args = {} ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -122,7 +123,9 @@ export default class CommandBase extends ArgsObject {
 		} catch ( e ) {
 			this.onCatchApply( e );
 
+			// Catch 'Hook-Break' that comes from hooks base.
 			if ( e instanceof $e.modules.HookBreak ) {
+				// Bypass.
 				return false;
 			}
 		}
@@ -154,9 +157,9 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called before run().
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 */
-	onBeforeRun( args ) {
+	onBeforeRun( args = {} ) {
 		$e.hooks.runUIBefore( this.currentCommand, args );
 	}
 
@@ -165,10 +168,10 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called after run().
 	 *
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param [args={}]
+	 * @param [result={*}]
 	 */
-	onAfterRun( args, result ) {
+	onAfterRun( args = {}, result ) {
 		$e.hooks.runUIAfter( this.currentCommand, args, result );
 	}
 
@@ -177,9 +180,9 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called before apply().
 	 *
-	 * @param {{}} args
+	 * @param [args={}]
 	 */
-	onBeforeApply( args ) {
+	onBeforeApply( args = {} ) {
 		$e.hooks.runDataDependency( this.currentCommand, args );
 	}
 
@@ -188,10 +191,10 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * Called after apply().
 	 *
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param [args={}]
+	 * @param [result={*}]
 	 */
-	onAfterApply( args, result ) {
+	onAfterApply( args = {}, result ) {
 		$e.hooks.runDataAfter( this.currentCommand, args, result );
 	}
 
@@ -205,14 +208,7 @@ export default class CommandBase extends ArgsObject {
 	onCatchApply( e ) {
 		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
 
-		if ( $e.devTools ) {
-			$e.devTools.log.error( e );
-		}
-
-		if ( ! ( e instanceof $e.modules.HookBreak ) ) {
-			// eslint-disable-next-line no-console
-			console.error( e );
-		}
+		elementorCommon.helpers.consoleError( e );
 
 		$e.hooks.runUICatch( this.currentCommand, this.args, e );
 	}

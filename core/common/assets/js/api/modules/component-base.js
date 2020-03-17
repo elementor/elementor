@@ -25,7 +25,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 		Object.entries( this.getCommandsInternal() ).forEach( ( [ command, callback ] ) => this.registerCommandInternal( command, callback ) );
 
-		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) );
+		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) ); // eslint-disable-line no-unused-vars
 	}
 
 	getNamespace() {
@@ -108,6 +108,10 @@ export default class ComponentBase extends elementorModules.Module {
 		$e.routes.register( this, route, callback );
 	}
 
+	unregisterRoute( route ) {
+		$e.routes.unregister( this, route );
+	}
+
 	registerTabRoute( tab ) {
 		this.registerRoute( tab, () => this.activateTab( tab ) );
 	}
@@ -173,6 +177,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 	removeTab( tab ) {
 		delete this.tabs[ tab ];
+		this.unregisterRoute( tab );
 	}
 
 	hasTab( tab ) {

@@ -136,7 +136,7 @@
 	}
 }
 
-.elementor-element--promotion__dialog {
+#elementor-element--promotion__dialog {
 	position: absolute;
 	width: 300px;
 	z-index: 1;
@@ -152,6 +152,10 @@
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
 		@include border-end-property(color, #fff);
+	}
+
+	&__title {
+		font-size: 14px;
 	}
 
 	.dialog {
@@ -196,8 +200,4 @@
 			}
 		}
 	}
-}
-
-#elementor-element--promotion__dialog__title {
-	font-size: 14px;
 }

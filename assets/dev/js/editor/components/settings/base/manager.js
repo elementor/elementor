@@ -12,9 +12,13 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementor.on( 'document:loaded', this.onElementorPreviewLoaded );
+		elementor.on( 'document:loaded', this.onElementorDocumentLoaded );
 
 		this.model.on( 'change', this.onModelChange );
+	},
+
+	unbindEvents: function() {
+		elementor.off( 'document:loaded', this.onElementorDocumentLoaded );
 	},
 
 	addPanelPage: function() {
@@ -53,6 +57,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			view: false,
 			label: this.getSettings( 'panelPage' ).title,
 			controls: this.model.controls,
+			document: this.getDocument(),
 			renderer: false,
 		} );
 
@@ -61,6 +66,10 @@ module.exports = elementorModules.ViewModule.extend( {
 			getEditModel: () => editModel,
 			model: editModel,
 		};
+	},
+
+	getDocument() {
+		return false;
 	},
 
 	updateStylesheet: function( keepOldEntries ) {
@@ -88,11 +97,16 @@ module.exports = elementorModules.ViewModule.extend( {
 	initControlsCSSParser: function() {
 		var controlsCSS;
 
+		this.destroyControlsCSS = function() {
+			controlsCSS.removeStyleFromDocument();
+		};
+
 		this.getControlsCSS = function() {
 			if ( ! controlsCSS ) {
 				controlsCSS = new ControlsCSSParser( {
 					id: this.getStyleId(),
 					settingsModel: this.model,
+					context: this.getEditedView(),
 				} );
 			}
 
@@ -195,7 +209,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		self.debounceSave();
 	},
 
-	onElementorPreviewLoaded: function() {
+	onElementorDocumentLoaded: function() {
 		this.updateStylesheet();
 
 		this.addPanelPage();
@@ -203,5 +217,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( ! elementor.userCan( 'design' ) ) {
 			$e.route( 'panel/page-settings/settings' );
 		}
+	},
+
+	destroy: function() {
+		this.unbindEvents();
+
+		this.model.destroy();
 	},
 } );

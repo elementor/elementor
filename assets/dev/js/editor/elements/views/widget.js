@@ -192,7 +192,7 @@ WidgetView = BaseElementView.extend( {
 
 	onBeforeDestroy: function() {
 		// Remove old style from the DOM.
-		elementor.$previewContents.find( '#elementor-style-' + this.model.cid ).remove();
+		elementor.$previewContents.find( '#elementor-style-' + this.model.get( 'id' ) ).remove();
 	},
 
 	onModelRemoteRender: function() {
@@ -230,7 +230,9 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onClickEdit: function() {
-		this.model.trigger( 'request:edit' );
+		if ( this.container.isEditable() ) {
+			this.model.trigger( 'request:edit' );
+		}
 	},
 } );
 

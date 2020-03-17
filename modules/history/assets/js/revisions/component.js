@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -10,6 +11,10 @@ export default class Component extends ComponentBase {
 			up: () => this.navigate( true ),
 			down: () => this.navigate(),
 		};
+	}
+
+	defaultHooks() {
+		return this.importHooks( hooks );
 	}
 
 	defaultShortcuts() {

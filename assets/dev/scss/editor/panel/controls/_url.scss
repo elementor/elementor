@@ -7,6 +7,10 @@
 		}
 	}
 
+	.elementor-control-field {
+		position: relative;
+	}
+
 	&:not(.elementor-control-dynamic),
 	&.elementor-control-dynamic-value {
 
@@ -40,7 +44,7 @@
 				padding-top: 10px;
 
 				.elementor-control-field-description {
-					margin-top: 5px;
+					margin-top: 10px;
 				}
 			}
 		}
@@ -50,7 +54,7 @@
 			align-items: center;
 
 			&:not(:last-child){
-				padding-bottom: 5px;
+				padding-bottom: 10px;
 			}
 
 			input,
@@ -71,8 +75,8 @@
 				content: none;
 
 				//instead of the original style
-				height: 16px;
-				width: 16px;
+				height: 15px;
+				width: 15px;
 				border: 1px solid $editor-lightest;
 
 				//align the mark in the input
@@ -94,6 +98,10 @@
 						transform: rotate(45deg);
 					}
 				}
+			}
+
+			label {
+				font-size: 12px;
 			}
 		}
 
@@ -118,10 +126,12 @@
 		&-autocomplete-spinner {
 			display: none;
 			position: absolute;
-			width: 12px;
-			height: 12px;
-			top: 7px;
-			@include start(44px);
+			top: 5px;
+			right: 0px;
+			width: 10px;
+			height: 10px;
+			font-size: 10px;
+			color: $gray-light;
 		}
 
 		&__custom-attributes {

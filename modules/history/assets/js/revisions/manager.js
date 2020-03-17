@@ -2,35 +2,14 @@ const RevisionsCollection = require( './collection' );
 
 /**
  * TODO: consider refactor this class.
+ * TODO: Rename to RevisionsModule.
  */
 export default class RevisionsManager {
-	history;
+	document;
 	revisions;
 
 	constructor( document ) {
-		this.attachEvents();
-
-		this.history = document.history;
-	}
-
-	onEditorSaved( data ) {
-		if ( data.latest_revisions ) {
-			this.addRevisions( data.latest_revisions );
-		}
-
-		this.requestRevisions( () => {
-			if ( data.revisions_ids ) {
-				const revisionsToKeep = this.revisions.filter( ( revision ) => {
-					return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
-				} );
-
-				this.revisions.reset( revisionsToKeep );
-			}
-		} );
-	}
-
-	attachEvents() {
-		elementor.channels.editor.on( 'saved', this.onEditorSaved.bind( this ) );
+		this.document = document;
 	}
 
 	getItems() {
@@ -58,12 +37,7 @@ export default class RevisionsManager {
 	setEditorData( data ) {
 		const collection = elementor.getRegion( 'sections' ).currentView.collection;
 
-		// Don't track in history.
-		this.history.setActive( false );
-
 		collection.reset( data );
-
-		this.history.setActive( true );
 	}
 
 	getRevisionDataAsync( id, options ) {

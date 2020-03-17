@@ -35,16 +35,17 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			slidesPerView: slidesToShow,
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
+			handleElementorBreakpoints: true,
 		};
 
 		swiperOptions.breakpoints = {};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.md - 1 ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.md ] = {
 			slidesPerView: +elementSettings.slides_to_show_mobile || 1,
 			slidesPerGroup: +elementSettings.slides_to_scroll_mobile || 1,
 		};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.lg - 1 ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.lg ] = {
 			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
 			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
 		};
@@ -52,7 +53,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
 				delay: elementSettings.autoplay_speed,
-				disableOnInteraction: !! elementSettings.pause_on_interaction,
+				disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
 			};
 		}
 
@@ -115,7 +116,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		// Expose the swiper instance in the frontend
 		this.elements.$carousel.data( 'swiper', this.swiper );
 
-		if ( elementSettings.pause_on_hover ) {
+		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.elements.$carousel.on( {
 				mouseenter: () => {
 					this.swiper.autoplay.stop();

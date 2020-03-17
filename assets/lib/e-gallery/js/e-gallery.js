@@ -1,3 +1,4 @@
+/*! E-Gallery v1.1.2 by Elementor */
 var EGallery =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -246,30 +247,16 @@ module.exports = _setPrototypeOf;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-function _typeof3(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof3 = function _typeof3(obj) { return typeof obj; }; } else { _typeof3 = function _typeof3(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof3(obj); }
-
-function _typeof2(obj) {
-  if (typeof Symbol === "function" && _typeof3(Symbol.iterator) === "symbol") {
-    _typeof2 = function _typeof2(obj) {
-      return _typeof3(obj);
-    };
-  } else {
-    _typeof2 = function _typeof2(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof3(obj);
-    };
-  }
-
-  return _typeof2(obj);
-}
-
 function _typeof(obj) {
-  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     module.exports = _typeof = function _typeof(obj) {
-      return _typeof2(obj);
+      return typeof obj;
     };
   } else {
     module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
@@ -435,10 +422,16 @@ function () {
     this.prepareGallery();
     var oldRunGallery = this.runGallery.bind(this);
     this.runGallery = this.debounce(function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
       if (_this.settings.lazyLoad) {
-        oldRunGallery();
+        oldRunGallery.apply(void 0, args);
       } else {
-        _this.allImagesPromise.then(oldRunGallery);
+        _this.allImagesPromise.then(function () {
+          return oldRunGallery.apply(void 0, args);
+        });
       }
     }, 300);
 
@@ -651,8 +644,8 @@ function () {
 
       var timeout;
       return function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
         }
 
         clearTimeout(timeout);
@@ -716,7 +709,7 @@ function () {
             image.onload = resolve;
           });
           promise.then(function () {
-            $item.find(_this6.settings.selectors.image).css('background-image', 'url(' + _this6.settings.items[index].thumbnail + ')').addClass(_this6.getItemClass(_this6.settings.classes.imageLoaded));
+            $item.find(_this6.settings.selectors.image).css('background-image', 'url("' + _this6.settings.items[index].thumbnail + '")').addClass(_this6.getItemClass(_this6.settings.classes.imageLoaded));
             item.loaded = true;
           });
           image.src = _this6.settings.items[index].thumbnail;

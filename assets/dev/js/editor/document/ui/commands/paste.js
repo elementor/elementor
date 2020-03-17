@@ -21,11 +21,6 @@ export class Paste extends CommandBase {
 		}
 	}
 
-	validateArgs( args ) {
-		this.requireArgumentType( 'storage', 'object', this );
-		//this.requireArgumentType( 'target', 'array', this );
-	}
-
 	apply( args ) {
 		if ( ! this.target ) {
 			return false;

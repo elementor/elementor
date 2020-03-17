@@ -46,10 +46,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		if ( dynamicSettings && dynamicSettings.active ) {
 			const tags = _.filter( elementor.dynamicTags.getConfig( 'tags' ), function( tag ) {
-				return _.intersection( tag.categories, dynamicSettings.categories ).length;
+				return tag.editable && _.intersection( tag.categories, dynamicSettings.categories ).length;
 			} );
 
-			if ( ! elementor.helpers.hasPro() || Object.keys( tags ).length ) {
+			if ( tags.length || elementor.config.user.is_administrator ) {
 				behaviors.tags = {
 					behaviorClass: TagsBehavior,
 					tags: tags,
@@ -107,7 +107,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	setEditSetting: function( settingKey, settingValue ) {
-		var settings = this.getOption( 'elementEditSettings' );
+		const settings = this.getOption( 'elementEditSettings' ) || this.getOption( 'container' ).settings;
 
 		settings.set( settingKey, settingValue );
 	},

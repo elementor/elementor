@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -16,38 +17,14 @@ export default class Component extends ComponentBase {
 
 	defaultCommandsInternal() {
 		return {
-			'open-default': () => $e.route( elementor.documents.getCurrent().config.panel.default_route ),
+			'open-default': () => $e.route( elementor.documents.getCurrent().config.panel.default_route, { refresh: true } ),
 			'state-loading': () => elementorCommon.elements.$body.addClass( 'elementor-panel-loading' ),
 			'state-ready': () => elementorCommon.elements.$body.removeClass( 'elementor-panel-loading' ),
 		};
 	}
 
 	defaultCommands() {
-		return {
-			open: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'edit' ),
-			close: () => elementor.getPanelView().modeSwitcher.currentView.setMode( 'preview' ),
-			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
-			save: () => $e.run( 'document/save/draft' ),
-			publish: () => $e.run( 'document/save/publish' ),
-			exit: () => $e.route( 'panel/menu' ),
-			'change-device-mode': ( args ) => {
-				const devices = [ 'desktop', 'tablet', 'mobile' ];
-				if ( ! args.device ) {
-					const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-					let modeIndex = devices.indexOf( currentDeviceMode );
-
-					modeIndex++;
-
-					if ( modeIndex >= devices.length ) {
-						modeIndex = 0;
-					}
-
-					args.device = devices[ modeIndex ];
-				}
-
-				elementor.changeDeviceMode( args.device );
-			},
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultShortcuts() {

@@ -13,6 +13,11 @@
 	// Reset Style for some themes and browsers
 	hyphens: manual;
 
+	a {
+		box-shadow: none;
+		text-decoration: none;
+	}
+
 	hr {
 		margin: 0;
 		background-color: transparent;
@@ -21,6 +26,9 @@
 	img {
 		height: auto;
 		max-width: 100%;
+		border: none;
+		border-radius: 0;
+		box-shadow: none;
 	}
 
 	.elementor-widget:not(.elementor-widget-text-editor) figure {

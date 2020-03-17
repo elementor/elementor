@@ -36,7 +36,7 @@ abstract class Tag extends Base_Tag {
 
 		$value = ob_get_clean();
 
-		if ( $value ) {
+		if ( ! Utils::is_empty( $value ) ) {
 			// TODO: fix spaces in `before`/`after` if WRAPPED_TAG ( conflicted with .elementor-tag { display: inline-flex; } );
 			if ( ! Utils::is_empty( $settings, 'before' ) ) {
 				$value = wp_kses_post( $settings['before'] ) . $value;
