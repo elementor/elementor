@@ -17,7 +17,6 @@ import * as hookUI from './modules/hooks/ui';
 
 /**
  * @typedef {{}} Args
- * @property {('command'|'start'|'contextmenu'|'panel'|'dialog'|'preview')} source
  * @property {Container} container
  * @property {Array.<Container>} containers
  */

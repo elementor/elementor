@@ -99,7 +99,7 @@ class AddSectionBase extends Marionette.ItemView {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
 						isEnabled: hasContent,
-						callback: () => $e.run( 'document/elements/empty', { source: 'contextmenu' } ),
+						callback: () => $e.run( 'document/elements/empty' ),
 					},
 				],
 			},
@@ -139,7 +139,6 @@ class AddSectionBase extends Marionette.ItemView {
 			columns: parsedStructure.columnsCount,
 			structure: selectedStructure,
 			options: Object.assign( {}, this.options ),
-			source: 'preview',
 		} );
 	}
 
@@ -167,7 +166,6 @@ class AddSectionBase extends Marionette.ItemView {
 						afterAdd: 'section:after:drop',
 					},
 				},
-				source: 'panel',
 			} );
 
 		// Create the element in column.

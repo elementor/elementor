@@ -19,7 +19,7 @@ export default class extends elementorModules.editor.utils.Module {
 			icon: 'eicon-adjust',
 			title: elementor.translate( 'Theme Style' ),
 			type: 'page',
-			callback: () => $e.run( 'panel/global/open', { source: 'panel' } ),
+			callback: () => $e.run( 'panel/global/open' ),
 		}, 'style' );
 	}
 
