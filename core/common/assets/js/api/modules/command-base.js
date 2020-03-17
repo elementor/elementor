@@ -4,12 +4,8 @@ export default class CommandBase extends ArgsObject {
 	static [Symbol.hasInstance]( obj ) {
 		let result = super[ Symbol.hasInstance ]( obj );
 
-		if ( ! result ) {
-			result = obj.classes.find( ( objClass ) => {
-				if ( objClass === this.getBaseName() ) {
-					return true;
-				}
-			} );
+		if ( ! result && -1 !== obj.classes.indexOf( this.getBaseName() ) ) {
+			result = true;
 		}
 
 		return result;
