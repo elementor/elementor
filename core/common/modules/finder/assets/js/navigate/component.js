@@ -39,10 +39,10 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultCommands() {
-		const layoutCommands = super.defaultCommands();
+		const modalCommands = super.defaultCommands();
 
 		return {
-			... layoutCommands,
+			... modalCommands,
 			... this.importCommands( commands ),
 		};
 	}
