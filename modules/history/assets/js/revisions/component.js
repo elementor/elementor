@@ -1,5 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import CommandBase from 'elementor-api/modules/command-base';
+import * as commands from './commands/';
 import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
@@ -8,16 +8,7 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		const self = this;
-
-		return {
-			up: () => new class Up extends CommandBase {
-				apply = () => self.navigate( true );
-			},
-			down: () => new class Down extends CommandBase {
-				apply = () => self.navigate();
-			},
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultHooks() {
