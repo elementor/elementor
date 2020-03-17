@@ -1,5 +1,5 @@
 import ItemView from './item';
-import ItemModel from './item-model';
+import ItemModel from '../model/item';
 
 export default class extends Marionette.CompositeView {
 	className() {

@@ -1,65 +1,12 @@
-import ComponentModalBase from 'elementor-api/modules/component-modal-base';
-import FinderLayout from './modal-layout';
-import CommandBase from 'elementor-api/modules/command-base';
+import ComponentBase from 'elementor-api/modules/component-base';
+import NavigateComponent from './navigate/component';
 
-export default class Component extends ComponentModalBase {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'finder';
 	}
 
-	defaultShortcuts() {
-		return {
-			'': {
-				keys: 'ctrl+e',
-			},
-			'navigate/down': {
-				keys: 'down',
-				scopes: [ this.getNamespace() ],
-				dependency: () => {
-					return this.getItemsView();
-				},
-			},
-			'navigate/up': {
-				keys: 'up',
-				scopes: [ this.getNamespace() ],
-				dependency: () => {
-					return this.getItemsView();
-				},
-			},
-			'navigate/select': {
-				keys: 'enter',
-				scopes: [ this.getNamespace() ],
-				dependency: () => {
-					return this.getItemsView().$activeItem;
-				},
-
-			},
-		};
-	}
-
-	defaultCommands() {
-		const self = this,
-			layoutCommands = super.defaultCommands();
-
-		return {
-			... layoutCommands,
-			'navigate/down': () => new class NavigateDown extends CommandBase {
-				apply = () => self.getItemsView().activateNextItem();
-			},
-			'navigate/up': () => new class NavigateUp extends CommandBase {
-				apply = () => self.getItemsView().activateNextItem( true );
-			},
-			'navigate/select': ( event ) => new class NavigateSelect extends CommandBase {
-				apply = () => self.getItemsView().goToActiveItem( event );
-			}( event ),
-		};
-	}
-
-	getModalLayout() {
-		return FinderLayout;
-	}
-
-	getItemsView() {
-		return this.layout.modalContent.currentView.content.currentView;
+	registerAPI() {
+		$e.components.register( new NavigateComponent( { manager: this } ) );
 	}
 }
