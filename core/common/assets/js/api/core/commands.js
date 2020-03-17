@@ -1,4 +1,4 @@
-import CommandBase from "elementor-api/modules/command-base";
+import CommandBase from 'elementor-api/modules/command-base';
 
 export default class Commands extends elementorModules.Module {
 	static trace = [];
