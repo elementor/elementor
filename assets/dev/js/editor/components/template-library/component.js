@@ -1,5 +1,5 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
-import CommandBase from 'elementor-api/modules/command-base';
+import * as commands from './commands/';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -65,17 +65,11 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultCommands() {
-		const self = this,
-			layoutCommands = super.defaultCommands();
+		const layoutCommands = super.defaultCommands();
 
 		return {
 			... layoutCommands,
-			open: ( args ) => new class Open extends CommandBase {
-				apply = () => self.show( args );
-			},
-			'insert-template': ( args ) => new class Open extends CommandBase {
-				apply = () => self.insertTemplate( args );
-			},
+			... this.importCommands( commands ),
 		};
 	}
 
@@ -136,6 +130,7 @@ export default class Component extends ComponentModalBase {
 		}
 	}
 
+	// TODO: Move function to 'insert-template' command.
 	insertTemplate( args ) {
 		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings,
 			model = args.model;
