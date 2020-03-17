@@ -107,7 +107,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 			if ( $button.attr( 'id' ) === this.ui.buttonSaveOptions.attr( 'id' ) ) {
 				// The "Save Options" button's tooltip needs to be raised to the same height as other buttons
-				offset = 7;
+				offset = $button.attr( 'data-tooltip-offset' );
 			}
 
 			$button.tipsy( {
