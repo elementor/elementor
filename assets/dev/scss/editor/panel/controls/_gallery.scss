@@ -97,7 +97,6 @@
 
 			i {
 				margin: 0;
-				color: $editor-light;
 			}
 		}
 	}
@@ -141,8 +140,6 @@
 
 	.elementor-control-dynamic-switcher {
 		border: 0;
-		border-bottom: 1px solid $editor-lightest;
-		@include border-start(1px solid $editor-lightest);
 		border-radius: 0 3px 0 0;
 	}
 }
