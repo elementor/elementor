@@ -1,4 +1,22 @@
 export default class ArgsObject {
+	static [Symbol.hasInstance]( obj ) {
+		const result = super[ Symbol.hasInstance ]( obj );
+
+		if ( result && obj ) {
+			const name = this.getBaseName ? this.getBaseName() : 'anonymous_' + new Date().getTime();
+
+			if ( ! obj.classes ) {
+				obj.classes = [];
+			}
+
+			if ( -1 === obj.classes.indexOf( name ) ) {
+				obj.classes.push( name );
+			}
+		}
+
+		return result;
+	}
+
 	/**
 	 * Function constructor().
 	 *
@@ -8,6 +26,14 @@ export default class ArgsObject {
 	 */
 	constructor( args ) {
 		this.args = args;
+
+		if ( ! this.classes ) {
+			this.classes = [];
+		}
+	}
+
+	static getBaseName() {
+		return 'args-object';
 	}
 
 	/**

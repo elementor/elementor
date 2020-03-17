@@ -30,6 +30,10 @@ export default class Debounce extends History {
 	 */
 	static debounce = undefined;
 
+	static getBaseName() {
+		return 'command-history-debounce';
+	}
+
 	initialize( args ) {
 		const { options = {} } = args;
 

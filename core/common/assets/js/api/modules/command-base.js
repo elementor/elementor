@@ -1,7 +1,19 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
-	isCommandBase = true;
+	static [Symbol.hasInstance]( obj ) {
+		let result = super[ Symbol.hasInstance ]( obj );
+
+		if ( ! result ) {
+			result = obj.classes.find( ( objClass ) => {
+				if ( objClass === this.getBaseName() ) {
+					return true;
+				}
+			} );
+		}
+
+		return result;
+	}
 
 	/**
 	 * Current component.
@@ -40,6 +52,10 @@ export default class CommandBase extends ArgsObject {
 
 		// Validate args before run.
 		this.validateArgs( args );
+	}
+
+	static getBaseName() {
+		return 'command-base';
 	}
 
 	/**

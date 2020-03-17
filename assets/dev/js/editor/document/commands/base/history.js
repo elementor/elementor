@@ -1,6 +1,10 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export default class History extends CommandBase {
+	static getBaseName() {
+		return 'command-history';
+	}
+
 	initialize( args ) {
 		/**
 		 * Get History from child command.

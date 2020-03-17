@@ -1,4 +1,7 @@
 import CommandBase from 'elementor-api/modules/command-base';
+import CommandHistoryHistory from 'elementor-document/commands/base/history';
+import CommandHistoryHistoryDebounce from 'elementor-document/commands/base/history/debounce';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-base.js', () => {
@@ -87,6 +90,27 @@ jQuery( () => {
 				);
 
 				$e.devTools = undefined;
+			} );
+
+			QUnit.test( 'instanceOf', ( assert ) => {
+				const internalCommand = new CommandInternalBase( {} ),
+					historyCommand = new CommandHistoryHistory( {} ),
+					historyDebounceCommand = new CommandHistoryHistoryDebounce( { } );
+
+				assert.equal( internalCommand instanceof CommandBase, true );
+				assert.equal( internalCommand instanceof CommandInternalBase, true );
+				assert.equal( internalCommand instanceof CommandHistoryHistory, false );
+				assert.equal( internalCommand instanceof CommandHistoryHistoryDebounce, false );
+
+				assert.equal( historyCommand instanceof CommandBase, true );
+				assert.equal( historyCommand instanceof CommandInternalBase, false );
+				assert.equal( historyCommand instanceof CommandHistoryHistory, true );
+				assert.equal( historyCommand instanceof CommandHistoryHistoryDebounce, false );
+
+				assert.equal( historyDebounceCommand instanceof CommandBase, true );
+				assert.equal( historyDebounceCommand instanceof CommandInternalBase, false );
+				assert.equal( historyDebounceCommand instanceof CommandHistoryHistory, true );
+				assert.equal( historyDebounceCommand instanceof CommandHistoryHistoryDebounce, true );
 			} );
 		} );
 	} );

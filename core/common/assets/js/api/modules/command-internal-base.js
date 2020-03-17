@@ -4,4 +4,8 @@ export default class CommandInternalBase extends CommandBase {
 	constructor( args, commandsAPI = $e.commandsInternal ) {
 		super( args, commandsAPI );
 	}
+
+	static getBaseName() {
+		return 'command-base-internal';
+	}
 }

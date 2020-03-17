@@ -1,3 +1,5 @@
+import CommandBase from "elementor-api/modules/command-base";
+
 export default class ComponentBase extends elementorModules.Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
@@ -105,7 +107,7 @@ export default class ComponentBase extends elementorModules.Module {
 				// Try get instance.
 				instance = callback();
 
-				if ( ! instance.isCommandBase ) {
+				if ( ! ( instance instanceof CommandBase ) ) {
 					throw Error( 'Command should inherent command base.' );
 				}
 			} catch ( e ) {
