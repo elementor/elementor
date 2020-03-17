@@ -251,7 +251,6 @@ export default class Commands extends elementorModules.Module {
 		this.currentTrace.push( command );
 
 		Commands.trace.push( command );
-		//Commands.trace.push( this.commands[ command ] );
 
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
