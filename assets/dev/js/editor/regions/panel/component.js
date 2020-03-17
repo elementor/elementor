@@ -1,5 +1,4 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import CommandBase from 'elementor-api/modules/command-base';
 import * as commands from './commands/';
 import * as commandsInternal from './commands/internal/';
 
