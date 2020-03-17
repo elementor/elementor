@@ -5,7 +5,7 @@ export default class CommandInternalBase extends CommandBase {
 		super( args, commandsAPI );
 	}
 
-	static getBaseName() {
-		return 'command-base-internal';
+	static getInstanceType() {
+		return 'CommandInternalBase';
 	}
 }

@@ -3,7 +3,7 @@ export default class ArgsObject {
 		const result = super[ Symbol.hasInstance ]( obj );
 
 		if ( result && obj ) {
-			const name = this.getBaseName ? this.getBaseName() : 'anonymous_' + new Date().getTime();
+			const name = this.getInstanceType ? this.getInstanceType() : 'anonymous_' + new Date().getTime();
 
 			if ( ! obj.classes ) {
 				obj.classes = [];
@@ -32,8 +32,8 @@ export default class ArgsObject {
 		}
 	}
 
-	static getBaseName() {
-		return 'args-object';
+	static getInstanceType() {
+		return 'ArgsObject';
 	}
 
 	/**

@@ -4,7 +4,7 @@ export default class CommandBase extends ArgsObject {
 	static [Symbol.hasInstance]( obj ) {
 		let result = super[ Symbol.hasInstance ]( obj );
 
-		if ( ! result && -1 !== obj.classes.indexOf( this.getBaseName() ) ) {
+		if ( ! result && -1 !== obj.classes.indexOf( this.getInstanceType() ) ) {
 			result = true;
 		}
 
@@ -50,8 +50,8 @@ export default class CommandBase extends ArgsObject {
 		this.validateArgs( args );
 	}
 
-	static getBaseName() {
-		return 'command-base';
+	static getInstanceType() {
+		return 'CommandBase';
 	}
 
 	/**

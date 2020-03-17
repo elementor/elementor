@@ -1,8 +1,9 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
+// TODO: rename History to CommandHistory.
 export default class History extends CommandBase {
-	static getBaseName() {
-		return 'command-history';
+	static getInstanceType() {
+		return 'CommandHistory';
 	}
 
 	initialize( args ) {
