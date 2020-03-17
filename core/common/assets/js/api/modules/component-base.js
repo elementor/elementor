@@ -150,6 +150,8 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	open() {
+		this.isOpen = true;
+
 		return true;
 	}
 
