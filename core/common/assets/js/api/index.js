@@ -68,19 +68,6 @@ export default class API {
 		return $e.commands.run( command, args );
 	}
 
-	// function create command instance from given command.
-	command( command, args ) {
-		const component = $e.commands.getComponent( command );
-
-		if ( ! component ) {
-			throw Error( `cannot get component for command: '${ command }''` );
-		}
-
-		const shortCommand = command.replace( component.getNamespace() + '/', '' );
-		const CommandClass = component.getCommands()[ shortCommand ];
-
-		return new CommandClass( args );
-	}
 	/**
 	 * Function internal().
 	 *
@@ -108,4 +95,25 @@ export default class API {
 	}
 
 	// TODO: shortcut();
+
+	/**
+	 * Function createCommand().
+	 *
+	 * Create command instance, from given command.
+	 *
+	 * @param {string} command
+	 * @param [args={}]
+	 */
+	createCommand( command, args ) {
+		const component = $e.commands.getComponent( command );
+
+		if ( ! component ) {
+			throw Error( `cannot get component for command: '${ command }''` );
+		}
+
+		const shortCommand = command.replace( component.getNamespace() + '/', '' );
+		const CommandClass = component.getCommands()[ shortCommand ];
+
+		return new CommandClass( args );
+	}
 }

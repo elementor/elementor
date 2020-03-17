@@ -7,9 +7,9 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return {
-			do: ( args ) => $e.command( 'document/history/do', args ),
-			undo: () => $e.command( 'document/history/undo' ),
-			redo: () => $e.command( 'document/history/redo' ),
+			do: ( args ) => $e.createCommand( 'document/history/do', args ),
+			undo: () => $e.createCommand( 'document/history/undo' ),
+			redo: () => $e.createCommand( 'document/history/redo' ),
 		};
 	}
 
