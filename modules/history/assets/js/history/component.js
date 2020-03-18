@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from 'elementor-document/history/commands/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -6,11 +7,7 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			do: ( args ) => $e.run( 'document/history/do', args ),
-			undo: () => $e.run( 'document/history/undo' ),
-			redo: () => $e.run( 'document/history/redo' ),
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultShortcuts() {

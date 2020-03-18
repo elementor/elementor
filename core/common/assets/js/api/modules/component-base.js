@@ -1,3 +1,5 @@
+import CommandBase from 'elementor-api/modules/command-base';
+
 export default class ComponentBase extends elementorModules.Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
@@ -89,7 +91,34 @@ export default class ComponentBase extends elementorModules.Module {
 		return this.shortcuts;
 	}
 
+	/**
+	 * @param {string} command
+	 * @param {function()} callback
+	 */
 	registerCommand( command, callback ) {
+		const fullCommand = this.getNamespace() + '/' + command,
+			isCallbackNewClass = callback.toString().includes( 'new' );
+
+		let instance;
+
+		// TODO: Remove when all commands have CommandBase as parent.
+		if ( isCallbackNewClass ) {
+			try {
+				// Try get instance.
+				instance = callback();
+
+				if ( ! ( instance instanceof CommandBase ) ) {
+					throw Error( 'Command should inherent command base.' );
+				}
+			} catch ( e ) {
+				if ( $e.devTools ) {
+					$e.devTools.log.error( `invalid command base: '${ fullCommand }'` );
+				}
+			}
+		} else if ( $e.devTools ) {
+			$e.devTools.log.error( `non command base: '${ fullCommand }'` );
+		}
+
 		$e.commands.register( this, command, callback );
 	}
 
@@ -121,6 +150,8 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	open() {
+		this.isOpen = true;
+
 		return true;
 	}
 
@@ -252,7 +283,11 @@ export default class ComponentBase extends elementorModules.Module {
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
 			const command = this.normalizeCommandName( className );
-			commands[ command ] = ( args ) => ( new Class( args ) ).run();
+			const callback = ( args ) => new Class( args );
+
+			callback.class = Class;
+
+			commands[ command ] = callback;
 		} );
 
 		return commands;
