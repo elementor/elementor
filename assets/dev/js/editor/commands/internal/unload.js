@@ -1,7 +1,7 @@
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
+import CommandInternal from 'elementor-api/modules/command-internal';
 import Document from 'elementor-editor/document';
 
-export class Unload extends CommandInternalBase {
+export class Unload extends CommandInternal {
 	validateArgs( args = {} ) {
 		this.requireArgumentConstructor( 'document', Document, args );
 	}

@@ -1,6 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import Command from 'elementor-api/modules/command';
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
+import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandHistory from 'elementor-document/commands/base/command-history';
 import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 
@@ -54,37 +54,37 @@ jQuery( () => {
 					},
 					commandBase = new CommandBase( ( {} ) ),
 					command = new Command( {} ),
-					internalCommand = new CommandInternalBase( {} ),
+					internalCommand = new CommandInternal( {} ),
 					historyCommand = new fakeCommandHistory( {} ),
 					historyDebounceCommand = new fakeCommandHistoryDebounce( {} );
 
 				assert.equal( commandBase instanceof CommandBase, true );
 				assert.equal( commandBase instanceof Command, false );
-				assert.equal( commandBase instanceof CommandInternalBase, false );
+				assert.equal( commandBase instanceof CommandInternal, false );
 				assert.equal( commandBase instanceof CommandHistory, false );
 				assert.equal( commandBase instanceof CommandHistoryDebounce, false );
 
 				assert.equal( command instanceof CommandBase, true );
 				assert.equal( command instanceof Command, true );
-				assert.equal( command instanceof CommandInternalBase, false );
+				assert.equal( command instanceof CommandInternal, false );
 				assert.equal( command instanceof CommandHistory, false );
 				assert.equal( command instanceof CommandHistoryDebounce, false );
 
 				assert.equal( internalCommand instanceof CommandBase, true );
 				assert.equal( internalCommand instanceof Command, true );
-				assert.equal( internalCommand instanceof CommandInternalBase, true );
+				assert.equal( internalCommand instanceof CommandInternal, true );
 				assert.equal( internalCommand instanceof CommandHistory, false );
 				assert.equal( internalCommand instanceof CommandHistoryDebounce, false );
 
 				assert.equal( historyCommand instanceof CommandBase, true );
 				assert.equal( historyCommand instanceof Command, true );
-				assert.equal( historyCommand instanceof CommandInternalBase, false );
+				assert.equal( historyCommand instanceof CommandInternal, false );
 				assert.equal( historyCommand instanceof CommandHistory, true );
 				assert.equal( historyCommand instanceof CommandHistoryDebounce, false );
 
 				assert.equal( historyDebounceCommand instanceof CommandBase, true );
 				assert.equal( historyDebounceCommand instanceof Command, true );
-				assert.equal( historyDebounceCommand instanceof CommandInternalBase, false );
+				assert.equal( historyDebounceCommand instanceof CommandInternal, false );
 				assert.equal( historyDebounceCommand instanceof CommandHistory, true );
 				assert.equal( historyDebounceCommand instanceof CommandHistoryDebounce, true );
 			} );

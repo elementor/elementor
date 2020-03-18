@@ -107,7 +107,6 @@ export default class CommandBase extends ArgsObject {
 	 */
 	validateArgs( args = {} ) {} // eslint-disable-line no-unused-vars
 
-
 	/**
 	 * Function apply().
 	 *

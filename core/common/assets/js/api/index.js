@@ -1,7 +1,7 @@
 /* Alphabetical order */
 import BackwardsCompatibility from './core/backwards-compatibility';
 import Command from './modules/command';
-import CommandInternalBase from './modules/command-internal-base';
+import CommandInternal from './modules/command-internal';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
 import ComponentBase from './modules/component-base';
@@ -49,8 +49,18 @@ export default class API {
 				return this.Command;
 			},
 
+			get CommandInternalBase() {
+				elementorCommon.helpers.hardDeprecated(
+					'$e.modules.CommandInternalBase',
+					'3.0.0',
+					'$e.modules.CommandInternal'
+				);
+
+				return this.CommandInternal;
+			},
+
 			Command,
-			CommandInternalBase,
+			CommandInternal,
 
 			ComponentBase,
 			ComponentModalBase,
