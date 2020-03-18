@@ -132,7 +132,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'default' => '',
 			'title' => _x( 'Background Color', 'Background Control', 'elementor' ),
 			'selectors' => [
-				'{{SELECTOR}}' => 'background-color: {{VALUE}};',
+				'{{SELECTOR}}' => 'background: {{VALUE}};',
 			],
 			'condition' => [
 				'background' => [ 'classic', 'gradient' ],
@@ -209,7 +209,7 @@ class Group_Control_Background extends Group_Control_Base {
 				],
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
+				'{{SELECTOR}}' => 'background-color: transparent; background: linear-gradient({{SIZE}}{{UNIT}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
 			],
 			'condition' => [
 				'background' => [ 'gradient' ],
