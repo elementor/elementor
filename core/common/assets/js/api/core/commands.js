@@ -1,4 +1,8 @@
+import CommandBase from 'elementor-api/modules/command-base';
+
 export default class Commands extends elementorModules.Module {
+	static trace = [];
+
 	/**
 	 * Function constructor().
 	 *
@@ -228,22 +232,36 @@ export default class Commands extends elementorModules.Module {
 		return this.currentTrace[ 0 ];
 	}
 
+	validateRun( command, args = {} ) {
+		if ( ! this.commands[ command ] ) {
+			this.error( `\`${ command }\` not found.` );
+		}
+
+		return this.getComponent( command ).dependency( command, args );
+	}
+
 	/**
 	 * Function beforeRun().
 	 *
 	 * @param {string} command
 	 * @param {} args
-	 *
-	 * @returns {boolean} dependency result
 	 */
 	beforeRun( command, args = {} ) {
-		if ( ! this.commands[ command ] ) {
-			this.error( `\`${ command }\` not found.` );
-		}
+		const component = this.getComponent( command ),
+			container = component.getRootContainer();
 
 		this.currentTrace.push( command );
 
-		return this.getComponent( command ).dependency( command, args );
+		Commands.trace.push( command );
+
+		this.current[ container ] = command;
+		this.currentArgs[ container ] = args;
+
+		if ( args.onBefore ) {
+			args.onBefore.apply( component, [ args ] );
+		}
+
+		this.trigger( 'run', component, command, args );
 	}
 
 	/**
@@ -257,33 +275,67 @@ export default class Commands extends elementorModules.Module {
 	 * @returns {boolean|*} results
 	 */
 	run( command, args = {} ) {
-		if ( ! this.beforeRun( command, args ) ) {
+		if ( ! this.validateRun( command, args ) ) {
 			return false;
 		}
 
-		const component = this.getComponent( command ),
-			container = component.getRootContainer();
+		this.beforeRun( command, args );
 
-		this.current[ container ] = command;
-		this.currentArgs[ container ] = args;
+		// Call to new command or callback.
+		const instance = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
 
-		this.trigger( 'run', component, command, args );
+		// TODO: Remove after all commands inheritance CommandBase.
+		if ( ! instance || ! ( instance instanceof CommandBase ) ) {
+			// Means instance is a result from callback and not command.
+			this.afterRun( command, args, instance );
 
-		if ( args.onBefore ) {
-			args.onBefore.apply( component, [ args ] );
+			return instance;
 		}
 
-		const results = this.commands[ command ].apply( component, [ args ] );
+		let results;
 
-		// TODO: Consider add results to `$e.devTools`.
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args, results ] );
+		this.validateInstance( instance, command );
+
+		// For UI Hooks.
+		instance.onBeforeRun( instance.args );
+
+		try {
+			// For data hooks.
+			instance.onBeforeApply( instance.args );
+
+			results = instance.run();
+		} catch ( e ) {
+			instance.onCatchApply( e );
+
+			if ( e instanceof $e.modules.HookBreak ) {
+				this.afterRun( command, args, e ); // To clear current.
+				return false;
+			}
 		}
 
-		this.afterRun( command );
+		const onAfter = ( _results ) => {
+			// For data hooks.
+			instance.onAfterApply( instance.args, _results );
 
-		if ( false === args.returnValue ) {
-			return true;
+			if ( instance.isDataChanged() ) {
+				$e.internal( 'document/save/set-is-modified', { status: true } );
+			}
+
+			// For UI hooks.
+			instance.onAfterRun( instance.args, _results );
+
+			this.afterRun( command, args, results );
+		};
+
+		// TODO: Temp code determine if it's a jQuery deferred object.
+		if ( results && 'object' === typeof results && results.promise && results.then && results.fail ) {
+			results.fail( instance.onCatchApply.bind( instance ) );
+			results.done( onAfter );
+		} else if ( results instanceof Promise ) {
+			results.catch( instance.onCatchApply.bind( instance ) );
+			results.then( onAfter );
+		} else {
+			onAfter( results );
 		}
 
 		return results;
@@ -311,17 +363,31 @@ export default class Commands extends elementorModules.Module {
 	 * Method fired before the command runs.
 	 *
 	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} results
 	 */
-	afterRun( command ) {
+	afterRun( command, args, results ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
 
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args, results ] );
+		}
+
 		this.currentTrace.pop();
+		Commands.trace.pop();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
 	}
 
+	validateInstance( instance, command ) {
+		const component = this.getComponent( command );
+
+		if ( ! instance || component !== instance.component ) {
+			this.error( `invalid instance, command: '${ command }' ` );
+		}
+	}
 	/**
 	 * Function error().
 	 *

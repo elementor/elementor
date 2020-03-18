@@ -61,8 +61,8 @@ export default class Routes extends Commands {
 		return true;
 	}
 
-	beforeRun( route, args ) {
-		if ( ! super.beforeRun( route, args ) ) {
+	validateRun( route, args = {} ) {
+		if ( ! super.validateRun( route, args ) ) {
 			return false;
 		}
 
@@ -70,6 +70,16 @@ export default class Routes extends Commands {
 			return false;
 		}
 
+		const component = this.getComponent( route );
+
+		if ( ! component.isOpen || args.reOpen ) {
+			component.isOpen = component.open( args );
+		}
+
+		return component.isOpen;
+	}
+
+	beforeRun( route, args ) {
 		const component = this.getComponent( route ),
 			container = component.getRootContainer(),
 			oldRoute = this.current[ container ];
@@ -78,11 +88,12 @@ export default class Routes extends Commands {
 			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
 		}
 
-		if ( ! component.isOpen || args.reOpen ) {
-			component.isOpen = component.open( args );
+		if ( args.onBefore ) {
+			args.onBefore.apply( component, [ args ] );
 		}
 
-		return component.isOpen;
+		this.current[ container ] = route;
+		this.currentArgs[ container ] = args;
 	}
 
 	to( route, args ) {
@@ -122,7 +133,13 @@ export default class Routes extends Commands {
 
 	// Don't clear current route.
 	afterRun( route, args ) {
-		this.getComponent( route ).onRoute( route, args );
+		const component = this.getComponent( route );
+
+		component.onRoute( route, args );
+
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args ] );
+		}
 	}
 
 	is( route, args = {} ) {
@@ -157,6 +174,8 @@ export default class Routes extends Commands {
 
 		return match;
 	}
+
+	validateInstance( instance, component, command ) {} // eslint-disable-line no-unused-vars
 
 	error( message ) {
 		throw Error( 'Routes: ' + message );

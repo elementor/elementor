@@ -33,8 +33,13 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 * @param [commandsAPI={}]
 	 */
-	constructor( args, commandsAPI = $e.commands ) {
+	constructor( args = {}, commandsAPI = $e.commands ) {
 		super( args );
+
+		// TODO: is better to check if register process is done.
+		if ( ! commandsAPI.currentTrace.length ) {
+			return;
+		}
 
 		// Acknowledge self about which command it run.
 		this.currentCommand = commandsAPI.getCurrentLast();
@@ -127,46 +132,7 @@ export default class CommandBase extends ArgsObject {
 	 * @returns {*}
 	 */
 	run() {
-		let result;
-
-		// For UI Hooks.
-		this.onBeforeRun( this.args );
-
-		try {
-			// For Data hooks.
-			this.onBeforeApply( this.args );
-
-			result = this.apply( this.args );
-		} catch ( e ) {
-			this.onCatchApply( e );
-
-			// Catch 'Hook-Break' that comes from hooks base.
-			if ( e instanceof $e.modules.HookBreak ) {
-				// Bypass.
-				return false;
-			}
-		}
-
-		const onAfter = ( _result ) => {
-			this.onAfterApply( this.args, _result );
-
-			if ( this.isDataChanged() ) {
-				$e.internal( 'document/save/set-is-modified', { status: true } );
-			}
-
-			// For UI hooks.
-			this.onAfterRun( this.args, _result );
-		};
-
-		// TODO: Temp code determine if it's a jQuery deferred object.
-		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
-			result.fail( this.onCatchApply.bind( this ) );
-			result.done( onAfter );
-		} else {
-			onAfter( result );
-		}
-
-		return result;
+		return this.apply( this.args );
 	}
 
 	/**
