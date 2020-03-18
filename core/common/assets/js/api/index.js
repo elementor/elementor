@@ -15,6 +15,12 @@ import Shortcuts from './core/shortcuts';
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
 
+/**
+ * @typedef {{}} Args
+ * @property {Container} container
+ * @property {Array.<Container>} containers
+ */
+
 export default class API {
 	/**
 	 * Function constructor().
@@ -54,7 +60,7 @@ export default class API {
 	 * Alias of `$e.commands.run()`.
 	 *
 	 * @param {string} command
-	 * @param [args={}]
+	 * @param {(Args|{})} [args={}]
 	 *
 	 * @returns {*}
 	 */
@@ -68,11 +74,11 @@ export default class API {
 	 * Alias of `$e.commandsInternal.run()`.
 	 *
 	 * @param {string} command
-	 * @param [args={}]
+	 * @param {(Args|{})} [args={}]
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
-	internal( command, args = {} ) {
+	internal( command, args ) {
 		return $e.commandsInternal.run( command, args );
 	}
 
