@@ -663,7 +663,7 @@ class Utils {
 	 * @param $string
 	 * @return string
 	 */
-	public static function decode_html_entities( $string ) {
+	public static function urlencode_html_entities( $string ) {
 		$entities_dictionary = [
 			'&#145;' => "'", // Opening single quote
 			'&#146;' => "'", // Closing single quote
@@ -680,6 +680,6 @@ class Utils {
 		// Decode decimal entities
 		$string = str_replace( array_keys( $entities_dictionary ), array_values( $entities_dictionary ), $string );
 
-		return html_entity_decode( $string, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		return rawurlencode( html_entity_decode( $string, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
 	}
 }

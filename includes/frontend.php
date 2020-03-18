@@ -1151,7 +1151,7 @@ class Frontend extends App {
 		if ( is_singular() ) {
 			$post = get_post();
 
-			$title = rawurlencode( Utils::decode_html_entities( wp_get_document_title() ) );
+			$title = Utils::urlencode_html_entities( wp_get_document_title() );
 
 			$settings['post'] = [
 				'id' => $post->ID,
