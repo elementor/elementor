@@ -5,9 +5,7 @@ export default class CommandHistory extends Command {
 		return 'CommandHistory';
 	}
 
-	constructor( args ) {
-		super( args );
-
+	initialize( args ) {
 		/**
 		 * Get History from child command.
 		 *

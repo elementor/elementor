@@ -101,22 +101,22 @@ export default class ComponentBase extends elementorModules.Module {
 
 		let instance;
 
-		// TODO: Remove when all commands have CommandBase as parent.
+		// TODO: Remove when all commands have Command as parent.
 		if ( isCallbackNewClass ) {
 			try {
 				// Try get instance.
 				instance = callback();
 
 				if ( ! ( instance instanceof Command ) ) {
-					throw Error( 'Command should inherent command base.' );
+					throw Error( 'Command should inherent "Command" class.' );
 				}
 			} catch ( e ) {
 				if ( $e.devTools ) {
-					$e.devTools.log.error( `invalid command base: '${ fullCommand }'` );
+					$e.devTools.log.error( `invalid command base: '${ fullCommand }'`, e );
 				}
 			}
 		} else if ( $e.devTools ) {
-			$e.devTools.log.error( `non command base: '${ fullCommand }'` );
+			$e.devTools.log.error( `Non command base: '${ fullCommand }', callback with out new operator.` );
 		}
 
 		$e.commands.register( this, command, callback );
