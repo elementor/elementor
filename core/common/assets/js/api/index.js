@@ -1,6 +1,6 @@
 /* Alphabetical order */
 import BackwardsCompatibility from './core/backwards-compatibility';
-import CommandBase from './modules/command-base';
+import Command from './modules/command';
 import CommandInternalBase from './modules/command-internal-base';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
@@ -39,7 +39,17 @@ export default class API {
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 
 		this.modules = {
-			CommandBase,
+			get CommandBase() {
+				elementorCommon.helpers.hardDeprecated(
+					'$e.modules.CommandBase',
+					'3.0.0',
+					'$e.modules.Command'
+				);
+
+				return this.Command;
+			},
+
+			Command,
 			CommandInternalBase,
 
 			ComponentBase,

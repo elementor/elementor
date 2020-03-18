@@ -1,15 +1,15 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 import CommandHistoryHistory from 'elementor-document/commands/base/command-history';
 import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/modules/command-base.js', () => {
-		QUnit.module( 'CommandBase', () => {
+	QUnit.module( 'File: core/common/assets/js/api/modules/command.js', () => {
+		QUnit.module( 'Command', () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandBase( { } );
+						const instance = new Command( { } );
 
 						instance.requireContainer();
 					},
@@ -20,7 +20,7 @@ jQuery( () => {
 			QUnit.test( 'constructor(): with container & containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {
+						const instance = new Command( {
 							container: {},
 							containers: [],
 						} );
@@ -34,11 +34,11 @@ jQuery( () => {
 			QUnit.test( 'apply(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new Command( {} );
 
 						instance.apply( {} );
 					},
-					new Error( 'CommandBase.apply() should be implemented, please provide \'apply\' functionality.' )
+					new Error( 'Command.apply() should be implemented, please provide \'apply\' functionality.' )
 				);
 			} );
 
@@ -47,7 +47,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new Command( {} );
 
 						instance.apply = () => {
 							throw new Error( random );
@@ -68,7 +68,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new Command( {} );
 
 						instance.apply = () => {
 							throw new Error( random );
@@ -101,17 +101,17 @@ jQuery( () => {
 						getHistory() {}
 					}( {} );
 
-				assert.equal( internalCommand instanceof CommandBase, true );
+				assert.equal( internalCommand instanceof Command, true );
 				assert.equal( internalCommand instanceof CommandInternalBase, true );
 				assert.equal( internalCommand instanceof CommandHistoryHistory, false );
 				assert.equal( internalCommand instanceof CommandHistoryDebounce, false );
 
-				assert.equal( historyCommand instanceof CommandBase, true );
+				assert.equal( historyCommand instanceof Command, true );
 				assert.equal( historyCommand instanceof CommandInternalBase, false );
 				assert.equal( historyCommand instanceof CommandHistoryHistory, true );
 				assert.equal( historyCommand instanceof CommandHistoryDebounce, false );
 
-				assert.equal( historyDebounceCommand instanceof CommandBase, true );
+				assert.equal( historyDebounceCommand instanceof Command, true );
 				assert.equal( historyDebounceCommand instanceof CommandInternalBase, false );
 				assert.equal( historyDebounceCommand instanceof CommandHistoryHistory, true );
 				assert.equal( historyDebounceCommand instanceof CommandHistoryDebounce, true );

@@ -1,5 +1,5 @@
 import ComponentBase from './component-base';
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
 export default class ComponentModalBase extends ComponentBase {
 	registerAPI() {
@@ -15,13 +15,13 @@ export default class ComponentModalBase extends ComponentBase {
 		const self = this;
 
 		return {
-			open: () => new class Open extends CommandBase {
+			open: () => new class Open extends Command {
 				apply = () => $e.route( self.getNamespace() );
 			},
-			close: () => new class Close extends CommandBase {
+			close: () => new class Close extends Command {
 				apply = () => self.close();
 			},
-			toggle: () => new class Toggle extends CommandBase {
+			toggle: () => new class Toggle extends Command {
 				apply() {
 					if ( self.isOpen ) {
 						self.close();

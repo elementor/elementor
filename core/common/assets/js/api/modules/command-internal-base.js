@@ -1,6 +1,6 @@
-import CommandBase from './command-base';
+import Command from './command';
 
-export default class CommandInternalBase extends CommandBase {
+export default class CommandInternalBase extends Command {
 	static getInstanceType() {
 		return 'CommandInternalBase';
 	}

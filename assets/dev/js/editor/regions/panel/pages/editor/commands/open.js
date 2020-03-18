@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class Open extends CommandBase {
+export class Open extends Command {
 	apply( args ) {
 		if ( ! this.component.setDefaultTab( args ) ) {
 			elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );

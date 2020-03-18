@@ -1,6 +1,6 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
-export default class CommandBase extends ArgsObject {
+export default class Command extends ArgsObject {
 	static [Symbol.hasInstance]( obj ) {
 		let result = super[ Symbol.hasInstance ]( obj );
 
@@ -15,7 +15,7 @@ export default class CommandBase extends ArgsObject {
 	}
 
 	static getInstanceType() {
-		return 'CommandBase';
+		return 'Command';
 	}
 
 	/**

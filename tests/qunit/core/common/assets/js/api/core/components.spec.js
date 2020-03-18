@@ -1,7 +1,7 @@
 import CommonHelper from 'elementor-tests-qunit/core/common/helper';
 import ComponentBase from 'elementor-api/modules/component-base';
 import ComponentBaseModal from 'elementor-api/modules/component-modal-base';
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/core/modules/component-*.js', () => {
@@ -86,7 +86,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new CommandBase,
+						commandA: () => new Command,
 					};
 				}
 			};
@@ -108,7 +108,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new CommandBase,
+						commandA: () => new Command,
 					};
 				}
 
@@ -173,7 +173,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new CommandBase,
+						commandA: () => new Command,
 					};
 				}
 			};
@@ -182,7 +182,7 @@ jQuery( () => {
 
 			assert.throws(
 				() => {
-					$e.commands.register( namespace, 'commandA', () => new CommandBase );
+					$e.commands.register( namespace, 'commandA', () => new Command );
 				},
 				new Error( `Commands: \`${ namespace + '/commandA' }\` is already registered.` )
 			);
@@ -210,7 +210,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new class extends CommandBase {
+						commandA: () => new class extends Command {
 							apply() {
 								assert.equal( $e.commands.is( command ), true );
 								commandStatus = 'afterRun';
@@ -241,7 +241,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: ( _args ) => new class CommandA extends CommandBase {
+						commandA: ( _args ) => new class CommandA extends Command {
 							apply( args ) {
 								assert.equal( args.argA, 1 );
 								assert.equal( $e.commands.getCurrentArgs( namespace ), args );
@@ -272,7 +272,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new class extends CommandBase {
+						commandA: () => new class extends Command {
 							apply = () => {};
 						},
 					};
@@ -328,7 +328,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new class extends CommandBase {
+						commandA: () => new class extends Command {
 							apply = () => {};
 						},
 					};
@@ -358,7 +358,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new class extends CommandBase {
+						commandA: () => new class extends Command {
 							apply = () => commandStatus = 'afterRun';
 						},
 					};
@@ -886,7 +886,7 @@ jQuery( () => {
 
 					defaultCommands() {
 						return {
-							commandA: () => new class extends CommandBase {
+							commandA: () => new class extends Command {
 								apply = () => commandStatus = 'afterRun';
 							},
 						};
@@ -921,7 +921,7 @@ jQuery( () => {
 
 					defaultCommands() {
 						return {
-							commandA: () => new class extends CommandBase {
+							commandA: () => new class extends Command {
 								apply = () => commandStatus = 'afterRunInScope';
 							},
 						};
@@ -976,7 +976,7 @@ jQuery( () => {
 
 					defaultCommands() {
 						return {
-							commandA: () => new class extends CommandBase {
+							commandA: () => new class extends Command {
 								apply = () => secondCommandStatus = 'afterRun';
 							},
 						};

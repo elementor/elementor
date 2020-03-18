@@ -26,7 +26,7 @@ function initialize() {
 
 		require( './core/common/assets/js/api/core/components.spec.js' );
 		require( './core/common/assets/js/api/core/hooks/base.spec.js' );
-		require( './core/common/assets/js/api/modules/command-base.spec.js' );
+		require( './core/common/assets/js/api/modules/command.spec.js' );
 		require( './core/editor/container/container.spec' );
 		require( './core/editor/document/commands/base/command-history.spec' );
 		require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
