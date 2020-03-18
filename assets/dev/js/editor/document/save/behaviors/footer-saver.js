@@ -103,12 +103,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		// Create tooltip on controls
 		this.$el.find( '.tooltip-target' ).each( ( index, button ) => {
 			const $button = jQuery( button );
-			let offset = 0;
-
-			if ( $button.attr( 'id' ) === this.ui.buttonSaveOptions.attr( 'id' ) ) {
-				// The "Save Options" button's tooltip needs to be raised to the same height as other buttons
-				offset = $button.attr( 'data-tooltip-offset' );
-			}
+			let offset = $button.data( 'tooltip-offset' ) ? $button.data( 'tooltip-offset' ) : 0;
 
 			$button.tipsy( {
 				// `n` for down, `s` for up
