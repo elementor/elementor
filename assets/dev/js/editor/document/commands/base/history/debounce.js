@@ -20,6 +20,7 @@ export const getDefaultDebounceDelay = () => {
 	return result;
 };
 
+// TODO: rename to CommandHistoryDebounce.
 export default class Debounce extends History {
 	/**
 	 * Function debounce().
@@ -29,6 +30,10 @@ export default class Debounce extends History {
 	 * @param {(function())}
 	 */
 	static debounce = undefined;
+
+	static getInstanceType() {
+		return 'CommandHistoryDebounce';
+	}
 
 	initialize( args ) {
 		const { options = {} } = args;
