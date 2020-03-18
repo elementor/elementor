@@ -75,6 +75,7 @@ abstract class Document extends Controls_Stack {
 			'is_editable' => true,
 			'edit_capability' => '',
 			'show_in_finder' => true,
+			'show_on_admin_bar' => true,
 			'support_kit' => false,
 		];
 	}

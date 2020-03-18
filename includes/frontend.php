@@ -216,6 +216,9 @@ class Frontend extends App {
 
 		// Add Edit with the Elementor in Admin Bar.
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
+
+		// Detect Elementor documents via their css that printed before the Admin Bar.
+		add_action( 'elementor/css-file/post/enqueue', [ $this, 'add_document_to_admin_bar' ] );
 	}
 
 	/**
@@ -880,10 +883,6 @@ class Frontend extends App {
 		// Change the current post, so widgets can use `documents->get_current`.
 		Plugin::$instance->documents->switch_to_document( $document );
 
-		if ( $document->is_editable_by_current_user() ) {
-			$this->admin_bar_edit_documents[ $document->get_main_id() ] = $document;
-		}
-
 		$data = $document->get_elements_data();
 
 		/**
@@ -947,6 +946,17 @@ class Frontend extends App {
 		Plugin::$instance->documents->restore_document();
 
 		return $content;
+	}
+
+	/**
+	 * @param Post_CSS $css_file
+	 */
+	public function add_document_to_admin_bar( $css_file ) {
+		$document = Plugin::$instance->documents->get( $css_file->get_post_id() );
+
+		if ( $document::get_property( 'show_on_admin_bar' ) && $document->is_editable_by_current_user() ) {
+			$this->admin_bar_edit_documents[ $document->get_main_id() ] = $document;
+		}
 	}
 
 	/**
