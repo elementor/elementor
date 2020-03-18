@@ -1,6 +1,23 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
+	static [Symbol.hasInstance]( obj ) {
+		let result = super[ Symbol.hasInstance ]( obj );
+
+		if ( ! result ) {
+			// If parent instanceOf returned 'false' then check if the given object 'obj', is instance of known types.
+			result = obj.instanceTypes &&
+				Array.isArray( obj.instanceTypes ) &&
+				-1 !== obj.instanceTypes.indexOf( this.getInstanceType() );
+		}
+
+		return result;
+	}
+
+	static getInstanceType() {
+		return 'CommandBase';
+	}
+
 	/**
 	 * Current component.
 	 *
