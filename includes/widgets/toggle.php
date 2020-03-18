@@ -306,13 +306,14 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
+		// The title selector specificity is to override Theme Style
 		$this->add_control(
 			'title_color',
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title a, {{WRAPPER}} .elementor-toggle-icon' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-toggle-title, {{WRAPPER}} .elementor-toggle-icon' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
 					'type' => Schemes\Color::get_type(),
