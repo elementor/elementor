@@ -35,6 +35,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			slidesPerView: slidesToShow,
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
+			handleElementorBreakpoints: true,
 		};
 
 		swiperOptions.breakpoints = {};
@@ -54,10 +55,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 				delay: elementSettings.autoplay_speed,
 				disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
 			};
-		}
-
-		if ( true === swiperOptions.loop ) {
-			swiperOptions.loopedSlides = this.getSlidesCount();
 		}
 
 		if ( isSingleSlide ) {

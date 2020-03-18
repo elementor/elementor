@@ -32,7 +32,8 @@
 
 			if ( ! $( '#elementor-editor' ).length ) {
 				self.cache.$editorPanel = $( $( '#elementor-gutenberg-panel' ).html() );
-				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.editor-block-list__layout, .editor-post-text-editor' );
+				// TODO: `editor-block-list__layout` class for WP < 5.3 support.
+				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.editor-block-list__layout, .editor-post-text-editor, .block-editor-block-list__layout' );
 				self.cache.$gurenbergBlockList.after( self.cache.$editorPanel );
 
 				self.cache.$editorPanelButton = self.cache.$editorPanel.find( '#elementor-go-to-edit-page-link' );

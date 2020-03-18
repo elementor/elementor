@@ -2,9 +2,9 @@
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 5.3
+Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 2.9.4
+Stable tag: 2.9.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -221,6 +221,23 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.6 - 2020-03-12 =
+* Fix: Removed redundant dynamic capabilities from all of color controls inside Group controls in Theme Style
+* Fix: Global widget is clickable when editing Theme Style
+* Fix: Dropcap not working immediately in Text Editor widget
+* Security Fix: Enable Safe Mode only for `activate_plugins` capability
+
+= 2.9.5 - 2020-03-09 =
+* Tweak: Added new parameter to Swiper wrapper to limit breakpoint intervention ([#10525](https://github.com/elementor/elementor/issues/10525))
+* Tweak: Updated E-Gallery library to v1.1.2
+* Tweak: Show descriptive Pro Promotions only for Administrator role
+* Fix: Inconsistent responsive display issue in the Editor when using Custom Breakpoints ([#10540](https://github.com/elementor/elementor/issues/10540))
+* Fix: Editor not loading when the Library launches on load ([Topic](https://wordpress.org/support/topic/editor-broken-in-2-9-4/))
+* Fix: Gallery Columns does not update immediately in the preview when in Masonry layout
+* Fix: Navigator does not update according to the current site part being edited
+* Fix: Hidden responsive indicator missing in editor
+* Fix: Tabs widget title color not working on mobile
+
 = 2.9.4 - 2020-03-04 =
 * Tweak: Added support for Elementor Pro v2.9.0
 * Tweak: Updated Swiper.js library to v5.3.6
@@ -242,7 +259,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Fix: Whatsapp share doesn't include line breaks between the page title and the URL in Share buttons widget
 * Fix: Box Shadow doesn't display properly in Toggle widget
 * Fix: Custom Link Attributes are not being applied in Icon Box widget
-* Fix: Added sanitization to Custom Link Attributes control to avoid security issue
+* Fix: Added sanitization to Custom Link Attributes control to avoid security issue (Props [@yzy9951](https://github.com/yzy9951))
 
 = 2.9.2 - 2020-02-16 =
 * Fix: Responsive issue when using Slides to Show control in carousel widgets ([#10540](https://github.com/elementor/elementor/issues/10540))

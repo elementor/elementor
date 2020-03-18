@@ -14,13 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends \Elementor\Core\Base\Module {
 
 	const OPTION_ENABLED = 'elementor_safe_mode';
+	const OPTION_TOKEN = self::OPTION_ENABLED . '_token';
 	const MU_PLUGIN_FILE_NAME = 'elementor-safe-mode.php';
 	const DOCS_HELPED_URL = 'https://go.elementor.com/safe-mode-helped/';
 	const DOCS_DIDNT_HELP_URL = 'https://go.elementor.com/safe-mode-didnt-helped/';
 	const DOCS_MU_PLUGINS_URL = 'https://go.elementor.com/safe-mode-mu-plugins/';
 	const DOCS_TRY_SAFE_MODE_URL = 'https://go.elementor.com/safe-mode/';
 
-	const EDITOR_NOTICE_TIMEOUT = 10000; /* ms */
+	const EDITOR_NOTICE_TIMEOUT = 30000; /* ms */
 
 	public function get_name() {
 		return 'safe-mode';
@@ -76,6 +77,10 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function enable_safe_mode() {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+
 		WP_Filesystem();
 
 		$this->update_allowed_plugins();
@@ -92,11 +97,23 @@ class Module extends \Elementor\Core\Base\Module {
 		$results = copy_dir( __DIR__ . '/mu-plugin/', WPMU_PLUGIN_DIR );
 
 		if ( is_wp_error( $results ) ) {
-			return false;
+			return;
 		}
+
+		$token = md5( wp_rand() );
+
+		// Only who own this key can use 'elementor-safe-mode'.
+		update_option( self::OPTION_TOKEN, $token );
+
+		// Save for later use.
+		setcookie( self::OPTION_TOKEN, $token, time() + HOUR_IN_SECONDS, COOKIEPATH );
 	}
 
 	public function disable_safe_mode() {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+
 		$file_path = WP_CONTENT_DIR . '/mu-plugins/elementor-safe-mode.php';
 		if ( file_exists( $file_path ) ) {
 			unlink( $file_path );
@@ -111,6 +128,9 @@ class Module extends \Elementor\Core\Base\Module {
 		delete_option( 'elementor_safe_mode_allowed_plugins' );
 		delete_option( 'theme_mods_elementor-safe' );
 		delete_option( 'elementor_safe_mode_created_mu_dir' );
+
+		delete_option( self::OPTION_TOKEN );
+		setcookie( self::OPTION_TOKEN, '', 1 );
 	}
 
 	public function filter_preview_url( $url ) {
@@ -328,6 +348,7 @@ class Module extends \Elementor\Core\Base\Module {
 		echo $this->print_safe_mode_css();
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-try-safe-mode">
+		<?php if ( current_user_can( 'install_plugins' ) ) : ?>
 			<header>
 				<i class="eicon-warning"></i>
 				<h2><?php echo __( 'Can\'t Edit?', 'elementor' ); ?></h2>
@@ -339,6 +360,16 @@ class Module extends \Elementor\Core\Base\Module {
 				<?php echo __( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot.', 'elementor' ); ?>
 				<a href="<?php echo self::DOCS_TRY_SAFE_MODE_URL; ?>" target="_blank"><?php echo __( 'Learn More', 'elementor' ); ?></a>
 			</div>
+		<?php else : ?>
+			<header>
+				<i class="eicon-warning"></i>
+				<h2><?php echo __( 'Can\'t Edit?', 'elementor' ); ?></h2>
+			</header>
+			<div class="elementor-toast-content">
+				<?php echo __( 'If you are experiencing a loading issue, contact your site administrator to troubleshoot the problem using Safe Mode.', 'elementor' ); ?>
+				<a href="<?php echo self::DOCS_TRY_SAFE_MODE_URL; ?>" target="_blank"><?php echo __( 'Learn More', 'elementor' ); ?></a>
+			</div>
+		<?php endif; ?>
 		</div>
 
 		<script>
@@ -478,7 +509,10 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function __construct() {
-		add_action( 'elementor/admin/after_create_settings/elementor-tools', [ $this, 'add_admin_button' ] );
+		if ( current_user_can( 'install_plugins' ) ) {
+			add_action( 'elementor/admin/after_create_settings/elementor-tools', [ $this, 'add_admin_button' ] );
+		}
+
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		$plugin_file = self::MU_PLUGIN_FILE_NAME;

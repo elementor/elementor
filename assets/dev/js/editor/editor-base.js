@@ -596,14 +596,6 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
-	openLibraryOnStart() {
-		if ( '#library' === location.hash ) {
-			$e.run( 'library/open' );
-
-			location.hash = '';
-		}
-	}
-
 	enterPreviewMode( hidePanel ) {
 		let $elements = elementorFrontend.elements.$body;
 
@@ -615,9 +607,13 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview' );
+		const $element = this.documents.getCurrent().$element;
+
+		if ( $element ) {
+			$element
+				.removeClass( 'elementor-edit-area-active' )
+				.addClass( 'elementor-edit-area-preview' );
+		}
 
 		if ( hidePanel ) {
 			// Handle panel resize
@@ -633,9 +629,9 @@ export default class EditorBase extends Marionette.Application {
 			.addClass( 'elementor-editor-active' );
 
 		if ( elementor.config.document.panel.has_elements ) {
-			this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-preview' )
-			.addClass( 'elementor-edit-area-active' );
+			this.documents.getCurrent().$element
+				.removeClass( 'elementor-edit-area-preview' )
+				.addClass( 'elementor-edit-area-active' );
 		}
 	}
 
@@ -803,6 +799,8 @@ export default class EditorBase extends Marionette.Application {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
 
+		this.initNavigator();
+
 		this.logSite();
 	}
 
@@ -862,8 +860,6 @@ export default class EditorBase extends Marionette.Application {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
-
-		this.openLibraryOnStart();
 
 		this.previewLoadedOnce = true;
 	}
@@ -968,75 +964,6 @@ export default class EditorBase extends Marionette.Application {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	}
 
-	unloadDocument( document ) {
-		if ( document.id !== this.config.document.id ) {
-			return;
-		}
-
-		this.elements = [];
-
-		this.saver.stopAutoSave( document );
-
-		this.channels.dataEditMode.trigger( 'switch', 'preview' );
-
-		this.$previewContents.find( `.elementor-${ document.id }` )
-			.removeClass( 'elementor-edit-area-active elementor-edit-mode' )
-			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
-
-		this.settings.page.destroy();
-
-		this.heartbeat.destroy();
-
-		document.editor.status = 'closed';
-
-		this.config.document = {};
-
-		this.documents.unsetCurrent();
-	}
-
-	/**
-	 * @param {{}} config
-	 */
-	loadDocument( config ) {
-		this.config.document = config;
-
-		this.setAjax();
-
-		this.addWidgetsCache( config.widgets );
-
-		this.templates.init();
-
-		const document = new Document( config );
-
-		elementor.documents.add( document );
-
-		// Must set current before create a container.
-		elementor.documents.setCurrent( document );
-
-		this.settings.page = new this.settings.modules.page( config.settings );
-
-		document.container = this.settings.page.getEditedView().getContainer();
-
-		// Reference container back to document.
-		document.container.document = document;
-
-		this.heartbeat = new Heartbeat( document );
-
-		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
-
-		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
-			this.showFlexBoxAttentionDialog();
-		}
-
-		if ( this.loaded ) {
-			$e.internal( 'editor/documents/attach-preview' );
-		}
-
-		return document;
-	}
-
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
 			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
@@ -1094,6 +1021,14 @@ export default class EditorBase extends Marionette.Application {
 			get() {
 				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
 				return elementor.widgetsCache;
+			},
+		} );
+
+		Object.defineProperty( this, '$previewElementorEl', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
+
+				return elementor.documents.getCurrent().$element;
 			},
 		} );
 	}
