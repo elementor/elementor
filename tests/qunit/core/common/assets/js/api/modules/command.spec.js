@@ -74,22 +74,10 @@ jQuery( () => {
 							throw new Error( random );
 						};
 
-						const origDevTools = $e.devTools;
-
-						// Use `$e.devTools` as a hack.
-						$e.devTools = {
-							log: { error: ( e ) => {
-									$e.devTools = origDevTools;
-									throw e;
-								} },
-						};
-
 						instance.run( {} );
 					},
 					new Error( random )
 				);
-
-				$e.devTools = undefined;
 			} );
 
 			QUnit.test( 'instanceOf', ( assert ) => {
