@@ -1,6 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
-export default class History extends CommandBase {
+export default class CommandHistory extends CommandBase {
 	static getInstanceType() {
 		return 'CommandHistory';
 	}

@@ -1,6 +1,6 @@
-import Debounce from 'elementor-document/commands/base/history/debounce';
+import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 
-export class Settings extends Debounce {
+export class Settings extends CommandHistoryDebounce {
 	/**
 	 * Function getSubTitle().
 	 *
