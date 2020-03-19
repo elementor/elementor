@@ -1,5 +1,6 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
-import FinderLayout from './modal-layout';
+import FinderLayout from './modal/views/layout';
+import * as commands from './commands/';
 
 export default class Component extends ComponentModalBase {
 	getNamespace() {
@@ -11,21 +12,21 @@ export default class Component extends ComponentModalBase {
 			'': {
 				keys: 'ctrl+e',
 			},
-			'navigate/down': {
+			'navigate-down': {
 				keys: 'down',
 				scopes: [ this.getNamespace() ],
 				dependency: () => {
 					return this.getItemsView();
 				},
 			},
-			'navigate/up': {
+			'navigate-up': {
 				keys: 'up',
 				scopes: [ this.getNamespace() ],
 				dependency: () => {
 					return this.getItemsView();
 				},
 			},
-			'navigate/select': {
+			'navigate-select': {
 				keys: 'enter',
 				scopes: [ this.getNamespace() ],
 				dependency: () => {
@@ -37,11 +38,41 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultCommands() {
-		return Object.assign( super.defaultCommands(), {
-			'navigate/down': () => this.getItemsView().activateNextItem(),
-			'navigate/up': () => this.getItemsView().activateNextItem( true ),
-			'navigate/select': ( event ) => this.getItemsView().goToActiveItem( event ),
-		} );
+		const modalCommands = super.defaultCommands();
+
+		return {
+			'navigate/down': () => {
+				elementorCommon.helpers.softDeprecated(
+					"$e.run( 'finder/navigate/down' )",
+					'3.0.0',
+					"$e.run( 'finder/navigate-down' )"
+				);
+
+				$e.run( 'finder/navigate-down' );
+			},
+			'navigate/up': () => {
+				elementorCommon.helpers.softDeprecated(
+					"$e.run( 'finder/navigate/up' )",
+					'3.0.0',
+					"$e.run( 'finder/navigate-up' )"
+				);
+
+				$e.run( 'finder/navigate-up' );
+			},
+			'navigate/select': ( event ) => {
+				elementorCommon.helpers.softDeprecated(
+					"$e.run( 'finder/navigate/select', event )",
+					'3.0.0',
+					"$e.run( 'finder/navigate-select', event )"
+				);
+
+				// TODO: Fix $e.shortcuts use args. ( args.event ).
+				$e.run( 'finder/navigate-select', event );
+			},
+
+			... modalCommands,
+			... this.importCommands( commands ),
+		};
 	}
 
 	getModalLayout() {
