@@ -36,8 +36,8 @@ export default class CommandBase extends ArgsObject {
 	constructor( args = {}, commandsAPI = $e.commands ) {
 		super( args );
 
-		// TODO: is better to check if register process is done.
-		if ( ! commandsAPI.currentTrace.length ) {
+		if ( args.isRegister ) {
+			// TODO: Maybe `this.validateRegister()`.
 			return;
 		}
 

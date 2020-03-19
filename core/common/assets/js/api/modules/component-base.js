@@ -105,7 +105,7 @@ export default class ComponentBase extends elementorModules.Module {
 		if ( isCallbackNewClass ) {
 			try {
 				// Try get instance.
-				instance = callback();
+				instance = callback( { isRegister: true } );
 
 				if ( ! ( instance instanceof CommandBase ) ) {
 					throw Error( 'Command should inherent command base.' );
