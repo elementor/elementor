@@ -1,3 +1,3 @@
-export { Down } from './down';
-export { Select } from './select';
-export { Up } from './up';
+export { NavigateDown } from './navigate-down';
+export { NavigateSelect } from './navigate-select';
+export { NavigateUp } from './navigate-up';
