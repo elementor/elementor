@@ -57,10 +57,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			};
 		}
 
-		if ( true === swiperOptions.loop ) {
-			swiperOptions.loopedSlides = this.getSlidesCount();
-		}
-
 		if ( isSingleSlide ) {
 			swiperOptions.effect = elementSettings.effect;
 
