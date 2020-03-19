@@ -1,6 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import CommandHistoryHistory from 'elementor-document/commands/base/history';
-import CommandHistoryHistoryDebounce from 'elementor-document/commands/base/history/debounce';
+import CommandHistoryHistory from 'elementor-document/commands/base/command-history';
+import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 jQuery( () => {
@@ -97,24 +97,24 @@ jQuery( () => {
 					historyCommand = new class Command extends CommandHistoryHistory {
 						getHistory() {}
 					}( {} ),
-					historyDebounceCommand = new class Command extends CommandHistoryHistoryDebounce {
+					historyDebounceCommand = new class Command extends CommandHistoryDebounce {
 						getHistory() {}
 					}( {} );
 
 				assert.equal( internalCommand instanceof CommandBase, true );
 				assert.equal( internalCommand instanceof CommandInternalBase, true );
 				assert.equal( internalCommand instanceof CommandHistoryHistory, false );
-				assert.equal( internalCommand instanceof CommandHistoryHistoryDebounce, false );
+				assert.equal( internalCommand instanceof CommandHistoryDebounce, false );
 
 				assert.equal( historyCommand instanceof CommandBase, true );
 				assert.equal( historyCommand instanceof CommandInternalBase, false );
 				assert.equal( historyCommand instanceof CommandHistoryHistory, true );
-				assert.equal( historyCommand instanceof CommandHistoryHistoryDebounce, false );
+				assert.equal( historyCommand instanceof CommandHistoryDebounce, false );
 
 				assert.equal( historyDebounceCommand instanceof CommandBase, true );
 				assert.equal( historyDebounceCommand instanceof CommandInternalBase, false );
 				assert.equal( historyDebounceCommand instanceof CommandHistoryHistory, true );
-				assert.equal( historyDebounceCommand instanceof CommandHistoryHistoryDebounce, true );
+				assert.equal( historyDebounceCommand instanceof CommandHistoryDebounce, true );
 			} );
 		} );
 	} );
