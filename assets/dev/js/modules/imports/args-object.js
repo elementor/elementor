@@ -36,10 +36,6 @@ export default class ArgsObject {
 	 */
 	constructor( args ) {
 		this.args = args;
-
-		if ( ! this.instanceTypes ) {
-			this.instanceTypes = [];
-		}
 	}
 
 	/**
