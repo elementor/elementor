@@ -26,7 +26,7 @@ jobs:
       - name: Run Lint
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
-          phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+          phpcs --config-set installed_paths $HOME/.config/composer/vendor/wp-coding-standards/wpcs
           phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
       - name: Run PHP Syntax Lint
         run: |
