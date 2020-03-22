@@ -72,7 +72,7 @@ class Manager extends BaseModule {
 			}
 		}
 
-		return 'error';
+		Ajax::instance()->send_error( 404 );
 	}
 }
 

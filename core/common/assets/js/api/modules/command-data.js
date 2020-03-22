@@ -13,14 +13,7 @@ export default class CommandData extends CommandBase {
 		 *
 		 * @type {{}}
 		 */
-		this.dataBefore = {};
-
-		/**
-		 * Data returned from remote.
-		 *
-		 * @type {{}}
-		 */
-		this.dataAfter = {};
+		this.data = {};
 	}
 
 	/**
@@ -119,11 +112,14 @@ export default class CommandData extends CommandBase {
 				throw Error( `Invalid type: '${ this.args.type }'` );
 		}
 
+		const method = this.args.dataType;
+
 		delete this.args.dataType;
 
 		this.args = methodBefore( this.args );
 
 		const requestData = {
+				method,
 				command: this.currentCommand,
 				component: this.component.getNamespace(),
 				timestamp: new Date().getTime(),
@@ -132,17 +128,22 @@ export default class CommandData extends CommandBase {
 
 		elementorCommon.ajax.addRequest( 'command-data', {
 			data: requestData,
-			error: ( e ) => {
+			error: ( ( e ) => {
 				this.onCatchApply( e );
-			},
+
+				deferred.reject();
+			} ),
 			success: ( ( data ) => {
-				this.dataBefore = data;
+				this.data = data;
 
-				this.dataAfter = methodAfter( data, this.args );
-				this.dataAfter = Object.assign( { requestData }, this.dataAfter );
+				// Run apply filter.
+				this.data = methodAfter( data, this.args );
 
-				deferred.resolve( this.dataAfter );
-			} ).bind( this ),
+				// Append requestData.
+				this.data = Object.assign( { requestData }, this.data );
+
+				deferred.resolve( this.data );
+			} ),
 		} );
 
 		return deferred.promise();

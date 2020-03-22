@@ -286,7 +286,7 @@ class Module extends BaseModule {
 	 *
 	 * @param null $code
 	 */
-	private function send_error( $code = null ) {
+	public function send_error( $code = null ) {
 		wp_send_json_error( [
 			'responses' => $this->response_data,
 		], $code );
