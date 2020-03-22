@@ -1,34 +1,16 @@
 <?php
 namespace Elementor\Data\Editor\Globals\Commands;
 
-class Colors {
-	private $component;
+use Elementor\Data\Base\Command as Base_Command;
 
-	public function __construct( $component ) {
-		$this->component = $component;
-	}
-
+class Colors extends Base_Command {
 	public function get_name() {
 		return 'colors';
 	}
 
-	private function before_apply( $data ) {
-		return $data;
-	}
-
-	private function apply( $data ) {
+	protected function apply( $data ) {
 		return [
 			'test' => 'from colors.php',
 		];
-	}
-
-	private function after_apply( $data, $result ) {
-		return $result;
-	}
-
-	public function run( $data ) {
-		$data = $this->before_apply( $data );
-		$result = $this->apply( $data );
-		return $this->after_apply( $data, $result );
 	}
 }

@@ -58,6 +58,7 @@ class Manager extends BaseModule {
 		// TODO: Validate editor.
 		$component = $data['component'];
 		$command = $data['command'];
+		$type = isset( $data['type'] ) ? $data['type'] : 'get';
 
 		if ( isset( $this->editor_components[ $component ] ) ) {
 			$command_instance = null;
@@ -68,7 +69,7 @@ class Manager extends BaseModule {
 			}
 
 			if ( $command_instance ) {
-				return $command_instance->run( $data );
+				return $command_instance->run( $type, $data );
 			}
 		}
 
