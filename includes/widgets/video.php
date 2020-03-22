@@ -282,7 +282,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'play_on_mobile',
 			[
-				'label' => __( 'Play on Mobile', 'elementor' ),
+				'label' => __( 'Play On Mobile', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'autoplay' => 'yes',
