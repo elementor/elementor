@@ -6,7 +6,7 @@ import RepeaterComponent from './document/repeater/component';
 import HistoryComponent from './document/history/component';
 import DynamicComponent from './document/dynamic/component';
 
-import GlobalComponent from './data/global/component';
+import GlobalsComponent from './data/globals/component';
 
 elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 	$e.components.register( new DocumentComponent() );
@@ -21,7 +21,7 @@ elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 	elementor.saver = $e.components.get( 'document/save' );
 
 	// TODO: Move to elementor:init-data-components
-	$e.components.register( new GlobalComponent() );
+	$e.components.register( new GlobalsComponent() );
 } );
 
 $e.modules.document = DocumentComponent.getModules();

@@ -116,12 +116,14 @@ export default class CommandData extends CommandBase {
 
 		this.args = methodBefore( this.args );
 
-		return new Promise( ( resolve, reject ) => {
-			elementorCommon.ajax.addRequest( 'command-data', {
-				data: {
-					command: this.currentCommand,
-					component: this.component.getNamespace(),
-				},
+		const requestData = {
+			command: this.currentCommand,
+			component: this.component.getNamespace(),
+			timestamp: new Date().getTime(),
+		};
+
+		return elementorCommon.ajax.addRequest( 'command-data', {
+				data: requestData,
 				error: ( e ) => {
 					this.onCatchApply( e );
 
@@ -129,10 +131,10 @@ export default class CommandData extends CommandBase {
 				},
 				success: ( data ) => {
 					this.data = methodAfter( data, this.args );
+					this.data = Object.assign( this.data, requestData );
 
 					return this.data;
 				},
 			} );
-		} );
 	}
 }

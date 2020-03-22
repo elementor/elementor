@@ -3,7 +3,7 @@ import * as commandsData from './commands/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
-		return 'global';
+		return 'globals';
 	}
 
 	defaultData() {
