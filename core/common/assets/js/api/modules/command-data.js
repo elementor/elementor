@@ -13,7 +13,14 @@ export default class CommandData extends CommandBase {
 		 *
 		 * @type {{}}
 		 */
-		this.data = {};
+		this.dataBefore = {};
+
+		/**
+		 * Data returned from remote.
+		 *
+		 * @type {{}}
+		 */
+		this.dataAfter = {};
 	}
 
 	/**
@@ -117,24 +124,27 @@ export default class CommandData extends CommandBase {
 		this.args = methodBefore( this.args );
 
 		const requestData = {
-			command: this.currentCommand,
-			component: this.component.getNamespace(),
-			timestamp: new Date().getTime(),
-		};
+				command: this.currentCommand,
+				component: this.component.getNamespace(),
+				timestamp: new Date().getTime(),
+			},
+			deferred = jQuery.Deferred();
 
-		return elementorCommon.ajax.addRequest( 'command-data', {
-				data: requestData,
-				error: ( e ) => {
-					this.onCatchApply( e );
+		elementorCommon.ajax.addRequest( 'command-data', {
+			data: requestData,
+			error: ( e ) => {
+				this.onCatchApply( e );
+			},
+			success: ( ( data ) => {
+				this.dataBefore = data;
 
-					reject( e );
-				},
-				success: ( data ) => {
-					this.data = methodAfter( data, this.args );
-					this.data = Object.assign( this.data, requestData );
+				this.dataAfter = methodAfter( data, this.args );
+				this.dataAfter = Object.assign( { requestData }, this.dataAfter );
 
-					return this.data;
-				},
-			} );
+				deferred.resolve( this.dataAfter );
+			} ).bind( this ),
+		} );
+
+		return deferred.promise();
 	}
 }

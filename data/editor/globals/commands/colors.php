@@ -18,8 +18,7 @@ class Colors {
 
 	private function apply( $data ) {
 		return [
-			'sentData' => $data,
-			'test',
+			'test' => 'from colors.php',
 		];
 	}
 
