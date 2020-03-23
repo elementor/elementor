@@ -142,12 +142,14 @@ class Icons_Manager {
 			[],
 			ELEMENTOR_VERSION
 		);
-		wp_enqueue_style(
-			'font-awesome-5-all',
-			self::get_fa_asset_url( 'all' ),
-			[],
-			ELEMENTOR_VERSION
-		);
+		if ( ! wp_script_is( 'font-awesome-pro' ) ) {
+			wp_enqueue_style(
+				'font-awesome-5-all',
+				self::get_fa_asset_url( 'all' ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		}
 		wp_enqueue_style(
 			'font-awesome-4-shim',
 			self::get_fa_asset_url( 'v4-shims' ),
