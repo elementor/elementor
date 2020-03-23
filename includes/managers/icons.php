@@ -142,6 +142,7 @@ class Icons_Manager {
 			[],
 			ELEMENTOR_VERSION
 		);
+		// Make sure that the CSS in the 'all' file does not override FA Pro's CSS
 		if ( ! wp_script_is( 'font-awesome-pro' ) ) {
 			wp_enqueue_style(
 				'font-awesome-5-all',
