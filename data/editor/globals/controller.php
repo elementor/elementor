@@ -9,7 +9,7 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		$this->register_endpoint( '\Elementor\Data\Editor\Globals\Endpoints\Colors' );
-		$this->register_endpoint( '\Elementor\Data\Editor\Globals\Endpoints\Test' );
+		$this->register_endpoint( Endpoints\Colors::class );
+		$this->register_endpoint( Endpoints\Test::class );
 	}
 }
