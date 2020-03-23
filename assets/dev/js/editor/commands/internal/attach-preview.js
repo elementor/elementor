@@ -68,7 +68,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 
 			document.$element
 				.addClass( 'elementor-edit-area-active' )
-				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
+				.removeClass( 'elementor-editor-preview' );
 
 			resolve();
 		} );
