@@ -92,6 +92,8 @@ export default class extends BaseRegion {
 
 		this.$el.draggable( this.getDraggableOptions() );
 
+		// Used timeout here since draggable and resizable are conflicting.
+		// https://stackoverflow.com/questions/4948582/jquery-draggable-and-resizable/
 		setTimeout( () => {
 			this.$el.resizable( this.getResizableOptions() );
 		} );
