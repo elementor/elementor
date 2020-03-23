@@ -11,25 +11,25 @@ export default class Data extends Commands {
 	}
 
 	create( endpoint, args = {} ) {
-		args.dataType = 'create';
+		args.type = 'create';
 
 		return this.run( endpoint, args );
 	}
 
 	delete( endpoint, args = {} ) {
-		args.dataType = 'delete';
+		args.type = 'delete';
 
 		return this.run( endpoint, args );
 	}
 
 	get( endpoint, args = {} ) {
-		args.dataType = 'get';
+		args.type = 'get';
 
 		return this.run( endpoint, args );
 	}
 
 	update( endpoint, args = {} ) {
-		args.dataType = 'update';
+		args.type = 'update';
 
 		return this.run( endpoint, args );
 	}
