@@ -95,7 +95,7 @@ class Control_Slider extends Control_Base_Units {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<?php $this->print_units_template(); ?>
-			<div class="elementor-control-input-wrapper elementor-clearfix elementor-control-tag-area">
+			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper elementor-clearfix elementor-control-tag-area">
 				<# if ( isMultiple && ( data.labels.length || data.scales ) ) { #>
 					<div class="elementor-slider__extra">
 						<# if ( data.labels.length ) { #>
