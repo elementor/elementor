@@ -1,12 +1,5 @@
 import CommandBase from './command-base';
 
-// TODO: Return it from the server. Original at WP_REST_Server.
-const READABLE = [ 'GET' ],
-	CREATABLE = [ 'POST' ],
-	EDITABLE = [ 'POST', 'PUT', 'PATCH' ],
-	DELETABLE = [ 'DELETE' ],
-	ALLMETHODS = [ 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' ];
-
 export default class CommandData extends CommandBase {
 	static getInstanceType() {
 		return 'CommandData';
@@ -21,42 +14,6 @@ export default class CommandData extends CommandBase {
 		 * @type {{}}
 		 */
 		this.data = {};
-	}
-
-	getHTTPMethod( type ) {
-		switch ( type ) {
-			case 'create':
-				return 'POST';
-
-			case 'delete':
-				return 'DELETE';
-
-			case 'get':
-				return 'GET';
-
-			case 'update':
-				return 'PUT';
-		}
-
-		return false;
-	}
-
-	getAllowedMethods( type ) {
-		switch ( type ) {
-			case 'create':
-				return CREATABLE;
-
-			case 'delete':
-				return DELETABLE;
-
-			case 'get':
-				return READABLE;
-
-			case 'update':
-				return EDITABLE;
-		}
-
-		return false;
 	}
 
 	getApplyMethods( type ) {
@@ -97,43 +54,17 @@ export default class CommandData extends CommandBase {
 
 		this.args = applyMethods.before( this.args );
 
-		const deferred = jQuery.Deferred(),
-			requestData = {
-				method: type,
-				command: this.currentCommand,
-				component: this.component.getNamespace(),
-				timestamp: new Date().getTime(),
-			},
-			params = {
-				credentials: 'include', // cookies
-			},
-			headers = {};
+		// TODO: Figure out which `requestData` is not in use and delete it.
+		const requestData = {
+			type,
+			timestamp: new Date().getTime(),
+			component: this.component.getNamespace(),
+			command: this.currentCommand,
+			args: this.args,
+		};
 
-		/**
-		 * Translate:
-		 * 'create, delete, get, update' to HTTP Methods:
-		 * 'GET, POST, PUT, PATCH, DELETE'
-		 */
-		const allowedMethods = this.getAllowedMethods( type ),
-			method = this.getHTTPMethod( type );
-
-		if ( 'GET' === method ) {
-			Object.assign( params, { headers } );
-		} else if ( allowedMethods ) {
-			Object.assign( headers, { 'Content-Type': 'application/json' } );
-			Object.assign( params, {
-				method,
-				headers: headers,
-				body: JSON.stringify( requestData ),
-			} );
-		} else {
-			throw Error( `Invalid type: '${ type }'` );
-		}
-
-		const response = fetch( elementor.config.home_url + '/wp-json/elementor/v1/' + requestData.command, params );
-
-		try {
-			response.then( ( _response ) => _response.json() ).then( ( data ) => {
+		return new Promise( ( resolve, reject ) => {
+			$e.utils.data.fetch( type, requestData ).then( ( data ) => {
 				this.data = data;
 
 				// Run apply filter.
@@ -142,37 +73,12 @@ export default class CommandData extends CommandBase {
 				// Append requestData.
 				this.data = Object.assign( { requestData }, this.data );
 
-				deferred.resolve( this.data );
+				resolve( this.data );
+			} ).catch( ( e ) => {
+				this.onCatchApply( e );
+				reject();
 			} );
-		} catch ( e ) {
-			this.onCatchApply( e );
-
-			deferred.reject();
-
-			return false;
-		}
-		// //elementor.config.home_url
-		// elementorCommon.ajax.addRequest( 'command-data', {
-		// 	data: requestData,
-		// 	error: ( ( e ) => {
-		// 		this.onCatchApply( e );
-		//
-		// 		deferred.reject();
-		// 	} ),
-		// 	success: ( ( data ) => {
-		// 		this.data = data;
-		//
-		// 		// Run apply filter.
-		// 		this.data = methodAfter( data, this.args );
-		//
-		// 		// Append requestData.
-		// 		this.data = Object.assign( { requestData }, this.data );
-		//
-		// 		deferred.resolve( this.data );
-		// 	} ),
-		// } );
-
-		return deferred.promise();
+		} );
 	}
 
 	/**

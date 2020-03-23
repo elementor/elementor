@@ -16,6 +16,8 @@ import Data from './core/data.js';
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
 
+import * as Utils from './utils/index';
+
 export default class API {
 	/**
 	 * Function constructor().
@@ -45,6 +47,10 @@ export default class API {
 
 			hookData,
 			hookUI,
+		};
+
+		this.utils = {
+			data: new Utils.Data(),
 		};
 
 		window.$e = this;
