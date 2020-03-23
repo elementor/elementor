@@ -39,8 +39,4 @@ abstract class Endpoint {
 	 * @return WP_Error|WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	abstract protected function get_items( $request );
-
-	protected function response( $data ) {
-		return [];
-	}
 }
