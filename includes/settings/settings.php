@@ -66,13 +66,13 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function register_admin_menu() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
 		global $menu;
 
 		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // WPCS: override ok.
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
 		add_menu_page(
 			__( 'Elementor', 'elementor' ),
