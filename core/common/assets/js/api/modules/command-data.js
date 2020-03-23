@@ -87,6 +87,7 @@ export default class CommandData extends CommandBase {
 	apply() {
 		let methodBefore, methodAfter;
 
+		// EXTRACT
 		switch ( this.args.dataType ) {
 			case 'create':
 				methodBefore = this.applyBeforeCreate;
@@ -115,25 +116,37 @@ export default class CommandData extends CommandBase {
 		const method = this.args.dataType;
 
 		delete this.args.dataType;
+		// EXTRACT
 
 		this.args = methodBefore( this.args );
 
-		const requestData = {
+		const deferred = jQuery.Deferred(),
+			requestData = {
 				method,
 				command: this.currentCommand,
 				component: this.component.getNamespace(),
 				timestamp: new Date().getTime(),
 			},
-			deferred = jQuery.Deferred();
+			params = {
+				credentials: 'include', // cookies
+			},
+			headers = {};
 
-		elementorCommon.ajax.addRequest( 'command-data', {
-			data: requestData,
-			error: ( ( e ) => {
-				this.onCatchApply( e );
+		if ( 'post' === method ) {
+			Object.assign( headers, { 'Content-Type': 'application/json' } );
+			Object.assign( params, {
+				method: 'POST',
+				headers: headers,
+				body: JSON.stringify( requestData ),
+			} );
+		} else {
+			Object.assign( params, { headers } );
+		}
 
-				deferred.reject();
-			} ),
-			success: ( ( data ) => {
+		const response = fetch( elementor.config.home_url + '/wp-json/elementor/v1/' + requestData.command, params );
+
+		try {
+			response.then( ( _response ) => _response.json() ).then( ( data ) => {
 				this.data = data;
 
 				// Run apply filter.
@@ -143,8 +156,34 @@ export default class CommandData extends CommandBase {
 				this.data = Object.assign( { requestData }, this.data );
 
 				deferred.resolve( this.data );
-			} ),
-		} );
+			} );
+		} catch ( e ) {
+			this.onCatchApply( e );
+
+			deferred.reject();
+
+			return false;
+		}
+		// //elementor.config.home_url
+		// elementorCommon.ajax.addRequest( 'command-data', {
+		// 	data: requestData,
+		// 	error: ( ( e ) => {
+		// 		this.onCatchApply( e );
+		//
+		// 		deferred.reject();
+		// 	} ),
+		// 	success: ( ( data ) => {
+		// 		this.data = data;
+		//
+		// 		// Run apply filter.
+		// 		this.data = methodAfter( data, this.args );
+		//
+		// 		// Append requestData.
+		// 		this.data = Object.assign( { requestData }, this.data );
+		//
+		// 		deferred.resolve( this.data );
+		// 	} ),
+		// } );
 
 		return deferred.promise();
 	}
