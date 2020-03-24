@@ -11,6 +11,7 @@ export default class extends BaseRegion {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
+		this.isLayoutInitOnce = false;
 
 		this.opened = false;
 
@@ -91,18 +92,21 @@ export default class extends BaseRegion {
 		this.show( new NavigatorLayout() );
 
 		this.$el.draggable( this.getDraggableOptions() );
+		this.$el.resizable( this.getResizableOptions() );
 
-		// Used timeout here since draggable and resizable are conflicting.
-		// https://stackoverflow.com/questions/4948582/jquery-draggable-and-resizable/
-		setTimeout( () => {
-			this.$el.resizable( this.getResizableOptions() );
-		} );
+		this.isLayoutInitOnce = true;
 	}
 
 	open( model ) {
 		// If open once.
 		if ( ! this.opened ) {
-			this.initLayout();
+			/**
+			 *  Since navigator is static element its layout should be rendered once for each document.
+			 *  reason: two flows opens the navigator: $e.route( 'navigator' ) and on documentLoaded.
+			 */
+			if ( ! this.isLayoutInitOnce ) {
+				this.initLayout();
+			}
 
 			this.opened = true;
 		}
@@ -285,10 +289,10 @@ export default class extends BaseRegion {
 	onDocumentLoaded( document ) {
 		if ( document.config.panel.has_elements ) {
 			this.initLayout();
-		}
 
-		if ( this.storage.visible ) {
-			$e.route( 'navigator' );
+			if ( this.storage.visible ) {
+				$e.route( 'navigator' );
+			}
 		}
 	}
 
