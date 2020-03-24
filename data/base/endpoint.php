@@ -28,15 +28,15 @@ abstract class Endpoint {
 		$this->register_get_items_route();
 	}
 
-	public function register_get_item_route() {
-		$args = [
+	public function register_get_item_route( $route = '/(?P<id>[\d]+)', $args = [] ) {
+		$args = array_merge( $args, [
 			'id' => [
 				'description' => __( 'Unique identifier for the object.' ),
 				'type' => 'integer',
 			],
-		];
+		] );
 
-		$this->register_route( '/(?P<id>[\d]+)', WP_REST_Server::READABLE, function ( $request ) {
+		$this->register_route( $route, WP_REST_Server::READABLE, function ( $request ) {
 			return rest_ensure_response( $this->get_item( $request->get_param( 'id' ), $request ) );
 		}, $args );
 	}
