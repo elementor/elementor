@@ -24,6 +24,7 @@ class Manager extends BaseModule {
 	}
 
 	public function register_editor_controllers() {
+		$this->register_controller( Editor\Document\Controller::class, $this->editor_controllers );
 		$this->register_controller( Editor\Globals\Controller::class, $this->editor_controllers );
 	}
 
