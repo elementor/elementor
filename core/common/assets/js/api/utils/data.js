@@ -42,6 +42,26 @@ export default class Data {
 		return false;
 	}
 
+	/**
+	 * @param {string} command
+	 * @param {{}} args
+	 *
+	 * @returns {string} Endpoint
+	 */
+	commandToEndpoint( command, args ) {
+		let endPoint = command;
+
+		if ( endPoint.includes( 'index' ) ) {
+			endPoint = endPoint.replace( 'index', '' );
+
+			if ( args.id ) {
+				endPoint += args.id.toString() + '/';
+			}
+		}
+
+		return endPoint;
+	}
+
 	fetch( type, requestData ) {
 		// TODO: Check if 'include' is required.
 		const params = {

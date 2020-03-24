@@ -59,7 +59,7 @@ export default class CommandData extends CommandBase {
 			type,
 			timestamp: new Date().getTime(),
 			component: this.component.getNamespace(),
-			command: this.currentCommand,
+			command: $e.utils.data.commandToEndpoint( this.currentCommand, this.args ),
 			args: this.args,
 		};
 
