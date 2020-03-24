@@ -11,7 +11,6 @@ export default class extends BaseRegion {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
-		this.isLayoutInitOnce = false;
 
 		this.opened = false;
 
@@ -93,21 +92,11 @@ export default class extends BaseRegion {
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );
-
-		this.isLayoutInitOnce = true;
 	}
 
 	open( model ) {
 		// If open once.
 		if ( ! this.opened ) {
-			/**
-			 *  Since navigator is static element its layout should be rendered once for each document.
-			 *  reason: two flows opens the navigator: $e.route( 'navigator' ) and on documentLoaded.
-			 */
-			if ( ! this.isLayoutInitOnce ) {
-				this.initLayout();
-			}
-
 			this.opened = true;
 		}
 
@@ -141,6 +130,10 @@ export default class extends BaseRegion {
 
 		if ( ! silent ) {
 			this.saveStorage( 'visible', false );
+		}
+
+		if ( this.$el.hasClass( 'ui-resizable' ) ) {
+			this.$el.resizable( 'destroy' );
 		}
 
 		elementorCommon.elements.$window.off( 'resize', this.ensurePosition );
