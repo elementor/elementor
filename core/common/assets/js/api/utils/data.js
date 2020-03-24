@@ -43,12 +43,13 @@ export default class Data {
 	}
 
 	/**
+	 * @param {string} type
 	 * @param {string} command
 	 * @param {{}} args
 	 *
 	 * @returns {string} Endpoint
 	 */
-	commandToEndpoint( command, args ) {
+	commandToEndpoint( type, command, args ) {
 		let endPoint = command;
 
 		if ( endPoint.includes( 'index' ) ) {
@@ -57,6 +58,17 @@ export default class Data {
 			if ( args.id ) {
 				endPoint += args.id.toString() + '/';
 			}
+		}
+
+		const argsEntries = Object.entries( args );
+
+		// Upon 'GET' args will become part of get params.
+		if ( 'get' === type && argsEntries.length ) {
+			endPoint += '?';
+
+			argsEntries.forEach( ( [ name, value ] ) => {
+				endPoint += name + '=' + value + '&';
+			} );
 		}
 
 		return endPoint;
@@ -68,6 +80,8 @@ export default class Data {
 				credentials: 'include', // cookies
 			},
 			headers = {};
+
+		requestData.command = this.commandToEndpoint( type, requestData.command, requestData.args );
 
 		/**
 		 * Translate:
