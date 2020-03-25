@@ -3,8 +3,6 @@
 //
 .elementor-widget-icon-box {
 
-		// Fix for: Icon position on mobile devices is always on top (#10708, #3040)
-
 		&.elementor-position- {
 
 			&left,
@@ -86,4 +84,33 @@
 	.elementor-icon-box-description {
 		margin: 0;
 	}
+
+	@media (max-width: $screen-sm-max) {
+
+		&.elementor-position- {
+
+			&right {
+
+				.elementor-icon-box-icon {
+					margin-left: 15px;
+				}
+			}
+
+			&left {
+
+				.elementor-icon-box-icon {
+					margin-right: 15px;
+				}
+			}
+
+			&top {
+
+				.elementor-icon-box-icon {
+					margin-bottom: 15px;
+				}
+			}
+		}
+
+	}
+
 }
