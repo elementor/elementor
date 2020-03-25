@@ -223,7 +223,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 = 2.9.7 - 2020-03-25 =
 * Tweak: Added compatibility with WordPress v5.4 ([#10745](https://github.com/elementor/elementor/issues/10745))
-* Tweak: Show Typography section to everyone in Section, Column and Inner Section elements ([#10592](https://github.com/elementor/elementor/issues/10525))
+* Tweak: Show Typography section to everyone in Section, Column and Inner Section elements ([#10592](https://github.com/elementor/elementor/issues/10592))
 * Fix: Custom Attributes section missing in Advanced tab ([#10881](https://github.com/elementor/elementor/issues/10881))
 * Fix: Title color & Typography settings are being overridden by Theme Style in Accordion and Toggle widget ([#10900](https://github.com/elementor/elementor/issues/10900))
 * Fix: Merged "Play On Mobile" string for better i18n in Video widget (Props [@pedro-mendonca](https://github.com/pedro-mendonca), [#10315](https://github.com/elementor/elementor/issues/10315))
