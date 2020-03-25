@@ -1163,32 +1163,19 @@ class Frontend extends App {
 
 			$title = Utils::urlencode_html_entities( wp_get_document_title() );
 
-			$thumb_id = get_post_thumbnail_id();
-			$thumb_size = 'full';
-			$full_thumb_meta = wp_get_attachment_image_src( $thumb_id, $thumb_size );
+			// Try to get the 'large' size featured image thumbnail
+			$featured_image_url = get_the_post_thumbnail_url( null, 'large' );
 
-			// If thumb is wider than 1600px, get the closest thumbnail size to it
-			// This is done because Pinterest has a problem sharing large images
-			if ( $thumb_id && $full_thumb_meta && ( 1600 < $full_thumb_meta[1] ) ) {
-				$thumbnail_sizes = Group_Control_Image_Size::get_all_image_sizes();
-
-				uasort( $thumbnail_sizes, function( $a, $b ) {
-					return $b['width'] - $a['width'];
-				} );
-
-				foreach ( $thumbnail_sizes as $size_slug => $size_meta ) {
-					if ( 1600 > $size_meta['width'] ) {
-						$thumb_size = $size_slug;
-						break;
-					}
-				}
+			// If the large size was nullified, use the full size which cannot be nullified/deleted
+			if ( ! $featured_image_url ) {
+				$featured_image_url = get_the_post_thumbnail_url( null, 'full' );
 			}
 
 			$settings['post'] = [
 				'id' => $post->ID,
 				'title' => $title,
 				'excerpt' => $post->post_excerpt,
-				'featuredImage' => get_the_post_thumbnail_url( null, $thumb_size ),
+				'featuredImage' => $featured_image_url,
 			];
 		} else {
 			$settings['post'] = [
