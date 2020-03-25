@@ -221,6 +221,23 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.7 - 2020-03-25 =
+* Tweak: Added compatibility with WordPress v5.4 ([#10745](https://github.com/elementor/elementor/issues/10745))
+* Tweak: Show Typography section to everyone in Section, Column and Inner Section elements ([#10592](https://github.com/elementor/elementor/issues/10525))
+* Fix: Custom Attributes section missing in Advanced tab ([#10881](https://github.com/elementor/elementor/issues/10881))
+* Fix: Title color & Typography settings are being overridden by Theme Style in Accordion and Toggle widget ([#10900](https://github.com/elementor/elementor/issues/10900))
+* Fix: Merged "Play On Mobile" string for better i18n in Video widget (Props [@pedro-mendonca](https://github.com/pedro-mendonca), [#10315](https://github.com/elementor/elementor/issues/10315))
+* Fix: Whatsapp share link does not escape HTML entities ([#10746](https://github.com/elementor/elementor/issues/10746))
+* Fix: Invalid request error conflict with Yoast plugin and Share Buttons widget ([#10746](https://github.com/elementor/elementor/issues/10746))
+* Fix: FontAwesome Pro icons not loading in edge cases
+* Fix: Missing Dynamic indication in Range control ([#10835](https://github.com/elementor/elementor/issues/10835))
+* Fix: Carousel spins multiple times when loading in Image Carousel widget
+* Fix: Theme style overrides Lightbox Share links color
+* Fix: Loading spinner placement glitch in URL control
+* Fix: Missing separator control in Icon widget
+* Fix: Dynamic Tags with the character “0” are not visible on frontend
+* Fix: Dashboard menu UI glitch for non-Administrator role users
+
 = 2.9.6 - 2020-03-12 =
 * Fix: Removed redundant dynamic capabilities from all of color controls inside Group controls in Theme Style
 * Fix: Global widget is clickable when editing Theme Style
