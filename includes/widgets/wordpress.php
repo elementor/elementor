@@ -90,7 +90,7 @@ class Widget_WordPress extends Widget_Base {
 		} else {
 			$category = 'wordpress'; // WPCS: spelling ok.
 		}
-		return [ $category ];
+		return apply_filters( 'elementor/widgets/wordpress/get_categories', [ $category ], $this );
 	}
 
 	/**
