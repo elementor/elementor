@@ -28,7 +28,11 @@ export default class Data extends HooksBase {
 
 			case 'catch':
 			case 'after': {
-				callback.callback( args, result );
+				const callbackResult = callback.callback( args, result );
+
+				if ( callbackResult ) {
+					return callbackResult;
+				}
 			}
 			break;
 
