@@ -8,11 +8,24 @@ class Colors extends Endpoint {
 		return 'colors';
 	}
 
+	protected function register() {
+		parent::register();
+
+		$this->register_get_item_route();
+	}
+
 	protected function get_items( $request ) {
 		return [
-			'color1' => 'red',
-			'color2' => 'green',
-			'color3' => 'blue',
 		];
+	}
+
+	protected function get_item( $id, $request ) {
+		switch ( $id ) {
+			case 'primary':
+				return 'red';
+
+			case 'secondary':
+				return 'green';
+		}
 	}
 }
