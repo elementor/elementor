@@ -63,21 +63,20 @@ export default class CommandData extends CommandBase {
 			args: this.args,
 		};
 
-		return new Promise( ( resolve, reject ) => {
-			$e.utils.data.fetch( type, requestData ).then( ( data ) => {
-				this.data = data;
+		return $e.utils.data.fetch( type, requestData ).then( ( data ) => {
+			this.data = data;
 
-				// Run apply filter.
-				this.data = applyMethods.after( data, this.args );
+			// Run apply filter.
+			this.data = applyMethods.after( data, this.args );
 
-				// Append requestData.
-				this.data = Object.assign( { requestData }, this.data );
+			this.data = { data: this.data };
 
-				resolve( this.data );
-			} ).catch( ( e ) => {
-				this.onCatchApply( e );
-				reject();
-			} );
+			// Append requestData.
+			this.data = Object.assign( { __requestData__: requestData }, this.data );
+
+			return this.data;
+		} ).catch( ( e ) => {
+			this.onCatchApply( e );
 		} );
 	}
 
