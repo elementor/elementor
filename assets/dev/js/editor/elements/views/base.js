@@ -470,7 +470,24 @@ BaseElementView = BaseContainer.extend( {
 
 	renderStyles( settings ) {
 		if ( ! settings ) {
-			settings = this.getEditModel().get( 'settings' );
+			if ( elementorCommonConfig.isTesting ) {
+				settings = this.getEditModel().get( 'settings' );
+
+				return this.renderStyles( settings );
+			}
+
+			// Async, means rendered when result received.
+			$e.data.get( 'document/elements', {
+				document_id: elementor.documents.getCurrent().id,
+				element_id: this.getEditModel().id,
+			} ).then( ( result ) => {
+				settings = new elementorModules.editor.elements.models.BaseSettings( result.data.settings, {
+					controls: elementor.getContainer( this.getEditModel().id ).controls,
+				} );
+				this.renderStyles( settings );
+			} );
+
+			return;
 		}
 
 		this.controlsCSSParser.stylesheet.empty();
