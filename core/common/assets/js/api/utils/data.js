@@ -54,10 +54,12 @@ export default class Data {
 
 		if ( endPoint.includes( 'index' ) ) {
 			endPoint = endPoint.replace( 'index', '' );
+		}
 
-			if ( args.id ) {
-				endPoint += args.id.toString() + '/';
-			}
+		if ( args.id ) {
+			endPoint += '/' + args.id.toString() + '/';
+
+			delete args.id;
 		}
 
 		const argsEntries = Object.entries( args );
