@@ -11,5 +11,6 @@ class Controller extends Controller_Base {
 	public function register_endpoints() {
 		$this->register_endpoint( Endpoints\Colors::class );
 		$this->register_endpoint( Endpoints\Test::class );
+		$this->register_endpoint( Endpoints\Typography::class );
 	}
 }
