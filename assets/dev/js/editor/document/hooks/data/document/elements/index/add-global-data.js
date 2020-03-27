@@ -6,8 +6,8 @@ export class AddGlobalData extends After {
 	}
 
 	getConditions( args, result ) {
-		if ( result.data.elType !== 'widget' ) {
-			return;
+		if ( 'get' !== args.type || ! result?.data ) {
+			return false;
 		}
 
 		result.data.settings.__globals__ = {
@@ -15,7 +15,7 @@ export class AddGlobalData extends After {
 			title_color: 'globals/colors/secondary',
 		};
 
-		return !! result?.data?.settings?.__globals__;
+		return result.data.settings?.__globals__;
 	}
 
 	getId() {

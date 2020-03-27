@@ -6,6 +6,44 @@ export const READABLE = [ 'GET' ],
 	ALLMETHODS = [ 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' ];
 
 export default class Data {
+	constructor( args = {} ) {
+		this.args = Object.assign( args, {
+			namespace: 'elementor',
+			version: '1',
+		} );
+
+		this.autoCache = {};
+
+		this.baseEndpointAddress = '';
+
+		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
+	}
+
+	onElementorLoaded() {
+		const { namespace, version } = this.args;
+
+		this.baseEndpointAddress = `${ elementor.config.home_url }/wp-json/${ namespace }/v${ version }/`;
+
+		// Clear auto cache.
+		$e.commandsInternal.on( 'run', ( component, command, args ) => {
+			if ( 'document/save/save' === command && args.document.id ) {
+				Object.values( this.autoCache ).forEach( ( componentCache ) => {
+					// Delete all cache for specific document.
+					if ( componentCache[ args.document.id ] ) {
+						delete componentCache[ args.document.id ];
+					}
+				} );
+			}
+
+			// Delete empty components.
+			Object.entries( this.autoCache ).forEach( ( [ componentName, componentCache ] ) => {
+				if ( 0 === Object.keys( componentCache ).length ) {
+					delete this.autoCache[ componentName ];
+				}
+			} );
+		} );
+	}
+
 	getHTTPMethod( type ) {
 		switch ( type ) {
 			case 'create':
@@ -106,12 +144,30 @@ export default class Data {
 			throw Error( `Invalid type: '${ type }'` );
 		}
 
-		return new Promise( async ( resolve, reject ) => {
-			const request = await window.fetch( elementor.config.home_url + '/wp-json/elementor/v1/' + requestData.command, params );
+		let cachePromise;
 
+		if ( requestData.args.autoCache ) {
+			cachePromise = this.fetchCacheAuto( type, requestData );
+
+			if ( cachePromise ) {
+				return cachePromise;
+			}
+		}
+
+		return new Promise( async ( resolve, reject ) => {
 			try {
+				const request = window.fetch( this.baseEndpointAddress + requestData.command, params );
+
+				let response = await request.then();
+
+				await request.catch( reject );
+
+				if ( ! response.ok ) {
+					throw response;
+				}
+
 				// Ensure JSON.
-				const response = await request.json();
+				response = await response.json();
 
 				// Catch wp reset errors.
 				if ( response.data && response.data.status && response.code ) {
@@ -120,10 +176,116 @@ export default class Data {
 					return response;
 				}
 
+				if ( requestData.args.autoCache ) {
+					this.autoCacheResponse( method, requestData, response );
+				}
+
 				resolve( response );
 			} catch ( e ) {
 				reject( e );
 			}
 		} );
+	}
+
+	// TODO: Remove - Development test function.
+	validateAutoCacheArgs( args ) {
+		// Minimal requirement.
+		if ( -1 === Object.values( args ).indexOf( [ 'component', 'document_id' ] ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	// TODO: Remove - Development test function.
+	autoCacheResponse( method, requestData, response ) {
+		if ( ! this.validateAutoCacheArgs( requestData.args ) ) {
+			return false;
+		}
+
+		if ( ! response?.id ) {
+			return false;
+		}
+
+		const documentId = requestData.args.document_id,
+			component = requestData.component;
+
+		if ( this.autoCache[ component ] && this.autoCache[ component ][ documentId ] ) {
+			return false;
+		}
+
+		requestData.args.element = response;
+
+		// Simulate fetch in reverse order.
+		// TODO: Remove - Create, addCache function.
+		this.fetchCacheAuto( 'create', requestData );
+	}
+
+	// TODO: Remove - Development test function.
+	fetchCacheAuto( method, requestData ) {
+		if ( ! this.validateAutoCacheArgs( requestData.args ) ) {
+			return false;
+		}
+
+		const documentId = requestData.args.document_id,
+			component = requestData.component;
+
+		switch ( method ) {
+			case 'get': {
+				if ( this.autoCache[ component ] && this.autoCache[ component ][ documentId ] ) {
+					// TODO: Filter probably wasting cpu here since `similar[ 0 ]` always used.
+					const similar = this.autoCache[ component ][ documentId ].filter( ( cacheItem ) =>
+						documentId === cacheItem.args.document_id &&
+						requestData.args.element_id === cacheItem.args.element_id
+					);
+
+					let data;
+
+					if ( similar.length ) {
+						data = similar[ similar.length - 1 ].args.element;
+					} else {
+						// TODO: Maybe get info from local.
+						// HINT : defaultSettings.
+						// const container = elementor.getContainer( requestData.args.element_id );
+						//
+						// if ( container ) {
+						// 	data = container.model.toJSON();
+						// }
+						//
+						// return false;
+					}
+
+					if ( ! data ) {
+						break;
+					}
+
+					return new Promise( async ( resolve ) => {
+						resolve( data );
+					} );
+				}
+			}
+			break;
+
+			case 'create': {
+				if ( ! this.autoCache[ component ] ) {
+					this.autoCache[ component ] = {};
+				}
+
+				if ( ! this.autoCache[ component ][ documentId ] ) {
+					this.autoCache[ component ][ documentId ] = [];
+				}
+
+				this.autoCache[ component ][ documentId ].push( requestData );
+
+				return new Promise( async ( resolve ) => {
+					resolve( { success: true } );
+				} );
+			}
+
+			default:
+				throw Error( `Invalid method: '${ method }'` );
+		}
+
+		return false;
 	}
 }

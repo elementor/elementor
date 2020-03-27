@@ -476,14 +476,21 @@ BaseElementView = BaseContainer.extend( {
 				return this.renderStyles( settings );
 			}
 
-			// Async, means rendered when result received.
-			$e.data.get( 'document/elements', {
+			const request = $e.data.get( 'document/elements', {
 				document_id: elementor.documents.getCurrent().id,
 				element_id: this.getEditModel().id,
-			} ).then( ( result ) => {
+				autoCache: true,
+			} );
+
+			// Async, means rendered when result received.
+			request.then( ( result ) => {
+				if ( ! result || ! result.data ) {
+					return this.renderStyles( this.getEditModel().get( 'settings' ) );
+				}
 				settings = new elementorModules.editor.elements.models.BaseSettings( result.data.settings, {
 					controls: elementor.getContainer( this.getEditModel().id ).controls,
 				} );
+
 				this.renderStyles( settings );
 			} );
 

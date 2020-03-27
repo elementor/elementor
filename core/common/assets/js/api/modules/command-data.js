@@ -50,8 +50,6 @@ export default class CommandData extends CommandBase {
 		const type = this.args.type,
 			applyMethods = this.getApplyMethods( type );
 
-		delete this.args.type;
-
 		this.args = applyMethods.before( this.args );
 
 		// TODO: Figure out which `requestData` is not in use and delete it.

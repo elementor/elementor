@@ -4,6 +4,14 @@ export default class Data extends Commands {
 	create( endpoint, args = {} ) {
 		args.type = 'create';
 
+		let commandFound = !! this.commands[ endpoint ];
+
+		// Assuming the command maybe index.
+		if ( ! commandFound && this.commands[ endpoint + '/index' ] ) {
+			endpoint = endpoint + '/index';
+			commandFound = true;
+		}
+
 		return this.run( endpoint, args );
 	}
 
