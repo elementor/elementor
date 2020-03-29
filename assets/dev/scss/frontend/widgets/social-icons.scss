@@ -2,6 +2,14 @@
 // Social Icons
 //
 
+.elementor-widget-social-icons {
+
+	.elementor-widget-container {
+		display: flex;
+		justify-content: center;
+	}
+}
+
 .elementor-social-icons-wrapper {
 	font-size: 0;
 }
