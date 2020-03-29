@@ -171,10 +171,15 @@ export default class Data {
 			throw Error( `Invalid type: '${ type }'` );
 		}
 
-		let cachePromise;
+		const haveCacheRequest = requestData.args.autoCache || requestData.args.editorCache;
 
-		if ( requestData.args.autoCache ) {
-			cachePromise = this.fetchCacheAuto( type, requestData );
+		if ( haveCacheRequest ) {
+			let cachePromise;
+
+			if ( requestData.args.autoCache ) {
+				cachePromise = this.autoCacheFetch( type, requestData );
+			} else if ( requestData.args.editorCache ) {
+			}
 
 			if ( cachePromise ) {
 				return cachePromise;
@@ -215,7 +220,7 @@ export default class Data {
 	}
 
 	// TODO: Remove - Development test function.
-	validateAutoCacheArgs( args ) {
+	autoCacheValidateArgs( args ) {
 		// Minimal requirement.
 		if ( -1 === Object.values( args ).indexOf( [ 'component', 'document_id' ] ) ) {
 			return true;
@@ -226,7 +231,7 @@ export default class Data {
 
 	// TODO: Remove - Development test function.
 	autoCacheResponse( method, requestData, response ) {
-		if ( ! this.validateAutoCacheArgs( requestData.args ) ) {
+		if ( ! this.autoCacheValidateArgs( requestData.args ) ) {
 			return false;
 		}
 
@@ -245,12 +250,20 @@ export default class Data {
 
 		// Simulate fetch in reverse order.
 		// TODO: Remove - Create, addCache function.
-		this.fetchCacheAuto( 'create', requestData );
+		this.autoCacheFetch( 'create', requestData );
 	}
 
 	// TODO: Remove - Development test function.
-	fetchCacheAuto( method, requestData ) {
-		if ( ! this.validateAutoCacheArgs( requestData.args ) ) {
+	autoCacheGetSimilarElement( component, documentId, elementId ) {
+		return this.autoCache[ component ][ documentId ].filter( ( cacheItem ) =>
+			documentId === cacheItem.args.document_id &&
+			elementId === cacheItem.args.element_id
+		);
+	}
+
+	// TODO: Remove - Development test function.
+	autoCacheFetch( method, requestData ) {
+		if ( ! this.autoCacheValidateArgs( requestData.args ) ) {
 			return false;
 		}
 
@@ -261,11 +274,7 @@ export default class Data {
 			case 'get': {
 				if ( this.autoCache[ component ] && this.autoCache[ component ][ documentId ] ) {
 					// TODO: Filter probably wasting cpu here since `similar[ 0 ]` always used.
-					const similar = this.autoCache[ component ][ documentId ].filter( ( cacheItem ) =>
-						documentId === cacheItem.args.document_id &&
-						requestData.args.element_id === cacheItem.args.element_id
-					);
-
+					const similar = this.autoCacheGetSimilarElement( component, documentId, requestData.args.element_id );
 					let data;
 
 					if ( similar.length ) {
@@ -303,6 +312,22 @@ export default class Data {
 				}
 
 				this.autoCache[ component ][ documentId ].push( requestData );
+
+				return new Promise( async ( resolve ) => {
+					resolve( { success: true } );
+				} );
+			}
+
+			case 'update': {
+				if ( this.autoCache[ component ] && this.autoCache[ component ][ documentId ] ) {
+					const similar = this.autoCacheGetSimilarElement( component, documentId, requestData.args.element_id );
+
+					if ( similar.length ) {
+						similar[ similar.length - 1 ].args.element = requestData.args.element;
+					} else {
+						this.autoCache[ component ][ documentId ].push( requestData );
+					}
+				}
 
 				return new Promise( async ( resolve ) => {
 					resolve( { success: true } );
