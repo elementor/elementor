@@ -5,6 +5,10 @@ export class AddCache extends After {
 		return 'document/elements/create';
 	}
 
+	getConditions( args, result ) {
+		return ! elementorCommonConfig.isTesting;
+	}
+
 	getId() {
 		return 'add-cache';
 	}
