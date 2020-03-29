@@ -114,6 +114,33 @@ export default class Data {
 		return endPoint;
 	}
 
+	 endpointToCommand( endpoint, args ) {
+		let commandFound = !! $e.data.commands[ endpoint ];
+
+		// Assuming the command maybe index.
+		if ( ! commandFound && $e.data.commands[ endpoint + '/index' ] ) {
+			endpoint = endpoint + '/index';
+			commandFound = true;
+		}
+
+		// Maybe the endpoint includes 'id'. as part of the endpoint.
+		if ( ! commandFound && 'get' === args.type ) {
+			const endpointParts = endpoint.split( '/' ),
+				assumedCommand = endpointParts[ 0 ] + '/' + endpointParts[ 1 ];
+
+			if ( $e.data.commands[ assumedCommand ] ) {
+				endpoint = assumedCommand;
+
+				// Warp with 'id'.
+				args.id = endpointParts[ 2 ];
+
+				commandFound = true;
+			}
+		}
+
+		return endpoint;
+	}
+
 	fetch( type, requestData ) {
 		// TODO: Check if 'include' is required.
 		const params = {
