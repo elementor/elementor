@@ -4,6 +4,11 @@ namespace Elementor\Data\Editor\Globals\Endpoints;
 use Elementor\Data\Base\Endpoint;
 
 class Colors extends Endpoint {
+	private static $fake_data = [
+		'primary' => 'red',
+		'secondary' => 'secondary',
+	];
+
 	public function get_name() {
 		return 'colors';
 	}
@@ -15,17 +20,14 @@ class Colors extends Endpoint {
 	}
 
 	protected function get_items( $request ) {
-		return [
-		];
+		return self::$fake_data;
 	}
 
 	protected function get_item( $id, $request ) {
-		switch ( $id ) {
-			case 'primary':
-				return 'red';
-
-			case 'secondary':
-				return 'green';
+		if ( isset( self::$fake_data[ $id ] ) ) {
+			return self::$fake_data[ $id ];
 		}
+
+		return false;
 	}
 }

@@ -4,6 +4,13 @@ namespace Elementor\Data\Editor\Globals\Endpoints;
 use Elementor\Data\Base\Endpoint;
 
 class Typography extends Endpoint {
+	private static $fake_data = [
+		'primary' => [
+			'font_family' => 'Arial',
+			'font_weight' => 'bold',
+		],
+	];
+
 	public function get_name() {
 		return 'typography';
 	}
@@ -15,17 +22,14 @@ class Typography extends Endpoint {
 	}
 
 	protected function get_items( $request ) {
-		return [
-		];
+		return self::$fake_data;
 	}
 
 	protected function get_item( $id, $request ) {
-		switch ( $id ) {
-			case 'primary':
-				return [
-					'font_family' => 'Arial',
-					'font_weight' => 'bold',
-				];
+		if ( isset( self::$fake_data[ $id ] ) ) {
+			return self::$fake_data[ $id ];
 		}
+
+		return false;
 	}
 }
