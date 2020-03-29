@@ -1,27 +1,29 @@
 import DocumentComponent from './document/component';
-import SaveComponent from './document/save/component';
-import UIComponent from './document/ui/component';
-import ElementsComponent from './document/elements/component';
-import RepeaterComponent from './document/repeater/component';
-import HistoryComponent from './document/history/component';
-import DynamicComponent from './document/dynamic/component';
+import DocumentSaveComponent from './document/save/component';
+import DocumentUIComponent from './document/ui/component';
+import DocumentElementsComponent from './document/elements/component';
+import DocumentRepeaterComponent from './document/repeater/component';
+import DocumentHistoryComponent from './document/history/component';
+import DocumentDynamicComponent from './document/dynamic/component';
+import DocumentGlobalsComponent from './document/globals/component';
 
-import GlobalsComponent from './data/globals/component';
+import DataGlobalsComponent from './data/globals/component';
 
 elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 	$e.components.register( new DocumentComponent() );
-	$e.components.register( new SaveComponent() );
-	$e.components.register( new UIComponent() );
-	$e.components.register( new ElementsComponent() );
-	$e.components.register( new RepeaterComponent() );
-	$e.components.register( new HistoryComponent() );
-	$e.components.register( new DynamicComponent() );
+	$e.components.register( new DocumentSaveComponent() );
+	$e.components.register( new DocumentUIComponent() );
+	$e.components.register( new DocumentElementsComponent() );
+	$e.components.register( new DocumentRepeaterComponent() );
+	$e.components.register( new DocumentHistoryComponent() );
+	$e.components.register( new DocumentDynamicComponent() );
+	$e.components.register( new DocumentGlobalsComponent() );
 
 	// TODO: Remove, BC Since 2.9.0.
 	elementor.saver = $e.components.get( 'document/save' );
 
 	// TODO: Move to elementor:init-data-components
-	$e.components.register( new GlobalsComponent() );
+	$e.components.register( new DataGlobalsComponent() );
 } );
 
 $e.modules.document = DocumentComponent.getModules();

@@ -10,11 +10,6 @@ export class AddGlobalData extends After {
 			return false;
 		}
 
-		result.data.settings.__globals__ = {
-			typography_typography: 'globals/typography/primary',
-			title_color: 'globals/colors/secondary',
-		};
-
 		return result.data.settings?.__globals__;
 	}
 
