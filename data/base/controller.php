@@ -34,6 +34,38 @@ abstract class Controller extends WP_REST_Controller {
 		return $this->rest_base;
 	}
 
+	public function get_controller_base() {
+		return $this->get_namespace() . '/' . $this->get_reset_base();
+	}
+
+	public function get_namespace_index( $request ) {
+		$server = rest_get_server();
+		$routes = $server->get_routes();
+
+		$endpoints = array_intersect_key( $server->get_routes(), $routes );
+
+		$controller_base = $this->get_controller_base();
+
+		array_walk( $endpoints, function ( &$item, $key ) use ( & $endpoints, $controller_base ) {
+			if ( ! strstr( $key, $controller_base ) ) {
+				unset( $endpoints[ $key ] );
+			}
+		} );
+
+		$data = [
+			'namespace' => $this->get_namespace(),
+			'controller' => $controller_base,
+			'routes' => $server->get_data_for_routes( $endpoints ),
+		];
+
+		$response = rest_ensure_response( $data );
+
+		// Link to the root index.
+		$response->add_link( 'up', rest_url( '/' ) );
+
+		return $response;
+	}
+
 	abstract public function register_endpoints();
 
 	protected function register_internal_endpoints() {
@@ -54,11 +86,6 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	public function get_items( $request ) {
-		// Default get_items return index of the controller with it endpoints.
-		$server = rest_get_server();
-
-		$request['namespace'] = $this->get_namespace();
-
-		return $server->get_namespace_index( $request );
+		return $this->get_namespace_index( $request );
 	}
 }
