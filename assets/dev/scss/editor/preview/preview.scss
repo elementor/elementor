@@ -126,6 +126,13 @@ html.elementor-html {
 	}
 }
 
+.elementor-section-wrap {
+
+	&:empty {
+		min-height: 25px;
+	}
+}
+
 // Element
 .elementor-element {
 
