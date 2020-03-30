@@ -6,8 +6,13 @@ use Elementor\Data\Base\Endpoint;
 class Typography extends Endpoint {
 	private static $fake_data = [
 		'primary' => [
-			'font_family' => 'Arial',
-			'font_weight' => 'bold',
+			'typography' => 'custom',
+			'font_family' => 'Over the Rainbow',
+			'font_weight' => '900',
+			'font_size' => [
+				'unit' => 'px',
+				'size' => 121,
+			],
 		],
 	];
 

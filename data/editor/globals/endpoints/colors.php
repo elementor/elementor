@@ -6,7 +6,7 @@ use Elementor\Data\Base\Endpoint;
 class Colors extends Endpoint {
 	private static $fake_data = [
 		'primary' => 'red',
-		'secondary' => 'secondary',
+		'secondary' => 'green',
 	];
 
 	public function get_name() {
