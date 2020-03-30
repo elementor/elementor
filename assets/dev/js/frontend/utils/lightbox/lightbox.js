@@ -23,6 +23,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				hidden: 'elementor-hidden',
 				invisible: 'elementor-invisible',
 				preventClose: 'elementor-lightbox-prevent-close',
+				screenReaderText: 'elementor-screen-only',
 				slideshow: {
 					container: 'swiper-container',
 					slidesWrapper: 'swiper-wrapper',
@@ -270,26 +271,43 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showFullscreen ) {
-			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand } ).append( $( '<span>' ), $( '<span>' ) );
+			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand, tabIndex: 0 } ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
 		}
 
 		if ( showZoom ) {
-			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn } );
+			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn, tabIndex: 0 } );
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
 			elements.$header.append( elements.$iconZoom );
 		}
 
 		if ( showShare ) {
-			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( $( '<span>' ) );
+			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare, tabIndex: 0 } )
+				.attr( 'aria-expanded', false )
+				.append( $( '<span>' ) );
 			const $shareLinks = $( '<div>' );
 			$shareLinks.on( 'click', ( e ) => {
 				e.stopPropagation();
 			} );
-			elements.$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
-			elements.$iconShare.add( elements.$shareMenu ).on( 'click', this.toggleShareMenu );
+			elements.$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } )
+				.attr( 'aria-expanded', false )
+				.append( $shareLinks );
+			elements.$iconShare
+				.add( elements.$shareMenu )
+				.on( 'click', this.toggleShareMenu )
 			elements.$header.append( elements.$iconShare, elements.$shareMenu );
+			elements.$iconShare.after( '<span class="' + classes.screenReaderText + '">Share Links</span>' );
+
+			// Accessibility: Open the Share Links menu when the Share Icon is focused and Enter is pressed
+			elements.$iconShare.on( 'keypress', ( key ) => {
+				// Check if the Enter key is pressed
+				if ( 13 === key.which ) {
+					key.preventDefault();
+
+					this.toggleShareMenu();
+				}
+			} );
 		}
 
 		return elements.$header;
@@ -315,9 +333,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		const classes = this.getSettings( 'classes' );
 		if ( this.elements.$container.hasClass( classes.slideshow.shareMode ) ) {
 			this.deactivateShareMode();
+			this.elements.$shareMenu
+				.attr( 'aria-expanded', false );
 		} else {
-			const $shareMenu = this.elements.$header.find( '.' + classes.slideshow.shareMenu );
-			$shareMenu.html( this.getShareLinks() );
+			this.elements.$shareMenu
+				.html( this.getShareLinks() )
+				.attr( 'aria-expanded', true );
 			this.activateShareMode();
 		}
 	},
@@ -325,12 +346,15 @@ module.exports = elementorModules.ViewModule.extend( {
 	activateShareMode: function() {
 		const classes = this.getSettings( 'classes' );
 		this.elements.$container.addClass( classes.slideshow.shareMode );
+		this.elements.$iconShare.attr( 'aria-expanded', true );
+		this.elements.$shareMenu.find( '.elementor-slideshow__share-links' ).first( 'a' ).focus();
 		this.swiper.detachEvents();
 	},
 
 	deactivateShareMode: function() {
 		const classes = this.getSettings( 'classes' );
 		this.elements.$container.removeClass( classes.slideshow.shareMode );
+		this.elements.$iconShare.attr( 'aria-expanded', false );
 		this.swiper.attachEvents();
 	},
 
@@ -438,8 +462,12 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } )
+				.html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) )
+				.append( '<span class="' + classes.screenReaderText + '">Previous</span>' );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } )
+				.html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) )
+				.append( '<span class="' + classes.screenReaderText + '">Next</span>' );
 
 			$container.append(
 				$prevButton,
