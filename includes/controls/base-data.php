@@ -31,6 +31,21 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	/**
+	 * Get Value Type
+	 *
+	 * Check whether the default value of the control is single (such as string, int) or multiple (array).
+	 * Default value is 'single', can also be 'multiple'.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 *
+	 * @return string Value Type
+	 */
+	public function get_value_type() {
+		return 'single';
+	}
+
+	/**
 	 * Retrieve default control settings.
 	 *
 	 * Get the default settings of the control. Used to return the default
