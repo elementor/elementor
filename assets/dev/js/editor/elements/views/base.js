@@ -489,6 +489,7 @@ BaseElementView = BaseContainer.extend( {
 				if ( ! result || ! result.data ) {
 					return this.renderStyles( this.getEditModel().get( 'settings' ) );
 				}
+
 				settings = new elementorModules.editor.elements.models.BaseSettings( result.data.settings, {
 					controls: elementor.getContainer( this.getEditModel().id ).controls,
 				} );
@@ -498,7 +499,6 @@ BaseElementView = BaseContainer.extend( {
 
 			return;
 		}
-
 
 		this.controlsCSSParser.stylesheet.empty();
 
