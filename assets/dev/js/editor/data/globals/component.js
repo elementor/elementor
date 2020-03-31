@@ -3,49 +3,20 @@ import * as commandsData from './commands/';
 import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
-	getNamespace() {
-		return 'globals';
-	}
-
-	registerAPI() {
-		super.registerAPI();
+	__construct( args = {} ) {
+		super.__construct( args );
 
 		// TODO: Remove - Create testing compatibility.
 		if ( elementorCommonConfig.isTesting ) {
 			return;
 		}
 
-		setTimeout( () => {
-			$e.data.get( 'globals/colors', {}, { cache: true } );
-			$e.data.get( 'globals/typography', {}, { cache: true } );
+		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
+	}
 
-			// TODO: Find better place.
-			const getFlatElements = ( elements ) => {
-				const result = [];
-				elements.forEach( ( element ) => {
-					if ( element.elements ) {
-						getFlatElements( element.elements ).forEach( ( _element ) => result.push( _element ) );
-					}
-
-					result.push( element );
-				} );
-				return result;
-			};
-
-			const document = elementor.documents.getCurrent();
-
-			getFlatElements( document.config.elements ).forEach( ( element ) =>
-				// Add cache.
-				$e.utils.data.cache(
-					'document/elements',
-					{
-						document_id: document.id,
-						element_id: element.id,
-					},
-					element
-				)
-			);
-		} );
+	getNamespace() {
+		return 'globals';
 	}
 
 	defaultData() {
@@ -54,5 +25,37 @@ export default class Component extends ComponentBase {
 
 	defaultHooks() {
 		return this.importHooks( hooks );
+	}
+
+	onDocumentLoaded( document ) {
+		// TODO: Find better place.
+		const getFlatElements = ( elements ) => {
+			const result = [];
+			elements.forEach( ( element ) => {
+				if ( element.elements ) {
+					getFlatElements( element.elements ).forEach( ( _element ) => result.push( _element ) );
+				}
+
+				result.push( element );
+			} );
+			return result;
+		};
+
+		getFlatElements( document.config.elements ).forEach( ( element ) =>
+			// Add cache.
+			$e.utils.data.cache(
+				'document/elements',
+				{
+					document_id: document.id,
+					element_id: element.id,
+				},
+				element
+			)
+		);
+	}
+
+	onElementorLoaded() {
+		// Add global cache before render.
+		$e.data.get( 'globals/index', {}, { cache: true } );
 	}
 }

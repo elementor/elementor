@@ -5,17 +5,34 @@ export default class Cache {
 		this.cache = {};
 	}
 
-	response( method, requestData, response ) {
+	load( method, requestData, response ) {
 		switch ( method ) {
 			case 'GET': {
-				if ( 1 === Object.values( requestData.args.query ).length ) {
-					Object.keys( response ).forEach( ( key ) => {
-						const endpoint = requestData.command + '/' + key;
+				const componentName = requestData?.component?.getNamespace(),
+					isCommandGetItemId = requestData.command === componentName,
+					isIndexCommand = requestData.endpoint + '/index' === requestData.command,
+					isQueryEmpty = 1 === Object.values( requestData.args.query ).length,
 
-						this.cache[ endpoint ] = response[ key ];
+					addCache = ( key, value ) => this.cache[ key ] = value,
+					addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
+
+				if ( isQueryEmpty && 1 === isCommandGetItemId ) {
+					Object.keys( response ).forEach( ( key ) => {
+						addCacheEndpoint( requestData.command, key, response[ key ] );
+					} );
+				} else if ( isQueryEmpty && isIndexCommand ) {
+					// Handles situation when 'index' was forced to use like in 'globals' component.
+					Object.entries( response ).forEach( ( [ key, value ] ) => {
+						if ( 'object' === typeof value ) {
+							Object.entries( value ).forEach( ( [ endpoint, endpointResponse ] ) => {
+								addCacheEndpoint( componentName, key + '/' + endpoint, endpointResponse );
+							} );
+						} else {
+							throw Error( `Invalid type: '${ value }'` );
+						}
 					} );
 				} else {
-					this.cache[ requestData.endpoint ] = response;
+					addCache( requestData.endpoint, response );
 				}
 			}
 			break;

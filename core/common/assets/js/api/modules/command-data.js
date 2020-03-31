@@ -56,6 +56,7 @@ export default class CommandData extends CommandBase {
 		const requestData = {
 			type,
 			timestamp: new Date().getTime(),
+			component: this.component,
 			command: this.currentCommand,
 			args: this.args,
 		};

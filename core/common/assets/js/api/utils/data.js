@@ -135,10 +135,6 @@ export default class Data {
 			},
 			headers = {};
 
-		if ( requestData.args.query.id ) {
-			requestData.cache = requestData.args.query.id;
-		}
-
 		requestData.endpoint = this.commandToEndpoint( type, requestData.command, requestData.args );
 		/**
 		 * Translate:
@@ -207,7 +203,7 @@ export default class Data {
 				}
 
 				if ( requestData.args.options.cache ) {
-					this.cacheStroage.response( method, requestData, response );
+					this.cacheStroage.load( method, requestData, response );
 				}
 
 				resolve( response );
@@ -221,7 +217,7 @@ export default class Data {
 		const args = { query },
 			endpoint = this.commandToEndpoint( 'get', command, args );
 
-		this.cacheStroage.response(
+		this.cacheStroage.load(
 			'GET',
 			{
 				command,
