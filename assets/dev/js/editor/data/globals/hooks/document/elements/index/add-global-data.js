@@ -6,6 +6,7 @@ export class ElementsIndexAddGlobalData extends After {
 	}
 
 	getConditions( args, result ) {
+		// TODO: Remove - Create testing compatibility.
 		return ! elementorCommonConfig.isTesting && 'get' === args.query.type && result?.data?.settings?.__globals__;
 	}
 

@@ -7,6 +7,7 @@ export class GlobalsEnableUpdateCache extends After {
 	}
 
 	getConditions( args, result ) {
+		// TODO: Remove - Create testing compatibility.
 		return ! elementorCommonConfig.isTesting;
 	}
 

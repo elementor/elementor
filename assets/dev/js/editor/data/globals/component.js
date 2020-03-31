@@ -10,6 +10,7 @@ export default class Component extends ComponentBase {
 	registerAPI() {
 		super.registerAPI();
 
+		// TODO: Remove - Create testing compatibility.
 		if ( elementorCommonConfig.isTesting ) {
 			return;
 		}

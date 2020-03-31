@@ -470,6 +470,7 @@ BaseElementView = BaseContainer.extend( {
 
 	renderStyles( settings ) {
 		if ( ! settings ) {
+			// TODO: Remove - Create testing compatibility.
 			if ( elementorCommonConfig.isTesting ) {
 				settings = this.getEditModel().get( 'settings' );
 

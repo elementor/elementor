@@ -7,6 +7,7 @@ export class ElementsCreateUpdateCache extends After {
 	}
 
 	getConditions( args, result ) {
+		// TODO: Remove - Create testing compatibility.
 		return ! elementorCommonConfig.isTesting;
 	}
 
@@ -22,7 +23,7 @@ export class ElementsCreateUpdateCache extends After {
 		CacheHelper.updateDocumentElements( args, containers );
 
 		if ( args.columns ) {
-			// Cache columns since if they created by 'create-section' - hook.
+			// Cache columns manually, since they created by 'create-section' - hook.
 			const columnsContainers = [];
 			containers.forEach( ( container ) => {
 				Object.values( container.view.children._views ).map( ( _view ) => {
