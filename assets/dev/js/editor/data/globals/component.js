@@ -10,6 +10,10 @@ export default class Component extends ComponentBase {
 	registerAPI() {
 		super.registerAPI();
 
+		if ( elementorCommonConfig.isTesting ) {
+			return;
+		}
+
 		setTimeout( () => {
 			$e.data.get( 'globals/colors', {}, { cache: true } );
 			$e.data.get( 'globals/typography', {}, { cache: true } );

@@ -6,7 +6,7 @@ export class ElementsIndexAddGlobalData extends After {
 	}
 
 	getConditions( args, result ) {
-		return 'get' === args.query.type && result?.data?.settings?.__globals__;
+		return ! elementorCommonConfig.isTesting && 'get' === args.query.type && result?.data?.settings?.__globals__;
 	}
 
 	getId() {

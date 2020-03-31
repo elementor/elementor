@@ -120,15 +120,7 @@ export class Settings extends CommandHistoryDebounce {
 			} else {
 				container.settings.set( newSettings );
 			}
-		} );
-	}
 
-	onAfterApply( args = {}, result ) {
-		const { containers = [ args.container ] } = args;
-
-		super.onAfterApply( args, result );
-
-		containers.forEach( ( container ) => {
 			container.render();
 		} );
 	}
