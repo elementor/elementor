@@ -112,7 +112,7 @@ abstract class Endpoint {
 				continue;
 			}
 
-			$response [ $endpoint->get_name() ] = $endpoint->get_items( $request );
+			$response[ $endpoint->get_name() ] = $endpoint->get_items( $request );
 		}
 
 		return $response;

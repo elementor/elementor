@@ -12,4 +12,8 @@ class Controller extends Controller_Base {
 		$this->register_endpoint( Endpoints\Colors::class );
 		$this->register_endpoint( Endpoints\Typography::class );
 	}
+
+	protected function register_internal_endpoints() {
+		$this->register_endpoint( Endpoints\Index::class, 'index' );
+	}
 }
