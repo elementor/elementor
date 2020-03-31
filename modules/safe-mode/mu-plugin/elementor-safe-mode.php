@@ -31,9 +31,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Safe_Mode {
 
 	const OPTION_ENABLED = 'elementor_safe_mode';
+	const OPTION_TOKEN = self::OPTION_ENABLED . '_token';
 
 	public function is_enabled() {
 		return get_option( self::OPTION_ENABLED );
+	}
+
+	public function is_valid_token() {
+		$token = isset( $_COOKIE[ self::OPTION_TOKEN ] ) ? $_COOKIE[ self::OPTION_TOKEN ] : null;
+
+		if ( $token && get_option( self::OPTION_TOKEN ) === $token ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function is_requested() {
@@ -103,7 +114,7 @@ class Safe_Mode {
 
 		$enabled_type = $this->is_enabled();
 
-		if ( ! $enabled_type ) {
+		if ( ! $enabled_type || ! $this->is_valid_token() ) {
 			return;
 		}
 

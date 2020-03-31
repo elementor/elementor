@@ -2,9 +2,9 @@
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 5.3
+Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 2.9.3
+Stable tag: 2.9.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -221,6 +221,48 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.7 - 2020-03-25 =
+* Tweak: Added compatibility with WordPress v5.4 ([#10745](https://github.com/elementor/elementor/issues/10745))
+* Tweak: Show Typography section to everyone in Section, Column and Inner Section elements ([#10592](https://github.com/elementor/elementor/issues/10592))
+* Fix: Custom Attributes section missing in Advanced tab ([#10881](https://github.com/elementor/elementor/issues/10881))
+* Fix: Title color & Typography settings are being overridden by Theme Style in Accordion and Toggle widget ([#10900](https://github.com/elementor/elementor/issues/10900))
+* Fix: Merged "Play On Mobile" string for better i18n in Video widget (Props [@pedro-mendonca](https://github.com/pedro-mendonca), [#10315](https://github.com/elementor/elementor/issues/10315))
+* Fix: Whatsapp share link does not escape HTML entities ([#10746](https://github.com/elementor/elementor/issues/10746))
+* Fix: Invalid request error conflict with Yoast plugin and Share Buttons widget ([#10746](https://github.com/elementor/elementor/issues/10746))
+* Fix: FontAwesome Pro icons not loading in edge cases
+* Fix: Missing Dynamic indication in Range control ([#10835](https://github.com/elementor/elementor/issues/10835))
+* Fix: Carousel spins multiple times when loading in Image Carousel widget
+* Fix: Theme style overrides Lightbox Share links color
+* Fix: Loading spinner placement glitch in URL control
+* Fix: Missing separator control in Icon widget
+* Fix: Dynamic Tags with the character “0” are not visible on frontend
+* Fix: Dashboard menu UI glitch for non-Administrator role users
+
+= 2.9.6 - 2020-03-12 =
+* Fix: Removed redundant dynamic capabilities from all of color controls inside Group controls in Theme Style
+* Fix: Global widget is clickable when editing Theme Style
+* Fix: Dropcap not working immediately in Text Editor widget
+* Security Fix: Enable Safe Mode only for `activate_plugins` capability
+
+= 2.9.5 - 2020-03-09 =
+* Tweak: Added new parameter to Swiper wrapper to limit breakpoint intervention ([#10525](https://github.com/elementor/elementor/issues/10525))
+* Tweak: Updated E-Gallery library to v1.1.2
+* Tweak: Show descriptive Pro Promotions only for Administrator role
+* Fix: Inconsistent responsive display issue in the Editor when using Custom Breakpoints ([#10540](https://github.com/elementor/elementor/issues/10540))
+* Fix: Editor not loading when the Library launches on load ([Topic](https://wordpress.org/support/topic/editor-broken-in-2-9-4/))
+* Fix: Gallery Columns does not update immediately in the preview when in Masonry layout
+* Fix: Navigator does not update according to the current site part being edited
+* Fix: Hidden responsive indicator missing in editor
+* Fix: Tabs widget title color not working on mobile
+
+= 2.9.4 - 2020-03-04 =
+* Tweak: Added support for Elementor Pro v2.9.0
+* Tweak: Updated Swiper.js library to v5.3.6
+* Tweak: Added version expected release date for Theme Style Custom CSS and Dynamic Color promotions
+* Fix: Warning in `/base/controls-stack.php` when a 3rd party controls doesn’t have a default dynamic value ([#10578](https://github.com/elementor/elementor/issues/10578))
+* Fix: Alignment issue on drag when not set to Infinite Loop in Image Carousel widget
+* Fix: Title Color change both title and link color in Accordion widget
+
 = 2.9.3 - 2020-02-26 =
 * Tweak: Don't show the "Have a look" link after successful Theme Style publish
 * Tweak: Show Database update notice only for users with `update_plugins` capability
@@ -234,7 +276,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Fix: Whatsapp share doesn't include line breaks between the page title and the URL in Share buttons widget
 * Fix: Box Shadow doesn't display properly in Toggle widget
 * Fix: Custom Link Attributes are not being applied in Icon Box widget
-* Fix: Added sanitization to Custom Link Attributes control to avoid security issue
+* Fix: Added sanitization to Custom Link Attributes control to avoid security issue (Props [@yzy9951](https://github.com/yzy9951))
 
 = 2.9.2 - 2020-02-16 =
 * Fix: Responsive issue when using Slides to Show control in carousel widgets ([#10540](https://github.com/elementor/elementor/issues/10540))

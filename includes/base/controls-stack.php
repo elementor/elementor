@@ -1180,6 +1180,10 @@ abstract class Controls_Stack extends Base_Object {
 
 			$dynamic_settings = $control_obj->get_settings( 'dynamic' );
 
+			if ( ! $dynamic_settings ) {
+				$dynamic_settings = [];
+			}
+
 			if ( ! empty( $control['dynamic'] ) ) {
 				$dynamic_settings = array_merge( $dynamic_settings, $control['dynamic'] );
 			}

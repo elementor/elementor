@@ -11,6 +11,8 @@ jobs:
         wordpress_versions: ['latest', '5.2', '5.1', '5.0']
     name: WordPress ${{ matrix.wordpress_versions }}
     steps:
+      - name: Startup MySQL service
+        run: sudo /etc/init.d/mysql start
       - name: Checkout source code
         uses: actions/checkout@master
       - name: Install Dependencies

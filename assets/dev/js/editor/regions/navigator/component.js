@@ -41,12 +41,12 @@ export default class Component extends ComponentBase {
 		return true;
 	}
 
-	close() {
+	close( silent ) {
 		if ( ! super.close() ) {
 			return false;
 		}
 
-		this.manager.close();
+		this.manager.close( silent );
 
 		return true;
 	}

@@ -4,12 +4,10 @@ const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-la
 
 export default class Component extends ComponentModalBase {
 	__construct( args ) {
-		// Before construct because it's used in defaultTabs().
-		this.docLibraryConfig = elementor.config.document.remoteLibrary;
-
 		super.__construct( args );
 
-		this.setDefaultRoute( this.docLibraryConfig.default_route );
+		// When switching documents update defaultTabs.
+		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
 	}
 
 	getNamespace() {
@@ -20,11 +18,11 @@ export default class Component extends ComponentModalBase {
 		return {
 			'templates/blocks': {
 				title: elementor.translate( 'blocks' ),
-				filter: {
+				getFilter: () => ( {
 					source: 'remote',
 					type: 'block',
-					subtype: this.docLibraryConfig.category,
-				},
+					subtype: elementor.config.document.remoteLibrary.category,
+				} ),
 			},
 			'templates/pages': {
 				title: elementor.translate( 'pages' ),
@@ -81,8 +79,17 @@ export default class Component extends ComponentModalBase {
 		};
 	}
 
+	onDocumentLoaded( document ) {
+		this.setDefaultRoute( document.config.remoteLibrary.default_route );
+
+		this.maybeOpenLibrary();
+	}
+
 	renderTab( tab ) {
-		this.manager.setScreen( this.tabs[ tab ].filter );
+		const currentTab = this.tabs[ tab ],
+			filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
+
+		this.manager.setScreen( filter );
 	}
 
 	activateTab( tab ) {
@@ -226,5 +233,13 @@ export default class Component extends ComponentModalBase {
 
 	getModalLayout() {
 		return TemplateLibraryLayoutView;
+	}
+
+	maybeOpenLibrary() {
+		if ( '#library' === location.hash ) {
+			$e.run( 'library/open' );
+
+			location.hash = '';
+		}
 	}
 }
