@@ -132,7 +132,7 @@ export default class extends BaseRegion {
 			this.saveStorage( 'visible', false );
 		}
 
-		if ( this.$el.hasClass( 'ui-resizable' ) ) {
+		if ( this.$el.resizable( 'instance' ) ) {
 			this.$el.resizable( 'destroy' );
 		}
 
