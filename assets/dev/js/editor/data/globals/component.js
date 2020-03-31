@@ -19,19 +19,22 @@ export default class Component extends ComponentBase {
 			$e.data.get( 'globals/colors', {}, { cache: true } );
 			$e.data.get( 'globals/typography', {}, { cache: true } );
 
-			// Add global cache.
-			const document = elementor.documents.getCurrent(),
-				sections = document.config.elements,
-				columns = sections.map( ( section ) => section.elements.flat() ).flat(),
-				widgets = columns.map( ( column ) => column.elements.flat() ).flat(),
-				allFlatElements = [
-					...sections,
-					...columns,
-					...widgets,
-				];
+			// TODO: Find better place.
+			const getFlatElements = ( elements ) => {
+				const result = [];
+				elements.forEach( ( element ) => {
+					if ( element.elements ) {
+						getFlatElements( element.elements ).forEach( ( _element ) => result.push( _element ) );
+					}
 
-			// TODO: Remove: Temp cache add.
-			allFlatElements.forEach( ( element ) =>
+					result.push( element );
+				} );
+				return result;
+			};
+
+			const document = elementor.documents.getCurrent();
+
+			getFlatElements( document.config.elements ).forEach( ( element ) =>
 				// Add cache.
 				$e.utils.data.cache(
 					'document/elements',
