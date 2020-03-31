@@ -1,20 +1,16 @@
 import After from 'elementor-api/modules/hooks/data/after';
 
-export class AddGlobalData extends After {
+export class ElementsIndexAddGlobalData extends After {
 	getCommand() {
 		return 'document/elements/index';
 	}
 
 	getConditions( args, result ) {
-		if ( 'get' !== args.type || ! result?.data ) {
-			return false;
-		}
-
-		return result.data.settings?.__globals__;
+		return 'get' === args.query.type && result?.data?.settings?.__globals__;
 	}
 
 	getId() {
-		return 'add-global-data';
+		return 'document/elements/index::add-global-data';
 	}
 
 	apply( args, result ) {
@@ -22,9 +18,9 @@ export class AddGlobalData extends After {
 
 		return Object.entries( element.settings.__globals__ ).map( async ( [ key, endpoint ] ) => {
 			// Get global item.
-			const itemResult = await $e.data.get( endpoint ),
+			const itemResult = await $e.data.get( endpoint, {}, { cache: true } ),
 				data = itemResult.data,
-				container = elementor.getContainer( args.element_id ),
+				container = elementor.getContainer( args.query.element_id ),
 				groupPrefix = container.controls[ key ]?.groupPrefix;
 
 			// it's a global settings with additional controls in group.
@@ -45,4 +41,4 @@ export class AddGlobalData extends After {
 	}
 }
 
-export default AddGlobalData;
+export default ElementsIndexAddGlobalData;

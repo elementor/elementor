@@ -47,7 +47,7 @@ export default class CommandData extends CommandBase {
 	}
 
 	apply() {
-		const type = this.args.type,
+		const type = this.args.query.type,
 			applyMethods = this.getApplyMethods( type );
 
 		this.args = applyMethods.before( this.args );
@@ -56,7 +56,6 @@ export default class CommandData extends CommandBase {
 		const requestData = {
 			type,
 			timestamp: new Date().getTime(),
-			component: this.component.getNamespace(),
 			command: this.currentCommand,
 			args: this.args,
 		};

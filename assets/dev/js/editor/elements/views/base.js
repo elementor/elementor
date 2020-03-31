@@ -479,7 +479,9 @@ BaseElementView = BaseContainer.extend( {
 			const request = $e.data.get( 'document/elements', {
 				document_id: elementor.documents.getCurrent().id,
 				element_id: this.getEditModel().id,
-				autoCache: true,
+			}, {
+				cache: true,
+				cacheOnly: true, // Cannot cache, Create section, columns.
 			} );
 
 			// Async, means rendered when result received.
@@ -496,6 +498,7 @@ BaseElementView = BaseContainer.extend( {
 
 			return;
 		}
+
 
 		this.controlsCSSParser.stylesheet.empty();
 

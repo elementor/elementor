@@ -1,3 +1,5 @@
+import Cache from './data/cache';
+
 // TODO: Return it from the server. Original at WP_REST_Server.
 export const READABLE = [ 'GET' ],
 	CREATABLE = [ 'POST' ],
@@ -12,7 +14,7 @@ export default class Data {
 			version: '1',
 		} );
 
-		this.autoCache = {};
+		this.cacheStroage = new Cache( this );
 
 		this.baseEndpointAddress = '';
 
@@ -23,25 +25,6 @@ export default class Data {
 		const { namespace, version } = this.args;
 
 		this.baseEndpointAddress = `${ elementor.config.home_url }/wp-json/${ namespace }/v${ version }/`;
-
-		// Clear auto cache.
-		$e.commandsInternal.on( 'run', ( component, command, args ) => {
-			if ( 'document/save/save' === command && args.document.id ) {
-				Object.values( this.autoCache ).forEach( ( componentCache ) => {
-					// Delete all cache for specific document.
-					if ( componentCache[ args.document.id ] ) {
-						delete componentCache[ args.document.id ];
-					}
-				} );
-			}
-
-			// Delete empty components.
-			Object.entries( this.autoCache ).forEach( ( [ componentName, componentCache ] ) => {
-				if ( 0 === Object.keys( componentCache ).length ) {
-					delete this.autoCache[ componentName ];
-				}
-			} );
-		} );
 	}
 
 	getHTTPMethod( type ) {
@@ -91,30 +74,34 @@ export default class Data {
 		let endPoint = command;
 
 		if ( endPoint.includes( 'index' ) ) {
-			endPoint = endPoint.replace( 'index', '' );
+			endPoint = endPoint.replace( '/index', '' );
 		}
 
-		if ( args.id ) {
-			endPoint += '/' + args.id.toString() + '/';
+		if ( args.query.id ) {
+			endPoint += '/' + args.query.id.toString();
 
-			delete args.id;
+			delete args.query.id;
 		}
 
-		const argsEntries = Object.entries( args );
+		delete args.query.type;
+
+		const queryEntries = Object.entries( args.query );
 
 		// Upon 'GET' args will become part of get params.
-		if ( 'get' === type && argsEntries.length ) {
+		if ( 'get' === type && queryEntries.length ) {
 			endPoint += '?';
 
-			argsEntries.forEach( ( [ name, value ] ) => {
+			queryEntries.forEach( ( [ name, value ] ) => {
 				endPoint += name + '=' + value + '&';
 			} );
 		}
 
+		args.query.type = type;
+
 		return endPoint;
 	}
 
-	 endpointToCommand( endpoint, args ) {
+	endpointToCommand( endpoint, query ) {
 		let commandFound = !! $e.data.commands[ endpoint ];
 
 		// Assuming the command maybe index.
@@ -124,7 +111,7 @@ export default class Data {
 		}
 
 		// Maybe the endpoint includes 'id'. as part of the endpoint.
-		if ( ! commandFound && 'get' === args.type ) {
+		if ( ! commandFound && 'get' === query.type ) {
 			const endpointParts = endpoint.split( '/' ),
 				assumedCommand = endpointParts[ 0 ] + '/' + endpointParts[ 1 ];
 
@@ -132,7 +119,7 @@ export default class Data {
 				endpoint = assumedCommand;
 
 				// Warp with 'id'.
-				args.id = endpointParts[ 2 ];
+				query.id = endpointParts[ 2 ];
 
 				commandFound = true;
 			}
@@ -148,8 +135,11 @@ export default class Data {
 			},
 			headers = {};
 
-		requestData.command = this.commandToEndpoint( type, requestData.command, requestData.args );
+		if ( requestData.args.query.id ) {
+			requestData.cache = requestData.args.query.id;
+		}
 
+		requestData.endpoint = this.commandToEndpoint( type, requestData.command, requestData.args );
 		/**
 		 * Translate:
 		 * 'create, delete, get, update' to HTTP Methods:
@@ -171,14 +161,13 @@ export default class Data {
 			throw Error( `Invalid type: '${ type }'` );
 		}
 
-		const haveCacheRequest = requestData.args.autoCache || requestData.args.editorCache;
+		const haveCacheRequest = requestData.args.options.cache;
+
+		let cachePromise;
 
 		if ( haveCacheRequest ) {
-			let cachePromise;
-
-			if ( requestData.args.autoCache ) {
-				cachePromise = this.autoCacheFetch( type, requestData );
-			} else if ( requestData.args.editorCache ) {
+			if ( true === requestData.args.options.cache ) {
+				cachePromise = this.cacheStroage.fetch( type, requestData );
 			}
 
 			if ( cachePromise ) {
@@ -187,8 +176,17 @@ export default class Data {
 		}
 
 		return new Promise( async ( resolve, reject ) => {
+			// TODO: Remove `requestData.args.options.cacheOnly` created to handle cache for section and columns.
+			if ( ! cachePromise && requestData.args.options.cacheOnly ) {
+				resolve( {
+					cache: false,
+				} );
+
+				return false;
+			}
+
 			try {
-				const request = window.fetch( this.baseEndpointAddress + requestData.command, params );
+				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params );
 
 				let response = await request.then();
 
@@ -208,8 +206,8 @@ export default class Data {
 					return response;
 				}
 
-				if ( requestData.args.autoCache ) {
-					this.autoCacheResponse( method, requestData, response );
+				if ( requestData.args.options.cache ) {
+					this.cacheStroage.response( method, requestData, response );
 				}
 
 				resolve( response );
@@ -219,125 +217,18 @@ export default class Data {
 		} );
 	}
 
-	// TODO: Remove - Development test function.
-	autoCacheValidateArgs( args ) {
-		// Minimal requirement.
-		if ( -1 === Object.values( args ).indexOf( [ 'component', 'document_id' ] ) ) {
-			return true;
-		}
+	cache( command, query, result ) {
+		const args = { query },
+			endpoint = this.commandToEndpoint( 'get', command, args );
 
-		return false;
-	}
-
-	// TODO: Remove - Development test function.
-	autoCacheResponse( method, requestData, response ) {
-		if ( ! this.autoCacheValidateArgs( requestData.args ) ) {
-			return false;
-		}
-
-		if ( ! response?.id ) {
-			return false;
-		}
-
-		const documentId = requestData.args.document_id,
-			component = requestData.component;
-
-		if ( this.autoCache[ component ] && this.autoCache[ component ][ documentId ] ) {
-			return false;
-		}
-
-		requestData.args.element = response;
-
-		// Simulate fetch in reverse order.
-		// TODO: Remove - Create, addCache function.
-		this.autoCacheFetch( 'create', requestData );
-	}
-
-	// TODO: Remove - Development test function.
-	autoCacheGetSimilarElement( component, documentId, elementId ) {
-		return this.autoCache[ component ][ documentId ].filter( ( cacheItem ) =>
-			documentId === cacheItem.args.document_id &&
-			elementId === cacheItem.args.element_id
+		this.cacheStroage.response(
+			'GET',
+			{
+				command,
+				endpoint,
+				args,
+			},
+			result
 		);
-	}
-
-	// TODO: Remove - Development test function.
-	autoCacheFetch( method, requestData ) {
-		if ( ! this.autoCacheValidateArgs( requestData.args ) ) {
-			return false;
-		}
-
-		const documentId = requestData.args.document_id,
-			component = requestData.component;
-
-		switch ( method ) {
-			case 'get': {
-				if ( this.autoCache[ component ] && this.autoCache[ component ][ documentId ] ) {
-					// TODO: Filter probably wasting cpu here since `similar[ 0 ]` always used.
-					const similar = this.autoCacheGetSimilarElement( component, documentId, requestData.args.element_id );
-					let data;
-
-					if ( similar.length ) {
-						data = similar[ similar.length - 1 ].args.element;
-					} else {
-						// TODO: Maybe get info from local.
-						// HINT : defaultSettings.
-						// const container = elementor.getContainer( requestData.args.element_id );
-						//
-						// if ( container ) {
-						// 	data = container.model.toJSON();
-						// }
-						//
-						// return false;
-					}
-
-					if ( ! data ) {
-						break;
-					}
-
-					return new Promise( async ( resolve ) => {
-						resolve( data );
-					} );
-				}
-			}
-			break;
-
-			case 'create': {
-				if ( ! this.autoCache[ component ] ) {
-					this.autoCache[ component ] = {};
-				}
-
-				if ( ! this.autoCache[ component ][ documentId ] ) {
-					this.autoCache[ component ][ documentId ] = [];
-				}
-
-				this.autoCache[ component ][ documentId ].push( requestData );
-
-				return new Promise( async ( resolve ) => {
-					resolve( { success: true } );
-				} );
-			}
-
-			case 'update': {
-				if ( this.autoCache[ component ] && this.autoCache[ component ][ documentId ] ) {
-					const similar = this.autoCacheGetSimilarElement( component, documentId, requestData.args.element_id );
-
-					if ( similar.length ) {
-						similar[ similar.length - 1 ].args.element = requestData.args.element;
-					} else {
-						this.autoCache[ component ][ documentId ].push( requestData );
-					}
-				}
-
-				return new Promise( async ( resolve ) => {
-					resolve( { success: true } );
-				} );
-			}
-
-			default:
-				throw Error( `Invalid method: '${ method }'` );
-		}
-
-		return false;
 	}
 }
