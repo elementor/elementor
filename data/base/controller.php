@@ -78,8 +78,8 @@ abstract class Controller extends WP_REST_Controller {
 		] );
 	}
 
-	protected function register_endpoint( $class ) {
-		$endpoint_instance = new $class( $this );
+	protected function register_endpoint( $class, $context = '' ) {
+		$endpoint_instance = new $class( $this, $context );
 		$endpoint_route = $this->get_name() . '/' . $endpoint_instance->get_name();
 
 		$this->endpoints[ $endpoint_route ] = $endpoint_instance;

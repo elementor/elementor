@@ -9,15 +9,22 @@ abstract class Endpoint {
 	/**
 	 * @var \Elementor\Data\Base\Controller
 	 */
-	private $controller;
+	protected $controller;
+
+	/**
+	 * @var string
+	 */
+	protected $context;
 
 	/**
 	 * Endpoint constructor.
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller
+	 * @param string $context
 	 */
-	public function __construct( $controller ) {
+	public function __construct( $controller, $context ) {
 		$this->controller = $controller;
+		$this->context = $context;
 
 		$this->register();
 	}
@@ -28,7 +35,7 @@ abstract class Endpoint {
 		$this->register_get_items_route();
 	}
 
-	public function register_get_item_route( $args = [], $route = '/(?P<id>[\w]+)' ) {
+	public function register_get_item_route( $args = [], $default_args = '/(?P<id>[\w]+)' ) {
 		$args = array_merge( [
 			'id' => [
 				'description' => __( 'Unique identifier for the object.' ),
@@ -36,7 +43,7 @@ abstract class Endpoint {
 			],
 		], $args );
 
-		$this->register_route( $route, WP_REST_Server::READABLE, function ( $request ) {
+		$this->register_route( $default_args, WP_REST_Server::READABLE, function ( $request ) {
 			return rest_ensure_response( $this->get_item( $request->get_param( 'id' ), $request ) );
 		}, $args );
 	}
@@ -48,7 +55,14 @@ abstract class Endpoint {
 	}
 
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
-		$route = '/' . $this->controller->get_reset_base() . '/' . $this->get_name() . $route;
+		$endpoint_name = $this->get_name();
+
+		// TODO: Allow this only for internal routes.
+		if ( 'index' === $this->context ) {
+			$endpoint_name = '';
+		}
+
+		$route = '/' . $this->controller->get_reset_base() . '/' . $endpoint_name . $route;
 
 		register_rest_route( $this->controller->get_namespace(), $route, [
 			[
@@ -80,5 +94,27 @@ abstract class Endpoint {
 	 */
 	protected function get_item( $id, $request ) {
 		return $this->controller->get_item( $request );
+	}
+
+
+	/**
+	 * Retrieves a recursive collection of items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return array
+	 */
+	protected function get_items_recursive( $request ) {
+		$response = [];
+
+		foreach ( $this->controller->endpoints as $endpoint ) {
+			if ( 'index' === $endpoint->context ) {
+				continue;
+			}
+
+			$response [ $endpoint->get_name() ] = $endpoint->get_items( $request );
+		}
+
+		return $response;
 	}
 }
