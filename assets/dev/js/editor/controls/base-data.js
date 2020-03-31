@@ -125,7 +125,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	applySavedValue: function() {
 		const controlValue = this.getControlValue();
 
-		if ( this.isMultipleValue( value ) ) {
+		if ( this.isMultipleValue( controlValue ) ) {
 			const $inputs = this.$( '[data-setting]' ),
 				self = this;
 
