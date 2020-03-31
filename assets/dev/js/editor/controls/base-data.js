@@ -70,12 +70,42 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.listenTo( settings, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
-	getControlValue: function() {
+	getControlValue: function( key ) {
+		const controlValue = this.container.settings.get( this.model.get( 'name' ) );
+
+		if ( this.isMultipleValue( controlValue ) ) {
+			if ( key ) {
+				let value = controlValue[ key ];
+
+				if ( undefined === value ) {
+					value = '';
+				}
+
+				return value;
+			}
+
+			return elementorCommon.helpers.cloneObject( controlValue );
+		}
+
 		return this.container.settings.get( this.model.get( 'name' ) );
 	},
 
-	setValue: function( value ) {
-		this.setSettingsModel( value );
+	setValue: function( key, value ) {
+		if ( this.isMultipleValue( value ) ) {
+			const controlValue = this.getControlValue();
+
+			if ( 'object' === typeof key ) {
+				_.each( key, function( internalValue, internalKey ) {
+					controlValue[ internalKey ] = internalValue;
+				} );
+			} else {
+				controlValue[ key ] = value;
+			}
+
+			this.setSettingsModel( controlValue );
+		} else {
+			this.setSettingsModel( value );
+		}
 	},
 
 	setSettingsModel: function( value ) {
@@ -91,7 +121,27 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	applySavedValue: function() {
-		this.setInputValue( '[data-setting="' + this.model.get( 'name' ) + '"]', this.getControlValue() );
+		const controlValue = this.getControlValue();
+
+		if ( this.isMultipleValue( value ) ) {
+			const $inputs = this.$( '[data-setting]' ),
+				self = this;
+
+			_.each( controlValue, function( value, key ) {
+				var $input = $inputs.filter( function() {
+					return key === this.dataset.setting;
+				} );
+
+				self.setInputValue( $input, value );
+			} );
+		} else {
+			this.setInputValue( '[data-setting="' + this.model.get( 'name' ) + '"]', controlValue );
+		}
+	},
+
+	// This method checks whether a control value is of type single or multiple (array/object)
+	isMultipleValue: function( value ) {
+		return _.isObject( value );
 	},
 
 	getEditSettings: function( setting ) {
@@ -278,17 +328,27 @@ ControlBaseDataView = ControlBaseView.extend( {
 		}
 	},
 
-	updateElementModel: function( value ) {
-		this.setValue( value );
+	updateElementModel: function( value, input ) {
+		if ( this.isMultipleValue( value ) ) {
+			const key = input.dataset.setting;
+
+			this.setValue( key, value );
+		} else {
+			this.setValue( value );
+		}
 	},
 }, {
 	// Static methods
 	getStyleValue: function( placeholder, controlValue, controlData ) {
-		if ( 'DEFAULT' === placeholder ) {
-			return controlData.default;
+		if ( ! _.isObject( controlValue ) ) {
+			if ( 'DEFAULT' === placeholder ) {
+				return controlData.default;
+			}
+
+			return controlValue;
 		}
 
-		return controlValue;
+		return controlValue[ placeholder.toLowerCase() ];
 	},
 
 	onPasteStyle: function() {
