@@ -11,7 +11,7 @@ export default class Cache {
 				const componentName = requestData?.component?.getNamespace(),
 					isCommandGetItemId = requestData.command === componentName,
 					isIndexCommand = requestData.endpoint + '/index' === requestData.command,
-					isQueryEmpty = 1 === Object.values( requestData.args.query ).length,
+					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
 
 					addCache = ( key, value ) => this.cache[ key ] = value,
 					addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );

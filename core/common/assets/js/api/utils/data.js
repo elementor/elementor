@@ -83,8 +83,6 @@ export default class Data {
 			delete args.query.id;
 		}
 
-		delete args.query.type;
-
 		const queryEntries = Object.entries( args.query );
 
 		// Upon 'GET' args will become part of get params.
@@ -96,12 +94,12 @@ export default class Data {
 			} );
 		}
 
-		args.query.type = type;
-
 		return endPoint;
 	}
 
-	endpointToCommand( endpoint, query ) {
+	endpointToCommand( endpoint, args ) {
+		const { query, options } = args;
+
 		let commandFound = !! $e.data.commands[ endpoint ];
 
 		// Assuming the command maybe index.
@@ -111,7 +109,7 @@ export default class Data {
 		}
 
 		// Maybe the endpoint includes 'id'. as part of the endpoint.
-		if ( ! commandFound && 'get' === query.type ) {
+		if ( ! commandFound && 'get' === options.type ) {
 			const endpointParts = endpoint.split( '/' ),
 				assumedCommand = endpointParts[ 0 ] + '/' + endpointParts[ 1 ];
 

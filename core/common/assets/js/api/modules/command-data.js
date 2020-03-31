@@ -47,7 +47,7 @@ export default class CommandData extends CommandBase {
 	}
 
 	apply() {
-		const type = this.args.query.type,
+		const type = this.args.options.type,
 			applyMethods = this.getApplyMethods( type );
 
 		this.args = applyMethods.before( this.args );
