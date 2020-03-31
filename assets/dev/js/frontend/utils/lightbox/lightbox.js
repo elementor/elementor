@@ -225,7 +225,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( ! videoUrl ) {
 			const downloadImage = i18n.downloadImage;
 
-			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold' } ) ) );
+			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold', title: 'Download' } ) ) );
 		}
 
 		return $linkList;
@@ -270,19 +270,19 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showFullscreen ) {
-			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand } ).append( $( '<span>' ), $( '<span>' ) );
+			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand, title: 'Fullscreen' } ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
 		}
 
 		if ( showZoom ) {
-			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn } );
+			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn, title: 'Zoom' } );
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
 			elements.$header.append( elements.$iconZoom );
 		}
 
 		if ( showShare ) {
-			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare } ).append( $( '<span>' ) );
+			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare, title: 'Share' } ).append( $( '<span>' ) );
 			const $shareLinks = $( '<div>' );
 			$shareLinks.on( 'click', ( e ) => {
 				e.stopPropagation();
@@ -439,8 +439,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon, title: 'Previous' } ) );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon, title: 'Next' } ) );
 
 			$container.append(
 				$prevButton,
