@@ -53,8 +53,6 @@ export class Create extends CommandHistory {
 			};
 		}
 
-		options.skipInitialRenderUI = true;
-
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
@@ -85,19 +83,6 @@ export class Create extends CommandHistory {
 		}
 
 		return result;
-	}
-
-	onAfterApply( args = {}, containers ) {
-		if ( ! Array.isArray( containers ) ) {
-			containers = [ containers ];
-		}
-
-		// Run hooks before render UI.
-		const hookResult = super.onAfterApply( args, containers );
-
-		containers.forEach( ( container ) => container.view.renderUI() );
-
-		return hookResult;
 	}
 
 	isDataChanged() {

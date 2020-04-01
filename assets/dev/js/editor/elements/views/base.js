@@ -17,8 +17,6 @@ BaseElementView = BaseContainer.extend( {
 
 	renderAttributes: {},
 
-	isRenderedUI: false,
-
 	className() {
 		let classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 
@@ -560,13 +558,11 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.attr( 'id', customElementID );
 	},
 
-	renderUI() {
+	renderUI: function() {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
 		this.enqueueFonts();
-
-		this.isRenderedUI = true;
 	},
 
 	runReadyTrigger: function() {
@@ -693,14 +689,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onRender() {
-		if ( this.isRenderedUI || true !== this.model.get( '__skipInitialRenderUI' ) ) {
-			this.renderUI();
-		}
-
-		// TODO: Remove - Currently didnt find solution for passing options to new created view.
-		if ( this.model.get( '__skipInitialRenderUI' ) ) {
-			this.model.unset( '__skipInitialRenderUI' );
-		}
+		this.renderUI();
 
 		this.runReadyTrigger();
 

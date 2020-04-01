@@ -68,10 +68,6 @@ module.exports = Marionette.CompositeView.extend( {
 			options.onBeforeAdd();
 		}
 
-		if ( true === options.skipInitialRenderUI ) {
-			newItem.__skipInitialRenderUI = true;
-		}
-
 		var newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
 
