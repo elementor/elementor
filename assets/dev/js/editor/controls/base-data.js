@@ -143,7 +143,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	// This method checks whether a control value is of type single or multiple (array/object)
 	isMultipleValue: function( value ) {
-		return _.isObject( value );
+		return jQuery.isPlainObject( value );
 	},
 
 	getEditSettings: function( setting ) {
@@ -336,13 +336,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 			this.setValue( key, value );
 		} else {
-			this.setValue( value );
+			this.setValue( null, value );
 		}
 	},
 }, {
 	// Static methods
 	getStyleValue: function( placeholder, controlValue, controlData ) {
-		if ( ! _.isObject( controlValue ) ) {
+		if ( ! jQuery.isPlainObject( controlValue ) ) {
 			if ( 'DEFAULT' === placeholder ) {
 				return controlData.default;
 			}
