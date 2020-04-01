@@ -1,4 +1,16 @@
 export default class DocumentCache {
+	static updateFromModel( documentId, model ) {
+		// Add cache.
+		$e.utils.data.cache(
+			'document/elements',
+			{
+				document_id: documentId,
+				element_id: model.id,
+			},
+			model,
+		);
+	}
+
 	static updateFromConfig( document ) {
 		// TODO: Find better place for `getFlatElements`.
 		const getFlatElements = ( _elements ) => {
@@ -14,19 +26,13 @@ export default class DocumentCache {
 		};
 
 		getFlatElements( document.config.elements ).forEach( ( element ) =>
-			// Add cache.
-			$e.utils.data.cache(
-				'document/elements',
-				{
-					document_id: document.id,
-					element_id: element.id,
-				},
-				element
-			)
+			DocumentCache.updateFromModel( document.id, element )
 		);
 	}
 
 	static updateFromContainers( args, containers = null, settings = null ) {
+		// TODO: Remove args.
+
 		if ( ! containers ) {
 			containers = args.containers || [ args.container ];
 		}

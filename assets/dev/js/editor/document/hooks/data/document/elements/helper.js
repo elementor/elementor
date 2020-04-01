@@ -1,4 +1,5 @@
 import { Create } from 'elementor-document/elements/commands';
+import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export default class Helper {
 	static createSectionColumns( containers, columns, options, structure = false ) {
@@ -10,6 +11,9 @@ export default class Helper {
 					settings: {},
 					elements: [],
 				};
+
+				// Update cache for column.
+				DocumentCache.updateFromModel( elementor.documents.getCurrent().id, model );
 
 				/**
 				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.

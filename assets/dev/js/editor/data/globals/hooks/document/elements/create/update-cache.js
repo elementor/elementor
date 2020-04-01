@@ -21,17 +21,6 @@ export class ElementsCreateUpdateCache extends After {
 		}
 
 		DocumentCache.updateFromContainers( args, containers );
-
-		if ( args.columns ) {
-			// Cache columns manually, since they created by 'create-section' - hook.
-			const columnsContainers = [];
-			containers.forEach( ( container ) => {
-				Object.values( container.view.children._views ).map( ( _view ) => {
-					columnsContainers.push( _view.getContainer() );
-				} );
-			} );
-			DocumentCache.updateFromContainers( args, columnsContainers );
-		}
 	}
 }
 

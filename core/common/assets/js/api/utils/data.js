@@ -126,6 +126,7 @@ export default class Data {
 		return endpoint;
 	}
 
+	// TODO: Function too big part it.
 	fetch( type, requestData ) {
 		// TODO: Check if 'include' is required.
 		const params = {
@@ -155,14 +156,10 @@ export default class Data {
 			throw Error( `Invalid type: '${ type }'` );
 		}
 
-		const haveCacheRequest = requestData.args.options.cache;
+		if ( requestData.args.options.cache ) {
+			let cachePromise;
 
-		let cachePromise;
-
-		if ( haveCacheRequest ) {
-			if ( true === requestData.args.options.cache ) {
-				cachePromise = this.cacheStroage.fetch( type, requestData );
-			}
+			cachePromise = this.cacheStroage.fetch( type, requestData );
 
 			if ( cachePromise ) {
 				return cachePromise;
@@ -170,15 +167,6 @@ export default class Data {
 		}
 
 		return new Promise( async ( resolve, reject ) => {
-			// TODO: Remove `requestData.args.options.cacheOnly` created to handle cache for section and columns.
-			if ( ! cachePromise && requestData.args.options.cacheOnly ) {
-				resolve( {
-					cache: false,
-				} );
-
-				return false;
-			}
-
 			try {
 				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params );
 
