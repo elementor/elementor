@@ -1,36 +1,28 @@
 import Commands from './commands.js';
 
 export default class Data extends Commands {
+	runCustom( type, endpoint, args ) {
+		args.options.type = type;
+
+		const command = $e.utils.data.endpointToCommand( endpoint, args );
+
+		return this.run( command, args );
+	}
+
 	create( endpoint, query = {}, options = {} ) {
-		options.type = 'create';
-
-		const args = { query, options };
-
-		return this.run( $e.utils.data.endpointToCommand( endpoint, args ), args );
+		return this.runCustom( 'create', endpoint, { query, options } );
 	}
 
 	delete( endpoint, query = {}, options = {} ) {
-		options.type = 'delete';
-
-		const args = { query, options };
-
-		return this.run( $e.utils.data.endpointToCommand( endpoint, args ), args );
+		return this.runCustom( 'delete', endpoint, { query, options } );
 	}
 
 	get( endpoint, query = {}, options = {} ) {
-		options.type = 'get';
-
-		const args = { query, options };
-
-		return this.run( $e.utils.data.endpointToCommand( endpoint, args ), args );
+		return this.runCustom( 'get', endpoint, { query, options } );
 	}
 
 	update( endpoint, query = {}, options = {} ) {
-		options.type = 'update';
-
-		const args = { query, options };
-
-		return this.run( $e.utils.data.endpointToCommand( endpoint, args ), args );
+		return this.runCustom( 'update', endpoint, { query, options } );
 	}
 
 	error( message ) {
