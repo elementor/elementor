@@ -1,5 +1,5 @@
 import After from 'elementor-api/modules/hooks/data/after';
-import CacheHelper from '../../cache-helper';
+import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export class ElementsCreateUpdateCache extends After {
 	getCommand() {
@@ -20,7 +20,7 @@ export class ElementsCreateUpdateCache extends After {
 			containers = [ containers ];
 		}
 
-		CacheHelper.updateDocumentElements( args, containers );
+		DocumentCache.updateFromContainers( args, containers );
 
 		if ( args.columns ) {
 			// Cache columns manually, since they created by 'create-section' - hook.
@@ -30,7 +30,7 @@ export class ElementsCreateUpdateCache extends After {
 					columnsContainers.push( _view.getContainer() );
 				} );
 			} );
-			CacheHelper.updateDocumentElements( args, columnsContainers );
+			DocumentCache.updateFromContainers( args, columnsContainers );
 		}
 	}
 }

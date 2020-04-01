@@ -1,5 +1,5 @@
 import After from 'elementor-api/modules/hooks/data/after';
-import CacheHelper from '../../cache-helper';
+import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export class GlobalsEnableUpdateCache extends After {
 	getCommand() {
@@ -16,7 +16,7 @@ export class GlobalsEnableUpdateCache extends After {
 	}
 
 	apply( args ) {
-		CacheHelper.updateDocumentElements( args );
+		DocumentCache.updateFromContainers( args );
 	}
 }
 

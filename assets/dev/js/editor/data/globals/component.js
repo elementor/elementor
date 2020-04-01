@@ -1,4 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
+
 import * as commandsData from './commands/';
 import * as hooks from './hooks/';
 
@@ -28,30 +30,7 @@ export default class Component extends ComponentBase {
 	}
 
 	onDocumentLoaded( document ) {
-		// TODO: Find better place.
-		const getFlatElements = ( elements ) => {
-			const result = [];
-			elements.forEach( ( element ) => {
-				if ( element.elements ) {
-					getFlatElements( element.elements ).forEach( ( _element ) => result.push( _element ) );
-				}
-
-				result.push( element );
-			} );
-			return result;
-		};
-
-		getFlatElements( document.config.elements ).forEach( ( element ) =>
-			// Add cache.
-			$e.utils.data.cache(
-				'document/elements',
-				{
-					document_id: document.id,
-					element_id: element.id,
-				},
-				element
-			)
-		);
+		DocumentCache.updateFromConfig( document );
 	}
 
 	onElementorLoaded() {
