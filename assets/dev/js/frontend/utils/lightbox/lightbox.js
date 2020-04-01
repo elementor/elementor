@@ -416,14 +416,15 @@ module.exports = elementorModules.ViewModule.extend( {
 				$slide.append( $playIcon );
 			} else {
 				const $zoomContainer = $( '<div>', { class: 'swiper-zoom-container' } ),
+					$slidePlaceholder = $( '<div class="swiper-lazy-preloader"></div>' ),
 					$slideImage = $( '<img>', {
-						class: classes.image + ' ' + classes.preventClose,
-						src: slide.image,
+						class: classes.image + ' ' + classes.preventClose + ' swiper-lazy',
+						'data-src': slide.image,
 						'data-title': slide.title,
 						'data-description': slide.description,
 					} );
 
-				$zoomContainer.append( $slideImage );
+				$zoomContainer.append( [ $slideImage, $slidePlaceholder ] );
 				$slide.append( $zoomContainer );
 			}
 
@@ -480,6 +481,9 @@ module.exports = elementorModules.ViewModule.extend( {
 				},
 				on: {
 					slideChangeTransitionEnd: this.onSlideChange,
+				},
+				lazy: {
+					loadPrevNext: true,
 				},
 				zoom: true,
 				spaceBetween: 100,
