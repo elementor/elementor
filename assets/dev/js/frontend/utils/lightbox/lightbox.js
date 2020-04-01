@@ -225,7 +225,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( ! videoUrl ) {
 			const downloadImage = i18n.downloadImage;
 
-			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold', title: 'Download' } ) ) );
+			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': 'Download' } ) ) );
 		}
 
 		return $linkList;
@@ -270,19 +270,19 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showFullscreen ) {
-			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand, title: 'Fullscreen' } ).append( $( '<span>' ), $( '<span>' ) );
+			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand, 'aria-label': 'Fullscreen' } ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
 		}
 
 		if ( showZoom ) {
-			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn, title: 'Zoom' } );
+			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn, 'aria-label': 'Zoom' } );
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
 			elements.$header.append( elements.$iconZoom );
 		}
 
 		if ( showShare ) {
-			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare, title: 'Share' } ).append( $( '<span>' ) );
+			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare, 'aria-label': 'Share' } ).append( $( '<span>' ) );
 			const $shareLinks = $( '<div>' );
 			$shareLinks.on( 'click', ( e ) => {
 				e.stopPropagation();
@@ -411,7 +411,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, title: 'Play Video' } ) );
+				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, 'aria-label': 'Play Video' } ) );
 
 				$slide.append( $playIcon );
 			} else {
@@ -439,8 +439,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon, title: 'Previous' } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon, title: 'Next' } ) );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon, 'aria-label': 'Previous' } ) );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon, 'aria-label': 'Next' } ) );
 
 			$container.append(
 				$prevButton,
