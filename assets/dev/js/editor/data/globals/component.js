@@ -13,7 +13,7 @@ export default class Component extends ComponentBase {
 			return;
 		}
 
-		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+		elementor.on( 'document:preview', this.onDocumentPreview.bind( this ) );
 		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
 	}
 
@@ -29,7 +29,9 @@ export default class Component extends ComponentBase {
 		return this.importHooks( hooks );
 	}
 
-	onDocumentLoaded( document ) {
+	onDocumentPreview( document ) {
+		// TODO: Delete old cache?
+		// Add document cache before render.
 		DocumentCache.updateFromConfig( document );
 	}
 
