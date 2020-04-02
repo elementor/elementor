@@ -30,13 +30,7 @@ export default class DocumentCache {
 		);
 	}
 
-	static updateFromContainers( args, containers = null, settings = null ) {
-		// TODO: Remove args.
-
-		if ( ! containers ) {
-			containers = args.containers || [ args.container ];
-		}
-
+	static updateFromContainers( containers = null, settings = null ) {
 		containers.forEach( ( container ) => {
 			const element = container.model.toJSON();
 

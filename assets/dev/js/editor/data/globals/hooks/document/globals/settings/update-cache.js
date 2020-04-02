@@ -16,8 +16,10 @@ export class GlobalsSettingsUpdateCache extends After {
 	}
 
 	apply( args ) {
-		DocumentCache.updateFromContainers( args );
+		const { containers = [ args.container ] } = args;
+
+		DocumentCache.updateFromContainers( containers );
 	}
 }
-``
+
 export default GlobalsSettingsUpdateCache;

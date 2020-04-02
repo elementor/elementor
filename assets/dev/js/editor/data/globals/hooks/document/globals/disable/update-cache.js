@@ -16,7 +16,9 @@ export class GlobalsDisableUpdateCache extends After {
 	}
 
 	apply( args ) {
-		DocumentCache.updateFromContainers( args );
+		const { containers = [ args.container ] } = args;
+
+		DocumentCache.updateFromContainers( containers );
 	}
 }
 

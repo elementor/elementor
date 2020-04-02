@@ -1,4 +1,5 @@
 import CommandHistory from 'elementor-document/commands/base/command-history';
+import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export class Create extends CommandHistory {
 	static restore( historyItem, isRedo ) {
@@ -53,36 +54,53 @@ export class Create extends CommandHistory {
 			};
 		}
 
-		containers.forEach( ( container ) => {
-			container = container.lookup();
-
-			const createdContainer = container.view.addElement( model, options ).getContainer();
-
-			result.push( createdContainer );
-
-			/**
-			 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
-			 * in getHistory().
-			 */
-			if ( this.isHistoryActive() ) {
-				$e.internal( 'document/history/log-sub-item', {
-					container,
-					type: 'sub-add',
-					restore: this.constructor.restore,
-					options,
-					data: {
-						containerToRestore: createdContainer,
-						modelToRestore: createdContainer.model.toJSON(),
-					},
-				} );
-			}
-		} );
+		containers.forEach( ( container ) =>
+			result.push( this.createElement( container.lookup(), model, options ) )
+		);
 
 		if ( 1 === result.length ) {
 			result = result[ 0 ];
 		}
 
 		return result;
+	}
+
+	createElement( container, model, options ) {
+		let isModelIdLocalSet = false;
+
+		// Since cache require model id, ensure is `model.id` is require.
+		if ( ! model.id ) {
+			model.id = elementor.helpers.getUniqueID();
+			isModelIdLocalSet = true;
+		}
+
+		DocumentCache.updateFromModel( container.document.id, model );
+
+		const newContainer = container.view.addElement( model, options ).getContainer();
+
+		/**
+		 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
+		 * in getHistory().
+		 */
+		if ( this.isHistoryActive() ) {
+			$e.internal( 'document/history/log-sub-item', {
+				container,
+				type: 'sub-add',
+				restore: this.constructor.restore,
+				options,
+				data: {
+					containerToRestore: newContainer,
+					modelToRestore: newContainer.model.toJSON(),
+				},
+			} );
+		}
+
+		// `model.id` was set locally, delete is required.
+		if ( isModelIdLocalSet ) {
+			delete model.id;
+		}
+
+		return newContainer;
 	}
 
 	isDataChanged() {
