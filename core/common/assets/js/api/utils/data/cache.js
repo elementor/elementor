@@ -5,14 +5,6 @@ export default class Cache {
 		this.cache = {};
 	}
 
-	endpointToUniqueId( endpoint ) {
-		/**
-		 * Since `$e.data` uses  `args.query` to generate endpoint in `function commandToEndpoint`.
-		 * The generated key should be the sorted.
-		 */
-		return endpoint.split( '' ).sort().join( '' );
-	}
-
 	load( method, requestData, response ) {
 		switch ( method ) {
 			case 'GET': {
@@ -21,7 +13,7 @@ export default class Cache {
 					isIndexCommand = requestData.endpoint + '/index' === requestData.command,
 					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
 
-					addCache = ( key, value ) => this.cache[ this.endpointToUniqueId( key ) ] = value,
+					addCache = ( key, value ) => this.cache[ key ] = value,
 					addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
 
 				if ( isQueryEmpty && 1 === isCommandGetItemId ) {
@@ -53,11 +45,9 @@ export default class Cache {
 	fetch( methodType, requestData ) {
 		switch ( methodType ) {
 			case 'get': {
-				const key = this.endpointToUniqueId( requestData.endpoint );
-
-				if ( this.cache[ key ] ) {
+				if ( this.cache[ requestData.endpoint ] ) {
 					return new Promise( async ( resolve ) => {
-						resolve( this.cache[ key ] );
+						resolve( this.cache[ requestData.endpoint ] );
 					} );
 				}
 			}

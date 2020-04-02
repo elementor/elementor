@@ -83,15 +83,20 @@ export default class Data {
 			delete args.query.id;
 		}
 
-		const queryEntries = Object.entries( args.query );
+		if ( 'get' === type ) {
+			// Sorting since the endpoint later will be used as key to store the cache.
+			const queryEntries = Object.entries( args.query ).sort(
+				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
+			);
 
-		// Upon 'GET' args will become part of get params.
-		if ( 'get' === type && queryEntries.length ) {
-			endPoint += '?';
+			// Upon 'GET', `args.query` will become part of get params.
+			if ( queryEntries.length ) {
+				endPoint += '?';
 
-			queryEntries.forEach( ( [ name, value ] ) => {
-				endPoint += name + '=' + value + '&';
-			} );
+				queryEntries.forEach( ( [ name, value ] ) => {
+					endPoint += name + '=' + value + '&';
+				} );
+			}
 		}
 
 		return endPoint;
