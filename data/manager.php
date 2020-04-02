@@ -32,7 +32,7 @@ class Manager extends BaseModule {
 	 * @param $controller_class_name
 	 * @param array &$target
 	 */
-	private function register_controller( $controller_class_name, array & $target ) {
+	private function register_controller( $controller_class_name, array &$target ) {
 		$controller_instance = new $controller_class_name( $this );
 
 		$target[ $controller_instance->get_name() ] = $controller_instance;

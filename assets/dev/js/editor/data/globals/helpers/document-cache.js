@@ -1,5 +1,9 @@
 export default class DocumentCache {
 	static updateFromModel( documentId, model ) {
+		if ( ! model.id ) {
+			throw Error( 'Invalid model.id' );
+		}
+
 		// Add cache.
 		$e.utils.data.cache(
 			'document/elements',
@@ -42,14 +46,7 @@ export default class DocumentCache {
 			}
 
 			// Update cache.
-			$e.utils.data.cache(
-				'document/elements',
-				{
-					document_id: elementor.documents.getCurrent().id,
-					element_id: container.id,
-				},
-				element
-			);
+			DocumentCache.updateFromModel( elementor.documents.getCurrent().id, element );
 		} );
 	}
 }

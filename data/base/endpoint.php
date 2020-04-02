@@ -5,7 +5,6 @@ namespace Elementor\Data\Base;
 use WP_REST_Server;
 
 abstract class Endpoint {
-
 	/**
 	 * @var \Elementor\Data\Base\Controller
 	 */
@@ -38,7 +37,7 @@ abstract class Endpoint {
 	public function register_get_item_route( $args = [], $default_args = '/(?P<id>[\w]+)' ) {
 		$args = array_merge( [
 			'id' => [
-				'description' => __( 'Unique identifier for the object.' ),
+				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
 			],
 		], $args );

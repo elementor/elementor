@@ -55,7 +55,7 @@ export class Create extends CommandHistory {
 		}
 
 		containers.forEach( ( container ) =>
-			result.push( this.createElement( container.lookup(), model, options ) )
+			result.push( this.createContainer( container.lookup(), model, options ) )
 		);
 
 		if ( 1 === result.length ) {
@@ -65,13 +65,11 @@ export class Create extends CommandHistory {
 		return result;
 	}
 
-	createElement( container, model, options ) {
-		let isModelIdLocalSet = false;
-
-		// Since cache require model id, ensure is `model.id` is require.
+	createContainer( container, model, options ) {
+		// Since cache require model id, ensure `model` & `model.id` is require.
 		if ( ! model.id ) {
+			model = elementorCommon.helpers.cloneObject( model );
 			model.id = elementor.helpers.getUniqueID();
-			isModelIdLocalSet = true;
 		}
 
 		DocumentCache.updateFromModel( container.document.id, model );
@@ -93,11 +91,6 @@ export class Create extends CommandHistory {
 					modelToRestore: newContainer.model.toJSON(),
 				},
 			} );
-		}
-
-		// `model.id` was set locally, delete is required.
-		if ( isModelIdLocalSet ) {
-			delete model.id;
 		}
 
 		return newContainer;
