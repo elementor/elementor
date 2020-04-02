@@ -8,20 +8,9 @@ export default class Cache {
 	endpointToUniqueId( endpoint ) {
 		/**
 		 * Since `$e.data` uses  `args.query` to generate endpoint in `function commandToEndpoint`.
-		 * The generated key should be the SUM of endpoint.
-		 * TODO: Remove POC comment and create test for the function.
-		 *  POC Comment:
-		 * 	test = 0 ; 'endpoint?param_b=b?param_a=a'.split('').forEach( ( char ) => test = test + parseInt( char.charCodeAt(0) ) ) ; console.log( test )
-		 * 	test = 0 ; 'endpoint?param_a=a?param_b=b'.split('').forEach( ( char ) => test = test + parseInt( char.charCodeAt(0) ) ) ; console.log( test )
-		 * 	both result: 2751
+		 * The generated key should be the sorted.
 		 */
-		let result = 0;
-
-		endpoint.split( '' ).forEach( ( char ) =>
-			result = result + parseInt( char.charCodeAt( 0 ) )
-		);
-
-		return result.toString();
+		return endpoint.split( '' ).sort().join( '' );
 	}
 
 	load( method, requestData, response ) {
