@@ -132,6 +132,10 @@ abstract class Base_Data_Control extends Base_Control {
 	 * @return string Control style value.
 	 */
 	public function get_style_value( $css_property, $control_value, array $control_data ) {
+		if ( is_array( $control_value ) ) {
+			return $control_value[ strtolower( $css_property ) ];
+		}
+
 		if ( 'DEFAULT' === $css_property ) {
 			return $control_data['default'];
 		}
