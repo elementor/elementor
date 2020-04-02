@@ -75,7 +75,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	getControlValue: function( key ) {
 		const controlValue = this.container.settings.get( this.model.get( 'name' ) );
 
-		if ( this.isMultipleValue( controlValue ) ) {
+		if ( this.isMultipleValue() ) {
 			if ( key ) {
 				let value = controlValue[ key ];
 
@@ -93,7 +93,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	setValue: function( key, value ) {
-		if ( this.isMultipleValue( value ) ) {
+		if ( this.isMultipleValue() ) {
 			const controlValue = this.getControlValue();
 
 			if ( 'object' === typeof key ) {
@@ -125,7 +125,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	applySavedValue: function() {
 		const controlValue = this.getControlValue();
 
-		if ( this.isMultipleValue( controlValue ) ) {
+		if ( this.isMultipleValue() ) {
 			const $inputs = this.$( '[data-setting]' ),
 				self = this;
 
@@ -142,8 +142,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	// This method checks whether a control value is of type single or multiple (array/object)
-	isMultipleValue: function( value ) {
-		return jQuery.isPlainObject( value );
+	isMultipleValue: function() {
+		return jQuery.isPlainObject( this.container.settings.get( this.model.get( 'name' ) ) );
 	},
 
 	getEditSettings: function( setting ) {
@@ -331,7 +331,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	updateElementModel: function( value, input ) {
-		if ( this.isMultipleValue( value ) ) {
+		if ( this.isMultipleValue() ) {
 			const key = input.dataset.setting;
 
 			this.setValue( key, value );
