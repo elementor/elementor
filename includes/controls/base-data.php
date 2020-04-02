@@ -24,10 +24,10 @@ abstract class Base_Data_Control extends Base_Control {
 	 * @since 1.5.0
 	 * @access public
 	 *
-	 * @return string Control default value.
+	 * @return string|array Control default value.
 	 */
 	public function get_default_value() {
-		return '';
+		return 'single' === $this->get_value_type() ? '' : [];
 	}
 
 	/**
@@ -88,7 +88,21 @@ abstract class Base_Data_Control extends Base_Control {
 			$value = $control['default'];
 		}
 
-		return $value;
+		// if value is a single value just return it
+		if ( 'single' === $this->get_value_type() ) {
+			return $value;
+		}
+
+		// Multiple logic
+		$control['default'] = array_merge(
+			$this->get_default_value(),
+			$control['default']
+		);
+
+		return array_merge(
+			$control['default'],
+			$value
+		);
 	}
 
 	/**
