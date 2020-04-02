@@ -5,6 +5,25 @@ export default class Cache {
 		this.cache = {};
 	}
 
+	endpointToUniqueId( endpoint ) {
+		/**
+		 * Since `$e.data` uses  `args.query` to generate endpoint in `function commandToEndpoint`.
+		 * The generated key should be the SUM of endpoint.
+		 * TODO: Remove POC comment and create test for the function.
+		 *  POC Comment:
+		 * 	test = 0 ; 'endpoint?param_b=b?param_a=a'.split('').forEach( ( char ) => test = test + parseInt( char.charCodeAt(0) ) ) ; console.log( test )
+		 * 	test = 0 ; 'endpoint?param_a=a?param_b=b'.split('').forEach( ( char ) => test = test + parseInt( char.charCodeAt(0) ) ) ; console.log( test )
+		 * 	both result: 2751
+		 */
+		let result = 0;
+
+		endpoint.split( '' ).forEach( ( char ) =>
+			result = result + parseInt( char.charCodeAt( 0 ) )
+		);
+
+		return result.toString();
+	}
+
 	load( method, requestData, response ) {
 		switch ( method ) {
 			case 'GET': {
@@ -13,7 +32,7 @@ export default class Cache {
 					isIndexCommand = requestData.endpoint + '/index' === requestData.command,
 					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
 
-					addCache = ( key, value ) => this.cache[ key ] = value,
+					addCache = ( key, value ) => this.cache[ this.endpointToUniqueId( key ) ] = value,
 					addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
 
 				if ( isQueryEmpty && 1 === isCommandGetItemId ) {
@@ -45,9 +64,11 @@ export default class Cache {
 	fetch( methodType, requestData ) {
 		switch ( methodType ) {
 			case 'get': {
-				if ( this.cache[ requestData.endpoint ] ) {
+				const key = this.endpointToUniqueId( requestData.endpoint );
+
+				if ( this.cache[ key ] ) {
 					return new Promise( async ( resolve ) => {
-						resolve( this.cache[ requestData.endpoint ] );
+						resolve( this.cache[ key ] );
 					} );
 				}
 			}
