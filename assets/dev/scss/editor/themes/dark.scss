@@ -145,6 +145,9 @@ $editor-danger: $theme-dark-danger;
 	--theme-color-navigator-item-icon: 			var(--editor-color-level-100);
 	--theme-color-navigator-item-editing-bg: 	var(--theme-color-panel-highlight-bg);
 	--theme-color-navigator-item-editing-text: 	var(--editor-color-level-100);
+	--theme-color-wysiwyg-editor-bg: var(--theme-color-panel-highlight-bg);
+	--theme-color-wysiwyg-editor-text: var(--theme-color-panel-highlight);
+	--theme-color-wysiwyg-editor-border: var(--theme-color-input-border-focus);
 
 	--theme-gradient-navigation-tab: linear-gradient(to bottom, var(--editor-color-level-20), var(--editor-color-level-35));
 	--theme-gradient-modal-tab: linear-gradient(to bottom, var(--editor-color-level-10), var(--editor-color-level-20));
