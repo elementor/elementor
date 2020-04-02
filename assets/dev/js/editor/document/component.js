@@ -2,15 +2,6 @@ import ComponentBase from 'elementor-api/modules/component-base';
 import BackwardsCompatibility from './backwards-compatibility.js';
 import CommandHistory from './commands/base/command-history';
 import CommandHistoryDebounce from './commands/base/command-history-debounce';
-
-import DynamicComponent from 'elementor-document/dynamic/component';
-import ElementsComponent from 'elementor-document/elements/component';
-import GlobalsComponent from 'elementor-document/globals/component';
-import HistoryComponent from 'elementor-document/history/component';
-import RepeaterComponent from 'elementor-document/repeater/component';
-import SaveComponent from 'elementor-document/save/component';
-import UIComponent from 'elementor-document/ui/component';
-
 import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
@@ -50,15 +41,6 @@ export default class Component extends ComponentBase {
 		new BackwardsCompatibility();
 
 		super.registerAPI();
-
-		// 'Document' Should register all child components ( /document/component ).
-		$e.components.register( new DynamicComponent() );
-		$e.components.register( new ElementsComponent() );
-		$e.components.register( new GlobalsComponent() );
-		$e.components.register( new HistoryComponent() );
-		$e.components.register( new RepeaterComponent() );
-		$e.components.register( new SaveComponent() );
-		$e.components.register( new UIComponent() );
 	}
 
 	defaultCommands() {
