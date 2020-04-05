@@ -5,7 +5,6 @@ import ElementsComponent from './document/elements/component';
 import RepeaterComponent from './document/repeater/component';
 import HistoryComponent from './document/history/component';
 import DynamicComponent from './document/dynamic/component';
-import GlobalsComponent from './document/globals/component';
 
 import DataGlobalsComponent from './data/globals/component';
 
@@ -20,7 +19,6 @@ elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 	$e.components.register( new RepeaterComponent() );
 	$e.components.register( new HistoryComponent() );
 	$e.components.register( new DynamicComponent() );
-	$e.components.register( new GlobalsComponent() );
 
 	// TODO: Remove, BC Since 2.9.0.
 	elementor.saver = $e.components.get( 'document/save' );
