@@ -1,11 +1,21 @@
 export default class DocumentCache {
-	static updateFromModel( documentId, model ) {
+	static deleteById( documentId, elementId ) {
+		$e.data.deleteCache(
+			'document/elements',
+			{
+				document_id: documentId,
+				element_id: elementId,
+			},
+		);
+	}
+
+	static updateByModel( documentId, model ) {
 		if ( ! model.id ) {
 			throw Error( 'Invalid model.id' );
 		}
 
 		// Add cache.
-		$e.utils.data.cache(
+		$e.data.loadCache(
 			'document/elements',
 			{
 				document_id: documentId,
@@ -15,7 +25,7 @@ export default class DocumentCache {
 		);
 	}
 
-	static updateFromConfig( document ) {
+	static updateByConfig( document ) {
 		// TODO: Find better place for `getFlatElements`.
 		const getFlatElements = ( _elements ) => {
 			const result = [];
@@ -30,11 +40,11 @@ export default class DocumentCache {
 		};
 
 		getFlatElements( document.config.elements ).forEach( ( element ) =>
-			DocumentCache.updateFromModel( document.id, element )
+			DocumentCache.updateByModel( document.id, element )
 		);
 	}
 
-	static updateFromContainers( containers = null, settings = null ) {
+	static updateByContainers( containers = null, settings = null ) {
 		containers.forEach( ( container ) => {
 			const element = container.model.toJSON();
 
@@ -46,7 +56,7 @@ export default class DocumentCache {
 			}
 
 			// Update cache.
-			DocumentCache.updateFromModel( elementor.documents.getCurrent().id, element );
+			DocumentCache.updateByModel( elementor.documents.getCurrent().id, element );
 		} );
 	}
 }

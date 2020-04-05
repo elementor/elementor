@@ -10,7 +10,7 @@ export class UpdateCacheBase extends After {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		DocumentCache.updateFromContainers( containers );
+		DocumentCache.updateByContainers( containers );
 	}
 }
 

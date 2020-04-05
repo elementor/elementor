@@ -13,7 +13,7 @@ export default class Helper {
 				};
 
 				// Update cache for column.
-				DocumentCache.updateFromModel( elementor.documents.getCurrent().id, model );
+				DocumentCache.updateByModel( elementor.documents.getCurrent().id, model );
 
 				/**
 				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.

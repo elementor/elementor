@@ -72,7 +72,7 @@ export class Create extends CommandHistory {
 			model.id = elementor.helpers.getUniqueID();
 		}
 
-		DocumentCache.updateFromModel( container.document.id, model );
+		DocumentCache.updateByModel( container.document.id, model );
 
 		const newContainer = container.view.addElement( model, options ).getContainer();
 

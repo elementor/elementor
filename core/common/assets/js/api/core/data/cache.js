@@ -2,7 +2,7 @@ export default class Cache {
 	constructor( manager ) {
 		this.manager = manager;
 
-		this.cache = {};
+		this.data = {};
 	}
 
 	load( method, requestData, response ) {
@@ -13,7 +13,7 @@ export default class Cache {
 					isIndexCommand = requestData.endpoint + '/index' === requestData.command,
 					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
 
-					addCache = ( key, value ) => this.cache[ key ] = value,
+					addCache = ( key, value ) => this.data[ key ] = value,
 					addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
 
 				if ( isQueryEmpty && 1 === isCommandGetItemId ) {
@@ -42,12 +42,12 @@ export default class Cache {
 		}
 	}
 
-	fetch( methodType, requestData ) {
+	receive( methodType, endpoint ) {
 		switch ( methodType ) {
 			case 'get': {
-				if ( this.cache[ requestData.endpoint ] ) {
+				if ( this.data[ endpoint ] ) {
 					return new Promise( async ( resolve ) => {
-						resolve( this.cache[ requestData.endpoint ] );
+						resolve( this.data[ endpoint ] );
 					} );
 				}
 			}
@@ -55,6 +55,16 @@ export default class Cache {
 
 			default:
 				throw Error( `Invalid method: '${ methodType }'` );
+		}
+
+		return false;
+	}
+
+	delete( endpoint ) {
+		if ( this.data[ endpoint ] ) {
+			delete this.data[ endpoint ];
+
+			return true;
 		}
 
 		return false;

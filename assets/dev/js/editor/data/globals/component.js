@@ -32,7 +32,7 @@ export default class Component extends ComponentBase {
 	onDocumentPreview( document ) {
 		// TODO: Delete old cache?
 		// Add document cache before render.
-		DocumentCache.updateFromConfig( document );
+		DocumentCache.updateByConfig( document );
 	}
 
 	onElementorLoaded() {

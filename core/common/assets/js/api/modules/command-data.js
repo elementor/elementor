@@ -61,7 +61,7 @@ export default class CommandData extends CommandBase {
 			args: this.args,
 		};
 
-		return $e.utils.data.fetch( type, requestData ).then( ( data ) => {
+		return $e.data.fetch( type, requestData ).then( ( data ) => {
 			this.data = data;
 
 			// Run apply filter.
