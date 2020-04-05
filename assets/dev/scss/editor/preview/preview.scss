@@ -339,15 +339,6 @@ html.elementor-html {
 	pointer-events: all;
 }
 
-.elementor-editor-element-setting {
-
-	// Avoid conflict between v2.1+ & Pro 2.1-
-	// TODO: Remove this in v2.4
-	&.elementor-editor-element-save {
-		display: none;
-	}
-}
-
 .elementor-editor-element-edit {
 
 	@media(min-width: $editor-screen-lg-min) {
