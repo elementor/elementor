@@ -6,7 +6,7 @@ const BaseSectionsContainerView = require( 'elementor-views/base-sections-contai
 
 const Preview = BaseSectionsContainerView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-preview' ),
-
+    // TODO: remove class dependency
 	className: 'elementor-inner',
 
 	childViewContainer: '.elementor-section-wrap',
