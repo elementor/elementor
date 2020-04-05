@@ -305,7 +305,7 @@ ul.elementor-icon-list-items.elementor-inline-items {
 				margin-right: calc(var(--grid-side-margin) / 2);
 				margin-left: calc(var(--grid-side-margin) / 2);
 
-				&-item > div {
+				&-item > div, &-item > a {
 					margin-right: calc(var(--grid-side-margin) / 2);
 					margin-left: calc(var(--grid-side-margin) / 2);
 					margin-bottom: var(--grid-bottom-margin);

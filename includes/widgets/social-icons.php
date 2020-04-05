@@ -440,13 +440,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'size' => 5,
 				],
 				'selectors' => [
-					'{{WRAPPER}}:not(.elementor-grid-0) .elementor-grid' => 'grid-column-gap: {{SIZE}}{{UNIT}}',
-					'{{WRAPPER}}.elementor-grid-0 .elementor-social-icon' => 'margin-right: calc({{SIZE}}{{UNIT}} / 2); margin-left: calc({{SIZE}}{{UNIT}} / 2)',
-					'(tablet) {{WRAPPER}}.elementor-grid-tablet-0 .elementor-social-icon' => 'margin-right: calc({{SIZE}}{{UNIT}} / 2); margin-left: calc({{SIZE}}{{UNIT}} / 2)',
-					'(mobile) {{WRAPPER}}.elementor-grid-mobile-0 .elementor-social-icon' => 'margin-right: calc({{SIZE}}{{UNIT}} / 2); margin-left: calc({{SIZE}}{{UNIT}} / 2)',
-					'{{WRAPPER}}.elementor-grid-0 .elementor-grid' => 'margin-right: calc(-{{SIZE}}{{UNIT}} / 2); margin-left: calc(-{{SIZE}}{{UNIT}} / 2)',
-					'(tablet) {{WRAPPER}}.elementor-grid-tablet-0 .elementor-grid' => 'margin-right: calc(-{{SIZE}}{{UNIT}} / 2); margin-left: calc(-{{SIZE}}{{UNIT}} / 2)',
-					'(mobile) {{WRAPPER}}.elementor-grid-mobile-0 .elementor-grid' => 'margin-right: calc(-{{SIZE}}{{UNIT}} / 2); margin-left: calc(-{{SIZE}}{{UNIT}} / 2)',
+					'{{WRAPPER}}' => '--grid-column-gap: {{SIZE}}{{UNIT}}; --grid-side-margin: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -460,10 +454,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'size' => 0,
 				],
 				'selectors' => [
-					'{{WRAPPER}}:not(.elementor-grid-0) .elementor-grid' => 'grid-row-gap: {{SIZE}}{{UNIT}}',
-					'{{WRAPPER}}.elementor-grid-0 .elementor-social-icon' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-					'(tablet) {{WRAPPER}}.elementor-grid-tablet-0 .elementor-social-icon' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-					'(mobile) {{WRAPPER}}.elementor-grid-mobile-0 .elementor-social-icon' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--grid-row-gap: {{SIZE}}{{UNIT}}; --grid-bottom-margin: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
