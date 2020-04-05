@@ -30,30 +30,6 @@ html.elementor-html {
 
 .elementor-edit-area-active {
 
-	.elementor-top-section {
-
-		> .elementor-container {
-
-			> .elementor-row {
-				min-height: 40px;
-			}
-		}
-	}
-
-	.elementor-inner-section {
-
-		&:first-child {
-			margin-top: 15px;
-		}
-
-		> .elementor-container {
-
-			> .elementor-row {
-				min-height: 40px;
-			}
-		}
-	}
-
 	.elementor-column-wrap {
 
 		&.elementor-element-empty {
