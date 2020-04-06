@@ -12,8 +12,6 @@ export default class extends BaseRegion {
 
 		this.isDocked = false;
 
-		this.opened = false;
-
 		this.indicators = {
 			customPosition: {
 				title: elementor.translate( 'custom_positioning' ),
@@ -95,11 +93,6 @@ export default class extends BaseRegion {
 	}
 
 	open( model ) {
-		// If open once.
-		if ( ! this.opened ) {
-			this.opened = true;
-		}
-
 		this.$el.show();
 
 		if ( this.storage.docked ) {
