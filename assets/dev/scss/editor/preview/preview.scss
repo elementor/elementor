@@ -30,6 +30,13 @@ html.elementor-html {
 
 .elementor-edit-area-active {
 
+	.elementor-inner-section {
+
+		&:first-child {
+			margin-top: 15px;
+		}
+	}
+
 	.elementor-column-wrap {
 
 		&.elementor-element-empty {
