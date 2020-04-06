@@ -5,6 +5,14 @@ namespace Elementor\Data\Base;
 use WP_REST_Server;
 
 abstract class Endpoint {
+	const AVAILABLE_METHODS = [
+		WP_REST_Server::READABLE,
+		WP_REST_Server::CREATABLE,
+		WP_REST_Server::EDITABLE,
+		WP_REST_Server::DELETABLE,
+		WP_REST_Server::ALLMETHODS,
+	];
+
 	/**
 	 * @var \Elementor\Data\Base\Controller
 	 */
@@ -51,6 +59,10 @@ abstract class Endpoint {
 	}
 
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
+		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
+			throw new \Exception( 'Invalid method' );
+		}
+
 		$endpoint_name = $this->get_name();
 
 		// TODO: Allow this only for internal routes.
@@ -65,6 +77,9 @@ abstract class Endpoint {
 				'args' => $args,
 				'methods' => $methods,
 				'callback' => $callback,
+				'permission_callback' => function( $request ) {
+					return $this->permission_callback( $request );
+				},
 			],
 		] );
 	}
@@ -112,5 +127,14 @@ abstract class Endpoint {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return boolean
+	 */
+	public function permission_callback( $request ) {
+		return $this->controller->permission_callback( $request );
 	}
 }

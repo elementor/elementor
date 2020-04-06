@@ -136,11 +136,11 @@ export default class Data extends Commands {
 
 	// TODO: Function too big part it.
 	fetch( type, requestData ) {
-		// TODO: Check if 'include' is required.
-		const params = {
-				credentials: 'include', // cookies
+		const nonce = wpApiSettings.nonce,
+			params = {
+				credentials: 'include', // cookies is required for wp reset.
 			},
-			headers = {};
+			headers = { 'X-WP-Nonce': nonce };
 
 		requestData.endpoint = this.commandToEndpoint( type, requestData.command, requestData.args );
 		/**

@@ -6,8 +6,11 @@ use WP_REST_Controller;
 use WP_REST_Server;
 
 abstract class Controller extends WP_REST_Controller {
+
 	const ROOT_NAMESPACE = 'elementor';
+
 	const REST_BASE = '';
+
 	const VERSION = '1';
 
 	public $endpoints = [];
@@ -19,7 +22,7 @@ abstract class Controller extends WP_REST_Controller {
 		$this->namespace = self::ROOT_NAMESPACE . '/v' . static::VERSION;
 		$this->rest_base = static::REST_BASE . $this->get_name();
 
-		add_action( 'rest_api_init', function() {
+		add_action( 'rest_api_init', function () {
 			$this->register_internal_endpoints();
 			$this->register_endpoints();
 		} );
@@ -99,6 +102,9 @@ abstract class Controller extends WP_REST_Controller {
 				'methods' => WP_REST_Server::READABLE,
 				'callback' => array( $this, 'get_items' ),
 				'args' => [],
+				'permission_callback' => function( $request ) {
+					return $this->permission_callback( $request );
+				},
 			],
 		] );
 	}
@@ -112,5 +118,19 @@ abstract class Controller extends WP_REST_Controller {
 
 	public function get_items( $request ) {
 		return $this->get_controller_index( $request );
+	}
+
+	public function permission_callback( $request ) {
+		switch ( $request->get_method() ) {
+			case 'GET':
+			case 'POST':
+			case 'UPDATE':
+			case 'PUT':
+			case 'DELETE':
+				// TODO: Handle all the situations.
+				return current_user_can( 'edit_posts' );
+		}
+
+		return false;
 	}
 }
