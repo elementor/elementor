@@ -13,7 +13,7 @@ export default class Component extends ComponentBase {
 			return;
 		}
 
-		elementor.on( 'document:preview', this.onDocumentPreview.bind( this ) );
+		elementor.on( 'document:before:preview', this.onDocumentPreview.bind( this ) );
 		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
 	}
 

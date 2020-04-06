@@ -59,7 +59,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 
 			const Preview = require( 'elementor-views/preview' );
 
-			elementor.trigger( 'document:preview', document );
+			elementor.trigger( 'document:before:preview', document );
 
 			elementor.sections.show( new Preview( { model: elementor.elementsModel } ) );
 
