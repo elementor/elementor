@@ -44,7 +44,8 @@ export class Create extends CommandHistory {
 	apply( args ) {
 		const { model, options = {}, containers = [ args.container ] } = args;
 
-		let result = [];
+		let result = [],
+			isIdSetLocal = false;
 
 		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 		if ( ! options.trigger ) {
@@ -54,46 +55,50 @@ export class Create extends CommandHistory {
 			};
 		}
 
-		containers.forEach( ( container ) =>
-			result.push( this.createContainer( container.lookup(), model, options ) )
-		);
+		containers.forEach( ( container ) => {
+			container = container.lookup();
+
+			// Since cache require model id, ensure `model` & `model.id` is require.
+			if ( ! model.id ) {
+				model.id = elementor.helpers.getUniqueID();
+				isIdSetLocal = true;
+			}
+
+			DocumentCache.updateByModel( container.document.id, model );
+
+			const newContainer = container.view.addElement( model, options ).getContainer();
+
+			if ( isIdSetLocal ) {
+				delete model.id;
+				isIdSetLocal = false;
+			}
+
+			result.push( newContainer );
+
+			/**
+			 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
+			 * in getHistory().
+			 */
+			if ( this.isHistoryActive() ) {
+				$e.internal( 'document/history/log-sub-item', {
+					container,
+					type: 'sub-add',
+					restore: this.constructor.restore,
+					options,
+					data: {
+						containerToRestore: newContainer,
+						modelToRestore: newContainer.model.toJSON(),
+					},
+				} );
+			}
+
+		} );
 
 		if ( 1 === result.length ) {
 			result = result[ 0 ];
 		}
 
 		return result;
-	}
-
-	createContainer( container, model, options ) {
-		// Since cache require model id, ensure `model` & `model.id` is require.
-		if ( ! model.id ) {
-			model = elementorCommon.helpers.cloneObject( model );
-			model.id = elementor.helpers.getUniqueID();
-		}
-
-		DocumentCache.updateByModel( container.document.id, model );
-
-		const newContainer = container.view.addElement( model, options ).getContainer();
-
-		/**
-		 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
-		 * in getHistory().
-		 */
-		if ( this.isHistoryActive() ) {
-			$e.internal( 'document/history/log-sub-item', {
-				container,
-				type: 'sub-add',
-				restore: this.constructor.restore,
-				options,
-				data: {
-					containerToRestore: newContainer,
-					modelToRestore: newContainer.model.toJSON(),
-				},
-			} );
-		}
-
-		return newContainer;
 	}
 
 	isDataChanged() {
