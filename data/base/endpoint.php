@@ -11,20 +11,12 @@ abstract class Endpoint {
 	protected $controller;
 
 	/**
-	 * @var string
-	 */
-	protected $context;
-
-	/**
 	 * Endpoint constructor.
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller
-	 * @param string $context
 	 */
-	public function __construct( $controller, $context ) {
+	public function __construct( $controller ) {
 		$this->controller = $controller;
-		$this->context = $context;
-
 		$this->register();
 	}
 
@@ -62,7 +54,7 @@ abstract class Endpoint {
 		$endpoint_name = $this->get_name();
 
 		// TODO: Allow this only for internal routes.
-		if ( 'index' === $this->context ) {
+		if ( 'index' === $endpoint_name ) {
 			$endpoint_name = '';
 		}
 
@@ -111,7 +103,8 @@ abstract class Endpoint {
 		$response = [];
 
 		foreach ( $this->controller->endpoints as $endpoint ) {
-			if ( 'index' === $endpoint->context ) {
+			// Skip self.
+			if ( $this === $endpoint ) {
 				continue;
 			}
 

@@ -14,6 +14,6 @@ class Controller extends Controller_Base {
 	}
 
 	protected function register_internal_endpoints() {
-		$this->register_endpoint( Endpoints\Index::class, 'index' );
+		$this->register_endpoint( Endpoints\Index::class );
 	}
 }
