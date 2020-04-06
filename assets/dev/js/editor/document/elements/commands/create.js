@@ -91,7 +91,6 @@ export class Create extends CommandHistory {
 					},
 				} );
 			}
-
 		} );
 
 		if ( 1 === result.length ) {
