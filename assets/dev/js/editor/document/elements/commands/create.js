@@ -58,9 +58,13 @@ export class Create extends CommandHistory {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			// Since cache require model id, ensure `model` & `model.id` is require.
+			// Since cache require model id, ensure `model.id`.
 			if ( ! model.id ) {
 				model.id = elementor.helpers.getUniqueID();
+
+				/**
+				 * If id was set locally, its required to be deleted later since its used each loop.
+				 */
 				isIdSetLocal = true;
 			}
 

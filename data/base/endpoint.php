@@ -28,6 +28,11 @@ abstract class Endpoint {
 		$this->register();
 	}
 
+	/**
+	 * Get endpoint name.
+	 *
+	 * @return string
+	 */
 	abstract protected function get_name();
 
 	protected function register() {
@@ -61,7 +66,7 @@ abstract class Endpoint {
 			$endpoint_name = '';
 		}
 
-		$route = '/' . $this->controller->get_reset_base() . '/' . $endpoint_name . $route;
+		$route = '/' . $this->controller->get_rest_base() . '/' . $endpoint_name . $route;
 
 		register_rest_route( $this->controller->get_namespace(), $route, [
 			[
@@ -94,7 +99,6 @@ abstract class Endpoint {
 	protected function get_item( $id, $request ) {
 		return $this->controller->get_item( $request );
 	}
-
 
 	/**
 	 * Retrieves a recursive collection of items.

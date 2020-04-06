@@ -27,7 +27,7 @@ export default class Data extends Commands {
 	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
-		this.baseEndpointAddress = `${ elementor.config.home_url }/wp-json/${ namespace }/v${ version }/`;
+		this.baseEndpointAddress = `${ elementor.config.rest_url }${ namespace }/v${ version }/`;
 	}
 
 	getHTTPMethod( type ) {
