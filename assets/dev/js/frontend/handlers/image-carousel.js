@@ -4,6 +4,8 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			selectors: {
 				carousel: '.elementor-image-carousel-wrapper',
 				slideContent: '.swiper-slide',
+				navButtons: '.elementor-swiper-button',
+				pagination: '.swiper-pagination',
 			},
 		};
 	}
@@ -13,6 +15,8 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		const elements = {
 			$carousel: this.$element.find( selectors.carousel ),
+			$navButtons: this.$element.find( selectors.navButtons ),
+			$pagination: this.$element.find( selectors.pagination ),
 		};
 
 		elements.$swiperSlides = elements.$carousel.find( selectors.slideContent );
@@ -36,6 +40,15 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
 			handleElementorBreakpoints: true,
+			navigation: {
+				prevEl: '.elementor-swiper-button-prev',
+				nextEl: '.elementor-swiper-button-next',
+			},
+			pagination: {
+				el: '.swiper-pagination',
+				type: 'bullets',
+				clickable: true,
+			},
 		};
 
 		swiperOptions.breakpoints = {};
@@ -74,28 +87,16 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation,
 			showDots = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation;
 
+		// Navigation and pagination markup now always exists but defaults to 'display: none'.
 		if ( showArrows ) {
-			swiperOptions.navigation = {
-				prevEl: '.elementor-swiper-button-prev',
-				nextEl: '.elementor-swiper-button-next',
-			};
+			this.elements.$navButtons.show();
 		}
 
 		if ( showDots ) {
-			swiperOptions.pagination = {
-				el: '.swiper-pagination',
-				type: 'bullets',
-				clickable: true,
-			};
+			this.elements.$pagination.show();
 		}
 
 		return swiperOptions;
-	}
-
-	updateSpaceBetween() {
-		this.swiper.params.spaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
-
-		this.swiper.update();
 	}
 
 	onInit( ...args ) {
@@ -113,6 +114,13 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		this.elements.$carousel.data( 'swiper', this.swiper );
 
 		if ( 'yes' === elementSettings.pause_on_hover ) {
+			this.togglePauseOnHover( true );
+		}
+	}
+
+	// This method live-handles the 'Pause On Hover' control's value being changed in the Editor Panel
+	togglePauseOnHover( toggleOn ) {
+		if ( toggleOn ) {
 			this.elements.$carousel.on( {
 				mouseenter: () => {
 					this.swiper.autoplay.stop();
@@ -121,13 +129,99 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 					this.swiper.autoplay.start();
 				},
 			} );
+		} else {
+			this.elements.$carousel.off( 'mouseenter mouseleave' );
 		}
 	}
 
+	updateSwiperOption( propertyName ) {
+		const elementSettings = this.getElementSettings(),
+			newSettingValue = elementSettings[ propertyName ],
+			changeableProperties = this.getChangeableProperties();
+
+		let propertyToUpdate = changeableProperties[ propertyName ],
+			valueToUpdate = newSettingValue;
+
+		// Handle special cases where the value to update is not the value that the Swiper library accepts
+		switch ( propertyName ) {
+			case 'image_spacing_custom':
+				valueToUpdate = newSettingValue.size || 0;
+				break;
+			case 'autoplay':
+				if ( newSettingValue ) {
+					valueToUpdate = {
+						delay: elementSettings.autoplay_speed,
+						disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
+					};
+				} else {
+					valueToUpdate = false;
+				}
+				break;
+			case 'autoplay_speed':
+				propertyToUpdate = 'autoplay';
+
+				valueToUpdate = {
+					delay: newSettingValue,
+					disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
+				};
+				break;
+			case 'pause_on_hover':
+				this.togglePauseOnHover( 'yes' === newSettingValue );
+				break;
+			case 'effect':
+				if ( 'fade' === newSettingValue ) {
+					this.swiper.params.fadeEffect = { crossFade: true };
+				} else {
+					this.swiper.params.fadeEffect = false;
+				}
+				break;
+			case 'navigation':
+				if ( 'arrows' === newSettingValue ) {
+					this.elements.$navButtons.show();
+					this.elements.$pagination.hide();
+				} else if ( 'dots' === newSettingValue ) {
+					this.elements.$pagination.show();
+					this.elements.$navButtons.hide();
+				} else if ( 'both' === newSettingValue ) {
+					this.elements.$pagination.show();
+					this.elements.$navButtons.show();
+				} else {
+					this.elements.$navButtons.hide();
+					this.elements.$pagination.hide();
+				}
+				break;
+			case 'pause_on_interaction':
+				valueToUpdate = 'yes' === newSettingValue;
+				break;
+		}
+
+		// 'pause_on_hover' is implemented by the handler with event listeners, not the Swiper library
+		if ( 'pause_on_hover' !== propertyName && 'navigation' !== propertyName ) {
+			this.swiper.params[ propertyToUpdate ] = valueToUpdate;
+		}
+	}
+
+	getChangeableProperties() {
+		return {
+			slides_to_show: 'slidesPerView',
+			slides_to_scroll: 'slidesPerGroup',
+			navigation: 'navigation', //
+			autoplay: 'autoplay', //
+			pause_on_hover: 'pauseOnHover', //
+			pause_on_interaction: 'disableOnInteraction', //
+			autoplay_speed: 'delay', //
+			effect: 'effect', //
+			speed: 'speed',
+			image_spacing_custom: 'spaceBetween', //
+		};
+	}
+
 	onElementChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
-			this.updateSpaceBetween();
-		} else if ( 'arrows_position' === propertyName ) {
+		const changeableProperties = this.getChangeableProperties();
+
+		if ( changeableProperties.hasOwnProperty( propertyName ) ) {
+			this.updateSwiperOption( propertyName );
+
 			this.swiper.update();
 		}
 	}

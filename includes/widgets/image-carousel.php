@@ -122,6 +122,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 				] + $slides_to_show,
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -138,6 +139,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'slides_to_show!' => '1',
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -167,6 +169,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'dots' => __( 'Dots', 'elementor' ),
 					'none' => __( 'None', 'elementor' ),
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -258,6 +261,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -275,6 +279,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -292,6 +297,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -305,10 +311,12 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
 
+		// Loop requires a re-render so no 'render_type = none'
 		$this->add_control(
 			'infinite',
 			[
@@ -336,6 +344,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'slides_to_show' => '1',
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -346,6 +355,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Animation Speed', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 500,
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -360,7 +370,6 @@ class Widget_Image_Carousel extends Widget_Base {
 					'ltr' => __( 'Left', 'elementor' ),
 					'rtl' => __( 'Right', 'elementor' ),
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -760,10 +769,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				<?php echo implode( '', $slides ); ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
-				<?php if ( $show_dots ) : ?>
 					<div class="swiper-pagination"></div>
-				<?php endif; ?>
-				<?php if ( $show_arrows ) : ?>
 					<div class="elementor-swiper-button elementor-swiper-button-prev">
 						<i class="eicon-chevron-left" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php _e( 'Previous', 'elementor' ); ?></span>
@@ -772,7 +778,6 @@ class Widget_Image_Carousel extends Widget_Base {
 						<i class="eicon-chevron-right" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php _e( 'Next', 'elementor' ); ?></span>
 					</div>
-				<?php endif; ?>
 			<?php endif; ?>
 		</div>
 		<?php
