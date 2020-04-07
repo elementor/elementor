@@ -204,7 +204,12 @@ abstract class Base_App {
 			'nonce' => wp_create_nonce( $this->get_slug() . $action ),
 		] + $params;
 
-		return add_query_arg( $params, Admin::$url );
+		// Encode base url, the encode is limited to 64 chars.
+		$admin_url = \Requests_IDNAEncoder::encode( get_admin_url() );
+
+		$admin_url .= 'admin.php?page=' . Admin::PAGE_ID;
+
+		return add_query_arg( $params, $admin_url );
 	}
 
 	/**
@@ -356,8 +361,8 @@ abstract class Base_App {
 			// In case $as_array = true.
 			$body = (object) $body;
 
-			$message = $body->message ? $body->message : wp_remote_retrieve_response_message( $response );
-			$code = $body->code ? $body->code : $response_code;
+			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
+			$code = isset( $body->code ) ? $body->code : $response_code;
 
 			if ( 401 === $code ) {
 				$this->delete();
