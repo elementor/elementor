@@ -438,7 +438,7 @@ class Element_Section extends Element_Base {
 					'bottom' => 'flex-end',
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 				// TODO: The following line is for BC since 2.7.0
 				'prefix_class' => 'elementor-section-content-',

@@ -78,7 +78,7 @@
 
 			> .elementor-column {
 
-				> .elementor-column-wrap {
+				> .elementor-widget-wrap {
 					align-items: flex-start;
 				}
 			}
@@ -91,7 +91,7 @@
 
 			> .elementor-column {
 
-				> .elementor-column-wrap {
+				> .elementor-widget-wrap {
 					align-items: center;
 				}
 			}
@@ -104,7 +104,7 @@
 
 			> .elementor-column {
 
-				> .elementor-column-wrap {
+				> .elementor-widget-wrap {
 					align-items: flex-end;
 				}
 			}
@@ -124,12 +124,6 @@
 }
 
 // Widget
-.elementor-column-wrap {
-	width: 100%;
-	position: relative;
-	display: flex;
-}
-
 .elementor-widget-wrap {
 	position: relative;
 	width: 100%;
@@ -164,7 +158,13 @@
 	position: relative;
 	min-height: 1px;
 	display: flex;
+}
 
+// BC: Deprecated since 3.0.0 - use `.elementor-widget-wrap`.
+.elementor-column-wrap {
+	width: 100%;
+	position: relative;
+	display: flex;
 }
 
 @mixin elementor-grid-classes {
