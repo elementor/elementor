@@ -12,21 +12,21 @@ export default class Component extends ComponentModalBase {
 			'': {
 				keys: 'ctrl+e',
 			},
-			down: {
+			'navigate-down': {
 				keys: 'down',
 				scopes: [ this.getNamespace() ],
 				dependency: () => {
 					return this.getItemsView();
 				},
 			},
-			up: {
+			'navigate-up': {
 				keys: 'up',
 				scopes: [ this.getNamespace() ],
 				dependency: () => {
 					return this.getItemsView();
 				},
 			},
-			select: {
+			'navigate-select': {
 				keys: 'enter',
 				scopes: [ this.getNamespace() ],
 				dependency: () => {
@@ -41,6 +41,35 @@ export default class Component extends ComponentModalBase {
 		const modalCommands = super.defaultCommands();
 
 		return {
+			'navigate/down': () => {
+				elementorCommon.helpers.softDeprecated(
+					"$e.run( 'finder/navigate/down' )",
+					'3.0.0',
+					"$e.run( 'finder/navigate-down' )"
+				);
+
+				$e.run( 'finder/navigate-down' );
+			},
+			'navigate/up': () => {
+				elementorCommon.helpers.softDeprecated(
+					"$e.run( 'finder/navigate/up' )",
+					'3.0.0',
+					"$e.run( 'finder/navigate-up' )"
+				);
+
+				$e.run( 'finder/navigate-up' );
+			},
+			'navigate/select': ( event ) => {
+				elementorCommon.helpers.softDeprecated(
+					"$e.run( 'finder/navigate/select', event )",
+					'3.0.0',
+					"$e.run( 'finder/navigate-select', event )"
+				);
+
+				// TODO: Fix $e.shortcuts use args. ( args.event ).
+				$e.run( 'finder/navigate-select', event );
+			},
+
 			... modalCommands,
 			... this.importCommands( commands ),
 		};

@@ -1,7 +1,22 @@
 .elementor-control-type-slider {
 
+	&.elementor-control-dynamic {
+
+		input {
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		}
+	}
+
+	// Hard selector
+	&.elementor-control-type-slider--multiple {
+
+		.elementor-control-input-wrapper  {
+			display: block;
+		}
+	}
+
 	&--multiple {
-		margin-bottom: 14px;
+		padding-bottom: 40px;
 
 		.elementor-slider {
 			margin-top: 12px;
@@ -51,12 +66,18 @@
 		}
 	}
 
-	&:not(.elementor-control-type-slider--multiple) {
+	.elementor-control-dynamic-switcher {
+		@include border-start-property(width, 0);
+		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	}
 
-		.elementor-control-input-wrapper {
-			display: flex;
-			align-items: center;
-		}
+	.elementor-control-input-wrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	.elementor-dynamic-cover {
+		margin-top: 10px;
 	}
 }
 

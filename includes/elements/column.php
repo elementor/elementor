@@ -626,9 +626,6 @@ class Element_Column extends Element_Base {
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 				'separator' => 'none',
-				'condition' => [
-					'heading_color!' => '',
-				],
 			]
 		);
 
@@ -640,9 +637,6 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'color_text!' => '',
 				],
 			]
 		);
@@ -656,9 +650,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
 				],
-				'condition' => [
-					'color_link!' => '',
-				],
 			]
 		);
 
@@ -670,9 +661,6 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'color_link_hover!' => '',
 				],
 			]
 		);
@@ -698,9 +686,6 @@ class Element_Column extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
-				],
-				'condition' => [
-					'text_align!' => '',
 				],
 			]
 		);
@@ -916,9 +901,7 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		if ( ! Utils::has_pro() ) {
-			Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
-		}
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
