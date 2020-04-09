@@ -10,7 +10,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
 	public function test_should_return_elementor_pro_link() {
-		$this->assertSame( self::BASE_LINK . '&utm_term=twentysixteen', Utils::get_pro_link( self::BASE_LINK ) );
+		$this->assertSame( self::BASE_LINK . '&utm_term=twentynineteen', Utils::get_pro_link( self::BASE_LINK ) );
 	}
 
 	public function test_should_return_source_of_placeholder_image() {
@@ -140,6 +140,28 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		}
 
 		$this->assertNull( \Elementor\Embed::get_video_properties( 'https://www.youtube.com/' ) );
+	}
+
+	/**
+	 * Test Should Receive a string with HTML entities and return the string with the HTML Entities decoded
+	 *
+	 * This tests the urlencode_html_entities() utility method, to see that it properly decodes HTML Entities and then correctly URL-encodes them to be used in URLs, such as social media sharing
+	 */
+	public function test_should_return_decoded_string() {
+		// This is a filter from the WordPress core wp_get_document_title() function.
+		// The filter is used here to make the wp_get_document_title() function return our test title.
+		add_filter( 'document_title_parts', function () {
+			return [
+				'title' => '"This is a string" with a variety of ‘HTML entities’. \'What?\' & (more) #stupid “things”'
+			];
+		} );
+
+		$before_encoding = wp_get_document_title();
+
+		$valid_encoding = '%22This%20is%20a%20string%22%20with%20a%20variety%20of%20%E2%80%98HTML%20entities%E2%80%99.%20%27What%3F%27%20%26%20%28more%29%20%23stupid%20%E2%80%9Cthings%E2%80%9D';
+		$after_encoding = Utils::urlencode_html_entities( $before_encoding );
+
+		$this->assertSame( $valid_encoding, $after_encoding );
 	}
 
 	public function test_is_empty() {
