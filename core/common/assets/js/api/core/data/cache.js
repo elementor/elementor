@@ -9,19 +9,15 @@ export default class Cache {
 		switch ( method ) {
 			case 'GET': {
 				const componentName = requestData?.component?.getNamespace(),
-					isCommandGetItemId = requestData.command === componentName,
 					isIndexCommand = requestData.endpoint + '/index' === requestData.command,
 					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
 
 					addCache = ( key, value ) => this.data[ key ] = value,
 					addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
 
-				if ( isQueryEmpty && 1 === isCommandGetItemId ) {
-					Object.keys( response ).forEach( ( key ) => {
-						addCacheEndpoint( requestData.command, key, response[ key ] );
-					} );
-				} else if ( isQueryEmpty && isIndexCommand ) {
+				if ( isQueryEmpty && isIndexCommand ) {
 					// Handles situation when 'index' was forced to use like in 'globals' component.
+					// EG: 'globals/index'.
 					Object.entries( response ).forEach( ( [ key, value ] ) => {
 						if ( 'object' === typeof value ) {
 							Object.entries( value ).forEach( ( [ endpoint, endpointResponse ] ) => {
@@ -31,7 +27,14 @@ export default class Cache {
 							throw Error( `Invalid type: '${ value }'` );
 						}
 					} );
+				} else if ( isQueryEmpty ) {
+					// Handles situation when query empty.
+					// EG: 'globals/typography'.
+					Object.keys( response ).forEach( ( key ) => {
+						addCacheEndpoint( requestData.command, key, response[ key ] );
+					} );
 				} else {
+					// Handles situation when query is not empty.
 					addCache( requestData.endpoint, response );
 				}
 			}
