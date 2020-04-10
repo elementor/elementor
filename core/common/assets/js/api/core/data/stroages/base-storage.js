@@ -47,10 +47,4 @@ export default class BaseStorage {
 
 		return result;
 	}
-
-	removeAll() {
-		const keys = Object.keys( this.provider );
-
-		keys.forEach( ( key ) => this.removeItem( key ) );
-	}
 }
