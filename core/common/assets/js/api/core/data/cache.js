@@ -1,18 +1,20 @@
+import LocalStorage from './stroages/local-storage';
+
 export default class Cache {
 	constructor( manager ) {
 		this.manager = manager;
 
-		this.data = {};
+		this.stroageProvider = new LocalStorage();
 	}
 
 	load( method, requestData, response ) {
 		switch ( method ) {
 			case 'GET': {
-				const componentName = requestData?.component?.getNamespace(),
+				const componentName = requestData.component?.getNamespace(),
 					isIndexCommand = requestData.endpoint + '/index' === requestData.command,
 					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
 
-					addCache = ( key, value ) => this.data[ key ] = value,
+					addCache = ( key, value ) => this.stroageProvider.setItem( key, JSON.stringify( value ) ),
 					addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
 
 				if ( isQueryEmpty && isIndexCommand ) {
@@ -48,9 +50,11 @@ export default class Cache {
 	receive( methodType, endpoint ) {
 		switch ( methodType ) {
 			case 'get': {
-				if ( this.data[ endpoint ] ) {
+				const data = this.stroageProvider.getItem( endpoint );
+
+				if ( null !== data ) {
 					return new Promise( async ( resolve ) => {
-						resolve( this.data[ endpoint ] );
+						resolve( JSON.parse( data ) );
 					} );
 				}
 			}
@@ -64,12 +68,6 @@ export default class Cache {
 	}
 
 	delete( endpoint ) {
-		if ( this.data[ endpoint ] ) {
-			delete this.data[ endpoint ];
-
-			return true;
-		}
-
-		return false;
+		return this.stroageProvider.removeItem( endpoint );
 	}
 }
