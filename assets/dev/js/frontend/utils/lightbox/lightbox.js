@@ -223,9 +223,10 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 
 		if ( ! videoUrl ) {
+			const download = i18n.download;
 			const downloadImage = i18n.downloadImage;
 
-			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': 'Download' } ) ) );
+			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': download } ) ) );
 		}
 
 		return $linkList;
@@ -249,6 +250,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getSlideshowHeader: function() {
+		const { i18n } = elementorFrontend.config;
 		const $ = jQuery,
 			showCounter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_counter' ),
 			showFullscreen = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_fullscreen' ),
@@ -270,19 +272,19 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showFullscreen ) {
-			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand, 'aria-label': 'Fullscreen' } ).append( $( '<span>' ), $( '<span>' ) );
+			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand, 'aria-label': i18n.fullscreen } ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
 		}
 
 		if ( showZoom ) {
-			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn, 'aria-label': 'Zoom' } );
+			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn, 'aria-label': i18n.zoom } );
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
 			elements.$header.append( elements.$iconZoom );
 		}
 
 		if ( showShare ) {
-			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare, 'aria-label': 'Share' } ).append( $( '<span>' ) );
+			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare, 'aria-label': i18n.share } ).append( $( '<span>' ) );
 			const $shareLinks = $( '<div>' );
 			$shareLinks.on( 'click', ( e ) => {
 				e.stopPropagation();
@@ -387,6 +389,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	setSlideshowContent: function( options ) {
+		const { i18n } = elementorFrontend.config;
 		const $ = jQuery,
 			isSingleSlide = 1 === options.slides.length,
 			hasTitle = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_title_src' ),
@@ -411,7 +414,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, 'aria-label': 'Play Video' } ) );
+				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, 'aria-label': i18n.playVideo } ) );
 
 				$slide.append( $playIcon );
 			} else {
@@ -439,8 +442,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon, 'aria-label': 'Previous' } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon, 'aria-label': 'Next' } ) );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon, 'aria-label': i18n.previous } ) );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon, 'aria-label': i18n.next } ) );
 
 			$container.append(
 				$prevButton,
