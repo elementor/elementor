@@ -4,8 +4,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			selectors: {
 				carousel: '.elementor-image-carousel-wrapper',
 				slideContent: '.swiper-slide',
-				navButtons: '.elementor-swiper-button',
-				pagination: '.swiper-pagination',
 			},
 		};
 	}
@@ -15,8 +13,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		const elements = {
 			$carousel: this.$element.find( selectors.carousel ),
-			$navButtons: this.$element.find( selectors.navButtons ),
-			$pagination: this.$element.find( selectors.pagination ),
 		};
 
 		elements.$swiperSlides = elements.$carousel.find( selectors.slideContent );
@@ -40,15 +36,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
 			handleElementorBreakpoints: true,
-			navigation: {
-				prevEl: '.elementor-swiper-button-prev',
-				nextEl: '.elementor-swiper-button-next',
-			},
-			pagination: {
-				el: '.swiper-pagination',
-				type: 'bullets',
-				clickable: true,
-			},
 		};
 
 		swiperOptions.breakpoints = {};
@@ -87,13 +74,19 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation,
 			showDots = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation;
 
-		// Navigation and pagination markup now always exists but defaults to 'display: none'.
 		if ( showArrows ) {
-			this.elements.$navButtons.show();
+			swiperOptions.navigation = {
+				prevEl: '.elementor-swiper-button-prev',
+				nextEl: '.elementor-swiper-button-next',
+			};
 		}
 
 		if ( showDots ) {
-			this.elements.$pagination.show();
+			swiperOptions.pagination = {
+				el: '.swiper-pagination',
+				type: 'bullets',
+				clickable: true,
+			};
 		}
 
 		return swiperOptions;
@@ -175,28 +168,13 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 					this.swiper.params.fadeEffect = false;
 				}
 				break;
-			case 'navigation':
-				if ( 'arrows' === newSettingValue ) {
-					this.elements.$navButtons.show();
-					this.elements.$pagination.hide();
-				} else if ( 'dots' === newSettingValue ) {
-					this.elements.$pagination.show();
-					this.elements.$navButtons.hide();
-				} else if ( 'both' === newSettingValue ) {
-					this.elements.$pagination.show();
-					this.elements.$navButtons.show();
-				} else {
-					this.elements.$navButtons.hide();
-					this.elements.$pagination.hide();
-				}
-				break;
 			case 'pause_on_interaction':
 				valueToUpdate = 'yes' === newSettingValue;
 				break;
 		}
 
 		// 'pause_on_hover' is implemented by the handler with event listeners, not the Swiper library
-		if ( 'pause_on_hover' !== propertyName && 'navigation' !== propertyName ) {
+		if ( 'pause_on_hover' !== propertyName ) {
 			this.swiper.params[ propertyToUpdate ] = valueToUpdate;
 		}
 	}
@@ -205,7 +183,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		return {
 			slides_to_show: 'slidesPerView',
 			slides_to_scroll: 'slidesPerGroup',
-			navigation: 'navigation',
 			autoplay: 'autoplay',
 			pause_on_hover: 'pauseOnHover',
 			pause_on_interaction: 'disableOnInteraction',
