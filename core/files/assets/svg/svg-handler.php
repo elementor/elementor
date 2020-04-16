@@ -341,6 +341,16 @@ class Svg_Handler {
 	}
 
 	/**
+	 * has_base64_value
+	 * @param $value
+	 *
+	 * @return false|int
+	 */
+	private function has_base64_or_datauri_value( $value ) {
+		return preg_match( '/(base64|data:text|data:image)/i', $value );
+	}
+
+	/**
 	 * get_allowed_attributes
 	 * @return array
 	 */
@@ -503,8 +513,8 @@ class Svg_Handler {
 
 			$attr_value = $element->attributes->item( $index )->value;
 
-			// Remove attribute if it has a remote reference or js
-			if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) ) {
+			// Remove attribute if it has a remote reference or js or data-URI/base64
+			if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) || $this->has_base64_or_datauri_value( $attr_value ) ) {
 				$element->removeAttribute( $attr_name );
 				continue;
 			}
@@ -629,8 +639,8 @@ class Svg_Handler {
 	 */
 	public function sanitizer( $content ) {
 		// Strip php tags
-		$content = $this->strip_php_tags( $content );
 		$content = $this->strip_comments( $content );
+		$content = $this->strip_php_tags( $content );
 
 		// Find the start and end tags so we can cut out miscellaneous garbage.
 		$start = strpos( $content, '<svg' );
