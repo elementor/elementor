@@ -205,14 +205,14 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		return {
 			slides_to_show: 'slidesPerView',
 			slides_to_scroll: 'slidesPerGroup',
-			navigation: 'navigation', //
-			autoplay: 'autoplay', //
-			pause_on_hover: 'pauseOnHover', //
-			pause_on_interaction: 'disableOnInteraction', //
-			autoplay_speed: 'delay', //
-			effect: 'effect', //
+			navigation: 'navigation',
+			autoplay: 'autoplay',
+			pause_on_hover: 'pauseOnHover',
+			pause_on_interaction: 'disableOnInteraction',
+			autoplay_speed: 'delay',
+			effect: 'effect',
 			speed: 'speed',
-			image_spacing_custom: 'spaceBetween', //
+			image_spacing_custom: 'spaceBetween',
 		};
 	}
 
