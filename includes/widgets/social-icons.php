@@ -273,7 +273,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '0',
 				'options' => [
-					'0' => __( 'Auto', 'elementor-pro' ),
+					'0' => __( 'Auto', 'elementor' ),
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
