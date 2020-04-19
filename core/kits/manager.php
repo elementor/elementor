@@ -65,6 +65,7 @@ class Manager {
 			'i18n' => [
 				'Close' => __( 'Close', 'elementor' ),
 				'Back' => __( 'Back', 'elementor' ),
+				'Global Settings' => __( 'Global Settings', 'elementor' ),
 				'Theme Style' => __( 'Theme Style', 'elementor' ),
 			],
 		] );

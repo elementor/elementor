@@ -54,7 +54,7 @@ class Kit extends PageBase {
 
 	public static function get_editor_panel_config() {
 		$config = parent::get_editor_panel_config();
-		$config['default_route'] = 'panel/global/style';
+		$config['default_route'] = 'panel/global/menu';
 
 		return $config;
 	}

@@ -16,6 +16,14 @@ export default class extends $e.modules.ComponentBase {
 		};
 	}
 
+	defaultRoutes() {
+		return {
+			menu: () => {
+				elementor.getPanelView().setPage( 'kit_menu' );
+			},
+		};
+	}
+
 	defaultCommands() {
 		return this.importCommands( commands );
 	}
