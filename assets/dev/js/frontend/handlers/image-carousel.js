@@ -179,10 +179,32 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		}
 	}
 
+	/*updateResponsiveSwiperOption( propertyName, currentDeviceMode ) {
+		const elementSettings = this.getElementSettings(),
+			changeableProperties = this.getChangeableProperties(),
+			propertyToUpdate = changeableProperties[ propertyName.slice( 0, propertyName.indexOf( '_' + currentDeviceMode ) ) ],
+			breakpoints = elementorFrontend.config.breakpoints,
+			breakpointDictionary = {
+				tablet: breakpoints.md,
+				mobile: breakpoints.xs,
+			};
+
+		if ( 'desktop' === currentDeviceMode ) {
+			this.swiper.params[ propertyToUpdate ] = elementSettings[ propertyName ];
+		} else {
+			this.swiper.params.breakpoints[ breakpointDictionary[ currentDeviceMode ] ][ propertyToUpdate ] = parseInt( elementSettings[ propertyName ] );
+
+			// Reverse the breakpoints to adjust to Swiper 5.x
+			//this.swiper.params = this.swiper.adjustConfig( this.swiper.params );
+		}
+
+		this.swiper.update();
+	}*/
+
 	getChangeableProperties() {
 		return {
-			slides_to_show: 'slidesPerView',
-			slides_to_scroll: 'slidesPerGroup',
+			//slides_to_show: 'slidesPerView',
+			//slides_to_scroll: 'slidesPerGroup',
 			autoplay: 'autoplay',
 			pause_on_hover: 'pauseOnHover',
 			pause_on_interaction: 'disableOnInteraction',
@@ -195,6 +217,12 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 	onElementChange( propertyName ) {
 		const changeableProperties = this.getChangeableProperties();
+		// const currentDeviceMode = elementorFrontend.getCurrentDeviceMode();
+
+		// Handle responsive controls
+		/*if ( propertyName.includes( '_' + currentDeviceMode ) ) {
+			this.updateResponsiveSwiperOption( propertyName, currentDeviceMode );
+		}*/
 
 		if ( changeableProperties.hasOwnProperty( propertyName ) ) {
 			this.updateSwiperOption( propertyName );
