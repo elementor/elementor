@@ -177,6 +177,8 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		if ( 'pause_on_hover' !== propertyName ) {
 			this.swiper.params[ propertyToUpdate ] = valueToUpdate;
 		}
+
+		this.swiper.update();
 	}
 
 	/*updateResponsiveSwiperOption( propertyName, currentDeviceMode ) {
@@ -226,8 +228,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		if ( changeableProperties.hasOwnProperty( propertyName ) ) {
 			this.updateSwiperOption( propertyName );
-
-			this.swiper.update();
 		}
 	}
 
