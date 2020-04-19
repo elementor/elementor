@@ -283,7 +283,7 @@ class Widget_Social_Icons extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-grid%s-',
 				'selectors' => [
-					'{{WRAPPER}}:not(.elementor-grid-0) .elementor-grid' => 'display: inline-grid; grid-template-columns: repeat({{VALUE}}, auto);',
+					'{{WRAPPER}}' => '--grid-template-columns: repeat({{VALUE}}, auto);',
 				],
 			]
 		);
