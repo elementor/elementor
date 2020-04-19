@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
@@ -398,7 +399,7 @@ class Upgrades {
 		// upgrade `video` widget settings (merge providers).
 		$post_ids = $updater->query_col(
 			'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = "_elementor_data" AND (
-			`meta_value` LIKE \'%"widgetType":"image"%\' 
+			`meta_value` LIKE \'%"widgetType":"image"%\'
 			OR `meta_value` LIKE \'%"widgetType":"theme-post-featured-image"%\'
 			OR `meta_value` LIKE \'%"widgetType":"theme-site-logo"%\'
 			OR `meta_value` LIKE \'%"widgetType":"woocommerce-category-image"%\'
@@ -570,8 +571,8 @@ class Upgrades {
 		global $wpdb;
 
 		$post_ids = $updater->query_col( $wpdb->prepare(
-			"SELECT p1.ID FROM {$wpdb->posts} AS p 
-					LEFT JOIN {$wpdb->posts} AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) 
+			"SELECT p1.ID FROM {$wpdb->posts} AS p
+					LEFT JOIN {$wpdb->posts} AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID)
 					WHERE p.post_type = %s;", $type ) );
 
 		if ( empty( $post_ids ) ) {
@@ -638,5 +639,66 @@ class Upgrades {
 	public static function _v_2_8_3_recalc_usage_data( $updater ) {
 		// Re-calc since older version(s) had invalid values.
 		return self::recalc_usage_data( $updater );
+	}
+
+	/**
+	 * Merge lightbox settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_lightbox_settings_to_kit( $updater ) {
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$post_ids = [];
+		$offset = $updater->get_current_offset();
+
+		// On first iteration apply on active kit itself.
+		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
+		if ( 0 === $offset ) {
+			self::merge_lightbox_settings_to_kit( $active_kit_id );
+		}
+
+		$revisions = wp_get_post_revisions( $active_kit_id, [
+			'fields' => 'ids',
+			'posts_per_page' => $updater->get_limit(),
+			'offset' => $offset,
+		] );
+
+		$post_ids += $revisions;
+
+		foreach ( $post_ids as $kit_id ) {
+			self::merge_lightbox_settings_to_kit( $kit_id );
+		}
+
+		return $updater->should_run_again( $post_ids );
+	}
+
+	public static function merge_lightbox_settings_to_kit( $kit_id ) {
+		$kit = Plugin::$instance->documents->get( $kit_id );
+		$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+		$current_settings = get_option( '_elementor_general_settings', [] );
+		$kit_settings = $kit->get_meta( $meta_key );
+
+		if ( empty( $current_settings ) || empty( $kit_settings ) ) {
+			return;
+		}
+
+		$has_changes = false;
+
+		foreach ( $current_settings as $key => $value ) {
+			// Only lightbox settings.
+			if ( false !== strpos( $key, 'lightbox' ) ) {
+				$kit_settings[ $key ] = $value;
+				$has_changes = true;
+			}
+		}
+
+		if ( $has_changes ) {
+			if ( ! empty( $kit_settings ) ) {
+				$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+				$page_settings_manager->save_settings( $kit_settings, $kit_id );
+			}
+		}
 	}
 }

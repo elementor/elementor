@@ -2,6 +2,7 @@
 namespace Elementor\Core\Kits\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
+use Elementor\Core\Kits\Helpers\Lightbox;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -20,9 +21,15 @@ class Kit extends PageBase {
 
 	private $custom_colors_disabled;
 	private $typography_schemes_disabled;
+	/**
+	 * @var Lightbox
+	 */
+	private $lightbox;
 
 	public function __construct( array $data = [] ) {
 		parent::__construct( $data );
+
+		$this->lightbox = new Lightbox( $this );
 
 		$this->custom_colors_disabled = get_option( 'elementor_disable_color_schemes' );
 		$this->typography_schemes_disabled = get_option( 'elementor_disable_typography_schemes' );
@@ -69,6 +76,8 @@ class Kit extends PageBase {
 	 */
 	protected function _register_controls() {
 		$this->register_document_controls();
+
+		$this->lightbox->register_controls();
 
 		$this->add_body_section();
 		$this->add_typography_section();

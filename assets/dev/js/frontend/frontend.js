@@ -80,6 +80,11 @@ class Frontend extends elementorModules.ViewModule {
 		return this.getItems( settingsObject, settingName );
 	}
 
+	getKitSettings( settingName ) {
+		// TODO: use Data API.
+		return this.getItems( this.config.kit, settingName );
+	}
+
 	getCurrentDeviceMode() {
 		return getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
 	}

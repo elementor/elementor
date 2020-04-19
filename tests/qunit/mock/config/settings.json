@@ -21,22 +21,6 @@
 		"description": "The list of fonts used if the chosen font is not available.",
 		"label_block": true,
 		"name": "elementor_default_generic_fonts"
-	  },
-	  "lightbox": {
-		"type": "section",
-		"tab": "lightbox",
-		"label": "Lightbox",
-		"name": "lightbox"
-	  },
-	  "elementor_global_image_lightbox": {
-		"type": "switcher",
-		"tab": "lightbox",
-		"section": "lightbox",
-		"label": "Image Lightbox",
-		"default": "yes",
-		"description": "Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.",
-		"frontend_available": true,
-		"name": "elementor_global_image_lightbox"
 	  }
 	},
 	"tabs": {
@@ -48,11 +32,7 @@
 	  "elementor_container_width": "1083",
 	  "elementor_space_between_widgets": "6",
 	  "elementor_stretched_section_container": "0",
-	  "elementor_page_title_selector": "5552222",
-	  "elementor_lightbox_color": "#383838",
-	  "elementor_lightbox_ui_color": "#ffffff",
-	  "elementor_global_image_lightbox": "yes",
-	  "elementor_lightbox_ui_color_hover": ""
+	  "elementor_page_title_selector": "5552222"
 	}
   },
   "editorPreferences": {

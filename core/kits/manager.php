@@ -37,6 +37,12 @@ class Manager {
 		return Plugin::$instance->documents->get( $id );
 	}
 
+	public function get_active_kit_for_fronend() {
+		$id = $this->get_active_id();
+
+		return Plugin::$instance->documents->get_doc_for_frontend( $id );
+	}
+
 	private function create_default() {
 		$kit = Plugin::$instance->documents->create( 'kit', [
 			'post_type' => Source_Local::CPT,
