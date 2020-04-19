@@ -343,7 +343,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'slides_to_show' => '1',
 				],
-				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);

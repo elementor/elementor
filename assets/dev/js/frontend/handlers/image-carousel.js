@@ -161,13 +161,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			case 'pause_on_hover':
 				this.togglePauseOnHover( 'yes' === newSettingValue );
 				break;
-			case 'effect':
-				if ( 'fade' === newSettingValue ) {
-					this.swiper.params.fadeEffect = { crossFade: true };
-				} else {
-					this.swiper.params.fadeEffect = false;
-				}
-				break;
 			case 'pause_on_interaction':
 				valueToUpdate = 'yes' === newSettingValue;
 				break;
@@ -211,7 +204,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			pause_on_hover: 'pauseOnHover',
 			pause_on_interaction: 'disableOnInteraction',
 			autoplay_speed: 'delay',
-			effect: 'effect',
 			speed: 'speed',
 			image_spacing_custom: 'spaceBetween',
 		};
