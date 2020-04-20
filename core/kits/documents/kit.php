@@ -22,12 +22,17 @@ class Kit extends PageBase {
 	 * @var Tabs\Theme_Style
 	 */
 	private $theme_style_tab;
+	/**
+	 * @var Tabs\Layout_Settings
+	 */
+	private $layout_settings_tab;
 
 	public function __construct( array $data = [] ) {
 		parent::__construct( $data );
 
 		$this->lightbox_tab = new Tabs\Lightbox( $this );
 		$this->colors_and_typography_tab = new Tabs\Colors_And_Typography( $this );
+		$this->layout_settings_tab = new Tabs\Layout_Settings( $this );
 		$this->theme_style_tab = new Tabs\Theme_Style( $this );
 	}
 
@@ -75,6 +80,7 @@ class Kit extends PageBase {
 
 		$this->lightbox_tab->register_controls();
 		$this->colors_and_typography_tab->register_controls();
+		$this->layout_settings_tab->register_controls();
 		$this->theme_style_tab->register_controls();
 	}
 

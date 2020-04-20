@@ -86,43 +86,6 @@ export const Settings = () => {
 						done();
 					} );
 				} );
-
-				QUnit.test( 'General Settings: Style', ( assert ) => {
-					elementor.getPreviewView();
-
-					const eGeneralSettings = elementor.settings.general.getEditedView().getContainer(),
-						settings = {
-							elementor_default_generic_fonts: 'fake',
-						};
-
-					ElementsHelper.settings( eGeneralSettings, settings );
-
-					const done = assert.async();
-
-					setTimeout( () => {
-						const historyItem = HistoryHelper.getFirstItem().attributes;
-
-						// Exist in history.
-						HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Global Settings' );
-
-						// Undo.
-						HistoryHelper.undoValidate( assert, historyItem );
-
-						assert.equal( eGeneralSettings.settings.attributes.elementor_default_generic_fonts,
-							elementor.config.settings.general.settings.elementor_default_generic_fonts,
-							'Settings back to default' );
-
-						// Redo.
-						HistoryHelper.redoValidate( assert, historyItem );
-
-						assert.equal( eGeneralSettings.settings.attributes.elementor_default_generic_fonts,
-							settings.elementor_default_generic_fonts,
-							'Settings restored'
-						);
-
-						done();
-					} );
-				} );
 			} );
 		} );
 

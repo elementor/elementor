@@ -16,6 +16,9 @@ export default class extends $e.modules.ComponentBase {
 			lightbox: {
 				helpUrl: 'http://go.elementor.com/panel-lightbox',
 			},
+			'layout-settings': {
+				helpUrl: 'http://go.elementor.com/panel-layout-settings',
+			},
 			'theme-style': {
 				helpUrl: 'http://go.elementor.com/panel-theme-style',
 			},

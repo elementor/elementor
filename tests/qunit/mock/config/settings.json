@@ -1,40 +1,4 @@
 {
-  "general": {
-	"name": "general",
-	"panelPage": {
-	  "title": "Global Settings"
-	},
-	"cssWrapperSelector": "",
-	"controls": {
-	  "style": {
-		"type": "section",
-		"tab": "style",
-		"label": "Style",
-		"name": "style"
-	  },
-	  "elementor_default_generic_fonts": {
-		"type": "text",
-		"tab": "style",
-		"section": "style",
-		"label": "Default Generic Fonts",
-		"default": "Sans-serif",
-		"description": "The list of fonts used if the chosen font is not available.",
-		"label_block": true,
-		"name": "elementor_default_generic_fonts"
-	  }
-	},
-	"tabs": {
-	  "style": "Style",
-	  "lightbox": "Lightbox"
-	},
-	"settings": {
-	  "elementor_default_generic_fonts": "Sans-serif ",
-	  "elementor_container_width": "1083",
-	  "elementor_space_between_widgets": "6",
-	  "elementor_stretched_section_container": "0",
-	  "elementor_page_title_selector": "5552222"
-	}
-  },
   "editorPreferences": {
 	"name": "editorPreferences",
 	"panelPage": {

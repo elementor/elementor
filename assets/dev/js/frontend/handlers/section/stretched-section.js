@@ -25,7 +25,7 @@ export default class StretchedSection extends elementorModules.frontend.handlers
 	}
 
 	getStretchContainer() {
-		return elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window;
+		return elementorFrontend.getKitSettings( 'stretched_section_container' ) || window;
 	}
 
 	stretch() {

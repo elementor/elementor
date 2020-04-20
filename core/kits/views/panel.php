@@ -13,6 +13,12 @@
 				</div>
 				<div class="elementor-panel-menu-item-title">Lightbox</div>
 			</div>
+			<div class="elementor-panel-menu-item" data-tab="layout-settings">
+				<div class="elementor-panel-menu-item-icon">
+					<i class="eicon-paint-brush"></i>
+				</div>
+				<div class="elementor-panel-menu-item-title">Layout Settings</div>
+			</div>
 			<div class="elementor-panel-menu-item" data-tab="theme-style">
 				<div class="elementor-panel-menu-item-icon">
 					<i class="eicon-adjust"></i>

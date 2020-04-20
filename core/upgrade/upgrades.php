@@ -648,7 +648,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_lightbox_settings_to_kit( $updater ) {
+	public static function _v_3_0_0_move_general_settings_to_kit( $updater ) {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		$post_ids = [];
 		$offset = $updater->get_current_offset();
@@ -656,7 +656,7 @@ class Upgrades {
 		// On first iteration apply on active kit itself.
 		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
 		if ( 0 === $offset ) {
-			self::merge_lightbox_settings_to_kit( $active_kit_id );
+			self::merge_general_settings_to_kit( $active_kit_id );
 		}
 
 		$revisions = wp_get_post_revisions( $active_kit_id, [
@@ -668,37 +668,25 @@ class Upgrades {
 		$post_ids += $revisions;
 
 		foreach ( $post_ids as $kit_id ) {
-			self::merge_lightbox_settings_to_kit( $kit_id );
+			self::merge_general_settings_to_kit( $kit_id );
 		}
 
 		return $updater->should_run_again( $post_ids );
 	}
 
-	public static function merge_lightbox_settings_to_kit( $kit_id ) {
+	public static function merge_general_settings_to_kit( $kit_id ) {
 		$kit = Plugin::$instance->documents->get( $kit_id );
 		$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 		$current_settings = get_option( '_elementor_general_settings', [] );
 		$kit_settings = $kit->get_meta( $meta_key );
 
-		if ( empty( $current_settings ) || empty( $kit_settings ) ) {
+		if ( empty( $current_settings ) && empty( $kit_settings ) ) {
 			return;
 		}
 
-		$has_changes = false;
+		$kit_settings = array_merge( $kit_settings, $current_settings );
 
-		foreach ( $current_settings as $key => $value ) {
-			// Only lightbox settings.
-			if ( false !== strpos( $key, 'lightbox' ) ) {
-				$kit_settings[ $key ] = $value;
-				$has_changes = true;
-			}
-		}
-
-		if ( $has_changes ) {
-			if ( ! empty( $kit_settings ) ) {
-				$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
-				$page_settings_manager->save_settings( $kit_settings, $kit_id );
-			}
-		}
+		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+		$page_settings_manager->save_settings( $kit_settings, $kit_id );
 	}
 }
