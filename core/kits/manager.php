@@ -131,6 +131,14 @@ class Manager {
 		$controls_manager->register_control( Repeater::CONTROL_TYPE, new Repeater() );
 	}
 
+	public function is_custom_colors_enabled() {
+		return ! get_option( 'elementor_disable_color_schemes' );
+	}
+
+	public function is_custom_typography_enabled() {
+		return ! get_option( 'elementor_disable_typography_schemes' );
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );

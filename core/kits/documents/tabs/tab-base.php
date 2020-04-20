@@ -32,12 +32,36 @@ abstract class Tab_Base {
 		$this->document->add_control( $id, $args, $options );
 	}
 
+	public function add_group_control( $id, $args, $options = [] ) {
+		$this->document->add_group_control( $id, $args, $options );
+	}
+
+	public function add_responsive_control( $id, $args, $options = [] ) {
+		$this->document->add_responsive_control( $id, $args, $options );
+	}
+
 	public function start_controls_section( $id, $args = [] ) {
 		$this->document->start_controls_section( $id, $args );
 	}
 
 	public function end_controls_section() {
 		$this->document->end_controls_section();
+	}
+
+	public function start_controls_tabs( $tabs_id, array $args = [] ) {
+		$this->document->start_controls_tabs( $tabs_id, $args );
+	}
+
+	public function start_controls_tab( $tab_id, $args ) {
+		$this->document->start_controls_tab( $tab_id, $args );
+	}
+
+	public function end_controls_tab() {
+		$this->document->end_controls_tab();
+	}
+
+	public function end_controls_tabs() {
+		$this->document->end_controls_tabs();
 	}
 
 	public function register_controls() {
