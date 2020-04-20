@@ -14,12 +14,16 @@ abstract class Endpoint {
 	];
 
 	/**
+	 * Controller of current endpoint.
+	 *
 	 * @var \Elementor\Data\Base\Controller
 	 */
 	protected $controller;
 
 	/**
 	 * Endpoint constructor.
+	 *
+	 * run `$this->>register()`.
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller
 	 */
@@ -35,10 +39,23 @@ abstract class Endpoint {
 	 */
 	abstract protected function get_name();
 
+	/**
+	 * Register the endpoint.
+	 *
+	 * By default: register get items route.
+	 */
 	protected function register() {
 		$this->register_get_items_route();
 	}
 
+	/**
+	 * Register get item route.
+	 *
+	 * @param array  $args
+	 * @param string $default_args
+	 *
+	 * @throws \Exception
+	 */
 	public function register_get_item_route( $args = [], $default_args = '/(?P<id>[\w]+)' ) {
 		$args = array_merge( [
 			'id' => [
@@ -52,15 +69,26 @@ abstract class Endpoint {
 		}, $args );
 	}
 
+	/**
+	 * Register get items route.
+	 */
 	public function register_get_items_route() {
 		$this->register_route( '', WP_REST_Server::READABLE, function ( $request ) {
 			return rest_ensure_response( $this->get_items( $request ) );
 		} );
 	}
 
+	/**
+	 * Register route.
+	 *
+	 * @param string $route
+	 * @param string $methods
+	 * @param null   $callback
+	 * @param array  $args
+	 */
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
-			throw new \Exception( 'Invalid method' );
+			return; // Invalid method.
 		}
 
 		$endpoint_name = $this->get_name();
@@ -130,6 +158,8 @@ abstract class Endpoint {
 	}
 
 	/**
+	 * Permission callback.
+	 *
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return boolean

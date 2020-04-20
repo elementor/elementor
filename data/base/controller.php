@@ -13,10 +13,24 @@ abstract class Controller extends WP_REST_Controller {
 
 	const VERSION = '1';
 
+	/**
+	 * Loaded endpoint(s).
+	 *
+	 * @var array
+	 */
 	public $endpoints = [];
 
 	/**
+	 * Loaded processor(s).
+	 *
+	 * @var \Elementor\Data\Base\Processor[][]
+	 */
+	public $processors = [];
+
+	/**
 	 * Controller constructor.
+	 *
+	 * Register endpoints on 'rest_api_init'.
 	 */
 	public function __construct() {
 		$this->namespace = self::ROOT_NAMESPACE . '/v' . static::VERSION;
@@ -25,6 +39,9 @@ abstract class Controller extends WP_REST_Controller {
 		add_action( 'rest_api_init', function () {
 			$this->register_internal_endpoints();
 			$this->register_endpoints();
+
+			// Aka hooks.
+			$this->register_processors();
 		} );
 	}
 
@@ -37,10 +54,28 @@ abstract class Controller extends WP_REST_Controller {
 
 	/**
 	 * Get controller namespace.
+	 *
 	 * @return string
 	 */
 	public function get_namespace() {
 		return $this->namespace;
+	}
+
+	/**
+	 * Get processors.
+	 *
+	 * @param string $command
+	 *
+	 * @return \Elementor\Data\Base\Processor[]
+	 */
+	public function get_processors( $command ) {
+		$result = [];
+
+		if ( isset( $this->processors[ $command ] ) ) {
+			$result = $this->processors[ $command ];
+		}
+
+		return $result;
 	}
 
 	/**
@@ -59,6 +94,10 @@ abstract class Controller extends WP_REST_Controller {
 	 */
 	public function get_controller_route() {
 		return $this->get_namespace() . '/' . $this->get_rest_base();
+	}
+
+	public function get_items( $request ) {
+		return $this->get_controller_index( $request );
 	}
 
 	/**
@@ -94,8 +133,20 @@ abstract class Controller extends WP_REST_Controller {
 		return $response;
 	}
 
+	/**
+	 * Register endpoints.
+	 */
 	abstract public function register_endpoints();
 
+	/**
+	 * Register processors.
+	 */
+	public function register_processors() {
+	}
+
+	/**
+	 * Register internal endpoints.
+	 */
 	protected function register_internal_endpoints() {
 		register_rest_route( $this->get_namespace(), '/' . $this->get_rest_base(), [
 			[
@@ -109,17 +160,45 @@ abstract class Controller extends WP_REST_Controller {
 		] );
 	}
 
-	protected function register_endpoint( $class ) {
-		$endpoint_instance = new $class( $this );
+	/**
+	 * Register endpoint.
+	 *
+	 * @param string $endpoint_class
+	 */
+	protected function register_endpoint( $endpoint_class ) {
+		$endpoint_instance = new $endpoint_class( $this );
 		$endpoint_route = $this->get_name() . '/' . $endpoint_instance->get_name();
 
 		$this->endpoints[ $endpoint_route ] = $endpoint_instance;
 	}
 
-	public function get_items( $request ) {
-		return $this->get_controller_index( $request );
+	/**
+	 * Register a processor.
+	 *
+	 * That will be later attached to the endpoint class.
+	 *
+	 * @param string $processor_class
+	 */
+	protected function register_processor( $processor_class ) {
+		$processor_instance = new $processor_class( $this );
+		$command = $processor_instance->get_command();
+
+		if ( ! isset( $this->processors[ $command ] ) ) {
+			$this->processors[ $command ] = [];
+		}
+
+		$this->processors[ $command ] [] = $processor_instance;
 	}
 
+	/**
+	 * Permission callback.
+	 *
+	 * Default Permission callback.
+	 *
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return bool
+	 */
 	public function permission_callback( $request ) {
 		switch ( $request->get_method() ) {
 			case 'GET':
