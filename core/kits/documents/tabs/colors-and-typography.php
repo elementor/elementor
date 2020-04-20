@@ -46,23 +46,12 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
-		$global_colors = [
-			[
-				'title' => __( 'Primary', 'elementor' ),
-				'color' => '#00f',
-			],
-			[
-				'title' => __( 'Secondary', 'elementor' ),
-				'color' => '#f00',
-			],
-		];
-
 		$this->add_control(
 			'colors',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
-				'default' => $global_colors,
+				'default' => [],
 			]
 		);
 
