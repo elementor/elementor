@@ -1,10 +1,13 @@
-export class KitFrontendLightbox extends $e.modules.hookUI.After {
+/**
+ * On change kit lightbox settings - update the lightbox preview config.
+ */
+export class KitUpdateLightboxPreview extends $e.modules.hookUI.After {
 	getCommand() {
 		return 'document/elements/settings';
 	}
 
 	getId() {
-		return 'kit-frontend-lightbox';
+		return 'kit-update-lightbox-preview';
 	}
 
 	getContainerType() {
@@ -26,4 +29,4 @@ export class KitFrontendLightbox extends $e.modules.hookUI.After {
 	}
 }
 
-export default KitFrontendLightbox;
+export default KitUpdateLightboxPreview;
