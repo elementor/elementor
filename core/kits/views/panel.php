@@ -15,3 +15,11 @@
 	</div>
 	<# } #>
 </script>
+
+<script type="text/template" id="tmpl-elementor-global-style-repeater-row">
+	<div class="elementor-repeater-row-tool elementor-repeater-tool-remove">
+		<i class="eicon-trash-o" aria-hidden="true"></i>
+		<span class="elementor-screen-only"><?php echo __( 'Remove', 'elementor' ); ?></span>
+	</div>
+	<div class="elementor-repeater-row-controls"></div>
+</script>
