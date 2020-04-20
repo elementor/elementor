@@ -2,6 +2,7 @@ import Component from './component';
 import panelView from './panel';
 import panelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
+import Repeater from './repeater';
 
 export default class extends elementorModules.editor.utils.Module {
 	addPanelPages() {
@@ -49,6 +50,8 @@ export default class extends elementorModules.editor.utils.Module {
 			}
 
 			$e.components.register( new Component( { manager: this } ) );
+
+			elementor.addControlView( 'global-style-repeater', Repeater );
 
 			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
 
