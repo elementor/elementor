@@ -97,7 +97,7 @@ class Kit extends PageBase {
 
 	protected function get_post_statuses() {
 		return [
-			'draft'   => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
+			'draft' => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
 			'publish' => __( 'Published', 'elementor' ),
 		];
 	}
