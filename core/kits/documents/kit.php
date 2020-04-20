@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Kit extends PageBase {
 
+	const SITE_STYLE_TAB = 'site-style';
+
 	private $custom_colors_disabled;
 	private $typography_schemes_disabled;
 
@@ -55,7 +57,8 @@ class Kit extends PageBase {
 
 	public static function get_editor_panel_config() {
 		$config = parent::get_editor_panel_config();
-		$config['default_route'] = 'panel/global/style';
+
+		$config['default_route'] = 'panel/global/site-style';
 
 		return $config;
 	}
@@ -69,6 +72,8 @@ class Kit extends PageBase {
 	 * @access protected
 	 */
 	protected function _register_controls() {
+		$this->add_tabs();
+
 		$this->register_document_controls();
 
 		$this->add_body_section();
@@ -77,7 +82,7 @@ class Kit extends PageBase {
 		$this->add_form_fields_section();
 		$this->add_images_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this, Controls_Manager::TAB_STYLE, [ __( 'Available in Pro v2.9.', 'elementor' ) ] );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, self::SITE_STYLE_TAB, [ __( 'Available in Pro v2.9.', 'elementor' ) ] );
 	}
 
 	protected function get_post_statuses() {
@@ -85,6 +90,12 @@ class Kit extends PageBase {
 			'draft'   => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
 			'publish' => __( 'Published', 'elementor' ),
 		];
+	}
+
+	private function add_tabs() {
+		$controls_manager = Plugin::$instance->controls_manager;
+
+		$controls_manager->add_tab( self::SITE_STYLE_TAB );
 	}
 
 	private function add_element_controls( $label, $prefix, $selector ) {
@@ -142,7 +153,7 @@ class Kit extends PageBase {
 			'section_body',
 			[
 				'label' => __( 'Background', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'tab' => self::SITE_STYLE_TAB,
 			]
 		);
 
@@ -198,7 +209,7 @@ class Kit extends PageBase {
 			'section_buttons',
 			[
 				'label' => __( 'Buttons', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'tab' => self::SITE_STYLE_TAB,
 			]
 		);
 
@@ -378,7 +389,7 @@ class Kit extends PageBase {
 			'section_typography',
 			[
 				'label' => __( 'Typography', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'tab' => self::SITE_STYLE_TAB,
 			]
 		);
 
@@ -561,7 +572,7 @@ class Kit extends PageBase {
 			'section_form_fields',
 			[
 				'label' => __( 'Form Fields', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'tab' => self::SITE_STYLE_TAB,
 			]
 		);
 
@@ -691,7 +702,7 @@ class Kit extends PageBase {
 			'section_images',
 			[
 				'label' => __( 'Images', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
+				'tab' => self::SITE_STYLE_TAB,
 			]
 		);
 
