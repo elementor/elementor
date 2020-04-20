@@ -17,17 +17,17 @@ export class ElementsIndexAddGlobalData extends After {
 	apply( args, result ) {
 		const element = result.data;
 
-		return Object.entries( element.settings.__globals__ ).map( async ( [ key, endpoint ] ) => {
+		return Object.entries( element.settings.__globals__ ).map( async ( [ globalKey, globalValue ] ) => {
 			// Get global item.
-			const itemResult = await $e.data.get( endpoint, {}, { cache: true } ),
-				data = itemResult.data,
+			const endpointResult = await $e.data.get( globalValue, {}, { cache: true } ),
 				container = elementor.getContainer( args.query.element_id ),
-				groupPrefix = container.controls[ key ]?.groupPrefix;
+				data = endpointResult.data,
+				controlGroupPrefix = container.controls[ globalKey ]?.groupPrefix;
 
 			// it's a global settings with additional controls in group.
-			if ( groupPrefix ) {
+			if ( controlGroupPrefix ) {
 				Object.values( container.controls ).map( ( control ) => {
-					if ( control.groupPrefix === groupPrefix ) {
+					if ( control.groupPrefix === controlGroupPrefix ) {
 						// The controls name (like `typography_font_family) is not equal to the global data control name (like `font_family`), duo to it's group prefix, like <typography_>font_family.
 						const baseName = control.name.replace( control.groupPrefix, '' );
 						if ( data[ baseName ] ) {
@@ -36,7 +36,7 @@ export class ElementsIndexAddGlobalData extends After {
 					}
 				} );
 			} else {
-				element.settings[ key ] = data;
+				element.settings[ globalKey ] = data;
 			}
 		} );
 	}
