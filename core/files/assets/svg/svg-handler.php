@@ -347,7 +347,7 @@ class Svg_Handler {
 	 * @return false|int
 	 */
 	private function has_base64_or_datauri_value( $value ) {
-		return preg_match( '/(base64|data:text|data:image)/i', $value );
+		return preg_match( '/(base64|data:(text|image))/i', $value );
 	}
 
 	/**
