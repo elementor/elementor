@@ -7,10 +7,19 @@ export default class StretchedSection extends elementorModules.frontend.handlers
 		elementorFrontend.addListenerOnce( handlerID, 'sticky:stick', this.stretch, this.$element );
 
 		elementorFrontend.addListenerOnce( handlerID, 'sticky:unstick', this.stretch, this.$element );
+
+		if ( elementorFrontend.isEditMode() ) {
+			this.onKitChangeStretchContainerChange = this.onKitChangeStretchContainerChange.bind( this );
+			elementor.channels.editor.on( 'kit:change:stretchContainer', this.onKitChangeStretchContainerChange );
+		}
 	}
 
 	unbindEvents() {
 		elementorFrontend.removeListeners( this.getUniqueHandlerID(), 'resize', this.stretch );
+
+		if ( elementorFrontend.isEditMode() ) {
+			elementor.channels.editor.off( 'kit:change:stretchContainer', this.onKitChangeStretchContainerChange );
+		}
 	}
 
 	initStretch() {
@@ -41,6 +50,10 @@ export default class StretchedSection extends elementorModules.frontend.handlers
 
 		super.onInit( ...args );
 
+		if ( elementorFrontend.isEditMode() ) {
+			elementor.channels.editor.on( 'kit:change:stretchContainer', this.onKitChangeStretchContainerChange.bind( this ) );
+		}
+
 		this.stretch();
 	}
 
@@ -54,11 +67,9 @@ export default class StretchedSection extends elementorModules.frontend.handlers
 		}
 	}
 
-	onGeneralSettingsChange( changed ) {
-		if ( 'elementor_stretched_section_container' in changed ) {
-			this.stretchElement.setSettings( 'selectors.container', this.getStretchContainer() );
+	onKitChangeStretchContainerChange() {
+		this.stretchElement.setSettings( 'selectors.container', this.getStretchContainer() );
 
-			this.stretch();
-		}
+		this.stretch();
 	}
 }
