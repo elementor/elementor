@@ -726,7 +726,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'z_index',
 			[
 				'label' => __( 'Z-Index', 'elementor' ),
