@@ -125,3 +125,8 @@
 		@include margin-start(10px);
 	}
 }
+
+.elementor-global-colors__color-value {
+	color: $editor-lightest;
+	font-size: 10px;
+}
