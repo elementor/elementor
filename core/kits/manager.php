@@ -126,7 +126,7 @@ class Manager {
 	}
 
 	public function register_controls() {
-		$controls_manager = \ElementorPro\Plugin::elementor()->controls_manager;
+		$controls_manager = Plugin::$instance->controls_manager;
 
 		$controls_manager->register_control( Repeater::CONTROL_TYPE, new Repeater() );
 	}
