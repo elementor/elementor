@@ -25,17 +25,17 @@ class Kit extends PageBase {
 	/**
 	 * @var Lightbox
 	 */
-	private $lightbox;
+	private $lightbox_tab;
 	/**
 	 * @var Colors_And_Typography
 	 */
-	private $colors_and_typography;
+	private $colors_and_typography_tab;
 
 	public function __construct( array $data = [] ) {
 		parent::__construct( $data );
 
-		$this->lightbox = new Lightbox( $this );
-		$this->colors_and_typography = new Colors_And_Typography( $this );
+		$this->lightbox_tab = new Lightbox( $this );
+		$this->colors_and_typography_tab = new Colors_And_Typography( $this );
 
 		$this->custom_colors_disabled = get_option( 'elementor_disable_color_schemes' );
 		$this->typography_schemes_disabled = get_option( 'elementor_disable_typography_schemes' );
@@ -83,8 +83,8 @@ class Kit extends PageBase {
 	protected function _register_controls() {
 		$this->register_document_controls();
 
-		$this->lightbox->register_controls();
-		$this->colors_and_typography->register_controls();
+		$this->lightbox_tab->register_controls();
+		$this->colors_and_typography_tab->register_controls();
 
 		$this->add_body_section();
 		$this->add_typography_section();
