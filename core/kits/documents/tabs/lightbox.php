@@ -1,51 +1,29 @@
 <?php
 
-namespace Elementor\Core\Kits\Helpers;
+namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Lightbox {
-	const TAB = 'lightbox';
+class Lightbox extends Tab_Base {
 
-	/**
-	 * @var Document
-	 */
-	private $document;
-
-	/**
-	 * Lightbox constructor.
-	 *
-	 * @param Document $document
-	 */
-	public function __construct( $document ) {
-		$this->document = $document;
+	protected function get_id() {
+		return 'lightbox';
 	}
 
-	public function add_control( $id, $args, $options = [] ) {
-		$this->document->add_control( $id, $args, $options );
+	protected function get_title() {
+		return __( 'Lightbox', 'elementor' );
 	}
 
-	public function start_controls_section( $id, $args = [] ) {
-		$this->document->start_controls_section( $id, $args );
-	}
-
-	public function end_controls_section() {
-		$this->document->end_controls_section();
-	}
-
-	public function register_controls() {
-		Controls_Manager::add_tab( self::TAB, __( 'Lightbox', 'elementor' ) );
-
+	public function register_tab_controls() {
 		$this->start_controls_section(
-			'section_lightbox',
+			'section_' . $this->get_id(),
 			[
-				'label' => __( 'Lightbox', 'elementor' ),
-				'tab' => self::TAB,
+				'label' => $this->get_title(),
+				'tab' => $this->get_id(),
 			]
 		);
 
