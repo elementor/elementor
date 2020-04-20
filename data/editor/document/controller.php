@@ -12,6 +12,10 @@ class Controller extends Controller_Base {
 		$this->register_endpoint( Endpoints\Elements::class );
 	}
 
+	public function register_processors() {
+		$this->register_processor( Processors\AddGlobals::class );
+	}
+
 	public function permission_callback( $request ) {
 		if ( 'GET' === $request->get_method() ) {
 			$document_id = $request->get_param( 'document_id' );
