@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits;
 
+use Elementor\Core\Kits\Controls\Repeater;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
@@ -117,11 +118,18 @@ class Manager {
 		return $kit;
 	}
 
+	public function register_controls() {
+		$controls_manager = \ElementorPro\Plugin::elementor()->controls_manager;
+
+		$controls_manager->register_control( Repeater::CONTROL_TYPE, new Repeater() );
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
 		add_action( 'elementor/frontend/after_enqueue_global', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
+		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
 	}
 }
