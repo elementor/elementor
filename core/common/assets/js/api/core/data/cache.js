@@ -4,7 +4,7 @@ export default class Cache {
 	constructor( manager ) {
 		this.manager = manager;
 
-		this.stroageProvider = new LocalStorage();
+		this.storage = new LocalStorage();
 	}
 
 	load( method, requestData, response ) {
@@ -14,7 +14,7 @@ export default class Cache {
 					isIndexCommand = requestData.endpoint + '/index' === requestData.command,
 					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
 
-					addCache = ( key, value ) => this.stroageProvider.setItem( key, JSON.stringify( value ) ),
+					addCache = ( key, value ) => this.storage.setItem( key, JSON.stringify( value ) ),
 					addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
 
 				if ( isQueryEmpty && isIndexCommand ) {
@@ -50,7 +50,7 @@ export default class Cache {
 	receive( methodType, endpoint ) {
 		switch ( methodType ) {
 			case 'get': {
-				const data = this.stroageProvider.getItem( endpoint );
+				const data = this.storage.getItem( endpoint );
 
 				if ( null !== data ) {
 					return new Promise( async ( resolve ) => {
@@ -68,6 +68,6 @@ export default class Cache {
 	}
 
 	delete( endpoint ) {
-		return this.stroageProvider.removeItem( endpoint );
+		return this.storage.removeItem( endpoint );
 	}
 }
