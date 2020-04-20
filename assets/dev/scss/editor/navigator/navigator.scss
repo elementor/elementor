@@ -58,7 +58,7 @@
 		cursor: pointer;
 
 		&:not(:hover) {
-			color: $editor-color-level-60;
+			color: $theme-color-panel-neutral;
 		}
 	}
 
@@ -137,15 +137,15 @@
 		}
 
 		.ui-sortable-helper {
-			background-color: $editor-color-level-0;
+			background-color: $theme-color-panel-front-bg;
 			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
 			transform: rotate(4deg);
-			border: 1px solid $editor-color-level-30;
+			border: 1px solid $theme-color-panel-back-bg;
 			pointer-events: none;
 		}
 
 		.ui-sortable-placeholder {
-			background-color: $editor-color-level-20;
+			background-color: $theme-color-panel-back-bg;
 		}
 	}
 
@@ -195,10 +195,10 @@
 			> .elementor-navigator__item {
 
 				&.elementor-editing {
-					background-color: $theme-color-navigator-item-editing-bg;
+					background-color: $theme-color-navigator-item-active-bg;
 
 					> * {
-						color: $theme-color-navigator-item-editing-text;
+						color: $theme-color-navigator-item-active-text;
 					}
 				}
 			}
@@ -207,7 +207,7 @@
 		&__list-toggle {
 			@include margin-end(7px);
 			transition: transform .3s;
-			color: $editor-color-level-60;
+			color: $theme-color-panel-neutral;
 		}
 
 		&__element-type {
@@ -224,8 +224,8 @@
 
 				&[contenteditable="true"] {
 					outline: none;
-					color: $editor-color-level-70;
-					background-color: $editor-color-level-0;
+					color: $theme-color-input-text;
+					background-color: $theme-color-input-bg;
 					padding: 2px 3px;
 					box-shadow: 0 0 4px rgba(0,0,0,0.2);
 				}
@@ -263,9 +263,9 @@
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
-			color: $editor-color-level-70;
-			background-color: $editor-color-level-0;
-			@include border-start(1px solid $editor-color-level-30);
+			color: $theme-color-panel-highlight;
+			background-color: $theme-color-navigator-item-active-bg;
+			@include border-start(1px solid $theme-color-panel-back-bg);
 
 			&:first-child {
 				@include border-start(3px solid $editor-info);
@@ -276,7 +276,7 @@
 			}
 
 			&:hover {
-				color: $editor-color-level-90;
+				color: $theme-color-panel-super-highlight;
 			}
 		}
 
@@ -300,7 +300,7 @@
 		}
 
 		&-section {
-			background-color: $editor-color-level-0;
+			background-color: $theme-color-panel-front-bg;
 		}
 	}
 }

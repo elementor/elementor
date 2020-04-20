@@ -822,7 +822,8 @@ class Editor {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
+		$editor_preferences_model = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model();
+		$ui_theme = $editor_preferences_model->get_settings( 'ui_theme' );
 		$ui_themes = [ 'light', 'dark' ];
 		$color_theme_dependencise = [];
 
