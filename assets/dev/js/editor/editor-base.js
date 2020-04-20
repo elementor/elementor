@@ -11,6 +11,7 @@ import HistoryManager from 'elementor/modules/history/assets/js/module';
 import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
+import Preview from 'elementor-views/preview';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -284,7 +285,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getPreviewView() {
-		return this.sections.currentView;
+		return this.previewView;
 	}
 
 	getPreviewContainer() {
@@ -372,6 +373,29 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
+	}
+
+	initPreviewView( document ) {
+		const element = document.$element[ 0 ];
+
+		if ( this.previewView && this.previewView.el === element ) {
+			this.previewView.destroy();
+		}
+
+		const preview = new Preview( { el: element, model: elementor.elementsModel } );
+
+		preview.$el.empty();
+
+		preview.resetChildViewContainer();
+
+		// In order to force rendering of children
+		preview.isRendered = true;
+
+		preview._renderChildren();
+
+		preview.triggerMethod( 'render' );
+
+		this.previewView = preview;
 	}
 
 	initFrontend() {
