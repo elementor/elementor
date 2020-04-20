@@ -293,7 +293,10 @@ class Post extends Base {
 			'element_id' => $element->get_id(),
 		] );
 
-		$element_settings = array_merge( $element_settings, $data['settings'] );
+		if ( isset( $data['settings'] ) ) {
+			$element_settings = array_merge( $element_settings, $data['settings'] );
+		}
+
 		$style_controls = $element->get_style_controls( null, $element->get_parsed_dynamic_settings( null, $element_settings ) );
 
 		$this->add_controls_stack_style_rules( $element, $style_controls, $element_settings, [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
