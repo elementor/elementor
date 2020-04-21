@@ -517,6 +517,11 @@ class Svg_Handler {
 	 */
 	private function strip_xlinks( $element ) {
 		$xlinks = $element->getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+
+		if ( ! $xlinks ) {
+			return;
+		}
+
 		$allowed_links = [
 			'data:image/png', // PNG
 			'data:image/gif', // GIF
