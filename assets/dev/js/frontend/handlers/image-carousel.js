@@ -218,7 +218,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 			this.updateResponsiveSwiperOption( propertyName, currentDeviceMode );
 		}*/
 
-		if ( changeableProperties.hasOwnProperty( propertyName ) ) {
+		if ( changeableProperties.propertyName ) {
 			this.updateSwiperOption( propertyName );
 		}
 	}
