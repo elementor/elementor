@@ -68,7 +68,7 @@ export class Create extends CommandHistory {
 				isIdSetLocal = true;
 			}
 
-			DocumentCache.updateByModel( container.document.id, model );
+			DocumentCache.loadModel( container.document.id, model );
 
 			const newContainer = container.view.addElement( model, options ).getContainer();
 

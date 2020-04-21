@@ -42,13 +42,15 @@ export default class Cache {
 		}
 	}
 
-	load( requestData, response ) {
-		const addCache = ( key, value ) => this.storage.setItem( key, JSON.stringify( value ) ),
-			addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
-
-		this.extractResponse( response, requestData, addCache, addCacheEndpoint );
-	}
-
+	/**
+	 *
+	 * Receive from cache.
+	 *
+	 * @param {string} methodType
+	 * @param {{}} requestData
+	 *
+	 * @return {(Promise|boolean)}
+	 */
 	receive( methodType, requestData ) {
 		const endpoint = requestData.endpoint,
 			data = this.storage.getItem( endpoint );
@@ -58,26 +60,56 @@ export default class Cache {
 				resolve( JSON.parse( data ) );
 			} );
 		}
+
+		return false;
 	}
 
+	/**
+	 *
+	 * Load data to cache
+	 *
+	 * @param {{}} requestData
+	 * @param {{}} response
+	 */
+	load( requestData, response ) {
+		const addCache = ( key, value ) => this.storage.setItem( key, JSON.stringify( value ) ),
+			addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
+
+		this.extractResponse( response, requestData, addCache, addCacheEndpoint );
+	}
+
+	/**
+	 *
+	 * Update only exist storage.
+	 *
+	 * @param {{}} requestData
+	 * @return {boolean}
+	 */
 	update( requestData ) {
 		const endpoint = requestData.endpoint;
-
 		let response = {};
 
 		// Simulate response from cache.
-		Object.entries( this.storage.getAll() ).forEach( ( [ key, value ] ) => {
-			// If current cache is part of the endpoint.
-			if ( key.includes( endpoint ) ) {
+		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, endpointValue ] ) => {
+			if ( endpointKey === endpoint ) {
+				// If requested endpoint matches current endpoint key.
+
+				response = JSON.parse( endpointValue );
+
+				// Merge response with `requestData.args.data`.
+				response = Object.assign( response, requestData.args.data );
+			} else if ( endpointKey.includes( endpoint ) ) {
+				// If current cache is part of the endpoint ( Handle situations like 'globals/ ... ' ).
+
 				let isResponseMerged = false;
 
 				// Merge simulated response with `requestData.args.data`.
 				Object.entries( requestData.args.data ).forEach( ( [ dataKey, dataValue ] ) => {
-					if ( key.includes( dataKey + '/' ) ) {
+					if ( endpointKey.includes( dataKey + '/' ) ) {
 						if ( 'object' === typeof dataValue ) {
 							Object.entries( dataValue ).forEach( ( [ subKey, subValue ] ) => {
-								if ( key === endpoint + '/' + dataKey + '/' + subKey ) {
-									response[ key ] = subValue;
+								if ( endpointKey === endpoint + '/' + dataKey + '/' + subKey ) {
+									response[ endpointKey ] = subValue;
 									isResponseMerged = true;
 								}
 							} );
@@ -86,7 +118,7 @@ export default class Cache {
 				} );
 
 				if ( ! isResponseMerged ) {
-					debugger;
+					throw Error( 'Cannot merge response.' );
 				}
 			}
 		} );

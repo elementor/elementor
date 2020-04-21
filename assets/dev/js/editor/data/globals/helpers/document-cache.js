@@ -1,20 +1,14 @@
-export default class DocumentCache {
-	static deleteById( documentId, elementId ) {
-		$e.data.deleteCache(
-			'document/elements',
-			{
-				document_id: documentId,
-				element_id: elementId,
-			},
-		);
-	}
+/**
+ * TODO: Try remove the file or content as more as possible.
+ * try to manipulate cache using only $e.data.
+ */
 
-	static updateByModel( documentId, model ) {
+export default class DocumentCache {
+	static loadModel( documentId, model ) {
 		if ( ! model.id ) {
 			throw Error( 'Invalid model.id' );
 		}
 
-		// Add cache.
 		$e.data.loadCache(
 			'document/elements',
 			{
@@ -25,7 +19,7 @@ export default class DocumentCache {
 		);
 	}
 
-	static updateByConfig( document ) {
+	static loadByConfig( document ) {
 		// TODO: Find better place for `getFlatElements`.
 		const getFlatElements = ( _elements ) => {
 			const result = [];
@@ -40,23 +34,38 @@ export default class DocumentCache {
 		};
 
 		getFlatElements( document.config.elements ).forEach( ( element ) =>
-			DocumentCache.updateByModel( document.id, element )
+			DocumentCache.loadModel( document.id, element )
 		);
 	}
 
-	static updateByContainers( containers = null, settings = null ) {
+	static updateByContainers( containers, mergeSettings = null ) {
 		containers.forEach( ( container ) => {
 			const element = container.model.toJSON();
 
 			delete element.defaultEditSettings;
 			delete element.editSettings;
 
-			if ( settings ) {
-				element.settings = Object.assign( element.settings, settings );
+			if ( ! element.settings ) {
+				throw Error( 'element settings is required.' );
 			}
 
-			// Update cache.
-			DocumentCache.updateByModel( elementor.documents.getCurrent().id, element );
+			if ( mergeSettings ) {
+				element.settings = Object.assign( element.settings, mergeSettings );
+			}
+
+			$e.data.updateCache( 'document/elements', {
+				document_id: elementor.documents.getCurrent().id,
+				element_id: element.id,
+			}, element );
+		} );
+	}
+
+	static deleteByContainers( containers ) {
+		containers.forEach( ( container ) => {
+			$e.data.deleteCache( 'document/elements', {
+				document_id: elementor.documents.getCurrent().id,
+				element_id: container.id,
+			} );
 		} );
 	}
 }

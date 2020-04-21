@@ -67,7 +67,7 @@ export default class Data extends Commands {
 	}
 
 	/**
-	 * @param {string} type
+	 * @param {string} type // TODO: Remove.
 	 * @param {string} command
 	 * @param {{}} args
 	 *
@@ -86,20 +86,18 @@ export default class Data extends Commands {
 			delete args.query.id;
 		}
 
-		if ( 'get' === type ) {
-			// Sorting since the endpoint later will be used as key to store the cache.
-			const queryEntries = Object.entries( args.query ).sort(
-				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
-			);
+		// Sorting since the endpoint later will be used as key to store the cache.
+		const queryEntries = Object.entries( args.query ).sort(
+			( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
+		);
 
-			// Upon 'GET', `args.query` will become part of get params.
-			if ( queryEntries.length ) {
-				endPoint += '?';
+		// `args.query` will become part of GET params.
+		if ( queryEntries.length ) {
+			endPoint += '?';
 
-				queryEntries.forEach( ( [ name, value ] ) => {
-					endPoint += name + '=' + value + '&';
-				} );
-			}
+			queryEntries.forEach( ( [ name, value ] ) => {
+				endPoint += name + '=' + value + '&';
+			} );
 		}
 
 		return endPoint;
@@ -240,9 +238,8 @@ export default class Data extends Commands {
 	 * TODO: Remove this function it should not exist.
 	 * Handle cache with: $e.data.update and $e.data.create.
 	 */
-	loadCache( endpoint, query, result ) {
-		const args = { query };
-		const command = this.endpointToCommand( endpoint, args );
+	loadCache( command, query, data ) {
+		const args = { query },
 			endpoint = this.commandToEndpoint( 'get', command, args );
 
 		this.cache.load(
@@ -251,7 +248,31 @@ export default class Data extends Commands {
 				endpoint,
 				args,
 			},
-			result
+			data
 		);
+	}
+
+	/**
+	 * The difference between 'loadCache' and 'updateCache' is update will only modify exist values.
+	 * and 'loadCache' will create or update.
+	 */
+	updateCache( command, query, data ) {
+		const args = { query, data },
+			endpoint = this.commandToEndpoint( 'update', command, args );
+
+		this.cache.update(
+			{
+				command,
+				endpoint,
+				args,
+			},
+		);
+	}
+
+	deleteCache( command, query ) {
+		const args = { query },
+			endpoint = this.commandToEndpoint( 'delete', command, args );
+
+		this.cache.delete( endpoint );
 	}
 }
