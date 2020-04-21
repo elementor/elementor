@@ -356,8 +356,8 @@ abstract class Base_App {
 			// In case $as_array = true.
 			$body = (object) $body;
 
-			$message = $body->message ? $body->message : wp_remote_retrieve_response_message( $response );
-			$code = $body->code ? $body->code : $response_code;
+			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
+			$code = isset( $body->code ) ? $body->code : $response_code;
 
 			if ( 401 === $code ) {
 				$this->delete();

@@ -216,6 +216,9 @@ class Frontend extends App {
 
 		// Add Edit with the Elementor in Admin Bar.
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
+
+		// Detect Elementor documents via their css that printed before the Admin Bar.
+		add_action( 'elementor/css-file/post/enqueue', [ $this, 'add_document_to_admin_bar' ] );
 	}
 
 	/**
@@ -390,7 +393,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.1.2',
+			'1.1.3',
 			true
 		);
 
@@ -480,7 +483,7 @@ class Frontend extends App {
 			'elementor-gallery',
 			$this->get_css_assets_url( 'e-gallery', 'assets/lib/e-gallery/css/' ),
 			[],
-			'1.1.2'
+			'1.1.3'
 		);
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
@@ -880,10 +883,6 @@ class Frontend extends App {
 		// Change the current post, so widgets can use `documents->get_current`.
 		Plugin::$instance->documents->switch_to_document( $document );
 
-		if ( $document->is_editable_by_current_user() ) {
-			$this->admin_bar_edit_documents[ $document->get_main_id() ] = $document;
-		}
-
 		$data = $document->get_elements_data();
 
 		/**
@@ -947,6 +946,17 @@ class Frontend extends App {
 		Plugin::$instance->documents->restore_document();
 
 		return $content;
+	}
+
+	/**
+	 * @param Post_CSS $css_file
+	 */
+	public function add_document_to_admin_bar( $css_file ) {
+		$document = Plugin::$instance->documents->get( $css_file->get_post_id() );
+
+		if ( $document::get_property( 'show_on_admin_bar' ) && $document->is_editable_by_current_user() ) {
+			$this->admin_bar_edit_documents[ $document->get_main_id() ] = $document;
+		}
 	}
 
 	/**
@@ -1150,12 +1160,8 @@ class Frontend extends App {
 
 		if ( is_singular() ) {
 			$post = get_post();
-			$title = wp_get_document_title();
 
-			if ( false !== strpos( $title, '&#8211' ) ) {
-				// Convert WP's core N-dash separator's HTMLEntity code to a regular dash character
-				$title = html_entity_decode( $title, ENT_NOQUOTES, 'UTF-8' );
-			}
+			$title = Utils::urlencode_html_entities( wp_get_document_title() );
 
 			$settings['post'] = [
 				'id' => $post->ID,

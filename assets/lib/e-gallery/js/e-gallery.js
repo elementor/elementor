@@ -1,4 +1,4 @@
-/*! E-Gallery v1.1.2 by Elementor */
+/*! E-Gallery v1.1.3 by Elementor */
 var EGallery =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -365,7 +365,7 @@ function () {
   }, {
     key: "createGallery",
     value: function createGallery() {
-      var settings = jQuery.extend(true, this.getDefaultSettings(), this.userSettings);
+      var settings = jQuery.extend(this.getDefaultSettings(), this.userSettings);
       var GalleryHandlerType = this.galleriesTypes[settings.type];
       this.galleryHandler = new GalleryHandlerType(settings);
     }
