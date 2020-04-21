@@ -1,6 +1,6 @@
 import CommandHistory from 'elementor-document/commands/base/command-history';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
-import DocumentCache from "elementor-editor/data/globals/helpers/document-cache";
+import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export default class DisableEnable extends CommandHistory {
 	static restore( historyItem, isRedo ) {
