@@ -164,10 +164,10 @@ export default class Data extends Commands {
 			throw Error( `Invalid type: '${ type }'` );
 		}
 
-		if ( requestData.args.options.cache ) {
+		if ( 'GET' === method && ! requestData.args.options.refresh ) {
 			let cachePromise;
 
-			cachePromise = this.cache.receive( type, requestData.endpoint );
+			cachePromise = this.cache.receive( type, requestData );
 
 			if ( cachePromise ) {
 				return cachePromise;
@@ -196,8 +196,9 @@ export default class Data extends Commands {
 					return response;
 				}
 
-				if ( requestData.args.options.cache ) {
-					this.cache.load( method, requestData, response );
+				// Upon 'GET' save cache.
+				if ( 'GET' === method ) {
+					this.cache.load( requestData, response );
 				}
 
 				resolve( response );
@@ -205,28 +206,6 @@ export default class Data extends Commands {
 				reject( e );
 			}
 		} );
-	}
-
-	loadCache( command, query, result ) {
-		const args = { query },
-			endpoint = this.commandToEndpoint( 'get', command, args );
-
-		this.cache.load(
-			'GET',
-			{
-				command,
-				endpoint,
-				args,
-			},
-			result
-		);
-	}
-
-	deleteCache( command, query ) {
-		const args = { query },
-			endpoint = this.commandToEndpoint( 'get', command, args );
-
-		return this.cache.delete( endpoint );
 	}
 
 	run( type, endpoint, args ) {
@@ -249,11 +228,30 @@ export default class Data extends Commands {
 		return this.run( 'get', endpoint, { query, options } );
 	}
 
-	update( endpoint, query = {}, options = {} ) {
-		return this.run( 'update', endpoint, { query, options } );
+	update( endpoint, query = {}, options = {}, data = {} ) {
+		return this.run( 'update', endpoint, { query, options, data } );
 	}
 
 	error( message ) {
 		throw Error( 'Data commands: ' + message );
+	}
+
+	/**
+	 * TODO: Remove this function it should not exist.
+	 * Handle cache with: $e.data.update and $e.data.create.
+	 */
+	loadCache( endpoint, query, result ) {
+		const args = { query };
+		const command = this.endpointToCommand( endpoint, args );
+			endpoint = this.commandToEndpoint( 'get', command, args );
+
+		this.cache.load(
+			{
+				command,
+				endpoint,
+				args,
+			},
+			result
+		);
 	}
 }

@@ -37,6 +37,6 @@ export default class Component extends ComponentBase {
 
 	onElementorLoaded() {
 		// Add global cache before render.
-		$e.data.get( 'globals/index', {}, { cache: true } );
+		$e.data.get( 'globals/index' );
 	}
 }

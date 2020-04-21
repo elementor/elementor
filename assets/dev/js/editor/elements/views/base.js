@@ -477,13 +477,10 @@ BaseElementView = BaseContainer.extend( {
 				return this.renderStyles( settings );
 			}
 
-			const request = $e.data.get(
-				'document/elements',
+			const request = $e.data.get( 'document/elements',
 				{
 					document_id: elementor.documents.getCurrent().id,
 					element_id: this.getEditModel().id,
-				}, {
-					cache: true,
 				} );
 
 			// Async, means rendered when result received.

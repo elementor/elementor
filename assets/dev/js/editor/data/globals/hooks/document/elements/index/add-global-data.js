@@ -19,7 +19,7 @@ export class ElementsIndexAddGlobalData extends After {
 
 		return Object.entries( element.settings.__globals__ ).map( async ( [ globalKey, globalValue ] ) => {
 			// Get global item.
-			const endpointResult = await $e.data.get( globalValue, {}, { cache: true } ),
+			const endpointResult = await $e.data.get( globalValue ),
 				container = elementor.getContainer( args.query.element_id ),
 				data = endpointResult.data,
 				controlGroupPrefix = container.controls[ globalKey ]?.groupPrefix;
