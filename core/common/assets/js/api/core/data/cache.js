@@ -135,6 +135,19 @@ export default class Cache {
 	}
 
 	delete( endpoint ) {
-		return this.storage.removeItem( endpoint );
+		let result = false;
+
+		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, endpointValue ] ) => {
+			if ( endpointKey === endpoint ) {
+				this.storage.removeItem( endpoint );
+				result = true;
+			} else if ( endpointKey.includes( endpoint + '/' ) ) {
+				// Handle situations like 'globals/ ... '.
+				this.storage.removeItem( endpointKey );
+				result = true;
+			}
+		} );
+
+		return result;
 	}
 }

@@ -7,8 +7,10 @@ export class ElementsSettingsUpdateCache extends After {
 	}
 
 	getConditions( args, result ) {
+		const { containers = [ args.container ] } = args;
+
 		// TODO: Remove - Create testing compatibility.
-		return ! elementorCommonConfig.isTesting;
+		return ! elementorCommonConfig.isTesting && 'repeater' !== containers[ 0 ].type;
 	}
 
 	getId() {

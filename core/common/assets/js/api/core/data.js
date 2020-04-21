@@ -80,24 +80,26 @@ export default class Data extends Commands {
 			endPoint = endPoint.replace( '/index', '' );
 		}
 
-		if ( args.query.id ) {
-			endPoint += '/' + args.query.id.toString();
+		if ( args.query ) {
+			if ( args.query.id ) {
+				endPoint += '/' + args.query.id.toString();
 
-			delete args.query.id;
-		}
+				delete args.query.id;
+			}
 
-		// Sorting since the endpoint later will be used as key to store the cache.
-		const queryEntries = Object.entries( args.query ).sort(
-			( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
-		);
+			// Sorting since the endpoint later will be used as key to store the cache.
+			const queryEntries = Object.entries( args.query ).sort(
+				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
+			);
 
-		// `args.query` will become part of GET params.
-		if ( queryEntries.length ) {
-			endPoint += '?';
+			// `args.query` will become part of GET params.
+			if ( queryEntries.length ) {
+				endPoint += '?';
 
-			queryEntries.forEach( ( [ name, value ] ) => {
-				endPoint += name + '=' + value + '&';
-			} );
+				queryEntries.forEach( ( [ name, value ] ) => {
+					endPoint += name + '=' + value + '&';
+				} );
+			}
 		}
 
 		return endPoint;
@@ -269,9 +271,13 @@ export default class Data extends Commands {
 		);
 	}
 
-	deleteCache( command, query ) {
-		const args = { query },
+	deleteCache( command, query = null ) {
+		const args = {},
 			endpoint = this.commandToEndpoint( 'delete', command, args );
+
+		if ( query ) {
+			args.query = query;
+		}
 
 		this.cache.delete( endpoint );
 	}
