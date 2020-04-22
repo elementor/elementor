@@ -12,11 +12,14 @@ export default class Cache {
 
 	/**
 	 * TODO: Add JSDOC.
+	 * TODO: Remove endpointCallback ( confuse after time ).
+	 * TODO: Optimize.
 	 */
 	extractResponse( response, requestData, keyCallback, endpointCallback ) {
 		const componentName = requestData.component?.getNamespace(),
 			isIndexCommand = requestData.endpoint + '/index' === requestData.command,
-			isQueryEmpty = 0 === Object.values( requestData.args.query ).length;
+			isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
+			endpointDepth = requestData.endpoint.split( '/', 3 ).length;
 
 		if ( isQueryEmpty && isIndexCommand ) {
 			// Handles situation when 'index' was forced to use like in 'globals' component.
@@ -30,8 +33,14 @@ export default class Cache {
 					keyCallback( key, value );
 				}
 			} );
+		} else if ( endpointDepth > 2 && isQueryEmpty ) {
+			// Handles situation when query empty.
+
+			// EG: 'globals/typography/primary'.
+			keyCallback( requestData.endpoint, response );
 		} else if ( isQueryEmpty ) {
 			// Handles situation when query empty.
+
 			// EG: 'globals/typography'.
 			Object.keys( response ).forEach( ( key ) => {
 				endpointCallback( requestData.command, key, response[ key ] );
