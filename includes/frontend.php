@@ -393,7 +393,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.1.3',
+			'1.2.0',
 			true
 		);
 
@@ -483,7 +483,7 @@ class Frontend extends App {
 			'elementor-gallery',
 			$this->get_css_assets_url( 'e-gallery', 'assets/lib/e-gallery/css/' ),
 			[],
-			'1.1.3'
+			'1.2.0'
 		);
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
