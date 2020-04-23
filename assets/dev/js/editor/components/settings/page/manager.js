@@ -69,7 +69,6 @@ module.exports = BaseSettings.extend( {
 			settings: editModel.get( 'settings' ),
 			label: elementor.config.document.panel.title,
 			controls: this.model.controls,
-			renderer: false,
 			children: elementor.elements,
 		} );
 
@@ -77,6 +76,14 @@ module.exports = BaseSettings.extend( {
 			getContainer: () => container,
 			getEditModel: () => editModel,
 			model: editModel,
+		};
+
+		// Emulate a view that can render the style.
+		container.renderer = {
+			view: {
+				lookup: () => container,
+				renderOnChange: () => this.updateStylesheet(),
+			},
 		};
 
 		return this.editedView;
