@@ -6,7 +6,7 @@
 **Requires at least:** 5.0  
 **Tested up to:** 5.4  
 **Requires PHP:** 5.6  
-**Stable tag:** 2.9.7  
+**Stable tag:** 2.9.8  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -223,9 +223,18 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 ## Changelog ##
 
+### 2.9.8 - 2020-04-21 ###
+* Tweak: Added `.webp` file extension support to Elementor Lightbox
+* Fix: Added missing font-family for `elementor-button` class to avoid system font ([#11166](https://github.com/elementor/elementor/issues/11166))
+* Fix: Site Part without any content has no height and not accessible in some cases
+* Fix: PHP notice in Connect module
+* Fix: Navigator resize action is not available in edge cases
+* Fix: SVG sanitizer `href` attribute for better security
+* Fix: Hardened user role that is allowed to upload unfiltered files for better security
+
 ### 2.9.7 - 2020-03-25 ###
 * Tweak: Added compatibility with WordPress v5.4 ([#10745](https://github.com/elementor/elementor/issues/10745))
-* Tweak: Show Typography section to everyone in Section, Column and Inner Section elements ([#10592](https://github.com/elementor/elementor/issues/10525))
+* Tweak: Show Typography section to everyone in Section, Column and Inner Section elements ([#10592](https://github.com/elementor/elementor/issues/10592))
 * Fix: Custom Attributes section missing in Advanced tab ([#10881](https://github.com/elementor/elementor/issues/10881))
 * Fix: Title color & Typography settings are being overridden by Theme Style in Accordion and Toggle widget ([#10900](https://github.com/elementor/elementor/issues/10900))
 * Fix: Merged "Play On Mobile" string for better i18n in Video widget (Props [@pedro-mendonca](https://github.com/pedro-mendonca), [#10315](https://github.com/elementor/elementor/issues/10315))
