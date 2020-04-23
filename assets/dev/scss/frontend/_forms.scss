@@ -192,6 +192,13 @@
 
 @mixin btn-align() {
 
+	&center, &start, &end {
+
+		.elementor-field-type-submit button {
+			flex-basis: initial;
+		}
+	}
+
 	&center .elementor-field-type-submit{
 		justify-content: center;
 	}
