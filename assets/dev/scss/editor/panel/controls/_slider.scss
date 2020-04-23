@@ -7,12 +7,16 @@
 		}
 	}
 
-	&--multiple {
-		margin-bottom: 14px;
+	// Hard selector
+	&.elementor-control-type-slider--multiple {
 
 		.elementor-control-input-wrapper  {
 			display: block;
 		}
+	}
+
+	&--multiple {
+		padding-bottom: 40px;
 
 		.elementor-slider {
 			margin-top: 12px;
@@ -81,6 +85,7 @@
 	}
 
 	.elementor-control-input-wrapper {
+		display: flex;
 		align-items: center;
 	}
 
