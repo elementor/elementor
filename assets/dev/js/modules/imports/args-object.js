@@ -1,23 +1,14 @@
-export default class ArgsObject {
-	static [Symbol.hasInstance]( obj ) {
-		/**
-		 * This is function extending being called each time JS uses instanceOf, since babel use it each time it create new class
-		 * its give's opportunity to mange capabilities of instanceOf operator.
-		 * saving current class each time will give option later to handle instanceOf for grant parents.
-		 * Important: For the mechanism to get working the CLASS should have 'getInstanceType function'.
-		 */
-		const result = super[ Symbol.hasInstance ]( obj );
+import InstanceType from './instance-type';
 
-		if ( result && obj ) {
-			const name = this.getInstanceType ? this.getInstanceType() : 'Anonymous_' + new Date().getTime();
+export default class ArgsObject extends InstanceType {
+	static [Symbol.hasInstance]( target ) {
+		let result = super[ Symbol.hasInstance ]( target );
 
-			if ( ! obj.instanceTypes ) {
-				obj.instanceTypes = [];
-			}
-
-			if ( -1 === obj.instanceTypes.indexOf( name ) ) {
-				obj.instanceTypes.push( name );
-			}
+		if ( target && ! result ) {
+			// If parent instanceOf returned 'false' then check if the given object 'obj', is instance of known types.
+			result = target.instanceTypes &&
+				Array.isArray( target.instanceTypes ) &&
+				-1 !== target.instanceTypes.indexOf( this.getInstanceType() );
 		}
 
 		return result;
@@ -35,6 +26,8 @@ export default class ArgsObject {
 	 * @param {{}} args
 	 */
 	constructor( args ) {
+		super();
+
 		this.args = args;
 	}
 
