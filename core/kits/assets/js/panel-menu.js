@@ -20,7 +20,7 @@ export default class extends Marionette.LayoutView {
 	}
 
 	onClickMenuItem( event ) {
-		const tab = jQuery( event.target ).parent().data( 'tab' );
+		const tab = jQuery( event.currentTarget ).data( 'tab' );
 		$e.route( `panel/global/${ tab }` );
 	}
 
