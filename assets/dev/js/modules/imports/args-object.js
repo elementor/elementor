@@ -1,19 +1,6 @@
 import InstanceType from './instance-type';
 
 export default class ArgsObject extends InstanceType {
-	static [Symbol.hasInstance]( target ) {
-		let result = super[ Symbol.hasInstance ]( target );
-
-		if ( target && ! result ) {
-			// If parent instanceOf returned 'false' then check if the given object 'obj', is instance of known types.
-			result = target.instanceTypes &&
-				Array.isArray( target.instanceTypes ) &&
-				-1 !== target.instanceTypes.indexOf( this.getInstanceType() );
-		}
-
-		return result;
-	}
-
 	static getInstanceType() {
 		return 'ArgsObject';
 	}

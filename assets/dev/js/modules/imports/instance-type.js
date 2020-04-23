@@ -27,6 +27,13 @@ export default class InstanceType {
 			}
 		}
 
+		if ( ! result ) {
+			// Check if the given 'target', is instance of known types.
+			result = target.instanceTypes &&
+				Array.isArray( target.instanceTypes ) &&
+				-1 !== target.instanceTypes.indexOf( this.getInstanceType() );
+		}
+
 		return result;
 	}
 
