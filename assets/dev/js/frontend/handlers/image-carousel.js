@@ -176,8 +176,6 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 	getChangeableProperties() {
 		return {
-			slides_to_show: 'slidesPerView',
-			slides_to_scroll: 'slidesPerGroup',
 			autoplay: 'autoplay',
 			pause_on_hover: 'pauseOnHover',
 			pause_on_interaction: 'disableOnInteraction',

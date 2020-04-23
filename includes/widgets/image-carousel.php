@@ -122,7 +122,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 				] + $slides_to_show,
-				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -139,7 +138,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'slides_to_show!' => '1',
 				],
-				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
