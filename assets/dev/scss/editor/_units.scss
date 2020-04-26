@@ -1,5 +1,11 @@
-@for $i from 1 through 5 {
+@for $i from 1 through 4 {
 	.elementor-control-unit-#{$i} {
 		width: $control-unit * $i;
 	}
+}
+
+.elementor-control-unit-5 {
+	min-width: $control-unit * 5;
+	max-width: 400px;
+	width: 60%;
 }
