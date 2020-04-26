@@ -337,17 +337,7 @@ class Svg_Handler {
 	 * @return false|int
 	 */
 	private function has_js_value( $value ) {
-		return preg_match( '/(script|javascript|alert\(|window\.|document)/i', $value );
-	}
-
-	/**
-	 * has_base64_value
-	 * @param $value
-	 *
-	 * @return false|int
-	 */
-	private function has_base64_or_datauri_value( $value ) {
-		return preg_match( '/(base64|data:(text|image))/i', $value );
+		return preg_match( '/base64|data|(?:java)?script|alert\(|window\.|document/i', $value );
 	}
 
 	/**
@@ -514,7 +504,7 @@ class Svg_Handler {
 			$attr_value = $element->attributes->item( $index )->value;
 
 			// Remove attribute if it has a remote reference or js or data-URI/base64
-			if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) || $this->has_base64_or_datauri_value( $attr_value ) ) {
+			if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) ) {
 				$element->removeAttribute( $attr_name );
 				continue;
 			}
@@ -527,6 +517,11 @@ class Svg_Handler {
 	 */
 	private function strip_xlinks( $element ) {
 		$xlinks = $element->getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+
+		if ( ! $xlinks ) {
+			return;
+		}
+
 		$allowed_links = [
 			'data:image/png', // PNG
 			'data:image/gif', // GIF
@@ -619,11 +614,6 @@ class Svg_Handler {
 			$this->validate_allowed_attributes( $current_element );
 
 			$this->strip_xlinks( $current_element );
-
-			$href = $current_element->getAttribute( 'href' );
-			if ( 1 === preg_match( self::SCRIPT_REGEX, $href ) ) {
-				$current_element->removeAttribute( 'href' );
-			}
 
 			if ( 'use' === strtolower( $current_element->tagName ) ) { // phpcs:ignore -- php DomDocument
 				$this->validate_use_tag( $current_element );
