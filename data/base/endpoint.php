@@ -45,18 +45,17 @@ abstract class Endpoint {
 	 * By default: register get items route.
 	 */
 	protected function register() {
-		$this->register_get_items_route();
+		$this->register_items_route();
 	}
 
 	/**
-	 * Register get item route.
+	 * Register item route.
 	 *
 	 * @param array  $args
 	 * @param string $default_args
-	 *
-	 * @throws \Exception
+	 * @param string $methods
 	 */
-	public function register_get_item_route( $args = [], $default_args = '/(?P<id>[\w]+)' ) {
+	public function register_item_route( $args = [], $default_args = '/(?P<id>[\w]+)', $methods = WP_REST_Server::READABLE ) {
 		$args = array_merge( [
 			'id' => [
 				'description' => 'Unique identifier for the object.',
@@ -64,17 +63,30 @@ abstract class Endpoint {
 			],
 		], $args );
 
-		$this->register_route( $default_args, WP_REST_Server::READABLE, function ( $request ) {
+		$this->register_route( $default_args, $methods, function ( $request ) {
 			return rest_ensure_response( $this->get_item( $request->get_param( 'id' ), $request ) );
 		}, $args );
 	}
 
 	/**
-	 * Register get items route.
+	 * Register items route.
+	 *
+	 * @param string $methods
 	 */
-	public function register_get_items_route() {
-		$this->register_route( '', WP_REST_Server::READABLE, function ( $request ) {
-			return rest_ensure_response( $this->get_items( $request ) );
+	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
+		// TODO: Handle permission callback.
+
+		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
+			switch ( $methods ) {
+				case WP_REST_Server::READABLE:
+					return rest_ensure_response( $this->get_items( $request ) );
+
+				case WP_REST_Server::CREATABLE:
+					return rest_ensure_response( $this->create_items( $request ) );
+
+				default:
+					// TODO: Error.
+			}
 		} );
 	}
 
@@ -155,6 +167,14 @@ abstract class Endpoint {
 		}
 
 		return $response;
+	}
+
+	protected function create_item( $id, $request ) {
+		return $this->controller->create_item( $request );
+	}
+
+	protected function create_items( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( __( "Method '%s' not implemented. Must be overridden in subclass." ), __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**

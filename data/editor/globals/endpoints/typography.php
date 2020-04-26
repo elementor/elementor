@@ -23,7 +23,8 @@ class Typography extends Endpoint {
 	protected function register() {
 		parent::register();
 
-		$this->register_get_item_route();
+		$this->register_item_route();
+		$this->register_items_route( \WP_REST_Server::CREATABLE );
 	}
 
 	protected function get_items( $request ) {

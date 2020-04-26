@@ -16,7 +16,7 @@ class Colors extends Endpoint {
 	protected function register() {
 		parent::register();
 
-		$this->register_get_item_route();
+		$this->register_item_route();
 	}
 
 	protected function get_items( $request ) {
