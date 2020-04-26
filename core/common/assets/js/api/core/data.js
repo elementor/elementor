@@ -216,8 +216,8 @@ export default class Data extends Commands {
 		return super.run( command, args );
 	}
 
-	create( endpoint, query = {}, options = {} ) {
-		return this.run( 'create', endpoint, { query, options } );
+	create( endpoint, query = {}, options = {}, data = {} ) {
+		return this.run( 'create', endpoint, { query, options, data } );
 	}
 
 	delete( endpoint, query = {}, options = {} ) {

@@ -2,6 +2,8 @@
 namespace Elementor\Data\Editor\Globals\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
+use Elementor\Plugin;
+use Elementor\Utils;
 
 class Typography extends Endpoint {
 	private static $fake_data = [
@@ -37,5 +39,29 @@ class Typography extends Endpoint {
 		}
 
 		return false;
+	}
+
+	protected function create_items( $request ) {
+		$result = [
+			'success' => false,
+		];
+
+		$data = $request->get_json_params();
+
+		if ( isset( $data['args'] ) && isset( $data['args']['data'] ) ) {
+			$data = $data['args'] ['data'];
+			$data['id'] = Utils::generate_random_string();
+
+			$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+  			$kit->add_repeater_row( 'typography', $data );
+
+			$result = [
+				'id' => $data['id'],
+				'success' => true,
+			];
+		}
+
+		return $result;
 	}
 }

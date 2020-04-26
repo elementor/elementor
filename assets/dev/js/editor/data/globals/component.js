@@ -1,7 +1,8 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
+import TypographyComponent from './typography/component';
 
-import * as commandsData from './commands/';
+import * as commandsData from './commands/data/';
 import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
@@ -19,6 +20,12 @@ export default class Component extends ComponentBase {
 
 	getNamespace() {
 		return 'globals';
+	}
+
+	registerAPI() {
+		$e.components.register( new TypographyComponent( { manager: this } ) );
+
+		super.registerAPI();
 	}
 
 	defaultData() {
