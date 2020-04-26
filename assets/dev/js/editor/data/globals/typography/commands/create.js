@@ -4,11 +4,11 @@ export class Create extends CommandBase {
 	validateArgs( args = {} ) {
 		this.requireContainer( args );
 		this.requireArgumentType( 'setting', 'string', args );
-		this.requireArgumentType( 'name', 'string', args );
+		this.requireArgumentType( 'title', 'string', args );
 	}
 
 	apply( args = {} ) {
-		const { container, setting, name } = args,
+		const { container, setting, title } = args,
 			controls = container.controls,
 			availableControls = {};
 
@@ -24,15 +24,15 @@ export class Create extends CommandBase {
 		if ( groupPrefix ) {
 			Object.entries( controls ).forEach( ( [ key, control ] ) => {
 				if ( key.includes( groupPrefix ) ) {
-					availableControls[ key.replace( groupPrefix, '' ) ] = container.settings.get( key );
+					availableControls[ key.replace( groupPrefix, 'typography_' ) ] = container.settings.get( key );
 				}
 			} );
 		}
 
 		if ( Object.values( availableControls ).length ) {
 			result = $e.data.create( 'globals/typography', {}, {}, {
-				name,
-				controls: availableControls,
+				title,
+				... availableControls,
 			} );
 		}
 

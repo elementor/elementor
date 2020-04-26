@@ -50,14 +50,14 @@ class Typography extends Endpoint {
 
 		if ( isset( $data['args'] ) && isset( $data['args']['data'] ) ) {
 			$data = $data['args'] ['data'];
-			$data['id'] = Utils::generate_random_string();
+			$data['_id'] = Utils::generate_random_string();
 
 			$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-  			$kit->add_repeater_row( 'typography', $data );
+			$kit->add_repeater_row( 'typography', $data );
 
 			$result = [
-				'id' => $data['id'],
+				'id' => $data['_id'],
 				'success' => true,
 			];
 		}
