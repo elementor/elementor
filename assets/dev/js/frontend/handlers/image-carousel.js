@@ -1,4 +1,4 @@
-class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
+class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -12,16 +12,12 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		const elements = {
-			$carousel: this.$element.find( selectors.carousel ),
+			$swiperContainer: this.$element.find( selectors.carousel ),
 		};
 
-		elements.$swiperSlides = elements.$carousel.find( selectors.slideContent );
+		elements.$slides = elements.$swiperContainer.find( selectors.slideContent );
 
 		return elements;
-	}
-
-	getSlidesCount() {
-		return this.elements.$swiperSlides.length;
 	}
 
 	getSwiperSettings() {
@@ -97,33 +93,17 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 
 		const elementSettings = this.getElementSettings();
 
-		if ( ! this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length ) {
+		if ( ! this.elements.$swiperContainer.length || 2 > this.elements.$slides.length ) {
 			return;
 		}
 
-		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
+		this.swiper = new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
 
 		// Expose the swiper instance in the frontend
-		this.elements.$carousel.data( 'swiper', this.swiper );
+		this.elements.$swiperContainer.data( 'swiper', this.swiper );
 
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
-		}
-	}
-
-	// This method live-handles the 'Pause On Hover' control's value being changed in the Editor Panel
-	togglePauseOnHover( toggleOn ) {
-		if ( toggleOn ) {
-			this.elements.$carousel.on( {
-				mouseenter: () => {
-					this.swiper.autoplay.stop();
-				},
-				mouseleave: () => {
-					this.swiper.autoplay.start();
-				},
-			} );
-		} else {
-			this.elements.$carousel.off( 'mouseenter mouseleave' );
 		}
 	}
 
