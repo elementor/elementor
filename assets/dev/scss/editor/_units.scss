@@ -5,7 +5,6 @@
 }
 
 .elementor-control-unit-5 {
-	min-width: $control-unit * 5;
 	max-width: 400px;
-	width: 52%;
+	width: 52%; //= Equal to 5 units in default panel width (300px)
 }
