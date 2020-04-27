@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Testing;
 
-use Elementor\Utils;
-
 class Elementor_Test_Widgets extends Elementor_Test_Base {
 
 	public function test_getInstance() {
@@ -69,7 +67,7 @@ class Elementor_Test_Widgets extends Elementor_Test_Base {
 
 				$error_msg = sprintf( 'Widget: %1$s, Control: %2$s', $widget->get_name(), $control['name'] );
 
-				if ( Utils::is_empty( $control['default'] ) ) {
+				if ( empty( $control['default'] ) ) {
 					$this->assertTrue( isset( $control['options'][''] ), $error_msg );
 				} else {
 					$flat_options = [];
