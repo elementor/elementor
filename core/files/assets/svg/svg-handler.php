@@ -1,18 +1,19 @@
 <?php
 namespace Elementor\Core\Files\Assets\Svg;
 
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Svg_Handler {
+class Svg_Handler extends Files_Upload_Handler {
 	/**
 	 * Inline svg attachment meta key
 	 */
 	const META_KEY = '_elementor_inline_svg';
-
 	const MIME_TYPE = 'image/svg+xml';
-
+	const FILE_TYPE = 'svg';
 	const SCRIPT_REGEX = '/(?:\w+script|data):/xi';
 
 	/**
@@ -31,40 +32,6 @@ class Svg_Handler {
 
 	public static function get_name() {
 		return 'svg-handler';
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function is_svg_uploads_enabled() {
-		return ! ! get_option( 'elementor_allow_svg', false );
-	}
-
-	/**
-	 * svg_sanitizer_can_run
-	 * @return bool
-	 */
-	public static function svg_sanitizer_can_run() {
-		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
-	}
-
-	/**
-	 * set_attachment_id
-	 * @param $attachment_id
-	 *
-	 * @return int
-	 */
-	public function set_attachment_id( $attachment_id ) {
-		$this->attachment_id = $attachment_id;
-		return $this->attachment_id;
-	}
-
-	/**
-	 * get_attachment_id
-	 * @return int
-	 */
-	public function get_attachment_id() {
-		return $this->attachment_id;
 	}
 
 	/**
@@ -140,42 +107,8 @@ class Svg_Handler {
 		return $allowed_types;
 	}
 
-	/**
-	 * wp_handle_upload_prefilter
-	 * @param $file
-	 *
-	 * @return mixed
-	 */
 	public function wp_handle_upload_prefilter( $file ) {
-		if ( ! $this->is_elementor_media_upload() || self::MIME_TYPE !== $file['type'] ) {
-			return $file;
-		}
-
-		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
-
-		if ( 'svg' !== $ext ) {
-			$file['error'] = sprintf( __( 'The uploaded %s file is not supported. Please upload a valid SVG file', 'elementor' ), $ext );
-			return $file;
-		}
-
-		if ( ! self::is_enabled() ) {
-			$file['error'] = __( 'SVG file is not allowed for security reasons', 'elementor' );
-			return $file;
-		}
-
-		if ( self::svg_sanitizer_can_run() && ! $this->sanitize_svg( $file['tmp_name'] ) ) {
-			$file['error'] = __( 'Invalid SVG Format, file not uploaded for security reasons', 'elementor' );
-		}
-
-		return $file;
-	}
-
-	/**
-	 * is_elementor_media_upload
-	 * @return bool
-	 */
-	private function is_elementor_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-editor-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
+		return $this->handle_upload_prefilter( $file, self::MIME_TYPE, self::FILE_TYPE );
 	}
 
 	/**
@@ -193,35 +126,9 @@ class Svg_Handler {
 	 * @return mixed
 	 */
 	public function wp_check_filetype_and_ext( $data, $file, $filename, $mimes ) {
-		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
-			return $data;
-		}
-
-		$filetype = wp_check_filetype( $filename, $mimes );
-
-		if ( 'svg' === $filetype['ext'] ) {
-			$data['ext'] = 'svg';
-			$data['type'] = self::MIME_TYPE;
-		}
-
-		return $data;
+		return $this->check_filetype_and_ext( $data, $filename, self::FILE_TYPE, $mimes, self::MIME_TYPE );
 	}
 
-	/**
-	 * Check if the contents are gzipped
-	 * @see http://www.gzip.org/zlib/rfc-gzip.html#member-format
-	 *
-	 * @param $contents
-	 * @return bool
-	 */
-	private function is_encoded( $contents ) {
-		$needle = "\x1f\x8b\x08";
-		if ( function_exists( 'mb_strpos' ) ) {
-			return 0 === mb_strpos( $contents, $needle );
-		} else {
-			return 0 === strpos( $contents, $needle );
-		}
-	}
 
 	/**
 	 * decode_svg
@@ -244,12 +151,12 @@ class Svg_Handler {
 	}
 
 	/**
-	 * sanitize_svg
+	 * sanitize_file
 	 * @param $filename
 	 *
 	 * @return bool
 	 */
-	public function sanitize_svg( $filename ) {
+	public function sanitize_file( $filename ) {
 		$original_content = file_get_contents( $filename );
 		$is_encoded = $this->is_encoded( $original_content );
 
@@ -309,7 +216,7 @@ class Svg_Handler {
 	 *
 	 * @return bool
 	 */
-	private function is_a_attribute( $name, $check ) {
+	protected function is_a_attribute( $name, $check ) {
 		return 0 === strpos( $name, $check . '-' );
 	}
 
@@ -554,40 +461,6 @@ class Svg_Handler {
 	}
 
 	/**
-	 * strip_php_tags
-	 * @param $string
-	 *
-	 * @return string
-	 */
-	private function strip_php_tags( $string ) {
-		$string = preg_replace( '/<\?(=|php)(.+?)\?>/i', '', $string );
-		// Remove XML, ASP, etc.
-		$string = preg_replace( '/<\?(.*)\?>/Us', '', $string );
-		$string = preg_replace( '/<\%(.*)\%>/Us', '', $string );
-
-		if ( ( false !== strpos( $string, '<?' ) ) || ( false !== strpos( $string, '<%' ) ) ) {
-			return '';
-		}
-		return $string;
-	}
-
-	/**
-	 * strip_comments
-	 * @param $string
-	 *
-	 * @return string
-	 */
-	private function strip_comments( $string ) {
-		// Remove comments.
-		$string = preg_replace( '/<!--(.*)-->/Us', '', $string );
-		$string = preg_replace( '/\/\*(.*)\*\//Us', '', $string );
-		if ( ( false !== strpos( $string, '<!--' ) ) || ( false !== strpos( $string, '/*' ) ) ) {
-			return '';
-		}
-		return $string;
-	}
-
-	/**
 	 * sanitize_elements
 	 */
 	private function sanitize_elements() {
@@ -714,19 +587,12 @@ class Svg_Handler {
 		return $attachment_data;
 	}
 
-	public static function is_enabled() {
-		static $enabled = null;
-		if ( null === $enabled ) {
-			$enabled = self::is_svg_uploads_enabled() && self::svg_sanitizer_can_run();
-			$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
-		}
-		return $enabled;
-	}
-
 	/**
 	 * Svg_Handler constructor.
 	 */
 	public function __construct() {
+		parent::__construct();
+
 		add_filter( 'upload_mimes', [ $this, 'upload_mimes' ] );
 		add_filter( 'wp_handle_upload_prefilter', [ $this, 'wp_handle_upload_prefilter' ] );
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'wp_check_filetype_and_ext' ], 10, 4 );

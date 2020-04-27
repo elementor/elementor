@@ -2,6 +2,12 @@ var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
 
 ControlMediaItemView = ControlMultipleBaseItemView.extend( {
+	cache: {
+		loaded: false,
+		dialog: false,
+		enableClicked: false,
+	},
+
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
@@ -10,6 +16,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
+		ui.fileName = '.elementor-control-media__file-name';
 
 		return ui;
 	},
@@ -27,18 +34,25 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	applySavedValue: function() {
 		var url = this.getControlValue( 'url' ),
-			mediaType = this.getMediaType();
+			mediaType = this.getMediaType(),
+			fileName = this.getControlValue( 'fileName' );
 
 		if ( 'image' === mediaType ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
+		} else {
+			this.ui.fileName.text( fileName );
 		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
 	},
 
 	openFrame: function() {
+		if ( ! this.isSvgEnabled() && ! elementor.iconManager.cache.svgDialogShown ) {
+			return this.getUnfilteredFilesUploadNotEnabledDialog().show();
+		}
+
 		if ( ! this.frame ) {
 			this.initFrame();
 		}
@@ -54,12 +68,37 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.frame.state().get( 'selection' ).add( wp.media.attachment( selectedId ) );
 	},
 
+	isSvgEnabled() {
+		if ( ! this.cache.enableClicked ) {
+			console.log('is svg enabled', this.model.get( 'is_svg_enabled' ));
+			return this.model.get( 'is_svg_enabled' );
+		}
+		return true;
+	},
+
+	// Trying a temp solution.
+	getUnfilteredFilesUploadNotEnabledDialog() {
+		const onConfirm = () => {
+			elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
+			elementor.iconManager.cache.svgDialogShown = true;
+			this.openFrame();
+		};
+		return elementor.helpers.getSimpleDialog(
+			'elementor-enable-svg-dialog',
+			elementor.translate( 'enable_svg' ),
+			elementor.translate( 'dialog_confirm_enable_svg' ),
+			elementor.translate( 'enable' ),
+			onConfirm
+		);
+	},
+
 	deleteImage: function( event ) {
 		event.stopPropagation();
 
 		this.setValue( {
 			url: '',
 			id: '',
+			fileName: '',
 		} );
 
 		this.applySavedValue();
@@ -85,6 +124,27 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			],
 		} );
 
+		/*
+		// TODO - remove
+		// Not working on the first time (require a page reload after value was changed) + working place function
+		elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
+
+		// TODO -remove
+		if ( this.model.get( 'is_json_upload_enabled' ) && 'application/json' === this.getMediaType() ) {
+			const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+
+			// TODO - allowing display of JSON files in the media select file window
+			this.frame.on( 'ready', () => {
+				_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = 'json';
+			} );
+
+			this.frame.on( 'close', () => {
+				// restore allowed upload extensions
+				_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+			} );
+		}
+		 */
+
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', this.select.bind( this ) );
 	},
@@ -103,6 +163,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.setValue( {
 				url: attachment.url,
 				id: attachment.id,
+				fileName: attachment.filename,
 			} );
 
 			this.applySavedValue();

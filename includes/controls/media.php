@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Assets\Json\Json_Handler;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -67,7 +68,16 @@ class Control_Media extends Control_Base_Multiple {
 			return $settings;
 		}
 
+		// Rotem code - rotem code
+		// TODO: is the add_filter needed?
+		// TODO: Will it work with JSON?
+		//add_filter( 'upload_mimes', array( $this, 'support_json_import' ) );
+
 		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
+
+		// Rotem code - rotem code
+		// TODO: remove before production
+		//remove_filter( 'upload_mimes', array( $this, 'support_json_import' ) );
 
 		if ( ! $settings ) {
 			$settings = [
@@ -116,6 +126,8 @@ class Control_Media extends Control_Base_Multiple {
 		wp_enqueue_script( 'image-edit' );
 	}
 
+
+
 	/**
 	 * Render media control output in the editor.
 	 *
@@ -130,6 +142,8 @@ class Control_Media extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<!-- TODO: hide this div when not video and not media -->
+			<# if ( 'image' === data.media_type || 'video' === data.media_type ) { #>
 			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
 				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
 					<div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
@@ -155,6 +169,30 @@ class Control_Media extends Control_Base_Multiple {
 					</div>
 				</div>
 			</div>
+				<# } else { #>
+			<div class="elementor-control-input-wrapper elementor-control-input-wrapper-file elementor-aspect-ratio-219">
+				<div class="elementor-control-media__file elementor-control-media__file elementor-control-tag-area elementor-control-preview-area">
+					<div class="elementor-control-upload-content">
+						<div class="elementor-control-media__upload-label">Click the media icon to upload file</div>
+						<div class="elementor-control-media__file-info">
+							<div class="elementor-control-media__icon">
+								<i class="eicon-document-file"></i>
+							</div>
+							<div class="elementor-control-media__file-name"></div>
+						</div>
+					</div>
+					<div class="elementor-control-upload-controls">
+						<div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+							<i class="eicon-trash-o"></i>
+						</div>
+						<div class="elementor-control-media-upload-button" title="<?php echo __( 'Upload', 'elementor' ); ?>">
+							<i class="eicon-upload"></i>
+						</div>
+					</div>
+				</div>
+				<# } #>
+				<!--end of div-->
+			</div>
 			<# if ( data.description ) { #>
 			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 			<# } #>
@@ -178,6 +216,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'media_type' => 'image',
+			'is_svg_enabled' => Json_Handler::is_enabled(), // TODO - remove
 			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',

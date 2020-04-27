@@ -18,10 +18,18 @@
 		border: 1px solid $editor-lightest;
 	}
 
+	.elementor-control-input-wrapper-file {
+		border-radius: 3px;
+	}
+
 	.eicon-plus-circle {
 		@include absolute-center;
 		color: #fff;
 		font-size: 20px;
+	}
+
+	&-upload-label {
+
 	}
 
 	&-upload-button {
@@ -136,6 +144,100 @@
 			background-color: rgba(#fff, 1);
 			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
 		}
+	}
+
+	&.elementor-media-empty .elementor-control-file-area {
+		display: none;
+	}
+
+	// When attachment type is not image and not video
+	&__file {
+		position: relative;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	&__file .elementor-control-upload-content {
+		padding-left: 5px;
+	}
+
+	&__file &__upload-label {
+		color: #A4AFB7;
+		font-size: 12px;
+		font-family: Roboto;
+		font-style: italic;
+		font-weight: normal;
+	}
+
+	&:not(.elementor-media-empty) &__file &__upload-label {
+		display: none;
+	}
+
+	&__file-info {
+		display: flex;
+		align-items: center;
+	}
+
+	&.elementor-media-empty &__file-info,
+	&.elementor-media-empty &__remove {
+		display: none;
+	}
+
+	&__file .elementor-control-file-area {
+		align-items: center;
+		cursor: pointer;
+		display: flex;
+		padding: 15px 10px;
+	}
+
+	&__file .elementor-control-upload-controls {
+		display: flex;
+		border-left: 1px solid #d5dadf;
+	}
+
+	&__file &__remove {
+		cursor: pointer;
+		top: initial;
+		right: initial;
+		position: relative;
+		border-right: 1px solid #d5dadf;
+		box-shadow: none;
+	}
+
+	&__file &-upload-button,
+	.elementor-control-media:not(.elementor-media-empty) &__file &-upload-button,
+	&__file &__remove {
+		width: 27px;
+		height: 27px;
+		cursor: pointer;
+		position: relative;
+		background-color: initial;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: #6D7882;
+	}
+
+	&__file &-upload-button:hover {
+		background-color: initial;
+	}
+
+	&__file &__icon,
+	&__file &__file-name {
+		font-family: Roboto;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 12px;
+		color: #6D7882;
+	}
+
+	&__file &__icon {
+		margin-right: 5px;
+	}
+
+	&__file &-area {
+		background-image: none;
 	}
 
 	.elementor-control-dynamic-switcher {
