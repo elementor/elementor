@@ -337,7 +337,7 @@ class Svg_Handler {
 	 * @return false|int
 	 */
 	private function has_js_value( $value ) {
-		return preg_match( '/(script|javascript|alert\(|window\.|document)/i', $value );
+		return preg_match( '/base64|data|(?:java)?script|alert\(|window\.|document/i', $value );
 	}
 
 	/**
@@ -503,7 +503,7 @@ class Svg_Handler {
 
 			$attr_value = $element->attributes->item( $index )->value;
 
-			// Remove attribute if it has a remote reference or js
+			// Remove attribute if it has a remote reference or js or data-URI/base64
 			if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) ) {
 				$element->removeAttribute( $attr_name );
 				continue;
@@ -517,6 +517,11 @@ class Svg_Handler {
 	 */
 	private function strip_xlinks( $element ) {
 		$xlinks = $element->getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+
+		if ( ! $xlinks ) {
+			return;
+		}
+
 		$allowed_links = [
 			'data:image/png', // PNG
 			'data:image/gif', // GIF
@@ -610,11 +615,6 @@ class Svg_Handler {
 
 			$this->strip_xlinks( $current_element );
 
-			$href = $current_element->getAttribute( 'href' );
-			if ( 1 === preg_match( self::SCRIPT_REGEX, $href ) ) {
-				$current_element->removeAttribute( 'href' );
-			}
-
 			if ( 'use' === strtolower( $current_element->tagName ) ) { // phpcs:ignore -- php DomDocument
 				$this->validate_use_tag( $current_element );
 			}
@@ -629,8 +629,8 @@ class Svg_Handler {
 	 */
 	public function sanitizer( $content ) {
 		// Strip php tags
-		$content = $this->strip_php_tags( $content );
 		$content = $this->strip_comments( $content );
+		$content = $this->strip_php_tags( $content );
 
 		// Find the start and end tags so we can cut out miscellaneous garbage.
 		$start = strpos( $content, '<svg' );
