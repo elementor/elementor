@@ -11,6 +11,10 @@ export class Disable extends DisableEnable {
 				const settingsToRestore = {};
 
 				Object.entries( container.globals.attributes ).forEach( ( [ globalKey, globalValue ] ) => {
+					/**
+					 * TODO: Use of `$e.data.getCache` maybe abnormal, cannot use '$e.data.get' since its return:
+					 * promise and disable is async command, Consider to use async hook.
+					 */
 					const data = $e.data.getCache( globalValue, {} );
 
 					if ( data ) {
