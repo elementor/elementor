@@ -167,7 +167,7 @@ export default class Data extends Commands {
 		if ( 'GET' === method && ! requestData.args.options.refresh ) {
 			let cachePromise;
 
-			cachePromise = this.cache.receive( type, requestData );
+			cachePromise = this.cache.receive( requestData );
 
 			if ( cachePromise ) {
 				return cachePromise;
@@ -234,6 +234,17 @@ export default class Data extends Commands {
 
 	error( message ) {
 		throw Error( 'Data commands: ' + message );
+	}
+
+	getCache( command, query ) {
+		const args = { query },
+			endpoint = this.commandToEndpoint( 'get', command, args );
+
+		return this.cache.get( {
+			command,
+			endpoint,
+			args,
+		} );
 	}
 
 	/**

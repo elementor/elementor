@@ -2,6 +2,10 @@ import LocalStorage from './stroages/local-storage';
 
 export default class Cache {
 	/**
+	 * Function constructor().
+	 *
+	 * Create cache.
+	 *
 	 * @param {Data} manager
 	 */
 	constructor( manager ) {
@@ -11,69 +15,72 @@ export default class Cache {
 	}
 
 	/**
-	 * TODO: Add JSDOC.
-	 * TODO: Remove endpointCallback ( confuse after time ).
-	 * TODO: Optimize.
+	 * Function extractResponse().
+	 *
+	 * Extract response to callback that accept key,value parameters using requestData.
+	 *
+	 * @param {{}} response
+	 * @param {{}} requestData
+	 * @param {function( string, any )} keyValueCallback - callback(key, value)
 	 */
-	extractResponse( response, requestData, keyCallback, endpointCallback ) {
+	extractResponse( response, requestData, keyValueCallback ) {
 		const componentName = requestData.component?.getNamespace(),
 			isIndexCommand = requestData.endpoint + '/index' === requestData.command,
 			isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
-			endpointDepth = requestData.endpoint.split( '/', 3 ).length;
+			isEndpointTwoLevelsDeep = 2 < requestData.endpoint.split( '/', 3 ).length;
 
 		if ( isQueryEmpty && isIndexCommand ) {
 			// Handles situation when 'index' was forced to use like in 'globals' component.
 			// EG: 'globals/index'.
-			Object.entries( response ).forEach( ( [ key, value ] ) => {
+			Object.entries( response ).forEach( ( [ key, /*object*/ value ] ) => {
 				if ( 'object' === typeof value ) {
 					Object.entries( value ).forEach( ( [ endpoint, endpointResponse ] ) => {
-						endpointCallback( componentName, key + '/' + endpoint, endpointResponse );
+						keyValueCallback( componentName + '/' + key + '/' + endpoint, endpointResponse );
 					} );
 				} else {
-					keyCallback( key, value );
+					keyValueCallback( key, value );
 				}
 			} );
-		} else if ( endpointDepth > 2 && isQueryEmpty ) {
+		} else if ( isEndpointTwoLevelsDeep && isQueryEmpty ) {
 			// Handles situation when query empty.
-
 			// EG: 'globals/typography/primary'.
-			keyCallback( requestData.endpoint, response );
+			keyValueCallback( requestData.endpoint, response );
 		} else if ( isQueryEmpty ) {
 			// Handles situation when query empty.
-
 			// EG: 'globals/typography'.
 			Object.keys( response ).forEach( ( key ) => {
-				endpointCallback( requestData.command, key, response[ key ] );
+				keyValueCallback( requestData.command + '/' + key, response[ key ] );
 			} );
 		} else {
 			// Handles situation when query is not empty.
-			keyCallback( requestData.endpoint, response );
+			keyValueCallback( requestData.endpoint, response );
 		}
 	}
 
 	/**
+	 * Function receive().
 	 *
 	 * Receive from cache.
 	 *
-	 * @param {string} methodType
 	 * @param {{}} requestData
 	 *
 	 * @return {(Promise|boolean)}
 	 */
-	receive( methodType, requestData ) {
-		const endpoint = requestData.endpoint,
-			data = this.storage.getItem( endpoint );
+	receive( requestData ) {
+		const data = this.get( requestData );
 
 		if ( null !== data ) {
 			return new Promise( async ( resolve ) => {
-				resolve( JSON.parse( data ) );
+				resolve( data );
 			} );
 		}
 
+		// TODO: Check if possible, always return promise and reject it.
 		return false;
 	}
 
 	/**
+	 * Function load().
 	 *
 	 * Load data to cache
 	 *
@@ -81,17 +88,31 @@ export default class Cache {
 	 * @param {{}} response
 	 */
 	load( requestData, response ) {
-		const addCache = ( key, value ) => this.storage.setItem( key, JSON.stringify( value ) ),
-			addCacheEndpoint = ( controller, endpoint, value ) => addCache( controller + '/' + endpoint, value );
+		const addCache = ( key, value ) => this.storage.setItem( key, JSON.stringify( value ) );
 
-		this.extractResponse( response, requestData, addCache, addCacheEndpoint );
+		this.extractResponse( response, requestData, addCache );
 	}
 
 	/**
+	 * Function get().
+	 *
+	 * Get from exist storage.
+	 *
+	 * @param {{}} requestData
+	 *
+	 * @return {{}}
+	 */
+	get( requestData ) {
+		return JSON.parse( this.storage.getItem( requestData.endpoint ) );
+	}
+
+	/**
+	 * Function update().
 	 *
 	 * Update only exist storage.
 	 *
 	 * @param {{}} requestData
+	 *
 	 * @return {boolean}
 	 */
 	update( requestData ) {
@@ -99,30 +120,24 @@ export default class Cache {
 		let response = {};
 
 		// Simulate response from cache.
-		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, endpointValue ] ) => {
+		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /*string*/ endpointValue ] ) => {
 			if ( endpointKey === endpoint ) {
 				// If requested endpoint matches current endpoint key.
-
 				response = JSON.parse( endpointValue );
-
 				// Merge response with `requestData.args.data`.
 				response = Object.assign( response, requestData.args.data );
 			} else if ( endpointKey.includes( endpoint ) ) {
 				// If current cache is part of the endpoint ( Handle situations like 'globals/ ... ' ).
-
 				let isResponseMerged = false;
-
 				// Merge simulated response with `requestData.args.data`.
-				Object.entries( requestData.args.data ).forEach( ( [ dataKey, dataValue ] ) => {
-					if ( endpointKey.includes( dataKey + '/' ) ) {
-						if ( 'object' === typeof dataValue ) {
-							Object.entries( dataValue ).forEach( ( [ subKey, subValue ] ) => {
-								if ( endpointKey === endpoint + '/' + dataKey + '/' + subKey ) {
-									response[ endpointKey ] = subValue;
-									isResponseMerged = true;
-								}
-							} );
-						}
+				Object.entries( requestData.args.data ).forEach( ( [ dataKey, /*object*/ dataValue ] ) => {
+					if ( 'object' === typeof dataValue && endpointKey.includes( dataKey + '/' ) ) {
+						Object.entries( dataValue ).forEach( ( [ subKey, subValue ] ) => {
+							if ( endpointKey === endpoint + '/' + dataKey + '/' + subKey ) {
+								response[ endpointKey ] = subValue;
+								isResponseMerged = true;
+							}
+						} );
 					}
 				} );
 
@@ -132,7 +147,7 @@ export default class Cache {
 			}
 		} );
 
-		// If response not found
+		// If response not found.
 		if ( 0 === Object.values( response ).length ) {
 			return false;
 		}
@@ -143,10 +158,19 @@ export default class Cache {
 		return true;
 	}
 
+	/**
+	 * Function delete().
+	 *
+	 * Delete endpoint from storage.
+	 *
+	 * @param {string} endpoint
+	 *
+	 * @return {boolean}
+	 */
 	delete( endpoint ) {
 		let result = false;
 
-		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, endpointValue ] ) => {
+		Object.keys( this.storage.getAll() ).forEach( ( endpointKey ) => {
 			if ( endpointKey === endpoint ) {
 				this.storage.removeItem( endpoint );
 				result = true;
