@@ -289,6 +289,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'starter_title' => _x( 'Typography', 'Typography Control', 'elementor' ),
 				'settings' => [
 					'render_type' => 'ui',
+					'global' => true,
 				],
 			],
 		];

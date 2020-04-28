@@ -1,3 +1,5 @@
+import GlobalControlSelect from './behaviors/global-select-behavior';
+
 var ControlChooseView = require( 'elementor-controls/choose' ),
 	ControlPopoverStarterView;
 
@@ -18,6 +20,89 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 
 	onPopoverToggleClick: function() {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
+	},
+
+	behaviors: function() {
+		if ( this.options.model.attributes.global ) {
+			return {
+				globalControlSelect: {
+					behaviorClass: GlobalControlSelect,
+					popoverContent: this.getGlobalTextStyles(),
+				},
+			};
+		}
+	},
+
+	// TODO: Replace placeholders with real global colors
+	getGlobalTextStyles: function() {
+		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-typography-repeater-container' } ),
+			globalTextStyles = [
+				{
+					textStyleName: 'Primary',
+					fontFamily: 'Varela',
+					fontSize: '34px',
+					fontWeight: 'normal',
+					transform: 'none',
+					fontStyle: 'normal',
+					textDecoration: 'none',
+					lineHeight: 'inherit',
+					letterSpacing: 'inherit',
+				},
+				{
+					textStyleName: 'Secondary',
+					fontFamily: 'Varela',
+					fontSize: '28px',
+					fontWeight: 'normal',
+					transform: 'none',
+					fontStyle: 'normal',
+					textDecoration: 'none',
+					lineHeight: 'inherit',
+					letterSpacing: 'inherit',
+				},
+				{
+					textStyleName: 'Text',
+					fontFamily: 'Varela',
+					fontSize: '15px',
+					fontWeight: 'normal',
+					transform: 'none',
+					fontStyle: 'normal',
+					textDecoration: 'none',
+					lineHeight: 'inherit',
+					letterSpacing: 'inherit',
+				},
+				{
+					textStyleName: 'Accent',
+					fontFamily: 'Varela',
+					fontSize: '12px',
+					fontWeight: 'normal',
+					transform: 'none',
+					fontStyle: 'normal',
+					textDecoration: 'none',
+					lineHeight: 'inherit',
+					letterSpacing: 'inherit',
+				},
+			];
+
+		globalTextStyles.forEach( ( textStyle ) => {
+			const $textStylePreview = jQuery( '<div>', { class: 'elementor-global-preview elementor-global-text-style', 'data-elementor-global-name': textStyle.textStyleName } );
+
+			$textStylePreview
+				.html( textStyle.textStyleName )
+				.css( {
+					fontFamily: textStyle.fontFamily,
+					fontSize: textStyle.fontSize,
+					fontWeight: textStyle.fontWeight,
+					transform: textStyle.transform,
+					fontStyle: textStyle.fontStyle,
+					textDecoration: textStyle.textDecoration,
+					lineHeight: textStyle.lineHeight,
+					letterSpacing: textStyle.letterSpacing,
+				} );
+
+			$globalTypographyContainer.append( $textStylePreview );
+		} );
+
+		return $globalTypographyContainer;
 	},
 }, {
 
