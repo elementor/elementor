@@ -30,7 +30,7 @@ class Utils {
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		 _deprecated_function( __METHOD__, '2.6.0', `wp_doing_ajax()` );
+		 _deprecated_function( __METHOD__, '2.6.0', 'wp_doing_ajax()' );
 
 		return wp_doing_ajax();
 	}
