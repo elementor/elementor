@@ -1,0 +1,76 @@
+// Elementor Global Controls
+.elementor-global {
+
+	&-select {
+		border: 1px solid $editor-lightest;
+		@include border-end(0);
+		border-radius: 3px 0 0 3px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 4px;
+		width: $control-unit * 4;
+		cursor: pointer;
+
+		i {
+			@include padding-start(5px);
+			@include padding-end(2px);
+		}
+	}
+
+	&-selected {
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	&-control-popover {
+		width: 270px;
+		z-index: 1;
+		font-size: 12px;
+	}
+
+	&-popover {
+
+		&-container {
+			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+			border-radius: 3px;
+			background-color: #fff;
+		}
+
+		&-title {
+			padding: 15px 20px;
+			font-weight: bold;
+			color: $editor-dark;
+			border-bottom: 1px solid $gray-bg;
+
+			i {
+				@include margin-end(5px);
+				color: $editor-lightest;
+			}
+		}
+	}
+
+	&-manage-button {
+		color: $editor-dark;
+		font-weight: 500;
+		padding: 15px 20px;
+		border-top: 1px solid $gray-bg;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+
+		i {
+			@include margin-start(auto);
+		}
+	}
+
+	// Typography Control
+	&-text-style {
+		padding: 5px 35px;
+		cursor: pointer;
+
+		&:hover {
+			background-color: $editor-background-light;
+		}
+	}
+}
