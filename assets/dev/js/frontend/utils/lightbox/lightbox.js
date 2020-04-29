@@ -95,6 +95,12 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	showModal: function( options ) {
+		this.buttons = [
+			this.getModal().getElements( 'closeButton' )[ 0 ],
+		];
+
+		this.focusedButton = null;
+
 		const self = this,
 			defaultOptions = self.getDefaultSettings().modalOptions;
 
@@ -120,6 +126,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( screenfull.isFullscreen ) {
 				self.deactivateFullscreen();
 			}
+
+			self.unbindHotKeys();
 		};
 
 		switch ( options.type ) {
@@ -189,6 +197,9 @@ module.exports = elementorModules.ViewModule.extend( {
 		modal.onHide = function() {
 			onHideMethod();
 
+			this.buttons = [];
+			this.focusedButton = null;
+
 			modal.getElements( 'message' ).removeClass( 'elementor-fit-aspect-ratio' );
 		};
 	},
@@ -204,7 +215,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			classes = this.getSettings( 'classes' ),
 			$linkList = $( '<div>', { class: classes.slideshow.shareLinks } ),
 			$activeSlide = this.getSlide( 'active' ),
-			$image = $activeSlide.find( '.elementor-lightbox-image' ),
+			$image = $activeSlide.find( '.' + classes.image ),
 			videoUrl = $activeSlide.data( 'elementor-slideshow-video' );
 
 		let itemUrl;
@@ -223,10 +234,9 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 
 		if ( ! videoUrl ) {
-			const download = i18n.download;
-			const downloadImage = i18n.downloadImage;
-
-			$linkList.append( $( '<a>', { href: itemUrl, download: '' } ).text( downloadImage ).prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': download } ) ) );
+			$linkList.append( $( '<a>', { href: itemUrl, download: '' } )
+				.text( i18n.downloadImage )
+				.prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': i18n.download } ) ) );
 		}
 
 		return $linkList;
@@ -272,26 +282,68 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showFullscreen ) {
-			elements.$iconExpand = $( '<i>', { class: slideshowClasses.iconExpand, 'aria-label': i18n.fullscreen } ).append( $( '<span>' ), $( '<span>' ) );
+			elements.$iconExpand = $( '<i>', {
+				class: slideshowClasses.iconExpand,
+				role: 'switch',
+				'aria-checked': false,
+				'aria-label': i18n.fullscreen,
+			} ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
+			elements.$iconExpand.on( 'keypress', ( key ) => {
+				// Check if the Enter key or Space key is pressed
+				if ( 13 === key.which || 32 === key.which ) {
+					key.preventDefault();
+
+					this.toggleFullscreen();
+				}
+			} );
 			elements.$header.append( elements.$iconExpand );
+			this.buttons.push( elements.$iconExpand[ 0 ] );
 		}
 
 		if ( showZoom ) {
-			elements.$iconZoom = $( '<i>', { class: slideshowClasses.iconZoomIn, 'aria-label': i18n.zoom } );
+			elements.$iconZoom = $( '<i>', {
+				class: slideshowClasses.iconZoomIn,
+				role: 'switch',
+				'aria-checked': false,
+				'aria-label': i18n.zoom,
+			} );
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
+			elements.$iconZoom.on( 'keypress', ( key ) => {
+				// Check if the Enter key or Space key is pressed
+				if ( 13 === key.which || 32 === key.which ) {
+					key.preventDefault();
+
+					this.toggleZoomMode();
+				}
+			} );
 			elements.$header.append( elements.$iconZoom );
+			this.buttons.push( elements.$iconZoom[ 0 ] );
 		}
 
 		if ( showShare ) {
-			elements.$iconShare = $( '<i>', { class: slideshowClasses.iconShare, 'aria-label': i18n.share } ).append( $( '<span>' ) );
+			elements.$iconShare = $( '<i>', {
+				class: slideshowClasses.iconShare,
+				role: 'button',
+				'aria-label': i18n.share,
+				'aria-expanded': false,
+			} ).append( $( '<span>' ) );
 			const $shareLinks = $( '<div>' );
 			$shareLinks.on( 'click', ( e ) => {
 				e.stopPropagation();
 			} );
 			elements.$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
 			elements.$iconShare.add( elements.$shareMenu ).on( 'click', this.toggleShareMenu );
+			elements.$iconShare.on( 'keypress', ( key ) => {
+				// Check if the Enter key or Space key is pressed
+				if ( 13 === key.which || 32 === key.which ) {
+					key.preventDefault();
+
+					this.toggleShareMenu();
+				}
+			} );
 			elements.$header.append( elements.$iconShare, elements.$shareMenu );
+			this.buttons.push( elements.$iconShare[ 0 ] );
 		}
 
 		return elements.$header;
@@ -317,9 +369,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		const classes = this.getSettings( 'classes' );
 		if ( this.elements.$container.hasClass( classes.slideshow.shareMode ) ) {
 			this.deactivateShareMode();
+			this.elements.$shareMenu
+				.attr( 'aria-expanded', false );
 		} else {
-			const $shareMenu = this.elements.$header.find( '.' + classes.slideshow.shareMenu );
-			$shareMenu.html( this.getShareLinks() );
+			this.elements.$shareMenu
+				.html( this.getShareLinks() )
+				.attr( 'aria-expanded', true );
 			this.activateShareMode();
 		}
 	},
@@ -327,26 +382,32 @@ module.exports = elementorModules.ViewModule.extend( {
 	activateShareMode: function() {
 		const classes = this.getSettings( 'classes' );
 		this.elements.$container.addClass( classes.slideshow.shareMode );
+		this.elements.$iconShare.attr( 'aria-expanded', true );
 		this.swiper.detachEvents();
 	},
 
 	deactivateShareMode: function() {
 		const classes = this.getSettings( 'classes' );
 		this.elements.$container.removeClass( classes.slideshow.shareMode );
+		this.elements.$iconShare.attr( 'aria-expanded', false );
 		this.swiper.attachEvents();
 	},
 
 	activateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
-		this.elements.$iconExpand.removeClass( classes.slideshow.iconExpand ).addClass( classes.slideshow.iconShrink );
+		this.elements.$iconExpand.removeClass( classes.slideshow.iconExpand )
+			.addClass( classes.slideshow.iconShrink )
+			.attr( 'aria-checked', 'true' );
 		this.elements.$container.addClass( classes.slideshow.fullscreenMode );
 	},
 
 	deactivateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.exit();
-		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink ).addClass( classes.slideshow.iconExpand );
+		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink )
+			.addClass( classes.slideshow.iconExpand )
+			.attr( 'aria-checked', 'false' );
 		this.elements.$container.removeClass( classes.slideshow.fullscreenMode );
 	},
 
@@ -420,12 +481,22 @@ module.exports = elementorModules.ViewModule.extend( {
 			} else {
 				const $zoomContainer = $( '<div>', { class: 'swiper-zoom-container' } ),
 					$slidePlaceholder = $( '<div class="swiper-lazy-preloader"></div>' ),
-					$slideImage = $( '<img>', {
-						class: classes.image + ' ' + classes.preventClose + ' swiper-lazy',
+					imageAttributes = {
 						'data-src': slide.image,
-						'data-title': slide.title,
-						'data-description': slide.description,
-					} );
+						class: classes.image + ' ' + classes.preventClose + ' swiper-lazy',
+					};
+
+				if ( slide.title ) {
+					imageAttributes[ 'data-title' ] = slide.title;
+					imageAttributes.alt = slide.title;
+				}
+
+				if ( slide.description ) {
+					imageAttributes[ 'data-description' ] = slide.description;
+					imageAttributes.alt += ' - ' + slide.description;
+				}
+
+				const $slideImage = $( '<img>', imageAttributes );
 
 				$zoomContainer.append( [ $slideImage, $slidePlaceholder ] );
 				$slide.append( $zoomContainer );
@@ -442,13 +513,15 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon, 'aria-label': i18n.previous } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon, 'aria-label': i18n.next } ) );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
 			$container.append(
 				$prevButton,
 				$nextButton,
 			);
+
+			this.buttons.push( $prevButton[ 0 ], $nextButton[ 0 ] );
 		}
 
 		if ( showFooter ) {
@@ -458,15 +531,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.setSettings( 'hideUiTimeout', '' );
 
-		$container.on( 'click mousemove keypress', () => {
-			clearTimeout( this.getSettings( 'hideUiTimeout' ) );
-			$container.removeClass( slideshowClasses.hideUiVisibility );
-			this.setSettings( 'hideUiTimeout', setTimeout( () => {
-				if ( ! $container.hasClass( slideshowClasses.shareMode ) ) {
-					$container.addClass( slideshowClasses.hideUiVisibility );
-				}
-			}, 3500 ) );
-		} );
+		$container.on( 'click mousemove keypress', this.showLightboxUi );
 
 		const modal = this.getModal();
 
@@ -520,7 +585,70 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( showFooter ) {
 				this.updateFooterText();
 			}
+
+			this.bindHotKeys();
+
+			jQuery.each( this.buttons, ( index, item ) => {
+				jQuery( item ).attr( 'tabindex', 0 );
+			} );
 		};
+	},
+
+	showLightboxUi: function() {
+		const slideshowClasses = this.getSettings( 'classes' ).slideshow,
+			$container = this.elements.$container;
+		clearTimeout( this.getSettings( 'hideUiTimeout' ) );
+		this.elements.$container.removeClass( slideshowClasses.hideUiVisibility );
+		this.setSettings( 'hideUiTimeout', setTimeout( () => {
+			if ( ! $container.hasClass( slideshowClasses.shareMode ) ) {
+				$container.addClass( slideshowClasses.hideUiVisibility );
+			}
+		}, 3500 ) );
+	},
+
+	bindHotKeys: function() {
+		this.getModal().getElements( 'window' ).on( {
+			keydown: this.activeKeyDown,
+		} );
+	},
+
+	unbindHotKeys: function() {
+		this.getModal().getElements( 'window' ).off( {
+			keydown: this.activeKeyDown,
+		} );
+	},
+
+	activeKeyDown: function( event ) {
+		this.showLightboxUi();
+
+		const TAB_KEY = 9;
+
+		if ( event.which === TAB_KEY ) {
+			let focusedButton,
+				isFirst,
+				isLast;
+
+			jQuery.each( this.buttons, ( index, item ) => {
+				if ( jQuery( item ).is( ':focus' ) ) {
+					focusedButton = this.buttons[ index ];
+					isFirst = 0 === index;
+					isLast = this.buttons.length - 1 === index;
+					return false;
+				}
+			} );
+
+			if ( event.shiftKey ) {
+				if ( isFirst ) {
+					event.preventDefault();
+					// Go to last button
+					this.buttons[ this.buttons.length - 1 ].focus();
+				}
+			} else if ( isLast || ! focusedButton ) {
+				event.preventDefault();
+				// Go to first button
+				this.buttons[ 0 ].focus();
+			}
+		}
 	},
 
 	setVideoAspectRatio: function( aspectRatio ) {
