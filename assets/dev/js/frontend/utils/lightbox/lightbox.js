@@ -95,9 +95,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	showModal: function( options ) {
-		this.buttons = [
-			this.getModal().getElements( 'closeButton' )[ 0 ],
-		];
+		const $closeButton = this.getModal().getElements( 'closeButton' );
+
+		this.buttons = [ $closeButton[ 0 ] ];
 
 		this.focusedButton = null;
 
@@ -276,51 +276,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		elements.$header = $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } );
 
-		if ( showCounter ) {
-			elements.$counter = $( '<span>', { class: slideshowClasses.counter } );
-			elements.$header.append( elements.$counter );
-		}
-
-		if ( showFullscreen ) {
-			elements.$iconExpand = $( '<i>', {
-				class: slideshowClasses.iconExpand,
-				role: 'switch',
-				'aria-checked': false,
-				'aria-label': i18n.fullscreen,
-			} ).append( $( '<span>' ), $( '<span>' ) );
-			elements.$iconExpand.on( 'click', this.toggleFullscreen );
-			elements.$iconExpand.on( 'keypress', ( key ) => {
-				// Check if the Enter key or Space key is pressed
-				if ( 13 === key.which || 32 === key.which ) {
-					key.preventDefault();
-
-					this.toggleFullscreen();
-				}
-			} );
-			elements.$header.append( elements.$iconExpand );
-			this.buttons.push( elements.$iconExpand[ 0 ] );
-		}
-
-		if ( showZoom ) {
-			elements.$iconZoom = $( '<i>', {
-				class: slideshowClasses.iconZoomIn,
-				role: 'switch',
-				'aria-checked': false,
-				'aria-label': i18n.zoom,
-			} );
-			elements.$iconZoom.on( 'click', this.toggleZoomMode );
-			elements.$iconZoom.on( 'keypress', ( key ) => {
-				// Check if the Enter key or Space key is pressed
-				if ( 13 === key.which || 32 === key.which ) {
-					key.preventDefault();
-
-					this.toggleZoomMode();
-				}
-			} );
-			elements.$header.append( elements.$iconZoom );
-			this.buttons.push( elements.$iconZoom[ 0 ] );
-		}
-
 		if ( showShare ) {
 			elements.$iconShare = $( '<i>', {
 				class: slideshowClasses.iconShare,
@@ -334,16 +289,37 @@ module.exports = elementorModules.ViewModule.extend( {
 			} );
 			elements.$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
 			elements.$iconShare.add( elements.$shareMenu ).on( 'click', this.toggleShareMenu );
-			elements.$iconShare.on( 'keypress', ( key ) => {
-				// Check if the Enter key or Space key is pressed
-				if ( 13 === key.which || 32 === key.which ) {
-					key.preventDefault();
-
-					this.toggleShareMenu();
-				}
-			} );
 			elements.$header.append( elements.$iconShare, elements.$shareMenu );
 			this.buttons.push( elements.$iconShare[ 0 ] );
+		}
+
+		if ( showZoom ) {
+			elements.$iconZoom = $( '<i>', {
+				class: slideshowClasses.iconZoomIn,
+				role: 'switch',
+				'aria-checked': false,
+				'aria-label': i18n.zoom,
+			} );
+			elements.$iconZoom.on( 'click', this.toggleZoomMode );
+			elements.$header.append( elements.$iconZoom );
+			this.buttons.push( elements.$iconZoom[ 0 ] );
+		}
+
+		if ( showFullscreen ) {
+			elements.$iconExpand = $( '<i>', {
+				class: slideshowClasses.iconExpand,
+				role: 'switch',
+				'aria-checked': false,
+				'aria-label': i18n.fullscreen,
+			} ).append( $( '<span>' ), $( '<span>' ) );
+			elements.$iconExpand.on( 'click', this.toggleFullscreen );
+			elements.$header.append( elements.$iconExpand );
+			this.buttons.push( elements.$iconExpand[ 0 ] );
+		}
+
+		if ( showCounter ) {
+			elements.$counter = $( '<span>', { class: slideshowClasses.counter } );
+			elements.$header.append( elements.$counter );
 		}
 
 		return elements.$header;
@@ -384,6 +360,9 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.elements.$container.addClass( classes.slideshow.shareMode );
 		this.elements.$iconShare.attr( 'aria-expanded', true );
 		this.swiper.detachEvents();
+		// Temporarily replace tabbable buttons with share-menu items
+		this.originalButtons = this.buttons;
+		this.buttons = [ this.elements.$iconShare[ 0 ] ].concat( this.elements.$shareMenu.find( 'a' ).toArray() );
 	},
 
 	deactivateShareMode: function() {
@@ -391,6 +370,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.elements.$container.removeClass( classes.slideshow.shareMode );
 		this.elements.$iconShare.attr( 'aria-expanded', false );
 		this.swiper.attachEvents();
+		this.buttons = this.originalButtons;
 	},
 
 	activateFullscreen: function() {
@@ -517,11 +497,11 @@ module.exports = elementorModules.ViewModule.extend( {
 			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
 			$container.append(
-				$prevButton,
 				$nextButton,
+				$prevButton,
 			);
 
-			this.buttons.push( $prevButton[ 0 ], $nextButton[ 0 ] );
+			this.buttons.push( $nextButton[ 0 ], $prevButton[ 0 ] );
 		}
 
 		if ( showFooter ) {
@@ -589,7 +569,13 @@ module.exports = elementorModules.ViewModule.extend( {
 			this.bindHotKeys();
 
 			jQuery.each( this.buttons, ( index, item ) => {
-				jQuery( item ).attr( 'tabindex', 0 );
+				jQuery( item )
+					.attr( 'tabindex', 0 )
+					.keypress( ( event ) => {
+					if ( 13 === event.which || 32 === event.which ) {
+						jQuery( item ).trigger( 'click' );
+					}
+				} );
 			} );
 		};
 	},
@@ -624,15 +610,17 @@ module.exports = elementorModules.ViewModule.extend( {
 		const TAB_KEY = 9;
 
 		if ( event.which === TAB_KEY ) {
+			const buttons = this.buttons;
+
 			let focusedButton,
 				isFirst,
 				isLast;
 
-			jQuery.each( this.buttons, ( index, item ) => {
+			jQuery.each( buttons, ( index, item ) => {
 				if ( jQuery( item ).is( ':focus' ) ) {
-					focusedButton = this.buttons[ index ];
+					focusedButton = buttons[ index ];
 					isFirst = 0 === index;
-					isLast = this.buttons.length - 1 === index;
+					isLast = buttons.length - 1 === index;
 					return false;
 				}
 			} );
@@ -641,12 +629,12 @@ module.exports = elementorModules.ViewModule.extend( {
 				if ( isFirst ) {
 					event.preventDefault();
 					// Go to last button
-					this.buttons[ this.buttons.length - 1 ].focus();
+					buttons[ buttons.length - 1 ].focus();
 				}
 			} else if ( isLast || ! focusedButton ) {
 				event.preventDefault();
 				// Go to first button
-				this.buttons[ 0 ].focus();
+				buttons[ 0 ].focus();
 			}
 		}
 	},

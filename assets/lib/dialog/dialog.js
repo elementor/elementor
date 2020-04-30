@@ -289,7 +289,7 @@
 			}
 
 			if (settings.closeButton) {
-				self.addElement('closeButton', '<div><i class="' + settings.closeButtonClass + '"></i></div>');
+				self.addElement('closeButton', '<a tabindex="0" title="Close (Esc)"><i class="' + settings.closeButtonClass + '"></i></a>');
 			}
 
 			var id = self.getSettings('id');

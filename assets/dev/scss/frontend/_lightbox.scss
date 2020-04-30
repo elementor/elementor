@@ -115,7 +115,7 @@
 
 	.elementor-swiper-button {
 		&:focus {
-			outline: none;
+			outline-width: 1px;
 		}
 
 		&-prev, &-next {
@@ -179,6 +179,7 @@
 	&__header {
 		color: var(--lightbox-ui-color);
 		display: flex;
+		flex-direction: row-reverse;
 		font-size: var(--lightbox-header-icons-size);
 		@include padding-start( 1em );
 		@include padding-end( 2.6em );
@@ -195,10 +196,10 @@
 			&:hover {
 				color: var(--lightbox-ui-color-hover);
 			}
+		}
 
-			&:first-of-type {
-				@include margin-start( auto );
-			}
+		.swiper-pagination-fraction {
+			@include margin-end( auto );
 		}
 
 		.elementor-icon-share {
@@ -241,9 +242,9 @@
 			color: $gray-dark;
 			font-size: 12px;
 			line-height: 2.5;
-			display: block;
 			opacity: 0;
 			transition: opacity 500ms 100ms;
+			display: none;
 
 			&:hover {
 				color: #000;
@@ -339,8 +340,12 @@
 			&__share-links {
 				transform: scale(1);
 
-				&, & a {
+				&, a {
 					opacity: 1;
+				}
+
+				a {
+					display: block;
 				}
 
 				.eicon {
