@@ -40,23 +40,23 @@ export default class DocumentCache {
 
 	static updateByContainers( containers, mergeSettings = null ) {
 		containers.forEach( ( container ) => {
-			const element = container.model.toJSON();
+			const data = $e.data.getCache( 'document/elements', {
+				document_id: container.document.id,
+				element_id: container.id,
+			} );
 
-			delete element.defaultEditSettings;
-			delete element.editSettings;
-
-			if ( ! element.settings ) {
-				throw Error( 'element settings is required.' );
+			if ( data.settings && mergeSettings ) {
+				data.settings = Object.assign( data.settings, mergeSettings );
 			}
 
-			if ( mergeSettings ) {
-				element.settings = Object.assign( element.settings, mergeSettings );
+			if ( ! data.settings ) {
+				data.settings = container.settings.toJSON();
 			}
 
 			$e.data.updateCache( 'document/elements', {
-				document_id: elementor.documents.getCurrent().id,
-				element_id: element.id,
-			}, element );
+				document_id: container.document.id,
+				element_id: data.id,
+			}, data );
 		} );
 	}
 

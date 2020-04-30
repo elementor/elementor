@@ -476,7 +476,9 @@ abstract class Document extends Controls_Stack {
 		];
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$config['elements'] = $this->get_elements_raw_data( null, true );
+			$config['elements'] = \Elementor\Data\Manager::run( 'document/elements', [
+				'document_id' => $this->get_main_id(),
+			] );
 			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 

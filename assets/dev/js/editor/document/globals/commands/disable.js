@@ -8,7 +8,7 @@ export class Disable extends DisableEnable {
 			container = container.lookup();
 
 			Object.keys( settings ).forEach( ( setting ) => {
-				const settingsToRestore = {};
+				const localSettings = {};
 
 				Object.entries( container.globals.attributes ).forEach( ( [ globalKey, globalValue ] ) => {
 					/**
@@ -23,23 +23,23 @@ export class Disable extends DisableEnable {
 								const groupPrefix = container.controls[ globalKey ].groupPrefix,
 									controlName = globalKey.replace( groupPrefix, '' ) + '_' + dataKey;
 
-								settingsToRestore[ controlName ] = dataValue;
+								localSettings[ controlName ] = dataValue;
 							} );
 						} else {
-							settingsToRestore[ globalKey ] = data;
+							localSettings[ globalKey ] = data;
 						}
 					}
 				} );
 
 				// TODO: Add dev-tools CSS to see if widget have globals.
-				if ( Object.keys( settingsToRestore ).length ) {
+				if ( Object.keys( localSettings ).length ) {
 					$e.run( 'document/elements/settings', {
 						container,
-						settings: settingsToRestore,
+						settings: localSettings,
 					} );
 				}
 
-				container.globals.unset( setting );
+				container.globals.set( setting, '' );
 			} );
 
 			container.settings.set( '__globals__', container.globals.toJSON() );

@@ -5,7 +5,13 @@ export default class LocalStorage extends BaseStorage {
 		super( localStorage );
 	}
 
-	custom() {
-		console.log( 'custom' );
+	debug() {
+		const entries = {};
+
+		Object.entries( this.getAll() ).map( ( [ key, /*string*/ data ] ) => {
+			entries[ key ] = JSON.parse( data );
+		} );
+
+		return entries;
 	}
 }

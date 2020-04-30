@@ -442,19 +442,9 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	enqueueFonts() {
+	enqueueIconFonts() {
 		const editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
-
-		jQuery.each( settings.getFontControls(), ( index, control ) => {
-			const fontFamilyName = editModel.getSetting( control.name );
-
-			if ( ! fontFamilyName ) {
-				return;
-			}
-
-			elementor.helpers.enqueueFont( fontFamilyName );
-		} );
 
 		// Enqueue Icon Fonts
 		jQuery.each( settings.getIconsControls(), ( index, control ) => {
@@ -505,6 +495,16 @@ BaseElementView = BaseContainer.extend( {
 			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
+
+		jQuery.each( settings.getFontControls(), async ( index, control ) => {
+			const fontFamilyName = settings.get( control.name );
+
+			if ( ! fontFamilyName ) {
+				return;
+			}
+
+			elementor.helpers.enqueueFont( fontFamilyName );
+		} );
 	},
 
 	renderCustomClasses() {
@@ -559,7 +559,7 @@ BaseElementView = BaseContainer.extend( {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
-		this.enqueueFonts();
+		this.enqueueIconFonts();
 	},
 
 	runReadyTrigger: function() {

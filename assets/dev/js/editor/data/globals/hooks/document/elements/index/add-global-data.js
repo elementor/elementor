@@ -18,6 +18,10 @@ export class ElementsIndexAddGlobalData extends After {
 		const element = result.data;
 
 		return Object.entries( element.settings.__globals__ ).map( async ( [ globalKey, globalValue ] ) => {
+			// Means, the control default value were disabled.
+			if ( ! globalValue ) {
+				return;
+			}
 			// Get global item.
 			const endpointResult = await $e.data.get( globalValue ),
 				container = elementor.getContainer( args.query.element_id ),

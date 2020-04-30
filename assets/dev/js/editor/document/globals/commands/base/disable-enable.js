@@ -76,7 +76,7 @@ export default class DisableEnable extends CommandHistory {
 
 		const { containers = [ args.container ] } = args;
 
-		DocumentCache.updateByContainers( containers );
+		DocumentCache.updateByContainers( containers, { __globals__: args.settings } );
 	}
 
 	isDataChanged() {
