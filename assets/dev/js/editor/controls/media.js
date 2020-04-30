@@ -29,7 +29,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	applySavedValue: function() {
 		var url = this.getControlValue( 'url' ),
 			mediaType = this.getMediaType(),
-			fileName = this.getControlValue( 'fileName' );
+			fileName = url.split( '/' ).pop();
 
 		if ( 'image' === mediaType ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
@@ -64,7 +64,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.setValue( {
 			url: '',
 			id: '',
-			fileName: '',
 		} );
 
 		this.applySavedValue();
@@ -107,8 +106,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( attachment.url ) {
 			this.setValue( {
 				url: attachment.url,
-				id: attachment.id,
-				fileName: attachment.filename,
+				id: attachment.id
 			} );
 
 			this.applySavedValue();
