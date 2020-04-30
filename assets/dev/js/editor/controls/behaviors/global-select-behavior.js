@@ -80,6 +80,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				show: 'show',
 				hide: 'hide',
 			},
+			hide: {
+				onOutsideClick: false,
+			},
 			position: {
 				my: `center top`,
 				at: `center bottom+5`,
