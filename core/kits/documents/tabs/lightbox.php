@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Lightbox extends Tab_Base {
 
-	protected function get_id() {
+	public function get_id() {
 		return 'lightbox';
 	}
 
-	protected function get_title() {
+	public function get_title() {
 		return __( 'Lightbox', 'elementor' );
 	}
 

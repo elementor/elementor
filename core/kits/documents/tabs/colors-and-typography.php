@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Colors_And_Typography extends Tab_Base {
 
-	protected function get_id() {
+	public function get_id() {
 		return 'colors-and-typography';
 	}
 
-	protected function get_title() {
+	public function get_title() {
 		return __( 'Colors & Typography', 'elementor' );
 	}
 

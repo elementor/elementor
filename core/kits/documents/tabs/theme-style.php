@@ -19,11 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Theme_Style extends Tab_Base {
 
-	protected function get_id() {
+	public function get_id() {
 		return 'theme-style';
 	}
 
-	protected function get_title() {
+	public function get_title() {
 		return __( 'Theme Style', 'elementor' );
 	}
 
@@ -34,7 +34,7 @@ class Theme_Style extends Tab_Base {
 		$this->add_form_fields_section();
 		$this->add_images_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this->document, $this->get_id() );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this->parent, $this->get_id() );
 	}
 
 	private function add_body_section() {
@@ -797,7 +797,7 @@ class Theme_Style extends Tab_Base {
 
 	private function add_schemes_notice() {
 		// Get the current section config (array - section id and tab) to use for creating a unique control ID and name
-		$current_section = $this->document->get_current_section();
+		$current_section = $this->parent->get_current_section();
 
 		/** @var Manager $module */
 		$kits_manager = Plugin::$instance->kits_manager;
