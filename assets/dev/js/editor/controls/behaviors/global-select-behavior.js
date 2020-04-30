@@ -53,9 +53,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	buildGlobalPopover() {
 		const $popover = jQuery( '<div>', { class: 'elementor-global-popover-container' } ),
 			$popoverTitle = jQuery( '<div>', { class: 'elementor-global-popover-title' } )
-				.html( '<i class="eicon-info-circle"></i>Global Colors' ),
+				.html( '<i class="eicon-info-circle"></i>' + this.getOption( 'popoverTitle' ) ),
 			$manageGlobalPresetsLink = jQuery( '<div>', { class: 'elementor-global-manage-button' } )
-				.html( 'Manage Color Styles<i class="eicon-cog"></i>' );
+				.html( this.getOption( 'manageButtonText' ) + '<i class="eicon-cog"></i>' );
 
 		$popover.append( $popoverTitle, this.getOption( 'popoverContent' ), $manageGlobalPresetsLink );
 

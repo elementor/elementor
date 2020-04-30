@@ -16,6 +16,8 @@ export default class extends ControlBaseDataView {
 			{
 				behaviorClass: GlobalControlSelect,
 				popoverContent: this.getGlobalColors(),
+				popoverTitle: 'Global Colors',
+				manageButtonText: 'Manage Global Colors',
 			},
 		];
 	}

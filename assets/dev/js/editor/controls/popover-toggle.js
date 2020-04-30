@@ -28,6 +28,8 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 				globalControlSelect: {
 					behaviorClass: GlobalControlSelect,
 					popoverContent: this.getGlobalTextStyles(),
+					popoverTitle: 'Global Typography',
+					manageButtonText: 'Manage Global Text Styles',
 				},
 			};
 		}
