@@ -50,10 +50,6 @@ export default class StretchedSection extends elementorModules.frontend.handlers
 
 		super.onInit( ...args );
 
-		if ( elementorFrontend.isEditMode() ) {
-			elementor.channels.editor.on( 'kit:change:stretchContainer', this.onKitChangeStretchContainerChange.bind( this ) );
-		}
-
 		this.stretch();
 	}
 
