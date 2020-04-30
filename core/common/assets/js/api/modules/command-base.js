@@ -1,6 +1,10 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
+	static getInstanceType() {
+		return 'CommandBase';
+	}
+
 	/**
 	 * Current component.
 	 *
