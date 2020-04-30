@@ -23,16 +23,21 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	},
 
 	behaviors: function() {
-		if ( this.options.model.attributes.global ) {
-			return {
-				globalControlSelect: {
-					behaviorClass: GlobalControlSelect,
-					popoverContent: this.getGlobalTextStyles(),
-					popoverTitle: 'Global Typography',
-					manageButtonText: 'Manage Global Text Styles',
-				},
-			};
+		const behaviors = ControlChooseView.prototype.behaviors.apply( this, arguments );
+
+		// We don't want to override existing inherited behaviors, such as dynamic tags
+		if ( ! this.options.model.attributes.global ) {
+			return behaviors;
 		}
+
+		behaviors.globalControlSelect = {
+			behaviorClass: GlobalControlSelect,
+			popoverContent: this.getGlobalTextStyles(),
+			popoverTitle: 'Global Typography',
+			manageButtonText: 'Manage Global Text Styles',
+		};
+
+		return behaviors;
 	},
 
 	// TODO: Replace placeholders with real global colors

@@ -12,14 +12,16 @@ export default class extends ControlBaseDataView {
 	}
 
 	behaviors() {
-		return [
-			{
-				behaviorClass: GlobalControlSelect,
-				popoverContent: this.getGlobalColors(),
-				popoverTitle: 'Global Colors',
-				manageButtonText: 'Manage Global Colors',
-			},
-		];
+		const behaviors = super.behaviors();
+
+		behaviors.globalControlSelect = {
+			behaviorClass: GlobalControlSelect,
+			popoverContent: this.getGlobalColors(),
+			popoverTitle: 'Global Colors',
+			manageButtonText: 'Manage Global Colors',
+		};
+
+		return behaviors;
 	}
 
 	applySavedValue() {
