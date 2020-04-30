@@ -39,7 +39,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			rowModel.set( '_id', rowId );
 		}
 
-		elementContainer.children[ index ] = new elementorModules.editor.Container( {
+		elementContainer.children.splice( index, 0, new elementorModules.editor.Container( {
 			type: 'repeater',
 			id: rowId,
 			model: new Backbone.Model( {
@@ -48,10 +48,10 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			settings: rowModel,
 			view: elementContainer.view,
 			parent: elementContainer,
-			label: elementContainer.label + ' ' + elementor.translate( 'Item' ) + `#${ index + 1 }`,
+			label: elementContainer.label + ' ' + elementor.translate( 'Item' ),
 			controls: rowModel.options.controls,
 			renderer: elementContainer.renderer,
-		} );
+		} ) );
 
 		return {
 			container: elementContainer.children[ index ],
