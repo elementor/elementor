@@ -2,29 +2,48 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	ui() {
 		return {
 			controlContent: '.elementor-control-content',
-			globalControlSelect: '.elementor-global-select',
-			globalControlSelected: '.elementor-global-selected',
 		};
 	}
 
-	events() {
-		return {
-			'click @ui.globalControlSelect': 'toggleSelect',
-		};
+	// This method exists because the UI elements are printer after controls are already rendered
+	registerUiElements() {
+		this.ui.GlobalPreviewItems = this.popover.getElements( 'widget' ).find( '.elementor-global-preview' );
+		this.ui.globalControlSelect = this.$el.find( '.elementor-global-select' );
+		this.ui.globalControlSelected = this.$el.find( '.elementor-global-selected' );
+	}
+
+	// This method exists because the UI elements are printer after controls are already rendered
+	registerEvents() {
+		this.ui.GlobalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event ) );
+		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
+	}
+
+	applySavedGlobalValue( event ) {
+		const previewData = event.currentTarget.dataset;
+
+		this.ui.globalControlSelected.html( previewData.elementorGlobalName );
+
+		this.toggleSelect();
 	}
 
 	// The Global Control elements are initialized onRender and not with initialize() because their position depends
 	// on elements that are not yet rendered when initialize() is called.
 	onRender() {
 		this.printGlobalSelectBox();
+
 		this.initGlobalPopover();
+
 		this.$el.addClass( 'elementor-control-global' );
+
+		// Instead of ui()
+		this.registerUiElements();
+
+		// Instead of events()
+		this.registerEvents();
 	}
 
 	toggleSelect() {
-		const visible = this.popover.isVisible();
-
-		if ( visible ) {
+		if ( this.popover.isVisible() ) {
 			this.popover.hide();
 		} else {
 			this.popover.show();
@@ -67,12 +86,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				of: this.ui.controlContent,
 				autoRefresh: true,
 			},
-		} );
-
-		this.popover.getElements( 'widget' ).find( '.elementor-global-preview' ).on( 'click', ( event ) => {
-			const previewData = event.currentTarget.dataset;
-
-			this.ui.globalControlSelected.html( previewData[ 'elementor-global-name' ] );
 		} );
 	}
 }
