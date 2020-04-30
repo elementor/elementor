@@ -130,6 +130,7 @@ class Control_Media extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<# if ( 'image' === data.media_type || 'video' === data.media_type ) { #>
 			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
 				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
 					<div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
@@ -154,6 +155,30 @@ class Control_Media extends Control_Base_Multiple {
 						<# } #>
 					</div>
 				</div>
+			</div>
+				<# } else { #>
+			<div class="elementor-control-input-wrapper elementor-control-input-wrapper-file elementor-aspect-ratio-219">
+				<div class="elementor-control-media__file elementor-control-media__file elementor-control-tag-area elementor-control-preview-area">
+					<div class="elementor-control-upload-content">
+						<div class="elementor-control-media__upload-label">Click the media icon to upload file</div>
+						<div class="elementor-control-media__file-info">
+							<div class="elementor-control-media__icon">
+								<i class="eicon-document-file"></i>
+							</div>
+							<div class="elementor-control-media__file-name"></div>
+						</div>
+					</div>
+					<div class="elementor-control-upload-controls">
+						<div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+							<i class="eicon-trash-o"></i>
+						</div>
+						<div class="elementor-control-media-upload-button" title="<?php echo __( 'Upload', 'elementor' ); ?>">
+							<i class="eicon-upload"></i>
+						</div>
+					</div>
+				</div>
+				<# } #>
+				<!--end of div-->
 			</div>
 			<# if ( data.description ) { #>
 			<div class="elementor-control-field-description">{{{ data.description }}}</div>

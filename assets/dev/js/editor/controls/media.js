@@ -10,6 +10,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
+		ui.fileName = '.elementor-control-media__file-name';
 
 		return ui;
 	},
@@ -27,12 +28,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	applySavedValue: function() {
 		var url = this.getControlValue( 'url' ),
-			mediaType = this.getMediaType();
+			mediaType = this.getMediaType(),
+			fileName = this.getControlValue( 'fileName' );
 
 		if ( 'image' === mediaType ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
+		} else {
+			this.ui.fileName.text( fileName );
 		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
@@ -60,6 +64,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.setValue( {
 			url: '',
 			id: '',
+			fileName: '',
 		} );
 
 		this.applySavedValue();
@@ -103,6 +108,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.setValue( {
 				url: attachment.url,
 				id: attachment.id,
+				fileName: attachment.filename,
 			} );
 
 			this.applySavedValue();
