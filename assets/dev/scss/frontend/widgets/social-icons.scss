@@ -2,6 +2,19 @@
 // Social Icons
 //
 
+.elementor-widget-social-icons {
+
+	&:not(.elementor-grid-0) .elementor-grid {
+		display: inline-grid;
+		grid-template-columns: var(--grid-template-columns);
+	}
+
+	.elementor-widget-container {
+		display: flex;
+		justify-content: center;
+	}
+}
+
 .elementor-social-icons-wrapper {
 	font-size: 0;
 }

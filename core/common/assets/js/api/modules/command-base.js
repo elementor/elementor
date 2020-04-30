@@ -1,6 +1,10 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandBase extends ArgsObject {
+	static getInstanceType() {
+		return 'CommandBase';
+	}
+
 	/**
 	 * Current component.
 	 *
@@ -130,21 +134,53 @@ export default class CommandBase extends ArgsObject {
 			}
 		}
 
+		return this.runAfter( result );
+	}
+
+	runAfter( result ) {
 		const onAfter = ( _result ) => {
-			this.onAfterApply( this.args, _result );
+				// Run Data hooks.
+				this.onAfterApply( this.args, _result );
 
-			if ( this.isDataChanged() ) {
-				$e.internal( 'document/save/set-is-modified', { status: true } );
-			}
+				// TODO: Create Command-Base for Command-Document and apply it on after.
+				if ( this.isDataChanged() ) {
+					$e.internal( 'document/save/set-is-modified', { status: true } );
+				}
 
-			// For UI hooks.
-			this.onAfterRun( this.args, _result );
-		};
+				// For UI hooks.
+				this.onAfterRun( this.args, _result );
+			},
+			asyncOnAfter = async ( _result ) => {
+				// Run Data hooks.
+				const results = this.onAfterApply( this.args, _result ),
+					promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
+
+				if ( promises.length ) {
+					// Wait for hooks before return the value.
+					await Promise.all( promises );
+				}
+
+				if ( this.isDataChanged() ) {
+					// TODO: Create Command-Base for Command-Document and apply it on after.
+					$e.internal( 'document/save/set-is-modified', { status: true } );
+				}
+
+				// For UI hooks.
+				this.onAfterRun( this.args, _result );
+			};
 
 		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
 			result.fail( this.onCatchApply.bind( this ) );
 			result.done( onAfter );
+		} else if ( result instanceof Promise ) {
+			// Override initial result ( promise ) to await onAfter promises, first!.
+			return ( async () => {
+				await result.catch( this.onCatchApply.bind( this ) );
+				await result.then( ( _result ) => asyncOnAfter( _result ) );
+
+				return result;
+			} )();
 		} else {
 			onAfter( result );
 		}
@@ -195,7 +231,7 @@ export default class CommandBase extends ArgsObject {
 	 * @param [result={*}]
 	 */
 	onAfterApply( args = {}, result ) {
-		$e.hooks.runDataAfter( this.currentCommand, args, result );
+		return $e.hooks.runDataAfter( this.currentCommand, args, result );
 	}
 
 	/**

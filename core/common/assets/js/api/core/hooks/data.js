@@ -23,20 +23,16 @@ export default class Data extends HooksBase {
 					// Throw custom break to be catch by the base for 'Safe' exit.
 					throw new $e.modules.HookBreak;
 				}
+				return true;
 			}
-			break;
 
 			case 'catch':
 			case 'after': {
-				callback.callback( args, result );
+				return callback.callback( args, result ) || true;
 			}
-			break;
-
-			default:
-				return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	shouldRun( callbacks ) {

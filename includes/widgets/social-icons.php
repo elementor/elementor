@@ -267,6 +267,31 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
+			'columns',
+			[
+				'label' => __( 'Columns', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '0',
+				'options' => [
+					'0' => __( 'Auto', 'elementor' ),
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+				],
+				'prefix_class' => 'elementor-grid%s-',
+				'selectors' => [
+					'{{WRAPPER}}' => '--grid-template-columns: repeat({{VALUE}}, auto);',
+				],
+			]
+		);
+
+		$start = is_rtl() ? 'end' : 'start';
+		$end = is_rtl() ? 'start' : 'end';
+
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -285,9 +310,13 @@ class Widget_Social_Icons extends Widget_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 				],
+				'selectors_dictionary' => [
+					'left' => 'flex-' . $start,
+					'right' => 'flex-' . $end,
+				],
 				'default' => 'center',
 				'selectors' => [
-					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-widget-container' => 'justify-content: {{VALUE}};',
 				],
 			]
 		);
@@ -396,8 +425,6 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		$icon_spacing = is_rtl() ? 'margin-left: {{SIZE}}{{UNIT}};' : 'margin-right: {{SIZE}}{{UNIT}};';
-
 		$this->add_responsive_control(
 			'icon_spacing',
 			[
@@ -409,8 +436,25 @@ class Widget_Social_Icons extends Widget_Base {
 						'max' => 100,
 					],
 				],
+				'default' => [
+					'size' => 5,
+				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon:not(:last-child)' => $icon_spacing,
+					'{{WRAPPER}}' => '--grid-column-gap: {{SIZE}}{{UNIT}}; --grid-side-margin: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'row_gap',
+			[
+				'label' => __( 'Rows Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--grid-row-gap: {{SIZE}}{{UNIT}}; --grid-bottom-margin: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -529,7 +573,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$migration_allowed = Icons_Manager::is_migration_allowed();
 
 		?>
-		<div class="elementor-social-icons-wrapper">
+		<div class="elementor-social-icons-wrapper elementor-grid">
 			<?php
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
@@ -569,15 +613,17 @@ class Widget_Social_Icons extends Widget_Base {
 				$this->add_link_attributes( $link_key, $item['link'] );
 
 				?>
-				<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
-					<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
-					<?php
-					if ( $is_new || $migrated ) {
-						Icons_Manager::render_icon( $item['social_icon'] );
-					} else { ?>
-						<i class="<?php echo esc_attr( $item['social'] ); ?>"></i>
-					<?php } ?>
-				</a>
+				<div class="elementor-grid-item">
+					<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
+						<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
+						<?php
+						if ( $is_new || $migrated ) {
+							Icons_Manager::render_icon( $item['social_icon'] );
+						} else { ?>
+							<i class="<?php echo esc_attr( $item['social'] ); ?>"></i>
+						<?php } ?>
+					</a>
+				</div>
 			<?php } ?>
 		</div>
 		<?php
@@ -594,23 +640,25 @@ class Widget_Social_Icons extends Widget_Base {
 	protected function content_template() {
 		?>
 		<# var iconsHTML = {}; #>
-		<div class="elementor-social-icons-wrapper">
+		<div class="elementor-social-icons-wrapper elementor-grid">
 			<# _.each( settings.social_icon_list, function( item, index ) {
 				var link = item.link ? item.link.url : '',
 					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
-				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ link }}">
-					<span class="elementor-screen-only">{{{ social }}}</span>
-					<#
-						iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
-						if ( ( ! item.social || migrated ) && iconsHTML[ index ] && iconsHTML[ index ].rendered ) { #>
-							{{{ iconsHTML[ index ].value }}}
-						<# } else { #>
-							<i class="{{ item.social }}"></i>
-						<# }
-					#>
-				</a>
+				<div class="elementor-grid-item">
+					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ link }}">
+						<span class="elementor-screen-only">{{{ social }}}</span>
+						<#
+							iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
+							if ( ( ! item.social || migrated ) && iconsHTML[ index ] && iconsHTML[ index ].rendered ) { #>
+								{{{ iconsHTML[ index ].value }}}
+							<# } else { #>
+								<i class="{{ item.social }}"></i>
+							<# }
+						#>
+					</a>
+				</div>
 			<# } ); #>
 		</div>
 		<?php
