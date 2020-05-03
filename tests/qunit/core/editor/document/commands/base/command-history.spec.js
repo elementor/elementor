@@ -1,22 +1,22 @@
-import History from 'elementor-document/commands/base/history';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 
 jQuery( () => {
-	QUnit.module( 'File: editor/document/commands/base/history', () => {
+	QUnit.module( 'File: editor/document/commands/base/command-history', () => {
 		QUnit.module( 'History', () => {
 			QUnit.test( 'getHistory(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new History( {} );
+						const instance = new CommandHistory( {} );
 
 						instance.getHistory( {} );
 					},
-					new Error( 'History.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
+					new Error( 'CommandHistory.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
 				);
 			} );
 		} );
 
 		QUnit.test( 'onCatchApply()`', ( assert ) => {
-			const fakeHistory = class extends History {
+			const fakeHistory = class extends CommandHistory {
 				// eslint-disable-next-line no-unused-vars
 				getHistory( args ) {
 					return true;

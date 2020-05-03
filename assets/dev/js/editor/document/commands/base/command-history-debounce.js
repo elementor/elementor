@@ -1,5 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import History from '../history';
+import CommandHistory from './command-history';
 
 export const DEFAULT_DEBOUNCE_DELAY = 800;
 
@@ -20,7 +20,7 @@ export const getDefaultDebounceDelay = () => {
 	return result;
 };
 
-export default class Debounce extends History {
+export default class CommandHistoryDebounce extends CommandHistory {
 	/**
 	 * Function debounce().
 	 *
@@ -29,6 +29,10 @@ export default class Debounce extends History {
 	 * @param {(function())}
 	 */
 	static debounce = undefined;
+
+	static getInstanceType() {
+		return 'CommandHistoryDebounce';
+	}
 
 	initialize( args ) {
 		const { options = {} } = args;

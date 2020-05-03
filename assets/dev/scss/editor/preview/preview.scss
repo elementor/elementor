@@ -30,40 +30,21 @@ html.elementor-html {
 
 .elementor-edit-area-active {
 
-	.elementor-top-section {
-
-		> .elementor-container {
-
-			> .elementor-row {
-				min-height: 40px;
-			}
-		}
-	}
-
 	.elementor-inner-section {
 
 		&:first-child {
 			margin-top: 15px;
 		}
-
-		> .elementor-container {
-
-			> .elementor-row {
-				min-height: 40px;
-			}
-		}
 	}
 
-	.elementor-column-wrap {
+	.elementor-widget-wrap {
 
 		&.elementor-element-empty {
 
-			.elementor-widget-wrap {
-				min-height: 30px; // In case of section with non-default content position
+			min-height: 30px; // In case of section with non-default content position
 
-				@media (min-width: $editor-screen-md-min) {
-					margin: 10px;
-				}
+			@media (min-width: $editor-screen-md-min) {
+				margin: 10px;
 			}
 		}
 	}
@@ -113,16 +94,19 @@ html.elementor-html {
 		transition: margin .3s, width .3s, font .3s;
 	}
 
-	.handle {
-		display: none; //TEMP
-	}
-
 	.elementor-inline-editing {
 		min-height: 15px;
 	}
 
 	.elementor-edit-hidden {
 		display: none;
+	}
+}
+
+.elementor-section-wrap {
+
+	&:empty {
+		min-height: 25px;
 	}
 }
 
@@ -354,15 +338,6 @@ html.elementor-html {
 	line-height: 1;
 	z-index: $first-layer;
 	pointer-events: all;
-}
-
-.elementor-editor-element-setting {
-
-	// Avoid conflict between v2.1+ & Pro 2.1-
-	// TODO: Remove this in v2.4
-	&.elementor-editor-element-save {
-		display: none;
-	}
 }
 
 .elementor-editor-element-edit {
@@ -941,7 +916,7 @@ html.elementor-html {
 		}
 	}
 
-	> .elementor-widget-container, > .elementor-column-wrap {
+	> .elementor-widget-container, > .elementor-widget-wrap {
 		filter: alpha(0.4) saturate(0);
 	}
 }
