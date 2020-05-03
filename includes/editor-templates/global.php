@@ -11,10 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </script>
 
-<script type="text/template" id="tmpl-elementor-preview">
-	<div class="elementor-section-wrap"></div>
-</script>
-
 <script type="text/template" id="tmpl-elementor-add-section">
 	<div class="elementor-add-section-inner">
 		<div class="elementor-add-section-close">

@@ -23,8 +23,8 @@ export default class Data extends HooksBase {
 					// Throw custom break to be catch by the base for 'Safe' exit.
 					throw new $e.modules.HookBreak;
 				}
+				return true;
 			}
-			break;
 
 			case 'catch':
 			case 'after':
@@ -35,12 +35,9 @@ export default class Data extends HooksBase {
 				}
 
 				return callbackResult;
-
-			default:
-				return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	shouldRun( callbacks ) {

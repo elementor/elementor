@@ -7,7 +7,7 @@ const DEFAULT_INNER_SECTION_COLUMNS = 2,
 	DEFAULT_MAX_COLUMNS = 10;
 
 const SectionView = BaseElementView.extend( {
-	childViewContainer: '> .elementor-container > .elementor-row',
+	childViewContainer: '> .elementor-container',
 
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
@@ -122,7 +122,7 @@ const SectionView = BaseElementView.extend( {
 		var sectionConnectClass = this.isInner() ? '.elementor-inner-section' : '.elementor-top-section';
 
 		return {
-			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
+			connectWith: sectionConnectClass + ' > .elementor-container',
 			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
 			items: '> .elementor-column',
 			forcePlaceholderSize: true,
