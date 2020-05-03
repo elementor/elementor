@@ -12,6 +12,10 @@
 		margin-right: auto;
 		margin-left: auto;
 		position: relative;
+
+		@media (max-width: $screen-md-max) {
+			flex-wrap: wrap;
+		}
 	}
 
 	// Max-width of container depending on section settings
@@ -72,13 +76,10 @@
 
 		> .elementor-container {
 
-			> .elementor-row {
+			> .elementor-column {
 
-				> .elementor-column {
-
-					> .elementor-column-wrap {
-						align-items: flex-start;
-					}
+				> .elementor-widget-wrap {
+					align-items: flex-start;
 				}
 			}
 		}
@@ -88,13 +89,10 @@
 
 		> .elementor-container {
 
-			> .elementor-row {
+			> .elementor-column {
 
-				> .elementor-column {
-
-					> .elementor-column-wrap {
-						align-items: center;
-					}
+				> .elementor-widget-wrap {
+					align-items: center;
 				}
 			}
 		}
@@ -104,13 +102,10 @@
 
 		> .elementor-container {
 
-			> .elementor-row {
+			> .elementor-column {
 
-				> .elementor-column {
-
-					> .elementor-column-wrap {
-						align-items: flex-end;
-					}
+				> .elementor-widget-wrap {
+					align-items: flex-end;
 				}
 			}
 		}
@@ -118,6 +113,7 @@
 }
 
 // Row
+// BC: Deprecated since 3.0.0 - use `.elementor-container`.
 .elementor-row {
 	width: 100%;
 	display: flex;
@@ -128,12 +124,6 @@
 }
 
 // Widget
-.elementor-column-wrap {
-	width: 100%;
-	position: relative;
-	display: flex;
-}
-
 .elementor-widget-wrap {
 	position: relative;
 	width: 100%;
@@ -168,7 +158,13 @@
 	position: relative;
 	min-height: 1px;
 	display: flex;
+}
 
+// BC: Deprecated since 3.0.0 - use `.elementor-widget-wrap`.
+.elementor-column-wrap {
+	width: 100%;
+	position: relative;
+	display: flex;
 }
 
 @mixin elementor-grid-classes {
@@ -193,28 +189,28 @@
 }
 
 // Columns Gap
-.elementor-row {
-	> .elementor-column {
-		> .elementor-element-populated {
-			.elementor-column-gap-narrow  > & {
-				padding: 5px;
-			}
+.elementor-column {
 
-			.elementor-column-gap-default > & {
-				padding: 10px;
-			}
+	> .elementor-element-populated {
 
-			.elementor-column-gap-extended > & {
-				padding: 15px;
-			}
+		.elementor-column-gap-narrow  > & {
+			padding: 5px;
+		}
 
-			.elementor-column-gap-wide > & {
-				padding: 20px;
-			}
+		.elementor-column-gap-default > & {
+			padding: 10px;
+		}
 
-			.elementor-column-gap-wider > & {
-				padding: 30px;
-			}
+		.elementor-column-gap-extended > & {
+			padding: 15px;
+		}
+
+		.elementor-column-gap-wide > & {
+			padding: 20px;
+		}
+
+		.elementor-column-gap-wider > & {
+			padding: 30px;
 		}
 	}
 }
@@ -255,7 +251,7 @@
 
 @mixin reverse-columns($device) {
 
-	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
+	.elementor-reverse#{$device} > .elementor-container {
 		@for $i from 1 through 10 {
 			> :nth-child(#{$i}) {
 				order: -$i + 11;
@@ -302,6 +298,14 @@ ul.elementor-icon-list-items.elementor-inline-items {
 				display: flex;
 				overflow: hidden;
 				flex-wrap: wrap;
+				margin-right: calc(var(--grid-side-margin) / 2);
+				margin-left: calc(var(--grid-side-margin) / 2);
+
+				&-item > div, &-item > a {
+					margin-right: calc(var(--grid-side-margin) / 2);
+					margin-left: calc(var(--grid-side-margin) / 2);
+					margin-bottom: var(--grid-bottom-margin);
+				}
 			}
 		}
 
@@ -311,6 +315,8 @@ ul.elementor-icon-list-items.elementor-inline-items {
 				.elementor-grid {
 					grid-template-columns: repeat(#{$i} , 1fr);
 					display: grid;
+					grid-column-gap: var(--grid-column-gap);
+					grid-row-gap: var(--grid-row-gap);
 				}
 			}
 		}

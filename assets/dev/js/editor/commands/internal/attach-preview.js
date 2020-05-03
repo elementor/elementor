@@ -48,18 +48,7 @@ export class AttachPreview extends CommandInternal {
 
 			elementor.initElements();
 
-			const iframeRegion = new Marionette.Region( {
-				// Make sure you get the DOM object out of the jQuery object
-				el: document.$element[ 0 ],
-			} );
-
-			elementor.addRegions( {
-				sections: iframeRegion,
-			} );
-
-			const Preview = require( 'elementor-views/preview' );
-
-			elementor.sections.show( new Preview( { model: elementor.elementsModel } ) );
+			elementor.initPreviewView( document );
 
 			document.container.view = elementor.getPreviewView();
 			document.container.model.attributes.elements = elementor.elements;

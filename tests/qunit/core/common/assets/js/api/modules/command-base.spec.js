@@ -44,49 +44,93 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'instanceOf', ( assert ) => {
-				const fakeCommandHistory = class extends CommandHistory {
-						getHistory() {
-						}
+				const validateCommandBase = ( commandBase ) => {
+						assert.equal( commandBase instanceof CommandBase, true );
+						assert.equal( commandBase instanceof Command, false );
+						assert.equal( commandBase instanceof CommandInternal, false, );
+						assert.equal( commandBase instanceof CommandHistory, false );
+						assert.equal( commandBase instanceof CommandHistoryDebounce, false );
+						assert.equal( commandBase instanceof $e.modules.Command, false );
+						assert.equal( commandBase instanceof $e.modules.CommandInternal, false );
+						assert.equal( commandBase instanceof $e.modules.document.CommandHistory, false );
+						assert.equal( commandBase instanceof $e.modules.document.CommandHistoryDebounce, false );
 					},
-					fakeCommandHistoryDebounce = class extends CommandHistoryDebounce {
-						getHistory() {
-						}
+					validateCommand = ( command ) => {
+						assert.equal( command instanceof CommandBase, true );
+						assert.equal( command instanceof Command, true );
+						assert.equal( command instanceof CommandInternal, false, );
+						assert.equal( command instanceof CommandHistory, false );
+						assert.equal( command instanceof CommandHistoryDebounce, false );
+						assert.equal( command instanceof $e.modules.Command, true );
+						assert.equal( command instanceof $e.modules.CommandInternal, false );
+						assert.equal( command instanceof $e.modules.document.CommandHistory, false );
+						assert.equal( command instanceof $e.modules.document.CommandHistoryDebounce, false );
 					},
-					commandBase = new CommandBase( ( {} ) ),
+					validateInternalCommand = ( internalCommand ) => {
+						assert.equal( internalCommand instanceof CommandBase, true, );
+						assert.equal( internalCommand instanceof Command, true, );
+						assert.equal( internalCommand instanceof CommandInternal, true );
+						assert.equal( internalCommand instanceof CommandHistory, false );
+						assert.equal( internalCommand instanceof CommandHistoryDebounce, false );
+						assert.equal( internalCommand instanceof $e.modules.Command, true );
+						assert.equal( internalCommand instanceof $e.modules.CommandInternal, true );
+						assert.equal( internalCommand instanceof $e.modules.document.CommandHistory, false );
+						assert.equal( internalCommand instanceof $e.modules.document.CommandHistoryDebounce, false );
+					},
+					validateHistoryCommand = ( historyCommand ) => {
+						assert.equal( historyCommand instanceof CommandBase, true );
+						assert.equal( historyCommand instanceof Command, true );
+						assert.equal( historyCommand instanceof CommandInternal, false );
+						assert.equal( historyCommand instanceof CommandHistory, true );
+						assert.equal( historyCommand instanceof CommandHistoryDebounce, false );
+						assert.equal( historyCommand instanceof $e.modules.Command, true );
+						assert.equal( historyCommand instanceof $e.modules.CommandInternal, false );
+						assert.equal( historyCommand instanceof $e.modules.document.CommandHistory, true );
+						assert.equal( historyCommand instanceof $e.modules.document.CommandHistoryDebounce, false );
+					},
+					validateHistoryDebounceCommand = ( historyDebounceCommand ) => {
+						assert.equal( historyDebounceCommand instanceof CommandBase, true );
+						assert.equal( historyDebounceCommand instanceof Command, true );
+						assert.equal( historyDebounceCommand instanceof CommandInternal, false );
+						assert.equal( historyDebounceCommand instanceof CommandHistory, true );
+						assert.equal( historyDebounceCommand instanceof CommandHistoryDebounce, true );
+						assert.equal( historyDebounceCommand instanceof $e.modules.Command, true );
+						assert.equal( historyDebounceCommand instanceof $e.modules.CommandInternal, false );
+						assert.equal( historyDebounceCommand instanceof $e.modules.document.CommandHistory, true );
+						assert.equal( historyDebounceCommand instanceof $e.modules.document.CommandHistoryDebounce, true );
+					},
+					validateCommands = ( command, internalCommand, historyCommand, historyDebounceCommand ) => {
+						validateCommand( command );
+						validateInternalCommand( internalCommand );
+						validateHistoryCommand( historyCommand );
+						validateHistoryDebounceCommand( historyDebounceCommand );
+					};
+
+				let commandBase = new CommandBase( {} ),
 					command = new Command( {} ),
 					internalCommand = new CommandInternal( {} ),
-					historyCommand = new fakeCommandHistory( {} ),
-					historyDebounceCommand = new fakeCommandHistoryDebounce( {} );
+					historyCommand = new class History extends CommandHistory {
+						getHistory() {}
+					}( {} ),
+					historyDebounceCommand = new class HistoryDebounce extends CommandHistoryDebounce {
+						getHistory() {}
+					}( {} );
 
-				assert.equal( commandBase instanceof CommandBase, true );
-				assert.equal( commandBase instanceof Command, false );
-				assert.equal( commandBase instanceof CommandInternal, false );
-				assert.equal( commandBase instanceof CommandHistory, false );
-				assert.equal( commandBase instanceof CommandHistoryDebounce, false );
+				validateCommandBase( commandBase );
 
-				assert.equal( command instanceof CommandBase, true );
-				assert.equal( command instanceof Command, true );
-				assert.equal( command instanceof CommandInternal, false );
-				assert.equal( command instanceof CommandHistory, false );
-				assert.equal( command instanceof CommandHistoryDebounce, false );
+				validateCommands( command, internalCommand, historyCommand, historyDebounceCommand );
 
-				assert.equal( internalCommand instanceof CommandBase, true );
-				assert.equal( internalCommand instanceof Command, true );
-				assert.equal( internalCommand instanceof CommandInternal, true );
-				assert.equal( internalCommand instanceof CommandHistory, false );
-				assert.equal( internalCommand instanceof CommandHistoryDebounce, false );
+				// eslint-disable-next-line no-unused-expressions
+				command = new $e.modules.Command( {} ),
+					internalCommand = new $e.modules.CommandInternal( {} ),
+					historyCommand = new class History extends $e.modules.document.CommandHistory {
+						getHistory() {}
+					}( {} ),
+					historyDebounceCommand = new class HistoryDebounce extends $e.modules.document.CommandHistoryDebounce {
+						getHistory() {}
+					}( {} );
 
-				assert.equal( historyCommand instanceof CommandBase, true );
-				assert.equal( historyCommand instanceof Command, true );
-				assert.equal( historyCommand instanceof CommandInternal, false );
-				assert.equal( historyCommand instanceof CommandHistory, true );
-				assert.equal( historyCommand instanceof CommandHistoryDebounce, false );
-
-				assert.equal( historyDebounceCommand instanceof CommandBase, true );
-				assert.equal( historyDebounceCommand instanceof Command, true );
-				assert.equal( historyDebounceCommand instanceof CommandInternal, false );
-				assert.equal( historyDebounceCommand instanceof CommandHistory, true );
-				assert.equal( historyDebounceCommand instanceof CommandHistoryDebounce, true );
+				validateCommands( command, internalCommand, historyCommand, historyDebounceCommand );
 			} );
 		} );
 	} );
