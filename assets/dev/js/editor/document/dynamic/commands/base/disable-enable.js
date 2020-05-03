@@ -1,7 +1,7 @@
-import History from 'elementor-document/commands/base/history';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
-export default class DisableEnable extends History {
+export default class DisableEnable extends CommandHistory {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 

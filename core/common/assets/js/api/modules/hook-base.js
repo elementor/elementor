@@ -110,10 +110,11 @@ export default class HookBase {
 	 * Condition for running the callback, if true, call to apply().
 	 *
 	 * @param [args={}]
+	 * @param [result=*]
 	 *
 	 * @returns {boolean}
 	 */
-	getConditions( args = {} ) { // eslint-disable-line no-unused-vars
+	getConditions( args = {}, result ) { // eslint-disable-line no-unused-vars
 		return true;
 	}
 
@@ -137,7 +138,7 @@ export default class HookBase {
 	 *
 	 * @param {*} args
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
 	run( ... args ) {
 		const { options = {} } = args[ 0 ];
@@ -147,7 +148,7 @@ export default class HookBase {
 			return true;
 		}
 
-		if ( this.getConditions( args[ 0 ] ) ) {
+		if ( this.getConditions( ... args ) ) {
 			if ( $e.devTools ) {
 				$e.devTools.log.callbacks().active( this.type, this.command, this.id );
 			}
