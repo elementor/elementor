@@ -8,18 +8,15 @@
 	}
 
 	&:not(.elementor-media-empty) {
-
-		.elementor-control-media-upload-button {
-			display: none;
+		.elementor-control-media__content {
+			&__upload-button {
+				display: none;
+			}
 		}
 	}
 
 	.elementor-control-input-wrapper {
 		border: 1px solid $editor-lightest;
-	}
-
-	.elementor-control-input-wrapper-file {
-		border-radius: 3px;
 	}
 
 	.eicon-plus-circle {
@@ -28,7 +25,7 @@
 		font-size: 20px;
 	}
 
-	&-upload-button {
+	&__content__upload-button {
 		background-color: $editor-lightest;
 	}
 
@@ -45,7 +42,6 @@
 		background-color: #f6f6f6;
 
 		&:not(:hover) {
-
 			.elementor-control-media__remove {
 				display: none;
 			}
@@ -120,21 +116,24 @@
 	}
 
 	&__remove {
-		position: absolute;
-		z-index: 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		transition: all .3s ease-in-out;
+	}
+
+	&__content__remove {
+		position: absolute;
+		z-index: 1;
 		top: 10px;
 		@include end(10px);
 		width: 20px;
 		height: 20px;
 		font-size: 11px;
-		background-color: rgba(#fff, .9);
 		color: $editor-light;
+		background-color: rgba(#fff, .9);
 		border-radius: 3px;
 		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
-		transition: all .3s ease-in-out;
 
 		&:hover {
 			background-color: rgba(#fff, 1);
@@ -148,92 +147,80 @@
 
 	// When attachment type is not image and not video
 	&__file {
-		position: relative;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-	}
+		width: 100%;
+		margin-top: 10px;
+		border: 1px solid $editor-lightest;
 
-	&__file {
-		.elementor-control-upload-content {
+		&__content {
 			padding-left: 5px;
+
+			&__label {
+				color: $editor-light;
+				font-size: 12px;
+				font-style: italic;
+			}
+
+			&__info {
+				display: flex;
+				align-items: center;
+
+				&__icon,
+				&__name {
+					font-size: 12px;
+					font-weight: 500;
+				}
+
+				&__icon {
+					margin-right: 5px;
+				}
+			}
+		}
+
+		&__controls {
+			display: flex;
+			border-left: 1px solid $editor-lightest;
+
+			&__upload-button,
+			&__remove {
+				width: 27px;
+				height: 27px;
+				cursor: pointer;
+				align-items: center;
+			}
+
+			&__upload-button {
+				display: flex;
+				justify-content: center;
+			}
+
+			&__remove {
+				border-right: 1px solid $editor-lightest;
+			}
 		}
 	}
 
-	&__file &__upload-label {
-		color: $editor-light;
-		font-size: 12px;
-		font-style: italic;
+	&:not(.elementor-media-empty) &__file  {
+		&__content {
+			&__label {
+				display: none;
+			}
+		}
 	}
 
-	&:not(.elementor-media-empty) &__file &__upload-label {
-		display: none;
-	}
-
-	&__file-info {
-		display: flex;
-		align-items: center;
-	}
-
-	&.elementor-media-empty &__file-info,
-	&.elementor-media-empty &__remove {
-		display: none;
-	}
-
-	&__file .elementor-control-file-area {
-		align-items: center;
-		cursor: pointer;
-		display: flex;
-		padding: 15px 10px;
-	}
-
-	&__file .elementor-control-upload-controls {
-		display: flex;
-		border-left: 1px solid $editor-lightest;
-	}
-
-	&__file &__remove {
-		cursor: pointer;
-		top: initial;
-		right: initial;
-		position: relative;
-		border-right: 1px solid $editor-lightest;
-		box-shadow: none;
-	}
-
-	&__file &-upload-button,
-	.elementor-control-media:not(.elementor-media-empty) &__file &-upload-button,
-	&__file &__remove {
-		width: 27px;
-		height: 27px;
-		cursor: pointer;
-		position: relative;
-		background-color: initial;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		color: $editor-dark;
-	}
-
-	&__file &-upload-button:hover {
-		background-color: initial;
-	}
-
-	&__file &__icon,
-	&__file &__file-name {
-		font-family: Roboto;
-		font-style: normal;
-		font-weight: 500;
-		font-size: 12px;
-		color: $editor-dark;
-	}
-
-	&__file &__icon {
-		margin-right: 5px;
-	}
-
-	&__file &-area {
-		background-image: none;
+	&.elementor-media-empty &__file {
+		&__content {
+			&__info {
+				display: none;
+			}
+		}
+		&__controls {
+			&__remove {
+				display: none;
+			}
+		}
 	}
 
 	.elementor-control-dynamic-switcher {

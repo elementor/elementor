@@ -10,7 +10,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
-		ui.fileName = '.elementor-control-media__file-name';
+		ui.fileName = '.elementor-control-media__file__content__info__name';
 
 		return ui;
 	},
@@ -106,7 +106,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( attachment.url ) {
 			this.setValue( {
 				url: attachment.url,
-				id: attachment.id
+				id: attachment.id,
 			} );
 
 			this.applySavedValue();
