@@ -289,7 +289,8 @@
 			}
 
 			if (settings.closeButton) {
-				self.addElement('closeButton', '<a tabindex="0" title="Close (Esc)"><i class="' + settings.closeButtonClass + '"></i></a>');
+				const { i18n } = elementorFrontend.config;
+				self.addElement('closeButton', '<a tabindex="0" title="' + i18n.close + ' (Esc)"><i class="' + settings.closeButtonClass + '"></i></a>');
 			}
 
 			var id = self.getSettings('id');

@@ -1154,6 +1154,7 @@ class Frontend extends App {
 				'playVideo' => __( 'Play Video', 'elementor' ),
 				'previous' => __( 'Previous', 'elementor' ),
 				'next' => __( 'Next', 'elementor' ),
+				'close' => __( 'Close', 'elementor'),
 			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
