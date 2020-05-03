@@ -438,7 +438,7 @@ class Element_Section extends Element_Base {
 					'bottom' => 'flex-end',
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 				// TODO: The following line is for BC since 2.7.0
 				'prefix_class' => 'elementor-section-content-',
@@ -1373,9 +1373,7 @@ class Element_Section extends Element_Base {
 		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
-		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
-			<div class="elementor-row"></div>
-		</div>
+		<div class="elementor-container elementor-column-gap-{{ settings.gap }}"></div>
 		<?php
 	}
 
@@ -1437,7 +1435,6 @@ class Element_Section extends Element_Base {
 			}
 			?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
-				<div class="elementor-row">
 		<?php
 	}
 
@@ -1451,7 +1448,6 @@ class Element_Section extends Element_Base {
 	 */
 	public function after_render() {
 		?>
-				</div>
 			</div>
 		</<?php echo esc_html( $this->get_html_tag() ); ?>>
 		<?php
