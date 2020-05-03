@@ -428,9 +428,6 @@ class Icons_Manager {
 	}
 
 	public function ajax_enable_svg_uploads() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
 		update_option( 'elementor_allow_svg', 1 );
 	}
 

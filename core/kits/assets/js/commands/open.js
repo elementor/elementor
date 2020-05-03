@@ -5,7 +5,7 @@ export class Open extends CommandBase {
 		const kit = elementor.documents.get( elementor.config.kit_id );
 
 		if ( kit && 'open' === kit.editor.status ) {
-			$e.route( 'panel/global/site-style' );
+			$e.route( 'panel/global/style' );
 			return jQuery.Deferred().resolve();
 		}
 

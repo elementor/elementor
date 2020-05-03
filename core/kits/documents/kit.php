@@ -2,7 +2,6 @@
 namespace Elementor\Core\Kits\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
-use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -11,7 +10,6 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
-use Elementor\Repeater;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,10 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Kit extends PageBase {
-
-	const SITE_STYLE_TAB = 'site-style';
-
-	const GLOBAL_STYLE_TAB = 'global-style';
 
 	private $custom_colors_disabled;
 	private $typography_schemes_disabled;
@@ -60,8 +54,7 @@ class Kit extends PageBase {
 
 	public static function get_editor_panel_config() {
 		$config = parent::get_editor_panel_config();
-
-		$config['default_route'] = 'panel/global/site-style';
+		$config['default_route'] = 'panel/global/style';
 
 		return $config;
 	}
@@ -75,8 +68,6 @@ class Kit extends PageBase {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-		$this->add_tabs();
-
 		$this->register_document_controls();
 
 		$this->add_body_section();
@@ -85,10 +76,7 @@ class Kit extends PageBase {
 		$this->add_form_fields_section();
 		$this->add_images_section();
 
-		$this->add_global_colors_section();
-		$this->add_global_typography_section();
-
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this, self::SITE_STYLE_TAB, [ __( 'Available in Pro v2.9.', 'elementor' ) ] );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, Controls_Manager::TAB_STYLE, [ __( 'Available in Pro v2.9.', 'elementor' ) ] );
 	}
 
 	protected function get_post_statuses() {
@@ -96,14 +84,6 @@ class Kit extends PageBase {
 			'draft'   => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
 			'publish' => __( 'Published', 'elementor' ),
 		];
-	}
-
-	private function add_tabs() {
-		$controls_manager = Plugin::$instance->controls_manager;
-
-		$controls_manager->add_tab( self::SITE_STYLE_TAB );
-
-		$controls_manager->add_tab( self::GLOBAL_STYLE_TAB );
 	}
 
 	private function add_element_controls( $label, $prefix, $selector ) {
@@ -161,7 +141,7 @@ class Kit extends PageBase {
 			'section_body',
 			[
 				'label' => __( 'Background', 'elementor' ),
-				'tab' => self::SITE_STYLE_TAB,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -217,7 +197,7 @@ class Kit extends PageBase {
 			'section_buttons',
 			[
 				'label' => __( 'Buttons', 'elementor' ),
-				'tab' => self::SITE_STYLE_TAB,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -397,7 +377,7 @@ class Kit extends PageBase {
 			'section_typography',
 			[
 				'label' => __( 'Typography', 'elementor' ),
-				'tab' => self::SITE_STYLE_TAB,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -580,7 +560,7 @@ class Kit extends PageBase {
 			'section_form_fields',
 			[
 				'label' => __( 'Form Fields', 'elementor' ),
-				'tab' => self::SITE_STYLE_TAB,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -710,7 +690,7 @@ class Kit extends PageBase {
 			'section_images',
 			[
 				'label' => __( 'Images', 'elementor' ),
-				'tab' => self::SITE_STYLE_TAB,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -939,58 +919,5 @@ class Kit extends PageBase {
 				],
 			]
 		);
-	}
-
-	private function add_global_colors_section() {
-		$this->start_controls_section(
-			'section_global_colors',
-			[
-				'label' => __( 'Global Colors', 'elementor' ),
-				'tab' => self::GLOBAL_STYLE_TAB,
-			]
-		);
-
-		$repeater = new Repeater();
-
-		$repeater->add_control(
-			'title',
-			[
-				'type' => Controls_Manager::TEXT,
-			]
-		);
-
-		$repeater->add_control(
-			'color',
-			[
-				'type' => Controls_Manager::COLOR,
-				'dynamic' => [],
-			]
-		);
-
-		$global_colors = [
-			[
-				'title' => __( 'Primary', 'elementor' ),
-				'color' => '#00f',
-			],
-			[
-				'title' => __( 'Secondary', 'elementor' ),
-				'color' => '#f00',
-			],
-		];
-
-		$this->add_control(
-			'colors',
-			[
-				'type' => Global_Style_Repeater::CONTROL_TYPE,
-				'fields' => $repeater->get_controls(),
-				'default' => $global_colors,
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	private function add_global_typography_section() {
-
 	}
 }

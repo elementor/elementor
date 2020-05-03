@@ -38,7 +38,7 @@
 		.elementor-panel-navigation {
 
 			.elementor-panel-navigation-tab{
-
+				
 				&.elementor-active{
 					border-bottom-color: $editor-kit-accent;
 				}
@@ -67,66 +67,4 @@
 	#elementor-panel-footer-navigator {
 		display: none;
 	}
-}
-
-.elementor-control-type-global-style-repeater {
-
-	.elementor-repeater {
-
-		&-fields {
-			margin-bottom: 15px;
-		}
-
-		&-row-controls {
-			display: flex;
-		}
-
-		&-tool-remove {
-			color: $editor-lightest;
-			cursor: pointer;
-		}
-	}
-
-	.elementor-control {
-		margin: 0;
-		padding: 0;
-
-		&-title {
-
-			input {
-
-				&:not(:focus) {
-					background: none;
-					border: none;
-				}
-			}
-		}
-
-		&-input-wrapper {
-			align-items: center;
-
-			&:hover {
-
-				.elementor-global-colors__color-value {
-					display: none;
-				}
-			}
-
-			&:not(:hover) {
-
-				.elementor-repeater-tool-remove {
-					display: none;
-				}
-			}
-		}
-	}
-
-	.pickr {
-		@include margin-start(10px);
-	}
-}
-
-.elementor-global-colors__color-value {
-	color: $editor-lightest;
-	font-size: 10px;
 }

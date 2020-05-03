@@ -94,7 +94,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'_z_index',
 			[
 				'label' => __( 'Z-Index', 'elementor' ),

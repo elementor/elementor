@@ -10,10 +10,7 @@ export default class extends $e.modules.ComponentBase {
 
 	defaultTabs() {
 		return {
-			'site-style': {
-				helpUrl: 'http://go.elementor.com/panel-theme-style',
-			},
-			'global-style': {
+			style: {
 				helpUrl: 'http://go.elementor.com/panel-theme-style',
 			},
 		};
