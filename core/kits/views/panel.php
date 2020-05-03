@@ -1,24 +1,16 @@
 <script type="text/template" id="tmpl-elementor-kit-panel-menu">
 	<div id="elementor-panel-page-menu">
 		<div class="elementor-panel-menu-items">
-			<div class="elementor-panel-menu-item" data-tab="lightbox">
+			<#
+			const tabs = $e.components.get( 'panel/global' ).getTabs();
+			Object.entries( tabs ).forEach( ( [ tab, config ] ) => { #>
+			<div class="elementor-panel-menu-item" data-tab="{{{ tab }}}">
 				<div class="elementor-panel-menu-item-icon">
-					<i class="eicon-cogs"></i>
+					<i class="{{{ config.icon }}}"></i>
 				</div>
-				<div class="elementor-panel-menu-item-title">Lightbox</div>
+				<div class="elementor-panel-menu-item-title">{{{ config.title }}}</div>
 			</div>
-			<div class="elementor-panel-menu-item" data-tab="layout-settings">
-				<div class="elementor-panel-menu-item-icon">
-					<i class="eicon-paint-brush"></i>
-				</div>
-				<div class="elementor-panel-menu-item-title">Layout Settings</div>
-			</div>
-			<div class="elementor-panel-menu-item" data-tab="theme-style">
-				<div class="elementor-panel-menu-item-icon">
-					<i class="eicon-adjust"></i>
-				</div>
-				<div class="elementor-panel-menu-item-title">Theme Style</div>
-			</div>
+			<# } ); #>
 		</div>
 	</div>
 </script>

@@ -11,29 +11,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Kit extends PageBase {
 
 	/**
-	 * @var Tabs\Lightbox
+	 * @var Tabs\Tab_Base[]
 	 */
-	private $lightbox_tab;
-	/**
-	 * @var Tabs\Colors_And_Typography
-	 */
-	private $colors_and_typography_tab;
-	/**
-	 * @var Tabs\Theme_Style
-	 */
-	private $theme_style_tab;
-	/**
-	 * @var Tabs\Layout_Settings
-	 */
-	private $layout_settings_tab;
+	private $tabs;
 
 	public function __construct( array $data = [] ) {
 		parent::__construct( $data );
 
-		$this->lightbox_tab = new Tabs\Lightbox( $this );
-		$this->colors_and_typography_tab = new Tabs\Colors_And_Typography( $this );
-		$this->layout_settings_tab = new Tabs\Layout_Settings( $this );
-		$this->theme_style_tab = new Tabs\Theme_Style( $this );
+		$this->tabs = [
+			'site_identity' => new Tabs\Site_Identity( $this ),
+			'lightbox' => new Tabs\Lightbox( $this ),
+			'colors_and_typography' => new Tabs\Colors_And_Typography( $this ),
+			'layout_settings' => new Tabs\Layout_Settings( $this ),
+			'theme_style' => new Tabs\Theme_Style( $this ),
+		];
 	}
 
 	public static function get_properties() {
@@ -71,6 +62,18 @@ class Kit extends PageBase {
 		return 'body.elementor-kit-' . $this->get_main_id();
 	}
 
+	public function save( $data ) {
+		$saved = parent::save( $data );
+
+		if ( $saved ) {
+			foreach ( $this->tabs as $tab ) {
+				$tab->on_save( $data );
+			}
+		}
+
+		return $saved;
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access protected
@@ -78,10 +81,9 @@ class Kit extends PageBase {
 	protected function _register_controls() {
 		$this->register_document_controls();
 
-		$this->lightbox_tab->register_controls();
-		$this->colors_and_typography_tab->register_controls();
-		$this->layout_settings_tab->register_controls();
-		$this->theme_style_tab->register_controls();
+		foreach ( $this->tabs as $tab ) {
+			$tab->register_controls();
+		}
 	}
 
 	protected function get_post_statuses() {

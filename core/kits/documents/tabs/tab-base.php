@@ -19,6 +19,8 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 		$this->register_tab_controls();
 	}
 
+	public function on_save( $data ) {}
+
 	protected function register_tab() {
 		Controls_Manager::add_tab( $this->get_id(), $this->get_title() );
 	}
