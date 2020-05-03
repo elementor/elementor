@@ -174,9 +174,9 @@ class Element_Column extends Element_Base {
 				],
 				'selectors' => [
 					// TODO: The following line is for BC since 2.7.0
-					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
+					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-widget-wrap' => 'align-items: {{VALUE}}',
 					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position)
-					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-column-wrap.elementor-element-populated > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-widget-wrap.elementor-element-populated' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 			]
 		);
@@ -197,7 +197,7 @@ class Element_Column extends Element_Base {
 					'space-evenly' => __( 'Space Evenly', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-column > .elementor-column-wrap > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
+					'{{WRAPPER}}.elementor-column > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
 				],
 			]
 		);
@@ -209,7 +209,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
+					'{{WRAPPER}} > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
 				],
 			]
 		);
@@ -263,7 +263,7 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background',
 				'types' => [ 'classic', 'gradient', 'slideshow' ],
-				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-column-wrap, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
+				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-widget-wrap, {{WRAPPER}} > .elementor-widget-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -626,9 +626,6 @@ class Element_Column extends Element_Base {
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 				'separator' => 'none',
-				'condition' => [
-					'heading_color!' => '',
-				],
 			]
 		);
 
@@ -640,9 +637,6 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'color_text!' => '',
 				],
 			]
 		);
@@ -656,9 +650,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
 				],
-				'condition' => [
-					'color_link!' => '',
-				],
 			]
 		);
 
@@ -670,9 +661,6 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'color_link_hover!' => '',
 				],
 			]
 		);
@@ -698,9 +686,6 @@ class Element_Column extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
-				],
-				'condition' => [
-					'text_align!' => '',
 				],
 			]
 		);
@@ -741,7 +726,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'z_index',
 			[
 				'label' => __( 'Z-Index', 'elementor' ),
@@ -916,9 +901,7 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		if ( ! Utils::has_pro() ) {
-			Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
-		}
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
@@ -933,9 +916,8 @@ class Element_Column extends Element_Base {
 	 */
 	protected function content_template() {
 		?>
-		<div class="elementor-column-wrap">
+		<div class="elementor-widget-wrap">
 			<div class="elementor-background-overlay"></div>
-			<div class="elementor-widget-wrap"></div>
 		</div>
 		<?php
 	}
@@ -954,10 +936,10 @@ class Element_Column extends Element_Base {
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		$column_wrap_classes = [ 'elementor-column-wrap' ];
+		$column_wrap_classes = [ 'elementor-widget-wrap' ];
 
 		if ( $this->get_children() ) {
-			$column_wrap_classes[] = ' elementor-element-populated';
+			$column_wrap_classes[] = 'elementor-element-populated';
 		}
 
 		$this->add_render_attribute( [
@@ -965,7 +947,7 @@ class Element_Column extends Element_Base {
 				'class' => $column_wrap_classes,
 			],
 			'_widget_wrapper' => [
-				'class' => [ 'elementor-widget-wrap' ],
+				'class' => $column_wrap_classes,
 			],
 			'_background_overlay' => [
 				'class' => [ 'elementor-background-overlay' ],
@@ -973,11 +955,10 @@ class Element_Column extends Element_Base {
 		] );
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
-			<div <?php echo $this->get_render_attribute_string( '_inner_wrapper' ); ?>>
-			<?php if ( $has_background_overlay ) : ?>
-				<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
-			<?php endif; ?>
-		<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
+			<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
+		<?php if ( $has_background_overlay ) : ?>
+			<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
+		<?php endif; ?>
 		<?php
 	}
 
@@ -991,7 +972,6 @@ class Element_Column extends Element_Base {
 	 */
 	public function after_render() {
 		?>
-				</div>
 			</div>
 		</<?php echo $this->get_html_tag(); ?>>
 		<?php

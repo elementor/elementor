@@ -142,12 +142,15 @@ class Icons_Manager {
 			[],
 			ELEMENTOR_VERSION
 		);
-		wp_enqueue_style(
-			'font-awesome-5-all',
-			self::get_fa_asset_url( 'all' ),
-			[],
-			ELEMENTOR_VERSION
-		);
+		// Make sure that the CSS in the 'all' file does not override FA Pro's CSS
+		if ( ! wp_script_is( 'font-awesome-pro' ) ) {
+			wp_enqueue_style(
+				'font-awesome-5-all',
+				self::get_fa_asset_url( 'all' ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		}
 		wp_enqueue_style(
 			'font-awesome-4-shim',
 			self::get_fa_asset_url( 'v4-shims' ),
@@ -425,6 +428,9 @@ class Icons_Manager {
 	}
 
 	public function ajax_enable_svg_uploads() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 		update_option( 'elementor_allow_svg', 1 );
 	}
 

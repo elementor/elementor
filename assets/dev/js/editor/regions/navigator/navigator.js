@@ -12,8 +12,6 @@ export default class extends BaseRegion {
 
 		this.isDocked = false;
 
-		this.opened = false;
-
 		this.indicators = {
 			customPosition: {
 				title: elementor.translate( 'custom_positioning' ),
@@ -91,18 +89,10 @@ export default class extends BaseRegion {
 		this.show( new NavigatorLayout() );
 
 		this.$el.draggable( this.getDraggableOptions() );
-
 		this.$el.resizable( this.getResizableOptions() );
 	}
 
 	open( model ) {
-		// If open once.
-		if ( ! this.opened ) {
-			this.initLayout();
-
-			this.opened = true;
-		}
-
 		this.$el.show();
 
 		if ( this.storage.docked ) {
@@ -133,6 +123,10 @@ export default class extends BaseRegion {
 
 		if ( ! silent ) {
 			this.saveStorage( 'visible', false );
+		}
+
+		if ( this.$el.resizable( 'instance' ) ) {
+			this.$el.resizable( 'destroy' );
 		}
 
 		elementorCommon.elements.$window.off( 'resize', this.ensurePosition );
@@ -281,10 +275,10 @@ export default class extends BaseRegion {
 	onDocumentLoaded( document ) {
 		if ( document.config.panel.has_elements ) {
 			this.initLayout();
-		}
 
-		if ( this.storage.visible ) {
-			$e.route( 'navigator' );
+			if ( this.storage.visible ) {
+				$e.route( 'navigator' );
+			}
 		}
 	}
 

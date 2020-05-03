@@ -1,6 +1,6 @@
-import History from 'elementor-document/commands/base/history';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 
-export class Paste extends History {
+export class Paste extends CommandHistory {
 	validateArgs( args ) {
 		this.requireContainer( args );
 

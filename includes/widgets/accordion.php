@@ -316,7 +316,7 @@ class Widget_Accordion extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-title',
+				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-title',
 				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 			]
 		);

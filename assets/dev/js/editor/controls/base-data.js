@@ -107,7 +107,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	setEditSetting: function( settingKey, settingValue ) {
-		var settings = this.getOption( 'elementEditSettings' );
+		const settings = this.getOption( 'elementEditSettings' ) || this.getOption( 'container' ).settings;
 
 		settings.set( settingKey, settingValue );
 	},
