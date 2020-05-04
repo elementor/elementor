@@ -29,11 +29,12 @@ class AddDefaultGlobals extends Processor\After {
 				if ( ! empty( $control['globals'] ) ) {
 					$element_settings = & $elements[ $element_key ]['settings'];
 
+					// Add default globals only when __globals__ does not exist.
 					if ( ! isset( $element_settings['__globals__'] ) ) {
 						$element_settings['__globals__'] = [];
-					}
 
-					$element_settings['__globals__'][ $control_name ] = $control['globals'];
+						$element_settings['__globals__'][ $control_name ] = $control['globals'];
+					}
 				}
 			}
 
