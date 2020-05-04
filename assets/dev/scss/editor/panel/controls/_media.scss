@@ -155,33 +155,28 @@
 		border: 1px solid $editor-lightest;
 
 		&__content {
-			padding-left: 5px;
+			@include padding-start(5px);
+			font-size: 12px;
 
 			&__label {
 				color: $editor-light;
-				font-size: 12px;
 				font-style: italic;
 			}
 
 			&__info {
 				display: flex;
 				align-items: center;
-
-				&__icon,
-				&__name {
-					font-size: 12px;
-					font-weight: 500;
-				}
+				font-weight: 500;
 
 				&__icon {
-					margin-right: 5px;
+					@include margin-end(5px);
 				}
 			}
 		}
 
 		&__controls {
 			display: flex;
-			border-left: 1px solid $editor-lightest;
+			@include border-start(1px solid $editor-lightest);
 
 			&__upload-button,
 			&__remove {
@@ -197,7 +192,7 @@
 			}
 
 			&__remove {
-				border-right: 1px solid $editor-lightest;
+				@include border-end(1px solid $editor-lightest);
 			}
 		}
 	}
