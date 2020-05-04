@@ -119,7 +119,7 @@ export default class ColorPicker extends elementorModules.Module {
 		this.$addButton.on( 'click', () => this.onAddButtonClick() );
 
 		this.$addButton.tipsy( {
-			title: () => elementor.translate( 'add_picked_color' ),
+			title: () => elementor.translate( 'create_global_color' ),
 			gravity: () => 's',
 		} );
 	}

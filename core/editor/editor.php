@@ -592,9 +592,18 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
-				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
 				'saved_colors' => __( 'Saved Colors', 'elementor' ),
 				'drag_to_delete' => __( 'Drag To Delete', 'elementor' ),
+
+				// Global Styles
+				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'global_colors_title' => __( 'Global Colors', 'elementor' ),
+				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
+				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
+				'global_colors_info' => __( 'Global colors help you work smarter. Save a color once and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below. Any change you make - the color will update throughout your entire site.', 'elementor' ),
+				'global_text_styles' => __( 'Global Text Styles', 'elementor' ),
+				'create_global_style' => __( 'Create New Global Text Style', 'elementor' ),
+				'global_typography_info' => __( 'Global text styles help you work smarter. Save a text style once, and use it anywhere throughout your site. Access and edit your global text styles by clicking the Manage button below. Any change you make - the text style will update throughout your entire site.', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),

@@ -17,8 +17,9 @@ export default class extends ControlBaseDataView {
 		behaviors.globalControlSelect = {
 			behaviorClass: GlobalControlSelect,
 			popoverContent: this.getGlobalColors(),
-			popoverTitle: 'Global Colors',
-			manageButtonText: 'Manage Global Colors',
+			popoverTitle: elementor.translate( 'global_colors_title' ),
+			manageButtonText: elementor.translate( 'manage_global_colors' ),
+			tooltipText: elementor.translate( 'global_colors_info' ),
 		};
 
 		return behaviors;

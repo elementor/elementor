@@ -33,8 +33,9 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 		behaviors.globalControlSelect = {
 			behaviorClass: GlobalControlSelect,
 			popoverContent: this.getGlobalTextStyles(),
-			popoverTitle: 'Global Typography',
-			manageButtonText: 'Manage Global Text Styles',
+			popoverTitle: elementor.translate( 'global_text_styles' ),
+			manageButtonText: elementor.translate( 'manage_global_text_styles' ),
+			tooltipText: elementor.translate( 'global_typography_info' ),
 		};
 
 		return behaviors;
