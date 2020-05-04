@@ -577,16 +577,6 @@ class Settings extends Settings_Page {
 									'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
 								],
 							],
-							'global_image_lightbox' => [
-								'label' => __( 'Image Lightbox', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox',
-									'value' => 'yes',
-									'std' => 'yes',
-									'sub_desc' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
-									'desc' => __( 'You can customize the lightbox design by going to: Top-left hamburger icon > Global Settings > Lightbox.', 'elementor' ),
-								],
-							],
 						],
 					],
 				],
