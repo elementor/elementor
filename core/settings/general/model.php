@@ -42,6 +42,6 @@ class Model {
 			$setting = str_replace( 'elementor_', '', $setting );
 		}
 
-		return Plugin::$instance->kits_manager->get_active_kit_for_frontend()->get_settings( $setting );
+		return Plugin::$instance->kits_manager->get_current_settings( $setting );
 	}
 }
