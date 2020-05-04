@@ -88,10 +88,6 @@ export default class ColorPicker extends elementorModules.Module {
 		return this.color;
 	}
 
-	addSwatch( color ) {
-		this.picker.addSwatch( color );
-	}
-
 	addPickerHeader() {
 		const { classes } = this.getSettings(),
 			$pickerHeader = jQuery( '<div>', { class: classes.pickerHeader } )
@@ -192,8 +188,6 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	onAddButtonClick() {
-		//this.addSwatch( this.color );
-
 		this.addToolsToSwatches();
 
 		elementor.schemes.addSchemeItem( 'color-picker', { value: this.color } );
