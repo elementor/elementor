@@ -2,7 +2,6 @@
 
 namespace Elementor\Core\Settings\General;
 
-use Elementor\Core\Settings\Base\CSS_Model;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
