@@ -2,8 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Responsive\Responsive;
-use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
-use Elementor\Core\Settings\Manager;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -373,9 +371,6 @@ class Settings extends Settings_Page {
 	public function on_admin_init() {
 		$this->handle_external_redirects();
 
-		// Save general settings in one list for a future usage
-		$this->handle_general_settings_update();
-
 		$this->maybe_remove_all_admin_notices();
 	}
 
@@ -565,38 +560,6 @@ class Settings extends Settings_Page {
 	 */
 	protected function get_page_title() {
 		return __( 'Elementor', 'elementor' );
-	}
-
-	/**
-	 * Handle general settings update.
-	 *
-	 * Save general settings in one list for a future usage.
-	 *
-	 * @since 2.0.0
-	 * @access private
-	 */
-	private function handle_general_settings_update() {
-		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action'] ) {
-			check_admin_referer( 'elementor-options' );
-
-			$saved_general_settings = get_option( General_Settings_Manager::META_KEY );
-
-			if ( ! $saved_general_settings ) {
-				$saved_general_settings = [];
-			}
-
-			$general_settings = Manager::get_settings_managers( 'general' )->get_model()->get_settings();
-
-			foreach ( $general_settings as $setting_key => $setting ) {
-				if ( ! empty( $_POST[ $setting_key ] ) ) {
-					$pure_setting_key = str_replace( 'elementor_', '', $setting_key );
-
-					$saved_general_settings[ $pure_setting_key ] = $_POST[ $setting_key ];
-				}
-			}
-
-			update_option( General_Settings_Manager::META_KEY, $saved_general_settings );
-		}
 	}
 
 	/**
