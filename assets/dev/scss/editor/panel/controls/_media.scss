@@ -185,8 +185,8 @@
 
 			&__upload-button,
 			&__remove {
-				width: 27px;
-				height: 27px;
+				width: $control-unit;
+				height: $control-unit;
 				cursor: pointer;
 				align-items: center;
 			}
