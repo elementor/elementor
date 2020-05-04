@@ -58,19 +58,6 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	abstract public function render();
 
 	/**
-	 * Render skin output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 1.7.6
-	 * @access public
-	 */
-	public function _content_template() {
-		_deprecated_function( __METHOD__, '1.7.6' );
-	}
-
-	/**
 	 * Register skin controls actions.
 	 *
 	 * Run on init and used to register new skins to be injected to the widget.
