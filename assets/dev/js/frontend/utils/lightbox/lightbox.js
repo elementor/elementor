@@ -597,9 +597,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	unbindHotKeys: function() {
-		this.getModal().getElements( 'window' ).off( {
-			keydown: this.activeKeyDown,
-		} );
+		this.getModal().getElements( 'window' ).off( 'keydown', this.activeKeyDown );
 	},
 
 	activeKeyDown: function( event ) {
