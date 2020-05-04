@@ -1158,7 +1158,7 @@ class Frontend extends App {
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 		$settings['kit'] = $kit->get_frontend_settings();
 
 		if ( is_singular() ) {

@@ -38,7 +38,7 @@ class Manager {
 		return Plugin::$instance->documents->get( $id );
 	}
 
-	public function get_active_kit_for_fronend() {
+	public function get_active_kit_for_frontend() {
 		$id = $this->get_active_id();
 
 		return Plugin::$instance->documents->get_doc_for_frontend( $id );
