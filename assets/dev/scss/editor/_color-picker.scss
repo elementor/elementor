@@ -3,13 +3,30 @@
 	&__header {
 		display: flex;
 		justify-content: space-between;
-		margin-bottom: 10px;
+		align-items: center;
+		font-weight: bold;
+		padding: 10px;
+		box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 	}
 
-	&__swatch-tool {
+	&__tools {
+		display: flex;
+
+		> * {
+			width: 20px;
+			height: 20px;
+			display: inline-flex;
+			border-radius: 3px;
+			cursor: pointer;
+			margin: 0 3.1px 0;
+		}
+	}
+
+	&__tool {
 		position: relative;
-		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
+		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 		background-color: #fff;
+		border: 0;
 
 		i {
 			position: absolute;
@@ -55,18 +72,43 @@
 	}
 }
 
-.pcr-swatch {
+.pcr {
 
-	&.pcr-active {
+	&-app[data-theme=monolith] {
+		padding: 0;
+	}
 
-		~ .elementor-color-picker__add-swatch {
-			background-color: $editor-lightest;
-			pointer-events: none;
-			box-shadow: none;
+	&-result {
+		border-right-width: 1px;
+		border-radius: 3px;
+	}
 
-			i {
-				color: #fff;
+	&-selection, &-interaction {
+		padding: 0 10px;
+	}
+
+	&-interaction {
+		padding-bottom: 10px;
+	}
+
+	&-swatch {
+
+		&.pcr-active {
+
+			~ .elementor-color-picker__add-swatch {
+				background-color: $editor-lightest;
+				pointer-events: none;
+				box-shadow: none;
+
+				i {
+					color: #fff;
+				}
 			}
 		}
+	}
+
+	.elementor-control-dynamic-switcher {
+		height: 20px;
+		border: 0;
 	}
 }
