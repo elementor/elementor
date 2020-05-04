@@ -1,17 +1,29 @@
-export default class BackgroundSlideshow extends elementorModules.frontend.handlers.SwiperBase {
+export default class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			classes: {
 				swiperContainer: 'elementor-background-slideshow swiper-container',
 				swiperWrapper: 'swiper-wrapper',
 				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
-				slideBackground: 'elementor-background-slideshow__slide__image',
+				swiperSlideInner: 'elementor-background-slideshow__slide__image',
 				kenBurns: 'elementor-ken-burns',
 				kenBurnsActive: 'elementor-ken-burns--active',
 				kenBurnsIn: 'elementor-ken-burns--in',
 				kenBurnsOut: 'elementor-ken-burns--out',
 			},
 		};
+	}
+
+	getDefaultElements() {
+		const classes = this.getSettings( 'classes' );
+
+		const elements = {
+			$slider: this.$element.find( '.' + classes.swiperContainer ),
+		};
+
+		elements.$mainSwiperSlides = elements.$slider.find( '.' + classes.swiperSlide );
+
+		return elements;
 	}
 
 	getSwiperOptions() {
@@ -30,9 +42,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			handleElementorBreakpoints: true,
 			on: {
 				slideChange: () => {
-					if ( elementSettings.background_slideshow_ken_burns ) {
-						this.handleKenBurns();
-					}
+					this.handleKenBurns();
 				},
 			},
 		};
@@ -58,6 +68,40 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		return swiperOptions;
 	}
 
+	getInitialSlide() {
+		const editSettings = this.getEditSettings();
+
+		return editSettings.activeItemIndex ? editSettings.activeItemIndex - 1 : 0;
+	}
+
+	handleKenBurns() {
+		const elementSettings = this.getElementSettings();
+
+		if ( ! elementSettings.background_slideshow_ken_burns ) {
+			return;
+		}
+
+		const settings = this.getSettings();
+
+		if ( this.$activeImageBg ) {
+			this.$activeImageBg.removeClass( settings.classes.kenBurnsActive );
+		}
+
+		this.activeItemIndex = this.swiper ? this.swiper.activeIndex : this.getInitialSlide();
+
+		if ( this.swiper ) {
+			this.$activeImageBg = jQuery( this.swiper.slides[ this.activeItemIndex ] ).children( '.' + settings.classes.swiperSlideInner );
+		} else {
+			this.$activeImageBg = jQuery( this.elements.$mainSwiperSlides[ 0 ] ).children( '.' + settings.classes.swiperSlideInner );
+		}
+
+		this.$activeImageBg.addClass( settings.classes.kenBurnsActive );
+	}
+
+	getSlidesCount() {
+		return this.elements.$slides.length;
+	}
+
 	buildSwiperElements() {
 		const classes = this.getSettings( 'classes' ),
 			elementSettings = this.getElementSettings(),
@@ -66,7 +110,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } ),
 			kenBurnsActive = elementSettings.background_slideshow_ken_burns;
 
-		let slideInnerClass = classes.slideBackground;
+		let slideInnerClass = classes.swiperSlideInner;
 
 		if ( kenBurnsActive ) {
 			slideInnerClass += ' ' + classes.kenBurns;
@@ -103,16 +147,12 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			return;
 		}
 
-		const elementSettings = this.getElementSettings();
-
 		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
 
 		// Expose the swiper instance in the frontend
 		this.elements.$backgroundSlideShowContainer.data( 'swiper', this.swiper );
 
-		if ( elementSettings.background_slideshow_ken_burns ) {
-			this.handleKenBurns();
-		}
+		this.handleKenBurns();
 	}
 
 	activate() {
