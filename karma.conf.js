@@ -111,7 +111,7 @@ module.exports = function( config ) {
 		if ( fs.existsSync( '../elementor-dev-tools' ) ) {
 			const last = karmaConfig.files.pop();
 
-			karmaConfig.files.push( { pattern: '../elementor-dev-tools/modules/dev-tools/assets/js/*.js', type: 'module' } );
+			karmaConfig.files.push( { pattern: '../elementor-dev-tools/assets/js/editor.js', type: 'module' } );
 
 			karmaConfig.files.push( last );
 		}

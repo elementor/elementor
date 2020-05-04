@@ -511,11 +511,9 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$page_title_selector = get_option( 'elementor_page_title_selector' );
+		$page_title_selector = Plugin::$instance->kits_manager->get_active_kit_for_fronend()->get_settings( 'page_title_selector' );
 
-		if ( empty( $page_title_selector ) ) {
-			$page_title_selector = 'h1.entry-title';
-		}
+		$page_title_selector .= ', .elementor-page-title';
 
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.

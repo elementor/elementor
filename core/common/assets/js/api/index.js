@@ -23,7 +23,8 @@ export default class API {
 	 * Create's 'elementor' api.
 	 */
 	constructor() {
-		this.bc = new BackwardsCompatibility();
+		window.$e = this;
+
 		this.components = new Components();
 
 		this.commands = new Commands();
@@ -47,7 +48,8 @@ export default class API {
 			hookUI,
 		};
 
-		window.$e = this;
+		// Backwards compatibility should be last, in order to handle others.
+		this.bc = new BackwardsCompatibility();
 	}
 
 	/**

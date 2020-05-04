@@ -31,28 +31,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	childViewOptions: function( rowModel, index ) {
 		const elementContainer = this.getOption( 'container' );
 
-		let rowId = rowModel.get( '_id' );
-
-		// TODO: Temp backwards compatibility. since 2.8.0.
-		if ( ! rowId ) {
-			rowId = 'bc-' + elementor.helpers.getUniqueID();
-			rowModel.set( '_id', rowId );
-		}
-
-		elementContainer.children.splice( index, 0, new elementorModules.editor.Container( {
-			type: 'repeater',
-			id: rowId,
-			model: new Backbone.Model( {
-				name: this.model.get( 'name' ),
-			} ),
-			settings: rowModel,
-			view: elementContainer.view,
-			parent: elementContainer,
-			label: elementContainer.label + ' ' + elementor.translate( 'Item' ),
-			controls: rowModel.options.controls,
-			renderer: elementContainer.renderer,
-		} ) );
-
 		return {
 			container: elementContainer.children[ index ],
 			controlFields: this.model.get( 'fields' ),
@@ -84,12 +62,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 			// Set the value silent
 			settings.set( controlName, this.collection, { silent: true } );
-		}
-
-		// Reset children.
-		// TODO: Temp backwards compatibility since 2.8.0.
-		if ( this.container ) {
-			this.container.children = [];
 		}
 	},
 

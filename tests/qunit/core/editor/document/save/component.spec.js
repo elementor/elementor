@@ -37,7 +37,7 @@ jQuery( () => {
 			 * on promise resolve, it will eventually set 'elementor.documents.getCurrent().editor.isSaved = true'.
 			 * Explanation: on after save, we catch the promise via '_results', then await for promise resolve.
 			 */
-			$e.commandsInternal.on( 'run', ( component, command, args ) => {
+			$e.commandsInternal.on( 'run:before', ( component, command, args ) => {
 				if ( 'document/save/save' === command ) {
 					args.onAfter = async ( _args, _results ) => {
 						const saveResult = await _results;

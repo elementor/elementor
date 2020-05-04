@@ -343,3 +343,12 @@
 		top: 2px;
 	}
 }
+
+// Elementor Page Title
+:root {
+	--page-title-display: 'inherit';
+}
+
+.elementor-page-title, h1.entry-title {
+	display: var(--page-title-display);
+}
