@@ -1,6 +1,21 @@
 import Commands from './commands.js';
 import Cache from './data/cache';
 
+/**
+ * @typedef {('create'|'delete'|'get'|'update')} DataTypes
+ */
+
+/**
+ * @typedef {{}} RequestData
+ *
+ * @property {DataTypes} type
+ * @property {number} timestamp
+ * @property {string} endpoint
+ * @property {Component} component
+ * @property {string} command
+ * @property {{}} args
+ */
+
 // TODO: Return it from the server. Original at WP_REST_Server.
 export const READABLE = [ 'GET' ],
 	CREATABLE = [ 'POST' ],
@@ -30,6 +45,15 @@ export default class Data extends Commands {
 		this.baseEndpointAddress = `${ elementor.config.rest_url }${ namespace }/v${ version }/`;
 	}
 
+	/**
+	 * Function getHTTPMethod().
+	 *
+	 * Returns HTTP Method by type.
+	 *
+	 * @param {DataTypes} type
+	 *
+	 * @return {string|boolean}
+	 */
 	getHTTPMethod( type ) {
 		switch ( type ) {
 			case 'create':
@@ -48,6 +72,15 @@ export default class Data extends Commands {
 		return false;
 	}
 
+	/**
+	 * Function getAllowedMethods().
+	 *
+	 * Returns allowed HTTP methods by type.
+	 *
+	 * @param {DataTypes} type
+	 *
+	 * @return {[string]|boolean}
+	 */
 	getAllowedMethods( type ) {
 		switch ( type ) {
 			case 'create':
@@ -67,13 +100,16 @@ export default class Data extends Commands {
 	}
 
 	/**
-	 * @param {string} type // TODO: Remove.
+	 * Function commandToEndpoint().
+	 *
+	 * Convert command to endpoint.
+	 *
 	 * @param {string} command
 	 * @param {{}} args
 	 *
-	 * @returns {string} Endpoint
+	 * @returns {string} endpoint
 	 */
-	commandToEndpoint( type, command, args ) {
+	commandToEndpoint( command, args ) {
 		let endPoint = command;
 
 		if ( endPoint.includes( 'index' ) ) {
@@ -105,44 +141,67 @@ export default class Data extends Commands {
 		return endPoint;
 	}
 
+	/**
+	 * Function endpointToCommand().
+	 *
+	 * Convect endpoint to command.
+	 *
+	 * Guess if command is 'index' endpoint
+	 * Guess if command is 'id' endpoint.
+	 * Modify args in case the endpoint is 'id` ( eg: wp-json/endpoint/id ).
+	 *
+	 * @param endpoint
+	 * @param args
+	 *
+	 * @return {string} command
+	 */
 	endpointToCommand( endpoint, args ) {
-		const { query, options } = args;
-
-		let commandFound = !! $e.data.commands[ endpoint ];
+		let command = endpoint,
+			commandFound = !! $e.data.commands[ endpoint ];
 
 		// Assuming the command maybe index.
 		if ( ! commandFound && $e.data.commands[ endpoint + '/index' ] ) {
-			endpoint = endpoint + '/index';
+			command = endpoint + '/index';
 			commandFound = true;
 		}
 
 		// Maybe the endpoint includes 'id'. as part of the endpoint.
-		if ( ! commandFound && 'get' === options.type ) {
+		if ( ! commandFound ) {
 			const endpointParts = endpoint.split( '/' ),
 				assumedCommand = endpointParts[ 0 ] + '/' + endpointParts[ 1 ];
 
 			if ( $e.data.commands[ assumedCommand ] ) {
-				endpoint = assumedCommand;
+				command = assumedCommand;
+				commandFound = true;
+
+				if ( ! args.query ) {
+					args.query = {};
+				}
 
 				// Warp with 'id'.
-				query.id = endpointParts[ 2 ];
-
-				commandFound = true;
+				args.query.id = endpointParts[ 2 ];
 			}
 		}
 
-		return endpoint;
+		return command;
 	}
 
-	// TODO: Function too big part it.
-	fetch( type, requestData ) {
+	/**
+	 * Function prepareHeaders().
+	 *
+	 * @param {DataTypes} type
+	 * @param {RequestData} requestData
+	 *
+	 * @return {{}} params
+	 */
+	prepareHeaders( type, requestData ) {
+		/* global wpApiSettings */
 		const nonce = wpApiSettings.nonce,
 			params = {
 				credentials: 'include', // cookies is required for wp reset.
 			},
 			headers = { 'X-WP-Nonce': nonce };
 
-		requestData.endpoint = this.commandToEndpoint( type, requestData.command, requestData.args );
 		/**
 		 * Translate:
 		 * 'create, delete, get, update' to HTTP Methods:
@@ -164,10 +223,25 @@ export default class Data extends Commands {
 			throw Error( `Invalid type: '${ type }'` );
 		}
 
-		if ( 'GET' === method && ! requestData.args.options.refresh ) {
-			let cachePromise;
+		return params;
+	}
 
-			cachePromise = this.cache.receive( requestData );
+	/**
+	 * Function fetch().
+	 *
+	 * @param {DataTypes} type
+	 * @param {RequestData} requestData
+	 *
+	 * @return {{}} params
+	 */
+	fetch( type, requestData ) {
+		requestData.endpoint = this.commandToEndpoint( requestData.command, requestData.args );
+
+		const params = this.prepareHeaders( type, requestData ),
+			useCache = 'get' === type && ! requestData.args.options?.refresh;
+
+		if ( useCache ) {
+			const cachePromise = this.cache.receive( requestData );
 
 			if ( cachePromise ) {
 				return cachePromise;
@@ -197,7 +271,7 @@ export default class Data extends Commands {
 				}
 
 				// Upon 'GET' save cache.
-				if ( 'GET' === method ) {
+				if ( useCache ) {
 					this.cache.load( requestData, response );
 				}
 
@@ -208,12 +282,84 @@ export default class Data extends Commands {
 		} );
 	}
 
-	run( type, endpoint, args ) {
-		args.options.type = type;
+	/**
+	 * Function getCache().
+	 *
+	 * @param {string} command
+	 * @param {{}} query
+	 *
+	 * @return {*}
+	 */
+	getCache( command, query ) {
+		const args = { query },
+			endpoint = this.commandToEndpoint( command, args );
 
-		const command = this.endpointToCommand( endpoint, args );
+		return this.cache.get( {
+			command,
+			endpoint,
+			args,
+		} );
+	}
 
-		return super.run( command, args );
+	/**
+	 * Function loadCache().
+	 *
+	 * @param {string} command
+	 * @param {{}} query
+	 * @param {*} data
+	 */
+	loadCache( command, query, data ) {
+		const args = { query },
+			endpoint = this.commandToEndpoint( command, args );
+
+		this.cache.load(
+			{
+				command,
+				endpoint,
+				args,
+			},
+			data
+		);
+	}
+
+	/**
+	 * Function updateCache().
+	 *
+	 * The difference between 'loadCache' and 'updateCache' is update will only modify exist values.
+	 * and 'loadCache' will create or update.
+	 *
+	 * @param {string} command
+	 * @param {{}} query
+	 * @param {{}} data
+	 */
+	updateCache( command, query, data ) {
+		const args = { query, data },
+			endpoint = this.commandToEndpoint( command, args );
+
+		this.cache.update(
+			{
+				command,
+				endpoint,
+				args,
+			},
+		);
+	}
+
+	/**
+	 * Function deleteCache().
+	 *
+	 * @param {string} command
+	 * @param {{}} query
+	 */
+	deleteCache( command, query = {} ) {
+		const args = { query },
+			endpoint = this.commandToEndpoint( command, args );
+
+		if ( Object.values( query ).length ) {
+			args.query = query;
+		}
+
+		this.cache.delete( endpoint );
 	}
 
 	create( endpoint, query = {}, options = {}, data = {} ) {
@@ -232,64 +378,15 @@ export default class Data extends Commands {
 		return this.run( 'update', endpoint, { query, options, data } );
 	}
 
+	run( type, endpoint, args ) {
+		args.options.type = type;
+
+		const command = this.endpointToCommand( endpoint, args );
+
+		return super.run( command, args );
+	}
+
 	error( message ) {
 		throw Error( 'Data commands: ' + message );
-	}
-
-	getCache( command, query ) {
-		const args = { query },
-			endpoint = this.commandToEndpoint( 'get', command, args );
-
-		return this.cache.get( {
-			command,
-			endpoint,
-			args,
-		} );
-	}
-
-	/**
-	 * TODO: Remove this function it should not exist.
-	 * Handle cache with: $e.data.update and $e.data.create.
-	 */
-	loadCache( command, query, data ) {
-		const args = { query },
-			endpoint = this.commandToEndpoint( 'get', command, args );
-
-		this.cache.load(
-			{
-				command,
-				endpoint,
-				args,
-			},
-			data
-		);
-	}
-
-	/**
-	 * The difference between 'loadCache' and 'updateCache' is update will only modify exist values.
-	 * and 'loadCache' will create or update.
-	 */
-	updateCache( command, query, data ) {
-		const args = { query, data },
-			endpoint = this.commandToEndpoint( 'update', command, args );
-
-		this.cache.update(
-			{
-				command,
-				endpoint,
-				args,
-			},
-		);
-	}
-
-	deleteCache( command, query = null ) {
-		const args = {},
-			endpoint = this.commandToEndpoint( 'delete', command, args );
-
-		if ( query ) {
-			args.query = query;
-		}
-
-		this.cache.delete( endpoint );
 	}
 }

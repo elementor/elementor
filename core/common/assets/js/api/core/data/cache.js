@@ -19,11 +19,11 @@ export default class Cache {
 	 *
 	 * Extract response to callback that accept key,value parameters using requestData.
 	 *
-	 * @param {{}} response
+	 * @param {*} data
 	 * @param {{}} requestData
 	 * @param {function( string, any )} keyValueCallback - callback(key, value)
 	 */
-	extractResponse( response, requestData, keyValueCallback ) {
+	extractData( data, requestData, keyValueCallback ) {
 		const componentName = requestData.component?.getNamespace(),
 			isIndexCommand = requestData.endpoint + '/index' === requestData.command,
 			isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
@@ -32,7 +32,7 @@ export default class Cache {
 		if ( isQueryEmpty && isIndexCommand ) {
 			// Handles situation when 'index' was forced to use like in 'globals' component.
 			// EG: 'globals/index'.
-			Object.entries( response ).forEach( ( [ key, /*object*/ value ] ) => {
+			Object.entries( data ).forEach( ( [ key, /*object*/ value ] ) => {
 				if ( 'object' === typeof value ) {
 					Object.entries( value ).forEach( ( [ endpoint, endpointResponse ] ) => {
 						keyValueCallback( componentName + '/' + key + '/' + endpoint, endpointResponse );
@@ -44,16 +44,16 @@ export default class Cache {
 		} else if ( isEndpointTwoLevelsDeep && isQueryEmpty ) {
 			// Handles situation when query empty.
 			// EG: 'globals/typography/primary'.
-			keyValueCallback( requestData.endpoint, response );
-		} else if ( isQueryEmpty ) {
+			keyValueCallback( requestData.endpoint, data );
+		} else if ( isQueryEmpty && 'object' === typeof data ) {
 			// Handles situation when query empty.
 			// EG: 'globals/typography'.
-			Object.keys( response ).forEach( ( key ) => {
-				keyValueCallback( requestData.command + '/' + key, response[ key ] );
+			Object.keys( data ).forEach( ( key ) => {
+				keyValueCallback( requestData.command + '/' + key, data[ key ] );
 			} );
 		} else {
 			// Handles situation when query is not empty.
-			keyValueCallback( requestData.endpoint, response );
+			keyValueCallback( requestData.endpoint, data );
 		}
 	}
 
@@ -85,12 +85,12 @@ export default class Cache {
 	 * Load data to cache
 	 *
 	 * @param {{}} requestData
-	 * @param {{}} response
+	 * @param {*} data
 	 */
-	load( requestData, response ) {
+	load( requestData, data ) {
 		const addCache = ( key, value ) => this.storage.setItem( key, JSON.stringify( value ) );
 
-		this.extractResponse( response, requestData, addCache );
+		this.extractData( data, requestData, addCache );
 	}
 
 	/**
@@ -124,8 +124,18 @@ export default class Cache {
 			if ( endpointKey === endpoint ) {
 				// If requested endpoint matches current endpoint key.
 				response = JSON.parse( endpointValue );
+
+				// Check if response is same data type as args.data ( since update requested ).
+				if ( typeof response !== typeof requestData.args.data ) {
+					throw new Error( 'Invalid data: type mismatch' );
+				}
+
 				// Merge response with `requestData.args.data`.
-				response = Object.assign( response, requestData.args.data );
+				if ( 'object' === typeof response ) {
+					response = Object.assign( response, requestData.args.data );
+				} else {
+					response = requestData.args.data;
+				}
 			} else if ( endpointKey.includes( endpoint ) ) {
 				// If current cache is part of the endpoint ( Handle situations like 'globals/ ... ' ).
 				let isResponseMerged = false;
