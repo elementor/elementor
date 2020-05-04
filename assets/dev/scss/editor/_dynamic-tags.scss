@@ -8,7 +8,7 @@
 	background-color: #fff;
 	border: 1px solid $editor-light;
 	border-radius: 3px;
-	z-index: $first-layer;
+	z-index: $super-layer;
 
 	&__group-title {
 		color: $editor-darkest;
@@ -155,7 +155,8 @@
 	&-value {
 
 		.elementor-control-tag-area,
-		.elementor-control-dynamic-switcher {
+		.elementor-control-dynamic-switcher,
+		.elementor-global-select {
 			display: none;
 		}
 	}

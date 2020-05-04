@@ -6,14 +6,6 @@ module.exports = Marionette.Behavior.extend( {
 
 	listenerAttached: false,
 
-	ui: {
-		dynamicSwitcher: '.elementor-control-dynamic-switcher',
-	},
-
-	events: {
-		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick',
-	},
-
 	initialize: function() {
 		if ( ! this.listenerAttached ) {
 			this.listenTo( this.view.options.container.settings, 'change:external:__dynamic__', this.onAfterExternalChange );
@@ -28,9 +20,15 @@ module.exports = Marionette.Behavior.extend( {
 
 		const $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
 
+		$dynamicSwitcher.on( 'click', ( event ) => this.onDynamicSwitcherClick( event ) );
+
 		this.$el.find( '.elementor-control-dynamic-switcher-wrapper' ).append( $dynamicSwitcher );
 
 		this.ui.dynamicSwitcher = $dynamicSwitcher;
+
+		if ( 'color' === this.view.model.attributes.type ) {
+			this.moveDynamicSwitcherToColorPicker();
+		}
 
 		// Add a Tipsy Tooltip to the Dynamic Switcher
 		this.ui.dynamicSwitcher.tipsy( {
@@ -39,6 +37,13 @@ module.exports = Marionette.Behavior.extend( {
 			},
 			gravity: 's',
 		} );
+	},
+
+	moveDynamicSwitcherToColorPicker: function() {
+		const $colorPickerToolsContainer = jQuery( this.view.colorPicker.picker.getRoot().app ).find( '.elementor-color-picker__tools' );
+
+		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'elementor-color-picker__tool' );
+		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
 	},
 
 	toggleDynamicClass: function() {
