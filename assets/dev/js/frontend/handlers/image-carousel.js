@@ -1,4 +1,4 @@
-class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
+class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -12,16 +12,12 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		const elements = {
-			$carousel: this.$element.find( selectors.carousel ),
+			$swiperContainer: this.$element.find( selectors.carousel ),
 		};
 
-		elements.$swiperSlides = elements.$carousel.find( selectors.slideContent );
+		elements.$slides = elements.$swiperContainer.find( selectors.slideContent );
 
 		return elements;
-	}
-
-	getSlidesCount() {
-		return this.elements.$swiperSlides.length;
 	}
 
 	getSwiperSettings() {
@@ -92,43 +88,88 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 		return swiperOptions;
 	}
 
-	updateSpaceBetween() {
-		this.swiper.params.spaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
-
-		this.swiper.update();
-	}
-
 	onInit( ...args ) {
 		super.onInit( ...args );
 
 		const elementSettings = this.getElementSettings();
 
-		if ( ! this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length ) {
+		if ( ! this.elements.$swiperContainer.length || 2 > this.elements.$slides.length ) {
 			return;
 		}
 
-		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
+		this.swiper = new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
 
 		// Expose the swiper instance in the frontend
-		this.elements.$carousel.data( 'swiper', this.swiper );
+		this.elements.$swiperContainer.data( 'swiper', this.swiper );
 
 		if ( 'yes' === elementSettings.pause_on_hover ) {
-			this.elements.$carousel.on( {
-				mouseenter: () => {
-					this.swiper.autoplay.stop();
-				},
-				mouseleave: () => {
-					this.swiper.autoplay.start();
-				},
-			} );
+			this.togglePauseOnHover( true );
 		}
 	}
 
+	updateSwiperOption( propertyName ) {
+		const elementSettings = this.getElementSettings(),
+			newSettingValue = elementSettings[ propertyName ],
+			changeableProperties = this.getChangeableProperties();
+
+		let propertyToUpdate = changeableProperties[ propertyName ],
+			valueToUpdate = newSettingValue;
+
+		// Handle special cases where the value to update is not the value that the Swiper library accepts
+		switch ( propertyName ) {
+			case 'image_spacing_custom':
+				valueToUpdate = newSettingValue.size || 0;
+				break;
+			case 'autoplay':
+				if ( newSettingValue ) {
+					valueToUpdate = {
+						delay: elementSettings.autoplay_speed,
+						disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
+					};
+				} else {
+					valueToUpdate = false;
+				}
+				break;
+			case 'autoplay_speed':
+				propertyToUpdate = 'autoplay';
+
+				valueToUpdate = {
+					delay: newSettingValue,
+					disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
+				};
+				break;
+			case 'pause_on_hover':
+				this.togglePauseOnHover( 'yes' === newSettingValue );
+				break;
+			case 'pause_on_interaction':
+				valueToUpdate = 'yes' === newSettingValue;
+				break;
+		}
+
+		// 'pause_on_hover' is implemented by the handler with event listeners, not the Swiper library
+		if ( 'pause_on_hover' !== propertyName ) {
+			this.swiper.params[ propertyToUpdate ] = valueToUpdate;
+		}
+
+		this.swiper.update();
+	}
+
+	getChangeableProperties() {
+		return {
+			autoplay: 'autoplay',
+			pause_on_hover: 'pauseOnHover',
+			pause_on_interaction: 'disableOnInteraction',
+			autoplay_speed: 'delay',
+			speed: 'speed',
+			image_spacing_custom: 'spaceBetween',
+		};
+	}
+
 	onElementChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
-			this.updateSpaceBetween();
-		} else if ( 'arrows_position' === propertyName ) {
-			this.swiper.update();
+		const changeableProperties = this.getChangeableProperties();
+
+		if ( changeableProperties.propertyName ) {
+			this.updateSwiperOption( propertyName );
 		}
 	}
 
