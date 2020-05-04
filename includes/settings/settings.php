@@ -491,90 +491,11 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'style' => [
 						'fields' => [
-							'default_generic_fonts' => [
-								'label' => __( 'Default Generic Fonts', 'elementor' ),
+							'notice' => [
+								'label' => __( 'Looking for the Style settings?', 'elementor' ),
 								'field_args' => [
-									'type' => 'text',
-									'std' => 'Sans-serif',
-									'class' => 'medium-text',
-									'desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
-								],
-							],
-							'container_width' => [
-								'label' => __( 'Content Width', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'min' => 300,
-										'placeholder' => '1140',
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
-								],
-							],
-							'space_between_widgets' => [
-								'label' => __( 'Space Between Widgets', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'placeholder' => '20',
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									'desc' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
-								],
-							],
-							'stretched_section_container' => [
-								'label' => __( 'Stretched Section Fit To', 'elementor' ),
-								'field_args' => [
-									'type' => 'text',
-									'attributes' => [
-										'placeholder' => 'body',
-										'class' => 'medium-text',
-									],
-									'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
-								],
-							],
-							'page_title_selector' => [
-								'label' => __( 'Page Title Selector', 'elementor' ),
-								'field_args' => [
-									'type' => 'text',
-									'attributes' => [
-										'placeholder' => 'h1.entry-title',
-										'class' => 'medium-text',
-									],
-									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
-								],
-							],
-							'viewport_lg' => [
-								'label' => __( 'Tablet Breakpoint', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'placeholder' => $default_breakpoints['lg'],
-										'min' => $default_breakpoints['md'] + 1,
-										'max' => $default_breakpoints['xl'] - 1,
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									/* translators: %d: Breakpoint value */
-									'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
-								],
-							],
-							'viewport_md' => [
-								'label' => __( 'Mobile Breakpoint', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'placeholder' => $default_breakpoints['md'],
-										'min' => $default_breakpoints['sm'] + 1,
-										'max' => $default_breakpoints['lg'] - 1,
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									/* translators: %d: Breakpoint value */
-									'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
+									'type' => 'raw_html',
+									'html' => __( 'The Style settings changed location and now can be found under: Editor > Menu > Global Settings.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
 								],
 							],
 						],
