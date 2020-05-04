@@ -62,6 +62,33 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		return $popover;
 	}
 
+	createGlobalInfoTooltip() {
+		const $infoIcon = this.popover.getElements( 'widget' ).find( '.elementor-global-popover-title .eicon-info-circle' );
+		this.globalInfoTooltip = elementorCommon.dialogsManager.createWidget( 'simple', {
+			className: 'elementor-global-info-tooltip',
+			message: this.getOption( 'tooltipText' ),
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			position: {
+				my: `left bottom`,
+				at: `left top+9`,
+				of: this.popover.getElements( 'widget' ),
+				autoRefresh: true,
+			},
+		} );
+
+		$infoIcon.on( {
+			mouseenter: () => {
+				this.globalInfoTooltip.show();
+			},
+			mouseleave: () => {
+				this.globalInfoTooltip.hide();
+			},
+		} );
+	}
+
 	printGlobalSelectBox() {
 		const $globalSelectBox = jQuery( '<div>', { class: 'elementor-global-select' } ),
 			$selectedGlobal = jQuery( '<span>', { class: 'elementor-global-selected' } )
@@ -90,5 +117,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				autoRefresh: true,
 			},
 		} );
+
+		this.createGlobalInfoTooltip();
 	}
 }

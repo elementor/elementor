@@ -73,4 +73,23 @@
 			background-color: $editor-background-light;
 		}
 	}
+
+	&-info-tooltip {
+		width: 270px;
+		z-index: 1;
+		background-color: rgba(30,30,30,0.9);
+		color: #fff;
+		padding: 20px;
+		border-radius: 3px;
+
+		&:after {
+			content: '';
+			position: absolute;
+			bottom: -17px;
+			@include start(16px);
+			transform: scaleY(0.9) rotate(180deg);
+			border: 10px solid transparent;
+			border-bottom-color: rgba(30,30,30,0.9);
+		}
+	}
 }
