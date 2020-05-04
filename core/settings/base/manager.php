@@ -143,22 +143,6 @@ abstract class Manager {
 		 *
 		 * The dynamic portion of the hook name, `$settings_name`, refers to the settings name.
 		 *
-		 * @since 1.6.0
-		 * @deprecated 2.0.0 Use `elementor/settings/{$settings_name}/success_response_data` filter.
-		 *
-		 * @param array $success_response_data Success response data.
-		 * @param int   $id                    Settings ID.
-		 * @param array $data                  Settings data.
-		 */
-		$success_response_data = apply_filters_deprecated( "elementor/{$settings_name}/settings/success_response_data", [ $success_response_data, $id, $data ], '2.0.0', "elementor/settings/{$settings_name}/success_response_data" );
-
-		/**
-		 * Settings success response data.
-		 *
-		 * Filters the success response data when saving settings using ajax.
-		 *
-		 * The dynamic portion of the hook name, `$settings_name`, refers to the settings name.
-		 *
 		 * @since 2.0.0
 		 *
 		 * @param array $success_response_data Success response data.
