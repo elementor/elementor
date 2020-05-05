@@ -12,7 +12,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.ui.globalControlSelected = this.$el.find( '.elementor-global-selected' );
 	}
 
-	// This method exists because the UI elements are printer after controls are already rendered
+	// This method exists because the UI elements are printed after controls are already rendered
 	registerEvents() {
 		this.ui.GlobalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event ) );
 		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
