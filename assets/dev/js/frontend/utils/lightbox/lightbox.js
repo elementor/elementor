@@ -50,6 +50,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				},
 			},
 			selectors: {
+				image: '.elementor-lightbox-image',
 				links: 'a, [data-elementor-lightbox]',
 				slideshow: {
 					activeSlide: '.swiper-slide-active',
@@ -95,9 +96,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	showModal: function( options ) {
-		const $closeButton = this.getModal().getElements( 'closeButton' );
+		this.elements.$closeButton = this.getModal().getElements( 'closeButton' );
 
-		this.buttons = [ $closeButton[ 0 ] ];
+		this.$buttons = this.elements.$closeButton;
 
 		this.focusedButton = null;
 
@@ -197,7 +198,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		modal.onHide = function() {
 			onHideMethod();
 
-			this.buttons = [];
+			this.$buttons = jQuery();
 			this.focusedButton = null;
 
 			modal.getElements( 'message' ).removeClass( 'elementor-fit-aspect-ratio' );
@@ -213,9 +214,10 @@ module.exports = elementorModules.ViewModule.extend( {
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
+			selectors = this.getSettings( 'selectors' ),
 			$linkList = $( '<div>', { class: classes.slideshow.shareLinks } ),
 			$activeSlide = this.getSlide( 'active' ),
-			$image = $activeSlide.find( '.' + classes.image ),
+			$image = $activeSlide.find( selectors.image ),
 			videoUrl = $activeSlide.data( 'elementor-slideshow-video' );
 
 		let itemUrl;
@@ -260,8 +262,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getSlideshowHeader: function() {
-		const { i18n } = elementorFrontend.config;
-		const $ = jQuery,
+		const { i18n } = elementorFrontend.config,
+			$ = jQuery,
 			showCounter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_counter' ),
 			showFullscreen = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_fullscreen' ),
 			showZoom = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_zoom' ),
@@ -283,14 +285,20 @@ module.exports = elementorModules.ViewModule.extend( {
 				'aria-label': i18n.share,
 				'aria-expanded': false,
 			} ).append( $( '<span>' ) );
+
 			const $shareLinks = $( '<div>' );
+
 			$shareLinks.on( 'click', ( e ) => {
 				e.stopPropagation();
 			} );
+
 			elements.$shareMenu = $( '<div>', { class: slideshowClasses.shareMenu } ).append( $shareLinks );
+
 			elements.$iconShare.add( elements.$shareMenu ).on( 'click', this.toggleShareMenu );
+
 			elements.$header.append( elements.$iconShare, elements.$shareMenu );
-			this.buttons.push( elements.$iconShare[ 0 ] );
+
+			this.$buttons = this.$buttons.add( elements.$iconShare );
 		}
 
 		if ( showZoom ) {
@@ -300,9 +308,12 @@ module.exports = elementorModules.ViewModule.extend( {
 				'aria-checked': false,
 				'aria-label': i18n.zoom,
 			} );
+
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
+
 			elements.$header.append( elements.$iconZoom );
-			this.buttons.push( elements.$iconZoom[ 0 ] );
+
+			this.$buttons = this.$buttons.add( elements.$iconZoom );
 		}
 
 		if ( showFullscreen ) {
@@ -314,7 +325,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			} ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
-			this.buttons.push( elements.$iconExpand[ 0 ] );
+			this.$buttons = this.$buttons.add( elements.$iconExpand );
 		}
 
 		if ( showCounter ) {
@@ -342,35 +353,43 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	toggleShareMenu: function() {
-		const classes = this.getSettings( 'classes' );
-		if ( this.elements.$container.hasClass( classes.slideshow.shareMode ) ) {
+		if ( this.shareMode ) {
 			this.deactivateShareMode();
-			this.elements.$shareMenu
-				.attr( 'aria-expanded', false );
 		} else {
-			this.elements.$shareMenu
-				.html( this.getShareLinks() )
-				.attr( 'aria-expanded', true );
+			this.elements.$shareMenu.html( this.getShareLinks() );
+
 			this.activateShareMode();
 		}
 	},
 
 	activateShareMode: function() {
 		const classes = this.getSettings( 'classes' );
+
 		this.elements.$container.addClass( classes.slideshow.shareMode );
+
 		this.elements.$iconShare.attr( 'aria-expanded', true );
+
+		// Prevent swiper interactions while in share mode
 		this.swiper.detachEvents();
+
 		// Temporarily replace tabbable buttons with share-menu items
-		this.originalButtons = this.buttons;
-		this.buttons = [ this.elements.$iconShare[ 0 ] ].concat( this.elements.$shareMenu.find( 'a' ).toArray() );
+		this.$originalButtons = this.$buttons;
+		this.$buttons = this.elements.$iconShare.add( this.elements.$shareMenu.find( 'a' ) );
+
+		this.shareMode = true;
 	},
 
 	deactivateShareMode: function() {
 		const classes = this.getSettings( 'classes' );
+
 		this.elements.$container.removeClass( classes.slideshow.shareMode );
 		this.elements.$iconShare.attr( 'aria-expanded', false );
+
 		this.swiper.attachEvents();
-		this.buttons = this.originalButtons;
+
+		this.$buttons = this.$originalButtons;
+
+		this.shareMode = false;
 	},
 
 	activateFullscreen: function() {
@@ -430,8 +449,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	setSlideshowContent: function( options ) {
-		const { i18n } = elementorFrontend.config;
-		const $ = jQuery,
+		const { i18n } = elementorFrontend.config,
+			$ = jQuery,
 			isSingleSlide = 1 === options.slides.length,
 			hasTitle = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_title_src' ),
 			hasDescription = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_description_src' ),
@@ -501,7 +520,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				$prevButton,
 			);
 
-			this.buttons.push( $nextButton[ 0 ], $prevButton[ 0 ] );
+			this.$buttons = this.$buttons.add( $nextButton ).add( $prevButton );
 		}
 
 		if ( showFooter ) {
@@ -568,26 +587,29 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			this.bindHotKeys();
 
-			jQuery.each( this.buttons, ( index, item ) => {
-				jQuery( item )
-					.attr( 'tabindex', 0 )
-					.keypress( ( event ) => {
-						if ( 13 === event.which || 32 === event.which ) {
-							jQuery( item ).trigger( 'click' );
-						}
-					} );
-			} );
+			this.$buttons
+				.attr( 'tabindex', 0 )
+				.on( 'keypress', ( event ) => {
+					const ENTER_KEY = 13,
+						SPACE_KEY = 32;
+
+					if ( ENTER_KEY === event.which || SPACE_KEY === event.which ) {
+						jQuery( event.currentTarget ).trigger( 'click' );
+					}
+				} );
 		};
 	},
 
 	showLightboxUi: function() {
-		const slideshowClasses = this.getSettings( 'classes' ).slideshow,
-			$container = this.elements.$container;
-		clearTimeout( this.getSettings( 'hideUiTimeout' ) );
+		const slideshowClasses = this.getSettings( 'classes' ).slideshow;
+
 		this.elements.$container.removeClass( slideshowClasses.hideUiVisibility );
+
+		clearTimeout( this.getSettings( 'hideUiTimeout' ) );
+
 		this.setSettings( 'hideUiTimeout', setTimeout( () => {
-			if ( ! $container.hasClass( slideshowClasses.shareMode ) ) {
-				$container.addClass( slideshowClasses.hideUiVisibility );
+			if ( ! this.shareMode ) {
+				this.elements.$container.addClass( slideshowClasses.hideUiVisibility );
 			}
 		}, 3500 ) );
 	},
@@ -610,17 +632,19 @@ module.exports = elementorModules.ViewModule.extend( {
 		const TAB_KEY = 9;
 
 		if ( event.which === TAB_KEY ) {
-			const buttons = this.buttons;
+			const $buttons = this.$buttons;
 
 			let focusedButton,
-				isFirst,
-				isLast;
+				isFirst = false,
+				isLast = false;
 
-			jQuery.each( buttons, ( index, item ) => {
+			$buttons.each( ( index ) => {
+				const item = $buttons[ index ];
+
 				if ( jQuery( item ).is( ':focus' ) ) {
-					focusedButton = buttons[ index ];
+					focusedButton = item;
 					isFirst = 0 === index;
-					isLast = buttons.length - 1 === index;
+					isLast = $buttons.length - 1 === index;
 					return false;
 				}
 			} );
@@ -628,13 +652,13 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( event.shiftKey ) {
 				if ( isFirst ) {
 					event.preventDefault();
-					// Go to last button
-					buttons[ buttons.length - 1 ].focus();
+					// Focus on last button
+					$buttons.last().focus();
 				}
 			} else if ( isLast || ! focusedButton ) {
 				event.preventDefault();
-				// Go to first button
-				buttons[ 0 ].focus();
+				// Focus on first button
+				$buttons.first().focus();
 			}
 		}
 	},
