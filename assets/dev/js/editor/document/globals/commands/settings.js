@@ -1,6 +1,7 @@
 import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
+// Run when a global color is chosen while the active color is a different global color
 export class Settings extends CommandHistoryDebounce {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );

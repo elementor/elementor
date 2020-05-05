@@ -1,5 +1,6 @@
 import DisableEnable from './base/disable-enable';
 
+// Run when a global color is chosen while the active color is custom
 export class Enable extends DisableEnable {
 	apply( args ) {
 		const { settings, containers = [ args.container ] } = args;
