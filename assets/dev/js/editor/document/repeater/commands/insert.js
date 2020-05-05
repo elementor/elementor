@@ -66,14 +66,7 @@ export class Insert extends History {
 
 			const collection = container.settings.get( name );
 
-			options.at = null === options.at ? collection.length : options.at;
-
-			// On `collection.push` the renderer needs a container, the container needs a settingsModel.
-			const rowSettingsModel = collection._prepareModel( model );
-
-			container.addRepeaterItem( name, rowSettingsModel, options.at );
-
-			result.push( collection.push( rowSettingsModel, options ) );
+			result.push( collection.push( model, options ) );
 
 			container.render();
 		} );
