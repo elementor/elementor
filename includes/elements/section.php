@@ -242,21 +242,6 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-			'stretch_section',
-			[
-				'label' => __( 'Stretch Section', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'return_value' => 'section-stretched',
-				'prefix_class' => 'elementor-',
-				'hide_in_inner' => true,
-				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
-				'render_type' => 'none',
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
 			'layout',
 			[
 				'label' => __( 'Content Width', 'elementor' ),
@@ -458,6 +443,21 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'overflow: {{VALUE}}',
 				],
+			]
+		);
+
+		$this->add_control(
+			'stretch_section',
+			[
+				'label' => __( 'Stretch Section', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'return_value' => 'section-stretched',
+				'prefix_class' => 'elementor-',
+				'hide_in_inner' => true,
+				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
+				'render_type' => 'none',
+				'frontend_available' => true,
 			]
 		);
 
