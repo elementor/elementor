@@ -449,6 +449,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'elementor-ntc',
+			ELEMENTOR_ASSETS_URL . 'lib/ntc/ntc' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -491,6 +499,7 @@ class Editor {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
+				'elementor-ntc',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
