@@ -5,7 +5,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		};
 	}
 
-	// This method exists because the UI elements are printer after controls are already rendered
+	// This method exists because the UI elements are printed after controls are already rendered
 	registerUiElements() {
 		this.ui.GlobalPreviewItems = this.popover.getElements( 'widget' ).find( '.elementor-global-preview' );
 		this.ui.globalControlSelect = this.$el.find( '.elementor-global-select' );
