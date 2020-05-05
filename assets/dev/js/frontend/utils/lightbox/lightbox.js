@@ -250,10 +250,10 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	getSlideshowHeader: function() {
 		const $ = jQuery,
-			showCounter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_counter' ),
-			showFullscreen = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_fullscreen' ),
-			showZoom = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_zoom' ),
-			showShare = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_share' ),
+			showCounter = 'yes' === elementorFrontend.getKitSettings( 'lightbox_enable_counter' ),
+			showFullscreen = 'yes' === elementorFrontend.getKitSettings( 'lightbox_enable_fullscreen' ),
+			showZoom = 'yes' === elementorFrontend.getKitSettings( 'lightbox_enable_zoom' ),
+			showShare = 'yes' === elementorFrontend.getKitSettings( 'lightbox_enable_share' ),
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
 			elements = this.elements;
@@ -389,8 +389,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	setSlideshowContent: function( options ) {
 		const $ = jQuery,
 			isSingleSlide = 1 === options.slides.length,
-			hasTitle = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_title_src' ),
-			hasDescription = '' !== elementorFrontend.getGeneralSettings( 'elementor_lightbox_description_src' ),
+			hasTitle = '' !== elementorFrontend.getKitSettings( 'lightbox_title_src' ),
+			hasDescription = '' !== elementorFrontend.getKitSettings( 'lightbox_description_src' ),
 			showFooter = hasTitle || hasDescription,
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
@@ -675,7 +675,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return false;
 		}
 
-		const generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
+		const generalOpenInLightbox = elementorFrontend.getKitSettings( 'global_image_lightbox' ),
 			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
 
 		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );

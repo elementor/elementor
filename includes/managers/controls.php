@@ -336,7 +336,7 @@ class Controls_Manager {
 	 * @param string $tab_name  Tab name.
 	 * @param string $tab_label Tab label.
 	 */
-	public static function add_tab( $tab_name, $tab_label ) {
+	public static function add_tab( $tab_name, $tab_label = '' ) {
 		if ( ! self::$tabs ) {
 			self::init_tabs();
 		}

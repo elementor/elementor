@@ -974,17 +974,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 2.0.0
-	 * @access public
-	 * @deprecated 2.2.0 Use `Document::save_template_type()`.
-	 */
-	public function save_type() {
-		_deprecated_function( __METHOD__, '2.2.0', __CLASS__ . '::save_template_type()' );
-
-		$this->save_template_type();
-	}
-
-	/**
 	 * @since 2.3.0
 	 * @access public
 	 */

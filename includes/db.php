@@ -72,39 +72,6 @@ class DB {
 	protected $switched_data = [];
 
 	/**
-	 * Save editor.
-	 *
-	 * Save data from the editor to the database.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->save()` method instead.
-	 *
-	 * @access public
-	 *
-	 * @param int    $post_id Post ID.
-	 * @param array  $data    Post data.
-	 * @param string $status  Optional. Post status. Default is `publish`.
-	 *
-	 * @return bool
-	 */
-	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		_deprecated_function( __METHOD__, '2.6.0', 'Plugin::$instance->documents->get( $post_id )->save()' );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		if ( self::STATUS_AUTOSAVE === $status ) {
-			$document = $document->get_autosave( 0, true );
-		}
-
-		return $document->save( [
-			'elements' => $data,
-			'settings' => [
-				'post_status' => $status,
-			],
-		] );
-	}
-
-	/**
 	 * Get builder.
 	 *
 	 * Retrieve editor data from the database.
@@ -162,56 +129,6 @@ class DB {
 	}
 
 	/**
-	 * Get plain editor.
-	 *
-	 * Retrieve post data that was saved in the database. Raw data before it
-	 * was parsed by elementor.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_elements_data()` method instead.
-	 *
-	 * @access public
-	 *
-	 * @param int    $post_id Post ID.
-	 * @param string $status  Optional. Post status. Default is `publish`.
-	 *
-	 * @return array Post data.
-	 */
-	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		_deprecated_function( __METHOD__, '2.6.0', 'Plugin::$instance->documents->get( $post_id )->get_elements_data()' );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		if ( $document ) {
-			return $document->get_elements_data( $status );
-		}
-
-		return [];
-	}
-
-	/**
-	 * Get auto-saved post revision.
-	 *
-	 * Retrieve the auto-saved post revision that is newer than current post.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.0.0
-	 *
-	 * @access public
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return \WP_Post|false The auto-saved post, or false.
-	 */
-	public function get_newer_autosave( $post_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_newer_autosave()' );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		return $document->get_newer_autosave();
-	}
-
-	/**
 	 * Get new editor from WordPress editor.
 	 *
 	 * When editing the with Elementor the first time, the current page content
@@ -235,26 +152,6 @@ class DB {
 		}
 
 		return [];
-	}
-
-	/**
-	 * Get new editor from WordPress editor.
-	 *
-	 * When editing the with Elementor the first time, the current page content
-	 * is parsed into Text Editor Widget that contains the original data.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.1.0 Use `Plugin::$instance->documents->get( $post_id )->convert_to_elementor()` instead
-	 * @access public
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return array Content in Elementor format.
-	 */
-	public function _get_new_editor_from_wp_editor( $post_id ) {
-		_deprecated_function( __METHOD__, '2.1.0', 'Plugin::$instance->documents->get( $post_id )->convert_to_elementor()' );
-
-		return $this->get_new_editor_from_wp_editor( $post_id );
 	}
 
 	/**
