@@ -587,17 +587,21 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			this.bindHotKeys();
 
-			this.$buttons
-				.attr( 'tabindex', 0 )
-				.on( 'keypress', ( event ) => {
-					const ENTER_KEY = 13,
-						SPACE_KEY = 32;
-
-					if ( ENTER_KEY === event.which || SPACE_KEY === event.which ) {
-						jQuery( event.currentTarget ).trigger( 'click' );
-					}
-				} );
+			this.makeButtonsAccessible();
 		};
+	},
+
+	makeButtonsAccessible: function() {
+		this.$buttons
+			.attr( 'tabindex', 0 )
+			.on( 'keypress', ( event ) => {
+				const ENTER_KEY = 13,
+					SPACE_KEY = 32;
+
+				if ( ENTER_KEY === event.which || SPACE_KEY === event.which ) {
+					jQuery( event.currentTarget ).trigger( 'click' );
+				}
+			} );
 	},
 
 	showLightboxUi: function() {
