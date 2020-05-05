@@ -92,4 +92,14 @@
 			border-bottom-color: rgba(30,30,30,0.9);
 		}
 	}
+
+	&-confirm {
+
+		&-add {
+
+			.dialog-confirm-ok {
+				color: $editor-success;
+			}
+		}
+	}
 }

@@ -20,6 +20,8 @@ export default class extends ControlBaseDataView {
 			popoverTitle: elementor.translate( 'global_colors_title' ),
 			manageButtonText: elementor.translate( 'manage_global_colors' ),
 			tooltipText: elementor.translate( 'global_colors_info' ),
+			newGlobalConfirmTitle: elementor.translate( 'create_global_style' ),
+			newGlobalConfirmText: elementor.translate( 'global_color_confirm_text' ),
 		};
 
 		return behaviors;
@@ -44,6 +46,7 @@ export default class extends ControlBaseDataView {
 			},
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
+			onAddButtonClick: () => this.onAddGlobalButtonClick(),
 		};
 
 		this.colorPicker = new ColorPicker( options );
@@ -117,6 +120,12 @@ export default class extends ControlBaseDataView {
 
 	onPickerClear() {
 		this.setValue( '' );
+	}
+
+	onAddGlobalButtonClick() {
+		const $color = this.createGlobalColorPreviewMarkup();
+
+		this.triggerMethod( 'addGlobalToList', $color );
 	}
 
 	onBeforeDestroy() {

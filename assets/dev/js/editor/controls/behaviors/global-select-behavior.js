@@ -7,14 +7,15 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerUiElements() {
-		this.ui.GlobalPreviewItems = this.popover.getElements( 'widget' ).find( '.elementor-global-preview' );
+		this.ui.globalPreviewsContainer = this.popover.getElements( 'widget' ).find( '.elementor-global-previews-container' );
+		this.ui.globalPreviewItems = this.popover.getElements( 'widget' ).find( '.elementor-global-preview' );
 		this.ui.globalControlSelect = this.$el.find( '.elementor-global-select' );
 		this.ui.globalControlSelected = this.$el.find( '.elementor-global-selected' );
 	}
 
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerEvents() {
-		this.ui.GlobalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event ) );
+		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event ) );
 		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
 	}
 
@@ -60,6 +61,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		$popover.append( $popoverTitle, this.getOption( 'popoverContent' ), $manageGlobalPresetsLink );
 
 		return $popover;
+	}
+
+	// This method is not called directly, but triggered by Marionette's .triggerMethod()
+	onAddGlobalToList( $color ) {
+		elementorCommon.dialogsManager.createWidget( 'confirm', {
+			className: 'elementor-global-confirm-add',
+			headerMessage: this.getOption( 'newGlobalConfirmTitle' ),
+			message: this.getOption( 'newGlobalConfirmText' ),
+			strings: {
+				confirm: elementor.translate( 'create' ),
+				cancel: elementor.translate( 'cancel' ),
+			},
+			onConfirm: () => {
+				this.ui.globalPreviewsContainer.append( $color );
+			},
+		} ).show();
 	}
 
 	createGlobalInfoTooltip() {

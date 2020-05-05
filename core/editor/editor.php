@@ -603,6 +603,9 @@ class Editor {
 				'create_global_style' => __( 'Create New Global Text Style', 'elementor' ),
 				'global_typography_info' => __( 'Global text styles help you work smarter. Save a text style once, and use it anywhere throughout your site. Access and edit your global text styles by clicking the Manage button below. Any change you make - the text style will update throughout your entire site.', 'elementor' ),
 				'default' => __( 'Default', 'elementor' ),
+				'create' => __( 'Create', 'elementor' ),
+				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
+				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Text Style?', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),

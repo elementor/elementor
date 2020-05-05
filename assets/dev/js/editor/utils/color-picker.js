@@ -194,6 +194,12 @@ export default class ColorPicker extends elementorModules.Module {
 
 		elementor.schemes.saveScheme( 'color-picker' );
 
+		const onPickerAddButtonClick = this.getSettings( 'onAddButtonClick' );
+
+		if ( onPickerAddButtonClick ) {
+			onPickerAddButtonClick();
+		}
+
 		this.fixTipsyForFF( this.$addButton );
 	}
 }

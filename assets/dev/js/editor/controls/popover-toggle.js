@@ -36,6 +36,8 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 			popoverTitle: elementor.translate( 'global_text_styles' ),
 			manageButtonText: elementor.translate( 'manage_global_text_styles' ),
 			tooltipText: elementor.translate( 'global_typography_info' ),
+			newGlobalConfirmTitle: elementor.translate( 'create_global_color' ),
+			newGlobalConfirmText: elementor.translate( 'global_typography_confirm_text' ),
 		};
 
 		return behaviors;
@@ -43,7 +45,7 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 
 	// TODO: Replace placeholders with real global colors
 	getGlobalTextStyles: function() {
-		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-typography-repeater-container' } ),
+		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } ),
 			globalTextStyles = [
 				{
 					textStyleName: 'Primary',
