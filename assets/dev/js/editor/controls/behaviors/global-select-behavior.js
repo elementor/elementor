@@ -80,19 +80,15 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 
 		$infoIcon.on( {
-			mouseenter: () => {
-				this.globalInfoTooltip.show();
-			},
-			mouseleave: () => {
-				this.globalInfoTooltip.hide();
-			},
+			mouseenter: () => this.globalInfoTooltip.show(),
+			mouseleave: () => this.globalInfoTooltip.hide(),
 		} );
 	}
 
 	printGlobalSelectBox() {
 		const $globalSelectBox = jQuery( '<div>', { class: 'elementor-global-select' } ),
 			$selectedGlobal = jQuery( '<span>', { class: 'elementor-global-selected' } )
-				.html( 'Global' );
+				.html( elementor.translate( 'default' ) );
 
 		$globalSelectBox.append( $selectedGlobal, '<i class="eicon-caret-down"></i>' );
 

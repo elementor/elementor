@@ -602,6 +602,7 @@ class Editor {
 				'global_text_styles' => __( 'Global Text Styles', 'elementor' ),
 				'create_global_style' => __( 'Create New Global Text Style', 'elementor' ),
 				'global_typography_info' => __( 'Global text styles help you work smarter. Save a text style once, and use it anywhere throughout your site. Access and edit your global text styles by clicking the Manage button below. Any change you make - the text style will update throughout your entire site.', 'elementor' ),
+				'default' => __( 'Default', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
