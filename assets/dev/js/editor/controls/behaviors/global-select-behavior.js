@@ -64,23 +64,38 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	// This method is not called directly, but triggered by Marionette's .triggerMethod()
-	onAddGlobalToList( $color ) {
+	onAddGlobalToList( $confirmMessage ) {
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			className: 'elementor-global-confirm-add',
 			headerMessage: this.getOption( 'newGlobalConfirmTitle' ),
-			message: this.getOption( 'newGlobalConfirmText' ),
+			message: $confirmMessage,
 			strings: {
 				confirm: elementor.translate( 'create' ),
 				cancel: elementor.translate( 'cancel' ),
 			},
+			hide: {
+				onBackgroundClick: false,
+			},
 			onConfirm: () => {
-				this.ui.globalPreviewsContainer.append( $color );
+				const globalData = $confirmMessage.data( 'globalData' );
+
+				globalData.name = this.globalNameInput.val();
+
+				const $globalPreview = this.view.createGlobalPreviewMarkup( globalData );
+
+				this.ui.globalPreviewsContainer.append( $globalPreview );
+			},
+			onShow: () => {
+				// Put focus on the naming input
+				this.globalNameInput = jQuery( '.elementor-global-confirm-add input' )
+					.focus();
 			},
 		} ).show();
 	}
 
 	createGlobalInfoTooltip() {
 		const $infoIcon = this.popover.getElements( 'widget' ).find( '.elementor-global-popover-title .eicon-info-circle' );
+
 		this.globalInfoTooltip = elementorCommon.dialogsManager.createWidget( 'simple', {
 			className: 'elementor-global-info-tooltip',
 			message: this.getOption( 'tooltipText' ),

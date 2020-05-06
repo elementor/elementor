@@ -21,7 +21,6 @@ export default class extends ControlBaseDataView {
 			manageButtonText: elementor.translate( 'manage_global_colors' ),
 			tooltipText: elementor.translate( 'global_colors_info' ),
 			newGlobalConfirmTitle: elementor.translate( 'create_global_style' ),
-			newGlobalConfirmText: elementor.translate( 'global_color_confirm_text' ),
 		};
 
 		return behaviors;
@@ -58,6 +57,7 @@ export default class extends ControlBaseDataView {
 		const color = this.colorPicker.picker.getColor(),
 			colorObject = {};
 
+		// color.a is the transparency percentage. 1 means HEX value and not rgba()
 		if ( 1 === color.a ) {
 			colorObject.code = color.toHEXA().toString( 0 );
 			colorObject.displayCode = colorObject.code;
@@ -69,7 +69,7 @@ export default class extends ControlBaseDataView {
 
 			color.a = 1;
 
-			// For color naming by the NTC library
+			// HEX version of the rgba color for color naming by the NTC library
 			colorObject.hexOnly = color.toHEXA().toString( 0 );
 
 			colorObject.displayCode = colorObject.hexOnly + transparency;
@@ -86,9 +86,27 @@ export default class extends ControlBaseDataView {
 		return ntc.name( color )[ 1 ];
 	}
 
-	createGlobalColorPreviewMarkup( color ) {
-		// This method is called without a color parameter when the user clicks the "Add" button,
-		// to add the selected color to the global colors
+	getAddGlobalConfirmMessage() {
+		const color = this.getColorObject(),
+			$message = jQuery( '<div>', { class: 'elementor-global-confirm-message' } ),
+			$messageText = jQuery( '<div>' )
+				.html( elementor.translate( 'global_color_confirm_text' ) ),
+			$inputWrapper = jQuery( '<div>', { class: 'elementor-global-confirm-input-wrapper' } ),
+			$colorPreview = jQuery( '<div>', { class: 'elementor-global-color__preview', style: 'background-color: ' + color.code } ),
+			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.name } )
+				.val( color.name );
+
+		$inputWrapper.append( $colorPreview, $input );
+
+		$message.append( $messageText, $inputWrapper );
+
+		$message.data( 'globalData', color );
+
+		return $message;
+	}
+
+	createGlobalPreviewMarkup( color ) {
+		// This method is called without a color parameter when the user clicks the "Add" button
 		if ( ! color ) {
 			color = this.getColorObject();
 		}
@@ -101,6 +119,9 @@ export default class extends ControlBaseDataView {
 				.html( color.displayCode );
 
 		$color.append( $colorPreview, $colorTitle, $colorHex );
+
+		// Make the name and hex values easily available for the preview in the confirm dialog
+		$color.data( 'globalData', color );
 
 		return $color;
 	}
@@ -151,7 +172,7 @@ export default class extends ControlBaseDataView {
 			globalColors = this.getPlaceholderColorsList();
 
 		Object.values( globalColors ).forEach( ( color ) => {
-			const $color = this.createGlobalColorPreviewMarkup( color );
+			const $color = this.createGlobalPreviewMarkup( color );
 
 			$globalColorsPreviewContainer.append( $color );
 		} );
@@ -170,9 +191,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	onAddGlobalButtonClick() {
-		const $color = this.createGlobalColorPreviewMarkup();
-
-		this.triggerMethod( 'addGlobalToList', $color );
+		this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
 	}
 
 	onBeforeDestroy() {

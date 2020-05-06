@@ -37,82 +37,133 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 			manageButtonText: elementor.translate( 'manage_global_text_styles' ),
 			tooltipText: elementor.translate( 'global_typography_info' ),
 			newGlobalConfirmTitle: elementor.translate( 'create_global_color' ),
-			newGlobalConfirmText: elementor.translate( 'global_typography_confirm_text' ),
 		};
 
 		return behaviors;
 	},
 
+	createGlobalPreviewMarkup: function( textStyle ) {
+		// This method is called without a color parameter when the user clicks the "Add" button
+		if ( ! textStyle ) {
+			textStyle = this.getTypographyObject();
+		}
+
+		const $textStylePreview = jQuery( '<div>', { class: 'elementor-global-preview elementor-global-text-style', 'data-elementor-global-name': textStyle.name } );
+
+		$textStylePreview
+			.html( textStyle.name )
+			.css( {
+				fontFamily: textStyle.fontFamily,
+				fontSize: textStyle.fontSize,
+				fontWeight: textStyle.fontWeight,
+				transform: textStyle.transform,
+				fontStyle: textStyle.fontStyle,
+				textDecoration: textStyle.textDecoration,
+				lineHeight: textStyle.lineHeight,
+				letterSpacing: textStyle.letterSpacing,
+			} );
+
+		return $textStylePreview;
+	},
+
+	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH VALUES OF THE TYPOGRAPHY CONTROLS
+	getTypographyObject: function() {
+		return {
+			name: 'Primary',
+			fontFamily: 'Varela',
+			fontSize: '34px',
+			fontWeight: 'normal',
+			transform: 'none',
+			fontStyle: 'normal',
+			textDecoration: 'none',
+			lineHeight: 'inherit',
+			letterSpacing: 'inherit',
+		};
+	},
+
+	getAddGlobalConfirmMessage: function() {
+		const $message = jQuery( '<div>', { class: 'elementor-global-confirm-message' } ),
+			$messageText = jQuery( '<div>' )
+				.html( elementor.translate( 'global_typography_confirm_text' ) ),
+			$inputWrapper = jQuery( '<div>', { class: 'elementor-global-confirm-input-wrapper' } ),
+			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: 'New Text Style' } )
+				.val( 'New Text Style' );
+
+		$inputWrapper.append( $input );
+
+		$message.append( $messageText, $inputWrapper );
+
+		$message.data( 'globalData', this.getTypographyObject() );
+
+		return $message;
+	},
+
+	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
+	getPlaceholderTextStylesList: function() {
+		return [
+			{
+				name: 'Primary',
+				fontFamily: 'Varela',
+				fontSize: '34px',
+				fontWeight: 'normal',
+				transform: 'none',
+				fontStyle: 'normal',
+				textDecoration: 'none',
+				lineHeight: 'inherit',
+				letterSpacing: 'inherit',
+			},
+			{
+				name: 'Secondary',
+				fontFamily: 'Varela',
+				fontSize: '28px',
+				fontWeight: 'normal',
+				transform: 'none',
+				fontStyle: 'normal',
+				textDecoration: 'none',
+				lineHeight: 'inherit',
+				letterSpacing: 'inherit',
+			},
+			{
+				name: 'Text',
+				fontFamily: 'Varela',
+				fontSize: '15px',
+				fontWeight: 'normal',
+				transform: 'none',
+				fontStyle: 'normal',
+				textDecoration: 'none',
+				lineHeight: 'inherit',
+				letterSpacing: 'inherit',
+			},
+			{
+				name: 'Accent',
+				fontFamily: 'Varela',
+				fontSize: '12px',
+				fontWeight: 'normal',
+				transform: 'none',
+				fontStyle: 'normal',
+				textDecoration: 'none',
+				lineHeight: 'inherit',
+				letterSpacing: 'inherit',
+			},
+		];
+	},
+
 	// TODO: Replace placeholders with real global colors
 	getGlobalTextStyles: function() {
 		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } ),
-			globalTextStyles = [
-				{
-					textStyleName: 'Primary',
-					fontFamily: 'Varela',
-					fontSize: '34px',
-					fontWeight: 'normal',
-					transform: 'none',
-					fontStyle: 'normal',
-					textDecoration: 'none',
-					lineHeight: 'inherit',
-					letterSpacing: 'inherit',
-				},
-				{
-					textStyleName: 'Secondary',
-					fontFamily: 'Varela',
-					fontSize: '28px',
-					fontWeight: 'normal',
-					transform: 'none',
-					fontStyle: 'normal',
-					textDecoration: 'none',
-					lineHeight: 'inherit',
-					letterSpacing: 'inherit',
-				},
-				{
-					textStyleName: 'Text',
-					fontFamily: 'Varela',
-					fontSize: '15px',
-					fontWeight: 'normal',
-					transform: 'none',
-					fontStyle: 'normal',
-					textDecoration: 'none',
-					lineHeight: 'inherit',
-					letterSpacing: 'inherit',
-				},
-				{
-					textStyleName: 'Accent',
-					fontFamily: 'Varela',
-					fontSize: '12px',
-					fontWeight: 'normal',
-					transform: 'none',
-					fontStyle: 'normal',
-					textDecoration: 'none',
-					lineHeight: 'inherit',
-					letterSpacing: 'inherit',
-				},
-			];
+			globalTextStyles = this.getPlaceholderTextStylesList();
 
 		globalTextStyles.forEach( ( textStyle ) => {
-			const $textStylePreview = jQuery( '<div>', { class: 'elementor-global-preview elementor-global-text-style', 'data-elementor-global-name': textStyle.textStyleName } );
-
-			$textStylePreview
-				.html( textStyle.textStyleName )
-				.css( {
-					fontFamily: textStyle.fontFamily,
-					fontSize: textStyle.fontSize,
-					fontWeight: textStyle.fontWeight,
-					transform: textStyle.transform,
-					fontStyle: textStyle.fontStyle,
-					textDecoration: textStyle.textDecoration,
-					lineHeight: textStyle.lineHeight,
-					letterSpacing: textStyle.letterSpacing,
-				} );
+			const $textStylePreview = this.createGlobalPreviewMarkup( textStyle );
 
 			$globalTypographyContainer.append( $textStylePreview );
 		} );
 
 		return $globalTypographyContainer;
+	},
+
+	onAddGlobalButtonClick: function() {
+		this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
 	},
 }, {
 
