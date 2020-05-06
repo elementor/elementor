@@ -92,6 +92,13 @@ export default class Container extends ArgsObject {
 	controls = {};
 
 	/**
+	 * Repeaters containers
+	 *
+	 * @type {{}}
+	 */
+	repeaters = {};
+
+	/**
 	 * Container renderer (The one who render).
 	 *
 	 * @type {Container}
@@ -156,17 +163,41 @@ export default class Container extends ArgsObject {
 	}
 
 	handleRepeaterChildren() {
-		// TODO: add a repeater attribute: `'repeater_type' => 'main`` and filter by it.
-		const repeaterControls = Object.values( this.controls ).filter( ( control ) => {
-			return 'repeater' === control.type;
+		Object.values( this.controls ).forEach( ( control ) => {
+			if ( 'repeater' !== control.type ) {
+				return;
+			}
+
+			const model = new Backbone.Model( {
+				name: control.name,
+			} );
+
+			this.repeaters[ control.name ] = new elementorModules.editor.Container( {
+				// TODO: replace to `repeater`, and the item should by `repeater-item`.
+				type: 'repeater-control',
+				id: control.name,
+				model,
+				settings: model,
+				view: this.view,
+				parent: this,
+				label: control.label || control.name,
+				controls: {},
+				renderer: this.renderer,
+			} );
+
+			this.settings.get( control.name ).forEach( ( rowModel, index ) => {
+				this.addRepeaterItem( control.name, rowModel, index );
+			} );
 		} );
 
-		// Only if has one repeater convert it to container children.
-		if ( 1 === repeaterControls.length ) {
-			const mainRepeaterName = repeaterControls[ 0 ].name;
-
-			this.settings.get( mainRepeaterName ).forEach( ( rowModel, index ) => {
-				this.addRepeaterItem( mainRepeaterName, rowModel, index );
+		// Backwards Compatibility: if there is only one repeater, set it's children as current children.
+		const repeaterNames = Object.keys( this.repeaters );
+		if ( 1 === repeaterNames.length ) {
+			Object.defineProperty( this, 'children', {
+				get() {
+					elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+					return this.repeaters[ repeaterNames[ 0 ] ].children;
+				},
 			} );
 		}
 	}
@@ -180,7 +211,7 @@ export default class Container extends ArgsObject {
 			rowSettingsModel.set( '_id', rowId );
 		}
 
-		this.children[ index ] = new elementorModules.editor.Container( {
+		this.repeaters[ repeaterName ].children[ index ] = new elementorModules.editor.Container( {
 			type: 'repeater',
 			id: rowSettingsModel.get( '_id' ),
 			model: new Backbone.Model( {
@@ -188,7 +219,7 @@ export default class Container extends ArgsObject {
 			} ),
 			settings: rowSettingsModel,
 			view: this.view,
-			parent: this,
+			parent: this.repeaters[ repeaterName ],
 			label: this.label + ' ' + elementor.translate( 'Item' ),
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
@@ -218,7 +249,7 @@ export default class Container extends ArgsObject {
 		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
 			// Hack For repeater item the result is the parent container.
 			if ( 'repeater' === this.type ) {
-				this.settings = this.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
+				this.settings = this.parent.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
 			}
 			return result;
 		}
