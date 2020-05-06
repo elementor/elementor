@@ -51,18 +51,17 @@
 	}
 
 	&-previews-container {
-		max-height: 256px;
+		max-height: 260px;
 		overflow-y: scroll;
 
 		&::-webkit-scrollbar {
 			width: 8px;
-			background-color: #f1f1f1;
-			outline: 1px solid slategrey;
 		}
 
 		&::-webkit-scrollbar-thumb {
 			background-color: darkgrey;
 			outline: 1px solid slategrey;
+			border-radius: 10px;
 		}
 	}
 
