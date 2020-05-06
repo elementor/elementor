@@ -7,13 +7,13 @@ import Cache from './data/cache';
 
 /**
  * @typedef {{}} RequestData
- *
- * @property {DataTypes} type
- * @property {number} timestamp
- * @property {string} endpoint
- * @property {Component} component
+
  * @property {string} command
+ * @property {string} endpoint
  * @property {{}} args
+ * @property {DataTypes} [type]
+ * @property {number} [timestamp]
+ * @property {Component} [component]
  */
 
 // TODO: Return it from the server. Original at WP_REST_Server.
@@ -362,7 +362,7 @@ export default class Data extends Commands {
 		this.cache.delete( endpoint );
 	}
 
-	create( endpoint, query = {}, options = {}, data = {} ) {
+	create( endpoint, data, query = {}, options = {} ) {
 		return this.run( 'create', endpoint, { query, options, data } );
 	}
 
@@ -374,10 +374,13 @@ export default class Data extends Commands {
 		return this.run( 'get', endpoint, { query, options } );
 	}
 
-	update( endpoint, query = {}, options = {}, data = {} ) {
+	update( endpoint, data, query = {}, options = {} ) {
 		return this.run( 'update', endpoint, { query, options, data } );
 	}
 
+	/**
+	 * TODO: Add JSDOC typedef for query and options.
+	 */
 	run( type, endpoint, args ) {
 		args.options.type = type;
 

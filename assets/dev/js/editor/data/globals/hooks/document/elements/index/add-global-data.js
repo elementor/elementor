@@ -23,7 +23,7 @@ export class ElementsIndexAddGlobalData extends After {
 				return;
 			}
 			// Get global item.
-			const endpointResult = await $e.data.get( globalValue ),
+			const endpointResult = await $e.data.get( globalValue, {}, { filter: 'filter-key-value' } ),
 				container = elementor.getContainer( args.query.element_id ),
 				data = endpointResult.data,
 				controlGroupPrefix = container.controls[ globalKey ]?.groupPrefix;

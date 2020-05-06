@@ -44,6 +44,6 @@ export default class Component extends ComponentBase {
 
 	onElementorLoaded() {
 		// Add global cache before render.
-		$e.data.get( 'globals' );
+		$e.data.get( 'globals', {}, { filter: 'filter-object-component' } );
 	}
 }

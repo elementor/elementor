@@ -2,6 +2,9 @@ import { CREATABLE, DELETABLE, EDITABLE, READABLE } from 'elementor-api/core/dat
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandData from 'elementor-api/modules/command-data';
 
+// Test cache module.
+require( './data/cache.spec.js' );
+
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/core/data.js', ( hooks ) => {
 		hooks.before( () => {
@@ -221,7 +224,7 @@ jQuery( () => {
 			const data = { someProp: 'someValue' },
 				query = { paramA: 'valueB' };
 
-			// This test case relay on cache.
+			// This test case relies on cache.
 			$e.data.loadCache( 'test-component-cache-manually/test-command', query, data );
 
 			// Get cache.

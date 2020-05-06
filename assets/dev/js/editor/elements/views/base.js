@@ -471,6 +471,8 @@ BaseElementView = BaseContainer.extend( {
 				{
 					document_id: elementor.documents.getCurrent().id,
 					element_id: this.getEditModel().id,
+				}, {
+					filter: 'filter-key-value',
 				} );
 
 			// Async, means rendered when result received.

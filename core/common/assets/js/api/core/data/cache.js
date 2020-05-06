@@ -15,45 +15,82 @@ export default class Cache {
 	}
 
 	/**
-	 * Function extractResponse().
+	 * Function extractData().
 	 *
-	 * Extract response to callback that accept key,value parameters using requestData.
+	 * Extract data to callback that accept key,value parameters, based on requestData, and data.
 	 *
 	 * @param {*} data
-	 * @param {{}} requestData
+	 * @param {RequestData} requestData
 	 * @param {function( string, any )} keyValueCallback - callback(key, value)
+	 * @param {('filter-object-component'|'filter-object'|'filter-key-value')} [filter]
 	 */
-	extractData( data, requestData, keyValueCallback ) {
-		const componentName = requestData.component?.getNamespace(),
-			isIndexCommand = requestData.endpoint + '/index' === requestData.command,
-			isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
-			isEndpointTwoLevelsDeep = 2 < requestData.endpoint.split( '/', 3 ).length;
+	extractData( data, requestData, keyValueCallback, filter ) {
+		if ( ! filter ) {
+			filter = requestData.args.options?.filter;
+		}
 
-		if ( isQueryEmpty && isIndexCommand ) {
-			// Handles situation when 'index' was forced to use like in 'globals' component.
-			// EG: 'globals/index'.
-			Object.entries( data ).forEach( ( [ key, /*object*/ value ] ) => {
-				if ( 'object' === typeof value ) {
-					Object.entries( value ).forEach( ( [ endpoint, endpointResponse ] ) => {
-						keyValueCallback( componentName + '/' + key + '/' + endpoint, endpointResponse );
-					} );
+		switch ( filter ) {
+			case 'filter-object-component': {
+				Object.entries( data ).forEach( ( [ key, /*object*/ value ] ) => {
+					const componentName = requestData.component?.getNamespace();
+
+					if ( ! componentName ) {
+						throw new Error( 'requestData.component is invalid.' );
+					}
+
+					if ( 'object' === typeof value && ! key.includes( componentName + '/' ) ) {
+						Object.entries( value ).forEach( ( [ subKey, subKeyValue ] ) => {
+							keyValueCallback( componentName + '/' + key + '/' + subKey, subKeyValue );
+						} );
+					} else if ( key.split( '/', 2 ).length > 1 ) {
+							keyValueCallback( key, value );
+						} else {
+							keyValueCallback( componentName + '/' + key, value );
+						}
+				} );
+			}
+			break;
+
+			case 'filter-object': {
+				Object.keys( data ).forEach( ( key ) => {
+					keyValueCallback( requestData.command + '/' + key, data[ key ] );
+				} );
+			}
+			break;
+
+			case 'filter-key-value': {
+				keyValueCallback( requestData.endpoint, data );
+			}
+			break;
+
+			// Try guess.
+			default:
+				const isIndexCommand = requestData.endpoint + '/index' === requestData.command,
+					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
+					endpointDepth = requestData.endpoint.split( '/', 3 ).length;
+
+				if ( isQueryEmpty ) {
+					if ( isIndexCommand ) {
+						// Handles situation when 'index' was forced to use like in 'globals' component.
+						// EG: 'globals/index'.
+						this.extractData( data, requestData, keyValueCallback, 'filter-object-component' );
+					} else if ( endpointDepth > 2 ) {
+						// Handle situations when endpoint is exactly the path to the specific data.
+						// EG: 'globals/typography/primary'.
+						this.extractData( data, requestData, keyValueCallback, 'filter-key-value' );
+					} else if ( 'object' === typeof data ) {
+						// Handles situation when data is part of the command.
+						// EG: 'globals/typography'.
+						this.extractData( data, requestData, keyValueCallback, 'filter-object' );
+					} else if ( 1 === endpointDepth && 'object' !== typeof data ) {
+						this.extractData( data, requestData, keyValueCallback, 'filter-key-value' );
+					} else {
+						throw new RangeError( 'extractData out of range, cannot guesses filter type' );
+					}
 				} else {
-					keyValueCallback( key, value );
+					// Handles situation when query is not empty and need to point the endpoint is equal to the data.
+					this.extractData( data, requestData, keyValueCallback, 'filter-key-value' );
 				}
-			} );
-		} else if ( isEndpointTwoLevelsDeep && isQueryEmpty ) {
-			// Handles situation when query empty.
-			// EG: 'globals/typography/primary'.
-			keyValueCallback( requestData.endpoint, data );
-		} else if ( isQueryEmpty && 'object' === typeof data ) {
-			// Handles situation when query empty.
-			// EG: 'globals/typography'.
-			Object.keys( data ).forEach( ( key ) => {
-				keyValueCallback( requestData.command + '/' + key, data[ key ] );
-			} );
-		} else {
-			// Handles situation when query is not empty.
-			keyValueCallback( requestData.endpoint, data );
 		}
 	}
 
@@ -62,7 +99,7 @@ export default class Cache {
 	 *
 	 * Receive from cache.
 	 *
-	 * @param {{}} requestData
+	 * @param {RequestData} requestData
 	 *
 	 * @return {(Promise|boolean)}
 	 */
@@ -84,7 +121,7 @@ export default class Cache {
 	 *
 	 * Load data to cache
 	 *
-	 * @param {{}} requestData
+	 * @param {RequestData} requestData
 	 * @param {*} data
 	 */
 	load( requestData, data ) {
@@ -98,7 +135,7 @@ export default class Cache {
 	 *
 	 * Get from exist storage.
 	 *
-	 * @param {{}} requestData
+	 * @param {RequestData} requestData
 	 *
 	 * @return {{}}
 	 */
@@ -109,11 +146,14 @@ export default class Cache {
 	/**
 	 * Function update().
 	 *
-	 * Update only exist storage.
+	 * Update only already exist storage, runs over all storage, do two cases, key-value update and situations like 'globals/ ... '.
+	 * 1. If the current endpointKey is equal to requestData.endpoint.
+	 * 2. If the current endpointKey is part of requestData.endpoint ( part of including '/' ) and requestData.args.data
+	 * is object, using requestData.args.data keys to preform a validation if current endpoint + '/' + dataKey + '/' + subKey equals to requestedData.endpoint.
 	 *
-	 * @param {{}} requestData
+	 * @param {RequestData} requestData
 	 *
-	 * @return {boolean}
+	 * @return {boolean} is updated
 	 */
 	update( requestData ) {
 		const endpoint = requestData.endpoint;
@@ -138,22 +178,20 @@ export default class Cache {
 				}
 			} else if ( endpointKey.includes( endpoint ) ) {
 				// If current cache is part of the endpoint ( Handle situations like 'globals/ ... ' ).
-				let isResponseMerged = false;
 				// Merge simulated response with `requestData.args.data`.
 				Object.entries( requestData.args.data ).forEach( ( [ dataKey, /*object*/ dataValue ] ) => {
-					if ( 'object' === typeof dataValue && endpointKey.includes( dataKey + '/' ) ) {
-						Object.entries( dataValue ).forEach( ( [ subKey, subValue ] ) => {
-							if ( endpointKey === endpoint + '/' + dataKey + '/' + subKey ) {
-								response[ endpointKey ] = subValue;
-								isResponseMerged = true;
-							}
-						} );
+					if ( 'object' === typeof dataValue ) {
+						if ( endpointKey.includes( dataKey + '/' ) ) {
+							Object.entries( dataValue ).forEach( ( [ subKey, subValue ] ) => {
+								if ( endpointKey === endpoint + '/' + dataKey + '/' + subKey ) {
+									response[ endpointKey ] = subValue;
+								}
+							} );
+						}
+					} else {
+						response[ endpointKey ] = dataValue;
 					}
 				} );
-
-				if ( ! isResponseMerged ) {
-					throw Error( 'Cannot merge response.' );
-				}
 			}
 		} );
 

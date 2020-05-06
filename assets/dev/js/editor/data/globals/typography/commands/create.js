@@ -30,9 +30,13 @@ export class Create extends CommandBase {
 		}
 
 		if ( Object.values( availableControls ).length ) {
-			result = $e.data.create( 'globals/typography', {}, {}, {
+			const data = {
 				title,
-				... availableControls,
+				...availableControls,
+			};
+
+			result = $e.data.create( 'globals/typography', data, {}, {
+					filter: 'filter-object',
 			} );
 		}
 
