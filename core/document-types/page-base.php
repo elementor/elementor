@@ -76,14 +76,6 @@ abstract class PageBase extends Document {
 	 * @param Document $document
 	 */
 	public static function register_hide_title_control( $document ) {
-		$page_title_selector = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_page_title_selector' );
-
-		if ( ! $page_title_selector ) {
-			$page_title_selector = 'h1.entry-title';
-		}
-
-		$page_title_selector .= ', .elementor-page-title';
-
 		$document->start_injection( [
 			'of' => 'post_status',
 			'fallback' => [
@@ -102,7 +94,7 @@ abstract class PageBase extends Document {
 					Settings::get_url() . '#tab-style'
 				),
 				'selectors' => [
-					'{{WRAPPER}} ' . $page_title_selector => 'display: none',
+					':root' => '--page-title-display: none',
 				],
 			]
 		);

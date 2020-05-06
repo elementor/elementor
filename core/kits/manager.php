@@ -38,6 +38,12 @@ class Manager {
 		return Plugin::$instance->documents->get( $id );
 	}
 
+	public function get_active_kit_for_fronend() {
+		$id = $this->get_active_id();
+
+		return Plugin::$instance->documents->get_doc_for_frontend( $id );
+	}
+
 	private function create_default() {
 		$kit = Plugin::$instance->documents->create( 'kit', [
 			'post_type' => Source_Local::CPT,
@@ -66,6 +72,7 @@ class Manager {
 			'i18n' => [
 				'Close' => __( 'Close', 'elementor' ),
 				'Back' => __( 'Back', 'elementor' ),
+				'Global Settings' => __( 'Global Settings', 'elementor' ),
 				'Theme Style' => __( 'Theme Style', 'elementor' ),
 			],
 		] );
@@ -119,9 +126,17 @@ class Manager {
 	}
 
 	public function register_controls() {
-		$controls_manager = \ElementorPro\Plugin::elementor()->controls_manager;
+		$controls_manager = Plugin::$instance->controls_manager;
 
 		$controls_manager->register_control( Repeater::CONTROL_TYPE, new Repeater() );
+	}
+
+	public function is_custom_colors_enabled() {
+		return ! get_option( 'elementor_disable_color_schemes' );
+	}
+
+	public function is_custom_typography_enabled() {
+		return ! get_option( 'elementor_disable_typography_schemes' );
 	}
 
 	public function __construct() {
