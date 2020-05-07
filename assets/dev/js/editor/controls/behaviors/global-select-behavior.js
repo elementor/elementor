@@ -5,6 +5,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		};
 	}
 
+	getGlobalValue() {
+		return this.view.container.globals.get( this.view.model.get( 'name' ) );
+	}
+
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerUiElements() {
 		this.ui.globalPreviewsContainer = this.popover.getElements( 'widget' ).find( '.elementor-global-previews-container' );
@@ -15,14 +19,16 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerEvents() {
-		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event ) );
+		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.elementorGlobalName ) );
 		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
 	}
 
-	applySavedGlobalValue( event ) {
-		const previewData = event.currentTarget.dataset;
+	applySavedGlobalValue( globalName ) {
+		//this.view.enableGlobalValue( globalName );
 
-		this.ui.globalControlSelected.html( previewData.elementorGlobalName );
+		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
+
+		this.ui.globalControlSelected.html( globalName );
 
 		this.toggleSelect();
 	}
@@ -35,12 +41,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.initGlobalPopover();
 
 		this.$el.addClass( 'elementor-control-global' );
-
-		// Instead of ui()
-		this.registerUiElements();
-
-		// Instead of events()
-		this.registerEvents();
 	}
 
 	toggleSelect() {
@@ -81,9 +81,19 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				globalData.name = this.globalNameInput.val();
 
+				/*$e.data.create( 'globals/colors', {
+					_id: elementor.helpers.getUniqueID(),
+					color: globalData.code,
+					title: globalData.name,
+				} );*/
+
+				// this.view.enableGlobalValue( globalData.name );
+
 				const $globalPreview = this.view.createGlobalPreviewMarkup( globalData );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
+
+				this.applySavedGlobalValue( globalData.name );
 			},
 			onShow: () => {
 				// Put focus on the naming input
@@ -146,6 +156,20 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			},
 		} );
 
+		this.addGlobalsListToPopover().then( () => {
+			// Instead of ui()
+			this.registerUiElements();
+
+			// Instead of events()
+			this.registerEvents();
+		} );
+
 		this.createGlobalInfoTooltip();
+	}
+
+	async addGlobalsListToPopover() {
+		const $globalsList = await this.view.buildGlobalsList();
+
+		this.popover.getElements( 'widget' ).find( '.elementor-global-popover-title' ).after( $globalsList );
 	}
 }

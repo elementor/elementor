@@ -32,7 +32,7 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 
 		behaviors.globalControlSelect = {
 			behaviorClass: GlobalControlSelect,
-			popoverContent: this.getGlobalTextStyles(),
+			popoverContent: this.buildGlobalsList(),
 			popoverTitle: elementor.translate( 'global_text_styles' ),
 			manageButtonText: elementor.translate( 'manage_global_text_styles' ),
 			tooltipText: elementor.translate( 'global_typography_info' ),
@@ -40,6 +40,10 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 		};
 
 		return behaviors;
+	},
+
+	getGlobalValue: function() {
+		return this.container.globals.get( this.model.get( 'name' ) );
 	},
 
 	createGlobalPreviewMarkup: function( textStyle ) {
@@ -98,8 +102,37 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 		return $message;
 	},
 
+	enableGlobalValue: function( textStyleName ) {
+		if ( this.getGlobalValue() ) {
+			// If a global text style is already active, switch them without disabling globals
+			$e.run( 'document/globals/settings', {
+				container: elementor.getCurrentElement().getContainer(),
+				settings: {
+					typography_typography: 'globals/typography/' + textStyleName,
+				},
+			} );
+		} else {
+			// If the active text style is NOT a global, enable globals and apply the selected global
+			$e.run( 'document/globals/enable', {
+				container: elementor.getCurrentElement().getContainer(),
+				settings: {
+					typography_typography: 'globals/typography/' + textStyleName,
+				},
+			} );
+		}
+	},
+
+	disableGlobalValue: function() {
+		$e.run( 'document/globals/disable', {
+			container: elementor.getCurrentElement().getContainer(),
+			settings: {
+				typography_typography: '',
+			},
+		} );
+	},
+
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
-	getPlaceholderTextStylesList: function() {
+	getGlobalTextStyles: function() {
 		return [
 			{
 				name: 'Primary',
@@ -149,9 +182,9 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	},
 
 	// TODO: Replace placeholders with real global colors
-	getGlobalTextStyles: function() {
+	buildGlobalsList: function() {
 		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } ),
-			globalTextStyles = this.getPlaceholderTextStylesList();
+			globalTextStyles = this.getGlobalTextStyles();
 
 		globalTextStyles.forEach( ( textStyle ) => {
 			const $textStylePreview = this.createGlobalPreviewMarkup( textStyle );

@@ -16,7 +16,6 @@ export default class extends ControlBaseDataView {
 
 		behaviors.globalControlSelect = {
 			behaviorClass: GlobalControlSelect,
-			popoverContent: this.getGlobalColors(),
 			popoverTitle: elementor.translate( 'global_colors_title' ),
 			manageButtonText: elementor.translate( 'manage_global_colors' ),
 			tooltipText: elementor.translate( 'global_colors_info' ),
@@ -24,6 +23,10 @@ export default class extends ControlBaseDataView {
 		};
 
 		return behaviors;
+	}
+
+	getGlobalValue() {
+		return this.container.globals.get( this.model.get( 'name' ) );
 	}
 
 	applySavedValue() {
@@ -86,6 +89,35 @@ export default class extends ControlBaseDataView {
 		return ntc.name( color )[ 1 ];
 	}
 
+	enableGlobalValue( colorName ) {
+		if ( this.getGlobalValue() ) {
+			// If a global color is already active, switch them without disabling globals
+			$e.run( 'document/globals/settings', {
+				container: elementor.getCurrentElement().getContainer(),
+				settings: {
+					title_color: 'globals/colors/' + colorName,
+				},
+			} );
+		} else {
+			// If the active color is NOT a global, enable globals and apply the selected global
+			$e.run( 'document/globals/enable', {
+				container: elementor.getCurrentElement().getContainer(),
+				settings: {
+					title_color: 'globals/colors/' + colorName,
+				},
+			} );
+		}
+	}
+
+	disableGlobalValue() {
+		$e.run( 'document/globals/disable', {
+			container: elementor.getCurrentElement().getContainer(),
+			settings: {
+				title_color: '',
+			},
+		} );
+	}
+
 	getAddGlobalConfirmMessage() {
 		const color = this.getColorObject(),
 			$message = jQuery( '<div>', { class: 'elementor-global-confirm-message' } ),
@@ -127,7 +159,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	// TODO: Replace placeholders with real global colors
-	getPlaceholderColorsList() {
+	async getGlobalColors() {
 		return {
 			Primary: {
 				name: 'Primary',
@@ -165,11 +197,14 @@ export default class extends ControlBaseDataView {
 				displayCode: '#048647',
 			},
 		};
+
+		return await $e.data.get( 'globals/colors' );
 	}
 
-	getGlobalColors() {
-		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } ),
-			globalColors = this.getPlaceholderColorsList();
+	async buildGlobalsList() {
+		const globalColors = await this.getGlobalColors();
+
+		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } );
 
 		Object.values( globalColors ).forEach( ( color ) => {
 			const $color = this.createGlobalPreviewMarkup( color );
@@ -183,6 +218,10 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerChange() {
+		if ( this.getGlobalValue() ) {
+			this.disableGlobalValue();
+		}
+
 		this.setValue( this.colorPicker.getColor() );
 	}
 
