@@ -615,6 +615,7 @@ class Editor {
 				'create' => __( 'Create', 'elementor' ),
 				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
 				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Text Style?', 'elementor' ),
+				'custom' => __( 'Custom', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),

@@ -220,6 +220,8 @@ export default class extends ControlBaseDataView {
 	onPickerChange() {
 		if ( this.getGlobalValue() ) {
 			this.disableGlobalValue();
+
+			this.$el.find( '.elementor-global-selected' ).html( elementor.translate( 'custom' ) );
 		}
 
 		this.setValue( this.colorPicker.getColor() );
