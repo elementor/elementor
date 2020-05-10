@@ -28,6 +28,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
 
+		if ( this.view.$el.hasClass( 'elementor-invalid-color' ) ) {
+			this.view.$el.removeClass( 'elementor-invalid-color' );
+		}
+
 		this.ui.globalControlSelected.html( globalName );
 
 		this.toggleSelect();

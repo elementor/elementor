@@ -226,13 +226,21 @@ export default class extends ControlBaseDataView {
 			this.$el.find( '.elementor-global-selected' ).html( elementor.translate( 'custom' ) );
 		}
 
+		if ( this.$el.hasClass( 'elementor-invalid-color' ) ) {
+			this.$el.removeClass( 'elementor-invalid-color' );
+		}
+
 		this.setValue( this.colorPicker.getColor() );
 	}
 
 	onPickerClear() {
 		this.setValue( '' );
 
-		this.$el.find( '.elementor-global-selected' ).html( elementor.translate( 'default' ) );
+		this.$el.addClass( 'elementor-invalid-color' );
+
+		this.$el
+			.find( '.elementor-global-selected' )
+			.html( elementor.translate( 'default' ) );
 	}
 
 	onAddGlobalButtonClick() {
