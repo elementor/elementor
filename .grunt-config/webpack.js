@@ -20,6 +20,14 @@ const moduleRules = {
 		// 	}
 		// },
 		{
+			test: /\.css$/i,
+			exclude: /node_modules/,
+			use: [
+				'style-loader',
+				'css-loader',
+			],
+		},
+		{
 			test: /\.js$/,
 			exclude: /node_modules/,
 			use: [
@@ -59,6 +67,7 @@ const entry = {
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/tests.js' ),
+	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
 };
 
 const webpackConfig = {

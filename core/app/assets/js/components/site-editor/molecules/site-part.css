@@ -1,0 +1,15 @@
+.elementor-app__site-editor__site-part {
+	width: 220px;
+	height: 200px;
+}
+
+/*
+TODO: add via webpack css & file loaders.
+#site-part__type-header {
+	background: url( 'images/header.png' );
+}
+
+#site-part__type-footer {
+	background: url( 'images/footer.png' );
+}
+ */

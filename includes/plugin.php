@@ -428,6 +428,11 @@ class Plugin {
 	public $kits_manager;
 
 	/**
+	 * @var Core\App\App
+	 */
+	public $app;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -595,6 +600,7 @@ class Plugin {
 		$this->upgrade = new Core\Upgrade\Manager();
 
 		if ( is_admin() ) {
+			$this->app = new Core\App\App();
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();

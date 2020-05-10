@@ -1,0 +1,15 @@
+.elementor-app__main {
+	display: flex;
+}
+
+.elementor-app__sidebar {
+	width: 30%;
+}
+
+.elementor-app__content {
+	width: 70%;
+}
+
+.elementor-screen-only {
+	display: none;
+}
