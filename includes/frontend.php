@@ -760,6 +760,11 @@ class Frontend extends App {
 				'cs_CZ' => 'latin-ext',
 				'ro_RO' => 'latin-ext',
 				'pl_PL' => 'latin-ext',
+				'hr_HR' => 'latin-ext',
+				'hu_HU' => 'latin-ext',
+				'sk_SK' => 'latin-ext',
+				'tr_TR' => 'latin-ext',
+				'lt_LT' => 'latin-ext',
 			];
 			$locale = get_locale();
 
