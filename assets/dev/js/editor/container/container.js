@@ -156,7 +156,7 @@ export default class Container extends ArgsObject {
 
 	handleRepeaterChildren() {
 		Object.values( this.controls ).forEach( ( control ) => {
-			if ( 'repeater' !== control.type ) {
+			if ( ! control.is_repeater ) {
 				return;
 			}
 
