@@ -136,7 +136,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method is not called directly, but triggered by Marionette's .triggerMethod()
 	onAddGlobalToList( $confirmMessage ) {
-		elementorCommon.dialogsManager.createWidget( 'confirm', {
+		this.confirmNewGlobalModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			className: 'elementor-global-confirm-add',
 			headerMessage: this.getOption( 'newGlobalConfirmTitle' ),
 			message: $confirmMessage,
