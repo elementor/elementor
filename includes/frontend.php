@@ -766,6 +766,9 @@ class Frontend extends App {
 				'tr_TR' => 'latin-ext',
 				'lt_LT' => 'latin-ext',
 			];
+
+			$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
+
 			$locale = get_locale();
 
 			if ( isset( $subsets[ $locale ] ) ) {
