@@ -31,8 +31,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 		behaviors.globalControlSelect = {
 			behaviorClass: GlobalControlSelect,
-			popoverContent: this.buildGlobalsList(),
-			popoverTitle: elementor.translate( 'global_text_styles' ),
+			popoverTitle: elementor.translate( 'global_text_styles_title' ),
 			manageButtonText: elementor.translate( 'manage_global_text_styles' ),
 			tooltipText: elementor.translate( 'global_typography_info' ),
 			newGlobalConfirmTitle: elementor.translate( 'create_global_color' ),
@@ -130,8 +129,12 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		} );
 	}
 
+	getNoGlobalsFoundMessage() {
+		return elementor.translate( 'no_global_text_styles' );
+	}
+
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
-	getGlobalTextStyles() {
+	async getGlobalsList() {
 		return [
 			{
 				name: 'Primary',
@@ -178,12 +181,13 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				letterSpacing: 'inherit',
 			},
 		];
+
+		return await $e.data.get( 'globals/typography' );
 	}
 
 	// TODO: Replace placeholders with real global colors
-	buildGlobalsList() {
-		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } ),
-			globalTextStyles = this.getGlobalTextStyles();
+	buildGlobalsList( globalTextStyles ) {
+		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } );
 
 		globalTextStyles.forEach( ( textStyle ) => {
 			const $textStylePreview = this.createGlobalPreviewMarkup( textStyle );

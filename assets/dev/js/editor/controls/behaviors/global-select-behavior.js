@@ -58,9 +58,76 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			$manageGlobalPresetsLink = jQuery( '<div>', { class: 'elementor-global-manage-button' } )
 				.html( this.getOption( 'manageButtonText' ) + '<i class="eicon-cog"></i>' );
 
-		$popover.append( $popoverTitle, this.getOption( 'popoverContent' ), $manageGlobalPresetsLink );
+		$popover.append( $popoverTitle, $manageGlobalPresetsLink );
 
 		return $popover;
+	}
+
+	printGlobalSelectBox() {
+		const $globalSelectBox = jQuery( '<div>', { class: 'elementor-global-select' } ),
+			$selectedGlobal = jQuery( '<span>', { class: 'elementor-global-selected' } )
+				.html( elementor.translate( 'default' ) );
+
+		$globalSelectBox.append( $selectedGlobal, '<i class="eicon-caret-down"></i>' );
+
+		this.$el.find( '.elementor-control-input-wrapper' ).prepend( $globalSelectBox );
+	}
+
+	initGlobalPopover() {
+		this.popover = elementorCommon.dialogsManager.createWidget( 'simple', {
+			className: 'elementor-global-control-popover',
+			message: this.buildGlobalPopover(),
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			hide: {
+				onOutsideClick: false,
+			},
+			position: {
+				my: `center top`,
+				at: `center bottom+5`,
+				of: this.ui.controlContent,
+				autoRefresh: true,
+			},
+		} );
+
+		// Render the list of globals and append them to the Globals popover
+		this.view.getGlobalsList()
+			.then(
+			( globalsList ) => {
+				if ( globalsList ) {
+					this.addGlobalsListToPopover( globalsList );
+				} else {
+					this.showEmptyGlobalsMessage();
+				}
+			},
+			() => {
+				this.showEmptyGlobalsMessage();
+			} )
+			.finally( () => this.registerUiElementsAndEvents() );
+
+		this.createGlobalInfoTooltip();
+	}
+
+	showEmptyGlobalsMessage() {
+		const $message = jQuery( '<div>', { class: 'elementor-global-no-globals-found elementor-global-previews-container' } ).html( this.view.getNoGlobalsFoundMessage() );
+
+		this.popover.getElements( 'widget' ).find( '.elementor-global-popover-title' ).after( $message );
+	}
+
+	addGlobalsListToPopover( globalsList ) {
+		const $globalsList = this.view.buildGlobalsList( globalsList );
+
+		this.popover.getElements( 'widget' ).find( '.elementor-global-popover-title' ).after( $globalsList );
+	}
+
+	registerUiElementsAndEvents() {
+		// Instead of ui()
+		this.registerUiElements();
+
+		// Instead of events()
+		this.registerEvents();
 	}
 
 	// This method is not called directly, but triggered by Marionette's .triggerMethod()
@@ -90,6 +157,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				// this.view.enableGlobalValue( globalData.name );
 
 				const $globalPreview = this.view.createGlobalPreviewMarkup( globalData );
+
+				if ( this.ui.globalPreviewsContainer.hasClass( 'elementor-global-no-globals-found' ) ) {
+					this.ui.globalPreviewsContainer.removeClass( 'elementor-global-no-globals-found' );
+				}
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
 
@@ -125,51 +196,5 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			mouseenter: () => this.globalInfoTooltip.show(),
 			mouseleave: () => this.globalInfoTooltip.hide(),
 		} );
-	}
-
-	printGlobalSelectBox() {
-		const $globalSelectBox = jQuery( '<div>', { class: 'elementor-global-select' } ),
-			$selectedGlobal = jQuery( '<span>', { class: 'elementor-global-selected' } )
-				.html( elementor.translate( 'default' ) );
-
-		$globalSelectBox.append( $selectedGlobal, '<i class="eicon-caret-down"></i>' );
-
-		this.$el.find( '.elementor-control-input-wrapper' ).prepend( $globalSelectBox );
-	}
-
-	initGlobalPopover() {
-		this.popover = elementorCommon.dialogsManager.createWidget( 'simple', {
-			className: 'elementor-global-control-popover',
-			message: this.buildGlobalPopover(),
-			effects: {
-				show: 'show',
-				hide: 'hide',
-			},
-			hide: {
-				onOutsideClick: false,
-			},
-			position: {
-				my: `center top`,
-				at: `center bottom+5`,
-				of: this.ui.controlContent,
-				autoRefresh: true,
-			},
-		} );
-
-		this.addGlobalsListToPopover().then( () => {
-			// Instead of ui()
-			this.registerUiElements();
-
-			// Instead of events()
-			this.registerEvents();
-		} );
-
-		this.createGlobalInfoTooltip();
-	}
-
-	async addGlobalsListToPopover() {
-		const $globalsList = await this.view.buildGlobalsList();
-
-		this.popover.getElements( 'widget' ).find( '.elementor-global-popover-title' ).after( $globalsList );
 	}
 }

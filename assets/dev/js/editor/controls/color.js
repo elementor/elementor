@@ -158,8 +158,12 @@ export default class extends ControlBaseDataView {
 		return $color;
 	}
 
+	getNoGlobalsFoundMessage() {
+		return elementor.translate( 'no_global_colors' );
+	}
+
 	// TODO: Replace placeholders with real global colors
-	async getGlobalColors() {
+	async getGlobalsList() {
 		return {
 			Primary: {
 				name: 'Primary',
@@ -201,9 +205,7 @@ export default class extends ControlBaseDataView {
 		return await $e.data.get( 'globals/colors' );
 	}
 
-	async buildGlobalsList() {
-		const globalColors = await this.getGlobalColors();
-
+	buildGlobalsList( globalColors ) {
 		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } );
 
 		Object.values( globalColors ).forEach( ( color ) => {
@@ -229,6 +231,8 @@ export default class extends ControlBaseDataView {
 
 	onPickerClear() {
 		this.setValue( '' );
+
+		this.$el.find( '.elementor-global-selected' ).html( elementor.translate( 'default' ) );
 	}
 
 	onAddGlobalButtonClick() {
