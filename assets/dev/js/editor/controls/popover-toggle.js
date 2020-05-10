@@ -1,28 +1,27 @@
 import GlobalControlSelect from './behaviors/global-select-behavior';
 
-var ControlChooseView = require( 'elementor-controls/choose' ),
-	ControlPopoverStarterView;
+const ControlChooseView = require( 'elementor-controls/choose' );
 
-ControlPopoverStarterView = ControlChooseView.extend( {
-	ui: function() {
-		var ui = ControlChooseView.prototype.ui.apply( this, arguments );
+export default class ControlPopoverStarterView extends ControlChooseView {
+	ui() {
+		const ui = ControlChooseView.prototype.ui.apply( this, arguments );
 
 		ui.popoverToggle = '.elementor-control-popover-toggle-toggle';
 
 		return ui;
-	},
+	}
 
-	events: function() {
+	events() {
 		return _.extend( ControlChooseView.prototype.events.apply( this, arguments ), {
 			'click @ui.popoverToggle': 'onPopoverToggleClick',
 		} );
-	},
+	}
 
-	onPopoverToggleClick: function() {
+	onPopoverToggleClick() {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
-	},
+	}
 
-	behaviors: function() {
+	behaviors() {
 		const behaviors = ControlChooseView.prototype.behaviors.apply( this, arguments );
 
 		// We don't want to override existing inherited behaviors, such as dynamic tags
@@ -40,13 +39,13 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 		};
 
 		return behaviors;
-	},
+	}
 
-	getGlobalValue: function() {
+	getGlobalValue() {
 		return this.container.globals.get( this.model.get( 'name' ) );
-	},
+	}
 
-	createGlobalPreviewMarkup: function( textStyle ) {
+	createGlobalPreviewMarkup( textStyle ) {
 		// This method is called without a color parameter when the user clicks the "Add" button
 		if ( ! textStyle ) {
 			textStyle = this.getTypographyObject();
@@ -68,10 +67,10 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 			} );
 
 		return $textStylePreview;
-	},
+	}
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH VALUES OF THE TYPOGRAPHY CONTROLS
-	getTypographyObject: function() {
+	getTypographyObject() {
 		return {
 			name: 'Primary',
 			fontFamily: 'Varela',
@@ -83,9 +82,9 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 			lineHeight: 'inherit',
 			letterSpacing: 'inherit',
 		};
-	},
+	}
 
-	getAddGlobalConfirmMessage: function() {
+	getAddGlobalConfirmMessage() {
 		const $message = jQuery( '<div>', { class: 'elementor-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_typography_confirm_text' ) ),
@@ -100,9 +99,9 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 		$message.data( 'globalData', this.getTypographyObject() );
 
 		return $message;
-	},
+	}
 
-	enableGlobalValue: function( textStyleName ) {
+	enableGlobalValue( textStyleName ) {
 		if ( this.getGlobalValue() ) {
 			// If a global text style is already active, switch them without disabling globals
 			$e.run( 'document/globals/settings', {
@@ -120,19 +119,19 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 				},
 			} );
 		}
-	},
+	}
 
-	disableGlobalValue: function() {
+	disableGlobalValue() {
 		$e.run( 'document/globals/disable', {
 			container: elementor.getCurrentElement().getContainer(),
 			settings: {
 				typography_typography: '',
 			},
 		} );
-	},
+	}
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
-	getGlobalTextStyles: function() {
+	getGlobalTextStyles() {
 		return [
 			{
 				name: 'Primary',
@@ -179,10 +178,10 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 				letterSpacing: 'inherit',
 			},
 		];
-	},
+	}
 
 	// TODO: Replace placeholders with real global colors
-	buildGlobalsList: function() {
+	buildGlobalsList() {
 		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } ),
 			globalTextStyles = this.getGlobalTextStyles();
 
@@ -193,16 +192,13 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 		} );
 
 		return $globalTypographyContainer;
-	},
+	}
 
-	onAddGlobalButtonClick: function() {
+	onAddGlobalButtonClick() {
 		this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
-	},
-}, {
+	}
+}
 
-	onPasteStyle: function( control, clipboardValue ) {
-		return ! clipboardValue || clipboardValue === control.return_value;
-	},
-} );
-
-module.exports = ControlPopoverStarterView;
+ControlPopoverStarterView.onPasteStyle = ( control, clipboardValue ) => {
+	return ! clipboardValue || clipboardValue === control.return_value;
+};

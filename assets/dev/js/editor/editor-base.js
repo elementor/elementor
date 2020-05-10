@@ -12,6 +12,7 @@ import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 import Preview from 'elementor-views/preview';
+import PopoverToggleControl from 'elementor-controls/popover-toggle';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -105,7 +106,7 @@ export default class EditorBase extends Marionette.Application {
 			Media: require( 'elementor-controls/media' ),
 			Number: require( 'elementor-controls/number' ),
 			Order: require( 'elementor-controls/order' ),
-			Popover_toggle: require( 'elementor-controls/popover-toggle' ),
+			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
 			Section: require( 'elementor-controls/section' ),
