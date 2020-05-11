@@ -1,6 +1,6 @@
 import ControlBaseDataView from './base-data';
 import ColorPicker from '../utils/color-picker';
-import GlobalControlSelect from './behaviors/global-select-behavior';
+import GlobalControlSelect from '../../../../../core/kits/assets/js/globals/global-select-behavior';
 
 export default class extends ControlBaseDataView {
 	ui() {

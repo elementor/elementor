@@ -1,4 +1,4 @@
-import GlobalControlSelect from './behaviors/global-select-behavior';
+import GlobalControlSelect from '../../../../../core/kits/assets/js/globals/global-select-behavior';
 
 const ControlChooseView = require( 'elementor-controls/choose' );
 
