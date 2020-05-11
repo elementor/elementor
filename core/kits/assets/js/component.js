@@ -15,11 +15,11 @@ export default class extends $e.modules.ComponentBase {
 				icon: 'eicon-site-identity',
 				helpUrl: 'http://go.elementor.com/panel-site-identity',
 			},
-			// 'colors-and-typography': {
-			// 	title: elementor.translate( 'Colors & Typography' ),
-			// 	icon: 'eicon-colors-typography',
-			// 	helpUrl: 'http://go.elementor.com/panel-colors-and-typography',
-			// },
+			'colors-and-typography': {
+				title: elementor.translate( 'Colors & Typography' ),
+				icon: 'eicon-colors-typography',
+				helpUrl: 'http://go.elementor.com/panel-colors-and-typography',
+			},
 			lightbox: {
 				title: elementor.translate( 'Lightbox' ),
 				icon: 'eicon-lightbox-expand',

@@ -1,4 +1,3 @@
-
 .elementor-panel {
 
 	#elementor-panel-header {
@@ -88,10 +87,10 @@
 	}
 
 	.elementor-control {
-		margin: 0;
 		padding: 0;
 
 		&-title {
+			flex-grow: 1;
 
 			input {
 
@@ -119,6 +118,10 @@
 				}
 			}
 		}
+	}
+
+	.elementor-button-wrapper {
+		text-align: center;
 	}
 
 	.pickr {
