@@ -4,6 +4,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
+use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,6 +36,7 @@ class Colors_And_Typography extends Tab_Base {
 			'title',
 			[
 				'type' => Controls_Manager::TEXT,
+				'label_block' => true,
 			]
 		);
 
@@ -42,6 +44,7 @@ class Colors_And_Typography extends Tab_Base {
 			'color',
 			[
 				'type' => Controls_Manager::COLOR,
+				'label_block' => true,
 				'dynamic' => [],
 			]
 		);
@@ -51,7 +54,41 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
-				'default' => [],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_text_style',
+			[
+				'label' => __( 'Global Text Styles', 'elementor' ),
+				'tab' => $this->get_id(),
+			]
+		);
+
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'title',
+			[
+				'type' => Controls_Manager::TEXT,
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'styles',
+			]
+		);
+
+		$this->add_control(
+			'text_styles',
+			[
+				'type' => Global_Style_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
 			]
 		);
 
