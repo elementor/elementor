@@ -118,7 +118,7 @@ export default class extends ControlBaseDataView {
 		} );
 	}
 
-	getAddGlobalConfirmMessage() {
+	getAddGlobalConfirmMessage( globalColors ) {
 		const color = this.getColorObject(),
 			$message = jQuery( '<div>', { class: 'elementor-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
@@ -127,6 +127,15 @@ export default class extends ControlBaseDataView {
 			$colorPreview = jQuery( '<div>', { class: 'elementor-global-color__preview', style: 'background-color: ' + color.code } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.name } )
 				.val( color.name );
+
+		// Check if the color already exists in the global colors, and display an appropriate message
+		Object.values( globalColors ).forEach( ( globalColor ) => {
+			if ( color.code === globalColor.code ) {
+				$messageText.html( elementor.translate( 'global_color_already_exists' ) );
+			} else if ( color.name === globalColor.name ) {
+				$messageText.html( elementor.translate( 'global_color_name_already_exists' ) );
+			}
+		} );
 
 		$inputWrapper.append( $colorPreview, $input );
 
@@ -244,7 +253,14 @@ export default class extends ControlBaseDataView {
 	}
 
 	onAddGlobalButtonClick() {
-		this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
+		this.getGlobalsList().then(
+			( globalsList ) => {
+				this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage( globalsList ) );
+			},
+			() => {
+				this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
+			},
+		);
 	}
 
 	onBeforeDestroy() {

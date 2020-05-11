@@ -617,6 +617,8 @@ class Editor {
 				'default' => __( 'Default', 'elementor' ),
 				'create' => __( 'Create', 'elementor' ),
 				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
+				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
+				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
 				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Text Style?', 'elementor' ),
 				'custom' => __( 'Custom', 'elementor' ),
 

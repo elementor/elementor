@@ -172,10 +172,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			},
 			onShow: () => {
 				// Put focus on the naming input
-				this.globalNameInput = jQuery( '.elementor-global-confirm-add input' )
-					.focus();
+				this.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
 			},
-		} ).show();
+		} );
+
+		this.confirmNewGlobalModal.show();
 	}
 
 	createGlobalInfoTooltip() {
