@@ -46,6 +46,7 @@ class Colors_And_Typography extends Tab_Base {
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
 				'dynamic' => [],
+				'global_settings' => true,
 			]
 		);
 

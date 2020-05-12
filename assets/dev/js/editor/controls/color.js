@@ -14,13 +14,15 @@ export default class extends ControlBaseDataView {
 	behaviors() {
 		const behaviors = super.behaviors();
 
-		behaviors.globalControlSelect = {
-			behaviorClass: GlobalControlSelect,
-			popoverTitle: elementor.translate( 'global_colors_title' ),
-			manageButtonText: elementor.translate( 'manage_global_colors' ),
-			tooltipText: elementor.translate( 'global_colors_info' ),
-			newGlobalConfirmTitle: elementor.translate( 'create_global_style' ),
-		};
+		if ( ! this.options.model.attributes.global_settings ) {
+			behaviors.globalControlSelect = {
+				behaviorClass: GlobalControlSelect,
+				popoverTitle: elementor.translate( 'global_colors_title' ),
+				manageButtonText: elementor.translate( 'manage_global_colors' ),
+				tooltipText: elementor.translate( 'global_colors_info' ),
+				newGlobalConfirmTitle: elementor.translate( 'create_global_style' ),
+			};
+		}
 
 		return behaviors;
 	}
@@ -47,6 +49,7 @@ export default class extends ControlBaseDataView {
 					opacity: this.model.get( 'alpha' ),
 				},
 			},
+			isGlobalSettings: !! this.model.attributes.global_settings,
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
@@ -68,6 +71,7 @@ export default class extends ControlBaseDataView {
 
 		this.$pickerButton.tipsy( {
 			title: () => this.getControlValue() ? this.getColorObject().displayCode : '',
+			offset: 4,
 			gravity: () => 's',
 		} );
 	}
