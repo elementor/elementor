@@ -607,6 +607,8 @@ class Editor {
 				'global_colors_title' => __( 'Global Colors', 'elementor' ),
 				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
 				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
+				'delete_global_color' => __( 'Delete Global Color', 'elementor' ),
+				'delete_global_color_info' => __( 'Please note that by deleting a global color, all of its instances will inherit their value from an unknown source', 'elementor' ),
 				'global_colors_info' => __( 'Global colors help you work smarter. Save a color once and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below. Any change you make - the color will update throughout your entire site.', 'elementor' ),
 				'no_global_colors' => __( 'No global colors were found.', 'elementor' ),
 				'global_text_styles_title' => __( 'Global Text Styles', 'elementor' ),

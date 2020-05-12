@@ -5,10 +5,20 @@ export default class extends RepeaterRow {
 		return '#tmpl-elementor-global-style-repeater-row';
 	}
 
+	events() {
+		return {
+			'click @ui.removeButton': 'onRemoveButtonClick',
+		};
+	}
+
 	updateColorValue() {
 		const color = this.model.get( 'color' );
 
 		this.$colorValue.text( color );
+	}
+
+	triggers() {
+		return {};
 	}
 
 	onChildviewRender( childView ) {
@@ -27,5 +37,25 @@ export default class extends RepeaterRow {
 		if ( undefined !== model.changed.color ) {
 			this.updateColorValue();
 		}
+	}
+
+	onRemoveButtonClick() {
+		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
+			className: 'elementor-global-confirm-delete',
+			headerMessage: elementor.translate( 'delete_global_color' ),
+			message: elementor.translate( 'delete_global_color_info' ),
+			strings: {
+				confirm: elementor.translate( 'delete' ),
+				cancel: elementor.translate( 'cancel' ),
+			},
+			hide: {
+				onBackgroundClick: false,
+			},
+			onConfirm: () => {
+				this.trigger( 'click:remove' );
+			},
+		} );
+
+		this.confirmDeleteModal.show();
 	}
 }
