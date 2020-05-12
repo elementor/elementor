@@ -22,7 +22,7 @@ export default class SitePart extends React.Component {
 				<header>
 					{ this.props.title }
 					<a target="_blank" rel="noopener noreferrer" href={ this.props.urls.docs } >
-						<i className="eicon-info" aria-hidden="true" title={ __( `Help`, 'elementor' ) } />
+						<i className="eicon-info" aria-hidden="true" title={ __( 'Help', 'elementor' ) } />
 					</a>
 				</header>
 				<main>
