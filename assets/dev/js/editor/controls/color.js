@@ -38,10 +38,11 @@ export default class extends ControlBaseDataView {
 	}
 
 	initPicker() {
-		const options = {
+		const controlValue = this.getControlValue(),
+			options = {
 			picker: {
 				el: this.ui.pickerContainer[ 0 ],
-				default: this.getControlValue(),
+				default: controlValue,
 				components: {
 					opacity: this.model.get( 'alpha' ),
 				},
@@ -53,29 +54,34 @@ export default class extends ControlBaseDataView {
 
 		this.colorPicker = new ColorPicker( options );
 
+		if ( controlValue ) {
+			this.colorPicker.picker.setColor(controlValue);
+		}
+
+		this.addTipsyToPickerButton();
+
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
+	}
+
+	addTipsyToPickerButton() {
+		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
+
+		this.$pickerButton.tipsy( {
+			title: () => this.getControlValue() ? this.getColorObject().displayCode : '',
+			gravity: () => 's',
+		} );
 	}
 
 	getColorObject() {
 		const color = this.colorPicker.picker.getColor(),
 			colorObject = {};
 
+		colorObject.displayCode = color.toHEXA().toString( 0 );
 		// color.a is the transparency percentage. 1 means HEX value and not rgba()
 		if ( 1 === color.a ) {
-			colorObject.code = color.toHEXA().toString( 0 );
-			colorObject.displayCode = colorObject.code;
+			colorObject.code = colorObject.displayCode;
 		} else {
-			// Format the color code to HEXA for display, but keep rgba() format for CSS implementation
-			const transparency = color.a * 100;
-
 			colorObject.code = color.toRGBA().toString( 0 );
-
-			color.a = 1;
-
-			// HEX version of the rgba color for color naming by the NTC library
-			colorObject.hexOnly = color.toHEXA().toString( 0 );
-
-			colorObject.displayCode = colorObject.hexOnly + transparency;
 		}
 
 		colorObject.name = this.getColorName( colorObject );
@@ -84,7 +90,8 @@ export default class extends ControlBaseDataView {
 	}
 
 	getColorName( colorObject ) {
-		const color = colorObject.hexOnly ? colorObject.hexOnly : colorObject.code;
+		//  Check if the display value is HEX or HEXA (HEXA = with transparency)
+		const color = 7 < colorObject.displayCode.length ? colorObject.displayCode.slice( 0, 6 ) : colorObject.code;
 
 		return ntc.name( color )[ 1 ];
 	}
