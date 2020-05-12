@@ -84,6 +84,9 @@ const webpackConfig = {
 	resolve: aliasList,
 	entry: entry,
 	watch: true,
+	externals: {
+		'@wordpress/i18n': 'wp.i18n',
+	}
 };
 
 const webpackProductionConfig = {

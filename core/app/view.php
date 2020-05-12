@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $e_icons_css_url = $this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ) . '?ver=5.6.2';
 $common_css_url = $this->get_css_assets_url( 'common' ) . '?ver=' . ELEMENTOR_VERSION;
-$app_js_url = $this->get_js_assets_url( 'app' );
 
 ?>
 <!DOCTYPE html>
@@ -25,6 +24,6 @@ $app_js_url = $this->get_js_assets_url( 'app' );
 </head>
 <body>
 <div id="elementor-app"></div>
-<script src="<?php echo $app_js_url; ?>"></script>
+<?php wp_print_footer_scripts(); ?>
 </body>
 </html>

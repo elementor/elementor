@@ -2,6 +2,7 @@
  * Elementor App
  */
 import React from 'react';
+import { __ } from '@wordpress/i18n';
 import { Router, LocationProvider, createHistory } from '@reach/router';
 import { createHashSource } from 'reach-router-hash-history';
 import SiteEditorPromotion from 'elementor-app/components/site-editor/pages/promotion';
@@ -35,7 +36,7 @@ export default class App extends React.Component {
 
 	render() {
 		this.addComponentRoute( '/site-editor/promotion', SiteEditorPromotion );
-		const NotFound = () => <h1>Not Found</h1>;
+		const NotFound = () => <h1>{ __( 'Not Found', 'elementor' ) }</h1>;
 
 		return (
 			<LocationProvider history={ createHistory( createHashSource() ) }>

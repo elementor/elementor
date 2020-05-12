@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 import Button from './header-button';
 
 export default class Header extends React.Component {
@@ -25,8 +26,7 @@ export default class Header extends React.Component {
 					<div className="elementor-templates-modal__header__items-area">
 						<Button
 							id="close"
-							// TODO: Translate.
-							text="Close"
+							text={ __( 'Close', 'elementor' ) }
 							icon="eicon-close"
 							className="elementor-templates-modal__header__close--normal"
 							onClick={ () => $e.run( 'app/close' ) }

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 import MenuItem from './../molecules/menu-item';
 
 export default class Menu extends React.Component {
@@ -18,9 +19,9 @@ export default class Menu extends React.Component {
 
 		return (
 			<nav className="elementor-app__site-editor__menu">
-				<MenuItem id="all-parts" text={ 'All Parts' /* TODO: Translate. */ } 	icon="eicon-filter" />
+				<MenuItem id="all-parts" text={ __( 'All Parts', 'elementor' ) } 	icon="eicon-filter" />
 				<div className="elementor-app__site-editor__menu__items-title">
-					{ 'Site Parts' /* TODO: Translate. */ }
+					{ __( 'Site Parts', 'elementor' ) }
 				</div>
 				{ items }
 			</nav>

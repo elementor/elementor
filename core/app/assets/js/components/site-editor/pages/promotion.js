@@ -1,4 +1,5 @@
 import React from 'react';
+import { __ } from '@wordpress/i18n';
 import Layout from '../templates/layout';
 import SiteParts from './../organisms/site-parts';
 
@@ -11,13 +12,13 @@ export default class Promotion extends React.Component {
 				<section className="elementor-app__site-editor__promotion">
 					<div>
 						<h1>
-							Create Full Site
+							{ __( 'Create Full Site', 'elementor' ) }
 						</h1>
 						<p>
-							Site Editor is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce
+							{ __( 'Site Editor is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce', 'elementor' ) }
 						</p>
 						<a target="_blank" rel="noopener noreferrer" href={ this.promotionUrl }>
-							Get Pro
+							{ __( 'Get Pro', 'elementor' ) }
 						</a>
 					</div>
 					<SiteParts templateTypes={ this.getTemplateTypes() } hoverElement={ this.getHoverElement() } />
@@ -38,7 +39,9 @@ export default class Promotion extends React.Component {
 			return (
 				<div onClick={ () => onHoverClick( props ) }>
 					<i className="eicon-lock" />
-					<span>{ `Get Pro` /* TODO: Translate. */ }</span>
+					<span>
+						{ __( 'Get Pro', 'elementor' ) }
+					</span>
 				</div>
 			);
 		};
@@ -49,7 +52,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'header',
 				icon: 'eicon-header',
-				title: 'Header',
+				title: __( 'Header', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-header',
 				},
@@ -57,7 +60,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'footer',
 				icon: 'eicon-footer',
-				title: 'Footer',
+				title: __( 'Footer', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-footer',
 				},
@@ -65,7 +68,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'single-post',
 				icon: 'eicon-single-post',
-				title: 'Single Post',
+				title: __( 'Single Post', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-single-post',
 				},
@@ -73,7 +76,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'error-404',
 				icon: 'eicon-error-404',
-				title: 'Error 404',
+				title: __( 'Error 404', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-error-404',
 				},
@@ -81,7 +84,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'search-results',
 				icon: 'eicon-search-results',
-				title: 'Search Results',
+				title: __( 'Search Results', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-search-results',
 				},
@@ -89,7 +92,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'archive',
 				icon: 'eicon-archive',
-				title: 'Archive',
+				title: __( 'Archive', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-archive',
 				},
@@ -97,7 +100,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'product',
 				icon: 'eicon-product-images',
-				title: 'Product',
+				title: __( 'Product', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-product',
 				},
@@ -105,7 +108,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'products',
 				icon: 'eicon-products',
-				title: 'Products',
+				title: __( 'Products', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-products',
 				},
@@ -113,7 +116,7 @@ export default class Promotion extends React.Component {
 			{
 				id: 'custom',
 				icon: 'eicon-custom',
-				title: 'Custom',
+				title: __( 'Custom', 'elementor' ),
 				urls: {
 					docs: 'https://docs.elementor.com/site-editor-custom',
 				},

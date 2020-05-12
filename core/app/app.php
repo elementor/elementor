@@ -46,8 +46,28 @@ class App extends BaseApp {
 		$submenu['elementor'][1][2] = $this->get_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
+	protected function get_init_settings() {
+		return [
+			'assetsBaseUrl'  => $this->get_assets_base_url(),
+		];
+	}
+
 	private function render() {
 		require __DIR__ . '/view.php';
+	}
+
+	private function enqueue_scripts() {
+		wp_enqueue_script(
+			'elementor-app',
+			$this->get_js_assets_url( 'app' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( 'elementor-app', 'elementor', ELEMENTOR_PATH . 'languages' );
+
+		$this->print_config();
 	}
 
 	public function __construct() {
@@ -72,6 +92,8 @@ class App extends BaseApp {
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
+
+		$this->enqueue_scripts();
 
 		do_action( 'elementor/app/init' );
 

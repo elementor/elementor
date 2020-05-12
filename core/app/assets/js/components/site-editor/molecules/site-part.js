@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 import './site-part.css';
 
 export default class SitePart extends React.Component {
@@ -21,7 +22,7 @@ export default class SitePart extends React.Component {
 				<header>
 					{ this.props.title }
 					<a target="_blank" rel="noopener noreferrer" href={ this.props.urls.docs } >
-						<i className="eicon-info" aria-hidden="true" title={ `Help` /* TODO: Translate. */ } />
+						<i className="eicon-info" aria-hidden="true" title={ __( `Help`, 'elementor' ) } />
 					</a>
 				</header>
 				<main>
