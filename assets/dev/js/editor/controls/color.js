@@ -58,7 +58,7 @@ export default class extends ControlBaseDataView {
 		this.colorPicker = new ColorPicker( options );
 
 		if ( controlValue ) {
-			this.colorPicker.picker.setColor(controlValue);
+			this.colorPicker.picker.setColor( controlValue );
 		}
 
 		this.addTipsyToPickerButton();
