@@ -67,6 +67,7 @@ const entry = {
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/tests.js' ),
+	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
 	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
 };
 

@@ -9,7 +9,15 @@ import SiteEditorPromotion from 'elementor-app/components/site-editor/pages/prom
 import './app.css';
 
 export default class App extends React.Component {
-	components = {};
+	routes = {};
+
+	constructor( props ) {
+		super( props );
+
+		this.addRoute( '/site-editor/promotion', SiteEditorPromotion );
+
+		elementorAppLoader.onAppInit( this );
+	}
 
 	/**
 	 * Allow plugins add their routes.
@@ -18,16 +26,16 @@ export default class App extends React.Component {
 	 * @param component
 	 * @param props
 	 */
-	addComponentRoute( path, component, props = {} ) {
-		this.components[ path ] = { component, props };
+	addRoute( path, component, props = {} ) {
+		this.routes[ path ] = { component, props };
 	}
 
 	/**
 	 * Create components for render.
 	 * @returns {React.Element[]}
 	 */
-	getComponents() {
-		return Object.entries( this.components ).map( ( [ path, { component, props } ] ) => {
+	getRoutes() {
+		return Object.entries( this.routes ).map( ( [ path, { component, props } ] ) => {
 			// Use the path as a key, and add it as a prop.
 			props.path = props.key = path;
 			return React.createElement( component, props );
@@ -35,13 +43,16 @@ export default class App extends React.Component {
 	}
 
 	render() {
-		this.addComponentRoute( '/site-editor/promotion', SiteEditorPromotion );
 		const NotFound = () => <h1>{ __( 'Not Found', 'elementor' ) }</h1>;
 
+		// Use hash route because it's actually rendered on a WP Admin page.
+		// Make it public for external uses.
+		this.history = createHistory( createHashSource() );
+
 		return (
-			<LocationProvider history={ createHistory( createHashSource() ) }>
+			<LocationProvider history={ this.history }>
 				<Router>
-					{ this.getComponents() }
+					{ this.getRoutes() }
 					<NotFound default />
 				</Router>
 			</LocationProvider>

@@ -46,6 +46,28 @@ class App extends BaseApp {
 		$submenu['elementor'][1][2] = $this->get_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
+	public function init() {
+		do_action( 'elementor/app/init', $this );
+
+		$this->enqueue_scripts();
+
+		// Send MIME Type header like WP admin-header.
+		header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
+
+		// Setup default heartbeat options
+		// TODO: Enable heartbeat.
+		add_filter( 'heartbeat_settings', function( $settings ) {
+			$settings['interval'] = 15;
+			return $settings;
+		} );
+
+		// Tell to WP Cache plugins do not cache this request.
+		Utils::do_not_cache();
+
+		$this->render();
+		die;
+	}
+
 	protected function get_init_settings() {
 		return [
 			'assetsBaseUrl'  => $this->get_assets_base_url(),
@@ -57,6 +79,14 @@ class App extends BaseApp {
 	}
 
 	private function enqueue_scripts() {
+		wp_enqueue_script(
+			'elementor-app-loader',
+			$this->get_js_assets_url( 'app-loader' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
 		wp_enqueue_script(
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
@@ -80,25 +110,6 @@ class App extends BaseApp {
 			return;
 		}
 
-		// Send MIME Type header like WP admin-header.
-		header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
-
-		// Setup default heartbeat options
-		// TODO: Enable heartbeat.
-		add_filter( 'heartbeat_settings', function( $settings ) {
-			$settings['interval'] = 15;
-			return $settings;
-		} );
-
-		// Tell to WP Cache plugins do not cache this request.
-		Utils::do_not_cache();
-
-		$this->enqueue_scripts();
-
-		do_action( 'elementor/app/init' );
-
-		$this->render();
-
-		die;
+		add_action( 'elementor/init', [ $this, 'init' ] );
 	}
 }
