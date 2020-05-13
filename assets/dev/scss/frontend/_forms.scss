@@ -191,31 +191,48 @@
 }
 
 @mixin btn-align() {
+	&stretch {
+		.elementor-field-type-submit:not(.e-form__buttons__wrapper) {
+			.elementor-button {
+				flex-basis: 100%;
+			}
+		}
 
-	&center, &start, &end {
-
-		.elementor-field-type-submit button {
-			flex-basis: initial;
+		.e-form__buttons__wrapper {
+			&,
+			&__button {
+				flex-basis: 100%;
+			}
 		}
 	}
 
-	&center .elementor-field-type-submit{
-		justify-content: center;
-	}
-
-	&stretch .elementor-field-type-submit{
-
-		button {
-			flex-basis: 100%;
+	&center {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: center;
 		}
 	}
 
-	&start .elementor-field-type-submit{
-		justify-content: getValueByDirection(flex-start, flex-end);
+	//&start .elementor-field-type-submit {
+	//	justify-content: getValueByDirection(flex-start, flex-end);
+	//}
+
+	&start {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: getValueByDirection(flex-start, flex-end);
+		}
 	}
 
-	&end .elementor-field-type-submit{
-		justify-content: getValueByDirection(flex-end, flex-start);
+	//&end .elementor-field-type-submit {
+	//	justify-content: getValueByDirection(flex-end, flex-start);
+	//}
+
+	&end {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: getValueByDirection(flex-end, flex-start);
+		}
 	}
 }
 
@@ -284,7 +301,6 @@
 	.elementor-button {
 		padding-top: 0;
 		padding-bottom: 0;
-		border: 0 none;
 
 		& > span {
 			display: flex;
