@@ -1,11 +1,11 @@
 name: Image Compare
 
-on: push
+on: [push]
 
 jobs:
   run:
     runs-on: ubuntu-16.04
-    if: startsWith( github.repository, 'elementor/' )
+    if: ( startsWith( github.repository, 'elementor/' ) || startsWith( github.repository, 'kobizz/' ) || startsWith( github.repository, 'matipojo/' ) || startsWith( github.repository, 'iNewLegend/' ) || startsWith( github.repository, 'joshmarom/' ) || startsWith( github.repository, 'udidol/' ) || startsWith( github.repository, 'rotemee/' ) )
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
