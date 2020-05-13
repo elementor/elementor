@@ -13,6 +13,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	registerUiElements() {
 		this.ui.globalPreviewsContainer = this.popover.getElements( 'widget' ).find( '.elementor-global-previews-container' );
 		this.ui.globalPreviewItems = this.popover.getElements( 'widget' ).find( '.elementor-global-preview' );
+		this.ui.manageGlobalsButton = this.popover.getElements( 'widget' ).find( '.elementor-global-manage-button' );
 		this.ui.globalControlSelect = this.$el.find( '.elementor-global-select' );
 		this.ui.globalControlSelected = this.$el.find( '.elementor-global-selected' );
 	}
@@ -21,6 +22,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	registerEvents() {
 		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.elementorGlobalName ) );
 		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
+		this.ui.manageGlobalsButton.on( 'click', () => {
+			$e.run( 'panel/global/open' ).then( () => $e.route( 'panel/global/colors-and-typography' ) );
+		} );
 	}
 
 	applySavedGlobalValue( globalName ) {
