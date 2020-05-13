@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import App from './app';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+	// TODO: Remove Strict mode.
+	<React.StrictMode>
+		<App />
+	</React.StrictMode>,
   document.getElementById( 'elementor-app' )
 );
