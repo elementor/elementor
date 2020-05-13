@@ -4,6 +4,7 @@
  * TODO: Temporary solution for routing extensibility and share components.
  */
 
+import React from 'react';
 import * as library from './components-library';
 
 class AppLoader {
@@ -12,29 +13,32 @@ class AppLoader {
 	/**
 	 * @type {*[]}
 	 */
-	components = [];
+	routes = [];
 
 	/**
 	 *
-	 * @param component {{
+	 * @param route {{
 	 *		path: string,
 	 *		component: object,
 	 *		props: object,
 	 * }}
 	 */
-	addComponent( component ) {
-		this.components.push( component );
+	addRoute( route ) {
+		this.routes.push( route );
 	}
 
 	/**
 	 *
 	 * @param app
 	 */
-	onAppInit( app ) {
+	getRoutes( app ) {
 		this.app = app;
 
-		this.components.forEach( ( component ) => {
-			app.addRoute( component.path, component.component, component.props );
+		return this.routes.map( ( route ) => {
+			const props = route.props || {};
+			// Use the path as a key, and add it as a prop.
+			props.path = props.key = route.path;
+			return React.createElement( route.component, props );
 		} );
 	}
 }

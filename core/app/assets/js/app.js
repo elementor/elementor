@@ -9,39 +9,6 @@ import SiteEditorPromotion from 'elementor-app/components/site-editor/pages/prom
 import './app.css';
 
 export default class App extends React.Component {
-	routes = {};
-
-	constructor( props ) {
-		super( props );
-
-		this.addRoute( '/site-editor/promotion', SiteEditorPromotion );
-
-		elementorAppLoader.onAppInit( this );
-	}
-
-	/**
-	 * Allow plugins add their routes.
-	 *
-	 * @param path
-	 * @param component
-	 * @param props
-	 */
-	addRoute( path, component, props = {} ) {
-		this.routes[ path ] = { component, props };
-	}
-
-	/**
-	 * Create components for render.
-	 * @returns {React.Element[]}
-	 */
-	getRoutes() {
-		return Object.entries( this.routes ).map( ( [ path, { component, props } ] ) => {
-			// Use the path as a key, and add it as a prop.
-			props.path = props.key = path;
-			return React.createElement( component, props );
-		} );
-	}
-
 	render() {
 		const NotFound = () => <h1>{ __( 'Not Found', 'elementor' ) }</h1>;
 
@@ -52,7 +19,8 @@ export default class App extends React.Component {
 		return (
 			<LocationProvider history={ this.history }>
 				<Router>
-					{ this.getRoutes() }
+					<SiteEditorPromotion path="/site-editor/promotion" />
+					{ elementorAppLoader.getRoutes( this ) }
 					<NotFound default />
 				</Router>
 			</LocationProvider>
