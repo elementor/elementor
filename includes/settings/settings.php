@@ -255,7 +255,7 @@ class Settings extends Settings_Page {
 					<div class="e-getting-started__content">
 						<div class="e-getting-started__content--narrow">
 							<h2><?php echo __( 'Welcome to Elementor', 'elementor' ); ?></h2>
-							<p><?php echo __( 'Get introduced to Elementor by watching our "Getting Started" video series. It will guide you through the steps needed to create your site layout, design and add the elements that make up your website.', 'elementor' ); ?></p>
+							<p><?php echo __( 'Get introduced to Elementor by watching our "Getting Started" video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ); ?></p>
 						</div>
 
 						<div class="e-getting-started__video">
