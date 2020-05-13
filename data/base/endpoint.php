@@ -21,11 +21,20 @@ abstract class Endpoint {
 	protected $controller;
 
 	/**
+	 * Loaded sub endpoint(s).
+	 *
+	 * @var \Elementor\Data\Base\SubEndpoint[]
+	 */
+	private $sub_endpoints = [];
+
+	/**
 	 * Endpoint constructor.
 	 *
 	 * run `$this->>register()`.
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller
+	 *
+	 * @throws \Exception
 	 */
 	public function __construct( $controller ) {
 		$this->controller = $controller;
@@ -40,22 +49,64 @@ abstract class Endpoint {
 	abstract protected function get_name();
 
 	/**
+	 * Get base route.
+	 *
+	 * Removing 'index' from endpoint.
+	 *
+	 * @return string
+	 */
+	protected function get_base_route() {
+		$endpoint_name = $this->get_name();
+
+		// TODO: Allow this only for internal routes.
+		if ( 'index' === $endpoint_name ) {
+			$endpoint_name = '';
+		}
+
+		return '/' . $this->controller->get_rest_base() . '/' . $endpoint_name;
+	}
+
+	/**
 	 * Register the endpoint.
 	 *
 	 * By default: register get items route.
+	 *
+	 * @throws \Exception
 	 */
 	protected function register() {
 		$this->register_items_route();
 	}
 
 	/**
+	 * Register sub endpoint.
+	 *
+	 * @param string $route
+	 * @param string $endpoint_class
+	 *
+	 * @throws \Exception
+	 */
+	protected function register_sub_endpoint( $route, $endpoint_class ) {
+		$endpoint_instance = new $endpoint_class( $route, $this );
+
+		if ( ! ( $endpoint_instance instanceof SubEndpoint ) ) {
+			throw new \Exception( 'Invalid endpoint instance.' );
+		}
+
+		$endpoint_route = $route . '/' . $endpoint_instance->get_name();
+
+		$this->sub_endpoints[ $endpoint_route ] = $endpoint_instance;
+	}
+
+	/**
 	 * Register item route.
 	 *
 	 * @param array  $args
-	 * @param string $default_args
+	 * @param string $route
 	 * @param string $methods
+	 *
+	 * @throws \Exception
 	 */
-	public function register_item_route( $args = [], $default_args = '/(?P<id>[\w]+)', $methods = WP_REST_Server::READABLE ) {
+	public function register_item_route( $args = [], $route = '/', $methods = WP_REST_Server::READABLE ) {
 		$args = array_merge( [
 			'id' => [
 				'description' => 'Unique identifier for the object.',
@@ -63,7 +114,11 @@ abstract class Endpoint {
 			],
 		], $args );
 
-		$this->register_route( $default_args, $methods, function ( $request ) {
+		if ( isset( $args['id'] ) && $args['id'] ) {
+			$route .= '(?P<id>[\w]+)/';
+		}
+
+		$this->register_route( $route, $methods, function ( $request ) {
 			return rest_ensure_response( $this->get_item( $request->get_param( 'id' ), $request ) );
 		}, $args );
 	}
@@ -72,6 +127,8 @@ abstract class Endpoint {
 	 * Register items route.
 	 *
 	 * @param string $methods
+	 *
+	 * @throws \Exception
 	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
 		// TODO: Handle permission callback.
@@ -85,7 +142,7 @@ abstract class Endpoint {
 					return rest_ensure_response( $this->create_items( $request ) );
 
 				default:
-					// TODO: Error.
+					throw new \Exception( 'Invalid method.' );
 			}
 		} );
 	}
@@ -97,22 +154,19 @@ abstract class Endpoint {
 	 * @param string $methods
 	 * @param null   $callback
 	 * @param array  $args
+	 *
+	 * @throws \Exception
+	 *
+	 * @return bool
 	 */
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
-			return; // Invalid method.
+			throw new \Exception( 'Invalid method.' );
 		}
 
-		$endpoint_name = $this->get_name();
+		$route = $this->get_base_route() . $route;
 
-		// TODO: Allow this only for internal routes.
-		if ( 'index' === $endpoint_name ) {
-			$endpoint_name = '';
-		}
-
-		$route = '/' . $this->controller->get_rest_base() . '/' . $endpoint_name . $route;
-
-		register_rest_route( $this->controller->get_namespace(), $route, [
+		return register_rest_route( $this->controller->get_namespace(), $route, [
 			[
 				'args' => $args,
 				'methods' => $methods,

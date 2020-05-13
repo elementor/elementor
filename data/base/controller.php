@@ -16,7 +16,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Loaded endpoint(s).
 	 *
-	 * @var array
+	 * @var \Elementor\Data\Base\Endpoint[]
 	 */
 	public $endpoints = [];
 
@@ -193,7 +193,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Permission callback.
 	 *
-	 * Default Permission callback.
+	 * Default controller permission callback.
 	 *
 	 * @param \WP_REST_Request $request
 	 *

@@ -19,7 +19,7 @@ class Manager extends BaseModule {
 	/**
 	 * Loaded controllers.
 	 *
-	 * @var array
+	 * @var Controller[]
 	 */
 	public $controllers = [];
 
