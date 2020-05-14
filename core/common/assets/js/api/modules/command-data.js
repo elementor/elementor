@@ -12,8 +12,18 @@ export default class CommandData extends CommandBase {
 		 * Data returned from remote.
 		 *
 		 * @type {{}}
+		 * // TODO delete.
 		 */
 		this.data = {};
+	}
+
+	/**
+	 * Get endpoint format
+	 *
+	 * @returns {(null|string)}
+	 */
+	getEndpointFormat() {
+		return null;
 	}
 
 	getApplyMethods( type ) {
@@ -52,13 +62,13 @@ export default class CommandData extends CommandBase {
 
 		this.args = applyMethods.before( this.args );
 
-		// TODO: Figure out which `requestData` is not in use and delete it.
 		const requestData = {
 			type,
+			args: this.args,
 			timestamp: new Date().getTime(),
 			component: this.component,
 			command: this.currentCommand,
-			args: this.args,
+			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.getEndpointFormat() ),
 		};
 
 		return $e.data.fetch( type, requestData ).then( ( data ) => {

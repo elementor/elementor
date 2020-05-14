@@ -4,6 +4,7 @@ namespace Elementor\Core\Base;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Manager;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Data\Manager as DataManager;
 use Elementor\Plugin;
 use Elementor\DB;
 use Elementor\Controls_Manager;
@@ -476,9 +477,11 @@ abstract class Document extends Controls_Stack {
 		];
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$config['elements'] = \Elementor\Data\Manager::run( 'document/elements', [
+			$data = DataManager::run( 'editor/documents/elements', [
 				'document_id' => $this->get_main_id(),
 			] );
+
+			$config['elements'] = array_values( $data );
 			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 

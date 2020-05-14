@@ -35,9 +35,8 @@ export class Create extends CommandBase {
 				...availableControls,
 			};
 
-			result = $e.data.create( 'globals/typography', data, {}, {
-					filter: 'filter-object',
-			} );
+			// Currently does not effect cache.
+			result = $e.data.create( 'globals/typography/index', data );
 		}
 
 		return result;

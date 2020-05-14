@@ -1,6 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
-import * as dataCommands from './commands/data/';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -9,9 +8,5 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return this.importCommands( commands );
-	}
-
-	defaultData() {
-		return this.importCommands( dataCommands );
 	}
 }

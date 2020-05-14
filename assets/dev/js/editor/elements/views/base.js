@@ -467,13 +467,10 @@ BaseElementView = BaseContainer.extend( {
 				return this.renderStyles( settings );
 			}
 
-			const request = $e.data.get( 'document/elements',
-				{
-					document_id: elementor.documents.getCurrent().id,
-					element_id: this.getEditModel().id,
-				}, {
-					filter: 'filter-key-value',
-				} );
+			const request = $e.data.get( 'editor/documents/elements', {
+				documentId: elementor.documents.getCurrent().id,
+				elementId: this.getEditModel().id,
+			} );
 
 			// Async, means rendered when result received.
 			request.then( ( result ) => {

@@ -7,13 +7,12 @@ import Cache from './data/cache';
 
 /**
  * @typedef {{}} RequestData
-
+ * @property {{}} args
+ * @property {Component} component
  * @property {string} command
  * @property {string} endpoint
- * @property {{}} args
  * @property {DataTypes} [type]
  * @property {number} [timestamp]
- * @property {Component} [component]
  */
 
 // TODO: Return it from the server. Original at WP_REST_Server.
@@ -106,20 +105,48 @@ export default class Data extends Commands {
 	 *
 	 * @param {string} command
 	 * @param {{}} args
+	 * @param {string|null} [format]
 	 *
 	 * @returns {string} endpoint
 	 */
-	commandToEndpoint( command, args ) {
-		let endPoint = command;
-
-		if ( endPoint.includes( 'index' ) ) {
-			endPoint = endPoint.replace( '/index', '' );
-		}
+	commandToEndpoint( command, args, format = null ) {
+		let endpoint = command;
 
 		if ( args.query ) {
-			if ( args.query.id ) {
-				endPoint += '/' + args.query.id.toString();
+			if ( ! format ) {
+				format = command;
+			}
 
+			if ( format && format.includes( '/:' ) ) {
+				// Means command includes magic query arguments ( controller/endpoint/:whatever ).
+				const magicParams = format.split( '/' ).filter( ( str ) => ':' === str.charAt( 0 ) );
+
+				magicParams.forEach( ( param ) => {
+					param = param.substr( 1 );
+
+					const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
+
+					if ( ! formatted ) {
+						return;
+					}
+
+					const key = formatted[ 0 ],
+						value = formatted[ 1 ].toString();
+
+					format = format.replace( new RegExp( ':' + param, 'g' ), value );
+
+					delete args.query[ key ];
+				} );
+
+				endpoint = format;
+			}
+
+			if ( endpoint.includes( 'index' ) ) {
+				endpoint = endpoint.replace( '/index', '' );
+			}
+
+			if ( args.query.id ) {
+				endpoint += '/' + args.query.id.toString();
 				delete args.query.id;
 			}
 
@@ -130,15 +157,19 @@ export default class Data extends Commands {
 
 			// `args.query` will become part of GET params.
 			if ( queryEntries.length ) {
-				endPoint += '?';
+				endpoint += '?';
 
 				queryEntries.forEach( ( [ name, value ] ) => {
-					endPoint += name + '=' + value + '&';
+					endpoint += name + '=' + value + '&';
 				} );
 			}
 		}
 
-		return endPoint;
+		if ( endpoint.includes( '/:' ) ) {
+			endpoint = endpoint.substring( 0, endpoint.indexOf( '/:' ) );
+		}
+
+		return endpoint;
 	}
 
 	/**
@@ -146,18 +177,16 @@ export default class Data extends Commands {
 	 *
 	 * Convect endpoint to command.
 	 *
-	 * Guess if command is 'index' endpoint
-	 * Guess if command is 'id' endpoint.
-	 * Modify args in case the endpoint is 'id` ( eg: wp-json/endpoint/id ).
-	 *
-	 * @param endpoint
-	 * @param args
+	 * @param {string} endpoint
+	 * @param {object} args
 	 *
 	 * @return {string} command
 	 */
-	endpointToCommand( endpoint, args ) {
+	endpointToCommand( endpoint, args = {} ) {
 		let command = endpoint,
 			commandFound = !! $e.data.commands[ endpoint ];
+
+		const endpointParts = endpoint.split( '/' );
 
 		// Assuming the command maybe index.
 		if ( ! commandFound && $e.data.commands[ endpoint + '/index' ] ) {
@@ -165,11 +194,13 @@ export default class Data extends Commands {
 			commandFound = true;
 		}
 
-		// Maybe the endpoint includes 'id'. as part of the endpoint.
+		// Maybe the it has 'id' as last endpointPart.
 		if ( ! commandFound ) {
-			const endpointParts = endpoint.split( '/' ),
-				assumedCommand = endpointParts[ 0 ] + '/' + endpointParts[ 1 ];
+			// Remove last parameter.
+			const lastParameter = endpointParts[ endpointParts.length - 1 ],
+				assumedCommand = command.replace( '/' + lastParameter, '' );
 
+			// If assumed command ( without last parameter ) exist.
 			if ( $e.data.commands[ assumedCommand ] ) {
 				command = assumedCommand;
 				commandFound = true;
@@ -179,7 +210,7 @@ export default class Data extends Commands {
 				}
 
 				// Warp with 'id'.
-				args.query.id = endpointParts[ 2 ];
+				args.query.id = lastParameter;
 			}
 		}
 
@@ -235,8 +266,6 @@ export default class Data extends Commands {
 	 * @return {{}} params
 	 */
 	fetch( type, requestData ) {
-		requestData.endpoint = this.commandToEndpoint( requestData.command, requestData.args );
-
 		const params = this.prepareHeaders( type, requestData ),
 			useCache = 'get' === type && ! requestData.args.options?.refresh;
 
@@ -285,18 +314,20 @@ export default class Data extends Commands {
 	/**
 	 * Function getCache().
 	 *
+	 * @param {ComponentBase} component
 	 * @param {string} command
 	 * @param {{}} query
 	 *
-	 * @return {*}
+	 * @returns {{}}
 	 */
-	getCache( command, query ) {
-		const args = { query },
-			endpoint = this.commandToEndpoint( command, args );
+	getCache( component, command, query = {} ) {
+		const args = { query };
 
 		return this.cache.get( {
+			endpoint: this.commandToEndpoint( command, args ),
+			component,
+
 			command,
-			endpoint,
 			args,
 		} );
 	}
@@ -304,18 +335,18 @@ export default class Data extends Commands {
 	/**
 	 * Function loadCache().
 	 *
+	 * @param {ComponentBase} component
 	 * @param {string} command
 	 * @param {{}} query
 	 * @param {*} data
 	 */
-	loadCache( command, query, data ) {
-		const args = { query },
-			endpoint = this.commandToEndpoint( command, args );
+	loadCache( component, command, query, data ) {
+		const args = { query };
 
-		this.cache.load(
-			{
+		this.cache.load( {
+				endpoint: this.commandToEndpoint( command, args ),
+				component,
 				command,
-				endpoint,
 				args,
 			},
 			data
@@ -328,21 +359,20 @@ export default class Data extends Commands {
 	 * The difference between 'loadCache' and 'updateCache' is update will only modify exist values.
 	 * and 'loadCache' will create or update.
 	 *
+	 * @param {ComponentBase} component
 	 * @param {string} command
 	 * @param {{}} query
-	 * @param {{}} data
+	 * @param {*} data
 	 */
-	updateCache( command, query, data ) {
-		const args = { query, data },
-			endpoint = this.commandToEndpoint( command, args );
+	updateCache( component, command, query, data ) {
+		const args = { query, data };
 
-		this.cache.update(
-			{
-				command,
-				endpoint,
-				args,
-			},
-		);
+		this.cache.update( {
+			endpoint: this.commandToEndpoint( command, args ),
+			component,
+			command,
+			args,
+		} );
 	}
 
 	/**
@@ -362,29 +392,33 @@ export default class Data extends Commands {
 		this.cache.delete( endpoint );
 	}
 
-	create( endpoint, data, query = {}, options = {} ) {
-		return this.run( 'create', endpoint, { query, options, data } );
+	create( command, data, query = {}, options = {} ) {
+		return this.run( 'create', command, { query, options, data } );
 	}
 
-	delete( endpoint, query = {}, options = {} ) {
-		return this.run( 'delete', endpoint, { query, options } );
+	delete( command, query = {}, options = {} ) {
+		return this.run( 'delete', command, { query, options } );
 	}
 
-	get( endpoint, query = {}, options = {} ) {
-		return this.run( 'get', endpoint, { query, options } );
+	get( command, query = {}, options = {} ) {
+		return this.run( 'get', command, { query, options } );
 	}
 
-	update( endpoint, data, query = {}, options = {} ) {
-		return this.run( 'update', endpoint, { query, options, data } );
+	update( command, data, query = {}, options = {} ) {
+		return this.run( 'update', command, { query, options, data } );
 	}
 
 	/**
-	 * TODO: Add JSDOC typedef for query and options.
+	 * TODO: Add JSDOC typedef for args ( query and options ).
+	 *
+	 * @param {DataTypes} type
+	 * @param {string} command
+	 * @param {{}} args
+	 *
+	 * @return {*}
 	 */
-	run( type, endpoint, args ) {
+	run( type, command, args ) {
 		args.options.type = type;
-
-		const command = this.endpointToCommand( endpoint, args );
 
 		return super.run( command, args );
 	}

@@ -1,5 +1,4 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 import TypographyComponent from './typography/component';
 
 import * as commandsData from './commands/data/';
@@ -37,13 +36,26 @@ export default class Component extends ComponentBase {
 	}
 
 	onDocumentPreview( document ) {
-		// TODO: Delete old cache?
-		// Add document cache before render.
-		DocumentCache.loadByConfig( document );
+		const { elements = {} } = document.config;
+
+		// Convect to cache format.
+		Object.entries( elements ).forEach( ( [ key, element ] ) => {
+			elements[ element.id ] = element;
+
+			delete elements[ key ];
+		} );
+
+		const component = $e.components.get( 'editor/documents' ),
+			command = 'editor/documents/:documentId/elements',
+			query = {
+				documentId: document.id,
+			};
+
+		$e.data.loadCache( component, command, query, elements );
 	}
 
 	onElementorLoaded() {
 		// Add global cache before render.
-		$e.data.get( 'globals', {}, { filter: 'filter-object-component' } );
+		$e.data.get( 'globals/index' );
 	}
 }

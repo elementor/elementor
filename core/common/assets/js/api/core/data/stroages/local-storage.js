@@ -2,7 +2,11 @@ import BaseStorage from './base-storage';
 
 export default class LocalStorage extends BaseStorage {
 	constructor() {
-		super( elementorCommonConfig.isTesting ? sessionStorage : localStorage );
+		super( localStorage );
+
+		if ( elementorCommonConfig.isTesting ) {
+			this.clear();
+		}
 	}
 
 	debug() {

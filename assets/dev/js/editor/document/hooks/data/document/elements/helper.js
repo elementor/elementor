@@ -12,8 +12,14 @@ export default class Helper {
 					elements: [],
 				};
 
-				// Update cache for column.
-				DocumentCache.loadModel( elementor.documents.getCurrent().id, model );
+				const component = $e.components.get( 'editor/documents' ),
+					command = 'editor/documents/:documentId/elements/:elementId',
+					query = {
+						documentId: elementor.documents.getCurrent().id,
+						elementId: model.id,
+					};
+
+				$e.data.loadCache( component, command, query, model );
 
 				/**
 				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.

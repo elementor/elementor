@@ -1,17 +1,20 @@
 <?php
-namespace Elementor\Data\Editor\Document\Processors;
+
+namespace Elementor\Data\Editor\Documents\Processors;
 
 use Elementor\Data\Base\Processor;
-use Elementor\Data\Manager as DataManager;
 use Elementor\Plugin;
 
+// TODO: Delete - handle in frontend.
+
 class AddDefaultGlobals extends Processor\After {
+
 	public function get_command() {
-		return 'document/elements';
+		return 'editor/documents/elements';
 	}
 
 	public function get_conditions( $args, $result ) {
-		return is_array( $result );
+		return isset( $args['document_id'] ) && ! isset( $args['element_id'] );
 	}
 
 	public function apply( $args, $result ) {
@@ -27,7 +30,7 @@ class AddDefaultGlobals extends Processor\After {
 
 			foreach ( $element_controls as $control_name => $control ) {
 				if ( ! empty( $control['globals'] ) ) {
-					$element_settings = & $elements[ $element_key ]['settings'];
+					$element_settings = &$elements[ $element_key ]['settings'];
 
 					// Add default globals only when __globals__ does not exist.
 					if ( ! isset( $element_settings['__globals__'] ) ) {

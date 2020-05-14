@@ -15,86 +15,6 @@ export default class Cache {
 	}
 
 	/**
-	 * Function extractData().
-	 *
-	 * Extract data to callback that accept key,value parameters, based on requestData, and data.
-	 *
-	 * @param {*} data
-	 * @param {RequestData} requestData
-	 * @param {function( string, any )} keyValueCallback - callback(key, value)
-	 * @param {('filter-object-component'|'filter-object'|'filter-key-value')} [filter]
-	 */
-	extractData( data, requestData, keyValueCallback, filter ) {
-		if ( ! filter ) {
-			filter = requestData.args.options?.filter;
-		}
-
-		switch ( filter ) {
-			case 'filter-object-component': {
-				Object.entries( data ).forEach( ( [ key, /*object*/ value ] ) => {
-					const componentName = requestData.component?.getNamespace();
-
-					if ( ! componentName ) {
-						throw new Error( 'requestData.component is invalid.' );
-					}
-
-					if ( 'object' === typeof value && ! key.includes( componentName + '/' ) ) {
-						Object.entries( value ).forEach( ( [ subKey, subKeyValue ] ) => {
-							keyValueCallback( componentName + '/' + key + '/' + subKey, subKeyValue );
-						} );
-					} else if ( key.split( '/', 2 ).length > 1 ) {
-							keyValueCallback( key, value );
-						} else {
-							keyValueCallback( componentName + '/' + key, value );
-						}
-				} );
-			}
-			break;
-
-			case 'filter-object': {
-				Object.keys( data ).forEach( ( key ) => {
-					keyValueCallback( requestData.command + '/' + key, data[ key ] );
-				} );
-			}
-			break;
-
-			case 'filter-key-value': {
-				keyValueCallback( requestData.endpoint, data );
-			}
-			break;
-
-			// Try guess.
-			default:
-				const isIndexCommand = requestData.endpoint + '/index' === requestData.command,
-					isQueryEmpty = 0 === Object.values( requestData.args.query ).length,
-					endpointDepth = requestData.endpoint.split( '/', 3 ).length;
-
-				if ( isQueryEmpty ) {
-					if ( isIndexCommand ) {
-						// Handles situation when 'index' was forced to use like in 'globals' component.
-						// EG: 'globals/index'.
-						this.extractData( data, requestData, keyValueCallback, 'filter-object-component' );
-					} else if ( endpointDepth > 2 ) {
-						// Handle situations when endpoint is exactly the path to the specific data.
-						// EG: 'globals/typography/primary'.
-						this.extractData( data, requestData, keyValueCallback, 'filter-key-value' );
-					} else if ( 'object' === typeof data ) {
-						// Handles situation when data is part of the command.
-						// EG: 'globals/typography'.
-						this.extractData( data, requestData, keyValueCallback, 'filter-object' );
-					} else if ( 1 === endpointDepth && 'object' !== typeof data ) {
-						this.extractData( data, requestData, keyValueCallback, 'filter-key-value' );
-					} else {
-						throw new RangeError( 'extractData out of range, cannot guesses filter type' );
-					}
-				} else {
-					// Handles situation when query is not empty and need to point the endpoint is equal to the data.
-					this.extractData( data, requestData, keyValueCallback, 'filter-key-value' );
-				}
-		}
-	}
-
-	/**
 	 * Function receive().
 	 *
 	 * Receive from cache.
@@ -107,6 +27,9 @@ export default class Cache {
 		const data = this.get( requestData );
 
 		if ( null !== data ) {
+			// If data comes from cache, add 'receiveCache' to requestData.
+			requestData.receiveCache = true;
+
 			return new Promise( async ( resolve ) => {
 				resolve( data );
 			} );
@@ -125,9 +48,40 @@ export default class Cache {
 	 * @param {*} data
 	 */
 	load( requestData, data ) {
-		const addCache = ( key, value ) => this.storage.setItem( key, JSON.stringify( value ) );
+		if ( ! requestData.component ) {
+			throw new Error( 'Invalid `requestData.component`, component is required.' );
+		}
 
-		this.extractData( data, requestData, addCache );
+		const componentName = requestData.component.getNamespace(),
+			nakedEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
+			nakedEndpointParts = nakedEndpoint.split( '/' );
+
+		let newData = {};
+
+		// Analyze reaming endpoint.
+		if ( nakedEndpointParts.length && nakedEndpoint !== componentName ) {
+			// Using reaming endpoint build new data object.
+			const result = nakedEndpointParts.reduce( ( accumulator, nakedEndpointPart ) => {
+				accumulator[ nakedEndpointPart ] = {};
+
+				return accumulator[ nakedEndpointPart ];
+			}, newData );
+
+			// 'result' is equal to 'newData' with a deeper pointer, build based on 'nakedEndpointParts' ( will effect newData ).
+			Object.assign( result, data );
+		} else {
+			newData = data;
+		}
+
+		let oldData = this.storage.getItem( componentName );
+
+		if ( oldData !== null ) {
+			oldData = JSON.parse( oldData );
+
+			newData = jQuery.extend( true, oldData, newData );
+		}
+
+		this.storage.setItem( componentName, JSON.stringify( newData ) );
 	}
 
 	/**
@@ -140,16 +94,32 @@ export default class Cache {
 	 * @return {{}}
 	 */
 	get( requestData ) {
-		return JSON.parse( this.storage.getItem( requestData.endpoint ) );
+		const componentName = requestData.component.getNamespace();
+
+		let componentData = this.storage.getItem( componentName );
+
+		if ( componentData !== null ) {
+			componentData = JSON.parse( componentData );
+			// Using reduce over endpoint parts it build the right index.
+			const nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+				nakedEndpointParts = nakedEndpoint.split( '/' ),
+				result = nakedEndpointParts.reduce( ( accumulator, endpointPart ) => {
+					if ( accumulator && accumulator[ endpointPart ] ) {
+						return accumulator[ endpointPart ];
+					}
+				}, componentData );
+
+			// Since $e.data.cache.receive will reject only if null is the result.
+			return result || null;
+		}
+
+		return null;
 	}
 
 	/**
 	 * Function update().
 	 *
-	 * Update only already exist storage, runs over all storage, do two cases, key-value update and situations like 'globals/ ... '.
-	 * 1. If the current endpointKey is equal to requestData.endpoint.
-	 * 2. If the current endpointKey is part of requestData.endpoint ( part of including '/' ) and requestData.args.data
-	 * is object, using requestData.args.data keys to preform a validation if current endpoint + '/' + dataKey + '/' + subKey equals to requestedData.endpoint.
+	 * Update only already exist storage, runs over all storage
 	 *
 	 * @param {RequestData} requestData
 	 *
@@ -161,37 +131,20 @@ export default class Cache {
 
 		// Simulate response from cache.
 		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /*string*/ endpointValue ] ) => {
-			if ( endpointKey === endpoint ) {
-				// If requested endpoint matches current endpoint key.
-				response = JSON.parse( endpointValue );
+			// Is this component update or specific endpoint?
+			if ( endpoint.includes( endpointKey ) ) {
+				if ( requestData.component.getNamespace() === endpoint ) {
+					// Update component.
+					debugger;
+				} else if ( endpointValue && 'object' === typeof requestData.args.data ) {
+					// Assuming it is a specific endpoint.
+					const oldData = JSON.parse( endpointValue ),
+						nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+						nakedEndpointParts = nakedEndpoint.split( '/' ),
+						oldSpecificData = nakedEndpointParts.reduce( ( accumulator, nakedEndpointPart ) => accumulator[ nakedEndpointPart ], oldData );
 
-				// Check if response is same data type as args.data ( since update requested ).
-				if ( typeof response !== typeof requestData.args.data ) {
-					throw new Error( 'Invalid data: type mismatch' );
+					response = jQuery.extend( true, oldSpecificData, requestData.args.data );
 				}
-
-				// Merge response with `requestData.args.data`.
-				if ( 'object' === typeof response ) {
-					response = Object.assign( response, requestData.args.data );
-				} else {
-					response = requestData.args.data;
-				}
-			} else if ( endpointKey.includes( endpoint ) ) {
-				// If current cache is part of the endpoint ( Handle situations like 'globals/ ... ' ).
-				// Merge simulated response with `requestData.args.data`.
-				Object.entries( requestData.args.data ).forEach( ( [ dataKey, /*object*/ dataValue ] ) => {
-					if ( 'object' === typeof dataValue ) {
-						if ( endpointKey.includes( dataKey + '/' ) ) {
-							Object.entries( dataValue ).forEach( ( [ subKey, subValue ] ) => {
-								if ( endpointKey === endpoint + '/' + dataKey + '/' + subKey ) {
-									response[ endpointKey ] = subValue;
-								}
-							} );
-						}
-					} else {
-						response[ endpointKey ] = dataValue;
-					}
-				} );
 			}
 		} );
 

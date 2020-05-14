@@ -288,7 +288,7 @@ class Post extends Base {
 
 		$element_settings = $element->get_settings();
 
-		$data = Manager::run( 'document/elements', [
+		$data = Manager::run( 'editor/documents/elements', [
 			'document_id' => $this->get_post_id(),
 			'element_id' => $element->get_id(),
 		] );

@@ -1,17 +1,19 @@
 <?php
-namespace Elementor\Data\Editor\Document\Processors;
+
+namespace Elementor\Data\Editor\Documents\Processors;
 
 use Elementor\Data\Base\Processor;
 use Elementor\Data\Manager;
 use Elementor\Plugin;
 
 class AddGlobals extends Processor\After {
+
 	public function get_command() {
-		return 'document/elements';
+		return 'editor/documents/elements';
 	}
 
 	public function get_conditions( $args, $result ) {
-		return isset( $result['settings']['__globals__'] );
+		return isset( $args['element_id'] ) && isset( $result['settings']['__globals__'] ); // Single selection.
 	}
 
 	public function apply( $args, $result ) {
@@ -21,6 +23,11 @@ class AddGlobals extends Processor\After {
 		$element_instance = Plugin::$instance->elements_manager->create_element_instance( $result );
 
 		foreach ( $globals as $global_key => $global_value ) {
+			// Means, the control default value were disabled.
+			if ( ! $global_value ) {
+				continue;
+			}
+
 			$data = Manager::run( $global_value );
 			$control = $element_instance->get_controls( $global_key );
 			$control_group_prefix = isset( $control['groupPrefix'] ) ? $control['groupPrefix'] : false;

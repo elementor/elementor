@@ -29,7 +29,14 @@ export class ElementsCreateAddDefaultGlobals extends After {
 
 					element.settings.__globals__[ controlName ] = control.globals;
 
-					DocumentCache.loadModel( container.document.id, element );
+					const component = $e.components.get( 'editor/documents' ),
+						command = 'editor/documents/:documentId/elements/:elementId',
+						query = {
+							documentId: container.document.id,
+							elementId: element.id,
+						};
+
+					$e.data.loadCache( component, command, query, element );
 				}
 			} );
 		} );

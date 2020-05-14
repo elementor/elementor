@@ -20,7 +20,7 @@ export class ElementsSettingsUpdateCache extends After {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		DocumentCache.updateByContainers( containers, args.settings );
+		DocumentCache.updateSettingsByContainers( containers, args.settings );
 	}
 }
 

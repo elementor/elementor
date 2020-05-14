@@ -2,16 +2,17 @@ import After from 'elementor-api/modules/hooks/data/after';
 
 export class ElementsIndexAddGlobalData extends After {
 	getCommand() {
-		return 'document/elements/index';
+		return 'editor/documents/elements';
 	}
 
 	getConditions( args, result ) {
 		// TODO: Remove - Create testing compatibility.
+		// TODO: Extend Hooks Create hooks for data, and add getType ( get, post, etc ).
 		return ! elementorCommonConfig.isTesting && 'get' === args.options.type && result?.data?.settings?.__globals__;
 	}
 
 	getId() {
-		return 'document/elements/index::add-global-data';
+		return 'editor/documents/elements::add-global-data';
 	}
 
 	apply( args, result ) {
@@ -23,8 +24,9 @@ export class ElementsIndexAddGlobalData extends After {
 				return;
 			}
 			// Get global item.
-			const endpointResult = await $e.data.get( globalValue, {}, { filter: 'filter-key-value' } ),
-				container = elementor.getContainer( args.query.element_id ),
+			const newArgs = { query: {} },
+				endpointResult = await $e.data.get( $e.data.endpointToCommand( globalValue, newArgs ), newArgs.query ),
+				container = elementor.getContainer( args.query.elementId ),
 				data = endpointResult.data,
 				controlGroupPrefix = container.controls[ globalKey ]?.groupPrefix;
 
