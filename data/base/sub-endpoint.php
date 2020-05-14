@@ -3,7 +3,15 @@
 namespace Elementor\Data\Base;
 
 abstract class SubEndpoint extends Endpoint {
+
+	/**
+	 * @var Endpoint
+	 */
 	protected $parent_endpoint;
+
+	/**
+	 * @var string
+	 */
 	protected $parent_route = '';
 
 	public function __construct( $parent_route, $parent_endpoint ) {
@@ -14,8 +22,17 @@ abstract class SubEndpoint extends Endpoint {
 	}
 
 	protected function get_base_route() {
-		$controller_name = $this->parent_endpoint->controller->get_name();
+		$controller_name = $this->controller->get_name();
 
 		return $controller_name . '/' . $this->parent_route . $this->get_name();
+	}
+
+	/**
+	 * Get parent route.
+	 *
+	 * @return \Elementor\Data\Base\Endpoint
+	 */
+	public function get_parent() {
+		return $this->parent_endpoint;
 	}
 }

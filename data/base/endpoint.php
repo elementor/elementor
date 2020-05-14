@@ -5,6 +5,7 @@ namespace Elementor\Data\Base;
 use WP_REST_Server;
 
 abstract class Endpoint {
+
 	const AVAILABLE_METHODS = [
 		WP_REST_Server::READABLE,
 		WP_REST_Server::CREATABLE,
@@ -49,6 +50,20 @@ abstract class Endpoint {
 	abstract protected function get_name();
 
 	/**
+	 * Get format suffix.
+	 *
+	 * Examples:
+	 * ':one_parameter_name'.
+	 * ':one_parameter_name/:two_parameter_name/'.
+	 * ':one_parameter_name/whatever/anything/:two_parameter_name/' and so on for each endpoint or sub-endpoint.
+	 *
+	 * @return string current location will later be added automatically.
+	 */
+	public static function get_format_suffix() {
+		return '';
+	}
+
+	/**
 	 * Get base route.
 	 *
 	 * Removing 'index' from endpoint.
@@ -59,6 +74,7 @@ abstract class Endpoint {
 		$endpoint_name = $this->get_name();
 
 		// TODO: Allow this only for internal routes.
+		// TODO: Make difference between internal and external endpoints.
 		if ( 'index' === $endpoint_name ) {
 			$endpoint_name = '';
 		}
@@ -95,6 +111,16 @@ abstract class Endpoint {
 		$endpoint_route = $route . '/' . $endpoint_instance->get_name();
 
 		$this->sub_endpoints[ $endpoint_route ] = $endpoint_instance;
+
+		$component_name = $endpoint_instance->controller->get_rest_base();
+		$parent_instance = $endpoint_instance->get_parent();
+		$parent_name = $endpoint_instance->get_name();
+		$parent_format_suffix = $parent_instance::get_format_suffix();
+
+		$command = $component_name . '/' . $parent_name;
+		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $endpoint_instance::get_format_suffix();
+
+		$this->controller->register_endpoint_format( $command, $format );
 	}
 
 	/**
@@ -155,9 +181,9 @@ abstract class Endpoint {
 	 * @param null   $callback
 	 * @param array  $args
 	 *
+	 * @return bool
 	 * @throws \Exception
 	 *
-	 * @return bool
 	 */
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
@@ -171,7 +197,7 @@ abstract class Endpoint {
 				'args' => $args,
 				'methods' => $methods,
 				'callback' => $callback,
-				'permission_callback' => function( $request ) {
+				'permission_callback' => function ( $request ) {
 					return $this->permission_callback( $request );
 				},
 			],

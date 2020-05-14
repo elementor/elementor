@@ -5,6 +5,7 @@ namespace Elementor\Data\Base;
 use WP_REST_Controller;
 use WP_REST_Server;
 
+
 abstract class Controller extends WP_REST_Controller {
 
 	const ROOT_NAMESPACE = 'elementor';
@@ -19,6 +20,13 @@ abstract class Controller extends WP_REST_Controller {
 	 * @var \Elementor\Data\Base\Endpoint[]
 	 */
 	public $endpoints = [];
+
+	/**
+	 * Loaded command(s) format.
+	 *
+	 * @var string[]
+	 */
+	public $command_formats = [];
 
 	/**
 	 * Loaded processor(s).
@@ -50,7 +58,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @return string
 	 */
-	abstract protected function get_name();
+	abstract public function get_name();
 
 	/**
 	 * Get controller namespace.
@@ -65,11 +73,33 @@ abstract class Controller extends WP_REST_Controller {
 	 * Get processors.
 	 *
 	 * @param string $command
+	 * @param string $format
 	 *
 	 * @return \Elementor\Data\Base\Processor[]
 	 */
-	public function get_processors( $command ) {
+	public function get_processors( $command, $format ) {
 		$result = [];
+
+		if ( $format ) {
+			$command_parts = explode( '/', $command );
+			$format_parts = explode( '/', $format );
+			$format_parts_length = count( $format_parts );
+
+			$command = '';
+
+			for ( $format_index = 0, $command_index = 0; $format_index < $format_parts_length; $format_index++ ) {
+				$format_part = $format_parts[ $format_index ];
+
+				if ( ':' === $format_part[0] ) {
+					continue;
+				}
+
+				$command .= $command_parts[ $command_index ] . '/';
+				$command_index++;
+			}
+
+			$command = rtrim( $command, '/' );
+		}
 
 		if ( isset( $this->processors[ $command ] ) ) {
 			$result = $this->processors[ $command ];
@@ -97,7 +127,7 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	public function get_items( $request ) {
-		return $this->get_controller_index( $request );
+		return $this->get_controller_index();
 	}
 
 	/**
@@ -153,7 +183,7 @@ abstract class Controller extends WP_REST_Controller {
 				'methods' => WP_REST_Server::READABLE,
 				'callback' => array( $this, 'get_items' ),
 				'args' => [],
-				'permission_callback' => function( $request ) {
+				'permission_callback' => function ( $request ) {
 					return $this->permission_callback( $request );
 				},
 			],
@@ -167,9 +197,27 @@ abstract class Controller extends WP_REST_Controller {
 	 */
 	protected function register_endpoint( $endpoint_class ) {
 		$endpoint_instance = new $endpoint_class( $this );
+
+		// TODO: Validate instance like in register_sub_endpoint().
+
 		$endpoint_route = $this->get_name() . '/' . $endpoint_instance->get_name();
 
 		$this->endpoints[ $endpoint_route ] = $endpoint_instance;
+
+		$command = $endpoint_route;
+		$format = $endpoint_instance::get_format_suffix();
+
+		if ( $command ) {
+			$format = $command . '/' . $format;
+		} else {
+			$format = $format . $command;
+		}
+
+		$this->register_endpoint_format( $command, $format );
+	}
+
+	public function register_endpoint_format( $command, $format ) {
+		$this->command_formats[ $command ] = rtrim( $format, '/' );
 	}
 
 	/**
@@ -181,6 +229,9 @@ abstract class Controller extends WP_REST_Controller {
 	 */
 	protected function register_processor( $processor_class ) {
 		$processor_instance = new $processor_class( $this );
+
+		// TODO: Validate processor instance.
+
 		$command = $processor_instance->get_command();
 
 		if ( ! isset( $this->processors[ $command ] ) ) {
