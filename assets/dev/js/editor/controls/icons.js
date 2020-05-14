@@ -1,3 +1,5 @@
+import FilesUploadEnabler from '../utils/files-upload-enabler';
+
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
 
 class ControlIconsView extends ControlMultipleBaseItemView {
@@ -226,32 +228,11 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.trigger( 'after:select' );
 	}
 
-	getSvgNotEnabledDialog() {
-		const onConfirm = () => {
-			elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
-			this.openFrame();
-		};
-		return elementor.helpers.getSimpleDialog(
-			'elementor-enable-svg-dialog',
-			elementor.translate( 'enable_svg' ),
-			elementor.translate( 'dialog_confirm_enable_svg' ),
-			elementor.translate( 'enable' ),
-			onConfirm
-		);
-	}
-
-	isSvgEnabled() {
-		if ( ! this.cache.enableClicked ) {
-			return this.model.get( 'is_svg_enabled' );
-		}
-		return true;
-	}
-
 	openFrame() {
-		if ( ! this.isSvgEnabled() && ! elementor.iconManager.cache.svgDialogShown ) {
-			const dialog = this.getSvgNotEnabledDialog();
-			elementor.iconManager.cache.svgDialogShown = true;
-			return dialog.show();
+		if ( ! FilesUploadEnabler.isUploadEnabled( this.model ) ) {
+			FilesUploadEnabler.getSvgNotEnabledDialog( () => this.openFrame() ).show();
+
+			return false;
 		}
 
 		if ( ! this.frame ) {

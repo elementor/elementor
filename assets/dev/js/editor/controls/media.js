@@ -1,13 +1,9 @@
+import FilesUploadEnabler from '../utils/files-upload-enabler';
+
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
 
 ControlMediaItemView = ControlMultipleBaseItemView.extend( {
-	cache: {
-		loaded: false,
-		dialog: false,
-		enableClicked: false,
-	},
-
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
@@ -49,8 +45,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	openFrame: function() {
-		if ( ! this.isSvgEnabled() && ! elementor.iconManager.cache.svgDialogShown ) {
-			return this.getUnfilteredFilesUploadNotEnabledDialog().show();
+		if ( ! FilesUploadEnabler.isUploadEnabled( this.model ) ) {
+			FilesUploadEnabler.getSvgNotEnabledDialog( () => this.openFrame() ).show();
+
+			return false;
 		}
 
 		if ( ! this.frame ) {
@@ -66,30 +64,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		this.frame.state().get( 'selection' ).add( wp.media.attachment( selectedId ) );
-	},
-
-	isSvgEnabled() {
-		if ( ! this.cache.enableClicked ) {
-			console.log('is svg enabled', this.model.get( 'is_svg_enabled' ));
-			return this.model.get( 'is_svg_enabled' );
-		}
-		return true;
-	},
-
-	// Trying a temp solution.
-	getUnfilteredFilesUploadNotEnabledDialog() {
-		const onConfirm = () => {
-			elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
-			elementor.iconManager.cache.svgDialogShown = true;
-			this.openFrame();
-		};
-		return elementor.helpers.getSimpleDialog(
-			'elementor-enable-svg-dialog',
-			elementor.translate( 'enable_svg' ),
-			elementor.translate( 'dialog_confirm_enable_svg' ),
-			elementor.translate( 'enable' ),
-			onConfirm
-		);
 	},
 
 	deleteImage: function( event ) {
@@ -123,27 +97,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				} ),
 			],
 		} );
-
-		/*
-		// TODO - remove
-		// Not working on the first time (require a page reload after value was changed) + working place function
-		elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
-
-		// TODO -remove
-		if ( this.model.get( 'is_json_upload_enabled' ) && 'application/json' === this.getMediaType() ) {
-			const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
-
-			// TODO - allowing display of JSON files in the media select file window
-			this.frame.on( 'ready', () => {
-				_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = 'json';
-			} );
-
-			this.frame.on( 'close', () => {
-				// restore allowed upload extensions
-				_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
-			} );
-		}
-		 */
 
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', this.select.bind( this ) );

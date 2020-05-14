@@ -100,36 +100,6 @@ class Svg_Handler extends Files_Upload_Handler {
 		return $svg;
 	}
 
-	public function upload_mimes( $allowed_types ) {
-		if ( $this->is_elementor_media_upload() ) {
-			$allowed_types['svg'] = self::MIME_TYPE;
-		}
-		return $allowed_types;
-	}
-
-	public function wp_handle_upload_prefilter( $file ) {
-		return $this->handle_upload_prefilter( $file, self::MIME_TYPE, self::FILE_TYPE );
-	}
-
-	/**
-	 * wp_check_filetype_and_ext
-	 * A workaround for upload validation which relies on a PHP extension (fileinfo)
-	 * with inconsistent reporting behaviour.
-	 * ref: https://core.trac.wordpress.org/ticket/39550
-	 * ref: https://core.trac.wordpress.org/ticket/40175
-	 *
-	 * @param $data
-	 * @param $file
-	 * @param $filename
-	 * @param $mimes
-	 *
-	 * @return mixed
-	 */
-	public function wp_check_filetype_and_ext( $data, $file, $filename, $mimes ) {
-		return $this->check_filetype_and_ext( $data, $filename, self::FILE_TYPE, $mimes, self::MIME_TYPE );
-	}
-
-
 	/**
 	 * decode_svg
 	 * @param $content
@@ -181,6 +151,22 @@ class Svg_Handler extends Files_Upload_Handler {
 		file_put_contents( $filename, $valid_svg );
 
 		return true;
+	}
+
+	/**
+	 * Check if the contents are gzipped
+	 * @see http://www.gzip.org/zlib/rfc-gzip.html#member-format
+	 *
+	 * @param $contents
+	 * @return bool
+	 */
+	protected function is_encoded( $contents ) {
+		$needle = "\x1f\x8b\x08";
+		if ( function_exists( 'mb_strpos' ) ) {
+			return 0 === mb_strpos( $contents, $needle );
+		} else {
+			return 0 === strpos( $contents, $needle );
+		}
 	}
 
 	/**
@@ -545,6 +531,40 @@ class Svg_Handler extends Files_Upload_Handler {
 	}
 
 	/**
+	 * strip_php_tags
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	protected function strip_php_tags( $string ) {
+		$string = preg_replace( '/<\?(=|php)(.+?)\?>/i', '', $string );
+		// Remove XML, ASP, etc.
+		$string = preg_replace( '/<\?(.*)\?>/Us', '', $string );
+		$string = preg_replace( '/<\%(.*)\%>/Us', '', $string );
+
+		if ( ( false !== strpos( $string, '<?' ) ) || ( false !== strpos( $string, '<%' ) ) ) {
+			return '';
+		}
+		return $string;
+	}
+
+	/**
+	 * strip_comments
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	protected function strip_comments( $string ) {
+		// Remove comments.
+		$string = preg_replace( '/<!--(.*)-->/Us', '', $string );
+		$string = preg_replace( '/\/\*(.*)\*\//Us', '', $string );
+		if ( ( false !== strpos( $string, '<!--' ) ) || ( false !== strpos( $string, '/*' ) ) ) {
+			return '';
+		}
+		return $string;
+	}
+
+	/**
 	 * wp_prepare_attachment_for_js
 	 * @param $attachment_data
 	 * @param $attachment
@@ -588,14 +608,33 @@ class Svg_Handler extends Files_Upload_Handler {
 	}
 
 	/**
+	 * set_attachment_id
+	 * @param $attachment_id
+	 *
+	 * @return int
+	 */
+	public function set_attachment_id( $attachment_id ) {
+		$this->attachment_id = $attachment_id;
+		return $this->attachment_id;
+	}
+
+	/**
+	 * get_attachment_id
+	 * @return int
+	 */
+	public function get_attachment_id() {
+		return $this->attachment_id;
+	}
+
+	/**
 	 * Svg_Handler constructor.
 	 */
 	public function __construct() {
 		parent::__construct();
 
-		add_filter( 'upload_mimes', [ $this, 'upload_mimes' ] );
-		add_filter( 'wp_handle_upload_prefilter', [ $this, 'wp_handle_upload_prefilter' ] );
-		add_filter( 'wp_check_filetype_and_ext', [ $this, 'wp_check_filetype_and_ext' ], 10, 4 );
+		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_files_upload' ] );
+		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_upload_prefilter' ] );
+		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
 		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'wp_prepare_attachment_for_js' ], 10, 3 );
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'delete_meta_cache' ] );
 	}

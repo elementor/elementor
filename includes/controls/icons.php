@@ -157,7 +157,7 @@ class Control_Icons extends Control_Base_Multiple {
 			],
 			'search_bar' => true,
 			'recommended' => false,
-			'is_svg_enabled' => Svg_Handler::is_enabled(),
+			'is_unfiltered_files_upload_enabled' => Svg_Handler::is_enabled(),
 			'skin' => 'media',
 			'exclude_inline_options' => [],
 		];

@@ -68,16 +68,7 @@ class Control_Media extends Control_Base_Multiple {
 			return $settings;
 		}
 
-		// Rotem code - rotem code
-		// TODO: is the add_filter needed?
-		// TODO: Will it work with JSON?
-		//add_filter( 'upload_mimes', array( $this, 'support_json_import' ) );
-
 		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
-
-		// Rotem code - rotem code
-		// TODO: remove before production
-		//remove_filter( 'upload_mimes', array( $this, 'support_json_import' ) );
 
 		if ( ! $settings ) {
 			$settings = [
@@ -142,7 +133,6 @@ class Control_Media extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<!-- TODO: hide this div when not video and not media -->
 			<# if ( 'image' === data.media_type || 'video' === data.media_type ) { #>
 			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
 				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
@@ -216,7 +206,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'media_type' => 'image',
-			'is_svg_enabled' => Json_Handler::is_enabled(), // TODO - remove
+			'is_unfiltered_files_upload_enabled' => Json_Handler::is_enabled(), // TODO - remove
 			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Files;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\Svg\Svg_Handler;
@@ -125,6 +126,14 @@ class Manager {
 		do_action( 'elementor/core/files/clear_cache' );
 	}
 
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', [ $this, 'ajax_unfiltered_files_upload' ] );
+	}
+
+	public function ajax_unfiltered_files_upload() {
+		update_option( 'elementor_unfiltered_files_upload', 1 );
+	}
+
 	/**
 	 * Register actions.
 	 *
@@ -135,6 +144,13 @@ class Manager {
 	 */
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
+
+		// TODO: remove before production
+		//delete_option( 'elementor_unfiltered_files_upload' );
+
+		// Ajax.
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
 	}
 }
