@@ -623,8 +623,8 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
-							'allow_svg' => [
-								'label' => __( 'Enable SVG Uploads', 'elementor' ),
+							'enable_unfiltered_files_upload' => [
+								'label' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'std' => '',
@@ -632,7 +632,7 @@ class Settings extends Settings_Page {
 										'' => __( 'Disable', 'elementor' ),
 										1 => __( 'Enable', 'elementor' ),
 									],
-									'desc' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
 						],

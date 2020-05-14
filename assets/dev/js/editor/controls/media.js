@@ -1,3 +1,5 @@
+import FilesUploadEnabler from '../utils/files-upload-enabler';
+
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
 
@@ -43,6 +45,12 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	openFrame: function() {
+		if ( ! FilesUploadEnabler.isUploadEnabled( this.model ) ) {
+			FilesUploadEnabler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+
+			return false;
+		}
+
 		if ( ! this.frame ) {
 			this.initFrame();
 		}
