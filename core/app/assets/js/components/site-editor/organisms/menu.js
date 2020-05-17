@@ -19,7 +19,7 @@ export default class Menu extends React.Component {
 
 		return (
 			<nav className="elementor-app__site-editor__menu">
-				<MenuItem id="all-parts" text={ __( 'All Parts', 'elementor' ) } 	icon="eicon-filter" />
+				<MenuItem id="all-parts" text={ __( 'All Parts', 'elementor' ) } 	icon="eicon-filter" url="site-editor/templates" />
 				<div className="elementor-app__site-editor__menu__items-title">
 					{ __( 'Site Parts', 'elementor' ) }
 				</div>
