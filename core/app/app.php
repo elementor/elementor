@@ -82,7 +82,9 @@ class App extends BaseApp {
 		wp_enqueue_script(
 			'elementor-app-loader',
 			$this->get_js_assets_url( 'app-loader' ),
-			[],
+			[
+				'wp-i18n',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
