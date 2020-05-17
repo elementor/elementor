@@ -627,14 +627,48 @@ class Svg_Handler extends Files_Upload_Handler {
 	}
 
 	/**
+	 * handle_upload_prefilter
+	 * @param $file
+	 *
+	 * @return mixed
+	 */
+	public function handle_upload_prefilter( $file ) {
+		if ( ! $this->is_file_should_handled( $file ) ) {
+			return $file;
+		}
+
+		$file = parent::handle_upload_prefilter( $file );
+
+		if ( ! $file['error'] && self::file_sanitizer_can_run() && ! $this->sanitize_file( $file['tmp_name'] ) ) {
+			$display_type = strtoupper( self::FILE_TYPE );
+
+			$file['error'] = __( "Invalid $display_type Format, file not uploaded for security reasons", 'elementor' );
+		}
+
+		return $file;
+	}
+
+	public function is_unfiltered_files_upload_enabled() {
+		$enabled = parent::is_unfiltered_files_upload_enabled() && self::file_sanitizer_can_run();
+		$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
+
+		return $enabled;
+	}
+
+	/**
+	 * file_sanitizer_can_run
+	 * @return bool
+	 */
+	public static function file_sanitizer_can_run() {
+		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
+	}
+
+	/**
 	 * Svg_Handler constructor.
 	 */
 	public function __construct() {
 		parent::__construct();
 
-		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_files_upload' ] );
-		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_upload_prefilter' ] );
-		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
 		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'wp_prepare_attachment_for_js' ], 10, 3 );
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'delete_meta_cache' ] );
 	}

@@ -1,6 +1,18 @@
 export default class FilesUploadEnabler {
-	static isUploadEnabled() {
-		return elementor.config.is_unfiltered_files_upload_enabled || FilesUploadEnabler.isFilesUploadDialogConfirmed;
+	static isUploadEnabled( mediaType ) {
+		if ( 'application/json' === mediaType ) {
+			mediaType = 'json';
+		}
+
+		if ( undefined === elementor.config.is_unfiltered_files_upload_enabled[ mediaType ] ) {
+			return true;
+		}
+
+		return elementor.config.is_unfiltered_files_upload_enabled[ mediaType ] || FilesUploadEnabler.isFilesUploadDialogConfirmed;
+	}
+
+	static uploadTypeCaller( frame ) {
+		frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
 	}
 
 	static getUnfilteredFilesNotEnabledDialog( callback ) {

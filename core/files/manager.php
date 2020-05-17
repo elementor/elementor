@@ -2,9 +2,10 @@
 namespace Elementor\Core\Files;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\Assets\Json\Json_Handler;
+use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\Svg\Svg_Handler;
 use Elementor\Core\Responsive\Files\Frontend;
 use Elementor\Utils;
 
@@ -24,6 +25,16 @@ class Manager {
 	private $files = [];
 
 	/**
+	 * @var Svg_Handler
+	 */
+	public $svg_handler;
+
+	/**
+	 * @var Json_Handler
+	 */
+	public $json_handler;
+
+	/**
 	 * Files manager constructor.
 	 *
 	 * Initializing the Elementor files manager.
@@ -33,6 +44,9 @@ class Manager {
 	 */
 	public function __construct() {
 		$this->register_actions();
+
+		$this->svg_handler = new Svg_Handler();
+		$this->json_handler = new Json_Handler();
 	}
 
 	public function get( $class, $args ) {
@@ -146,7 +160,7 @@ class Manager {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 
 		// TODO: remove before production
-		//delete_option( 'elementor_unfiltered_files_upload' );
+		delete_option( 'elementor_unfiltered_files_upload' );
 
 		// Ajax.
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );

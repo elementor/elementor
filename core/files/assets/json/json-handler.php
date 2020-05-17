@@ -14,15 +14,4 @@ class Json_Handler extends Files_Upload_Handler {
 	public static function get_name() {
 		return 'json-handler';
 	}
-
-	/**
-	 * Json_Handler constructor.
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_files_upload' ] );
-		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_upload_prefilter' ] );
-		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
-	}
 }

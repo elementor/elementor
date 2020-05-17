@@ -229,7 +229,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openFrame() {
-		if ( ! FilesUploadEnabler.isUploadEnabled( this.model ) ) {
+		if ( ! FilesUploadEnabler.isUploadEnabled( 'svg' ) ) {
 			FilesUploadEnabler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
 
 			return false;

@@ -45,7 +45,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	openFrame: function() {
-		if ( ! FilesUploadEnabler.isUploadEnabled( this.model ) ) {
+		if ( this.frame && ! FilesUploadEnabler.isUploadEnabled( this.getMediaType(), this.frame ) ) {
 			FilesUploadEnabler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
 
 			return false;
@@ -56,6 +56,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		this.frame.open();
+
+		this.frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
+		this.frame.uploader.uploader.param( 'upload_type', 'application/json' );
 
 		const selectedId = this.getControlValue( 'id' );
 
