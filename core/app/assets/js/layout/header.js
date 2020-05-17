@@ -9,6 +9,10 @@ export default class Header extends React.Component {
 		buttons: PropTypes.arrayOf( PropTypes.object ),
 	};
 
+	componentDidMount() {
+		document.title = __( 'Elementor', 'elementor' ) + ' | ' + this.props.title;
+	}
+
 	render() {
 		return (
 			<div className="elementor-app__header dialog-header dialog-lightbox-header">
