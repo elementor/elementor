@@ -1,4 +1,4 @@
-import { CREATABLE, DELETABLE, EDITABLE, READABLE } from 'elementor-api/core/data';
+import {CREATABLE, DELETABLE, EDITABLE, READABLE} from 'elementor-api/core/data';
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandData from 'elementor-api/modules/command-data';
 
@@ -33,6 +33,19 @@ jQuery( () => {
 			assert.deepEqual( $e.data.getAllowedMethods( 'get' ), READABLE );
 			assert.deepEqual( $e.data.getAllowedMethods( 'update' ), EDITABLE );
 		} );
+
+		QUnit.test( 'commandToEndpoint(): command with format', ( assert ) => {
+			const command = 'component/:paramA/command/:paramB',
+				args = { query: {} };
+
+			args.query.paramA = 'valueA';
+			args.query.paramB = 'valueB';
+
+			const endpoint = $e.data.commandToEndpoint( command, args );
+
+			assert.equal( endpoint, 'component/valueA/command/valueB', 'Valid endpoint.' );
+		} );
+
 
 		QUnit.test( 'commandToEndpoint(): command with query', ( assert ) => {
 			const command = 'component/command',
@@ -159,7 +172,7 @@ jQuery( () => {
 		} );
 
 		QUnit.test( 'fetch(): with cache', async ( assert ) => {
-			$e.components.register( new class TestComponent extends ComponentBase {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
 				getNamespace() {
 					return 'test-component-with-cache';
 				}
@@ -194,22 +207,24 @@ jQuery( () => {
 				} );
 			};
 
-			const result = await $e.data.fetch( 'get', {
+			const requestData = {
+				component,
 				endpoint,
 				command,
 				args,
-			} );
+			};
+
+			const result = await $e.data.fetch( 'get', requestData );
 
 			// Validate result.
 			assert.deepEqual( response.data, result.data );
-
 			// Validate item get cached.
-			assert.equal( $e.data.cache.storage.getItem( endpoint ), JSON.stringify( response ) );
+			assert.deepEqual( $e.data.cache.get( requestData ).data, response.data );
 		} );
 
 		QUnit.test( 'fetch(): with cache loaded manually', async ( assert ) => {
 			// Register test data command.
-			$e.components.register( new class TestComponent extends ComponentBase {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
 				getNamespace() {
 					return 'test-component-cache-manually';
 				}
@@ -225,7 +240,7 @@ jQuery( () => {
 				query = { paramA: 'valueB' };
 
 			// This test case relies on cache.
-			$e.data.loadCache( 'test-component-cache-manually/test-command', query, data );
+			$e.data.loadCache( component, 'test-component-cache-manually/test-command', query, data );
 
 			// Get cache.
             const result = await $e.data.get( 'test-component-cache-manually/test-command', query );
@@ -235,136 +250,191 @@ jQuery( () => {
 		} );
 
 		QUnit.test( 'getCache(): simple', ( assert ) => {
-			const key = 'some-test-key',
-				data = 'some-test-value';
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'get-cache-simple-component';
+					}
+				} ),
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+				},
+				someData = {
+					someKey: 'someValue',
+				};
 
-			$e.data.cache.storage.setItem( key, JSON.stringify( data ) );
+			$e.data.cache.load( requestData, someData );
 
-			const result = $e.data.getCache( key, {} );
+			const result = $e.data.getCache( component, component.getNamespace() );
 
-			assert.equal( result, data );
+			assert.deepEqual( result, someData );
 		} );
 
 		QUnit.test( 'getCache(): with query', ( assert ) => {
-			const command = 'some-test-key',
-				data = 'some-test-value',
-				query = { param: 'value' },
-				endpoint = $e.data.commandToEndpoint( command, { query } );
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'get-cache-query-component';
+					}
+				} ),
+				args = {
+					query: {
+						paramA: 'valueA',
+					},
+				},
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), args ),
+					command: component.getNamespace(),
+					component: component,
+					args,
+				},
+				someData = {
+					someKey: 'someValue',
+				};
 
-			$e.data.cache.storage.setItem( endpoint, JSON.stringify( data ) );
+			$e.data.cache.load( requestData, someData );
 
-			const result = $e.data.getCache( command, query );
+			const result = $e.data.getCache( component, component.getNamespace(), args.query );
 
-			assert.equal( result, data );
+			assert.deepEqual( result, someData );
 		} );
 
 		QUnit.test( 'loadCache(): with simple data', ( assert ) => {
-			const command = 'some-test-key',
-				data = 'some-test-value';
-
-			$e.data.loadCache( command, {}, data );
-
-			const result = $e.data.getCache( command, {} );
-
-			assert.equal( result, data );
-		} );
-
-		QUnit.test( 'loadCache(): with object data', ( assert ) => {
-			const command = 'some-test-key',
-				data = {
-					extractedProp: 'some-value',
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'load-cache-simple-component';
+					}
+				} ),
+				someData = {
+					someKey: 'someValue',
 				};
 
-			$e.data.loadCache( command, {}, data );
+			$e.data.loadCache( component, component.getNamespace(), {}, someData );
 
-			const result = $e.data.getCache( `${ command }/extractedProp`, {} );
+			const result = $e.data.getCache( component, component.getNamespace() );
 
-			assert.equal( result, data.extractedProp );
+			assert.deepEqual( result, someData );
 		} );
 
 		QUnit.test( 'loadCache(): with query', ( assert ) => {
-			const command = 'some-test-key',
-				data = 'some-test-value',
-				query = { param: 'value' };
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'load-cache-query-component';
+					}
+				} ),
+				query = {
+					param: 'value',
+				},
+				someData = {
+					someKey: 'someValue',
+				};
 
-			$e.data.loadCache( command, query, data );
+			$e.data.loadCache( component, component.getNamespace(), query, someData );
 
-			const result = $e.data.getCache( command, query );
+			const result = $e.data.getCache( component, component.getNamespace(), query );
 
-			assert.equal( result, data );
+			assert.deepEqual( result, someData );
 		} );
 
-		QUnit.test( 'updateCache(): with simple data', ( assert ) => {
-			const command = 'some-test-key',
-				query = { param: 'value' },
-				data = 'old-value',
-				newData = 'new-value';
+		QUnit.test( 'updateCache(): component', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'update-cache-component';
+					}
+				} ),
+				olData = {
+					param: 'oldValue',
+				},
+				newData = {
+					param: 'new-value',
+				};
 
-			$e.data.loadCache( command, query, data );
+			$e.data.loadCache( component, component.getNamespace(), {}, olData );
 
-			let result = $e.data.getCache( command, query );
+			let result = $e.data.getCache( component, component.getNamespace() );
 
-			assert.equal( data, result );
+			assert.deepEqual( result, olData );
 
-			$e.data.updateCache( command, query, newData );
+			$e.data.updateCache( component, component.getNamespace(), {}, newData );
 
-			result = $e.data.getCache( command, query );
-
-			assert.equal( result, newData );
-		} );
-
-		QUnit.test( 'updateCache(): with object data', ( assert ) => {
-			const command = 'some-test-key',
-				query = { param: 'value' },
-				data = { param: 'old-value' },
-				newData = { param: 'new-value' };
-
-			$e.data.loadCache( command, query, data );
-
-			let result = $e.data.getCache( command, query );
-
-			assert.deepEqual( data, result );
-
-			$e.data.updateCache( command, query, newData );
-
-			result = $e.data.getCache( command, query );
+			result = $e.data.getCache( component, component.getNamespace() );
 
 			assert.deepEqual( result, newData );
 		} );
 
-		QUnit.test( 'deleteCache(): simple', ( assert ) => {
-			const command = 'some-test-key',
-				data = 'value';
+		QUnit.test( 'updateCache(): specific data, by endpoint', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'update-cache-specific-data-endpoint-component';
+					}
+				} ),
+				olData = {
+					objectA: {
+						paramA: 'valueA',
+					},
+				},
+				change = {
+					paramA: 'new-value',
+				},
+				newData = {
+					objectA: change,
+				};
 
-			$e.data.loadCache( command, {}, data );
+			$e.data.loadCache( component, component.getNamespace(), {}, olData );
 
-			let result = $e.data.getCache( command, {} );
+			let result = $e.data.getCache( component, component.getNamespace() );
 
-			assert.equal( data, result );
+			assert.deepEqual( result, olData );
 
-			$e.data.deleteCache( command );
+			$e.data.updateCache( component, component.getNamespace() + '/objectA', {}, change );
 
-			result = $e.data.getCache( command, {} );
+			result = $e.data.getCache( component, component.getNamespace() );
 
-			assert.notEqual( result, data );
+			assert.deepEqual( result, newData );
 		} );
 
-		QUnit.test( 'deleteCache(): with query', ( assert ) => {
-			const command = 'some-test-key',
-				query = { param: 'value' },
-				data = 'value';
+		QUnit.test( 'updateCache(): specific data, by data object', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'update-cache-specific-data-object-component';
+					}
+				} ),
+				olData = {
+					objectA: {
+						paramA: 'valueA',
+					},
+				},
+				change = {
+					objectA: {
+						paramA: 'new-value',
+					},
+				};
 
-			$e.data.loadCache( command, query, data );
+			$e.data.loadCache( component, component.getNamespace(), {}, olData );
 
-			let result = $e.data.getCache( command, query );
+			let result = $e.data.getCache( component, component.getNamespace() );
 
-			assert.equal( data, result );
+			assert.deepEqual( result, olData );
 
-			$e.data.deleteCache( command, query );
+			$e.data.updateCache( component, component.getNamespace(), {}, change );
 
-			result = $e.data.getCache( command, query );
+			result = $e.data.getCache( component, component.getNamespace() );
 
-			assert.notEqual( result, data );
+			assert.deepEqual( result, change );
+		} );
+
+		QUnit.test( 'deleteCache(): simple', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'delete-cache-simple-component';
+					}
+				} );
+
+			$e.data.loadCache( component, component.getNamespace(), {}, {} );
+
+			$e.data.deleteCache( component.getNamespace() );
+
+			assert.equal( $e.data.getCache( component, component.getNamespace() ), null );
 		} );
 	} );
 } );

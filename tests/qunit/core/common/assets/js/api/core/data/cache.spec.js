@@ -241,7 +241,7 @@ jQuery( () => {
 		QUnit.test( 'delete(): simple', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
-						return 'load-simple-component';
+						return 'delete-simple-component';
 					}
 
 					getData() {
