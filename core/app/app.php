@@ -28,7 +28,7 @@ class App extends BaseApp {
 	}
 
 	public function get_url() {
-		return admin_url( 'admin.php?page=' . self::PAGE_ID . '&nonce=' . wp_create_nonce( self::PAGE_ID ) );
+		return admin_url( 'admin.php?page=' . self::PAGE_ID . '#site-editor/promotion' );
 	}
 
 	public function register_admin_menu() {
@@ -103,9 +103,6 @@ class App extends BaseApp {
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 
-		if ( empty( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], self::PAGE_ID ) ) {
-			return;
-		}
 		if ( empty( $_GET['page'] ) || self::PAGE_ID !== $_GET['page'] ) {
 			return;
 		}
