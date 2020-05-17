@@ -1,5 +1,6 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { Link, LocationProvider } from '@reach/router';
 
 export default class Button extends React.Component {
 	static propTypes = {
@@ -9,6 +10,7 @@ export default class Button extends React.Component {
 		tooltip: PropTypes.string,
 		id: PropTypes.string,
 		className: PropTypes.string,
+		url: PropTypes.string,
 		onClick: PropTypes.func,
 	};
 
@@ -36,10 +38,10 @@ export default class Button extends React.Component {
 			}
 
 			return (
-				<Fragment>
+				<>
 					{ icon }
 					{ screenReaderText }
-				</Fragment>
+				</>
 			);
 		}
 		return '';
@@ -52,24 +54,40 @@ export default class Button extends React.Component {
 	render() {
 		const attributes = {},
 			id = this.getCssId(),
-			className = this.getClassName(),
-			onClick = this.props.onClick;
+			className = this.getClassName();
 
 		// Add attributes only if they are not empty.
 		if ( id ) {
 			attributes.id = id;
 		}
+
 		if ( className ) {
 			attributes.className = className;
 		}
-		if ( onClick ) {
-			attributes.onClick = onClick;
+		if ( this.props.onClick ) {
+			attributes.onClick = this.props.onClick;
+		}
+
+		const buttonContent = (
+			<>
+				{ this.getIcon() }
+				{ this.getText() }
+			</>
+		);
+
+		if ( this.props.url ) {
+			return (
+			<LocationProvider history={ elementorAppLoader.app.history }>
+				<Link to={ this.props.url } { ...attributes } >
+					{ buttonContent }
+				</Link>
+			</LocationProvider>
+			);
 		}
 
 		return (
 			<div { ...attributes }>
-				{ this.getIcon() }
-				{ this.getText() }
+				{ buttonContent }
 			</div>
 		);
 	}
