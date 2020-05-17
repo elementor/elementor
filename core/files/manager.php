@@ -159,9 +159,6 @@ class Manager {
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 
-		// TODO: remove before production
-		delete_option( 'elementor_unfiltered_files_upload' );
-
 		// Ajax.
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
