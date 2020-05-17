@@ -1,5 +1,4 @@
 import CommandHistory from 'elementor-document/commands/base/command-history';
-import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export class Create extends CommandHistory {
 	static restore( historyItem, isRedo ) {

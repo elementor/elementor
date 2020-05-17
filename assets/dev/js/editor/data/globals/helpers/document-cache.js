@@ -23,7 +23,6 @@ export default class DocumentCache {
 				data.settings = container.settings.toJSON();
 			}
 
-
 			$e.data.updateCache( component, command, {
 				documentId,
 				elementId,

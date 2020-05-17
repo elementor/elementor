@@ -1,4 +1,4 @@
-import {CREATABLE, DELETABLE, EDITABLE, READABLE} from 'elementor-api/core/data';
+import { CREATABLE, DELETABLE, EDITABLE, READABLE } from 'elementor-api/core/data';
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandData from 'elementor-api/modules/command-data';
 
@@ -45,7 +45,6 @@ jQuery( () => {
 
 			assert.equal( endpoint, 'component/valueA/command/valueB', 'Valid endpoint.' );
 		} );
-
 
 		QUnit.test( 'commandToEndpoint(): command with query', ( assert ) => {
 			const command = 'component/command',

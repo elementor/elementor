@@ -1,5 +1,4 @@
 import After from 'elementor-api/modules/hooks/data/after';
-import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export class ElementsCreateAddDefaultGlobals extends After {
 	getCommand() {

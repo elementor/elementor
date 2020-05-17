@@ -1,5 +1,4 @@
 import LocalStorage from './stroages/local-storage';
-import ComponentBase from 'elementor-api/modules/component-base';
 
 export default class Cache {
 	/**

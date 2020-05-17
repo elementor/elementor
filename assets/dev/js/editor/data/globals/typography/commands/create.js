@@ -22,7 +22,7 @@ export class Create extends CommandBase {
 		}
 
 		if ( groupPrefix ) {
-			Object.entries( controls ).forEach( ( [ key, control ] ) => {
+			Object.entries( controls ).forEach( ( [ key ] ) => {
 				if ( key.includes( groupPrefix ) ) {
 					availableControls[ key.replace( groupPrefix, 'typography_' ) ] = container.settings.get( key );
 				}

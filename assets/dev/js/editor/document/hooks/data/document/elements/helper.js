@@ -1,5 +1,4 @@
 import { Create } from 'elementor-document/elements/commands';
-import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export default class Helper {
 	static createSectionColumns( containers, columns, options, structure = false ) {
