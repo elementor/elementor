@@ -7,12 +7,13 @@ import Cache from './data/cache';
 
 /**
  * @typedef {{}} RequestData
- * @property {{}} args
- * @property {Component} component
+ * @property {ComponentBase} component
  * @property {string} command
  * @property {string} endpoint
  * @property {DataTypes} [type]
+ * @property {{}} [args]
  * @property {number} [timestamp]
+ * @property {boolean} [receiveCache]
  */
 
 // TODO: Return it from the server. Original at WP_REST_Server.

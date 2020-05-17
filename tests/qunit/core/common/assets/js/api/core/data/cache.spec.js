@@ -1,6 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 
-const COMPLEX_OBJECT = {
+const TEST_OBJECT = {
 	simpleKeyValue: 'value',
 	complexObject: {
 		anotherObject: {
@@ -10,161 +10,174 @@ const COMPLEX_OBJECT = {
 	},
 };
 
-// TODO: Rewrite / Refactor test(s).
-
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/core/data/cache.js', ( hooks ) => {
 		hooks.beforeEach( () => {
 			$e.data.cache.storage.clear();
 		} );
 
-		QUnit.test( 'extractData(): filter-object-component', ( assert ) => {
-			const component = $e.components.register( new class TestComponent extends ComponentBase {
-					getNamespace() {
-						return 'test-extract-data-filter-object-component';
-					}
-
-					defaultData() {
-						return {
-							index: () => {},
-						};
-					}
-				} ),
-				command = component.getNamespace() + '/index',
-				data = COMPLEX_OBJECT,
-				requestData = {
-					endpoint: '',
-					command,
-					component,
-					args: {
-						query: {},
-					},
+		QUnit.test( 'validateRequestData', ( assert ) => {
+			assert.throws( () => {
+					$e.data.cache.validateRequestData( {} );
 				},
-				result = {};
-
-			requestData.endpoint = $e.data.commandToEndpoint( requestData.command, requestData.args );
-
-			$e.data.cache.extractData( data, requestData, ( key, value ) => {
-				result[ key ] = value;
-			}, 'filter-object-component' );
-
-			assert.deepEqual( result, {
-				'test-extract-data-filter-object-component/simpleKeyValue': 'value',
-				'test-extract-data-filter-object-component/complexObject/anotherObject': {
-					key: 'value',
+				new Error( 'Invalid requestData.component.' )
+			);
+			assert.throws( () => {
+					$e.data.cache.validateRequestData( {
+						component: {},
+					} );
 				},
-				'test-extract-data-filter-object-component/complexObject/simpleKeyValue': 'in complex object',
-			} );
-		} );
-
-		QUnit.test( 'extractData(): filter-object', ( assert ) => {
-			const command = 'test-extract-data-filter-object/test',
-				data = COMPLEX_OBJECT,
-				requestData = {
-					endpoint: '',
-					command,
-					args: {
-						query: {},
-					},
+				new Error( 'Invalid requestData.command.' )
+			);
+			assert.throws( () => {
+					$e.data.cache.validateRequestData( {
+						component: {},
+						command: '',
+					} );
 				},
-				result = {};
-
-			requestData.endpoint = $e.data.commandToEndpoint( requestData.command, requestData.args );
-
-			$e.data.cache.extractData( data, requestData, ( key, value ) => {
-				result[ key ] = value;
-			}, 'filter-object' );
-
-			assert.deepEqual( result, {
-				'test-extract-data-filter-object/test/simpleKeyValue': 'value',
-				'test-extract-data-filter-object/test/complexObject': {
-					anotherObject: { key: 'value' },
-					simpleKeyValue: 'in complex object',
-				},
-			} );
-		} );
-
-		QUnit.test( 'extractData(): filter-key-value ', ( assert ) => {
-			const command = 'filter-key-value/test',
-				data = COMPLEX_OBJECT,
-				requestData = {
-					endpoint: '',
-					command,
-					args: {
-						query: {},
-					},
-				},
-				result = {};
-
-			requestData.endpoint = $e.data.commandToEndpoint( requestData.command, requestData.args );
-
-			$e.data.cache.extractData( data, requestData, ( key, value ) => {
-				result[ key ] = value;
-			}, 'filter-key-value' );
-
-			assert.deepEqual( result[ requestData.endpoint ], data );
+				new Error( 'Invalid requestData.endpoint.' )
+			);
 		} );
 
 		QUnit.test( 'receive(): simple ', async ( assert ) => {
-			const value = 'receive-value-' + Math.random().toString(),
-				randomKey = Math.random().toString();
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'receive-simple-component';
+					}
+				} ),
+				randomValue = Math.random().toString(),
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+				};
 
-			$e.data.cache.storage.setItem( randomKey, JSON.stringify( value ) );
+			// Set cache test item.
+			$e.data.cache.storage.setItem( component.getNamespace(), JSON.stringify( randomValue ) );
 
-			const result = await $e.data.cache.receive( { endpoint: randomKey } );
+			const result = await $e.data.cache.receive( requestData );
 
-			assert.equal( value, result );
+			assert.equal( requestData.receiveCache, true ); // added to requestData by receive.
+			assert.equal( randomValue, result );
 		} );
 
 		QUnit.test( 'load(): simple', ( assert ) => {
-			const value = 'load-value-' + Math.random().toString(),
-				randomKey = Math.random().toString();
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'load-simple-component';
+					}
+				} ),
+				randomValue = Math.random().toString(),
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+				};
 
-			$e.data.cache.load( {
-				endpoint: randomKey,
-				args: {
-					query: {},
-					options: {
-						filter: 'filter-key-value',
-					},
-				},
-			}, value );
+			$e.data.cache.load( requestData, randomValue );
 
-			assert.equal( value, JSON.parse( $e.data.cache.storage.getItem( randomKey ) ) );
+			assert.equal( randomValue, JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ) );
+		} );
+
+		QUnit.test( 'load(): complex', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'load-complex-component';
+					}
+				} ),
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+				};
+
+			$e.data.cache.load( requestData, TEST_OBJECT );
+
+			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), TEST_OBJECT );
 		} );
 
 		QUnit.test( 'get(): simple', ( assert ) => {
-			const value = 'get-value-' + Math.random().toString(),
-				randomKey = Math.random().toString();
-
-			$e.data.cache.storage.setItem( randomKey, JSON.stringify( value ) );
-
-			const result = $e.data.cache.get( { endpoint: randomKey } );
-
-			assert.equal( value, result );
-		} );
-
-		QUnit.test( 'update(): key value', ( assert ) => {
-			const randomKey = Math.random().toString(),
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'get-simple-component';
+					}
+				} ),
+				randomValue = Math.random().toString(),
 				requestData = {
-					command: '',
-					endpoint: randomKey,
-					args: {
-						query: {},
-						options: {
-							filter: 'filter-key-value',
-						},
-						data: COMPLEX_OBJECT,
-					},
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
 				};
 
-			$e.data.cache.load( requestData, requestData.args.data );
+			$e.data.cache.load( requestData, randomValue );
 
-			const newObject = elementor.helpers.cloneObject( COMPLEX_OBJECT );
+			const result = $e.data.cache.get( requestData );
 
-			newObject.complexObject.anotherObject.key = randomKey;
-			newObject.complexObject.simpleKeyValue = randomKey;
-			newObject.simpleKeyValue = randomKey;
+			assert.equal( result, randomValue );
+		} );
+
+		QUnit.test( 'get(): complex', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'get-complex-component';
+					}
+				} ),
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+				};
+
+			$e.data.cache.load( requestData, TEST_OBJECT );
+
+			requestData.endpoint = component.getNamespace() + '/simpleKeyValue';
+
+			const simpleKeyValue = $e.data.cache.get( requestData );
+
+			requestData.endpoint = component.getNamespace() + '/complexObject';
+
+			const complexObject = $e.data.cache.get( requestData );
+
+			requestData.endpoint = component.getNamespace() + '/complexObject/anotherObject';
+
+			const complexObjectAnotherObject = $e.data.cache.get( requestData );
+
+			requestData.endpoint = component.getNamespace() + '/complexObject/anotherObject/key';
+
+			const complexObjectAnotherObjectKey = $e.data.cache.get( requestData );
+
+			requestData.endpoint = component.getNamespace() + '/complexObject/simpleKeyValue';
+
+			const complexObjectSimpleKeyValue = $e.data.cache.get( requestData );
+
+			assert.equal( simpleKeyValue, TEST_OBJECT.simpleKeyValue );
+			assert.deepEqual( complexObject, TEST_OBJECT.complexObject );
+			assert.deepEqual( complexObjectAnotherObject, TEST_OBJECT.complexObject.anotherObject );
+			assert.equal( complexObjectAnotherObjectKey, TEST_OBJECT.complexObject.anotherObject.key );
+			assert.equal( complexObjectSimpleKeyValue, TEST_OBJECT.complexObject.simpleKeyValue );
+		} );
+
+		QUnit.test( 'update(): simple', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'update-simple-component';
+					}
+				} ),
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+					args: {},
+				},
+				randomValue = Math.random().toString();
+
+			$e.data.cache.load( requestData, TEST_OBJECT );
+
+			const newObject = elementor.helpers.cloneObject( TEST_OBJECT );
+
+			newObject.complexObject.anotherObject.key = randomValue;
+			newObject.complexObject.simpleKeyValue = randomValue;
+			newObject.simpleKeyValue = randomValue;
 
 			requestData.args.data = newObject;
 
@@ -175,153 +188,83 @@ jQuery( () => {
 			assert.deepEqual( newObject, result );
 		} );
 
-		QUnit.test( 'update(): key value, mismatch data', ( assert ) => {
-			const randomKey = Math.random().toString(),
-				requestData = {
-					command: '',
-					endpoint: randomKey,
-					args: {
-						query: {},
-						options: {
-							filter: 'filter-key-value',
-						},
-						data: COMPLEX_OBJECT,
-					},
-				};
-
-			$e.data.cache.load( requestData, requestData.args.data );
-
-			requestData.args.data = 'mismatch-data';
-
-			assert.throws(
-				() => {
-					$e.data.cache.update( requestData );
-				},
-				new Error( 'Invalid data: type mismatch' ),
-			);
-		} );
-
-		QUnit.test( 'update(): component', ( assert ) => {
-			const randomValue = Math.random().toString(),
-				component = $e.components.register( new class TestComponent extends ComponentBase {
+		QUnit.test( 'update(): deep', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
-						return 'update-component';
-					}
-
-					defaultData() {
-						return {
-							index: () => {},
-						};
+						return 'update-deep-component';
 					}
 				} ),
-				command = component.getNamespace() + '/index',
-					requestData = {
-						command,
-						endpoint: '',
-						args: {
-							query: {},
-							options: {
-								filter: 'filter-object-component',
-							},
-							data: COMPLEX_OBJECT,
-						},
-						component,
-					},
-				result = {};
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+					args: {},
+				},
+				randomValue = Math.random().toString();
 
-			requestData.endpoint = $e.data.commandToEndpoint( requestData.command, requestData.args );
+			$e.data.cache.load( requestData, TEST_OBJECT );
 
-			// Load
-			$e.data.cache.load( requestData, requestData.args.data );
-
-			requestData.args.data.complexObject.simpleKeyValue = randomValue;
-			requestData.args.data.complexObject.anotherObject.key = randomValue;
-			requestData.args.data.simpleKeyValue = randomValue;
-
-			// Update
+			// Update object.simpleKeyValue.
+			requestData.args.data = {
+				simpleKeyValue: randomValue,
+			};
+			requestData.endpoint = component.getNamespace();
 			$e.data.cache.update( requestData );
 
-			// Get data.
-			$e.data.cache.extractData( $e.data.cache.storage.debug(), requestData, ( key, value ) => {
-				if ( key.includes( requestData.endpoint ) ) {
-					result[ key ] = value;
-				}
-			}, 'filter-object-component' );
+			// Update object.complexObject.simpleKeyValue
+			requestData.args.data = {
+				simpleKeyValue: randomValue,
+			};
+			requestData.endpoint = component.getNamespace() + '/complexObject';
+			$e.data.cache.update( requestData );
 
-			// Validate
-			assert.deepEqual( result, {
-				'update-component/simpleKeyValue': randomValue,
-				'update-component/complexObject/simpleKeyValue': randomValue,
-				'update-component/complexObject/anotherObject': {
-					key: randomValue,
-				},
-			} );
+			// Update object.complexObject.anotherObject.key
+			requestData.args.data = {
+				key: randomValue,
+			};
+			requestData.endpoint = component.getNamespace() + '/complexObject/anotherObject';
+			$e.data.cache.update( requestData );
+
+			requestData.endpoint = component.getNamespace();
+
+			const newObject = elementor.helpers.cloneObject( TEST_OBJECT );
+
+			newObject.complexObject.anotherObject.key = randomValue;
+			newObject.complexObject.simpleKeyValue = randomValue;
+			newObject.simpleKeyValue = randomValue;
+
+			const result = $e.data.cache.get( requestData );
+
+			assert.deepEqual( result, newObject );
 		} );
 
-		QUnit.test( 'delete(): specific endpoint', ( assert ) => {
-			const value = 'delete-endpoint-' + Math.random().toString(),
-				randomKey = Math.random().toString(),
-				requestData = {
-					endpoint: randomKey,
-					command: '',
-					args: {
-						query: {},
-						options: {
-							filter: 'filter-key-value',
-						},
-					},
-				};
-
-			$e.data.cache.load( requestData, value );
-
-			$e.data.cache.delete( requestData.endpoint );
-
-			assert.equal( $e.data.cache.get( requestData ), null );
-		} );
-
-		QUnit.test( 'delete(): component', ( assert ) => {
-			const randomValue = Math.random().toString(),
-				component = $e.components.register( new class TestComponent extends ComponentBase {
+		QUnit.test( 'delete(): simple', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
-						return 'delete-component';
+						return 'load-simple-component';
 					}
 
-					defaultData() {
+					getData() {
 						return {
-							index: () => {},
+							command: () => {},
 						};
 					}
 				} ),
-				command = component.getNamespace() + '/index',
+				command = component.getNamespace() + '/command',
+				randomValue = Math.random().toString(),
 				requestData = {
-					command,
-					endpoint: '',
-					args: {
-						query: {},
-						options: {
-							filter: 'filter-object-component',
-						},
-						data: COMPLEX_OBJECT,
-					},
-					component,
-				},
-				result = {};
+					endpoint: $e.data.commandToEndpoint( command, {} ),
+					command: command,
+					component: component,
+				};
 
-			requestData.endpoint = $e.data.commandToEndpoint( requestData.command, requestData.args );
+			$e.data.cache.load( requestData, {
+				command: randomValue,
+			} );
 
-			// Load
-			$e.data.cache.load( requestData, requestData.args.data );
+			$e.data.cache.delete( component.getNamespace() );
 
-			// Delete
-			$e.data.cache.delete( requestData.endpoint );
-
-			$e.data.cache.extractData( $e.data.cache.storage.debug(), requestData, ( key, value ) => {
-				if ( key.includes( requestData.endpoint ) ) {
-					result[ key ] = value;
-				}
-			}, 'filter-object-component' );
-
-			assert.equal( Object.values( result ).length, 0 );
+			assert.equal( $e.data.cache.get( requestData ), null );
 		} );
 	} );
 } );

@@ -1,4 +1,5 @@
 import LocalStorage from './stroages/local-storage';
+import ComponentBase from 'elementor-api/modules/component-base';
 
 export default class Cache {
 	/**
@@ -14,6 +15,20 @@ export default class Cache {
 		this.storage = new LocalStorage();
 	}
 
+	validateRequestData( requestData ) {
+		if ( 'object' !== typeof requestData.component ) {
+			throw new Error( 'Invalid requestData.component.' );
+		}
+
+		if ( 'string' !== typeof requestData.command ) {
+			throw new Error( 'Invalid requestData.command.' );
+		}
+
+		if ( 'string' !== typeof requestData.endpoint ) {
+			throw new Error( 'Invalid requestData.endpoint.' );
+		}
+	}
+
 	/**
 	 * Function receive().
 	 *
@@ -24,6 +39,8 @@ export default class Cache {
 	 * @return {(Promise|boolean)}
 	 */
 	receive( requestData ) {
+		this.validateRequestData( requestData );
+
 		const data = this.get( requestData );
 
 		if ( null !== data ) {
@@ -48,9 +65,7 @@ export default class Cache {
 	 * @param {*} data
 	 */
 	load( requestData, data ) {
-		if ( ! requestData.component ) {
-			throw new Error( 'Invalid `requestData.component`, component is required.' );
-		}
+		this.validateRequestData( requestData );
 
 		const componentName = requestData.component.getNamespace(),
 			nakedEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
@@ -100,6 +115,11 @@ export default class Cache {
 
 		if ( componentData !== null ) {
 			componentData = JSON.parse( componentData );
+
+			if ( componentName === requestData.endpoint ) {
+				return componentData;
+			}
+
 			// Using reduce over endpoint parts it build the right index.
 			const nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
 				nakedEndpointParts = nakedEndpoint.split( '/' ),
@@ -126,22 +146,29 @@ export default class Cache {
 	 * @return {boolean} is updated
 	 */
 	update( requestData ) {
+		if ( 'object' !== typeof requestData.args.data ) {
+			throw new Error( 'requestData.args.data object is excepted.' );
+		}
+
 		const endpoint = requestData.endpoint;
 		let response = {};
 
 		// Simulate response from cache.
 		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /*string*/ endpointValue ] ) => {
-			// Is this component update or specific endpoint?
-			if ( endpoint.includes( endpointKey ) ) {
-				if ( requestData.component.getNamespace() === endpoint ) {
-					// Update component.
-					debugger;
-				} else if ( endpointValue && 'object' === typeof requestData.args.data ) {
-					// Assuming it is a specific endpoint.
-					const oldData = JSON.parse( endpointValue ),
-						nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
-						nakedEndpointParts = nakedEndpoint.split( '/' ),
-						oldSpecificData = nakedEndpointParts.reduce( ( accumulator, nakedEndpointPart ) => accumulator[ nakedEndpointPart ], oldData );
+			if ( endpointValue && endpoint.includes( endpointKey ) ) {
+				// Assuming it is a specific endpoint.
+				const oldData = JSON.parse( endpointValue ),
+					nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+					nakedEndpointParts = nakedEndpoint.split( '/' ),
+					isComponentUpdate = 1 === nakedEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace();
+
+				// Component update or specific update?
+				if ( isComponentUpdate ) {
+					response = jQuery.extend( true, oldData, requestData.args.data );
+				} else {
+					const oldSpecificData = nakedEndpointParts.reduce(
+						( accumulator, nakedEndpointPart ) => accumulator[ nakedEndpointPart ], oldData
+					);
 
 					response = jQuery.extend( true, oldSpecificData, requestData.args.data );
 				}
@@ -171,16 +198,13 @@ export default class Cache {
 	delete( endpoint ) {
 		let result = false;
 
-		Object.keys( this.storage.getAll() ).forEach( ( endpointKey ) => {
-			if ( endpointKey === endpoint ) {
+		for ( const key in this.storage.getAll() ) {
+			if ( key === endpoint ) {
 				this.storage.removeItem( endpoint );
 				result = true;
-			} else if ( endpointKey.includes( endpoint + '/' ) ) {
-				// Handle situations like 'globals/ ... '.
-				this.storage.removeItem( endpointKey );
-				result = true;
+				break;
 			}
-		} );
+		}
 
 		return result;
 	}

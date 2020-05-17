@@ -31,6 +31,9 @@ export default class ComponentBase extends elementorModules.Module {
 		Object.entries( this.getData() ).forEach( ( [ command, callback ] ) => this.registerData( command, callback ) );
 	}
 
+	/**
+	 * @returns {string}
+	 */
 	getNamespace() {
 		elementorModules.ForceMethodImplementation();
 	}
