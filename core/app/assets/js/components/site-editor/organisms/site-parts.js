@@ -16,7 +16,7 @@ export default class SiteParts extends React.Component {
 	render() {
 		const items = this.props.templateTypes.map( ( item ) => {
 			return (
-				<SitePart key={ item.id } { ...item }>
+				<SitePart key={ item.type } { ...item }>
 					{ React.createElement( this.props.hoverElement, item ) }
 				</SitePart>
 			);

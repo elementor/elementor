@@ -5,7 +5,7 @@ import './site-part.css';
 
 export default class SitePart extends React.Component {
 	static propTypes = {
-		id: PropTypes.string.isRequired,
+		type: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		className: PropTypes.string,
 		urls: PropTypes.object,
@@ -18,7 +18,7 @@ export default class SitePart extends React.Component {
 
 	render() {
 		return (
-			<section id={ `site-part__type-${ this.props.id }` } className="elementor-app__site-editor__site-part">
+			<section id={ `site-part__type-${ this.props.type }` } className="elementor-app__site-editor__site-part">
 				<header>
 					{ this.props.title }
 					<a target="_blank" rel="noopener noreferrer" href={ this.props.urls.docs } >

@@ -50,7 +50,7 @@ export default class Promotion extends React.Component {
 	getTemplateTypes() {
 		return [
 			{
-				id: 'header',
+				type: 'header',
 				icon: 'eicon-header',
 				title: __( 'Header', 'elementor' ),
 				urls: {
@@ -58,7 +58,7 @@ export default class Promotion extends React.Component {
 				},
 			},
 			{
-				id: 'footer',
+				type: 'footer',
 				icon: 'eicon-footer',
 				title: __( 'Footer', 'elementor' ),
 				urls: {
@@ -66,7 +66,7 @@ export default class Promotion extends React.Component {
 				},
 			},
 			{
-				id: 'single-post',
+				type: 'single-post',
 				icon: 'eicon-single-post',
 				title: __( 'Single Post', 'elementor' ),
 				urls: {
@@ -74,7 +74,7 @@ export default class Promotion extends React.Component {
 				},
 			},
 			{
-				id: 'error-404',
+				type: 'error-404',
 				icon: 'eicon-error-404',
 				title: __( 'Error 404', 'elementor' ),
 				urls: {
@@ -82,7 +82,7 @@ export default class Promotion extends React.Component {
 				},
 			},
 			{
-				id: 'search-results',
+				type: 'search-results',
 				icon: 'eicon-search-results',
 				title: __( 'Search Results', 'elementor' ),
 				urls: {
@@ -90,7 +90,7 @@ export default class Promotion extends React.Component {
 				},
 			},
 			{
-				id: 'archive',
+				type: 'archive',
 				icon: 'eicon-archive',
 				title: __( 'Archive', 'elementor' ),
 				urls: {
@@ -98,7 +98,7 @@ export default class Promotion extends React.Component {
 				},
 			},
 			{
-				id: 'product',
+				type: 'product',
 				icon: 'eicon-product-images',
 				title: __( 'Product', 'elementor' ),
 				urls: {
@@ -106,7 +106,7 @@ export default class Promotion extends React.Component {
 				},
 			},
 			{
-				id: 'products',
+				type: 'products',
 				icon: 'eicon-products',
 				title: __( 'Products', 'elementor' ),
 				urls: {
@@ -114,7 +114,7 @@ export default class Promotion extends React.Component {
 				},
 			},
 			{
-				id: 'custom',
+				type: 'custom',
 				icon: 'eicon-custom',
 				title: __( 'Custom', 'elementor' ),
 				urls: {

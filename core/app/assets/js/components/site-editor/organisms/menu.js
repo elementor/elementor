@@ -14,7 +14,7 @@ export default class Menu extends React.Component {
 
 	render() {
 		const items =	this.props.items.map( ( item ) => {
-			return <MenuItem key={ item.id } text={ item.title } {...item } />;
+			return <MenuItem key={ item.type } text={ item.title } {...item } />;
 		} );
 
 		return (
