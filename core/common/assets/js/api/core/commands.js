@@ -1,6 +1,7 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
+import Command from '../modules/command';
 
-export default class Commands extends elementorModules.Module {
+export default class Commands extends CommandsBackwardsCompatibility {
 	static trace = [];
 
 	/**
@@ -261,7 +262,7 @@ export default class Commands extends elementorModules.Module {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.trigger( 'run', component, command, args );
+		this.trigger( 'run:before', component, command, args );
 	}
 
 	/**
@@ -285,8 +286,7 @@ export default class Commands extends elementorModules.Module {
 		const instance = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
 
 		// TODO: Remove after all commands inheritance CommandBase.
-		if ( ! instance || ! ( instance instanceof CommandBase ) ) {
-			// Means instance is a result from callback and not command.
+		if ( ! instance || ! ( instance instanceof Command ) ) {
 			this.afterRun( command, args, instance );
 
 			return instance;
@@ -338,6 +338,10 @@ export default class Commands extends elementorModules.Module {
 			onAfter( results );
 		}
 
+		if ( false === args.returnValue ) {
+			return true;
+		}
+
 		return results;
 	}
 
@@ -379,6 +383,8 @@ export default class Commands extends elementorModules.Module {
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
+
+        this.trigger( 'run:after', component, command, args, results );
 	}
 
 	validateInstance( instance, command ) {

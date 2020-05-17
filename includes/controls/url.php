@@ -72,7 +72,8 @@ class Control_URL extends Control_Base_Multiple {
 				'categories' => [ TagsModule::URL_CATEGORY ],
 				'property' => 'url',
 			],
-			'custom_attributes_description' => __( 'Set custom attributes for the link element. Separate attribute keys from values using the | (pipe) character. Separate key-value pairs with a comma.', 'elementor' ),
+			'custom_attributes_description' => __( 'Set custom attributes for the link element. Separate attribute keys from values using the | (pipe) character. Separate key-value pairs with a comma.', 'elementor' )
+			. ' <a href="https://go.elementor.com/panel-link-custom-attributes/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 		];
 	}
 

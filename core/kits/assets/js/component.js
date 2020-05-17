@@ -10,8 +10,38 @@ export default class extends $e.modules.ComponentBase {
 
 	defaultTabs() {
 		return {
-			style: {
+			'site-identity': {
+				title: elementor.translate( 'Site Identity' ),
+				icon: 'eicon-site-identity',
+				helpUrl: 'http://go.elementor.com/panel-site-identity',
+			},
+			// 'colors-and-typography': {
+			// 	title: elementor.translate( 'Colors & Typography' ),
+			// 	icon: 'eicon-colors-typography',
+			// 	helpUrl: 'http://go.elementor.com/panel-colors-and-typography',
+			// },
+			lightbox: {
+				title: elementor.translate( 'Lightbox' ),
+				icon: 'eicon-lightbox-expand',
+				helpUrl: 'http://go.elementor.com/panel-lightbox',
+			},
+			'layout-settings': {
+				title: elementor.translate( 'Layout Settings' ),
+				icon: 'eicon-layout-settings',
+				helpUrl: 'http://go.elementor.com/panel-layout-settings',
+			},
+			'theme-style': {
+				title: elementor.translate( 'Theme Style' ),
+				icon: 'eicon-theme-style',
 				helpUrl: 'http://go.elementor.com/panel-theme-style',
+			},
+		};
+	}
+
+	defaultRoutes() {
+		return {
+			menu: () => {
+				elementor.getPanelView().setPage( 'kit_menu' );
 			},
 		};
 	}
