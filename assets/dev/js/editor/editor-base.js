@@ -328,6 +328,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
+		this.documents = $e.components.register( new EditorDocuments() );
+
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
@@ -381,6 +383,8 @@ export default class EditorBase extends Marionette.Application {
 		if ( this.previewView && this.previewView.el === element ) {
 			this.previewView.destroy();
 		}
+
+		elementor.trigger( 'document:before:preview', document );
 
 		const preview = new Preview( { el: element, model: elementor.elementsModel } );
 
@@ -793,8 +797,6 @@ export default class EditorBase extends Marionette.Application {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
-
-		elementor.documents = $e.components.register( new EditorDocuments() );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();

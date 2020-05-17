@@ -43,7 +43,8 @@ export class Create extends CommandHistory {
 	apply( args ) {
 		const { model, options = {}, containers = [ args.container ] } = args;
 
-		let result = [];
+		let result = [],
+			isIdSetLocal = false;
 
 		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 		if ( ! options.trigger ) {
@@ -56,10 +57,33 @@ export class Create extends CommandHistory {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			const createdContainer = container.view.addElement( model, options ).getContainer();
+			// Since cache require model id, ensure `model.id`.
+			if ( ! model.id ) {
+				model.id = elementor.helpers.getUniqueID();
 
-			result.push( createdContainer );
+				/**
+				 * If id was set locally, its required to be deleted later since its used each loop.
+				 */
+				isIdSetLocal = true;
+			}
 
+			const component = $e.components.get( 'editor/documents' ),
+				command = 'editor/documents/:documentId/elements/:elementId',
+				query = {
+					documentId: container.document.id,
+					elementId: model.id,
+				};
+
+			$e.data.loadCache( component, command, query, model );
+
+			const newContainer = container.view.addElement( model, options ).getContainer();
+
+			if ( isIdSetLocal ) {
+				delete model.id;
+				isIdSetLocal = false;
+			}
+
+			result.push( newContainer );
 			/**
 			 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
 			 * in getHistory().
@@ -71,8 +95,8 @@ export class Create extends CommandHistory {
 					restore: this.constructor.restore,
 					options,
 					data: {
-						containerToRestore: createdContainer,
-						modelToRestore: createdContainer.model.toJSON(),
+						containerToRestore: newContainer,
+						modelToRestore: newContainer.model.toJSON(),
 					},
 				} );
 			}
