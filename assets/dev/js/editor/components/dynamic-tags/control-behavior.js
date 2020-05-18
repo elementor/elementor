@@ -26,7 +26,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.ui.dynamicSwitcher = $dynamicSwitcher;
 
-		if ( 'color' === this.view.model.attributes.type ) {
+		if ( 'color' === this.view.model.get( 'type' ) ) {
 			this.moveDynamicSwitcherToColorPicker();
 		}
 
