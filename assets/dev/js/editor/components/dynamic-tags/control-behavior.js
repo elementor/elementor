@@ -40,7 +40,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	moveDynamicSwitcherToColorPicker: function() {
-		const $colorPickerToolsContainer = jQuery( this.view.colorPicker.picker.getRoot().app ).find( '.elementor-color-picker__tools' );
+		const $colorPickerToolsContainer = this.view.colorPicker.$pickerToolsContainer;
 
 		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'elementor-color-picker__tool' );
 		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );

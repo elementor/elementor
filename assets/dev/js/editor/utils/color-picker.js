@@ -95,6 +95,8 @@ export default class ColorPicker extends elementorModules.Module {
 			$pickerToolsContainer = jQuery( '<div>', { class: classes.pickerToolsContainer } ),
 			isGlobalSettings = this.getSettings( 'isGlobalSettings' );
 
+		this.$pickerToolsContainer = $pickerToolsContainer;
+
 		// Don't create the add button in the Global Settings color pickers
 		if ( ! isGlobalSettings ) {
 			this.createAddButton();
