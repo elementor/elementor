@@ -30,7 +30,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 			// Currently, this.videoID only exists when the video is a YouTube video
 			if ( this.videoID ) {
 				this.apiProvider.onApiReady( ( apiObject ) => {
-					this.prepareYTVideo( apiObject );
+					this.prepareYTVideo( apiObject, true );
 				} );
 
 				return;
@@ -75,7 +75,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
 	}
 
-	prepareYTVideo( YT ) {
+	prepareYTVideo( YT, onOverlayClick ) {
 		const elementSettings = this.getElementSettings(),
 			playerOptions = {
 				videoId: this.videoID,
@@ -85,7 +85,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 							this.player.mute();
 						}
 
-						if ( elementSettings.autoplay ) {
+						if ( elementSettings.autoplay || onOverlayClick ) {
 							this.player.playVideo();
 						}
 					},
