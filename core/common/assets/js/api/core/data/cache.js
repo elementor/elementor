@@ -43,8 +43,8 @@ export default class Cache {
 		const data = this.get( requestData );
 
 		if ( null !== data ) {
-			// If data comes from cache, add 'receiveCache' to requestData.
-			requestData.receiveCache = true;
+			// If data comes from cache, add 'cache = hit' to requestData.
+			requestData.cache = 'hit';
 
 			return new Promise( async ( resolve ) => {
 				resolve( data );

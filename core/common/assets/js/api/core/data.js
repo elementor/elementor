@@ -13,7 +13,7 @@ import Cache from './data/cache';
  * @property {DataTypes} [type]
  * @property {{}} [args]
  * @property {number} [timestamp]
- * @property {boolean} [receiveCache]
+ * @property {('hit'|'miss')} [cache]
  */
 
 // TODO: Return it from the server. Original at WP_REST_Server.
@@ -267,6 +267,8 @@ export default class Data extends Commands {
 	 * @return {{}} params
 	 */
 	fetch( type, requestData ) {
+		requestData.cache = 'miss';
+
 		const params = this.prepareHeaders( type, requestData ),
 			useCache = 'get' === type && ! requestData.args.options?.refresh;
 
