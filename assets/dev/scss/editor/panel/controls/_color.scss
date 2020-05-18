@@ -20,17 +20,17 @@
 			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		}
 
-		.elementor-global-select ~ .pickr {
+		.e-global-select ~ .pickr {
 			border-radius: 0;
 		}
 	}
 
-	.elementor-global-select ~ .pickr {
+	.e-global-select ~ .pickr {
 		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 	}
 }
 
-.elementor-global-color {
+.e-global-color {
 	margin: 5px auto;
 	padding: 5px 20px;
 	display: flex;

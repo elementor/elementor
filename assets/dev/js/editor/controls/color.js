@@ -127,11 +127,11 @@ export default class extends ControlBaseDataView {
 
 	getAddGlobalConfirmMessage( globalColors ) {
 		const color = this.getColorData(),
-			$message = jQuery( '<div>', { class: 'elementor-global-confirm-message' } ),
+			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_color_confirm_text' ) ),
-			$inputWrapper = jQuery( '<div>', { class: 'elementor-global-confirm-input-wrapper' } ),
-			$colorPreview = jQuery( '<div>', { class: 'elementor-global-color__preview', style: 'background-color: ' + color.code } ),
+			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
+			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.code } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.name } )
 				.val( color.name );
 
@@ -159,11 +159,11 @@ export default class extends ControlBaseDataView {
 			color = this.getColorData();
 		}
 
-		const $color = jQuery( '<div>', { class: 'elementor-global-preview elementor-global-color', 'data-elementor-global-name': color.name } ),
-			$colorPreview = jQuery( '<div>', { class: 'elementor-global-color__preview', style: 'background-color: ' + color.code } ),
-			$colorTitle = jQuery( '<span>', { class: 'elementor-global-color__title' } )
+		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global-name': color.name } ),
+			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.code } ),
+			$colorTitle = jQuery( '<span>', { class: 'e-global-color__title' } )
 				.html( color.name ),
-			$colorHex = jQuery( '<span>', { class: 'elementor-global-color__hex' } )
+			$colorHex = jQuery( '<span>', { class: 'e-global-color__hex' } )
 				.html( color.displayCode );
 
 		$color.append( $colorPreview, $colorTitle, $colorHex );
@@ -217,7 +217,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	buildGlobalsList( globalColors ) {
-		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } );
+		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
 		Object.values( globalColors ).forEach( ( color ) => {
 			const $color = this.createGlobalPreviewMarkup( color );
@@ -234,11 +234,11 @@ export default class extends ControlBaseDataView {
 		if ( this.getGlobalValue() ) {
 			this.unsetGlobalValue();
 
-			this.$el.find( '.elementor-global-selected' ).html( elementor.translate( 'custom' ) );
+			this.$el.find( '.e-global-selected' ).html( elementor.translate( 'custom' ) );
 		}
 
-		if ( this.$el.hasClass( 'elementor-invalid-color' ) ) {
-			this.$el.removeClass( 'elementor-invalid-color' );
+		if ( this.$el.hasClass( 'e-invalid-color' ) ) {
+			this.$el.removeClass( 'e-invalid-color' );
 		}
 
 		this.setValue( this.colorPicker.getColor() );
@@ -247,10 +247,10 @@ export default class extends ControlBaseDataView {
 	onPickerClear() {
 		this.setValue( '' );
 
-		this.$el.addClass( 'elementor-invalid-color' );
+		this.$el.addClass( 'e-invalid-color' );
 
 		this.$el
-			.find( '.elementor-global-selected' )
+			.find( '.e-global-selected' )
 			.html( elementor.translate( 'default' ) );
 	}
 

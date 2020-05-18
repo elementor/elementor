@@ -46,7 +46,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			textStyle = this.getTypographyObject();
 		}
 
-		const $textStylePreview = jQuery( '<div>', { class: 'elementor-global-preview elementor-global-text-style', 'data-elementor-global-name': textStyle.name } );
+		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global-name': textStyle.name } );
 
 		$textStylePreview
 			.html( textStyle.name )
@@ -80,10 +80,10 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	getAddGlobalConfirmMessage() {
-		const $message = jQuery( '<div>', { class: 'elementor-global-confirm-message' } ),
+		const $message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_typography_confirm_text' ) ),
-			$inputWrapper = jQuery( '<div>', { class: 'elementor-global-confirm-input-wrapper' } ),
+			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: 'New Text Style' } )
 				.val( 'New Text Style' );
 
@@ -179,7 +179,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	// TODO: Replace placeholders with real global colors
 	buildGlobalsList( globalTextStyles ) {
-		const $globalTypographyContainer = jQuery( '<div>', { class: 'elementor-global-previews-container' } );
+		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
 		globalTextStyles.forEach( ( textStyle ) => {
 			const $textStylePreview = this.createGlobalPreviewMarkup( textStyle );

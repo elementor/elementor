@@ -1,5 +1,5 @@
 // Elementor Global Controls
-.elementor-global {
+.e-global {
 
 	&-select {
 		border: 1px solid $editor-lightest;
@@ -134,13 +134,5 @@
 				border: 0;
 			}
 		}
-	}
-
-	&-no-globals-found {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 15px;
-		font-style: italic;
 	}
 }
