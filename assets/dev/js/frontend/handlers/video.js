@@ -3,7 +3,6 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		return {
 			selectors: {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
-				videoContainer: '.elementor-video-container',
 				video: '.elementor-video',
 				videoIframe: '.elementor-video-iframe',
 			},
@@ -15,7 +14,6 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 
 		return {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
-			$videoContainer: this.$element.find( selectors.videoContainer ),
 			$video: this.$element.find( selectors.video ),
 			$videoIframe: this.$element.find( selectors.videoIframe ),
 		};
@@ -77,32 +75,6 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
 	}
 
-	startVideoLoop( firstTime ) {
-		// If the section has been removed
-		if ( ! this.player.getIframe().contentWindow ) {
-			return;
-		}
-
-		const elementSettings = this.getElementSettings(),
-			startPoint = elementSettings.start || 0,
-			endPoint = elementSettings.end;
-
-		if ( ! elementSettings.loop && ! firstTime ) {
-			this.player.stopVideo();
-			return;
-		}
-
-		this.player.seekTo( startPoint );
-
-		if ( endPoint ) {
-			const durationToEnd = endPoint - startPoint + 1;
-
-			setTimeout( () => {
-				this.startVideoLoop( false );
-			}, durationToEnd * 1000 );
-		}
-	}
-
 	prepareYTVideo( YT ) {
 		const elementSettings = this.getElementSettings(),
 			playerOptions = {
@@ -113,9 +85,9 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 							this.player.mute();
 						}
 
-						this.startVideoLoop( true );
-
-						this.player.playVideo();
+						if ( elementSettings.autoplay ) {
+							this.player.playVideo();
+						}
 					},
 					onStateChange: ( event ) => {
 						if ( event.data === YT.PlayerState.ENDED && elementSettings.loop ) {
@@ -128,8 +100,19 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 					rel: elementSettings.rel ? 1 : 0,
 					playsinline: elementSettings.play_on_mobile ? 1 : 0,
 					modestbranding: elementSettings.modestbranding ? 1 : 0,
+					autoplay: elementSettings.autoplay ? 1 : 0,
+					start: elementSettings.start,
+					end: elementSettings.end,
 				},
 			};
+
+		if ( elementSettings.start ) {
+			playerOptions.start = elementSettings.start;
+		}
+
+		if ( elementSettings.end ) {
+			playerOptions.end = elementSettings.end;
+		}
 
 		if ( elementSettings.yt_privacy ) {
 			playerOptions.host = 'https://www.youtube-nocookie.com';

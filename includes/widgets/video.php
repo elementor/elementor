@@ -276,6 +276,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'frontend_available' => true,
 			]
 		);
 
@@ -830,7 +831,7 @@ class Widget_Video extends Widget_Base {
 			<?php
 			if ( ! $settings['lightbox'] ) {
 				if ( 'youtube' === $settings['video_type'] ) {
-					echo '<div class="elementor-video-container"><div class="elementor-video"></div></div>';
+					echo '<div class="elementor-video"></div>';
 				} else {
 					echo $video_html; // XSS ok.
 				}
