@@ -260,7 +260,7 @@ export default class extends ControlBaseDataView {
 				this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage( globalsList ) );
 			},
 			() => {
-				this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
+				// TODO: What to do if this request fails??
 			},
 		);
 	}
