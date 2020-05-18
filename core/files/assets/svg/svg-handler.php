@@ -642,7 +642,7 @@ class Svg_Handler extends Files_Upload_Handler {
 		if ( ! $file['error'] && self::file_sanitizer_can_run() && ! $this->sanitize_file( $file['tmp_name'] ) ) {
 			$display_type = strtoupper( self::FILE_TYPE );
 
-			$file['error'] = __( "Invalid $display_type Format, file not uploaded for security reasons", 'elementor' );
+			$file['error'] = sprintf( __( 'Invalid %1$s Format, file not uploaded for security reasons', 'elementor' ), $display_type );
 		}
 
 		return $file;

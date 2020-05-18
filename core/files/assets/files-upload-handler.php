@@ -49,12 +49,12 @@ abstract class Files_Upload_Handler {
 		$display_type = strtoupper( static::FILE_TYPE );
 
 		if ( static::FILE_TYPE !== $ext ) {
-			$file['error'] = sprintf( __( "The uploaded %s file is not supported. Please upload a valid $display_type file", 'elementor' ), $ext );
+			$file['error'] = sprintf( __( 'The uploaded %1$s file is not supported. Please upload a valid %2$s file', 'elementor' ), $ext, $display_type );
 			return $file;
 		}
 
-		if ( ! self::is_unfiltered_files_upload_enabled() ) {
-			$file['error'] = __( "$display_type file is not allowed for security reasons", 'elementor' );
+		if ( ! self::is_enabled() ) {
+			$file['error'] = sprintf( __( '%1$s file is not allowed for security reasons', 'elementor' ), $display_type );
 			return $file;
 		}
 
