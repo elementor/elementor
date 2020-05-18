@@ -40,10 +40,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return behaviors;
 	}
 
-	getGlobalValue() {
-		return this.container.globals.get( this.model.get( 'name' ) );
-	}
-
 	createGlobalPreviewMarkup( textStyle ) {
 		// This method is called without a color parameter when the user clicks the "Add" button
 		if ( ! textStyle ) {

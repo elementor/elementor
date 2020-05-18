@@ -27,10 +27,6 @@ export default class extends ControlBaseDataView {
 		return behaviors;
 	}
 
-	getGlobalValue() {
-		return this.container.globals.get( this.model.get( 'name' ) );
-	}
-
 	applySavedValue() {
 		if ( this.colorPicker ) {
 			this.colorPicker.picker.setColor( this.getControlValue() );

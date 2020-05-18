@@ -76,6 +76,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return this.container.settings.get( this.model.get( 'name' ) );
 	},
 
+	getGlobalValue: function() {
+		return this.container.globals.get( this.model.get( 'name' ) );
+	},
+
 	setValue: function( value ) {
 		this.setSettingsModel( value );
 	},
