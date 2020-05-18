@@ -104,24 +104,14 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.view.getGlobalsList()
 			.then(
 			( globalsList ) => {
-				if ( globalsList ) {
-					this.addGlobalsListToPopover( globalsList );
-				} else {
-					this.showEmptyGlobalsMessage();
-				}
+				this.addGlobalsListToPopover( globalsList );
 			},
 			() => {
-				this.showEmptyGlobalsMessage();
+				// TODO: What happens if the request fails??
 			} )
 			.finally( () => this.registerUiElementsAndEvents() );
 
 		this.createGlobalInfoTooltip();
-	}
-
-	showEmptyGlobalsMessage() {
-		const $message = jQuery( '<div>', { class: 'elementor-global-no-globals-found elementor-global-previews-container' } ).html( this.view.getNoGlobalsFoundMessage() );
-
-		this.popover.getElements( 'widget' ).find( '.elementor-global-popover-title' ).after( $message );
 	}
 
 	addGlobalsListToPopover( globalsList ) {

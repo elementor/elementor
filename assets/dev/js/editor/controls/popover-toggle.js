@@ -125,10 +125,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		} );
 	}
 
-	getNoGlobalsFoundMessage() {
-		return elementor.translate( 'no_global_text_styles' );
-	}
-
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
 	async getGlobalsList() {
 		return [

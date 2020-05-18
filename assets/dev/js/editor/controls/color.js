@@ -173,11 +173,6 @@ export default class extends ControlBaseDataView {
 
 		return $color;
 	}
-
-	getNoGlobalsFoundMessage() {
-		return elementor.translate( 'no_global_colors' );
-	}
-
 	// TODO: Replace placeholders with real global colors
 	async getGlobalsList() {
 		return {
