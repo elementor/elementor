@@ -169,6 +169,9 @@ export default class Data extends Commands {
 					endpoint += name + '=' + value + '&';
 				} );
 			}
+
+			// If last character is '&' remove it.
+			endpoint = endpoint.replace( /&$/, '' );
 		}
 
 		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
@@ -339,7 +342,6 @@ export default class Data extends Commands {
 		return this.cache.get( {
 			endpoint: this.commandToEndpoint( command, args ),
 			component,
-
 			command,
 			args,
 		} );

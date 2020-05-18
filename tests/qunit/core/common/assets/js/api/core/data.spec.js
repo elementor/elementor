@@ -55,7 +55,7 @@ jQuery( () => {
 
 			const endpoint = $e.data.commandToEndpoint( command, args );
 
-			assert.equal( endpoint, 'component/command?paramA=valueA&paramB=valueB&', 'Valid endpoint.' );
+			assert.equal( endpoint, 'component/command?paramA=valueA&paramB=valueB', 'Valid endpoint.' );
 		} );
 
 		QUnit.test( 'commandToEndpoint(): command with query and index', ( assert ) => {
@@ -67,7 +67,7 @@ jQuery( () => {
 
 			const endpoint = $e.data.commandToEndpoint( command, args );
 
-			assert.equal( endpoint, 'component?paramA=valueA&paramB=valueB&', 'Valid endpoint.' );
+			assert.equal( endpoint, 'component?paramA=valueA&paramB=valueB', 'Valid endpoint.' );
 		} );
 
 		QUnit.test( 'endpointToCommand(): endpoints with index and id', ( assert ) => {
