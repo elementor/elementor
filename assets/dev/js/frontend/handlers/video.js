@@ -3,6 +3,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		return {
 			selectors: {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
+				videoContainer: '.elementor-video-container',
 				video: '.elementor-video',
 				videoIframe: '.elementor-video-iframe',
 			},
@@ -14,6 +15,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 
 		return {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
+			$videoContainer: this.$element.find( selectors.videoContainer ),
 			$video: this.$element.find( selectors.video ),
 			$videoIframe: this.$element.find( selectors.videoIframe ),
 		};
@@ -26,6 +28,15 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 	handleVideo() {
 		if ( ! this.getElementSettings( 'lightbox' ) ) {
 			this.elements.$imageOverlay.remove();
+
+			// Currently, this.videoID only exists when the video is a YouTube video
+			if ( this.videoID ) {
+				this.apiProvider.onApiReady( ( apiObject ) => {
+					this.prepareYTVideo( apiObject );
+				} );
+
+				return;
+			}
 
 			this.playVideo();
 		}
@@ -66,8 +77,94 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
 	}
 
+	startVideoLoop( firstTime ) {
+		// If the section has been removed
+		if ( ! this.player.getIframe().contentWindow ) {
+			return;
+		}
+
+		const elementSettings = this.getElementSettings(),
+			startPoint = elementSettings.start || 0,
+			endPoint = elementSettings.end;
+
+		if ( ! elementSettings.loop && ! firstTime ) {
+			this.player.stopVideo();
+			return;
+		}
+
+		this.player.seekTo( startPoint );
+
+		if ( endPoint ) {
+			const durationToEnd = endPoint - startPoint + 1;
+
+			setTimeout( () => {
+				this.startVideoLoop( false );
+			}, durationToEnd * 1000 );
+		}
+	}
+
+	prepareYTVideo( YT ) {
+		const elementSettings = this.getElementSettings(),
+			playerOptions = {
+				videoId: this.videoID,
+				events: {
+					onReady: () => {
+						if ( elementSettings.mute ) {
+							this.player.mute();
+						}
+
+						this.startVideoLoop( true );
+
+						this.player.playVideo();
+					},
+					onStateChange: ( event ) => {
+						if ( event.data === YT.PlayerState.ENDED && elementSettings.loop ) {
+							this.player.seekTo( elementSettings.start || 0 );
+						}
+					},
+				},
+				playerVars: {
+					controls: elementSettings.controls ? 1 : 0,
+					rel: elementSettings.rel ? 1 : 0,
+					playsinline: elementSettings.play_on_mobile ? 1 : 0,
+					modestbranding: elementSettings.modestbranding ? 1 : 0,
+				},
+			};
+
+		if ( elementSettings.yt_privacy ) {
+			playerOptions.host = 'https://www.youtube-nocookie.com';
+			playerOptions.playerVars.origin = window.location.hostname;
+		}
+
+		this.player = new YT.Player( this.elements.$video[ 0 ], playerOptions );
+	}
+
 	bindEvents() {
 		this.elements.$imageOverlay.on( 'click', this.handleVideo.bind( this ) );
+	}
+
+	onInit() {
+		super.onInit();
+
+		const elementSettings = this.getElementSettings();
+
+		if ( 'youtube' === elementSettings.video_type ) {
+			this.apiProvider = elementorFrontend.utils.youtube;
+		} else {
+			// Currently the only API integration in the Video widget is for the YT API
+			return;
+		}
+
+		this.videoID = this.apiProvider.getVideoIDFromURL( elementSettings.youtube_url );
+
+		// If there is an image overlay, the YouTube video prep method will be triggered on click
+		if ( ! this.videoID || elementSettings.show_image_overlay ) {
+			return;
+		}
+
+		this.apiProvider.onApiReady( ( apiObject ) => {
+			this.prepareYTVideo( apiObject );
+		} );
 	}
 
 	onElementChange( propertyName ) {

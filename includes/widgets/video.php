@@ -116,6 +116,7 @@ class Widget_Video extends Widget_Base {
 					'dailymotion' => __( 'Dailymotion', 'elementor' ),
 					'hosted' => __( 'Self Hosted', 'elementor' ),
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -137,6 +138,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'youtube',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -243,9 +245,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Start Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
-				'condition' => [
-					'loop' => '',
-				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -256,9 +256,9 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
 				'condition' => [
-					'loop' => '',
 					'video_type' => [ 'youtube', 'hosted' ],
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -287,6 +287,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -295,6 +296,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Mute', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'frontend_available' => true,
 			]
 		);
 
@@ -306,6 +308,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type!' => 'dailymotion',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -320,6 +323,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type!' => 'vimeo',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -346,6 +350,7 @@ class Widget_Video extends Widget_Base {
 					'video_type' => [ 'youtube' ],
 					'controls' => 'yes',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -385,6 +390,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'youtube',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -495,6 +501,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'Hide', 'elementor' ),
 				'label_on' => __( 'Show', 'elementor' ),
+				'frontend_available' => true,
 			]
 		);
 
@@ -822,7 +829,11 @@ class Widget_Video extends Widget_Base {
 		<div <?php echo $this->get_render_attribute_string( 'video-wrapper' ); ?>>
 			<?php
 			if ( ! $settings['lightbox'] ) {
-				echo $video_html; // XSS ok.
+				if ( 'youtube' === $settings['video_type'] ) {
+					echo '<div class="elementor-video-container"><div class="elementor-video"></div></div>';
+				} else {
+					echo $video_html; // XSS ok.
+				}
 			}
 
 			if ( $this->has_image_overlay() ) {
