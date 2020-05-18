@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Files_Upload_Handler {
+	const OPTION_KEY = 'elementor_unfiltered_files_upload';
+
 	public function __construct() {
 		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_files_upload' ] );
 		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_upload_prefilter' ] );
@@ -24,8 +26,26 @@ abstract class Files_Upload_Handler {
 	/**
 	 * @return bool
 	 */
-	public function is_unfiltered_files_upload_enabled() {
-		return ! ! get_option( 'elementor_unfiltered_files_upload', false );
+	final public static function is_enabled() {
+		$enabled = ! ! get_option( self::OPTION_KEY ) && self::file_sanitizer_can_run();
+
+		/**
+		 * @deprecated 2.9.9 Use `elementor/document/urls/edit` filter instead.
+		 */
+		$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
+
+		/**
+		 * Allow Unfiltered Files Upload.
+		 *
+		 * Determines weather to enable unfiltered files upload.
+		 *
+		 * @since 2.9.9
+		 *
+		 * @param bool $enabled Weather upload is enabled or not.
+		 */
+		$enabled = apply_filters( 'elementor/files/allow_unfiltered_upload', $enabled );
+
+		return $enabled;
 	}
 
 	final public function support_unfiltered_files_upload( $existing_mimes ) {
@@ -66,7 +86,16 @@ abstract class Files_Upload_Handler {
 	}
 
 	/**
-	 * check_filetype_and_ext
+	 * file_sanitizer_can_run
+	 * @return bool
+	 */
+	public static function file_sanitizer_can_run() {
+		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
+	}
+
+	/**
+	 * Check filetype and ext
+	 *
 	 * A workaround for upload validation which relies on a PHP extension (fileinfo)
 	 * with inconsistent reporting behaviour.
 	 * ref: https://core.trac.wordpress.org/ticket/39550

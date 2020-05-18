@@ -648,21 +648,6 @@ class Svg_Handler extends Files_Upload_Handler {
 		return $file;
 	}
 
-	public function is_unfiltered_files_upload_enabled() {
-		$enabled = parent::is_unfiltered_files_upload_enabled() && self::file_sanitizer_can_run();
-		$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
-
-		return $enabled;
-	}
-
-	/**
-	 * file_sanitizer_can_run
-	 * @return bool
-	 */
-	public static function file_sanitizer_can_run() {
-		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
-	}
-
 	/**
 	 * Svg_Handler constructor.
 	 */

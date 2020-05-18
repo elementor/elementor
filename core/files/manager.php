@@ -2,6 +2,7 @@
 namespace Elementor\Core\Files;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Files\Assets\Json\Json_Handler;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Files\CSS\Global_CSS;
@@ -145,7 +146,7 @@ class Manager {
 	}
 
 	public function ajax_unfiltered_files_upload() {
-		update_option( 'elementor_unfiltered_files_upload', 1 );
+		update_option( Files_Upload_Handler::OPTION_KEY, 1 );
 	}
 
 	/**

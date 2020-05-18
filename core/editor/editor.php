@@ -5,6 +5,7 @@ use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Files\Assets\Json\Json_Handler;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Responsive\Responsive;
@@ -541,9 +542,8 @@ class Editor {
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
 				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
-			'is_unfiltered_files_upload_enabled' => [
-				'svg' => Plugin::$instance->files_manager->svg_handler->is_unfiltered_files_upload_enabled(),
-				'json' => Plugin::$instance->files_manager->json_handler->is_unfiltered_files_upload_enabled(),
+			'filesUpload' => [
+				'unfilteredFiles' => Files_Upload_Handler::is_enabled(),
 			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
