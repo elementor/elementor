@@ -1,4 +1,4 @@
-import FilesUploadEnabler from '../utils/files-upload-enabler';
+import FilesUploadHanlder from '../utils/files-upload-hanlder';
 
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
@@ -45,8 +45,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	openFrame: function() {
-		if ( this.frame && ! FilesUploadEnabler.isUploadEnabled( this.getMediaType(), this.frame ) ) {
-			FilesUploadEnabler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+		if ( ! FilesUploadHanlder.isUploadEnabled( this.getMediaType() ) ) {
+			FilesUploadHanlder.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
 
 			return false;
 		}
@@ -57,8 +57,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		this.frame.open();
 
-		this.frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
-		this.frame.uploader.uploader.param( 'upload_type', 'application/json' );
+		// Set params to trigger sanitizer
+		FilesUploadHanlder.uploadTypeCaller( this.frame );
 
 		const selectedId = this.getControlValue( 'id' );
 

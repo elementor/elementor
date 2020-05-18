@@ -1,4 +1,4 @@
-export default class FilesUploadEnabler {
+export default class FilesUploadHanlder {
 	static isUploadEnabled( mediaType ) {
 		const unfilteredFilesTypes = [ 'svg', 'application/json' ];
 
