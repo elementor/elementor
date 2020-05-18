@@ -76,6 +76,17 @@ export default class Button extends React.Component {
 		);
 
 		if ( this.props.url ) {
+			// @see https://reach.tech/router/example/active-links.
+			attributes.getProps = ( props ) => {
+				if ( props.isCurrent ) {
+					attributes.className += ' active';
+				}
+
+				return {
+					className: attributes.className,
+				};
+			};
+
 			return (
 			<LocationProvider history={ elementorAppLoader.app.history }>
 				<Link to={ this.props.url } { ...attributes } >

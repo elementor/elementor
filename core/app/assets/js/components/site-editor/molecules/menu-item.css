@@ -1,0 +1,7 @@
+.elementor-app__site-editor__menu-item {
+	display: block;
+}
+
+.elementor-app__site-editor__menu-item.active {
+	border-left: 3px solid #0acbf5;
+}
