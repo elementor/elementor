@@ -57,7 +57,7 @@ jQuery( () => {
 
 			const result = await $e.data.cache.receive( requestData );
 
-			assert.equal( requestData.receiveCache, true ); // added to requestData by receive.
+			assert.equal( requestData.cache, 'hit' ); // added to requestData by receive.
 			assert.equal( randomValue, result );
 		} );
 

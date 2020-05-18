@@ -1,6 +1,7 @@
+import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import LocalStorage from './stroages/local-storage';
 
-export default class Cache {
+export default class Cache extends ArgsObject {
 	/**
 	 * Function constructor().
 	 *
@@ -9,23 +10,17 @@ export default class Cache {
 	 * @param {Data} manager
 	 */
 	constructor( manager ) {
+		super( {} );
+
 		this.manager = manager;
 
 		this.storage = new LocalStorage();
 	}
 
 	validateRequestData( requestData ) {
-		if ( 'object' !== typeof requestData.component ) {
-			throw new Error( 'Invalid requestData.component.' );
-		}
-
-		if ( 'string' !== typeof requestData.command ) {
-			throw new Error( 'Invalid requestData.command.' );
-		}
-
-		if ( 'string' !== typeof requestData.endpoint ) {
-			throw new Error( 'Invalid requestData.endpoint.' );
-		}
+		this.requireArgument( 'component', requestData );
+		this.requireArgumentType( 'command', 'string', requestData );
+		this.requireArgumentType( 'endpoint', 'string', requestData );
 	}
 
 	/**
@@ -43,8 +38,8 @@ export default class Cache {
 		const data = this.get( requestData );
 
 		if ( null !== data ) {
-			// If data comes from cache, add 'receiveCache' to requestData.
-			requestData.receiveCache = true;
+			// If data comes from cache, add 'cache = hit' to requestData.
+			requestData.cache = 'hit';
 
 			return new Promise( async ( resolve ) => {
 				resolve( data );

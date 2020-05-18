@@ -59,7 +59,7 @@ abstract class Endpoint {
 	 *
 	 * @return string current location will later be added automatically.
 	 */
-	public static function get_format_suffix() {
+	public static function get_format() {
 		return '';
 	}
 
@@ -115,10 +115,10 @@ abstract class Endpoint {
 		$component_name = $endpoint_instance->controller->get_rest_base();
 		$parent_instance = $endpoint_instance->get_parent();
 		$parent_name = $endpoint_instance->get_name();
-		$parent_format_suffix = $parent_instance::get_format_suffix();
+		$parent_format_suffix = $parent_instance::get_format();
 
 		$command = $component_name . '/' . $parent_name;
-		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $endpoint_instance::get_format_suffix();
+		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $endpoint_instance::get_format();
 
 		$this->controller->register_endpoint_format( $command, $format );
 	}
@@ -255,7 +255,7 @@ abstract class Endpoint {
 	}
 
 	protected function create_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( __( "Method '%s' not implemented. Must be overridden in subclass." ), __METHOD__ ), array( 'status' => 405 ) );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
