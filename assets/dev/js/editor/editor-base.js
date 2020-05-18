@@ -328,6 +328,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
+		elementor.documents = $e.components.register( new EditorDocuments() );
+
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
@@ -793,8 +795,6 @@ export default class EditorBase extends Marionette.Application {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
-
-		elementor.documents = $e.components.register( new EditorDocuments() );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();

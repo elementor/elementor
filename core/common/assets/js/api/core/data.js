@@ -176,7 +176,7 @@ export default class Data extends Commands {
 
 		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
 		// eg: 'documents/:documentId/elements/:elementId' and args { documentId: 4123 }.
-		// result: 'documents/:documentId/elements'
+		// result: 'documents/4123/elements'
 		if ( endpoint.includes( '/:' ) ) {
 			endpoint = endpoint.substring( 0, endpoint.indexOf( '/:' ) );
 		}
