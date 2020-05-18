@@ -1,14 +1,12 @@
 export default class FilesUploadEnabler {
 	static isUploadEnabled( mediaType ) {
-		if ( 'application/json' === mediaType ) {
-			mediaType = 'json';
-		}
+		const unfilteredFilesTypes = [ 'svg', 'application/json' ];
 
-		if ( undefined === elementor.config.is_unfiltered_files_upload_enabled[ mediaType ] ) {
+		if ( ! unfilteredFilesTypes.includes( mediaType ) ) {
 			return true;
 		}
 
-		return elementor.config.is_unfiltered_files_upload_enabled[ mediaType ] || FilesUploadEnabler.isFilesUploadDialogConfirmed;
+		return elementor.config.filesUpload.unfilteredFiles;
 	}
 
 	static uploadTypeCaller( frame ) {
@@ -18,12 +16,12 @@ export default class FilesUploadEnabler {
 	static getUnfilteredFilesNotEnabledDialog( callback ) {
 		const onConfirm = () => {
 			elementorCommon.ajax.addRequest( 'enable_unfiltered_files_upload', {}, true );
-			FilesUploadEnabler.isFilesUploadDialogConfirmed = true;
+			elementor.config.filesUpload.unfilteredFiles = true;
 			callback();
 		};
 
 		return elementor.helpers.getSimpleDialog(
-			'elementor-enable-svg-dialog',
+			'e-enable-unfiltered-files-dialog',
 			elementor.translate( 'enable_unfiltered_files_upload' ),
 			elementor.translate( 'dialog_confirm_enable_unfiltered_files_upload' ),
 			elementor.translate( 'enable' ),
