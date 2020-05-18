@@ -104,6 +104,10 @@ export default class Data extends Commands {
 	 *
 	 * Convert command to endpoint.
 	 *
+	 * For example `component/command/:arg_example` => `controller/endpoint/8`.
+	 *
+	 * TODO: Find a better solution.
+	 *
 	 * @param {string} command
 	 * @param {{}} args
 	 * @param {string|null} [format]
@@ -123,6 +127,7 @@ export default class Data extends Commands {
 				const magicParams = format.split( '/' ).filter( ( str ) => ':' === str.charAt( 0 ) );
 
 				magicParams.forEach( ( param ) => {
+					// Remove the ':'.
 					param = param.substr( 1 );
 
 					const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
@@ -156,7 +161,7 @@ export default class Data extends Commands {
 				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
 			);
 
-			// `args.query` will become part of GET params.
+			// `args.query` will become a part of GET params.
 			if ( queryEntries.length ) {
 				endpoint += '?';
 
@@ -166,6 +171,9 @@ export default class Data extends Commands {
 			}
 		}
 
+		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
+		// eg: 'documents/:documentId/elements/:elementId' and args { documentId: 4123 }.
+		// result: 'documents/:documentId/elements'
 		if ( endpoint.includes( '/:' ) ) {
 			endpoint = endpoint.substring( 0, endpoint.indexOf( '/:' ) );
 		}
@@ -176,7 +184,9 @@ export default class Data extends Commands {
 	/**
 	 * Function endpointToCommand().
 	 *
-	 * Convect endpoint to command.
+	 * Convert endpoint to command.
+	 *
+	 * TODO: Find a better solution
 	 *
 	 * @param {string} endpoint
 	 * @param {object} args
@@ -248,7 +258,7 @@ export default class Data extends Commands {
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
 			Object.assign( params, {
 				method,
-				headers: headers,
+				headers,
 				body: JSON.stringify( requestData ),
 			} );
 		} else {
