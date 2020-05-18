@@ -11,8 +11,7 @@ export default class CommandData extends CommandBase {
 		/**
 		 * Data returned from remote.
 		 *
-		 * @type {{}}
-		 * // TODO delete.
+		 * @type {*}
 		 */
 		this.data = {};
 	}
@@ -60,6 +59,7 @@ export default class CommandData extends CommandBase {
 		const type = this.args.options.type,
 			applyMethods = this.getApplyMethods( type );
 
+		// Run 'before' method.
 		this.args = applyMethods.before( this.args );
 
 		const requestData = {
@@ -74,7 +74,7 @@ export default class CommandData extends CommandBase {
 		return $e.data.fetch( type, requestData ).then( ( data ) => {
 			this.data = data;
 
-			// Run apply filter.
+			// Run 'after' method.
 			this.data = applyMethods.after( data, this.args );
 
 			this.data = { data: this.data };
