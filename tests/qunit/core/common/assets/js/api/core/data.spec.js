@@ -119,7 +119,7 @@ jQuery( () => {
 		 * to test *fetch* with different approaches.
 		 */
 		QUnit.test( 'fetch(): simple', async ( assert ) => {
-			const testComponent = $e.components.register( new class TestComponent extends ComponentBase {
+			$e.components.register( new class TestComponent extends ComponentBase {
 				getNamespace() {
 					return 'test-component-fetch-simple';
 				}
@@ -242,9 +242,9 @@ jQuery( () => {
 			$e.data.loadCache( component, 'test-component-cache-manually/test-command', query, data );
 
 			// Get cache.
-            const result = await $e.data.get( 'test-component-cache-manually/test-command', query );
+			const result = await $e.data.get( 'test-component-cache-manually/test-command', query );
 
-            // Validate if data is same as result.data.
+			// Validate if data is same as result.data.
 			assert.deepEqual( data, result.data );
 		} );
 
@@ -424,10 +424,10 @@ jQuery( () => {
 
 		QUnit.test( 'deleteCache(): simple', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
-					getNamespace() {
-						return 'delete-cache-simple-component';
-					}
-				} );
+				getNamespace() {
+					return 'delete-cache-simple-component';
+				}
+			} );
 
 			$e.data.loadCache( component, component.getNamespace(), {}, {} );
 
