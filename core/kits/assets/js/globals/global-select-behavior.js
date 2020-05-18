@@ -28,7 +28,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	applySavedGlobalValue( globalName ) {
-		//this.view.enableGlobalValue( globalName );
+		//this.view.setGlobalValue( globalName );
 
 		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
 
@@ -153,7 +153,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 					title: globalData.name,
 				} );*/
 
-				// this.view.enableGlobalValue( globalData.name );
+				// this.view.setGlobalValue( globalData.name );
 
 				const $globalPreview = this.view.createGlobalPreviewMarkup( globalData );
 

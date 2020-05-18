@@ -96,7 +96,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return $message;
 	}
 
-	enableGlobalValue( textStyleName ) {
+	setGlobalValue( textStyleName ) {
 		if ( this.getGlobalValue() ) {
 			// If a global text style is already active, switch them without disabling globals
 			$e.run( 'document/globals/settings', {
@@ -116,7 +116,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		}
 	}
 
-	disableGlobalValue() {
+	unsetGlobalValue() {
 		$e.run( 'document/globals/disable', {
 			container: elementor.getCurrentElement().getContainer(),
 			settings: {

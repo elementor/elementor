@@ -66,13 +66,13 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 
 		this.$pickerButton.tipsy( {
-			title: () => this.getControlValue() ? this.getColorObject().displayCode : '',
+			title: () => this.getControlValue() ? this.getColorData().displayCode : '',
 			offset: 4,
 			gravity: () => 's',
 		} );
 	}
 
-	getColorObject() {
+	getColorData() {
 		const color = this.colorPicker.picker.getColor(),
 			colorObject = {};
 
@@ -96,7 +96,7 @@ export default class extends ControlBaseDataView {
 		return ntc.name( color )[ 1 ];
 	}
 
-	enableGlobalValue( colorName ) {
+	setGlobalValue( colorName ) {
 		if ( this.getGlobalValue() ) {
 			// If a global color is already active, switch them without disabling globals
 			$e.run( 'document/globals/settings', {
@@ -116,7 +116,7 @@ export default class extends ControlBaseDataView {
 		}
 	}
 
-	disableGlobalValue() {
+	unsetGlobalValue() {
 		$e.run( 'document/globals/disable', {
 			container: elementor.getCurrentElement().getContainer(),
 			settings: {
@@ -126,7 +126,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	getAddGlobalConfirmMessage( globalColors ) {
-		const color = this.getColorObject(),
+		const color = this.getColorData(),
 			$message = jQuery( '<div>', { class: 'elementor-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_color_confirm_text' ) ),
@@ -156,7 +156,7 @@ export default class extends ControlBaseDataView {
 	createGlobalPreviewMarkup( color ) {
 		// This method is called without a color parameter when the user clicks the "Add" button
 		if ( ! color ) {
-			color = this.getColorObject();
+			color = this.getColorData();
 		}
 
 		const $color = jQuery( '<div>', { class: 'elementor-global-preview elementor-global-color', 'data-elementor-global-name': color.name } ),
@@ -232,7 +232,7 @@ export default class extends ControlBaseDataView {
 
 	onPickerChange() {
 		if ( this.getGlobalValue() ) {
-			this.disableGlobalValue();
+			this.unsetGlobalValue();
 
 			this.$el.find( '.elementor-global-selected' ).html( elementor.translate( 'custom' ) );
 		}
