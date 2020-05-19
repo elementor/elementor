@@ -9,7 +9,7 @@ export default class FilesUploadHanlder {
 		return elementor.config.filesUpload.unfilteredFiles;
 	}
 
-	static setUploadTypeCaller(frame ) {
+	static setUploadTypeCaller( frame ) {
 		frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
 	}
 
