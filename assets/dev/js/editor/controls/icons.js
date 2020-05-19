@@ -242,7 +242,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.frame.open();
 
 		// Set params to trigger sanitizer
-		FilesUploadHanlder.uploadTypeCaller( this.frame );
+		FilesUploadHanlder.setUploadTypeCaller( this.frame );
 
 		const selectedId = this.getControlValue( 'id' );
 		if ( ! selectedId ) {
