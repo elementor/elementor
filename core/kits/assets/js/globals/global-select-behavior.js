@@ -145,7 +145,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				onBackgroundClick: false,
 			},
 			onConfirm: () => {
-				const globalData = $confirmMessage.data( 'globalData' );
+				const globalData = this.view.getNewGlobalData();
 
 				globalData.name = this.globalNameInput.val();
 
@@ -157,11 +157,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				// this.view.setGlobalValue( globalData.name );
 
-				const $globalPreview = this.view.createGlobalPreviewMarkup( globalData );
+				const $globalPreview = this.view.createGlobalItemMarkup( globalData );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
 
-				this.applySavedGlobalValue( globalData.name );
+				this.applySavedGlobalValue( globalData.value );
 			},
 			onShow: () => {
 				// Put focus on the naming input

@@ -66,13 +66,13 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 
 		this.$pickerButton.tipsy( {
-			title: () => this.getControlValue() ? this.getColorData().displayCode : '',
+			title: () => this.getControlValue() ? this.getNewGlobalData().displayCode : '',
 			offset: 4,
 			gravity: () => 's',
 		} );
 	}
 
-	getColorData() {
+	getNewGlobalData() {
 		const color = this.colorPicker.picker.getColor(),
 			colorObject = {};
 
@@ -126,7 +126,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	getAddGlobalConfirmMessage( globalColors ) {
-		const color = this.getColorData(),
+		const color = this.getNewGlobalData(),
 			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_color_confirm_text' ) ),
@@ -152,18 +152,16 @@ export default class extends ControlBaseDataView {
 
 		$message.append( $messageText, $inputWrapper );
 
-		$message.data( 'globalData', color );
-
 		return $message;
 	}
 
-	createGlobalPreviewMarkup( color ) {
+	createGlobalItemMarkup( color ) {
 		// This method is called without a color parameter when the user clicks the "Add" button
 		if ( ! color ) {
-			color = this.getColorData();
+			color = this.getNewGlobalData();
 		}
 
-		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global-name': color.name } ),
+		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global-name': color.value } ),
 			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.code } ),
 			$colorTitle = jQuery( '<span>', { class: 'e-global-color__title' } )
 				.html( color.name ),
@@ -172,9 +170,6 @@ export default class extends ControlBaseDataView {
 
 		$color.append( $colorPreview, $colorTitle, $colorHex );
 
-		// Make the name and hex values easily available for the preview in the confirm dialog
-		$color.data( 'globalData', color );
-
 		return $color;
 	}
 	// TODO: Replace placeholders with real global colors
@@ -182,49 +177,58 @@ export default class extends ControlBaseDataView {
 		return {
 			Primary: {
 				name: 'Primary',
+				value: 'globals/colors/primary',
 				code: '#4631DA',
 				displayCode: '#4631DA',
 			},
 			Secondary: {
 				name: 'Secondary',
+				value: 'globals/colors/secondary',
 				code: '#71D7F7',
 				displayCode: '#71D7F7',
 			},
 			Text: {
 				name: 'Text',
+				value: 'globals/colors/text',
 				code: '#495157',
 				displayCode: '#495157',
 			},
 			Accent: {
 				name: 'Accent',
+				value: 'globals/colors/accent',
 				code: '#A4AFB7',
 				displayCode: '#A4AFB7',
 			},
 			OrangeRed: {
 				name: 'Orange Red',
+				value: 'globals/colors/orange-red',
 				code: '#FF650E',
 				displayCode: '#FF650E',
 			},
 			Crimson: {
 				name: 'Crimson',
+				value: 'globals/colors/crimson',
 				code: '#F3113A',
 				displayCode: '#F3113A',
 			},
 			GrassGreen: {
 				name: 'Grass Green',
+				value: 'globals/colors/grass-green',
 				code: '#048647',
 				displayCode: '#048647',
 			},
 		};
 
-		return await $e.data.get( 'globals/colors' );
+		/*const result = await $e.data.get( 'globals/colors' );
+
+		return result.data;*/
 	}
 
 	buildGlobalsList( globalColors ) {
 		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
 		Object.values( globalColors ).forEach( ( color ) => {
-			const $color = this.createGlobalPreviewMarkup( color );
+			const $color = this.createGlobalItemMarkup( color );
 
 			$globalColorsPreviewContainer.append( $color );
 		} );

@@ -40,13 +40,13 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return behaviors;
 	}
 
-	createGlobalPreviewMarkup( textStyle ) {
-		// This method is called without a color parameter when the user clicks the "Add" button
+	createGlobalItemMarkup( textStyle ) {
+		// This method is called without a parameter when the user clicks the "Add" button
 		if ( ! textStyle ) {
 			textStyle = this.getTypographyObject();
 		}
 
-		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global-name': textStyle.name } );
+		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global-name': textStyle.value } );
 
 		$textStylePreview
 			.html( textStyle.name )
@@ -56,9 +56,10 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH VALUES OF THE TYPOGRAPHY CONTROLS
-	getTypographyObject() {
+	getNewGlobalData() {
 		return {
-			name: 'Primary',
+			name: 'New Style',
+			value: 'globals/typography/new-style',
 			fontFamily: 'Varela',
 			fontSize: '34px',
 			fontWeight: 'normal',
@@ -81,8 +82,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		$inputWrapper.append( $input );
 
 		$message.append( $messageText, $inputWrapper );
-
-		$message.data( 'globalData', this.getTypographyObject() );
 
 		return $message;
 	}
@@ -121,6 +120,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return [
 			{
 				name: 'Primary',
+				value: 'globals/typography/primary',
 				fontFamily: 'Varela',
 				fontSize: '34px',
 				fontWeight: 'normal',
@@ -132,6 +132,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			},
 			{
 				name: 'Secondary',
+				value: 'globals/typography/secondary',
 				fontFamily: 'Varela',
 				fontSize: '28px',
 				fontWeight: 'normal',
@@ -143,6 +144,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			},
 			{
 				name: 'Text',
+				value: 'globals/typography/text',
 				fontFamily: 'Varela',
 				fontSize: '15px',
 				fontWeight: 'normal',
@@ -154,6 +156,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			},
 			{
 				name: 'Accent',
+				value: 'globals/typography/accent',
 				fontFamily: 'Varela',
 				fontSize: '12px',
 				fontWeight: 'normal',
@@ -165,7 +168,9 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			},
 		];
 
-		return await $e.data.get( 'globals/typography' );
+		/*const result = await $e.data.get( 'globals/typography' );
+
+		return result.data;*/
 	}
 
 	// TODO: Replace placeholders with real global colors
@@ -173,7 +178,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
 		globalTextStyles.forEach( ( textStyle ) => {
-			const $textStylePreview = this.createGlobalPreviewMarkup( textStyle );
+			const $textStylePreview = this.createGlobalItemMarkup( textStyle );
 
 			$globalTypographyContainer.append( $textStylePreview );
 		} );
