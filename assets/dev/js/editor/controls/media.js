@@ -30,14 +30,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	applySavedValue: function() {
 		var url = this.getControlValue( 'url' ),
-			mediaType = this.getMediaType(),
-			fileName = url.split( '/' ).pop();
+			mediaType = this.getMediaType();
 
 		if ( 'image' === mediaType ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
 		} else {
+			const fileName = url ? url.split( '/' ).pop() : '';
 			this.ui.fileName.text( fileName );
 		}
 
