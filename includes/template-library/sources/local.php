@@ -787,14 +787,6 @@ class Source_Local extends Source_Base {
 	 * [
 	 *  0 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-2-col-marble-title.json',
 	 *  1 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-2-col-text-and-photo.json',
-	 *  2 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-3-col-articles.json',
-	 *  3 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-3-col-icon-boxes.json',
-	 *  4 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-3-col-pricing-table.json',
-	 *  5 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-4-col-staff-circles.json',
-	 *  6 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-call-to-action-bar-tall.json',
-	 *  7 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-call-to-action-bar-with-button.json',
-	 *  8 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-contact-form-and-details.json',
-	 *  9 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-footer.json',
 	 * ]
 	 *
 	 * @since 2.9.8
@@ -865,7 +857,7 @@ class Source_Local extends Source_Base {
 				$zipped_file_name = $zip->getNameIndex( $i );
 				$zipped_extension = pathinfo( $zipped_file_name, PATHINFO_EXTENSION );
 				// Template Kit zip files contain a `manifest.json` file, this is not a valid Elementor template so ensure we skip it.
-				if ( 'manifest.json' !== $zipped_file_name && 'json' === $zipped_extension ) {
+				if ( 'json' === $zipped_extension && 'manifest.json' !== $zipped_file_name ) {
 					$valid_entries[] = $zipped_file_name;
 				}
 			}
