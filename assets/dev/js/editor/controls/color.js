@@ -87,7 +87,7 @@ export default class extends ControlBaseDataView {
 
 	getColorName( colorObject ) {
 		//  Check if the display value is HEX or HEXA (HEXA = with transparency)
-		const color = 7 < colorObject.displayCode.length ? colorObject.displayCode.slice( 0, 6 ) : colorObject.code;
+		const color = 7 < colorObject.displayCode.length ? colorObject.displayCode.slice( 0, 7 ) : colorObject.code;
 
 		return ntc.name( color )[ 1 ];
 	}
