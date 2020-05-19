@@ -213,20 +213,12 @@
 		}
 	}
 
-	//&start .elementor-field-type-submit {
-	//	justify-content: getValueByDirection(flex-start, flex-end);
-	//}
-
 	&start {
 		.elementor-field-type-submit,
 		.e-form__buttons {
 			justify-content: getValueByDirection(flex-start, flex-end);
 		}
 	}
-
-	//&end .elementor-field-type-submit {
-	//	justify-content: getValueByDirection(flex-end, flex-start);
-	//}
 
 	&end {
 		.elementor-field-type-submit,
