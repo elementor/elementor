@@ -84,6 +84,7 @@ class App extends BaseApp {
 			$this->get_js_assets_url( 'app-loader' ),
 			[
 				'wp-i18n',
+				'react',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -92,7 +93,10 @@ class App extends BaseApp {
 		wp_enqueue_script(
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
-			[],
+			[
+				'react',
+				'react-dom',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);

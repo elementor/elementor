@@ -98,6 +98,7 @@ const webpackConfig = {
 	watch: true,
 	externals: {
 		'@wordpress/i18n': 'wp.i18n',
+		react: 'React',
 	}
 };
 
