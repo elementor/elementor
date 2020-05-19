@@ -1,6 +1,7 @@
+import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import LocalStorage from './stroages/local-storage';
 
-export default class Cache {
+export default class Cache extends ArgsObject {
 	/**
 	 * Function constructor().
 	 *
@@ -9,29 +10,29 @@ export default class Cache {
 	 * @param {Data} manager
 	 */
 	constructor( manager ) {
+		super( {} );
+
 		this.manager = manager;
 
 		this.storage = new LocalStorage();
 	}
 
+	/**
+	 * Function validateRequestData().
+	 *
+	 * @param {RequestData} requestData
+	 */
 	validateRequestData( requestData ) {
-		if ( 'object' !== typeof requestData.component ) {
-			throw new Error( 'Invalid requestData.component.' );
-		}
-
-		if ( 'string' !== typeof requestData.command ) {
-			throw new Error( 'Invalid requestData.command.' );
-		}
-
-		if ( 'string' !== typeof requestData.endpoint ) {
-			throw new Error( 'Invalid requestData.endpoint.' );
-		}
+		this.requireArgument( 'component', requestData );
+		this.requireArgumentType( 'command', 'string', requestData );
+		this.requireArgumentType( 'endpoint', 'string', requestData );
 	}
 
 	/**
 	 * Function receive().
 	 *
-	 * Receive from cache.
+	 * Receive from cache. the difference between receive() and get() is that receive return it as promise...
+	 * to fake fetch mechanism.
 	 *
 	 * @param {RequestData} requestData
 	 *
@@ -43,8 +44,8 @@ export default class Cache {
 		const data = this.get( requestData );
 
 		if ( null !== data ) {
-			// If data comes from cache, add 'receiveCache' to requestData.
-			requestData.receiveCache = true;
+			// If data comes from cache, add 'cache = hit' to requestData.
+			requestData.cache = 'hit';
 
 			return new Promise( async ( resolve ) => {
 				resolve( data );
@@ -58,7 +59,10 @@ export default class Cache {
 	/**
 	 * Function load().
 	 *
-	 * Load data to cache
+	 * Load data to cache.
+	 *
+	 * The difference between load() and update() is that load, will modify the data anyway...
+	 * when update() will only modify exist objects/values.
 	 *
 	 * @param {RequestData} requestData
 	 * @param {*} data
@@ -72,9 +76,10 @@ export default class Cache {
 
 		let newData = {};
 
+		// Example of working with reaming endpoint part(s) at 'cache.spec.js' test: 'load(): deep'.
 		// Analyze reaming endpoint.
 		if ( nakedEndpointParts.length && nakedEndpoint !== componentName ) {
-			// Using reaming endpoint build new data object.
+			// Using reaming endpoint parts, to build new data object.
 			const result = nakedEndpointParts.reduce( ( accumulator, nakedEndpointPart ) => {
 				accumulator[ nakedEndpointPart ] = {};
 
@@ -89,6 +94,7 @@ export default class Cache {
 
 		let oldData = this.storage.getItem( componentName );
 
+		// When have old data, merge it recursively with newData using jQuery.extend().
 		if ( oldData !== null ) {
 			oldData = JSON.parse( oldData );
 

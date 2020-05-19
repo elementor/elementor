@@ -20,14 +20,14 @@ jQuery( () => {
 			assert.throws( () => {
 					$e.data.cache.validateRequestData( {} );
 				},
-				new Error( 'Invalid requestData.component.' )
+				new Error( 'component is required.' )
 			);
 			assert.throws( () => {
 					$e.data.cache.validateRequestData( {
 						component: {},
 					} );
 				},
-				new Error( 'Invalid requestData.command.' )
+				new Error( 'command is required.' )
 			);
 			assert.throws( () => {
 					$e.data.cache.validateRequestData( {
@@ -35,7 +35,7 @@ jQuery( () => {
 						command: '',
 					} );
 				},
-				new Error( 'Invalid requestData.endpoint.' )
+				new Error( 'endpoint is required.' )
 			);
 		} );
 
@@ -57,14 +57,14 @@ jQuery( () => {
 
 			const result = await $e.data.cache.receive( requestData );
 
-			assert.equal( requestData.receiveCache, true ); // added to requestData by receive.
+			assert.equal( requestData.cache, 'hit' ); // added to requestData by receive.
 			assert.equal( randomValue, result );
 		} );
 
-		QUnit.test( 'load(): simple', ( assert ) => {
+		QUnit.test( 'load(): value', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
-						return 'load-simple-component';
+						return 'load-value-component';
 					}
 				} ),
 				randomValue = Math.random().toString(),
@@ -79,10 +79,10 @@ jQuery( () => {
 			assert.equal( randomValue, JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ) );
 		} );
 
-		QUnit.test( 'load(): complex', ( assert ) => {
+		QUnit.test( 'load(): object', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
-						return 'load-complex-component';
+						return 'load-object-component';
 					}
 				} ),
 				requestData = {
@@ -94,6 +94,51 @@ jQuery( () => {
 			$e.data.cache.load( requestData, TEST_OBJECT );
 
 			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), TEST_OBJECT );
+		} );
+
+		QUnit.test( 'load(): deep', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'load-deep-component';
+					}
+				} ),
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+				};
+
+			// Load TEST_OBJECT to cache 'load-deep-component = TEST_OBJECT'.
+			$e.data.cache.load( requestData, TEST_OBJECT );
+
+			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), TEST_OBJECT );
+
+			// Modify `TEST_OBJECT.complexObject`.
+			requestData.endpoint += '/complexObject';
+
+			$e.data.cache.load( requestData, {
+				newKey: 'newValue',
+			} );
+
+			// Modify `TEST_OBJECT.complexObject.anotherObject`.
+			requestData.endpoint += '/anotherObject';
+
+			$e.data.cache.load( requestData, {
+				newKey: 'newValue',
+			} );
+
+			// Validate.
+			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), {
+				simpleKeyValue: 'value',
+				complexObject: {
+					anotherObject: {
+						key: 'value',
+						newKey: 'newValue',
+					},
+					simpleKeyValue: 'in complex object',
+					newKey: 'newValue',
+				},
+			} );
 		} );
 
 		QUnit.test( 'get(): simple', ( assert ) => {
