@@ -1219,7 +1219,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Frontend settings.
 	 */
 	public function get_frontend_settings() {
-		$frontend_settings = array_intersect_key( $this->get_active_settings(), array_flip( $this->get_frontend_settings_keys() ) );
+		$frontend_settings = array_intersect_key( $this->get_settings_for_display(), array_flip( $this->get_frontend_settings_keys() ) );
 
 		foreach ( $frontend_settings as $key => $setting ) {
 			if ( in_array( $setting, [ null, '' ], true ) ) {
