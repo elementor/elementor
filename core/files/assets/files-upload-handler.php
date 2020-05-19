@@ -19,7 +19,7 @@ abstract class Files_Upload_Handler {
 	 * is_elementor_media_upload
 	 * @return bool
 	 */
-	final private function is_elementor_media_upload() {
+	private function is_elementor_media_upload() {
 		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-editor-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
 	}
 
@@ -30,7 +30,7 @@ abstract class Files_Upload_Handler {
 		$enabled = ! ! get_option( self::OPTION_KEY ) && self::file_sanitizer_can_run();
 
 		/**
-		 * @deprecated 2.9.9 Use `elementor/document/urls/edit` filter instead.
+		 * @deprecated 3.0.0 Use `elementor/document/urls/edit` filter instead.
 		 */
 		$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
 
@@ -39,7 +39,7 @@ abstract class Files_Upload_Handler {
 		 *
 		 * Determines weather to enable unfiltered files upload.
 		 *
-		 * @since 2.9.9
+		 * @since 3.0.0
 		 *
 		 * @param bool $enabled Weather upload is enabled or not.
 		 */
@@ -108,7 +108,7 @@ abstract class Files_Upload_Handler {
 	 *
 	 * @return mixed
 	 */
-	final private function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
+	private function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
 		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
 			return $data;
 		}

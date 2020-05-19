@@ -12,8 +12,11 @@ class Svg_Handler extends Files_Upload_Handler {
 	 * Inline svg attachment meta key
 	 */
 	const META_KEY = '_elementor_inline_svg';
+
 	const MIME_TYPE = 'image/svg+xml';
+
 	const FILE_TYPE = 'svg';
+
 	const SCRIPT_REGEX = '/(?:\w+script|data):/xi';
 
 	/**
@@ -121,12 +124,12 @@ class Svg_Handler extends Files_Upload_Handler {
 	}
 
 	/**
-	 * sanitize_file
+	 * sanitize_svg
 	 * @param $filename
 	 *
 	 * @return bool
 	 */
-	public function sanitize_file( $filename ) {
+	public function sanitize_svg( $filename ) {
 		$original_content = file_get_contents( $filename );
 		$is_encoded = $this->is_encoded( $original_content );
 
@@ -160,7 +163,7 @@ class Svg_Handler extends Files_Upload_Handler {
 	 * @param $contents
 	 * @return bool
 	 */
-	protected function is_encoded( $contents ) {
+	private function is_encoded( $contents ) {
 		$needle = "\x1f\x8b\x08";
 		if ( function_exists( 'mb_strpos' ) ) {
 			return 0 === mb_strpos( $contents, $needle );
@@ -202,7 +205,7 @@ class Svg_Handler extends Files_Upload_Handler {
 	 *
 	 * @return bool
 	 */
-	protected function is_a_attribute( $name, $check ) {
+	private function is_a_attribute( $name, $check ) {
 		return 0 === strpos( $name, $check . '-' );
 	}
 
@@ -536,7 +539,7 @@ class Svg_Handler extends Files_Upload_Handler {
 	 *
 	 * @return string
 	 */
-	protected function strip_php_tags( $string ) {
+	private function strip_php_tags( $string ) {
 		$string = preg_replace( '/<\?(=|php)(.+?)\?>/i', '', $string );
 		// Remove XML, ASP, etc.
 		$string = preg_replace( '/<\?(.*)\?>/Us', '', $string );
@@ -554,7 +557,7 @@ class Svg_Handler extends Files_Upload_Handler {
 	 *
 	 * @return string
 	 */
-	protected function strip_comments( $string ) {
+	private function strip_comments( $string ) {
 		// Remove comments.
 		$string = preg_replace( '/<!--(.*)-->/Us', '', $string );
 		$string = preg_replace( '/\/\*(.*)\*\//Us', '', $string );
@@ -639,13 +642,50 @@ class Svg_Handler extends Files_Upload_Handler {
 
 		$file = parent::handle_upload_prefilter( $file );
 
-		if ( ! $file['error'] && self::file_sanitizer_can_run() && ! $this->sanitize_file( $file['tmp_name'] ) ) {
+		if ( ! $file['error'] && self::file_sanitizer_can_run() && ! $this->sanitize_svg( $file['tmp_name'] ) ) {
 			$display_type = strtoupper( self::FILE_TYPE );
 
 			$file['error'] = sprintf( __( 'Invalid %1$s Format, file not uploaded for security reasons', 'elementor' ), $display_type );
 		}
 
 		return $file;
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0 Use Files_Upload_Handler::file_sanitizer_can_run() instead.
+	 */
+	public function svg_sanitizer_can_run() {
+		_deprecated_function( __METHOD__, '3.0.0', 'Files_Upload_Handler::file_sanitizer_can_run()' );
+
+		return Files_Upload_Handler::file_sanitizer_can_run();
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0
+	 */
+	public function upload_mimes() {
+		_deprecated_function( __METHOD__, '3.0.0' );
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0
+	 */
+	public function wp_handle_upload_prefilter() {
+		_deprecated_function( __METHOD__, '3.0.0' );
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0 Use Files_Upload_Handler::is_enabled() instead.
+	 * @see is_enabled()
+	 */
+	public function is_svg_uploads_enabled() {
+		_deprecated_function( __METHOD__, '3.0.0', 'Files_Upload_Handler::is_enabled()' );
+
+		return Files_Upload_Handler::is_enabled();
 	}
 
 	/**
