@@ -13,10 +13,6 @@ class Svg_Handler extends Files_Upload_Handler {
 	 */
 	const META_KEY = '_elementor_inline_svg';
 
-	const MIME_TYPE = 'image/svg+xml';
-
-	const FILE_TYPE = 'svg';
-
 	const SCRIPT_REGEX = '/(?:\w+script|data):/xi';
 
 	/**
@@ -58,6 +54,14 @@ class Svg_Handler extends Files_Upload_Handler {
 	 */
 	protected function delete_meta() {
 		delete_post_meta( $this->attachment_id, self::META_KEY );
+	}
+
+	public function get_mime_type() {
+		return 'image/svg+xml';
+	}
+
+	public function get_file_type() {
+		return 'svg';
 	}
 
 	/**
@@ -643,7 +647,7 @@ class Svg_Handler extends Files_Upload_Handler {
 		$file = parent::handle_upload_prefilter( $file );
 
 		if ( ! $file['error'] && self::file_sanitizer_can_run() && ! $this->sanitize_svg( $file['tmp_name'] ) ) {
-			$display_type = strtoupper( self::FILE_TYPE );
+			$display_type = strtoupper( self::get_file_type() );
 
 			$file['error'] = sprintf( __( 'Invalid %1$s Format, file not uploaded for security reasons', 'elementor' ), $display_type );
 		}

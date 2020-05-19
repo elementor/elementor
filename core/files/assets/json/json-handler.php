@@ -8,10 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Json_Handler extends Files_Upload_Handler {
-	const MIME_TYPE = 'application/json';
-	const FILE_TYPE = 'json';
-
 	public static function get_name() {
 		return 'json-handler';
+	}
+
+	public function get_mime_type() {
+		return 'application/json';
+	}
+
+	public function get_file_type() {
+		return 'json';
 	}
 }

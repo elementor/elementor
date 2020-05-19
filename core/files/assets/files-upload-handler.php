@@ -15,6 +15,9 @@ abstract class Files_Upload_Handler {
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
 	}
 
+	abstract public function get_mime_type();
+	abstract public function get_file_type();
+
 	/**
 	 * is_elementor_media_upload
 	 * @return bool
@@ -49,7 +52,7 @@ abstract class Files_Upload_Handler {
 	}
 
 	final public function support_unfiltered_files_upload( $existing_mimes ) {
-		$existing_mimes[ static::FILE_TYPE ] = static::MIME_TYPE;
+		$existing_mimes[ $this->get_file_type() ] = $this->get_mime_type();
 
 		return $existing_mimes;
 	}
@@ -66,9 +69,9 @@ abstract class Files_Upload_Handler {
 		}
 
 		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
-		$display_type = strtoupper( static::FILE_TYPE );
+		$display_type = strtoupper( $this->get_file_type() );
 
-		if ( static::FILE_TYPE !== $ext ) {
+		if ( $this->get_file_type() !== $ext ) {
 			$file['error'] = sprintf( __( 'The uploaded %1$s file is not supported. Please upload a valid %2$s file', 'elementor' ), $ext, $display_type );
 			return $file;
 		}
@@ -82,7 +85,7 @@ abstract class Files_Upload_Handler {
 	}
 
 	protected function is_file_should_handled( $file ) {
-		return $this->is_elementor_media_upload() && static::MIME_TYPE === $file['type'];
+		return $this->is_elementor_media_upload() && $this->get_mime_type() === $file['type'];
 	}
 
 	/**
@@ -114,11 +117,11 @@ abstract class Files_Upload_Handler {
 		}
 
 		$wp_file_type = wp_check_filetype( $filename, $mimes );
-		$file_type = strtolower( static::FILE_TYPE );
+		$file_type = strtolower( $this->get_file_type() );
 
 		if ( $file_type === $wp_file_type['ext'] ) {
-			$data['ext'] = static::FILE_TYPE;
-			$data['type'] = static::MIME_TYPE;
+			$data['ext'] = $this->get_file_type();
+			$data['type'] = $this->get_mime_type();
 		}
 
 		return $data;
