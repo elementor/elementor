@@ -87,23 +87,22 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	setGlobalValue( textStyleName ) {
+		let command = '';
+
 		if ( this.getGlobalValue() ) {
 			// If a global text style is already active, switch them without disabling globals
-			$e.run( 'document/globals/settings', {
-				container: elementor.getCurrentElement().getContainer(),
-				settings: {
-					typography_typography: 'globals/typography/' + textStyleName,
-				},
-			} );
+			command = 'document/globals/settings';
 		} else {
 			// If the active text style is NOT a global, enable globals and apply the selected global
-			$e.run( 'document/globals/enable', {
-				container: elementor.getCurrentElement().getContainer(),
-				settings: {
-					typography_typography: 'globals/typography/' + textStyleName,
-				},
-			} );
+			command = 'document/globals/enable';
 		}
+
+		$e.run( command, {
+			container: elementor.getCurrentElement().getContainer(),
+			settings: {
+				typography_typography: textStyleName,
+			},
+		} );
 	}
 
 	unsetGlobalValue() {
