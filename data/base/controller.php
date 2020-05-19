@@ -5,7 +5,6 @@ namespace Elementor\Data\Base;
 use WP_REST_Controller;
 use WP_REST_Server;
 
-
 abstract class Controller extends WP_REST_Controller {
 
 	const ROOT_NAMESPACE = 'elementor';
@@ -73,33 +72,11 @@ abstract class Controller extends WP_REST_Controller {
 	 * Get processors.
 	 *
 	 * @param string $command
-	 * @param string $format
 	 *
 	 * @return \Elementor\Data\Base\Processor[]
 	 */
-	public function get_processors( $command, $format ) {
+	public function get_processors( $command ) {
 		$result = [];
-
-		if ( $format ) {
-			$command_parts = explode( '/', $command );
-			$format_parts = explode( '/', $format );
-			$format_parts_length = count( $format_parts );
-
-			$command = '';
-
-			for ( $format_index = 0, $command_index = 0; $format_index < $format_parts_length; $format_index++ ) {
-				$format_part = $format_parts[ $format_index ];
-
-				if ( ':' === $format_part[0] ) {
-					continue;
-				}
-
-				$command .= $command_parts[ $command_index ] . '/';
-				$command_index++;
-			}
-
-			$command = rtrim( $command, '/' );
-		}
 
 		if ( isset( $this->processors[ $command ] ) ) {
 			$result = $this->processors[ $command ];
