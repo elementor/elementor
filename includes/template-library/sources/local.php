@@ -778,6 +778,44 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Find temporary files.
+	 *
+	 * Recursively finds a list of temporary files from the extracted zip file.
+	 *
+	 * Example return data:
+	 *
+	 * [
+	 *  0 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-2-col-marble-title.json',
+	 *  1 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-2-col-text-and-photo.json',
+	 * ]
+	 *
+	 * @since 2.9.8
+	 * @access private
+	 *
+	 * @param string $temp_path - The temporary file path to scan for template files
+	 *
+	 * @return array An array of temporary files on the filesystem
+	 */
+	private function find_temp_files( $temp_path ) {
+
+		$file_names = [];
+
+		$possible_file_names = array_diff( scandir( $temp_path ), [ '.', '..' ] );
+
+		// Find nested files in the unzipped path. This happens for example when the user imports a Template Kit.
+		foreach ( $possible_file_names as $possible_file_name ) {
+			$full_possible_file_name = $temp_path . '/' . $possible_file_name;
+			if ( is_dir( $full_possible_file_name ) ) {
+				$file_names = $file_names + $this->find_temp_files( $full_possible_file_name );
+			} else {
+				$file_names[] = $full_possible_file_name;
+			}
+		}
+
+		return $file_names;
+	}
+
+	/**
 	 * Import local template.
 	 *
 	 * Import template from a file.
@@ -818,7 +856,8 @@ class Source_Local extends Source_Base {
 			for ( $i = 0; $i < $zip->numFiles; $i++ ) {
 				$zipped_file_name = $zip->getNameIndex( $i );
 				$zipped_extension = pathinfo( $zipped_file_name, PATHINFO_EXTENSION );
-				if ( 'json' === $zipped_extension ) {
+				// Template Kit zip files contain a `manifest.json` file, this is not a valid Elementor template so ensure we skip it.
+				if ( 'json' === $zipped_extension && 'manifest.json' !== $zipped_file_name ) {
 					$valid_entries[] = $zipped_file_name;
 				}
 			}
@@ -829,11 +868,9 @@ class Source_Local extends Source_Base {
 
 			$zip->close();
 
-			$file_names = array_diff( scandir( $temp_path ), [ '.', '..' ] );
+			$file_names = $this->find_temp_files( $temp_path );
 
-			foreach ( $file_names as $file_name ) {
-				$full_file_name = $temp_path . '/' . $file_name;
-
+			foreach ( $file_names as $full_file_name ) {
 				$import_result = $this->import_single_template( $full_file_name );
 
 				unlink( $full_file_name );
@@ -1324,7 +1361,7 @@ class Source_Local extends Source_Base {
 		$content = $data['content'];
 
 		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'file_error', 'Invalid File' );
+			return new \WP_Error( 'file_error', 'Invalid Content In File' );
 		}
 
 		$content = $this->process_export_import_content( $content, 'on_import' );
