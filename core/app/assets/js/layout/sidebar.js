@@ -1,13 +1,11 @@
-export default class Sidebar extends React.Component {
-	static propTypes = {
-		children: PropTypes.object,
-	};
-
-	render() {
-		return (
-			<div className="elementor-app__sidebar">
-				{ this.props.children }
-			</div>
-		);
-	}
+export default function Sidebar( props ) {
+	return (
+		<div className="elementor-app__sidebar">
+			{ props.children }
+		</div>
+	);
 }
+
+Sidebar.propTypes = {
+	children: PropTypes.object,
+};

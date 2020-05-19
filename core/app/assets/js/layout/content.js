@@ -1,13 +1,11 @@
-export default class Content extends React.Component {
-	static propTypes = {
-		children: PropTypes.object,
-	};
-
-	render() {
-		return (
-			<main className="elementor-app__content">
-				{ this.props.children }
-			</main>
-		);
-	}
+export default function Content( props ) {
+	return (
+		<main className="elementor-app__content">
+			{ props.children }
+		</main>
+	);
 }
+
+Content.propTypes = {
+	children: PropTypes.object,
+};

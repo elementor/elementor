@@ -86,7 +86,7 @@ export default class Button extends React.Component {
 			};
 
 			return (
-			<LocationProvider history={ elementorAppLoader.app.history }>
+			<LocationProvider history={ elementorAppLoader.appHistory }>
 				<Link to={ this.props.url } { ...attributes } >
 					{ buttonContent }
 				</Link>
