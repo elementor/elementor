@@ -2,7 +2,6 @@
 namespace Elementor\Core\Editor\Data\Documents\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
-use ElementorPro\Modules\Forms\Module;
 use Elementor\Plugin;
 
 class Index extends Endpoint {
@@ -31,7 +30,7 @@ class Index extends Endpoint {
 		$document = Plugin::$instance->documents->get( $document_id );
 
 		if ( ! $document ) {
-			return new WP_Error( 'invalid_document_id', __( 'Invalid document id' ) );
+			return new \WP_Error( 'invalid_document_id', 'Invalid document id' );
 		}
 
 		$result = $document->get_data();
