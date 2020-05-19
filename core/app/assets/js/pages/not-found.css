@@ -1,0 +1,7 @@
+.elementor-app__not-found .elementor-app__sidebar {
+	display: none;
+}
+
+.elementor-app__not-found .elementor-app__content {
+	width: 100%;
+}

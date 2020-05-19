@@ -6,6 +6,10 @@ export default class Header extends React.Component {
 		buttons: PropTypes.arrayOf( PropTypes.object ),
 	};
 
+	static defaultProps = {
+		buttons: [],
+	};
+
 	componentDidMount() {
 		document.title = __( 'Elementor', 'elementor' ) + ' | ' + this.props.title;
 	}
