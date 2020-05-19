@@ -295,18 +295,16 @@ export default class Data extends Commands {
 
 		return new Promise( async ( resolve, reject ) => {
 			try {
-				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params );
+				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params ),
+					response = await request
+						.then( ( _response ) => {
+							if ( ! _response.ok ) {
+								throw _response;
+							}
 
-				let response = await request.then();
-
-				await request.catch( reject );
-
-				if ( ! response.ok ) {
-					throw response;
-				}
-
-				// Ensure JSON.
-				response = await response.json();
+							return _response.json();
+						} )
+						.catch( reject );
 
 				// Catch wp reset errors.
 				if ( response.data && response.data.status && response.code ) {
