@@ -494,6 +494,7 @@ class Editor {
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
+				'react',
 			],
 			ELEMENTOR_VERSION,
 			true
