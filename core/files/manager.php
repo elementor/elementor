@@ -26,16 +26,6 @@ class Manager {
 	private $files = [];
 
 	/**
-	 * @var Svg_Handler
-	 */
-	public $svg_handler;
-
-	/**
-	 * @var Json_Handler
-	 */
-	public $json_handler;
-
-	/**
 	 * Files manager constructor.
 	 *
 	 * Initializing the Elementor files manager.
@@ -46,8 +36,8 @@ class Manager {
 	public function __construct() {
 		$this->register_actions();
 
-		$this->svg_handler = new Svg_Handler();
-		$this->json_handler = new Json_Handler();
+		new Svg_Handler();
+		new Json_Handler();
 	}
 
 	public function get( $class, $args ) {

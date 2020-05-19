@@ -6,8 +6,6 @@ use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
-use Elementor\Core\Files\Assets\Json\Json_Handler;
-use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
