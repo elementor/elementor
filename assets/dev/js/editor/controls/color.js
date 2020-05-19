@@ -137,11 +137,15 @@ export default class extends ControlBaseDataView {
 
 		// Check if the color already exists in the global colors, and display an appropriate message
 		Object.values( globalColors ).forEach( ( globalColor ) => {
+			let messageContent = '';
+
 			if ( color.code === globalColor.code ) {
-				$messageText.html( elementor.translate( 'global_color_already_exists' ) );
+				messageContent = elementor.translate( 'global_color_already_exists' );
 			} else if ( color.name === globalColor.name ) {
-				$messageText.html( elementor.translate( 'global_color_name_already_exists' ) );
+				messageContent = elementor.translate( 'global_color_name_already_exists' );
 			}
+
+			$messageText.html( messageContent );
 		} );
 
 		$inputWrapper.append( $colorPreview, $input );
