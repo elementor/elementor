@@ -79,6 +79,10 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		this.ui.itemTitle.html( title );
 	},
 
+	toggleSort( enable ) {
+		this.$el.toggleClass( 'elementor-repeater-row--disable-sort', ! enable );
+	},
+
 	initialize: function( options ) {
 		this.itemIndex = 0;
 
