@@ -1,4 +1,4 @@
-import FilesUploadHanlder from '../utils/files-upload-hanlder';
+import FilesUploadHandler from '../utils/files-upload-hanlder';
 
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
 
@@ -229,8 +229,8 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openFrame() {
-		if ( ! FilesUploadHanlder.isUploadEnabled( 'svg' ) ) {
-			FilesUploadHanlder.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+		if ( ! FilesUploadHandler.isUploadEnabled( 'svg' ) ) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
 
 			return false;
 		}
@@ -242,7 +242,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.frame.open();
 
 		// Set params to trigger sanitizer
-		FilesUploadHanlder.setUploadTypeCaller( this.frame );
+		FilesUploadHandler.setUploadTypeCaller( this.frame );
 
 		const selectedId = this.getControlValue( 'id' );
 		if ( ! selectedId ) {
