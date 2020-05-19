@@ -50,16 +50,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 		$textStylePreview
 			.html( textStyle.name )
-			.css( {
-				fontFamily: textStyle.fontFamily,
-				fontSize: textStyle.fontSize,
-				fontWeight: textStyle.fontWeight,
-				transform: textStyle.transform,
-				fontStyle: textStyle.fontStyle,
-				textDecoration: textStyle.textDecoration,
-				lineHeight: textStyle.lineHeight,
-				letterSpacing: textStyle.letterSpacing,
-			} );
+			.css( { fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle );
 
 		return $textStylePreview;
 	}
