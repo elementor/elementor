@@ -11,9 +11,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerUiElements() {
-		this.ui.globalPreviewsContainer = this.popover.getElements( 'widget' ).find( '.e-global-previews-container' );
-		this.ui.globalPreviewItems = this.popover.getElements( 'widget' ).find( '.e-global-preview' );
-		this.ui.manageGlobalsButton = this.popover.getElements( 'widget' ).find( '.e-global-manage-button' );
+		const popoverWidget = this.popover.getElements( 'widget' );
+
+		this.ui.globalPreviewsContainer = popoverWidget.find( '.e-global-previews-container' );
+		this.ui.globalPreviewItems = popoverWidget.find( '.e-global-preview' );
+		this.ui.manageGlobalsButton = popoverWidget.find( '.e-global-manage-button' );
 		this.ui.globalControlSelect = this.$el.find( '.e-global-select' );
 		this.ui.globalControlSelected = this.$el.find( '.e-global-selected' );
 	}
