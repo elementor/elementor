@@ -108,6 +108,44 @@ class Manager extends BaseModule {
 	}
 
 	/**
+	 * Run server.
+	 *
+	 * Init WordPress reset api.
+	 *
+	 * @return \WP_REST_Server
+	 */
+	public function run_server() {
+		static $server = null;
+
+		if ( ! $server ) {
+			$server = rest_get_server(); // Init API.
+		}
+
+		return $server;
+	}
+
+	/**
+	 * Run internal.
+	 *
+	 * @param string $endpoint
+	 * @param array  $args
+	 * @param string $method
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function run_internal( $endpoint, $args, $method ) {
+		$this->run_server();
+
+		$endpoint = '/' . Controller::ROOT_NAMESPACE . '/v' . Controller::VERSION . '/' . $endpoint;
+
+		// Run reset api.
+		$request = new \WP_REST_Request( $method, $endpoint );
+		$request->set_query_params( $args );
+
+		return rest_do_request( $request );
+	}
+
+	/**
 	 * Run processor.
 	 *
 	 * @param \Elementor\Data\Base\Processor $processor
@@ -155,58 +193,65 @@ class Manager extends BaseModule {
 	}
 
 	/**
+	 * Run endpoint.
+	 *
+	 * @param string $endpoint
+	 * @param array $args
+	 * @param string $method
+	 *
+	 * @return array
+	 */
+	public static function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
+		/** @var \Elementor\Data\Manager $manager */
+		$manager = self::instance();
+
+		$response = $manager->run_internal( $endpoint, $args, $method );
+
+		return $response->get_data();
+	}
+
+	/**
 	 * Run ( simulated reset api ).
 	 *
 	 * Do:
-	 * init reset server.
-	 * run before processors.
-	 * run command as reset api endpoint from internal3
-	 * run after processors.
+	 * Init reset server.
+	 * Run before processors.
+	 * Run command as reset api endpoint from internal3
+	 * Run after processors.
 	 *
 	 * @param string $command
 	 * @param array  $args
 	 * @param string $method
 	 *
 	 * @return array processed result
-	 * @throws \Exception
-	 *
 	 */
 	public static function run( $command, $args = [], $method = 'GET' ) {
-		static $server = null;
-
-		if ( ! $server ) {
-			$server = rest_get_server(); // Init API.
-		}
-
 		/** @var \Elementor\Data\Manager $manager */
 		$manager = self::instance();
+		$manager->run_server();
 
 		$controller_instance = $manager->find_controller_instance( $command );
 
 		if ( ! $controller_instance ) {
-			throw new \Exception( "Cannot find controller for command: '$command'" );
+			return [];
 		}
 
 		$format = isset( $controller_instance->command_formats[ $command ] ) ?
 			$controller_instance->command_formats[ $command ] : false;
 
-		$command_processors = $controller_instance->get_processors( $command, $format );
+		$command_processors = $controller_instance->get_processors( $command );
 		$endpoint = $manager->command_to_endpoint( $command, $format, $args );
 
 		self::run_processors( $command_processors, Processor\Before::class, [ $args ] );
 
-		$endpoint = '/' . Controller::ROOT_NAMESPACE . '/v' . Controller::VERSION . '/' . $endpoint;
+		$response = $manager->run_internal( $endpoint, $args, $method );
+		$result = $response->get_data();
 
-		// Run reset api.
-		$request = new \WP_REST_Request( $method, $endpoint );
-		$request->set_query_params( $args );
-		$response = rest_do_request( $request );
-		$result = $server->response_to_data( $response, false );
-
-		// TODO: Should processors have catch like mechanism?
-		if ( ! $response->is_error() ) {
-			$result = self::run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
+		if ( $response->is_error() ) {
+			return [];
 		}
+
+		$result = self::run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
 
 		return $result;
 	}

@@ -116,9 +116,10 @@ abstract class Endpoint {
 		$parent_instance = $endpoint_instance->get_parent();
 		$parent_name = $endpoint_instance->get_name();
 		$parent_format_suffix = $parent_instance::get_format();
+		$current_format_suffix = $endpoint_instance::get_format();
 
 		$command = $component_name . '/' . $parent_name;
-		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $endpoint_instance::get_format();
+		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $current_format_suffix;
 
 		$this->controller->register_endpoint_format( $command, $format );
 	}
