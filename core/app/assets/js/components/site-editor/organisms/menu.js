@@ -1,5 +1,3 @@
-import React from 'react';
-import { __ } from '@wordpress/i18n';
 import MenuItem from './../molecules/menu-item';
 import { TemplateTypesConsumer } from '../context/template-types';
 

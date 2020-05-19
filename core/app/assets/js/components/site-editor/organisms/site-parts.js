@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import SitePart from './../molecules/site-part';
 import { TemplateTypesConsumer } from '../context/template-types';
 import './site-parts.css';

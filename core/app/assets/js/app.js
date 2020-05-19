@@ -1,8 +1,6 @@
 /**
  * Elementor App
  */
-import React from 'react';
-import { __ } from '@wordpress/i18n';
 import { Router, LocationProvider, createHistory } from '@reach/router';
 import { createHashSource } from 'reach-router-hash-history';
 import SiteEditorPromotion from 'elementor-app/components/site-editor/pages/promotion';

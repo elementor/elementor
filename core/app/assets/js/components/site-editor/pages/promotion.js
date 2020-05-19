@@ -1,5 +1,3 @@
-import React from 'react';
-import { __ } from '@wordpress/i18n';
 import Layout from '../templates/layout';
 import SiteParts from './../organisms/site-parts';
 

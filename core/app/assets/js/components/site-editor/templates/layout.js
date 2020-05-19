@@ -1,6 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { __ } from '@wordpress/i18n';
 import Page from 'elementor-app/layout/page';
 import SiteEditorMenu from '../organisms/menu';
 import TemplateTypesContext from '../context/template-types';

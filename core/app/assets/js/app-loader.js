@@ -4,8 +4,6 @@
  * TODO: Temporary solution for routing extensibility and share components.
  */
 
-import React from 'react';
-import { __ } from '@wordpress/i18n';
 import * as library from './components-library';
 
 class AppLoader {

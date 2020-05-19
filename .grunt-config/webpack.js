@@ -8,6 +8,8 @@ const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const aliasList = require('./webpack.alias.js').resolve;
 
+const webpack = require('webpack');
+
 const moduleRules = {
 	rules: [
 		// {
@@ -83,6 +85,13 @@ const webpackConfig = {
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]'
 	},
+	plugins: [
+		new webpack.ProvidePlugin( {
+			React: 'react',
+			PropTypes: 'prop-types',
+			__: ['@wordpress/i18n', '__'],
+		} )
+	],
 	module: moduleRules,
 	resolve: aliasList,
 	entry: entry,

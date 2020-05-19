@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Link, LocationProvider } from '@reach/router';
 
 export default class Button extends React.Component {

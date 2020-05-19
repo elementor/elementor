@@ -1,6 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { __ } from '@wordpress/i18n';
 import './site-part.css';
 
 export default class SitePart extends React.Component {

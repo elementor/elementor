@@ -22,6 +22,9 @@ module.exports = {
 		elementor: true,
 		DialogsManager: true,
 		module: true,
+		React: true,
+		PropTypes: true,
+		__: true,
 	},
 	'parserOptions': {
 		'ecmaVersion': 2017,
