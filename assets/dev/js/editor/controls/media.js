@@ -1,3 +1,5 @@
+import FilesUploadHandler from '../utils/files-upload-handler';
+
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
 
@@ -43,11 +45,20 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	openFrame: function() {
+		if ( ! FilesUploadHanlder.isUploadEnabled( this.getMediaType() ) ) {
+			FilesUploadHanlder.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+
+			return false;
+		}
+
 		if ( ! this.frame ) {
 			this.initFrame();
 		}
 
 		this.frame.open();
+
+		// Set params to trigger sanitizer
+		FilesUploadHanlder.setUploadTypeCaller( this.frame );
 
 		const selectedId = this.getControlValue( 'id' );
 

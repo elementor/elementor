@@ -5,6 +5,7 @@ use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -539,6 +540,9 @@ class Editor {
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
 				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
+			'filesUpload' => [
+				'unfilteredFiles' => Files_Upload_Handler::is_enabled(),
+			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => $settings,
@@ -620,9 +624,9 @@ class Editor {
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
-				// Enable SVG uploads.
-				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
-				'dialog_confirm_enable_svg' => __( 'Before you enable SVG upload, note that SVG files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
+				// Enable unfiltered files upload.
+				'enable_unfiltered_files_upload' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
+				'dialog_confirm_enable_unfiltered_files_upload' => __( 'Before you enable unfiltered files upload, note that this kind of files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
 
 				// Enable fontawesome 5 if needed.
 				'enable_fa5' => __( 'Elementor\'s New Icon Library', 'elementor' ),
