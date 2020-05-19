@@ -1,4 +1,4 @@
-import FilesUploadHandler from '../utils/files-upload-hanlder';
+import FilesUploadHandler from '../utils/files-upload-handler';
 
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
 

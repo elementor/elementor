@@ -1,4 +1,4 @@
-import FilesUploadHanlder from '../utils/files-upload-hanlder';
+import FilesUploadHandler from '../utils/files-upload-handler';
 
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
