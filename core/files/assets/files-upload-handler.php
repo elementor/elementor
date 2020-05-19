@@ -16,6 +16,7 @@ abstract class Files_Upload_Handler {
 	}
 
 	abstract public function get_mime_type();
+
 	abstract public function get_file_type();
 
 	/**
@@ -69,9 +70,10 @@ abstract class Files_Upload_Handler {
 		}
 
 		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
-		$display_type = strtoupper( $this->get_file_type() );
+		$file_type = $this->get_file_type();
+		$display_type = strtoupper( $file_type );
 
-		if ( $this->get_file_type() !== $ext ) {
+		if ( $file_type !== $ext ) {
 			$file['error'] = sprintf( __( 'The uploaded %1$s file is not supported. Please upload a valid %2$s file', 'elementor' ), $ext, $display_type );
 			return $file;
 		}
@@ -120,7 +122,7 @@ abstract class Files_Upload_Handler {
 		$file_type = strtolower( $this->get_file_type() );
 
 		if ( $file_type === $wp_file_type['ext'] ) {
-			$data['ext'] = $this->get_file_type();
+			$data['ext'] = $file_type;
 			$data['type'] = $this->get_mime_type();
 		}
 
