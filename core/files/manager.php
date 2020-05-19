@@ -136,6 +136,10 @@ class Manager {
 	}
 
 	public function ajax_unfiltered_files_upload() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		update_option( Files_Upload_Handler::OPTION_KEY, 1 );
 	}
 
