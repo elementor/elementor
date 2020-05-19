@@ -17,6 +17,11 @@ export default class Cache extends ArgsObject {
 		this.storage = new LocalStorage();
 	}
 
+	/**
+	 * Function validateRequestData().
+	 *
+	 * @param {RequestData} requestData
+	 */
 	validateRequestData( requestData ) {
 		this.requireArgument( 'component', requestData );
 		this.requireArgumentType( 'command', 'string', requestData );
@@ -26,7 +31,8 @@ export default class Cache extends ArgsObject {
 	/**
 	 * Function receive().
 	 *
-	 * Receive from cache.
+	 * Receive from cache. the difference between receive() and get() is that receive return it as promise...
+	 * to fake fetch mechanism.
 	 *
 	 * @param {RequestData} requestData
 	 *
@@ -53,7 +59,10 @@ export default class Cache extends ArgsObject {
 	/**
 	 * Function load().
 	 *
-	 * Load data to cache
+	 * Load data to cache.
+	 *
+	 * The difference between load() and update() is that load, will modify the data anyway...
+	 * when update() will only modify exist objects/values.
 	 *
 	 * @param {RequestData} requestData
 	 * @param {*} data
@@ -67,9 +76,10 @@ export default class Cache extends ArgsObject {
 
 		let newData = {};
 
+		// Example of working with reaming endpoint part(s) at 'cache.spec.js' test: 'load(): deep'.
 		// Analyze reaming endpoint.
 		if ( nakedEndpointParts.length && nakedEndpoint !== componentName ) {
-			// Using reaming endpoint build new data object.
+			// Using reaming endpoint parts, to build new data object.
 			const result = nakedEndpointParts.reduce( ( accumulator, nakedEndpointPart ) => {
 				accumulator[ nakedEndpointPart ] = {};
 
@@ -84,6 +94,7 @@ export default class Cache extends ArgsObject {
 
 		let oldData = this.storage.getItem( componentName );
 
+		// When have old data, merge it recursively with newData using jQuery.extend().
 		if ( oldData !== null ) {
 			oldData = JSON.parse( oldData );
 
