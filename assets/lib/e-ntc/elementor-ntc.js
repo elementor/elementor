@@ -29,6 +29,7 @@ Sample Usage:
   </script>
 
 */
+/* Modified by Elementor Team */
 
 var ntc = {
 
