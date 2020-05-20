@@ -306,7 +306,7 @@ export default class Data extends Commands {
 						} )
 						.catch( reject );
 
-				// Catch wp reset errors.
+				// Catch WP REST errors.
 				if ( response.data && response.data.status && response.code ) {
 					reject( response.message );
 
