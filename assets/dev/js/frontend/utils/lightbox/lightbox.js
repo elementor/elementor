@@ -264,10 +264,10 @@ module.exports = elementorModules.ViewModule.extend( {
 	getSlideshowHeader: function() {
 		const { i18n } = elementorFrontend.config,
 			$ = jQuery,
-			showCounter = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_counter' ),
-			showFullscreen = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_fullscreen' ),
-			showZoom = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_zoom' ),
-			showShare = 'yes' === elementorFrontend.getGeneralSettings( 'elementor_lightbox_enable_share' ),
+			showCounter = 'yes' === elementorFrontend.getKitSettings( 'lightbox_enable_counter' ),
+			showFullscreen = 'yes' === elementorFrontend.getKitSettings( 'lightbox_enable_fullscreen' ),
+			showZoom = 'yes' === elementorFrontend.getKitSettings( 'lightbox_enable_zoom' ),
+			showShare = 'yes' === elementorFrontend.getKitSettings( 'lightbox_enable_share' ),
 			classes = this.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
 			elements = this.elements;
@@ -652,12 +652,12 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( event.shiftKey ) {
 				if ( isFirst ) {
 					event.preventDefault();
-					// Focus on last button
+
 					$buttons.last().focus();
 				}
 			} else if ( isLast || ! focusedButton ) {
 				event.preventDefault();
-				// Focus on first button
+
 				$buttons.first().focus();
 			}
 		}
