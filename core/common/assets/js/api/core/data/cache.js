@@ -76,7 +76,7 @@ export default class Cache extends ArgsObject {
 
 		let newData = {};
 
-		// Example of working with reaming endpoint part(s) at 'cache.spec.js' test: 'load(): deep'.
+		// Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'load(): deep'.
 		// Analyze reaming endpoint.
 		if ( nakedEndpointParts.length && nakedEndpoint !== componentName ) {
 			// Using reaming endpoint parts, to build new data object.
