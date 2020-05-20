@@ -328,7 +328,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
-		elementor.documents = $e.components.register( new EditorDocuments() );
+		this.documents = $e.components.register( new EditorDocuments() );
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
