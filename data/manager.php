@@ -213,7 +213,7 @@ class Manager extends BaseModule {
 	 * Do:
 	 * Init reset server.
 	 * Run before processors.
-	 * Run command as reset api endpoint from internal3
+	 * Run command as reset api endpoint from internal.
 	 * Run after processors.
 	 *
 	 * @param string $command
