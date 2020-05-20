@@ -11,22 +11,6 @@ export default class extends ControlBaseDataView {
 		return ui;
 	}
 
-	behaviors() {
-		const behaviors = super.behaviors();
-
-		if ( ! this.options.model.attributes.global_settings ) {
-			behaviors.globalControlSelect = {
-				behaviorClass: GlobalControlSelect,
-				popoverTitle: elementor.translate( 'global_colors_title' ),
-				manageButtonText: elementor.translate( 'manage_global_colors' ),
-				tooltipText: elementor.translate( 'global_colors_info' ),
-				newGlobalConfirmTitle: elementor.translate( 'create_global_style' ),
-			};
-		}
-
-		return behaviors;
-	}
-
 	applySavedValue() {
 		if ( this.colorPicker ) {
 			this.colorPicker.picker.setColor( this.getControlValue() );

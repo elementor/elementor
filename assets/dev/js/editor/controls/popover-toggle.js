@@ -21,25 +21,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
-	behaviors() {
-		const behaviors = ControlChooseView.prototype.behaviors.apply( this, arguments );
-
-		// We don't want to override existing inherited behaviors, such as dynamic tags
-		if ( ! this.options.model.attributes.global ) {
-			return behaviors;
-		}
-
-		behaviors.globalControlSelect = {
-			behaviorClass: GlobalControlSelect,
-			popoverTitle: elementor.translate( 'global_text_styles_title' ),
-			manageButtonText: elementor.translate( 'manage_global_text_styles' ),
-			tooltipText: elementor.translate( 'global_typography_info' ),
-			newGlobalConfirmTitle: elementor.translate( 'create_global_color' ),
-		};
-
-		return behaviors;
-	}
-
 	createGlobalItemMarkup( textStyle ) {
 		// This method is called without a parameter when the user clicks the "Add" button
 		if ( ! textStyle ) {

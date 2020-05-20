@@ -41,7 +41,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	behaviors: function() {
-		const behaviors = {},
+		const behaviors = ControlBaseView.prototype.behaviors.apply( this, arguments ),
 			dynamicSettings = this.options.model.get( 'dynamic' );
 
 		if ( dynamicSettings && dynamicSettings.active ) {
