@@ -55,20 +55,11 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	},
 
 	setTitle: function() {
-		var titleField = this.getOption( 'titleField' ),
-			title = '';
+		const titleField = this.getOption( 'titleField' );
+
+		let title = '';
 
 		if ( titleField ) {
-			var values = {};
-
-			this.children.each( function( child ) {
-				if ( ! ( child instanceof ControlBaseDataView ) ) {
-					return;
-				}
-
-				values[ child.model.get( 'name' ) ] = child.getControlValue();
-			} );
-
 			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( this.model.parseDynamicSettings() );
 		}
 
