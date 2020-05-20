@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-/**
- * TODO: Manager should know if its `editor/admin/frontend` and register the right commands.
- */
 class Manager extends BaseModule {
 
 	/**
@@ -256,4 +253,3 @@ class Manager extends BaseModule {
 		return $result;
 	}
 }
-
