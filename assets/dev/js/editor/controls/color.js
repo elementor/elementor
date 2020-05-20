@@ -46,34 +46,14 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 
 		this.$pickerButton.tipsy( {
-			title: () => this.getControlValue() ? this.getNewGlobalData().displayCode : '',
+			title: () => this.getControlValue() ? this.getNewGlobalData().code : '',
 			offset: 4,
 			gravity: () => 's',
 		} );
 	}
-
+dfgdfg
 	getNewGlobalData() {
-		const color = this.colorPicker.picker.getColor(),
-			colorObject = {};
-
-		colorObject.displayCode = color.toHEXA().toString( 0 );
-		// color.a is the transparency percentage. 1 means HEX value and not rgba()
-		if ( 1 === color.a ) {
-			colorObject.code = colorObject.displayCode;
-		} else {
-			colorObject.code = color.toRGBA().toString( 0 );
-		}
-
-		colorObject.name = this.getColorName( colorObject );
-
-		return colorObject;
-	}
-
-	getColorName( colorObject ) {
-		//  Check if the display value is HEX or HEXA (HEXA = with transparency)
-		const color = 7 < colorObject.displayCode.length ? colorObject.displayCode.slice( 0, 7 ) : colorObject.code;
-
-		return ntc.name( color )[ 1 ];
+		this.colorPicker.getColorData();
 	}
 
 	setGlobalValue( colorName ) {
@@ -146,7 +126,7 @@ export default class extends ControlBaseDataView {
 			$colorTitle = jQuery( '<span>', { class: 'e-global-color__title' } )
 				.html( color.name ),
 			$colorHex = jQuery( '<span>', { class: 'e-global-color__hex' } )
-				.html( color.displayCode );
+				.html( color.code );
 
 		$color.append( $colorPreview, $colorTitle, $colorHex );
 
@@ -159,43 +139,36 @@ export default class extends ControlBaseDataView {
 				name: 'Primary',
 				value: 'globals/colors/primary',
 				code: '#4631DA',
-				displayCode: '#4631DA',
 			},
 			Secondary: {
 				name: 'Secondary',
 				value: 'globals/colors/secondary',
 				code: '#71D7F7',
-				displayCode: '#71D7F7',
 			},
 			Text: {
 				name: 'Text',
 				value: 'globals/colors/text',
 				code: '#495157',
-				displayCode: '#495157',
 			},
 			Accent: {
 				name: 'Accent',
 				value: 'globals/colors/accent',
 				code: '#A4AFB7',
-				displayCode: '#A4AFB7',
 			},
 			OrangeRed: {
 				name: 'Orange Red',
 				value: 'globals/colors/orange-red',
 				code: '#FF650E',
-				displayCode: '#FF650E',
 			},
 			Crimson: {
 				name: 'Crimson',
 				value: 'globals/colors/crimson',
 				code: '#F3113A',
-				displayCode: '#F3113A',
 			},
 			GrassGreen: {
 				name: 'Grass Green',
 				value: 'globals/colors/grass-green',
 				code: '#048647',
-				displayCode: '#048647',
 			},
 		};
 

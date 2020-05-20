@@ -86,6 +86,22 @@ export default class ColorPicker extends elementorModules.Module {
 		return this.color;
 	}
 
+	getColorName( colorObject ) {
+		//  Check if the display value is HEX or HEXA (HEXA = with transparency)
+		const color = 7 < colorObject.code.length ? colorObject.code.slice( 0, 7 ) : colorObject.code;
+
+		return ntc.name( color )[ 1 ];
+	}
+
+	getColorData() {
+		const color = this.colorPicker.picker.getColor();
+
+		return {
+			name: this.colorPicker.getColorName( colorObject ),
+			code: color.toHEXA().toString( 0 ),
+		};
+	}
+
 	addPickerHeader() {
 		const { classes } = this.getSettings(),
 			$pickerHeader = jQuery( '<div>', { class: classes.pickerHeader } )
