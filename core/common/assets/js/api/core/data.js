@@ -13,7 +13,7 @@ import Cache from './data/cache';
  * @property {DataTypes} [type]
  * @property {{}} [args]
  * @property {number} [timestamp]
- * @property {boolean} [receiveCache]
+ * @property {('hit'|'miss')} [cache]
  */
 
 // TODO: Return it from the server. Original at WP_REST_Server.
@@ -104,6 +104,10 @@ export default class Data extends Commands {
 	 *
 	 * Convert command to endpoint.
 	 *
+	 * For example `component/command/:arg_example` => `controller/endpoint/8`.
+	 *
+	 * TODO: Find a better solution.
+	 *
 	 * @param {string} command
 	 * @param {{}} args
 	 * @param {string|null} [format]
@@ -123,6 +127,7 @@ export default class Data extends Commands {
 				const magicParams = format.split( '/' ).filter( ( str ) => ':' === str.charAt( 0 ) );
 
 				magicParams.forEach( ( param ) => {
+					// Remove the ':'.
 					param = param.substr( 1 );
 
 					const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
@@ -156,7 +161,7 @@ export default class Data extends Commands {
 				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
 			);
 
-			// `args.query` will become part of GET params.
+			// `args.query` will become a part of GET params.
 			if ( queryEntries.length ) {
 				endpoint += '?';
 
@@ -164,8 +169,14 @@ export default class Data extends Commands {
 					endpoint += name + '=' + value + '&';
 				} );
 			}
+
+			// If last character is '&' remove it.
+			endpoint = endpoint.replace( /&$/, '' );
 		}
 
+		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
+		// eg: 'documents/:documentId/elements/:elementId' and args { documentId: 4123 }.
+		// result: 'documents/4123/elements'
 		if ( endpoint.includes( '/:' ) ) {
 			endpoint = endpoint.substring( 0, endpoint.indexOf( '/:' ) );
 		}
@@ -176,7 +187,9 @@ export default class Data extends Commands {
 	/**
 	 * Function endpointToCommand().
 	 *
-	 * Convect endpoint to command.
+	 * Convert endpoint to command.
+	 *
+	 * TODO: Find a better solution
 	 *
 	 * @param {string} endpoint
 	 * @param {object} args
@@ -248,7 +261,7 @@ export default class Data extends Commands {
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
 			Object.assign( params, {
 				method,
-				headers: headers,
+				headers,
 				body: JSON.stringify( requestData ),
 			} );
 		} else {
@@ -267,11 +280,13 @@ export default class Data extends Commands {
 	 * @return {{}} params
 	 */
 	fetch( type, requestData ) {
+		requestData.cache = 'miss';
+
 		const params = this.prepareHeaders( type, requestData ),
 			useCache = 'get' === type && ! requestData.args.options?.refresh;
 
 		if ( useCache ) {
-			const cachePromise = this.cache.receive( requestData );
+			const cachePromise = this.cache.getAsync( requestData );
 
 			if ( cachePromise ) {
 				return cachePromise;
@@ -280,20 +295,18 @@ export default class Data extends Commands {
 
 		return new Promise( async ( resolve, reject ) => {
 			try {
-				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params );
+				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params ),
+					response = await request
+						.then( ( _response ) => {
+							if ( ! _response.ok ) {
+								throw _response;
+							}
 
-				let response = await request.then();
+							return _response.json();
+						} )
+						.catch( reject );
 
-				await request.catch( reject );
-
-				if ( ! response.ok ) {
-					throw response;
-				}
-
-				// Ensure JSON.
-				response = await response.json();
-
-				// Catch wp reset errors.
+				// Catch WP REST errors.
 				if ( response.data && response.data.status && response.code ) {
 					reject( response.message );
 
@@ -327,7 +340,6 @@ export default class Data extends Commands {
 		return this.cache.get( {
 			endpoint: this.commandToEndpoint( command, args ),
 			component,
-
 			command,
 			args,
 		} );
