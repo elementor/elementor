@@ -16,6 +16,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Editor\Data;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1059,6 +1060,8 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
+		Plugin::$instance->data_manager->register_controller( Data\Documents\Controller::class );
+
 		$this->notice_bar = new Notice_Bar();
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );

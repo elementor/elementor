@@ -35,7 +35,7 @@ class Manager extends BaseModule {
 	 *
 	 * @param string $controller_class_name
 	 */
-	private function register_controller( $controller_class_name ) {
+	public function register_controller( $controller_class_name ) {
 		$controller_instance = new $controller_class_name();
 
 		// TODO: Validate instance.
