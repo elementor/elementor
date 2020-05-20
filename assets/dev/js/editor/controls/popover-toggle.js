@@ -27,11 +27,12 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			textStyle = this.getTypographyObject();
 		}
 
-		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global-name': textStyle.value } );
+		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global-name': textStyle.value } ),
+			{ fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle;
 
 		$textStylePreview
 			.html( textStyle.name )
-			.css( { fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle );
+			.css( { fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } );
 
 		return $textStylePreview;
 	}
