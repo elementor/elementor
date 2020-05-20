@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits;
 
+use Elementor\Core\Kits\Controls\Repeater;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
@@ -37,6 +38,12 @@ class Manager {
 		return Plugin::$instance->documents->get( $id );
 	}
 
+	public function get_active_kit_for_fronend() {
+		$id = $this->get_active_id();
+
+		return Plugin::$instance->documents->get_doc_for_frontend( $id );
+	}
+
 	private function create_default() {
 		$kit = Plugin::$instance->documents->create( 'kit', [
 			'post_type' => Source_Local::CPT,
@@ -65,6 +72,7 @@ class Manager {
 			'i18n' => [
 				'Close' => __( 'Close', 'elementor' ),
 				'Back' => __( 'Back', 'elementor' ),
+				'Global Settings' => __( 'Global Settings', 'elementor' ),
 				'Theme Style' => __( 'Theme Style', 'elementor' ),
 			],
 		] );
@@ -117,11 +125,26 @@ class Manager {
 		return $kit;
 	}
 
+	public function register_controls() {
+		$controls_manager = Plugin::$instance->controls_manager;
+
+		$controls_manager->register_control( Repeater::CONTROL_TYPE, new Repeater() );
+	}
+
+	public function is_custom_colors_enabled() {
+		return ! get_option( 'elementor_disable_color_schemes' );
+	}
+
+	public function is_custom_typography_enabled() {
+		return ! get_option( 'elementor_disable_typography_schemes' );
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
 		add_action( 'elementor/frontend/after_enqueue_global', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
+		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
 	}
 }

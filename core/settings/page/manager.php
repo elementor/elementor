@@ -31,24 +31,6 @@ class Manager extends CSS_Manager {
 	const META_KEY = '_elementor_page_settings';
 
 	/**
-	 * Is CPT supports custom templates.
-	 *
-	 * Whether the Custom Post Type supports templates.
-	 *
-	 * @since 1.6.0
-	 * @deprecated 2.0.0 Use `Utils::is_cpt_custom_templates_supported()` method instead.
-	 * @access public
-	 * @static
-	 *
-	 * @return bool True is templates are supported, False otherwise.
-	 */
-	public static function is_cpt_custom_templates_supported() {
-		_deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported()' );
-
-		return Utils::is_cpt_custom_templates_supported();
-	}
-
-	/**
 	 * Get manager name.
 	 *
 	 * Retrieve page settings manager name.

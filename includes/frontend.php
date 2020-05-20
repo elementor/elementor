@@ -393,7 +393,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.1.3',
+			'1.2.0',
 			true
 		);
 
@@ -483,7 +483,7 @@ class Frontend extends App {
 			'elementor-gallery',
 			$this->get_css_assets_url( 'e-gallery', 'assets/lib/e-gallery/css/' ),
 			[],
-			'1.1.3'
+			'1.2.0'
 		);
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
@@ -1165,6 +1165,9 @@ class Frontend extends App {
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
+		$settings['kit'] = $kit->get_frontend_settings();
 
 		if ( is_singular() ) {
 			$post = get_post();

@@ -1,4 +1,4 @@
-import ModalContent from './modal-content';
+import ModalContent from './content';
 
 export default class extends elementorModules.common.views.modal.Layout {
 	getModalOptions() {
