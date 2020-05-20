@@ -22,15 +22,15 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerEvents() {
-		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.elementorGlobalName ) );
+		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.elementorGlobal ) );
 		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
 			$e.run( 'panel/global/open' ).then( () => $e.route( 'panel/global/colors-and-typography' ) );
 		} );
 	}
 
-	applySavedGlobalValue( globalName ) {
-		//this.view.setGlobalValue( globalName );
+	applySavedGlobalValue( globalValue ) {
+		//this.view.setGlobalValue( globalValue );
 
 		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
 
@@ -38,7 +38,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.view.$el.removeClass( 'e-invalid-color' );
 		}
 
-		this.ui.globalControlSelected.html( globalName );
+		this.ui.globalControlSelected.html( globalValue );
 
 		this.toggleSelect();
 	}
@@ -155,7 +155,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 					title: globalData.name,
 				} );*/
 
-				// this.view.setGlobalValue( globalData.name );
+				// this.view.setGlobalValue( globalData.value );
 
 				const $globalPreview = this.view.createGlobalItemMarkup( globalData );
 

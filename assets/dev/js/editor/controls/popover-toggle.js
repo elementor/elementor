@@ -27,7 +27,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			textStyle = this.getTypographyObject();
 		}
 
-		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global-name': textStyle.value } ),
+		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': textStyle.value } ),
 			{ fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle;
 
 		$textStylePreview
@@ -68,7 +68,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return $message;
 	}
 
-	setGlobalValue( textStyleName ) {
+	setGlobalValue( globalValue ) {
 		let command = '';
 
 		if ( this.getGlobalValue() ) {
@@ -82,7 +82,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		$e.run( command, {
 			container: elementor.getCurrentElement().getContainer(),
 			settings: {
-				typography_typography: textStyleName,
+				typography_typography: globalValue,
 			},
 		} );
 	}

@@ -51,29 +51,28 @@ export default class extends ControlBaseDataView {
 			gravity: () => 's',
 		} );
 	}
-dfgdfg
+
 	getNewGlobalData() {
 		this.colorPicker.getColorData();
 	}
 
-	setGlobalValue( colorName ) {
+	setGlobalValue( globalValue ) {
+		let command = '';
+
 		if ( this.getGlobalValue() ) {
 			// If a global color is already active, switch them without disabling globals
-			$e.run( 'document/globals/settings', {
-				container: elementor.getCurrentElement().getContainer(),
-				settings: {
-					title_color: 'globals/colors/' + colorName,
-				},
-			} );
+			command = 'document/globals/settings';
 		} else {
 			// If the active color is NOT a global, enable globals and apply the selected global
-			$e.run( 'document/globals/enable', {
-				container: elementor.getCurrentElement().getContainer(),
-				settings: {
-					title_color: 'globals/colors/' + colorName,
-				},
-			} );
+			command = 'document/globals/enable';
 		}
+
+		$e.run( command, {
+			container: elementor.getCurrentElement().getContainer(),
+			settings: {
+				title_color: globalValue,
+			},
+		} );
 	}
 
 	unsetGlobalValue() {
@@ -121,7 +120,7 @@ dfgdfg
 			color = this.getNewGlobalData();
 		}
 
-		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global-name': color.value } ),
+		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global': color.value } ),
 			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.code } ),
 			$colorTitle = jQuery( '<span>', { class: 'e-global-color__title' } )
 				.html( color.name ),
