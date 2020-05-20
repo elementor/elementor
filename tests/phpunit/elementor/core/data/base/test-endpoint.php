@@ -1,62 +1,8 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Data\Base;
 
-use Elementor\Data\Base\Endpoint;
-use Elementor\Data\Base\Controller;
 use Elementor\Data\Manager;
 use Elementor\Testing\Elementor_Test_Base;
-
-class Mock_Endpoint extends Endpoint {
-	public function get_name() {
-		static $name = null;
-
-		if ( ! $name ) {
-			$name = 'test-endpoint-' . rand_long_str( 5 );
-		}
-
-		return $name;
-	}
-
-	public function get_items( $request ) {
-		return [
-			'get_items' => [
-				'fakeKey' => 'fakeValue'
-			],
-		];
-	}
-}
-
-class Recursive_Internal_Endpoint extends Endpoint {
-
-	public function get_name() {
-		return 'index';
-	}
-
-	public function get_items( $request ) {
-		return $this->get_items_recursive( $request );
-	}
-}
-
-class Recursive_Controller extends Controller {
-
-	public function get_name() {
-		return 'test-controller';
-	}
-
-	public function register_endpoints() {
-		$this->register_endpoint( Mock_Endpoint::class );
-		$this->register_endpoint( Mock_Endpoint::class );
-	}
-
-	protected function register_internal_endpoints() {
-		$this->register_endpoint( Recursive_Internal_Endpoint::class );
-	}
-
-	public function permission_callback( $request ) {
-		return true; // Bypass.
-	}
-}
 
 class Test_Endpoint extends Elementor_Test_Base {
 
@@ -83,7 +29,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 		 * TODO: Create Base Endpoint\Internal\Index
 		 */
 
-		$controller = $this->manager->register_controller_instance( new Recursive_Controller() );
+		$controller = $this->manager->register_controller_instance( new Mock\Recursive\Controller );
 
 		do_action( 'rest_api_init' ); // Ensure controller loaded.
 
