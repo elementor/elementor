@@ -450,7 +450,7 @@ class Editor {
 
 		wp_register_script(
 			'elementor-ntc',
-			ELEMENTOR_ASSETS_URL . 'lib/ntc/elementor-ntc' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/e-ntc/e-ntc' . $suffix . '.js',
 			[],
 			'1.0.0',
 			true
