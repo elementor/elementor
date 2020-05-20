@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data\Base;
 
 use WP_REST_Controller;

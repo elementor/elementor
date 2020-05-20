@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data;
 
 use Elementor\Core\Base\Module as BaseModule;
@@ -11,9 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-/**
- * TODO: Manager should know if its `editor/admin/frontend` and register the right commands.
- */
 class Manager extends BaseModule {
 
 	/**
@@ -216,7 +212,7 @@ class Manager extends BaseModule {
 	 * Do:
 	 * Init reset server.
 	 * Run before processors.
-	 * Run command as reset api endpoint from internal3
+	 * Run command as reset api endpoint from internal.
 	 * Run after processors.
 	 *
 	 * @param string $command
@@ -256,4 +252,3 @@ class Manager extends BaseModule {
 		return $result;
 	}
 }
-

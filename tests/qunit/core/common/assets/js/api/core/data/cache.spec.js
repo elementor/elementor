@@ -55,7 +55,7 @@ jQuery( () => {
 			// Set cache test item.
 			$e.data.cache.storage.setItem( component.getNamespace(), JSON.stringify( randomValue ) );
 
-			const result = await $e.data.cache.receive( requestData );
+			const result = await $e.data.cache.getAsync( requestData );
 
 			assert.equal( requestData.cache, 'hit' ); // added to requestData by receive.
 			assert.equal( randomValue, result );

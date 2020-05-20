@@ -286,7 +286,7 @@ export default class Data extends Commands {
 			useCache = 'get' === type && ! requestData.args.options?.refresh;
 
 		if ( useCache ) {
-			const cachePromise = this.cache.receive( requestData );
+			const cachePromise = this.cache.getAsync( requestData );
 
 			if ( cachePromise ) {
 				return cachePromise;
@@ -306,7 +306,7 @@ export default class Data extends Commands {
 						} )
 						.catch( reject );
 
-				// Catch wp reset errors.
+				// Catch WP REST errors.
 				if ( response.data && response.data.status && response.code ) {
 					reject( response.message );
 

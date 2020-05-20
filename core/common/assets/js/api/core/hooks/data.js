@@ -27,14 +27,14 @@ export default class Data extends HooksBase {
 			}
 
 			case 'catch':
-			case 'after':
-				const callbackResult = callback.callback( args, result );
-
-				if ( ! callbackResult ) {
-					return true;
-				}
-
-				return callbackResult;
+			case 'after': {
+				/**
+				 * When handling HOOK which is data after and its is not breakable.
+				 * Even the result of the callback is negative, it is required to return positive.
+				 * Since result of runCallback determine if the callback succeeded.
+				 */
+				return callback.callback( args, result ) || 'after' === event;
+			}
 		}
 
 		return false;

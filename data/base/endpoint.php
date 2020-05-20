@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data\Base;
 
 use WP_REST_Server;
@@ -220,7 +219,7 @@ abstract class Endpoint {
 	/**
 	 * Retrieves one item from the collection.
 	 *
-	 * @param string           $id
+	 * @param string $id
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
