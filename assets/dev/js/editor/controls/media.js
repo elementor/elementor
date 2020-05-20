@@ -45,8 +45,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	openFrame: function() {
-		if ( ! FilesUploadHanlder.isUploadEnabled( this.getMediaType() ) ) {
-			FilesUploadHanlder.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+		if ( ! FilesUploadHandler.isUploadEnabled( this.getMediaType() ) ) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
 
 			return false;
 		}
@@ -58,7 +58,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.frame.open();
 
 		// Set params to trigger sanitizer
-		FilesUploadHanlder.setUploadTypeCaller( this.frame );
+		FilesUploadHandler.setUploadTypeCaller( this.frame );
 
 		const selectedId = this.getControlValue( 'id' );
 
