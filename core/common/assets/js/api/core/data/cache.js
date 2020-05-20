@@ -29,16 +29,16 @@ export default class Cache extends ArgsObject {
 	}
 
 	/**
-	 * Function receive().
+	 * Function getAsync().
 	 *
-	 * Receive from cache. the difference between receive() and get() is that receive return it as promise...
+	 * Receive from cache. the difference between getAsync() and get() is that receive return it as promise...
 	 * to fake fetch mechanism.
 	 *
 	 * @param {RequestData} requestData
 	 *
 	 * @return {(Promise|boolean)}
 	 */
-	receive( requestData ) {
+	getAsync( requestData ) {
 		this.validateRequestData( requestData );
 
 		const data = this.get( requestData );

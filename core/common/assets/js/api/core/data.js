@@ -286,7 +286,7 @@ export default class Data extends Commands {
 			useCache = 'get' === type && ! requestData.args.options?.refresh;
 
 		if ( useCache ) {
-			const cachePromise = this.cache.receive( requestData );
+			const cachePromise = this.cache.getAsync( requestData );
 
 			if ( cachePromise ) {
 				return cachePromise;
