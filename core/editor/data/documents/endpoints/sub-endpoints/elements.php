@@ -10,7 +10,7 @@ class Elements extends SubEndpoint {
 		return 'elements';
 	}
 
-	public static function get_format_suffix() {
+	public static function get_format() {
 		return ':element_id';
 	}
 

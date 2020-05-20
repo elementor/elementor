@@ -9,7 +9,7 @@ class Index extends Endpoint {
 		return 'index';
 	}
 
-	public static function get_format_suffix() {
+	public static function get_format() {
 		return ':document_id';
 	}
 
