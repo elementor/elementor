@@ -28,6 +28,7 @@
 			"tab": "content",
 			"section": "section_tabs",
 			"label": "Tabs Items",
+			"is_repeater" : true,
 			"fields": {
 				"tab_title": {
 					"type": "text",

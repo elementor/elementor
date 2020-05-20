@@ -112,14 +112,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 		}, 'style' );
 
 		this.addItem( {
-			name: 'global-settings',
-			icon: 'eicon-cogs',
-			title: elementor.translate( 'global_settings' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/general-settings/style' ),
-		}, 'settings', 'elementor-settings' );
-
-		this.addItem( {
 			name: 'elementor-settings',
 			icon: 'eicon-editor-external-link',
 			title: elementor.translate( 'elementor_settings' ),
