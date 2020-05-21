@@ -2,7 +2,9 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Settings\Manager;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Data\Manager as DataManager;
 use Elementor\Plugin;
 use Elementor\DB;
 use Elementor\Controls_Manager;
@@ -475,7 +477,11 @@ abstract class Document extends Controls_Stack {
 		];
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$config['elements'] = $this->get_elements_raw_data( null, true );
+			$data = DataManager::run( 'editor/documents/elements', [
+				'document_id' => $this->get_main_id(),
+			] );
+
+			$config['elements'] = array_values( $data );
 			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
@@ -1091,6 +1097,26 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $last_edited;
+	}
+
+	public function add_repeater_row( $control_id, $item ) {
+		$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+		$document_settings = $this->get_meta( $meta_key );
+
+		if ( ! isset( $document_settings[ $control_id ] ) ) {
+			$document_settings[ $control_id ] = [];
+		}
+
+		$document_settings[ $control_id ][] = $item;
+
+		$page_settings_manager = Manager::get_settings_managers( 'page' );
+		$page_settings_manager->save_settings( $document_settings, $this->get_main_id() );
+
+		$autosave = $this->get_autosave();
+
+		if ( $autosave ) {
+			$autosave->add_repeater_row( $control_id, $item );
+		}
 	}
 
 	/**

@@ -534,6 +534,7 @@ class Editor {
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
+			'rest_url' => get_rest_url(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'tabs' => $plugin->controls_manager->get_tabs(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
@@ -1086,6 +1087,9 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
+		Plugin::$instance->data_manager->register_controller( Data\Globals\Controller::class );
+		Plugin::$instance->data_manager->register_controller( Data\Documents\Controller::class );
+
 		$this->notice_bar = new Notice_Bar();
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );

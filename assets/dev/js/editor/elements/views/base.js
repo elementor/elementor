@@ -442,19 +442,9 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	enqueueFonts() {
+	enqueueIconFonts() {
 		const editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
-
-		jQuery.each( settings.getFontControls(), ( index, control ) => {
-			const fontFamilyName = editModel.getSetting( control.name );
-
-			if ( ! fontFamilyName ) {
-				return;
-			}
-
-			elementor.helpers.enqueueFont( fontFamilyName );
-		} );
 
 		// Enqueue Icon Fonts
 		jQuery.each( settings.getIconsControls(), ( index, control ) => {
@@ -470,7 +460,28 @@ BaseElementView = BaseContainer.extend( {
 
 	renderStyles( settings ) {
 		if ( ! settings ) {
-			settings = this.getEditModel().get( 'settings' );
+			// TODO: Remove - Create testing compatibility.
+			if ( elementorCommonConfig.isTesting ) {
+				settings = this.getEditModel().get( 'settings' );
+
+				return this.renderStyles( settings );
+			}
+
+			const request = $e.data.get( 'editor/documents/elements', {
+				documentId: elementor.documents.getCurrent().id,
+				elementId: this.getEditModel().id,
+			} );
+
+			// Async, means rendered when result received.
+			request.then( ( result ) => {
+				settings = new elementorModules.editor.elements.models.BaseSettings( result.data.settings, {
+					controls: elementor.getContainer( this.getEditModel().id ).controls,
+				} );
+
+				this.renderStyles( settings );
+			} );
+
+			return;
 		}
 
 		this.controlsCSSParser.stylesheet.empty();
@@ -483,6 +494,16 @@ BaseElementView = BaseContainer.extend( {
 			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
+
+		jQuery.each( settings.getFontControls(), async ( index, control ) => {
+			const fontFamilyName = settings.get( control.name );
+
+			if ( ! fontFamilyName ) {
+				return;
+			}
+
+			elementor.helpers.enqueueFont( fontFamilyName );
+		} );
 	},
 
 	renderCustomClasses() {
@@ -537,7 +558,7 @@ BaseElementView = BaseContainer.extend( {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
-		this.enqueueFonts();
+		this.enqueueIconFonts();
 	},
 
 	runReadyTrigger: function() {
