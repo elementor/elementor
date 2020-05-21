@@ -31,7 +31,7 @@ class TemplateTypesContext extends React.Component {
 	}
 
 	getTemplateTypes() {
-		return elementorCommon.ajax.addRequest( 'site_editor_template_types', {}, true );
+		return elementorCommon.ajax.addRequest( 'app_site_editor_template_types', {}, true );
 	}
 
 	render() {

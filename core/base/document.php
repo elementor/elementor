@@ -123,7 +123,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 * @static
 	 *
-	 * @return string Element title.
+	 * @return string document icon.
 	 */
 	public static function get_icon() {
 		return 'eicon-post';
