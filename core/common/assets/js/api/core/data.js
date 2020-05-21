@@ -294,26 +294,25 @@ export default class Data extends Commands {
 		}
 
 		return new Promise( async ( resolve, reject ) => {
+			// This function is async because:
+			// it needs to wait for the results, to cache them before it resolve's the promise.
 			try {
 				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params ),
-					response = await request
-						.then( ( _response ) => {
-							if ( ! _response.ok ) {
-								throw _response;
+					response = await request.then( async ( _response ) => {
+						if ( ! _response.ok ) {
+							// Catch WP REST errors.
+							if ( _response.headers.get( 'content-type' ).includes( 'application/json' ) ) {
+								_response = await _response.json();
 							}
 
-							return _response.json();
-						} )
-						.catch( reject );
+							throw _response;
+						}
 
-				// Catch WP REST errors.
-				if ( response.data && response.data.status && response.code ) {
-					reject( response.message );
+						return _response.json();
+					} );
 
-					return response;
-				}
-
-				// Upon 'GET' save cache.
+				// At this point, it got the resolved response from remote.
+				// So load cache, and resolve it.
 				if ( useCache ) {
 					this.cache.load( requestData, response );
 				}
