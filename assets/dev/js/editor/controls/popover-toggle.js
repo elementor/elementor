@@ -1,5 +1,3 @@
-import GlobalControlSelect from '../../../../../core/kits/assets/js/globals/global-select-behavior';
-
 const ControlChooseView = require( 'elementor-controls/choose' );
 
 export default class ControlPopoverStarterView extends ControlChooseView {
@@ -27,7 +25,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			textStyle = this.getTypographyObject();
 		}
 
-		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': textStyle.value } ),
+		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': JSON.stringify( textStyle ) } ),
 			{ fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle;
 
 		$textStylePreview
@@ -38,7 +36,18 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH VALUES OF THE TYPOGRAPHY CONTROLS
-	getNewGlobalData() {
+	getGlobalData() {
+		const dataMockup = this.getGlobalDataMockup();
+
+		return {
+			id: elementor.helpers.getUniqueID(),
+			commandName: 'globals/typography',
+			key: 'typography_typography',
+			value: dataMockup,
+		};
+	}
+
+	getGlobalDataMockup() {
 		return {
 			name: 'New Style',
 			value: 'globals/typography/new-style',
@@ -66,34 +75,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		$message.append( $messageText, $inputWrapper );
 
 		return $message;
-	}
-
-	setGlobalValue( globalValue ) {
-		let command = '';
-
-		if ( this.getGlobalValue() ) {
-			// If a global text style is already active, switch them without disabling globals
-			command = 'document/globals/settings';
-		} else {
-			// If the active text style is NOT a global, enable globals and apply the selected global
-			command = 'document/globals/enable';
-		}
-
-		$e.run( command, {
-			container: elementor.getCurrentElement().getContainer(),
-			settings: {
-				typography_typography: globalValue,
-			},
-		} );
-	}
-
-	unsetGlobalValue() {
-		$e.run( 'document/globals/disable', {
-			container: elementor.getCurrentElement().getContainer(),
-			settings: {
-				typography_typography: '',
-			},
-		} );
 	}
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST

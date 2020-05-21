@@ -1,6 +1,5 @@
 import ControlBaseDataView from './base-data';
 import ColorPicker from '../utils/color-picker';
-import GlobalControlSelect from '../../../../../core/kits/assets/js/globals/global-select-behavior';
 
 export default class extends ControlBaseDataView {
 	ui() {
@@ -46,51 +45,30 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 
 		this.$pickerButton.tipsy( {
-			title: () => this.getControlValue() ? this.getNewGlobalData().code : '',
+			title: () => this.getControlValue() ? this.colorPicker.getColorData().value : '',
 			offset: 4,
 			gravity: () => 's',
 		} );
 	}
 
-	getNewGlobalData() {
-		this.colorPicker.getColorData();
-	}
+	getGlobalData() {
+		const colorData = this.colorPicker.getColorData();
 
-	setGlobalValue( globalValue ) {
-		let command = '';
-
-		if ( this.getGlobalValue() ) {
-			// If a global color is already active, switch them without disabling globals
-			command = 'document/globals/settings';
-		} else {
-			// If the active color is NOT a global, enable globals and apply the selected global
-			command = 'document/globals/enable';
-		}
-
-		$e.run( command, {
-			container: elementor.getCurrentElement().getContainer(),
-			settings: {
-				title_color: globalValue,
-			},
-		} );
-	}
-
-	unsetGlobalValue() {
-		$e.run( 'document/globals/disable', {
-			container: elementor.getCurrentElement().getContainer(),
-			settings: {
-				title_color: '',
-			},
-		} );
+		return {
+			id: colorData.id,
+			commandName: 'globals/colors',
+			key: 'colors',
+			value: colorData.value,
+		};
 	}
 
 	getAddGlobalConfirmMessage( globalColors ) {
-		const color = this.getNewGlobalData(),
+		const color = this.colorPicker.getColorData(),
 			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_color_confirm_text' ) ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.code } ),
+			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.value } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.name } )
 				.val( color.name );
 
@@ -98,7 +76,7 @@ export default class extends ControlBaseDataView {
 		Object.values( globalColors ).forEach( ( globalColor ) => {
 			let messageContent = '';
 
-			if ( color.code === globalColor.code ) {
+			if ( color.value === globalColor.value ) {
 				messageContent = elementor.translate( 'global_color_already_exists' );
 			} else if ( color.name === globalColor.name ) {
 				messageContent = elementor.translate( 'global_color_name_already_exists' );
@@ -117,15 +95,15 @@ export default class extends ControlBaseDataView {
 	createGlobalItemMarkup( color ) {
 		// This method is called without a color parameter when the user clicks the "Add" button
 		if ( ! color ) {
-			color = this.getNewGlobalData();
+			color = this.colorPicker.getColorData();
 		}
 
-		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global': color.value } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.code } ),
+		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global': JSON.stringify( color ) } ),
+			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.value } ),
 			$colorTitle = jQuery( '<span>', { class: 'e-global-color__title' } )
 				.html( color.name ),
 			$colorHex = jQuery( '<span>', { class: 'e-global-color__hex' } )
-				.html( color.code );
+				.html( color.value );
 
 		$color.append( $colorPreview, $colorTitle, $colorHex );
 
@@ -135,39 +113,46 @@ export default class extends ControlBaseDataView {
 	async getGlobalsList() {
 		return {
 			Primary: {
+				id: 'primary',
+				commandName: 'globals/colors',
 				name: 'Primary',
-				value: 'globals/colors/primary',
-				code: '#4631DA',
+				value: '#4631DA',
 			},
 			Secondary: {
+				id: 'secondary',
+				commandName: 'globals/colors',
 				name: 'Secondary',
-				value: 'globals/colors/secondary',
-				code: '#71D7F7',
+				value: '#71D7F7',
 			},
 			Text: {
+				id: 'text',
+				commandName: 'globals/colors',
 				name: 'Text',
-				value: 'globals/colors/text',
-				code: '#495157',
+				value: '#495157',
 			},
 			Accent: {
+				id: 'accent',
+				commandName: 'globals/colors',
 				name: 'Accent',
-				value: 'globals/colors/accent',
-				code: '#A4AFB7',
+				value: '#A4AFB7',
 			},
 			OrangeRed: {
+				id: 'orange-red',
+				commandName: 'globals/colors',
 				name: 'Orange Red',
-				value: 'globals/colors/orange-red',
-				code: '#FF650E',
+				value: '#FF650E',
 			},
 			Crimson: {
+				id: 'crimson',
+				commandName: 'globals/colors',
 				name: 'Crimson',
-				value: 'globals/colors/crimson',
-				code: '#F3113A',
+				value: '#F3113A',
 			},
 			GrassGreen: {
+				id: 'grass-green',
+				commandName: 'globals/colors',
 				name: 'Grass Green',
-				value: 'globals/colors/grass-green',
-				code: '#048647',
+				value: '#048647',
 			},
 		};
 
@@ -192,8 +177,6 @@ export default class extends ControlBaseDataView {
 
 	onPickerChange() {
 		if ( this.getGlobalValue() ) {
-			this.unsetGlobalValue();
-
 			this.$el.find( '.e-global-selected' ).html( elementor.translate( 'custom' ) );
 		}
 

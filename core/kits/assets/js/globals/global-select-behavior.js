@@ -22,15 +22,15 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerEvents() {
-		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.elementorGlobal ) );
+		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( JSON.parse( event.currentTarget.dataset.elementorGlobal ) ) );
 		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
 			$e.run( 'panel/global/open' ).then( () => $e.route( 'panel/global/colors-and-typography' ) );
 		} );
 	}
 
-	applySavedGlobalValue( globalValue ) {
-		//this.view.setGlobalValue( globalValue );
+	applySavedGlobalValue( globalData ) {
+		//this.setGlobalValue( globalData );
 
 		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
 
@@ -38,7 +38,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.view.$el.removeClass( 'e-invalid-color' );
 		}
 
-		this.ui.globalControlSelected.html( globalValue );
+		this.ui.globalControlSelected.html( globalData.name );
 
 		this.toggleSelect();
 	}
@@ -145,23 +145,21 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				onBackgroundClick: false,
 			},
 			onConfirm: () => {
-				const globalData = this.view.getNewGlobalData();
+				const globalData = this.view.getGlobalData();
 
 				globalData.name = this.globalNameInput.val();
 
-				/*$e.data.create( 'globals/colors', {
-					_id: elementor.helpers.getUniqueID(),
-					color: globalData.code,
+				/*$e.data.create( globalData.commandName, {
+					_id: globalData.id,
+					value: globalData.value,
 					title: globalData.name,
 				} );*/
-
-				// this.view.setGlobalValue( globalData.value );
 
 				const $globalPreview = this.view.createGlobalItemMarkup( globalData );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
 
-				this.applySavedGlobalValue( globalData.value );
+				this.applySavedGlobalValue( globalData );
 			},
 			onShow: () => {
 				// Put focus on the naming input
@@ -170,6 +168,38 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 
 		this.confirmNewGlobalModal.show();
+	}
+
+	setGlobalValue( globalData ) {
+		let command = '';
+		const settings = {};
+
+		if ( this.getGlobalValue() ) {
+			// If a global text style is already active, switch them without disabling globals
+			command = 'document/globals/settings';
+		} else {
+			// If the active text style is NOT a global, enable globals and apply the selected global
+			command = 'document/globals/enable';
+		}
+
+		settings[ globalData.key ] = globalData.id;
+
+		$e.run( command, {
+			container: elementor.getCurrentElement().getContainer(),
+			settings: settings,
+		} );
+	}
+
+	unsetGlobalValue() {
+		const globalData = this.view.getGlobalData(),
+			settings = {};
+
+		settings[ globalData.key ] = '';
+
+		$e.run( 'document/globals/disable', {
+			container: elementor.getCurrentElement().getContainer(),
+			settings: settings,
+		} );
 	}
 
 	createGlobalInfoTooltip() {
