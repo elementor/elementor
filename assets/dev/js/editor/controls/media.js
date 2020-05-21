@@ -1,3 +1,5 @@
+import FilesUploadHandler from '../utils/files-upload-handler';
+
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
 
@@ -28,14 +30,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	applySavedValue: function() {
 		var url = this.getControlValue( 'url' ),
-			mediaType = this.getMediaType(),
-			fileName = url.split( '/' ).pop();
+			mediaType = this.getMediaType();
 
 		if ( 'image' === mediaType ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
 		} else {
+			const fileName = url ? url.split( '/' ).pop() : '';
 			this.ui.fileName.text( fileName );
 		}
 
@@ -43,11 +45,20 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	openFrame: function() {
+		if ( ! FilesUploadHandler.isUploadEnabled( this.getMediaType() ) ) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+
+			return false;
+		}
+
 		if ( ! this.frame ) {
 			this.initFrame();
 		}
 
 		this.frame.open();
+
+		// Set params to trigger sanitizer
+		FilesUploadHandler.setUploadTypeCaller( this.frame );
 
 		const selectedId = this.getControlValue( 'id' );
 

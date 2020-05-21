@@ -82,7 +82,7 @@ export default class Container extends ArgsObject {
 	 *
 	 * @type {{}}
 	 */
-	controls;
+	controls = {};
 
 	/**
 	 * Repeaters containers
@@ -142,6 +142,8 @@ export default class Container extends ArgsObject {
 
 		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
 		this.panel = new Panel( this );
+
+		this.handleRepeaterChildren();
 	}
 
 	validateArgs( args ) {
