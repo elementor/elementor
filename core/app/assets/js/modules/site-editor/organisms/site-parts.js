@@ -1,6 +1,6 @@
 import SitePart from './../molecules/site-part';
 import { Context as TemplateTypesContext } from '../context/template-types';
-import './site-parts.css';
+import './site-parts.scss';
 
 export default function SiteParts( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext );

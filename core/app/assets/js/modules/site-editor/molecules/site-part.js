@@ -1,4 +1,4 @@
-import './site-part.css';
+import './site-part.scss';
 
 export default function SitePart( props ) {
 	return (
