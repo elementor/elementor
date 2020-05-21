@@ -255,11 +255,11 @@ class Settings extends Settings_Page {
 					<div class="e-getting-started__content">
 						<div class="e-getting-started__content--narrow">
 							<h2><?php echo __( 'Welcome to Elementor', 'elementor' ); ?></h2>
-							<p><?php echo __( 'We recommend you watch this 2 minute getting started video, and then try the editor yourself by dragging and dropping elements to create your first page.', 'elementor' ); ?></p>
+							<p><?php echo __( 'Get introduced to Elementor by watching our "Getting Started" video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ); ?></p>
 						</div>
 
 						<div class="e-getting-started__video">
-							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/nZlgNmbC-Cw?rel=0&amp;controls=1&amp;modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLZyp9H25CboH8b_wsNyOmstckiOE8aUBg&amp;controls=1&amp;modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 						</div>
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
@@ -267,7 +267,7 @@ class Settings extends Settings_Page {
 							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
-							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Get the Full Guide', 'elementor' ); ?></a>
+							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Watch the Full Guide', 'elementor' ); ?></a>
 						</div>
 					</div>
 				</div>
@@ -613,8 +613,8 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
-							'allow_svg' => [
-								'label' => __( 'Enable SVG Uploads', 'elementor' ),
+							'enable_unfiltered_files_upload' => [
+								'label' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'std' => '',
@@ -622,7 +622,7 @@ class Settings extends Settings_Page {
 										'' => __( 'Disable', 'elementor' ),
 										1 => __( 'Enable', 'elementor' ),
 									],
-									'desc' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
 						],
