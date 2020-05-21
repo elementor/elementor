@@ -424,6 +424,14 @@ $devices: 'desktop', 'tablet', 'mobile';
 	.elementor-control-media__tool {
 		background-color: $theme-dark-gray-lighter;
 	}
+
+	&__file {
+
+		&,
+		&__controls {
+			border-color: $theme-dark-gray-light;
+		}
+	}
 }
 
 .elementor-control-media-area, .pcr-app[data-theme=monolith] .pcr-color-palette, .pcr-button {

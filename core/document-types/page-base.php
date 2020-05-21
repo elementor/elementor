@@ -190,7 +190,7 @@ abstract class PageBase extends Document {
 					'type' => Controls_Manager::MEDIA,
 					'default' => [
 						'id' => get_post_thumbnail_id(),
-						'url' => get_the_post_thumbnail_url( $document->post->ID ),
+						'url' => (string) get_the_post_thumbnail_url( $document->post->ID ),
 					],
 				]
 			);
