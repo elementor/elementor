@@ -224,11 +224,10 @@
 		display: block;
 		position: absolute;
 		min-width: 200px;
-		@include end(67px);
-		top: 60px;
+		@include end(2.8em);
+		top: 3em;
 		background-color: #fff;
 		border-radius: 3px;
-		font-size: 16px;
 		padding: 14px 20px;
 		transform: scale(0);
 		opacity: 0;
@@ -250,8 +249,8 @@
 			}
 
 			i {
-				@include margin-end(10px);
-				font-size: 15px;
+				font-size: 1.25em;
+				@include margin-end(0.75em);
 			}
 		}
 
@@ -259,9 +258,9 @@
 			content: '';
 			display: block;
 			position: absolute;
-			top: 0;
-			#{$end}: 15px;
-			border: 9px solid;
+			top: 1px;
+			@include end(0.5em);
+			border: .45em solid;
 			border-color: transparent transparent #fff transparent;
 			transform: translateY(-100%) scaleX(0.7);
 		}
