@@ -24,7 +24,7 @@ class TemplateTypesContext extends React.Component {
 		} )
 		.fail( ( error ) => {
 			this.setState( {
-				error: error.statusText,
+				error: error.statusText ? error.statusText : error,
 				loading: false,
 			} );
 		} );

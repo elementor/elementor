@@ -3,6 +3,7 @@ namespace Elementor\Core\App;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
 
@@ -161,6 +162,8 @@ class App extends BaseApp {
 	}
 
 	private function enqueue_scripts() {
+		Plugin::$instance->common->register_scripts();
+
 		wp_enqueue_script(
 			'elementor-app-loader',
 			$this->get_js_assets_url( 'app-loader' ),
@@ -201,12 +204,12 @@ class App extends BaseApp {
 
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		if ( empty( $_GET['page'] ) || self::PAGE_ID !== $_GET['page'] ) {
 			return;
 		}
 
 		add_action( 'elementor/init', [ $this, 'init' ] );
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }
