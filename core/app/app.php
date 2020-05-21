@@ -2,6 +2,7 @@
 namespace Elementor\Core\App;
 
 use Elementor\Core\Base\App as BaseApp;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Settings;
 use Elementor\Utils;
 
@@ -68,6 +69,87 @@ class App extends BaseApp {
 		die;
 	}
 
+	public function get_site_editor_template_types() {
+		return [
+			[
+				'type' => 'header',
+				'icon' => 'eicon-header',
+				'title' => __( 'Header', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-header',
+				],
+			],
+			[
+				'type' => 'footer',
+				'icon' => 'eicon-footer',
+				'title' => __( 'Footer', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-footer',
+				],
+			],
+			[
+				'type' => 'single-post',
+				'icon' => 'eicon-single-post',
+				'title' => __( 'Single Post', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-single-post',
+				],
+			],
+			[
+				'type' => 'error-404',
+				'icon' => 'eicon-error-404',
+				'title' => __( 'Error 404', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-error-404',
+				],
+			],
+			[
+				'type' => 'search-results',
+				'icon' => 'eicon-search-results',
+				'title' => __( 'Search Results', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-search-results',
+				],
+			],
+			[
+				'type' => 'archive',
+				'icon' => 'eicon-archive',
+				'title' => __( 'Archive', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-archive',
+				],
+			],
+			[
+				'type' => 'product',
+				'icon' => 'eicon-product-images',
+				'title' => __( 'Product', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-product',
+				],
+			],
+			[
+				'type' => 'products',
+				'icon' => 'eicon-products',
+				'title' => __( 'Products', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-products',
+				],
+			],
+			[
+				'type' => 'custom',
+				'icon' => 'eicon-custom',
+				'title' => __( 'Custom', 'elementor' ),
+				'urls' => [
+					'docs' => 'https =>//docs.elementor.com/site-editor-custom',
+				],
+			],
+		];
+	}
+
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'site_editor_template_types', [ $this, 'get_site_editor_template_types' ] );
+	}
+
 	protected function get_init_settings() {
 		return [
 			'assetsBaseUrl'  => $this->get_assets_base_url(),
@@ -114,5 +196,6 @@ class App extends BaseApp {
 		}
 
 		add_action( 'elementor/init', [ $this, 'init' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }

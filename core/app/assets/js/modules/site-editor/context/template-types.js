@@ -9,29 +9,40 @@ class TemplateTypesContext extends React.Component {
 		super( props );
 		this.state = {
 			templateTypes: [],
+			loading: true,
+			error: false,
 		};
 	}
 
 	componentDidMount() {
-		this.getTemplateTypes().then( ( response ) => {
+		this.getTemplateTypes()
+		.then( ( response ) => {
 			this.setState( {
-				templateTypes: response.data.template_types,
+				templateTypes: response,
+				loading: false,
+			} );
+		} )
+		.fail( ( error ) => {
+			this.setState( {
+				error: error.statusText,
+				loading: false,
 			} );
 		} );
 	}
 
 	getTemplateTypes() {
-		return new Promise( ( resolve ) => {
-			resolve( {
-					data: {
-						template_types: elementorAppLoader.getData( 'template_types' ),
-					},
-				}
-			);
-		} );
+		return elementorCommon.ajax.addRequest( 'site_editor_template_types', {}, true );
 	}
 
 	render() {
+		if ( this.state.error ) {
+			return <h3>{ __( 'Error:', 'elementor' ) } { this.state.error }</h3>;
+		}
+
+		if ( this.state.loading ) {
+			return <h3>{ __( 'Loading', 'elementor' ) }...</h3>;
+		}
+
 		return (
 			<Context.Provider value={ this.state }>
 				{ this.props.children }

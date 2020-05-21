@@ -116,6 +116,20 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get document icon.
+	 *
+	 * Retrieve the document icon.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @return string Element title.
+	 */
+	public static function get_icon() {
+		return 'eicon-post';
+	}
+
+	/**
 	 * Get property.
 	 *
 	 * Retrieve the document property.
