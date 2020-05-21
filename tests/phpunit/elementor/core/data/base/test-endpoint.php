@@ -37,7 +37,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$endpoints_results = $this->manager->run_endpoint( $controller->get_name() );
 
 		foreach ( $endpoints_results as $endpoint_name => $endpoints_result ) {
-			// EG: Run endpoint 'test-controller/test-endpoint-{random}'.
+			// Run endpoint like `test-controller/test-endpoint-{random}`.
 			$endpoint = $controller->get_name() . '/' . $endpoint_name;
 			$result = $this->manager->run_endpoint( $endpoint );
 
