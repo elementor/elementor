@@ -3,13 +3,20 @@
 	height: 200px;
 }
 
-/*
-TODO: add via webpack css-loader & file-loader.
-#site-part__type-header {
-	background: url( 'images/header.png' );
-}
+$types: (
+	"archive"
+	"error-404"
+	"footer"
+	"header"
+	"product"
+	"products"
+	"search-results"
+	"single-page"
+	"single-post"
+);
 
-#site-part__type-footer {
-	background: url( 'images/footer.png' );
+@each $type in $types {
+	#site-part__type-#{$type} {
+		background: url( 'images/' + $type + '.svg' );
+	}
 }
- */
