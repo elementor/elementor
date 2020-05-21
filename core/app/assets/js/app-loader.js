@@ -1,14 +1,10 @@
 /**
  * App Loader
  *
- * TODO: Temporary solution for routing extensibility and share components.
+ * TODO: Temporary solution for routing extensibility.
  */
 
-import * as library from './components-library';
-
 class AppLoader {
-	library = library;
-
 	/**
 	 * @type {*[]}
 	 */

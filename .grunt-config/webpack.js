@@ -83,6 +83,9 @@ const entry = {
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
+	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
+	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
+	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
@@ -90,8 +93,6 @@ const entry = {
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/tests.js' ),
-	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
-	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
 };
 
 const webpackConfig = {
@@ -118,6 +119,8 @@ const webpackConfig = {
 	externals: {
 		'@wordpress/i18n': 'wp.i18n',
 		react: 'React',
+		'@elementor/app-ui': 'elementorAppPackages.appUi',
+		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
 	}
 };
 
