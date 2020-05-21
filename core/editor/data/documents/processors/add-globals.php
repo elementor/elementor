@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Data\Editor\Documents\Processors;
+namespace Elementor\Core\Editor\Data\Documents\Processors;
 
 use Elementor\Data\Base\Processor;
 use Elementor\Data\Manager;

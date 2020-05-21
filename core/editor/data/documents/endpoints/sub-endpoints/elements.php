@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Data\Editor\Documents\Endpoints\SubEndpoints;
+namespace Elementor\Core\Editor\Data\Documents\Endpoints\SubEndpoints;
 
 use Elementor\Data\Base\SubEndpoint;
 use Elementor\Plugin;

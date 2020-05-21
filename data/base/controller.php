@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data\Base;
 
 use WP_REST_Controller;
@@ -182,7 +181,7 @@ abstract class Controller extends WP_REST_Controller {
 		$this->endpoints[ $endpoint_route ] = $endpoint_instance;
 
 		$command = $endpoint_route;
-		$format = $endpoint_instance::get_format_suffix();
+		$format = $endpoint_instance::get_format();
 
 		if ( $command ) {
 			$format = $command . '/' . $format;

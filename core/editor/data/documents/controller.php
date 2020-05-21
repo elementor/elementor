@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Data\Editor\Documents;
+namespace Elementor\Core\Editor\Data\Documents;
 
 use Elementor\Data\Base\Controller as Controller_Base;
 

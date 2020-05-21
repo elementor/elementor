@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data\Base\Processor;
 
 use Elementor\Data\Base\Processor;

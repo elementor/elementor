@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data\Base;
 
 abstract class SubEndpoint extends Endpoint {

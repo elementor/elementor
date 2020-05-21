@@ -5,14 +5,26 @@ use Elementor\Data\Manager;
 use Elementor\Testing\Elementor_Test_Base;
 
 class Test_Manager extends Elementor_Test_Base {
-	public function test_commands_formats() {
-		do_action( 'rest_api_init' );
-		/**
-		 * @var $manager \Elementor\Data\Manager
-		 */
-		$manager = Manager::instance();
 
-		$controllers = $manager->get_controllers();
+	/**
+	 * @var \Elementor\Data\Manager
+	 */
+	protected $manager;
+
+	/**
+	 * @var \WP_REST_Server
+	 */
+	protected $server;
+
+	public function setUp() {
+		parent::setUp();
+
+		$this->manager = Manager::instance();
+		$this->server = $this->manager->run_server();
+	}
+
+	public function test_commands_formats() {
+		$controllers = $this->manager->get_controllers();
 
 		$this->assertEquals( [
 			'editor/documents/elements' => 'editor/documents/:document_id/elements/:element_id',

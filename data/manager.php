@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data;
 
 use Elementor\Core\Base\Module as BaseModule;
@@ -11,9 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-/**
- * TODO: Manager should know if its `editor/admin/frontend` and register the right commands.
- */
 class Manager extends BaseModule {
 
 	/**
@@ -39,12 +35,25 @@ class Manager extends BaseModule {
 	 *
 	 * @param string $controller_class_name
 	 */
-	private function register_controller( $controller_class_name ) {
+	public function register_controller( $controller_class_name ) {
 		$controller_instance = new $controller_class_name();
 
+		$this->register_controller_instance( $controller_instance );
+	}
+
+	/**
+	 * Register controller instance.
+	 *
+	 * @param \Elementor\Data\Base\Controller $controller_instance
+	 *
+	 * @return \Elementor\Data\Base\Controller
+	 */
+	public function register_controller_instance( $controller_instance ) {
 		// TODO: Validate instance.
 
 		$this->controllers[ $controller_instance->get_name() ] = $controller_instance;
+
+		return $controller_instance;
 	}
 
 	/**
@@ -216,7 +225,7 @@ class Manager extends BaseModule {
 	 * Do:
 	 * Init reset server.
 	 * Run before processors.
-	 * Run command as reset api endpoint from internal3
+	 * Run command as reset api endpoint from internal.
 	 * Run after processors.
 	 *
 	 * @param string $command
@@ -256,4 +265,3 @@ class Manager extends BaseModule {
 		return $result;
 	}
 }
-
