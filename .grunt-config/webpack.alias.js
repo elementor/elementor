@@ -21,6 +21,7 @@ module.exports = {
 			'elementor-panel': path.resolve( __dirname, '../assets/dev/js/editor/regions/panel' ),
 			'elementor-regions': path.resolve( __dirname, '../assets/dev/js/editor/regions' ),
 			'elementor-revisions': path.resolve( __dirname, '../assets/dev/js/editor/components/revisions' ),
+			'elementor-scss': path.resolve( __dirname, '../assets/dev/scss' ),
 			'elementor-templates': path.resolve( __dirname, '../assets/dev/js/editor/components/template-library' ),
 			'elementor-tests-qunit': path.resolve( __dirname, '../tests/qunit' ),
 			'elementor-utils': path.resolve( __dirname, '../assets/dev/js/utils' ),
