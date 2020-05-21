@@ -27,7 +27,7 @@ export class ElementsIndexAddGlobalData extends After {
 			const newArgs = { query: {} },
 				endpointResult = await $e.data.get( $e.data.endpointToCommand( globalValue, newArgs ), newArgs.query ),
 				container = elementor.getContainer( args.query.elementId ),
-				data = endpointResult.data,
+				data = endpointResult.data.value,
 				controlGroupPrefix = container.controls[ globalKey ]?.groupPrefix;
 
 			// it's a global settings with additional controls in group.

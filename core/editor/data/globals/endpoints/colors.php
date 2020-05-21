@@ -5,8 +5,16 @@ use Elementor\Data\Base\Endpoint;
 
 class Colors extends Endpoint {
 	private static $fake_data = [
-		'primary' => 'red',
-		'secondary' => 'green',
+		'primary' => [
+			'name' => 'Primary',
+			'value' => 'red',
+			'id' => 'primary',
+		],
+		'secondary' => [
+			'name' => 'Secondary',
+			'value' => 'green',
+			'id' => 'secondary',
+		],
 	];
 
 	public function get_name() {

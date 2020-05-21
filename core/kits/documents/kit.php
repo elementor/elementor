@@ -19,11 +19,11 @@ class Kit extends PageBase {
 		parent::__construct( $data );
 
 		$this->tabs = [
+			'theme_style' => new Tabs\Theme_Style( $this ),
 			'site_identity' => new Tabs\Site_Identity( $this ),
 			'lightbox' => new Tabs\Lightbox( $this ),
 			'colors_and_typography' => new Tabs\Colors_And_Typography( $this ),
 			'layout_settings' => new Tabs\Layout_Settings( $this ),
-			'theme_style' => new Tabs\Theme_Style( $this ),
 		];
 	}
 

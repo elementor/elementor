@@ -19,11 +19,17 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
+	getCommand() {
+		return 'globals/typography';
+	}
+
 	createGlobalItemMarkup( textStyle ) {
 		// This method is called without a parameter when the user clicks the "Add" button
 		if ( ! textStyle ) {
 			textStyle = this.getTypographyObject();
 		}
+
+		textStyle.key = this.model.get( 'name' );
 
 		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': JSON.stringify( textStyle ) } ),
 			{ fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle;
@@ -79,7 +85,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
 	async getGlobalsList() {
-		return [
+		/*return [
 			{
 				name: 'Primary',
 				value: 'globals/typography/primary',
@@ -128,18 +134,18 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-		];
+		];*/
 
-		/*const result = await $e.data.get( 'globals/typography' );
+		const result = await $e.data.get( 'globals/typography' );
 
-		return result.data;*/
+		return result.data;
 	}
 
 	// TODO: Replace placeholders with real global colors
 	buildGlobalsList( globalTextStyles ) {
 		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
-		globalTextStyles.forEach( ( textStyle ) => {
+		Object.values( globalTextStyles ).forEach( ( textStyle ) => {
 			const $textStylePreview = this.createGlobalItemMarkup( textStyle );
 
 			$globalTypographyContainer.append( $textStylePreview );

@@ -92,11 +92,17 @@ export default class extends ControlBaseDataView {
 		return $message;
 	}
 
+	getCommand() {
+		return 'globals/colors';
+	}
+
 	createGlobalItemMarkup( color ) {
 		// This method is called without a color parameter when the user clicks the "Add" button
 		if ( ! color ) {
 			color = this.colorPicker.getColorData();
 		}
+
+		color.key = this.model.get( 'name' );
 
 		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global': JSON.stringify( color ) } ),
 			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.value } ),
@@ -111,7 +117,7 @@ export default class extends ControlBaseDataView {
 	}
 	// TODO: Replace placeholders with real global colors
 	async getGlobalsList() {
-		return {
+		/*return {
 			Primary: {
 				id: 'primary',
 				commandName: 'globals/colors',
@@ -154,11 +160,11 @@ export default class extends ControlBaseDataView {
 				name: 'Grass Green',
 				value: '#048647',
 			},
-		};
+		};*/
 
-		/*const result = await $e.data.get( 'globals/colors' );
+		const result = await $e.data.get( 'globals/colors' );
 
-		return result.data;*/
+		return result.data;
 	}
 
 	buildGlobalsList( globalColors ) {

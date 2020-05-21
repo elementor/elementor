@@ -8,12 +8,29 @@ use Elementor\Utils;
 class Typography extends Endpoint {
 	private static $fake_data = [
 		'primary' => [
-			'typography' => 'custom',
-			'font_family' => 'Over the Rainbow',
-			'font_weight' => '900',
-			'font_size' => [
-				'unit' => 'px',
-				'size' => 121,
+			'name' => 'Primary',
+			'id' => 'primary',
+			'value' => [
+				'typography' => 'custom',
+				'font_family' => 'Over the Rainbow',
+				'font_weight' => '900',
+				'font_size' => [
+					'unit' => 'px',
+					'size' => 121,
+				],
+			],
+		],
+		'secondary' => [
+			'name' => 'Secondary',
+			'id' => 'secondary',
+			'value' => [
+				'typography' => 'custom',
+				'font_family' => 'Tahoma',
+				'font_weight' => '500',
+				'font_size' => [
+					'unit' => 'px',
+					'size' => 40,
+				],
 			],
 		],
 	];
