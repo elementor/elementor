@@ -464,7 +464,7 @@ abstract class Element_Base extends Controls_Stack {
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
 			// Custom URL attributes should come as a string of comma-delimited key|value pairs
 			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
-			$blacklist = [ 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup' ];
+			$blacklist = [ 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup', 'onload', 'onerror', 'onanimationend', 'onanimationstart' ];
 
 			foreach ( $custom_attributes as $attribute ) {
 				// Trim in case users inserted unwanted spaces
