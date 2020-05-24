@@ -68,23 +68,6 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get processors.
-	 *
-	 * @param string $command
-	 *
-	 * @return \Elementor\Data\Base\Processor[]
-	 */
-	public function get_processors( $command ) {
-		$result = [];
-
-		if ( isset( $this->processors[ $command ] ) ) {
-			$result = $this->processors[ $command ];
-		}
-
-		return $result;
-	}
-
-	/**
 	 * Get controller reset base.
 	 *
 	 * @return string
@@ -100,6 +83,23 @@ abstract class Controller extends WP_REST_Controller {
 	 */
 	public function get_controller_route() {
 		return $this->get_namespace() . '/' . $this->get_rest_base();
+	}
+
+	/**
+	 * Get processors.
+	 *
+	 * @param string $command
+	 *
+	 * @return \Elementor\Data\Base\Processor[]
+	 */
+	public function get_processors( $command ) {
+		$result = [];
+
+		if ( isset( $this->processors[ $command ] ) ) {
+			$result = $this->processors[ $command ];
+		}
+
+		return $result;
 	}
 
 	public function get_items( $request ) {
@@ -192,16 +192,14 @@ abstract class Controller extends WP_REST_Controller {
 		$this->register_endpoint_format( $command, $format );
 	}
 
-	public function register_endpoint_format( $command, $format ) {
-		$this->command_formats[ $command ] = rtrim( $format, '/' );
-	}
-
 	/**
 	 * Register a processor.
 	 *
 	 * That will be later attached to the endpoint class.
 	 *
 	 * @param string $processor_class
+	 *
+	 * @return \Elementor\Data\Base\Processor $processor_instance
 	 */
 	protected function register_processor( $processor_class ) {
 		$processor_instance = new $processor_class( $this );
@@ -215,6 +213,18 @@ abstract class Controller extends WP_REST_Controller {
 		}
 
 		$this->processors[ $command ] [] = $processor_instance;
+
+		return $processor_instance;
+	}
+
+	/**
+	 * Register endpoint format.
+	 *
+	 * @param string $command
+	 * @param string $format
+	 */
+	public function register_endpoint_format( $command, $format ) {
+		$this->command_formats[ $command ] = rtrim( $format, '/' );
 	}
 
 	/**
@@ -233,7 +243,7 @@ abstract class Controller extends WP_REST_Controller {
 			case 'UPDATE':
 			case 'PUT':
 			case 'DELETE':
-				// TODO: Handle all the situations.
+				// TODO: Handle all the situations + tests.
 				return current_user_can( 'edit_posts' );
 		}
 

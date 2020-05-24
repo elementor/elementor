@@ -1,7 +1,9 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\Data\Base\Mock\Recursive;
+namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Recursive;
 
-class Internal_Endpoint extends \Elementor\Data\Base\Endpoint {
+use Elementor\Data\Base\Endpoint;
+
+class Internal_Endpoint extends Endpoint {
 
 	public function get_name() {
 		return 'index';

@@ -2,6 +2,7 @@
 import BackwardsCompatibility from './core/backwards-compatibility';
 import CommandBase from './modules/command-base';
 import CommandInternalBase from './modules/command-internal-base';
+import CommandData from './modules/command-data';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
 import ComponentBase from './modules/component-base';
@@ -38,6 +39,8 @@ export default class API {
 		this.modules = {
 			CommandBase,
 			CommandInternalBase,
+
+			CommandData,
 
 			ComponentBase,
 			ComponentModalBase,

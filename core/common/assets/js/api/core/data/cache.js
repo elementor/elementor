@@ -1,7 +1,6 @@
-import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import LocalStorage from './stroages/local-storage';
 
-export default class Cache extends ArgsObject {
+export default class Cache {
 	/**
 	 * Function constructor().
 	 *
@@ -10,22 +9,9 @@ export default class Cache extends ArgsObject {
 	 * @param {Data} manager
 	 */
 	constructor( manager ) {
-		super( {} );
-
 		this.manager = manager;
 
 		this.storage = new LocalStorage();
-	}
-
-	/**
-	 * Function validateRequestData().
-	 *
-	 * @param {RequestData} requestData
-	 */
-	validateRequestData( requestData ) {
-		this.requireArgument( 'component', requestData );
-		this.requireArgumentType( 'command', 'string', requestData );
-		this.requireArgumentType( 'endpoint', 'string', requestData );
 	}
 
 	/**
@@ -39,8 +25,6 @@ export default class Cache extends ArgsObject {
 	 * @return {(Promise|boolean)}
 	 */
 	getAsync( requestData ) {
-		this.validateRequestData( requestData );
-
 		const data = this.get( requestData );
 
 		if ( null !== data ) {
@@ -68,7 +52,7 @@ export default class Cache extends ArgsObject {
 	 * @param {*} data
 	 */
 	load( requestData, data ) {
-		this.validateRequestData( requestData );
+		$e.data.validateRequestData( requestData );
 
 		const componentName = requestData.component.getNamespace(),
 			nakedEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
@@ -114,6 +98,8 @@ export default class Cache extends ArgsObject {
 	 * @return {{}}
 	 */
 	get( requestData ) {
+		$e.data.validateRequestData( requestData );
+
 		const componentName = requestData.component.getNamespace();
 
 		let componentData = this.storage.getItem( componentName );
@@ -151,6 +137,8 @@ export default class Cache extends ArgsObject {
 	 * @return {boolean} is updated
 	 */
 	update( requestData ) {
+		$e.data.validateRequestData( requestData );
+
 		if ( 'object' !== typeof requestData.args.data ) {
 			throw new Error( 'requestData.args.data object is excepted.' );
 		}

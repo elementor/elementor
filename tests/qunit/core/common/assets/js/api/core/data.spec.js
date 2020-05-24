@@ -92,16 +92,45 @@ jQuery( () => {
 			assert.equal( endpointWithId, component.getNamespace() + '/test-id' );
 		} );
 
+		QUnit.test( 'validateRequestData', ( assert ) => {
+			assert.throws( () => {
+					$e.data.validateRequestData( {} );
+				},
+				new Error( 'component is required.' )
+			);
+			assert.throws( () => {
+					$e.data.validateRequestData( {
+						component: {},
+					} );
+				},
+				new Error( 'command is required.' )
+			);
+			assert.throws( () => {
+					$e.data.validateRequestData( {
+						component: {},
+						command: '',
+					} );
+				},
+				new Error( 'endpoint is required.' )
+			);
+		} );
+
 		QUnit.test( 'prepareHeaders(): with GET', ( assert ) => {
-			const requestData = { paramA: 'valueA' },
-				params = $e.data.prepareHeaders( 'get', requestData );
+			const requestData = {
+					paramA: 'valueA',
+					type: 'get',
+				},
+				params = $e.data.prepareHeaders( requestData );
 
 			assert.equal( params.headers[ 'X-WP-Nonce' ], wpApiSettings.nonce );
 		} );
 
 		QUnit.test( 'prepareHeaders(): with POST', ( assert ) => {
-			const requestData = { paramA: 'valueA' },
-				params = $e.data.prepareHeaders( 'create', requestData );
+			const requestData = {
+					paramA: 'valueA',
+					type: 'create',
+				},
+				params = $e.data.prepareHeaders( requestData );
 
 			assert.equal( params.body, '{"paramA":"valueA"}' );
 		} );
@@ -109,9 +138,20 @@ jQuery( () => {
 		QUnit.test( 'prepareHeaders(): with invalid type', ( assert ) => {
 			const type = 'some-invalid-type';
 
-			assert.throws( () => $e.data.prepareHeaders( type, {} ),
+			assert.throws( () => $e.data.prepareHeaders( { type } ),
 				new Error( `Invalid type: '${ type }'` )
 			);
+		} );
+
+		QUnit.test( 'prepareHeaders(): should keep type', ( assert ) => {
+			const requestData = {
+					paramA: 'valueA',
+					type: 'get',
+				};
+
+			$e.data.prepareHeaders( requestData );
+
+			assert.equal( requestData.type, 'get' );
 		} );
 
 		/**
@@ -157,7 +197,8 @@ jQuery( () => {
 				} );
 			};
 
-			const result = await $e.data.fetch( 'get', {
+			const result = await $e.data.fetch( {
+				type: 'get',
 				endpoint,
 				command,
 				args,
@@ -207,13 +248,14 @@ jQuery( () => {
 			};
 
 			const requestData = {
+				type: 'get',
 				component,
 				endpoint,
 				command,
 				args,
 			};
 
-			const result = await $e.data.fetch( 'get', requestData );
+			const result = await $e.data.fetch( requestData );
 
 			// Validate result.
 			assert.deepEqual( response.data, result.data );
