@@ -39,7 +39,7 @@ jQuery( () => {
 			);
 		} );
 
-		QUnit.test( 'receive(): simple ', async ( assert ) => {
+		QUnit.test( 'getAsync(): simple ', async ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'receive-simple-component';
