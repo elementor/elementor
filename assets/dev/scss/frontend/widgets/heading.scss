@@ -2,31 +2,34 @@
 // Heading
 //
 
-.elementor-heading-title {
-	padding: 0;
-	margin: 0;
-	line-height: 1;
+.elementor-widget-heading {
 
-	> a {
-		color: inherit;
-		font-size: inherit;
-	}
+	.elementor-heading-title {
+		padding: 0;
+		margin: 0;
+		line-height: 1;
 
-	&.elementor-size- {
-		&small {
-			font-size: 15px;
+		> a {
+			color: inherit;
+			font-size: inherit;
 		}
-		&medium {
-			font-size: 19px;
-		}
-		&large {
-			font-size: 29px;
-		}
-		&xl {
-			font-size: 39px;
-		}
-		&xxl {
-			font-size: 59px;
+
+		&.elementor-size- {
+			&small {
+				font-size: 15px;
+			}
+			&medium {
+				font-size: 19px;
+			}
+			&large {
+				font-size: 29px;
+			}
+			&xl {
+				font-size: 39px;
+			}
+			&xxl {
+				font-size: 59px;
+			}
 		}
 	}
 }
