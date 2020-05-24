@@ -38,9 +38,22 @@ class Manager extends BaseModule {
 	public function register_controller( $controller_class_name ) {
 		$controller_instance = new $controller_class_name();
 
+		$this->register_controller_instance( $controller_instance );
+	}
+
+	/**
+	 * Register controller instance.
+	 *
+	 * @param \Elementor\Data\Base\Controller $controller_instance
+	 *
+	 * @return \Elementor\Data\Base\Controller
+	 */
+	public function register_controller_instance( $controller_instance ) {
 		// TODO: Validate instance.
 
 		$this->controllers[ $controller_instance->get_name() ] = $controller_instance;
+
+		return $controller_instance;
 	}
 
 	/**

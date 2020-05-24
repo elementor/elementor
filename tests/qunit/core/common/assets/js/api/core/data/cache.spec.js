@@ -16,30 +16,7 @@ jQuery( () => {
 			$e.data.cache.storage.clear();
 		} );
 
-		QUnit.test( 'validateRequestData', ( assert ) => {
-			assert.throws( () => {
-					$e.data.cache.validateRequestData( {} );
-				},
-				new Error( 'component is required.' )
-			);
-			assert.throws( () => {
-					$e.data.cache.validateRequestData( {
-						component: {},
-					} );
-				},
-				new Error( 'command is required.' )
-			);
-			assert.throws( () => {
-					$e.data.cache.validateRequestData( {
-						component: {},
-						command: '',
-					} );
-				},
-				new Error( 'endpoint is required.' )
-			);
-		} );
-
-		QUnit.test( 'receive(): simple ', async ( assert ) => {
+		QUnit.test( 'getAsync(): simple ', async ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'receive-simple-component';

@@ -1,3 +1,4 @@
+import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import Commands from './commands.js';
 import Cache from './data/cache';
 
@@ -33,6 +34,7 @@ export default class Data extends Commands {
 		} );
 
 		this.cache = new Cache( this );
+		this.validatedRequests = {};
 
 		this.baseEndpointAddress = '';
 
@@ -232,16 +234,43 @@ export default class Data extends Commands {
 	}
 
 	/**
+	 * Function validateRequestData().
+	 *
+	 * Validate request data requirements.
+	 *
+	 * @param {RequestData} requestData
+	 */
+	validateRequestData( requestData ) {
+		// Do not validate if its already valid.
+		if ( requestData.timestamp && this.validatedRequests[ requestData.timestamp ] ) {
+			return;
+		}
+
+		const argsObject = new ArgsObject( requestData );
+
+		argsObject.requireArgument( 'component', requestData );
+		argsObject.requireArgumentType( 'command', 'string', requestData );
+		argsObject.requireArgumentType( 'endpoint', 'string', requestData );
+
+		// Ensure timestamp.
+		if ( ! requestData.timestamp ) {
+			requestData.timestamp = new Date().getTime();
+		}
+
+		this.validatedRequests[ requestData.timestamp ] = true;
+	}
+
+	/**
 	 * Function prepareHeaders().
 	 *
-	 * @param {DataTypes} type
 	 * @param {RequestData} requestData
 	 *
 	 * @return {{}} params
 	 */
-	prepareHeaders( type, requestData ) {
+	prepareHeaders( requestData ) {
 		/* global wpApiSettings */
-		const nonce = wpApiSettings.nonce,
+		const type = requestData.type,
+			nonce = wpApiSettings.nonce,
 			params = {
 				credentials: 'include', // cookies is required for wp reset.
 			},
@@ -258,11 +287,15 @@ export default class Data extends Commands {
 		if ( 'GET' === method ) {
 			Object.assign( params, { headers } );
 		} else if ( allowedMethods ) {
+			const body = Object.assign( requestData );
+
+			delete body.type;
+
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
 			Object.assign( params, {
 				method,
 				headers,
-				body: JSON.stringify( requestData ),
+				body: JSON.stringify( body ),
 			} );
 		} else {
 			throw Error( `Invalid type: '${ type }'` );
@@ -274,16 +307,15 @@ export default class Data extends Commands {
 	/**
 	 * Function fetch().
 	 *
-	 * @param {DataTypes} type
 	 * @param {RequestData} requestData
 	 *
 	 * @return {{}} params
 	 */
-	fetch( type, requestData ) {
+	fetch( requestData ) {
 		requestData.cache = 'miss';
 
-		const params = this.prepareHeaders( type, requestData ),
-			useCache = 'get' === type && ! requestData.args.options?.refresh;
+		const params = this.prepareHeaders( requestData ),
+			useCache = 'get' === requestData.type && ! requestData.args.options?.refresh;
 
 		if ( useCache ) {
 			const cachePromise = this.cache.getAsync( requestData );
@@ -294,26 +326,25 @@ export default class Data extends Commands {
 		}
 
 		return new Promise( async ( resolve, reject ) => {
+			// This function is async because:
+			// it needs to wait for the results, to cache them before it resolve's the promise.
 			try {
 				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params ),
-					response = await request
-						.then( ( _response ) => {
-							if ( ! _response.ok ) {
-								throw _response;
+					response = await request.then( async ( _response ) => {
+						if ( ! _response.ok ) {
+							// Catch WP REST errors.
+							if ( _response.headers.get( 'content-type' ).includes( 'application/json' ) ) {
+								_response = await _response.json();
 							}
 
-							return _response.json();
-						} )
-						.catch( reject );
+							throw _response;
+						}
 
-				// Catch WP REST errors.
-				if ( response.data && response.data.status && response.code ) {
-					reject( response.message );
+						return _response.json();
+					} );
 
-					return response;
-				}
-
-				// Upon 'GET' save cache.
+				// At this point, it got the resolved response from remote.
+				// So load cache, and resolve it.
 				if ( useCache ) {
 					this.cache.load( requestData, response );
 				}

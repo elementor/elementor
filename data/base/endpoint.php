@@ -46,7 +46,7 @@ abstract class Endpoint {
 	 *
 	 * @return string
 	 */
-	abstract protected function get_name();
+	abstract public function get_name();
 
 	/**
 	 * Get format suffix.
@@ -229,7 +229,11 @@ abstract class Endpoint {
 	}
 
 	/**
-	 * Retrieves a recursive collection of items.
+	 * Retrieves a recursive collection of all endpoint(s), items.
+	 *
+	 * Get items recursive, will run overall endpoints of the current controller.
+	 * For each endpoint it will run `$endpoint->getItems( $request ) // the $request passed in get_items_recursive`.
+	 * Will skip self endpoint ( more information available a 'test-endpoint.php'.
 	 *
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
