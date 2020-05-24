@@ -777,28 +777,6 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
-	 * Get class controls.
-	 *
-	 * Retrieve the controls that use the same prefix class from all the active
-	 * controls
-	 *
-	 * @since 1.4.0
-	 * @deprecated 2.1.0
-	 * @access public
-	 *
-	 * @return array Class controls.
-	 */
-	final public function get_class_controls() {
-		_deprecated_function( __METHOD__, '2.1.0' );
-
-		return array_filter(
-			$this->get_active_controls(), function( $control ) {
-				return ( isset( $control['prefix_class'] ) );
-			}
-		);
-	}
-
-	/**
 	 * Get tabs controls.
 	 *
 	 * Retrieve all the tabs assigned to the control.
@@ -1219,7 +1197,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Frontend settings.
 	 */
 	public function get_frontend_settings() {
-		$frontend_settings = array_intersect_key( $this->get_active_settings(), array_flip( $this->get_frontend_settings_keys() ) );
+		$frontend_settings = array_intersect_key( $this->get_settings_for_display(), array_flip( $this->get_frontend_settings_keys() ) );
 
 		foreach ( $frontend_settings as $key => $setting ) {
 			if ( in_array( $setting, [ null, '' ], true ) ) {

@@ -7,8 +7,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	onEditSettingsChange: null,
 
-	onGeneralSettingsChange: null,
-
 	onPageSettingsChange: null,
 
 	isEdit: null,
@@ -98,7 +96,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			} );
 		}
 
-		[ 'page', 'general' ].forEach( function( settingsType ) {
+		[ 'page' ].forEach( function( settingsType ) {
 			var listenerMethodName = 'on' + settingsType[ 0 ].toUpperCase() + settingsType.slice( 1 ) + 'SettingsChange';
 
 			if ( self[ listenerMethodName ] ) {

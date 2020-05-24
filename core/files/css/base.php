@@ -239,20 +239,6 @@ abstract class Base extends Base_File {
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
-		 * @since 1.9.0
-		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
-		 *
-		 * @param Base $this The current CSS file.
-		 */
-		do_action_deprecated( "elementor/{$name}-css-file/enqueue", [ $this ], '2.0.0', "elementor/css-file/{$name}/enqueue" );
-
-		/**
-		 * Enqueue CSS file.
-		 *
-		 * Fires when CSS file is enqueued on Elementor.
-		 *
-		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
-		 *
 		 * @since 2.0.0
 		 *
 		 * @param Base $this The current CSS file.
@@ -426,23 +412,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * Get CSS.
-	 *
-	 * Retrieve the CSS. If the CSS is empty, parse it again.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 * @deprecated 2.1.0 Use `CSS_File::get_content()` method instead
-	 *
-	 * @return string The CSS.
-	 */
-	public function get_css() {
-		_deprecated_function( __METHOD__, '2.1.0', __CLASS__ . '::get_content()' );
-
-		return $this->get_content();
-	}
-
-	/**
 	 * Get stylesheet.
 	 *
 	 * Retrieve the CSS file stylesheet instance.
@@ -596,20 +565,6 @@ abstract class Base extends Base_File {
 		$this->render_css();
 
 		$name = $this->get_name();
-
-		/**
-		 * Parse CSS file.
-		 *
-		 * Fires when CSS file is parsed on Elementor.
-		 *
-		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
-		 *
-		 * @since 1.2.0
-		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
-		 *
-		 * @param Base $this The current CSS file.
-		 */
-		do_action_deprecated( "elementor/{$name}-css-file/parse", [ $this ], '2.0.0', "elementor/css-file/{$name}/parse" );
 
 		/**
 		 * Parse CSS file.

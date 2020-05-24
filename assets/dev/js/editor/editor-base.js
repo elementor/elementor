@@ -1,6 +1,5 @@
 /* global ElementorConfig */
 
-import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from 'elementor-common/utils/environment';
@@ -9,10 +8,10 @@ import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
-import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
+import Preview from 'elementor-views/preview';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -286,7 +285,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getPreviewView() {
-		return this.sections.currentView;
+		return this.previewView;
 	}
 
 	getPreviewContainer() {
@@ -374,6 +373,29 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
+	}
+
+	initPreviewView( document ) {
+		const element = document.$element[ 0 ];
+
+		if ( this.previewView && this.previewView.el === element ) {
+			this.previewView.destroy();
+		}
+
+		const preview = new Preview( { el: element, model: elementor.elementsModel } );
+
+		preview.$el.empty();
+
+		preview.resetChildViewContainer();
+
+		// In order to force rendering of children
+		preview.isRendered = true;
+
+		preview._renderChildren();
+
+		preview.triggerMethod( 'render' );
+
+		this.previewView = preview;
 	}
 
 	initFrontend() {
@@ -610,9 +632,7 @@ export default class EditorBase extends Marionette.Application {
 		const $element = this.documents.getCurrent().$element;
 
 		if ( $element ) {
-			$element
-				.removeClass( 'elementor-edit-area-active' )
-				.addClass( 'elementor-edit-area-preview' );
+			$element.removeClass( 'elementor-edit-area-active' );
 		}
 
 		if ( hidePanel ) {
@@ -629,9 +649,7 @@ export default class EditorBase extends Marionette.Application {
 			.addClass( 'elementor-editor-active' );
 
 		if ( elementor.config.document.panel.has_elements ) {
-			this.documents.getCurrent().$element
-				.removeClass( 'elementor-edit-area-preview' )
-				.addClass( 'elementor-edit-area-active' );
+			this.documents.getCurrent().$element.addClass( 'elementor-edit-area-active' );
 		}
 	}
 
