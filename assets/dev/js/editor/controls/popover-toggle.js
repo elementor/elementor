@@ -19,11 +19,17 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
+	getCommand() {
+		return 'globals/typography';
+	}
+
 	createGlobalItemMarkup( textStyle ) {
 		// This method is called without a parameter when the user clicks the "Add" button
 		if ( ! textStyle ) {
 			textStyle = this.getTypographyObject();
 		}
+
+		textStyle.key = this.model.get( 'name' );
 
 		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': JSON.stringify( textStyle ) } ),
 			{ fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle;
@@ -79,8 +85,8 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
 	async getGlobalsList() {
-		return [
-			{
+		return {
+			primary: {
 				name: 'Primary',
 				value: 'globals/typography/primary',
 				fontFamily: 'Varela',
@@ -92,7 +98,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-			{
+			secondary: {
 				name: 'Secondary',
 				value: 'globals/typography/secondary',
 				fontFamily: 'Varela',
@@ -104,7 +110,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-			{
+			text: {
 				name: 'Text',
 				value: 'globals/typography/text',
 				fontFamily: 'Varela',
@@ -116,7 +122,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-			{
+			accent: {
 				name: 'Accent',
 				value: 'globals/typography/accent',
 				fontFamily: 'Varela',
@@ -128,7 +134,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-		];
+		};
 
 		/*const result = await $e.data.get( 'globals/typography' );
 
@@ -139,7 +145,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	buildGlobalsList( globalTextStyles ) {
 		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
-		globalTextStyles.forEach( ( textStyle ) => {
+		Object.values( globalTextStyles ).forEach( ( textStyle ) => {
 			const $textStylePreview = this.createGlobalItemMarkup( textStyle );
 
 			$globalTypographyContainer.append( $textStylePreview );

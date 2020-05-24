@@ -182,7 +182,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			command = 'document/globals/enable';
 		}
 
-		settings[ globalData.key ] = globalData.id;
+		settings[ globalData.key ] = this.view.getCommand() + '/' + globalData.id;
 
 		$e.run( command, {
 			container: elementor.getCurrentElement().getContainer(),
