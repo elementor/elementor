@@ -2,7 +2,7 @@ export default class extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				links: 'a[href^="%23elementor-action"]',
+				links: 'a[href^="%23elementor-action"], a[href^="#elementor-action"]',
 			},
 		};
 	}
