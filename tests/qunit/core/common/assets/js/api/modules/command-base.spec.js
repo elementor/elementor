@@ -93,7 +93,7 @@ jQuery( () => {
 				$e.devTools = undefined;
 			} );
 
-			QUnit.test( 'instanceOf: validate: CommandBase', ( assert ) => {
+			QUnit.test( 'instanceOf(): validate: CommandBase', ( assert ) => {
 				const validateCommandBase = ( command ) => {
 					assert.equal( command instanceof CommandBase, true );
 					assert.equal( command instanceof CommandInternalBase, false, );
@@ -111,7 +111,7 @@ jQuery( () => {
 				validateCommandBase( new $e.modules.CommandBase( {} ) );
 			} );
 
-			QUnit.test( 'instanceOf: validate: CommandInternalBase', ( assert ) => {
+			QUnit.test( 'instanceOf(): validate: CommandInternalBase', ( assert ) => {
 				const validateInternalCommand = ( command ) => {
 					assert.equal( command instanceof CommandBase, true, );
 					assert.equal( command instanceof CommandInternalBase, true );
@@ -129,25 +129,7 @@ jQuery( () => {
 				validateInternalCommand( new $e.modules.CommandInternalBase( {} ) );
 			} );
 
-			QUnit.test( 'instanceOf: validate: CommandData', ( assert ) => {
-				const validateCommandData = ( command ) => {
-					assert.equal( command instanceof CommandBase, true, );
-					assert.equal( command instanceof CommandInternalBase, false );
-					assert.equal( command instanceof CommandData, true, );
-					assert.equal( command instanceof CommandHistory, false );
-					assert.equal( command instanceof CommandHistoryDebounce, false );
-					assert.equal( command instanceof $e.modules.CommandBase, true );
-					assert.equal( command instanceof $e.modules.CommandInternalBase, false );
-					assert.equal( command instanceof $e.modules.CommandData, true );
-					assert.equal( command instanceof $e.modules.document.CommandHistory, false );
-					assert.equal( command instanceof $e.modules.document.CommandHistoryDebounce, false );
-				};
-
-				validateCommandData( new CommandData( {} ) );
-				validateCommandData( new $e.modules.CommandData( {} ) );
-			} );
-
-			QUnit.test( 'instanceOf: validate: CommandHistory', ( assert ) => {
+			QUnit.test( 'instanceOf(): validate: CommandHistory', ( assert ) => {
 				const validateHistoryCommand = ( command ) => {
 					assert.equal( command instanceof CommandBase, true, );
 					assert.equal( command instanceof CommandInternalBase, false );
@@ -172,7 +154,7 @@ jQuery( () => {
 				validateHistoryCommand( historyCommandExternal );
 			} );
 
-			QUnit.test( 'instanceOf: validate: CommandHistoryDebounce', ( assert ) => {
+			QUnit.test( 'instanceOf(): validate: CommandHistoryDebounce', ( assert ) => {
 				const validateHistoryDebounceCommand = ( command ) => {
 					assert.equal( command instanceof CommandBase, true, );
 					assert.equal( command instanceof CommandInternalBase, false );

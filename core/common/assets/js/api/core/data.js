@@ -1,3 +1,4 @@
+import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import Commands from './commands.js';
 import Cache from './data/cache';
 
@@ -33,6 +34,7 @@ export default class Data extends Commands {
 		} );
 
 		this.cache = new Cache( this );
+		this.validatedRequests = {};
 
 		this.baseEndpointAddress = '';
 
@@ -229,6 +231,33 @@ export default class Data extends Commands {
 		}
 
 		return command;
+	}
+
+	/**
+	 * Function validateRequestData().
+	 *
+	 * Validate request data requirements.
+	 *
+	 * @param {RequestData} requestData
+	 */
+	validateRequestData( requestData ) {
+		// Do not validate if its already valid.
+		if ( requestData.timestamp && this.validatedRequests[ requestData.timestamp ] ) {
+			return;
+		}
+
+		const argsObject = new ArgsObject( requestData );
+
+		argsObject.requireArgument( 'component', requestData );
+		argsObject.requireArgumentType( 'command', 'string', requestData );
+		argsObject.requireArgumentType( 'endpoint', 'string', requestData );
+
+		// Ensure timestamp.
+		if ( ! requestData.timestamp ) {
+			requestData.timestamp = new Date().getTime();
+		}
+
+		this.validatedRequests[ requestData.timestamp ] = true;
 	}
 
 	/**

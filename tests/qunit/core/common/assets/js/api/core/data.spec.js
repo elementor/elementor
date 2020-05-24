@@ -92,6 +92,29 @@ jQuery( () => {
 			assert.equal( endpointWithId, component.getNamespace() + '/test-id' );
 		} );
 
+		QUnit.test( 'validateRequestData', ( assert ) => {
+			assert.throws( () => {
+					$e.data.validateRequestData( {} );
+				},
+				new Error( 'component is required.' )
+			);
+			assert.throws( () => {
+					$e.data.validateRequestData( {
+						component: {},
+					} );
+				},
+				new Error( 'command is required.' )
+			);
+			assert.throws( () => {
+					$e.data.validateRequestData( {
+						component: {},
+						command: '',
+					} );
+				},
+				new Error( 'endpoint is required.' )
+			);
+		} );
+
 		QUnit.test( 'prepareHeaders(): with GET', ( assert ) => {
 			const requestData = {
 					paramA: 'valueA',
