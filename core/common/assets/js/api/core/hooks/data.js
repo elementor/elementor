@@ -29,7 +29,7 @@ export default class Data extends HooksBase {
 			case 'catch':
 			case 'after': {
 				/**
-				 * When handling HOOK which is data after ( not breakable Z).
+				 * When handling HOOK which is data after (not breakable).
 				 * Even the result of the callback is negative, it is required to return positive.
 				 * Since result of runCallback determine if the callback succeeded.
 				 */
