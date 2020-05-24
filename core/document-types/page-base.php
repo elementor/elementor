@@ -88,11 +88,7 @@ abstract class PageBase extends Document {
 			[
 				'label' => __( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'description' => sprintf(
-					/* translators: %s: Setting page link */
-					__( 'Not working? You can set a different selector for the title in the <a href="%s" target="_blank">Settings page</a>.', 'elementor' ),
-					Settings::get_url() . '#tab-style'
-				),
+				'description' => __( 'Not working? You can set a different selector for the title in Global Settings > Layout Settings', 'elementor' ),
 				'selectors' => [
 					':root' => '--page-title-display: none',
 				],
