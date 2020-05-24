@@ -126,7 +126,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		if ( this.model.get( 'item_actions' ).sort ) {
-			this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
+			this.ui.fieldContainer.sortable( {
+				axis: 'y',
+				handle: '.elementor-repeater-row-tools',
+				cancel: '.elementor-repeater-row--disable-sort',
+			} );
 		}
 
 		this.toggleMinRowsClass();
