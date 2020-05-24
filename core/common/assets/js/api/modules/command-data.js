@@ -71,7 +71,7 @@ export default class CommandData extends CommandBase {
 			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.getEndpointFormat() ),
 		};
 
-		return $e.data.fetch( type, requestData ).then( ( data ) => {
+		return $e.data.fetch( requestData ).then( ( data ) => {
 			this.data = data;
 
 			// Run 'after' method.

@@ -234,14 +234,14 @@ export default class Data extends Commands {
 	/**
 	 * Function prepareHeaders().
 	 *
-	 * @param {DataTypes} type
 	 * @param {RequestData} requestData
 	 *
 	 * @return {{}} params
 	 */
-	prepareHeaders( type, requestData ) {
+	prepareHeaders( requestData ) {
 		/* global wpApiSettings */
-		const nonce = wpApiSettings.nonce,
+		const type = requestData.type,
+			nonce = wpApiSettings.nonce,
 			params = {
 				credentials: 'include', // cookies is required for wp reset.
 			},
@@ -258,11 +258,15 @@ export default class Data extends Commands {
 		if ( 'GET' === method ) {
 			Object.assign( params, { headers } );
 		} else if ( allowedMethods ) {
+			const body = Object.assign( requestData );
+
+			delete body.type;
+
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
 			Object.assign( params, {
 				method,
 				headers,
-				body: JSON.stringify( requestData ),
+				body: JSON.stringify( body ),
 			} );
 		} else {
 			throw Error( `Invalid type: '${ type }'` );
@@ -274,16 +278,15 @@ export default class Data extends Commands {
 	/**
 	 * Function fetch().
 	 *
-	 * @param {DataTypes} type
 	 * @param {RequestData} requestData
 	 *
 	 * @return {{}} params
 	 */
-	fetch( type, requestData ) {
+	fetch( requestData ) {
 		requestData.cache = 'miss';
 
-		const params = this.prepareHeaders( type, requestData ),
-			useCache = 'get' === type && ! requestData.args.options?.refresh;
+		const params = this.prepareHeaders( requestData ),
+			useCache = 'get' === requestData.type && ! requestData.args.options?.refresh;
 
 		if ( useCache ) {
 			const cachePromise = this.cache.getAsync( requestData );
