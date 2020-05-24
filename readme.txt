@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 2.9.8
+Stable tag: 2.9.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,27 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.9.9 - 2020-05-24 =
+* Tweak: Added 'Learn More' link to URL Custom Attributes Description
+* Tweak: Added real-time JS preview handling in Image Carousel widget
+* Tweak: Added File upload control UI
+* Tweak: Added support for processing Envato Template Kit ZIP files
+* Tweak: Allow disabling a repeater item sorting option by adding a class
+* Tweak: Adjusted CSS selectors to be more generic in Forms
+* Tweak: Updated content in Getting Started screen
+* Tweak: Added JSON files support to files upload handler
+* Tweak: Changed SVG Uploads prompt message to Unfiltered Files
+* Tweak: Added an option for repeater item to disable itself
+* Tweak: Removed temporary code from Page Settings
+* Tweak: Added infrastructure improvements to Repeater control to support upcoming versions
+* Fix: Default line-height value in Heading widget is overriding line-height setting in Theme Style ([#10501](https://github.com/elementor/elementor/issues/10501), [#10649](https://github.com/elementor/elementor/issues/10649))
+* Fix: Dynamic settings are not available in frontend JS in edge cases
+* Fix: Connectivity issues in Connect module
+* Fix: Removed source map comment so browsers don't look for source map in Swiper library ([#10764](https://github.com/elementor/elementor/issues/10764))
+* Fix: Render style on repeater item change in Page Settings
+* Fix: Added sanitization to Custom Link Attributes control to avoid security issue
+* Fix: Added sanitization to URL control to avoid security issue
 
 = 2.9.8 - 2020-04-21 =
 * Tweak: Added `.webp` file extension support to Elementor Lightbox
