@@ -1,14 +1,16 @@
 /**
- * App Loader
+ * App Router
  *
  * TODO: Temporary solution for routing extensibility.
  */
 
-class AppLoader {
+class Router {
 	/**
 	 * @type {*[]}
 	 */
 	routes = [];
+
+	history = null;
 
 	/**
 	 *
@@ -22,13 +24,7 @@ class AppLoader {
 		this.routes.push( route );
 	}
 
-	/**
-	 *
-	 * @param app
-	 */
-	getRoutes( app ) {
-		this.app = app;
-
+	getRoutes() {
 		return this.routes.map( ( route ) => {
 			const props = route.props || {};
 			// Use the path as a key, and add it as a prop.
@@ -38,4 +34,11 @@ class AppLoader {
 	}
 }
 
-window.elementorAppLoader = new AppLoader();
+const router = new Router();
+
+// Make router available for use within packages.
+window.elementorAppPackages = {
+	router,
+};
+
+export default router;

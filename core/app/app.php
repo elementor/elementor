@@ -83,17 +83,6 @@ class App extends BaseApp {
 		Plugin::$instance->common->register_scripts();
 
 		wp_enqueue_script(
-			'elementor-app-loader',
-			$this->get_js_assets_url( 'app-loader' ),
-			[
-				'wp-i18n',
-				'react',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_enqueue_script(
 			'elementor-app-packages',
 			$this->get_js_assets_url( 'app-packages' ),
 			[

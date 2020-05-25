@@ -1,4 +1,5 @@
 import { Link, LocationProvider } from '@reach/router';
+import router from '@elementor/router';
 
 export default class Button extends React.Component {
 	static propTypes = {
@@ -86,7 +87,7 @@ export default class Button extends React.Component {
 			};
 
 			return (
-			<LocationProvider history={ elementorAppLoader.appHistory }>
+			<LocationProvider history={ router.appHistory }>
 				<Link to={ this.props.url } { ...attributes } >
 					{ buttonContent }
 				</Link>
