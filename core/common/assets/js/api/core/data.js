@@ -289,15 +289,15 @@ export default class Data extends Commands {
 		if ( 'GET' === method ) {
 			Object.assign( params, { headers } );
 		} else if ( allowedMethods ) {
-			const body = Object.assign( requestData );
-
-			delete body.type;
+			if ( ! requestData.args?.data ) {
+				throw Error( 'Invalid requestData.args.data' );
+			}
 
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
 			Object.assign( params, {
 				method,
 				headers,
-				body: JSON.stringify( body ),
+				body: JSON.stringify( requestData.args.data ),
 			} );
 		} else {
 			throw Error( `Invalid type: '${ type }'` );

@@ -152,6 +152,9 @@ jQuery( () => {
 			const requestData = {
 					paramA: 'valueA',
 					type: 'create',
+					args: {
+						data: { paramA: 'valueA' },
+					},
 				},
 				params = $e.data.prepareHeaders( requestData );
 
@@ -166,15 +169,15 @@ jQuery( () => {
 			);
 		} );
 
-		QUnit.test( 'prepareHeaders(): should keep type', ( assert ) => {
+		QUnit.test( 'prepareHeaders(): post without data', ( assert ) => {
 			const requestData = {
 					paramA: 'valueA',
-					type: 'get',
+					type: 'create',
 				};
 
-			$e.data.prepareHeaders( requestData );
-
-			assert.equal( requestData.type, 'get' );
+			assert.throws( () => $e.data.prepareHeaders( requestData ),
+				new Error( `Invalid requestData.args.data` )
+			);
 		} );
 
 		/**
