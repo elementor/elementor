@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
 use Elementor\Data\Manager;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
 
 class Test_Endpoint extends Elementor_Test_Base {
 
@@ -22,6 +23,22 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$this->manager = Manager::instance();
 		$this->manager->kill_server();
 	}
+
+	public function test_create_simple() {
+		$test_controller_instance = new ControllerSimple( $this );
+		$this->manager->run_server();
+
+		// Validate `$this->>register()`.
+		$this->assertCount( 1, $test_controller_instance->endpoints );
+	}
+
+	public function test_create_invalid_controller() {
+		$this->expectException( \Exception::class );
+
+		new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( null );
+	}
+
+
 
 	public function test_get_items_recursive() {
 		/**

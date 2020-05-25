@@ -7,22 +7,20 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
  */
 trait BaseTrait {
 
-	private $random = null;
+	public $random = null;
+	public $bypass_register_status = false;
 
 	public function get_name() {
-		static $name = null;
-
-		if ( ! $name ) {
+		if ( ! $this->random ) {
 			$this->random = rand_long_str( 5 );
-			$name = 'test-' . $this->get_type() . '-' . $this->random;
 		}
 
-		return $name;
+		return 'test-' . $this->get_type() . '-' . $this->random;
 	}
 
 	abstract function get_type();
 
-	public function get_random() {
-		return $this->random;
+	public function bypass_original_register( $status = true ) {
+		$this->bypass_register_status = $status;
 	}
 }

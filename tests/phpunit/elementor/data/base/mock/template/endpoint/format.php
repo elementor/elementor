@@ -1,7 +1,9 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
+namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 
-class Endpoint extends \Elementor\Data\Base\Endpoint {
+use \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\BaseTrait;
+
+class Format extends \Elementor\Data\Base\Endpoint {
 
 	/**
 	 * @var \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller
@@ -12,6 +14,10 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 
 	public function get_type() {
 		return 'endpoint';
+	}
+
+	public static function get_format() {
+		return ':arg_id';
 	}
 
 	protected function register() {

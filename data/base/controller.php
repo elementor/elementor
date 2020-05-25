@@ -169,6 +169,8 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register endpoint.
 	 *
 	 * @param string $endpoint_class
+	 *
+	 * @return \Elementor\Data\Base\Endpoint
 	 */
 	protected function register_endpoint( $endpoint_class ) {
 		$endpoint_instance = new $endpoint_class( $this );
@@ -189,6 +191,8 @@ abstract class Controller extends WP_REST_Controller {
 		}
 
 		$this->register_endpoint_format( $command, $format );
+
+		return $endpoint_instance;
 	}
 
 	/**
