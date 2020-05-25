@@ -37,17 +37,16 @@ abstract class Controller extends WP_REST_Controller {
 	 * Controller constructor.
 	 *
 	 * Register endpoints on 'rest_api_init'.
+	 *
 	 */
 	public function __construct() {
+		// TODO: Controllers and endpoints can have common interface.
+
 		$this->namespace = self::ROOT_NAMESPACE . '/v' . static::VERSION;
 		$this->rest_base = static::REST_BASE . $this->get_name();
 
 		add_action( 'rest_api_init', function () {
-			$this->register_internal_endpoints();
-			$this->register_endpoints();
-
-			// Aka hooks.
-			$this->register_processors();
+			$this->register(); // Because 'register' is protected.
 		} );
 	}
 
@@ -215,6 +214,19 @@ abstract class Controller extends WP_REST_Controller {
 		$this->processors[ $command ] [] = $processor_instance;
 
 		return $processor_instance;
+	}
+
+	/**
+	 * Register.
+	 *
+	 * Endpoints & processors.
+	 */
+	protected function register() {
+		$this->register_internal_endpoints();
+		$this->register_endpoints();
+
+		// Aka hooks.
+		$this->register_processors();
 	}
 
 	/**

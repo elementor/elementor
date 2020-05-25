@@ -20,7 +20,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->manager = Manager::instance();
-		$this->server = $this->manager->run_server();
+		$this->manager->kill_server();
 	}
 
 	public function test_get_items_recursive() {
@@ -30,8 +30,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 		 */
 
 		$controller = $this->manager->register_controller_instance( new Mock\Recursive\Controller );
-
-		do_action( 'rest_api_init' ); // Ensure controller loaded.
+		$this->manager->run_server(); // Ensure controller loaded.
 
 		// Run internal index endpoint. Run endpoint 'test-controller'.
 		$endpoints_results = $this->manager->run_endpoint( $controller->get_name() );

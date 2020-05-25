@@ -55,22 +55,22 @@ export default class Cache {
 		$e.data.validateRequestData( requestData );
 
 		const componentName = requestData.component.getNamespace(),
-			nakedEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
-			nakedEndpointParts = nakedEndpoint.split( '/' );
+			pureEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
+			pureEndpointParts = pureEndpoint.split( '/' );
 
 		let newData = {};
 
 		// Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'load(): deep'.
 		// Analyze reaming endpoint.
-		if ( nakedEndpointParts.length && nakedEndpoint !== componentName ) {
+		if ( pureEndpointParts.length && pureEndpoint !== componentName ) {
 			// Using reaming endpoint parts, to build new data object.
-			const result = nakedEndpointParts.reduce( ( accumulator, nakedEndpointPart ) => {
-				accumulator[ nakedEndpointPart ] = {};
+			const result = pureEndpointParts.reduce( ( accumulator, pureEndpointPart ) => {
+				accumulator[ pureEndpointPart ] = {};
 
-				return accumulator[ nakedEndpointPart ];
+				return accumulator[ pureEndpointPart ];
 			}, newData );
 
-			// 'result' is equal to 'newData' with a deeper pointer, build based on 'nakedEndpointParts' ( will effect newData ).
+			// 'result' is equal to 'newData' with a deeper pointer, build based on 'pureEndpointParts' ( will effect newData ).
 			Object.assign( result, data );
 		} else {
 			newData = data;
@@ -112,9 +112,9 @@ export default class Cache {
 			}
 
 			// Using reduce over endpoint parts it build the right index.
-			const nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
-				nakedEndpointParts = nakedEndpoint.split( '/' ),
-				result = nakedEndpointParts.reduce( ( accumulator, endpointPart ) => {
+			const pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+				pureEndpointParts = pureEndpoint.split( '/' ),
+				result = pureEndpointParts.reduce( ( accumulator, endpointPart ) => {
 					if ( accumulator && accumulator[ endpointPart ] ) {
 						return accumulator[ endpointPart ];
 					}
@@ -151,16 +151,16 @@ export default class Cache {
 			if ( endpointValue && endpoint.includes( endpointKey ) ) {
 				// Assuming it is a specific endpoint.
 				const oldData = JSON.parse( endpointValue ),
-					nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
-					nakedEndpointParts = nakedEndpoint.split( '/' ),
-					isComponentUpdate = 1 === nakedEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace();
+					pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+					pureEndpointParts = pureEndpoint.split( '/' ),
+					isComponentUpdate = 1 === pureEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace();
 
 				// Component update or specific update?
 				if ( isComponentUpdate ) {
 					response = jQuery.extend( true, oldData, requestData.args.data );
 				} else {
-					const oldSpecificData = nakedEndpointParts.reduce(
-						( accumulator, nakedEndpointPart ) => accumulator[ nakedEndpointPart ], oldData
+					const oldSpecificData = pureEndpointParts.reduce(
+						( accumulator, pureEndpointPart ) => accumulator[ pureEndpointPart ], oldData
 					);
 
 					response = jQuery.extend( true, oldSpecificData, requestData.args.data );

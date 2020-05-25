@@ -5,7 +5,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
 class Controller extends \Elementor\Data\Base\Controller {
 	use BaseTrait;
 
-	function get_type() {
+	public function get_type() {
 		return 'controller';
 	}
 
@@ -16,4 +16,5 @@ class Controller extends \Elementor\Data\Base\Controller {
 	public function permission_callback( $request ) {
 		return true; // Bypass.
 	}
+
 }

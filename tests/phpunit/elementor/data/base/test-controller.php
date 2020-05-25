@@ -24,13 +24,12 @@ class Test_Controller extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->manager = Manager::instance();
-		$this->server = $this->manager->run_server();
+		$this->manager->kill_server();
 	}
 
 	public function test_create_simple() {
 		$controller = new ControllerSimple( $this );
-
-		do_action( 'rest_api_init' ); // Ensure controller loaded.
+		$this->manager->run_server(); // Load controller.
 
 		$rest_index = Manager::run_endpoint( $controller->get_name() );
 		$rest_routes = $rest_index['routes'];
@@ -45,19 +44,19 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	public function test_get_processors() {
-		// Validate Also `$register_processors();`.
-
+		// Validate also `$register_processors();`.
 		$controller = new ControllerWithProcessor( $this );
-
-		do_action( 'rest_api_init' ); // Ensure controller loaded.
+		$this->manager->run_server(); // Load controller.
 
 		$processors = $controller->get_processors( $controller->get_name() );
 
-		$this->assertEquals( $controller::$fake_processor_instance, $processors[ 0 ] );
+		$this->assertCount( 1, $processors );
+		$this->assertEquals( $controller->processors[ $controller->get_name() ][ 0 ], $processors[ 0 ] );
 	}
 
 	public function test_get_items() {
 		$controller = new ControllerTemplate( $this );
+		$this->manager->run_server(); // Load controller.
 
 		$data = $controller->get_items( null )->get_data();
 
@@ -68,6 +67,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 	public function test_get_controller_index() {
 		$controller = new ControllerTemplate( $this );
+		$this->manager->run_server(); // Load controller.
 
 		$data = $controller->get_controller_index()->get_data();
 

@@ -44,7 +44,7 @@ export default class Data extends Commands {
 	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
-		this.baseEndpointAddress = `${ elementor.config.rest_url }${ namespace }/v${ version }/`;
+		this.baseEndpointAddress = `${ elementorCommon.config.rest_url }${ namespace }/v${ version }/`;
 	}
 
 	/**
@@ -325,6 +325,7 @@ export default class Data extends Commands {
 			}
 		}
 
+		// TODO: Test 'window.fetch' have the right endpoint.
 		return new Promise( async ( resolve, reject ) => {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
