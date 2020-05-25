@@ -124,6 +124,76 @@ abstract class Endpoint {
 	}
 
 	/**
+	 * Retrieves a collection of items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	protected function get_items( $request ) {
+		return $this->controller->get_items( $request );
+	}
+
+	/**
+	 * Retrieves one item from the collection.
+	 *
+	 * @param string $id
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	protected function get_item( $id, $request ) {
+		return $this->controller->get_item( $request );
+	}
+
+	/**
+	 * Retrieves a recursive collection of all endpoint(s), items.
+	 *
+	 * Get items recursive, will run overall endpoints of the current controller.
+	 * For each endpoint it will run `$endpoint->getItems( $request ) // the $request passed in get_items_recursive`.
+	 * Will skip self endpoint ( more information available a 'test-endpoint.php'.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return array
+	 */
+	protected function get_items_recursive( $request ) {
+		$response = [];
+
+		foreach ( $this->controller->endpoints as $endpoint ) {
+			// Skip self.
+			if ( $this === $endpoint ) {
+				continue;
+			}
+
+			$response[ $endpoint->get_name() ] = $endpoint->get_items( $request );
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Get permission callback.
+	 *
+	 * By default get permission callback from the controller.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return boolean
+	 */
+	protected function get_permission_callback( $request ) {
+		return $this->controller->get_permission_callback( $request );
+	}
+
+	protected function create_item( $id, $request ) {
+		return $this->controller->create_item( $request );
+	}
+
+	protected function create_items( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+	}
+
+	/**
 	 * Register item route.
 	 *
 	 * @param array  $args
@@ -183,7 +253,6 @@ abstract class Endpoint {
 	 *
 	 * @return bool
 	 * @throws \Exception
-	 *
 	 */
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
@@ -199,77 +268,9 @@ abstract class Endpoint {
 				'methods' => $methods,
 				'callback' => $callback,
 				'permission_callback' => function ( $request ) {
-					return $this->permission_callback( $request );
+					return $this->get_permission_callback( $request );
 				},
 			],
 		] );
-	}
-
-	/**
-	 * Retrieves a collection of items.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
-	protected function get_items( $request ) {
-		return $this->controller->get_items( $request );
-	}
-
-	/**
-	 * Retrieves one item from the collection.
-	 *
-	 * @param string $id
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
-	protected function get_item( $id, $request ) {
-		return $this->controller->get_item( $request );
-	}
-
-	/**
-	 * Retrieves a recursive collection of all endpoint(s), items.
-	 *
-	 * Get items recursive, will run overall endpoints of the current controller.
-	 * For each endpoint it will run `$endpoint->getItems( $request ) // the $request passed in get_items_recursive`.
-	 * Will skip self endpoint ( more information available a 'test-endpoint.php'.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return array
-	 */
-	protected function get_items_recursive( $request ) {
-		$response = [];
-
-		foreach ( $this->controller->endpoints as $endpoint ) {
-			// Skip self.
-			if ( $this === $endpoint ) {
-				continue;
-			}
-
-			$response[ $endpoint->get_name() ] = $endpoint->get_items( $request );
-		}
-
-		return $response;
-	}
-
-	protected function create_item( $id, $request ) {
-		return $this->controller->create_item( $request );
-	}
-
-	protected function create_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
-	}
-
-	/**
-	 * Permission callback.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return boolean
-	 */
-	public function permission_callback( $request ) {
-		return $this->controller->permission_callback( $request );
 	}
 }
