@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Core\Editor\Data\Documents;
 
 use Elementor\Data\Base\Controller as Controller_Base;
@@ -18,7 +19,7 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_processors() {
-		//$this->register_processor( Processors\AddDefaultGlobals::class );
-		//$this->register_processor( Processors\AddGlobals::class );
+		$this->register_processor( Processors\AddDefaultGlobals::class );
+		$this->register_processor( Processors\AddGlobals::class );
 	}
 }

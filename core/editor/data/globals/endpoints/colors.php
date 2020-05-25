@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Data\Editor\Globals\Endpoints;
+namespace Elementor\Core\Editor\Data\Globals\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
 

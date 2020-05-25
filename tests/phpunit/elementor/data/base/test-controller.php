@@ -3,9 +3,9 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
 use Elementor\Data\Manager;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
 
 
 class Test_Controller extends Elementor_Test_Base {
@@ -34,12 +34,10 @@ class Test_Controller extends Elementor_Test_Base {
 		$rest_index = Manager::run_endpoint( $controller->get_name() );
 		$rest_routes = $rest_index['routes'];
 
-		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes,
-		'Validate `$this->register_internal_endpoints();`.' );
+		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_internal_endpoints();`.' );
 
 		foreach ( $controller->endpoints as $endpoint ) {
-			$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() ], $rest_routes,
-				'Validate `$this->register_endpoints();`.' );
+			$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() ], $rest_routes, 'Validate `$this->register_endpoints();`.' );
 		}
 	}
 
@@ -51,7 +49,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$processors = $controller->get_processors( $controller->get_name() );
 
 		$this->assertCount( 1, $processors );
-		$this->assertEquals( $controller->processors[ $controller->get_name() ][ 0 ], $processors[ 0 ] );
+		$this->assertEquals( $controller->processors[ $controller->get_name() ][0], $processors[0] );
 	}
 
 	public function test_get_items() {
@@ -60,7 +58,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$data = $controller->get_items( null )->get_data();
 
-		$controller_pure_name = str_replace( $data['namespace'] . '/',  '',  $data['controller'] );
+		$controller_pure_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $controller_pure_name );
 	}
@@ -71,7 +69,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$data = $controller->get_controller_index()->get_data();
 
-		$controller_pure_name = str_replace( $data['namespace'] . '/',  '',  $data['controller'] );
+		$controller_pure_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $controller_pure_name );
 	}
@@ -81,6 +79,6 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$controller->register_endpoint_format( 'test-command', 'test-format' );
 
-		$this->assertEquals( 'test-format', $controller->command_formats[ 'test-command' ] );
+		$this->assertEquals( 'test-format', $controller->command_formats['test-command'] );
 	}
 }

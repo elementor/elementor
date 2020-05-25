@@ -85,27 +85,6 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get processors.
-	 *
-	 * @param string $command
-	 *
-	 * @return \Elementor\Data\Base\Processor[]
-	 */
-	public function get_processors( $command ) {
-		$result = [];
-
-		if ( isset( $this->processors[ $command ] ) ) {
-			$result = $this->processors[ $command ];
-		}
-
-		return $result;
-	}
-
-	public function get_items( $request ) {
-		return $this->get_controller_index();
-	}
-
-	/**
 	 * Retrieves the index for a controller.
 	 *
 	 * @return \WP_REST_Response|\WP_Error
@@ -139,6 +118,27 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get processors.
+	 *
+	 * @param string $command
+	 *
+	 * @return \Elementor\Data\Base\Processor[]
+	 */
+	public function get_processors( $command ) {
+		$result = [];
+
+		if ( isset( $this->processors[ $command ] ) ) {
+			$result = $this->processors[ $command ];
+		}
+
+		return $result;
+	}
+
+	public function get_items( $request ) {
+		return $this->get_controller_index();
+	}
+
+	/**
 	 * Register endpoints.
 	 */
 	abstract public function register_endpoints();
@@ -159,7 +159,7 @@ abstract class Controller extends WP_REST_Controller {
 				'callback' => array( $this, 'get_items' ),
 				'args' => [],
 				'permission_callback' => function ( $request ) {
-					return $this->permission_callback( $request );
+					return $this->get_permission_callback( $request );
 				},
 			],
 		] );
@@ -236,19 +236,22 @@ abstract class Controller extends WP_REST_Controller {
 	 * @param string $format
 	 */
 	public function register_endpoint_format( $command, $format ) {
+		// The function is public since endpoint need to access it.
 		$this->command_formats[ $command ] = rtrim( $format, '/' );
 	}
 
 	/**
-	 * Permission callback.
+	 * Get permission callback.
 	 *
 	 * Default controller permission callback.
+	 * By default endpoint will inherit the permission callback from the controller.
 	 *
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return bool
 	 */
-	public function permission_callback( $request ) {
+	public function get_permission_callback( $request ) {
+		// The function is public since endpoint need to access it.
 		switch ( $request->get_method() ) {
 			case 'GET':
 			case 'POST':
