@@ -35,16 +35,21 @@ class App extends BaseApp {
 	public function register_admin_menu() {
 		global $submenu;
 
-		add_submenu_page(
+		$submenu_page = add_submenu_page(
 			Settings::PAGE_ID,
 			__( 'Site Editor', 'elementor' ),
 			__( 'Site Editor', 'elementor' ),
 			'manage_options',
-			self::PAGE_ID
+			self::PAGE_ID,
+			function () {
+				// Do nothing. the page needs to load as a full page via $this->init.
+			}
 		);
 
 		// Hack to add a link to sub menu.
 		$submenu['elementor'][1][2] = $this->get_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		add_action( 'load-' . $submenu_page, [ $this, 'init' ] );
 	}
 
 	public function init() {
@@ -112,12 +117,6 @@ class App extends BaseApp {
 	public function __construct() {
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
 
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-
-		if ( empty( $_GET['page'] ) || self::PAGE_ID !== $_GET['page'] ) {
-			return;
-		}
-
-		add_action( 'elementor/init', [ $this, 'init' ] );
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 51 /* after Elementor page */ );
 	}
 }
