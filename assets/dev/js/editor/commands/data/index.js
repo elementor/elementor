@@ -2,7 +2,7 @@ import CommandData from 'elementor-api/modules/command-data';
 
 class Index extends CommandData {
 	getEndpointFormat() {
-		return 'editor/documents/index/:documentId/';
+		return 'editor/documents/index/{documentId}/';
 	}
 
 	validateArgs( args = {} ) {

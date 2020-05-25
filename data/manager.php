@@ -107,12 +107,12 @@ class Manager extends BaseModule {
 			$formatted = $format;
 
 			array_walk( $args, function ( $val, $key ) use ( &$formatted ) {
-				$formatted = str_replace( ':' . $key, $val, $formatted );
+				$formatted = str_replace( '{' . $key . '}', $val, $formatted );
 			} );
 
 			// Remove if not requested.
-			if ( strstr( $formatted, '/:' ) ) {
-				$formatted = substr( $formatted, 0, strpos( $formatted, '/:' ) );
+			if ( strstr( $formatted, '/{' ) ) {
+				$formatted = substr( $formatted, 0, strpos( $formatted, '/{' ) );
 			}
 
 			$endpoint = $formatted;

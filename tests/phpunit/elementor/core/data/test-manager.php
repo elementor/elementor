@@ -27,8 +27,8 @@ class Test_Manager extends Elementor_Test_Base {
 		$controllers = $this->manager->get_controllers();
 
 		$this->assertEquals( [
-			'editor/documents/elements' => 'editor/documents/:document_id/elements/:element_id',
-			'editor/documents/index' => 'editor/documents/index/:document_id',
+			'editor/documents/elements' => 'editor/documents/{document_id}/elements/{element_id}',
+			'editor/documents/index' => 'editor/documents/index/{document_id}',
 		], $controllers['editor/documents']->command_formats );
 	}
 }

@@ -34,18 +34,6 @@ jQuery( () => {
 			assert.deepEqual( $e.data.getAllowedMethods( 'update' ), EDITABLE );
 		} );
 
-		QUnit.test( 'commandToEndpoint(): command with format', ( assert ) => {
-			const command = 'component/:paramA/command/:paramB',
-				args = { query: {} };
-
-			args.query.paramA = 'valueA';
-			args.query.paramB = 'valueB';
-
-			const endpoint = $e.data.commandToEndpoint( command, args );
-
-			assert.equal( endpoint, 'component/valueA/command/valueB', 'Valid endpoint.' );
-		} );
-
 		QUnit.test( 'commandToEndpoint(): command with query', ( assert ) => {
 			const command = 'component/command',
 				args = { query: {} };
@@ -68,6 +56,64 @@ jQuery( () => {
 			const endpoint = $e.data.commandToEndpoint( command, args );
 
 			assert.equal( endpoint, 'component?paramA=valueA&paramB=valueB', 'Valid endpoint.' );
+		} );
+
+		QUnit.test( 'commandToEndpoint(): command with magic params ( format )', ( assert ) => {
+			const command = 'component/{paramA}/{paramB}/command',
+				args = { query: {} };
+
+			args.query.paramA = 'valueA';
+			args.query.paramB = 'valueB';
+
+			const endpoint = $e.data.commandToEndpoint( command, args );
+
+			assert.equal( endpoint, 'component/valueA/valueB/command', 'Valid endpoint.' );
+		} );
+
+		QUnit.test( 'commandToEndpoint(): command with magic params and index', ( assert ) => {
+			const command = 'component/{paramA}/index/{paramB}',
+				args = { query: {} };
+
+			args.query.paramA = 'valueA';
+			args.query.paramB = 'valueB';
+
+			const endpoint = $e.data.commandToEndpoint( command, args );
+
+			assert.equal( endpoint, 'component/valueA/valueB', 'Valid endpoint.' );
+		} );
+
+		QUnit.test( 'commandToEndpoint(): command with magic params and one parameter missing', ( assert ) => {
+			const command = 'component/{paramA}/endpoint/{paramB}',
+				args = { query: {} };
+
+			args.query.paramA = 'valueA';
+
+			const endpoint = $e.data.commandToEndpoint( command, args );
+
+			assert.equal( endpoint, 'component/valueA/endpoint', 'Valid endpoint.' );
+		} );
+
+		QUnit.test( 'commandToEndpoint(): command with magic params and index', ( assert ) => {
+			const command = 'component/{paramA}/index/{paramB}',
+				args = { query: {} };
+
+			args.query.paramA = 'valueA';
+			args.query.paramB = 'valueB';
+
+			const endpoint = $e.data.commandToEndpoint( command, args );
+
+			assert.equal( endpoint, 'component/valueA/valueB', 'Valid endpoint.' );
+		} );
+
+		QUnit.test( 'commandToEndpoint(): command with magic params and one parameter missing', ( assert ) => {
+			const command = 'component/{paramA}/endpoint/{paramB}',
+				args = { query: {} };
+
+			args.query.paramA = 'valueA';
+
+			const endpoint = $e.data.commandToEndpoint( command, args );
+
+			assert.equal( endpoint, 'component/valueA/endpoint', 'Valid endpoint.' );
 		} );
 
 		QUnit.test( 'endpointToCommand(): endpoints with index and id', ( assert ) => {

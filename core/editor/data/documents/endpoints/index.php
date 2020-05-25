@@ -11,7 +11,7 @@ class Index extends Endpoint {
 	}
 
 	public static function get_format() {
-		return ':document_id';
+		return '{document_id}';
 	}
 
 	protected function register() {

@@ -18,11 +18,6 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	protected $manager;
 
-	/**
-	 * @var \WP_REST_Server
-	 */
-	protected $server;
-
 	public function setUp() {
 		parent::setUp();
 

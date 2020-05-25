@@ -68,7 +68,7 @@ export class Create extends CommandHistory {
 			}
 
 			const component = $e.components.get( 'editor/documents' ),
-				command = 'editor/documents/:documentId/elements/:elementId',
+				command = 'editor/documents/{documentId}/elements/{elementId}',
 				query = {
 					documentId: container.document.id,
 					elementId: model.id,

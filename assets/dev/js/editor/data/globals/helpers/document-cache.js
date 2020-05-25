@@ -9,7 +9,7 @@ export default class DocumentCache {
 			const documentId = container.document.id,
 				elementId = container.id,
 				component = $e.components.get( 'editor/documents' ),
-				command = 'editor/documents/:documentId/elements/:elementId',
+				command = 'editor/documents/{documentId}/elements/{elementId}',
 				data = $e.data.getCache( component, command, {
 					documentId,
 					elementId,

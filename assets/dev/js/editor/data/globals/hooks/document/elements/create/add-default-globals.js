@@ -29,7 +29,7 @@ export class ElementsCreateAddDefaultGlobals extends After {
 					element.settings.__globals__[ controlName ] = control.globals;
 
 					const component = $e.components.get( 'editor/documents' ),
-						command = 'editor/documents/:documentId/elements/:elementId',
+						command = 'editor/documents/{documentId}/elements/{elementId}',
 						query = {
 							documentId: container.document.id,
 							elementId: element.id,

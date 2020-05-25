@@ -11,7 +11,7 @@ class Elements extends SubEndpoint {
 	}
 
 	public static function get_format() {
-		return ':element_id';
+		return '{element_id}';
 	}
 
 	protected function register() {
