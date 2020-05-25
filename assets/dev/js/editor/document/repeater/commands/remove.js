@@ -60,7 +60,7 @@ export class Remove extends History {
 			}
 
 			// Remove from container and add to result.
-			result.push( container.children.pop( index ) );
+			result.push( container.children.splice( index, 1 ) );
 
 			collection.remove( model );
 
