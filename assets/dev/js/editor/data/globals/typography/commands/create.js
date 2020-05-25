@@ -36,7 +36,7 @@ export class Create extends CommandBase {
 			};
 
 			// Currently does not effect cache.
-			result = $e.data.create( 'globals/typography/index', data );
+			result = $e.data.create( 'globals/typography', data );
 		}
 
 		return result;

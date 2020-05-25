@@ -42,26 +42,18 @@ class Typography extends Endpoint {
 	}
 
 	protected function create_items( $request ) {
-		$result = [
-			'success' => false,
-		];
-
 		$data = $request->get_json_params();
 
-		if ( isset( $data['args'] ) && isset( $data['args']['data'] ) ) {
-			$data = $data['args'] ['data'];
-			$data['_id'] = Utils::generate_random_string();
-
-			$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-			$kit->add_repeater_row( 'typography', $data );
-
-			$result = [
-				'id' => $data['_id'],
-				'success' => true,
-			];
+		if ( ! isset( $data['title'] ) ) {
+			return new \WP_Error( 'invalid_title', 'Invalid title' );
 		}
 
-		return $result;
+		$data['_id'] = Utils::generate_random_string();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$kit->add_repeater_row( 'typography', $data );
+
+		return $data;
 	}
 }
