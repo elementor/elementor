@@ -13,6 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Manager extends BaseModule {
 
 	/**
+	 * @var \WP_REST_Server
+	 */
+	private $server;
+
+	/**
 	 * Loaded controllers.
 	 *
 	 * @var \Elementor\Data\Base\Controller[]
@@ -124,13 +129,24 @@ class Manager extends BaseModule {
 	 * @return \WP_REST_Server
 	 */
 	public function run_server() {
-		static $server = null;
-
-		if ( ! $server ) {
-			$server = rest_get_server(); // Init API.
+		if ( ! $this->server ) {
+			$this->server = rest_get_server(); // Init API.
 		}
 
-		return $server;
+		return $this->server;
+	}
+
+	/**
+	 * Kill server.
+	 *
+	 * Free server and controllers.
+	 */
+	public function kill_server() {
+		global $wp_rest_server;
+
+		$this->controllers = [];
+		$this->server = false;
+		$wp_rest_server = false;
 	}
 
 	/**
