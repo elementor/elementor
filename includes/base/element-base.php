@@ -450,7 +450,7 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = $url_control['url'];
+			$attributes['href'] = str_replace( 'javascript:', '', $url_control['url'] );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
@@ -464,7 +464,7 @@ abstract class Element_Base extends Controls_Stack {
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
 			// Custom URL attributes should come as a string of comma-delimited key|value pairs
 			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
-			$blacklist = [ 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup' ];
+			$blacklist = [ 'href', 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup', 'onload', 'onerror', 'onanimationend', 'onanimationstart' ];
 
 			foreach ( $custom_attributes as $attribute ) {
 				// Trim in case users inserted unwanted spaces

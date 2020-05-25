@@ -76,11 +76,11 @@ class Control_Icons extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
 				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
-					<div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
+					<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button elementor-fit-aspect-ratio">
 						<i class="eicon-plus-circle" aria-hidden="true"></i>
 					</div>
 					<div class="elementor-control-media-area elementor-fit-aspect-ratio">
-						<div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+						<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
 							<i class="eicon-trash"></i>
 						</div>
 						<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
@@ -157,7 +157,6 @@ class Control_Icons extends Control_Base_Multiple {
 			],
 			'search_bar' => true,
 			'recommended' => false,
-			'is_svg_enabled' => Svg_Handler::is_enabled(),
 			'skin' => 'media',
 			'exclude_inline_options' => [],
 		];
