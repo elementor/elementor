@@ -1,8 +1,8 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
 
 class Controller extends \Elementor\Data\Base\Controller {
+
 	use BaseTrait;
 
 	public function get_type() {

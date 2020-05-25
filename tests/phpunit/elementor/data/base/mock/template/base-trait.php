@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
 
 /**
@@ -7,9 +6,8 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
  * Simple trait for reduce code size.
  */
 trait BaseTrait {
-	private $random = null;
 
-	abstract function get_type();
+	private $random = null;
 
 	public function get_name() {
 		static $name = null;
@@ -21,6 +19,8 @@ trait BaseTrait {
 
 		return $name;
 	}
+
+	abstract function get_type();
 
 	public function get_random() {
 		return $this->random;
