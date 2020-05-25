@@ -124,13 +124,14 @@ export default class Data extends Commands {
 				format = command;
 			}
 
-			if ( format && format.includes( '/:' ) ) {
-				// Means command includes magic query arguments ( controller/endpoint/:whatever ).
-				const magicParams = format.split( '/' ).filter( ( str ) => ':' === str.charAt( 0 ) );
+			if ( format && format.includes( '/{' ) ) {
+				// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
+				const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
 
 				magicParams.forEach( ( param ) => {
-					// Remove the ':'.
-					param = param.substr( 1 );
+					// Remove the '{', '}'.
+					param = param.replace( '{', '' );
+					param = param.replace( '}', '' );
 
 					const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
 
@@ -141,7 +142,8 @@ export default class Data extends Commands {
 					const key = formatted[ 0 ],
 						value = formatted[ 1 ].toString();
 
-					format = format.replace( new RegExp( ':' + param, 'g' ), value );
+					// Replace magic params with values.
+					format = format.replace( new RegExp( '{' + param + '}', 'g' ), value );
 
 					delete args.query[ key ];
 				} );
@@ -177,10 +179,10 @@ export default class Data extends Commands {
 		}
 
 		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
-		// eg: 'documents/:documentId/elements/:elementId' and args { documentId: 4123 }.
+		// eg: 'documents/{documentId}/elements/{elementId}' and args { documentId: 4123 }.
 		// result: 'documents/4123/elements'
-		if ( endpoint.includes( '/:' ) ) {
-			endpoint = endpoint.substring( 0, endpoint.indexOf( '/:' ) );
+		if ( endpoint.includes( '/{' ) ) {
+			endpoint = endpoint.substring( 0, endpoint.indexOf( '/{' ) );
 		}
 
 		return endpoint;
