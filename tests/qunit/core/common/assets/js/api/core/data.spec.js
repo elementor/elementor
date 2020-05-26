@@ -1,10 +1,11 @@
-import { CREATABLE, DELETABLE, EDITABLE, READABLE } from 'elementor-api/core/data';
+import {CREATABLE, DELETABLE, EDITABLE, READABLE} from 'elementor-api/core/data';
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandData from 'elementor-api/modules/command-data';
 
 // Test cache module.
 require( './data/cache.spec.js' );
 
+// TODO: Each time creating component requires too many lines of code use helper.
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/core/data.js', ( hooks ) => {
 		hooks.before( () => {
@@ -185,27 +186,19 @@ jQuery( () => {
 		 * to test *fetch* with different approaches.
 		 */
 		QUnit.test( 'fetch(): simple', async ( assert ) => {
-			$e.components.register( new class TestComponent extends ComponentBase {
-				getNamespace() {
-					return 'test-component-fetch-simple';
-				}
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'test-component-fetch-simple';
+					}
 
-				defaultData() {
-					return this.importCommands( {
-						TestCommand: class TestCommand extends CommandData {},
-					} );
-				}
-			} );
-
-			const fetchOrig = fetch,
+					defaultData() {
+						return this.importCommands( {
+							TestCommand: class TestCommand extends CommandData {
+							},
+						} );
+					}
+				} ),
 				command = 'test-component-fetch-simple/test-command',
-				response = {
-					json: () => response,
-					ok: true,
-					data: {
-						testParam: 'testValue',
-					},
-				},
 				args = {
 					options: {
 						refresh: true,
@@ -214,103 +207,90 @@ jQuery( () => {
 						param1: 'valueA',
 					},
 				},
-				endpoint = $e.data.commandToEndpoint( command, args );
+				endpoint = $e.data.commandToEndpoint( command, args ),
+				requestData = {
+					type: 'get',
+					endpoint,
+					component,
+					command,
+					args,
+				};
 
-			fetch = ( address, params ) => {
-				fetch = fetchOrig;
-				return new Promise( async ( resolve ) => {
-					resolve( response );
-				} );
-			};
-
-			const result = await $e.data.fetch( {
-				type: 'get',
-				endpoint,
-				command,
-				args,
+			await $e.data.fetch( requestData, ( input ) => {
+				assert.equal( input, $e.data.baseEndpointAddress + command + '?param1=valueA' );
+				return Promise.resolve( new Response( null ) );
 			} );
-
-			// Validate result.
-			assert.deepEqual( response.data, result.data );
-
-			// Validate item didn't get cached.
-			assert.equal( $e.data.cache.storage.getItem( endpoint ), null );
 		} );
 
-		QUnit.test( 'fetch(): with cache', async ( assert ) => {
+		QUnit.only( 'fetch(): with cache', async ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
-				getNamespace() {
-					return 'test-component-with-cache';
-				}
+					getNamespace() {
+						return 'test-component-fetch-cache';
+					}
 
-				defaultData() {
-					return this.importCommands( {
-						TestCommand: class TestCommand extends CommandData {},
-					} );
-				}
-			} );
-
-			const fetchOrig = fetch,
-				command = 'test-component-with-cache/test-command',
-				response = {
-					json: () => response,
-					ok: true,
-					data: {
-						testParam: 'testValue',
-					},
-				},
+					defaultData() {
+						return this.importCommands( {
+							TestCommand: class TestCommand extends CommandData {
+							},
+						} );
+					}
+				} ),
+				fakeResponse = { test: true },
+				command = 'test-component-fetch-cache/test-command',
 				args = {
 					query: {
 						param1: 'valueA',
 					},
 				},
-				endpoint = $e.data.commandToEndpoint( command, args );
-
-			fetch = ( address, params ) => {
-				fetch = fetchOrig;
-				return new Promise( async ( resolve ) => {
-					resolve( response );
+				endpoint = $e.data.commandToEndpoint( command, args ),
+				requestData = {
+					type: 'get',
+					endpoint,
+					component,
+					command,
+					args,
+				},
+				result = await $e.data.fetch( requestData, ( input ) => {
+					assert.equal( input, $e.data.baseEndpointAddress + command + '?param1=valueA' );
+					return Promise.resolve( new Response( JSON.stringify( fakeResponse ) ) );
 				} );
-			};
 
-			const requestData = {
-				type: 'get',
-				component,
-				endpoint,
-				command,
-				args,
-			};
+			assert.deepEqual( result, fakeResponse );
 
-			const result = await $e.data.fetch( requestData );
-
-			// Validate result.
-			assert.deepEqual( response.data, result.data );
-			// Validate item get cached.
-			assert.deepEqual( $e.data.cache.get( requestData ).data, response.data );
+			// Validate cache.
+			assert.deepEqual( $e.data.cache.get( requestData ), result );
 		} );
 
 		QUnit.test( 'fetch(): with cache loaded manually', async ( assert ) => {
 			// Register test data command.
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
-				getNamespace() {
-					return 'test-component-cache-manually';
-				}
+					getNamespace() {
+						return 'test-component-cache-manually';
+					}
 
-				defaultData() {
-					return this.importCommands( {
-						TestCommand: class TestCommand extends CommandData {},
-					} );
-				}
-			} );
-
-			const data = { someProp: 'someValue' },
-				query = { paramA: 'valueB' };
+					defaultData() {
+						return this.importCommands( {
+							TestCommand: class TestCommand extends CommandData {
+							},
+						} );
+					}
+				} ),
+				command = 'test-component-cache-manually/test-command',
+				data = { someProp: 'someValue' },
+				query = { paramA: 'valueB' },
+				requestData = {
+					type: 'get',
+					component,
+					command,
+					endpoint: $e.data.commandToEndpoint( command, { query } ),
+					args: { query },
+				};
 
 			// This test case relies on cache.
-			$e.data.loadCache( component, 'test-component-cache-manually/test-command', query, data );
+			$e.data.loadCache( component, command, query, data );
 
 			// Get cache.
-			const result = await $e.data.get( 'test-component-cache-manually/test-command', query );
+			const result = await $e.data.fetch( requestData );
 
 			// Validate if data is same as result.data.
 			assert.deepEqual( data, result.data );
