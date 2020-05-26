@@ -218,11 +218,11 @@ jQuery( () => {
 
 			await $e.data.fetch( requestData, ( input ) => {
 				assert.equal( input, $e.data.baseEndpointAddress + command + '?param1=valueA' );
-				return Promise.resolve( new Response( null ) );
+				return Promise.resolve( new Response( JSON.stringify( {} ) ) );
 			} );
 		} );
 
-		QUnit.only( 'fetch(): with cache', async ( assert ) => {
+		QUnit.test( 'fetch(): with cache', async ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'test-component-fetch-cache';
@@ -293,7 +293,7 @@ jQuery( () => {
 			const result = await $e.data.fetch( requestData );
 
 			// Validate if data is same as result.data.
-			assert.deepEqual( data, result.data );
+			assert.deepEqual( data, result );
 		} );
 
 		QUnit.test( 'getCache(): simple', ( assert ) => {
