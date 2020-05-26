@@ -60,7 +60,7 @@ export class Remove extends CommandHistory {
 			}
 
 			// Remove from container and add to result.
-			result.push( container.repeaters[ name ].children.pop( index ) );
+			result.push( container.repeaters[ name ].children.splice( index, 1 ) );
 
 			collection.remove( model );
 
