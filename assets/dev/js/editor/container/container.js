@@ -183,6 +183,7 @@ export default class Container extends ArgsObject {
 		} );
 
 		// Backwards Compatibility: if there is only one repeater (type=repeater), set it's children as current children.
+		// Since 3.0.0.
 		const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
 
 		if ( 1 === repeaters.length ) {
