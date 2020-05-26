@@ -10,6 +10,6 @@ class Internal_Endpoint extends Endpoint {
 	}
 
 	public function get_items( $request ) {
-		return $this->get_items_recursive( $request );
+		return $this->controller->get_items_recursive( [ $this ] );
 	}
 }
