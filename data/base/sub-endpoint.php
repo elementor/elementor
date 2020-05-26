@@ -29,7 +29,7 @@ abstract class SubEndpoint extends Endpoint {
 		return $this->parent_endpoint;
 	}
 
-	protected function get_base_route() {
+	public function get_base_route() {
 		$controller_name = $this->controller->get_name();
 
 		return $controller_name . '/' . $this->parent_route . $this->get_name();

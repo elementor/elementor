@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
 
-class Endpoint extends \Elementor\Data\Base\Endpoint {
+class SubEndpoint extends \Elementor\Data\Base\SubEndpoint {
 
 	/**
 	 * @var \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller
@@ -31,19 +31,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		}
 	}
 
-	public function do_get_items( $request ) {
-		return $this->get_items( $request );
-	}
-
-	public function do_get_items_recursive( $request ) {
-		return parent::get_items_recursive( $request );
-	}
-
 	public function do_register() {
 		parent::register();
-	}
-
-	public function do_register_sub_endpoint( $route, $endpoint_class ) {
-		return parent::register_sub_endpoint( $route, $endpoint_class );
 	}
 }
