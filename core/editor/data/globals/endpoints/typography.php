@@ -29,11 +29,11 @@ class Typography extends Endpoint {
 		$this->register_items_route( \WP_REST_Server::CREATABLE );
 	}
 
-	protected function get_items( $request ) {
+	public function get_items( $request ) {
 		return self::$fake_data;
 	}
 
-	protected function get_item( $id, $request ) {
+	public function get_item( $id, $request ) {
 		if ( isset( self::$fake_data[ $id ] ) ) {
 			return self::$fake_data[ $id ];
 		}
@@ -41,7 +41,7 @@ class Typography extends Endpoint {
 		return false;
 	}
 
-	protected function create_items( $request ) {
+	public function create_items( $request ) {
 		$data = $request->get_json_params();
 
 		if ( ! isset( $data['title'] ) ) {

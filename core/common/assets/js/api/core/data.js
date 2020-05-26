@@ -151,10 +151,6 @@ export default class Data extends Commands {
 				endpoint = format;
 			}
 
-			if ( endpoint.includes( 'index' ) ) {
-				endpoint = endpoint.replace( '/index', '' );
-			}
-
 			if ( args.query.id ) {
 				endpoint += '/' + args.query.id.toString();
 				delete args.query.id;
@@ -176,6 +172,10 @@ export default class Data extends Commands {
 
 			// If last character is '&' remove it.
 			endpoint = endpoint.replace( /&$/, '' );
+		}
+
+		if ( endpoint.includes( 'index' ) ) {
+			endpoint = endpoint.replace( '/index', '' );
 		}
 
 		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.

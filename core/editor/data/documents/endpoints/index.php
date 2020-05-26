@@ -27,7 +27,7 @@ class Index extends Endpoint {
 		]);
 	}
 
-	protected function get_item( $document_id, $request ) {
+	public function get_item( $document_id, $request ) {
 		$document = Plugin::$instance->documents->get( $document_id );
 
 		if ( ! $document ) {

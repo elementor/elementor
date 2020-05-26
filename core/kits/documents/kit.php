@@ -23,7 +23,7 @@ class Kit extends PageBase {
 			'lightbox' => new Tabs\Lightbox( $this ),
 			'colors_and_typography' => new Tabs\Colors_And_Typography( $this ),
 			'layout_settings' => new Tabs\Layout_Settings( $this ),
-			'theme_style' => new Tabs\Theme_Style( $this ),
+			//'theme_style' => new Tabs\Theme_Style( $this ),
 		];
 	}
 

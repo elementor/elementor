@@ -20,7 +20,7 @@ class Elements extends SubEndpoint {
 		$this->register_item_route();
 	}
 
-	protected function get_items( $request ) {
+	public function get_items( $request ) {
 		$elements = [];
 		$document_id = $request->get_param( 'document_id' );
 
@@ -37,7 +37,7 @@ class Elements extends SubEndpoint {
 		return $elements;
 	}
 
-	protected function get_item( $element_id, $request ) {
+	public function get_item( $element_id, $request ) {
 		$element = [];
 		$document_id = $request->get_param( 'document_id' );
 
