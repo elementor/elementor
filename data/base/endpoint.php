@@ -28,6 +28,20 @@ abstract class Endpoint {
 	private $sub_endpoints = [];
 
 	/**
+	 * Get format suffix.
+	 *
+	 * Examples:
+	 * ':one_parameter_name'.
+	 * ':one_parameter_name/:two_parameter_name/'.
+	 * ':one_parameter_name/whatever/anything/:two_parameter_name/' and so on for each endpoint or sub-endpoint.
+	 *
+	 * @return string current location will later be added automatically.
+	 */
+	public static function get_format() {
+		return '';
+	}
+
+	/**
 	 * Endpoint constructor.
 	 *
 	 * run `$this->>register()`.
@@ -53,27 +67,13 @@ abstract class Endpoint {
 	abstract public function get_name();
 
 	/**
-	 * Get format suffix.
-	 *
-	 * Examples:
-	 * ':one_parameter_name'.
-	 * ':one_parameter_name/:two_parameter_name/'.
-	 * ':one_parameter_name/whatever/anything/:two_parameter_name/' and so on for each endpoint or sub-endpoint.
-	 *
-	 * @return string current location will later be added automatically.
-	 */
-	public static function get_format() {
-		return '';
-	}
-
-	/**
 	 * Get base route.
 	 *
 	 * Removing 'index' from endpoint.
 	 *
 	 * @return string
 	 */
-	protected function get_base_route() {
+	public function get_base_route() {
 		$endpoint_name = $this->get_name();
 
 		// TODO: Allow this only for internal routes.
@@ -102,6 +102,7 @@ abstract class Endpoint {
 	 * @param string $route
 	 * @param string $endpoint_class
 	 *
+	 * @return \Elementor\Data\Base\SubEndpoint
 	 * @throws \Exception
 	 */
 	protected function register_sub_endpoint( $route, $endpoint_class ) {
@@ -125,6 +126,8 @@ abstract class Endpoint {
 		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $current_format_suffix;
 
 		$this->controller->register_endpoint_format( $command, $format );
+
+		return $endpoint_instance;
 	}
 
 	/**
