@@ -238,9 +238,9 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @param string $command
 	 * @param string $format
+	 *
 	 */
 	public function register_endpoint_format( $command, $format ) {
-		// The function is public since endpoint need to access it.
 		$this->command_formats[ $command ] = rtrim( $format, '/' );
 	}
 

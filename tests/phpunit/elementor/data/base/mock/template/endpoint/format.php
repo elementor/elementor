@@ -17,7 +17,7 @@ class Format extends \Elementor\Data\Base\Endpoint {
 	}
 
 	public static function get_format() {
-		return ':arg_id';
+		return '{arg_id}';
 	}
 
 	protected function register() {
