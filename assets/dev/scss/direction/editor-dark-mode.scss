@@ -467,6 +467,26 @@ $devices: 'desktop', 'tablet', 'mobile';
 	.elementor-control-media__content {
 		border-color: $theme-dark-gray-light;
 	}
+
+	&.elementor-control-dynamic {
+
+		.elementor-control-gallery-clear {
+			border-color: $theme-dark-gray-light;
+		}
+	}
+
+	.elementor-control-dynamic-switcher {
+		border-bottom: 1px solid $theme-dark-gray-light;
+		border-left: 1px solid $theme-dark-gray-light;
+		border-radius: 0 3px 0 0;
+	}
+}
+
+body.rtl .elementor-control-type-gallery {
+	.elementor-control-dynamic-switcher {
+		border-right: 1px solid $theme-dark-gray-light;
+		border-left: none;
+	}
 }
 
 //URL Control
