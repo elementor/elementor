@@ -14,7 +14,7 @@ class SubEndpoint extends \Elementor\Data\Base\SubEndpoint {
 		return 'endpoint';
 	}
 
-	protected function get_items( $request ) {
+	public function get_items( $request ) {
 		$test_data = $this->get_test_data( 'get_items');
 
 		if ( $test_data ) {

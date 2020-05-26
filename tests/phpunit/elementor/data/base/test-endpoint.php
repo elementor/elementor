@@ -101,7 +101,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 
 		$endpoint_instance->set_test_data( 'get_items', 'valid' );
 
-		$this->assertEquals( 'valid', $endpoint_instance->do_get_items( null ) );
+		$this->assertEquals( 'valid', $endpoint_instance->get_items( null ) );
 	}
 
 	public function test_get_items_simulated() {
@@ -113,49 +113,6 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$endpoint_instance->set_test_data( 'get_items', 'valid' );
 
 		$this->assertEquals( 'valid', Manager::run_endpoint( trim( $endpoint_instance->get_base_route(), '/' ) ) );
-	}
-
-	public function test_get_items_recursive() {
-		$this->manager->run_server();
-
-		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
-		$endpoint_instance0 = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
-		$endpoint_instance1 = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
-		$endpoint_index_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\Index::class );
-
-		$endpoint_instance0->set_test_data( 'get_items', 'endpoint0_result');
-		$endpoint_instance1->set_test_data( 'get_items', 'endpoint1_result');
-
-		// Result should include both endpoints result.
-		$results = $endpoint_index_instance->do_get_items_recursive(null);
-		$count = 0;
-
-		foreach ( $results as $result ) {
-			$this->assertEquals( 'endpoint' . $count . '_result', $result );
-			$count++;
-		}
-	}
-
-	public function test_get_items_recursive_simulated() {
-		/**
-		 * TODO: Create Base Endpoint\Internal
-		 * TODO: Create Base Endpoint\Internal\Index
-		 */
-
-		$controller = $this->manager->register_controller_instance( new Mock\Recursive\Controller );
-		$this->manager->run_server(); // Ensure controller loaded.
-
-		// Run internal index endpoint. Run endpoint 'test-controller'.
-		$endpoints_results = $this->manager->run_endpoint( $controller->get_name() );
-
-		foreach ( $endpoints_results as $endpoint_name => $endpoints_result ) {
-			// Run endpoint like `test-controller/test-endpoint-{random}`.
-			$endpoint = $controller->get_name() . '/' . $endpoint_name;
-			$result = $this->manager->run_endpoint( $endpoint );
-
-			// Each manual run of the endpoint equals to part of $endpoints_results which is recursive result.
-			$this->assertEquals( $endpoints_result, $result );
-		}
 	}
 
 	// TODO: Add test_get_permission_callback(), when get_permission_callback() function is completed.

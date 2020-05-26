@@ -14,7 +14,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return 'endpoint';
 	}
 
-	protected function get_items( $request ) {
+	public function get_items( $request ) {
 		$test_data = $this->get_test_data( 'get_items');
 
 		if ( $test_data ) {
@@ -29,14 +29,6 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		if ( ! $this->controller->bypass_register_status ) {
 			parent::register();
 		}
-	}
-
-	public function do_get_items( $request ) {
-		return $this->get_items( $request );
-	}
-
-	public function do_get_items_recursive( $request ) {
-		return parent::get_items_recursive( $request );
 	}
 
 	public function do_register() {

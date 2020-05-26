@@ -137,7 +137,7 @@ abstract class Endpoint {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	protected function get_items( $request ) {
+	public function get_items( $request ) {
 		return $this->controller->get_items( $request );
 	}
 
@@ -149,34 +149,8 @@ abstract class Endpoint {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	protected function get_item( $id, $request ) {
+	public function get_item( $id, $request ) {
 		return $this->controller->get_item( $request );
-	}
-
-	/**
-	 * Retrieves a recursive collection of all endpoint(s), items.
-	 *
-	 * Get items recursive, will run overall endpoints of the current controller.
-	 * For each endpoint it will run `$endpoint->getItems( $request ) // the $request passed in get_items_recursive`.
-	 * Will skip self endpoint ( more information available a 'test-endpoint.php'.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return array
-	 */
-	protected function get_items_recursive( $request ) {
-		$response = [];
-
-		foreach ( $this->controller->endpoints as $endpoint ) {
-			// Skip self.
-			if ( $this === $endpoint ) {
-				continue;
-			}
-
-			$response[ $endpoint->get_name() ] = $endpoint->get_items( $request );
-		}
-
-		return $response;
 	}
 
 	/**
@@ -188,15 +162,15 @@ abstract class Endpoint {
 	 *
 	 * @return boolean
 	 */
-	protected function get_permission_callback( $request ) {
+	public function get_permission_callback( $request ) {
 		return $this->controller->get_permission_callback( $request );
 	}
 
-	protected function create_item( $id, $request ) {
+	public function create_item( $id, $request ) {
 		return $this->controller->create_item( $request );
 	}
 
-	protected function create_items( $request ) {
+	public function create_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
