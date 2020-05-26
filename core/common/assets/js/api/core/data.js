@@ -289,15 +289,15 @@ export default class Data extends Commands {
 		if ( 'GET' === method ) {
 			Object.assign( params, { headers } );
 		} else if ( allowedMethods ) {
-			const body = Object.assign( requestData );
-
-			delete body.type;
+			if ( ! requestData.args?.data ) {
+				throw Error( 'Invalid requestData.args.data' );
+			}
 
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
 			Object.assign( params, {
 				method,
 				headers,
-				body: JSON.stringify( body ),
+				body: JSON.stringify( requestData.args.data ),
 			} );
 		} else {
 			throw Error( `Invalid type: '${ type }'` );
@@ -310,10 +310,11 @@ export default class Data extends Commands {
 	 * Function fetch().
 	 *
 	 * @param {RequestData} requestData
+	 * @param {function(input: RequestInfo, init?) : Promise<Response> } [fetchAPI]
 	 *
 	 * @return {{}} params
 	 */
-	fetch( requestData ) {
+	fetch( requestData, fetchAPI = window.fetch ) {
 		requestData.cache = 'miss';
 
 		const params = this.prepareHeaders( requestData ),
@@ -327,12 +328,11 @@ export default class Data extends Commands {
 			}
 		}
 
-		// TODO: Test 'window.fetch' have the right endpoint.
 		return new Promise( async ( resolve, reject ) => {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
 			try {
-				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params ),
+				const request = fetchAPI( this.baseEndpointAddress + requestData.endpoint, params ),
 					response = await request.then( async ( _response ) => {
 						if ( ! _response.ok ) {
 							// Catch WP REST errors.
