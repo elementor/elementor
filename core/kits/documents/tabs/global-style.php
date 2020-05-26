@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Colors_And_Typography extends Tab_Base {
+class Global_Style extends Tab_Base {
 
 	public function get_id() {
-		return 'colors-and-typography';
+		return 'global-style';
 	}
 
 	public function get_title() {
