@@ -104,14 +104,22 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$this->assertEquals( 'valid', $endpoint_instance->do_get_items( null ) );
 	}
 
-	// TODO: Add method: test_get_items_simulated as test_get_items_recursive_simulated.
-
-	public function test_get_items_recursive() {
-
+	public function test_get_items_simulated() {
 		$this->manager->run_server();
 
 		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
-		$endpoint_instance0= $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+
+		$endpoint_instance->set_test_data( 'get_items', 'valid' );
+
+		$this->assertEquals( 'valid', Manager::run_endpoint( trim( $endpoint_instance->get_base_route(), '/' ) ) );
+	}
+
+	public function test_get_items_recursive() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance0 = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
 		$endpoint_instance1 = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
 		$endpoint_index_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\Index::class );
 
@@ -151,6 +159,52 @@ class Test_Endpoint extends Elementor_Test_Base {
 	}
 
 	// TODO: Add test_get_permission_callback(), when get_permission_callback() function is completed.
+	// TODO: Add test_create_item(), when create_item() function is completed.
+	// TODO: Add test_create_items(), when create_items() function is completed.
 
+	public function test_register_item_route() {
+		$this->manager->run_server();
 
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$controller_instance->bypass_original_register();
+
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+		$endpoint_instance->register_item_route();
+
+		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name() . '/(?P<id>[\w]+)';
+
+		$data = $controller_instance->get_controller_index()->get_data();
+
+		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
+	}
+
+	public function test_register_items_route() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$controller_instance->bypass_original_register();
+
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+		$endpoint_instance->register_items_route();
+
+		$data = $controller_instance->get_controller_index()->get_data();
+		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name();
+
+		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
+	}
+
+	public function test_register_route() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$controller_instance->bypass_original_register();
+
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+		$endpoint_instance->register_route( '/custom-route' );
+
+		$data = $controller_instance->get_controller_index()->get_data();
+		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name() . '/custom-route';
+
+		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
+	}
 }
