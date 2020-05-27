@@ -218,8 +218,9 @@ export default class Data extends Commands {
 	 * Validate request data requirements.
 	 *
 	 * @param {RequestData} requestData
+	 * @param {boolean} [requireArgsData]
 	 */
-	validateRequestData( requestData ) {
+	validateRequestData( requestData, requireArgsData = false ) {
 		// Do not validate if its already valid.
 		if ( requestData.timestamp && this.validatedRequests[ requestData.timestamp ] ) {
 			return;
@@ -227,9 +228,13 @@ export default class Data extends Commands {
 
 		const argsObject = new ArgsObject( requestData );
 
-		argsObject.requireArgument( 'component', requestData );
-		argsObject.requireArgumentType( 'command', 'string', requestData );
-		argsObject.requireArgumentType( 'endpoint', 'string', requestData );
+		argsObject.requireArgument( 'component' );
+		argsObject.requireArgumentType( 'command', 'string' );
+		argsObject.requireArgumentType( 'endpoint', 'string' );
+
+		if ( requireArgsData ) {
+			argsObject.requireArgumentType( 'data', 'object', requestData.args );
+		}
 
 		// Ensure timestamp.
 		if ( ! requestData.timestamp ) {
