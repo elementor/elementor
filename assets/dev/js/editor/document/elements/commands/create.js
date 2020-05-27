@@ -60,6 +60,23 @@ export class Create extends CommandHistory {
 
 			result.push( createdContainer );
 
+			const component = $e.components.get( 'editor/documents' ),
+				command = 'editor/documents/elements',
+				query = {
+					documentId: container.document.id,
+					elementId: model.id,
+				};
+
+			$e.data.loadCache( component, command, query, model );
+
+			const newContainer = container.view.addElement( model, options ).getContainer();
+
+			if ( isIdSetLocal ) {
+				delete model.id;
+				isIdSetLocal = false;
+			}
+
+			result.push( newContainer );
 			/**
 			 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
 			 * in getHistory().

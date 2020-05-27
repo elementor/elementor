@@ -35,6 +35,7 @@ export default class Data extends Commands {
 
 		this.cache = new Cache( this );
 		this.validatedRequests = {};
+		this.commandFormats = {};
 
 		this.baseEndpointAddress = '';
 
@@ -119,11 +120,9 @@ export default class Data extends Commands {
 	commandToEndpoint( command, args, format = null ) {
 		let endpoint = command;
 
-		if ( args.query ) {
-			if ( ! format ) {
-				format = command;
-			}
+		const argsQueryLength = args?.query ? Object.values( args.query ).length : 0;
 
+		if ( argsQueryLength ) {
 			if ( format && format.includes( '/{' ) ) {
 				// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
 				const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
@@ -150,12 +149,19 @@ export default class Data extends Commands {
 
 				endpoint = format;
 			}
+		} else if ( format ) {
+			// No magic params, but still format,
+			endpoint = format;
+		}
 
-			if ( args.query.id ) {
-				endpoint += '/' + args.query.id.toString();
-				delete args.query.id;
-			}
+		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
+		// eg: 'documents/{documentId}/elements/{elementId}' and args { documentId: 4123 }.
+		// result: 'documents/4123/elements'
+		if ( format && endpoint.includes( '/{' ) ) {
+			endpoint = endpoint.substring( 0, endpoint.indexOf( '/{' ) );
+		}
 
+		if ( argsQueryLength ) {
 			// Sorting since the endpoint later will be used as key to store the cache.
 			const queryEntries = Object.entries( args.query ).sort(
 				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
@@ -174,62 +180,33 @@ export default class Data extends Commands {
 			endpoint = endpoint.replace( /&$/, '' );
 		}
 
-		if ( endpoint.includes( 'index' ) ) {
-			endpoint = endpoint.replace( '/index', '' );
-		}
-
-		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
-		// eg: 'documents/{documentId}/elements/{elementId}' and args { documentId: 4123 }.
-		// result: 'documents/4123/elements'
-		if ( endpoint.includes( '/{' ) ) {
-			endpoint = endpoint.substring( 0, endpoint.indexOf( '/{' ) );
-		}
-
 		return endpoint;
 	}
 
 	/**
-	 * Function endpointToCommand().
+	 * Function commandExtractArgs().
 	 *
-	 * Convert endpoint to command.
+	 * If the command have query convert it to args.
 	 *
-	 * TODO: Find a better solution
+	 * @param {string} command
+	 * @param {object} argsTarget
 	 *
-	 * @param {string} endpoint
-	 * @param {object} args
-	 *
-	 * @return {string} command
+	 * @returns {string} command
 	 */
-	endpointToCommand( endpoint, args = {} ) {
-		let command = endpoint,
-			commandFound = !! $e.data.commands[ endpoint ];
-
-		const endpointParts = endpoint.split( '/' );
-
-		// Assuming the command maybe index.
-		if ( ! commandFound && $e.data.commands[ endpoint + '/index' ] ) {
-			command = endpoint + '/index';
-			commandFound = true;
-		}
-
-		// Maybe the it has 'id' as last endpointPart.
-		if ( ! commandFound ) {
-			// Remove last parameter.
-			const lastParameter = endpointParts[ endpointParts.length - 1 ],
-				assumedCommand = command.replace( '/' + lastParameter, '' );
-
-			// If assumed command ( without last parameter ) exist.
-			if ( $e.data.commands[ assumedCommand ] ) {
-				command = assumedCommand;
-				commandFound = true;
-
-				if ( ! args.query ) {
-					args.query = {};
-				}
-
-				// Warp with 'id'.
-				args.query.id = lastParameter;
+	commandExtractArgs( command, argsTarget ) {
+		if ( command?.includes( '?' ) ) {
+			if ( ! argsTarget.query ) {
+				argsTarget.query = {};
 			}
+
+			const commandParts = command.split( '?' ),
+				pureCommand = commandParts[ 0 ],
+				queryString = commandParts[ 1 ],
+				query = new URLSearchParams( queryString );
+
+			Object.assign( argsTarget.query, Object.fromEntries( query ) );
+
+			command = pureCommand;
 		}
 
 		return command;
@@ -372,7 +349,7 @@ export default class Data extends Commands {
 		const args = { query };
 
 		return this.cache.get( {
-			endpoint: this.commandToEndpoint( command, args ),
+			endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
 			component,
 			command,
 			args,
@@ -391,7 +368,7 @@ export default class Data extends Commands {
 		const args = { query };
 
 		this.cache.load( {
-				endpoint: this.commandToEndpoint( command, args ),
+				endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
 				component,
 				command,
 				args,
@@ -415,7 +392,7 @@ export default class Data extends Commands {
 		const args = { query, data };
 
 		this.cache.update( {
-			endpoint: this.commandToEndpoint( command, args ),
+			endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
 			component,
 			command,
 			args,
@@ -430,13 +407,25 @@ export default class Data extends Commands {
 	 */
 	deleteCache( command, query = {} ) {
 		const args = { query },
-			endpoint = this.commandToEndpoint( command, args );
+			endpoint = this.commandToEndpoint( command, args, this.commandFormats[ command ] );
 
 		if ( Object.values( query ).length ) {
 			args.query = query;
 		}
 
 		this.cache.delete( endpoint );
+	}
+
+	/**
+	 * Function registerFormat().
+	 *
+	 * Register's format for each command.
+	 *
+	 * @param {string} command
+	 * @param {string} format
+	 */
+	registerFormat( command, format ) {
+		this.commandFormats[ command ] = format;
 	}
 
 	create( command, data, query = {}, options = {} ) {
@@ -456,6 +445,23 @@ export default class Data extends Commands {
 	}
 
 	/**
+	 * @param {ComponentBase} component
+	 * @param {string} command
+	 * @param callback
+	 */
+	register( component, command, callback ) {
+		super.register( component, command, callback );
+
+		const fullCommandName = component.getNamespace() + '/' + command,
+			commandInstance = component.commandsClasses[ command ],
+			format = commandInstance && commandInstance.getEndpointFormat ? commandInstance.getEndpointFormat() : false;
+
+		if ( format ) {
+			$e.data.registerFormat( fullCommandName, format );
+		}
+	}
+
+	/**
 	 * TODO: Add JSDOC typedef for args ( query and options ).
 	 *
 	 * @param {DataTypes} type
@@ -466,6 +472,8 @@ export default class Data extends Commands {
 	 */
 	run( type, command, args ) {
 		args.options.type = type;
+
+		command = this.commandExtractArgs( command, args );
 
 		return super.run( command, args );
 	}
