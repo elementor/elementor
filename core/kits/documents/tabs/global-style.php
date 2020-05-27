@@ -13,6 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Global_Style extends Tab_Base {
 
+	const COLOR_PRIMARY = 'globals/colors/primary';
+	const COLOR_SECONDARY = 'globals/colors/secondary';
+	const COLOR_TEXT = 'globals/colors/text';
+	const COLOR_ACCENT = 'globals/colors/accent';
+
+	const TYPOGRAPHY_PRIMARY = 'globals/typography/primary';
+	const TYPOGRAPHY_SECONDARY = 'globals/typography/secondary';
+	const TYPOGRAPHY_TEXT = 'globals/typography/text';
+	const TYPOGRAPHY_ACCENT = 'globals/typography/accent';
+
 	public function get_id() {
 		return 'global-style';
 	}

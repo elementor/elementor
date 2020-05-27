@@ -31,22 +31,52 @@ Schemes = function() {
 		schemes = elementorCommon.helpers.cloneObject( elementor.config.schemes.items );
 	};
 
-	var fetchControlStyles = function( control, controlsStack, widgetType ) {
+	var mapGlobalsToSchemes = function() {
+		return {
+			'globals/colors/primary': '1',
+			'globals/colors/secondary': '2',
+			'globals/colors/text': '3',
+			'globals/colors/accent': '4',
+			'globals/typography/primary': '1',
+			'globals/typography/secondary': '2',
+			'globals/typography/text': '3',
+			'globals/typography/accent': '4',
+		};
+	};
+
+	var fetchControlStyles = function( control, controlsStack, widgetType, globalsToSchemesMap ) {
 		ControlsCSSParser.addControlStyleRules(
 			stylesheet,
 			control,
 			controlsStack,
-			( controlStyles ) => self.getSchemeValue( controlStyles.scheme.type, controlStyles.scheme.value, controlStyles.scheme.key ).value,
+			( controlStyles ) => {
+				let schemeType = '',
+					schemeValue = '',
+					schemeKey = '';
+
+				if ( controlStyles.global ) {
+					schemeType = controlStyles.global.includes( 'colors' ) ? 'color' : 'typography';
+					schemeValue = globalsToSchemesMap[ controlStyles.global ];
+					schemeKey = false;
+				} else {
+					schemeType = controlStyles.scheme.type;
+					schemeValue = controlStyles.scheme.value;
+					schemeKey = controlStyles.scheme.key;
+				}
+
+				return self.getSchemeValue( schemeType, schemeValue, schemeKey ).value;
+			},
 			[ '{{WRAPPER}}' ],
 			[ settings.selectorWrapperPrefix + widgetType ]
 		);
 	};
 
 	var fetchWidgetControlsStyles = function( widget ) {
-		var widgetSchemeControls = self.getWidgetSchemeControls( widget );
+		var widgetSchemeControls = self.getWidgetSchemeControls( widget ),
+			globalsToSchemesMap = mapGlobalsToSchemes();
 
 		_.each( widgetSchemeControls, function( control ) {
-			fetchControlStyles( control, widgetSchemeControls, widget.widget_type );
+			fetchControlStyles( control, widgetSchemeControls, widget.widget_type, globalsToSchemesMap );
 		} );
 	};
 
@@ -66,7 +96,7 @@ Schemes = function() {
 
 	this.getWidgetSchemeControls = function( widget ) {
 		return _.filter( widget.controls, function( control ) {
-			return _.isObject( control.scheme );
+			return _.isObject( control.scheme ) || ( 'undefined' !== typeof control.global );
 		} );
 	};
 

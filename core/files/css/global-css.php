@@ -1,9 +1,11 @@
 <?php
 namespace Elementor\Core\Files\CSS;
 
+use Elementor\Core\Kits\Documents\Tabs\Global_Style;
 use Elementor\Plugin;
 use Elementor\Scheme_Base;
 use Elementor\Settings;
+use Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -110,6 +112,27 @@ class Global_CSS extends Base {
 	}
 
 	/**
+	 * Map Globals to Schemes
+	 *
+	 * Map the 4 default global keys to the 4 default scheme types
+	 *
+	 * @since 1.2.0
+	 * @access private
+	 */
+	private function map_globals_to_schemes() {
+		return [
+			Global_Style::COLOR_PRIMARY => Schemes\Color::COLOR_1,
+			Global_Style::COLOR_SECONDARY => Schemes\Color::COLOR_2,
+			Global_Style::COLOR_TEXT => Schemes\Color::COLOR_3,
+			Global_Style::COLOR_ACCENT => Schemes\Color::COLOR_4,
+			Global_Style::TYPOGRAPHY_PRIMARY => Schemes\Typography::TYPOGRAPHY_1,
+			Global_Style::TYPOGRAPHY_SECONDARY => Schemes\Typography::TYPOGRAPHY_2,
+			Global_Style::TYPOGRAPHY_TEXT => Schemes\Typography::TYPOGRAPHY_3,
+			Global_Style::TYPOGRAPHY_ACCENT => Schemes\Typography::TYPOGRAPHY_4,
+		];
+	}
+
+	/**
 	 * Render schemes CSS.
 	 *
 	 * Parse the CSS for all the widgets and all the scheme controls.
@@ -119,13 +142,19 @@ class Global_CSS extends Base {
 	 */
 	private function render_schemes_css() {
 		$elementor = Plugin::$instance;
+		$globals_schemes_map = $this->map_globals_to_schemes();
 
 		foreach ( $elementor->widgets_manager->get_widget_types() as $widget ) {
 			$scheme_controls = $widget->get_scheme_controls();
 
 			foreach ( $scheme_controls as $control ) {
 				$this->add_control_rules(
-					$control, $widget->get_controls(), function( $control ) use ( $elementor ) {
+					$control, $widget->get_controls(), function( $control ) use ( $elementor, $globals_schemes_map ) {
+						if ( isset( $control['global'] ) ) {
+							$control['scheme']['type'] = strpos( $control['global'], 'colors' ) !== false ? 'color' : 'typography';
+							$control['scheme']['value'] = $globals_schemes_map[ $control['global'] ];
+						}
+
 						$scheme_value = $elementor->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 
 						if ( empty( $scheme_value ) ) {

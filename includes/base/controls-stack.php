@@ -724,7 +724,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		return array_filter(
 			$this->get_controls(), function( $control ) use ( $enabled_schemes ) {
-				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
+				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) ) || ! empty( $control['global'] );
 			}
 		);
 	}
