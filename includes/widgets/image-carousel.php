@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Style;
 use Elementor\Core\Settings\Manager;
 
 /**
@@ -665,7 +665,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'global' => Global_Style::COLOR_ACCENT,
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 			]
 		);

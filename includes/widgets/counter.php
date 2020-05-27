@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Style;
 
 /**
  * Elementor counter widget.
@@ -228,10 +228,7 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
-				],
+				'global' => Global_Style::COLOR_PRIMARY,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number-wrapper' => 'color: {{VALUE}};',
 				],
@@ -242,7 +239,7 @@ class Widget_Counter extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography_number',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => Global_Style::TYPOGRAPHY_PRIMARY,
 				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
 			]
 		);
@@ -262,10 +259,7 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
-				],
+				'global' => Global_Style::COLOR_SECONDARY,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'color: {{VALUE}};',
 				],
@@ -276,7 +270,7 @@ class Widget_Counter extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography_title',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'global' => Global_Style::TYPOGRAPHY_SECONDARY,
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
 			]
 		);

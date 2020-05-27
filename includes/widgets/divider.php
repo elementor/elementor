@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Style;
 
 /**
  * Elementor divider widget.
@@ -549,10 +549,7 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
-				],
+				'global' => Global_Style::COLOR_SECONDARY,
 				'default' => '#000',
 				'render_type' => 'template',
 				'selectors' => [
@@ -685,10 +682,7 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
-				],
+				'global' => Global_Style::COLOR_SECONDARY,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-divider__text' => 'color: {{VALUE}}',
 				],
@@ -699,7 +693,7 @@ class Widget_Divider extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'global' => Global_Style::TYPOGRAPHY_SECONDARY,
 				'selector' => '{{WRAPPER}} .elementor-divider__text',
 			]
 		);
@@ -821,10 +815,7 @@ class Widget_Divider extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon svg' => 'fill: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
-				],
+				'global' => Global_Style::COLOR_SECONDARY,
 			]
 		);
 

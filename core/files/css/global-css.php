@@ -5,7 +5,6 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Style;
 use Elementor\Plugin;
 use Elementor\Scheme_Base;
 use Elementor\Settings;
-use Elementor\Core\Schemes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
