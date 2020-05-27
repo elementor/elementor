@@ -111,7 +111,8 @@ export default class Cache {
 				return componentData;
 			}
 
-			// Using reduce over endpoint parts it build the right index.
+			// Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'get(): complex'.
+			// Analyze reaming endpoint (Using reduce over endpoint parts, build the right index).
 			const pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
 				pureEndpointParts = pureEndpoint.split( '/' ),
 				result = pureEndpointParts.reduce( ( accumulator, endpointPart ) => {
