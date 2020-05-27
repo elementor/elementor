@@ -107,7 +107,7 @@ export default class Data extends Commands {
 	 *
 	 * Convert command to endpoint.
 	 *
-	 * For example `component/command/:arg_example` => `controller/endpoint/8`.
+	 * For example `component/command/{arg}` => `controller/endpoint/8`.
 	 *
 	 * TODO: Find a better solution.
 	 *
