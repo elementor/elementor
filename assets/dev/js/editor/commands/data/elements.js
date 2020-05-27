@@ -1,7 +1,7 @@
 import CommandData from 'elementor-api/modules/command-data';
 
 class Elements extends CommandData {
-	getEndpointFormat() {
+	static getEndpointFormat() {
 		return 'editor/documents/{documentId}/elements/{elementId}';
 	}
 

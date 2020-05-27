@@ -12,7 +12,7 @@ export default class Helper {
 				};
 
 				const component = $e.components.get( 'editor/documents' ),
-					command = 'editor/documents/{documentId}/elements/{elementId}',
+					command = 'editor/documents/elements',
 					query = {
 						documentId: elementor.documents.getCurrent().id,
 						elementId: model.id,

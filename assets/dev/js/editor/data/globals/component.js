@@ -46,7 +46,7 @@ export default class Component extends ComponentBase {
 		} );
 
 		const component = $e.components.get( 'editor/documents' ),
-			command = 'editor/documents/{documentId}/elements',
+			command = 'editor/documents/elements',
 			query = {
 				documentId: document.id,
 			};
