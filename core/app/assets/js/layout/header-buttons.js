@@ -24,7 +24,15 @@ export default function HeaderButtons( props ) {
 				text={ __( 'Close', 'elementor' ) }
 				icon="eicon-close"
 				className="elementor-templates-modal__header__close--normal"
-				onClick={ () => $e.run( 'app/close' ) }
+				onClick={ () => {
+					// Directly.
+					if ( window.top === window ) {
+						history.back();
+					} else {
+						// Iframe.
+						window.top.elementorAppLoader.closeApp();
+					}
+				} }
 			/>
 			{ tools }
 		</div>

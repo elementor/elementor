@@ -599,8 +599,9 @@ class Plugin {
 
 		$this->upgrade = new Core\Upgrade\Manager();
 
+		$this->app = new Core\App\App();
+
 		if ( is_admin() ) {
-			$this->app = new Core\App\App();
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();

@@ -28,37 +28,42 @@ class App extends BaseApp {
 		return 'app';
 	}
 
-	public function get_url() {
-		return admin_url( 'admin.php?page=' . self::PAGE_ID . '#site-editor/promotion' );
+	public function get_base_url() {
+		return admin_url( 'admin.php?page=' . self::PAGE_ID . '&ver=' . ELEMENTOR_VERSION );
 	}
 
 	public function register_admin_menu() {
-		global $submenu;
-
-		$submenu_page = add_submenu_page(
+		add_submenu_page(
 			Settings::PAGE_ID,
 			__( 'Site Editor', 'elementor' ),
 			__( 'Site Editor', 'elementor' ),
 			'manage_options',
-			self::PAGE_ID,
-			function () {
-				// Do nothing. the page needs to load as a full page via $this->init.
-			}
+			self::PAGE_ID
 		);
-
-		// Hack to add a link to sub menu.
-		$submenu['elementor'][1][2] = $this->get_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-
-		add_action( 'load-' . $submenu_page, [ $this, 'init' ] );
 	}
 
-	public function init() {
+	public function fix_submenu( $menu ) {
+		global $submenu;
+
+		// Hack to add a link to sub menu.
+		foreach ( $submenu['elementor'] as &$item ) {
+			if ( self::PAGE_ID === $item[2] ) {
+				$item[2] = $this->get_settings( 'menu_url' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$item[4] = 'elementor-app-link'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			}
+		}
+
+		return $menu;
+	}
+
+	public function is_current() {
+		return ( ! empty( $_GET['page'] ) && self::PAGE_ID === $_GET['page'] );
+	}
+
+	public function admin_init() {
 		do_action( 'elementor/app/init', $this );
 
 		$this->enqueue_scripts();
-
-		// Send MIME Type header like WP admin-header.
-		header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
 		// Setup default heartbeat options
 		// TODO: Enable heartbeat.
@@ -67,16 +72,13 @@ class App extends BaseApp {
 			return $settings;
 		} );
 
-		// Tell to WP Cache plugins do not cache this request.
-		Utils::do_not_cache();
-
 		$this->render();
 		die;
 	}
 
 	protected function get_init_settings() {
 		return [
-			'assetsBaseUrl'  => $this->get_assets_base_url(),
+			'menu_url'  => $this->get_base_url() . '#site-editor/promotion',
 		];
 	}
 
@@ -85,7 +87,10 @@ class App extends BaseApp {
 	}
 
 	private function enqueue_scripts() {
-		Plugin::$instance->common->register_scripts();
+		if ( empty( $_GET['mode'] ) || 'iframe' !== $_GET['mode'] ) {
+			Plugin::$instance->init_common();
+			Plugin::$instance->common->register_scripts();
+		}
 
 		wp_enqueue_script(
 			'elementor-app-packages',
@@ -114,9 +119,30 @@ class App extends BaseApp {
 		$this->print_config();
 	}
 
+	public function enqueue_app_loader() {
+		wp_enqueue_script(
+			'elementor-app-loader',
+			$this->get_js_assets_url( 'app-loader' ),
+			[
+				'elementor-common',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
 	public function __construct() {
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
 
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 51 /* after Elementor page */ );
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 21 /* after Elementor page */ );
+
+		// Happens after WP plugin page validation.
+		add_filter( 'add_menu_classes', [ $this, 'fix_submenu' ] );
+
+		if ( $this->is_current() ) {
+			add_action( 'admin_init', [ $this, 'admin_init' ], 0 );
+		} else {
+			add_action( 'elementor/common/after_register_scripts', [ $this, 'enqueue_app_loader' ] );
+		}
 	}
 }

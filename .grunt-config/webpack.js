@@ -84,6 +84,7 @@ const entry = {
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
 	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
+	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
 	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
