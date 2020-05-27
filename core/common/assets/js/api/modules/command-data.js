@@ -32,7 +32,7 @@ export default class CommandData extends CommandBase {
 	 *
 	 * @returns {(null|string)}
 	 */
-	getEndpointFormat() {
+	static getEndpointFormat() {
 		return null;
 	}
 
@@ -83,7 +83,7 @@ export default class CommandData extends CommandBase {
 			timestamp: new Date().getTime(),
 			component: this.component,
 			command: this.currentCommand,
-			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.getEndpointFormat() ),
+			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
 		};
 	}
 
