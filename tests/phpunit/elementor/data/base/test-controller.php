@@ -142,15 +142,15 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$command_format = array_values( $controller->command_formats )[0];
 
-		$this->assertEquals( $controller->get_name() . '/' . $endpoint_instance->get_name() . '/:arg_id', $command_format );
+		$this->assertEquals( $controller->get_name() . '/' . $endpoint_instance->get_name() . '/{arg_id}', $command_format );
 	}
 
 	public function test_register_endpoint_format() {
 		$controller = new ControllerTemplate();
 
-		$controller->register_endpoint_format( 'test-command', 'test-format' );
+		$controller->register_endpoint_format( 'test-command', 'test-command/{test-format}' );
 
-		$this->assertEquals( 'test-format', $controller->command_formats['test-command'] );
+		$this->assertEquals( 'test-command/{test-format}', $controller->command_formats['test-command'] );
 	}
 
 	public function test_get_items_recursive() {
