@@ -380,8 +380,8 @@ export default class Data extends Commands {
 	/**
 	 * Function updateCache().
 	 *
-	 * The difference between 'loadCache' and 'updateCache' is update will only modify exist values.
-	 * and 'loadCache' will create or update.
+	 * The difference between 'setCache' and 'updateCache' is update will only modify exist values.
+	 * and 'setCache' will create or update.
 	 *
 	 * @param {ComponentBase} component
 	 * @param {string} command

@@ -51,7 +51,7 @@ export default class Component extends ComponentBase {
 				documentId: document.id,
 			};
 
-		$e.data.loadCache( component, command, query, elements );
+		$e.data.setCache( component, command, query, elements );
 	}
 
 	onElementorLoaded() {

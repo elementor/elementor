@@ -74,7 +74,7 @@ export class Create extends CommandHistory {
 					elementId: model.id,
 				};
 
-			$e.data.loadCache( component, command, query, model );
+			$e.data.setCache( component, command, query, model );
 
 			const newContainer = container.view.addElement( model, options ).getContainer();
 

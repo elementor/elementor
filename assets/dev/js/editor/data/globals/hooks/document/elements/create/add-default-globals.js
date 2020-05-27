@@ -35,7 +35,7 @@ export class ElementsCreateAddDefaultGlobals extends After {
 							elementId: element.id,
 						};
 
-					$e.data.loadCache( component, command, query, element );
+					$e.data.setCache( component, command, query, element );
 				}
 			} );
 		} );

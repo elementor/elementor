@@ -18,7 +18,7 @@ export default class Helper {
 						elementId: model.id,
 					};
 
-				$e.data.loadCache( component, command, query, model );
+				$e.data.setCache( component, command, query, model );
 
 				/**
 				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.
