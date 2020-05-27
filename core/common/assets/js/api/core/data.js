@@ -161,7 +161,7 @@ export default class Data extends Commands {
 			endpoint = endpoint.substring( 0, endpoint.indexOf( '/{' ) );
 		}
 
-		if ( argsQueryLength ) {
+		if ( args.query && Object.values( args.query ).length ) {
 			// Sorting since the endpoint later will be used as key to store the cache.
 			const queryEntries = Object.entries( args.query ).sort(
 				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
