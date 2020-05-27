@@ -1,4 +1,5 @@
 /**
+ * TODO: Merge all storage's to one.
  * Using this technique give's the ability to use JSDOC from 'window.storage'.
  *
  * @implements {Storage}
