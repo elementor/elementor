@@ -161,7 +161,7 @@ export default class Data extends Commands {
 			endpoint = endpoint.substring( 0, endpoint.indexOf( '/{' ) );
 		}
 
-		if ( argsQueryLength ) {
+		if ( args.query && Object.values( args.query ).length ) {
 			// Sorting since the endpoint later will be used as key to store the cache.
 			const queryEntries = Object.entries( args.query ).sort(
 				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
@@ -326,7 +326,7 @@ export default class Data extends Commands {
 				// At this point, it got the resolved response from remote.
 				// So load cache, and resolve it.
 				if ( useCache ) {
-					this.cache.load( requestData, response );
+					this.cache.set( requestData, response );
 				}
 
 				resolve( response );
@@ -357,17 +357,17 @@ export default class Data extends Commands {
 	}
 
 	/**
-	 * Function loadCache().
+	 * Function setCache().
 	 *
 	 * @param {ComponentBase} component
 	 * @param {string} command
 	 * @param {{}} query
 	 * @param {*} data
 	 */
-	loadCache( component, command, query, data ) {
+	setCache( component, command, query, data ) {
 		const args = { query };
 
-		this.cache.load( {
+		this.cache.set( {
 				endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
 				component,
 				command,

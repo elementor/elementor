@@ -31,9 +31,9 @@ abstract class Endpoint {
 	 * Get format suffix.
 	 *
 	 * Examples:
-	 * ':one_parameter_name'.
-	 * ':one_parameter_name/:two_parameter_name/'.
-	 * ':one_parameter_name/whatever/anything/:two_parameter_name/' and so on for each endpoint or sub-endpoint.
+	 * '{one_parameter_name}'.
+	 * '{one_parameter_name}/{two_parameter_name}/'.
+	 * '{one_parameter_name}/whatever/anything/{two_parameter_name}/' and so on for each endpoint or sub-endpoint.
 	 *
 	 * @return string current location will later be added automatically.
 	 */

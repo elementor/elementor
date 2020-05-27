@@ -41,17 +41,17 @@ export default class Cache {
 	}
 
 	/**
-	 * Function load().
+	 * Function set().
 	 *
-	 * Load data to cache.
+	 * set data to cache.
 	 *
-	 * The difference between load() and update() is that load, will modify the data anyway...
+	 * The difference between set() and update() is that set, will modify the data anyway...
 	 * when update() will only modify exist objects/values.
 	 *
 	 * @param {RequestData} requestData
 	 * @param {*} data
 	 */
-	load( requestData, data ) {
+	set( requestData, data ) {
 		$e.data.validateRequestData( requestData );
 
 		const componentName = requestData.component.getNamespace(),
@@ -111,7 +111,8 @@ export default class Cache {
 				return componentData;
 			}
 
-			// Using reduce over endpoint parts it build the right index.
+			// Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'get(): complex'.
+			// Analyze reaming endpoint (Using reduce over endpoint parts, build the right index).
 			const pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
 				pureEndpointParts = pureEndpoint.split( '/' ),
 				result = pureEndpointParts.reduce( ( accumulator, endpointPart ) => {
@@ -174,7 +175,7 @@ export default class Cache {
 		}
 
 		// Update cache.
-		this.load( requestData, response );
+		this.set( requestData, response );
 
 		return true;
 	}
