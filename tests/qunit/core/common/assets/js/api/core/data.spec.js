@@ -277,7 +277,7 @@ jQuery( () => {
 				};
 
 			// This test case relies on cache.
-			$e.data.loadCache( component, command, query, data );
+			$e.data.setCache( component, command, query, data );
 
 			// Get cache.
 			const result = await $e.data.fetch( requestData );
@@ -301,7 +301,7 @@ jQuery( () => {
 					someKey: 'someValue',
 				};
 
-			$e.data.cache.load( requestData, someData );
+			$e.data.cache.set( requestData, someData );
 
 			const result = $e.data.getCache( component, component.getNamespace() );
 
@@ -329,14 +329,14 @@ jQuery( () => {
 					someKey: 'someValue',
 				};
 
-			$e.data.cache.load( requestData, someData );
+			$e.data.cache.set( requestData, someData );
 
 			const result = $e.data.getCache( component, component.getNamespace(), args.query );
 
 			assert.deepEqual( result, someData );
 		} );
 
-		QUnit.test( 'loadCache(): with simple data', ( assert ) => {
+		QUnit.test( 'setCache(): with simple data', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'load-cache-simple-component';
@@ -346,14 +346,14 @@ jQuery( () => {
 					someKey: 'someValue',
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), {}, someData );
+			$e.data.setCache( component, component.getNamespace(), {}, someData );
 
 			const result = $e.data.getCache( component, component.getNamespace() );
 
 			assert.deepEqual( result, someData );
 		} );
 
-		QUnit.test( 'loadCache(): with query', ( assert ) => {
+		QUnit.test( 'setCache(): with query', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'load-cache-query-component';
@@ -366,7 +366,7 @@ jQuery( () => {
 					someKey: 'someValue',
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), query, someData );
+			$e.data.setCache( component, component.getNamespace(), query, someData );
 
 			const result = $e.data.getCache( component, component.getNamespace(), query );
 
@@ -386,7 +386,7 @@ jQuery( () => {
 					param: 'new-value',
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), {}, olData );
+			$e.data.setCache( component, component.getNamespace(), {}, olData );
 
 			let result = $e.data.getCache( component, component.getNamespace() );
 
@@ -417,7 +417,7 @@ jQuery( () => {
 					objectA: change,
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), {}, olData );
+			$e.data.setCache( component, component.getNamespace(), {}, olData );
 
 			let result = $e.data.getCache( component, component.getNamespace() );
 
@@ -447,7 +447,7 @@ jQuery( () => {
 					},
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), {}, olData );
+			$e.data.setCache( component, component.getNamespace(), {}, olData );
 
 			let result = $e.data.getCache( component, component.getNamespace() );
 
@@ -467,7 +467,7 @@ jQuery( () => {
 				}
 			} );
 
-			$e.data.loadCache( component, component.getNamespace(), {}, {} );
+			$e.data.setCache( component, component.getNamespace(), {}, {} );
 
 			$e.data.deleteCache( component.getNamespace() );
 
