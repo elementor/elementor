@@ -20,17 +20,27 @@ class AppLoader {
 				event.preventDefault();
 				this.openApp( link.href );
 			} );
+
+			link.addEventListener( 'mouseenter', () => {
+				this.loadApp( link.href );
+			} );
 		} );
 	}
 
-	openApp( url ) {
+	loadApp( url ) {
 		if ( ! this.iframe ) {
 			this.iframe = document.createElement( 'iframe' );
 			this.iframe.className = 'elementor-app-iframe';
+			this.iframe.style.display = 'none';
 			document.body.appendChild( this.iframe );
 		}
 
 		this.iframe.src = url.replace( 'elementor-app', 'elementor-app&mode=iframe' );
+	}
+
+	openApp( url ) {
+		this.loadApp( url );
+
 		this.iframe.style.display = '';
 		document.body.style.overflow = 'hidden';
 	}
