@@ -29,7 +29,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$controller = new ControllerSimple();
 		$this->manager->run_server();
 
-		$rest_index = Manager::run_endpoint( $controller->get_name() );
+		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
 		$rest_routes = $rest_index['routes'];
 
 		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_internal_endpoints();`.' );
@@ -103,7 +103,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$controller->do_register_internal_endpoints();
 		$this->manager->run_server();
 
-		$data = Manager::run_endpoint( $controller->get_name() );
+		$data = $this->manager->run_endpoint( $controller->get_name() );
 
 		$controller_pure_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
