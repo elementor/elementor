@@ -86,19 +86,20 @@ export default class ColorPicker extends elementorModules.Module {
 		return this.color;
 	}
 
-	getColorName( colorObject ) {
+	getColorName( color ) {
 		//  Check if the display value is HEX or HEXA (HEXA = with transparency)
-		const color = 7 < colorObject.value.length ? colorObject.value.slice( 0, 7 ) : colorObject.code;
+		const colorForNaming = 7 < color.length ? color.slice( 0, 7 ) : color;
 
-		return ntc.name( color )[ 1 ];
+		return ntc.name( colorForNaming )[ 1 ];
 	}
 
 	getColorData() {
-		const color = this.picker.getColor();
+		const color = this.picker.getColor(),
+			colorValue = color.toHEXA().toString( 0 );
 
 		return {
-			name: this.getColorName( colorObject ),
-			value: color.toHEXA().toString( 0 ),
+			name: this.getColorName( colorValue ),
+			value: colorValue,
 			id: elementor.helpers.getUniqueID(),
 		};
 	}
