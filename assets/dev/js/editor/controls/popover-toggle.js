@@ -48,7 +48,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return {
 			id: elementor.helpers.getUniqueID(),
 			commandName: 'globals/typography',
-			key: 'typography_typography',
+			key: this.model.get( 'name' ),
 			value: dataMockup,
 		};
 	}

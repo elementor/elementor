@@ -57,7 +57,7 @@ export default class extends ControlBaseDataView {
 		return {
 			id: colorData.id,
 			commandName: 'globals/colors',
-			key: 'colors',
+			key: this.model.get( 'name' ),
 			value: colorData.value,
 		};
 	}
