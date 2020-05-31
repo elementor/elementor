@@ -260,10 +260,10 @@ class Group_Control_Typography extends Group_Control_Base {
 
 		$args = $this->get_args();
 
-		if ( in_array( $control_id, self::get_scheme_fields_keys() ) && ! empty( $args['scheme'] ) ) {
+		if ( in_array( $control_id, self::get_scheme_fields_keys() ) && ( ! empty( $args['scheme'] ) || ! empty( $args['global'] ) ) ) {
 			$field_args['scheme'] = [
 				'type' => self::get_type(),
-				'value' => $args['scheme'],
+				'value' => isset( $args['scheme'] ) ? $args['scheme'] : '',
 				'key' => $control_id,
 			];
 		}
