@@ -61,7 +61,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$endpoint_instance->set_test_data( 'get_items', 'valid' );
 
 		// Validate register did 'register_items_route'.
-		$data = Manager::run_endpoint( $controller_instance->get_name() . '/' . $endpoint_instance->get_name() );
+		$data = $this->manager->run_endpoint( $controller_instance->get_name() . '/' . $endpoint_instance->get_name() );
 
 		$this->assertEquals( $data, 'valid' );
 	}
@@ -77,7 +77,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 
 		$endpoint = $controller_instance->get_name() .  '/test-route/' . $sub_endpoint_instance->get_name();
 
-		$data = Manager::run_endpoint( $endpoint  );
+		$data = $this->manager->run_endpoint( $endpoint  );
 
 		$this->assertEquals( $data, 'valid' );
 	}
@@ -112,7 +112,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 
 		$endpoint_instance->set_test_data( 'get_items', 'valid' );
 
-		$this->assertEquals( 'valid', Manager::run_endpoint( trim( $endpoint_instance->get_base_route(), '/' ) ) );
+		$this->assertEquals( 'valid', $this->manager->run_endpoint( trim( $endpoint_instance->get_base_route(), '/' ) ) );
 	}
 
 	// TODO: Add test_get_permission_callback(), when get_permission_callback() function is completed.
