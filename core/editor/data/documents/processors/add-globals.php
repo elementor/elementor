@@ -28,8 +28,7 @@ class AddGlobals extends Processor\After {
 				continue;
 			}
 
-			$data = Manager::run_endpoint( $global_value );
-
+			$data = Manager::instance()->run( $global_value );
 			$control = $element_instance->get_controls( $global_key );
 			$control_group_prefix = isset( $control['groupPrefix'] ) ? $control['groupPrefix'] : false;
 

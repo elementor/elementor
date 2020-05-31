@@ -16,8 +16,7 @@ export class Disable extends DisableEnable {
 							return;
 						}
 
-						const newArgs = { query: {} },
-							promise = $e.data.get( $e.data.endpointToCommand( globalValue, newArgs ), newArgs.query ),
+						const promise = $e.data.get( globalValue ),
 							result = await promise;
 
 						if ( result ) {

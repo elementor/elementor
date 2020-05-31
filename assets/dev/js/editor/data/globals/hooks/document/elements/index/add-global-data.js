@@ -24,8 +24,7 @@ export class ElementsIndexAddGlobalData extends After {
 				return;
 			}
 			// Get global item.
-			const newArgs = { query: {} },
-				endpointResult = await $e.data.get( $e.data.endpointToCommand( globalValue, newArgs ), newArgs.query ),
+			const endpointResult = await $e.data.get( globalValue ),
 				container = elementor.getContainer( args.query.elementId ),
 				data = endpointResult.data.value,
 				controlGroupPrefix = container.controls[ globalKey ]?.groupPrefix;

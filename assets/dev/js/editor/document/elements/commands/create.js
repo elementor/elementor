@@ -68,13 +68,13 @@ export class Create extends CommandHistory {
 			}
 
 			const component = $e.components.get( 'editor/documents' ),
-				command = 'editor/documents/:documentId/elements/:elementId',
+				command = 'editor/documents/elements',
 				query = {
 					documentId: container.document.id,
 					elementId: model.id,
 				};
 
-			$e.data.loadCache( component, command, query, model );
+			$e.data.setCache( component, command, query, model );
 
 			const newContainer = container.view.addElement( model, options ).getContainer();
 

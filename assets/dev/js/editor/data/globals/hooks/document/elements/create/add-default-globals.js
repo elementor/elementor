@@ -29,13 +29,13 @@ export class ElementsCreateAddDefaultGlobals extends After {
 					element.settings.__globals__[ controlName ] = control.globals;
 
 					const component = $e.components.get( 'editor/documents' ),
-						command = 'editor/documents/:documentId/elements/:elementId',
+						command = 'editor/documents/elements',
 						query = {
 							documentId: container.document.id,
 							elementId: element.id,
 						};
 
-					$e.data.loadCache( component, command, query, element );
+					$e.data.setCache( component, command, query, element );
 				}
 			} );
 		} );

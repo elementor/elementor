@@ -224,6 +224,7 @@ class App extends BaseApp {
 			'isRTL' => is_rtl(),
 			'isDebug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
 			'activeModules' => array_keys( $this->get_components() ),
+			'rest_url' => get_rest_url(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],

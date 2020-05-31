@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Data\Base;
 
+use Elementor\Data\Manager;
 use WP_REST_Server;
 
 abstract class Endpoint {
@@ -28,6 +29,20 @@ abstract class Endpoint {
 	private $sub_endpoints = [];
 
 	/**
+	 * Get format suffix.
+	 *
+	 * Examples:
+	 * '{one_parameter_name}'.
+	 * '{one_parameter_name}/{two_parameter_name}/'.
+	 * '{one_parameter_name}/whatever/anything/{two_parameter_name}/' and so on for each endpoint or sub-endpoint.
+	 *
+	 * @return string current location will later be added automatically.
+	 */
+	public static function get_format() {
+		return '';
+	}
+
+	/**
 	 * Endpoint constructor.
 	 *
 	 * run `$this->>register()`.
@@ -37,6 +52,10 @@ abstract class Endpoint {
 	 * @throws \Exception
 	 */
 	public function __construct( $controller ) {
+		if ( ! ( $controller instanceof Controller ) ) {
+			throw new \Exception( 'Invalid controller' );
+		}
+
 		$this->controller = $controller;
 		$this->register();
 	}
@@ -49,27 +68,13 @@ abstract class Endpoint {
 	abstract public function get_name();
 
 	/**
-	 * Get format suffix.
-	 *
-	 * Examples:
-	 * ':one_parameter_name'.
-	 * ':one_parameter_name/:two_parameter_name/'.
-	 * ':one_parameter_name/whatever/anything/:two_parameter_name/' and so on for each endpoint or sub-endpoint.
-	 *
-	 * @return string current location will later be added automatically.
-	 */
-	public static function get_format() {
-		return '';
-	}
-
-	/**
 	 * Get base route.
 	 *
 	 * Removing 'index' from endpoint.
 	 *
 	 * @return string
 	 */
-	protected function get_base_route() {
+	public function get_base_route() {
 		$endpoint_name = $this->get_name();
 
 		// TODO: Allow this only for internal routes.
@@ -98,6 +103,7 @@ abstract class Endpoint {
 	 * @param string $route
 	 * @param string $endpoint_class
 	 *
+	 * @return \Elementor\Data\Base\SubEndpoint
 	 * @throws \Exception
 	 */
 	protected function register_sub_endpoint( $route, $endpoint_class ) {
@@ -120,7 +126,53 @@ abstract class Endpoint {
 		$command = $component_name . '/' . $parent_name;
 		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $current_format_suffix;
 
-		$this->controller->register_endpoint_format( $command, $format );
+		Manager::instance()->register_endpoint_format( $command, $format );
+
+		return $endpoint_instance;
+	}
+
+	/**
+	 * Retrieves a collection of items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	public function get_items( $request ) {
+		return $this->controller->get_items( $request );
+	}
+
+	/**
+	 * Retrieves one item from the collection.
+	 *
+	 * @param string $id
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	public function get_item( $id, $request ) {
+		return $this->controller->get_item( $request );
+	}
+
+	/**
+	 * Get permission callback.
+	 *
+	 * By default get permission callback from the controller.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return boolean
+	 */
+	public function get_permission_callback( $request ) {
+		return $this->controller->get_permission_callback( $request );
+	}
+
+	public function create_item( $id, $request ) {
+		return $this->controller->create_item( $request );
+	}
+
+	public function create_items( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -183,7 +235,6 @@ abstract class Endpoint {
 	 *
 	 * @return bool
 	 * @throws \Exception
-	 *
 	 */
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
@@ -199,77 +250,9 @@ abstract class Endpoint {
 				'methods' => $methods,
 				'callback' => $callback,
 				'permission_callback' => function ( $request ) {
-					return $this->permission_callback( $request );
+					return $this->get_permission_callback( $request );
 				},
 			],
 		] );
-	}
-
-	/**
-	 * Retrieves a collection of items.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
-	protected function get_items( $request ) {
-		return $this->controller->get_items( $request );
-	}
-
-	/**
-	 * Retrieves one item from the collection.
-	 *
-	 * @param string $id
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
-	protected function get_item( $id, $request ) {
-		return $this->controller->get_item( $request );
-	}
-
-	/**
-	 * Retrieves a recursive collection of all endpoint(s), items.
-	 *
-	 * Get items recursive, will run overall endpoints of the current controller.
-	 * For each endpoint it will run `$endpoint->getItems( $request ) // the $request passed in get_items_recursive`.
-	 * Will skip self endpoint ( more information available a 'test-endpoint.php'.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return array
-	 */
-	protected function get_items_recursive( $request ) {
-		$response = [];
-
-		foreach ( $this->controller->endpoints as $endpoint ) {
-			// Skip self.
-			if ( $this === $endpoint ) {
-				continue;
-			}
-
-			$response[ $endpoint->get_name() ] = $endpoint->get_items( $request );
-		}
-
-		return $response;
-	}
-
-	protected function create_item( $id, $request ) {
-		return $this->controller->create_item( $request );
-	}
-
-	protected function create_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
-	}
-
-	/**
-	 * Permission callback.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return boolean
-	 */
-	public function permission_callback( $request ) {
-		return $this->controller->permission_callback( $request );
 	}
 }

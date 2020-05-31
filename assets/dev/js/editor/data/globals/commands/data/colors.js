@@ -1,7 +1,9 @@
 import CommandData from 'elementor-api/modules/command-data';
 
 export class Colors extends CommandData {
-	// Nothing to do.
+	static getEndpointFormat() {
+		return 'globals/colors/{id}';
+	}
 }
 
 export default Colors;

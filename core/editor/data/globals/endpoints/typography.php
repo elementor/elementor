@@ -46,11 +46,11 @@ class Typography extends Endpoint {
 		$this->register_items_route( \WP_REST_Server::CREATABLE );
 	}
 
-	protected function get_items( $request ) {
+	public function get_items( $request ) {
 		return self::$fake_data;
 	}
 
-	protected function get_item( $id, $request ) {
+	public function get_item( $id, $request ) {
 		if ( isset( self::$fake_data[ $id ] ) ) {
 			return self::$fake_data[ $id ];
 		}
@@ -58,27 +58,19 @@ class Typography extends Endpoint {
 		return false;
 	}
 
-	protected function create_items( $request ) {
-		$result = [
-			'success' => false,
-		];
-
+	public function create_items( $request ) {
 		$data = $request->get_json_params();
 
-		if ( isset( $data['args'] ) && isset( $data['args']['data'] ) ) {
-			$data = $data['args'] ['data'];
-			$data['_id'] = Utils::generate_random_string();
-
-			$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-			$kit->add_repeater_row( 'typography', $data );
-
-			$result = [
-				'id' => $data['_id'],
-				'success' => true,
-			];
+		if ( ! isset( $data['title'] ) ) {
+			return new \WP_Error( 'invalid_title', 'Invalid title' );
 		}
 
-		return $result;
+		$data['_id'] = Utils::generate_random_string();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$kit->add_repeater_row( 'typography', $data );
+
+		return $data;
 	}
 }

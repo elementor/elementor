@@ -429,7 +429,7 @@ class Plugin {
 	public $kits_manager;
 
 	/**
-	 * @var \Elementor\Data\Manager
+	 * @var \Core\Data\Manager
 	 */
 	public $data_manager;
 

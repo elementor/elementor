@@ -27,11 +27,11 @@ class Colors extends Endpoint {
 		$this->register_item_route();
 	}
 
-	protected function get_items( $request ) {
+	public function get_items( $request ) {
 		return self::$fake_data;
 	}
 
-	protected function get_item( $id, $request ) {
+	public function get_item( $id, $request ) {
 		if ( isset( self::$fake_data[ $id ] ) ) {
 			return self::$fake_data[ $id ];
 		}

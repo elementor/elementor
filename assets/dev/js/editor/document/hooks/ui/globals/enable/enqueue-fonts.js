@@ -18,8 +18,7 @@ export class EnqueueFonts extends After {
 
 		Object.values( settings ).forEach( async ( setting ) => {
 			if ( setting.includes( 'typography' ) ) {
-				const newArgs = { query: {} },
-					result = await $e.data.get( $e.data.endpointToCommand( setting, newArgs ), newArgs.query );
+				const result = await $e.data.get( setting );
 
 				// eslint-disable-next-line camelcase
 				if ( result.data?.font_family ) {

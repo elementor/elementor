@@ -1,7 +1,6 @@
-import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import LocalStorage from './stroages/local-storage';
 
-export default class Cache extends ArgsObject {
+export default class Cache {
 	/**
 	 * Function constructor().
 	 *
@@ -10,22 +9,9 @@ export default class Cache extends ArgsObject {
 	 * @param {Data} manager
 	 */
 	constructor( manager ) {
-		super( {} );
-
 		this.manager = manager;
 
 		this.storage = new LocalStorage();
-	}
-
-	/**
-	 * Function validateRequestData().
-	 *
-	 * @param {RequestData} requestData
-	 */
-	validateRequestData( requestData ) {
-		this.requireArgument( 'component', requestData );
-		this.requireArgumentType( 'command', 'string', requestData );
-		this.requireArgumentType( 'endpoint', 'string', requestData );
 	}
 
 	/**
@@ -39,8 +25,6 @@ export default class Cache extends ArgsObject {
 	 * @return {(Promise|boolean)}
 	 */
 	getAsync( requestData ) {
-		this.validateRequestData( requestData );
-
 		const data = this.get( requestData );
 
 		if ( null !== data ) {
@@ -57,36 +41,36 @@ export default class Cache extends ArgsObject {
 	}
 
 	/**
-	 * Function load().
+	 * Function set().
 	 *
-	 * Load data to cache.
+	 * set data to cache.
 	 *
-	 * The difference between load() and update() is that load, will modify the data anyway...
+	 * The difference between set() and update() is that set, will modify the data anyway...
 	 * when update() will only modify exist objects/values.
 	 *
 	 * @param {RequestData} requestData
 	 * @param {*} data
 	 */
-	load( requestData, data ) {
-		this.validateRequestData( requestData );
+	set( requestData, data ) {
+		$e.data.validateRequestData( requestData );
 
 		const componentName = requestData.component.getNamespace(),
-			nakedEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
-			nakedEndpointParts = nakedEndpoint.split( '/' );
+			pureEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
+			pureEndpointParts = pureEndpoint.split( '/' );
 
 		let newData = {};
 
 		// Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'load(): deep'.
 		// Analyze reaming endpoint.
-		if ( nakedEndpointParts.length && nakedEndpoint !== componentName ) {
+		if ( pureEndpointParts.length && pureEndpoint !== componentName ) {
 			// Using reaming endpoint parts, to build new data object.
-			const result = nakedEndpointParts.reduce( ( accumulator, nakedEndpointPart ) => {
-				accumulator[ nakedEndpointPart ] = {};
+			const result = pureEndpointParts.reduce( ( accumulator, pureEndpointPart ) => {
+				accumulator[ pureEndpointPart ] = {};
 
-				return accumulator[ nakedEndpointPart ];
+				return accumulator[ pureEndpointPart ];
 			}, newData );
 
-			// 'result' is equal to 'newData' with a deeper pointer, build based on 'nakedEndpointParts' ( will effect newData ).
+			// 'result' is equal to 'newData' with a deeper pointer, build based on 'pureEndpointParts' ( will effect newData ).
 			Object.assign( result, data );
 		} else {
 			newData = data;
@@ -114,6 +98,8 @@ export default class Cache extends ArgsObject {
 	 * @return {{}}
 	 */
 	get( requestData ) {
+		$e.data.validateRequestData( requestData );
+
 		const componentName = requestData.component.getNamespace();
 
 		let componentData = this.storage.getItem( componentName );
@@ -125,10 +111,11 @@ export default class Cache extends ArgsObject {
 				return componentData;
 			}
 
-			// Using reduce over endpoint parts it build the right index.
-			const nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
-				nakedEndpointParts = nakedEndpoint.split( '/' ),
-				result = nakedEndpointParts.reduce( ( accumulator, endpointPart ) => {
+			// Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'get(): complex'.
+			// Analyze reaming endpoint (Using reduce over endpoint parts, build the right index).
+			const pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+				pureEndpointParts = pureEndpoint.split( '/' ),
+				result = pureEndpointParts.reduce( ( accumulator, endpointPart ) => {
 					if ( accumulator && accumulator[ endpointPart ] ) {
 						return accumulator[ endpointPart ];
 					}
@@ -151,9 +138,7 @@ export default class Cache extends ArgsObject {
 	 * @return {boolean} is updated
 	 */
 	update( requestData ) {
-		if ( 'object' !== typeof requestData.args.data ) {
-			throw new Error( 'requestData.args.data object is excepted.' );
-		}
+		$e.data.validateRequestData( requestData, true );
 
 		const endpoint = requestData.endpoint;
 		let response = {};
@@ -163,16 +148,16 @@ export default class Cache extends ArgsObject {
 			if ( endpointValue && endpoint.includes( endpointKey ) ) {
 				// Assuming it is a specific endpoint.
 				const oldData = JSON.parse( endpointValue ),
-					nakedEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
-					nakedEndpointParts = nakedEndpoint.split( '/' ),
-					isComponentUpdate = 1 === nakedEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace();
+					pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+					pureEndpointParts = pureEndpoint.split( '/' ),
+					isComponentUpdate = 1 === pureEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace();
 
 				// Component update or specific update?
 				if ( isComponentUpdate ) {
 					response = jQuery.extend( true, oldData, requestData.args.data );
 				} else {
-					const oldSpecificData = nakedEndpointParts.reduce(
-						( accumulator, nakedEndpointPart ) => accumulator[ nakedEndpointPart ], oldData
+					const oldSpecificData = pureEndpointParts.reduce(
+						( accumulator, pureEndpointPart ) => accumulator[ pureEndpointPart ], oldData
 					);
 
 					response = jQuery.extend( true, oldSpecificData, requestData.args.data );
@@ -186,7 +171,7 @@ export default class Cache extends ArgsObject {
 		}
 
 		// Update cache.
-		this.load( requestData, response );
+		this.set( requestData, response );
 
 		return true;
 	}

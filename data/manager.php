@@ -11,6 +11,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Manager extends BaseModule {
+	/**
+	 * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
+	 *
+	 * @return \Elementor\Core\Base\Module|\Elementor\Data\Manager
+	 */
+	public static function instance() {
+		return ( parent::instance() );
+	}
+
+	/**
+	 * @var \WP_REST_Server
+	 */
+	private $server;
 
 	/**
 	 * Loaded controllers.
@@ -18,6 +31,13 @@ class Manager extends BaseModule {
 	 * @var \Elementor\Data\Base\Controller[]
 	 */
 	public $controllers = [];
+
+	/**
+	 * Loaded command(s) format.
+	 *
+	 * @var string[]
+	 */
+	public $command_formats = [];
 
 	public function get_name() {
 		return 'data-manager';
@@ -34,11 +54,13 @@ class Manager extends BaseModule {
 	 * Register controller.
 	 *
 	 * @param string $controller_class_name
+	 *
+	 * @return \Elementor\Data\Base\Controller
 	 */
 	public function register_controller( $controller_class_name ) {
 		$controller_instance = new $controller_class_name();
 
-		$this->register_controller_instance( $controller_instance );
+		return $this->register_controller_instance( $controller_instance );
 	}
 
 	/**
@@ -54,6 +76,17 @@ class Manager extends BaseModule {
 		$this->controllers[ $controller_instance->get_name() ] = $controller_instance;
 
 		return $controller_instance;
+	}
+
+	/**
+	 * Register endpoint format.
+	 *
+	 * @param string $command
+	 * @param string $format
+	 *
+	 */
+	public function register_endpoint_format( $command, $format ) {
+		$this->command_formats[ $command ] = rtrim( $format, '/' );
 	}
 
 	/**
@@ -91,7 +124,7 @@ class Manager extends BaseModule {
 	 *
 	 * @param string $command
 	 * @param string $format
-	 * @param array   $args
+	 * @param array  $args
 	 *
 	 * @return string endpoint
 	 */
@@ -102,12 +135,12 @@ class Manager extends BaseModule {
 			$formatted = $format;
 
 			array_walk( $args, function ( $val, $key ) use ( &$formatted ) {
-				$formatted = str_replace( ':' . $key, $val, $formatted );
+				$formatted = str_replace( '{' . $key . '}', $val, $formatted );
 			} );
 
 			// Remove if not requested.
-			if ( strstr( $formatted, '/:' ) ) {
-				$formatted = substr( $formatted, 0, strpos( $formatted, '/:' ) );
+			if ( strstr( $formatted, '/{' ) ) {
+				$formatted = substr( $formatted, 0, strpos( $formatted, '/{' ) );
 			}
 
 			$endpoint = $formatted;
@@ -124,13 +157,25 @@ class Manager extends BaseModule {
 	 * @return \WP_REST_Server
 	 */
 	public function run_server() {
-		static $server = null;
-
-		if ( ! $server ) {
-			$server = rest_get_server(); // Init API.
+		if ( ! $this->server ) {
+			$this->server = rest_get_server(); // Init API.
 		}
 
-		return $server;
+		return $this->server;
+	}
+
+	/**
+	 * Kill server.
+	 *
+	 * Free server and controllers.
+	 */
+	public function kill_server() {
+		global $wp_rest_server;
+
+		$this->controllers = [];
+		$this->command_formats = [];
+		$this->server = false;
+		$wp_rest_server = false;
 	}
 
 	/**
@@ -162,7 +207,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return mixed
 	 */
-	public static function run_processor( $processor, $data ) {
+	public function run_processor( $processor, $data ) {
 		if ( call_user_func_array( [ $processor, 'get_conditions' ], $data ) ) {
 			return call_user_func_array( [ $processor, 'apply' ], $data );
 		}
@@ -176,18 +221,18 @@ class Manager extends BaseModule {
 	 * Filter them by class.
 	 *
 	 * @param \Elementor\Data\Base\Processor[] $processors
-	 * @param string                           $filter_by_class
-	 * @param array                            $data
+	 * @param string $filter_by_class
+	 * @param array $data
 	 *
 	 * @return false|array
 	 */
-	public static function run_processors( $processors, $filter_by_class, $data ) {
+	public function run_processors( $processors, $filter_by_class, $data ) {
 		foreach ( $processors as $processor ) {
 			if ( $processor instanceof $filter_by_class ) {
 				if ( Processor\Before::class === $filter_by_class ) {
-					self::run_processor( $processor, $data );
+					$this->run_processor( $processor, $data );
 				} elseif ( Processor\After::class === $filter_by_class ) {
-					$result = self::run_processor( $processor, $data );
+					$result = $this->run_processor( $processor, $data );
 					if ( $result ) {
 						$data[1] = $result;
 					}
@@ -210,8 +255,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return array
 	 */
-	public static function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
-		/** @var \Elementor\Data\Manager $manager */
+	public function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
 		$manager = self::instance();
 
 		$response = $manager->run_internal( $endpoint, $args, $method );
@@ -234,8 +278,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return array processed result
 	 */
-	public static function run( $command, $args = [], $method = 'GET' ) {
-		/** @var \Elementor\Data\Manager $manager */
+	public function run( $command, $args = [], $method = 'GET' ) {
 		$manager = self::instance();
 		$manager->run_server();
 
@@ -245,13 +288,13 @@ class Manager extends BaseModule {
 			return [];
 		}
 
-		$format = isset( $controller_instance->command_formats[ $command ] ) ?
-			$controller_instance->command_formats[ $command ] : false;
+		$format = isset( $manager->command_formats[ $command ] ) ?
+			$manager->command_formats[ $command ] : false;
 
 		$command_processors = $controller_instance->get_processors( $command );
 		$endpoint = $manager->command_to_endpoint( $command, $format, $args );
 
-		self::run_processors( $command_processors, Processor\Before::class, [ $args ] );
+		$manager->run_processors( $command_processors, Processor\Before::class, [ $args ] );
 
 		$response = $manager->run_internal( $endpoint, $args, $method );
 		$result = $response->get_data();
@@ -260,7 +303,7 @@ class Manager extends BaseModule {
 			return [];
 		}
 
-		$result = self::run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
+		$result = $manager->run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
 
 		return $result;
 	}

@@ -477,7 +477,7 @@ abstract class Document extends Controls_Stack {
 		];
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$data = DataManager::run( 'editor/documents/elements', [
+			$data = DataManager::instance()->run( 'editor/documents/elements', [
 				'document_id' => $this->get_main_id(),
 			] );
 

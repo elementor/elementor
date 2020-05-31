@@ -46,12 +46,12 @@ export default class Component extends ComponentBase {
 		} );
 
 		const component = $e.components.get( 'editor/documents' ),
-			command = 'editor/documents/:documentId/elements',
+			command = 'editor/documents/elements',
 			query = {
 				documentId: document.id,
 			};
 
-		$e.data.loadCache( component, command, query, elements );
+		$e.data.setCache( component, command, query, elements );
 	}
 
 	onElementorLoaded() {
