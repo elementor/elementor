@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Data\Base;
 
+use Elementor\Data\Manager;
 use WP_REST_Server;
 
 abstract class Endpoint {
@@ -125,7 +126,7 @@ abstract class Endpoint {
 		$command = $component_name . '/' . $parent_name;
 		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $current_format_suffix;
 
-		$this->controller->register_endpoint_format( $command, $format );
+		Manager::instance()->register_endpoint_format( $command, $format );
 
 		return $endpoint_instance;
 	}
