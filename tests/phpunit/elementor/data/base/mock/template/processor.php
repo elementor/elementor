@@ -22,6 +22,9 @@ class Processor extends After {
 	}
 
 	public function apply( $args, $result ) {
+		if ( is_array( $result ) ) {
+			$result[ 'from_processor'] = true;
+		}
 		return $result;
 	}
 }

@@ -54,11 +54,13 @@ class Manager extends BaseModule {
 	 * Register controller.
 	 *
 	 * @param string $controller_class_name
+	 *
+	 * @return \Elementor\Data\Base\Controller
 	 */
 	public function register_controller( $controller_class_name ) {
 		$controller_instance = new $controller_class_name();
 
-		$this->register_controller_instance( $controller_instance );
+		return $this->register_controller_instance( $controller_instance );
 	}
 
 	/**
@@ -254,7 +256,6 @@ class Manager extends BaseModule {
 	 * @return array
 	 */
 	public function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
-		/** @var \Elementor\Data\Manager $manager */
 		$manager = self::instance();
 
 		$response = $manager->run_internal( $endpoint, $args, $method );

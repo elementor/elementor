@@ -5,7 +5,6 @@ namespace Elementor\Core\Editor\Data\Documents\Processors;
 use Elementor\Data\Base\Processor;
 use Elementor\Data\Manager;
 use Elementor\Plugin;
-use function parallel\run;
 
 class AddGlobals extends Processor\After {
 
