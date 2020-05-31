@@ -687,12 +687,14 @@ class Utils {
 	 * Parse attributes that come as a string of comma-delimited key|value pairs.
 	 * Removes Javascript events and unescaped `href` attributes.
 	 *
-	 * @param $attributes_string
+	 * @param string $attributes_string
+	 *
+	 * @param string $delimiter Default comma `,`.
 	 *
 	 * @return array
 	 */
-	public static function parse_custom_attributes( $attributes_string ) {
-		$attributes = explode( ',', $attributes_string );
+	public static function parse_custom_attributes( $attributes_string, $delimiter = ',' ) {
+		$attributes = explode( $delimiter, $attributes_string );
 		$result = [];
 
 		foreach ( $attributes as $attribute ) {
