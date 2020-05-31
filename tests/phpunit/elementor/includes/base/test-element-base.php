@@ -39,6 +39,26 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 			'test' => 'javascript:javascript:alert()',
 			'results' => 'alert()',
 		],
+		'javajavascript_script' => [
+			'test' => 'javajavascript:script:alert()',
+			'results' => 'alert()',
+		],
+		'javascript_case_sensitive' => [
+			'test' => 'JaVaScript:alert()',
+			'results' => 'alert()',
+		],
+		'javascript_special_characters1' => [
+			'test' => 'javas cript:alert()',
+			'results' => 'alert()',
+		],
+		'javascript_special_characters2' => [
+			'test' => 'javascript :alert()',
+			'results' => 'alert()',
+		],
+		'javascript_special_characters3' => [
+			'test' => 'jA&#x0A;Vas&#099;&#000000114;&#00105;&#X70;&#000000000000000000000116;:alert()',
+			'results' => 'alert()',
+		],
 		'relative' => [
 			'test' => '/test',
 			'results' => '/test',
@@ -46,6 +66,62 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		'hash' => [
 			'test' => '#test',
 			'results' => '#test',
+		],
+	];
+
+	// Valid/not valid custom attributes.
+	static $custom_attributes = [
+		'rel' => [
+			'test' => 'rel|noreferrer',
+			'results' => 'rel="noreferrer"',
+		],
+		'download' => [
+			'test' => 'download|filename',
+			'results' => 'download="filename"',
+		],
+		'title' => [
+			'test' => 'title|Learn More',
+			'results' => 'title="Learn More"',
+		],
+		'style' => [
+			'test' => 'style|color:red',
+			'results' => 'style="color:red"',
+		],
+		'data' => [
+			'test' => 'data-id|8',
+			'results' => 'data-id="8"',
+		],
+		'onclick' => [
+			'test' => 'onclick|alert()',
+			'results' => '',
+		],
+		'onclick_prefix' => [
+			'test' => 'test onclick|alert()',
+			'results' => 'test="alert()"',
+		],
+		'onclick_slash_prefix' => [
+			'test' => 'test/onclick|alert()',
+			'results' => 'test="alert()"',
+		],
+		'onclick_spaces' => [
+			'test' => ' onclick|alert()',
+			'results' => '',
+		],
+		'onclick_quotes_prefix' => [
+			'test' => '""onclick|alert()',
+			'results' => '',
+		],
+		'onclick_no_pipe' => [
+			'test' => 'onclick="alert()"',
+			'results' => '',
+		],
+		'onclick_no_pipe_with_prefix' => [
+			'test' => '"test"="1"onclick="alert()"',
+			'results' => 'test=""',
+		],
+		'onclick_as_a_value' => [
+			'test' => 'test|"onclick=alert()',
+			'results' => 'test="&quot;onclick=alert()"',
 		],
 	];
 
@@ -60,6 +136,20 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 			$results = $element->get_render_attributes( $type );
 
 			$this->assertEquals( $config['results'], $results[ 'href' ][0], 'Test ' . $type );
+		}
+	}
+
+	public function test_add_link_custom_attributes() {
+		$element = Plugin::$instance->elements_manager->create_element_instance( self::$element_mock );
+
+		foreach ( self::$custom_attributes as $type => $config ) {
+			$element->add_link_attributes( $type, [
+				'custom_attributes' => $config['test']
+			] );
+
+			$results = $element->get_render_attribute_string( $type );
+
+			$this->assertEquals( $config['results'], $results, 'Test ' . $type );
 		}
 	}
 }

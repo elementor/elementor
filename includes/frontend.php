@@ -462,7 +462,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.6.2'
+			'5.7.0'
 		);
 
 		wp_register_style(
@@ -1120,7 +1120,7 @@ class Frontend extends App {
 	}
 
 	public function create_action_hash( $action, array $settings = [] ) {
-		return rawurlencode( sprintf( '#elementor-action:action=%1$s&settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+		return '#' . rawurlencode( sprintf( 'elementor-action:action=%1$s&settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
 	}
 
 	/**
