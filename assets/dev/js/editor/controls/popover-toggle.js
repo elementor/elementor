@@ -85,8 +85,8 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
 	async getGlobalsList() {
-		/*return [
-			{
+		/*return {
+			primary: {
 				name: 'Primary',
 				value: 'globals/typography/primary',
 				fontFamily: 'Varela',
@@ -98,7 +98,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-			{
+			secondary: {
 				name: 'Secondary',
 				value: 'globals/typography/secondary',
 				fontFamily: 'Varela',
@@ -110,7 +110,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-			{
+			text: {
 				name: 'Text',
 				value: 'globals/typography/text',
 				fontFamily: 'Varela',
@@ -122,7 +122,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-			{
+			accent: {
 				name: 'Accent',
 				value: 'globals/typography/accent',
 				fontFamily: 'Varela',
@@ -134,7 +134,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				lineHeight: 'inherit',
 				letterSpacing: 'inherit',
 			},
-		];*/
+		};*/
 
 		const result = await $e.data.get( 'globals/typography' );
 
