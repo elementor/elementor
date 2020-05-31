@@ -450,7 +450,7 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = (string) wp_kses_bad_protocol( $url_control['url'], [ 'http', 'https' ] );
+			$attributes['href'] = wp_kses_bad_protocol( $url_control['url'], [ 'http', 'https' ] );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
