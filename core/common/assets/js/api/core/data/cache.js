@@ -138,11 +138,7 @@ export default class Cache {
 	 * @return {boolean} is updated
 	 */
 	update( requestData ) {
-		$e.data.validateRequestData( requestData );
-
-		if ( 'object' !== typeof requestData.args.data ) {
-			throw new Error( 'requestData.args.data object is excepted.' );
-		}
+		$e.data.validateRequestData( requestData, true );
 
 		const endpoint = requestData.endpoint;
 		let response = {};

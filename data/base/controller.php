@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Data\Base;
 
+use Elementor\Data\Manager;
 use WP_REST_Controller;
 use WP_REST_Server;
 
@@ -18,13 +19,6 @@ abstract class Controller extends WP_REST_Controller {
 	 * @var \Elementor\Data\Base\Endpoint[]
 	 */
 	public $endpoints = [];
-
-	/**
-	 * Loaded command(s) format.
-	 *
-	 * @var string[]
-	 */
-	public $command_formats = [];
 
 	/**
 	 * Loaded processor(s).
@@ -190,7 +184,8 @@ abstract class Controller extends WP_REST_Controller {
 			$format = $format . $command;
 		}
 
-		$this->register_endpoint_format( $command, $format );
+		// `$e.data.registerFormat()`.
+		Manager::instance()->register_endpoint_format( $command, $format );
 
 		return $endpoint_instance;
 	}
@@ -231,17 +226,6 @@ abstract class Controller extends WP_REST_Controller {
 
 		// Aka hooks.
 		$this->register_processors();
-	}
-
-	/**
-	 * Register endpoint format.
-	 *
-	 * @param string $command
-	 * @param string $format
-	 *
-	 */
-	public function register_endpoint_format( $command, $format ) {
-		$this->command_formats[ $command ] = rtrim( $format, '/' );
 	}
 
 	/**

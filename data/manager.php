@@ -11,6 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Manager extends BaseModule {
+	/**
+	 * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
+	 *
+	 * @return \Elementor\Core\Base\Module|\Elementor\Data\Manager
+	 */
+	public static function instance() {
+		return ( parent::instance() );
+	}
 
 	/**
 	 * @var \WP_REST_Server
@@ -23,6 +31,13 @@ class Manager extends BaseModule {
 	 * @var \Elementor\Data\Base\Controller[]
 	 */
 	public $controllers = [];
+
+	/**
+	 * Loaded command(s) format.
+	 *
+	 * @var string[]
+	 */
+	public $command_formats = [];
 
 	public function get_name() {
 		return 'data-manager';
@@ -62,6 +77,17 @@ class Manager extends BaseModule {
 	}
 
 	/**
+	 * Register endpoint format.
+	 *
+	 * @param string $command
+	 * @param string $format
+	 *
+	 */
+	public function register_endpoint_format( $command, $format ) {
+		$this->command_formats[ $command ] = rtrim( $format, '/' );
+	}
+
+	/**
 	 * Find controller instance.
 	 *
 	 * By given command name.
@@ -96,7 +122,7 @@ class Manager extends BaseModule {
 	 *
 	 * @param string $command
 	 * @param string $format
-	 * @param array   $args
+	 * @param array  $args
 	 *
 	 * @return string endpoint
 	 */
@@ -145,6 +171,7 @@ class Manager extends BaseModule {
 		global $wp_rest_server;
 
 		$this->controllers = [];
+		$this->command_formats = [];
 		$this->server = false;
 		$wp_rest_server = false;
 	}
@@ -170,6 +197,7 @@ class Manager extends BaseModule {
 		return rest_do_request( $request );
 	}
 
+	// TODO Change all static functions below to public members.
 	/**
 	 * Run processor.
 	 *
@@ -251,7 +279,6 @@ class Manager extends BaseModule {
 	 * @return array processed result
 	 */
 	public static function run( $command, $args = [], $method = 'GET' ) {
-		/** @var \Elementor\Data\Manager $manager */
 		$manager = self::instance();
 		$manager->run_server();
 
@@ -261,8 +288,8 @@ class Manager extends BaseModule {
 			return [];
 		}
 
-		$format = isset( $controller_instance->command_formats[ $command ] ) ?
-			$controller_instance->command_formats[ $command ] : false;
+		$format = isset( $manager->command_formats[ $command ] ) ?
+			$manager->command_formats[ $command ] : false;
 
 		$command_processors = $controller_instance->get_processors( $command );
 		$endpoint = $manager->command_to_endpoint( $command, $format, $args );

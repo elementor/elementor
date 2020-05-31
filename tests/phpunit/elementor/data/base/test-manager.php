@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Data;
 
 use Elementor\Data\Manager;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 
 class Test_Manager extends Elementor_Test_Base {
 
@@ -15,6 +16,14 @@ class Test_Manager extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->manager = Manager::instance();
+	}
+
+	public function test_register_endpoint_format() {
+		$controller = new ControllerTemplate();
+
+		$this->manager->register_endpoint_format( 'test-command', 'test-command/{test-format}' );
+
+		$this->assertEquals( 'test-command/{test-format}', $this->manager->command_formats['test-command'] );
 	}
 
 	public function test_command_to_endpoint() {
