@@ -29,13 +29,42 @@ class Typography extends Endpoint {
 		$this->register_items_route( \WP_REST_Server::CREATABLE );
 	}
 
+	private function get_kit_items() {
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
+
+		// TODO: Remove 'fake-data'.
+		$result = self::$fake_data;
+		$items = $kit->get_settings_for_display( 'typography' );
+
+		if ( ! $items ) {
+			$items = [];
+		}
+
+		foreach ( $items as $index => &$item ) {
+			foreach ( $item as $setting => $value ) {
+				$new_setting = str_replace( 'typography_', '', $setting, $count );
+				if ( $count ) {
+					$item[ $new_setting ] = $value;
+					unset( $item[ $setting ] );
+				}
+			}
+
+			$id = $items[ $index ]['_id'];
+			$result[ $id ] = $items[ $index ];
+		}
+
+		return $result;
+	}
+
 	public function get_items( $request ) {
-		return self::$fake_data;
+		return $this->get_kit_items();
 	}
 
 	public function get_item( $id, $request ) {
-		if ( isset( self::$fake_data[ $id ] ) ) {
-			return self::$fake_data[ $id ];
+		$items = $this->get_kit_items();
+
+		if ( isset( $items[ $id ] ) ) {
+			return $items[ $id ];
 		}
 
 		return false;
