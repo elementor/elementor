@@ -338,7 +338,7 @@ class Compatibility {
 		if ( ! empty( $wp_importer ) ) {
 			$wp_importer_version = $wp_importer['wordpress-importer.php']['Version'];
 
-			if ( isset( $wp_importer_version ) && ! empty( $wp_importer_version ) ) {
+			if ( ! empty( $wp_importer_version ) ) {
 				if ( version_compare( $wp_importer_version, '0.7', '>=' ) ) {
 					return $post_meta;
 				}
