@@ -161,6 +161,11 @@ class Test_Manager extends Elementor_Test_Base {
 			'paramB' => 'valueB',
 		] );
 		$this->assertEquals( 'controller/endpoint', $two_parameters_first_missing );
+
+		$advance = $this->manager->command_to_endpoint( 'example/documents', 'example/documents/{document_id}/elements/{element_id}', [
+			'document_id' => '1618',
+		] );
+		$this->assertEquals( 'example/documents/1618/elements', $advance );
 	}
 
 	public function test_run_server() {
