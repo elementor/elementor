@@ -69,8 +69,8 @@ export default class extends ControlBaseDataView {
 				.html( elementor.translate( 'global_color_confirm_text' ) ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
 			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.value } ),
-			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.name } )
-				.val( color.name );
+			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.title } )
+				.val( color.title );
 
 		// Check if the color already exists in the global colors, and display an appropriate message
 		Object.values( globalColors ).forEach( ( globalColor ) => {
@@ -78,7 +78,7 @@ export default class extends ControlBaseDataView {
 
 			if ( color.value === globalColor.value ) {
 				messageContent = elementor.translate( 'global_color_already_exists' );
-			} else if ( color.name === globalColor.name ) {
+			} else if ( color.title === globalColor.title ) {
 				messageContent = elementor.translate( 'global_color_name_already_exists' );
 			}
 

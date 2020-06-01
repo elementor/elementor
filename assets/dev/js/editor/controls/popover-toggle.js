@@ -26,7 +26,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	createGlobalItemMarkup( textStyle ) {
 		// This method is called without a parameter when the user clicks the "Add" button
 		if ( ! textStyle ) {
-			textStyle = this.getTypographyObject();
+			textStyle = this.getGlobalData();
 		}
 
 		textStyle.key = this.model.get( 'name' );
@@ -35,7 +35,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			{ fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle;
 
 		$textStylePreview
-			.html( textStyle.name )
+			.html( textStyle.title )
 			.css( { fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } );
 
 		return $textStylePreview;
@@ -55,16 +55,18 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	getGlobalDataMockup() {
 		return {
-			name: 'New Style',
-			value: 'globals/typography/new-style',
-			fontFamily: 'Varela',
-			fontSize: '34px',
-			fontWeight: 'normal',
-			transform: 'none',
-			fontStyle: 'normal',
-			textDecoration: 'none',
-			lineHeight: 'inherit',
-			letterSpacing: 'inherit',
+			id: 'new-style',
+			title: 'New Style',
+			value: {
+				fontFamily: 'Varela',
+				fontSize: '34px',
+				fontWeight: 'normal',
+				transform: 'none',
+				fontStyle: 'normal',
+				textDecoration: 'none',
+				lineHeight: 'inherit',
+				letterSpacing: 'inherit',
+			},
 		};
 	}
 

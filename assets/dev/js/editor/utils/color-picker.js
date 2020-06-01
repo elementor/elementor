@@ -98,9 +98,9 @@ export default class ColorPicker extends elementorModules.Module {
 			colorValue = color.toHEXA().toString( 0 );
 
 		return {
-			name: this.getColorName( colorValue ),
-			value: colorValue,
 			id: elementor.helpers.getUniqueID(),
+			title: this.getColorName( colorValue ),
+			value: colorValue,
 		};
 	}
 
