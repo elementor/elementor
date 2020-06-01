@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Data\Base;
 
 use Elementor\Data\Manager;
@@ -131,6 +132,35 @@ abstract class Endpoint {
 		return $endpoint_instance;
 	}
 
+	/*
+	 * TODO: PHPDoc + tests.
+	 */
+	public function base_callback( $methods, $request, $is_multi = false ) {
+		// TODO: Handle permission callback.
+		switch ( $methods ) {
+			case WP_REST_Server::READABLE:
+				$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
+				break;
+
+			case WP_REST_Server::CREATABLE:
+				$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
+				break;
+
+			case WP_REST_Server::EDITABLE:
+				$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
+				break;
+
+			case WP_REST_Server::DELETABLE:
+				$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
+				break;
+
+			default:
+				throw new \Exception( 'Invalid method.' );
+		}
+
+		return rest_ensure_response( $result );
+	}
+
 	/**
 	 * Retrieves a collection of items.
 	 *
@@ -167,24 +197,85 @@ abstract class Endpoint {
 		return $this->controller->get_permission_callback( $request );
 	}
 
+	/**
+	 * Creates one item.
+	 *
+	 * @param string $id id of request item.
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function create_item( $id, $request ) {
 		return $this->controller->create_item( $request );
 	}
 
+	/**
+	 * Creates multiple items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function create_items( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+	}
+
+	/**
+	 * Updates one item.
+	 *
+	 * @param string $id id of request item.
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	public function update_item( $id, $request ) {
+		return $this->controller->update_item( $request );
+	}
+
+	/**
+	 * Updates multiple items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	public function update_items( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+	}
+
+	/**
+	 * Delete one item.
+	 *
+	 * @param string $id id of request item.
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	public function delete_item( $id, $request ) {
+		return $this->controller->update_item( $request );
+	}
+
+	/**
+	 * Updates multiple items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	public function delete_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
 	 * Register item route.
 	 *
-	 * @param array  $args
+	 * @param array $args
 	 * @param string $route
 	 * @param string $methods
 	 *
 	 * @throws \Exception
 	 */
-	public function register_item_route( $args = [], $route = '/', $methods = WP_REST_Server::READABLE ) {
+	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
 		$args = array_merge( [
 			'id' => [
 				'description' => 'Unique identifier for the object.',
@@ -196,8 +287,8 @@ abstract class Endpoint {
 			$route .= '(?P<id>[\w]+)/';
 		}
 
-		$this->register_route( $route, $methods, function ( $request ) {
-			return rest_ensure_response( $this->get_item( $request->get_param( 'id' ), $request ) );
+		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
+			return $this->base_callback( $methods, $request );
 		}, $args );
 	}
 
@@ -209,19 +300,8 @@ abstract class Endpoint {
 	 * @throws \Exception
 	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
-		// TODO: Handle permission callback.
-
 		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
-			switch ( $methods ) {
-				case WP_REST_Server::READABLE:
-					return rest_ensure_response( $this->get_items( $request ) );
-
-				case WP_REST_Server::CREATABLE:
-					return rest_ensure_response( $this->create_items( $request ) );
-
-				default:
-					throw new \Exception( 'Invalid method.' );
-			}
+			return $this->base_callback( $methods, $request, true );
 		} );
 	}
 
@@ -230,8 +310,8 @@ abstract class Endpoint {
 	 *
 	 * @param string $route
 	 * @param string $methods
-	 * @param null   $callback
-	 * @param array  $args
+	 * @param null $callback
+	 * @param array $args
 	 *
 	 * @return bool
 	 * @throws \Exception
