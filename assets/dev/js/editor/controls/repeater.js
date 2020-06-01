@@ -129,7 +129,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			this.ui.fieldContainer.sortable( {
 				axis: 'y',
 				handle: '.elementor-repeater-row-tools',
-				cancel: '.elementor-repeater-row--disable-sort',
+				items: ' > :not(.elementor-repeater-row--disable-sort)',
 			} );
 		}
 
