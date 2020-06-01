@@ -271,7 +271,7 @@ export default class Data extends Commands {
 		if ( 'GET' === method ) {
 			Object.assign( params, { headers } );
 		} else if ( allowedMethods ) {
-			if ( ! requestData.args?.data ) {
+			if ( [ 'POST', 'PUT' ].includes( method ) && ! requestData.args?.data ) {
 				throw Error( 'Invalid requestData.args.data' );
 			}
 
