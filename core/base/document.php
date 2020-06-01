@@ -1103,6 +1103,10 @@ abstract class Document extends Controls_Stack {
 		$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 		$document_settings = $this->get_meta( $meta_key );
 
+		if ( ! $document_settings ) {
+			$document_settings = [];
+		}
+
 		if ( ! isset( $document_settings[ $control_id ] ) ) {
 			$document_settings[ $control_id ] = [];
 		}
