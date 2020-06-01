@@ -70,20 +70,19 @@ module.exports = BaseSettings.extend( {
 			label: elementor.config.document.panel.title,
 			controls: this.model.controls,
 			children: elementor.elements,
+			// Emulate a view that can render the style.
+			renderer: {
+				view: {
+					lookup: () => container,
+					renderOnChange: () => this.updateStylesheet(),
+				},
+			},
 		} );
 
 		this.editedView = {
 			getContainer: () => container,
 			getEditModel: () => editModel,
 			model: editModel,
-		};
-
-		// Emulate a view that can render the style.
-		container.renderer = {
-			view: {
-				lookup: () => container,
-				renderOnChange: () => this.updateStylesheet(),
-			},
 		};
 
 		return this.editedView;
