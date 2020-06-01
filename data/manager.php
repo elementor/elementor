@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Data;
 
 use Elementor\Core\Base\Module as BaseModule;
@@ -11,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Manager extends BaseModule {
+
 	/**
 	 * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
 	 *
@@ -115,6 +117,23 @@ class Manager extends BaseModule {
 		}
 
 		return false;
+	}
+
+	/**
+	 * TODO PHPDoc, test.
+	 */
+	public function command_extract_args( $command, &$args = [] ) {
+		if ( false !== strpos( $command, '?' ) ) {
+			$command_parts = explode( '?', $command );
+			$pure_command = $command_parts[0];
+			$query_string = $command_parts[1];
+
+			parse_str( $query_string, $args );
+
+			$command = $pure_command;
+		}
+
+		return $command;
 	}
 
 	/**
@@ -288,10 +307,12 @@ class Manager extends BaseModule {
 			return [];
 		}
 
-		$format = isset( $manager->command_formats[ $command ] ) ?
-			$manager->command_formats[ $command ] : false;
+		$command = $manager->command_extract_args( $command, $args );
+
+		$format = isset( $manager->command_formats[ $command ] ) ? $manager->command_formats[ $command ] : false;
 
 		$command_processors = $controller_instance->get_processors( $command );
+
 		$endpoint = $manager->command_to_endpoint( $command, $format, $args );
 
 		$manager->run_processors( $command_processors, Processor\Before::class, [ $args ] );

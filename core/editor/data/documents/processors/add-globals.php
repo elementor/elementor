@@ -37,14 +37,14 @@ class AddGlobals extends Processor\After {
 					if ( isset( $control['groupPrefix'] ) && $control['groupPrefix'] === $control_group_prefix ) {
 						$base_control_name = str_replace( $control['groupPrefix'], '', $control['name'] );
 
-						if ( isset( $data[ $base_control_name ] ) ) {
+						if ( isset( $data['value'][ $base_control_name ] ) ) {
 							$control_name = $control['name'];
-							$settings[ $control_name ] = $data[ $base_control_name ];
+							$settings[ $control_name ] = $data['value'][ $base_control_name ];
 						}
 					}
 				}
 			} else {
-				$settings[ $global_key ] = $data;
+				$settings[ $global_key ] = $data['value'];
 			}
 		}
 
