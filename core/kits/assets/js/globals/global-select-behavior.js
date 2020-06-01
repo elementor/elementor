@@ -149,11 +149,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				globalData.name = this.globalNameInput.val();
 
-				/*$e.data.create( globalData.commandName, {
-					_id: globalData.id,
-					value: globalData.value,
+				$e.run( globalData.commandName + '/create', {
+					container: elementor.getCurrentElement().getContainer(),
+					setting: globalData.key, // group control name
 					title: globalData.name,
-				} );*/
+				} );
 
 				const $globalPreview = this.view.createGlobalItemMarkup( globalData );
 
@@ -182,7 +182,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			command = 'document/globals/enable';
 		}
 
-		settings[ globalData.key ] = this.view.getCommand() + '/' + globalData.id;
+		// colors / typography
+		settings[ globalData.key ] = this.view.getCommand() + '?id=' + globalData.id;
 
 		$e.run( command, {
 			container: elementor.getCurrentElement().getContainer(),
