@@ -17,8 +17,10 @@ export class Create extends CommandBase {
 			throw new Error( `Invalid setting: control '${ setting }', not found.` );
 		}
 
+		const id = elementor.helpers.getUniqueID();
+
 		// Currently does not effect cache.
-		result = $e.data.create( 'globals/colors', {
+		result = $e.data.create( `globals/colors?id=${ id }`, {
 			title,
 			color: container.settings.get( setting ),
 		} );

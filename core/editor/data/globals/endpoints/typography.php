@@ -47,7 +47,8 @@ class Typography extends Endpoint {
 		parent::register();
 
 		$this->register_item_route();
-		$this->register_items_route( \WP_REST_Server::CREATABLE );
+		$this->register_item_route( \WP_REST_Server::CREATABLE );
+		$this->register_item_route( \WP_REST_Server::DELETABLE );
 	}
 
 	public function get_items( $request ) {
@@ -64,14 +65,14 @@ class Typography extends Endpoint {
 		return false;
 	}
 
-	public function create_items( $request ) {
+	public function create_item( $id, $request ) {
 		$item = $request->get_json_params();
 
 		if ( ! isset( $item['title'] ) ) {
 			return new \WP_Error( 'invalid_title', 'Invalid title' );
 		}
 
-		$item['_id'] = Utils::generate_random_string();
+		$item['_id'] = $id;
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 

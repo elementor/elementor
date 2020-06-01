@@ -30,13 +30,13 @@ export class Create extends CommandBase {
 		}
 
 		if ( Object.values( availableControls ).length ) {
-			const data = {
-				title,
-				...availableControls,
-			};
+			const id = elementor.helpers.getUniqueID();
 
 			// Currently does not effect cache.
-			result = $e.data.create( 'globals/typography', data );
+			result = $e.data.create( `globals/typography/${ id }`, {
+				title,
+				... availableControls,
+			} );
 		}
 
 		return result;
