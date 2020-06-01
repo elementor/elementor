@@ -98,7 +98,7 @@ class Repeater extends Element_Base {
 			$args = array_merge( $args, $current_tab );
 		}
 
-		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
+		return parent::add_control( $id, $args, $options );
 	}
 
 	/**
@@ -134,5 +134,9 @@ class Repeater extends Element_Base {
 	 */
 	protected function _get_default_child_type( array $element_data ) {
 		return false;
+	}
+
+	protected function handle_control_position( array $args, $control_id, $overwrite ) {
+		return $args;
 	}
 }
