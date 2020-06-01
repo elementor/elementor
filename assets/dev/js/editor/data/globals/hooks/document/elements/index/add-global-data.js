@@ -26,7 +26,7 @@ export class ElementsIndexAddGlobalData extends After {
 			// Get global item.
 			const endpointResult = await $e.data.get( globalValue ),
 				container = elementor.getContainer( args.query.elementId ),
-				data = endpointResult.data.value,
+				value = endpointResult.data.value,
 				controlGroupPrefix = container.controls[ globalKey ]?.groupPrefix;
 
 			// it's a global settings with additional controls in group.
@@ -35,13 +35,13 @@ export class ElementsIndexAddGlobalData extends After {
 					if ( control.groupPrefix === controlGroupPrefix ) {
 						// The controls name (like `typography_font_family) is not equal to the global data control name (like `font_family`), duo to it's group prefix, like <typography_>font_family.
 						const baseName = control.name.replace( control.groupPrefix, '' );
-						if ( data[ baseName ] ) {
-							element.settings[ control.name ] = data[ baseName ];
+						if ( value[ baseName ] ) {
+							element.settings[ control.name ] = value[ baseName ];
 						}
 					}
 				} );
 			} else {
-				element.settings[ globalKey ] = data;
+				element.settings[ globalKey ] = value;
 			}
 		} );
 	}

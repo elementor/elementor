@@ -259,8 +259,8 @@ class Test_Manager extends Elementor_Test_Base {
 			'editor/documents/elements' => 'editor/documents/{document_id}/elements/{element_id}',
 			'editor/documents/index' => 'editor/documents/index/{document_id}',
 			'globals/index' => 'globals/index',
-			'globals/colors' => 'globals/colors',
-			'globals/typography' => 'globals/typography',
+			'globals/colors' => 'globals/colors/{id}',
+			'globals/typography' => 'globals/typography/{id}',
 		], $this->manager->command_formats );
 	}
 }
