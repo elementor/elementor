@@ -143,6 +143,11 @@
 		border-radius: 3px;
 		background: #fff;
 
+		&.e-control-tool {
+			height: 20px;
+			border: 0;
+		}
+
 		&-wrapper {
 			display: flex;
 		}

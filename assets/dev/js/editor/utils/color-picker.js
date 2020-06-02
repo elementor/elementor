@@ -26,7 +26,7 @@ export default class ColorPicker extends elementorModules.Module {
 				active: 'elementor-active',
 				pickerHeader: 'elementor-color-picker__header',
 				pickerToolsContainer: 'elementor-color-picker__tools',
-				pickerTool: 'elementor-color-picker__tool',
+				pickerTool: 'e-control-tool',
 				customClearButton: 'elementor-color-picker__clear',
 				swatchPlaceholder: 'elementor-color-picker__swatch-placeholder',
 				addSwatch: 'elementor-color-picker__add-swatch',
