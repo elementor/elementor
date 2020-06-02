@@ -9,21 +9,19 @@ export default function HeaderButtons( props ) {
 		} );
 
 		tools = (
-			<div id="elementor-template-library-header-tools">
-				<div id="elementor-template-library-header-actions">
-					{ buttons }
-				</div>
+			<div id="e-app__view__header__buttons__actions">
+				{ buttons }
 			</div>
 		);
 	}
 
 	return (
-		<div className="elementor-templates-modal__header__items-area">
+		<div className="e-app__view__header__buttons">
 			<Button
 				id="close"
 				text={ __( 'Close', 'elementor' ) }
 				icon="eicon-close"
-				className="elementor-templates-modal__header__close--normal"
+				className="e-app__view__header__buttons__button-close--normal"
 				onClick={ () => {
 					// Directly.
 					if ( window.top === window ) {

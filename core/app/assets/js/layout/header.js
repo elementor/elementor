@@ -6,20 +6,18 @@ export default function Header( props ) {
 	} );
 
 	return (
-		<div className="elementor-app__header dialog-header dialog-lightbox-header">
-			<div className="elementor-templates-modal__header">
-				<div className="elementor-templates-modal__header__logo-area">
-					<div className="elementor-templates-modal__header__logo">
-						<span className="elementor-templates-modal__header__logo__icon-wrapper elementor-gradient-logo">
-							<i className="eicon-elementor" />
-						</span>
-						<span className="elementor-templates-modal__header__logo__title">
-							{ props.title }
-						</span>
-					</div>
+		<div className="e-app__view__header dialog-header">
+			<div className="e-app__view__header__logo-area">
+				<div className="e-app__view__header__logo">
+					<span className="e-app__view__header__logo__icon elementor-gradient-logo">
+						<i className="eicon-elementor" />
+					</span>
+					<span className="e-app__view__header__logo__title">
+						{ props.title }
+					</span>
 				</div>
-				<HeaderButtons buttons={ props.buttons } />
 			</div>
+			<HeaderButtons buttons={ props.buttons } />
 		</div>
 	);
 }

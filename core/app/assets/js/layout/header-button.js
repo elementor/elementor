@@ -6,10 +6,10 @@ export default class Button extends BaseButton {
 	} );
 
 	getCssId() {
-		return `elementor-template-library-header-` + super.getCssId();
+		return `e-app__view__header__buttons__button-` + super.getCssId();
 	}
 
 	getClassName() {
-		return `elementor-templates-modal__header__item ` + super.getClassName();
+		return `e-app__view__header__buttons__button ` + super.getClassName();
 	}
 }

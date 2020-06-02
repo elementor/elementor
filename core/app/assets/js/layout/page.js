@@ -5,10 +5,10 @@ import Content from './content';
 export default function Page( props ) {
 	return (
 		<div className={ props.className }>
-			<div className="dialog-widget dialog-lightbox-widget dialog-type-buttons dialog-type-lightbox elementor-templates-modal">
-				<div className="dialog-widget-content dialog-lightbox-widget-content">
+			<div className="e-app__view">
+				<div className="e-app__view__content">
 					<Header title={ props.title } buttons={ props.headerButtons } />
-					<div className="dialog-message dialog-lightbox-message elementor-app__main">
+					<div className="e-app__main">
 						<Sidebar>
 							{ props.sidebar }
 						</Sidebar>
