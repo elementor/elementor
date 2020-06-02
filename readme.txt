@@ -221,6 +221,9 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.11 - 2020-06-02 =
+* Fix: Several URI protocols removed from links ([#11518](https://github.com/elementor/elementor/issues/11518))
+
 = 2.9.10 - 2020-06-01 =
 * Tweak: Updated `eicons` library to v5.7.0
 * Tweak: Added infrastructure improvements to Repeater control to support upcoming versions
