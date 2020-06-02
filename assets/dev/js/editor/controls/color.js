@@ -223,7 +223,19 @@ export default class extends ControlBaseDataView {
 		this.setValue( this.colorPicker.getColor() );
 	}
 
-	onPickerClear() {
+	async onPickerClear() {
+		if ( this.getGlobalValue() ) {
+			const globalData = this.getGlobalData(),
+				settings = {};
+
+			settings[ globalData.key ] = '';
+
+			await $e.run( 'document/globals/disable', {
+				container: this.container,
+				settings: settings,
+			} );
+		}
+
 		this.setValue( '' );
 
 		this.$el.addClass( 'e-invalid-color' );
