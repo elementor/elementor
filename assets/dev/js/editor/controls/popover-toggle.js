@@ -29,6 +29,45 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return 'globals/typography';
 	}
 
+	buildPreviewItemCSS( textStyles ) {
+		const cssObject = {};
+
+		Object.entries( textStyles ).forEach( ( [ property, value ] ) => {
+			switch ( property ) {
+				case 'font_family':
+					cssObject.fontFamily = value;
+					break;
+				case 'font_size':
+					// Set max size for Text Style previews in the select popover so it isn't too big
+					if ( value.size > 40 ) {
+						value.size = 40;
+					}
+					cssObject.fontSize = value.size + value.unit;
+					break;
+				case 'font_weight':
+					cssObject.fontWeight = value;
+					break;
+				case 'transform':
+					cssObject.transform = value;
+					break;
+				case 'font_style':
+					cssObject.fontStyle = value;
+					break;
+				case 'text_decoration':
+					cssObject.textDecoration = value;
+					break;
+				case 'line_height':
+					cssObject.lineHeight = value;
+					break;
+				case 'letter_spacing':
+					cssObject.letterSpacing = value;
+					break;
+			}
+		} );
+
+		return cssObject;
+	}
+
 	createGlobalItemMarkup( textStyle ) {
 		// This method is called without a parameter when the user clicks the "Add" button
 		if ( ! textStyle ) {
