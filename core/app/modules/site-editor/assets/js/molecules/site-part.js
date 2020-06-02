@@ -2,7 +2,7 @@ import './site-part.scss';
 
 export default function SitePart( props ) {
 	return (
-		<section id={ `site-part__type-${ props.type }` } className="elementor-app__site-editor__site-part">
+		<section id={ `site-part__type-${ props.type }` } className="e-app__site-editor__site-part">
 			<header>
 				{ props.title }
 				<a target="_blank" rel="noopener noreferrer" href={ props.urls.docs } >

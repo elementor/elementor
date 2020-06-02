@@ -23,7 +23,7 @@ export default function Promotion() {
 
 	return (
 		<Layout>
-			<section className="elementor-app__site-editor__promotion">
+			<section className="e-app__site-editor__promotion">
 				<div>
 					<h1>
 						{ __( 'Create Full Site', 'elementor' ) }

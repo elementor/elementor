@@ -6,7 +6,7 @@ export default function SiteParts( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext );
 
 	return (
-		<section className="elementor-app__site-editor__site-parts">
+		<section className="e-app__site-editor__site-parts">
 			{ (
 				templateTypes.map( ( item ) => (
 					<SitePart key={ item.type } { ...item }>

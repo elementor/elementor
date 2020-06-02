@@ -5,9 +5,9 @@ export default function Menu() {
 	const { templateTypes } = React.useContext( TemplateTypesContext );
 
 	return (
-		<nav className="elementor-app__site-editor__menu">
+		<nav className="e-app__site-editor__menu">
 			<MenuItem id="all-parts" text={ __( 'All Parts', 'elementor' ) } 	icon="eicon-filter" url="/site-editor/templates" />
-			<div className="elementor-app__site-editor__menu__items-title">
+			<div className="e-app__site-editor__menu__items-title">
 				{ __( 'Site Parts', 'elementor' ) }
 			</div>
 				{ (

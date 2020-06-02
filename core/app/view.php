@@ -23,7 +23,7 @@ $common_css_url = $this->get_css_assets_url( 'common' ) . '?ver=' . ELEMENTOR_VE
 	<link type="text/css" rel="stylesheet" href="<?php echo $common_css_url; ?>">
 </head>
 <body>
-<div id="elementor-app"></div>
+<div id="e-app"></div>
 <?php wp_print_footer_scripts(); ?>
 </body>
 </html>
