@@ -125,8 +125,6 @@ export default class ColorPicker extends elementorModules.Module {
 		$pickerHeader.append( $pickerToolsContainer );
 
 		this.$pickerAppContainer.prepend( $pickerHeader );
-
-		this.addToolsToSwatches();
 	}
 
 	createAddButton() {
@@ -236,8 +234,6 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	onAddButtonClick() {
-		this.addToolsToSwatches();
-
 		elementor.schemes.addSchemeItem( 'color-picker', { value: this.color } );
 
 		elementor.schemes.saveScheme( 'color-picker' );
