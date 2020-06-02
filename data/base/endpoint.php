@@ -265,7 +265,7 @@ abstract class Endpoint {
 	}
 
 	/**
-	 * Updates multiple items.
+	 * Delete multiple items.
 	 *
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
