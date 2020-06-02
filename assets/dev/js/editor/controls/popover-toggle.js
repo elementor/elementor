@@ -37,12 +37,11 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 		textStyle.key = this.model.get( 'name' );
 
-		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': JSON.stringify( textStyle ) } ),
-			{ fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } = textStyle;
+		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': JSON.stringify( textStyle ) } );
 
 		$textStylePreview
 			.html( textStyle.title )
-			.css( { fontFamily, fontSize, fontWeight, transform, fontStyle, textDecoration, lineHeight, letterSpacing } );
+			.css( this.buildPreviewItemCSS( textStyle.value ) );
 
 		return $textStylePreview;
 	}
