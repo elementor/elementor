@@ -204,6 +204,10 @@ export default class extends ControlBaseDataView {
 		return this.state;
 	}
 
+	setGlobalDisplay( color ) {
+		this.colorPicker.picker.setColor( color, true );
+	}
+
 	onPickerChange() {
 		if ( this.getGlobalValue() ) {
 			this.$el.find( '.e-global-selected' ).html( elementor.translate( 'custom' ) );
