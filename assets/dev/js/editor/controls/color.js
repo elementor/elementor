@@ -64,6 +64,7 @@ export default class extends ControlBaseDataView {
 			id: colorData.id,
 			commandName: 'globals/colors',
 			key: this.model.get( 'name' ),
+			title: colorData.title,
 			value: colorData.value,
 		};
 	}
@@ -113,7 +114,7 @@ export default class extends ControlBaseDataView {
 		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global': JSON.stringify( color ) } ),
 			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.value } ),
 			$colorTitle = jQuery( '<span>', { class: 'e-global-color__title' } )
-				.html( color.name ),
+				.html( color.title ),
 			$colorHex = jQuery( '<span>', { class: 'e-global-color__hex' } )
 				.html( color.value );
 
