@@ -1,5 +1,5 @@
 /* global jQuery */
-import * as Ajax from './';
+import * as Ajax from './index';
 
 const fakeActionFailed = ( action, fullParams ) => {
 	return {
