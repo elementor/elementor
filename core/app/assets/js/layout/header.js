@@ -1,4 +1,5 @@
 import HeaderButtons from './header-buttons';
+import './header.scss';
 
 export default function Header( props ) {
 	React.useEffect( () => {
@@ -6,7 +7,7 @@ export default function Header( props ) {
 	} );
 
 	return (
-		<div className="e-app__view__header dialog-header">
+		<div className="e-app__view__header">
 			<div className="e-app__view__header__logo-area">
 				<div className="e-app__view__header__logo">
 					<span className="e-app__view__header__logo__icon elementor-gradient-logo">

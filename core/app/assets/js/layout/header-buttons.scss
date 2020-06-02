@@ -1,0 +1,36 @@
+@import '../../../../../assets/dev/scss/helpers/variables.scss';
+
+.e-app {
+	&__view {
+		&__header {
+			&__buttons {
+				display: flex;
+				flex-direction: row-reverse;
+			}
+
+			&__actions {
+				display: flex;
+
+				&__button {
+					/*@include padding-end(16px);*/
+					padding-right: 16px;
+				}
+			}
+
+			&__buttons,
+			&__actions {
+				&__button {
+					i {
+						font-size: 20px;
+						transition: $transition-hover;
+						cursor: pointer;
+
+						&:not(:hover) {
+							color: $editor-light;
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,83 @@
+@import '../../../../../assets/dev/scss/helpers/variables.scss';
+
+.e-app {
+	&__view {
+		&__header {
+			&__buttons {
+				&__button {
+					position: relative;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					box-sizing: content-box;
+
+					i {
+						font-size: 20px;
+						transition: $transition-hover;
+						cursor: pointer;
+
+						&:not(:hover) {
+							color: $editor-light;
+						}
+					}
+
+					&-close {
+						&--normal {
+							width: 45px;
+							/*@include border-start(1px solid $editor-background);*/
+							border-left: 1px solid $editor-background;
+
+							i {
+								font-size: 18px;
+							}
+						}
+
+						&--skip {
+							padding: 10px;
+							/*
+							@include padding-start(20px);
+							@include margin-end(10px);
+							 */
+							padding-left: 20px;
+							margin-right: 10px;
+
+							color: #fff;
+							background-color: $editor-light;
+							font-size: 11px;
+							font-weight: normal;
+							line-height: 1;
+							text-transform: uppercase;
+							border-radius: 2px;
+							cursor: pointer;
+
+							> i {
+								font-size: inherit;
+								/*
+								@include padding-start(10px);
+								@include margin-start(15px);
+								@include border-start(1px solid);
+								*/
+								padding-left: 10px;
+								margin-left: 15px;
+								border-left: 1px solid;
+
+								&:not(:hover) { // Overwrite the default
+									color: #fff;
+								}
+							}
+						}
+					}
+				}
+
+				&-actions {
+					display: flex;
+
+					&__button {
+						/*@include padding-end(16px);*/
+						padding-right: 16px;
+					}
+				}
+			}
+		}
+	}
+}

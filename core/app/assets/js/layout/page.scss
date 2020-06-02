@@ -1,0 +1,14 @@
+@import '../../../../../assets/dev/scss/helpers/variables.scss';
+
+.e-app {
+	&__view {
+		&__content {
+			width: 100%;
+			box-sizing: border-box;
+			background-color: $editor-background-light;
+			line-height: 1.5;
+			font-size: 12px;
+			font-family: $admin-font-family;
+		}
+	}
+}

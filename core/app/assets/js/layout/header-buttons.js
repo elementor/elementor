@@ -1,4 +1,5 @@
 import Button from './header-button';
+import './header-buttons.scss';
 
 export default function HeaderButtons( props ) {
 	let tools = '';
@@ -9,7 +10,7 @@ export default function HeaderButtons( props ) {
 		} );
 
 		tools = (
-			<div id="e-app__view__header__buttons__actions">
+			<div id="e-app__view__header__buttons-actions">
 				{ buttons }
 			</div>
 		);

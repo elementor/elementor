@@ -1,0 +1,48 @@
+@import '../../../../../assets/dev/scss/helpers/variables.scss';
+
+.e-app {
+	&__view {
+		&__header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			height: 50px;
+			background-color: $white;
+			box-shadow: 0 0 8px rgba(0 ,0 ,0 , .1);
+
+			&__logo {
+				line-height: 1;
+				text-transform: uppercase;
+				font-weight: bold;
+				cursor: pointer;
+
+				&-area {
+					/*text-align: $start;*/
+					text-align: left;
+
+					/*@include padding-start(15px);*/
+					padding-left: 15px;
+
+					> * {
+						display: flex;
+						align-items: center;
+					}
+				}
+
+				&__icon {
+					/*@include margin-end(10px);*/
+					margin-right: 10px;
+				}
+
+				&__title {
+					padding-top: 2px;
+					font-size: 15px;
+				}
+
+				i {
+					font-size: 10px;
+				}
+			}
+		}
+	}
+}

@@ -1,6 +1,7 @@
 import Header from './header';
 import Sidebar from './sidebar';
 import Content from './content';
+import './page.scss';
 
 export default function Page( props ) {
 	return (
