@@ -322,7 +322,6 @@ abstract class Endpoint {
 		}
 
 		$route = $this->get_base_route() . $route;
-		$route = str_replace( '//', '/', $route );
 
 		return register_rest_route( $this->controller->get_namespace(), $route, [
 			[

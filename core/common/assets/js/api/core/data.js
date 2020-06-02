@@ -45,7 +45,7 @@ export default class Data extends Commands {
 	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
-		this.baseEndpointAddress = `${ elementorCommon.config.rest_url }${ namespace }/v${ version }/`;
+		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;
 	}
 
 	/**
