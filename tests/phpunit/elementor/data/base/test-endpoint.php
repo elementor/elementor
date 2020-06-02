@@ -4,6 +4,8 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 use Elementor\Data\Manager;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
 use Exception;
 
 class Test_Endpoint extends Elementor_Test_Base {
@@ -91,6 +93,60 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
 
 		$endpoint_instance->do_register_sub_endpoint( 'test-route/', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+	}
+
+	public function test_base_callback() {
+		$excepted_data = [ 'test' => true ];
+		$controller = new ControllerTemplate();
+		$controller->bypass_original_register();
+
+		$endpoint_instance = $controller->do_register_endpoint( EndpointTemplate::class );
+
+		$endpoint_instance->set_test_data( 'get_items', $excepted_data );
+		$result = $endpoint_instance->base_callback( \WP_REST_Server::READABLE, new \WP_REST_Request(), true );
+		$this->assertEquals( $excepted_data, $result->get_data() );
+
+		$endpoint_instance->set_test_data( 'get_item', $excepted_data );
+		$request = new \WP_REST_Request( 'GET', [ 'id' => true ] );
+		$result = $endpoint_instance->base_callback( \WP_REST_Server::READABLE, $request, false );
+		$this->assertEquals( $excepted_data, $result->get_data() );
+
+		$endpoint_instance->set_test_data( 'create_items', $excepted_data );
+		$result = $endpoint_instance->base_callback( \WP_REST_Server::CREATABLE, new \WP_REST_Request(), true );
+		$this->assertEquals( $excepted_data, $result->get_data() );
+
+		$endpoint_instance->set_test_data( 'create_item', $excepted_data );
+		$request = new \WP_REST_Request( 'CREATE', [ 'id' => true ] );
+		$result = $endpoint_instance->base_callback( \WP_REST_Server::CREATABLE, $request, false );
+		$this->assertEquals( $excepted_data, $result->get_data() );
+
+		$endpoint_instance->set_test_data( 'update_items', $excepted_data );
+		$result = $endpoint_instance->base_callback( \WP_REST_Server::EDITABLE, new \WP_REST_Request(), true );
+		$this->assertEquals( $excepted_data, $result->get_data() );
+
+		$endpoint_instance->set_test_data( 'update_item', $excepted_data );
+		$request = new \WP_REST_Request( 'PUT', [ 'id' => true ] );
+		$result = $endpoint_instance->base_callback( \WP_REST_Server::EDITABLE, $request, false );
+		$this->assertEquals( $excepted_data, $result->get_data() );
+
+		$endpoint_instance->set_test_data( 'delete_items', $excepted_data );
+		$result = $endpoint_instance->base_callback( \WP_REST_Server::DELETABLE, new \WP_REST_Request(), true );
+		$this->assertEquals( $excepted_data, $result->get_data() );
+
+		$endpoint_instance->set_test_data( 'delete_item', $excepted_data );
+		$request = new \WP_REST_Request( 'DELETE', [ 'id' => true ] );
+		$result = $endpoint_instance->base_callback( \WP_REST_Server::DELETABLE, $request, false );
+		$this->assertEquals( $excepted_data, $result->get_data() );
+	}
+
+	public function test_base_callback_invalid_method() {
+		$controller = new ControllerTemplate();
+		$controller->bypass_original_register();
+
+		$endpoint_instance = $controller->do_register_endpoint( EndpointTemplate::class );
+
+		$this->expectException( Exception::class );
+		$endpoint_instance->base_callback( 'some-invalid-method', new \WP_REST_Request(), true );
 	}
 
 	public function test_get_items() {

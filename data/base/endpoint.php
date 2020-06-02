@@ -132,8 +132,17 @@ abstract class Endpoint {
 		return $endpoint_instance;
 	}
 
-	/*
-	 * TODO: PHPDoc + tests.
+	/**
+	 * Base callback.
+	 *
+	 * All reset requests from the client should pass this function.
+	 *
+	 * @param string $methods
+	 * @param \WP_REST_Request $request
+	 * @param bool $is_multi
+	 *
+	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
+	 * @throws \Exception
 	 */
 	public function base_callback( $methods, $request, $is_multi = false ) {
 		// TODO: Handle permission callback.

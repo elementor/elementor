@@ -32,6 +32,10 @@ class Controller extends \Elementor\Data\Base\Controller {
 		} );
 	}
 
+	/**
+	 * @param $endpoint_class
+	 * @return \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint|\Elementor\Data\Base\Endpoint
+	 */
 	public function do_register_endpoint( $endpoint_class ) {
 		return $this->register_endpoint( $endpoint_class );
 	}
