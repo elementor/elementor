@@ -19,12 +19,12 @@ class Index extends Endpoint {
 
 		$this->register_sub_endpoint( '(?P<document_id>[\w]+)/', SubEndpoints\Elements::class );
 
-		$this->register_item_route( [
+		$this->register_item_route( \WP_REST_Server::READABLE, [
 			'id' => [
 				'description' => 'Document id.',
 				'type' => 'string',
 			],
-		]);
+		] );
 	}
 
 	public function get_item( $document_id, $request ) {

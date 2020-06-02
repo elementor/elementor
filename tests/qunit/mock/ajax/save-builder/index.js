@@ -1,4 +1,4 @@
-import * as mock from './mock/';
+import * as mock from './mock';
 
 export const saveBuilder = ( action, fullParams ) => {
 	switch ( action.data.status ) {

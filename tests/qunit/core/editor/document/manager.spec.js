@@ -1,15 +1,18 @@
 import ElementsHelper from './elements/helper.js';
+import * as eData from 'elementor-tests-qunit/mock/e-data/index';
 
 let documentTemp;
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/manager', ( hooks ) => {
 		hooks.before( () => {
+			eData.mock();
 			// Save current document before go.
 			documentTemp = elementor.documents.getCurrent();
 		} );
 
 		hooks.after( () => {
+			eData.silence();
 			// Put back saved document, to current.
 			elementor.documents.setCurrent( documentTemp );
 		} );

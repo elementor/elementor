@@ -1,5 +1,6 @@
 import EditorTest from './js/editor-test';
-import * as Ajax from './ajax/';
+import * as Ajax from './mock/ajax/';
+import * as eData from './mock/e-data/';
 
 function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
@@ -19,6 +20,7 @@ function initialize() {
 	elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
 	Ajax.silence();
+	eData.silence();
 
 	elementor.on( 'preview:loaded', () => {
 		// Disable UI Hooks.

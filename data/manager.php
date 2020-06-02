@@ -157,8 +157,16 @@ class Manager extends BaseModule {
 				$formatted = str_replace( '{' . $key . '}', $val, $formatted );
 			} );
 
-			// Remove if not requested.
+			// Remove remaining format if not requested via `$args`.
 			if ( strstr( $formatted, '/{' ) ) {
+				/**
+				 * Example:
+				 * $command = 'example/documents';
+				 * $format = 'example/documents/{document_id}/elements/{element_id}';
+				 * $formatted = 'example/documents/1618/elements/{element_id}';
+				 * Result:
+				 * $formatted = 'example/documents/1618/elements';
+				 */
 				$formatted = substr( $formatted, 0, strpos( $formatted, '/{' ) );
 			}
 

@@ -45,7 +45,7 @@ export default class Data extends Commands {
 	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
-		this.baseEndpointAddress = `${ elementorCommon.config.rest_url }${ namespace }/v${ version }/`;
+		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;
 	}
 
 	/**
@@ -271,7 +271,7 @@ export default class Data extends Commands {
 		if ( 'GET' === method ) {
 			Object.assign( params, { headers } );
 		} else if ( allowedMethods ) {
-			if ( ! requestData.args?.data ) {
+			if ( [ 'POST', 'PUT' ].includes( method ) && ! requestData.args?.data ) {
 				throw Error( 'Invalid requestData.args.data' );
 			}
 

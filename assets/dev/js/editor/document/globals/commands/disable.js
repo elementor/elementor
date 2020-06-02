@@ -20,16 +20,17 @@ export class Disable extends DisableEnable {
 							result = await promise;
 
 						if ( result ) {
-							const { data } = result;
+							const { value } = result.data;
+
 							if ( container.controls[ globalKey ].groupPrefix ) {
-								Object.entries( data ).forEach( ( [ dataKey, dataValue ] ) => {
+								Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
 									const groupPrefix = container.controls[ globalKey ].groupPrefix,
 										controlName = globalKey.replace( groupPrefix, '' ) + '_' + dataKey;
 
 									localSettings[ controlName ] = dataValue;
 								} );
 							} else {
-								localSettings[ globalKey ] = data;
+								localSettings[ globalKey ] = value;
 							}
 						}
 
