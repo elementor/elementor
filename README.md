@@ -6,7 +6,7 @@
 **Requires at least:** 5.0  
 **Tested up to:** 5.4  
 **Requires PHP:** 5.6  
-**Stable tag:** 2.9.9  
+**Stable tag:** 2.9.10  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -222,6 +222,16 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.9.10 - 2020-06-01 ###
+* Tweak: Updated `eicons` library to v5.7.0
+* Tweak: Added infrastructure improvements to Repeater control to support upcoming versions
+* Fix: Popup action links triggers 404 error ([#11104](https://github.com/elementor/elementor/issues/11104))
+* Fix: Removed source map comment so browsers don't look for source map in Swiper library ([#10764](https://github.com/elementor/elementor/issues/10764))
+* Fix: Elementor posts aren't properly imported with WordPress Importer v0.7 ([#11466](https://github.com/elementor/elementor/issues/11466), [#10744](https://github.com/elementor/elementor/issues/10744))
+* Fix: Theme Style overrides link settings in some cases ([#11462](https://github.com/elementor/elementor/issues/11462))
+* Fix: UI glitch in Media controls
+* Fix: Hardened sanitization in Custom Link Attributes and in URL control to avoid security issues
 
 ### 2.9.9 - 2020-05-24 ###
 * Tweak: Added 'Learn More' link to URL Custom Attributes Description
