@@ -18,6 +18,12 @@ export default class extends ControlBaseDataView {
 		}
 	}
 
+	initialize( ...args ) {
+		super.initialize( ...args );
+
+		this.state = {};
+	}
+
 	initPicker() {
 		const controlValue = this.getControlValue(),
 			options = {
@@ -181,10 +187,29 @@ export default class extends ControlBaseDataView {
 		return $globalColorsPreviewContainer;
 	}
 
+	setState( key, value ) {
+		const changedState = super.setState( key, value );
+
+		if ( ! changedState ) {
+			return;
+		}
+
+		if ( 'addButtonActive' === key ) {
+			this.colorPicker.toggleToolState( '$addButton', value );
+		} else if ( 'clearButtonActive' ) {
+			this.colorPicker.toggleToolState( '$customClearButton', value );
+		}
+
+		return this.state;
+	}
+
 	onPickerChange() {
 		if ( this.getGlobalValue() ) {
 			this.$el.find( '.e-global-selected' ).html( elementor.translate( 'custom' ) );
 		}
+
+		this.setState( 'addButtonActive', true );
+		this.setState( 'clearButtonActive', true );
 
 		if ( this.$el.hasClass( 'e-invalid-color' ) ) {
 			this.$el.removeClass( 'e-invalid-color' );
@@ -197,6 +222,9 @@ export default class extends ControlBaseDataView {
 		this.setValue( '' );
 
 		this.$el.addClass( 'e-invalid-color' );
+
+		this.setState( 'addButtonActive', false );
+		this.setState( 'clearButtonActive', false );
 
 		this.$el
 			.find( '.e-global-selected' )

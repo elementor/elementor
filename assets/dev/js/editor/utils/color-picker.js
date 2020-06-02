@@ -134,12 +134,31 @@ export default class ColorPicker extends elementorModules.Module {
 
 		this.$addButton = jQuery( '<button>', { class: classes.pickerTool + ' ' + classes.addSwatch } ).html( jQuery( '<i>', { class: classes.plusIcon } ) );
 
-		this.$addButton.on( 'click', () => this.onAddButtonClick() );
+		this.toggleButtonListener( '$addButton', true );
 
 		this.$addButton.tipsy( {
 			title: () => elementor.translate( 'create_global_color' ),
 			gravity: () => 's',
 		} );
+	}
+
+	toggleButtonListener( button, on ) {
+		let callback = {};
+
+		switch ( button ) {
+			case '$addButton':
+				callback = () => this.onAddButtonClick();
+				break;
+			case '$customClearButton':
+				callback = () => this.picker._clearColor();
+				break;
+		}
+
+		if ( on ) {
+			this[ button ].on( 'click', callback );
+		} else {
+			this[ button ].off( 'click', '**' );
+		}
 	}
 
 	createCustomClearButton() {
@@ -148,13 +167,9 @@ export default class ColorPicker extends elementorModules.Module {
 		this.$customClearButton = jQuery( '<div>', { class: classes.customClearButton + ' ' + classes.pickerTool } )
 			.html( '<i class="eicon-undo"></i>' );
 
-		this.$customClearButton.on( 'click', () => this.picker._clearColor() );
+		this.toggleButtonListener( '$customClearButton', true );
 
 		this.addTipsyToClearButton();
-	}
-
-	addToolsToSwatches() {
-		this.picker.activateSwatch();
 	}
 
 	destroy() {
@@ -169,6 +184,17 @@ export default class ColorPicker extends elementorModules.Module {
 
 	introductionViewed() {
 		return ColorPicker.droppingIntroductionViewed || elementor.config.user.introduction.colorPickerDropping;
+	}
+
+	toggleToolState( button, value ) {
+		if ( value ) {
+			// When the picker is changed it means a color has been selected
+			this[ button ].removeClass( 'e-control-tool-disabled' );
+			this.toggleButtonListener( button, true );
+		} else {
+			this[ button ].addClass( 'e-control-tool-disabled' );
+			this.toggleButtonListener( button, false );
+		}
 	}
 
 	onPickerChange() {
