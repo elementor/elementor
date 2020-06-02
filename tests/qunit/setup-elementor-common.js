@@ -4,6 +4,7 @@ const elementorCommonConfig = {
 	activeModules: [ 'ajax' ],
 	ajax: { url: '-' },
 	i18n: {},
-	urls: {},
-	rest_url: 'http://localtest/wp-json/',
+	urls: {
+		rest: 'http://localtest/wp-json/',
+	},
 };
