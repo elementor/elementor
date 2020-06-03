@@ -171,6 +171,10 @@ export default class extends ControlBaseDataView {
 		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
 		Object.values( globalColors ).forEach( ( color ) => {
+			if ( ! color.value ) {
+				return;
+			}
+
 			const $color = this.createGlobalItemMarkup( color );
 
 			$globalColorsPreviewContainer.append( $color );
