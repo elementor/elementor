@@ -72,8 +72,7 @@ export default class extends ControlBaseDataView {
 	getAddGlobalConfirmMessage( globalColors ) {
 		const color = this.colorPicker.getColorData(),
 			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
-			$messageText = jQuery( '<div>' )
-				.html( elementor.translate( 'global_color_confirm_text' ) ),
+			$messageText = jQuery( '<div>' ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
 			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.value } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.title } )
@@ -81,7 +80,7 @@ export default class extends ControlBaseDataView {
 
 		// Check if the color already exists in the global colors, and display an appropriate message
 		Object.values( globalColors ).forEach( ( globalColor ) => {
-			let messageContent = '';
+			let messageContent = elementor.translate( 'global_color_confirm_text' );
 
 			if ( color.value === globalColor.value ) {
 				messageContent = elementor.translate( 'global_color_already_exists' );
