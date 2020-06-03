@@ -150,18 +150,16 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			hide: {
 				onBackgroundClick: false,
 			},
-			onConfirm: () => {
+			onConfirm: async () => {
 				const globalData = this.view.getGlobalData();
 
 				globalData.title = this.globalNameInput.val();
 
-				$e.run( globalData.commandName + '/create', {
-					container: this.view.container,
-					setting: globalData.key, // group control name
-					title: globalData.title,
-				} );
+				await this.createNewGlobal( globalData );
 
 				const $globalPreview = this.view.createGlobalItemMarkup( globalData );
+
+				$globalPreview.on( 'click', ( event ) => this.applySavedGlobalValue( JSON.parse( event.currentTarget.dataset.elementorGlobal ) ) );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
 
@@ -174,6 +172,19 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 
 		this.confirmNewGlobalModal.show();
+	}
+
+	async createNewGlobal( globalData ) {
+		await $e.run( globalData.commandName + '/create', {
+			container: this.view.container,
+			setting: globalData.key, // group control name
+			title: globalData.title,
+		} )
+			.then( async ( result ) => {
+				await $e.data.get( globalData.commandName + '?id=' + result.data._id );
+				//$e.data.get( globalData.commandName )
+				this.setGlobalValue( globalData );
+			} );
 	}
 
 	setGlobalValue( globalData ) {
