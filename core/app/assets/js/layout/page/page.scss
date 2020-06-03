@@ -9,6 +9,10 @@
 			line-height: 1.5;
 			font-size: 12px;
 			font-family: $admin-font-family;
+
+			&__main {
+				display: flex;
+			}
 		}
 	}
 }

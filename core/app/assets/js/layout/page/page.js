@@ -9,7 +9,7 @@ export default function Page( props ) {
 			<div className="e-app__view">
 				<div className="e-app__view__content">
 					<Header title={ props.title } buttons={ props.headerButtons } />
-					<div className="e-app__main">
+					<div className="e-app__view__content__main">
 						<Sidebar>
 							{ props.sidebar }
 						</Sidebar>
