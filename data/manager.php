@@ -120,7 +120,12 @@ class Manager extends BaseModule {
 	}
 
 	/**
-	 * TODO PHPDoc, test.
+	 * Command extract args.
+	 *
+	 * @param string $command
+	 * @param array $args
+	 *
+	 * @return string
 	 */
 	public function command_extract_args( $command, &$args = [] ) {
 		if ( false !== strpos( $command, '?' ) ) {
@@ -131,6 +136,8 @@ class Manager extends BaseModule {
 			parse_str( $query_string, $args );
 
 			$command = $pure_command;
+
+			$command = rtrim( $command, '/' );
 		}
 
 		return $command;
