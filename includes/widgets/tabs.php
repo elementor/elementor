@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor tabs widget.
  *
@@ -58,19 +60,17 @@ class Widget_Tabs extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the tabs widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
 	/**
@@ -89,37 +89,47 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'tab_title',
+			[
+				'label' => __( 'Title & Description', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => __( 'Tab Title', 'elementor' ),
+				'placeholder' => __( 'Tab Title', 'elementor' ),
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_control(
+			'tab_content',
+			[
+				'label' => __( 'Content', 'elementor' ),
+				'default' => __( 'Tab Content', 'elementor' ),
+				'placeholder' => __( 'Tab Content', 'elementor' ),
+				'type' => Controls_Manager::WYSIWYG,
+				'show_label' => false,
+				'dynamic' => [
+					'active' => false,
+				],
+			]
+		);
+
 		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Tabs Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
 						'tab_title' => __( 'Tab #1', 'elementor' ),
-						'tab_content' => __( 'I am tab content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
+						'tab_content' => __( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 					[
 						'tab_title' => __( 'Tab #2', 'elementor' ),
-						'tab_content' => __( 'I am tab content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-				],
-				'fields' => [
-					[
-						'name' => 'tab_title',
-						'label' => __( 'Title & Content', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-						'default' => __( 'Tab Title', 'elementor' ),
-						'placeholder' => __( 'Tab Title', 'elementor' ),
-						'label_block' => true,
-					],
-					[
-						'name' => 'tab_content',
-						'label' => __( 'Content', 'elementor' ),
-						'default' => __( 'Tab Content', 'elementor' ),
-						'placeholder' => __( 'Tab Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
-						'show_label' => false,
+						'tab_content' => __( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 				],
 				'title_field' => '{{{ tab_title }}}',
@@ -241,11 +251,11 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title, {{WRAPPER}} .elementor-tab-title a' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 			]
 		);
@@ -256,11 +266,11 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title.elementor-active' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title.elementor-active a' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_4,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_4,
 				],
 			]
 		);
@@ -270,7 +280,7 @@ class Widget_Tabs extends Widget_Base {
 			[
 				'name' => 'tab_typography',
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -292,8 +302,8 @@ class Widget_Tabs extends Widget_Base {
 					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 			]
 		);
@@ -303,7 +313,7 @@ class Widget_Tabs extends Widget_Base {
 			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -319,13 +329,14 @@ class Widget_Tabs extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$tabs = $this->get_settings( 'tabs' );
+		$tabs = $this->get_settings_for_display( 'tabs' );
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-tabs" role="tablist">
 			<div class="elementor-tabs-wrapper">
-				<?php foreach ( $tabs as $index => $item ) :
+				<?php
+				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
@@ -334,16 +345,16 @@ class Widget_Tabs extends Widget_Base {
 						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'data-tab' => $tab_count,
-						'tabindex' => $id_int . $tab_count,
 						'role' => 'tab',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 					?>
-					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
+					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><a href=""><?php echo $item['tab_title']; ?></a></div>
 				<?php endforeach; ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper">
-				<?php foreach ( $tabs as $index => $item ) :
+				<?php
+				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 
 					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
@@ -360,7 +371,6 @@ class Widget_Tabs extends Widget_Base {
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
-						'tabindex' => $id_int . $tab_count,
 						'data-tab' => $tab_count,
 						'role' => 'tab',
 					] );
@@ -380,10 +390,10 @@ class Widget_Tabs extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<div class="elementor-tabs" role="tablist">
 			<#
@@ -395,7 +405,7 @@ class Widget_Tabs extends Widget_Base {
 					_.each( settings.tabs, function( item, index ) {
 						var tabCount = index + 1;
 						#>
-						<div id="elementor-tab-title-{{ tabindex + tabCount }}" class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab" aria-controls="elementor-tab-content-{{ tabindex + tabCount }}">{{{ item.tab_title }}}</div>
+						<div id="elementor-tab-title-{{ tabindex + tabCount }}" class="elementor-tab-title elementor-tab-desktop-title" data-tab="{{ tabCount }}" role="tab" aria-controls="elementor-tab-content-{{ tabindex + tabCount }}"><a href="">{{{ item.tab_title }}}</a></div>
 					<# } ); #>
 				</div>
 				<div class="elementor-tabs-content-wrapper">

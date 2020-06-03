@@ -1,13 +1,43 @@
-var BaseElementView = require( 'elementor-elements/views/base' ),
-	AddSectionView = require( 'elementor-views/add-section/inline' ),
-	SectionView;
+import AddSectionView from '../../views/add-section/inline';
 
-SectionView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
+const BaseElementView = require( 'elementor-elements/views/base' );
+
+const DEFAULT_INNER_SECTION_COLUMNS = 2,
+	DEFAULT_MIN_COLUMN_SIZE = 2,
+	DEFAULT_MAX_COLUMNS = 10;
+
+const SectionView = BaseElementView.extend( {
+	childViewContainer: '> .elementor-container > .elementor-row',
+
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
 	addSectionView: null,
 
-	toggleEditTools: false,
+	_checkIsFull: function() {
+		this.toggleSectionIsFull();
+
+		elementorCommon.helpers.softDeprecated( '_checkIsFull', '2.9.0',
+			'toggleSectionIsFull()' );
+	},
+
+	toggleSectionIsFull: function() {
+		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
+	},
+
+	addChildModel: function( model ) {
+		/// TODO: maybe should be part of $e.hooks.
+		const isModelInstance = model instanceof Backbone.Model,
+			isInner = this.isInner();
+
+		if ( isModelInstance ) {
+			// TODO: change to command.
+			model.set( 'isInner', isInner );
+		} else {
+			model.isInner = isInner;
+		}
+
+		return BaseElementView.prototype.addChildModel.apply( this, arguments );
+	},
 
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
@@ -20,68 +50,72 @@ SectionView = BaseElementView.extend( {
 		return this.model.getSetting( 'html_tag' ) || 'section';
 	},
 
-	childViewContainer: '> .elementor-container > .elementor-row',
-
 	behaviors: function() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'column'
+				elChildType: 'column',
 			},
-			HandleDuplicate: {
-				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-			},
-			HandleAddMode: {
-				behaviorClass: require( 'elementor-behaviors/duplicate' )
-			}
 		} );
 
 		return elementor.hooks.applyFilters( 'elements/section/behaviors', behaviors, this );
 	},
 
-	errors: {
-		columnWidthTooLarge: 'New column width is too large',
-		columnWidthTooSmall: 'New column width is too small'
-	},
-
-	events: function() {
-		var events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events[ 'click @ui.addButton' ] = 'onClickAdd';
-
-		return events;
-	},
-
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
-		this.listenTo( this.collection, 'add remove reset', this._checkIsFull );
-
-		this._checkIsEmpty();
+		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 	},
 
-	addEmptyColumn: function() {
-		this.addChildModel( {
-			id: elementor.helpers.getUniqueID(),
-			elType: 'column',
-			settings: {},
-			elements: []
-		} );
-	},
+	getEditButtons: function() {
+		const elementData = elementor.getElementData( this.model ),
+			editTools = {};
 
-	addChildModel: function( model, options ) {
-		var isModelInstance = model instanceof Backbone.Model,
-			isInner = this.isInner();
-
-		if ( isModelInstance ) {
-			model.set( 'isInner', isInner );
-		} else {
-			model.isInner = isInner;
+		if ( ! this.isInner() ) {
+			editTools.add = {
+				title: elementor.translate( 'add_element', [ elementData.title ] ),
+				icon: 'plus',
+			};
 		}
 
-		return BaseElementView.prototype.addChildModel.apply( this, arguments );
+		editTools.edit = {
+			title: elementor.translate( 'edit_element', [ elementData.title ] ),
+			icon: 'handle',
+		};
+
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
+			editTools.duplicate = {
+				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
+				icon: 'clone',
+			};
+		}
+
+		editTools.remove = {
+			title: elementor.translate( 'delete_element', [ elementData.title ] ),
+			icon: 'close',
+		};
+
+		return editTools;
+	},
+
+	getContextMenuGroups: function() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+
+		groups.splice( transferGroupIndex + 1, 0, {
+			name: 'save',
+			actions: [
+				{
+					name: 'save',
+					title: elementor.translate( 'save_as_block' ),
+					callback: this.save.bind( this ),
+				},
+			],
+		} );
+
+		return groups;
 	},
 
 	getSortableOptions: function() {
@@ -89,19 +123,11 @@ SectionView = BaseElementView.extend( {
 
 		return {
 			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
-			handle: '> .elementor-element-overlay .elementor-editor-column-settings .elementor-editor-element-trigger',
+			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
 			items: '> .elementor-column',
 			forcePlaceholderSize: true,
-			tolerance: 'pointer'
+			tolerance: 'pointer',
 		};
-	},
-
-	onSettingsChanged: function( settingsModel ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		if ( settingsModel.changed.structure ) {
-			this.redefineLayout();
-		}
 	},
 
 	getColumnPercentSize: function( element, size ) {
@@ -114,52 +140,6 @@ SectionView = BaseElementView.extend( {
 
 	getStructure: function() {
 		return this.model.getSetting( 'structure' );
-	},
-
-	setStructure: function( structure ) {
-		var parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
-
-		if ( +parsedStructure.columnsCount !== this.collection.length ) {
-			throw new TypeError( 'The provided structure doesn\'t match the columns count.' );
-		}
-
-		this.model.setSetting( 'structure', structure );
-	},
-
-	redefineLayout: function() {
-		var preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
-
-		this.collection.each( function( model, index ) {
-			model.setSetting( '_column_size', preset.preset[ index ] );
-			model.setSetting( '_inline_size', null );
-		} );
-	},
-
-	resetLayout: function() {
-		this.setStructure( this.getDefaultStructure() );
-	},
-
-	resetColumnsCustomSize: function() {
-		this.collection.each( function( model ) {
-			model.setSetting( '_inline_size', null );
-		} );
-	},
-
-	isCollectionFilled: function() {
-		var MAX_SIZE = 10,
-			columnsCount = this.collection.length;
-
-		return ( MAX_SIZE <= columnsCount );
-	},
-
-	_checkIsFull: function() {
-		this.$el.toggleClass( 'elementor-section-filled', this.isCollectionFilled() );
-	},
-
-	_checkIsEmpty: function() {
-		if ( ! this.collection.length && ! this.model.get( 'dontFillEmpty' ) ) {
-			this.addEmptyColumn();
-		}
 	},
 
 	getColumnAt: function( index ) {
@@ -176,45 +156,87 @@ SectionView = BaseElementView.extend( {
 		return this.getColumnAt( this.collection.indexOf( columnView.model ) - 1 );
 	},
 
+	getNeighborContainer( container ) {
+		const parentView = container.parent.view,
+			nextView = parentView.getNextColumn( container.view ) || parentView.getPreviousColumn( container.view );
+
+		if ( ! nextView ) {
+			return false;
+		}
+
+		return nextView.getContainer();
+	},
+
+	setStructure: function( structure, shouldAdjustColumns = true ) {
+		const parsedStructure = elementor.presetsFactory.getParsedStructure( structure );
+
+		if ( +parsedStructure.columnsCount !== this.collection.length ) {
+			throw new TypeError( 'The provided structure doesn\'t match the columns count.' );
+		}
+
+		$e.run( 'document/elements/settings', {
+			container: this.getContainer(),
+			settings: { structure },
+			options: { external: true },
+		} );
+
+		if ( shouldAdjustColumns ) {
+			this.adjustColumns();
+		}
+	},
+
+	adjustColumns: function() {
+		const preset = elementor.presetsFactory.getPresetByStructure( this.getStructure() );
+
+		this.children.each( ( columnView, index ) => {
+			const container = columnView.getContainer();
+
+			$e.run( 'document/elements/settings', {
+				container,
+				settings: {
+					_column_size: preset.preset[ index ],
+					_inline_size: null,
+				},
+			} );
+		} );
+	},
+
+	resetLayout: function( shouldAdjustColumns = true ) {
+		this.setStructure( this.getDefaultStructure(), shouldAdjustColumns );
+	},
+
+	resetColumnsCustomSize: function() {
+		this.children.each( ( columnView ) => {
+			$e.run( 'document/elements/settings', {
+				container: columnView.getContainer(),
+				settings: {
+					_inline_size: null,
+				},
+				options: {
+					external: true,
+				},
+			} );
+		} );
+	},
+
+	isCollectionFilled: function() {
+		return ( DEFAULT_MAX_COLUMNS <= this.collection.length );
+	},
+
 	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {
 		columnView.ui.percentsTooltip.show();
 
-		columnView.ui.percentsTooltip.attr( 'data-side', elementor.config.is_rtl ? 'right' : 'left' );
+		columnView.ui.percentsTooltip.attr( 'data-side', elementorCommon.config.isRTL ? 'right' : 'left' );
 
 		nextColumnView.ui.percentsTooltip.show();
 
-		nextColumnView.ui.percentsTooltip.attr( 'data-side', elementor.config.is_rtl ? 'left' : 'right' );
+		nextColumnView.ui.percentsTooltip.attr( 'data-side', elementorCommon.config.isRTL ? 'left' : 'right' );
 	},
 
 	hideChildrenPercentsTooltip: function( columnView, nextColumnView ) {
 		columnView.ui.percentsTooltip.hide();
 
 		nextColumnView.ui.percentsTooltip.hide();
-	},
-
-	resizeChild: function( childView, currentSize, newSize ) {
-		var nextChildView = this.getNextColumn( childView ) || this.getPreviousColumn( childView );
-
-		if ( ! nextChildView ) {
-			throw new ReferenceError( 'There is not any next column' );
-		}
-
-		var minColumnSize = 10,
-			$nextElement = nextChildView.$el,
-			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[0].getBoundingClientRect().width ),
-			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
-
-		if ( nextElementNewSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooLarge );
-		}
-
-		if ( newSize < minColumnSize ) {
-			throw new RangeError( this.errors.columnWidthTooSmall );
-		}
-
-		nextChildView.model.setSetting( '_inline_size', nextElementNewSize );
-
-		return true;
 	},
 
 	destroyAddSectionView: function() {
@@ -226,20 +248,19 @@ SectionView = BaseElementView.extend( {
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		this._checkIsFull();
+		this.toggleSectionIsFull();
 	},
 
-	onClickAdd: function() {
+	onAddButtonClick: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.fadeToDeath();
 
 			return;
 		}
 
-		var myIndex = this.model.collection.indexOf( this.model ),
-			addSectionView = new AddSectionView( {
-				atIndex: myIndex
-			} );
+		const addSectionView = new AddSectionView( {
+			at: this.model.collection.indexOf( this.model ),
+		} );
 
 		addSectionView.render();
 
@@ -249,28 +270,13 @@ SectionView = BaseElementView.extend( {
 
 		// Delaying the slide down for slow-render browsers (such as FF)
 		setTimeout( function() {
-			addSectionView.$el.slideDown();
+			addSectionView.$el.slideDown( null, function() {
+				// Remove inline style, for preview mode.
+				jQuery( this ).css( 'display', '' );
+			} );
 		} );
 
 		this.addSectionView = addSectionView;
-	},
-
-	onAddChild: function() {
-		if ( ! this.isBuffering && ! this.model.get( 'dontFillEmpty' ) ) {
-			// Reset the layout just when we have really add/remove element.
-			this.resetLayout();
-		}
-	},
-
-	onRemoveChild: function() {
-		if ( ! this.isManualRemoving ) {
-			return;
-		}
-
-		// If it's the last column, please create new one.
-		this._checkIsEmpty();
-
-		this.resetLayout();
 	},
 
 	onChildviewRequestResizeStart: function( columnView ) {
@@ -301,31 +307,29 @@ SectionView = BaseElementView.extend( {
 		elementor.helpers.enableElementEvents( $iframes );
 	},
 
-	onChildviewRequestResize: function( columnView, ui, event ) {
-		// Get current column details
-		var currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
-
+	onChildviewRequestResize: function( columnView, ui ) {
 		ui.element.css( {
 			width: '',
-			left: 'initial' // Fix for RTL resizing
+			left: 'initial', // Fix for RTL resizing
 		} );
 
-		var newSize = this.getColumnPercentSize( ui.element, ui.size.width );
-
-		try {
-			this.resizeChild( columnView, currentSize, newSize );
-		} catch ( e ) {
-			return;
-		}
-
-		columnView.model.setSetting( '_inline_size', newSize );
+		$e.run( 'document/elements/settings', {
+			container: columnView.getContainer(),
+			settings: {
+				_inline_size: this.getColumnPercentSize( ui.element, ui.size.width ),
+			},
+		} );
 	},
 
 	onDestroy: function() {
 		BaseElementView.prototype.onDestroy.apply( this, arguments );
 
 		this.destroyAddSectionView();
-	}
+	},
 } );
 
 module.exports = SectionView;
+
+module.exports.DEFAULT_INNER_SECTION_COLUMNS = DEFAULT_INNER_SECTION_COLUMNS;
+module.exports.DEFAULT_MIN_COLUMN_SIZE = DEFAULT_MIN_COLUMN_SIZE;
+module.exports.DEFAULT_MAX_COLUMNS = DEFAULT_MAX_COLUMNS;

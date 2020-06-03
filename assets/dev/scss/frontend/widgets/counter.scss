@@ -16,13 +16,17 @@
 				line-height: 1;
 			}
 
-			&prefix {
+			&prefix,
+			&suffix {
 				flex-grow: 1;
+				white-space: pre-wrap;
+			}
+
+			&prefix {
 				text-align: $end;
 			}
 
 			&suffix {
-				flex-grow: 1;
 				text-align: $start;
 			}
 		}

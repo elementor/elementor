@@ -8,16 +8,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor base UI control.
  *
- * A base control for creating UI controls.
+ * An abstract class for creating new UI controls in the panel.
  *
  * @abstract
  */
 abstract class Base_UI_Control extends Base_Control {
 
 	/**
-	 * Retrieve features.
+	 * Get features.
 	 *
-	 * Get the list of all the available features.
+	 * Retrieve the list of all the available features.
 	 *
 	 * @since 1.5.0
 	 * @access public

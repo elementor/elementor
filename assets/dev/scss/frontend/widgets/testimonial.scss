@@ -12,10 +12,14 @@
 
 	.elementor-testimonial-name {
 		line-height: 1.5;
+		color: inherit;
+		display: block;
 	}
 
 	.elementor-testimonial-job {
 		font-size: 0.85em;
+		color: inherit;
+		display: block;
 	}
 
 	&.elementor-testimonial-text-align- {
@@ -48,6 +52,8 @@
 				width: 60px;
 				height: 60px;
 				border-radius: 50%;
+				object-fit: cover;
+				max-width: none;
 			}
 		}
 

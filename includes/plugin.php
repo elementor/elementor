@@ -1,18 +1,30 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Admin;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Common\App as CommonApp;
+use Elementor\Core\Debug\Inspector;
+use Elementor\Core\Documents_Manager;
+use Elementor\Core\Kits\Manager as Kits_Manager;
+use Elementor\Core\Editor\Editor;
+use Elementor\Core\Files\Manager as Files_Manager;
+use Elementor\Core\Files\Assets\Manager as Assets_Manager;
 use Elementor\Core\Modules_Manager;
-use Elementor\Debug\Debug;
-use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
+use Elementor\Core\Schemes\Manager as Schemes_Manager;
+use Elementor\Core\Settings\Manager as Settings_Manager;
+use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Modules\History\Revisions_Manager;
+use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
+use Elementor\Core\Logger\Manager as Log_Manager;
+use Elementor\Modules\System_Info\Module as System_Info_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Elementor plugin class.
+ * Elementor plugin.
  *
  * The main plugin handler class is responsible for initializing Elementor. The
  * class registers and all the components required to run the plugin.
@@ -47,6 +59,19 @@ class Plugin {
 	public $db;
 
 	/**
+	 * Ajax Manager.
+	 *
+	 * Holds the plugin ajax manager.
+	 *
+	 * @since 1.9.0
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )` instead
+	 * @access public
+	 *
+	 * @var Ajax
+	 */
+	public $ajax;
+
+	/**
 	 * Controls manager.
 	 *
 	 * Holds the plugin controls manager.
@@ -59,16 +84,16 @@ class Plugin {
 	public $controls_manager;
 
 	/**
-	 * Debug.
+	 * Documents manager.
 	 *
-	 * Holds the plugin debug.
+	 * Holds the documents manager.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @var Debug
+	 * @var Documents_Manager
 	 */
-	public $debug;
+	public $documents;
 
 	/**
 	 * Schemes manager.
@@ -119,6 +144,18 @@ class Plugin {
 	public $revisions_manager;
 
 	/**
+	 * Images manager.
+	 *
+	 * Holds the plugin images manager.
+	 *
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 * @var Images_Manager
+	 */
+	public $images_manager;
+
+	/**
 	 * Maintenance mode.
 	 *
 	 * Holds the plugin maintenance mode.
@@ -131,16 +168,28 @@ class Plugin {
 	public $maintenance_mode;
 
 	/**
-	 * Document settings manager.
+	 * Page settings manager.
 	 *
-	 * Holds the document settings manager.
+	 * Holds the page settings manager.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @var PageSettingsManager
+	 * @var Page_Settings_Manager
 	 */
 	public $page_settings_manager;
+
+	/**
+	 * Dynamic tags manager.
+	 *
+	 * Holds the dynamic tags manager.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @var Dynamic_Tags_Manager
+	 */
+	public $dynamic_tags;
 
 	/**
 	 * Settings.
@@ -153,6 +202,18 @@ class Plugin {
 	 * @var Settings
 	 */
 	public $settings;
+
+	/**
+	 * Role Manager.
+	 *
+	 * Holds the plugin Role Manager
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @var \Elementor\Core\RoleManager\Role_Manager
+	 */
+	public $role_manager;
 
 	/**
 	 * Admin.
@@ -263,14 +324,39 @@ class Plugin {
 	public $skins_manager;
 
 	/**
-	 * Posts CSS manager.
+	 * Files Manager.
 	 *
-	 * Holds the posts CSS manager.
+	 * Holds the files manager.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @var Files_Manager
+	 */
+	public $files_manager;
+
+	/**
+	 * Assets Manager.
+	 *
+	 * Holds the Assets manager.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 *
+	 * @var Assets_Manager
+	 */
+	public $assets_manager;
+
+	/**
+	 * Files Manager.
+	 *
+	 * Holds the files manager.
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 2.1.0 Use `Plugin::$files_manager` instead
 	 *
-	 * @var Posts_CSS_Manager
+	 * @var Files_Manager
 	 */
 	public $posts_css_manager;
 
@@ -292,11 +378,11 @@ class Plugin {
 	 * Holds the modules manager.
 	 *
 	 * @since 1.0.0
-	 * @access private
+	 * @access public
 	 *
 	 * @var Modules_Manager
 	 */
-	private $modules_manager;
+	public $modules_manager;
 
 	/**
 	 * Beta testers.
@@ -311,19 +397,35 @@ class Plugin {
 	public $beta_testers;
 
 	/**
-	 * Get version.
-	 *
-	 * Retrieve the current version of Elementor.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @deprecated
-	 *
-	 * @return string Elementor version.
+	 * @var Inspector
+	 * @deprecated 2.1.2 Use $inspector.
 	 */
-	public function get_version() {
-		return ELEMENTOR_VERSION;
-	}
+	public $debugger;
+
+	/**
+	 * @var Inspector
+	 */
+	public $inspector;
+
+	/**
+	 * @var CommonApp
+	 */
+	public $common;
+
+	/**
+	 * @var Log_Manager
+	 */
+	public $logger;
+
+	/**
+	 * @var Core\Upgrade\Manager
+	 */
+	public $upgrade;
+
+	/**
+	 * @var Core\Kits\Manager
+	 */
+	public $kits_manager;
 
 	/**
 	 * Clone.
@@ -338,7 +440,7 @@ class Plugin {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
 	}
 
 	/**
@@ -351,7 +453,7 @@ class Plugin {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
 	}
 
 	/**
@@ -408,6 +510,40 @@ class Plugin {
 	}
 
 	/**
+	 * Get install time.
+	 *
+	 * Retrieve the time when Elementor was installed.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 * @static
+	 *
+	 * @return int Unix timestamp when Elementor was installed.
+	 */
+	public function get_install_time() {
+		$installed_time = get_option( '_elementor_installed_time' );
+
+		if ( ! $installed_time ) {
+			$installed_time = time();
+
+			update_option( '_elementor_installed_time', $installed_time );
+		}
+
+		return $installed_time;
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function on_rest_api_init() {
+		// On admin/frontend sometimes the rest API is initialized after the common is initialized.
+		if ( ! $this->common ) {
+			$this->init_common();
+		}
+	}
+
+	/**
 	 * Init components.
 	 *
 	 * Initialize Elementor components. Register actions, run setting manager,
@@ -418,41 +554,64 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
-		Compatibility::register_actions();
-		SettingsManager::run();
+		$this->inspector = new Inspector();
+		$this->debugger = $this->inspector;
+
+		Settings_Manager::run();
 
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
+		$this->documents = new Documents_Manager();
+		$this->kits_manager = new Kits_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
-		$this->posts_css_manager = new Posts_CSS_Manager();
+		$this->files_manager = new Files_Manager();
+		$this->assets_manager = new Assets_Manager();
+		$this->icons_manager = new Icons_Manager();
+		/*
+		 * @TODO: Remove deprecated alias
+		 */
+		$this->posts_css_manager = $this->files_manager;
 		$this->settings = new Settings();
+		$this->tools = new Tools();
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
-		$this->debug = new Debug();
 		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
+		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
+		$this->role_manager = new Core\RoleManager\Role_Manager();
+		$this->system_info = new System_Info_Module();
+		$this->revisions_manager = new Revisions_Manager();
+		$this->images_manager = new Images_Manager();
 
+		User::init();
 		Api::init();
 		Tracker::init();
 
+		$this->upgrade = new Core\Upgrade\Manager();
+
 		if ( is_admin() ) {
-			$this->revisions_manager = new Revisions_Manager();
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
-			$this->system_info = new System_Info\Main();
 			$this->admin = new Admin();
-			$this->tools = new Tools();
 			$this->beta_testers = new Beta_Testers();
-
-			if ( Utils::is_ajax() ) {
-				new Images_Manager();
-			}
 		}
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function init_common() {
+		$this->common = new CommonApp();
+
+		$this->common->init_components();
+
+		$this->ajax = $this->common->get_component( 'ajax' );
 	}
 
 	/**
@@ -460,7 +619,7 @@ class Plugin {
 	 *
 	 * Register Elementor support for all the supported post types defined by
 	 * the user in the admin screen and saved as `elementor_cpt_support` option
-	 * in WordPress ``$wpdb->options` table.
+	 * in WordPress `$wpdb->options` table.
 	 *
 	 * If no custom post type selected, usually in new installs, this method
 	 * will return the two default post types: `page` and `post`.
@@ -501,7 +660,17 @@ class Plugin {
 	private function __construct() {
 		$this->register_autoloader();
 
+		$this->logger = Log_Manager::instance();
+
+		Maintenance::init();
+		Compatibility::register_actions();
+
 		add_action( 'init', [ $this, 'init' ], 0 );
+		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
+	}
+
+	final public static function get_title() {
+		return __( 'Elementor', 'elementor' );
 	}
 }
 

@@ -1,0 +1,113 @@
+.elementor-star-rating {
+	color: $gray-mouse;
+	font-family: eicons;
+	display: inline-block;
+
+	i {
+		display: inline-block;
+		position: relative;
+		font-style: normal;
+		cursor: default;
+
+		&:before {
+			content: '\e934';
+			display: block;
+			font-size: inherit;
+			font-family: inherit;
+			position: absolute;
+			overflow: hidden;
+			color: $orange;
+			top: 0;
+			@include start(0);
+		}
+	}
+
+	.elementor-star-empty:before {
+		content: none;
+	}
+
+	@for $i from 1 through 9 {
+
+		.elementor-star-#{$i} {
+
+			&:before {
+				width: $i * 10%
+			}
+		}
+	}
+
+	&__wrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	&__title {
+		@include margin-end(10px);
+	}
+}
+
+@mixin star-rating-align($device) {
+
+	.elementor-star-rating {
+
+		&#{$device} {
+
+			&--align {
+
+				&-right {
+
+					.elementor-star-rating__wrapper {
+						text-align: right;
+						justify-content: getValueByDirection( flex-end, flex-start );
+					}
+				}
+
+				&-left {
+
+					.elementor-star-rating__wrapper {
+						text-align: left;
+						justify-content: getValueByDirection( flex-start, flex-end );
+					}
+				}
+
+				&-center {
+					.elementor-star-rating__wrapper {
+						text-align: center;
+						justify-content: center;
+					}
+				}
+
+				&-justify {
+					.elementor-star-rating__title {
+						@include margin-end( auto );
+					}
+				}
+			}
+		}
+	}
+}
+
+@include star-rating-align('');
+
+@media (max-width: $screen-md-max) {
+	@include star-rating-align(-tablet);
+}
+
+@media (max-width: $screen-sm-max) {
+	@include star-rating-align(-mobile);
+}
+
+.last-star{
+	letter-spacing: 0;
+}
+
+.elementor--star-style-star_unicode {
+
+	.elementor-star-rating {
+		font-family: 'Arial', 'Helvetica', sans-serif;
+
+		i:not(.elementor-star-empty):before {
+			content: '\002605';
+		}
+	}
+}

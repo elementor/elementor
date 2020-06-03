@@ -1,0 +1,5 @@
+@for $i from 1 through 5 {
+	.elementor-control-unit-#{$i} {
+		width: $control-unit * $i;
+	}
+}

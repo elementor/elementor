@@ -1,61 +1,57 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' );
-
-module.exports = HandlerModule.extend( {
-	$activeContent: null,
-
-	getDefaultSettings: function() {
+export default class baseTabs extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				tabTitle: '.elementor-tab-title',
-				tabContent: '.elementor-tab-content'
+				tabContent: '.elementor-tab-content',
 			},
 			classes: {
-				active: 'elementor-active'
+				active: 'elementor-active',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
 			toggleSelf: true,
 			hidePrevious: true,
-			autoExpand: true
+			autoExpand: true,
 		};
-	},
+	}
 
-	getDefaultElements: function() {
-		var selectors = this.getSettings( 'selectors' );
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
 
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
-			$tabContents: this.findElement( selectors.tabContent )
+			$tabContents: this.findElement( selectors.tabContent ),
 		};
-	},
+	}
 
-	activateDefaultTab: function() {
-		var settings = this.getSettings();
+	activateDefaultTab() {
+		const settings = this.getSettings();
 
-		if ( ! settings.autoExpand || 'editor' === settings.autoExpand && ! this.isEdit ) {
+		if ( ! settings.autoExpand || ( 'editor' === settings.autoExpand && ! this.isEdit ) ) {
 			return;
 		}
 
-		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
+		const defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
 			originalToggleMethods = {
 				showTabFn: settings.showTabFn,
-				hideTabFn: settings.hideTabFn
+				hideTabFn: settings.hideTabFn,
 			};
 
 		// Toggle tabs without animation to avoid jumping
 		this.setSettings( {
 			showTabFn: 'show',
-			hideTabFn: 'hide'
+			hideTabFn: 'hide',
 		} );
 
 		this.changeActiveTab( defaultActiveTab );
 
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
-	},
+	}
 
-	deactivateActiveTab: function( tabIndex ) {
-		var settings = this.getSettings(),
+	deactivateActiveTab( tabIndex ) {
+		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
 			$activeTitle = this.elements.$tabTitles.filter( activeFilter ),
@@ -64,10 +60,10 @@ module.exports = HandlerModule.extend( {
 		$activeTitle.add( $activeContent ).removeClass( activeClass );
 
 		$activeContent[ settings.hideTabFn ]();
-	},
+	}
 
-	activateTab: function( tabIndex ) {
-		var settings = this.getSettings(),
+	activateTab( tabIndex ) {
+		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
 			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' );
@@ -75,42 +71,43 @@ module.exports = HandlerModule.extend( {
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
 
 		$requestedContent[ settings.showTabFn ]();
-	},
+	}
 
-	isActiveTab: function( tabIndex ) {
+	isActiveTab( tabIndex ) {
 		return this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
-	},
+	}
 
-	bindEvents: function() {
-		var self = this;
+	bindEvents() {
+		this.elements.$tabTitles.on( {
+			keydown: ( event ) => {
+				if ( 'Enter' === event.key ) {
+					event.preventDefault();
 
-		self.elements.$tabTitles.on( 'focus', function( event ) {
-			self.changeActiveTab( event.currentTarget.dataset.tab );
-		} );
-
-		if ( self.getSettings( 'toggleSelf' ) ) {
-			self.elements.$tabTitles.on( 'mousedown', function( event ) {
-				if ( jQuery( event.currentTarget ).is( ':focus' ) ) {
-					self.changeActiveTab( event.currentTarget.dataset.tab );
+					this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 				}
-			} );
-		}
-	},
+			},
+			click: ( event ) => {
+				event.preventDefault();
 
-	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
+			},
+		} );
+	}
+
+	onInit( ...args ) {
+		super.onInit( ...args );
 
 		this.activateDefaultTab();
-	},
+	}
 
-	onEditSettingsChange: function( propertyName ) {
+	onEditSettingsChange( propertyName ) {
 		if ( 'activeItemIndex' === propertyName ) {
 			this.activateDefaultTab();
 		}
-	},
+	}
 
-	changeActiveTab: function( tabIndex ) {
-		var isActiveTab = this.isActiveTab( tabIndex ),
+	changeActiveTab( tabIndex ) {
+		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
 
 		if ( ( settings.toggleSelf || ! isActiveTab ) && settings.hidePrevious ) {
@@ -125,4 +122,4 @@ module.exports = HandlerModule.extend( {
 			this.activateTab( tabIndex );
 		}
 	}
-} );
+}

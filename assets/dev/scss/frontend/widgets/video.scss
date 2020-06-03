@@ -3,6 +3,11 @@
 //
 .elementor-widget-video {
 
+	.elementor-widget-container {
+		overflow: hidden;
+		transform: translate3d(0, 0, 0); // Allow border-radius in Safari
+	}
+
 	.elementor-open-inline {
 
 		.elementor-custom-embed-image-overlay {
@@ -34,5 +39,9 @@
 			display: block;
 			width: 100%;
 		}
+	}
+
+	.elementor-video {
+		object-fit: cover;
 	}
 }

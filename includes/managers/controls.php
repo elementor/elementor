@@ -1,10 +1,12 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
- * Elementor controls manager class.
+ * Elementor controls manager.
  *
  * Elementor controls manager handler class is responsible for registering and
  * initializing all the supported controls, both regular controls and the group
@@ -14,92 +16,225 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  */
 class Controls_Manager {
 
+	/**
+	 * Content tab.
+	 */
 	const TAB_CONTENT = 'content';
-	const TAB_STYLE = 'style';
-	const TAB_ADVANCED = 'advanced';
-	const TAB_RESPONSIVE = 'responsive';
-	const TAB_LAYOUT = 'layout';
-	const TAB_SETTINGS = 'settings';
-
-	/** This control is documented in includes/controls/text.php */
-	const TEXT = 'text';
-	/** This control is documented in includes/controls/number.php */
-	const NUMBER = 'number';
-	/** This control is documented in includes/controls/textarea.php */
-	const TEXTAREA = 'textarea';
-	/** This control is documented in includes/controls/select.php */
-	const SELECT = 'select';
-	/** This control is documented in includes/controls/switcher.php */
-	const SWITCHER = 'switcher';
-
-	/** This control is documented in includes/controls/button.php */
-	const BUTTON = 'button';
-	/** This control is documented in includes/controls/hidden.php */
-	const HIDDEN = 'hidden';
-	/** This control is documented in includes/controls/heading.php */
-	const HEADING = 'heading';
-	/** This control is documented in includes/controls/raw-html.php */
-	const RAW_HTML = 'raw_html';
-	/** This control is documented in includes/controls/popover-toggle.php */
-	const POPOVER_TOGGLE = 'popover_toggle';
-	/** This control is documented in includes/controls/section.php */
-	const SECTION = 'section';
-	/** This control is documented in includes/controls/tab.php */
-	const TAB = 'tab';
-	/** This control is documented in includes/controls/tabs.php */
-	const TABS = 'tabs';
-
-	/** This control is documented in includes/controls/color.php */
-	const COLOR = 'color';
-	/** This control is documented in includes/controls/media.php */
-	const MEDIA = 'media';
-	/** This control is documented in includes/controls/slider.php */
-	const SLIDER = 'slider';
-	/** This control is documented in includes/controls/dimensions.php */
-	const DIMENSIONS = 'dimensions';
-	/** This control is documented in includes/controls/choose.php */
-	const CHOOSE = 'choose';
-	/** This control is documented in includes/controls/wysiwyg.php */
-	const WYSIWYG = 'wysiwyg';
-	/** This control is documented in includes/controls/code.php */
-	const CODE = 'code';
-	/** This control is documented in includes/controls/font.php */
-	const FONT = 'font';
-	/** This control is documented in includes/controls/image-dimensions.php */
-	const IMAGE_DIMENSIONS = 'image_dimensions';
-
-	/** This control is documented in includes/controls/wp-widget.php */
-	const WP_WIDGET = 'wp_widget';
-
-	/** This control is documented in includes/controls/url.php */
-	const URL = 'url';
-	/** This control is documented in includes/controls/repeater.php */
-	const REPEATER = 'repeater';
-	/** This control is documented in includes/controls/icon.php */
-	const ICON = 'icon';
-	/** This control is documented in includes/controls/gallery.php */
-	const GALLERY = 'gallery';
-	/** This control is documented in includes/controls/structure.php */
-	const STRUCTURE = 'structure';
-	/** This control is documented in includes/controls/select2.php */
-	const SELECT2 = 'select2';
-	/** This control is documented in includes/controls/date-time.php */
-	const DATE_TIME = 'date_time';
-	/** This control is documented in includes/controls/box-shadow.php */
-	const BOX_SHADOW = 'box_shadow';
-	/** This control is documented in includes/controls/text-shadow.php */
-	const TEXT_SHADOW = 'text_shadow';
-	/** This control is documented in includes/controls/animation.php */
-	const ANIMATION = 'animation';
-	/** This control is documented in includes/controls/hover-animation.php */
-	const HOVER_ANIMATION = 'hover_animation';
-	/** This control is documented in includes/controls/order.php */
-	const ORDER = 'order';
 
 	/**
-	 * @deprecated 1.5.4 In favor of Control_Switcher.
+	 * Style tab.
 	 */
-	const CHECKBOX = 'checkbox';
+	const TAB_STYLE = 'style';
+
+	/**
+	 * Advanced tab.
+	 */
+	const TAB_ADVANCED = 'advanced';
+
+	/**
+	 * Responsive tab.
+	 */
+	const TAB_RESPONSIVE = 'responsive';
+
+	/**
+	 * Layout tab.
+	 */
+	const TAB_LAYOUT = 'layout';
+
+	/**
+	 * Settings tab.
+	 */
+	const TAB_SETTINGS = 'settings';
+
+	/**
+	 * Text control.
+	 */
+	const TEXT = 'text';
+
+	/**
+	 * Number control.
+	 */
+	const NUMBER = 'number';
+
+	/**
+	 * Textarea control.
+	 */
+	const TEXTAREA = 'textarea';
+
+	/**
+	 * Select control.
+	 */
+	const SELECT = 'select';
+
+	/**
+	 * Switcher control.
+	 */
+	const SWITCHER = 'switcher';
+
+	/**
+	 * Button control.
+	 */
+	const BUTTON = 'button';
+
+	/**
+	 * Hidden control.
+	 */
+	const HIDDEN = 'hidden';
+
+	/**
+	 * Heading control.
+	 */
+	const HEADING = 'heading';
+
+	/**
+	 * Raw HTML control.
+	 */
+	const RAW_HTML = 'raw_html';
+
+	/**
+	 * Deprecated Notice control.
+	 */
+	const DEPRECATED_NOTICE = 'deprecated_notice';
+
+	/**
+	 * Popover Toggle control.
+	 */
+	const POPOVER_TOGGLE = 'popover_toggle';
+
+	/**
+	 * Section control.
+	 */
+	const SECTION = 'section';
+
+	/**
+	 * Tab control.
+	 */
+	const TAB = 'tab';
+
+	/**
+	 * Tabs control.
+	 */
+	const TABS = 'tabs';
+
+	/**
+	 * Divider control.
+	 */
+	const DIVIDER = 'divider';
+
+	/**
+	 * Color control.
+	 */
+	const COLOR = 'color';
+
+	/**
+	 * Media control.
+	 */
+	const MEDIA = 'media';
+
+	/**
+	 * Slider control.
+	 */
+	const SLIDER = 'slider';
+
+	/**
+	 * Dimensions control.
+	 */
+	const DIMENSIONS = 'dimensions';
+
+	/**
+	 * Choose control.
+	 */
+	const CHOOSE = 'choose';
+
+	/**
+	 * WYSIWYG control.
+	 */
+	const WYSIWYG = 'wysiwyg';
+
+	/**
+	 * Code control.
+	 */
+	const CODE = 'code';
+
+	/**
+	 * Font control.
+	 */
+	const FONT = 'font';
+
+	/**
+	 * Image dimensions control.
+	 */
+	const IMAGE_DIMENSIONS = 'image_dimensions';
+
+	/**
+	 * WordPress widget control.
+	 */
+	const WP_WIDGET = 'wp_widget';
+
+	/**
+	 * URL control.
+	 */
+	const URL = 'url';
+
+	/**
+	 * Repeater control.
+	 */
+	const REPEATER = 'repeater';
+
+	/**
+	 * Icon control.
+	 */
+	const ICON = 'icon';
+
+	/**
+	 * Icons control.
+	 */
+	const ICONS = 'icons';
+
+	/**
+	 * Gallery control.
+	 */
+	const GALLERY = 'gallery';
+
+	/**
+	 * Structure control.
+	 */
+	const STRUCTURE = 'structure';
+
+	/**
+	 * Select2 control.
+	 */
+	const SELECT2 = 'select2';
+
+	/**
+	 * Date/Time control.
+	 */
+	const DATE_TIME = 'date_time';
+
+	/**
+	 * Box shadow control.
+	 */
+	const BOX_SHADOW = 'box_shadow';
+
+	/**
+	 * Text shadow control.
+	 */
+	const TEXT_SHADOW = 'text_shadow';
+
+	/**
+	 * Entrance animation control.
+	 */
+	const ANIMATION = 'animation';
+
+	/**
+	 * Hover animation control.
+	 */
+	const HOVER_ANIMATION = 'hover_animation';
+
+	/**
+	 * Exit animation control.
+	 */
+	const EXIT_ANIMATION = 'exit_animation';
 
 	/**
 	 * Controls.
@@ -168,8 +303,6 @@ class Controls_Manager {
 			self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
 			self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
 		];
-
-		self::$tabs = Utils::apply_filters_deprecated( 'elementor/controls/get_available_tabs_controls', [ self::$tabs ], '1.6.0', '`' . __CLASS__ . '::add_tab( $tab_name, $tab_title )`' );
 	}
 
 	/**
@@ -192,17 +325,18 @@ class Controls_Manager {
 	}
 
 	/**
-	 * Get tab.
+	 * Add tab.
 	 *
-	 * Retrieve the tab of the current control.
+	 * This method adds a new tab to the current control.
 	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
 	 *
-	 * @return array Control tabs.
+	 * @param string $tab_name  Tab name.
+	 * @param string $tab_label Tab label.
 	 */
-	public static function add_tab( $tab_name, $tab_title ) {
+	public static function add_tab( $tab_name, $tab_label ) {
 		if ( ! self::$tabs ) {
 			self::init_tabs();
 		}
@@ -211,7 +345,67 @@ class Controls_Manager {
 			return;
 		}
 
-		self::$tabs[ $tab_name ] = $tab_title;
+		self::$tabs[ $tab_name ] = $tab_label;
+	}
+
+	public static function get_groups_names() {
+		// Group name must use "-" instead of "_"
+		return [
+			'background',
+			'border',
+			'typography',
+			'image-size',
+			'box-shadow',
+			'css-filter',
+			'text-shadow',
+		];
+	}
+
+	public static function get_controls_names() {
+		return [
+			self::TEXT,
+			self::NUMBER,
+			self::TEXTAREA,
+			self::SELECT,
+			self::SWITCHER,
+
+			self::BUTTON,
+			self::HIDDEN,
+			self::HEADING,
+			self::RAW_HTML,
+			self::POPOVER_TOGGLE,
+			self::SECTION,
+			self::TAB,
+			self::TABS,
+			self::DIVIDER,
+			self::DEPRECATED_NOTICE,
+
+			self::COLOR,
+			self::MEDIA,
+			self::SLIDER,
+			self::DIMENSIONS,
+			self::CHOOSE,
+			self::WYSIWYG,
+			self::CODE,
+			self::FONT,
+			self::IMAGE_DIMENSIONS,
+
+			self::WP_WIDGET,
+
+			self::URL,
+			self::REPEATER,
+			self::ICON,
+			self::ICONS,
+			self::GALLERY,
+			self::STRUCTURE,
+			self::SELECT2,
+			self::DATE_TIME,
+			self::BOX_SHADOW,
+			self::TEXT_SHADOW,
+			self::ANIMATION,
+			self::HOVER_ANIMATION,
+			self::EXIT_ANIMATION,
+		];
 	}
 
 	/**
@@ -232,69 +426,20 @@ class Controls_Manager {
 	private function register_controls() {
 		$this->controls = [];
 
-		$available_controls = [
-			self::TEXT,
-			self::NUMBER,
-			self::TEXTAREA,
-			self::SELECT,
-			self::SWITCHER,
-
-			self::BUTTON,
-			self::HIDDEN,
-			self::HEADING,
-			self::RAW_HTML,
-			self::POPOVER_TOGGLE,
-			self::SECTION,
-			self::TAB,
-			self::TABS,
-
-			self::COLOR,
-			self::MEDIA,
-			self::SLIDER,
-			self::DIMENSIONS,
-			self::CHOOSE,
-			self::WYSIWYG,
-			self::CODE,
-			self::FONT,
-			self::IMAGE_DIMENSIONS,
-
-			self::WP_WIDGET,
-
-			self::URL,
-			self::REPEATER,
-			self::ICON,
-			self::GALLERY,
-			self::STRUCTURE,
-			self::SELECT2,
-			self::DATE_TIME,
-			self::BOX_SHADOW,
-			self::TEXT_SHADOW,
-			self::ANIMATION,
-			self::HOVER_ANIMATION,
-			self::ORDER,
-
-			self::CHECKBOX,
-		];
-
-		foreach ( $available_controls as $control_id ) {
-			$control_filename = str_replace( '_', '-', $control_id );
-
-			$control_filename = ELEMENTOR_PATH . "includes/controls/{$control_filename}.php";
-
-			require( $control_filename );
-
-			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id );
+		foreach ( self::get_controls_names() as $control_id ) {
+			$control_class_id = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $control_id ) ) );
+			$class_name = __NAMESPACE__ . '\Control_' . $control_class_id;
 
 			$this->register_control( $control_id, new $class_name() );
 		}
 
 		// Group Controls
-		$this->control_groups['background'] = new Group_Control_Background();
-		$this->control_groups['border']     = new Group_Control_Border();
-		$this->control_groups['typography'] = new Group_Control_Typography();
-		$this->control_groups['image-size'] = new Group_Control_Image_Size();
-		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
-		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
+		foreach ( self::get_groups_names() as $group_name ) {
+			$group_class_id = str_replace( ' ', '_', ucwords( str_replace( '-', ' ', $group_name ) ) );
+			$class_name = __NAMESPACE__ . '\Group_Control_' . $group_class_id;
+
+			$this->control_groups[ $group_name ] = new $class_name();
+		}
 
 		/**
 		 * After controls registered.
@@ -368,7 +513,7 @@ class Controls_Manager {
 	/**
 	 * Get control.
 	 *
-	 * Retrieve the specific control from the current controls instance.
+	 * Retrieve a specific control from the current controls instance.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -395,17 +540,13 @@ class Controls_Manager {
 	 *    Control data.
 	 *
 	 *    @type array $name Control data.
- 	 * }
+	 * }
 	 */
 	public function get_controls_data() {
 		$controls_data = [];
 
 		foreach ( $this->get_controls() as $name => $control ) {
 			$controls_data[ $name ] = $control->get_settings();
-
-			if ( $control instanceof Base_Data_Control ) {
-				$controls_data[ $name ]['default_value'] = $control->get_default_value();
-			}
 		}
 
 		return $controls_data;
@@ -460,11 +601,11 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string               $id       Group control ID.
-	 * @param Group_Control_Base[] $instance Group control instance, usually the
-	 *                                       current instance.
+	 * @param string             $id       Group control ID.
+	 * @param Group_Control_Base $instance Group control instance, usually the
+	 *                                     current instance.
 	 *
-	 * @return Group_Control_Base[] Group control instance.
+	 * @return Group_Control_Base Group control instance.
 	 */
 	public function add_group_control( $id, $instance ) {
 		$this->control_groups[ $id ] = $instance;
@@ -495,10 +636,10 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param Controls_Stack $element Element stack.
+	 * @param Controls_Stack $controls_stack Controls stack.
 	 */
-	public function open_stack( Controls_Stack $element ) {
-		$stack_id = $element->get_unique_name();
+	public function open_stack( Controls_Stack $controls_stack ) {
+		$stack_id = $controls_stack->get_unique_name();
 
 		$this->stacks[ $stack_id ] = [
 			'tabs' => [],
@@ -517,20 +658,12 @@ class Controls_Manager {
 	 * @param Controls_Stack $element      Element stack.
 	 * @param string         $control_id   Control ID.
 	 * @param array          $control_data Control data.
-	 * @param array          $options      Optional. Control aditional options.
+	 * @param array          $options      Optional. Control additional options.
 	 *                                     Default is an empty array.
 	 *
 	 * @return bool True if control added, False otherwise.
 	 */
 	public function add_control_to_stack( Controls_Stack $element, $control_id, $control_data, $options = [] ) {
-		if ( ! is_array( $options ) ) {
-			_deprecated_argument( __FUNCTION__, '1.7.0', 'Use `[ \'overwrite\' => ' . var_export( $options, true ) . ' ]` instead.' );
-
-			$options = [
-				'overwrite' => $options,
-			];
-		}
-
 		$default_options = [
 			'overwrite' => false,
 			'index' => null,
@@ -550,7 +683,7 @@ class Controls_Manager {
 		$control_type_instance = $this->get_control( $control_data['type'] );
 
 		if ( ! $control_type_instance ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Control type `' . $control_data['type'] . '` not found`', '1.0.0' );
+			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Control type "%s" not found.', $control_data['type'] ), '1.0.0' );
 			return false;
 		}
 
@@ -567,7 +700,7 @@ class Controls_Manager {
 		$stack_id = $element->get_unique_name();
 
 		if ( ! $options['overwrite'] && isset( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
+			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Cannot redeclare control with same name "%s".', $control_id ), '1.0.0' );
 
 			return false;
 		}
@@ -604,9 +737,9 @@ class Controls_Manager {
 	 * @access public
 	 *
 	 * @param string $stack_id   Stack ID.
-	 * @param string $control_id The ID of the control to remove.
+	 * @param array|string $control_id The ID of the control to remove.
 	 *
-	 * @return bool True if the stack was removed, False otherwise.
+	 * @return bool|\WP_Error True if the stack was removed, False otherwise.
 	 */
 	public function remove_control_from_stack( $stack_id, $control_id ) {
 		if ( is_array( $control_id ) ) {
@@ -662,7 +795,7 @@ class Controls_Manager {
 	 * @param Controls_Stack $element      Element stack.
 	 * @param string         $control_id   Control ID.
 	 * @param array          $control_data Control data.
-	 * @param array          $options      Optional. Control aditional options.
+	 * @param array          $options      Optional. Control additional options.
 	 *                                     Default is an empty array.
 	 *
 	 * @return bool True if control updated, False otherwise.
@@ -680,7 +813,9 @@ class Controls_Manager {
 			$control_data = array_merge( $old_control_data, $control_data );
 		}
 
-		return $this->add_control_to_stack( $element, $control_id, $control_data, [ 'overwrite' => true ] );
+		return $this->add_control_to_stack( $element, $control_id, $control_data, [
+			'overwrite' => true,
+		] );
 	}
 
 	/**
@@ -743,39 +878,99 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param Element_Base $element The element.
+	 * @param Controls_Stack $controls_stack .
+	 * @param string $tab
+	 * @param array $additional_messages
+	 *
 	 */
-	public function add_custom_css_controls( $element ) {
-		$element->start_controls_section(
+	public function add_custom_css_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED, $additional_messages = [] ) {
+		$controls_stack->start_controls_section(
 			'section_custom_css_pro',
 			[
 				'label' => __( 'Custom CSS', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_ADVANCED,
+				'tab' => $tab,
 			]
 		);
 
-		$element->add_control(
+		$messages = [
+			__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ),
+		];
+
+		if ( $additional_messages ) {
+			$messages = array_merge( $messages, $additional_messages );
+		}
+
+		$controls_stack->add_control(
 			'custom_css_pro',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => '<div class="elementor-panel-nerd-box">
-						<i class="elementor-panel-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
-						<div class="elementor-panel-nerd-box-title">' .
-							__( 'Meet Our Custom CSS', 'elementor' ) .
-						'</div>
-						<div class="elementor-panel-nerd-box-message">' .
-							__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ) .
-						'</div>
-						<div class="elementor-panel-nerd-box-message">' .
-							__( 'This feature is only available on Elementor Pro.', 'elementor' ) .
-						'</div>
-						<a class="elementor-panel-nerd-box-link elementor-button elementor-button-default elementor-go-pro" href="' . Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash' ) . '" target="_blank">' .
-							__( 'Go Pro', 'elementor' ) .
-						'</a>
-						</div>',
+				'type' => self::RAW_HTML,
+				'raw' => $this->get_teaser_template( [
+					'title' => __( 'Meet Our Custom CSS', 'elementor' ),
+					'messages' => $messages,
+					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash',
+				] ),
 			]
 		);
 
-		$element->end_controls_section();
+		$controls_stack->end_controls_section();
+	}
+
+	public function get_teaser_template( $texts ) {
+		ob_start();
+		?>
+		<div class="elementor-nerd-box">
+			<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; ?>" />
+			<div class="elementor-nerd-box-title"><?php echo $texts['title']; ?></div>
+			<?php foreach ( $texts['messages'] as $message ) { ?>
+				<div class="elementor-nerd-box-message"><?php echo $message; ?></div>
+			<?php }
+
+			if ( $texts['link'] ) { ?>
+				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo Utils::get_pro_link( $texts['link'] ); ?>" target="_blank">
+					<?php echo __( 'Go Pro', 'elementor' ); ?>
+				</a>
+			<?php } ?>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Add custom attributes controls.
+	 *
+	 * This method adds a new control for the "Custom Attributes" feature. The free
+	 * version of elementor uses this method to display an upgrade message to
+	 * Elementor Pro.
+	 *
+	 * @since 2.8.3
+	 * @access public
+	 *
+	 * @param Controls_Stack $controls_stack.
+	 */
+	public function add_custom_attributes_controls( Controls_Stack $controls_stack ) {
+		$controls_stack->start_controls_section(
+			'section_custom_attributes_pro',
+			[
+				'label' => __( 'Attributes', 'elementor' ),
+				'tab' => self::TAB_ADVANCED,
+			]
+		);
+
+		$controls_stack->add_control(
+			'custom_attributes_pro',
+			[
+				'type' => self::RAW_HTML,
+				'raw' => $this->get_teaser_template( [
+					'title' => __( 'Meet Our Attributes', 'elementor' ),
+					'messages' => [
+						__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
+					],
+					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-attributes&utm_campaign=gopro&utm_medium=wp-dash',
+				] ),
+			]
+		);
+
+		$controls_stack->end_controls_section();
 	}
 }

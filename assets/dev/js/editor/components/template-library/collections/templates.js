@@ -2,7 +2,7 @@ var TemplateLibraryTemplateModel = require( 'elementor-templates/models/template
 	TemplateLibraryCollection;
 
 TemplateLibraryCollection = Backbone.Collection.extend( {
-	model: TemplateLibraryTemplateModel
+	model: TemplateLibraryTemplateModel,
 } );
 
 module.exports = TemplateLibraryCollection;

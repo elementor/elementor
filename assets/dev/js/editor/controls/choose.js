@@ -14,8 +14,18 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'mousedown label': 'onMouseDownLabel',
 			'click @ui.inputs': 'onClickInput',
-			'change @ui.inputs': 'onBaseInputChange'
+			'change @ui.inputs': 'onBaseInputChange',
 		} );
+	},
+
+	applySavedValue: function() {
+		const currentValue = this.getControlValue();
+
+		if ( currentValue ) {
+			this.ui.inputs.filter( '[value="' + currentValue + '"]' ).prop( 'checked', true );
+		} else {
+			this.ui.inputs.filter( ':checked' ).prop( 'checked', false );
+		}
 	},
 
 	onMouseDownLabel: function( event ) {
@@ -36,16 +46,11 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 			$selectedInput.prop( 'checked', false ).trigger( 'change' );
 		}
 	},
+}, {
 
-	onRender: function() {
-		ControlBaseDataView.prototype.onRender.apply( this, arguments );
-
-		var currentValue = this.getControlValue();
-
-		if ( currentValue ) {
-			this.ui.inputs.filter( '[value="' + currentValue + '"]' ).prop( 'checked', true );
-		}
-	}
+	onPasteStyle: function( control, clipboardValue ) {
+		return '' === clipboardValue || undefined !== control.options[ clipboardValue ];
+	},
 } );
 
 module.exports = ControlChooseItemView;

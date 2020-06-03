@@ -1,0 +1,162 @@
+.elementor-tags-list {
+	display: none;
+	position: absolute;
+	width: 260px;
+	max-height: 300px;
+	overflow: auto;
+	padding-bottom: 5px;
+	background-color: #fff;
+	border: 1px solid $editor-light;
+	border-radius: 3px;
+	z-index: $first-layer;
+
+	&__group-title {
+		color: $editor-darkest;
+		font-weight: bold;
+		font-size: 12px;
+		padding: 10px 15px;
+		display: flex;
+		align-items: center;
+
+		.eicon-info-circle {
+			@include padding-end(5px);
+			color: $editor-info;
+			font-size: 14px;
+		}
+	}
+
+	&__item {
+		font-size: 10px;
+		padding: 6px 15px;
+		cursor: pointer;
+
+		&:before {
+			content: '>';
+			font-size: 8px;
+			@include padding-end(5px);
+		}
+
+		&:hover {
+			background-color: $editor-background;
+		}
+	}
+
+	&__teaser {
+		border-top: 2px solid $editor-lightest;
+		padding-top: 4px;
+		margin-top: 4px;
+
+		&-title {
+			color: $editor-dark;
+		}
+
+		&-text {
+			padding: 2px 15px 8px;
+			line-height: 1.5;
+			font-size: 12px;
+		}
+
+		&-link {
+			color: $editor-accent;
+			text-decoration: underline;
+			font-style: italic;
+			font-weight: bold;
+		}
+	}
+}
+
+.elementor-dynamic-cover {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: $control-unit;
+	box-sizing: border-box; // overriding for TinyMCE environment
+
+	&__title {
+		padding: 0 8px;
+		flex-grow: 1;
+		@include ellipsis;
+	}
+
+	&__settings,
+	&__remove {
+		color: $editor-lighter;
+		cursor: pointer;
+		transition: $transition-hover;
+
+		&:hover {
+			color: $editor-light;
+		}
+	}
+
+	.elementor-control-type-wysiwyg & {
+		margin-top: 10px;
+	}
+}
+
+.elementor-tag-settings-popup {
+	position: absolute;
+	width: 260px;
+	background-color: $editor-background;
+	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
+	z-index: 1;
+
+	&:before {
+		$triangle-size: 10px;
+
+		content: '';
+		position: absolute;
+		top: -#{$triangle-size * 2};
+		@include start(5px);
+		border: $triangle-size solid transparent;
+		border-bottom-color: #fff;
+	}
+
+	.elementor-control {
+
+		&-type-section {
+
+			&:first-child {
+				margin: 0;
+			}
+		}
+	}
+}
+
+.elementor-tag-controls-stack-empty {
+	background-color: #fff;
+	padding: 10px;
+	font-size: 13px;
+	text-align: center;
+}
+
+.elementor-control-dynamic {
+
+	&-switcher {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		height: $control-unit;
+		cursor: pointer;
+		border: 1px solid $editor-lightest;
+		border-radius: 3px;
+		background: #fff;
+
+		&-wrapper {
+			display: flex;
+		}
+
+		.eicon-database {
+			font-size: 12px;
+		}
+	}
+
+	&-value {
+
+		.elementor-control-tag-area,
+		.elementor-control-dynamic-switcher {
+			display: none;
+		}
+	}
+}

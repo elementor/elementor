@@ -1,27 +1,50 @@
-var ControlBaseDataView = require( 'elementor-controls/base-data' ),
-	ControlColorItemView;
+import ControlBaseDataView from './base-data';
+import ColorPicker from '../utils/color-picker';
 
-ControlColorItemView = ControlBaseDataView.extend( {
-	onReady: function() {
-		var self = this;
+export default class extends ControlBaseDataView {
+	ui() {
+		const ui = super.ui();
 
-		elementor.helpers.wpColorPicker( self.ui.input, {
-			change: function() {
-				self.ui.input.val( self.ui.input.wpColorPicker( 'color' ) ).trigger( 'input' );
-			},
-			clear: function() {
-				self.setValue( '' );
-			}
-		} );
-	},
+		ui.pickerContainer = '.elementor-color-picker-placeholder';
 
-	onBeforeDestroy: function() {
-		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
-			this.ui.input.wpColorPicker( 'close' );
-		}
-
-		this.$el.remove();
+		return ui;
 	}
-} );
 
-module.exports = ControlColorItemView;
+	applySavedValue() {
+		if ( this.colorPicker ) {
+			this.colorPicker.picker.setColor( this.getControlValue() );
+		} else {
+			this.initPicker();
+		}
+	}
+
+	initPicker() {
+		const options = {
+			picker: {
+				el: this.ui.pickerContainer[ 0 ],
+				default: this.getControlValue(),
+				components: {
+					opacity: this.model.get( 'alpha' ),
+				},
+			},
+			onChange: () => this.onPickerChange(),
+			onClear: () => this.onPickerClear(),
+		};
+
+		this.colorPicker = new ColorPicker( options );
+
+		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
+	}
+
+	onPickerChange() {
+		this.setValue( this.colorPicker.getColor() );
+	}
+
+	onPickerClear() {
+		this.setValue( '' );
+	}
+
+	onBeforeDestroy() {
+		this.colorPicker.destroy();
+	}
+}

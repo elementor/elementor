@@ -1,12 +1,14 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Settings\Manager as SettingsManager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Widget Base.
+ * Elementor widget base.
  *
  * An abstract class to register new Elementor widgets. It extended the
  * `Element_Base` class to inherit its properties.
@@ -23,7 +25,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used in cases where the widget has no content. When widgets uses only
 	 * skins to display dynamic content generated on the server. For example the
-	 * posts widget in Elemenrot Pro. Default is true, the widget has content
+	 * posts widget in Elementor Pro. Default is true, the widget has content
 	 * template.
 	 *
 	 * @access protected
@@ -41,40 +43,10 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @return string Control type.
+	 * @return string The type.
 	 */
 	public static function get_type() {
 		return 'widget';
-	}
-
-	/**
-	 * Get default edit tools.
-	 *
-	 * Retrieve the default edit tools of the widget. This method is used to set
-	 * initial tools - it adds Duplicate and Remove on top of of Edit and Save
-	 * tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @return array Default edit tools.
-	 */
-	protected static function get_default_edit_tools() {
-		$widget_label = __( 'Widget', 'elementor' );
-
-		return [
-			'duplicate' => [
-				/* translators: %s: Widget Label */
-				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
-				'icon' => 'clone',
-			],
-			'remove' => [
-				/* translators: %s: Widget Label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
-				'icon' => 'close',
-			],
-		];
 	}
 
 	/**
@@ -116,7 +88,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return array Widget categories.
 	 */
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'general' ];
 	}
 
 	/**
@@ -127,6 +99,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @throws \Exception If arguments are missing when initializing a full widget
+	 *                   instance.
+	 *
 	 * @param array      $data Widget data. Default is an empty array.
 	 * @param array|null $args Optional. Widget default arguments. Default is null.
 	 */
@@ -136,7 +111,7 @@ abstract class Widget_Base extends Element_Base {
 		$is_type_instance = $this->is_type_instance();
 
 		if ( ! $is_type_instance && null === $args ) {
-			throw new \Exception( '`$args` argument is required when initializing a full widget instance' );
+			throw new \Exception( '`$args` argument is required when initializing a full widget instance.' );
 		}
 
 		if ( $is_type_instance ) {
@@ -236,15 +211,15 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
-	 * @param array  $args       Section arguments.
+	 * @param array  $args       Section arguments Optional.
 	 */
-	public function start_controls_section( $section_id, array $args ) {
+	public function start_controls_section( $section_id, array $args = [] ) {
 		parent::start_controls_section( $section_id, $args );
 
 		static $is_first_section = true;
 
 		if ( $is_first_section ) {
-			$this->_register_skin_control();
+			$this->register_skin_control();
 
 			$is_first_section = false;
 		}
@@ -256,10 +231,10 @@ abstract class Widget_Base extends Element_Base {
 	 * An internal method that is used to add a skin control to the widget.
 	 * Added at the top of the controls section.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
-	private function _register_skin_control() {
+	private function register_skin_control() {
 		$skins = $this->get_skins();
 		if ( ! empty( $skins ) ) {
 			$skin_options = [];
@@ -321,90 +296,59 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Retrieve the current widget initial configuration.
 	 *
-	 * Adds more configuration on top of the controls list, the tabs assignet to
+	 * Adds more configuration on top of the controls list, the tabs assigned to
 	 * the control, element name, type, icon and more. This method also adds
 	 * widget type, keywords and categories.
 	 *
-	 * @since 1.0.10
+	 * @since 2.9.0
 	 * @access protected
 	 *
 	 * @return array The initial widget config.
 	 */
-	protected function _get_initial_config() {
+	protected function get_initial_config() {
 		$config = [
 			'widget_type' => $this->get_name(),
 			'keywords' => $this->get_keywords(),
 			'categories' => $this->get_categories(),
+			'html_wrapper_class' => $this->get_html_wrapper_class(),
+			'show_in_panel' => $this->show_in_panel(),
 		];
 
-		return array_merge( parent::_get_initial_config(), $config );
-	}
+		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
-	/**
-	 * Print widget template.
-	 *
-	 * Used to generate the widget template on the editor, using a Backbone
-	 * JavaScript template.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	final public function print_template() {
-		ob_start();
-
-		$this->_content_template();
-
-		$content_template = ob_get_clean();
-
-		/**
-		 * Print widget template.
-		 *
-		 * Filters the widget template before it's printed in the editor.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string      $content_template The widget template in the editor.
-		 * @param Widget_Base $this             The widget.
-		 */
-		$content_template = apply_filters( 'elementor/widget/print_template', $content_template,  $this );
-
-		// Bail if the widget renderd on the server not using javascript
-		if ( empty( $content_template ) ) {
-			return;
+		if ( $stack ) {
+			$config['controls'] = $this->get_stack( false )['controls'];
+			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
-		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php $this->render_edit_tools(); ?>
-			<div class="elementor-widget-container">
-				<?php echo $content_template; ?>
-			</div>
-		</script>
-		<?php
+
+		return array_merge( parent::get_initial_config(), $config );
 	}
 
 	/**
-	 * Render widget edit tools.
-	 *
-	 * Used to generate the edit tools HTML.
-	 *
-	 * @since 1.8.0
+	 * @since 2.3.1
 	 * @access protected
 	 */
-	protected function render_edit_tools() {
+	protected function should_print_empty() {
+		return false;
+	}
+
+	/**
+	 * Print widget content template.
+	 *
+	 * Used to generate the widget content template on the editor, using a
+	 * Backbone JavaScript template.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @param string $template_content Template content.
+	 */
+	protected function print_template_content( $template_content ) {
 		?>
-		<div class="elementor-element-overlay">
-			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?>">
-					<i class="eicon-edit" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?></span>
-				</li>
-				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
-						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-					</li>
-				<?php endforeach; ?>
-			</ul>
+		<div class="elementor-widget-container">
+			<?php
+			echo $template_content; // XSS ok.
+			?>
 		</div>
 		<?php
 	}
@@ -438,6 +382,123 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get HTML wrapper class.
+	 *
+	 * Retrieve the widget container class. Can be used to override the
+	 * container class for specific widgets.
+	 *
+	 * @since 2.0.9
+	 * @access protected
+	 */
+	protected function get_html_wrapper_class() {
+		return 'elementor-widget-' . $this->get_name();
+	}
+
+	/**
+	 * Add widget render attributes.
+	 *
+	 * Used to add attributes to the current widget wrapper HTML tag.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
+	protected function _add_render_attributes() {
+		parent::_add_render_attributes();
+
+		$this->add_render_attribute(
+			'_wrapper', 'class', [
+				'elementor-widget',
+				$this->get_html_wrapper_class(),
+			]
+		);
+
+		$settings = $this->get_settings();
+
+		$this->add_render_attribute( '_wrapper', 'data-widget_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
+	}
+
+	/**
+	 * Add lightbox data to image link.
+	 *
+	 * Used to add lightbox data attributes to image link HTML.
+	 *
+	 * @since 2.9.1
+	 * @access public
+	 *
+	 * @param string $link_html Image link HTML.
+	 * @param string $id Attachment id.
+	 *
+	 * @return string Image link HTML with lightbox data attributes.
+	 */
+	public function add_lightbox_data_to_image_link( $link_html, $id ) {
+		$settings = $this->get_settings_for_display();
+		$open_lightbox = isset( $settings['open_lightbox'] ) ? $settings['open_lightbox'] : null;
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$this->add_render_attribute( 'link', 'class', 'elementor-clickable', true );
+		}
+
+		$this->add_lightbox_data_attributes( 'link', $id, $open_lightbox, $this->get_id(), true );
+		return preg_replace( '/^<a/', '<a ' . $this->get_render_attribute_string( 'link' ), $link_html );
+	}
+
+	/**
+	 * Add Light-Box attributes.
+	 *
+	 * Used to add Light-Box-related data attributes to links that open media files.
+	 *
+	 * @param array|string $element         The link HTML element.
+	 * @param int $id                       The ID of the image
+	 * @param string $lightbox_setting_key  The setting key that dictates weather to open the image in a lightbox
+	 * @param string $group_id              Unique ID for a group of lightbox images
+	 * @param bool $overwrite               Optional. Whether to overwrite existing
+	 *                                      attribute. Default is false, not to overwrite.
+	 *
+	 * @return Widget_Base Current instance of the widget.
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 */
+	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false ) {
+		$general_settings_model = SettingsManager::get_settings_managers( 'general' )->get_model();
+		$is_global_image_lightbox_enabled = 'yes' === $general_settings_model->get_settings( 'elementor_global_image_lightbox' );
+
+		if ( 'no' === $lightbox_setting_key ) {
+			if ( $is_global_image_lightbox_enabled ) {
+				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no' );
+			}
+
+			return $this;
+		}
+
+		if ( 'yes' !== $lightbox_setting_key && ! $is_global_image_lightbox_enabled ) {
+			return $this;
+		}
+
+		$attributes['data-elementor-open-lightbox'] = 'yes';
+
+		if ( $group_id ) {
+			$attributes['data-elementor-lightbox-slideshow'] = $group_id;
+		}
+
+		if ( $id ) {
+			$lightbox_image_attributes = Plugin::$instance->images_manager->get_lightbox_image_attributes( $id );
+
+			if ( isset( $lightbox_image_attributes['title'] ) ) {
+				$attributes['data-elementor-lightbox-title'] = $lightbox_image_attributes['title'];
+			}
+
+			if ( isset( $lightbox_image_attributes['description'] ) ) {
+				$attributes['data-elementor-lightbox-description'] = $lightbox_image_attributes['description'];
+			}
+		}
+
+		$this->add_render_attribute( $element, $attributes, null, $overwrite );
+
+		return $this;
+	}
+
+	/**
 	 * Render widget output on the frontend.
 	 *
 	 * Used to generate the final HTML displayed on the frontend.
@@ -460,24 +521,24 @@ abstract class Widget_Base extends Element_Base {
 		 */
 		do_action( 'elementor/widget/before_render_content', $this );
 
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			$this->render_edit_tools();
+		ob_start();
+
+		$skin = $this->get_current_skin();
+		if ( $skin ) {
+			$skin->set_parent( $this );
+			$skin->render();
+		} else {
+			$this->render();
 		}
 
+		$widget_content = ob_get_clean();
+
+		if ( empty( $widget_content ) ) {
+			return;
+		}
 		?>
 		<div class="elementor-widget-container">
 			<?php
-			ob_start();
-
-			$skin = $this->get_current_skin();
-			if ( $skin ) {
-				$skin->set_parent( $this );
-				$skin->render();
-			} else {
-				$this->render();
-			}
-
-			$widget_content = ob_get_clean();
 
 			/**
 			 * Render widget content.
@@ -491,7 +552,7 @@ abstract class Widget_Base extends Element_Base {
 			 */
 			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
 
-			echo $widget_content;
+			echo $widget_content; // XSS ok.
 			?>
 		</div>
 		<?php
@@ -524,29 +585,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Add render attributes.
-	 *
-	 * Used to add several attributes to current widget `_wrapper` element.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
-	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
-
-		$this->add_render_attribute(
-			'_wrapper', 'class', [
-				'elementor-widget',
-				'elementor-widget-' . $this->get_name(),
-			]
-		);
-
-		$settings = $this->get_settings();
-
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
-	}
-
-	/**
 	 * Before widget rendering.
 	 *
 	 * Used to add stuff before the widget `_wrapper` element.
@@ -556,7 +594,7 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function before_render() {
 		?>
-		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<div <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 	}
 
@@ -818,5 +856,34 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function get_skins() {
 		return Plugin::$instance->skins_manager->get_skins( $this );
+	}
+
+	/**
+	 * @param string $plugin_title  Plugin's title
+	 * @param string $since         Plugin version widget was deprecated
+	 * @param string $last          Plugin version in which the widget will be removed
+	 * @param string $replacement   Widget replacement
+	 */
+	protected function deprecated_notice( $plugin_title, $since, $last = '', $replacement = '' ) {
+		$this->start_controls_section( 'Deprecated',
+			[
+				'label' => __( 'Deprecated', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'deprecated_notice',
+			[
+				'type' => Controls_Manager::DEPRECATED_NOTICE,
+				'widget' => $this->get_title(),
+				'since' => $since,
+				'last' => $last,
+				'plugin' => $plugin_title,
+				'replacement' => $replacement,
+			]
+		);
+
+		$this->end_controls_section();
+
 	}
 }

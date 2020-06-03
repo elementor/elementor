@@ -27,9 +27,7 @@
 		}
 
 		&__logo {
-			color: $editor-accent;
-			font-size: 40px;
-			width: 40px;
+			width: 30px;
 		}
 
 		&__versions {
@@ -121,7 +119,7 @@
 		&__go-pro {
 
 			a {
-				color: $editor-orange;
+				color: $editor-accent;
 				font-weight: 500;
 			}
 		}

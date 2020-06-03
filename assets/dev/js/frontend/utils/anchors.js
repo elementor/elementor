@@ -1,16 +1,12 @@
-var ViewModule = require( '../../utils/view-module' );
-
-module.exports = ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
-
 		return {
 			scrollDuration: 500,
 			selectors: {
 				links: 'a[href*="#"]',
 				targets: '.elementor-element, .elementor-menu-anchor',
 				scrollable: 'html, body',
-				wpAdminBar: '#wpadminbar'
-			}
+			},
 		};
 	},
 
@@ -20,34 +16,49 @@ module.exports = ViewModule.extend( {
 
 		return {
 			$scrollable: $( selectors.scrollable ),
-			$wpAdminBar: $( selectors.wpAdminBar )
 		};
 	},
 
 	bindEvents: function() {
-		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
+		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
 	},
 
 	handleAnchorLinks: function( event ) {
 		var clickedLink = event.currentTarget,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
-			isSameHostname = ( location.hostname === clickedLink.hostname );
+			isSameHostname = ( location.hostname === clickedLink.hostname ),
+			$anchor;
 
 		if ( ! isSameHostname || ! isSamePathname || clickedLink.hash.length < 2 ) {
 			return;
 		}
 
-		var $anchor = jQuery( clickedLink.hash ).filter( this.getSettings( 'selectors.targets' ) );
+		try {
+			$anchor = jQuery( clickedLink.hash ).filter( this.getSettings( 'selectors.targets' ) );
+		} catch ( e ) {
+			return;
+		}
 
 		if ( ! $anchor.length ) {
 			return;
 		}
 
-		var hasAdminBar = ( 1 <= this.elements.$wpAdminBar.length ),
-			scrollTop = $anchor.offset().top;
+		var scrollTop = $anchor.offset().top,
+			$wpAdminBar = elementorFrontend.elements.$wpAdminBar,
+			$activeStickies = jQuery( '.elementor-section.elementor-sticky--active:visible' ),
+			maxStickyHeight = 0;
 
-		if ( hasAdminBar ) {
-			scrollTop -= this.elements.$wpAdminBar.height();
+		if ( $wpAdminBar.length > 0 ) {
+			scrollTop -= $wpAdminBar.height();
+		}
+
+		// Offset height of tallest sticky
+		if ( $activeStickies.length > 0 ) {
+			maxStickyHeight = Math.max.apply( null, $activeStickies.map( function() {
+				return jQuery( this ).outerHeight();
+			} ).get() );
+
+			scrollTop -= maxStickyHeight;
 		}
 
 		event.preventDefault();
@@ -55,13 +66,13 @@ module.exports = ViewModule.extend( {
 		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
 
 		this.elements.$scrollable.animate( {
-			scrollTop: scrollTop
+			scrollTop: scrollTop,
 		}, this.getSettings( 'scrollDuration' ), 'linear' );
 	},
 
 	onInit: function() {
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.bindEvents();
-	}
+	},
 } );

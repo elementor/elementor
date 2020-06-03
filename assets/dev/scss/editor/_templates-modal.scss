@@ -1,46 +1,6 @@
-$library_screen_breakpoint: $screen-lg-max;
+$remote-templates-items-space: 30px;
 
 #elementor-template-library-modal {
-
-	.dialog-widget-content {
-		background-color: $editor-background-light;
-		width: 100%;
-
-		@media (max-width: $library_screen_breakpoint) {
-			max-width: 990px;
-		}
-
-		@media (min-width: $library_screen_breakpoint + 1) {
-			max-width: 1200px;
-		}
-	}
-
-	.dialog-widget-header {
-		padding: 0;
-		background-color: #fff;
-		box-shadow: $panel-bottom-shadow;
-		position: relative; // Show the shadow above the scrolled list
-		z-index: 1;
-	}
-
-	.dialog-buttons-wrapper {
-		display: none;
-	}
-
-	.dialog-message {
-		height: 750px;
-		max-height: 85vh;
-		overflow: auto;
-		padding: 25px 30px 30px;
-	}
-
-	a {
-
-		&,
-		&:hover {
-			color: inherit;
-		}
-	}
 
 	a.elementor-template-library-blank-footer-link {
 		font-style: normal;
@@ -48,49 +8,17 @@ $library_screen_breakpoint: $screen-lg-max;
 		color: $editor-success;
 
 		&:hover {
-			font-weight: 500;
+			color: darken($editor-success, 10%);
 		}
 	}
-}
 
-#elementor-template-library-header {
-	display: flex;
-	align-items: center;
-	height: 50px;
-}
-
-#elementor-template-library-header-logo-area {
-	text-align: $start;
-	@include padding-start(15px);
-
-	> * {
-		display: flex;
-		align-items: center;
-	}
-}
-
-#elementor-template-library-header-logo {
-	font-size: 15px;
-	text-transform: uppercase;
-	color: $editor-darkest;
-	font-weight: bold;
-	cursor: pointer;
-
-	&-icon-wrapper {
-		padding: 4px 7px 6px;
-		background-image: linear-gradient(-135deg, #EF295A, #434363);
-		border-radius: 2px;
-		@include margin-end(10px);
+	.dialog-buttons-wrapper {
+		display: none;
 	}
 
-	i {
-		color: #fff;
-		font-size: 10px;
+	.select2-container {
+		z-index: 0;
 	}
-}
-
-#elementor-template-library-header-menu-area {
-	flex-grow: 1;
 }
 
 #elementor-template-library-header-menu {
@@ -101,44 +29,13 @@ $library_screen_breakpoint: $screen-lg-max;
 
 .elementor-template-library-menu-item {
 	display: inline-block;
-	padding: 17px;
+	padding: 17px 0;
+	width: 115px;
 	cursor: pointer;
 
 	&.elementor-active {
-		background-image: linear-gradient(to bottom, #f3f3f3, #fff);
-		border-bottom: 3px solid #9b0a46;
-	}
-}
-
-#elementor-template-library-header-items-area {
-	display: flex;
-	flex-direction: row-reverse;
-}
-
-.elementor-template-library-header-item {
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-sizing: content-box;
-
-	> i {
-		font-size: 20px;
-		transition: color .5s;
-		cursor: pointer;
-
-		&:not(:hover) {
-			color: $editor-light;
-		}
-	}
-}
-
-#elementor-template-library-header-close-modal {
-	width: 45px;
-	@include border-start(1px solid $editor-background);
-
-	i {
-		font-size: 18px;
+		background-image: linear-gradient(to bottom, $editor-background-light, #fff);
+		border-bottom: 3px solid $editor-accent;
 	}
 }
 
@@ -156,6 +53,17 @@ $library_screen_breakpoint: $screen-lg-max;
 
 	.elementor-button {
 		padding: 8px 14px;
+		font-size: 11px;
+	}
+
+	.elementor-template-library-template-insert {
+		color: #fff;
+		background-color: $editor-success;
+	}
+
+	.elementor-go-pro {
+		background-color: $editor-accent;
+		color: #fff;
 	}
 }
 
@@ -174,19 +82,8 @@ $library_screen_breakpoint: $screen-lg-max;
 		font-size: 18px;
 
 		&:before {
-			content: getValueByDirection( '\e908', '\e907' );
+			content: getValueByDirection( '\e87e', '\e87d' );
 		}
-	}
-}
-
-#elementor-template-library-loading {
-
-	.elementor-loading-title {
-		color: $editor-light;
-	}
-
-	.elementor-loader-box {
-		background-color: $editor-lightest;
 	}
 }
 
@@ -198,6 +95,7 @@ $library_screen_breakpoint: $screen-lg-max;
 		#elementor-template-library-templates-container {
 			box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, .03);
 			margin-top: 10px;
+			margin-bottom: 45px;
 		}
 
 		.elementor-template-library-order-input {
@@ -252,7 +150,7 @@ $library_screen_breakpoint: $screen-lg-max;
 
 				&:after {
 					font-family: eicons;
-					content: '\e956';
+					content: '\e8ae';
 					@include margin-start(3px);
 				}
 			}
@@ -262,7 +160,7 @@ $library_screen_breakpoint: $screen-lg-max;
 				+ .elementor-template-library-order-label {
 
 					&:after {
-						content: '\e955';
+						content: '\e8ad';
 					}
 				}
 			}
@@ -273,16 +171,14 @@ $library_screen_breakpoint: $screen-lg-max;
 #elementor-template-library-templates-container {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: flex-start; // For blocks layout
 
 	// These rules are here because of selectors priority
-	.elementor-template-library-template-insert {
-		font-size: 12px;
-	}
-
 	.elementor-template-library-template-local {
 
 		.elementor-template-library-template-insert {
 			text-transform: none;
+			font-size: 12px;
 		}
 	}
 }
@@ -295,6 +191,7 @@ $library_screen_breakpoint: $screen-lg-max;
 
 .elementor-template-library-filter-toolbar {
 	display: flex;
+	align-items: center;
 }
 
 #elementor-template-library-filter-toolbar-remote {
@@ -308,12 +205,35 @@ $library_screen_breakpoint: $screen-lg-max;
 
 .elementor-template-library-order-label {
 	text-transform: uppercase;
-	cursor: pointer;
 	@include padding-end(22px);
 	user-select: none;
+}
+
+label.elementor-template-library-order-label {
+	cursor: pointer;
 
 	&:hover {
 		color: $editor-darker;
+	}
+}
+
+#elementor-template-library-filter {
+	@include border-end(1px solid $editor-lightest);
+
+	.select2 {
+		text-align: $start;
+		@include margin-end(25px);
+	}
+
+	.select2-selection__rendered {
+		text-transform: capitalize;
+	}
+}
+
+#select2-elementor-template-library-filter-subtype-results {
+
+	.select2-results__option {
+		text-transform: capitalize;
 	}
 }
 
@@ -335,7 +255,7 @@ $library_screen_breakpoint: $screen-lg-max;
 
 				&:after {
 					color: $editor-accent;
-					content: '\f004';
+					content: '\e93f';
 				}
 			}
 		}
@@ -362,7 +282,7 @@ $library_screen_breakpoint: $screen-lg-max;
 
 		&:after {
 			color: $editor-light;
-			content: '\f08a';
+			content: '\e923';
 		}
 	}
 }
@@ -371,13 +291,11 @@ $library_screen_breakpoint: $screen-lg-max;
 	width: 200px;
 	position: relative;
 
-	&:after {
-		content: '\e863';
+	i {
 		position: absolute;
 		top: 50%;
 		@include end(0);
 		transform: translateY(-50%);
-		font-family: eicons;
 	}
 }
 
@@ -386,7 +304,6 @@ $library_screen_breakpoint: $screen-lg-max;
 	border-bottom: 1px solid $editor-lightest;
 	border-radius: 0;
 	font-size: 11px;
-	text-transform: uppercase;
 	padding: 8px 15px 8px 0;
 	transition: border 0.5s;
 
@@ -396,55 +313,43 @@ $library_screen_breakpoint: $screen-lg-max;
 
 	&::placeholder {
 		font-weight: 300;
-		color: $editor-lighter;
+		text-transform: uppercase;
 	}
 
 	&:focus {
 		border-color: $editor-lighter;
-
-		&::placeholder {
-			color: $editor-light;
-		}
 	}
 }
 
 .elementor-template-library-template-remote {
-	$items-space: 30px;
-
-	margin: $items-space / 2;
+	margin: $remote-templates-items-space / 2;
 	padding: 8px;
 	background-color: #fff;
 	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
+	border-radius: 3px;
 
-	&:not(:hover) {
+	&:hover {
 
-		.elementor-template-library-template-controls {
-			opacity: 0;
-		}
-
-		.elementor-template-library-template-favorite-label {
+		.elementor-template-library-template-name {
 			display: none;
 		}
 	}
 
-	border-radius: 3px;
+	&:not(:hover) {
 
-	@media (max-width: $library_screen_breakpoint) {
-		width: calc(25% - #{$items-space});
-	}
+		.elementor-template-library-template-preview {
+			opacity: 0;
+		}
 
-	@media (min-width: $library_screen_breakpoint + 1) {
-		width: calc(20% - #{$items-space});
-	}
-
-	@media (max-width: $screen-lg-min) {
-		width: calc(33.333% - #{$items-space});
+		.elementor-template-library-favorite,
+		.elementor-template-library-template-action {
+			display: none;
+		}
 	}
 
 	&.elementor-template-library-pro-template {
 
 		.elementor-template-library-template-body {
-			position: relative;
 
 			&:before {
 				position: absolute;
@@ -461,12 +366,43 @@ $library_screen_breakpoint: $screen-lg-max;
 		}
 	}
 
+	&:not(.elementor-template-library-template-page) {
+		position: relative;
+		width: calc(33.333% - #{$remote-templates-items-space});
+		overflow: hidden;
+
+		img {
+			display: block;
+			width: 100%;
+		}
+
+		.elementor-template-library-template-footer {
+			position: absolute;
+			width: 100%;
+			bottom: 0;
+			@include start(0);
+			padding: 10px;
+			background-color: #fff;
+			transition: transform .5s;
+		}
+
+		.elementor-template-library-template-name {
+			display: none;
+		}
+
+		&:not(:hover) {
+
+			.elementor-template-library-template-footer {
+				transform: translateY(100%)
+			}
+		}
+	}
+
 	.elementor-template-library-template-body {
-		height: 200px;
 		position: relative;
 	}
 
-	@media (max-width: $screen-lg-min) {
+	@media (max-width: $editor-screen-lg-min) {
 
 		.elementor-template-library-template-body {
 			height: 300px;
@@ -480,7 +416,7 @@ $library_screen_breakpoint: $screen-lg-max;
 		box-shadow: inset 0px -2px 15px -6px rgba(0, 0, 0, 0.07);
 	}
 
-	.elementor-template-library-template-controls {
+	.elementor-template-library-template-preview {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -488,32 +424,27 @@ $library_screen_breakpoint: $screen-lg-max;
 		height: 100%;
 		background-color: rgba(0,0,0,.5);
 		transition: opacity .5s;
-	}
-
-	.elementor-template-library-template-action {
-		font-size: 11px;
-		width: 150px;
-		padding: 11px;
-	}
-
-	.elementor-template-library-template-preview {
-		position: relative;
-		height: 150px;
 		cursor: pointer;
 
 		i {
 			font-size: 20px;
 			color: $editor-lightest;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
+			@include absolute-center;
 		}
 	}
 
+	.elementor-template-library-template-insert {
+		color: $editor-success;
+	}
+
+	.elementor-go-pro {
+		color: $editor-accent;
+	}
+
 	.elementor-template-library-template-footer {
-		margin: 10px 0 2px;
 		display: flex;
+		justify-content: space-between;
+		margin-top: 10px;
 		font-size: 11px;
 		line-height: 1;
 	}
@@ -522,9 +453,7 @@ $library_screen_breakpoint: $screen-lg-max;
 		text-align: $start;
 		color: $editor-dark;
 		flex-grow: 1;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		@include ellipsis;
 		@include padding-end(5px);
 	}
 
@@ -538,7 +467,7 @@ $library_screen_breakpoint: $screen-lg-max;
 				i {
 
 					&:before {
-						content: '\f004';
+						content: '\e93f';
 						color: $editor-accent;
 					}
 				}
@@ -555,6 +484,24 @@ $library_screen_breakpoint: $screen-lg-max;
 				color: $editor-accent;
 			}
 		}
+	}
+}
+
+.elementor-template-library-template-page {
+	@media (max-width: $library_screen_breakpoint) {
+		width: calc(25% - #{$remote-templates-items-space});
+	}
+
+	@media (min-width: $library_screen_breakpoint + 1) {
+		width: calc(20% - #{$remote-templates-items-space});
+	}
+
+	@media (max-width: $editor-screen-lg-min) {
+		width: calc(33.333% - #{$remote-templates-items-space});
+	}
+
+	.elementor-template-library-template-body {
+		height: 200px;
 	}
 }
 
@@ -611,15 +558,20 @@ $library_screen_breakpoint: $screen-lg-max;
 		font-weight: 500;
 	}
 
-	.elementor-template-library-template-name, .elementor-template-library-template-meta {
+	.elementor-template-library-template-name,
+	.elementor-template-library-template-meta {
 		@include padding-end(20px);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 
 	.elementor-template-library-template-meta {
 		color: $editor-light;
+	}
+
+	.elementor-template-library-template-name,
+	.elementor-template-library-template-meta,
+	.elementor-template-library-template-preview,
+	.elementor-template-library-template-action {
+		@include ellipsis;
 	}
 
 	.elementor-template-library-template-controls {
@@ -627,13 +579,14 @@ $library_screen_breakpoint: $screen-lg-max;
 		display: flex;
 		align-items: center;
 
+		&,
+		& a {
+			color: $editor-light;
+		}
+
 		> div {
 			cursor: pointer;
 			transition: color .5s;
-
-			&:not(:hover) {
-				color: $editor-light;
-			}
 		}
 	}
 
@@ -648,26 +601,24 @@ $library_screen_breakpoint: $screen-lg-max;
 		@include margin-start(6px);
 	}
 
-	.elementor-template-library-template-delete {
+	.elementor-template-library-template-more {
 
-		&:hover {
-			color: $editor-danger;
+		&:hover,
+		a:hover {
+			color: $editor-darker;
 		}
-	}
 
-	.elementor-template-library-template-export {
+		.elementor-template-library-template-delete {
 
-		&:hover {
-
-			i {
-				color: $editor-darker;
+			&:hover {
+				color: $editor-danger;
 			}
 		}
 	}
 
 	.elementor-template-library-template-action {
 		padding: 8px 18px;
-		margin: 0 20px;
+		margin: 0 5%;
 	}
 
 	.elementor-template-library-template-more {
@@ -730,18 +681,35 @@ $library_screen_breakpoint: $screen-lg-max;
 	margin-top: 45px;
 	color: $editor-lighter;
 	line-height: 1;
+
+	img {
+		width: 70px;
+	}
+
+	.elementor-template-library-no-results {
+		width: 200px;
+	}
 }
 
 .elementor-template-library-blank-title {
 	font-size: 30px;
 	margin-top: 40px;
+
+	@media (max-width: $editor-screen-lg-max) {
+		font-size: 25px;
+	}
 }
 
 .elementor-template-library-blank-message {
 	font-size: 18px;
 	color: $editor-light;
-	margin-top: 25px;
+	margin-top: 15px;
 	font-weight: 300;
+
+	@media (max-width: $editor-screen-lg-max) {
+		font-size: 16px;
+		margin-top: 10px;
+	}
 }
 
 #elementor-template-library-save-template-form {
@@ -764,16 +732,11 @@ $library_screen_breakpoint: $screen-lg-max;
 	@include padding-start(25px);
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 	border: none;
-
-	&::placeholder {
-		color: $editor-light;
-	}
 }
 
 #elementor-template-library-save-template-submit {
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-	font-weight: 500;
 
 	&:hover {
 		box-shadow: none;
@@ -802,7 +765,6 @@ $library_screen_breakpoint: $screen-lg-max;
 		&-label {
 			margin-top: 20px;
 			padding: 15px 35px;
-			font-size: 16px;
 			display: inline-block;
 		}
 
@@ -827,13 +789,64 @@ $library_screen_breakpoint: $screen-lg-max;
 	}
 }
 
+.e-route-library-connect {
+	#elementor-template-library-modal {
+		.dialog-message {
+			max-height: 95vh;
+			padding: 100px 0 0;
+			min-height: 550px;
+		}
+	}
+}
+
+#elementor-template-library-connect {
+
+	&-logo {
+		font-size: 20px;
+	}
+
+	&__button {
+		display: inline-block;
+		position: relative;
+		z-index: 1; // over the images
+		margin-top: 25px;
+		padding: 12px 24px;
+		font-size: 14px;
+	}
+
+	&__background-image {
+
+		&-left-1 {
+			right: 22.4%; bottom: -29%; animation: 1.5s fadeIn, 1.5s slideDown, 3.5s mover 1.5s infinite alternate;
+		}
+
+		&-left-2 {
+			right: 46.25%; bottom: -15.5%; animation: 3s fadeIn, 3s slideDown, 2s mover 3s infinite alternate;
+		}
+
+		&-right-1 {
+			left: 37%; bottom: -41%; animation: 2.5s fadeIn, 2.5s slideDown, 2s mover 2.5s infinite alternate;
+		}
+
+		&-right-2 {
+			left: 48%; bottom: -12.5%; animation: 1.5s fadeIn, 1.5s slideDown, 1.5s mover 1.5s infinite alternate;
+		}
+	}
+}
+
+.elementor-template-library-connect {
+
+	&__background-image {
+		position: absolute;
+	}
+}
+
 .elementor-template-library-blank-footer {
 	position: absolute;
 	bottom: 70px;
 	left: 50%;
 	transform: translateX(-50%);
 	color: $editor-light;
-	font-size: 16px;
 	font-style: italic;
 
 	@media (max-height: 700px) {
@@ -847,6 +860,10 @@ $library_screen_breakpoint: $screen-lg-max;
 		color: $editor-lighter;
 		font-size: 56px;
 		margin-top: 40px;
+	}
+
+	.elementor-nerd-box-icon {
+		margin-top: 70px;
 	}
 
 	.elementor-excerpt {
@@ -919,7 +936,7 @@ $library_screen_breakpoint: $screen-lg-max;
 	}
 }
 
-@media (max-width: $screen-md-max) {
+@media (max-width: $editor-screen-md-max) {
 
 	.elementor-template-library-local-column-3 {
 		display: none;

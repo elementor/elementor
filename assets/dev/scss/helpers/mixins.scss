@@ -72,24 +72,16 @@
 	}
 }
 
-@mixin visibility() {
-	@media (max-width: $screen-sm-max) {
-		.elementor-hidden-phone {
-			@content;
-		}
-	}
-
-	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-		.elementor-hidden-tablet {
-			@content;
-		}
-	}
-
-	@media (min-width: $screen-lg-min) {
-		.elementor-hidden-desktop {
-			@content;
-		}
-	}
+@mixin ellipsis {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
+@mixin absolute-center {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
 //End

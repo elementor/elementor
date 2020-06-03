@@ -1,0 +1,79 @@
+#elementor-beta-tester-modal {
+
+	.elementor-templates-modal__header__items-area {
+
+		color: $editor-lighter;
+		cursor: pointer;
+
+		&:hover {
+
+			.elementor-beta-tester-do-not-show-again,
+			.elementor-templates-modal__header__item > i {
+				color: $editor-dark;
+			}
+		}
+
+		.elementor-templates-modal__header__close {
+			border: none;
+		}
+
+		.elementor-beta-tester-do-not-show-again {
+			text-transform: uppercase;
+			font-weight: bold;
+			font-size: 12px;
+			transition: $transition-hover;
+		}
+
+	}
+
+	.dialog-lightbox-widget-content {
+		max-width: 500px;
+		height: initial;
+	}
+
+	.dialog-lightbox-message{
+		padding: 40px;
+		height: 300px;
+		background-color: #fff;
+	}
+}
+
+#elementor-beta-tester-form {
+
+	&__caption {
+		font-weight: bold;
+		font-size: 20px;
+		color: $editor-darkest;
+	}
+
+	&__description {
+		font-size: 15px;
+		color: $editor-dark;
+		margin-top: 10px;
+	}
+
+	&__input-wrapper{
+		display:flex;
+		margin-top: 30px;
+
+		.elementor-button {
+			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+		}
+	}
+
+	&__email {
+		flex-grow: 1;
+		border: $editor-lightest 1px solid;
+		@include border-end(0);
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		margin: 0;
+		padding: 10px;
+		height: 50px;
+	}
+
+	&__terms {
+		margin-top: 40px;
+		font-size: 11px;
+		color: $editor-light;
+	}
+}

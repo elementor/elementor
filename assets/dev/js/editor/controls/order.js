@@ -24,7 +24,7 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend( {
 
 	onInputChange: function() {
 		this.changeLabelTitle();
-	}
+	},
 } );
 
 module.exports = ControlOrderItemView;

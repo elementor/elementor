@@ -1,19 +1,17 @@
-var Module = require( 'elementor-utils/module' );
-
-module.exports = Module.extend( {
+module.exports = elementorModules.Module.extend( {
 	initToast: function() {
-		var toast = elementor.dialogsManager.createWidget( 'buttons', {
+		var toast = elementorCommon.dialogsManager.createWidget( 'buttons', {
 			id: 'elementor-toast',
 			position: {
 				my: 'center bottom',
 				at: 'center bottom-10',
 				of: '#elementor-panel-content-wrapper',
-				autoRefresh: true
+				autoRefresh: true,
 			},
 			hide: {
 				onClick: true,
 				auto: true,
-				autoDelay: 10000
+				autoDelay: 10000,
 			},
 			effects: {
 				show: function() {
@@ -34,10 +32,10 @@ module.exports = Module.extend( {
 						height: 'show',
 						paddingBottom: 'show',
 						paddingTop: 'show',
-						top: top
+						top: top,
 					}, {
 						easing: 'linear',
-						duration: 300
+						duration: 300,
 					} );
 				},
 				hide: function() {
@@ -49,14 +47,16 @@ module.exports = Module.extend( {
 						height: 'hide',
 						paddingBottom: 'hide',
 						paddingTop: 'hide',
-						top: top + 100
+						top: top + 100,
 					}, {
 						easing: 'linear',
-						duration: 300
+						duration: 300,
 					} );
-				}
+				},
 			},
-			buttonTag: 'div'
+			button: {
+				tag: 'div',
+			},
 		} );
 
 		this.getToast = function() {
@@ -82,5 +82,5 @@ module.exports = Module.extend( {
 
 	onInit: function() {
 		this.initToast();
-	}
+	},
 } );

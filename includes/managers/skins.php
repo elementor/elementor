@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor skins manager class.
+ * Elementor skins manager.
  *
  * Elementor skins manager handler class is responsible for registering and
  * initializing all the supported skins.

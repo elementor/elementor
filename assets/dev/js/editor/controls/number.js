@@ -20,10 +20,10 @@ ControlNumberItemView = ControlBaseDataView.extend( {
 
 		if ( ! jQuery.isEmptyObject( validationTerms ) ) {
 			this.addValidator( new NumberValidator( {
-				validationTerms: validationTerms
+				validationTerms: validationTerms,
 			} ) );
 		}
-	}
+	},
 } );
 
 module.exports = ControlNumberItemView;

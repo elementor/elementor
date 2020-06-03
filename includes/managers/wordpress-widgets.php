@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor WordPress widgets manager class.
+ * Elementor WordPress widgets manager.
  *
  * Elementor WordPress widgets manager handler class is responsible for
  * registering and initializing all the supported controls, both regular
@@ -62,6 +62,9 @@ class WordPress_Widgets_Manager {
 		wp_enqueue_style( 'widgets' );
 		wp_enqueue_style( 'media-views' );
 		// End TODO.
+
+		// Don't enqueue `code-editor` for WP Custom HTML widget.
+		wp_get_current_user()->syntax_highlighting = 'false';
 
 		/** This action is documented in wp-admin/admin-header.php */
 		do_action( 'admin_print_scripts-widgets.php' );

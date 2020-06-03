@@ -5,14 +5,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor "Tools" page in WordPress Dashboard.
+ *
+ * Elementor settings page handler class responsible for creating and displaying
+ * Elementor "Tools" page in WordPress dashboard.
+ *
+ * @since 1.0.0
+ */
 class Tools extends Settings_Page {
 
+	/**
+	 * Settings page ID for Elementor tools.
+	 */
 	const PAGE_ID = 'elementor-tools';
 
 	/**
+	 * Register admin menu.
+	 *
+	 * Add new Elementor Tools admin menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function register_admin_menu() {
 		add_submenu_page(
 			Settings::PAGE_ID,
@@ -25,72 +42,75 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Clear cache.
+	 *
+	 * Delete post meta containing the post CSS file data. And delete the actual
+	 * CSS files from the upload directory.
+	 *
+	 * Fired by `wp_ajax_elementor_clear_cache` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 
 		wp_send_json_success();
 	}
 
 	/**
+	 * Replace URLs.
+	 *
+	 * Sends an ajax request to replace old URLs to new URLs. This method also
+	 * updates all the Elementor data.
+	 *
+	 * Fired by `wp_ajax_elementor_replace_url` action.
+	 *
 	 * @since 1.1.0
 	 * @access public
-	*/
+	 */
 	public function ajax_elementor_replace_url() {
 		check_ajax_referer( 'elementor_replace_url', '_nonce' );
 
-		$from = ! empty( $_POST['from'] ) ? trim( $_POST['from'] ) : '';
-		$to = ! empty( $_POST['to'] ) ? trim( $_POST['to'] ) : '';
+		$from = ! empty( $_POST['from'] ) ? $_POST['from'] : '';
+		$to = ! empty( $_POST['to'] ) ? $_POST['to'] : '';
 
-		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
-		if ( ! $is_valid_urls ) {
-			wp_send_json_error( __( 'The `from` and `to` URL\'s must be a valid URL', 'elementor' ) );
-		}
-
-		if ( $from === $to ) {
-			wp_send_json_error( __( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
-		}
-
-		global $wpdb;
-
-		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
-		$rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
-			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
-		// @codingStandardsIgnoreEnd
-
-		if ( false === $rows_affected ) {
-			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
-		} else {
-			Plugin::$instance->posts_css_manager->clear_cache();
-			wp_send_json_success( sprintf(
-				/* translators: %s: Number of rows */
-				__( '%d Rows Affected', 'elementor' ),
-				$rows_affected
-			) );
+		try {
+			$results = Utils::replace_urls( $from, $to );
+			wp_send_json_success( $results );
+		} catch ( \Exception $e ) {
+			wp_send_json_error( $e->getMessage() );
 		}
 	}
 
 	/**
+	 * Elementor version rollback.
+	 *
+	 * Rollback to previous Elementor version.
+	 *
+	 * Fired by `admin_post_elementor_rollback` action.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 */
 	public function post_elementor_rollback() {
 		check_admin_referer( 'elementor_rollback' );
+
+		$rollback_versions = $this->get_rollback_versions();
+		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
+			wp_die( __( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
+		}
 
 		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
 
 		$rollback = new Rollback(
 			[
-				'version' => ELEMENTOR_PREVIOUS_STABLE_VERSION,
+				'version' => $_GET['version'],
 				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
 				'plugin_slug' => $plugin_slug,
-				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, ELEMENTOR_PREVIOUS_STABLE_VERSION ),
+				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $_GET['version'] ),
 			]
 		);
 
@@ -104,9 +124,13 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Tools page constructor.
+	 *
+	 * Initializing Elementor "Tools" page.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -120,11 +144,69 @@ class Tools extends Settings_Page {
 		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
 	}
 
+	private function get_rollback_versions() {
+		$rollback_versions = get_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION );
+		if ( false === $rollback_versions ) {
+			$max_versions = 30;
+
+			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+
+			$plugin_information = plugins_api(
+				'plugin_information', [
+					'slug' => 'elementor',
+				]
+			);
+
+			if ( empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
+				return [];
+			}
+
+			krsort( $plugin_information->versions );
+
+			$rollback_versions = [];
+
+			$current_index = 0;
+			foreach ( $plugin_information->versions as $version => $download_link ) {
+				if ( $max_versions <= $current_index ) {
+					break;
+				}
+
+				if ( preg_match( '/(trunk|beta|rc)/i', strtolower( $version ) ) ) {
+					continue;
+				}
+
+				if ( version_compare( $version, ELEMENTOR_VERSION, '>=' ) ) {
+					continue;
+				}
+
+				$current_index++;
+				$rollback_versions[] = $version;
+			}
+
+			set_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION, $rollback_versions, WEEK_IN_SECONDS );
+		}
+
+		return $rollback_versions;
+	}
+
 	/**
+	 * Create tabs.
+	 *
+	 * Return the tools page tabs, sections and fields.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	*/
+	 *
+	 * @return array An array with the page tabs, sections and fields.
+	 */
 	protected function create_tabs() {
+		$rollback_html = '<select class="elementor-rollback-select">';
+
+		foreach ( $this->get_rollback_versions() as $version ) {
+			$rollback_html .= "<option value='{$version}'>$version</option>";
+		}
+		$rollback_html .= '</select>';
+
 		return [
 			'general' => [
 				'label' => __( 'General', 'elementor' ),
@@ -163,6 +245,7 @@ class Tools extends Settings_Page {
 							);
 							$intro_text = '<div>' . $intro_text . '</div>';
 
+							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
 							echo $intro_text;
 						},
 						'fields' => [
@@ -199,13 +282,9 @@ class Tools extends Settings_Page {
 								'field_args' => [
 									'type' => 'raw_html',
 									'html' => sprintf(
-										'<a href="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
-										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback' ), 'elementor_rollback' ),
-										sprintf(
-											/* translators: %s: Elementor previous stable version */
-											__( 'Reinstall v%s', 'elementor' ),
-											ELEMENTOR_PREVIOUS_STABLE_VERSION
-										)
+										$rollback_html . '<a data-placeholder-text="' . __( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
+										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' ),
+										__( 'Reinstall', 'elementor' )
 									),
 									'desc' => '<span style="color: red;">' . __( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],
@@ -215,14 +294,12 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => __( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = sprintf(
-								/* translators: %s: Elementor version */
-								__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ),
-								ELEMENTOR_VERSION
-							);
+							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
 							$intro_text = '<p>' . $intro_text . '</p>';
+							$newsletter_opt_in_text = sprintf( __( '<a id="beta-tester-first-to-know" href="%s">Click here</a> to join our first-to-know email updates.', 'elementor' ), '#' );
 
 							echo $intro_text;
+							echo $newsletter_opt_in_text;
 						},
 						'fields' => [
 							'beta' => [
@@ -234,7 +311,7 @@ class Tools extends Settings_Page {
 										'no' => __( 'Disable', 'elementor' ),
 										'yes' => __( 'Enable', 'elementor' ),
 									],
-									'desc' => __( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ),
+									'desc' => '<span style="color: red;">' . __( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
 								],
 							],
 						],
@@ -245,19 +322,15 @@ class Tools extends Settings_Page {
 	}
 
 	/**
-	 * @since 1.5.2
-	 * @access public
-	*/
-	public function display_settings_page() {
-		wp_enqueue_script( 'elementor-dialog' );
-
-		parent::display_settings_page();
-	}
-
-	/**
+	 * Get tools page title.
+	 *
+	 * Retrieve the title for the tools page.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	*/
+	 *
+	 * @return string Tools page title.
+	 */
 	protected function get_page_title() {
 		return __( 'Tools', 'elementor' );
 	}

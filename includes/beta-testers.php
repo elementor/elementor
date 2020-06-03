@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor beta testers class.
+ * Elementor beta testers.
  *
  * Elementor beta testers handler class is responsible for the Beta Testers
  * feature that allows developers to test Elementor beta versions.
@@ -14,6 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.5.0
  */
 class Beta_Testers {
+
+	const NEWSLETTER_TERMS_URL = 'https://go.elementor.com/beta-testers-newsletter-terms';
+
+	const NEWSLETTER_PRIVACY_URL = 'https://go.elementor.com/beta-testers-newsletter-privacy';
+
+	const BETA_TESTER_SIGNUP = 'beta_tester_signup';
 
 	/**
 	 * Transient key.

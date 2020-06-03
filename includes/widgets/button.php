@@ -5,10 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor button widget.
  *
- * Elementor widget that displays a button with the ability to controll every
+ * Elementor widget that displays a button with the ability to control every
  * aspect of the button design.
  *
  * @since 1.0.0
@@ -55,6 +57,22 @@ class Widget_Button extends Widget_Base {
 	 */
 	public function get_icon() {
 		return 'eicon-button';
+	}
+
+	/**
+	 * Get widget categories.
+	 *
+	 * Retrieve the list of categories the button widget belongs to.
+	 *
+	 * Used to determine where to display the widget in the editor.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return array Widget categories.
+	 */
+	public function get_categories() {
+		return [ 'basic' ];
 	}
 
 	/**
@@ -116,8 +134,11 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => __( 'Click me', 'elementor' ),
-				'placeholder' => __( 'Click me', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+				'default' => __( 'Click here', 'elementor' ),
+				'placeholder' => __( 'Click here', 'elementor' ),
 			]
 		);
 
@@ -126,6 +147,9 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'default' => [
 					'url' => '#',
@@ -141,19 +165,19 @@ class Widget_Button extends Widget_Base {
 				'options' => [
 					'left'    => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'fa fa-align-justify',
+						'icon' => 'eicon-text-align-justify',
 					],
 				],
 				'prefix_class' => 'elementor%s-align-',
@@ -168,16 +192,16 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
+				'style_transfer' => true,
 			]
 		);
 
 		$this->add_control(
-			'icon',
+			'selected_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'label_block' => true,
-				'default' => '',
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
 			]
 		);
 
@@ -192,7 +216,7 @@ class Widget_Button extends Widget_Base {
 					'right' => __( 'After', 'elementor' ),
 				],
 				'condition' => [
-					'icon!' => '',
+					'selected_icon[value]!' => '',
 				],
 			]
 		);
@@ -206,9 +230,6 @@ class Widget_Button extends Widget_Base {
 					'px' => [
 						'max' => 50,
 					],
-				],
-				'condition' => [
-					'icon!' => '',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
@@ -226,6 +247,22 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'button_css_id',
+			[
+				'label' => __( 'Button ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'default' => '',
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'description' => __( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor' ),
+				'separator' => 'before',
+
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -240,8 +277,16 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
-				'selector' => '{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button',
+				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'selector' => '{{WRAPPER}} .elementor-button',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'text_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
 
@@ -261,7 +306,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
 				],
 			]
 		);
@@ -272,11 +317,11 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_4,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_4,
 				],
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -296,7 +341,8 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button:hover, {{WRAPPER}} .elementor-button:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button:hover svg, {{WRAPPER}} .elementor-button:focus svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -307,7 +353,7 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button:hover, {{WRAPPER}} .elementor-button:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -321,7 +367,7 @@ class Widget_Button extends Widget_Base {
 					'border_border!' => '',
 				],
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button:hover, {{WRAPPER}} .elementor-button:hover' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -342,8 +388,6 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'placeholder' => '1px',
-				'default' => '1px',
 				'selector' => '{{WRAPPER}} .elementor-button',
 				'separator' => 'before',
 			]
@@ -356,7 +400,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -369,14 +413,14 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'text_padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'separator' => 'before',
 			]
@@ -394,24 +438,21 @@ class Widget_Button extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'button', 'href', $settings['link']['url'] );
+			$this->add_link_attributes( 'button', $settings['link'] );
 			$this->add_render_attribute( 'button', 'class', 'elementor-button-link' );
-
-			if ( $settings['link']['is_external'] ) {
-				$this->add_render_attribute( 'button', 'target', '_blank' );
-			}
-
-			if ( $settings['link']['nofollow'] ) {
-				$this->add_render_attribute( 'button', 'rel', 'nofollow' );
-			}
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );
+		$this->add_render_attribute( 'button', 'role', 'button' );
+
+		if ( ! empty( $settings['button_css_id'] ) ) {
+			$this->add_render_attribute( 'button', 'id', $settings['button_css_id'] );
+		}
 
 		if ( ! empty( $settings['size'] ) ) {
 			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
@@ -435,22 +476,27 @@ class Widget_Button extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
-
 		view.addInlineEditingAttributes( 'text', 'none' );
+		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 		#>
 		<div class="elementor-button-wrapper">
-			<a class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
+			<a id="{{ settings.button_css_id }}" class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
 				<span class="elementor-button-content-wrapper">
-					<# if ( settings.icon ) { #>
+					<# if ( settings.icon || settings.selected_icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
-						<i class="{{ settings.icon }}" aria-hidden="true"></i>
+						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
+							{{{ iconHTML.value }}}
+						<# } else { #>
+							<i class="{{ settings.icon }}" aria-hidden="true"></i>
+						<# } #>
 					</span>
 					<# } #>
 					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
@@ -469,23 +515,51 @@ class Widget_Button extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render_text() {
-		$settings = $this->get_settings();
-		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $settings['icon_align'] );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
+		$settings = $this->get_settings_for_display();
 
-		$this->add_render_attribute( 'text', 'class', 'elementor-button-text' );
+		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+
+		if ( ! $is_new && empty( $settings['icon_align'] ) ) {
+			// @todo: remove when deprecated
+			// added as bc in 2.6
+			//old default
+			$settings['icon_align'] = $this->get_settings( 'icon_align' );
+		}
+
+		$this->add_render_attribute( [
+			'content-wrapper' => [
+				'class' => 'elementor-button-content-wrapper',
+			],
+			'icon-align' => [
+				'class' => [
+					'elementor-button-icon',
+					'elementor-align-icon-' . $settings['icon_align'],
+				],
+			],
+			'text' => [
+				'class' => 'elementor-button-text',
+			],
+		] );
 
 		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>
 		<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
-			<?php if ( ! empty( $settings['icon'] ) ) : ?>
+			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
 			<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
-				<i class="<?php echo esc_attr( $settings['icon'] ); ?>" aria-hidden="true"></i>
+				<?php if ( $is_new || $migrated ) :
+					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
+				else : ?>
+					<i class="<?php echo esc_attr( $settings['icon'] ); ?>" aria-hidden="true"></i>
+				<?php endif; ?>
 			</span>
 			<?php endif; ?>
 			<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
 		</span>
 		<?php
+	}
+
+	public function on_import( $element ) {
+		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
 	}
 }

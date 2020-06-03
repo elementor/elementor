@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Base_Object;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -8,34 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor base control.
  *
- * A base control for creating controls in the panel. Each control accepts all
- * the params listed below.
+ * An abstract class for creating new controls in the panel.
  *
  * @since 1.0.0
  * @abstract
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $title       Optional. The field title that appears on mouse
- *                            hover. Default is empty.
- * @param string $placeholder Optional. The field placeholder that appears when
- *                            the field has no values. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param mixed  $default     Optional. The field default value.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is false.
  */
-abstract class Base_Control {
+abstract class Base_Control extends Base_Object {
 
 	/**
 	 * Base settings.
@@ -48,29 +28,16 @@ abstract class Base_Control {
 	 */
 	private $_base_settings = [
 		'label' => '',
-		'title' => '',
-		'placeholder' => '',
 		'description' => '',
-		'separator' => 'default',
 		'show_label' => true,
 		'label_block' => false,
+		'separator' => 'default',
 	];
 
 	/**
-	 * Settings.
+	 * Get features.
 	 *
-	 * Holds all the settings of the control.
-	 *
-	 * @access private
-	 *
-	 * @var array
-	 */
-	private $_settings = [];
-
-	/**
-	 * Retrieve features.
-	 *
-	 * Get the list of all the available features. Currently Elementor uses only
+	 * Retrieve the list of all the available features. Currently Elementor uses only
 	 * the `UI` feature.
 	 *
 	 * @since 1.5.0
@@ -84,7 +51,9 @@ abstract class Base_Control {
 	}
 
 	/**
-	 * Retrieve control type.
+	 * Get control type.
+	 *
+	 * Retrieve the control type.
 	 *
 	 * @since 1.5.0
 	 * @access public
@@ -101,9 +70,9 @@ abstract class Base_Control {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->_settings = array_merge( $this->_base_settings, $this->get_default_settings() );
+		$this->set_settings( array_merge( $this->_base_settings, $this->get_default_settings() ) );
 
-		$this->_settings['features'] = static::get_features();
+		$this->set_settings( 'features', static::get_features() );
 	}
 
 	/**
@@ -115,49 +84,6 @@ abstract class Base_Control {
 	 * @access public
 	 */
 	public function enqueue() {}
-
-	/**
-	 * Retrieve control settings.
-	 *
-	 * Get the control settings or a specific setting value.
-	 *
-	 * @since 1.5.0
-	 * @access public
-	 *
-	 * @param string $setting_key Optional. Specific key to return from the
-	 *                            settings. If key set it will return the
-	 *                            specific value of the key, otherwise the
-	 *                            entire key array will be returned. Dafault is
-	 *                            null.
-	 *
-	 * @return mixed The control settings, or specific setting value.
-	 */
-	final public function get_settings( $setting_key = null ) {
-		if ( $setting_key ) {
-			if ( isset( $this->_settings[ $setting_key ] ) ) {
-				return $this->_settings[ $setting_key ];
-			}
-
-			return null;
-		}
-
-		return $this->_settings;
-	}
-
-	/**
-	 * Set control settings.
-	 *
-	 * Used to set or to update the settings of an existing control.
-	 *
-	 * @since 1.5.0
-	 * @access public
-	 *
-	 * @param string $key   Control settings key.
-	 * @param mixed  $value Control settings value.
-	 */
-	final public function set_settings( $key, $value ) {
-		$this->_settings[ $key ] = $value;
-	}
 
 	/**
 	 * Control content template.
@@ -188,16 +114,24 @@ abstract class Base_Control {
 		?>
 		<script type="text/html" id="tmpl-elementor-control-<?php echo esc_attr( $this->get_type() ); ?>-content">
 			<div class="elementor-control-content">
-				<?php $this->content_template(); ?>
+				<?php
+				// TODO: This is for backwards compatibility starting from 2.9.0
+				// This `if` statement should be removed when the method is removed
+				if ( method_exists( $this, '_content_template' ) ) {
+					$this->_content_template();
+				} else {
+					$this->content_template();
+				}
+				?>
 			</div>
 		</script>
 		<?php
 	}
 
 	/**
-	 * Retrieve default control settings.
+	 * Get default control settings.
 	 *
-	 * Get the default settings of the control. Used to return the default
+	 * Retrieve the default settings of the control. Used to return the default
 	 * settings while initializing the control.
 	 *
 	 * @since 1.5.0

@@ -5,6 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+use Elementor\Core\Settings\Manager;
+
 /**
  * Elementor image gallery widget.
  *
@@ -39,7 +42,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Image Gallery', 'elementor' );
+		return __( 'Basic Gallery', 'elementor' );
 	}
 
 	/**
@@ -57,35 +60,17 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the image gallery widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
-	}
-
-	/**
-	 * Add lightbox data to image link.
-	 *
-	 * Used to add lightbox data attributes to image link HTML.
-	 *
-	 * @since 1.6.0
-	 * @access public
-	 *
-	 * @param string $link_html Image link HTML.
-	 *
-	 * @return string Image link HTML with lightbox data attributes.
-	 */
-	public function add_lightbox_data_to_image_link( $link_html ) {
-		return preg_replace( '/^<a/', '<a ' . $this->get_render_attribute_string( 'link' ), $link_html );
+	public function get_keywords() {
+		return [ 'image', 'photo', 'visual', 'gallery' ];
 	}
 
 	/**
@@ -109,14 +94,19 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
+				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
-				'name' => 'thumbnail',
+				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'exclude' => [ 'custom' ],
+				'separator' => 'none',
 			]
 		);
 
@@ -136,7 +126,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_link',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'file',
 				'options' => [
@@ -167,7 +157,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_rand',
 			[
-				'label' => __( 'Ordering', 'elementor' ),
+				'label' => __( 'Order By', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
@@ -292,19 +282,19 @@ class Widget_Image_Gallery extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'fa fa-align-justify',
+						'icon' => 'eicon-text-align-justify',
 					],
 				],
 				'default' => 'center',
@@ -336,7 +326,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
 				'condition' => [
 					'gallery_display_caption' => '',
@@ -356,7 +346,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( ! $settings['wp_gallery'] ) {
 			return;
@@ -381,13 +371,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		?>
 		<div class="elementor-image-gallery">
 			<?php
-			$this->add_render_attribute( 'link', [
-				'class' => 'elementor-clickable',
-				'data-elementor-open-lightbox' => $settings['open_lightbox'],
-				'data-elementor-lightbox-slideshow' => $this->get_id(),
-			] );
-
-			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ] );
+			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ], 10, 2 );
 
 			echo do_shortcode( '[gallery ' . $this->get_render_attribute_string( 'shortcode' ) . ']' );
 

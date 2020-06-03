@@ -12,6 +12,7 @@
 
 			> input, > textarea, > .elementor-select-wrapper, .elementor-field-subgroup {
 				flex-basis: 100%;
+				max-width: 100%; // Fix for Firefox browser
 			}
 		}
 	}
@@ -37,6 +38,7 @@
 
 	.elementor-field-textual {
 		width: 100%;
+		max-width: 100%; // Tweak for themes that set this property
 		border: 1px solid $gray;
 		background-color: transparent;
 		color: $gray-darker;
@@ -59,6 +61,8 @@
 
 		select {
 			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
 			color: inherit;
 			font-size: inherit;
 			font-family: inherit;
@@ -72,8 +76,8 @@
 		}
 
 		&:before {
-			content: '\f0d7';
-			font-family: 'FontAwesome';
+			content: '\e92a';
+			font-family: 'eicons';
 			font-size: 15px;
 			position: absolute;
 			top: 50%;
@@ -82,6 +86,7 @@
 			pointer-events: none;
 		}
 	}
+
 	&.elementor-field-type-select-multiple{
 		.elementor-select-wrapper:before {
 			content: '';
@@ -115,6 +120,22 @@
 	}
 }
 
+.elementor-field-type-checkbox,
+.elementor-field-type-radio,
+.elementor-field-type-acceptance {
+
+	.elementor-field-subgroup {
+
+		.elementor-field-option {
+
+			input,
+			label {
+				display: inline;
+			}
+		}
+	}
+}
+
 .elementor-field-label {
 	cursor: pointer;
 
@@ -128,6 +149,10 @@
 // Keep the following out from another parent selector!
 .elementor-field-textual {
 	line-height: 1.4;
+	font-size: 15px; //size-sm
+	min-height: 40px; //size-sm
+	padding: 5px 14px; //size-sm
+	border-radius: 3px; //size-sm
 
 	&.elementor-size- {
 
@@ -139,10 +164,7 @@
 		}
 
 		&sm {
-			font-size: 15px;
-			min-height: 40px;
-			padding: 5px 14px;
-			border-radius: 3px;
+			//default size
 		}
 
 		&md {
@@ -169,24 +191,57 @@
 }
 
 @mixin btn-align() {
+	&stretch {
+		.elementor-field-type-submit:not(.e-form__buttons__wrapper) {
+			.elementor-button {
+				flex-basis: 100%;
+			}
+		}
 
-	&center .elementor-field-type-submit{
-		justify-content: center;
-	}
-
-	&stretch .elementor-field-type-submit{
-
-		button {
-			flex-basis: 100%;
+		.e-form__buttons__wrapper {
+			&,
+			&__button {
+				flex-basis: 100%;
+			}
 		}
 	}
 
-	&start .elementor-field-type-submit{
-		justify-content: getValueByDirection(flex-start, flex-end);
+	&center {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: center;
+		}
 	}
 
-	&end .elementor-field-type-submit{
-		justify-content: getValueByDirection(flex-end, flex-start);
+	&start {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: getValueByDirection(flex-start, flex-end);
+		}
+	}
+
+	&end {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: getValueByDirection(flex-end, flex-start);
+		}
+	}
+
+	&center,
+	&start,
+	&end {
+		.elementor-field-type-submit:not(.e-form__buttons__wrapper) {
+			.elementor-button {
+				flex-basis: initial;
+			}
+		}
+
+		.e-form__buttons__wrapper {
+			&,
+			&__button {
+				flex-basis: initial;
+			}
+		}
 	}
 }
 
@@ -227,9 +282,9 @@
 	line-height: 1;
 
 	&:before {
-		content: "\f00c";
+		content: "\e90e";
 		display: inline-block;
-		font-family: fontawesome;
+		font-family: eicons;
 		font-weight: normal;
 		font-style: normal;
 		vertical-align: middle;
@@ -240,7 +295,7 @@
 		color: $danger;
 
 		&:before {
-			content: "\f00d";
+			content: "\e87f";
 		}
 	}
 
@@ -255,19 +310,11 @@
 	.elementor-button {
 		padding-top: 0;
 		padding-bottom: 0;
-		border: 0 none;
+		border: none;
 
 		& > span {
 			display: flex;
 			justify-content: center;
-		}
-
-		.elementor-align-icon-right {
-			order: getValueByDirection( 2 ,0 );
-		}
-
-		.elementor-align-icon-left {
-			order: getValueByDirection( 0 ,2 );
 		}
 
 		&.elementor-size- {
@@ -294,4 +341,3 @@
 		}
 	}
 }
-

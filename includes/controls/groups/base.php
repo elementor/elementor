@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base group control.
+ * Elementor group control base.
  *
- * A base control for creating group control.
+ * An abstract class for creating new group controls in the panel.
  *
  * @since 1.0.0
  * @abstract
@@ -40,9 +40,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	private $options;
 
 	/**
-	 * Retrieve options.
+	 * Get options.
 	 *
-	 * Get group control options. If options are not set, it will initialize default options.
+	 * Retrieve group control options. If options are not set, it will initialize default options.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -122,7 +122,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 				$element->add_responsive_control( $id, $field_args, $options );
 			} else {
-				$element->add_control( $id , $field_args, $options );
+				$element->add_control( $id, $field_args, $options );
 			}
 		}
 
@@ -136,9 +136,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve arguments.
+	 * Get arguments.
 	 *
-	 * Get group control arguments.
+	 * Retrieve group control arguments.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -150,9 +150,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve fields.
+	 * Get fields.
 	 *
-	 * Get group control fields.
+	 * Retrieve group control fields.
 	 *
 	 * @since 1.2.2
 	 * @access public
@@ -160,11 +160,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Control fields.
 	 */
 	final public function get_fields() {
-		// TODO: Temp - compatibility for posts group
-		if ( method_exists( $this, '_get_controls' ) ) {
-			return $this->_get_controls( $this->get_args() );
-		}
-
 		if ( null === static::$fields ) {
 			static::$fields = $this->init_fields();
 		}
@@ -173,9 +168,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve controls prefix.
+	 * Get controls prefix.
 	 *
-	 * Get the prefix of the group control, which is `{{ControlName}}_`.
+	 * Retrieve the prefix of the group control, which is `{{ControlName}}_`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -187,9 +182,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve group control classes.
+	 * Get group control classes.
 	 *
-	 * Get the classes of the group control.
+	 * Retrieve the classes of the group control.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -212,9 +207,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	abstract protected function init_fields();
 
 	/**
-	 * Retrieve default options.
+	 * Get default options.
 	 *
-	 * Get the default options of the group control. Used to return the
+	 * Retrieve the default options of the group control. Used to return the
 	 * default options while initializing the group control.
 	 *
 	 * @since 1.9.0
@@ -227,9 +222,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve child default arguments.
+	 * Get child default arguments.
 	 *
-	 * Get the default arguments for all the child controls for a specific group
+	 * Retrieve the default arguments for all the child controls for a specific group
 	 * control.
 	 *
 	 * @since 1.2.2
@@ -294,12 +289,14 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$field_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
-		if ( ! empty( $args['condition'] ) ) {
-			if ( empty( $field_args['condition'] ) ) {
-				$field_args['condition'] = [];
-			}
+		foreach ( [ 'condition', 'conditions' ] as $condition_type ) {
+			if ( ! empty( $args[ $condition_type ] ) ) {
+				if ( empty( $field_args[ $condition_type ] ) ) {
+					$field_args[ $condition_type ] = [];
+				}
 
-			$field_args['condition'] += $args['condition'];
+				$field_args[ $condition_type ] += $args[ $condition_type ];
+			}
 		}
 
 		return $field_args;
@@ -318,13 +315,13 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Processed fields.
 	 */
 	protected function prepare_fields( $fields ) {
-		foreach ( $fields as $field_key => &$field ) {
-			if ( ! empty( $field['condition'] ) ) {
-				$field = $this->add_conditions_prefix( $field );
-			}
+		$popover_options = $this->get_options( 'popover' );
 
-			if ( ! empty( $field['selectors'] ) ) {
-				$field['selectors'] = $this->handle_selectors( $field['selectors'] );
+		$popover_name = ! $popover_options ? null : $popover_options['starter_name'];
+
+		foreach ( $fields as $field_key => &$field ) {
+			if ( $popover_name ) {
+				$field['condition'][ $popover_name . '!' ] = '';
 			}
 
 			if ( isset( $this->args['fields_options']['__all'] ) ) {
@@ -333,6 +330,34 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 			if ( isset( $this->args['fields_options'][ $field_key ] ) ) {
 				$field = array_merge( $field, $this->args['fields_options'][ $field_key ] );
+			}
+
+			if ( ! empty( $field['condition'] ) ) {
+				$field = $this->add_condition_prefix( $field );
+			}
+
+			if ( ! empty( $field['conditions'] ) ) {
+				$field['conditions'] = $this->add_conditions_prefix( $field['conditions'] );
+			}
+
+			if ( ! empty( $field['selectors'] ) ) {
+				$field['selectors'] = $this->handle_selectors( $field['selectors'] );
+			}
+
+			if ( ! empty( $field['device_args'] ) ) {
+				foreach ( $field['device_args'] as $device => $device_arg ) {
+					if ( ! empty( $field['device_args'][ $device ]['condition'] ) ) {
+						$field['device_args'][ $device ] = $this->add_condition_prefix( $field['device_args'][ $device ] );
+					}
+
+					if ( ! empty( $field['device_args'][ $device ]['conditions'] ) ) {
+						$field['device_args'][ $device ]['conditions'] = $this->add_conditions_prefix( $field['device_args'][ $device ]['conditions'] );
+					}
+
+					if ( ! empty( $device_arg['selectors'] ) ) {
+						$field['device_args'][ $device ]['selectors'] = $this->handle_selectors( $device_arg['selectors'] );
+					}
+				}
 			}
 		}
 
@@ -353,7 +378,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				'starter_name' => 'popover_toggle',
 				'starter_value' => 'custom',
 				'starter_title' => '',
-				'toggle_type' => 'switcher',
 			],
 		];
 
@@ -366,18 +390,18 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * Initializing group control base class.
 	 *
 	 * @since 1.2.2
-	 * @access private
+	 * @access protected
 	 *
 	 * @param array $args Group control settings value.
 	 */
-	private function init_args( $args ) {
+	protected function init_args( $args ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
 	}
 
 	/**
-	 * Retrieve default arguments.
+	 * Get default arguments.
 	 *
-	 * Get the default arguments of the group control. Used to return the
+	 * Retrieve the default arguments of the group control. Used to return the
 	 * default arguments while initializing the group control.
 	 *
 	 * @since 1.2.2
@@ -409,7 +433,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * @return array Group control field.
 	 */
-	private function add_conditions_prefix( $field ) {
+	private function add_condition_prefix( $field ) {
 		$controls_prefix = $this->get_controls_prefix();
 
 		$prefixed_condition_keys = array_map(
@@ -427,18 +451,36 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $field;
 	}
 
+	private function add_conditions_prefix( $conditions ) {
+		$controls_prefix = $this->get_controls_prefix();
+
+		foreach ( $conditions['terms'] as & $condition ) {
+			if ( isset( $condition['terms'] ) ) {
+				$condition = $this->add_conditions_prefix( $condition );
+
+				continue;
+			}
+
+			$condition['name'] = $controls_prefix . $condition['name'];
+		}
+
+		return $conditions;
+	}
+
 	/**
 	 * Handle selectors.
 	 *
 	 * Used to process the CSS selector of group control fields. When using
 	 * group control, Elementor needs to apply the selector to different fields.
-	 * This method handels the process.
+	 * This method handles the process.
 	 *
-	 * In addition, it handels selector values from other fields and process the
+	 * In addition, it handles selector values from other fields and process the
 	 * css.
 	 *
 	 * @since 1.2.2
 	 * @access private
+	 *
+	 * @param array $selectors An array of selectors to process.
 	 *
 	 * @return array Processed selectors.
 	 */
@@ -448,7 +490,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$selectors = array_combine(
 			array_map(
 				function( $key ) use ( $args ) {
-						return str_replace( '{{SELECTOR}}', $args['selector'], $key );
+					return str_replace( '{{SELECTOR}}', $args['selector'], $key );
 				}, array_keys( $selectors )
 			),
 			$selectors
@@ -461,11 +503,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		foreach ( $selectors as &$selector ) {
-			$selector = preg_replace_callback(
-				'/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function( $matches ) use ( $controls_prefix ) {
-					return $controls_prefix . $matches[0];
-				}, $selector
-			);
+			$selector = preg_replace_callback( '/\{\{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
+				return preg_replace_callback( '/[^ ]+(?=\.)/', function( $sub_matches ) use ( $controls_prefix ) {
+					return $controls_prefix . $sub_matches[0];
+				}, $matches[1] );
+			}, $selector );
 		}
 
 		return $selectors;
@@ -494,15 +536,26 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$control_params = [
 			'type' => Controls_Manager::POPOVER_TOGGLE,
 			'label' => $label,
-			'toggle_type' => $popover_options['toggle_type'],
 			'return_value' => $popover_options['starter_value'],
 		];
 
-		if ( ! empty( $settings['condition'] ) ) {
-			$control_params['condition'] = $settings['condition'];
+		if ( ! empty( $popover_options['settings'] ) ) {
+			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
 		}
 
-		$element->add_control( $this->get_controls_prefix() . $popover_options['starter_name'], $control_params );
+		foreach ( [ 'condition', 'conditions' ] as $key ) {
+			if ( ! empty( $settings[ $key ] ) ) {
+				$control_params[ $key ] = $settings[ $key ];
+			}
+		}
+
+		$starter_name = $popover_options['starter_name'];
+
+		if ( isset( $this->args['fields_options'][ $starter_name ] ) ) {
+			$control_params = array_merge( $control_params, $this->args['fields_options'][ $starter_name ] );
+		}
+
+		$element->add_control( $this->get_controls_prefix() . $starter_name, $control_params );
 
 		$element->start_popover();
 	}

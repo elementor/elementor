@@ -1,68 +1,144 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	ImageCarouselHandler;
-
-ImageCarouselHandler = HandlerModule.extend( {
-	getDefaultSettings: function() {
+class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
-				carousel: '.elementor-image-carousel'
-			}
+				carousel: '.elementor-image-carousel-wrapper',
+				slideContent: '.swiper-slide',
+			},
 		};
-	},
+	}
 
-	getDefaultElements: function() {
-		var selectors = this.getSettings( 'selectors' );
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
 
-		return {
-			$carousel: this.$element.find( selectors.carousel )
+		const elements = {
+			$carousel: this.$element.find( selectors.carousel ),
 		};
-	},
 
-	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elements.$swiperSlides = elements.$carousel.find( selectors.slideContent );
 
-		var elementSettings = this.getElementSettings(),
+		return elements;
+	}
+
+	getSlidesCount() {
+		return this.elements.$swiperSlides.length;
+	}
+
+	getSwiperSettings() {
+		const elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
-			isSingleSlide = 1 === slidesToShow;
+			isSingleSlide = 1 === slidesToShow,
+			defaultLGDevicesSlidesCount = isSingleSlide ? 1 : 2,
+			elementorBreakpoints = elementorFrontend.config.breakpoints;
 
-		var slickOptions = {
-			slidesToShow: slidesToShow,
-			autoplay: 'yes' === elementSettings.autoplay,
-			autoplaySpeed: elementSettings.autoplay_speed,
-			infinite: 'yes' === elementSettings.infinite,
-			pauseOnHover: 'yes' ===  elementSettings.pause_on_hover,
+		const swiperOptions = {
+			slidesPerView: slidesToShow,
+			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
-			arrows: -1 !== [ 'arrows', 'both' ].indexOf( elementSettings.navigation ),
-			dots: -1 !== [ 'dots', 'both' ].indexOf( elementSettings.navigation ),
-			rtl: 'rtl' === elementSettings.direction,
-			responsive: [
-				{
-					breakpoint: 1025,
-					settings: {
-						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
-						slidesToScroll: 1
-					}
-				},
-				{
-					breakpoint: 768,
-					settings: {
-						slidesToShow: +elementSettings.slides_to_show_mobile || 1,
-						slidesToScroll: 1
-					}
-				}
-			]
+			handleElementorBreakpoints: true,
 		};
 
-		if ( isSingleSlide ) {
-			slickOptions.fade = 'fade' === elementSettings.effect;
-		} else {
-			slickOptions.slidesToScroll = +elementSettings.slides_to_scroll;
+		swiperOptions.breakpoints = {};
+
+		swiperOptions.breakpoints[ elementorBreakpoints.md ] = {
+			slidesPerView: +elementSettings.slides_to_show_mobile || 1,
+			slidesPerGroup: +elementSettings.slides_to_scroll_mobile || 1,
+		};
+
+		swiperOptions.breakpoints[ elementorBreakpoints.lg ] = {
+			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
+			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
+		};
+
+		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
+			swiperOptions.autoplay = {
+				delay: elementSettings.autoplay_speed,
+				disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
+			};
 		}
 
-		this.elements.$carousel.slick( slickOptions );
-	}
-} );
+		if ( isSingleSlide ) {
+			swiperOptions.effect = elementSettings.effect;
 
-module.exports = function( $scope ) {
-	new ImageCarouselHandler( { $element: $scope } );
+			if ( 'fade' === elementSettings.effect ) {
+				swiperOptions.fadeEffect = { crossFade: true };
+			}
+		} else {
+			swiperOptions.slidesPerGroup = +elementSettings.slides_to_scroll || 1;
+		}
+
+		if ( elementSettings.image_spacing_custom ) {
+			swiperOptions.spaceBetween = elementSettings.image_spacing_custom.size;
+		}
+
+		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation,
+			showDots = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation;
+
+		if ( showArrows ) {
+			swiperOptions.navigation = {
+				prevEl: '.elementor-swiper-button-prev',
+				nextEl: '.elementor-swiper-button-next',
+			};
+		}
+
+		if ( showDots ) {
+			swiperOptions.pagination = {
+				el: '.swiper-pagination',
+				type: 'bullets',
+				clickable: true,
+			};
+		}
+
+		return swiperOptions;
+	}
+
+	updateSpaceBetween() {
+		this.swiper.params.spaceBetween = this.getElementSettings( 'image_spacing_custom' ).size || 0;
+
+		this.swiper.update();
+	}
+
+	onInit( ...args ) {
+		super.onInit( ...args );
+
+		const elementSettings = this.getElementSettings();
+
+		if ( ! this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length ) {
+			return;
+		}
+
+		this.swiper = new Swiper( this.elements.$carousel, this.getSwiperSettings() );
+
+		// Expose the swiper instance in the frontend
+		this.elements.$carousel.data( 'swiper', this.swiper );
+
+		if ( 'yes' === elementSettings.pause_on_hover ) {
+			this.elements.$carousel.on( {
+				mouseenter: () => {
+					this.swiper.autoplay.stop();
+				},
+				mouseleave: () => {
+					this.swiper.autoplay.start();
+				},
+			} );
+		}
+	}
+
+	onElementChange( propertyName ) {
+		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
+			this.updateSpaceBetween();
+		} else if ( 'arrows_position' === propertyName ) {
+			this.swiper.update();
+		}
+	}
+
+	onEditSettingsChange( propertyName ) {
+		if ( 'activeItemIndex' === propertyName ) {
+			this.swiper.slideToLoop( this.getEditSettings( 'activeItemIndex' ) - 1 );
+		}
+	}
+}
+
+export default ( $scope ) => {
+	elementorFrontend.elementsHandler.addHandler( ImageCarouselHandler, { $element: $scope } );
 };

@@ -1,3 +1,5 @@
+import FilesUploadHandler from '../utils/files-upload-handler';
+
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
 
@@ -6,8 +8,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.controlMedia = '.elementor-control-media';
-		ui.frameOpeners = '.elementor-control-media-upload-button, .elementor-control-media-image';
-		ui.deleteButton = '.elementor-control-media-delete';
+		ui.mediaImage = '.elementor-control-media__preview';
+		ui.mediaVideo = '.elementor-control-media-video';
+		ui.frameOpeners = '.elementor-control-preview-area';
+		ui.removeButton = '.elementor-control-media__remove';
+		ui.fileName = '.elementor-control-media__file__content__info__name';
 
 		return ui;
 	},
@@ -15,49 +20,84 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	events: function() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
-			'click @ui.deleteButton': 'deleteImage'
+			'click @ui.removeButton': 'deleteImage',
 		} );
 	},
 
-	onReady: function() {
-		if ( _.isEmpty( this.getControlValue( 'url' ) ) ) {
-			this.ui.controlMedia.addClass( 'media-empty' );
+	getMediaType: function() {
+		return this.model.get( 'media_type' );
+	},
+
+	applySavedValue: function() {
+		var url = this.getControlValue( 'url' ),
+			mediaType = this.getMediaType();
+
+		if ( 'image' === mediaType ) {
+			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
+		} else if ( 'video' === mediaType ) {
+			this.ui.mediaVideo.attr( 'src', url );
+		} else {
+			const fileName = url ? url.split( '/' ).pop() : '';
+			this.ui.fileName.text( fileName );
 		}
+
+		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
 	},
 
 	openFrame: function() {
+		if ( ! FilesUploadHandler.isUploadEnabled( this.getMediaType() ) ) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+
+			return false;
+		}
+
 		if ( ! this.frame ) {
 			this.initFrame();
 		}
 
 		this.frame.open();
+
+		// Set params to trigger sanitizer
+		FilesUploadHandler.setUploadTypeCaller( this.frame );
+
+		const selectedId = this.getControlValue( 'id' );
+
+		if ( ! selectedId ) {
+			return;
+		}
+
+		this.frame.state().get( 'selection' ).add( wp.media.attachment( selectedId ) );
 	},
 
-	deleteImage: function() {
+	deleteImage: function( event ) {
+		event.stopPropagation();
+
 		this.setValue( {
 			url: '',
-			id: ''
+			id: '',
 		} );
 
-		this.render();
+		this.applySavedValue();
 	},
 
 	/**
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
 	initFrame: function() {
+		// Set current doc id to attach uploaded images.
+		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
-				text: elementor.translate( 'insert_media' )
+				text: elementor.translate( 'insert_media' ),
 			},
 			states: [
 				new wp.media.controller.Library( {
 					title: elementor.translate( 'insert_media' ),
-					library: wp.media.query( { type: 'image' } ),
+					library: wp.media.query( { type: this.getMediaType() } ),
 					multiple: false,
-					date: false
-				} )
-			]
+					date: false,
+				} ),
+			],
 		} );
 
 		// When a file is selected, run a callback.
@@ -77,10 +117,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( attachment.url ) {
 			this.setValue( {
 				url: attachment.url,
-				id: attachment.id
+				id: attachment.id,
 			} );
 
-			this.render();
+			this.applySavedValue();
 		}
 
 		this.trigger( 'after:select' );
@@ -88,7 +128,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	onBeforeDestroy: function() {
 		this.$el.remove();
-	}
+	},
 } );
 
 module.exports = ControlMediaItemView;

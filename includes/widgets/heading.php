@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor heading widget.
  *
@@ -53,7 +55,37 @@ class Widget_Heading extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-type-tool';
+		return 'eicon-t-letter';
+	}
+
+	/**
+	 * Get widget categories.
+	 *
+	 * Retrieve the list of categories the heading widget belongs to.
+	 *
+	 * Used to determine where to display the widget in the editor.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return array Widget categories.
+	 */
+	public function get_categories() {
+		return [ 'basic' ];
+	}
+
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'heading', 'title', 'text' ];
 	}
 
 	/**
@@ -77,6 +109,9 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'Add Your Heading Text Here', 'elementor' ),
 			]
@@ -87,7 +122,9 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'https://your-link.com', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => '',
 				],
@@ -140,19 +177,19 @@ class Widget_Heading extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'fa fa-align-justify',
+						'icon' => 'eicon-text-align-justify',
 					],
 				],
 				'default' => '',
@@ -187,8 +224,8 @@ class Widget_Heading extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
@@ -200,7 +237,7 @@ class Widget_Heading extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
 			]
 		);
@@ -210,6 +247,33 @@ class Widget_Heading extends Widget_Base {
 			[
 				'name' => 'text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
+			]
+		);
+
+		$this->add_control(
+			'blend_mode',
+			[
+				'label' => __( 'Blend Mode', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => __( 'Normal', 'elementor' ),
+					'multiply' => 'Multiply',
+					'screen' => 'Screen',
+					'overlay' => 'Overlay',
+					'darken' => 'Darken',
+					'lighten' => 'Lighten',
+					'color-dodge' => 'Color Dodge',
+					'saturation' => 'Saturation',
+					'color' => 'Color',
+					'difference' => 'Difference',
+					'exclusion' => 'Exclusion',
+					'hue' => 'Hue',
+					'luminosity' => 'Luminosity',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'mix-blend-mode: {{VALUE}}',
+				],
+				'separator' => 'none',
 			]
 		);
 
@@ -225,9 +289,9 @@ class Widget_Heading extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
-		if ( empty( $settings['title'] ) ) {
+		if ( '' === $settings['title'] ) {
 			return;
 		}
 
@@ -242,15 +306,7 @@ class Widget_Heading extends Widget_Base {
 		$title = $settings['title'];
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_render_attribute( 'url', 'href', $settings['link']['url'] );
-
-			if ( $settings['link']['is_external'] ) {
-				$this->add_render_attribute( 'url', 'target', '_blank' );
-			}
-
-			if ( ! empty( $settings['link']['nofollow'] ) ) {
-				$this->add_render_attribute( 'url', 'rel', 'nofollow' );
-			}
+			$this->add_link_attributes( 'url', $settings['link'] );
 
 			$title = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $title );
 		}
@@ -265,10 +321,10 @@ class Widget_Heading extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 		var title = settings.title;

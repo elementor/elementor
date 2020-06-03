@@ -2,7 +2,6 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlCodeEditorItemView;
 
 ControlCodeEditorItemView = ControlBaseDataView.extend( {
-
 	ui: function() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
@@ -18,9 +17,11 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			return;
 		}
 
-		var langTools = ace.require( 'ace/ext/language_tools' );
+		const langTools = ace.require( 'ace/ext/language_tools' ),
+			uiTheme = elementor.settings.editorPreferences.model.get( 'ui_theme' ),
+			userPrefersDark = matchMedia( '(prefers-color-scheme: dark)' ).matches;
 
-		self.editor = ace.edit( this.ui.editor[0] );
+		self.editor = ace.edit( this.ui.editor[ 0 ] );
 
 		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
 
@@ -31,8 +32,12 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			showGutter: true,
 			useWorker: true,
 			enableBasicAutocompletion: true,
-			enableLiveAutocompletion: true
+			enableLiveAutocompletion: true,
 		} );
+
+		if ( 'dark' === uiTheme || ( 'auto' === uiTheme && userPrefersDark ) ) {
+			self.editor.setTheme( 'ace/theme/merbivore_soft' );
+		}
 
 		self.editor.getSession().setUseWrapMode( true );
 
@@ -49,12 +54,12 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 							name: 'selector',
 							value: 'selector',
 							score: 1,
-							meta: 'Elementor'
+							meta: 'Elementor',
 						} ];
 					}
 
 					callback( null, list );
-				}
+				},
 			};
 
 			langTools.addCompleter( selectorCompleter );
@@ -94,7 +99,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 	onDestroy: function() {
 		elementor.panel.$el.off( 'resize.aceEditor' );
-	}
+	},
 } );
 
 module.exports = ControlCodeEditorItemView;

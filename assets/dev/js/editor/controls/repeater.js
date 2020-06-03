@@ -1,12 +1,11 @@
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	RepeaterRowView = require( 'elementor-controls/repeater-row' ),
-	BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlRepeaterItemView;
 
 ControlRepeaterItemView = ControlBaseDataView.extend( {
 	ui: {
 		btnAddRow: '.elementor-repeater-add',
-		fieldContainer: '.elementor-repeater-fields'
+		fieldContainer: '.elementor-repeater-fields-wrapper',
 	},
 
 	events: function() {
@@ -14,77 +13,90 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			'click @ui.btnAddRow': 'onButtonAddRowClick',
 			'sortstart @ui.fieldContainer': 'onSortStart',
 			'sortupdate @ui.fieldContainer': 'onSortUpdate',
-			'sortstop @ui.fieldContainer': 'onSortStop'
+			'sortstop @ui.fieldContainer': 'onSortStop',
 		};
 	},
 
 	childView: RepeaterRowView,
 
-	childViewContainer: '.elementor-repeater-fields',
+	childViewContainer: '.elementor-repeater-fields-wrapper',
 
 	templateHelpers: function() {
 		return {
-			data: _.extend( {}, this.model.toJSON(), { controlValue: [] } )
+			itemActions: this.model.get( 'item_actions' ),
+			data: _.extend( {}, this.model.toJSON(), { controlValue: [] } ),
 		};
 	},
 
-	childViewOptions: function() {
+	childViewOptions: function( rowModel, index ) {
+		const elementContainer = this.getOption( 'container' );
+
+		let rowId = rowModel.get( '_id' );
+
+		// TODO: Temp backwards compatibility. since 2.8.0.
+		if ( ! rowId ) {
+			rowId = 'bc-' + elementor.helpers.getUniqueID();
+			rowModel.set( '_id', rowId );
+		}
+
+		elementContainer.children.splice( index, 0, new elementorModules.editor.Container( {
+			type: 'repeater',
+			id: rowId,
+			model: new Backbone.Model( {
+				name: this.model.get( 'name' ),
+			} ),
+			settings: rowModel,
+			view: elementContainer.view,
+			parent: elementContainer,
+			label: elementContainer.label + ' ' + elementor.translate( 'Item' ),
+			controls: rowModel.options.controls,
+			renderer: elementContainer.renderer,
+		} ) );
+
 		return {
+			container: elementContainer.children[ index ],
 			controlFields: this.model.get( 'fields' ),
 			titleField: this.model.get( 'title_field' ),
-			parentModel: this.elementSettingsModel // For parentConditions in repeaterRow
+			itemActions: this.model.get( 'item_actions' ),
 		};
 	},
 
 	createItemModel: function( attrs, options, controlView ) {
-		options = options || {};
-
 		options.controls = controlView.model.get( 'fields' );
 
-		if ( ! attrs._id ) {
-			attrs._id = elementor.helpers.getUniqueID();
-		}
-
-		return new BaseSettingsModel( attrs, options );
+		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 
 	fillCollection: function() {
-		var controlName = this.model.get( 'name' );
-		this.collection = this.elementSettingsModel.get( controlName );
+		// TODO: elementSettingsModel is deprecated since 2.8.0.
+		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
+		var controlName = this.model.get( 'name' );
+		this.collection = settings.get( controlName );
+
+		// Hack for history redo/undo
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
 			this.collection = new Backbone.Collection( this.collection, {
 				// Use `partial` to supply the `this` as an argument, but not as context
-				// the `_` i sa place holder for original arguments: `attrs` & `options`
-				model: _.partial( this.createItemModel, _, _, this )
+				// the `_` is a place holder for original arguments: `attrs` & `options`
+				model: _.partial( this.createItemModel, _, _, this ),
 			} );
 
 			// Set the value silent
-			this.elementSettingsModel.set( controlName, this.collection, { silent: true } );
-			this.listenTo( this.collection, 'change', this.onRowControlChange );
-			this.listenTo( this.collection, 'update', this.onRowUpdate, this );
+			settings.set( controlName, this.collection, { silent: true } );
+		}
+
+		// Reset children.
+		// TODO: Temp backwards compatibility since 2.8.0.
+		if ( this.container ) {
+			this.container.children = [];
 		}
 	},
 
-	initialize: function( options ) {
+	initialize: function() {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		this.fillCollection();
-
-		this.listenTo( this.collection, 'change', this.onRowControlChange );
-		this.listenTo( this.collection, 'update', this.onRowUpdate, this );
-	},
-
-	addRow: function( data, options ) {
-		var id = elementor.helpers.getUniqueID();
-
-		if ( data instanceof Backbone.Model ) {
-			data.set( '_id', id );
-		} else {
-			data._id = id;
-		}
-
-		return this.collection.add( data, options );
 	},
 
 	editRow: function( rowView ) {
@@ -119,7 +131,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	updateActiveRow: function() {
-		var activeItemIndex = 0;
+		var activeItemIndex = 1;
 
 		if ( this.currentEditableChild ) {
 			activeItemIndex = this.currentEditableChild.itemIndex;
@@ -133,13 +145,21 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 		this.children.each( function( view ) {
 			view.updateIndex( collection.indexOf( view.model ) + 1 );
+
+			view.setTitle();
 		} );
 	},
 
 	onRender: function() {
 		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
-		this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
+		if ( this.model.get( 'item_actions' ).sort ) {
+			this.ui.fieldContainer.sortable( {
+				axis: 'y',
+				handle: '.elementor-repeater-row-tools',
+				items: ' > :not(.elementor-repeater-row--disable-sort)',
+			} );
+		}
 
 		this.toggleMinRowsClass();
 	},
@@ -172,13 +192,15 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	onSortUpdate: function( event, ui ) {
-		var oldIndex = ui.item.data( 'oldIndex' ),
-			model = this.collection.at( oldIndex ),
+		const oldIndex = ui.item.data( 'oldIndex' ),
 			newIndex = ui.item.index();
 
-		this.collection.remove( model );
-
-		this.addRow( model, { at: newIndex } );
+		$e.run( 'document/repeater/move', {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			sourceIndex: oldIndex,
+			targetIndex: newIndex,
+		} );
 	},
 
 	onAddChild: function() {
@@ -186,92 +208,49 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	onRemoveChild: function( childView ) {
+	onButtonAddRowClick: function() {
+		const defaults = {};
+
+		// Get default fields.
+		_.each( this.model.get( 'fields' ), ( field ) => {
+			defaults[ field.name ] = field.default;
+		} );
+
+		const newModel = $e.run( 'document/repeater/insert', {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			model: defaults,
+		} );
+
+		this.editRow( this.children.findByModel( newModel ) );
+		this.toggleMinRowsClass();
+	},
+
+	onChildviewClickRemove: function( childView ) {
 		if ( childView === this.currentEditableChild ) {
 			delete this.currentEditableChild;
 		}
 
-		this.updateChildIndexes();
+		$e.run( 'document/repeater/remove', {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			index: childView._index,
+		} );
+
 		this.updateActiveRow();
-	},
-
-	onRowUpdate: function( collection, event ) {
-		// Simulate `changed` and `_previousAttributes` values
-		var settings = this.elementSettingsModel,
-			collectionCloned = collection.clone(),
-			controlName = this.model.get( 'name' );
-
-		if ( event.add ) {
-			collectionCloned.remove( event.changes.added[0] );
-		} else {
-			collectionCloned.add( event.changes.removed[0], { at: event.index } );
-		}
-
-		settings.changed = {};
-		settings.changed[ controlName ] = collection;
-
-		settings._previousAttributes = {};
-		settings._previousAttributes[ controlName ] = collectionCloned.toJSON();
-
-		settings.trigger( 'change', settings,  settings._pending );
-
-		delete settings.changed;
-		delete settings._previousAttributes;
+		this.updateChildIndexes();
 
 		this.toggleMinRowsClass();
 	},
 
-	onRowControlChange: function( model ) {
-		// Simulate `changed` and `_previousAttributes` values
-		var changed = Object.keys( model.changed );
-
-		if ( ! changed.length ) {
-			return;
-		}
-
-		var collectionCloned = model.collection.toJSON(),
-			modelIndex = model.collection.findIndex( model ),
-			element = this._parent.model,
-			settings = element.get( 'settings' ),
-			controlName = this.model.get( 'name' );
-
-		// Save it with old values
-		collectionCloned[ modelIndex ] = model._previousAttributes;
-
-		settings.changed = {};
-		settings.changed[ controlName ] =  model.collection;
-
-		settings._previousAttributes = {};
-		settings._previousAttributes[ controlName ] = collectionCloned;
-
-		settings.trigger( 'change', settings );
-
-		delete settings.changed;
-		delete settings._previousAttributes;
-	},
-
-	onButtonAddRowClick: function() {
-		var defaults = {};
-		_.each( this.model.get( 'fields' ), function( field ) {
-			defaults[ field.name ] = field['default'];
+	onChildviewClickDuplicate: function( childView ) {
+		$e.run( 'document/repeater/duplicate', {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			index: childView._index,
 		} );
 
-		var newModel = this.addRow( defaults ),
-			newChildView = this.children.findByModel( newModel );
-
-		this.editRow( newChildView );
-		this.render();
-	},
-
-	onChildviewClickRemove: function( childView ) {
-		childView.model.destroy();
-		this.render();
-	},
-
-	onChildviewClickDuplicate: function( childView ) {
-		var newModel = this.createItemModel( childView.model.toJSON(), {}, this );
-		this.addRow( newModel, { at: childView.itemIndex } );
-		this.render();
+		this.toggleMinRowsClass();
 	},
 
 	onChildviewClickEdit: function( childView ) {
@@ -283,7 +262,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.fillCollection();
 
 		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
-	}
+	},
 } );
 
 module.exports = ControlRepeaterItemView;

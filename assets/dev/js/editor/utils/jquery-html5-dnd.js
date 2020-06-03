@@ -1,8 +1,7 @@
 /**
  * HTML5 - Drag and Drop
  */
-;(function( $ ) {
-
+( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
 		try {
 			event.originalEvent.dataTransfer.setData( 'test', 'test' );
@@ -23,7 +22,7 @@
 				element: '',
 				groups: null,
 				onDragStart: null,
-				onDragEnd: null
+				onDragEnd: null,
 			};
 
 		var initSettings = function() {
@@ -47,7 +46,7 @@
 		var onDragStart = function( event ) {
 			var groups = settings.groups || [],
 				dataContainer = {
-					groups: groups
+					groups: groups,
 				};
 
 			if ( hasFullDataTransferSupport( event ) ) {
@@ -104,7 +103,7 @@
 				onDragEnter: null,
 				onDragging: null,
 				onDropping: null,
-				onDragLeave: null
+				onDragLeave: null,
 			};
 
 		var initSettings = function() {
@@ -114,7 +113,7 @@
 		var initElementsCache = function() {
 			elementsCache.$element = $( settings.element );
 
-			elementsCache.$placeholder = $( '<div>', { 'class': settings.placeholderClass } );
+			elementsCache.$placeholder = $( '<div>', { class: settings.placeholderClass } );
 		};
 
 		var hasHorizontalDetection = function() {
@@ -143,7 +142,7 @@
 				return false;
 			}
 
-			sensitivity = sensitivity[0];
+			sensitivity = sensitivity[ 0 ];
 
 			isPercentValue = /%$/.test( settings.horizontalSensitivity );
 
@@ -167,7 +166,9 @@
 
 			event = event.originalEvent;
 
-			if ( currentSide = checkHorizontal( event.offsetX, elementWidth ) ) {
+			currentSide = checkHorizontal( event.offsetX, elementWidth );
+
+			if ( currentSide ) {
 				return;
 			}
 
@@ -179,7 +180,7 @@
 
 			var elementPosition = currentElement.getBoundingClientRect();
 
-			currentSide = event.clientY > elementPosition.top + elementHeight / 2 ? 'bottom' : 'top';
+			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
 
 		var insertPlaceholder = function() {
@@ -196,7 +197,7 @@
 			var dataTransferTypes,
 				draggableGroups,
 				isGroupMatch,
-				isDroppingAllowed;
+				droppingAllowed;
 
 			if ( settings.groups && hasFullDataTransferSupport( event ) ) {
 				dataTransferTypes = event.originalEvent.dataTransfer.types;
@@ -214,7 +215,6 @@
 						}
 
 						settings.groups.forEach( function( groupName ) {
-
 							if ( -1 !== draggableGroups.groups.indexOf( groupName ) ) {
 								isGroupMatch = true;
 
@@ -231,10 +231,9 @@
 			}
 
 			if ( $.isFunction( settings.isDroppingAllowed ) ) {
+				droppingAllowed = settings.isDroppingAllowed.call( currentElement, currentSide, event, self );
 
-				isDroppingAllowed = settings.isDroppingAllowed.call( currentElement, currentSide, event, self );
-
-				if ( ! isDroppingAllowed ) {
+				if ( ! droppingAllowed ) {
 					return false;
 				}
 			}
@@ -378,7 +377,7 @@
 
 	var plugins = {
 		html5Draggable: Draggable,
-		html5Droppable: Droppable
+		html5Droppable: Droppable,
 	};
 
 	$.each( plugins, function( pluginName, Plugin ) {
@@ -390,9 +389,7 @@
 					hasInstance = instance instanceof Plugin;
 
 				if ( hasInstance ) {
-
 					if ( 'destroy' === options ) {
-
 						instance.destroy();
 
 						$.removeData( this, pluginName );
@@ -409,4 +406,4 @@
 			return this;
 		};
 	} );
-})( jQuery );
+} )( jQuery );

@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
 /**
  * Elementor accordion widget.
  *
@@ -58,19 +59,17 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the accordion widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'accordion', 'tabs', 'toggle' ];
 	}
 
 	/**
@@ -89,35 +88,45 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'tab_title',
+			[
+				'label' => __( 'Title & Description', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => __( 'Accordion Title', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_control(
+			'tab_content',
+			[
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::WYSIWYG,
+				'default' => __( 'Accordion Content', 'elementor' ),
+				'show_label' => false,
+			]
+		);
+
 		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Accordion Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
 						'tab_title' => __( 'Accordion #1', 'elementor' ),
-						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
+						'tab_content' => __( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 					[
 						'tab_title' => __( 'Accordion #2', 'elementor' ),
-						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-				],
-				'fields' => [
-					[
-						'name' => 'tab_title',
-						'label' => __( 'Title & Content', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-						'default' => __( 'Accordion Title' , 'elementor' ),
-						'label_block' => true,
-					],
-					[
-						'name' => 'tab_content',
-						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
-						'default' => __( 'Accordion Content', 'elementor' ),
-						'show_label' => false,
+						'tab_content' => __( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 				],
 				'title_field' => '{{{ tab_title }}}',
@@ -130,6 +139,64 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
+			]
+		);
+
+		$this->add_control(
+			'selected_icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'separator' => 'before',
+				'fa4compatibility' => 'icon',
+				'default' => [
+					'value' => 'fas fa-plus',
+					'library' => 'fa-solid',
+				],
+				'recommended' => [
+					'fa-solid' => [
+						'chevron-down',
+						'angle-down',
+						'angle-double-down',
+						'caret-down',
+						'caret-square-down',
+					],
+					'fa-regular' => [
+						'caret-square-down',
+					],
+				],
+				'skin' => 'inline',
+				'label_block' => false,
+			]
+		);
+
+		$this->add_control(
+			'selected_active_icon',
+			[
+				'label' => __( 'Active Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon_active',
+				'default' => [
+					'value' => 'fas fa-minus',
+					'library' => 'fa-solid',
+				],
+				'recommended' => [
+					'fa-solid' => [
+						'chevron-up',
+						'angle-up',
+						'angle-double-up',
+						'caret-up',
+						'caret-square-up',
+					],
+					'fa-regular' => [
+						'caret-square-up',
+					],
+				],
+				'skin' => 'inline',
+				'label_block' => false,
+				'condition' => [
+					'selected_icon[value]!' => '',
+				],
 			]
 		);
 
@@ -149,29 +216,6 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'icon',
-			[
-				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-plus',
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'icon_active',
-			[
-				'label' => __( 'Active Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-minus',
-				'label_block' => true,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 
@@ -244,11 +288,11 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-accordion .elementor-tab-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-accordion-icon, {{WRAPPER}} .elementor-accordion-title' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 			]
 		);
@@ -259,11 +303,11 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-accordion .elementor-tab-title.elementor-active' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-active .elementor-accordion-icon, {{WRAPPER}} .elementor-active .elementor-accordion-title' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_4,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_4,
 				],
 			]
 		);
@@ -272,8 +316,8 @@ class Widget_Accordion extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-title',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-title',
+				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -297,7 +341,7 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'icon!' => '',
+					'selected_icon[value]!' => '',
 				],
 			]
 		);
@@ -319,10 +363,6 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'default' => is_rtl() ? 'right' : 'left',
 				'toggle' => false,
-				'label_block' => false,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 
@@ -332,10 +372,8 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-accordion .elementor-tab-title .elementor-accordion-icon .fa:before' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'icon!' => '',
+					'{{WRAPPER}} .elementor-accordion .elementor-tab-title .elementor-accordion-icon i:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-accordion .elementor-tab-title .elementor-accordion-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -346,10 +384,8 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon .fa:before' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'icon!' => '',
+					'{{WRAPPER}} .elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon i:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -369,9 +405,6 @@ class Widget_Accordion extends Widget_Base {
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-icon.elementor-accordion-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-icon.elementor-accordion-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 
@@ -382,9 +415,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Content', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 
@@ -408,8 +438,8 @@ class Widget_Accordion extends Widget_Base {
 					'{{WRAPPER}} .elementor-accordion .elementor-tab-content' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 			]
 		);
@@ -419,7 +449,7 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-content',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -447,12 +477,25 @@ class Widget_Accordion extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
+		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 
+		if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// @todo: remove when deprecated
+			// added as bc in 2.6
+			// add old default
+			$settings['icon'] = 'fa fa-plus';
+			$settings['icon_active'] = 'fa fa-minus';
+			$settings['icon_align'] = $this->get_settings( 'icon_align' );
+		}
+
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-accordion" role="tablist">
-			<?php foreach ( $settings['tabs'] as $index => $item ) :
+			<?php
+			foreach ( $settings['tabs'] as $index => $item ) :
 				$tab_count = $index + 1;
 
 				$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
@@ -462,7 +505,6 @@ class Widget_Accordion extends Widget_Base {
 				$this->add_render_attribute( $tab_title_setting_key, [
 					'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-title' ],
-					'tabindex' => $id_int . $tab_count,
 					'data-tab' => $tab_count,
 					'role' => 'tab',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
@@ -480,13 +522,19 @@ class Widget_Accordion extends Widget_Base {
 				?>
 				<div class="elementor-accordion-item">
 					<<?php echo $settings['title_html_tag']; ?> <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>>
-						<?php if ( $settings['icon'] ) : ?>
-						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo esc_attr( $settings['icon_align'] ); ?>" aria-hidden="true">
-							<i class="elementor-accordion-icon-closed <?php echo esc_attr( $settings['icon'] ); ?>"></i>
-							<i class="elementor-accordion-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
-						</span>
+						<?php if ( $has_icon ) : ?>
+							<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo esc_attr( $settings['icon_align'] ); ?>" aria-hidden="true">
+							<?php
+							if ( $is_new || $migrated ) { ?>
+								<span class="elementor-accordion-icon-closed"><?php Icons_Manager::render_icon( $settings['selected_icon'] ); ?></span>
+								<span class="elementor-accordion-icon-opened"><?php Icons_Manager::render_icon( $settings['selected_active_icon'] ); ?></span>
+							<?php } else { ?>
+								<i class="elementor-accordion-icon-closed <?php echo esc_attr( $settings['icon'] ); ?>"></i>
+								<i class="elementor-accordion-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
+							<?php } ?>
+							</span>
 						<?php endif; ?>
-						<?php echo $item['tab_title']; ?>
+						<a class="elementor-accordion-title" href=""><?php echo $item['tab_title']; ?></a>
 					</<?php echo $settings['title_html_tag']; ?>>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
@@ -500,15 +548,18 @@ class Widget_Accordion extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<div class="elementor-accordion" role="tablist">
 			<#
 			if ( settings.tabs ) {
-				var tabindex = view.getIDInt().toString().substr( 0, 3 );
+				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
+					iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, {}, 'i' , 'object' ),
+					iconActiveHTML = elementor.helpers.renderIcon( view, settings.selected_active_icon, {}, 'i' , 'object' ),
+					migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 
 				_.each( settings.tabs, function( item, index ) {
 					var tabCount = index + 1,
@@ -536,13 +587,18 @@ class Widget_Accordion extends Widget_Base {
 					#>
 					<div class="elementor-accordion-item">
 						<{{{ settings.title_html_tag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
-							<# if ( settings.icon ) { #>
+							<# if ( settings.icon || settings.selected_icon ) { #>
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}" aria-hidden="true">
-								<i class="elementor-accordion-icon-closed {{ settings.icon }}"></i>
-								<i class="elementor-accordion-icon-opened {{ settings.icon_active }}"></i>
+								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+									<span class="elementor-accordion-icon-closed">{{{ iconHTML.value }}}</span>
+									<span class="elementor-accordion-icon-opened">{{{ iconActiveHTML.value }}}</span>
+								<# } else { #>
+									<i class="elementor-accordion-icon-closed {{ settings.icon }}"></i>
+									<i class="elementor-accordion-icon-opened {{ settings.icon_active }}"></i>
+								<# } #>
 							</span>
 							<# } #>
-							{{{ item.tab_title }}}
+							<a class="elementor-accordion-title" href="">{{{ item.tab_title }}}</a>
 						</{{{ settings.title_html_tag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>

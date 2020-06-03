@@ -1,69 +1,83 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	VideoModule;
-
-VideoModule = HandlerModule.extend( {
-	getDefaultSettings: function() {
+class VideoModule extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
-				videoWrapper: '.elementor-wrapper',
-				videoFrame: 'iframe'
-			}
+				video: '.elementor-video',
+				videoIframe: '.elementor-video-iframe',
+			},
 		};
-	},
+	}
 
-	getDefaultElements: function() {
-		var selectors = this.getSettings( 'selectors' );
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
 
-		var elements = {
+		return {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
-			$videoWrapper: this.$element.find( selectors.videoWrapper )
+			$video: this.$element.find( selectors.video ),
+			$videoIframe: this.$element.find( selectors.videoIframe ),
 		};
+	}
 
-		elements.$videoFrame = elements.$videoWrapper.find( selectors.videoFrame );
-
-		return elements;
-	},
-
-	getLightBox: function() {
+	getLightBox() {
 		return elementorFrontend.utils.lightbox;
-	},
+	}
 
-	handleVideo: function() {
+	handleVideo() {
 		if ( ! this.getElementSettings( 'lightbox' ) ) {
 			this.elements.$imageOverlay.remove();
 
 			this.playVideo();
 		}
-	},
+	}
 
-	playVideo: function() {
-		var $videoFrame = this.elements.$videoFrame,
-			newSourceUrl = $videoFrame[0].src.replace( '&autoplay=0', '' );
+	playVideo() {
+		if ( this.elements.$video.length ) {
+			this.elements.$video[ 0 ].play();
 
-		$videoFrame[0].src = newSourceUrl + '&autoplay=1';
-	},
+			return;
+		}
 
-	animateVideo: function() {
-		this.getLightBox().setEntranceAnimation( this.getElementSettings( 'lightbox_content_animation' ) );
-	},
+		const $videoIframe = this.elements.$videoIframe,
+			lazyLoad = $videoIframe.data( 'lazy-load' );
 
-	handleAspectRatio: function() {
+		if ( lazyLoad ) {
+			$videoIframe.attr( 'src', lazyLoad );
+		}
+
+		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
+
+		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+
+		if ( $videoIframe[ 0 ].src.includes( 'vimeo.com' ) ) {
+			const videoSrc = $videoIframe[ 0 ].src,
+				timeMatch = /#t=[^&]*/.exec( videoSrc );
+
+			// Param '#t=' must be last in the URL
+			$videoIframe[ 0 ].src = videoSrc.slice( 0, timeMatch.index ) + videoSrc.slice( timeMatch.index + timeMatch[ 0 ].length ) + timeMatch[ 0 ];
+		}
+	}
+
+	animateVideo() {
+		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
+	}
+
+	handleAspectRatio() {
 		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
-	},
+	}
 
-	bindEvents: function() {
-		this.elements.$imageOverlay.on( 'click', this.handleVideo );
-	},
+	bindEvents() {
+		this.elements.$imageOverlay.on( 'click', this.handleVideo.bind( this ) );
+	}
 
-	onElementChange: function( propertyName ) {
-		if ( 'lightbox_content_animation' === propertyName ) {
+	onElementChange( propertyName ) {
+		if ( 0 === propertyName.indexOf( 'lightbox_content_animation' ) ) {
 			this.animateVideo();
 
 			return;
 		}
 
-		var isLightBoxEnabled = this.getElementSettings( 'lightbox' );
+		const isLightBoxEnabled = this.getElementSettings( 'lightbox' );
 
 		if ( 'lightbox' === propertyName && ! isLightBoxEnabled ) {
 			this.getLightBox().getModal().hide();
@@ -75,8 +89,8 @@ VideoModule = HandlerModule.extend( {
 			this.handleAspectRatio();
 		}
 	}
-} );
+}
 
-module.exports = function( $scope ) {
-	new VideoModule( { $element: $scope } );
+export default ( $scope ) => {
+	elementorFrontend.elementsHandler.addHandler( VideoModule, { $element: $scope } );
 };

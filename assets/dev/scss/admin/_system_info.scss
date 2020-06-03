@@ -16,6 +16,17 @@
 		.widefat {
 			white-space: pre;
 		}
+
+		.elementor-log-entries {
+			white-space: pre-wrap;
+		}
+
+		&:not(.elementor-system-info-log) {
+
+			tbody td:first-child {
+				width: 300px;
+			}
+		}
 	}
 
 	.elementor-system-info-report-name {
@@ -34,7 +45,8 @@
 		}
 	}
 
-	.elementor-system-info-report-field, .elementor-system-info-field-recommendation {
+	.elementor-system-info-report-field,
+	.elementor-system-info-field-recommendation {
 		padding-left: 10px;
 		color: #7F7F7F;
 	}
@@ -66,5 +78,23 @@
 		td:first-child {
 			@include border-start(3px solid $editor-orange);
 		}
+	}
+
+	a.box-title-tool {
+		font-size: 80%;
+		@include margin-start(15px);
+		color: $gray;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	#elementor-usage-recalc {
+		font-size: 12px;
+		color: #ffffff;
+		background-color: $editor-light;
+		padding: 4px 18px 5px 18px;
+		border-radius: 3px;
 	}
 }

@@ -6,7 +6,11 @@
 	display: inline-block;
 	line-height: 1;
 	background-color: $gray;
+	font-size: 15px; //size-sm
+	padding: 12px 24px; //size-sm
+	border-radius: 3px; //size-sm
 	color: #fff;
+	fill: #fff;
 	text-align: center;
 	transition: $transition-hover;
 
@@ -14,7 +18,25 @@
 	&:focus,
 	&:visited {
 		color: #fff;
-		opacity: .9;
+	}
+
+	&-content-wrapper {
+		display: flex;
+		justify-content: center;
+	}
+
+	&-icon {
+		flex-grow: 0;
+		order: 5;
+		svg {
+			width: 1em;
+		}
+	}
+
+	&-text {
+		flex-grow: 1;
+		order: 10;
+		display: inline-block;
 	}
 
 	&.elementor-size- {
@@ -26,9 +48,7 @@
 		}
 
 		&sm {
-			font-size: 15px;
-			padding: 12px 24px;
-			border-radius: 3px;
+			//default size
 		}
 
 		&md {
@@ -53,19 +73,24 @@
 	.elementor-align-icon- {
 
 		&right {
-			float: right;
 			margin-left: 5px;
+			order: getValueByDirection( 15, 5 );
 		}
 
 		&left {
-			float: left;
 			margin-right: 5px;
+			order: getValueByDirection( 5, 15 );
 		}
 	}
 
-	.elementor-button-text {
-		display: inline-block;
+	span {
+		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
 	}
+}
+
+/* TODO: REMOVE THIS EXCEPTION AFTER PRO 2.8 RELEASES */
+.elementor-menu-cart__toggle .elementor-button-icon {
+	order: 15;
 }
 
 .elementor-element.elementor-button- {

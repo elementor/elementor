@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor shapes class.
+ * Elementor shapes.
  *
  * Elementor shapes handler class is responsible for setting up the supported
  * shape dividers.
@@ -104,6 +104,12 @@ class Shapes {
 	 * @return string Shape file path.
 	 */
 	public static function get_shape_path( $shape, $is_negative = false ) {
+
+		if ( isset( self::$shapes[ $shape ] ) && isset( self::$shapes[ $shape ]['path'] ) ) {
+			$path = self::$shapes[ $shape ]['path'];
+			return ( $is_negative ) ? str_replace( '.svg', '-negative.svg', $path ) : $path;
+		}
+
 		$file_name = $shape;
 
 		if ( $is_negative ) {
@@ -123,7 +129,7 @@ class Shapes {
 	 * @static
 	 */
 	private static function init_shapes() {
-		self::$shapes = [
+		$native_shapes = [
 			'mountains' => [
 				'title' => _x( 'Mountains', 'Shapes', 'elementor' ),
 				'has_flip' => true,
@@ -204,5 +210,66 @@ class Shapes {
 				'has_negative' => true,
 			],
 		];
+
+		self::$shapes = array_merge( $native_shapes, self::get_additional_shapes() );
+	}
+
+	/**
+	 * Get Additional Shapes
+	 *
+	 * Used to add custom shapes to elementor.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return array
+	 */
+	private static function get_additional_shapes() {
+		static $additional_shapes = null;
+
+		if ( null !== $additional_shapes ) {
+			return $additional_shapes;
+		}
+		$additional_shapes = [];
+		/**
+		 * Additional shapes.
+		 *
+		 * Filters the shapes used by Elementor to add additional shapes.
+		 *
+		 * @since 2.0.1
+		 *
+		 * @param array $additional_shapes Additional Elementor shapes.
+		 */
+		$additional_shapes = apply_filters( 'elementor/shapes/additional_shapes', $additional_shapes );
+		return $additional_shapes;
+	}
+
+	/**
+	 * Get Additional Shapes For Config
+	 *
+	 * Used to set additional shape paths for editor
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return array|bool
+	 */
+	public static function get_additional_shapes_for_config() {
+		$additional_shapes = self::get_additional_shapes();
+		if ( empty( $additional_shapes ) ) {
+			return false;
+		}
+
+		$additional_shapes_config = [];
+		foreach ( $additional_shapes as $shape_name => $shape_settings ) {
+			if ( ! isset( $shape_settings['url'] ) ) {
+				continue;
+			}
+			$additional_shapes_config[ $shape_name ] = $shape_settings['url'];
+		}
+
+		if ( empty( $additional_shapes_config ) ) {
+			return false;
+		}
+
+		return $additional_shapes_config;
 	}
 }

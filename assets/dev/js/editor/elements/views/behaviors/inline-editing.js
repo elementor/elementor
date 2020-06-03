@@ -7,15 +7,19 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 	ui: function() {
 		return {
-			inlineEditingArea: '.' + this.getOption( 'inlineEditingClass' )
+			inlineEditingArea: '.' + this.getOption( 'inlineEditingClass' ),
 		};
 	},
 
 	events: function() {
 		return {
 			'click @ui.inlineEditingArea': 'onInlineEditingClick',
-			'input @ui.inlineEditingArea':'onInlineEditingUpdate'
+			'input @ui.inlineEditingArea': 'onInlineEditingUpdate',
 		};
+	},
+
+	initialize: function() {
+		this.onInlineEditingBlur = this.onInlineEditingBlur.bind( this );
 	},
 
 	getEditingSettingKey: function() {
@@ -25,9 +29,28 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	startEditing: function( $element ) {
 		if (
 			this.editing ||
-			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
+			! this.view.container.isEditable() ||
 			this.view.model.isRemoteRequestActive()
 		) {
+			return;
+		}
+
+		var elementorSettingKey = $element.data().elementorSettingKey,
+			settingKey = elementorSettingKey,
+			keyParts = elementorSettingKey.split( '.' ),
+			isRepeaterKey = 3 === keyParts.length,
+			settingsModel = this.view.getEditModel().get( 'settings' );
+
+		if ( isRepeaterKey ) {
+			settingsModel = settingsModel.get( keyParts[ 0 ] ).models[ keyParts[ 1 ] ];
+
+			settingKey = keyParts[ 2 ];
+		}
+
+		var dynamicSettings = settingsModel.get( '__dynamic__' ),
+			isDynamic = dynamicSettings && dynamicSettings[ settingKey ];
+
+		if ( isDynamic ) {
 			return;
 		}
 
@@ -50,7 +73,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		 */
 		this.$currentEditingArea.html( contentHTML );
 
-		var ElementorInlineEditor = elementorFrontend.getElements( 'window' ).ElementorInlineEditor;
+		var ElementorInlineEditor = elementorFrontend.elements.window.ElementorInlineEditor;
 
 		this.editing = true;
 
@@ -62,41 +85,41 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
-			editor: this.$currentEditingArea[0],
+			editor: this.$currentEditingArea[ 0 ],
 			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
-			cleanAttrs: ['id', 'class', 'name'],
+			cleanAttrs: [ 'id', 'class', 'name' ],
 			placeholder: elementor.translate( 'type_here' ) + '...',
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
 				externalLink: {
-					className: 'eicon-editor-external-link'
+					className: 'eicon-editor-external-link',
 				},
 				list: {
-					className: 'eicon-editor-list-ul'
+					className: 'eicon-editor-list-ul',
 				},
 				insertOrderedList: {
-					className: 'eicon-editor-list-ol'
+					className: 'eicon-editor-list-ol',
 				},
 				insertUnorderedList: {
-					className: 'eicon-editor-list-ul'
+					className: 'eicon-editor-list-ul',
 				},
 				createlink: {
-					className: 'eicon-editor-link'
+					className: 'eicon-editor-link',
 				},
 				unlink: {
-					className: 'eicon-editor-unlink'
+					className: 'eicon-editor-unlink',
 				},
 				blockquote: {
-					className: 'eicon-editor-quote'
+					className: 'eicon-editor-quote',
 				},
 				p: {
-					className: 'eicon-editor-paragraph'
+					className: 'eicon-editor-paragraph',
 				},
 				pre: {
-					className: 'eicon-editor-code'
-				}
-			}
+					className: 'eicon-editor-code',
+				},
+			},
 		} );
 
 		var $menuItems = jQuery( this.editor._menu ).children();
@@ -110,11 +133,17 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$currentEditingArea.on( 'blur', this.onInlineEditingBlur.bind( this ) );
+		this.$currentEditingArea.on( 'blur', this.onInlineEditingBlur );
+
+		elementorCommon.elements.$body.on( 'mousedown', this.onInlineEditingBlur );
 	},
 
 	stopEditing: function() {
 		this.editing = false;
+
+		this.$currentEditingArea.off( 'blur', this.onInlineEditingBlur );
+
+		elementorCommon.elements.$body.off( 'mousedown', this.onInlineEditingBlur );
 
 		this.editor.destroy();
 
@@ -143,28 +172,51 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}, 30 );
 	},
 
-	onInlineEditingBlur: function() {
-		var self = this;
+	onInlineEditingBlur: function( event ) {
+		if ( 'mousedown' === event.type ) {
+			this.stopEditing();
+
+			return;
+		}
 
 		/**
 		 * When exiting inline editing we need to set timeout, to make sure there is no focus on internal
 		 * toolbar action. This prevent the blur and allows the user to continue the inline editing.
 		 */
-		setTimeout( function() {
-			var selection = elementorFrontend.getElements( 'window' ).getSelection(),
+		setTimeout( () => {
+			const selection = elementorFrontend.elements.window.getSelection(),
 				$focusNode = jQuery( selection.focusNode );
 
 			if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {
 				return;
 			}
 
-			self.stopEditing();
+			this.stopEditing();
 		}, 20 );
 	},
 
 	onInlineEditingUpdate: function() {
-		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
-	}
+		let key = this.getEditingSettingKey(),
+			container = this.view.getContainer();
+
+		const parts = key.split( '.' );
+
+		// Is it repeater?
+		if ( 3 === parts.length ) {
+			container = container.children[ parts[ 1 ] ];
+			key = parts[ 2 ];
+		}
+
+		$e.run( 'document/elements/settings', {
+			container,
+			settings: {
+				[ key ]: this.editor.getContent(),
+			},
+			options: {
+				external: true,
+			},
+		} );
+	},
 } );
 
 module.exports = InlineEditingBehavior;

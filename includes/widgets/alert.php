@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor alert widget.
  *
@@ -58,19 +60,17 @@ class Widget_Alert extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the alert widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'alert', 'notice', 'message' ];
 	}
 
 	/**
@@ -101,6 +101,7 @@ class Widget_Alert extends Widget_Base {
 					'warning' => __( 'Warning', 'elementor' ),
 					'danger' => __( 'Danger', 'elementor' ),
 				],
+				'style_transfer' => true,
 			]
 		);
 
@@ -112,6 +113,9 @@ class Widget_Alert extends Widget_Base {
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'This is an Alert', 'elementor' ),
 				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -124,6 +128,9 @@ class Widget_Alert extends Widget_Base {
 				'default' => __( 'I am a description. Click the edit button to change this text.', 'elementor' ),
 				'separator' => 'none',
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -224,7 +231,7 @@ class Widget_Alert extends Widget_Base {
 			[
 				'name' => 'alert_title',
 				'selector' => '{{WRAPPER}} .elementor-alert-title',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -254,7 +261,7 @@ class Widget_Alert extends Widget_Base {
 			[
 				'name' => 'alert_description',
 				'selector' => '{{WRAPPER}} .elementor-alert-description',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -271,9 +278,9 @@ class Widget_Alert extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
-		if ( empty( $settings['alert_title'] ) ) {
+		if ( Utils::is_empty( $settings['alert_title'] ) ) {
 			return;
 		}
 
@@ -289,19 +296,20 @@ class Widget_Alert extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<span <?php echo $this->get_render_attribute_string( 'alert_title' ); ?>><?php echo $settings['alert_title']; ?></span>
-			<?php if ( ! empty( $settings['alert_description'] ) ) {
+			<?php
+			if ( ! Utils::is_empty( $settings['alert_description'] ) ) :
 				$this->add_render_attribute( 'alert_description', 'class', 'elementor-alert-description' );
 
 				$this->add_inline_editing_attributes( 'alert_description' );
 				?>
 				<span <?php echo $this->get_render_attribute_string( 'alert_description' ); ?>><?php echo $settings['alert_description']; ?></span>
-			<?php }
-			if ( 'show' === $settings['show_dismiss'] ) { ?>
+			<?php endif; ?>
+			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
 				<button type="button" class="elementor-alert-dismiss">
 					<span aria-hidden="true">&times;</span>
-					<span class="elementor-screen-only"><?php esc_html_e( 'Dismiss alert', 'elementor' ); ?></span>
+					<span class="elementor-screen-only"><?php echo __( 'Dismiss alert', 'elementor' ); ?></span>
 				</button>
-			<?php } ?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -311,10 +319,10 @@ class Widget_Alert extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<# if ( settings.alert_title ) {
 			view.addRenderAttribute( {
@@ -331,7 +339,7 @@ class Widget_Alert extends Widget_Base {
 				<# if ( 'show' === settings.show_dismiss ) { #>
 					<button type="button" class="elementor-alert-dismiss">
 						<span aria-hidden="true">&times;</span>
-						<span class="elementor-screen-only"><?php esc_html_e( 'Dismiss alert', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo __( 'Dismiss alert', 'elementor' ); ?></span>
 					</button>
 				<# } #>
 			</div>

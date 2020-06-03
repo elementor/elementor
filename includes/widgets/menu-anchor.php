@@ -58,19 +58,17 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the menu anchor widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'menu', 'anchor', 'link' ];
 	}
 
 	/**
@@ -90,21 +88,22 @@ class Widget_Menu_Anchor extends Widget_Base {
 		);
 
 		$this->add_control(
-			'anchor_description',
-			[
-				'raw' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-descriptor',
-			]
-		);
-
-		$this->add_control(
 			'anchor',
 			[
 				'label' => __( 'The ID of Menu Anchor.', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'For Example: About', 'elementor' ),
+				'description' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'label_block' => true,
+			]
+		);
+
+		$this->add_control(
+			'anchor_note',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => sprintf( __( 'Note: The ID link ONLY accepts these chars: %s', 'elementor' ), '`A-Z, a-z, 0-9, _ , -`' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
 
@@ -120,10 +119,10 @@ class Widget_Menu_Anchor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$anchor = $this->get_settings( 'anchor' );
+		$anchor = $this->get_settings_for_display( 'anchor' );
 
 		if ( ! empty( $anchor ) ) {
-			$this->add_render_attribute( 'inner', 'id', $anchor );
+			$this->add_render_attribute( 'inner', 'id', sanitize_html_class( $anchor ) );
 		}
 
 		$this->add_render_attribute( 'inner', 'class', 'elementor-menu-anchor' );
@@ -137,10 +136,10 @@ class Widget_Menu_Anchor extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<div class="elementor-menu-anchor"{{{ settings.anchor ? ' id="' + settings.anchor + '"' : '' }}}></div>
 		<?php

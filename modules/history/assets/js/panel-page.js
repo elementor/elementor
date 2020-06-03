@@ -1,73 +1,67 @@
-var TabHistoryView = require( './history/panel-tab' ),
-	TabHistoryEmpty = require( './history/empty' ),
-	TabRevisionsView = require( './revisions/panel-tab' ),
-	TabRevisionsEmpty = require( './revisions/empty' );
+var TabHistoryView = require( './history/panel-tab' );
+
+import TabRevisionsLoadingView from './revisions/panel/loading';
+import TabRevisionsView from './revisions/panel/tab';
+import TabRevisionsEmptyView from './revisions/panel/empty';
 
 module.exports = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-history-page',
 
 	regions: {
-		content: '#elementor-panel-history-content'
+		content: '#elementor-panel-history-content',
 	},
 
 	ui: {
-		tabs: '.elementor-panel-navigation-tab'
-	},
-
-	events: {
-		'click @ui.tabs': 'onTabClick'
+		tabs: '.elementor-panel-navigation-tab',
 	},
 
 	regionViews: {},
 
 	currentTab: null,
 
-	initialize: function() {
+	/**
+	 * @type {Document}
+	 */
+	document: null,
+
+	initialize: function( options ) {
+		this.document = options.document || elementor.documents.getCurrent();
+
 		this.initRegionViews();
 	},
 
 	initRegionViews: function() {
-		var historyItems = elementor.history.history.getItems(),
-			revisionsItems = elementor.history.revisions.getItems();
+		const historyItems = this.document.history.getItems();
 
-		this.regionViews  = {
-			history: {
-				region: this.content,
-				view: function() {
-					if ( historyItems.length ) {
-						return TabHistoryView;
-					}
-
-					return TabHistoryEmpty;
+		this.regionViews = {
+			actions: {
+				view: () => {
+					return TabHistoryView;
 				},
 				options: {
-					collection: historyItems
-				}
+					collection: historyItems,
+					history: this.document.history,
+				},
 			},
 			revisions: {
-				region: this.content,
-				view: function() {
-					if ( revisionsItems.length ) {
-						return TabRevisionsView;
+				view: () => {
+					const revisionsItems = this.document.revisions.getItems();
+
+					if ( ! revisionsItems ) {
+						return TabRevisionsLoadingView;
 					}
 
-					return TabRevisionsEmpty;
+					if ( 1 === revisionsItems.length && 'current' === revisionsItems.models[ 0 ].get( 'type' ) ) {
+						return TabRevisionsEmptyView;
+					}
+
+					return TabRevisionsView;
 				},
-
 				options: {
-					collection: revisionsItems
-				}
-			}
+					document: this.document,
+				},
+			},
 		};
-	},
-
-	activateTab: function( tabName ) {
-		this.ui.tabs
-			.removeClass( 'active' )
-			.filter( '[data-view="' + tabName + '"]' )
-			.addClass( 'active' );
-
-		this.showView( tabName );
 	},
 
 	getCurrentTab: function() {
@@ -75,29 +69,16 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	showView: function( viewName ) {
-		var viewDetails = this.regionViews[ viewName ],
+		const viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {},
-			View = viewDetails.view;
-
-		if ( 'function' === typeof View ) {
 			View = viewDetails.view();
+
+		if ( this.currentTab && this.currentTab.constructor === View ) {
+			return;
 		}
 
-		options.viewName = viewName;
 		this.currentTab = new View( options );
 
-		viewDetails.region.show( this.currentTab );
+		this.content.show( this.currentTab );
 	},
-
-	onRender: function() {
-		this.showView( 'history' );
-	},
-
-	onTabClick: function( event ) {
-		this.activateTab( event.currentTarget.dataset.view );
-	},
-
-	onDestroy: function() {
-		elementor.getPanelView().getFooterView().ui.history.removeClass( 'elementor-open' );
-	}
 } );

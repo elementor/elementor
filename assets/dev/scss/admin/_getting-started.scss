@@ -1,0 +1,69 @@
+
+// Getting Started - Admin Page
+
+.e-getting-started {
+	max-width: 900px;
+	padding: 2.5em 0;
+	margin: auto;
+	text-align: center;
+
+	&__header {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		box-shadow: $panel-bottom-shadow;
+
+		.e-logo-wrapper {
+			font-size: 10px;
+			@include margin-end(10px);
+		}
+	}
+
+	&__title {
+		padding: 0 15px;
+		font-weight: 600;
+		text-transform: uppercase;
+		display: flex;
+		align-items: center;
+	}
+
+	&__skip {
+		@include border-start(1px solid #eee);
+		font-size: 16px;
+		color: inherit;
+
+		i {
+			padding: 15px;
+		}
+	}
+
+	&__content {
+		padding: 50px;
+
+		h2 {
+			font-size: 2em;
+			margin-top: 0;
+		}
+	}
+
+	&__content--narrow {
+		max-width: 500px;
+		margin: auto;
+	}
+
+	&__video {
+		margin: 40px 0 60px;
+
+		iframe {
+			box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.15);
+		}
+	}
+
+	&__actions {
+
+		.button-primary {
+			@include margin-end(20px);
+		}
+	}
+}

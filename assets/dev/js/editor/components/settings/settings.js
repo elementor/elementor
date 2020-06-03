@@ -1,14 +1,15 @@
-var Module = require( 'elementor-utils/module' );
+import EditorPreferences from './editor-preferences/manager';
 
-module.exports = Module.extend( {
+module.exports = elementorModules.Module.extend( {
 	modules: {
 		base: require( 'elementor-editor/components/settings/base/manager' ),
 		general: require( 'elementor-editor/components/settings/general/manager' ),
-		page: require( 'elementor-editor/components/settings/page/manager' )
+		page: require( 'elementor-editor/components/settings/page/manager' ),
+		editorPreferences: EditorPreferences,
 	},
 
 	panelPages: {
-		base: require( 'elementor-editor/components/settings/base/panel' )
+		base: require( 'elementor-editor/components/settings/base/panel' ),
 	},
 
 	onInit: function() {
@@ -23,5 +24,5 @@ module.exports = Module.extend( {
 
 			self[ name ] = new Manager( config );
 		} );
-	}
+	},
 } );

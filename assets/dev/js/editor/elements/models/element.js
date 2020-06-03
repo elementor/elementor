@@ -1,5 +1,4 @@
-var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
+var ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
 	ElementModel;
 
 ElementModel = Backbone.Model.extend( {
@@ -8,7 +7,9 @@ ElementModel = Backbone.Model.extend( {
 		elType: '',
 		isInner: false,
 		settings: {},
-		defaultEditSettings: {}
+		defaultEditSettings: {
+			defaultEditRoute: 'content',
+		},
 	},
 
 	remoteRender: false,
@@ -43,7 +44,7 @@ ElementModel = Backbone.Model.extend( {
 
 		this.on( {
 			destroy: this.onDestroy,
-			'editor:close': this.onCloseEditor
+			'editor:close': this.onCloseEditor,
 		} );
 	},
 
@@ -51,12 +52,12 @@ ElementModel = Backbone.Model.extend( {
 		var elType = this.get( 'elType' ),
 			settings = this.get( 'settings' ),
 			settingModels = {
-				column: ColumnSettingsModel
+				column: ColumnSettingsModel,
 			},
-			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
+			SettingsModel = settingModels[ elType ] || elementorModules.editor.elements.models.BaseSettings;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
-			settings = elementor.helpers.cloneObject( settings );
+			settings = elementorCommon.helpers.cloneObject( settings );
 		}
 
 		if ( 'widget' === elType ) {
@@ -66,7 +67,9 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
-		settings = new SettingsModel( settings );
+		settings = new SettingsModel( settings, {
+			controls: elementor.getElementControls( this ),
+		} );
 
 		this.set( 'settings', settings );
 
@@ -81,41 +84,20 @@ ElementModel = Backbone.Model.extend( {
 		elementorFrontend.config.elements.editSettings[ this.cid ] = editSettings;
 	},
 
-	onDestroy: function() {
-		// Clean the memory for all use instances
-		var settings = this.get( 'settings' ),
-			elements = this.get( 'elements' );
-
-		if ( undefined !== elements ) {
-			_.each( _.clone( elements.models ), function( model ) {
-				model.destroy();
-			} );
-		}
-
-		if ( settings instanceof BaseSettingsModel ) {
-			settings.destroy();
-		}
-	},
-
-	onCloseEditor: function() {
-		this.initEditSettings();
-
-		if ( this.renderOnLeave ) {
-			this.renderRemoteServer();
-		}
-	},
-
 	setSetting: function( key, value ) {
-		var keyParts = key.split( '.' ),
-			isRepeaterKey = 3 === keyParts.length,
-			settings = this.get( 'settings' );
+		var settings = this.get( 'settings' );
 
-		key = keyParts[0];
+		if ( 'object' !== typeof key ) {
+			var keyParts = key.split( '.' ),
+				isRepeaterKey = 3 === keyParts.length;
 
-		if ( isRepeaterKey ) {
-			settings = settings.get( key ).models[ keyParts[1] ];
+			key = keyParts[ 0 ];
 
-			key = keyParts[2];
+			if ( isRepeaterKey ) {
+				settings = settings.get( key ).models[ keyParts[ 1 ] ];
+
+				key = keyParts[ 2 ];
+			}
 		}
 
 		settings.setExternalChange( key, value );
@@ -126,7 +108,7 @@ ElementModel = Backbone.Model.extend( {
 			isRepeaterKey = 3 === keyParts.length,
 			settings = this.get( 'settings' );
 
-		key = keyParts[0];
+		key = keyParts[ 0 ];
 
 		var value = settings.get( key );
 
@@ -135,7 +117,7 @@ ElementModel = Backbone.Model.extend( {
 		}
 
 		if ( isRepeaterKey ) {
-			value = value.models[ keyParts[1] ].get( keyParts[2] );
+			value = value.models[ keyParts[ 1 ] ].get( keyParts[ 2 ] );
 		}
 
 		return value;
@@ -149,29 +131,34 @@ ElementModel = Backbone.Model.extend( {
 		return this._htmlCache;
 	},
 
-	getTitle: function() {
-		var elementData = elementor.getElementData( this );
+	getDefaultTitle: function() {
+		return elementor.getElementData( this ).title;
+	},
 
-		return ( elementData ) ? elementData.title : 'Unknown';
+	getTitle: function() {
+		let title = this.getSetting( '_title' );
+
+		if ( ! title ) {
+			title = this.getDefaultTitle();
+		}
+
+		return title;
 	},
 
 	getIcon: function() {
-		var elementData = elementor.getElementData( this );
-
-		return ( elementData ) ? elementData.icon : 'unknown';
+		return elementor.getElementData( this ).icon;
 	},
 
 	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
-		return elementor.ajax.send( 'render_widget', {
+		return elementorCommon.ajax.addRequest( 'render_widget', {
+			unique_id: this.cid,
 			data: {
-				post_id: elementor.config.post_id,
-				data: JSON.stringify( data ),
-				_nonce: elementor.config.nonce
+				data: data,
 			},
-			success: this.onRemoteGetHtml.bind( this )
-		} );
+			success: this.onRemoteGetHtml.bind( this ),
+		}, true ).jqXhr;
 	},
 
 	renderRemoteServer: function() {
@@ -200,7 +187,7 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	clone: function() {
-		var newModel = new this.constructor( elementor.helpers.cloneObject( this.attributes ) );
+		var newModel = new this.constructor( elementorCommon.helpers.cloneObject( this.attributes ) );
 
 		newModel.set( 'id', elementor.helpers.getUniqueID() );
 
@@ -216,7 +203,7 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	toJSON: function( options ) {
-		options = _.extend( { copyHtmlCache: false }, options );
+		options = options || {};
 
 		// Call parent's toJSON method
 		var data = Backbone.Model.prototype.toJSON.call( this );
@@ -233,8 +220,32 @@ ElementModel = Backbone.Model.extend( {
 			delete data.htmlCache;
 		}
 
+		if ( options.remove ) {
+			options.remove.forEach( ( key ) => delete data[ key ] );
+		}
+
 		return data;
-	}
+	},
+
+	onCloseEditor: function() {
+		if ( this.renderOnLeave ) {
+			this.renderRemoteServer();
+		}
+	},
+
+	onDestroy: function() {
+		// Clean the memory for all use instances
+		var settings = this.get( 'settings' ),
+			elements = this.get( 'elements' );
+
+		if ( undefined !== elements ) {
+			_.each( _.clone( elements.models ), function( model ) {
+				model.destroy();
+			} );
+		}
+
+		settings.destroy();
+	},
 
 } );
 

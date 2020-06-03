@@ -10,6 +10,17 @@
 	overflow: hidden;
 	/* Fix of Webkit flickering */
 	z-index: 1;
+
+	.swiper-slide {
+
+		figure {
+			line-height: 0;
+		}
+	}
+
+	.elementor-lightbox-content-source {
+		display: none;
+	}
 }
 
 .swiper-container-no-flexbox .swiper-slide {
@@ -145,7 +156,7 @@
 
 /* Common Styles */
 .swiper-pagination-fraction, .swiper-pagination-custom, .swiper-container-horizontal > .swiper-pagination-bullets {
-	bottom: 10px;
+	bottom: 5px;
 	left: 0;
 	width: 100%;
 }
@@ -170,6 +181,8 @@ button.swiper-pagination-bullet {
 	padding: 0;
 	box-shadow: none;
 	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
 }
 
 .swiper-pagination-clickable .swiper-pagination-bullet {
@@ -207,12 +220,12 @@ button.swiper-pagination-bullet {
 	margin: 0 6px;
 }
 
-/* Progress */
-.swiper-pagination-progress {
+/* Progressbar */
+.swiper-pagination-progressbar {
 	background: rgba(0, 0, 0, 0.25);
 	position: absolute;
 
-	.swiper-pagination-progressbar {
+	.swiper-pagination-progressbar-fill {
 		background: #000;
 		position: absolute;
 		left: 0;
@@ -224,34 +237,34 @@ button.swiper-pagination-bullet {
 	}
 }
 
-.swiper-container-rtl .swiper-pagination-progress .swiper-pagination-progressbar {
+.swiper-container-rtl .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
 	transform-origin: right top;
 }
 
-.swiper-container-horizontal > .swiper-pagination-progress {
+.swiper-container-horizontal > .swiper-pagination-progressbar {
 	width: 100%;
 	height: 4px;
 	left: 0;
 	top: 0;
 }
 
-.swiper-container-vertical > .swiper-pagination-progress {
+.swiper-container-vertical > .swiper-pagination-progressbar {
 	width: 4px;
 	height: 100%;
 	left: 0;
 	top: 0;
 }
 
-.swiper-pagination-progress {
+.swiper-pagination-progressbar {
 
 	&.swiper-pagination-white {
 		background: rgba(255, 255, 255, 0.5);
-		.swiper-pagination-progressbar {
+		.swiper-pagination-progressbar-fill {
 			background: #fff;
 		}
 	}
 
-	&.swiper-pagination-black .swiper-pagination-progressbar {
+	&.swiper-pagination-black .swiper-pagination-progressbar-fill {
 		background: #000;
 	}
 }
@@ -304,7 +317,6 @@ button.swiper-pagination-bullet {
 
 .swiper-container-cube .swiper-slide, .swiper-container-flip .swiper-slide {
 	pointer-events: none;
-	backface-visibility: hidden;
 	z-index: 1;
 }
 
@@ -434,6 +446,81 @@ button.swiper-pagination-bullet {
 
 .swiper-scrollbar-cursor-drag {
 	cursor: move;
+}
+
+.elementor-pagination-position-outside {
+	$caption-space: 30px;
+
+	.swiper-container {
+		padding-bottom: $caption-space;
+	}
+
+	.elementor-swiper-button {
+		top: calc(50% - #{$caption-space} / 2);
+	}
+}
+
+.elementor-swiper {
+	position: relative;
+}
+
+.elementor-main-swiper {
+	position: static;
+}
+
+.elementor-arrows-position- {
+
+	&outside {
+
+		.swiper-container {
+			width: calc(100% - 60px);
+		}
+
+		.elementor-swiper-button {
+
+			&-prev {
+				left: 0;
+			}
+
+			&-next {
+				right: 0;
+			}
+		}
+	}
+}
+
+.swiper-image-stretch {
+
+	.swiper-slide {
+
+		.swiper-slide-image {
+			width: 100%;
+		}
+	}
+}
+
+.elementor-swiper-button {
+	position: absolute;
+	display: inline-flex; // Position exactly in center
+	z-index: 1;
+	cursor: pointer;
+	font-size: 25px;
+	color: $slides_gui;
+	top: 50%;
+	// Fix for Safari - Navigation arrows don't appear in cube mode without adding a 1px translateZ
+	transform: translate3d( 0, -50%, 1px );
+
+	&-prev {
+		left: 10px;
+	}
+
+	&-next {
+		right: 10px;
+	}
+
+	&.swiper-button-disabled {
+		opacity: 0.3;
+	}
 }
 
 /* Preloader */

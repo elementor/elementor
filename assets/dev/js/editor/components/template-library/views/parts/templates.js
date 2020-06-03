@@ -18,16 +18,18 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	ui: {
-		filterText: '#elementor-template-library-filter-text',
+		textFilter: '#elementor-template-library-filter-text',
+		selectFilter: '.elementor-template-library-filter-select',
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
-		orderLabels: '.elementor-template-library-order-label'
+		orderLabels: 'label.elementor-template-library-order-label',
 	},
 
 	events: {
-		'input @ui.filterText': 'onFilterTextInput',
+		'input @ui.textFilter': 'onTextFilterInput',
+		'change @ui.selectFilter': 'onSelectFilterChange',
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
-		'mousedown @ui.orderLabels': 'onOrderLabelsClick'
+		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 	},
 
 	comparators: {
@@ -51,7 +53,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			}
 
 			return -trendIndex;
-		}
+		},
 	},
 
 	getChildView: function( childModel ) {
@@ -71,7 +73,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			passingFilter = true;
 
 		jQuery.each( filterTerms, function( filterTermName ) {
-			var filterValue = this.value || elementor.templates.getFilter( filterTermName );
+			var filterValue = elementor.templates.getFilter( filterTermName );
 
 			if ( ! filterValue ) {
 				return;
@@ -132,7 +134,13 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				return 1;
 			}
 
-			return l < r ? 1 : l > r ? -1 : 0;
+			if ( l < r ) {
+				return 1;
+			}
+			if ( l > r ) {
+				return -1;
+			}
+			return 0;
 		};
 	},
 
@@ -142,40 +150,77 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
+	setFiltersUI: function() {
+		var $filters = this.$( this.ui.selectFilter );
+
+		$filters.select2( {
+			placeholder: elementor.translate( 'category' ),
+			allowClear: true,
+			width: 150,
+			dropdownParent: this.$el,
+		} );
+	},
+
+	setMasonrySkin: function() {
+		var masonry = new elementorModules.utils.Masonry( {
+			container: this.$childViewContainer,
+			items: this.$childViewContainer.children(),
+		} );
+
+		this.$childViewContainer.imagesLoaded( masonry.run.bind( masonry ) );
+	},
+
 	toggleFilterClass: function() {
-		this.$el.toggleClass( 'elementor-templates-filter-active', !! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
+		this.$el.toggleClass( 'elementor-templates-filter-active', ! ! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
+	},
+
+	onRender() {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
+			this.setFiltersUI();
+		}
 	},
 
 	onRenderCollection: function() {
 		this.addSourceData();
 
 		this.toggleFilterClass();
+
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
+			this.setMasonrySkin();
+		}
 	},
 
 	onBeforeRenderEmpty: function() {
 		this.addSourceData();
 	},
 
-	onFilterTextInput: function() {
-		elementor.templates.setFilter( 'text', this.ui.filterText.val() );
+	onTextFilterInput: function() {
+		elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
 	},
 
-	onMyFavoritesFilterChange: function(  ) {
-		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
+	onSelectFilterChange: function( event ) {
+		var $select = jQuery( event.currentTarget ),
+			filterName = $select.data( 'elementor-filter' );
+
+		elementor.templates.setFilter( filterName, $select.val() );
+	},
+
+	onMyFavoritesFilterChange: function() {
+		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[ 0 ].checked );
 	},
 
 	onOrderLabelsClick: function( event ) {
 		var $clickedInput = jQuery( event.currentTarget.control ),
 			toggle;
 
-		if ( ! $clickedInput[0].checked ) {
+		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
 		}
 
 		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
-	}
+	},
 } );
 
 module.exports = TemplateLibraryCollectionView;

@@ -1,53 +1,16 @@
-# Select
-A simple Select box control. Accepts an `array` of `options` in which the `key` is the value and the `value` is the option name. 
+## Documentation has Moved
 
-*Returns* `string`
+This document in now available on [Developer API for Elementor](developers.elementor.com)
 
-## Example
+### Quick Links
 
-```php
-$this->add_control(
-  'border_style',
-  [
-     'label'       => __( 'Border Style', 'your-plugin' ),
-     'type' => Controls_Manager::SELECT,
-     'default' => 'solid',
-     'options' => [
-     	'solid'  => __( 'Solid', 'your-plugin' ),
-     	'dashed' => __( 'Dashed', 'your-plugin' ),
-     	'dotted' => __( 'Dotted', 'your-plugin' ),
-     	'double' => __( 'Double', 'your-plugin' ),
-     	'none'   => __( 'None', 'your-plugin' ),
-     ],
-	 'selectors' => [ // You can use the selected value in an auto-generated css rule.
-	    '{{WRAPPER}} .your-element' => 'border-style: {{VALUE}}',
-	 ],
-  ]
-);
-```
-
-## Usage
-
-**PHP:** *(Under `render()` method)*
-```php
-$settings = $this->get_settings();
-
-echo '<div style="border-style: ' . $settings['border_style'] . '"> ... </div>';
-```
-
-**JS:** *(Under `_content_template()` method)*
-```html
-<div style="border-style: {{ settings.text }}"> ... </div>
-```
-
-## Arguments
-
-Argument       | Required   | Type         | Default                      | Description
-------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-`label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
-`type`         | yes        | *`string`*   | `Controls_Manager::TEXT`     | The type of the control
-`default`      | no         | *`string`*   |                              | The default value of the control
-`options`      | yes        | *`array`*    |                              | A `key => value` array of all available options 
-`label_block`  | no         | *`bool`*     | `false`                      | Display the label above the control by setting to true
-`description`  | no         | *`string`*   |                              | A description text to display below the control
-`separator`    | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator
+* [Getting Started](https://developers.elementor.com/getting-started/)
+* [The Editor](https://developers.elementor.com/elementor-editor/)
+* [The Widgets](https://developers.elementor.com/elementor-widgets/)
+* [The Controls](https://developers.elementor.com/elementor-controls/)
+* [Code Reference](https://code.elementor.com)
+* [PHP Hooks](https://code.elementor.com/php-hooks/)
+* [JS Hooks](https://code.elementor.com/js-hooks/)
+* [Classes](https://code.elementor.com/classes/)
+* [Methods](https://code.elementor.com/methods/)
+* [Functions](https://code.elementor.com/functions/)

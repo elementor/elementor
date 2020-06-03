@@ -1,12 +1,15 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Utils\Exceptions;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Elementor widgets manager class.
+ * Elementor widgets manager.
  *
  * Elementor widgets manager handler class is responsible for registering and
  * initializing all the supported Elementor widgets.
@@ -33,10 +36,10 @@ class Widgets_Manager {
 	 * Initialize Elementor widgets manager. Include all the the widgets files
 	 * and register each Elementor and WordPress widget.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
-	 */
-	private function _init_widgets() {
+	*/
+	private function init_widgets() {
 		$build_widgets_filename = [
 			'common',
 			'heading',
@@ -50,8 +53,9 @@ class Widgets_Manager {
 			'google-maps',
 			'icon',
 			'icon-box',
-			'image-gallery',
+			'star-rating',
 			'image-carousel',
+			'image-gallery',
 			'icon-list',
 			'counter',
 			'progress',
@@ -66,6 +70,7 @@ class Widgets_Manager {
 			'html',
 			'menu-anchor',
 			'sidebar',
+			'read-more',
 		];
 
 		$this->_widget_types = [];
@@ -80,7 +85,7 @@ class Widgets_Manager {
 			$this->register_widget_type( new $class_name() );
 		}
 
-		$this->_register_wp_widgets();
+		$this->register_wp_widgets();
 
 		/**
 		 * After widgets registered.
@@ -102,10 +107,10 @@ class Widgets_Manager {
 	 * Exclude the widgets that are in Elementor widgets black list. Theme and
 	 * plugin authors can filter the black list.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
-	 */
-	private function _register_wp_widgets() {
+	*/
+	private function register_wp_widgets() {
 		global $wp_widget_factory;
 
 		// Skip Pojo widgets.
@@ -162,10 +167,10 @@ class Widgets_Manager {
 	 *
 	 * Require Elementor widget base class.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
-	 */
-	private function _require_files() {
+	*/
+	private function require_files() {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
 	}
 
@@ -180,10 +185,10 @@ class Widgets_Manager {
 	 * @param Widget_Base $widget Elementor widget.
 	 *
 	 * @return true True if the widget was registered.
-	 */
+	*/
 	public function register_widget_type( Widget_Base $widget ) {
 		if ( is_null( $this->_widget_types ) ) {
-			$this->_init_widgets();
+			$this->init_widgets();
 		}
 
 		$this->_widget_types[ $widget->get_name() ] = $widget;
@@ -202,7 +207,7 @@ class Widgets_Manager {
 	 * @param string $name Widget name.
 	 *
 	 * @return true True if the widget was unregistered, False otherwise.
-	 */
+	*/
 	public function unregister_widget_type( $name ) {
 		if ( ! isset( $this->_widget_types[ $name ] ) ) {
 			return false;
@@ -223,11 +228,11 @@ class Widgets_Manager {
 	 *
 	 * @param string $widget_name Optional. Widget name. Default is null.
 	 *
-	 * @return null|Widget_Base[] Registered widget types.
-	 */
+	 * @return Widget_Base|Widget_Base[]|null Registered widget types.
+	*/
 	public function get_widget_types( $widget_name = null ) {
 		if ( is_null( $this->_widget_types ) ) {
-			$this->_init_widgets();
+			$this->init_widgets();
 		}
 
 		if ( null !== $widget_name ) {
@@ -246,16 +251,29 @@ class Widgets_Manager {
 	 * @access public
 	 *
 	 * @return array Registered widget types with each widget config.
-	 */
+	*/
 	public function get_widget_types_config() {
 		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
-			if ( ! $widget->show_in_panel() ) {
+			$config[ $widget_key ] = $widget->get_config();
+		}
+
+		return $config;
+	}
+
+	public function ajax_get_widget_types_controls_config( array $data ) {
+		$config = [];
+
+		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
+			if ( isset( $data['exclude'][ $widget_key ] ) ) {
 				continue;
 			}
 
-			$config[ $widget_key ] = $widget->get_config();
+			$config[ $widget_key ] = [
+				'controls' => $widget->get_stack( false )['controls'],
+				'tabs_controls' => $widget->get_tabs_controls(),
+			];
 		}
 
 		return $config;
@@ -270,51 +288,45 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @throws \Exception If current user don't have permissions to edit the post.
+	 *
+	 * @param array $request Ajax request.
+	 *
+	 * @return array {
+	 *     Rendered widget.
+	 *
+	 *     @type string $render The rendered HTML.
+	 * }
 	 */
-	public function ajax_render_widget() {
-		Plugin::$instance->editor->verify_ajax_nonce();
+	public function ajax_render_widget( $request ) {
+		$document = Plugin::$instance->documents->get( $request['editor_post_id'] );
 
-		if ( empty( $_POST['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
-		}
-
-		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_access' ) );
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
 		// Override the global $post for the render.
 		query_posts(
 			[
-				'p' => $_POST['post_id'],
+				'p' => $request['editor_post_id'],
 				'post_type' => 'any',
 			]
 		);
 
-		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
+		$editor = Plugin::$instance->editor;
+		$is_edit_mode = $editor->is_edit_mode();
+		$editor->set_edit_mode( true );
 
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		Plugin::$instance->documents->switch_to_document( $document );
 
-		// Start buffering
-		ob_start();
+		$render_html = $document->render_element( $request['data'] );
 
-		/** @var Widget_Base $widget */
-		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
+		$editor->set_edit_mode( $is_edit_mode );
 
-		if ( ! $widget ) {
-			wp_send_json_error();
-
-			return;
-		}
-
-		$widget->render_content();
-
-		$render_html = ob_get_clean();
-
-		wp_send_json_success(
-			[
-				'render' => $render_html,
-			]
-		);
+		return [
+			'render' => $render_html,
+		];
 	}
 
 	/**
@@ -326,25 +338,25 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @param array $request Ajax request.
+	 *
+	 * @return bool|string Rendered widget form.
 	 */
-	public function ajax_get_wp_widget_form() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( empty( $_POST['widget_type'] ) ) {
-			wp_send_json_error();
+	public function ajax_get_wp_widget_form( $request ) {
+		if ( empty( $request['widget_type'] ) ) {
+			return false;
 		}
 
-		if ( empty( $_POST['data'] ) ) {
-			$_POST['data'] = [];
+		if ( empty( $request['data'] ) ) {
+			$request['data'] = [];
 		}
-
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
 
 		$element_data = [
-			'id' => $_POST['id'],
+			'id' => $request['id'],
 			'elType' => 'widget',
-			'widgetType' => $_POST['widget_type'],
-			'settings' => $data,
+			'widgetType' => $request['widget_type'],
+			'settings' => $request['data'],
 		];
 
 		/**
@@ -353,10 +365,10 @@ class Widgets_Manager {
 		$widget_obj = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 		if ( ! $widget_obj ) {
-			wp_send_json_error();
+			return false;
 		}
 
-		wp_send_json_success( $widget_obj->get_form() );
+		return $widget_obj->get_form();
 	}
 
 	/**
@@ -367,7 +379,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function render_widgets_content() {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->print_template();
@@ -384,7 +396,7 @@ class Widgets_Manager {
 	 * @access public
 	 *
 	 * @return array Registered widget types with settings keys for each widget.
-	 */
+	*/
 	public function get_widgets_frontend_settings_keys() {
 		$keys = [];
 
@@ -406,10 +418,23 @@ class Widgets_Manager {
 	 *
 	 * @since 1.3.0
 	 * @access public
-	 */
+	*/
 	public function enqueue_widgets_scripts() {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->enqueue_scripts();
+		}
+	}
+
+	/**
+	 * Enqueue widgets styles
+	 *
+	 * Enqueue all the styles defined as a dependency for each widget
+	 *
+	 * @access public
+	 */
+	public function enqueue_widgets_styles() {
+		foreach ( $this->get_widget_types() as $widget ) {
+			$widget->enqueue_styles();
 		}
 	}
 
@@ -476,11 +501,26 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function __construct() {
-		$this->_require_files();
+		$this->require_files();
 
-		add_action( 'wp_ajax_elementor_render_widget', [ $this, 'ajax_render_widget' ] );
-		add_action( 'wp_ajax_elementor_editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+	}
+
+	/**
+	 * Register ajax actions.
+	 *
+	 * Add new actions to handle data after an ajax requests returned.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param Ajax $ajax_manager
+	 */
+	public function register_ajax_actions( Ajax $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
+		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+		$ajax_manager->register_ajax_action( 'get_widgets_config', [ $this, 'ajax_get_widget_types_controls_config' ] );
 	}
 }

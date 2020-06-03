@@ -2,51 +2,84 @@
 namespace Elementor\Core\Settings\General;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Settings\Base\Model as BaseModel;
+use Elementor\Core\Settings\Base\CSS_Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Model extends BaseModel {
+/**
+ * Elementor global settings model.
+ *
+ * Elementor global settings model handler class is responsible for registering
+ * and managing Elementor global settings models.
+ *
+ * @since 1.6.0
+ */
+class Model extends CSS_Model {
 
 	/**
+	 * Get model name.
+	 *
+	 * Retrieve global settings model name.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @return string Model name.
 	 */
 	public function get_name() {
 		return 'global-settings';
 	}
 
 	/**
+	 * Get CSS wrapper selector.
+	 *
+	 * Retrieve the wrapper selector for the global settings model.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @return string CSS wrapper selector.
 	 */
+
 	public function get_css_wrapper_selector() {
 		return '';
 	}
 
 	/**
+	 * Get panel page settings.
+	 *
+	 * Retrieve the panel setting for the global settings model.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @return array {
+	 *    Panel settings.
+	 *
+	 *    @type string $title The panel title.
+	 *    @type array  $menu  The panel menu.
+	 * }
 	 */
 	public function get_panel_page_settings() {
 		return [
 			'title' => __( 'Global Settings', 'elementor' ),
-			'menu' => [
-				'icon' => 'fa fa-cogs',
-				'beforeItem' => 'elementor-settings',
-			],
 		];
 	}
 
 	/**
+	 * Get controls list.
+	 *
+	 * Retrieve the global settings model controls list.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
+	 *
+	 * @return array Controls list.
 	 */
 	public static function get_controls_list() {
-
 		return [
 			Controls_Manager::TAB_STYLE => [
 				'style' => [
@@ -62,7 +95,7 @@ class Model extends BaseModel {
 						'elementor_container_width' => [
 							'label' => __( 'Content Width', 'elementor' ) . ' (px)',
 							'type' => Controls_Manager::NUMBER,
-							'min' => 0,
+							'min' => 300,
 							'description' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 							'selectors' => [
 								'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{VALUE}}px',
@@ -107,11 +140,54 @@ class Model extends BaseModel {
 							'description' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
 							'frontend_available' => true,
 						],
-						'elementor_enable_lightbox_in_editor' => [
-							'label' => __( 'Enable In Editor', 'elementor' ),
+						'elementor_lightbox_enable_counter' => [
+							'label' => __( 'Counter', 'elementor' ),
 							'type' => Controls_Manager::SWITCHER,
 							'default' => 'yes',
-							'description' => __( '', 'elementor' ),
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_enable_fullscreen' => [
+							'label' => __( 'Fullscreen', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_enable_zoom' => [
+							'label' => __( 'Zoom', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_enable_share' => [
+							'label' => __( 'Share', 'elementor' ),
+							'type' => Controls_Manager::SWITCHER,
+							'default' => 'yes',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_title_src' => [
+							'label' => __( 'Title', 'elementor' ),
+							'type' => Controls_Manager::SELECT,
+							'options' => [
+								'' => __( 'None', 'elementor' ),
+								'title' => __( 'Title', 'elementor' ),
+								'caption' => __( 'Caption', 'elementor' ),
+								'alt' => __( 'Alt', 'elementor' ),
+								'description' => __( 'Description', 'elementor' ),
+							],
+							'default' => 'title',
+							'frontend_available' => true,
+						],
+						'elementor_lightbox_description_src' => [
+							'label' => __( 'Description', 'elementor' ),
+							'type' => Controls_Manager::SELECT,
+							'options' => [
+								'' => __( 'None', 'elementor' ),
+								'title' => __( 'Title', 'elementor' ),
+								'caption' => __( 'Caption', 'elementor' ),
+								'alt' => __( 'Alt', 'elementor' ),
+								'description' => __( 'Description', 'elementor' ),
+							],
+							'default' => 'description',
 							'frontend_available' => true,
 						],
 						'elementor_lightbox_color' => [
@@ -125,15 +201,38 @@ class Model extends BaseModel {
 							'label' => __( 'UI Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
-								'.elementor-lightbox .dialog-lightbox-close-button, .elementor-lightbox .elementor-swiper-button' => 'color: {{VALUE}}',
+								'.elementor-lightbox' => '--lightbox-ui-color: {{VALUE}}',
 							],
 						],
 						'elementor_lightbox_ui_color_hover' => [
 							'label' => __( 'UI Hover Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
-								'.elementor-lightbox .dialog-lightbox-close-button:hover, .elementor-lightbox .elementor-swiper-button:hover' => 'color: {{VALUE}}',
+								'.elementor-lightbox' => '--lightbox-ui-color-hover: {{VALUE}}',
 							],
+						],
+						'elementor_lightbox_text_color' => [
+							'label' => __( 'Text Color', 'elementor' ),
+							'type' => Controls_Manager::COLOR,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-text-color: {{VALUE}}',
+							],
+						],
+						'lightbox_icons_size' => [
+							'label' => __( 'Toolbar Icons Size', 'elementor' ),
+							'type' => Controls_Manager::SLIDER,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-header-icons-size: {{SIZE}}{{UNIT}}',
+							],
+							'separator' => 'before',
+						],
+						'lightbox_slider_icons_size' => [
+							'label' => __( 'Navigation Icons Size', 'elementor' ),
+							'type' => Controls_Manager::SLIDER,
+							'selectors' => [
+								'.elementor-lightbox' => '--lightbox-navigation-icons-size: {{SIZE}}{{UNIT}}',
+							],
+							'separator' => 'before',
 						],
 					],
 				],
@@ -142,6 +241,10 @@ class Model extends BaseModel {
 	}
 
 	/**
+	 * Register model controls.
+	 *
+	 * Used to add new controls to the global settings model.
+	 *
 	 * @since 1.6.0
 	 * @access protected
 	 */

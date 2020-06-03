@@ -1,0 +1,43 @@
+
+/*= Elementor Admin Alert
+---------------------------------------*/
+
+.elementor-admin-alert {
+	padding: 15px;
+	border-left: 5px solid transparent;
+	position: relative;
+	font-size: 12px;
+	line-height: 1.5;
+	text-align: $start;
+
+	a {
+		color: inherit;
+	}
+
+	&.elementor-alert- {
+
+		&info {
+			color: $info-text;
+			background-color: $info-bg;
+			border-color: $info-border;
+		}
+
+		&success {
+			color: $success-text;
+			background-color: $success-bg;
+			border-color: $success-border;
+		}
+
+		&warning {
+			color: $warning-text;
+			background-color: $warning-bg;
+			border-color: $warning-border;
+		}
+
+		&danger {
+			color: $danger-text;
+			background-color: $danger-bg;
+			border-color: $danger-border;
+		}
+	}
+}

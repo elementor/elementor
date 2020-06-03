@@ -1,6 +1,4 @@
-var ControlsStack = require( 'elementor-views/controls-stack' );
-
-module.exports = ControlsStack.extend( {
+module.exports = elementorModules.editor.views.ControlsStack.extend( {
 	id: function() {
 		return 'elementor-panel-' + this.getOption( 'name' ) + '-settings';
 	},
@@ -15,11 +13,7 @@ module.exports = ControlsStack.extend( {
 
 	childViewOptions: function() {
 		return {
-			elementSettingsModel: this.model
+			container: this.getOption( 'editedView' ).getContainer(),
 		};
 	},
-
-	initialize: function() {
-		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	}
 } );

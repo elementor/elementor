@@ -1,0 +1,37 @@
+//
+// Animations
+//
+
+$section-placeholder-size: 40px;
+$widget-placeholder-size: 10px;
+
+@keyframes placeholder-section {
+	0% {
+		height: 0;
+		opacity: 0;
+	}
+	100% {
+		height: $section-placeholder-size;
+		opacity: .9;
+	}
+}
+
+@keyframes placeholder-widget {
+	0% {
+		height: 0;
+		opacity: 0;
+	}
+	100% {
+		height: $widget-placeholder-size;
+		opacity: .9;
+	}
+}
+
+@keyframes section-outline {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}

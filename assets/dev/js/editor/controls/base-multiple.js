@@ -18,7 +18,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	},
 
 	getControlValue: function( key ) {
-		var values = this.elementSettingsModel.get( this.model.get( 'name' ) );
+		var values = this.container.settings.get( this.model.get( 'name' ) );
 
 		if ( ! jQuery.isPlainObject( values ) ) {
 			return {};
@@ -34,7 +34,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 			return value;
 		}
 
-		return elementor.helpers.cloneObject( values );
+		return elementorCommon.helpers.cloneObject( values );
 	},
 
 	setValue: function( key, value ) {
@@ -55,7 +55,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		var key = input.dataset.setting;
 
 		this.setValue( key, value );
-	}
+	},
 }, {
 	// Static methods
 	getStyleValue: function( placeholder, controlValue ) {
@@ -63,8 +63,8 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 			return ''; // invalid
 		}
 
-		return controlValue[ placeholder ];
-	}
+		return controlValue[ placeholder.toLowerCase() ];
+	},
 } );
 
 module.exports = ControlBaseMultipleItemView;

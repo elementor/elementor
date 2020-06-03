@@ -1,17 +1,14 @@
-var TemplateLibraryTemplateModel;
-
-TemplateLibraryTemplateModel = Backbone.Model.extend( {
+module.exports = Backbone.Model.extend( {
 	defaults: {
 		template_id: 0,
 		title: '',
 		source: '',
 		type: '',
+		subtype: '',
 		author: '',
 		thumbnail: '',
 		url: '',
 		export_link: '',
-		tags: []
-	}
+		tags: [],
+	},
 } );
-
-module.exports = TemplateLibraryTemplateModel;

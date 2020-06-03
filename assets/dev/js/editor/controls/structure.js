@@ -12,7 +12,7 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 
 	events: function() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
-			'click @ui.resetStructure': 'onResetStructureClick'
+			'click @ui.resetStructure': 'onResetStructureClick',
 		} );
 	},
 
@@ -36,15 +36,9 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 		return elementor.presetsFactory.getPresets( parsedStructure.columnsCount );
 	},
 
-	onInputChange: function() {
-		this.getCurrentEditedSection().redefineLayout();
-
-		this.render();
-	},
-
 	onResetStructureClick: function() {
 		this.getCurrentEditedSection().resetColumnsCustomSize();
-	}
+	},
 } );
 
 module.exports = ControlStructureItemView;

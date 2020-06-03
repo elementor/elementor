@@ -1,48 +1,62 @@
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
-	className: 'elementor-panel-controls-stack',
-
 	classes: {
-		popover: 'elementor-controls-popover'
+		popover: 'elementor-controls-popover',
 	},
 
 	activeTab: null,
 
 	activeSection: null,
 
+	className: function() {
+		return 'elementor-controls-stack';
+	},
+
 	templateHelpers: function() {
 		return {
-			elementData: elementor.getElementData( this.model )
+			elementData: elementor.getElementData( this.model ),
+		};
+	},
+
+	childViewOptions: function() {
+		return {
+			// TODO: elementSettingsModel is deprecated since 2.8.0.
+			elementSettingsModel: this.model,
 		};
 	},
 
 	ui: function() {
 		return {
 			tabs: '.elementor-panel-navigation-tab',
-			reloadButton: '.elementor-update-preview-button'
+			reloadButton: '.elementor-update-preview-button',
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.tabs': 'onClickTabControl',
-			'click @ui.reloadButton': 'onReloadButtonClick'
+			'click @ui.reloadButton': 'onReloadButtonClick',
 		};
 	},
 
 	modelEvents: {
-		'destroy': 'onModelDestroy'
+		destroy: 'onModelDestroy',
 	},
 
 	behaviors: {
 		HandleInnerTabs: {
-			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
-		}
+			behaviorClass: require( 'elementor-behaviors/inner-tabs' ),
+		},
 	},
 
 	initialize: function() {
+		this.initCollection();
+
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
+	initCollection: function() {
+		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( this.getOption( 'controls' ) ) ) );
 	},
 
 	filter: function( controlModel ) {
@@ -59,29 +73,59 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return ! section || section === this.activeSection;
 	},
 
+	getControlViewByModel: function( model ) {
+		return this.children.findByModelCid( model.cid );
+	},
+
+	getControlViewByName: function( name ) {
+		return this.getControlViewByModel( this.getControlModel( name ) );
+	},
+
+	getControlModel: function( name ) {
+		return this.collection.findWhere( { name: name } );
+	},
+
 	isVisibleSectionControl: function( sectionControlModel ) {
 		return this.activeTab === sectionControlModel.get( 'tab' );
 	},
 
-	activateTab: function( $tab ) {
-		var self = this,
-			activeTab = this.activeTab = $tab.data( 'tab' );
+	activateTab: function( tab ) {
+		this.activeTab = tab;
 
-		this.ui.tabs.removeClass( 'active' );
+		this.activateFirstSection();
 
-		$tab.addClass( 'active' );
+		this._renderChildren();
 
-		var sectionControls = this.collection.filter( function( controlModel ) {
-			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
-		} );
-
-		if ( sectionControls[0] ) {
-			this.activateSection( sectionControls[0].get( 'name' ) );
-		}
+		return this;
 	},
 
 	activateSection: function( sectionName ) {
 		this.activeSection = sectionName;
+
+		return this;
+	},
+	activateFirstSection: function() {
+		var self = this;
+
+		var sectionControls = self.collection.filter( function( controlModel ) {
+			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
+		} );
+
+		if ( ! sectionControls[ 0 ] ) {
+			return;
+		}
+
+		var preActivatedSection = sectionControls.filter( function( controlModel ) {
+			return self.activeSection === controlModel.get( 'name' );
+		} );
+
+		if ( preActivatedSection[ 0 ] ) {
+			return;
+		}
+
+		self.activateSection( sectionControls[ 0 ].get( 'name' ) );
+
+		return this;
 	},
 
 	getChildView: function( item ) {
@@ -111,7 +155,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			if ( popover.start ) {
 				popoverStarted = true;
 
-				$popover = jQuery( '<div>', { 'class': self.classes.popover } );
+				$popover = jQuery( '<div>', { class: self.classes.popover } );
 
 				child.$el.before( $popover );
 
@@ -128,14 +172,24 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.$el.find( '.' + this.classes.popover ).remove();
 	},
 
+	getNamespaceArray: function() {
+		return [ elementor.getPanelView().getCurrentPageName() ];
+	},
+
 	openActiveSection: function() {
 		var activeSection = this.activeSection,
 			activeSectionView = this.children.filter( function( view ) {
 				return activeSection === view.model.get( 'name' );
 			} );
 
-		if ( activeSectionView[0] ) {
-			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
+		if ( activeSectionView[ 0 ] ) {
+			activeSectionView[ 0 ].$el.addClass( 'elementor-open' );
+
+			const eventNamespace = this.getNamespaceArray();
+
+			eventNamespace.push( activeSection, 'activated' );
+
+			elementor.channels.editor.trigger( eventNamespace.join( ':' ), this );
 		}
 	},
 
@@ -145,26 +199,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.handlePopovers();
 	},
 
-	onRenderTemplate: function() {
-		this.activateTab( this.ui.tabs.eq( 0 ) );
-	},
-
 	onModelDestroy: function() {
 		this.destroy();
-	},
-
-	onClickTabControl: function( event ) {
-		event.preventDefault();
-
-		var $tab = this.$( event.currentTarget );
-
-		if ( this.activeTab === $tab.data( 'tab' ) ) {
-			return;
-		}
-
-		this.activateTab( $tab );
-
-		this._renderChildren();
 	},
 
 	onReloadButtonClick: function() {
@@ -172,11 +208,13 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onDeviceModeChange: function() {
-		this.$el.removeClass( 'elementor-responsive-switchers-open' );
+		if ( 'desktop' === elementor.channels.deviceMode.request( 'currentMode' ) ) {
+			this.$el.removeClass( 'elementor-responsive-switchers-open' );
+		}
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {
-		var isSectionOpen = childView.ui.heading.hasClass( 'elementor-open' );
+		var isSectionOpen = childView.$el.hasClass( 'elementor-open' );
 
 		this.activateSection( isSectionOpen ? null : childView.model.get( 'name' ) );
 
@@ -187,7 +225,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 		if ( 'desktop' === device ) {
 			this.$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}
-	}
+	},
 } );
 
 module.exports = ControlsStack;

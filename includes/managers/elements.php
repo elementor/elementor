@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor elements manager class.
+ * Elementor elements manager.
  *
  * Elementor elements manager handler class is responsible for registering and
  * initializing all the supported elements.
@@ -35,7 +35,7 @@ class Elements_Manager {
 	 *
 	 * @var
 	 */
-	private $_categories;
+	private $categories;
 
 	/**
 	 * Elements constructor.
@@ -47,9 +47,6 @@ class Elements_Manager {
 	 */
 	public function __construct() {
 		$this->require_files();
-
-		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
-		add_action( 'wp_ajax_elementor_discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	/**
@@ -105,11 +102,11 @@ class Elements_Manager {
 	 * @return array Element categories.
 	 */
 	public function get_categories() {
-		if ( null === $this->_categories ) {
+		if ( null === $this->categories ) {
 			$this->init_categories();
 		}
 
-		return $this->_categories;
+		return $this->categories;
 	}
 
 	/**
@@ -122,23 +119,15 @@ class Elements_Manager {
 	 *
 	 * @param string $category_name       Category name.
 	 * @param array  $category_properties Category properties.
-	 * @param int    $offset              Optional. Where to add the category in
-	 *                                    the categories array. Default is null.
 	 */
-	public function add_category( $category_name, $category_properties, $offset = null ) {
-		if ( null === $this->_categories ) {
-			$this->init_categories();
+	public function add_category( $category_name, $category_properties ) {
+		if ( null === $this->categories ) {
+			$this->get_categories();
 		}
 
-		if ( null === $offset ) {
-			$this->_categories[ $category_name ] = $category_properties;
+		if ( ! isset( $this->categories[ $category_name ] ) ) {
+			$this->categories[ $category_name ] = $category_properties;
 		}
-
-		$this->_categories = array_slice( $this->_categories, 0, $offset, true )
-			+ [
-				$category_name => $category_properties,
-			]
-			+ array_slice( $this->_categories, $offset, null, true );
 	}
 
 	/**
@@ -184,7 +173,7 @@ class Elements_Manager {
 	/**
 	 * Get element types.
 	 *
-	 * Retrieve the list of all the element types, or if a spesific element name
+	 * Retrieve the list of all the element types, or if a specific element name
 	 * was provided retrieve his element types.
 	 *
 	 * @since 1.0.0
@@ -192,12 +181,12 @@ class Elements_Manager {
 	 *
 	 * @param string $element_name Optional. Element name. Default is null.
 	 *
-	 * @return null|Element_Base[] Element types, or a list of all the element
+	 * @return null|Element_Base|Element_Base[] Element types, or a list of all the element
 	 *                             types, or null if element does not exist.
 	 */
 	public function get_element_types( $element_name = null ) {
 		if ( is_null( $this->_element_types ) ) {
-			$this->_init_elements();
+			$this->init_elements();
 		}
 
 		if ( null !== $element_name ) {
@@ -242,110 +231,15 @@ class Elements_Manager {
 	}
 
 	/**
-	 * Ajax discard changes.
-	 *
-	 * Ajax handler for Elementor discard_changes. Handles the discarded changes
-	 * in the builder by deleting autosaved revisions.
-	 *
-	 * Fired by `wp_ajax_elementor_discard_changes` action.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 */
-	public function ajax_discard_changes() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$request = $_POST;
-
-		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
-		}
-
-		$autosave = Utils::get_post_autosave( $request['post_id'] );
-
-		if ( $autosave ) {
-			$deleted = wp_delete_post_revision( $autosave->ID );
-			$success = $deleted && ! is_wp_error( $deleted );
-		} else {
-			$success = true;
-		}
-
-		if ( $success ) {
-			wp_send_json_success();
-		}
-
-		wp_send_json_error();
-	}
-
-	/**
-	 * Ajax save builder.
-	 *
-	 * Ajax handler for Elementor save_builder. Handles the saved data returned
-	 * by the builder.
-	 *
-	 * Fired by `wp_ajax_elementor_save_builder` action.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function ajax_save_builder() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$request = $_POST;
-
-		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
-		}
-
-		$post_id = $request['post_id'];
-
-		if ( ! User::is_current_user_can_edit( $post_id ) ) {
-			wp_send_json_error( new \WP_Error( 'no_access' ) );
-		}
-
-		$status = DB::STATUS_DRAFT;
-
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ] , true ) ) {
-			$status = $request['status'];
-		}
-
-		$posted = json_decode( stripslashes( $request['data'] ), true );
-
-		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
-
-		$return_data = [
-			'config' => [
-				'last_edited' => Utils::get_last_edited( $post_id ),
-				'wp_preview' => [
-					'url' => Utils::get_wp_preview_url( $post_id ),
-				],
-			],
-		];
-
-		/**
-		 * Saved ajax data returned by the builder.
-		 *
-		 * Filters the ajax data returned when saving the post on the builder.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array $return_data The returned data. Default is an empty array.
-		 */
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $post_id );
-
-		wp_send_json_success( $return_data );
-	}
-
-	/**
 	 * Init elements.
 	 *
 	 * Initialize Elementor elements by registering the supported elements.
 	 * Elementor supports by default `section` element and `column` element.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
-	private function _init_elements() {
+	private function init_elements() {
 		$this->_element_types = [];
 
 		foreach ( [ 'section', 'column' ] as $element_name ) {
@@ -373,23 +267,52 @@ class Elements_Manager {
 	 * @access private
 	 */
 	private function init_categories() {
-		$this->_categories = [
+		$this->categories = [
 			'basic' => [
 				'title' => __( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
-			'general-elements' => [
-				'title' => __( 'General Elements', 'elementor' ),
+			'pro-elements' => [
+				'title' => __( 'Pro', 'elementor' ),
+			],
+			'general' => [
+				'title' => __( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
-			'pojo' => [
-				'title' => __( 'Pojo Themes', 'elementor' ),
-				'icon' => 'eicon-pojome',
+			'theme-elements' => [
+				'title' => __( 'Site', 'elementor' ),
+				'active' => false,
 			],
-			'wordpress' => [
-				'title' => __( 'WordPress', 'elementor' ),
-				'icon' => 'eicon-wordpress',
+			'woocommerce-elements' => [
+				'title' => __( 'WooCommerce', 'elementor' ),
+				'active' => false,
 			],
+		];
+
+		/**
+		 * When categories are registered.
+		 *
+		 * Fires after basic categories are registered, before WordPress
+		 * category have been registered.
+		 *
+		 * This is where categories registered by external developers are
+		 * added.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Elements_Manager $this Elements manager instance.
+		 */
+		do_action( 'elementor/elements/categories_registered', $this );
+
+		$this->categories['pojo'] = [
+			'title' => __( 'Pojo Themes', 'elementor' ),
+			'icon' => 'eicon-pojome',
+		];
+
+		$this->categories['wordpress'] = [
+			'title' => __( 'WordPress', 'elementor' ),
+			'icon' => 'eicon-wordpress',
+			'active' => false,
 		];
 	}
 

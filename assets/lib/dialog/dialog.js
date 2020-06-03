@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.1.0
+ * Dialogs Manager v4.7.6
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -7,7 +7,7 @@
  * https://github.com/kobizz/dialogs-manager/blob/master/LICENSE.txt
  */
 
-(function ($, global) {
+(function($, global) {
 	'use strict';
 
 	/*
@@ -15,13 +15,13 @@
 	 */
 	var DialogsManager = {
 		widgetsTypes: {},
-		createWidgetType: function (typeName, properties, Parent) {
+		createWidgetType: function(typeName, properties, Parent) {
 
 			if (!Parent) {
 				Parent = this.Widget;
 			}
 
-			var WidgetType = function () {
+			var WidgetType = function() {
 
 				Parent.apply(this, arguments);
 			};
@@ -34,14 +34,14 @@
 
 			prototype.constructor = WidgetType;
 
-			WidgetType.extend = function (typeName, properties) {
+			WidgetType.extend = function(typeName, properties) {
 
 				return DialogsManager.createWidgetType(typeName, properties, WidgetType);
 			};
 
 			return WidgetType;
 		},
-		addWidgetType: function (typeName, properties, Parent) {
+		addWidgetType: function(typeName, properties, Parent) {
 
 			if (properties && properties.prototype instanceof this.Widget) {
 				return this.widgetsTypes[typeName] = properties;
@@ -49,7 +49,7 @@
 
 			return this.widgetsTypes[typeName] = this.createWidgetType(typeName, properties, Parent);
 		},
-		getWidgetType: function (widgetType) {
+		getWidgetType: function(widgetType) {
 
 			return this.widgetsTypes[widgetType];
 		}
@@ -58,18 +58,18 @@
 	/*
 	 * Dialog Manager instances constructor
 	 */
-	DialogsManager.Instance = function () {
+	DialogsManager.Instance = function() {
 
 		var self = this,
 			elements = {},
 			settings = {};
 
-		var initElements = function () {
+		var initElements = function() {
 
 			elements.body = $('body');
 		};
 
-		var initSettings = function (options) {
+		var initSettings = function(options) {
 
 			var defaultSettings = {
 				classPrefix: 'dialog',
@@ -82,7 +82,7 @@
 			$.extend(settings, defaultSettings, options);
 		};
 
-		this.createWidget = function (widgetType, properties) {
+		this.createWidget = function(widgetType, properties) {
 
 			var WidgetTypeConstructor = DialogsManager.getWidgetType(widgetType),
 				widget = new WidgetTypeConstructor(widgetType);
@@ -91,12 +91,10 @@
 
 			widget.init(self, properties);
 
-			widget.setMessage(properties.message);
-
 			return widget;
 		};
 
-		this.getSettings = function (property) {
+		this.getSettings = function(property) {
 
 			if (property) {
 				return settings[property];
@@ -105,7 +103,7 @@
 			return Object.create(settings);
 		};
 
-		this.init = function (settings) {
+		this.init = function(settings) {
 
 			initSettings(settings);
 
@@ -120,7 +118,7 @@
 	/*
 	 * Widget types constructor
 	 */
-	DialogsManager.Widget = function (widgetName) {
+	DialogsManager.Widget = function(widgetName) {
 
 		var self = this,
 			settings = {},
@@ -129,37 +127,49 @@
 			hideTimeOut = 0,
 			baseClosureMethods = ['refreshPosition'];
 
-		var bindEvents = function () {
+		var bindEvents = function() {
 
-			elements.window.on('keyup', onWindowKeyUp);
+			var windows = [elements.window];
 
-			if (settings.hide.onOutsideClick) {
-				elements.window[0].addEventListener('click', hideOnOutsideClick, true);
+			if (elements.iframe) {
+				windows.push(jQuery(elements.iframe[0].contentWindow));
 			}
+
+			windows.forEach(function(window) {
+				if (settings.hide.onEscKeyPress) {
+					window.on('keyup', onWindowKeyUp);
+				}
+
+				if (settings.hide.onOutsideClick) {
+					window[0].addEventListener('click', hideOnOutsideClick, true);
+				}
+
+				if (settings.hide.onOutsideContextMenu) {
+					window[0].addEventListener('contextmenu', hideOnOutsideClick, true);
+				}
+
+				if (settings.position.autoRefresh) {
+					window.on('resize', self.refreshPosition);
+				}
+			});
 
 			if (settings.hide.onClick || settings.hide.onBackgroundClick) {
 				elements.widget.on('click', hideOnClick);
 			}
-
-			if (settings.position.autoRefresh) {
-				elements.window.on('resize', self.refreshPosition);
-			}
 		};
 
-		var callEffect = function (intent, params) {
+		var callEffect = function(intent, params) {
 
 			var effect = settings.effects[intent],
 				$widget = elements.widget;
 
 			if ($.isFunction(effect)) {
 				effect.apply($widget, params);
-			}
-			else {
+			} else {
 
 				if ($widget[effect]) {
 					$widget[effect].apply($widget, params);
-				}
-				else {
+				} else {
 					throw 'Reference Error: The effect ' + effect + ' not found';
 				}
 			}
@@ -169,27 +179,118 @@
 
 			var closureMethodsNames = baseClosureMethods.concat(self.getClosureMethods());
 
-			$.each(closureMethodsNames, function () {
+			$.each(closureMethodsNames, function() {
 
 				var methodName = this,
 					oldMethod = self[methodName];
 
-				self[methodName] = function () {
+				self[methodName] = function() {
 
 					oldMethod.apply(self, arguments);
 				};
 			});
 		};
 
-		var initElements = function () {
+		var fixIframePosition = function(position) {
+			if (! position.my) {
+				return;
+			}
+
+			var horizontalOffsetRegex = /left|right/,
+				extraOffsetRegex = /([+-]\d+)?$/,
+				iframeOffset = elements.iframe.offset(),
+				iframeWindow = elements.iframe[0].contentWindow,
+				myParts = position.my.split(' '),
+				fixedParts = [];
+
+			if (myParts.length === 1) {
+				if (horizontalOffsetRegex.test(myParts[0])) {
+					myParts.push('center');
+				} else {
+					myParts.unshift('center');
+				}
+			}
+
+			myParts.forEach(function(part, index) {
+				var fixedPart = part.replace(extraOffsetRegex, function(partOffset) {
+					partOffset = +partOffset || 0;
+
+					if (! index) {
+						partOffset += iframeOffset.left - iframeWindow.scrollX;
+					} else {
+						partOffset += iframeOffset.top - iframeWindow.scrollY;
+					}
+
+					if (partOffset >= 0) {
+						partOffset = '+' + partOffset;
+					}
+
+					return partOffset;
+				});
+
+				fixedParts.push(fixedPart);
+			});
+
+			position.my = fixedParts.join(' ');
+		};
+
+		var hideOnClick = function(event) {
+
+			if (isContextMenuClickEvent(event)) {
+				return;
+			}
+
+			if (settings.hide.onClick) {
+
+				if ($(event.target).closest(settings.selectors.preventClose).length) {
+					return;
+				}
+			} else if (event.target !== this) {
+				return;
+			}
+
+			self.hide();
+		};
+
+		var isIgnoredTarget = function(event) {
+
+			if (! settings.hide.ignore) {
+				return false;
+			}
+
+			return !! $(event.target).closest(settings.hide.ignore).length;
+		};
+
+		var hideOnOutsideClick = function(event) {
+
+			if (isContextMenuClickEvent(event) || $(event.target).closest(elements.widget).length || isIgnoredTarget(event)) {
+				return;
+			}
+
+			self.hide();
+		};
+
+		var initElements = function() {
 
 			self.addElement('widget');
+
+			self.addElement('header');
 
 			self.addElement('message');
 
 			self.addElement('window', window);
 
+			self.addElement('body', document.body);
+
 			self.addElement('container', settings.container);
+
+			if (settings.iframe) {
+				self.addElement('iframe', settings.iframe);
+			}
+
+			if (settings.closeButton) {
+				self.addElement('closeButton', '<div><i class="' + settings.closeButtonClass + '"></i></div>');
+			}
 
 			var id = self.getSettings('id');
 
@@ -205,28 +306,34 @@
 
 			classes.push(self.getSettings('className'));
 
-			self.getElements('widget').addClass(classes.join(' '));
+			elements.widget.addClass(classes.join(' '));
 		};
 
-		var initSettings = function (parent, userSettings) {
+		var initSettings = function(parent, userSettings) {
 
 			var parentSettings = $.extend(true, {}, parent.getSettings());
 
 			settings = {
+				headerMessage: '',
+				message: '',
 				effects: parentSettings.effects,
 				classes: {
 					globalPrefix: parentSettings.classPrefix,
-					prefix: parentSettings.classPrefix + '-' + widgetName
+					prefix: parentSettings.classPrefix + '-' + widgetName,
+					preventScroll: parentSettings.classPrefix + '-prevent-scroll'
 				},
 				selectors: {
 					preventClose: '.' + parentSettings.classPrefix + '-prevent-close'
 				},
 				container: 'body',
+				preventScroll: false,
+				iframe: null,
+				closeButton: false,
+				closeButtonClass: parentSettings.classPrefix + '-close-button-icon',
 				position: {
 					element: 'widget',
 					my: 'center',
 					at: 'center',
-					of: 'container',
 					enable: true,
 					autoRefresh: false
 				},
@@ -235,7 +342,10 @@
 					autoDelay: 5000,
 					onClick: false,
 					onOutsideClick: true,
-					onBackgroundClick: true
+					onOutsideContextMenu: false,
+					onBackgroundClick: true,
+					onEscKeyPress: true,
+					ignore: ''
 				}
 			};
 
@@ -244,9 +354,9 @@
 			initSettingsEvents();
 		};
 
-		var initSettingsEvents = function () {
+		var initSettingsEvents = function() {
 
-			$.each(settings, function (settingKey) {
+			$.each(settings, function(settingKey) {
 
 				var eventName = settingKey.match(/^on([A-Z].*)/);
 
@@ -260,34 +370,17 @@
 			});
 		};
 
-		var normalizeClassName = function (name) {
+		var isContextMenuClickEvent = function(event) {
+			// Firefox fires `click` event on every `contextmenu` event.
+			return event.type === 'click' && event.button === 2;
+		};
 
-			return name.replace(/([a-z])([A-Z])/g, function () {
+		var normalizeClassName = function(name) {
+
+			return name.replace(/([a-z])([A-Z])/g, function() {
 
 				return arguments[1] + '-' + arguments[2].toLowerCase();
 			});
-		};
-
-		var hideOnClick = function(event) {
-
-			if (settings.hide.onClick) {
-
-				if ($(event.target).closest(settings.selectors.preventClose).length) {
-					return;
-				}
-			} else if (event.target !== this) {
-				return;
-			}
-
-			self.hide();
-		};
-
-		var hideOnOutsideClick = function(event) {
-			if ($(event.target).closest(elements.widget).length) {
-				return;
-			}
-
-			self.hide();
 		};
 
 		var onWindowKeyUp = function(event) {
@@ -301,41 +394,68 @@
 
 		var unbindEvents = function() {
 
-			elements.window.off('keyup', onWindowKeyUp);
+			var windows = [elements.window];
 
-			if (settings.hide.onOutsideClick) {
-				elements.window[0].removeEventListener('click', hideOnOutsideClick, true);
+			if (elements.iframe) {
+				windows.push(jQuery(elements.iframe[0].contentWindow));
 			}
+
+			windows.forEach(function(window) {
+				if (settings.hide.onEscKeyPress) {
+					window.off('keyup', onWindowKeyUp);
+				}
+
+				if (settings.hide.onOutsideClick) {
+					window[0].removeEventListener('click', hideOnOutsideClick, true);
+				}
+
+				if (settings.hide.onOutsideContextMenu) {
+					window[0].removeEventListener('contextmenu', hideOnOutsideClick, true);
+				}
+
+				if (settings.position.autoRefresh) {
+					window.off('resize', self.refreshPosition);
+				}
+			});
 
 			if (settings.hide.onClick || settings.hide.onBackgroundClick) {
 				elements.widget.off('click', hideOnClick);
 			}
-
-			if (settings.position.autoRefresh) {
-				elements.window.off('resize', self.refreshPosition);
-			}
 		};
 
-		this.addElement = function (name, element, type) {
+		this.addElement = function(name, element, classes) {
 
 			var $newElement = elements[name] = $(element || '<div>'),
-				normalizedName = normalizeClassName(name),
-				className = [];
+				normalizedName = normalizeClassName(name);
 
-			if (type) {
-				className.push(settings.classes.globalPrefix + '-' + type);
-			}
+			classes = classes ? classes + ' ' : '';
 
-			className.push(settings.classes.globalPrefix + '-' + normalizedName);
+			classes += settings.classes.globalPrefix + '-' + normalizedName;
 
-			className.push(settings.classes.prefix + '-' + normalizedName);
+			classes += ' ' + settings.classes.prefix + '-' + normalizedName;
 
-			$newElement.addClass(className.join(' '));
+			$newElement.addClass(classes);
 
 			return $newElement;
 		};
 
-		this.getSettings = function (setting) {
+		this.destroy = function() {
+
+			unbindEvents();
+
+			elements.widget.remove();
+
+			self.trigger('destroy');
+
+			return self;
+		};
+
+		this.getElements = function(item) {
+
+			return item ? elements[item] : elements;
+		};
+
+		this.getSettings = function(setting) {
 
 			var copy = Object.create(settings);
 
@@ -346,7 +466,28 @@
 			return copy;
 		};
 
-		this.init = function (parent, properties) {
+		this.hide = function() {
+
+			if (! self.isVisible()) {
+				return;
+			}
+
+			clearTimeout(hideTimeOut);
+
+			callEffect('hide', arguments);
+
+			unbindEvents();
+
+			if (settings.preventScroll) {
+				self.getElements('body').removeClass(settings.classes.preventScroll);
+			}
+
+			self.trigger('hide');
+
+			return self;
+		};
+
+		this.init = function(parent, properties) {
 
 			if (!(parent instanceof DialogsManager.Instance)) {
 				throw 'The ' + self.widgetName + ' must to be initialized from an instance of DialogsManager.Instance';
@@ -362,34 +503,19 @@
 
 			self.buildWidget();
 
-			if (self.attachEvents) {
-				self.attachEvents();
-			}
+			self.attachEvents();
 
 			self.trigger('ready');
 
 			return self;
 		};
 
-		this.getElements = function (item) {
+		this.isVisible = function() {
 
-			return item ? elements[item] : elements;
+			return elements.widget.is(':visible');
 		};
 
-		this.hide = function () {
-
-			clearTimeout(hideTimeOut);
-
-			callEffect('hide', arguments);
-
-			unbindEvents();
-
-			self.trigger('hide');
-
-			return self;
-		};
-
-		this.on = function (eventName, callback) {
+		this.on = function(eventName, callback) {
 
 			if ('object' === typeof eventName) {
 				$.each(eventName, function(singleEventName) {
@@ -402,7 +528,7 @@
 			var eventNames = eventName.split(' ');
 
 			eventNames.forEach(function(singleEventName) {
-				if (! events[singleEventName]) {
+				if (!events[singleEventName]) {
 					events[singleEventName] = [];
 				}
 
@@ -412,23 +538,74 @@
 			return self;
 		};
 
-		this.setMessage = function (message) {
+		this.off = function(eventName, callback) {
+
+			if (! events[ eventName ]) {
+				return self;
+			}
+
+			if (! callback) {
+				delete events[eventName];
+
+				return self;
+			}
+
+			var callbackIndex = events[eventName].indexOf(callback);
+
+			if (-1 !== callbackIndex) {
+				events[eventName].splice(callbackIndex, 1);
+			}
+
+			return self;
+		};
+
+		this.refreshPosition = function() {
+
+			if (! settings.position.enable) {
+				return;
+			}
+
+			var position = $.extend({}, settings.position);
+
+			if (elements[position.of]) {
+				position.of = elements[position.of];
+			}
+
+			if (! position.of) {
+				position.of = window;
+			}
+
+			if (settings.iframe) {
+				fixIframePosition(position);
+			}
+
+			elements[position.element].position(position);
+		};
+
+		this.setID = function(id) {
+
+			elements.widget.attr('id', id);
+
+			return self;
+		};
+
+		this.setHeaderMessage = function(message) {
+
+			self.getElements('header').html(message);
+
+			return self;
+		};
+
+		this.setMessage = function(message) {
 
 			elements.message.html(message);
 
 			return self;
 		};
 
-		this.setID = function (id) {
-
-			self.getElements('widget').attr('id', id);
-
-			return self;
-		};
-
 		this.setSettings = function(key, value) {
 
-			if ('object' === typeof value) {
+			if (jQuery.isPlainObject(value)) {
 				$.extend(true, settings[key], value);
 			} else {
 				settings[key] = value;
@@ -437,7 +614,9 @@
 			return self;
 		};
 
-		this.show = function () {
+		this.show = function() {
+
+			clearTimeout(hideTimeOut);
 
 			elements.widget.appendTo(elements.container).hide();
 
@@ -451,27 +630,16 @@
 
 			bindEvents();
 
+			if (settings.preventScroll) {
+				self.getElements('body').addClass(settings.classes.preventScroll);
+			}
+
 			self.trigger('show');
 
 			return self;
 		};
 
-		this.refreshPosition = function () {
-
-			if (! settings.position.enable) {
-				return;
-			}
-
-			var position = $.extend({}, settings.position);
-
-			if (elements[position.of]) {
-				position.of = elements[position.of];
-			}
-
-			elements[position.element].position(position);
-		};
-
-		this.trigger = function (eventName, params) {
+		this.trigger = function(eventName, params) {
 
 			var methodName = 'on' + eventName[0].toUpperCase() + eventName.slice(1);
 
@@ -485,21 +653,10 @@
 				return;
 			}
 
-			$.each(callbacks, function (index, callback) {
+			$.each(callbacks, function(index, callback) {
 
 				callback.call(self, params);
 			});
-
-			return self;
-		};
-
-		this.destroy = function() {
-
-			unbindEvents();
-
-			elements.widget.remove();
-
-			self.trigger('destroy');
 
 			return self;
 		};
@@ -508,14 +665,34 @@
 	DialogsManager.Widget.prototype.types = [];
 
 	// Inheritable widget methods
-	DialogsManager.Widget.prototype.buildWidget = function () {
+	DialogsManager.Widget.prototype.buildWidget = function() {
 
-		var elements = this.getElements();
+		var elements = this.getElements(),
+			settings = this.getSettings();
 
-		elements.widget.html(elements.message);
+		elements.widget.append(elements.header, elements.message);
+
+		this.setHeaderMessage(settings.headerMessage);
+
+		this.setMessage(settings.message);
+
+		if (this.getSettings('closeButton')) {
+			elements.widget.prepend(elements.closeButton);
+		}
 	};
 
-	DialogsManager.Widget.prototype.getDefaultSettings = function () {
+	DialogsManager.Widget.prototype.attachEvents = function() {
+
+		var self = this;
+
+		if (self.getSettings('closeButton')) {
+			self.getElements('closeButton').on('click', function() {
+				self.hide();
+			});
+		}
+	};
+
+	DialogsManager.Widget.prototype.getDefaultSettings = function() {
 
 		return {};
 	};
@@ -525,22 +702,22 @@
 		return [];
 	};
 
-	DialogsManager.Widget.prototype.onHide = function () {
+	DialogsManager.Widget.prototype.onHide = function() {
 	};
 
-	DialogsManager.Widget.prototype.onShow = function () {
+	DialogsManager.Widget.prototype.onShow = function() {
 	};
 
-	DialogsManager.Widget.prototype.onInit = function () {
+	DialogsManager.Widget.prototype.onInit = function() {
 	};
 
-	DialogsManager.Widget.prototype.onReady = function () {
+	DialogsManager.Widget.prototype.onReady = function() {
 	};
 
 	DialogsManager.widgetsTypes.simple = DialogsManager.Widget;
 
 	DialogsManager.addWidgetType('buttons', {
-		activeKeyUp: function (event) {
+		activeKeyUp: function(event) {
 
 			var TAB_KEY = 9;
 
@@ -552,7 +729,11 @@
 				this.hotKeys[event.which](this);
 			}
 		},
-		activeKeyDown: function (event) {
+		activeKeyDown: function(event) {
+
+			if (!this.focusedButton) {
+				return;
+			}
 
 			var TAB_KEY = 9;
 
@@ -581,16 +762,23 @@
 				this.focusedButton = this.buttons[nextButtonIndex].focus();
 			}
 		},
-		addButton: function (options) {
+		addButton: function(options) {
 
 			var self = this,
-				$button = self.addElement(options.name, $('<' + this.getSettings('buttonTag') + '>').text(options.text), 'button');
+				settings = self.getSettings(),
+				buttonSettings = jQuery.extend(settings.button, options);
+
+			var classes = options.classes ? options.classes + ' ' : '';
+
+			classes += settings.classes.globalPrefix + '-button';
+
+			var $button = self.addElement(options.name, $('<' + buttonSettings.tag + '>').text(options.text), classes);
 
 			self.buttons.push($button);
 
-			var buttonFn = function () {
+			var buttonFn = function() {
 
-				if (self.getSettings('hide').onButtonClick) {
+				if (settings.hide.onButtonClick) {
 					self.hide();
 				}
 
@@ -613,14 +801,14 @@
 
 			return self;
 		},
-		bindHotKeys: function () {
+		bindHotKeys: function() {
 
 			this.getElements('window').on({
 				keyup: this.activeKeyUp,
 				keydown: this.activeKeyDown
 			});
 		},
-		buildWidget: function () {
+		buildWidget: function() {
 
 			DialogsManager.Widget.prototype.buildWidget.apply(this, arguments);
 
@@ -628,27 +816,29 @@
 
 			this.getElements('widget').append($buttonsWrapper);
 		},
-		getClosureMethods: function () {
+		getClosureMethods: function() {
 
 			return [
 				'activeKeyUp',
 				'activeKeyDown'
 			];
 		},
-		getDefaultSettings: function () {
+		getDefaultSettings: function() {
 
 			return {
 				hide: {
 					onButtonClick: true
 				},
-				buttonTag: 'button'
+				button: {
+					tag: 'button'
+				}
 			};
 		},
-		onHide: function () {
+		onHide: function() {
 
 			this.unbindHotKeys();
 		},
-		onInit: function () {
+		onInit: function() {
 
 			this.buttons = [];
 
@@ -656,7 +846,7 @@
 
 			this.focusedButton = null;
 		},
-		onShow: function () {
+		onShow: function() {
 
 			this.bindHotKeys();
 
@@ -668,7 +858,7 @@
 				this.focusedButton.focus();
 			}
 		},
-		unbindHotKeys: function () {
+		unbindHotKeys: function() {
 
 			this.getElements('window').off({
 				keyup: this.activeKeyUp,
@@ -678,16 +868,13 @@
 	});
 
 	DialogsManager.addWidgetType('lightbox', DialogsManager.getWidgetType('buttons').extend('lightbox', {
-		getDefaultSettings: function () {
+		getDefaultSettings: function() {
 
 			var settings = DialogsManager.getWidgetType('buttons').prototype.getDefaultSettings.apply(this, arguments);
 
 			return $.extend(true, settings, {
-				headerMessage: '',
 				contentWidth: 'auto',
 				contentHeight: 'auto',
-				closeButton: false,
-				closeButtonClass: 'fa fa-times',
 				position: {
 					element: 'widgetContent',
 					of: 'widget',
@@ -695,33 +882,22 @@
 				}
 			});
 		},
-		buildWidget: function () {
+		buildWidget: function() {
 
 			DialogsManager.getWidgetType('buttons').prototype.buildWidget.apply(this, arguments);
 
-			var $widgetHeader = this.addElement('widgetHeader'),
-				$widgetContent = this.addElement('widgetContent');
+			var $widgetContent = this.addElement('widgetContent'),
+				elements = this.getElements();
 
-			var elements = this.getElements();
-
-			$widgetContent.append($widgetHeader, elements.message, elements.buttonsWrapper);
+			$widgetContent.append(elements.header, elements.message, elements.buttonsWrapper);
 
 			elements.widget.html($widgetContent);
 
-			if (! this.getSettings('closeButton')) {
-				return;
-			}
-
-			var $closeButton = this.addElement('closeButton', '<div><i class="' + this.getSettings('closeButtonClass') + '"></i></div>');
-
-			$widgetContent.prepend($closeButton);
-		},
-		attachEvents: function() {
-			if (this.getSettings('closeButton')) {
-				this.getElements('closeButton').on('click', this.hide);
+			if (elements.closeButton) {
+				$widgetContent.prepend(elements.closeButton);
 			}
 		},
-		onReady: function(){
+		onReady: function() {
 
 			var elements = this.getElements(),
 				settings = this.getSettings();
@@ -733,19 +909,11 @@
 			if ('auto' !== settings.contentHeight) {
 				elements.message.height(settings.contentHeight);
 			}
-
-			this.setHeaderMessage(settings.headerMessage);
-		},
-		setHeaderMessage: function (message) {
-
-			this.getElements('widgetHeader').html(message);
-
-			return this;
 		}
 	}));
 
 	DialogsManager.addWidgetType('confirm', DialogsManager.getWidgetType('lightbox').extend('confirm', {
-		onReady: function () {
+		onReady: function() {
 
 			DialogsManager.getWidgetType('lightbox').prototype.onReady.apply(this, arguments);
 
@@ -755,7 +923,7 @@
 			this.addButton({
 				name: 'cancel',
 				text: strings.cancel,
-				callback: function (widget) {
+				callback: function(widget) {
 
 					widget.trigger('cancel');
 				},
@@ -765,14 +933,14 @@
 			this.addButton({
 				name: 'ok',
 				text: strings.confirm,
-				callback: function (widget) {
+				callback: function(widget) {
 
 					widget.trigger('confirm');
 				},
 				focus: !isDefaultCancel
 			});
 		},
-		getDefaultSettings: function () {
+		getDefaultSettings: function() {
 
 			var settings = DialogsManager.getWidgetType('lightbox').prototype.getDefaultSettings.apply(this, arguments);
 
@@ -788,7 +956,7 @@
 	}));
 
 	DialogsManager.addWidgetType('alert', DialogsManager.getWidgetType('lightbox').extend('alert', {
-		onReady: function () {
+		onReady: function() {
 
 			DialogsManager.getWidgetType('lightbox').prototype.onReady.apply(this, arguments);
 
@@ -797,13 +965,13 @@
 			this.addButton({
 				name: 'ok',
 				text: strings.confirm,
-				callback: function (widget) {
+				callback: function(widget) {
 
 					widget.trigger('confirm');
 				}
 			});
 		},
-		getDefaultSettings: function () {
+		getDefaultSettings: function() {
 
 			var settings = DialogsManager.getWidgetType('lightbox').prototype.getDefaultSettings.apply(this, arguments);
 
@@ -817,4 +985,7 @@
 
 	// Exporting the DialogsManager variable to global
 	global.DialogsManager = DialogsManager;
-})(typeof require === 'function' ? require('jquery') : jQuery, typeof module !== 'undefined' ? module.exports : window);
+})(
+	typeof jQuery !== 'undefined' ? jQuery : typeof require === 'function' && require('jquery'),
+	typeof module !== 'undefined' ? module.exports : window
+);

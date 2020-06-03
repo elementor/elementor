@@ -8,6 +8,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		ui.addImages = '.elementor-control-gallery-add';
 		ui.clearGallery = '.elementor-control-gallery-clear';
 		ui.galleryThumbnails = '.elementor-control-gallery-thumbnails';
+		ui.status = '.elementor-control-gallery-status-title';
 
 		return ui;
 	},
@@ -16,18 +17,40 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'click @ui.addImages': 'onAddImagesClick',
 			'click @ui.clearGallery': 'onClearGalleryClick',
-			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick'
+			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick',
 		} );
 	},
 
 	onReady: function() {
-		var hasImages = this.hasImages();
+		this.initRemoveDialog();
+	},
+
+	applySavedValue: function() {
+		var images = this.getControlValue(),
+			imagesCount = images.length,
+			hasImages = !! imagesCount;
 
 		this.$el
-		    .toggleClass( 'elementor-gallery-has-images', hasImages )
-		    .toggleClass( 'elementor-gallery-empty', ! hasImages );
+			.toggleClass( 'elementor-gallery-has-images', hasImages )
+			.toggleClass( 'elementor-gallery-empty', ! hasImages );
 
-		this.initRemoveDialog();
+		var $galleryThumbnails = this.ui.galleryThumbnails;
+
+		$galleryThumbnails.empty();
+
+		this.ui.status.text( elementor.translate( hasImages ? 'gallery_images_selected' : 'gallery_no_images_selected', [ imagesCount ] ) );
+
+		if ( ! hasImages ) {
+			return;
+		}
+
+		this.getControlValue().forEach( function( image ) {
+			var $thumbnail = jQuery( '<div>', { class: 'elementor-control-gallery-thumbnail' } );
+
+			$thumbnail.css( 'background-image', 'url(' + image.url + ')' );
+
+			$galleryThumbnails.append( $thumbnail );
+		} );
 	},
 
 	hasImages: function() {
@@ -44,16 +67,16 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		var frameStates = {
 			create: 'gallery',
 			add: 'gallery-library',
-			edit: 'gallery-edit'
+			edit: 'gallery-edit',
 		};
 
 		var options = {
-			frame:  'post',
+			frame: 'post',
 			multiple: true,
 			state: frameStates[ action ],
 			button: {
-				text: elementor.translate( 'insert_media' )
-			}
+				text: elementor.translate( 'insert_media' ),
+			},
 		};
 
 		if ( this.hasImages() ) {
@@ -64,9 +87,9 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		// When a file is selected, run a callback.
 		this.frame.on( {
-			'update': this.select,
+			update: this.select,
 			'menu:render:default': this.menuRender,
-			'content:render:browse': this.gallerySettings
+			'content:render:browse': this.gallerySettings,
 		}, this );
 	},
 
@@ -87,12 +110,12 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			order: 'ASC',
 			type: 'image',
 			perPage: -1,
-			post__in: _.pluck( this.getControlValue(), 'id' )
+			post__in: _.pluck( this.getControlValue(), 'id' ),
 		} );
 
 		return new wp.media.model.Selection( attachments.models, {
 			props: attachments.props.toJSON(),
-			multiple: true
+			multiple: true,
 		} );
 	},
 
@@ -106,13 +129,13 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		selection.each( function( image ) {
 			images.push( {
 				id: image.get( 'id' ),
-				url: image.get( 'url' )
+				url: image.get( 'url' ),
 			} );
 		} );
 
 		this.setValue( images );
 
-		this.render();
+		this.applySavedValue();
 	},
 
 	onBeforeDestroy: function() {
@@ -124,9 +147,9 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	},
 
 	resetGallery: function() {
-		this.setValue( '' );
+		this.setValue( [] );
 
-		this.render();
+		this.applySavedValue();
 	},
 
 	initRemoveDialog: function() {
@@ -134,15 +157,15 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
-				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+				removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 					message: elementor.translate( 'dialog_confirm_gallery_delete' ),
 					headerMessage: elementor.translate( 'delete_gallery' ),
 					strings: {
 						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' )
+						cancel: elementor.translate( 'cancel' ),
 					},
 					defaultOption: 'confirm',
-					onConfirm: this.resetGallery.bind( this )
+					onConfirm: this.resetGallery.bind( this ),
 				} );
 			}
 
@@ -160,7 +183,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 	onGalleryThumbnailsClick: function() {
 		this.openFrame( 'edit' );
-	}
+	},
 } );
 
 module.exports = ControlMediaItemView;

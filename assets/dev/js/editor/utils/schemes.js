@@ -7,7 +7,7 @@ Schemes = function() {
 		stylesheet = new Stylesheet(),
 		schemes = {},
 		settings = {
-			selectorWrapperPrefix: '.elementor-widget-'
+			selectorWrapperPrefix: '.elementor-widget-',
 		},
 		elements = {};
 
@@ -16,21 +16,30 @@ Schemes = function() {
 	};
 
 	var initElements = function() {
-		elements.$style = jQuery( '<style>', {
-			id: 'elementor-style-scheme'
-		});
+		const id = 'elementor-style-scheme';
+
+		elements.$style = elementor.$previewContents.find( `#${ id }` );
+
+		if ( ! elements.$style.length ) {
+			elements.$style = jQuery( '<style>', { id } );
+		}
 
 		elements.$previewHead = elementor.$previewContents.find( 'head' );
 	};
 
 	var initSchemes = function() {
-		schemes = elementor.helpers.cloneObject( elementor.config.schemes.items );
+		schemes = elementorCommon.helpers.cloneObject( elementor.config.schemes.items );
 	};
 
 	var fetchControlStyles = function( control, controlsStack, widgetType ) {
-		ControlsCSSParser.addControlStyleRules( stylesheet, control, controlsStack, function( control ) {
-			return self.getSchemeValue( control.scheme.type, control.scheme.value, control.scheme.key ).value;
-		}, [ '{{WRAPPER}}' ], [ settings.selectorWrapperPrefix + widgetType ] );
+		ControlsCSSParser.addControlStyleRules(
+			stylesheet,
+			control,
+			controlsStack,
+			( controlStyles ) => self.getSchemeValue( controlStyles.scheme.type, controlStyles.scheme.value, controlStyles.scheme.key ).value,
+			[ '{{WRAPPER}}' ],
+			[ settings.selectorWrapperPrefix + widgetType ]
+		);
 	};
 
 	var fetchWidgetControlsStyles = function( widget ) {
@@ -42,8 +51,8 @@ Schemes = function() {
 	};
 
 	var fetchAllWidgetsSchemesStyle = function() {
-		_.each( elementor.config.widgets, function( widget ) {
-			fetchWidgetControlsStyles(  widget  );
+		_.each( elementor.widgetsCache, function( widget ) {
+			fetchWidgetControlsStyles( widget );
 		} );
 	};
 
@@ -82,7 +91,7 @@ Schemes = function() {
 			schemeValue = scheme.items[ value ];
 
 		if ( key && _.isObject( schemeValue ) ) {
-			var clonedSchemeValue = elementor.helpers.cloneObject( schemeValue );
+			var clonedSchemeValue = elementorCommon.helpers.cloneObject( schemeValue );
 
 			clonedSchemeValue.value = schemeValue.value[ key ];
 
@@ -101,33 +110,63 @@ Schemes = function() {
 	};
 
 	this.resetSchemes = function( schemeName ) {
-		schemes[ schemeName ] = elementor.helpers.cloneObject( elementor.config.schemes.items[ schemeName ] );
+		schemes[ schemeName ] = elementorCommon.helpers.cloneObject( elementor.config.schemes.items[ schemeName ] );
 	};
 
 	this.saveScheme = function( schemeName ) {
-		elementor.config.schemes.items[ schemeName ].items = elementor.helpers.cloneObject( schemes[ schemeName ].items );
+		elementor.config.schemes.items[ schemeName ].items = elementorCommon.helpers.cloneObject( schemes[ schemeName ].items );
 
-		var itemsToSave = {};
+		const itemsToSave = {};
 
 		_.each( schemes[ schemeName ].items, function( item, key ) {
 			itemsToSave[ key ] = item.value;
 		} );
 
-		NProgress.start();
-
-		elementor.ajax.send( 'apply_scheme', {
+		return elementorCommon.ajax.addRequest( 'apply_scheme', {
 			data: {
 				scheme_name: schemeName,
-				data: JSON.stringify( itemsToSave )
+				data: JSON.stringify( itemsToSave ),
 			},
-			success: function() {
-				NProgress.done();
-			}
 		} );
 	};
 
 	this.setSchemeValue = function( schemeName, itemKey, value ) {
 		schemes[ schemeName ].items[ itemKey ].value = value;
+	};
+
+	this.addSchemeItem = function( schemeName, item, at ) {
+		const scheme = schemes[ schemeName ],
+			schemeKeys = Object.keys( scheme.items ),
+			hasAt = undefined !== at,
+			targetIndex = hasAt ? at : +( schemeKeys.slice( -1 )[ 0 ] ) || 0;
+
+		if ( hasAt ) {
+			let itemIndex = schemeKeys.length + 1;
+
+			for ( ; itemIndex > at; itemIndex-- ) {
+				scheme.items[ itemIndex ] = scheme.items[ itemIndex - 1 ];
+			}
+		}
+
+		scheme.items[ targetIndex + 1 ] = item;
+	};
+
+	this.removeSchemeItem = function( schemeName, itemKey ) {
+		const items = schemes[ schemeName ].items;
+
+		while ( true ) {
+			itemKey++;
+
+			const nextItem = items[ itemKey + 1 ];
+
+			if ( ! nextItem ) {
+				delete items[ itemKey ];
+
+				break;
+			}
+
+			items[ itemKey ] = nextItem;
+		}
 	};
 };
 

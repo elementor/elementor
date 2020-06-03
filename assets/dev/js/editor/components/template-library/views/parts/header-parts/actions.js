@@ -4,19 +4,19 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-header-actions',
 
 	ui: {
-		'import': '#elementor-template-library-header-import i',
+		import: '#elementor-template-library-header-import i',
 		sync: '#elementor-template-library-header-sync i',
-		save: '#elementor-template-library-header-save i'
+		save: '#elementor-template-library-header-save i',
 	},
 
 	events: {
 		'click @ui.import': 'onImportClick',
 		'click @ui.sync': 'onSyncClick',
-		'click @ui.save': 'onSaveClick'
+		'click @ui.save': 'onSaveClick',
 	},
 
 	onImportClick: function() {
-		elementor.templates.getLayout().showImportView();
+		$e.route( 'library/import' );
 	},
 
 	onSyncClick: function() {
@@ -24,14 +24,18 @@ module.exports = Marionette.ItemView.extend( {
 
 		self.ui.sync.addClass( 'eicon-animation-spin' );
 
-		elementor.templates.requestLibraryData( function() {
-			self.ui.sync.removeClass( 'eicon-animation-spin' );
+		elementor.templates.requestLibraryData( {
+			onUpdate: function() {
+				self.ui.sync.removeClass( 'eicon-animation-spin' );
 
-			elementor.templates.showTemplates();
-		}, true, true );
+				$e.routes.refreshContainer( 'library' );
+			},
+			forceUpdate: true,
+			forceSync: true,
+		} );
 	},
 
 	onSaveClick: function() {
-		elementor.templates.getLayout().showSaveTemplateView();
-	}
+		$e.route( 'library/save-template' );
+	},
 } );

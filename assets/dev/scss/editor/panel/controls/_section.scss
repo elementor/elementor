@@ -2,10 +2,13 @@
 	margin-top: 10px;
 	padding: 0;
 
-	& + .elementor-control {
+	&.elementor-open {
+		padding-bottom: 15px;
+	}
+
+	+ .elementor-control {
 
 		&:not(.elementor-control-type-section) {
-			padding-top: 15px;
 
 			&:before {
 				display: none;

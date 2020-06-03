@@ -1,17 +1,23 @@
 .elementor-control-type-color {
-	// This chaining is required in order to let the `width` rules override the default
-	> .elementor-control-content {
 
-		> .elementor-control-field {
+	.elementor-control-title {
+		flex-grow: 1;
+	}
 
-			> .elementor-control-title {
-				width: 70%;
-			}
+	.elementor-control-input-wrapper {
+		display: flex;
+		justify-content: flex-end;
+	}
 
-			> .elementor-control-input-wrapper {
-				height: 27px; //Fix jumping of panel when the wp-picker is active
-				width: 30%;
-			}
+	.elementor-control-dynamic-switcher {
+		@include border-start-property(width, 0);
+		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	}
+
+	&.elementor-control-dynamic {
+
+		.pickr {
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		}
 	}
 }

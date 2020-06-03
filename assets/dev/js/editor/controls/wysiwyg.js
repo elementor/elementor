@@ -2,28 +2,39 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlWysiwygItemView;
 
 ControlWysiwygItemView = ControlBaseDataView.extend( {
+	editor: null,
+
+	ui: function() {
+		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
+
+		jQuery.extend( ui, {
+			inputWrapper: '.elementor-control-input-wrapper',
+		} );
+
+		return ui;
+	},
 
 	events: function() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
-			'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
+			'keyup textarea.elementor-wp-editor': 'onBaseInputChange',
 		} );
 	},
 
 	// List of buttons to move {buttonToMove: afterButton}
 	buttons: {
 		addToBasic: {
-			underline: 'italic'
+			underline: 'italic',
 		},
 		addToAdvanced: {},
 		moveToAdvanced: {
 			blockquote: 'removeformat',
 			alignleft: 'blockquote',
 			aligncenter: 'alignleft',
-			alignright: 'aligncenter'
+			alignright: 'aligncenter',
 		},
 		moveToBasic: {},
 		removeFromBasic: [ 'unlink', 'wp_more' ],
-		removeFromAdvanced: []
+		removeFromAdvanced: [],
 	},
 
 	initialize: function() {
@@ -35,10 +46,14 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 
 		// Wait a cycle before initializing the editors.
 		_.defer( function() {
+			if ( self.isDestroyed ) {
+				return;
+			}
+
 			// Initialize QuickTags, and set as the default mode.
 			quicktags( {
 				buttons: 'strong,em,del,link,img,close',
-				id: self.editorID
+				id: self.editorID,
 			} );
 
 			if ( elementor.config.rich_editing_enabled ) {
@@ -58,11 +73,8 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			id: self.editorID,
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
-				// Save the bind callback to allow overwrite it externally
-				self.saveEditor = self.saveEditor.bind( self, editor );
-
-				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
-			}
+				self.editor = editor;
+			},
 		};
 
 		tinyMCEPreInit.mceInit[ self.editorID ] = _.extend( _.clone( tinyMCEPreInit.mceInit.elementorwpeditor ), editorConfig );
@@ -72,18 +84,21 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	saveEditor: function( editor ) {
-		editor.save();
+	applySavedValue: function() {
+		if ( ! this.editor ) {
+			return;
+		}
 
-		this.setValue( editor.getContent() );
+		var controlValue = this.getControlValue();
+
+		this.editor.setContent( controlValue );
+
+		// Update also the plain textarea
+		jQuery( '#' + this.editorID ).val( controlValue );
 	},
 
-	attachElContent: function() {
-		var editorTemplate = elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', this.getControlValue() );
-
-		this.$el.html( editorTemplate );
-
-		return this;
+	saveEditor: function() {
+		this.setValue( this.editor.getContent() );
 	},
 
 	moveButtons: function( buttonsToMove, from, to ) {
@@ -135,13 +150,18 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
 	},
 
-	onAfterExternalChange: function() {
-		var controlValue = this.getControlValue();
+	onReady: function() {
+		const $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', this.getControlValue() ) );
 
-		tinymce.get( this.editorID ).setContent( controlValue );
+		$editor.find( `.wp-editor-tabs` ).addClass( 'elementor-control-dynamic-switcher-wrapper' );
 
-		// Update also the plain textarea
-		jQuery( '#' + this.editorID ).val( controlValue );
+		this.ui.inputWrapper.html( $editor );
+
+		setTimeout( () => {
+			if ( ! this.isDestroyed && this.editor ) {
+				this.editor.on( 'keyup change undo redo', this.saveEditor.bind( this ) );
+			}
+		}, 100 );
 	},
 
 	onBeforeDestroy: function() {
@@ -157,7 +177,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		// Cleanup PreInit data
 		delete tinyMCEPreInit.mceInit[ this.editorID ];
 		delete tinyMCEPreInit.qtInit[ this.editorID ];
-	}
+	},
 } );
 
 module.exports = ControlWysiwygItemView;

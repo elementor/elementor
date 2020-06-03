@@ -69,7 +69,7 @@
 	padding: 10px;
 	box-shadow: $panel-top-shadow;
 	cursor: default;
-	z-index: 4;
+	z-index: $super-layer;
 }
 
 .elementor-panel-footer-sub-menu {
@@ -84,15 +84,16 @@
 	width: 100%;
 	cursor: pointer;
 
-	&:not(:last-child) {
-		margin-bottom: 1px;
+	&.elementor-disabled {
+
+		.elementor-icon,
+		.elementor-title {
+			color: $editor-dark;
+		}
 	}
 
-	&[data-device-mode="mobile-landscape"] {
-
-		.fa-mobile {
-			transform: rotate(-90deg);
-		}
+	&:not(:last-child) {
+		margin-bottom: 1px;
 	}
 
 	&:hover {
@@ -142,11 +143,14 @@
 	}
 }
 
-#elementor-panel-saver-publish {
+#elementor-panel-footer-saver-publish {
 	width: 80px;
-	@extend .elementor-button-success;
 
-	.elementor-button.elementor-button-state {
+	.elementor-button-state {
+
+		i {
+			@include margin-end(0);
+		}
 
 		#elementor-panel-saver-button-publish-label {
 			display: none;
@@ -154,7 +158,7 @@
 	}
 }
 
-#elementor-panel-saver-save-options {
+#elementor-panel-footer-saver-options {
 	width: 35px;
 	@include border-start(1px solid $editor-darkest);
 
@@ -183,26 +187,38 @@
 	}
 }
 
-#elementor-panel-saver-button- {
-	&preview {
-		a {
-			color: $editor-light;
+.elementor-disabled {
+	cursor: default;
+}
+
+#elementor-panel-saver- {
+
+	&button-{
+		&preview {
+			a {
+				color: $editor-light;
+			}
 		}
-	}
 
-	&publish,
-	&save-options {
-		font-size: 11px;
-		text-transform: uppercase;
-		height: 26px;
-	}
+		&publish,
+		&save-options {
+			font-size: 11px;
+			text-transform: uppercase;
+			height: 26px;
 
-	&publish {
-		width: 100%;
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-	},
+			&.elementor-disabled {
+				background-color: $editor-darker;
+				color: $editor-light;
+			}
+		}
 
-	&save-options {
-		width: 25px;
+		&publish {
+			width: 100%;
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		}
+
+		&save-options {
+			width: 25px;
+		}
 	}
 }

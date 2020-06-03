@@ -5,18 +5,22 @@ Conditions = function() {
 
 	this.compare = function( leftValue, rightValue, operator ) {
 		switch ( operator ) {
-			/* jshint ignore:start */
+			/* eslint-disable eqeqeq */
 			case '==':
 				return leftValue == rightValue;
 			case '!=':
 				return leftValue != rightValue;
-			/* jshint ignore:end */
+			/* eslint-enable eqeqeq */
 			case '!==':
 				return leftValue !== rightValue;
 			case 'in':
 				return -1 !== rightValue.indexOf( leftValue );
 			case '!in':
 				return -1 === rightValue.indexOf( leftValue );
+			case 'contains':
+				return -1 !== leftValue.indexOf( rightValue );
+			case '!contains':
+				return -1 === leftValue.indexOf( rightValue );
 			case '<':
 				return leftValue < rightValue;
 			case '<=':
