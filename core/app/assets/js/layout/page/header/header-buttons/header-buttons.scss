@@ -1,0 +1,16 @@
+@import '../../../../../assets/dev/scss/helpers/variables.scss';
+
+.e-app {
+	&__view {
+		&__header {
+			&__buttons {
+				display: flex;
+				flex-direction: row-reverse;
+			}
+
+			&__actions {
+				display: flex;
+			}
+		}
+	}
+}

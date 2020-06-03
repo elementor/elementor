@@ -21,6 +21,11 @@
 						}
 					}
 
+					&-action {
+						/*@include padding-end(16px);*/
+						padding-right: 16px;
+					}
+
 					&-close {
 						&--normal {
 							width: 45px;
@@ -66,15 +71,6 @@
 								}
 							}
 						}
-					}
-				}
-
-				&-actions {
-					display: flex;
-
-					&__button {
-						/*@include padding-end(16px);*/
-						padding-right: 16px;
 					}
 				}
 			}

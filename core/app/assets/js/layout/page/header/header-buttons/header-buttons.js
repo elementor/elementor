@@ -6,11 +6,11 @@ export default function HeaderButtons( props ) {
 
 	if ( props.buttons.length ) {
 		const buttons = props.buttons.map( ( button ) => {
-			return <Button key={ button.id } {...button } />;
+			return <Button className="e-app__view__header__buttons__button-action" key={ button.id } {...button } />;
 		} );
 
 		tools = (
-			<div id="e-app__view__header__buttons-actions">
+			<div id="e-app__view__header__actions">
 				{ buttons }
 			</div>
 		);
