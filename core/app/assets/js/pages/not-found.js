@@ -1,4 +1,4 @@
-import Page from 'elementor-app/layout/page';
+import Page from 'elementor-app/layout/page/page';
 import './not-found.scss';
 
 export default function NotFound() {

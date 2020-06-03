@@ -1,4 +1,4 @@
-import Page from 'elementor-app/layout/page';
+import Page from 'elementor-app/layout/page/page';
 import SiteEditorMenu from '../organisms/menu';
 import TemplateTypesContext from '../context/template-types';
 
