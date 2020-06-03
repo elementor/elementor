@@ -42,8 +42,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.view.setGlobalDisplay( globalData.value );
 		}
 
-		this.view.setState( 'addButtonActive', false );
-		this.view.setState( 'clearButtonActive', true );
+		this.view.setOptions( 'addButtonActive', false );
+		this.view.setOptions( 'clearButtonActive', true );
 
 
 		this.toggleSelect();
