@@ -1,6 +1,6 @@
-import Header from './header';
-import Sidebar from './sidebar';
-import Content from './content';
+import Header from './header/header';
+import Sidebar from './sidebar/sidebar';
+import Content from './content/content';
 import './page.scss';
 
 export default function Page( props ) {

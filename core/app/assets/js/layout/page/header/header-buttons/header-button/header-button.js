@@ -1,4 +1,4 @@
-import BaseButton from '../molecules/button';
+import BaseButton from '../../../../../molecules/button';
 import './header-button.scss';
 
 export default class Button extends BaseButton {

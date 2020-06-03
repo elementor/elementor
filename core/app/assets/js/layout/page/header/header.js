@@ -1,4 +1,4 @@
-import HeaderButtons from './header-buttons';
+import HeaderButtons from './header-buttons/header-buttons';
 import './header.scss';
 
 export default function Header( props ) {
