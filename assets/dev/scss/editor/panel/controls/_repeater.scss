@@ -88,6 +88,22 @@
 		}
 	}
 
+	.elementor-repeater-row--form-step {
+		.elementor-repeater-row-tools {
+			&:hover {
+				background-color: $editor-lighter;
+			}
+
+			div:not(.elementor-repeater-row-handle-sortable) {
+				background-color: $editor-background-light;
+
+				&:hover {
+					background-color: $gray-bg;
+				}
+			}
+		}
+	}
+
 	.elementor-button-wrapper {
 		text-align: center;
 		padding-top: 5px;
