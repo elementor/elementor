@@ -15,12 +15,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		} );
 	}
 
-	initialize( ...args ) {
-		super.initialize( ...args );
-
-		this.state = {};
-	}
-
 	onPopoverToggleClick() {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}

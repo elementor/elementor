@@ -18,10 +18,6 @@ export default class extends ControlBaseDataView {
 		}
 	}
 
-	initialize( ...args ) {
-		super.initialize( ...args );
-	}
-
 	initPicker() {
 		const controlValue = this.getControlValue(),
 			options = {
