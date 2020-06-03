@@ -149,6 +149,30 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$endpoint_instance->base_callback( 'some-invalid-method', new \WP_REST_Request(), true );
 	}
 
+	public function test_get_item() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$endpoint_instance->set_test_data( 'get_item', 'valid' );
+
+		$this->assertEquals( 'valid', $endpoint_instance->get_item( null,null ) );
+	}
+
+	public function test_get_item_simulated() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint_instance->register_item_route();
+
+		$endpoint_instance->set_test_data( 'get_item', 'valid' );
+		$endpoint = trim( $endpoint_instance->get_base_route(), '/' ) . '/fake_id';
+
+		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint ) );
+	}
+
 	public function test_get_items() {
 		$this->manager->run_server();
 
@@ -172,8 +196,151 @@ class Test_Endpoint extends Elementor_Test_Base {
 	}
 
 	// TODO: Add test_get_permission_callback(), when get_permission_callback() function is completed.
-	// TODO: Add test_create_item(), when create_item() function is completed.
-	// TODO: Add test_create_items(), when create_items() function is completed.
+
+
+	public function test_create_item() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$endpoint_instance->set_test_data( 'create_item', 'valid' );
+
+		$this->assertEquals( 'valid', $endpoint_instance->create_item( null,null ) );
+	}
+
+	public function test_create_item_simulated() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint_instance->register_item_route( \WP_REST_Server::CREATABLE );
+
+		$endpoint_instance->set_test_data( 'create_item', 'valid' );
+		$endpoint = trim( $endpoint_instance->get_base_route(), '/' ) . '/fake_id';
+
+		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], \WP_REST_Server::CREATABLE ) );
+	}
+
+	public function test_create_items() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$endpoint_instance->set_test_data( 'create_items', 'valid' );
+
+		$this->assertEquals( 'valid', $endpoint_instance->create_items( null ) );
+	}
+
+	public function test_create_items_simulated() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint_instance->register_items_route( \WP_REST_Server::CREATABLE );
+
+		$endpoint_instance->set_test_data( 'create_items', 'valid' );
+		$endpoint = trim( $endpoint_instance->get_base_route(), '/' );
+
+		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'POST' ) );
+	}
+
+	public function test_update_item() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$endpoint_instance->set_test_data( 'update_item', 'valid' );
+
+		$this->assertEquals( 'valid', $endpoint_instance->update_item( null,null ) );
+	}
+
+	public function test_update_item_simulated() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint_instance->register_item_route( \WP_REST_Server::EDITABLE );
+
+		$endpoint_instance->set_test_data( 'update_item', 'valid' );
+		$endpoint = trim( $endpoint_instance->get_base_route(), '/' ) . '/fake_id';
+
+		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'PUT' ) );
+	}
+
+	public function test_update_items() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$endpoint_instance->set_test_data( 'update_items', 'valid' );
+
+		$this->assertEquals( 'valid', $endpoint_instance->update_items( null ) );
+	}
+
+	public function test_update_items_simulated() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint_instance->register_items_route( \WP_REST_Server::EDITABLE );
+
+		$endpoint_instance->set_test_data( 'update_items', 'valid' );
+		$endpoint = trim( $endpoint_instance->get_base_route(), '/' );
+
+		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'PUT' ) );
+	}
+
+	public function test_delete_item() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$endpoint_instance->set_test_data( 'delete_item', 'valid' );
+
+		$this->assertEquals( 'valid', $endpoint_instance->delete_item( null,null ) );
+	}
+
+	public function test_delete_item_simulated() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint_instance->register_item_route( \WP_REST_Server::DELETABLE );
+
+		$endpoint_instance->set_test_data( 'delete_item', 'valid' );
+		$endpoint = trim( $endpoint_instance->get_base_route(), '/' ) . '/fake_id';
+
+		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'DELETE' ) );
+	}
+
+	public function test_delete_items() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$endpoint_instance->set_test_data( 'delete_items', 'valid' );
+
+		$this->assertEquals( 'valid', $endpoint_instance->delete_items( null ) );
+	}
+
+	public function test_delete_items_simulated() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint_instance->register_items_route( \WP_REST_Server::DELETABLE );
+
+		$endpoint_instance->set_test_data( 'delete_items', 'valid' );
+		$endpoint = trim( $endpoint_instance->get_base_route(), '/' );
+
+		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'DELETE' ) );
+	}
 
 	public function test_register_item_route() {
 		$this->manager->run_server();

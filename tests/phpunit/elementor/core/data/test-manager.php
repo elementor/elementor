@@ -72,6 +72,15 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( $controller, $this->manager->find_controller_instance( $controller->get_name() . '/' . $endpoint_instance->get_name() ));
 	}
 
+	public function test_command_extract_args() {
+		$args = [];
+		$command = 'controller/endpoint/?id=test&test=true';
+		$command_extracted = $this->manager->command_extract_args( $command, $args );
+
+		$this->assertEquals( 'controller/endpoint', $command_extracted );
+		$this->assertEquals( [ 'id' => 'test', 'test' => 'true' ], $args );
+	}
+
 	public function test_command_to_endpoint() {
 		$one_parameter = $this->manager->command_to_endpoint( 'controller/endpoint', 'controller/endpoint/{paramA}', [
 			'paramA' => 'valueA',
