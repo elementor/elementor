@@ -20,8 +20,6 @@ export default class extends ControlBaseDataView {
 
 	initialize( ...args ) {
 		super.initialize( ...args );
-
-		this.state = {};
 	}
 
 	initPicker() {
