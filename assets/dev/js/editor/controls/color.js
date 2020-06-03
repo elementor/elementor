@@ -212,6 +212,7 @@ export default class extends ControlBaseDataView {
 
 	onPickerChange() {
 		if ( this.getGlobalValue() ) {
+			this.triggerMethod( 'unsetGlobalValue' );
 			this.$el.find( '.e-global-selected' ).html( elementor.translate( 'custom' ) );
 		}
 
@@ -227,15 +228,7 @@ export default class extends ControlBaseDataView {
 
 	async onPickerClear() {
 		if ( this.getGlobalValue() ) {
-			const globalData = this.getGlobalData(),
-				settings = {};
-
-			settings[ globalData.key ] = '';
-
-			await $e.run( 'document/globals/disable', {
-				container: this.container,
-				settings: settings,
-			} );
+			this.triggerMethod( 'unsetGlobalValue' );
 		}
 
 		this.setValue( '' );

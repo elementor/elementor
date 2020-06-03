@@ -197,7 +197,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 	}
 
-	unsetGlobalValue() {
+	// The unset method is triggered from the controls via triggerMethod
+	onUnsetGlobalValue() {
 		const globalData = this.view.getGlobalData(),
 			settings = {};
 
