@@ -7,8 +7,11 @@
 			align-items: center;
 			justify-content: space-between;
 			height: 50px;
+			box-shadow: $panel-bottom-shadow;
 			background-color: $white;
-			box-shadow: 0 0 8px rgba(0 ,0 ,0 , .1);
+			color: $editor-darkest;
+			font-size: 15px;
+			font-weight: 500;
 
 			&__logo {
 				display: flex;
