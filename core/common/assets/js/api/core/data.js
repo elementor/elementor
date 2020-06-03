@@ -300,7 +300,7 @@ export default class Data extends Commands {
 		requestData.cache = 'miss';
 
 		const params = this.prepareHeaders( requestData ),
-			useCache = 'get' === requestData.type && ! requestData.args.options?.refresh;
+			useCache = [ 'create', 'get' ].includes( requestData.type ) && ! requestData.args.options?.refresh;
 
 		if ( useCache ) {
 			const cachePromise = this.cache.getAsync( requestData );
