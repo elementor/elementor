@@ -167,6 +167,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			},
 			onShow: () => {
 				// Put focus on the naming input
+				this.view.colorPicker.picker.hide();
 				this.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
 			},
 		} );
