@@ -204,8 +204,11 @@ export default class extends ControlBaseDataView {
 		return this.state;
 	}
 
+	// Change the color picker value without triggering Pickr's 'change' event
 	setGlobalDisplay( color ) {
-		this.colorPicker.picker.setColor( color, true );
+		const parsedColor = this.colorPicker.picker._parseLocalColor( color );
+
+		this.colorPicker.picker.setHSVA( ...parsedColor.values, false );
 	}
 
 	onPickerChange() {
