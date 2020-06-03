@@ -1,3 +1,5 @@
+import './content.scss';
+
 export default function Content( props ) {
 	return (
 		<main className="e-app__content">
