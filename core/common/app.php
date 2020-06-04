@@ -226,6 +226,7 @@ class App extends BaseApp {
 			'activeModules' => array_keys( $this->get_components() ),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
+				'rest' => get_rest_url(),
 			],
 		];
 	}
