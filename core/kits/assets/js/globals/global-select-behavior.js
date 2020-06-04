@@ -163,7 +163,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
 
-				this.applySavedGlobalValue( globalData );
+				/*this.applySavedGlobalValue( globalData );*/
 			},
 			onShow: () => {
 				// Put focus on the naming input
@@ -176,16 +176,20 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	async createNewGlobal( globalData ) {
-		await $e.run( globalData.commandName + '/create', {
-			container: this.view.container,
-			setting: globalData.key, // group control name
-			title: globalData.title,
-		} )
-			.then( async ( result ) => {
-				await $e.data.get( globalData.commandName + '?id=' + result.data._id );
-				//$e.data.get( globalData.commandName )
-				this.setGlobalValue( globalData );
+		const container = this.view.container,
+			result = await $e.run( globalData.commandName + '/create', {
+				container,
+				setting: globalData.key, // group control name
+				title: globalData.title,
 			} );
+
+		this.applySavedGlobalValue( result.data );
+		// $e.run( 'document/globals/enable', {
+		// 	container,
+		// 	settings: {
+		// 		[ globalData.key ]: this.view.getCommand() + '?id=' + result.data.id,
+		// 	},
+		// } );
 	}
 
 	setGlobalValue( globalData ) {

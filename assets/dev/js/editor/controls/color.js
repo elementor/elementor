@@ -221,7 +221,18 @@ export default class extends ControlBaseDataView {
 			this.$el.removeClass( 'e-invalid-color' );
 		}
 
-		this.setValue( this.colorPicker.getColor() );
+		$e.run( 'document/elements/settings', {
+			container: this.container,
+			settings: {
+				[ this.model.get( 'name' ) ]: this.colorPicker.getColor(),
+			},
+			options: {
+				preventDefaultRender: true,
+			},
+		} );
+
+		// Manually render, since update-cache run after settings. but renderStyles run on render, and cache didnt get updated yet.
+		this.container.render();
 	}
 
 	async onPickerClear() {

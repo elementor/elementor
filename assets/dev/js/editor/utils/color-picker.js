@@ -79,7 +79,7 @@ export default class ColorPicker extends elementorModules.Module {
 			colorRepresentation = color.toRGBA();
 		}
 
-		return colorRepresentation.toString( 0 );
+		return colorRepresentation.toString();
 	}
 
 	getColor() {
