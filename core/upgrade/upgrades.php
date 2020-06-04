@@ -779,6 +779,48 @@ class Upgrades {
 	}
 
 	/**
+	 * Move default typography settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist.
+			if ( $kit->get_settings( 'system_typography' ) ) {
+				return;
+			}
+
+			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'typography' );
+
+			$default_typography = $scheme_obj->get_scheme();
+
+			$new_ids = [
+				'primary',
+				'secondary',
+				'text',
+				'accent',
+			];
+
+			foreach ( $default_typography as $index => $typography ) {
+				$kit->add_repeater_row( 'system_typography', [
+					'_id' => $new_ids[ $index - 1 ], // $default_typography starts from 1.
+					'title' => $typography['title'],
+					'system_typography_typography' => 'custom',
+					'system_typography_font_family' => $typography['value']['font_family'],
+					'system_typography_font_weight' => $typography['value']['font_weight'],
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+
+	/**
 	 * @param callback $callback
 	 * @param Updater $updater
 	 *

@@ -189,8 +189,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$this->assertEquals( $generic_font, $revision_generic_font_after );
 			$this->assertEquals( $lightbox_color, $revision_lightbox_color_after );
 		}
-
-		return;
 	}
 
 	public function test_v_3_0_0_move_saved_colors_to_kit() {
@@ -334,9 +332,80 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$this->assertEquals( $default_colors[3]['value'], $revision_system_colors[2]['color'] );
 			$this->assertEquals( $default_colors[4]['value'], $revision_system_colors[3]['color'] );
 		}
-
-		return;
 	}
+
+	public function test_v_3_0_0_move_default_typography_to_kit() {
+		$updater = $this->create_updater();
+
+		// Prepare.
+		$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'typography' );
+
+		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
+		wp_set_current_user( $user_id );
+
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id );
+
+		// Create revisions.
+		$revisions_count = 10;
+		$query_limit = 3;
+		$expected_iterations = (int) ceil( $revisions_count / $query_limit );
+		$upgrade_iterations = 1;
+
+		for ( $i = 0; $i < $revisions_count; $i++ ) {
+			$kit->save( [
+				'elements' => [],
+			] );
+		}
+
+		$updater->set_limit( $query_limit );
+
+		// Run upgrade.
+		while ( Upgrades::_v_3_0_0_move_default_typography_to_kit( $updater ) ) {
+			$upgrade_iterations++;
+
+			$updater->set_current_item( [
+				'iterate_num' => $upgrade_iterations,
+			] );
+
+			// Avoid infinity loop.
+			if ( $upgrade_iterations > $revisions_count ) {
+				break;
+			}
+		}
+
+		// Assert iterations.
+		$this->assertEquals( $expected_iterations, $upgrade_iterations );
+
+		// Refresh kit.
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+
+		// Assert kit upgraded.
+		$saved_typography = $scheme_obj->get_scheme();
+		$kit_system_typography = $kit->get_settings( 'system_typography' );
+
+		$this->assertEquals( 'primary', $kit_system_typography[0]['_id'] );
+		$this->assertEquals( $saved_typography[1]['value']['font_family'], $kit_system_typography[0]['system_typography_font_family'] );
+		$this->assertEquals( $saved_typography[2]['value']['font_family'], $kit_system_typography[1]['system_typography_font_family'] );
+		$this->assertEquals( $saved_typography[3]['value']['font_family'], $kit_system_typography[2]['system_typography_font_family'] );
+		$this->assertEquals( $saved_typography[4]['value']['font_family'], $kit_system_typography[3]['system_typography_font_family'] );
+
+		// Assert revisions upgraded.
+		$revisions_ids = wp_get_post_revisions( $kit_id, [
+			'fields' => 'ids',
+		] );
+
+		foreach ( $revisions_ids as $revision_id ) {
+			$revision = Plugin::$instance->documents->get( $revision_id, false );
+			$revision_saved_typography = $revision->get_settings( 'system_typography' );
+
+			$this->assertEquals( $saved_typography[1]['value']['font_family'], $revision_saved_typography[0]['system_typography_font_family'] );
+			$this->assertEquals( $saved_typography[2]['value']['font_family'], $revision_saved_typography[1]['system_typography_font_family'] );
+			$this->assertEquals( $saved_typography[3]['value']['font_family'], $revision_saved_typography[2]['system_typography_font_family'] );
+			$this->assertEquals( $saved_typography[4]['value']['font_family'], $revision_saved_typography[3]['system_typography_font_family'] );
+		}
+	}
+
 
 	/**
 	 * @param string $post_type
