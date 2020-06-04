@@ -3,8 +3,6 @@ import BaseStorage from './base-storage';
 export default class LocalStorage extends BaseStorage {
 	constructor() {
 		super( localStorage );
-
-		this.clear();
 	}
 
 	debug() {
@@ -15,7 +13,7 @@ export default class LocalStorage extends BaseStorage {
 			entries[ key ] = JSON.parse( data );
 		} );
 
-		Object.keys( entries ).sort().forEach( ( key ) =>  {
+		Object.keys( entries ).sort().forEach( ( key ) => {
 			ordered[ key ] = entries[ key ];
 		} );
 
