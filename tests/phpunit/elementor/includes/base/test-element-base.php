@@ -33,31 +33,31 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		],
 		'javascript' => [
 			'test' => 'javascript:alert()',
-			'results' => 'alert()',
+			'results' => '',
 		],
 		'javascript_javascript' => [
 			'test' => 'javascript:javascript:alert()',
-			'results' => 'alert()',
+			'results' => '',
 		],
 		'javajavascript_script' => [
 			'test' => 'javajavascript:script:alert()',
-			'results' => 'alert()',
+			'results' => '',
 		],
 		'javascript_case_sensitive' => [
 			'test' => 'JaVaScript:alert()',
-			'results' => 'alert()',
+			'results' => '',
 		],
 		'javascript_special_characters1' => [
 			'test' => 'javas cript:alert()',
-			'results' => 'alert()',
+			'results' => '',
 		],
 		'javascript_special_characters2' => [
 			'test' => 'javascript :alert()',
-			'results' => 'alert()',
+			'results' => '',
 		],
 		'javascript_special_characters3' => [
 			'test' => 'jA&#x0A;Vas&#099;&#000000114;&#00105;&#X70;&#000000000000000000000116;:alert()',
-			'results' => 'alert()',
+			'results' => '',
 		],
 		'relative' => [
 			'test' => '/test',
@@ -66,6 +66,18 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		'hash' => [
 			'test' => '#test',
 			'results' => '#test',
+		],
+		'mailto' => [
+			'test' => 'mailto:test@test.test',
+			'results' => 'mailto:test@test.test',
+		],
+		'tel' => [
+			'test' => 'tel:123456',
+			'results' => 'tel:123456',
+		],
+		'elementor_action' => [
+			'test' => '#elementor-action%3Aaction%3Dpopup%3Aopen%26settings%3DeyJpZCI6IjExODgiLCJ0b2dnbGUiOmZhbHNlfQ%3D%3D',
+			'results' => '#elementor-action%3Aaction%3Dpopup%3Aopen%26settings%3DeyJpZCI6IjExODgiLCJ0b2dnbGUiOmZhbHNlfQ%3D%3D',
 		],
 	];
 

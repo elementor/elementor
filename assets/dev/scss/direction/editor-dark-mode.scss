@@ -619,10 +619,26 @@ body.rtl .elementor-control-type-gallery {
 		}
 
 		> div:not(.elementor-repeater-row-handle-sortable) {
-			background-color: $theme-dark-gray;
+			background-color: $theme-dark-gray-dark;
 
 			&:hover {
-				background-color: lighten($theme-dark-gray, 2.5%);
+				background-color: lighten($theme-dark-gray-dark, 2.5%);
+			}
+		}
+	}
+
+	.elementor-repeater-row--form-step {
+		.elementor-repeater-row-tools {
+			&:hover {
+				background-color: $theme-dark-gray-lighter;
+			}
+
+			div:not(.elementor-repeater-row-handle-sortable) {
+				background-color: $theme-dark-gray;
+
+				&:hover {
+					background-color: $theme-dark-gray-light;
+				}
 			}
 		}
 	}
