@@ -68,71 +68,95 @@
 	}
 }
 
-.elementor-control-type-global-style-repeater {
+.elementor-control {
 
-	.elementor-repeater {
+	&-type-global-style-repeater {
 
-		&-fields {
-			margin-bottom: 15px;
-		}
+		.elementor-repeater {
 
-		&-row-controls {
-			display: flex;
-		}
-
-		&-tool-remove {
-			color: $editor-lightest;
-			cursor: pointer;
-		}
-	}
-
-	.elementor-control {
-		padding: 0;
-
-		&-title {
-			flex-grow: 1;
-
-			input {
-
-				&:not(:focus) {
-					background: none;
-					border: none;
-				}
-			}
-		}
-
-		&-input-wrapper {
-			align-items: center;
-
-			&:hover {
-
-				.elementor-global-colors__color-value {
-					display: none;
-				}
+			&-fields {
+				margin-bottom: 25px;
 			}
 
-			&:not(:hover) {
+			&-row-controls {
+				display: flex;
+				align-items: center;
+			}
 
-				.elementor-repeater-tool-remove {
-					display: none;
-				}
+			&-tool-remove {
+				color: $editor-lightest;
+				cursor: pointer;
 			}
 		}
-	}
-
-	.elementor-controls-popover {
 
 		.elementor-control {
-			padding: 0 20px 15px;
+			padding: 0;
+
+			&-title {
+				flex-grow: 1;
+
+				input {
+
+					&:not(:focus) {
+						background: none;
+						border: none;
+					}
+				}
+			}
+
+			&-input-wrapper {
+				display: flex;
+				align-items: center;
+
+				&:hover {
+
+					.elementor-global-colors__color-value {
+						display: none;
+					}
+				}
+
+				&:not(:hover) {
+
+					.elementor-repeater-tool-remove,
+					.elementor-repeater-tool-remove--disabled {
+						display: none;
+					}
+				}
+			}
+		}
+
+		// Hard selector to override default margin
+		.elementor-control-content {
+
+			> .elementor-control-field {
+
+				> .elementor-control-input-wrapper {
+					margin-top: 0;
+				}
+			}
+		}
+
+		.elementor-controls-popover {
+			align-self: end;
+			margin-top: 35px;
+
+			.elementor-control {
+				padding: 0 20px 15px;
+			}
+		}
+
+		.elementor-button-wrapper {
+			text-align: center;
+		}
+
+		.pickr {
+			@include margin-start(10px);
 		}
 	}
 
-	.elementor-button-wrapper {
-		text-align: center;
-	}
-
-	.pickr {
-		@include margin-start(10px);
+	&-system_colors,
+	&-system_typography {
+		padding-bottom: 0;
 	}
 }
 

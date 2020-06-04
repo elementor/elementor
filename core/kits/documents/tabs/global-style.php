@@ -50,7 +50,19 @@ class Global_Style extends Tab_Base {
 		);
 
 		$this->add_control(
-			'colors',
+			'system_colors',
+			[
+				'type' => Global_Style_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
+				'item_actions' => [
+					'add' => false,
+					'remove' => false,
+				],
+			]
+		);
+
+		$this->add_control(
+			'custom_colors',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
@@ -81,11 +93,31 @@ class Global_Style extends Tab_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'styles',
+				'label' => '',
+				'fields_options' => [
+					'font_family' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external:CONTAINER.id}}-family: {{VALUE}}',
+						],
+					],
+				],
 			]
 		);
 
 		$this->add_control(
-			'text_styles',
+			'system_typography',
+			[
+				'type' => Global_Style_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
+				'item_actions' => [
+					'add' => false,
+					'remove' => false,
+				],
+			]
+		);
+
+		$this->add_control(
+			'custom_typography',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
