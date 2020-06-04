@@ -135,19 +135,19 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return elementor.getControlView( controlType );
 	},
 
-	handlePopovers: function( controls ) {
+	handlePopovers: function( view ) {
 		let popoverStarted = false,
 			$popover;
 
-		this.removePopovers();
+		this.removePopovers( view );
 
-		controls.each( ( control ) => {
+		view.children.each( ( control ) => {
 			if ( popoverStarted ) {
 				$popover.append( control.$el );
 			}
 
 			if ( control.children.length ) {
-				control.children.each( ( child ) => this.handlePopovers( child.children ) );
+				control.children.each( ( child ) => this.handlePopovers( child ) );
 			}
 
 			const popover = control.model.get( 'popover' );
@@ -172,8 +172,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	removePopovers: function() {
-		this.$el.find( '.' + this.classes.popover ).remove();
+	removePopovers: function( view ) {
+		view.$el.find( '.' + this.classes.popover ).remove();
 	},
 
 	getNamespaceArray: function() {
@@ -200,7 +200,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onRenderCollection: function() {
 		this.openActiveSection();
 
-		this.handlePopovers( this.children );
+		this.handlePopovers( this );
 	},
 
 	onModelDestroy: function() {
