@@ -527,7 +527,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$settings = $this->get_args();
 
-		if ( ! empty( $settings['label'] ) ) {
+		if ( isset( $settings['label'] ) ) {
 			$label = $settings['label'];
 		} else {
 			$label = $popover_options['starter_title'];
