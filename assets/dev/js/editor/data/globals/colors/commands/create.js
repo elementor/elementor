@@ -22,7 +22,7 @@ export class Create extends CommandBase {
 		// Currently does not effect cache.
 		result = $e.data.create( `globals/colors?id=${ id }`, {
 			title,
-			color: container.settings.get( setting ),
+			value: container.settings.get( setting ),
 		} );
 
 		return result;
