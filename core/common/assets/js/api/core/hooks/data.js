@@ -28,7 +28,12 @@ export default class Data extends HooksBase {
 
 			case 'catch':
 			case 'after': {
-				return callback.callback( args, result ) || true;
+				/**
+				 * When handling HOOK which is data after (not breakable),
+				 * even the result of the callback is negative, it is required to return positive,
+				 * since result of runCallback determine if the callback succeeded.
+				 */
+				return callback.callback( args, result ) || 'after' === event;
 			}
 		}
 
@@ -55,4 +60,3 @@ export default class Data extends HooksBase {
 		$e.devTools.log.callbacks().callback( this.getType(), command, args, event, id );
 	}
 }
-
