@@ -61,6 +61,9 @@ class Colors extends Endpoint {
 
 		$kit->add_repeater_row( $this->get_name(), $item );
 
+		unset( $item['_id'] );
+		$item['id'] = $id;
+
 		return $item;
 	}
 

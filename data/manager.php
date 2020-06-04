@@ -120,7 +120,12 @@ class Manager extends BaseModule {
 	}
 
 	/**
-	 * TODO PHPDoc, test.
+	 * Command extract args.
+	 *
+	 * @param string $command
+	 * @param array $args
+	 *
+	 * @return string
 	 */
 	public function command_extract_args( $command, &$args = [] ) {
 		if ( false !== strpos( $command, '?' ) ) {
@@ -131,6 +136,8 @@ class Manager extends BaseModule {
 			parse_str( $query_string, $args );
 
 			$command = $pure_command;
+
+			$command = rtrim( $command, '/' );
 		}
 
 		return $command;
@@ -283,9 +290,7 @@ class Manager extends BaseModule {
 	 * @return array
 	 */
 	public function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
-		$manager = self::instance();
-
-		$response = $manager->run_internal( $endpoint, $args, $method );
+		$response = $this->run_internal( $endpoint, $args, $method );
 
 		return $response->get_data();
 	}
@@ -306,33 +311,32 @@ class Manager extends BaseModule {
 	 * @return array processed result
 	 */
 	public function run( $command, $args = [], $method = 'GET' ) {
-		$manager = self::instance();
-		$manager->run_server();
+		$this->run_server();
 
-		$controller_instance = $manager->find_controller_instance( $command );
+		$controller_instance = $this->find_controller_instance( $command );
 
 		if ( ! $controller_instance ) {
 			return [];
 		}
 
-		$command = $manager->command_extract_args( $command, $args );
+		$command = $this->command_extract_args( $command, $args );
 
 		$format = isset( $manager->command_formats[ $command ] ) ? $manager->command_formats[ $command ] : false;
 
 		$command_processors = $controller_instance->get_processors( $command );
 
-		$endpoint = $manager->command_to_endpoint( $command, $format, $args );
+		$endpoint = $this->command_to_endpoint( $command, $format, $args );
 
-		$manager->run_processors( $command_processors, Processor\Before::class, [ $args ] );
+		$this->run_processors( $command_processors, Processor\Before::class, [ $args ] );
 
-		$response = $manager->run_internal( $endpoint, $args, $method );
+		$response = $this->run_internal( $endpoint, $args, $method );
 		$result = $response->get_data();
 
 		if ( $response->is_error() ) {
 			return [];
 		}
 
-		$result = $manager->run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
+		$result = $this->run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
 
 		return $result;
 	}
