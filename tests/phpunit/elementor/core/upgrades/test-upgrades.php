@@ -106,6 +106,91 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertEquals( $posts_count, $usage['wp-post']['button']['count'] );
 	}
 
+	public function test_v_3_0_0_move_general_settings_to_kit() {
+		$updater = $this->create_updater();
+
+		// Prepare.
+		$generic_font = 'some-generic-font';
+		$lightbox_color = '#e1e3ef';
+
+		$general_settings = [
+			'default_generic_fonts' => $generic_font,
+			'lightbox_color' => $lightbox_color,
+		];
+
+		update_option( '_elementor_general_settings', $general_settings );
+
+		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
+		wp_set_current_user( $user_id );
+
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id );
+
+		// Create revisions.
+		$revisions_count = 10;
+		$query_limit = 3;
+		$expected_iterations = (int) ceil( $revisions_count / $query_limit );
+		$upgrade_iterations = 1;
+
+		for ( $i = 0; $i < $revisions_count; $i++ ) {
+			$kit->save( [
+				'elements' => [],
+			] );
+		}
+
+		$kit_generic_font_before = $kit->get_settings( 'default_generic_fonts' );
+		$kit_lightbox_color_before = $kit->get_settings( 'lightbox_color' );
+
+		$this->assertNotEquals( $generic_font, $kit_generic_font_before );
+		$this->assertNotEquals( $lightbox_color, $kit_lightbox_color_before );
+
+		$updater->set_limit( $query_limit );
+
+		// Run upgrade.
+		while ( Upgrades::_v_3_0_0_move_general_settings_to_kit( $updater ) ) {
+			$upgrade_iterations++;
+
+			$updater->set_current_item( [
+				'iterate_num' => $upgrade_iterations,
+			] );
+
+			// Avoid infinity loop.
+			if ( $upgrade_iterations > $revisions_count ) {
+				break;
+			}
+		}
+
+		// Assert iterations.
+		$this->assertEquals( $expected_iterations, $upgrade_iterations );
+
+		// Refresh kit.
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+
+		// Assert kit upgraded.
+		$kit_generic_font_after = $kit->get_settings( 'default_generic_fonts' );
+		$kit_lightbox_color_after = $kit->get_settings( 'lightbox_color' );
+
+		$this->assertEquals( $generic_font, $kit_generic_font_after );
+		$this->assertEquals( $lightbox_color, $kit_lightbox_color_after );
+
+		// Assert revisions upgraded.
+
+		$revisions_ids = wp_get_post_revisions( $kit_id, [
+			'fields' => 'ids',
+		] );
+
+		foreach ( $revisions_ids as $revision_id ) {
+			$revision = Plugin::$instance->documents->get( $revision_id, false );
+
+			$revision_generic_font_after = $revision->get_settings( 'default_generic_fonts' );
+			$revision_lightbox_color_after = $revision->get_settings( 'lightbox_color' );
+
+			$this->assertEquals( $generic_font, $revision_generic_font_after );
+			$this->assertEquals( $lightbox_color, $revision_lightbox_color_after );
+		}
+
+		return;
+	}
 
 	/**
 	 * @param string $post_type
