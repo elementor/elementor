@@ -3,7 +3,7 @@ namespace Elementor\Core\Editor\Data\Documents\Endpoints\SubEndpoints;
 
 use Elementor\Data\Base\SubEndpoint;
 use Elementor\Plugin;
-use ElementorPro\Modules\Forms\Module; // TODO: Move to core.
+use Elementor\Utils;
 
 class Elements extends SubEndpoint {
 	public function get_name() {
@@ -43,7 +43,7 @@ class Elements extends SubEndpoint {
 
 		if ( $document_id ) {
 			$document = Plugin::$instance->documents->get( $document_id );
-			$element = Module::find_element_recursive( $document->get_elements_data(), $element_id );
+			$element = Utils::find_element_recursive( $document->get_elements_data(), $element_id );
 		}
 
 		return $element;
