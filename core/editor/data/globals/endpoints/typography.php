@@ -10,35 +10,6 @@ class Typography extends Endpoint {
 		return '{id}';
 	}
 
-	private static $fake_data = [
-		'primary' => [
-			'id' => 'primary',
-			'title' => 'Primary',
-			'value' => [
-				'typography' => 'custom',
-				'font_family' => 'Over the Rainbow',
-				'font_weight' => '900',
-				'font_size' => [
-					'unit' => 'px',
-					'size' => 121,
-				],
-			],
-		],
-		'secondary' => [
-			'id' => 'secondary',
-			'title' => 'Secondary',
-			'value' => [
-				'typography' => 'custom',
-				'font_family' => 'Tahoma',
-				'font_weight' => '500',
-				'font_size' => [
-					'unit' => 'px',
-					'size' => 40,
-				],
-			],
-		],
-	];
-
 	public function get_name() {
 		return 'typography';
 	}
@@ -76,21 +47,28 @@ class Typography extends Endpoint {
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$kit->add_repeater_row( 'typography', $item );
+		$kit->add_repeater_row( 'custom_typography', $item );
 
 		return $item;
 	}
 
 	private function get_kit_items() {
+		$result = [];
+
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
 
-		// TODO: Remove 'fake-data'.
-		$result = self::$fake_data;
-		$items = $kit->get_settings_for_display( 'typography' );
+		$system_items = $kit->get_settings_for_display( 'system_typography' );
+		$custom_items = $kit->get_settings_for_display( 'custom_typography' );
 
-		if ( ! $items ) {
-			$items = [];
+		if ( ! $system_items ) {
+			$system_items = [];
 		}
+
+		if ( ! $custom_items ) {
+			$custom_items = [];
+		}
+
+		$items = array_merge( $system_items, $custom_items );
 
 		foreach ( $items as $index => &$item ) {
 			foreach ( $item as $setting => $value ) {
@@ -102,10 +80,12 @@ class Typography extends Endpoint {
 			}
 
 			$id = $item['_id'];
+
 			$result[ $id ] = [
 				'title' => $item['title'],
 				'id' => $id,
 			];
+
 			unset( $item['_id'], $item['title'] );
 
 			$result[ $id ]['value'] = $item;
