@@ -19,7 +19,7 @@ export class Create extends CommandBase {
 
 		const id = elementor.helpers.getUniqueID();
 
-		// Currently does not effect cache.
+		// Currently does not affect cache.
 		result = $e.data.create( `globals/colors?id=${ id }`, {
 			title,
 			value: container.settings.get( setting ),
