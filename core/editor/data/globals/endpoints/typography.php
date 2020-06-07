@@ -55,7 +55,7 @@ class Typography extends Endpoint {
 	private function get_kit_items() {
 		$result = [];
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 
 		$system_items = $kit->get_settings_for_display( 'system_typography' );
 		$custom_items = $kit->get_settings_for_display( 'custom_typography' );

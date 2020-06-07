@@ -63,15 +63,14 @@ class Colors extends Endpoint {
 			return new \WP_Error( 'invalid_item', 'Invalid item' );
 		}
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
-
-
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		
 		return [ 'success' => $success ];
 	}
 
 	private function get_kit_items() {
 		$result = [];
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 
 		$system_items = $kit->get_settings_for_display( 'system_colors' );
 		$custom_items = $kit->get_settings_for_display( 'custom_colors' );
