@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.6.2");
-  src: url("../fonts/eicons.eot?5.6.2#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.6.2") format("woff2"), url("../fonts/eicons.woff?5.6.2") format("woff"), url("../fonts/eicons.ttf?5.6.2") format("truetype"), url("../fonts/eicons.svg?5.6.2#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.7.0");
+  src: url("../fonts/eicons.eot?5.7.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.7.0") format("woff2"), url("../fonts/eicons.woff?5.7.0") format("woff"), url("../fonts/eicons.ttf?5.7.0") format("truetype"), url("../fonts/eicons.svg?5.7.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1130,6 +1130,21 @@
 
 .eicon-lock:before {
   content: '\e96f'; }
+
+.eicon-export-kit:before {
+  content: '\e970'; }
+
+.eicon-import-kit:before {
+  content: '\e971'; }
+
+.eicon-lottie:before {
+  content: '\e972'; }
+
+.eicon-products-archive:before {
+  content: '\e973'; }
+
+.eicon-single-product:before {
+  content: '\e974'; }
 
 .eicon-eye:before {
   content: '\e8ac'; }

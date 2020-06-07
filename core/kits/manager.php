@@ -38,10 +38,21 @@ class Manager {
 		return Plugin::$instance->documents->get( $id );
 	}
 
-	public function get_active_kit_for_fronend() {
+	public function get_active_kit_for_frontend() {
 		$id = $this->get_active_id();
 
 		return Plugin::$instance->documents->get_doc_for_frontend( $id );
+	}
+
+
+	public function get_current_settings( $setting = null ) {
+		$kit = $this->get_active_kit_for_frontend();
+
+		if ( ! $kit ) {
+			return '';
+		}
+
+		return $kit->get_settings( $setting );
 	}
 
 	private function create_default() {
