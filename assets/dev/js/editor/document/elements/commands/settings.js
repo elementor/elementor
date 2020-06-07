@@ -1,4 +1,5 @@
 import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
+import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export class Settings extends CommandHistoryDebounce {
 	/**
@@ -121,9 +122,9 @@ export class Settings extends CommandHistoryDebounce {
 				container.settings.set( newSettings );
 			}
 
-			if ( ! options.preventDefaultRender ) {
-				container.render();
-			}
+			DocumentCache.updateSettingsByContainers( [ container ], newSettings );
+
+			container.render();
 		} );
 	}
 
