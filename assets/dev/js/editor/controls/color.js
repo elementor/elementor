@@ -11,6 +11,20 @@ export default class extends ControlBaseDataView {
 	}
 
 	applySavedValue() {
+		const globalKey = this.getGlobalValue();
+
+		if ( globalKey ) {
+			$e.data.get( globalKey )
+				.then( ( globalData ) => {
+					this.updateClassGlobalValue( globalData.data.value );
+					this.applyCurrentValue();
+				} );
+		} else {
+			this.applyCurrentValue();
+		}
+	}
+
+	applyCurrentValue() {
 		if ( this.colorPicker ) {
 			this.colorPicker.picker.setColor( this.getControlValue() );
 		} else {
@@ -18,6 +32,18 @@ export default class extends ControlBaseDataView {
 
 			this.triggerMethod( 'moveDynamicSwitcherToColorPicker' );
 		}
+
+		if ( this.globalValue ) {
+			this.setGlobalDisplay();
+		}
+	}
+
+	updateClassGlobalValue( color ) {
+		this.globalValue = color;
+	}
+
+	getControlValue() {
+		return this.globalValue || super.getControlValue();
 	}
 
 	initPicker() {
@@ -117,6 +143,7 @@ export default class extends ControlBaseDataView {
 
 		return $color;
 	}
+
 	// TODO: Replace placeholders with real global colors
 	async getGlobalsList() {
 		/*return {
@@ -204,8 +231,14 @@ export default class extends ControlBaseDataView {
 	}
 
 	// Change the color picker value without triggering Pickr's 'change' event
-	setGlobalDisplay( color ) {
-		const parsedColor = this.colorPicker.picker._parseLocalColor( color );
+	setGlobalDisplay() {
+		if ( ! this.globalValue ) {
+			this.$el.addClass( 'e-invalid-color' );
+
+			return;
+		}
+
+		const parsedColor = this.colorPicker.picker._parseLocalColor( this.globalValue );
 
 		this.colorPicker.picker.setHSVA( ...parsedColor.values, false );
 	}
