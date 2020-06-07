@@ -64,7 +64,7 @@ class Colors extends Endpoint {
 		}
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		
+
 		return [ 'success' => $success ];
 	}
 

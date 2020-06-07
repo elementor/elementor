@@ -11,7 +11,7 @@ export class Create extends CommandBase {
 		const { container, setting, title } = args,
 			controls = container.controls;
 
-		let	result = false;
+		let result = false;
 
 		if ( ! controls[ setting ] ) {
 			throw new Error( `Invalid setting: control '${ setting }', not found.` );
