@@ -230,7 +230,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		settings[ globalData.key ] = this.view.getCommand() + '?id=' + globalData.id;
 
 		$e.run( command, {
-			container: this.view.container,
+			container: this.view.options.container,
 			settings: settings,
 		} );
 	}
