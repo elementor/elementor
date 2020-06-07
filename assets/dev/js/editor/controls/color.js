@@ -15,6 +15,8 @@ export default class extends ControlBaseDataView {
 			this.colorPicker.picker.setColor( this.getControlValue() );
 		} else {
 			this.initPicker();
+
+			this.triggerMethod( 'moveDynamicSwitcherToColorPicker' );
 		}
 	}
 
