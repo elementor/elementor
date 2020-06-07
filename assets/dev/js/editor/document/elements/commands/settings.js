@@ -124,7 +124,9 @@ export class Settings extends CommandHistoryDebounce {
 
 			DocumentCache.updateSettingsByContainers( [ container ], newSettings );
 
-			container.render();
+			if ( true !== options.preventDefaultRender ) {
+				container.render();
+			}
 		} );
 	}
 
