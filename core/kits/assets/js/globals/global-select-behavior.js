@@ -162,8 +162,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				$globalPreview.on( 'click', ( event ) => this.applySavedGlobalValue( JSON.parse( event.currentTarget.dataset.elementorGlobal ) ) );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
-
-				/*this.applySavedGlobalValue( globalData );*/
 			},
 			onShow: () => {
 				// Put focus on the naming input
@@ -221,7 +219,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		settings[ globalData.key ] = '';
 
 		$e.run( 'document/globals/disable', {
-			container: elementor.getCurrentElement().getContainer(),
+			container: this.view.container,
 			settings: settings,
 		} );
 	}
