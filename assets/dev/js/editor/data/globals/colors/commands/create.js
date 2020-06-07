@@ -1,12 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CreateBase from 'elementor-editor/data/globals/base/create-base';
 
-export class Create extends CommandBase {
-	validateArgs( args = {} ) {
-		this.requireContainer( args );
-		this.requireArgumentType( 'setting', 'string', args );
-		this.requireArgumentType( 'title', 'string', args );
-	}
-
+export class Create extends CreateBase {
 	apply( args = {} ) {
 		const { container, setting, title } = args,
 			controls = container.controls;
