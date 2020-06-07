@@ -206,12 +206,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			} );
 
 		this.applySavedGlobalValue( result.data );
-		// $e.run( 'document/globals/enable', {
-		// 	container,
-		// 	settings: {
-		// 		[ globalData.key ]: this.view.getCommand() + '?id=' + result.data.id,
-		// 	},
-		// } );
 	}
 
 	setGlobalValue( globalData ) {
