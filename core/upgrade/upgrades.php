@@ -5,6 +5,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -642,51 +643,76 @@ class Upgrades {
 	}
 
 	/**
-	 * Merge lightbox settings to active kit and all it's revisions.
+	 * Move general & lightbox settings to active kit and all it's revisions.
 	 *
 	 * @param Updater $updater
 	 *
 	 * @return bool
 	 */
 	public static function _v_3_0_0_move_general_settings_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			if ( ! $kit ) {
+				return;
+			}
+
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$current_settings = get_option( '_elementor_general_settings', [] );
+			$kit_settings = $kit->get_meta( $meta_key );
+
+			// Already exist.
+			if ( isset( $kit_settings['default_generic_fonts'] ) ) {
+				return;
+			}
+
+			if ( empty( $current_settings ) ) {
+				return;
+			}
+
+			if ( ! $kit_settings ) {
+				$kit_settings = [];
+			}
+
+			$kit_settings = array_merge( $kit_settings, $current_settings );
+
+			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+			$page_settings_manager->save_settings( $kit_settings, $kit_id );
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * @param callback $callback
+	 * @param Updater $updater
+	 *
+	 * @return mixed
+	 */
+	private static function move_settings_to_kit( $callback, $updater ) {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$post_ids = [];
+		if ( ! $active_kit_id ) {
+			return false;
+		}
+
 		$offset = $updater->get_current_offset();
 
 		// On first iteration apply on active kit itself.
 		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
 		if ( 0 === $offset ) {
-			self::merge_general_settings_to_kit( $active_kit_id );
+			$callback( $active_kit_id );
 		}
 
-		$revisions = wp_get_post_revisions( $active_kit_id, [
+		$revisions_ids = wp_get_post_revisions( $active_kit_id, [
 			'fields' => 'ids',
 			'posts_per_page' => $updater->get_limit(),
 			'offset' => $offset,
 		] );
 
-		$post_ids += $revisions;
-
-		foreach ( $post_ids as $kit_id ) {
-			self::merge_general_settings_to_kit( $kit_id );
+		foreach ( $revisions_ids as $revision_id ) {
+			$callback( $revision_id );
 		}
 
-		return $updater->should_run_again( $post_ids );
-	}
-
-	public static function merge_general_settings_to_kit( $kit_id ) {
-		$kit = Plugin::$instance->documents->get( $kit_id );
-		$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
-		$current_settings = get_option( '_elementor_general_settings', [] );
-		$kit_settings = $kit->get_meta( $meta_key );
-
-		if ( empty( $current_settings ) && empty( $kit_settings ) ) {
-			return;
-		}
-
-		$kit_settings = array_merge( $kit_settings, $current_settings );
-
-		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
-		$page_settings_manager->save_settings( $kit_settings, $kit_id );
+		return $updater->should_run_again( $revisions_ids );
 	}
 }
