@@ -9,6 +9,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		return this.view.container.globals.get( this.view.model.get( 'name' ) );
 	}
 
+	getGlobalIdFromValue( globalValue ) {
+		return globalValue.substring( globalValue.indexOf( '?' ) + 4 );
+	}
+
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerUiElements() {
 		const popoverWidget = this.popover.getElements( 'widget' );
@@ -47,8 +51,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.view.setOptions( 'addButtonActive', false );
 		this.view.setOptions( 'clearButtonActive', true );
 
+		this.setSelectBoxText( globalData.title );
 
 		this.toggleSelect();
+	}
+
+	setSelectBoxText( globalName ) {
+		this.ui.globalControlSelected.html( globalName );
 	}
 
 	// The Global Control elements are initialized onRender and not with initialize() because their position depends
@@ -111,15 +120,28 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 
 		// Render the list of globals and append them to the Globals popover
+		// TODO: FIND BEST WAY TO CACHE THE GLOBALS LIST SO THE DB FETCH RUNS ONLY ONCE ON PAGE LOAD
 		this.view.getGlobalsList()
 			.then(
 			( globalsList ) => {
 				this.addGlobalsListToPopover( globalsList );
+
+				this.registerUiElementsAndEvents();
+
+				const globalValue = this.getGlobalValue();
+
+				// If there is a global value applied to the control, set the global select box text to display its name
+				if ( globalValue ) {
+					const globalId = this.getGlobalIdFromValue( globalValue );
+
+					const globalData = globalsList[ globalId ];
+
+					this.setSelectBoxText( globalData.title );
+				}
 			},
 			() => {
 				// TODO: What happens if the request fails??
-			} )
-			.finally( () => this.registerUiElementsAndEvents() );
+			} );
 
 		this.createGlobalInfoTooltip();
 	}
