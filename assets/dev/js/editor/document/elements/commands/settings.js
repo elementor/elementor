@@ -1,5 +1,4 @@
 import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
-import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
 export class Settings extends CommandHistoryDebounce {
 	/**
@@ -122,7 +121,7 @@ export class Settings extends CommandHistoryDebounce {
 				container.settings.set( newSettings );
 			}
 
-			DocumentCache.updateSettingsByContainers( [ container ], newSettings );
+			this.updateCache( container );
 
 			if ( true !== options.preventDefaultRender ) {
 				container.render();
@@ -132,6 +131,18 @@ export class Settings extends CommandHistoryDebounce {
 
 	isDataChanged() {
 		return true;
+	}
+
+	updateCache( container ) {
+		const documentId = container.document.id,
+			elementId = container.id,
+			component = $e.components.get( 'editor/documents' ),
+			command = 'editor/documents/elements';
+
+		$e.data.updateCache( component, command, {
+			documentId,
+			elementId,
+		}, { settings: container.settings } );
 	}
 }
 
