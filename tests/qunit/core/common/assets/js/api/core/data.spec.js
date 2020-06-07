@@ -288,7 +288,6 @@ jQuery( () => {
 
 			// Validate if data is same as result.data.
 			assert.deepEqual( data, result );
-
 		} );
 
 		QUnit.test( 'getCache(): simple', ( assert ) => {
