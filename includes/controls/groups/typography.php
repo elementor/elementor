@@ -260,6 +260,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		$field_args = parent::add_group_args_to_field( $control_id, $field_args );
 
 		$field_args['groupPrefix'] = $this->get_controls_prefix();
+		$field_args['groupType'] = 'typography';
 
 		$args = $this->get_args();
 
@@ -293,6 +294,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'settings' => [
 					'render_type' => 'ui',
 					'global' => true,
+					'groupType' => 'typography',
 				],
 			],
 		];
