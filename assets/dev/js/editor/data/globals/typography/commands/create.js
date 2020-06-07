@@ -33,7 +33,7 @@ export class Create extends CommandBase {
 			const id = elementor.helpers.getUniqueID();
 
 			// Currently does not effect cache.
-			result = $e.data.create( `globals/typography/${ id }`, {
+			result = $e.data.create( `globals/typography/id=${ id }`, {
 				title,
 				... availableControls,
 			} );
