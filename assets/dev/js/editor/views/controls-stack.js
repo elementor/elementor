@@ -157,7 +157,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 			if ( popover.start ) {
 				self.currentPopover = new ControlsPopover( child );
 
-				self.popovers[ child.model.attributes.groupPrefix ] = self.currentPopover;
+				if ( child.model.attributes.groupPrefix ) {
+					self.popovers[ child.model.attributes.groupPrefix ] = self.currentPopover;
+				}
 			}
 
 			if ( popover.end ) {
