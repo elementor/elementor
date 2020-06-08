@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Style;
 
 /**
  * Elementor testimonial widget.
@@ -227,10 +227,7 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
-				],
+				'global' => Global_Style::COLOR_TEXT,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-content' => 'color: {{VALUE}};',
@@ -242,7 +239,7 @@ class Widget_Testimonial extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => Global_Style::TYPOGRAPHY_TEXT,
 				'selector' => '{{WRAPPER}} .elementor-testimonial-content',
 			]
 		);
@@ -316,10 +313,7 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
-				],
+				'global' => Global_Style::COLOR_PRIMARY,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-name' => 'color: {{VALUE}};',
@@ -331,7 +325,7 @@ class Widget_Testimonial extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'name_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => Global_Style::TYPOGRAPHY_PRIMARY,
 				'selector' => '{{WRAPPER}} .elementor-testimonial-name',
 			]
 		);
@@ -352,10 +346,7 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
-				],
+				'global' => Global_Style::COLOR_SECONDARY,
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-job' => 'color: {{VALUE}};',
@@ -367,7 +358,7 @@ class Widget_Testimonial extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'job_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'global' => Global_Style::TYPOGRAPHY_SECONDARY,
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 			]
 		);
