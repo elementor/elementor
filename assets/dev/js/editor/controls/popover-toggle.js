@@ -26,7 +26,22 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	buildPreviewItemCSS( textStyles ) {
 		const cssObject = {};
 
+		// TODO: REMOVE THIS WHEN THE DOUBLE VALUE PROPERTY ISSUE IS FIXED
+		if ( textStyles.value ) {
+			textStyles = textStyles.value;
+		}
+
 		Object.entries( textStyles ).forEach( ( [ property, value ] ) => {
+			// If a control value is empty, ignore it
+			if ( ! value || '' === value.size ) {
+				return;
+			}
+
+			// TODO: FIGURE OUT WHAT THE FINAL VALUE KEY FORMAT IS AND ADJUST THIS ACCORDINGLY
+			if ( property.startsWith( 'typography_' ) ) {
+				property = property.replace( 'typography_', '' );
+			}
+
 			switch ( property ) {
 				case 'font_family':
 					cssObject.fontFamily = value;
@@ -163,14 +178,16 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return result.data;
 	}
 
-	// TODO: Replace placeholders with real global colors
 	buildGlobalsList( globalTextStyles ) {
 		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
 		Object.values( globalTextStyles ).forEach( ( textStyle ) => {
-			const $textStylePreview = this.createGlobalItemMarkup( textStyle );
+			// Only build markup if the text style is valid
+			if ( textStyle ) {
+				const $textStylePreview = this.createGlobalItemMarkup( textStyle );
 
-			$globalTypographyContainer.append( $textStylePreview );
+				$globalTypographyContainer.append( $textStylePreview );
+			}
 		} );
 
 		return $globalTypographyContainer;
