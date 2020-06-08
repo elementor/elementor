@@ -67,6 +67,10 @@ export default class extends ControlBaseDataView {
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
 	}
 
+	hidePopover() {
+		this.colorPicker.picker.hide();
+	}
+
 	addTipsyToPickerButton() {
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 

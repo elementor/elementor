@@ -188,8 +188,12 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				this.ui.globalPreviewsContainer.append( $globalPreview );
 			},
 			onShow: () => {
+				// If the control creating the new global has an open popover, make sure it closes when the modal appears
+				if ( this.view.hidePopover ) {
+					this.view.hidePopover();
+				}
+
 				// Put focus on the naming input
-				this.view.colorPicker.picker.hide();
 				this.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
 			},
 		} );
