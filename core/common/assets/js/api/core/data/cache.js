@@ -1,5 +1,8 @@
 import LocalStorage from './stroages/local-storage';
 
+/**
+ * TODO: Search common logic, create functions to reduce code size.
+ */
 export default class Cache {
 	/**
 	 * Function constructor().
@@ -181,18 +184,69 @@ export default class Cache {
 	 *
 	 * Delete endpoint from storage.
 	 *
-	 * @param {string} endpoint
+	 * TODO: Create tests for the new logic.
 	 *
-	 * @return {boolean}
+	 * @param {RequestData} requestData
+	 *
+	 * @return {boolean} is deleted
 	 */
-	delete( endpoint ) {
+	delete( requestData ) {
+		$e.data.validateRequestData( requestData );
+
 		let result = false;
 
-		for ( const key in this.storage.getAll() ) {
-			if ( key === endpoint ) {
-				this.storage.removeItem( endpoint );
-				result = true;
-				break;
+		const componentName = requestData.component.getNamespace();
+
+		if ( componentName !== requestData.endpoint ) {
+			const oldData = this.storage.getItem( componentName ),
+				newData = {};
+
+			if ( null === oldData ) {
+				return false;
+			}
+
+			const pureEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
+				pureEndpointParts = pureEndpoint.split( '/' ),
+				lastEndpointPart = pureEndpointParts[ pureEndpointParts.length - 1 ];
+
+				pureEndpointParts.reduce( ( accumulator, pureEndpointPart ) => {
+					if ( pureEndpointPart === lastEndpointPart ) {
+						// Null, means delete.
+						accumulator[ pureEndpointPart ] = null;
+					} else {
+						accumulator[ pureEndpointPart ] = {};
+					}
+					return accumulator[ pureEndpointPart ];
+				}, newData );
+
+			if ( Object.keys( oldData ).length ) {
+				const deleteKeys = ( target, nullsObject ) => {
+					if ( nullsObject ) {
+						Object.keys( nullsObject ).forEach( ( key ) => {
+							if ( nullsObject[ key ] && 'object' === typeof nullsObject[ key ] ) {
+								deleteKeys( nullsObject[ key ], target[ key ] );
+							} else if ( null === nullsObject[ key ] ) {
+								delete target[ key ];
+								result = true;
+							}
+						} );
+					} else {
+						// Means need to clear all the object.
+						Object.keys( target ).forEach( ( key ) => delete target[ key ] );
+					}
+
+					return target;
+				};
+
+				this.storage.setItem( componentName, JSON.stringify( deleteKeys( JSON.parse( oldData ), newData ) ) );
+			}
+		} else {
+			for ( const key in this.storage.getAll() ) {
+				if ( key === requestData.endpoint ) {
+					this.storage.removeItem( requestData.endpoint );
+					result = true;
+					break;
+				}
 			}
 		}
 

@@ -473,7 +473,7 @@ jQuery( () => {
 
 			$e.data.setCache( component, component.getNamespace(), {}, {} );
 
-			$e.data.deleteCache( component.getNamespace() );
+			$e.data.deleteCache( component, component.getNamespace(), {} );
 
 			assert.equal( $e.data.getCache( component, component.getNamespace() ), null );
 		} );

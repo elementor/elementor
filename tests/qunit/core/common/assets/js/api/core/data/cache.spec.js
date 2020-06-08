@@ -284,7 +284,11 @@ jQuery( () => {
 				command: randomValue,
 			} );
 
-			$e.data.cache.delete( component.getNamespace() );
+			$e.data.cache.delete( {
+				component,
+				command,
+				endpoint: command,
+			} );
 
 			assert.equal( $e.data.cache.get( requestData ), null );
 		} );
