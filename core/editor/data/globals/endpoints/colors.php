@@ -90,7 +90,7 @@ class Colors extends Endpoint {
 			$result[ $id ] = [
 				'id' => $id,
 				'title' => $item['title'],
-				'value' => $item['color'],
+				'value' => $item['value'],
 			];
 		}
 

@@ -3,7 +3,7 @@ import DisableEnable from './base/disable-enable';
 // Run when a custom control value is set while the active value is a global
 export class Disable extends DisableEnable {
 	apply( args ) {
-		const { settings, containers = [ args.container ] } = args;
+		const { settings, containers = [ args.container ], options = {} } = args;
 
 		return new Promise( async ( resolve, reject ) => {
 			containers.forEach( ( container ) => {
@@ -40,7 +40,9 @@ export class Disable extends DisableEnable {
 
 					Promise.all( promises ).then( () => {
 						// TODO: Add dev-tools CSS to see if widget have globals.
-						if ( Object.keys( localSettings ).length ) {
+
+						// Restore globals settings as custom local settings.
+						if ( options.restore && Object.keys( localSettings ).length ) {
 							$e.run( 'document/elements/settings', {
 								container,
 								settings: localSettings,

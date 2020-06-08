@@ -27,9 +27,9 @@ export class Create extends CreateBase {
 			const id = elementor.helpers.getUniqueID();
 
 			// Currently does not effect cache.
-			result = $e.data.create( `globals/typography/id=${ id }`, {
+			result = $e.data.create( `globals/typography?id=${ id }`, {
 				title,
-				... availableControls,
+				value: availableControls,
 			} );
 		}
 
