@@ -85,7 +85,6 @@ export default class extends ControlBaseDataView {
 		const colorData = this.colorPicker.getColorData();
 
 		return {
-			id: colorData.id,
 			commandName: 'globals/colors',
 			key: this.model.get( 'name' ),
 			title: colorData.title,
