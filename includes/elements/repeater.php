@@ -43,6 +43,13 @@ class Repeater extends Element_Base {
 		self::$counter++;
 
 		parent::__construct( $data, $args );
+
+		$this->add_control(
+			'_id',
+			[
+				'type' => Controls_Manager::HIDDEN,
+			]
+		);
 	}
 
 	/**
