@@ -70,7 +70,7 @@ class Settings extends Settings_Page {
 
 		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // WPCS: override ok.
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( apply_filters( 'elementor/admin/edit_settings', 'manage_options' ) ) ) {
 			return;
 		}
 
