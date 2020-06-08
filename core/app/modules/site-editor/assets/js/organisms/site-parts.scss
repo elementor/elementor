@@ -1,4 +1,5 @@
 .elementor-app__site-editor__site-parts {
-	display: flex;
-	flex-flow: wrap;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 20px;
 }

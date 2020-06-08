@@ -1,4 +1,4 @@
-import BaseButton from 'elementor-app/molecules/button';
+import BaseButton from 'elementor-app/ui/molecules/button';
 import './menu-item.scss';
 
 export default class MenuItem extends BaseButton {
