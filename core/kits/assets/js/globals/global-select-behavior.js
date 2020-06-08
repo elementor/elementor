@@ -42,7 +42,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.view.$el.removeClass( 'e-invalid-color' );
 		}
 
-		this.view.updateClassGlobalValue( globalData.value );
+		if ( this.view.updateClassGlobalValue ) {
+			this.view.updateClassGlobalValue( globalData.value );
+		}
 
 		if ( this.view.setGlobalDisplay ) {
 			this.view.setGlobalDisplay();
