@@ -78,11 +78,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	createGlobalItemMarkup( textStyle ) {
-		// This method is called without a parameter when the user clicks the "Add" button
-		if ( ! textStyle ) {
-			textStyle = this.getGlobalData();
-		}
-
 		textStyle.key = this.model.get( 'name' );
 
 		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': JSON.stringify( textStyle ) } );
