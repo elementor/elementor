@@ -402,13 +402,8 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 //Media Control
-.elementor-control-media-upload-button {
-	background-color: $theme-dark-gray-darkest;
-}
-
 .elementor-control-media__remove {
-	background-color: $theme-dark-gray-light;
-	color: $theme-dark-gray-lightest;
+	border-color: $theme-dark-gray-light;
 }
 
 .elementor-control-media {

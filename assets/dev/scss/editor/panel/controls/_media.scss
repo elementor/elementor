@@ -153,6 +153,7 @@
 		width: 100%;
 		margin-top: 10px;
 		border: 1px solid $editor-lightest;
+		border-radius: 3px;
 
 		&__content {
 			@include padding-start(5px);
