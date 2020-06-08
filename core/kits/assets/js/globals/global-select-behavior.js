@@ -179,7 +179,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				globalData.title = this.globalNameInput.val();
 
-				await this.createNewGlobal( globalData );
+				const newGlobal = await this.createNewGlobal( globalData );
+
+				if ( ! globalData.value ) {
+					globalData.value = newGlobal.value;
+				}
 
 				const $globalPreview = this.view.createGlobalItemMarkup( globalData );
 
@@ -210,6 +214,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			} );
 
 		this.applySavedGlobalValue( result.data );
+
+		return result.data;
 	}
 
 	setGlobalValue( globalData ) {
