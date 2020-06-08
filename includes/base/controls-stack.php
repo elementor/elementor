@@ -734,7 +734,7 @@ abstract class Controls_Stack extends Base_Object {
 
 			$control = array_merge( $control_obj->get_settings(), $control );
 
-			if ( Controls_Manager::REPEATER === $control['type'] ) {
+			if ( $control_obj instanceof Control_Repeater ) {
 				$style_fields = [];
 
 				foreach ( $this->get_settings( $control_name ) as $item ) {
