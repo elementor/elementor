@@ -83,12 +83,10 @@ export default class Cache {
 
 		// When have old data, merge it recursively with newData using jQuery.extend().
 		if ( oldData !== null ) {
-			oldData = JSON.parse( oldData );
-
 			newData = jQuery.extend( true, oldData, newData );
 		}
 
-		this.storage.setItem( componentName, JSON.stringify( newData ) );
+		this.storage.setItem( componentName, newData );
 	}
 
 	/**
@@ -103,13 +101,10 @@ export default class Cache {
 	get( requestData ) {
 		$e.data.validateRequestData( requestData );
 
-		const componentName = requestData.component.getNamespace();
-
-		let componentData = this.storage.getItem( componentName );
+		const componentName = requestData.component.getNamespace(),
+			componentData = this.storage.getItem( componentName );
 
 		if ( componentData !== null ) {
-			componentData = JSON.parse( componentData );
-
 			if ( componentName === requestData.endpoint ) {
 				return componentData;
 			}
@@ -150,7 +145,7 @@ export default class Cache {
 		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /*string*/ endpointValue ] ) => {
 			if ( endpointValue && endpoint.includes( endpointKey ) ) {
 				// Assuming it is a specific endpoint.
-				const oldData = JSON.parse( endpointValue ),
+				const oldData = endpointValue,
 					pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
 					pureEndpointParts = pureEndpoint.split( '/' ),
 					isComponentUpdate = 1 === pureEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace();
@@ -238,7 +233,7 @@ export default class Cache {
 					return target;
 				};
 
-				this.storage.setItem( componentName, JSON.stringify( deleteKeys( JSON.parse( oldData ), newData ) ) );
+				this.storage.setItem( componentName, deleteKeys( oldData, newData ) );
 			}
 		} else {
 			for ( const key in this.storage.getAll() ) {
