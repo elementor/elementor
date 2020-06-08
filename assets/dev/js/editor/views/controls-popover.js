@@ -11,6 +11,8 @@ export default class ControlsPopover {
 		this.$popover.append( child.$el );
 
 		if ( 'typography' === this.child.model.attributes.groupType ) {
+			this.popoverToggleView = this.child.options.container.panel.getControlView( this.groupControlName );
+
 			// Add the "Typography" header to the popover
 			this.createPopoverHeader();
 		}
@@ -68,21 +70,7 @@ export default class ControlsPopover {
 	}
 
 	onAddButtonClick() {
-		//const popoverToggleView = this.child.options.container.panel.getControlView( this.groupControlName );
-
-		$e.run( 'globals/typography/create', {
-			container: this.child.options.container,
-			setting: this.groupControlName, // group control name
-			title: 'New Style_' + elementor.helpers.getUniqueID(),
-		} )
-			.then( ( result ) => {
-				$e.run( 'document/globals/enable', {
-					container: this.child.options.container,
-					settings: {
-						[ this.groupControlName ]: `globals/typography?id=${ result.data._id }`,
-					},
-				} );
-			} );
+		this.popoverToggleView.onAddGlobalButtonClick();
 	}
 
 	createAddButton() {
