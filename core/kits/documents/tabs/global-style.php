@@ -46,6 +46,9 @@ class Global_Style extends Tab_Base {
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
 				'dynamic' => [],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
+				],
 			]
 		);
 
@@ -97,7 +100,42 @@ class Global_Style extends Tab_Base {
 				'fields_options' => [
 					'font_family' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external:CONTAINER.id}}-family: {{VALUE}}',
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-family: "{{VALUE}}"',
+						],
+					],
+					'font_size' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-size: {{SIZE}}{{UNIT}}',
+						],
+					],
+					'font_weight' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-weight: {{VALUE}}',
+						],
+					],
+					'text_transform' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-text-transform: {{VALUE}}',
+						],
+					],
+					'font_style' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-style: {{VALUE}}',
+						],
+					],
+					'text_decoration' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-text-decoration: {{VALUE}}',
+						],
+					],
+					'line_height' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-line-height: {{SIZE}}{{UNIT}}',
+						],
+					],
+					'letter_spacing' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
 						],
 					],
 				],
