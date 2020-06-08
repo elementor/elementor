@@ -753,7 +753,7 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
+					// this.schemes.printSchemesStyle();
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {
@@ -831,7 +831,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.schemes.init();
 
-		this.schemes.printSchemesStyle();
+		// this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 
