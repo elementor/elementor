@@ -63,7 +63,7 @@ class App extends BaseApp {
 	public function admin_init() {
 		do_action( 'elementor/app/init', $this );
 
-		$this->enqueue_scripts();
+		$this->enqueue_assets();
 
 		// Setup default heartbeat options
 		// TODO: Enable heartbeat.
@@ -86,11 +86,37 @@ class App extends BaseApp {
 		require __DIR__ . '/view.php';
 	}
 
-	private function enqueue_scripts() {
+	private function enqueue_assets() {
 		if ( empty( $_GET['mode'] ) || 'iframe' !== $_GET['mode'] ) {
 			Plugin::$instance->init_common();
 			Plugin::$instance->common->register_scripts();
 		}
+
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+
+		wp_register_style(
+			'elementor-icons',
+			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
+			[],
+			'5.6.2'
+		);
+
+		wp_register_style(
+			'elementor-common',
+			$this->get_css_assets_url( 'common' . $direction_suffix ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_enqueue_style(
+			'elementor-app',
+			$this->get_css_assets_url( 'app' . $direction_suffix ),
+			[
+				'elementor-icons',
+				'elementor-common',
+			],
+			ELEMENTOR_VERSION
+		);
 
 		wp_enqueue_script(
 			'elementor-app-packages',

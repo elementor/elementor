@@ -9,9 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var App $this
  */
 
-$e_icons_css_url = $this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ) . '?ver=5.6.2';
-$common_css_url = $this->get_css_assets_url( 'common' ) . '?ver=' . ELEMENTOR_VERSION;
-
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -19,8 +16,7 @@ $common_css_url = $this->get_css_assets_url( 'common' ) . '?ver=' . ELEMENTOR_VE
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title><?php echo __( 'Elementor', 'elementor' ) . ' | ' . get_the_title(); ?></title>
-	<link type="text/css" rel="stylesheet" href="<?php echo $e_icons_css_url; ?>">
-	<link type="text/css" rel="stylesheet" href="<?php echo $common_css_url; ?>">
+<?php wp_print_styles(); ?>
 </head>
 <body>
 <div id="elementor-app"></div>

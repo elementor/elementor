@@ -17,6 +17,6 @@ $types: (
 
 @each $type in $types {
 	#site-part__type-#{$type} {
-		background: url( 'images/' + $type + '.svg' );
+		background: url( '../images/app/site-editor/' + $type + '.svg' );
 	}
 }
