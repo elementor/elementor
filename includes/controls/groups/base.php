@@ -504,8 +504,24 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		foreach ( $selectors as &$selector ) {
 			$selector = preg_replace_callback( '/{{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
-				return preg_replace_callback( '/[^ ]+(?=\.)/', function( $sub_matches ) use ( $controls_prefix ) {
-					return $controls_prefix . $sub_matches[0];
+				$is_external_reference = false;
+
+				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function( $sub_matches ) use ( $controls_prefix, & $is_external_reference ) {
+					$placeholder = $sub_matches[0];
+
+					if ( 'external.' === $placeholder ) {
+						$is_external_reference = true;
+
+						return '';
+					}
+
+					if ( $is_external_reference ) {
+						$is_external_reference = false;
+
+						return $placeholder;
+					}
+
+					return $controls_prefix . $placeholder;
 				}, $matches[1] );
 			}, $selector );
 		}
