@@ -30,6 +30,7 @@ export class Empty extends CommandHistory {
 
 	apply( args ) {
 		if ( args.force && elementor.elements ) {
+			this.deleteCache();
 			elementor.elements.reset();
 			elementor.getPreviewContainer().panel.closeEditor();
 			return;
@@ -42,6 +43,14 @@ export class Empty extends CommandHistory {
 		if ( this.args.force ) {
 			return true;
 		}
+	}
+
+	deleteCache() {
+		const documentId = elementor.documents.getCurrentId(),
+			component = $e.components.get( 'editor/documents' ),
+			command = 'editor/documents/elements';
+
+		$e.data.deleteCache( component, command, { documentId } );
 	}
 }
 
