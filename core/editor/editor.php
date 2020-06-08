@@ -615,6 +615,7 @@ class Editor {
 				'delete_global_color_info' => __( 'Please note that by deleting a global color, all of its instances will inherit their value from an unknown source', 'elementor' ),
 				'global_colors_info' => __( 'Global colors help you work smarter. Save a color once and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below. Any change you make - the color will update throughout your entire site.', 'elementor' ),
 				'typography' => __( 'Typography', 'elementor' ),
+				'new_text_style' => __( 'New Text Style', 'elementor' ),
 				'global_text_styles_title' => __( 'Global Text Styles', 'elementor' ),
 				'manage_global_typography' => __( 'Manage Global Text Styles', 'elementor' ),
 				'create_global_style' => __( 'Create New Global Text Style', 'elementor' ),
