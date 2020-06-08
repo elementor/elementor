@@ -97,8 +97,8 @@
 # Modules
 /modules                          		@matipojo
 /modules/dynamic-tags             		@matipojo @kobizz
-/modules/library						@matipojo @kobizz
-/modules/system-info					@matipojo @kobizz
+/modules/library             			@matipojo @kobizz
+/modules/system-info             		@matipojo @kobizz
 /modules/gutenberg                		@kingyes
 
 # Tests
