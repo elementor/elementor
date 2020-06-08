@@ -9,19 +9,6 @@ class Colors extends Endpoint {
 		return '{id}';
 	}
 
-	private static $fake_data = [
-		'primary' => [
-			'id' => 'primary',
-			'title' => 'Primary',
-			'value' => 'red',
-		],
-		'secondary' => [
-			'id' => 'secondary',
-			'title' => 'Secondary',
-			'value' => 'green',
-		],
-	];
-
 	public function get_name() {
 		return 'colors';
 	}
@@ -59,7 +46,7 @@ class Colors extends Endpoint {
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$kit->add_repeater_row( $this->get_name(), $item );
+		$kit->add_repeater_row( 'custom_colors', $item );
 
 		unset( $item['_id'] );
 		$item['id'] = $id;
@@ -76,22 +63,27 @@ class Colors extends Endpoint {
 			return new \WP_Error( 'invalid_item', 'Invalid item' );
 		}
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
-
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 
 		return [ 'success' => $success ];
 	}
 
 	private function get_kit_items() {
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
+		$result = [];
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 
-		// TODO: Remove 'fake-data'.
-		$result = self::$fake_data;
-		$items = $kit->get_settings_for_display( $this->get_name() );
+		$system_items = $kit->get_settings_for_display( 'system_colors' );
+		$custom_items = $kit->get_settings_for_display( 'custom_colors' );
 
-		if ( ! $items ) {
-			$items = [];
+		if ( ! $system_items ) {
+			$system_items = [];
 		}
+
+		if ( ! $custom_items ) {
+			$custom_items = [];
+		}
+
+		$items = array_merge( $system_items, $custom_items );
 
 		foreach ( $items as $index => $item ) {
 			$id = $item['_id'];

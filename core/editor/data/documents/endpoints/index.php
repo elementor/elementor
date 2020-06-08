@@ -2,7 +2,6 @@
 namespace Elementor\Core\Editor\Data\Documents\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
-use ElementorPro\Modules\Forms\Module;
 use Elementor\Plugin;
 
 class Index extends Endpoint {

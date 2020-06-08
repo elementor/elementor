@@ -1,17 +1,11 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CreateBase from 'elementor-editor/data/globals/base/create-base';
 
-export class Create extends CommandBase {
-	validateArgs( args = {} ) {
-		this.requireContainer( args );
-		this.requireArgumentType( 'setting', 'string', args );
-		this.requireArgumentType( 'title', 'string', args );
-	}
-
+export class Create extends CreateBase {
 	apply( args = {} ) {
 		const { container, setting, title } = args,
 			controls = container.controls;
 
-		let	result = false;
+		let result = false;
 
 		if ( ! controls[ setting ] ) {
 			throw new Error( `Invalid setting: control '${ setting }', not found.` );
@@ -19,7 +13,7 @@ export class Create extends CommandBase {
 
 		const id = elementor.helpers.getUniqueID();
 
-		// Currently does not effect cache.
+		// Currently does not affect cache.
 		result = $e.data.create( `globals/colors?id=${ id }`, {
 			title,
 			value: container.settings.get( setting ),

@@ -121,6 +121,8 @@ export class Settings extends CommandHistoryDebounce {
 				container.settings.set( newSettings );
 			}
 
+			this.updateCache( container );
+
 			if ( ! options.preventDefaultRender ) {
 				container.render();
 			}
@@ -129,6 +131,18 @@ export class Settings extends CommandHistoryDebounce {
 
 	isDataChanged() {
 		return true;
+	}
+
+	updateCache( container ) {
+		const documentId = container.document.id,
+			elementId = container.id,
+			component = $e.components.get( 'editor/documents' ),
+			command = 'editor/documents/elements';
+
+		$e.data.updateCache( component, command, {
+			documentId,
+			elementId,
+		}, { settings: container.settings } );
 	}
 }
 
