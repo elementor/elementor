@@ -378,13 +378,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPreviewView( document ) {
-		const element = document.$element[ 0 ];
-
-		if ( this.previewView && this.previewView.el === element ) {
-			this.previewView.destroy();
-		}
-
-		const preview = new Preview( { el: element, model: elementor.elementsModel } );
+		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
 
 		preview.$el.empty();
 
