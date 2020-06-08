@@ -81,40 +81,22 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH VALUES OF THE TYPOGRAPHY CONTROLS
 	getGlobalData() {
-		const dataMockup = this.getGlobalDataMockup();
-
+		// elementor.getPanelView().getCurrentPageView().popovers[ this.model.get( 'name' ) ];
 		return {
-			id: elementor.helpers.getUniqueID(),
 			commandName: 'globals/typography',
 			key: this.model.get( 'name' ),
-			value: dataMockup,
-		};
-	}
-
-	getGlobalDataMockup() {
-		return {
-			id: 'new-style',
-			title: 'New Style',
-			value: {
-				fontFamily: 'Varela',
-				fontSize: '34px',
-				fontWeight: 'normal',
-				transform: 'none',
-				fontStyle: 'normal',
-				textDecoration: 'none',
-				lineHeight: 'inherit',
-				letterSpacing: 'inherit',
-			},
+			title: elementor.translate( 'new_text_style' ),
 		};
 	}
 
 	getAddGlobalConfirmMessage() {
-		const $message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
+		const globalData = this.getGlobalData(),
+			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_typography_confirm_text' ) ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
-			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: 'New Text Style' } )
-				.val( 'New Text Style' );
+			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: globalData.title } )
+				.val( globalData.title );
 
 		$inputWrapper.append( $input );
 
