@@ -7,7 +7,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			id: 0,
-			context: null,
+			container: null,
 			settingsModel: null,
 			dynamicParsing: {},
 		};
