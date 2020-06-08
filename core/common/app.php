@@ -158,7 +158,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.6.2'
+			'5.7.0'
 		);
 
 		wp_enqueue_style(

@@ -68,4 +68,8 @@
 		color: $editor-light;
 		@include margin-start(auto);
 	}
+
+	.pcr-button {
+		background-color: #fff;
+	}
 }
