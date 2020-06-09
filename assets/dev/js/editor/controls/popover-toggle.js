@@ -23,15 +23,10 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return 'globals/typography';
 	}
 
-	buildPreviewItemCSS( textStyles ) {
+	buildPreviewItemCSS( globalValue ) {
 		const cssObject = {};
 
-		// TODO: REMOVE THIS WHEN THE DOUBLE VALUE PROPERTY ISSUE IS FIXED
-		if ( textStyles.value ) {
-			textStyles = textStyles.value;
-		}
-
-		Object.entries( textStyles ).forEach( ( [ property, value ] ) => {
+		Object.entries( globalValue ).forEach( ( [ property, value ] ) => {
 			// If a control value is empty, ignore it
 			if ( ! value || '' === value.size ) {
 				return;
@@ -77,21 +72,20 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return cssObject;
 	}
 
-	createGlobalItemMarkup( textStyle ) {
-		textStyle.key = this.model.get( 'name' );
+	createGlobalItemMarkup( globalData ) {
+		globalData.key = this.model.get( 'name' );
 
-		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-elementor-global': JSON.stringify( textStyle ) } );
+		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-global-id': globalData.id } );
 
 		$textStylePreview
-			.html( textStyle.title )
-			.css( this.buildPreviewItemCSS( textStyle.value ) );
+			.html( globalData.title )
+			.css( this.buildPreviewItemCSS( globalData.value ) );
 
 		return $textStylePreview;
 	}
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH VALUES OF THE TYPOGRAPHY CONTROLS
-	getGlobalData() {
-		// elementor.getPanelView().getCurrentPageView().popovers[ this.model.get( 'name' ) ];
+	getGlobalMeta() {
 		return {
 			commandName: 'globals/typography',
 			key: this.model.get( 'name' ),
@@ -100,7 +94,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	getAddGlobalConfirmMessage() {
-		const globalData = this.getGlobalData(),
+		const globalData = this.getGlobalMeta(),
 			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_typography_confirm_text' ) ),
@@ -186,6 +180,25 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		} );
 
 		return $globalTypographyContainer;
+	}
+
+	toggleButtonListener( button, on ) {
+		let callback = {};
+
+		switch ( button ) {
+			case '$addButton':
+				callback = () => this.onAddButtonClick();
+				break;
+			case '$clearButton':
+				callback = () => this.picker._clearColor();
+				break;
+		}
+
+		if ( on ) {
+			this[ button ].on( 'click', callback );
+		} else {
+			this[ button ].off( 'click', '**' );
+		}
 	}
 
 	setOptions( key, value ) {

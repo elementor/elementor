@@ -85,7 +85,7 @@ export default class extends ControlBaseDataView {
 		} );
 	}
 
-	getGlobalData() {
+	getGlobalMeta() {
 		const colorData = this.colorPicker.getColorData();
 
 		return {
@@ -129,20 +129,13 @@ export default class extends ControlBaseDataView {
 		return 'globals/colors';
 	}
 
-	createGlobalItemMarkup( color ) {
-		// This method is called without a color parameter when the user clicks the "Add" button
-		if ( ! color ) {
-			color = this.colorPicker.getColorData();
-		}
-
-		color.key = this.model.get( 'name' );
-
-		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-elementor-global': JSON.stringify( color ) } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.value } ),
+	createGlobalItemMarkup( globalData ) {
+		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-global-id': globalData.id } ),
+			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + globalData.value } ),
 			$colorTitle = jQuery( '<span>', { class: 'e-global-color__title' } )
-				.html( color.title ),
+				.html( globalData.title ),
 			$colorHex = jQuery( '<span>', { class: 'e-global-color__hex' } )
-				.html( color.value );
+				.html( globalData.value );
 
 		$color.append( $colorPreview, $colorTitle, $colorHex );
 

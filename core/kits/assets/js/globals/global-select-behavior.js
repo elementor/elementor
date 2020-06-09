@@ -26,18 +26,21 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerEvents() {
-		this.ui.globalPreviewItems.on( 'click', ( event ) => this.applySavedGlobalValue( JSON.parse( event.currentTarget.dataset.elementorGlobal ) ) );
+		this.ui.globalPreviewsContainer.on( 'click', '.e-global-preview', async ( event ) => await this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
 		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
 			$e.run( 'panel/global/open' ).then( () => $e.route( 'panel/global/colors-and-typography' ) );
 		} );
 	}
 
-	applySavedGlobalValue( globalData ) {
-		this.setGlobalValue( globalData );
+	async applySavedGlobalValue( globalId ) {
+		this.setGlobalValue( globalId );
+
+		const globalMeta = this.view.getGlobalMeta(),
+			globalResult = await $e.data.get( globalMeta.commandName, { id: globalId } ),
+			globalData = globalResult.data;
 
 		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
-
 		if ( this.view.$el.hasClass( 'e-no-value-color' ) ) {
 			this.view.$el.removeClass( 'e-no-value-color' );
 		}
@@ -53,7 +56,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.view.setOptions( 'addButtonActive', false );
 		this.view.setOptions( 'clearButtonActive', true );
 
-		this.setSelectBoxText( globalData.title );
+		this.setSelectBoxText( globalMeta.title );
 
 		this.toggleSelect();
 	}
@@ -191,22 +194,17 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			hide: {
 				onBackgroundClick: false,
 			},
-			onConfirm: async () => {
-				const globalData = this.view.getGlobalData();
+			onConfirm: () => {
+				const globalMeta = this.view.getGlobalMeta();
 
-				globalData.title = this.globalNameInput.val();
+				globalMeta.title = this.globalNameInput.val();
 
-				const newGlobal = await this.createNewGlobal( globalData );
+				this.createNewGlobal( globalMeta )
+					.then( ( result ) => {
+						const $globalPreview = this.view.createGlobalItemMarkup( result.data );
 
-				if ( ! globalData.value ) {
-					globalData.value = newGlobal.value;
-				}
-
-				const $globalPreview = this.view.createGlobalItemMarkup( globalData );
-
-				$globalPreview.on( 'click', ( event ) => this.applySavedGlobalValue( JSON.parse( event.currentTarget.dataset.elementorGlobal ) ) );
-
-				this.ui.globalPreviewsContainer.append( $globalPreview );
+						this.ui.globalPreviewsContainer.append( $globalPreview );
+					} );
 			},
 			onShow: () => {
 				// If the control creating the new global has an open popover, make sure it closes when the modal appears
@@ -222,20 +220,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.confirmNewGlobalModal.show();
 	}
 
-	async createNewGlobal( globalData ) {
-		const container = this.view.container,
-			result = await $e.run( globalData.commandName + '/create', {
-				container,
-				setting: globalData.key, // group control name
-				title: globalData.title,
+	createNewGlobal( globalMeta ) {
+		const container = this.view.container;
+
+		return $e.run( globalMeta.commandName + '/create', {
+			container,
+			setting: globalMeta.key, // group control name
+			title: globalMeta.title,
+		} )
+			.then( ( result ) => {
+				this.applySavedGlobalValue( result.data.id );
+
+				return result;
 			} );
-
-		this.applySavedGlobalValue( result.data );
-
-		return result.data;
 	}
 
-	setGlobalValue( globalData ) {
+	setGlobalValue( globalId ) {
 		let command = '';
 		const settings = {};
 
@@ -248,7 +248,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		}
 
 		// colors / typography
-		settings[ globalData.key ] = this.view.getCommand() + '?id=' + globalData.id;
+		settings[ this.view.model.get( 'name' ) ] = this.view.getCommand() + '?id=' + globalId;
 
 		$e.run( command, {
 			container: this.view.options.container,
@@ -258,7 +258,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// The unset method is triggered from the controls via triggerMethod
 	onUnsetGlobalValue() {
-		const globalData = this.view.getGlobalData(),
+		const globalData = this.view.getGlobalMeta(),
 			settings = {};
 
 		settings[ globalData.key ] = '';
