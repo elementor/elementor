@@ -218,8 +218,8 @@ select {
 			height: 8px;
 			width: 8px;
 			background:
-					linear-gradient(45deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 43%,$theme-dark-gray-lightest 45%,$theme-dark-gray-lightest 55%,rgba(0,0,0,0) 57%,rgba(0,0,0,0) 100%),
-					linear-gradient(135deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 43%,$theme-dark-gray-lightest 45%,$theme-dark-gray-lightest 55%,rgba(0,0,0,0) 57%,rgba(0,0,0,0) 100%);
+					linear-gradient(45deg, transparent 45%, $theme-dark-gray-lightest 45%, $theme-dark-gray-lightest 55%, transparent 55%),
+					linear-gradient(135deg, transparent 45%, $theme-dark-gray-lightest 45%, $theme-dark-gray-lightest 55%, transparent 55%);
 		}
 	}
 
