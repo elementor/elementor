@@ -19,14 +19,14 @@ export class ElementsCreateAddDefaultGlobals extends After {
 
 		containers.forEach( ( /* Container */ container ) => {
 			Object.entries( container.controls ).forEach( ( [ controlName, control ] ) => {
-				if ( control.globals ) {
+				if ( control.global ) {
 					const element = container.model.toJSON();
 
 					if ( ! element.settings.__globals__ ) {
 						element.settings.__globals__ = {};
 					}
 
-					element.settings.__globals__[ controlName ] = control.globals;
+					element.settings.__globals__[ controlName ] = control.global;
 
 					const component = $e.components.get( 'editor/documents' ),
 						command = 'editor/documents/elements',
