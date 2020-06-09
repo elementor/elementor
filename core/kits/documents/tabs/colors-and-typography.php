@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Colors_And_Typography extends Tab_Base {
 
 	public function get_id() {
-		return 'global-style';
+		return 'colors-and-typography';
 	}
 
 	public function get_title() {
