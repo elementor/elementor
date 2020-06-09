@@ -3,6 +3,8 @@ namespace Elementor\Core\Kits\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Core\Kits\Documents\Tabs;
+use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Page\Manager as PageManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -91,5 +93,30 @@ class Kit extends PageBase {
 			'draft' => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
 			'publish' => __( 'Published', 'elementor' ),
 		];
+	}
+
+	public function add_repeater_row( $control_id, $item ) {
+		$meta_key = PageManager::META_KEY;
+		$document_settings = $this->get_meta( $meta_key );
+
+		if ( ! $document_settings ) {
+			$document_settings = [];
+		}
+
+		if ( ! isset( $document_settings[ $control_id ] ) ) {
+			$document_settings[ $control_id ] = [];
+		}
+
+		$document_settings[ $control_id ][] = $item;
+
+		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+		$page_settings_manager->save_settings( $document_settings, $this->get_id() );
+
+		/** @var Kit $autosave **/
+		$autosave = $this->get_autosave();
+
+		if ( $autosave ) {
+			$autosave->add_repeater_row( $control_id, $item );
+		}
 	}
 }
