@@ -3,6 +3,7 @@ namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Manager;
+use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Data\Manager as DataManager;
 use Elementor\Plugin;
@@ -1100,7 +1101,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function add_repeater_row( $control_id, $item ) {
-		$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+		$meta_key = PageManager::META_KEY;
 		$document_settings = $this->get_meta( $meta_key );
 
 		if ( ! $document_settings ) {
