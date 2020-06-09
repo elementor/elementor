@@ -88,17 +88,11 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$default_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
-
-		if ( $default_fonts ) {
-			$default_fonts = ', ' . $default_fonts;
-		}
-
 		$fields['font_family'] = [
 			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::FONT,
 			'default' => '',
-			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
+			'selector_value' => 'font-family: "{{VALUE}}"' . Utils::get_default_fonts() . ';',
 		];
 
 		$fields['font_size'] = [
