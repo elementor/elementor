@@ -87,4 +87,8 @@ export default class ControlsPopover {
 			gravity: () => 's',
 		} );
 	}
+
+	destroy() {
+		this.$popover.remove();
+	}
 }
