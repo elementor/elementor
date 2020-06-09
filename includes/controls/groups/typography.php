@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Manager as SettingsManager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -88,17 +86,11 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
-
-		if ( $default_fonts ) {
-			$default_fonts = ', ' . $default_fonts;
-		}
-
 		$fields['font_family'] = [
 			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::FONT,
 			'default' => '',
-			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
+			'selector_value' => 'font-family: "{{VALUE}}"' . Utils::get_default_fonts() . ';',
 		];
 
 		$fields['font_size'] = [
