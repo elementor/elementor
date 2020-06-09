@@ -27,11 +27,11 @@ class Typography extends Base {
 		$items = array_merge( $system_items, $custom_items );
 
 		foreach ( $items as $index => &$item ) {
-			foreach ( $item as $setting => $value ) {
+			foreach ( $item['value'] as $setting => $value ) {
 				$new_setting = str_replace( 'typography_', '', $setting, $count );
 				if ( $count ) {
-					$item[ $new_setting ] = $value;
-					unset( $item[ $setting ] );
+					$item['value'][ $new_setting ] = $value;
+					unset( $item['value'][ $setting ] );
 				}
 			}
 
@@ -44,7 +44,7 @@ class Typography extends Base {
 
 			unset( $item['_id'], $item['title'] );
 
-			$result[ $id ]['value'] = $item;
+			$result[ $id ]['value'] = $item['value'];
 		}
 
 		return $result;
