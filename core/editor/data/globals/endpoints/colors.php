@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Editor\Data\Globals\Endpoints;
 
-use Elementor\Data\Base\Endpoint;
 use Elementor\Plugin;
 
 class Colors extends Base {
