@@ -1114,7 +1114,7 @@ abstract class Document extends Controls_Stack {
 		$document_settings[ $control_id ][] = $item;
 
 		$page_settings_manager = Manager::get_settings_managers( 'page' );
-		$page_settings_manager->save_settings( $document_settings, $this->get_main_id() );
+		$page_settings_manager->save_settings( $document_settings, $this->get_id() );
 
 		$autosave = $this->get_autosave();
 
