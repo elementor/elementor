@@ -1,20 +1,23 @@
+import Card from 'elementor-app/ui/card/card';
+import CardHeader from 'elementor-app/ui/card/card-header';
+import CardBody from 'elementor-app/ui/card/card-body';
+import CardImage from 'elementor-app/ui/card/card-image';
+import CardOverlay from 'elementor-app/ui/card/card-overlay';
+
 import './site-part.scss';
 
 export default function SitePart( props ) {
 	return (
-		<section id={ `site-part__type-${ props.type }` } className="elementor-app__site-editor__site-part">
-			<header>
-				{ props.title }
-				<a target="_blank" rel="noopener noreferrer" href={ props.urls.docs } >
-					<i className="eicon-info" aria-hidden="true" title={ __( 'Help', 'elementor' ) } />
-				</a>
-			</header>
-			<main>
-				<div className="hover-content">
-					{ props.children }
-				</div>
-			</main>
-		</section>
+		<Card className="site-part">
+			<CardHeader>
+				<h1 className="card__headline">{ props.title }</h1>
+			</CardHeader>
+			<CardBody>
+				<CardImage alt={ props.title } src={ props.urls.thumbnail }>
+					<CardOverlay>{ props.children }</CardOverlay>
+				</CardImage>
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -22,7 +25,7 @@ SitePart.propTypes = {
 	type: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
 	className: PropTypes.string,
-	urls: PropTypes.object,
+	urls: PropTypes.object.isRequired,
 	children: PropTypes.object.isRequired,
 };
 

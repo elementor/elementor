@@ -79,6 +79,7 @@ class App extends BaseApp {
 	protected function get_init_settings() {
 		return [
 			'menu_url'  => $this->get_base_url() . '#site-editor/promotion',
+			'assets_url'  => ELEMENTOR_ASSETS_URL,
 		];
 	}
 
