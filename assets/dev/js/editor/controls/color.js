@@ -64,6 +64,16 @@ export default class extends ControlBaseDataView {
 
 		this.addTipsyToPickerButton();
 
+		this.$pickerButton.on( 'click', () => {
+			if ( this.getGlobalValue() ) {
+				this.triggerMethod( 'unsetGlobalValue' );
+
+				if ( ! this.getControlValue() ) {
+					this.setOptions( 'clearButtonActive', false );
+				}
+			}
+		} );
+
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
 
 		if ( ! this.getGlobalValue() && ! this.getControlValue() ) {
@@ -223,8 +233,6 @@ export default class extends ControlBaseDataView {
 			this.colorPicker.toggleToolState( '$addButton', value );
 		} else if ( 'clearButtonActive' === key ) {
 			this.colorPicker.toggleToolState( '$customClearButton', value );
-		} else if ( 'globalSelectBox' === key ) {
-			this.triggerMethod( 'handleGlobalSelectBoxState', value );
 		}
 
 		return this.options;
@@ -248,8 +256,15 @@ export default class extends ControlBaseDataView {
 			this.triggerMethod( 'unsetGlobalValue' );
 		}
 
+		this.setValue( this.colorPicker.getColor() );
+
+		if ( ! this.isCustom ) {
+			this.triggerMethod( 'updateSelectBoxText' );
+
+			this.isCustom = true;
+		}
+
 		if ( ! this.model.get( 'global' ) ) {
-			this.setOptions( 'globalSelectBox', 'custom' );
 			this.setOptions( 'addButtonActive', true );
 		}
 
@@ -258,24 +273,15 @@ export default class extends ControlBaseDataView {
 		if ( this.$el.hasClass( 'e-no-value-color' ) ) {
 			this.$el.removeClass( 'e-no-value-color' );
 		}
-
-		$e.run( 'document/elements/settings', {
-			container: this.container,
-			settings: {
-				[ this.model.get( 'name' ) ]: this.colorPicker.getColor(),
-			},
-			options: {
-				preventDefaultRender: true,
-			},
-		} );
-
-		// Manually render, since update-cache run after settings. but renderStyles run on render, and cache didnt get updated yet.
-		this.container.render();
 	}
 
-	async onPickerClear() {
+	onPickerClear() {
 		if ( this.getGlobalValue() ) {
 			this.triggerMethod( 'unsetGlobalValue' );
+		} else {
+			this.isCustom = false;
+
+			this.triggerMethod( 'updateSelectBoxText' );
 		}
 
 		this.setValue( '' );
@@ -283,7 +289,6 @@ export default class extends ControlBaseDataView {
 		this.$el.addClass( 'e-no-value-color' );
 
 		if ( ! this.model.get( 'global' ) ) {
-			this.setOptions( 'globalSelectBox', 'default' );
 			this.setOptions( 'addButtonActive', false );
 		}
 

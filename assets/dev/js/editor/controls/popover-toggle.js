@@ -16,6 +16,8 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onPopoverToggleClick() {
+		this.triggerMethod( 'unsetGlobalValue' );
+
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
@@ -199,20 +201,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		} else {
 			this[ button ].off( 'click', '**' );
 		}
-	}
-
-	setOptions( key, value ) {
-		const changedState = super.setOptions( key, value );
-
-		if ( ! changedState ) {
-			return;
-		}
-
-		if ( 'globalSelectBox' ) {
-			this.triggerMethod( 'handleGlobalSelectBoxState', value );
-		}
-
-		return this.options;
 	}
 
 	onAddGlobalButtonClick() {

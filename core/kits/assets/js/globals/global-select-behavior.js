@@ -9,10 +9,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		return this.view.container.globals.get( this.view.model.get( 'name' ) );
 	}
 
-	getGlobalIdFromValue( globalValue ) {
-		return globalValue.substring( globalValue.indexOf( '?' ) + 4 );
-	}
-
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerUiElements() {
 		const popoverWidget = this.popover.getElements( 'widget' );
@@ -56,13 +52,28 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.view.setOptions( 'addButtonActive', false );
 		this.view.setOptions( 'clearButtonActive', true );
 
-		this.setSelectBoxText( globalData.title );
-
 		this.toggleSelect();
 	}
 
-	setSelectBoxText( globalName ) {
-		this.view.setOptions( 'globalSelectBox', globalName );
+	onUpdateSelectBoxText() {
+		const value = this.view.getControlValue(),
+			globalValue = this.getGlobalValue();
+
+		let selectBoxText = '';
+
+		if ( globalValue ) {
+			// If there is a global value saved, get the global's name and display it
+			$e.data.get( globalValue )
+				.then( ( result ) => this.ui.globalControlSelected.html( result.data.title ) );
+		} else if ( value ) {
+			// If there is a value and it is not a global
+			selectBoxText = elementor.translate( 'custom' );
+		} else {
+			// If there is no value, set the text as default
+			selectBoxText = elementor.translate( 'default' );
+		}
+
+		this.ui.globalControlSelected.html( selectBoxText );
 	}
 
 	onHandleGlobalSelectBoxState( value ) {
@@ -152,11 +163,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				// If there is a global value applied to the control, set the global select box text to display its name
 				if ( globalValue ) {
-					const globalId = this.getGlobalIdFromValue( globalValue );
-
-					const globalData = globalsList[ globalId ];
-
-					this.setSelectBoxText( globalData.title );
+					this.onUpdateSelectBoxText();
 				}
 			},
 			() => {
@@ -250,10 +257,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		// colors / typography
 		settings[ this.view.model.get( 'name' ) ] = this.view.getCommand() + '?id=' + globalId;
 
+		// Trigger async render.
 		$e.run( command, {
 			container: this.view.options.container,
 			settings: settings,
 		} );
+
+		this.onUpdateSelectBoxText(); // control value still old.
 	}
 
 	// The unset method is triggered from the controls via triggerMethod
@@ -266,7 +276,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		$e.run( 'document/globals/disable', {
 			container: this.view.container,
 			settings: settings,
-		} );
+		} )
+			.then( () => {
+				this.onUpdateSelectBoxText();
+				this.view.setOptions( 'addButtonActive', false );
+			} );
 	}
 
 	createGlobalInfoTooltip() {
