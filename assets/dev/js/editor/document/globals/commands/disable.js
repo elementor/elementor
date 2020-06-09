@@ -1,64 +1,66 @@
 import DisableEnable from './base/disable-enable';
 
-// Run when a custom control value is set while the active value is a global
+// TODO: Add dev-tools CSS to see if widget have globals.
 export class Disable extends DisableEnable {
-	apply( args ) {
+	async apply( args ) {
 		const { settings, containers = [ args.container ], options = {} } = args;
 
-		return new Promise( async ( resolve, reject ) => {
-			containers.forEach( ( container ) => {
-				container = container.lookup();
+		await containers.map( async ( container ) => {
+			container = container.lookup();
 
-				Object.keys( settings ).forEach( ( setting ) => {
-					const localSettings = {},
-						promises = Object.entries( container.globals.attributes ).map( async ( [ globalKey, globalValue ] ) => {
-							// Means, the control default value were disabled.
-							if ( ! globalValue ) {
-								return;
-							}
+			let localSettings = {},
+				promises = [];
 
-							const promise = $e.data.get( globalValue ),
-								result = await promise;
+			// Get global values.
+			if ( options.restore ) {
+				promises = Object.entries( container.globals.attributes ).map( async ( [ globalKey, globalValue ] ) => {
+					// Means, the control default value were disabled.
+					if ( ! globalValue ) {
+						return;
+					}
 
-							if ( result ) {
-								const { value } = result.data;
+					const promise = $e.data.get( globalValue ),
+						result = await promise;
 
-								if ( container.controls[ globalKey ].groupPrefix ) {
-									Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
-										const groupPrefix = container.controls[ globalKey ].groupPrefix,
-											controlName = globalKey.replace( groupPrefix, '' ) + '_' + dataKey;
+					if ( result ) {
+						const { value } = result.data;
 
-										localSettings[ controlName ] = dataValue;
-									} );
-								} else {
-									localSettings[ globalKey ] = value;
-								}
-							}
+						if ( container.controls[ globalKey ].groupPrefix ) {
+							Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
+								const groupPrefix = container.controls[ globalKey ].groupPrefix,
+									controlName = globalKey.replace( groupPrefix, '' ) + '_' + dataKey;
 
-							return promise;
-						} );
-
-					Promise.all( promises ).then( () => {
-						// TODO: Add dev-tools CSS to see if widget have globals.
-
-						// Restore globals settings as custom local settings.
-						if ( options.restore && Object.keys( localSettings ).length ) {
-							$e.run( 'document/elements/settings', {
-								container,
-								settings: localSettings,
+								localSettings[ controlName ] = dataValue;
 							} );
+						} else {
+							localSettings[ globalKey ] = value;
 						}
+					}
 
-						container.globals.set( setting, '' );
-
-						container.settings.set( '__globals__', container.globals.toJSON() );
-
-						container.render();
-
-						resolve( true );
-					} );
+					return promise;
 				} );
+			}
+
+			await Promise.all( promises ).then( () => {
+				// Restore globals settings as custom local settings.
+				if ( options.restore && Object.keys( localSettings ).length ) {
+					$e.run( 'document/elements/settings', {
+						container,
+						settings: localSettings,
+					} );
+				}
+
+				// Clear globals.
+				Object.keys( settings ).forEach( ( setting ) =>
+					container.globals.set( setting, '' )
+				);
+
+				container.settings.set( '__globals__', container.globals.toJSON() );
+
+				container.render();
 			} );
+
+			return Promise.resolve();
 		} );
 	}
 }
