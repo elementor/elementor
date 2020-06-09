@@ -65,6 +65,10 @@ export default class extends ControlBaseDataView {
 		this.addTipsyToPickerButton();
 
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
+
+		if ( ! this.getGlobalValue() && ! this.getControlValue() ) {
+			this.$el.addClass( 'e-no-value-color' );
+		}
 	}
 
 	hidePopover() {
@@ -234,7 +238,7 @@ export default class extends ControlBaseDataView {
 	// Change the color picker value without triggering Pickr's 'change' event
 	setGlobalDisplay() {
 		if ( ! this.globalValue ) {
-			this.$el.addClass( 'e-invalid-color' );
+			this.$el.addClass( 'e-no-value-color' );
 
 			return;
 		}
@@ -253,8 +257,8 @@ export default class extends ControlBaseDataView {
 		this.setOptions( 'addButtonActive', true );
 		this.setOptions( 'clearButtonActive', true );
 
-		if ( this.$el.hasClass( 'e-invalid-color' ) ) {
-			this.$el.removeClass( 'e-invalid-color' );
+		if ( this.$el.hasClass( 'e-no-value-color' ) ) {
+			this.$el.removeClass( 'e-no-value-color' );
 		}
 
 		$e.run( 'document/elements/settings', {
@@ -278,7 +282,7 @@ export default class extends ControlBaseDataView {
 
 		this.setValue( '' );
 
-		this.$el.addClass( 'e-invalid-color' );
+		this.$el.addClass( 'e-no-value-color' );
 
 		this.setOptions( 'addButtonActive', false );
 		this.setOptions( 'clearButtonActive', false );
