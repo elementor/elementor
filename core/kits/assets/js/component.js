@@ -31,7 +31,7 @@ export default class extends $e.modules.ComponentBase {
 				helpUrl: 'http://go.elementor.com/panel-layout-settings',
 			},
 			'theme-style': {
-				title: elementor.translate( 'Theme Style' ),
+				title: elementor.translate( 'theme_style' ),
 				icon: 'eicon-theme-style',
 				helpUrl: 'http://go.elementor.com/panel-theme-style',
 			},

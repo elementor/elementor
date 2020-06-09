@@ -438,7 +438,7 @@ BaseElementView = BaseContainer.extend( {
 	initControlsCSSParser() {
 		this.controlsCSSParser = new ControlsCSSParser( {
 			id: this.model.get( 'id' ),
-			context: this,
+			container: this.getContainer(),
 			settingsModel: this.getEditModel().get( 'settings' ),
 			dynamicParsing: this.getDynamicParsingSettings(),
 		} );

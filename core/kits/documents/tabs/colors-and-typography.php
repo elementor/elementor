@@ -46,12 +46,27 @@ class Colors_And_Typography extends Tab_Base {
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
 				'dynamic' => [],
-				'global_settings' => true,
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
+				],
+				'global' => true,
 			]
 		);
 
 		$this->add_control(
-			'colors',
+			'system_colors',
+			[
+				'type' => Global_Style_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
+				'item_actions' => [
+					'add' => false,
+					'remove' => false,
+				],
+			]
+		);
+
+		$this->add_control(
+			'custom_colors',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
@@ -82,11 +97,66 @@ class Colors_And_Typography extends Tab_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'styles',
+				'label' => '',
+				'fields_options' => [
+					'font_family' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-family: "{{VALUE}}"',
+						],
+					],
+					'font_size' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-size: {{SIZE}}{{UNIT}}',
+						],
+					],
+					'font_weight' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-weight: {{VALUE}}',
+						],
+					],
+					'text_transform' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-text-transform: {{VALUE}}',
+						],
+					],
+					'font_style' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-style: {{VALUE}}',
+						],
+					],
+					'text_decoration' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-text-decoration: {{VALUE}}',
+						],
+					],
+					'line_height' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-line-height: {{SIZE}}{{UNIT}}',
+						],
+					],
+					'letter_spacing' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
+						],
+					],
+				],
 			]
 		);
 
 		$this->add_control(
-			'text_styles',
+			'system_typography',
+			[
+				'type' => Global_Style_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
+				'item_actions' => [
+					'add' => false,
+					'remove' => false,
+				],
+			]
+		);
+
+		$this->add_control(
+			'custom_typography',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),

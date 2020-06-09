@@ -106,6 +106,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 		return this;
 	},
+
 	activateFirstSection: function() {
 		var self = this;
 
@@ -136,40 +137,42 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return elementor.getControlView( controlType );
 	},
 
-	handlePopovers: function() {
-		var self = this;
+	handlePopovers: function( view ) {
+		let popover;
 
-		self.removePopovers();
+		view.popovers = [];
 
-		self.popovers = {};
+		this.removePopovers( view );
 
-		self.children.each( function( child ) {
-			if ( self.currentPopover ) {
-				self.currentPopover.addChild( child );
+		view.children.each( ( control ) => {
+			if ( popover ) {
+				popover.addChild( control );
 			}
 
-			const popover = child.model.get( 'popover' );
+			if ( control.children.length ) {
+				control.children.each( ( child ) => this.handlePopovers( child ) );
+			}
 
-			if ( ! popover ) {
+			const popoverData = control.model.get( 'popover' );
+
+			if ( ! popoverData ) {
 				return;
 			}
 
-			if ( popover.start ) {
-				self.currentPopover = new ControlsPopover( child );
+			if ( popoverData.start ) {
+				popover = new ControlsPopover( control );
 
-				if ( child.model.attributes.groupPrefix ) {
-					self.popovers[ child.model.attributes.groupPrefix ] = self.currentPopover;
-				}
+				view.popovers.push( popover );
 			}
 
-			if ( popover.end ) {
-				delete self.currentPopover;
+			if ( popoverData.end ) {
+				popover = null;
 			}
 		} );
 	},
 
-	removePopovers: function() {
-		this.$el.find( '.' + this.classes.popover ).remove();
+	removePopovers: function( view ) {
+		view.popovers.forEach( ( popover ) => popover.destroy() );
 	},
 
 	getNamespaceArray: function() {
@@ -196,7 +199,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onRenderCollection: function() {
 		this.openActiveSection();
 
-		this.handlePopovers();
+		this.handlePopovers( this );
 	},
 
 	onModelDestroy: function() {
