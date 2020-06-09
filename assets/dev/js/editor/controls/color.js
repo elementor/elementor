@@ -54,7 +54,7 @@ export default class extends ControlBaseDataView {
 					opacity: this.model.get( 'alpha' ),
 				},
 			},
-			isGlobalSettings: !! this.model.attributes.global_settings,
+			global: this.model.get( 'global' ),
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
@@ -228,8 +228,10 @@ export default class extends ControlBaseDataView {
 
 		if ( 'addButtonActive' === key ) {
 			this.colorPicker.toggleToolState( '$addButton', value );
-		} else if ( 'clearButtonActive' ) {
+		} else if ( 'clearButtonActive' === key ) {
 			this.colorPicker.toggleToolState( '$customClearButton', value );
+		} else if ( 'globalSelectBox' === key ) {
+			this.triggerMethod( 'handleGlobalSelectBoxState', value );
 		}
 
 		return this.options;
@@ -251,10 +253,13 @@ export default class extends ControlBaseDataView {
 	onPickerChange() {
 		if ( this.getGlobalValue() ) {
 			this.triggerMethod( 'unsetGlobalValue' );
-			this.$el.find( '.e-global-selected' ).html( elementor.translate( 'custom' ) );
 		}
 
-		this.setOptions( 'addButtonActive', true );
+		if ( ! this.model.get( 'global' ) ) {
+			this.setOptions( 'globalSelectBox', 'custom' );
+			this.setOptions( 'addButtonActive', true );
+		}
+
 		this.setOptions( 'clearButtonActive', true );
 
 		if ( this.$el.hasClass( 'e-no-value-color' ) ) {
@@ -284,7 +289,11 @@ export default class extends ControlBaseDataView {
 
 		this.$el.addClass( 'e-no-value-color' );
 
-		this.setOptions( 'addButtonActive', false );
+		if ( ! this.model.get( 'global' ) ) {
+			this.setOptions( 'globalSelectBox', 'default' );
+			this.setOptions( 'addButtonActive', false );
+		}
+
 		this.setOptions( 'clearButtonActive', false );
 
 		this.$el

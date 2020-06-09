@@ -108,16 +108,16 @@ export default class ColorPicker extends elementorModules.Module {
 			$pickerHeader = jQuery( '<div>', { class: classes.pickerHeader } )
 				.html( '<span>Color Picker</span>' ),
 			$pickerToolsContainer = jQuery( '<div>', { class: classes.pickerToolsContainer } ),
-			isGlobalSettings = this.getSettings( 'isGlobalSettings' );
+			global = this.getSettings( 'global' );
 
 		this.$pickerToolsContainer = $pickerToolsContainer;
 
 		// Don't create the add button in the Global Settings color pickers
-		if ( ! isGlobalSettings ) {
+		if ( ! global ) {
 			this.createAddButton();
 		}
 
-		this.createCustomClearButton();
+		this.moveClearButton();
 
 		$pickerToolsContainer.append( this.$customClearButton, this.$addButton );
 
@@ -158,7 +158,8 @@ export default class ColorPicker extends elementorModules.Module {
 		}
 	}
 
-	createCustomClearButton() {
+	// Move the clear button from Pickr's default location into the Color Picker header
+	moveClearButton() {
 		const { classes } = this.getSettings();
 
 		this.$customClearButton = jQuery( '<div>', { class: classes.customClearButton + ' ' + classes.pickerTool } )

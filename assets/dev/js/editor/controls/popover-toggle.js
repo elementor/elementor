@@ -188,6 +188,20 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return $globalTypographyContainer;
 	}
 
+	setOptions( key, value ) {
+		const changedState = super.setOptions( key, value );
+
+		if ( ! changedState ) {
+			return;
+		}
+
+		if ( 'globalSelectBox' ) {
+			this.triggerMethod( 'handleGlobalSelectBoxState', value );
+		}
+
+		return this.options;
+	}
+
 	onAddGlobalButtonClick() {
 		this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
 	}

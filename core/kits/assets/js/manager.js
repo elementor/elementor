@@ -39,7 +39,9 @@ export default class extends elementorModules.editor.utils.Module {
 	}
 
 	addGlobalsBehavior( behaviors, view ) {
-		if ( 'color' === view.options.model.get( 'type' ) ) {
+		const isGlobalPanelInstance = view.options.model.attributes.global;
+
+		if ( 'color' === view.options.model.get( 'type' ) && ! isGlobalPanelInstance ) {
 			behaviors.globals = {
 				behaviorClass: GlobalControlSelect,
 				popoverTitle: elementor.translate( 'global_colors_title' ),
@@ -49,7 +51,7 @@ export default class extends elementorModules.editor.utils.Module {
 			};
 		}
 
-		if ( 'popover_toggle' === view.options.model.get( 'type' ) && view.options.model.attributes.global ) {
+		if ( 'popover_toggle' === view.options.model.get( 'type' ) && ! isGlobalPanelInstance ) {
 			behaviors.globals = {
 				behaviorClass: GlobalControlSelect,
 				popoverTitle: elementor.translate( 'global_text_styles_title' ),

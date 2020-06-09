@@ -38,8 +38,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
 
-		if ( this.view.$el.hasClass( 'e-invalid-color' ) ) {
-			this.view.$el.removeClass( 'e-invalid-color' );
+		if ( this.view.$el.hasClass( 'e-no-value-color' ) ) {
+			this.view.$el.removeClass( 'e-no-value-color' );
 		}
 
 		if ( this.view.updateClassGlobalValue ) {
@@ -59,7 +59,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	setSelectBoxText( globalName ) {
-		this.ui.globalControlSelected.html( globalName );
+		this.view.setOptions( 'globalSelectBox', globalName );
+	}
+
+	onHandleGlobalSelectBoxState( value ) {
+		let selectBoxText = 'Default';
+
+		if ( 'custom' === value ) {
+			selectBoxText = elementor.translate('custom' );
+		} else if ( 'default' === value ) {
+			selectBoxText = elementor.translate('default' );
+		} else {
+			// When a global is set, set the select box text to the global's name
+			selectBoxText = value;
+		}
+
+		this.ui.globalControlSelected.html( selectBoxText );
 	}
 
 	// The Global Control elements are initialized onRender and not with initialize() because their position depends
