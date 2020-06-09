@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Settings\Manager as SettingsManager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -726,5 +728,15 @@ class Utils {
 		}
 
 		return $result;
+	}
+
+	public static function get_default_fonts() {
+		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
+
+		if ( $default_fonts ) {
+			$default_fonts = ', ' . $default_fonts;
+		}
+
+		return $default_fonts;
 	}
 }
