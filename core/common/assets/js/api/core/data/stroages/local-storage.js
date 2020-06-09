@@ -3,17 +3,15 @@ import BaseStorage from './base-storage';
 export default class LocalStorage extends BaseStorage {
 	constructor() {
 		super( localStorage );
+
+		this.storage = new Map();
 	}
 
 	debug() {
-		const entries = {},
+		const entries = this.getAll(),
 			ordered = {};
 
-		Object.entries( this.getAll() ).map( ( [ key, /*string*/ data ] ) => {
-			entries[ key ] = JSON.parse( data );
-		} );
-
-		Object.keys( entries ).sort().forEach( ( key ) => {
+		Object.keys( this.getAll() ).sort().forEach( ( key ) => {
 			ordered[ key ] = entries[ key ];
 		} );
 

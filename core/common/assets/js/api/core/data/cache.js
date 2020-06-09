@@ -1,5 +1,8 @@
 import LocalStorage from './stroages/local-storage';
 
+/**
+ * TODO: Search common logic, create functions to reduce code size.
+ */
 export default class Cache {
 	/**
 	 * Function constructor().
@@ -80,12 +83,10 @@ export default class Cache {
 
 		// When have old data, merge it recursively with newData using jQuery.extend().
 		if ( oldData !== null ) {
-			oldData = JSON.parse( oldData );
-
 			newData = jQuery.extend( true, oldData, newData );
 		}
 
-		this.storage.setItem( componentName, JSON.stringify( newData ) );
+		this.storage.setItem( componentName, newData );
 	}
 
 	/**
@@ -100,13 +101,10 @@ export default class Cache {
 	get( requestData ) {
 		$e.data.validateRequestData( requestData );
 
-		const componentName = requestData.component.getNamespace();
-
-		let componentData = this.storage.getItem( componentName );
+		const componentName = requestData.component.getNamespace(),
+			componentData = this.storage.getItem( componentName );
 
 		if ( componentData !== null ) {
-			componentData = JSON.parse( componentData );
-
 			if ( componentName === requestData.endpoint ) {
 				return componentData;
 			}
@@ -147,7 +145,7 @@ export default class Cache {
 		Object.entries( this.storage.getAll() ).forEach( ( [ endpointKey, /*string*/ endpointValue ] ) => {
 			if ( endpointValue && endpoint.includes( endpointKey ) ) {
 				// Assuming it is a specific endpoint.
-				const oldData = JSON.parse( endpointValue ),
+				const oldData = endpointValue,
 					pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
 					pureEndpointParts = pureEndpoint.split( '/' ),
 					isComponentUpdate = 1 === pureEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace();
@@ -181,18 +179,69 @@ export default class Cache {
 	 *
 	 * Delete endpoint from storage.
 	 *
-	 * @param {string} endpoint
+	 * TODO: Create tests for the new logic.
 	 *
-	 * @return {boolean}
+	 * @param {RequestData} requestData
+	 *
+	 * @return {boolean} is deleted
 	 */
-	delete( endpoint ) {
+	delete( requestData ) {
+		$e.data.validateRequestData( requestData );
+
 		let result = false;
 
-		for ( const key in this.storage.getAll() ) {
-			if ( key === endpoint ) {
-				this.storage.removeItem( endpoint );
-				result = true;
-				break;
+		const componentName = requestData.component.getNamespace();
+
+		if ( componentName !== requestData.endpoint ) {
+			const oldData = this.storage.getItem( componentName ),
+				newData = {};
+
+			if ( null === oldData ) {
+				return false;
+			}
+
+			const pureEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
+				pureEndpointParts = pureEndpoint.split( '/' ),
+				lastEndpointPart = pureEndpointParts[ pureEndpointParts.length - 1 ];
+
+				pureEndpointParts.reduce( ( accumulator, pureEndpointPart ) => {
+					if ( pureEndpointPart === lastEndpointPart ) {
+						// Null, means delete.
+						accumulator[ pureEndpointPart ] = null;
+					} else {
+						accumulator[ pureEndpointPart ] = {};
+					}
+					return accumulator[ pureEndpointPart ];
+				}, newData );
+
+			if ( Object.keys( oldData ).length ) {
+				const deleteKeys = ( target, nullsObject ) => {
+					if ( nullsObject ) {
+						Object.keys( nullsObject ).forEach( ( key ) => {
+							if ( nullsObject[ key ] && 'object' === typeof nullsObject[ key ] ) {
+								deleteKeys( nullsObject[ key ], target[ key ] );
+							} else if ( null === nullsObject[ key ] ) {
+								delete target[ key ];
+								result = true;
+							}
+						} );
+					} else {
+						// Means need to clear all the object.
+						Object.keys( target ).forEach( ( key ) => delete target[ key ] );
+					}
+
+					return target;
+				};
+
+				this.storage.setItem( componentName, deleteKeys( oldData, newData ) );
+			}
+		} else {
+			for ( const key in this.storage.getAll() ) {
+				if ( key === requestData.endpoint ) {
+					this.storage.removeItem( requestData.endpoint );
+					result = true;
+					break;
+				}
 			}
 		}
 

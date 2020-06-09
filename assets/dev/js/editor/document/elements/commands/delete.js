@@ -58,6 +58,8 @@ export class Delete extends CommandHistory {
 			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 			elementor.channels.data.trigger( 'element:after:remove', container.model );
 
+			this.deleteCache( container );
+
 			container.panel.refresh();
 		} );
 
@@ -70,6 +72,18 @@ export class Delete extends CommandHistory {
 
 	isDataChanged() {
 		return true;
+	}
+
+	deleteCache( container ) {
+		const documentId = container.document.id,
+			elementId = container.id,
+			component = $e.components.get( 'editor/documents' ),
+			command = 'editor/documents/elements';
+
+		$e.data.deleteCache( component, command, {
+			documentId,
+			elementId,
+		} );
 	}
 }
 
