@@ -1,15 +1,33 @@
+* {
+	box-sizing: border-box;
+}
+
 .elementor-app__main {
 	display: flex;
+	background-color: #F1F3F5;
 }
 
 .elementor-app__sidebar {
+	background-color: rgba(255, 255, 255, 0.5);
 	width: 30%;
+	max-width: 275px;
+	flex-grow: 0;
 }
 
 .elementor-app__content {
-	width: 70%;
+	flex-grow: 1;
+	padding: 2.8125rem;
+	height: 100%;
+	overflow: scroll;
 }
 
 .elementor-screen-only {
 	display: none;
+}
+
+.dialog-type-lightbox:not(.elementor-popup-modal) {
+	.dialog-message.elementor-app__main {
+		text-align: unset;
+		padding: 0;
+	}
 }

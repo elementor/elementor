@@ -22,29 +22,10 @@ const moduleRules = {
 		// 	}
 		// },
 		{
-			test: /\.(s)?css$/i,
-			exclude: /node_modules/,
-			use: [
-				'style-loader',
-				{
-					loader: 'css-loader',
-					options: {
-						sourceMap: true,
-					},
-				},
-				{
-					loader: 'sass-loader',
-					options: {
-						sourceMap: true,
-					},
-				},
-			],
-		},
-		{
-			test: /\.(png|jpg|gif|svg)$/i,
+			test: /core[/\\]app.*\.(s)?css$/i,
 			use: [
 				{
-					loader: 'url-loader',
+					loader: './loaders/app-imports.js',
 				},
 			],
 		},
@@ -122,7 +103,7 @@ const webpackConfig = {
 		'@elementor/app-ui': 'elementorAppPackages.appUi',
 		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
 		'@elementor/router': 'elementorAppPackages.router',
-	}
+	},
 };
 
 const webpackProductionConfig = {

@@ -5,18 +5,22 @@
 
 // Example of a global token
 $global-portrait-image-aspect-ratio: calc(1.045 * 100%);
+$global-portrait-image-aspect-ratio: calc(1.045 * 100%);
+$global-color-dark: #6D7882;
 
 // Local API. Will consume global tokens
-$card-background-color: #fff;
-$card-box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+$card-background-color: rgba(255,255,255,0.5);
+$card-box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 $card-border-radius: 3px;
 
 $card-header-padding-y: 1rem;
 $card-header-padding-x: 0.625rem;
 $card-header-border: solid 1px #e3e3e3;
 
-$card-headline-color: #555;
+$card-headline-color: $global-color-dark;
 $card-headline-font-size: 0.75rem;
+$card-headline-font-weight: 500;
+$card-headline-font-family: Roboto sans-serif;
 $card-headline-line-height: 1;
 
 $card-body-padding-y: 0.625rem;
@@ -46,6 +50,7 @@ $card-image-overlay-background-color: rgba(0,0,0,0.5);
 	&__headline {
 		color: $card-headline-color;
 		font-size: $card-headline-font-size;
+		font-weight: $card-headline-font-weight;
 		line-height: $card-headline-line-height;
 	}
 
@@ -59,14 +64,20 @@ $card-image-overlay-background-color: rgba(0,0,0,0.5);
 		background-color: $card-figure-background-color;
 		position: relative;
 		padding-bottom: $card-figure-padding-bottom;
+		overflow: scroll;
+		height: 0;
 
 		img {
-			width: 100%;
+			top: 0;
+			left: 0;
+			position: relative;
 		}
 	}
 
 	&__image {
-		position: absolute;
+		width: 100%;
+		object-fit: contain;
+		object-position: top;
 	}
 
 	&__image-overlay {

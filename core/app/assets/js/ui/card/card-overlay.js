@@ -2,7 +2,7 @@ import './card.scss';
 
 export default function CardOverlay( props ) {
 	return (
-		<div className={ `card__overlay ${ props.className }` }>
+		<div className={ `card__image-overlay ${ props.className }` }>
 			{ props.children }
 		</div>
 	);
