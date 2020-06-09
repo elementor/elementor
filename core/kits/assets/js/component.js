@@ -15,10 +15,10 @@ export default class extends $e.modules.ComponentBase {
 				icon: 'eicon-site-identity',
 				helpUrl: 'http://go.elementor.com/panel-site-identity',
 			},
-			'global-style': {
+			'colors-and-typography': {
 				title: elementor.translate( 'Colors & Typography' ),
 				icon: 'eicon-colors-typography',
-				helpUrl: 'http://go.elementor.com/panel-global-style',
+				helpUrl: 'http://go.elementor.com/panel-colors-and-typography',
 			},
 			lightbox: {
 				title: elementor.translate( 'Lightbox' ),
