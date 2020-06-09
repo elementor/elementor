@@ -51,7 +51,7 @@ export default class extends elementorModules.editor.utils.Module {
 			};
 		}
 
-		if ( 'popover_toggle' === view.options.model.get( 'type' ) && ! isGlobalPanelInstance ) {
+		if ( 'popover_toggle' === view.options.model.get( 'type' ) && 'typography' === view.options.model.get( 'groupType' ) && ! isGlobalPanelInstance ) {
 			behaviors.globals = {
 				behaviorClass: GlobalControlSelect,
 				popoverTitle: elementor.translate( 'global_text_styles_title' ),
