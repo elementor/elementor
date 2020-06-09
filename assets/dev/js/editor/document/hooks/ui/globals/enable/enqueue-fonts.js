@@ -9,10 +9,6 @@ export class EnqueueFonts extends After {
 		return 'enqueue-fonts';
 	}
 
-	getConditions( args ) {
-		return Object.values( args.settings ).some( ( setting ) => setting.includes( 'typography' ) );
-	}
-
 	apply( args ) {
 		const { settings } = args;
 
