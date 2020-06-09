@@ -154,51 +154,6 @@ export default class extends ControlBaseDataView {
 
 	// TODO: Replace placeholders with real global colors
 	async getGlobalsList() {
-		/*return {
-			Primary: {
-				id: 'primary',
-				commandName: 'globals/colors',
-				name: 'Primary',
-				value: '#4631DA',
-			},
-			Secondary: {
-				id: 'secondary',
-				commandName: 'globals/colors',
-				name: 'Secondary',
-				value: '#71D7F7',
-			},
-			Text: {
-				id: 'text',
-				commandName: 'globals/colors',
-				name: 'Text',
-				value: '#495157',
-			},
-			Accent: {
-				id: 'accent',
-				commandName: 'globals/colors',
-				name: 'Accent',
-				value: '#A4AFB7',
-			},
-			OrangeRed: {
-				id: 'orange-red',
-				commandName: 'globals/colors',
-				name: 'Orange Red',
-				value: '#FF650E',
-			},
-			Crimson: {
-				id: 'crimson',
-				commandName: 'globals/colors',
-				name: 'Crimson',
-				value: '#F3113A',
-			},
-			GrassGreen: {
-				id: 'grass-green',
-				commandName: 'globals/colors',
-				name: 'Grass Green',
-				value: '#048647',
-			},
-		};*/
-
 		const result = await $e.data.get( 'globals/colors' );
 
 		return result.data;

@@ -113,57 +113,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
 	async getGlobalsList() {
-		/*return {
-			primary: {
-				name: 'Primary',
-				value: 'globals/typography/primary',
-				fontFamily: 'Varela',
-				fontSize: '34px',
-				fontWeight: 'normal',
-				transform: 'none',
-				fontStyle: 'normal',
-				textDecoration: 'none',
-				lineHeight: 'inherit',
-				letterSpacing: 'inherit',
-			},
-			secondary: {
-				name: 'Secondary',
-				value: 'globals/typography/secondary',
-				fontFamily: 'Varela',
-				fontSize: '28px',
-				fontWeight: 'normal',
-				transform: 'none',
-				fontStyle: 'normal',
-				textDecoration: 'none',
-				lineHeight: 'inherit',
-				letterSpacing: 'inherit',
-			},
-			text: {
-				name: 'Text',
-				value: 'globals/typography/text',
-				fontFamily: 'Varela',
-				fontSize: '15px',
-				fontWeight: 'normal',
-				transform: 'none',
-				fontStyle: 'normal',
-				textDecoration: 'none',
-				lineHeight: 'inherit',
-				letterSpacing: 'inherit',
-			},
-			accent: {
-				name: 'Accent',
-				value: 'globals/typography/accent',
-				fontFamily: 'Varela',
-				fontSize: '12px',
-				fontWeight: 'normal',
-				transform: 'none',
-				fontStyle: 'normal',
-				textDecoration: 'none',
-				lineHeight: 'inherit',
-				letterSpacing: 'inherit',
-			},
-		};*/
-
 		const result = await $e.data.get( 'globals/typography' );
 
 		return result.data;
