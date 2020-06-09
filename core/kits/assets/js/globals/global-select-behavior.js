@@ -56,7 +56,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.view.setOptions( 'addButtonActive', false );
 		this.view.setOptions( 'clearButtonActive', true );
 
-		this.setSelectBoxText( globalMeta.title );
+		this.setSelectBoxText( globalData.title );
 
 		this.toggleSelect();
 	}
