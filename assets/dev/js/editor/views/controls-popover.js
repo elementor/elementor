@@ -12,10 +12,8 @@ export default class ControlsPopover {
 
 		this.popoverToggleView = child._parent.children.findByIndex( child._index - 1 );
 
-		const globalConfig = this.popoverToggleView.model.get( 'global' );
-
-		if ( globalConfig?.active && 'typography' === this.child.model.attributes.groupType ) {
-			// Add the "Typography" header to the popover
+		// Add the "Typography" header to the popover
+		if ( 'typography' === this.child.model.attributes.groupType ) {
 			this.createPopoverHeader();
 		}
 	}
@@ -49,7 +47,11 @@ export default class ControlsPopover {
 		this.$headerControlsWrapper.append( $resetLabel );
 		this.$popoverHeader.append( this.$headerControlsWrapper );
 
-		this.createAddButton();
+		const globalConfig = this.popoverToggleView.model.get( 'global' );
+
+		if ( globalConfig?.active ) {
+			this.createAddButton();
+		}
 
 		this.$popover
 			.prepend( this.$popoverHeader )
