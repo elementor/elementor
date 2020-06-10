@@ -41,6 +41,11 @@ export default class extends RepeaterRow {
 				.find( '.elementor-control-input-wrapper' )
 				.append( this.getRemoveButton() );
 		}
+
+		this.ui.removeButton.tipsy( {
+			title: () => elementor.translate( 'delete_global_color' ),
+			gravity: () => 's',
+		} );
 	}
 
 	onModelChange( model ) {
