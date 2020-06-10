@@ -24,5 +24,4 @@ export default class extends Repeater {
 
 		textControlView.ui.input.val( `${ elementor.translate( 'new_item' ) } #${ rowView.itemIndex }` );
 	}
-
 }
