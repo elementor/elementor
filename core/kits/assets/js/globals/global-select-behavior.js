@@ -56,7 +56,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.toggleSelect();
 	}
 
-	onUpdateSelectBoxText() {
+	onValueTypeChange() {
+		this.updateSelectBoxText();
+	}
+
+	updateSelectBoxText() {
 		const value = this.view.getControlValue(),
 			globalValue = this.getGlobalValue();
 
@@ -72,21 +76,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} else {
 			// If there is no value, set the text as default
 			selectBoxText = elementor.translate( 'default' );
-		}
-
-		this.ui.globalControlSelected.html( selectBoxText );
-	}
-
-	onHandleGlobalSelectBoxState( value ) {
-		let selectBoxText = 'Default';
-
-		if ( 'custom' === value ) {
-			selectBoxText = elementor.translate('custom' );
-		} else if ( 'default' === value ) {
-			selectBoxText = elementor.translate('default' );
-		} else {
-			// When a global is set, set the select box text to the global's name
-			selectBoxText = value;
 		}
 
 		this.ui.globalControlSelected.html( selectBoxText );
@@ -164,7 +153,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				// If there is a global value applied to the control, set the global select box text to display its name
 				if ( globalValue ) {
-					this.onUpdateSelectBoxText();
+					this.updateSelectBoxText();
 				}
 			},
 			() => {
@@ -264,7 +253,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			settings: settings,
 		} );
 
-		this.onUpdateSelectBoxText(); // control value still old.
+		this.onValueTypeChange(); // control value still old.
 	}
 
 	// The unset method is triggered from the controls via triggerMethod
@@ -279,7 +268,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			settings: settings,
 		} )
 			.then( () => {
-				this.onUpdateSelectBoxText();
+				this.updateSelectBoxText();
 				this.view.setOptions( 'addButtonActive', false );
 			} );
 	}

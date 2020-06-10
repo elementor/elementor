@@ -207,14 +207,14 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerChange() {
+		this.setValue( this.colorPicker.getColor() );
+
 		if ( this.getGlobalValue() ) {
 			this.triggerMethod( 'unsetGlobalValue' );
 		}
 
-		this.setValue( this.colorPicker.getColor() );
-
 		if ( ! this.isCustom ) {
-			this.triggerMethod( 'updateSelectBoxText' );
+			this.triggerMethod( 'valueTypeChange' );
 
 			this.isCustom = true;
 		}
@@ -236,7 +236,7 @@ export default class extends ControlBaseDataView {
 		} else {
 			this.isCustom = false;
 
-			this.triggerMethod( 'updateSelectBoxText' );
+			this.triggerMethod( 'valueTypeChange' );
 		}
 
 		this.setValue( '' );
