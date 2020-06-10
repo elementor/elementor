@@ -5,6 +5,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		const ui = ControlChooseView.prototype.ui.apply( this, arguments );
 
 		ui.popoverToggle = '.elementor-control-popover-toggle-toggle';
+		ui.resetInput = '.elementor-control-popover-toggle-reset';
 
 		return ui;
 	}
@@ -21,6 +22,10 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		}
 
 		this.$el.next( '.elementor-controls-popover' ).toggle();
+	}
+
+	resetControlValue() {
+		this.ui.resetInput.trigger( 'click' );
 	}
 
 	getCommand() {
