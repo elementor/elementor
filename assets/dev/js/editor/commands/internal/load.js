@@ -32,6 +32,8 @@ export class Load extends CommandInternalBase {
 		// Reference container back to document.
 		document.container.document = document;
 
+		this.setCache( document );
+
 		elementor.heartbeat = new Heartbeat( document );
 
 		const isOldPageVersion = elementor.config.document.version &&
@@ -46,6 +48,25 @@ export class Load extends CommandInternalBase {
 		}
 
 		return document;
+	}
+
+	setCache( document ) {
+		const { elements = {} } = document.config;
+
+		// Convect to cache format.
+		Object.entries( elements ).forEach( ( [ key, element ] ) => {
+			elements[ element.id ] = element;
+
+			delete elements[ key ];
+		} );
+
+		const component = $e.components.get( 'editor/documents' ),
+			command = 'editor/documents/elements',
+			query = {
+				documentId: document.id,
+			};
+
+		$e.data.setCache( component, command, query, elements );
 	}
 }
 

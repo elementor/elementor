@@ -14,7 +14,6 @@ export default class Component extends ComponentBase {
 			return;
 		}
 
-		elementor.on( 'document:before:preview', this.onDocumentPreview.bind( this ) );
 		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
 	}
 
@@ -35,25 +34,6 @@ export default class Component extends ComponentBase {
 
 	defaultHooks() {
 		return this.importHooks( hooks );
-	}
-
-	onDocumentPreview( document ) {
-		const { elements = {} } = document.config;
-
-		// Convect to cache format.
-		Object.entries( elements ).forEach( ( [ key, element ] ) => {
-			elements[ element.id ] = element;
-
-			delete elements[ key ];
-		} );
-
-		const component = $e.components.get( 'editor/documents' ),
-			command = 'editor/documents/elements',
-			query = {
-				documentId: document.id,
-			};
-
-		$e.data.setCache( component, command, query, elements );
 	}
 
 	onElementorLoaded() {
