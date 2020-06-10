@@ -265,6 +265,10 @@ class Widgets_Manager {
 	public function ajax_get_widget_types_controls_config( array $data ) {
 		$config = [];
 
+		// Init kit controls in order to avoid init kit group control from within another group control.
+		// Todo: find a better solution.
+		Plugin::$instance->kits_manager->get_active_kit_for_frontend()->get_controls();
+
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
 			if ( isset( $data['exclude'][ $widget_key ] ) ) {
 				continue;
