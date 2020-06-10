@@ -242,6 +242,12 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} else {
 			// If the active text style is NOT a global, enable globals and apply the selected global
 			command = 'document/globals/enable';
+
+			// If the control didn't have a global active, and the control has a toggle button (e.g. group controls),
+			// make sure activating the global disables the control's toggle.
+			if ( this.view.resetControlValue ) {
+				this.view.resetControlValue();
+			}
 		}
 
 		// colors / typography
