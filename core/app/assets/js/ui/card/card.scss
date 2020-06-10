@@ -3,39 +3,53 @@
 	display: flex;
 }
 
-// Example of a global token
-$global-portrait-image-aspect-ratio: calc(1.045 * 100%);
-$global-portrait-image-aspect-ratio: calc(1.045 * 100%);
-$global-color-dark: #6D7882;
+// Global tokens
+$color-stack-gray-pale-sky: #6D7882;
+$color-stack-gray-athens-gray: #f1f3f5;
+$stock-color-white: #fff;
+$stock-color-white-opacity-5: rgba(255,255,255,0.5);
+$stock-color-black-opacity-2: rgba(0,0,0,0.2);
+
+$global-portrait-image-aspect-ratio: calc(0.956 * 100%);
+
+$global-border-radius-default: 3px;
+$spacing: 10px;
+$box-shadow-default: 0 4px 10px rgba(0,0,0,0.05);
+$type-font-family: Roboto sans-serif;
+$transition-duration-default: 0.3s;
 
 // Local API. Will consume global tokens
-$card-background-color: rgba(255,255,255,0.5);
-$card-box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-$card-border-radius: 3px;
+$card-background-color: $stock-color-white-opacity-5;
+$card-background-color-hover: $stock-color-white;
+$card-box-shadow: $box-shadow-default;
+$card-border-radius: $global-border-radius-default;
+$card-transition: $transition-duration-default;
 
-$card-header-padding-y: 1rem;
-$card-header-padding-x: 0.625rem;
-$card-header-border: solid 1px #e3e3e3;
+$card-header-padding-y: $spacing;
+$card-header-padding-x: $spacing;
+$card-header-border: solid 1px $color-stack-gray-athens-gray;
 
-$card-headline-color: $global-color-dark;
+$card-headline-color: $color-stack-gray-pale-sky;
 $card-headline-font-size: 0.75rem;
 $card-headline-font-weight: 500;
-$card-headline-font-family: Roboto sans-serif;
-$card-headline-line-height: 1;
+$card-headline-font-family: $type-font-family;
+$card-headline-line-height: $spacing * 2;
 
-$card-body-padding-y: 0.625rem;
-$card-body-padding-x: 0.625rem;
+$card-body-padding-y: $spacing;
+$card-body-padding-x: $spacing;
 
-$card-figure-background-color: #eee;
+$card-figure-background-color: $color-stack-gray-athens-gray;
 $card-figure-padding-bottom: $global-portrait-image-aspect-ratio;
 
-$card-image-overlay-background-color: rgba(0,0,0,0.5);
+$card-image-overlay-background-color: $stock-color-black-opacity-2;
+$card-image-overlay-transition: $transition-duration-default;
 
 
 .card {
 	background-color: $card-background-color;
 	box-shadow: $card-box-shadow;
 	border-radius: $card-border-radius;
+	transition: $card-transition;
 
 	&__header {
 		padding: $card-header-padding-y $card-header-padding-x;
@@ -43,7 +57,7 @@ $card-image-overlay-background-color: rgba(0,0,0,0.5);
 	}
 
 	/*
-	 TBD: Optionaly remove headline styling in favor of a global atom
+	 TBD: Optionally remove headline styling in favor of a global atom
 	 depending on variation needs
 	*/
 
@@ -56,7 +70,6 @@ $card-image-overlay-background-color: rgba(0,0,0,0.5);
 
 	&__body {
 		padding: $card-body-padding-y $card-body-padding-x;
-
 	}
 
 	// figure is here to assist with aspect ratio, and dealing with different image sizes and bg-color for shorter images e.g. header, footer.
@@ -66,18 +79,15 @@ $card-image-overlay-background-color: rgba(0,0,0,0.5);
 		padding-bottom: $card-figure-padding-bottom;
 		overflow: scroll;
 		height: 0;
-
-		img {
-			top: 0;
-			left: 0;
-			position: relative;
-		}
 	}
 
 	&__image {
 		width: 100%;
 		object-fit: contain;
 		object-position: top;
+		position: relative;
+		top: 0;
+		left: 0;
 	}
 
 	&__image-overlay {
@@ -87,6 +97,7 @@ $card-image-overlay-background-color: rgba(0,0,0,0.5);
 		width: 100%;
 		height: 100%;
 		opacity: 0;
+		transition: $card-image-overlay-transition;
 
 		&:hover {
 			opacity: 1;
@@ -94,6 +105,10 @@ $card-image-overlay-background-color: rgba(0,0,0,0.5);
 	}
 
 	&__footer {}
+
+	&:hover {
+		background-color: $card-background-color-hover;
+	}
 
 	h1 {
 		margin: 0;
