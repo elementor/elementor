@@ -623,7 +623,7 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
-							'enable_unfiltered_files_upload' => [
+							'unfiltered_files_upload' => [
 								'label' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
