@@ -12,9 +12,9 @@ export default class extends RepeaterRow {
 	}
 
 	updateColorValue() {
-		const color = this.model.get( 'color' );
+		const colorData = this.model.attributes;
 
-		this.$colorValue.text( color );
+		this.$colorValue.text( colorData.value );
 	}
 
 	getRemoveButton() {
