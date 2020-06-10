@@ -50,7 +50,9 @@ class Colors_And_Typography extends Tab_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
 				],
-				'global' => true,
+				'global' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -99,6 +101,9 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'name' => 'styles',
 				'label' => '',
+				'global' => [
+					'active' => false,
+				],
 				'fields_options' => [
 					'font_family' => [
 						'selectors' => [

@@ -10,9 +10,11 @@ export default class ControlsPopover {
 
 		this.$popover.append( child.$el );
 
-		if ( 'typography' === this.child.model.attributes.groupType ) {
-			this.popoverToggleView = this.child.options.container.panel.getControlView( this.groupControlName );
+		this.popoverToggleView = child._parent.children.findByIndex( child._index - 1 );
 
+		const globalConfig = this.popoverToggleView.model.get( 'global' );
+
+		if ( globalConfig?.active && 'typography' === this.child.model.attributes.groupType ) {
 			// Add the "Typography" header to the popover
 			this.createPopoverHeader();
 		}

@@ -29,7 +29,7 @@ class AddDefaultGlobals extends Processor\After {
 			$element_controls = $element_instance->get_controls();
 
 			foreach ( $element_controls as $control_name => $control ) {
-				if ( ! empty( $control['global'] ) ) {
+				if ( ! empty( $control['global']['default'] ) ) {
 					$element_settings = &$elements[ $element_key ]['settings'];
 
 					// Add default globals only when __globals__ does not exist.

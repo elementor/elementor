@@ -294,6 +294,9 @@ class Group_Control_Typography extends Group_Control_Base {
 				'settings' => [
 					'render_type' => 'ui',
 					'groupType' => 'typography',
+					'global' => [
+						'active' => true,
+					],
 				],
 			],
 		];
