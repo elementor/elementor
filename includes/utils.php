@@ -566,14 +566,4 @@ class Utils {
 
 		return $result;
 	}
-
-	public static function get_default_fonts() {
-		$default_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
-
-		if ( $default_fonts ) {
-			$default_fonts = ', ' . $default_fonts;
-		}
-
-		return $default_fonts;
-	}
 }
