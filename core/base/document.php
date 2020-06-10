@@ -2,8 +2,6 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Settings\Manager;
-use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Data\Manager as DataManager;
 use Elementor\Plugin;
@@ -1098,30 +1096,6 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $last_edited;
-	}
-
-	public function add_repeater_row( $control_id, $item ) {
-		$meta_key = PageManager::META_KEY;
-		$document_settings = $this->get_meta( $meta_key );
-
-		if ( ! $document_settings ) {
-			$document_settings = [];
-		}
-
-		if ( ! isset( $document_settings[ $control_id ] ) ) {
-			$document_settings[ $control_id ] = [];
-		}
-
-		$document_settings[ $control_id ][] = $item;
-
-		$page_settings_manager = Manager::get_settings_managers( 'page' );
-		$page_settings_manager->save_settings( $document_settings, $this->get_id() );
-
-		$autosave = $this->get_autosave();
-
-		if ( $autosave ) {
-			$autosave->add_repeater_row( $control_id, $item );
-		}
 	}
 
 	/**

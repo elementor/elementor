@@ -6,8 +6,8 @@ export class KitDeleteGlobalsCache extends After {
 	}
 
 	getConditions( args ) {
-		const { document = elementor.documents.getCurrent() } = args;
-		return 'kit' === document.config.type;
+		const { status, document = elementor.documents.getCurrent() } = args;
+		return 'publish' === status && 'kit' === document.config.type;
 	}
 
 	getId() {
@@ -16,7 +16,7 @@ export class KitDeleteGlobalsCache extends After {
 
 	apply( args ) {
 		// After kit updates - remove globals from cache and force re-request from server.
-		$e.data.deleteCache( 'globals/index' );
+		$e.data.deleteCache( $e.components.get( 'globals' ), 'globals/index' );
 	}
 }
 
