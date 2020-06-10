@@ -27,7 +27,11 @@ module.exports = Marionette.Behavior.extend( {
 		this.ui.dynamicSwitcher = $dynamicSwitcher;
 
 		if ( 'color' === this.view.model.get( 'type' ) ) {
-			this.onMoveDynamicSwitcherToColorPicker();
+			if ( this.view.colorPicker ) {
+				this.onMoveDynamicSwitcherToColorPicker();
+			} else {
+				setTimeout( () => this.onMoveDynamicSwitcherToColorPicker() );
+			}
 		}
 
 		// Add a Tipsy Tooltip to the Dynamic Switcher
@@ -40,13 +44,11 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onMoveDynamicSwitcherToColorPicker: function() {
-		if ( this.view.colorPicker ) {
-			const $colorPickerToolsContainer = this.view.colorPicker.$pickerToolsContainer;
+		const $colorPickerToolsContainer = this.view.colorPicker.$pickerToolsContainer;
 
-			this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
+		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
 
-			$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
-		}
+		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
 	},
 
 	toggleDynamicClass: function() {
