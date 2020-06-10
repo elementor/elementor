@@ -1,5 +1,7 @@
 import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
+import Icon from 'elementor-app/ui/atoms/icon';
+import Typography from 'elementor-app/ui/atoms/typography';
 
 export default class Button extends React.Component {
 	static propTypes = {
@@ -29,11 +31,11 @@ export default class Button extends React.Component {
 	getIcon() {
 		if ( this.props.icon ) {
 			const tooltip = this.props.tooltip || this.props.text;
-			const icon = <i className={ this.props.icon } aria-hidden="true" title={ tooltip } />;
+			const icon = <Icon className={ this.props.icon } aria-hidden="true" title={ tooltip } />;
 			let screenReaderText = '';
 
 			if ( this.props.hideText ) {
-				screenReaderText = <span className="elementor-screen-only" >{ tooltip }</span>;
+				screenReaderText = <Typography className="elementor-screen-only" >{ tooltip }</Typography>;
 			}
 
 			return (

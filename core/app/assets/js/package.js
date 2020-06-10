@@ -1,4 +1,6 @@
 // Alphabetical order.
+import Typography from './ui/atoms/typography';
+import Icon from './ui/atoms/icon';
 import Button from './ui/molecules/button';
 import Card from './ui/card/card';
 import CardBody from './ui/card/card-body';
@@ -9,6 +11,8 @@ import NotFound from './pages/not-found';
 import Page from './layout/page';
 
 export default {
+	Typography,
+	Icon,
 	Button,
 	NotFound,
 	Page,

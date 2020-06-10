@@ -117,4 +117,9 @@ $card-image-overlay-transition: $transition-duration-default;
 	figure{
 		margin: 0;
 	}
+
+	&__info-icon {
+		color: $card-info-icon-color;
+
+	}
 }
