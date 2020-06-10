@@ -9,6 +9,10 @@ export default class VimeoLoader extends BaseLoader {
 		return /^(?:https?:\/\/)?(?:www|player\.)?(?:vimeo\.com\/)?(?:video\/)?(\d+)([^?&#"'>]?)/;
 	}
 
+	getExternalURLRegex() {
+		return /^(?:https?:\/\/)?(?:www|player\.)?(?:vimeo\.com\/external\/)?(\d+)([^.]?)/;
+	}
+
 	isApiLoaded() {
 		return window.Vimeo;
 	}
