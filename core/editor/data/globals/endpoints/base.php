@@ -38,11 +38,11 @@ abstract class Base extends Endpoint {
 			return new \WP_Error( 'invalid_title', 'Invalid title' );
 		}
 
-		$item['_id'] = $id;
-
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$kit->add_repeater_row( 'custom_' . $this->get_name(), $item );
+		$db_item = $this->convert_db_format( $item );
+
+		$kit->add_repeater_row( 'custom_' . $this->get_name(), $db_item );
 
 		unset( $item['_id'] );
 		$item['id'] = $id;
@@ -51,4 +51,10 @@ abstract class Base extends Endpoint {
 	}
 
 	abstract protected function get_kit_items();
+
+	/**
+	 * @param array $item frontend format.
+	 * @return array backend format.
+	 */
+	abstract protected function convert_db_format( $item );
 }

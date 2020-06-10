@@ -36,4 +36,12 @@ class Colors extends Base {
 
 		return $result;
 	}
+
+	protected function convert_db_format( $item ) {
+		return [
+			'_id' => $item['id'],
+			'title' => $item['title'],
+			'value' => $item['value'],
+		];
+	}
 }
