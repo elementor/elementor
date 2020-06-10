@@ -40,8 +40,9 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
+		// Color Value
 		$repeater->add_control(
-			'color',
+			'value',
 			[
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
