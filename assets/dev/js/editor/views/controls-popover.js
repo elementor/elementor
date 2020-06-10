@@ -27,7 +27,7 @@ export default class ControlsPopover {
 	createPopoverHeader() {
 		const $popoverToggleControl = this.$popover.prev(),
 			// Get the existing reset button
-			$resetInput = $popoverToggleControl.find( '.elementor-control-popover-toggle-reset' ),
+			//$resetInput = $popoverToggleControl.find( '.elementor-control-popover-toggle-reset' ),
 			$resetLabel = $popoverToggleControl.find( '.elementor-control-popover-toggle-reset-label' );
 
 		this.$popoverHeader = jQuery( '<div>', { class: 'e-group-control-header' } )
@@ -36,7 +36,7 @@ export default class ControlsPopover {
 		this.$headerControlsWrapper = jQuery( '<div>', { class: 'e-control-tools' } );
 
 		// Hide the reset "radio button"
-		$resetInput.hide();
+		//$resetInput.hide();
 
 		// Give the reset button the control tool styling,
 		// and add a click event so clicking on it closes the popover
@@ -45,7 +45,8 @@ export default class ControlsPopover {
 			.on( 'click', () => this.onResetButtonClick() );
 
 		// Move the popover toggle reset button into the popover header
-		this.$headerControlsWrapper.append( $resetInput, $resetLabel );
+		//this.$headerControlsWrapper.append( $resetInput, $resetLabel );
+		this.$headerControlsWrapper.append( $resetLabel );
 		this.$popoverHeader.append( this.$headerControlsWrapper );
 
 		this.createAddButton();
