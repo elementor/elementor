@@ -340,7 +340,7 @@ module.exports = {
 						has = true;
 						return false;
 					}
-					if ( 'repeater' === controlData.type ) {
+					if ( controlData.is_repeater ) {
 						has = hasControlOfType( controlData.fields, type );
 						if ( has ) {
 							return false;
