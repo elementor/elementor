@@ -266,6 +266,8 @@ export default class extends ControlBaseDataView {
 	}
 
 	onBeforeDestroy() {
-		this.colorPicker.destroy();
+		if ( this.colorPicker ) {
+			this.colorPicker.destroy();
+		}
 	}
 }
