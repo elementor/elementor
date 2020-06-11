@@ -56,7 +56,13 @@ class Typography extends Base {
 			'title' => $item['title'],
 		];
 
-		$db_format = array_merge( $item['value'], $db_format );
+		$values = [];
+
+		foreach ( $item['value'] as $key => $value ) {
+			$values[ 'styles_' . $key ] = $value;
+		}
+
+		$db_format = array_merge( $values, $db_format );
 
 		return $db_format;
 	}
