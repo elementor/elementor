@@ -28,7 +28,7 @@ class Typography extends Base {
 
 		foreach ( $items as $index => &$item ) {
 			foreach ( $item as $setting => $value ) {
-				$new_setting = str_replace( 'typography_', '', $setting, $count );
+				$new_setting = str_replace( 'styles_', '', $setting, $count );
 				if ( $count ) {
 					$item[ $new_setting ] = $value;
 					unset( $item[ $setting ] );
