@@ -16,13 +16,11 @@ export default class extends Repeater {
 		return templateHelpers;
 	}
 
-	onButtonAddRowClick() {
-		super.onButtonAddRowClick();
+	getDefaults() {
+		const defaults = super.getDefaults();
 
-		// Get the text input for the new global
-		const rowView = this.children.last(),
-			textControlView = rowView.children.findByModel( rowView.collection.findWhere( { type: 'text' } ) );
+		defaults.title = `${ elementor.translate( 'new_item' ) } #${ this.children.length + 1 }`;
 
-		textControlView.ui.input.val( `${ elementor.translate( 'new_item' ) } #${ rowView.itemIndex }` );
+		return defaults;
 	}
 }
