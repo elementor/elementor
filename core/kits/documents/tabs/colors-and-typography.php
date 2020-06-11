@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Global_Style extends Tab_Base {
+class Colors_And_Typography extends Tab_Base {
 
 	const COLOR_PRIMARY = 'globals/colors?id=primary';
 	const COLOR_SECONDARY = 'globals/colors?id=secondary';
@@ -24,7 +24,7 @@ class Global_Style extends Tab_Base {
 	const TYPOGRAPHY_ACCENT = 'globals/typography?id=accent';
 
 	public function get_id() {
-		return 'global-style';
+		return 'colors-and-typography';
 	}
 
 	public function get_title() {

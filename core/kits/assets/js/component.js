@@ -11,22 +11,22 @@ export default class extends $e.modules.ComponentBase {
 	defaultTabs() {
 		return {
 			'site-identity': {
-				title: elementor.translate( 'Site Identity' ),
+				title: elementor.translate( 'site_identity' ),
 				icon: 'eicon-site-identity',
 				helpUrl: 'http://go.elementor.com/panel-site-identity',
 			},
-			'global-style': {
-				title: elementor.translate( 'Colors & Typography' ),
+			'colors-and-typography': {
+				title: elementor.translate( 'colors_and_typography' ),
 				icon: 'eicon-colors-typography',
-				helpUrl: 'http://go.elementor.com/panel-global-style',
+				helpUrl: 'http://go.elementor.com/panel-colors-and-typography',
 			},
 			lightbox: {
-				title: elementor.translate( 'Lightbox' ),
+				title: elementor.translate( 'lightbox' ),
 				icon: 'eicon-lightbox-expand',
 				helpUrl: 'http://go.elementor.com/panel-lightbox',
 			},
 			'layout-settings': {
-				title: elementor.translate( 'Layout Settings' ),
+				title: elementor.translate( 'layout_settings' ),
 				icon: 'eicon-layout-settings',
 				helpUrl: 'http://go.elementor.com/panel-layout-settings',
 			},
