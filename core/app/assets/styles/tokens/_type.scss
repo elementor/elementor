@@ -1,0 +1,51 @@
+// TYPE
+$eps-font-base: 1rem;
+
+// Font sizes registration
+$font-size-10: (0.625 * $eps-font-base); //~10px
+$font-size-12: (0.75 * $eps-font-base); //~12px
+$font-size-13: (0.8125 * $eps-font-base); //~13px
+$font-size-14: (0.875 * $eps-font-base); //~14px
+$font-size-17: (1.0625 * $eps-font-base); //~17px
+$font-size-18: (1.125 * $eps-font-base); //~18px
+$font-size-20: (1.25 * $eps-font-base); //~20px
+$font-size-22: (1.375 * $eps-font-base); //~22px
+$font-size-24: (1.5 * $eps-font-base); //~24px
+$font-size-26: (1.625 * $eps-font-base); //~26
+$font-size-28: (1.75 * $eps-font-base); //~28px
+$font-size-32: (2 * $eps-font-base); //~32px
+$font-size-36: (2.25 * $eps-font-base); //~36px
+$font-size-40: (2.5 * $eps-font-base); //~40px
+$font-size-48: (3 * $eps-font-base); //~48px
+$font-size-56: (3.5 * $eps-font-base); //~56px
+$font-size-60: (3.75 * $eps-font-base); //~60px
+$font-size-64: (4 * $eps-font-base); //~64px
+$font-size-70: (4.375 * $eps-font-base); //~70px
+
+// Line heights
+// Registration (temps)
+$line-height-2: 2; // [$card-headline-line-height,];
+
+// Semantics
+$eps-line-height-flat: 1; //can be hardcoded as 1
+$eps-line-height-base: 1.5;
+$eps-line-height-sm: 1.2;
+$eps-line-height-lg: 1.8;
+
+// scale
+$eps-font-size-display-1: $font-size-70; //70px
+$eps-font-size-display-2: $font-size-64; //64px
+$eps-font-size-display-3: $font-size-60; //60
+$eps-font-size-display-4: $font-size-56; //56
+//
+$eps-font-size-h-1: $font-size-48; //48
+$eps-font-size-h-2: $font-size-32; //32
+$eps-font-size-h-3: $font-size-24; //24
+$eps-font-size-h-4: $font-size-22; //22
+$eps-font-size-h-5: $font-size-20; //20
+$eps-font-size-h-6: $font-size-18; //18
+
+$eps-font-size-text-sm: $font-size-14; //14px
+$eps-font-size-text-xs: $font-size-13; //13px
+$eps-font-size-caption: $font-size-12; //12px
+$eps-font-size-micro: $font-size-10; //10px
