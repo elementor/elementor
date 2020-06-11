@@ -235,7 +235,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var control = this,
 				valueToParse;
 
-			if ( 'repeater' === control.type ) {
+			if ( control.is_repeater ) {
 				valueToParse = settings[ control.name ];
 				valueToParse.forEach( function( value, key ) {
 					valueToParse[ key ] = self.parseDynamicSettings( value, options, control.fields );
