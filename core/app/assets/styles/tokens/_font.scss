@@ -1,0 +1,18 @@
+// Font
+
+//$eps-font-weight-thin: 200;
+//$eps-font-weight-light: 300;
+$eps-font-weight-normal: 400;
+$eps-font-weight-medium: 500;
+$eps-font-weight-bold: 700;
+
+//font face names
+$font-src-roboto: 'roboto';
+
+// generic, check if exist
+$font-family-monospace: monospace;
+$font-family-roboto: Roboto;
+
+$eps-font-family-code: $font-family-monospace;
+$eps-font-family-fallback: $font-family-roboto;
+$eps-font-family-base: $font-family-roboto, $eps-font-family-fallback;

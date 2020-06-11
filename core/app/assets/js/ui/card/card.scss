@@ -1,49 +1,33 @@
-// Example of Utility Class
-.u-flex {
-	display: flex;
-}
+// Card
 
-// Global tokens
-$color-stack-gray-pale-sky: #6D7882;
-$color-stack-gray-athens-gray: #f1f3f5;
-$stock-color-white: #fff;
-$stock-color-white-opacity-5: rgba(255,255,255,0.5);
-$stock-color-black-opacity-2: rgba(0,0,0,0.2);
-
-$global-portrait-image-aspect-ratio: calc(0.956 * 100%);
-
-$global-border-radius-default: 3px;
-$spacing: 10px;
-$box-shadow-default: 0 4px 10px rgba(0,0,0,0.05);
-$type-font-family: Roboto sans-serif;
-$transition-duration-default: 0.3s;
+// this should emulate external packages consumption
+@import "../../../styles/common";
 
 // Local API. Will consume global tokens
-$card-background-color: $stock-color-white-opacity-5;
-$card-background-color-hover: $stock-color-white;
-$card-box-shadow: $box-shadow-default;
-$card-border-radius: $global-border-radius-default;
-$card-transition: $transition-duration-default;
+$card-background-color: rgba($eps-brand-light, $opacity-5);
+$card-background-color-hover: $eps-brand-light;
+$card-box-shadow: $eds-box-shadow;
+$card-border-radius: $eps-radius;
+$card-transition: $eps-transition-duration;
 
-$card-header-padding-y: $spacing;
-$card-header-padding-x: $spacing;
-$card-header-border: solid 1px $color-stack-gray-athens-gray;
+$card-header-padding-y: $eps-spacer;
+$card-header-padding-x: $eps-spacer;
+$card-header-border: $eps-border;
 
-$card-headline-color: $color-stack-gray-pale-sky;
-$card-headline-font-size: 0.75rem;
-$card-headline-font-weight: 500;
-$card-headline-font-family: $type-font-family;
-$card-headline-line-height: $spacing * 2;
+$card-headline-color: $eps-gray-500;
 
-$card-body-padding-y: $spacing;
-$card-body-padding-x: $spacing;
+$card-headline-font-size: $font-size-12;
+$card-headline-font-weight: $eps-font-weight-medium;
+$card-headline-line-height: $line-height-2;
 
-$card-figure-background-color: $color-stack-gray-athens-gray;
-$card-figure-padding-bottom: $global-portrait-image-aspect-ratio;
+$card-body-padding-y: $eps-spacer;
+$card-body-padding-x: $eps-spacer;
 
-$card-image-overlay-background-color: $stock-color-black-opacity-2;
-$card-image-overlay-transition: $transition-duration-default;
+$card-figure-background-color: $eps-gray-200;
+$card-figure-padding-bottom: $ratio-portrait;
 
+$card-image-overlay-background-color: rgba($eps-brand-dark, $opacity-2);
+$card-image-overlay-transition: $card-transition;
 
 .card {
 	background-color: $card-background-color;
@@ -104,7 +88,8 @@ $card-image-overlay-transition: $transition-duration-default;
 		}
 	}
 
-	&__footer {}
+	&__footer {
+	}
 
 	&:hover {
 		background-color: $card-background-color-hover;
@@ -114,12 +99,11 @@ $card-image-overlay-transition: $transition-duration-default;
 		margin: 0;
 	}
 
-	figure{
+	figure {
 		margin: 0;
 	}
 
 	&__info-icon {
-		color: $card-info-icon-color;
-
+		//color: $card-info-icon-color;
 	}
 }
