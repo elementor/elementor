@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Global_Style;
+use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 
 /**
  * Elementor image box widget.
@@ -458,7 +458,9 @@ class Widget_Image_Box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_PRIMARY,
+				],
 			]
 		);
 
@@ -467,7 +469,9 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title',
-				'global' => Global_Style::TYPOGRAPHY_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+				],
 			]
 		);
 
@@ -489,7 +493,9 @@ class Widget_Image_Box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_TEXT,
+				],
 			]
 		);
 
@@ -498,7 +504,9 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description',
-				'global' => Global_Style::TYPOGRAPHY_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 

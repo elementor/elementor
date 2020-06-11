@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Global_Style;
+use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 
 /**
  * Elementor alert widget.
@@ -231,7 +231,9 @@ class Widget_Alert extends Widget_Base {
 			[
 				'name' => 'alert_title',
 				'selector' => '{{WRAPPER}} .elementor-alert-title',
-				'global' => Global_Style::TYPOGRAPHY_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+				],
 			]
 		);
 
@@ -261,7 +263,9 @@ class Widget_Alert extends Widget_Base {
 			[
 				'name' => 'alert_description',
 				'selector' => '{{WRAPPER}} .elementor-alert-description',
-				'global' => Global_Style::TYPOGRAPHY_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 

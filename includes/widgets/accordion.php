@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Global_Style;
+use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 /**
  * Elementor accordion widget.
  *
@@ -290,7 +290,9 @@ class Widget_Accordion extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion-icon, {{WRAPPER}} .elementor-accordion-title' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_PRIMARY,
+				],
 			]
 		);
 
@@ -302,7 +304,9 @@ class Widget_Accordion extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-active .elementor-accordion-icon, {{WRAPPER}} .elementor-active .elementor-accordion-title' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_ACCENT,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_ACCENT,
+				],
 			]
 		);
 
@@ -311,7 +315,9 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-title',
-				'global' => Global_Style::TYPOGRAPHY_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+				],
 			]
 		);
 
@@ -431,7 +437,9 @@ class Widget_Accordion extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-tab-content' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_TEXT,
+				],
 			]
 		);
 
@@ -440,7 +448,9 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-content',
-				'global' => Global_Style::TYPOGRAPHY_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 
