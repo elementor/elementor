@@ -51,13 +51,12 @@ export class Load extends CommandInternalBase {
 	}
 
 	setCache( document ) {
-		const { elements = {} } = document.config;
+		const { elements = {} } = document.config,
+			elementsCache = {};
 
 		// Convect to cache format.
-		Object.entries( elements ).forEach( ( [ key, element ] ) => {
-			elements[ element.id ] = element;
-
-			delete elements[ key ];
+		Object.values( elements ).forEach( ( element ) => {
+			elementsCache[ element.id ] = element;
 		} );
 
 		const component = $e.components.get( 'editor/documents' ),
