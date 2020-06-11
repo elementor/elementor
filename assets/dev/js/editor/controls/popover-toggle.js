@@ -17,7 +17,9 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onPopoverToggleClick() {
-		if ( 'typography' === this.model.get( 'groupType' ) && this.ui.popoverToggle.is( ':checked' ) ) {
+		const globalData = this.model.get( 'global' );
+
+		if ( 'typography' === this.model.get( 'groupType' ) && this.ui.popoverToggle.is( ':checked' ) && globalData?.active ) {
 			this.triggerMethod( 'unsetGlobalValue' );
 		}
 
