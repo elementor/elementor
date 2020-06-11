@@ -11,15 +11,19 @@ import './site-part.scss';
 export default function SitePart( props ) {
 	return (
 		<Card className="site-part">
+			<React.Fragment>
 			<CardHeader>
-				<Typography tagName="h1" className="card__headline">{ props.title }</Typography>
-				<Button text="Info" hideText={ true } Icon="eicons-info" />
+				<React.Fragment>
+					<Typography tagName="h1" className="card__headline">{ props.title }</Typography>
+					<Button text="Info" hideText={true} icon="eicon-info-circle" />
+				</React.Fragment>
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.title } src={ props.urls.thumbnail }>
 					<CardOverlay>{ props.children }</CardOverlay>
 				</CardImage>
 			</CardBody>
+			</React.Fragment>
 		</Card>
 	);
 }
