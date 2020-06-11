@@ -21,8 +21,7 @@ export default class BaseLoader extends elementorModules.ViewModule {
 	}
 
 	getVideoIDFromURL( url ) {
-		const videoRegex = url.includes( 'vimeo.com/external' ) ? this.getExternalURLRegex() : this.getURLRegex(),
-			videoIDParts = url.match( videoRegex );
+		const videoIDParts = url.match( this.getURLRegex() );
 
 		return videoIDParts && videoIDParts[ 1 ];
 	}
