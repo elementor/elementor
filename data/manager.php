@@ -230,7 +230,7 @@ class Manager extends BaseModule {
 		$request = new \WP_REST_Request( $method, $endpoint );
 		$request->set_query_params( $args );
 
-  		return rest_do_request( $request );
+		return rest_do_request( $request );
 	}
 
 	/**
@@ -327,7 +327,7 @@ class Manager extends BaseModule {
 
 		$endpoint = $this->command_to_endpoint( $command, $format, $args );
 
- 		$this->run_processors( $command_processors, Processor\Before::class, [ $args ] );
+		$this->run_processors( $command_processors, Processor\Before::class, [ $args ] );
 
 		$response = $this->run_internal( $endpoint, $args, $method );
 		$result = $response->get_data();
