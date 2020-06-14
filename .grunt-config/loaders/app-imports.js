@@ -3,7 +3,7 @@ const dir = path.resolve( __dirname, '../../' );
 const fs = require('fs');
 
 module.exports = function() {
-	const importsFile = dir + '/core/app/assets/scss/app-imports.scss',
+	const importsFile = dir + '/core/app/assets/styles/app-imports.scss',
 		relativePath = path.relative( path.dirname(importsFile), this.resourcePath ).replace( /\\/g, '/' ),
 		importStatement = `@import "${ relativePath }";`,
 		importContent = fs.readFileSync(importsFile).toString().split("\n"),
@@ -18,4 +18,3 @@ module.exports = function() {
 	}
 	return ``;
 }
-
