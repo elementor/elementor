@@ -39,14 +39,16 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
-		var dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
+		// If the current element contains dynamic values, parse thesex values
+		const dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
 
 		_.each( styleControls, ( control ) => {
 			if ( control.styleFields && control.styleFields.length ) {
 				this.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, control.fields, placeholders, replacements );
 			}
 
-			if ( control.dynamic && control.dynamic.active && values.__dynamic__ && values.__dynamic__[ control.name ] ) {
+			// If a dynamic tag includes controls with CSS implementations, Take their CSS and apply it
+			if ( control.dynamic?.active && values.__dynamic__?.[ control.name ] ) {
 				this.addDynamicControlStyleRules( values.__dynamic__[ control.name ], control );
 			}
 
@@ -59,55 +61,91 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		var value = this.getStyleControlValue( control, values );
+		let controlGlobalKey = control.name;
 
-		if ( undefined === value ) {
-			return;
+		if ( control.groupType ) {
+			controlGlobalKey = control.groupPrefix + control.groupType;
+		}
+
+		const globalValues = this.getSettings( 'container' ).globals.attributes,
+			globalValue = globalValues[ controlGlobalKey ];
+
+		let value;
+
+		if ( ! globalValue ) {
+			value = this.getStyleControlValue( control, values );
+
+			if ( undefined === value ) {
+				return;
+			}
 		}
 
 		_.each( control.selectors, ( cssProperty, selector ) => {
 			var outputCssProperty;
 
-			try {
-				outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
-					const externalControlMissing = controlName && ! controls[ controlName ];
+			if ( globalValue ) {
+				const propertyParts = cssProperty.split( ':' );
 
-					let parsedValue = '';
+				const globalArgs = {};
 
-					if ( ! externalControlMissing ) {
-						parsedValue = this.parsePropertyPlaceholder( control, value, controls, values, placeholder, controlName );
-					}
+				$e.data.commandExtractArgs( globalValue, globalArgs );
 
-					if ( ! parsedValue && 0 !== parsedValue ) {
-						if ( fallbackValue ) {
-							parsedValue = fallbackValue;
+				const id = globalArgs.query.id;
 
-							const stringValueMatches = parsedValue.match( /^(['"])(.*)\1$/ );
+				let propertyValue;
 
-							if ( stringValueMatches ) {
-								parsedValue = stringValueMatches[ 2 ];
-							} else if ( ! isFinite( parsedValue ) ) {
-								if ( fallbackControlName && ! controls[ fallbackControlName ] ) {
-									return '';
-								}
+				// it's a global settings with additional controls in group.
+				if ( control.groupType ) {
+					const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' );
 
-								parsedValue = this.parsePropertyPlaceholder( control, value, controls, values, fallbackValue, fallbackControlName );
-							}
+					propertyValue = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
+				} else {
+					propertyValue = `var( --e-global-${ control.type }-${ id } )`;
+				}
+
+				outputCssProperty = propertyParts[ 0 ] + ':' + propertyValue;
+			} else {
+				try {
+					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
+						const externalControlMissing = controlName && ! controls[ controlName ];
+
+						let parsedValue = '';
+
+						if ( ! externalControlMissing ) {
+							parsedValue = this.parsePropertyPlaceholder( control, value, controls, values, placeholder, controlName );
 						}
 
 						if ( ! parsedValue && 0 !== parsedValue ) {
-							if ( externalControlMissing ) {
-								return '';
+							if ( fallbackValue ) {
+								parsedValue = fallbackValue;
+
+								const stringValueMatches = parsedValue.match( /^(['"])(.*)\1$/ );
+
+								if ( stringValueMatches ) {
+									parsedValue = stringValueMatches[ 2 ];
+								} else if ( ! isFinite( parsedValue ) ) {
+									if ( fallbackControlName && ! controls[ fallbackControlName ] ) {
+										return '';
+									}
+
+									parsedValue = this.parsePropertyPlaceholder( control, value, controls, values, fallbackValue, fallbackControlName );
+								}
 							}
 
-							throw '';
-						}
-					}
+							if ( ! parsedValue && 0 !== parsedValue ) {
+								if ( externalControlMissing ) {
+									return '';
+								}
 
-					return parsedValue;
-				} );
-			} catch ( e ) {
-				return;
+								throw '';
+							}
+						}
+
+						return parsedValue;
+					} );
+				} catch ( e ) {
+					return;
+				}
 			}
 
 			if ( _.isEmpty( outputCssProperty ) ) {
