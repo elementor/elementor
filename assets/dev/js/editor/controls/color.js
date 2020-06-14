@@ -11,6 +11,10 @@ export default class extends ControlBaseDataView {
 	}
 
 	applySavedValue() {
+		if ( ! this.colorPicker ) {
+			this.initPicker();
+		}
+
 		const globalKey = this.getGlobalValue();
 
 		if ( globalKey ) {
