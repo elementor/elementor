@@ -9,9 +9,15 @@ import './site-part.scss';
 
 export default class SitePart extends Card {
 	getHeader() {
+		const Indicator = () => {
+			const active = "site-part__indicator--active";
+
+			return <i className={`site-part__indicator ${ active }`}/>;
+		};
 		return (
 			<CardHeader>
 				<React.Fragment>
+					<Indicator/>
 					<Typography tagName="h1" className="card__headline">{ this.props.title }</Typography>
 					<Button text="Info" hideText={ true } icon="eicon-info-circle" />
 				</React.Fragment>
