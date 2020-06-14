@@ -5,11 +5,11 @@ $eps-box-shadow-size: 0 4px 10px;
 $eps-box-shadow-size-sm: null;
 $eps-shadow-size-lg: null;
 
-$eps-box-shadow-alpha-unit: $opacity-5;
+$eps-box-shadow-alpha-unit: $opacity-05;
 $eps-box-shadow-alpha-hover: null;
 
 // shadow presets
-$eds-box-shadow: $eps-box-shadow-size rgba($eps-box-shadow-color, 3 * $eps-box-shadow-alpha-unit);
+$eds-box-shadow: $eps-box-shadow-size rgba($eps-box-shadow-color, $eps-box-shadow-alpha-unit);
 $eds-box-shadow-sm: null;
 $eds-box-shadow-lg: null;
 $eds-box-shadow-hover: null;
