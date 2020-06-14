@@ -65,7 +65,7 @@ export class Load extends CommandInternalBase {
 				documentId: document.id,
 			};
 
-		$e.data.setCache( component, command, query, elements );
+		$e.data.setCache( component, command, query, elementsCache );
 	}
 }
 

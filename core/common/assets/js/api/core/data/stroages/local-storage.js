@@ -1,18 +1,18 @@
-import BaseStorage from './base-storage';
+import PrefixStorage from './prefix-storage';
 
-export default class LocalStorage extends BaseStorage {
+export default class LocalStorage extends PrefixStorage {
 	constructor() {
 		super( localStorage );
-
-		this.storage = new Map();
 	}
 
 	debug() {
 		const entries = this.getAll(),
 			ordered = {};
 
-		Object.keys( this.getAll() ).sort().forEach( ( key ) => {
-			ordered[ key ] = entries[ key ];
+		Object.keys( entries ).sort().forEach( ( key ) => {
+			const value = entries[ key ];
+
+			ordered[ key ] = value;
 		} );
 
 		return ordered;
