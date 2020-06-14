@@ -1,4 +1,5 @@
 import Layout from '../templates/layout';
+import CardOverlay from 'elementor-app/ui/card/card-overlay';
 import SiteParts from './../organisms/site-parts';
 
 export default function Promotion() {
@@ -8,12 +9,14 @@ export default function Promotion() {
 		const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
 
 		return (
-			<a target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
-				<i className="eicon-lock" />
-				<span>
-				{ __( 'Get Pro', 'elementor' ) }
-			</span>
-			</a>
+			<CardOverlay>
+				<a target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
+					<i className="eicon-lock" />
+					<span>
+					{ __( 'Get Pro', 'elementor' ) }
+				</span>
+				</a>
+			</CardOverlay>
 		);
 	};
 

@@ -2,40 +2,36 @@ import Card from 'elementor-app/ui/card/card';
 import CardHeader from 'elementor-app/ui/card/card-header';
 import CardBody from 'elementor-app/ui/card/card-body';
 import CardImage from 'elementor-app/ui/card/card-image';
-import CardOverlay from 'elementor-app/ui/card/card-overlay';
 import Typography from 'elementor-app/ui/atoms/typography';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './site-part.scss';
 
-export default function SitePart( props ) {
-	return (
-		<Card className="site-part">
-			<React.Fragment>
+export default class SitePart extends Card {
+	getHeader() {
+		return (
 			<CardHeader>
 				<React.Fragment>
-					<Typography tagName="h1" className="card__headline">{ props.title }</Typography>
-					<Button text="Info" hideText={true} icon="eicon-info-circle" />
+					<Typography tagName="h1" className="card__headline">{ this.props.title }</Typography>
+					<Button text="Info" hideText={ true } icon="eicon-info-circle" />
 				</React.Fragment>
 			</CardHeader>
+		);
+	}
+
+	getBody() {
+		return (
 			<CardBody>
-				<CardImage alt={ props.title } src={ props.urls.thumbnail }>
-					<CardOverlay>{ props.children }</CardOverlay>
+				<CardImage alt={ this.props.partTitle } src={ this.props.partThumbnail }>
+					{ this.props.children }
 				</CardImage>
 			</CardBody>
-			</React.Fragment>
-		</Card>
-	);
+		);
+	}
 }
 
 SitePart.propTypes = {
-	type: PropTypes.string.isRequired,
-	title: PropTypes.string.isRequired,
-	className: PropTypes.string,
-	urls: PropTypes.object.isRequired,
-	children: PropTypes.object.isRequired,
-};
-
-SitePart.defaultProps = {
-	className: '',
+	partThumbnail: PropTypes.string.isRequired,
+	partTitle: PropTypes.string.isRequired,
+	children: PropTypes.object,
 };
