@@ -264,5 +264,18 @@ class Test_Manager extends Elementor_Test_Base {
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $data_controller_name );
+<<<<<<< HEAD
+=======
+	}
+
+	public function test_commands_formats() {
+		$this->manager->run_server();
+
+		$this->assertEquals( [
+			'globals/index' => 'globals/index',
+			'globals/colors' => 'globals/colors/{id}',
+			'globals/typography' => 'globals/typography/{id}',
+		], $this->manager->command_formats );
+>>>>>>> 3ac6a35... TMP
 	}
 }

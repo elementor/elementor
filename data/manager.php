@@ -321,7 +321,11 @@ class Manager extends BaseModule {
 
 		$command = $this->command_extract_args( $command, $args );
 
+<<<<<<< HEAD
 		$format = isset( $manager->command_formats[ $command ] ) ? $manager->command_formats[ $command ] : false;
+=======
+		$format = isset( $this->command_formats[ $command ] ) ? $this->command_formats[ $command ] : false;
+>>>>>>> 3ac6a35... TMP
 
 		$command_processors = $controller_instance->get_processors( $command );
 

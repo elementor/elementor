@@ -407,18 +407,32 @@ export default class Data extends Commands {
 	/**
 	 * Function deleteCache().
 	 *
+	 * @param {ComponentBase} component
 	 * @param {string} command
 	 * @param {{}} query
 	 */
-	deleteCache( command, query = {} ) {
-		const args = { query },
-			endpoint = this.commandToEndpoint( command, args, this.commandFormats[ command ] );
+	deleteCache( component, command, query = {} ) {
+		const args = { query };
 
-		if ( Object.values( query ).length ) {
-			args.query = query;
-		}
+		this.cache.delete( {
+				endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
+				component,
+				command,
+				args,
+			}
+		);
+	}
 
-		this.cache.delete( endpoint );
+	/**
+	 * Function registerFormat().
+	 *
+	 * Register's format for each command.
+	 *
+	 * @param {string} command
+	 * @param {string} format
+	 */
+	registerFormat( command, format ) {
+		this.commandFormats[ command ] = format;
 	}
 
 	/**

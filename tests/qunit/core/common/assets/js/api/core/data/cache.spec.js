@@ -30,7 +30,7 @@ jQuery( () => {
 				};
 
 			// Set cache test item.
-			$e.data.cache.storage.setItem( component.getNamespace(), JSON.stringify( randomValue ) );
+			$e.data.cache.storage.setItem( component.getNamespace(), randomValue );
 
 			const result = await $e.data.cache.getAsync( requestData );
 
@@ -53,7 +53,7 @@ jQuery( () => {
 
 			$e.data.cache.set( requestData, randomValue );
 
-			assert.equal( randomValue, JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ) );
+			assert.equal( randomValue, $e.data.cache.storage.getItem( component.getNamespace() ) );
 		} );
 
 		QUnit.test( 'set(): object', ( assert ) => {
@@ -70,7 +70,7 @@ jQuery( () => {
 
 			$e.data.cache.set( requestData, TEST_OBJECT );
 
-			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), TEST_OBJECT );
+			assert.deepEqual( $e.data.cache.storage.getItem( component.getNamespace() ), TEST_OBJECT );
 		} );
 
 		QUnit.test( 'set(): deep', ( assert ) => {
@@ -88,7 +88,7 @@ jQuery( () => {
 			// Load TEST_OBJECT to cache 'load-deep-component = TEST_OBJECT'.
 			$e.data.cache.set( requestData, TEST_OBJECT );
 
-			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), TEST_OBJECT );
+			assert.deepEqual( $e.data.cache.storage.getItem( component.getNamespace() ), TEST_OBJECT );
 
 			// Modify `TEST_OBJECT.complexObject`.
 			requestData.endpoint += '/complexObject';
@@ -105,7 +105,7 @@ jQuery( () => {
 			} );
 
 			// Validate.
-			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), {
+			assert.deepEqual( $e.data.cache.storage.getItem( component.getNamespace() ), {
 				simpleKeyValue: 'value',
 				complexObject: {
 					anotherObject: {
@@ -284,7 +284,11 @@ jQuery( () => {
 				command: randomValue,
 			} );
 
-			$e.data.cache.delete( component.getNamespace() );
+			$e.data.cache.delete( {
+				component,
+				command,
+				endpoint: command,
+			} );
 
 			assert.equal( $e.data.cache.get( requestData ), null );
 		} );
