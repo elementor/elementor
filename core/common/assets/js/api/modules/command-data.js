@@ -1,6 +1,20 @@
 import CommandBase from './command-base';
 
 export default class CommandData extends CommandBase {
+	/**
+	 * Data returned from remote.
+	 *
+	 * @type {*}
+	 */
+	data;
+
+	/**
+	 * Fetch type.
+	 *
+	 * @type {DataTypes}
+	 */
+	type;
+
 	static getInstanceType() {
 		return 'CommandData';
 	}
@@ -8,24 +22,26 @@ export default class CommandData extends CommandBase {
 	constructor( args, commandsAPI = $e.data ) {
 		super( args, commandsAPI );
 
-		/**
-		 * Data returned from remote.
-		 *
-		 * @type {*}
-		 */
-		this.data = {};
+		if ( this.args.options?.type ) {
+			this.type = this.args.options.type;
+		}
 	}
 
 	/**
-	 * Get endpoint format
+	 * Function getEndpointFormat().
 	 *
 	 * @returns {(null|string)}
 	 */
-	getEndpointFormat() {
+	static getEndpointFormat() {
 		return null;
 	}
 
-	getApplyMethods( type ) {
+	/**
+	 * @param {DataTypes} type
+	 *
+	 * @returns {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}}
+	 */
+	getApplyMethods( type = this.type ) {
 		let before, after;
 		switch ( type ) {
 			case 'create':
@@ -55,23 +71,31 @@ export default class CommandData extends CommandBase {
 		return { before, after };
 	}
 
-	apply() {
-		const type = this.args.options.type,
-			applyMethods = this.getApplyMethods( type );
-
-		// Run 'before' method.
-		this.args = applyMethods.before( this.args );
-
-		const requestData = {
-			type,
+	/**
+	 * Function getRequestData().
+	 *
+	 * @returns {RequestData}
+	 */
+	getRequestData() {
+		return {
+			type: this.type,
 			args: this.args,
 			timestamp: new Date().getTime(),
 			component: this.component,
 			command: this.currentCommand,
-			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.getEndpointFormat() ),
+			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
 		};
+	}
 
-		return $e.data.fetch( type, requestData ).then( ( data ) => {
+	apply() {
+		const applyMethods = this.getApplyMethods();
+
+		// Run 'before' method.
+		this.args = applyMethods.before( this.args );
+
+		const requestData = this.getRequestData();
+
+		return $e.data.fetch( requestData ).then( ( data ) => {
 			this.data = data;
 
 			// Run 'after' method.

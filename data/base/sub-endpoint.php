@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Data\Base;
 
+// TODO: Add test.
+
 abstract class SubEndpoint extends Endpoint {
 
 	/**
@@ -20,12 +22,6 @@ abstract class SubEndpoint extends Endpoint {
 		parent::__construct( $this->parent_endpoint->controller );
 	}
 
-	protected function get_base_route() {
-		$controller_name = $this->controller->get_name();
-
-		return $controller_name . '/' . $this->parent_route . $this->get_name();
-	}
-
 	/**
 	 * Get parent route.
 	 *
@@ -33,5 +29,11 @@ abstract class SubEndpoint extends Endpoint {
 	 */
 	public function get_parent() {
 		return $this->parent_endpoint;
+	}
+
+	public function get_base_route() {
+		$controller_name = $this->controller->get_name();
+
+		return $controller_name . '/' . $this->parent_route . $this->get_name();
 	}
 }

@@ -2,6 +2,7 @@
 namespace Elementor\Data\Base;
 
 abstract class Processor {
+
 	/**
 	 * Controller.
 	 *

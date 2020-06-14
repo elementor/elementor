@@ -2,7 +2,7 @@ import DocumentHelper from '../helper';
 import ElementsHelper from '../elements/helper';
 import * as commands from './commands/index.spec.js';
 import * as commandsInternal from './commands/internal/index.spec.js';
-import * as Ajax from 'elementor-tests-qunit/ajax';
+import * as Ajax from 'elementor-tests-qunit/mock/ajax';
 
 jQuery( () => {
 	QUnit.module( 'Component: document/save', ( hooks ) => {

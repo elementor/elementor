@@ -1,3 +1,4 @@
+import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import Commands from './commands.js';
 import Cache from './data/cache';
 
@@ -33,6 +34,8 @@ export default class Data extends Commands {
 		} );
 
 		this.cache = new Cache( this );
+		this.validatedRequests = {};
+		this.commandFormats = {};
 
 		this.baseEndpointAddress = '';
 
@@ -42,7 +45,7 @@ export default class Data extends Commands {
 	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
-		this.baseEndpointAddress = `${ elementor.config.rest_url }${ namespace }/v${ version }/`;
+		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;
 	}
 
 	/**
@@ -104,7 +107,7 @@ export default class Data extends Commands {
 	 *
 	 * Convert command to endpoint.
 	 *
-	 * For example `component/command/:arg_example` => `controller/endpoint/8`.
+	 * For example `component/command/{arg}` => `controller/endpoint/8`.
 	 *
 	 * TODO: Find a better solution.
 	 *
@@ -117,18 +120,17 @@ export default class Data extends Commands {
 	commandToEndpoint( command, args, format = null ) {
 		let endpoint = command;
 
-		if ( args.query ) {
-			if ( ! format ) {
-				format = command;
-			}
+		const argsQueryLength = args?.query ? Object.values( args.query ).length : 0;
 
-			if ( format && format.includes( '/:' ) ) {
-				// Means command includes magic query arguments ( controller/endpoint/:whatever ).
-				const magicParams = format.split( '/' ).filter( ( str ) => ':' === str.charAt( 0 ) );
+		if ( argsQueryLength ) {
+			if ( format && format.includes( '/{' ) ) {
+				// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
+				const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
 
 				magicParams.forEach( ( param ) => {
-					// Remove the ':'.
-					param = param.substr( 1 );
+					// Remove the '{', '}'.
+					param = param.replace( '{', '' );
+					param = param.replace( '}', '' );
 
 					const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
 
@@ -139,23 +141,27 @@ export default class Data extends Commands {
 					const key = formatted[ 0 ],
 						value = formatted[ 1 ].toString();
 
-					format = format.replace( new RegExp( ':' + param, 'g' ), value );
+					// Replace magic params with values.
+					format = format.replace( new RegExp( '{' + param + '}', 'g' ), value );
 
 					delete args.query[ key ];
 				} );
 
 				endpoint = format;
 			}
+		} else if ( format ) {
+			// No magic params, but still format,
+			endpoint = format;
+		}
 
-			if ( endpoint.includes( 'index' ) ) {
-				endpoint = endpoint.replace( '/index', '' );
-			}
+		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
+		// eg: 'documents/{documentId}/elements/{elementId}' and args { documentId: 4123 }.
+		// result: 'documents/4123/elements'
+		if ( format && endpoint.includes( '/{' ) ) {
+			endpoint = endpoint.substring( 0, endpoint.indexOf( '/{' ) );
+		}
 
-			if ( args.query.id ) {
-				endpoint += '/' + args.query.id.toString();
-				delete args.query.id;
-			}
-
+		if ( args.query && Object.values( args.query ).length ) {
 			// Sorting since the endpoint later will be used as key to store the cache.
 			const queryEntries = Object.entries( args.query ).sort(
 				( [ aKey ], [ bKey ] ) => aKey - bKey // Sort by param name.
@@ -174,74 +180,81 @@ export default class Data extends Commands {
 			endpoint = endpoint.replace( /&$/, '' );
 		}
 
-		// If requested magic param does not exist in args, need to remove it to have fixed endpoint.
-		// eg: 'documents/:documentId/elements/:elementId' and args { documentId: 4123 }.
-		// result: 'documents/4123/elements'
-		if ( endpoint.includes( '/:' ) ) {
-			endpoint = endpoint.substring( 0, endpoint.indexOf( '/:' ) );
-		}
-
 		return endpoint;
 	}
 
 	/**
-	 * Function endpointToCommand().
+	 * Function commandExtractArgs().
 	 *
-	 * Convert endpoint to command.
+	 * If the command have query convert it to args.
 	 *
-	 * TODO: Find a better solution
+	 * @param {string} command
+	 * @param {object} argsTarget
 	 *
-	 * @param {string} endpoint
-	 * @param {object} args
-	 *
-	 * @return {string} command
+	 * @returns {string} command
 	 */
-	endpointToCommand( endpoint, args = {} ) {
-		let command = endpoint,
-			commandFound = !! $e.data.commands[ endpoint ];
-
-		const endpointParts = endpoint.split( '/' );
-
-		// Assuming the command maybe index.
-		if ( ! commandFound && $e.data.commands[ endpoint + '/index' ] ) {
-			command = endpoint + '/index';
-			commandFound = true;
-		}
-
-		// Maybe the it has 'id' as last endpointPart.
-		if ( ! commandFound ) {
-			// Remove last parameter.
-			const lastParameter = endpointParts[ endpointParts.length - 1 ],
-				assumedCommand = command.replace( '/' + lastParameter, '' );
-
-			// If assumed command ( without last parameter ) exist.
-			if ( $e.data.commands[ assumedCommand ] ) {
-				command = assumedCommand;
-				commandFound = true;
-
-				if ( ! args.query ) {
-					args.query = {};
-				}
-
-				// Warp with 'id'.
-				args.query.id = lastParameter;
+	commandExtractArgs( command, argsTarget ) {
+		if ( command?.includes( '?' ) ) {
+			if ( ! argsTarget.query ) {
+				argsTarget.query = {};
 			}
+
+			const commandParts = command.split( '?' ),
+				pureCommand = commandParts[ 0 ],
+				queryString = commandParts[ 1 ],
+				query = new URLSearchParams( queryString );
+
+			Object.assign( argsTarget.query, Object.fromEntries( query ) );
+
+			command = pureCommand;
 		}
 
 		return command;
 	}
 
 	/**
+	 * Function validateRequestData().
+	 *
+	 * Validate request data requirements.
+	 *
+	 * @param {RequestData} requestData
+	 * @param {boolean} [requireArgsData]
+	 */
+	validateRequestData( requestData, requireArgsData = false ) {
+		// Do not validate if its already valid.
+		if ( requestData.timestamp && this.validatedRequests[ requestData.timestamp ] ) {
+			return;
+		}
+
+		const argsObject = new ArgsObject( requestData );
+
+		argsObject.requireArgument( 'component' );
+		argsObject.requireArgumentType( 'command', 'string' );
+		argsObject.requireArgumentType( 'endpoint', 'string' );
+
+		if ( requireArgsData ) {
+			argsObject.requireArgumentType( 'data', 'object', requestData.args );
+		}
+
+		// Ensure timestamp.
+		if ( ! requestData.timestamp ) {
+			requestData.timestamp = new Date().getTime();
+		}
+
+		this.validatedRequests[ requestData.timestamp ] = true;
+	}
+
+	/**
 	 * Function prepareHeaders().
 	 *
-	 * @param {DataTypes} type
 	 * @param {RequestData} requestData
 	 *
 	 * @return {{}} params
 	 */
-	prepareHeaders( type, requestData ) {
+	prepareHeaders( requestData ) {
 		/* global wpApiSettings */
-		const nonce = wpApiSettings.nonce,
+		const type = requestData.type,
+			nonce = wpApiSettings.nonce,
 			params = {
 				credentials: 'include', // cookies is required for wp reset.
 			},
@@ -258,11 +271,15 @@ export default class Data extends Commands {
 		if ( 'GET' === method ) {
 			Object.assign( params, { headers } );
 		} else if ( allowedMethods ) {
+			if ( [ 'POST', 'PUT' ].includes( method ) && ! requestData.args?.data ) {
+				throw Error( 'Invalid requestData.args.data' );
+			}
+
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
 			Object.assign( params, {
 				method,
 				headers,
-				body: JSON.stringify( requestData ),
+				body: JSON.stringify( requestData.args.data ),
 			} );
 		} else {
 			throw Error( `Invalid type: '${ type }'` );
@@ -274,16 +291,16 @@ export default class Data extends Commands {
 	/**
 	 * Function fetch().
 	 *
-	 * @param {DataTypes} type
 	 * @param {RequestData} requestData
+	 * @param {function(input: RequestInfo, init?) : Promise<Response> } [fetchAPI]
 	 *
 	 * @return {{}} params
 	 */
-	fetch( type, requestData ) {
+	fetch( requestData, fetchAPI = window.fetch ) {
 		requestData.cache = 'miss';
 
-		const params = this.prepareHeaders( type, requestData ),
-			useCache = 'get' === type && ! requestData.args.options?.refresh;
+		const params = this.prepareHeaders( requestData ),
+			useCache = [ 'create', 'get' ].includes( requestData.type ) && ! requestData.args.options?.refresh;
 
 		if ( useCache ) {
 			const cachePromise = this.cache.getAsync( requestData );
@@ -294,28 +311,27 @@ export default class Data extends Commands {
 		}
 
 		return new Promise( async ( resolve, reject ) => {
+			// This function is async because:
+			// it needs to wait for the results, to cache them before it resolve's the promise.
 			try {
-				const request = window.fetch( this.baseEndpointAddress + requestData.endpoint, params ),
-					response = await request
-						.then( ( _response ) => {
-							if ( ! _response.ok ) {
-								throw _response;
+				const request = fetchAPI( this.baseEndpointAddress + requestData.endpoint, params ),
+					response = await request.then( async ( _response ) => {
+						if ( ! _response.ok ) {
+							// Catch WP REST errors.
+							if ( _response.headers.get( 'content-type' ).includes( 'application/json' ) ) {
+								_response = await _response.json();
 							}
 
-							return _response.json();
-						} )
-						.catch( reject );
+							throw _response;
+						}
 
-				// Catch WP REST errors.
-				if ( response.data && response.data.status && response.code ) {
-					reject( response.message );
+						return _response.json();
+					} );
 
-					return response;
-				}
-
-				// Upon 'GET' save cache.
+				// At this point, it got the resolved response from remote.
+				// So load cache, and resolve it.
 				if ( useCache ) {
-					this.cache.load( requestData, response );
+					this.cache.set( requestData, response );
 				}
 
 				resolve( response );
@@ -338,7 +354,7 @@ export default class Data extends Commands {
 		const args = { query };
 
 		return this.cache.get( {
-			endpoint: this.commandToEndpoint( command, args ),
+			endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
 			component,
 			command,
 			args,
@@ -346,18 +362,18 @@ export default class Data extends Commands {
 	}
 
 	/**
-	 * Function loadCache().
+	 * Function setCache().
 	 *
 	 * @param {ComponentBase} component
 	 * @param {string} command
 	 * @param {{}} query
 	 * @param {*} data
 	 */
-	loadCache( component, command, query, data ) {
+	setCache( component, command, query, data ) {
 		const args = { query };
 
-		this.cache.load( {
-				endpoint: this.commandToEndpoint( command, args ),
+		this.cache.set( {
+				endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
 				component,
 				command,
 				args,
@@ -369,8 +385,8 @@ export default class Data extends Commands {
 	/**
 	 * Function updateCache().
 	 *
-	 * The difference between 'loadCache' and 'updateCache' is update will only modify exist values.
-	 * and 'loadCache' will create or update.
+	 * The difference between 'setCache' and 'updateCache' is update will only modify exist values.
+	 * and 'setCache' will create or update.
 	 *
 	 * @param {ComponentBase} component
 	 * @param {string} command
@@ -381,7 +397,7 @@ export default class Data extends Commands {
 		const args = { query, data };
 
 		this.cache.update( {
-			endpoint: this.commandToEndpoint( command, args ),
+			endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
 			component,
 			command,
 			args,
@@ -391,18 +407,32 @@ export default class Data extends Commands {
 	/**
 	 * Function deleteCache().
 	 *
+	 * @param {ComponentBase} component
 	 * @param {string} command
 	 * @param {{}} query
 	 */
-	deleteCache( command, query = {} ) {
-		const args = { query },
-			endpoint = this.commandToEndpoint( command, args );
+	deleteCache( component, command, query = {} ) {
+		const args = { query };
 
-		if ( Object.values( query ).length ) {
-			args.query = query;
-		}
+		this.cache.delete( {
+				endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
+				component,
+				command,
+				args,
+			}
+		);
+	}
 
-		this.cache.delete( endpoint );
+	/**
+	 * Function registerFormat().
+	 *
+	 * Register's format for each command.
+	 *
+	 * @param {string} command
+	 * @param {string} format
+	 */
+	registerFormat( command, format ) {
+		this.commandFormats[ command ] = format;
 	}
 
 	create( command, data, query = {}, options = {} ) {
@@ -422,6 +452,23 @@ export default class Data extends Commands {
 	}
 
 	/**
+	 * @param {ComponentBase} component
+	 * @param {string} command
+	 * @param callback
+	 */
+	register( component, command, callback ) {
+		super.register( component, command, callback );
+
+		const fullCommandName = component.getNamespace() + '/' + command,
+			commandInstance = component.commandsClasses[ command ],
+			format = commandInstance && commandInstance.getEndpointFormat ? commandInstance.getEndpointFormat() : false;
+
+		if ( format ) {
+			$e.data.registerFormat( fullCommandName, format );
+		}
+	}
+
+	/**
 	 * TODO: Add JSDOC typedef for args ( query and options ).
 	 *
 	 * @param {DataTypes} type
@@ -432,6 +479,8 @@ export default class Data extends Commands {
 	 */
 	run( type, command, args ) {
 		args.options.type = type;
+
+		command = this.commandExtractArgs( command, args );
 
 		return super.run( command, args );
 	}

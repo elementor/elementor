@@ -1,21 +1,14 @@
 import { CREATABLE, DELETABLE, EDITABLE, READABLE } from 'elementor-api/core/data';
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandData from 'elementor-api/modules/command-data';
+import * as eData from 'elementor-tests-qunit/mock/e-data/index';
 
 // Test cache module.
 require( './data/cache.spec.js' );
 
+// TODO: Each time creating component requires too many lines of code use helper.
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/core/data.js', ( hooks ) => {
-		hooks.before( () => {
-			// wpApiSettings is required by $e.data.
-			if ( ! window.wpApiSettings ) {
-				window.wpApiSettings = {};
-			}
-
-			wpApiSettings.nonce = 'test';
-		} );
-
 		hooks.beforeEach( () => {
 			$e.data.cache.storage.clear();
 		} );
@@ -34,18 +27,6 @@ jQuery( () => {
 			assert.deepEqual( $e.data.getAllowedMethods( 'update' ), EDITABLE );
 		} );
 
-		QUnit.test( 'commandToEndpoint(): command with format', ( assert ) => {
-			const command = 'component/:paramA/command/:paramB',
-				args = { query: {} };
-
-			args.query.paramA = 'valueA';
-			args.query.paramB = 'valueB';
-
-			const endpoint = $e.data.commandToEndpoint( command, args );
-
-			assert.equal( endpoint, 'component/valueA/command/valueB', 'Valid endpoint.' );
-		} );
-
 		QUnit.test( 'commandToEndpoint(): command with query', ( assert ) => {
 			const command = 'component/command',
 				args = { query: {} };
@@ -58,50 +39,107 @@ jQuery( () => {
 			assert.equal( endpoint, 'component/command?paramA=valueA&paramB=valueB', 'Valid endpoint.' );
 		} );
 
-		QUnit.test( 'commandToEndpoint(): command with query and index', ( assert ) => {
-			const command = 'component/index',
+		QUnit.test( 'commandToEndpoint(): command with magic params', ( assert ) => {
+			const command = 'component/command',
+				format = 'component/{paramA}/{paramB}/command',
 				args = { query: {} };
 
 			args.query.paramA = 'valueA';
 			args.query.paramB = 'valueB';
 
-			const endpoint = $e.data.commandToEndpoint( command, args );
+			const endpoint = $e.data.commandToEndpoint( command, args, format );
 
-			assert.equal( endpoint, 'component?paramA=valueA&paramB=valueB', 'Valid endpoint.' );
+			assert.equal( endpoint, 'component/valueA/valueB/command', 'Valid endpoint.' );
 		} );
 
-		QUnit.test( 'endpointToCommand(): endpoints with index and id', ( assert ) => {
-			const Component = class extends ComponentBase {
-					getNamespace() {
-						return 'test-data-commands';
-					}
+		QUnit.test( 'commandToEndpoint(): command with magic params and one *first* parameter missing', ( assert ) => {
+			const command = 'component/command',
+				format = 'component/{paramA}/command/{paramB}',
+				args = { query: {} };
 
-					defaultData() {
-						return {
-							index: () => {},
-							'test-id': () => {},
-						};
-					}
+			args.query.paramB = 'valueB';
+
+			const endpoint = $e.data.commandToEndpoint( command, args, format );
+
+			assert.equal( endpoint, 'component', 'Valid endpoint.' );
+		} );
+
+		QUnit.test( 'commandToEndpoint(): command with magic params and one *second* parameter missing', ( assert ) => {
+			const command = 'component/command',
+				format = 'component/{paramA}/command/{paramB}',
+				args = { query: {} };
+
+			args.query.paramA = 'valueA';
+
+			const endpoint = $e.data.commandToEndpoint( command, args, format );
+
+			assert.equal( endpoint, 'component/valueA/command', 'Valid endpoint.' );
+		} );
+
+		QUnit.test( 'commandToEndpoint(): command with magic params and one *format* parameter missing', ( assert ) => {
+			const command = 'component/command',
+				format = 'component/command/{paramA}',
+				args = { query: {} };
+
+			args.query.paramA = 'valueA';
+			args.query.paramB = 'valueB';
+
+			const endpoint = $e.data.commandToEndpoint( command, args, format );
+
+			assert.equal( endpoint, 'component/command/valueA?paramB=valueB', 'Valid endpoint.' );
+		} );
+
+		QUnit.test( 'commandQueryToArgs(): simple', ( assert ) => {
+			const queryCommand = 'component/command?paramA=valueA',
+				args = {},
+				pureCommand = $e.data.commandExtractArgs( queryCommand, args );
+
+			assert.equal( pureCommand, 'component/command', 'Valid pure command.' );
+			assert.deepEqual( args.query, { paramA: 'valueA' }, 'Valid args.query.' );
+		} );
+
+		QUnit.test( 'validateRequestData', ( assert ) => {
+			assert.throws( () => {
+					$e.data.validateRequestData( {} );
 				},
-				component = $e.components.register( new Component() );
-
-			const endpointWithIndex = $e.data.endpointToCommand( 'test-data-commands', {} ),
-				endpointWithId = $e.data.endpointToCommand( 'test-data-commands/test-id/some-id', {} );
-
-			assert.equal( endpointWithIndex, component.getNamespace() + '/index' );
-			assert.equal( endpointWithId, component.getNamespace() + '/test-id' );
+				new Error( 'component is required.' )
+			);
+			assert.throws( () => {
+					$e.data.validateRequestData( {
+						component: {},
+					} );
+				},
+				new Error( 'command is required.' )
+			);
+			assert.throws( () => {
+					$e.data.validateRequestData( {
+						component: {},
+						command: '',
+					} );
+				},
+				new Error( 'endpoint is required.' )
+			);
 		} );
 
 		QUnit.test( 'prepareHeaders(): with GET', ( assert ) => {
-			const requestData = { paramA: 'valueA' },
-				params = $e.data.prepareHeaders( 'get', requestData );
+			const requestData = {
+					paramA: 'valueA',
+					type: 'get',
+				},
+				params = $e.data.prepareHeaders( requestData );
 
 			assert.equal( params.headers[ 'X-WP-Nonce' ], wpApiSettings.nonce );
 		} );
 
 		QUnit.test( 'prepareHeaders(): with POST', ( assert ) => {
-			const requestData = { paramA: 'valueA' },
-				params = $e.data.prepareHeaders( 'create', requestData );
+			const requestData = {
+					paramA: 'valueA',
+					type: 'create',
+					args: {
+						data: { paramA: 'valueA' },
+					},
+				},
+				params = $e.data.prepareHeaders( requestData );
 
 			assert.equal( params.body, '{"paramA":"valueA"}' );
 		} );
@@ -109,8 +147,19 @@ jQuery( () => {
 		QUnit.test( 'prepareHeaders(): with invalid type', ( assert ) => {
 			const type = 'some-invalid-type';
 
-			assert.throws( () => $e.data.prepareHeaders( type, {} ),
+			assert.throws( () => $e.data.prepareHeaders( { type } ),
 				new Error( `Invalid type: '${ type }'` )
+			);
+		} );
+
+		QUnit.test( 'prepareHeaders(): post without data', ( assert ) => {
+			const requestData = {
+					paramA: 'valueA',
+					type: 'create',
+				};
+
+			assert.throws( () => $e.data.prepareHeaders( requestData ),
+				new Error( `Invalid requestData.args.data` )
 			);
 		} );
 
@@ -119,27 +168,19 @@ jQuery( () => {
 		 * to test *fetch* with different approaches.
 		 */
 		QUnit.test( 'fetch(): simple', async ( assert ) => {
-			$e.components.register( new class TestComponent extends ComponentBase {
-				getNamespace() {
-					return 'test-component-fetch-simple';
-				}
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'test-component-fetch-simple';
+					}
 
-				defaultData() {
-					return this.importCommands( {
-						TestCommand: class TestCommand extends CommandData {},
-					} );
-				}
-			} );
-
-			const fetchOrig = fetch,
+					defaultData() {
+						return this.importCommands( {
+							TestCommand: class TestCommand extends CommandData {
+							},
+						} );
+					}
+				} ),
 				command = 'test-component-fetch-simple/test-command',
-				response = {
-					json: () => response,
-					ok: true,
-					data: {
-						testParam: 'testValue',
-					},
-				},
 				args = {
 					options: {
 						refresh: true,
@@ -148,104 +189,105 @@ jQuery( () => {
 						param1: 'valueA',
 					},
 				},
-				endpoint = $e.data.commandToEndpoint( command, args );
+				endpoint = $e.data.commandToEndpoint( command, args ),
+				requestData = {
+					type: 'get',
+					endpoint,
+					component,
+					command,
+					args,
+				};
 
-			fetch = ( address, params ) => {
-				fetch = fetchOrig;
-				return new Promise( async ( resolve ) => {
-					resolve( response );
-				} );
-			};
+			eData.free();
 
-			const result = await $e.data.fetch( 'get', {
-				endpoint,
-				command,
-				args,
+			await $e.data.fetch( requestData, ( input ) => {
+				assert.equal( input, $e.data.baseEndpointAddress + command + '?param1=valueA' );
+				return Promise.resolve( new Response( JSON.stringify( {} ) ) );
 			} );
 
-			// Validate result.
-			assert.deepEqual( response.data, result.data );
-
-			// Validate item didn't get cached.
-			assert.equal( $e.data.cache.storage.getItem( endpoint ), null );
+			eData.silence();
 		} );
 
 		QUnit.test( 'fetch(): with cache', async ( assert ) => {
+			eData.free();
+
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
-				getNamespace() {
-					return 'test-component-with-cache';
-				}
+					getNamespace() {
+						return 'test-component-fetch-cache';
+					}
 
-				defaultData() {
-					return this.importCommands( {
-						TestCommand: class TestCommand extends CommandData {},
-					} );
-				}
-			} );
-
-			const fetchOrig = fetch,
-				command = 'test-component-with-cache/test-command',
-				response = {
-					json: () => response,
-					ok: true,
-					data: {
-						testParam: 'testValue',
-					},
-				},
+					defaultData() {
+						return this.importCommands( {
+							TestCommand: class TestCommand extends CommandData {
+							},
+						} );
+					}
+				} ),
+				fakeResponse = { test: true },
+				command = 'test-component-fetch-cache/test-command',
 				args = {
 					query: {
 						param1: 'valueA',
 					},
 				},
-				endpoint = $e.data.commandToEndpoint( command, args );
-
-			fetch = ( address, params ) => {
-				fetch = fetchOrig;
-				return new Promise( async ( resolve ) => {
-					resolve( response );
+				endpoint = $e.data.commandToEndpoint( command, args ),
+				requestData = {
+					type: 'get',
+					endpoint,
+					component,
+					command,
+					args,
+				},
+				result = await $e.data.fetch( requestData, ( input ) => {
+					assert.equal( input, $e.data.baseEndpointAddress + command + '?param1=valueA' );
+					return Promise.resolve( new Response( JSON.stringify( fakeResponse ) ) );
 				} );
-			};
 
-			const requestData = {
-				component,
-				endpoint,
-				command,
-				args,
-			};
+			assert.deepEqual( result, fakeResponse );
 
-			const result = await $e.data.fetch( 'get', requestData );
+			// Validate cache.
+			assert.deepEqual( $e.data.cache.get( requestData ), result );
 
-			// Validate result.
-			assert.deepEqual( response.data, result.data );
-			// Validate item get cached.
-			assert.deepEqual( $e.data.cache.get( requestData ).data, response.data );
+			eData.silence();
 		} );
 
 		QUnit.test( 'fetch(): with cache loaded manually', async ( assert ) => {
 			// Register test data command.
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
-				getNamespace() {
-					return 'test-component-cache-manually';
-				}
+					getNamespace() {
+						return 'test-component-cache-manually';
+					}
 
-				defaultData() {
-					return this.importCommands( {
-						TestCommand: class TestCommand extends CommandData {},
-					} );
-				}
-			} );
-
-			const data = { someProp: 'someValue' },
-				query = { paramA: 'valueB' };
+					defaultData() {
+						return this.importCommands( {
+							TestCommand: class TestCommand extends CommandData {
+							},
+						} );
+					}
+				} ),
+				command = 'test-component-cache-manually/test-command',
+				data = { someProp: 'someValue' },
+				query = { paramA: 'valueB' },
+				requestData = {
+					type: 'get',
+					component,
+					command,
+					endpoint: $e.data.commandToEndpoint( command, { query } ),
+					args: { query },
+				};
 
 			// This test case relies on cache.
-			$e.data.loadCache( component, 'test-component-cache-manually/test-command', query, data );
+			$e.data.setCache( component, command, query, data );
+
+			eData.mock();
 
 			// Get cache.
-			const result = await $e.data.get( 'test-component-cache-manually/test-command', query );
+			const result = await $e.data.fetch( requestData );
+
+			eData.silence();
 
 			// Validate if data is same as result.data.
-			assert.deepEqual( data, result.data );
+			assert.deepEqual( data, result );
 		} );
 
 		QUnit.test( 'getCache(): simple', ( assert ) => {
@@ -263,7 +305,7 @@ jQuery( () => {
 					someKey: 'someValue',
 				};
 
-			$e.data.cache.load( requestData, someData );
+			$e.data.cache.set( requestData, someData );
 
 			const result = $e.data.getCache( component, component.getNamespace() );
 
@@ -291,14 +333,14 @@ jQuery( () => {
 					someKey: 'someValue',
 				};
 
-			$e.data.cache.load( requestData, someData );
+			$e.data.cache.set( requestData, someData );
 
 			const result = $e.data.getCache( component, component.getNamespace(), args.query );
 
 			assert.deepEqual( result, someData );
 		} );
 
-		QUnit.test( 'loadCache(): with simple data', ( assert ) => {
+		QUnit.test( 'setCache(): with simple data', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'load-cache-simple-component';
@@ -308,14 +350,14 @@ jQuery( () => {
 					someKey: 'someValue',
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), {}, someData );
+			$e.data.setCache( component, component.getNamespace(), {}, someData );
 
 			const result = $e.data.getCache( component, component.getNamespace() );
 
 			assert.deepEqual( result, someData );
 		} );
 
-		QUnit.test( 'loadCache(): with query', ( assert ) => {
+		QUnit.test( 'setCache(): with query', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'load-cache-query-component';
@@ -328,7 +370,7 @@ jQuery( () => {
 					someKey: 'someValue',
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), query, someData );
+			$e.data.setCache( component, component.getNamespace(), query, someData );
 
 			const result = $e.data.getCache( component, component.getNamespace(), query );
 
@@ -348,7 +390,7 @@ jQuery( () => {
 					param: 'new-value',
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), {}, olData );
+			$e.data.setCache( component, component.getNamespace(), {}, olData );
 
 			let result = $e.data.getCache( component, component.getNamespace() );
 
@@ -379,7 +421,7 @@ jQuery( () => {
 					objectA: change,
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), {}, olData );
+			$e.data.setCache( component, component.getNamespace(), {}, olData );
 
 			let result = $e.data.getCache( component, component.getNamespace() );
 
@@ -409,7 +451,7 @@ jQuery( () => {
 					},
 				};
 
-			$e.data.loadCache( component, component.getNamespace(), {}, olData );
+			$e.data.setCache( component, component.getNamespace(), {}, olData );
 
 			let result = $e.data.getCache( component, component.getNamespace() );
 
@@ -429,9 +471,9 @@ jQuery( () => {
 				}
 			} );
 
-			$e.data.loadCache( component, component.getNamespace(), {}, {} );
+			$e.data.setCache( component, component.getNamespace(), {}, {} );
 
-			$e.data.deleteCache( component.getNamespace() );
+			$e.data.deleteCache( component, component.getNamespace(), {} );
 
 			assert.equal( $e.data.getCache( component, component.getNamespace() ), null );
 		} );

@@ -16,30 +16,7 @@ jQuery( () => {
 			$e.data.cache.storage.clear();
 		} );
 
-		QUnit.test( 'validateRequestData', ( assert ) => {
-			assert.throws( () => {
-					$e.data.cache.validateRequestData( {} );
-				},
-				new Error( 'component is required.' )
-			);
-			assert.throws( () => {
-					$e.data.cache.validateRequestData( {
-						component: {},
-					} );
-				},
-				new Error( 'command is required.' )
-			);
-			assert.throws( () => {
-					$e.data.cache.validateRequestData( {
-						component: {},
-						command: '',
-					} );
-				},
-				new Error( 'endpoint is required.' )
-			);
-		} );
-
-		QUnit.test( 'receive(): simple ', async ( assert ) => {
+		QUnit.test( 'getAsync(): simple ', async ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'receive-simple-component';
@@ -53,7 +30,7 @@ jQuery( () => {
 				};
 
 			// Set cache test item.
-			$e.data.cache.storage.setItem( component.getNamespace(), JSON.stringify( randomValue ) );
+			$e.data.cache.storage.setItem( component.getNamespace(), randomValue );
 
 			const result = await $e.data.cache.getAsync( requestData );
 
@@ -61,7 +38,7 @@ jQuery( () => {
 			assert.equal( randomValue, result );
 		} );
 
-		QUnit.test( 'load(): value', ( assert ) => {
+		QUnit.test( 'set(): value', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'load-value-component';
@@ -74,12 +51,12 @@ jQuery( () => {
 					component: component,
 				};
 
-			$e.data.cache.load( requestData, randomValue );
+			$e.data.cache.set( requestData, randomValue );
 
-			assert.equal( randomValue, JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ) );
+			assert.equal( randomValue, $e.data.cache.storage.getItem( component.getNamespace() ) );
 		} );
 
-		QUnit.test( 'load(): object', ( assert ) => {
+		QUnit.test( 'set(): object', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'load-object-component';
@@ -91,12 +68,12 @@ jQuery( () => {
 					component: component,
 				};
 
-			$e.data.cache.load( requestData, TEST_OBJECT );
+			$e.data.cache.set( requestData, TEST_OBJECT );
 
-			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), TEST_OBJECT );
+			assert.deepEqual( $e.data.cache.storage.getItem( component.getNamespace() ), TEST_OBJECT );
 		} );
 
-		QUnit.test( 'load(): deep', ( assert ) => {
+		QUnit.test( 'set(): deep', ( assert ) => {
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'load-deep-component';
@@ -109,26 +86,26 @@ jQuery( () => {
 				};
 
 			// Load TEST_OBJECT to cache 'load-deep-component = TEST_OBJECT'.
-			$e.data.cache.load( requestData, TEST_OBJECT );
+			$e.data.cache.set( requestData, TEST_OBJECT );
 
-			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), TEST_OBJECT );
+			assert.deepEqual( $e.data.cache.storage.getItem( component.getNamespace() ), TEST_OBJECT );
 
 			// Modify `TEST_OBJECT.complexObject`.
 			requestData.endpoint += '/complexObject';
 
-			$e.data.cache.load( requestData, {
+			$e.data.cache.set( requestData, {
 				newKey: 'newValue',
 			} );
 
 			// Modify `TEST_OBJECT.complexObject.anotherObject`.
 			requestData.endpoint += '/anotherObject';
 
-			$e.data.cache.load( requestData, {
+			$e.data.cache.set( requestData, {
 				newKey: 'newValue',
 			} );
 
 			// Validate.
-			assert.deepEqual( JSON.parse( $e.data.cache.storage.getItem( component.getNamespace() ) ), {
+			assert.deepEqual( $e.data.cache.storage.getItem( component.getNamespace() ), {
 				simpleKeyValue: 'value',
 				complexObject: {
 					anotherObject: {
@@ -154,7 +131,7 @@ jQuery( () => {
 					component: component,
 				};
 
-			$e.data.cache.load( requestData, randomValue );
+			$e.data.cache.set( requestData, randomValue );
 
 			const result = $e.data.cache.get( requestData );
 
@@ -173,7 +150,7 @@ jQuery( () => {
 					component: component,
 				};
 
-			$e.data.cache.load( requestData, TEST_OBJECT );
+			$e.data.cache.set( requestData, TEST_OBJECT );
 
 			requestData.endpoint = component.getNamespace() + '/simpleKeyValue';
 
@@ -216,7 +193,7 @@ jQuery( () => {
 				},
 				randomValue = Math.random().toString();
 
-			$e.data.cache.load( requestData, TEST_OBJECT );
+			$e.data.cache.set( requestData, TEST_OBJECT );
 
 			const newObject = elementor.helpers.cloneObject( TEST_OBJECT );
 
@@ -247,7 +224,7 @@ jQuery( () => {
 				},
 				randomValue = Math.random().toString();
 
-			$e.data.cache.load( requestData, TEST_OBJECT );
+			$e.data.cache.set( requestData, TEST_OBJECT );
 
 			// Update object.simpleKeyValue.
 			requestData.args.data = {
@@ -303,11 +280,15 @@ jQuery( () => {
 					component: component,
 				};
 
-			$e.data.cache.load( requestData, {
+			$e.data.cache.set( requestData, {
 				command: randomValue,
 			} );
 
-			$e.data.cache.delete( component.getNamespace() );
+			$e.data.cache.delete( {
+				component,
+				command,
+				endpoint: command,
+			} );
 
 			assert.equal( $e.data.cache.get( requestData ), null );
 		} );
