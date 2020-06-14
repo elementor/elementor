@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 2.9.11
+Stable tag: 2.9.12
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,14 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.9.12 - 2020-06-14 =
+* Fix: Dynamic default value not working in Form widget ([#11578](https://github.com/elementor/elementor/issues/11578), [#11609](https://github.com/elementor/elementor/issues/11609))
+* Fix: Dark mode glitches in Form Step items ([#11579](https://github.com/elementor/elementor/issues/11579))
+* Fix: Unfiltered files upload not working when enabled from WordPress dashboard (Props [@jrutheiser](https://github.com/jrutheiser))
+* Fix: File upload control has text cursor instead of pointer cursor
+* Fix: Dark mode glitches in File upload control
+* Fix: Clear icon dark mode glitch in the widgets search box
 
 = 2.9.11 - 2020-06-02 =
 * Fix: Several URI protocols removed from links ([#11518](https://github.com/elementor/elementor/issues/11518))
