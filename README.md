@@ -223,6 +223,14 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 ## Changelog ##
 
+### 2.9.12 - 2020-06-14 ###
+* Fix: Dynamic default value not working in Form widget ([#11578](https://github.com/elementor/elementor/issues/11578), [#11609](https://github.com/elementor/elementor/issues/11609))
+* Fix: Dark mode glitches in Form Step items ([#11579](https://github.com/elementor/elementor/issues/11579))
+* Fix: Unfiltered files upload not working when enabled from WordPress dashboard (Props [@jrutheiser](https://github.com/jrutheiser))
+* Fix: File upload control has text cursor instead of pointer cursor
+* Fix: Dark mode glitches in File upload control
+* Fix: Clear icon dark mode glitch in the widgets search box
+
 ### 2.9.11 - 2020-06-02 ###
 * Fix: Several URI protocols removed from links ([#11518](https://github.com/elementor/elementor/issues/11518))
 
