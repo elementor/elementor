@@ -384,6 +384,8 @@ export default class EditorBase extends Marionette.Application {
 			this.previewView.destroy();
 		}
 
+		elementor.trigger( 'document:before:preview', document );
+
 		const preview = new Preview( { el: element, model: elementor.elementsModel } );
 
 		preview.$el.empty();

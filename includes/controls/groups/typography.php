@@ -227,6 +227,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function prepare_fields( $fields ) {
 		array_walk(
 			$fields, function( &$field, $field_name ) {
+
 				if ( in_array( $field_name, [ 'typography', 'popover_toggle' ] ) ) {
 					return;
 				}
@@ -257,6 +258,8 @@ class Group_Control_Typography extends Group_Control_Base {
 	 */
 	protected function add_group_args_to_field( $control_id, $field_args ) {
 		$field_args = parent::add_group_args_to_field( $control_id, $field_args );
+
+		$field_args['groupPrefix'] = $this->get_controls_prefix();
 
 		$args = $this->get_args();
 

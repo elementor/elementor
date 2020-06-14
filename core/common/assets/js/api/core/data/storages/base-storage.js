@@ -23,7 +23,13 @@ export default class BaseStorage {
 	}
 
 	getItem( key ) {
-		return this.provider.getItem( key );
+		const result = this.provider.getItem( key );
+
+		if ( null !== result ) {
+			return JSON.parse( result );
+		}
+
+		return result;
 	}
 
 	key( index ) {
@@ -35,7 +41,7 @@ export default class BaseStorage {
 	}
 
 	setItem( key, value ) {
-		return this.provider.setItem( key, value );
+		return this.provider.setItem( key, JSON.stringify( value ) );
 	}
 
 	getAll() {

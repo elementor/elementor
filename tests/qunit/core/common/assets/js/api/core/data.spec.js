@@ -1,6 +1,7 @@
 import { CREATABLE, DELETABLE, EDITABLE, READABLE } from 'elementor-api/core/data';
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandData from 'elementor-api/modules/command-data';
+import * as eData from 'elementor-tests-qunit/mock/e-data/index';
 
 // Test cache module.
 require( './data/cache.spec.js' );
@@ -8,15 +9,6 @@ require( './data/cache.spec.js' );
 // TODO: Each time creating component requires too many lines of code use helper.
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/core/data.js', ( hooks ) => {
-		hooks.before( () => {
-			// wpApiSettings is required by $e.data.
-			if ( ! window.wpApiSettings ) {
-				window.wpApiSettings = {};
-			}
-
-			wpApiSettings.nonce = 'test';
-		} );
-
 		hooks.beforeEach( () => {
 			$e.data.cache.storage.clear();
 		} );
@@ -206,13 +198,19 @@ jQuery( () => {
 					args,
 				};
 
+			eData.free();
+
 			await $e.data.fetch( requestData, ( input ) => {
 				assert.equal( input, $e.data.baseEndpointAddress + command + '?param1=valueA' );
 				return Promise.resolve( new Response( JSON.stringify( {} ) ) );
 			} );
+
+			eData.silence();
 		} );
 
 		QUnit.test( 'fetch(): with cache', async ( assert ) => {
+			eData.free();
+
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
 						return 'test-component-fetch-cache';
@@ -249,6 +247,8 @@ jQuery( () => {
 
 			// Validate cache.
 			assert.deepEqual( $e.data.cache.get( requestData ), result );
+
+			eData.silence();
 		} );
 
 		QUnit.test( 'fetch(): with cache loaded manually', async ( assert ) => {
@@ -279,8 +279,12 @@ jQuery( () => {
 			// This test case relies on cache.
 			$e.data.setCache( component, command, query, data );
 
+			eData.mock();
+
 			// Get cache.
 			const result = await $e.data.fetch( requestData );
+
+			eData.silence();
 
 			// Validate if data is same as result.data.
 			assert.deepEqual( data, result );
@@ -469,7 +473,7 @@ jQuery( () => {
 
 			$e.data.setCache( component, component.getNamespace(), {}, {} );
 
-			$e.data.deleteCache( component.getNamespace() );
+			$e.data.deleteCache( component, component.getNamespace(), {} );
 
 			assert.equal( $e.data.getCache( component, component.getNamespace() ), null );
 		} );

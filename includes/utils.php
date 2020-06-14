@@ -566,4 +566,22 @@ class Utils {
 
 		return $result;
 	}
+
+	public static function find_element_recursive( $elements, $id ) {
+		foreach ( $elements as $element ) {
+			if ( $id === $element['id'] ) {
+				return $element;
+			}
+
+			if ( ! empty( $element['elements'] ) ) {
+				$element = self::find_element_recursive( $element['elements'], $id );
+
+				if ( $element ) {
+					return $element;
+				}
+			}
+		}
+
+		return false;
+	}
 }
