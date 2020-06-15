@@ -5,10 +5,6 @@ export default class ColorPicker extends elementorModules.Module {
 		this.createPicker();
 	}
 
-	getColorPickerPalette() {
-		return _.pluck( elementor.schemes.getScheme( 'color-picker' ).items, 'value' );
-	}
-
 	getDefaultSettings() {
 		return {
 			picker: {
@@ -27,14 +23,8 @@ export default class ColorPicker extends elementorModules.Module {
 				pickerHeader: 'elementor-color-picker__header',
 				pickerToolsContainer: 'elementor-color-picker__tools',
 				pickerTool: 'e-control-tool',
-				customClearButton: 'elementor-color-picker__clear',
-				swatchPlaceholder: 'elementor-color-picker__swatch-placeholder',
-				addSwatch: 'elementor-color-picker__add-swatch',
+				clearButton: 'elementor-color-picker__clear',
 				plusIcon: 'eicon-plus',
-				trashIcon: 'eicon-trash-o',
-			},
-			selectors: {
-				swatch: '.pcr-swatch',
 			},
 		};
 	}
@@ -207,9 +197,7 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	onAddButtonClick() {
-		elementor.schemes.addSchemeItem( 'color-picker', { value: this.color } );
-
-		elementor.schemes.saveScheme( 'color-picker' );
+		this.hide();
 
 		const onPickerAddButtonClick = this.getSettings( 'onAddButtonClick' );
 
