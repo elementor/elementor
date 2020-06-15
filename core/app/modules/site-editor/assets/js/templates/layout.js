@@ -1,12 +1,12 @@
 import Page from 'elementor-app/layout/page';
-import SiteEditorMenu from '../organisms/menu';
+import Menu from '../organisms/menu';
 import TemplateTypesContext from '../context/template-types';
 
 export default function Layout( props ) {
 	const config = {
 		title: __( 'Site Editor', 'elementor' ),
 		headerButtons: props.headerButtons,
-		sidebar: <SiteEditorMenu />,
+		sidebar: <Menu />,
 		content: props.children,
 	};
 

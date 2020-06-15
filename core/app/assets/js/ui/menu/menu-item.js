@@ -6,6 +6,6 @@ export default class SideMenuItem extends BaseButton {
 	}
 
 	getClassName() {
-		return `e-app__side-menu__item ` + super.getClassName();
+		return `e-app__menu-item ` + super.getClassName();
 	}
 }

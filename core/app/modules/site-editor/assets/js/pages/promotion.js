@@ -1,6 +1,6 @@
 import Layout from '../templates/layout';
 import PromotionOverlay from '../molecules/promotion-overlay';
-import SiteParts from './../organisms/site-parts';
+import SiteParts from '../organisms/site-parts';
 
 export default function Promotion() {
 	const promotionUrl = 'https://go.elementor.com/site-editor',
