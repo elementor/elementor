@@ -27,7 +27,7 @@ export default class Component extends ComponentBase {
 	}
 
 	onElementorLoaded() {
-		// Add global cache before render.
+		// Add globals to cache before render.
 		$e.data.get( 'globals/index' );
 	}
 }
