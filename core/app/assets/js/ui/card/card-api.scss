@@ -1,0 +1,58 @@
+// this should emulate external packages consumption
+@import "../../../styles/common";
+
+// Private API. Will consume global tokens
+// - Default tokens
+$card-background-color: rgba($eps-theme-light, $opacity-5);
+$card-background-color-hover: theme-colors(light);
+$card-box-shadow: $eds-box-shadow;
+$card-border-radius: $eps-radius;
+$card-transition: $eps-transition-duration;
+
+$card-header-padding-y: $eps-spacer;
+$card-header-padding-x: $eps-spacer;
+$card-header-border: $eps-border;
+
+$card-headline-color: tints(500);
+
+$card-headline-font-size: $font-size-12;
+$card-headline-font-weight: $eps-font-weight-medium;
+$card-headline-line-height: $line-height-2;
+
+$card-body-padding-y: $eps-spacer;
+$card-body-padding-x: $eps-spacer;
+
+$card-figure-background-color: tints(200);
+$card-figure-padding-bottom: $ratio-portrait;
+
+$card-image-overlay-background-color: rgba($eps-theme-dark, $opacity-2);
+$card-image-overlay-transition: $card-transition;
+
+// - Dark tokens
+$card-dark-background-color: rgba($eps-dark-theme-light, $opacity-5);
+$card-dark-background-color-hover: dark-theme-colors(light);
+$card-dark-box-shadow: $eds-box-shadow;
+$card-dark-header-border: $eps-border;
+$card-dark-headline-color: dark-tints(500);
+$card-dark-figure-background-color: dark-tints(200);
+$card-dark-image-overlay-background-color: rgba($eps-dark-theme-dark, $opacity-2);
+
+:root {
+	--card-background-color: #{$card-background-color};
+	--card-background-color-hover: #{$card-background-color-hover};
+	--card-box-shadow: #{$card-box-shadow};
+	--card-header-border: #{$card-header-border};
+	--card-headline-color: #{$card-headline-color};
+	--card-figure-background-color: #{$card-figure-background-color};
+	--card-image-overlay-background-color: #{$card-image-overlay-background-color};
+}
+
+.dark {
+	--card-background-color: #{$card-dark-background-color};
+	--card-background-color-hover: #{$card-dark-background-color-hover};
+	--card-box-shadow: #{$card-dark-box-shadow};
+	--card-header-border: #{$card-dark-header-border};
+	--card-headline-color: #{$card-dark-headline-color};
+	--card-figure-background-color: #{$card-dark-figure-background-color};
+	--card-image-overlay-background-color: #{$card-dark-image-overlay-background-color};
+}

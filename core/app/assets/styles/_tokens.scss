@@ -1,7 +1,7 @@
 // Global tokens
 // - Sort Order has meaning
 @import "./tokens/colors";
-@import "./tokens/brand";
+@import "./tokens/theme";
 @import "./tokens/spacing";
 @import "./tokens/font";
 @import "./tokens/type";
@@ -14,3 +14,14 @@
 @import "./tokens/styles/radius";
 @import "./tokens/styles/shadow";
 @import "./tokens/styles/z-index";
+
+// Maps
+@import "./tokens/maps/colors-map";
+@import "./tokens/maps/theme-map";
+@import "./tokens/maps/tints-map";
+
+// Map Semantic functions
+@import "./tokens/map-functions";
+
+// Themes
+@import "themes/dark-tokens";

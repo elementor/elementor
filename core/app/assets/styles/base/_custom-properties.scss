@@ -1,0 +1,18 @@
+// Base: Custom properties
+// - Generated via loops from relevant maps.
+
+// Custom variable values only support SassScript inside `#{}`.
+
+:root {
+	@each $color, $value in $eps-brand {
+		@if map-get($eps-brand, $color) {
+			--#{$color}: #{$value};
+		}
+	}
+
+	@each $color, $value in $eps-tints {
+		@if map-get($eps-tints, $color) {
+			--#{$color}: #{$value};
+		}
+	}
+}

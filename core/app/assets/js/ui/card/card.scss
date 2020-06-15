@@ -1,33 +1,7 @@
 // Card
 
 // this should emulate external packages consumption
-@import "../../../styles/common";
-
-// Local API. Will consume global tokens
-$card-background-color: rgba($eps-brand-light, $opacity-5);
-$card-background-color-hover: $eps-brand-light;
-$card-box-shadow: $eds-box-shadow;
-$card-border-radius: $eps-radius;
-$card-transition: $eps-transition-duration;
-
-$card-header-padding-y: $eps-spacer;
-$card-header-padding-x: $eps-spacer;
-$card-header-border: $eps-border;
-
-$card-headline-color: $eps-gray-500;
-
-$card-headline-font-size: $font-size-12;
-$card-headline-font-weight: $eps-font-weight-medium;
-$card-headline-line-height: $line-height-2;
-
-$card-body-padding-y: $eps-spacer;
-$card-body-padding-x: $eps-spacer;
-
-$card-figure-background-color: $eps-gray-200;
-$card-figure-padding-bottom: $ratio-portrait;
-
-$card-image-overlay-background-color: rgba($eps-brand-dark, $opacity-2);
-$card-image-overlay-transition: $card-transition;
+@import "./card-api";
 
 .card {
 	background-color: $card-background-color;
