@@ -84,8 +84,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	createGlobalItemMarkup( globalData ) {
-		globalData.key = this.model.get( 'name' );
-
 		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-global-id': globalData.id } );
 
 		$textStylePreview
