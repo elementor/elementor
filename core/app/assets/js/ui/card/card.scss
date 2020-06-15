@@ -1,33 +1,7 @@
 // Card
 
 // this should emulate external packages consumption
-@import "../../../styles/common";
-
-// Local API. Will consume global tokens
-$card-background-color: rgba($eps-brand-light, $opacity-5);
-$card-background-color-hover: $eps-brand-light;
-$card-box-shadow: $eds-box-shadow;
-$card-border-radius: $eps-radius;
-$card-transition: $eps-transition-duration;
-
-$card-header-padding-y: $eps-spacer;
-$card-header-padding-x: $eps-spacer;
-$card-header-border: $eps-border;
-
-$card-headline-color: $eps-gray-500;
-
-$card-headline-font-size: $font-size-12;
-$card-headline-font-weight: $eps-font-weight-medium;
-$card-header-height: $eps-spacer * 2;
-
-$card-body-padding-y: $eps-spacer;
-$card-body-padding-x: $eps-spacer;
-
-$card-figure-background-color: $eps-gray-200;
-$card-figure-padding-bottom: $ratio-portrait;
-
-$card-image-overlay-background-color: rgba($eps-brand-dark, $opacity-2);
-$card-image-overlay-transition: $card-transition;
+@import "./card-api";
 
 .card {
 	background-color: $card-background-color;
@@ -38,10 +12,7 @@ $card-image-overlay-transition: $card-transition;
 	&__header {
 		padding: $card-header-padding-y $card-header-padding-x;
 		border-bottom: $card-header-border;
-		min-height: $card-header-height;
 		display: flex;
-		align-items: center;
-		box-sizing: content-box;
 	}
 
 	/*
@@ -53,7 +24,7 @@ $card-image-overlay-transition: $card-transition;
 		color: $card-headline-color;
 		font-size: $card-headline-font-size;
 		font-weight: $card-headline-font-weight;
-		flex-grow: 1;
+		line-height: $card-headline-line-height;
 	}
 
 	&__body {
@@ -73,7 +44,7 @@ $card-image-overlay-transition: $card-transition;
 		width: 100%;
 		object-fit: contain;
 		object-position: top;
-		position: absolute;
+		position: relative;
 		top: 0;
 		left: 0;
 	}
