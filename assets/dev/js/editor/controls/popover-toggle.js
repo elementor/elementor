@@ -26,10 +26,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
-	resetControlValue() {
-		this.ui.resetInput.trigger( 'click' );
-	}
-
 	getCommand() {
 		return 'globals/typography';
 	}
