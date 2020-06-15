@@ -10,7 +10,7 @@ export default function SiteParts( props ) {
 		<section className="site-editor__site-parts u-grid">
 			{ (
 				templateTypes.map( ( item ) => (
-					<SitePart key={ item.type } { ...item }>
+					<SitePart className="site-part" partThumbnail={ item.urls.thumbnail } partTitle={ item.title } key={ item.type } { ...item }>
 						{ React.createElement( props.hoverElement, item ) }
 					</SitePart>
 				) )

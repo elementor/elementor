@@ -38,6 +38,7 @@ $card-image-overlay-transition: $card-transition;
 	&__header {
 		padding: $card-header-padding-y $card-header-padding-x;
 		border-bottom: $card-header-border;
+		display: flex;
 	}
 
 	/*
@@ -76,6 +77,7 @@ $card-image-overlay-transition: $card-transition;
 
 	&__image-overlay {
 		position: absolute;
+		top: 0;
 		background-color: $card-image-overlay-background-color;
 		z-index: 1;
 		width: 100%;

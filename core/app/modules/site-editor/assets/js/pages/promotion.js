@@ -1,25 +1,12 @@
 import Layout from '../templates/layout';
+import PromotionOverlay from '../molecules/promotion-overlay';
 import SiteParts from './../organisms/site-parts';
 
 export default function Promotion() {
-	const promotionUrl = 'https://go.elementor.com/site-editor';
-
-	const PromotionHoverElement = ( props ) => {
-		const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
-
-		return (
-			<a target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
-				<i className="eicon-lock" />
-				<span>
-				{ __( 'Get Pro', 'elementor' ) }
-			</span>
-			</a>
-		);
-	};
-
-	PromotionHoverElement.propTypes = {
-		type: PropTypes.string,
-	};
+	const promotionUrl = 'https://go.elementor.com/site-editor',
+		PromotionHoverElement = ( props ) => {
+			return <PromotionOverlay type={ props.type } promotionUrl={ promotionUrl }/>;
+		};
 
 	return (
 		<Layout>

@@ -1,0 +1,27 @@
+// Card
+
+// this should emulate external packages consumption
+@import "../../../../../assets/styles/common";
+
+$site-part-indicator-size: $eps-spacer;
+$site-part-indicator-color: $eps-gray-500;
+$site-part-indicator-color-active: $eps-gray-500;
+$site-part-indicator-box-shadow: $eds-box-shadow;
+$site-part-indicator-radius: 100%;
+$site-part-indicator-border: 2px #ff solid;
+
+.site-part {
+	&__indicator {
+		display: block;
+		width: $site-part-indicator-size;
+		height: $site-part-indicator-size;
+		box-shadow: $site-part-indicator-box-shadow;
+		background-color: $site-part-indicator-color;
+		border: $site-part-indicator-border;
+		border-radius: $site-part-indicator-radius;
+
+		&--active {
+			background-color: $eps-brand-success;
+		}
+	}
+}

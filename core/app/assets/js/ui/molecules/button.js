@@ -49,7 +49,7 @@ export default class Button extends React.Component {
 	}
 
 	getText() {
-		return this.props.hideText ? '' : this.props.text;
+		return this.props.hideText ? '' : <Typography>{ this.props.text }</Typography>;
 	}
 
 	render() {

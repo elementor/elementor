@@ -1,16 +1,16 @@
 // Global tokens
 // - Sort Order has meaning
-@import "/tokens/colors";
-@import "/tokens/brand";
-@import "/tokens/spacing";
-@import "/tokens/font";
-@import "/tokens/type";
-@import "/tokens/ratio";
-@import "/tokens/opacity";
+@import "./tokens/colors";
+@import "./tokens/brand";
+@import "./tokens/spacing";
+@import "./tokens/font";
+@import "./tokens/type";
+@import "./tokens/ratio";
+@import "./tokens/opacity";
 
 // - Sort Order is A-Z
-@import "/tokens/styles/border";
-@import "/tokens/styles/motion";
-@import "/tokens/styles/radius";
-@import "/tokens/styles/shadow";
-@import "/tokens/styles/z-index";
+@import "./tokens/styles/border";
+@import "./tokens/styles/motion";
+@import "./tokens/styles/radius";
+@import "./tokens/styles/shadow";
+@import "./tokens/styles/z-index";
