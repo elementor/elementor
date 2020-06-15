@@ -79,6 +79,23 @@ class Library extends Common_App {
 		$ajax_manager->register_ajax_action( 'library_connect_popup_seen', [ $this, 'library_connect_popup_seen' ] );
 	}
 
+	protected function get_app_info() {
+		return [
+			'user_common_data' => [
+				'label' => 'User Common Data',
+				'value' => get_user_option( $this->get_option_name(), get_current_user_id() ),
+			],
+			'connect_site_key' => [
+				'label' => 'Site Key',
+				'value' => get_option( 'elementor_connect_site_key' ),
+			],
+			'remote_info_library' => [
+				'label' => 'Remote Library Info',
+				'value' => get_option( 'elementor_remote_info_library' ),
+			],
+		];
+	}
+
 	protected function init() {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
