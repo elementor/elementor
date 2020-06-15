@@ -60,7 +60,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	updateSelectBoxText() {
 		const value = this.view.getControlValue(),
-			globalValue = this.getGlobalValue();
+			globalValue = this.view.getGlobalKey();
 
 		let selectBoxText = '';
 
@@ -234,7 +234,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		let command = '';
 		const settings = {};
 
-		if ( this.getGlobalValue() ) {
+		if ( this.view.getGlobalKey() ) {
 			// If a global text style is already active, switch them without disabling globals
 			command = 'document/globals/settings';
 		} else {

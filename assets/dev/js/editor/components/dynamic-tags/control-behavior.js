@@ -230,7 +230,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.setTagView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
 
 		// If an element has an active global value, disable it before applying the dynamic value
-		if ( this.view.getGlobalValue() ) {
+		if ( this.view.getGlobalKey() ) {
 			this.view.triggerMethod( 'unsetGlobalValue' );
 		}
 
