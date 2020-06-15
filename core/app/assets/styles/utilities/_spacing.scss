@@ -1,0 +1,76 @@
+// stylelint-disable declaration-no-important
+
+// Margin and Padding
+@each $prop, $abbrev in (margin: m, padding: p) {
+	@each $size, $length in $spacers {
+		.u-#{$abbrev}-#{$size} {
+			#{$prop}: $length !important;
+		}
+		.u-#{$abbrev}t-#{$size},
+		.#{$abbrev}y-#{$size} {
+			#{$prop}-top: $length !important;
+		}
+		.u-#{$abbrev}r-#{$size},
+		.u-#{$abbrev}x-#{$size} {
+			#{$prop}-right: $length !important;
+		}
+		.u-#{$abbrev}b-#{$size},
+		.u-#{$abbrev}y-#{$size} {
+			#{$prop}-bottom: $length !important;
+		}
+		.u-#{$abbrev}l-#{$size},
+		.u-#{$abbrev}x-#{$size} {
+			#{$prop}-left: $length !important;
+		}
+	}
+}
+
+// Negative margins (e.g., where `.mb-n1` is negative version of `.mb-1`)
+@each $size, $length in $spacers {
+	@if $size != 0 {
+		.u-m-n#{$size} {
+			margin: -$length !important;
+		}
+		.u-mt-n#{$size},
+		.u-my-n#{$size} {
+			margin-top: -$length !important;
+		}
+		.u-mr-n#{$size},
+		.u-mx-n#{$size} {
+			margin-right: -$length !important;
+		}
+		.u-mb-n#{$size},
+		.u-my-n#{$size} {
+			margin-bottom: -$length !important;
+		}
+		.u-ml-n#{$size},
+		.u-mx-n#{$size} {
+			margin-left: -$length !important;
+		}
+	}
+}
+
+// Some special margin utils
+.u-m-auto {
+	margin: auto !important;
+}
+
+.u-mt-auto,
+.u-my-auto {
+	margin-top: auto !important;
+}
+
+.u-mr-auto,
+.u-mx-auto {
+	margin-right: auto !important;
+}
+
+.u-mb-auto,
+.u-my-auto {
+	margin-bottom: auto !important;
+}
+
+.u-ml-auto,
+.u-mx-auto {
+	margin-left: auto !important;
+}

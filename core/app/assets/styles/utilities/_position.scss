@@ -1,0 +1,32 @@
+// stylelint-disable declaration-no-important
+
+// Common values
+@each $position in $positions {
+  .u-position-#{$position} { position: $position !important; }
+}
+
+// Shorthand
+
+.u-fixed-top {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: $eps-zindex-fixed;
+}
+
+.u-fixed-bottom {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $eps-zindex-fixed;
+}
+
+.u-sticky-top {
+  @supports (position: sticky) {
+    position: sticky;
+    top: 0;
+    z-index: $eps-zindex-sticky;
+  }
+}

@@ -1,0 +1,17 @@
+// Utilities for common `display` values
+
+@each $value in $displays {
+	.u-d-#{$value} {
+		display: $value !important;
+	}
+}
+
+// Utilities for toggling `display` in print
+
+@media print {
+	@each $value in $displays {
+		.u-d-print-#{$value} {
+			display: $value !important;
+		}
+	}
+}
