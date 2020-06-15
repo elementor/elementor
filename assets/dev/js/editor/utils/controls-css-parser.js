@@ -61,14 +61,19 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		let controlGlobalKey = control.name;
+		const container = this.getSettings( 'container' );
 
-		if ( control.groupType ) {
-			controlGlobalKey = control.groupPrefix + control.groupType;
+		let globalValue;
+
+		if ( container.globals ) {
+			let controlGlobalKey = control.name;
+
+			if ( control.groupType ) {
+				controlGlobalKey = control.groupPrefix + control.groupType;
+			}
+
+			globalValue = container.globals.get( controlGlobalKey );
 		}
-
-		const globalValues = this.getSettings( 'container' ).globals.attributes,
-			globalValue = globalValues[ controlGlobalKey ];
 
 		let value;
 
