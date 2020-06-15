@@ -11,41 +11,18 @@ export default class extends ControlBaseDataView {
 	}
 
 	applySavedValue() {
-		if ( ! this.colorPicker ) {
-			this.initPicker();
-		}
+		const currentValue = this.getCurrentValue();
 
-		const globalKey = this.getGlobalValue();
-
-		if ( globalKey ) {
-			$e.data.get( globalKey )
-				.then( ( globalData ) => {
-					this.updateClassGlobalValue( globalData.data.value );
-					this.applyCurrentValue();
-				} );
-		} else {
-			this.applyCurrentValue();
-		}
-	}
-
-	applyCurrentValue() {
 		if ( this.colorPicker ) {
-			this.colorPicker.picker.setColor( this.getControlValue() );
+			// Set the picker color without triggering the 'onChange' event
+			const parsedColor = this.colorPicker.picker._parseLocalColor( currentValue );
+
+			this.colorPicker.picker.setHSVA( ...parsedColor.values, false );
 		} else {
 			this.initPicker();
 		}
 
-		if ( this.globalValue ) {
-			this.setGlobalDisplay();
-		}
-	}
-
-	updateClassGlobalValue( color ) {
-		this.globalValue = color;
-	}
-
-	getControlValue() {
-		return this.globalValue || super.getControlValue();
+		this.$el.toggleClass( 'e-no-value-color', ! currentValue );
 	}
 
 	initPicker() {
@@ -66,28 +43,16 @@ export default class extends ControlBaseDataView {
 
 		this.colorPicker = new ColorPicker( options );
 
+		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
+
 		this.addTipsyToPickerButton();
 
-		this.$pickerButton.on( 'click', () => {
-			if ( this.getGlobalValue() ) {
-				this.triggerMethod( 'unsetGlobalValue' );
-			}
-		} );
+		this.$pickerButton.on( 'click', () => this.onPickerButtonClick() );
 
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
-
-		if ( ! this.getGlobalValue() && ! this.getControlValue() ) {
-			this.$el.addClass( 'e-no-value-color' );
-		}
-	}
-
-	hidePopover() {
-		this.colorPicker.picker.hide();
 	}
 
 	addTipsyToPickerButton() {
-		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
-
 		this.$pickerButton.tipsy( {
 			title: () => this.getCurrentValue() || '',
 			offset: 4,
@@ -177,58 +142,41 @@ export default class extends ControlBaseDataView {
 		return $globalColorsPreviewContainer;
 	}
 
-	// Change the color picker value without triggering Pickr's 'change' event
-	setGlobalDisplay() {
-		if ( ! this.globalValue ) {
-			this.$el.addClass( 'e-no-value-color' );
-
-			return;
-		}
-
-		const parsedColor = this.colorPicker.picker._parseLocalColor( this.globalValue );
-
-		this.colorPicker.picker.setHSVA( ...parsedColor.values, false );
-	}
-
 	onPickerChange() {
 		this.setValue( this.colorPicker.getColor() );
 
-		if ( this.getGlobalValue() ) {
-			this.triggerMethod( 'unsetGlobalValue' );
-		}
-
 		if ( ! this.isCustom ) {
-			this.triggerMethod( 'valueTypeChange' );
+			this.triggerMethod( 'value:type:change' );
 
-			this.isCustom = true;
-		}
 			this.colorPicker.toggleClearButtonState( true );
 
+			if ( this.$el.hasClass( 'e-no-value-color' ) ) {
+				this.$el.removeClass( 'e-no-value-color' );
+			}
 
-		if ( this.$el.hasClass( 'e-no-value-color' ) ) {
-			this.$el.removeClass( 'e-no-value-color' );
+			this.isCustom = true;
 		}
 	}
 
 	onPickerClear() {
-		if ( this.getGlobalValue() ) {
-			this.triggerMethod( 'unsetGlobalValue' );
-		} else {
-			this.isCustom = false;
-
-			this.triggerMethod( 'valueTypeChange' );
-		}
+		this.isCustom = false;
 
 		this.setValue( '' );
+
+		this.triggerMethod( 'value:type:change' );
 
 		this.$el.addClass( 'e-no-value-color' );
 
 		this.colorPicker.toggleClearButtonState( false );
+	}
 
+	onPickerButtonClick() {
+		if ( this.getGlobalKey() ) {
+			this.triggerMethod( 'unset:global:value' );
+		}
 
-		this.$el
-			.find( '.e-global-selected' )
-			.html( elementor.translate( 'default' ) );
+		// If there is a value in the control, set the clear button to active, if not, deactivate it
+		this.colorPicker.toggleClearButtonState( !! this.getCurrentValue() );
 	}
 
 	onAddGlobalButtonClick() {
