@@ -5,10 +5,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		};
 	}
 
-	getGlobalValue() {
-		return this.view.container.globals.get( this.view.model.get( 'name' ) );
-	}
-
 	// This method exists because the UI elements are printed after controls are already rendered
 	registerUiElements() {
 		const popoverWidget = this.popover.getElements( 'widget' );
