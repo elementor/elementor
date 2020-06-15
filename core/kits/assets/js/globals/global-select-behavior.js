@@ -33,9 +33,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	async applySavedGlobalValue( globalId ) {
 		this.setGlobalValue( globalId );
 
-		const globalMeta = this.view.getGlobalMeta(),
-			globalResult = await $e.data.get( globalMeta.commandName, { id: globalId } ),
-			globalData = globalResult.data;
 
 		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
 		if ( this.view.$el.hasClass( 'e-no-value-color' ) ) {
@@ -189,30 +186,27 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			hide: {
 				onBackgroundClick: false,
 			},
-			onConfirm: () => {
-				const globalMeta = this.view.getGlobalMeta();
-
-				globalMeta.title = this.globalNameInput.val();
-
-				this.createNewGlobal( globalMeta )
-					.then( ( result ) => {
-						const $globalPreview = this.view.createGlobalItemMarkup( result.data );
-
-						this.ui.globalPreviewsContainer.append( $globalPreview );
-					} );
-			},
+			onConfirm: () => this.onConfirmNewGlobal(),
 			onShow: () => {
-				// If the control creating the new global has an open popover, make sure it closes when the modal appears
-				if ( this.view.hidePopover ) {
-					this.view.hidePopover();
-				}
-
 				// Put focus on the naming input
 				this.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
 			},
 		} );
 
 		this.confirmNewGlobalModal.show();
+	}
+
+	onConfirmNewGlobal() {
+		const globalMeta = this.view.getGlobalMeta();
+
+		globalMeta.title = this.globalNameInput.val();
+
+		this.createNewGlobal( globalMeta )
+			.then( ( result ) => {
+				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
+
+				this.ui.globalPreviewsContainer.append( $globalPreview );
+			} );
 	}
 
 	createNewGlobal( globalMeta ) {
@@ -262,17 +256,14 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// The unset method is triggered from the controls via triggerMethod
 	onUnsetGlobalValue() {
-		const globalData = this.view.getGlobalMeta(),
-			settings = {};
-
-		settings[ globalData.key ] = '';
+		const globalMeta = this.view.getGlobalMeta();
 
 		$e.run( 'document/globals/disable', {
 			container: this.view.container,
-			settings: settings,
+			settings: { [ globalMeta.key ]: '' },
 		} )
 			.then( () => {
-				this.updateSelectBoxText();
+				this.onValueTypeChange();
 			} );
 	}
 

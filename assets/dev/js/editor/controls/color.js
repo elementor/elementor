@@ -61,34 +61,33 @@ export default class extends ControlBaseDataView {
 	}
 
 	getGlobalMeta() {
-		const colorData = this.colorPicker.getColorData();
-
 		return {
 			commandName: this.getCommand(),
 			key: this.model.get( 'name' ),
-			title: colorData.title,
-			value: colorData.value,
+			title: this.colorPicker.getColorTitle(),
 		};
 	}
 
 	getAddGlobalConfirmMessage( globalColors ) {
-		const color = this.colorPicker.getColorData(),
+		const colorTitle = this.colorPicker.getColorTitle(),
 			currentValue = this.getCurrentValue(),
 			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
-			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.title } )
-				.val( color.title );
 			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + currentValue } ),
+			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: colorTitle } )
+				.val( colorTitle );
 
 		// Check if the color already exists in the global colors, and display an appropriate message
 		Object.values( globalColors ).forEach( ( globalColor ) => {
-			let messageContent = elementor.translate( 'global_color_confirm_text' );
+			let messageContent;
 
 			if ( currentValue === globalColor.value ) {
 				messageContent = elementor.translate( 'global_color_already_exists' );
-			} else if ( color.title === globalColor.title ) {
+			} else if ( colorTitle === globalColor.title ) {
 				messageContent = elementor.translate( 'global_color_name_already_exists' );
+			} else {
+				messageContent = elementor.translate( 'global_color_confirm_text' );
 			}
 
 			$messageText.html( messageContent );
