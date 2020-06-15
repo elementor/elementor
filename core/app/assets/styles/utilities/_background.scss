@@ -1,17 +1,14 @@
 // Utilities: Background
-// - copied and modified from "bootstrap 4.5
-
-
-// stylelint-disable declaration-no-important
+// - generating background util classes from '$theme-colors' loop
 
 @each $color, $value in $theme-colors {
-	@include bg-variant(".bg-#{$color}", $value, true);
+	.u-bg-#{$color}{ background-color:$value;}
 }
 
-.bg-white {
-	background-color: $white !important;
+@each $color, $value in $tints {
+	.u-bg-gray-#{$color}{ background-color:$value;}
 }
 
-.bg-transparent {
+.u-bg-transparent {
 	background-color: transparent !important;
 }

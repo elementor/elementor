@@ -3,12 +3,12 @@ $border-style-solid: solid;
 $border-style-dashed: dashed;
 $border-style-dotted: dotted;
 
-$eps-border-style-default: $border-style-solid;
-$eps-border-size-default: 1px;
-$eps-border-size-md: 2px;
-$eps-border-size-lg: 3px;
+$eps-border-style: $border-style-solid;
+$eps-border-width: 1px;
+$eps-border-width-md: 2px;
+$eps-border-width-lg: 3px;
 
-$eps-border-color-default: $eps-gray-200;
-$eps-border-color-light: lighten($eps-border-color-default, 10%);
+$eps-border-color: $eps-gray-200;
+$eps-border-color-light: lighten($eps-border-color, 10%);
 
-$eps-border: $eps-border-size-default $eps-border-style-default $eps-border-color-default;
+$eps-border: $eps-border-width $eps-border-style $eps-border-color;

@@ -5,7 +5,7 @@
 // - Default tokens
 $card-background-color: rgba($eps-theme-light, $opacity-5);
 $card-background-color-hover: theme-colors(light);
-$card-box-shadow: $eds-box-shadow;
+$card-box-shadow: $eps-box-shadow;
 $card-border-radius: $eps-radius;
 $card-transition: $eps-transition-duration;
 
@@ -31,7 +31,7 @@ $card-image-overlay-transition: $card-transition;
 // - Dark tokens
 $card-dark-background-color: rgba($eps-dark-theme-light, $opacity-5);
 $card-dark-background-color-hover: dark-theme-colors(light);
-$card-dark-box-shadow: $eds-box-shadow;
+$card-dark-box-shadow: $eps-box-shadow;
 $card-dark-header-border: $eps-border;
 $card-dark-headline-color: dark-tints(500);
 $card-dark-figure-background-color: dark-tints(200);

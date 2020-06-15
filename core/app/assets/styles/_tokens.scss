@@ -7,6 +7,7 @@
 @import "./tokens/type";
 @import "./tokens/ratio";
 @import "./tokens/opacity";
+@import "./tokens/utilities";
 
 // - Sort Order is A-Z
 @import "./tokens/styles/border";
@@ -16,9 +17,11 @@
 @import "./tokens/styles/z-index";
 
 // Maps
+// - Sorted by roles
 @import "./tokens/maps/colors-map";
 @import "./tokens/maps/theme-map";
 @import "./tokens/maps/tints-map";
+@import "./tokens/maps/spacing-map";
 
 // Map Semantic functions
 @import "./tokens/map-functions";

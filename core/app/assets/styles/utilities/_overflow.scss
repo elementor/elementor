@@ -1,0 +1,5 @@
+// stylelint-disable declaration-no-important
+
+@each $value in $overflows {
+  .u-overflow-#{$value} { overflow: $value !important; }
+}

@@ -1,0 +1,121 @@
+// stylelint-disable declaration-no-important
+
+//
+// Text
+//
+
+.u-text-monospace {
+	font-family: $font-family-monospace !important;
+}
+
+// Alignment
+
+.u-text-justify {
+	text-align: justify !important;
+}
+
+.u-text-wrap {
+	white-space: normal !important;
+}
+
+.u-text-nowrap {
+	white-space: nowrap !important;
+}
+
+.u-text-truncate {
+	@include text-truncate();
+}
+
+
+// Alignment (TBD if responsive is needed)
+.u-text-left {
+	text-align: left !important;
+}
+
+.u-text-right {
+	text-align: right !important;
+}
+
+.u-text-center {
+	text-align: center !important;
+}
+
+
+// Transformation
+
+.u-text-lowercase {
+	text-transform: lowercase !important;
+}
+
+.u-text-uppercase {
+	text-transform: uppercase !important;
+}
+
+.u-text-capitalize {
+	text-transform: capitalize !important;
+}
+
+// Weight and italics
+.u-font-weight-normal {
+	font-weight: $eps-font-weight-normal !important;
+}
+
+.u-font-weight-medium {
+	font-weight: $eps-font-weight-medium !important;
+}
+
+.u-font-weight-bold {
+	font-weight: $eps-font-weight-bold !important;
+}
+
+.u-font-italic {
+	font-style: italic !important;
+}
+
+// Contextual colors
+
+.u-text-white {
+	color: $white !important;
+}
+
+@each $color, $value in $theme-colors {
+	.u-text-#{$color} {
+		color: $value;
+	}
+}
+
+.u-text-body {
+	color: $body-color !important;
+}
+
+.u-text-muted {
+	color: $text-muted !important;
+}
+
+.u-text-dark-50 {
+	color: rgba($eps-theme-dark, .5) !important;
+}
+
+.u-text-light-50 {
+	color: rgba($eps-theme-light, .5) !important;
+}
+
+// Misc
+
+.u-text-hide {
+	@include text-hide();
+}
+
+.u-text-decoration-none {
+	text-decoration: none !important;
+}
+
+.u-text-break {
+	word-wrap: break-word !important;
+}
+
+// Reset
+
+.u-text-reset {
+	color: inherit !important;
+}
