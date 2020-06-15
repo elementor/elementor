@@ -49,11 +49,10 @@ export default class extends ControlBaseDataView {
 	}
 
 	initPicker() {
-		const controlValue = this.getControlValue(),
-			options = {
+		const options = {
 			picker: {
 				el: this.ui.pickerContainer[ 0 ],
-				default: controlValue,
+				default: this.getCurrentValue(),
 				components: {
 					opacity: this.model.get( 'alpha' ),
 				},
@@ -89,7 +88,7 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 
 		this.$pickerButton.tipsy( {
-			title: () => this.getControlValue() ? this.colorPicker.getColorData().value : '',
+			title: () => this.getCurrentValue() || '',
 			offset: 4,
 			gravity: () => 's',
 		} );
@@ -108,18 +107,19 @@ export default class extends ControlBaseDataView {
 
 	getAddGlobalConfirmMessage( globalColors ) {
 		const color = this.colorPicker.getColorData(),
+			currentValue = this.getCurrentValue(),
 			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + color.value } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.title } )
 				.val( color.title );
+			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + currentValue } ),
 
 		// Check if the color already exists in the global colors, and display an appropriate message
 		Object.values( globalColors ).forEach( ( globalColor ) => {
 			let messageContent = elementor.translate( 'global_color_confirm_text' );
 
-			if ( color.value === globalColor.value ) {
+			if ( currentValue === globalColor.value ) {
 				messageContent = elementor.translate( 'global_color_already_exists' );
 			} else if ( color.title === globalColor.title ) {
 				messageContent = elementor.translate( 'global_color_name_already_exists' );
