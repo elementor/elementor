@@ -106,7 +106,7 @@ export default class ColorPicker extends elementorModules.Module {
 	addPickerHeader() {
 		const { classes } = this.getSettings(),
 			$pickerHeader = jQuery( '<div>', { class: classes.pickerHeader } )
-				.html( '<span>Color Picker</span>' ),
+				.text( elementor.translate( 'color_picker' ) ),
 			$pickerToolsContainer = jQuery( '<div>', { class: classes.pickerToolsContainer } ),
 			isGlobal = this.getSettings( 'global' );
 

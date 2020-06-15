@@ -605,6 +605,7 @@ class Editor {
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
 				'saved_colors' => __( 'Saved Colors', 'elementor' ),
 				'drag_to_delete' => __( 'Drag To Delete', 'elementor' ),
+				'color_picker' => __( 'Color Picker', 'elementor' ),
 
 				// Global Styles
 				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
