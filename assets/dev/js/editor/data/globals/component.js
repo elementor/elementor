@@ -8,11 +8,6 @@ export default class Component extends ComponentBase {
 	__construct( args = {} ) {
 		super.__construct( args );
 
-		// TODO: Remove - Create testing compatibility.
-		if ( elementorCommonConfig.isTesting ) {
-			return;
-		}
-
 		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
 	}
 
