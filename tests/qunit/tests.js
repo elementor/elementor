@@ -38,9 +38,12 @@ function initialize() {
 
 		require( './core/editor/document/commands/base/command-history.spec' );
 		require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
+		require( './core/editor/document/globals/commands/base/disable-enable.spec' );
 
 		require( './core/editor/document/component.spec' );
 		require( './core/editor/document/manager.spec' );
+
+		// TODO: Require all components from one file.
 
 		require( './core/editor/document/elements/component.spec' );
 		require( './core/editor/document/repeater/component.spec' );

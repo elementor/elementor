@@ -1,13 +1,13 @@
-import DisableEnable from 'elementor-document/dynamic/commands/base/disable-enable';
+import DisableEnable from 'elementor-document/globals/commands/base/disable-enable';
 
 jQuery( () => {
-	QUnit.module( 'File: editor/document/dynamic/commands/base/disable-enable', () => {
+	QUnit.module( 'File: editor/document/globals/commands/base/disable-enable', () => {
 		QUnit.test( 'restore()', ( assert ) => {
 			const historyItem = {
 				get: ( key ) => {
 					if ( 'data' === key ) {
 						return {
-							command: 'document/dynamic/enable',
+							command: 'document/globals/enable',
 							changes: {
 								1: 'fake',
 							},
@@ -36,7 +36,7 @@ jQuery( () => {
 
 			$e.run = orig;
 
-			assert.equal( tempCommand, 'document/dynamic/disable' );
+			assert.equal( tempCommand, 'document/globals/disable' );
 
 			assert.propEqual( tempArgs.settings, Object.entries( historyItem.get( 'data' ).changes )[ 0 ][ 1 ] );
 			assert.propEqual( tempArgs.container, historyItem.get( 'containers' )[ 0 ] );
