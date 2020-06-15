@@ -45,8 +45,14 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.toggleSelect();
 	}
 
+	// Update the behavior's components
 	onValueTypeChange() {
 		this.updateSelectBoxText();
+
+		// TODO: Check if this is necessary, if it is, implement it
+		if ( this.view.toggleNoValueClass ) {
+			this.view.toggleNoValueClass();
+		}
 	}
 
 	updateSelectBoxText() {
@@ -141,15 +147,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				this.registerUiElementsAndEvents();
 
-				const globalValue = this.getGlobalValue();
-
-				// If there is a global value applied to the control, set the global select box text to display its name
-				if ( globalValue ) {
-					this.updateSelectBoxText();
-				}
-			},
-			() => {
-				// TODO: What happens if the request fails??
+				this.onValueTypeChange();
 			} );
 
 		this.createGlobalInfoTooltip();
@@ -241,8 +239,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			container: this.view.options.container,
 			settings: settings,
 		} );
-
-		this.onValueTypeChange(); // control value still old.
 	}
 
 	// The unset method is triggered from the controls via triggerMethod
