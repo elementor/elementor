@@ -684,6 +684,143 @@ class Upgrades {
 	}
 
 	/**
+	 * Move default colors settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist.
+			if ( $kit->get_settings( 'system_colors' ) ) {
+				return;
+			}
+
+			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color' );
+
+			$default_colors = $scheme_obj->get_scheme();
+
+			$new_ids = [
+				'primary',
+				'secondary',
+				'text',
+				'accent',
+			];
+
+			foreach ( $default_colors as $index => $color ) {
+				$kit->add_repeater_row( 'system_colors', [
+					'_id' => $new_ids[ $index - 1 ], // $default_colors starts from 1.
+					'title' => $color['title'],
+					'color' => $color['value'],
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * Move saved colors settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_saved_colors_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist.
+			if ( $kit->get_settings( 'custom_colors' ) ) {
+				return;
+			}
+
+			$system_colors_rows = $kit->get_settings( 'system_colors' );
+
+			if ( ! $system_colors_rows ) {
+				$system_colors_rows = [];
+			}
+
+			$system_colors = [];
+
+			foreach ( $system_colors_rows as $color_row ) {
+				$system_colors[] = $color_row['color'];
+			}
+
+			$saved_scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color-picker' );
+
+			$current_saved_colors_rows = $saved_scheme_obj->get_scheme();
+
+			$current_saved_colors = [];
+
+			foreach ( $current_saved_colors_rows as $color_row ) {
+				$current_saved_colors[] = $color_row['value'];
+			}
+
+			$colors_to_save = array_diff( $current_saved_colors, $system_colors );
+
+			if ( empty( $colors_to_save ) ) {
+				return;
+			}
+
+			foreach ( $colors_to_save as $index => $color ) {
+				$kit->add_repeater_row( 'custom_colors', [
+					'_id' => Utils::generate_random_string(),
+					'title' => __( 'Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'color' => $color,
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * Move default typography settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist.
+			if ( $kit->get_settings( 'system_typography' ) ) {
+				return;
+			}
+
+			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'typography' );
+
+			$default_typography = $scheme_obj->get_scheme();
+
+			$new_ids = [
+				'primary',
+				'secondary',
+				'text',
+				'accent',
+			];
+
+			foreach ( $default_typography as $index => $typography ) {
+				$kit->add_repeater_row( 'system_typography', [
+					'_id' => $new_ids[ $index - 1 ], // $default_typography starts from 1.
+					'title' => $typography['title'],
+					'system_typography_typography' => 'custom',
+					'system_typography_font_family' => $typography['value']['font_family'],
+					'system_typography_font_weight' => $typography['value']['font_weight'],
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+
+	/**
 	 * @param callback $callback
 	 * @param Updater $updater
 	 *
