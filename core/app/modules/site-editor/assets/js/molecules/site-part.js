@@ -9,17 +9,22 @@ import './site-part.scss';
 
 export default class SitePart extends Card {
 	getHeader() {
-		const Indicator = () => {
-			const active = "site-part__indicator--active";
+		const Indicator = ( props ) => {
+			const active = props.active ? 'indicator-bullet--active' : '';
 
-			return <i className={`site-part__indicator ${ active }`}/>;
+			return <i className={`indicator-bullet ${ active }`}/>;
 		};
+
+		Indicator.propTypes = {
+			active: PropTypes.bool,
+		};
+
 		return (
 			<CardHeader>
 				<React.Fragment>
-					<Indicator/>
+					<Indicator active={ true }/>
 					<Typography tagName="h1" className="card__headline">{ this.props.title }</Typography>
-					<Button text="Info" hideText={ true } icon="eicon-info-circle" />
+					<Button text="Info" hideText={ true } icon="eicon-info-circle info-toggle" />
 				</React.Fragment>
 			</CardHeader>
 		);
