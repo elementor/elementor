@@ -50,8 +50,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.view.setGlobalDisplay();
 		}
 
-		this.view.setOptions( 'addButtonActive', false );
-		this.view.setOptions( 'clearButtonActive', true );
 
 		this.toggleSelect();
 	}
@@ -275,7 +273,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} )
 			.then( () => {
 				this.updateSelectBoxText();
-				this.view.setOptions( 'addButtonActive', false );
 			} );
 	}
 

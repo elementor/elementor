@@ -142,25 +142,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return $globalTypographyContainer;
 	}
 
-	toggleButtonListener( button, on ) {
-		let callback = {};
-
-		switch ( button ) {
-			case '$addButton':
-				callback = () => this.onAddButtonClick();
-				break;
-			case '$clearButton':
-				callback = () => this.picker._clearColor();
-				break;
-		}
-
-		if ( on ) {
-			this[ button ].on( 'click', callback );
-		} else {
-			this[ button ].off( 'click', '**' );
-		}
-	}
-
 	onAddGlobalButtonClick() {
 		this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
 	}

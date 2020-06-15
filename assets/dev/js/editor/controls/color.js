@@ -71,10 +71,6 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton.on( 'click', () => {
 			if ( this.getGlobalValue() ) {
 				this.triggerMethod( 'unsetGlobalValue' );
-
-				if ( ! this.getControlValue() ) {
-					this.setOptions( 'clearButtonActive', false );
-				}
 			}
 		} );
 
@@ -181,22 +177,6 @@ export default class extends ControlBaseDataView {
 		return $globalColorsPreviewContainer;
 	}
 
-	setOptions( key, value ) {
-		const changedState = super.setOptions( key, value );
-
-		if ( ! changedState ) {
-			return;
-		}
-
-		if ( 'addButtonActive' === key ) {
-			this.colorPicker.toggleToolState( '$addButton', value );
-		} else if ( 'clearButtonActive' === key ) {
-			this.colorPicker.toggleToolState( '$customClearButton', value );
-		}
-
-		return this.options;
-	}
-
 	// Change the color picker value without triggering Pickr's 'change' event
 	setGlobalDisplay() {
 		if ( ! this.globalValue ) {
@@ -222,12 +202,8 @@ export default class extends ControlBaseDataView {
 
 			this.isCustom = true;
 		}
+			this.colorPicker.toggleClearButtonState( true );
 
-		if ( ! this.model.get( 'global' ) ) {
-			this.setOptions( 'addButtonActive', true );
-		}
-
-		this.setOptions( 'clearButtonActive', true );
 
 		if ( this.$el.hasClass( 'e-no-value-color' ) ) {
 			this.$el.removeClass( 'e-no-value-color' );
@@ -247,11 +223,8 @@ export default class extends ControlBaseDataView {
 
 		this.$el.addClass( 'e-no-value-color' );
 
-		if ( ! this.model.get( 'global' ) ) {
-			this.setOptions( 'addButtonActive', false );
-		}
+		this.colorPicker.toggleClearButtonState( false );
 
-		this.setOptions( 'clearButtonActive', false );
 
 		this.$el
 			.find( '.e-global-selected' )

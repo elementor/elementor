@@ -254,24 +254,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.applySavedValue();
 	},
 
-	setOptions: function( key, value ) {
-		// If the state has not been initially set before, set it here
-		if ( 'undefined' === typeof this.options[ key ] ) {
-			this.options[ key ] = value;
-
-			return this.options;
-		}
-
-		// If the new state is the same as the one saved, do nothing
-		if ( this.options[ key ] === value ) {
-			return;
-		}
-
-		this.options[ key ] = value;
-
-		return this.options;
-	},
-
 	addTooltip: function() {
 		this.ui.tooltipTargets = this.$el.find( '.tooltip-target' );
 
