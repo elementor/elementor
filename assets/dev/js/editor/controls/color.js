@@ -98,7 +98,7 @@ export default class extends ControlBaseDataView {
 		const colorData = this.colorPicker.getColorData();
 
 		return {
-			commandName: 'globals/colors',
+			commandName: this.getCommand(),
 			key: this.model.get( 'name' ),
 			title: colorData.title,
 			value: colorData.value,
@@ -152,9 +152,8 @@ export default class extends ControlBaseDataView {
 		return $color;
 	}
 
-	// TODO: Replace placeholders with real global colors
 	async getGlobalsList() {
-		const result = await $e.data.get( 'globals/colors' );
+		const result = await $e.data.get( this.getCommand() );
 
 		return result.data;
 	}

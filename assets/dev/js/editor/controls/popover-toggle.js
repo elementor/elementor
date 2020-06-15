@@ -95,10 +95,9 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return $textStylePreview;
 	}
 
-	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH VALUES OF THE TYPOGRAPHY CONTROLS
 	getGlobalMeta() {
 		return {
-			commandName: 'globals/typography',
+			commandName: this.getCommand(),
 			key: this.model.get( 'name' ),
 			title: elementor.translate( 'new_text_style' ),
 		};
@@ -120,9 +119,8 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return $message;
 	}
 
-	// TODO: REPLACE THIS PLACEHOLDER OBJECT WITH THE ACTUAL GLOBALS ONCE THEY EXIST
 	async getGlobalsList() {
-		const result = await $e.data.get( 'globals/typography' );
+		const result = await $e.data.get( this.getCommand() );
 
 		return result.data;
 	}
