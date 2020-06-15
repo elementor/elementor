@@ -150,16 +150,6 @@ class Manager {
 		return ! get_option( 'elementor_disable_typography_schemes' );
 	}
 
-	public function get_default_fonts() {
-		$default_fonts = $this->get_current_settings( 'default_generic_fonts' );
-
-		if ( $default_fonts ) {
-			$default_fonts = ', ' . $default_fonts;
-		}
-
-		return $default_fonts;
-	}
-
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );

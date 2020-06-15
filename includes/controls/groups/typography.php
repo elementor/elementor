@@ -90,7 +90,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::FONT,
 			'default' => '',
-			'selector_value' => 'font-family: "{{VALUE}}"' . Plugin::$instance->kits_manager->get_default_fonts() . ';',
+			'selector_value' => 'font-family: "{{VALUE}}", ' . Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' ) . ';',
 		];
 
 		$fields['font_size'] = [
