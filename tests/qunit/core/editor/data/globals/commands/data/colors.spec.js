@@ -8,8 +8,9 @@ export const Colors = () => {
 		} );
 
 		hooks.after( () => {
+			$e.data.cache.storage.clear();
 			eData.mockClear();
-			eData.free();
+			eData.silence();
 		} );
 
 		QUnit.test( 'get', async ( assert ) => {

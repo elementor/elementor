@@ -4,13 +4,14 @@ import * as eData from 'elementor-tests-qunit/mock/e-data';
 export const Create = () => {
 	QUnit.module( 'Create', ( hooks ) => {
 		hooks.before( () => {
+			$e.data.cache.storage.clear();
 			eData.mockAdd( 'create', 'globals/colors' );
 			eData.mock();
 		} );
 
 		hooks.after( () => {
 			eData.mockClear();
-			eData.free();
+			eData.silence();
 		} );
 
 		QUnit.test( 'Simple', async ( assert ) => {
