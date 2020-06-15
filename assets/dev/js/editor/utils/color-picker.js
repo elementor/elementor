@@ -48,11 +48,11 @@ export default class ColorPicker extends elementorModules.Module {
 
 		this.$pickerAppContainer = jQuery( this.picker.getRoot().app );
 
-		this.addPickerHeader();
+		this.createPickerHeader();
 	}
 
 	addTipsyToClearButton() {
-		this.$customClearButton.tipsy( {
+		this.$clearButton.tipsy( {
 			title: () => elementor.translate( 'clear' ),
 			gravity: () => 's',
 		} );
@@ -76,40 +76,32 @@ export default class ColorPicker extends elementorModules.Module {
 		return this.color;
 	}
 
-	getColorName( color ) {
+	getColorTitle() {
+		const color = this.picker.getColor(),
+			colorValue = color.toHEXA().toString( 0 );
+
 		//  Check if the display value is HEX or HEXA (HEXA = with transparency)
-		const colorForNaming = 7 < color.length ? color.slice( 0, 7 ) : color;
+		const colorForNaming = 7 < colorValue.length ? colorValue.slice( 0, 7 ) : colorValue;
 
 		return ntc.name( colorForNaming )[ 1 ];
 	}
 
-	getColorData() {
-		const color = this.picker.getColor(),
-			colorValue = color.toHEXA().toString( 0 );
-
-		return {
-			title: this.getColorName( colorValue ),
-			value: colorValue,
-		};
-	}
-
-	addPickerHeader() {
+	createPickerHeader() {
 		const { classes } = this.getSettings(),
 			$pickerHeader = jQuery( '<div>', { class: classes.pickerHeader } )
 				.text( elementor.translate( 'color_picker' ) ),
 			$pickerToolsContainer = jQuery( '<div>', { class: classes.pickerToolsContainer } ),
-			isGlobal = this.getSettings( 'global' );
+			addButton = this.getSettings( 'addButton' );
 
 		this.$pickerToolsContainer = $pickerToolsContainer;
 
-		// Don't create the add button in the Global Settings color pickers
-		if ( isGlobal?.active ) {
+		if ( addButton ) {
 			this.createAddButton();
 		}
 
-		this.moveClearButton();
+		this.createClearButton();
 
-		$pickerToolsContainer.append( this.$customClearButton, this.$addButton );
+		$pickerToolsContainer.append( this.$clearButton, this.$addButton );
 
 		$pickerHeader.append( $pickerToolsContainer );
 
@@ -119,8 +111,9 @@ export default class ColorPicker extends elementorModules.Module {
 	createAddButton() {
 		const { classes } = this.getSettings();
 
-		this.$addButton = jQuery( '<button>', { class: classes.pickerTool + ' ' + classes.addSwatch } ).html( jQuery( '<i>', { class: classes.plusIcon } ) );
+		this.$addButton = jQuery( '<button>', { class: classes.pickerTool } ).html( jQuery( '<i>', { class: classes.plusIcon } ) );
 
+		this.$addButton.on( 'click', () => this.onAddButtonClick() );
 
 		this.$addButton.tipsy( {
 			title: () => elementor.translate( 'create_global_color' ),
@@ -129,13 +122,13 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	// Move the clear button from Pickr's default location into the Color Picker header
-	moveClearButton() {
+	createClearButton() {
 		const { classes } = this.getSettings();
 
-		this.$customClearButton = jQuery( '<div>', { class: classes.customClearButton + ' ' + classes.pickerTool } )
+		this.$clearButton = jQuery( '<div>', { class: classes.clearButton + ' ' + classes.pickerTool } )
 			.html( '<i class="eicon-undo"></i>' );
 
-		this.toggleButtonListener( '$customClearButton', true );
+		this.$clearButton.on( 'click', () => this.picker._clearColor() );
 
 		this.addTipsyToClearButton();
 	}
@@ -144,6 +137,7 @@ export default class ColorPicker extends elementorModules.Module {
 		this.picker.destroyAndRemove();
 	}
 
+	// TODO: CHECK IF THIS IS STILL NECESSARY
 	fixTipsyForFF( $button ) {
 		// There's a bug in FireFox about hiding the tooltip after the button was clicked,
 		// So let's force it to hide
