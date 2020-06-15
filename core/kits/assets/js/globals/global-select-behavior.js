@@ -24,25 +24,25 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 	}
 
+	fetchGlobalValue() {
+		return $e.data.get( this.view.getGlobalKey() )
+			.then( ( globalData ) => {
+				this.view.globalValue = globalData.data.value;
+
+				this.onValueTypeChange();
+
+				this.view.applySavedValue();
+
+				return globalData.data;
+			} );
+	}
+
 	async applySavedGlobalValue( globalId ) {
 		this.setGlobalValue( globalId );
 
+		this.fetchGlobalValue();
 
-		// TODO: HANDLE CASE WHERE GLOBAL IS NOT FOUND (e.g. WAS DELETED)
-		if ( this.view.$el.hasClass( 'e-no-value-color' ) ) {
-			this.view.$el.removeClass( 'e-no-value-color' );
-		}
-
-		if ( this.view.updateClassGlobalValue ) {
-			this.view.updateClassGlobalValue( globalData.value );
-		}
-
-		if ( this.view.setGlobalDisplay ) {
-			this.view.setGlobalDisplay();
-		}
-
-
-		this.toggleSelect();
+		this.popover.hide();
 	}
 
 	// Update the behavior's components
@@ -82,6 +82,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.printGlobalSelectBox();
 
 		this.initGlobalPopover();
+
+		if ( this.view.getGlobalKey() ) {
+			// This setTimeout is here to overcome an issue with a requestAnimationFrame that runs in the Pickr library
+			setTimeout( () => this.fetchGlobalValue(), 50 );
+		}
 
 		this.$el.addClass( 'elementor-control-global' );
 	}
@@ -139,7 +144,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 
 		// Render the list of globals and append them to the Globals popover
-		// TODO: FIND BEST WAY TO CACHE THE GLOBALS LIST SO THE DB FETCH RUNS ONLY ONCE ON PAGE LOAD
 		this.view.getGlobalsList()
 			.then(
 			( globalsList ) => {
