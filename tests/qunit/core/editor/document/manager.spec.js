@@ -6,7 +6,7 @@ let documentTemp;
 jQuery( () => {
 	QUnit.module( 'File: editor/document/manager', ( hooks ) => {
 		hooks.before( () => {
-			eData.mock();
+			eData.cache();
 			// Save current document before go.
 			documentTemp = elementor.documents.getCurrent();
 		} );

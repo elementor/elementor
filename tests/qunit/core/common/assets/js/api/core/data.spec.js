@@ -279,7 +279,7 @@ jQuery( () => {
 			// This test case relies on cache.
 			$e.data.setCache( component, command, query, data );
 
-			eData.mock();
+			eData.cache();
 
 			// Get cache.
 			const result = await $e.data.fetch( requestData );

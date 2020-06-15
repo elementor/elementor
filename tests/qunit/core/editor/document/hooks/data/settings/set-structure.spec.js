@@ -4,7 +4,7 @@ import * as eData from 'elementor-tests-qunit/mock/e-data/index';
 export const SetStructure = () => {
 	QUnit.module( 'SetStructure', () => {
 		QUnit.test( 'apply(): Inner Section', ( assert ) => {
-			eData.mock();
+			eData.cache();
 
 			const structure = '21',
 				eInnerSection = ElementsHelper.createInnerSection(
