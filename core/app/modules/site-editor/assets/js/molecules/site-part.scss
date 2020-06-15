@@ -1,27 +1,38 @@
-// Card
+// Site Part
 
 // this should emulate external packages consumption
 @import "../../../../../assets/styles/common";
 
-$site-part-indicator-size: $eps-spacer;
-$site-part-indicator-color: $eps-gray-500;
-$site-part-indicator-color-active: $eps-gray-500;
-$site-part-indicator-box-shadow: $eds-box-shadow;
-$site-part-indicator-radius: 100%;
-$site-part-indicator-border: 2px #ff solid;
+$indicator-bullet-size: $eps-spacer * 1.2;
+$indicator-bullet-color: $eps-gray-500;
+$indicator-bullet-color-active: $eps-gray-500;
+$indicator-bullet-box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+$indicator-bullet-radius: 100%;
+$indicator-bullet-border: 2px $eps-brand-light solid;
+$indicator-bullet-spacing: $eps-spacer;
 
-.site-part {
-	&__indicator {
-		display: block;
-		width: $site-part-indicator-size;
-		height: $site-part-indicator-size;
-		box-shadow: $site-part-indicator-box-shadow;
-		background-color: $site-part-indicator-color;
-		border: $site-part-indicator-border;
-		border-radius: $site-part-indicator-radius;
+.indicator-bullet {
+	display: block;
+	width: $indicator-bullet-size;
+	height: $indicator-bullet-size;
+	box-shadow: $indicator-bullet-box-shadow;
+	background-color: $indicator-bullet-color;
+	border: $indicator-bullet-border;
+	border-radius: $indicator-bullet-radius;
+	margin-inline-end: $indicator-bullet-spacing;
 
-		&--active {
-			background-color: $eps-brand-success;
-		}
+	&--active {
+		background-color: $eps-brand-success;
+	}
+}
+
+$info-toggle-color: $eps-gray-300;
+$info-toggle-hover-color: $eps-gray-600;
+
+.info-toggle {
+	color: $info-toggle-color;
+
+	&:hover {
+		color: $info-toggle-hover-color;
 	}
 }

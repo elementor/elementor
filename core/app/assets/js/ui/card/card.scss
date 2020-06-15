@@ -18,7 +18,7 @@ $card-headline-color: $eps-gray-500;
 
 $card-headline-font-size: $font-size-12;
 $card-headline-font-weight: $eps-font-weight-medium;
-$card-headline-line-height: $line-height-2;
+$card-header-height: $eps-spacer * 2;
 
 $card-body-padding-y: $eps-spacer;
 $card-body-padding-x: $eps-spacer;
@@ -38,7 +38,10 @@ $card-image-overlay-transition: $card-transition;
 	&__header {
 		padding: $card-header-padding-y $card-header-padding-x;
 		border-bottom: $card-header-border;
+		min-height: $card-header-height;
 		display: flex;
+		align-items: center;
+		box-sizing: content-box;
 	}
 
 	/*
@@ -50,7 +53,7 @@ $card-image-overlay-transition: $card-transition;
 		color: $card-headline-color;
 		font-size: $card-headline-font-size;
 		font-weight: $card-headline-font-weight;
-		line-height: $card-headline-line-height;
+		flex-grow: 1;
 	}
 
 	&__body {
@@ -70,7 +73,7 @@ $card-image-overlay-transition: $card-transition;
 		width: 100%;
 		object-fit: contain;
 		object-position: top;
-		position: relative;
+		position: absolute;
 		top: 0;
 		left: 0;
 	}

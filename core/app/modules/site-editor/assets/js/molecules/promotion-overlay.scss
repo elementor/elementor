@@ -1,0 +1,38 @@
+// Site Part
+
+// this should emulate external packages consumption
+@import "../../../../../assets/styles/common";
+
+$promotion-overlay-icon-size: 20px;
+$promotion-overlay-icon-spacing: $eps-spacer * 2;
+$promotion-overlay-icon-color: $eps-brand-light;
+$promotion-overlay-button-text-color: $eps-brand-light;
+$promotion-overlay-button-background-color: $color-red-debian;
+$promotion-overlay-button-border-radius: $eps-radius;
+$promotion-overlay-button-padding-y: 8px;
+$promotion-overlay-button-padding-x: 16px;
+
+.promotion-overlay {
+	&__link {
+		display: flex;
+		width: 100%;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		text-decoration: none;
+	}
+
+	&__icon {
+		font-size: $promotion-overlay-icon-size;
+		color: $promotion-overlay-icon-color;
+		margin-bottom: $promotion-overlay-icon-spacing;
+	}
+
+	&__button {
+		color: $promotion-overlay-button-text-color;
+		background-color: $promotion-overlay-button-background-color;
+		border-radius: $promotion-overlay-button-border-radius;
+		padding: $promotion-overlay-button-padding-y $promotion-overlay-button-padding-x;
+	}
+}
