@@ -4,8 +4,8 @@
 // Custom variable values only support SassScript inside `#{}`.
 
 :root {
-	@each $color, $value in $eps-brand {
-		@if map-get($eps-brand, $color) {
+	@each $color, $value in $eps-theme-colors {
+		@if map-get($eps-theme-colors, $color) {
 			--#{$color}: #{$value};
 		}
 	}
