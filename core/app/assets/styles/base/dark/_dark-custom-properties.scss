@@ -3,8 +3,8 @@
 
 // Custom variable values only support SassScript inside `#{}`.
 .dark {
-	@each $color, $value in $eps-dark-brand {
-		@if map-get($eps-dark-brand, $color) {
+	@each $color, $value in $eps-dark-theme-colors {
+		@if map-get($eps-dark-theme-colors, $color) {
 			--#{$color}: #{$value};
 		}
 	}
