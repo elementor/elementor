@@ -104,6 +104,7 @@ export default class extends ControlBaseDataView {
 		return 'globals/colors';
 	}
 
+	// globalData is received from the Data API
 	createGlobalItemMarkup( globalData ) {
 		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-global-id': globalData.id } ),
 			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + globalData.value } ),
@@ -123,6 +124,7 @@ export default class extends ControlBaseDataView {
 		return result.data;
 	}
 
+	// Create the markup for the colors in the global select dropdown
 	buildGlobalsList( globalColors ) {
 		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
 
