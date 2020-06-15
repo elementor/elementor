@@ -12,7 +12,9 @@
 	&__header {
 		padding: $card-header-padding-y $card-header-padding-x;
 		border-bottom: $card-header-border;
+		min-height: $card-header-height;
 		display: flex;
+		align-items: center;
 	}
 
 	/*
@@ -24,7 +26,7 @@
 		color: $card-headline-color;
 		font-size: $card-headline-font-size;
 		font-weight: $card-headline-font-weight;
-		line-height: $card-headline-line-height;
+		flex-grow: 1;
 	}
 
 	&__body {
@@ -44,7 +46,7 @@
 		width: 100%;
 		object-fit: contain;
 		object-position: top;
-		position: relative;
+		position: absolute;
 		top: 0;
 		left: 0;
 	}
@@ -83,3 +85,4 @@
 		//color: $card-info-icon-color;
 	}
 }
+
