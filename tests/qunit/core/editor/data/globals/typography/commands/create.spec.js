@@ -4,12 +4,7 @@ import * as eData from 'elementor-tests-qunit/mock/e-data';
 export const Create = () => {
 	QUnit.module( 'Create', ( hooks ) => {
 		hooks.before( () => {
-			eData.mockAdd( 'create', 'globals/typography', ( result, requestData ) => {
-				const { query } = requestData.args,
-					{ data } = requestData.args;
-
-				return { ... query, ... data };
-			} );
+			eData.mockAdd( 'create', 'globals/typography' );
 			eData.mock();
 		} );
 

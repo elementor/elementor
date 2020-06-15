@@ -15,9 +15,19 @@ export const mockData = [];
 /**
  * @param {DataTypes} type
  * @param {string} command
- * @param {function(result, RequestData)} callback
+ * @param {function(result, RequestData)|null} [callback=null]
  */
-export const mockAdd = ( /*  */ type, command, callback ) => {
+export const mockAdd = ( /*  */ type, command, callback = null ) => {
+	// Default callback return query and data merged.
+	if ( ! callback ) {
+		callback = ( result, requestData ) => {
+			const { query } = requestData.args,
+				{ data } = requestData.args;
+
+			return { ... query, ... data };
+		};
+	}
+
 	return mockData.push( { type, command, callback } );
 };
 
