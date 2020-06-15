@@ -57,7 +57,8 @@ export default class extends ControlBaseDataView {
 					opacity: this.model.get( 'alpha' ),
 				},
 			},
-			global: this.model.get( 'global' ),
+			// Don't create the add button in the Global Settings color pickers
+			addButton: this.model.get( 'global' )?.active,
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
