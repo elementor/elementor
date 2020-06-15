@@ -12,8 +12,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.ui.globalPreviewsContainer = popoverWidget.find( '.e-global-previews-container' );
 		this.ui.globalPreviewItems = popoverWidget.find( '.e-global-preview' );
 		this.ui.manageGlobalsButton = popoverWidget.find( '.e-global-manage-button' );
-		this.ui.globalControlSelect = this.$el.find( '.e-global-select' );
-		this.ui.globalControlSelected = this.$el.find( '.e-global-selected' );
 	}
 
 	// This method exists because the UI elements are printed after controls are already rendered
@@ -110,6 +108,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		$globalSelectBox.append( $selectedGlobal, '<i class="eicon-caret-down"></i>' );
 
 		this.$el.find( '.elementor-control-input-wrapper' ).prepend( $globalSelectBox );
+
+		this.ui.globalControlSelect = $globalSelectBox;
+		this.ui.globalControlSelected = $selectedGlobal;
 	}
 
 	initGlobalPopover() {
