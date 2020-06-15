@@ -3,12 +3,12 @@ import * as eData from 'elementor-tests-qunit/mock/e-data';
 export const Colors = () => {
 	QUnit.module( 'Colors', ( hooks ) => {
 		hooks.before( () => {
+			$e.data.cache.storage.clear();
 			eData.mockAdd( 'create', 'globals/colors' );
 			eData.mock();
 		} );
 
 		hooks.after( () => {
-			$e.data.cache.storage.clear();
 			eData.mockClear();
 			eData.silence();
 		} );
