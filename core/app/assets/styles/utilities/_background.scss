@@ -1,0 +1,17 @@
+// Utilities: Background
+// - copied and modified from "bootstrap 4.5
+
+
+// stylelint-disable declaration-no-important
+
+@each $color, $value in $theme-colors {
+	@include bg-variant(".bg-#{$color}", $value, true);
+}
+
+.bg-white {
+	background-color: $white !important;
+}
+
+.bg-transparent {
+	background-color: transparent !important;
+}
