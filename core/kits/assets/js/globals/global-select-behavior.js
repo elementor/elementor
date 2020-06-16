@@ -37,7 +37,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			} );
 	}
 
-	async applySavedGlobalValue( globalId ) {
+	applySavedGlobalValue( globalId ) {
 		this.setGlobalValue( globalId );
 
 		this.fetchGlobalValue();
@@ -48,11 +48,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	// Update the behavior's components
 	onValueTypeChange() {
 		this.updateSelectBoxText();
-
-		// TODO: Check if this is necessary, if it is, implement it
-		if ( this.view.toggleNoValueClass ) {
-			this.view.toggleNoValueClass();
-		}
 	}
 
 	updateSelectBoxText() {
@@ -150,8 +145,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				this.addGlobalsListToPopover( globalsList );
 
 				this.registerUiElementsAndEvents();
-
-				this.onValueTypeChange();
 			} );
 
 		this.createGlobalInfoTooltip();
