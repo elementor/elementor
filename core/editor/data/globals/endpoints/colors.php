@@ -30,7 +30,7 @@ class Colors extends Base {
 			$result[ $id ] = [
 				'id' => $id,
 				'title' => $item['title'],
-				'value' => $item['value'],
+				'color' => $item['color'],
 			];
 		}
 
@@ -41,7 +41,7 @@ class Colors extends Base {
 		return [
 			'_id' => $item['id'],
 			'title' => $item['title'],
-			'value' => $item['value'],
+			'color' => $item['color'],
 		];
 	}
 }

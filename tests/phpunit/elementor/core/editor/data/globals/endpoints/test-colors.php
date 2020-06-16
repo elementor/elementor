@@ -39,7 +39,7 @@ class Test_Colors extends Elementor_Test_Base {
 		$id = (string) rand();
 		$args = [
 			'id' => $id,
-			'value' => 'red',
+			'color' => 'red',
 			'title' => 'whatever',
 		];
 

@@ -15,7 +15,7 @@ export class Create extends CreateBase {
 
 		result = $e.data.create( `globals/colors?id=${ id }`, {
 			title,
-			value: container.settings.get( setting ),
+			color: container.settings.get( setting ),
 		} );
 
 		return result;

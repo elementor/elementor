@@ -31,7 +31,7 @@ export const Create = () => {
 			} );
 
 			assert.equal( result.data.title, title );
-			assert.equal( result.data.value, 'red' );
+			assert.equal( result.data.color, 'red' );
 		} );
 	} );
 };
