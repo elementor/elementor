@@ -3,16 +3,15 @@
 
 // Private API. Will consume global tokens
 // - Default tokens
-$card-background-color: rgba($eps-theme-light, $opacity-5);
+$card-background-color: rgba(theme-colors(light), $opacity-5);
 $card-background-color-hover: theme-colors(light);
 $card-box-shadow: $eps-box-shadow;
 $card-border-radius: $eps-radius;
 $card-transition: $eps-transition-duration;
 
-$card-header-padding-y: $eps-spacer;
-$card-header-padding-x: $eps-spacer;
+$card-header-padding: spacing(10);  ;
 $card-header-border: $eps-border;
-$card-header-height: $eps-spacer * 4;
+$card-header-height: spacing(20) * 2;
 
 $card-headline-color: tints(500);
 
@@ -20,23 +19,23 @@ $card-headline-font-size: $font-size-12;
 $card-headline-font-weight: $eps-font-weight-medium;
 $card-headline-line-height: $line-height-2;
 
-$card-body-padding-y: $eps-spacer;
-$card-body-padding-x: $eps-spacer;
+$card-body-padding-y: spacing(10);
+$card-body-padding-x: spacing(10);
 
 $card-figure-background-color: tints(200);
 $card-figure-padding-bottom: $ratio-portrait;
 
-$card-image-overlay-background-color: rgba($eps-theme-dark, $opacity-2);
+$card-image-overlay-background-color: rgba(theme-colors(dark), $opacity-2);
 $card-image-overlay-transition: $card-transition;
 
 // - Dark tokens
-$card-dark-background-color: rgba($eps-dark-theme-light, $opacity-5);
-$card-dark-background-color-hover: dark-theme-colors(light);
+$card-dark-background-color: rgba(dark-tints(600), $opacity-5);
+$card-dark-background-color-hover: dark-tints(600);
 $card-dark-box-shadow: $eps-box-shadow;
-$card-dark-header-border: $eps-border;
-$card-dark-headline-color: dark-tints(500);
-$card-dark-figure-background-color: dark-tints(200);
-$card-dark-image-overlay-background-color: rgba($eps-dark-theme-dark, $opacity-2);
+$card-dark-header-border: 1px solid #{dark-tints(700)};
+$card-dark-headline-color: dark-tints(100);
+$card-dark-figure-background-color: dark-tints(500);
+$card-dark-image-overlay-background-color: rgba(dark-tints(700), $opacity-5);
 
 :root {
 	--card-background-color: #{$card-background-color};

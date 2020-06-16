@@ -1,24 +1,10 @@
 $eps-spacers: (
-		0: 0,
-		1: $eps-spacer /2,
-		2: $eps-spacer,
-		3: 2 * $eps-spacer,
-		4: 2.5 * $eps-spacer,
-		5: 3 * $eps-spacer,
-		6: 3.75 * $eps-spacer,
-		7: 5.5 * $eps-spacer
+		0:  0,
+		5:  $eps-spacer * 1.25 / 2,
+		10: $eps-spacer * 1.25,
+		16: $eps-spacer * 2,
+		20: $eps-spacer * 2.5,
+		24: $eps-spacer * 3,
+		30: $eps-spacer * 3.75,
+		44: $eps-spacer * 5.5,
 );
-
-
-
-// Todo: remove comments when done investigating array values
-//$card-headline-line-height: $spacer * 2;
-
-//45 , 44
-//30, 30
-//25, 24
-//20 ,20
-//15, 16
-//10, 10
-
-//8 based

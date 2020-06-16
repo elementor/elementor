@@ -4,14 +4,14 @@
 @import "./card-api";
 
 .card {
-	background-color: $card-background-color;
+	background-color: var(--card-background-color);
 	box-shadow: $card-box-shadow;
 	border-radius: $card-border-radius;
 	transition: $card-transition;
 
 	&__header {
-		padding: $card-header-padding-y $card-header-padding-x;
-		border-bottom: $card-header-border;
+		padding: $card-header-padding;
+		border-bottom: var(--card-header-border);
 		min-height: $card-header-height;
 		display: flex;
 		align-items: center;
@@ -23,7 +23,7 @@
 	*/
 
 	&__headline {
-		color: $card-headline-color;
+		color: var(--card-headline-color);
 		font-size: $card-headline-font-size;
 		font-weight: $card-headline-font-weight;
 		flex-grow: 1;
@@ -35,7 +35,7 @@
 
 	// figure is here to assist with aspect ratio, and dealing with different image sizes and bg-color for shorter images e.g. header, footer.
 	&__figure {
-		background-color: $card-figure-background-color;
+		background-color: var(--card-figure-background-color);
 		position: relative;
 		padding-bottom: $card-figure-padding-bottom;
 		overflow: scroll;
@@ -54,7 +54,7 @@
 	&__image-overlay {
 		position: absolute;
 		top: 0;
-		background-color: $card-image-overlay-background-color;
+		background-color: var(--card-image-overlay-background-color);
 		z-index: 1;
 		width: 100%;
 		height: 100%;
@@ -70,7 +70,7 @@
 	}
 
 	&:hover {
-		background-color: $card-background-color-hover;
+		background-color: var(--card-background-color-hover);
 	}
 
 	h1 {
