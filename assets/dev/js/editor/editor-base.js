@@ -328,6 +328,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
+		this.documents = $e.components.register( new EditorDocuments() );
+
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
@@ -632,9 +634,7 @@ export default class EditorBase extends Marionette.Application {
 		const $element = this.documents.getCurrent().$element;
 
 		if ( $element ) {
-			$element
-				.removeClass( 'elementor-edit-area-active' )
-				.addClass( 'elementor-edit-area-preview' );
+			$element.removeClass( 'elementor-edit-area-active' );
 		}
 
 		if ( hidePanel ) {
@@ -651,9 +651,7 @@ export default class EditorBase extends Marionette.Application {
 			.addClass( 'elementor-editor-active' );
 
 		if ( elementor.config.document.panel.has_elements ) {
-			this.documents.getCurrent().$element
-				.removeClass( 'elementor-edit-area-preview' )
-				.addClass( 'elementor-edit-area-active' );
+			this.documents.getCurrent().$element.addClass( 'elementor-edit-area-active' );
 		}
 	}
 
@@ -793,8 +791,6 @@ export default class EditorBase extends Marionette.Application {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
-
-		elementor.documents = $e.components.register( new EditorDocuments() );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();

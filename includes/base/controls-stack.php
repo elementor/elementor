@@ -1148,7 +1148,7 @@ abstract class Controls_Stack extends Base_Object {
 				continue;
 			}
 
-			if ( 'repeater' === $control_obj->get_type() ) {
+			if ( $control_obj instanceof Control_Repeater ) {
 				foreach ( $settings[ $control_name ] as & $field ) {
 					$field = $this->parse_dynamic_settings( $field, $control['fields'], $field );
 				}
@@ -1197,7 +1197,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Frontend settings.
 	 */
 	public function get_frontend_settings() {
-		$frontend_settings = array_intersect_key( $this->get_active_settings(), array_flip( $this->get_frontend_settings_keys() ) );
+		$frontend_settings = array_intersect_key( $this->get_settings_for_display(), array_flip( $this->get_frontend_settings_keys() ) );
 
 		foreach ( $frontend_settings as $key => $setting ) {
 			if ( in_array( $setting, [ null, '' ], true ) ) {
@@ -1980,7 +1980,9 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		foreach ( $controls as $control ) {
-			if ( 'repeater' === $control['type'] ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( $control_obj instanceof Control_Repeater ) {
 				if ( empty( $settings[ $control['name'] ] ) ) {
 					continue;
 				}

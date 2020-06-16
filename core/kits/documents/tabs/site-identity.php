@@ -37,7 +37,6 @@ class Site_Identity extends Tab_Base {
 				'default' => get_option( 'blogname' ),
 				'placeholder' => __( 'Choose name', 'elementor' ),
 				'label_block' => true,
-				'on_save' => [ $this, 'save_site_name' ],
 			]
 		);
 

@@ -333,6 +333,18 @@ class Compatibility {
 	 * @return array Updated post meta.
 	 */
 	public static function on_wp_import_post_meta( $post_meta ) {
+		$wp_importer = get_plugins( '/wordpress-importer' );
+
+		if ( ! empty( $wp_importer ) ) {
+			$wp_importer_version = $wp_importer['wordpress-importer.php']['Version'];
+
+			if ( ! empty( $wp_importer_version ) ) {
+				if ( version_compare( $wp_importer_version, '0.7', '>=' ) ) {
+					return $post_meta;
+				}
+			}
+		}
+
 		foreach ( $post_meta as &$meta ) {
 			if ( '_elementor_data' === $meta['key'] ) {
 				$meta['value'] = wp_slash( $meta['value'] );
