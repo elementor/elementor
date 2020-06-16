@@ -1,4 +1,4 @@
-import ElementsHelper from '../../../elements/helper';
+import ElementsHelper from '../../../../../elements/helper';
 
 export const SectionColumnsSetStructure = () => {
 	QUnit.module( 'SectionColumnsSetStructure', () => {

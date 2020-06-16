@@ -1,5 +1,5 @@
-import ElementsHelper from '../../../elements/helper';
-import HistoryHelper from '../../../history/helper';
+import ElementsHelper from '../../../../../elements/helper';
+import HistoryHelper from '../../../../../history/helper';
 
 export const SectionColumnsResetLayout = () => {
 	QUnit.module( 'SectionColumnsResetLayout', () => {
