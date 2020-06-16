@@ -11,7 +11,7 @@
 
 	@each $color, $value in $eps-dark-tints {
 		@if map-get($eps-dark-tints, $color) {
-			--#{$color}: #{$value};
+			--gray-#{$color}: #{$value};
 		}
 	}
 }

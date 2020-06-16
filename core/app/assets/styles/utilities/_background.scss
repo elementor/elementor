@@ -6,7 +6,7 @@
 }
 
 @each $color, $value in $eps-tints {
-	.u-bg-gray-#{$color}{ background-color:var(--#{$color});}
+	.u-bg-gray-#{$color}{ background-color:var(--gray-#{$color});}
 }
 
 .u-bg-transparent {

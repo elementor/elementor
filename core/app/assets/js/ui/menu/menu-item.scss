@@ -1,0 +1,36 @@
+// this import should be to a @package
+@import "../../../styles/common";
+
+$menu-item-color: tints(500);
+$menu-item-font-size: 12px;
+$menu-item-line-height: 14px;
+$menu-item-padding-y: 16px;
+$menu-item-padding-x: 30px;
+$menu-item-link-spacing: 13px;
+$menu-item-icon-size: 16px;
+
+.e-app-menu-item {
+	padding: $menu-item-padding-y $menu-item-padding-x;
+	color: $menu-item-color;
+	font-size: $menu-item-font-size;
+	line-height: $menu-item-line-height;
+	display: flex;
+	align-items: center;
+
+	&,
+	&:active,
+	&:hover,
+	&:focus {
+		text-decoration: none;
+	}
+
+	span {
+		margin-left: $menu-item-link-spacing;
+	}
+
+	.icon {
+		font-size: $menu-item-icon-size;
+	}
+}
+
+//elementor-app__site-editor__menu__items-title

@@ -27,7 +27,7 @@ body {
 	line-height: $eps-line-height-base;
 	color: var(--body-color);
 	text-align: left;
-	background-color: $eps-body-bg;
+	background-color: var(--body-bg);
 }
 
 

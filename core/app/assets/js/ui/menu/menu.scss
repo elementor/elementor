@@ -1,0 +1,19 @@
+@import "../../../styles/common";
+
+$menu-title-font-size: 11px;
+$menu-title-line-height: 13px;
+$menu-title-color: #6D7882;
+$menu-title-padding-y: 16px;
+$menu-title-padding-x: 30px;
+
+
+.e-app-menu {
+	&__title {
+		padding: $menu-title-padding-y $menu-title-padding-x;
+		font-size: $menu-title-font-size;
+		line-height: $menu-title-line-height;
+		text-transform: uppercase;
+		font-weight: normal;
+		color: $menu-title-color;
+	}
+}
