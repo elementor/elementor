@@ -292,5 +292,40 @@ jQuery( () => {
 
 			assert.equal( $e.data.cache.get( requestData ), null );
 		} );
+
+		QUnit.test( 'delete(): deep', ( assert ) => {
+			const component = $e.components.register( new class TestComponent extends ComponentBase {
+					getNamespace() {
+						return 'delete-deep-component';
+					}
+				} ),
+				requestData = {
+					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
+					command: component.getNamespace(),
+					component: component,
+					args: {},
+				};
+
+			$e.data.cache.set( requestData, TEST_OBJECT );
+
+			requestData.endpoint = component.getNamespace() + '/complexObject/anotherObject/key';
+			$e.data.cache.delete( requestData );
+			assert.equal( $e.data.cache.get( requestData ), null );
+
+			requestData.endpoint = component.getNamespace() + '/complexObject/anotherObject';
+			$e.data.cache.delete( requestData );
+			assert.equal( $e.data.cache.get( requestData ), null );
+
+			requestData.endpoint = component.getNamespace() + '/complexObject';
+			$e.data.cache.delete( requestData );
+			assert.equal( $e.data.cache.get( requestData ), null );
+
+			requestData.endpoint = component.getNamespace() + '/simpleKeyValue';
+			$e.data.cache.delete( requestData );
+			assert.equal( $e.data.cache.get( requestData ), null );
+
+			requestData.endpoint = component.getNamespace();
+			assert.deepEqual( $e.data.cache.get( requestData ), { } );
+		} );
 	} );
 } );

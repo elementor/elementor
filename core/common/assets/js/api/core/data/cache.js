@@ -179,8 +179,6 @@ export default class Cache {
 	 *
 	 * Delete endpoint from storage.
 	 *
-	 * TODO: Create tests for the new logic.
-	 *
 	 * @param {RequestData} requestData
 	 *
 	 * @return {boolean} is deleted
