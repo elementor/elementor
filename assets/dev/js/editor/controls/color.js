@@ -50,6 +50,10 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton.on( 'click', () => this.onPickerButtonClick() );
 
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
+
+		if ( ! this.getGlobalKey() && ! this.getControlValue() ) {
+			this.$el.addClass( 'e-color__no-value' );
+		}
 	}
 
 	addTipsyToPickerButton() {
@@ -74,9 +78,9 @@ export default class extends ControlBaseDataView {
 			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
 			$messageText = jQuery( '<div>' ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + currentValue } ),
-			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: colorTitle } )
-				.val( colorTitle );
+			$colorPreview = jQuery( '<div>', { class: 'e-global__color-preview', style: 'background-color: ' + color.value } ),
+			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.title } )
+				.val( color.title );
 
 		// Check if the color already exists in the global colors, and display an appropriate message
 		Object.values( globalColors ).forEach( ( globalColor ) => {
@@ -106,11 +110,11 @@ export default class extends ControlBaseDataView {
 
 	// globalData is received from the Data API
 	createGlobalItemMarkup( globalData ) {
-		const $color = jQuery( '<div>', { class: 'e-global-preview e-global-color', 'data-global-id': globalData.id } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global-color__preview', style: 'background-color: ' + globalData.value } ),
-			$colorTitle = jQuery( '<span>', { class: 'e-global-color__title' } )
+		const $color = jQuery( '<div>', { class: 'e-global__preview-item e-global__color', 'data-global-id': globalData.id } ),
+			$colorPreview = jQuery( '<div>', { class: 'e-global__color-preview', style: 'background-color: ' + globalData.value } ),
+			$colorTitle = jQuery( '<span>', { class: 'e-global__color-title' } )
 				.html( globalData.title ),
-			$colorHex = jQuery( '<span>', { class: 'e-global-color__hex' } )
+			$colorHex = jQuery( '<span>', { class: 'e-global__color-hex' } )
 				.html( globalData.value );
 
 		$color.append( $colorPreview, $colorTitle, $colorHex );
@@ -126,7 +130,7 @@ export default class extends ControlBaseDataView {
 
 	// Create the markup for the colors in the global select dropdown
 	buildGlobalsList( globalColors ) {
-		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
+		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
 
 		Object.values( globalColors ).forEach( ( color ) => {
 			if ( ! color.value ) {

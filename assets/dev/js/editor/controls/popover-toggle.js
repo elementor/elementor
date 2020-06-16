@@ -64,7 +64,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	createGlobalItemMarkup( globalData ) {
-		const $textStylePreview = jQuery( '<div>', { class: 'e-global-preview e-global-text-style', 'data-global-id': globalData.id } );
+		const $textStylePreview = jQuery( '<div>', { class: 'e-global__preview-item e-global__text-style', 'data-global-id': globalData.id } );
 
 		$textStylePreview
 			.html( globalData.title )
@@ -83,10 +83,10 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	getAddGlobalConfirmMessage() {
 		const globalData = this.getGlobalMeta(),
-			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
+			$message = jQuery( '<div>', { class: 'e-global__confirm-message' } ),
 			$messageText = jQuery( '<div>' )
 				.html( elementor.translate( 'global_typography_confirm_text' ) ),
-			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
+			$inputWrapper = jQuery( '<div>', { class: 'e-global__confirm-input-wrapper' } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: globalData.title } )
 				.val( globalData.title );
 
@@ -104,7 +104,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	buildGlobalsList( globalTextStyles ) {
-		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global-previews-container' } );
+		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
 
 		Object.values( globalTextStyles ).forEach( ( textStyle ) => {
 			// Only build markup if the text style is valid

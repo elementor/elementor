@@ -1,7 +1,7 @@
 // Elementor Global Controls
 .e-global {
 
-	&-select {
+	&__select-box {
 		border: 1px solid $editor-lightest;
 		@include border-end(0);
 		border-radius: 3px 0 0 3px;
@@ -16,20 +16,17 @@
 			@include padding-start(5px);
 			@include padding-end(2px);
 		}
+
+		&-text {
+			white-space: nowrap;
+			overflow: hidden;
+		}
 	}
 
-	&-selected {
-		white-space: nowrap;
-		overflow: hidden;
-	}
-
-	&-control-popover {
+	&__popover {
 		width: 270px;
 		z-index: 1;
 		font-size: 12px;
-	}
-
-	&-popover {
 
 		&-container {
 			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
@@ -50,7 +47,7 @@
 		}
 	}
 
-	&-previews-container {
+	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: scroll;
 
@@ -65,7 +62,7 @@
 		}
 	}
 
-	&-manage-button {
+	&__manage-button {
 		color: $editor-dark;
 		font-weight: 500;
 		padding: 15px 20px;
@@ -79,8 +76,8 @@
 		}
 	}
 
-	// Typography Control
-	&-text-style {
+	// Typography Globals
+	&__text-style {
 		padding: 5px 35px;
 		cursor: pointer;
 
@@ -89,7 +86,52 @@
 		}
 	}
 
-	&-info-tooltip {
+	// Color Globals
+	&__color {
+		margin: 5px auto;
+		padding: 5px 20px;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+
+		&:first-child {
+			margin-top: 10px;
+		}
+
+		&:last-child {
+			margin-bottom: 10px;
+		}
+
+		&:hover {
+			background-color: $editor-background-light;
+		}
+
+		&-preview {
+			height: 20px;
+			width: 20px;
+			border-radius: 3px;
+			border: 1px solid rgba(0, 0, 0, 0.1);
+			@include margin-end(10px);
+		}
+
+		&-title {
+			font-weight: 500;
+			color: $editor-dark;
+		}
+
+		&-hex {
+			font-size: 10px;
+			font-weight: 500;
+			color: $editor-light;
+			@include margin-start(auto);
+		}
+
+		.pcr-button {
+			background-color: #fff;
+		}
+	}
+
+	&__info-tooltip {
 		width: 270px;
 		z-index: 1;
 		background-color: rgba(30,30,30,0.9);
@@ -108,7 +150,7 @@
 		}
 	}
 
-	&-confirm {
+	&__confirm {
 
 		&-add {
 

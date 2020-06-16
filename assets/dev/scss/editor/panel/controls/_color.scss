@@ -20,56 +20,12 @@
 			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		}
 
-		.e-global-select ~ .pickr {
+		.e-global__select-box ~ .pickr {
 			border-radius: 0;
 		}
 	}
 
-	.e-global-select ~ .pickr {
+	.e-global__select-box ~ .pickr {
 		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-	}
-}
-
-.e-global-color {
-	margin: 5px auto;
-	padding: 5px 20px;
-	display: flex;
-	align-items: center;
-	cursor: pointer;
-
-	&:first-child {
-		margin-top: 10px;
-	}
-
-	&:last-child {
-		margin-bottom: 10px;
-	}
-
-	&:hover {
-		background-color: $editor-background-light;
-	}
-
-	&__preview {
-		height: 20px;
-		width: 20px;
-		border-radius: 3px;
-		border: 1px solid rgba(0, 0, 0, 0.1);
-		@include margin-end(10px);
-	}
-
-	&__title {
-		font-weight: 500;
-		color: $editor-dark;
-	}
-
-	&__hex {
-		font-size: 10px;
-		font-weight: 500;
-		color: $editor-light;
-		@include margin-start(auto);
-	}
-
-	.pcr-button {
-		background-color: #fff;
 	}
 }
