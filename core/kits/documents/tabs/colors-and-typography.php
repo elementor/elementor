@@ -95,7 +95,7 @@ class Colors_And_Typography extends Tab_Base {
 		$repeater->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name' => 'styles',
+				'name' => 'typography',
 				'label' => '',
 				'fields_options' => [
 					'font_family' => [
