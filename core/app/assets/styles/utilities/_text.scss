@@ -75,21 +75,21 @@
 // Contextual colors
 
 .u-text-white {
-	color: $white !important;
+	color: $color-white !important;
 }
 
-@each $color, $value in $theme-colors {
+@each $color, $value in $eps-theme-colors {
 	.u-text-#{$color} {
-		color: $value;
+		color: var(--#{$color});
 	}
 }
 
 .u-text-body {
-	color: $body-color !important;
+	color: var(--body-color);
 }
 
 .u-text-muted {
-	color: $text-muted !important;
+	color: var(--text-muted) !important;
 }
 
 .u-text-dark-50 {

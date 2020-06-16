@@ -1,12 +1,12 @@
 // Utilities: Background
-// - generating background util classes from '$theme-colors' loop
+// - generating background util classes from '$eps-theme-colors' loop
 
-@each $color, $value in $theme-colors {
-	.u-bg-#{$color}{ background-color:$value;}
+@each $color, $value in $eps-theme-colors {
+	.u-bg-#{$color}{ background-color:var(--#{$color});}
 }
 
-@each $color, $value in $tints {
-	.u-bg-gray-#{$color}{ background-color:$value;}
+@each $color, $value in $eps-tints {
+	.u-bg-gray-#{$color}{ background-color:var(--#{$color});}
 }
 
 .u-bg-transparent {

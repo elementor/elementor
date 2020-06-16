@@ -3,3 +3,17 @@ $displays: none, inline, inline-block, block, table, table-row, table-cell, flex
 $overflows: auto, hidden !default;
 $positions: static, relative, absolute, fixed, sticky !default;
 $user-selects: all, auto, none !default;
+
+// This variable affects the `.h-*` and `.w-*` classes.
+$sizes: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$sizes: map-merge(
+				(
+						25: 25%,
+						50: 50%,
+						75: 75%,
+						100: 100%,
+						auto: auto
+				),
+				$sizes
+);
