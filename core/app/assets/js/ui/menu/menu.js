@@ -1,10 +1,11 @@
+import "./menu.scss";
 import MenuItem from './menu-item';
 
 export default function Menu( props ) {
 	return (
-		<nav className="elementor-app__site-editor__menu">
+		<nav className="e-app-menu">
 			<MenuItem id="all-parts" text={ __( 'All Parts', 'elementor' ) } icon="eicon-filter" url="/site-editor/templates" />
-			<div className="elementor-app__site-editor__menu__items-title">
+			<div className="e-app-menu__title">
 				{ __( 'Site Parts', 'elementor' ) }
 			</div>
 			{ (
