@@ -142,6 +142,10 @@
 
 			.elementor-control {
 				padding: 0 20px 15px;
+
+				&-title {
+					flex-grow: initial;
+				}
 			}
 		}
 
