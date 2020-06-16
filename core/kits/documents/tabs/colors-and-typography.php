@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Colors_And_Typography extends Tab_Base {
 
+	const TYPOGRAPHY_GROUP_PREFIX = 'typography';
+
 	public function get_id() {
 		return 'colors-and-typography';
 	}
@@ -95,7 +97,7 @@ class Colors_And_Typography extends Tab_Base {
 		$repeater->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name' => 'typography',
+				'name' => self::TYPOGRAPHY_GROUP_PREFIX,
 				'label' => '',
 				'fields_options' => [
 					'font_family' => [
