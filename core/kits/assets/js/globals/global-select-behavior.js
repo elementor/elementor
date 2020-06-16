@@ -181,7 +181,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			onConfirm: () => this.onConfirmNewGlobal(),
 			onShow: () => {
 				// Put focus on the naming input
-				this.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
+				this.ui.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
 			},
 		} );
 
@@ -191,7 +191,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	onConfirmNewGlobal() {
 		const globalMeta = this.view.getGlobalMeta();
 
-		globalMeta.title = this.globalNameInput.val();
+		globalMeta.title = this.ui.globalNameInput.val();
 
 		this.createNewGlobal( globalMeta )
 			.then( ( result ) => {
@@ -202,10 +202,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	createNewGlobal( globalMeta ) {
-		const container = this.view.container;
-
 		return $e.run( globalMeta.commandName + '/create', {
-			container,
+			container: this.view.container,
 			setting: globalMeta.key, // group control name
 			title: globalMeta.title,
 		} )
