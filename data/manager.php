@@ -133,7 +133,9 @@ class Manager extends BaseModule {
 			$pure_command = $command_parts[0];
 			$query_string = $command_parts[1];
 
-			parse_str( $query_string, $args );
+			parse_str( $query_string, $temp );
+
+			$args = array_merge( $temp, $args );
 
 			$command = $pure_command;
 
@@ -228,7 +230,12 @@ class Manager extends BaseModule {
 
 		// Run reset api.
 		$request = new \WP_REST_Request( $method, $endpoint );
-		$request->set_query_params( $args );
+
+		if ( 'GET' === $method ) {
+			$request->set_query_params( $args );
+		} else {
+			$request->set_body_params( $args );
+		}
 
 		return rest_do_request( $request );
 	}
