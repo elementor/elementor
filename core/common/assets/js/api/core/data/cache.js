@@ -219,7 +219,7 @@ export default class Cache {
 					if ( nullsObject ) {
 						Object.keys( nullsObject ).forEach( ( key ) => {
 							if ( nullsObject[ key ] && 'object' === typeof nullsObject[ key ] ) {
-								deleteKeys( nullsObject[ key ], target[ key ] );
+								deleteKeys( target[ key ], nullsObject[ key ] );
 							} else if ( null === nullsObject[ key ] ) {
 								delete target[ key ];
 								result = true;
