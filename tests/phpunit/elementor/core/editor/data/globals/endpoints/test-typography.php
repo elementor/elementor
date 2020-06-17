@@ -8,9 +8,9 @@ require_once 'base.php';
 use Elementor\Plugin;
 use Elementor\Core\Editor\Data;
 
-class Test_Colors extends Base  {
+class Test_Typography extends Base {
 	public function get_command() {
-		return 'globals/colors';
+		return 'globals/typography';
 	}
 
 	public function get_controller_class() {
@@ -21,8 +21,10 @@ class Test_Colors extends Base  {
 		$id = (string) rand();
 		$args = [
 			'id' => $id,
-			'color' => 'red',
 			'title' => 'whatever',
+			'value' => [
+				'whatever' => true,
+			],
 		];
 
 		$result = $this->manager->run_endpoint( $this->get_endpoint( $id ), $args, \WP_REST_Server::CREATABLE );
