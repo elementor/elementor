@@ -33,6 +33,7 @@ export default class extends ControlBaseDataView {
 				components: {
 					opacity: this.model.get( 'alpha' ),
 				},
+				defaultRepresentation: 'HEX',
 			},
 			// Don't create the add button in the Global Settings color pickers
 			addButton: this.model.get( 'global' )?.active,
@@ -150,7 +151,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerChange() {
-		this.setValue( this.colorPicker.getColor() );
+		this.setValue( this.colorPicker.picker.getColor().toHEXA().toString() );
 
 		if ( ! this.isCustom ) {
 			this.triggerMethod( 'value:type:change' );
