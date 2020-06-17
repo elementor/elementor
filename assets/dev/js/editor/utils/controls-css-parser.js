@@ -39,7 +39,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
-		// If the current element contains dynamic values, parse thesex values
+		// If the current element contains dynamic values, parse these values
 		const dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
 
 		_.each( styleControls, ( control ) => {
