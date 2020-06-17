@@ -18,7 +18,7 @@ import Cache from './data/cache';
  */
 
 /**
- * @typedef {{}} ExtractedCommand
+ * @typedef {object} ExtractedCommand
  * @property {string} command
  * @property {object} args
  */
@@ -489,9 +489,9 @@ export default class Data extends Commands {
 	run( type, command, args ) {
 		args.options.type = type;
 
-		const extractedCommand = this.commandExtractArgs( command );
+		( { command, args } = this.commandExtractArgs( command, args ) );
 
-		return super.run( extractedCommand.command, { ... args, ... extractedCommand.args } );
+		return super.run( command, args );
 	}
 
 	error( message ) {
