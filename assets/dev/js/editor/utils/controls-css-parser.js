@@ -89,13 +89,9 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			var outputCssProperty;
 
 			if ( globalValue ) {
-				const propertyParts = cssProperty.split( ':' );
-
-				const globalArgs = {};
-
-				$e.data.commandExtractArgs( globalValue, globalArgs );
-
-				const id = globalArgs.query.id;
+				const propertyParts = cssProperty.split( ':' ),
+					{ args } = $e.data.commandExtractArgs( globalValue ),
+					id = args.query.id;
 
 				let propertyValue;
 

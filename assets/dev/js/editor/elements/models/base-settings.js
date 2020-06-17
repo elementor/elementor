@@ -346,10 +346,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 				return;
 			}
 
-			const globalArgs = {};
-
-			const command = $e.data.commandExtractArgs( valueToParse, globalArgs ),
-				globalValue = $e.data.getCache( $e.components.get( 'globals' ), command, globalArgs.query );
+			const { command, args } = $e.data.commandExtractArgs( valueToParse ),
+				globalValue = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
 
 			if ( control.groupType ) {
 				settings[ control.name ] = 'custom';
