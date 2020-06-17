@@ -49,7 +49,7 @@
 
 	&__preview-items-container {
 		max-height: 260px;
-		overflow-y: scroll;
+		overflow-y: auto;
 
 		&::-webkit-scrollbar {
 			width: 8px;
