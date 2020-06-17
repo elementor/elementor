@@ -47,7 +47,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				this.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, control.fields, placeholders, replacements );
 			}
 
-			// If a dynamic tag includes controls with CSS implementations, Take their CSS and apply it
+			// If a dynamic tag includes controls with CSS implementations, Take their CSS and apply it.
 			if ( control.dynamic?.active && values.__dynamic__?.[ control.name ] ) {
 				this.addDynamicControlStyleRules( values.__dynamic__[ control.name ], control );
 			}
