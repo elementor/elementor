@@ -8,11 +8,12 @@ $menu-item-icon-size: spacing(16);
 $menu-item-padding-y: spacing(8);
 $menu-item-padding-x: spacing(30);
 $menu-item-height: spacing(44);
+$menu-item-pointer-width: spacing(5);
+$menu-item-pointer-color: theme-colors(link-color);
 
 $menu-item-color: tints(600);
 $menu-item-color-hover: tints(700);
 $menu-item-background-color-active: theme-colors(light);
-$menu-item-background-color-hover: rgba(var(--menu-item-background-color-active), $opacity-8);
 
 :root {
 	--menu-item-color: #{$menu-item-color};
@@ -38,10 +39,22 @@ $menu-item-dark-background-color-active: dark-tints(600);
 	line-height: $menu-item-line-height;
 	display: flex;
 	align-items: center;
+	position: relative;
+	transition: $eps-transition-duration;
+
+	&::before {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: var(--menu-item-pointer-width);
+		background-color: $menu-item-pointer-color;
+	}
 
 	&:hover {
 		--menu-item-color: var(--menu-item-color-hover);
-		background-color: $menu-item-background-color-hover
 	}
 
 	&,
@@ -57,6 +70,7 @@ $menu-item-dark-background-color-active: dark-tints(600);
 	}
 
 	&--active {
+		--menu-item-pointer-width: #{$menu-item-pointer-width};
 		background-color: var(--menu-item-background-color-active);
 	}
 }
