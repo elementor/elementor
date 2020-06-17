@@ -35,7 +35,7 @@
 
 <script type="text/template" id="tmpl-elementor-global-style-repeater-row">
 	<# let removeClass = 'remove',
-			removeIcon = 'eicon-trash';
+			removeIcon = 'eicon-trash-o';
 
 	if ( ! itemActions.remove ) {
 		removeClass += '--disabled';
