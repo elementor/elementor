@@ -121,7 +121,7 @@ export class Settings extends CommandHistoryDebounce {
 				container.settings.set( newSettings );
 			}
 
-			if ( true !== options.preventDefaultRender ) {
+			if ( ! options.preventDefaultRender ) {
 				container.render();
 			}
 		} );
