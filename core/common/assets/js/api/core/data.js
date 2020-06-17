@@ -17,6 +17,12 @@ import Cache from './data/cache';
  * @property {('hit'|'miss')} [cache]
  */
 
+/**
+ * @typedef {{}} ExtractedCommand
+ * @property {string} command
+ * @property {object} args
+ */
+
 // TODO: Return it from the server. Original at WP_REST_Server.
 export const READABLE = [ 'GET' ],
 	CREATABLE = [ 'POST' ],
@@ -189,14 +195,14 @@ export default class Data extends Commands {
 	 * If the command have query convert it to args.
 	 *
 	 * @param {string} command
-	 * @param {object} argsTarget
+	 * @param {object} args
 	 *
-	 * @returns {string} command
+	 * @returns {ExtractedCommand} command
 	 */
-	commandExtractArgs( command, argsTarget ) {
+	commandExtractArgs( command, args = {} ) {
 		if ( command?.includes( '?' ) ) {
-			if ( ! argsTarget.query ) {
-				argsTarget.query = {};
+			if ( ! args.query ) {
+				args.query = {};
 			}
 
 			const commandParts = command.split( '?' ),
@@ -204,12 +210,15 @@ export default class Data extends Commands {
 				queryString = commandParts[ 1 ],
 				query = new URLSearchParams( queryString );
 
-			Object.assign( argsTarget.query, Object.fromEntries( query ) );
+			Object.assign( args.query, Object.fromEntries( query ) );
 
 			command = pureCommand;
 		}
 
-		return command;
+		return {
+			command,
+			args,
+		};
 	}
 
 	/**
@@ -478,9 +487,9 @@ export default class Data extends Commands {
 	run( type, command, args ) {
 		args.options.type = type;
 
-		command = this.commandExtractArgs( command, args );
+		const extractedCommand = this.commandExtractArgs( command );
 
-		return super.run( command, args );
+		return super.run( extractedCommand.command, { ... args, ... extractedCommand.args } );
 	}
 
 	error( message ) {
