@@ -246,6 +246,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} )
 			.then( () => {
 				this.onValueTypeChange();
+
+				this.view.globalValue = null;
 			} );
 	}
 
