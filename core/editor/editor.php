@@ -605,9 +605,11 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Global Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'preferences' => __( 'Preferences', 'elementor' ),
+				'site_editor' => __( 'Site Editor', 'elementor' ),
+				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'more' => __( 'More', 'elementor' ),
+				'navigate_from_page' => __( 'Navigate From Page', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
 				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
