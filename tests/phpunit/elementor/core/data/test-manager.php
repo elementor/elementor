@@ -77,8 +77,17 @@ class Test_Manager extends Elementor_Test_Base {
 		$command = 'controller/endpoint/?id=test&test=true';
 		$command_extracted = $this->manager->command_extract_args( $command, $args );
 
-		$this->assertEquals( 'controller/endpoint', $command_extracted );
-		$this->assertEquals( [ 'id' => 'test', 'test' => 'true' ], $args );
+		$this->assertEquals( 'controller/endpoint', $command_extracted->command );
+		$this->assertEquals( [ 'id' => 'test', 'test' => 'true' ], $command_extracted->args );
+	}
+
+	public function test_command_extract_args_merged() {
+		$args = [ 'merge' => 'true'];
+		$command = 'controller/endpoint/?id=test&test=true';
+		$command_extracted = $this->manager->command_extract_args( $command, $args );
+
+		$this->assertEquals( 'controller/endpoint', $command_extracted->command );
+		$this->assertEquals( [ 'id' => 'test', 'test' => 'true', 'merge' => 'true' ], $command_extracted->args );
 	}
 
 	public function test_command_to_endpoint() {
