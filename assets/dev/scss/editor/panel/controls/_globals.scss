@@ -160,6 +160,13 @@
 			}
 		}
 
+		&-message-text {
+
+			i {
+				color: $editor-orange;
+			}
+		}
+
 		&-input-wrapper {
 			display: flex;
 			align-items: center;

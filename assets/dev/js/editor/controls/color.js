@@ -75,27 +75,29 @@ export default class extends ControlBaseDataView {
 	getAddGlobalConfirmMessage( globalColors ) {
 		const colorTitle = this.colorPicker.getColorTitle(),
 			currentValue = this.getCurrentValue(),
-			$message = jQuery( '<div>', { class: 'e-global-confirm-message' } ),
-			$messageText = jQuery( '<div>' ),
-			$inputWrapper = jQuery( '<div>', { class: 'e-global-confirm-input-wrapper' } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global__color-preview', style: 'background-color: ' + color.value } ),
-			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: color.title } )
-				.val( color.title );
+			$message = jQuery( '<div>', { class: 'e-global__confirm-message' } ),
+			$messageText = jQuery( '<div>', { class: 'e-global__confirm-message-text' } ),
+			$inputWrapper = jQuery( '<div>', { class: 'e-global__confirm-input-wrapper' } ),
+			$colorPreview = jQuery( '<div>', { class: 'e-global__color-preview', style: 'background-color: ' + currentValue } ),
+			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: colorTitle } )
+				.val( colorTitle );
+
+		let messageContent;
 
 		// Check if the color already exists in the global colors, and display an appropriate message
-		Object.values( globalColors ).forEach( ( globalColor ) => {
-			let messageContent;
-
+		for ( const globalColor of Object.values( globalColors ) ) {
 			if ( currentValue === globalColor.value ) {
-				messageContent = elementor.translate( 'global_color_already_exists' );
+				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
+				break;
 			} else if ( colorTitle === globalColor.title ) {
-				messageContent = elementor.translate( 'global_color_name_already_exists' );
+				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_name_already_exists' );
+				break;
 			} else {
 				messageContent = elementor.translate( 'global_color_confirm_text' );
 			}
+		}
 
-			$messageText.html( messageContent );
-		} );
+		$messageText.html( messageContent );
 
 		$inputWrapper.append( $colorPreview, $input );
 
