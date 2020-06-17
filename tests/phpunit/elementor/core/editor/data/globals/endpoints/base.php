@@ -16,12 +16,29 @@ abstract class Base extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$this->manager = Manager::instance();
+		$this->set_manager();
+
 		$this->manager->kill_server();
 
 		$this->manager->register_controller( $this->get_controller_class() );
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID);
+	}
+
+	public function set_manager( $manager = null ) {
+		if ( ! $manager ) {
+			$manager = Manager::instance();
+		}
+
+		$this->manager = $manager;
+	}
+
+	public function get_manager() {
+		if ( ! $this->manager ) {
+			$this->manager = Manager::instance();
+		}
+
+		return $this->manager;
 	}
 
 	public function get_endpoint( $id = null ) {
