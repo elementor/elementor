@@ -1,21 +1,42 @@
 // this import should be to a @package
 @import "../../../styles/common";
 
-$menu-item-color: tints(500);
-$menu-item-font-size: 12px;
-$menu-item-line-height: 14px;
-$menu-item-padding-y: 16px;
-$menu-item-padding-x: 30px;
-$menu-item-link-spacing: 13px;
-$menu-item-icon-size: 16px;
+$menu-item-font-size: $eps-font-size-caption;
+$menu-item-line-height: $eps-line-height-sm;
+$menu-item-link-spacing: spacing(12);
+$menu-item-icon-size: spacing(16);
+$menu-item-padding-y: spacing(8);
+$menu-item-padding-x: spacing(30);
+$menu-item-height: spacing(44);
+
+$menu-item-color: tints(600);
+$menu-item-color-hover: tints(700);
+
+:root {
+	--menu-item-color: #{$menu-item-color};
+	--menu-item-color-hover: #{$menu-item-color-hover};
+}
+
+$menu-item-dark-color: dark-tints(200);
+$menu-item-dark-color-hover: dark-tints(100);
+
+.dark {
+	--menu-item-color: #{$menu-item-dark-color};
+	--menu-item-color-hover: #{$menu-item-dark-color-hover};
+}
 
 .e-app-menu-item {
 	padding: $menu-item-padding-y $menu-item-padding-x;
-	color: $menu-item-color;
+	min-height: $menu-item-height;
+	color: var(--menu-item-color);
 	font-size: $menu-item-font-size;
 	line-height: $menu-item-line-height;
 	display: flex;
 	align-items: center;
+
+	&:hover {
+		--menu-item-color: var(--menu-item-color-hover);
+	}
 
 	&,
 	&:active,
@@ -24,13 +45,8 @@ $menu-item-icon-size: 16px;
 		text-decoration: none;
 	}
 
-	span {
-		margin-left: $menu-item-link-spacing;
-	}
-
 	.icon {
 		font-size: $menu-item-icon-size;
+		margin-inline-end: $menu-item-link-spacing;
 	}
 }
-
-//elementor-app__site-editor__menu__items-title

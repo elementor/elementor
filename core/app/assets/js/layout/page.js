@@ -26,7 +26,7 @@ Page.propTypes = {
 	title: PropTypes.string,
 	className: PropTypes.string,
 	headerButtons: PropTypes.arrayOf( PropTypes.object ),
-	sidebar: PropTypes.object.isRequired,
+	sidebar: PropTypes.object,
 	content: PropTypes.object.isRequired,
 };
 

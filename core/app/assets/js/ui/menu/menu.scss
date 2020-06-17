@@ -2,10 +2,23 @@
 
 $menu-title-font-size: 11px;
 $menu-title-line-height: 13px;
-$menu-title-color: #6D7882;
-$menu-title-padding-y: 16px;
-$menu-title-padding-x: 30px;
+$menu-title-padding-y: spacing(8);
+$menu-title-padding-x: spacing(30);
+$menu-item-height: spacing(44);
 
+// Default Color scheme
+$menu-title-color: tints(600);
+
+// Dark Color scheme
+$menu-title-dark-color: tints(600);
+
+:root {
+	--menu-title-color: #{$menu-title-color};
+}
+
+.dark {
+	--menu-title-color: #{$menu-title-dark-color};
+}
 
 .e-app-menu {
 	&__title {
@@ -14,6 +27,6 @@ $menu-title-padding-x: 30px;
 		line-height: $menu-title-line-height;
 		text-transform: uppercase;
 		font-weight: normal;
-		color: $menu-title-color;
+		color: var(--menu-title-color);
 	}
 }
