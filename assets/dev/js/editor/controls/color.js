@@ -22,7 +22,7 @@ export default class extends ControlBaseDataView {
 			this.initPicker();
 		}
 
-		this.$el.toggleClass( 'e-no-value-color', ! currentValue );
+		this.$el.toggleClass( 'e-color__no-value', ! currentValue );
 	}
 
 	initPicker() {
@@ -155,8 +155,8 @@ export default class extends ControlBaseDataView {
 
 			this.colorPicker.toggleClearButtonState( true );
 
-			if ( this.$el.hasClass( 'e-no-value-color' ) ) {
-				this.$el.removeClass( 'e-no-value-color' );
+			if ( this.$el.hasClass( 'e-color__no-value' ) ) {
+				this.$el.removeClass( 'e-color__no-value' );
 			}
 
 			this.isCustom = true;
@@ -170,7 +170,7 @@ export default class extends ControlBaseDataView {
 
 		this.triggerMethod( 'value:type:change' );
 
-		this.$el.addClass( 'e-no-value-color' );
+		this.$el.addClass( 'e-color__no-value' );
 
 		this.colorPicker.toggleClearButtonState( false );
 	}

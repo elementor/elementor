@@ -38,14 +38,14 @@
 
 .e-color__no-value {
 
-	.pickr {
-		background: linear-gradient(135deg, #ffffff 46%,#ff3030 50%,#ffffff 54%);
-	}
-
 	.pcr-button {
-		color: transparent;
 		background-image: none;
 		background-color: transparent;
+		border: 1px solid #d5dadf;
+
+		&:after {
+			background: linear-gradient(135deg, #ffffff 46%, #ff3030 50%, #ffffff 54%);
+		}
 	}
 }
 
