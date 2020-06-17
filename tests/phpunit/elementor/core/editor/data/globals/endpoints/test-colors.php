@@ -2,37 +2,20 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 
-use Elementor\Data\Manager;
+// TODO: Use autoloader.
+require 'base.php';
+
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Editor\Data;
 
-class Test_Colors extends Elementor_Test_Base {
 
-	/**
-	 * @var \Elementor\Core\Base\Module|\Elementor\Data\Manager
-	 */
-	private $manager;
-
-	public function get_endpoint( $id = null ) {
-		$endpoint = 'globals/colors';
-
-		if ( $id ) {
-			$endpoint .= '/' . $id;
-		}
-
-		return $endpoint;
+class Test_Colors extends Base  {
+	public function get_command() {
+		return 'globals/colors';
 	}
 
-	public function setUp() {
-		parent::setUp();
-
-		$this->manager = Manager::instance();
-		$this->manager->kill_server();
-
-		$this->manager->register_controller( Data\Globals\Controller::class );
-
-		wp_set_current_user( $this->factory()->get_administrator_user()->ID);
+	public function get_controller_class() {
+		return Data\Globals\Controller::class;
 	}
 
 	public function test_create() {
