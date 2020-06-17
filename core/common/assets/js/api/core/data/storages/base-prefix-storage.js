@@ -1,6 +1,6 @@
 import BaseStorage from 'elementor-api/core/data/storages/base-storage';
 
-export default class PrefixStorage extends BaseStorage {
+export default class BasePrefixStorage extends BaseStorage {
 	static DEFAULT_KEY_PREFIX = 'e_';
 
 	clear() {
@@ -8,19 +8,19 @@ export default class PrefixStorage extends BaseStorage {
 	}
 
 	getItem( key ) {
-		return super.getItem( PrefixStorage.DEFAULT_KEY_PREFIX + key );
+		return super.getItem( BasePrefixStorage.DEFAULT_KEY_PREFIX + key );
 	}
 
 	removeItem( key ) {
-		return super.removeItem( PrefixStorage.DEFAULT_KEY_PREFIX + key );
+		return super.removeItem( BasePrefixStorage.DEFAULT_KEY_PREFIX + key );
 	}
 
 	setItem( key, value ) {
-		return super.setItem( PrefixStorage.DEFAULT_KEY_PREFIX + key, value );
+		return super.setItem( BasePrefixStorage.DEFAULT_KEY_PREFIX + key, value );
 	}
 
 	getAll() {
-		const { DEFAULT_KEY_PREFIX } = PrefixStorage,
+		const { DEFAULT_KEY_PREFIX } = BasePrefixStorage,
 			keys = Object.keys( this.provider ),
 			result = {};
 

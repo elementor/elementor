@@ -1,6 +1,6 @@
-import PrefixStorage from './prefix-storage';
+import BasePrefixStorage from './base-prefix-storage';
 
-export default class LocalStorage extends PrefixStorage {
+export default class LocalStorage extends BasePrefixStorage {
 	constructor() {
 		super( localStorage );
 	}
