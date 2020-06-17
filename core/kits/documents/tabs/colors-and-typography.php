@@ -59,6 +59,24 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
+				'default' => [
+					[
+						'title' => __( 'Primary', 'elementor' ),
+						'color' => '#6ec1e4',
+					],
+					[
+						'title' => __( 'Secondary', 'elementor' ),
+						'color' => '#54595f',
+					],
+					[
+						'title' => __( 'Text', 'elementor' ),
+						'color' => '#7a7a7a',
+					],
+					[
+						'title' => __( 'Accent', 'elementor' ),
+						'color' => '#61ce70',
+					],
+				],
 				'item_actions' => [
 					'add' => false,
 					'remove' => false,
@@ -144,11 +162,37 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
+		$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_family';
+
+		$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_weight';
+
 		$this->add_control(
 			'system_typography',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
+				'default' => [
+					[
+						'title' => __( 'Primary', 'elementor' ),
+						$font_family_key => 'Roboto',
+						$font_weight_key => '600',
+					],
+					[
+						'title' => __( 'Secondary', 'elementor' ),
+						$font_family_key => 'Roboto Slab',
+						$font_weight_key => '400',
+					],
+					[
+						'title' => __( 'Text', 'elementor' ),
+						$font_family_key => 'Roboto',
+						$font_weight_key => '400',
+					],
+					[
+						'title' => __( 'Accent', 'elementor' ),
+						$font_family_key => 'Roboto',
+						$font_weight_key => '500',
+					],
+				],
 				'item_actions' => [
 					'add' => false,
 					'remove' => false,
