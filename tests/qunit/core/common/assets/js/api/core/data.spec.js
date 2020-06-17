@@ -92,10 +92,10 @@ jQuery( () => {
 		QUnit.test( 'commandQueryToArgs(): simple', ( assert ) => {
 			const queryCommand = 'component/command?paramA=valueA',
 				args = {},
-				pureCommand = $e.data.commandExtractArgs( queryCommand, args );
+				extractedCommand = $e.data.commandExtractArgs( queryCommand, args );
 
-			assert.equal( pureCommand, 'component/command', 'Valid pure command.' );
-			assert.deepEqual( args.query, { paramA: 'valueA' }, 'Valid args.query.' );
+			assert.equal( extractedCommand.command, 'component/command', 'Valid pure command.' );
+			assert.deepEqual( extractedCommand.args.query, { paramA: 'valueA' }, 'Valid args.query.' );
 		} );
 
 		QUnit.test( 'validateRequestData', ( assert ) => {
