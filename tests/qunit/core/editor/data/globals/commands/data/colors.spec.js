@@ -4,13 +4,12 @@ export const Colors = () => {
 	QUnit.module( 'Colors', ( hooks ) => {
 		hooks.before( () => {
 			$e.data.cache.storage.clear();
-			eData.mockAdd( 'create', 'globals/colors' );
-			eData.mock();
+			eData.addMock( 'create', 'globals/colors' );
+			eData.attachMock();
 		} );
 
 		hooks.after( () => {
-			eData.mockClear();
-			eData.silence();
+			eData.clearMock();
 		} );
 
 		QUnit.test( 'get', async ( assert ) => {
@@ -18,12 +17,12 @@ export const Colors = () => {
 
 			$e.data.setCache( $e.components.get( 'globals' ), 'globals/colors', {}, data );
 
-			eData.cache();
+			eData.attachCache();
 
 			const resultId = await $e.data.get( 'globals/colors?id=test' ),
 				resultAll = await $e.data.get( 'globals/colors' );
 
-			eData.mock(); // Back to default.
+			eData.attachMock(); // Back to default.
 
 			assert.equal( resultId.data, true );
 			assert.deepEqual( resultAll.data, data );

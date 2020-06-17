@@ -78,7 +78,7 @@ export const PasteStyle = () => {
 					},
 				} );
 
-				eData.cache();
+				eData.attachCache();
 
 				ElementsHelper.settings( eButtonGlobal, {
 					typography_text_transform: 'uppercase',
@@ -95,8 +95,6 @@ export const PasteStyle = () => {
 				ElementsHelper.pasteStyle( eButton );
 
 				assert.deepEqual( eButton.settings.attributes.__globals__, eButtonGlobal.globals.attributes );
-
-				eData.silence();
 			} );
 
 			// TODO: Paste __dynamic__.

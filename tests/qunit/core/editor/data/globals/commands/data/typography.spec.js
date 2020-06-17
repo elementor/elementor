@@ -3,13 +3,13 @@ import * as eData from 'elementor-tests-qunit/mock/e-data';
 export const Typography = () => {
 	QUnit.module( 'Typography', ( hooks ) => {
 		hooks.before( () => {
-			eData.mockAdd( 'create', 'globals/typography' );
-			eData.mock();
+			eData.addMock( 'create', 'globals/typography' );
+			eData.attachMock();
 		} );
 
 		hooks.after( () => {
-			eData.mockClear();
-			eData.free();
+			eData.clearMock();
+			eData.restoreFetch();
 		} );
 
 		QUnit.test( 'get', async ( assert ) => {
@@ -17,12 +17,12 @@ export const Typography = () => {
 
 			$e.data.setCache( $e.components.get( 'globals' ), 'globals/typography', {}, data );
 
-			eData.cache();
+			eData.attachCache();
 
 			const resultId = await $e.data.get( 'globals/typography?id=test' ),
 				resultAll = await $e.data.get( 'globals/typography' );
 
-			eData.mock(); // Back to default.
+			eData.attachMock(); // Back to default.
 
 			assert.equal( resultId.data, true );
 			assert.deepEqual( resultAll.data, data );

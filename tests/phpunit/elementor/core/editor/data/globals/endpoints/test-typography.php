@@ -26,23 +26,25 @@ class Test_Typography extends Base {
 			],
 		];
 
+		// Create
 		$result = $this->manager->run_endpoint( $this->get_endpoint( $id ), $args, \WP_REST_Server::CREATABLE );
 
 		// Bug: kit does not updated after save.
-		Plugin::$instance->documents->get( Plugin::$instance->kits_manager->get_active_id(), false );
+		$kit = Plugin::$instance->documents->get( Plugin::$instance->kits_manager->get_active_id(), false );
 
-		$this->assertEquals( $args, $result );
+		$typography = $kit->get_settings( 'custom_typography' );
 
-		return $result;
+		$this->assertEquals( $id, $typography[0]['_id'] );
+		$this->assertArrayHaveKeys( [ 'whatever' ], $typography[0] );
+
+		return $typography;
 	}
 
 	public function test_get() {
-		$create_result = $this->test_create();
+		$typography = $this->test_create();
 
-		$this->manager->run_server();
+		$rest_result = $this->manager->run_endpoint( $this->get_endpoint( $typography[0]['_id'] ) );
 
-		$get_result = $this->manager->run_endpoint( $this->get_endpoint( $create_result['id'] ) );
-
-		$this->assertEquals( $create_result, $get_result );
+		$this->assertEquals( $rest_result['id'], $typography[0]['_id'] );
 	}
 }

@@ -24,23 +24,25 @@ class Test_Colors extends Base  {
 			'title' => 'whatever',
 		];
 
-		$result = $this->manager->run_endpoint( $this->get_endpoint( $id ), $args, \WP_REST_Server::CREATABLE );
+		// Create
+		$this->manager->run_endpoint( $this->get_endpoint( $id ), $args, \WP_REST_Server::CREATABLE );
 
 		// Bug: kit does not updated after save.
-		Plugin::$instance->documents->get( Plugin::$instance->kits_manager->get_active_id(), false );
+		$kit = Plugin::$instance->documents->get( Plugin::$instance->kits_manager->get_active_id(), false );
 
-		$this->assertEquals( $args, $result );
+		$colors = $kit->get_settings( 'custom_colors' );
 
-		return $result;
+		$this->assertEquals( $id, $colors[0]['_id'] );
+		$this->assertEquals( $args['color'], $colors[0]['color'] );
+
+		return $colors;
 	}
 
 	public function test_get() {
-		$create_result = $this->test_create();
+		$colors = $this->test_create();
 
-		$this->manager->run_server();
+		$rest_result = $this->manager->run_endpoint( $this->get_endpoint( $colors[0]['_id'] ) );
 
-		$get_result = $this->manager->run_endpoint( $this->get_endpoint( $create_result['id'] ) );
-
-		$this->assertEquals( $create_result, $get_result );
+		$this->assertEquals( $rest_result['id'], $colors[0]['_id'] );
 	}
 }

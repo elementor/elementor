@@ -17,7 +17,7 @@ export const mockData = [];
  * @param {string} command
  * @param {function(result, RequestData)|null} [callback=null]
  */
-export const mockAdd = ( /*  */ type, command, callback = null ) => {
+export const addMock = ( /*  */ type, command, callback = null ) => {
 	// Default callback return query and data merged.
 	if ( ! callback ) {
 		callback = ( result, requestData ) => {
@@ -31,9 +31,9 @@ export const mockAdd = ( /*  */ type, command, callback = null ) => {
 	return mockData.push( { type, command, callback } );
 };
 
-export const mockClear = () => mockData.splice( 0, mockData.length );
+export const clearMock = () => mockData.splice( 0, mockData.length );
 
-export const mock = () => {
+export const attachMock = () => {
 	$e.data.fetch = ( /* RequestData */ requestData, fetchAPI ) => {
 		if ( fetchAPI ) {
 			return fetchOriginal( requestData, fetchAPI );
@@ -55,7 +55,7 @@ export const mock = () => {
 	};
 };
 
-export const cache = () => {
+export const attachCache = () => {
 	$e.data.fetch = ( /* RequestData */ requestData, fetchAPI ) => {
 		if ( fetchAPI ) {
 			return fetchOriginal( requestData, fetchAPI );
@@ -65,10 +65,6 @@ export const cache = () => {
 	};
 };
 
-export const silence = () => {
-	$e.data.fetch = () => Promise.resolve( {} );
-};
-
-export const free = () => {
+export const restoreFetch = () => {
 	$e.data.fetch = fetchOriginal;
 };

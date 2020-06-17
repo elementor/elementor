@@ -9,11 +9,7 @@ export const Disable = () => {
 		} );
 
 		hooks.before( () => {
-			eData.cache();
-		} );
-
-		hooks.after( () => {
-			eData.silence();
+			eData.attachCache();
 		} );
 
 		QUnit.module( 'Single Selection', () => {

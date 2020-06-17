@@ -6,13 +6,12 @@ let documentTemp;
 jQuery( () => {
 	QUnit.module( 'File: editor/document/manager', ( hooks ) => {
 		hooks.before( () => {
-			eData.cache();
+			eData.attachCache();
 			// Save current document before go.
 			documentTemp = elementor.documents.getCurrent();
 		} );
 
 		hooks.after( () => {
-			eData.silence();
 			// Put back saved document, to current.
 			elementor.documents.setCurrent( documentTemp );
 		} );

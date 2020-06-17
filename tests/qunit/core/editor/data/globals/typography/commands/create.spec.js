@@ -5,13 +5,12 @@ export const Create = () => {
 	QUnit.module( 'Create', ( hooks ) => {
 		hooks.before( () => {
 			$e.data.cache.storage.clear();
-			eData.mockAdd( 'create', 'globals/typography' );
-			eData.mock();
+			eData.addMock( 'create', 'globals/typography' );
+			eData.attachMock();
 		} );
 
 		hooks.after( () => {
-			eData.mockClear();
-			eData.silence();
+			eData.clearMock();
 		} );
 
 		QUnit.test( 'Simple', async ( assert ) => {

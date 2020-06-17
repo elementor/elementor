@@ -4,7 +4,7 @@ import * as eData from 'elementor-tests-qunit/mock/e-data';
 export const SetStructure = () => {
 	QUnit.module( 'SetStructure', () => {
 		QUnit.test( 'apply(): Inner Section', ( assert ) => {
-			eData.cache();
+			eData.attachCache();
 
 			const structure = '21',
 				eInnerSection = ElementsHelper.createInnerSection(
@@ -20,8 +20,6 @@ export const SetStructure = () => {
 					'structure was set correctly' );
 				done();
 			} );
-
-			eData.silence();
 		} );
 
 		// TODO: Create another test which check the view.
