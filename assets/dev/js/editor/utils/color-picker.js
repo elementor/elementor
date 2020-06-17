@@ -191,7 +191,7 @@ export default class ColorPicker extends elementorModules.Module {
 	}
 
 	onAddButtonClick() {
-		this.hide();
+		this.picker.hide();
 
 		const onPickerAddButtonClick = this.getSettings( 'onAddButtonClick' );
 
