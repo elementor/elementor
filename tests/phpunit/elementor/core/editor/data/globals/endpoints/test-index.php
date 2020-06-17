@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 
 // TODO: Use autoloader.
-require_once 'base.php';
 
 use Elementor\Core\Editor\Data;
 
