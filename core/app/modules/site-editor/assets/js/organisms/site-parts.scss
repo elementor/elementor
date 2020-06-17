@@ -1,5 +1,7 @@
+@import "../../../../../assets/styles/common";
+
 .site-editor__site-parts {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	grid-gap: 20px;
+	grid-gap: spacing(24);
 }

@@ -4,20 +4,47 @@
 
 $app-background-color: tints(200);
 $app-sidebar-background-color: rgba(theme-colors(light), $opacity-5);
+$box-shadow-color: rgba(theme-colors(dark), $opacity-05);
+$app-sidebar-box-shadow: 0 2px 30px var(--box-shadow-color);
 
 :root {
 	--app-background-color: #{$app-background-color};
 	--app-sidebar-background-color: #{$app-sidebar-background-color};
+	--box-shadow-color: #{$box-shadow-color};
 }
 
 $app-dark-background-color: dark-tints(700);
 $app-sidebar-dark-background-color: dark-tints(700);
+$box-shadow-dark-color: rgba(theme-colors(dark), $opacity-05);
 
 .dark {
 	--app-background-color: #{$app-dark-background-color};
 	--app-sidebar-background-color: #{$app-sidebar-dark-background-color};
+	--box-shadow-color: #{$box-shadow-dark-color};
 }
 
+
+@media (min-width: 1440px) {
+	.elementor-templates-modal .dialog-widget-content {
+		max-width: 1440px;
+	}
+}
+
+@media (max-width: 1439px) {
+	.elementor-templates-modal .dialog-widget-content {
+		max-width: 1200px;
+	}
+}
+
+.dialog-type-lightbox {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.elementor-templates-modal .dialog-message {
+	height: 920px;
+}
 
 * {
 	box-sizing: border-box;
@@ -34,6 +61,7 @@ $app-sidebar-dark-background-color: dark-tints(700);
 	width: 30%;
 	max-width: 275px;
 	flex-grow: 0;
+	box-shadow: $app-sidebar-box-shadow;
 }
 
 .elementor-app__content {

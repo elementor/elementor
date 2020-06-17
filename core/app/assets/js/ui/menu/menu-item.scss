@@ -11,18 +11,23 @@ $menu-item-height: spacing(44);
 
 $menu-item-color: tints(600);
 $menu-item-color-hover: tints(700);
+$menu-item-background-color-active: theme-colors(light);
+$menu-item-background-color-hover: rgba(var(--menu-item-background-color-active), $opacity-8);
 
 :root {
 	--menu-item-color: #{$menu-item-color};
 	--menu-item-color-hover: #{$menu-item-color-hover};
+	--menu-item-background-color-active: #{$menu-item-background-color-active};
 }
 
 $menu-item-dark-color: dark-tints(200);
 $menu-item-dark-color-hover: dark-tints(100);
+$menu-item-dark-background-color-active: dark-tints(600);
 
 .dark {
 	--menu-item-color: #{$menu-item-dark-color};
 	--menu-item-color-hover: #{$menu-item-dark-color-hover};
+	--menu-item-background-color-active: #{$menu-item-dark-background-color-active};
 }
 
 .e-app-menu-item {
@@ -36,6 +41,7 @@ $menu-item-dark-color-hover: dark-tints(100);
 
 	&:hover {
 		--menu-item-color: var(--menu-item-color-hover);
+		background-color: $menu-item-background-color-hover
 	}
 
 	&,
@@ -48,5 +54,9 @@ $menu-item-dark-color-hover: dark-tints(100);
 	.icon {
 		font-size: $menu-item-icon-size;
 		margin-inline-end: $menu-item-link-spacing;
+	}
+
+	&--active {
+		background-color: var(--menu-item-background-color-active);
 	}
 }
