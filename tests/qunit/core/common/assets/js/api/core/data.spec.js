@@ -97,13 +97,23 @@ jQuery( () => {
 			assert.equal( endpoint, 'component/command/valueA?paramB=valueB', 'Valid endpoint.' );
 		} );
 
-		QUnit.test( 'commandQueryToArgs(): simple', ( assert ) => {
+		QUnit.test( 'commandExtractArgs(): simple', ( assert ) => {
 			const queryCommand = 'component/command?paramA=valueA',
 				args = {},
-				pureCommand = $e.data.commandExtractArgs( queryCommand, args );
+				extractedCommand = $e.data.commandExtractArgs( queryCommand, args );
 
-			assert.equal( pureCommand, 'component/command', 'Valid pure command.' );
-			assert.deepEqual( args.query, { paramA: 'valueA' }, 'Valid args.query.' );
+			assert.equal( extractedCommand.command, 'component/command', 'Valid pure command.' );
+			assert.deepEqual( extractedCommand.args.query, { paramA: 'valueA' }, 'Valid args.query.' );
+		} );
+
+		QUnit.test( 'commandExtractArgs(): merged', ( assert ) => {
+			const queryCommand = 'component/command?paramA=valueA',
+				args = { merge: true },
+				extractedCommand = $e.data.commandExtractArgs( queryCommand, args );
+
+			assert.equal( extractedCommand.command, 'component/command', 'Valid pure command.' );
+			assert.deepEqual( extractedCommand.args.query, { paramA: 'valueA' }, 'Valid args.query.' );
+			assert.deepEqual( extractedCommand.args.merge, true, 'Valid args merge.' );
 		} );
 
 		QUnit.test( 'validateRequestData', ( assert ) => {
