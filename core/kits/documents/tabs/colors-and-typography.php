@@ -61,18 +61,22 @@ class Colors_And_Typography extends Tab_Base {
 				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
+						'_id' => 'primary',
 						'title' => __( 'Primary', 'elementor' ),
 						'color' => '#6ec1e4',
 					],
 					[
+						'_id' => 'secondary',
 						'title' => __( 'Secondary', 'elementor' ),
 						'color' => '#54595f',
 					],
 					[
+						'_id' => 'text',
 						'title' => __( 'Text', 'elementor' ),
 						'color' => '#7a7a7a',
 					],
 					[
+						'_id' => 'accent',
 						'title' => __( 'Accent', 'elementor' ),
 						'color' => '#61ce70',
 					],
@@ -173,21 +177,25 @@ class Colors_And_Typography extends Tab_Base {
 				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
+						'_id' => 'primary',
 						'title' => __( 'Primary', 'elementor' ),
 						$font_family_key => 'Roboto',
 						$font_weight_key => '600',
 					],
 					[
+						'_id' => 'secondary',
 						'title' => __( 'Secondary', 'elementor' ),
 						$font_family_key => 'Roboto Slab',
 						$font_weight_key => '400',
 					],
 					[
+						'_id' => 'text',
 						'title' => __( 'Text', 'elementor' ),
 						$font_family_key => 'Roboto',
 						$font_weight_key => '400',
 					],
 					[
+						'_id' => 'accent',
 						'title' => __( 'Accent', 'elementor' ),
 						$font_family_key => 'Roboto',
 						$font_weight_key => '500',
