@@ -487,7 +487,7 @@ export default class Data extends Commands {
 	run( type, command, args ) {
 		args.options.type = type;
 
-		const extractedCommand = this.commandExtractArgs( command );
+		const { command, args } = this.commandExtractArgs( command, args );
 
 		return super.run( extractedCommand.command, { ... args, ... extractedCommand.args } );
 	}
