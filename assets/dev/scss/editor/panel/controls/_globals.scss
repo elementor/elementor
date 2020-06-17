@@ -74,16 +74,17 @@
 		i {
 			@include margin-start(auto);
 		}
+
+		&:hover {
+			background-color: $editor-kit-accent;
+			color: #fff;
+		}
 	}
 
 	// Typography Globals
 	&__text-style {
 		padding: 5px 35px;
 		cursor: pointer;
-
-		&:hover {
-			background-color: $editor-background-light;
-		}
 	}
 
 	// Color Globals
@@ -100,10 +101,6 @@
 
 		&:last-child {
 			margin-bottom: 10px;
-		}
-
-		&:hover {
-			background-color: $editor-background-light;
 		}
 
 		&-preview {
@@ -128,6 +125,14 @@
 
 		.pcr-button {
 			background-color: #fff;
+		}
+	}
+
+	&__text-style,
+	&__color {
+
+		&:hover {
+			background-color: $editor-background-light;
 		}
 	}
 
