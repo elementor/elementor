@@ -506,7 +506,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$selector = preg_replace_callback( '/{{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
 				$is_external_reference = false;
 
-				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function( $sub_matches ) use ( $controls_prefix, & $is_external_reference ) {
+				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function( $sub_matches ) use ( $controls_prefix, &$is_external_reference ) {
 					$placeholder = $sub_matches[0];
 
 					if ( 'external.' === $placeholder ) {
