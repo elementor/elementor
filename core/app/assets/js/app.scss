@@ -15,7 +15,7 @@ $app-sidebar-box-shadow: 0 2px 30px var(--box-shadow-color);
 
 $app-dark-background-color: dark-tints(700);
 $app-sidebar-dark-background-color: dark-tints(700);
-$box-shadow-dark-color: rgba(theme-colors(dark), $opacity-05);
+$box-shadow-dark-color: rgba(theme-colors(dark), $opacity-15);
 
 .dark {
 	--app-background-color: #{$app-dark-background-color};

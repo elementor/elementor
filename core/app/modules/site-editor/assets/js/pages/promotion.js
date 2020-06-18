@@ -1,12 +1,27 @@
 import Layout from '../templates/layout';
-import PromotionOverlay from '../molecules/promotion-overlay';
 import SiteParts from '../organisms/site-parts';
+import CardOverlay from 'elementor-app/ui/card/card-overlay';
+
+import './promotion-overlay.scss';
 
 export default function Promotion() {
 	const promotionUrl = 'https://go.elementor.com/site-editor',
 		PromotionHoverElement = ( props ) => {
-			return <PromotionOverlay type={ props.type } promotionUrl={ promotionUrl }/>;
+			const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
+			return (
+				<CardOverlay className="promotion-overlay">
+					<a className="promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
+						<i className="promotion-overlay__icon eicon-lock" />
+						<span className="promotion-overlay__button eps-button">{__( 'Get Pro', 'elementor' )}</span>
+					</a>
+				</CardOverlay>
+			);
 		};
+
+	PromotionHoverElement.propTypes = {
+		className: PropTypes.string,
+		type: PropTypes.string.isRequired,
+	};
 
 	return (
 		<Layout>
@@ -27,3 +42,4 @@ export default function Promotion() {
 		</Layout>
 	);
 }
+

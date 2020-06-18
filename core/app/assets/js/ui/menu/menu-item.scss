@@ -53,15 +53,8 @@ $menu-item-dark-background-color-active: dark-tints(600);
 		background-color: $menu-item-pointer-color;
 	}
 
-	&:hover {
+	&:hover, &--active {
 		--menu-item-color: var(--menu-item-color-hover);
-	}
-
-	&,
-	&:active,
-	&:hover,
-	&:focus {
-		text-decoration: none;
 	}
 
 	.icon {

@@ -1,4 +1,4 @@
-import "./menu-item.scss";
+import './menu-item.scss';
 import BaseButton from '../molecules/button';
 
 export default class SideMenuItem extends BaseButton {
