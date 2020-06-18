@@ -1,0 +1,10 @@
+// Maps: z-index map
+$eps-z-index-levels: (
+		dropdown:$eps-zindex-dropdown,
+		sticky: $eps-zindex-sticky,
+		fixed:$eps-zindex-fixed,
+		backdrop: $eps-zindex-modal-backdrop,
+		modal: $eps-zindex-modal,
+		popover: $eps-zindex-popover,
+		tooltip: $eps-zindex-tooltip,
+);
