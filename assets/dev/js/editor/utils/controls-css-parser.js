@@ -97,7 +97,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 				// it's a global settings with additional controls in group.
 				if ( control.groupType ) {
-					const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' );
+					const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' ).replace( /(_tablet|_mobile)$/, '' );
 
 					propertyValue = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
 				} else {
