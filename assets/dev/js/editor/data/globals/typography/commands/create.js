@@ -18,7 +18,13 @@ export class Create extends CreateBase {
 		if ( groupPrefix ) {
 			Object.entries( controls ).forEach( ( [ key ] ) => {
 				if ( key.includes( groupPrefix ) ) {
-					availableControls[ key.replace( groupPrefix, 'styles_' ) ] = container.settings.get( key );
+					// Get values but remove defaults.
+					const value = container.settings.get( key ),
+						defaultValue = container.controls[ key ].default;
+
+					if ( ! _.isEqual( value, defaultValue ) ) {
+						availableControls[ key.replace( groupPrefix, 'typography_' ) ] = container.settings.get( key );
+					}
 				}
 			} );
 		}

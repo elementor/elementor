@@ -30,7 +30,7 @@ export const Create = () => {
 			} );
 
 			assert.equal( result.data.title, title );
-			assert.equal( result.data.value.styles_text_transform, 'uppercase' );
+			assert.equal( result.data.value.typography_text_transform, 'uppercase' );
 		} );
 	} );
 };

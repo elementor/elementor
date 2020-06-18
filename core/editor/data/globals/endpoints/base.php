@@ -40,12 +40,11 @@ abstract class Base extends Endpoint {
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
+		$item['id'] = $id;
+
 		$db_item = $this->convert_db_format( $item );
 
 		$kit->add_repeater_row( 'custom_' . $this->get_name(), $db_item );
-
-		unset( $item['_id'] );
-		$item['id'] = $id;
 
 		return $item;
 	}
