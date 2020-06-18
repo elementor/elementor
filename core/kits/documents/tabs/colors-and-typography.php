@@ -5,6 +5,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
 use Elementor\Group_Control_Typography;
+use Elementor\Plugin;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,33 +55,39 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
+		$default_colors = [];
+
+		if ( Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+			$default_colors = [
+				[
+					'_id' => 'primary',
+					'title' => __( 'Primary', 'elementor' ),
+					'color' => '#6ec1e4',
+				],
+				[
+					'_id' => 'secondary',
+					'title' => __( 'Secondary', 'elementor' ),
+					'color' => '#54595f',
+				],
+				[
+					'_id' => 'text',
+					'title' => __( 'Text', 'elementor' ),
+					'color' => '#7a7a7a',
+				],
+				[
+					'_id' => 'accent',
+					'title' => __( 'Accent', 'elementor' ),
+					'color' => '#61ce70',
+				],
+			];
+		}
+
 		$this->add_control(
 			'system_colors',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
-				'default' => [
-					[
-						'_id' => 'primary',
-						'title' => __( 'Primary', 'elementor' ),
-						'color' => '#6ec1e4',
-					],
-					[
-						'_id' => 'secondary',
-						'title' => __( 'Secondary', 'elementor' ),
-						'color' => '#54595f',
-					],
-					[
-						'_id' => 'text',
-						'title' => __( 'Text', 'elementor' ),
-						'color' => '#7a7a7a',
-					],
-					[
-						'_id' => 'accent',
-						'title' => __( 'Accent', 'elementor' ),
-						'color' => '#61ce70',
-					],
-				],
+				'default' => $default_colors,
 				'item_actions' => [
 					'add' => false,
 					'remove' => false,
@@ -166,41 +173,47 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
-		$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_family';
+		$default_typography = [];
 
-		$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_weight';
+		if ( Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
+			$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_family';
+
+			$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_weight';
+
+			$default_typography = [
+				[
+					'_id' => 'primary',
+					'title' => __( 'Primary', 'elementor' ),
+					$font_family_key => 'Roboto',
+					$font_weight_key => '600',
+				],
+				[
+					'_id' => 'secondary',
+					'title' => __( 'Secondary', 'elementor' ),
+					$font_family_key => 'Roboto Slab',
+					$font_weight_key => '400',
+				],
+				[
+					'_id' => 'text',
+					'title' => __( 'Text', 'elementor' ),
+					$font_family_key => 'Roboto',
+					$font_weight_key => '400',
+				],
+				[
+					'_id' => 'accent',
+					'title' => __( 'Accent', 'elementor' ),
+					$font_family_key => 'Roboto',
+					$font_weight_key => '500',
+				],
+			];
+		}
 
 		$this->add_control(
 			'system_typography',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
-				'default' => [
-					[
-						'_id' => 'primary',
-						'title' => __( 'Primary', 'elementor' ),
-						$font_family_key => 'Roboto',
-						$font_weight_key => '600',
-					],
-					[
-						'_id' => 'secondary',
-						'title' => __( 'Secondary', 'elementor' ),
-						$font_family_key => 'Roboto Slab',
-						$font_weight_key => '400',
-					],
-					[
-						'_id' => 'text',
-						'title' => __( 'Text', 'elementor' ),
-						$font_family_key => 'Roboto',
-						$font_weight_key => '400',
-					],
-					[
-						'_id' => 'accent',
-						'title' => __( 'Accent', 'elementor' ),
-						$font_family_key => 'Roboto',
-						$font_weight_key => '500',
-					],
-				],
+				'default' => $default_typography,
 				'item_actions' => [
 					'add' => false,
 					'remove' => false,
