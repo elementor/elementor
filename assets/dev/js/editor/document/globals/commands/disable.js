@@ -9,8 +9,8 @@ export class Disable extends DisableEnable {
 		await containers.map( async ( container ) => {
 			container = container.lookup();
 
-			let localSettings = {},
-				promises = [];
+			const localSettings = {};
+			let promises = [];
 
 			// Get global values.
 			if ( options.restore ) {
@@ -26,7 +26,7 @@ export class Disable extends DisableEnable {
 					if ( result ) {
 						const { value } = result.data;
 
-						if ( container.controls[ globalKey ].groupPrefix ) {
+						if ( container.controls[ globalKey ]?.groupPrefix ) {
 							Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
 								const groupPrefix = container.controls[ globalKey ].groupPrefix,
 									controlName = globalKey.replace( groupPrefix, '' ) + '_' + dataKey;
