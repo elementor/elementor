@@ -1,6 +1,8 @@
 const ControlChooseView = require( 'elementor-controls/choose' );
 
 export default class ControlPopoverStarterView extends ControlChooseView {
+	_enqueuedFonts = [];
+
 	ui() {
 		const ui = ControlChooseView.prototype.ui.apply( this, arguments );
 
@@ -30,6 +32,33 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return 'globals/typography';
 	}
 
+	// TODO: Use `elementor.helpers.enqueueFont` and add support for enqueue to the editor frame.
+	enqueueFont( font ) {
+		if ( -1 !== this._enqueuedFonts.indexOf( font ) ) {
+			return;
+		}
+
+		let fontUrl;
+		const fontType = elementor.config.controls.font.options[ font ];
+
+		switch ( fontType ) {
+			case 'googlefonts' :
+				fontUrl = 'https://fonts.googleapis.com/css?family=' + font + '&text=' + font;
+				break;
+
+			case 'earlyaccess' :
+				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+				break;
+		}
+
+		if ( ! _.isEmpty( fontUrl ) ) {
+			jQuery( 'head' ).find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
+		}
+
+		this._enqueuedFonts.push( font );
+	}
+
 	buildPreviewItemCSS( globalValue ) {
 		const cssObject = {};
 
@@ -40,8 +69,12 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			}
 
 			// TODO: FIGURE OUT WHAT THE FINAL VALUE KEY FORMAT IS AND ADJUST THIS ACCORDINGLY
-			if ( property.startsWith( 'styles_' ) ) {
-				property = property.replace( 'styles_', '' );
+			if ( property.startsWith( 'typography_' ) ) {
+				property = property.replace( 'typography_', '' );
+			}
+
+			if ( 'font_family' === property ) {
+				this.enqueueFont( value );
 			}
 
 			if ( 'font_size' === property ) {
