@@ -758,7 +758,9 @@ abstract class Controls_Stack extends Base_Object {
 
 			$control = array_merge( $control_obj->get_settings(), $control );
 
-			if ( Controls_Manager::REPEATER === $control['type'] ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( $control_obj instanceof Control_Repeater ) {
 				$style_fields = [];
 
 				foreach ( $this->get_settings( $control_name ) as $item ) {
@@ -1095,7 +1097,9 @@ abstract class Controls_Stack extends Base_Object {
 			$control = $controls[ $setting_key ];
 
 			if ( $this->is_control_visible( $control, $settings ) ) {
-				if ( Controls_Manager::REPEATER === $control['type'] ) {
+				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+				if ( $control_obj instanceof Control_Repeater ) {
 					foreach ( $setting as & $item ) {
 						$item = $this->get_active_settings( $item, $control['fields'] );
 					}
