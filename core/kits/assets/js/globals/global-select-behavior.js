@@ -195,6 +195,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		this.createNewGlobal( globalMeta )
 			.then( ( result ) => {
+				elementor.refreshKitCssFiles();
+
 				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
