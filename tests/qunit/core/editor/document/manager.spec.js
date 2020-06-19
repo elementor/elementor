@@ -15,31 +15,31 @@ jQuery( () => {
 		} );
 
 		QUnit.test( 'History per document', ( assert ) => {
-			const documentConfigMaster = { id: 2 },
-				documentConfigSlave = { id: 3 };
+			const documentConfigFoo = { id: 2 },
+				documentConfigBar = { id: 3 };
 
 			// Add fake documents.
-			const documentMaster = elementor.documents.addDocumentByConfig( documentConfigMaster ),
-				documentSlave = elementor.documents.addDocumentByConfig( documentConfigSlave );
+			const documentFoo = elementor.documents.addDocumentByConfig( documentConfigFoo ),
+				documentBar = elementor.documents.addDocumentByConfig( documentConfigBar );
 
-			// Set current document to master.
-			elementor.documents.setCurrent( documentMaster );
+			// Set current document to Foo.
+			elementor.documents.setCurrent( documentFoo );
 
-			// Create button and save it under master document.
+			// Create button and save it under Foo document.
 			const eButton = ElementsHelper.createAutoButton();
 
-			// Validate the button was saved to history of master document.
+			// Validate the button was saved to history of Foo document.
 			assert.equal( elementor.documents.getCurrent().history.getItems().length, 3,
-				'Master document have "3" items in history.' );
+				'Foo document have "3" items in history.' );
 
-			// Set current document to slave.
-			elementor.documents.setCurrent( documentSlave );
+			// Set current document to Bar.
+			elementor.documents.setCurrent( documentBar );
 
 			// Validate document does not have History.
 			assert.equal( elementor.documents.getCurrent().history.getItems().length, 0,
-				'Slave document does not have items in history.' );
+				'Bar document does not have items in history.' );
 
-			// Do change under slave document.
+			// Do change under Bar document.
 			ElementsHelper.settings( eButton, {
 				text: 'Some other value',
 			} );
@@ -47,20 +47,20 @@ jQuery( () => {
 			const done = assert.async(); // Pause the test till done.
 
 			setTimeout( () => {
-				// Validate history of slave document was affected.
+				// Validate history of Bar document was affected.
 				assert.equal( elementor.documents.getCurrent().history.getItems().length, 2,
-					'Slave document have "2" items in history.' );
+					'Bar document have "2" items in history.' );
 
-				// Ensure history under slave document have button settings changed.
+				// Ensure history under Bar document have button settings changed.
 				assert.equal( elementor.documents.getCurrent().history.getItems().at( 0 ).attributes.type, 'change',
-					'Slave document was affected and there is "change" type in it.' );
+					'Bar document was affected and there is "change" type in it.' );
 
-				// Set current document to master.
-				elementor.documents.setCurrent( documentMaster );
+				// Set current document to Foo.
+				elementor.documents.setCurrent( documentFoo );
 
-				// Ensure master still have only initial history.
+				// Ensure Foo still have only initial history.
 				assert.equal( elementor.documents.getCurrent().history.getItems().length, 3,
-					'Master document still have "3" items in history.' );
+					'Foo document still have "3" items in history.' );
 
 				done();
 			} );
