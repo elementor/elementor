@@ -302,7 +302,11 @@ abstract class Base extends Base_File {
 			$value = call_user_func( $value_callback, $control );
 
 			if ( null === $value ) {
-				return;
+				if ( empty( $control['global']['default'] ) ) {
+					return;
+				}
+
+				$global_value = $control['global']['default'];
 			}
 		}
 
