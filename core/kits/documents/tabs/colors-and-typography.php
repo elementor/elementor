@@ -16,6 +16,16 @@ class Colors_And_Typography extends Tab_Base {
 
 	const TYPOGRAPHY_GROUP_PREFIX = 'typography';
 
+	const COLOR_PRIMARY = 'globals/colors?id=primary';
+	const COLOR_SECONDARY = 'globals/colors?id=secondary';
+	const COLOR_TEXT = 'globals/colors?id=text';
+	const COLOR_ACCENT = 'globals/colors?id=accent';
+
+	const TYPOGRAPHY_PRIMARY = 'globals/typography?id=primary';
+	const TYPOGRAPHY_SECONDARY = 'globals/typography?id=secondary';
+	const TYPOGRAPHY_TEXT = 'globals/typography?id=text';
+	const TYPOGRAPHY_ACCENT = 'globals/typography?id=accent';
+
 	public function get_id() {
 		return 'colors-and-typography';
 	}
