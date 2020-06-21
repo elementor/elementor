@@ -188,5 +188,28 @@ class Test_Controller extends Elementor_Test_Base {
 		}
 	}
 
-	// TODO: test_get_permission_callback.
+	public function test_get_permission_callback() {
+		// Set admin.
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+
+		$controller = new ControllerSimple();
+		$controller->bypass_original_permission( false );
+
+		$methods = explode( ', ', \WP_REST_Server::ALLMETHODS );
+
+		foreach( $methods  as $method ) {
+			$request = new \WP_REST_Request( $method );
+
+			$this->assertEquals( $controller->get_permission_callback( $request ), true );
+		}
+
+		// Set subscriber.
+		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+
+		foreach( $methods as $method ) {
+			$request = new \WP_REST_Request( $method );
+
+			$this->assertEquals( $controller->get_permission_callback( $request ), false );
+		}
+	}
 }
