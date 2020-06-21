@@ -22,11 +22,13 @@
 // Maps
 // - Sorted by roles
 @import "./tokens/maps/colors-map";
+@import "./tokens/maps/opacity-map";
 @import "./tokens/maps/theme-map";
 @import "./tokens/maps/tints-map";
 @import "./tokens/maps/spacing-map";
 @import "./tokens/maps/type-map";
 @import "./tokens/maps/z-index-map";
+@import "./tokens/maps/shadow-map";
 
 // Map Semantic functions
 @import "./tokens/map-functions";
