@@ -176,32 +176,37 @@ class Colors_And_Typography extends Tab_Base {
 		$default_typography = [];
 
 		if ( Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
-			$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_family';
 
+			$typography_key = self::TYPOGRAPHY_GROUP_PREFIX . '_typography';
+			$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_family';
 			$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_weight';
 
 			$default_typography = [
 				[
 					'_id' => 'primary',
 					'title' => __( 'Primary', 'elementor' ),
+					$typography_key => 'custom',
 					$font_family_key => 'Roboto',
 					$font_weight_key => '600',
 				],
 				[
 					'_id' => 'secondary',
 					'title' => __( 'Secondary', 'elementor' ),
+					$typography_key => 'custom',
 					$font_family_key => 'Roboto Slab',
 					$font_weight_key => '400',
 				],
 				[
 					'_id' => 'text',
 					'title' => __( 'Text', 'elementor' ),
+					$typography_key => 'custom',
 					$font_family_key => 'Roboto',
 					$font_weight_key => '400',
 				],
 				[
 					'_id' => 'accent',
 					'title' => __( 'Accent', 'elementor' ),
+					$typography_key => 'custom',
 					$font_family_key => 'Roboto',
 					$font_weight_key => '500',
 				],
