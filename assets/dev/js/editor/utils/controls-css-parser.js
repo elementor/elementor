@@ -67,8 +67,9 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			controlGlobalKey = control.groupPrefix + control.groupType;
 		}
 
-		const globalValues = this.getSettings( 'container' ).globals.attributes,
-			globalValue = globalValues[ controlGlobalKey ];
+		const globalValues = this.getSettings( 'container' ).globals.attributes;
+
+		let globalValue = globalValues[ controlGlobalKey ];
 
 		let value;
 
@@ -79,6 +80,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				if ( ! control.global?.default ) {
 					return;
 				}
+
 				globalValue = control.global.default;
 			}
 		}
