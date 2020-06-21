@@ -32,7 +32,7 @@ abstract class Base extends Endpoint {
 	}
 
 	public function create_item( $id, $request ) {
-		$item = $request->get_body_params();
+		$item = $request->get_json_params();
 
 		if ( ! isset( $item['title'] ) ) {
 			return new \WP_Error( 'invalid_title', 'Invalid title' );

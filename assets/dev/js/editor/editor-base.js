@@ -12,6 +12,7 @@ import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 import Preview from 'elementor-views/preview';
+import PopoverToggleControl from 'elementor-controls/popover-toggle';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -105,7 +106,7 @@ export default class EditorBase extends Marionette.Application {
 			Media: require( 'elementor-controls/media' ),
 			Number: require( 'elementor-controls/number' ),
 			Order: require( 'elementor-controls/order' ),
-			Popover_toggle: require( 'elementor-controls/popover-toggle' ),
+			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
 			Section: require( 'elementor-controls/section' ),
@@ -163,6 +164,10 @@ export default class EditorBase extends Marionette.Application {
 		popover: {
 			element: '.elementor-controls-popover',
 			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+		},
+		globalControlsSelect: {
+			element: '.e-global__popover',
+			ignore: '.e-global__select-box',
 		},
 		tagsList: {
 			element: '.elementor-tags-list',
@@ -378,15 +383,9 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPreviewView( document ) {
-		const element = document.$element[ 0 ];
-
-		if ( this.previewView && this.previewView.el === element ) {
-			this.previewView.destroy();
-		}
-
 		elementor.trigger( 'document:before:preview', document );
 
-		const preview = new Preview( { el: element, model: elementor.elementsModel } );
+		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
 
 		preview.$el.empty();
 
@@ -761,7 +760,6 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {
@@ -838,8 +836,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
-
-		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 
@@ -1062,5 +1058,12 @@ export default class EditorBase extends Marionette.Application {
 			type = state ? 'text/css' : 'elementor/disabled-css';
 
 		$files.attr( { type } );
+	}
+
+	refreshKitCssFiles() {
+		const $link = this.$previewContents.find( `#elementor-post-${ elementor.config.kit_id }-css` ),
+			href = $link.attr( 'href' ).split( '?' )[ 0 ];
+
+		$link.attr( { href: `${ href }?ver=${ ( new Date() ).getTime() }` } );
 	}
 }

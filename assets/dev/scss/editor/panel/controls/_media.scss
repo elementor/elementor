@@ -153,8 +153,6 @@
 		width: 100%;
 		margin-top: 10px;
 		border: 1px solid $editor-lightest;
-		border-radius: 3px;
-		cursor: pointer;
 
 		&__content {
 			@include padding-start(5px);

@@ -451,6 +451,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'elementor-ntc',
+			ELEMENTOR_ASSETS_URL . 'lib/e-ntc/e-ntc' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -493,6 +501,7 @@ class Editor {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
+				'elementor-ntc',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
@@ -595,9 +604,31 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
-				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
 				'saved_colors' => __( 'Saved Colors', 'elementor' ),
 				'drag_to_delete' => __( 'Drag To Delete', 'elementor' ),
+				'color_picker' => __( 'Color Picker', 'elementor' ),
+
+				// Global Styles
+				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'global_colors_title' => __( 'Global Colors', 'elementor' ),
+				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
+				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
+				'delete_global_color' => __( 'Delete Global Color', 'elementor' ),
+				'delete_global_color_info' => __( 'Please note that by deleting a global color, all of its instances will inherit their value from an unknown source', 'elementor' ),
+				'global_colors_info' => __( 'Global colors help you work smarter. Save a color once and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below. Any change you make - the color will update throughout your entire site.', 'elementor' ),
+				'typography' => __( 'Typography', 'elementor' ),
+				'new_text_style' => __( 'New Text Style', 'elementor' ),
+				'global_text_styles_title' => __( 'Global Text Styles', 'elementor' ),
+				'manage_global_typography' => __( 'Manage Global Text Styles', 'elementor' ),
+				'create_global_style' => __( 'Create New Global Text Style', 'elementor' ),
+				'global_typography_info' => __( 'Global text styles help you work smarter. Save a text style once, and use it anywhere throughout your site. Access and edit your global text styles by clicking the Manage button below. Any change you make - the text style will update throughout your entire site.', 'elementor' ),
+				'default' => __( 'Default', 'elementor' ),
+				'create' => __( 'Create', 'elementor' ),
+				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
+				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
+				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
+				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Text Style?', 'elementor' ),
+				'custom' => __( 'Custom', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),

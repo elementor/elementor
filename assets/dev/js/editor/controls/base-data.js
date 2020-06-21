@@ -41,7 +41,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	behaviors: function() {
-		const behaviors = {},
+		const behaviors = ControlBaseView.prototype.behaviors.apply( this, arguments ),
 			dynamicSettings = this.options.model.get( 'dynamic' );
 
 		if ( dynamicSettings && dynamicSettings.active ) {
@@ -74,6 +74,22 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	getControlValue: function() {
 		return this.container.settings.get( this.model.get( 'name' ) );
+	},
+
+	getGlobalKey: function() {
+		return this.container.globals.get( this.model.get( 'name' ) );
+	},
+
+	getGlobalValue: function() {
+		return this.globalValue;
+	},
+
+	getCurrentValue: function() {
+		if ( this.globalValue ) {
+			return this.globalValue;
+		}
+
+		return this.getControlValue();
 	},
 
 	setValue: function( value ) {

@@ -3,12 +3,26 @@
 	&__header {
 		display: flex;
 		justify-content: space-between;
-		margin-bottom: 10px;
+		align-items: center;
+		font-weight: bold;
+		padding: 10px;
+		box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 	}
 
-	&__swatch-tool {
+	&__tools {
+		display: flex;
+	}
+
+	&__tool {
+		width: 20px;
+		height: 20px;
+		display: inline-flex;
+		border-radius: 3px;
+		cursor: pointer;
+		margin: 0 3.1px 0;
+		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+		border: 0;
 		position: relative;
-		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.15);
 		background-color: #fff;
 
 		i {
@@ -20,53 +34,42 @@
 			font-size: 13px;
 		}
 	}
+}
 
-	&__swatch-placeholder {
-		border: 1px dashed $editor-lighter;
-	}
+.e-color__no-value {
 
-	&__dropping-area {
-		margin-top: 10px;
-		padding: 15px;
-		border: 1px dashed $editor-lightest;
-		text-align: center;
-		color: $editor-dark;
-		display: none;
+	.pcr-button {
+		background-image: none;
+		background-color: transparent;
+		border: 1px solid #d5dadf;
 
-		&.elementor-active {
-			border-color: $editor-light;
-
-			i {
-				color: $editor-warning;
-			}
-		}
-
-		i {
-			font-size: 15px;
-		}
-
-		&__drag-to-delete {
-			margin-top: 10px;
-		}
-
-		.elementor-color-picker__swatch-placeholder {
-			display: none;
+		&:after {
+			background: linear-gradient(135deg, #ffffff 46%, #ff3030 50%, #ffffff 54%);
 		}
 	}
 }
 
-.pcr-swatch {
+.pcr {
 
-	&.pcr-active {
+	&-app[data-theme=monolith] {
+		padding: 0;
+	}
 
-		~ .elementor-color-picker__add-swatch {
-			background-color: $editor-lightest;
-			pointer-events: none;
-			box-shadow: none;
+	&-result {
+		border-right-width: 1px;
+		border-radius: 3px;
+	}
 
-			i {
-				color: #fff;
-			}
-		}
+	&-selection, &-interaction {
+		padding: 0 10px;
+	}
+
+	&-interaction {
+		padding-bottom: 10px;
+	}
+
+	.elementor-control-dynamic-switcher {
+		height: 20px;
+		border: 0;
 	}
 }

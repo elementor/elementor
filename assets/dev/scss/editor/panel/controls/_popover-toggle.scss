@@ -43,3 +43,16 @@
 		border: 1px solid $editor-lightest;
 	}
 }
+
+.elementor-control-global {
+
+	.elementor-control-input-wrapper {
+		display: flex;
+		justify-content: flex-end;
+		direction: $direction;
+	}
+
+	.elementor-control-popover-toggle-toggle-label {
+		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	}
+}

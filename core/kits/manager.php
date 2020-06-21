@@ -81,10 +81,18 @@ class Manager {
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
 			],
 			'i18n' => [
-				'Close' => __( 'Close', 'elementor' ),
-				'Back' => __( 'Back', 'elementor' ),
-				'Global Settings' => __( 'Global Settings', 'elementor' ),
-				'Theme Style' => __( 'Theme Style', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
+				'back' => __( 'Back', 'elementor' ),
+				'global_settings' => __( 'Global Settings', 'elementor' ),
+				'site_identity' => __( 'Site Identity', 'elementor' ),
+				'colors_and_typography' => __( 'Colors & Typography', 'elementor' ),
+				'lightbox' => __( 'Lightbox', 'elementor' ),
+				'layout_settings' => __( 'Layout Settings', 'elementor' ),
+				'theme_style' => __( 'Theme Style', 'elementor' ),
+				'add_color' => __( 'Add Color', 'elementor' ),
+				'add_style' => __( 'Add Style', 'elementor' ),
+				'new_item' => __( 'New Item', 'elementor' ),
+				'new_global' => __( 'New Global', 'elementor' ),
 			],
 		] );
 

@@ -4,7 +4,10 @@ import DocumentHelper from 'elementor-editor/document/helper';
 module.exports = {
 	document: DocumentHelper,
 
-	_enqueuedFonts: [],
+	_enqueuedFonts: {
+		editor: [],
+		preview: [],
+	},
 	_enqueuedIconFonts: [],
 	_inlineSvg: [],
 
@@ -198,8 +201,14 @@ module.exports = {
 		};
 	},
 
-	enqueueFont( font ) {
-		if ( -1 !== this._enqueuedFonts.indexOf( font ) ) {
+	// target = editor/preview
+	enqueueFont( font, target ) {
+		// Backwards Compatibility
+		if ( ! target ) {
+			target = 'preview';
+		}
+
+		if ( -1 !== this._enqueuedFonts[ target ].indexOf( font ) ) {
 			return;
 		}
 
@@ -232,16 +241,27 @@ module.exports = {
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
-			this.enqueuePreviewStylesheet( fontUrl );
+			let $document;
+
+			if ( 'editor' === target ) {
+				$document = elementorCommon.elements.$document;
+			} else {
+				$document = elementor.$previewContents;
+			}
+
+			this.enqueueCSS( fontUrl, $document );
 		}
 
-		this._enqueuedFonts.push( font );
+		this._enqueuedFonts[ target ].push( font );
 
 		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
 	resetEnqueuedFontsCache() {
-		this._enqueuedFonts = [];
+		this._enqueuedFonts = {
+			editor: [],
+			preview: [],
+		};
 		this._enqueuedIconFonts = [];
 	},
 

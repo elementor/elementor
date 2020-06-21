@@ -180,7 +180,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	onButtonAddRowClick: function() {
+	getDefaults: function() {
 		const defaults = {};
 
 		// Get default fields.
@@ -188,14 +188,23 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			defaults[ field.name ] = field.default;
 		} );
 
+		return defaults;
+	},
+
+	onButtonAddRowClick: function() {
 		const newModel = $e.run( 'document/repeater/insert', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
-			model: defaults,
+			model: this.getDefaults(),
 		} );
 
-		this.editRow( this.children.findByModel( newModel ) );
+		const newChild = this.children.findByModel( newModel );
+
+		this.editRow( newChild );
+
 		this.toggleMinRowsClass();
+
+		this._parent.handlePopovers( newChild );
 	},
 
 	onChildviewClickRemove: function( childView ) {
