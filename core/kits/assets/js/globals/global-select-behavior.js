@@ -254,7 +254,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	createGlobalInfoTooltip() {
-		const $infoIcon = this.popover.getElements( 'widget' ).find( '.e-global-popover__title .eicon-info-circle' );
+		const $infoIcon = this.popover.getElements( 'widget' ).find( '.e-global__popover-title .eicon-info-circle' );
 
 		this.globalInfoTooltip = elementorCommon.dialogsManager.createWidget( 'simple', {
 			className: 'e-global__info-tooltip',
