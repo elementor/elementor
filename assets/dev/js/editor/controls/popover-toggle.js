@@ -13,13 +13,21 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	events() {
 		return _.extend( ControlChooseView.prototype.events.apply( this, arguments ), {
 			'click @ui.popoverToggle': 'onPopoverToggleClick',
+			'click @ui.resetInput': 'onResetInputClick',
 		} );
 	}
 
-	onPopoverToggleClick() {
+	onResetInputClick() {
 		const globalData = this.model.get( 'global' );
 
-		if ( 'typography' === this.model.get( 'groupType' ) && this.ui.popoverToggle.is( ':checked' ) && globalData?.active ) {
+		if ( globalData?.active ) {
+			this.triggerMethod( 'value:type:change' );
+		}
+	}
+
+	onPopoverToggleClick() {
+		// If the control has a global value, unset the global
+		if ( this.getGlobalKey() ) {
 			this.triggerMethod( 'unsetGlobalValue' );
 		}
 
