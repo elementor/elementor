@@ -7,7 +7,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			id: 0,
-			container: null,
+			context: null,
 			settingsModel: null,
 			dynamicParsing: {},
 		};
@@ -61,18 +61,19 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		const container = this.getSettings( 'container' );
+		const context = this.getSettings( 'context' ),
+			globals = context.model.get( '__globals__' );
 
 		let globalValue;
 
-		if ( container.globals ) {
+		if ( globals ) {
 			let controlGlobalKey = control.name;
 
 			if ( control.groupType ) {
 				controlGlobalKey = control.groupPrefix + control.groupType;
 			}
 
-			globalValue = container.globals.get( controlGlobalKey );
+			globalValue = globals[ controlGlobalKey ];
 		}
 
 		let value;
@@ -266,7 +267,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	addStyleToDocument: function() {
 		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
 
-		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this.getSettings( 'container' ) );
+		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this.getSettings( 'context' ) );
 
 		this.elements.$stylesheetElement.text( this.stylesheet + extraCSS );
 	},
