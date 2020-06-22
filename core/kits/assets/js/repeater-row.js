@@ -12,7 +12,7 @@ export default class extends RepeaterRow {
 	}
 
 	updateColorValue() {
-		this.$colorValue.text( this.model.get( 'value' ) );
+		this.$colorValue.text( this.model.get( 'color' ) );
 	}
 
 	getRemoveButton() {
