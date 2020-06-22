@@ -84,8 +84,12 @@
 			}
 
 			&-tool-remove {
-				color: $editor-lightest;
 				cursor: pointer;
+
+				&,
+				&--disabled {
+					color: $editor-lightest;
+				}
 			}
 		}
 

@@ -40,7 +40,7 @@
 	if ( ! itemActions.remove ) {
 		removeClass += '--disabled';
 
-		removeIcon += '-o'
+		removeIcon = 'eicon-disable-trash-o'
 	}
 	#>
 	<div class="elementor-repeater-row-tool elementor-repeater-tool-{{{ removeClass }}}">
