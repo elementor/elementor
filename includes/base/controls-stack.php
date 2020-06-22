@@ -379,31 +379,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
-			$target_section_args = $this->current_section;
-
-			$target_tab = $this->current_tab;
-
-			if ( $this->injection_point ) {
-				$target_section_args = $this->injection_point['section'];
-
-				if ( ! empty( $this->injection_point['tab'] ) ) {
-					$target_tab = $this->injection_point['tab'];
-				}
-			}
-
-			if ( null !== $target_section_args ) {
-				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
-					_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $id ), '1.0.0' );
-				}
-
-				$args = array_replace_recursive( $target_section_args, $args );
-
-				if ( null !== $target_tab ) {
-					$args = array_replace_recursive( $target_tab, $args );
-				}
-			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
-				wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
-			}
+			$args = $this->handle_control_position( $args, $id, $options['overwrite'] );
 		}
 
 		if ( $options['position'] ) {
@@ -757,8 +733,6 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$control = array_merge( $control_obj->get_settings(), $control );
-
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			if ( $control_obj instanceof Control_Repeater ) {
 				$style_fields = [];
@@ -1929,6 +1903,40 @@ abstract class Controls_Stack extends Base_Object {
 		} else {
 			$this->register_controls();
 		}
+	}
+
+	protected function handle_control_position( array $args, $control_id, $overwrite ) {
+		if ( isset( $args['type'] ) && in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
+			return $args;
+		}
+
+		$target_section_args = $this->current_section;
+
+		$target_tab = $this->current_tab;
+
+		if ( $this->injection_point ) {
+			$target_section_args = $this->injection_point['section'];
+
+			if ( ! empty( $this->injection_point['tab'] ) ) {
+				$target_tab = $this->injection_point['tab'];
+			}
+		}
+
+		if ( null !== $target_section_args ) {
+			if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
+				_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $control_id ), '1.0.0' );
+			}
+
+			$args = array_replace_recursive( $target_section_args, $args );
+
+			if ( null !== $target_tab ) {
+				$args = array_replace_recursive( $target_tab, $args );
+			}
+		} elseif ( empty( $args['section'] ) && ( ! $overwrite || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id ) ) ) ) {
+			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
+		}
+
+		return $args;
 	}
 
 	/**

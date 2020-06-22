@@ -40,7 +40,7 @@
 /core/document-types              		@matipojo
 /core/dynamic-tags                		@kobizz
 /core/editor                      		@kobizz
-/core/kits                        		@matipojo
+/core/kits                        		@matipojo @kobizz
 /core/files                       		@kobizz @matipojo
 /core/logger                      		@matipojo
 /core/responsive                  		@kobizz
@@ -97,6 +97,8 @@
 # Modules
 /modules                          		@matipojo
 /modules/dynamic-tags             		@matipojo @kobizz
+/modules/library             			@matipojo @kobizz
+/modules/system-info             		@matipojo @kobizz
 /modules/gutenberg                		@kingyes
 
 # Tests

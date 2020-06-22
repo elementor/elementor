@@ -378,13 +378,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPreviewView( document ) {
-		const element = document.$element[ 0 ];
-
-		if ( this.previewView && this.previewView.el === element ) {
-			this.previewView.destroy();
-		}
-
-		const preview = new Preview( { el: element, model: elementor.elementsModel } );
+		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
 
 		preview.$el.empty();
 
@@ -759,7 +753,6 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {
@@ -836,8 +829,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
-
-		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 
