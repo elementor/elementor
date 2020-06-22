@@ -50,22 +50,29 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.updateSelectBoxText();
 	}
 
-	updateSelectBoxText() {
-		const value = this.view.getControlValue(),
-			globalValue = this.view.getGlobalKey();
-
+	updateSelectBoxText( value ) {
 		let selectBoxText = '';
 
-		if ( globalValue ) {
-			// If there is a global value saved, get the global's name and display it
-			$e.data.get( globalValue )
-				.then( ( result ) => this.ui.globalControlSelected.html( result.data.title ) );
-		} else if ( value ) {
-			// If there is a value and it is not a global
-			selectBoxText = elementor.translate( 'custom' );
+		if ( value ) {
+			selectBoxText = value;
 		} else {
-			// If there is no value, set the text as default
-			selectBoxText = elementor.translate( 'default' );
+			value = this.view.getControlValue();
+
+			const globalValue = this.view.getGlobalKey();
+
+			if ( globalValue ) {
+				// If there is a global value saved, get the global's name and display it
+				$e.data.get( globalValue )
+					.then( ( result ) => this.updateSelectBoxText( result.data.title ) );
+
+				return;
+			} else if ( value ) {
+				// If there is a value and it is not a global
+				selectBoxText = elementor.translate( 'custom' );
+			} else {
+				// If there is no value, set the text as default
+				selectBoxText = elementor.translate( 'default' );
+			}
 		}
 
 		this.ui.globalControlSelected.html( selectBoxText );
@@ -81,6 +88,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		if ( this.view.getGlobalKey() ) {
 			// This setTimeout is here to overcome an issue with a requestAnimationFrame that runs in the Pickr library
 			setTimeout( () => this.fetchGlobalValue(), 50 );
+		} else {
+			this.onValueTypeChange();
 		}
 
 		this.$el.addClass( 'elementor-control-global' );

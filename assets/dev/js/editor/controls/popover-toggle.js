@@ -25,12 +25,20 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		}
 	}
 
-	onPopoverToggleClick() {
+	onInputChange( event ) {
+		if ( event.currentTarget !== this.ui.popoverToggle[ 0 ] ) {
+			return;
+		}
+
 		// If the control has a global value, unset the global
 		if ( this.getGlobalKey() ) {
 			this.triggerMethod( 'unsetGlobalValue' );
+		} else if ( this.isGlobalActive() ) {
+			this.triggerMethod( 'value:type:change' );
 		}
+	}
 
+	onPopoverToggleClick() {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
