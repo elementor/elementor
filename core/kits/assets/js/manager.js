@@ -52,7 +52,7 @@ export default class extends elementorModules.editor.utils.Module {
 				popoverTitle: elementor.translate( 'global_colors_title' ),
 				manageButtonText: elementor.translate( 'manage_global_colors' ),
 				tooltipText: elementor.translate( 'global_colors_info' ),
-				newGlobalConfirmTitle: elementor.translate( 'create_global_style' ),
+				newGlobalConfirmTitle: elementor.translate( 'create_global_color' ),
 			};
 		}
 
@@ -62,7 +62,7 @@ export default class extends elementorModules.editor.utils.Module {
 				popoverTitle: elementor.translate( 'global_text_styles_title' ),
 				manageButtonText: elementor.translate( 'manage_global_typography' ),
 				tooltipText: elementor.translate( 'global_typography_info' ),
-				newGlobalConfirmTitle: elementor.translate( 'create_global_color' ),
+				newGlobalConfirmTitle: elementor.translate( 'create_global_style' ),
 			};
 		}
 
