@@ -25,7 +25,7 @@ export default class extends RepeaterRow {
 
 	onChildviewRender( childView ) {
 		if ( 'color' === childView.model.get( 'type' ) ) {
-			this.$colorValue = jQuery( '<div>', { class: 'elementor-global-colors__color-value' } );
+			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value' } );
 
 			childView.$el
 				.find( '.elementor-control-input-wrapper' )
