@@ -68,7 +68,7 @@ class Settings extends Settings_Page {
 	public function register_admin_menu() {
 		global $menu;
 
-		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // WPCS: override ok.
+		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
