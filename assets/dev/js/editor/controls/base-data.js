@@ -92,6 +92,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return this.getControlValue();
 	},
 
+	isGlobalActive: function() {
+		return this.options.model.get( 'global' )?.active;
+	},
+
 	setValue: function( value ) {
 		this.setSettingsModel( value );
 	},

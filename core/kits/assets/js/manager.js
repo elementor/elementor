@@ -39,8 +39,12 @@ export default class extends elementorModules.editor.utils.Module {
 	}
 
 	addGlobalsBehavior( behaviors, view ) {
-		const globalConfig = view.options.model.get( 'global' ),
-			isGlobalActive = globalConfig?.active;
+		// The view can be a UI control which does not have this method
+		if ( ! view.isGlobalActive ) {
+			return;
+		}
+
+		const isGlobalActive = view.isGlobalActive();
 
 		if ( 'color' === view.options.model.get( 'type' ) && isGlobalActive ) {
 			behaviors.globals = {
