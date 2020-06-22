@@ -599,6 +599,17 @@ class Widget_Image extends Widget_Base {
 		return $caption;
 	}
 
+	public function handle_svg_as_image_size( $image_data, $attachment_id, $size ) {
+		if ( get_post_mime_type( $attachment_id ) === 'image/svg+xml' ) {
+			$image_sizes = Group_Control_Image_Size::get_all_image_sizes();
+
+			$image_data['1'] = $image_sizes[ $size ][ 'width' ];
+			$image_data['2'] = $image_sizes[ $size ][ 'height' ];
+		}
+
+		return $image_data;
+	}
+
 	/**
 	 * Render image widget output on the frontend.
 	 *
@@ -608,6 +619,8 @@ class Widget_Image extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
+		add_filter( 'wp_get_attachment_image_src', array( $this, 'handle_svg_as_image_size' ), 10, 4 );
+
 		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['image']['url'] ) ) {
@@ -676,6 +689,8 @@ class Widget_Image extends Widget_Base {
 				dimension: settings.image_custom_dimension,
 				model: view.getEditModel()
 			};
+
+			console.log( 'image widget: ', image );
 
 			var image_url = elementor.imagesManager.getImageUrl( image );
 
