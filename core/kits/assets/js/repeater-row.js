@@ -54,9 +54,9 @@ export default class extends RepeaterRow {
 
 	onRemoveButtonClick() {
 		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
-			className: 'elementor-global-confirm-delete',
+			className: 'e-global__confirm-delete',
 			headerMessage: elementor.translate( 'delete_global_color' ),
-			message: elementor.translate( 'delete_global_color_info' ),
+			message: '<i class="eicon-info-circle"></i> ' + elementor.translate( 'delete_global_color_info' ),
 			strings: {
 				confirm: elementor.translate( 'delete' ),
 				cancel: elementor.translate( 'cancel' ),
