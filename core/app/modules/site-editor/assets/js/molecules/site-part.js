@@ -10,6 +10,10 @@ import './site-part.scss';
 export default class SitePart extends Card {
 	getHeader() {
 		const Indicator = ( props ) => {
+			if ( ! props.showIndicator ) {
+				return '';
+			}
+
 			const active = props.active ? 'indicator-bullet--active' : '';
 
 			return <i className={`indicator-bullet ${ active }`}/>;
@@ -17,6 +21,7 @@ export default class SitePart extends Card {
 
 		Indicator.propTypes = {
 			active: PropTypes.bool,
+			showIndicator: PropTypes.bool,
 		};
 
 		return (
@@ -45,4 +50,5 @@ SitePart.propTypes = {
 	partThumbnail: PropTypes.string.isRequired,
 	partTitle: PropTypes.string.isRequired,
 	children: PropTypes.object,
+	showIndicator: PropTypes.bool,
 };

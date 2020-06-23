@@ -10,6 +10,11 @@ $menu-item-padding-x: spacing(30);
 $menu-item-height: spacing(44);
 $menu-item-pointer-width: spacing(5);
 $menu-item-pointer-color: theme-colors(link-color);
+$menu-item-action-button-padding: spacing(10);
+$menu-item-action-button-color: tints(300);
+
+$menu-item-active-box-shadow: $eps-box-shadow;
+$menu-item-transition: $eps-transition-duration;
 
 $menu-item-color: tints(600);
 $menu-item-color-hover: tints(700);
@@ -40,7 +45,8 @@ $menu-item-dark-background-color-active: dark-tints(600);
 	display: flex;
 	align-items: center;
 	position: relative;
-	transition: $eps-transition-duration;
+	transition: $menu-item-transition;
+	--action-button-opacity: 0;
 
 	&::before {
 		content: '';
@@ -53,17 +59,37 @@ $menu-item-dark-background-color-active: dark-tints(600);
 		background-color: $menu-item-pointer-color;
 	}
 
-	&:hover, &--active {
-		--menu-item-color: var(--menu-item-color-hover);
+	&:hover {
+		--action-button-opacity: 1;
 	}
 
-	.icon {
-		font-size: $menu-item-icon-size;
-		margin-inline-end: $menu-item-link-spacing;
+	&:hover, &--active {
+		--menu-item-color: var(--menu-item-color-hover);
+		background-color: var(--menu-item-background-color-active);
+	}
+
+	&__link {
+		flex-grow: 1;
+
+		.icon {
+			font-size: $menu-item-icon-size;
+			margin-inline-end: $menu-item-link-spacing;
+		}
+	}
+
+	&__action-button {
+		color: $menu-item-action-button-color;
+		opacity: var(--action-button-opacity);
+		padding: $menu-item-action-button-padding;
+		transition: $menu-item-transition;
 	}
 
 	&--active {
 		--menu-item-pointer-width: #{$menu-item-pointer-width};
-		background-color: var(--menu-item-background-color-active);
+		box-shadow: $menu-item-active-box-shadow;
+
+		.icon {
+			color: $menu-item-pointer-color;
+		}
 	}
 }

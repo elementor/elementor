@@ -21,6 +21,17 @@ $menu-title-dark-color: tints(600);
 }
 
 .e-app-menu {
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+		li {
+			display: flex;
+		}
+	}
+
 	&__title {
 		padding: $menu-title-padding-y $menu-title-padding-x;
 		font-size: $menu-title-font-size;
