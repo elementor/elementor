@@ -3,16 +3,10 @@ import TypographyComponent from './typography/component';
 import ColorsComponent from './colors/component';
 
 import * as commandsData from './commands/data/';
-import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
 	__construct( args = {} ) {
 		super.__construct( args );
-
-		// TODO: Remove - Create testing compatibility.
-		if ( elementorCommonConfig.isTesting ) {
-			return;
-		}
 
 		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
 	}
@@ -32,12 +26,8 @@ export default class Component extends ComponentBase {
 		return this.importCommands( commandsData );
 	}
 
-	defaultHooks() {
-		return this.importHooks( hooks );
-	}
-
 	onElementorLoaded() {
-		// Add global cache before render.
+		// Add globals to cache before render.
 		$e.data.get( 'globals/index' );
 	}
 }

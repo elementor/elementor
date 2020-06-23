@@ -1,6 +1,6 @@
 import DocumentHelper from './helper';
 import ElementsHelper from './elements/helper';
-import * as hooksData from './hooks/data/index.spec';
+import * as hooksData from './hooks/data/document/elements/index.spec';
 
 QUnit.module( 'Component: document', () => {
 	QUnit.module( `Hooks`, ( hooks ) => {

@@ -139,7 +139,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 				control.styleFields = styleFields;
 			}
 
-			if ( control.fields || ( control.dynamic?.active ) || self.isGlobalControl( control.name, controls ) || self.isStyleControl( control.name, controls ) ) {
+			if ( control.fields || ( control.dynamic?.active ) || self.isGlobalControl( control, controls ) || self.isStyleControl( control.name, controls ) ) {
 				styleControls.push( control );
 			}
 		} );
@@ -147,9 +147,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return styleControls;
 	},
 
-	isGlobalControl: function( attribute, controls ) {
-		const control = controls[ attribute ];
-
+	isGlobalControl: function( control, controls ) {
 		let controlGlobalKey = control.name;
 
 		if ( control.groupType ) {
@@ -161,7 +159,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 		if ( ! globalControl.global?.active ) {
 			return false;
 		}
-		const globalValue = this.attributes.__globals__ && this.attributes.__globals__[ controlGlobalKey ];
+
+		const globalValue = this.attributes.__globals__?.[ controlGlobalKey ];
 
 		return !! globalValue;
 	},
@@ -325,14 +324,14 @@ BaseSettingsModel = Backbone.Model.extend( {
 			if ( control.is_repeater ) {
 				valueToParse = settings[ control.name ];
 
-				valueToParse.forEach( function( value, key ) {
+				valueToParse.forEach( ( value, key ) => {
 					valueToParse[ key ] = self.parseGlobalSettings( value, control.fields );
 				} );
 
 				return;
 			}
 
-			valueToParse = settings.__globals__ && settings.__globals__[ control.name ];
+			valueToParse = settings.__globals__?.[ control.name ];
 
 			if ( ! valueToParse ) {
 				return;
@@ -344,14 +343,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 				globalSettings = elementor.config.controls[ control.type ].global;
 			}
 
-			if ( ! globalSettings || ! globalSettings.active ) {
-				// return;
+			if ( ! globalSettings?.active ) {
+				return;
 			}
 
-			let globalArgs = {};
-
-			const command = $e.data.commandExtractArgs( valueToParse, globalArgs ),
-				globalValue = $e.data.getCache( $e.components.get( 'globals' ), command, globalArgs.query );
+			const { command, args } = $e.data.commandExtractArgs( valueToParse ),
+				globalValue = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
 
 			if ( control.groupType ) {
 				settings[ control.name ] = 'custom';

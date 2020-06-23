@@ -7,7 +7,7 @@ export { Typography } from './typography';
 // TODO: Remove - Move to into base, Possible to handle using ComponentData.
 export class Index extends CommandData {
 	static getEndpointFormat() {
-		// 'globals/index' => 'globals'.
+		// Format 'globals/index' to 'globals'.
 		return 'globals';
 	}
 }

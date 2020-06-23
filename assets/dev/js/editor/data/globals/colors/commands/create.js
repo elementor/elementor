@@ -13,7 +13,6 @@ export class Create extends CreateBase {
 
 		const id = elementor.helpers.getUniqueID();
 
-		// Currently does not affect cache.
 		result = $e.data.create( `globals/colors?id=${ id }`, {
 			title,
 			value: container.settings.get( setting ),

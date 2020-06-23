@@ -165,6 +165,13 @@
 			}
 		}
 
+		&-delete {
+
+			i {
+				color: $editor-warning;
+			}
+		}
+
 		&-message-text {
 
 			i {
@@ -188,5 +195,7 @@
 				border: 0;
 			}
 		}
+
+
 	}
 }

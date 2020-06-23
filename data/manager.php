@@ -231,7 +231,12 @@ class Manager extends BaseModule {
 
 		// Run reset api.
 		$request = new \WP_REST_Request( $method, $endpoint );
-		$request->set_query_params( $args );
+
+		if ( 'GET' === $method ) {
+			$request->set_query_params( $args );
+		} else {
+			$request->set_body_params( $args );
+		}
 
 		return rest_do_request( $request );
 	}

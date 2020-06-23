@@ -208,18 +208,16 @@ jQuery( () => {
 					args,
 				};
 
-			eData.free();
+			eData.restoreFetch();
 
 			await $e.data.fetch( requestData, ( input ) => {
 				assert.equal( input, $e.data.baseEndpointAddress + command + '?param1=valueA' );
 				return Promise.resolve( new Response( JSON.stringify( {} ) ) );
 			} );
-
-			eData.silence();
 		} );
 
 		QUnit.test( 'fetch(): with cache', async ( assert ) => {
-			eData.free();
+			eData.restoreFetch();
 
 			const component = $e.components.register( new class TestComponent extends ComponentBase {
 					getNamespace() {
@@ -257,8 +255,6 @@ jQuery( () => {
 
 			// Validate cache.
 			assert.deepEqual( $e.data.cache.get( requestData ), result );
-
-			eData.silence();
 		} );
 
 		QUnit.test( 'fetch(): with cache loaded manually', async ( assert ) => {
@@ -289,12 +285,10 @@ jQuery( () => {
 			// This test case relies on cache.
 			$e.data.setCache( component, command, query, data );
 
-			eData.mock();
+			eData.attachCache();
 
 			// Get cache.
 			const result = await $e.data.fetch( requestData );
-
-			eData.silence();
 
 			// Validate if data is same as result.data.
 			assert.deepEqual( data, result );

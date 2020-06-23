@@ -1,4 +1,4 @@
-import LocalStorage from './stroages/local-storage';
+import LocalStorage from './storages/local-storage';
 
 /**
  * TODO: Search common logic, create functions to reduce code size.
@@ -179,8 +179,6 @@ export default class Cache {
 	 *
 	 * Delete endpoint from storage.
 	 *
-	 * TODO: Create tests for the new logic.
-	 *
 	 * @param {RequestData} requestData
 	 *
 	 * @return {boolean} is deleted
@@ -219,7 +217,7 @@ export default class Cache {
 					if ( nullsObject ) {
 						Object.keys( nullsObject ).forEach( ( key ) => {
 							if ( nullsObject[ key ] && 'object' === typeof nullsObject[ key ] ) {
-								deleteKeys( nullsObject[ key ], target[ key ] );
+								deleteKeys( target[ key ], nullsObject[ key ] );
 							} else if ( null === nullsObject[ key ] ) {
 								delete target[ key ];
 								result = true;

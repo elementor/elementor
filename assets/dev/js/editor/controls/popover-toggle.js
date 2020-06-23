@@ -13,16 +13,32 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	events() {
 		return _.extend( ControlChooseView.prototype.events.apply( this, arguments ), {
 			'click @ui.popoverToggle': 'onPopoverToggleClick',
+			'click @ui.resetInput': 'onResetInputClick',
 		} );
 	}
 
-	onPopoverToggleClick() {
+	onResetInputClick() {
 		const globalData = this.model.get( 'global' );
 
-		if ( 'typography' === this.model.get( 'groupType' ) && this.ui.popoverToggle.is( ':checked' ) && globalData?.active ) {
-			this.triggerMethod( 'unsetGlobalValue' );
+		if ( globalData?.active ) {
+			this.triggerMethod( 'value:type:change' );
+		}
+	}
+
+	onInputChange( event ) {
+		if ( event.currentTarget !== this.ui.popoverToggle[ 0 ] ) {
+			return;
 		}
 
+		// If the control has a global value, unset the global
+		if ( this.getGlobalKey() ) {
+			this.triggerMethod( 'unsetGlobalValue' );
+		} else if ( this.isGlobalActive() ) {
+			this.triggerMethod( 'value:type:change' );
+		}
+	}
+
+	onPopoverToggleClick() {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
@@ -40,8 +56,12 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			}
 
 			// TODO: FIGURE OUT WHAT THE FINAL VALUE KEY FORMAT IS AND ADJUST THIS ACCORDINGLY
-			if ( property.startsWith( 'styles_' ) ) {
-				property = property.replace( 'styles_', '' );
+			if ( property.startsWith( 'typography_' ) ) {
+				property = property.replace( 'typography_', '' );
+			}
+
+			if ( 'font_family' === property ) {
+				elementor.helpers.enqueueFont( value, 'editor' );
 			}
 
 			if ( 'font_size' === property ) {

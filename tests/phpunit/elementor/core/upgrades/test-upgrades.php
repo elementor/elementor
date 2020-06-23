@@ -239,12 +239,13 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		// Assert kit upgraded.
 		$saved_colors = $scheme_obj->get_scheme();
-		$kit_system_colors = $kit->get_settings( 'custom_colors' );
+		$kit_custom_colors = $kit->get_settings( 'custom_colors' );
 
-		$this->assertEquals( $saved_colors[1]['value'], $kit_system_colors[0]['color'] );
-		$this->assertEquals( $saved_colors[2]['value'], $kit_system_colors[1]['color'] );
-		$this->assertEquals( $saved_colors[3]['value'], $kit_system_colors[2]['color'] );
-		$this->assertEquals( $saved_colors[4]['value'], $kit_system_colors[3]['color'] );
+		// First 4 saved colors are actually the 4 system colors that shouldn't be saved as custom colors.
+		$this->assertEquals( $saved_colors[5]['value'], $kit_custom_colors[0]['color'] );
+		$this->assertEquals( $saved_colors[6]['value'], $kit_custom_colors[1]['color'] );
+		$this->assertEquals( $saved_colors[7]['value'], $kit_custom_colors[2]['color'] );
+		$this->assertEquals( $saved_colors[8]['value'], $kit_custom_colors[3]['color'] );
 
 		// Assert revisions upgraded.
 		$revisions_ids = wp_get_post_revisions( $kit_id, [
@@ -255,10 +256,11 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$revision = Plugin::$instance->documents->get( $revision_id, false );
 			$revision_system_colors = $revision->get_settings( 'custom_colors' );
 
-			$this->assertEquals( $saved_colors[1]['value'], $revision_system_colors[0]['color'] );
-			$this->assertEquals( $saved_colors[2]['value'], $revision_system_colors[1]['color'] );
-			$this->assertEquals( $saved_colors[3]['value'], $revision_system_colors[2]['color'] );
-			$this->assertEquals( $saved_colors[4]['value'], $revision_system_colors[3]['color'] );
+			// First 4 saved colors are actually the 4 system colors that shouldn't be saved as custom colors.
+			$this->assertEquals( $saved_colors[5]['value'], $revision_system_colors[0]['color'] );
+			$this->assertEquals( $saved_colors[6]['value'], $revision_system_colors[1]['color'] );
+			$this->assertEquals( $saved_colors[7]['value'], $revision_system_colors[2]['color'] );
+			$this->assertEquals( $saved_colors[8]['value'], $revision_system_colors[3]['color'] );
 		}
 	}
 
@@ -385,10 +387,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_system_typography = $kit->get_settings( 'system_typography' );
 
 		$this->assertEquals( 'primary', $kit_system_typography[0]['_id'] );
-		$this->assertEquals( $saved_typography[1]['value']['font_family'], $kit_system_typography[0]['system_typography_font_family'] );
-		$this->assertEquals( $saved_typography[2]['value']['font_family'], $kit_system_typography[1]['system_typography_font_family'] );
-		$this->assertEquals( $saved_typography[3]['value']['font_family'], $kit_system_typography[2]['system_typography_font_family'] );
-		$this->assertEquals( $saved_typography[4]['value']['font_family'], $kit_system_typography[3]['system_typography_font_family'] );
+		$this->assertEquals( $saved_typography[1]['value']['font_family'], $kit_system_typography[0]['typography_font_family'] );
+		$this->assertEquals( $saved_typography[2]['value']['font_family'], $kit_system_typography[1]['typography_font_family'] );
+		$this->assertEquals( $saved_typography[3]['value']['font_family'], $kit_system_typography[2]['typography_font_family'] );
+		$this->assertEquals( $saved_typography[4]['value']['font_family'], $kit_system_typography[3]['typography_font_family'] );
 
 		// Assert revisions upgraded.
 		$revisions_ids = wp_get_post_revisions( $kit_id, [
@@ -399,10 +401,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$revision = Plugin::$instance->documents->get( $revision_id, false );
 			$revision_saved_typography = $revision->get_settings( 'system_typography' );
 
-			$this->assertEquals( $saved_typography[1]['value']['font_family'], $revision_saved_typography[0]['system_typography_font_family'] );
-			$this->assertEquals( $saved_typography[2]['value']['font_family'], $revision_saved_typography[1]['system_typography_font_family'] );
-			$this->assertEquals( $saved_typography[3]['value']['font_family'], $revision_saved_typography[2]['system_typography_font_family'] );
-			$this->assertEquals( $saved_typography[4]['value']['font_family'], $revision_saved_typography[3]['system_typography_font_family'] );
+			$this->assertEquals( $saved_typography[1]['value']['font_family'], $revision_saved_typography[0]['typography_font_family'] );
+			$this->assertEquals( $saved_typography[2]['value']['font_family'], $revision_saved_typography[1]['typography_font_family'] );
+			$this->assertEquals( $saved_typography[3]['value']['font_family'], $revision_saved_typography[2]['typography_font_family'] );
+			$this->assertEquals( $saved_typography[4]['value']['font_family'], $revision_saved_typography[3]['typography_font_family'] );
 		}
 	}
 

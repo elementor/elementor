@@ -11,14 +11,12 @@ export class SectionColumns extends After {
 		return 'create-section-columns';
 	}
 
-	getConditions( args ) {
-		const { containers = [ args.container ] } = args;
+	getContainerType() {
+		return 'document';
+	}
 
-		/**
-		 * Avoid of using `getContainerType() returns 'document'`, since cache hooks need to be called first,
-		 * and hooks with containerType are top order.
-		 */
-		return containers.every( ( container ) => 'document' === container.id ) && ! args.model.elements;
+	getConditions( args ) {
+		return ! args.model.elements;
 	}
 
 	/**

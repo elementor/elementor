@@ -12,7 +12,7 @@ export default class extends RepeaterRow {
 	}
 
 	updateColorValue() {
-		this.$colorValue.text( this.model.get( 'value' ) );
+		this.$colorValue.text( this.model.get( 'color' ) );
 	}
 
 	getRemoveButton() {
@@ -25,7 +25,7 @@ export default class extends RepeaterRow {
 
 	onChildviewRender( childView ) {
 		if ( 'color' === childView.model.get( 'type' ) ) {
-			this.$colorValue = jQuery( '<div>', { class: 'elementor-global-colors__color-value' } );
+			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value' } );
 
 			childView.$el
 				.find( '.elementor-control-input-wrapper' )
@@ -54,9 +54,9 @@ export default class extends RepeaterRow {
 
 	onRemoveButtonClick() {
 		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
-			className: 'elementor-global-confirm-delete',
+			className: 'e-global__confirm-delete',
 			headerMessage: elementor.translate( 'delete_global_color' ),
-			message: elementor.translate( 'delete_global_color_info' ),
+			message: '<i class="eicon-info-circle"></i> ' + elementor.translate( 'delete_global_color_info' ),
 			strings: {
 				confirm: elementor.translate( 'delete' ),
 				cancel: elementor.translate( 'cancel' ),

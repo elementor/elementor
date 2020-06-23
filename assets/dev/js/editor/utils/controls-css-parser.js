@@ -7,7 +7,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			id: 0,
-			container: null,
+			context: null,
 			settingsModel: null,
 			dynamicParsing: {},
 		};
@@ -39,7 +39,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
-		// If the current element contains dynamic values, parse thesex values
+		// If the current element contains dynamic values, parse these values
 		const dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
 
 		_.each( styleControls, ( control ) => {
@@ -47,7 +47,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				this.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, control.fields, placeholders, replacements );
 			}
 
-			// If a dynamic tag includes controls with CSS implementations, Take their CSS and apply it
+			// If a dynamic tag includes controls with CSS implementations, Take their CSS and apply it.
 			if ( control.dynamic?.active && values.__dynamic__?.[ control.name ] ) {
 				this.addDynamicControlStyleRules( values.__dynamic__[ control.name ], control );
 			}
@@ -61,14 +61,20 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		let controlGlobalKey = control.name;
+		const context = this.getSettings( 'context' ),
+			globals = context.model.get( 'settings' ).get( '__globals__' );
 
-		if ( control.groupType ) {
-			controlGlobalKey = control.groupPrefix + control.groupType;
+		let globalValue;
+
+		if ( globals ) {
+			let controlGlobalKey = control.name;
+
+			if ( control.groupType ) {
+				controlGlobalKey = control.groupPrefix + control.groupType;
+			}
+
+			globalValue = globals[ controlGlobalKey ];
 		}
-
-		const globalValues = this.getSettings( 'container' ).globals.attributes,
-			globalValue = globalValues[ controlGlobalKey ];
 
 		let value;
 
@@ -76,7 +82,11 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			value = this.getStyleControlValue( control, values );
 
 			if ( undefined === value ) {
-				return;
+				if ( ! control.global?.default ) {
+					return;
+				}
+
+				globalValue = control.global.default;
 			}
 		}
 
@@ -84,19 +94,15 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			var outputCssProperty;
 
 			if ( globalValue ) {
-				const propertyParts = cssProperty.split( ':' );
-
-				const globalArgs = {};
-
-				$e.data.commandExtractArgs( globalValue, globalArgs );
-
-				const id = globalArgs.query.id;
+				const propertyParts = cssProperty.split( ':' ),
+					{ args } = $e.data.commandExtractArgs( globalValue ),
+					id = args.query.id;
 
 				let propertyValue;
 
 				// it's a global settings with additional controls in group.
 				if ( control.groupType ) {
-					const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' );
+					const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' ).replace( /(_tablet|_mobile)$/, '' );
 
 					propertyValue = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
 				} else {
@@ -265,7 +271,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	addStyleToDocument: function() {
 		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
 
-		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this.getSettings( 'container' ) );
+		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this.getSettings( 'context' ) );
 
 		this.elements.$stylesheetElement.text( this.stylesheet + extraCSS );
 	},

@@ -1,8 +1,6 @@
 import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
-import DocumentCache from 'elementor-editor/data/globals/helpers/document-cache';
 
-// Run when a global color is chosen while the active color is a different global color
 export class Settings extends CommandHistoryDebounce {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
@@ -69,14 +67,6 @@ export class Settings extends CommandHistoryDebounce {
 
 			container.render();
 		} );
-	}
-
-	onAfterRun( args, result ) {
-		super.onAfterRun( args, result );
-
-		const { containers = [ args.container ] } = args;
-
-		DocumentCache.updateSettingsByContainers( containers, { __globals__: args.settings } );
 	}
 }
 

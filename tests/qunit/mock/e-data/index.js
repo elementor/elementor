@@ -1,3 +1,8 @@
-export { mock } from './setup-fetch';
-export { free } from './setup-fetch';
-export { silence } from './setup-fetch';
+export {
+	attachMock,
+	addMock,
+	clearMock,
+	attachCache,
+	restoreFetch,
+	silence,
+} from './setup-fetch';

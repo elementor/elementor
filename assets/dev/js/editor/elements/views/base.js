@@ -211,8 +211,6 @@ BaseElementView = BaseContainer.extend( {
 
 		const editModel = this.getEditModel();
 
-		editModel.get( 'editSettings' ).set( 'documentId', elementor.documents.getCurrentId() );
-
 		if ( this.collection && this.onCollectionChanged ) {
 			elementorCommon.helpers.softDeprecated( 'onCollectionChanged', '2.8.0', '$e.hooks' );
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
@@ -438,7 +436,7 @@ BaseElementView = BaseContainer.extend( {
 	initControlsCSSParser() {
 		this.controlsCSSParser = new ControlsCSSParser( {
 			id: this.model.get( 'id' ),
-			container: this.getContainer(),
+			context: this,
 			settingsModel: this.getEditModel().get( 'settings' ),
 			dynamicParsing: this.getDynamicParsingSettings(),
 		} );
@@ -462,32 +460,7 @@ BaseElementView = BaseContainer.extend( {
 
 	renderStyles( settings ) {
 		if ( ! settings ) {
-			const editModel = this.getEditModel(),
-				elementId = editModel.id,
-				documentId = editModel.get( 'editSettings' ).get( 'documentId' ),
-				request = $e.data.get( 'editor/documents/elements', { documentId, elementId } );
-
-			// Async, means rendered when result received.
-			request.then( ( result ) => {
-				const container = elementor.getContainer( elementId );
-
-				// If container not exist, its means that it was deleted and then it get the result.
-				// EG: When do 'document/history/undo'.
-				if ( ! container ) {
-					if ( $e.devTools ) {
-						$e.devTools.log.info( `renderStyles: container with id: '${ elementId }' does not exist.` );
-					}
-					return;
-				}
-
-				settings = new elementorModules.editor.elements.models.BaseSettings( result.data.settings, {
-					controls: container.controls,
-				} );
-
-				this.renderStyles( settings );
-			} );
-
-			return;
+			settings = this.getEditModel().get( 'settings' );
 		}
 
 		this.controlsCSSParser.stylesheet.empty();

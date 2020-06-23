@@ -6,7 +6,7 @@ export class Create extends CreateBase {
 			controls = container.controls,
 			availableControls = {};
 
-		let	result = false,
+		let result = false,
 			groupPrefix = '';
 
 		if ( controls[ setting ] && controls[ setting ].groupPrefix ) {
@@ -18,7 +18,13 @@ export class Create extends CreateBase {
 		if ( groupPrefix ) {
 			Object.entries( controls ).forEach( ( [ key ] ) => {
 				if ( key.includes( groupPrefix ) ) {
-					availableControls[ key.replace( groupPrefix, '' ) ] = container.settings.get( key );
+					// Get values but remove defaults.
+					const value = container.settings.get( key ),
+						defaultValue = container.controls[ key ].default;
+
+					if ( ! _.isEqual( value, defaultValue ) ) {
+						availableControls[ key.replace( groupPrefix, 'typography_' ) ] = container.settings.get( key );
+					}
 				}
 			} );
 		}
@@ -26,7 +32,6 @@ export class Create extends CreateBase {
 		if ( Object.values( availableControls ).length ) {
 			const id = elementor.helpers.getUniqueID();
 
-			// Currently does not effect cache.
 			result = $e.data.create( `globals/typography?id=${ id }`, {
 				title,
 				value: availableControls,

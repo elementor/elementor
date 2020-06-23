@@ -506,7 +506,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$selector = preg_replace_callback( '/{{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
 				$is_external_reference = false;
 
-				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function( $sub_matches ) use ( $controls_prefix, & $is_external_reference ) {
+				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function( $sub_matches ) use ( $controls_prefix, &$is_external_reference ) {
 					$placeholder = $sub_matches[0];
 
 					if ( 'external.' === $placeholder ) {
@@ -543,6 +543,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$settings = $this->get_args();
 
+		if ( isset( $settings['popover'] ) ) {
+			$popover_options['settings'] = array_replace_recursive( $popover_options['settings'], $settings['popover']['settings'] );
+		}
+
 		if ( isset( $settings['label'] ) ) {
 			$label = $settings['label'];
 		} else {
@@ -559,7 +563,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
 		}
 
-		foreach ( [ 'global', 'condition', 'conditions' ] as $key ) {
+		foreach ( [ 'condition', 'conditions' ] as $key ) {
 			if ( ! empty( $settings[ $key ] ) ) {
 				$control_params[ $key ] = $settings[ $key ];
 			}
