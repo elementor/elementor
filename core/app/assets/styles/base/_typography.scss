@@ -1,74 +1,122 @@
-.heading {
-	color: #6D7882;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 26px;
-	line-height: 26px;
+// Tags
+
+h1,
+.h1 {
+  font-size: $eps-h-1-font-size;
 }
 
-body {
-	color: #A4AFB7;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 22px;
+h2,
+.h2 {
+  font-size: $eps-h-2-font-size;
+}
+
+h3,
+.h3 {
+  font-size: $eps-h-3-font-size;
+}
+
+h4,
+.h4 {
+  font-size: $eps-h4-font-size;
+}
+
+h5,
+.h5 {
+  font-size: $eps-h-5-font-size;
+}
+
+h6,
+.h6 {
+  font-size: $eps-h-5-font-size;
+}
+
+p {
+  margin-bottom: spacing(16);
+}
+
+.heading {
+  color: #6D7882;
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 26px;
 }
 
 .card_headline {
-	color: #6D7882;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 12px;
-	line-height: 17px;
+  color: #6D7882;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 17px;
 }
 
 .menu-item {
-	color: #6D7882;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 12px;
-	line-height: 14px;
+  color: #6D7882;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
 }
 
 .header-title {
-	color: #495157;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 15px;
-	line-height: 18px;
-	text-transform: uppercase;
+  color: #495157;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 18px;
+  text-transform: uppercase;
 }
 
 .add-new-button {
-	color: #495157;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 18px;
-	line-height: 20px;
+  color: #495157;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 20px;
 }
 
 .get-pro-button {
-	color: #FFFFFF;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 13px;
-	line-height: 15px;
-	text-align: center;
-	text-transform: capitalize;
+  color: #FFFFFF;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+  text-align: center;
+  text-transform: capitalize;
 }
 
 .back-button {
-	color: #A4AFB7;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 14px;
+  color: #A4AFB7;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
 }
+
+// semantic sizing for text
+// todo: should be put !importatnt here? update code and remove comment
+.text-xxs {
+  font-size: $eps-text-xxs-font-size;
+}
+
+.text-xs {
+  font-size: $eps-text-xs-font-size;
+}
+
+.text-sm {
+  font-size: $eps-text-sm-font-size;
+}
+
+.text-md {
+  font-size: $eps-text-md-font-size;
+}
+
+.text-lg {
+  font-size: $eps-text-lg-font-size;
+}
+
+.text-xl {
+  font-size: $eps-text-xl-font-size;
+}
+
+// todo: placeholders for future semantic work, update or remove
+//.page-title{}
+//.section-title{}
+//.component-title{}
+//.page-subtitle{}
+//.section-subtitle{}
+//.component-subtitle{}
