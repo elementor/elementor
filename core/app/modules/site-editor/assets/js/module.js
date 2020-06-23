@@ -97,7 +97,7 @@ export default class SiteEditor {
 				icon: 'eicon-custom',
 				title: __( 'Custom', 'elementor' ),
 				urls: {
-					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/custom.svg',
+					thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN89B8AAskB44g04okAAAAASUVORK5CYII=',
 					docs: 'https://docs.elementor.com/site-editor-custom',
 				},
 			},
