@@ -32,6 +32,29 @@ config.elements = {
 	column,
 };
 
+const controls = {
+	font: {
+		options: {},
+	},
+	repeater: {
+		item_actions: {
+			add: true,
+			duplicate: true,
+			remove: true,
+			sort: true,
+		},
+	},
+};
+
+// Controls.
+config.controls = new Proxy( {}, {
+	get( target, name ) {
+		return controls[ name ] || {
+			features: [],
+		};
+	},
+} );
+
 // Schemes.
 config.schemes = {
 	items: SchemeItems,

@@ -17,18 +17,5 @@
   "icons": {
 	"libraries": []
   },
-  "controls": {
-	"font": {
-	  "options": {}
-	},
-	"repeater": {
-	  "item_actions": {
-		"add": true,
-		"duplicate": true,
-		"remove": true,
-		"sort": true
-	  }
-	}
-  },
   "autosave_interval": 1000
 }

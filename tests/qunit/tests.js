@@ -20,7 +20,6 @@ function initialize() {
 	elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
 	Ajax.silence();
-	eData.silence();
 
 	elementor.on( 'preview:loaded', () => {
 		// Disable UI Hooks.
