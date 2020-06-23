@@ -24,7 +24,7 @@
 
 	&__headline {
 		color: var(--card-headline-color);
-		font-size: $card-headline-font-size;
+		--h1-font-size: $card-headline-font-size;
 		font-weight: $card-headline-font-weight;
 		flex-grow: 1;
 	}
@@ -71,10 +71,6 @@
 
 	&:hover {
 		background-color: var(--card-background-color-hover);
-	}
-
-	h1 {
-		margin: 0;
 	}
 
 	figure {

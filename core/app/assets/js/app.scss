@@ -42,41 +42,57 @@ $box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
 	justify-content: center;
 }
 
-.elementor-templates-modal .dialog-message {
-	height: 920px;
+:root {
+	--h1-font-size: #{type(h, "1")};
 }
 
-* {
-	box-sizing: border-box;
+h1 {
+	font-size: var(--h1-font-size);
 }
 
-.elementor-app__main {
-	display: flex;
-	background-color: var(--app-background-color);
-}
+.elementor-app {
+	font-size: type(text, md);
 
-.elementor-app__sidebar {
-	background-color: var(--app-sidebar-background-color);
-	padding-top: spacing(20);
-	width: 30%;
-	max-width: 275px;
-	flex-grow: 0;
-	box-shadow: $app-sidebar-box-shadow;
-}
+	&__main {
+		display: flex;
+		height: 920px;
+		max-height: 85vh;
+		overflow: auto;
+		background-color: var(--app-background-color);
+	}
 
-.elementor-app__content {
-	flex-grow: 1;
-	padding: 2.8125rem;
-	height: 100%;
-	overflow: scroll;
+	&__sidebar {
+		background-color: var(--app-sidebar-background-color);
+		padding-top: spacing(20);
+		width: 30%;
+		max-width: 275px;
+		flex-grow: 0;
+		overflow: auto;
+		box-shadow: $app-sidebar-box-shadow;
+	}
+
+	&__content {
+		flex-grow: 1;
+		padding: 2.8125rem;
+		height: 100%;
+		overflow: scroll;
+	}
 }
 
 .elementor-screen-only {
-	display: none;
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0,0,0,0);
+	white-space: nowrap;
+	clip-path: inset(50%);
+	border: 0;
 }
 
 .dialog-type-lightbox:not(.elementor-popup-modal) {
-	.dialog-message.elementor-app__main {
+	.elementor-app__main {
 		text-align: unset;
 		padding: 0;
 	}

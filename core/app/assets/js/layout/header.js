@@ -6,7 +6,7 @@ export default function Header( props ) {
 	} );
 
 	return (
-		<div className="elementor-app__header dialog-header dialog-lightbox-header">
+		<header className="elementor-app__header dialog-header dialog-lightbox-header">
 			<div className="elementor-templates-modal__header">
 				<div className="elementor-templates-modal__header__logo-area">
 					<div className="elementor-templates-modal__header__logo">
@@ -20,7 +20,7 @@ export default function Header( props ) {
 				</div>
 				<HeaderButtons buttons={ props.buttons } />
 			</div>
-		</div>
+		</header>
 	);
 }
 

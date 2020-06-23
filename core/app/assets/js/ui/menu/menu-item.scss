@@ -70,6 +70,8 @@ $menu-item-dark-background-color-active: dark-tints(600);
 
 	&__link {
 		flex-grow: 1;
+		display: flex;
+		align-items: center;
 
 		.icon {
 			font-size: $menu-item-icon-size;
