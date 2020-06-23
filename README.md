@@ -6,7 +6,7 @@
 **Requires at least:** 5.0  
 **Tested up to:** 5.4  
 **Requires PHP:** 5.6  
-**Stable tag:** 2.9.12  
+**Stable tag:** 2.9.13  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -223,10 +223,10 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 ## Changelog ##
 
-### 2.9.12 - 2020-06-14
+### 2.9.13 - 2020-06-23 ###
 * Fix: Duplicated Hidden type form fields inherited required attribute in Form widget ([#11578](https://github.com/elementor/elementor/issues/11578))
 * Fix: Select2 control width glitch
-###
+
 ### 2.9.12 - 2020-06-14 ###
 * Fix: Dynamic default value not working in Form widget ([#11578](https://github.com/elementor/elementor/issues/11578), [#11609](https://github.com/elementor/elementor/issues/11609))
 * Fix: Dark mode glitches in Form Step items ([#11579](https://github.com/elementor/elementor/issues/11579))
