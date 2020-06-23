@@ -8,12 +8,12 @@ export default class extends elementorModules.editor.utils.Module {
 	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: panelView,
-			title: elementor.translate( 'Global Settings' ),
+			title: elementor.translate( 'global_settings' ),
 		} );
 
 		elementor.getPanelView().addPage( 'kit_menu', {
 			view: panelMenuView,
-			title: elementor.translate( 'Global Settings' ),
+			title: elementor.translate( 'global_settings' ),
 		} );
 	}
 

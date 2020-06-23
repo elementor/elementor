@@ -285,7 +285,7 @@ abstract class Base extends Base_File {
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			try {
-				$output_css_property = preg_replace_callback( '/\{\{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+				$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
 					$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
 					$parsed_value = '';
@@ -339,7 +339,7 @@ abstract class Base extends Base_File {
 			if ( $device_rules ) {
 				$selector = preg_replace( $device_pattern, '', $selector );
 
-				preg_match_all( '/\(([^\)]+)\)/', $device_rules[0], $pure_device_rules );
+				preg_match_all( '/\(([^)]+)\)/', $device_rules[0], $pure_device_rules );
 
 				$pure_device_rules = $pure_device_rules[1];
 
