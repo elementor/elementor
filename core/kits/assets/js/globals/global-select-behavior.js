@@ -254,6 +254,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		$e.run( 'document/globals/disable', {
 			container: this.view.container,
 			settings: { [ globalMeta.key ]: '' },
+			options: { restore: true },
 		} )
 			.then( () => {
 				this.onValueTypeChange();
