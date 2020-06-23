@@ -650,7 +650,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function register_autoloader() {
-		require ELEMENTOR_PATH . '/includes/autoloader.php';
+		require_once ELEMENTOR_PATH . '/includes/autoloader.php';
 
 		Autoloader::run();
 	}

@@ -125,22 +125,25 @@ class Manager extends BaseModule {
 	 * @param string $command
 	 * @param array $args
 	 *
-	 * @return string
+	 * @return \stdClass
 	 */
-	public function command_extract_args( $command, &$args = [] ) {
+	public function command_extract_args( $command, $args = [] ) {
+		$result = new \stdClass();
+		$result->command = $command;
+		$result->args = $args;
+
 		if ( false !== strpos( $command, '?' ) ) {
 			$command_parts = explode( '?', $command );
 			$pure_command = $command_parts[0];
 			$query_string = $command_parts[1];
 
-			parse_str( $query_string, $args );
+			parse_str( $query_string, $temp );
 
-			$command = $pure_command;
-
-			$command = rtrim( $command, '/' );
+			$result->command = rtrim( $pure_command, '/' );
+			$result->args = array_merge( $args, $temp );
 		}
 
-		return $command;
+		return $result;
 	}
 
 	/**
@@ -319,7 +322,9 @@ class Manager extends BaseModule {
 			return [];
 		}
 
-		$command = $this->command_extract_args( $command, $args );
+		$extracted_command = $this->command_extract_args( $command, $args );
+		$command = $extracted_command->command;
+		$args = $extracted_command->args;
 
 		$format = isset( $this->command_formats[ $command ] ) ? $this->command_formats[ $command ] : false;
 
