@@ -18,8 +18,16 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		return jQuery.extend( this.getSelect2DefaultOptions(), this.model.get( 'select2options' ) );
 	},
 
-	onReady: function() {
-		this.ui.select.select2( this.getSelect2Options() );
+	applySavedValue: function() {
+		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
+
+		const select2Instance = this.ui.select.data( 'select2' );
+
+		if ( ! select2Instance ) {
+			this.ui.select.select2( this.getSelect2Options() );
+		} else {
+			this.ui.select.trigger( 'change' );
+		}
 	},
 
 	onBeforeDestroy: function() {
@@ -29,14 +37,7 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 
 		this.$el.remove();
 	},
-
-	onAfterExternalChange: function() {
-		this.ui.select.select2( 'destroy' );
-
-		this.onReady();
-
-		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
-	},
 } );
 
 module.exports = ControlSelect2ItemView;
+F
