@@ -94,8 +94,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			var outputCssProperty;
 
 			if ( globalValue ) {
-				const propertyParts = cssProperty.split( ':' ),
-					{ args } = $e.data.commandExtractArgs( globalValue ),
+				const { args } = $e.data.commandExtractArgs( globalValue ),
 					id = args.query.id;
 
 				let propertyValue;
@@ -109,7 +108,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 					propertyValue = `var( --e-global-${ control.type }-${ id } )`;
 				}
 
-				outputCssProperty = propertyParts[ 0 ] + ':' + propertyValue;
+				outputCssProperty = cssProperty.replace( /(:)[^;]+(;?)/g, '$1' + propertyValue + '$2' );
 			} else {
 				try {
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {

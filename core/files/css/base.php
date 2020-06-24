@@ -50,7 +50,7 @@ abstract class Base extends Base_File {
 
 	/**
 	 * Fonts.
-	 *
+	f *
 	 * Holds the list of fonts.
 	 *
 	 * @access private
@@ -312,8 +312,6 @@ abstract class Base extends Base_File {
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			if ( $global_value ) {
-				$property_parts = explode( ':', $css_property );
-
 				$global_args = explode( '?id=', $global_value );
 
 				$id = $global_args[1];
@@ -326,7 +324,7 @@ abstract class Base extends Base_File {
 					$property_value = "var( --e-global-$control[type]-$id )";
 				}
 
-				$output_css_property = $property_parts[0] . ':' . $property_value;
+				$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $property_value . '$2', $css_property );
 			} else {
 				try {
 					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
