@@ -199,7 +199,6 @@ class Test_Controller extends Elementor_Test_Base {
 
 		foreach( $methods  as $method ) {
 			$request = new \WP_REST_Request( $method );
-
 			$this->assertEquals( $controller->get_permission_callback( $request ), true );
 		}
 
@@ -208,7 +207,6 @@ class Test_Controller extends Elementor_Test_Base {
 
 		foreach( $methods as $method ) {
 			$request = new \WP_REST_Request( $method );
-
 			$this->assertEquals( $controller->get_permission_callback( $request ), false );
 		}
 	}

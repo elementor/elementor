@@ -2,8 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 
-// TODO: Use autoloader.
-
 use Elementor\Plugin;
 use Elementor\Core\Editor\Data;
 
