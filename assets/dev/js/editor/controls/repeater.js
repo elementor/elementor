@@ -129,7 +129,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			this.ui.fieldContainer.sortable( {
 				axis: 'y',
 				handle: '.elementor-repeater-row-tools',
-				cancel: '.elementor-repeater-row--disable-sort',
+				items: ' > :not(.elementor-repeater-row--disable-sort)',
 			} );
 		}
 
@@ -194,8 +194,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			model: defaults,
 		} );
 
-		this.editRow( this.children.findByModel( newModel ) );
+		const newChild = this.children.findByModel( newModel );
+
+		this.editRow( newChild );
+
 		this.toggleMinRowsClass();
+
+		this._parent.handlePopovers( newChild );
 	},
 
 	onChildviewClickRemove: function( childView ) {

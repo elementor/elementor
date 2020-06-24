@@ -16,13 +16,18 @@
 	  "title": "Post Settings"
 	},
 	"controls": {
-	  "padding": {
-		"unit": "px",
-		"top": "",
-		"right": "",
-		"bottom": "",
-		"left": "",
-		"isLinked": true
+	  "post_title": {
+		"name": "post_title",
+		"label": "Title",
+		"description": "",
+		"show_label": true,
+		"label_block": true,
+		"separator": "none",
+		"input_type": "text",
+		"placeholder": "",
+		"type": "text",
+		"tab": "settings",
+		"section": "document_settings"
 	  }
 	}
   },

@@ -60,21 +60,5 @@
 		a {
 			color: $editor-dark;
 		}
-
-		&-exit-to-dashboard {
-			background-color: $wp-primary;
-			color: #fff;
-			text-transform: uppercase;
-			font-size: 12px;
-
-			&:hover {
-				background-color: darken($wp-primary, 5%);
-			}
-
-			.elementor-panel-menu-item-title,
-			.elementor-panel-menu-item-icon {
-				color: #fff;
-			}
-		}
 	}
 }
