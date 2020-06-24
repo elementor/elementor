@@ -40,4 +40,3 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 } );
 
 module.exports = ControlSelect2ItemView;
-F
