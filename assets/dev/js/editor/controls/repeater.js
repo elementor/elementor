@@ -194,8 +194,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			model: defaults,
 		} );
 
-		this.editRow( this.children.findByModel( newModel ) );
+		const newChild = this.children.findByModel( newModel );
+
+		this.editRow( newChild );
+
 		this.toggleMinRowsClass();
+
+		this._parent.handlePopovers( newChild );
 	},
 
 	onChildviewClickRemove: function( childView ) {
