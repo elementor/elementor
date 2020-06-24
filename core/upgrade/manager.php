@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Core\Upgrade;
 
 use Elementor\Core\Base\DB_Upgrades_Manager;
@@ -9,6 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Manager extends DB_Upgrades_Manager {
+
+	// todo: remove in future releases
+	public function should_upgrade() {
+		if ( ( 'elementor' === $this->get_plugin_name() ) && version_compare( get_option( $this->get_version_option_name() ), '2.4.2', '<' ) ) {
+			delete_option( 'elementor_log' );
+		}
+
+		return parent::should_upgrade();
+	}
 
 	public function get_name() {
 		return 'upgrade';
@@ -24,6 +32,10 @@ class Manager extends DB_Upgrades_Manager {
 
 	public function get_plugin_label() {
 		return __( 'Elementor', 'elementor' );
+	}
+
+	public function get_updater_label() {
+		return sprintf( '<strong>%s </strong> &#8211;', __( 'Elementor Data Updater', 'elementor' ) );
 	}
 
 	public function get_new_version() {

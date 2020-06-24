@@ -65,8 +65,7 @@ class Source_Remote extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $args Optional. Filter templates list based on a set of
-	 *                    arguments. Default is an empty array.
+	 * @param array $args Optional. Nou used in remote source.
 	 *
 	 * @return array Remote templates.
 	 */
@@ -79,10 +78,6 @@ class Source_Remote extends Source_Base {
 			foreach ( $library_data['templates'] as $template_data ) {
 				$templates[] = $this->prepare_template( $template_data );
 			}
-		}
-
-		if ( ! empty( $args ) ) {
-			$templates = wp_list_filter( $templates, $args );
 		}
 
 		return $templates;
@@ -185,7 +180,7 @@ class Source_Remote extends Source_Base {
 	 * @param array  $args    Custom template arguments.
 	 * @param string $context Optional. The context. Default is `display`.
 	 *
-	 * @return array Remote Template data.
+	 * @return array|\WP_Error Remote Template data.
 	 */
 	public function get_data( array $args, $context = 'display' ) {
 		$data = Api::get_template_content( $args['template_id'] );
@@ -193,6 +188,9 @@ class Source_Remote extends Source_Base {
 		if ( is_wp_error( $data ) ) {
 			return $data;
 		}
+
+		// BC.
+		$data = (array) $data;
 
 		$data['content'] = $this->replace_elements_ids( $data['content'] );
 		$data['content'] = $this->process_export_import_content( $data['content'], 'on_import' );

@@ -68,12 +68,14 @@ presetsFactory = {
 	},
 
 	_createSVGPreset: function( presetPath, svgWidth, svgHeight ) {
-		var svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+		// this is here to avoid being picked up by https re-write systems
+		const protocol = 'ht' + 'tp';
+		var svg = document.createElementNS( protocol + '://www.w3.org/2000/svg', 'svg' );
 
-		svg.setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:xlink', 'http://www.w3.org/1999/xlink' );
+		svg.setAttributeNS( protocol + '://www.w3.org/2000/xmlns/', 'xmlns:xlink', protocol + '://www.w3.org/1999/xlink' );
 		svg.setAttribute( 'viewBox', '0 0 ' + svgWidth + ' ' + svgHeight );
 
-		var path = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
+		var path = document.createElementNS( protocol + '://www.w3.org/2000/svg', 'path' );
 
 		path.setAttribute( 'd', presetPath );
 

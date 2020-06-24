@@ -9,13 +9,14 @@
 		font-size: 11px;
 		line-height: 1.4;
 		cursor: pointer;
+		transition: $transition-hover;
 
 		&:hover {
 			background-color: fade_out($editor-background, 0.7) ;
 
 			.elementor-history-item__icon{
-				.fa:before {
-					content:'\f1da';
+				.eicon:before {
+					content:'\e924';
 				}
 			}
 		}
@@ -26,11 +27,11 @@
 
 		&-current {
 			background: $editor-background;
-			cursor: inherit;
+			cursor: default;
 
 			.elementor-history-item__icon, &:hover .elementor-history-item__icon{
-				.fa:before {
-					content:'\f00c';
+				.eicon:before {
+					content:'\e90e';
 				}
 			}
 		}
@@ -60,6 +61,31 @@
 	&revisions-message{
 		font-size: 11px;
 		text-align: center;
-		padding: 5px 0;
+		padding-top: 5px;
+	}
+}
+
+#elementor-panel-history {
+	padding: 20px 20px 15px;
+
+	&.elementor-empty {
+
+		.elementor-history-revisions-message {
+			padding-top: 20px;
+		}
+	}
+
+	&:not(.elementor-empty) {
+		background-color: #fff;
+		margin-top: 10px;
+	}
+}
+
+#elementor-panel-history-no-items,
+#elementor-panel-revisions-no-revisions {
+	text-align: center;
+
+	.elementor-nerd-box-icon {
+		margin-top: 20px;
 	}
 }

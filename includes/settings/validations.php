@@ -54,6 +54,23 @@ class Settings_Validations {
 	}
 
 	/**
+	 * Current Time
+	 *
+	 * Used to return current time
+	 *
+	 * @since 2.5.0
+	 * @access public
+	 * @static
+	 *
+	 * @param mixed $input Input field.
+	 *
+	 * @return int
+	 */
+	public static function current_time( $input ) {
+		return time();
+	}
+
+	/**
 	 * Clear cache.
 	 *
 	 * Delete post meta containing the post CSS file data. And delete the actual

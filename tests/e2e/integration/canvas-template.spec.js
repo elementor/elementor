@@ -27,15 +27,16 @@ describe( 'Tests if Canvas Template works', () => {
 		cy.get( '#elementor-switch-mode-button' ).click();
 		cy.addWidget( 'basic', 'heading' );
 		cy.get( '#elementor-panel-saver-button-save-options' ).click();
-		cy.get( '#elementor-panel-footer-sub-menu-item-save-draft > .elementor-title' ).click();
+		cy.get( '#elementor-panel-saver-menu-save-draft > .elementor-title' ).click();
 
 		cy.disableElementorPopup();
 
 		cy.visit( '/wp-admin/edit.php' );
 		cy.get( 'a[class="row-title"]' ).contains( canvasTemplate ).click();
 		cy.wait( 200 );
-		cy.get( ':nth-child(6) > .components-panel__body-title > .components-button' ).click();
-		cy.get( '#inspector-textarea-control-0' ).type( 'some-test' );
+		cy.get( '#elementor-switch-mode-button' ).click();
+		cy.get( '.editor-block-list__block' ).click();
+		cy.get( '#mce_0' ).type( 'some-test' );
 		cy.get( '.editor-post-publish-button' ).should( 'have.attr', 'aria-disabled', 'true' );
 		cy.get( '.editor-post-publish-button' ).should( 'have.attr', 'aria-disabled', 'false' );
 

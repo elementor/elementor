@@ -1,0 +1,110 @@
+{
+	"color": {
+		"items": {
+			"1": {
+				"title": "Primary",
+				"value": "#6ec1e4"
+			},
+			"2": {
+				"title": "Secondary",
+				"value": "#60656d"
+			},
+			"3": {
+				"title": "Text",
+				"value": "#7a7a7a"
+			},
+			"4": {
+				"title": "Accent",
+				"value": "#61ce70"
+			}
+		},
+		"title": "Colors",
+		"disabled_title": "Color Palettes"
+	},
+	"typography": {
+		"items": {
+			"1": {
+				"title": "Primary Headline",
+				"value": {
+					"font_family": "Roboto",
+					"font_weight": "600"
+				}
+			},
+			"2": {
+				"title": "Secondary Headline",
+				"value": {
+					"font_family": "Roboto Slab",
+					"font_weight": "900"
+				}
+			},
+			"3": {
+				"title": "Body Text",
+				"value": {
+					"font_family": "Risque",
+					"font_weight": "400"
+				}
+			},
+			"4": {
+				"title": "Accent Text",
+				"value": {
+					"font_family": "Roboto",
+					"font_weight": "500"
+				}
+			}
+		},
+		"title": "Typography",
+		"disabled_title": "Default Fonts"
+	},
+	"color-picker": {
+		"items": {
+			"1": {
+				"value": "#6ec1e4"
+			},
+			"2": {
+				"value": "#54595f"
+			},
+			"3": {
+				"value": "#7a7a7a"
+			},
+			"4": {
+				"value": "#61ce70"
+			},
+			"5": {
+				"value": "#4054b2"
+			},
+			"6": {
+				"value": "#23a455"
+			},
+			"7": {
+				"value": "#000"
+			},
+			"8": {
+				"value": "#fff"
+			},
+			"9": {
+				"value": "#61CE70"
+			},
+			"10": {
+				"value": "#61CE70"
+			},
+			"11": {
+				"value": "#61CE70"
+			},
+			"12": {
+				"value": "#A9D4AF"
+			},
+			"13": {
+				"value": "#000000"
+			},
+			"14": {
+				"value": "#000000"
+			},
+			"15": {
+				"value": "#D04242"
+			},
+			"16": {
+				"value": "#C58888"
+			}
+		}
+	}
+}

@@ -88,6 +88,9 @@ module.exports = Marionette.ItemView.extend( {
 		this.tagControlsStack = new TagControlsStack( {
 			model: this.model,
 			controls: this.model.controls,
+			name: this.options.name,
+			controlName: this.options.controlName,
+			container: this.options.container,
 			el: this.getSettingsPopup().getElements( 'message' )[ 0 ],
 		} );
 
@@ -101,11 +104,12 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	initialize: function() {
+		// The `model` should always be available.
+		this.initModel();
+
 		if ( ! this.hasSettings() ) {
 			return;
 		}
-
-		this.initModel();
 
 		this.initSettingsPopup();
 
@@ -127,6 +131,10 @@ module.exports = Marionette.ItemView.extend( {
 	onDestroy: function() {
 		if ( this.hasSettings() ) {
 			this.getSettingsPopup().destroy();
+		}
+
+		if ( this.tagControlsStack ) {
+			this.tagControlsStack.destroy();
 		}
 	},
 } );

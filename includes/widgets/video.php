@@ -132,7 +132,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'placeholder' => __( 'Enter your URL', 'elementor' ) . ' (YouTube)',
-				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+				'default' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
 				'label_block' => true,
 				'condition' => [
 					'video_type' => 'youtube',
@@ -183,9 +183,9 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'insert_from_url',
+			'insert_url',
 			[
-				'label' => __( 'Insert From URL', 'elementor' ),
+				'label' => __( 'External URL', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'video_type' => 'hosted',
@@ -196,7 +196,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'hosted_url',
 			[
-				'label' => __( 'Link', 'elementor' ),
+				'label' => __( 'Choose File', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'dynamic' => [
 					'active' => true,
@@ -207,7 +207,7 @@ class Widget_Video extends Widget_Base {
 				'media_type' => 'video',
 				'condition' => [
 					'video_type' => 'hosted',
-					'insert_from_url' => '',
+					'insert_url' => '',
 				],
 			]
 		);
@@ -216,13 +216,23 @@ class Widget_Video extends Widget_Base {
 			'external_url',
 			[
 				'label' => __( 'URL', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
+				'type' => Controls_Manager::URL,
+				'autocomplete' => false,
+				'options' => false,
+				'label_block' => true,
+				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
+					],
 				],
+				'media_type' => 'video',
+				'placeholder' => __( 'Enter your URL', 'elementor' ),
 				'condition' => [
 					'video_type' => 'hosted',
-					'insert_from_url' => 'yes',
+					'insert_url' => 'yes',
 				],
 			]
 		);
@@ -266,6 +276,17 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+			]
+		);
+
+		$this->add_control(
+			'play_on_mobile',
+			[
+				'label' => __( 'Play On Mobile', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'autoplay' => 'yes',
+				],
 			]
 		);
 
@@ -480,7 +501,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'image_overlay',
 			[
-				'label' => __( 'Image', 'elementor' ),
+				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
@@ -567,6 +588,8 @@ class Widget_Video extends Widget_Base {
 					'219' => '21:9',
 					'43' => '4:3',
 					'32' => '3:2',
+					'11' => '1:1',
+					'916' => '9:16',
 				],
 				'default' => '169',
 				'prefix_class' => 'elementor-aspect-ratio-',
@@ -707,7 +730,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'range' => [
 					'%' => [
-						'min' => 50,
+						'min' => 30,
 					],
 				],
 				'selectors' => [
@@ -735,13 +758,12 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'lightbox_content_animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
-				'label_block' => true,
 			]
 		);
 
@@ -760,6 +782,14 @@ class Widget_Video extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 
 		$video_url = $settings[ $settings['video_type'] . '_url' ];
+
+		if ( 'hosted' === $settings['video_type'] ) {
+			$video_url = $this->get_hosted_video_url();
+		}
+
+		if ( empty( $video_url ) ) {
+			return;
+		}
 
 		if ( 'hosted' === $settings['video_type'] ) {
 			ob_start();
@@ -812,6 +842,8 @@ class Widget_Video extends Widget_Base {
 						'modalOptions' => [
 							'id' => 'elementor-lightbox-' . $this->get_id(),
 							'entranceAnimation' => $settings['lightbox_content_animation'],
+							'entranceAnimation_tablet' => $settings['lightbox_content_animation_tablet'],
+							'entranceAnimation_mobile' => $settings['lightbox_content_animation_mobile'],
 							'videoAspectRatio' => $settings['aspect_ratio'],
 						],
 					];
@@ -861,7 +893,11 @@ class Widget_Video extends Widget_Base {
 	public function render_plain_content() {
 		$settings = $this->get_settings_for_display();
 
-		$url = $settings[ $settings['video_type'] . '_url' ];
+		if ( 'hosted' !== $settings['video_type'] ) {
+			$url = $settings[ $settings['video_type'] . '_url' ];
+		} else {
+			$url = $this->get_hosted_video_url();
+		}
 
 		echo esc_url( $url );
 	}
@@ -883,6 +919,10 @@ class Widget_Video extends Widget_Base {
 
 		if ( $settings['autoplay'] && ! $this->has_image_overlay() ) {
 			$params['autoplay'] = '1';
+
+			if ( $settings['play_on_mobile'] ) {
+				$params['playsinline'] = '1';
+			}
 		}
 
 		$params_dictionary = [];
@@ -1004,6 +1044,10 @@ class Widget_Video extends Widget_Base {
 			$video_params['muted'] = 'muted';
 		}
 
+		if ( $settings['play_on_mobile'] ) {
+			$video_params['playsinline'] = '';
+		}
+
 		if ( ! $settings['download_button'] ) {
 			$video_params['controlsList'] = 'nodownload';
 		}
@@ -1025,8 +1069,8 @@ class Widget_Video extends Widget_Base {
 	private function get_hosted_video_url() {
 		$settings = $this->get_settings_for_display();
 
-		if ( ! empty( $settings['insert_from_url'] ) ) {
-			$video_url = $settings['external_url'];
+		if ( ! empty( $settings['insert_url'] ) ) {
+			$video_url = $settings['external_url']['url'];
 		} else {
 			$video_url = $settings['hosted_url']['url'];
 		}

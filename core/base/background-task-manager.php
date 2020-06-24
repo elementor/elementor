@@ -28,7 +28,7 @@ abstract class Background_Task_Manager extends BaseModule {
 		$logger->info( $this->get_plugin_name() . '::' . $this->get_action() . ' Started' );
 	}
 
-	public function on_runner_complete() {
+	public function on_runner_complete( $did_tasks = false ) {
 		$logger = Plugin::$instance->logger->get_logger();
 		$logger->info( $this->get_plugin_name() . '::' . $this->get_action() . ' Completed' );
 	}
@@ -72,6 +72,8 @@ abstract class Background_Task_Manager extends BaseModule {
 		if ( empty( $_GET[ $this->get_action() ] ) ) {
 			return;
 		}
+
+		Plugin::$instance->init_common();
 
 		if ( 'run' === $_GET[ $this->get_action() ] && check_admin_referer( $this->get_action() . 'run' ) ) {
 			$this->start_run();

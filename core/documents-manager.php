@@ -3,6 +3,7 @@ namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\DocumentTypes\Page;
 use Elementor\Core\DocumentTypes\Post;
 use Elementor\DB;
 use Elementor\Plugin;
@@ -22,18 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class Documents_Manager {
-
-	/**
-	 * Registered document groups.
-	 *
-	 * Holds the list of all the registered document groups.
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 *
-	 * @var array
-	 */
-	protected $groups = [];
 
 	/**
 	 * Registered types.
@@ -99,6 +88,7 @@ class Documents_Manager {
 		add_filter( 'post_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 	}
 
 	/**
@@ -116,6 +106,7 @@ class Documents_Manager {
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
 		$ajax_manager->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
+		$ajax_manager->register_ajax_action( 'get_document_config', [ $this, 'ajax_get_document_config' ] );
 	}
 
 	/**
@@ -128,7 +119,9 @@ class Documents_Manager {
 	 */
 	public function register_default_types() {
 		$default_types = [
-			'post' => Post::get_class_full_name(),
+			'post' => Post::get_class_full_name(), // BC.
+			'wp-post' => Post::get_class_full_name(),
+			'wp-page' => Page::get_class_full_name(),
 		];
 
 		foreach ( $default_types as $type => $class ) {
@@ -145,7 +138,7 @@ class Documents_Manager {
 	 * @access public
 	 *
 	 * @param string $type  Document type name.
-	 * @param Document $class The name of the class that registers the document type.
+	 * @param string $class The name of the class that registers the document type.
 	 *                      Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
@@ -355,7 +348,7 @@ class Documents_Manager {
 		$class = $this->get_document_type( $type, false );
 
 		if ( ! $class ) {
-			wp_die( sprintf( 'Type %s does not exist.', $type ) );
+			return new \WP_Error( 500, sprintf( 'Type %s does not exist.', $type ) );
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
@@ -370,18 +363,23 @@ class Documents_Manager {
 			$update_title = true;
 		}
 
+		$meta_data['_elementor_edit_mode'] = 'builder';
+
+		// Save the type as-is for plugins that hooked at `wp_insert_post`.
+		$meta_data[ Document::TYPE_META_KEY ] = $type;
+
+		$post_data['meta_input'] = $meta_data;
+
 		$post_id = wp_insert_post( $post_data );
 
 		if ( ! empty( $update_title ) ) {
 			$post_data['ID'] = $post_id;
 			$post_data['post_title'] .= ' #' . $post_id;
+
+			// The meta doesn't need update.
+			unset( $post_data['meta_input'] );
+
 			wp_update_post( $post_data );
-		}
-
-		add_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
-
-		foreach ( $meta_data as $key => $value ) {
-			add_post_meta( $post_id, $key, $value );
 		}
 
 		/** @var Document $document */
@@ -389,7 +387,8 @@ class Documents_Manager {
 			'post_id' => $post_id,
 		] );
 
-		$document->save_template_type();
+		// Let the $document to re-save the template type by his way + version.
+		$document->save( [] );
 
 		return $document;
 	}
@@ -409,6 +408,11 @@ class Documents_Manager {
 		global $pagenow;
 
 		if ( ! in_array( $pagenow, [ 'post.php', 'edit.php' ], true ) ) {
+			return $allcaps;
+		}
+
+		// Don't touch not existing or not allowed caps.
+		if ( empty( $caps[0] ) || empty( $allcaps[ $caps[0] ] ) ) {
 			return $allcaps;
 		}
 
@@ -512,10 +516,13 @@ class Documents_Manager {
 		$document = $this->get( $document->get_post()->ID, false );
 
 		$return_data = [
+			'status' => $document->get_post()->post_status,
 			'config' => [
-				'last_edited' => $document->get_last_edited(),
-				'wp_preview' => [
-					'url' => $document->get_wp_preview_url(),
+				'document' => [
+					'last_edited' => $document->get_last_edited(),
+					'urls' => [
+						'wp_preview' => $document->get_wp_preview_url(),
+					],
 				],
 			],
 		];
@@ -559,6 +566,34 @@ class Documents_Manager {
 		}
 
 		return $success;
+	}
+
+	public function ajax_get_document_config( $request ) {
+		$post_id = absint( $request['id'] );
+
+		Plugin::$instance->editor->set_post_id( $post_id );
+
+		$document = $this->get_doc_or_auto_save( $post_id );
+
+		if ( ! $document ) {
+			throw new \Exception( 'Not Found.' );
+		}
+
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		// Set the global data like $post, $authordata and etc
+		Plugin::$instance->db->switch_to_post( $post_id );
+
+		$this->switch_to_document( $document );
+
+		// Change mode to Builder
+		Plugin::$instance->db->set_is_elementor_page( $post_id );
+
+		$doc_config = $document->get_config();
+
+		return $doc_config;
 	}
 
 	/**
@@ -620,35 +655,30 @@ class Documents_Manager {
 	}
 
 	/**
-	 * Register group.
-	 *
-	 * Registers a single document group.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @param string $id   Group ID.
-	 * @param array  $args Group data.
-	 *
-	 * @return Documents_Manager The updated document manager instance.
-	 */
-	public function register_group( $id, $args ) {
-		$this->groups[ $id ] = $args;
-		return $this;
-	}
-
-	/**
 	 * Get groups.
 	 *
-	 * Retrieve the list of all the registered document groups.
-	 *
 	 * @since 2.0.0
+	 * @deprecated 2.4.0
 	 * @access public
 	 *
-	 * @return array list of all the registered document groups.
+	 * @return array
 	 */
 	public function get_groups() {
-		return $this->groups;
+		_deprecated_function( __METHOD__, '2.4.0' );
+
+		return [];
+	}
+
+	public function localize_settings( $settings ) {
+		$translations = [];
+
+		foreach ( $this->get_document_types() as $type => $class ) {
+			$translations[ $type ] = $class::get_title();
+		}
+
+		return array_replace_recursive( $settings, [
+			'i18n' => $translations,
+		] );
 	}
 
 	private function register_types() {

@@ -1,0 +1,25 @@
+.elementor-control-type-icons {
+
+	.elementor-control-media__preview {
+
+		> * {
+			@include absolute-center;
+		}
+
+		i {
+			font-size: 70px;
+			color: $editor-dark;
+		}
+
+		svg {
+			height: 75%;
+		}
+	}
+
+	.elementor-control-icons--inline__svg {
+
+		i.eicon-upload {
+			font-size: 15px;
+		}
+	}
+}

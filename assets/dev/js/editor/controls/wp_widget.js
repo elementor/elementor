@@ -33,7 +33,7 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 				// Fake Widget ID
 				id: self.model.cid,
 				widget_type: self.model.get( 'widget' ),
-				data: self.elementSettingsModel.toJSON(),
+				data: self.container.settings.toJSON(),
 			},
 			success: function( data ) {
 				self.ui.form.html( data );

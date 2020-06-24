@@ -1,0 +1,18 @@
+{
+	"success": true,
+	"code": 200,
+	"data": {
+		"status": "publish",
+		"config": {
+			"document": {
+				"last_edited": "Last edited on <time>Jan 19, 12:34<\/time> by test",
+				"urls": {
+				},
+				"revisions": {
+				}
+			}
+		},
+		"latest_revisions": [],
+		"revisions_ids": []
+	}
+}

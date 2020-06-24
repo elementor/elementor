@@ -90,13 +90,13 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<div class="elementor-image-dimensions-field">
+				<div class="elementor-image-dimensions-field elementor-control-unit-2">
 					<?php $control_uid = $this->get_control_uid( 'width' ); ?>
 					<input id="<?php echo $control_uid; ?>" type="text" data-setting="width" />
 					<label for="<?php echo $control_uid; ?>" class="elementor-image-dimensions-field-description"><?php echo __( 'Width', 'elementor' ); ?></label>
 				</div>
 				<div class="elementor-image-dimensions-separator">x</div>
-				<div class="elementor-image-dimensions-field">
+				<div class="elementor-image-dimensions-field elementor-control-unit-2">
 					<?php $control_uid = $this->get_control_uid( 'height' ); ?>
 					<input id="<?php echo $control_uid; ?>" type="text" data-setting="height" />
 					<label for="<?php echo $control_uid; ?>" class="elementor-image-dimensions-field-description"><?php echo __( 'Height', 'elementor' ); ?></label>

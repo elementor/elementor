@@ -1,22 +1,5 @@
 .elementor-control-type-switcher {
 
-	&.elementor-label-inline {
-
-		> .elementor-control-content {
-
-			.elementor-control-field {
-
-				.elementor-control-title {
-					width: 70%;
-				}
-
-				.elementor-control-input-wrapper {
-					width: 30%;
-				}
-			}
-		}
-	}
-
 	.elementor-control-input-wrapper {
 		text-align: $end;
 	}
@@ -25,7 +8,6 @@
 		position: relative;
 		display: inline-block;
 		vertical-align: top;
-		width: 49px;
 		height: 20px;
 		background-color: white;
 		border-radius: 18px;
@@ -102,7 +84,8 @@
 	}
 
 	.elementor-switch-input:checked ~ .elementor-switch-handle {
-		left: 30px;
+		left: initial;
+		right: 1px;
 		box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
 	}
 }

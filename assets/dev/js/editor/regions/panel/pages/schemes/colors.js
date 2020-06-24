@@ -23,7 +23,7 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 	},
 
 	onSystemSchemeClick: function( event ) {
-		var $schemeClicked = jQuery( event.currentTarget ),
+		const $schemeClicked = jQuery( event.currentTarget ),
 			schemeName = $schemeClicked.data( 'schemeName' ),
 			scheme = elementor.config.system_schemes[ this.getType() ][ schemeName ].items;
 

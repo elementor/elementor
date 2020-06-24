@@ -19,14 +19,16 @@ class Admin {
 	 * @access public
 	 */
 	public function register_admin_menu() {
-		add_submenu_page(
+		$submenu_page = add_submenu_page(
 			Settings::PAGE_ID,
 			__( 'Connect', 'elementor' ),
 			__( 'Connect', 'elementor' ),
-			'manage_options',
+			'edit_posts',
 			self::PAGE_ID,
 			[ $this, 'render_page' ]
 		);
+
+		add_action( 'load-' . $submenu_page, [ $this, 'on_load_page' ] );
 	}
 
 	/**
@@ -49,7 +51,7 @@ class Admin {
 			$nonce_action = $_GET['app'] . $_GET['action'];
 
 			if ( ! $app ) {
-				wp_die( 'Unknown app: ' . $app_slug );
+				wp_die( 'Unknown app: ' . esc_attr( $app_slug ) );
 			}
 
 			if ( empty( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], $nonce_action ) ) {
@@ -103,6 +105,5 @@ class Admin {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 206 );
 		add_action( 'admin_head', [ $this, 'hide_menu_item' ] );
-		add_action( 'load-elementor_page_' . self::PAGE_ID, [ $this, 'on_load_page' ] );
 	}
 }

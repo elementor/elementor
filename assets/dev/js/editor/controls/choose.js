@@ -18,6 +18,16 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
+	applySavedValue: function() {
+		const currentValue = this.getControlValue();
+
+		if ( currentValue ) {
+			this.ui.inputs.filter( '[value="' + currentValue + '"]' ).prop( 'checked', true );
+		} else {
+			this.ui.inputs.filter( ':checked' ).prop( 'checked', false );
+		}
+	},
+
 	onMouseDownLabel: function( event ) {
 		var $clickedLabel = this.$( event.currentTarget ),
 			$selectedInput = this.$( '#' + $clickedLabel.attr( 'for' ) );
@@ -34,16 +44,6 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 
 		if ( $selectedInput.data( 'checked' ) ) {
 			$selectedInput.prop( 'checked', false ).trigger( 'change' );
-		}
-	},
-
-	onRender: function() {
-		ControlBaseDataView.prototype.onRender.apply( this, arguments );
-
-		var currentValue = this.getControlValue();
-
-		if ( currentValue ) {
-			this.ui.inputs.filter( '[value="' + currentValue + '"]' ).prop( 'checked', true );
 		}
 	},
 }, {

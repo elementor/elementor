@@ -4,11 +4,11 @@ namespace Elementor\Modules\PageTemplates;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\DocumentTypes\Post as PostDocument;
 use Elementor\DB;
-use Elementor\Modules\Library\Documents\Page as PageDocument;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Core\DocumentTypes\PageBase as PageBase;
+use Elementor\Modules\Library\Documents\Page as LibraryPageDocument;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -80,6 +80,12 @@ class Module extends BaseModule {
 
 			if ( $document ) {
 				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
+
+				if ( ! $template_path ) {
+					$kit_default_template = Plugin::$instance->kits_manager->get_current_settings( 'default_page_template' );
+					$template_path = $this->get_template_path( $kit_default_template );
+				}
+
 				if ( $template_path ) {
 					$template = $template_path;
 
@@ -232,7 +238,7 @@ class Module extends BaseModule {
 	 * @param Document $document The document instance.
 	 */
 	public function action_register_template_control( $document ) {
-		if ( $document instanceof PostDocument || $document instanceof PageDocument ) {
+		if ( $document instanceof PageBase || $document instanceof LibraryPageDocument ) {
 			$this->register_template_control( $document );
 		}
 	}
@@ -255,18 +261,28 @@ class Module extends BaseModule {
 
 		require_once ABSPATH . '/wp-admin/includes/template.php';
 
-		$options = [
-			'default' => __( 'Default', 'elementor' ),
-		];
-
-		$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
-
 		$document->start_injection( [
 			'of' => 'post_status',
 			'fallback' => [
 				'of' => 'post_title',
 			],
 		] );
+
+		$this->add_template_controls( $document, $control_id );
+
+		$document->end_injection();
+	}
+
+	public function add_template_controls( Document $document, $control_id, $include_post_templates = true ) {
+		$options = [
+			'default' => __( 'Default', 'elementor' ),
+		];
+
+		if ( $include_post_templates ) {
+			$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
+		} else {
+			$options += $this->add_page_templates( [], null, null );
+		}
 
 		$document->add_control(
 			$control_id,
@@ -316,8 +332,6 @@ class Module extends BaseModule {
 				],
 			]
 		);
-
-		$document->end_injection();
 	}
 
 	/**
@@ -356,6 +370,20 @@ class Module extends BaseModule {
 		}
 
 		return $check;
+	}
+
+	/**
+	 * Support `wp_body_open` action, available since WordPress 5.2.
+	 *
+	 * @since 2.7.0
+	 * @access public
+	 */
+	public static function body_open() {
+		if ( function_exists( 'wp_body_open' ) ) {
+			wp_body_open();
+		} else {
+			do_action( 'wp_body_open' );
+		}
 	}
 
 	/**

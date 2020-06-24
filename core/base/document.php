@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Settings\Page\Manager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\DB;
@@ -31,6 +32,7 @@ abstract class Document extends Controls_Stack {
 	 * Document type meta key.
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
+	const PAGE_META_KEY = '_elementor_page_settings';
 
 	private $main_id;
 
@@ -70,7 +72,12 @@ abstract class Document extends Controls_Stack {
 	 */
 	public static function get_properties() {
 		return [
+			'has_elements' => true,
 			'is_editable' => true,
+			'edit_capability' => '',
+			'show_in_finder' => true,
+			'show_on_admin_bar' => true,
+			'support_kit' => false,
 		];
 	}
 
@@ -81,11 +88,15 @@ abstract class Document extends Controls_Stack {
 	 */
 	public static function get_editor_panel_config() {
 		return [
+			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
+			'default_route' => 'panel/elements/categories',
+			'has_elements' => static::get_property( 'has_elements' ),
+			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
 				/* translators: %s: the document title. */
-				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),
+				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
 			],
 		];
 	}
@@ -157,10 +168,11 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.0.12
+	 * @deprecated 2.4.0 Use `Document::get_remote_library_config()` instead
 	 * @access public
 	 */
 	public function get_remote_library_type() {
-		return $this->get_name();
+		_deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_remote_library_config()' );
 	}
 
 	/**
@@ -221,10 +233,12 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.0.6
-	 * @deprecated 2.4.0 Use `Document::get_container_attributes` instead
+	 * @deprecated 2.4.0 Use `Document::get_container_attributes()` instead
 	 * @access public
 	 */
 	public function get_container_classes() {
+		_deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_container_attributes()' );
+
 		return '';
 	}
 
@@ -237,15 +251,16 @@ abstract class Document extends Controls_Stack {
 			'class' => 'elementor elementor-' . $id,
 		];
 
-		if ( ! Plugin::$instance->preview->is_preview_mode( $id ) ) {
-			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
+		$version_meta = $this->get_main_meta( '_elementor_version' );
+
+		if ( version_compare( $version_meta, '2.5.0', '<' ) ) {
+			$attributes['class'] .= ' elementor-bc-flex-widget';
 		}
 
-		// TODO: BC since 2.4.0
-		$classes = $this->get_container_classes();
-
-		if ( $classes ) {
-			$attributes['class'] .= ' ' . $classes;
+		if ( Plugin::$instance->preview->is_preview() ) {
+			$attributes['data-elementor-title'] = static::get_title();
+		} else {
+			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
 		}
 
 		return $attributes;
@@ -257,10 +272,17 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function get_wp_preview_url() {
 		$main_post_id = $this->get_main_id();
+		$document = $this;
+
+		// Ajax request from editor.
+		if ( ! empty( $_POST['initial_document_id'] ) ) {
+			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
+		}
 
 		$url = get_preview_post_link(
-			$main_post_id,
+			$document->get_main_id(),
 			[
+				'preview_id' => $main_post_id,
 				'preview_nonce' => wp_create_nonce( 'post_preview_' . $main_post_id ),
 			]
 		);
@@ -403,27 +425,92 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function is_editable_by_current_user() {
+		$edit_capability = static::get_property( 'edit_capability' );
+		if ( $edit_capability && ! current_user_can( $edit_capability ) ) {
+			return false;
+		}
+
 		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
+	public function add_repeater_row( $control_id, $item ) {
+		$meta_key = Manager::META_KEY;
+		$document_settings = $this->get_meta( $meta_key );
+
+		if ( ! $document_settings ) {
+			$document_settings = [];
+		}
+
+		if ( ! isset( $document_settings[ $control_id ] ) ) {
+			$document_settings[ $control_id ] = [];
+		}
+
+		$document_settings[ $control_id ][] = $item;
+
+		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+		$page_settings_manager->save_settings( $document_settings, $this->get_id() );
+
+		$autosave = $this->get_autosave();
+
+		if ( $autosave ) {
+			$autosave->add_repeater_row( $control_id, $item );
+		}
+	}
+
 	/**
-	 * @since 2.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _get_initial_config() {
-		return [
+	protected function get_initial_config() {
+		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
+
+		$locked_user = Plugin::$instance->editor->get_locked_user( $this->get_main_id() );
+
+		if ( $locked_user ) {
+			$locked_user = $locked_user->display_name;
+		}
+
+		$post_type_object = get_post_type_object( $this->get_main_post()->post_type );
+
+		$settings = SettingsManager::get_settings_managers_config();
+
+		$config = [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
-			'remote_type' => $this->get_remote_library_type(),
+			'version' => $this->get_main_meta( '_elementor_version' ),
+			'settings' => $settings['page'],
+			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
+			'container' => 'body',
+			'post_type_title' => $this->get_post_type_title(),
+			'user' => [
+				'can_publish' => current_user_can( $post_type_object->cap->publish_posts ),
+
+				// Deprecated config since 2.9.0.
+				'locked' => $locked_user,
+			],
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),
 				'wp_preview' => $this->get_wp_preview_url(),
 				'permalink' => $this->get_permalink(),
+				'have_a_look' => $this->get_have_a_look_url(),
 			],
 		];
+
+		if ( static::get_property( 'has_elements' ) ) {
+			$config['elements'] = $this->get_elements_raw_data( null, true );
+			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
+		}
+
+		$additional_config = apply_filters( 'elementor/document/config', [], $this->get_main_id() );
+
+		if ( ! empty( $additional_config ) ) {
+			$config = array_replace_recursive( $config, $additional_config );
+		}
+
+		return $config;
 	}
 
 	/**
@@ -431,50 +518,7 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-		$this->start_controls_section(
-			'document_settings',
-			[
-				'label' => __( 'General Settings', 'elementor' ),
-				'tab' => Controls_Manager::TAB_SETTINGS,
-			]
-		);
-
-		$this->add_control(
-			'post_title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => $this->post->post_title,
-				'label_block' => true,
-				'separator' => 'none',
-			]
-		);
-
-		$post_type_object = get_post_type_object( $this->post->post_type );
-
-		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
-		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
-
-		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
-
-			$statuses = get_post_statuses();
-			if ( 'future' === $this->get_main_post()->post_status ) {
-				$statuses['future'] = __( 'Future', 'elementor' );
-			}
-
-			$this->add_control(
-				'post_status',
-				[
-					'label' => __( 'Status', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => $this->get_main_post()->post_status,
-					'options' => $statuses,
-				]
-			);
-		}
-
-		$this->end_controls_section();
-
+		$this->register_document_controls();
 		/**
 		 * Register document controls.
 		 *
@@ -500,26 +544,60 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
-		if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
-			if ( ! defined( 'DOING_AUTOSAVE' ) ) {
-				define( 'DOING_AUTOSAVE', true );
-			}
+		/**
+		 * Before document save.
+		 *
+		 * Fires when document save starts on Elementor.
+		 *
+		 * @since 2.5.12
+		 *
+		 * @param \Elementor\Core\Base\Document $this The current document.
+		 * @param $data.
+		 */
+		do_action( 'elementor/document/before_save', $this, $data );
+
+		if ( ! current_user_can( 'unfiltered_html' ) ) {
+			$data = wp_kses_post_deep( $data );
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
+			if ( isset( $data['settings']['post_status'] ) && DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
+				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
+					define( 'DOING_AUTOSAVE', true );
+				}
+			}
+
 			$this->save_settings( $data['settings'] );
+
+			// Refresh post after save settings.
+			$this->post = get_post( $this->post->ID );
 		}
 
-		// Refresh post after save settings.
-		$this->post = get_post( $this->post->ID );
+		// Don't check is_empty, because an empty array should be saved.
+		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
+			$this->save_elements( $data['elements'] );
+		}
 
-		// TODO: refresh settings.
-		$this->save_elements( $data['elements'] );
+		$this->save_template_type();
+
+		$this->save_version();
 
 		// Remove Post CSS
-		$post_css = new Post_CSS( $this->post->ID );
+		$post_css = Post_CSS::create( $this->post->ID );
 
 		$post_css->delete();
+
+		/**
+		 * After document save.
+		 *
+		 * Fires when document save is complete.
+		 *
+		 * @since 2.5.12
+		 *
+		 * @param \Elementor\Core\Base\Document $this The current document.
+		 * @param $data.
+		 */
+		do_action( 'elementor/document/after_save', $this, $data );
 
 		return true;
 	}
@@ -638,6 +716,10 @@ abstract class Document extends Controls_Stack {
 	 * @return array
 	 */
 	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
+		if ( ! static::get_property( 'has_elements' ) ) {
+			return [];
+		}
+
 		if ( is_null( $data ) ) {
 			$data = $this->get_elements_data();
 		}
@@ -705,7 +787,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function convert_to_elementor() {
-		$this->save_template_type();
+		$this->save( [] );
 
 		if ( empty( $this->post->post_content ) ) {
 			return [];
@@ -765,10 +847,8 @@ abstract class Document extends Controls_Stack {
 		}
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
-			<div class="elementor-inner">
-				<div class="elementor-section-wrap">
-					<?php $this->print_elements( $elements_data ); ?>
-				</div>
+			<div class="elementor-section-wrap">
+				<?php $this->print_elements( $elements_data ); ?>
 			</div>
 		</div>
 		<?php
@@ -789,7 +869,7 @@ abstract class Document extends Controls_Stack {
 	public function get_panel_page_settings() {
 		return [
 			/* translators: %s: Document title */
-			'title' => sprintf( __( '%s Settings', 'elementor' ), self::get_title() ),
+			'title' => sprintf( __( '%s Settings', 'elementor' ), static::get_title() ),
 		];
 	}
 
@@ -864,8 +944,6 @@ abstract class Document extends Controls_Stack {
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
-		update_metadata( 'post', $this->post->ID, '_elementor_version', DB::DB_VERSION );
-
 		/**
 		 * After saving data.
 		 *
@@ -900,15 +978,24 @@ abstract class Document extends Controls_Stack {
 		return false;
 	}
 
-	/**
-	 * @since 2.0.0
-	 * @access public
-	 * @deprecated Use `save_template_type`.
-	 */
-	public function save_type() {
-		// TODO: _deprecated_function( __METHOD__, '2.2.0', 'save_template_type' );
+	public function save_version() {
+		if ( ! defined( 'IS_ELEMENTOR_UPGRADE' ) ) {
+			// Save per revision.
+			$this->update_meta( '_elementor_version', ELEMENTOR_VERSION );
 
-		$this->save_template_type();
+			/**
+			 * Document version save.
+			 *
+			 * Fires when document version is saved on Elementor.
+			 * Will not fire during Elementor Upgrade.
+			 *
+			 * @since 2.5.12
+			 *
+			 * @param \Elementor\Core\Base\Document $this The current document.
+			 *
+			 */
+			do_action( 'elementor/document/save_version', $this );
+		}
 	}
 
 	/**
@@ -1067,6 +1154,17 @@ abstract class Document extends Controls_Stack {
 		parent::__construct( $data );
 	}
 
+	protected function get_remote_library_config() {
+		$config = [
+			'type' => 'block',
+			'default_route' => 'templates/blocks',
+			'category' => $this->get_name(),
+			'autoImportSettings' => false,
+		];
+
+		return $config;
+	}
+
 	/**
 	 * @since 2.0.4
 	 * @access protected
@@ -1093,5 +1191,59 @@ abstract class Document extends Controls_Stack {
 
 			$element->print_element();
 		}
+	}
+
+	protected function register_document_controls() {
+		$this->start_controls_section(
+			'document_settings',
+			[
+				'label' => __( 'General Settings', 'elementor' ),
+				'tab' => Controls_Manager::TAB_SETTINGS,
+			]
+		);
+
+		$this->add_control(
+			'post_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => $this->post->post_title,
+				'label_block' => true,
+				'separator' => 'none',
+			]
+		);
+
+		$post_type_object = get_post_type_object( $this->post->post_type );
+
+		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
+		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
+
+		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
+
+			$statuses = $this->get_post_statuses();
+			if ( 'future' === $this->get_main_post()->post_status ) {
+				$statuses['future'] = __( 'Future', 'elementor' );
+			}
+
+			$this->add_control(
+				'post_status',
+				[
+					'label' => __( 'Status', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => $this->get_main_post()->post_status,
+					'options' => $statuses,
+				]
+			);
+		}
+
+		$this->end_controls_section();
+	}
+
+	protected function get_post_statuses() {
+		return get_post_statuses();
+	}
+
+	protected function get_have_a_look_url() {
+		return $this->get_permalink();
 	}
 }

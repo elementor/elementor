@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Testing\Elementor_Test_Base;
 
@@ -9,13 +10,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
 	public function test_should_return_elementor_pro_link() {
-		$this->assertSame( self::BASE_LINK . '&utm_term=twentysixteen', Utils::get_pro_link( self::BASE_LINK ) );
-	}
-
-	public function test_should_return_elementor_pro_link_with_partner_id() {
-		$id = 'invalid_partner_id';
-		define( 'ELEMENTOR_PARTNER_ID', $id );
-		$this->assertSame( self::BASE_LINK . "&utm_term=twentysixteen&partner_id=$id", Utils::get_pro_link( self::BASE_LINK ) );
+		$this->assertSame( self::BASE_LINK . '&utm_term=twentynineteen', Utils::get_pro_link( self::BASE_LINK ) );
 	}
 
 	public function test_should_return_source_of_placeholder_image() {
@@ -23,10 +18,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_edit_link() {
-		$this->assertSame( '', Utils::get_edit_link() );
-
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$edit_link = Utils::get_edit_link( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id );
+		$edit_link = $document->get_edit_url();
 		$this->assertContains( '/post.php?post=', $edit_link );
 		$this->assertContains( '&action=elementor', $edit_link );
 	}
@@ -36,9 +30,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	 */
 	public function test_should_confirm_ajax() {
 		if ( defined( 'DOING_AJAX' ) ) {
-			$this->assertTrue( Utils::is_ajax() );
+			$this->assertTrue( wp_doing_ajax() );
 		} else {
-			$this->assertFalse( Utils::is_ajax() );
+			$this->assertFalse( wp_doing_ajax() );
 		}
 	}
 
@@ -48,7 +42,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_preview_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$preview_url = Utils::get_preview_url( $post_id );
+		$preview_url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 		$this->assertContains( '/?p=', $preview_url );
 		$this->assertContains( '&elementor-preview=', $preview_url );
 		$this->assertContains( '&ver=', $preview_url );
@@ -56,7 +50,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_wordpress_preview_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$wp_preview_url = Utils::get_wp_preview_url( $post_id );
+		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 		$this->assertContains( '/?p=', $wp_preview_url );
 		$this->assertContains( '&preview_nonce=', $wp_preview_url );
 		$this->assertContains( '&preview=', $wp_preview_url );
@@ -91,7 +85,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_not_get_exit_to_dashboard_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$this->assertNull( Utils::get_exit_to_dashboard_url( $post_id ) );
+		$this->assertNull( Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url() );
 	}
 
 
@@ -117,7 +111,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_when_and_how_edited_the_post_last() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$this->assertRegExp( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Utils::get_last_edited( $post_id ) );
+		$this->assertRegExp( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Plugin::$instance->documents->get( $post_id )->get_last_edited() );
 	}
 
 	public function test_should_get_post_auto_save() {
@@ -146,5 +140,44 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		}
 
 		$this->assertNull( \Elementor\Embed::get_video_properties( 'https://www.youtube.com/' ) );
+	}
+
+	/**
+	 * Test Should Receive a string with HTML entities and return the string with the HTML Entities decoded
+	 *
+	 * This tests the urlencode_html_entities() utility method, to see that it properly decodes HTML Entities and then correctly URL-encodes them to be used in URLs, such as social media sharing
+	 */
+	public function test_should_return_decoded_string() {
+		// This is a filter from the WordPress core wp_get_document_title() function.
+		// The filter is used here to make the wp_get_document_title() function return our test title.
+		add_filter( 'document_title_parts', function () {
+			return [
+				'title' => '"This is a string" with a variety of ‘HTML entities’. \'What?\' & (more) #stupid “things”'
+			];
+		} );
+
+		$before_encoding = wp_get_document_title();
+
+		$valid_encoding = '%22This%20is%20a%20string%22%20with%20a%20variety%20of%20%E2%80%98HTML%20entities%E2%80%99.%20%27What%3F%27%20%26%20%28more%29%20%23stupid%20%E2%80%9Cthings%E2%80%9D';
+		$after_encoding = Utils::urlencode_html_entities( $before_encoding );
+
+		$this->assertSame( $valid_encoding, $after_encoding );
+	}
+
+	public function test_is_empty() {
+		$this->assertEquals( false, Utils::is_empty('0' ),
+			"'0' is not empty" );
+
+		$this->assertEquals( true, Utils::is_empty('' ),
+			"'' is empty" );
+
+		$this->assertEquals( true, Utils::is_empty( [], 'key' ),
+			"[] with undefined key, is empty" );
+
+		$this->assertEquals( true, Utils::is_empty( [ 'key' => '' ], 'key' ),
+			"[ 'key' => '' ] is empty" );
+
+		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
+			"[ 'key' => '0' ] is empty" );
 	}
 }

@@ -35,18 +35,7 @@ class Fonts {
 	 */
 	const LOCAL = 'local';
 
-	/**
-	 * Additional fonts.
-	 *
-	 * Used to hold additional fonts.
-	 *
-	 * @since 1.9.4
-	 * @access private
-	 * @static
-	 *
-	 * @var null|array
-	 */
-	private static $additional_fonts = null;
+	private static $fonts;
 
 	/**
 	 * Font groups.
@@ -59,7 +48,7 @@ class Fonts {
 	 *
 	 * @var null|array
 	 */
-	private static $font_groups = null;
+	private static $font_groups;
 
 	/**
 	 * Get font Groups.
@@ -109,7 +98,7 @@ class Fonts {
 	 * @return array Supported fonts.
 	 */
 	public static function get_fonts() {
-		if ( null === self::$additional_fonts ) {
+		if ( null === self::$fonts ) {
 			$additional_fonts = [];
 
 			/**
@@ -123,10 +112,10 @@ class Fonts {
 			 */
 			$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', $additional_fonts );
 
-			self::$additional_fonts = $additional_fonts;
+			self::$fonts = array_merge( self::get_native_fonts(), $additional_fonts );
 		}
 
-		return array_merge( self::get_native_fonts(), self::$additional_fonts );
+		return self::$fonts;
 	}
 
 	/**

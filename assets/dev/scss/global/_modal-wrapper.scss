@@ -1,7 +1,7 @@
 .elementor-templates-modal {
 
 	.dialog-widget-content {
-		font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
+		font-family: $admin-font-family;
 		background-color: $editor-background-light;
 		width: 100%;
 
@@ -25,14 +25,36 @@
 		}
 
 		&-buttons-wrapper {
+			background-color: #fff;
+			border: none;
 			display: none;
+			justify-content: flex-end;
+			padding: 5px;
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+			position: relative;
+
+			.elementor-button {
+				height: 40px;
+				@include margin-start(5px);
+
+				&-success {
+					padding: 12px 36px;
+					color: #fff;
+					width: initial;
+					font-size: 15px;
+
+					&:hover {
+						background-color: $editor-success;
+					}
+				}
+			}
 		}
 
 		&-message {
 			height: 750px;
 			max-height: 85vh;
 			overflow: auto;
-			padding: 25px 30px 30px;
+			padding-top: 25px;
 		}
 
 		&-content {
@@ -67,9 +89,6 @@
 			}
 
 			&__icon-wrapper {
-				padding: 4px 7px 6px;
-				background-image: linear-gradient(-135deg, $brand-color-light, $brand-color-dark);
-				border-radius: 2px;
 				@include margin-end(10px);
 			}
 
@@ -78,7 +97,6 @@
 			}
 
 			i {
-				color: #fff;
 				font-size: 10px;
 			}
 		}
@@ -97,7 +115,7 @@
 
 			> i {
 				font-size: 20px;
-				transition: color .5s;
+				transition: $transition-hover;
 				cursor: pointer;
 
 				&:not(:hover) {
@@ -142,5 +160,16 @@
 				}
 			}
 		}
+	}
+
+	&__sidebar {
+		flex-shrink: 0;
+		width: 25%;
+		background-color: rgba(255, 255, 255, 0.3);
+	}
+
+	&__content {
+		flex-grow: 1;
+		box-shadow: 0 0 13px inset rgba(0, 0, 0, 0.05);
 	}
 }

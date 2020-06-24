@@ -19,17 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Model extends Controls_Stack {
 
 	/**
-	 * Get CSS wrapper selector.
-	 *
-	 * Retrieve the wrapper selector for the current panel.
-	 *
-	 * @since 1.6.0
-	 * @access public
-	 * @abstract
-	 */
-	abstract public function get_css_wrapper_selector();
-
-	/**
 	 * Get panel page settings.
 	 *
 	 * Retrieve the page setting for the current panel.

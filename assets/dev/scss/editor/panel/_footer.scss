@@ -96,13 +96,6 @@
 		margin-bottom: 1px;
 	}
 
-	&[data-device-mode="mobile-landscape"] {
-
-		.fa-mobile {
-			transform: rotate(-90deg);
-		}
-	}
-
 	&:hover {
 		background-color: rgba(0, 0, 0, 0.2);
 	}

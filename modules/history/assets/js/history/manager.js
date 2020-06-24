@@ -1,169 +1,113 @@
-var HistoryCollection = require( './collection' ),
-	HistoryItem = require( './item' ),
-	ElementHistoryBehavior = require( './element-behavior' ),
-	CollectionHistoryBehavior = require( './collection-behavior' );
+import ItemModel from './item-model';
 
-var	Manager = function() {
-	var self = this,
-		currentItemID = null,
-		items = new HistoryCollection(),
-		editorSaved = false,
-		active = true;
+/**
+ * TODO: consider refactor this class.
+ * TODO: should be `Document/History` component.
+ * TODO: should be attached to elementor.history.history + BC.
+ */
+export default class HistoryManager {
+	currentItemID = null;
 
-	var translations = {
+	items = new Backbone.Collection( [], { model: ItemModel } );
+
+	active = true;
+
+	translations = {
 		add: elementor.translate( 'added' ),
-		remove: elementor.translate( 'removed' ),
 		change: elementor.translate( 'edited' ),
+		disable: elementor.translate( 'disabled' ),
+		duplicate: elementor.translate( 'duplicate' ),
+		enable: elementor.translate( 'enabled' ),
 		move: elementor.translate( 'moved' ),
+		paste: elementor.translate( 'pasted' ),
 		paste_style: elementor.translate( 'style_pasted' ),
+		remove: elementor.translate( 'removed' ),
 		reset_style: elementor.translate( 'style_reset' ),
+		reset_settings: elementor.translate( 'settings_reset' ),
 	};
 
-	var addBehaviors = function( behaviors ) {
-		behaviors.ElementHistory = {
-			behaviorClass: ElementHistoryBehavior,
-		};
+	constructor( document ) {
+		this.document = document;
 
-		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior,
-		};
+		this.currentItem = new Backbone.Model( {
+			id: 0,
+		} );
+	}
 
-		return behaviors;
-	};
-
-	var addCollectionBehavior = function( behaviors ) {
-		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior,
-		};
-
-		return behaviors;
-	};
-
-	var getActionLabel = function( itemData ) {
-		if ( translations[ itemData.type ] ) {
-			return translations[ itemData.type ];
+	getActionLabel( itemData ) {
+		// TODO: this function should be static.
+		if ( this.translations[ itemData.type ] ) {
+			return this.translations[ itemData.type ];
 		}
 
 		return itemData.type;
-	};
+	}
 
-	var navigate = function( isRedo ) {
-		var currentItem = items.find( function( model ) {
+	navigate( isRedo ) {
+		const currentItem = this.items.find( ( model ) => {
 				return 'not_applied' === model.get( 'status' );
 			} ),
-			currentItemIndex = items.indexOf( currentItem ),
+			currentItemIndex = this.items.indexOf( currentItem ),
 			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex + 1;
 
-		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0 || requiredIndex >= items.length ) {
+		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0 || requiredIndex >= this.items.length ) {
 			return;
 		}
 
-		self.doItem( requiredIndex );
-	};
+		this.doItem( requiredIndex );
+	}
 
-	var addHotKeys = function() {
-		var H_KEY = 72,
-			Y_KEY = 89,
-			Z_KEY = 90;
+	setActive( value ) {
+		this.active = value;
+	}
 
-		elementorCommon.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
-			isWorthHandling: function( event ) {
-				return elementorCommon.hotKeys.isControlEvent( event ) && event.shiftKey;
-			},
-			handle: function() {
-				elementor.getPanelView().setPage( 'historyPage' );
-			},
-		} );
+	getActive( value ) {
+		return this.active;
+	}
 
-		var navigationWorthHandling = function( event ) {
-			return items.length && elementorCommon.hotKeys.isControlEvent( event ) && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
-		};
+	getItems() {
+		return this.items;
+	}
 
-		elementorCommon.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
-			isWorthHandling: navigationWorthHandling,
-			handle: () => {
-				navigate( true );
-			},
-		} );
+	startItem( itemData ) {
+		this.currentItemID = this.addItem( itemData );
 
-		elementorCommon.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
-			isWorthHandling: navigationWorthHandling,
-			handle: function( event ) {
-				navigate( event.shiftKey );
-			},
-		} );
-	};
+		return this.currentItemID;
+	}
 
-	var onPanelSave = function() {
-		if ( items.length >= 2 ) {
-			// Check if it's a save after made changes, `items.length - 1` is the `Editing Started Item
-			var firstEditItem = items.at( items.length - 2 );
-			editorSaved = ( 'not_applied' === firstEditItem.get( 'status' ) );
+	endItem( id ) {
+		if ( this.currentItemID !== id ) {
+			return;
 		}
-	};
 
-	var init = function() {
-		addHotKeys();
+		this.currentItemID = null;
+	}
 
-		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
-		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
+	deleteItem( id ) {
+		const item = this.items.findWhere( {
+			id: id,
+		} );
 
-		elementor.channels.data
-			.on( 'drag:before:update', self.startMovingItem )
-			.on( 'drag:after:update', self.endItem )
+		this.items.remove( item );
 
-			.on( 'element:before:add', self.startAddElement )
-			.on( 'element:after:add', self.endItem )
+		this.currentItemID = null;
+	}
 
-			.on( 'element:before:remove', self.startRemoveElement )
-			.on( 'element:after:remove', self.endItem )
+	isItemStarted() {
+		return null !== this.currentItemID;
+	}
 
-			.on( 'element:before:paste:style', self.startPasteStyle )
-			.on( 'element:after:paste:style', self.endItem )
+	getCurrentId() {
+		return this.currentItemID;
+	}
 
-			.on( 'element:before:reset:style', self.startResetStyle )
-			.on( 'element:after:reset:style', self.endItem )
-
-			.on( 'section:before:drop', self.startDropElement )
-			.on( 'section:after:drop', self.endItem )
-
-			.on( 'template:before:insert', self.startInsertTemplate )
-			.on( 'template:after:insert', self.endItem );
-
-		elementor.channels.editor.on( 'saved', onPanelSave );
-	};
-
-	this.setActive = function( value ) {
-		active = value;
-	};
-
-	this.getActive = function() {
-		return active;
-	};
-
-	this.getItems = function() {
-		return items;
-	};
-
-	this.startItem = function( itemData ) {
-		currentItemID = this.addItem( itemData );
-	};
-
-	this.endItem = function() {
-		currentItemID = null;
-	};
-
-	this.isItemStarted = function() {
-		return null !== currentItemID;
-	};
-
-	this.addItem = function( itemData ) {
+	addItem( itemData ) {
 		if ( ! this.getActive() ) {
 			return;
 		}
 
-		if ( ! items.length ) {
-			items.add( {
+		if ( ! this.items.length ) {
+			this.items.add( {
 				status: 'not_applied',
 				title: elementor.translate( 'editing_started' ),
 				subTitle: '',
@@ -173,59 +117,43 @@ var	Manager = function() {
 		}
 
 		// Remove old applied items from top of list
-		while ( items.length && 'applied' === items.first().get( 'status' ) ) {
-			items.shift();
+		while ( this.items.length && 'applied' === this.items.first().get( 'status' ) ) {
+			this.items.shift();
 		}
 
-		var id = currentItemID ? currentItemID : new Date().getTime();
+		const id = this.currentItemID ? this.currentItemID : new Date().getTime();
 
-		var	currentItem = items.findWhere( {
+		let currentItem = this.items.findWhere( {
 			id: id,
 		} );
 
 		if ( ! currentItem ) {
-			currentItem = new HistoryItem( {
+			currentItem = new ItemModel( {
 				id: id,
 				title: itemData.title,
 				subTitle: itemData.subTitle,
-				action: getActionLabel( itemData ),
+				action: this.getActionLabel( itemData ),
 				type: itemData.type,
-				elementType: itemData.elementType,
 			} );
 
-			self.startItemTitle = '';
-			self.startItemAction = '';
+			this.startItemTitle = '';
+			this.startItemAction = '';
 		}
 
-		var position = 0;
+		currentItem.get( 'items' ).add( itemData, { at: 0 } );
 
-		// Temp fix. On move a column - insert the `remove` subItem before the section changes subItem.
-		// In a multi columns section - the structure has been changed,
-		// In a one column section - it's filled with an empty column,
-		// The order is important for the `redoItem`, that needed to change the section first
-		// and only after that - to remove the column.
-		if ( 'column' === itemData.elementType && 'remove' === itemData.type && 'column' === currentItem.get( 'elementType' ) ) {
-			position = 1;
-		}
+		this.items.add( currentItem, { at: 0 } );
 
-		currentItem.get( 'items' ).add( itemData, { at: position } );
-
-		items.add( currentItem, { at: 0 } );
-
-		var panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().render();
-		}
+		this.updateCurrentItem( currentItem );
 
 		return id;
-	};
+	}
 
-	this.doItem = function( index ) {
+	doItem( index ) {
 		// Don't track while restoring the item
 		this.setActive( false );
 
-		var item = items.at( index );
+		const item = this.items.at( index );
 
 		if ( 'not_applied' === item.get( 'status' ) ) {
 			this.undoItem( index );
@@ -235,175 +163,97 @@ var	Manager = function() {
 
 		this.setActive( true );
 
-		var panel = elementor.getPanelView(),
+		const panel = elementor.getPanelView(),
 			panelPage = panel.getCurrentPageView(),
-			viewToScroll;
+			editedElementView = panelPage.getOption( 'editedElementView' );
 
-		if ( 'editor' === panel.getCurrentPageName() ) {
-			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
+		let viewToScroll;
+
+		if ( $e.routes.isPartOf( 'panel/editor' ) && editedElementView ) {
+			if ( editedElementView.isDestroyed ) {
 				// If the the element isn't exist - show the history panel
-				panel.setPage( 'historyPage' );
+				$e.route( 'panel/history/actions' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
-				viewToScroll = panelPage.getOption( 'editedElementView' );
+				viewToScroll = editedElementView;
 			}
-		} else {
-			if ( 'historyPage' === panel.getCurrentPageName() ) {
-				panelPage.render();
-			}
+		} else if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
+			const historyItem = item.get( 'items' ).first();
 
-			// Try scroll to affected element.
-			if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
-				var history = item.get( 'items' ).first().get( 'history' );
+			if ( historyItem.get( 'restore' ) ) {
+				let container = 'sub-add' === historyItem.get( 'type' ) ?
+					historyItem.get( 'data' ).containerToRestore :
+					historyItem.get( 'container' ) || historyItem.get( 'containers' );
 
-				if ( history && history.behavior.view.model ) {
-					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
+				if ( Array.isArray( container ) ) {
+					container = container[ 0 ];
+				}
+
+				if ( container ) {
+					viewToScroll = container.lookup().view;
 				}
 			}
 		}
 
+		$e.internal( 'document/save/set-is-modified', {
+			status: item.get( 'id' ) !== this.document.editor.lastSaveHistoryId,
+		} );
+
+		this.updateCurrentItem( item );
+
 		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );
 		}
+	}
 
-		if ( item.get( 'editing_started' ) ) {
-			if ( ! editorSaved ) {
-				elementor.saver.setFlagEditorChange( false );
-			}
-		}
-	};
-
-	this.undoItem = function( index ) {
-		var item;
-
-		for ( var stepNum = 0; stepNum < index; stepNum++ ) {
-			item = items.at( stepNum );
+	undoItem( index ) {
+		for ( let stepNum = 0; stepNum < index; stepNum++ ) {
+			const item = this.items.at( stepNum );
 
 			if ( 'not_applied' === item.get( 'status' ) ) {
 				item.get( 'items' ).each( function( subItem ) {
-					var history = subItem.get( 'history' );
+					const restore = subItem.get( 'restore' );
 
-					if ( history ) { /* type duplicate first items hasn't history */
-						history.behavior.restore( subItem );
+					if ( restore ) {
+						restore( subItem );
 					}
 				} );
 
 				item.set( 'status', 'applied' );
 			}
 		}
-	};
+	}
 
-	this.redoItem = function( index ) {
-		for ( var stepNum = items.length - 1; stepNum >= index; stepNum-- ) {
-			var item = items.at( stepNum );
+	redoItem( index ) {
+		for ( let stepNum = this.items.length - 1; stepNum >= index; stepNum-- ) {
+			const item = this.items.at( stepNum );
 
 			if ( 'applied' === item.get( 'status' ) ) {
 				var reversedSubItems = _.toArray( item.get( 'items' ).models ).reverse();
 
 				_( reversedSubItems ).each( function( subItem ) {
-					var history = subItem.get( 'history' );
+					const restore = subItem.get( 'restore' );
 
-					if ( history ) { /* type duplicate first items hasn't history */
-						history.behavior.restore( subItem, true );
+					if ( restore ) {
+						restore( subItem, true );
 					}
 				} );
 
 				item.set( 'status', 'not_applied' );
 			}
 		}
-	};
+	}
 
-	this.getModelLabel = function( model ) {
-		if ( ! ( model instanceof Backbone.Model ) ) {
-			model = new Backbone.Model( model );
+	updateCurrentItem( item ) {
+		// Save last selected item.
+		this.currentItem = item;
+
+		this.updatePanelPageCurrentItem();
+	}
+
+	updatePanelPageCurrentItem() {
+		if ( $e.routes.is( 'panel/history/actions' ) ) {
+			elementor.getPanelView().getCurrentPageView().getCurrentTab().updateCurrentItem();
 		}
-
-		return elementor.getElementData( model ).title;
-	};
-
-	this.findView = function( modelID, views ) {
-		var founded = false;
-
-		if ( ! views ) {
-			views = elementor.getPreviewView().children;
-		}
-
-		_.each( views._views, ( view ) => {
-			if ( founded ) {
-				return;
-			}
-			// Widget global used getEditModel
-			var model = view.getEditModel ? view.getEditModel() : view.model;
-
-			if ( modelID === model.get( 'id' ) ) {
-				founded = view;
-			} else if ( view.children && view.children.length ) {
-				founded = this.findView( modelID, view.children );
-			}
-		} );
-
-		return founded;
-	};
-
-	this.startMovingItem = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'move',
-			title: self.getModelLabel( model ),
-			elementType: model.elType || model.get( 'elType' ),
-		} );
-	};
-
-	this.startInsertTemplate = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: elementor.translate( 'template' ),
-			subTitle: model.get( 'title' ),
-			elementType: 'template',
-		} );
-	};
-
-	this.startDropElement = function() {
-		var elementView = elementor.channels.panelElements.request( 'element:selected' );
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: self.getModelLabel( elementView.model ),
-			elementType: elementView.model.get( 'widgetType' ) || elementView.model.get( 'elType' ),
-		} );
-	};
-
-	this.startAddElement = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'add',
-			title: self.getModelLabel( model ),
-			elementType: model.elType,
-		} );
-	};
-
-	this.startPasteStyle = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'paste_style',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
-	};
-
-	this.startResetStyle = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'reset_style',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
-	};
-
-	this.startRemoveElement = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'remove',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' ),
-		} );
-	};
-
-	init();
-};
-
-module.exports = new Manager();
+	}
+}

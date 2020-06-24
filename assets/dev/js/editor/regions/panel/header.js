@@ -17,18 +17,24 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 		'click @ui.menuButton': 'onClickMenu',
 	},
 
+	behaviors: function() {
+		return elementor.hooks.applyFilters( 'panel/header/behaviors', {}, this );
+	},
+
 	setTitle: function( title ) {
 		this.ui.title.html( title );
 	},
 
 	onClickAdd: function() {
-		elementor.getPanelView().setPage( 'elements' );
+		$e.route( 'panel/elements/categories' );
 	},
 
 	onClickMenu: function() {
-		const nextPage = 'menu' === elementor.getPanelView().getCurrentPageName() ? 'elements' : 'menu';
-
-		elementor.getPanelView().setPage( nextPage );
+		if ( $e.routes.is( 'panel/menu' ) ) {
+			$e.route( 'panel/elements/categories' );
+		} else {
+			$e.route( 'panel/menu' );
+		}
 	},
 } );
 

@@ -1,0 +1,258 @@
+#elementor-icons-manager {
+
+	&-modal {
+
+		.dialog-message {
+			padding: 0;
+			height: 700px;
+		}
+
+		.dialog-content {
+			display: flex;
+		}
+
+		.dialog-buttons-wrapper {
+			display: flex;
+		}
+	}
+
+	&__wrapper {
+		display: flex;
+	}
+
+	&__sidebar {
+
+		@media (max-width: $editor-screen-xs-max) {
+			display: none;
+		}
+	}
+
+	&__tab-links {
+		margin-top: 30px;
+	}
+
+	&__upload {
+		margin: 20px 45px;
+		padding-top: 35px;
+		border-top: 1px solid $editor-background;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		@media (max-width: $editor-screen-lg-max) {
+			margin: 20px 25px;
+		}
+
+		&__title {
+			color: $editor-light;
+			font-size: 11px;
+			text-transform: uppercase;
+		}
+	}
+
+	&__main {
+		display: flex;
+		flex-direction: column;
+		padding: 30px 80px 0;
+
+		@media (max-width: $editor-screen-lg-max) {
+			padding: 30px 50px 0;
+		}
+
+		@media (max-width: $editor-screen-xs-max) {
+			width: 100%;
+		}
+	}
+
+	&__search {
+		position: relative;
+
+		input {
+			padding: 8px 15px;
+			background-color: #fff;
+			border: none;
+
+			&::placeholder {
+				font-style: italic;
+			}
+		}
+
+		i {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			@include end(15px);
+		}
+	}
+
+	&__tab {
+
+		&__wrapper {
+			overflow: auto;
+			margin: 25px -15px 0;
+			padding: 0 15px 15px;
+		}
+
+		&__title {
+			color: $editor-darker;
+			font-size: 16px;
+			font-weight: 500;
+			text-align: $start;
+
+			@media (max-width: $editor-screen-xs-max) {
+				display: none;
+			}
+		}
+
+		&__content {
+			display: grid;
+			grid-template-columns: repeat(7, 1fr);
+			grid-gap: 20px;
+			margin: 20px 0;
+
+			@media (max-width: $editor-screen-lg-max) {
+				grid-template-columns: repeat(6, 1fr);
+			}
+
+			@media (max-width: $editor-screen-md-max) {
+				grid-template-columns: repeat(5, 1fr);
+
+			}
+
+			@media (max-width: $editor-screen-sm-max) {
+				grid-template-columns: repeat(4, 1fr);
+			}
+
+			@media (max-width: $editor-screen-xs-max) {
+				grid-template-columns: repeat(3, 1fr);
+			}
+		}
+	}
+
+	&__promotion {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		padding-top: 70px;
+
+		&__icon {
+			font-size: 60px;
+			color: $editor-lighter;
+		}
+
+		&__text {
+			width: 300px;
+			font-size: 16px;
+			padding-top: 25px;
+		}
+
+		&__link {
+			margin-top: 20px;
+		}
+	}
+}
+
+.elementor-icons-manager {
+
+	&__tab-link {
+		@include padding(15px, 0, 15px, 45px);
+		font-size: 14px;
+		color: $editor-dark;
+		text-align: $start;
+		cursor: pointer;
+		position: relative;
+
+		i {
+			font-size: 20px;
+			@include padding-end(15px);
+			color: $editor-light;
+		}
+
+		@media (max-width: $editor-screen-lg-max) {
+			@include padding(15px, 15px, 15px, 25px);
+			font-size: 11px;
+
+			i {
+				font-size: 15px;
+			}
+		}
+
+		@media (max-width: $editor-screen-md-max) {
+
+			i {
+				display: none;
+			}
+		}
+
+		&.elementor-active {
+			background-color: #fff;
+			box-shadow: 0 6px 20px 0 rgba(0,0,0,0.1);
+
+			&:after {
+				content: '';
+				position: absolute;
+				height: 100%;
+				width: 5px;
+				top: 0;
+				@include start(0);
+				background-color: $editor-info;
+			}
+
+			i {
+				color: $editor-info;
+			}
+		}
+	}
+
+	&__tab__item {
+		position: relative;
+		height: 0;
+		padding-bottom: 100%;
+		background-color: #fff;
+		box-shadow: 0 1px 12px rgba(0,0,0,.05);
+		border-radius: 3px;
+		cursor: pointer;
+		transition: $transition-hover;
+		overflow: hidden;
+
+		&:hover {
+			box-shadow: 0 1px 14px rgba(0, 0, 0, 0.16)
+		}
+
+		&.elementor-selected {
+			box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05), 0 0 0 3px #71d7f7;
+		}
+
+		&__content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 100%;
+			@include absolute-center;
+			padding: 1px;
+		}
+
+		&__icon {
+			font-size: 25px;
+			color: $editor-dark;
+		}
+
+		&__name {
+			color: $editor-lighter;
+			font-size: 11px;
+			padding: 13px 20px 0;
+			max-width: 100%;
+			@include ellipsis;
+		}
+	}
+}
+
+#elementor-enable-fa5-dialog {
+	a {
+		font-style: italic;
+		text-decoration: underline;
+	}
+	.dialog-confirm-ok {
+		color: $editor-success;
+	}
+}

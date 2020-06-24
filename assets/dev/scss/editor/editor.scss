@@ -4,6 +4,7 @@
 @import "breakpoints";
 
 // Reboot CSS
+@import "units";
 @import "wrapper";
 @import "global";
 @import "loader";
@@ -14,12 +15,13 @@
 @import "perfect-scrollbar";
 @import "nprogress";
 @import "panel/panel";
-@import "panel/control";
-@import "panel/color-picker";
+@import "panel/controls";
 @import "mode-switcher";
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
+@import "../../../../core/kits/assets/css/panel";
 
+@import "animations";
 @import "devices";
 @import "tipsy";
 @import "templates-modal";
@@ -29,4 +31,9 @@
 @import "introduction";
 @import "hotkeys";
 
+@import "resizable";
 @import "navigator/navigator";
+@import "notice-bar";
+@import "preview-loading-error";
+@import "icons-manager";
+@import "color-picker";

@@ -1,7 +1,11 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Icons_Manager;
+use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,7 +44,12 @@ class Upgrades {
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
 			if ( empty( $data ) ) {
 				continue;
 			}
@@ -57,7 +66,11 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::$instance->db->save_editor( $post_id, $data );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			$document->save( [
+				'elements' => $data,
+			] );
 		}
 	}
 
@@ -88,7 +101,12 @@ class Upgrades {
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
 			if ( empty( $data ) ) {
 				continue;
 			}
@@ -113,7 +131,11 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::$instance->db->save_editor( $post_id, $data );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			$document->save( [
+				'elements' => $data,
+			] );
 		}
 	}
 
@@ -141,7 +163,12 @@ class Upgrades {
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
 			if ( empty( $data ) ) {
 				continue;
 			}
@@ -172,7 +199,11 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::$instance->db->save_editor( $post_id, $data );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			$document->save( [
+				'elements' => $data,
+			] );
 		}
 	}
 
@@ -296,12 +327,17 @@ class Upgrades {
 
 		foreach ( $post_ids as $post_id ) {
 			$do_update = false;
-			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
 			if ( empty( $data ) ) {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( &$do_update ) {
 				if ( empty( $element['widgetType'] ) || 'video' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -364,7 +400,7 @@ class Upgrades {
 		// upgrade `video` widget settings (merge providers).
 		$post_ids = $updater->query_col(
 			'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = "_elementor_data" AND (
-			`meta_value` LIKE \'%"widgetType":"image"%\' 
+			`meta_value` LIKE \'%"widgetType":"image"%\'
 			OR `meta_value` LIKE \'%"widgetType":"theme-post-featured-image"%\'
 			OR `meta_value` LIKE \'%"widgetType":"theme-site-logo"%\'
 			OR `meta_value` LIKE \'%"widgetType":"woocommerce-category-image"%\'
@@ -400,7 +436,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update, $widgets ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( &$do_update, $widgets ) {
 				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
 					return $element;
 				}
@@ -464,5 +500,372 @@ class Upgrades {
 		} // End foreach().
 
 		return $updater->should_run_again( $post_ids );
+	}
+
+	/**
+	 * Set FontAwesome Migration needed flag
+	 */
+	public static function _v_2_6_0_fa4_migration_flag() {
+		add_option( 'elementor_icon_manager_needs_update', 'yes' );
+		add_option( 'elementor_load_fa4_shim', 'yes' );
+	}
+
+	/**
+	 * migrate Icon control string value to Icons control array value
+	 *
+	 * @param array $element
+	 * @param array $args
+	 *
+	 * @return mixed
+	 */
+	public static function _migrate_icon_fa4_value( $element, $args ) {
+		$widget_id = $args['widget_id'];
+
+		if ( empty( $element['widgetType'] ) || $widget_id !== $element['widgetType'] ) {
+			return $element;
+		}
+		foreach ( $args['control_ids'] as $old_name => $new_name ) {
+			// exit if new value exists
+			if ( isset( $element['settings'][ $new_name ] ) ) {
+				continue;
+			}
+
+			// exit if no value to migrate
+			if ( ! isset( $element['settings'][ $old_name ] ) ) {
+				continue;
+			}
+
+			$element['settings'][ $new_name ] = Icons_Manager::fa4_to_fa5_value_migration( $element['settings'][ $old_name ] );
+			$args['do_update'] = true;
+		}
+		return $element;
+	}
+
+	/**
+	 * Set FontAwesome 5 value Migration on for button widget
+	 *
+	 * @param Updater $updater
+	 */
+	public static function _v_2_6_6_fa4_migration_button( $updater ) {
+		$changes = [
+			[
+				'callback' => [ 'Elementor\Core\Upgrade\Upgrades', '_migrate_icon_fa4_value' ],
+				'control_ids' => [
+					'icon' => 'selected_icon',
+				],
+			],
+		];
+		Upgrade_Utils::_update_widget_settings( 'button', $updater, $changes );
+		Upgrade_Utils::_update_widget_settings( 'icon-box', $updater, $changes );
+	}
+
+	/**
+	 *  Update database to separate page from post.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @param string $type
+	 *
+	 * @return bool
+	 */
+	public static function rename_document_base_to_wp( $updater, $type ) {
+		global $wpdb;
+
+		$post_ids = $updater->query_col( $wpdb->prepare(
+			"SELECT p1.ID FROM {$wpdb->posts} AS p
+					LEFT JOIN {$wpdb->posts} AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID)
+					WHERE p.post_type = %s;", $type ) );
+
+		if ( empty( $post_ids ) ) {
+			return false;
+		}
+
+		$sql_post_ids = implode( ',', $post_ids );
+
+		$wpdb->query( $wpdb->prepare(
+			"UPDATE $wpdb->postmeta SET meta_value = %s
+			WHERE meta_key = '_elementor_template_type' && post_id in ( %s );
+		 ", 'wp-' . $type, $sql_post_ids ) );
+
+		return $updater->should_run_again( $post_ids );
+	}
+
+	/**
+	 *  Update database to separate page from post.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	// Because the query is slow on large sites, temporary don't upgrade.
+	/*	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
+		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
+	}*/
+
+	// Upgrade code was fixed & moved to _v_2_7_1_remove_old_usage_data.
+	/* public static function _v_2_7_0_remove_old_usage_data() {} */
+
+	// Upgrade code moved to _v_2_7_1_recalc_usage_data.
+	/* public static function _v_2_7_0_recalc_usage_data( $updater ) {} */
+
+	/**
+	 * Don't use the old data anymore.
+	 * Since 2.7.1 the key was changed from `elementor_elements_usage` to `elementor_controls_usage`.
+	 */
+	public static function _v_2_7_1_remove_old_usage_data() {
+		delete_option( 'elementor_elements_usage' );
+		delete_post_meta_by_key( '_elementor_elements_usage' );
+	}
+
+	/**
+	 * Recalc usage.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function recalc_usage_data( $updater ) {
+		/** @var Module $module */
+		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
+
+		$post_count = $module->recalc_usage( $updater->get_limit(), $updater->get_current_offset() );
+
+		return ( $post_count === $updater->get_limit() );
+	}
+
+	public static function _v_2_7_1_recalc_usage_data( $updater ) {
+		return self::recalc_usage_data( $updater );
+	}
+
+	public static function _v_2_8_3_recalc_usage_data( $updater ) {
+		// Re-calc since older version(s) had invalid values.
+		return self::recalc_usage_data( $updater );
+	}
+
+	/**
+	 * Move general & lightbox settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_general_settings_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			if ( ! $kit ) {
+				return;
+			}
+
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$current_settings = get_option( '_elementor_general_settings', [] );
+			$kit_settings = $kit->get_meta( $meta_key );
+
+			// Already exist.
+			if ( isset( $kit_settings['default_generic_fonts'] ) ) {
+				return;
+			}
+
+			if ( empty( $current_settings ) ) {
+				return;
+			}
+
+			if ( ! $kit_settings ) {
+				$kit_settings = [];
+			}
+
+			// Convert some setting to Elementor slider format.
+			$settings_to_slider = [
+				'container_width',
+				'viewport_lg',
+				'viewport_md',
+			];
+
+			foreach ( $settings_to_slider as $setting ) {
+				if ( ! empty( $current_settings[ $setting ] ) ) {
+					$current_settings[ $setting ] = [
+						'unit' => 'px',
+						'size' => $current_settings[ $setting ],
+					];
+				}
+			}
+
+			$kit_settings = array_merge( $kit_settings, $current_settings );
+
+			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+			$page_settings_manager->save_settings( $kit_settings, $kit_id );
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * Move default colors settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist.
+			if ( $kit->get_settings( 'system_colors' ) ) {
+				return;
+			}
+
+			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color' );
+
+			$default_colors = $scheme_obj->get_scheme();
+
+			$new_ids = [
+				'primary',
+				'secondary',
+				'text',
+				'accent',
+			];
+
+			foreach ( $default_colors as $index => $color ) {
+				$kit->add_repeater_row( 'system_colors', [
+					'_id' => $new_ids[ $index - 1 ], // $default_colors starts from 1.
+					'title' => $color['title'],
+					'color' => $color['value'],
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * Move saved colors settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_saved_colors_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist.
+			if ( $kit->get_settings( 'custom_colors' ) ) {
+				return;
+			}
+
+			$system_colors_rows = $kit->get_settings( 'system_colors' );
+
+			if ( ! $system_colors_rows ) {
+				$system_colors_rows = [];
+			}
+
+			$system_colors = [];
+
+			foreach ( $system_colors_rows as $color_row ) {
+				$system_colors[] = $color_row['color'];
+			}
+
+			$saved_scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color-picker' );
+
+			$current_saved_colors_rows = $saved_scheme_obj->get_scheme();
+
+			$current_saved_colors = [];
+
+			foreach ( $current_saved_colors_rows as $color_row ) {
+				$current_saved_colors[] = $color_row['value'];
+			}
+
+			$colors_to_save = array_diff( $current_saved_colors, $system_colors );
+
+			if ( empty( $colors_to_save ) ) {
+				return;
+			}
+
+			foreach ( $colors_to_save as $index => $color ) {
+				$kit->add_repeater_row( 'custom_colors', [
+					'_id' => Utils::generate_random_string(),
+					'title' => __( 'Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'color' => $color,
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * Move default typography settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist.
+			if ( $kit->get_settings( 'system_typography' ) ) {
+				return;
+			}
+
+			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'typography' );
+
+			$default_typography = $scheme_obj->get_scheme();
+
+			$new_ids = [
+				'primary',
+				'secondary',
+				'text',
+				'accent',
+			];
+
+			foreach ( $default_typography as $index => $typography ) {
+				$kit->add_repeater_row( 'system_typography', [
+					'_id' => $new_ids[ $index - 1 ], // $default_typography starts from 1.
+					'title' => $typography['title'],
+					'system_typography_typography' => 'custom',
+					'system_typography_font_family' => $typography['value']['font_family'],
+					'system_typography_font_weight' => $typography['value']['font_weight'],
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+
+	/**
+	 * @param callback $callback
+	 * @param Updater $updater
+	 *
+	 * @return mixed
+	 */
+	private static function move_settings_to_kit( $callback, $updater ) {
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+		if ( ! $active_kit_id ) {
+			return false;
+		}
+
+		$offset = $updater->get_current_offset();
+
+		// On first iteration apply on active kit itself.
+		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
+		if ( 0 === $offset ) {
+			$callback( $active_kit_id );
+		}
+
+		$revisions_ids = wp_get_post_revisions( $active_kit_id, [
+			'fields' => 'ids',
+			'posts_per_page' => $updater->get_limit(),
+			'offset' => $offset,
+		] );
+
+		foreach ( $revisions_ids as $revision_id ) {
+			$callback( $revision_id );
+		}
+
+		return $updater->should_run_again( $revisions_ids );
 	}
 }

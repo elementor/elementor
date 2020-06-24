@@ -21,14 +21,19 @@ BaseSettingsModel = Backbone.Model.extend( {
 			defaults = {};
 
 		_.each( self.controls, function( control ) {
-			var isUIControl = -1 !== control.features.indexOf( 'ui' );
+			// Check features since they does not exist in tests.
+			var isUIControl = control.features && -1 !== control.features.indexOf( 'ui' );
 
 			if ( isUIControl ) {
 				return;
 			}
 			var controlName = control.name;
 
-			defaults[ controlName ] = control.default;
+			if ( 'object' === typeof control.default ) {
+				defaults[ controlName ] = elementorCommon.helpers.cloneObject( control.default );
+			} else {
+				defaults[ controlName ] = control.default;
+			}
 
 			var isDynamicControl = control.dynamic && control.dynamic.active,
 				hasDynamicSettings = isDynamicControl && attrs.__dynamic__ && attrs.__dynamic__[ controlName ];
@@ -77,8 +82,14 @@ BaseSettingsModel = Backbone.Model.extend( {
 						model: function( attributes, options ) {
 							options = options || {};
 
-							options.controls = field.fields;
+							options.controls = {};
 
+							// eslint-disable-next-line no-unused-vars
+							Object.entries( field.fields ).map( ( [ key, item ] ) => {
+								options.controls[ item.name ] = item;
+							} );
+
+							// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
 							if ( ! attributes._id ) {
 								attributes._id = elementor.helpers.getUniqueID();
 							}
@@ -91,9 +102,17 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
-	getFontControls: function() {
-		return _.filter( this.getActiveControls(), function( control ) {
-			return 'font' === control.type;
+	getFontControls() {
+		return this.getControlsByType( 'font' );
+	},
+
+	getIconsControls() {
+		return this.getControlsByType( 'icons' );
+	},
+
+	getControlsByType( type ) {
+		return _.filter( this.getActiveControls(), ( control ) => {
+			return type === control.type;
 		} );
 	},
 
@@ -120,12 +139,30 @@ BaseSettingsModel = Backbone.Model.extend( {
 				control.styleFields = styleFields;
 			}
 
-			if ( control.fields || ( control.dynamic && control.dynamic.active ) || self.isStyleControl( control.name, controls ) ) {
+			if ( control.fields || ( control.dynamic?.active ) || self.isGlobalControl( control, controls ) || self.isStyleControl( control.name, controls ) ) {
 				styleControls.push( control );
 			}
 		} );
 
 		return styleControls;
+	},
+
+	isGlobalControl: function( control, controls ) {
+		let controlGlobalKey = control.name;
+
+		if ( control.groupType ) {
+			controlGlobalKey = control.groupPrefix + control.groupType;
+		}
+
+		const globalControl = controls[ controlGlobalKey ];
+
+		if ( ! globalControl.global?.active ) {
+			return false;
+		}
+
+		const globalValue = this.attributes.__globals__?.[ controlGlobalKey ];
+
+		return !! globalValue;
 	},
 
 	isStyleControl: function( attribute, controls ) {
@@ -161,7 +198,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	getActiveControls: function( controls, attributes ) {
-		var activeControls = {};
+		const activeControls = {};
 
 		if ( ! controls ) {
 			controls = this.controls;
@@ -171,7 +208,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 			attributes = this.attributes;
 		}
 
-		_.each( controls, function( control, controlKey ) {
+		attributes = this.parseGlobalSettings( attributes, controls );
+
+		jQuery.each( controls, ( controlKey, control ) => {
 			if ( elementor.helpers.isActiveControl( control, attributes ) ) {
 				activeControls[ controlKey ] = control;
 			}
@@ -216,7 +255,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var control = this,
 				valueToParse;
 
-			if ( 'repeater' === control.type ) {
+			if ( control.is_repeater ) {
 				valueToParse = settings[ control.name ];
 				valueToParse.forEach( function( value, key ) {
 					valueToParse[ key ] = self.parseDynamicSettings( value, options, control.fields );
@@ -273,6 +312,53 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return settings;
 	},
 
+	parseGlobalSettings: function( settings, controls ) {
+		settings = elementorCommon.helpers.cloneObject( settings );
+
+		controls = controls || this.controls;
+
+		jQuery.each( controls, ( index, control ) => {
+			let valueToParse;
+
+			if ( control.is_repeater ) {
+				valueToParse = settings[ control.name ];
+
+				valueToParse.forEach( ( value, key ) => {
+					valueToParse[ key ] = this.parseGlobalSettings( value, control.fields );
+				} );
+
+				return;
+			}
+
+			valueToParse = settings.__globals__?.[ control.name ];
+
+			if ( ! valueToParse ) {
+				return;
+			}
+
+			let globalSettings = control.global;
+
+			if ( undefined === globalSettings ) {
+				globalSettings = elementor.config.controls[ control.type ].global;
+			}
+
+			if ( ! globalSettings?.active ) {
+				return;
+			}
+
+			const { command, args } = $e.data.commandExtractArgs( valueToParse ),
+				globalValue = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
+
+			if ( control.groupType ) {
+				settings[ control.name ] = 'custom';
+			} else {
+				settings[ control.name ] = globalValue;
+			}
+		} );
+
+		return settings;
+	},
+
 	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
@@ -288,40 +374,24 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 		} );
 
-		if ( options.removeDefault ) {
+		// TODO: `options.removeDefault` is a bc since 2.5.14
+		if ( ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) || options.removeDefault ) {
 			var controls = this.controls;
 
 			_.each( data, function( value, key ) {
-				var control = controls[ key ];
+				const control = controls[ key ];
 
-				if ( control ) {
-					// TODO: use `save_default` in text|textarea controls.
-					if ( control.save_default || ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) ) {
-						return;
-					}
+				if ( ! control ) {
+					return;
+				}
 
-					if ( data[ key ] && 'object' === typeof data[ key ] ) {
-						// First check length difference
-						if ( Object.keys( data[ key ] ).length !== Object.keys( control.default ).length ) {
-							return;
-						}
+				// TODO: use `save_default` in text|textarea controls.
+				if ( control.save_default || ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) ) {
+					return;
+				}
 
-						// If it's equal length, loop over value
-						var isEqual = true;
-
-						_.each( data[ key ], function( propertyValue, propertyKey ) {
-							if ( data[ key ][ propertyKey ] !== control.default[ propertyKey ] ) {
-								return isEqual = false;
-							}
-						} );
-
-						if ( isEqual ) {
-							delete data[ key ];
-						}
-					}
-					if ( data[ key ] === control.default ) {
-							delete data[ key ];
-					}
+				if ( _.isEqual( data[ key ], control.default ) ) {
+					delete data[ key ];
 				}
 			} );
 		}

@@ -25,20 +25,20 @@ Thanks for your understanding.
 Please do not report security issues here. Instead, email them to support at elementor dot com so we can deal with them securely and quickly.
 
 ## Found a Bug?
-If you find a bug in the source code, you can help us by [submitting a bug report](#bug-report) issue to our [GitHub Repository](https://github.com/pojome/elementor/issues/new?template=Feature_request.md). Even better, you can submit a Pull Request with a fix.
+If you find a bug in the source code, you can help us by [submitting a bug report](#bug-report) issue to our [GitHub Repository](https://github.com/elementor/elementor/issues/new?template=Feature_request.md). Even better, you can submit a Pull Request with a fix.
 
 ### Bug Report
 Before opening a new issue, please:
 * update to the newest versions of WordPress and the Elementor/Elementor Pro plugins.
 * search for duplicate issues to prevent opening a duplicate issue. If there is already an open existing issue, please comment on that issue.
 * check our [Elementor Knowledge base](https://docs.elementor.com) for your issue. There are a lot of common errors documented there with possible solutions.
-* follow our [Bug Report](https://github.com/pojome/elementor/issues/new?template=Bug_report.md) template when creating a new issue.
+* follow our [Bug Report](https://github.com/elementor/elementor/issues/new?template=Bug_report.md) template when creating a new issue.
 * add as much information as possible. For example: add screenshots, relevant links, step by step guides etc.
 
 ## Feature Request
 Before opening a new Feature Request issue, please:
 * Search for duplicate issues to prevent opening a duplicate feature request. If there is already an open existing request, please leave a comment there.
-* Follow our [Feature Request](https://github.com/pojome/elementor/issues/new?template=Feature_request.md) template when creating a new issue.
+* Follow our [Feature Request](https://github.com/elementor/elementor/issues/new?template=Feature_request.md) template when creating a new issue.
 * Add as much information as possible. For example: give us a clear explanation of why you think the feature request is something we should consider for Elementor.
 
 ## I want to Contribute
@@ -52,7 +52,7 @@ There are many ways to contribute to Elementor:
 When contributing please ensure you follow the guidelines below so that we can keep on top of things.
 
 #### Before Submitting a PR
-Make sure your problem does not exist as an issue already by searching through [the existing issues](https://github.com/pojome/elementor/issues). If you cannot find anything which relates to your problem, please [create a new issue](https://github.com/pojome/elementor/issues/new).
+Make sure your problem does not exist as an issue already by searching through [the existing issues](https://github.com/elementor/elementor/issues). If you cannot find anything which relates to your problem, please [create a new issue](https://github.com/elementor/elementor/issues/new).
 
 #### Submitting a PR
 

@@ -47,9 +47,7 @@
 
 			&__title {
 				flex-grow: 1;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
+				@include ellipsis;
 			}
 
 			&__shortcut {
@@ -61,7 +59,7 @@
 				&:not(.elementor-context-menu-list__item--disabled) {
 
 					&:hover {
-						background-color: $editor-alert;
+						background-color: $editor-red;
 					}
 				}
 			}

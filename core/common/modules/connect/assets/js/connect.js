@@ -1,17 +1,33 @@
 export default class extends elementorModules.ViewModule {
 	addPopupPlugin() {
+		let counter = 0;
+
 		jQuery.fn.elementorConnect = function( options ) {
 			const settings = jQuery.extend( {
 				// These are the defaults.
-				callback: () => location.reload(),
+				success: () => location.reload(),
+				error: () => {
+					elementor.notifications.showToast( {
+						message: elementor.translate( 'connect_error' ),
+					} );
+				},
 			}, options );
 
-			this.attr( {
-				target: '_blank',
-				href: this.attr( 'href' ) + '&mode=popup',
-			} );
+			this.each( function() {
+				counter++;
 
-			elementorCommon.elements.$window.on( 'elementorConnected', settings.callback );
+				const $this = jQuery( this ),
+					callbackId = 'cb' + ( counter );
+
+				$this.attr( {
+					target: '_blank',
+					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId,
+				} );
+
+				elementorCommon.elements.$window
+					.on( 'elementor/connect/success/' + callbackId, settings.success )
+					.on( 'elementor/connect/error/' + callbackId, settings.error );
+			} );
 
 			return this;
 		};
@@ -20,19 +36,19 @@ export default class extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				connectPopup: '.elementor-connect-popup',
+				connectButton: '#elementor-template-library-connect__button',
 			},
 		};
 	}
 
 	getDefaultElements() {
 		return {
-			$connectPopup: jQuery( this.getSettings( 'selectors.connectPopup' ) ),
+			$connectButton: jQuery( this.getSettings( 'selectors.connectButton' ) ),
 		};
 	}
 
 	applyPopup() {
-		this.elements.$connectPopup.elementorConnect();
+		this.elements.$connectButton.elementorConnect();
 	}
 
 	onInit() {

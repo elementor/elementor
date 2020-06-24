@@ -38,12 +38,19 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onPreviewButtonChange: function() {
-		elementor.changeEditMode( this.getCurrentMode() );
+		const mode = this.getCurrentMode();
+
+		if ( 'edit' === mode ) {
+			$e.run( 'panel/open' );
+		} else if ( 'preview' === mode ) {
+			$e.run( 'panel/close' );
+		} else {
+			throw Error( `Invalid mode: '${ mode }'` );
+		}
 	},
 
-	onEditModeChanged: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' ),
-			title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
+	onEditModeChanged: function( activeMode ) {
+		const title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
 
 		this.ui.previewLabel.attr( 'title', title );
 		this.ui.previewLabelA11y.text( title );

@@ -38,10 +38,6 @@ class Modules_Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		$modules = [
-			'history',
-			'screenshots',
-		];
 		$modules_namespace_prefix = $this->get_modules_namespace_prefix();
 
 		foreach ( $this->get_modules_names() as $module_name ) {
@@ -77,6 +73,7 @@ class Modules_Manager {
 			'gutenberg',
 			'wp-cli',
 			'safe-mode',
+			'usage',
 			'screenshots',
 		];
 	}

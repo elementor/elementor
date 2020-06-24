@@ -63,6 +63,7 @@ $delicious: 	#3399ff;
 $deviantart: 	#05cc47;
 $digg:			#005be2;
 $dribbble:		#ea4c89;
+$elementor:		#D30C5C;
 $envelope:		#ea4335;
 $facebook:		#3b5998;
 $flickr:		#0063dc;
@@ -77,6 +78,7 @@ $jsfiddle:		#487AA2;
 $linkedin:		#0077b5;
 $medium:		#00ab6b;
 $meetup:		#ec1c40;
+$mix:			#f3782b;
 $mixcloud:		#273a4b;
 $odnoklassniki:	#F4731C;
 $pinterest:		#bd081c;
@@ -100,10 +102,11 @@ $tripadvisor:	#589442;
 $tumblr:		#35465c;
 $twitch:		#6441A5;
 $twitter:		#1DA1F2;
+$viber:			#665cac;
 $vimeo:			#1ab7ea;
 $vk:			#45668e;
-$weibo:			#df2029;
-$weixin:		#7bb32e; //WeChat
+$weibo:			#DD2430;
+$weixin:		#31A918; //WeChat
 $whatsapp:		#25d366;
 $wordpress:		#21759b;
 $xing:			#026466;
@@ -111,8 +114,9 @@ $yelp:			#af0606;
 $youtube:		#cd201f;
 $five-h-px:		#0099e5; //500px
 
-// WordPress
+// WordPress Admin
 $wp-primary: #0085ba;
+$admin-font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
 
 // Editor colors
 $editor-darkest:#495157;
@@ -126,17 +130,31 @@ $editor-lightest: #d5dadf;
 $editor-accent: #D30C5C;
 $editor-background: $gray-bg;
 $editor-background-light: #f1f3f5;
+$editor-background-lighter: #fcfcfc;
 
 $editor-orange: #fcb92c;
+$editor-red: #d72b3f;
 
-$editor-danger: #f00;
+$editor-danger: $editor-red;
 $editor-warning: #b01b1b;
-$editor-alert: #d72b3f;
 $editor-success: #39b54a;
 $editor-info: #71d7f7;
 
 $brand-color-light: #f2295b;
 $brand-color-dark: #434363;
+
+$editor-kit-accent: #4ab7f4;
+
+// Panel Alert
+$editor-alert-danger: $editor-danger;
+$editor-alert-warning: $editor-orange;
+$editor-alert-info: $editor-info;
+$editor-alert-success: $editor-success;
+
+$editor-alert-danger-bg: #fefbfc;
+$editor-alert-warning-bg: #fcfcfc;
+$editor-alert-info-bg: #f3fcff;
+$editor-alert-success-bg: #fcfffc;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
@@ -145,7 +163,7 @@ $panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 $slides_gui: rgba(238, 238, 238, .9);
 
 // Panel Transition
-$transition-hover: all .5s;
+$transition-hover: all .3s;
 
 // Layers (Z-indexes)
 $under-layer: -1;
@@ -181,6 +199,8 @@ $column-sizes: (
 		90: 90%,
 		100: 100%
 );
+
+$control-unit: 27px;
 
 // Panel
 $panel-width: 280px;

@@ -1,108 +1,242 @@
-.elementor-control-type-media {
+.elementor-control-media {
 
-	.elementor-control-media {
-		padding: 7px;
-		border: 1px solid;
-		height: 150px;
-		transition: all .2s ease-in-out;
+	&.elementor-media-empty {
 
-		&:not(:hover) {
-			border-color: $editor-lightest;
-
-			.elementor-control-media-upload-button {
-				background-color: $editor-lightest;
-			}
-		}
-
-		&:hover {
-			border-color: $editor-light;
-
-			.elementor-control-media-upload-button {
-				background-color: $editor-light;
-			}
-		}
-
-		&.elementor-media-empty {
-
-			.elementor-control-media-area {
-				display: none;
-			}
-		}
-
-		&:not(.elementor-media-empty) {
-
-			.elementor-control-media-upload-button {
-				display: none;
-			}
-		}
-
-		> * {
-			height: 100%;
-			cursor: pointer;
-			position: relative;
+		.elementor-control-media-area {
+			display: none;
 		}
 	}
 
-	.fa-plus-circle {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
+	&:not(.elementor-media-empty) {
+		.elementor-control-media__content {
+			&__upload-button {
+				display: none;
+			}
+		}
+	}
+
+	.elementor-control-input-wrapper {
+		border: 1px solid $editor-lightest;
+	}
+
+	.eicon-plus-circle {
+		@include absolute-center;
 		color: #fff;
 		font-size: 20px;
 	}
 
-	.elementor-control-media-area {
+	&__content__upload-button {
+		background-color: $editor-lightest;
+	}
 
+	&__preview {
+		height: 100%;
+		background-size: cover;
+		background-position: center;
+	}
+
+	&-area {
 		background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
 		background-size: 16px 16px;
 		background-position: 0 0, 8px 8px;
 		background-color: #f6f6f6;
-		overflow: hidden;
 
 		&:not(:hover) {
-
-			.elementor-control-media-delete {
-				box-shadow: none;
-				bottom: -30px;
+			.elementor-control-media__remove {
+				display: none;
 			}
 		}
 
-		&:hover {
-
-			.elementor-control-media-image {
-				opacity: .9;
-			}
-		}
-
-		i {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
+		.eicon-video-camera {
+			@include absolute-center;
 			color: rgba(255, 255, 255, 0.7);
 			font-size: 21px;
 		}
 	}
 
-	.elementor-control-media-delete {
+	& &__content {
+		cursor: pointer;
+		overflow: hidden;
+
+		&:hover {
+
+			&:after {
+				content: '';
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				background-color: rgba(0, 0, 0, .2);
+				pointer-events: none;
+			}
+		}
+
+		&:not(:hover) {
+
+			.elementor-control-media__tools {
+				bottom: -30px;
+			}
+		}
+	}
+
+	&__content {
+		transition: all .2s ease-in-out;
+	}
+
+	&__tools {
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		right: 0;
-		text-align: center;
-		padding: 9.5px;
-		font-size: 11px;
-		color: #fff;
-		background-color: $editor-light;
-		text-transform: uppercase;
+		height: $control-unit;
 		transition: all .2s ease-in-out;
-		box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
+
+		> * {
+
+			&:not(:first-child) {
+				@include margin-start(1px);
+			}
+		}
 	}
 
-	.elementor-control-media-image {
-		height: 100%;
-		background-size: cover;
-		background-position: center;
+	&__tool {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-grow: 1;
+		color: #fff;
+		background-color: rgba($editor-dark, .85);
+		font-size: 11px;
+		transition: background .3s;
+
+		&:hover {
+			background-color: rgba($editor-dark, .95);
+		}
+	}
+
+	&__remove {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all .3s ease-in-out;
+	}
+
+	&__content__remove {
+		position: absolute;
+		z-index: 1;
+		top: 10px;
+		@include end(10px);
+		width: 20px;
+		height: 20px;
+		font-size: 11px;
+		color: $editor-light;
+		background-color: rgba(#fff, .9);
+		border-radius: 3px;
+		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
+
+		&:hover {
+			background-color: rgba(#fff, 1);
+			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+		}
+	}
+
+	&.elementor-media-empty .elementor-control-file-area {
+		display: none;
+	}
+
+	// When attachment type is not image and not video
+	&__file {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		margin-top: 10px;
+		border: 1px solid $editor-lightest;
+		border-radius: 3px;
+		cursor: pointer;
+
+		&__content {
+			@include padding-start(5px);
+			font-size: 12px;
+
+			&__label {
+				color: $editor-light;
+			}
+
+			&__info {
+				display: flex;
+				align-items: center;
+				font-weight: 500;
+
+				&__icon {
+					@include margin-end(5px);
+				}
+			}
+		}
+
+		&__controls {
+			display: flex;
+			@include border-start(1px solid $editor-lightest);
+
+			&__upload-button,
+			&__remove {
+				width: $control-unit;
+				height: $control-unit;
+				cursor: pointer;
+				align-items: center;
+			}
+
+			&__upload-button {
+				display: flex;
+				justify-content: center;
+			}
+
+			&__remove {
+				@include border-end(1px solid $editor-lightest);
+			}
+		}
+	}
+
+	&:not(.elementor-media-empty) &__file  {
+		&__content {
+			&__label {
+				display: none;
+			}
+		}
+	}
+
+	&.elementor-media-empty &__file {
+		&__content {
+			&__info {
+				display: none;
+			}
+		}
+		&__controls {
+			&__remove {
+				display: none;
+			}
+		}
+	}
+
+	.elementor-control-dynamic-switcher {
+		border: none;
+		border-radius: 0;
+		background-color: rgba($editor-dark, .85);
+		color: #fff;
+
+		&:hover {
+			background-color: rgba($editor-dark, .95);
+		}
+	}
+}
+
+.elementor-control-type-media {
+
+	&.elementor-control-dynamic-value {
+
+		.elementor-control-input-wrapper {
+			border: none;
+		}
 	}
 }

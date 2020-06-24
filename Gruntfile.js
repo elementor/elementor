@@ -26,9 +26,7 @@ module.exports = function( grunt ) {
 		copy: require( './.grunt-config/copy' ),
 		clean: require( './.grunt-config/clean' ),
 		webpack: require( './.grunt-config/webpack' ),
-		qunit: {
-			src: 'tests/qunit/index.html',
-		},
+		karma: require( './.grunt-config/karma' ),
 	} );
 
 	// Default task(s).
@@ -123,7 +121,6 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'test', [
-		'qunit',
-		'clean:qunit',
+		'karma:unit',
 	] );
 };

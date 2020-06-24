@@ -5,7 +5,7 @@
 	var ElementorGutenbergApp = {
 
 		cacheElements: function() {
-			this.isElementorMode = '1' === ElementorGutenbergSettings.isElementorMode;
+			this.isElementorMode = ElementorGutenbergSettings.isElementorMode;
 
 			this.cache = {};
 
@@ -32,7 +32,8 @@
 
 			if ( ! $( '#elementor-editor' ).length ) {
 				self.cache.$editorPanel = $( $( '#elementor-gutenberg-panel' ).html() );
-				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.editor-block-list__layout, .editor-post-text-editor' );
+				// TODO: `editor-block-list__layout` class for WP < 5.3 support.
+				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.editor-block-list__layout, .editor-post-text-editor, .block-editor-block-list__layout' );
 				self.cache.$gurenbergBlockList.after( self.cache.$editorPanel );
 
 				self.cache.$editorPanelButton = self.cache.$editorPanel.find( '#elementor-go-to-edit-page-link' );
@@ -57,17 +58,28 @@
 			var self = this;
 
 			self.cache.$switchModeButton.on( 'click', function() {
-				self.isElementorMode = ! self.isElementorMode;
-
-				self.toggleStatus();
-
 				if ( self.isElementorMode ) {
-					self.cache.$editorPanelButton.trigger( 'click' );
-				} else {
-					var wpEditor = wp.data.dispatch( 'core/editor' );
+					elementorCommon.dialogsManager.createWidget( 'confirm', {
+						message: elementorAdmin.translate( 'back_to_wordpress_editor_message' ),
+						headerMessage: elementorAdmin.translate( 'back_to_wordpress_editor_header' ),
+						strings: {
+							confirm: elementorAdmin.translate( 'yes' ),
+							cancel: elementorAdmin.translate( 'cancel' ),
+						},
+						defaultOption: 'confirm',
+						onConfirm: function() {
+							const wpEditor = wp.data.dispatch( 'core/editor' );
 
-					wpEditor.editPost( { gutenberg_elementor_mode: false } );
-					wpEditor.savePost();
+							wpEditor.editPost( { gutenberg_elementor_mode: false } );
+							wpEditor.savePost();
+							self.isElementorMode = ! self.isElementorMode;
+							self.toggleStatus();
+						},
+					} ).show();
+				} else {
+					self.isElementorMode = ! self.isElementorMode;
+					self.toggleStatus();
+					self.cache.$editorPanelButton.trigger( 'click' );
 				}
 			} );
 		},

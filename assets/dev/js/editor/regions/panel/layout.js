@@ -1,6 +1,10 @@
 var EditModeItemView = require( 'elementor-regions/panel/edit-mode' ),
 	PanelLayoutView;
 
+import PanelComponent from './component';
+import ElementsComponent from './pages/elements/component';
+import EditorComponent from './pages/editor/component';
+
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
 
@@ -17,10 +21,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	childEvents: {
 		'click:add': function() {
-			this.setPage( 'elements' );
+			$e.route( 'panel/elements/categories' );
 		},
 		'editor:destroy': function() {
-			this.setPage( 'elements', null, { autoFocusSearch: false } );
+			$e.route( 'panel/elements/categories', {
+				autoFocusSearch: false,
+			} );
 		},
 	},
 
@@ -31,6 +37,14 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
+		$e.components.register( new PanelComponent( { manager: this } ) );
+
+		$e.internal( 'panel/state-loading' );
+
+		$e.components.register( new ElementsComponent( { manager: this } ) );
+
+		$e.components.register( new EditorComponent( { manager: this } ) );
+
 		this.initPages();
 	},
 
@@ -52,9 +66,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			},
 			typographyScheme: {
 				view: require( 'elementor-panel/pages/schemes/typography' ),
-			},
-			colorPickerScheme: {
-				view: require( 'elementor-panel/pages/schemes/color-picker' ),
 			},
 		};
 
@@ -144,22 +155,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this
 			.trigger( 'set:page', this.currentPageView )
 			.trigger( 'set:page:' + page, this.currentPageView );
-	},
 
-	openEditor: function( model, view ) {
-		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ), {
-			model: model,
-			controls: elementor.getElementControls( model ),
-			editedElementView: view,
-		} );
+		if ( elementor.promotion.dialog ) {
+			elementor.promotion.dialog.hide();
+		}
 
-		const action = 'panel/open_editor/' + model.get( 'elType' );
-
-		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( action, this, model, view );
-
-		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this, model, view );
+		return this.currentPageView;
 	},
 
 	onBeforeShow: function() {
@@ -182,9 +183,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			.on( 'before:show', this.onEditorBeforeShow.bind( this ) )
 			.on( 'empty', this.onEditorEmpty.bind( this ) )
 			.on( 'show', this.updateScrollbar.bind( this ) );
-
-		// Set default page to elements
-		this.setPage( 'elements' );
 	},
 
 	onEditorBeforeShow: function() {
@@ -200,6 +198,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			this.perfectScrollbar = new PerfectScrollbar( this.content.el, {
 				suppressScrollX: true,
 			} );
+
+			// The RTL is buggy, so always keep it LTR.
+			this.perfectScrollbar.isRtl = false;
 
 			return;
 		}

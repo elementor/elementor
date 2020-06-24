@@ -1,0 +1,22 @@
+
+#tab-replace_url.elementor-active,
+#tab-fontawesome4_migration.elementor-active {
+
+	~ p.submit {
+		display: none;
+	}
+}
+
+#elementor_rollback,
+#elementor_rollback_pro,
+#elementor_replace_url {
+
+	> div {
+		display: flex;
+
+		input,
+		select {
+			@include margin-end(6px);
+		}
+	}
+}

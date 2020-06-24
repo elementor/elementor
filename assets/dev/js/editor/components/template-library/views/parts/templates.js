@@ -157,6 +157,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			placeholder: elementor.translate( 'category' ),
 			allowClear: true,
 			width: 150,
+			dropdownParent: this.$el,
 		} );
 	},
 
@@ -173,14 +174,18 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.toggleClass( 'elementor-templates-filter-active', ! ! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
 
+	onRender() {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
+			this.setFiltersUI();
+		}
+	},
+
 	onRenderCollection: function() {
 		this.addSourceData();
 
 		this.toggleFilterClass();
 
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'block' === elementor.templates.getFilter( 'type' ) ) {
-			this.setFiltersUI();
-
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
 			this.setMasonrySkin();
 		}
 	},

@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Core\Files;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Files\Assets\Json\Json_Handler;
+use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Responsive\Files\Frontend;
@@ -19,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Manager {
 
+	private $files = [];
+
 	/**
 	 * Files manager constructor.
 	 *
@@ -29,6 +35,21 @@ class Manager {
 	 */
 	public function __construct() {
 		$this->register_actions();
+
+		new Svg_Handler();
+		new Json_Handler();
+	}
+
+	public function get( $class, $args ) {
+		$id = $class . '-' . wp_json_encode( $args );
+
+		if ( ! isset( $this->files[ $id ] ) ) {
+			// Create an instance from dynamic args length.
+			$reflection_class = new \ReflectionClass( $class );
+			$this->files[ $id ] = $reflection_class->newInstanceArgs( $args );
+		}
+
+		return $this->files[ $id ];
 	}
 
 	/**
@@ -48,7 +69,7 @@ class Manager {
 			return;
 		}
 
-		$css_file = new Post_CSS( $post_id );
+		$css_file = Post_CSS::create( $post_id );
 
 		$css_file->delete();
 	}
@@ -105,19 +126,21 @@ class Manager {
 		 *
 		 * Fires after Elementor clears files
 		 *
-		 * @since 2.0.8
-		 * @deprecated 2.1.0 Use `elementor/core/files/clear_cache` instead
-		 */
-		do_action_deprecated( 'elementor/css-file/clear_cache', [], '2.1.0', 'elementor/core/files/clear_cache' );
-
-		/**
-		 * Elementor clear files.
-		 *
-		 * Fires after Elementor clears files
-		 *
 		 * @since 2.1.0
 		 */
 		do_action( 'elementor/core/files/clear_cache' );
+	}
+
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', [ $this, 'ajax_unfiltered_files_upload' ] );
+	}
+
+	public function ajax_unfiltered_files_upload() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		update_option( Files_Upload_Handler::OPTION_KEY, 1 );
 	}
 
 	/**
@@ -130,6 +153,10 @@ class Manager {
 	 */
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
+
+		// Ajax.
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
 	}
 }

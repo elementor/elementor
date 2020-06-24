@@ -2,13 +2,12 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Editor\Editor;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
-use Elementor\Editor;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
-use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -164,6 +163,15 @@ class Source_Local extends Source_Base {
 		}
 	}
 
+	public static function get_admin_url( $relative = false ) {
+		$base_url = self::ADMIN_MENU_SLUG;
+		if ( ! $relative ) {
+			$base_url = admin_url( $base_url );
+		}
+
+		return add_query_arg( 'tabs_group', 'library', $base_url );
+	}
+
 	/**
 	 * Get local template ID.
 	 *
@@ -287,7 +295,7 @@ class Source_Local extends Source_Base {
 			'labels' => [
 				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
 				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
-				'all_items' => __( 'All Categories', 'elementor' ),
+				'all_items' => _x( 'All Categories', 'Template Library', 'elementor' ),
 			],
 		];
 
@@ -316,6 +324,9 @@ class Source_Local extends Source_Base {
 	public function admin_menu_reorder() {
 		global $submenu;
 
+		if ( ! isset( $submenu[ self::ADMIN_MENU_SLUG ] ) ) {
+			return;
+		}
 		$library_submenu = &$submenu[ self::ADMIN_MENU_SLUG ];
 
 		// Remove 'All Templates' menu.
@@ -329,8 +340,10 @@ class Source_Local extends Source_Base {
 		}
 
 		// Move the 'Categories' menu to end.
-		$library_submenu[800] = $library_submenu[15];
-		unset( $library_submenu[15] );
+		if ( isset( $library_submenu[15] ) ) {
+			$library_submenu[800] = $library_submenu[15];
+			unset( $library_submenu[15] );
+		}
 
 		if ( $this->is_current_screen() ) {
 			$library_title = $this->get_library_title();
@@ -347,9 +360,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_menu() {
-		$url = add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
-
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, $url );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -380,12 +391,18 @@ class Source_Local extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $args Optional. Filter templates list based on a set of
+	 * @param array $args Optional. Filter templates based on a set of
 	 *                    arguments. Default is an empty array.
 	 *
 	 * @return array Local templates.
 	 */
 	public function get_items( $args = [] ) {
+		$template_types = array_values( self::$template_types );
+
+		if ( ! empty( $args['type'] ) ) {
+			$template_types = $args['type'];
+		}
+
 		$templates_query = new \WP_Query(
 			[
 				'post_type' => self::CPT,
@@ -396,7 +413,7 @@ class Source_Local extends Source_Base {
 				'meta_query' => [
 					[
 						'key' => Document::TYPE_META_KEY,
-						'value' => array_values( self::$template_types ),
+						'value' => $template_types,
 					],
 				],
 			]
@@ -408,10 +425,6 @@ class Source_Local extends Source_Base {
 			foreach ( $templates_query->get_posts() as $post ) {
 				$templates[] = $this->get_item( $post->ID );
 			}
-		}
-
-		if ( ! empty( $args ) ) {
-			$templates = wp_list_filter( $templates, $args );
 		}
 
 		return $templates;
@@ -430,36 +443,44 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int The ID of the saved/updated template, `WP_Error` otherwise.
 	 */
 	public function save_item( $template_data ) {
-		$type = Plugin::$instance->documents->get_document_type( $template_data['type'], false );
-
-		if ( ! $type ) {
-			return new \WP_Error( 'save_error', sprintf( 'Invalid template type "%s".', $template_data['type'] ) );
-		}
-
-		// TODO: Work with the documents system.
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
 			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
-		$template_id = wp_insert_post( [
-			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
-			'post_status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
-			'post_type' => self::CPT,
+		$defaults = [
+			'title' => __( '(no title)', 'elementor' ),
+			'page_settings' => [],
+			'status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
+		];
+
+		$template_data = wp_parse_args( $template_data, $defaults );
+
+		$document = Plugin::$instance->documents->create(
+			$template_data['type'],
+			[
+				'post_title' => $template_data['title'],
+				'post_status' => $template_data['status'],
+				'post_type' => self::CPT,
+			]
+		);
+
+		if ( is_wp_error( $document ) ) {
+			/**
+			 * @var \WP_Error $document
+			 */
+			return $document;
+		}
+
+		if ( ! empty( $template_data['content'] ) ) {
+			$template_data['content'] = $this->replace_elements_ids( $template_data['content'] );
+		}
+
+		$document->save( [
+			'elements' => $template_data['content'],
+			'settings' => $template_data['page_settings'],
 		] );
 
-		if ( is_wp_error( $template_id ) ) {
-			return $template_id;
-		}
-
-		Plugin::$instance->db->set_is_elementor_page( $template_id );
-
-		Plugin::$instance->db->save_editor( $template_id, $template_data['content'] );
-
-		$this->save_item_type( $template_id, $template_data['type'] );
-
-		if ( ! empty( $template_data['page_settings'] ) ) {
-			SettingsManager::get_settings_managers( 'page' )->save_settings( $template_data['page_settings'], $template_id );
-		}
+		$template_id = $document->get_main_id();
 
 		/**
 		 * After template library save.
@@ -505,7 +526,15 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
-		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
+		$document = Plugin::$instance->documents->get( $new_data['id'] );
+
+		if ( ! $document ) {
+			return new \WP_Error( 'save_error', __( 'Template not exist.', 'elementor' ) );
+		}
+
+		$document->save( [
+			'elements' => $new_data['content'],
+		] );
 
 		/**
 		 * After template library update.
@@ -596,7 +625,8 @@ class Source_Local extends Source_Base {
 		if ( ! empty( $args['display'] ) ) {
 			$content = $db->get_builder( $template_id );
 		} else {
-			$content = $db->get_plain_editor( $template_id );
+			$document = Plugin::$instance->documents->get( $template_id );
+			$content = $document ? $document->get_elements_data() : [];
 		}
 
 		if ( ! empty( $content ) ) {
@@ -607,7 +637,7 @@ class Source_Local extends Source_Base {
 			'content' => $content,
 		];
 
-		if ( ! empty( $args['page_settings'] ) ) {
+		if ( ! empty( $args['with_page_settings'] ) ) {
 			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['template_id'] );
 
 			$data['page_settings'] = $page->get_data( 'settings' );
@@ -718,7 +748,7 @@ class Source_Local extends Source_Base {
 		}
 
 		// Create temporary .zip file
-		$zip_archive_filename = 'elementor-templates-' . date( 'Y-m-d' ) . '.zip';
+		$zip_archive_filename = 'elementor-templates-' . gmdate( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();
 
@@ -745,6 +775,44 @@ class Source_Local extends Source_Base {
 		unlink( $zip_complete_path );
 
 		die;
+	}
+
+	/**
+	 * Find temporary files.
+	 *
+	 * Recursively finds a list of temporary files from the extracted zip file.
+	 *
+	 * Example return data:
+	 *
+	 * [
+	 *  0 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-2-col-marble-title.json',
+	 *  1 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-2-col-text-and-photo.json',
+	 * ]
+	 *
+	 * @since 2.9.8
+	 * @access private
+	 *
+	 * @param string $temp_path - The temporary file path to scan for template files
+	 *
+	 * @return array An array of temporary files on the filesystem
+	 */
+	private function find_temp_files( $temp_path ) {
+
+		$file_names = [];
+
+		$possible_file_names = array_diff( scandir( $temp_path ), [ '.', '..' ] );
+
+		// Find nested files in the unzipped path. This happens for example when the user imports a Template Kit.
+		foreach ( $possible_file_names as $possible_file_name ) {
+			$full_possible_file_name = $temp_path . '/' . $possible_file_name;
+			if ( is_dir( $full_possible_file_name ) ) {
+				$file_names = $file_names + $this->find_temp_files( $full_possible_file_name );
+			} else {
+				$file_names[] = $full_possible_file_name;
+			}
+		}
+
+		return $file_names;
 	}
 
 	/**
@@ -782,15 +850,27 @@ class Source_Local extends Source_Base {
 
 			$zip->open( $path );
 
-			$zip->extractTo( $temp_path );
+			$valid_entries = [];
+
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+				$zipped_file_name = $zip->getNameIndex( $i );
+				$zipped_extension = pathinfo( $zipped_file_name, PATHINFO_EXTENSION );
+				// Template Kit zip files contain a `manifest.json` file, this is not a valid Elementor template so ensure we skip it.
+				if ( 'json' === $zipped_extension && 'manifest.json' !== $zipped_file_name ) {
+					$valid_entries[] = $zipped_file_name;
+				}
+			}
+
+			if ( ! empty( $valid_entries ) ) {
+				$zip->extractTo( $temp_path, $valid_entries );
+			}
 
 			$zip->close();
 
-			$file_names = array_diff( scandir( $temp_path ), [ '.', '..' ] );
+			$file_names = $this->find_temp_files( $temp_path );
 
-			foreach ( $file_names as $file_name ) {
-				$full_file_name = $temp_path . '/' . $file_name;
-
+			foreach ( $file_names as $full_file_name ) {
 				$import_result = $this->import_single_template( $full_file_name );
 
 				unlink( $full_file_name );
@@ -1185,6 +1265,12 @@ class Source_Local extends Source_Base {
 
 		$current_type = get_query_var( 'elementor_library_type' );
 
+		$document_types = Plugin::instance()->documents->get_document_types();
+
+		if ( empty( $document_types[ $current_type ] ) ) {
+			return;
+		}
+
 		// TODO: Better way to exclude widget type.
 		if ( 'widget' === $current_type ) {
 			return;
@@ -1248,7 +1334,7 @@ class Source_Local extends Source_Base {
 			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
 		);
 
-		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', 'elementor' ) . '</label>';
+		echo '<label class="screen-reader-text" for="cat">' . _x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
 	}
 
@@ -1275,7 +1361,7 @@ class Source_Local extends Source_Base {
 		$content = $data['content'];
 
 		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'file_error', 'Invalid File' );
+			return new \WP_Error( 'file_error', 'Invalid Content In File' );
 		}
 
 		$content = $this->process_export_import_content( $content, 'on_import' );
@@ -1351,7 +1437,7 @@ class Source_Local extends Source_Base {
 		$export_data += $template_data;
 
 		return [
-			'name' => 'elementor-' . $template_id . '-' . date( 'Y-m-d' ) . '.json',
+			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
 		];
 	}
@@ -1397,10 +1483,6 @@ class Source_Local extends Source_Base {
 			$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
 		}
 
-		if ( 'page' === $template_type ) {
-			$template_label = __( 'Content', 'elementor' );
-		}
-
 		/**
 		 * Template label by template type.
 		 *
@@ -1434,6 +1516,10 @@ class Source_Local extends Source_Base {
 		}
 
 		$current_tabs_group = $this->get_current_tab_group();
+
+		if ( isset( $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] ) && '-1' === $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] ) {
+			unset( $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] );
+		}
 
 		if ( empty( $current_tabs_group ) ) {
 			return;

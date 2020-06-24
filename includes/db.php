@@ -72,39 +72,6 @@ class DB {
 	protected $switched_data = [];
 
 	/**
-	 * Save editor.
-	 *
-	 * Save data from the editor to the database.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->save()` method instead.
-	 *
-	 * @access public
-	 *
-	 * @param int    $post_id Post ID.
-	 * @param array  $data    Post data.
-	 * @param string $status  Optional. Post status. Default is `publish`.
-	 *
-	 * @return bool
-	 */
-	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->save()' );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		if ( self::STATUS_AUTOSAVE === $status ) {
-			$document = $document->get_autosave( 0, true );
-		}
-
-		return $document->save( [
-			'elements' => $data,
-			'settings' => [
-				'post_status' => $status,
-			],
-		] );
-	}
-
-	/**
 	 * Get builder.
 	 *
 	 * Retrieve editor data from the database.
@@ -162,63 +129,13 @@ class DB {
 	}
 
 	/**
-	 * Get plain editor.
-	 *
-	 * Retrieve post data that was saved in the database. Raw data before it
-	 * was parsed by elementor.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_elements_data()` method instead.
-	 *
-	 * @access public
-	 *
-	 * @param int    $post_id Post ID.
-	 * @param string $status  Optional. Post status. Default is `publish`.
-	 *
-	 * @return array Post data.
-	 */
-	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_elements_data()' );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		if ( $document ) {
-			return $document->get_elements_data( $status );
-		}
-
-		return [];
-	}
-
-	/**
-	 * Get auto-saved post revision.
-	 *
-	 * Retrieve the auto-saved post revision that is newer than current post.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_newer_autosave()` method instead.
-	 *
-	 * @access public
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return \WP_Post|false The auto-saved post, or false.
-	 */
-	public function get_newer_autosave( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_newer_autosave()' );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		return $document->get_newer_autosave();
-	}
-
-	/**
 	 * Get new editor from WordPress editor.
 	 *
 	 * When editing the with Elementor the first time, the current page content
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
 	 * @since 2.1.0
-	 * @deprecated 2.3.0 Use `$document->convert_to_elementor()` instead
+	 * @deprecated 2.3.0 Use `Plugin::$instance->documents->get( $post_id )->convert_to_elementor()` instead
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -226,7 +143,8 @@ class DB {
 	 * @return array Content in Elementor format.
 	 */
 	public function get_new_editor_from_wp_editor( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.3.0', '$document->convert_to_elementor()' );
+		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->documents->get( $post_id )->convert_to_elementor()' );
+
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( $document ) {
@@ -234,26 +152,6 @@ class DB {
 		}
 
 		return [];
-	}
-
-	/**
-	 * Get new editor from WordPress editor.
-	 *
-	 * When editing the with Elementor the first time, the current page content
-	 * is parsed into Text Editor Widget that contains the original data.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.1.0 Use `DB::get_new_editor_from_wp_editor()` instead
-	 * @access public
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return array Content in Elementor format.
-	 */
-	public function _get_new_editor_from_wp_editor( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.1.0', __CLASS__ . '::get_new_editor_from_wp_editor()' );
-
-		return $this->get_new_editor_from_wp_editor( $post_id );
 	}
 
 	/**
@@ -346,20 +244,21 @@ class DB {
 	 *
 	 * @param array    $data_container Any type of elementor data.
 	 * @param callable $callback       A function to iterate data by.
+	 * @param array    $args           Array of args pointers for passing parameters in & out of the callback
 	 *
 	 * @return mixed Iterated data.
 	 */
-	public function iterate_data( $data_container, $callback ) {
+	public function iterate_data( $data_container, $callback, $args = [] ) {
 		if ( isset( $data_container['elType'] ) ) {
 			if ( ! empty( $data_container['elements'] ) ) {
-				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback );
+				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback, $args );
 			}
 
-			return $callback( $data_container );
+			return call_user_func( $callback, $data_container, $args );
 		}
 
 		foreach ( $data_container as $element_key => $element_value ) {
-			$element_data = $this->iterate_data( $data_container[ $element_key ], $callback );
+			$element_data = $this->iterate_data( $data_container[ $element_key ], $callback, $args );
 
 			if ( null === $element_data ) {
 				continue;
@@ -478,7 +377,7 @@ class DB {
 			'original_id' => get_the_ID(), // Note, it can be false if the global isn't set
 		];
 
-		$GLOBALS['post'] = get_post( $post_id ); // WPCS: override ok.
+		$GLOBALS['post'] = get_post( $post_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		setup_postdata( $GLOBALS['post'] );
 	}
@@ -505,7 +404,7 @@ class DB {
 			return;
 		}
 
-		$GLOBALS['post'] = get_post( $data['original_id'] ); // WPCS: override ok.
+		$GLOBALS['post'] = get_post( $data['original_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		setup_postdata( $GLOBALS['post'] );
 	}
@@ -546,20 +445,20 @@ class DB {
 
 		$this->switched_data[] = $switched_data;
 
-		$wp_query = $new_query; // WPCS: override ok.
+		$wp_query = $new_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Ensure the global post is set only if needed
 		unset( $GLOBALS['post'] );
 
 		if ( isset( $new_query->posts[0] ) ) {
 			if ( $force_global_post || $new_query->is_singular() ) {
-				$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
+				$GLOBALS['post'] = $new_query->posts[0]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				setup_postdata( $GLOBALS['post'] );
 			}
 		}
 
 		if ( $new_query->is_author() ) {
-			$GLOBALS['authordata'] = get_userdata( $new_query->get( 'author' ) ); // WPCS: override ok.
+			$GLOBALS['authordata'] = get_userdata( $new_query->get( 'author' ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 	}
 
@@ -581,19 +480,19 @@ class DB {
 
 		global $wp_query;
 
-		$wp_query = $data['original']; // WPCS: override ok.
+		$wp_query = $data['original']; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Ensure the global post/authordata is set only if needed.
 		unset( $GLOBALS['post'] );
 		unset( $GLOBALS['authordata'] );
 
 		if ( ! empty( $data['post'] ) ) {
-			$GLOBALS['post'] = $data['post']; // WPCS: override ok.
+			$GLOBALS['post'] = $data['post']; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			setup_postdata( $GLOBALS['post'] );
 		}
 
 		if ( $wp_query->is_author() ) {
-			$GLOBALS['authordata'] = get_userdata( $wp_query->get( 'author' ) ); // WPCS: override ok.
+			$GLOBALS['authordata'] = get_userdata( $wp_query->get( 'author' ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 	}
 
@@ -610,7 +509,8 @@ class DB {
 	 * @return string Post plain text.
 	 */
 	public function get_plain_text( $post_id ) {
-		$data = $this->get_plain_editor( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id );
+		$data = $document ? $document->get_elements_data() : [];
 
 		return $this->get_plain_text_from_data( $data );
 	}

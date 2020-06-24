@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Manager as SettingsManager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -88,7 +86,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
+		$default_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
 
 		if ( $default_fonts ) {
 			$default_fonts = ', ' . $default_fonts;
@@ -104,11 +102,16 @@ class Group_Control_Typography extends Group_Control_Base {
 		$fields['font_size'] = [
 			'label' => _x( 'Size', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'em', 'rem' ],
+			'size_units' => [ 'px', 'em', 'rem', 'vw' ],
 			'range' => [
 				'px' => [
 					'min' => 1,
 					'max' => 200,
+				],
+				'vw' => [
+					'min' => 0.1,
+					'max' => 10,
+					'step' => 0.1,
 				],
 			],
 			'responsive' => true,
@@ -230,10 +233,6 @@ class Group_Control_Typography extends Group_Control_Base {
 
 				$field['selectors'] = [
 					'{{SELECTOR}}' => $selector_value,
-				];
-
-				$field['condition'] = [
-					'typography' => 'custom',
 				];
 			}
 		);

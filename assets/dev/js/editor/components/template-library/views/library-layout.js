@@ -5,10 +5,10 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryCollectionView = require( 'elementor-templates/views/parts/templates' ),
 	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
+	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
-
 	getModalOptions: function() {
 		return {
 			id: 'elementor-template-library-modal',
@@ -19,7 +19,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		return {
 			title: elementor.translate( 'library' ),
 			click: function() {
-				elementor.templates.setTemplatesPage( 'remote', 'page' );
+				$e.run( 'library/open', { toDefault: true } );
 			},
 		};
 	},
@@ -47,14 +47,18 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection,
 		} ) );
-
-		this.setHeaderDefaultParts();
 	},
 
 	showImportView: function() {
 		this.getHeaderView().menuArea.reset();
 
 		this.modalContent.show( new TemplateLibraryImportView() );
+	},
+
+	showConnectView: function( args ) {
+		this.getHeaderView().menuArea.reset();
+
+		this.modalContent.show( new TemplateLibraryConnectView( args ) );
 	},
 
 	showSaveTemplateView: function( elementModel ) {

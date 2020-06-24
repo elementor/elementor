@@ -15,6 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Beta_Testers {
 
+	const NEWSLETTER_TERMS_URL = 'https://go.elementor.com/beta-testers-newsletter-terms';
+
+	const NEWSLETTER_PRIVACY_URL = 'https://go.elementor.com/beta-testers-newsletter-privacy';
+
+	const BETA_TESTER_SIGNUP = 'beta_tester_signup';
+
 	/**
 	 * Transient key.
 	 *

@@ -1,3 +1,5 @@
+import FilesUploadHandler from '../utils/files-upload-handler';
+
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
 
@@ -6,10 +8,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.controlMedia = '.elementor-control-media';
-		ui.mediaImage = '.elementor-control-media-image';
+		ui.mediaImage = '.elementor-control-media__preview';
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
-		ui.deleteButton = '.elementor-control-media-delete';
+		ui.removeButton = '.elementor-control-media__remove';
+		ui.fileName = '.elementor-control-media__file__content__info__name';
 
 		return ui;
 	},
@@ -17,7 +20,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	events: function() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
-			'click @ui.deleteButton': 'deleteImage',
+			'click @ui.removeButton': 'deleteImage',
 		} );
 	},
 
@@ -33,17 +36,37 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
+		} else {
+			const fileName = url ? url.split( '/' ).pop() : '';
+			this.ui.fileName.text( fileName );
 		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
 	},
 
 	openFrame: function() {
+		if ( ! FilesUploadHandler.isUploadEnabled( this.getMediaType() ) ) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+
+			return false;
+		}
+
 		if ( ! this.frame ) {
 			this.initFrame();
 		}
 
 		this.frame.open();
+
+		// Set params to trigger sanitizer
+		FilesUploadHandler.setUploadTypeCaller( this.frame );
+
+		const selectedId = this.getControlValue( 'id' );
+
+		if ( ! selectedId ) {
+			return;
+		}
+
+		this.frame.state().get( 'selection' ).add( wp.media.attachment( selectedId ) );
 	},
 
 	deleteImage: function( event ) {

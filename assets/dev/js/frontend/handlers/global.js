@@ -1,47 +1,51 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	GlobalHandler;
-
-GlobalHandler = HandlerModule.extend( {
-	getElementName: function() {
+class GlobalHandler extends elementorModules.frontend.handlers.Base {
+	getWidgetType() {
 		return 'global';
-	},
-	animate: function() {
-		var $element = this.$element,
-			animation = this.getAnimation(),
-			elementSettings = this.getElementSettings(),
+	}
+
+	animate() {
+		const $element = this.$element,
+			animation = this.getAnimation();
+
+		if ( 'none' === animation ) {
+			$element.removeClass( 'elementor-invisible' );
+			return;
+		}
+
+		const elementSettings = this.getElementSettings(),
 			animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
 
 		$element.removeClass( animation );
 
-		setTimeout( function() {
-			$element.removeClass( 'elementor-invisible' ).addClass( animation );
-		}, animationDelay );
-	},
-	getAnimation: function() {
-		var elementSettings = this.getElementSettings();
-
-		return elementSettings.animation || elementSettings._animation;
-	},
-	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
-
-		var animation = this.getAnimation();
-
-		if ( ! animation ) {
-			return;
+		if ( this.currentAnimation ) {
+			$element.removeClass( this.currentAnimation );
 		}
 
-		this.$element.removeClass( animation );
+		this.currentAnimation = animation;
 
-		elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
-	},
-	onElementChange: function( propertyName ) {
+		setTimeout( () => {
+			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
+		}, animationDelay );
+	}
+
+	getAnimation() {
+		return this.getCurrentDeviceSetting( 'animation' ) || this.getCurrentDeviceSetting( '_animation' );
+	}
+
+	onInit( ...args ) {
+		super.onInit( ...args );
+		if ( this.getAnimation() ) {
+			elementorFrontend.waypoint( this.$element, () => this.animate() );
+		}
+	}
+
+	onElementChange( propertyName ) {
 		if ( /^_?animation/.test( propertyName ) ) {
 			this.animate();
 		}
-	},
-} );
+	}
+}
 
-module.exports = function( $scope ) {
-	new GlobalHandler( { $element: $scope } );
+export default ( $scope ) => {
+	elementorFrontend.elementsHandler.addHandler( GlobalHandler, { $element: $scope } );
 };

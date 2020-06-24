@@ -11,6 +11,14 @@ $remote-templates-items-space: 30px;
 			color: darken($editor-success, 10%);
 		}
 	}
+
+	.dialog-buttons-wrapper {
+		display: none;
+	}
+
+	.select2-container {
+		z-index: 0;
+	}
 }
 
 #elementor-template-library-header-menu {
@@ -26,8 +34,8 @@ $remote-templates-items-space: 30px;
 	cursor: pointer;
 
 	&.elementor-active {
-		background-image: linear-gradient(to bottom, #f3f3f3, #fff);
-		border-bottom: 3px solid #9b0a46;
+		background-image: linear-gradient(to bottom, $editor-background-light, #fff);
+		border-bottom: 3px solid $editor-accent;
 	}
 }
 
@@ -52,6 +60,11 @@ $remote-templates-items-space: 30px;
 		color: #fff;
 		background-color: $editor-success;
 	}
+
+	.elementor-go-pro {
+		background-color: $editor-accent;
+		color: #fff;
+	}
 }
 
 #elementor-template-library-header-preview-back {
@@ -69,7 +82,7 @@ $remote-templates-items-space: 30px;
 		font-size: 18px;
 
 		&:before {
-			content: getValueByDirection( '\e908', '\e907' );
+			content: getValueByDirection( '\e87e', '\e87d' );
 		}
 	}
 }
@@ -137,7 +150,7 @@ $remote-templates-items-space: 30px;
 
 				&:after {
 					font-family: eicons;
-					content: '\e956';
+					content: '\e8ae';
 					@include margin-start(3px);
 				}
 			}
@@ -147,7 +160,7 @@ $remote-templates-items-space: 30px;
 				+ .elementor-template-library-order-label {
 
 					&:after {
-						content: '\e955';
+						content: '\e8ad';
 					}
 				}
 			}
@@ -242,7 +255,7 @@ label.elementor-template-library-order-label {
 
 				&:after {
 					color: $editor-accent;
-					content: '\f004';
+					content: '\e93f';
 				}
 			}
 		}
@@ -269,7 +282,7 @@ label.elementor-template-library-order-label {
 
 		&:after {
 			color: $editor-light;
-			content: '\f08a';
+			content: '\e923';
 		}
 	}
 }
@@ -278,13 +291,11 @@ label.elementor-template-library-order-label {
 	width: 200px;
 	position: relative;
 
-	&:after {
-		content: '\e863';
+	i {
 		position: absolute;
 		top: 50%;
 		@include end(0);
 		transform: translateY(-50%);
-		font-family: eicons;
 	}
 }
 
@@ -293,7 +304,6 @@ label.elementor-template-library-order-label {
 	border-bottom: 1px solid $editor-lightest;
 	border-radius: 0;
 	font-size: 11px;
-	text-transform: uppercase;
 	padding: 8px 15px 8px 0;
 	transition: border 0.5s;
 
@@ -303,15 +313,11 @@ label.elementor-template-library-order-label {
 
 	&::placeholder {
 		font-weight: 300;
-		color: $editor-lighter;
+		text-transform: uppercase;
 	}
 
 	&:focus {
 		border-color: $editor-lighter;
-
-		&::placeholder {
-			color: $editor-light;
-		}
 	}
 }
 
@@ -360,6 +366,38 @@ label.elementor-template-library-order-label {
 		}
 	}
 
+	&:not(.elementor-template-library-template-page) {
+		position: relative;
+		width: calc(33.333% - #{$remote-templates-items-space});
+		overflow: hidden;
+
+		img {
+			display: block;
+			width: 100%;
+		}
+
+		.elementor-template-library-template-footer {
+			position: absolute;
+			width: 100%;
+			bottom: 0;
+			@include start(0);
+			padding: 10px;
+			background-color: #fff;
+			transition: transform .5s;
+		}
+
+		.elementor-template-library-template-name {
+			display: none;
+		}
+
+		&:not(:hover) {
+
+			.elementor-template-library-template-footer {
+				transform: translateY(100%)
+			}
+		}
+	}
+
 	.elementor-template-library-template-body {
 		position: relative;
 	}
@@ -391,19 +429,7 @@ label.elementor-template-library-order-label {
 		i {
 			font-size: 20px;
 			color: $editor-lightest;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
-		}
-	}
-
-	.elementor-template-library-template-action {
-		background-color: transparent;
-		text-transform: none;
-
-		i {
-			@include margin-end(0);
+			@include absolute-center;
 		}
 	}
 
@@ -411,8 +437,8 @@ label.elementor-template-library-order-label {
 		color: $editor-success;
 	}
 
-	.elementor-button-go-pro {
-		color: $editor-orange;
+	.elementor-go-pro {
+		color: $editor-accent;
 	}
 
 	.elementor-template-library-template-footer {
@@ -427,9 +453,7 @@ label.elementor-template-library-order-label {
 		text-align: $start;
 		color: $editor-dark;
 		flex-grow: 1;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		@include ellipsis;
 		@include padding-end(5px);
 	}
 
@@ -443,7 +467,7 @@ label.elementor-template-library-order-label {
 				i {
 
 					&:before {
-						content: '\f004';
+						content: '\e93f';
 						color: $editor-accent;
 					}
 				}
@@ -478,38 +502,6 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-body {
 		height: 200px;
-	}
-}
-
-.elementor-template-library-template-block {
-	position: relative;
-	width: calc(33.333% - #{$remote-templates-items-space});
-	overflow: hidden;
-
-	img {
-		display: block;
-		width: 100%;
-	}
-
-	.elementor-template-library-template-footer {
-		position: absolute;
-		width: 100%;
-		bottom: 0;
-		@include start(0);
-		padding: 10px;
-		background-color: #fff;
-		transition: transform .5s;
-	}
-
-	.elementor-template-library-template-name {
-		display: none;
-	}
-
-	&:not(:hover) {
-
-		.elementor-template-library-template-footer {
-			transform: translateY(100%)
-		}
 	}
 }
 
@@ -579,9 +571,7 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-meta,
 	.elementor-template-library-template-preview,
 	.elementor-template-library-template-action {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		@include ellipsis;
 	}
 
 	.elementor-template-library-template-controls {
@@ -589,13 +579,14 @@ label.elementor-template-library-order-label {
 		display: flex;
 		align-items: center;
 
+		&,
+		& a {
+			color: $editor-light;
+		}
+
 		> div {
 			cursor: pointer;
 			transition: color .5s;
-
-			&:not(:hover) {
-				color: $editor-light;
-			}
 		}
 	}
 
@@ -610,19 +601,17 @@ label.elementor-template-library-order-label {
 		@include margin-start(6px);
 	}
 
-	.elementor-template-library-template-delete {
+	.elementor-template-library-template-more {
 
-		&:hover {
-			color: $editor-danger;
+		&:hover,
+		a:hover {
+			color: $editor-darker;
 		}
-	}
 
-	.elementor-template-library-template-export {
+		.elementor-template-library-template-delete {
 
-		&:hover {
-
-			i {
-				color: $editor-darker;
+			&:hover {
+				color: $editor-danger;
 			}
 		}
 	}
@@ -692,18 +681,35 @@ label.elementor-template-library-order-label {
 	margin-top: 45px;
 	color: $editor-lighter;
 	line-height: 1;
+
+	img {
+		width: 70px;
+	}
+
+	.elementor-template-library-no-results {
+		width: 200px;
+	}
 }
 
 .elementor-template-library-blank-title {
 	font-size: 30px;
 	margin-top: 40px;
+
+	@media (max-width: $editor-screen-lg-max) {
+		font-size: 25px;
+	}
 }
 
 .elementor-template-library-blank-message {
 	font-size: 18px;
 	color: $editor-light;
-	margin-top: 25px;
+	margin-top: 15px;
 	font-weight: 300;
+
+	@media (max-width: $editor-screen-lg-max) {
+		font-size: 16px;
+		margin-top: 10px;
+	}
 }
 
 #elementor-template-library-save-template-form {
@@ -726,10 +732,6 @@ label.elementor-template-library-order-label {
 	@include padding-start(25px);
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 	border: none;
-
-	&::placeholder {
-		color: $editor-light;
-	}
 }
 
 #elementor-template-library-save-template-submit {
@@ -787,6 +789,58 @@ label.elementor-template-library-order-label {
 	}
 }
 
+.e-route-library-connect {
+	#elementor-template-library-modal {
+		.dialog-message {
+			max-height: 95vh;
+			padding: 100px 0 0;
+			min-height: 550px;
+		}
+	}
+}
+
+#elementor-template-library-connect {
+
+	&-logo {
+		font-size: 20px;
+	}
+
+	&__button {
+		display: inline-block;
+		position: relative;
+		z-index: 1; // over the images
+		margin-top: 25px;
+		padding: 12px 24px;
+		font-size: 14px;
+	}
+
+	&__background-image {
+
+		&-left-1 {
+			right: 22.4%; bottom: -29%; animation: 1.5s fadeIn, 1.5s slideDown, 3.5s mover 1.5s infinite alternate;
+		}
+
+		&-left-2 {
+			right: 46.25%; bottom: -15.5%; animation: 3s fadeIn, 3s slideDown, 2s mover 3s infinite alternate;
+		}
+
+		&-right-1 {
+			left: 37%; bottom: -41%; animation: 2.5s fadeIn, 2.5s slideDown, 2s mover 2.5s infinite alternate;
+		}
+
+		&-right-2 {
+			left: 48%; bottom: -12.5%; animation: 1.5s fadeIn, 1.5s slideDown, 1.5s mover 1.5s infinite alternate;
+		}
+	}
+}
+
+.elementor-template-library-connect {
+
+	&__background-image {
+		position: absolute;
+	}
+}
+
 .elementor-template-library-blank-footer {
 	position: absolute;
 	bottom: 70px;
@@ -806,6 +860,10 @@ label.elementor-template-library-order-label {
 		color: $editor-lighter;
 		font-size: 56px;
 		margin-top: 40px;
+	}
+
+	.elementor-nerd-box-icon {
+		margin-top: 70px;
 	}
 
 	.elementor-excerpt {

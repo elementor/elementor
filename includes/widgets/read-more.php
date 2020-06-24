@@ -52,7 +52,7 @@ class Widget_Read_More extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-coding';
+		return 'eicon-post-excerpt';
 	}
 
 	/**
@@ -87,9 +87,18 @@ class Widget_Read_More extends Widget_Base {
 		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', __( 'Continue reading', 'elementor' ) );
 
 		$this->add_control(
+			'theme_support',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => sprintf( __( 'Note: This widget only affects themes that use `%s` in archive pages.', 'elementor' ), 'the_content' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+			]
+		);
+
+		$this->add_control(
 			'link_text',
 			[
-				'label' => __( 'Link Text', 'elementor' ),
+				'label' => __( 'Read More Text', 'elementor' ),
 				'placeholder' => $default_link_text,
 				'default' => $default_link_text,
 			]
@@ -114,9 +123,10 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<!--more {{ settings.link_text }}-->
 		<?php

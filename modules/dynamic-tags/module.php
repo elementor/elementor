@@ -56,6 +56,16 @@ class Module extends BaseModule {
 	const GALLERY_CATEGORY = 'gallery';
 
 	/**
+	 * Dynamic tags number category.
+	 */
+	const NUMBER_CATEGORY = 'number';
+
+	/**
+	 * Dynamic tags number category.
+	 */
+	const COLOR_CATEGORY = 'color';
+
+	/**
 	 * Dynamic tags module constructor.
 	 *
 	 * Initializing Elementor dynamic tags module.
