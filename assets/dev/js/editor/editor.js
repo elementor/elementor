@@ -1,8 +1,8 @@
 import EditorBase from './editor-base';
 
-		NProgress.start();
 export class Editor extends EditorBase {
 	onStart( options ) {
+		NProgress.start();
 		NProgress.inc( 0.2 );
 
 		super.onStart( options );
