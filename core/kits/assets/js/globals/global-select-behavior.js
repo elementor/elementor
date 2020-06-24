@@ -58,7 +58,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} else {
 			value = this.view.getControlValue();
 
-			const globalValue = this.view.getGlobalKey();
+			const globalValue = this.view.getGlobalKey() || this.view.model.get( 'global' )?.default;
 
 			if ( globalValue ) {
 				// If there is a global value saved, get the global's name and display it
