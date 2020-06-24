@@ -1153,7 +1153,7 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			if ( $control_obj instanceof Control_Repeater ) {
-				if ( ! isset(  $settings[ $control_name ] ) ) {
+				if ( ! isset( $settings[ $control_name ] ) ) {
 					continue;
 				}
 
