@@ -56,9 +56,9 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function enqueue_assets() {
-		$post_id = get_the_ID();
+		$document = Plugin::$instance->documents->get( get_the_ID() );
 
-		if ( ! User::is_current_user_can_edit( $post_id ) ) {
+		if ( ! $document || ! $document->is_editable_by_current_user() ) {
 			return;
 		}
 
@@ -69,11 +69,10 @@ class Module extends BaseModule {
 		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', [ 'jquery' ], ELEMENTOR_VERSION, true );
 
 		$elementor_settings = [
-			'isElementorMode' => Plugin::$instance->db->is_built_with_elementor( $post_id ),
-			'editLink' => Utils::get_edit_link( $post_id ),
+			'isElementorMode' => $document->is_built_with_elementor(),
+			'editLink' => $document->get_edit_url(),
 		];
-
-		wp_localize_script( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
+		Utils::print_js_config( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
 	}
 
 	/**

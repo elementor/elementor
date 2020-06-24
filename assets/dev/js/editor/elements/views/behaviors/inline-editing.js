@@ -29,7 +29,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	startEditing: function( $element ) {
 		if (
 			this.editing ||
-			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
+			! this.view.container.isEditable() ||
 			this.view.model.isRemoteRequestActive()
 		) {
 			return;
@@ -196,7 +196,26 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
+		let key = this.getEditingSettingKey(),
+			container = this.view.getContainer();
+
+		const parts = key.split( '.' );
+
+		// Is it repeater?
+		if ( 3 === parts.length ) {
+			container = container.children[ parts[ 1 ] ];
+			key = parts[ 2 ];
+		}
+
+		$e.run( 'document/elements/settings', {
+			container,
+			settings: {
+				[ key ]: this.editor.getContent(),
+			},
+			options: {
+				external: true,
+			},
+		} );
 	},
 } );
 

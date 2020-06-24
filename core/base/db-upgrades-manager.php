@@ -10,17 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	protected $current_version = null;
+	protected $query_limit = 100;
 
 	abstract public function get_new_version();
 	abstract public function get_version_option_name();
 	abstract public function get_upgrades_class();
+	abstract public function get_updater_label();
 
 	public function get_task_runner_class() {
 		return 'Elementor\Core\Upgrade\Updater';
 	}
 
 	public function get_query_limit() {
-		return 100;
+		return $this->query_limit;
+	}
+
+	public function set_query_limit( $limit ) {
+		$this->query_limit = $limit;
 	}
 
 	public function get_current_version() {
@@ -43,10 +49,16 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		return version_compare( $this->get_new_version(), $current_version, '>' );
 	}
 
-	public function on_runner_complete() {
+	public function on_runner_start() {
+		parent::on_runner_start();
+
+		define( 'IS_ELEMENTOR_UPGRADE', true );
+	}
+
+	public function on_runner_complete( $did_tasks = false ) {
 		$logger = Plugin::$instance->logger->get_logger();
 
-		$logger->info( 'Update DB completed', [
+		$logger->info( 'Elementor data updater process has been completed.', [
 			'meta' => [
 				'plugin' => $this->get_plugin_label(),
 				'from' => $this->current_version,
@@ -58,12 +70,14 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$this->update_db_version();
 
-		$this->add_flag( 'completed' );
+		if ( $did_tasks ) {
+			$this->add_flag( 'completed' );
+		}
 	}
 
 	public function admin_notice_start_upgrade() {
 		$upgrade_link = $this->get_start_action_url();
-		$message = '<p>' . sprintf( __( '%s needs upgrade the Database.', 'elementor' ), $this->get_plugin_label() ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s Your site database needs to be updated to the latest version.', 'elementor' ), $this->get_updater_label() ) . '</p>';
 		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Update Now', 'elementor' ) ) . '</p>';
 
 		echo '<div class="notice notice-error">' . $message . '</div>';
@@ -71,8 +85,8 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 	public function admin_notice_upgrade_is_running() {
 		$upgrade_link = $this->get_continue_action_url();
-		$message = '<p>' . sprintf( __( '%s is updating the database in background..', 'elementor' ), $this->get_plugin_label() ) . '</p>';
-		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Run immediately', 'elementor' ) ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s Database update process is running in the background.', 'elementor' ), $this->get_updater_label() ) . '</p>';
+		$message .= '<p>' . __( 'Taking a while?', 'elementor' ) . '<a href="' . $upgrade_link . '" class="button-primary">' . __( 'Click here to run it now', 'elementor' ) . '</a></p>';
 
 		echo '<div class="notice notice-warning">' . $message . '</div>';
 	}
@@ -80,7 +94,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	public function admin_notice_upgrade_is_completed() {
 		$this->delete_flag( 'completed' );
 
-		$message = '<p>' . sprintf( __( '%s has been update the database. Enjoy!', 'elementor' ), $this->get_plugin_label() ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s The database update process is now complete. Thank you for updating to the latest version!', 'elementor' ), $this->get_updater_label() ) . '</p>';
 
 		echo '<div class="notice notice-success">' . $message . '</div>';
 	}
@@ -110,7 +124,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$updater->save()->dispatch();
 
-		Plugin::$instance->logger->get_logger()->info( 'Update DB has been queued', [
+		Plugin::$instance->logger->get_logger()->info( 'Elementor data updater process has been queued.', [
 			'meta' => [
 				'plugin' => $this->get_plugin_label(),
 				'from' => $this->current_version,
@@ -153,11 +167,9 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function __construct() {
-		if ( ! is_admin() || ! current_user_can( 'update_plugins' ) ) {
-			return;
-		}
-
-		if ( $this->get_flag( 'completed' ) ) {
+		// If upgrade is completed - show the notice only for admins.
+		// Note: in this case `should_upgrade` returns false, because it's already upgraded.
+		if ( is_admin() && current_user_can( 'update_plugins' ) && $this->get_flag( 'completed' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_completed' ] );
 		}
 
@@ -167,10 +179,10 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$updater = $this->get_task_runner();
 
-		if ( $updater->is_running() ) {
+		$this->start_run();
+
+		if ( $updater->is_running() && current_user_can( 'update_plugins' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_running' ] );
-		} else {
-			add_action( 'admin_notices', [ $this, 'admin_notice_start_upgrade' ] );
 		}
 
 		parent::__construct();

@@ -56,7 +56,8 @@ class Dynamic_CSS extends Post {
 	 * @access protected
 	 */
 	protected function get_data() {
-		return Plugin::$instance->db->get_plain_editor( $this->post_id_for_data );
+		$document = Plugin::$instance->documents->get( $this->post_id_for_data );
+		return $document ? $document->get_elements_data() : [];
 	}
 
 	/**

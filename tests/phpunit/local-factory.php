@@ -142,7 +142,7 @@ class Local_Factory extends \WP_UnitTestCase {
 				'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
 				'post_status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
 				'post_type' => \Elementor\TemplateLibrary\Source_Local::CPT,
-				'post_content' => '<ul><li title="Edit">Edit</li></ul><h3>This is the heading</h3>Click edit button to change this text. Lorem ipsum dolor sit amet consectetur adipiscing elit dolor<h3>This is the heading</h3>Click edit button to change this text. Lorem ipsum dolor sit amet consectetur adipiscing elit dolor<a href="#">Click Here</a>',
+				'post_content' => '<ul><li title="Edit">Edit</li></ul><h3>This is the heading</h3>Lorem ipsum dolor sit amet consectetur adipiscing elit dolor<h3>This is the heading</h3>Lorem ipsum dolor sit amet consectetur adipiscing elit dolor<a href="#">Click Here</a>',
 			]
 		);
 		update_post_meta( $template_id, '_elementor_data', '["type":"bla"]' );

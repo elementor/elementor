@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\Connect\Apps\Library;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -50,18 +52,6 @@ class Api {
 	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
 	/**
-	 * API get template content URL.
-	 *
-	 * Holds the URL of the template content API.
-	 *
-	 * @access private
-	 * @static
-	 *
-	 * @var string API get template content URL.
-	 */
-	private static $api_get_template_content_url = 'https://my.elementor.com/api/v1/templates/%d';
-
-	/**
 	 * Get info data.
 	 *
 	 * This function notifies the user of upgrade notices, new templates and contributors.
@@ -83,7 +73,7 @@ class Api {
 		if ( $force_update || false === $info_data ) {
 			$timeout = ( $force_update ) ? 25 : 8;
 
-			$response = wp_remote_post( self::$api_info_url, [
+			$response = wp_remote_get( self::$api_info_url, [
 				'timeout' => $timeout,
 				'body' => [
 					// Which API version is used.
@@ -108,8 +98,6 @@ class Api {
 			}
 
 			if ( isset( $info_data['library'] ) ) {
-				$info_data['library']['categories'] = json_decode( $info_data['library']['categories'] );
-
 				update_option( self::LIBRARY_OPTION_KEY, $info_data['library'], 'no' );
 
 				unset( $info_data['library'] );
@@ -146,6 +134,30 @@ class Api {
 		}
 
 		return $data['upgrade_notice'];
+	}
+
+	public static function get_admin_notice() {
+		$data = self::get_info_data();
+		if ( empty( $data['admin_notice'] ) ) {
+			return false;
+		}
+		return $data['admin_notice'];
+	}
+
+	public static function get_canary_deployment_info( $force = false ) {
+		$data = self::get_info_data( $force );
+
+		if ( empty( $data['canary_deployment'] ) ) {
+			return false;
+		}
+
+		return $data['canary_deployment'];
+	}
+
+	public static function get_promotion_widgets() {
+		$data = self::get_info_data();
+
+		return $data['pro_widgets'];
 	}
 
 	/**
@@ -211,55 +223,13 @@ class Api {
 	 *
 	 * @param int $template_id The template ID.
 	 *
-	 * @return array The template content.
+	 * @return object|\WP_Error The template content.
 	 */
 	public static function get_template_content( $template_id ) {
-		$url = sprintf( self::$api_get_template_content_url, $template_id );
+		/** @var Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 
-		$body_args = [
-			// Which API version is used.
-			'api_version' => ELEMENTOR_VERSION,
-			// Which language to return.
-			'site_lang' => get_bloginfo( 'language' ),
-		];
-
-		/**
-		 * API: Template body args.
-		 *
-		 * Filters the body arguments send with the GET request when fetching the content.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array $body_args Body arguments.
-		 */
-		$body_args = apply_filters( 'elementor/api/get_templates/body_args', $body_args );
-
-		$response = wp_remote_get( $url, [
-			'timeout' => 40,
-			'body' => $body_args,
-		] );
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$response_code = (int) wp_remote_retrieve_response_code( $response );
-
-		if ( 200 !== $response_code ) {
-			return new \WP_Error( 'response_code_error', sprintf( 'The request returned with a status code of %s.', $response_code ) );
-		}
-
-		$template_content = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( isset( $template_content['error'] ) ) {
-			return new \WP_Error( 'response_error', $template_content['error'] );
-		}
-
-		if ( empty( $template_content['data'] ) && empty( $template_content['content'] ) ) {
-			return new \WP_Error( 'template_data_error', 'An invalid data was returned.' );
-		}
-
-		return $template_content;
+		return $library->get_template_content( $template_id );
 	}
 
 	/**

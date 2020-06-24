@@ -11,6 +11,7 @@ use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Stylesheet;
+use Elementor\Icons_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -57,6 +58,8 @@ abstract class Base extends Base_File {
 	 * @var array
 	 */
 	private $fonts = [];
+
+	private $icons_fonts = [];
 
 	/**
 	 * Stylesheet object.
@@ -217,22 +220,17 @@ abstract class Base extends Base_File {
 			}
 		}
 
-		$name = $this->get_name();
+		if ( ! empty( $meta['icons'] ) ) {
+			$icons_types = Icons_Manager::get_icon_manager_tabs();
+			foreach ( $meta['icons'] as $icon_font ) {
+				if ( ! isset( $icons_types[ $icon_font ] ) ) {
+					continue;
+				}
+				Plugin::$instance->frontend->enqueue_font( $icon_font );
+			}
+		}
 
-		/**
-		 * Enqueue CSS file.
-		 *
-		 * Fires when CSS file is enqueued on Elementor.
-		 *
-		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
-		 *
-		 * @since 1.9.0
-		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
-		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
-		 *
-		 * @param Base $this The current CSS file.
-		 */
-		do_action( "elementor/{$name}-css-file/enqueue", $this );
+		$name = $this->get_name();
 
 		/**
 		 * Enqueue CSS file.
@@ -287,7 +285,7 @@ abstract class Base extends Base_File {
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			try {
-				$output_css_property = preg_replace_callback( '/\{\{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+				$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
 					$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
 					$parsed_value = '';
@@ -341,7 +339,7 @@ abstract class Base extends Base_File {
 			if ( $device_rules ) {
 				$selector = preg_replace( $device_pattern, '', $selector );
 
-				preg_match_all( '/\(([^\)]+)\)/', $device_rules[0], $pure_device_rules );
+				preg_match_all( '/\(([^)]+)\)/', $device_rules[0], $pure_device_rules );
 
 				$pure_device_rules = $pure_device_rules[1];
 
@@ -414,21 +412,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * Get CSS.
-	 *
-	 * Retrieve the CSS. If the CSS is empty, parse it again.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 * @deprecated 2.1.0 Use `CSS_File::get_content()` method instead
-	 *
-	 * @return string The CSS.
-	 */
-	public function get_css() {
-		return $this->get_content();
-	}
-
-	/**
 	 * Get stylesheet.
 	 *
 	 * Retrieve the CSS file stylesheet instance.
@@ -475,7 +458,14 @@ abstract class Base extends Base_File {
 				$this->add_dynamic_control_style_rules( $control, $control[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );
 			}
 
+			if ( Controls_Manager::ICONS === $control['type'] ) {
+				$this->icons_fonts[] = $values[ $control['name'] ]['library'];
+			}
+
 			if ( ! empty( $parsed_dynamic_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] ) ) {
+				// Dynamic CSS should not be added to the CSS files.
+				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
+				// and printed in a style tag.
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
 				continue;
 			}
@@ -515,6 +505,7 @@ abstract class Base extends Base_File {
 	protected function get_default_meta() {
 		return array_merge( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
+			'icons' => array_unique( $this->icons_fonts ),
 			'status' => '',
 		] );
 	}
@@ -574,21 +565,6 @@ abstract class Base extends Base_File {
 		$this->render_css();
 
 		$name = $this->get_name();
-
-		/**
-		 * Parse CSS file.
-		 *
-		 * Fires when CSS file is parsed on Elementor.
-		 *
-		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
-		 *
-		 * @since 1.2.0
-		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
-		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
-		 *
-		 * @param Base $this The current CSS file.
-		 */
-		do_action( "elementor/{$name}-css-file/parse", $this );
 
 		/**
 		 * Parse CSS file.

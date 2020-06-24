@@ -134,9 +134,17 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	tagDataToTagText: function( tagID, tagName, tagSettings ) {
-		tagSettings = encodeURIComponent( JSON.stringify( ( tagSettings && tagSettings.toJSON( { removeDefault: true } ) ) || {} ) );
+		tagSettings = encodeURIComponent( JSON.stringify( ( tagSettings && tagSettings.toJSON( { remove: [ 'default' ] } ) ) || {} ) );
 
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
+	},
+
+	tagContainerToTagText: function( /**Container*/ container ) {
+		return elementor.dynamicTags.tagDataToTagText(
+			container.view.getOption( 'id' ),
+			container.view.getOption( 'name' ),
+			container.view.model
+		);
 	},
 
 	cleanCache: function() {

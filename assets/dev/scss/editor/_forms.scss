@@ -8,7 +8,7 @@ input, select, textarea, .elementor-input-style {
 	width: 100%;
 	background: none;
 	box-shadow: none;
-	color: $editor-darkest;
+	color: $editor-dark;
 	border: 1px solid;
 	outline: none;
 
@@ -17,7 +17,14 @@ input, select, textarea, .elementor-input-style {
 	}
 
 	&:focus {
-		border-color: $editor-light;
+
+		&, + .elementor-control-dynamic-switcher {
+			border-color: $editor-light;
+		}
+	}
+
+	&::placeholder {
+		color: $editor-light;
 	}
 }
 
@@ -28,8 +35,14 @@ input, select, textarea, .elementor-input-style {
 	}
 }
 
+input {
+	// This fixes an issue in Firefox, in cases where a container with `display: flex` has a defined width,
+	// an input element inside this container cannot be given its own defined width.
+	min-width: 0;
+}
+
 input, textarea, .elementor-input-style {
-	padding: 5px 8px;
+	padding: 5px;
 }
 
 textarea, .elementor-input-style {
@@ -38,24 +51,8 @@ textarea, .elementor-input-style {
 
 input[type="checkbox"],
 input[type="radio"] {
-	border: 1px solid $editor-lightest;
-	background: #fff;
-	color: #555;
-	clear: none;
-	cursor: pointer;
-	display: inline-block;
-	line-height: 0;
-	height: 16px;
-	margin: -4px 4px 0 0;
-	outline: 0;
-	text-align: center;
-	vertical-align: middle;
-	width: 16px;
-	min-width: 16px;
-	transition: .05s border-color ease-in-out;
-	&:focus {
-		border-color: $editor-light;
-	}
+	height: auto;
+	width: auto;
 }
 
 input[disabled] {
@@ -65,5 +62,6 @@ input[disabled] {
 }
 
 select {
-	height: 27px;
+	outline: none;
+	height: $control-unit;
 }

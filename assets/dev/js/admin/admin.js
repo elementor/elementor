@@ -45,7 +45,19 @@
 				event.preventDefault();
 
 				if ( self.isElementorMode() ) {
-					self.elements.$switchModeInput.val( '' );
+					elementorCommon.dialogsManager.createWidget( 'confirm', {
+						message: self.translate( 'back_to_wordpress_editor_message' ),
+						headerMessage: self.translate( 'back_to_wordpress_editor_header' ),
+						strings: {
+							confirm: self.translate( 'yes' ),
+							cancel: self.translate( 'cancel' ),
+						},
+						defaultOption: 'confirm',
+						onConfirm: function() {
+							self.elements.$switchModeInput.val( '' );
+							self.toggleStatus();
+						},
+					} ).show();
 				} else {
 					self.elements.$switchModeInput.val( true );
 
@@ -66,9 +78,8 @@
 
 						location.href = self.elements.$goToEditLink.attr( 'href' );
 					} );
+					self.toggleStatus();
 				}
-
-				self.toggleStatus();
 			} );
 
 			self.elements.$goToEditLink.on( 'click', function() {
@@ -144,9 +155,45 @@
 						}
 
 						elementorCommon.dialogsManager.createWidget( 'alert', {
-								message: response.data,
-							} ).show();
+							message: response.data,
+						} ).show();
 					} );
+			} );
+
+			$( '#elementor_upgrade_fa_button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				const $updateButton = $( this );
+				$updateButton.addClass( 'loading' );
+				elementorCommon.dialogsManager.createWidget( 'confirm', {
+					id: 'confirm_fa_migration_admin_modal',
+					message: self.translate( 'confirm_fa_migration_admin_modal_body' ),
+					headerMessage: self.translate( 'confirm_fa_migration_admin_modal_head' ),
+					strings: {
+						confirm: self.translate( 'yes' ),
+						cancel: self.translate( 'cancel' ),
+					},
+					defaultOption: 'confirm',
+					onConfirm: () => {
+						$updateButton.removeClass( 'error' ).addClass( 'loading' );
+						$.post( ajaxurl, $updateButton.data() )
+							.done( function( response ) {
+								$updateButton.removeClass( 'loading' ).addClass( 'success' );
+								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
+								const redirectTo = ( location.search.split( 'redirect_to=' )[ 1 ] || '' ).split( '&' )[ 0 ];
+								if ( redirectTo ) {
+									location.href = decodeURIComponent( redirectTo );
+									return;
+								}
+								history.go( -1 );
+							} )
+							.fail( function() {
+								$updateButton.removeClass( 'loading' ).addClass( 'error' );
+							} );
+					},
+					onCancel: () => {
+						$updateButton.removeClass( 'loading' ).addClass( 'error' );
+					},
+				} ).show();
 			} );
 
 			self.elements.$settingsTabs.on( {
@@ -163,6 +210,16 @@
 					self.goToSettingsTabFromHash();
 				},
 			} );
+
+			$( 'select.elementor-rollback-select' ).on( 'change', function() {
+				var $this = $( this ),
+					$rollbackButton = $this.next( '.elementor-rollback-button' ),
+					placeholderText = $rollbackButton.data( 'placeholder-text' ),
+					placeholderUrl = $rollbackButton.data( 'placeholder-url' );
+
+				$rollbackButton.html( placeholderText.replace( '{VERSION}', $this.val() ) );
+				$rollbackButton.attr( 'href', placeholderUrl.replace( 'VERSION', $this.val() ) );
+			} ).trigger( 'change' );
 
 			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
 				event.preventDefault();
@@ -231,7 +288,7 @@
 		},
 
 		isElementorMode: function() {
-			return !! this.elements.$switchModeInput.val();
+			return ! ! this.elements.$switchModeInput.val();
 		},
 
 		animateLoader: function() {
@@ -247,17 +304,19 @@
 		},
 
 		goToSettingsTab: function( tabName ) {
-			var $activePage = this.elements.$settingsFormPages.filter( '#' + tabName );
+			const $pages = this.elements.$settingsFormPages;
 
-			if ( ! $activePage.length ) {
+			if ( ! $pages.length ) {
 				return;
 			}
+
+			const $activePage = $pages.filter( '#' + tabName );
 
 			this.elements.$activeSettingsPage.removeClass( 'elementor-active' );
 
 			this.elements.$activeSettingsTab.removeClass( 'nav-tab-active' );
 
-			var $activeTab = this.elements.$settingsTabs.filter( '#elementor-settings-' + tabName );
+			const $activeTab = this.elements.$settingsTabs.filter( '#elementor-settings-' + tabName );
 
 			$activePage.addClass( 'elementor-active' );
 

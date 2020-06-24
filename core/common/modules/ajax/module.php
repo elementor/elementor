@@ -109,7 +109,7 @@ class Module extends BaseModule {
 	 */
 	public function register_ajax_action( $tag, $callback ) {
 		if ( ! did_action( 'elementor/ajax/register_actions' ) ) {
-			_doing_it_wrong( __METHOD__, esc_html( __( 'Use `elementor/ajax/register_actions` hook to register ajax action.', 'elementor' ) ), '2.0.0' );
+			_doing_it_wrong( __METHOD__, esc_html( sprintf( 'Use `%s` hook to register ajax action.', 'elementor/ajax/register_actions' ) ), '2.0.0' );
 		}
 
 		$this->ajax_actions[ $tag ] = compact( 'tag', 'callback' );
@@ -248,9 +248,32 @@ class Module extends BaseModule {
 	 * @access protected
 	 */
 	private function send_success() {
-		wp_send_json_success( [
-			'responses' => $this->response_data,
-		] );
+		$response = [
+			'success' => true,
+			'data' => [
+				'responses' => $this->response_data,
+			],
+		];
+
+		$json = wp_json_encode( $response );
+
+		while ( ob_get_status() ) {
+			ob_end_clean();
+		}
+
+		if ( function_exists( 'gzencode' ) ) {
+			$response = gzencode( $json );
+
+			header( 'Content-Type: application/json; charset=utf-8' );
+			header( 'Content-Encoding: gzip' );
+			header( 'Content-Length: ' . strlen( $response ) );
+
+			echo $response;
+		} else {
+			echo $json;
+		}
+
+		wp_die( '', '', [ 'response' => null ] );
 	}
 
 	/**

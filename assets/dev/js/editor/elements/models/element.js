@@ -7,7 +7,9 @@ ElementModel = Backbone.Model.extend( {
 		elType: '',
 		isInner: false,
 		settings: {},
-		defaultEditSettings: {},
+		defaultEditSettings: {
+			defaultEditRoute: 'content',
+		},
 	},
 
 	remoteRender: false,
@@ -201,7 +203,7 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	toJSON: function( options ) {
-		options = _.extend( { copyHtmlCache: false }, options );
+		options = options || {};
 
 		// Call parent's toJSON method
 		var data = Backbone.Model.prototype.toJSON.call( this );
@@ -216,6 +218,10 @@ ElementModel = Backbone.Model.extend( {
 			data.htmlCache = this.getHtmlCache();
 		} else {
 			delete data.htmlCache;
+		}
+
+		if ( options.remove ) {
+			options.remove.forEach( ( key ) => delete data[ key ] );
 		}
 
 		return data;

@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor progress widget.
  *
@@ -125,7 +127,9 @@ class Widget_Progress extends Widget_Base {
 					'size' => 50,
 					'unit' => '%',
 				],
-				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -178,8 +182,8 @@ class Widget_Progress extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-bar' => 'background-color: {{VALUE}};',
@@ -199,12 +203,55 @@ class Widget_Progress extends Widget_Base {
 		);
 
 		$this->add_control(
+			'bar_height',
+			[
+				'label' => __( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-progress-bar' => 'height: {{SIZE}}{{UNIT}}; line-height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'bar_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-progress-wrapper' => 'border-radius: {{SIZE}}{{UNIT}}; overflow: hidden;',
+				],
+			]
+		);
+
+		$this->add_control(
+			'inner_text_heading',
+			[
+				'label' => __( 'Inner Text', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'bar_inline_color',
 			[
-				'label' => __( 'Inner Text Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-bar' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'bar_inner_typography',
+				'selector' => '{{WRAPPER}} .elementor-progress-bar',
+				'exclude' => [
+					'line_height',
 				],
 			]
 		);
@@ -228,8 +275,8 @@ class Widget_Progress extends Widget_Base {
 					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 			]
 		);
@@ -239,7 +286,7 @@ class Widget_Progress extends Widget_Base {
 			[
 				'name' => 'typography',
 				'selector' => '{{WRAPPER}} .elementor-title',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -248,6 +295,7 @@ class Widget_Progress extends Widget_Base {
 
 	/**
 	 * Render progress widget output on the frontend.
+	 * Make sure value does no exceed 100%.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -257,12 +305,23 @@ class Widget_Progress extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$progress_percentage = is_numeric( $settings['percent']['size'] ) ? $settings['percent']['size'] : '0';
+		if ( 100 < $progress_percentage ) {
+			$progress_percentage = 100;
+		}
+
+		$this->add_render_attribute( 'title', [
+			'class' => 'elementor-title',
+		]);
+
+		$this->add_inline_editing_attributes( 'title' );
+
 		$this->add_render_attribute( 'wrapper', [
 			'class' => 'elementor-progress-wrapper',
 			'role' => 'progressbar',
 			'aria-valuemin' => '0',
 			'aria-valuemax' => '100',
-			'aria-valuenow' => $settings['percent']['size'],
+			'aria-valuenow' => $progress_percentage,
 			'aria-valuetext' => $settings['inner_text'],
 		] );
 
@@ -272,7 +331,7 @@ class Widget_Progress extends Widget_Base {
 
 		$this->add_render_attribute( 'progress-bar', [
 			'class' => 'elementor-progress-bar',
-			'data-max' => $settings['percent']['size'],
+			'data-max' => $progress_percentage,
 		] );
 
 		$this->add_render_attribute( 'inner_text', [
@@ -281,15 +340,15 @@ class Widget_Progress extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'inner_text' );
 
-		if ( ! empty( $settings['title'] ) ) { ?>
-			<span class="elementor-title"><?php echo $settings['title']; ?></span>
+		if ( ! Utils::is_empty( $settings['title'] ) ) { ?>
+			<span <?php echo $this->get_render_attribute_string( 'title' ); ?>><?php echo $settings['title']; ?></span>
 		<?php } ?>
 
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<div <?php echo $this->get_render_attribute_string( 'progress-bar' ); ?>>
 				<span <?php echo $this->get_render_attribute_string( 'inner_text' ); ?>><?php echo $settings['inner_text']; ?></span>
 				<?php if ( 'hide' !== $settings['display_percentage'] ) { ?>
-					<span class="elementor-progress-percentage"><?php echo $settings['percent']['size']; ?>%</span>
+					<span class="elementor-progress-percentage"><?php echo $progress_percentage; ?>%</span>
 				<?php } ?>
 			</div>
 		</div>
@@ -301,18 +360,29 @@ class Widget_Progress extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
+		let progress_percentage = 0;
+		if ( ! isNaN( settings.percent.size ) ) {
+			progress_percentage = 100 < settings.percent.size ? 100 : settings.percent.size;
+		}
+
+		view.addRenderAttribute( 'title', {
+			'class': 'elementor-title'
+		} );
+
+		view.addInlineEditingAttributes( 'title' );
+
 		view.addRenderAttribute( 'progressWrapper', {
 			'class': [ 'elementor-progress-wrapper', 'progress-' + settings.progress_type ],
 			'role': 'progressbar',
 			'aria-valuemin': '0',
 			'aria-valuemax': '100',
-			'aria-valuenow': settings.percent.size,
+			'aria-valuenow': progress_percentage,
 			'aria-valuetext': settings.inner_text
 		} );
 
@@ -323,13 +393,13 @@ class Widget_Progress extends Widget_Base {
 		view.addInlineEditingAttributes( 'inner_text' );
 		#>
 		<# if ( settings.title ) { #>
-			<span class="elementor-title">{{{ settings.title }}}</span><#
+			<span {{{ view.getRenderAttributeString( 'title' ) }}}>{{{ settings.title }}}</span><#
 		} #>
 		<div {{{ view.getRenderAttributeString( 'progressWrapper' ) }}}>
-			<div class="elementor-progress-bar" data-max="{{ settings.percent.size }}">
+			<div class="elementor-progress-bar" data-max="{{ progress_percentage }}">
 				<span {{{ view.getRenderAttributeString( 'inner_text' ) }}}>{{{ settings.inner_text }}}</span>
 				<# if ( 'hide' !== settings.display_percentage ) { #>
-					<span class="elementor-progress-percentage">{{{ settings.percent.size }}}%</span>
+					<span class="elementor-progress-percentage">{{{ progress_percentage }}}%</span>
 				<# } #>
 			</div>
 		</div>

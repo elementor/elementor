@@ -34,6 +34,7 @@ export default class extends Marionette.LayoutView {
 			draggable: false,
 			hide: {
 				onOutsideClick: false,
+				onEscKeyPress: false,
 			},
 		};
 

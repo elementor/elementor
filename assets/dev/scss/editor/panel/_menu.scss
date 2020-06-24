@@ -43,6 +43,10 @@
 			text-align: center;
 			width: 50px;
 			color: $editor-light;
+
+			.eicon-editor-external-link {
+				font-size: 18px;
+			}
 		}
 
 		&-title {
@@ -53,19 +57,8 @@
 			}
 		}
 
-		&-exit-to-dashboard {
-			background-color: $wp-primary;
-			color: #fff;
-			text-transform: uppercase;
-			font-size: 12px;
-
-			&:hover {
-				background-color: darken($wp-primary, 5%);
-			}
-
-			.elementor-panel-menu-item-icon {
-				color: #fff;
-			}
+		a {
+			color: $editor-dark;
 		}
 	}
 }

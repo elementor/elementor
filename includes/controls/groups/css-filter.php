@@ -8,8 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor CSS Filter control.
  *
- * A base control for applying css filters. Displays sliders to define
- * the values of different css filters including blur, brightens, contrast, saturation, .
+ * A base control for applying css filters. Displays sliders to define the
+ * values of different CSS filters including blur, brightens, contrast,
+ * saturation and hue.
  *
  * @since 2.1.0
  */
@@ -23,7 +24,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 * @since 2.1.0
 	 * @access protected
 	 *
-	 * @param array $fields CSS Filter control fields.
+	 * @param array $fields CSS filter control fields.
 	 *
 	 * @return array Processed fields.
 	 */
@@ -54,14 +55,8 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 *
 	 * @return array Control fields.
 	 */
-
 	protected function init_fields() {
 		$controls = [];
-
-		$controls['filter_type'] = [
-			'type' => Controls_Manager::HIDDEN,
-			'default' => 'custom',
-		];
 
 		$controls['blur'] = [
 			'label' => _x( 'Blur', 'Filter Control', 'elementor' ),
@@ -80,9 +75,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'filter: brightness( {{brightness.SIZE}}% ) contrast( {{contrast.SIZE}}% ) saturate( {{saturate.SIZE}}% ) blur( {{blur.SIZE}}px ) hue-rotate( {{hue.SIZE}}deg )',
 			],
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		$controls['brightness'] = [
@@ -100,9 +92,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 				],
 			],
 			'separator' => 'none',
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		$controls['contrast'] = [
@@ -120,9 +109,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 				],
 			],
 			'separator' => 'none',
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		$controls['saturate'] = [
@@ -140,9 +126,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 				],
 			],
 			'separator' => 'none',
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		$controls['hue'] = [
@@ -160,31 +143,9 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 				],
 			],
 			'separator' => 'none',
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		return $controls;
-	}
-
-
-	/**
-	 * @since 2.1.0
-	 * @access protected
-	 */
-	protected function prepare_fields( $fields ) {
-		array_walk( $fields, function ( &$field, $field_name ) {
-			if ( in_array( $field_name, [ 'css_filter', 'popover_toggle' ] ) ) {
-				return;
-			}
-
-			$field['condition'] = [
-				'css_filter' => 'custom',
-			];
-		} );
-
-		return parent::prepare_fields( $fields );
 	}
 
 	/**
@@ -196,7 +157,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 * @since 2.1.0
 	 * @access protected
 	 *
-	 * @return array Default box shadow control options.
+	 * @return array Default CSS filter control options.
 	 */
 	protected function get_default_options() {
 		return [

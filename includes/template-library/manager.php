@@ -128,7 +128,14 @@ class Manager {
 		if ( ! $source_instance instanceof Source_Base ) {
 			return new \WP_Error( 'wrong_instance_source' );
 		}
-		$this->_registered_sources[ $source_instance->get_id() ] = $source_instance;
+
+		$source_id = $source_instance->get_id();
+
+		if ( isset( $this->_registered_sources[ $source_id ] ) ) {
+			return new \WP_Error( 'source_exists' );
+		}
+
+		$this->_registered_sources[ $source_id ] = $source_instance;
 
 		return true;
 	}
@@ -139,6 +146,8 @@ class Manager {
 	 * Remove an existing template sources from the list of registered template
 	 * sources.
 	 *
+	 * @deprecated 2.7.0
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
@@ -147,12 +156,6 @@ class Manager {
 	 * @return bool Whether the source was unregistered.
 	 */
 	public function unregister_source( $id ) {
-		if ( ! isset( $this->_registered_sources[ $id ] ) ) {
-			return false;
-		}
-
-		unset( $this->_registered_sources[ $id ] );
-
 		return true;
 	}
 
@@ -227,11 +230,12 @@ class Manager {
 	public function get_library_data( array $args ) {
 		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
 
+		// Ensure all document are registered.
+		Plugin::$instance->documents->get_document_types();
+
 		return [
 			'templates' => $this->get_templates(),
-			'config' => [
-				'categories' => $library_data['categories'],
-			],
+			'config' => $library_data['types_data'],
 		];
 	}
 
@@ -262,11 +266,9 @@ class Manager {
 
 		$args['content'] = json_decode( $args['content'], true );
 
-		if ( 'page' === $args['type'] ) {
-			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
 
-			$args['page_settings'] = $page->get_data( 'settings' );
-		}
+		$args['page_settings'] = $page->get_data( 'settings' );
 
 		$template_id = $source->save_item( $args );
 

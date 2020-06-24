@@ -1,9 +1,9 @@
 import Helpers from './utils/helpers';
 import Storage from './utils/storage';
-import HotKeys from './utils/hot-keys';
-import Ajax from '../../modules/ajax/assets/js/ajax';
-import Finder from '../../modules/finder/assets/js/finder';
-import Connect from '../../modules/connect/assets/js/connect';
+import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
+import Finder from 'elementor-common-modules/finder/assets/js/finder';
+import Connect from 'elementor-common-modules/connect/assets/js/connect';
+import API from './api/';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -31,11 +31,9 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.storage = new Storage();
 
-		this.hotKeys = new HotKeys();
-
-		this.hotKeys.bindListener( this.elements.$window );
-
 		this.dialogsManager = new DialogsManager.Instance();
+
+		this.api = new API();
 
 		this.initModules();
 	}
@@ -56,6 +54,27 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		} );
 	}
 
+	compileArrayTemplateArgs( template, templateArgs ) {
+		return template.replace( /%(?:(\d+)\$)?s/g, ( match, number ) => {
+			if ( ! number ) {
+				number = 1;
+			}
+
+			number--;
+			return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+		} );
+	}
+
+	compileObjectTemplateArgs( template, templateArgs ) {
+		return template.replace( /{{(?:([ \w]+))}}/g, ( match, name ) => {
+			return templateArgs[ name ] ? templateArgs[ name ] : match;
+		} );
+	}
+
+	compileTemplate( template, templateArgs ) {
+		return jQuery.isPlainObject( templateArgs ) ? this.compileObjectTemplateArgs( template, templateArgs ) : this.compileArrayTemplateArgs( template, templateArgs );
+	}
+
 	translate( stringKey, context, templateArgs, i18nStack ) {
 		if ( context ) {
 			i18nStack = this.config[ context ].i18n;
@@ -72,15 +91,7 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		}
 
 		if ( templateArgs ) {
-			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
-				if ( ! number ) {
-					number = 1;
-				}
-
-				number--;
-
-				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
-			} );
+			string = this.compileTemplate( string, templateArgs );
 		}
 
 		return string;

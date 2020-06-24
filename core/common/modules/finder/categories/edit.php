@@ -63,6 +63,7 @@ class Edit extends Base_Category {
 
 		$document_types = Plugin::$instance->documents->get_document_types( [
 			'is_editable' => true,
+			'show_in_finder' => true,
 		] );
 
 		// TODO: Remove on 2.4.0.
@@ -70,7 +71,7 @@ class Edit extends Base_Category {
 
 		$recently_edited_query_args = [
 			'post_type' => $post_types,
-			'post_status' => [ 'publish', 'draft' ],
+			'post_status' => [ 'publish', 'draft', 'private', 'pending', 'future' ],
 			'posts_per_page' => '10',
 			'meta_query' => [
 				[
@@ -126,7 +127,7 @@ class Edit extends Base_Category {
 					[
 						'name' => 'view',
 						'url' => $document->get_permalink(),
-						'icon' => 'eye',
+						'icon' => 'preview-medium',
 					],
 				],
 			];

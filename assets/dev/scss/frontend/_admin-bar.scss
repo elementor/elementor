@@ -8,8 +8,7 @@
 	}
 
 	.elementor-edit-link-title {
-		overflow: hidden;
-		text-overflow: ellipsis;
+		@include ellipsis;
 		width: 100%;
 	}
 

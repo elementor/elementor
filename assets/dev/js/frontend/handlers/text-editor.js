@@ -1,10 +1,5 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	TextEditor;
-
-TextEditor = HandlerModule.extend( {
-	dropCapLetter: '',
-
-	getDefaultSettings: function() {
+class TextEditor extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				paragraph: 'p:first',
@@ -14,10 +9,10 @@ TextEditor = HandlerModule.extend( {
 				dropCapLetter: 'elementor-drop-cap-letter',
 			},
 		};
-	},
+	}
 
-	getDefaultElements: function() {
-		var selectors = this.getSettings( 'selectors' ),
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' ),
 			classes = this.getSettings( 'classes' ),
 			$dropCap = jQuery( '<span>', { class: classes.dropCap } ),
 			$dropCapLetter = jQuery( '<span>', { class: classes.dropCapLetter } );
@@ -29,14 +24,10 @@ TextEditor = HandlerModule.extend( {
 			$dropCap: $dropCap,
 			$dropCapLetter: $dropCapLetter,
 		};
-	},
+	}
 
-	getElementName: function() {
-		return 'text-editor';
-	},
-
-	wrapDropCap: function() {
-		var isDropCapEnabled = this.getElementSettings( 'drop_cap' );
+	wrapDropCap() {
+		const isDropCapEnabled = this.getElementSettings( 'drop_cap' );
 
 		if ( ! isDropCapEnabled ) {
 			// If there is an old drop cap inside the paragraph
@@ -51,20 +42,20 @@ TextEditor = HandlerModule.extend( {
 			return;
 		}
 
-		var $paragraph = this.elements.$paragraph;
+		const $paragraph = this.elements.$paragraph;
 
 		if ( ! $paragraph.length ) {
 			return;
 		}
 
-		var	paragraphContent = $paragraph.html().replace( /&nbsp;/g, ' ' ),
+		const paragraphContent = $paragraph.html().replace( /&nbsp;/g, ' ' ),
 			firstLetterMatch = paragraphContent.match( /^ *([^ ] ?)/ );
 
 		if ( ! firstLetterMatch ) {
 			return;
 		}
 
-		var firstLetter = firstLetterMatch[ 1 ],
+		const firstLetter = firstLetterMatch[ 1 ],
 			trimmedFirstLetter = firstLetter.trim();
 
 		// Don't apply drop cap when the content starting with an HTML tag
@@ -76,26 +67,26 @@ TextEditor = HandlerModule.extend( {
 
 		this.elements.$dropCapLetter.text( trimmedFirstLetter );
 
-		var restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, function( match ) {
+		const restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, ( match ) => {
 			return new Array( match.length + 1 ).join( '&nbsp;' );
 		} );
 
 		$paragraph.html( restoredParagraphContent ).prepend( this.elements.$dropCap );
-	},
+	}
 
-	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+	onInit( ...args ) {
+		super.onInit( ...args );
 
 		this.wrapDropCap();
-	},
+	}
 
-	onElementChange: function( propertyName ) {
+	onElementChange( propertyName ) {
 		if ( 'drop_cap' === propertyName ) {
 			this.wrapDropCap();
 		}
-	},
-} );
+	}
+}
 
-module.exports = function( $scope ) {
-	new TextEditor( { $element: $scope } );
+export default ( $scope ) => {
+	elementorFrontend.elementsHandler.addHandler( TextEditor, { $element: $scope } );
 };

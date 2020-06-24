@@ -14,34 +14,10 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewClick: function( childView ) {
-		const menuItemType = childView.model.get( 'type' );
+		const callback = childView.model.get( 'callback' );
 
-		switch ( menuItemType ) {
-			case 'page':
-				const pageName = childView.model.get( 'pageName' ),
-					pageTitle = childView.model.get( 'title' );
-
-				elementor.getPanelView().setPage( pageName, pageTitle );
-
-				break;
-
-			case 'link':
-				const link = childView.model.get( 'link' ),
-					isNewTab = childView.model.get( 'newTab' );
-
-				if ( isNewTab ) {
-					open( link, '_blank' );
-				} else {
-					location.href = childView.model.get( 'link' );
-				}
-
-				break;
-			default:
-				const callback = childView.model.get( 'callback' );
-
-				if ( _.isFunction( callback ) ) {
-					callback.call( childView );
-				}
+		if ( _.isFunction( callback ) ) {
+			callback.call( childView );
 		}
 	},
 } );

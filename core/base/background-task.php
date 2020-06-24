@@ -46,7 +46,7 @@ abstract class Background_Task extends \WP_Background_Process {
 		$sql = preg_replace( '/;$/', '', $sql );
 		$sql .= ' LIMIT %d, %d;';
 
-		$results = $wpdb->get_col( $wpdb->prepare( $sql, $this->get_current_offset(), $this->get_limit() ) ); // WPCS: unprepared SQL OK.
+		$results = $wpdb->get_col( $wpdb->prepare( $sql, $this->get_current_offset(), $this->get_limit() ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( ! empty( $results ) ) {
 			$this->set_total();
@@ -61,7 +61,7 @@ abstract class Background_Task extends \WP_Background_Process {
 
 	public function get_current_offset() {
 		$limit = $this->get_limit();
-		return $this->current_item['iterate_num'] * $limit;
+		return ( $this->current_item['iterate_num'] - 1 ) * $limit;
 	}
 
 	public function get_limit() {
@@ -73,7 +73,7 @@ abstract class Background_Task extends \WP_Background_Process {
 
 		if ( empty( $this->current_item['total'] ) ) {
 			$total_rows = $wpdb->get_var( 'SELECT FOUND_ROWS();' );
-			$total_iterates = floor( $total_rows / $this->get_limit() );
+			$total_iterates = ceil( $total_rows / $this->get_limit() );
 			$this->current_item['total'] = $total_iterates;
 		}
 	}
@@ -85,7 +85,7 @@ abstract class Background_Task extends \WP_Background_Process {
 	 * performed, or, call parent::complete().
 	 */
 	protected function complete() {
-		$this->manager->on_runner_complete();
+		$this->manager->on_runner_complete( true );
 
 		parent::complete();
 	}
@@ -265,7 +265,7 @@ abstract class Background_Task extends \WP_Background_Process {
 				if ( empty( $item['total'] ) ) {
 					$progress = sprintf( '(x%s)', $item['iterate_num'] );
 				} else {
-					$percent = floor( $item['iterate_num'] / ( $item['total'] / 100 ) );
+					$percent = ceil( $item['iterate_num'] / ( $item['total'] / 100 ) );
 					$progress = sprintf( '(%s of %s, %s%%)', $item['iterate_num'], $item['total'], $percent );
 				}
 			}
@@ -359,6 +359,10 @@ abstract class Background_Task extends \WP_Background_Process {
 			$this->delete_all_batches();
 			wp_clear_scheduled_hook( $this->cron_hook_identifier );
 		}
+	}
+
+	public function set_current_item( $item ) {
+		$this->current_item = $item;
 	}
 
 	protected function format_callback_log( $item ) {

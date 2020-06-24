@@ -29,7 +29,7 @@ class Elementor_Test_Revisions_Manager_Ajax extends Elementor_Test_AJAX {
 			'latest_revisions',
 			'revisions_ids',
 		], $ret );
-		$this->assertEquals( $child_id, $ret['config']['current_revision_id'] );
+		$this->assertEquals( $child_id, $ret['config']['document']['revisions']['current_id'] );
 		$this->assertEquals( 2, count( $ret['latest_revisions'] ) );
 		$this->assertEquals( [ $parent_id, $child_id ], $ret['revisions_ids'] );
 	}

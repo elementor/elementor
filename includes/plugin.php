@@ -6,13 +6,19 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Kits\Manager as Kits_Manager;
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
+use Elementor\Core\Files\Assets\Manager as Assets_Manager;
 use Elementor\Core\Modules_Manager;
+use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
+use Elementor\Modules\System_Info\Module as System_Info_Module;
+use Elementor\Data\Manager as Data_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -137,6 +143,18 @@ class Plugin {
 	 * @var Revisions_Manager
 	 */
 	public $revisions_manager;
+
+	/**
+	 * Images manager.
+	 *
+	 * Holds the plugin images manager.
+	 *
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 * @var Images_Manager
+	 */
+	public $images_manager;
 
 	/**
 	 * Maintenance mode.
@@ -319,6 +337,18 @@ class Plugin {
 	public $files_manager;
 
 	/**
+	 * Assets Manager.
+	 *
+	 * Holds the Assets manager.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 *
+	 * @var Assets_Manager
+	 */
+	public $assets_manager;
+
+	/**
 	 * Files Manager.
 	 *
 	 * Holds the files manager.
@@ -392,6 +422,16 @@ class Plugin {
 	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
+
+	/**
+	 * @var Core\Kits\Manager
+	 */
+	public $kits_manager;
+
+	/**
+	 * @var \Core\Data\Manager
+	 */
+	public $data_manager;
 
 	/**
 	 * Clone.
@@ -476,6 +516,29 @@ class Plugin {
 	}
 
 	/**
+	 * Get install time.
+	 *
+	 * Retrieve the time when Elementor was installed.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 * @static
+	 *
+	 * @return int Unix timestamp when Elementor was installed.
+	 */
+	public function get_install_time() {
+		$installed_time = get_option( '_elementor_installed_time' );
+
+		if ( ! $installed_time ) {
+			$installed_time = time();
+
+			update_option( '_elementor_installed_time', $installed_time );
+		}
+
+		return $installed_time;
+	}
+
+	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
@@ -505,11 +568,14 @@ class Plugin {
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
 		$this->documents = new Documents_Manager();
+		$this->kits_manager = new Kits_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
 		$this->files_manager = new Files_Manager();
+		$this->assets_manager = new Assets_Manager();
+		$this->icons_manager = new Icons_Manager();
 		/*
 		 * @TODO: Remove deprecated alias
 		 */
@@ -524,8 +590,9 @@ class Plugin {
 		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
-		$this->system_info = new System_Info\Main();
+		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
+		$this->images_manager = new Images_Manager();
 
 		User::init();
 		Api::init();
@@ -538,10 +605,6 @@ class Plugin {
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
-
-			if ( Utils::is_ajax() ) {
-				new Images_Manager();
-			}
 		}
 	}
 
@@ -587,7 +650,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function register_autoloader() {
-		require ELEMENTOR_PATH . '/includes/autoloader.php';
+		require_once ELEMENTOR_PATH . '/includes/autoloader.php';
 
 		Autoloader::run();
 	}
@@ -604,12 +667,17 @@ class Plugin {
 		$this->register_autoloader();
 
 		$this->logger = Log_Manager::instance();
+		$this->data_manager = Data_Manager::instance();
 
 		Maintenance::init();
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
 		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
+	}
+
+	final public static function get_title() {
+		return __( 'Elementor', 'elementor' );
 	}
 }
 

@@ -4,16 +4,10 @@
 
 .elementor-control-type-repeater {
 
-	&,
 	.elementor-control:not(.elementor-control-type-tab) {
-		padding: 0 10px 15px;
-	}
-
-	.elementor-control {
-
-		&:before {
-			display: none;
-		}
+		padding-right: 10px;
+		padding-left: 10px;
+		padding-bottom: 10px;
 	}
 
 	&.elementor-repeater-has-minimum-rows {
@@ -34,15 +28,6 @@
 
 		&:not(.editable) {
 			display: none;
-		}
-
-		// Color Picker control
-		.wp-picker-container {
-
-			&.wp-picker-active {
-				transform: translateY(0);
-				border-width: 0;
-			}
 		}
 	}
 
@@ -78,12 +63,17 @@
 		.elementor-repeater-row-item-title {
 			text-align: $start;
 			padding: 0 10px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			font-size: 12px;
+			@include ellipsis;
 
-			.fa {
+			.eicon,
+			i,
+			svg {
 				@include margin-end(5px);
+			}
+
+			img[src$="svg"] {
+				width: 1em;
 			}
 		}
 
@@ -100,6 +90,6 @@
 
 	.elementor-button-wrapper {
 		text-align: center;
-		padding: 10px;
+		padding-top: 5px;
 	}
 }

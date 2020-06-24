@@ -1,6 +1,8 @@
-import EditorModule from '../editor/utils/module';
-import ControlsStack from '../editor/views/controls-stack';
-import BaseSettings from '../editor/elements/models/base-settings';
+import EditorModule from './utils/module';
+import Introduction from './utils/introduction';
+import ControlsStack from './views/controls-stack';
+import BaseSettings from './elements/models/base-settings';
+import Container from './container/container';
 
 elementorModules.editor = {
 	elements: {
@@ -10,8 +12,11 @@ elementorModules.editor = {
 	},
 	utils: {
 		Module: EditorModule,
+		Introduction: Introduction,
 	},
 	views: {
 		ControlsStack: ControlsStack,
 	},
+
+	Container: Container,
 };

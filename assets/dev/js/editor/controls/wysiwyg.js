@@ -2,7 +2,6 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlWysiwygItemView;
 
 ControlWysiwygItemView = ControlBaseDataView.extend( {
-
 	editor: null,
 
 	ui: function() {
@@ -47,6 +46,10 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 
 		// Wait a cycle before initializing the editors.
 		_.defer( function() {
+			if ( self.isDestroyed ) {
+				return;
+			}
+
 			// Initialize QuickTags, and set as the default mode.
 			quicktags( {
 				buttons: 'strong,em,del,link,img,close',
@@ -95,8 +98,6 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	},
 
 	saveEditor: function() {
-		this.editor.save();
-
 		this.setValue( this.editor.getContent() );
 	},
 
@@ -150,14 +151,16 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	},
 
 	onReady: function() {
-		var self = this;
+		const $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', this.getControlValue() ) );
 
-		var $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, self.editorID ).replace( '%%EDITORCONTENT%%', self.getControlValue() ) );
+		$editor.find( `.wp-editor-tabs` ).addClass( 'elementor-control-dynamic-switcher-wrapper' );
 
-		self.ui.inputWrapper.html( $editor );
+		this.ui.inputWrapper.html( $editor );
 
-		setTimeout( function() {
-			self.editor.on( 'keyup change undo redo SetContent', self.saveEditor.bind( self ) );
+		setTimeout( () => {
+			if ( ! this.isDestroyed && this.editor ) {
+				this.editor.on( 'keyup change undo redo', this.saveEditor.bind( this ) );
+			}
 		}, 100 );
 	},
 

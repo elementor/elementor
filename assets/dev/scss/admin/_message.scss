@@ -5,9 +5,8 @@
 .notice {
 
 	&.elementor-message {
-		border: none;
 		padding: 20px;
-
+		@include border-start-property(color, $editor-accent);
 		.elementor-message-inner {
 			display: flex;
 			align-items: center;
@@ -34,6 +33,7 @@
 			text-align: center;
 			display: flex;
 			flex-direction: column;
+			@include margin-start(auto);
 
 			.elementor-button {
 				background-color: $editor-accent;
@@ -72,8 +72,15 @@
 			}
 		}
 	}
-}
 
+	&.elementor-message-announcement {
+		border-color: $editor-accent;
+
+		a {
+			color: $editor-accent;
+		}
+	}
+}
 
 @media (min-width: 1200px) {
 

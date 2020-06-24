@@ -2,12 +2,14 @@ module.exports = {
 	extends: [
 		'wordpress',
 		'plugin:wordpress/esnext',
-		//'plugin:react/recommended',
+		'plugin:react/recommended',
 	],
 	plugins: [
 		'wordpress',
-		//'react',
+		'babel',
+		'react',
 	],
+	parser: 'babel-eslint',
 	globals: {
 		wp: true,
 		window: true,
@@ -24,6 +26,9 @@ module.exports = {
 	'parserOptions': {
 		'ecmaVersion': 2017,
 		'sourceType': 'module',
+		'ecmaFeatures': {
+			'jsx': true,
+		},
 	},
 	rules: {
 		// custom canceled rules
@@ -33,7 +38,7 @@ module.exports = {
 		'computed-property-spacing': [ 'error', 'always' ],
 		'comma-dangle': [ 'error', 'always-multiline' ],
 		'no-undef': 'off',
-		'no-unused-vars': 'error',
+		'no-unused-vars': [ 'warn', { 'ignoreRestSiblings': true } ],
 		'dot-notation': 'error',
 		'no-shadow': 'error',
 		'no-lonely-if': 'error',
@@ -66,14 +71,13 @@ module.exports = {
 		'jsx-quotes': 'error',
 		'keyword-spacing': 'error',
 		'lines-around-comment': 'off',
-		'no-bitwise': 'error',
+		'no-bitwise': [ 'error', { 'allow': [ '^' ] } ],
 		'no-caller': 'error',
 		'no-debugger': 'warn',
 		'no-dupe-args': 'error',
 		'no-dupe-keys': 'error',
 		'no-duplicate-case': 'error',
 		'no-eval': 'error',
-		'no-fallthrough': 'error',
 		'no-multiple-empty-lines': [ 'error', { max: 1 } ],
 		'no-multi-str': 'off',
 		'no-negated-in-lhs': 'error',
@@ -121,6 +125,8 @@ module.exports = {
 		yoda: [ 'error', 'always', {
 			'onlyEquality': true,
 		} ],
+		'react/react-in-jsx-scope': 'off',
+		'babel/semi': 1,
 		// 'react/display-name': 'off',
 		// 'react/jsx-curly-spacing': [ 'error', {
 		// 	when: 'always',
@@ -133,6 +139,5 @@ module.exports = {
 		// 'react/jsx-tag-spacing': 'error',
 		// 'react/no-children-prop': 'off',
 		// 'react/prop-types': 'off',
-		// 'react/react-in-jsx-scope': 'off',
 	},
 };

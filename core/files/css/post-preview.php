@@ -64,7 +64,8 @@ class Post_Preview extends Post {
 	 * @return array Post data.
 	 */
 	protected function get_data() {
-		return Plugin::$instance->db->get_plain_editor( $this->preview_id );
+		$document = Plugin::$instance->documents->get( $this->preview_id );
+		return $document ? $document->get_elements_data() : [];
 	}
 
 	/**

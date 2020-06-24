@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Db extends Base {
 
-	const MAX_LOG_ENTRIES = 42;
-
 	public function save_log( Log_Item $item ) {
 		$log = $this->maybe_truncate_log();
 
@@ -25,12 +23,16 @@ class Db extends Base {
 		update_option( self::LOG_NAME, $log, 'no' );
 	}
 
+	public function clear() {
+		delete_option( self::LOG_NAME );
+	}
+
 	private function maybe_truncate_log() {
 		/** @var Log_Item[] $log */
 		$log = $this->get_log();
 
-		if ( self::MAX_LOG_ENTRIES > count( $log ) ) {
-			$log = array_slice( $log, -self::MAX_LOG_ENTRIES );
+		if ( Log_Item::MAX_LOG_ENTRIES < count( $log ) ) {
+			$log = array_slice( $log, -Log_Item::MAX_LOG_ENTRIES );
 		}
 
 		return $log;
@@ -40,6 +42,13 @@ class Db extends Base {
 		// Clear cache.
 		wp_cache_delete( self::LOG_NAME, 'options' );
 
-		return get_option( self::LOG_NAME, [] );
+		$log = get_option( self::LOG_NAME, [] );
+
+		// In case the DB log is corrupted.
+		if ( ! is_array( $log ) ) {
+			$log = [];
+		}
+
+		return $log;
 	}
 }

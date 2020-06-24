@@ -10,12 +10,22 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '#elementor-panel-page-menu-content',
 
+	// Remove empty groups that exist for BC.
+	filter: ( child ) => {
+		return child.get( 'items' ).length;
+	},
+
 	initialize: function() {
 		this.collection = PanelMenuPageView.getGroups();
+
+		this.registerDocumentItems();
+
+		// On switch a document, re create document items.
+		elementor.once( 'document:loaded', this.registerDocumentItems );
 	},
 
 	getArrowClass: function() {
-		return 'eicon-arrow-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
+		return 'eicon-chevron-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
 	},
 
 	onRender: function() {
@@ -25,97 +35,77 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	onDestroy: function() {
 		elementor.getPanelView().getHeaderView().ui.menuIcon.removeClass( this.getArrowClass() ).addClass( 'eicon-menu-bar' );
 	},
+
+	registerDocumentItems() {
+		// Todo: internal command.
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
+			name: 'exit-to-dashboard',
+			icon: 'eicon-wordpress',
+			title: elementor.translate( 'exit_to_dashboard' ),
+			type: 'link',
+			link: elementor.config.document.urls.exit_to_dashboard,
+		}, 'navigate_from_page' );
+
+		// Todo: internal command.
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
+			name: 'view-page',
+			icon: 'eicon-preview-thin',
+			title: elementor.translate( 'view_page' ),
+			type: 'link',
+			link: elementor.config.document.urls.permalink,
+		}, 'navigate_from_page' );
+	},
 }, {
 	groups: null,
 
 	initGroups: function() {
-		let menus = [];
+		this.groups = new Backbone.Collection( [] );
 
-		const goToSection = {
-			name: 'go_to',
-			title: elementor.translate( 'go_to' ),
-			items: [
-				{
-					name: 'view-page',
-					icon: 'fa fa-eye',
-					title: elementor.translate( 'view_page' ),
-					type: 'link',
-					link: elementor.config.document.urls.permalink,
-				},
-				{
-					name: 'exit-to-dashboard',
-					icon: 'fa fa-wordpress',
-					title: elementor.translate( 'exit_to_dashboard' ),
-					type: 'link',
-					link: elementor.config.document.urls.exit_to_dashboard,
-				},
-			],
-		};
+		// Keep the old `more` for BC, since 3.0.0.
+		this.groups.add( {
+			name: 'more',
+			title: elementor.translate( 'more' ),
+			items: [],
+		} );
+
+		this.groups.add( {
+			name: 'navigate_from_page',
+			title: elementor.translate( 'navigate_from_page' ),
+			items: [],
+		} );
 
 		if ( elementor.config.user.is_administrator ) {
-			goToSection.items.unshift( {
-				name: 'finder',
-				icon: 'fa fa-search',
-				title: elementorCommon.translate( 'finder', 'finder' ),
-				callback: () => elementorCommon.finder.getLayout().showModal(),
-			} );
-
-			menus = [
-				{
-					name: 'style',
-					title: elementor.translate( 'global_style' ),
-					items: [
-						{
-							name: 'global-colors',
-							icon: 'fa fa-paint-brush',
-							title: elementor.translate( 'global_colors' ),
-							type: 'page',
-							pageName: 'colorScheme',
-						},
-						{
-							name: 'global-fonts',
-							icon: 'fa fa-font',
-							title: elementor.translate( 'global_fonts' ),
-							type: 'page',
-							pageName: 'typographyScheme',
-						},
-						{
-							name: 'color-picker',
-							icon: 'fa fa-eyedropper',
-							title: elementor.translate( 'color_picker' ),
-							type: 'page',
-							pageName: 'colorPickerScheme',
-						},
-					],
-				},
-				{
-					name: 'settings',
-					title: elementor.translate( 'settings' ),
-					items: [
-						{
-							name: 'elementor-settings',
-							icon: 'fa fa-external-link',
-							title: elementor.translate( 'elementor_settings' ),
-							type: 'link',
-							link: elementor.config.settings_page_link,
-							newTab: true,
-						},
-						{
-							name: 'about-elementor',
-							icon: 'fa fa-info-circle',
-							title: elementor.translate( 'about_elementor' ),
-							type: 'link',
-							link: elementor.config.elementor_site,
-							newTab: true,
-						},
-					],
-				},
-			];
+			this.addAdminMenu();
 		}
+	},
 
-		menus.push( goToSection );
+	addAdminMenu: function() {
+		this.groups.add( {
+			name: 'style',
+			title: elementor.translate( 'global_style' ),
+			items: [],
+		}, { at: 0 } );
 
-		this.groups = new Backbone.Collection( menus );
+		this.addItem( {
+			name: 'editor-preferences',
+			icon: 'eicon-user-preferences',
+			title: elementor.translate( 'user_preferences' ),
+			type: 'page',
+			callback: () => $e.route( 'panel/editor-preferences' ),
+		}, 'style' );
+
+		this.groups.add( {
+			name: 'settings',
+			title: elementor.translate( 'settings' ),
+			items: [],
+		}, { at: 1 } );
+
+		this.addItem( {
+			name: 'finder',
+			icon: 'eicon-search',
+			title: elementorCommon.translate( 'find_anything', 'finder' ),
+			callback: () => $e.route( 'finder' ),
+		}, 'navigate_from_page', 'view-page' );
 	},
 
 	getGroups: function() {
@@ -135,6 +125,13 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		var items = group.get( 'items' ),
 			beforeItem;
+
+		// Remove if exist.
+		const exists = _.findWhere( items, { name: itemData.name } );
+
+		if ( exists ) {
+			items.splice( items.indexOf( exists ), 1 );
+		}
 
 		if ( before ) {
 			beforeItem = _.findWhere( items, { name: before } );

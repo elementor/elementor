@@ -24,7 +24,19 @@ class User {
 
 	const INTRODUCTION_KEY = 'elementor_introduction';
 
-	const INTRODUCTION_VERSION = 2;
+	const BETA_TESTER_META_KEY = 'elementor_beta_tester';
+
+	/**
+	 * API URL.
+	 *
+	 * Holds the URL of the Beta Tester Opt-in API.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var string API URL.
+	 */
+	const BETA_TESTER_API_URL = 'https://my.elementor.com/api/v1/beta_tester/';
 
 	/**
 	 * Init.
@@ -49,6 +61,7 @@ class User {
 	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
+		$ajax->register_ajax_action( 'beta_tester_signup', [ __CLASS__, 'register_as_beta_tester' ] );
 	}
 
 	/**
@@ -213,7 +226,7 @@ class User {
 		$notices[ $_REQUEST['notice_id'] ] = 'true';
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
-		if ( ! Utils::is_ajax() ) {
+		if ( ! wp_doing_ajax() ) {
 			wp_safe_redirect( admin_url() );
 			die;
 		}
@@ -226,35 +239,56 @@ class User {
 	 * @access public
 	 * @static
 	 */
-	public static function set_introduction_viewed() {
+	public static function set_introduction_viewed( array $data ) {
 		$user_introduction_meta = self::get_introduction_meta();
+
+		$user_introduction_meta[ $data['introductionKey'] ] = true;
+
+		update_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, $user_introduction_meta );
+	}
+
+	public static function register_as_beta_tester( array $data ) {
+		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
+		$response = wp_safe_remote_post(
+			self::BETA_TESTER_API_URL,
+			[
+				'timeout' => 25,
+				'body' => [
+					'api_version' => ELEMENTOR_VERSION,
+					'site_lang' => get_bloginfo( 'language' ),
+					'beta_tester_email' => $data['betaTesterEmail'],
+				],
+			]
+		);
+
+		$response_code = (int) wp_remote_retrieve_response_code( $response );
+
+		if ( 200 === $response_code ) {
+			self::set_introduction_viewed( [
+				'introductionKey' => Beta_Testers::BETA_TESTER_SIGNUP,
+			] );
+		}
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return array|mixed|string
+	 * @since  2.1.0
+	 * @access public
+	 * @static
+	 */
+	public static function get_introduction_meta( $key = '' ) {
+		$user_introduction_meta = get_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, true );
 
 		if ( ! $user_introduction_meta ) {
 			$user_introduction_meta = [];
 		}
 
-		$user_introduction_meta[ self::INTRODUCTION_VERSION ] = true;
+		if ( $key ) {
+			return empty( $user_introduction_meta[ $key ] ) ? '' : $user_introduction_meta[ $key ];
+		}
 
-		update_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, $user_introduction_meta );
-	}
-
-	/**
-	 * @since 2.1.0
-	 * @access public
-	 * @static
-	 */
-	public static function is_should_view_introduction() {
-		$user_introduction_meta = self::get_introduction_meta();
-
-		return empty( $user_introduction_meta[ self::INTRODUCTION_VERSION ] );
-	}
-
-	/**
-	 * @since 2.1.0
-	 * @access private
-	 * @static
-	 */
-	private static function get_introduction_meta() {
-		return get_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, true );
+		return $user_introduction_meta;
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Settings;
 
+use Elementor\Core\Settings\Base\CSS_Model;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,7 +40,7 @@ class Manager {
 	 *
 	 * @var array
 	 */
-	private static $builtin_settings_managers_names = [ 'page', 'general' ];
+	private static $builtin_settings_managers_names = [ 'page', 'editorPreferences' ];
 
 	/**
 	 * Add settings manager.
@@ -79,6 +80,15 @@ class Manager {
 	 */
 	public static function get_settings_managers( $manager_name = null ) {
 		if ( $manager_name ) {
+			// Backwards compatibility for `general` manager, since 3.0.0.
+			// Register the class only if needed.
+			if ( 'general' === $manager_name ) {
+				// TODO: _deprecated_argument( $manager_name, '3.0.0', 'Plugin::$instance->kits_manager->get_active_kit_for_frontend();' );
+				$manager_class = self::get_manager_class( $manager_name );
+
+				self::add_settings_manager( new $manager_class() );
+			}
+
 			if ( isset( self::$settings_managers[ $manager_name ] ) ) {
 				return self::$settings_managers[ $manager_name ];
 			}
@@ -100,10 +110,25 @@ class Manager {
 	 */
 	private static function register_default_settings_managers() {
 		foreach ( self::$builtin_settings_managers_names as $manager_name ) {
-			$manager_class = __NAMESPACE__ . '\\' . ucfirst( $manager_name ) . '\Manager';
+			$manager_class = self::get_manager_class( $manager_name );
 
 			self::add_settings_manager( new $manager_class() );
 		}
+	}
+
+	/**
+	 * Get class path for default settings managers.
+	 *
+	 * @param $manager_name
+	 *
+	 * @return string
+	 * @since  3.0.0
+	 * @access private
+	 * @static
+	 */
+
+	private static function get_manager_class( $manager_name ) {
+		return __NAMESPACE__ . '\\' . ucfirst( $manager_name ) . '\Manager';
 	}
 
 	/**
@@ -134,11 +159,14 @@ class Manager {
 			$config[ $name ] = [
 				'name' => $manager->get_name(),
 				'panelPage' => $settings_model->get_panel_page_settings(),
-				'cssWrapperSelector' => $settings_model->get_css_wrapper_selector(),
 				'controls' => $settings_model->get_controls(),
 				'tabs' => $tabs,
 				'settings' => $settings_model->get_settings(),
 			];
+
+			if ( $settings_model instanceof CSS_Model ) {
+				$config[ $name ]['cssWrapperSelector'] = $settings_model->get_css_wrapper_selector();
+			}
 		}
 
 		return $config;

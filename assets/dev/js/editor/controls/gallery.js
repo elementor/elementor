@@ -147,7 +147,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	},
 
 	resetGallery: function() {
-		this.setValue( '' );
+		this.setValue( [] );
 
 		this.applySavedValue();
 	},

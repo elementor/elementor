@@ -1,6 +1,6 @@
 .elementor-star-rating {
 	color: $gray-mouse;
-	font-family: FontAwesome;
+	font-family: eicons;
 	display: inline-block;
 
 	i {
@@ -10,7 +10,7 @@
 		cursor: default;
 
 		&:before {
-			content: '\f005';
+			content: '\e934';
 			display: block;
 			font-size: inherit;
 			font-family: inherit;
@@ -44,40 +44,57 @@
 	&__title {
 		@include margin-end(10px);
 	}
+}
 
-	&--align {
+@mixin star-rating-align($device) {
 
-		&-right {
+	.elementor-star-rating {
 
-			.elementor-star-rating__wrapper {
-				text-align: right;
-				justify-content: getValueByDirection( flex-end, flex-start );
-			}
-		}
+		&#{$device} {
 
-		&-left {
+			&--align {
 
-			.elementor-star-rating__wrapper {
-				text-align: left;
-				justify-content: getValueByDirection( flex-start, flex-end );
-			}
-		}
+				&-right {
 
-		&-center {
+					.elementor-star-rating__wrapper {
+						text-align: right;
+						justify-content: getValueByDirection( flex-end, flex-start );
+					}
+				}
 
-			.elementor-star-rating__wrapper {
-				text-align: center;
-				justify-content: center;
-			}
-		}
+				&-left {
 
-		&-justify {
+					.elementor-star-rating__wrapper {
+						text-align: left;
+						justify-content: getValueByDirection( flex-start, flex-end );
+					}
+				}
 
-			.elementor-star-rating__title {
-				@include margin-end( auto );
+				&-center {
+					.elementor-star-rating__wrapper {
+						text-align: center;
+						justify-content: center;
+					}
+				}
+
+				&-justify {
+					.elementor-star-rating__title {
+						@include margin-end( auto );
+					}
+				}
 			}
 		}
 	}
+}
+
+@include star-rating-align('');
+
+@media (max-width: $screen-md-max) {
+	@include star-rating-align(-tablet);
+}
+
+@media (max-width: $screen-sm-max) {
+	@include star-rating-align(-mobile);
 }
 
 .last-star{

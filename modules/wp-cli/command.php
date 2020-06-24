@@ -101,6 +101,9 @@ class Command extends \WP_CLI_Command {
 	 * @alias sync-library
 	 */
 	public function sync_library( $args, $assoc_args ) {
+		// TODO:
+		// \WP_CLI::warning( 'command is deprecated since 2.8.0 Please use: wp elementor library sync' );
+
 		$data = Api::get_library_data( true );
 
 		if ( empty( $data ) ) {
@@ -123,6 +126,9 @@ class Command extends \WP_CLI_Command {
 	 * @alias import-library
 	 */
 	public function import_library( $args, $assoc_args ) {
+		// TODO:
+		// \WP_CLI::warning( 'command is deprecated since 2.8.0 Please use: wp elementor library import' );
+
 		if ( empty( $args[0] ) ) {
 			\WP_CLI::error( 'Please set file path.' );
 		}

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Settings\Manager as SettingsManager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -88,6 +90,42 @@ class Images_Manager {
 		}
 
 		return $urls;
+	}
+
+	/**
+	 * Get Light-Box Image Attributes
+	 *
+	 * Used to retrieve an array of image attributes to be used for displaying an image in Elementor's Light Box module.
+	 *
+	 * @param int $id       The ID of the image
+	 *
+	 * @return array An array of image attributes including `title` and `description`.
+	 * @since 2.9.0
+	 * @access public
+	 */
+
+	public function get_lightbox_image_attributes( $id ) {
+		$attributes = [];
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$lightbox_title_src = $kit->get_settings( 'lightbox_title_src' );
+		$lightbox_description_src = $kit->get_settings( 'lightbox_description_src' );
+		$attachment = get_post( $id );
+		$image_data = [
+			'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+			'caption' => $attachment->post_excerpt,
+			'description' => $attachment->post_content,
+			'title' => $attachment->post_title,
+		];
+
+		if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
+			$attributes['title'] = $image_data[ $lightbox_title_src ];
+		}
+
+		if ( $lightbox_description_src && $image_data[ $lightbox_description_src ] ) {
+			$attributes['description'] = $image_data[ $lightbox_description_src ];
+		}
+
+		return $attributes;
 	}
 
 	/**

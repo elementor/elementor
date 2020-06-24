@@ -1,4 +1,7 @@
 <?php
+
+use Elementor\Autoloader;
+
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
 	$_tests_dir = '/tmp/wordpress-tests-lib';
@@ -16,8 +19,8 @@ define( 'PLUGIN_PATH', PLUGIN_FOLDER . '/' . PLUGIN_FILE );
 // Activates this plugin in WordPress so it can be tested.
 $GLOBALS['wp_tests_options'] = [
 	'active_plugins' => [ PLUGIN_PATH ],
-	'template' => 'twentysixteen',
-	'stylesheet' => 'twentysixteen',
+	'template' => 'twentynineteen',
+	'stylesheet' => 'twentynineteen',
 ];
 
 require_once $_tests_dir . '/includes/functions.php';
@@ -38,6 +41,9 @@ require __DIR__ . '/phpunit/base-class.php';
 require __DIR__ . '/phpunit/ajax-class.php';
 require __DIR__ . '/phpunit/manager.php';
 \Elementor\Testing\Manager::instance();
+
+require_once dirname( __DIR__ ) . '/includes/autoloader.php';
+Autoloader::run();
 
 if ( getenv( 'PART_RUN' ) ) {
 	\Elementor\Plugin::instance();

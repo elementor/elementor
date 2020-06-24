@@ -47,7 +47,7 @@ class Control_Text extends Base_Data_Control {
 			<# if ( data.label ) {#>
 				<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<# } #>
-			<div class="elementor-control-input-wrapper">
+			<div class="elementor-control-input-wrapper elementor-control-unit-5 elementor-control-dynamic-switcher-wrapper">
 				<input id="<?php echo $control_uid; ?>" type="{{ data.input_type }}" class="tooltip-target elementor-control-tag-area" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
 			</div>
 		</div>
@@ -74,7 +74,9 @@ class Control_Text extends Base_Data_Control {
 			'placeholder' => '',
 			'title' => '',
 			'dynamic' => [
-				'categories' => [ TagsModule::TEXT_CATEGORY ],
+				'categories' => [
+					TagsModule::TEXT_CATEGORY,
+				],
 			],
 		];
 	}

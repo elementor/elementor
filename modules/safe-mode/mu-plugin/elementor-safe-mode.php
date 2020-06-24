@@ -2,11 +2,11 @@
 
 /**
  * Plugin Name: Elementor Safe Mode
- * Description: Enter to Elementor Editor in safe mode.
- * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
+ * Description: Safe Mode allows you to troubleshoot issues by only loading the editor, without loading the theme or any other plugin.
+ * Plugin URI: https://elementor.com/?utm_source=safe-mode&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Elementor.com
- * Version: 0.0.1
- * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
+ * Version: 1.0.0
+ * Author URI: https://elementor.com/?utm_source=safe-mode&utm_campaign=author-uri&utm_medium=wp-dash
  *
  * Text Domain: elementor
  *
@@ -31,27 +31,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Safe_Mode {
 
 	const OPTION_ENABLED = 'elementor_safe_mode';
-
-	public function __construct() {
-		$enabled_type = $this->is_enabled();
-
-		if ( ! $enabled_type ) {
-			return;
-		}
-
-		if ( ! $this->is_requested() && 'global' !== $enabled_type ) {
-			return;
-		}
-
-		if ( ! $this->is_editor() && ! $this->is_editor_preview() ) {
-			return;
-		}
-
-		$this->add_hooks();
-	}
+	const OPTION_TOKEN = self::OPTION_ENABLED . '_token';
 
 	public function is_enabled() {
 		return get_option( self::OPTION_ENABLED );
+	}
+
+	public function is_valid_token() {
+		$token = isset( $_COOKIE[ self::OPTION_TOKEN ] ) ? $_COOKIE[ self::OPTION_TOKEN ] : null;
+
+		if ( $token && get_option( self::OPTION_TOKEN ) === $token ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function is_requested() {
@@ -64,6 +57,10 @@ class Safe_Mode {
 
 	public function is_editor_preview() {
 		return isset( $_GET['elementor-preview'] );
+	}
+
+	public function is_editor_ajax() {
+		return is_admin() && isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'];
 	}
 
 	public function add_hooks() {
@@ -80,12 +77,56 @@ class Safe_Mode {
 		} );
 
 		add_action( 'elementor/init', function () {
-			/** @var Elementor\Modules\SafeMode\Module $module */
-			$module = \Elementor\Plugin::$instance->modules_manager->get_modules( 'safe-mode' );
-			if ( $module ) {
-				$module->run_safe_mode();
-			}
+			do_action( 'elementor/safe_mode/init' );
 		} );
+	}
+
+	/**
+	 * Plugin row meta.
+	 *
+	 * Adds row meta links to the plugin list table
+	 *
+	 * Fired by `plugin_row_meta` filter.
+	 *
+	 * @access public
+	 *
+	 * @param array  $plugin_meta An array of the plugin's metadata, including
+	 *                            the version, author, author URI, and plugin URI.
+	 * @param string $plugin_file Path to the plugin file, relative to the plugins
+	 *                            directory.
+	 *
+	 * @return array An array of plugin row meta links.
+	 */
+	public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
+		if ( basename( __FILE__ ) === $plugin_file ) {
+			$row_meta = [
+				'docs' => '<a href="https://go.elementor.com/safe-mode/" aria-label="' . esc_attr( __( 'Learn More', 'elementor' ) ) . '" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+			];
+
+			$plugin_meta = array_merge( $plugin_meta, $row_meta );
+		}
+
+		return $plugin_meta;
+	}
+
+	public function __construct() {
+		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 4 );
+
+		$enabled_type = $this->is_enabled();
+
+		if ( ! $enabled_type || ! $this->is_valid_token() ) {
+			return;
+		}
+
+		if ( ! $this->is_requested() && 'global' !== $enabled_type ) {
+			return;
+		}
+
+		if ( ! $this->is_editor() && ! $this->is_editor_preview() && ! $this->is_editor_ajax() ) {
+			return;
+		}
+
+		$this->add_hooks();
 	}
 }
 

@@ -146,7 +146,8 @@ class Post extends Base {
 	 * @return array Post data.
 	 */
 	protected function get_data() {
-		return Plugin::$instance->db->get_plain_editor( $this->post_id );
+		$document = Plugin::$instance->documents->get( $this->post_id );
+		return $document ? $document->get_elements_data() : [];
 	}
 
 	/**

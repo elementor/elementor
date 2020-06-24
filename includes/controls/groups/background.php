@@ -90,15 +90,19 @@ class Group_Control_Background extends Group_Control_Base {
 		return [
 			'classic' => [
 				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
-				'icon' => 'fa fa-paint-brush',
+				'icon' => 'eicon-paint-brush',
 			],
 			'gradient' => [
 				'title' => _x( 'Gradient', 'Background Control', 'elementor' ),
-				'icon' => 'fa fa-barcode',
+				'icon' => 'eicon-barcode',
 			],
 			'video' => [
-				'title' => _x( 'Background Video', 'Background Control', 'elementor' ),
-				'icon' => 'fa fa-video-camera',
+				'title' => _x( 'Video', 'Background Control', 'elementor' ),
+				'icon' => 'eicon-video-camera',
+			],
+			'slideshow' => [
+				'title' => _x( 'Slideshow', 'Background Control', 'elementor' ),
+				'icon' => 'eicon-slideshow',
 			],
 		];
 	}
@@ -119,7 +123,6 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['background'] = [
 			'label' => _x( 'Background Type', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
-			'label_block' => false,
 			'render_type' => 'ui',
 		];
 
@@ -264,14 +267,14 @@ class Group_Control_Background extends Group_Control_Base {
 			'responsive' => true,
 			'options' => [
 				'' => _x( 'Default', 'Background Control', 'elementor' ),
-				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
-				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
-				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
-				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
 				'center center' => _x( 'Center Center', 'Background Control', 'elementor' ),
+				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
 				'center right' => _x( 'Center Right', 'Background Control', 'elementor' ),
-				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
+				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
+				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
+				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
 				'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
+				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
 				'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
 				'initial' => _x( 'Custom', 'Background Control', 'elementor' ),
 
@@ -289,8 +292,16 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'X Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
-			'size_units' => [ 'px', 'em', '%', 'vw', 'vh' ],
+			'size_units' => [ 'px', 'em', '%', 'vw' ],
 			'default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'tablet_default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'mobile_default' => [
 				'unit' => 'px',
 				'size' => 0,
 			],
@@ -304,10 +315,6 @@ class Group_Control_Background extends Group_Control_Base {
 					'max' => 100,
 				],
 				'%' => [
-					'min' => -100,
-					'max' => 100,
-				],
-				'vh' => [
 					'min' => -100,
 					'max' => 100,
 				],
@@ -325,14 +332,42 @@ class Group_Control_Background extends Group_Control_Base {
 				'image[url]!' => '',
 			],
 			'required' => true,
+			'device_args' => [
+				Controls_Stack::RESPONSIVE_TABLET => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos_tablet.SIZE}}{{ypos_tablet.UNIT}}',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'position_tablet' => [ 'initial' ],
+					],
+				],
+				Controls_Stack::RESPONSIVE_MOBILE => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos_mobile.SIZE}}{{ypos_mobile.UNIT}}',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'position_mobile' => [ 'initial' ],
+					],
+				],
+			],
 		];
 
 		$fields['ypos'] = [
 			'label' => _x( 'Y Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
-			'size_units' => [ 'px', 'em', '%', 'vw', 'vh' ],
+			'size_units' => [ 'px', 'em', '%', 'vh' ],
 			'default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'tablet_default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'mobile_default' => [
 				'unit' => 'px',
 				'size' => 0,
 			],
@@ -353,10 +388,6 @@ class Group_Control_Background extends Group_Control_Base {
 					'min' => -100,
 					'max' => 100,
 				],
-				'vw' => [
-					'min' => -100,
-					'max' => 100,
-				],
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-position: {{xpos.SIZE}}{{xpos.UNIT}} {{SIZE}}{{UNIT}}',
@@ -367,6 +398,26 @@ class Group_Control_Background extends Group_Control_Base {
 				'image[url]!' => '',
 			],
 			'required' => true,
+			'device_args' => [
+				Controls_Stack::RESPONSIVE_TABLET => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-position: {{xpos_tablet.SIZE}}{{xpos_tablet.UNIT}} {{SIZE}}{{UNIT}}',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'position_tablet' => [ 'initial' ],
+					],
+				],
+				Controls_Stack::RESPONSIVE_MOBILE => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-position: {{xpos_mobile.SIZE}}{{xpos_mobile.UNIT}} {{SIZE}}{{UNIT}}',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'position_mobile' => [ 'initial' ],
+					],
+				],
+			],
 		];
 
 		$fields['attachment'] = [
@@ -378,9 +429,8 @@ class Group_Control_Background extends Group_Control_Base {
 				'scroll' => _x( 'Scroll', 'Background Control', 'elementor' ),
 				'fixed' => _x( 'Fixed', 'Background Control', 'elementor' ),
 			],
-			'responsive' => true,
 			'selectors' => [
-				'{{SELECTOR}}' => 'background-attachment: {{VALUE}};',
+				'(desktop+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
 			],
 			'condition' => [
 				'background' => [ 'classic' ],
@@ -452,10 +502,6 @@ class Group_Control_Background extends Group_Control_Base {
 					'min' => 0,
 					'max' => 1000,
 				],
-				'em' => [
-					'min' => 0,
-					'max' => 100,
-				],
 				'%' => [
 					'min' => 0,
 					'max' => 100,
@@ -479,19 +525,40 @@ class Group_Control_Background extends Group_Control_Base {
 				'size' => [ 'initial' ],
 				'image[url]!' => '',
 			],
+			'device_args' => [
+				Controls_Stack::RESPONSIVE_TABLET => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-size: {{SIZE}}{{UNIT}} auto',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'size_tablet' => [ 'initial' ],
+					],
+				],
+				Controls_Stack::RESPONSIVE_MOBILE => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-size: {{SIZE}}{{UNIT}} auto',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'size_mobile' => [ 'initial' ],
+					],
+				],
+			],
 		];
 
 		$fields['video_link'] = [
 			'label' => _x( 'Video Link', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
-			'placeholder' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
-			'description' => __( 'YouTube link or video file (mp4 is recommended).', 'elementor' ),
+			'placeholder' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
+			'description' => __( 'YouTube/Vimeo link, or link to video file (mp4 is recommended).', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
 			'condition' => [
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_start'] = [
@@ -503,6 +570,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_end'] = [
@@ -514,13 +582,33 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'video' ],
 			],
 			'of_type' => 'video',
+			'frontend_available' => true,
+		];
+
+		$fields['play_once'] = [
+			'label' => __( 'Play Once', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+			'frontend_available' => true,
+		];
+
+		$fields['play_on_mobile'] = [
+			'label' => __( 'Play On Mobile', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+			'frontend_available' => true,
 		];
 
 		$fields['video_fallback'] = [
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
-			'description' => __( 'This cover image will replace the background video on mobile and tablet devices.', 'elementor' ),
+			'description' => __( 'This cover image will replace the background video in case that the video could not be loaded.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
-			'label_block' => true,
 			'condition' => [
 				'background' => [ 'video' ],
 			],
@@ -528,6 +616,137 @@ class Group_Control_Background extends Group_Control_Base {
 				'{{SELECTOR}}' => 'background: url("{{URL}}") 50% 50%; background-size: cover;',
 			],
 			'of_type' => 'video',
+		];
+
+		$fields['slideshow_gallery'] = [
+			'label' => _x( 'Images', 'Background Control', 'elementor' ),
+			'type' => Controls_Manager::GALLERY,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'show_label' => false,
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_loop'] = [
+			'label' => __( 'Infinite Loop', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'default' => 'yes',
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_slide_duration'] = [
+			'label' => __( 'Duration', 'elementor' ) . ' (ms)',
+			'type' => Controls_Manager::NUMBER,
+			'default' => 5000,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_slide_transition'] = [
+			'label' => __( 'Transition', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => 'fade',
+			'options' => [
+				'fade' => 'Fade',
+				'slide_right' => 'Slide Right',
+				'slide_left' => 'Slide Left',
+				'slide_up' => 'Slide Up',
+				'slide_down' => 'Slide Down',
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_transition_duration'] = [
+			'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
+			'type' => Controls_Manager::NUMBER,
+			'default' => 500,
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_background_size'] = [
+			'label' => __( 'Background Size', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'responsive' => true,
+			'default' => '',
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'auto' => __( 'Auto', 'elementor' ),
+				'cover' => __( 'Cover', 'elementor' ),
+				'contain' => __( 'Contain', 'elementor' ),
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-size: {{VALUE}};',
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+		];
+
+		$fields['slideshow_background_position'] = [
+			'label' => __( 'Background Position', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => '',
+			'responsive' => true,
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'center center' => _x( 'Center Center', 'Background Control', 'elementor' ),
+				'center left' => _x( 'Center Left', 'Background Control', 'elementor' ),
+				'center right' => _x( 'Center Right', 'Background Control', 'elementor' ),
+				'top center' => _x( 'Top Center', 'Background Control', 'elementor' ),
+				'top left' => _x( 'Top Left', 'Background Control', 'elementor' ),
+				'top right' => _x( 'Top Right', 'Background Control', 'elementor' ),
+				'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
+				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
+				'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-position: {{VALUE}};',
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+		];
+
+		$fields['slideshow_ken_burns'] = [
+			'label' => __( 'Ken Burns Effect', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'separator' => 'before',
+			'condition' => [
+				'background' => [ 'slideshow' ],
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
+		];
+
+		$fields['slideshow_ken_burns_zoom_direction'] = [
+			'label' => __( 'Direction', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => 'in',
+			'options' => [
+				'in' => __( 'In', 'elementor' ),
+				'out' => __( 'Out', 'elementor' ),
+			],
+			'condition' => [
+				'background' => [ 'slideshow' ],
+				'slideshow_ken_burns!' => '',
+			],
+			'of_type' => 'slideshow',
+			'frontend_available' => true,
 		];
 
 		return $fields;
@@ -547,6 +766,7 @@ class Group_Control_Background extends Group_Control_Base {
 	protected function get_child_default_args() {
 		return [
 			'types' => [ 'classic', 'gradient' ],
+			'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background), {{WRAPPER}} > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 		];
 	}
 

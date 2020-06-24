@@ -2,7 +2,13 @@ export default class extends elementorModules.Module {
 	get( key, options ) {
 		options = options || {};
 
-		const storage = options.session ? sessionStorage : localStorage;
+		let storage;
+
+		try {
+			storage = options.session ? sessionStorage : localStorage;
+		} catch ( e ) {
+			return key ? undefined : {};
+		}
 
 		let elementorStorage = storage.getItem( 'elementor' );
 
@@ -70,7 +76,13 @@ export default class extends elementorModules.Module {
 	}
 
 	save( object, session ) {
-		const storage = session ? sessionStorage : localStorage;
+		let storage;
+
+		try {
+			storage = session ? sessionStorage : localStorage;
+		} catch ( e ) {
+			return;
+		}
 
 		storage.setItem( 'elementor', JSON.stringify( object ) );
 	}

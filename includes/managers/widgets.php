@@ -54,8 +54,8 @@ class Widgets_Manager {
 			'icon',
 			'icon-box',
 			'star-rating',
-			'image-gallery',
 			'image-carousel',
+			'image-gallery',
 			'icon-list',
 			'counter',
 			'progress',
@@ -262,6 +262,23 @@ class Widgets_Manager {
 		return $config;
 	}
 
+	public function ajax_get_widget_types_controls_config( array $data ) {
+		$config = [];
+
+		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
+			if ( isset( $data['exclude'][ $widget_key ] ) ) {
+				continue;
+			}
+
+			$config[ $widget_key ] = [
+				'controls' => $widget->get_stack( false )['controls'],
+				'tabs_controls' => $widget->get_tabs_controls(),
+			];
+		}
+
+		return $config;
+	}
+
 	/**
 	 * Ajax render widget.
 	 *
@@ -409,6 +426,19 @@ class Widgets_Manager {
 	}
 
 	/**
+	 * Enqueue widgets styles
+	 *
+	 * Enqueue all the styles defined as a dependency for each widget
+	 *
+	 * @access public
+	 */
+	public function enqueue_widgets_styles() {
+		foreach ( $this->get_widget_types() as $widget ) {
+			$widget->enqueue_styles();
+		}
+	}
+
+	/**
 	 * Retrieve inline editing configuration.
 	 *
 	 * Returns general inline editing configurations like toolbar types etc.
@@ -488,8 +518,9 @@ class Widgets_Manager {
 	 *
 	 * @param Ajax $ajax_manager
 	 */
-	public function register_ajax_actions( $ajax_manager ) {
+	public function register_ajax_actions( Ajax $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
 		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+		$ajax_manager->register_ajax_action( 'get_widgets_config', [ $this, 'ajax_get_widget_types_controls_config' ] );
 	}
 }

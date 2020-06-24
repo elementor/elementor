@@ -13,13 +13,14 @@
 .dialog-message {
 	font-size: 12px;
 	line-height: 1.5;
+	box-sizing: border-box;
 }
 
-.dialog-type-lightbox{
+.dialog-type-lightbox {
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	top: 0;
+	bottom: 0;
 	left: 0;
 	background-color: rgba(0, 0, 0, 0.8);
 	z-index: 9999;
@@ -33,17 +34,21 @@
 	.dialog-header {
 		font-size: 15px;
 		color: $editor-darkest;
-		padding: 20px 0;
+		padding: 30px 0 10px;
 		font-weight: 500;
 	}
 
 	.dialog-message {
-		padding: 0 20px 20px;
+		padding: 0 30px 30px;
 		min-height: 50px;
 	}
 
-	.dialog-header, .dialog-message {
-		text-align: center;
+	&:not(.elementor-popup-modal) {
+
+		.dialog-header,
+		.dialog-message {
+			text-align: center;
+		}
 	}
 
 	.dialog-buttons-wrapper {
@@ -51,21 +56,18 @@
 		text-align: center;
 
 		> .dialog-button {
+			font-family: $admin-font-family;
 			width: 50%;
 			border: none;
 			background: none;
+			color: $editor-dark;
 			font-size: 15px;
 			cursor: pointer;
 			padding: 13px 0;
 			outline: 0;
 
-			&:first-child {
-				color: $editor-dark;
-				@include border-end(1px solid $editor-background);
-			}
-
 			&:hover {
-				background-color: lighten( $editor-background, 5%);
+				background-color: lighten($editor-background, 5%);
 			}
 
 			&.dialog-ok {
@@ -90,8 +92,8 @@
 .dialog-close-button {
 	cursor: pointer;
 	position: absolute;
-	top: 30px;
-	right: 30px;
+	margin-top: 15px;
+	@include end(15px);
 	font-size: 15px;
 	line-height: 1;
 
@@ -110,21 +112,34 @@
 	}
 }
 
-.dialog-prevent-scroll {
-	overflow: hidden;
+.dialog-confirm-widget {
+
+	.dialog-button {
+
+		&:first-child {
+			@include border-end(1px solid $editor-background);
+		}
+	}
 }
 
-@media (max-width: $editor-screen-sm-max) {
+.dialog-prevent-scroll {
+	overflow: hidden;
+	max-height: 100vh;
+}
 
-	.dialog-close-button {
-		top: 15px;
-		right: 15px;
-	}
-
+@media (min-width: $editor-screen-md-max) {
 	body.admin-bar {
+		.dialog-lightbox-widget {
+			height: calc(100vh - 32px);
+		}
+	}
+}
 
-		.dialog-close-button {
-			top: 40px;
+@media (max-width: $editor-screen-md-max) {
+	body.admin-bar {
+		.dialog-type-lightbox {
+			position: sticky;
+			height: 100vh;
 		}
 	}
 }

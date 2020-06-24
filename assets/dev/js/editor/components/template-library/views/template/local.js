@@ -25,7 +25,7 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 		elementor.templates.deleteTemplate( this.model, {
 			onConfirm: function() {
-				toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'fa fa-circle-o-notch fa-spin' );
+				toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
 			},
 			onSuccess: function() {
 				elementor.templates.showTemplates();

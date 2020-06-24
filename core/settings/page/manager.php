@@ -4,9 +4,8 @@ namespace Elementor\Core\Settings\Page;
 use Elementor\Core\Files\CSS\Base;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Files\CSS\Post_Preview;
+use Elementor\Core\Settings\Base\CSS_Manager;
 use Elementor\Core\Utils\Exceptions;
-use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\DB;
 use Elementor\Plugin;
@@ -24,51 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.6.0
  */
-class Manager extends BaseManager {
+class Manager extends CSS_Manager {
 
 	/**
 	 * Meta key for the page settings.
 	 */
 	const META_KEY = '_elementor_page_settings';
-
-	/**
-	 * Is CPT supports custom templates.
-	 *
-	 * Whether the Custom Post Type supports templates.
-	 *
-	 * @since 1.6.0
-	 * @deprecated 2.0.0 Use `Utils::is_cpt_custom_templates_supported()` method instead.
-	 * @access public
-	 * @static
-	 *
-	 * @return bool True is templates are supported, False otherwise.
-	 */
-	public static function is_cpt_custom_templates_supported() {
-		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported()' );
-
-		return Utils::is_cpt_custom_templates_supported();
-	}
-
-	/**
-	 * Get page data.
-	 *
-	 * Retrieves page data for any given a page ID.
-	 *
-	 * @since      1.6.0
-	 * @deprecated 1.6.0
-	 * @access     public
-	 * @static
-	 *
-	 * @param int $id Page ID.
-	 *
-	 * @return BaseModel
-	 */
-	public static function get_page( $id ) {
-		// translators: %s Elementor Document Settings API URL
-		_deprecated_file( __METHOD__, '1.6.0', 'the new settings API', sprintf( 'See <a href="%s">Elementor Document Settings</a> for more information.', 'https://developers.elementor.com/elementor-document-settings/' ) );
-
-		return SettingsManager::get_settings_managers( 'page' )->get_model( $id );
-	}
 
 	/**
 	 * Get manager name.
@@ -194,6 +154,29 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * @inheritDoc
+	 *
+	 * Override parent because the page setting moved to document.settings.
+	 */
+	protected function print_editor_template_content( $name ) {
+		?>
+		<#
+		const tabs = elementor.config.document.settings.tabs;
+
+		if ( Object.values( tabs ).length > 1 ) { #>
+		<div class="elementor-panel-navigation">
+			<# _.each( tabs, function( tabTitle, tabSlug ) { #>
+			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
+			</div>
+			<# } ); #>
+		</div>
+		<# } #>
+		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<?php
+	}
+
+	/**
 	 * Save settings to DB.
 	 *
 	 * Save page settings to the database, as post meta data.
@@ -207,7 +190,8 @@ class Manager extends BaseManager {
 	protected function save_settings_to_db( array $settings, $id ) {
 		// Use update/delete_metadata in order to handle also revisions.
 		if ( ! empty( $settings ) ) {
-			update_metadata( 'post', $id, self::META_KEY, $settings );
+			// Use `wp_slash` in order to avoid the unslashing during the `update_post_meta`.
+			update_metadata( 'post', $id, self::META_KEY, wp_slash( $settings ) );
 		} else {
 			delete_metadata( 'post', $id, self::META_KEY );
 		}

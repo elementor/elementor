@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Schemes;
+
 /**
  * Elementor text editor widget.
  *
@@ -54,7 +56,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-align-left';
+		return 'eicon-text';
 	}
 
 	/**
@@ -108,10 +110,7 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::WYSIWYG,
-				'dynamic' => [
-					'active' => true,
-				],
-				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
+				'default' => '<p>' . __( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ) . '</p>',
 			]
 		);
 
@@ -144,19 +143,19 @@ class Widget_Text_Editor extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'fa fa-align-justify',
+						'icon' => 'eicon-text-align-justify',
 					],
 				],
 				'selectors' => [
@@ -175,8 +174,8 @@ class Widget_Text_Editor extends Widget_Base {
 					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 			]
 		);
@@ -185,7 +184,53 @@ class Widget_Text_Editor extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+			]
+		);
+
+		$text_columns = range( 1, 10 );
+		$text_columns = array_combine( $text_columns, $text_columns );
+		$text_columns[''] = __( 'Default', 'elementor' );
+
+		$this->add_responsive_control(
+			'text_columns',
+			[
+				'label' => __( 'Columns', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
+				'options' => $text_columns,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-text-editor' => 'columns: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'column_gap',
+			[
+				'label' => __( 'Columns Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'vw' ],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'%' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'vw' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'em' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-text-editor' => 'column-gap: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -214,9 +259,6 @@ class Widget_Text_Editor extends Widget_Base {
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-drop-cap-view-',
-				'condition' => [
-					'drop_cap' => 'yes',
-				],
 			]
 		);
 
@@ -230,11 +272,8 @@ class Widget_Text_Editor extends Widget_Base {
 					'{{WRAPPER}}.elementor-drop-cap-view-framed .elementor-drop-cap, {{WRAPPER}}.elementor-drop-cap-view-default .elementor-drop-cap' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
-				],
-				'condition' => [
-					'drop_cap' => 'yes',
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_1,
 				],
 			]
 		);
@@ -337,9 +376,6 @@ class Widget_Text_Editor extends Widget_Base {
 				'exclude' => [
 					'letter_spacing',
 				],
-				'condition' => [
-					'drop_cap' => 'yes',
-				],
 			]
 		);
 
@@ -385,10 +421,10 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 1.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {
+	protected function content_template() {
 		?>
 		<#
 		view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );

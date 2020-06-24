@@ -120,11 +120,11 @@ class Control_Dimensions extends Control_Base_Units {
 					<li>
 						<button class="elementor-link-dimensions tooltip-target" data-tooltip="<?php echo esc_attr__( 'Link values together', 'elementor' ); ?>">
 							<span class="elementor-linked">
-								<i class="fa fa-link" aria-hidden="true"></i>
+								<i class="eicon-link" aria-hidden="true"></i>
 								<span class="elementor-screen-only"><?php echo __( 'Link values together', 'elementor' ); ?></span>
 							</span>
 							<span class="elementor-unlinked">
-								<i class="fa fa-chain-broken" aria-hidden="true"></i>
+								<i class="eicon-chain-broken" aria-hidden="true"></i>
 								<span class="elementor-screen-only"><?php echo __( 'Unlinked values', 'elementor' ); ?></span>
 							</span>
 						</button>

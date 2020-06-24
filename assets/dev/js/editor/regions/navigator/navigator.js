@@ -1,3 +1,5 @@
+import Component from './component';
+
 const BaseRegion = require( 'elementor-regions/base' );
 
 import NavigatorLayout from './layout';
@@ -6,17 +8,26 @@ export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
+		this.component = $e.components.register( new Component( { manager: this } ) );
+
 		this.isDocked = false;
 
-		this.opened = false;
+		this.indicators = {
+			customPosition: {
+				title: elementor.translate( 'custom_positioning' ),
+				icon: 'cursor-move',
+				settingKeys: [ '_position', '_element_width' ],
+				section: '_section_position',
+			},
+		};
 
 		this.ensurePosition = this.ensurePosition.bind( this );
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		if ( this.storage.visible ) {
-			this.open();
-		}
+		// TODO: Move to hook on 'editor/documents/load'.
+		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+		elementor.on( 'document:unloaded', this.onDocumentUnloaded.bind( this ) );
 	}
 
 	getStorageKey() {
@@ -74,21 +85,14 @@ export default class extends BaseRegion {
 		};
 	}
 
-	beforeFirstOpen() {
+	initLayout() {
 		this.show( new NavigatorLayout() );
 
 		this.$el.draggable( this.getDraggableOptions() );
-
 		this.$el.resizable( this.getResizableOptions() );
 	}
 
 	open( model ) {
-		if ( ! this.opened ) {
-			this.beforeFirstOpen();
-
-			this.opened = true;
-		}
-
 		this.$el.show();
 
 		if ( this.storage.docked ) {
@@ -119,6 +123,10 @@ export default class extends BaseRegion {
 
 		if ( ! silent ) {
 			this.saveStorage( 'visible', false );
+		}
+
+		if ( this.$el.resizable( 'instance' ) ) {
+			this.$el.resizable( 'destroy' );
 		}
 
 		elementorCommon.elements.$window.off( 'resize', this.ensurePosition );
@@ -261,6 +269,22 @@ export default class extends BaseRegion {
 			this.open();
 		} else {
 			this.close( true );
+		}
+	}
+
+	onDocumentLoaded( document ) {
+		if ( document.config.panel.has_elements ) {
+			this.initLayout();
+
+			if ( this.storage.visible ) {
+				$e.route( 'navigator' );
+			}
+		}
+	}
+
+	onDocumentUnloaded() {
+		if ( this.component.isOpen ) {
+			this.component.close( true );
 		}
 	}
 }

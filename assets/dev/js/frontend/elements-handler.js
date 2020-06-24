@@ -1,45 +1,84 @@
-var ElementsHandler;
+import accordionHandler from './handlers/accordion';
+import alertHandler from './handlers/alert';
+import counterHandler from './handlers/counter';
+import progressHandler from './handlers/progress';
+import tabsHandler from './handlers/tabs';
+import toggleHandler from './handlers/toggle';
+import videoHandler from './handlers/video';
+import imageCarouselHandler from './handlers/image-carousel';
+import textEditorHandler from './handlers/text-editor';
+import sectionHandler from './handlers/section/section';
+import columnHandler from './handlers/column';
+import globalHandler from './handlers/global';
 
-ElementsHandler = function( $ ) {
-	var self = this;
+module.exports = function( $ ) {
+	const self = this;
 
 	// element-type.skin-type
-	var handlers = {
+	const handlers = {
 		// Elements
-		section: require( 'elementor-frontend/handlers/section' ),
+		section: sectionHandler,
+		column: columnHandler,
 
 		// Widgets
-		'accordion.default': require( 'elementor-frontend/handlers/accordion' ),
-		'alert.default': require( 'elementor-frontend/handlers/alert' ),
-		'counter.default': require( 'elementor-frontend/handlers/counter' ),
-		'progress.default': require( 'elementor-frontend/handlers/progress' ),
-		'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
-		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
-		'video.default': require( 'elementor-frontend/handlers/video' ),
-		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' ),
+		'accordion.default': accordionHandler,
+		'alert.default': alertHandler,
+		'counter.default': counterHandler,
+		'progress.default': progressHandler,
+		'tabs.default': tabsHandler,
+		'toggle.default': toggleHandler,
+		'video.default': videoHandler,
+		'image-carousel.default': imageCarouselHandler,
+		'text-editor.default': textEditorHandler,
 	};
 
-	var addGlobalHandlers = function() {
-		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
+	const handlersInstances = {};
+
+	const addGlobalHandlers = function() {
+		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 	};
 
-	var addElementsHandlers = function() {
+	const addElementsHandlers = function() {
 		$.each( handlers, function( elementName, funcCallback ) {
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/' + elementName, funcCallback );
 		} );
 	};
 
-	var init = function() {
-		if ( ! elementorFrontend.isEditMode() ) {
-			self.initHandlers();
-		}
+	const init = function() {
+		self.initHandlers();
 	};
 
 	this.initHandlers = function() {
 		addGlobalHandlers();
 
 		addElementsHandlers();
+	};
+
+	this.addHandler = function( HandlerClass, options ) {
+		const elementID = options.$element.data( 'model-cid' );
+
+		let handlerID;
+
+		// If element is in edit mode
+		if ( elementID ) {
+			handlerID = HandlerClass.prototype.getConstructorID();
+
+			if ( ! handlersInstances[ elementID ] ) {
+				handlersInstances[ elementID ] = {};
+			}
+
+			const oldHandler = handlersInstances[ elementID ][ handlerID ];
+
+			if ( oldHandler ) {
+				oldHandler.onDestroy();
+			}
+		}
+
+		const newHandler = new HandlerClass( options );
+
+		if ( elementID ) {
+			handlersInstances[ elementID ][ handlerID ] = newHandler;
+		}
 	};
 
 	this.getHandlers = function( handlerName ) {
@@ -50,28 +89,23 @@ ElementsHandler = function( $ ) {
 		return handlers;
 	};
 
-	this.runReadyTrigger = function( $scope ) {
-		var elementType = $scope.attr( 'data-element_type' );
+	this.runReadyTrigger = function( scope ) {
+		// Initializing the `$scope` as frontend jQuery instance
+		const $scope = jQuery( scope ),
+			elementType = $scope.attr( 'data-element_type' );
 
 		if ( ! elementType ) {
 			return;
 		}
 
-		// Initializing the `$scope` as frontend jQuery instance
-		$scope = jQuery( $scope );
-
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
-		var isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
-
-		if ( isWidgetType ) {
-			elementorFrontend.hooks.doAction( 'frontend/element_ready/widget', $scope, $ );
-		}
-
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
+
+		if ( 'widget' === elementType ) {
+			elementorFrontend.hooks.doAction( 'frontend/element_ready/' + $scope.attr( 'data-widget_type' ), $scope, $ );
+		}
 	};
 
 	init();
 };
-
-module.exports = ElementsHandler;
