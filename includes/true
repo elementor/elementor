@@ -884,6 +884,12 @@ class Frontend extends App {
 			$menu_args['href'] = $this->admin_bar_edit_documents[ $queried_object_id ]->get_edit_url();
 			unset( $this->admin_bar_edit_documents[ $queried_object_id ] );
 		}
+		
+		//Temporary workaround for issue #11728
+		if (false === empty($queried_object_id) && false === isset($menu_args['href']))
+		{
+			$menu_args['href'] = home_url() . '/wp-admin/post.php?post=' . get_queried_object_id() . '&action=elementor';
+		}
 
 		$wp_admin_bar->add_node( $menu_args );
 
