@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Colors_And_Typography extends Tab_Base {
 
-	const TYPOGRAPHY_GROUP_PREFIX = 'typography';
+	const TYPOGRAPHY_NAME = 'typography';
+	const TYPOGRAPHY_GROUP_PREFIX = self::TYPOGRAPHY_NAME . '_';
 
 	const COLOR_PRIMARY = 'globals/colors?id=primary';
 	const COLOR_SECONDARY = 'globals/colors?id=secondary';
@@ -198,9 +199,9 @@ class Colors_And_Typography extends Tab_Base {
 
 		if ( Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
 
-			$typography_key = self::TYPOGRAPHY_GROUP_PREFIX . '_typography';
-			$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_family';
-			$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_weight';
+			$typography_key = self::TYPOGRAPHY_GROUP_PREFIX . 'typography';
+			$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . 'font_family';
+			$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . 'font_weight';
 
 			$default_typography = [
 				[

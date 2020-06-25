@@ -23,7 +23,7 @@ export class Create extends CreateBase {
 						defaultValue = container.controls[ key ].default;
 
 					if ( ! _.isEqual( value, defaultValue ) ) {
-						availableControls[ key.replace( groupPrefix, 'typography_' ) ] = container.settings.get( key );
+						availableControls[ key.replace( groupPrefix, elementor.config.kit_config.typography_prefix ) ] = container.settings.get( key );
 					}
 				}
 			} );
