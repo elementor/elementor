@@ -94,7 +94,7 @@ class Module extends BaseModule {
 			'html2canvas',
 			ELEMENTOR_URL . 'modules/screenshots/assets/js/html2canvas.min.js',
 			[],
-			'1.0.0-alpha.12',
+			'1.0.0-rc.5',
 			true
 		);
 
