@@ -29,7 +29,7 @@ export class Disable extends DisableEnable {
 
 						if ( groupPrefix ) {
 							Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
-								dataKey = dataKey.replace( 'typography_', groupPrefix );
+								dataKey = dataKey.replace( elementor.config.kit_config.typography_prefix, groupPrefix );
 								localSettings[ dataKey ] = dataValue;
 							} );
 						} else {
