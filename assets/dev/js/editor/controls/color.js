@@ -15,14 +15,14 @@ export default class extends ControlBaseDataView {
 
 		if ( this.colorPicker ) {
 			// When there is a global set on the control but there is no value/it doesn't exist, don't show a value
-			if ( this.getGlobalKey() && ! currentValue ) {
-				return;
+			if ( currentValue ) {
+				// Set the picker color without triggering the 'onChange' event
+				const parsedColor = this.colorPicker.picker._parseLocalColor( currentValue );
+
+				this.colorPicker.picker.setHSVA( ...parsedColor.values, false );
+			} else {
+				this.colorPicker.picker._clearColor( true );
 			}
-
-			// Set the picker color without triggering the 'onChange' event
-			const parsedColor = this.colorPicker.picker._parseLocalColor( currentValue );
-
-			this.colorPicker.picker.setHSVA( ...parsedColor.values, false );
 		} else {
 			this.initPicker();
 		}
