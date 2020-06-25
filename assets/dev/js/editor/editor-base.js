@@ -8,6 +8,7 @@ import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
+import ScreenshotsModule from 'elementor/modules/screenshots/assets/js/editor/module'
 import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -35,7 +36,7 @@ export default class EditorBase extends Marionette.Application {
 	ajax = elementorCommon.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
 	history = require( 'elementor/modules/history/assets/js/module' );
-	screenshots = require( 'elementor/modules/screenshots/assets/js/editor/module' );
+	screenshots = new ScreenshotsModule();
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),

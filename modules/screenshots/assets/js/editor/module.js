@@ -1,22 +1,11 @@
-var Module = function() {
-	var init = function() {
-		elementor.saver.on( 'before:save', onBeforeSave.bind( this ) );
-	};
+import Component from './component'
 
-	var onBeforeSave = function( options ) {
-		if ( 'autosave' === options.status ) {
-			return;
-		}
+export default class Module {
+	constructor() {
+		elementorCommon.elements.$window.on( 'elementor:init-components', this.onElementorInitComponents.bind( this ) );
+	}
 
-		var url = elementor.config.document.urls.preview.replace( 'elementor-preview', 'elementor-screenshot' );
-		var iframe = document.createElement( 'iframe' );
-		iframe.src = url;
-		iframe.width = '1300';
-		iframe.style = 'visibable: hidden;';
-		jQuery( 'body' ).append( iframe );
-	};
-
-	jQuery( window ).on( 'elementor:init', init );
-};
-
-module.exports = new Module();
+	onElementorInitComponents() {
+		$e.components.register( new Component() );
+	}
+}
