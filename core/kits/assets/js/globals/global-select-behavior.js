@@ -63,7 +63,17 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			if ( globalValue ) {
 				// If there is a global value saved, get the global's name and display it
 				$e.data.get( globalValue )
-					.then( ( result ) => this.updateSelectBoxText( result.data.title ) );
+					.then( ( result ) => {
+						let text = '';
+
+						if ( result.data.title ) {
+							text = result.data.title;
+						} else {
+							text = elementor.translate( 'default' );
+						}
+
+						this.updateSelectBoxText( text );
+					} );
 
 				return;
 			} else if ( value ) {

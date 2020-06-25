@@ -14,6 +14,11 @@ export default class extends ControlBaseDataView {
 		const currentValue = this.getCurrentValue();
 
 		if ( this.colorPicker ) {
+			// When there is a global set on the control but there is no value/it doesn't exist, don't show a value
+			if ( this.getGlobalKey() && ! currentValue ) {
+				return;
+			}
+
 			// Set the picker color without triggering the 'onChange' event
 			const parsedColor = this.colorPicker.picker._parseLocalColor( currentValue );
 
@@ -58,8 +63,15 @@ export default class extends ControlBaseDataView {
 	}
 
 	addTipsyToPickerButton() {
+		let currentValue = this.getCurrentValue();
+
+		// If there is a global enabled for the control, but the global has no value
+		if ( this.getGlobalKey && ! currentValue ) {
+			currentValue = `${ elementor.translate( 'invalid' ) } ${ elementor.translate( 'global_color' ) }`;
+		}
+
 		this.$pickerButton.tipsy( {
-			title: () => this.getCurrentValue() || '',
+			title: () => currentValue || '',
 			offset: 4,
 			gravity: () => 's',
 		} );
