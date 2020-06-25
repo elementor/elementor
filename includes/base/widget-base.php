@@ -344,8 +344,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
+		$this->add_render_attribute('_widget_container', 'class', 'elementor-widget-container');
 		?>
-		<div class="elementor-widget-container">
+			<div <?php $this->print_render_attribute_string( '_widget_container' ); ?>>
 			<?php
 			echo $template_content; // XSS ok.
 			?>
@@ -536,8 +537,9 @@ abstract class Widget_Base extends Element_Base {
 		if ( empty( $widget_content ) ) {
 			return;
 		}
+		$this->add_render_attribute('_widget_container', 'class', 'elementor-widget-container');
 		?>
-		<div class="elementor-widget-container">
+		<div <?php $this->print_render_attribute_string( '_widget_container' ); ?>>
 			<?php
 
 			/**
