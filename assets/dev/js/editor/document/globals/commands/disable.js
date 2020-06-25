@@ -24,10 +24,12 @@ export class Disable extends DisableEnable {
 						result = await promise;
 
 					if ( result ) {
-						const { value } = result.data;
+						const { value } = result.data,
+							groupPrefix = container.controls[ globalKey ]?.groupPrefix;
 
-						if ( container.controls[ globalKey ]?.groupPrefix ) {
+						if ( groupPrefix ) {
 							Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
+								dataKey = dataKey.replace( 'typography_', groupPrefix );
 								localSettings[ dataKey ] = dataValue;
 							} );
 						} else {
