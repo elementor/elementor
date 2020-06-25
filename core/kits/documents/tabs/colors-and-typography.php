@@ -141,7 +141,7 @@ class Colors_And_Typography extends Tab_Base {
 		$repeater->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name' => self::TYPOGRAPHY_GROUP_PREFIX,
+				'name' => self::TYPOGRAPHY_NAME,
 				'label' => '',
 				'popover' => [
 					'settings' => [
