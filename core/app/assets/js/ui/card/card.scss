@@ -8,6 +8,7 @@
 	box-shadow: $card-box-shadow;
 	border-radius: $card-border-radius;
 	transition: $card-transition;
+	font-size: $card-font-size;
 
 	&__header {
 		padding: $card-header-padding;
@@ -25,6 +26,7 @@
 	&__headline {
 		color: var(--card-headline-color);
 		--h1-font-size: $card-headline-font-size;
+		--h1-margin-bottom: 0;
 		font-weight: $card-headline-font-weight;
 		flex-grow: 1;
 	}

@@ -1,0 +1,102 @@
+// BTN API
+$button-font-size: type(text,sm);
+$button-line-height: 15px;
+$button-padding-y: 0.75em;
+$button-padding-x: 1.75em;
+$button-border-radius: $eps-radius;
+$button-hover-constant: 5%;
+$button-active-constant: 3%;
+// sizing
+// -- sm
+$button-sm-font-size: type(text,xs);
+$button-sm-line-height: 14px;
+//$button-sm-padding-y: 0.75em; // 7px;
+//$button-sm-padding-x: 2em; // 16px;
+// --lg
+$button-lg-font-size: type(text,lg);
+$button-lg-line-height: 18px;
+//$button-lg-padding-y: 0.75em; // 14px;
+//$button-lg-padding-x: 2em; // 36px;
+//Semantic Colors
+$button-primary-background-color: theme-colors(success);
+$button-primary-hover-background-color: darken($button-primary-background-color, $button-hover-constant);
+$button-primary-active-background-color: darken($button-primary-background-color, $button-active-constant);
+$button-primary-color: theme-colors(light);
+$button-secondary-background-color: tints(400);
+$button-secondary-hover-background-color: darken($button-secondary-background-color, $button-hover-constant);
+$button-secondary-active-background-color: darken($button-secondary-background-color, $button-active-constant);
+$button-secondary-color: theme-colors(light);
+$button-cta-background-color: theme-colors(cta);
+$button-cta-hover-background-color: darken($button-cta-background-color, $button-hover-constant);
+$button-cta-active-background-color: darken($button-cta-background-color, $button-active-constant);
+$button-cta-color: theme-colors(light);
+$button-disabled-background-color: theme-colors(disabled);
+$button-disabled-hover-background-color: darken($button-disabled-background-color, $button-hover-constant);
+$button-disabled-active-background-color: darken($button-disabled-background-color, $button-active-constant);
+$button-disabled-color: theme-colors(light);
+// -- dark
+$button-dark-primary-background-color: dark-theme-colors(success);
+$button-dark-primary-color: dark-theme-colors(light);
+$button-dark-primary-hover-background-color: darken($button-dark-primary-background-color, $button-hover-constant);
+$button-dark-primary-active-background-color: darken($button-dark-primary-background-color, $button-active-constant);
+$button-dark-secondary-background-color: dark-tints(400);
+$button-dark-secondary-hover-background-color: darken($button-dark-secondary-background-color, $button-hover-constant);
+$button-dark-secondary-active-background-color: darken($button-dark-secondary-background-color, $button-active-constant);
+$button-dark-secondary-color: dark-theme-colors(light);
+$button-dark-cta-background-color: dark-theme-colors(cta);
+$button-dark-cta-hover-background-color: darken($button-dark-cta-background-color, $button-hover-constant);
+$button-dark-cta-active-background-color: darken($button-dark-cta-background-color, $button-active-constant);
+$button-dark-cta-color: dark-theme-colors(light);
+$button-dark-disabled-background-color: dark-theme-colors(disabled);
+$button-dark-disabled-hover-background-color: darken($button-dark-disabled-background-color, $button-hover-constant);
+$button-dark-disabled-active-background-color: darken($button-dark-disabled-background-color, $button-active-constant);
+$button-dark-disabled-color: dark-theme-colors(light);
+
+// using mixing to transfer custom properties
+@mixin button-custom-properties() {
+  --button-font-size: #{$button-font-size};
+  --button-line-height: #{$button-line-height};
+  --button-padding-y: #{$button-padding-y};
+  --button-padding-x: #{$button-padding-x};
+  // primary
+  --button-primary-background-color: #{$button-primary-background-color};
+  --button-primary-hover-background-color: #{$button-primary-hover-background-color};
+  --button-primary-active-background-color: #{$button-primary-active-background-color};
+  --button-primary-color: #{$button-primary-color};
+  // secondary
+  --button-secondary-background-color: #{$button-secondary-background-color};
+  --button-secondary-hover-background-color: #{$button-secondary-hover-background-color};
+  --button-secondary-active-background-color: #{$button-secondary-active-background-color};
+  --button-secondary-color: #{$button-secondary-color};
+  // cta
+  --button-cta-background-color: #{$button-cta-background-color};
+  --button-cta-hover-background-color: #{$button-cta-hover-background-color};
+  --button-cta-active-background-color: #{$button-cta-active-background-color};
+  --button-cta-color: #{$button-cta-color};
+  // disabled
+  --button-disabled-background-color: #{$button-disabled-background-color};
+  --button-disabled-hover-background-color: #{$button-disabled-hover-background-color};
+  --button-disabled-active-background-color: #{$button-disabled-active-background-color};
+  --button-disabled-color: #{$button-disabled-color};
+}
+
+@mixin button-dark-custom-properties() {
+  --button-primary-background-color: #{$button-dark-primary-background-color};
+  --button-primary-color: #{$button-dark-primary-color};
+  --button-primary-hover-background-color: #{$button-dark-primary-hover-background-color};
+  --button-primary-active-background-color: #{$button-dark-primary-active-background-color};
+  --button-secondary-background-color: #{$button-dark-secondary-background-color};
+  --button-secondary-color: #{$button-dark-secondary-color};
+  --button-secondary-hover-background-color: #{$button-dark-secondary-hover-background-color};
+  --button-secondary-active-background-color: #{$button-dark-secondary-active-background-color};
+  --button-cta-background-color: #{$button-dark-cta-background-color};
+  --button-cta-hover-background-color: #{$button-dark-cta-hover-background-color};
+  --button-cta-active-background-color: #{$button-dark-cta-active-background-color};
+  --button-cta-color: #{$button-dark-cta-color};
+  --button-disabled-background-color: #{$button-dark-disabled-background-color};
+  --button-disabled-hover-background-color: #{$button-dark-disabled-hover-background-color};
+  --button-disabled-active-background-color: #{$button-dark-disabled-active-background-color};
+  --button-disabled-color: #{$button-dark-disabled-color};
+}
+
+

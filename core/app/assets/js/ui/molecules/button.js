@@ -35,7 +35,7 @@ export default class Button extends React.Component {
 			let screenReaderText = '';
 
 			if ( this.props.hideText ) {
-				screenReaderText = <Typography className="elementor-screen-only" >{ tooltip }</Typography>;
+				screenReaderText = <Typography className="u-sr-only" >{ tooltip }</Typography>;
 			}
 
 			return (

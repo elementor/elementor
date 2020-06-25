@@ -1,6 +1,7 @@
 @import "../styles/common";
 @import "../styles/base";
 @import "../styles/utilities";
+@import "../styles/components";
 
 $app-background-color: tints(200);
 $app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
@@ -44,10 +45,22 @@ $box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
 
 :root {
 	--h1-font-size: #{type(h, "1")};
+	--h1-margin-bottom: #{spacing(20)};
+	--hr-color: #{tints(300)};
+}
+
+.dark {
+	--hr-color: #{dark-tints(500)};
 }
 
 h1 {
 	font-size: var(--h1-font-size);
+	margin-bottom: var(--h1-margin-bottom);
+}
+
+hr {
+	border: 0 none;
+	border-bottom: 1px solid var(--hr-color);
 }
 
 .elementor-app {
@@ -77,18 +90,6 @@ h1 {
 		height: 100%;
 		overflow: scroll;
 	}
-}
-
-.elementor-screen-only {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0,0,0,0);
-	white-space: nowrap;
-	clip-path: inset(50%);
-	border: 0;
 }
 
 .dialog-type-lightbox:not(.elementor-popup-modal) {

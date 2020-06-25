@@ -4,10 +4,12 @@ $eps-theme-colors: (
 		link-color: $eps-link-color,
 		link-hover-color: $eps-link-hover-color,
 		text-muted:$eps-theme-text-muted,
+		disabled: $eps-theme-disabled,
 		light: $eps-theme-light,
 		dark: $eps-theme-dark,
 		info: $eps-theme-info,
-		error: $eps-theme-error,
+		cta: $eps-theme-cta,
+		danger: $eps-theme-danger,
 		success: $eps-theme-success,
 		warning: $eps-theme-warning,
 );

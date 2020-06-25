@@ -11,10 +11,10 @@ $eps-type-map: (
 				"26": $font-size-26,
 				"30": $font-size-30,
 		),
-		line-height: (
+		line-height:(
 				"2":$line-height-2,
 				flat:$eps-line-height-flat,
-				base: $eps-line-height-base,
+				base:$eps-line-height-base,
 				sm:$eps-line-height-sm,
 				lg:$eps-line-height-lg,
 		),
@@ -25,7 +25,7 @@ $eps-type-map: (
 				"4":$eps-display-4-font-size,
 		),
 		h:(
-				"1": $eps-h-1-font-size,
+				"1":$eps-h-1-font-size,
 				"2":$eps-h-2-font-size,
 				"3":$eps-h-3-font-size,
 				"4":$eps-h-4-font-size,
@@ -38,7 +38,8 @@ $eps-type-map: (
 				xs:$eps-text-xs-font-size,
 				sm:$eps-text-sm-font-size,
 				md:$eps-text-md-font-size,
-				lg: $eps-text-lg-font-size,
+				lg:$eps-text-lg-font-size,
+				xl:$eps-text-xl-font-size,
 		),
 		caption: $eps-font-size-caption,
 		micro: $eps-font-size-micro,
