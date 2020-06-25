@@ -113,10 +113,16 @@ class Test_Upgrades extends Elementor_Test_Base {
 		// Prepare.
 		$generic_font = 'some-generic-font';
 		$lightbox_color = '#e1e3ef';
+		$container_width = '1000';
+		$viewport_lg = '900';
+		$viewport_md = '800';
 
 		$general_settings = [
 			'default_generic_fonts' => $generic_font,
 			'lightbox_color' => $lightbox_color,
+			'container_width' => $container_width,
+			'viewport_lg' => $viewport_lg,
+			'viewport_md' => $viewport_md,
 		];
 
 		update_option( '_elementor_general_settings', $general_settings );
@@ -139,11 +145,18 @@ class Test_Upgrades extends Elementor_Test_Base {
 			] );
 		}
 
+		// Ensure the testable values are not default values of the kit.
 		$kit_generic_font_before = $kit->get_settings( 'default_generic_fonts' );
 		$kit_lightbox_color_before = $kit->get_settings( 'lightbox_color' );
+		$kit_container_width_before = $kit->get_settings( 'container_width' );
+		$kit_viewport_lg_before = $kit->get_settings( 'viewport_lg' );
+		$kit_viewport_md_before = $kit->get_settings( 'viewport_md' );
 
 		$this->assertNotEquals( $generic_font, $kit_generic_font_before );
 		$this->assertNotEquals( $lightbox_color, $kit_lightbox_color_before );
+		$this->assertNotEquals( $container_width, $kit_container_width_before );
+		$this->assertNotEquals( $viewport_lg, $kit_viewport_lg_before );
+		$this->assertNotEquals( $viewport_md, $kit_viewport_md_before );
 
 		$updater->set_limit( $query_limit );
 
@@ -170,9 +183,15 @@ class Test_Upgrades extends Elementor_Test_Base {
 		// Assert kit upgraded.
 		$kit_generic_font_after = $kit->get_settings( 'default_generic_fonts' );
 		$kit_lightbox_color_after = $kit->get_settings( 'lightbox_color' );
+		$kit_container_width_after = $kit->get_settings( 'container_width' );
+		$kit_viewport_lg_after = $kit->get_settings( 'viewport_lg' );
+		$kit_viewport_md_after = $kit->get_settings( 'viewport_md' );
 
 		$this->assertEquals( $generic_font, $kit_generic_font_after );
 		$this->assertEquals( $lightbox_color, $kit_lightbox_color_after );
+		$this->assertEquals( $container_width, $kit_container_width_after['size'] );
+		$this->assertEquals( $viewport_lg, $kit_viewport_lg_after['size'] );
+		$this->assertEquals( $viewport_md, $kit_viewport_md_after['size'] );
 
 		// Assert revisions upgraded.
 

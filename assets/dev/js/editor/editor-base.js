@@ -531,7 +531,9 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor && elementor.documents.getCurrent() ) {
+			// It's a click on the preview area, not in the edit area,
+			// and a document is open and has an edit area.
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );

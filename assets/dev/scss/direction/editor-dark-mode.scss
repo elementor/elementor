@@ -319,16 +319,14 @@ select {
 	//Menu
 	.elementor-panel-menu-item {
 
-		&:not(.elementor-panel-menu-item-exit-to-dashboard) {
-			background-color: $theme-dark-gray-dark;
+		background-color: $theme-dark-gray-dark;
 
-			&:hover {
-				background-color: $theme-dark-gray;
-			}
+		&:hover {
+			background-color: $theme-dark-gray;
+		}
 
-			a {
-				color: $theme-dark-light;
-			}
+		a {
+			color: $theme-dark-light;
 		}
 
 		&-icon {

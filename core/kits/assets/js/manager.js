@@ -23,11 +23,19 @@ export default class extends elementorModules.editor.utils.Module {
 
 		menu.addItem( {
 			name: 'global-settings',
-			icon: 'eicon-adjust',
+			icon: 'eicon-global-settings',
 			title: elementor.translate( 'global_settings' ),
 			type: 'page',
 			callback: () => $e.route( 'panel/global/menu' ),
-		}, 'style', 'global-colors' );
+		}, 'style', 'editor-preferences' );
+
+		menu.addItem( {
+			name: 'site-editor',
+			icon: 'eicon-theme-builder',
+			title: elementor.translate( 'site_editor' ),
+			type: 'page',
+			callback: () => $e.run( 'panel/global/open-site-editor' ),
+		}, 'style', 'editor-preferences' );
 	}
 
 	addHeaderBehavior( behaviors ) {
