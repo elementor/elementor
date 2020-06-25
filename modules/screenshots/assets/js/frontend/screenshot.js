@@ -1,15 +1,22 @@
 /* global ElementorScreenshotConfig, elementorFrontendConfig, jQuery */
 class Screenshot {
 
+	crop = {
+		width: 1200,
+		height: 1500,
+	}
+
 	/**
 	 * Holds the screen shot Iframe
 	 */
 	$elementor;
 
 	/**
-	 * The current post id
+	 * The config that provided from the backend
+	 *
+	 * @var object
 	 */
-	postId;
+	config;
 
 	constructor() {
 		jQuery( () => this.init() )
@@ -17,7 +24,7 @@ class Screenshot {
 
 	init() {
 		this.$elementor = jQuery( ElementorScreenshotConfig.selector );
-		this.postId = elementorFrontendConfig.post.id;
+		this.config = { ...ElementorScreenshotConfig, ...{ post: { id: elementorFrontendConfig.post.id } } };
 
 		if ( ! this.$elementor.length ) {
 			console.warn( 'Screenshots: Elementor content was not found.' );
@@ -27,13 +34,16 @@ class Screenshot {
 		return Promise.resolve()
 			.then( this.handleIFrames.bind( this ) )
 			.then( this.handleSlides.bind( this ) )
+			.then( this.hidePageHeaders.bind( this ) )
 			.then( this.createCanvas.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
 			.then( this.save.bind( this ) )
 	}
 
 	handleIFrames() {
-		this.$elementor.find( 'iframe' ).each( () => {
+		const $self = this;
+
+		this.$elementor.find( 'iframe' ).each( function () {
 			const $iframe = jQuery( this )
 			const $iframeMask = jQuery( '<div />', {
 				css: {
@@ -65,7 +75,7 @@ class Screenshot {
 				const matches = regex.exec( $iframe.attr( 'src' ) );
 
 				$iframeMask.append( jQuery( '<img />', {
-					src: screenshotProxy( 'https://img.youtube.com/vi/' + matches[ 1 ] + '/0.jpg' ),
+					src: $self.getScreenshotProxyUrl( `https://img.youtube.com/vi/${matches[ 1 ]}/0.jpg`, $self.config ),
 					crossOrigin: 'Anonymous',
 					css: {
 						width: $iframe.width(),
@@ -102,10 +112,18 @@ class Screenshot {
 	 * @returns {Promise<unknown>}
 	 */
 	createCanvas() {
-		return html2canvas( this.$elementor.get( 0 ), {
-			useCORS: true,
-			foreignObjectRendering: true,
-		} );
+		return new Promise( ( resolve ) => {
+			setTimeout( () => {
+				html2canvas( this.$elementor.get( 0 ), {
+					useCORS: true,
+					foreignObjectRendering: false,
+				} ).then( ( canvas ) => {
+					jQuery( 'body' ).prepend( canvas )
+
+					resolve( canvas )
+				} );
+			}, 5000 )
+		} )
 	}
 
 	/**
@@ -117,10 +135,10 @@ class Screenshot {
 	cropCanvas( canvas ) {
 		const cropCanvas = document.createElement( 'canvas' );
 		const cropContext = cropCanvas.getContext( '2d' );
-		const ratio = 500 / canvas.width;
+		const ratio = this.crop.width / canvas.width;
 
-		cropCanvas.width = 500;
-		cropCanvas.height = 700;
+		cropCanvas.width = this.crop.width;
+		cropCanvas.height = this.crop.height;
 
 		cropContext.drawImage( canvas, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width * ratio, canvas.height * ratio );
 
@@ -136,10 +154,27 @@ class Screenshot {
 	save( canvas ) {
 		return elementorCommon.ajax.addRequest( 'screenshot_save', {
 			data: {
-				post_id: this.postId,
+				post_id: this.config.post.id,
 				screenshot: canvas.toDataURL( 'image/png' ),
 			},
 		} );
+	}
+
+	/**
+	 * @param url
+	 * @param config
+	 * @returns {string}
+	 */
+	getScreenshotProxyUrl( url, config ) {
+		return `${config.home_url}?screenshot_proxy&nonce=${config.nonce}&href=${url}`;
+	}
+
+	hidePageHeaders() {
+		jQuery( 'body > *' )
+			.not( this.$elementor.parents( 'body > *' ) )
+			.css( 'display', 'none' );
+
+		return Promise.resolve();
 	}
 }
 

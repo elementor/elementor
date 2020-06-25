@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Modules\Screenshots;
 
 use Elementor\Core\Base\Module as BaseModule;
@@ -133,6 +134,10 @@ class Module extends BaseModule {
 		if ( isset( $_REQUEST['screenshot_proxy'] ) ) {
 			$this->screenshot_proxy();
 			die;
+		}
+
+		if ( isset( $_REQUEST['elementor-screenshot'] ) ) {
+			show_admin_bar( false );
 		}
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
