@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class Close extends CommandBase {
+export class Close extends Command {
 	apply() {
 		// The kit is opened directly.
 		if ( elementor.config.initial_document.id === parseInt( elementor.config.kit_id ) ) {

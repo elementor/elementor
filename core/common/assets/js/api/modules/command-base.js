@@ -1,4 +1,5 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
+import Command from './command';
 
 export default class CommandBase extends ArgsObject {
 	static getInstanceType() {
@@ -20,8 +21,19 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 * @param [commandsAPI={}]
 	 */
-	constructor( args, commandsAPI = $e.commands ) {
+	constructor( args = {}, commandsAPI = $e.commands ) {
 		super( args );
+
+		// TODO: is better to check if register process is done.
+		// If not running, this is may be only during the register.
+		if ( ! $e.commands.constructor.trace.length ) {
+			// Validate 'Command-Base' extended by 'Command', only not for testing.
+			if ( ! elementorCommonConfig.isTesting && -1 === this.instanceTypes.indexOf( Command.getInstanceType() ) ) {
+				throw Error( `'${ CommandBase.getInstanceType() }' Class cannot be extended directly, use: '${ Command.getInstanceType() }'.` );
+			}
+
+			return;
+		}
 
 		// Acknowledge self about which command it run.
 		this.currentCommand = commandsAPI.getCurrentLast();
@@ -83,17 +95,6 @@ export default class CommandBase extends ArgsObject {
 	validateArgs( args = {} ) {} // eslint-disable-line no-unused-vars
 
 	/**
-	 * Function isDataChanged().
-	 *
-	 * Whether the editor needs to set change flag on/off.
-	 *
-	 * @returns {boolean}
-	 */
-	isDataChanged() {
-		return false;
-	}
-
-	/**
 	 * Function apply().
 	 *
 	 * Do the actual command.
@@ -114,78 +115,7 @@ export default class CommandBase extends ArgsObject {
 	 * @returns {*}
 	 */
 	run() {
-		let result;
-
-		// For UI Hooks.
-		this.onBeforeRun( this.args );
-
-		try {
-			// For Data hooks.
-			this.onBeforeApply( this.args );
-
-			result = this.apply( this.args );
-		} catch ( e ) {
-			this.onCatchApply( e );
-
-			// Catch 'Hook-Break' that comes from hooks base.
-			if ( e instanceof $e.modules.HookBreak ) {
-				// Bypass.
-				return false;
-			}
-		}
-
-		return this.runAfter( result );
-	}
-
-	runAfter( result ) {
-		const onAfter = ( _result ) => {
-				// Run Data hooks.
-				this.onAfterApply( this.args, _result );
-
-				// TODO: Create Command-Base for Command-Document and apply it on after.
-				if ( this.isDataChanged() ) {
-					$e.internal( 'document/save/set-is-modified', { status: true } );
-				}
-
-				// For UI hooks.
-				this.onAfterRun( this.args, _result );
-			},
-			asyncOnAfter = async ( _result ) => {
-				// Run Data hooks.
-				const results = this.onAfterApply( this.args, _result ),
-					promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
-
-				if ( promises.length ) {
-					// Wait for hooks before return the value.
-					await Promise.all( promises );
-				}
-
-				if ( this.isDataChanged() ) {
-					// TODO: Create Command-Base for Command-Document and apply it on after.
-					$e.internal( 'document/save/set-is-modified', { status: true } );
-				}
-
-				// For UI hooks.
-				this.onAfterRun( this.args, _result );
-			};
-
-		// TODO: Temp code determine if it's a jQuery deferred object.
-		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
-			result.fail( this.onCatchApply.bind( this ) );
-			result.done( onAfter );
-		} else if ( result instanceof Promise ) {
-			// Override initial result ( promise ) to await onAfter promises, first!.
-			return ( async () => {
-				await result.catch( this.onCatchApply.bind( this ) );
-				await result.then( ( _result ) => asyncOnAfter( _result ) );
-
-				return result;
-			} )();
-		} else {
-			onAfter( result );
-		}
-
-		return result;
+		return this.apply( this.args );
 	}
 
 	/**
@@ -195,9 +125,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * @param [args={}]
 	 */
-	onBeforeRun( args = {} ) {
-		$e.hooks.runUIBefore( this.currentCommand, args );
-	}
+	onBeforeRun( args = {} ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function onAfterRun.
@@ -207,9 +135,7 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 * @param [result={*}]
 	 */
-	onAfterRun( args = {}, result ) {
-		$e.hooks.runUIAfter( this.currentCommand, args, result );
-	}
+	onAfterRun( args = {}, result ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function onBeforeApply.
@@ -218,9 +144,7 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * @param [args={}]
 	 */
-	onBeforeApply( args = {} ) {
-		$e.hooks.runDataDependency( this.currentCommand, args );
-	}
+	onBeforeApply( args = {} ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function onAfterApply.
@@ -230,9 +154,7 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 * @param [result={*}]
 	 */
-	onAfterApply( args = {}, result ) {
-		return $e.hooks.runDataAfter( this.currentCommand, args, result );
-	}
+	onAfterApply( args = {}, result ) {} // eslint-disable-line no-unused-vars
 
 	/**
 	 * Function onCatchApply.
@@ -241,11 +163,5 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * @param {Error} e
 	 */
-	onCatchApply( e ) {
-		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
-
-		elementorCommon.helpers.consoleError( e );
-
-		$e.hooks.runUICatch( this.currentCommand, this.args, e );
-	}
+	onCatchApply( e ) {} // // eslint-disable-line no-unused-vars
 }

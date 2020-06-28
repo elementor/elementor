@@ -1,4 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 import CommandHistory from './command-history';
 
 export const DEFAULT_DEBOUNCE_DELAY = 800;
@@ -50,7 +50,7 @@ export default class CommandHistoryDebounce extends CommandHistory {
 	}
 
 	onBeforeRun( args ) {
-		CommandBase.prototype.onBeforeRun.call( this, args );
+		Command.prototype.onBeforeRun.call( this, args );
 
 		if ( this.history && this.isHistoryActive() ) {
 			$e.internal( 'document/history/add-transaction', this.history );
@@ -58,7 +58,7 @@ export default class CommandHistoryDebounce extends CommandHistory {
 	}
 
 	onAfterRun( args, result ) {
-		CommandBase.prototype.onAfterRun.call( this, args, result );
+		Command.prototype.onAfterRun.call( this, args, result );
 
 		if ( this.isHistoryActive() ) {
 			if ( this.isDebounceRequired ) {
@@ -70,7 +70,7 @@ export default class CommandHistoryDebounce extends CommandHistory {
 	}
 
 	onCatchApply( e ) {
-		CommandBase.prototype.onCatchApply.call( this, e );
+		Command.prototype.onCatchApply.call( this, e );
 
 		// Rollback history on failure.
 		if ( e instanceof $e.modules.HookBreak && this.history ) {

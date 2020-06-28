@@ -1,7 +1,7 @@
 /* Alphabetical order */
 import BackwardsCompatibility from './core/backwards-compatibility';
-import CommandBase from './modules/command-base';
-import CommandInternalBase from './modules/command-internal-base';
+import Command from './modules/command';
+import CommandInternal from './modules/command-internal';
 import CommandData from './modules/command-data';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
@@ -16,6 +16,12 @@ import Data from './core/data.js';
 
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
+
+/**
+ * @typedef {{}} Args
+ * @property {Container} container
+ * @property {Array.<Container>} containers
+ */
 
 export default class API {
 	/**
@@ -37,9 +43,28 @@ export default class API {
 		this.data = new Data();
 
 		this.modules = {
-			CommandBase,
-			CommandInternalBase,
+			get CommandBase() {
+				elementorCommon.helpers.hardDeprecated(
+					'$e.modules.CommandBase',
+					'3.0.0',
+					'$e.modules.Command'
+				);
 
+				return this.Command;
+			},
+
+			get CommandInternalBase() {
+				elementorCommon.helpers.hardDeprecated(
+					'$e.modules.CommandInternalBase',
+					'3.0.0',
+					'$e.modules.CommandInternal'
+				);
+
+				return this.CommandInternal;
+			},
+
+			Command,
+			CommandInternal,
 			CommandData,
 
 			ComponentBase,
@@ -61,7 +86,7 @@ export default class API {
 	 * Alias of `$e.commands.run()`.
 	 *
 	 * @param {string} command
-	 * @param [args={}]
+	 * @param {(Args|{})} [args={}]
 	 *
 	 * @returns {*}
 	 */
@@ -75,11 +100,11 @@ export default class API {
 	 * Alias of `$e.commandsInternal.run()`.
 	 *
 	 * @param {string} command
-	 * @param [args={}]
+	 * @param {(Args|{})} [args={}]
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
-	internal( command, args = {} ) {
+	internal( command, args ) {
 		return $e.commandsInternal.run( command, args );
 	}
 

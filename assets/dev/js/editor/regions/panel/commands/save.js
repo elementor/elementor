@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class Save extends CommandBase {
+export class Save extends Command {
 	apply() {
 		$e.run( 'document/save/draft' );
 	}

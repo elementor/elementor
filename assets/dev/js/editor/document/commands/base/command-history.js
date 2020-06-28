@@ -1,20 +1,12 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export default class CommandHistory extends CommandBase {
+export default class CommandHistory extends Command {
 	static getInstanceType() {
 		return 'CommandHistory';
 	}
 
-	constructor( args ) {
-		super( args );
-
-		/**
-		 * Get History from child command.
-		 *
-		 * @type {{}|boolean}
-		 */
-		this.history = this.getHistory( args );
-
+	initialize( args = {} ) {
+		super.initialize( args );
 		/**
 		 * @type {number|boolean}
 		 */
@@ -47,6 +39,12 @@ export default class CommandHistory extends CommandBase {
 
 	onBeforeRun( args ) {
 		super.onBeforeRun( args );
+		/**
+		 * Get History from child command.
+		 *
+		 * @type {{}|boolean}
+		 */
+		this.history = this.getHistory( args );
 
 		if ( this.history && this.isHistoryActive() ) {
 			this.historyId = $e.internal( 'document/history/start-log', this.history );
