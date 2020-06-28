@@ -1,30 +1,33 @@
 /* global ElementorScreenshotConfig, elementorFrontendConfig, jQuery */
 class Screenshot {
-
-	crop = {
-		width: 1200,
-		height: 1500,
-	}
-
-	/**
-	 * Holds the screen shot Iframe
-	 */
-	$elementor;
-
-	/**
-	 * The config that provided from the backend
-	 *
-	 * @var object
-	 */
-	config;
-
 	constructor() {
+		/**
+		 * Holds the screen shot Iframe
+		 */
+		this.$elementor = null
+
+		/**
+		 * The config that provided from the backend
+		 *
+		 * @var object
+		 */
+		this.config = {
+			crop: {
+				width: 1200,
+				height: 1500,
+			}
+		};
+
 		jQuery( () => this.init() )
 	}
 
 	init() {
 		this.$elementor = jQuery( ElementorScreenshotConfig.selector );
-		this.config = { ...ElementorScreenshotConfig, ...{ post: { id: elementorFrontendConfig.post.id } } };
+		this.config = {
+			...this.config,
+			...ElementorScreenshotConfig,
+			...{ post: { id: elementorFrontendConfig.post.id } }
+		};
 
 		if ( ! this.$elementor.length ) {
 			console.warn( 'Screenshots: Elementor content was not found.' );
@@ -34,8 +37,10 @@ class Screenshot {
 		return Promise.resolve()
 			.then( this.handleIFrames.bind( this ) )
 			.then( this.handleSlides.bind( this ) )
-			.then( this.hidePageHeaders.bind( this ) )
-			.then( this.createCanvas.bind( this ) )
+			.then( this.loadGoogleFonts.bind( this ) )
+			.then( this.hideUnnecessaryElements.bind( this ) )
+			.then( this.createImage.bind( this ) )
+			.then( this.createImageElement.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
 			.then( this.save.bind( this ) )
 	}
@@ -111,36 +116,47 @@ class Screenshot {
 	 *
 	 * @returns {Promise<unknown>}
 	 */
-	createCanvas() {
+	createImage() {
 		return new Promise( ( resolve ) => {
 			setTimeout( () => {
-				html2canvas( this.$elementor.get( 0 ), {
-					useCORS: true,
-					foreignObjectRendering: false,
-				} ).then( ( canvas ) => {
-					jQuery( 'body' ).prepend( canvas )
-
-					resolve( canvas )
-				} );
+				domtoimage.toPng( this.$elementor.parents( 'body' ).get( 0 ), {} )
+					.then( ( dataUrl ) => resolve( dataUrl ) )
 			}, 5000 )
 		} )
 	}
 
 	/**
-	 * Crop canvas.
+	 * Creates fake image element to get the size of the image later on.
 	 *
-	 * @param canvas
+	 * @param dataUrl
+	 * @returns {Promise<HTMLImageElement>}
+	 */
+	createImageElement( dataUrl ) {
+		const image = new Image()
+		image.src = dataUrl
+
+		return new Promise( resolve => {
+			image.onload = () => {
+				resolve( image )
+			}
+		} )
+	}
+
+	/**
+	 * crop image
+	 *
+	 * @param image
 	 * @returns {Promise<unknown>}
 	 */
-	cropCanvas( canvas ) {
+	cropCanvas( image ) {
 		const cropCanvas = document.createElement( 'canvas' );
 		const cropContext = cropCanvas.getContext( '2d' );
-		const ratio = this.crop.width / canvas.width;
+		const ratio = this.config.crop.width / image.width;
 
-		cropCanvas.width = this.crop.width;
-		cropCanvas.height = this.crop.height;
+		cropCanvas.width = this.config.crop.width;
+		cropCanvas.height = this.config.crop.height;
 
-		cropContext.drawImage( canvas, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width * ratio, canvas.height * ratio );
+		cropContext.drawImage( image, 0, 0, image.width, image.height, 0, 0, image.width * ratio, image.height * ratio );
 
 		return Promise.resolve( cropCanvas )
 	}
@@ -169,13 +185,34 @@ class Screenshot {
 		return `${config.home_url}?screenshot_proxy&nonce=${config.nonce}&href=${url}`;
 	}
 
-	/**
-	 * @returns {Promise<void>}
-	 */
-	hidePageHeaders() {
-		jQuery( 'body > *' )
-			.not( this.$elementor.parents( 'body > *' ) )
-			.css( 'display', 'none' );
+	loadGoogleFonts() {
+		const $self = this;
+
+		return Promise.all( jQuery( 'head link[href^="https://fonts.googleapis.com"]' ).map( function () {
+			return $self.loadFont( jQuery( this ).attr( 'href' ) )
+		} ) )
+	}
+
+	loadFont( url ) {
+		return fetch( url )
+			.then( ( response ) => response.text() )
+			.then( data => {
+				const head = document.getElementsByTagName( 'head' )[ 0 ];
+				const style = document.createElement( 'style' );
+
+				style.appendChild( document.createTextNode( data ) );
+				head.appendChild( style );
+
+				return Promise.resolve()
+			} )
+	}
+
+	hideUnnecessaryElements() {
+		jQuery( 'body' ).prepend(
+			this.$elementor
+		);
+
+		jQuery( 'body > *' ).not( this.$elementor ).css( 'display', 'none' );
 
 		return Promise.resolve();
 	}

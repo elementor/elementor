@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Screenshots;
 
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\User;
 
@@ -94,10 +95,10 @@ class Module extends BaseModule {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
 		wp_enqueue_script(
-			'html2canvas',
-			ELEMENTOR_URL . "modules/screenshots/assets/js/html2canvas{$suffix}.js",
+			'dom-to-image',
+			ELEMENTOR_URL . "modules/screenshots/assets/js/dom-to-image{$suffix}.js",
 			[],
-			'1.0.0-rc.5',
+			'2.6.0',
 			true
 		);
 
@@ -105,7 +106,7 @@ class Module extends BaseModule {
 			'elementor-screenshot',
 			ELEMENTOR_URL . "modules/screenshots/assets/js/frontend/screenshot{$suffix}.js",
 			[
-				'html2canvas',
+				'dom-to-image',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -121,7 +122,7 @@ class Module extends BaseModule {
 
 		wp_add_inline_script( 'elementor-screenshot', 'var ElementorScreenshotConfig = ' . json_encode( $config ) . ';' );
 
-		$css = new \Elementor\Core\Files\CSS\Post_Preview( $post_id );
+		$css = Post_Preview::create( $post_id );
 		$css->enqueue();
 	}
 
