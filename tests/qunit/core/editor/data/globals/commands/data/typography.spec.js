@@ -9,11 +9,11 @@ export const Typography = () => {
 
 		QUnit.test( 'get', async ( assert ) => {
 			const result = await $e.data.get( 'globals/typography' ),
-				data = result.data[ 'fcf2ddc' ];
+				data = result.data.fcf2ddc;
 
 			assert.deepEqual( data.value, {
 				typography_typography: 'custom',
-				typography_font_family: 'Arial'
+				typography_font_family: 'Arial',
 			} );
 
 			assert.equal( data.title, 'test' );
@@ -27,7 +27,7 @@ export const Typography = () => {
 			assert.equal( result.data.title, 'test' );
 			assert.deepEqual( result.data.value, {
 				typography_typography: 'custom',
-				typography_font_family: 'Arial'
+				typography_font_family: 'Arial',
 			} );
 		} );
 	} );
