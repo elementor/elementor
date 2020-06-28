@@ -674,6 +674,22 @@ class Upgrades {
 				$kit_settings = [];
 			}
 
+			// Convert some setting to Elementor slider format.
+			$settings_to_slider = [
+				'container_width',
+				'viewport_lg',
+				'viewport_md',
+			];
+
+			foreach ( $settings_to_slider as $setting ) {
+				if ( ! empty( $current_settings[ $setting ] ) ) {
+					$current_settings[ $setting ] = [
+						'unit' => 'px',
+						'size' => $current_settings[ $setting ],
+					];
+				}
+			}
+
 			$kit_settings = array_merge( $kit_settings, $current_settings );
 
 			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );

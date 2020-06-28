@@ -378,16 +378,9 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPreviewView( document ) {
-		const element = document.$element[ 0 ];
+        elementor.trigger( 'document:before:preview', document );
 
-		if ( this.previewView && this.previewView.el === element ) {
-			this.previewView.destroy();
-		}
-
-		elementor.trigger( 'document:before:preview', document );
-
-		const preview = new Preview( { el: element, model: elementor.elementsModel } );
-
+		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
 		preview.$el.empty();
 
 		preview.resetChildViewContainer();
@@ -532,7 +525,9 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor && elementor.documents.getCurrent() ) {
+			// It's a click on the preview area, not in the edit area,
+			// and a document is open and has an edit area.
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );
@@ -761,7 +756,6 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {
@@ -838,8 +832,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
-
-		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 

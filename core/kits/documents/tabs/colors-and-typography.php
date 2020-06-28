@@ -4,6 +4,8 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
+use Elementor\Group_Control_Typography;
+use Elementor\Plugin;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Colors_And_Typography extends Tab_Base {
+
+	const TYPOGRAPHY_GROUP_PREFIX = 'typography';
 
 	public function get_id() {
 		return 'colors-and-typography';
@@ -35,6 +39,7 @@ class Colors_And_Typography extends Tab_Base {
 			'title',
 			[
 				'type' => Controls_Manager::TEXT,
+				'label_block' => true,
 			]
 		);
 
@@ -42,16 +47,190 @@ class Colors_And_Typography extends Tab_Base {
 			'color',
 			[
 				'type' => Controls_Manager::COLOR,
+				'label_block' => true,
 				'dynamic' => [],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
+				],
+			]
+		);
+
+		$default_colors = [];
+
+		if ( Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+			$default_colors = [
+				[
+					'_id' => 'primary',
+					'title' => __( 'Primary', 'elementor' ),
+					'color' => '#6ec1e4',
+				],
+				[
+					'_id' => 'secondary',
+					'title' => __( 'Secondary', 'elementor' ),
+					'color' => '#54595f',
+				],
+				[
+					'_id' => 'text',
+					'title' => __( 'Text', 'elementor' ),
+					'color' => '#7a7a7a',
+				],
+				[
+					'_id' => 'accent',
+					'title' => __( 'Accent', 'elementor' ),
+					'color' => '#61ce70',
+				],
+			];
+		}
+
+		$this->add_control(
+			'system_colors',
+			[
+				'type' => Global_Style_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
+				'default' => $default_colors,
+				'item_actions' => [
+					'add' => false,
+					'remove' => false,
+				],
 			]
 		);
 
 		$this->add_control(
-			'colors',
+			'custom_colors',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
-				'default' => [],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_text_style',
+			[
+				'label' => __( 'Global Text Styles', 'elementor' ),
+				'tab' => $this->get_id(),
+			]
+		);
+
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'title',
+			[
+				'type' => Controls_Manager::TEXT,
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => self::TYPOGRAPHY_GROUP_PREFIX,
+				'label' => '',
+				'fields_options' => [
+					'font_family' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-family: "{{VALUE}}"',
+						],
+					],
+					'font_size' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-size: {{SIZE}}{{UNIT}}',
+						],
+					],
+					'font_weight' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-weight: {{VALUE}}',
+						],
+					],
+					'text_transform' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-text-transform: {{VALUE}}',
+						],
+					],
+					'font_style' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-style: {{VALUE}}',
+						],
+					],
+					'text_decoration' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-text-decoration: {{VALUE}}',
+						],
+					],
+					'line_height' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-line-height: {{SIZE}}{{UNIT}}',
+						],
+					],
+					'letter_spacing' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
+						],
+					],
+				],
+			]
+		);
+
+		$default_typography = [];
+
+		if ( Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
+
+			$typography_key = self::TYPOGRAPHY_GROUP_PREFIX . '_typography';
+			$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_family';
+			$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_weight';
+
+			$default_typography = [
+				[
+					'_id' => 'primary',
+					'title' => __( 'Primary', 'elementor' ),
+					$typography_key => 'custom',
+					$font_family_key => 'Roboto',
+					$font_weight_key => '600',
+				],
+				[
+					'_id' => 'secondary',
+					'title' => __( 'Secondary', 'elementor' ),
+					$typography_key => 'custom',
+					$font_family_key => 'Roboto Slab',
+					$font_weight_key => '400',
+				],
+				[
+					'_id' => 'text',
+					'title' => __( 'Text', 'elementor' ),
+					$typography_key => 'custom',
+					$font_family_key => 'Roboto',
+					$font_weight_key => '400',
+				],
+				[
+					'_id' => 'accent',
+					'title' => __( 'Accent', 'elementor' ),
+					$typography_key => 'custom',
+					$font_family_key => 'Roboto',
+					$font_weight_key => '500',
+				],
+			];
+		}
+
+		$this->add_control(
+			'system_typography',
+			[
+				'type' => Global_Style_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
+				'default' => $default_typography,
+				'item_actions' => [
+					'add' => false,
+					'remove' => false,
+				],
+			]
+		);
+
+		$this->add_control(
+			'custom_typography',
+			[
+				'type' => Global_Style_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
 			]
 		);
 
