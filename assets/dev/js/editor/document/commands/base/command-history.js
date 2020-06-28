@@ -5,14 +5,8 @@ export default class CommandHistory extends Command {
 		return 'CommandHistory';
 	}
 
-	initialize( args ) {
-		/**
-		 * Get History from child command.
-		 *
-		 * @type {{}|boolean}
-		 */
-		this.history = this.getHistory( args );
-
+	initialize( args = {} ) {
+		super.initialize( args );
 		/**
 		 * @type {number|boolean}
 		 */
@@ -45,6 +39,12 @@ export default class CommandHistory extends Command {
 
 	onBeforeRun( args ) {
 		super.onBeforeRun( args );
+		/**
+		 * Get History from child command.
+		 *
+		 * @type {{}|boolean}
+		 */
+		this.history = this.getHistory( args );
 
 		if ( this.history && this.isHistoryActive() ) {
 			this.historyId = $e.internal( 'document/history/start-log', this.history );
