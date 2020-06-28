@@ -50,7 +50,7 @@ abstract class Base extends Base_File {
 
 	/**
 	 * Fonts.
-	f *
+	 *
 	 * Holds the list of fonts.
 	 *
 	 * @access private
@@ -288,31 +288,27 @@ abstract class Base extends Base_File {
 		}
 
 		$global_values = [];
-		$global_value = '';
+		$global_key = '';
 
 		if ( ! empty( $values['__globals__'] ) ) {
 			$global_values = $values['__globals__'];
 		}
 
 		if ( ! empty( $global_values[ $control_global_key ] ) ) {
-			$global_value = $global_values[ $control_global_key ];
+			$global_key = $global_values[ $control_global_key ];
 		}
 
-		if ( ! $global_value ) {
+		if ( ! $global_key ) {
 			$value = call_user_func( $value_callback, $control );
 
 			if ( null === $value ) {
-				if ( empty( $control['global']['default'] ) ) {
-					return;
-				}
-
-				$global_value = $control['global']['default'];
+				return;
 			}
 		}
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
-			if ( $global_value ) {
-				$global_args = explode( '?id=', $global_value );
+			if ( $global_key ) {
+				$global_args = explode( '?id=', $global_key );
 
 				$id = $global_args[1];
 

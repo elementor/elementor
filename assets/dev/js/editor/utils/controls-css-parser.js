@@ -56,24 +56,24 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				return;
 			}
 
-			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements );
+			const context = this.getSettings( 'context' ),
+				globalValues = context.model.get( 'settings' ).get( '__globals__' );
+
+			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements, globalValues );
 		} );
 	},
 
-	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		const context = this.getSettings( 'context' ),
-			globals = context.model.get( 'settings' ).get( '__globals__' );
-
+	addControlStyleRules: function( control, values, controls, placeholders, replacements, globalValues ) {
 		let globalValue;
 
-		if ( globals ) {
+		if ( globalValues ) {
 			let controlGlobalKey = control.name;
 
 			if ( control.groupType ) {
 				controlGlobalKey = control.groupPrefix + control.groupType;
 			}
 
-			globalValue = globals[ controlGlobalKey ];
+			globalValue = globalValues[ controlGlobalKey ];
 		}
 
 		let value;

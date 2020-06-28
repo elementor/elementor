@@ -4,6 +4,7 @@ import panelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
 import Repeater from './repeater';
 import GlobalControlSelect from './globals/global-select-behavior';
+import ControlsCSSParser from '../../../../assets/dev/js/editor/utils/controls-css-parser';
 
 export default class extends elementorModules.editor.utils.Module {
 	addPanelPages() {
@@ -77,6 +78,48 @@ export default class extends elementorModules.editor.utils.Module {
 		return behaviors;
 	}
 
+	// Use the Controls CSS Parser to add the global defaults CSS to the page
+	renderGlobalsDefaultCSS() {
+		const cssParser = new ControlsCSSParser( {
+			id: 'e-global-style',
+		} );
+
+		Object.values( elementor.widgetsCache ).forEach( ( widget ) => {
+			const globalControls = [],
+				globalValues = {};
+
+			Object.values( widget.controls ).forEach( ( control ) => {
+				let globalControl = control;
+
+				if ( control.groupType ) {
+					globalControl = widget.controls[ control.groupPrefix + control.groupType ];
+				}
+
+				if ( control.global?.default ) {
+					globalValues[ control.name ] = globalControl.global.default;
+				}
+
+				if ( globalControl.global?.default ) {
+					globalControls.push( control );
+				}
+			} );
+
+			// TODO: Doesn't this cause an extra add_control_rules for non-global CSS?
+			globalControls.forEach( ( control ) => {
+				cssParser.addControlStyleRules(
+					control,
+					widget.controls, // values
+					widget.controls, // controls
+					[ '{{WRAPPER}}' ],
+					[ '.elementor-widget-' + widget.widget_type ],
+					globalValues
+				);
+			} );
+		} );
+
+		cssParser.addStyleToDocument();
+	}
+
 	onInit() {
 		super.onInit();
 
@@ -96,6 +139,8 @@ export default class extends elementorModules.editor.utils.Module {
 			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
 
 			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
+
+			elementor.on( 'preview:loaded', () => this.renderGlobalsDefaultCSS() );
 
 			elementor.on( 'panel:init', () => {
 				this.addPanelPages();
