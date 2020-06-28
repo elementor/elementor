@@ -15,7 +15,12 @@ class Screenshot {
 			crop: {
 				width: 1200,
 				height: 1500,
-			}
+			},
+			allowedCssUrls: [
+				'https://fonts.googleapis.com',
+				'https://kit-pro.fontawesome.com',
+				'https://use.typekit.net'
+			]
 		};
 
 		jQuery( () => this.init() )
@@ -37,7 +42,7 @@ class Screenshot {
 		return Promise.resolve()
 			.then( this.handleIFrames.bind( this ) )
 			.then( this.handleSlides.bind( this ) )
-			.then( this.loadGoogleFonts.bind( this ) )
+			.then( this.loadExternalCss.bind( this ) )
 			.then( this.hideUnnecessaryElements.bind( this ) )
 			.then( this.createImage.bind( this ) )
 			.then( this.createImageElement.bind( this ) )
@@ -45,6 +50,12 @@ class Screenshot {
 			.then( this.save.bind( this ) )
 	}
 
+	/**
+	 * The html-to-image library can not snapshot the iframes.
+	 * so this method convert all the iframes with something else.
+	 *
+	 * @returns {Promise<void>}
+	 */
 	handleIFrames() {
 		const $self = this;
 
@@ -96,23 +107,59 @@ class Screenshot {
 		return Promise.resolve();
 	}
 
+	/**
+	 * Slides should show only the first slide, all the other slides will be removed
+	 *
+	 * @returns {Promise<void>}
+	 */
 	handleSlides() {
-		this.$elementor.find( '.elementor-slides' ).each( () => {
+		this.$elementor.find( '.elementor-slides' ).each( function () {
 			const $this = jQuery( this );
 
-			$this
-				.attr(
-					'data-slider_options',
-					$this.attr( 'data-slider_options' )
-						.replace( '"autoplay":true', '"autoplay":false' )
-				);
+			$this.find( '> *' ).not( $this.find( '> :first-child' ) ).each( function () {
+				jQuery( this ).remove()
+			} );
 		} );
 
 		return Promise.resolve();
 	}
 
 	/**
-	 * Creates the canvas capture the screenshot.
+	 * css from another server cannot be loaded.
+	 * that is why we fetch the content of the css and set it as an inline css.
+	 *
+	 * @returns {Promise<unknown[]>}
+	 */
+	loadExternalCss() {
+		const $self = this;
+
+		const selector = this.config.allowedCssUrls.map( allowedCssUrl => {
+			return `link[href^="${allowedCssUrl}"]`;
+		} ).join( ', ' );
+
+		return Promise.all( jQuery( selector ).map( function () {
+			return $self.loadCss( jQuery( this ).attr( 'href' ) )
+				.then( () => jQuery( this ).remove() )
+		} ) )
+	}
+
+	/**
+	 * hide all the element except for the target element.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	hideUnnecessaryElements() {
+		jQuery( 'body' ).prepend(
+			this.$elementor
+		);
+
+		jQuery( 'body > *' ).not( this.$elementor ).css( 'display', 'none' );
+
+		return Promise.resolve();
+	}
+
+	/**
+	 * Creates a png image
 	 *
 	 * @returns {Promise<unknown>}
 	 */
@@ -120,7 +167,9 @@ class Screenshot {
 		return new Promise( ( resolve ) => {
 			setTimeout( () => {
 				domtoimage.toPng( this.$elementor.parents( 'body' ).get( 0 ), {} )
-					.then( ( dataUrl ) => resolve( dataUrl ) )
+					.then( ( dataUrl ) => {
+						resolve( dataUrl )
+					} )
 			}, 5000 )
 		} )
 	}
@@ -143,7 +192,7 @@ class Screenshot {
 	}
 
 	/**
-	 * crop image
+	 * Crop the image to requested sizes
 	 *
 	 * @param image
 	 * @returns {Promise<unknown>}
@@ -185,17 +234,24 @@ class Screenshot {
 		return `${config.home_url}?screenshot_proxy&nonce=${config.nonce}&href=${url}`;
 	}
 
-	loadGoogleFonts() {
-		const $self = this;
-
-		return Promise.all( jQuery( 'head link[href^="https://fonts.googleapis.com"]' ).map( function () {
-			return $self.loadFont( jQuery( this ).attr( 'href' ) )
-		} ) )
-	}
-
-	loadFont( url ) {
+	/**
+	 * load one css file
+	 *
+	 * @param url
+	 * @returns {Promise<void>}
+	 */
+	loadCss( url ) {
 		return fetch( url )
 			.then( ( response ) => response.text() )
+			.then( ( data ) => {
+				// This is a specific use case when we need
+				// to load the fonts of the library so we replace all the relative url with absolute.
+				if ( url.startsWith( 'https://kit-pro.fontawesome.com' ) ) {
+					data = data.replace( /url\(\.\.\/webfonts/g, 'url(https://kit-pro.fontawesome.com/releases/latest/webfonts' )
+				}
+
+				return data
+			} )
 			.then( data => {
 				const head = document.getElementsByTagName( 'head' )[ 0 ];
 				const style = document.createElement( 'style' );
@@ -205,16 +261,6 @@ class Screenshot {
 
 				return Promise.resolve()
 			} )
-	}
-
-	hideUnnecessaryElements() {
-		jQuery( 'body' ).prepend(
-			this.$elementor
-		);
-
-		jQuery( 'body > *' ).not( this.$elementor ).css( 'display', 'none' );
-
-		return Promise.resolve();
 	}
 }
 
