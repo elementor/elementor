@@ -762,6 +762,8 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
+					this.kitManager.renderGlobalsDefaultCSS();
+
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {

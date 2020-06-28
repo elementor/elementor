@@ -85,6 +85,10 @@ export default class extends elementorModules.editor.utils.Module {
 		} );
 
 		Object.values( elementor.widgetsCache ).forEach( ( widget ) => {
+			if ( ! widget.controls ) {
+				return;
+			}
+
 			const globalControls = [],
 				globalValues = {};
 
