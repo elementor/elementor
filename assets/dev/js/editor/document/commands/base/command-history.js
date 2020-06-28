@@ -6,7 +6,13 @@ export default class CommandHistory extends Command {
 	}
 
 	initialize( args = {} ) {
-		super.initialize( args );
+        /**
+		 * Get History from child command.
+		 *
+		 * @type {{}|boolean}
+		 */
+		this.history = this.getHistory( args );
+
 		/**
 		 * @type {number|boolean}
 		 */
