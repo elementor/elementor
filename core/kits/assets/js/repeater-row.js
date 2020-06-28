@@ -5,19 +5,27 @@ export default class extends RepeaterRow {
 		return '#tmpl-elementor-global-style-repeater-row';
 	}
 
-	updateColorValue() {
-		const color = this.model.get( 'color' );
+	events() {
+		return {
+			'click @ui.removeButton': 'onRemoveButtonClick',
+		};
+	}
 
-		this.$colorValue.text( color );
+	updateColorValue() {
+		this.$colorValue.text( this.model.get( 'color' ) );
 	}
 
 	getRemoveButton() {
 		return this.ui.removeButton.add( this.$el.find( '.elementor-repeater-tool-remove--disabled' ) );
 	}
 
+	triggers() {
+		return {};
+	}
+
 	onChildviewRender( childView ) {
 		if ( 'color' === childView.model.get( 'type' ) ) {
-			this.$colorValue = jQuery( '<div>', { class: 'elementor-global-colors__color-value' } );
+			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value' } );
 
 			childView.$el
 				.find( '.elementor-control-input-wrapper' )
@@ -31,11 +39,36 @@ export default class extends RepeaterRow {
 				.find( '.elementor-control-input-wrapper' )
 				.append( this.getRemoveButton() );
 		}
+
+		this.ui.removeButton.tipsy( {
+			title: () => elementor.translate( 'delete_global_color' ),
+			gravity: () => 's',
+		} );
 	}
 
 	onModelChange( model ) {
-		if ( undefined !== model.changed.color ) {
+		if ( undefined !== model.changed.value ) {
 			this.updateColorValue();
 		}
+	}
+
+	onRemoveButtonClick() {
+		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
+			className: 'e-global__confirm-delete',
+			headerMessage: elementor.translate( 'delete_global_color' ),
+			message: '<i class="eicon-info-circle"></i> ' + elementor.translate( 'delete_global_color_info' ),
+			strings: {
+				confirm: elementor.translate( 'delete' ),
+				cancel: elementor.translate( 'cancel' ),
+			},
+			hide: {
+				onBackgroundClick: false,
+			},
+			onConfirm: () => {
+				this.trigger( 'click:remove' );
+			},
+		} );
+
+		this.confirmDeleteModal.show();
 	}
 }

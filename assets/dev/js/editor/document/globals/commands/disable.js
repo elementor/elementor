@@ -6,11 +6,11 @@ export class Disable extends DisableEnable {
 	async apply( args ) {
 		const { settings, containers = [ args.container ], options = {} } = args;
 
-		await containers.map( async ( container ) => {
+		const all = containers.map( async ( container ) => {
 			container = container.lookup();
 
-			let localSettings = {},
-				promises = [];
+			const localSettings = {};
+			let promises = [];
 
 			// Get global values.
 			if ( options.restore ) {
@@ -24,14 +24,13 @@ export class Disable extends DisableEnable {
 						result = await promise;
 
 					if ( result ) {
-						const { value } = result.data;
+						const { value } = result.data,
+							groupPrefix = container.controls[ globalKey ]?.groupPrefix;
 
-						if ( container.controls[ globalKey ].groupPrefix ) {
+						if ( groupPrefix ) {
 							Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
-								const groupPrefix = container.controls[ globalKey ].groupPrefix,
-									controlName = globalKey.replace( groupPrefix, '' ) + '_' + dataKey;
-
-								localSettings[ controlName ] = dataValue;
+								dataKey = dataKey.replace( elementor.config.kit_config.typography_prefix, groupPrefix );
+								localSettings[ dataKey ] = dataValue;
 							} );
 						} else {
 							localSettings[ globalKey ] = value;
@@ -48,6 +47,9 @@ export class Disable extends DisableEnable {
 					$e.run( 'document/elements/settings', {
 						container,
 						settings: localSettings,
+						options: {
+							external: true,
+						},
 					} );
 				}
 
@@ -63,6 +65,8 @@ export class Disable extends DisableEnable {
 
 			return Promise.resolve();
 		} );
+
+		await Promise.all( all );
 	}
 }
 

@@ -162,6 +162,33 @@ export default class Container extends ArgsObject {
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
 	}
 
+	/**
+	 * Function getRelatedControls().
+	 *
+	 * @param {{}} settings
+	 *
+	 * @return {{}}
+	 */
+	getRelatedControls( settings ) {
+		const result = {};
+
+		Object.keys( settings ).forEach( ( settingKey ) => {
+			Object.values( this.controls ).forEach( ( control ) => {
+				if ( settingKey === control.name ) {
+					result[ control.name ] = control;
+				} else if ( this.controls[ settingKey ]?.groupPrefix ) {
+					const { groupPrefix } = this.controls[ settingKey ];
+
+					if ( control.name.toString().startsWith( groupPrefix ) ) {
+						result[ control.name ] = control;
+					}
+				}
+			} );
+		} );
+
+		return result;
+	}
+
 	handleRepeaterChildren() {
 		Object.values( this.controls ).forEach( ( control ) => {
 			if ( ! control.is_repeater ) {

@@ -1,3 +1,5 @@
+import ControlsPopover from './controls-popover';
+
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
@@ -136,44 +138,41 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	handlePopovers: function( view ) {
-		let popoverStarted = false,
-			$popover;
+		let popover;
+
+		view.popovers = [];
 
 		this.removePopovers( view );
 
 		view.children.each( ( control ) => {
-			if ( popoverStarted ) {
-				$popover.append( control.$el );
+			if ( popover ) {
+				popover.addChild( control );
 			}
 
 			if ( control.children.length ) {
 				control.children.each( ( child ) => this.handlePopovers( child ) );
 			}
 
-			const popover = control.model.get( 'popover' );
+			const popoverData = control.model.get( 'popover' );
 
-			if ( ! popover ) {
+			if ( ! popoverData ) {
 				return;
 			}
 
-			if ( popover.start ) {
-				popoverStarted = true;
+			if ( popoverData.start ) {
+				popover = new ControlsPopover( control );
 
-				$popover = jQuery( '<div>', { class: this.classes.popover } );
-
-				control.$el.before( $popover );
-
-				$popover.append( control.$el );
+				view.popovers.push( popover );
 			}
 
-			if ( popover.end ) {
-				popoverStarted = false;
+			if ( popoverData.end ) {
+				popover = null;
 			}
 		} );
 	},
 
 	removePopovers: function( view ) {
-		view.$el.find( '.' + this.classes.popover ).remove();
+		view.popovers.forEach( ( popover ) => popover.destroy() );
 	},
 
 	getNamespaceArray: function() {

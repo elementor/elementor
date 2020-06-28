@@ -1,5 +1,6 @@
 import DisableEnable from './base/disable-enable';
 
+// Run when a global control value is chosen while the active value is custom
 export class Enable extends DisableEnable {
 	apply( args ) {
 		const { settings, containers = [ args.container ] } = args;
@@ -14,8 +15,8 @@ export class Enable extends DisableEnable {
 			container.render();
 
 			// Clear custom local settings.
-			Object.keys( settings ).forEach( ( key ) => {
-				container.settings.set( key, container.controls[ key ].default );
+			Object.values( container.getRelatedControls( settings ) ).forEach( ( control ) => {
+				container.settings.set( control.name, control.default );
 			} );
 		} );
 	}

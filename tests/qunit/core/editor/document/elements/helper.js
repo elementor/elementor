@@ -283,6 +283,9 @@ export default class ElementsHelper {
 		return this.createForm( eContainer );
 	}
 
+	/**
+	 * @return {Container}
+	 */
 	static createAutoButton( eContainer = null ) {
 		if ( ! eContainer ) {
 			eContainer = this.createSection( 1, true );

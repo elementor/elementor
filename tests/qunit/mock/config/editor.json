@@ -17,8 +17,5 @@
   "icons": {
 	"libraries": []
   },
-  "autosave_interval": 1000,
-  "kit_config": {
-	  "typography_prefix": "typography_"
-  }
+  "autosave_interval": 1000
 }
