@@ -12,7 +12,7 @@ export class GlobalsTypographyGet extends MockDataBase {
 
 	getMockData() {
 		return {
-			'fcf2ddc': Data,
+			fcf2ddc: Data,
 		};
 	}
 }
