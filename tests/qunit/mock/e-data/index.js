@@ -1,8 +1,8 @@
 export {
 	attachMock,
-	addMock,
-	clearMock,
 	attachCache,
+	addMock,
+	removeMock,
 	restoreFetch,
-	silence,
+	emptyFetch,
 } from './setup-fetch';
