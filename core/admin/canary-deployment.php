@@ -84,7 +84,7 @@ class Canary_Deployment extends Module {
 	private function get_canary_deployment_info() {
 		global $pagenow;
 
-		$force = 'update-core.php' === $pagenow && isset( $_GET['force-check'] ); // WPCS: XSS ok.
+		$force = 'update-core.php' === $pagenow && isset( $_GET['force-check'] );
 
 		$canary_deployment = $this->get_canary_deployment_remote_info( $force );
 

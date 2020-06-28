@@ -3,8 +3,11 @@ import ComponentBase from 'elementor-api/modules/component-base';
 import ComponentBaseModal from 'elementor-api/modules/component-modal-base';
 import Command from 'elementor-api/modules/command';
 
+/**
+ * TODO: Part to files same as core files ( mirrored ).
+ */
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/core/modules/component-*.js', () => {
+	QUnit.module( 'File: core/common/assets/js/api/core/components.js', () => {
 		QUnit.test( 'Register Component', ( assert ) => {
 			const namespace = 'register',
 				Component = class extends ComponentBase {

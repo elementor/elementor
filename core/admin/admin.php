@@ -358,7 +358,7 @@ class Admin extends App {
 			'e-dashboard-overview' => $dashboard['e-dashboard-overview'],
 		];
 
-		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard ); // WPCS: override ok.
+		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	/**

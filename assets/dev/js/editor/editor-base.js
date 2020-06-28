@@ -328,7 +328,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
-		elementor.documents = $e.components.register( new EditorDocuments() );
+		this.documents = $e.components.register( new EditorDocuments() );
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
@@ -378,13 +378,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPreviewView( document ) {
-		const element = document.$element[ 0 ];
-
-		if ( this.previewView && this.previewView.el === element ) {
-			this.previewView.destroy();
-		}
-
-		const preview = new Preview( { el: element, model: elementor.elementsModel } );
+		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
 
 		preview.$el.empty();
 
@@ -530,7 +524,9 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor && elementor.documents.getCurrent() ) {
+			// It's a click on the preview area, not in the edit area,
+			// and a document is open and has an edit area.
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );
@@ -634,9 +630,7 @@ export default class EditorBase extends Marionette.Application {
 		const $element = this.documents.getCurrent().$element;
 
 		if ( $element ) {
-			$element
-				.removeClass( 'elementor-edit-area-active' )
-				.addClass( 'elementor-edit-area-preview' );
+			$element.removeClass( 'elementor-edit-area-active' );
 		}
 
 		if ( hidePanel ) {
@@ -653,9 +647,7 @@ export default class EditorBase extends Marionette.Application {
 			.addClass( 'elementor-editor-active' );
 
 		if ( elementor.config.document.panel.has_elements ) {
-			this.documents.getCurrent().$element
-				.removeClass( 'elementor-edit-area-preview' )
-				.addClass( 'elementor-edit-area-active' );
+			this.documents.getCurrent().$element.addClass( 'elementor-edit-area-active' );
 		}
 	}
 
@@ -763,7 +755,6 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {
@@ -840,8 +831,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
-
-		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 
