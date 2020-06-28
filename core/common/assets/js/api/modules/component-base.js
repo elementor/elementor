@@ -6,8 +6,6 @@ export default class ComponentBase extends elementorModules.Module {
 			this.manager = args.manager;
 		}
 
-		this.commandsClasses = {};
-
 		this.commands = this.defaultCommands();
 		this.commandsInternal = this.defaultCommandsInternal();
 		this.hooks = this.defaultHooks();
@@ -300,8 +298,8 @@ export default class ComponentBase extends elementorModules.Module {
 
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
-			const command = this.normalizeCommandName( className );
-			const callback = ( args ) => new Class( args );
+			const command = this.normalizeCommandName( className ),
+				callback = ( args ) => new Class( args );
 
 			callback.class = Class;
 
