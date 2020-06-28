@@ -91,9 +91,11 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
+
 		wp_enqueue_script(
 			'html2canvas',
-			ELEMENTOR_URL . 'modules/screenshots/assets/js/html2canvas.min.js',
+			ELEMENTOR_URL . "modules/screenshots/assets/js/html2canvas{$suffix}.js",
 			[],
 			'1.0.0-rc.5',
 			true
@@ -101,11 +103,11 @@ class Module extends BaseModule {
 
 		wp_enqueue_script(
 			'elementor-screenshot',
-			ELEMENTOR_URL . 'modules/screenshots/assets/js/frontend/screenshot.js',
+			ELEMENTOR_URL . "modules/screenshots/assets/js/frontend/screenshot{$suffix}.js",
 			[
 				'html2canvas',
 			],
-			ELEMENTOR_VERSION . time(),
+			ELEMENTOR_VERSION,
 			true
 		);
 

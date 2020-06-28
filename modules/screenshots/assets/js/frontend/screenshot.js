@@ -169,6 +169,9 @@ class Screenshot {
 		return `${config.home_url}?screenshot_proxy&nonce=${config.nonce}&href=${url}`;
 	}
 
+	/**
+	 * @returns {Promise<void>}
+	 */
 	hidePageHeaders() {
 		jQuery( 'body > *' )
 			.not( this.$elementor.parents( 'body > *' ) )
