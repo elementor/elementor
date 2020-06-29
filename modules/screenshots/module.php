@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Screenshots;
 
+use Elementor\Plugin;
+use Elementor\Frontend;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\User;
@@ -38,7 +40,7 @@ class Module extends BaseModule {
 		$post_id = $data['post_id'];
 
 		$file_content = substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) );
-		$file_name = 'Elementor-Post-Screenshot-' . $post_id . '.png';
+		$file_name = 'Elementor Post Screenshot ' . $post_id . '.png';
 		$over_write_file_name_callback = function () use ( $file_name ) {
 			return $file_name;
 		};
@@ -88,7 +90,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_scripts() {
-		if ( ! isset( $_REQUEST['elementor-screenshot'] ) || ! User::is_current_user_can_edit() ) {
+		if ( ! $this->is_in_screenshot_mode() || ! User::is_current_user_can_edit() ) {
 			return;
 		}
 
@@ -105,7 +107,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-screenshot',
 			ELEMENTOR_URL . "modules/screenshots/assets/js/preview/screenshot{$suffix}.js",
-			[ 'dom-to-image', ],
+			[ 'dom-to-image' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -117,10 +119,10 @@ class Module extends BaseModule {
 			'nonce' => wp_create_nonce( 'screenshot_proxy' ),
 			'home_url' => home_url(),
 			'post_id' => $post_id,
-			'debug' => SCRIPT_DEBUG
+			'debug' => SCRIPT_DEBUG,
 		];
 
-		wp_add_inline_script( 'elementor-screenshot', 'var ElementorScreenshotConfig = ' . json_encode( $config ) . ';' );
+		wp_add_inline_script( 'elementor-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
 
 		$css = Post_Preview::create( $post_id );
 		$css->enqueue();
@@ -159,14 +161,23 @@ class Module extends BaseModule {
 		] );
 	}
 
+	/**
+	 * @return bool
+	 */
+	protected function is_in_screenshot_mode() {
+		return isset( $_REQUEST['elementor-screenshot'] );
+	}
+
 	public function __construct() {
 		if ( isset( $_REQUEST['screenshot_proxy'] ) ) {
 			$this->screenshot_proxy();
 			die;
 		}
 
-		if ( isset( $_REQUEST['elementor-screenshot'] ) ) {
+		if ( $this->is_in_screenshot_mode() ) {
 			show_admin_bar( false );
+
+			Plugin::$instance->frontend->set_render_mode( Frontend::RENDER_MODE_STATIC );
 		}
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );

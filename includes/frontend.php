@@ -29,6 +29,9 @@ class Frontend extends App {
 	 */
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
+	const RENDER_MODE_NORMAL = 'normal';
+	const RENDER_MODE_STATIC = 'static';
+
 	/**
 	 * Post ID.
 	 *
@@ -137,6 +140,15 @@ class Frontend extends App {
 	private $body_classes = [
 		'elementor-default',
 	];
+
+	/**
+	 * determine the render mode of the current post
+	 * in case that equals self::RENDER_MODE_STATIC the post elements should be
+	 * loaded static without any interaction
+	 *
+	 * @var string
+	 */
+	private $render_mode = self::RENDER_MODE_NORMAL;
 
 	/**
 	 * Front End constructor.
@@ -1121,6 +1133,24 @@ class Frontend extends App {
 
 	public function create_action_hash( $action, array $settings = [] ) {
 		return '#' . rawurlencode( sprintf( 'elementor-action:action=%1$s&settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_render_mode() {
+		return $this->render_mode;
+	}
+
+	/**
+	 * @param $render_mode
+	 *
+	 * @return $this
+	 */
+	public function set_render_mode( $render_mode ) {
+		$this->render_mode = $render_mode;
+
+		return $this;
 	}
 
 	/**
