@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Screenshots;
 
-use Elementor\Plugin;
-use Elementor\Frontend;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\User;
@@ -171,8 +169,6 @@ class Module extends BaseModule {
 
 		if ( $this->is_in_screenshot_mode() ) {
 			show_admin_bar( false );
-
-			Plugin::$instance->frontend->set_render_mode( Frontend::RENDER_MODE_STATIC );
 		}
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
