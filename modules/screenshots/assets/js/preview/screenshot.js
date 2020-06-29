@@ -170,16 +170,24 @@ class Screenshot {
 	 * @returns {Promise<unknown>}
 	 */
 	createImage() {
-		return new Promise( ( resolve ) => {
-			setTimeout( () => {
-				this.log( 'Creating screenshot.' );
+		const pageLoadedPromise = new Promise( ( resolve ) => {
+			window.addEventListener( 'load', () => {
+				resolve();
+			} );
+		} );
 
-				domtoimage.toPng( document.body, {} )
-					.then( ( dataUrl ) => {
-						resolve( dataUrl );
-					} );
+		const timeOutPromise = new Promise( ( resolve ) => {
+			setTimeout( () => {
+				resolve();
 			}, 5000 );
 		} );
+
+		return Promise.race( [ pageLoadedPromise, timeOutPromise ] )
+			.then( () => {
+				this.log( 'Creating screenshot.' );
+
+				return domtoimage.toPng( document.body, {} );
+			} );
 	}
 
 	/**
