@@ -22,13 +22,6 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
-	 * @returns {Command}
-	 */
-	get( id ) {
-		return this.commands[ id ];
-	}
-
-	/**
 	 * Function getAll().
 	 *
 	 * Receive all loaded commands.
@@ -37,6 +30,13 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 */
 	getAll() {
 		return Object.keys( this.commands ).sort();
+	}
+
+	/**
+	 * @returns {Command}
+	 */
+	getCommandClass( id ) {
+		return this.commands[ id ]?.class;
 	}
 
 	/**
