@@ -69,8 +69,6 @@ class Preview extends App {
 	 * @access public
 	 */
 	public function init() {
-		Plugin::$instance->frontend->set_render_mode(Frontend::RENDER_MODE_STATIC);
-
 		if ( is_admin() || ! $this->is_preview_mode() ) {
 			return;
 		}
