@@ -1,4 +1,4 @@
-/* global ElementorScreenshotConfig, elementorFrontendConfig, jQuery */
+/* global ElementorScreenshotConfig, jQuery */
 class Screenshot {
 	constructor() {
 		/**
@@ -26,24 +26,28 @@ class Screenshot {
 		jQuery( () => this.init() );
 	}
 
+	/**
+	 * The main method for this class
+	 */
 	init() {
 		this.$elementor = jQuery( ElementorScreenshotConfig.selector );
 		this.config = {
 			...this.config,
 			...ElementorScreenshotConfig,
-			...{ post: { id: elementorFrontendConfig.post.id } },
 		};
 
 		if ( ! this.$elementor.length ) {
-			console.warn( 'Screenshots: Elementor content was not found.' );
+			elementorCommon.helpers.consoleWarn( 'Screenshots: Elementor content was not found.' );
+
 			return;
 		}
 
-		return Promise.resolve()
-			.then( this.handleIFrames.bind( this ) )
-			.then( this.handleSlides.bind( this ) )
+		this.handleIFrames();
+		this.handleSlides();
+		this.hideUnnecessaryElements();
+
+		Promise.resolve()
 			.then( this.loadExternalCss.bind( this ) )
-			.then( this.hideUnnecessaryElements.bind( this ) )
 			.then( this.createImage.bind( this ) )
 			.then( this.createImageElement.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
@@ -51,16 +55,13 @@ class Screenshot {
 	}
 
 	/**
-	 * Html to images libraries can not snapshot iframes
-	 * This method convert all the iframes to some other elements.
-	 *
-	 * @returns {Promise<void>}
+	 * Html to images libraries can not snapshot IFrames
+	 * This method convert all the IFrames to some other elements.
 	 */
 	handleIFrames() {
-		const $self = this;
+		this.$elementor.find( 'iframe' ).each( ( index, el ) => {
+			const $iframe = jQuery( el );
 
-		this.$elementor.find( 'iframe' ).each( function() {
-			const $iframe = jQuery( this );
 			const $iframeMask = jQuery( '<div />', {
 				css: {
 					background: 'gray',
@@ -70,46 +71,58 @@ class Screenshot {
 			} );
 
 			if ( $iframe.next().is( '.elementor-custom-embed-image-overlay' ) ) {
-				const regex = /url\(\"(.*)\"/gm;
-				const url = $iframe.next().css( 'backgroundImage' );
-				const matches = regex.exec( url );
-
-				$iframeMask.css( { background: $iframe.next().css( 'background' ) } );
-
-				$iframeMask.append( jQuery( '<img />', {
-					src: matches[ 1 ],
-					css: {
-						width: $iframe.width(),
-						height: $iframe.height(),
-					},
-				} ) );
-
-				$iframe.next().remove();
+				this.handleCustomEmbedImageIFrame( $iframe, $iframeMask );
 			} else if ( -1 !== $iframe.attr( 'src' ).search( 'youtu' ) ) {
-				const regex = /^.*(?:youtu.be\/|youtube(?:-nocookie)?.com\/(?:(?:watch)??(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^?&"'>]+)/;
-				const matches = regex.exec( $iframe.attr( 'src' ) );
-
-				$iframeMask.append( jQuery( '<img />', {
-					src: $self.getScreenshotProxyUrl( `https://img.youtube.com/vi/${ matches[ 1 ] }/0.jpg`, $self.config ),
-					crossOrigin: 'Anonymous',
-					css: {
-						width: $iframe.width(),
-						height: $iframe.height(),
-					},
-				} ) );
+				this.handleYouTubeIFrame( $iframe, $iframeMask );
 			}
 
 			$iframe.before( $iframeMask );
 			$iframe.remove();
 		} );
+	}
 
-		return Promise.resolve();
+	/**
+	 * @param $iframe
+	 * @param $iframeMask
+	 */
+	handleCustomEmbedImageIFrame( $iframe, $iframeMask ) {
+		const regex = /url\(\"(.*)\"/gm;
+		const url = $iframe.next().css( 'backgroundImage' );
+		const matches = regex.exec( url );
+
+		$iframeMask.css( { background: $iframe.next().css( 'background' ) } );
+
+		$iframeMask.append( jQuery( '<img />', {
+			src: matches[ 1 ],
+			css: {
+				width: $iframe.width(),
+				height: $iframe.height(),
+			},
+		} ) );
+
+		$iframe.next().remove();
+	}
+
+	/**
+	 * @param $iframe
+	 * @param $iframeMask
+	 */
+	handleYouTubeIFrame( $iframe, $iframeMask ) {
+		const regex = /^.*(?:youtu.be\/|youtube(?:-nocookie)?.com\/(?:(?:watch)??(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^?&"'>]+)/;
+		const matches = regex.exec( $iframe.attr( 'src' ) );
+
+		$iframeMask.append( jQuery( '<img />', {
+			src: this.getScreenshotProxyUrl( `https://img.youtube.com/vi/${ matches[ 1 ] }/0.jpg` ),
+			crossOrigin: 'Anonymous',
+			css: {
+				width: $iframe.width(),
+				height: $iframe.height(),
+			},
+		} ) );
 	}
 
 	/**
 	 * Slides should show only the first slide, all the other slides will be removed
-	 *
-	 * @returns {Promise<void>}
 	 */
 	handleSlides() {
 		this.$elementor.find( '.elementor-slides' ).each( function() {
@@ -119,8 +132,6 @@ class Screenshot {
 				jQuery( this ).remove();
 			} );
 		} );
-
-		return Promise.resolve();
 	}
 
 	/**
@@ -130,22 +141,18 @@ class Screenshot {
 	 * @returns {Promise<unknown[]>}
 	 */
 	loadExternalCss() {
-		const $self = this;
-
 		const selector = this.config.allowedCssUrls.map( ( allowedCssUrl ) => {
 			return `link[href^="${ allowedCssUrl }"]`;
 		} ).join( ', ' );
 
-		return Promise.all( jQuery( selector ).map( function() {
-			return $self.loadCss( jQuery( this ).attr( 'href' ) )
-				.then( () => jQuery( this ).remove() );
+		return Promise.all( jQuery( selector ).map( ( index, el ) => {
+			return this.loadCss( jQuery( el ).attr( 'href' ) )
+				.then( () => jQuery( el ).remove() );
 		} ) );
 	}
 
 	/**
 	 * hide all the element except for the target element.
-	 *
-	 * @returns {Promise<void>}
 	 */
 	hideUnnecessaryElements() {
 		jQuery( 'body' ).prepend(
@@ -153,8 +160,6 @@ class Screenshot {
 		);
 
 		jQuery( 'body > *' ).not( this.$elementor ).css( 'display', 'none' );
-
-		return Promise.resolve();
 	}
 
 	/**
@@ -165,7 +170,9 @@ class Screenshot {
 	createImage() {
 		return new Promise( ( resolve ) => {
 			setTimeout( () => {
-				domtoimage.toPng( this.$elementor.parents( 'body' ).get( 0 ), {} )
+				this.log( 'Creating screenshot.' );
+
+				domtoimage.toPng( document.body, {} )
 					.then( ( dataUrl ) => {
 						resolve( dataUrl );
 					} );
@@ -218,19 +225,24 @@ class Screenshot {
 	save( canvas ) {
 		return elementorCommon.ajax.addRequest( 'screenshot_save', {
 			data: {
-				post_id: this.config.post.id,
+				post_id: this.config.post_id,
 				screenshot: canvas.toDataURL( 'image/png' ),
+			},
+			success: ( url ) => {
+				this.log( `Screenshot created: ${ url }` );
+			},
+			error: () => {
+				this.log( 'Failed to create screenshot.' );
 			},
 		} );
 	}
 
 	/**
 	 * @param url
-	 * @param config
 	 * @returns {string}
 	 */
-	getScreenshotProxyUrl( url, config ) {
-		return `${ config.home_url }?screenshot_proxy&nonce=${ config.nonce }&href=${ url }`;
+	getScreenshotProxyUrl( url ) {
+		return `${ this.config.home_url }?screenshot_proxy&nonce=${ this.config.nonce }&href=${ url }`;
 	}
 
 	/**
@@ -260,6 +272,20 @@ class Screenshot {
 
 				return Promise.resolve();
 			} );
+	}
+
+	/**
+	 * Log messages for debugging
+	 *
+	 * @param message
+	 */
+	log( message ) {
+		if ( ! this.config.debug ) {
+			return;
+		}
+
+		// eslint-disable-next-line no-console
+		console.log( message );
 	}
 }
 

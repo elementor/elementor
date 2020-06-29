@@ -96,7 +96,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$image['id'] = '';
 		}
 
-		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! isset( $_GET['elementor-screenshot'] ) ) {
+		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) ) {
 			$image_class .= " attachment-$size size-$size";
 			$image_attr = [
 				'class' => trim( $image_class ),

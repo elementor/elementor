@@ -38,7 +38,7 @@ class Module extends BaseModule {
 		$post_id = $data['post_id'];
 
 		$file_content = substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) );
-		$file_name = 'Elementor Post Screenshot ' . $post_id . '.png';
+		$file_name = 'Elementor-Post-Screenshot-' . $post_id . '.png';
 		$over_write_file_name_callback = function () use ( $file_name ) {
 			return $file_name;
 		};
@@ -116,6 +116,8 @@ class Module extends BaseModule {
 			'selector' => '.elementor-' . $post_id,
 			'nonce' => wp_create_nonce( 'screenshot_proxy' ),
 			'home_url' => home_url(),
+			'post_id' => $post_id,
+			'debug' => SCRIPT_DEBUG
 		];
 
 		wp_add_inline_script( 'elementor-screenshot', 'var ElementorScreenshotConfig = ' . json_encode( $config ) . ';' );
