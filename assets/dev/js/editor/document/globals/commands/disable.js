@@ -1,12 +1,11 @@
 import DisableEnable from './base/disable-enable';
 
 // TODO: Add dev-tools CSS to see if widget have globals.
-// TODO: This is the only disable which is async ( no common sense ), find solution.
 export class Disable extends DisableEnable {
 	async apply( args ) {
 		const { settings, containers = [ args.container ], options = {} } = args;
 
-		const all = containers.map( async ( container ) => {
+		await containers.map( async ( container ) => {
 			container = container.lookup();
 
 			const localSettings = {};
@@ -24,13 +23,14 @@ export class Disable extends DisableEnable {
 						result = await promise;
 
 					if ( result ) {
-						const { value } = result.data,
-							groupPrefix = container.controls[ globalKey ]?.groupPrefix;
+						const { value } = result.data;
 
-						if ( groupPrefix ) {
+						if ( container.controls[ globalKey ].groupPrefix ) {
 							Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
-								dataKey = dataKey.replace( elementor.config.kit_config.typography_prefix, groupPrefix );
-								localSettings[ dataKey ] = dataValue;
+								const groupPrefix = container.controls[ globalKey ].groupPrefix,
+									controlName = globalKey.replace( groupPrefix, '' ) + '_' + dataKey;
+
+								localSettings[ controlName ] = dataValue;
 							} );
 						} else {
 							localSettings[ globalKey ] = value;
@@ -47,9 +47,6 @@ export class Disable extends DisableEnable {
 					$e.run( 'document/elements/settings', {
 						container,
 						settings: localSettings,
-						options: {
-							external: true,
-						},
 					} );
 				}
 
@@ -65,8 +62,6 @@ export class Disable extends DisableEnable {
 
 			return Promise.resolve();
 		} );
-
-		await Promise.all( all );
 	}
 }
 
