@@ -1,7 +1,7 @@
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 export class Capture extends CommandInternalBase {
-	apply( args ) {
+	apply() {
 		jQuery( 'body' ).append( this.createIframe() );
 	}
 

@@ -119,7 +119,6 @@ class Module extends BaseModule {
 			'nonce' => wp_create_nonce( 'screenshot_proxy' ),
 			'home_url' => home_url(),
 			'post_id' => $post_id,
-			'debug' => SCRIPT_DEBUG,
 		];
 
 		wp_add_inline_script( 'elementor-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
@@ -145,14 +144,10 @@ class Module extends BaseModule {
 	public function extend_document_config( $config ) {
 		$post_id = get_queried_object_id();
 
-		add_filter( 'pre_option_permalink_structure', '__return_empty_string' );
-
-		$url = set_url_scheme( add_query_arg( [
+		$url = add_query_arg( [
 			'elementor-screenshot' => $post_id,
 			'ver' => time(),
-		], get_permalink( $post_id ) ) );
-
-		remove_filter( 'pre_option_permalink_structure', '__return_empty_string' );
+		], get_permalink( $post_id ) );
 
 		return array_replace_recursive( $config, [
 			'urls' => [

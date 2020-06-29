@@ -2,12 +2,12 @@
 class Screenshot {
 	constructor() {
 		/**
-		 * Holds the screen shot Iframe
+		 * Holds the screen shot Iframe.
 		 */
 		this.$elementor = null;
 
 		/**
-		 * The config that provided from the backend
+		 * The config that provided from the backend.
 		 *
 		 * @var object
 		 */
@@ -27,7 +27,7 @@ class Screenshot {
 	}
 
 	/**
-	 * The main method for this class
+	 * The main method for this class.
 	 */
 	init() {
 		this.$elementor = jQuery( ElementorScreenshotConfig.selector );
@@ -56,7 +56,7 @@ class Screenshot {
 
 	/**
 	 * Html to images libraries can not snapshot IFrames
-	 * This method convert all the IFrames to some other elements.
+	 * this method convert all the IFrames to some other elements.
 	 */
 	handleIFrames() {
 		this.$elementor.find( 'iframe' ).each( ( index, el ) => {
@@ -122,21 +122,21 @@ class Screenshot {
 	}
 
 	/**
-	 * Slides should show only the first slide, all the other slides will be removed
+	 * Slides should show only the first slide, all the other slides will be removed.
 	 */
 	handleSlides() {
-		this.$elementor.find( '.elementor-slides' ).each( function() {
-			const $this = jQuery( this );
+		this.$elementor.find( '.elementor-slides' ).each( ( index, el ) => {
+			const $this = jQuery( el );
 
-			$this.find( '> *' ).not( $this.find( '> :first-child' ) ).each( function() {
-				jQuery( this ).remove();
+			$this.find( '> *' ).not( $this.find( '> :first-child' ) ).each( ( childIndex, childEl ) => {
+				jQuery( childEl ).remove();
 			} );
 		} );
 	}
 
 	/**
 	 * CSS from another server cannot be loaded,
-	 * That is the reason behind this method, fetching the content of the CSS and set it as an inline css.
+	 * that is the reason behind this method, fetching the content of the CSS and set it as an inline css.
 	 *
 	 * @returns {Promise<unknown[]>}
 	 */
@@ -146,13 +146,15 @@ class Screenshot {
 		} ).join( ', ' );
 
 		return Promise.all( jQuery( selector ).map( ( index, el ) => {
-			return this.loadCss( jQuery( el ).attr( 'href' ) )
-				.then( () => jQuery( el ).remove() );
+			const $link = jQuery( el );
+
+			return this.loadCss( $link.attr( 'href' ) )
+				.then( () => $link.remove() );
 		} ) );
 	}
 
 	/**
-	 * hide all the element except for the target element.
+	 * Hide all the element except for the target element.
 	 */
 	hideUnnecessaryElements() {
 		jQuery( 'body' ).prepend(
@@ -163,7 +165,7 @@ class Screenshot {
 	}
 
 	/**
-	 * Creates a png image
+	 * Creates a png image.
 	 *
 	 * @returns {Promise<unknown>}
 	 */
@@ -198,7 +200,7 @@ class Screenshot {
 	}
 
 	/**
-	 * Crop the image to requested sizes
+	 * Crop the image to requested sizes.
 	 *
 	 * @param image
 	 * @returns {Promise<unknown>}
@@ -246,7 +248,7 @@ class Screenshot {
 	}
 
 	/**
-	 * load one css file
+	 * Load one css file.
 	 *
 	 * @param url
 	 * @returns {Promise<void>}
@@ -275,12 +277,12 @@ class Screenshot {
 	}
 
 	/**
-	 * Log messages for debugging
+	 * Log messages for debugging.
 	 *
 	 * @param message
 	 */
 	log( message ) {
-		if ( ! this.config.debug ) {
+		if ( ! elementorCommonConfig.isDebug ) {
 			return;
 		}
 
