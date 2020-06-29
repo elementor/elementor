@@ -24,12 +24,18 @@ export default class extends RepeaterRow {
 	}
 
 	onChildviewRender( childView ) {
+		let globalType = '';
+
 		if ( 'color' === childView.model.get( 'type' ) ) {
 			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value' } );
 
 			childView.$el
 				.find( '.elementor-control-input-wrapper' )
 				.prepend( this.getRemoveButton(), this.$colorValue );
+
+			globalType = 'color';
+
+			this.ui.removeButton.data( 'e-global-type', 'color' );
 
 			this.updateColorValue();
 		}
@@ -38,12 +44,18 @@ export default class extends RepeaterRow {
 			childView.$el
 				.find( '.elementor-control-input-wrapper' )
 				.append( this.getRemoveButton() );
+
+			globalType = 'text_style';
 		}
 
-		this.ui.removeButton.tipsy( {
-			title: () => elementor.translate( 'delete_global_color' ),
-			gravity: () => 's',
-		} );
+		if ( 'color' === childView.model.get( 'type' ) || 'popover_toggle' === childView.model.get( 'type' ) ) {
+			this.ui.removeButton.data( 'e-global-type', globalType );
+
+			this.ui.removeButton.tipsy( {
+				title: () => elementor.translate( 'delete_global_' + globalType ),
+				gravity: () => 's',
+			} );
+		}
 	}
 
 	onModelChange( model ) {
@@ -53,10 +65,12 @@ export default class extends RepeaterRow {
 	}
 
 	onRemoveButtonClick() {
+		const globalType = this.ui.removeButton.data( 'e-global-type' );
+
 		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			className: 'e-global__confirm-delete',
-			headerMessage: elementor.translate( 'delete_global_color' ),
-			message: '<i class="eicon-info-circle"></i> ' + elementor.translate( 'delete_global_color_info' ),
+			headerMessage: elementor.translate( 'delete_global_' + globalType ),
+			message: '<i class="eicon-info-circle"></i> ' + elementor.translate( 'delete_global_' + globalType + '_info' ),
 			strings: {
 				confirm: elementor.translate( 'delete' ),
 				cancel: elementor.translate( 'cancel' ),
