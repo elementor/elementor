@@ -32,7 +32,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 		// If the control has a global value, unset the global
 		if ( this.getGlobalKey() ) {
-			this.triggerMethod( 'unsetGlobalValue' );
+			this.triggerMethod( 'unset:global:value' );
 		} else if ( this.isGlobalActive() ) {
 			this.triggerMethod( 'value:type:change' );
 		}
