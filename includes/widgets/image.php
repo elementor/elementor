@@ -332,11 +332,15 @@ class Widget_Image extends Widget_Base {
 				'mobile_default' => [
 					'unit' => 'px',
 				],
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'vh' ],
 				'range' => [
 					'px' => [
 						'min' => 1,
 						'max' => 500,
+					],
+					'vh' => [
+						'min' => 1,
+						'max' => 100,
 					],
 				],
 				'selectors' => [
