@@ -30,6 +30,10 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		}
 	},
 
+	onReady: function() {
+		elementorCommon.helpers.softDeprecated( 'onReady', '3.0.0' );
+	},
+
 	onBeforeDestroy: function() {
 		// We always destroy the select2 instance because there are cases where the DOM element's data cache
 		// itself has been destroyed but the select2 instance on it still exists
