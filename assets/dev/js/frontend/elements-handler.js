@@ -45,10 +45,6 @@ module.exports = function( $ ) {
 	};
 
 	const init = function() {
-		if ( 'static' === elementorFrontend.config.render_mode ) {
-			return;
-		}
-
 		self.initHandlers();
 	};
 

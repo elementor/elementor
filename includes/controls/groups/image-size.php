@@ -96,9 +96,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$image['id'] = '';
 		}
 
-		$is_in_static_render_mode = Frontend::RENDER_MODE_STATIC === Plugin::$instance->frontend->get_render_mode();
+		$is_static_render_mode = Frontend::RENDER_MODE_STATIC === Plugin::$instance->frontend->get_render_mode();
 
-		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! $is_in_static_render_mode ) {
+		// On static mode don't use WP responsive images.
+		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! $is_static_render_mode ) {
 			$image_class .= " attachment-$size size-$size";
 			$image_attr = [
 				'class' => trim( $image_class ),

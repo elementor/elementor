@@ -800,9 +800,9 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
-			$is_in_static_render_mode = Plugin::$instance->frontend->get_render_mode() === Frontend::RENDER_MODE_STATIC;
+			$is_static_render_mode = Plugin::$instance->frontend->get_render_mode() === Frontend::RENDER_MODE_STATIC;
 
-			if ( ! $is_in_static_render_mode ) {
+			if ( ! $is_static_render_mode ) {
 				// Hide the element until the animation begins
 				$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
 			}
