@@ -131,6 +131,32 @@ class Module extends BaseModule {
 		$ajax_manager->register_ajax_action( 'screenshot_save', [ $this, 'ajax_save' ] );
 	}
 
+	/**
+	 * Extends document config with screenshot URL.
+	 *
+	 * @param $config
+	 *
+	 * @return array
+	 */
+	public function extend_document_config( $config ) {
+		$post_id = get_queried_object_id();
+
+		add_filter( 'pre_option_permalink_structure', '__return_empty_string' );
+
+		$url = set_url_scheme( add_query_arg( [
+			'elementor-screenshot' => $post_id,
+			'ver' => time(),
+		], get_permalink( $post_id ) ) );
+
+		remove_filter( 'pre_option_permalink_structure', '__return_empty_string' );
+
+		return array_replace_recursive( $config, [
+			'urls' => [
+				'screenshot' => $url,
+			],
+		] );
+	}
+
 	public function __construct() {
 		if ( isset( $_REQUEST['screenshot_proxy'] ) ) {
 			$this->screenshot_proxy();
@@ -144,5 +170,7 @@ class Module extends BaseModule {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
+		add_filter( 'elementor/document/config', [ $this, 'extend_document_config' ] );
 	}
 }

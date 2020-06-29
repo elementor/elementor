@@ -1,4 +1,4 @@
-import CommandInternalBase from "elementor-api/modules/command-internal-base";
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 export class Capture extends CommandInternalBase {
 	apply( args ) {
@@ -10,12 +10,12 @@ export class Capture extends CommandInternalBase {
 
 		iframe.src = this.getIframeUrl();
 		iframe.width = '1300';
-		iframe.style = 'visibable: hidden;';
+		iframe.style = 'visibility: hidden;';
 
 		return iframe;
 	}
 
 	getIframeUrl() {
-		return elementor.config.document.urls.preview.replace( 'elementor-preview', 'elementor-screenshot' );
+		return elementor.config.document.urls.screenshot;
 	}
 }
