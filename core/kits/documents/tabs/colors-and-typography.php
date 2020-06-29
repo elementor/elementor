@@ -143,12 +143,8 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'name' => self::TYPOGRAPHY_NAME,
 				'label' => '',
-				'popover' => [
-					'settings' => [
-						'global' => [
-							'active' => false,
-						],
-					],
+				'global' => [
+					'active' => false,
 				],
 				'fields_options' => [
 					'font_family' => [
