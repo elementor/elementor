@@ -348,7 +348,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_responsive_control(
 			'object-fit',
 			[
-				'label' => __( 'Image Fit', 'elementor' ),
+				'label' => __( 'Object Fit', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
