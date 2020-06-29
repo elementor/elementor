@@ -96,7 +96,7 @@ class Module extends BaseModule {
 
 		wp_enqueue_script(
 			'dom-to-image',
-			ELEMENTOR_URL . "modules/screenshots/assets/js/dom-to-image{$suffix}.js",
+			ELEMENTOR_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
 			[],
 			'2.6.0',
 			true
@@ -105,9 +105,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-screenshot',
 			ELEMENTOR_URL . "modules/screenshots/assets/js/preview/screenshot{$suffix}.js",
-			[
-				'dom-to-image',
-			],
+			[ 'dom-to-image', ],
 			ELEMENTOR_VERSION,
 			true
 		);

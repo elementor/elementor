@@ -4,7 +4,7 @@ class Screenshot {
 		/**
 		 * Holds the screen shot Iframe
 		 */
-		this.$elementor = null
+		this.$elementor = null;
 
 		/**
 		 * The config that provided from the backend
@@ -19,11 +19,11 @@ class Screenshot {
 			allowedCssUrls: [
 				'https://fonts.googleapis.com',
 				'https://kit-pro.fontawesome.com',
-				'https://use.typekit.net'
-			]
+				'https://use.typekit.net',
+			],
 		};
 
-		jQuery( () => this.init() )
+		jQuery( () => this.init() );
 	}
 
 	init() {
@@ -31,7 +31,7 @@ class Screenshot {
 		this.config = {
 			...this.config,
 			...ElementorScreenshotConfig,
-			...{ post: { id: elementorFrontendConfig.post.id } }
+			...{ post: { id: elementorFrontendConfig.post.id } },
 		};
 
 		if ( ! this.$elementor.length ) {
@@ -47,7 +47,7 @@ class Screenshot {
 			.then( this.createImage.bind( this ) )
 			.then( this.createImageElement.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
-			.then( this.save.bind( this ) )
+			.then( this.save.bind( this ) );
 	}
 
 	/**
@@ -59,8 +59,8 @@ class Screenshot {
 	handleIFrames() {
 		const $self = this;
 
-		this.$elementor.find( 'iframe' ).each( function () {
-			const $iframe = jQuery( this )
+		this.$elementor.find( 'iframe' ).each( function() {
+			const $iframe = jQuery( this );
 			const $iframeMask = jQuery( '<div />', {
 				css: {
 					background: 'gray',
@@ -85,13 +85,12 @@ class Screenshot {
 				} ) );
 
 				$iframe.next().remove();
-
 			} else if ( -1 !== $iframe.attr( 'src' ).search( 'youtu' ) ) {
 				const regex = /^.*(?:youtu.be\/|youtube(?:-nocookie)?.com\/(?:(?:watch)??(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^?&"'>]+)/;
 				const matches = regex.exec( $iframe.attr( 'src' ) );
 
 				$iframeMask.append( jQuery( '<img />', {
-					src: $self.getScreenshotProxyUrl( `https://img.youtube.com/vi/${matches[ 1 ]}/0.jpg`, $self.config ),
+					src: $self.getScreenshotProxyUrl( `https://img.youtube.com/vi/${ matches[ 1 ] }/0.jpg`, $self.config ),
 					crossOrigin: 'Anonymous',
 					css: {
 						width: $iframe.width(),
@@ -113,11 +112,11 @@ class Screenshot {
 	 * @returns {Promise<void>}
 	 */
 	handleSlides() {
-		this.$elementor.find( '.elementor-slides' ).each( function () {
+		this.$elementor.find( '.elementor-slides' ).each( function() {
 			const $this = jQuery( this );
 
-			$this.find( '> *' ).not( $this.find( '> :first-child' ) ).each( function () {
-				jQuery( this ).remove()
+			$this.find( '> *' ).not( $this.find( '> :first-child' ) ).each( function() {
+				jQuery( this ).remove();
 			} );
 		} );
 
@@ -133,14 +132,14 @@ class Screenshot {
 	loadExternalCss() {
 		const $self = this;
 
-		const selector = this.config.allowedCssUrls.map( allowedCssUrl => {
-			return `link[href^="${allowedCssUrl}"]`;
+		const selector = this.config.allowedCssUrls.map( ( allowedCssUrl ) => {
+			return `link[href^="${ allowedCssUrl }"]`;
 		} ).join( ', ' );
 
-		return Promise.all( jQuery( selector ).map( function () {
+		return Promise.all( jQuery( selector ).map( function() {
 			return $self.loadCss( jQuery( this ).attr( 'href' ) )
-				.then( () => jQuery( this ).remove() )
-		} ) )
+				.then( () => jQuery( this ).remove() );
+		} ) );
 	}
 
 	/**
@@ -168,10 +167,10 @@ class Screenshot {
 			setTimeout( () => {
 				domtoimage.toPng( this.$elementor.parents( 'body' ).get( 0 ), {} )
 					.then( ( dataUrl ) => {
-						resolve( dataUrl )
-					} )
-			}, 5000 )
-		} )
+						resolve( dataUrl );
+					} );
+			}, 5000 );
+		} );
 	}
 
 	/**
@@ -181,14 +180,14 @@ class Screenshot {
 	 * @returns {Promise<HTMLImageElement>}
 	 */
 	createImageElement( dataUrl ) {
-		const image = new Image()
-		image.src = dataUrl
+		const image = new Image();
+		image.src = dataUrl;
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			image.onload = () => {
-				resolve( image )
-			}
-		} )
+				resolve( image );
+			};
+		} );
 	}
 
 	/**
@@ -207,7 +206,7 @@ class Screenshot {
 
 		cropContext.drawImage( image, 0, 0, image.width, image.height, 0, 0, image.width * ratio, image.height * ratio );
 
-		return Promise.resolve( cropCanvas )
+		return Promise.resolve( cropCanvas );
 	}
 
 	/**
@@ -231,7 +230,7 @@ class Screenshot {
 	 * @returns {string}
 	 */
 	getScreenshotProxyUrl( url, config ) {
-		return `${config.home_url}?screenshot_proxy&nonce=${config.nonce}&href=${url}`;
+		return `${ config.home_url }?screenshot_proxy&nonce=${ config.nonce }&href=${ url }`;
 	}
 
 	/**
@@ -247,21 +246,21 @@ class Screenshot {
 				// This is a specific use case when we need
 				// to load the fonts of the library so we replace all the relative url with absolute.
 				if ( url.startsWith( 'https://kit-pro.fontawesome.com' ) ) {
-					data = data.replace( /url\(\.\.\/webfonts/g, 'url(https://kit-pro.fontawesome.com/releases/latest/webfonts' )
+					data = data.replace( /url\(\.\.\/webfonts/g, 'url(https://kit-pro.fontawesome.com/releases/latest/webfonts' );
 				}
 
-				return data
+				return data;
 			} )
-			.then( data => {
+			.then( ( data ) => {
 				const head = document.getElementsByTagName( 'head' )[ 0 ];
 				const style = document.createElement( 'style' );
 
 				style.appendChild( document.createTextNode( data ) );
 				head.appendChild( style );
 
-				return Promise.resolve()
-			} )
+				return Promise.resolve();
+			} );
 	}
 }
 
-new Screenshot()
+new Screenshot();

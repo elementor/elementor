@@ -1,3 +1,11 @@
+/**
+ * Dom-To-Image 2.6.0
+ * https://github.com/tsayen/dom-to-image
+ *
+ * Released under the MIT license
+ * https://github.com/tsayen/dom-to-image/blob/master/LICENSE
+ */
+
 (function ( global ) {
 	'use strict';
 
