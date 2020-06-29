@@ -177,9 +177,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @param string $attachment_id The attachment ID.
+	 * @param string $attachment_id  The attachment ID.
 	 * @param string $image_size_key Settings key for image size.
-	 * @param array  $settings      Control settings.
+	 * @param array  $settings       Control settings.
 	 *
 	 * @return string Attachment image source URL.
 	 */

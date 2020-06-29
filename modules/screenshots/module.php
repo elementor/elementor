@@ -88,7 +88,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_scripts() {
-		if ( ! isset( $_REQUEST['elementor-screenshot'] ) || ! User::is_current_user_can_edit() ) { // WPCS: CSRF ok.
+		if ( ! isset( $_REQUEST['elementor-screenshot'] ) || ! User::is_current_user_can_edit() ) {
 			return;
 		}
 
@@ -104,7 +104,7 @@ class Module extends BaseModule {
 
 		wp_enqueue_script(
 			'elementor-screenshot',
-			ELEMENTOR_URL . "modules/screenshots/assets/js/frontend/screenshot{$suffix}.js",
+			ELEMENTOR_URL . "modules/screenshots/assets/js/preview/screenshot{$suffix}.js",
 			[
 				'dom-to-image',
 			],

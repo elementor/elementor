@@ -50,8 +50,8 @@ class Modules_Manager {
 			/** @var Module $class_name */
 			if ( $class_name::is_active() ) {
 				$this->modules[ $module_name ] = $class_name::instance();
+			}
 		}
-	}
 	}
 
 	/**

@@ -1,18 +1,18 @@
 /* global ElementorConfig */
 
-import Navigator from './regions/navigator/navigator';
-import HotkeysScreen from './components/hotkeys/hotkeys';
-import environment from 'elementor-common/utils/environment';
-import DateTimeControl from 'elementor-controls/date-time';
-import NoticeBar from './utils/notice-bar';
-import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
-import HistoryManager from 'elementor/modules/history/assets/js/module';
-import ScreenshotsModule from 'elementor/modules/screenshots/assets/js/editor/module'
+import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from 'elementor-editor/component';
-import Promotion from './utils/promotion';
+import environment from 'elementor-common/utils/environment';
+import HistoryManager from 'elementor/modules/history/assets/js/module';
+import HotkeysScreen from './components/hotkeys/hotkeys';
+import IconsManager from './components/icons-manager/icons-manager';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
+import Navigator from './regions/navigator/navigator';
+import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
+import Promotion from './utils/promotion';
+import ScreenshotsModule from 'elementor/modules/screenshots/assets/js/editor/module'
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 

@@ -51,8 +51,8 @@ class Screenshot {
 	}
 
 	/**
-	 * The html-to-image library can not snapshot the iframes.
-	 * so this method convert all the iframes with something else.
+	 * Html to images libraries can not snapshot iframes
+	 * This method convert all the iframes to some other elements.
 	 *
 	 * @returns {Promise<void>}
 	 */
@@ -125,8 +125,8 @@ class Screenshot {
 	}
 
 	/**
-	 * css from another server cannot be loaded.
-	 * that is why we fetch the content of the css and set it as an inline css.
+	 * CSS from another server cannot be loaded,
+	 * That is the reason behind this method, fetching the content of the CSS and set it as an inline css.
 	 *
 	 * @returns {Promise<unknown[]>}
 	 */
