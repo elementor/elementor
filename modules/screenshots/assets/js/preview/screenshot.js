@@ -16,12 +16,20 @@ class Screenshot {
 				width: 1200,
 				height: 1500,
 			},
-			excludeCssUrls: [
+			excludedCssUrls: [
 				'https://kit-pro.fontawesome.com',
 			],
-			timeout: 5000, // 5 secs
+			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
+			render_timeout: 5000, // Wait until all the element will be loaded or 5 sec and then take screenshot.
 			timerLabel: 'timer',
 		};
+
+		/**
+		 * hold the timeout timer
+		 *
+		 * @type {number|null}
+		 */
+		this.timeoutTimer = null;
 
 		jQuery( () => this.init() );
 	}
@@ -44,6 +52,8 @@ class Screenshot {
 			return;
 		}
 
+		this.timeoutTimer = setTimeout( this.screenshotFailed.bind( this ), this.config.timeout );
+
 		this.handleIFrames();
 		this.handleSlides();
 		this.hideUnnecessaryElements();
@@ -54,11 +64,8 @@ class Screenshot {
 			.then( this.createImageElement.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
 			.then( this.save.bind( this ) )
-			.then( () => {
-				window.top.postMessage( { name: 'capture-screenshot-done' }, '*' );
-
-				this.log( 'Screenshot End.', 'timeEnd' );
-			} );
+			.then( this.screenshotSucceed.bind( this ) )
+			.catch( this.screenshotFailed.bind( this ) );
 	}
 
 	/**
@@ -146,12 +153,12 @@ class Screenshot {
 	 * this method take all the links from another domain and proxy them.
 	 */
 	loadExternalCss() {
-		const excludeUrls = [
+		const excludedUrls = [
 			this.config.home_url,
-			...this.config.excludeCssUrls,
+			...this.config.excludedCssUrls,
 		];
 
-		const notSelector = excludeUrls.map( ( url ) => {
+		const notSelector = excludedUrls.map( ( url ) => {
 			return `[href^="${ url }"]`;
 		} ).join( ', ' );
 
@@ -192,7 +199,7 @@ class Screenshot {
 		const timeOutPromise = new Promise( ( resolve ) => {
 			setTimeout( () => {
 				resolve();
-			}, this.config.timeout );
+			}, this.config.render_timeout );
 		} );
 
 		return Promise.race( [ pageLoadedPromise, timeOutPromise ] )
@@ -243,20 +250,26 @@ class Screenshot {
 	 * Send the image to the server.
 	 *
 	 * @param canvas
-	 * @returns {*}
+	 * @returns {Promise<unknown>}
 	 */
 	save( canvas ) {
-		return elementorCommon.ajax.addRequest( 'screenshot_save', {
-			data: {
-				post_id: this.config.post_id,
-				screenshot: canvas.toDataURL( 'image/png' ),
-			},
-			success: ( url ) => {
-				this.log( `Screenshot created: ${ encodeURI( url ) }` );
-			},
-			error: () => {
-				this.log( 'Failed to create screenshot.' );
-			},
+		return new Promise( ( resolve, reject ) => {
+			elementorCommon.ajax.addRequest( 'screenshot_save', {
+				data: {
+					post_id: this.config.post_id,
+					screenshot: canvas.toDataURL( 'image/png' ),
+				},
+				success: ( url ) => {
+					this.log( `Screenshot created: ${ encodeURI( url ) }` );
+
+					resolve();
+				},
+				error: () => {
+					this.log( 'Failed to create screenshot.' );
+
+					reject();
+				},
+			} );
 		} );
 	}
 
@@ -266,6 +279,34 @@ class Screenshot {
 	 */
 	getScreenshotProxyUrl( url ) {
 		return `${ this.config.home_url }?screenshot_proxy&nonce=${ this.config.nonce }&href=${ url }`;
+	}
+
+	/**
+	 * Notify that the screenshot has been succeed.
+	 */
+	screenshotSucceed() {
+		this.screenshotDone( true );
+	}
+
+	/**
+	 * Notify that the screenshot has been failed.
+	 */
+	screenshotFailed() {
+		this.screenshotDone( false );
+	}
+
+	/**
+	 * Final method of the screenshot.
+	 *
+	 * @param success
+	 */
+	screenshotDone( success ) {
+		clearTimeout( this.timeoutTimer );
+		this.timeoutTimer = null;
+
+		window.top.postMessage( { name: 'capture-screenshot-done', success }, '*' );
+
+		this.log( `Screenshot ${ success ? 'Succeed' : 'Failed' }.`, 'timeEnd' );
 	}
 
 	/**
