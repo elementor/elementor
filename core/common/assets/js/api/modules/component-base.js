@@ -119,7 +119,7 @@ export default class ComponentBase extends elementorModules.Module {
 		if ( isCallbackNewClass ) {
 			try {
 				// Try get instance.
-				instance = callback();
+				instance = callback( { component: this } );
 
 				if ( ! ( instance instanceof Command ) ) {
 					throw Error( 'Command should inherent "Command" class.' );
