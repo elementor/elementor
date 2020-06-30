@@ -11,6 +11,7 @@ $menu-item-height: spacing(44);
 $menu-item-pointer-width: spacing(5);
 $menu-item-pointer-color: theme-colors(link-color);
 $menu-item-action-button-padding: spacing(10);
+$menu-item-action-button-margin: spacing(20);
 $menu-item-action-button-color: tints(300);
 
 $menu-item-active-box-shadow: $eps-box-shadow;
@@ -37,11 +38,6 @@ $menu-item-dark-background-color-active: dark-tints(600);
 }
 
 .e-app-menu-item {
-	padding: $menu-item-padding-y $menu-item-padding-x;
-	min-height: $menu-item-height;
-	color: var(--menu-item-color);
-	font-size: $menu-item-font-size;
-	line-height: $menu-item-line-height;
 	display: flex;
 	align-items: center;
 	position: relative;
@@ -65,13 +61,20 @@ $menu-item-dark-background-color-active: dark-tints(600);
 
 	&:hover, &--active {
 		--menu-item-color: var(--menu-item-color-hover);
+		--eps-link-color: var(--menu-item-color-hover);
 		background-color: var(--menu-item-background-color-active);
 	}
 
 	&__link {
+		padding: $menu-item-padding-y $menu-item-padding-x;
+		min-height: $menu-item-height;
+		font-size: $menu-item-font-size;
+		line-height: $menu-item-line-height;
 		flex-grow: 1;
 		display: flex;
 		align-items: center;
+		color: var(--menu-item-color);
+		--eps-link-color: var(--menu-item-color);
 
 		.icon {
 			font-size: $menu-item-icon-size;
@@ -84,6 +87,7 @@ $menu-item-dark-background-color-active: dark-tints(600);
 		opacity: var(--action-button-opacity);
 		padding: $menu-item-action-button-padding;
 		transition: $menu-item-transition;
+		margin-inline-end: $menu-item-action-button-margin;
 	}
 
 	&--active {

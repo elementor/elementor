@@ -61,7 +61,8 @@ small {
 
 // Links
 a {
-  color: $eps-link-color;
+	--eps-link-color: $eps-link-color;
+  color: var(--eps-link-color);
   background-color: transparent; // Remove the gray background on active links in IE 10.
 
   &,
@@ -73,7 +74,7 @@ a {
 
   &:focus,
   &:hover {
-	color: $eps-link-hover-color;
+	  --eps-link-color: $eps-link-hover-color;
 	text-decoration: $eps-link-hover-decoration;
   }
 }
