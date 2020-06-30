@@ -14,8 +14,8 @@ export class Enable extends DisableEnable {
 			container.render();
 
 			// Clear custom local settings.
-			Object.keys( settings ).forEach( ( key ) => {
-				container.settings.set( key, container.controls[ key ].default );
+			Object.values( container.getRelatedControls( settings ) ).forEach( ( control ) => {
+				container.settings.set( control.name, control.default );
 			} );
 		} );
 	}

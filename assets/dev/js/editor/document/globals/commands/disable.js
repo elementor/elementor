@@ -1,7 +1,6 @@
 import DisableEnable from './base/disable-enable';
 
 // TODO: Add dev-tools CSS to see if widget have globals.
-// TODO: This is the only disable which is async ( no common sense ), find solution.
 export class Disable extends DisableEnable {
 	async apply( args ) {
 		const { settings, containers = [ args.container ], options = {} } = args;
@@ -9,8 +8,8 @@ export class Disable extends DisableEnable {
 		await containers.map( async ( container ) => {
 			container = container.lookup();
 
-			let localSettings = {},
-				promises = [];
+			const localSettings = {};
+			let promises = [];
 
 			// Get global values.
 			if ( options.restore ) {
