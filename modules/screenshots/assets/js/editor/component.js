@@ -4,6 +4,19 @@ import * as hooks from './hooks/';
 import * as internalCommands from './commands/internal/';
 
 export default class Component extends ComponentBase {
+	__construct( args = {} ) {
+		super.__construct( args );
+
+		this.capturingScreenshot = false;
+
+		elementorCommon.elements.$window.on( 'beforeunload', () => {
+			if ( this.isCapturingScreenshot() ) {
+				// Returns a message to confirm dialog.
+				return elementor.translate( 'before_unload_screenshot_alert' );
+			}
+		} );
+	}
+
 	getNamespace() {
 		return 'screenshots';
 	}
@@ -14,5 +27,9 @@ export default class Component extends ComponentBase {
 
 	defaultHooks() {
 		return this.importHooks( hooks );
+	}
+
+	isCapturingScreenshot() {
+		return this.capturingScreenshot;
 	}
 }

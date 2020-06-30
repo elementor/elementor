@@ -18,7 +18,7 @@ class Screenshot {
 			},
 			allowedCssUrls: [
 				'https://fonts.googleapis.com',
-				'https://kit-pro.fontawesome.com',
+				// 'https://kit-pro.fontawesome.com',
 				'https://use.typekit.net',
 			],
 			timeout: 5000, // 5 secs
@@ -57,6 +57,8 @@ class Screenshot {
 			.then( this.cropCanvas.bind( this ) )
 			.then( this.save.bind( this ) )
 			.then( () => {
+				window.top.postMessage( { name: 'capture-screenshot-done' }, '*' );
+
 				this.log( 'Screeenshot End.', 'timeEnd' );
 			} );
 	}
