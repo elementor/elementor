@@ -401,23 +401,26 @@ class Source_Local extends Source_Base {
 
 		if ( ! empty( $args['type'] ) ) {
 			$template_types = $args['type'];
+			unset( $args['type'] );
 		}
 
-		$templates_query = new \WP_Query(
-			[
-				'post_type' => self::CPT,
-				'post_status' => 'publish',
-				'posts_per_page' => -1,
-				'orderby' => 'title',
-				'order' => 'ASC',
-				'meta_query' => [
-					[
-						'key' => Document::TYPE_META_KEY,
-						'value' => $template_types,
-					],
+		$defaults = [
+			'post_type' => self::CPT,
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+			'orderby' => 'title',
+			'order' => 'ASC',
+			'meta_query' => [
+				[
+					'key' => Document::TYPE_META_KEY,
+					'value' => $template_types,
 				],
-			]
-		);
+			],
+		];
+
+		$query_args = wp_parse_args( $args, $defaults );
+
+		$templates_query = new \WP_Query( $query_args );
 
 		$templates = [];
 
@@ -583,6 +586,7 @@ class Source_Local extends Source_Base {
 			'date' => $date,
 			'human_date' => date_i18n( get_option( 'date_format' ), $date ),
 			'author' => $user->display_name,
+			'status' => $post->post_status,
 			'hasPageSettings' => ! empty( $page_settings ),
 			'tags' => [],
 			'export_link' => $this->get_export_link( $template_id ),
