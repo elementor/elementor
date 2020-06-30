@@ -38,10 +38,21 @@ class Manager {
 		return Plugin::$instance->documents->get( $id );
 	}
 
-	public function get_active_kit_for_fronend() {
+	public function get_active_kit_for_frontend() {
 		$id = $this->get_active_id();
 
 		return Plugin::$instance->documents->get_doc_for_frontend( $id );
+	}
+
+
+	public function get_current_settings( $setting = null ) {
+		$kit = $this->get_active_kit_for_frontend();
+
+		if ( ! $kit ) {
+			return '';
+		}
+
+		return $kit->get_settings( $setting );
 	}
 
 	private function create_default() {
@@ -70,10 +81,16 @@ class Manager {
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
 			],
 			'i18n' => [
-				'Close' => __( 'Close', 'elementor' ),
-				'Back' => __( 'Back', 'elementor' ),
-				'Global Settings' => __( 'Global Settings', 'elementor' ),
-				'Theme Style' => __( 'Theme Style', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
+				'back' => __( 'Back', 'elementor' ),
+				'global_settings' => __( 'Global Settings', 'elementor' ),
+				'site_identity' => __( 'Site Identity', 'elementor' ),
+				'colors_and_typography' => __( 'Colors & Typography', 'elementor' ),
+				'lightbox' => __( 'Lightbox', 'elementor' ),
+				'layout_settings' => __( 'Layout Settings', 'elementor' ),
+				'theme_style' => __( 'Theme Style', 'elementor' ),
+				'add_color' => __( 'Add Color', 'elementor' ),
+				'add_style' => __( 'Add Style', 'elementor' ),
 			],
 		] );
 
