@@ -1,0 +1,26 @@
+// POPOVER: API
+$eps-popover-padding-y: 10px;
+$eps-popover-background-color: theme-colors(light);
+$eps-popover-border-radius: $eps-radius;
+//$eps-popover-arrow-size: $eps-arrow-size;
+//$eps-popover-arrow-position: 14px;
+$eps-popover-box-shadow-color: rgba(0, 0, 0, 0.15);
+$eps-popover-box-shadow-size: 0px 1px 20px; // add to globals
+$eps-popover-item-font-size: 11px;
+$eps-popover-item-line-height: 13px;
+$eps-popover-font-weight: $eps-font-weight-medium;
+$eps-popover-item-spacing-y: 5px;
+$eps-popover-item-spacing-x: 16px;
+$eps-popover-item-background-color: theme-colors(light);
+$eps-popover-item-color: tints(600);
+$eps-popover-item-hover-color: tints(700);
+$eps-popover-item-danger-hover-color: theme-colors(danger);
+
+:root {
+	--popover-background-color: #{$eps-popover-background-color};
+	--popover-item-color: #{$eps-popover-item-color};
+	--popover-item-hover-color: #{$eps-popover-item-hover-color};
+	--popover-item-danger-hover-color: #{$eps-popover-item-danger-hover-color};
+	--popover-box-shadow-color: #{$eps-popover-box-shadow-color};
+	--popover-box-shadow-size: #{$eps-popover-box-shadow-size};
+}

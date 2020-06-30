@@ -1,0 +1,44 @@
+@import "./popover-api";
+
+
+/* Suggested markup
+<ul className="eps-popover">
+        // modifiers [--danger]
+		<li className="eps-popover__item">
+		<i className="icon eicon-header eps-popover__item-icon"></i>
+		<span>Export</span>
+		</li>
+		</ul>
+*/
+
+// checkbox label
+.#{$eps-prefix}popover {
+	padding: $eps-popover-padding-y;
+	background-color: var(--popover-background-color);
+	box-shadow: var(--popover-box-shadow-size) var(--popover-box-shadow-color);
+	list-style: none;
+	max-width: 120px;
+	border-radius: $eps-popover-border-radius;
+
+	&__item {
+		padding: $eps-popover-item-spacing-y $eps-popover-item-spacing-x;
+		background-color: $eps-popover-item-background-color;
+		color: var(--popover-item-color);
+		font-size: $eps-popover-item-font-size;
+		font-weight: $eps-popover-font-weight;
+		line-height: $eps-popover-item-line-height;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+
+		&--danger{
+			&:hover{
+			--popover-item-color:var(--popover-item-danger-hover-color);
+			}
+		}
+		&-icon {
+			font-size: inherit;
+			margin-inline-end: 0.75rem;
+		}
+	}
+}
