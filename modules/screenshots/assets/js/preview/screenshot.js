@@ -49,6 +49,8 @@ class Screenshot {
 		if ( ! this.$elementor.length ) {
 			elementorCommon.helpers.consoleWarn( 'Screenshots: Elementor content was not found.' );
 
+			this.screenshotFailed();
+
 			return;
 		}
 

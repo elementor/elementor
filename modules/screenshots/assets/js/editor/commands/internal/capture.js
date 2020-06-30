@@ -16,6 +16,10 @@ export class Capture extends CommandInternalBase {
 			}
 
 			this.component.isCapturingScreenshot = false;
+
+			if ( ! elementorCommonConfig.isDebug ) {
+				iframe.remove();
+			}
 		};
 	}
 

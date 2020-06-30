@@ -31,10 +31,9 @@ class Module extends BaseModule {
 			die;
 		}
 
-		$original_headers = wp_remote_retrieve_headers( $response )->getAll();
+		$content_type = wp_remote_retrieve_headers( $response )->offsetGet( 'content-type' );
 
-		header( 'content-type: ' . $original_headers['content-type'] );
-
+		header( 'content-type: ' . $content_type );
 
 		echo $body;
 	}
@@ -53,11 +52,11 @@ class Module extends BaseModule {
 		};
 
 		$upload_dir_callback = function ( $uploads ) {
-			return array_merge($uploads, [
+			return array_merge( $uploads, [
 				'subdir' => $subdir = '/elementor/screenshots',
 				'path' => "{$uploads['basedir']}/{$subdir}",
 				'url' => "{$uploads['baseurl']}/{$subdir}",
-			]);
+			] );
 		};
 
 		add_filter( 'wp_unique_filename', $over_write_file_name_callback );
