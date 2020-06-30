@@ -60,15 +60,17 @@ export default class extends ControlBaseDataView {
 	}
 
 	addTipsyToPickerButton() {
-		let currentValue = this.getCurrentValue();
-
-		// If there is a global enabled for the control, but the global has no value
-		if ( this.getGlobalKey() && ! currentValue ) {
-			currentValue = `${ elementor.translate( 'invalid' ) } ${ elementor.translate( 'global_color' ) }`;
-		}
-
 		this.$pickerButton.tipsy( {
-			title: () => currentValue || '',
+			title: () => {
+				let currentValue = this.getCurrentValue();
+
+				// If there is a global enabled for the control, but the global has no value
+				if ( this.getGlobalKey() && ! currentValue ) {
+					currentValue = `${ elementor.translate( 'invalid' ) } ${ elementor.translate( 'global_color' ) }`;
+				}
+
+				return currentValue || '';
+			},
 			offset: 4,
 			gravity: () => 's',
 		} );
