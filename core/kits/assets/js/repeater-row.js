@@ -45,7 +45,7 @@ export default class extends RepeaterRow {
 				.find( '.elementor-control-input-wrapper' )
 				.append( this.getRemoveButton() );
 
-			globalType = 'text_style';
+			globalType = 'typography';
 		}
 
 		if ( 'color' === childView.model.get( 'type' ) || 'popover_toggle' === childView.model.get( 'type' ) ) {

@@ -98,7 +98,7 @@ class Manager {
 				'new_item' => __( 'New Item', 'elementor' ),
 				'new_global' => __( 'New Global', 'elementor' ),
 				'global_color' => __( 'Global Color', 'elementor' ),
-				'global_typography' => __( 'Text Style', 'elementor' ),
+				'global_typography' => __( 'Global Typography', 'elementor' ),
 				'invalid' => __( 'Invalid', 'elementor' ),
 			],
 		] );

@@ -123,7 +123,7 @@ class Colors_And_Typography extends Tab_Base {
 		$this->start_controls_section(
 			'section_text_style',
 			[
-				'label' => __( 'Global Text Styles', 'elementor' ),
+				'label' => __( 'Global Typography', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);

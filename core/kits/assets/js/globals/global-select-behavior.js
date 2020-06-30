@@ -244,10 +244,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		const settings = {};
 
 		if ( this.view.getGlobalKey() ) {
-			// If a global text style is already active, switch them without disabling globals
+			// If a global setting is already active, switch them without disabling globals
 			command = 'document/globals/settings';
 		} else {
-			// If the active text style is NOT a global, enable globals and apply the selected global
+			// If the active setting is NOT a global, enable globals and apply the selected global
 			command = 'document/globals/enable';
 		}
 

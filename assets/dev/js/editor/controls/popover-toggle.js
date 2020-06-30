@@ -69,7 +69,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			}
 
 			if ( 'font_size' === property ) {
-				// Set max size for Text Style previews in the select popover so it isn't too big
+				// Set max size for Typography previews in the select popover so it isn't too big
 				if ( value.size > 40 ) {
 					value.size = 40;
 				}
@@ -88,20 +88,20 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	createGlobalItemMarkup( globalData ) {
-		const $textStylePreview = jQuery( '<div>', { class: 'e-global__preview-item e-global__text-style', 'data-global-id': globalData.id } );
+		const $typographyPreview = jQuery( '<div>', { class: 'e-global__preview-item e-global__typography', 'data-global-id': globalData.id } );
 
-		$textStylePreview
+		$typographyPreview
 			.html( globalData.title )
 			.css( this.buildPreviewItemCSS( globalData.value ) );
 
-		return $textStylePreview;
+		return $typographyPreview;
 	}
 
 	getGlobalMeta() {
 		return {
 			commandName: this.getCommand(),
 			key: this.model.get( 'name' ),
-			title: elementor.translate( 'new_text_style' ),
+			title: elementor.translate( 'new_typography_setting' ),
 		};
 	}
 
@@ -127,15 +127,15 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return result.data;
 	}
 
-	buildGlobalsList( globalTextStyles ) {
+	buildGlobalsList( globalTypographies ) {
 		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
 
-		Object.values( globalTextStyles ).forEach( ( textStyle ) => {
-			// Only build markup if the text style is valid
-			if ( textStyle ) {
-				const $textStylePreview = this.createGlobalItemMarkup( textStyle );
+		Object.values( globalTypographies ).forEach( ( typography ) => {
+			// Only build markup if the typography is valid
+			if ( typography ) {
+				const $typographyPreview = this.createGlobalItemMarkup( typography );
 
-				$globalTypographyContainer.append( $textStylePreview );
+				$globalTypographyContainer.append( $typographyPreview );
 			}
 		} );
 
