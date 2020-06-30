@@ -9,13 +9,6 @@ export default class CommandBase extends ArgsObject {
 	/**
 	 * Current component.
 	 *
-	 * @type {(null|Component)}
-	 */
-	static _component = null;
-
-	/**
-	 * Current component.
-	 *
 	 * @type {Component}
 	 */
 	component;
@@ -46,8 +39,7 @@ export default class CommandBase extends ArgsObject {
 		this.currentCommand = commandsAPI.getCurrentLast();
 
 		// Assign instance of current component.
-		this.constructor._component = this.constructor._component || args.component || commandsAPI.getComponent( this.currentCommand );
-		this.component = this.constructor._component;
+		this.component = commandsAPI.getComponent( this.currentCommand );
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
