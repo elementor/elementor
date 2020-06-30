@@ -17,17 +17,26 @@ class Module extends BaseModule {
 	}
 
 	public function screenshot_proxy() {
-		if ( ! wp_verify_nonce( $_GET['nonce'], 'screenshot_proxy' ) ) {
+		if ( ! wp_verify_nonce( $_GET['nonce'], 'screenshot_proxy' ) || empty( $_GET['href'] ) ) {
 			echo '';
+			die;
 		}
 
-		if ( ! empty( $_GET['href'] ) ) {
-			$response = wp_remote_get( utf8_decode( $_GET['href'] ) );
-			$body = wp_remote_retrieve_body( $response );
-			if ( $body ) {
-				echo $body;
-			}
+		$response = wp_remote_get( utf8_decode( $_GET['href'] ) );
+
+		$body = wp_remote_retrieve_body( $response );
+
+		if ( ! $body ) {
+			echo '';
+			die;
 		}
+
+		$original_headers = wp_remote_retrieve_headers( $response )->getAll();
+
+		header( 'content-type: ' . $original_headers['content-type'] );
+
+
+		echo $body;
 	}
 
 	public function ajax_save( $data ) {

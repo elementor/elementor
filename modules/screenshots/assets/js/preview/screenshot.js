@@ -16,10 +16,8 @@ class Screenshot {
 				width: 1200,
 				height: 1500,
 			},
-			allowedCssUrls: [
-				'https://fonts.googleapis.com',
-				// 'https://kit-pro.fontawesome.com',
-				'https://use.typekit.net',
+			excludeCssUrls: [
+				'https://kit-pro.fontawesome.com',
 			],
 			timeout: 5000, // 5 secs
 			timerLabel: 'timer',
@@ -49,9 +47,9 @@ class Screenshot {
 		this.handleIFrames();
 		this.handleSlides();
 		this.hideUnnecessaryElements();
+		this.loadExternalCss();
 
 		Promise.resolve()
-			.then( this.loadExternalCss.bind( this ) )
 			.then( this.createImage.bind( this ) )
 			.then( this.createImageElement.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
@@ -144,22 +142,28 @@ class Screenshot {
 	}
 
 	/**
-	 * CSS from another server cannot be loaded,
-	 * that is the reason behind this method, fetching the content of the CSS and set it as an inline css.
-	 *
-	 * @returns {Promise<unknown[]>}
+	 * CSS from another server cannot be loaded with the current dom to image library.
+	 * this method take all the links from another domain and proxy them.
 	 */
 	loadExternalCss() {
-		const selector = this.config.allowedCssUrls.map( ( allowedCssUrl ) => {
-			return `link[href^="${ allowedCssUrl }"]`;
+		const excludeUrls = [
+			this.config.home_url,
+			...this.config.excludeCssUrls,
+		];
+
+		const notSelector = excludeUrls.map( ( url ) => {
+			return `[href^="${ url }"]`;
 		} ).join( ', ' );
 
-		return Promise.all( jQuery( selector ).map( ( index, el ) => {
+		jQuery( 'link' ).not( notSelector ).each( ( index, el ) => {
 			const $link = jQuery( el );
+			const $newLink = $link.clone();
 
-			return this.loadCss( $link.attr( 'href' ) )
-				.then( () => $link.remove() );
-		} ) );
+			$newLink.attr( 'href', this.getScreenshotProxyUrl( $link.attr( 'href' ) ) );
+
+			jQuery( 'head' ).append( $newLink );
+			$link.remove();
+		} );
 	}
 
 	/**
@@ -262,35 +266,6 @@ class Screenshot {
 	 */
 	getScreenshotProxyUrl( url ) {
 		return `${ this.config.home_url }?screenshot_proxy&nonce=${ this.config.nonce }&href=${ url }`;
-	}
-
-	/**
-	 * Load one css file.
-	 *
-	 * @param url
-	 * @returns {Promise<void>}
-	 */
-	loadCss( url ) {
-		return fetch( url )
-			.then( ( response ) => response.text() )
-			.then( ( data ) => {
-				// This is a specific use case when there is a need
-				// to load the fonts of font awesome library so we replace all the relative urls with absolute urls.
-				if ( url.startsWith( 'https://kit-pro.fontawesome.com' ) ) {
-					data = data.replace( /url\(\.\.\/webfonts/g, 'url(https://kit-pro.fontawesome.com/releases/latest/webfonts' );
-				}
-
-				return data;
-			} )
-			.then( ( data ) => {
-				const head = document.getElementsByTagName( 'head' )[ 0 ];
-				const style = document.createElement( 'style' );
-
-				style.appendChild( document.createTextNode( data ) );
-				head.appendChild( style );
-
-				return Promise.resolve();
-			} );
 	}
 
 	/**
