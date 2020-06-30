@@ -39,13 +39,10 @@
 .e-color__no-value {
 
 	.pcr-button {
-		background-image: none;
+		background-image: linear-gradient(135deg, transparent 46%, #ff3030 50%, transparent 54%);
+		background-size: cover;
 		background-color: transparent;
 		border: 1px solid #d5dadf;
-
-		&:after {
-			background: linear-gradient(135deg, transparent 46%, #ff3030 50%, transparent 54%);
-		}
 	}
 }
 

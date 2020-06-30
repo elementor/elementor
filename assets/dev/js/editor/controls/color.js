@@ -11,6 +11,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	applySavedValue() {
+		// Gets the current OR default value of the control
 		const currentValue = this.getCurrentValue();
 
 		if ( this.colorPicker ) {
@@ -56,10 +57,6 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton.on( 'click', () => this.onPickerButtonClick() );
 
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
-
-		if ( ! this.getGlobalKey() && ! this.getControlValue() ) {
-			this.$el.addClass( 'e-color__no-value' );
-		}
 	}
 
 	addTipsyToPickerButton() {
@@ -181,11 +178,13 @@ export default class extends ControlBaseDataView {
 	onPickerClear() {
 		this.isCustom = false;
 
+		// Empty the value saved in the control
 		this.setValue( '' );
 
+		// Adjust the Global select box text according to the cleared value
 		this.triggerMethod( 'value:type:change' );
 
-		this.$el.addClass( 'e-color__no-value' );
+		this.applySavedValue();
 
 		this.colorPicker.toggleClearButtonState( false );
 	}
