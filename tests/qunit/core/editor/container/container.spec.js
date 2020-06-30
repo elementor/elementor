@@ -24,14 +24,14 @@ jQuery( () => {
 			);
 		} );
 
-		QUnit.test( 'getRelatedControls(): simple', ( assert ) => {
+		QUnit.test( 'getGroupRelatedControls(): simple', ( assert ) => {
 			const excepted = [ 'typography_typography', 'typography_font_family', 'typography_font_size', 'typography_font_size_tablet', 'typography_font_size_mobile', 'typography_font_weight', 'typography_text_transform', 'typography_font_style', 'typography_text_decoration', 'typography_line_height', 'typography_line_height_tablet', 'typography_line_height_mobile', 'typography_letter_spacing', 'typography_letter_spacing_tablet', 'typography_letter_spacing_mobile', 'button_text_color' ],
 				settings = {
 					typography_typography: '',
 					button_text_color: '',
 				},
 				eButton = ElementsHelper.createAutoButton(),
-				controls = eButton.getRelatedControls( settings );
+				controls = eButton.getGroupRelatedControls( settings );
 
 			assert.deepEqual( Object.keys( controls ), excepted );
 		} );
