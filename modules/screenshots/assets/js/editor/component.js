@@ -7,6 +7,11 @@ export default class Component extends ComponentBase {
 	__construct( args = {} ) {
 		super.__construct( args );
 
+		/**
+		 * Equals to true if capturing a screenshot is on process.
+		 *
+		 * @type {boolean}
+		 */
 		this.capturingScreenshot = false;
 
 		elementorCommon.elements.$window.on( 'beforeunload', () => {

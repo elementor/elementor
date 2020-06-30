@@ -59,7 +59,7 @@ class Screenshot {
 			.then( () => {
 				window.top.postMessage( { name: 'capture-screenshot-done' }, '*' );
 
-				this.log( 'Screeenshot End.', 'timeEnd' );
+				this.log( 'Screenshot End.', 'timeEnd' );
 			} );
 	}
 
