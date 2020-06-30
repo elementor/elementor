@@ -38,7 +38,7 @@ class Module extends BaseModule {
 		$post_id = $data['post_id'];
 
 		$file_content = substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) );
-		$file_name = 'Elementor Post Screenshot ' . $post_id . '.png';
+		$file_name = 'Elementor-post-screenshot-' . $post_id . '.png';
 		$over_write_file_name_callback = function () use ( $file_name ) {
 			return $file_name;
 		};
@@ -88,7 +88,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_scripts() {
-		if ( ! $this->is_in_screenshot_mode() || ! User::is_current_user_can_edit() ) {
+		if ( ! $this->is_screenshot_mode() || ! User::is_current_user_can_edit() ) {
 			return;
 		}
 
@@ -157,7 +157,7 @@ class Module extends BaseModule {
 	/**
 	 * @return bool
 	 */
-	protected function is_in_screenshot_mode() {
+	protected function is_screenshot_mode() {
 		return isset( $_REQUEST['elementor-screenshot'] );
 	}
 
@@ -167,7 +167,7 @@ class Module extends BaseModule {
 			die;
 		}
 
-		if ( $this->is_in_screenshot_mode() ) {
+		if ( $this->is_screenshot_mode() ) {
 			show_admin_bar( false );
 		}
 

@@ -274,8 +274,8 @@ class Screenshot {
 		return fetch( url )
 			.then( ( response ) => response.text() )
 			.then( ( data ) => {
-				// This is a specific use case when we need
-				// to load the fonts of the library so we replace all the relative url with absolute.
+				// This is a specific use case when there is a need
+				// to load the fonts of font awesome library so we replace all the relative urls with absolute urls.
 				if ( url.startsWith( 'https://kit-pro.fontawesome.com' ) ) {
 					data = data.replace( /url\(\.\.\/webfonts/g, 'url(https://kit-pro.fontawesome.com/releases/latest/webfonts' );
 				}

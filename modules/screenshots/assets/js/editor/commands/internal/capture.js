@@ -2,7 +2,7 @@ import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 export class Capture extends CommandInternalBase {
 	apply() {
-		this.component.capturingScreenshot = true;
+		this.component.isCapturingScreenshot = true;
 
 		const iframe = this.createIframe();
 
@@ -15,7 +15,7 @@ export class Capture extends CommandInternalBase {
 				return;
 			}
 
-			this.component.capturingScreenshot = false;
+			this.component.isCapturingScreenshot = false;
 		};
 	}
 

@@ -12,7 +12,7 @@ export class CaptureScreenshot extends After {
 		return 'capture-screenshot';
 	}
 
-	getConditions( args = {}, result ) {
+	getConditions( args = {} ) {
 		return 'publish' === args.status;
 	}
 

@@ -1,1 +1,1 @@
-export { CaptureScreenshot } from './ui/document/save/save/capture-screenshot'
+export { CaptureScreenshot } from './ui/document/save/save/capture-screenshot';

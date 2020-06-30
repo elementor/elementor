@@ -12,10 +12,10 @@ export default class Component extends ComponentBase {
 		 *
 		 * @type {boolean}
 		 */
-		this.capturingScreenshot = false;
+		this.isCapturingScreenshot = false;
 
 		elementorCommon.elements.$window.on( 'beforeunload', () => {
-			if ( this.isCapturingScreenshot() ) {
+			if ( this.isCapturingScreenshot ) {
 				// Returns a message to confirm dialog.
 				return elementor.translate( 'before_unload_screenshot_alert' );
 			}
@@ -32,9 +32,5 @@ export default class Component extends ComponentBase {
 
 	defaultHooks() {
 		return this.importHooks( hooks );
-	}
-
-	isCapturingScreenshot() {
-		return this.capturingScreenshot;
 	}
 }
