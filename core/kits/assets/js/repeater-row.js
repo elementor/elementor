@@ -59,7 +59,7 @@ export default class extends RepeaterRow {
 	}
 
 	onModelChange( model ) {
-		if ( undefined !== model.changed.value ) {
+		if ( undefined !== model.changed.color ) {
 			this.updateColorValue();
 		}
 	}
