@@ -195,6 +195,10 @@ export default class extends ControlBaseDataView {
 			this.triggerMethod( 'unset:global:value' );
 		}
 
+		if ( this.isGlobalActive() && ! this.getControlValue() && ! this.getGlobalKey() && this.model.get( 'global' )?.default ) {
+			this.triggerMethod( 'unlink:global:default' );
+		}
+
 		// If there is a value in the control, set the clear button to active, if not, deactivate it
 		this.colorPicker.toggleClearButtonState( !! this.getCurrentValue() );
 	}

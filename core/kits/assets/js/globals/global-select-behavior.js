@@ -277,6 +277,21 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			} );
 	}
 
+	onUnlinkGlobalDefault() {
+		const globalMeta = this.view.getGlobalMeta();
+
+		$e.run( 'document/globals/unlink', {
+			container: this.view.container,
+			globalValue: this.view.model.get( 'global' ).default,
+			setting: globalMeta.key,
+		} )
+			.then( () => {
+			this.onValueTypeChange();
+
+			this.view.globalValue = null;
+		} );
+	}
+
 	createGlobalInfoTooltip() {
 		const $infoIcon = this.popover.getElements( 'widget' ).find( '.e-global__popover-title .eicon-info-circle' );
 
