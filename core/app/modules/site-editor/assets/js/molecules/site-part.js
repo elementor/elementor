@@ -26,11 +26,11 @@ export default class SitePart extends Card {
 
 		return (
 			<CardHeader>
-				<React.Fragment>
+				<>
 					<Indicator active={ true }/>
 					<Typography tagName="h1" className="card__headline">{ this.props.title }</Typography>
 					<Button text="Info" hideText={ true } icon="eicon-info-circle info-toggle" />
-				</React.Fragment>
+				</>
 			</CardHeader>
 		);
 	}
