@@ -22,7 +22,7 @@ export default class CommandDisableEnable extends CommandHistory {
 
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
-			commandInstance = $e.commands.get( data.command ).class;
+			commandInstance = $e.commands.getCommandClass( data.command );
 
 		// Upon `disable` command toggle `isRedo`.
 		if ( commandInstance.getDisableCommand() === data.command ) {

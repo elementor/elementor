@@ -203,6 +203,10 @@ module.exports = {
 
 	// target = editor/preview
 	enqueueFont( font, target ) {
+		if ( $e.devTools ) {
+			$e.devTools.log.info( `enqueueFont font: '${ font }', target: '${ target }'` );
+		}
+
 		// Backwards Compatibility
 		if ( ! target ) {
 			target = 'preview';
@@ -241,15 +245,12 @@ module.exports = {
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
-			let $document;
-
 			if ( 'editor' === target ) {
-				$document = elementorCommon.elements.$document;
-			} else {
-				$document = elementor.$previewContents;
+				// TODO: Find better solution, temporary fix, covering issue: 'fonts does not rendered in global styles'.
+				this.enqueueCSS( fontUrl, elementorCommon.elements.$document );
 			}
 
-			this.enqueueCSS( fontUrl, $document );
+			this.enqueueCSS( fontUrl, elementor.$previewContents );
 		}
 
 		this._enqueuedFonts[ target ].push( font );
