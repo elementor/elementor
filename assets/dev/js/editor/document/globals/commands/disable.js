@@ -20,6 +20,7 @@ export class Disable extends DisableEnable {
 
 					return $e.run( 'document/globals/unlink', {
 						container,
+						options: { external: true },
 						globalValue,
 						setting: globalKey,
 					} );

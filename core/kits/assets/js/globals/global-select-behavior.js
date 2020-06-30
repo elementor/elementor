@@ -284,6 +284,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			container: this.view.container,
 			globalValue: this.view.model.get( 'global' ).default,
 			setting: globalMeta.key,
+			options: { external: true },
 		} )
 			.then( () => {
 			this.onValueTypeChange();
