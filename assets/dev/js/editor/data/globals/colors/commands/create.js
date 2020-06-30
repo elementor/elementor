@@ -11,7 +11,8 @@ export class Create extends CreateBase {
 			throw new Error( `Invalid setting: control '${ setting }', not found.` );
 		}
 
-		const id = elementor.helpers.getUniqueID();
+		// `args.id` used by tests.
+		const id = args.id || elementor.helpers.getUniqueID();
 
 		result = $e.data.create( `globals/colors?id=${ id }`, {
 			title,

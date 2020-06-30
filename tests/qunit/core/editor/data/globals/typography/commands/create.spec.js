@@ -3,27 +3,40 @@ import * as eData from 'elementor-tests-qunit/mock/e-data';
 
 export const Create = () => {
 	QUnit.module( 'Create', ( hooks ) => {
+		let prevMock = false;
+
 		hooks.before( () => {
-			$e.data.cache.storage.clear();
+			prevMock = eData.removeMock( 'create', 'globals/typography' );
+
+			// Default addMock callback is return args.data merged with args.query.
 			eData.addMock( 'create', 'globals/typography' );
 			eData.attachMock();
+
+			$e.data.cache.storage.clear();
 		} );
 
 		hooks.after( () => {
-			eData.clearMock();
+			const { type, command, callback } = prevMock;
+
+			// Remove what was set locally.
+			eData.removeMock( type, command );
+
+			// Set back what was before.
+			eData.addMock( type, command, callback );
 		} );
 
 		QUnit.test( 'Simple', async ( assert ) => {
 			// Create widget.
 			const eButton = ElementsHelper.createAutoButton(),
-				random = Math.random().toString(),
-				title = 'title_' + random;
+				id = elementor.helpers.getUniqueID(),
+				title = 'title_' + id;
 
 			ElementsHelper.settings( eButton, {
 				typography_text_transform: 'uppercase',
 			} );
 
 			const result = await $e.run( 'globals/typography/create', {
+				id,
 				container: eButton,
 				setting: 'typography_typography',
 				title,
@@ -34,5 +47,3 @@ export const Create = () => {
 		} );
 	} );
 };
-
-export default Create;

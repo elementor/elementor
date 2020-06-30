@@ -3,35 +3,32 @@ import * as eData from 'elementor-tests-qunit/mock/e-data';
 export const Typography = () => {
 	QUnit.module( 'Typography', ( hooks ) => {
 		hooks.before( () => {
-			eData.addMock( 'create', 'globals/typography' );
 			eData.attachMock();
-		} );
-
-		hooks.after( () => {
-			eData.clearMock();
-			eData.restoreFetch();
+			$e.data.cache.storage.clear();
 		} );
 
 		QUnit.test( 'get', async ( assert ) => {
-			const data = { test: true };
+			const result = await $e.data.get( 'globals/typography' ),
+				data = result.data.fcf2ddc;
 
-			$e.data.setCache( $e.components.get( 'globals' ), 'globals/typography', {}, data );
+			assert.deepEqual( data.value, {
+				typography_typography: 'custom',
+				typography_font_family: 'Arial',
+			} );
 
-			eData.attachCache();
-
-			const resultId = await $e.data.get( 'globals/typography?id=test' ),
-				resultAll = await $e.data.get( 'globals/typography' );
-
-			eData.attachMock(); // Back to default.
-
-			assert.equal( resultId.data, true );
-			assert.deepEqual( resultAll.data, data );
+			assert.equal( data.title, 'test' );
 		} );
 
 		QUnit.test( 'create', async ( assert ) => {
-			const result = await $e.data.create( 'globals/typography', { test: true } );
+			// TODO: When creating its does not care about which data you pass into create.
+			const result = await $e.data.create( 'globals/typography' );
 
-			assert.equal( result.data.test, true );
+			assert.equal( result.data.id, 'fcf2ddc' );
+			assert.equal( result.data.title, 'test' );
+			assert.deepEqual( result.data.value, {
+				typography_typography: 'custom',
+				typography_font_family: 'Arial',
+			} );
 		} );
 	} );
 };
