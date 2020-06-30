@@ -37,7 +37,6 @@ class Site_Identity extends Tab_Base {
 				'default' => get_option( 'blogname' ),
 				'placeholder' => __( 'Choose name', 'elementor' ),
 				'label_block' => true,
-				'on_save' => [ $this, 'save_site_name' ],
 			]
 		);
 
@@ -83,7 +82,7 @@ class Site_Identity extends Tab_Base {
 		}
 
 		if ( isset( $data['settings']['site_description'] ) ) {
-			update_option( 'blog_description', $data['settings']['site_description'] );
+			update_option( 'blogdescription', $data['settings']['site_description'] );
 		}
 
 		if ( isset( $data['settings']['site_logo'] ) ) {

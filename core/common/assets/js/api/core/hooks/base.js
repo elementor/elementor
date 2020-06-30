@@ -318,7 +318,7 @@ export default class HooksBase extends elementorModules.Module {
 	 * @param {string} command
 	 * @param {array} callbacks
 	 * @param {{}} args
-	 * @param {*} result
+	 * @param {[]} result
 	 */
 	runCallbacks( event, command, callbacks, args, result ) {
 		const callbacksResult = [];

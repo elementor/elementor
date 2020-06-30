@@ -47,11 +47,6 @@ class Settings extends Base_Category {
 				'url' => $settings_url,
 				'keywords' => [ 'general', 'settings', 'elementor' ],
 			],
-			'style' => [
-				'title' => __( 'Style', 'elementor' ),
-				'url' => $settings_url . '#tab-style',
-				'keywords' => [ 'style', 'settings', 'elementor' ],
-			],
 			'advanced' => [
 				'title' => __( 'Advanced', 'elementor' ),
 				'url' => $settings_url . '#tab-advanced',

@@ -226,6 +226,23 @@
 			justify-content: getValueByDirection(flex-end, flex-start);
 		}
 	}
+
+	&center,
+	&start,
+	&end {
+		.elementor-field-type-submit:not(.e-form__buttons__wrapper) {
+			.elementor-button {
+				flex-basis: initial;
+			}
+		}
+
+		.e-form__buttons__wrapper {
+			&,
+			&__button {
+				flex-basis: initial;
+			}
+		}
+	}
 }
 
 .elementor-button-align- {
@@ -293,6 +310,7 @@
 	.elementor-button {
 		padding-top: 0;
 		padding-bottom: 0;
+		border: none;
 
 		& > span {
 			display: flex;

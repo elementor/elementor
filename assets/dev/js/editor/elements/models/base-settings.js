@@ -139,12 +139,30 @@ BaseSettingsModel = Backbone.Model.extend( {
 				control.styleFields = styleFields;
 			}
 
-			if ( control.fields || ( control.dynamic && control.dynamic.active ) || self.isStyleControl( control.name, controls ) ) {
+			if ( control.fields || ( control.dynamic?.active ) || self.isGlobalControl( control, controls ) || self.isStyleControl( control.name, controls ) ) {
 				styleControls.push( control );
 			}
 		} );
 
 		return styleControls;
+	},
+
+	isGlobalControl: function( control, controls ) {
+		let controlGlobalKey = control.name;
+
+		if ( control.groupType ) {
+			controlGlobalKey = control.groupPrefix + control.groupType;
+		}
+
+		const globalControl = controls[ controlGlobalKey ];
+
+		if ( ! globalControl.global?.active ) {
+			return false;
+		}
+
+		const globalValue = this.attributes.__globals__?.[ controlGlobalKey ];
+
+		return !! globalValue;
 	},
 
 	isStyleControl: function( attribute, controls ) {
@@ -189,6 +207,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 		if ( ! attributes ) {
 			attributes = this.attributes;
 		}
+
+		attributes = this.parseGlobalSettings( attributes, controls );
 
 		jQuery.each( controls, ( controlKey, control ) => {
 			if ( elementor.helpers.isActiveControl( control, attributes ) ) {
@@ -235,7 +255,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var control = this,
 				valueToParse;
 
-			if ( 'repeater' === control.type ) {
+			if ( control.is_repeater ) {
 				valueToParse = settings[ control.name ];
 				valueToParse.forEach( function( value, key ) {
 					valueToParse[ key ] = self.parseDynamicSettings( value, options, control.fields );
@@ -286,6 +306,53 @@ BaseSettingsModel = Backbone.Model.extend( {
 				settings[ control.name ][ dynamicSettings.property ] = dynamicValue;
 			} else {
 				settings[ control.name ] = dynamicValue;
+			}
+		} );
+
+		return settings;
+	},
+
+	parseGlobalSettings: function( settings, controls ) {
+		settings = elementorCommon.helpers.cloneObject( settings );
+
+		controls = controls || this.controls;
+
+		jQuery.each( controls, ( index, control ) => {
+			let valueToParse;
+
+			if ( control.is_repeater ) {
+				valueToParse = settings[ control.name ];
+
+				valueToParse.forEach( ( value, key ) => {
+					valueToParse[ key ] = this.parseGlobalSettings( value, control.fields );
+				} );
+
+				return;
+			}
+
+			valueToParse = settings.__globals__?.[ control.name ];
+
+			if ( ! valueToParse ) {
+				return;
+			}
+
+			let globalSettings = control.global;
+
+			if ( undefined === globalSettings ) {
+				globalSettings = elementor.config.controls[ control.type ].global;
+			}
+
+			if ( ! globalSettings?.active ) {
+				return;
+			}
+
+			const { command, args } = $e.data.commandExtractArgs( valueToParse ),
+				globalValue = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
+
+			if ( control.groupType ) {
+				settings[ control.name ] = 'custom';
+			} else {
+				settings[ control.name ] = globalValue;
 			}
 		} );
 
