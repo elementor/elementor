@@ -21,6 +21,8 @@ class Screenshot {
 				'https://kit-pro.fontawesome.com',
 				'https://use.typekit.net',
 			],
+			timeout: 5000, // 5 secs
+			timerLabel: 'timer',
 		};
 
 		jQuery( () => this.init() );
@@ -30,6 +32,8 @@ class Screenshot {
 	 * The main method for this class.
 	 */
 	init() {
+		this.log( 'Screeenshot init', 'time' );
+
 		this.$elementor = jQuery( ElementorScreenshotConfig.selector );
 		this.config = {
 			...this.config,
@@ -51,7 +55,10 @@ class Screenshot {
 			.then( this.createImage.bind( this ) )
 			.then( this.createImageElement.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
-			.then( this.save.bind( this ) );
+			.then( this.save.bind( this ) )
+			.then( () => {
+				this.log( 'Screeenshot End.', 'timeEnd' );
+			} );
 	}
 
 	/**
@@ -179,12 +186,12 @@ class Screenshot {
 		const timeOutPromise = new Promise( ( resolve ) => {
 			setTimeout( () => {
 				resolve();
-			}, 5000 );
+			}, this.config.timeout );
 		} );
 
 		return Promise.race( [ pageLoadedPromise, timeOutPromise ] )
 			.then( () => {
-				this.log( 'Creating screenshot.' );
+				this.log( 'Start creating screenshot.' );
 
 				return domtoimage.toPng( document.body, {} );
 			} );
@@ -239,7 +246,7 @@ class Screenshot {
 				screenshot: canvas.toDataURL( 'image/png' ),
 			},
 			success: ( url ) => {
-				this.log( `Screenshot created: ${ url }` );
+				this.log( `Screenshot created: ${ encodeURI( url ) }` );
 			},
 			error: () => {
 				this.log( 'Failed to create screenshot.' );
@@ -288,14 +295,18 @@ class Screenshot {
 	 * Log messages for debugging.
 	 *
 	 * @param message
+	 * @param timerMethod
 	 */
-	log( message ) {
+	log( message, timerMethod = 'timeLog' ) {
 		if ( ! elementorCommonConfig.isDebug ) {
 			return;
 		}
 
 		// eslint-disable-next-line no-console
 		console.log( message );
+
+		// eslint-disable-next-line no-console
+		console[ timerMethod ]( this.config.timerLabel );
 	}
 }
 
