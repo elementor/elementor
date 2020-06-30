@@ -50,6 +50,12 @@ class Embed {
 		'dailymotion' => 'https://dailymotion.com/embed/video/{VIDEO_ID}',
 	];
 
+	private static $embed_thumbnail_patterns = [
+		'youtube' => 'https://img.youtube.com/vi/{VIDEO_ID}/0.jpg',
+		'vimeo' => null,
+		'dailymotion' => null,
+	];
+
 	/**
 	 * Get video properties.
 	 *
@@ -125,6 +131,22 @@ class Embed {
 		return add_query_arg( $embed_url_params, $embed_pattern );
 	}
 
+	public static function get_embed_thumbnail_url( $video_url ) {
+		$video_properties = self::get_video_properties( $video_url );
+
+		if ( ! $video_properties ) {
+			return null;
+		}
+
+		$embed_thumbnail_pattern = self::$embed_thumbnail_patterns[ $video_properties['provider'] ];
+
+		$replacements = [
+			'{VIDEO_ID}' => $video_properties['video_id'],
+		];
+
+		return str_replace( array_keys( $replacements ), $replacements, $embed_thumbnail_pattern );
+	}
+
 	/**
 	 * Get embed HTML.
 	 *
@@ -187,5 +209,15 @@ class Embed {
 
 		/** This filter is documented in wp-includes/class-oembed.php */
 		return apply_filters( 'oembed_result', $iframe_html, $video_url, $frame_attributes );
+	}
+
+	public static function get_embed_thumbnail_html( $video_url ) {
+		$video_embed_thumbnail_url = self::get_embed_thumbnail_url( $video_url );
+
+		if ( ! $video_embed_thumbnail_url ) {
+			return null;
+		}
+
+		return "<img src='{$video_embed_thumbnail_url}' alt='' />";
 	}
 }
