@@ -19,7 +19,7 @@ class Screenshot {
 			excludedCssUrls: [
 				'https://kit-pro.fontawesome.com',
 			],
-			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
+			timeout: 1500, // Wait until screenshot taken or fail in 15 secs.
 			render_timeout: 5000, // Wait until all the element will be loaded or 5 sec and then take screenshot.
 			timerLabel: 'timer',
 		};
@@ -29,7 +29,7 @@ class Screenshot {
 		 *
 		 * @type {number|null}
 		 */
-		this.timeoutTimer = null;
+		this.timeoutTimer = setTimeout( this.screenshotFailed.bind( this ), this.config.timeout );
 
 		jQuery( () => this.init() );
 	}
@@ -51,8 +51,6 @@ class Screenshot {
 
 			return;
 		}
-
-		this.timeoutTimer = setTimeout( this.screenshotFailed.bind( this ), this.config.timeout );
 
 		this.handleIFrames();
 		this.handleSlides();
