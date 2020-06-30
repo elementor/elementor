@@ -52,7 +52,16 @@ class Module extends BaseModule {
 			return $file_name;
 		};
 
+		$upload_dir_callback = function ( $uploads ) {
+			return array_merge($uploads, [
+				'subdir' => $subdir = '/elementor/screenshots',
+				'path' => "{$uploads['basedir']}/{$subdir}",
+				'url' => "{$uploads['baseurl']}/{$subdir}",
+			]);
+		};
+
 		add_filter( 'wp_unique_filename', $over_write_file_name_callback );
+		add_filter( 'upload_dir', $upload_dir_callback );
 
 		$upload = wp_upload_bits(
 			$file_name,
@@ -60,6 +69,7 @@ class Module extends BaseModule {
 			base64_decode( $file_content )
 		);
 
+		remove_filter( 'upload_dir', $upload_dir_callback );
 		remove_filter( 'wp_unique_filename', $over_write_file_name_callback );
 
 		$attachment_data = get_post_meta( $post_id, '_elementor_screenshot', true );

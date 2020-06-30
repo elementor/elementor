@@ -19,7 +19,7 @@ class Screenshot {
 			excludedCssUrls: [
 				'https://kit-pro.fontawesome.com',
 			],
-			timeout: 1500, // Wait until screenshot taken or fail in 15 secs.
+			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
 			render_timeout: 5000, // Wait until all the element will be loaded or 5 sec and then take screenshot.
 			timerLabel: 'timer',
 		};
