@@ -327,7 +327,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'name' => 'typography',
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_ACCENT,
+					'default' => Colors_And_Typography::TYPOGRAPHY_ACCENT,
 				],
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
 				'condition' => [
