@@ -231,7 +231,12 @@ class Manager extends BaseModule {
 
 		// Run reset api.
 		$request = new \WP_REST_Request( $method, $endpoint );
-		$request->set_query_params( $args );
+
+		if ( 'GET' === $method ) {
+			$request->set_query_params( $args );
+		} else {
+			$request->set_body_params( $args );
+		}
 
 		return rest_do_request( $request );
 	}
@@ -326,7 +331,7 @@ class Manager extends BaseModule {
 		$command = $extracted_command->command;
 		$args = $extracted_command->args;
 
-		$format = isset( $manager->command_formats[ $command ] ) ? $manager->command_formats[ $command ] : false;
+		$format = isset( $this->command_formats[ $command ] ) ? $this->command_formats[ $command ] : false;
 
 		$command_processors = $controller_instance->get_processors( $command );
 

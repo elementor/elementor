@@ -433,30 +433,6 @@ abstract class Document extends Controls_Stack {
 		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
-	public function add_repeater_row( $control_id, $item ) {
-		$meta_key = Manager::META_KEY;
-		$document_settings = $this->get_meta( $meta_key );
-
-		if ( ! $document_settings ) {
-			$document_settings = [];
-		}
-
-		if ( ! isset( $document_settings[ $control_id ] ) ) {
-			$document_settings[ $control_id ] = [];
-		}
-
-		$document_settings[ $control_id ][] = $item;
-
-		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
-		$page_settings_manager->save_settings( $document_settings, $this->get_id() );
-
-		$autosave = $this->get_autosave();
-
-		if ( $autosave ) {
-			$autosave->add_repeater_row( $control_id, $item );
-		}
-	}
-
 	/**
 	 * @since 2.9.0
 	 * @access protected

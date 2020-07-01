@@ -248,6 +248,7 @@
 			"name": "section_style"
 		},
 		"typography_typography": {
+			"groupPrefix": "typography_",
 			"type": "popover_toggle",
 			"tab": "style",
 			"section": "section_style",
