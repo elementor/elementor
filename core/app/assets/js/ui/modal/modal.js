@@ -43,12 +43,15 @@ ModalProvider.propTypes = {
 
 class Modal extends React.Component {
 	modalRef = React.createRef();
+	closeRef = React.createRef();
 
 	closeModal = ( e ) => {
 		const { modalProps } = this.props;
-		const node = this.modalRef.current;
+		const node = this.modalRef.current,
+			closeNode = this.closeRef.current,
+			isInCloseNode = closeNode && closeNode.contains( e.target );
 		// ignore if click is inside the modal
-		if ( node && node.contains( e.target ) ) {
+		if ( node && node.contains( e.target ) && ! isInCloseNode ) {
 			return;
 		}
 
@@ -68,6 +71,9 @@ class Modal extends React.Component {
 		return modalProps.show ? (
 			<div className="modal-overlay" ref={this.modalRef}>
 				<div className="modal">
+					<div className="modal-close-wrapper" ref={ this.closeRef }>
+						<Button text={ __( 'Close', 'elementor' ) } icon="eicon eicon-close" onClick={ this.closeModal } />
+					</div>
 					{children}
 				</div>
 			</div>
