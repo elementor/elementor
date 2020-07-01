@@ -113,10 +113,18 @@ class Module extends BaseModule {
 
 		update_post_meta( $post_id, '_elementor_screenshot', $attachment_data );
 
+		$disable_thumbnail_sizes_filter = function () {
+			return [];
+		};
+
+		add_filter( 'intermediate_image_sizes_advanced', $disable_thumbnail_sizes_filter );
+
 		wp_update_attachment_metadata(
 			$attachment_id,
 			wp_generate_attachment_metadata( $attachment_id, $upload['file'] )
 		);
+
+		remove_filter( 'intermediate_image_sizes_advanced', $disable_thumbnail_sizes_filter );
 
 		return $upload['url'];
 	}
