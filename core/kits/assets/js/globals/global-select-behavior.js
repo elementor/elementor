@@ -51,6 +51,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	updateSelectBoxText( value ) {
+		if ( ! this.ui.globalControlSelected ) {
+			return;
+		}
+
 		let selectBoxText = '';
 
 		if ( value ) {
