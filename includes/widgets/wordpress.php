@@ -88,7 +88,7 @@ class Widget_WordPress extends Widget_Base {
 		if ( $this->is_pojo_widget() ) {
 			$category = 'pojo';
 		} else {
-			$category = 'wordpress'; // WPCS: spelling ok.
+			$category = 'wordpress';
 		}
 		return [ $category ];
 	}

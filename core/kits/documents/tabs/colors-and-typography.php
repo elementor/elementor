@@ -5,6 +5,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
 use Elementor\Group_Control_Typography;
+use Elementor\Plugin;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +23,8 @@ class Colors_And_Typography extends Tab_Base {
 	const TYPOGRAPHY_SECONDARY = 'globals/typography?id=secondary';
 	const TYPOGRAPHY_TEXT = 'globals/typography?id=text';
 	const TYPOGRAPHY_ACCENT = 'globals/typography?id=accent';
+
+	const TYPOGRAPHY_GROUP_PREFIX = 'typography';
 
 	public function get_id() {
 		return 'colors-and-typography';
@@ -62,11 +65,39 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
+		$default_colors = [];
+
+		if ( Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+			$default_colors = [
+				[
+					'_id' => 'primary',
+					'title' => __( 'Primary', 'elementor' ),
+					'color' => '#6ec1e4',
+				],
+				[
+					'_id' => 'secondary',
+					'title' => __( 'Secondary', 'elementor' ),
+					'color' => '#54595f',
+				],
+				[
+					'_id' => 'text',
+					'title' => __( 'Text', 'elementor' ),
+					'color' => '#7a7a7a',
+				],
+				[
+					'_id' => 'accent',
+					'title' => __( 'Accent', 'elementor' ),
+					'color' => '#61ce70',
+				],
+			];
+		}
+
 		$this->add_control(
 			'system_colors',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
+				'default' => $default_colors,
 				'item_actions' => [
 					'add' => false,
 					'remove' => false,
@@ -105,7 +136,7 @@ class Colors_And_Typography extends Tab_Base {
 		$repeater->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name' => 'styles',
+				'name' => self::TYPOGRAPHY_GROUP_PREFIX,
 				'label' => '',
 				'fields_options' => [
 					'font_family' => [
@@ -152,11 +183,52 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
+		$default_typography = [];
+
+		if ( Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
+
+			$typography_key = self::TYPOGRAPHY_GROUP_PREFIX . '_typography';
+			$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_family';
+			$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . '_font_weight';
+
+			$default_typography = [
+				[
+					'_id' => 'primary',
+					'title' => __( 'Primary', 'elementor' ),
+					$typography_key => 'custom',
+					$font_family_key => 'Roboto',
+					$font_weight_key => '600',
+				],
+				[
+					'_id' => 'secondary',
+					'title' => __( 'Secondary', 'elementor' ),
+					$typography_key => 'custom',
+					$font_family_key => 'Roboto Slab',
+					$font_weight_key => '400',
+				],
+				[
+					'_id' => 'text',
+					'title' => __( 'Text', 'elementor' ),
+					$typography_key => 'custom',
+					$font_family_key => 'Roboto',
+					$font_weight_key => '400',
+				],
+				[
+					'_id' => 'accent',
+					'title' => __( 'Accent', 'elementor' ),
+					$typography_key => 'custom',
+					$font_family_key => 'Roboto',
+					$font_weight_key => '500',
+				],
+			];
+		}
+
 		$this->add_control(
 			'system_typography',
 			[
 				'type' => Global_Style_Repeater::CONTROL_TYPE,
 				'fields' => $repeater->get_controls(),
+				'default' => $default_typography,
 				'item_actions' => [
 					'add' => false,
 					'remove' => false,

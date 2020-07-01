@@ -86,7 +86,7 @@ class Editor {
 	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
 	 */
 	public function init( $die = true ) {
-		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
+		if ( empty( $_REQUEST['post'] ) ) {
 			return;
 		}
 
@@ -340,8 +340,8 @@ class Editor {
 		$plugin = Plugin::$instance;
 
 		// Reset global variable
-		$wp_styles = new \WP_Styles(); // WPCS: override ok.
-		$wp_scripts = new \WP_Scripts(); // WPCS: override ok.
+		$wp_styles = new \WP_Styles(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_scripts = new \WP_Scripts(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
@@ -605,9 +605,11 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Global Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'preferences' => __( 'Preferences', 'elementor' ),
+				'site_editor' => __( 'Site Editor', 'elementor' ),
+				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'more' => __( 'More', 'elementor' ),
+				'navigate_from_page' => __( 'Navigate From Page', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
 				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 

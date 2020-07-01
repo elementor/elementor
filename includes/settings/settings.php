@@ -66,7 +66,7 @@ class Settings extends Settings_Page {
 	public function register_admin_menu() {
 		global $menu;
 
-		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // WPCS: override ok.
+		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
@@ -606,11 +606,5 @@ class Settings extends Settings_Page {
 
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', [ $this, 'menu_order' ] );
-
-		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
-			foreach ( [ 'add', 'update' ] as $action ) {
-				add_action( "{$action}_option_elementor_viewport_{$breakpoint_key}", [ 'Elementor\Core\Responsive\Responsive', 'compile_stylesheet_templates' ] );
-			}
-		}
 	}
 }
