@@ -1,4 +1,4 @@
-import "./menu.scss";
+import './menu.scss';
 import Button from '../molecules/button';
 
 export default function Menu( props ) {

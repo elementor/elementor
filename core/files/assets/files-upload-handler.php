@@ -113,7 +113,7 @@ abstract class Files_Upload_Handler {
 	 *
 	 * @return mixed
 	 */
-	private function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
+	public function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
 		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
 			return $data;
 		}

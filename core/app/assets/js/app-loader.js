@@ -1,5 +1,3 @@
-import './app-loader.scss';
-
 class AppLoader {
 	selector = 'a.elementor-app-link';
 	iframe;
@@ -31,7 +29,16 @@ class AppLoader {
 		if ( ! this.iframe ) {
 			this.iframe = document.createElement( 'iframe' );
 			this.iframe.className = 'elementor-app-iframe';
-			this.iframe.style.display = 'none';
+			this.iframe.style.cssText = '' +
+				'display: none;' +
+				'width: 100%;' +
+				'height: 100%;' +
+				'position: absolute;' +
+				'top: 0;' +
+				'left: 0;' +
+				'z-index: 99999; /* Over WP Admin Bar */' +
+				'background-color: rgba(0, 0, 0, 0.8);';
+
 			document.body.appendChild( this.iframe );
 		}
 

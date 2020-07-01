@@ -1,3 +1,4 @@
+import AllPartsButton from '../organisms/all-parts-button';
 import Layout from '../templates/layout';
 import SiteParts from '../organisms/site-parts';
 import CardOverlay from 'elementor-app/ui/card/card-overlay';
@@ -24,7 +25,7 @@ export default function Promotion() {
 	};
 
 	return (
-		<Layout>
+		<Layout allPartsButton={ <AllPartsButton /> } >
 			<section className="site-editor__promotion">
 				<div className="u-mb-20 u-d-flex">
 					<div className="col-7">

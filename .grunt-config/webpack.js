@@ -45,6 +45,7 @@ const moduleRules = {
 							[ '@babel/plugin-proposal-class-properties' ],
 							[ '@babel/plugin-transform-runtime' ],
 							[ '@babel/plugin-transform-modules-commonjs' ],
+							[ '@babel/plugin-proposal-optional-chaining' ],
 						],
 					},
 				},
@@ -76,15 +77,29 @@ const entry = {
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/tests.js' ),
 };
 
-const webpackConfig = {
+const externals = {
+	'@wordpress/i18n': 'wp.i18n',
+		react: 'React',
+		'@elementor/app-ui': 'elementorAppPackages.appUi',
+		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+		'@elementor/router': 'elementorAppPackages.router',
+};
+
+const baseConfig = {
 	target: 'web',
 	context: __dirname,
 	devtool: 'source-map',
+	externals,
+	module: moduleRules,
+	resolve: aliasList,
+};
+
+const webpackConfig = Object.assign( {}, baseConfig, {
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
 		filename: '[name].js',
-		devtoolModuleFilenameTemplate: '../[resource]'
+		devtoolModuleFilenameTemplate: '../[resource]',
 	},
 	plugins: [
 		new webpack.ProvidePlugin( {
@@ -93,30 +108,16 @@ const webpackConfig = {
 			__: ['@wordpress/i18n', '__'],
 		} )
 	],
-	module: moduleRules,
-	resolve: aliasList,
 	entry: entry,
 	watch: true,
-	externals: {
-		'@wordpress/i18n': 'wp.i18n',
-		react: 'React',
-		'@elementor/app-ui': 'elementorAppPackages.appUi',
-		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-		'@elementor/router': 'elementorAppPackages.router',
-	},
-};
+} );
 
-const webpackProductionConfig = {
-	target: 'web',
-	context: __dirname,
-	devtool: 'source-map',
+const webpackProductionConfig = Object.assign( {}, baseConfig, {
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
-		filename: '[name].js'
+		filename: '[name].js',
 	},
-	module: moduleRules,
-	resolve: aliasList,
 	entry: {},
 	performance: { hints: false },
 	optimization: {
@@ -130,7 +131,7 @@ const webpackProductionConfig = {
 			} ),
 		],
 	},
-};
+} );
 
 // Add minified entry points
 for ( const entryPoint in entry ) {

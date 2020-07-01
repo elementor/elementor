@@ -26,7 +26,13 @@ export default class SiteEditor {
 				title: __( 'Header', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/header.svg',
-					docs: 'https://docs.elementor.com/site-editor-header',
+				},
+				tooltip_data: {
+					title: __( 'What is a Global Header?', 'elementor' ),
+					content: __( 'The Global Header allows you to easily design and edit custom WordPress headers so you are no longer constrained by your theme’s header design limitations.', 'elementor' ),
+					tip: __( 'You can create multiple headers, and assign each to different areas of your site.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-header',
+					video_url: 'https://www.youtube.com/watch?v=tDePkL-1tu4',
 				},
 			},
 			{
@@ -35,7 +41,13 @@ export default class SiteEditor {
 				title: __( 'Footer', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/footer.svg',
-					docs: 'https://docs.elementor.com/site-editor-footer',
+				},
+				tooltip_data: {
+					title: __( 'What is a Global Footer?', 'elementor' ),
+					content: __( 'The Global Footer allows you to easily design and edit custom WordPress footers without the limits of your theme’s footer design constraints', 'elementor' ),
+					tip: __( 'You can create multiple footers, and assign each to different areas of your site.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-footer',
+					video_url: 'https://www.youtube.com/watch?v=ob7SMEfVRfc',
 				},
 			},
 			{
@@ -44,7 +56,13 @@ export default class SiteEditor {
 				title: __( 'Single Page', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/single-page.svg',
-					docs: 'https://docs.elementor.com/site-editor-single-page',
+				},
+				tooltip_data: {
+					title: __( 'What is a Global Page?', 'elementor' ),
+					content: __( 'A global page template allows you to easily create the layout and style of pages, ensuring design consistency across all the pages of your site.', 'elementor' ),
+					tip: __( 'You can create multiple global page templates, and assign each to different areas of your site.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-single-page',
+					video_url: 'https://www.youtube.com/watch?v=5LWrOIAGOsc',
 				},
 			},
 			{
@@ -53,7 +71,13 @@ export default class SiteEditor {
 				title: __( 'Single Post', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/single-post.svg',
-					docs: 'https://docs.elementor.com/site-editor-single-post',
+				},
+				tooltip_data: {
+					title: __( 'What is a Global Post?', 'elementor' ),
+					content: __( 'A global post template allows you to easily design the layout and style of posts, ensuring a design consistency throughout all your blog posts, for example.', 'elementor' ),
+					tip: __( 'You can create multiple global post templates, and assign each to a different category.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-single-post',
+					video_url: 'https://www.youtube.com/watch?v=KMPVOt_1F2A',
 				},
 			},
 			{
@@ -62,7 +86,13 @@ export default class SiteEditor {
 				title: __( 'Archive', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/archive.svg',
-					docs: 'https://docs.elementor.com/site-editor-archive',
+				},
+				tooltip_data: {
+					title: __( 'What is a Global Archive?', 'elementor' ),
+					content: __( 'A global archive template allows you to easily design the layout and style of archive pages - those pages that show a list of posts (e.g. a blog’s list of recent posts), which may be filtered by terms such as authors, categories, tags, search results, etc.', 'elementor' ),
+					tip: __( 'If you’d like a different style for a specific category, it’s easy to create a separate global archive template whose condition is to only display when users are viewing that category’s list of posts.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-archive',
+					video_url: __( 'https://www.youtube.com/watch?v=7rDIS1Li4jM', 'elementor' ),
 				},
 			},
 			{
@@ -71,7 +101,13 @@ export default class SiteEditor {
 				title: __( 'Search Results', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/search-results.svg',
-					docs: 'https://docs.elementor.com/site-editor-search-results',
+				},
+				tooltip_data: {
+					title: __( 'What are Search Results templates?', 'elementor' ),
+					content: __( 'You can easily control the layout and design of the Search Results page with the Search Results template, which is simply a special archive template just for displaying search results.', 'elementor' ),
+					tip: __( 'You can customize the message if there are no results for the search term.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-search-results',
+					video_url: 'https://www.youtube.com/watch?v=kPAUEShgdoo',
 				},
 			},
 			{
@@ -80,7 +116,13 @@ export default class SiteEditor {
 				title: __( 'Product', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/product.svg',
-					docs: 'https://docs.elementor.com/site-editor-product',
+				},
+				tooltip_data: {
+					title: __( 'What is a Global Product?', 'elementor' ),
+					content: __( 'A global product template allows you to easily design the layout and style of WooCommerce single product pages, and apply that template to various conditions that you assign.', 'elementor' ),
+					tip: __( 'You can create multiple global product templates, and assign each to different types of products, enabling a custom design for each group of similar products.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-product',
+					video_url: 'https://www.youtube.com/watch?v=F2gyAeZdU9s',
 				},
 			},
 			{
@@ -89,16 +131,13 @@ export default class SiteEditor {
 				title: __( 'Products', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/products.svg',
-					docs: 'https://docs.elementor.com/site-editor-products',
 				},
-			},
-			{
-				type: 'custom',
-				icon: 'eicon-custom',
-				title: __( 'Custom', 'elementor' ),
-				urls: {
-					thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN89B8AAskB44g04okAAAAASUVORK5CYII=',
-					docs: 'https://docs.elementor.com/site-editor-custom',
+				tooltip_data: {
+					title: __( 'What is a Global Products Archive?', 'elementor' ),
+					content: __( 'A global archive product template allows you to easily design the layout and style of your WooCommerce shop page or other product archive pages - those pages that show a list of products, which may be filtered by terms such as categories, tags, etc.', 'elementor' ),
+					tip: __( 'You can create multiple global archive product templates, and assign each to different categories of products. This gives you the freedom to customize the appearance for each type of product being shown.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-products',
+					video_url: 'https://www.youtube.com/watch?v=F2gyAeZdU9s',
 				},
 			},
 			{
@@ -107,7 +146,13 @@ export default class SiteEditor {
 				title: __( 'Error 404', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/error-404.svg',
-					docs: 'https://docs.elementor.com/site-editor-error-404',
+				},
+				tooltip_data: {
+					title: __( 'What is a 404 Page?', 'elementor' ),
+					content: __( 'A 404 page template allows you to easily design the layout and style of the page that is displayed when a visitor arrives at a page that does not exist.', 'elementor' ),
+					tip: __( 'Keep your site\'s visitors happy when they get lost by displaying your recent posts, a search bar, or any information that might help the user find what they were looking for.', 'elementor' ),
+					docs: 'https://go.elementor.com/site-editor-error-404',
+					video_url: 'https://www.youtube.com/watch?v=Z2GoYYbWciU',
 				},
 			},
 			];
