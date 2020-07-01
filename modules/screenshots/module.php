@@ -12,10 +12,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	/**
+	 * Module name.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return 'screenshots';
 	}
 
+	/**
+	 * Creates proxy for css and images,
+	 * dom to image libraries cannot load content from another origin.
+	 */
 	public function screenshot_proxy() {
 		if ( ! wp_verify_nonce( $_GET['nonce'], 'screenshot_proxy' ) || empty( $_GET['href'] ) ) {
 			echo '';
@@ -38,6 +47,13 @@ class Module extends BaseModule {
 		echo $body;
 	}
 
+	/**
+	 * Save screenshot and attached it to the post.
+	 *
+	 * @param $data
+	 *
+	 * @return string
+	 */
 	public function ajax_save( $data ) {
 		if ( empty( $data['screenshot'] ) ) {
 			return false;
@@ -105,6 +121,9 @@ class Module extends BaseModule {
 		return $upload['url'];
 	}
 
+	/**
+	 * Load screenshot scripts.
+	 */
 	public function enqueue_scripts() {
 		if ( ! $this->is_screenshot_mode() || ! User::is_current_user_can_edit() ) {
 			return;
@@ -144,6 +163,8 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Register screenshots action.
+	 *
 	 * @param \Elementor\Core\Common\Modules\Ajax\Module $ajax_manager
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
@@ -173,14 +194,28 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Checks if is in screenshot mode.
+	 *
 	 * @return bool
 	 */
 	protected function is_screenshot_mode() {
 		return isset( $_REQUEST['elementor-screenshot'] );
 	}
 
+	/**
+	 * Checks if is in proxy mode.
+	 *
+	 * @return bool
+	 */
+	protected function is_screenshot_proxy_mode() {
+		return isset( $_REQUEST['screenshot_proxy'] );
+	}
+
+	/**
+	 * Module constructor.
+	 */
 	public function __construct() {
-		if ( isset( $_REQUEST['screenshot_proxy'] ) ) {
+		if ( $this->is_screenshot_proxy_mode() ) {
 			$this->screenshot_proxy();
 			die;
 		}
