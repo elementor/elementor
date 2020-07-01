@@ -159,9 +159,9 @@ class Screenshot {
 			...this.config.excludedCssUrls,
 		];
 
-		const notSelector = excludedUrls.map( ( url ) => {
-			return `[href^="${ url }"]`;
-		} ).join( ', ' );
+		const notSelector = excludedUrls
+			.map( ( url ) => `[href^="${ url }"]` )
+			.join( ', ' );
 
 		jQuery( 'link' ).not( notSelector ).each( ( index, el ) => {
 			const $link = jQuery( el );
@@ -246,9 +246,7 @@ class Screenshot {
 		image.src = dataUrl;
 
 		return new Promise( ( resolve ) => {
-			image.onload = () => {
-				resolve( image );
-			};
+			image.onload = () => resolve( image );
 		} );
 	}
 
@@ -264,7 +262,7 @@ class Screenshot {
 		const ratio = this.config.crop.width / image.width;
 
 		cropCanvas.width = this.config.crop.width;
-		cropCanvas.height = this.config.crop.height;
+		cropCanvas.height = this.config.crop.height > image.height ? image.height : this.config.crop.height;
 
 		cropContext.drawImage( image, 0, 0, image.width, image.height, 0, 0, image.width * ratio, image.height * ratio );
 
