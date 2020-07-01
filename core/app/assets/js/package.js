@@ -9,6 +9,7 @@ import CardOverlay from './ui/card/card-overlay';
 import Icon from './ui/atoms/icon';
 import Menu from './ui/menu/menu';
 import MenuItem from './ui/menu/menu-item';
+import ModalProvider from './ui/modal/modal';
 import NotFound from './pages/not-found';
 import Page from './layout/page';
 import Typography from './ui/atoms/typography';
@@ -24,6 +25,7 @@ export default {
 	Icon,
 	Menu,
 	MenuItem,
+	ModalProvider,
 	NotFound,
 	Page,
 	Typography,
