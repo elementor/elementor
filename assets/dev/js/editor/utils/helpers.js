@@ -40,14 +40,6 @@ module.exports = {
 		this.enqueueCSS( url, elementorCommon.elements.$document );
 	},
 
-	/**
-	 * @deprecated 2.6.0
-	 */
-	enqueueStylesheet( url ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
-		this.enqueuePreviewStylesheet( url );
-	},
-
 	fetchInlineSvg( svgUrl, callback = false ) {
 		fetch( svgUrl )
 			.then( ( response ) => response.ok ? response.text() : '' )
@@ -440,12 +432,6 @@ module.exports = {
 		return _.isEmpty( hasFields );
 	},
 
-	cloneObject( object ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
-
-		return elementorCommon.helpers.cloneObject( object );
-	},
-
 	disableElementEvents( $element ) {
 		$element.each( function() {
 			const currentPointerEvents = this.style.pointerEvents;
@@ -473,12 +459,6 @@ module.exports = {
 				.removeData( 'backup-pointer-events' )
 				.css( 'pointer-events', backupPointerEvents );
 		} );
-	},
-
-	wpColorPicker( $element ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
-
-		return new ColorPicker( { picker: { el: $element } } );
 	},
 
 	isInViewport( element, html ) {

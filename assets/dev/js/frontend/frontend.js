@@ -19,15 +19,6 @@ class Frontend extends elementorModules.ViewModule {
 		this.config = elementorFrontendConfig;
 	}
 
-	// TODO: BC since 2.5.0
-	get Module() {
-		if ( this.isEditMode() ) {
-			parent.elementorCommon.helpers.hardDeprecated( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
-		}
-
-		return elementorModules.frontend.handlers.Base;
-	}
-
 	getDefaultSettings() {
 		return {
 			selectors: {

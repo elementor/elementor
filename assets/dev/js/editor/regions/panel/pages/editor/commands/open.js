@@ -3,6 +3,7 @@ import CommandBase from 'elementor-api/modules/command-base';
 export class Open extends CommandBase {
 	apply( args ) {
 		if ( ! this.component.setDefaultTab( args ) ) {
+			// TODO: - Delete BC.
 			elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
 
 			args.model.trigger( 'request:edit' );

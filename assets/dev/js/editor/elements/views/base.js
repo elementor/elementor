@@ -211,16 +211,6 @@ BaseElementView = BaseContainer.extend( {
 
 		const editModel = this.getEditModel();
 
-		if ( this.collection && this.onCollectionChanged ) {
-			elementorCommon.helpers.softDeprecated( 'onCollectionChanged', '2.8.0', '$e.hooks' );
-			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
-		}
-
-		if ( this.onSettingsChanged ) {
-			elementorCommon.helpers.softDeprecated( 'onSettingsChanged', '2.8.0', '$e.hooks' );
-			this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged );
-		}
-
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
 			.listenTo( this.model, 'request:edit', this.onEditRequest )
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
@@ -256,59 +246,6 @@ BaseElementView = BaseContainer.extend( {
 
 	attachElContent: function( html ) {
 		this.$el.empty().append( this.getHandlesOverlay(), html );
-	},
-
-	startTransport() {
-		elementorCommon.helpers.softDeprecated( 'element.startTransport', '2.8.0', "$e.run( 'document/elements/copy' )" );
-
-		$e.run( 'document/elements/copy', {
-			container: this.getContainer(),
-		} );
-	},
-
-	copy() {
-		elementorCommon.helpers.softDeprecated( 'element.copy', '2.8.0', "$e.run( 'document/elements/copy' )" );
-
-		$e.run( 'document/elements/copy', {
-			container: this.getContainer(),
-		} );
-	},
-
-	cut() {
-		elementorCommon.helpers.softDeprecated( 'element.cut', '2.8.0' );
-	},
-
-	paste() {
-		elementorCommon.helpers.softDeprecated( 'element.paste', '2.8.0', "$e.run( 'document/elements/paste' )" );
-
-		$e.run( 'document/elements/paste', {
-			container: this.getContainer(),
-			at: this._parent.collection.indexOf( this.model ),
-		} );
-	},
-
-	duplicate() {
-		elementorCommon.helpers.softDeprecated( 'element.duplicate', '2.8.0', "$e.run( 'document/elements/duplicate' )" );
-
-		$e.run( 'document/elements/duplicate', {
-			container: this.getContainer(),
-		} );
-	},
-
-	pasteStyle() {
-		elementorCommon.helpers.softDeprecated( 'element.pasteStyle', '2.8.0', "$e.run( 'document/elements/paste-style' )" );
-
-		$e.run( 'document/elements/paste-style', {
-			container: this.getContainer(),
-		} );
-	},
-
-	resetStyle() {
-		elementorCommon.helpers.softDeprecated( 'element.resetStyle', '2.8.0', "$e.run( 'document/elements/reset-style' )" );
-
-		$e.run( 'document/elements/reset-style', {
-			container: this.getContainer(),
-		} );
 	},
 
 	isStyleTransferControl( control ) {

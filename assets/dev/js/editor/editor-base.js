@@ -50,36 +50,11 @@ export default class EditorBase extends Marionette.Application {
 	 * TODO: All of the following entries should move to `elementorModules.editor`
 	 */
 	modules = {
-		// TODO: Deprecated alias since 2.3.0
-		get Module() {
-			elementorCommon.helpers.hardDeprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
-
-			return elementorModules.Module;
-		},
 		components: {
-			templateLibrary: {
-				views: {
-					// TODO: Deprecated alias since 2.4.0
-					get BaseModalLayout() {
-						elementorCommon.helpers.hardDeprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
-
-						return elementorModules.common.views.modal.Layout;
-					},
-				},
-			},
 			saver: {
 				behaviors: {
 					FooterSaver: require( './document/save/behaviors/footer-saver' ),
 				},
-			},
-		},
-		saver: {
-			get footerBehavior() {
-				elementorCommon.helpers.softDeprecated( 'elementor.modules.saver.footerBehavior.',
-					'2.9.0',
-					'elementor.modules.components.saver.behaviors.FooterSaver' );
-
-				return elementor.modules.components.saver.behaviors.FooterSaver;
 			},
 		},
 		controls: {
@@ -122,12 +97,6 @@ export default class EditorBase extends Marionette.Application {
 		},
 		elements: {
 			models: {
-				// TODO: Deprecated alias since 2.4.0
-				get BaseSettings() {
-					elementorCommon.helpers.hardDeprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
-
-					return elementorModules.editor.elements.models.BaseSettings;
-				},
 				Element: require( 'elementor-elements/models/element' ),
 			},
 			views: {
@@ -147,14 +116,6 @@ export default class EditorBase extends Marionette.Application {
 						Menu: require( 'elementor-panel/pages/menu/menu' ),
 					},
 				},
-			},
-		},
-		views: {
-			// TODO: Deprecated alias since 2.4.0
-			get ControlsStack() {
-				elementorCommon.helpers.hardDeprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
-
-				return elementorModules.editor.views.ControlsStack;
 			},
 		},
 	};
@@ -803,8 +764,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addBackgroundClickArea( document );
 
-		this.addDeprecatedConfigProperties();
-
 		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
@@ -978,69 +937,6 @@ export default class EditorBase extends Marionette.Application {
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
 			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
-		} );
-	}
-
-	addDeprecatedConfigProperties() {
-		const map = {
-			data: {
-				replacement: 'elements',
-				value: () => elementor.config.document.elements,
-			},
-			current_user_can_publish: {
-				replacement: 'user.can_publish',
-				value: () => elementor.config.document.user.can_publish,
-			},
-			locked_user: {
-				replacement: '',
-				value: () => elementor.config.document.user.locked,
-			},
-			revisions_enabled: {
-				replacement: 'revisions.enabled',
-				value: () => elementor.config.document.revisions.enabled,
-			},
-			current_revision_id: {
-				replacement: 'revisions.current_id',
-				value: () => elementor.config.document.revisions.current_id,
-			},
-		};
-
-		jQuery.each( map, ( key, data ) => {
-			// Use `defineProperty` because `get property()` fails during the `Marionette...extend`.
-			Object.defineProperty( this.config, key, {
-				get() {
-					const replacement = data.replacement ? 'elementor.config.document.' + data.replacement : '';
-					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', replacement );
-					// return from current document.
-					return data.value();
-				},
-				set() {
-					elementorCommon.helpers.softDeprecated( 'elementor.config.' + key, '2.9.0', 'elementor.config.document.' + data.replacement );
-					throw Error( 'Deprecated' );
-				},
-			} );
-		} );
-
-		Object.defineProperty( this.config.settings, 'page', {
-			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.settings.page', '2.9.0', 'elementor.config.document.settings' );
-				return elementor.config.document.settings;
-			},
-		} );
-
-		Object.defineProperty( this.config, 'widgets', {
-			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
-				return elementor.widgetsCache;
-			},
-		} );
-
-		Object.defineProperty( this, '$previewElementorEl', {
-			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
-
-				return elementor.documents.getCurrent().$element;
-			},
 		} );
 	}
 

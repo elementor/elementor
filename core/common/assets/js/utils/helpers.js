@@ -41,13 +41,6 @@ export default class Helpers {
 		}
 	}
 
-	deprecatedMethod( methodName, version, replacement ) {
-		this.deprecatedMessage( 'hard', methodName, version, replacement );
-
-		// This itself is deprecated.
-		this.softDeprecated( 'elementorCommon.helpers.deprecatedMethod', '2.8.0', 'elementorCommon.helpers.softDeprecated || elementorCommon.helpers.hardDeprecated' );
-	}
-
 	cloneObject( object ) {
 		return JSON.parse( JSON.stringify( object ) );
 	}

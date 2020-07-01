@@ -124,15 +124,6 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.importTemplate = function( model, args = {} ) {
-		elementorCommon.helpers.softDeprecated( 'importTemplate', '2.8.0',
-			"$e.run( 'library/insert-template' )" );
-
-		args.model = model;
-
-		$e.run( 'library/insert-template', args );
-	};
-
 	this.saveTemplate = function( type, data ) {
 		var templateType = templateTypes[ type ];
 

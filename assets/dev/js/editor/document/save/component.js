@@ -1,9 +1,9 @@
-import BackwardsCompatibility from './backwards-compatibility';
+import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
 import * as commandsInternal from './commands/internal';
 import * as hooks from './hooks/';
 
-export default class Component extends BackwardsCompatibility {
+export default class Component extends ComponentBase {
 	/**
 	 * Footer saver behavior.
 	 *
