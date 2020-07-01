@@ -8,22 +8,22 @@ import './site-part.scss';
 
 export default class SitePart extends Card {
 	getHeader() {
-		const Indicator = ( props ) => {
-			if ( ! props.showIndicator ) {
+		const Indicator = () => {
+			if ( ! this.props.showIndicator ) {
 				return '';
 			}
 
-			const active = props.active ? 'indicator-bullet--active' : '';
+			const active = this.props.isActive ? 'indicator-bullet--active' : '';
 
 			return <i className={`indicator-bullet ${ active }`}/>;
 		};
 
-		const ActionButton = ( props ) => {
-			if ( ! props.actionButton ) {
+		const ActionButton = () => {
+			if ( ! this.props.actionButton ) {
 				return '';
 			}
 
-			return ( props.actionButton );
+			return ( this.props.actionButton );
 		};
 
 		return (
@@ -53,6 +53,6 @@ SitePart.propTypes = {
 	title: PropTypes.string.isRequired,
 	children: PropTypes.object,
 	showIndicator: PropTypes.bool,
-	active: PropTypes.bool,
+	isActive: PropTypes.bool,
 	actionButton: PropTypes.object,
 };
