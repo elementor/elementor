@@ -1,8 +1,9 @@
-import CommandBase from './command-base';
+import Command from './command';
 
-export default class CommandInternalBase extends CommandBase {
+// TODO - Remove - '-base' from file name.
+export default class CommandInternal extends Command {
 	static getInstanceType() {
-		return 'CommandInternalBase';
+		return 'CommandInternal';
 	}
 
 	constructor( args, commandsAPI = $e.commandsInternal ) {
