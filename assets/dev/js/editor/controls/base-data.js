@@ -85,6 +85,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	getCurrentValue: function() {
+		if ( this.getGlobalKey() && ! this.globalValue ) {
+			return '';
+		}
+
 		if ( this.globalValue ) {
 			return this.globalValue;
 		}
@@ -95,11 +99,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 			return controlValue;
 		}
 
-		const controlGlobal = this.model.get( 'global' );
+		const controlGlobalArgs = this.model.get( 'global' );
 
 		// TODO: FIND BETTER SOLUTION FOR GETTING THE DEFAULT VALUE
-		if ( controlGlobal?.default ) {
-			const { command, args } = $e.data.commandExtractArgs( controlGlobal.default ),
+		if ( controlGlobalArgs?.default ) {
+			const { command, args } = $e.data.commandExtractArgs( controlGlobalArgs.default ),
 				result = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
 
 			return result?.value;
