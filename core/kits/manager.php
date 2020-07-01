@@ -91,7 +91,7 @@ class Manager {
 				'site_identity' => __( 'Site Identity', 'elementor' ),
 				'colors_and_typography' => __( 'Colors & Typography', 'elementor' ),
 				'lightbox' => __( 'Lightbox', 'elementor' ),
-				'layout_settings' => __( 'Layout Settings', 'elementor' ),
+				'layout_settings' => __( 'Layout', 'elementor' ),
 				'theme_style' => __( 'Theme Style', 'elementor' ),
 				'add_color' => __( 'Add Color', 'elementor' ),
 				'add_style' => __( 'Add Style', 'elementor' ),
