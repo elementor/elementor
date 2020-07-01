@@ -442,7 +442,7 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	enqueueIconFonts() {
+	enqueueFonts() {
 		const editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
@@ -537,7 +537,7 @@ BaseElementView = BaseContainer.extend( {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
-		this.enqueueIconFonts();
+		this.enqueueFonts();
 	},
 
 	runReadyTrigger: function() {
