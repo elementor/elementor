@@ -38,7 +38,7 @@ class Screenshot {
 	 * The main method for this class.
 	 */
 	init() {
-		this.log( 'Screeenshot init', 'time' );
+		this.log( 'Screenshot init', 'time' );
 
 		this.$elementor = jQuery( ElementorScreenshotConfig.selector );
 		this.config = {
