@@ -18,18 +18,18 @@ export class Unlink extends Command {
 			const result = await $e.data.get( globalValue );
 
 			if ( result ) {
+				// Prepare global value to mapping.
 				const { value } = result.data,
-					relatedControls = container.getRelatedControls( { [ setting ]: '' } );
+					groupPrefix = container.controls[ setting ]?.groupPrefix;
 
-				Object.values( relatedControls ).forEach( ( control ) => {
-					const controlName = control.name;
-
-					if ( 'object' === typeof value && value[ controlName ] ) {
-						localSettings[ controlName ] = value[ controlName ];
-					} else {
-						localSettings[ controlName ] = value;
-					}
-				} );
+				if ( groupPrefix ) {
+					Object.entries( value ).forEach( ( [ dataKey, dataValue ] ) => {
+						dataKey = dataKey.replace( elementor.config.kit_config.typography_prefix, groupPrefix );
+						localSettings[ dataKey ] = dataValue;
+					} );
+				} else {
+					localSettings[ setting ] = value;
+				}
 			}
 
 			return Promise.resolve();
