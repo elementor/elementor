@@ -163,7 +163,7 @@ export default class Container extends ArgsObject {
 	}
 
 	/**
-	 * Function getRelatedControls().
+	 * Function getGroupRelatedControls().
 	 *
 	 * Example:
 	 * Settings = { typography_typography: 'whatever', button_text_color: 'whatever' };
@@ -174,7 +174,7 @@ export default class Container extends ArgsObject {
 	 *
 	 * @return {{}}
 	 */
-	getRelatedControls( settings ) {
+	getGroupRelatedControls( settings ) {
 		const result = {};
 
 		Object.keys( settings ).forEach( ( settingKey ) => {
