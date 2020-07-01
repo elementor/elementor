@@ -16,7 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title><?php echo __( 'Elementor', 'elementor' ) . ' | ' . get_the_title(); ?></title>
-<?php wp_print_styles(); ?>
+	<base target="_parent">
+	<?php wp_print_styles(); ?>
 </head>
 <body>
 <div id="elementor-app"></div>

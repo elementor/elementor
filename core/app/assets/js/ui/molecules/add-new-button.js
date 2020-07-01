@@ -1,4 +1,5 @@
 import Button from './button';
+import Typography from '../atoms/typography';
 
 import './add-new-button.scss';
 
