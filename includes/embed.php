@@ -50,12 +50,6 @@ class Embed {
 		'dailymotion' => 'https://dailymotion.com/embed/video/{VIDEO_ID}',
 	];
 
-	private static $embed_thumbnail_patterns = [
-		'youtube' => 'https://img.youtube.com/vi/{VIDEO_ID}/0.jpg',
-		'vimeo' => null,
-		'dailymotion' => null,
-	];
-
 	/**
 	 * Get video properties.
 	 *
@@ -131,20 +125,46 @@ class Embed {
 		return add_query_arg( $embed_url_params, $embed_pattern );
 	}
 
-	public static function get_embed_thumbnail_url( $video_url ) {
-		$video_properties = self::get_video_properties( $video_url );
+	/**
+	 * Get oembed video data.
+	 *
+	 * @param $video_url
+	 * @param $cached_post_id
+	 *
+	 * @return array|null
+	 */
+	public static function get_oembed_video_data( $video_url, $cached_post_id = null ) {
+		$cached_oembed_data = [];
 
-		if ( ! $video_properties ) {
+		if ( $cached_post_id ) {
+			$cached_oembed_data = json_decode( get_post_meta( $cached_post_id, '_elementor_oembed_cache', true ), true );
+
+			if ( isset( $cached_oembed_data[ $video_url ] ) ) {
+				return $cached_oembed_data[ $video_url ];
+			}
+		}
+
+		$oembed_data = _wp_oembed_get_object()->get_data( $video_url );
+
+		if ( ! $oembed_data ) {
 			return null;
 		}
 
-		$embed_thumbnail_pattern = self::$embed_thumbnail_patterns[ $video_properties['provider'] ];
-
-		$replacements = [
-			'{VIDEO_ID}' => $video_properties['video_id'],
+		$normalize_oembed_data = [
+			'thumbnail_url' => $oembed_data->thumbnail_url,
+			'title' => $oembed_data->title,
 		];
 
-		return str_replace( array_keys( $replacements ), $replacements, $embed_thumbnail_pattern );
+		if ( $cached_post_id ) {
+			update_post_meta($cached_post_id, '_elementor_oembed_cache', wp_json_encode(array_merge(
+				$cached_oembed_data ? $cached_oembed_data : [],
+				[
+					$video_url => $normalize_oembed_data,
+				]
+			)));
+		}
+
+		return $normalize_oembed_data;
 	}
 
 	/**
@@ -211,13 +231,21 @@ class Embed {
 		return apply_filters( 'oembed_result', $iframe_html, $video_url, $frame_attributes );
 	}
 
-	public static function get_embed_thumbnail_html( $video_url ) {
-		$video_embed_thumbnail_url = self::get_embed_thumbnail_url( $video_url );
+	/**
+	 * @param $video_url
+	 * @param null|string|int $cached_post_id
+	 *
+	 * @return string|null
+	 */
+	public static function get_embed_thumbnail_html( $video_url, $cached_post_id = null ) {
+		$oembed_data = self::get_oembed_video_data( $video_url, $cached_post_id );
 
-		if ( ! $video_embed_thumbnail_url ) {
+		if ( ! $oembed_data ) {
 			return null;
 		}
 
-		return "<img src='{$video_embed_thumbnail_url}' alt='' />";
+		return "<div class='elementor-image'>
+			<img src='{$oembed_data['thumbnail_url']}' alt='{$oembed_data['title']}' title='{$oembed_data['title']}' width='100%' />
+		</div>";
 	}
 }
