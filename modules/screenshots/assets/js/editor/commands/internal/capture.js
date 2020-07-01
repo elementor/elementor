@@ -27,7 +27,7 @@ export class Capture extends CommandInternalBase {
 		const iframe = document.createElement( 'iframe' );
 
 		iframe.src = this.getIframeUrl();
-		iframe.width = '1300';
+		iframe.width = '1200';
 		iframe.style = 'visibility: hidden;';
 
 		return iframe;

@@ -57,6 +57,7 @@ class Screenshot {
 		this.handleIFrames();
 		this.handleSlides();
 		this.hideUnnecessaryElements();
+		this.removeUnnecessaryElements();
 		this.loadExternalCss();
 
 		Promise.resolve()
@@ -182,6 +183,30 @@ class Screenshot {
 		);
 
 		jQuery( 'body > *' ).not( this.$elementor ).css( 'display', 'none' );
+	}
+
+	/**
+	 * Remove all the sections that should not be in the screenshot.
+	 */
+	removeUnnecessaryElements() {
+		let currentHeight = 0;
+
+		this.$elementor
+			.find( ' .elementor-section-wrap > .elementor-section' )
+			.filter( ( index, el ) => {
+				let shouldBeRemoved = false;
+
+				if ( currentHeight >= this.config.crop.height ) {
+					shouldBeRemoved = true;
+				}
+
+				currentHeight += jQuery( el ).outerHeight();
+
+				return shouldBeRemoved;
+			} )
+			.each( ( index, el ) => {
+				el.remove();
+			} );
 	}
 
 	/**
