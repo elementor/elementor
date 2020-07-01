@@ -623,7 +623,7 @@ class Editor {
 				'create_global_typography' => __( 'Create New Global Typography', 'elementor' ),
 				'delete_global_typography' => __( 'Delete Global Typography', 'elementor' ),
 				'delete_global_typography_info' => __( 'Please note that by deleting a Global Typography setting, all of its instances will inherit their value from an unknown source', 'elementor' ),
-				'global_typography_info' => __( 'Global Typography settings help you work smarter. Save a Typography setting once, and use it anywhere throughout your site. Access and edit your global Typography settings by clicking the Manage button below. Any change you make - the text style will update throughout your entire site.', 'elementor' ),
+				'global_typography_info' => __( 'Global typography help you work smarter. Save a typography, and use it anywhere throughout your site. Access and edit your global typography by clicking the Manage button below.', 'elementor' ),
 				'default' => __( 'Default', 'elementor' ),
 				'create' => __( 'Create', 'elementor' ),
 				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
