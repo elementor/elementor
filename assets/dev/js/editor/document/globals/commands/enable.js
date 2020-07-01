@@ -12,6 +12,11 @@ export class Enable extends DisableEnable {
 			container.settings.set( '__globals__', container.globals.toJSON() );
 
 			container.render();
+
+			// Clear custom local settings.
+			Object.keys( settings ).forEach( ( key ) => {
+				container.settings.set( key, container.controls[ key ].default );
+			} );
 		} );
 	}
 }
