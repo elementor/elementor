@@ -77,22 +77,22 @@ class Colors_And_Typography extends Tab_Base {
 				[
 					'_id' => 'primary',
 					'title' => __( 'Primary', 'elementor' ),
-					'color' => '#6ec1e4',
+					'color' => '#6EC1E4',
 				],
 				[
 					'_id' => 'secondary',
 					'title' => __( 'Secondary', 'elementor' ),
-					'color' => '#54595f',
+					'color' => '#54595F',
 				],
 				[
 					'_id' => 'text',
 					'title' => __( 'Text', 'elementor' ),
-					'color' => '#7a7a7a',
+					'color' => '#7A7A7A',
 				],
 				[
 					'_id' => 'accent',
 					'title' => __( 'Accent', 'elementor' ),
-					'color' => '#61ce70',
+					'color' => '#61CE70',
 				],
 			];
 		}
