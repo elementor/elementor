@@ -6,46 +6,24 @@ import Typography from 'elementor-app/ui/atoms/typography';
 
 import './site-part.scss';
 
-export default class SitePart extends Card {
-	getHeader() {
-		const Indicator = () => {
-			if ( ! this.props.showIndicator ) {
-				return '';
-			}
-
-			const active = this.props.isActive ? 'indicator-bullet--active' : '';
-
-			return <i className={`indicator-bullet ${ active }`}/>;
-		};
-
-		const ActionButton = () => {
-			if ( ! this.props.actionButton ) {
-				return '';
-			}
-
-			return ( this.props.actionButton );
-		};
-
-		return (
-			<CardHeader>
-				<>
-					<Indicator/>
-					<Typography tagName="h1" className="card__headline">{ this.props.title }</Typography>
-					<ActionButton/>
-				</>
-			</CardHeader>
-		);
-	}
-
-	getBody() {
-		return (
-			<CardBody>
-				<CardImage alt={ this.props.title } src={ this.props.thumbnail }>
-					{ this.props.children }
-				</CardImage>
-			</CardBody>
-		);
-	}
+export default function SitePart( props ) {
+	return (
+		<Card>
+			<>
+				<CardHeader>
+					<>
+						<Typography tagName="h1" className="card__headline">{ props.title }</Typography>
+						{ props.actionButton }
+					</>
+				</CardHeader>
+				<CardBody>
+					<CardImage alt={ props.title } src={ props.thumbnail }>
+						{ props.children }
+					</CardImage>
+				</CardBody>
+			</>
+		</Card>
+	);
 }
 
 SitePart.propTypes = {
@@ -53,6 +31,5 @@ SitePart.propTypes = {
 	title: PropTypes.string.isRequired,
 	children: PropTypes.object,
 	showIndicator: PropTypes.bool,
-	isActive: PropTypes.bool,
 	actionButton: PropTypes.object,
 };

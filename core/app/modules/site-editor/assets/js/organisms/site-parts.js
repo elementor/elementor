@@ -5,7 +5,7 @@ import './site-parts.scss';
 
 export default function SiteParts( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext ),
-		ActionButton = <Button text="Info" hideText={ true } icon="eicon-info-circle info-toggle" />;
+		ActionButton = ( <Button text="Info" hideText={ true } icon="eicon-info-circle info-toggle" /> );
 
 	return (
 		<section className="site-editor__site-parts u-grid">
