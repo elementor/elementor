@@ -8,6 +8,7 @@
 	height: 100%;
 	align-items: center;
 	justify-content: center;
+	z-index: $eps-zindex-modal-backdrop;
 
 	.modal {
 		width: 50%;
