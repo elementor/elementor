@@ -48,14 +48,8 @@ class AppLoader {
 	openApp( url ) {
 		this.loadApp( url );
 
-		this.referrer = location;
-
 		this.iframe.style.display = '';
 		document.body.style.overflow = 'hidden';
-	}
-
-	goBack() {
-		window.location = this.referrer;
 	}
 
 	closeApp() {

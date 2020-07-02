@@ -80,6 +80,7 @@ class App extends BaseApp {
 		return [
 			'menu_url'  => $this->get_base_url() . '#site-editor/promotion',
 			'assets_url'  => ELEMENTOR_ASSETS_URL,
+			'return_url'  => isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : admin_url(),
 		];
 	}
 
@@ -156,6 +157,8 @@ class App extends BaseApp {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		$this->print_config( 'elementor-app-loader' );
 	}
 
 	public function __construct() {
