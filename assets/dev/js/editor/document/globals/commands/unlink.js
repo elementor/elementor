@@ -1,7 +1,7 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
 // TODO: Add dev-tools CSS to see if widget have globals.
-export class Unlink extends Command {
+export class Unlink extends CommandBase {
 	validateArgs( args = {} ) {
 		this.requireContainer( args );
 		this.requireArgumentType( 'setting', 'string', args );
