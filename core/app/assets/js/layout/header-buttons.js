@@ -25,13 +25,10 @@ export default function HeaderButtons( props ) {
 				icon="eicon-close"
 				className="elementor-templates-modal__header__close--normal"
 				onClick={ () => {
-					// Directly.
-					if ( window.top === window ) {
-						window.location = elementorAppConfig.return_url;
-					} else {
-						// Iframe.
-						window.top.elementorAppLoader.closeApp();
-					}
+					$e.run( 'app/close', {
+						// it's not an iframe.
+						redirect: window.top === window,
+					} );
 				} }
 			/>
 			{ tools }
