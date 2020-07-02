@@ -1,0 +1,35 @@
+// COMPONENT API: GRID
+@import "assets/dev/scss/editor/_breakpoints.scss";
+
+
+// MIXIN: Grid Coll generator
+$eps-grid-columns: 12;
+
+//defining flex traits
+@mixin grid-item-auto($size) {
+	.#{$eps-prefix}grid-item-#{$size}- {
+		flex-grow: 1;
+		max-width: 100%;
+		flex-basis: 0;
+	}
+}
+
+
+// defining cols.
+@mixin grid-col-generator($size, $grid-columns: $eps-grid-columns) {
+	@for $i from 1 through $grid-columns {
+		.#{$eps-prefix}grid-item-#{$size}-#{$i} {
+			flex-grow: 0;
+			max-width: percentage($i / $grid-columns);
+			flex-basis: percentage($i / $grid-columns);
+		}
+	}
+}
+
+//@mixin grid-spacing($keys...) {
+//	:root {
+//		@each $key in $keys {
+//			--grid-spacing-#{$key}: #{spacing($key)}
+//		}
+//	}
+//}
