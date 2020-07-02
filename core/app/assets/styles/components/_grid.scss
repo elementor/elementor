@@ -3,6 +3,7 @@
 
 @import "./grid-api";
 
+
 .#{$eps-prefix}grid {
 	// Flex Structure rules
 	// apply to all screen size
@@ -25,51 +26,19 @@
 		// item padding can be 8,10,12,16
 		// container width and negative margin are calculated dynamically
 		// @markup <Grid container spacing={5} and so on >
+		&[class*="#{$eps-prefix}grid-container-spacing"] {
+			--grid-row-gutter: calc(-1 * var(--grid-spacing-gutter));
+			width: var(--grid-spacing-width);
+			margin: var(--grid-row-gutter);
+
+			> .#{$eps-prefix}grid-item {
+				padding: var(--grid-spacing-gutter);
+			}
+
+		}
+
 		&-spacing {
-			&-5 {
-				width: calc(100% + 10px);
-				margin: -5px;
-
-				> .#{$eps-prefix}grid-item {
-					padding: 5px;
-				}
-			}
-
-			&-8 {
-				width: calc(100% + 16px);
-				margin: -5px;
-
-				> .#{$eps-prefix}grid-item {
-					padding: 8px;
-				}
-			}
-
-			&-10 {
-				width: calc(100% + 20px);
-				margin: -10px;
-
-				> .#{$eps-prefix}grid-item {
-					padding: 10px;
-				}
-			}
-
-			&-12 {
-				width: calc(100% + 24px);
-				margin: -12px;
-
-				> .#{$eps-prefix}grid-item {
-					padding: 12px;
-				}
-			}
-
-			&-16 {
-				width: calc(100% + 32px);
-				margin: -16px;
-
-				> .#{$eps-prefix}grid-item {
-					padding: 16px;
-				}
-			}
+			@include grid-spacing-classes($eps-grid-spacing-keys);
 		}
 	}
 
@@ -255,5 +224,3 @@
 @media screen and (min-width: $editor-screen-xxl-min) {
 	@include grid-col-generator(xxl);
 }
-
-

@@ -4,6 +4,7 @@
 
 // MIXIN: Grid Coll generator
 $eps-grid-columns: 12;
+$eps-grid-spacing-keys: (5 8 10 12 16);
 
 //defining flex traits
 @mixin grid-item-auto($size) {
@@ -26,10 +27,20 @@ $eps-grid-columns: 12;
 	}
 }
 
-//@mixin grid-spacing($keys...) {
-//	:root {
-//		@each $key in $keys {
-//			--grid-spacing-#{$key}: #{spacing($key)}
-//		}
-//	}
-//}
+// generating spacing classes and custom properties
+@mixin grid-spacing-classes($keys, $amp:'&') {
+	@each $key in $keys {
+		#{$amp}-#{$key} {
+			--grid-spacing-gutter: #{spacing($key)};
+		}
+	}
+}
+
+// exporting custom properties
+@mixin grid-custom-properties {
+	:root {
+		--grid-spacing-width: calc(100% + var(#{--grid-container-gutters}));
+		--grid-spacing-gutters: calc(2 * var(#{--grid-spacing-gutter}));
+	}
+}
+
