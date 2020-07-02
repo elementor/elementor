@@ -585,6 +585,7 @@ class Source_Local extends Source_Base {
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
 			'date' => $date,
 			'human_date' => date_i18n( get_option( 'date_format' ), $date ),
+			'human_modified_date' => date_i18n( get_option( 'date_format' ), strtotime( $post->post_modified ) ),
 			'author' => $user->display_name,
 			'status' => $post->post_status,
 			'hasPageSettings' => ! empty( $page_settings ),
