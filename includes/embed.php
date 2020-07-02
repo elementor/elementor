@@ -198,7 +198,7 @@ class Embed {
 	 *
 	 * @return array|null
 	 */
-	public static function get_oembed_data( $video_url, $cached_post_id) {
+	public static function get_oembed_data( $video_url, $cached_post_id ) {
 		$cached_oembed_data = json_decode( get_post_meta( $cached_post_id, '_elementor_oembed_cache', true ), true );
 
 		if ( isset( $cached_oembed_data[ $video_url ] ) ) {
@@ -207,7 +207,7 @@ class Embed {
 
 		$normalize_oembed_data = self::fetch_oembed_video_data( $video_url );
 
-		if ( ! $cached_oembed_data) {
+		if ( ! $cached_oembed_data ) {
 			$cached_oembed_data = [];
 		}
 
