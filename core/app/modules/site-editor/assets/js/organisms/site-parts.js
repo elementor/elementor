@@ -1,4 +1,5 @@
 import SitePart from '../molecules/site-part';
+import CssGrid from 'elementor-app/ui/atoms/css-grid';
 import Button from 'elementor-app/ui/molecules/button';
 import ModalProvider from 'elementor-app/ui/modal/modal';
 
@@ -44,7 +45,7 @@ export default function SiteParts( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext );
 
 	return (
-		<section className="site-editor__site-parts u-grid">
+		<CssGrid className="site-editor__site-parts">
 			{ (
 				templateTypes.map( ( item ) => (
 					<SitePart className="site-part" actionButton={ <InfoButton { ...item.tooltip_data } /> } thumbnail={ item.urls.thumbnail } key={ item.type } { ...item }>
@@ -52,9 +53,10 @@ export default function SiteParts( props ) {
 					</SitePart>
 				) )
 			) }
-		</section>
+		</CssGrid>
 	);
 }
+
 
 SiteParts.propTypes = {
 	hoverElement: PropTypes.func.isRequired,
