@@ -3,6 +3,7 @@ import AddNewButton from './ui/molecules/add-new-button';
 import Button from './ui/molecules/button';
 import Card from './ui/card/card';
 import CardBody from './ui/card/card-body';
+import CardFooter from './ui/card/card-footer';
 import CardImage from './ui/card/card-image';
 import CardHeader from './ui/card/card-header';
 import CardOverlay from './ui/card/card-overlay';
@@ -19,6 +20,7 @@ export default {
 	Button,
 	Card,
 	CardBody,
+	CardFooter,
 	CardHeader,
 	CardImage,
 	CardOverlay,

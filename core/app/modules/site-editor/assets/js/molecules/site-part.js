@@ -9,19 +9,15 @@ import './site-part.scss';
 export default function SitePart( props ) {
 	return (
 		<Card>
-			<>
-				<CardHeader>
-					<>
-						<Typography tagName="h1" className="card__headline">{ props.title }</Typography>
-						{ props.actionButton }
-					</>
-				</CardHeader>
-				<CardBody>
-					<CardImage alt={ props.title } src={ props.thumbnail }>
-						{ props.children }
-					</CardImage>
-				</CardBody>
-			</>
+			<CardHeader>
+				<Typography tagName="h1" className="card__headline">{ props.title }</Typography>
+				{ props.actionButton }
+			</CardHeader>
+			<CardBody>
+				<CardImage alt={ props.title } src={ props.thumbnail }>
+					{ props.children }
+				</CardImage>
+			</CardBody>
 		</Card>
 	);
 }

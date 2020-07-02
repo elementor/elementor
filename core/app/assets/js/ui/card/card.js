@@ -11,7 +11,7 @@ export default function Card( props ) {
 Card.propTypes = {
 	type: PropTypes.string,
 	className: PropTypes.string,
-	children: PropTypes.object,
+	children: PropTypes.any,
 };
 
 Card.defaultProps = {

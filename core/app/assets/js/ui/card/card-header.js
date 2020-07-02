@@ -10,7 +10,7 @@ export default function CardHeader( props ) {
 
 CardHeader.propTypes = {
 	className: PropTypes.string,
-	children: PropTypes.object.isRequired,
+	children: PropTypes.any.isRequired,
 };
 
 CardHeader.defaultProps = {
