@@ -82,11 +82,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			value = this.getStyleControlValue( control, values );
 
 			if ( undefined === value ) {
-				if ( ! control.global?.default ) {
-					return;
-				}
-
-				globalValue = control.global.default;
+				return;
 			}
 		}
 
