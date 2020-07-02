@@ -145,6 +145,13 @@ abstract class Endpoint {
 	 * @throws \Exception
 	 */
 	public function base_callback( $methods, $request, $is_multi = false ) {
+		// TODO: Find better solution.
+		$json_params = $request->get_json_params();
+
+		if ( $json_params ) {
+			$request->set_body_params( $json_params );
+		}
+
 		// TODO: Handle permission callback.
 		switch ( $methods ) {
 			case WP_REST_Server::READABLE:
