@@ -1,6 +1,5 @@
 /* global ElementorConfig */
 
-import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from 'elementor-common/utils/environment';
@@ -9,10 +8,10 @@ import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
-import Document from './document';
 import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
+import Preview from 'elementor-views/preview';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -286,7 +285,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getPreviewView() {
-		return this.sections.currentView;
+		return this.previewView;
 	}
 
 	getPreviewContainer() {
@@ -328,6 +327,8 @@ export default class EditorBase extends Marionette.Application {
 		this.history = new HistoryManager();
 
 		this.promotion = new Promotion();
+
+		this.documents = $e.components.register( new EditorDocuments() );
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
@@ -374,6 +375,25 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
+	}
+
+	initPreviewView( document ) {
+		elementor.trigger( 'document:before:preview', document );
+
+		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
+
+		preview.$el.empty();
+
+		preview.resetChildViewContainer();
+
+		// In order to force rendering of children
+		preview.isRendered = true;
+
+		preview._renderChildren();
+
+		preview.triggerMethod( 'render' );
+
+		this.previewView = preview;
 	}
 
 	initFrontend() {
@@ -506,7 +526,9 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor && elementor.documents.getCurrent() ) {
+			// It's a click on the preview area, not in the edit area,
+			// and a document is open and has an edit area.
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );
@@ -610,9 +632,7 @@ export default class EditorBase extends Marionette.Application {
 		const $element = this.documents.getCurrent().$element;
 
 		if ( $element ) {
-			$element
-				.removeClass( 'elementor-edit-area-active' )
-				.addClass( 'elementor-edit-area-preview' );
+			$element.removeClass( 'elementor-edit-area-active' );
 		}
 
 		if ( hidePanel ) {
@@ -629,9 +649,7 @@ export default class EditorBase extends Marionette.Application {
 			.addClass( 'elementor-editor-active' );
 
 		if ( elementor.config.document.panel.has_elements ) {
-			this.documents.getCurrent().$element
-				.removeClass( 'elementor-edit-area-preview' )
-				.addClass( 'elementor-edit-area-active' );
+			this.documents.getCurrent().$element.addClass( 'elementor-edit-area-active' );
 		}
 	}
 
@@ -739,7 +757,6 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {
@@ -771,8 +788,6 @@ export default class EditorBase extends Marionette.Application {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
-
-		elementor.documents = $e.components.register( new EditorDocuments() );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
@@ -818,8 +833,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
-
-		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 

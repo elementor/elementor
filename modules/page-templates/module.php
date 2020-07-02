@@ -80,6 +80,12 @@ class Module extends BaseModule {
 
 			if ( $document ) {
 				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
+
+				if ( ! $template_path ) {
+					$kit_default_template = Plugin::$instance->kits_manager->get_current_settings( 'default_page_template' );
+					$template_path = $this->get_template_path( $kit_default_template );
+				}
+
 				if ( $template_path ) {
 					$template = $template_path;
 
@@ -255,18 +261,28 @@ class Module extends BaseModule {
 
 		require_once ABSPATH . '/wp-admin/includes/template.php';
 
-		$options = [
-			'default' => __( 'Default', 'elementor' ),
-		];
-
-		$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
-
 		$document->start_injection( [
 			'of' => 'post_status',
 			'fallback' => [
 				'of' => 'post_title',
 			],
 		] );
+
+		$this->add_template_controls( $document, $control_id );
+
+		$document->end_injection();
+	}
+
+	public function add_template_controls( Document $document, $control_id, $include_post_templates = true ) {
+		$options = [
+			'default' => __( 'Default', 'elementor' ),
+		];
+
+		if ( $include_post_templates ) {
+			$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
+		} else {
+			$options += $this->add_page_templates( [], null, null );
+		}
 
 		$document->add_control(
 			$control_id,
@@ -316,8 +332,6 @@ class Module extends BaseModule {
 				],
 			]
 		);
-
-		$document->end_injection();
 	}
 
 	/**

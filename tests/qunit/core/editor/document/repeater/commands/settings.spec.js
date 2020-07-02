@@ -42,7 +42,7 @@ export const Settings = () => {
 					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
-					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', `Tabs Item#${ index + 1 }` );
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', `Tabs Item` );
 
 					// Undo.
 					HistoryHelper.undoValidate( assert, historyItem );

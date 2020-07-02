@@ -5,6 +5,7 @@ use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -16,6 +17,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Editor\Data;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -85,7 +87,7 @@ class Editor {
 	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
 	 */
 	public function init( $die = true ) {
-		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
+		if ( empty( $_REQUEST['post'] ) ) {
 			return;
 		}
 
@@ -339,8 +341,8 @@ class Editor {
 		$plugin = Plugin::$instance;
 
 		// Reset global variable
-		$wp_styles = new \WP_Styles(); // WPCS: override ok.
-		$wp_scripts = new \WP_Scripts(); // WPCS: override ok.
+		$wp_styles = new \WP_Styles(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_scripts = new \WP_Scripts(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
@@ -511,11 +513,9 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$page_title_selector = get_option( 'elementor_page_title_selector' );
+		$page_title_selector = Plugin::$instance->kits_manager->get_current_settings( 'page_title_selector' );
 
-		if ( empty( $page_title_selector ) ) {
-			$page_title_selector = 'h1.entry-title';
-		}
+		$page_title_selector .= ', .elementor-page-title';
 
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.
@@ -538,6 +538,9 @@ class Editor {
 			'icons' => [
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
 				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library&utm_campaign=gopro&utm_medium=wp-dash' ),
+			],
+			'filesUpload' => [
+				'unfilteredFiles' => Files_Upload_Handler::is_enabled(),
 			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
@@ -603,9 +606,11 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Global Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'preferences' => __( 'Preferences', 'elementor' ),
+				'site_editor' => __( 'Site Editor', 'elementor' ),
+				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'more' => __( 'More', 'elementor' ),
+				'navigate_from_page' => __( 'Navigate From Page', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
 				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
@@ -620,9 +625,9 @@ class Editor {
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
-				// Enable SVG uploads.
-				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
-				'dialog_confirm_enable_svg' => __( 'Before you enable SVG upload, note that SVG files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
+				// Enable unfiltered files upload.
+				'enable_unfiltered_files_upload' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
+				'dialog_confirm_enable_unfiltered_files_upload' => __( 'Before you enable unfiltered files upload, note that this kind of files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
 
 				// Enable fontawesome 5 if needed.
 				'enable_fa5' => __( 'Elementor\'s New Icon Library', 'elementor' ),
@@ -1060,6 +1065,8 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
+		Plugin::$instance->data_manager->register_controller( Data\Globals\Controller::class );
+
 		$this->notice_bar = new Notice_Bar();
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );

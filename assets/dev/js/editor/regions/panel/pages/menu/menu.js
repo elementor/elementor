@@ -10,6 +10,11 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '#elementor-panel-page-menu-content',
 
+	// Remove empty groups that exist for BC.
+	filter: ( child ) => {
+		return child.get( 'items' ).length;
+	},
+
 	initialize: function() {
 		this.collection = PanelMenuPageView.getGroups();
 
@@ -34,21 +39,21 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	registerDocumentItems() {
 		// Todo: internal command.
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
-			name: 'view-page',
-			icon: 'eicon-preview-medium',
-			title: elementor.translate( 'view_page' ),
-			type: 'link',
-			link: elementor.config.document.urls.permalink,
-		}, 'more' );
-
-		// Todo: internal command.
-		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
 			name: 'exit-to-dashboard',
 			icon: 'eicon-wordpress',
 			title: elementor.translate( 'exit_to_dashboard' ),
 			type: 'link',
 			link: elementor.config.document.urls.exit_to_dashboard,
-		}, 'more' );
+		}, 'navigate_from_page' );
+
+		// Todo: internal command.
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
+			name: 'view-page',
+			icon: 'eicon-preview-thin',
+			title: elementor.translate( 'view_page' ),
+			type: 'link',
+			link: elementor.config.document.urls.permalink,
+		}, 'navigate_from_page' );
 	},
 }, {
 	groups: null,
@@ -56,19 +61,18 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	initGroups: function() {
 		this.groups = new Backbone.Collection( [] );
 
+		// Keep the old `more` for BC, since 3.0.0.
 		this.groups.add( {
 			name: 'more',
 			title: elementor.translate( 'more' ),
 			items: [],
 		} );
 
-		this.addItem( {
-			name: 'editor-preferences',
-			icon: 'eicon-preferences',
-			title: elementor.translate( 'preferences' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/editor-preferences' ),
-		}, 'more' );
+		this.groups.add( {
+			name: 'navigate_from_page',
+			title: elementor.translate( 'navigate_from_page' ),
+			items: [],
+		} );
 
 		if ( elementor.config.user.is_administrator ) {
 			this.addAdminMenu();
@@ -82,6 +86,14 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			items: [],
 		}, { at: 0 } );
 
+		this.addItem( {
+			name: 'editor-preferences',
+			icon: 'eicon-user-preferences',
+			title: elementor.translate( 'user_preferences' ),
+			type: 'page',
+			callback: () => $e.route( 'panel/editor-preferences' ),
+		}, 'style' );
+
 		this.groups.add( {
 			name: 'settings',
 			title: elementor.translate( 'settings' ),
@@ -90,52 +102,10 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'finder',
-			icon: 'eicon-search-bold',
-			title: elementorCommon.translate( 'finder', 'finder' ),
+			icon: 'eicon-search',
+			title: elementorCommon.translate( 'find_anything', 'finder' ),
 			callback: () => $e.route( 'finder' ),
-		}, 'more', 'view-page' );
-
-		this.addItem( {
-			name: 'global-colors',
-			icon: 'eicon-paint-brush',
-			title: elementor.translate( 'global_colors' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/global-colors' ),
-		}, 'style' );
-
-		this.addItem( {
-			name: 'global-fonts',
-			icon: 'eicon-font',
-			title: elementor.translate( 'global_fonts' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/global-fonts' ),
-		}, 'style' );
-
-		this.addItem( {
-			name: 'global-settings',
-			icon: 'eicon-cogs',
-			title: elementor.translate( 'global_settings' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/general-settings/style' ),
-		}, 'settings', 'elementor-settings' );
-
-		this.addItem( {
-			name: 'elementor-settings',
-			icon: 'eicon-editor-external-link',
-			title: elementor.translate( 'elementor_settings' ),
-			type: 'link',
-			link: elementor.config.settings_page_link,
-			newTab: true,
-		}, 'settings' );
-
-		this.addItem( {
-			name: 'about-elementor',
-			icon: 'eicon-info-circle',
-			title: elementor.translate( 'about_elementor' ),
-			type: 'link',
-			link: elementor.config.elementor_site,
-			newTab: true,
-		}, 'settings' );
+		}, 'navigate_from_page', 'view-page' );
 	},
 
 	getGroups: function() {

@@ -7,6 +7,10 @@
 		}
 	}
 
+	.elementor-control-field {
+		position: relative;
+	}
+
 	&:not(.elementor-control-dynamic),
 	&.elementor-control-dynamic-value {
 
@@ -122,10 +126,12 @@
 		&-autocomplete-spinner {
 			display: none;
 			position: absolute;
-			width: 12px;
-			height: 12px;
-			top: 7px;
-			@include start(44px);
+			top: 5px;
+			right: 0px;
+			width: 10px;
+			height: 10px;
+			font-size: 10px;
+			color: $gray-light;
 		}
 
 		&__custom-attributes {

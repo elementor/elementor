@@ -8,9 +8,10 @@
 	}
 
 	&:not(.elementor-media-empty) {
-
-		.elementor-control-media-upload-button {
-			display: none;
+		.elementor-control-media__content {
+			&__upload-button {
+				display: none;
+			}
 		}
 	}
 
@@ -24,7 +25,7 @@
 		font-size: 20px;
 	}
 
-	&-upload-button {
+	&__content__upload-button {
 		background-color: $editor-lightest;
 	}
 
@@ -41,7 +42,6 @@
 		background-color: #f6f6f6;
 
 		&:not(:hover) {
-
 			.elementor-control-media__remove {
 				display: none;
 			}
@@ -116,25 +116,106 @@
 	}
 
 	&__remove {
-		position: absolute;
-		z-index: 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		transition: all .3s ease-in-out;
+	}
+
+	&__content__remove {
+		position: absolute;
+		z-index: 1;
 		top: 10px;
 		@include end(10px);
 		width: 20px;
 		height: 20px;
 		font-size: 11px;
-		background-color: rgba(#fff, .9);
 		color: $editor-light;
+		background-color: rgba(#fff, .9);
 		border-radius: 3px;
 		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
-		transition: all .3s ease-in-out;
 
 		&:hover {
 			background-color: rgba(#fff, 1);
 			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+		}
+	}
+
+	&.elementor-media-empty .elementor-control-file-area {
+		display: none;
+	}
+
+	// When attachment type is not image and not video
+	&__file {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		margin-top: 10px;
+		border: 1px solid $editor-lightest;
+		border-radius: 3px;
+		cursor: pointer;
+
+		&__content {
+			@include padding-start(5px);
+			font-size: 12px;
+
+			&__label {
+				color: $editor-light;
+			}
+
+			&__info {
+				display: flex;
+				align-items: center;
+				font-weight: 500;
+
+				&__icon {
+					@include margin-end(5px);
+				}
+			}
+		}
+
+		&__controls {
+			display: flex;
+			@include border-start(1px solid $editor-lightest);
+
+			&__upload-button,
+			&__remove {
+				width: $control-unit;
+				height: $control-unit;
+				cursor: pointer;
+				align-items: center;
+			}
+
+			&__upload-button {
+				display: flex;
+				justify-content: center;
+			}
+
+			&__remove {
+				@include border-end(1px solid $editor-lightest);
+			}
+		}
+	}
+
+	&:not(.elementor-media-empty) &__file  {
+		&__content {
+			&__label {
+				display: none;
+			}
+		}
+	}
+
+	&.elementor-media-empty &__file {
+		&__content {
+			&__info {
+				display: none;
+			}
+		}
+		&__controls {
+			&__remove {
+				display: none;
+			}
 		}
 	}
 

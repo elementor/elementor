@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
+	childViewContainer: '> .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -43,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = '> .elementor-column-wrap';
+		ui.columnInner = '> .elementor-widget-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
@@ -204,7 +204,7 @@ ColumnView = BaseElementView.extend( {
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
-			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
+			items: ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: self.isDroppingAllowed.bind( self ),

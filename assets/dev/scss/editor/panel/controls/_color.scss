@@ -20,6 +20,10 @@
 			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		}
 	}
+
+	.pcr-button {
+		background-color: #fff;
+	}
 }
 
 // This fixes a bug in the color picker's "clear" button

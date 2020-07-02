@@ -4,20 +4,28 @@ export default class Swiper {
 	constructor( container, config ) {
 		this.config = config;
 
-		if ( this.config.breakpoints && this.config.handleElementorBreakpoints ) {
-			this.adjustConfig();
+		if ( this.config.breakpoints ) {
+			// The config is passed as a param to allow adjustConfig to be called outside of this wrapper
+			this.config = this.adjustConfig( config );
 		}
+
+		originalSwiper.prototype.adjustConfig = this.adjustConfig;
 
 		return new originalSwiper( container, this.config );
 	}
 
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)
 	// In Swiper 5.0.0 and up, breakpoints changed from acting as max-width to acting as min-width
-	adjustConfig() {
+	adjustConfig( config ) {
+		// Only reverse the breakpoints if the handle param has been defined
+		if ( ! config.handleElementorBreakpoints ) {
+			return config;
+		}
+
 		const elementorBreakpoints = elementorFrontend.config.breakpoints,
 			elementorBreakpointValues = Object.values( elementorBreakpoints );
 
-		Object.keys( this.config.breakpoints ).forEach( ( configBPKey ) => {
+		Object.keys( config.breakpoints ).forEach( ( configBPKey ) => {
 			const configBPKeyInt = parseInt( configBPKey );
 			let breakpointToUpdate;
 
@@ -38,14 +46,16 @@ export default class Swiper {
 				breakpointToUpdate = elementorBreakpointValues[ currentBPIndexInElementorBPs - 1 ];
 			}
 
-			this.config.breakpoints[ breakpointToUpdate ] = this.config.breakpoints[ configBPKey ];
+			config.breakpoints[ breakpointToUpdate ] = config.breakpoints[ configBPKey ];
 
 			// Then reset the settings in the original breakpoint key to the default values
-			this.config.breakpoints[ configBPKey ] = {
-				slidesPerView: this.config.slidesPerView,
-				slidesPerGroup: this.config.slidesPerGroup ? this.config.slidesPerGroup : 1,
+			config.breakpoints[ configBPKey ] = {
+				slidesPerView: config.slidesPerView,
+				slidesPerGroup: config.slidesPerGroup ? config.slidesPerGroup : 1,
 			};
 		} );
+
+		return config;
 	}
 }
 

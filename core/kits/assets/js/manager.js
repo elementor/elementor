@@ -1,13 +1,19 @@
 import Component from './component';
 import panelView from './panel';
+import panelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
+import Repeater from './repeater';
 
 export default class extends elementorModules.editor.utils.Module {
-	addPanelPage() {
+	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: panelView,
-			title: elementor.translate( 'Theme Style' ),
-			name: 'kit_settings',
+			title: elementor.translate( 'global_settings' ),
+		} );
+
+		elementor.getPanelView().addPage( 'kit_menu', {
+			view: panelMenuView,
+			title: elementor.translate( 'global_settings' ),
 		} );
 	}
 
@@ -15,12 +21,20 @@ export default class extends elementorModules.editor.utils.Module {
 		const menu = elementor.modules.layouts.panel.pages.menu.Menu;
 
 		menu.addItem( {
-			name: 'theme-style',
-			icon: 'eicon-adjust',
-			title: elementor.translate( 'Theme Style' ),
+			name: 'global-settings',
+			icon: 'eicon-global-settings',
+			title: elementor.translate( 'global_settings' ),
 			type: 'page',
-			callback: () => $e.run( 'panel/global/open' ),
-		}, 'style' );
+			callback: () => $e.route( 'panel/global/menu' ),
+		}, 'style', 'editor-preferences' );
+
+		menu.addItem( {
+			name: 'site-editor',
+			icon: 'eicon-theme-builder',
+			title: elementor.translate( 'site_editor' ),
+			type: 'page',
+			callback: () => $e.run( 'panel/global/open-site-editor' ),
+		}, 'style', 'editor-preferences' );
 	}
 
 	addHeaderBehavior( behaviors ) {
@@ -45,10 +59,12 @@ export default class extends elementorModules.editor.utils.Module {
 
 			$e.components.register( new Component( { manager: this } ) );
 
+			elementor.addControlView( 'global-style-repeater', Repeater );
+
 			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
 
 			elementor.on( 'panel:init', () => {
-				this.addPanelPage();
+				this.addPanelPages();
 
 				this.addPanelMenuItem();
 			} );
