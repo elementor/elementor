@@ -27,7 +27,7 @@ export default function HeaderButtons( props ) {
 				onClick={ () => {
 					// Directly.
 					if ( window.top === window ) {
-						history.back();
+						window.top.elementorAppLoader.goBack();
 					} else {
 						// Iframe.
 						window.top.elementorAppLoader.closeApp();
