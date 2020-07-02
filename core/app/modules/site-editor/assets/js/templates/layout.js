@@ -6,7 +6,7 @@ export default function Layout( props ) {
 	const config = {
 		title: __( 'Site Editor', 'elementor' ),
 		headerButtons: props.headerButtons,
-		sidebar: <Menu allPartsButton={ props.allPartsButton } />,
+		sidebar: <Menu allPartsButton={ props.allPartsButton } promotion={props.promotion} />,
 		content: props.children,
 	};
 
@@ -21,6 +21,7 @@ Layout.propTypes = {
 	headerButtons: PropTypes.arrayOf( PropTypes.object ),
 	allPartsButton: PropTypes.element.isRequired,
 	children: PropTypes.object.isRequired,
+	promotion: PropTypes.bool,
 };
 
 Layout.defaultProps = {

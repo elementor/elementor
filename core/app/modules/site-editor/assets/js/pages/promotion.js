@@ -25,7 +25,7 @@ export default function Promotion() {
 	};
 
 	return (
-		<Layout allPartsButton={ <AllPartsButton /> } >
+		<Layout allPartsButton={ <AllPartsButton /> } promotion>
 			<section className="site-editor__promotion">
 				<div className="u-mb-20 u-d-flex">
 					<div className="col-7">
@@ -42,7 +42,7 @@ export default function Promotion() {
 						</a>
 					</div>
 				</div>
-				<hr className="u-mb-44"/>
+				<hr className="eps-separator"/>
 				<SiteParts hoverElement={ PromotionHoverElement } />
 			</section>
 		</Layout>

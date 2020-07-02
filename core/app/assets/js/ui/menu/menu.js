@@ -2,12 +2,12 @@ import './menu.scss';
 import Button from '../molecules/button';
 
 export default function Menu( props ) {
-	const ActionButton = () => {
+	const ActionButton = ( itemProps ) => {
 		if ( ! props.actionButton ) {
 			return '';
 		}
 
-		return props.actionButton;
+		return props.actionButton( itemProps );
 	};
 
 	return (
@@ -18,7 +18,7 @@ export default function Menu( props ) {
 				props.menuItems.map( ( item ) => (
 					<li key={ item.type } className="e-app-menu-item">
 						<Button text={ item.title } className="e-app-menu-item__link" {...item } />
-						<ActionButton/>
+						<ActionButton {...item }/>
 					</li>
 				) )
 			) }
@@ -30,5 +30,5 @@ export default function Menu( props ) {
 Menu.propTypes = {
 	menuItems: PropTypes.arrayOf( PropTypes.object ),
 	children: PropTypes.object,
-	actionButton: PropTypes.object,
+	actionButton: PropTypes.func,
 };
