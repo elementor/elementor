@@ -52,8 +52,8 @@ class Elementor_Test_Ajax_Action extends Elementor_Test_Base {
 
 		$this->assertTrue( file_exists( $upload_dir['basedir'] . $file_path ) );
 
-		$this->assertIsArray(
-			$post_meta = get_post_meta( $this->post->ID, '_elementor_screenshot', true )
+		$this->assertTrue(
+			is_array( $post_meta = get_post_meta( $this->post->ID, '_elementor_screenshot', true ) )
 		);
 
 		$this->assertEquals( $upload_dir['baseurl'] . $file_path, $post_meta['url'] );
