@@ -1,5 +1,5 @@
 class AppLoader {
-	selector = 'a.elementor-app-link';
+	selector = 'a.elementor-app-link, .elementor-app-link .ab-item';
 	iframe;
 
 	constructor() {
