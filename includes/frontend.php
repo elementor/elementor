@@ -1143,6 +1143,15 @@ class Frontend extends App {
 	}
 
 	/**
+	 * @param string $render_mode
+	 *
+	 * @return bool
+	 */
+	public function is_render_mode( string $render_mode ) {
+		return $this->get_render_mode() === $render_mode;
+	}
+
+	/**
 	 * @param $render_mode
 	 *
 	 * @return $this
