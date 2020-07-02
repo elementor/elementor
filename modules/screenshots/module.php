@@ -55,7 +55,7 @@ class Module extends BaseModule {
 	 * @return string
 	 */
 	public function ajax_save( $data ) {
-		if ( empty( $data['screenshot'] ) ) {
+		if ( empty( $data['screenshot'] ) || empty( $data['post_id'] ) ) {
 			return false;
 		}
 
@@ -69,7 +69,7 @@ class Module extends BaseModule {
 
 		$upload_dir_callback = function ( $uploads ) {
 			return array_merge( $uploads, [
-				'subdir' => $subdir = '/elementor/screenshots',
+				'subdir' => $subdir = 'elementor/screenshots',
 				'path' => "{$uploads['basedir']}/{$subdir}",
 				'url' => "{$uploads['baseurl']}/{$subdir}",
 			] );
