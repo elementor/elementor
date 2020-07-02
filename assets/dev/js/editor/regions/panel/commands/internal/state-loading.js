@@ -1,6 +1,6 @@
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
-export class StateLoading extends CommandInternal {
+export class StateLoading extends CommandInternalBase {
 	apply() {
 		elementorCommon.elements.$body.addClass( 'elementor-panel-loading' );
 	}

@@ -1,6 +1,6 @@
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
 
-export class AttachPreview extends CommandInternal {
+export class AttachPreview extends CommandInternalBaseBase {
 	apply() {
 		const document = elementor.documents.getCurrent();
 

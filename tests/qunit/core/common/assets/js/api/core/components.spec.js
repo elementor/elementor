@@ -1,7 +1,6 @@
 import CommonHelper from 'elementor-tests-qunit/core/common/helper';
 import ComponentBase from 'elementor-api/modules/component-base';
 import ComponentBaseModal from 'elementor-api/modules/component-modal-base';
-import Command from 'elementor-api/modules/command';
 
 /**
  * TODO: Part to files same as core files ( mirrored ).
@@ -89,7 +88,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new Command,
+						commandA: () => {},
 					};
 				}
 			};
@@ -111,7 +110,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new Command,
+						commandA: () => {},
 					};
 				}
 
@@ -176,7 +175,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new Command,
+						commandA: () => {},
 					};
 				}
 			};
@@ -185,7 +184,7 @@ jQuery( () => {
 
 			assert.throws(
 				() => {
-					$e.commands.register( namespace, 'commandA', () => new Command );
+					$e.commands.register( namespace, 'commandA', () => {} );
 				},
 				new Error( `Commands: \`${ namespace + '/commandA' }\` is already registered.` )
 			);
@@ -213,11 +212,9 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new class extends Command {
-							apply() {
-								assert.equal( $e.commands.is( command ), true );
-								commandStatus = 'afterRun';
-							}
+						commandA: () => {
+							assert.equal( $e.commands.is( command ), true );
+							commandStatus = 'afterRun';
 						},
 					};
 				}
@@ -244,12 +241,10 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: ( _args ) => new class CommandA extends Command {
-							apply( args ) {
-								assert.equal( args.argA, 1 );
-								assert.equal( $e.commands.getCurrentArgs( namespace ), args );
-							}
-						}( _args ),
+						commandA: ( args ) => {
+							assert.equal( args.argA, 1 );
+							assert.equal( $e.commands.getCurrentArgs( namespace ), args );
+						},
 					};
 				}
 			};
@@ -275,9 +270,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new class extends Command {
-							apply = () => {};
-						},
+						commandA: () => {},
 					};
 				}
 			};
@@ -331,9 +324,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new class extends Command {
-							apply = () => {};
-						},
+						commandA: () => {},
 					};
 				}
 			};
@@ -361,9 +352,7 @@ jQuery( () => {
 
 				defaultCommands() {
 					return {
-						commandA: () => new class extends Command {
-							apply = () => commandStatus = 'afterRun';
-						},
+						commandA: () => commandStatus = 'afterRun',
 					};
 				}
 			};
@@ -889,8 +878,8 @@ jQuery( () => {
 
 					defaultCommands() {
 						return {
-							commandA: () => new class extends Command {
-								apply = () => commandStatus = 'afterRun';
+							commandA: () => {
+								commandStatus = 'afterRun';
 							},
 						};
 					}
@@ -924,8 +913,8 @@ jQuery( () => {
 
 					defaultCommands() {
 						return {
-							commandA: () => new class extends Command {
-								apply = () => commandStatus = 'afterRunInScope';
+							commandA: () => {
+								commandStatus = 'afterRunInScope';
 							},
 						};
 					}
@@ -979,8 +968,8 @@ jQuery( () => {
 
 					defaultCommands() {
 						return {
-							commandA: () => new class extends Command {
-								apply = () => secondCommandStatus = 'afterRun';
+							commandA: () => {
+								secondCommandStatus = 'afterRun';
 							},
 						};
 					}

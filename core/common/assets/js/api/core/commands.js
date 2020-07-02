@@ -1,9 +1,6 @@
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
-import Command from '../modules/command';
 
 export default class Commands extends CommandsBackwardsCompatibility {
-	static trace = [];
-
 	/**
 	 * Function constructor().
 	 *
@@ -19,6 +16,16 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
+
+		this.classes = {};
+	}
+
+	/**
+	 * @param id
+	 * @returns {CommandBase}
+	 */
+	getCommandClass( id ) {
+		return this.classes[ id ];
 	}
 
 	/**
@@ -30,13 +37,6 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 */
 	getAll() {
 		return Object.keys( this.commands ).sort();
-	}
-
-	/**
-	 * @returns {Command}
-	 */
-	getCommandClass( id ) {
-		return this.commands[ id ]?.class;
 	}
 
 	/**
@@ -240,36 +240,22 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		return this.currentTrace[ 0 ];
 	}
 
-	validateRun( command, args = {} ) {
-		if ( ! this.commands[ command ] ) {
-			this.error( `\`${ command }\` not found.` );
-		}
-
-		return this.getComponent( command ).dependency( command, args );
-	}
-
 	/**
 	 * Function beforeRun().
 	 *
 	 * @param {string} command
 	 * @param {} args
+	 *
+	 * @returns {boolean} dependency result
 	 */
 	beforeRun( command, args = {} ) {
-		const component = this.getComponent( command ),
-			container = component.getRootContainer();
+		if ( ! this.commands[ command ] ) {
+			this.error( `\`${ command }\` not found.` );
+		}
 
 		this.currentTrace.push( command );
 
-		Commands.trace.push( command );
-
-		this.current[ container ] = command;
-		this.currentArgs[ container ] = args;
-
-		if ( args.onBefore ) {
-			args.onBefore.apply( component, [ args ] );
-		}
-
-		this.trigger( 'run:before', component, command, args );
+		return this.getComponent( command ).dependency( command, args );
 	}
 
 	/**
@@ -283,67 +269,32 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @returns {boolean|*} results
 	 */
 	run( command, args = {} ) {
-		if ( ! this.validateRun( command, args ) ) {
+		if ( ! this.beforeRun( command, args ) ) {
 			return false;
 		}
 
-		this.beforeRun( command, args );
+		const component = this.getComponent( command ),
+			container = component.getRootContainer();
 
-		// Call to new command or callback.
-		const instance = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
+		this.current[ container ] = command;
+		this.currentArgs[ container ] = args;
 
-		// TODO: Remove after all commands inheritance CommandBase.
-		if ( ! instance || ! ( instance instanceof Command ) ) {
-			this.afterRun( command, args, instance );
+		this.trigger( 'run:before', component, command, args );
 
-			return instance;
+		if ( args.onBefore ) {
+			args.onBefore.apply( component, [ args ] );
 		}
 
-		let results;
+		const results = this.commands[ command ].apply( component, [ args ] );
 
-		this.validateInstance( instance, command );
-
-		// For UI Hooks.
-		instance.onBeforeRun( instance.args );
-
-		try {
-			// For data hooks.
-			instance.onBeforeApply( instance.args );
-
-			results = instance.run();
-		} catch ( e ) {
-			instance.onCatchApply( e );
-
-			if ( e instanceof $e.modules.HookBreak ) {
-				this.afterRun( command, args, e ); // To clear current.
-				return false;
-			}
+		// TODO: Consider add results to `$e.devTools`.
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args, results ] );
 		}
 
-		const onAfter = ( _results ) => {
-			// For data hooks.
-			instance.onAfterApply( instance.args, _results );
+		this.afterRun( command );
 
-			if ( instance.isDataChanged() ) {
-				$e.internal( 'document/save/set-is-modified', { status: true } );
-			}
-
-			// For UI hooks.
-			instance.onAfterRun( instance.args, _results );
-
-			this.afterRun( command, args, results );
-		};
-
-		// TODO: Temp code determine if it's a jQuery deferred object.
-		if ( results && 'object' === typeof results && results.promise && results.then && results.fail ) {
-			results.fail( instance.onCatchApply.bind( instance ) );
-			results.done( onAfter );
-		} else if ( results instanceof Promise ) {
-			results.catch( instance.onCatchApply.bind( instance ) );
-			results.then( onAfter );
-		} else {
-			onAfter( results );
-		}
+		this.trigger( 'run:after', component, command, args, results );
 
 		if ( false === args.returnValue ) {
 			return true;
@@ -374,33 +325,17 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Method fired before the command runs.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} results
 	 */
-	afterRun( command, args, results ) {
+	afterRun( command ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
 
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args, results ] );
-		}
-
 		this.currentTrace.pop();
-		Commands.trace.pop();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
-
-        this.trigger( 'run:after', component, command, args, results );
 	}
 
-	validateInstance( instance, command ) {
-		const component = this.getComponent( command );
-
-		if ( ! instance || component !== instance.component ) {
-			this.error( `invalid instance, command: '${ command }' ` );
-		}
-	}
 	/**
 	 * Function error().
 	 *

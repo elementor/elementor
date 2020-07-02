@@ -1,6 +1,6 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class InsertTemplate extends Command {
+export class InsertTemplate extends CommandBase {
 	apply( args ) {
 		return this.component.insertTemplate( args );
 	}
