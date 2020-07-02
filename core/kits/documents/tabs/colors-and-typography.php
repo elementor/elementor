@@ -14,9 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Colors_And_Typography extends Tab_Base {
 
-	const TYPOGRAPHY_NAME = 'typography';
-	const TYPOGRAPHY_GROUP_PREFIX = self::TYPOGRAPHY_NAME . '_';
-
 	const COLOR_PRIMARY = 'globals/colors?id=primary';
 	const COLOR_SECONDARY = 'globals/colors?id=secondary';
 	const COLOR_TEXT = 'globals/colors?id=text';
@@ -26,6 +23,9 @@ class Colors_And_Typography extends Tab_Base {
 	const TYPOGRAPHY_SECONDARY = 'globals/typography?id=secondary';
 	const TYPOGRAPHY_TEXT = 'globals/typography?id=text';
 	const TYPOGRAPHY_ACCENT = 'globals/typography?id=accent';
+
+	const TYPOGRAPHY_NAME = 'typography';
+	const TYPOGRAPHY_GROUP_PREFIX = self::TYPOGRAPHY_NAME . '_';
 
 	public function get_id() {
 		return 'colors-and-typography';
