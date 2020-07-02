@@ -57,7 +57,6 @@ export default function SiteParts( props ) {
 	);
 }
 
-
 SiteParts.propTypes = {
 	hoverElement: PropTypes.func.isRequired,
 };

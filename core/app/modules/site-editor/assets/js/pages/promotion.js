@@ -42,7 +42,7 @@ export default function Promotion() {
 						</a>
 					</div>
 				</div>
-				<hr className="u-mb-44"/>
+				<hr className="eps-separator"/>
 				<SiteParts hoverElement={ PromotionHoverElement } />
 			</section>
 		</Layout>

@@ -5,6 +5,7 @@ $eps-add-new-button-size-sm: spacing(16);
 $eps-add-new-button-icon-size: calc( var(--eps-add-new-button-size) * 0.75 );
 
 .eps-add-new-button {
+	display: block;
 	--eps-add-new-button-size: #{$eps-add-new-button-size};
 	background-color: $eps-add-new-button-background-color;
 	color: $eps-add-new-button-icon-color;

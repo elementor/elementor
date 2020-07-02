@@ -5,7 +5,13 @@ import './add-new-button.scss';
 
 export default class AddNewButton extends Button {
 	getClassName() {
-		return this.props.className;
+		let className = this.props.className;
+
+		if ( this.props.size ) {
+			className += ' eps-add-new-button--' + this.props.size;
+		}
+
+		return className;
 	}
 
 	getText() {
@@ -15,6 +21,7 @@ export default class AddNewButton extends Button {
 	static propTypes = {
 		...Button.propTypes,
 		text: PropTypes.string,
+		size: PropTypes.string,
 	};
 
 	static defaultProps = {
