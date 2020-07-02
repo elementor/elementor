@@ -16,6 +16,16 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
+
+		this.classes = {};
+	}
+
+	/**
+	 * @param id
+	 * @returns {CommandBase}
+	 */
+	getCommandClass( id ) {
+		return this.classes[ id ];
 	}
 
 	/**
@@ -27,13 +37,6 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 */
 	getAll() {
 		return Object.keys( this.commands ).sort();
-	}
-
-	/**
-	 * @returns {Command}
-	 */
-	getCommandClass( id ) {
-		return this.commands[ id ]?.class;
 	}
 
 	/**
