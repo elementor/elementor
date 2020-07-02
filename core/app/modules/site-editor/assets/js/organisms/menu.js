@@ -18,8 +18,8 @@ export default function Menu( props ) {
 
 			return (
 				<span className={className}>
-				<AddNewButton hideText={true} size="sm" onClick={ () => onHoverClick() }/>
-			</span>
+					<AddNewButton hideText={true} size="sm" onClick={ () => onHoverClick() }/>
+				</span>
 			);
 		};
 
