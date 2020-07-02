@@ -1,10 +1,10 @@
-import Command from 'elementor-api/modules/command';
-
 export default class ComponentBase extends elementorModules.Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
 			this.manager = args.manager;
 		}
+
+		this.commandsClasses = {};
 
 		this.commands = this.defaultCommands();
 		this.commandsInternal = this.defaultCommandsInternal();
@@ -105,34 +105,7 @@ export default class ComponentBase extends elementorModules.Module {
 		return this.data;
 	}
 
-	/**
-	 * @param {string} command
-	 * @param {function()} callback
-	 */
 	registerCommand( command, callback ) {
-		const fullCommand = this.getNamespace() + '/' + command,
-			isCallbackNewClass = callback.toString().includes( 'new' );
-
-		let instance;
-
-		// TODO: Remove when all commands have Command as parent.
-		if ( isCallbackNewClass ) {
-			try {
-				// Try get instance.
-				instance = callback();
-
-				if ( ! ( instance instanceof Command ) ) {
-					throw Error( 'Command should inherent "Command" class.' );
-				}
-			} catch ( e ) {
-				if ( $e.devTools ) {
-					$e.devTools.log.error( `invalid command base: '${ fullCommand }'`, e );
-				}
-			}
-		} else if ( $e.devTools ) {
-			$e.devTools.log.error( `Non command base: '${ fullCommand }', callback with out new operator.` );
-		}
-
 		$e.commands.register( this, command, callback );
 	}
 
@@ -298,12 +271,12 @@ export default class ComponentBase extends elementorModules.Module {
 
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
-			const command = this.normalizeCommandName( className ),
-				callback = ( args ) => new Class( args );
+			const command = this.normalizeCommandName( className );
+			commands[ command ] = ( args ) => ( new Class( args ) ).run();
 
-			callback.class = Class;
-
-			commands[ command ] = callback;
+			// TODO: Temporary code, remove after merge with 'require-commands-base' branch.
+			// should not return callback, but Class or Instance without run.
+			this.commandsClasses[ command ] = Class;
 		} );
 
 		return commands;

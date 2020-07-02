@@ -1,6 +1,6 @@
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
-export class Save extends CommandInternal {
+export class Save extends CommandInternalBase {
 	apply( args ) {
 		const { status = 'draft', force = false, onSuccess = null, document = elementor.documents.getCurrent() } = args;
 

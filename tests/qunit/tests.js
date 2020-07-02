@@ -33,8 +33,6 @@ function initialize() {
 		require( './core/common/assets/js/api/core/data.spec.js' );
 
 		require( './core/common/assets/js/api/core/hooks/base.spec.js' );
-		require( './core/common/assets/js/api/modules/command-base.spec.js' );
-		require( './core/common/assets/js/api/modules/command.spec.js' );
 
 		require( './core/editor/container/container.spec' );
 
