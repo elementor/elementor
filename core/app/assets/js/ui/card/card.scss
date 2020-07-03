@@ -69,6 +69,8 @@
 	}
 
 	&__footer {
+		padding: $card-padding;
+		border-top: $card-header-border;
 	}
 
 	&:hover {

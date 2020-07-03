@@ -14,6 +14,7 @@ import MenuItem from './ui/menu/menu-item';
 import ModalProvider from './ui/modal/modal';
 import NotFound from './pages/not-found';
 import Page from './layout/page';
+import Popover from './ui/molecules/popover';
 import Typography from './ui/atoms/typography';
 
 export default {
@@ -32,5 +33,6 @@ export default {
 	ModalProvider,
 	NotFound,
 	Page,
+	Popover,
 	Typography,
 };
