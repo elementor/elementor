@@ -9,19 +9,20 @@ $card-box-shadow: $eps-box-shadow;
 $card-border-radius: $eps-radius;
 $card-transition: $eps-transition-duration;
 $card-font-size: type(text,xs);
+$card-padding: spacing(10);
 
-$card-header-padding: spacing(10);
+$card-header-padding: $card-padding;
 $card-header-border: $eps-border;
 $card-header-height: spacing(20) * 2;
 
 $card-headline-color: tints(600);
 
-$card-headline-font-size: $font-size-12;
+$card-headline-font-size: type(caption);
 $card-headline-font-weight: $eps-font-weight-medium;
 $card-headline-line-height: $line-height-2;
 
-$card-body-padding-y: spacing(10);
-$card-body-padding-x: spacing(10);
+$card-body-padding-y: $card-padding;
+$card-body-padding-x: $card-padding;
 
 $card-figure-background-color: tints(200);
 $card-figure-padding-bottom: $ratio-portrait;
