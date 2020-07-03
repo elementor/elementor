@@ -9,16 +9,16 @@ export default function Menu( props ) {
 			const className = 'e-app-menu-item__action-button';
 
 			if ( props.promotion ) {
-				return <Button text="Locked" hideText={true} icon="eicon-lock" className={className} />;
+				return <Button text={ __( 'Go Pro', 'elementor' ) } hideText={true} icon="eicon-lock" className={className} />;
 			}
 
-			const onHoverClick = () => {
+			const goToCreate = () => {
 				location.href = itemProps.urls.create;
 			};
 
 			return (
 				<span className={className}>
-					<AddNewButton hideText={true} size="sm" onClick={ () => onHoverClick() }/>
+					<AddNewButton hideText={true} size="sm" onClick={ () => goToCreate() }/>
 				</span>
 			);
 		};
