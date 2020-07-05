@@ -1,5 +1,6 @@
 import EditorTest from './js/editor-test';
-import * as Ajax from './ajax/';
+import * as Ajax from './mock/ajax/';
+import * as eData from './mock/e-data/';
 
 function initialize() {
 	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
@@ -19,6 +20,7 @@ function initialize() {
 	elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
 	Ajax.silence();
+	eData.emptyFetch();
 
 	elementor.on( 'preview:loaded', () => {
 		// Disable UI Hooks.
@@ -38,16 +40,22 @@ function initialize() {
 
 		require( './core/editor/document/commands/base/command-history.spec' );
 		require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
+		require( './core/editor/document/globals/commands/base/disable-enable.spec' );
 
 		require( './core/editor/document/component.spec' );
 		require( './core/editor/document/manager.spec' );
 
+		// TODO: Require all components from one file.
+
 		require( './core/editor/document/elements/component.spec' );
+		require( './core/editor/document/globals/component.spec' );
 		require( './core/editor/document/repeater/component.spec' );
 		require( './core/editor/document/dynamic/component.spec' );
 		require( './core/editor/document/history/component.spec' );
 		require( './core/editor/document/ui/component.spec' );
 		require( './core/editor/document/save/component.spec' );
+
+		require( './core/editor/data/globals/component.spec' );
 	} );
 
 	elementor.start();

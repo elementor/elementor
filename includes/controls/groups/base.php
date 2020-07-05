@@ -559,7 +559,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
 		}
 
-		foreach ( [ 'condition', 'conditions' ] as $key ) {
+		foreach ( [ 'global', 'condition', 'conditions' ] as $key ) {
 			if ( ! empty( $settings[ $key ] ) ) {
 				$control_params[ $key ] = $settings[ $key ];
 			}
@@ -570,6 +570,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		if ( isset( $this->args['fields_options'][ $starter_name ] ) ) {
 			$control_params = array_merge( $control_params, $this->args['fields_options'][ $starter_name ] );
 		}
+
+		$control_params['groupPrefix'] = $this->get_controls_prefix();
 
 		$element->add_control( $this->get_controls_prefix() . $starter_name, $control_params );
 
