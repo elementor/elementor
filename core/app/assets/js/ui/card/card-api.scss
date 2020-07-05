@@ -25,7 +25,7 @@ $card-body-padding-y: $card-padding;
 $card-body-padding-x: $card-padding;
 
 $card-figure-background-color: tints(200);
-$card-figure-padding-bottom: $ratio-portrait;
+$card-figure-padding-bottom: var(--card-image-aspect-ratio, #{$ratio-portrait});
 
 $card-image-overlay-background-color: rgba(theme-colors(dark), $opacity-02);
 $card-image-overlay-transition: $card-transition;
