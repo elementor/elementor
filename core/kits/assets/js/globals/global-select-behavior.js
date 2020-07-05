@@ -124,7 +124,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	buildGlobalPopover() {
 		const $popover = jQuery( '<div>', { class: 'e-global__popover-container' } ),
 			$popoverTitle = jQuery( '<div>', { class: 'e-global__popover-title' } )
-				.html( '<i class="eicon-info-circle"></i>' + this.getOption( 'popoverTitle' ) ),
+				.html( '<div class="e-global__popover-info"><i class="eicon-info-circle"></i></div>' + this.getOption( 'popoverTitle' ) ),
 			$manageGlobalPresetsLink = jQuery( '<div>', { class: 'e-global__manage-button' } )
 				.html( this.getOption( 'manageButtonText' ) + '<i class="eicon-cog"></i>' );
 
@@ -298,10 +298,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	createGlobalInfoTooltip() {
-		const $infoIcon = this.popover.getElements( 'widget' ).find( '.e-global__popover-title .eicon-info-circle' );
+		const $infoIcon = this.popover.getElements( 'widget' ).find( '.e-global__popover-info' );
 
 		this.globalInfoTooltip = elementorCommon.dialogsManager.createWidget( 'simple', {
-			className: 'e-global__info-tooltip',
+			className: 'e-global__popover-info-tooltip',
 			message: this.getOption( 'tooltipText' ),
 			effects: {
 				show: 'show',
