@@ -24,11 +24,8 @@ class Test_Controller extends Elementor_Test_Base  {
 		$controller = new Globals\Controller();
 		$methods = explode( ', ', \WP_REST_Server::ALLMETHODS );
 
-		// TODO: Globals default 'get_permission_callback' is 'return current_user_can( 'edit_posts' )'
-		// Create a user with only that permission and check.
-
-		// Set admin.
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		// Set Editor.
+		wp_set_current_user( $this->factory()->get_editor_user()->ID );
 
 		foreach ( $methods as $method ) {
 			$request = new \WP_REST_Request( $method );
@@ -37,5 +34,11 @@ class Test_Controller extends Elementor_Test_Base  {
 
 		// Set subscriber.
 		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+
+		foreach ( $methods as $method ) {
+			$request = new \WP_REST_Request( $method );
+			$this->assertEquals( $controller->get_permission_callback( $request ), false );
+		}
+
 	}
 }

@@ -202,8 +202,8 @@ class Test_Controller extends Elementor_Test_Base {
 			$this->assertEquals( $controller->get_permission_callback( $request ), true );
 		}
 
-		// Set subscriber.
-		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+		// Set editor.
+		wp_set_current_user( $this->factory()->get_editor_user()->ID );
 
 		foreach( $methods as $method ) {
 			$request = new \WP_REST_Request( $method );
