@@ -1,6 +1,7 @@
 @import "./buttons-api";
 
 .#{$eps-prefix}button {
+	display: inline-block;
 	//custom properties
 	@include button-custom-properties;
 	// definitions
