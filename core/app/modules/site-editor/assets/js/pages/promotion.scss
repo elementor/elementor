@@ -33,3 +33,23 @@ $promotion-overlay-button-padding-x: 16px;
 	  //placeholder
 	}
 }
+
+.site-editor__promotion {
+	.page-header {
+		display: flex;
+		margin-bottom: spacing(10)
+	}
+
+	.col-7 {
+		width: 100% / 12 * 7;
+	}
+
+	.col-5 {
+		width: 100% / 12 * 5;
+		text-align: end;
+	}
+
+	hr {
+		margin-bottom: spacing(44);
+	}
+}

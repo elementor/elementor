@@ -3,7 +3,7 @@ import Layout from '../templates/layout';
 import SiteParts from '../organisms/site-parts';
 import CardOverlay from 'elementor-app/ui/card/card-overlay';
 
-import './promotion-overlay.scss';
+import './promotion.scss';
 
 export default function Promotion() {
 	const promotionUrl = 'https://go.elementor.com/site-editor',
@@ -27,7 +27,7 @@ export default function Promotion() {
 	return (
 		<Layout allPartsButton={ <AllPartsButton /> } promotion>
 			<section className="site-editor__promotion">
-				<div className="u-mb-20 u-d-flex">
+				<div className="page-header">
 					<div className="col-7">
 						<h1>
 							{ __( 'Create Full Site', 'elementor' ) }
@@ -36,7 +36,7 @@ export default function Promotion() {
 							{ __( 'Site Editor is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce', 'elementor' ) }
 						</p>
 					</div>
-					<div className="col-5 u-d-flex u-align-items-center u-justify-content-end">
+					<div className="col-5">
 						<a target="_blank" rel="noopener noreferrer" className="eps-button eps-button--sm eps-button--cta" href={ promotionUrl }>
 							{ __( 'Get Pro', 'elementor' ) }
 						</a>
