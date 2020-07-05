@@ -193,30 +193,30 @@ class Embed {
 	 * Get oembed data from the cache.
 	 * if not exists in the cache it will fetch from provider and then save to the cache.
 	 *
-	 * @param $video_url
+	 * @param $oembed_url
 	 * @param $cached_post_id
 	 *
 	 * @return array|null
 	 */
-	public static function get_oembed_data( $video_url, $cached_post_id ) {
+	public static function get_oembed_data( $oembed_url, $cached_post_id ) {
 		$cached_oembed_data = json_decode( get_post_meta( $cached_post_id, '_elementor_oembed_cache', true ), true );
 
-		if ( isset( $cached_oembed_data[ $video_url ] ) ) {
-			return $cached_oembed_data[ $video_url ];
+		if ( isset( $cached_oembed_data[ $oembed_url ] ) ) {
+			return $cached_oembed_data[ $oembed_url ];
 		}
 
-		$normalize_oembed_data = self::fetch_oembed_video_data( $video_url );
+		$normalize_oembed_data = self::fetch_oembed_data( $oembed_url );
 
 		if ( ! $cached_oembed_data ) {
 			$cached_oembed_data = [];
 		}
 
-		update_post_meta($cached_post_id, '_elementor_oembed_cache', wp_json_encode(array_merge(
+		update_post_meta( $cached_post_id, '_elementor_oembed_cache', wp_json_encode( array_merge(
 			$cached_oembed_data,
 			[
-				$video_url => $normalize_oembed_data,
+				$oembed_url => $normalize_oembed_data,
 			]
-		)));
+		) ) );
 
 		return $normalize_oembed_data;
 	}
@@ -228,7 +228,7 @@ class Embed {
 	 *
 	 * @return array|null
 	 */
-	public static function fetch_oembed_video_data( $video_url ) {
+	public static function fetch_oembed_data( $video_url ) {
 		$oembed_data = _wp_oembed_get_object()->get_data( $video_url );
 
 		if ( ! $oembed_data ) {
@@ -242,13 +242,13 @@ class Embed {
 	}
 
 	/**
-	 * @param $video_url
+	 * @param $oembed_url
 	 * @param null|string|int $cached_post_id
 	 *
 	 * @return string|null
 	 */
-	public static function get_embed_thumbnail_html( $video_url, $cached_post_id = null ) {
-		$oembed_data = self::get_oembed_data( $video_url, $cached_post_id );
+	public static function get_embed_thumbnail_html( $oembed_url, $cached_post_id = null ) {
+		$oembed_data = self::get_oembed_data( $oembed_url, $cached_post_id );
 
 		if ( ! $oembed_data ) {
 			return null;
