@@ -125,7 +125,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered result
 	 */
-	applyAfterCreate( data, args = {} ) {
+	applyAfterCreate( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
@@ -133,7 +133,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered args
 	 */
-	applyBeforeDelete( args = {} ) {
+	applyBeforeDelete( args = {} ) {// eslint-disable-line no-unused-vars
 		return args;
 	}
 
@@ -142,7 +142,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered result
 	 */
-	applyAfterDelete( data, args = {} ) {
+	applyAfterDelete( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
@@ -150,7 +150,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered args
 	 */
-	applyBeforeGet( args = {} ) {
+	applyBeforeGet( args = {} ) {// eslint-disable-line no-unused-vars
 		return args;
 	}
 
@@ -159,7 +159,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered result
 	 */
-	applyAfterGet( data, args = {} ) {
+	applyAfterGet( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
@@ -167,7 +167,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered args
 	 */
-	applyBeforeUpdate( args = {} ) {
+	applyBeforeUpdate( args = {} ) {// eslint-disable-line no-unused-vars
 		return args;
 	}
 
