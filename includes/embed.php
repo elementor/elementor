@@ -224,12 +224,12 @@ class Embed {
 	/**
 	 * Fetch oembed data from oembed provider.
 	 *
-	 * @param $video_url
+	 * @param $oembed_url
 	 *
 	 * @return array|null
 	 */
-	public static function fetch_oembed_data( $video_url ) {
-		$oembed_data = _wp_oembed_get_object()->get_data( $video_url );
+	public static function fetch_oembed_data( $oembed_url ) {
+		$oembed_data = _wp_oembed_get_object()->get_data( $oembed_url );
 
 		if ( ! $oembed_data ) {
 			return null;
