@@ -69,8 +69,8 @@ class Modal extends React.Component {
 	render() {
 		const { modalProps, children } = this.props;
 		return modalProps.show ? (
-			<div className="modal-overlay" ref={this.modalRef}>
-				<div className="modal">
+			<div className="modal-overlay">
+				<div className="modal" ref={ this.modalRef }>
 					<div className="modal-close-wrapper" ref={ this.closeRef }>
 						<Button text={ __( 'Close', 'elementor' ) } icon="eicon eicon-close" onClick={ this.closeModal } />
 					</div>
