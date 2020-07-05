@@ -619,7 +619,7 @@ class Editor {
 				'typography' => __( 'Typography', 'elementor' ),
 				'new_typography_setting' => __( 'New Typography Setting', 'elementor' ),
 				'global_typography_title' => __( 'Global Typography Settings', 'elementor' ),
-				'manage_global_typography' => __( 'Manage Global Typography Settings', 'elementor' ),
+				'manage_global_typography' => __( 'Manage Global Typography', 'elementor' ),
 				'create_global_typography' => __( 'Create New Global Typography', 'elementor' ),
 				'delete_global_typography' => __( 'Delete Global Typography', 'elementor' ),
 				'delete_global_typography_info' => __( 'Please note that by deleting a Global Typography setting, all of its instances will inherit their value from an unknown source', 'elementor' ),
