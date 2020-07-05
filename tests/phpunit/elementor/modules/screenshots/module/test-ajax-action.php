@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Testing\Modules\Screenshots;
+namespace Elementor\Testing\Modules\Screenshots\Module;
 
 use Elementor\Modules\Screenshots\Module;
 use Elementor\Testing\Elementor_Test_Base;
@@ -23,7 +23,7 @@ class Elementor_Test_Ajax_Action extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$this->module = new Module();
+		$this->module = Module::instance();
 		$this->post = $this->factory()->create_and_get_default_post();
 	}
 

@@ -2,15 +2,20 @@
 
 namespace Elementor\Modules\Screenshots;
 
+use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Module extends BaseModule {
+
+	const SCREENSHOT_NONCE_ACTION = 'screenshot';
+	const SCREENSHOT_PROXY_NONCE_ACTION = 'screenshot_proxy';
+
+	const SCREENSHOT_PARAM_NAME = 'elementor-screenshot';
 
 	/**
 	 * Module name.
@@ -24,27 +29,25 @@ class Module extends BaseModule {
 	/**
 	 * Creates proxy for css and images,
 	 * dom to image libraries cannot load content from another origin.
+	 *
+	 * @param $url
+	 *
+	 * @return string
 	 */
-	public function screenshot_proxy() {
-		if ( ! wp_verify_nonce( $_GET['nonce'], 'screenshot_proxy' ) || empty( $_GET['href'] ) ) {
-			echo '';
-			die;
-		}
-
-		$response = wp_remote_get( utf8_decode( $_GET['href'] ) );
+	public function get_proxy_data( $url ) {
+		$response = wp_remote_get( utf8_decode( $url ) );
 
 		$body = wp_remote_retrieve_body( $response );
 
 		if ( ! $body ) {
-			echo '';
-			die;
+			$body = '';
 		}
 
 		$content_type = wp_remote_retrieve_headers( $response )->offsetGet( 'content-type' );
 
 		header( 'content-type: ' . $content_type );
 
-		echo $body;
+		return $body;
 	}
 
 	/**
@@ -133,9 +136,7 @@ class Module extends BaseModule {
 	 * Load screenshot scripts.
 	 */
 	public function enqueue_scripts() {
-		if ( ! $this->is_screenshot_mode() || ! User::is_current_user_can_edit() ) {
-			return;
-		}
+		$post_id = $_GET[ self::SCREENSHOT_PARAM_NAME ]; // phpcs:ignore -- Nonce was checked before register this method.
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
@@ -155,11 +156,9 @@ class Module extends BaseModule {
 			true
 		);
 
-		$post_id = get_queried_object_id();
-
 		$config = [
 			'selector' => '.elementor-' . $post_id,
-			'nonce' => wp_create_nonce( 'screenshot_proxy' ),
+			'nonce' => wp_create_nonce( self::SCREENSHOT_PROXY_NONCE_ACTION ),
 			'home_url' => home_url(),
 			'post_id' => $post_id,
 		];
@@ -192,6 +191,7 @@ class Module extends BaseModule {
 		$url = add_query_arg( [
 			'elementor-screenshot' => $post_id,
 			'ver' => time(),
+			'nonce' => wp_create_nonce( self::SCREENSHOT_NONCE_ACTION . $post_id ),
 		], get_permalink( $post_id ) );
 
 		return array_replace_recursive( $config, [
@@ -202,40 +202,77 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Checks if is in screenshot mode.
+	 * Check and validate proxy mode.
+	 *
+	 * @param array $query_params
 	 *
 	 * @return bool
+	 * @throws \Requests_Exception_HTTP_400
+	 * @throws \Requests_Exception_HTTP_403
 	 */
-	protected function is_screenshot_mode() {
-		return isset( $_REQUEST['elementor-screenshot'] );
+	protected function is_screenshot_proxy_mode( array $query_params ) {
+		$is_proxy = isset( $query_params['screenshot_proxy'] );
+
+		if ( $is_proxy ) {
+			if ( ! wp_verify_nonce( $query_params['nonce'], self::SCREENSHOT_PROXY_NONCE_ACTION ) ) {
+				throw new \Requests_Exception_HTTP_403();
+			}
+
+			if ( ! $query_params['href'] ) {
+				throw new \Requests_Exception_HTTP_400();
+			}
+		}
+
+		return $is_proxy;
 	}
 
 	/**
-	 * Checks if is in proxy mode.
+	 * Check and validate proxy mode.
+	 *
+	 * @param array $query_params
 	 *
 	 * @return bool
+	 * @throws \Requests_Exception_HTTP_403
 	 */
-	protected function is_screenshot_proxy_mode() {
-		return isset( $_REQUEST['screenshot_proxy'] );
+	protected function is_screenshot_mode( array $query_params ) {
+		$is_screenshot = isset( $query_params[ self::SCREENSHOT_PARAM_NAME ] );
+
+		if ( $is_screenshot ) {
+			$post_id = $query_params[ self::SCREENSHOT_PARAM_NAME ];
+
+			if ( ! wp_verify_nonce( $query_params['nonce'], self::SCREENSHOT_NONCE_ACTION . $post_id ) ) {
+				throw new \Requests_Exception_HTTP_403();
+			}
+
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( ! $document->is_editable_by_current_user() ) {
+				throw new \Requests_Exception_HTTP_403();
+			}
+		}
+
+		return $is_screenshot;
 	}
 
 	/**
 	 * Module constructor.
+	 *
+	 * @throws \Requests_Exception_HTTP_400
+	 * @throws \Requests_Exception_HTTP_403
 	 */
 	public function __construct() {
-		if ( $this->is_screenshot_proxy_mode() ) {
-			$this->screenshot_proxy();
+		if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
+			echo $this->get_proxy_data( $_GET['href'] ); // phpcs:ignore -- Nonce was checked on the above method
 			die;
 		}
 
-		if ( $this->is_screenshot_mode() ) {
+		if ( $this->is_screenshot_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
 			show_admin_bar( false );
+
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
 		}
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
-
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-
 		add_filter( 'elementor/document/config', [ $this, 'extend_document_config' ] );
 	}
 }
