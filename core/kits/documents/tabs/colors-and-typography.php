@@ -14,6 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Colors_And_Typography extends Tab_Base {
 
+	const COLOR_PRIMARY = 'globals/colors?id=primary';
+	const COLOR_SECONDARY = 'globals/colors?id=secondary';
+	const COLOR_TEXT = 'globals/colors?id=text';
+	const COLOR_ACCENT = 'globals/colors?id=accent';
+
+	const TYPOGRAPHY_PRIMARY = 'globals/typography?id=primary';
+	const TYPOGRAPHY_SECONDARY = 'globals/typography?id=secondary';
+	const TYPOGRAPHY_TEXT = 'globals/typography?id=text';
+	const TYPOGRAPHY_ACCENT = 'globals/typography?id=accent';
+
 	const TYPOGRAPHY_NAME = 'typography';
 	const TYPOGRAPHY_GROUP_PREFIX = self::TYPOGRAPHY_NAME . '_';
 
