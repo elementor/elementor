@@ -3,6 +3,8 @@ import { Context as TemplateTypesContext } from '../context/template-types';
 import Button from 'elementor-app/ui/molecules/button';
 import AddNewButton from 'elementor-app/ui/molecules/add-new-button';
 
+import './menu.scss';
+
 export default function Menu( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext ),
 		actionButton = ( itemProps ) => {
@@ -27,7 +29,7 @@ export default function Menu( props ) {
 		<UiMenu menuItems={ templateTypes } actionButton={ actionButton }>
 			<>
 				{ props.allPartsButton }
-				<div className="e-app-menu__title u-mt-44 u-mb-16">
+				<div className="e-app-menu__title">
 					{ __( 'Site Parts', 'elementor' ) }
 				</div>
 			</>
