@@ -1147,7 +1147,7 @@ class Frontend extends App {
 	 *
 	 * @return bool
 	 */
-	public function is_render_mode( string $render_mode ) {
+	public function is_render_mode( $render_mode ) {
 		return $this->get_render_mode() === $render_mode;
 	}
 
