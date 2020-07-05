@@ -19,13 +19,14 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
+		this.classes = {};
 	}
 
 	/**
 	 * @returns {Command}
 	 */
-	get( id ) {
-		return this.commands[ id ];
+	getCommandClass( id ) {
+		return $e.commands.classes[ id ];
 	}
 
 	/**

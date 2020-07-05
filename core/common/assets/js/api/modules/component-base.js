@@ -298,12 +298,11 @@ export default class ComponentBase extends elementorModules.Module {
 
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
-			const command = this.normalizeCommandName( className ),
-				callback = ( args ) => new Class( args );
+			const command = this.normalizeCommandName( className );
 
-			callback.class = Class;
+			commands[ command ] = ( args ) => new Class( args );
 
-			commands[ command ] = callback;
+			$e.commands.classes[ this.getNamespace() + '/' + command ] = Class;
 		} );
 
 		return commands;
