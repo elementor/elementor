@@ -248,9 +248,9 @@ module.exports = {
 			if ( 'editor' === target ) {
 				// TODO: Find better solution, temporary fix, covering issue: 'fonts does not rendered in global styles'.
 				this.enqueueCSS( fontUrl, elementorCommon.elements.$document );
+			} else {
+				this.enqueueCSS( fontUrl, elementor.$previewContents );
 			}
-
-			this.enqueueCSS( fontUrl, elementor.$previewContents );
 		}
 
 		this._enqueuedFonts[ target ].push( font );
