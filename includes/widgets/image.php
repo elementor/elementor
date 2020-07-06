@@ -599,15 +599,35 @@ class Widget_Image extends Widget_Base {
 		return $caption;
 	}
 
-	public function handle_svg_as_image_size( $image_data, $attachment_id, $size ) {
-		if ( get_post_mime_type( $attachment_id ) === 'image/svg+xml' ) {
-			$image_sizes = Group_Control_Image_Size::get_all_image_sizes();
+	public function set_svg_size( $image_data, $attachment_id, $size ) {
+		$image_sizes = Group_Control_Image_Size::get_all_image_sizes();
 
-			$image_data['1'] = $image_sizes[ $size ][ 'width' ];
-			$image_data['2'] = $image_sizes[ $size ][ 'height' ];
-		}
+		$image_data['1'] = $image_sizes[ $size ][ 'width' ];
+		$image_data['2'] = $image_sizes[ $size ][ 'height' ];
 
 		return $image_data;
+	}
+
+	private function handle_svg_image( $action, $settings ) {
+		$is_custom_size= 'custom' === $settings[ 'image_size' ];
+		$callback = 'set_svg_size';
+		$filter = 'wp_get_attachment_image_src';
+
+		if ( 'before_render' === $action ) {
+			if ( $is_custom_size ) {
+				$custom_dimensions = $settings[ 'image_custom_dimension' ];
+
+				add_image_size( 'custom', $custom_dimensions[ 'width' ], $custom_dimensions[ 'height' ] );
+			}
+
+			add_filter( $filter, [ $this, $callback ], 10, 4 );
+		} elseif ( 'after_render' === $action ) {
+			remove_filter( $filter, [ $this, $callback ] );
+
+			if ( $is_custom_size ) {
+				remove_image_size( 'custom' );
+			}
+		}
 	}
 
 	/**
@@ -619,12 +639,16 @@ class Widget_Image extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		add_filter( 'wp_get_attachment_image_src', array( $this, 'handle_svg_as_image_size' ), 10, 4 );
-
 		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['image']['url'] ) ) {
 			return;
+		}
+
+		$is_svg = get_post_mime_type( $settings['image']['id'] ) === 'image/svg+xml';
+
+		if ( $is_svg ) {
+			$this->handle_svg_image( 'before_render', $settings );
 		}
 
 		$has_caption = $this->has_caption( $settings );
@@ -669,6 +693,10 @@ class Widget_Image extends Widget_Base {
 			<?php endif; ?>
 		</div>
 		<?php
+
+		if ( $is_svg ) {
+			$this->handle_svg_image( 'after_render', $settings );
+		}
 	}
 
 	/**
@@ -689,8 +717,6 @@ class Widget_Image extends Widget_Base {
 				dimension: settings.image_custom_dimension,
 				model: view.getEditModel()
 			};
-
-			console.log( 'image widget: ', image );
 
 			var image_url = elementor.imagesManager.getImageUrl( image );
 
@@ -749,11 +775,42 @@ class Widget_Image extends Widget_Base {
 				#><figure class="wp-caption"><#
 			}
 
+			var getImageSizeFromControlOptions = function() {
+				var imageSizeOptions = image.model.attributes.settings.options.controls.image_size.options;
+				var imageSize = { width: '', height: '' };
+				var imageDimensions;
+
+				if ( 'custom' === image.size ) {
+					imageSize = settings.image_custom_dimension;
+				} else {
+					imageDimensions = imageSizeOptions[ image.size ].match( /(?<=-\s)(\d*\sx\s\d*)/gi );
+
+					if ( imageDimensions && imageDimensions.length ) {
+						imageDimensions = imageDimensions[0].split( ' x ' );
+
+						imageSize.width = imageDimensions[0];
+						imageSize.height = imageDimensions[1];
+					}
+				}
+
+				return imageSize;
+			};
+
+			var isSvg = 'svg' === image_url.split( '.' ).pop();
+			var svgSize = {};
+
+			if ( isSvg ) {
+				svgSize = getImageSizeFromControlOptions();
+			}
+
 			if ( link_url ) {
 					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
 			}
+					if ( isSvg ) {
+						#><img src="{{ image_url }}" class="{{ imgClass }}" width="{{ svgSize.width }}" height="{{ svgSize.height }}" /><#
+					} else {
 						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
-
+					}
 			if ( link_url ) {
 					#></a><#
 			}
