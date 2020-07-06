@@ -15,7 +15,6 @@ $eps-grid-spacing-keys: (5 8 10 12 16);
 	}
 }
 
-
 // defining cols.
 @mixin grid-col-generator($size, $grid-columns: $eps-grid-columns) {
 	@for $i from 1 through $grid-columns {

@@ -7,9 +7,9 @@ export default function Grid( props ) {
 			{
 				prop: 'container',
 				nested: [
-					{ prop: 'spacing', repeatOnValue: true },
-					{ prop: 'noWrap' },
-					{ prop: 'wrapReverse' },
+					{ prop: 'spacing', isModifier: true, ignoreValue: true },
+					{ prop: 'noWrap', isModifier: true },
+					{ prop: 'wrapReverse', isModifier: true },
 				],
 			},
 			{
@@ -25,10 +25,11 @@ export default function Grid( props ) {
 				],
 			},
 		],
+		getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': props.spacing + 'px' } : {},
 		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
 
 	return (
-		<div className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<div style={ getStyle() } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
 			{ props.children }
 		</div>
 	);
@@ -51,7 +52,7 @@ function getPropsClasses( propsMap, props, prefix ) {
 
 	for ( const propData of propsMap ) {
 		if ( props[ propData.prop ] ) {
-			const propValue = isValidPropValue( props[ propData.prop ] ) ? '-' + props[ propData.prop ] : '',
+			const propValue = isValidPropValue( props[ propData.prop ] ) && ! propData.ignoreValue ? '-' + props[ propData.prop ] : '',
 				connection = propData.isModifier ? '--' : '-';
 
 			let propName = connection + camelCaseToDashCase( propData.prop );
@@ -89,6 +90,7 @@ function camelCaseToDashCase( str ) {
 
 Grid.propTypes = {
 	className: PropTypes.string,
+	spacing: PropTypes.number,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,

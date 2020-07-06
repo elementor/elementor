@@ -14,11 +14,11 @@
 		width: 100%;
 
 		//@prop: no-wrap
-		&-no-wrap {
+		&--no-wrap {
 			flex-wrap: nowrap;
 		}
 
-		&-wrap-reverse {
+		&--wrap-reverse {
 			flex-wrap: wrap-reverse;
 		}
 
@@ -27,7 +27,7 @@
 		// item padding can be 8,10,12,16
 		// container width and negative margin are calculated dynamically
 		// @markup <Grid container spacing={5} and so on >
-		&[class*="#{$eps-prefix}grid-container-spacing"] {
+		&--spacing {
 			--grid-row-gutter: calc(-1 * var(--grid-spacing-gutter));
 			width: var(--grid-spacing-width);
 			margin: var(--grid-row-gutter);
@@ -35,11 +35,6 @@
 			> .#{$eps-prefix}grid-item {
 				padding: var(--grid-spacing-gutter);
 			}
-
-		}
-
-		&-spacing {
-			@include grid-spacing-classes($eps-grid-spacing-keys);
 		}
 	}
 
