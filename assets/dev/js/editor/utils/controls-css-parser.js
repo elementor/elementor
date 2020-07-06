@@ -39,35 +39,180 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
-		var self = this,
-			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ), styleControls );
+		// If the current element contains dynamic values, parse these values
+		const dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
 
-		_.each( styleControls, function( control ) {
+		_.each( styleControls, ( control ) => {
 			if ( control.styleFields && control.styleFields.length ) {
-				self.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, controls, placeholders, replacements );
+				this.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, control.fields, placeholders, replacements );
 			}
 
-			if ( control.dynamic && control.dynamic.active && values.__dynamic__ && values.__dynamic__[ control.name ] ) {
-				self.addDynamicControlStyleRules( values.__dynamic__[ control.name ], control );
+			// If a dynamic tag includes controls with CSS implementations, Take their CSS and apply it.
+			if ( control.dynamic?.active && values.__dynamic__?.[ control.name ] ) {
+				this.addDynamicControlStyleRules( values.__dynamic__[ control.name ], control );
 			}
 
 			if ( ! control.selectors ) {
 				return;
 			}
 
-			self.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements );
+			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements );
 		} );
 	},
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		ControlsCSSParser.addControlStyleRules(
-			this.stylesheet,
-			control,
-			controls,
-			( StyleControl ) => this.getStyleControlValue( StyleControl, values ),
-			placeholders,
-			replacements
-		);
+		const context = this.getSettings( 'context' ),
+			globals = context.model.get( '__globals__' );
+
+		let globalValue;
+
+		if ( globals ) {
+			let controlGlobalKey = control.name;
+
+			if ( control.groupType ) {
+				controlGlobalKey = control.groupPrefix + control.groupType;
+			}
+
+			globalValue = globals[ controlGlobalKey ];
+		}
+
+		let value;
+
+		if ( ! globalValue ) {
+			value = this.getStyleControlValue( control, values );
+
+			if ( undefined === value ) {
+				return;
+			}
+		}
+
+		_.each( control.selectors, ( cssProperty, selector ) => {
+			var outputCssProperty;
+
+			if ( globalValue ) {
+				const propertyParts = cssProperty.split( ':' ),
+					{ args } = $e.data.commandExtractArgs( globalValue ),
+					id = args.query.id;
+
+				let propertyValue;
+
+				// it's a global settings with additional controls in group.
+				if ( control.groupType ) {
+					const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' ).replace( /(_tablet|_mobile)$/, '' );
+
+					propertyValue = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
+				} else {
+					propertyValue = `var( --e-global-${ control.type }-${ id } )`;
+				}
+
+				outputCssProperty = propertyParts[ 0 ] + ':' + propertyValue;
+			} else {
+				try {
+					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
+						const externalControlMissing = controlName && ! controls[ controlName ];
+
+						let parsedValue = '';
+
+						if ( ! externalControlMissing ) {
+							parsedValue = this.parsePropertyPlaceholder( control, value, controls, values, placeholder, controlName );
+						}
+
+						if ( ! parsedValue && 0 !== parsedValue ) {
+							if ( fallbackValue ) {
+								parsedValue = fallbackValue;
+
+								const stringValueMatches = parsedValue.match( /^(['"])(.*)\1$/ );
+
+								if ( stringValueMatches ) {
+									parsedValue = stringValueMatches[ 2 ];
+								} else if ( ! isFinite( parsedValue ) ) {
+									if ( fallbackControlName && ! controls[ fallbackControlName ] ) {
+										return '';
+									}
+
+									parsedValue = this.parsePropertyPlaceholder( control, value, controls, values, fallbackValue, fallbackControlName );
+								}
+							}
+
+							if ( ! parsedValue && 0 !== parsedValue ) {
+								if ( externalControlMissing ) {
+									return '';
+								}
+
+								throw '';
+							}
+						}
+
+						return parsedValue;
+					} );
+				} catch ( e ) {
+					return;
+				}
+			}
+
+			if ( _.isEmpty( outputCssProperty ) ) {
+				return;
+			}
+
+			var devicePattern = /^(?:\([^)]+\)){1,2}/,
+				deviceRules = selector.match( devicePattern ),
+				query = {};
+
+			if ( deviceRules ) {
+				deviceRules = deviceRules[ 0 ];
+
+				selector = selector.replace( devicePattern, '' );
+
+				var pureDevicePattern = /\(([^)]+)\)/g,
+					pureDeviceRules = [],
+					matches;
+
+				matches = pureDevicePattern.exec( deviceRules );
+				while ( matches ) {
+					pureDeviceRules.push( matches[ 1 ] );
+					matches = pureDevicePattern.exec( deviceRules );
+				}
+
+				_.each( pureDeviceRules, ( deviceRule ) => {
+					if ( 'desktop' === deviceRule ) {
+						return;
+					}
+
+					var device = deviceRule.replace( /\+$/, '' ),
+						endPoint = device === deviceRule ? 'max' : 'min';
+
+					query[ endPoint ] = device;
+				} );
+			}
+
+			_.each( placeholders, ( placeholder, index ) => {
+				// Check if it's a RegExp
+				var regexp = placeholder.source ? placeholder.source : placeholder,
+					placeholderPattern = new RegExp( regexp, 'g' );
+
+				selector = selector.replace( placeholderPattern, replacements[ index ] );
+			} );
+
+			if ( ! Object.keys( query ).length && control.responsive ) {
+				query = _.pick( elementorCommon.helpers.cloneObject( control.responsive ), [ 'min', 'max' ] );
+
+				if ( 'desktop' === query.max ) {
+					delete query.max;
+				}
+			}
+
+			this.stylesheet.addRules( selector, outputCssProperty, query );
+		} );
+	},
+
+	parsePropertyPlaceholder: function( control, value, controls, values, placeholder, parserControlName ) {
+		if ( parserControlName ) {
+			control = _.findWhere( controls, { name: parserControlName } );
+
+			value = this.getStyleControlValue( control, values );
+		}
+
+		return elementor.getControlView( control.type ).getStyleValue( placeholder, value, control );
 	},
 
 	getStyleControlValue: function( control, values ) {
@@ -85,12 +230,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControlsItems, controls, placeholders, replacements ) {
-		var self = this;
+		repeaterControlsItems.forEach( ( item, index ) => {
+			const itemModel = repeaterValues.models[ index ];
 
-		repeaterControlsItems.forEach( function( item, index ) {
-			var itemModel = repeaterValues.models[ index ];
-
-			self.addStyleRules(
+			this.addStyleRules(
 				item,
 				itemModel.attributes,
 				controls,
@@ -139,122 +282,5 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		this.initStylesheet();
 	},
 } );
-
-ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls, valueCallback, placeholders, replacements ) {
-	var value = valueCallback( control );
-
-	if ( undefined === value ) {
-		return;
-	}
-
-	_.each( control.selectors, function( cssProperty, selector ) {
-		var outputCssProperty;
-
-		try {
-			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, function( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) {
-				const externalControlMissing = controlName && ! controls[ controlName ];
-
-				let parsedValue = '';
-
-				if ( ! externalControlMissing ) {
-					parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, placeholder, controlName );
-				}
-
-				if ( ! parsedValue && 0 !== parsedValue ) {
-					if ( fallbackValue ) {
-						parsedValue = fallbackValue;
-
-						const stringValueMatches = parsedValue.match( /^(['"])(.*)\1$/ );
-
-						if ( stringValueMatches ) {
-							parsedValue = stringValueMatches[ 2 ];
-						} else if ( ! isFinite( parsedValue ) ) {
-							if ( fallbackControlName && ! controls[ fallbackControlName ] ) {
-								return '';
-							}
-
-							parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, fallbackValue, fallbackControlName );
-						}
-					}
-
-					if ( ! parsedValue && 0 !== parsedValue ) {
-						if ( externalControlMissing ) {
-							return '';
-						}
-
-						throw '';
-					}
-				}
-
-				return parsedValue;
-			} );
-		} catch ( e ) {
-			return;
-		}
-
-		if ( _.isEmpty( outputCssProperty ) ) {
-			return;
-		}
-
-		var devicePattern = /^(?:\([^)]+\)){1,2}/,
-			deviceRules = selector.match( devicePattern ),
-			query = {};
-
-		if ( deviceRules ) {
-			deviceRules = deviceRules[ 0 ];
-
-			selector = selector.replace( devicePattern, '' );
-
-			var pureDevicePattern = /\(([^)]+)\)/g,
-				pureDeviceRules = [],
-				matches;
-
-			matches = pureDevicePattern.exec( deviceRules );
-			while ( matches ) {
-				pureDeviceRules.push( matches[ 1 ] );
-				matches = pureDevicePattern.exec( deviceRules );
-			}
-
-			_.each( pureDeviceRules, function( deviceRule ) {
-				if ( 'desktop' === deviceRule ) {
-					return;
-				}
-
-				var device = deviceRule.replace( /\+$/, '' ),
-					endPoint = device === deviceRule ? 'max' : 'min';
-
-				query[ endPoint ] = device;
-			} );
-		}
-
-		_.each( placeholders, function( placeholder, index ) {
-			// Check if it's a RegExp
-			var regexp = placeholder.source ? placeholder.source : placeholder,
-				placeholderPattern = new RegExp( regexp, 'g' );
-
-			selector = selector.replace( placeholderPattern, replacements[ index ] );
-		} );
-
-		if ( ! Object.keys( query ).length && control.responsive ) {
-			query = _.pick( elementorCommon.helpers.cloneObject( control.responsive ), [ 'min', 'max' ] );
-
-			if ( 'desktop' === query.max ) {
-				delete query.max;
-			}
-		}
-
-		stylesheet.addRules( selector, outputCssProperty, query );
-	} );
-};
-
-ControlsCSSParser.parsePropertyPlaceholder = function( control, value, controls, valueCallback, placeholder, parserControlName ) {
-	if ( parserControlName ) {
-		control = _.findWhere( controls, { name: parserControlName } );
-
-		value = valueCallback( control );
-	}
-
-	return elementor.getControlView( control.type ).getStyleValue( placeholder, value, control );
-};
 
 module.exports = ControlsCSSParser;
