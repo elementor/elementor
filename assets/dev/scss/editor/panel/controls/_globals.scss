@@ -38,7 +38,7 @@
 			padding: 15px 20px;
 			font-weight: bold;
 			color: $editor-dark;
-			border-bottom: 1px solid $gray-bg;
+			border-bottom: 1px solid $editor-background;
 
 			i {
 				@include margin-end(5px);
@@ -85,8 +85,8 @@
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background-color: darkgrey;
-			outline: 1px solid slategrey;
+			background-color: $gray-light;
+			outline: 1px solid $gray;
 			border-radius: 10px;
 		}
 	}
@@ -95,7 +95,7 @@
 		color: $editor-dark;
 		font-weight: 500;
 		padding: 15px 20px;
-		border-top: 1px solid $gray-bg;
+		border-top: 1px solid $editor-background;
 		display: flex;
 		align-items: center;
 		cursor: pointer;

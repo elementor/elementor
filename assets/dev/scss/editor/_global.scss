@@ -215,7 +215,7 @@
 	background-color: #fff;
 
 	&-disabled {
-		background: #E6E9EC;
+		background: $gray-bg;
 		box-shadow: initial;
 		cursor: initial;
 		pointer-events: none;
