@@ -194,9 +194,7 @@ export default class extends ControlBaseDataView {
 	onPickerButtonClick() {
 		if ( this.getGlobalKey() ) {
 			this.triggerMethod( 'unset:global:value' );
-		}
-
-		if ( this.isGlobalActive() && ! this.getControlValue() && ! this.getGlobalKey() && this.model.get( 'global' )?.default ) {
+		} else if ( this.isGlobalActive() && ! this.getControlValue() && this.model.get( 'global' )?.default ) {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 
