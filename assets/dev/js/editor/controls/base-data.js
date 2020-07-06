@@ -99,7 +99,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 			return controlValue;
 		}
 
-		const controlGlobalArgs = this.model.get( 'global' );
+		const controlGlobalArgs = this.model.get( 'global' ),
+			isColorControl = 'color' === this.model.get( 'type' ),
+			isTypographyControl = 'typography' === this.model.get( 'groupType' );
+
+		// If the control is a color/typography control and default colors/typography are disabled, don't return the global value
+		if ( ( isColorControl && ! elementor.config.globals.defaults_enabled.colors ) || ( isTypographyControl && ! elementor.config.globals.defaults_enabled.typography ) ) {
+			return '';
+		}
 
 		// TODO: FIND BETTER SOLUTION FOR GETTING THE DEFAULT VALUE
 		if ( controlGlobalArgs?.default ) {
