@@ -50,7 +50,7 @@ export default class ControlsPopover {
 
 		this.$popover
 			.prepend( this.$popoverHeader )
-			.addClass( 'e-typography-popover' );
+			.addClass( 'e-controls-popover--typography' );
 	}
 
 	onResetButtonClick() {
