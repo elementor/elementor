@@ -730,7 +730,7 @@ class Upgrades {
 				$kit->add_repeater_row( 'system_colors', [
 					'_id' => $new_ids[ $index - 1 ], // $default_colors starts from 1.
 					'title' => $color['title'],
-					'color' => $color['value'],
+					'color' => strtoupper( $color['value'] ),
 				] );
 			}
 		};
@@ -763,7 +763,7 @@ class Upgrades {
 			$system_colors = [];
 
 			foreach ( $system_colors_rows as $color_row ) {
-				$system_colors[] = $color_row['color'];
+				$system_colors[] = strtoupper( $color_row['color'] );
 			}
 
 			$saved_scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color-picker' );
@@ -773,7 +773,7 @@ class Upgrades {
 			$current_saved_colors = [];
 
 			foreach ( $current_saved_colors_rows as $color_row ) {
-				$current_saved_colors[] = $color_row['value'];
+				$current_saved_colors[] = strtoupper( $color_row['value'] );
 			}
 
 			$colors_to_save = array_diff( $current_saved_colors, $system_colors );
