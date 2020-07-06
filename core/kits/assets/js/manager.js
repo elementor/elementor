@@ -82,7 +82,14 @@ export default class extends elementorModules.editor.utils.Module {
 	renderGlobalsDefaultCSS() {
 		const cssParser = new ControlsCSSParser( {
 			id: 'e-global-style',
-		} );
+		} ),
+			defaultColorsEnabled = elementor.config.globals.defaults_enabled.colors,
+			defaultTypographyEnabled = elementor.config.globals.defaults_enabled.typography;
+
+		// If both default colors and typography are disabled, there is no need to render schemes and default global css
+		if ( ! defaultColorsEnabled && ! defaultTypographyEnabled ) {
+			return;
+		}
 
 		Object.values( elementor.widgetsCache ).forEach( ( widget ) => {
 			if ( ! widget.controls ) {
@@ -93,6 +100,13 @@ export default class extends elementorModules.editor.utils.Module {
 				globalValues = {};
 
 			Object.values( widget.controls ).forEach( ( control ) => {
+				const isColorControl = 'color' === control.type,
+					isTypographyControl = 'typography' === control.groupType;
+
+				if ( ( isColorControl && ! defaultColorsEnabled ) || ( isTypographyControl && ! defaultTypographyEnabled ) ) {
+					return;
+				}
+
 				let globalControl = control;
 
 				if ( control.groupType ) {

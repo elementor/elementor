@@ -531,6 +531,7 @@ class Editor {
 		unset( $settings['page'] );
 
 		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
+		$kits_manager = Plugin::$instance->kits_manager;
 
 		$config = [
 			'initial_document' => $document->get_config(),
@@ -543,6 +544,12 @@ class Editor {
 			'schemes' => [
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
+			],
+			'globals' => [
+				'defaults_enabled' => [
+					'colors' => $kits_manager->is_custom_colors_enabled(),
+					'typography' => $kits_manager->is_custom_typography_enabled(),
+				],
 			],
 			'icons' => [
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),

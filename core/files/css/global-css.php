@@ -1,9 +1,11 @@
 <?php
 namespace Elementor\Core\Files\CSS;
 
+use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
 use Elementor\Scheme_Base;
 use Elementor\Settings;
+use Elementor\Widget_Heading;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -120,14 +122,33 @@ class Global_CSS extends Base {
 	private function render_schemes_and_globals_css() {
 		$elementor = Plugin::$instance;
 
+		/** @var Manager $module */
+		$kits_manager = Plugin::$instance->kits_manager;
+		$custom_colors_enabled = $kits_manager->is_custom_colors_enabled();
+		$custom_typography_enabled = $kits_manager->is_custom_typography_enabled();
+
+		// If both default colors and typography are disabled, there is no need to render schemes and default global css
+		if ( ! $custom_colors_enabled && ! $custom_typography_enabled ) {
+			return;
+		}
+
 		foreach ( $elementor->widgets_manager->get_widget_types() as $widget ) {
 			$controls = $widget->get_controls();
+			$widget_heading = $widget instanceof Widget_Heading;
 
 			$global_controls = [];
 
 			$global_values['__globals__'] = [];
 
 			foreach ( $controls as $control ) {
+				$is_color_control = 'color' === $control['type'];
+				$is_typography_control = isset( $control['groupType'] ) && 'typography' === $control['groupType'];
+
+				// If it is a color/typography control and default colors/typography are disabled, don't add the default CSS
+				if ( ( $is_color_control && ! $custom_colors_enabled ) || ( $is_typography_control && ! $custom_typography_enabled ) ) {
+					continue;
+				}
+
 				$global_control = $control;
 
 				// Handle group controls that don't have a default global property
