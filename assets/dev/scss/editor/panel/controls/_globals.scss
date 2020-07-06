@@ -53,7 +53,7 @@
 			&-tooltip {
 				width: 270px;
 				z-index: 1;
-				background-color: rgba(30,30,30,0.9);
+				background-color: rgba(0,0,0,0.9);
 				color: #fff;
 				padding: 20px;
 				border-radius: 3px;
@@ -65,7 +65,7 @@
 					@include start(16px);
 					transform: scaleY(0.9) rotate(180deg);
 					border: 10px solid transparent;
-					border-bottom-color: rgba(30,30,30,0.9);
+					border-bottom-color: rgba(0,0,0,0.9);
 				}
 			}
 
@@ -85,8 +85,8 @@
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background-color: $gray-light;
-			outline: 1px solid $gray;
+			background-color: $editor-light;
+			outline: 1px solid $editor-darker;
 			border-radius: 10px;
 		}
 	}
