@@ -8,7 +8,7 @@ import './site-part.scss';
 
 export default function SitePart( props ) {
 	return (
-		<Card>
+		<Card className="site-part">
 			<CardHeader>
 				<Typography tagName="h1" className="card__headline">{ props.title }</Typography>
 				{ props.actionButton }
