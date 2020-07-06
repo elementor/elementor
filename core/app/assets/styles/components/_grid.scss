@@ -11,6 +11,7 @@
 	&-container {
 		display: flex;
 		flex-wrap: wrap;
+		width: 100%;
 
 		//@prop: no-wrap
 		&-no-wrap {
@@ -169,16 +170,15 @@
 
 //@prop: ZeroMinWidth
 //@markup <Grid item zeroMinWidth> or <Grid item sm> and so on..
-.#{$eps-prefix}-item--zero-width {
+.#{$eps-prefix}grid-item--zero-min-width {
 	min-width: 0;
 }
 
 // Item flex sizing, auto grid
 //@prop: [xs,sm,md,lg,xl,xxl]
 //@markup <Grid item xs> or <Grid item sm> and so on..
-.grid-xs-auto {
-	@include grid-item-auto(xs);
-}
+// No need for container:
+@include grid-item-auto(xs);
 
 //@prop: [xs={@num<=12}],sm={@num<=12},md={@num<=12},lg={@num<=12},xl={@num<=12},xxl={@num<=12}]
 //@markup <Grid item xs={4}> or <Grid item sm={3}> and so on..
