@@ -28,7 +28,7 @@ export default class extends ControlBaseDataView {
 			this.initPicker();
 		}
 
-		this.$el.toggleClass( 'e-color__no-value', ! currentValue );
+		this.$el.toggleClass( 'e-control-color--no-value', ! currentValue );
 	}
 
 	initPicker() {
@@ -169,8 +169,8 @@ export default class extends ControlBaseDataView {
 
 			this.colorPicker.toggleClearButtonState( true );
 
-			if ( this.$el.hasClass( 'e-color__no-value' ) ) {
-				this.$el.removeClass( 'e-color__no-value' );
+			if ( this.$el.hasClass( 'e-control-color--no-value' ) ) {
+				this.$el.removeClass( 'e-control-color--no-value' );
 			}
 
 			this.isCustom = true;
