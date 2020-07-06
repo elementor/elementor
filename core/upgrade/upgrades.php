@@ -839,9 +839,9 @@ class Upgrades {
 				$kit->add_repeater_row( 'system_typography', [
 					'_id' => $new_ids[ $index - 1 ], // $default_typography starts from 1.
 					'title' => $typography['title'],
-					'system_typography_typography' => 'custom',
-					'system_typography_font_family' => $typography['value']['font_family'],
-					'system_typography_font_weight' => $typography['value']['font_weight'],
+					'typography_typography' => 'custom',
+					'typography_font_family' => $typography['value']['font_family'],
+					'typography_font_weight' => $typography['value']['font_weight'],
 				] );
 			}
 		};
