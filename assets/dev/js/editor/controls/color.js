@@ -203,14 +203,9 @@ export default class extends ControlBaseDataView {
 	}
 
 	onAddGlobalButtonClick() {
-		this.getGlobalsList().then(
-			( globalsList ) => {
-				this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage( globalsList ) );
-			},
-			() => {
-				// TODO: What to do if this request fails??
-			},
-		);
+		this.getGlobalsList().then( ( globalsList ) => {
+			this.triggerMethod( 'add:global:to:list', this.getAddGlobalConfirmMessage( globalsList ) );
+		} );
 	}
 
 	onBeforeDestroy() {
