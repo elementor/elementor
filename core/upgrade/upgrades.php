@@ -708,6 +708,10 @@ class Upgrades {
 	 */
 	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
 		$callback = function( $kit_id ) {
+			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+				return;
+			}
+
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
@@ -807,6 +811,10 @@ class Upgrades {
 	 */
 	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
 		$callback = function( $kit_id ) {
+			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
+				return;
+			}
+
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
