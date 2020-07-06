@@ -710,8 +710,10 @@ class Upgrades {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
-			// Already exist.
-			if ( $kit->get_settings( 'system_colors' ) ) {
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['system_colors'] ) ) {
 				return;
 			}
 
@@ -749,8 +751,10 @@ class Upgrades {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
-			// Already exist.
-			if ( $kit->get_settings( 'custom_colors' ) ) {
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
 				return;
 			}
 
@@ -805,8 +809,10 @@ class Upgrades {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
-			// Already exist.
-			if ( $kit->get_settings( 'system_typography' ) ) {
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['system_typography'] ) ) {
 				return;
 			}
 
