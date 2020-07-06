@@ -143,7 +143,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onAddGlobalButtonClick() {
-		this.triggerMethod( 'addGlobalToList', this.getAddGlobalConfirmMessage() );
+		this.triggerMethod( 'add:global:to:list', this.getAddGlobalConfirmMessage() );
 	}
 }
 
