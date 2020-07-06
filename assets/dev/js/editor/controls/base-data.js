@@ -99,17 +99,18 @@ ControlBaseDataView = ControlBaseView.extend( {
 			return controlValue;
 		}
 
-		const controlGlobalArgs = this.model.get( 'global' ),
-			isColorControl = 'color' === this.model.get( 'type' ),
-			isTypographyControl = 'typography' === this.model.get( 'groupType' );
-
-		// If the control is a color/typography control and default colors/typography are disabled, don't return the global value
-		if ( ( isColorControl && ! elementor.config.globals.defaults_enabled.colors ) || ( isTypographyControl && ! elementor.config.globals.defaults_enabled.typography ) ) {
-			return '';
-		}
+		const controlGlobalArgs = this.model.get( 'global' );
 
 		// TODO: FIND BETTER SOLUTION FOR GETTING THE DEFAULT VALUE
 		if ( controlGlobalArgs?.default ) {
+			const isColorControl = 'color' === this.model.get( 'type' ),
+				isTypographyControl = 'typography' === this.model.get( 'groupType' ) && 'popover_toggle' === this.model.get( 'type' );
+
+			// If the control is a color/typography control and default colors/typography are disabled, don't return the global value
+			if ( ( isColorControl && ! elementor.config.globals.defaults_enabled.colors ) || ( isTypographyControl && ! elementor.config.globals.defaults_enabled.typography ) ) {
+				return '';
+			}
+
 			const { command, args } = $e.data.commandExtractArgs( controlGlobalArgs.default ),
 				result = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
 
