@@ -769,9 +769,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		$globals = $this->get_settings( '__globals__' );
 
-		$global_value = ! empty( $globals[ $control_global_key ] );
-
-		return $global_value;
+		return ! empty( $globals[ $control_global_key ] );
 	}
 
 	/**
