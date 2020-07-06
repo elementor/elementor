@@ -122,7 +122,6 @@ export default class extends elementorModules.editor.utils.Module {
 				}
 			} );
 
-			// TODO: Doesn't this cause an extra add_control_rules for non-global CSS?
 			globalControls.forEach( ( control ) => {
 				cssParser.addControlStyleRules(
 					control,
