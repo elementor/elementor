@@ -134,7 +134,6 @@ class Global_CSS extends Base {
 
 		foreach ( $elementor->widgets_manager->get_widget_types() as $widget ) {
 			$controls = $widget->get_controls();
-			$widget_heading = $widget instanceof Widget_Heading;
 
 			$global_controls = [];
 
