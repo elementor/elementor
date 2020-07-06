@@ -28,9 +28,9 @@ module.exports = Marionette.Behavior.extend( {
 
 		if ( 'color' === this.view.model.get( 'type' ) ) {
 			if ( this.view.colorPicker ) {
-				this.onMoveDynamicSwitcherToColorPicker();
+				this.moveDynamicSwitcherToColorPicker();
 			} else {
-				setTimeout( () => this.onMoveDynamicSwitcherToColorPicker() );
+				setTimeout( () => this.moveDynamicSwitcherToColorPicker() );
 			}
 		}
 
@@ -43,7 +43,7 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 	},
 
-	onMoveDynamicSwitcherToColorPicker: function() {
+	moveDynamicSwitcherToColorPicker: function() {
 		const $colorPickerToolsContainer = this.view.colorPicker.$pickerToolsContainer;
 
 		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
