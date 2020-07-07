@@ -1,24 +1,24 @@
 export default function Grid( props ) {
 	const propsMap = {
-		direction: '--direction{{ -VALUE }}',
-		justify: '--justify{{ -VALUE }}',
-		alignContent: '--align-content{{ -VALUE }}',
-		alignItems: '--align-items{{ -VALUE }}',
-		container: '-container',
-		noWrap: '-container--no-wrap',
-		wrapReverse: '-container--wrap-reverse',
-		spacing: '-container--spacing',
-		item: '-item',
-		zeroMinWidth: '-item--zero-min-width',
-		xs: '-item-xs{{ -VALUE }}',
-		sm: '-item-sm{{ -VALUE }}',
-		md: '-item-md{{ -VALUE }}',
-		lg: '-item-lg{{ -VALUE }}',
-		xl: '-item-xl{{ -VALUE }}',
-		xxl: '-item-xxl{{ -VALUE }}',
-	},
-	getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': props.spacing + 'px' } : {},
-	classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
+			direction: '--direction{{ -VALUE }}',
+			justify: '--justify{{ -VALUE }}',
+			alignContent: '--align-content{{ -VALUE }}',
+			alignItems: '--align-items{{ -VALUE }}',
+			container: '-container',
+			noWrap: '-container--no-wrap',
+			wrapReverse: '-container--wrap-reverse',
+			spacing: '-container--spacing',
+			item: '-item',
+			zeroMinWidth: '-item--zero-min-width',
+			xs: '-item-xs{{ -VALUE }}',
+			sm: '-item-sm{{ -VALUE }}',
+			md: '-item-md{{ -VALUE }}',
+			lg: '-item-lg{{ -VALUE }}',
+			xl: '-item-xl{{ -VALUE }}',
+			xxl: '-item-xxl{{ -VALUE }}',
+		},
+		getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': props.spacing } : {},
+		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
 
 	return (
 		<div style={ getStyle() } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>

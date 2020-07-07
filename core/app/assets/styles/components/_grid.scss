@@ -28,7 +28,7 @@
 		// container width and negative margin are calculated dynamically
 		// @markup <Grid container spacing={5} and so on >
 		&--spacing {
-			--grid-row-gutter: calc(-1 * var(--grid-spacing-gutter));
+			--grid-row-gutter: calc(-1 * #{$grid-spacing-gutter});
 			width: var(--grid-spacing-width);
 			margin: var(--grid-row-gutter);
 

@@ -15,12 +15,32 @@ export default function KitContentList( props ) {
 			</Grid>
 		),
 		getNotice = ( notice ) => (
-			<Box type="notice" className="">
+			<Box type="notice">
 				<Text size="sm">
 					{ notice }
 				</Text>
 			</Box>
 		),
+		getProFeaturesIndication = () => (
+			<Text size="md" tag="span" color="cta" className="kit-content-list__pro-indication">
+				<strong>{ __( 'Pro Features', 'elementor' ) }</strong>
+			</Text>
+		),
+		getFeatures = ( features ) => {
+			const lockedFeatures = features.locked ? <span className="kit-content-list__locked-features">{ features.locked.join( ', ' ) }</span> : null;
+			let openFeatures = features.open?.join( ', ' );
+
+			if ( openFeatures && lockedFeatures ) {
+				openFeatures += ', ';
+			}
+
+			return (
+				<>
+					{ openFeatures }
+					{ lockedFeatures }
+				</>
+			);
+		},
 		getContentSelection = ( item ) => {
 			if ( 'content' !== item.type || 'export' !== props.type ) {
 				return;
@@ -31,12 +51,50 @@ export default function KitContentList( props ) {
 					<KitContentSelect options={ item.data.contentSelection } />
 				</Grid>
 			);
-		};
+		},
+		exportContent = [
+			{
+				type: 'templates',
+				data: {
+					title: __( 'Global Templates', 'elementor' ),
+					features: {
+						open: [
+							__( 'Saved Templates', 'elementor' ),
+						],
+						locked: [
+							__( 'Site Parts', 'elementor' ),
+							__( 'Popups', 'elementor' ),
+							__( 'Global Widgets', 'elementor' ),
+						],
+					},
+					notice: 'Site Parts, Global widgets and Popups will are available only when Elementor Pro license is Connected',
+				},
+			},
+			{
+				type: 'styles',
+				data: {
+					title: __( 'Global Styles And Settings', 'elementor' ),
+					description: __( 'Theme Style, Global Colors and Typography, Layout, Lightbox and Site Identity settings', 'elementor' ),
+				},
+			},
+			{
+				type: 'content',
+				data: {
+					title: __( 'Content', 'elementor' ),
+					description: __( 'Published pages, posts, related taxonomies, menu and custom post types.', 'elementor' ),
+					contentSelection: [
+						__( 'Select custom post types (maximum of 20 posts will be included)', 'elementor' ),
+						'Option 2',
+						'Option 3',
+					],
+				},
+			},
+		];
 
 	return (
 		<List separated className="kit-content-list">
 			{
-				props.content.map( ( item, index ) => (
+				exportContent.map( ( item, index ) => (
 					<List.Item key={ index } className="kit-content-list__item">
 						<Grid container justify="space-between" alignItems="center">
 							<Grid item>
@@ -47,8 +105,10 @@ export default function KitContentList( props ) {
 										<Text size="sm" className="kit-content-list__title">{ item.data.title }</Text>
 
 										<Grid item>
-											<Text size="sm" tag="span" className="kit-content-list__description">{ item.data.description }</Text>
-											{ item.data.notice ? <Button color="cta" text={ __( 'Pro Features', 'elementor' ) } url="/#" /> : null }
+											<Text size="sm" tag="span" className="kit-content-list__description">
+												{ item.data.description || ( item.data.features && getFeatures( item.data.features ) ) }
+											</Text>
+											{ item.data.notice ? getProFeaturesIndication() : null }
 										</Grid>
 									</Grid>
 								</Grid>
