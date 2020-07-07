@@ -13,6 +13,10 @@
 	@return map-deep-get($eps-tints, $keys...);
 }
 
+@function theme-elements-colors($keys...) {
+	@return map-deep-get($eps-theme-elements-colors, $keys...);
+}
+
 @function type($keys...) {
 	@return map-deep-get($eps-type-map, $keys...);
 }
@@ -28,3 +32,7 @@
 @function shadow($keys...) {
   @return map-deep-get($eps-shadow-map, $keys...);
 }
+
+@function atomizer($keys...){
+	@return map-deep-get($eps-atoms,$keys...);
+};

@@ -1,8 +1,4 @@
 $eps-dark-theme-colors: (
-		body-color: $eps-dark-theme-body-color,
-		body-bg:$eps-dark-theme-body-bg,
-		link-color: $eps-dark-theme-link-color,
-		link-hover-color: $eps-dark-theme-link-hover-color,
 		text-muted:$eps-dark-theme-text-muted,
 		disabled: $eps-dark-theme-disabled,
 		light: $eps-dark-theme-dark,
@@ -14,3 +10,26 @@ $eps-dark-theme-colors: (
 		success: $eps-dark-theme-success,
 		warning: $eps-dark-theme-warning,
 );
+
+$eps-dark-theme-elements-colors: (
+		body-color: $eps-dark-theme-body-color,
+		body-bg:$eps-dark-theme-body-bg,
+		link-color: $eps-dark-theme-link-color,
+		link-hover-color: $eps-dark-theme-link-hover-color,
+		display-1-color:$eps-dark-theme-display-1-color,
+		display-2-color:$eps-dark-theme-display-1-color,
+		display-3-color:$eps-dark-theme-display-1-color,
+		display-4-color:$eps-dark-theme-display-1-color,
+		h-1-color:$eps-dark-theme-h-1-color,
+		h-2-color:$eps-dark-theme-h-2-color,
+		h-3-color:$eps-dark-theme-h-3-color,
+		h-4-color:$eps-dark-theme-h-4-color,
+		h-5-color:$eps-dark-theme-h-5-color,
+		h-6-color:$eps-dark-theme-h-6-color,
+		text-base-color:$eps-dark-theme-text-base-color,
+		text-xl-color:$eps-dark-theme-text-xl-color,
+		text-lg-color:$eps-dark-theme-text-lg-color,
+		text-sm-color:$eps-dark-theme-text-sm-color,
+		text-xs-color:$eps-dark-theme-text-xs-color,
+		text-xxs-color:$eps-dark-theme-text-xxs-color,
+)
