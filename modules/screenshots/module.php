@@ -150,7 +150,7 @@ class Module extends BaseModule {
 
 		wp_enqueue_script(
 			'elementor-screenshot',
-			ELEMENTOR_URL . "modules/screenshots/assets/js/preview/screenshot{$suffix}.js",
+			ELEMENTOR_URL . "assets/js/screenshot{$suffix}.js",
 			[ 'dom-to-image' ],
 			ELEMENTOR_VERSION,
 			true
