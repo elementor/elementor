@@ -4,6 +4,7 @@ namespace Elementor\Core\App;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Plugin;
 use Elementor\Settings;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,7 +35,7 @@ class App extends BaseApp {
 
 	public function register_admin_menu() {
 		add_submenu_page(
-			Settings::PAGE_ID,
+			Source_Local::ADMIN_MENU_SLUG,
 			__( 'Site Editor', 'elementor' ),
 			__( 'Site Editor', 'elementor' ),
 			'manage_options',
@@ -46,7 +47,7 @@ class App extends BaseApp {
 		global $submenu;
 
 		// Hack to add a link to sub menu.
-		foreach ( $submenu['elementor'] as &$item ) {
+		foreach ( $submenu[ Source_Local::ADMIN_MENU_SLUG ] as &$item ) {
 			if ( self::PAGE_ID === $item[2] ) {
 				$item[2] = $this->get_settings( 'menu_url' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				$item[4] = 'elementor-app-link'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
