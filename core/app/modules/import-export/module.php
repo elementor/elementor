@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\App\Modules\SiteEditor;
+namespace Elementor\Core\App\Modules\ImportExport;
 
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Site Editor Module
+ * Import Export Module
  *
  * Responsible for initializing Elementor App functionality
  */

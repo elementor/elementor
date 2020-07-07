@@ -1,4 +1,4 @@
-import router from '../../../../assets/js/router';
+import router from '@elementor/router';
 
 import Import from './pages/import/import';
 import ImportFailed from './pages/import-failed/import-failed';

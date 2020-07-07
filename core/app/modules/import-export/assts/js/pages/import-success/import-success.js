@@ -5,7 +5,7 @@ import ImportSuccessList from './import-success-list/import-success-list';
 import Text from '../../ui/text/text';
 import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
-
+//
 import './import-success.scss';
 
 export default function ImportSuccess() {
@@ -18,7 +18,7 @@ export default function ImportSuccess() {
 						{ __( 'Congrats, the following kit elements were imported', 'elementor' ) }
 					</Heading>
 
-					<img src={ elementorAppConfig.assets_url + 'images/go-pro-wp-dashboard.svg' } />
+					<img className="e-app-export-success__image" src={ elementorAppConfig.assets_url + 'images/go-pro-wp-dashboard.svg' } />
 
 					<ImportSuccessList />
 
