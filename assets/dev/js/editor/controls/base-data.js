@@ -84,21 +84,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return this.globalValue;
 	},
 
-	getCurrentValue: function() {
-		if ( this.getGlobalKey() && ! this.globalValue ) {
-			return '';
-		}
-
-		if ( this.globalValue ) {
-			return this.globalValue;
-		}
-
-		const controlValue = this.getControlValue();
-
-		if ( controlValue ) {
-			return controlValue;
-		}
-
+	getGlobalDefault: function() {
 		const controlGlobalArgs = this.model.get( 'global' );
 
 		// TODO: FIND BETTER SOLUTION FOR GETTING THE DEFAULT VALUE.
@@ -116,6 +102,27 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 			return result?.value;
 		}
+
+		// No global default.
+		return '';
+	},
+
+	getCurrentValue: function() {
+		if ( this.getGlobalKey() && ! this.globalValue ) {
+			return '';
+		}
+
+		if ( this.globalValue ) {
+			return this.globalValue;
+		}
+
+		const controlValue = this.getControlValue();
+
+		if ( controlValue ) {
+			return controlValue;
+		}
+
+		return this.getGlobalDefault();
 	},
 
 	isGlobalActive: function() {

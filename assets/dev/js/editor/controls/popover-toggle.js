@@ -39,7 +39,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onPopoverToggleClick() {
-		if ( this.isGlobalActive() && ! this.getControlValue() && ! this.getGlobalKey() && this.model.get( 'global' )?.default ) {
+		if ( this.isGlobalActive() && ! this.getControlValue() && ! this.getGlobalKey() && this.getGlobalDefault() ) {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 

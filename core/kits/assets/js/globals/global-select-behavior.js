@@ -65,7 +65,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			let globalValue = this.view.getGlobalKey();
 
 			if ( ! globalValue && ! value ) {
-				globalValue = this.view.model.get( 'global' )?.default;
+				globalValue = this.view.getGlobalDefault();
 			}
 
 			if ( globalValue ) {
