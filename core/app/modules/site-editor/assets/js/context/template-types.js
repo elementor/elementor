@@ -1,5 +1,7 @@
 export const Context = React.createContext();
 
+import './template-types.scss';
+
 class TemplateTypesContext extends React.Component {
 	static propTypes = {
 		children: PropTypes.object.isRequired,
@@ -38,11 +40,11 @@ class TemplateTypesContext extends React.Component {
 
 	render() {
 		if ( this.state.error ) {
-			return <h3>{ __( 'Error:', 'elementor' ) } { this.state.error }</h3>;
+			return <div className="e-loading-wrapper"><h3>{ __( 'Error:', 'elementor' ) } { this.state.error }</h3></div>;
 		}
 
 		if ( this.state.loading ) {
-			return <h3>{ __( 'Loading', 'elementor' ) }...</h3>;
+			return <div className="e-loading-wrapper"><h3>{ __( 'Loading', 'elementor' ) }...</h3></div>;
 		}
 
 		return (
