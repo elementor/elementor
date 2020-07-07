@@ -1,7 +1,15 @@
+:root {
+	--kit-content-list-item-background-color: theme-colors(light);
+}
+
+.dark {
+	--kit-content-list-item-background-color: dark-tints(600);
+}
+
 .kit-content-list {
 	&__item {
 		padding: spacing(20);
-		background: theme-colors(light);
+		background: var( --kit-content-list-item-background-color );
 	}
 
 	&__checkbox {
