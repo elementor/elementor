@@ -17,8 +17,8 @@ export class EnqueueFonts extends After {
 				const result = await $e.data.get( setting );
 
 				// eslint-disable-next-line camelcase
-				if ( result.data?.font_family ) {
-					elementor.helpers.enqueueFont( result.data.font_family );
+				if ( result.data?.value?.typography_font_family ) {
+					elementor.helpers.enqueueFont( result.data.value.typography_font_family );
 				}
 			}
 		} );
