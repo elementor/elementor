@@ -2,8 +2,6 @@ export default class ControlsPopover {
 	constructor( child ) {
 		this.child = child;
 
-		this.groupControlName = child.model.get( 'groupPrefix' ) + 'typography';
-
 		this.$popover = jQuery( '<div>', { class: 'elementor-controls-popover' } );
 
 		child.$el.before( this.$popover );
@@ -55,12 +53,13 @@ export default class ControlsPopover {
 	onResetButtonClick() {
 		this.$popover.hide();
 
-		const args = {
+		const groupControlName = this.child.model.get( 'groupPrefix' ) + 'typography',
+			args = {
 			container: this.child.options.container,
-			settings: { [ this.groupControlName ]: '' },
+			settings: { [ groupControlName ]: '' },
 		};
 
-		if ( this.child.options.container.globals.get( this.groupControlName ) ) {
+		if ( this.child.options.container.globals.get( groupControlName ) ) {
 			// The Disable Globals command applies global settings locally,
 			// so disabling the global shouldn't actually change the appearance of the widget.
 			$e.run( 'document/globals/disable', args );
