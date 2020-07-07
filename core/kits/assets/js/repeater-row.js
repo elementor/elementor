@@ -24,9 +24,12 @@ export default class extends RepeaterRow {
 	}
 
 	onChildviewRender( childView ) {
+		const isColor = 'color' === childView.model.get( 'type' ),
+			isPopoverToggle = 'popover_toggle' === childView.model.get( 'type' );
+
 		let globalType = '';
 
-		if ( 'color' === childView.model.get( 'type' ) ) {
+		if ( isColor ) {
 			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value' } );
 
 			childView.$el
@@ -40,7 +43,7 @@ export default class extends RepeaterRow {
 			this.updateColorValue();
 		}
 
-		if ( 'popover_toggle' === childView.model.get( 'type' ) ) {
+		if ( isPopoverToggle ) {
 			childView.$el
 				.find( '.elementor-control-input-wrapper' )
 				.append( this.getRemoveButton() );
@@ -48,7 +51,7 @@ export default class extends RepeaterRow {
 			globalType = 'typography';
 		}
 
-		if ( 'color' === childView.model.get( 'type' ) || 'popover_toggle' === childView.model.get( 'type' ) ) {
+		if ( isColor || isPopoverToggle ) {
 			this.ui.removeButton.data( 'e-global-type', globalType );
 
 			this.ui.removeButton.tipsy( {
