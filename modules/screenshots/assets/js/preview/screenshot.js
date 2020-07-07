@@ -21,7 +21,7 @@ class Screenshot {
 			],
 			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
 			render_timeout: 5000, // Wait until all the element will be loaded or 5 sec and then take screenshot.
-			timerLabel: 'timer',
+			timerLabel: null,
 		};
 
 		/**
@@ -38,13 +38,14 @@ class Screenshot {
 	 * The main method for this class.
 	 */
 	init() {
-		this.log( 'Screenshot init', 'time' );
-
 		this.$elementor = jQuery( ElementorScreenshotConfig.selector );
 		this.config = {
 			...this.config,
 			...ElementorScreenshotConfig,
+			timerLabel: `${ ElementorScreenshotConfig.post_id } - timer`,
 		};
+
+		this.log( 'Screenshot init', 'time' );
 
 		if ( ! this.$elementor.length ) {
 			elementorCommon.helpers.consoleWarn( 'Screenshots: Elementor content was not found.' );
@@ -285,7 +286,7 @@ class Screenshot {
 				success: ( url ) => {
 					this.log( `Screenshot created: ${ encodeURI( url ) }` );
 
-					resolve();
+					resolve( url );
 				},
 				error: () => {
 					this.log( 'Failed to create screenshot.' );
@@ -307,8 +308,8 @@ class Screenshot {
 	/**
 	 * Notify that the screenshot has been succeed.
 	 */
-	screenshotSucceed() {
-		this.screenshotDone( true );
+	screenshotSucceed( imageUrl ) {
+		this.screenshotDone( true, imageUrl );
 	}
 
 	/**
@@ -322,12 +323,18 @@ class Screenshot {
 	 * Final method of the screenshot.
 	 *
 	 * @param success
+	 * @param imageUrl
 	 */
-	screenshotDone( success ) {
+	screenshotDone( success, imageUrl = null ) {
 		clearTimeout( this.timeoutTimer );
 		this.timeoutTimer = null;
 
-		window.top.postMessage( { name: 'capture-screenshot-done', success }, '*' );
+		window.top.postMessage( {
+			name: 'capture-screenshot-done',
+			success,
+			id: this.config.post_id,
+			imageUrl,
+		}, '*' );
 
 		this.log( `Screenshot ${ success ? 'Succeed' : 'Failed' }.`, 'timeEnd' );
 	}
@@ -344,7 +351,7 @@ class Screenshot {
 		}
 
 		// eslint-disable-next-line no-console
-		console.log( message );
+		console.log( `${ this.config.post_id } - ${ message }` );
 
 		// eslint-disable-next-line no-console
 		console[ timerMethod ]( this.config.timerLabel );
