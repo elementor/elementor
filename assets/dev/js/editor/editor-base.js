@@ -1063,11 +1063,4 @@ export default class EditorBase extends Marionette.Application {
 
 		$files.attr( { type } );
 	}
-
-	refreshKitCssFiles() {
-		const $link = this.$previewContents.find( `#elementor-post-${ elementor.config.kit_id }-css` ),
-			href = $link.attr( 'href' ).split( '?' )[ 0 ];
-
-		$link.attr( { href: `${ href }?ver=${ ( new Date() ).getTime() }` } );
-	}
 }
