@@ -8,13 +8,12 @@ $eps-grid-spacing-keys: (5 8 10 12 16);
 
 //defining flex traits
 @mixin grid-item-auto($size) {
-	.#{$eps-prefix}grid-item-#{$size}- {
+	.#{$eps-prefix}grid-item-#{$size} {
 		flex-grow: 1;
 		max-width: 100%;
 		flex-basis: 0;
 	}
 }
-
 
 // defining cols.
 @mixin grid-col-generator($size, $grid-columns: $eps-grid-columns) {
