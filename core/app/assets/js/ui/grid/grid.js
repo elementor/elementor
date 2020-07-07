@@ -17,7 +17,7 @@ export default function Grid( props ) {
 			xl: '-item-xl{{ -VALUE }}',
 			xxl: '-item-xxl{{ -VALUE }}',
 		},
-		getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': props.spacing + 'px' } : {},
+		getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': props.spacing } : {},
 		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
 
 	return (
