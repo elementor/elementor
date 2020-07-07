@@ -68,7 +68,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				globalValue = this.view.model.get( 'global' )?.default;
 			}
 
-			if ( globalValue ) {
+			if ( globalValue && elementor.config.globals.defaults_enabled[ this.view.getGlobalMeta().controlType ] ) {
 				// If there is a global value saved, get the global's name and display it.
 				$e.data.get( globalValue )
 					.then( ( result ) => {

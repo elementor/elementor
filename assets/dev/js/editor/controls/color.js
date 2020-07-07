@@ -80,7 +80,8 @@ export default class extends ControlBaseDataView {
 		return {
 			commandName: this.getGlobalCommand(),
 			key: this.model.get( 'name' ),
-			title: this.colorPicker.getColorTitle(),
+			title: this.colorPicker?.getColorTitle(),
+			controlType: 'colors',
 		};
 	}
 
