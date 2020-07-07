@@ -1,0 +1,21 @@
+.kit-content-list {
+	&__item {
+		padding: spacing(20);
+		background: theme-colors(light);
+	}
+
+	&__checkbox {
+		margin-inline-end: spacing(12);
+	}
+
+	&__title {
+		font-size: type( size, base );
+		color: tints(800);
+		line-height: 1;
+	}
+
+	&__description {
+		font-size: type( size, "13" );
+		color: tints(600);
+	}
+}

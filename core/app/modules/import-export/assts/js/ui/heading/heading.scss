@@ -1,0 +1,21 @@
+.import-export-heading {
+	&--xs {
+		font-size: type( h, "3" );
+	}
+
+	&--sm {
+		font-size: type( h, "3" );
+	}
+
+	&--md {
+		font-size: type( h, "1" );
+	}
+
+	&--lg {
+		font-size: type( h, "1" );
+	}
+
+	&--xl {
+		font-size: type( h, "2" );
+	}
+}

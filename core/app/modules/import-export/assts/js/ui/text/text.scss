@@ -1,0 +1,15 @@
+.import-export-text {
+	font-size: type( text, base );
+
+	&--sm {
+		font-size: type( text, sm );
+	}
+
+	&--md {
+		font-size: type( text, md );
+	}
+
+	&--xl {
+		font-size: type( text, xl );
+	}
+}
