@@ -44,6 +44,13 @@
 	}
 }
 
+.elementor-controls-popover {
+
+	&.e-controls-popover--typography {
+		padding-top: 0;
+	}
+}
+
 .elementor-control-global {
 
 	.elementor-control-input-wrapper {
