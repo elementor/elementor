@@ -77,6 +77,14 @@ export default class Button extends React.Component {
 		);
 
 		if ( this.props.url ) {
+			if ( 0 === this.props.url.indexOf( 'http' ) ) {
+				return (
+					<a href={ this.props.url } target="_parent" { ...attributes }>
+						{ buttonContent }
+					</a>
+				);
+			}
+
 			// @see https://reach.tech/router/example/active-links.
 			attributes.getProps = ( props ) => {
 				if ( props.isCurrent ) {
