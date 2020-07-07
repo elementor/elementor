@@ -11,13 +11,13 @@ export default class extends ControlBaseDataView {
 	}
 
 	applySavedValue() {
-		// Gets the current OR default value of the control
+		// Gets the current OR default value of the control.
 		const currentValue = this.getCurrentValue();
 
 		if ( this.colorPicker ) {
-			// When there is a global set on the control but there is no value/it doesn't exist, don't show a value
+			// When there is a global set on the control but there is no value/it doesn't exist, don't show a value.
 			if ( currentValue ) {
-				// Set the picker color without triggering the 'onChange' event
+				// Set the picker color without triggering the 'onChange' event.
 				const parsedColor = this.colorPicker.picker._parseLocalColor( currentValue );
 
 				this.colorPicker.picker.setHSVA( ...parsedColor.values, false );
@@ -41,7 +41,7 @@ export default class extends ControlBaseDataView {
 				},
 				defaultRepresentation: 'HEX',
 			},
-			// Don't create the add button in the Global Settings color pickers
+			// Don't create the add button in the Global Settings color pickers.
 			addButton: this.model.get( 'global' )?.active,
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
@@ -64,7 +64,7 @@ export default class extends ControlBaseDataView {
 			title: () => {
 				let currentValue = this.getCurrentValue();
 
-				// If there is a global enabled for the control, but the global has no value
+				// If there is a global enabled for the control, but the global has no value.
 				if ( this.getGlobalKey() && ! currentValue ) {
 					currentValue = `${ elementor.translate( 'invalid' ) } ${ elementor.translate( 'global_color' ) }`;
 				}
@@ -96,7 +96,7 @@ export default class extends ControlBaseDataView {
 
 		let messageContent;
 
-		// Check if the color already exists in the global colors, and display an appropriate message
+		// Check if the color already exists in the global colors, and display an appropriate message.
 		for ( const globalColor of Object.values( globalColors ) ) {
 			if ( currentValue === globalColor.value ) {
 				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
@@ -122,7 +122,7 @@ export default class extends ControlBaseDataView {
 		return 'globals/colors';
 	}
 
-	// globalData is received from the Data API
+	// The globalData parameter is received from the Data API.
 	createGlobalItemMarkup( globalData ) {
 		const $color = jQuery( '<div>', { class: 'e-global__preview-item e-global__color', 'data-global-id': globalData.id } ),
 			$colorPreview = jQuery( '<div>', { class: 'e-global__color-preview', style: 'background-color: ' + globalData.value } ),
@@ -142,7 +142,7 @@ export default class extends ControlBaseDataView {
 		return result.data;
 	}
 
-	// Create the markup for the colors in the global select dropdown
+	// Create the markup for the colors in the global select dropdown.
 	buildGlobalsList( globalColors ) {
 		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
 
@@ -180,10 +180,10 @@ export default class extends ControlBaseDataView {
 	onPickerClear() {
 		this.isCustom = false;
 
-		// Empty the value saved in the control
+		// Empty the value saved in the control.
 		this.setValue( '' );
 
-		// Adjust the Global select box text according to the cleared value
+		// Adjust the Global select box text according to the cleared value.
 		this.triggerMethod( 'value:type:change' );
 
 		this.applySavedValue();
@@ -198,7 +198,7 @@ export default class extends ControlBaseDataView {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 
-		// If there is a value in the control, set the clear button to active, if not, deactivate it
+		// If there is a value in the control, set the clear button to active, if not, deactivate it.
 		this.colorPicker.toggleClearButtonState( !! this.getCurrentValue() );
 	}
 

@@ -48,7 +48,7 @@ export default class extends elementorModules.editor.utils.Module {
 	}
 
 	addGlobalsBehavior( behaviors, view ) {
-		// The view can be a UI control which does not have this method
+		// The view can be a UI control which does not have this method.
 		if ( ! view.isGlobalActive ) {
 			return;
 		}
@@ -78,7 +78,7 @@ export default class extends elementorModules.editor.utils.Module {
 		return behaviors;
 	}
 
-	// Use the Controls CSS Parser to add the global defaults CSS to the page
+	// Use the Controls CSS Parser to add the global defaults CSS to the page.
 	renderGlobalsDefaultCSS() {
 		const cssParser = new ControlsCSSParser( {
 			id: 'e-global-style',
@@ -86,7 +86,7 @@ export default class extends elementorModules.editor.utils.Module {
 			defaultColorsEnabled = elementor.config.globals.defaults_enabled.colors,
 			defaultTypographyEnabled = elementor.config.globals.defaults_enabled.typography;
 
-		// If both default colors and typography are disabled, there is no need to render schemes and default global css
+		// If both default colors and typography are disabled, there is no need to render schemes and default global css.
 		if ( ! defaultColorsEnabled && ! defaultTypographyEnabled ) {
 			return;
 		}

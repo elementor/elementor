@@ -127,7 +127,7 @@ class Global_CSS extends Base {
 		$custom_colors_enabled = $kits_manager->is_custom_colors_enabled();
 		$custom_typography_enabled = $kits_manager->is_custom_typography_enabled();
 
-		// If both default colors and typography are disabled, there is no need to render schemes and default global css
+		// If both default colors and typography are disabled, there is no need to render schemes and default global css.
 		if ( ! $custom_colors_enabled && ! $custom_typography_enabled ) {
 			return;
 		}
@@ -143,19 +143,21 @@ class Global_CSS extends Base {
 				$is_color_control = 'color' === $control['type'];
 				$is_typography_control = isset( $control['groupType'] ) && 'typography' === $control['groupType'];
 
-				// If it is a color/typography control and default colors/typography are disabled, don't add the default CSS
+				// If it is a color/typography control and default colors/typography are disabled,
+				// don't add the default CSS.
 				if ( ( $is_color_control && ! $custom_colors_enabled ) || ( $is_typography_control && ! $custom_typography_enabled ) ) {
 					continue;
 				}
 
 				$global_control = $control;
 
-				// Handle group controls that don't have a default global property
+				// Handle group controls that don't have a default global property.
 				if ( ! empty( $control['groupType'] ) ) {
 					$global_control = $controls[ $control['groupPrefix'] . $control['groupType'] ];
 				}
 
-				// If the control has a default global defined, add it to the globals array that is used in add_control_rules
+				// If the control has a default global defined, add it to the globals array
+				// that is used in add_control_rules.
 				if ( ! empty( $control['global']['default'] ) ) {
 					$global_values['__globals__'][ $control['name'] ] = $global_control['global']['default'];
 				}
@@ -169,7 +171,7 @@ class Global_CSS extends Base {
 				$this->add_control_rules( $control, $controls, function( $control ) {}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ], $global_values );
 			}
 
-			// TODO: When removing the Schemes mechanism, handle this as well
+			// TODO: When removing the Schemes mechanism, handle this as well.
 			$scheme_controls = $widget->get_scheme_controls();
 
 			foreach ( $scheme_controls as $control ) {

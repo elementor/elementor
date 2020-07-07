@@ -5,7 +5,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		};
 	}
 
-	// This method exists because the UI elements are printed after controls are already rendered
+	// This method exists because the UI elements are printed after controls are already rendered.
 	registerUiElements() {
 		const popoverWidget = this.popover.getElements( 'widget' );
 
@@ -14,7 +14,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.ui.manageGlobalsButton = popoverWidget.find( '.e-global__manage-button' );
 	}
 
-	// This method exists because the UI elements are printed after controls are already rendered
+	// This method exists because the UI elements are printed after controls are already rendered.
 	registerEvents() {
 		this.ui.globalPreviewsContainer.on( 'click', '.e-global__preview-item', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
 		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
@@ -45,7 +45,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.popover.hide();
 	}
 
-	// Update the behavior's components
+	// Update the behavior's components.
 	onValueTypeChange() {
 		this.updateSelectBoxText();
 	}
@@ -69,7 +69,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			}
 
 			if ( globalValue ) {
-				// If there is a global value saved, get the global's name and display it
+				// If there is a global value saved, get the global's name and display it.
 				$e.data.get( globalValue )
 					.then( ( result ) => {
 						let text = '';
@@ -85,10 +85,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				return;
 			} else if ( value ) {
-				// If there is a value and it is not a global
+				// If there is a value and it is not a global, set the text to custom.
 				selectBoxText = elementor.translate( 'custom' );
 			} else {
-				// If there is no value, set the text as default
+				// If there is no value, set the text as default.
 				selectBoxText = elementor.translate( 'default' );
 			}
 		}
@@ -104,7 +104,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.initGlobalPopover();
 
 		if ( this.view.getGlobalKey() ) {
-			// This setTimeout is here to overcome an issue with a requestAnimationFrame that runs in the Pickr library
+			// This setTimeout is here to overcome an issue with a requestAnimationFrame that runs in the Pickr library.
 			setTimeout( () => this.fetchGlobalValue(), 50 );
 		} else {
 			this.onValueTypeChange();
@@ -165,7 +165,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			},
 		} );
 
-		// Render the list of globals and append them to the Globals popover
+		// Render the list of globals and append them to the Globals popover.
 		this.view.getGlobalsList()
 			.then(
 			( globalsList ) => {
@@ -192,7 +192,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	// This method is not called directly, but triggered by Marionette's .triggerMethod(),
-	// in the onAddGlobalButtonClick() method in the color and typography global controls
+	// in the onAddGlobalButtonClick() method in the color and typography global controls.
 	onAddGlobalToList( $confirmMessage ) {
 		this.confirmNewGlobalModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			className: 'e-global__confirm-add',
@@ -207,7 +207,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			},
 			onConfirm: () => this.onConfirmNewGlobal(),
 			onShow: () => {
-				// Put focus on the naming input
+				// Put focus on the naming input.
 				this.ui.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
 			},
 		} );
@@ -248,10 +248,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		const settings = {};
 
 		if ( this.view.getGlobalKey() ) {
-			// If a global setting is already active, switch them without disabling globals
+			// If a global setting is already active, switch them without disabling globals.
 			command = 'document/globals/settings';
 		} else {
-			// If the active setting is NOT a global, enable globals and apply the selected global
+			// If the active setting is NOT a global, enable globals and apply the selected global.
 			command = 'document/globals/enable';
 		}
 
@@ -265,7 +265,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 	}
 
-	// The unset method is triggered from the controls via triggerMethod
+	// The unset method is triggered from the controls via triggerMethod.
 	onUnsetGlobalValue() {
 		const globalMeta = this.view.getGlobalMeta();
 
