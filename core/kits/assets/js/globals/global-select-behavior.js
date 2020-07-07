@@ -64,11 +64,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 			let globalValue = this.view.getGlobalKey();
 
-			if ( ! globalValue && ! value ) {
+			if ( ! globalValue && ! value && elementor.config.globals.defaults_enabled[ this.view.getGlobalMeta().controlType ] ) {
 				globalValue = this.view.model.get( 'global' )?.default;
 			}
 
-			if ( globalValue && elementor.config.globals.defaults_enabled[ this.view.getGlobalMeta().controlType ] ) {
+			if ( globalValue ) {
 				// If there is a global value saved, get the global's name and display it.
 				$e.data.get( globalValue )
 					.then( ( result ) => {
