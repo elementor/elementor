@@ -708,10 +708,16 @@ class Upgrades {
 	 */
 	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
 		$callback = function( $kit_id ) {
+			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+				return;
+			}
+
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
-			// Already exist.
-			if ( $kit->get_settings( 'system_colors' ) ) {
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['system_colors'] ) ) {
 				return;
 			}
 
@@ -749,8 +755,10 @@ class Upgrades {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
-			// Already exist.
-			if ( $kit->get_settings( 'custom_colors' ) ) {
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
 				return;
 			}
 
@@ -803,10 +811,16 @@ class Upgrades {
 	 */
 	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
 		$callback = function( $kit_id ) {
+			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
+				return;
+			}
+
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
-			// Already exist.
-			if ( $kit->get_settings( 'system_typography' ) ) {
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['system_typography'] ) ) {
 				return;
 			}
 
@@ -825,9 +839,9 @@ class Upgrades {
 				$kit->add_repeater_row( 'system_typography', [
 					'_id' => $new_ids[ $index - 1 ], // $default_typography starts from 1.
 					'title' => $typography['title'],
-					'system_typography_typography' => 'custom',
-					'system_typography_font_family' => $typography['value']['font_family'],
-					'system_typography_font_weight' => $typography['value']['font_weight'],
+					'typography_typography' => 'custom',
+					'typography_font_family' => $typography['value']['font_family'],
+					'typography_font_weight' => $typography['value']['font_weight'],
 				] );
 			}
 		};
