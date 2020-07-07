@@ -3,7 +3,7 @@ import Message from '../../ui/message/message';
 import Heading from '../../ui/heading/heading';
 import Text from '../../ui/text/text';
 import Box from '../../ui/box/box';
-import MainFooter from '../../shared/main-footer/main-footer';
+import Footer from '../../shared/footer/footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './import-process.scss';
@@ -23,9 +23,9 @@ export default function ImportProcess() {
 					{ __( 'Importing global templates', 'elementor' ) }
 				</Box>
 
-				<MainFooter>
+				<Footer separator justify="end">
 					<Button variant="disabled" text={ __( 'Cancel', 'elementor' ) } url="/import/process" />
-				</MainFooter>
+				</Footer>
 			</Message>
 		</Layout>
 	);

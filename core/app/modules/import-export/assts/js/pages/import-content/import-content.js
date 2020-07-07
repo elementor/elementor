@@ -1,7 +1,7 @@
 import Layout from '../../templates/layout';
 import ImportContentList from './import-content-list/import-content-list';
 import Heading from '../../ui/heading/heading';
-import MainFooter from '../../shared/main-footer/main-footer';
+import Footer from '../../shared/footer/footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 export default function ImportContent() {
@@ -14,9 +14,9 @@ export default function ImportContent() {
 
 				<ImportContentList />
 
-				<MainFooter>
+				<Footer separator justify="end">
 					<Button variant="primary" text={ __( 'Import', 'elementor' ) } url="/import/process" />
-				</MainFooter>
+				</Footer>
 			</section>
 		</Layout>
 	);

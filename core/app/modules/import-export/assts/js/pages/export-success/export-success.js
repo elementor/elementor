@@ -2,7 +2,7 @@ import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
 import Heading from '../../ui/heading/heading';
 import Text from '../../ui/text/text';
-import Grid from 'elementor-app/ui/grid/grid';
+import Footer from '../../shared/footer/footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './export-success.scss';
@@ -26,9 +26,9 @@ export default function ExportSuccess() {
 					<Button text={ __( 'click here', 'elementor' ) } url="/#" />
 				</Message>
 
-				<Grid container justify="center" className="e-app-export-success__learn-more">
+				<Footer justify="center">
 					<Button size="md" text={ __( 'Learn More', 'elementor' ) } url="/#" />
-				</Grid>
+				</Footer>
 			</section>
 		</Layout>
 	);

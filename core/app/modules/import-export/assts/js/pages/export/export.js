@@ -2,7 +2,7 @@ import Layout from '../../templates/layout';
 import Heading from '../../ui/heading/heading';
 import Box from '../../ui/box/box';
 import ExportContentList from './export-content-list/export-content-list';
-import MainFooter from '../../shared/main-footer/main-footer';
+import Footer from '../../shared/footer/footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 import '../import-export.scss';
@@ -28,9 +28,9 @@ export default function Export() {
 					<ExportContentList />
 				</div>
 
-				<MainFooter>
+				<Footer separator justify="end">
 					<Button size="lg" variant="primary" text={ __( 'Next', 'elementor' ) } url="/export/success" />
-				</MainFooter>
+				</Footer>
 			</section>
 		</Layout>
 	);

@@ -3,13 +3,13 @@ import Message from '../../ui/message/message';
 import Heading from '../../ui/heading/heading';
 import ImportSuccessList from './import-success-list/import-success-list';
 import Text from '../../ui/text/text';
+import Footer from '../../shared/footer/footer';
 import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
-//
+
 import './import-success.scss';
 
 export default function ImportSuccess() {
-	console.log( 'elementorAppConfig.assets_url', elementorAppConfig.assets_url );
 	return (
 		<Layout type="import">
 			<section className="e-app-import-success">
@@ -18,7 +18,7 @@ export default function ImportSuccess() {
 						{ __( 'Congrats, the following kit elements were imported', 'elementor' ) }
 					</Heading>
 
-					<img className="e-app-export-success__image" src={ elementorAppConfig.assets_url + 'images/go-pro-wp-dashboard.svg' } />
+					<img src={ elementorAppConfig.assets_url + 'images/go-pro.svg' } />
 
 					<ImportSuccessList />
 
@@ -27,10 +27,10 @@ export default function ImportSuccess() {
 					</Grid>
 				</Message>
 
-				<Grid container justify="center" alignItems="center" className="e-app-export-success__learn-more">
+				<Footer justify="center">
 					<Button size="md" text={ __( 'Click here', 'elementor' ) } url="/#" />
 					<Text tag="span" size="sm">{ __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }</Text>
-				</Grid>
+				</Footer>
 			</section>
 		</Layout>
 	);
