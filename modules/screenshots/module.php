@@ -179,6 +179,19 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * @param $post_id
+	 *
+	 * @return string
+	 */
+	public function get_screenshot_url( $post_id ) {
+		return add_query_arg( [
+			'elementor-screenshot' => $post_id,
+			'ver' => time(),
+			'nonce' => wp_create_nonce( self::SCREENSHOT_NONCE_ACTION . $post_id ),
+		], get_permalink( $post_id ) );
+	}
+
+	/**
 	 * Extends document config with screenshot URL.
 	 *
 	 * @param $config
@@ -186,13 +199,9 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public function extend_document_config( $config ) {
-		$post_id = get_queried_object_id();
-
-		$url = add_query_arg( [
-			'elementor-screenshot' => $post_id,
-			'ver' => time(),
-			'nonce' => wp_create_nonce( self::SCREENSHOT_NONCE_ACTION . $post_id ),
-		], get_permalink( $post_id ) );
+		$url = $this->get_screenshot_url(
+			get_queried_object_id()
+		);
 
 		return array_replace_recursive( $config, [
 			'urls' => [
