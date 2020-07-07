@@ -46,7 +46,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
-	getCommand() {
+	getGlobalCommand() {
 		return 'globals/typography';
 	}
 
@@ -99,7 +99,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	getGlobalMeta() {
 		return {
-			commandName: this.getCommand(),
+			commandName: this.getGlobalCommand(),
 			key: this.model.get( 'name' ),
 			title: elementor.translate( 'new_typography_setting' ),
 		};
@@ -122,7 +122,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	async getGlobalsList() {
-		const result = await $e.data.get( this.getCommand() );
+		const result = await $e.data.get( this.getGlobalCommand() );
 
 		return result.data;
 	}

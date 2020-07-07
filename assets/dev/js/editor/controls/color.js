@@ -78,7 +78,7 @@ export default class extends ControlBaseDataView {
 
 	getGlobalMeta() {
 		return {
-			commandName: this.getCommand(),
+			commandName: this.getGlobalCommand(),
 			key: this.model.get( 'name' ),
 			title: this.colorPicker.getColorTitle(),
 		};
@@ -118,7 +118,7 @@ export default class extends ControlBaseDataView {
 		return $message;
 	}
 
-	getCommand() {
+	getGlobalCommand() {
 		return 'globals/colors';
 	}
 
@@ -137,7 +137,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	async getGlobalsList() {
-		const result = await $e.data.get( this.getCommand() );
+		const result = await $e.data.get( this.getGlobalCommand() );
 
 		return result.data;
 	}

@@ -256,7 +256,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		}
 
 		// colors / typography
-		settings[ this.view.model.get( 'name' ) ] = this.view.getCommand() + '?id=' + globalId;
+		settings[ this.view.model.get( 'name' ) ] = this.view.getGlobalCommand() + '?id=' + globalId;
 
 		// Trigger async render.
 		$e.run( command, {
