@@ -1,30 +1,22 @@
 export default function Grid( props ) {
-	const propsMap = [
-			{ prop: 'direction', isModifier: true },
-			{ prop: 'justify', isModifier: true },
-			{ prop: 'alignContent', isModifier: true },
-			{ prop: 'alignItems', isModifier: true },
-			{
-				prop: 'container',
-				nested: [
-					{ prop: 'spacing', isModifier: true, ignoreValue: true },
-					{ prop: 'noWrap', isModifier: true },
-					{ prop: 'wrapReverse', isModifier: true },
-				],
-			},
-			{
-				prop: 'item',
-				nested: [
-					{ prop: 'zeroMinWidth', isModifier: true },
-					{ prop: 'xs' },
-					{ prop: 'sm' },
-					{ prop: 'md' },
-					{ prop: 'lg' },
-					{ prop: 'xl' },
-					{ prop: 'xxl' },
-				],
-			},
-		],
+	const propsMap = {
+			direction: '--direction{{ -VALUE }}',
+			justify: '--justify{{ -VALUE }}',
+			alignContent: '--align-content{{ -VALUE }}',
+			alignItems: '--align-items{{ -VALUE }}',
+			container: '-container',
+			noWrap: '-container--no-wrap',
+			wrapReverse: '-container--wrap-reverse',
+			spacing: '-container--spacing',
+			item: '-item',
+			zeroMinWidth: '-item--zero-min-width',
+			xs: '-item-xs{{ -VALUE }}',
+			sm: '-item-sm{{ -VALUE }}',
+			md: '-item-md{{ -VALUE }}',
+			lg: '-item-lg{{ -VALUE }}',
+			xl: '-item-xl{{ -VALUE }}',
+			xxl: '-item-xxl{{ -VALUE }}',
+		},
 		getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': props.spacing + 'px' } : {},
 		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
 
@@ -35,45 +27,30 @@ export default function Grid( props ) {
 	);
 }
 
-/*
-	This function convert props into classes, according certain rules and structure:
+function getPropsClasses( propsMap, props ) {
+	const classes = [];
 
-	- Each prop name gets automatically a baseClassName (eps-grid) as a prefix.
-	- When a prop has no value, only the prop name will be rendered in the class name (<Grid justify> --> eps-grid--justify).
-	- When a certain prop has the isModifier flag: the prop class name will be added with a double dash (eps-grid--justify-XXX).
-	- When the isModifier flag does not exist (or false) the prop class name will be added with one dash (eps-grid-item).
-	- Each 'camel case' prop name will be automatically converted into a 'dash case' (alignItems --> align-items)
-	- When a certain prop has a nested array: the nested values will be added to the base prop name (eps-grid-container-no-wrap).
-	- When a certain prop has the repeatOnValue flag: the prop will be rendered twice - with and without the value:
-	  Example: <Grid container spacing={5}> will render: container-spacing + container-spacing-5, instead of just: container-spacing-5.
- */
-function getPropsClasses( propsMap, props, prefix ) {
-	let classes = [];
+	for ( const prop in propsMap ) {
+		if ( props[ prop ] ) {
+			const propValue = isValidPropValue( props[ prop ] ) ? props[ prop ] : '';
 
-	for ( const propData of propsMap ) {
-		if ( props[ propData.prop ] ) {
-			const propValue = isValidPropValue( props[ propData.prop ] ) && ! propData.ignoreValue ? '-' + props[ propData.prop ] : '',
-				connection = propData.isModifier ? '--' : '-';
-
-			let propName = connection + camelCaseToDashCase( propData.prop );
-
-			if ( prefix ) {
-				propName = prefix + propName;
-			}
-
-			if ( propData.repeatOnValue && '' !== propValue ) {
-				classes.push( getBaseClassName() + propName );
-			}
-
-			classes.push( getBaseClassName() + propName + propValue );
-
-			if ( propData.nested?.length ) {
-				classes = classes.concat( getPropsClasses( propData.nested, props, propName ) );
-			}
+			classes.push( getBaseClassName() + renderPropValueBrackets( propsMap[ prop ], propValue ) );
 		}
 	}
 
 	return classes;
+}
+
+function renderPropValueBrackets( propClass, propValue ) {
+	const brackets = propClass.match( /{{.*?}}/ );
+
+	if ( brackets ) {
+		const bracketsValue = propValue ? brackets[ 0 ].replace( /[{ }]/g, '' ).replace( /value/i, propValue ) : '';
+
+		propClass = propClass.replace( brackets[ 0 ], bracketsValue );
+	}
+
+	return propClass;
 }
 
 function getBaseClassName() {
@@ -84,12 +61,12 @@ function isValidPropValue( propValue ) {
 	return propValue && 'boolean' !== typeof propValue;
 }
 
-function camelCaseToDashCase( str ) {
-	return str.replace( /([A-Z])/g, ( char ) => '-' + char.toLowerCase() );
-}
-
 Grid.propTypes = {
 	className: PropTypes.string,
+	direction: PropTypes.string,
+	justify: PropTypes.string,
+	alignContent: PropTypes.string,
+	alignItems: PropTypes.string,
 	spacing: PropTypes.number,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
