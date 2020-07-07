@@ -201,15 +201,10 @@ module.exports = {
 		};
 	},
 
-	// target = editor/preview
-	enqueueFont( font, target ) {
+	// The target parameter = 'editor'/'preview'. Defaults to 'preview' for backwards compatibility.
+	enqueueFont( font, target = 'preview' ) {
 		if ( $e.devTools ) {
 			$e.devTools.log.info( `enqueueFont font: '${ font }', target: '${ target }'` );
-		}
-
-		// Backwards Compatibility
-		if ( ! target ) {
-			target = 'preview';
 		}
 
 		if ( -1 !== this._enqueuedFonts[ target ].indexOf( font ) ) {
