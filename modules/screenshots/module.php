@@ -202,6 +202,20 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Handle frontend for screenshot mode.
+	 *
+	 * Sets the mode on `template redirect` hook, after plugins are loaded and before WP page render.
+	 * @throws \Requests_Exception_HTTP_403
+	 */
+	public function handle_screenshot_mode() {
+		if ( $this->is_screenshot_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
+			show_admin_bar( false );
+
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
+		}
+	}
+
+	/**
 	 * Check and validate proxy mode.
 	 *
 	 * @param array $query_params
@@ -266,12 +280,7 @@ class Module extends BaseModule {
 			die;
 		}
 
-		if ( $this->is_screenshot_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
-			show_admin_bar( false );
-
-			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
-		}
-
+		add_action( 'template_redirect', [ $this, 'handle_screenshot_mode' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_filter( 'elementor/document/config', [ $this, 'extend_document_config' ] );
 	}
