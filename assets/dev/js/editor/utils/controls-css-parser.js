@@ -104,6 +104,8 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 					propertyValue = `var( --e-global-${ control.type }-${ id } )`;
 				}
 
+				// This regex handles a case where a control's selector property value includes more than one CSS selector.
+				// Example: 'selector' => 'background: {{VALUE}}; background-color: {{VALUE}};'.
 				outputCssProperty = cssProperty.replace( /(:)[^;]+(;?)/g, '$1' + propertyValue + '$2' );
 			} else {
 				try {
