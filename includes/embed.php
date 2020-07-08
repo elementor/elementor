@@ -188,4 +188,72 @@ class Embed {
 		/** This filter is documented in wp-includes/class-oembed.php */
 		return apply_filters( 'oembed_result', $iframe_html, $video_url, $frame_attributes );
 	}
+
+	/**
+	 * Get oembed data from the cache.
+	 * if not exists in the cache it will fetch from provider and then save to the cache.
+	 *
+	 * @param $oembed_url
+	 * @param $cached_post_id
+	 *
+	 * @return array|null
+	 */
+	public static function get_oembed_data( $oembed_url, $cached_post_id ) {
+		$cached_oembed_data = json_decode( get_post_meta( $cached_post_id, '_elementor_oembed_cache', true ), true );
+
+		if ( isset( $cached_oembed_data[ $oembed_url ] ) ) {
+			return $cached_oembed_data[ $oembed_url ];
+		}
+
+		$normalize_oembed_data = self::fetch_oembed_data( $oembed_url );
+
+		if ( ! $cached_oembed_data ) {
+			$cached_oembed_data = [];
+		}
+
+		update_post_meta( $cached_post_id, '_elementor_oembed_cache', wp_json_encode( array_merge(
+			$cached_oembed_data,
+			[
+				$oembed_url => $normalize_oembed_data,
+			]
+		) ) );
+
+		return $normalize_oembed_data;
+	}
+
+	/**
+	 * Fetch oembed data from oembed provider.
+	 *
+	 * @param $oembed_url
+	 *
+	 * @return array|null
+	 */
+	public static function fetch_oembed_data( $oembed_url ) {
+		$oembed_data = _wp_oembed_get_object()->get_data( $oembed_url );
+
+		if ( ! $oembed_data ) {
+			return null;
+		}
+
+		return [
+			'thumbnail_url' => $oembed_data->thumbnail_url,
+			'title' => $oembed_data->title,
+		];
+	}
+
+	/**
+	 * @param $oembed_url
+	 * @param null|string|int $cached_post_id
+	 *
+	 * @return string|null
+	 */
+	public static function get_embed_thumbnail_html( $oembed_url, $cached_post_id = null ) {
+		$oembed_data = self::get_oembed_data( $oembed_url, $cached_post_id );
+
+		if ( ! $oembed_data ) {
+			return null;
+		}
+
+		return '<div class="elementor-image">' . sprintf( '<img src="%1$s" alt="%2$s" title="%2$s" width="%3$s" />', $oembed_data['thumbnail_url'], esc_attr( $oembed_data['title'] ), '100%' ) . '</div>';
+	}
 }
