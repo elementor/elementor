@@ -9,7 +9,6 @@ export default function ExportContentList() {
 
 ExportContentList.propTypes = {
 	classname: PropTypes.string,
-	content: PropTypes.array,
 };
 
 ExportContentList.defaultProps = {

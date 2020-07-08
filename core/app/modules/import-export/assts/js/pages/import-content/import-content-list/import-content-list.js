@@ -9,7 +9,6 @@ export default function ImportContentList() {
 
 ImportContentList.propTypes = {
 	classname: PropTypes.string,
-	content: PropTypes.array,
 };
 
 ImportContentList.defaultProps = {
