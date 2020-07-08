@@ -10,6 +10,12 @@
 		}
 	}
 
+	@each $color, $value in $eps-theme-elements-colors {
+		@if map-get($eps-theme-elements-colors, $color) {
+			--#{$color}: #{$value};
+		}
+	}
+
 	@each $color, $value in $eps-tints {
 		@if map-get($eps-tints, $color) {
 			--gray-#{$color}: #{$value};

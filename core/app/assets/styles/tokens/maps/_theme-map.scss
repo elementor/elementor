@@ -1,8 +1,4 @@
 $eps-theme-colors: (
-		body-color: $eps-body-color,
-		body-bg:$eps-body-bg,
-		link-color: $eps-link-color,
-		link-hover-color: $eps-link-hover-color,
 		text-muted:$eps-theme-text-muted,
 		disabled: $eps-theme-disabled,
 		light: $eps-theme-light,
@@ -13,3 +9,26 @@ $eps-theme-colors: (
 		success: $eps-theme-success,
 		warning: $eps-theme-warning,
 );
+
+$eps-theme-elements-colors: (
+		body-color: $eps-body-color,
+		body-bg:$eps-body-bg,
+		link-color: $eps-link-color,
+		link-hover-color: $eps-link-hover-color,
+		display-1-color:$eps-display-1-color,
+		display-2-color:$eps-display-1-color,
+		display-3-color:$eps-display-1-color,
+		display-4-color:$eps-display-1-color,
+		h-1-color:$eps-h-1-color,
+		h-2-color:$eps-h-2-color,
+		h-3-color:$eps-h-3-color,
+		h-4-color:$eps-h-4-color,
+		h-5-color:$eps-h-5-color,
+		h-6-color:$eps-h-6-color,
+		text-base-color:$eps-text-base-color,
+		text-xl-color:$eps-text-xl-color,
+		text-lg-color:$eps-text-lg-color,
+		text-sm-color:$eps-text-sm-color,
+		text-xs-color:$eps-text-xs-color,
+		text-xxs-color:$eps-text-xxs-color,
+)
