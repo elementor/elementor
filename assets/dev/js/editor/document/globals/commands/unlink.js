@@ -11,7 +11,7 @@ export class Unlink extends CommandBase {
 	}
 
 	async apply( args ) {
-		const { containers = [ args.container ], setting, globalValue } = args,
+		const { containers = [ args.container ], setting, globalValue, options = {} } = args,
 			localSettings = {};
 
 		await Promise.all( containers.map( async ( /* Container */ container ) => {
@@ -39,6 +39,7 @@ export class Unlink extends CommandBase {
 		if ( Object.keys( localSettings ).length ) {
 			$e.run( 'document/elements/settings', {
 				containers,
+				options,
 				settings: localSettings,
 			} );
 		}

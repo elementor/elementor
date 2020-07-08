@@ -451,6 +451,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'elementor-ntc',
+			ELEMENTOR_ASSETS_URL . 'lib/e-ntc/e-ntc' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -493,6 +501,7 @@ class Editor {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
+				'elementor-ntc',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
@@ -522,6 +531,7 @@ class Editor {
 		unset( $settings['page'] );
 
 		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
+		$kits_manager = Plugin::$instance->kits_manager;
 
 		$config = [
 			'initial_document' => $document->get_config(),
@@ -534,6 +544,12 @@ class Editor {
 			'schemes' => [
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
+			],
+			'globals' => [
+				'defaults_enabled' => [
+					'colors' => $kits_manager->is_custom_colors_enabled(),
+					'typography' => $kits_manager->is_custom_typography_enabled(),
+				],
 			],
 			'icons' => [
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
@@ -595,9 +611,33 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
-				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
 				'saved_colors' => __( 'Saved Colors', 'elementor' ),
 				'drag_to_delete' => __( 'Drag To Delete', 'elementor' ),
+				'color_picker' => __( 'Color Picker', 'elementor' ),
+
+				// Global Styles
+				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'global_colors_title' => __( 'Global Colors', 'elementor' ),
+				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
+				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
+				'delete_global_color' => __( 'Delete Global Color', 'elementor' ),
+				'delete_global_color_info' => __( 'Please note that by deleting a global color, all of its instances will inherit their value from an unknown source', 'elementor' ),
+				'global_colors_info' => __( 'Global colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below.', 'elementor' ),
+				'typography' => __( 'Typography', 'elementor' ),
+				'new_typography_setting' => __( 'New Typography Setting', 'elementor' ),
+				'global_typography_title' => __( 'Global Typography Settings', 'elementor' ),
+				'manage_global_typography' => __( 'Manage Global Typography', 'elementor' ),
+				'create_global_typography' => __( 'Create New Global Typography', 'elementor' ),
+				'delete_global_typography' => __( 'Delete Global Typography', 'elementor' ),
+				'delete_global_typography_info' => __( 'Please note that by deleting a Global Typography setting, all of its instances will inherit their value from an unknown source', 'elementor' ),
+				'global_typography_info' => __( 'Global typography help you work smarter. Save a typography, and use it anywhere throughout your site. Access and edit your global typography by clicking the Manage button below.', 'elementor' ),
+				'default' => __( 'Default', 'elementor' ),
+				'create' => __( 'Create', 'elementor' ),
+				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
+				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
+				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
+				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Typography setting?', 'elementor' ),
+				'custom' => __( 'Custom', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),

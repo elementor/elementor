@@ -543,6 +543,14 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$settings = $this->get_args();
 
+		if ( isset( $settings['global'] ) ) {
+			if ( ! isset( $popover_options['settings']['global'] ) ) {
+				$popover_options['settings']['global'] = [];
+			}
+
+			$popover_options['settings']['global'] = array_replace_recursive( $popover_options['settings']['global'], $settings['global'] );
+		}
+
 		if ( isset( $settings['label'] ) ) {
 			$label = $settings['label'];
 		} else {
@@ -559,7 +567,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
 		}
 
-		foreach ( [ 'global', 'condition', 'conditions' ] as $key ) {
+		foreach ( [ 'condition', 'conditions' ] as $key ) {
 			if ( ! empty( $settings[ $key ] ) ) {
 				$control_params[ $key ] = $settings[ $key ];
 			}

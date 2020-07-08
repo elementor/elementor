@@ -84,8 +84,12 @@
 			}
 
 			&-tool-remove {
-				color: $editor-lightest;
 				cursor: pointer;
+
+				&,
+				&--disabled {
+					color: $editor-lightest;
+				}
 			}
 		}
 
@@ -110,7 +114,7 @@
 
 				&:hover {
 
-					.elementor-global-colors__color-value {
+					.e-global-colors__color-value {
 						display: none;
 					}
 				}
@@ -153,7 +157,8 @@
 			text-align: center;
 		}
 
-		.pickr {
+		.pickr,
+		.elementor-control-popover-toggle-toggle-label {
 			@include margin-start(10px);
 		}
 	}
@@ -164,7 +169,7 @@
 	}
 }
 
-.elementor-global-colors__color-value {
+.e-global-colors__color-value {
 	color: $editor-lightest;
 	font-size: 10px;
 }
