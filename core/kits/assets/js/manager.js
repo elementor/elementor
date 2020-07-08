@@ -4,7 +4,7 @@ import panelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
 import Repeater from './repeater';
 import GlobalControlSelect from './globals/global-select-behavior';
-import ControlsCSSParser from '../../../../assets/dev/js/editor/utils/controls-css-parser';
+import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-parser';
 
 export default class extends elementorModules.editor.utils.Module {
 	addPanelPages() {
