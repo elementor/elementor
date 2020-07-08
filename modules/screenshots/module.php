@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Screenshots;
 
 use Elementor\Plugin;
+use Elementor\Frontend;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -217,11 +218,16 @@ class Module extends BaseModule {
 	 * @throws \Requests_Exception_HTTP_403
 	 */
 	public function handle_screenshot_mode() {
-		if ( $this->is_screenshot_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
-			show_admin_bar( false );
-
-			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
+		if ( ! $this->is_screenshot_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
+			return;
 		}
+
+		// Make the preview to be rendered static. (static images, video, slides and animations).
+		Plugin::$instance->frontend->set_render_mode( Frontend::RENDER_MODE_STATIC );
+
+		show_admin_bar( false );
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
 	}
 
 	/**
