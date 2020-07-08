@@ -1,6 +1,7 @@
 @import "../styles/common";
 @import "../styles/base";
 @import "../styles/components";
+@import "../styles/shame";
 
 $app-background-color: tints(200);
 $app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
@@ -63,7 +64,7 @@ hr {
 }
 
 .elementor-app {
-	font-size: type(text, md);
+	font-size: type(text, base);
 
 	&__main {
 		display: flex;

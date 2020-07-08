@@ -1,116 +1,59 @@
-// Tags
+// TYPOGRAPHY: Atoms, tags, reusable typography elements
 
 h1,
 .h1 {
-  font-size: $eps-h-1-font-size;
+	@include create-atom(typography, heading, 1);
 }
 
 h2,
 .h2 {
-  font-size: $eps-h-2-font-size;
+	@include create-atom(typography, heading, 2);
 }
 
 h3,
 .h3 {
-  font-size: $eps-h-3-font-size;
+	@include create-atom(typography, heading, 3);
 }
 
 h4,
 .h4 {
-  font-size: $eps-h4-font-size;
+	@include create-atom(typography, heading, 4);
 }
 
 h5,
 .h5 {
-  font-size: $eps-h-5-font-size;
+	@include create-atom(typography, heading, 5);
 }
 
 h6,
 .h6 {
-  font-size: $eps-h-5-font-size;
-}
-
-p {
-  margin-bottom: spacing(16);
-}
-
-.heading {
-  color: #6D7882;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 26px;
-}
-
-.card_headline {
-  color: #6D7882;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 17px;
-}
-
-.menu-item {
-  color: #6D7882;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 14px;
-}
-
-.header-title {
-  color: #495157;
-  font-weight: bold;
-  font-size: 15px;
-  line-height: 18px;
-  text-transform: uppercase;
-}
-
-.add-new-button {
-  color: #495157;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 20px;
-}
-
-.get-pro-button {
-  color: #FFFFFF;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 15px;
-  text-align: center;
-  text-transform: capitalize;
-}
-
-.back-button {
-  color: #A4AFB7;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 14px;
+	@include create-atom(typography, heading, 6);
 }
 
 // semantic sizing for text
 // todo: should be put !importatnt here? update code and remove comment
 .text-xxs {
-  font-size: $eps-text-xxs-font-size;
+	@include create-atom(typography, text, xxs);
 }
 
 .text-xs {
-  font-size: $eps-text-xs-font-size;
+	@include create-atom(typography, text, xs);
+}
+
+.text {
+	@include create-atom(typography, text, base);
 }
 
 .text-sm {
-  font-size: $eps-text-sm-font-size;
-}
-
-.text-md {
-  font-size: $eps-text-md-font-size;
+	@include create-atom(typography, text, sm);
 }
 
 .text-lg {
-  font-size: $eps-text-lg-font-size;
+	@include create-atom(typography, text, lg);
 }
 
 .text-xl {
-  font-size: $eps-text-xl-font-size;
+	@include create-atom(typography, text, xl);
 }
 
 // todo: placeholders for future semantic work, update or remove
