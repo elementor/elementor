@@ -12,7 +12,7 @@ $card-font-size: type(text,xs);
 $card-padding: spacing(10);
 
 $card-header-padding: $card-padding;
-$card-header-border: $eps-border;
+$card-header-footer-border: $eps-border;
 $card-header-height: spacing(20) * 2;
 
 $card-headline-color: tints(600);
@@ -43,7 +43,7 @@ $card-dark-image-overlay-background-color: rgba(dark-tints(700), $opacity-05);
 	--card-background-color: #{$card-background-color};
 	--card-background-color-hover: #{$card-background-color-hover};
 	--card-box-shadow: #{$card-box-shadow};
-	--card-header-border: #{$card-header-border};
+	--card-header-footer-border: #{$card-header-footer-border};
 	--card-headline-color: #{$card-headline-color};
 	--card-figure-background-color: #{$card-figure-background-color};
 	--card-image-overlay-background-color: #{$card-image-overlay-background-color};
@@ -53,7 +53,7 @@ $card-dark-image-overlay-background-color: rgba(dark-tints(700), $opacity-05);
 	--card-background-color: #{$card-dark-background-color};
 	--card-background-color-hover: #{$card-dark-background-color-hover};
 	--card-box-shadow: #{$card-dark-box-shadow};
-	--card-header-border: #{$card-dark-header-border};
+	--card-header-footer-border: #{$card-dark-header-border};
 	--card-headline-color: #{$card-dark-headline-color};
 	--card-figure-background-color: #{$card-dark-figure-background-color};
 	--card-image-overlay-background-color: #{$card-dark-image-overlay-background-color};

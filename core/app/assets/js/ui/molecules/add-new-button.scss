@@ -5,16 +5,21 @@ $eps-add-new-button-size-sm: spacing(16);
 $eps-add-new-button-icon-size: calc( var(--eps-add-new-button-size) * 0.75 );
 
 .eps-add-new-button {
-	display: block;
+	display: inline-flex;
 	--eps-add-new-button-size: #{$eps-add-new-button-size};
-	background-color: $eps-add-new-button-background-color;
-	color: $eps-add-new-button-icon-color;
-	width: var(--eps-add-new-button-size);
-	height: var(--eps-add-new-button-size);
-	border-radius: 100%;
-	font-size: $eps-add-new-button-icon-size;
 	line-height: var(--eps-add-new-button-size);
-	text-align: center;
+
+	.icon {
+		background-color: $eps-add-new-button-background-color;
+		color: $eps-add-new-button-icon-color;
+		width: var(--eps-add-new-button-size);
+		height: var(--eps-add-new-button-size);
+		border-radius: 100%;
+		font-size: $eps-add-new-button-icon-size;
+		text-align: center;
+		margin-inline-end: spacing(10);
+		line-height: var(--eps-add-new-button-size);
+	}
 
 	&--sm {
 		--eps-add-new-button-size: #{$eps-add-new-button-size-sm};

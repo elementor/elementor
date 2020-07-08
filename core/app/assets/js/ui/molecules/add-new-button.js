@@ -1,5 +1,4 @@
 import Button from './button';
-import Typography from '../atoms/typography';
 
 import './add-new-button.scss';
 
@@ -12,10 +11,6 @@ export default class AddNewButton extends Button {
 		}
 
 		return className;
-	}
-
-	getText() {
-		return this.props.hideText ? '' : <Typography>{ this.props.text }</Typography>;
 	}
 
 	static propTypes = {

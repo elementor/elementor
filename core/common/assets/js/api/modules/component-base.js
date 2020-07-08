@@ -4,8 +4,6 @@ export default class ComponentBase extends elementorModules.Module {
 			this.manager = args.manager;
 		}
 
-		this.commandsClasses = {};
-
 		this.commands = this.defaultCommands();
 		this.commandsInternal = this.defaultCommandsInternal();
 		this.hooks = this.defaultHooks();
@@ -275,8 +273,8 @@ export default class ComponentBase extends elementorModules.Module {
 			commands[ command ] = ( args ) => ( new Class( args ) ).run();
 
 			// TODO: Temporary code, remove after merge with 'require-commands-base' branch.
-			// should not return callback, but Class or Instance without run.
-			this.commandsClasses[ command ] = Class;
+			// should not return callback, but Class or Instance without run ( gain performance ).
+			$e.commands.classes[ this.getNamespace() + '/' + command ] = Class;
 		} );
 
 		return commands;

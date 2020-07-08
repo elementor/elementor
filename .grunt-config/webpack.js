@@ -85,11 +85,20 @@ const externals = {
 		'@elementor/router': 'elementorAppPackages.router',
 };
 
+const plugins = [
+	new webpack.ProvidePlugin( {
+		React: 'react',
+		PropTypes: 'prop-types',
+		__: ['@wordpress/i18n', '__'],
+	} )
+];
+
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
 	devtool: 'source-map',
 	externals,
+	plugins,
 	module: moduleRules,
 	resolve: aliasList,
 };
@@ -101,13 +110,6 @@ const webpackConfig = Object.assign( {}, baseConfig, {
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
 	},
-	plugins: [
-		new webpack.ProvidePlugin( {
-			React: 'react',
-			PropTypes: 'prop-types',
-			__: ['@wordpress/i18n', '__'],
-		} )
-	],
 	entry: entry,
 	watch: true,
 } );

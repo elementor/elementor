@@ -12,7 +12,7 @@
 
 	&__header {
 		padding: $card-header-padding;
-		border-bottom: var(--card-header-border);
+		border-bottom: var(--card-header-footer-border);
 		min-height: $card-header-height;
 		display: flex;
 		align-items: center;
@@ -70,7 +70,7 @@
 
 	&__footer {
 		padding: $card-padding;
-		border-top: $card-header-border;
+		border-top: var(--card-header-footer-border);
 	}
 
 	&:hover {

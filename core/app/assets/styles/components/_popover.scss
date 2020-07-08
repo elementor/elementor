@@ -13,11 +13,11 @@
 
 // checkbox label
 .#{$eps-prefix}popover {
-	padding: $eps-popover-padding-y;
+	padding: $eps-popover-padding-y 0;
 	background-color: var(--popover-background-color);
 	box-shadow: var(--popover-box-shadow-size) var(--popover-box-shadow-color);
 	list-style: none;
-	max-width: 120px;
+	min-width: 120px;
 	border-radius: $eps-popover-border-radius;
 	position: absolute;
 	z-index: 1;
@@ -66,9 +66,9 @@
 			}
 		}
 
-		&-icon {
+		.icon {
 			font-size: inherit;
-			margin-inline-end: 0.75rem;
+			margin-inline-end: spacing(5);
 		}
 	}
 }
