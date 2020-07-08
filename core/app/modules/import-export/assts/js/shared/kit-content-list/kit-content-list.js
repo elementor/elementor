@@ -27,7 +27,7 @@ export default function KitContentList( props ) {
 			</Text>
 		),
 		getFeatures = ( features ) => {
-			const lockedFeatures = features.locked ? <span className="kit-content-list__locked-features">{ features.locked.join( ', ' ) }</span> : null;
+			const lockedFeatures = features.locked?.length ? <span className="kit-content-list__locked-features">{ features.locked.join( ', ' ) }</span> : null;
 			let openFeatures = features.open?.join( ', ' );
 
 			if ( openFeatures && lockedFeatures ) {
