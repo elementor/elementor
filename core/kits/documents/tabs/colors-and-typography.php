@@ -54,6 +54,7 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
+		// Color Value
 		$repeater->add_control(
 			'color',
 			[
@@ -62,6 +63,9 @@ class Colors_And_Typography extends Tab_Base {
 				'dynamic' => [],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
+				],
+				'global' => [
+					'active' => false,
 				],
 			]
 		);
@@ -73,22 +77,22 @@ class Colors_And_Typography extends Tab_Base {
 				[
 					'_id' => 'primary',
 					'title' => __( 'Primary', 'elementor' ),
-					'color' => '#6ec1e4',
+					'color' => '#6EC1E4',
 				],
 				[
 					'_id' => 'secondary',
 					'title' => __( 'Secondary', 'elementor' ),
-					'color' => '#54595f',
+					'color' => '#54595F',
 				],
 				[
 					'_id' => 'text',
 					'title' => __( 'Text', 'elementor' ),
-					'color' => '#7a7a7a',
+					'color' => '#7A7A7A',
 				],
 				[
 					'_id' => 'accent',
 					'title' => __( 'Accent', 'elementor' ),
-					'color' => '#61ce70',
+					'color' => '#61CE70',
 				],
 			];
 		}
@@ -119,7 +123,7 @@ class Colors_And_Typography extends Tab_Base {
 		$this->start_controls_section(
 			'section_text_style',
 			[
-				'label' => __( 'Global Text Styles', 'elementor' ),
+				'label' => __( 'Global Typography', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);
@@ -139,45 +143,48 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'name' => self::TYPOGRAPHY_NAME,
 				'label' => '',
+				'global' => [
+					'active' => false,
+				],
 				'fields_options' => [
 					'font_family' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-family: "{{VALUE}}"',
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-font-family: "{{VALUE}}"',
 						],
 					],
 					'font_size' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-size: {{SIZE}}{{UNIT}}',
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-font-size: {{SIZE}}{{UNIT}}',
 						],
 					],
 					'font_weight' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-weight: {{VALUE}}',
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-font-weight: {{VALUE}}',
 						],
 					],
 					'text_transform' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-text-transform: {{VALUE}}',
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-text-transform: {{VALUE}}',
 						],
 					],
 					'font_style' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-font-style: {{VALUE}}',
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-font-style: {{VALUE}}',
 						],
 					],
 					'text_decoration' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-text-decoration: {{VALUE}}',
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-text-decoration: {{VALUE}}',
 						],
 					],
 					'line_height' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-line-height: {{SIZE}}{{UNIT}}',
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-line-height: {{SIZE}}{{UNIT}}',
 						],
 					],
 					'letter_spacing' => [
 						'selectors' => [
-							'{{SELECTOR}}' => '--e-global-style-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
 						],
 					],
 				],
