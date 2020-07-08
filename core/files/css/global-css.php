@@ -5,7 +5,6 @@ use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
 use Elementor\Scheme_Base;
 use Elementor\Settings;
-use Elementor\Widget_Heading;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
