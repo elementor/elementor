@@ -62,7 +62,7 @@
 				cursor: pointer;
 			}
 
-			input {
+			&-input {
 				margin: 0;
 				padding: 0;
 				border-radius: 2px;
@@ -135,10 +135,10 @@
 		}
 
 		&__custom-attributes {
-			margin-top: 10px;
+			margin-top: 5px;
 
 			label {
-				display: block;
+				font-size: 12px;
 			}
 
 			input {
