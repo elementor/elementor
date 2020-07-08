@@ -1,5 +1,3 @@
-import './text.scss';
-
 export default function Text( props ) {
 	const baseClassName = 'import-export-text',
 		classes = [
@@ -19,7 +17,7 @@ export default function Text( props ) {
 
 Text.propTypes = {
 	className: PropTypes.string,
-	size: PropTypes.string.isRequired,
+	variant: PropTypes.string,
 	tag: PropTypes.string,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,

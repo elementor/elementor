@@ -1,9 +1,9 @@
 import Layout from '../../templates/layout';
 import DragDrop from './drag-drop/drag-drop';
 import Message from '../../ui/message/message';
-import Heading from '../../ui/heading/heading';
-import Text from '../../ui/text/text';
 import Box from '../../ui/box/box';
+import Heading from 'elementor-app/ui/atoms/heading';
+import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './import.scss';
@@ -18,19 +18,19 @@ export default function Import() {
 			<section className="e-app-import">
 				<DragDrop>
 					<Message className="e-app-import__select-file">
-						<Heading size="lg">
+						<Heading variant="lg">
 							{ __( 'Import a Kit to Your Site', 'elementor' ) }
 						</Heading>
 
-						<Text size="md">
+						<Text variant="md">
 							{ __( 'Drag & Drop your zip template file', 'elementor' ) }
 						</Text>
 
-						<Text size="sm">
+						<Text variant="sm">
 							{ __( 'Or', 'elementor' ) }
 						</Text>
 
-						<Button variant="primary" text={ __( 'Select File', 'elementor' ) } url="/#" />
+						<Button color="primary" size="sm" text={ __( 'Select File', 'elementor' ) } url="/#" />
 					</Message>
 				</DragDrop>
 

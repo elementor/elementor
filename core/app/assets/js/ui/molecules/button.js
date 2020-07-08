@@ -41,7 +41,7 @@ export default class Button extends React.Component {
 	}
 
 	getStylePropsClasses( baseClassName ) {
-		const styleProps = [ 'variant', 'size' ],
+		const styleProps = [ 'color', 'size' ],
 			stylePropClasses = [];
 
 		styleProps.forEach( ( styleProp ) => {

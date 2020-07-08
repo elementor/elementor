@@ -1,8 +1,8 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
-import Heading from '../../ui/heading/heading';
-import Text from '../../ui/text/text';
 import Footer from '../../shared/footer/footer';
+import Heading from 'elementor-app/ui/atoms/heading';
+import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './export-success.scss';
@@ -12,15 +12,15 @@ export default function ExportSuccess() {
 		<Layout type="export">
 			<section className="e-app-export-success">
 				<Message>
-					<Heading size="xl">
+					<Heading variant="xl">
 						{ __( 'Your Kit Was Exported Successfully!', 'elementor' ) }
 					</Heading>
 
-					<Text size="md">
+					<Text variant="md">
 						{ __( 'Use this exported Kit on another Elementor site by uploading it via Kit Manager > Import Kit', 'elementor' ) }
 					</Text>
 
-					<Text tag="span" size="sm">
+					<Text tag="span" variant="sm">
 						{ __( 'If the download doesn\'t start automatically, please', 'elementor' ) }
 					</Text>
 					<Button text={ __( 'click here', 'elementor' ) } url="/#" />

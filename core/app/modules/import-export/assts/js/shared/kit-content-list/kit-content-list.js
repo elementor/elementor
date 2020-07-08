@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import List from '../../ui/list/list';
-import Text from '../../ui/text/text';
+import Text from '../../../../../../assets/js/ui/atoms/text';
 import Box from '../../ui/box/box';
 import KitContentSelect from './kit-content-select/kit-content-select';
 import Grid from 'elementor-app/ui/grid/grid';
@@ -48,18 +48,18 @@ export default function KitContentList( props ) {
 	],
 	getButton = () => (
 		<Grid item>
-			<Button variant="cta" text={ __( 'Lear More', 'elementor' ) } url="/#" />
+			<Button color="cta" text={ __( 'Lear More', 'elementor' ) } url="/#" />
 		</Grid>
 	),
 	getNotice = ( notice ) => (
 		<Box type="notice">
-			<Text size="sm">
+			<Text variant="sm">
 				{ notice }
 			</Text>
 		</Box>
 	),
 	getProFeaturesIndication = () => (
-		<Text size="md" tag="span" color="cta" className="kit-content-list__pro-indication">
+		<Text variant="md" tag="span" color="cta" className="kit-content-list__pro-indication">
 			<strong>{ __( 'Pro Features', 'elementor' ) }</strong>
 		</Text>
 	),
@@ -105,7 +105,6 @@ export default function KitContentList( props ) {
 	};
 
 	useEffect( () => {
-		//console.log( 'running useEffect' );
 		const getData = async () => {
 			const data = await getApiData();
 
@@ -128,10 +127,10 @@ export default function KitContentList( props ) {
 									<Checkbox className="kit-content-list__checkbox" />
 
 									<Grid item>
-										<Text size="sm" className="kit-content-list__title">{ item.data.title }</Text>
+										<Text variant="sm" className="kit-content-list__title">{ item.data.title }</Text>
 
 										<Grid item>
-											<Text size="sm" tag="span" className="kit-content-list__description">
+											<Text variant="sm" tag="span" className="kit-content-list__description">
 												{ item.data.description || ( item.data.features && getFeatures( item.data.features ) ) }
 											</Text>
 											{ item.data.notice ? getProFeaturesIndication() : null }

@@ -1,15 +1,13 @@
-import './heading.scss';
-
 export default function Heading( props ) {
-	const baseClassName = 'import-export-heading',
+	const baseClassName = 'eps',
+		allowedTags = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
 		classes = [
-			baseClassName,
 			props.className,
 		],
-		tagName = props.tag || 'h1';
+		tagName = ( props.tag && allowedTags.includes( props.tag ) ) || 'h1';
 
-	if ( props.size ) {
-		classes.push( baseClassName + '--' + props.size );
+	if ( props.variant ) {
+		classes.push( baseClassName + '-h' + props.variant );
 	}
 
 	return React.createElement( tagName, {
@@ -19,8 +17,7 @@ export default function Heading( props ) {
 
 Heading.propTypes = {
 	className: PropTypes.string,
-	size: PropTypes.string.isRequired,
-	variant: PropTypes.string, // page-title etc.
+	variant: PropTypes.string.isRequired,
 	tag: PropTypes.string,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,

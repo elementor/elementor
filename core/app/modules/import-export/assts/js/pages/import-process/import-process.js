@@ -1,9 +1,9 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
-import Heading from '../../ui/heading/heading';
-import Text from '../../ui/text/text';
 import Box from '../../ui/box/box';
 import Footer from '../../shared/footer/footer';
+import Heading from 'elementor-app/ui/atoms/heading';
+import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './import-process.scss';
@@ -12,10 +12,10 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import">
 			<Message className="e-app-import-process">
-				<Heading size="lg">
+				<Heading variant="lg">
 					{ __( 'Your Kit Is Being Imported', 'elementor' ) }
 				</Heading>
-				<Text size="md">
+				<Text variant="md">
 					{ __( 'This may take a few moments to complete.\nPlease don’t close this window until importing is completed', 'elementor' ) }
 				</Text>
 
@@ -24,7 +24,7 @@ export default function ImportProcess() {
 				</Box>
 
 				<Footer separator justify="end">
-					<Button variant="disabled" text={ __( 'Cancel', 'elementor' ) } url="/import/process" />
+					<Button color="disabled" text={ __( 'Cancel', 'elementor' ) } url="/import/process" />
 				</Footer>
 			</Message>
 		</Layout>
