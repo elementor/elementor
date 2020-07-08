@@ -44,6 +44,10 @@ export class Unlink extends CommandBase {
 			} );
 		}
 	}
+
+	isDataChanged() {
+		return true;
+	}
 }
 
 export default Unlink;
