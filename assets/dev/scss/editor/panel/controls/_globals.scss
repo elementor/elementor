@@ -78,6 +78,7 @@
 	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: auto;
+		overflow-x: hidden;
 
 		&::-webkit-scrollbar {
 			width: 8px;
@@ -153,6 +154,7 @@
 
 	&__preview-item {
 		cursor: pointer;
+		white-space: nowrap;
 
 		&:hover {
 			background-color: $editor-background-light;
