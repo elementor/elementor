@@ -27,6 +27,15 @@
 		margin-inline-end: spacing(10);
 	}
 
+	&__body {
+		padding: spacing(24);
+	}
+
+	&__tip {
+		padding-inline-start: spacing(12);
+		border-inline-start: 3px solid theme-colors(info);
+	}
+
 	&__close-wrapper {
 		padding-inline-start: spacing(16);
 		border-inline-start: solid 1px theme-colors(light);

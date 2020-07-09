@@ -1,6 +1,6 @@
 import Button from 'elementor-app/ui/molecules/button';
 import Grid from 'elementor-app/ui/grid/grid';
-import Icon from "elementor-app/ui/atoms/icon";
+import Icon from 'elementor-app/ui/atoms/icon';
 
 import './modal.scss';
 

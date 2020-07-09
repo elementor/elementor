@@ -20,18 +20,19 @@ const InfoButton = ( props ) => {
 			<Grid container spacing={25}>
 				<Grid item sm={6}>
 					<p>
-						{ props.content } <Button text={ __( 'Learn More', 'elementor' ) } url={ props.docs } />
+						{ props.content } <Button text={ __( 'Learn More', 'elementor' ) } className="link" url={ props.docs } />
 					</p>
 				</Grid>
 				<Grid item sm={6}>
-					<p>
-						{ __( 'Tip', 'elementor' ) } { props.tip }
-					</p>
+					<div className="eps-modal__tip">
+						<h3>{ __( 'Tip', 'elementor' ) }</h3>
+						<p>{ props.tip }</p>
+					</div>
 					<section>
-						<h1>{ __( 'Watch Video', 'elementor' ) }</h1>
-						<iframe id="ytplayer" type="text/html" width="640" height="360"
-										src={ props.video_url }
-										frameBorder="0"></iframe>
+						<h3>{ __( 'Watch Video', 'elementor' ) }</h3>
+						<div className="video-wrapper">
+							<iframe id="ytplayer" src={ props.video_url } frameBorder="0"/>
+						</div>
 					</section>
 				</Grid>
 			</Grid>
