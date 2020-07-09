@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 
 import List from '../../ui/list/list';
-import Text from '../../../../../../assets/js/ui/atoms/text';
 import Box from '../../ui/box/box';
 import KitContentSelect from './kit-content-select/kit-content-select';
+import Heading from 'elementor-app/ui/atoms/heading';
+import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 import Checkbox from 'elementor-app/ui/atoms/checkbox';
 import Button from 'elementor-app/ui/molecules/button';
@@ -127,7 +128,7 @@ export default function KitContentList( props ) {
 									<Checkbox className="kit-content-list__checkbox" />
 
 									<Grid item>
-										<Text variant="sm" className="kit-content-list__title">{ item.data.title }</Text>
+										<Heading variant="h3" className="kit-content-list__title">{ item.data.title }</Heading>
 
 										<Grid item>
 											<Text variant="sm" tag="span" className="kit-content-list__description">

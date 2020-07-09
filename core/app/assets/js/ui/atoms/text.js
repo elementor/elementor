@@ -1,14 +1,12 @@
 export default function Text( props ) {
-	const baseClassName = 'import-export-text',
+	const baseClassName = 'eps',
 		classes = [
-			baseClassName,
 			props.className,
 		],
-		tagName = props.tag || 'p';
+		tagName = props.tag || 'p',
+		variant = props.variant && 'md' !== props.variant ? '-' + props.variant : '';
 
-	if ( props.size ) {
-		classes.push( baseClassName + '--' + props.size );
-	}
+	classes.push( baseClassName + '-text' + variant );
 
 	return React.createElement( tagName, {
 		className: classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ),

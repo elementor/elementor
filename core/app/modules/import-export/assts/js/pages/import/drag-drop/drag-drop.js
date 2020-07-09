@@ -1,12 +1,18 @@
+import { useState, useRef } from 'react';
+
 export default function DragDrop( props ) {
 	const onDrop = ( event ) => {
-			event.preventDefault();
-			console.log( 'onDrop' );
+			//event.preventDefault();
+			//console.log( 'onDrop' );
 		},
 		onDragOver = ( event ) => {
-			event.preventDefault();
-			console.log( 'onDragOver' );
-		};
+			//event.preventDefault();
+			//console.log( 'onDragOver' );
+		},
+		onFileSelect = ( event ) => {
+			console.log( event.target.files[0] );
+		},
+		fileInput = useRef();
 
 	return (
 		<div
@@ -14,6 +20,8 @@ export default function DragDrop( props ) {
 			onDrop={ onDrop }
 			onDragOver={ onDragOver }
 			>
+			<input type="file" name="file" ref={ fileInput } onChange={ onFileSelect } />
+			<button onClick={ () => { fileInput.current.click(); } }>click</button>
 			{ props.children }
 		</div>
 	);

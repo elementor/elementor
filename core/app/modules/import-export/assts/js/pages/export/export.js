@@ -13,7 +13,7 @@ export default function Export() {
 		<Layout type="export">
 			<section className="e-app-export">
 				<div className="e-app-export__kit-name">
-					<Heading variant="lg">
+					<Heading variant="h2" tag="h1">
 						{ __( 'Kit Name', 'elementor' ) }
 					</Heading>
 					<Box>
@@ -22,7 +22,7 @@ export default function Export() {
 				</div>
 
 				<div className="e-app-export__kit-content">
-					<Heading variant="lg">
+					<Heading variant="h2">
 						{ __( 'Choose What To Include In The Kit', 'elementor' ) }
 					</Heading>
 					<ExportContentList />

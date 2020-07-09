@@ -30,16 +30,4 @@
 			text-align: end;
 		}
 	}
-
-	@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
-		.text-uppercase-#{$breakpoint} {
-			text-transform: uppercase;
-		}
-	}
-
-	@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
-		.text-capitalize-#{$breakpoint} {
-			text-transform: capitalize;
-		}
-	}
 }

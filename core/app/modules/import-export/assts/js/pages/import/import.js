@@ -1,3 +1,5 @@
+import { useState, useRef } from 'react';
+
 import Layout from '../../templates/layout';
 import DragDrop from './drag-drop/drag-drop';
 import Message from '../../ui/message/message';
@@ -9,30 +11,41 @@ import Button from 'elementor-app/ui/molecules/button';
 import './import.scss';
 
 export default function Import() {
-	const onDragOver = ( event ) => {
-		console.log( 'event', event );
-	};
+	const onDrop = ( event ) => {
+			event.preventDefault();
+			console.log( 'onDrop' );
+		},
+		onDragOver = ( event ) => {
+			event.preventDefault();
+			console.log( 'onDragOver' );
+		},
+		onFileSelect = ( event ) => {
+			console.log( event.target.files[0] );
+		},
+		fileInput = useRef();
 
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
-				<DragDrop>
+				<div onDrop={ onDrop } onDragOver={ onDragOver }>
 					<Message className="e-app-import__select-file">
-						<Heading variant="lg">
-							{ __( 'Import a Kit to Your Site', 'elementor' ) }
-						</Heading>
+					<Heading variant="lg">
+						{ __( 'Import a Kit to Your Site', 'elementor' ) }
+					</Heading>
 
-						<Text variant="md">
-							{ __( 'Drag & Drop your zip template file', 'elementor' ) }
-						</Text>
+					<Text variant="md">
+						{ __( 'Drag & Drop your zip template file', 'elementor' ) }
+					</Text>
 
-						<Text variant="sm">
-							{ __( 'Or', 'elementor' ) }
-						</Text>
+					<Text variant="sm">
+						{ __( 'Or', 'elementor' ) }
+					</Text>
 
-						<Button color="primary" size="sm" text={ __( 'Select File', 'elementor' ) } url="/#" />
+					<input ref={ fileInput } onChange={ onFileSelect } type="file" className="elementor-hide" />
+
+					<Button color="primary" size="sm" onClick={ () => { fileInput.current.click(); } } text={ __( 'Select File', 'elementor' ) } />
 					</Message>
-				</DragDrop>
+				</div>
 
 				<Box type="notice">
 					{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }

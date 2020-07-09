@@ -4,10 +4,10 @@ export default function Heading( props ) {
 		classes = [
 			props.className,
 		],
-		tagName = ( props.tag && allowedTags.includes( props.tag ) ) || 'h1';
+		tagName = allowedTags.includes( props.tag ) ? props.tag : 'h1';
 
 	if ( props.variant ) {
-		classes.push( baseClassName + '-h' + props.variant );
+		classes.push( baseClassName + '-' + props.variant );
 	}
 
 	return React.createElement( tagName, {
