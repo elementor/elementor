@@ -75,7 +75,7 @@
 		.elementor-repeater {
 
 			&-fields {
-				margin-bottom: 25px;
+				margin-bottom: 15px;
 			}
 
 			&-row-controls {
@@ -100,6 +100,7 @@
 				flex-grow: 1;
 
 				input {
+					max-width: $control-unit * 5;
 
 					&:not(:focus) {
 						background: none;

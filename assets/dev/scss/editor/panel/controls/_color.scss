@@ -1,5 +1,12 @@
 .elementor-control-type-color {
 
+	&.elementor-control-global {
+
+		.e-global__select-box ~ .pickr {
+			border-radius: getValueByDirection(0px 3px 3px 0, 3px 0 0 3px);
+		}
+	}
+
 	.elementor-control-title {
 		flex-grow: 1;
 	}
@@ -19,13 +26,5 @@
 		.pickr {
 			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		}
-
-		.e-global__select-box ~ .pickr {
-			border-radius: 0;
-		}
-	}
-
-	.e-global__select-box ~ .pickr {
-		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 	}
 }

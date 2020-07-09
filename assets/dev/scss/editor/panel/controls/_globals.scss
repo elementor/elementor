@@ -4,11 +4,11 @@
 	&__select-box {
 		border: 1px solid $editor-lightest;
 		@include border-end(0);
-		border-radius: 3px 0 0 3px;
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 4px;
+		padding: 5px;
 		width: 97px;
 		cursor: pointer;
 
