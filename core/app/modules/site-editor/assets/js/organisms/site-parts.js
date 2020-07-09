@@ -1,4 +1,5 @@
 import SitePart from '../molecules/site-part';
+import Grid from 'elementor-app/ui/grid/grid';
 import CssGrid from 'elementor-app/ui/atoms/css-grid';
 import Button from 'elementor-app/ui/molecules/button';
 import ModalProvider from 'elementor-app/ui/modal/modal';
@@ -16,18 +17,24 @@ const InfoButton = ( props ) => {
 
 	return (
 		<ModalProvider toggleButtonProps={ toggleButtonProps } title={ props.title }>
-			<p>
-				{ props.content } <Button text={ __( 'Learn More', 'elementor' ) } url={ props.docs } />
-			</p>
-			<p>
-				{ __( 'Tip', 'elementor' ) } { props.tip }
-			</p>
-			<section>
-				<h1>{ __( 'Watch Video', 'elementor' ) }</h1>
-				<iframe id="ytplayer" type="text/html" width="640" height="360"
-								src={ props.video_url }
-								frameBorder="0"></iframe>
-			</section>
+			<Grid container spacing={25}>
+				<Grid item sm={6}>
+					<p>
+						{ props.content } <Button text={ __( 'Learn More', 'elementor' ) } url={ props.docs } />
+					</p>
+				</Grid>
+				<Grid item sm={6}>
+					<p>
+						{ __( 'Tip', 'elementor' ) } { props.tip }
+					</p>
+					<section>
+						<h1>{ __( 'Watch Video', 'elementor' ) }</h1>
+						<iframe id="ytplayer" type="text/html" width="640" height="360"
+										src={ props.video_url }
+										frameBorder="0"></iframe>
+					</section>
+				</Grid>
+			</Grid>
 		</ModalProvider>
 	);
 };

@@ -72,20 +72,22 @@ class Modal extends React.Component {
 	render() {
 		const { modalProps, children } = this.props;
 		return modalProps.show ? (
-			<div className="modal__overlay" onClick={ this.closeModal }>
-				<div className="modal" ref={ this.modalRef } >
-					<Grid container className="modal__header" justify="space-between" alignItems="center">
+			<div className="eps-modal__overlay" onClick={ this.closeModal }>
+				<div className="eps-modal" ref={ this.modalRef } >
+					<Grid container className="eps-modal__header" justify="space-between" alignItems="center">
 						<Grid item>
-							<Icon className="eicon-info-circle"/>
+							<Icon className="eps-modal__icon eicon-info-circle"/>
 							{ this.props.title }
 						</Grid>
 						<Grid item>
-							<div className="modal-close-wrapper" ref={ this.closeRef }>
+							<div className="eps-modal__close-wrapper" ref={ this.closeRef }>
 								<Button text={ __( 'Close', 'elementor' ) } hideText icon="eicon-close" onClick={ this.closeModal } />
 							</div>
 						</Grid>
 					</Grid>
-					{children}
+					<div className="eps-modal__body">
+						{children}
+					</div>
 				</div>
 			</div>
 		) : null;

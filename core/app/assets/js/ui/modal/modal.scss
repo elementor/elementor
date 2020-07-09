@@ -1,5 +1,5 @@
-.modal {
-	width: size(900);
+.eps-modal {
+	width: px-to-rem(900);
 	background: theme-colors(light);
 
 	&__overlay {
@@ -16,9 +16,19 @@
 	}
 
 	&__header {
+		font-size: $eps-body-font-size;
 		background: theme-colors(info);
 		color: theme-colors(light);
 		height: spacing(44);
 		padding: spacing(10) spacing(16);
+	}
+
+	&__icon {
+		margin-inline-end: spacing(10);
+	}
+
+	&__close-wrapper {
+		padding-inline-start: spacing(16);
+		border-inline-start: solid 1px theme-colors(light);
 	}
 }
