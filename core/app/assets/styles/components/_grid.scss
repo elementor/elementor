@@ -5,6 +5,8 @@
 
 
 .#{$eps-prefix}grid {
+	@include grid-custom-properties();
+
 	// Flex Structure rules
 	// apply to all screen size
 	// @props: container
@@ -28,12 +30,12 @@
 		// container width and negative margin are calculated dynamically
 		// @markup <Grid container spacing={5} and so on >
 		&--spacing {
-			--grid-row-gutter: calc(-1 * #{$grid-spacing-gutter});
+			--grid-row-gutter: calc(var(--grid-spacing-gutter) * -#{px-to-rem(1)});
 			width: var(--grid-spacing-width);
 			margin: var(--grid-row-gutter);
 
 			> .#{$eps-prefix}grid-item {
-				padding: var(--grid-spacing-gutter);
+				padding: calc(var(--grid-spacing-gutter) * #{px-to-rem(1)});
 			}
 		}
 	}
