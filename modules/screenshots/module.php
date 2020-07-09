@@ -56,81 +56,24 @@ class Module extends BaseModule {
 	 *
 	 * @param $data
 	 *
-	 * @return string
+	 * @return bool|string
+	 * @throws \Exception
 	 */
 	public function ajax_save( $data ) {
+
 		if ( empty( $data['screenshot'] ) || empty( $data['post_id'] ) ) {
 			return false;
 		}
 
-		$post_id = $data['post_id'];
+		$screenshot = new Screenshot( $data['post_id'], $data['screenshot'] );
 
-		$file_content = substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) );
-		$file_name = 'Elementor-post-screenshot-' . $post_id . '.png';
-		$over_write_file_name_callback = function () use ( $file_name ) {
-			return $file_name;
-		};
+		$screenshot
+			->create_dir()
+			->upload()
+			->remove_old_attachment()
+			->create_new_attachment();
 
-		$upload_dir_callback = function ( $uploads ) {
-			return array_merge( $uploads, [
-				'subdir' => $subdir = 'elementor/screenshots',
-				'path' => "{$uploads['basedir']}/{$subdir}",
-				'url' => "{$uploads['baseurl']}/{$subdir}",
-			] );
-		};
-
-		add_filter( 'wp_unique_filename', $over_write_file_name_callback );
-		add_filter( 'upload_dir', $upload_dir_callback );
-
-		$upload = wp_upload_bits(
-			$file_name,
-			null,
-			base64_decode( $file_content )
-		);
-
-		remove_filter( 'upload_dir', $upload_dir_callback );
-		remove_filter( 'wp_unique_filename', $over_write_file_name_callback );
-
-		$attachment_data = get_post_meta( $post_id, '_elementor_screenshot', true );
-
-		if ( $attachment_data ) {
-			return $attachment_data['url'];
-		}
-
-		$post = [
-			'post_title' => $file_name,
-			'guid' => $upload['url'],
-		];
-
-		$info = wp_check_filetype( $upload['file'] );
-
-		if ( $info ) {
-			$post['post_mime_type'] = $info['type'];
-		}
-
-		$attachment_id = wp_insert_attachment( $post, $upload['file'] );
-
-		$attachment_data = [
-			'id' => $attachment_id,
-			'url' => $upload['url'],
-		];
-
-		update_post_meta( $post_id, '_elementor_screenshot', $attachment_data );
-
-		$disable_thumbnail_sizes_filter = function () {
-			return [];
-		};
-
-		add_filter( 'intermediate_image_sizes_advanced', $disable_thumbnail_sizes_filter );
-
-		wp_update_attachment_metadata(
-			$attachment_id,
-			wp_generate_attachment_metadata( $attachment_id, $upload['file'] )
-		);
-
-		remove_filter( 'intermediate_image_sizes_advanced', $disable_thumbnail_sizes_filter );
-
-		return $upload['url'];
+		return $screenshot->get_screenshot_url();
 	}
 
 	/**
