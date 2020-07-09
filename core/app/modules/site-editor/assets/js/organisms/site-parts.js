@@ -15,8 +15,7 @@ const InfoButton = ( props ) => {
 	};
 
 	return (
-		<ModalProvider toggleButtonProps={ toggleButtonProps }>
-			<h1>{ props.title }</h1>
+		<ModalProvider toggleButtonProps={ toggleButtonProps } title={ props.title }>
 			<p>
 				{ props.content } <Button text={ __( 'Learn More', 'elementor' ) } url={ props.docs } />
 			</p>

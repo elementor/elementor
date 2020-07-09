@@ -1,18 +1,24 @@
-.modal-overlay {
-	background: gray;
-	position: absolute;
-	display: flex;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	align-items: center;
-	justify-content: center;
-	z-index: $eps-zindex-modal-backdrop;
+.modal {
+	width: size(900);
+	background: theme-colors(light);
 
-	.modal {
-		width: 50%;
-		height: 50%;
-		background: white;
+	&__overlay {
+		background: rgba(theme-colors(dark), $opacity-03);
+		position: fixed;
+		display: flex;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		z-index: $eps-zindex-modal-backdrop;
+	}
+
+	&__header {
+		background: theme-colors(info);
+		color: theme-colors(light);
+		height: spacing(44);
+		padding: spacing(10) spacing(16);
 	}
 }
