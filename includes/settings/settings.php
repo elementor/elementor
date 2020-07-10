@@ -241,8 +241,9 @@ class Settings extends Settings_Page {
 				<div class="e-getting-started__box postbox">
 					<div class="e-getting-started__header">
 						<div class="e-getting-started__title">
-							<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
-
+							<div class="e-logo-wrapper">
+								<i class="eicon-elementor"></i>
+							</div>
 							<?php echo __( 'Getting Started', 'elementor' ); ?>
 						</div>
 						<a class="e-getting-started__skip" href="<?php echo esc_url( admin_url() ); ?>">
