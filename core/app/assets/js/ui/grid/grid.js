@@ -1,5 +1,4 @@
 export default function Grid( props ) {
-	console.log( 'grid' );
 	const propsMap = {
 			direction: '--direction{{ -VALUE }}',
 			justify: '--justify{{ -VALUE }}',
@@ -61,31 +60,6 @@ function getBaseClassName() {
 function isValidPropValue( propValue ) {
 	return propValue && 'boolean' !== typeof propValue;
 }
-
-Grid.propTypes = {
-	className: PropTypes.string,
-	direction: PropTypes.string,
-	justify: PropTypes.string,
-	alignContent: PropTypes.string,
-	alignItems: PropTypes.string,
-	container: PropTypes.bool,
-	item: PropTypes.bool,
-	noWrap: PropTypes.bool,
-	wrapReverse: PropTypes.bool,
-	zeroMinWidth: PropTypes.bool,
-	spacing: PropTypes.number,
-	xs: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	sm: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	md: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	lg: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	xl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	xxl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
-};
 
 Grid.defaultProps = {
 	className: '',
