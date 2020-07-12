@@ -112,6 +112,8 @@
 			&-input-wrapper {
 				display: flex;
 				align-items: center;
+				// Fix HEX values flickering when moving the mouse over them.
+				min-width: $control-unit * 3;
 
 				&:hover {
 
