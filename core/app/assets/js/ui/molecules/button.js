@@ -13,8 +13,8 @@ export default class Button extends React.Component {
 		className: PropTypes.string,
 		url: PropTypes.string,
 		onClick: PropTypes.func,
-		color: PropTypes.string,
-		size: PropTypes.string,
+		variant: PropTypes.string,
+		ghost: PropTypes.any,
 	};
 
 	static defaultProps = {
@@ -29,6 +29,10 @@ export default class Button extends React.Component {
 	getClassName() {
 		const baseClassName = 'eps-button',
 			classes = [ baseClassName, this.props.className ];
+
+		if ( this.props.ghost ) {
+			classes.push( baseClassName + '--ghost' );
+		}
 
 		return classes
 			.concat( this.getStylePropsClasses( baseClassName ) )

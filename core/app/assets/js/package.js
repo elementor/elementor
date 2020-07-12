@@ -8,7 +8,6 @@ import CardImage from './ui/card/card-image';
 import CardHeader from './ui/card/card-header';
 import CardOverlay from './ui/card/card-overlay';
 import CssGrid from './ui/atoms/css-grid';
-import Grid from './ui/grid/grid';
 import Icon from './ui/atoms/icon';
 import Menu from './ui/menu/menu';
 import MenuItem from './ui/menu/menu-item';
@@ -28,7 +27,6 @@ export default {
 	CardImage,
 	CardOverlay,
 	CssGrid,
-	Grid,
 	Icon,
 	Menu,
 	MenuItem,
