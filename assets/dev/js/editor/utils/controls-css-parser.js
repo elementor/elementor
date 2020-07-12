@@ -57,28 +57,37 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			}
 
 			const context = this.getSettings( 'context' ),
-				globalValues = context.model.get( 'settings' ).get( '__globals__' );
+				globalKeys = context.model.get( 'settings' ).get( '__globals__' );
 
-			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements, globalValues );
+			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements, globalKeys );
 		} );
 	},
 
-	addControlStyleRules: function( control, values, controls, placeholders, replacements, globalValues ) {
-		let globalValue;
+	addControlStyleRules: function( control, values, controls, placeholders, replacements, globalKeys ) {
+		let globalKey;
 
-		if ( globalValues ) {
+		if ( globalKeys ) {
 			let controlGlobalKey = control.name;
 
 			if ( control.groupType ) {
 				controlGlobalKey = control.groupPrefix + control.groupType;
 			}
 
-			globalValue = globalValues[ controlGlobalKey ];
+			globalKey = globalKeys[ controlGlobalKey ];
 		}
 
-		let value;
+		let value,
+			globalArgs;
 
-		if ( ! globalValue ) {
+		if ( globalKey ) {
+			globalArgs = $e.data.commandExtractArgs( globalKey );
+
+			value = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
+
+			if ( ! value.id ) {
+				return;
+			}
+		} else {
 			value = this.getStyleControlValue( control, values );
 
 			if ( undefined === value ) {
@@ -89,9 +98,8 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		_.each( control.selectors, ( cssProperty, selector ) => {
 			var outputCssProperty;
 
-			if ( globalValue ) {
-				const { args } = $e.data.commandExtractArgs( globalValue ),
-					id = args.query.id;
+			if ( globalArgs ) {
+				const id = value.id;
 
 				let propertyValue;
 
