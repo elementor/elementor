@@ -59,11 +59,13 @@ class Repeater extends Control_Repeater {
 	public function content_template() {
 		?>
 		<div class="elementor-repeater-fields-wrapper"></div>
-		<div class="elementor-button-wrapper">
-			<button class="elementor-button elementor-button-default elementor-repeater-add" type="button">
-				<i class="eicon-plus" aria-hidden="true"></i><?php echo __( 'Add Color', 'elementor' ); ?>
-			</button>
-		</div>
+		<# if ( itemActions.add ) { #>
+			<div class="elementor-button-wrapper">
+				<button class="elementor-button elementor-button-default elementor-repeater-add" type="button">
+					<i class="eicon-plus" aria-hidden="true"></i><span class="elementor-repeater__add-button__text">{{{ addButtonText }}}</span>
+				</button>
+			</div>
+		<# } #>
 		<?php
 	}
 }

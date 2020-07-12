@@ -2,7 +2,11 @@
 namespace Elementor\Core\Kits\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Kits\Documents\Tabs;
+use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Page\Manager as PageManager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -21,7 +25,7 @@ class Kit extends PageBase {
 		$this->tabs = [
 			'site_identity' => new Tabs\Site_Identity( $this ),
 			'lightbox' => new Tabs\Lightbox( $this ),
-			'global_style' => new Tabs\Global_Style( $this ),
+			'colors_and_typography' => new Tabs\Colors_And_Typography( $this ),
 			'layout_settings' => new Tabs\Layout_Settings( $this ),
 			'theme_style' => new Tabs\Theme_Style( $this ),
 		];
@@ -91,5 +95,42 @@ class Kit extends PageBase {
 			'draft' => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
 			'publish' => __( 'Published', 'elementor' ),
 		];
+	}
+
+	public function add_repeater_row( $control_id, $item ) {
+		$meta_key = PageManager::META_KEY;
+		$document_settings = $this->get_meta( $meta_key );
+
+		if ( ! $document_settings ) {
+			$document_settings = [];
+		}
+
+		if ( ! isset( $document_settings[ $control_id ] ) ) {
+			$document_settings[ $control_id ] = [];
+		}
+
+		$document_settings[ $control_id ][] = $item;
+
+		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+		$page_settings_manager->save_settings( $document_settings, $this->get_id() );
+
+		/** @var Kit $autosave **/
+		$autosave = $this->get_autosave();
+
+		if ( $autosave ) {
+			$autosave->add_repeater_row( $control_id, $item );
+		}
+
+		// Remove Post CSS.
+		$post_css = Post_CSS::create( $this->post->ID );
+
+		$post_css->delete();
+
+		// Refresh Cache.
+		Plugin::$instance->documents->get( $this->post->ID, false );
+
+		$post_css = Post_CSS::create( $this->post->ID );
+
+		$post_css->enqueue();
 	}
 }

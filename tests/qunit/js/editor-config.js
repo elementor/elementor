@@ -26,11 +26,39 @@ config.document.widgets = {
 // Settings.
 config.settings = settings;
 
+// TODO: Remove - Temporary fix, to find the issue run in debug mode ( config.settings.devToolsPreferences get conflicted. ).
+if ( ! QUnit.config.isDebug ) {
+	delete config.settings.devToolsPreferences;
+}
+
 // Elements.
 config.elements = {
 	section,
 	column,
 };
+
+const controls = {
+	font: {
+		options: {},
+	},
+	repeater: {
+		item_actions: {
+			add: true,
+			duplicate: true,
+			remove: true,
+			sort: true,
+		},
+	},
+};
+
+// Controls.
+config.controls = new Proxy( {}, {
+	get( target, name ) {
+		return controls[ name ] || {
+			features: [],
+		};
+	},
+} );
 
 // Schemes.
 config.schemes = {
@@ -52,5 +80,8 @@ config.wp_editor = '<div id="wp-elementorwpeditor-wrap" class="wp-core-ui wp-edi
 	'</div>\n' +
 	'<div id="wp-elementorwpeditor-editor-container" class="wp-editor-container"><div id="qt_elementorwpeditor_toolbar" class="quicktags-toolbar"></div><textarea class="elementor-wp-editor wp-editor-area" style="height: 250px" autocomplete="off" cols="40" name="elementorwpeditor" id="elementorwpeditor">%%EDITORCONTENT%%</textarea></div>\n' +
 	'</div>\n';
+
+// Reset URL
+config.rest_url = 'http://test-rest/wp-json/';
 
 export default config;

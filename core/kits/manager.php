@@ -2,6 +2,7 @@
 namespace Elementor\Core\Kits;
 
 use Elementor\Core\Kits\Controls\Repeater;
+use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
@@ -77,14 +78,28 @@ class Manager {
 
 		$settings = array_replace_recursive( $settings, [
 			'kit_id' => $kit->get_main_id(),
+			'kit_config' => [
+				'typography_prefix' => Colors_And_Typography::TYPOGRAPHY_GROUP_PREFIX,
+			],
 			'user' => [
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
 			],
 			'i18n' => [
-				'Close' => __( 'Close', 'elementor' ),
-				'Back' => __( 'Back', 'elementor' ),
-				'Global Settings' => __( 'Global Settings', 'elementor' ),
-				'Theme Style' => __( 'Theme Style', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
+				'back' => __( 'Back', 'elementor' ),
+				'global_settings' => __( 'Global Settings', 'elementor' ),
+				'site_identity' => __( 'Site Identity', 'elementor' ),
+				'colors_and_typography' => __( 'Colors & Typography', 'elementor' ),
+				'lightbox' => __( 'Lightbox', 'elementor' ),
+				'layout_settings' => __( 'Layout', 'elementor' ),
+				'theme_style' => __( 'Theme Style', 'elementor' ),
+				'add_color' => __( 'Add Color', 'elementor' ),
+				'add_style' => __( 'Add Style', 'elementor' ),
+				'new_item' => __( 'New Item', 'elementor' ),
+				'new_global' => __( 'New Global', 'elementor' ),
+				'global_color' => __( 'Global Color', 'elementor' ),
+				'global_typography' => __( 'Global Typography', 'elementor' ),
+				'invalid' => __( 'Invalid', 'elementor' ),
 			],
 		] );
 

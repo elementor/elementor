@@ -3,6 +3,7 @@
 namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Sub_Controls_Stack;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,6 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Tab_Base extends Sub_Controls_Stack {
+	/**
+	 * @var Kit
+	 */
+	protected $parent;
 
 	abstract protected function register_tab_controls();
 

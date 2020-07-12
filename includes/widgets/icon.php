@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Global_Style;
+use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 
 /**
  * Elementor icon widget.
@@ -217,7 +217,9 @@ class Widget_Icon extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon svg' => 'fill: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_PRIMARY,
+				],
 			]
 		);
 

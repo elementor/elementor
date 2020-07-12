@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Global_Style;
+use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 
 /**
  * Elementor toggle widget.
@@ -315,7 +315,9 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle-title, {{WRAPPER}} .elementor-toggle-icon' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_PRIMARY,
+				],
 			]
 		);
 
@@ -327,7 +329,9 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title.elementor-active a, {{WRAPPER}} .elementor-tab-title.elementor-active .elementor-toggle-icon' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_ACCENT,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_ACCENT,
+				],
 			]
 		);
 
@@ -336,7 +340,9 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-title',
-				'global' => Global_Style::TYPOGRAPHY_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+				],
 			]
 		);
 
@@ -456,7 +462,9 @@ class Widget_Toggle extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_TEXT,
+				],
 			]
 		);
 
@@ -465,7 +473,9 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-content',
-				'global' => Global_Style::TYPOGRAPHY_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 

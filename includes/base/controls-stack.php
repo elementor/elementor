@@ -317,6 +317,8 @@ abstract class Controls_Stack extends Base_Object {
 			$settings = $this->get_controls_settings();
 		}
 
+		$settings = $this->parse_global_settings( $settings, $controls );
+
 		$active_controls = array_reduce(
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
 				$control = $controls[ $control_key ];
@@ -379,31 +381,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
-			$target_section_args = $this->current_section;
-
-			$target_tab = $this->current_tab;
-
-			if ( $this->injection_point ) {
-				$target_section_args = $this->injection_point['section'];
-
-				if ( ! empty( $this->injection_point['tab'] ) ) {
-					$target_tab = $this->injection_point['tab'];
-				}
-			}
-
-			if ( null !== $target_section_args ) {
-				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
-					_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $id ), '1.0.0' );
-				}
-
-				$args = array_replace_recursive( $target_section_args, $args );
-
-				if ( null !== $target_tab ) {
-					$args = array_replace_recursive( $target_tab, $args );
-				}
-			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
-				wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
-			}
+			$args = $this->handle_control_position( $args, $id, $options['overwrite'] );
 		}
 
 		if ( $options['position'] ) {
@@ -758,7 +736,7 @@ abstract class Controls_Stack extends Base_Object {
 
 			$control = array_merge( $control_obj->get_settings(), $control );
 
-			if ( Controls_Manager::REPEATER === $control['type'] ) {
+			if ( $control_obj instanceof Control_Repeater ) {
 				$style_fields = [];
 
 				foreach ( $this->get_settings( $control_name ) as $item ) {
@@ -768,12 +746,30 @@ abstract class Controls_Stack extends Base_Object {
 				$control['style_fields'] = $style_fields;
 			}
 
-			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || ! empty( $control['style_fields'] ) ) {
+			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || $this->is_global_control( $control_name, $controls ) || ! empty( $control['style_fields'] ) ) {
 				$style_controls[ $control_name ] = $control;
 			}
 		}
 
 		return $style_controls;
+	}
+
+	private function is_global_control( $control_name, $controls ) {
+		$control = $controls[ $control_name ];
+
+		$control_global_key = $control_name;
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		if ( empty( $controls[ $control_global_key ]['global']['active'] ) ) {
+			return false;
+		}
+
+		$globals = $this->get_settings( '__globals__' );
+
+		return ! empty( $globals[ $control_global_key ] );
 	}
 
 	/**
@@ -1026,9 +1022,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 2.0.14
 	 * @access public
 	 */
-	public function get_parsed_dynamic_settings( $setting = null ) {
+	public function get_parsed_dynamic_settings( $setting = null, $settings = null ) {
+		if ( null === $settings ) {
+			$settings = $this->get_settings();
+		}
+
 		if ( null === $this->parsed_dynamic_settings ) {
-			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
+			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $settings );
 		}
 
 		return self::get_items( $this->parsed_dynamic_settings, $setting );
@@ -1073,7 +1073,9 @@ abstract class Controls_Stack extends Base_Object {
 			$control = $controls[ $setting_key ];
 
 			if ( $this->is_control_visible( $control, $settings ) ) {
-				if ( Controls_Manager::REPEATER === $control['type'] ) {
+				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+				if ( $control_obj instanceof Control_Repeater ) {
 					foreach ( $setting as & $item ) {
 						$item = $this->get_active_settings( $item, $control['fields'] );
 					}
@@ -1148,7 +1150,11 @@ abstract class Controls_Stack extends Base_Object {
 				continue;
 			}
 
-			if ( 'repeater' === $control_obj->get_type() ) {
+			if ( $control_obj instanceof Control_Repeater ) {
+				if ( ! isset( $settings[ $control_name ] ) ) {
+					continue;
+				}
+
 				foreach ( $settings[ $control_name ] as & $field ) {
 					$field = $this->parse_dynamic_settings( $field, $control['fields'], $field );
 				}
@@ -1927,6 +1933,40 @@ abstract class Controls_Stack extends Base_Object {
 		}
 	}
 
+	protected function handle_control_position( array $args, $control_id, $overwrite ) {
+		if ( isset( $args['type'] ) && in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
+			return $args;
+		}
+
+		$target_section_args = $this->current_section;
+
+		$target_tab = $this->current_tab;
+
+		if ( $this->injection_point ) {
+			$target_section_args = $this->injection_point['section'];
+
+			if ( ! empty( $this->injection_point['tab'] ) ) {
+				$target_tab = $this->injection_point['tab'];
+			}
+		}
+
+		if ( null !== $target_section_args ) {
+			if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
+				_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $control_id ), '1.0.0' );
+			}
+
+			$args = array_replace_recursive( $target_section_args, $args );
+
+			if ( null !== $target_tab ) {
+				$args = array_replace_recursive( $target_tab, $args );
+			}
+		} elseif ( empty( $args['section'] ) && ( ! $overwrite || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id ) ) ) ) {
+			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
+		}
+
+		return $args;
+	}
+
 	/**
 	 * Initialize the class.
 	 *
@@ -1980,7 +2020,9 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		foreach ( $controls as $control ) {
-			if ( 'repeater' === $control['type'] ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( $control_obj instanceof Control_Repeater ) {
 				if ( empty( $settings[ $control['name'] ] ) ) {
 					continue;
 				}
@@ -2033,5 +2075,36 @@ abstract class Controls_Stack extends Base_Object {
 				$this->init( $data );
 			}
 		}
+	}
+
+	private function parse_global_settings( array $settings, array $controls ) {
+		foreach ( $controls as $control ) {
+			$control_name = $control['name'];
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			if ( $control_obj instanceof Control_Repeater ) {
+				foreach ( $settings[ $control_name ] as & $field ) {
+					$field = $this->parse_global_settings( $field, $control['fields'] );
+				}
+
+				continue;
+			}
+
+			if ( empty( $control['global']['active'] ) ) {
+				continue;
+			}
+
+			if ( empty( $settings['__globals__'][ $control_name ] ) ) {
+				continue;
+			}
+
+			$settings[ $control_name ] = 'global';
+		}
+
+		return $settings;
 	}
 }

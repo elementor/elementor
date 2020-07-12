@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Files\CSS;
 
-use Elementor\Core\Kits\Documents\Tabs\Global_Style;
+use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
 use Elementor\Scheme_Base;
 use Elementor\Settings;
@@ -64,7 +64,7 @@ class Global_CSS extends Base {
 	 * @access protected
 	 */
 	protected function render_css() {
-		$this->render_schemes_css();
+		$this->render_schemes_and_globals_css();
 	}
 
 	/**
@@ -139,21 +139,69 @@ class Global_CSS extends Base {
 	 * @since 1.2.0
 	 * @access private
 	 */
-	private function render_schemes_css() {
+	private function render_schemes_and_globals_css() {
 		$elementor = Plugin::$instance;
 		$globals_schemes_map = $this->map_globals_to_schemes();
 
+		/** @var Manager $module */
+		$kits_manager = Plugin::$instance->kits_manager;
+		$custom_colors_enabled = $kits_manager->is_custom_colors_enabled();
+		$custom_typography_enabled = $kits_manager->is_custom_typography_enabled();
+
+		// If both default colors and typography are disabled, there is no need to render schemes and default global css.
+		if ( ! $custom_colors_enabled && ! $custom_typography_enabled ) {
+			return;
+		}
+
 		foreach ( $elementor->widgets_manager->get_widget_types() as $widget ) {
+			$controls = $widget->get_controls();
+
+			$global_controls = [];
+
+			$global_values['__globals__'] = [];
+
+			foreach ( $controls as $control ) {
+				$is_color_control = 'color' === $control['type'];
+				$is_typography_control = isset( $control['groupType'] ) && 'typography' === $control['groupType'];
+
+				// If it is a color/typography control and default colors/typography are disabled,
+				// don't add the default CSS.
+				if ( ( $is_color_control && ! $custom_colors_enabled ) || ( $is_typography_control && ! $custom_typography_enabled ) ) {
+					continue;
+				}
+
+				$global_control = $control;
+
+				// Handle group controls that don't have a default global property.
+				if ( ! empty( $control['groupType'] ) ) {
+					$global_control = $controls[ $control['groupPrefix'] . $control['groupType'] ];
+				}
+
+				// If the control has a default global defined, add it to the globals array
+				// that is used in add_control_rules.
+				if ( ! empty( $control['global']['default'] ) ) {
+					$global_values['__globals__'][ $control['name'] ] = $global_control['global']['default'];
+				}
+
+				if ( ! empty( $global_control['global']['default'] ) ) {
+					$global_controls[] = $control;
+				}
+			}
+
+			foreach ( $global_controls as $control ) {
+				$this->add_control_rules( $control, $controls, function( $control ) {}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ], $global_values );
+			}
+
+			// TODO: When removing the Schemes mechanism, handle this as well.
 			$scheme_controls = $widget->get_scheme_controls();
 
 			foreach ( $scheme_controls as $control ) {
 				$this->add_control_rules(
-					$control, $widget->get_controls(), function( $control ) use ( $elementor, $globals_schemes_map ) {
+					$control, $controls, function( $control ) use ( $elementor, $globals_schemes_map ) {
 						if ( isset( $control['global'] ) ) {
 							$control['scheme']['type'] = strpos( $control['global'], 'colors' ) !== false ? 'color' : 'typography';
 							$control['scheme']['value'] = $globals_schemes_map[ $control['global'] ];
 						}
-
 						$scheme_value = $elementor->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
 
 						if ( empty( $scheme_value ) ) {

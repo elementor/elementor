@@ -101,12 +101,17 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 	addTooltip() {
 		// Create tooltip on controls
-		this.$el.find( '.tooltip-target' ).tipsy( {
-			// `n` for down, `s` for up
-			gravity: 's',
-			title() {
-				return this.getAttribute( 'data-tooltip' );
-			},
+		this.$el.find( '.tooltip-target' ).each( ( index, button ) => {
+			const $button = jQuery( button );
+
+			$button.tipsy( {
+				// `n` for down, `s` for up
+				gravity: 's',
+				offset: $button.data( 'tooltip-offset' ),
+				title() {
+					return this.getAttribute( 'data-tooltip' );
+				},
+			} );
 		} );
 	}
 

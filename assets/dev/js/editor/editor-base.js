@@ -12,6 +12,7 @@ import EditorDocuments from 'elementor-editor/component';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 import Preview from 'elementor-views/preview';
+import PopoverToggleControl from 'elementor-controls/popover-toggle';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -105,7 +106,7 @@ export default class EditorBase extends Marionette.Application {
 			Media: require( 'elementor-controls/media' ),
 			Number: require( 'elementor-controls/number' ),
 			Order: require( 'elementor-controls/order' ),
-			Popover_toggle: require( 'elementor-controls/popover-toggle' ),
+			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
 			Section: require( 'elementor-controls/section' ),
@@ -163,6 +164,10 @@ export default class EditorBase extends Marionette.Application {
 		popover: {
 			element: '.elementor-controls-popover',
 			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+		},
+		globalControlsSelect: {
+			element: '.e-global__popover',
+			ignore: '.e-global__select-box',
 		},
 		tagsList: {
 			element: '.elementor-tags-list',
@@ -328,6 +333,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
+		this.documents = $e.components.register( new EditorDocuments() );
+
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
@@ -376,13 +383,9 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initPreviewView( document ) {
-		const element = document.$element[ 0 ];
+		elementor.trigger( 'document:before:preview', document );
 
-		if ( this.previewView && this.previewView.el === element ) {
-			this.previewView.destroy();
-		}
-
-		const preview = new Preview( { el: element, model: elementor.elementsModel } );
+		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
 
 		preview.$el.empty();
 
@@ -528,7 +531,9 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor && elementor.documents.getCurrent() ) {
+			// It's a click on the preview area, not in the edit area,
+			// and a document is open and has an edit area.
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );
@@ -757,7 +762,8 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
+					this.kitManager.renderGlobalsDefaultCSS();
+
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {
@@ -789,8 +795,6 @@ export default class EditorBase extends Marionette.Application {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
-
-		elementor.documents = $e.components.register( new EditorDocuments() );
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
@@ -836,8 +840,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
-
-		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 

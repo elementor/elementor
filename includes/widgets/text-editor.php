@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Global_Style;
+use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 
 /**
  * Elementor text editor widget.
@@ -125,66 +125,6 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_style',
-			[
-				'label' => __( 'Text Editor', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_responsive_control(
-			'align',
-			[
-				'label' => __( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'eicon-text-align-justify',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-text-editor' => 'text-align: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_color',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}' => 'color: {{VALUE}};',
-				],
-				'global' => Global_Style::COLOR_TEXT,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'typography',
-				'global' => Global_Style::TYPOGRAPHY_TEXT,
-			]
-		);
-
 		$text_columns = range( 1, 10 );
 		$text_columns = array_combine( $text_columns, $text_columns );
 		$text_columns[''] = __( 'Default', 'elementor' );
@@ -234,6 +174,70 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
+			'section_style',
+			[
+				'label' => __( 'Text Editor', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'eicon-text-align-right',
+					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-text-editor' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_TEXT,
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'typography',
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'section_drop_cap',
 			[
 				'label' => __( 'Drop Cap', 'elementor' ),
@@ -268,7 +272,9 @@ class Widget_Text_Editor extends Widget_Base {
 					'{{WRAPPER}}.elementor-drop-cap-view-stacked .elementor-drop-cap' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-drop-cap-view-framed .elementor-drop-cap, {{WRAPPER}}.elementor-drop-cap-view-default .elementor-drop-cap' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_PRIMARY,
+				],
 			]
 		);
 

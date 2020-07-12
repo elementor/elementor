@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Global_Style;
+use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 
 /**
  * Elementor icon list widget.
@@ -155,7 +155,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'icon_list',
 			[
-				'label' => '',
+				'label' => __( 'Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
 				'default' => [
@@ -352,7 +352,9 @@ class Widget_Icon_List extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
-				'global' => Global_Style::COLOR_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_TEXT,
+				],
 				'condition' => [
 					'divider' => 'yes',
 				],
@@ -382,7 +384,9 @@ class Widget_Icon_List extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'fill: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_PRIMARY,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_PRIMARY,
+				],
 			]
 		);
 
@@ -464,7 +468,9 @@ class Widget_Icon_List extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
 				],
-				'global' => Global_Style::COLOR_SECONDARY,
+				'global' => [
+					'default' => Colors_And_Typography::COLOR_SECONDARY,
+				],
 			]
 		);
 
@@ -501,7 +507,9 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'name' => 'icon_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-list-item',
-				'global' => Global_Style::TYPOGRAPHY_TEXT,
+				'global' => [
+					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 

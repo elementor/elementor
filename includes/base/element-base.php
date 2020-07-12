@@ -450,7 +450,7 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = str_replace( 'javascript:', '', $url_control['url'] );
+			$attributes['href'] = esc_url( $url_control['url'] );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
@@ -463,33 +463,7 @@ abstract class Element_Base extends Controls_Stack {
 
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
 			// Custom URL attributes should come as a string of comma-delimited key|value pairs
-			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
-			$blacklist = [ 'href', 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup', 'onload', 'onerror', 'onanimationend', 'onanimationstart' ];
-
-			foreach ( $custom_attributes as $attribute ) {
-				// Trim in case users inserted unwanted spaces
-				$attr_key_value = explode( '|', $attribute );
-
-				$attr_key = $attr_key_value[0];
-
-				// Cover cases where key/value have spaces both before and/or after the actual value
-				preg_match( '/[^=]+/', $attr_key, $attr_key_matches );
-
-				$attr_key = trim( $attr_key_matches[0] );
-
-				// Implement attribute blacklist
-				if ( in_array( strtolower( $attr_key ), $blacklist, true ) ) {
-					continue;
-				}
-
-				if ( isset( $attr_key_value[1] ) ) {
-					$attr_value = trim( $attr_key_value[1] );
-				} else {
-					$attr_value = '';
-				}
-
-				$attributes[ $attr_key ] = $attr_value;
-			}
+			$attributes = array_merge( $attributes, Utils::parse_custom_attributes( $url_control['custom_attributes'] ) );
 		}
 
 		if ( $attributes ) {
