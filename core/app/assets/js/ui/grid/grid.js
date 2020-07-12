@@ -1,4 +1,5 @@
 export default function Grid( props ) {
+	console.log( 'grid' );
 	const propsMap = {
 			direction: '--direction{{ -VALUE }}',
 			justify: '--justify{{ -VALUE }}',
