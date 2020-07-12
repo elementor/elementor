@@ -1,6 +1,6 @@
 export const Capture = () => {
 	QUnit.module( 'Capture', () => {
-		QUnit.only( 'capture as screenshot.', async ( assert ) => {
+		QUnit.test( 'capture as screenshot.', async ( assert ) => {
 			assert.expect( 2 );
 
 			$e.internal( 'screenshots/capture' ).then( () => {
@@ -18,7 +18,7 @@ export const Capture = () => {
 			successfulScreenshot();
 		} );
 
-		QUnit.only( 'command will listen to iframe status message, and update the component.', async ( assert ) => {
+		QUnit.test( 'command will listen to iframe status message, and update the component.', async ( assert ) => {
 			assert.expect( 3 );
 
 			const component = $e.components.get( 'screenshots' );
