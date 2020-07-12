@@ -12,9 +12,11 @@ class ExportContext extends React.Component {
 			title: 'Initial Title',
 			includes: [],
 			postTypes: [],
+			isLoading: false,
 			setTitle: this.setTitle,
 			setIncludes: this.setIncludes,
 			setPostTypes: this.setPostTypes,
+			setIsLoading: this.setIsLoading,
 		};
 	}
 
@@ -45,6 +47,10 @@ class ExportContext extends React.Component {
 		setTimeout( () => {
 			console.log( 'this.state options: ', this.state );
 		}, 1500 );
+	}
+
+	setIsLoading = ( value ) => {
+		this.setState( { isLoading: value } );
 	}
 
 	componentDidMount() {

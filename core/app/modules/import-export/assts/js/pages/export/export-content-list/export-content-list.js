@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Context as ExportContext } from '../../../context/export';
+
 import KitContentList from '../../../shared/kit-content-list/kit-content-list';
 import Box from '../../../ui/box/box';
 import Footer from '../../../shared/footer/footer';
+import Loading from '../../../shared/loading/loading';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Button from 'elementor-app/ui/molecules/button';
 
-export default function ExportContentList() {
+export default function ExportContentList( props ) {
 	const exportData = React.useContext( ExportContext ),
 		exportData2 = {
 			elementor_export_kit: {
@@ -13,16 +16,11 @@ export default function ExportContentList() {
 				include: exportData.includes,
 				custom_post_types: exportData.postTypes,
 			},
-			elementor_import_kit: {
-				title: 'My Awesome Kit',
-				include: [ 'templates', 'settings', 'content' ],
-				custom_post_types: [ 'product2', 'acf2' ],
-			},
 		},
-		getButtonLink = () => '/' + '#export',
+		getButtonLink = () => '/export',
 		setTitle = ( event ) => exportData.setTitle( event.target.value );
 
-	return (
+	const ExportContent = () => (
 		<section className="e-app-export">
 			<div className="e-app-export__kit-name">
 				<Heading variant="h2" tag="h1">
@@ -42,14 +40,21 @@ export default function ExportContentList() {
 			</div>
 
 			<Footer separator justify="end">
-				<Button url={ getButtonLink() } size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
+				<Button url={ getButtonLink() } onClick={ () => exportData.setIsLoading( true ) } size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
 			</Footer>
 		</section>
+	);
+
+	return (
+		<>
+			{ exportData.isLoading ? <Loading /> : <ExportContent /> }
+		</>
 	);
 }
 
 ExportContentList.propTypes = {
 	classname: PropTypes.string,
+	setApiStatus: PropTypes.func,
 };
 
 ExportContentList.defaultProps = {
