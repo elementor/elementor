@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { Redirect } from '@reach/router';
+
 import Layout from '../../templates/layout';
 import Box from '../../ui/box/box';
 import ExportContentList from './export-content-list/export-content-list';
@@ -9,6 +12,30 @@ import '../import-export.scss';
 import './export.scss';
 
 export default function Export() {
+	const [ apiStatus, setApiStatus ] = useState(),
+		sendExportData = () => {
+			const options = {
+				data: {
+					elementor_export_kit: {
+						title: 'My Awesome Kit',
+						include: [ 'templates', 'settings', 'content' ],
+						custom_post_types: [ 'product', 'acf' ],
+					},
+				},
+				success: () => {
+					setApiStatus( 'success' );
+				},
+				error: () => {
+					setApiStatus( 'error' );
+				},
+				complete: () => {},
+			};
+
+			setApiStatus( 'waiting' );
+
+			elementorCommon.ajax.addRequest( 'elementor_export_kit', options );
+		};
+
 	return (
 		<Layout type="export">
 			<section className="e-app-export">
@@ -28,8 +55,10 @@ export default function Export() {
 					<ExportContentList />
 				</div>
 
+				{ 'success' === apiStatus ? <Redirect to="/export/success" noThrow /> : null }
+
 				<Footer separator justify="end">
-					<Button size="lg" color="primary" text={ __( 'Next', 'elementor' ) } url="/export/success" />
+					<Button onClick={ sendExportData } size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
 				</Footer>
 			</section>
 		</Layout>
