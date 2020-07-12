@@ -298,7 +298,13 @@ abstract class Base extends Base_File {
 			$global_key = $global_values[ $control_global_key ];
 		}
 
-		if ( ! $global_key ) {
+		if ( $global_key ) {
+			$value = Plugin::$instance->data_manager->run( $global_key );
+
+			if ( empty( $value ) ) {
+				return;
+			}
+		} else {
 			$value = call_user_func( $value_callback, $control );
 
 			if ( null === $value ) {
