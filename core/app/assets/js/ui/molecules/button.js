@@ -13,8 +13,8 @@ export default class Button extends React.Component {
 		className: PropTypes.string,
 		url: PropTypes.string,
 		onClick: PropTypes.func,
-		variant: PropTypes.string,
-		ghost: PropTypes.any,
+		color: PropTypes.string,
+		size: PropTypes.string,
 	};
 
 	static defaultProps = {
