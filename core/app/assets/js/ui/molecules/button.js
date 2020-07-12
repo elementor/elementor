@@ -13,6 +13,8 @@ export default class Button extends React.Component {
 		className: PropTypes.string,
 		url: PropTypes.string,
 		onClick: PropTypes.func,
+		color: PropTypes.string,
+		size: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -25,7 +27,32 @@ export default class Button extends React.Component {
 	}
 
 	getClassName() {
-		return this.props.className;
+		const baseClassName = 'eps-button',
+			classes = [ baseClassName, this.props.className ];
+
+		return classes
+			.concat( this.getStylePropsClasses( baseClassName ) )
+			.filter( ( classItem ) => '' !== classItem )
+			.join( ' ' );
+	}
+
+	getStylePropsClasses( baseClassName ) {
+		const styleProps = [ 'color', 'size' ],
+			stylePropClasses = [];
+
+		styleProps.forEach( ( styleProp ) => {
+			let stylePropValue = this.props[ styleProp ];
+
+			if ( stylePropValue ) {
+				if ( this.props.ghost ) {
+					stylePropValue += '-ghost';
+				}
+
+				stylePropClasses.push( baseClassName + '--' + stylePropValue );
+			}
+		} );
+
+		return stylePropClasses;
 	}
 
 	getIcon() {
@@ -97,11 +124,11 @@ export default class Button extends React.Component {
 			};
 
 			return (
-			<LocationProvider history={ router.appHistory }>
-				<Link to={ this.props.url } { ...attributes } >
-					{ buttonContent }
-				</Link>
-			</LocationProvider>
+				<LocationProvider history={ router.appHistory }>
+					<Link to={ this.props.url } { ...attributes } >
+						{ buttonContent }
+					</Link>
+				</LocationProvider>
 			);
 		}
 

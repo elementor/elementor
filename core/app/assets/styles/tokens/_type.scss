@@ -30,29 +30,24 @@ $eps-display-3-font-size: $font-size-30;
 $eps-display-4-font-size: $font-size-30;
 //
 $eps-h-1-font-size: $font-size-26;
-$eps-h-2-font-size: $font-size-30;
+$eps-h-2-font-size: $font-size-20;
 $eps-h-3-font-size: $eps-font-size-base;
-$eps-h-4-font-size: null;
-$eps-h-5-font-size: null;
-$eps-h-6-font-size: null;
+$eps-h-4-font-size: $font-size-14;
+$eps-h-5-font-size: $font-size-14;
+$eps-h-6-font-size: $font-size-14;
+
 
 $eps-body-font-size: $font-size-14;
-
-$eps-text-xl-font-size: $font-size-14; //14px
-$eps-tex-xs-font-size: $font-size-13; //13px
-
-
-$eps-font-size-caption: $font-size-12; //12px
-$eps-font-size-micro: $font-size-10; //10px
-
-
+$eps-font-size-caption: $font-size-12;
 //
-$eps-small-font-size: 80%;
-$eps-paragraph-margin-bottom: null;
-$eps-headings-margin-bottom: null;
 
 $eps-text-xl-font-size: $eps-font-size-base;//16px
 $eps-text-lg-font-size: $font-size-15;
 $eps-text-sm-font-size: $font-size-13;
 $eps-text-xs-font-size: $font-size-12;
 $eps-text-xxs-font-size: $font-size-11;
+$eps-font-size-micro: $font-size-10; //10px
+
+$eps-small-font-size: 80%;
+$eps-paragraph-margin-bottom: null;
+$eps-headings-margin-bottom: null;
