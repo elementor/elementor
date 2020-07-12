@@ -12,6 +12,7 @@ class Screenshot {
 		 * @var object
 		 */
 		this.config = {
+			empty_content_headline: 'Empty Content.',
 			crop: {
 				width: 1200,
 				height: 1500,
@@ -48,11 +49,11 @@ class Screenshot {
 		this.log( 'Screenshot init', 'time' );
 
 		if ( ! this.$elementor.length ) {
-			elementorCommon.helpers.consoleWarn( 'Screenshots: Elementor content was not found.' );
+			elementorCommon.helpers.consoleWarn(
+				'Screenshots: The content of this page is empty, the module will create a fake conent just for this screenshot.'
+			);
 
-			this.screenshotFailed();
-
-			return;
+			this.createFakeContent();
 		}
 
 		this.handleIFrames();
@@ -68,6 +69,22 @@ class Screenshot {
 			.then( this.save.bind( this ) )
 			.then( this.screenshotSucceed.bind( this ) )
 			.catch( this.screenshotFailed.bind( this ) );
+	}
+
+	createFakeContent() {
+		this.$elementor = jQuery( '<div></div>' ).css( {
+			height: this.config.crop.height,
+			width: this.config.crop.width,
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'center',
+		} );
+
+		this.$elementor.append(
+			jQuery( '<h1></h1>' ).css( { fontSize: '85px' } ).html( this.config.empty_content_headline )
+		);
+
+		document.body.prepend( this.$elementor );
 	}
 
 	/**
