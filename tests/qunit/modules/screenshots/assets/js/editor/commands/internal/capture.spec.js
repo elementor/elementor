@@ -11,7 +11,7 @@ export const Capture = () => {
 			} );
 
 			assert.ok( jQuery( 'body' ).find(
-				`iframe[src="${ elementor.config.document.urls.screenshot }12313"]` ).get( 0 ),
+				`iframe[src="${ elementor.config.document.urls.screenshot }"]` ).get( 0 ),
 				'IFrame should be exists in the body.'
 			);
 
