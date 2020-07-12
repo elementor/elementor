@@ -1,5 +1,4 @@
-$eps-1px: spacing(10) / 10;
-$eps-grid-gap: calc(var(--eps-grid-spacing) * #{$eps-1px});
+$eps-grid-gap: calc(var(--eps-grid-spacing) * #{px-to-rem(1)});
 $eps-grid-columns: repeat(var(--eps-grid-columns), 1fr);
 
 .eps-css-grid {

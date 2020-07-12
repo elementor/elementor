@@ -1,18 +1,43 @@
-.modal-overlay {
-	background: gray;
-	position: absolute;
-	display: flex;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	align-items: center;
-	justify-content: center;
-	z-index: $eps-zindex-modal-backdrop;
+.eps-modal {
+	width: px-to-rem(900);
+	background: theme-colors(light);
 
-	.modal {
-		width: 50%;
-		height: 50%;
-		background: white;
+	&__overlay {
+		background: rgba(theme-colors(dark), $opacity-03);
+		position: fixed;
+		display: flex;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		z-index: $eps-zindex-modal-backdrop;
+	}
+
+	&__header {
+		font-size: $eps-body-font-size;
+		background: theme-colors(info);
+		color: theme-colors(light);
+		height: spacing(44);
+		padding: spacing(10) spacing(16);
+	}
+
+	&__icon {
+		margin-inline-end: spacing(10);
+	}
+
+	&__body {
+		padding: spacing(24);
+	}
+
+	&__tip {
+		padding-inline-start: spacing(12);
+		border-inline-start: 3px solid theme-colors(info);
+	}
+
+	&__close-wrapper {
+		padding-inline-start: spacing(16);
+		border-inline-start: solid 1px theme-colors(light);
 	}
 }
