@@ -16,13 +16,25 @@ export class Capture extends CommandInternalBase {
 
 		// The iframe send an event when the screenshot process complete
 		// then the command send a notice to the component about it.
-		return new Promise( ( resolve ) => {
+		return new Promise( ( resolve, reject ) => {
 			const listener = ( message ) => {
-				this.listenIframeMessage( message );
+				const { data } = message;
+
+				if ( ! data.name || data.name !== 'capture-screenshot-done' ) {
+					return;
+				}
+
+				this.component.isCapturingScreenshot = false;
+
+				if ( ! elementorCommonConfig.isDebug ) {
+					this.iframe.remove();
+				}
 
 				window.removeEventListener( 'message', listener );
 
-				resolve( this.iframe );
+				return data.success ?
+					resolve( this.iframe ) :
+					reject();
 			};
 
 			window.addEventListener( 'message', listener );
@@ -37,18 +49,6 @@ export class Capture extends CommandInternalBase {
 		iframe.style = 'visibility: hidden;';
 
 		return iframe;
-	}
-
-	listenIframeMessage( message ) {
-		if ( ! message.data.name || message.data.name !== 'capture-screenshot-done' ) {
-			return;
-		}
-
-		this.component.isCapturingScreenshot = false;
-
-		if ( ! elementorCommonConfig.isDebug ) {
-			this.iframe.remove();
-		}
 	}
 
 	getIframeUrl() {

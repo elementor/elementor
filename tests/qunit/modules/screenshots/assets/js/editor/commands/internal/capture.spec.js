@@ -1,21 +1,42 @@
+/* global jQuery */
 export const Capture = () => {
 	QUnit.module( 'Capture', () => {
-		QUnit.test( 'capture as screenshot.', async ( assert ) => {
+		const iFrameSelector = `iframe[src="${ elementor.config.document.urls.screenshot }"]`;
+
+		QUnit.test( 'Add and remove the screenshot iframe on success', async ( assert ) => {
 			assert.expect( 2 );
 
 			$e.internal( 'screenshots/capture' ).then( () => {
 				assert.ok(
-					! jQuery( 'body' ).find( `iframe[src="${ elementor.config.document.urls.screenshot }"]` ).get( 0 ),
+					! jQuery( 'body' ).find( iFrameSelector ).length,
 					'IFrame should NOT be exists in the body.'
 				);
 			} );
 
-			assert.ok( jQuery( 'body' ).find(
-				`iframe[src="${ elementor.config.document.urls.screenshot }"]` ).get( 0 ),
+			assert.ok(
+				jQuery( 'body' ).find( iFrameSelector ).length,
 				'IFrame should be exists in the body.'
 			);
 
-			successfulScreenshot();
+			screenshotDone();
+		} );
+
+		QUnit.test( 'Add and remove the screenshot iframe on failed', async ( assert ) => {
+			assert.expect( 2 );
+
+			$e.internal( 'screenshots/capture' ).catch( () => {
+				assert.ok(
+					! jQuery( 'body' ).find( iFrameSelector ).length,
+					'IFrame should NOT be exists in the body.'
+				);
+			} );
+
+			assert.ok(
+				jQuery( 'body' ).find( iFrameSelector ).length,
+				'IFrame should be exists in the body.'
+			);
+
+			screenshotDone( false );
 		} );
 
 		QUnit.test( 'command will listen to iframe status message, and update the component.', async ( assert ) => {
@@ -31,15 +52,15 @@ export const Capture = () => {
 
 			assert.ok( component.isCapturingScreenshot );
 
-			successfulScreenshot();
+			screenshotDone();
 		} );
 	} );
 };
 
-function successfulScreenshot() {
+function screenshotDone( success = true ) {
 	window.postMessage( {
 		name: 'capture-screenshot-done',
-		success: true,
+		success,
 	}, '*' );
 }
 
