@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { Context as ExportContext } from '../../context/export';
+import { Context as ImportContext } from '../../context/import';
 
 import List from '../../ui/list/list';
 import Box from '../../ui/box/box';
@@ -12,8 +14,10 @@ import Button from 'elementor-app/ui/molecules/button';
 import './kit-content-list.scss';
 
 export default function KitContentList( props ) {
-	const [ postsList, setPostsList ] = useState( [ __( 'Select custom post types (maximum of 20 posts will be included)', 'elementor' ) ] );
-	const exportContent = [
+	const contextType = 'export' === props.type ? ExportContext : ImportContext,
+		contextData = useContext( contextType ),
+		[ postsList, setPostsList ] = useState( [ __( 'Select custom post types (maximum of 20 posts will be included)', 'elementor' ) ] ),
+		exportContent = [
 		{
 			type: 'templates',
 			data: {
@@ -28,11 +32,11 @@ export default function KitContentList( props ) {
 						__( 'Global Widgets', 'elementor' ),
 					],
 				},
-				notice: 'Site Parts, Global widgets and Popups will are available only when Elementor Pro license is Connected',
+				notice: __( 'Site Parts, Global widgets and Popups will are available only when Elementor Pro license is Connected', 'elementor' ),
 			},
 		},
 		{
-			type: 'styles',
+			type: 'settings',
 			data: {
 				title: __( 'Global Styles And Settings', 'elementor' ),
 				description: __( 'Theme Style, Global Colors and Typography, Layout, Lightbox and Site Identity settings', 'elementor' ),
@@ -89,6 +93,11 @@ export default function KitContentList( props ) {
 				<KitContentSelect options={ item.data.contentSelection } />
 			</Grid>
 		);
+	},
+	setIncludes	= ( event, includeType ) => {
+		const action = event.target.checked ? 'add' : 'remove';
+
+		contextData.setIncludes( includeType, action );
 	};
 
 	const getApiData = () => {
@@ -125,7 +134,7 @@ export default function KitContentList( props ) {
 						<Grid container justify="space-between" alignItems="center">
 							<Grid item>
 								<Grid container item>
-									<Checkbox className="kit-content-list__checkbox" />
+									<Checkbox onChange={ ( event ) => setIncludes( event, item.type ) } className="kit-content-list__checkbox" />
 
 									<Grid item>
 										<Heading variant="h3" className="kit-content-list__title">{ item.data.title }</Heading>
@@ -156,7 +165,6 @@ export default function KitContentList( props ) {
 KitContentList.propTypes = {
 	classname: PropTypes.string,
 	type: PropTypes.string.isRequired,
-	content: PropTypes.array,
 };
 
 KitContentList.defaultProps = {

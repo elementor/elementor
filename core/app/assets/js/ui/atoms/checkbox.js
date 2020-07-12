@@ -1,6 +1,7 @@
 export default function Checkbox( props ) {
 	return (
 		<input
+			{ ...props }
 			type="checkbox"
 			disabled={ props.disabled }
 			className={ `eps-checkbox ${ props.className }` }

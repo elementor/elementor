@@ -22,7 +22,29 @@ export default function Import() {
 		onFileSelect = ( event ) => {
 			console.log( event.target.files[0] );
 		},
-		fileInput = useRef();
+		fileInput = useRef(),
+		sendImportData = () => {
+			const options = {
+				data: {
+					elementor_export_kit: {
+						title: 'My Awesome Kit',
+						include: [ 'templates', 'settings', 'content' ],
+						custom_post_types: [ 'product', 'acf' ],
+					},
+				},
+				success: () => {
+					//setApiStatus( 'success' );
+				},
+				error: () => {
+					//setApiStatus( 'error' );
+				},
+				complete: () => {},
+			};
+
+			setApiStatus( 'waiting' );
+
+			elementorCommon.ajax.addRequest( 'elementor_export_kit', options );
+		};
 
 	return (
 		<Layout type="import">
