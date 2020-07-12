@@ -46,6 +46,8 @@ function initialize() {
 		require( './core/editor/document/history/component.spec' );
 		require( './core/editor/document/ui/component.spec' );
 		require( './core/editor/document/save/component.spec' );
+
+		require( './modules/screenshots/assets/js/editor/component.spec' );
 	} );
 
 	elementor.start();

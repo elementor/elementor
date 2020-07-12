@@ -1,26 +1,32 @@
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
 export class Capture extends CommandInternalBase {
+	constructor() {
+		super();
+
+		this.iframe = null;
+	}
+
 	apply() {
 		this.component.isCapturingScreenshot = true;
 
-		const iframe = this.createIframe();
+		this.iframe = this.createIframe();
 
-		jQuery( 'body' ).append( iframe );
+		document.body.append( this.iframe );
 
 		// The iframe send an event when the screenshot process complete
 		// then the command send a notice to the component about it.
-		window.onmessage = ( message ) => {
-			if ( ! message.data.name || message.data.name !== 'capture-screenshot-done' ) {
-				return;
-			}
+		return new Promise( ( resolve ) => {
+			const listener = ( message ) => {
+				this.listenIframeMessage( message );
 
-			this.component.isCapturingScreenshot = false;
+				window.removeEventListener( 'message', listener );
 
-			if ( ! elementorCommonConfig.isDebug ) {
-				iframe.remove();
-			}
-		};
+				resolve( this.iframe );
+			};
+
+			window.addEventListener( 'message', listener );
+		} );
 	}
 
 	createIframe() {
@@ -31,6 +37,18 @@ export class Capture extends CommandInternalBase {
 		iframe.style = 'visibility: hidden;';
 
 		return iframe;
+	}
+
+	listenIframeMessage( message ) {
+		if ( ! message.data.name || message.data.name !== 'capture-screenshot-done' ) {
+			return;
+		}
+
+		this.component.isCapturingScreenshot = false;
+
+		if ( ! elementorCommonConfig.isDebug ) {
+			this.iframe.remove();
+		}
 	}
 
 	getIframeUrl() {
