@@ -1,33 +1,42 @@
-import { useState } from 'react';
 import { Context as ExportContext } from '../../../context/export';
 
 import KitContentList from '../../../shared/kit-content-list/kit-content-list';
 import Box from '../../../ui/box/box';
 import Footer from '../../../shared/footer/footer';
-import Loading from '../../../shared/loading/loading';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Button from 'elementor-app/ui/molecules/button';
 
 export default function ExportContentList( props ) {
-	const exportData = React.useContext( ExportContext ),
-		exportData2 = {
+	const contextData = React.useContext( ExportContext ),
+		exportData = {
 			elementor_export_kit: {
-				title: exportData.title,
-				include: exportData.includes,
-				custom_post_types: exportData.postTypes,
+				title: contextData.title,
+				include: contextData.includes,
+				custom_post_types: contextData.postTypes,
 			},
 		},
-		getButtonLink = () => '/export',
-		setTitle = ( event ) => exportData.setTitle( event.target.value );
+		exportContent = () => {
+			const currentBaseUrl = window.location.origin + window.location.pathname + window.location.search,
+				queryConnection = currentBaseUrl.indexOf( '?' ) > -1 ? '&' : '?',
+				downloadUrl = currentBaseUrl + queryConnection + 'data=1' + window.location.hash,
+				downloadWindow = window.open( downloadUrl, 'download_window', 'toolbar=0,location=no,directories=0,status=0,scrollbars=0,resizeable=0,width=1,height=1,top=0,left=0' );
 
-	const ExportContent = () => (
+			props.setIsLoading( true );
+
+			downloadWindow.addEventListener( 'beforeunload', () => {
+				props.setIsLoading( false );
+			} );
+		},
+		setTitle = ( event ) => contextData.setTitle( event.target.value );
+
+	return (
 		<section className="e-app-export">
 			<div className="e-app-export__kit-name">
 				<Heading variant="h2" tag="h1">
 					{ __( 'Kit Name', 'elementor' ) }
 				</Heading>
 				<Box>
-					<input type="text" onChange={ setTitle } defaultValue={exportData.title} />
+					<input type="text" onChange={ setTitle } defaultValue={contextData.title} />
 				</Box>
 			</div>
 
@@ -40,21 +49,15 @@ export default function ExportContentList( props ) {
 			</div>
 
 			<Footer separator justify="end">
-				<Button url={ getButtonLink() } onClick={ () => exportData.setIsLoading( true ) } size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
+				<Button onClick={ exportContent } size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
 			</Footer>
 		</section>
-	);
-
-	return (
-		<>
-			{ exportData.isLoading ? <Loading /> : <ExportContent /> }
-		</>
 	);
 }
 
 ExportContentList.propTypes = {
 	classname: PropTypes.string,
-	setApiStatus: PropTypes.func,
+	setIsLoading: PropTypes.func,
 };
 
 ExportContentList.defaultProps = {
