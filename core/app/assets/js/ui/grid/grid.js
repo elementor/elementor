@@ -1,3 +1,5 @@
+import './grid.scss';
+
 export default function Grid( props ) {
 	const propsMap = {
 			direction: '--direction{{ -VALUE }}',
