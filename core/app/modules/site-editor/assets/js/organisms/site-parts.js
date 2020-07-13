@@ -20,7 +20,7 @@ const InfoButton = ( props ) => {
 			<Grid container spacing={25}>
 				<Grid item sm={6}>
 					<p>
-						{ props.content } <Button text={ __( 'Learn More', 'elementor' ) } className="link" url={ props.docs } />
+						{ props.content } <Button text={ __( 'Learn More', 'elementor' ) } color="link" url={ props.docs } />
 					</p>
 				</Grid>
 				<Grid item sm={6}>

@@ -34,6 +34,9 @@
 	&__tip {
 		padding-inline-start: spacing(12);
 		border-inline-start: 3px solid theme-colors(info);
+		&:not(:last-child) {
+			margin-bottom: spacing(30);
+		}
 	}
 
 	&__close-wrapper {

@@ -49,7 +49,7 @@ $eps-atoms: (
 			1:(
 				font-size: $eps-h-1-font-size,
 				line-height: $eps-line-height-flat,
-				color: var(--h-1-color),
+				color: var(--h1-color),
 				margin-top: null,
 				margin-bottom: 2.5 * $eps-spacer,
 				font-familiy:null,
@@ -60,7 +60,7 @@ $eps-atoms: (
 			2:(
 				font-size: $eps-h-2-font-size,
 				line-height: $eps-line-height-sm,
-				color: var(--h-2-color),
+				color: var(--h2-color),
 				margin-top: 0,
 				margin-bottom: 2.5 * $eps-spacer,
 				font-familiy: null,
@@ -73,7 +73,7 @@ $eps-atoms: (
 				line-height:$eps-line-height-base,
 				color: var(--h3-color),
 				margin-top: 0,
-				margin-bottom: 1.25 * $eps-spacer,
+				margin-bottom: 2 * $eps-spacer,
 				font-familiy:null,
 				font-weight:$eps-font-weight-medium,
 				font-style: null,
