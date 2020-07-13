@@ -11,8 +11,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {{}} args
 	 */
-	constructor( ...args ) {
-		super( ...args );
+	constructor( ... args ) {
+		super( ... args );
 
 		this.current = {};
 		this.currentArgs = {};
@@ -26,7 +26,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @returns {Command}
 	 */
 	getCommandClass( id ) {
-		return $e.commands.classes[ id ];
+		return this.commands[ id ];
 	}
 
 	/**
@@ -291,18 +291,27 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		this.beforeRun( command, args );
 
 		// Call to new command or callback.
-		const instance = this.commands[ command ].apply( this.getComponent( command ), [ args ] );
+		let instance = this.commands[ command ];
 
-		// TODO: Remove after all commands inheritance CommandBase.
-		if ( ! instance || ! ( instance instanceof Command ) ) {
-			this.afterRun( command, args, instance );
-
-			return instance;
+		if ( instance.getInstanceType ) {
+			instance = new instance( args );
 		}
 
 		let results;
 
-		this.validateInstance( instance, command );
+		// Route?.
+		if ( ! ( instance instanceof Command ) ) {
+			results = instance.apply( this.getComponent( command ), [ args ] );
+
+			this.afterRun( command, args, results );
+
+			return results;
+		}
+
+		// TODO: Check with mati.
+		if ( ! this.validateInstance( instance, command ) ) {
+			return;
+		}
 
 		// For UI Hooks.
 		instance.onBeforeRun( instance.args );
@@ -396,12 +405,23 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	validateInstance( instance, command ) {
-		const component = this.getComponent( command );
-
-		if ( ! instance || component !== instance.component ) {
+		if ( ! ( instance instanceof Command ) ) {
 			this.error( `invalid instance, command: '${ command }' ` );
 		}
+
+		const component = this.getComponent( command );
+
+		if ( component !== instance.component ) {
+			if ( $e.devTools ) {
+				$e.devTools.log.error( `Command: '${ command }' registerArgs.component: '${ instance.component.getNamespace() }' while current: '${ component.getNamespace() }'` );
+			}
+
+			return false;
+		}
+
+		return true;
 	}
+
 	/**
 	 * Function error().
 	 *

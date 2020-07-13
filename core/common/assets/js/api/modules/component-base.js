@@ -1,4 +1,6 @@
+import CommandBase from 'elementor-api/modules/command-base';
 import Command from 'elementor-api/modules/command';
+import CommandCallback from 'elementor-api/modules/command-callback';
 
 export default class ComponentBase extends elementorModules.Module {
 	__construct( args = {} ) {
@@ -17,6 +19,8 @@ export default class ComponentBase extends elementorModules.Module {
 
 		this.defaultRoute = '';
 		this.currentTab = '';
+
+		this.isRegistered = false;
 	}
 
 	registerAPI() {
@@ -31,6 +35,8 @@ export default class ComponentBase extends elementorModules.Module {
 		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) ); // eslint-disable-line no-unused-vars
 
 		Object.entries( this.getData() ).forEach( ( [ command, callback ] ) => this.registerData( command, callback ) );
+
+		this.isRegistered = true;
 	}
 
 	/**
@@ -107,33 +113,32 @@ export default class ComponentBase extends elementorModules.Module {
 
 	/**
 	 * @param {string} command
-	 * @param {function()} callback
+	 * @param {(function()|CommandBase)} context
 	 */
-	registerCommand( command, callback ) {
+	registerCommand( command, context ) {
 		const fullCommand = this.getNamespace() + '/' + command,
-			isCallbackNewClass = callback.toString().includes( 'new' );
+			instanceType = context.getInstanceType ? context.getInstanceType() : false,
+			registerArgs = {
+				__command: fullCommand,
+				__component: this,
+			};
 
-		let instance;
-
-		// TODO: Remove when all commands have Command as parent.
-		if ( isCallbackNewClass ) {
-			try {
-				// Try get instance.
-				instance = callback( { component: this } );
-
-				if ( ! ( instance instanceof Command ) ) {
-					throw Error( 'Command should inherent "Command" class.' );
-				}
-			} catch ( e ) {
-				if ( $e.devTools ) {
-					$e.devTools.log.error( `invalid command base: '${ fullCommand }'`, e );
-				}
+		// Support pure callback.
+		if ( ! instanceType ) {
+			if ( $e.devTools ) {
+				$e.devTools.log.warn( `Attach command-callback, on command: '${ fullCommand }', context is unknown type.` );
 			}
-		} else if ( $e.devTools ) {
-			$e.devTools.log.error( `Non command base: '${ fullCommand }', callback with out new operator.` );
+			registerArgs.__callback = context;
+			context = CommandCallback;
 		}
 
-		$e.commands.register( this, command, callback );
+		const instance = new context( registerArgs );
+
+		if ( ! ( instance instanceof Command ) ) {
+			throw Error( `Command: '${ fullCommand }' should inherent "Command" class.` );
+		}
+
+		$e.commands.register( this, command, context );
 	}
 
 	/**
@@ -293,6 +298,10 @@ export default class ComponentBase extends elementorModules.Module {
 		return commandName.replace( /[A-Z]/g, ( match, offset ) => ( offset > 0 ? '-' : '' ) + match.toLowerCase() );
 	}
 
+	/**
+	 * @param {Object.<string, Command>} commandsFromImport
+	 * @returns {{}} imported commands
+	 */
 	importCommands( commandsFromImport ) {
 		const commands = {};
 
@@ -300,9 +309,7 @@ export default class ComponentBase extends elementorModules.Module {
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
 			const command = this.normalizeCommandName( className );
 
-			commands[ command ] = ( args ) => new Class( args );
-
-			$e.commands.classes[ this.getNamespace() + '/' + command ] = Class;
+			commands[ command ] = Class;
 		} );
 
 		return commands;

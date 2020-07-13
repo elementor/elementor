@@ -1,17 +1,19 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
-import Command from './command';
 
 export default class CommandBase extends ArgsObject {
+	static registerArgs = {};
+
 	static getInstanceType() {
 		return 'CommandBase';
 	}
 
-	/**
-	 * Current component.
-	 *
-	 * @type {(null|Component)}
-	 */
-	static _component = null;
+	static getCommand() {
+		return this.registerArgs.__command;
+	}
+
+	static getComponent() {
+		return this.registerArgs.__component;
+	}
 
 	/**
 	 * Current component.
@@ -31,23 +33,18 @@ export default class CommandBase extends ArgsObject {
 	constructor( args = {}, commandsAPI = $e.commands ) {
 		super( args );
 
-		// TODO: is better to check if register process is done.
-		// If not running, this is may be only during the register.
-		if ( ! $e.commands.constructor.trace.length ) {
-			// Validate 'Command-Base' extended by 'Command', only not for testing.
-			if ( ! elementorCommonConfig.isTesting && -1 === this.instanceTypes.indexOf( Command.getInstanceType() ) ) {
-				throw Error( `'${ CommandBase.getInstanceType() }' Class cannot be extended directly, use: '${ Command.getInstanceType() }'.` );
-			}
+		if ( ( 'register' === $e.components.state || elementorCommonConfig.isTesting ) && 0 === $e.commands.constructor.trace.length ) {
+			this.constructor.registerArgs = args;
 
 			return;
 		}
 
 		// Acknowledge self about which command it run.
-		this.currentCommand = commandsAPI.getCurrentLast();
+		// TODO: rename `this.currentCommand` to `this.command`.
+		this.currentCommand = this.constructor.getCommand() || commandsAPI.getCurrentLast();
 
 		// Assign instance of current component.
-		this.constructor._component = this.constructor._component || args.component || commandsAPI.getComponent( this.currentCommand );
-		this.component = this.constructor._component;
+		this.component = this.constructor.getComponent() || commandsAPI.getComponent( this.currentCommand );
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );
@@ -60,6 +57,8 @@ export default class CommandBase extends ArgsObject {
 	}
 
 	/**
+	 * TODO: This method should move to command-editor and should not be part of js-api/core.
+	 *
 	 * Function requireContainer().
 	 *
 	 * Validate `arg.container` & `arg.containers`.
