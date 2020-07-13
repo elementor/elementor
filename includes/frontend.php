@@ -515,6 +515,15 @@ class Frontend extends App {
 			$has_custom_file ? null : ELEMENTOR_VERSION
 		);
 
+		if ( Plugin::instance()->is_legacy_mode_active ) {
+			// If The Markup Legacy Mode is active, register the legacy CSS
+			wp_register_style(
+				'elementor-frontend-legacy',
+				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
+				[],
+				ELEMENTOR_VERSION
+			);
+		}
 		/**
 		 * After frontend register styles.
 		 *
@@ -580,6 +589,11 @@ class Frontend extends App {
 		wp_enqueue_style( 'elementor-icons' );
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
+
+		if ( Plugin::instance()->is_legacy_mode_active ) {
+			// If The Markup Legacy Mode is active, enqueue the legacy CSS
+			wp_enqueue_style( 'elementor-frontend-legacy' );
+		}
 
 		/**
 		 * After frontend styles enqueued.

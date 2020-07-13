@@ -433,6 +433,8 @@ class Plugin {
 	 */
 	public $data_manager;
 
+	public $is_legacy_mode_active;
+
 	/**
 	 * Clone.
 	 *
@@ -668,6 +670,8 @@ class Plugin {
 
 		$this->logger = Log_Manager::instance();
 		$this->data_manager = Data_Manager::instance();
+
+		$this->is_legacy_mode_active = ! empty( get_option( 'elementor_markup_legacy_mode' ) );
 
 		Maintenance::init();
 		Compatibility::register_actions();

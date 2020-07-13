@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: '> .elementor-widget-wrap',
+	childViewContainer: elementor.config.markup_legacy_mode ? '> .elementor-column-wrap > .elementor-widget-wrap' : '> .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -43,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = '> .elementor-widget-wrap';
+		ui.columnInner = elementor.config.markup_legacy_mode ? '> .elementor-column-wrap' : '> .elementor-widget-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
@@ -195,7 +195,14 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-		var self = this;
+		const self = this,
+			isLegacyMode = elementor.config.markup_legacy_mode;
+
+		let itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+
+		if ( isLegacyMode ) {
+			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		}
 
 		BaseElementView.prototype.onRender.apply( self, arguments );
 
@@ -204,7 +211,7 @@ ColumnView = BaseElementView.extend( {
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
-			items: ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
+			items: itemsClasses,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
