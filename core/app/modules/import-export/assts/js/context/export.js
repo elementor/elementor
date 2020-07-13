@@ -12,11 +12,9 @@ class ExportContext extends React.Component {
 			title: 'Initial Title',
 			includes: [],
 			postTypes: [],
-			isLoading: false,
 			setTitle: this.setTitle,
 			setIncludes: this.setIncludes,
 			setPostTypes: this.setPostTypes,
-			setIsLoading: this.setIsLoading,
 		};
 	}
 
@@ -29,24 +27,15 @@ class ExportContext extends React.Component {
 			this.setState( ( prevState ) => {
 				return { includes: [ ...prevState.includes, value ] };
 			} );
-			setTimeout( () => {
-				console.log( 'this.state', this.state );
-			}, 1500 );
 		} else if ( 'remove' === action ) {
 			this.setState( ( prevState ) => {
-				return { includes: prevState.includes.filter( ( item ) => item !== value ) };
+				return { includes: prevState.includes.splice( prevState.includes.indexOf( value ) ) };
 			} );
-			setTimeout( () => {
-				console.log( 'this.state', this.state );
-			}, 1500 );
 		}
 	}
 
 	setPostTypes = ( options ) => {
 		this.setState( { postTypes: options } );
-		setTimeout( () => {
-			console.log( 'this.state options: ', this.state );
-		}, 1500 );
 	}
 
 	setIsLoading = ( value ) => {
