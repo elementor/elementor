@@ -2,7 +2,7 @@ $eps-add-new-button-background-color: theme-colors(info);
 $eps-add-new-button-icon-color: theme-colors(light);
 $eps-add-new-button-size: spacing(24);
 $eps-add-new-button-size-sm: spacing(16);
-$eps-add-new-button-icon-size: calc( var(--eps-add-new-button-size) * 0.75 );
+$eps-add-new-button-icon-size: calc(var(--eps-add-new-button-size) * 0.75);
 
 .eps-add-new-button {
 	display: inline-flex;
@@ -17,8 +17,11 @@ $eps-add-new-button-icon-size: calc( var(--eps-add-new-button-size) * 0.75 );
 		border-radius: 100%;
 		font-size: $eps-add-new-button-icon-size;
 		text-align: center;
-		margin-inline-end: spacing(10);
 		line-height: var(--eps-add-new-button-size);
+	}
+
+	span:not(.sr-only) {
+		margin-inline-start: spacing(10);
 	}
 
 	&--sm {
