@@ -423,15 +423,20 @@ class Icons_Manager {
 		return $settings;
 	}
 
-	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'enable_svg_uploads', [ $this, 'ajax_enable_svg_uploads' ] );
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0
+	 */
+	public function register_ajax_actions() {
+		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
+	/**
+	 * @since 3.0.0.
+	 * @deprecated 3.0.0
+	 */
 	public function ajax_enable_svg_uploads() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-		update_option( 'elementor_allow_svg', 1 );
+		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
 	/**
@@ -448,9 +453,6 @@ class Icons_Manager {
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
-
-		// Ajax.
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );

@@ -462,7 +462,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.6.2'
+			'5.8.0'
 		);
 
 		wp_register_style(
@@ -1120,7 +1120,7 @@ class Frontend extends App {
 	}
 
 	public function create_action_hash( $action, array $settings = [] ) {
-		return rawurlencode( sprintf( '#elementor-action:action=%1$s&settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+		return '#' . rawurlencode( sprintf( 'elementor-action:action=%1$s&settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
 	}
 
 	/**
@@ -1146,7 +1146,15 @@ class Frontend extends App {
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
 				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
 				'pinIt' => __( 'Pin it', 'elementor' ),
+				'download' => __( 'Download', 'elementor' ),
 				'downloadImage' => __( 'Download image', 'elementor' ),
+				'fullscreen' => __( 'Fullscreen', 'elementor' ),
+				'zoom' => __( 'Zoom', 'elementor' ),
+				'share' => __( 'Share', 'elementor' ),
+				'playVideo' => __( 'Play Video', 'elementor' ),
+				'previous' => __( 'Previous', 'elementor' ),
+				'next' => __( 'Next', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
@@ -1158,7 +1166,7 @@ class Frontend extends App {
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 		$settings['kit'] = $kit->get_frontend_settings();
 
 		if ( is_singular() ) {

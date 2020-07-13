@@ -359,7 +359,7 @@ class Utils {
 			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
 		}
 
-		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" ); // WPCS: unprepared SQL ok.
+		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( $revision ) {
 			$revision = new \WP_Post( $revision );
@@ -520,5 +520,68 @@ class Utils {
 		$string = str_replace( array_keys( $entities_dictionary ), array_values( $entities_dictionary ), $string );
 
 		return rawurlencode( html_entity_decode( $string, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+	}
+
+	/**
+	 * Parse attributes that come as a string of comma-delimited key|value pairs.
+	 * Removes Javascript events and unescaped `href` attributes.
+	 *
+	 * @param string $attributes_string
+	 *
+	 * @param string $delimiter Default comma `,`.
+	 *
+	 * @return array
+	 */
+	public static function parse_custom_attributes( $attributes_string, $delimiter = ',' ) {
+		$attributes = explode( $delimiter, $attributes_string );
+		$result = [];
+
+		foreach ( $attributes as $attribute ) {
+			$attr_key_value = explode( '|', $attribute );
+
+			$attr_key = mb_strtolower( $attr_key_value[0] );
+
+			// Remove any not allowed characters.
+			preg_match( '/[-_a-z0-9]+/', $attr_key, $attr_key_matches );
+
+			if ( empty( $attr_key_matches[0] ) ) {
+				continue;
+			}
+
+			$attr_key = $attr_key_matches[0];
+
+			// Avoid Javascript events and unescaped href.
+			if ( 'href' === $attr_key || 'on' === substr( $attr_key, 0, 2 ) ) {
+				continue;
+			}
+
+			if ( isset( $attr_key_value[1] ) ) {
+				$attr_value = trim( $attr_key_value[1] );
+			} else {
+				$attr_value = '';
+			}
+
+			$result[ $attr_key ] = $attr_value;
+		}
+
+		return $result;
+	}
+
+	public static function find_element_recursive( $elements, $id ) {
+		foreach ( $elements as $element ) {
+			if ( $id === $element['id'] ) {
+				return $element;
+			}
+
+			if ( ! empty( $element['elements'] ) ) {
+				$element = self::find_element_recursive( $element['elements'], $id );
+
+				if ( $element ) {
+					return $element;
+				}
+			}
+		}
+
+		return false;
 	}
 }

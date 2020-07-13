@@ -75,6 +75,9 @@ class Control_Color extends Base_Data_Control {
 				],
 				'active' => true,
 			],
+			'global' => [
+				'active' => true,
+			],
 		];
 	}
 }

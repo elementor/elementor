@@ -503,9 +503,25 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		foreach ( $selectors as &$selector ) {
-			$selector = preg_replace_callback( '/\{\{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
-				return preg_replace_callback( '/[^ ]+(?=\.)/', function( $sub_matches ) use ( $controls_prefix ) {
-					return $controls_prefix . $sub_matches[0];
+			$selector = preg_replace_callback( '/{{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
+				$is_external_reference = false;
+
+				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function( $sub_matches ) use ( $controls_prefix, &$is_external_reference ) {
+					$placeholder = $sub_matches[0];
+
+					if ( 'external.' === $placeholder ) {
+						$is_external_reference = true;
+
+						return '';
+					}
+
+					if ( $is_external_reference ) {
+						$is_external_reference = false;
+
+						return $placeholder;
+					}
+
+					return $controls_prefix . $placeholder;
 				}, $matches[1] );
 			}, $selector );
 		}
@@ -527,7 +543,15 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$settings = $this->get_args();
 
-		if ( ! empty( $settings['label'] ) ) {
+		if ( isset( $settings['global'] ) ) {
+			if ( ! isset( $popover_options['settings']['global'] ) ) {
+				$popover_options['settings']['global'] = [];
+			}
+
+			$popover_options['settings']['global'] = array_replace_recursive( $popover_options['settings']['global'], $settings['global'] );
+		}
+
+		if ( isset( $settings['label'] ) ) {
 			$label = $settings['label'];
 		} else {
 			$label = $popover_options['starter_title'];
@@ -554,6 +578,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		if ( isset( $this->args['fields_options'][ $starter_name ] ) ) {
 			$control_params = array_merge( $control_params, $this->args['fields_options'][ $starter_name ] );
 		}
+
+		$control_params['groupPrefix'] = $this->get_controls_prefix();
 
 		$element->add_control( $this->get_controls_prefix() . $starter_name, $control_params );
 

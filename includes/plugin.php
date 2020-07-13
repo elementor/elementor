@@ -18,6 +18,7 @@ use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
+use Elementor\Data\Manager as Data_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -428,6 +429,11 @@ class Plugin {
 	public $kits_manager;
 
 	/**
+	 * @var \Core\Data\Manager
+	 */
+	public $data_manager;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -644,7 +650,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function register_autoloader() {
-		require ELEMENTOR_PATH . '/includes/autoloader.php';
+		require_once ELEMENTOR_PATH . '/includes/autoloader.php';
 
 		Autoloader::run();
 	}
@@ -661,6 +667,7 @@ class Plugin {
 		$this->register_autoloader();
 
 		$this->logger = Log_Manager::instance();
+		$this->data_manager = Data_Manager::instance();
 
 		Maintenance::init();
 		Compatibility::register_actions();
