@@ -5,19 +5,22 @@
 
 
 .#{$eps-prefix}grid {
+	@include grid-custom-properties();
+
 	// Flex Structure rules
 	// apply to all screen size
 	// @props: container
 	&-container {
 		display: flex;
 		flex-wrap: wrap;
+		width: 100%;
 
 		//@prop: no-wrap
-		&-no-wrap {
+		&--no-wrap {
 			flex-wrap: nowrap;
 		}
 
-		&-wrap-reverse {
+		&--wrap-reverse {
 			flex-wrap: wrap-reverse;
 		}
 
@@ -26,19 +29,14 @@
 		// item padding can be 8,10,12,16
 		// container width and negative margin are calculated dynamically
 		// @markup <Grid container spacing={5} and so on >
-		&[class*="#{$eps-prefix}grid-container-spacing"] {
-			--grid-row-gutter: calc(-1 * var(--grid-spacing-gutter));
+		&--spacing {
+			--grid-row-gutter: calc(var(--grid-spacing-gutter) * -#{px-to-rem(1)});
 			width: var(--grid-spacing-width);
 			margin: var(--grid-row-gutter);
 
 			> .#{$eps-prefix}grid-item {
-				padding: var(--grid-spacing-gutter);
+				padding: calc(var(--grid-spacing-gutter) * #{px-to-rem(1)});
 			}
-
-		}
-
-		&-spacing {
-			@include grid-spacing-classes($eps-grid-spacing-keys);
 		}
 	}
 
@@ -96,6 +94,14 @@
 
 		&-space-between {
 			justify-content: space-between;
+		}
+
+		&-space-around {
+			justify-content: space-around;
+		}
+
+		&-space-evenly {
+			justify-content: space-evenly;
 		}
 	}
 
@@ -169,58 +175,24 @@
 
 //@prop: ZeroMinWidth
 //@markup <Grid item zeroMinWidth> or <Grid item sm> and so on..
-.#{$eps-prefix}-item--zero-width {
+.#{$eps-prefix}grid-item--zero-min-width {
 	min-width: 0;
 }
 
 // Item flex sizing, auto grid
 //@prop: [xs,sm,md,lg,xl,xxl]
 //@markup <Grid item xs> or <Grid item sm> and so on..
-.grid-xs-auto {
-	@include grid-item-auto(xs);
-}
-
+// No need for container:
 //@prop: [xs={@num<=12}],sm={@num<=12},md={@num<=12},lg={@num<=12},xl={@num<=12},xxl={@num<=12}]
 //@markup <Grid item xs={4}> or <Grid item sm={3}> and so on..
-@media screen and (min-width: $editor-screen-sm-min) {
-	@include grid-item-auto(sm);
+@each $breakpoint in map-keys($breakpoints) {
+	@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
+		@include grid-item-auto($breakpoint);
+	}
 }
-
-@media screen and (min-width: $editor-screen-md-min) {
-	@include grid-item-auto(md);
-}
-
-@media screen and (min-width: $editor-screen-lg-min) {
-	@include grid-item-auto(lg);
-}
-
-@media screen and (min-width: $editor-screen-xl-min) {
-	@include grid-item-auto(xl);
-}
-
-@media screen and (min-width: $editor-screen-xxl-min) {
-	@include grid-item-auto(xxl);
-}
-
 // Generating cols per each media breakpoint
-@include grid-col-generator(xs);
-
-@media screen and (min-width: $editor-screen-sm-min) {
-	@include grid-col-generator(sm);
-}
-
-@media screen and (min-width: $editor-screen-md-min) {
-	@include grid-col-generator(md);
-}
-
-@media screen and (min-width: $editor-screen-lg-min) {
-	@include grid-col-generator(lg);
-}
-
-@media screen and (min-width: $editor-screen-xl-min) {
-	@include grid-col-generator(xl);
-}
-
-@media screen and (min-width: $editor-screen-xxl-min) {
-	@include grid-col-generator(xxl);
+@each $breakpoint in map-keys($breakpoints) {
+	@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
+		@include grid-col-generator($breakpoint);
+	}
 }

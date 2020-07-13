@@ -1,0 +1,57 @@
+// SHAME:
+// Purpose of this partial is to gather all ad hock, not structured code.
+// This will enable to refactor it bit by bit into structured code without effecting current output.
+
+//todo: discuss, is this needed?
+.heading {
+	color: #6D7882;
+	font-weight: 500;
+	font-size: 26px;
+	line-height: 26px;
+}
+
+.card_headline {
+	color: #6D7882;
+	font-weight: 500;
+	font-size: 12px;
+	line-height: 17px;
+}
+
+.menu-item {
+	color: #6D7882;
+	font-weight: 500;
+	font-size: 12px;
+	line-height: 14px;
+}
+
+.header-title {
+	color: #495157;
+	font-weight: bold;
+	font-size: 15px;
+	line-height: 18px;
+	text-transform: uppercase;
+}
+
+.add-new-button {
+	color: #495157;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 20px;
+}
+
+.get-pro-button {
+	color: #FFFFFF;
+	font-weight: 500;
+	font-size: 13px;
+	line-height: 15px;
+	text-align: center;
+	text-transform: capitalize;
+}
+
+.back-button {
+	color: #A4AFB7;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 14px;
+}

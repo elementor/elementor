@@ -30,6 +30,10 @@ $button-cta-background-color: theme-colors(cta);
 $button-cta-hover-background-color: darken($button-cta-background-color, $button-hover-constant);
 $button-cta-active-background-color: darken($button-cta-background-color, $button-active-constant);
 $button-cta-color: theme-colors(light);
+$button-link-background-color: theme-elements-colors(link-color);
+$button-link-hover-background-color: darken($button-link-background-color, $button-hover-constant);
+$button-link-active-background-color: darken($button-link-background-color, $button-active-constant);
+$button-link-color: theme-colors(light);
 $button-disabled-background-color: theme-colors(disabled);
 $button-disabled-hover-background-color: darken($button-disabled-background-color, $button-hover-constant);
 $button-disabled-active-background-color: darken($button-disabled-background-color, $button-active-constant);
@@ -47,6 +51,10 @@ $button-dark-cta-background-color: dark-theme-colors(cta);
 $button-dark-cta-hover-background-color: darken($button-dark-cta-background-color, $button-hover-constant);
 $button-dark-cta-active-background-color: darken($button-dark-cta-background-color, $button-active-constant);
 $button-dark-cta-color: dark-theme-colors(light);
+$button-dark-link-background-color: theme-elements-colors(link-color);
+$button-dark-link-hover-background-color: darken($button-dark-link-background-color, $button-hover-constant);
+$button-dark-link-active-background-color: darken($button-dark-link-background-color, $button-active-constant);
+$button-dark-link-color: theme-colors(light);
 $button-dark-disabled-background-color: dark-theme-colors(disabled);
 $button-dark-disabled-hover-background-color: darken($button-dark-disabled-background-color, $button-hover-constant);
 $button-dark-disabled-active-background-color: darken($button-dark-disabled-background-color, $button-active-constant);
@@ -73,6 +81,11 @@ $button-dark-disabled-color: dark-theme-colors(light);
   --button-cta-hover-background-color: #{$button-cta-hover-background-color};
   --button-cta-active-background-color: #{$button-cta-active-background-color};
   --button-cta-color: #{$button-cta-color};
+  // link
+  --button-link-background-color: #{$button-link-background-color};
+  --button-link-hover-background-color: #{$button-link-hover-background-color};
+  --button-link-active-background-color: #{$button-link-active-background-color};
+  --button-link-color: #{$button-link-color};
   // disabled
   --button-disabled-background-color: #{$button-disabled-background-color};
   --button-disabled-hover-background-color: #{$button-disabled-hover-background-color};
@@ -81,22 +94,31 @@ $button-dark-disabled-color: dark-theme-colors(light);
 }
 
 @mixin button-dark-custom-properties() {
-  --button-primary-background-color: #{$button-dark-primary-background-color};
-  --button-primary-color: #{$button-dark-primary-color};
-  --button-primary-hover-background-color: #{$button-dark-primary-hover-background-color};
-  --button-primary-active-background-color: #{$button-dark-primary-active-background-color};
-  --button-secondary-background-color: #{$button-dark-secondary-background-color};
-  --button-secondary-color: #{$button-dark-secondary-color};
-  --button-secondary-hover-background-color: #{$button-dark-secondary-hover-background-color};
-  --button-secondary-active-background-color: #{$button-dark-secondary-active-background-color};
-  --button-cta-background-color: #{$button-dark-cta-background-color};
-  --button-cta-hover-background-color: #{$button-dark-cta-hover-background-color};
-  --button-cta-active-background-color: #{$button-dark-cta-active-background-color};
-  --button-cta-color: #{$button-dark-cta-color};
-  --button-disabled-background-color: #{$button-dark-disabled-background-color};
-  --button-disabled-hover-background-color: #{$button-dark-disabled-hover-background-color};
-  --button-disabled-active-background-color: #{$button-dark-disabled-active-background-color};
-  --button-disabled-color: #{$button-dark-disabled-color};
+	// primary
+	--button-primary-background-color: #{$button-dark-primary-background-color};
+	--button-primary-color: #{$button-dark-primary-color};
+	--button-primary-hover-background-color: #{$button-dark-primary-hover-background-color};
+	--button-primary-active-background-color: #{$button-dark-primary-active-background-color};
+	// secondary
+	--button-secondary-background-color: #{$button-dark-secondary-background-color};
+	--button-secondary-color: #{$button-dark-secondary-color};
+	--button-secondary-hover-background-color: #{$button-dark-secondary-hover-background-color};
+	--button-secondary-active-background-color: #{$button-dark-secondary-active-background-color};
+	// cta
+	--button-cta-background-color: #{$button-dark-cta-background-color};
+	--button-cta-hover-background-color: #{$button-dark-cta-hover-background-color};
+	--button-cta-active-background-color: #{$button-dark-cta-active-background-color};
+	--button-cta-color: #{$button-dark-cta-color};
+	// link
+	--button-link-background-color: #{$button-dark-link-background-color};
+	--button-link-hover-background-color: #{$button-dark-link-hover-background-color};
+	--button-link-active-background-color: #{$button-dark-link-active-background-color};
+	--button-link-color: #{$button-dark-link-color};
+	// disabled
+	--button-disabled-background-color: #{$button-dark-disabled-background-color};
+	--button-disabled-hover-background-color: #{$button-dark-disabled-hover-background-color};
+	--button-disabled-active-background-color: #{$button-dark-disabled-active-background-color};
+	--button-disabled-color: #{$button-dark-disabled-color};
 }
 
 

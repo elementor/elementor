@@ -86,7 +86,8 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$default_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
+		// TODO: IMPLEMEMENT SOLUTION IN FRONTEND
+		$default_fonts = '';// Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
 
 		if ( $default_fonts ) {
 			$default_fonts = ', ' . $default_fonts;
@@ -258,6 +259,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		$field_args = parent::add_group_args_to_field( $control_id, $field_args );
 
 		$field_args['groupPrefix'] = $this->get_controls_prefix();
+		$field_args['groupType'] = 'typography';
 
 		$args = $this->get_args();
 
@@ -290,6 +292,10 @@ class Group_Control_Typography extends Group_Control_Base {
 				'starter_title' => _x( 'Typography', 'Typography Control', 'elementor' ),
 				'settings' => [
 					'render_type' => 'ui',
+					'groupType' => 'typography',
+					'global' => [
+						'active' => true,
+					],
 				],
 			],
 		];

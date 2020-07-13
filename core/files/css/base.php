@@ -276,54 +276,93 @@ abstract class Base extends Base_File {
 	 * @param array    $placeholders   Placeholders.
 	 * @param array    $replacements   Replacements.
 	 */
-	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
-		$value = call_user_func( $value_callback, $control );
-
-		if ( null === $value || empty( $control['selectors'] ) ) {
+	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements, array $values = [] ) {
+		if ( empty( $control['selectors'] ) ) {
 			return;
 		}
 
+		$control_global_key = $control['name'];
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		$global_values = [];
+		$global_key = '';
+
+		if ( ! empty( $values['__globals__'] ) ) {
+			$global_values = $values['__globals__'];
+		}
+
+		if ( ! empty( $global_values[ $control_global_key ] ) ) {
+			$global_key = $global_values[ $control_global_key ];
+		}
+
+		if ( ! $global_key ) {
+			$value = call_user_func( $value_callback, $control );
+
+			if ( null === $value ) {
+				return;
+			}
+		}
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
-			try {
-				$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
-					$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
+			if ( $global_key ) {
+				$global_args = explode( '?id=', $global_key );
 
-					$parsed_value = '';
+				$id = $global_args[1];
 
-					if ( ! $external_control_missing ) {
-						$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
-					}
+				if ( ! empty( $control['groupType'] ) ) {
+					$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
 
-					if ( '' === $parsed_value ) {
-						if ( isset( $matches[4] ) ) {
-							$parsed_value = $matches[4];
+					$property_value = "var( --e-global-$control[groupType]-$id-$property_name )";
+				} else {
+					$property_value = "var( --e-global-$control[type]-$id )";
+				}
 
-							$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
+				$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $property_value . '$2', $css_property );
+			} else {
+				try {
+					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
-							if ( $is_string_value ) {
-								$parsed_value = $string_matches[2];
-							} elseif ( ! is_numeric( $parsed_value ) ) {
-								if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
-									return '';
-								}
+						$parsed_value = '';
 
-								$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
-							}
+						if ( ! $external_control_missing ) {
+							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
 						}
 
 						if ( '' === $parsed_value ) {
-							if ( $external_control_missing ) {
-								return '';
+							if ( isset( $matches[4] ) ) {
+								$parsed_value = $matches[4];
+
+								$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
+
+								if ( $is_string_value ) {
+									$parsed_value = $string_matches[2];
+								} elseif ( ! is_numeric( $parsed_value ) ) {
+									if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
+										return '';
+									}
+
+									$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
+								}
 							}
 
-							throw new \Exception();
-						}
-					}
+							if ( '' === $parsed_value ) {
+								if ( $external_control_missing ) {
+									return '';
+								}
 
-					return $parsed_value;
-				}, $css_property );
-			} catch ( \Exception $e ) {
-				return;
+								throw new \Exception();
+							}
+						}
+
+						return $parsed_value;
+					}, $css_property );
+				} catch ( \Exception $e ) {
+					return;
+				}
 			}
 
 			if ( ! $output_css_property ) {
@@ -600,7 +639,7 @@ abstract class Base extends Base_File {
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
-			}, $placeholders, $replacements
+			}, $placeholders, $replacements, $values
 		);
 	}
 

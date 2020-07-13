@@ -9,7 +9,6 @@
 @import "./tokens/type";
 @import "./tokens/ratio";
 @import "./tokens/opacity";
-@import "./tokens/utilities";
 @import "./tokens/z-index";
 
 // - Sort Order is A-Z
@@ -29,6 +28,7 @@
 @import "./tokens/maps/type-map";
 @import "./tokens/maps/z-index-map";
 @import "./tokens/maps/shadow-map";
+@import "./tokens/maps/atoms";
 
 // Map Semantic functions
 @import "./tokens/map-functions";

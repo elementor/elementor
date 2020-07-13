@@ -5,26 +5,44 @@
 	//custom properties
 	@include button-custom-properties;
 	// definitions
-	color: var(--button-color);
+	color: var(--button-background-color, currentColor);
 	border-radius: $button-border-radius;
-	font-size: var(--button-font-size);
+	font-size: inherit;
 	line-height: var(--button-line-height);
-	padding: var(--button-padding-y) var(--button-padding-x);
-	background-color: var(--button-background-color, transparent);
+	cursor: pointer;
 
-	&:active{
-		background-color: var(--button-active-background-color, transparent);
+	&:active {
+		--button-background-color: var(--button-active-background-color, transparent);
 	}
 
-	&:hover{
-		color: var(--button-color);
-		background-color: var(--button-hover-background-color, transparent);
+	&:hover {
+		--button-background-color: var(--button-hover-background-color);
 	}
 
 	.dark & {
 		//dark custom properties
 		// @include button-dark-custom-properties;
 	}
+
+	//  Variants
+
+	&--contained {
+		// definitions
+		color: var(--button-color);
+		padding: var(--button-padding-y) var(--button-padding-x);
+		background-color: var(--button-background-color, transparent);
+		font-size: var(--button-font-size);
+
+		&:hover {
+			color: var(--button-color);
+		}
+	}
+
+	&--outlined {
+
+	}
+
+	//  Sizes
 
 	&--sm {
 		--button-font-size: #{$button-sm-font-size};
@@ -35,6 +53,8 @@
 		--button-font-size: #{$button-lg-font-size};
 		--button-line-height: #{$button-lg-line-height};
 	}
+
+	//  Colors
 
 	&--primary {
 		--button-color: var(--button-primary-color);
@@ -57,11 +77,19 @@
 		--button-active-background-color: var(--button-cta-active-background-color);
 	}
 
+	&--link {
+		--button-color: var(--button-link-color);
+		--button-background-color: var(--button-link-background-color);
+		--button-hover-background-color: var(--button-link-hover-background-color);
+		--button-active-background-color: var(--button-link-active-background-color);
+	}
+
 	&--disabled,
 	&[disabled] {
 		--button-color: var(--button-disabled-color);
 		--button-background-color: var(--button-disabled-background-color);
 		--button-hover-background-color: var(--button-disabled-hover-background-color);
 		--button-active-background-color: var(--button-disabled-active-background-color);
+		cursor: default;
 	}
 }

@@ -56,24 +56,24 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				return;
 			}
 
-			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements );
+			const context = this.getSettings( 'context' ),
+				globalValues = context.model.get( 'settings' ).get( '__globals__' );
+
+			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements, globalValues );
 		} );
 	},
 
-	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		const context = this.getSettings( 'context' ),
-			globals = context.model.get( '__globals__' );
-
+	addControlStyleRules: function( control, values, controls, placeholders, replacements, globalValues ) {
 		let globalValue;
 
-		if ( globals ) {
+		if ( globalValues ) {
 			let controlGlobalKey = control.name;
 
 			if ( control.groupType ) {
 				controlGlobalKey = control.groupPrefix + control.groupType;
 			}
 
-			globalValue = globals[ controlGlobalKey ];
+			globalValue = globalValues[ controlGlobalKey ];
 		}
 
 		let value;
@@ -90,8 +90,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			var outputCssProperty;
 
 			if ( globalValue ) {
-				const propertyParts = cssProperty.split( ':' ),
-					{ args } = $e.data.commandExtractArgs( globalValue ),
+				const { args } = $e.data.commandExtractArgs( globalValue ),
 					id = args.query.id;
 
 				let propertyValue;
@@ -105,7 +104,9 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 					propertyValue = `var( --e-global-${ control.type }-${ id } )`;
 				}
 
-				outputCssProperty = propertyParts[ 0 ] + ':' + propertyValue;
+				// This regex handles a case where a control's selector property value includes more than one CSS selector.
+				// Example: 'selector' => 'background: {{VALUE}}; background-color: {{VALUE}};'.
+				outputCssProperty = cssProperty.replace( /(:)[^;]+(;?)/g, '$1' + propertyValue + '$2' );
 			} else {
 				try {
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {

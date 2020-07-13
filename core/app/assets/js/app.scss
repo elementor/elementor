@@ -1,6 +1,7 @@
 @import "../styles/common";
 @import "../styles/base";
 @import "../styles/components";
+@import "../styles/shame";
 
 $app-background-color: tints(200);
 $app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
@@ -45,7 +46,10 @@ $box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
 :root {
 	--h1-font-size: #{type(h, "1")};
 	--h1-margin-bottom: #{spacing(20)};
+
 	--hr-color: #{tints(300)};
+	--h1-color: #{tints(600)};
+	--h3-color: #{tints(800)};
 }
 
 .dark {
@@ -63,7 +67,7 @@ hr {
 }
 
 .elementor-app {
-	font-size: type(text, md);
+	font-size: type(text, base);
 
 	&__main {
 		display: flex;
@@ -91,9 +95,16 @@ hr {
 	}
 }
 
-.dialog-type-lightbox:not(.elementor-popup-modal) {
-	.elementor-app__main {
-		text-align: unset;
-		padding: 0;
+.video-wrapper {
+	position: relative;
+	padding-bottom: 56.25%;
+	padding-top: 25px;
+	height: 0;
+	iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
 	}
 }

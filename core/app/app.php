@@ -3,9 +3,8 @@ namespace Elementor\Core\App;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Plugin;
-use Elementor\Settings;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Utils;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -79,9 +78,10 @@ class App extends BaseApp {
 
 	protected function get_init_settings() {
 		return [
-			'menu_url'  => $this->get_base_url() . '#site-editor/promotion',
-			'assets_url'  => ELEMENTOR_ASSETS_URL,
-			'return_url'  => isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : admin_url(),
+			'menu_url' => $this->get_base_url() . '#site-editor/promotion',
+			'assets_url' => ELEMENTOR_ASSETS_URL,
+			'return_url' => isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : admin_url(),
+			'ui_theme' => SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' ),
 		];
 	}
 
