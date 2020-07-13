@@ -654,6 +654,7 @@ abstract class Base extends Base_File {
 	 */
 	private function get_style_control_value( array $control, array $values ) {
 		if ( ! empty( $values['__globals__'][ $control['name'] ] ) ) {
+			// When the control itself has no global value, but it refers to another control global value
 			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
 		}
 
