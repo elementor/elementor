@@ -47,6 +47,7 @@ $box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
 	--h1-font-size: #{type(h, "1")};
 	--h1-margin-bottom: #{spacing(20)};
 	--hr-color: #{tints(300)};
+	--h-1-color: #{tints(600)};
 }
 
 .dark {
