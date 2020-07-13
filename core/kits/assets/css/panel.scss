@@ -87,6 +87,7 @@
 
 			&-fields {
 				margin-bottom: 15px;
+				position: relative;
 			}
 
 			&-row-controls {
@@ -157,6 +158,12 @@
 		.elementor-controls-popover {
 			align-self: end;
 			margin-top: 35px;
+			top: 0;
+			width: 100%;
+
+			&:before {
+				right: 5px;
+			}
 
 			.elementor-control {
 				padding: 0 20px 15px;
