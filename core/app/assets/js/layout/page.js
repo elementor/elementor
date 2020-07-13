@@ -28,10 +28,10 @@ export default function Page( props ) {
 
 	return (
 		<div className={ props.className + userPrefersTheme }>
-			<div className="dialog-widget dialog-lightbox-widget dialog-type-buttons dialog-type-lightbox elementor-templates-modal">
-				<div className="dialog-widget-content dialog-lightbox-widget-content elementor-app">
+			<div className="eps-app__lightbox dialog-widget dialog-lightbox-widget dialog-type-buttons dialog-type-lightbox elementor-templates-modal">
+				<div className="eps-app">
 					<Header title={ props.title } buttons={ props.headerButtons } />
-					<div className="elementor-app__main">
+					<div className="eps-app__main">
 						{ getSideBar() }
 						<Content>
 							{ props.content }
