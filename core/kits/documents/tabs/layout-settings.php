@@ -18,7 +18,7 @@ class Layout_Settings extends Tab_Base {
 	}
 
 	public function get_title() {
-		return __( 'Layout Settings', 'elementor' );
+		return __( 'Layout', 'elementor' );
 	}
 
 	public function register_tab_controls() {

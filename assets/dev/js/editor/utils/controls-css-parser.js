@@ -56,29 +56,38 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				return;
 			}
 
-			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements );
+			const context = this.getSettings( 'context' ),
+				globalKeys = context.model.get( 'settings' ).get( '__globals__' );
+
+			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements, globalKeys );
 		} );
 	},
 
-	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		const context = this.getSettings( 'context' ),
-			globals = context.model.get( '__globals__' );
+	addControlStyleRules: function( control, values, controls, placeholders, replacements, globalKeys ) {
+		let globalKey;
 
-		let globalValue;
-
-		if ( globals ) {
+		if ( globalKeys ) {
 			let controlGlobalKey = control.name;
 
 			if ( control.groupType ) {
 				controlGlobalKey = control.groupPrefix + control.groupType;
 			}
 
-			globalValue = globals[ controlGlobalKey ];
+			globalKey = globalKeys[ controlGlobalKey ];
 		}
 
-		let value;
+		let value,
+			globalArgs;
 
-		if ( ! globalValue ) {
+		if ( globalKey ) {
+			globalArgs = $e.data.commandExtractArgs( globalKey );
+
+			value = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
+
+			if ( ! value.id ) {
+				return;
+			}
+		} else {
 			value = this.getStyleControlValue( control, values );
 
 			if ( undefined === value ) {
@@ -89,10 +98,8 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		_.each( control.selectors, ( cssProperty, selector ) => {
 			var outputCssProperty;
 
-			if ( globalValue ) {
-				const propertyParts = cssProperty.split( ':' ),
-					{ args } = $e.data.commandExtractArgs( globalValue ),
-					id = args.query.id;
+			if ( globalArgs ) {
+				const id = value.id;
 
 				let propertyValue;
 
@@ -105,7 +112,9 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 					propertyValue = `var( --e-global-${ control.type }-${ id } )`;
 				}
 
-				outputCssProperty = propertyParts[ 0 ] + ':' + propertyValue;
+				// This regex handles a case where a control's selector property value includes more than one CSS selector.
+				// Example: 'selector' => 'background: {{VALUE}}; background-color: {{VALUE}};'.
+				outputCssProperty = cssProperty.replace( /(:)[^;]+(;?)/g, '$1' + propertyValue + '$2' );
 			} else {
 				try {
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {

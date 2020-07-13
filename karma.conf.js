@@ -99,6 +99,7 @@ module.exports = function( config ) {
 		client: {
 			clearContext: true,
 			qunit: {
+				isDebug,
 				showUI: false,
 				testTimeout: 5000,
 			},

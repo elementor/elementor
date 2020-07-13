@@ -470,7 +470,7 @@ export default class Data extends Commands {
 
 		const fullCommandName = component.getNamespace() + '/' + command,
 			commandInstance = $e.commands.getCommandClass( fullCommandName ),
-			format = commandInstance && commandInstance.getEndpointFormat ? commandInstance.getEndpointFormat() : false;
+			format = commandInstance?.getEndpointFormat ? commandInstance.getEndpointFormat() : false;
 
 		if ( format ) {
 			$e.data.registerFormat( fullCommandName, format );

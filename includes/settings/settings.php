@@ -530,7 +530,7 @@ class Settings extends Settings_Page {
 								],
 							],
 							'unfiltered_files_upload' => [
-								'label' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
+								'label' => __( 'Enable Unfiltered File Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'std' => '',

@@ -68,6 +68,10 @@ export class Settings extends CommandHistoryDebounce {
 			container.render();
 		} );
 	}
+
+	isDataChanged() {
+		return true;
+	}
 }
 
 export default Settings;
