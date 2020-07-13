@@ -79,6 +79,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 						this.updateCurrentGlobalName( text );
 					} );
 
+				if ( ! this.ui.globalControlSelect.hasClass( 'e-global__select-box--active' ) ) {
+					this.ui.globalControlSelect.addClass( 'e-global__select-box--active' );
+				}
+
 				return;
 			} else if ( value ) {
 				// If there is a value and it is not a global, set the text to custom.
@@ -87,13 +91,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				// If there is no value, set the text as default.
 				selectBoxText = elementor.translate( 'default' );
 			}
-		}
 
-		if ( this.view.getGlobalKey() ) {
-			if ( ! this.ui.globalControlSelect.hasClass( 'e-global__select-box--active' ) ) {
-				this.ui.globalControlSelect.addClass( 'e-global__select-box--active' );
-			}
-		} else {
 			this.ui.globalControlSelect.removeClass( 'e-global__select-box--active' );
 		}
 
