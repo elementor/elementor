@@ -1,4 +1,4 @@
-export const main = () => {
+export const tests = () => {
 	require( './core/common/assets/js/api/modules/command-base.spec.js' );
 	require( './core/common/assets/js/api/modules/command-data.spec.js' );
 
@@ -31,7 +31,7 @@ export const main = () => {
 
 // export for external build.
 if ( $e?.devTools?.external && ! $e.devTools.external.tests ) {
-	$e.devTools.external.tests = main;
+	$e.devTools.external.tests = tests;
 }
 
-export default main;
+export default tests;
