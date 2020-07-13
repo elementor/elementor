@@ -13,6 +13,7 @@ export default class Button extends React.Component {
 		className: PropTypes.string,
 		url: PropTypes.string,
 		onClick: PropTypes.func,
+		variant: PropTypes.string,
 		color: PropTypes.string,
 		size: PropTypes.string,
 	};
@@ -20,6 +21,7 @@ export default class Button extends React.Component {
 	static defaultProps = {
 		id: '',
 		className: '',
+		variant: '',
 	};
 
 	getCssId() {
@@ -37,7 +39,7 @@ export default class Button extends React.Component {
 	}
 
 	getStylePropsClasses( baseClassName ) {
-		const styleProps = [ 'color', 'size' ],
+		const styleProps = [ 'color', 'size', 'variant' ],
 			stylePropClasses = [];
 
 		styleProps.forEach( ( styleProp ) => {
@@ -62,7 +64,7 @@ export default class Button extends React.Component {
 			let screenReaderText = '';
 
 			if ( this.props.hideText ) {
-				screenReaderText = <Typography className="sr-only" >{ tooltip }</Typography>;
+				screenReaderText = <span className="sr-only" >{ tooltip }</span>;
 			}
 
 			return (
@@ -76,7 +78,7 @@ export default class Button extends React.Component {
 	}
 
 	getText() {
-		return this.props.hideText ? '' : <Typography>{ this.props.text }</Typography>;
+		return this.props.hideText ? '' : <span>{ this.props.text }</span>;
 	}
 
 	render() {
@@ -92,6 +94,7 @@ export default class Button extends React.Component {
 		if ( className ) {
 			attributes.className = className;
 		}
+
 		if ( this.props.onClick ) {
 			attributes.onClick = this.props.onClick;
 		}
