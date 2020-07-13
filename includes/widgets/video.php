@@ -808,9 +808,7 @@ class Widget_Video extends Widget_Base {
 			if ( $is_static_render_mode ) {
 				// Make sure that the oembed data saved in cache.
 				Embed::get_oembed_data( $video_url, $post_id );
-			}
 
-			if ( $is_static_render_mode ) {
 				$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
 			} else {
 				$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
