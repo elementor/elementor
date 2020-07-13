@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\Screenshots;
 
 use Elementor\Utils;
@@ -146,7 +145,7 @@ class Screenshot {
 	 */
 	public function get_file_name() {
 		if ( ! $this->file_name ) {
-			$now = ( new \DateTime() )->format( 'Y-m-dTH:i:s' );
+			$now = ( new \DateTime() )->format( 'Y-m-d-H-i-s' );
 			$random_str = Utils::generate_random_string();
 
 			$this->file_name = "Elementor-post-screenshot_{$this->post_id}_{$now}_{$random_str}.png";

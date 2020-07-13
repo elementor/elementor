@@ -60,7 +60,6 @@ class Module extends BaseModule {
 	 * @throws \Exception
 	 */
 	public function ajax_save( $data ) {
-
 		if ( empty( $data['screenshot'] ) || empty( $data['post_id'] ) ) {
 			return false;
 		}

@@ -34,7 +34,7 @@ class Elementor_Test_Ajax_Action extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_false_if_there_is_no_post_id() {
-		$response = $this->module->ajax_save( [ 'screenshot' => 'adsasd' ] );
+		$response = $this->module->ajax_save( [ 'screenshot' => 'invalid-id' ] );
 
 		$this->assertFalse( $response );
 	}

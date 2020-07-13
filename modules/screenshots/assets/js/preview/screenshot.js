@@ -17,7 +17,7 @@ class Screenshot {
 				width: 1200,
 				height: 1500,
 			},
-			excludedCssUrls: [
+			excluded_css_urls: [
 				'https://kit-pro.fontawesome.com',
 			],
 			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
@@ -43,7 +43,7 @@ class Screenshot {
 		this.config = {
 			...this.config,
 			...ElementorScreenshotConfig,
-			timerLabel: `${ ElementorScreenshotConfig.post_id } - timer`,
+			timer_label: `${ ElementorScreenshotConfig.post_id } - timer`,
 		};
 
 		this.log( 'Screenshot init', 'time' );
@@ -174,7 +174,7 @@ class Screenshot {
 	loadExternalCss() {
 		const excludedUrls = [
 			this.config.home_url,
-			...this.config.excludedCssUrls,
+			...this.config.excluded_css_urls,
 		];
 
 		const notSelector = excludedUrls
@@ -371,7 +371,7 @@ class Screenshot {
 		console.log( `${ this.config.post_id } - ${ message }` );
 
 		// eslint-disable-next-line no-console
-		console[ timerMethod ]( this.config.timerLabel );
+		console[ timerMethod ]( this.config.timer_label );
 	}
 }
 
