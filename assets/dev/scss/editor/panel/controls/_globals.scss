@@ -7,19 +7,13 @@
 		border-radius: 3px 0 0 3px;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: center;
 		padding: 4px;
-		width: 97px;
+		width: $control-unit;
 		cursor: pointer;
 
-		i {
-			@include padding-start(5px);
-			@include padding-end(2px);
-		}
-
-		&-text {
-			white-space: nowrap;
-			overflow: hidden;
+		&--active i {
+			color: $editor-info;
 		}
 	}
 

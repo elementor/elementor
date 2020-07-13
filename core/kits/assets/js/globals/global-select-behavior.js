@@ -47,14 +47,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// Update the behavior's components.
 	onValueTypeChange() {
-		this.updateSelectBoxText();
+		this.updateCurrentGlobalName();
 	}
 
-	updateSelectBoxText( value ) {
-		if ( ! this.ui.globalControlSelected ) {
-			return;
-		}
-
+	updateCurrentGlobalName( value ) {
 		let selectBoxText = '';
 
 		if ( value ) {
@@ -80,7 +76,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 							text = elementor.translate( 'default' );
 						}
 
-						this.updateSelectBoxText( text );
+						this.updateCurrentGlobalName( text );
 					} );
 
 				return;
@@ -93,7 +89,21 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			}
 		}
 
-		this.ui.globalControlSelected.html( selectBoxText );
+		if ( this.view.getGlobalKey() ) {
+			if ( ! this.ui.globalControlSelect.hasClass( 'e-global__select-box--active' ) ) {
+				this.ui.globalControlSelect.addClass( 'e-global__select-box--active' );
+			}
+		} else {
+			this.ui.globalControlSelect.removeClass( 'e-global__select-box--active' );
+		}
+
+		this.globalName = selectBoxText;
+	}
+
+	getCurrentGlobalName() {
+		if ( this.globalName ) {
+			return this.globalName;
+		}
 	}
 
 	// The Global Control elements are initialized onRender and not with initialize() because their position depends
@@ -135,15 +145,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	printGlobalSelectBox() {
 		const $globalSelectBox = jQuery( '<div>', { class: 'e-global__select-box' } ),
-			$selectedGlobal = jQuery( '<span>', { class: 'e-global__select-box-text' } )
-				.html( elementor.translate( 'default' ) );
+			$selectedGlobal = jQuery( '<i>', { class: 'eicon-global-settings' } );
 
-		$globalSelectBox.append( $selectedGlobal, '<i class="eicon-caret-down"></i>' );
+		$globalSelectBox.append( $selectedGlobal );
 
 		this.$el.find( '.elementor-control-input-wrapper' ).prepend( $globalSelectBox );
 
 		this.ui.globalControlSelect = $globalSelectBox;
 		this.ui.globalControlSelected = $selectedGlobal;
+
+		this.ui.globalControlSelected.tipsy( {
+			title: () => {
+				return this.globalName;
+			},
+			offset: 7,
+			gravity: () => 's',
+		} );
 	}
 
 	initGlobalPopover() {
