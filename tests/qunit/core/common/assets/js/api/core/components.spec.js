@@ -6,7 +6,11 @@ import ComponentBaseModal from 'elementor-api/modules/component-modal-base';
  * TODO: Part to files same as core files ( mirrored ).
  */
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/core/components.js', () => {
+	QUnit.module( 'File: core/common/assets/js/api/core/components.js', ( hooks ) => {
+		hooks.beforeEach( () => {
+			$e.routes.clear();
+		} );
+
 		QUnit.test( 'Register Component', ( assert ) => {
 			const namespace = 'register',
 				Component = class extends ComponentBase {
@@ -312,8 +316,6 @@ jQuery( () => {
 			const activeComponent = Object.keys( $e.components.activeComponents ).pop();
 
 			assert.equal( activeComponent, namespace );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Ensure that run command is not activate the component', ( assert ) => {
@@ -429,8 +431,6 @@ jQuery( () => {
 
 			assert.equal( $e.routes.isPartOf( namespace ), true );
 			assert.equal( $e.routes.isPartOf( 'notPartOf' ), false );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Route with args', ( assert ) => {
@@ -465,8 +465,6 @@ jQuery( () => {
 			assert.equal( $e.routes.is( routeA ), false );
 
 			assert.equal( $e.routes.getCurrentArgs( namespace ), args );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Route with events args', ( assert ) => {
@@ -499,8 +497,6 @@ jQuery( () => {
 
 			assert.equal( onBeforeStatus, 'afterRoute' );
 			assert.equal( onAfterStatus, 'afterRoute' );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Route to tab & activate tab', ( assert ) => {
@@ -543,8 +539,6 @@ jQuery( () => {
 			assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
 
 			$fixture.remove();
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Add tab', ( assert ) => {
@@ -593,7 +587,6 @@ jQuery( () => {
 			assert.equal( $fixture.find( '[data-tab=tabB]' ).index(), newTabIndex );
 
 			$fixture.remove();
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Check if route.to is activate the component', ( assert ) => {
@@ -618,8 +611,6 @@ jQuery( () => {
 			const activeComponent = Object.keys( $e.components.activeComponents ).pop();
 
 			assert.equal( activeComponent, namespace );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Route with dependency', ( assert ) => {
@@ -673,7 +664,6 @@ jQuery( () => {
 			assert.equal( routeCount, 1 );
 			$e.route( namespace + '/routeA' );
 			assert.equal( routeCount, 1 );
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Open component dependency', ( assert ) => {
@@ -705,8 +695,6 @@ jQuery( () => {
 			assert.equal( openCount, 1 );
 
 			assert.equal( $e.routes.is( namespace + '/routeA' ), false );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Re-open component is avoided', ( assert ) => {
@@ -743,8 +731,6 @@ jQuery( () => {
 
 			$e.route( namespace + '/routeA' );
 			assert.equal( openCount, 2 );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'On close route', ( assert ) => {
@@ -776,8 +762,6 @@ jQuery( () => {
 
 			$e.route( namespace + '/routeB' );
 			assert.equal( routeStatus, 'closed' );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'On route', ( assert ) => {
@@ -805,8 +789,6 @@ jQuery( () => {
 
 			$e.route( namespace + '/routeA' );
 			assert.equal( routeStatus, 'afterRoute' );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'State: save & restore', ( assert ) => {
@@ -845,8 +827,6 @@ jQuery( () => {
 
 			assert.equal( $e.routes.getCurrent( namespace ), namespace + '/routeA' );
 			assert.equal( $e.routes.getCurrentArgs( namespace ), routeArgs );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
 		QUnit.test( 'Refresh container', ( assert ) => {
@@ -877,18 +857,16 @@ jQuery( () => {
 			$e.route( namespace + '/routeA', routeArgs );
 
 			$e.routes.refreshContainer( namespace );
-
-			$e.routes.clearCurrent( namespace );
 		} );
 
-		QUnit.module( 'Shortcuts', ( hooks ) => {
+		QUnit.module( 'Shortcuts', ( _hooks ) => {
 			const originalShortcuts = $e.shortcuts.handlers;
 
-			hooks.beforeEach( () => {
+			_hooks.beforeEach( () => {
 				$e.shortcuts.handlers = {};
 			} );
 
-			hooks.afterEach( () => {
+			_hooks.afterEach( () => {
 				$e.shortcuts.handlers = originalShortcuts;
 			} );
 
@@ -1024,8 +1002,6 @@ jQuery( () => {
 				CommonHelper.runShortcut( 90 /* z */, true );
 
 				assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
-
-				$e.routes.clearCurrent( namespace );
 			} );
 
 			QUnit.test( 'Modal component without a modal layout', ( assert ) => {
