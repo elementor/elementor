@@ -54,6 +54,7 @@ hr {
 
 .eps-app {
 	font-size: type(text, base);
+	color: var(--body-color);
 	background-color: var(--app-background-color);
 	position: absolute;
 	border-radius: 3px;
