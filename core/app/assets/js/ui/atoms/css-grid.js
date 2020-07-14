@@ -1,9 +1,19 @@
 import './css-grid.scss';
 
+const pxToRem = ( pixels ) => {
+	if ( ! pixels ) {
+		return;
+	}
+
+	return `${ pixels * 0.0625 }rem`;
+};
+
 export default function CssGrid( props ) {
 	const gridStyle = {
 		'--eps-grid-columns': props.columns,
-		'--eps-grid-spacing': props.spacing,
+		'--eps-grid-spacing': pxToRem( props.spacing ),
+		'--eps-grid-col-min-width': pxToRem( props.colMinWidth ),
+		'--eps-grid-col-max-width': pxToRem( props.colMaxWidth ),
 	};
 
 	return (
@@ -18,9 +28,11 @@ CssGrid.propTypes = {
 	children: PropTypes.any.isRequired,
 	columns: PropTypes.number,
 	spacing: PropTypes.number,
+	colMinWidth: PropTypes.number,
+	colMaxWidth: PropTypes.number,
 };
 
 CssGrid.defaultProps = {
-	columns: 4,
 	spacing: 24,
+	className: '',
 };
