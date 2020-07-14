@@ -963,7 +963,7 @@ class Element_Column extends Element_Base {
 				'class' => $column_wrap_classes,
 			],
 			'_widget_wrapper' => [
-				'class' => $is_legacy_mode_active ? [ 'elementor-widget-wrap' ] : $column_wrap_classes,
+				'class' => $is_legacy_mode_active ? 'elementor-widget-wrap' : $column_wrap_classes,
 			],
 			'_background_overlay' => [
 				'class' => [ 'elementor-background-overlay' ],
