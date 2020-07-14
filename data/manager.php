@@ -237,32 +237,6 @@ class Manager extends BaseModule {
 	}
 
 	/**
-	 * Run internal.
-	 *
-	 * @param string $endpoint
-	 * @param array  $args
-	 * @param string $method
-	 *
-	 * @return \WP_REST_Response
-	 */
-	public function run_internal( $endpoint, $args, $method ) {
-		$this->run_server();
-
-		$endpoint = '/' . Controller::ROOT_NAMESPACE . '/v' . Controller::VERSION . '/' . $endpoint;
-
-		// Run reset api.
-		$request = new \WP_REST_Request( $method, $endpoint );
-
-		if ( 'GET' === $method ) {
-			$request->set_query_params( $args );
-		} else {
-			$request->set_body_params( $args );
-		}
-
-		return rest_do_request( $request );
-	}
-
-	/**
 	 * Run processor.
 	 *
 	 * @param \Elementor\Data\Base\Processor $processor
@@ -310,7 +284,38 @@ class Manager extends BaseModule {
 	}
 
 	/**
+	 * Run request.
+	 *
+	 * Simulate rest API from within the backend.
+	 * Use args as query.
+	 *
+	 * @param string $endpoint
+	 * @param array $args
+	 * @param string $method
+	 *
+	 * @return \WP_REST_Response
+	 */
+	private function run_request( $endpoint, $args, $method ) {
+		$this->run_server();
+
+		$endpoint = '/' . Controller::ROOT_NAMESPACE . '/v' . Controller::VERSION . '/' . $endpoint;
+
+		// Run reset api.
+		$request = new \WP_REST_Request( $method, $endpoint );
+
+		if ( 'GET' === $method ) {
+			$request->set_query_params( $args );
+		} else {
+			$request->set_body_params( $args );
+		}
+
+		return rest_do_request( $request );
+	}
+
+	/**
 	 * Run endpoint.
+	 *
+	 * Wrapper for `$this->>run_request` return `$response->getData()` instead of `$response`.
 	 *
 	 * @param string $endpoint
 	 * @param array $args
@@ -319,7 +324,7 @@ class Manager extends BaseModule {
 	 * @return array
 	 */
 	public function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
-		$response = $this->run_internal( $endpoint, $args, $method );
+		$response = $this->run_request( $endpoint, $args, $method );
 
 		return $response->get_data();
 	}
@@ -360,7 +365,7 @@ class Manager extends BaseModule {
 
 		$this->run_processors( $command_processors, Processor\Before::class, [ $args ] );
 
-		$response = $this->run_internal( $endpoint, $args, $method );
+		$response = $this->run_request( $endpoint, $args, $method );
 		$result = $response->get_data();
 
 		if ( $response->is_error() ) {
