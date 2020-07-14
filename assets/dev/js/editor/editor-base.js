@@ -13,7 +13,7 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import Promotion from './utils/promotion';
-import ScreenshotsModule from 'elementor/modules/screenshots/assets/js/editor/module'
+import ScreenshotsModule from 'elementor/modules/screenshots/assets/js/editor/module';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
