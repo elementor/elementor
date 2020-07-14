@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\Screenshots\Module;
 
 use Elementor\Modules\Screenshots\Module;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Modules\Screenshots\Screenshot;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -48,7 +49,8 @@ class Elementor_Test_Ajax_Action extends Elementor_Test_Base {
 		] );
 
 		$upload_dir = wp_get_upload_dir();
-		$file_path = '/elementor/screenshots/Elementor-post-screenshot-' . $this->post->ID . '.png';
+
+		$file_path = str_replace($upload_dir['baseurl'], '', $response);
 
 		$this->assertTrue( file_exists( $upload_dir['basedir'] . $file_path ) );
 
