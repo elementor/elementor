@@ -108,6 +108,14 @@ class Local_Factory extends \WP_UnitTestCase {
 		return $this->factory()->user->create_and_get( [ 'role' => 'subscriber' ] );
 	}
 
+	/**
+	 * @return \WP_User
+	 */
+	public function get_editor_user() {
+		return $this->factory()->user->create_and_get( [ 'role' => 'editor' ] );
+	}
+
+
 	private function create_template( $template_data = [ 'title' => 'new template' ] ) {
 		$template_id = $this->factory()->post->create(
 			[
