@@ -50,9 +50,13 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	showImportView: function() {
-		this.getHeaderView().menuArea.reset();
+		const headerView = this.getHeaderView();
+
+		headerView.menuArea.reset();
 
 		this.modalContent.show( new TemplateLibraryImportView() );
+
+		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 	},
 
 	showConnectView: function( args ) {

@@ -10,7 +10,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		if ( ! this.$childViewContainer ) {
 			this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
-			this.$el.append( this.$childViewContainer );
+			this.$el.prepend( this.$childViewContainer );
 		}
 
 		return this.$childViewContainer;
