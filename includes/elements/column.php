@@ -153,7 +153,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$is_legacy_mode_active = ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) );
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
 		$main_selector_element = $is_legacy_mode_active ? 'column' : 'widget';
 		$widget_wrap_child = $is_legacy_mode_active ? ' > .elementor-widget-wrap' : '';
 
@@ -921,7 +921,7 @@ class Element_Column extends Element_Base {
 	 * @access protected
 	 */
 	protected function content_template() {
-		$is_legacy_mode_active = ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) );
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
 		$wrapper_element = $is_legacy_mode_active ? 'column' : 'widget';
 
 		?>
@@ -948,14 +948,13 @@ class Element_Column extends Element_Base {
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		$is_legacy_mode_active = ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) );
-		$legacy_space = $is_legacy_mode_active ? ' ' : '';
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
 		$wrapper_attribute_string = $is_legacy_mode_active ? '_inner_wrapper' : '_widget_wrapper';
 
 		$column_wrap_classes = $is_legacy_mode_active ? [ 'elementor-column-wrap' ] : [ 'elementor-widget-wrap' ];
 
 		if ( $this->get_children() ) {
-			$column_wrap_classes[] = $legacy_space . 'elementor-element-populated';
+			$column_wrap_classes[] = 'elementor-element-populated';
 		}
 
 		$this->add_render_attribute( [
@@ -990,7 +989,7 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		if ( ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) ) ) { ?>
+		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
 				</div>
 		<?php } ?>
 			</div>

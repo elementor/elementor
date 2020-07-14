@@ -822,7 +822,7 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_legacy_mode_active = ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) );
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
 
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>

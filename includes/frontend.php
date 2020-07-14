@@ -510,7 +510,7 @@ class Frontend extends App {
 
 		$frontend_dependencies = [];
 
-		if ( ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) ) ) {
+		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
 			// If The Markup Legacy Mode is active, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
@@ -528,7 +528,6 @@ class Frontend extends App {
 			$frontend_dependencies,
 			$has_custom_file ? null : ELEMENTOR_VERSION
 		);
-
 
 		/**
 		 * After frontend register styles.

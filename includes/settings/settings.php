@@ -541,7 +541,7 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
-							'markup_legacy_mode' => [
+							'element_wrappers_legacy_mode' => [
 								'label' => __( 'HTML Output Legacy Mode', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',

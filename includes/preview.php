@@ -253,7 +253,7 @@ class Preview extends App {
 
 		wp_enqueue_style( 'editor-preview' );
 
-		if ( ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) ) ) {
+		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
 			wp_register_style(
 				'editor-preview-legacy',
 				ELEMENTOR_ASSETS_URL . 'css/editor-preview-legacy' . $direction_suffix . $suffix . '.css',
