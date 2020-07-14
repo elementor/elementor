@@ -1,4 +1,4 @@
-// TODO: Wrong location used as `elementorModules.ForceMethodImplementation(); should be` `elementorUtils.ForceMethodImplementation()`;
+// TODO: Wrong location used as `elementorModules.ForceMethodImplementation(); should be` `elementorUtils.forceMethodImplementation()`;
 
 export class ForceMethodImplementation extends Error {
 	constructor( info = {} ) {

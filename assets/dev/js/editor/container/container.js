@@ -71,6 +71,13 @@ export default class Container extends ArgsObject {
 	dynamic;
 
 	/**
+	 * Container globals.
+	 *
+	 * @type {Backbone.Model}
+	 */
+	globals;
+
+	/**
 	 * Container label.
 	 *
 	 * @type {string}
@@ -141,6 +148,7 @@ export default class Container extends ArgsObject {
 		}
 
 		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
+		this.globals = new Backbone.Model( this.settings.get( '__globals__' ) );
 		this.panel = new Panel( this );
 
 		this.handleRepeaterChildren();
@@ -152,6 +160,38 @@ export default class Container extends ArgsObject {
 
 		this.requireArgumentInstance( 'settings', Backbone.Model, args );
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
+	}
+
+	/**
+	 * Function getGroupRelatedControls().
+	 *
+	 * Example:
+	 * Settings = { typography_typography: 'whatever', button_text_color: 'whatever' };
+	 * Result { control_name: controlValue, ... - and so on };
+	 * `Object.keys( Result ) = [ 'typography_typography', 'typography_font_family', 'typography_font_size', 'typography_font_size_tablet', 'typography_font_size_mobile', 'typography_font_weight', 'typography_text_transform', 'typography_font_style', 'typography_text_decoration', 'typography_line_height', 'typography_line_height_tablet', 'typography_line_height_mobile', 'typography_letter_spacing', 'typography_letter_spacing_tablet', 'typography_letter_spacing_mobile', 'button_text_color' ]`.
+	 *
+	 * @param {{}} settings
+	 *
+	 * @return {{}}
+	 */
+	getGroupRelatedControls( settings ) {
+		const result = {};
+
+		Object.keys( settings ).forEach( ( settingKey ) => {
+			Object.values( this.controls ).forEach( ( control ) => {
+				if ( settingKey === control.name ) {
+					result[ control.name ] = control;
+				} else if ( this.controls[ settingKey ]?.groupPrefix ) {
+					const { groupPrefix } = this.controls[ settingKey ];
+
+					if ( control.name.toString().startsWith( groupPrefix ) ) {
+						result[ control.name ] = control;
+					}
+				}
+			} );
+		} );
+
+		return result;
 	}
 
 	handleRepeaterChildren() {

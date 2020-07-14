@@ -261,10 +261,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_custom_colors = $kit->get_settings( 'custom_colors' );
 
 		// First 4 saved colors are actually the 4 system colors that shouldn't be saved as custom colors.
-		$this->assertEquals( $saved_colors[5]['value'], $kit_custom_colors[0]['color'] );
-		$this->assertEquals( $saved_colors[6]['value'], $kit_custom_colors[1]['color'] );
-		$this->assertEquals( $saved_colors[7]['value'], $kit_custom_colors[2]['color'] );
-		$this->assertEquals( $saved_colors[8]['value'], $kit_custom_colors[3]['color'] );
+		$this->assertEquals( strtoupper( $saved_colors[5]['value'] ), $kit_custom_colors[0]['color'] );
+		$this->assertEquals( strtoupper( $saved_colors[6]['value'] ), $kit_custom_colors[1]['color'] );
+		$this->assertEquals( strtoupper( $saved_colors[7]['value'] ), $kit_custom_colors[2]['color'] );
+		$this->assertEquals( strtoupper( $saved_colors[8]['value'] ), $kit_custom_colors[3]['color'] );
 
 		// Assert revisions upgraded.
 		$revisions_ids = wp_get_post_revisions( $kit_id, [
@@ -276,10 +276,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$revision_system_colors = $revision->get_settings( 'custom_colors' );
 
 			// First 4 saved colors are actually the 4 system colors that shouldn't be saved as custom colors.
-			$this->assertEquals( $saved_colors[5]['value'], $revision_system_colors[0]['color'] );
-			$this->assertEquals( $saved_colors[6]['value'], $revision_system_colors[1]['color'] );
-			$this->assertEquals( $saved_colors[7]['value'], $revision_system_colors[2]['color'] );
-			$this->assertEquals( $saved_colors[8]['value'], $revision_system_colors[3]['color'] );
+			$this->assertEquals( strtoupper( $saved_colors[5]['value'] ), $revision_system_colors[0]['color'] );
+			$this->assertEquals( strtoupper( $saved_colors[6]['value'] ), $revision_system_colors[1]['color'] );
+			$this->assertEquals( strtoupper( $saved_colors[7]['value'] ), $revision_system_colors[2]['color'] );
+			$this->assertEquals( strtoupper( $saved_colors[8]['value'] ), $revision_system_colors[3]['color'] );
 		}
 	}
 
@@ -334,10 +334,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_system_colors = $kit->get_settings( 'system_colors' );
 
 		$this->assertEquals( 'primary', $kit_system_colors[0]['_id'] );
-		$this->assertEquals( $default_colors[1]['value'], $kit_system_colors[0]['color'] );
-		$this->assertEquals( $default_colors[2]['value'], $kit_system_colors[1]['color'] );
-		$this->assertEquals( $default_colors[3]['value'], $kit_system_colors[2]['color'] );
-		$this->assertEquals( $default_colors[4]['value'], $kit_system_colors[3]['color'] );
+		$this->assertEquals( strtoupper( $default_colors[1]['value'] ), $kit_system_colors[0]['color'] );
+		$this->assertEquals( strtoupper( $default_colors[2]['value'] ), $kit_system_colors[1]['color'] );
+		$this->assertEquals( strtoupper( $default_colors[3]['value'] ), $kit_system_colors[2]['color'] );
+		$this->assertEquals( strtoupper( $default_colors[4]['value'] ), $kit_system_colors[3]['color'] );
 
 		// Assert revisions upgraded.
 		$revisions_ids = wp_get_post_revisions( $kit_id, [
@@ -348,10 +348,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$revision = Plugin::$instance->documents->get( $revision_id, false );
 			$revision_system_colors = $revision->get_settings( 'system_colors' );
 
-			$this->assertEquals( $default_colors[1]['value'], $revision_system_colors[0]['color'] );
-			$this->assertEquals( $default_colors[2]['value'], $revision_system_colors[1]['color'] );
-			$this->assertEquals( $default_colors[3]['value'], $revision_system_colors[2]['color'] );
-			$this->assertEquals( $default_colors[4]['value'], $revision_system_colors[3]['color'] );
+			$this->assertEquals( strtoupper( $default_colors[1]['value'] ), $revision_system_colors[0]['color'] );
+			$this->assertEquals( strtoupper( $default_colors[2]['value'] ), $revision_system_colors[1]['color'] );
+			$this->assertEquals( strtoupper( $default_colors[3]['value'] ), $revision_system_colors[2]['color'] );
+			$this->assertEquals( strtoupper( $default_colors[4]['value'] ), $revision_system_colors[3]['color'] );
 		}
 	}
 
