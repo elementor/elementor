@@ -141,16 +141,10 @@ class Layout_Settings extends Tab_Base {
 			'viewport_lg',
 			[
 				'label' => __( 'Tablet', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => $default_breakpoints['lg'],
-				],
-				'range' => [
-					'px' => [
-						'min' => $default_breakpoints['md'] + 1,
-						'max' => $default_breakpoints['xl'] - 1,
-					],
-				],
+				'type' => Controls_Manager::NUMBER,
+				'min' => $default_breakpoints['md'] + 1,
+				'max' => $default_breakpoints['xl'] - 1,
+				'default' => $default_breakpoints['lg'],
 				/* translators: %d: Breakpoint value */
 				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
 			]
@@ -160,16 +154,10 @@ class Layout_Settings extends Tab_Base {
 			'viewport_md',
 			[
 				'label' => __( 'Mobile', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => $default_breakpoints['md'],
-				],
-				'range' => [
-					'px' => [
-						'min' => $default_breakpoints['sm'] + 1,
-						'max' => $default_breakpoints['lg'] - 1,
-					],
-				],
+				'type' => Controls_Manager::NUMBER,
+				'min' => $default_breakpoints['sm'] + 1,
+				'max' => $default_breakpoints['lg'] - 1,
+				'default' => $default_breakpoints['md'],
 				/* translators: %d: Breakpoint value */
 				'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
 			]
