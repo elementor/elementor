@@ -65,7 +65,7 @@ export default function Import() {
 
 					<input ref={ fileInput } onChange={ onFileSelect } type="file" className="elementor-hide" />
 
-					<Button color="primary" size="sm" onClick={ () => { fileInput.current.click(); } } text={ __( 'Select File', 'elementor' ) } />
+					<Button variant="contained" color="primary" size="sm" onClick={ () => { fileInput.current.click(); } } text={ __( 'Select File', 'elementor' ) } />
 					</Message>
 				</div>
 

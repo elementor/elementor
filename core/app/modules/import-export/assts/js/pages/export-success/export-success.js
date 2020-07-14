@@ -27,7 +27,7 @@ export default function ExportSuccess() {
 				</Message>
 
 				<Footer justify="center">
-					<Button size="md" text={ __( 'Learn More', 'elementor' ) } url="/#" />
+					<Button variant="contained" size="md" text={ __( 'Learn More', 'elementor' ) } url="/#" />
 				</Footer>
 			</section>
 		</Layout>

@@ -24,7 +24,7 @@ export default function ImportProcess() {
 				</Box>
 
 				<Footer separator justify="end">
-					<Button color="disabled" text={ __( 'Cancel', 'elementor' ) } url="/import/process" />
+					<Button variant="contained" color="disabled" text={ __( 'Cancel', 'elementor' ) } url="/import/process" />
 				</Footer>
 			</Message>
 		</Layout>

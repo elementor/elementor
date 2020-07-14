@@ -15,7 +15,7 @@ export default function ImportContent() {
 				<ImportContentList />
 
 				<Footer separator justify="end">
-					<Button color="primary" text={ __( 'Import', 'elementor' ) } url="/import/process" />
+					<Button variant="contained" color="primary" text={ __( 'Import', 'elementor' ) } url="/import/process" />
 				</Footer>
 			</section>
 		</Layout>

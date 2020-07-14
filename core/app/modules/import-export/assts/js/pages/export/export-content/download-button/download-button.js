@@ -17,7 +17,7 @@ export default class DownloadButton extends React.PureComponent {
 			<ExportConsumer>
 				{
 					( context ) => (
-						<Button onClick={ () => { this.getDownloadUrl( context ) } } size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
+						<Button onClick={ () => { this.getDownloadUrl( context ) } } variant="contained" size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
 					)
 				}
 			</ExportConsumer>

@@ -45,7 +45,7 @@ export default function ImportFailed() {
 							<Button text={ __( 'Click Here', 'elementor' ) } url="/#" />
 							<span> { __( 'to try solving the issue.', 'elementor' ) }</span>
 						</Text>
-						<Button color="primary" text={ __( 'Select File', 'elementor' ) } url="/#" />
+						<Button variant="contained" color="primary" text={ __( 'Select File', 'elementor' ) } url="/#" />
 					</div>
 				</Message>
 			</Grid>

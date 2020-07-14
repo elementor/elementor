@@ -28,7 +28,7 @@ export default class KitContentList extends React.PureComponent {
 
 	getButton = () => (
 		<Grid item>
-			<Button color="cta" text={ __( 'Lear More', 'elementor' ) } url="/#" />
+			<Button variant="contained" color="cta" text={ __( 'Lear More', 'elementor' ) } url="/#" />
 		</Grid>
 	)
 

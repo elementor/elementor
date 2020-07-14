@@ -28,7 +28,7 @@ export default function ImportSuccess() {
 				</Message>
 
 				<Footer justify="center">
-					<Button size="md" text={ __( 'Click here', 'elementor' ) } url="/#" />
+					<Button variant="contained" size="md" text={ __( 'Click here', 'elementor' ) } url="/#" />
 					<Text tag="span" variant="sm">{ __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }</Text>
 				</Footer>
 			</section>
