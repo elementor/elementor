@@ -363,6 +363,8 @@ class Documents_Manager {
 			$update_title = true;
 		}
 
+		$post_data['post_title'] = esc_attr( $post_data['post_title'] );
+
 		$meta_data['_elementor_edit_mode'] = 'builder';
 
 		// Save the type as-is for plugins that hooked at `wp_insert_post`.
