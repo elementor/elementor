@@ -26,39 +26,25 @@ $box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
 
 
 @media (min-width: 1440px) {
-	.elementor-templates-modal .dialog-widget-content {
+	.eps-app {
 		max-width: 1440px;
 	}
 }
 
 @media (max-width: 1439px) {
-	.elementor-templates-modal .dialog-widget-content {
+	.eps-app {
 		max-width: 1200px;
 	}
-}
-
-.dialog-type-lightbox {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 }
 
 :root {
 	--h1-font-size: #{type(h, "1")};
 	--h1-margin-bottom: #{spacing(20)};
-
 	--hr-color: #{tints(300)};
-	--h1-color: #{tints(600)};
-	--h3-color: #{tints(800)};
 }
 
 .dark {
 	--hr-color: #{dark-tints(500)};
-}
-
-h1 {
-	font-size: var(--h1-font-size);
-	margin-bottom: var(--h1-margin-bottom);
 }
 
 hr {
@@ -66,15 +52,28 @@ hr {
 	border-bottom: 1px solid var(--hr-color);
 }
 
-.elementor-app {
+.eps-app {
 	font-size: type(text, base);
+	color: var(--body-color);
+	background-color: var(--app-background-color);
+	position: absolute;
+	border-radius: 3px;
+	box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
+	overflow: hidden;
+	font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+	width: 100%;
+
+	&__lightbox {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
 	&__main {
 		display: flex;
 		height: 920px;
 		max-height: 85vh;
 		overflow: auto;
-		background-color: var(--app-background-color);
 	}
 
 	&__sidebar {

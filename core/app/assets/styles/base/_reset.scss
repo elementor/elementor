@@ -20,14 +20,15 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 // Body
 
 body {
-  margin: 0;
-  font-family: $eps-font-family-base;
-  font-size: $eps-body-font-size;
-  font-weight: $eps-font-weight-base;
-  line-height: $eps-line-height-base;
-  color: var(--body-color);
-  text-align: left;
-  background-color: var(--body-bg);
+	margin: 0;
+	font-family: $eps-font-family-base;
+	font-size: $eps-body-font-size;
+	font-weight: $eps-font-weight-base;
+	line-height: $eps-line-height-base;
+	color: var(--body-color);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-color: var(--body-bg);
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {

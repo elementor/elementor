@@ -1,6 +1,6 @@
 export default function Content( props ) {
 	return (
-		<main className="elementor-app__content">
+		<main className="eps-app__content">
 			{ props.children }
 		</main>
 	);

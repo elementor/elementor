@@ -1,9 +1,45 @@
+$eps-modal-background-color: theme-colors(light);
+$eps-modal-width: px-to-rem(900);
+$eps-modal-overlay: rgba(theme-colors(dark), $opacity-05);
+$eps-modal-zindex: $eps-zindex-modal-backdrop;
+$eps-modal-header-type: type(text, md);
+$eps-modal-header-background-color: theme-colors(info);
+$eps-modal-header-color: theme-colors(light);
+$eps-modal-header-height: spacing(44);
+$eps-modal-header-padding: spacing(10) spacing(16);
+$eps-modal-icon-spacing: spacing(10);
+$eps-modal-body-padding: spacing(24);
+$eps-modal-close-button-spacing: spacing(16);
+$eps-modal-close-button-border: solid 1px theme-colors(light);
+$eps-tip-padding-start: spacing(12);
+$eps-tip-border-start: 3px solid theme-colors(info);
+$eps-tip-margin-bottom: spacing(30);
+
+:root {
+	--eps-modal-background-color: #{$eps-modal-background-color};
+	--eps-modal-header-background-color: #{$eps-modal-header-background-color};
+}
+
+// Dark
+
+$eps-dark-modal-background-color: dark-tints(700);
+$eps-dark-modal-header-background-color: dark-theme-colors(info);
+
+.dark {
+	--eps-modal-background-color: #{$eps-dark-modal-background-color};
+	--eps-modal-header-background-color: #{$eps-dark-modal-header-background-color};
+}
+
+/** ----------------------------------------------------------------
+	EPS Modal
+---------------------------------------------------------------- */
+
 .eps-modal {
-	width: px-to-rem(900);
-	background: theme-colors(light);
+	max-width: $eps-modal-width;
+	background: var(--eps-modal-background-color);
 
 	&__overlay {
-		background: rgba(theme-colors(dark), $opacity-03);
+		background: $eps-modal-overlay;
 		position: fixed;
 		display: flex;
 		top: 0;
@@ -12,35 +48,35 @@
 		height: 100%;
 		align-items: center;
 		justify-content: center;
-		z-index: $eps-zindex-modal-backdrop;
+		z-index: $eps-modal-zindex;
 	}
 
 	&__header {
-		font-size: $eps-body-font-size;
-		background: theme-colors(info);
-		color: theme-colors(light);
-		height: spacing(44);
-		padding: spacing(10) spacing(16);
+		font-size: $eps-modal-header-type;
+		background: var(--eps-modal-header-background-color);
+		color: $eps-modal-header-color;
+		height: $eps-modal-header-height;
+		padding: $eps-modal-header-padding;
 	}
 
 	&__icon {
-		margin-inline-end: spacing(10);
+		margin-inline-end: $eps-modal-icon-spacing;
 	}
 
 	&__body {
-		padding: spacing(24);
+		padding: $eps-modal-body-padding;
 	}
 
-	&__tip {
-		padding-inline-start: spacing(12);
-		border-inline-start: 3px solid theme-colors(info);
+	&__tip, .eps-tip {
+		padding-inline-start: $eps-tip-padding-start;
+		border-inline-start: $eps-tip-border-start;
 		&:not(:last-child) {
-			margin-bottom: spacing(30);
+			margin-bottom: $eps-tip-margin-bottom;
 		}
 	}
 
 	&__close-wrapper {
-		padding-inline-start: spacing(16);
-		border-inline-start: solid 1px theme-colors(light);
+		padding-inline-start: $eps-modal-close-button-spacing;
+		border-inline-start: $eps-modal-close-button-border;
 	}
 }

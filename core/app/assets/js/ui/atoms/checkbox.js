@@ -1,3 +1,5 @@
+import './checkbox.scss';
+
 export default function Checkbox( props ) {
 	return (
 		<input

@@ -24,9 +24,9 @@
 	*/
 
 	&__headline {
-		color: var(--card-headline-color);
-		--h1-font-size: $card-headline-font-size;
-		--h1-margin-bottom: 0;
+		--h1-color: var(--card-headline-color);
+		font-size: $card-headline-font-size;
+		margin-bottom: 0;
 		font-weight: $card-headline-font-weight;
 		flex-grow: 1;
 	}
