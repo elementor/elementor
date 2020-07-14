@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: elementor.config.markup_legacy_mode ? '> .elementor-column-wrap > .elementor-widget-wrap' : '> .elementor-widget-wrap',
+	childViewContainer: elementor.config.legacyMode.elementWrappers ? '> .elementor-column-wrap > .elementor-widget-wrap' : '> .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -43,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = elementor.config.markup_legacy_mode ? '> .elementor-column-wrap' : '> .elementor-widget-wrap';
+		ui.columnInner = elementor.config.legacyMode.elementWrappers ? '> .elementor-column-wrap' : '> .elementor-widget-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
