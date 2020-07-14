@@ -39,7 +39,7 @@ class Screenshot {
 	 * @param int $post_id
 	 * @param string $base64_image
 	 */
-	public function __construct( int $post_id, string $base64_image ) {
+	public function __construct( $post_id, $base64_image ) {
 		$this->post_id = $post_id;
 		$this->base64_image = $base64_image;
 	}
