@@ -6,8 +6,6 @@ import ModalProvider from 'elementor-app/ui/modal/modal';
 
 import { Context as TemplateTypesContext } from '../context/template-types';
 
-import './site-parts.scss';
-
 const InfoButton = ( props ) => {
 	const toggleButtonProps = {
 		text: __( 'Info', 'elementor' ),

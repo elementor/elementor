@@ -1,4 +1,5 @@
 import HeaderButtons from './header-buttons';
+import Grid from '../ui/grid/grid';
 
 export default function Header( props ) {
 	React.useEffect( () => {
@@ -6,21 +7,13 @@ export default function Header( props ) {
 	} );
 
 	return (
-		<header className="eps-app__header dialog-header dialog-lightbox-header">
-			<div className="elementor-templates-modal__header">
-				<div className="elementor-templates-modal__header__logo-area">
-					<div className="elementor-templates-modal__header__logo">
-						<span className="elementor-templates-modal__header__logo__icon-wrapper elementor-gradient-logo">
-							<i className="eicon-elementor" />
-						</span>
-						<span className="elementor-templates-modal__header__logo__title">
-							{ props.title }
-						</span>
-					</div>
-				</div>
-				<HeaderButtons buttons={ props.buttons } />
-			</div>
-		</header>
+		<Grid container alignItems="center" justify="space-between" className="eps-app__header">
+			<span className="eps-app__logo-title-wrapper">
+				<i className="eps-app__logo eicon-elementor"/>
+				<h1 className="eps-app__title">{ props.title }</h1>
+			</span>
+			<HeaderButtons buttons={ props.buttons } />
+		</Grid>
 	);
 }
 
