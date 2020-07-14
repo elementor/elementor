@@ -110,7 +110,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.onValueTypeChange();
 		}
 
-		this.$el.addClass( 'elementor-control-global' );
+		this.$el.addClass( 'e-control-global' );
 	}
 
 	toggleSelect() {

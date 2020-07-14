@@ -9,7 +9,7 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 5px;
-		width: 97px;
+		width: 100%;
 		cursor: pointer;
 
 		i {
@@ -202,6 +202,24 @@
 				padding: 2px;
 				border: 0;
 			}
+		}
+	}
+}
+
+.e-control-global {
+
+	.elementor-control-input-wrapper {
+		display: flex;
+		justify-content: flex-end;
+		max-width: $control-unit * 5;
+		width: 100%;
+	}
+
+	&.elementor-control {
+
+		// A hardened selector to override popover-toggle's inverse direction CSS (in _popover-toggle.scss)
+		.elementor-control-input-wrapper {
+			direction: $direction;
 		}
 	}
 }
