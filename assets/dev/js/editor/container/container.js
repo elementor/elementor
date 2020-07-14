@@ -241,7 +241,7 @@ export default class Container extends ArgsObject {
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
 		if ( ! rowId ) {
-			rowId = 'bc-' + elementor.helpers.getUniqueID();
+			rowId = 'bc-' + elementorCommon.helpers.getUniqueId();
 			rowSettingsModel.set( '_id', rowId );
 		}
 
