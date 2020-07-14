@@ -12,7 +12,7 @@ export default function Export() {
 
 	return (
 		<Layout type="export">
-			{ isLoading ? <Loading /> : <ExportContentList setIsLoading={ setIsLoading } /> }
+			{ isLoading ? <Loading /> : <ExportContentList isLoading={ isLoading } setIsLoading={ setIsLoading } /> }
 		</Layout>
 	);
 }

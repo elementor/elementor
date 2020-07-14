@@ -1,33 +1,12 @@
-import { Context as ExportContext } from '../../../context/export';
-
-import KitContentList from '../../../shared/kit-content-list/kit-content-list';
+import KitContent from '../../../shared/kit-content/kit-content';
 import Box from '../../../ui/box/box';
 import Footer from '../../../shared/footer/footer';
+import DownloadButton from './download-button/download-button';
+import KitNameInput from './kit-name-input/kit-name-input';
 import Heading from 'elementor-app/ui/atoms/heading';
-import Button from 'elementor-app/ui/molecules/button';
 
-export default function ExportContentList( props ) {
-	const contextData = React.useContext( ExportContext ),
-		exportData = {
-			elementor_export_kit: {
-				title: contextData.title,
-				include: contextData.includes,
-				custom_post_types: contextData.postTypes,
-			},
-		},
-		exportContent = () => {
-			const currentBaseUrl = window.location.origin + window.location.pathname + window.location.search,
-				queryConnection = currentBaseUrl.indexOf( '?' ) > -1 ? '&' : '?',
-				downloadUrl = currentBaseUrl + queryConnection + 'data=1' + window.location.hash,
-				downloadWindow = window.open( downloadUrl, 'download_window', 'toolbar=0,location=no,directories=0,status=0,scrollbars=0,resizeable=0,width=1,height=1,top=0,left=0' );
-
-			props.setIsLoading( true );
-
-			downloadWindow.addEventListener( 'beforeunload', () => {
-				props.setIsLoading( false );
-			} );
-		},
-		setTitle = ( event ) => contextData.setTitle( event.target.value );
+export default function ExportContentList() {
+	console.log( 'RE-RENDERS: ExportContentList()' );
 
 	return (
 		<section className="e-app-export">
@@ -36,7 +15,7 @@ export default function ExportContentList( props ) {
 					{ __( 'Kit Name', 'elementor' ) }
 				</Heading>
 				<Box>
-					<input type="text" onChange={ setTitle } defaultValue={contextData.title} />
+					<KitNameInput />
 				</Box>
 			</div>
 
@@ -45,11 +24,11 @@ export default function ExportContentList( props ) {
 					{ __( 'Choose What To Include In The Kit', 'elementor' ) }
 				</Heading>
 
-				<KitContentList type="export" />
+				<KitContent type="export" />
 			</div>
 
 			<Footer separator justify="end">
-				<Button onClick={ exportContent } size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
+				<DownloadButton />
 			</Footer>
 		</section>
 	);
@@ -57,6 +36,7 @@ export default function ExportContentList( props ) {
 
 ExportContentList.propTypes = {
 	classname: PropTypes.string,
+	isLoading: PropTypes.bool,
 	setIsLoading: PropTypes.func,
 };
 

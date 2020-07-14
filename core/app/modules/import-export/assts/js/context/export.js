@@ -19,17 +19,20 @@ class ExportContext extends React.Component {
 	}
 
 	setTitle = ( value ) => {
+		console.log( 'updating the title in the state' );
 		this.setState( { title: value } );
 	}
 
 	setIncludes = ( value, action ) => {
 		if ( 'add' === action ) {
 			this.setState( ( prevState ) => {
+				console.log( 'updating includes: adding value' );
 				return { includes: [ ...prevState.includes, value ] };
 			} );
 		} else if ( 'remove' === action ) {
 			this.setState( ( prevState ) => {
-				return { includes: prevState.includes.splice( prevState.includes.indexOf( value ) ) };
+				console.log( 'updating includes: removing value' );
+				return { includes: prevState.includes.filter( ( item ) => item !== value ) };
 			} );
 		}
 	}
@@ -40,9 +43,6 @@ class ExportContext extends React.Component {
 
 	setIsLoading = ( value ) => {
 		this.setState( { isLoading: value } );
-	}
-
-	componentDidMount() {
 	}
 
 	render() {
