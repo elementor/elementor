@@ -195,42 +195,43 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-		const self = this,
-			isLegacyMode = elementor.config.markup_legacy_mode;
+		const isLegacyMode = elementor.config.legacyMode.elementWrappers;
 
-		let itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		let itemsClasses = '';
 
 		if ( isLegacyMode ) {
 			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		} else {
+			itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
 		}
 
-		BaseElementView.prototype.onRender.apply( self, arguments );
+		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		self.changeChildContainerClasses();
+		this.changeChildContainerClasses();
 
-		self.changeSizeUI();
+		this.changeSizeUI();
 
-		self.$el.html5Droppable( {
+		this.$el.html5Droppable( {
 			items: itemsClasses,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
+			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: function( side, event ) {
+			onDropping: ( side, event ) => {
 				event.stopPropagation();
 
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				var newIndex = jQuery( this ).index();
+				let newIndex = jQuery( this ).index();
 
 				if ( 'bottom' === side ) {
 					newIndex++;
 				}
 
-				self.addElementFromPanel( { at: newIndex } );
+				this.addElementFromPanel( { at: newIndex } );
 			},
 		} );
 	},
