@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import Layout from '../../templates/layout';
-import ExportContentList from './export-content-list/export-content-list';
+import ExportContent from './export-content/export-content';
 import Loading from '../../shared/loading/loading';
 
 import '../import-export.scss';
@@ -12,7 +12,7 @@ export default function Export() {
 
 	return (
 		<Layout type="export">
-			{ isLoading ? <Loading /> : <ExportContentList isLoading={ isLoading } setIsLoading={ setIsLoading } /> }
+			{ isLoading ? <Loading /> : <ExportContent isLoading={ isLoading } setIsLoading={ setIsLoading } /> }
 		</Layout>
 	);
 }

@@ -5,7 +5,7 @@ import DownloadButton from './download-button/download-button';
 import KitNameInput from './kit-name-input/kit-name-input';
 import Heading from 'elementor-app/ui/atoms/heading';
 
-export default function ExportContentList() {
+export default function ExportContent() {
 	console.log( 'RE-RENDERS: ExportContentList()' );
 
 	return (
@@ -34,12 +34,12 @@ export default function ExportContentList() {
 	);
 }
 
-ExportContentList.propTypes = {
+ExportContent.propTypes = {
 	classname: PropTypes.string,
 	isLoading: PropTypes.bool,
 	setIsLoading: PropTypes.func,
 };
 
-ExportContentList.defaultProps = {
+ExportContent.defaultProps = {
 	className: '',
 };
