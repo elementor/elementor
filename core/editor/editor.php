@@ -595,7 +595,7 @@ class Editor {
 			],
 			// Legacy Mode - for backwards compatibility of older HTML markup.
 			'legacyMode' => [
-				'elementWrappers' => Plugin::instance()->is_legacy_mode_active,
+				'elementWrappers' => ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) ),
 			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),

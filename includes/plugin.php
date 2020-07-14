@@ -433,7 +433,7 @@ class Plugin {
 	 */
 	public $data_manager;
 
-	public $is_legacy_mode_active;
+	public $legacy_mode;
 
 	/**
 	 * Clone.
@@ -622,6 +622,26 @@ class Plugin {
 		$this->ajax = $this->common->get_component( 'ajax' );
 	}
 
+	public function get_legacy_mode( $mode_name = false ) {
+		if ( ! $this->legacy_mode ) {
+			// If the legacy_mode variable does not exist yet, create it here.
+			$this->legacy_mode = [
+				'element_wrappers' => get_option( 'elementor_markup_legacy_mode' ),
+			];
+		}
+
+		if ( ! $mode_name ) {
+			return $this->legacy_mode;
+		}
+
+		if ( isset( $this->legacy_mode[ $mode_name ] ) ) {
+			return $this->legacy_mode[ $mode_name ];
+		}
+
+		// If there is no legacy mode with the given mode name;
+		return false;
+	}
+
 	/**
 	 * Add custom post type support.
 	 *
@@ -670,8 +690,6 @@ class Plugin {
 
 		$this->logger = Log_Manager::instance();
 		$this->data_manager = Data_Manager::instance();
-
-		$this->is_legacy_mode_active = ! empty( get_option( 'elementor_markup_legacy_mode' ) );
 
 		Maintenance::init();
 		Compatibility::register_actions();

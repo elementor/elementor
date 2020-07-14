@@ -153,7 +153,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$is_legacy_mode_active = Plugin::instance()->is_legacy_mode_active;
+		$is_legacy_mode_active = ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) );
 		$main_selector_element = $is_legacy_mode_active ? 'column' : 'widget';
 		$widget_wrap_child = $is_legacy_mode_active ? ' > .elementor-widget-wrap' : '';
 
@@ -921,7 +921,7 @@ class Element_Column extends Element_Base {
 	 * @access protected
 	 */
 	protected function content_template() {
-		$is_legacy_mode_active = Plugin::instance()->is_legacy_mode_active;
+		$is_legacy_mode_active = ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) );
 		$wrapper_element = $is_legacy_mode_active ? 'column' : 'widget';
 
 		?>
@@ -948,7 +948,7 @@ class Element_Column extends Element_Base {
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		$is_legacy_mode_active = Plugin::instance()->is_legacy_mode_active;
+		$is_legacy_mode_active = ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) );
 		$legacy_space = $is_legacy_mode_active ? ' ' : '';
 		$wrapper_attribute_string = $is_legacy_mode_active ? '_inner_wrapper' : '_widget_wrapper';
 
@@ -990,7 +990,7 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		if ( Plugin::instance()->is_legacy_mode_active ) { ?>
+		if ( ! empty( Plugin::instance()->get_legacy_mode( 'element_wrappers' ) ) ) { ?>
 				</div>
 		<?php } ?>
 			</div>
