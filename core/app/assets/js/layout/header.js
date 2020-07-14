@@ -6,7 +6,7 @@ export default function Header( props ) {
 	} );
 
 	return (
-		<header className="elementor-app__header dialog-header dialog-lightbox-header">
+		<header className="eps-app__header dialog-header dialog-lightbox-header">
 			<div className="elementor-templates-modal__header">
 				<div className="elementor-templates-modal__header__logo-area">
 					<div className="elementor-templates-modal__header__logo">

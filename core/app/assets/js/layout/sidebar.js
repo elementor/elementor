@@ -1,6 +1,6 @@
 export default function Sidebar( props ) {
 	return (
-		<div className="elementor-app__sidebar">
+		<div className="eps-app__sidebar">
 			{ props.children }
 		</div>
 	);

@@ -2,6 +2,8 @@ import Page from 'elementor-app/layout/page';
 import Menu from '../organisms/menu';
 import TemplateTypesContext from '../context/template-types';
 
+import './site-editor.scss';
+
 export default function Layout( props ) {
 	const config = {
 		title: __( 'Site Editor', 'elementor' ),

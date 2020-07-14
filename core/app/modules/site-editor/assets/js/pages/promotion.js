@@ -1,7 +1,11 @@
 import AllPartsButton from '../organisms/all-parts-button';
+import Button from 'elementor-app/ui/molecules/button';
+import CardOverlay from 'elementor-app/ui/card/card-overlay';
+import Grid from 'elementor-app/ui/Grid/grid';
+import Heading from 'elementor-app/ui/atoms/heading';
 import Layout from '../templates/layout';
 import SiteParts from '../organisms/site-parts';
-import CardOverlay from 'elementor-app/ui/card/card-overlay';
+import Text from 'elementor-app/ui/atoms/text';
 
 import './promotion.scss';
 
@@ -13,7 +17,7 @@ export default function Promotion() {
 				<CardOverlay className="promotion-overlay">
 					<a className="promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
 						<i className="promotion-overlay__icon eicon-lock" />
-						<span className="promotion-overlay__button eps-button eps-button--sm eps-button--cta">{__( 'Get Pro', 'elementor' )}</span>
+						<Button size="sm" color="cta" variant="contained" text={__( 'Get Pro', 'elementor' )} />
 					</a>
 				</CardOverlay>
 			);
@@ -27,25 +31,22 @@ export default function Promotion() {
 	return (
 		<Layout allPartsButton={ <AllPartsButton /> } promotion>
 			<section className="site-editor__promotion">
-				<div className="page-header">
-					<div className="col-7">
-						<h1>
+				<Grid container className="page-header">
+					<Grid item sm={7} justify="end">
+						<Heading variant="h1">
 							{ __( 'Create Full Site', 'elementor' ) }
-						</h1>
-						<p>
+						</Heading>
+						<Text>
 							{ __( 'Site Editor is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce', 'elementor' ) }
-						</p>
-					</div>
-					<div className="col-5">
-						<a target="_blank" rel="noopener noreferrer" className="eps-button eps-button--sm eps-button--cta" href={ promotionUrl }>
-							{ __( 'Get Pro', 'elementor' ) }
-						</a>
-					</div>
-				</div>
+						</Text>
+					</Grid>
+					<Grid item container justify="end" alignItems="start" sm={5}>
+						<Button size="sm" color="cta" variant="contained" url={ promotionUrl }text={__( 'Get Pro', 'elementor' )} />
+					</Grid>
+				</Grid>
 				<hr className="eps-separator"/>
 				<SiteParts hoverElement={ PromotionHoverElement } />
 			</section>
 		</Layout>
 	);
 }
-
