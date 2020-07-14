@@ -83,13 +83,10 @@
 				align-items: center;
 			}
 
-			&-tool-remove {
+			&-row-tool {
 				cursor: pointer;
-
-				&,
-				&--disabled {
-					color: $editor-lightest;
-				}
+				color: $editor-lightest;
+				padding: 5px;
 			}
 		}
 
@@ -159,7 +156,7 @@
 
 		.pickr,
 		.elementor-control-popover-toggle-toggle-label {
-			@include margin-start(10px);
+			@include margin-start(5px);
 		}
 	}
 
@@ -172,4 +169,5 @@
 .e-global-colors__color-value {
 	color: $editor-lightest;
 	font-size: 10px;
+	padding: 0 5px;
 }
