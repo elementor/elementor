@@ -7,9 +7,13 @@
 	margin: 0;
 	line-height: 1;
 
-	> a {
-		color: inherit;
-		font-size: inherit;
+	&[class*="elementor-size-"] {
+
+		> a {
+			color: inherit;
+			font-size: inherit;
+			line-height: inherit;
+		}
 	}
 
 	&.elementor-size- {

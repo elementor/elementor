@@ -1,9 +1,12 @@
 <?php
 namespace Elementor\Core\Files;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Files\Assets\Json\Json_Handler;
+use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\Svg\Svg_Handler;
 use Elementor\Core\Responsive\Files\Frontend;
 use Elementor\Utils;
 
@@ -32,6 +35,9 @@ class Manager {
 	 */
 	public function __construct() {
 		$this->register_actions();
+
+		new Svg_Handler();
+		new Json_Handler();
 	}
 
 	public function get( $class, $args ) {
@@ -125,6 +131,18 @@ class Manager {
 		do_action( 'elementor/core/files/clear_cache' );
 	}
 
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', [ $this, 'ajax_unfiltered_files_upload' ] );
+	}
+
+	public function ajax_unfiltered_files_upload() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		update_option( Files_Upload_Handler::OPTION_KEY, 1 );
+	}
+
 	/**
 	 * Register actions.
 	 *
@@ -135,6 +153,10 @@ class Manager {
 	 */
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
+
+		// Ajax.
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
 	}
 }

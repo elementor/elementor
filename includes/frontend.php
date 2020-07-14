@@ -29,6 +29,9 @@ class Frontend extends App {
 	 */
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
+	const RENDER_MODE_NORMAL = 'normal';
+	const RENDER_MODE_STATIC = 'static';
+
 	/**
 	 * Post ID.
 	 *
@@ -130,6 +133,15 @@ class Frontend extends App {
 	 * @var Document[]
 	 */
 	private $admin_bar_edit_documents = [];
+
+	/**
+	 * Determine the render mode.
+	 * if equals to self::RENDER_MODE_STATIC,
+	 * all the elements should be render without any interaction.
+	 *
+	 * @var string
+	 */
+	private $render_mode = self::RENDER_MODE_NORMAL;
 
 	/**
 	 * @var string[]
@@ -462,7 +474,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.6.2'
+			'5.8.0'
 		);
 
 		wp_register_style(
@@ -1120,7 +1132,40 @@ class Frontend extends App {
 	}
 
 	public function create_action_hash( $action, array $settings = [] ) {
-		return rawurlencode( sprintf( '#elementor-action:action=%1$s&settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+		return '#' . rawurlencode( sprintf( 'elementor-action:action=%1$s&settings=%2$s', $action, base64_encode( wp_json_encode( $settings ) ) ) );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_render_mode() {
+		return $this->render_mode;
+	}
+
+	/**
+	 * @param string $render_mode
+	 *
+	 * @return bool
+	 */
+	public function is_render_mode( $render_mode ) {
+		return $this->get_render_mode() === $render_mode;
+	}
+
+	/**
+	 * @param $render_mode
+	 *
+	 * @return $this
+	 */
+	public function set_render_mode( $render_mode ) {
+		$available_render_modes = [ self::RENDER_MODE_STATIC, self::RENDER_MODE_NORMAL ];
+
+		if ( ! in_array( $render_mode, $available_render_modes, true ) ) {
+			$render_mode = self::RENDER_MODE_NORMAL;
+		}
+
+		$this->render_mode = $render_mode;
+
+		return $this;
 	}
 
 	/**
@@ -1146,11 +1191,20 @@ class Frontend extends App {
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
 				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
 				'pinIt' => __( 'Pin it', 'elementor' ),
+				'download' => __( 'Download', 'elementor' ),
 				'downloadImage' => __( 'Download image', 'elementor' ),
+				'fullscreen' => __( 'Fullscreen', 'elementor' ),
+				'zoom' => __( 'Zoom', 'elementor' ),
+				'share' => __( 'Share', 'elementor' ),
+				'playVideo' => __( 'Play Video', 'elementor' ),
+				'previous' => __( 'Previous', 'elementor' ),
+				'next' => __( 'Next', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
+			'render_mode' => $this->get_render_mode(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
@@ -1158,7 +1212,7 @@ class Frontend extends App {
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_fronend();
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 		$settings['kit'] = $kit->get_frontend_settings();
 
 		if ( is_singular() ) {

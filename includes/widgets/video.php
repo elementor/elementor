@@ -369,18 +369,6 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'color',
-			[
-				'label' => __( 'Controls Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'condition' => [
-					'video_type' => [ 'vimeo', 'dailymotion' ],
-				],
-			]
-		);
-
 		// YouTube.
 		$this->add_control(
 			'yt_privacy',
@@ -449,6 +437,18 @@ class Widget_Video extends Widget_Base {
 				'default' => 'yes',
 				'condition' => [
 					'video_type' => 'vimeo',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color',
+			[
+				'label' => __( 'Controls Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'condition' => [
+					'video_type' => [ 'vimeo', 'dailymotion' ],
 				],
 			]
 		);
@@ -810,7 +810,14 @@ class Widget_Video extends Widget_Base {
 
 			$embed_options = $this->get_embed_options();
 
-			$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
+			$is_static_render_mode = Plugin::$instance->frontend->is_render_mode( Frontend::RENDER_MODE_STATIC );
+			$post_id = get_queried_object_id();
+
+			if ( $is_static_render_mode ) {
+				$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
+			} else {
+				$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
+			}
 		}
 
 		if ( empty( $video_html ) ) {

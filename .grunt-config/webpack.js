@@ -33,6 +33,7 @@ const moduleRules = {
 							[ '@babel/plugin-proposal-class-properties' ],
 							[ '@babel/plugin-transform-runtime' ],
 							[ '@babel/plugin-transform-modules-commonjs' ],
+							[ '@babel/plugin-proposal-optional-chaining' ],
 						],
 					},
 				},

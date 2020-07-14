@@ -5,6 +5,7 @@ use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -16,6 +17,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Editor\Data;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -85,7 +87,7 @@ class Editor {
 	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
 	 */
 	public function init( $die = true ) {
-		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
+		if ( empty( $_REQUEST['post'] ) ) {
 			return;
 		}
 
@@ -339,8 +341,8 @@ class Editor {
 		$plugin = Plugin::$instance;
 
 		// Reset global variable
-		$wp_styles = new \WP_Styles(); // WPCS: override ok.
-		$wp_scripts = new \WP_Scripts(); // WPCS: override ok.
+		$wp_styles = new \WP_Styles(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_scripts = new \WP_Scripts(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
@@ -449,6 +451,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'elementor-ntc',
+			ELEMENTOR_ASSETS_URL . 'lib/e-ntc/e-ntc' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -491,6 +501,7 @@ class Editor {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
+				'elementor-ntc',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
@@ -511,7 +522,7 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$page_title_selector = Plugin::$instance->kits_manager->get_active_kit_for_fronend()->get_settings( 'page_title_selector' );
+		$page_title_selector = Plugin::$instance->kits_manager->get_current_settings( 'page_title_selector' );
 
 		$page_title_selector .= ', .elementor-page-title';
 
@@ -520,6 +531,7 @@ class Editor {
 		unset( $settings['page'] );
 
 		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
+		$kits_manager = Plugin::$instance->kits_manager;
 
 		$config = [
 			'initial_document' => $document->get_config(),
@@ -533,9 +545,18 @@ class Editor {
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
+			'globals' => [
+				'defaults_enabled' => [
+					'colors' => $kits_manager->is_custom_colors_enabled(),
+					'typography' => $kits_manager->is_custom_typography_enabled(),
+				],
+			],
 			'icons' => [
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
 				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library&utm_campaign=gopro&utm_medium=wp-dash' ),
+			],
+			'filesUpload' => [
+				'unfilteredFiles' => Files_Upload_Handler::is_enabled(),
 			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
@@ -590,9 +611,33 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
-				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
 				'saved_colors' => __( 'Saved Colors', 'elementor' ),
 				'drag_to_delete' => __( 'Drag To Delete', 'elementor' ),
+				'color_picker' => __( 'Color Picker', 'elementor' ),
+
+				// Global Styles
+				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'global_colors_title' => __( 'Global Colors', 'elementor' ),
+				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
+				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
+				'delete_global_color' => __( 'Delete Global Color', 'elementor' ),
+				'delete_global_color_info' => __( 'Please note that by deleting a global color, all of its instances will inherit their value from an unknown source', 'elementor' ),
+				'global_colors_info' => __( 'Global colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below.', 'elementor' ),
+				'typography' => __( 'Typography', 'elementor' ),
+				'new_typography_setting' => __( 'New Typography Setting', 'elementor' ),
+				'global_typography_title' => __( 'Global Typography Settings', 'elementor' ),
+				'manage_global_typography' => __( 'Manage Global Typography', 'elementor' ),
+				'create_global_typography' => __( 'Create New Global Typography', 'elementor' ),
+				'delete_global_typography' => __( 'Delete Global Typography', 'elementor' ),
+				'delete_global_typography_info' => __( 'Please note that by deleting a Global Typography setting, all of its instances will inherit their value from an unknown source', 'elementor' ),
+				'global_typography_info' => __( 'Global typography help you work smarter. Save a typography, and use it anywhere throughout your site. Access and edit your global typography by clicking the Manage button below.', 'elementor' ),
+				'default' => __( 'Default', 'elementor' ),
+				'create' => __( 'Create', 'elementor' ),
+				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
+				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
+				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
+				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Typography setting?', 'elementor' ),
+				'custom' => __( 'Custom', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
@@ -601,9 +646,11 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Global Style', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'preferences' => __( 'Preferences', 'elementor' ),
+				'site_editor' => __( 'Site Editor', 'elementor' ),
+				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'more' => __( 'More', 'elementor' ),
+				'navigate_from_page' => __( 'Navigate From Page', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
 				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
@@ -618,9 +665,9 @@ class Editor {
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
-				// Enable SVG uploads.
-				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
-				'dialog_confirm_enable_svg' => __( 'Before you enable SVG upload, note that SVG files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
+				// Enable unfiltered file uploads.
+				'enable_unfiltered_files_upload' => __( 'Enable Unfiltered File Uploads', 'elementor' ),
+				'dialog_confirm_enable_unfiltered_files_upload' => __( 'Before you enable unfiltered files upload, note that this kind of files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
 
 				// Enable fontawesome 5 if needed.
 				'enable_fa5' => __( 'Elementor\'s New Icon Library', 'elementor' ),
@@ -1058,6 +1105,8 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
+		Plugin::$instance->data_manager->register_controller( Data\Globals\Controller::class );
+
 		$this->notice_bar = new Notice_Bar();
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
