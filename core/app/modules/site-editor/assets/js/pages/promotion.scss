@@ -1,16 +1,6 @@
-// Site Part
-
-// this should emulate external packages consumption
-@import "../../../../../assets/styles/common";
-
 $promotion-overlay-icon-size: 20px;
-$promotion-overlay-icon-spacing: $eps-spacer * 2;
+$promotion-overlay-icon-spacing: spacing(16);
 $promotion-overlay-icon-color: $eps-theme-light;
-$promotion-overlay-button-text-color: $eps-theme-light;
-$promotion-overlay-button-background-color: $color-red-debian;
-$promotion-overlay-button-border-radius: $eps-radius;
-$promotion-overlay-button-padding-y: 8px;
-$promotion-overlay-button-padding-x: 16px;
 
 .promotion-overlay {
 	&__link {
@@ -27,29 +17,5 @@ $promotion-overlay-button-padding-x: 16px;
 		font-size: $promotion-overlay-icon-size;
 		color: $promotion-overlay-icon-color;
 		margin-bottom: $promotion-overlay-icon-spacing;
-	}
-
-	&__button {
-	  //placeholder
-	}
-}
-
-.site-editor__promotion {
-	.page-header {
-		display: flex;
-		margin-bottom: spacing(10)
-	}
-
-	.col-7 {
-		width: 100% / 12 * 7;
-	}
-
-	.col-5 {
-		width: 100% / 12 * 5;
-		text-align: end;
-	}
-
-	.eps-separator {
-		margin-bottom: spacing(44);
 	}
 }
