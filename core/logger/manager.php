@@ -23,8 +23,10 @@ class Manager extends BaseModule {
 		return 'log';
 	}
 
-	public function shutdown() {
-		$last_error = error_get_last();
+	public function shutdown( $last_error = null ) {
+		if ( ! $last_error ) {
+			$last_error = error_get_last();
+		}
 
 		if ( ! $last_error ) {
 			return;
@@ -48,6 +50,34 @@ class Manager extends BaseModule {
 		$item = new PHP( $last_error );
 
 		$this->get_logger()->log( $item );
+	}
+
+	public function rest_error_handler( $error_number, $error_message, $error_file, $error_line ) {
+		$error = new \WP_Error( $error_number, $error_message, [
+			'type' => $error_number,
+			'message' => $error_message,
+			'file' => $error_file,
+			'line' => $error_line,
+		] );
+
+		// Notify $e.data.
+		if ( ! headers_sent() ) {
+			header( 'Content-Type: application/json; charset=UTF-8' );
+
+			http_response_code( 500 );
+
+			echo wp_json_encode( $error->get_error_data() );
+		}
+
+		$this->shutdown( $error->get_error_data() );
+
+		exit;
+	}
+
+	public function register_rest_error_handler() {
+		if ( ! \Elementor\Data\Manager::instance()->is_internal() ) {
+			set_error_handler( [ $this, 'rest_error_handler' ], E_ALL );
+		}
 	}
 
 	public function add_system_info_report() {
@@ -209,6 +239,8 @@ class Manager extends BaseModule {
 
 	public function __construct() {
 		register_shutdown_function( [ $this, 'shutdown' ] );
+
+		add_action( 'rest_api_init', [ $this, 'register_rest_error_handler' ] );
 
 		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 80 );
 

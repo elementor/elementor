@@ -44,21 +44,6 @@ class Manager extends BaseModule {
 		return ( parent::instance() );
 	}
 
-	public function __construct() {
-		add_action( 'rest_api_init', function () {
-			// Empty server means: this is not an internal run.
-			if ( ! $this->is_internal && ! Error_Manager::is_registered() ) {
-				Error_Manager::register_handler( [ $this, 'rest_error_handler' ] );
-			}
-		} );
-	}
-
-	public function __destruct() {
-		if ( Error_Manager::is_registered() ) {
-			Error_Manager::unregister_handler();
-		}
-	}
-
 	public function get_name() {
 		return 'data-manager';
 	}
@@ -212,6 +197,9 @@ class Manager extends BaseModule {
 	 * @return \WP_REST_Server
 	 */
 	public function run_server() {
+		/**
+		 * If run_server() called means, that rest api is simulated from the backend.
+		 */
 		$this->is_internal = true;
 
 		if ( ! $this->server ) {
@@ -315,7 +303,7 @@ class Manager extends BaseModule {
 	/**
 	 * Run endpoint.
 	 *
-	 * Wrapper for `$this->>run_request` return `$response->getData()` instead of `$response`.
+	 * Wrapper for `$this->run_request` return `$response->getData()` instead of `$response`.
 	 *
 	 * @param string $endpoint
 	 * @param array $args
@@ -377,18 +365,7 @@ class Manager extends BaseModule {
 		return $result;
 	}
 
-	/**
-	 * @param \WP_Error $error
-	 */
-	public function rest_error_handler( $error ) {
-		if ( ! headers_sent() ) {
-			header( 'Content-Type: application/json; charset=UTF-8' );
-		}
-
-		http_response_code( 500 );
-
-		echo wp_json_encode( $error->get_error_data() );
-
-		exit;
+	public function is_internal() {
+		return $this->is_internal;
 	}
 }
