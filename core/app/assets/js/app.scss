@@ -10,6 +10,8 @@ $app-logo-size: px-to-rem(28);
 $app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
 $box-shadow-color: rgba(theme-colors(dark), $opacity-005);
 $app-sidebar-box-shadow: 0 2px 30px var(--box-shadow-color);
+$app-header-buttons-separator-color: tints(300);
+$app-header-buttons-color: tints(500);
 
 :root {
 	--app-background-color: #{$app-background-color};
@@ -17,6 +19,8 @@ $app-sidebar-box-shadow: 0 2px 30px var(--box-shadow-color);
 	--app-header-color: #{$app-header-color};
 	--app-sidebar-background-color: #{$app-sidebar-background-color};
 	--box-shadow-color: #{$box-shadow-color};
+	--app-header-buttons-separator-color: #{$app-header-buttons-separator-color};
+	--app-header-buttons-color: #{$app-header-buttons-color};
 }
 
 $app-dark-background-color: dark-tints(700);
@@ -24,6 +28,8 @@ $app-header-dark-background-color: dark-tints(800);
 $app-header-dark-color: dark-tints(100);
 $app-sidebar-dark-background-color: dark-tints(700);
 $box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
+$app-header-buttons-separator-dark-color: dark-tints(400);
+$app-header-buttons-dark-color: dark-tints(200);
 
 .dark {
 	--app-background-color: #{$app-dark-background-color};
@@ -31,6 +37,8 @@ $box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
 	--app-header-color: #{$app-header-dark-color};
 	--app-sidebar-background-color: #{$app-sidebar-dark-background-color};
 	--box-shadow-color: #{$box-shadow-dark-color};
+	--app-header-buttons-separator-color: #{$app-header-buttons-separator-dark-color};
+	--app-header-buttons-color: #{$app-header-buttons-dark-color};
 }
 
 
@@ -94,6 +102,28 @@ hr {
 		z-index: 1;
 		height: 50px;
 		padding: 0 spacing(16);
+	}
+
+	&__header-buttons {
+		display: flex;
+		align-items: center;
+		flex-direction: row-reverse;
+		font-size: 18px;
+	}
+
+	&__header-btn {
+		--button-background-color: var(--app-header-buttons-color);
+		padding-inline-start: spacing(16);
+		font-size: 18px;
+		line-height: spacing(20);
+
+		&:first-child:not(:last-child) {
+			border-inline-start: 1px solid var(--app-header-buttons-separator-color);
+		}
+
+		&:not(:first-child) {
+			padding-inline-end: spacing(16);
+		}
 	}
 
 	&__logo-title-wrapper {
