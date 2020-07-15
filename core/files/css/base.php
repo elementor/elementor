@@ -275,6 +275,7 @@ abstract class Base extends Base_File {
 	 * @param callable $value_callback Callback function for the value.
 	 * @param array    $placeholders   Placeholders.
 	 * @param array    $replacements   Replacements.
+	 * @param array    $values         Global Values.
 	 */
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements, array $values = [] ) {
 		if ( empty( $control['selectors'] ) ) {
