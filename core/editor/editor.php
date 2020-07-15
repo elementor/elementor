@@ -666,8 +666,8 @@ class Editor {
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
-				// Enable unfiltered files upload.
-				'enable_unfiltered_files_upload' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
+				// Enable unfiltered file uploads.
+				'enable_unfiltered_files_upload' => __( 'Enable Unfiltered File Uploads', 'elementor' ),
 				'dialog_confirm_enable_unfiltered_files_upload' => __( 'Before you enable unfiltered files upload, note that this kind of files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
 
 				// Enable fontawesome 5 if needed.
@@ -798,7 +798,6 @@ class Editor {
 				'see_it_in_action' => __( 'See it in Action', 'elementor' ),
 				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
 				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
-				'available_in_pro_v29' => __( 'Available in Pro V2.9.', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

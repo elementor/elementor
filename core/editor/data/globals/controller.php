@@ -16,4 +16,8 @@ class Controller extends Controller_Base {
 	protected function register_internal_endpoints() {
 		$this->register_endpoint( Endpoints\Index::class );
 	}
+
+	public function get_permission_callback( $request ) {
+		return current_user_can( 'edit_posts' );
+	}
 }

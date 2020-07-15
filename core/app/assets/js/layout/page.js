@@ -28,7 +28,7 @@ export default function Page( props ) {
 
 	return (
 		<div className={ props.className + userPrefersTheme }>
-			<div className="eps-app__lightbox dialog-widget dialog-lightbox-widget dialog-type-buttons dialog-type-lightbox elementor-templates-modal">
+			<div className="eps-app__lightbox">
 				<div className="eps-app">
 					<Header title={ props.title } buttons={ props.headerButtons } />
 					<div className="eps-app__main">

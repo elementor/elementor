@@ -4,24 +4,41 @@
 @import "../styles/shame";
 
 $app-background-color: tints(200);
+$app-header-background-color: theme-colors(light);
+$app-header-color: tints(800);
+$app-logo-size: px-to-rem(28);
 $app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
 $box-shadow-color: rgba(theme-colors(dark), $opacity-005);
 $app-sidebar-box-shadow: 0 2px 30px var(--box-shadow-color);
+$app-header-buttons-separator-color: tints(300);
+$app-header-buttons-color: tints(500);
 
 :root {
 	--app-background-color: #{$app-background-color};
+	--app-header-background-color: #{$app-header-background-color};
+	--app-header-color: #{$app-header-color};
 	--app-sidebar-background-color: #{$app-sidebar-background-color};
 	--box-shadow-color: #{$box-shadow-color};
+	--app-header-buttons-separator-color: #{$app-header-buttons-separator-color};
+	--app-header-buttons-color: #{$app-header-buttons-color};
 }
 
 $app-dark-background-color: dark-tints(700);
+$app-header-dark-background-color: dark-tints(800);
+$app-header-dark-color: dark-tints(100);
 $app-sidebar-dark-background-color: dark-tints(700);
 $box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
+$app-header-buttons-separator-dark-color: dark-tints(400);
+$app-header-buttons-dark-color: dark-tints(200);
 
 .dark {
 	--app-background-color: #{$app-dark-background-color};
+	--app-header-background-color: #{$app-header-dark-background-color};
+	--app-header-color: #{$app-header-dark-color};
 	--app-sidebar-background-color: #{$app-sidebar-dark-background-color};
 	--box-shadow-color: #{$box-shadow-dark-color};
+	--app-header-buttons-separator-color: #{$app-header-buttons-separator-dark-color};
+	--app-header-buttons-color: #{$app-header-buttons-dark-color};
 }
 
 
@@ -67,6 +84,74 @@ hr {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		position: fixed;
+		height: 100%;
+		width: 100%;
+		background-color: rgba(0, 0, 0, 0.8);
+		z-index: 9999;
+		bottom: 0;
+		left: 0;
+	}
+
+	&__header {
+		font-size: 15px;
+		color: var(--app-header-color);
+		background-color: var(--app-header-background-color);
+		box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+		position: relative;
+		z-index: 1;
+		height: 50px;
+		padding: 0 spacing(16);
+	}
+
+	&__header-buttons {
+		display: flex;
+		align-items: center;
+		flex-direction: row-reverse;
+		font-size: 18px;
+	}
+
+	&__header-btn {
+		--button-background-color: var(--app-header-buttons-color);
+		padding-inline-start: spacing(16);
+		font-size: 18px;
+		line-height: spacing(20);
+
+		&:first-child:not(:last-child) {
+			border-inline-start: 1px solid var(--app-header-buttons-separator-color);
+		}
+
+		&:not(:first-child) {
+			padding-inline-end: spacing(16);
+		}
+	}
+
+	&__logo-title-wrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	&__logo {
+		display: block;
+		width: $app-logo-size;
+		height: $app-logo-size;
+		line-height: $app-logo-size;
+		text-align: center;
+		font-size: calc(0.4 * #{$app-logo-size});
+		border-radius: 50%;
+		color: #fff;
+		background-color: darken( theme-colors(cta), 5% ); // Temporary Style choice made by me. (Josh)
+
+		&:not(:last-child) {
+			margin-inline-end: spacing(10);
+		}
+	}
+
+	&__title {
+		font-size: type(text,lg);
+		font-weight: 700;
+		text-transform: uppercase;
+		margin-bottom: 0;
 	}
 
 	&__main {
@@ -99,6 +184,7 @@ hr {
 	padding-bottom: 56.25%;
 	padding-top: 25px;
 	height: 0;
+
 	iframe {
 		position: absolute;
 		top: 0;
@@ -106,4 +192,8 @@ hr {
 		width: 100%;
 		height: 100%;
 	}
+}
+
+.eps-separator {
+	margin-bottom: spacing(44);
 }

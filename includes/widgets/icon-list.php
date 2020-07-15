@@ -155,7 +155,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'icon_list',
 			[
-				'label' => '',
+				'label' => __( 'Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
 				'default' => [

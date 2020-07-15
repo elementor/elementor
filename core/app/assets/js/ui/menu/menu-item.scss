@@ -1,6 +1,3 @@
-// this import should be to a @package
-@import "../../../styles/common";
-
 $menu-item-font-size: $eps-font-size-caption;
 $menu-item-line-height: $eps-line-height-sm;
 $menu-item-link-spacing: spacing(12);
@@ -20,21 +17,28 @@ $menu-item-transition: $eps-transition-duration;
 $menu-item-color: tints(600);
 $menu-item-color-hover: tints(700);
 $menu-item-background-color-active: theme-colors(light);
+$menu-item-icon-color: tints(500);
 
 :root {
 	--menu-item-color: #{$menu-item-color};
 	--menu-item-color-hover: #{$menu-item-color-hover};
 	--menu-item-background-color-active: #{$menu-item-background-color-active};
+	--menu-item-icon-color: #{$menu-item-icon-color};
+	--menu-item-action-button-color: #{$menu-item-action-button-color};
 }
 
-$menu-item-dark-color: dark-tints(200);
+$menu-item-dark-color: dark-tints(100);
 $menu-item-dark-color-hover: dark-tints(100);
 $menu-item-dark-background-color-active: dark-tints(600);
+$menu-item-icon-dark-color: dark-tints(200);
+$menu-item-action-button-dark-color: dark-tints(400);
 
 .dark {
 	--menu-item-color: #{$menu-item-dark-color};
 	--menu-item-color-hover: #{$menu-item-dark-color-hover};
 	--menu-item-background-color-active: #{$menu-item-dark-background-color-active};
+	--menu-item-icon-color: #{$menu-item-icon-dark-color};
+	--menu-item-action-button-color: #{$menu-item-action-button-dark-color};
 }
 
 .e-app-menu-item {
@@ -78,12 +82,13 @@ $menu-item-dark-background-color-active: dark-tints(600);
 
 		.icon {
 			font-size: $menu-item-icon-size;
+			color: var(--menu-item-icon-color);
 			margin-inline-end: $menu-item-link-spacing;
 		}
 	}
 
 	&__action-button {
-		color: $menu-item-action-button-color;
+		color: var(--menu-item-action-button-color);
 		opacity: var(--action-button-opacity);
 		padding: $menu-item-action-button-padding;
 		transition: $menu-item-transition;
