@@ -1,18 +1,22 @@
-//// color presets
+// TOKENS STYLES: SHADOW presets
+$eps-box-shadow-alpha-unit: $opacity-005;
+$eps-box-shadow-alpha-hover: null;
+
 $eps-box-shadow-color: $eps-theme-dark;
 $eps-box-shadow-color-hover: null;
 $eps-box-shadow-size: 0 4px 6px;
 $eps-box-shadow-size-2: 0 4px 10px;
+$eps-box-shadow-size-3: 2px 8px 23px 3px;
+
 $eps-box-shadow-size-sm: null;
+$eps-box-shadow-size-lg: 0 4px 10px;
 $eps-shadow-size-lg: null;
 
-$eps-box-shadow-alpha-unit: $opacity-005;
-$eps-box-shadow-alpha-hover: null;
-
 // shadow presets
-$eps-box-shadow: $eps-box-shadow-size rgba($eps-box-shadow-color, $eps-box-shadow-alpha-unit);
+$eps-box-shadow: $eps-box-shadow-size rgba(var(--color-box-shadow-color, #{$eps-box-shadow-color}), $eps-box-shadow-alpha-unit);
 // todo: temp values, map to semantics when semantics (use casing) is concluded.
-$eps-box-shadow-2: $eps-box-shadow-size rgba($eps-box-shadow-color, $eps-box-shadow-alpha-unit);
+$eps-box-shadow-2: $eps-box-shadow-size rgba(var(--color-box-shadow-color, #{$eps-box-shadow-color}), $eps-box-shadow-alpha-unit);
+$eps-box-shadow-3: $eps-box-shadow-size-3 rgba(var(--color-box-shadow-color, #{$eps-box-shadow-color}), 4 * $eps-box-shadow-alpha-unit);
 
 $eps-box-shadow-sm: null;
 $eps-box-shadow-lg: null;
