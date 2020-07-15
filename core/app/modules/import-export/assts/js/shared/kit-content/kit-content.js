@@ -6,7 +6,7 @@ import { Context as ImportContext } from '../../context/import';
 import KitContentList from './kit-content-list/kit-content-list';
 
 export default function KitContent( props ) {
-	const contextType = 'export' === props.type ? ExportContext : ImportContext,
+	const contextType = useMemo( () => 'export' === props.type ? ExportContext : ImportContext, [ props.type ] ),
 		context = useContext( contextType );
 
 	return useMemo( () => {

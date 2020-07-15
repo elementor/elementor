@@ -17,13 +17,21 @@ export default function DownloadButton() {
 		return currentBaseUrl + queryConnection + jQuery.param( exportData ) + window.location.hash;
 	};
 
-	console.log( 'RE-RENDER DOWNLOAD BUTTON222' );
+	console.log( 'RE-RENDER DownloadButton()' );
+
 	return (
 		<ExportConsumer>
 			{
-				( context ) => {
-					return <Button url={ getDownloadUrl( context ) } target="_blank" variant="contained" size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
-				}
+				( context ) => (
+					<Button
+						url={ getDownloadUrl( context ) }
+						target="_blank"
+						variant="contained"
+						size="lg"
+						color="primary"
+						text={ __( 'Next', 'elementor' ) }
+					/>
+				)
 			}
 		</ExportConsumer>
 	);

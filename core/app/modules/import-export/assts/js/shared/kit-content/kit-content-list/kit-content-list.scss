@@ -19,17 +19,6 @@ $kit-content-list-item-dark-background-color: dark-tints(600);
 		margin-inline-end: spacing(12);
 	}
 
-	&__title {
-		font-size: type( size, base );
-		color: tints(800);
-		line-height: 1;
-	}
-
-	&__description {
-		font-size: type( size, "13" );
-		color: tints(600);
-	}
-
 	&__pro-indication {
 		margin-inline-start: spacing(30);
 		color: theme-colors(cta);
