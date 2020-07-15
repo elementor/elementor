@@ -831,7 +831,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		if ( 'title' === $caption_type ) {
-			return $attachment_post->post_title;
+			return esc_html( $attachment_post->post_title );
 		}
 
 		return $attachment_post->post_content;
