@@ -21,7 +21,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
 	margin: 0;
-	font-family: $eps-font-family-base;
+	font-family: $eps-font-family;
 	font-size: $eps-body-font-size;
 	font-weight: $eps-font-weight-base;
 	line-height: $eps-line-height-base;
@@ -29,6 +29,10 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	background-color: var(--body-bg);
+}
+
+::selection {
+	background-color: rgba(theme-colors(cta), $opacity-05);
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -199,4 +203,11 @@ textarea {
 // Always hide an element with the `hidden` HTML attribute (from PureCSS).
 [hidden] {
   display: none !important;
+}
+
+// Opinionated resets:
+
+hr {
+	border: 0 none;
+	border-bottom: 1px solid var(--hr-color);
 }
