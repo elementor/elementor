@@ -28,6 +28,11 @@ class Manager extends BaseModule {
 	private $server;
 
 	/**
+	 * @var array
+	 */
+	private $cache = [];
+
+	/**
 	 * Loaded controllers.
 	 *
 	 * @var \Elementor\Data\Base\Controller[]
@@ -50,6 +55,20 @@ class Manager extends BaseModule {
 	 */
 	public function get_controllers() {
 		return $this->controllers;
+	}
+
+	private function get_cache( $key ) {
+		$result = null;
+
+		if ( isset( $this->cache[ $key ] ) ) {
+			$result = $this->cache[ $key ];
+		}
+
+		return $result;
+	}
+
+	private function set_cache( $key, $value ) {
+		$this->cache[ $key ] = $value;
 	}
 
 	/**
@@ -212,6 +231,7 @@ class Manager extends BaseModule {
 		$this->controllers = [];
 		$this->command_formats = [];
 		$this->server = false;
+		$this->cache = [];
 		$wp_rest_server = false;
 	}
 
@@ -319,11 +339,19 @@ class Manager extends BaseModule {
 	 * @return array processed result
 	 */
 	public function run( $command, $args = [], $method = 'GET' ) {
+		$key = crc32( $command . '-' . wp_json_encode( $args ) . '-' . $method );
+		$cache = $this->get_cache( $key );
+
+		if ( $cache ) {
+			return $cache;
+		}
+
 		$this->run_server();
 
 		$controller_instance = $this->find_controller_instance( $command );
 
 		if ( ! $controller_instance ) {
+			$this->set_cache( $key, [] );
 			return [];
 		}
 
@@ -343,10 +371,13 @@ class Manager extends BaseModule {
 		$result = $response->get_data();
 
 		if ( $response->is_error() ) {
+			$this->set_cache( $key, [] );
 			return [];
 		}
 
 		$result = $this->run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
+
+		$this->set_cache( $key, $result );
 
 		return $result;
 	}
