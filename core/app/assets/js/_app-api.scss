@@ -12,7 +12,7 @@ $app-main-height: 920px;
 $app-main-max-height: 85vh;
 
 $app-header-background-color: theme-colors(light);
-$app-header-box-shadow: 0 0 8px rgba(var(--color-dark), 0.1);
+$app-header-box-shadow: 0 0 8px rgba(var(--dark), 0.1);
 $app-header-height: px-to-rem(50);
 $app-header-color: tints(800);
 $app-header-font-size: type(size, "15");
