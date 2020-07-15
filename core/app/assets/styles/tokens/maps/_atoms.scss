@@ -70,10 +70,10 @@ $eps-atoms: (
 			),
 			3:(
 				font-size: $eps-h-3-font-size,
-				line-height:$eps-line-height-base,
+				line-height: $eps-line-height-base,
 				color: var(--h3-color),
 				margin-top: 0,
-				margin-bottom: 2 * $eps-spacer,
+				margin-bottom: $eps-spacer,
 				font-familiy:null,
 				font-weight:$eps-font-weight-medium,
 				font-style: null,

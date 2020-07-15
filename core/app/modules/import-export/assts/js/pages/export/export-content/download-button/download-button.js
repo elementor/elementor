@@ -7,7 +7,7 @@ export default function DownloadButton() {
 		const currentBaseUrl = window.location.origin + window.location.pathname + window.location.search,
 			queryConnection = currentBaseUrl.indexOf( '?' ) > -1 ? '&' : '?',
 			exportData = {
-				elementor_export: {
+				elementor_export_kit: {
 					title: data.title,
 					include: data.includes,
 					custom_post_types: data.postTypes,

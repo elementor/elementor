@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import List from '../../../ui/list/list';
 import Box from '../../../ui/box/box';
-import KitContentSelect from './kit-content-select/kit-content-select';
+import PostTypesSelect from './post-types-select/post-types-select';
+import TemplatesFeatures from './templates-features/templates-features';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
@@ -32,26 +33,6 @@ export default function KitContentList( props ) {
 			<strong>{ __( 'Pro Features', 'elementor' ) }</strong>
 		</Text>
 	),
-	getFeatures = ( features ) => {
-		const lockedFeatures = features.locked?.length ? <span className="kit-content-list__locked-features">{ features.locked.join( ', ' ) }</span> : null;
-		let openFeatures = features.open?.join( ', ' );
-
-		if ( openFeatures && lockedFeatures ) {
-			openFeatures += ', ';
-		}
-
-		return (
-			<>
-				{ openFeatures }
-				{ lockedFeatures }
-			</>
-		);
-	},
-	getContentSelection = () => (
-		<Grid container justify="center" className="kit-content-selection-container">
-			<KitContentSelect options={ postsList } />
-		</Grid>
-	),
 	setIncludes	= ( event, includeType ) => {
 		const action = event.target.checked ? 'add' : 'remove';
 
@@ -73,7 +54,7 @@ export default function KitContentList( props ) {
 
 										<Grid item>
 											<Text variant="sm" tag="span" className="kit-content-list__description">
-												{ item.data.description || ( item.data.features && getFeatures( item.data.features ) ) }
+												{ item.data.description || ( item.data.features && <TemplatesFeatures features={ item.data.features } /> ) }
 											</Text>
 
 											{ item.data.notice ? getProFeaturesIndication() : null }
@@ -82,7 +63,7 @@ export default function KitContentList( props ) {
 								</Grid>
 
 								{ item.data.notice ? getNotice( item.data.notice ) : null }
-								{ ( 'content' === item.type && 'export' === props.type ) ? getContentSelection() : null }
+								{ ( 'content' === item.type && 'export' === props.type ) ? <PostTypesSelect options={ postsList }/> : null }
 							</Grid>
 
 							{ item.data.notice ? getButton() : null }
