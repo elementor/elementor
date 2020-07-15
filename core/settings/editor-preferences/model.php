@@ -65,6 +65,23 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
+			'panel_width',
+			[
+				'label' => __( 'Panel Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 200,
+						'max' => 680,
+					],
+				],
+				'default' => [
+					'size' => 300,
+				],
+			]
+		);
+
+		$this->add_control(
 			'edit_buttons',
 			[
 				'label' => __( 'Editing Handles', 'elementor' ),
