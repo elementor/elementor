@@ -1,84 +1,25 @@
 @import "../styles/common";
+@import "./app-api";
 @import "../styles/base";
 @import "../styles/components";
 @import "../styles/shame";
 
-$app-background-color: tints(200);
-$app-header-background-color: theme-colors(light);
-$app-header-color: tints(800);
-$app-logo-size: px-to-rem(28);
-$app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
-$box-shadow-color: rgba(theme-colors(dark), $opacity-005);
-$app-sidebar-box-shadow: 0 2px 30px var(--box-shadow-color);
-$app-header-buttons-separator-color: tints(300);
-$app-header-buttons-color: tints(500);
-
-:root {
-	--app-background-color: #{$app-background-color};
-	--app-header-background-color: #{$app-header-background-color};
-	--app-header-color: #{$app-header-color};
-	--app-sidebar-background-color: #{$app-sidebar-background-color};
-	--box-shadow-color: #{$box-shadow-color};
-	--app-header-buttons-separator-color: #{$app-header-buttons-separator-color};
-	--app-header-buttons-color: #{$app-header-buttons-color};
-}
-
-$app-dark-background-color: dark-tints(700);
-$app-header-dark-background-color: dark-tints(800);
-$app-header-dark-color: dark-tints(100);
-$app-sidebar-dark-background-color: dark-tints(700);
-$box-shadow-dark-color: rgba(theme-colors(dark), $opacity-015);
-$app-header-buttons-separator-dark-color: dark-tints(400);
-$app-header-buttons-dark-color: dark-tints(200);
-
-.dark {
-	--app-background-color: #{$app-dark-background-color};
-	--app-header-background-color: #{$app-header-dark-background-color};
-	--app-header-color: #{$app-header-dark-color};
-	--app-sidebar-background-color: #{$app-sidebar-dark-background-color};
-	--box-shadow-color: #{$box-shadow-dark-color};
-	--app-header-buttons-separator-color: #{$app-header-buttons-separator-dark-color};
-	--app-header-buttons-color: #{$app-header-buttons-dark-color};
-}
-
-
-@media (min-width: 1440px) {
-	.eps-app {
-		max-width: 1440px;
-	}
-}
-
-@media (max-width: 1439px) {
-	.eps-app {
-		max-width: 1200px;
-	}
-}
-
-:root {
-	--h1-font-size: #{type(h, "1")};
-	--h1-margin-bottom: #{spacing(20)};
-	--hr-color: #{tints(300)};
-}
-
-.dark {
-	--hr-color: #{dark-tints(500)};
-}
-
-hr {
-	border: 0 none;
-	border-bottom: 1px solid var(--hr-color);
-}
 
 .eps-app {
-	font-size: type(text, base);
+	font-size: $spp-font-size;
 	color: var(--body-color);
 	background-color: var(--app-background-color);
 	position: absolute;
-	border-radius: 3px;
-	box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
+	border-radius: $app-radius;
+	box-shadow: $eps-box-shadow-size-3 var(--app-box-shadow-color);
 	overflow: hidden;
-	font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+	font-family: $eps-font-family; // todo: we have body definition for font familiy,consider removing
 	width: 100%;
+	max-width: $app-max-width;
+
+	@media (min-width: #{map-get($breakpoints, xl)}) {
+		max-width: $app-max-width-min-xl;
+	}
 
 	&__lightbox {
 		display: flex;
@@ -87,42 +28,42 @@ hr {
 		position: fixed;
 		height: 100%;
 		width: 100%;
-		background-color: rgba(0, 0, 0, 0.8);
-		z-index: 9999;
+		background-color: var(--app-lightbox-background-color);
+		z-index: $app-lightbox-z-index;
 		bottom: 0;
 		left: 0;
 	}
 
 	&__header {
-		font-size: 15px;
+		font-size: $app-header-font-size;
 		color: var(--app-header-color);
 		background-color: var(--app-header-background-color);
-		box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+		box-shadow: $app-header-box-shadow;
 		position: relative;
 		z-index: 1;
-		height: 50px;
-		padding: 0 spacing(16);
+		height: $app-header-height;
+		padding: $app-header-padding-y $spp-header-padding-x;
 	}
 
 	&__header-buttons {
 		display: flex;
 		align-items: center;
 		flex-direction: row-reverse;
-		font-size: 18px;
+		font-size: $app-header-buttons-font-size;
 	}
 
 	&__header-btn {
 		--button-background-color: var(--app-header-buttons-color);
-		padding-inline-start: spacing(16);
-		font-size: 18px;
-		line-height: spacing(20);
+		padding-inline-start: $app-header-btn-padding-x;
+		font-size: $app-header-btn-font-size;
+		line-height: $app-header-btn-line-height;
 
 		&:first-child:not(:last-child) {
 			border-inline-start: 1px solid var(--app-header-buttons-separator-color);
 		}
 
 		&:not(:first-child) {
-			padding-inline-end: spacing(16);
+			padding-inline-end: $app-header-btn-padding-x;
 		}
 	}
 
@@ -131,41 +72,43 @@ hr {
 		align-items: center;
 	}
 
+	//todo: consider refactoring as a stand alone block.
 	&__logo {
 		display: block;
 		width: $app-logo-size;
 		height: $app-logo-size;
 		line-height: $app-logo-size;
 		text-align: center;
-		font-size: calc(0.4 * #{$app-logo-size});
-		border-radius: 50%;
-		color: #fff;
-		background-color: darken( theme-colors(cta), 5% ); // Temporary Style choice made by me. (Josh)
+		font-size: $app-logo-font-size;
+		border-radius: $app-logo-radius;
+		color: $app-logo-color;
+		background-color: $app-logo-background-color;
 
 		&:not(:last-child) {
-			margin-inline-end: spacing(10);
+			margin-inline-end: $app-logo-margin-end;
 		}
 	}
 
+	//todo: consider refactoring as logo element.
 	&__title {
-		font-size: type(text,lg);
-		font-weight: 700;
+		font-size: $app-title-font-size;
+		font-weight: $app-title-font-weight;
 		text-transform: uppercase;
 		margin-bottom: 0;
 	}
 
 	&__main {
 		display: flex;
-		height: 920px;
-		max-height: 85vh;
+		height: $app-main-height;
+		max-height: $app-main-max-height;
 		overflow: auto;
 	}
 
 	&__sidebar {
 		background-color: var(--app-sidebar-background-color);
-		padding-top: spacing(20);
-		width: 30%;
-		max-width: 275px;
+		padding-top: $app-sidebar-padding-top;
+		width: $app-sidebar-width;
+		max-width: $app-sidebar-max-width;
 		flex-grow: 0;
 		overflow: auto;
 		box-shadow: $app-sidebar-box-shadow;
@@ -173,27 +116,8 @@ hr {
 
 	&__content {
 		flex-grow: 1;
-		padding: 2.8125rem;
+		padding: $app-content-padding;
 		height: 100%;
 		overflow: scroll;
 	}
-}
-
-.video-wrapper {
-	position: relative;
-	padding-bottom: 56.25%;
-	padding-top: 25px;
-	height: 0;
-
-	iframe {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-}
-
-.eps-separator {
-	margin-bottom: spacing(44);
 }
