@@ -9,6 +9,8 @@ class Manager {
 
 	const FORMAT_VERSION = '1.0';
 
+	const EXPORT_TRIGGER_KEY = 'elementor_export_kit';
+
 	/**
 	 * @var Export
 	 */
@@ -19,7 +21,7 @@ class Manager {
 	}
 
 	public function on_elementor_init() {
-		if ( ! isset( $_GET['elementor_export_kit'] ) ) {
+		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
 			return;
 		}
 
