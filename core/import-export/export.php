@@ -38,7 +38,7 @@ class Export extends Base_Object {
 	}
 
 	protected function get_init_settings() {
-		return $_GET['elementor_export'];
+		return $_GET[ Manager::EXPORT_TRIGGER_KEY ];
 	}
 
 	public function get_current_archive_path() {

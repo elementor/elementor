@@ -28,6 +28,6 @@ export default class Component extends ComponentBase {
 
 	onElementorLoaded() {
 		// Add globals to cache before render.
-		$e.data.get( 'globals/index' );
+		$e.data.get( 'globals/index' ).then( () => elementor.trigger( 'globals:loaded' ) );
 	}
 }

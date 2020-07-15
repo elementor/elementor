@@ -7,6 +7,11 @@ import GlobalControlSelect from './globals/global-select-behavior';
 import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-parser';
 
 export default class extends elementorModules.editor.utils.Module {
+	loadingTriggers = {
+		preview: false,
+		globals: false,
+	};
+
 	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: panelView,
@@ -80,6 +85,10 @@ export default class extends elementorModules.editor.utils.Module {
 
 	// Use the Controls CSS Parser to add the global defaults CSS to the page.
 	renderGlobalsDefaultCSS() {
+		if ( ! this.loadingTriggers.preview || ! this.loadingTriggers.globals ) {
+			return;
+		}
+
 		const cssParser = new ControlsCSSParser( {
 			id: 'e-global-style',
 		} ),
@@ -164,7 +173,17 @@ export default class extends elementorModules.editor.utils.Module {
 
 			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
 
-			elementor.on( 'preview:loaded', () => this.renderGlobalsDefaultCSS() );
+			elementor.on( 'preview:loaded', () => {
+				this.loadingTriggers.preview = true;
+
+				this.renderGlobalsDefaultCSS();
+			} );
+
+			elementor.on( 'globals:loaded', () => {
+				this.loadingTriggers.globals = true;
+
+				this.renderGlobalsDefaultCSS();
+			} );
 
 			elementor.on( 'panel:init', () => {
 				this.addPanelPages();
