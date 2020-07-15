@@ -107,7 +107,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		}
 
 		if ( $this->get_options( 'popover' ) ) {
-			$this->start_popover( $element );
+			$this->start_popover( $element, $user_args );
 		}
 
 		foreach ( $filtered_fields as $field_id => $field_args ) {
@@ -538,10 +538,14 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @access private
 	 * @param Controls_Stack $element Element.
 	 */
-	private function start_popover( Controls_Stack $element ) {
+	private function start_popover( Controls_Stack $element, $user_args ) {
 		$popover_options = $this->get_options( 'popover' );
 
 		$settings = $this->get_args();
+
+		if ( isset( $user_args['scheme'] ) ) {
+			$settings['global']['default'] = $element->convert_scheme_to_default_global( $user_args );
+		}
 
 		if ( isset( $settings['global'] ) ) {
 			if ( ! isset( $popover_options['settings']['global'] ) ) {

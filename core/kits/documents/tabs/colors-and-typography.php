@@ -35,6 +35,34 @@ class Colors_And_Typography extends Tab_Base {
 		return __( 'Colors & Typography', 'elementor' );
 	}
 
+	/**
+	 * Map Scheme To Global
+	 *
+	 * Convert a given scheme value to its corresponding default global value
+	 *
+	 * @param string $type 'color'/'typography'
+	 * @param $value
+	 * @return mixed
+	 */
+	public static function map_scheme_to_global( $type, $value ) {
+		$schemes_to_globals_map = [
+			'color' => [
+				'1' => self::COLOR_PRIMARY,
+				'2' => self::COLOR_SECONDARY,
+				'3' => self::COLOR_TEXT,
+				'4' => self::COLOR_ACCENT,
+			],
+			'typography' => [
+				'1' => self::TYPOGRAPHY_PRIMARY,
+				'2' => self::TYPOGRAPHY_SECONDARY,
+				'3' => self::TYPOGRAPHY_TEXT,
+				'4' => self::TYPOGRAPHY_ACCENT,
+			],
+		];
+
+		return $schemes_to_globals_map[ $type ][ $value ];
+	}
+
 	public function register_tab_controls() {
 		$this->start_controls_section(
 			'section_global_colors',
