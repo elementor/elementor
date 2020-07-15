@@ -66,7 +66,13 @@ class Manager extends BaseModule {
 
 			http_response_code( 500 );
 
-			echo wp_json_encode( $error->get_error_data() );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				echo wp_json_encode( $error->get_error_data() );
+			} else {
+				echo wp_json_encode( [
+					'message' => 'Server error, see Elementor => System Info',
+				] );
+			}
 		}
 
 		$this->shutdown( $error->get_error_data() );
