@@ -138,7 +138,7 @@ class Control_Media extends Control_Base_Multiple {
 					</div>
 					<div class="elementor-control-media-area elementor-fit-aspect-ratio">
 						<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
-							<i class="eicon-trash"></i>
+							<i class="eicon-trash-o"></i>
 						</div>
 						<# if( 'image' === data.media_type ) { #>
 						<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>

@@ -2,8 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 
-// TODO: Use autoloader.
-
 use Elementor\Core\Editor\Data;
 
 class Test_Index extends Base  {

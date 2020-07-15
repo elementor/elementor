@@ -1144,6 +1144,55 @@ abstract class Document extends Controls_Stack {
 		parent::__construct( $data );
 	}
 
+	public function get_export_data() {
+		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
+			$element_data['id'] = Utils::generate_random_string();
+
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
+			if ( ! $element ) {
+				return null;
+			}
+
+			return $this->process_element_export_import_content( $element, 'on_export' );
+		} );
+
+		return [
+			'content' => $content,
+			'settings' => $this->get_data( 'settings' ),
+		];
+	}
+
+	private function process_element_export_import_content( Controls_Stack $element, $method ) {
+		$element_data = $element->get_data();
+
+		if ( method_exists( $element, $method ) ) {
+			// TODO: Use the internal element data without parameters.
+			$element_data = $element->{$method}( $element_data );
+		}
+
+		foreach ( $element->get_controls() as $control ) {
+			$control_class = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			// If the control isn't exist, like a plugin that creates the control but deactivated.
+			if ( ! $control_class ) {
+				return $element_data;
+			}
+
+			if ( method_exists( $control_class, $method ) ) {
+				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
+			}
+
+			// On Export, check if the control has an argument 'export' => false.
+			if ( 'on_export' === $method && isset( $control['export'] ) && false === $control['export'] ) {
+				unset( $element_data['settings'][ $control['name'] ] );
+			}
+		}
+
+		return $element_data;
+	}
+
 	protected function get_remote_library_config() {
 		$config = [
 			'type' => 'block',

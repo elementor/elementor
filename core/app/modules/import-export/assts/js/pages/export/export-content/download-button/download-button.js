@@ -2,25 +2,29 @@ import { ExportConsumer } from '../../../../context/export';
 
 import Button from 'elementor-app/ui/molecules/button';
 
-export default class DownloadButton extends React.PureComponent {
-	getDownloadUrl = ( data ) => {
+export default function DownloadButton() {
+	const getDownloadUrl = ( data ) => {
 		const currentBaseUrl = window.location.origin + window.location.pathname + window.location.search,
-			queryConnection = currentBaseUrl.indexOf( '?' ) > -1 ? '&' : '?';
+			queryConnection = currentBaseUrl.indexOf( '?' ) > -1 ? '&' : '?',
+			exportData = {
+				elementor_export: {
+					title: data.title,
+					include: data.includes,
+					custom_post_types: data.postTypes,
+				},
+			};
 
-		console.log( 'data', data );
+		return currentBaseUrl + queryConnection + jQuery.param( exportData ) + window.location.hash;
+	};
 
-		return currentBaseUrl + queryConnection + 'data=1' + window.location.hash;
-	}
-
-	render() {
-		return (
-			<ExportConsumer>
-				{
-					( context ) => (
-						<Button onClick={ () => { this.getDownloadUrl( context ) } } variant="contained" size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
-					)
+	console.log( 'RE-RENDER DOWNLOAD BUTTON222' );
+	return (
+		<ExportConsumer>
+			{
+				( context ) => {
+					return <Button url={ getDownloadUrl( context ) } target="_blank" variant="contained" size="lg" color="primary" text={ __( 'Next', 'elementor' ) } />
 				}
-			</ExportConsumer>
-		);
-	}
+			}
+		</ExportConsumer>
+	);
 }

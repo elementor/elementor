@@ -35,13 +35,16 @@
 	width: 100% !important;
 	outline: none;
 	z-index: $editor-layer;
+	font-size: 12px;
 
 	&.select2-container--default {
 
 		.select2-selection--single {
+			height: 27px;
 
 			.select2-selection__rendered {
 				color: $editor-dark;
+				line-height: 27px;
 			}
 		}
 
@@ -84,10 +87,6 @@
 	&--single {
 		height: $control-unit;
 	}
-}
-
-.select2-selection__rendered {
-	line-height: $control-unit;
 }
 
 .select2-selection__arrow {

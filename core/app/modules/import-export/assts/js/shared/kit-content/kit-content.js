@@ -1,15 +1,19 @@
-import Consumer from './consumer/consumer';
+import { useContext, useMemo } from 'react';
+
+import { Context as ExportContext } from '../../context/export';
+import { Context as ImportContext } from '../../context/import';
 
 import KitContentList from './kit-content-list/kit-content-list';
 
 export default function KitContent( props ) {
-	console.log( 'RE-RENDERS: KitContent() - as a function component' );
+	const contextType = 'export' === props.type ? ExportContext : ImportContext,
+		context = useContext( contextType );
 
-	return (
-		<Consumer type={ props.type }>
-			{ ( context ) => <KitContentList type={ props.type } setIncludes={ context.setIncludes } /> }
-		</Consumer>
-	);
+	return useMemo( () => {
+		return (
+			<KitContentList type={ props.type } setIncludes={ context.setIncludes } />
+		);
+	}, [] );
 }
 
 KitContent.propTypes = {

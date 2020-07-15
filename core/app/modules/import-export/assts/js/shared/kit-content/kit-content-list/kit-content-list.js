@@ -11,7 +11,7 @@ import kitContentData from '../kit-content-data/kit-content-data';
 
 import './kit-content-list.scss';
 
-export default class KitContentList extends React.PureComponent {
+export default class KitContentList extends React.Component {
 	static propTypes = {
 		classname: PropTypes.string,
 		type: PropTypes.string.isRequired,

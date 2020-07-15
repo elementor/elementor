@@ -41,7 +41,7 @@ abstract class Files_Upload_Handler {
 		/**
 		 * Allow Unfiltered Files Upload.
 		 *
-		 * Determines weather to enable unfiltered files upload.
+		 * Determines whether to enable unfiltered file uploads.
 		 *
 		 * @since 3.0.0
 		 *
