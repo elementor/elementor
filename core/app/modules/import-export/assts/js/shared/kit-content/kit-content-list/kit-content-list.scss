@@ -13,6 +13,7 @@ $kit-content-list-item-dark-background-color: dark-tints(600);
 	&__item {
 		padding: spacing(20);
 		background: var( --kit-content-list-item-background-color );
+		border-bottom: 1px solid tints(200);
 	}
 
 	&__checkbox {
@@ -25,6 +26,6 @@ $kit-content-list-item-dark-background-color: dark-tints(600);
 	}
 
 	&__locked-features {
-		color: tints(400);
+		color: tints(500);
 	}
 }

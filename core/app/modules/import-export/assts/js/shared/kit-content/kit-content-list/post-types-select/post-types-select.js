@@ -11,16 +11,23 @@ export default function PostTypesSelect( props ) {
 			const selectedOptions = [ ...event.target.selectedOptions ].map( ( option ) => option.value );
 
 			contextData.setPostTypes( selectedOptions );
+		},
+		getpostTypesOptions = () => {
+			const customPostTypes = elementorAppConfig[ 'import-export' ]?.custom_post_types;
+
+			if ( ! customPostTypes ) {
+				return;
+			}
+
+			return Object.entries( customPostTypes ).map( ( item, index ) => (
+				<option key={index} value={ item[ 0 ] }>{ item[ 1 ] }</option>
+			) );
 		};
 
 	return (
 		<Grid container justify="center" className="kit-content-selection-container">
 			<select onChange={ setPostTypes } className="kit-content-select" multiple>
-				{
-					Object.entries( elementorAppConfig[ 'import-export' ].custom_post_types ).map( ( item, index ) => (
-						<option key={index} value={ item[ 0 ] }>{ item[ 1 ] }</option>
-					) )
-				}
+				{ getpostTypesOptions() }
 			</select>
 		</Grid>
 	);

@@ -1,5 +1,4 @@
 import KitContent from '../../../shared/kit-content/kit-content';
-import Box from '../../../ui/box/box';
 import KitNameInput from './kit-name-input/kit-name-input';
 import Heading from 'elementor-app/ui/atoms/heading';
 
@@ -12,9 +11,8 @@ export default function ExportContent() {
 				<Heading variant="h2" tag="h1">
 					{ __( 'Kit Name', 'elementor' ) }
 				</Heading>
-				<Box>
-					<KitNameInput />
-				</Box>
+
+				<KitNameInput />
 			</div>
 
 			<div className="e-app-export__kit-content">
