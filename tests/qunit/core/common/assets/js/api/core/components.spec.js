@@ -6,7 +6,11 @@ import ComponentBaseModal from 'elementor-api/modules/component-modal-base';
  * TODO: Part to files same as core files ( mirrored ).
  */
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/core/components.js', () => {
+	QUnit.module( 'File: core/common/assets/js/api/core/components.js', ( hooks ) => {
+		hooks.beforeEach( () => {
+			$e.routes.clear();
+		} );
+
 		QUnit.test( 'Register Component', ( assert ) => {
 			const namespace = 'register',
 				Component = class extends ComponentBase {
@@ -855,14 +859,14 @@ jQuery( () => {
 			$e.routes.refreshContainer( namespace );
 		} );
 
-		QUnit.module( 'Shortcuts', ( hooks ) => {
+		QUnit.module( 'Shortcuts', ( _hooks ) => {
 			const originalShortcuts = $e.shortcuts.handlers;
 
-			hooks.beforeEach( () => {
+			_hooks.beforeEach( () => {
 				$e.shortcuts.handlers = {};
 			} );
 
-			hooks.afterEach( () => {
+			_hooks.afterEach( () => {
 				$e.shortcuts.handlers = originalShortcuts;
 			} );
 
