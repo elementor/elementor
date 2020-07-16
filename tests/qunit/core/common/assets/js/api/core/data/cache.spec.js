@@ -195,7 +195,7 @@ jQuery( () => {
 
 			$e.data.cache.set( requestData, TEST_OBJECT );
 
-			const newObject = elementor.helpers.cloneObject( TEST_OBJECT );
+			const newObject = elementorCommon.helpers.cloneObject( TEST_OBJECT );
 
 			newObject.complexObject.anotherObject.key = randomValue;
 			newObject.complexObject.simpleKeyValue = randomValue;
@@ -249,7 +249,7 @@ jQuery( () => {
 
 			requestData.endpoint = component.getNamespace();
 
-			const newObject = elementor.helpers.cloneObject( TEST_OBJECT );
+			const newObject = elementorCommon.helpers.cloneObject( TEST_OBJECT );
 
 			newObject.complexObject.anotherObject.key = randomValue;
 			newObject.complexObject.simpleKeyValue = randomValue;

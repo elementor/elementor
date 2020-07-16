@@ -32,7 +32,7 @@ export default class RepeaterHelper {
 	}
 
 	static settings( eContainer, name, index, settings, options ) {
-		const container = eContainer.children[ index ];
+		const container = eContainer.repeaters[ name ].children[ index ];
 
 		$e.run( 'document/elements/settings', {
 			container,
@@ -43,7 +43,7 @@ export default class RepeaterHelper {
 
 	static multiSettings( eContainers, name, index, settings, options ) {
 		eContainers = eContainers.map( ( eContainer ) => {
-			return eContainer.children[ index ];
+			return eContainer.repeaters[ name ].children[ index ];
 		} );
 
 		$e.run( 'document/elements/settings', {
