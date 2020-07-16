@@ -33,7 +33,7 @@ class Root extends Base {
 			'version' => Manager::FORMAT_VERSION,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'created' => date( 'Y-m-d H:i:s' ),
-			'title' => $this->exporter->get_settings( 'include' ),
+			'title' => $this->exporter->get_settings( 'title' ),
 			'description' => $kit_post->post_excerpt,
 			'image' => get_the_post_thumbnail_url( $kit_post ),
 		];
