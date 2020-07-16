@@ -50,13 +50,13 @@ class Test_Controller extends Elementor_Test_Base {
 	public function test_get_namespace() {
 		$controller = new ControllerSimple();
 
-		$this->assertEquals( ControllerBase::ROOT_NAMESPACE . '/v' . ControllerBase::VERSION, $controller->get_namespace() );
+		$this->assertEquals( Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION, $controller->get_namespace() );
 	}
 
 	public function test_get_reset_base() {
 		$controller = new ControllerSimple();
 
-		$this->assertEquals( ControllerBase::REST_BASE . $controller->get_name(), $controller->get_rest_base() );
+		$this->assertEquals( Manager::REST_BASE . $controller->get_name(), $controller->get_rest_base() );
 	}
 
 	public function test_get_controller_route() {

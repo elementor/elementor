@@ -12,6 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Manager extends BaseModule {
+	const ROOT_NAMESPACE = 'elementor';
+
+	const REST_BASE = '';
+
+	const VERSION = '1';
 
 	/**
 	 * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
@@ -227,7 +232,7 @@ class Manager extends BaseModule {
 	public function run_internal( $endpoint, $args, $method ) {
 		$this->run_server();
 
-		$endpoint = '/' . Controller::ROOT_NAMESPACE . '/v' . Controller::VERSION . '/' . $endpoint;
+		$endpoint = '/' . self::ROOT_NAMESPACE . '/v' . self::VERSION . '/' . $endpoint;
 
 		// Run reset api.
 		$request = new \WP_REST_Request( $method, $endpoint );
