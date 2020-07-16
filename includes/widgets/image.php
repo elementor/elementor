@@ -354,12 +354,14 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Object Fit', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'condition' => [
+					'height[size]!' => '',
+				],
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					'fill' => __( 'Fill', 'elementor' ),
 					'cover' => __( 'Cover', 'elementor' ),
 					'contain' => __( 'Contain', 'elementor' ),
-					'scale-down' => __( 'Scale Down', 'elementor' ),
 				],
 				'default' => '',
 				'selectors' => [
