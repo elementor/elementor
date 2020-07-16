@@ -58,13 +58,7 @@ class Manager extends BaseModule {
 	}
 
 	private function get_cache( $key ) {
-		$result = null;
-
-		if ( isset( $this->cache[ $key ] ) ) {
-			$result = $this->cache[ $key ];
-		}
-
-		return $result;
+		return self::get_items( $this->cache, $key );
 	}
 
 	private function set_cache( $key, $value ) {
