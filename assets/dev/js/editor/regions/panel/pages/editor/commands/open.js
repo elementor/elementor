@@ -2,6 +2,8 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Open extends CommandBase {
 	apply( args ) {
+		elementor.helpers.scrollToView( args.view.$el, 0 );
+
 		if ( ! this.component.setDefaultTab( args ) ) {
 			elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
 
