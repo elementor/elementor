@@ -34,7 +34,7 @@ class Export extends Base_Object {
 	}
 
 	private function get_archive_file_name() {
-		return __DIR__ . $this->get_archive_relative_file_name();
+		return __DIR__ . DIRECTORY_SEPARATOR . $this->get_archive_relative_file_name();
 	}
 
 	protected function get_init_settings() {
@@ -46,7 +46,11 @@ class Export extends Base_Object {
 	}
 
 	public function set_current_archive_path( $path ) {
-		$this->current_archive_path = $path . '/';
+		if ( $path ) {
+			$path .= DIRECTORY_SEPARATOR;
+		}
+
+		$this->current_archive_path = $path;
 	}
 
 	public function add_json_file( $name, $content, $json_flags = null ) {
