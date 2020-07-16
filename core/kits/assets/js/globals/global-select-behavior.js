@@ -17,7 +17,12 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerEvents() {
 		this.ui.globalPreviewsContainer.on( 'click', '.e-global__preview-item', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
-		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
+
+		// TODO: Find better solution.
+		if ( this.ui.globalControlSelect ) {
+			this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
+		}
+
 		this.ui.manageGlobalsButton.on( 'click', () => {
 			const args = {
 				route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
