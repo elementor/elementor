@@ -16,6 +16,9 @@ export const Draft = () => {
 			const testStatuses = [ 'publish', 'private' ],
 				document = elementor.documents.getCurrent();
 
+			// Since draft: will reject if 'document.editor.isChanged == false'.
+			$e.internal( 'document/save/set-is-modified', { status: true } );
+
 			for ( const status of testStatuses ) {
 				document.container.settings.set( 'post_status', status );
 
