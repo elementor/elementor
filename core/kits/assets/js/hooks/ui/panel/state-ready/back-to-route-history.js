@@ -24,6 +24,9 @@ export class KitBackToRouteHistory extends $e.modules.hookUI.After {
 		 * To handle the the issue, request globals manually, then back to route.
 		 */
 		$e.data.get( 'globals/index' ).then( () => {
+			// Since the container comes from history, its not connected element.
+			historyBeforeOpen.container = historyBeforeOpen.container.lookup();
+
 			$e.run( 'panel/editor/open', {
 				view: historyBeforeOpen.container.view,
 				model: historyBeforeOpen.container.model,
