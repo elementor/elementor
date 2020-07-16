@@ -16,7 +16,14 @@ export class KitBackToRouteHistory extends $e.modules.hookUI.After {
 
 		delete $e.routes.temp;
 
-		setTimeout( () => {
+		/**
+		 * TODO: Find better solution.
+		 * Since cache deleted after leaving globals.
+		 * Cover issue: When back to route, it back to style, it causes the UI ask for styles separately and since,
+		 * Cache deleted, it asks the remote ( $e.data ) for specific colors/typography endpoints and causes a delay in global select box.
+		 * To handle the the issue, request globals manually, then back to route.
+		 */
+		$e.data.get( 'globals/index' ).then( () => {
 			$e.run( 'panel/editor/open', {
 				view: historyBeforeOpen.container.view,
 				model: historyBeforeOpen.container.model,
