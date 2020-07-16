@@ -21,7 +21,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
 	margin: 0;
-	font-family: $eps-font-family-base;
+	font-family: $eps-font-family;
 	font-size: $eps-body-font-size;
 	font-weight: $eps-font-weight-base;
 	line-height: $eps-line-height-base;
@@ -203,4 +203,11 @@ textarea {
 // Always hide an element with the `hidden` HTML attribute (from PureCSS).
 [hidden] {
   display: none !important;
+}
+
+// Opinionated resets:
+
+hr {
+	border: 0 none;
+	border-bottom: 1px solid var(--hr-color);
 }
