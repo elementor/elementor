@@ -6,8 +6,6 @@ import ModalProvider from 'elementor-app/ui/modal/modal';
 
 import { Context as TemplateTypesContext } from '../context/template-types';
 
-import './site-parts.scss';
-
 const InfoButton = ( props ) => {
 	const toggleButtonProps = {
 		text: __( 'Info', 'elementor' ),
@@ -52,7 +50,7 @@ export default function SiteParts( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext );
 
 	return (
-		<CssGrid className="site-editor__site-parts">
+		<CssGrid className="site-editor__site-parts" colMinWidth={200} spacing={24}>
 			{ (
 				templateTypes.map( ( item ) => (
 					<SitePart className="site-part" actionButton={ <InfoButton { ...item.tooltip_data } /> } thumbnail={ item.urls.thumbnail } key={ item.type } { ...item }>

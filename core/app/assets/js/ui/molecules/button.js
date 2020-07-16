@@ -48,13 +48,9 @@ export default class Button extends React.Component {
 			stylePropClasses = [];
 
 		styleProps.forEach( ( styleProp ) => {
-			let stylePropValue = this.props[ styleProp ];
+			const stylePropValue = this.props[ styleProp ];
 
 			if ( stylePropValue ) {
-				if ( this.props.ghost ) {
-					stylePropValue += '-ghost';
-				}
-
 				stylePropClasses.push( baseClassName + '--' + stylePropValue );
 			}
 		} );

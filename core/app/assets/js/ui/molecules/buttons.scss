@@ -1,12 +1,11 @@
 @import "buttons-api";
 
 .#{$eps-prefix}button {
-	display: inline-block;
+	display: inline-flex;
 	//custom properties
 	@include button-custom-properties;
 	// definitions
 	color: var(--button-background-color, currentColor);
-	border-radius: $button-border-radius;
 	font-size: inherit;
 	line-height: var(--button-line-height);
 	cursor: pointer;
@@ -39,7 +38,7 @@
 	}
 
 	&--outlined {
-
+		border-radius: $button-border-radius;
 	}
 
 	//  Sizes

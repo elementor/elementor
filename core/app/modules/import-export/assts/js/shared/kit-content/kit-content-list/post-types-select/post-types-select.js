@@ -17,7 +17,9 @@ export default function PostTypesSelect( props ) {
 		<Grid container justify="center" className="kit-content-selection-container">
 			<select onChange={ setPostTypes } className="kit-content-select" multiple>
 				{
-					props.options.map( ( option, index ) => <option key={ index }>{ option }</option> )
+					Object.entries( elementorAppConfig[ 'import-export' ].custom_post_types ).map( ( item, index ) => (
+						<option key={index} value={ item[ 0 ] }>{ item[ 1 ] }</option>
+					) )
 				}
 			</select>
 		</Grid>

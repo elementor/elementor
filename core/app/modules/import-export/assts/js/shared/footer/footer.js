@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import Grid from 'elementor-app/ui/grid/grid';
 
 import './footer.scss';
@@ -11,14 +10,10 @@ export default function Footer( props ) {
 		classes.push( baseClassName + '__separator' );
 	}
 
-	console.log( 'RE-RENDERS: Footer()' );
-
 	return (
-		<footer className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
-			<Grid container justify={ props.justify }>
-				{ props.children }
-			</Grid>
-		</footer>
+		<Grid container { ...props } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+			{ props.children }
+		</Grid>
 	);
 }
 

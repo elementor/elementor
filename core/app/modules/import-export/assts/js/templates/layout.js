@@ -7,6 +7,7 @@ export default function Layout( props ) {
 		title: 'import' === props.type ? __( 'Import Kit', 'elementor' ) : __( 'Export Kit', 'elementor' ),
 		headerButtons: props.headerButtons,
 		content: props.children,
+		footer: props.footer,
 	},
 	Context = 'import' === props.type ? ImportContext : ExportContext;
 
@@ -21,6 +22,7 @@ Layout.propTypes = {
 	type: PropTypes.string.isRequired,
 	headerButtons: PropTypes.arrayOf( PropTypes.object ),
 	children: PropTypes.object.isRequired,
+	footer: PropTypes.object,
 };
 
 Layout.defaultProps = {

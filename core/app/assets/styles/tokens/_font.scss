@@ -12,7 +12,11 @@ $font-src-roboto: 'roboto';
 // generic, check if exist
 $font-family-monospace: monospace;
 $font-family-roboto: Roboto;
+$font-family-arial: Arial;
+$font-family-helvetica: Helvetica;
+$font-family-verdana: Verdana;
 
 $eps-font-family-code: $font-family-monospace;
-$eps-font-family-fallback: $font-family-roboto;
-$eps-font-family-base: $font-family-roboto, $eps-font-family-fallback;
+$eps-font-family-fallback: sans-serif;
+$eps-font-family-base: $font-family-roboto, $font-family-arial, $font-family-helvetica, $font-family-verdana;
+$eps-font-family: $eps-font-family-base, $eps-font-family-fallback;

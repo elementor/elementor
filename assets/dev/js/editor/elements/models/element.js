@@ -189,7 +189,7 @@ ElementModel = Backbone.Model.extend( {
 	clone: function() {
 		var newModel = new this.constructor( elementorCommon.helpers.cloneObject( this.attributes ) );
 
-		newModel.set( 'id', elementor.helpers.getUniqueID() );
+		newModel.set( 'id', elementorCommon.helpers.getUniqueId() );
 
 		newModel.setHtmlCache( this.getHtmlCache() );
 

@@ -29,6 +29,7 @@
 		margin-bottom: 0;
 		font-weight: $card-headline-font-weight;
 		flex-grow: 1;
+		@include text-truncate();
 	}
 
 	&__body {

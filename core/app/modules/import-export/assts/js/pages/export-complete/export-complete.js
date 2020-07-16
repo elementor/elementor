@@ -5,9 +5,9 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
-import './export-success.scss';
+import './export-complete.scss';
 
-export default function ExportSuccess() {
+export default function ExportComplete() {
 	return (
 		<Layout type="export">
 			<section className="e-app-export-success">

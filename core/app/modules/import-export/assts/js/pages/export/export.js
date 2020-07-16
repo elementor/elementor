@@ -1,19 +1,31 @@
 import { useState } from 'react';
+import { Redirect } from '@reach/router';
 
 import Layout from '../../templates/layout';
 import ExportContent from './export-content/export-content';
-import Loading from '../../shared/loading/loading';
+import DownloadButton from './download-button/download-button';
+import Footer from '../../shared/footer/footer';
 
 import '../import-export.scss';
 import './export.scss';
 
 export default function Export() {
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [ isDownloading, setIsDownloading ] = useState( false ),
+		getFooter = () => {
+			if ( isDownloading ) {
+				return;
+			}
+
+			return (
+				<Footer separator justify="end">
+					<DownloadButton setIsDownloading={ setIsDownloading } />
+				</Footer>
+			);
+		};
 
 	return (
-		<Layout type="export">
-			{ isLoading ? <Loading /> : <ExportContent isLoading={ isLoading } setIsLoading={ setIsLoading } /> }
+		<Layout type="export" footer={ getFooter() }>
+			{ isDownloading ? <Redirect to="/export/complete" noThrow /> : <ExportContent /> }
 		</Layout>
 	);
 }
-

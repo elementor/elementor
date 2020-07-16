@@ -7,7 +7,7 @@ import ImportProcess from './pages/import-process/import-process';
 import ImportSuccess from './pages/import-success/import-success';
 
 import Export from './pages/export/export';
-import ExportSuccess from './pages/export-success/export-success';
+import ExportComplete from './pages/export-complete/export-complete';
 
 export default class ImportExport {
 	routes = [
@@ -37,8 +37,8 @@ export default class ImportExport {
 			component: Export,
 		},
 		{
-			path: '/export/success',
-			component: ExportSuccess,
+			path: '/export/complete',
+			component: ExportComplete,
 		},
 	];
 
