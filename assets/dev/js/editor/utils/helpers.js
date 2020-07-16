@@ -293,7 +293,9 @@ module.exports = {
 	},
 
 	getUniqueID() {
-		return Math.random().toString( 16 ).substr( 2, 7 );
+		elementorCommon.helpers.softDeprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
+
+		return elementorCommon.helpers.getUniqueId();
 	},
 
 	getSocialNetworkNameFromIcon( iconsControl, fallbackControl, toUpperCase = false, migrated = null, withIcon = false ) {

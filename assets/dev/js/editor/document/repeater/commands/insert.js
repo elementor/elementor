@@ -25,7 +25,7 @@ export class Insert extends CommandHistory {
 		super.initialize( args );
 
 		if ( ! args.model._id ) {
-			args.model._id = elementor.helpers.getUniqueID();
+			args.model._id = elementorCommon.helpers.getUniqueId();
 		}
 	}
 
