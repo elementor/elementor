@@ -3,7 +3,7 @@
 
 $app-background-color: tints(200);
 $spp-font-size: type(text, base);
-$app-box-shadow-color: rgba(var(--box-shadow-color, #{$eps-box-shadow-color}), 4 * $eps-box-shadow-alpha-unit);
+$app-box-shadow-color: $eps-box-shadow-size-3;
 $app-radius: $eps-radius;
 $app-max-width: 1200px;
 $app-max-width-min-xl: #{map-get($breakpoints, xl)};
@@ -12,7 +12,7 @@ $app-main-height: 920px;
 $app-main-max-height: 85vh;
 
 $app-header-background-color: theme-colors(light);
-$app-header-box-shadow: 0 0 8px rgba(var(--dark), 0.1);
+$app-header-box-shadow: $eps-box-shadow-2;
 $app-header-height: px-to-rem(50);
 $app-header-color: tints(800);
 $app-header-font-size: type(size, "15");
@@ -23,7 +23,7 @@ $app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
 $app-sidebar-padding-top: spacing(20);
 $app-sidebar-width: 30%;
 $app-sidebar-max-width: px-to-rem(275);
-$app-sidebar-box-shadow: 0 2px 30px var(--box-shadow-color);
+$app-sidebar-box-shadow: $eps-box-shadow-3;
 
 $app-logo-size: px-to-rem(28);
 $app-logo-font-size: calc(0.4 * #{$app-logo-size});

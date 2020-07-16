@@ -1,7 +1,7 @@
 @import "buttons-api";
 
 .#{$eps-prefix}button {
-	display: inline-block;
+	display: inline-flex;
 	//custom properties
 	@include button-custom-properties;
 	// definitions
@@ -37,6 +37,7 @@
 		}
 	}
 
+	&--contained,
 	&--outlined {
 		border-radius: $button-border-radius;
 	}

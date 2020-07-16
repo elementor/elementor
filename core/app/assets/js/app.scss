@@ -11,7 +11,7 @@
 	background-color: var(--app-background-color);
 	position: absolute;
 	border-radius: $app-radius;
-	box-shadow: $eps-box-shadow-size-3 var(--app-box-shadow-color);
+	box-shadow: $eps-box-shadow-3;
 	overflow: hidden;
 	font-family: $eps-font-family; // todo: we have body definition for font familiy,consider removing
 	width: 100%;
@@ -67,6 +67,7 @@
 		}
 	}
 
+
 	&__logo-title-wrapper {
 		display: flex;
 		align-items: center;
@@ -101,7 +102,7 @@
 		display: flex;
 		height: $app-main-height;
 		max-height: $app-main-max-height;
-		overflow: auto;
+		overflow-y: auto;
 	}
 
 	&__sidebar {
