@@ -276,7 +276,7 @@ export default class Container extends ArgsObject {
 			return this;
 		}
 
-		if ( this !== this.renderer && this.renderer.view?.isDisconnected() ) {
+		if ( this !== this.renderer && this.renderer.view?.isDisconnected && this.renderer.view.isDisconnected() ) {
 			this.renderer = this.renderer.lookup();
 		}
 
