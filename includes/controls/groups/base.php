@@ -107,7 +107,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		}
 
 		if ( $this->get_options( 'popover' ) ) {
-			$this->start_popover( $element, $user_args );
+			$this->start_popover( $element );
 		}
 
 		foreach ( $filtered_fields as $field_id => $field_args ) {
@@ -396,6 +396,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 */
 	protected function init_args( $args ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
+
+		if ( isset( $this->args['scheme'] ) ) {
+			$this->args['global']['default'] = Plugin::$instance->kits_manager->convert_scheme_to_global( $this->args['scheme'] );
+		}
 	}
 
 	/**
@@ -538,14 +542,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @access private
 	 * @param Controls_Stack $element Element.
 	 */
-	private function start_popover( Controls_Stack $element, $user_args ) {
+	private function start_popover( Controls_Stack $element ) {
 		$popover_options = $this->get_options( 'popover' );
 
 		$settings = $this->get_args();
-
-		if ( isset( $user_args['scheme'] ) ) {
-			$settings['global']['default'] = $element->convert_scheme_to_default_global( $user_args );
-		}
 
 		if ( isset( $settings['global'] ) ) {
 			if ( ! isset( $popover_options['settings']['global'] ) ) {

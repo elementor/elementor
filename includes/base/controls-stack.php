@@ -373,7 +373,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		if ( isset( $args['scheme'] ) ) {
 			$args['global'] = [
-				'default' => $this->convert_scheme_to_default_global( $args ),
+				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args['scheme'] ),
 			];
 
 			unset( $args['scheme'] );
@@ -714,28 +714,6 @@ abstract class Controls_Stack extends Base_Object {
 				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
 			}
 		);
-	}
-
-	/**
-	 * Convert Scheme to Default Global
-	 *
-	 * If a control has a scheme property, convert it to a default Global.
-	 *
-	 * @param $args - control/group control args
-	 * @return array - control/group control args
-	 * @since 3.0.0
-	 * @access public
-	 *
-	 */
-	public function convert_scheme_to_default_global( $args ) {
-		if ( isset( $args['scheme']['type'] ) && isset( $args['scheme']['value'] ) ) {
-			$default_global_value = Colors_And_Typography::map_scheme_to_global( $args['scheme']['type'], $args['scheme']['value'] );
-		} else {
-			// Typography control 'scheme' properties usually only include the string with the typography value ('1'-'4').
-			$default_global_value = Colors_And_Typography::map_scheme_to_global( 'typography', $args['scheme'] );
-		}
-
-		return $default_global_value;
 	}
 
 	/**
