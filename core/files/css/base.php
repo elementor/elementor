@@ -276,54 +276,87 @@ abstract class Base extends Base_File {
 	 * @param array    $placeholders   Placeholders.
 	 * @param array    $replacements   Replacements.
 	 */
-	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
-		$value = call_user_func( $value_callback, $control );
-
-		if ( null === $value || empty( $control['selectors'] ) ) {
+	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements, array $values = [] ) {
+		if ( empty( $control['selectors'] ) ) {
 			return;
 		}
 
+		$control_global_key = $control['name'];
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		$global_values = [];
+		$global_key = '';
+
+		if ( ! empty( $values['__globals__'] ) ) {
+			$global_values = $values['__globals__'];
+		}
+
+		if ( ! empty( $global_values[ $control_global_key ] ) ) {
+			$global_key = $global_values[ $control_global_key ];
+		}
+
+		if ( ! $global_key ) {
+			$value = call_user_func( $value_callback, $control );
+
+			if ( null === $value ) {
+				return;
+			}
+		}
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
-			try {
-				$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
-					$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
+			$output_css_property = '';
 
-					$parsed_value = '';
+			if ( $global_key ) {
+				$selector_global_value = $this->get_selector_global_value( $control, $global_key );
 
-					if ( ! $external_control_missing ) {
-						$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
-					}
+				if ( $selector_global_value ) {
+					$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $selector_global_value . '$2', $css_property );
+				}
+			} else {
+				try {
+					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
-					if ( '' === $parsed_value ) {
-						if ( isset( $matches[4] ) ) {
-							$parsed_value = $matches[4];
+						$parsed_value = '';
 
-							$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
-
-							if ( $is_string_value ) {
-								$parsed_value = $string_matches[2];
-							} elseif ( ! is_numeric( $parsed_value ) ) {
-								if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
-									return '';
-								}
-
-								$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
-							}
+						if ( ! $external_control_missing ) {
+							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
 						}
 
 						if ( '' === $parsed_value ) {
-							if ( $external_control_missing ) {
-								return '';
+							if ( isset( $matches[4] ) ) {
+								$parsed_value = $matches[4];
+
+								$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
+
+								if ( $is_string_value ) {
+									$parsed_value = $string_matches[2];
+								} elseif ( ! is_numeric( $parsed_value ) ) {
+									if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
+										return '';
+									}
+
+									$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
+								}
 							}
 
-							throw new \Exception();
-						}
-					}
+							if ( '' === $parsed_value ) {
+								if ( $external_control_missing ) {
+									return '';
+								}
 
-					return $parsed_value;
-				}, $css_property );
-			} catch ( \Exception $e ) {
-				return;
+								throw new \Exception();
+							}
+						}
+
+						return $parsed_value;
+					}, $css_property );
+				} catch ( \Exception $e ) {
+					return;
+				}
 			}
 
 			if ( ! $output_css_property ) {
@@ -600,7 +633,7 @@ abstract class Base extends Base_File {
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
-			}, $placeholders, $replacements
+			}, $placeholders, $replacements, $values
 		);
 	}
 
@@ -620,6 +653,11 @@ abstract class Base extends Base_File {
 	 * @return mixed Style control value.
 	 */
 	private function get_style_control_value( array $control, array $values ) {
+		if ( ! empty( $values['__globals__'][ $control['name'] ] ) ) {
+			// When the control itself has no global value, but it refers to another control global value
+			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
+		}
+
 		$value = $values[ $control['name'] ];
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
@@ -703,5 +741,27 @@ abstract class Base extends Base_File {
 
 			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
 		} );
+	}
+
+	private function get_selector_global_value( $control, $global_key ) {
+		$value = Plugin::$instance->data_manager->run( $global_key );
+
+		if ( empty( $value ) ) {
+			return null;
+		}
+
+		$global_args = explode( '?id=', $global_key );
+
+		$id = $global_args[1];
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
+
+			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
+		} else {
+			$value = "var( --e-global-$control[type]-$id )";
+		}
+
+		return $value;
 	}
 }

@@ -269,6 +269,18 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'image_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-wrapper img' => 'border-radius: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->add_control(
 			'hover_animation',
 			[

@@ -2,9 +2,11 @@
 namespace Elementor\Core\Kits\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as PageManager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -118,5 +120,17 @@ class Kit extends PageBase {
 		if ( $autosave ) {
 			$autosave->add_repeater_row( $control_id, $item );
 		}
+
+		// Remove Post CSS.
+		$post_css = Post_CSS::create( $this->post->ID );
+
+		$post_css->delete();
+
+		// Refresh Cache.
+		Plugin::$instance->documents->get( $this->post->ID, false );
+
+		$post_css = Post_CSS::create( $this->post->ID );
+
+		$post_css->enqueue();
 	}
 }

@@ -39,20 +39,20 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	registerDocumentItems() {
 		// Todo: internal command.
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
-			name: 'exit-to-dashboard',
-			icon: 'eicon-wordpress',
-			title: elementor.translate( 'exit_to_dashboard' ),
-			type: 'link',
-			link: elementor.config.document.urls.exit_to_dashboard,
-		}, 'navigate_from_page' );
-
-		// Todo: internal command.
-		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
 			name: 'view-page',
 			icon: 'eicon-preview-thin',
 			title: elementor.translate( 'view_page' ),
 			type: 'link',
 			link: elementor.config.document.urls.permalink,
+		}, 'navigate_from_page' );
+
+		// Todo: internal command.
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
+			name: 'exit-to-dashboard',
+			icon: 'eicon-wordpress',
+			title: elementor.translate( 'exit_to_dashboard' ),
+			type: 'link',
+			link: elementor.config.document.urls.exit_to_dashboard,
 		}, 'navigate_from_page' );
 	},
 }, {

@@ -83,9 +83,10 @@
 				align-items: center;
 			}
 
-			&-tool-remove {
-				color: $editor-lightest;
+			&-row-tool {
 				cursor: pointer;
+				color: $editor-lightest;
+				padding: 5px;
 			}
 		}
 
@@ -110,7 +111,7 @@
 
 				&:hover {
 
-					.elementor-global-colors__color-value {
+					.e-global-colors__color-value {
 						display: none;
 					}
 				}
@@ -153,8 +154,9 @@
 			text-align: center;
 		}
 
-		.pickr {
-			@include margin-start(10px);
+		.pickr,
+		.elementor-control-popover-toggle-toggle-label {
+			@include margin-start(5px);
 		}
 	}
 
@@ -164,7 +166,8 @@
 	}
 }
 
-.elementor-global-colors__color-value {
+.e-global-colors__color-value {
 	color: $editor-lightest;
 	font-size: 10px;
+	padding: 0 5px;
 }

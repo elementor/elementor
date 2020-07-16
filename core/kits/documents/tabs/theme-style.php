@@ -802,7 +802,7 @@ class Theme_Style extends Tab_Base {
 		/** @var Manager $module */
 		$kits_manager = Plugin::$instance->kits_manager;
 
-		if ( ! $kits_manager->is_custom_colors_enabled() || ! $kits_manager->is_custom_typography_enabled() ) {
+		if ( $kits_manager->is_custom_colors_enabled() || $kits_manager->is_custom_typography_enabled() ) {
 			$this->add_control(
 				$current_section['section'] . '_schemes_notice',
 				[

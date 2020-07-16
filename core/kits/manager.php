@@ -91,10 +91,15 @@ class Manager {
 				'site_identity' => __( 'Site Identity', 'elementor' ),
 				'colors_and_typography' => __( 'Colors & Typography', 'elementor' ),
 				'lightbox' => __( 'Lightbox', 'elementor' ),
-				'layout_settings' => __( 'Layout Settings', 'elementor' ),
+				'layout_settings' => __( 'Layout', 'elementor' ),
 				'theme_style' => __( 'Theme Style', 'elementor' ),
 				'add_color' => __( 'Add Color', 'elementor' ),
 				'add_style' => __( 'Add Style', 'elementor' ),
+				'new_item' => __( 'New Item', 'elementor' ),
+				'new_global' => __( 'New Global', 'elementor' ),
+				'global_color' => __( 'Global Color', 'elementor' ),
+				'global_typography' => __( 'Global Typography', 'elementor' ),
+				'invalid' => __( 'Invalid', 'elementor' ),
 			],
 		] );
 

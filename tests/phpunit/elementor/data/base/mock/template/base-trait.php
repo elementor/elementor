@@ -10,6 +10,7 @@ trait BaseTrait {
 	public $test_data = [];
 	public $random = null;
 	public $bypass_register_status = false;
+	public $bypass_permission_status = false;
 
 	public function get_name() {
 		if ( ! $this->random ) {
@@ -20,6 +21,11 @@ trait BaseTrait {
 	}
 
 	abstract function get_type();
+
+
+	public function bypass_original_permission( $status = true ) {
+		$this->bypass_permission_status = $status;
+	}
 
 	public function bypass_original_register( $status = true ) {
 		$this->bypass_register_status = $status;

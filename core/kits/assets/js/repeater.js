@@ -15,4 +15,12 @@ export default class extends Repeater {
 
 		return templateHelpers;
 	}
+
+	getDefaults() {
+		const defaults = super.getDefaults();
+
+		defaults.title = `${ elementor.translate( 'new_item' ) } #${ this.children.length + 1 }`;
+
+		return defaults;
+	}
 }
