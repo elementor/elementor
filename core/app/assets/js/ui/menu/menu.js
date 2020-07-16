@@ -14,17 +14,16 @@ export default function Menu( props ) {
 
 	return (
 		<LocationProvider history={ router.appHistory }>
-			<nav className="e-app-menu">
+			<nav className="eps-menu">
 				<ul>
 				{ props.children }
 				{ (
 					props.menuItems.map( ( item ) => (
 						<Match key={ item.type } path={ item.url }>
 							{ ( { match } ) => {
-								console.log( match );
 								return (
-								<li key={item.type} className={`e-app-menu-item${ match ? ' active' : '' }`}>
-									<Button text={item.title} className="e-app-menu-item__link" {...item} />
+								<li key={item.type} className={`eps-menu-item${ match ? ' eps-menu-item--active' : '' }`}>
+									<Button text={item.title} className="eps-menu-item__link" {...item} />
 									<ActionButton {...item} />
 								</li> );
 							} }

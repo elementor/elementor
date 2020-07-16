@@ -5,7 +5,7 @@ export default function AllPartsButton( props ) {
 		<MenuItem
 			id="all-parts"
 			text={ __( 'All Parts', 'elementor' ) }
-			className="e-app-menu-item--active e-app-menu-item__link"
+			className="eps-menu-item--active eps-menu-item__link"
 			icon="eicon-filter"
 			url={ props.url }
 		/>
