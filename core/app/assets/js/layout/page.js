@@ -1,19 +1,19 @@
 import Header from './header';
 import Sidebar from './sidebar';
 import Content from './content';
+import Footer from './footer';
 
 export default function Page( props ) {
-	const getSideBar = () => {
-		if ( ! props.sidebar ) {
-			return '';
-		}
-
-		return (
-			<Sidebar>
-				{ props.sidebar }
-			</Sidebar>
-		);
-	};
+	const getSideBar = () => (
+		<Sidebar>
+			{ props.sidebar }
+		</Sidebar>
+	),
+	getFooter = () => (
+		<Footer>
+			{ props.footer }
+		</Footer>
+	);
 
 	const uiTheme = elementorAppConfig.ui_theme;
 	let userPrefersTheme = '';
@@ -32,11 +32,12 @@ export default function Page( props ) {
 				<div className="eps-app">
 					<Header title={ props.title } buttons={ props.headerButtons } />
 					<div className="eps-app__main">
-						{ getSideBar() }
+						{ props.sidebar && getSideBar() }
 						<Content>
 							{ props.content }
 						</Content>
 					</div>
+					{ props.footer && getFooter() }
 				</div>
 			</div>
 		</div>
@@ -49,6 +50,7 @@ Page.propTypes = {
 	headerButtons: PropTypes.arrayOf( PropTypes.object ),
 	sidebar: PropTypes.object,
 	content: PropTypes.object.isRequired,
+	footer: PropTypes.object,
 };
 
 Page.defaultProps = {
