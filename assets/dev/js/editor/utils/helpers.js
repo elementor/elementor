@@ -539,7 +539,7 @@ module.exports = {
 
 			const scrolling = elementTop - ( parentHeight / 2 );
 
-			$scrolled.stop( true ).animate( { scrollTop: scrolling }, 0 === timeout ? 0 : 1000 );
+			$scrolled.stop( true ).animate( { scrollTop: scrolling }, 1000 );
 		}, timeout );
 	},
 
