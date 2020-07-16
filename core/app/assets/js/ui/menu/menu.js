@@ -1,7 +1,7 @@
 import './menu.scss';
 import Button from '../molecules/button';
 import router from '@elementor/router';
-import { Link, Match, LocationProvider } from '@reach/router';
+import { Match, LocationProvider } from '@reach/router';
 
 export default function Menu( props ) {
 	const ActionButton = ( itemProps ) => {
@@ -15,8 +15,8 @@ export default function Menu( props ) {
 	return (
 		<LocationProvider history={ router.appHistory }>
 			<nav className="eps-menu">
-				<ul>
 				{ props.children }
+				<ul>
 				{ (
 					props.menuItems.map( ( item ) => (
 						<Match key={ item.type } path={ item.url }>
