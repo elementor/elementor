@@ -102,7 +102,7 @@
 		display: flex;
 		height: $app-main-height;
 		max-height: $app-main-max-height;
-		overflow: auto;
+		overflow-y: auto;
 	}
 
 	&__sidebar {
