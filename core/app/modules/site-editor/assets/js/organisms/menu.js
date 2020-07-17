@@ -26,7 +26,7 @@ export default function Menu( props ) {
 		};
 
 	return (
-		<UiMenu menuItems={ templateTypes } actionButton={ actionButton }>
+		<UiMenu menuItems={ templateTypes } actionButton={ actionButton } promotion={ props.promotion }>
 			<>
 				{ props.allPartsButton }
 				<div className="eps-menu__title">
