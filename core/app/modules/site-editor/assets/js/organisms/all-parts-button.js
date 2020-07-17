@@ -2,12 +2,12 @@ import MenuItem from 'elementor-app/ui/menu/menu-item';
 import { Match } from '@reach/router';
 
 export default function AllPartsButton( props ) {
-	const activePathname = props.promotion ? 'site-editor/promotion' : '/site-editor/templates';
+	const activePathname = '/site-editor/templates';
 
 	return (
 		<Match path={ activePathname }>
 			{ ( { match } ) => {
-				const className = `eps-menu-item__link${ match ? ' eps-menu-item--active' : '' }`;
+				const className = `eps-menu-item__link${ match || props.promotion ? ' eps-menu-item--active' : '' }`;
 
 				return (
 					<MenuItem
@@ -15,7 +15,7 @@ export default function AllPartsButton( props ) {
 						text={__( 'All Parts', 'elementor' )}
 						className={ className }
 						icon="eicon-filter"
-						url={props.url}
+						url={ props.url }
 					/> );
 				}
 			}
