@@ -96,12 +96,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.globalName = selectBoxText;
 	}
 
-	getCurrentGlobalName() {
-		if ( this.globalName ) {
-			return this.globalName;
-		}
-	}
-
 	// The Global Control elements are initialized onRender and not with initialize() because their position depends
 	// on elements that are not yet rendered when initialize() is called.
 	onRender() {
