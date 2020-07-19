@@ -12,10 +12,9 @@ export class KitSaveRouteHistory extends $e.modules.hookUI.Before {
 	}
 
 	apply( args ) {
-		// TODO: Save reference in memory.
 		// $e.data.setTemp( $e.components.get( 'panel/global' ),  'routeHistory', args );
 		// or $e.data.setTempOnce - means when you get it, it will automatically remove.
-		$e.routes.temp = args;
+		$e.routes.tempHistory = args;
 	}
 }
 

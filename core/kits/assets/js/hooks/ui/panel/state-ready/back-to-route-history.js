@@ -8,13 +8,13 @@ export class KitBackToRouteHistory extends $e.modules.hookUI.After {
 	}
 
 	getConditions( args ) {
-		return $e.routes.temp && 'kit' !== elementor.documents.get( args.id ).config.type;
+		return $e.routes.tempHistory && 'kit' !== elementor.documents.get( args.id ).config.type;
 	}
 
 	apply( args ) {
-		const historyBeforeOpen = $e.routes.temp;
+		const historyBeforeOpen = $e.routes.tempHistory;
 
-		delete $e.routes.temp;
+		delete $e.routes.tempHistory;
 
 		/**
 		 * TODO: Find better solution.
