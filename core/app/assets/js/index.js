@@ -9,10 +9,11 @@ if ( location.href.includes( 'mode=iframe' ) ) {
 
 new SiteEditor();
 
+const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
+
 ReactDOM.render(
-	// TODO: Remove Strict mode.
-	<React.StrictMode>
+	<AppWrapper>
 		<App />
-	</React.StrictMode>,
+	</AppWrapper>,
   document.getElementById( 'elementor-app' )
 );
