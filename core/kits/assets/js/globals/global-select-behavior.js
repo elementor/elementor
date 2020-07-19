@@ -79,9 +79,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 						this.updateCurrentGlobalName( text );
 					} );
 
-				if ( ! this.ui.globalControlSelect.hasClass( 'e-global__select-box--active' ) ) {
-					this.ui.globalControlSelect.addClass( 'e-global__select-box--active' );
-				}
+				this.ui.globalControlSelect.addClass( 'e-global__select-box--active' );
 
 				return;
 			} else if ( value ) {
