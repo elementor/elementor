@@ -108,6 +108,13 @@ body {
 			background-color: $theme-dark-gray-dark;
 		}
 	}
+
+	&__repeater-separator {
+		width: 260px;
+		border-bottom: 1px solid $theme-dark-gray-darkest;
+		margin-bottom: 15px;
+		align-self: center;
+	}
 }
 
 // Elementor control tools - Typography popover header and Color Picker Header
