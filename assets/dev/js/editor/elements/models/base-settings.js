@@ -91,7 +91,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 							// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
 							if ( ! attributes._id ) {
-								attributes._id = elementor.helpers.getUniqueID();
+								attributes._id = elementorCommon.helpers.getUniqueId();
 							}
 
 							return new BaseSettingsModel( attributes, options );

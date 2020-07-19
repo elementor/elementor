@@ -12,6 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Manager extends BaseModule {
+	const ROOT_NAMESPACE = 'elementor';
+
+	const REST_BASE = '';
+
+	const VERSION = '1';
 
 	/**
 	 * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
@@ -26,6 +31,11 @@ class Manager extends BaseModule {
 	 * @var \WP_REST_Server
 	 */
 	private $server;
+
+	/**
+	 * @var array
+	 */
+	private $cache = [];
 
 	/**
 	 * Loaded controllers.
@@ -50,6 +60,14 @@ class Manager extends BaseModule {
 	 */
 	public function get_controllers() {
 		return $this->controllers;
+	}
+
+	private function get_cache( $key ) {
+		return self::get_items( $this->cache, $key );
+	}
+
+	private function set_cache( $key, $value ) {
+		$this->cache[ $key ] = $value;
 	}
 
 	/**
@@ -212,6 +230,7 @@ class Manager extends BaseModule {
 		$this->controllers = [];
 		$this->command_formats = [];
 		$this->server = false;
+		$this->cache = [];
 		$wp_rest_server = false;
 	}
 
@@ -227,7 +246,7 @@ class Manager extends BaseModule {
 	public function run_internal( $endpoint, $args, $method ) {
 		$this->run_server();
 
-		$endpoint = '/' . Controller::ROOT_NAMESPACE . '/v' . Controller::VERSION . '/' . $endpoint;
+		$endpoint = '/' . self::ROOT_NAMESPACE . '/v' . self::VERSION . '/' . $endpoint;
 
 		// Run reset api.
 		$request = new \WP_REST_Request( $method, $endpoint );
@@ -319,11 +338,19 @@ class Manager extends BaseModule {
 	 * @return array processed result
 	 */
 	public function run( $command, $args = [], $method = 'GET' ) {
+		$key = crc32( $command . '-' . wp_json_encode( $args ) . '-' . $method );
+		$cache = $this->get_cache( $key );
+
+		if ( $cache ) {
+			return $cache;
+		}
+
 		$this->run_server();
 
 		$controller_instance = $this->find_controller_instance( $command );
 
 		if ( ! $controller_instance ) {
+			$this->set_cache( $key, [] );
 			return [];
 		}
 
@@ -343,10 +370,13 @@ class Manager extends BaseModule {
 		$result = $response->get_data();
 
 		if ( $response->is_error() ) {
+			$this->set_cache( $key, [] );
 			return [];
 		}
 
 		$result = $this->run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
+
+		$this->set_cache( $key, $result );
 
 		return $result;
 	}
