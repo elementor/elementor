@@ -1,20 +1,22 @@
-export class KitBackToRouteHistory extends $e.modules.hookUI.After {
+import BaseOpenClose from '../base/base-open-close';
+
+export class KitBackToRouteHistory extends BaseOpenClose {
 	getCommand() {
-		return 'editor/documents/open';
+		return 'panel/global/close';
 	}
 
 	getId() {
-		return 'back-to-route-history--/editor/documents/open';
+		return 'back-to-route-history-/panel/global/close';
 	}
 
-	getConditions( args ) {
-		return $e.routes.tempHistory && 'kit' !== elementor.documents.get( args.id ).config.type;
+	getConditions() {
+		return this.component.routeHistory;
 	}
 
-	apply( args ) {
-		const historyBeforeOpen = $e.routes.tempHistory;
+	apply() {
+		const historyBeforeOpen = this.component.routeHistory;
 
-		delete $e.routes.tempHistory;
+		delete this.component.routeHistory;
 
 		/**
 		 * TODO: Find better solution.

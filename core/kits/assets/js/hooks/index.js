@@ -5,4 +5,4 @@ export { KitUpdateStretchContainer } from './ui/document/elements/settings/updat
 export { KitSaveRouteHistory } from './ui/panel/global/open/save-route-history';
 export { KitRemoveEditorActiveCSSDocumentsOpen } from './ui/editor/documents/open/remove-editor-active-css';
 export { KitRemoveEditorActiveCSSPanelOpen } from './ui/panel/open/remove-editor-active-css';
-export { KitBackToRouteHistory } from './ui/panel/state-ready/back-to-route-history';
+export { KitBackToRouteHistory } from './ui/panel/global/close/back-to-route-history';
