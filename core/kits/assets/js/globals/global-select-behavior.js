@@ -90,9 +90,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				selectBoxText = elementor.translate( 'default' );
 			}
 
+			// If there is no value, remove the 'active' class from the Global Toggle button.
 			this.ui.globalControlSelect.removeClass( 'e-global__select-box--active' );
 		}
 
+		// This is used in the Global Toggle Button's tooltip.
 		this.globalName = selectBoxText;
 	}
 
@@ -144,6 +146,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.ui.globalControlSelect = $globalSelectBox;
 		this.ui.globalControlSelected = $selectedGlobal;
 
+		// Add tooltip to the Global Popover toggle button, displaying the current Global Name / 'Default' / 'Custom'.
 		this.ui.globalControlSelected.tipsy( {
 			title: () => {
 				return this.globalName;
