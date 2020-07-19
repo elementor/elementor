@@ -298,13 +298,7 @@ abstract class Base extends Base_File {
 			$global_key = $global_values[ $control_global_key ];
 		}
 
-		if ( $global_key ) {
-			$value = Plugin::$instance->data_manager->run( $global_key );
-
-			if ( empty( $value ) ) {
-				return;
-			}
-		} else {
+		if ( ! $global_key ) {
 			$value = call_user_func( $value_callback, $control );
 
 			if ( null === $value ) {
@@ -313,20 +307,14 @@ abstract class Base extends Base_File {
 		}
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
+			$output_css_property = '';
+
 			if ( $global_key ) {
-				$global_args = explode( '?id=', $global_key );
+				$selector_global_value = $this->get_selector_global_value( $control, $global_key );
 
-				$id = $global_args[1];
-
-				if ( ! empty( $control['groupType'] ) ) {
-					$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
-
-					$property_value = "var( --e-global-$control[groupType]-$id-$property_name )";
-				} else {
-					$property_value = "var( --e-global-$control[type]-$id )";
+				if ( $selector_global_value ) {
+					$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $selector_global_value . '$2', $css_property );
 				}
-
-				$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $property_value . '$2', $css_property );
 			} else {
 				try {
 					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
@@ -665,6 +653,11 @@ abstract class Base extends Base_File {
 	 * @return mixed Style control value.
 	 */
 	private function get_style_control_value( array $control, array $values ) {
+		if ( ! empty( $values['__globals__'][ $control['name'] ] ) ) {
+			// When the control itself has no global value, but it refers to another control global value
+			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
+		}
+
 		$value = $values[ $control['name'] ];
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
@@ -748,5 +741,27 @@ abstract class Base extends Base_File {
 
 			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
 		} );
+	}
+
+	private function get_selector_global_value( $control, $global_key ) {
+		$value = Plugin::$instance->data_manager->run( $global_key );
+
+		if ( empty( $value ) ) {
+			return null;
+		}
+
+		$global_args = explode( '?id=', $global_key );
+
+		$id = $global_args[1];
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
+
+			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
+		} else {
+			$value = "var( --e-global-$control[type]-$id )";
+		}
+
+		return $value;
 	}
 }

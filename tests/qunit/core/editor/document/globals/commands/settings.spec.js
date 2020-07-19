@@ -15,8 +15,8 @@ export const Settings = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', async ( assert ) => {
 				const eButton = ElementsHelper.createAutoButton(),
-					id = elementor.helpers.getUniqueID(),
-					idSecond = elementor.helpers.getUniqueID(),
+					id = elementorCommon.helpers.getUniqueId(),
+					idSecond = elementorCommon.helpers.getUniqueId(),
 					typography_typography = `globals/typography?id=${ id }`, // eslint-disable-line camelcase
 					typography_typography_second = `globals/typography?id=${ idSecond }`; // eslint-disable-line camelcase
 
@@ -44,8 +44,8 @@ export const Settings = () => {
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', async ( assert ) => {
 				const eButtons = ElementsHelper.multiCreateAutoButton(),
-					id = elementor.helpers.getUniqueID(),
-					idSecond = elementor.helpers.getUniqueID(),
+					id = elementorCommon.helpers.getUniqueId(),
+					idSecond = elementorCommon.helpers.getUniqueId(),
 					typography_typography = `globals/typography?id=${ id }`, // eslint-disable-line camelcase
 					typography_typography_second = `globals/typography?id=${ idSecond }`; // eslint-disable-line camelcase
 
