@@ -108,9 +108,16 @@ body {
 			background-color: $theme-dark-gray-dark;
 		}
 	}
+}
 
-	&__repeater-separator {
-		border-bottom-color: $theme-dark-gray-darkest;
+// Global Settings
+.elementor-control {
+
+	&-type-global-style-repeater {
+
+		.elementor-button-wrapper {
+			border-top-color: $theme-dark-gray-darkest;
+		}
 	}
 }
 

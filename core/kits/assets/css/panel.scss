@@ -176,6 +176,9 @@
 
 		.elementor-button-wrapper {
 			text-align: center;
+			border-top: 1px solid $editor-background;
+			max-width: 260px;
+			padding-top: 15px;
 		}
 
 		.pickr,
