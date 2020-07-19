@@ -38,6 +38,12 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	setCurrentActivePreviewItem() {
+		const selectedClass = 'e-global__preview-item--selected';
+
+		if ( this.activePreviewItem ) {
+			this.activePreviewItem.removeClass( selectedClass );
+		}
+
 		// If there is an active global on the control, get it.
 		let globalKey = this.view.getGlobalKey();
 
@@ -57,16 +63,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		const { args } = $e.data.commandExtractArgs( globalKey ),
 			globalId = args.query.id;
 
-		const selectedClass = 'e-global__preview-item--selected',
-			// Get the active global's corresponding preview item in the Global Select Popover
-			$item = this.ui.globalPreviewItems.filter( `[data-global-id="${ globalId }"]` );
+		// Get the active global's corresponding preview item in the Global Select Popover
+		const $item = this.ui.globalPreviewItems.filter( `[data-global-id="${ globalId }"]` );
 
 		if ( ! $item ) {
 			return;
-		}
-
-		if ( this.activePreviewItem ) {
-			this.activePreviewItem.removeClass( selectedClass );
 		}
 
 		this.activePreviewItem = $item;
