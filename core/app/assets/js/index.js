@@ -15,5 +15,5 @@ ReactDOM.render(
 	<AppWrapper>
 		<App />
 	</AppWrapper>,
-  document.getElementById( 'elementor-app' )
+  document.getElementById( 'e-app' )
 );
