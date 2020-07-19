@@ -56,6 +56,10 @@ class Manager extends BaseModule {
 		return ( parent::instance() );
 	}
 
+	public function __construct() {
+		add_action( 'rest_api_init', [ $this, 'register_rest_error_handler' ] );
+	}
+
 	public function get_name() {
 		return 'data-manager';
 	}
@@ -112,6 +116,14 @@ class Manager extends BaseModule {
 	 */
 	public function register_endpoint_format( $command, $format ) {
 		$this->command_formats[ $command ] = rtrim( $format, '/' );
+	}
+
+	public function register_rest_error_handler() {
+		if ( ! $this->is_internal() ) {
+			$logger_manager = \Elementor\Core\Logger\Manager::instance();
+
+			set_error_handler( [ $logger_manager, 'rest_error_handler' ], E_ALL );
+		}
 	}
 
 	/**

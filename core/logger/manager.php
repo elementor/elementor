@@ -80,12 +80,6 @@ class Manager extends BaseModule {
 		exit;
 	}
 
-	public function register_rest_error_handler() {
-		if ( ! \Elementor\Data\Manager::instance()->is_internal() ) {
-			set_error_handler( [ $this, 'rest_error_handler' ], E_ALL );
-		}
-	}
-
 	public function add_system_info_report() {
 		System_Info::add_report(
 			'log', [
@@ -245,8 +239,6 @@ class Manager extends BaseModule {
 
 	public function __construct() {
 		register_shutdown_function( [ $this, 'shutdown' ] );
-
-		add_action( 'rest_api_init', [ $this, 'register_rest_error_handler' ] );
 
 		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 80 );
 
