@@ -1,7 +1,7 @@
 import './menu.scss';
 import Button from '../molecules/button';
 import router from '@elementor/router';
-import { Link, Match, LocationProvider } from '@reach/router';
+import { Match, LocationProvider } from '@reach/router';
 
 export default function Menu( props ) {
 	const ActionButton = ( itemProps ) => {
@@ -12,11 +12,27 @@ export default function Menu( props ) {
 		return props.actionButton( itemProps );
 	};
 
+	if ( props.promotion ) {
+		return (
+			<nav className="eps-menu">
+				{ props.children }
+				<ul>
+					{ props.menuItems.map( ( item ) => (
+						<li key={item.type} className="eps-menu-item">
+							<Button text={item.title} className="eps-menu-item__link" {...item} />
+							<ActionButton {...item} />
+						</li>
+					) ) }
+				</ul>
+			</nav>
+		);
+	}
+
 	return (
 		<LocationProvider history={ router.appHistory }>
 			<nav className="eps-menu">
-				<ul>
 				{ props.children }
+				<ul>
 				{ (
 					props.menuItems.map( ( item ) => (
 						<Match key={ item.type } path={ item.url }>
@@ -40,4 +56,5 @@ Menu.propTypes = {
 	menuItems: PropTypes.arrayOf( PropTypes.object ),
 	children: PropTypes.object,
 	actionButton: PropTypes.func,
+	promotion: PropTypes.bool,
 };
