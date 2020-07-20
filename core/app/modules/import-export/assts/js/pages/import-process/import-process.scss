@@ -1,5 +1,38 @@
 .e-app-import-process {
+	&__icon {
+		color: theme-colors(info);
+		font-size: 30px;
+		animation: loader 2s linear 0s infinite;
+	}
+
+	&__main-title {
+		margin-top: spacing(44);
+	}
+
 	&__box {
 		margin-top: 50px;
 	}
+}
+
+@mixin keyframes($animation_name) {
+    @-webkit-keyframes #{$animation_name} {
+        @content;
+    }
+
+    @-moz-keyframes #{$animation_name} {
+        @content;
+    }
+
+    @-o-keyframes #{$animation_name} {
+        @content;
+    }
+
+    @keyframes #{$animation_name} {
+        @content;
+    }
+}
+
+@include keyframes(loader) {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
