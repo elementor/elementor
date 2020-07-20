@@ -4,12 +4,12 @@
 	&__select-box {
 		border: 1px solid $editor-lightest;
 		@include border-end(0);
-		border-radius: 3px 0 0 3px;
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 4px;
-		width: 97px;
+		padding: 5px;
+		width: 100%;
 		cursor: pointer;
 
 		i {
@@ -20,6 +20,7 @@
 		&-text {
 			white-space: nowrap;
 			overflow: hidden;
+			height: 14px;
 		}
 	}
 
@@ -108,7 +109,21 @@
 
 	// Typography Globals
 	&__typography {
-		padding: 5px 35px;
+		padding: getValueByDirection(5px 10px 5px 35px, 5px 35px 5px 10px);
+		@include ellipsis;
+
+		&.e-global__preview-item--selected {
+
+			&:before {
+				font-family: 'eicons';
+				font-size: 13px;
+				content: '\e90e'; // eicon-check
+				position: absolute;
+				transform: translateY(-50%);
+				top: 50%;
+				left: 12px;
+			}
+		}
 	}
 
 	// Color Globals
@@ -132,12 +147,15 @@
 			border-radius: 3px;
 			border: 1px solid rgba(0, 0, 0, 0.1);
 			@include margin-end(10px);
+			flex-shrink: 0;
 		}
 
 		&-title {
 			font-weight: 500;
 			color: $editor-dark;
 			flex-grow: 1;
+			@include ellipsis;
+			@include padding-end(10px);
 		}
 
 		&-hex {
@@ -153,6 +171,7 @@
 
 	&__preview-item {
 		cursor: pointer;
+		position: relative;
 
 		&:hover {
 			background-color: $editor-background-light;
@@ -198,6 +217,24 @@
 				padding: 2px;
 				border: 0;
 			}
+		}
+	}
+}
+
+.e-control-global {
+
+	.elementor-control-input-wrapper {
+		display: flex;
+		justify-content: flex-end;
+		max-width: $control-unit * 5;
+		width: 100%;
+	}
+
+	&.elementor-control {
+
+		// A hardened selector to override popover-toggle's inverse direction CSS (in _popover-toggle.scss)
+		.elementor-control-input-wrapper {
+			direction: $direction;
 		}
 	}
 }

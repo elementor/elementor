@@ -100,6 +100,8 @@ class Manager {
 				'global_color' => __( 'Global Color', 'elementor' ),
 				'global_typography' => __( 'Global Typography', 'elementor' ),
 				'invalid' => __( 'Invalid', 'elementor' ),
+				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
+				'typography_cannot_be_deleted' => __( 'System Typography can\'t be deleted', 'elementor' ),
 			],
 		] );
 
