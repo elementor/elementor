@@ -785,14 +785,14 @@ abstract class Base extends Base_File {
 
 		$active_controls = array_reduce(
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
-			$control = $controls[ $control_key ];
+				$control = $controls[ $control_key ];
 
-			if ( $controls_stack->is_control_visible( $control, $settings ) ) {
-				$active_controls[ $control_key ] = $control;
-			}
+				if ( $controls_stack->is_control_visible( $control, $settings ) ) {
+					$active_controls[ $control_key ] = $control;
+				}
 
-			return $active_controls;
-		}, []
+				return $active_controls;
+			}, []
 		);
 
 		return $active_controls;
