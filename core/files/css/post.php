@@ -35,6 +35,10 @@ class Post extends Base {
 	 */
 	private $post_id;
 
+	protected function is_global_parsing_supported() {
+		return true;
+	}
+
 	/**
 	 * Post CSS file constructor.
 	 *

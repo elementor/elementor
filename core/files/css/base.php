@@ -94,6 +94,10 @@ abstract class Base extends Base_File {
 	 */
 	abstract public function get_name();
 
+	protected function is_global_parsing_supported() {
+		return false;
+	}
+
 	/**
 	 * CSS file constructor.
 	 *
@@ -763,5 +767,54 @@ abstract class Base extends Base_File {
 		}
 
 		return $value;
+	}
+
+	private function parse_global_settings( array $settings, array $controls ) {
+		foreach ( $controls as $control ) {
+			$control_name = $control['name'];
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			if ( $control_obj instanceof Control_Repeater ) {
+				foreach ( $settings[ $control_name ] as & $field ) {
+					$field = $this->parse_global_settings( $field, $control['fields'] );
+				}
+
+				continue;
+			}
+
+			if ( empty( $control['global']['active'] ) ) {
+				continue;
+			}
+
+			if ( empty( $settings['__globals__'][ $control_name ] ) ) {
+				continue;
+			}
+
+			$settings[ $control_name ] = 'global';
+		}
+
+		return $settings;
+	}
+
+	private function is_global_control( Controls_Stack $controls_stack, $control_name, $controls ) {
+		$control = $controls[ $control_name ];
+
+		$control_global_key = $control_name;
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		if ( empty( $controls[ $control_global_key ]['global']['active'] ) ) {
+			return false;
+		}
+
+		$globals = $controls_stack->get_settings( '__globals__' );
+
+		return ! empty( $globals[ $control_global_key ] );
 	}
 }

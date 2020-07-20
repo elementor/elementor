@@ -317,8 +317,6 @@ abstract class Controls_Stack extends Base_Object {
 			$settings = $this->get_controls_settings();
 		}
 
-		$settings = $this->parse_global_settings( $settings, $controls );
-
 		$active_controls = array_reduce(
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
 				$control = $controls[ $control_key ];
@@ -752,24 +750,6 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return $style_controls;
-	}
-
-	private function is_global_control( $control_name, $controls ) {
-		$control = $controls[ $control_name ];
-
-		$control_global_key = $control_name;
-
-		if ( ! empty( $control['groupType'] ) ) {
-			$control_global_key = $control['groupPrefix'] . $control['groupType'];
-		}
-
-		if ( empty( $controls[ $control_global_key ]['global']['active'] ) ) {
-			return false;
-		}
-
-		$globals = $this->get_settings( '__globals__' );
-
-		return ! empty( $globals[ $control_global_key ] );
 	}
 
 	/**
@@ -2075,36 +2055,5 @@ abstract class Controls_Stack extends Base_Object {
 				$this->init( $data );
 			}
 		}
-	}
-
-	private function parse_global_settings( array $settings, array $controls ) {
-		foreach ( $controls as $control ) {
-			$control_name = $control['name'];
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
-
-			if ( ! $control_obj instanceof Base_Data_Control ) {
-				continue;
-			}
-
-			if ( $control_obj instanceof Control_Repeater ) {
-				foreach ( $settings[ $control_name ] as & $field ) {
-					$field = $this->parse_global_settings( $field, $control['fields'] );
-				}
-
-				continue;
-			}
-
-			if ( empty( $control['global']['active'] ) ) {
-				continue;
-			}
-
-			if ( empty( $settings['__globals__'][ $control_name ] ) ) {
-				continue;
-			}
-
-			$settings[ $control_name ] = 'global';
-		}
-
-		return $settings;
 	}
 }
