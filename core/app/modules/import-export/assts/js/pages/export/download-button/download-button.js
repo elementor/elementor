@@ -1,4 +1,4 @@
-import { ExportConsumer } from '../../../context/export';
+import { KitConsumer } from '../../../context/kit-content';
 
 import Button from 'elementor-app/ui/molecules/button';
 
@@ -22,7 +22,7 @@ export default function DownloadButton( props ) {
 	};
 
 	return (
-		<ExportConsumer>
+		<KitConsumer>
 			{
 				( context ) => {
 					const isDownloadAllowed = context.includes.length;
@@ -43,7 +43,7 @@ export default function DownloadButton( props ) {
 					);
 				}
 			}
-		</ExportConsumer>
+		</KitConsumer>
 	);
 }
 

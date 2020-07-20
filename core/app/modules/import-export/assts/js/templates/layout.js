@@ -1,6 +1,5 @@
 import Page from 'elementor-app/layout/page';
-import ImportContext from '../context/import';
-import ExportContext from '../context/export';
+import KitContext from '../context/kit-content';
 
 export default function Layout( props ) {
 	const config = {
@@ -9,7 +8,7 @@ export default function Layout( props ) {
 		content: props.children,
 		footer: props.footer,
 	},
-	Context = 'import' === props.type ? ImportContext : ExportContext;
+	Context = KitContext;
 
 	return (
 		<Context>

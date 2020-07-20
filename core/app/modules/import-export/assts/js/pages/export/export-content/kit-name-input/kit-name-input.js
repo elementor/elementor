@@ -1,10 +1,10 @@
 import { useContext, useMemo } from 'react';
-import { Context as ExportContext } from '../../../../context/export';
+import { Context as KitContext } from '../../../../context/kit-content';
 
 import Box from '../../../../ui/box/box';
 
 export default function KitNameInput() {
-	const context = useContext( ExportContext );
+	const context = useContext( KitContext );
 
 	return useMemo( () => (
 		<Box>

@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
 import Box from '../../ui/box/box';

@@ -1,13 +1,11 @@
 import { useContext, useMemo } from 'react';
 
-import { Context as ExportContext } from '../../context/export';
-import { Context as ImportContext } from '../../context/import';
+import { Context as KitContext } from '../../context/kit-content';
 
 import KitContentList from './kit-content-list/kit-content-list';
 
 export default function KitContent( props ) {
-	const contextType = useMemo( () => 'export' === props.type ? ExportContext : ImportContext, [ props.type ] ),
-		context = useContext( contextType );
+	const context = useContext( KitContext );
 
 	return useMemo( () => {
 		return (

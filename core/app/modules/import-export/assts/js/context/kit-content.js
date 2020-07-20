@@ -1,6 +1,6 @@
 export const Context = React.createContext();
 
-class ExportContext extends React.Component {
+class KitContext extends React.Component {
 	static propTypes = {
 		children: PropTypes.object.isRequired,
 	};
@@ -50,5 +50,5 @@ class ExportContext extends React.Component {
 	}
 }
 
-export const ExportConsumer = Context.Consumer;
-export default ExportContext;
+export const KitConsumer = Context.Consumer;
+export default KitContext;

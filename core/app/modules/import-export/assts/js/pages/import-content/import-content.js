@@ -1,5 +1,5 @@
 import Layout from '../../templates/layout';
-import ImportContentList from './import-content-list/import-content-list';
+import KitContent from '../../shared/kit-content/kit-content';
 import Footer from '../../shared/footer/footer';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Button from 'elementor-app/ui/molecules/button';
@@ -18,7 +18,7 @@ export default function ImportContent() {
 					{ __( 'Choose The Contents to Include in Your Site', 'elementor' ) }
 				</Heading>
 
-				<ImportContentList />
+				<KitContent type="import" />
 			</section>
 		</Layout>
 	);
