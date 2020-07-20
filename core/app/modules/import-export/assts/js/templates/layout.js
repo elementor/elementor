@@ -11,8 +11,6 @@ export default function Layout( props ) {
 	},
 	Context = 'import' === props.type ? ImportContext : ExportContext;
 
-	console.log( 'props.children', props.children );
-
 	return (
 		<Context>
 			<Page { ...config } />

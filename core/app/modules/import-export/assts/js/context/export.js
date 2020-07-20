@@ -41,10 +41,6 @@ class ExportContext extends React.Component {
 		this.setState( { postTypes: options } );
 	}
 
-	setIsLoading = ( value ) => {
-		this.setState( { isLoading: value } );
-	}
-
 	render() {
 		return (
 			<Context.Provider value={ this.state }>
