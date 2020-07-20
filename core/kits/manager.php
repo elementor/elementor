@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits;
 
+use Elementor\Controls_Stack;
 use Elementor\Core\Kits\Controls\Repeater;
 use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
 use Elementor\Plugin;
@@ -183,21 +184,22 @@ class Manager {
 	 * Convert Scheme to Default Global
 	 *
 	 * If a control has a scheme property, convert it to a default Global.
+	 * The $element parameter is passed for the deprecated argument function message.
 	 *
-	 * @param $scheme - Control scheme property
+	 * @param $args - Control scheme property
+	 * @param Controls_Stack $element
 	 * @return array - Control/group control args
 	 * @since 3.0.0
 	 * @access public
-	 *
 	 */
-	public function convert_scheme_to_global( $scheme ) {
-		if ( isset( $scheme['type'] ) && isset( $scheme['value'] ) ) {
-			//_deprecated_argument( $args['scheme'], '3.0.0', 'Schemes are now deprecated - use $args[\'global\'] instead.' );
-			return $this->map_scheme_to_global( $scheme['type'], $scheme['value'] );
+	public function convert_scheme_to_global( $args, Controls_Stack $element ) {
+		if ( isset( $args['scheme']['type'] ) && isset( $args['scheme']['value'] ) ) {
+			//_deprecated_argument( $args['scheme'], '3.0.0', 'Element ' . $element->get_name() . ' - Control \'' . $args['name'] . '\' - Schemes ($args[\'scheme\']) are now deprecated - use $args[\'global\'] instead.' );
+			return $this->map_scheme_to_global( $args['scheme']['type'], $args['scheme']['value'] );
 		}
 
 		// Typography control 'scheme' properties usually only include the string with the typography value ('1'-'4').
-		return $this->map_scheme_to_global( 'typography', $scheme );
+		return $this->map_scheme_to_global( 'typography', $args['scheme'] );
 	}
 
 	public function register_controls() {

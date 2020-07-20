@@ -83,7 +83,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *                                  an empty array.
 	 */
 	final public function add_controls( Controls_Stack $element, array $user_args, array $options = [] ) {
-		$this->init_args( $user_args );
+		// The $element variable is passed so its name is included in a deprecation notice.
+		$this->init_args( $user_args, $element );
 
 		// Filter which controls to display
 		$filtered_fields = $this->filter_fields();
@@ -388,17 +389,19 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * Init arguments.
 	 *
 	 * Initializing group control base class.
+	 * The $element parameter is passed for the deprecated argument function message.
 	 *
+	 * @param array $args Group control settings value.
+	 * @param Controls_Stack $element
 	 * @since 1.2.2
 	 * @access protected
 	 *
-	 * @param array $args Group control settings value.
 	 */
-	protected function init_args( $args ) {
+	protected function init_args( $args, Controls_Stack $element ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
 
 		if ( isset( $this->args['scheme'] ) ) {
-			$this->args['global']['default'] = Plugin::$instance->kits_manager->convert_scheme_to_global( $this->args['scheme'] );
+			$this->args['global']['default'] = Plugin::$instance->kits_manager->convert_scheme_to_global( $this->args, $element );
 		}
 	}
 
