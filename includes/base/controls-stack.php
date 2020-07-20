@@ -372,7 +372,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		if ( isset( $args['scheme'] ) ) {
 			$args['global'] = [
-				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args, $this ),
+				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args ),
 			];
 
 			unset( $args['scheme'] );
