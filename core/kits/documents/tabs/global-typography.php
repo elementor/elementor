@@ -157,6 +157,18 @@ class Global_Typography extends Tab_Base {
 			]
 		);
 
+		$this->add_control(
+			'default_generic_fonts',
+			[
+				'label' => __( 'Fallback Font Family', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => 'Sans-serif',
+				'description' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
+				'label_block' => true,
+				'separator' => 'before',
+			]
+		);
+
 		$this->end_controls_section();
 	}
 }

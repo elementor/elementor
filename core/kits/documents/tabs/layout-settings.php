@@ -32,17 +32,6 @@ class Layout_Settings extends Tab_Base {
 			]
 		);
 
-		$this->add_control(
-			'default_generic_fonts',
-			[
-				'label' => __( 'Default Generic Fonts', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => 'Sans-serif',
-				'description' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
-				'label_block' => true,
-			]
-		);
-
 		$this->add_responsive_control(
 			'container_width',
 			[
