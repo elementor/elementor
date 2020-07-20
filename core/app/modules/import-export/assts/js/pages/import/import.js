@@ -1,48 +1,25 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
 import Box from '../../ui/box/box';
 import DragDrop from '../../ui/drag-drop/drag-drop';
+import SelectFile from '../../shared/select-file/select-file';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
-import Button from 'elementor-app/ui/molecules/button';
+
+import useFile from '../../shared/use-file/use-file';
 
 import './import.scss';
 
 export default function Import() {
-	const [ file, setFile ] = useState(),
+	const { setFile } = useFile(),
 		dragDropEvents = {
 			onDrop: ( event ) => {
 				setFile( event.dataTransfer.files[ 0 ] );
 			},
-		},
-		onFileSelect = ( event ) => {
-			setFile( event.target.files[ 0 ] );
-		},
-		fileInput = useRef();
-
-	useEffect( () => {
-		if ( file ) {
-			const formData = new FormData();
-
-			formData.append( file.name, file );
-
-			console.log( 'file', file );
-
-			const options = {
-				data: formData,
-				success: () => {
-				},
-				error: () => {
-				},
-				complete: () => {},
-			};
-
-			elementorCommon.ajax.addRequest( 'elementor_export_kit', options );
-		}
-	}, [ file ] );
+		};
 
 	return (
 		<Layout type="import">
@@ -63,9 +40,7 @@ export default function Import() {
 							{ __( 'Or', 'elementor' ) }
 						</Text>
 
-						<input ref={ fileInput } onChange={ onFileSelect } type="file" className="e-app-import__file-input" />
-
-						<Button onClick={ () => fileInput.current.click() } text={ __( 'Select File', 'elementor' ) } variant="contained" color="primary" size="sm" />
+						<SelectFile />
 					</Message>
 				</DragDrop>
 
