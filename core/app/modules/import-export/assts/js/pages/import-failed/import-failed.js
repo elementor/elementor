@@ -1,15 +1,18 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
+import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
-import Grid from "../../../../../../assets/js/ui/grid/grid";
+import Grid from 'elementor-app/ui/grid/grid';
+
+import './import-failed.scss';
 
 export default function ImportFailed() {
 	return (
 		<Layout type="import">
-			<Grid container justify="space-evenly">
+			<Grid container justify="space-evenly" className="none">
 				<Grid item>
 					<Heading variant="display-1">Display 1</Heading>
 					<Heading variant="display-2">Display 2</Heading>
@@ -32,23 +35,25 @@ export default function ImportFailed() {
 					<Text variant="xs">Text xs</Text>
 					<Text variant="xxs">Text xxs</Text>
 				</Grid>
-
-				<Message className="e-app-import-failed none">
-					<div style={ { display: 'none' } }>
-						<Heading variant="lg">
-							{ __( 'File Upload Failed', 'elementor' ) }
-						</Heading>
-						<Text variant="md">
-							{ __( 'File is invalid and could not be processed', 'elementor' ) }
-						</Text>
-						<Text variant="md">
-							<Button text={ __( 'Click Here', 'elementor' ) } url="/#" />
-							<span> { __( 'to try solving the issue.', 'elementor' ) }</span>
-						</Text>
-						<Button variant="contained" color="primary" text={ __( 'Select File', 'elementor' ) } url="/#" />
-					</div>
-				</Message>
 			</Grid>
+			<Message className="e-app-import-failed">
+				<div>
+					<Icon className="e-app-import-failed__icon eicon-warning" />
+
+					<Heading variant="display-3">
+						{ __( 'File Upload Failed', 'elementor' ) }
+					</Heading>
+
+					<Text variant="md">
+						{ __( 'File is invalid and could not be processed', 'elementor' ) }
+						<br />
+						<Button color="link" className="e-app-import-failed__click-here" text={ __( 'Click Here', 'elementor' ) } url="/#" />
+						<span>{ __( 'to try solving the issue.', 'elementor' ) }</span>
+					</Text>
+
+					<Button className="e-app-import-failed__select-file" variant="contained" color="primary" text={ __( 'Select File', 'elementor' ) } url="/#" />
+				</div>
+			</Message>
 		</Layout>
 	);
 }

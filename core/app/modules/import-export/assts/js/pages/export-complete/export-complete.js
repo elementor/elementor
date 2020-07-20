@@ -8,10 +8,18 @@ import Button from 'elementor-app/ui/molecules/button';
 import './export-complete.scss';
 
 export default function ExportComplete() {
+	const getFooter = () => (
+		<Footer justify="center" className="e-app-export-complete__learn-more">
+			<Button color="link" size="md" text={ __( 'Learn More', 'elementor' ) } url="/#" />
+		</Footer>
+	);
+
 	return (
-		<Layout type="export">
-			<section className="e-app-export-success">
+		<Layout type="export" footer={ getFooter() }>
+			<section className="e-app-export-complete">
 				<Message>
+					<img className="e-app-export-complete__main-image" src={ elementorAppConfig.assets_url + 'images/go-pro.svg' } />
+
 					<Heading variant="xl">
 						{ __( 'Your Kit Was Exported Successfully!', 'elementor' ) }
 					</Heading>
@@ -23,12 +31,9 @@ export default function ExportComplete() {
 					<Text tag="span" variant="sm">
 						{ __( 'If the download doesn\'t start automatically, please', 'elementor' ) }
 					</Text>
-					<Button text={ __( 'click here', 'elementor' ) } url="/#" />
-				</Message>
 
-				<Footer justify="center">
-					<Button variant="contained" size="md" text={ __( 'Learn More', 'elementor' ) } url="/#" />
-				</Footer>
+					<Button color="link" className="e-app-export-complete__click-here" text={ __( 'click here', 'elementor' ) } url="/#" />
+				</Message>
 			</section>
 		</Layout>
 	);

@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import Layout from '../../templates/layout';
-import DragDrop from './drag-drop/drag-drop';
 import Message from '../../ui/message/message';
 import Box from '../../ui/box/box';
+import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
@@ -11,27 +11,51 @@ import Button from 'elementor-app/ui/molecules/button';
 import './import.scss';
 
 export default function Import() {
-	const onDrop = ( event ) => {
+	const [ isDragOver, setIsDragOver ] = useState( false ),
+		[ file, setFile ] = useState(),
+		onDragDropActions = ( event ) => {
 			event.preventDefault();
-			console.log( 'onDrop' );
+			event.stopPropagation();
 		},
-		onDragOver = ( event ) => {
-			event.preventDefault();
-			console.log( 'onDragOver' );
+		dragDropEvents = {
+			onDrop: ( event ) => {
+				onDragDropActions( event );
+
+				setIsDragOver( false );
+
+				setFile( event.dataTransfer.files[ 0 ] );
+			},
+			onDragOver: ( event ) => {
+				onDragDropActions( event );
+
+				setIsDragOver( true );
+			},
+			onDragLeave: ( event ) => {
+				onDragDropActions( event );
+
+				setIsDragOver( false );
+			},
 		},
 		onFileSelect = ( event ) => {
-			console.log( event.target.files[0] );
+			setFile( event.target.files[ 0 ] );
 		},
 		fileInput = useRef(),
-		sendImportData = () => {
+		getSelectFileClasses = () => {
+			const className = 'e-app-import__select-file';
+
+			return className + ( isDragOver ? ` ${ className }--drop-over` : '' );
+		};
+
+	useEffect( () => {
+		if ( file ) {
+			const formData = new FormData();
+
+			formData.append( file.name, file );
+
+			console.log( 'formData', formData );
+
 			const options = {
-				data: {
-					elementor_export_kit: {
-						title: 'My Awesome Kit',
-						include: [ 'templates', 'settings', 'content' ],
-						custom_post_types: [ 'product', 'acf' ],
-					},
-				},
+				data: formData,
 				success: () => {
 					//setApiStatus( 'success' );
 				},
@@ -41,36 +65,41 @@ export default function Import() {
 				complete: () => {},
 			};
 
-			setApiStatus( 'waiting' );
+			//setApiStatus( 'waiting' );
 
 			elementorCommon.ajax.addRequest( 'elementor_export_kit', options );
-		};
+		}
+	}, [ file ] );
 
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
-				<div onDrop={ onDrop } onDragOver={ onDragOver }>
-					<Message className="e-app-import__select-file">
-					<Heading variant="lg">
-						{ __( 'Import a Kit to Your Site', 'elementor' ) }
-					</Heading>
+				<div { ...dragDropEvents }>
+					<Message className={ getSelectFileClasses() }>
+						<Icon className="e-app-import__icon eicon-library-upload" />
 
-					<Text variant="md">
-						{ __( 'Drag & Drop your zip template file', 'elementor' ) }
-					</Text>
+						<Heading variant="display-3">
+							{ __( 'Import a Kit to Your Site', 'elementor' ) }
+						</Heading>
 
-					<Text variant="sm">
-						{ __( 'Or', 'elementor' ) }
-					</Text>
+						<Text variant="xl">
+							{ __( 'Drag & Drop your zip template file', 'elementor' ) }
+						</Text>
 
-					<input ref={ fileInput } onChange={ onFileSelect } type="file" className="elementor-hide" />
+						<Text variant="lg">
+							{ __( 'Or', 'elementor' ) }
+						</Text>
 
-					<Button variant="contained" color="primary" size="sm" onClick={ () => { fileInput.current.click(); } } text={ __( 'Select File', 'elementor' ) } />
+						<input ref={ fileInput } onChange={ onFileSelect } type="file" className="e-app-import__file-input" />
+
+						<Button onClick={ () => fileInput.current.click() } text={ __( 'Select File', 'elementor' ) } variant="contained" color="primary" size="sm" />
 					</Message>
 				</div>
 
-				<Box type="notice">
-					{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
+				<Box variant="notice" className="kit-content-list__notice">
+					<Text variant="xs">
+						{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
+					</Text>
 				</Box>
 			</section>
 		</Layout>

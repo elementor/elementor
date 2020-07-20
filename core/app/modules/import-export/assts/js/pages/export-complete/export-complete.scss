@@ -1,3 +1,18 @@
-.e-app-export-success {
+.e-app-export-complete {
 	height: 100%;
+
+	&__main-image {
+		margin-bottom: spacing(30);
+	}
+
+	&__click-here {
+		margin-inline-start: spacing(5);
+		text-decoration: underline;
+		font-style: italic;
+	}
+
+	&__learn-more {
+		margin-bottom: spacing(10);
+		text-decoration: underline;
+	}
 }

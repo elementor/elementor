@@ -22,8 +22,8 @@ export default function KitContentList( props ) {
 		</Grid>
 	),
 	getNotice = ( notice ) => (
-		<Box type="notice">
-			<Text variant="sm">
+		<Box variant="notice" className="kit-content-list__notice">
+			<Text variant="xs">
 				{ notice }
 			</Text>
 		</Box>
@@ -57,16 +57,16 @@ export default function KitContentList( props ) {
 												{ item.data.description || ( item.data.features && <TemplatesFeatures features={ item.data.features } /> ) }
 											</Text>
 
-											{ item.data.notice ? getProFeaturesIndication() : null }
+											{ item.data.notice && getProFeaturesIndication() }
 										</Grid>
 									</Grid>
 								</Grid>
 
-								{ item.data.notice ? getNotice( item.data.notice ) : null }
+								{ item.data.notice && getNotice( item.data.notice ) }
 								{ ( 'content' === item.type && 'export' === props.type ) ? <PostTypesSelect options={ postsList }/> : null }
 							</Grid>
 
-							{ item.data.notice ? getButton() : null }
+							{ item.data.notice && getButton() }
 						</Grid>
 					</List.Item>
 				) )

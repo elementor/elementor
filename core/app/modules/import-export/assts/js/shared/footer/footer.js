@@ -3,6 +3,7 @@ import Grid from 'elementor-app/ui/grid/grid';
 import './footer.scss';
 
 export default function Footer( props ) {
+	console.log( 'props.className', props.className );
 	const baseClassName = 'import-export-footer',
 		classes = [ baseClassName, props.className ];
 

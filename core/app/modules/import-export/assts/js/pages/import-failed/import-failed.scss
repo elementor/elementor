@@ -1,0 +1,16 @@
+.e-app-import-failed {
+	&__icon {
+		margin-bottom: spacing(30);
+		font-size: 50px;
+		color: theme-colors(danger);
+	}
+
+	&__click-here {
+		margin-inline-end: spacing(5);
+		text-decoration: underline;
+	}
+
+	&__select-file {
+		margin-top: spacing(16);
+	}
+}

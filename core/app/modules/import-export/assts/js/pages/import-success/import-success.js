@@ -10,27 +10,31 @@ import Button from 'elementor-app/ui/molecules/button';
 import './import-success.scss';
 
 export default function ImportSuccess() {
+	const getFooter = () => (
+		<Footer justify="center" className="e-app-import-success__bottom_sentence">
+			<Text variant="xs" tag="span">
+				<Button color="link" text={ __( 'Click here', 'elementor' ) } className="e-app-import-success__click-here" url="/#" />
+				{ __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
+			</Text>
+		</Footer>
+	);
+
 	return (
-		<Layout type="import">
+		<Layout type="import" footer={ getFooter() }>
 			<section className="e-app-import-success">
 				<Message>
-					<Heading size="lg">
+					<img className="e-app-import-success__main-image" src={ elementorAppConfig.assets_url + 'images/go-pro.svg' } />
+
+					<Heading variant="display-3">
 						{ __( 'Congrats, the following kit elements were imported', 'elementor' ) }
 					</Heading>
 
-					<img src={ elementorAppConfig.assets_url + 'images/go-pro.svg' } />
-
 					<ImportSuccessList />
 
-					<Grid container justify="center">
-						<Button color="primary" text={ __( 'View live Site', 'elementor' ) } url="/#"/>
+					<Grid container justify="center" className="e-app-import-success__button-container">
+						<Button variant="contained" color="primary" text={ __( 'View live Site', 'elementor' ) } url="/#"/>
 					</Grid>
 				</Message>
-
-				<Footer justify="center">
-					<Button variant="contained" size="md" text={ __( 'Click here', 'elementor' ) } url="/#" />
-					<Text tag="span" variant="sm">{ __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }</Text>
-				</Footer>
 			</section>
 		</Layout>
 	);

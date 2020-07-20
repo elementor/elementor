@@ -4,8 +4,8 @@ export default function Box( props ) {
 	const baseClassName = 'import-export-box',
 		classes = [ baseClassName, props.className ];
 
-	if ( props.type ) {
-		classes.push( baseClassName + '--' + props.type );
+	if ( props.variant ) {
+		classes.push( baseClassName + '--' + props.variant );
 	}
 
 	return (
@@ -17,7 +17,7 @@ export default function Box( props ) {
 
 Box.propTypes = {
 	className: PropTypes.string,
-	type: PropTypes.any,
+	variant: PropTypes.any,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,

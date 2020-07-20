@@ -1,19 +1,27 @@
 $kit-content-list-item-background-color: theme-colors(light);
 $kit-content-list-item-dark-background-color: dark-tints(600);
+$kit-content-list-item-border-color: tints(200);
+$kit-content-list-item-dark-border-color: dark-tints(700);
+$kit-content-list-locked-features-color: tints(500);
+$kit-content-list-locked-features-dark-color: dark-tints(300);
 
 :root {
 	--kit-content-list-item-background-color: #{$kit-content-list-item-background-color};
+	--kit-content-list-item-border-color: #{$kit-content-list-item-border-color};
+	--kit-content-list-locked-features-color: #{$kit-content-list-locked-features-color};
 }
 
 .dark {
 	--kit-content-list-item-background-color: #{$kit-content-list-item-dark-background-color};
+	--kit-content-list-item-border-color: #{$kit-content-list-item-dark-border-color};
+	--kit-content-list-locked-features-color: #{$kit-content-list-locked-features-dark-color};
 }
 
 .kit-content-list {
 	&__item {
 		padding: spacing(20);
-		background: var( --kit-content-list-item-background-color );
-		border-bottom: 1px solid tints(200);
+		background: var(--kit-content-list-item-background-color);
+		border-bottom: 1px solid var(--kit-content-list-item-border-color);
 	}
 
 	&__checkbox {
@@ -26,6 +34,10 @@ $kit-content-list-item-dark-background-color: dark-tints(600);
 	}
 
 	&__locked-features {
-		color: tints(500);
+		color: var(--kit-content-list-locked-features-color);
+	}
+
+	&__notice {
+		margin-top: spacing(16);
 	}
 }

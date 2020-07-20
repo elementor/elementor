@@ -15,6 +15,7 @@ export default function ImportProcess() {
 				<Heading variant="lg">
 					{ __( 'Your Kit Is Being Imported', 'elementor' ) }
 				</Heading>
+
 				<Text variant="md">
 					{ __( 'This may take a few moments to complete.\nPlease don’t close this window until importing is completed', 'elementor' ) }
 				</Text>
