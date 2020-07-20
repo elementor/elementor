@@ -744,7 +744,7 @@ abstract class Controls_Stack extends Base_Object {
 				$control['style_fields'] = $style_fields;
 			}
 
-			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || $this->is_global_control( $control_name, $controls ) || ! empty( $control['style_fields'] ) ) {
+			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || ! empty( $control['style_fields'] ) ) {
 				$style_controls[ $control_name ] = $control;
 			}
 		}
