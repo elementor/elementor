@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
 import Box from '../../ui/box/box';
+import DragDrop from '../../ui/drag-drop/drag-drop';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
@@ -11,40 +12,16 @@ import Button from 'elementor-app/ui/molecules/button';
 import './import.scss';
 
 export default function Import() {
-	const [ isDragOver, setIsDragOver ] = useState( false ),
-		[ file, setFile ] = useState(),
-		onDragDropActions = ( event ) => {
-			event.preventDefault();
-			event.stopPropagation();
-		},
+	const [ file, setFile ] = useState(),
 		dragDropEvents = {
 			onDrop: ( event ) => {
-				onDragDropActions( event );
-
-				setIsDragOver( false );
-
 				setFile( event.dataTransfer.files[ 0 ] );
-			},
-			onDragOver: ( event ) => {
-				onDragDropActions( event );
-
-				setIsDragOver( true );
-			},
-			onDragLeave: ( event ) => {
-				onDragDropActions( event );
-
-				setIsDragOver( false );
 			},
 		},
 		onFileSelect = ( event ) => {
 			setFile( event.target.files[ 0 ] );
 		},
-		fileInput = useRef(),
-		getSelectFileClasses = () => {
-			const className = 'e-app-import__select-file';
-
-			return className + ( isDragOver ? ` ${ className }--drop-over` : '' );
-		};
+		fileInput = useRef();
 
 	useEffect( () => {
 		if ( file ) {
@@ -52,20 +29,16 @@ export default function Import() {
 
 			formData.append( file.name, file );
 
-			console.log( 'formData', formData );
+			console.log( 'file', file );
 
 			const options = {
 				data: formData,
 				success: () => {
-					//setApiStatus( 'success' );
 				},
 				error: () => {
-					//setApiStatus( 'error' );
 				},
 				complete: () => {},
 			};
-
-			//setApiStatus( 'waiting' );
 
 			elementorCommon.ajax.addRequest( 'elementor_export_kit', options );
 		}
@@ -74,8 +47,8 @@ export default function Import() {
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
-				<div { ...dragDropEvents }>
-					<Message className={ getSelectFileClasses() }>
+				<DragDrop { ...dragDropEvents }>
+					<Message>
 						<Icon className="e-app-import__icon eicon-library-upload" />
 
 						<Heading variant="display-3">
@@ -94,7 +67,7 @@ export default function Import() {
 
 						<Button onClick={ () => fileInput.current.click() } text={ __( 'Select File', 'elementor' ) } variant="contained" color="primary" size="sm" />
 					</Message>
-				</div>
+				</DragDrop>
 
 				<Box variant="notice" className="kit-content-list__notice">
 					<Text variant="xs">

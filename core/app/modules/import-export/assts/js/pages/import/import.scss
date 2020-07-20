@@ -1,17 +1,4 @@
 .e-app-import {
-	&__select-file {
-		text-align: center;
-		background: theme-colors(light);
-		outline: 2px dashed tints(300);
-		outline-offset: spacing(12) * -1;
-		margin-bottom: spacing(24);
-		padding: 1.5 * spacing(44);
-
-		&--drop-over {
-			outline-color: theme-colors(info);
-		}
-	}
-
 	&__icon {
 		margin-bottom: spacing(44);
 		color: tints(400);
