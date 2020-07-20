@@ -5,8 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
-use Elementor\Core\Settings\Manager;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 
 /**
  * Elementor image carousel widget.
@@ -666,7 +665,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'name' => 'caption_typography',
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_ACCENT,
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 			]
