@@ -5,7 +5,6 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
 use Elementor\Group_Control_Typography;
-use Elementor\Plugin;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
