@@ -51,6 +51,7 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'required' => true,
 			]
 		);
 
@@ -70,32 +71,28 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
-		$default_colors = [];
-
-		if ( Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
-			$default_colors = [
-				[
-					'_id' => 'primary',
-					'title' => __( 'Primary', 'elementor' ),
-					'color' => '#6EC1E4',
-				],
-				[
-					'_id' => 'secondary',
-					'title' => __( 'Secondary', 'elementor' ),
-					'color' => '#54595F',
-				],
-				[
-					'_id' => 'text',
-					'title' => __( 'Text', 'elementor' ),
-					'color' => '#7A7A7A',
-				],
-				[
-					'_id' => 'accent',
-					'title' => __( 'Accent', 'elementor' ),
-					'color' => '#61CE70',
-				],
-			];
-		}
+		$default_colors = [
+			[
+				'_id' => 'primary',
+				'title' => __( 'Primary', 'elementor' ),
+				'color' => '#6EC1E4',
+			],
+			[
+				'_id' => 'secondary',
+				'title' => __( 'Secondary', 'elementor' ),
+				'color' => '#54595F',
+			],
+			[
+				'_id' => 'text',
+				'title' => __( 'Text', 'elementor' ),
+				'color' => '#7A7A7A',
+			],
+			[
+				'_id' => 'accent',
+				'title' => __( 'Accent', 'elementor' ),
+				'color' => '#61CE70',
+			],
+		];
 
 		$this->add_control(
 			'system_colors',
@@ -135,6 +132,7 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'required' => true,
 			]
 		);
 
@@ -191,45 +189,40 @@ class Colors_And_Typography extends Tab_Base {
 			]
 		);
 
-		$default_typography = [];
+		$typography_key = self::TYPOGRAPHY_GROUP_PREFIX . 'typography';
+		$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . 'font_family';
+		$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . 'font_weight';
 
-		if ( Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
-
-			$typography_key = self::TYPOGRAPHY_GROUP_PREFIX . 'typography';
-			$font_family_key = self::TYPOGRAPHY_GROUP_PREFIX . 'font_family';
-			$font_weight_key = self::TYPOGRAPHY_GROUP_PREFIX . 'font_weight';
-
-			$default_typography = [
-				[
-					'_id' => 'primary',
-					'title' => __( 'Primary', 'elementor' ),
-					$typography_key => 'custom',
-					$font_family_key => 'Roboto',
-					$font_weight_key => '600',
-				],
-				[
-					'_id' => 'secondary',
-					'title' => __( 'Secondary', 'elementor' ),
-					$typography_key => 'custom',
-					$font_family_key => 'Roboto Slab',
-					$font_weight_key => '400',
-				],
-				[
-					'_id' => 'text',
-					'title' => __( 'Text', 'elementor' ),
-					$typography_key => 'custom',
-					$font_family_key => 'Roboto',
-					$font_weight_key => '400',
-				],
-				[
-					'_id' => 'accent',
-					'title' => __( 'Accent', 'elementor' ),
-					$typography_key => 'custom',
-					$font_family_key => 'Roboto',
-					$font_weight_key => '500',
-				],
-			];
-		}
+		$default_typography = [
+			[
+				'_id' => 'primary',
+				'title' => __( 'Primary', 'elementor' ),
+				$typography_key => 'custom',
+				$font_family_key => 'Roboto',
+				$font_weight_key => '600',
+			],
+			[
+				'_id' => 'secondary',
+				'title' => __( 'Secondary', 'elementor' ),
+				$typography_key => 'custom',
+				$font_family_key => 'Roboto Slab',
+				$font_weight_key => '400',
+			],
+			[
+				'_id' => 'text',
+				'title' => __( 'Text', 'elementor' ),
+				$typography_key => 'custom',
+				$font_family_key => 'Roboto',
+				$font_weight_key => '400',
+			],
+			[
+				'_id' => 'accent',
+				'title' => __( 'Accent', 'elementor' ),
+				$typography_key => 'custom',
+				$font_family_key => 'Roboto',
+				$font_weight_key => '500',
+			],
+		];
 
 		$this->add_control(
 			'system_typography',

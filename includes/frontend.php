@@ -29,6 +29,9 @@ class Frontend extends App {
 	 */
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
+	const RENDER_MODE_NORMAL = 'normal';
+	const RENDER_MODE_STATIC = 'static';
+
 	/**
 	 * Post ID.
 	 *
@@ -130,6 +133,15 @@ class Frontend extends App {
 	 * @var Document[]
 	 */
 	private $admin_bar_edit_documents = [];
+
+	/**
+	 * Determine the render mode.
+	 * if equals to self::RENDER_MODE_STATIC,
+	 * all the elements should be render without any interaction.
+	 *
+	 * @var string
+	 */
+	private $render_mode = self::RENDER_MODE_NORMAL;
 
 	/**
 	 * @var string[]
@@ -1124,6 +1136,39 @@ class Frontend extends App {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function get_render_mode() {
+		return $this->render_mode;
+	}
+
+	/**
+	 * @param string $render_mode
+	 *
+	 * @return bool
+	 */
+	public function is_render_mode( $render_mode ) {
+		return $this->get_render_mode() === $render_mode;
+	}
+
+	/**
+	 * @param $render_mode
+	 *
+	 * @return $this
+	 */
+	public function set_render_mode( $render_mode ) {
+		$available_render_modes = [ self::RENDER_MODE_STATIC, self::RENDER_MODE_NORMAL ];
+
+		if ( ! in_array( $render_mode, $available_render_modes, true ) ) {
+			$render_mode = self::RENDER_MODE_NORMAL;
+		}
+
+		$this->render_mode = $render_mode;
+
+		return $this;
+	}
+
+	/**
 	 * Get Init Settings
 	 *
 	 * Used to define the default/initial settings of the object. Inheriting classes may implement this method to define
@@ -1159,6 +1204,7 @@ class Frontend extends App {
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
+			'render_mode' => $this->get_render_mode(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],

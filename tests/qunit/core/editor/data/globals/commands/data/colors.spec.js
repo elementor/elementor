@@ -10,7 +10,7 @@ export const Colors = () => {
 		QUnit.test( 'get', async ( assert ) => {
 			const result = await $e.data.get( 'globals/colors' ),
 				data = result.data[ '4521fd0' ];
-debugger;
+
 			assert.equal( data.title, 'test' );
 			assert.equal( data.value, 'red' );
 		} );
