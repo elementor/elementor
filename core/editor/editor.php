@@ -451,14 +451,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-ntc',
-			ELEMENTOR_ASSETS_URL . 'lib/e-ntc/e-ntc' . $suffix . '.js',
-			[],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -501,7 +493,6 @@ class Editor {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
-				'elementor-ntc',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
@@ -617,6 +608,7 @@ class Editor {
 
 				// Global Styles
 				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'new_global_color' => __( 'New Global Color', 'elementor' ),
 				'global_colors_title' => __( 'Global Colors', 'elementor' ),
 				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
 				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
@@ -635,7 +627,6 @@ class Editor {
 				'create' => __( 'Create', 'elementor' ),
 				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
 				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
-				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
 				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Typography setting?', 'elementor' ),
 				'custom' => __( 'Custom', 'elementor' ),
 

@@ -80,13 +80,12 @@ export default class extends ControlBaseDataView {
 		return {
 			commandName: this.getGlobalCommand(),
 			key: this.model.get( 'name' ),
-			title: this.colorPicker?.getColorTitle(),
 			controlType: 'colors',
 		};
 	}
 
 	getAddGlobalConfirmMessage( globalColors ) {
-		const colorTitle = this.colorPicker.getColorTitle(),
+		const colorTitle = elementor.translate( 'new_global_color' ),
 			currentValue = this.getCurrentValue(),
 			$message = jQuery( '<div>', { class: 'e-global__confirm-message' } ),
 			$messageText = jQuery( '<div>', { class: 'e-global__confirm-message-text' } ),
@@ -101,9 +100,6 @@ export default class extends ControlBaseDataView {
 		for ( const globalColor of Object.values( globalColors ) ) {
 			if ( currentValue === globalColor.value ) {
 				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
-				break;
-			} else if ( colorTitle === globalColor.title ) {
-				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_name_already_exists' );
 				break;
 			} else {
 				messageContent = elementor.translate( 'global_color_confirm_text' );
