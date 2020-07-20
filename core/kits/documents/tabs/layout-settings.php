@@ -125,16 +125,15 @@ class Layout_Settings extends Tab_Base {
 		 * @var PageTemplatesModule $page_templates_module
 		 */
 		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
+		$page_templates = $page_templates_module->add_page_templates( [], null, null );
 
 		$page_template_control_options = [
 			'label' => __( 'Default Page Layout', 'elementor' ),
 			'options' => [
 				// This is here because the "Theme" string is different than the default option's string.
 				'default' => __( 'Theme', 'elementor' ),
-			],
+			] + $page_templates,
 		];
-
-		$page_template_control_options['options'] += $page_templates_module->add_page_templates( [], null, null );
 
 		$page_templates_module->add_template_controls( $this->parent, 'default_page_template', $page_template_control_options );
 
