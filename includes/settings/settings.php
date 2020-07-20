@@ -542,6 +542,21 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
+							'element_wrappers_legacy_mode' => [
+								'label' => __( 'HTML Output Legacy Mode', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'options' => [
+										'' => __( 'After 3.0', 'elementor' ),
+										1 => __( 'Before 3.0', 'elementor' ),
+									],
+									'desc' => __( 'Developers, Please Note! If you’ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy Mode allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
+										. '<br /><br />'
+										. __( 'Please note - you should not use this mode on newly created sites.', 'elementor' )
+										. '<br />'
+										. '<a href="https://go.elementor.com/legacy-mode" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+								],
+							],
 						],
 					],
 				],

@@ -593,6 +593,10 @@ class Editor {
 			'ui' => [
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 			],
+			// Legacy Mode - for backwards compatibility of older HTML markup.
+			'legacyMode' => [
+				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
+			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'edit' => __( 'Edit', 'elementor' ),
