@@ -302,6 +302,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @since 2.0.9 Added the `controls` and the `settings` parameters.
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param array $controls Optional. An array of controls. Default is null.
 	 * @param array $settings Optional. Controls settings. Default is null.
@@ -309,6 +310,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Active controls.
 	 */
 	public function get_active_controls( array $controls = null, array $settings = null ) {
+		// _deprecated_function( __METHOD__, '3.0.0' );
+
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
 		}
@@ -714,6 +717,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @since 2.0.9 Added the `settings` parameter.
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param array $controls Optional. Controls list. Default is null.
 	 * @param array $settings Optional. Controls settings. Default is null.
@@ -721,6 +725,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Style controls.
 	 */
 	final public function get_style_controls( array $controls = null, array $settings = null ) {
+		// _deprecated_function( __METHOD__, '3.0.0' );
+
 		$controls = $this->get_active_controls( $controls, $settings );
 
 		$style_controls = [];
