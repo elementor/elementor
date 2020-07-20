@@ -5,7 +5,7 @@ export class Disable extends DisableEnable {
 	async apply( args ) {
 		const { settings, containers = [ args.container ], options = {} } = args;
 
-		const all = containers.map( async ( container ) => {
+		const all = containers.map( async ( /* Container */ container ) => {
 			container = container.lookup();
 
 			let promises = [];
@@ -36,7 +36,7 @@ export class Disable extends DisableEnable {
 
 			container.settings.set( '__globals__', container.globals.toJSON() );
 
-			container.render();
+			container.renderUI();
 		} );
 
 		await Promise.all( all );
