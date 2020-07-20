@@ -186,7 +186,7 @@ class Manager {
 	 * If a control has a scheme property, convert it to a default Global.
 	 * The $element parameter is passed for the deprecated argument function message.
 	 *
-	 * @param $args - Control scheme property
+	 * @param $args - Control args
 	 * @param Controls_Stack $element
 	 * @return array - Control/group control args
 	 * @since 3.0.0
