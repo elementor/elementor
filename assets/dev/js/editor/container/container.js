@@ -320,6 +320,14 @@ export default class Container extends ArgsObject {
 		this.renderer.view.renderOnChange( this.settings );
 	}
 
+	renderUI() {
+		if ( ! this.renderer ) {
+			return;
+		}
+
+		this.renderer.view.renderUI();
+	}
+
 	isEditable() {
 		return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ) && 'open' === this.document.editor.status;
 	}

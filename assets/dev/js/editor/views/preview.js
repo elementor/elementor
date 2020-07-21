@@ -10,7 +10,15 @@ const Preview = BaseSectionsContainerView.extend( {
 		if ( ! this.$childViewContainer ) {
 			this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
-			this.$el.prepend( this.$childViewContainer );
+			if ( elementor.config.legacyMode.elementWrappers ) {
+				const inner = jQuery( '<div>', { class: 'elementor-inner' } );
+
+				inner.append( this.$childViewContainer );
+
+				this.$el.prepend( inner );
+			} else {
+				this.$el.prepend( this.$childViewContainer );
+			}
 		}
 
 		return this.$childViewContainer;
