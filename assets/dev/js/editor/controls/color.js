@@ -101,6 +101,9 @@ export default class extends ControlBaseDataView {
 			if ( currentValue === globalColor.value ) {
 				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
 				break;
+			} else if ( colorTitle === globalColor.title ) {
+				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_name_already_exists' );
+				break;
 			} else {
 				messageContent = elementor.translate( 'global_color_confirm_text' );
 			}
