@@ -34,10 +34,9 @@ jobs:
           message: 'Updating to latest version'
           ref: "update/latest"
         env:
-          # This is necessary in order to push a commit to the repo
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
+          GITHUB_TOKEN: ${{ secrets.TOKEN }} # Leave this line unchanged
       - name: Create PR
         uses: peter-evans/create-pull-request@v2.8.1@master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN }}
           base: dist
