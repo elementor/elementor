@@ -82,6 +82,7 @@ export default class extends ControlBaseDataView {
 			key: this.model.get( 'name' ),
 			title: this.colorPicker?.getColorTitle(),
 			controlType: 'colors',
+			route: 'panel/global/global-colors',
 		};
 	}
 
