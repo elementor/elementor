@@ -35,7 +35,7 @@ export default function PostTypesSelect( props ) {
 			<select onChange={ setPostTypes } className="kit-content-select" multiple>
 
 			</select>
-			<Select2  onChange={ ( event ) => { console.log( event.target.selectedOptions ); } } options={ getPostTypesOptions() }>
+			<Select2 multiple settings={ { width: '100%' } } onChange={ ( event ) => { console.log( event.target.selectedOptions ); } } options={ getPostTypesOptions() }>
 
 			</Select2>
 		</Grid>
