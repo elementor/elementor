@@ -33,26 +33,25 @@ PanelMenu.initGroups = () => {
 	PanelMenu.groups.add( {
 		name: 'navigate_from_page',
 		title: elementor.translate( 'navigate_from_page' ),
-		items: [],
+		items: [
+			// Todo: internal command.
+			{
+				name: 'view-page',
+				icon: 'eicon-preview-thin',
+				title: elementor.translate( 'view_page' ),
+				type: 'link',
+				link: elementor.config.document.urls.permalink,
+			},
+			// Todo: internal command.
+			{
+				name: 'exit-to-dashboard',
+				icon: 'eicon-wordpress',
+				title: elementor.translate( 'exit_to_dashboard' ),
+				type: 'link',
+				link: elementor.config.document.urls.exit_to_dashboard,
+			},
+		],
 	} );
-
-	// Todo: internal command.
-	PanelMenu.addItem( {
-		name: 'view-page',
-		icon: 'eicon-preview-thin',
-		title: elementor.translate( 'view_page' ),
-		type: 'link',
-		link: elementor.config.document.urls.permalink,
-	}, 'navigate_from_page' );
-
-	// Todo: internal command.
-	PanelMenu.addItem( {
-		name: 'exit-to-dashboard',
-		icon: 'eicon-wordpress',
-		title: elementor.translate( 'exit_to_dashboard' ),
-		type: 'link',
-		link: elementor.config.document.urls.exit_to_dashboard,
-	}, 'navigate_from_page' );
 
 	if ( elementor.config.user.is_administrator ) {
 		PanelMenu.addAdminMenu();
@@ -63,22 +62,16 @@ PanelMenu.addAdminMenu = () => {
 	PanelMenu.groups.add( {
 		name: 'style',
 		title: elementor.translate( 'global_style' ),
-		items: [],
+		items: [
+			{
+				name: 'editor-preferences',
+				icon: 'eicon-user-preferences',
+				title: elementor.translate( 'user_preferences' ),
+				type: 'page',
+				callback: () => $e.route( 'panel/editor-preferences' ),
+			},
+		],
 	}, { at: 0 } );
-
-	PanelMenu.addItem( {
-		name: 'editor-preferences',
-		icon: 'eicon-user-preferences',
-		title: elementor.translate( 'user_preferences' ),
-		type: 'page',
-		callback: () => $e.route( 'panel/editor-preferences' ),
-	}, 'style' );
-
-	PanelMenu.groups.add( {
-		name: 'settings',
-		title: elementor.translate( 'settings' ),
-		items: [],
-	}, { at: 1 } );
 
 	PanelMenu.addItem( {
 		name: 'finder',
