@@ -58,10 +58,16 @@ class Manager extends BaseModule {
 
 	public function __construct() {
 		add_action( 'rest_api_init', [ $this, 'register_rest_error_handler' ] );
+        
+        $this->register_common_controllers();
 	}
 
 	public function get_name() {
 		return 'data-manager';
+	}
+
+	public function register_common_controllers() {
+		$this->register_controller( Common\Bulk\Controller::class );
 	}
 
 	/**

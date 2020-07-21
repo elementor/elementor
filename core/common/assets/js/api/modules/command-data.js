@@ -1,5 +1,9 @@
 import CommandBase from './command-base';
 
+/**
+ * @typedef {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}} ApplyMethods
+ */
+
 export default class CommandData extends CommandBase {
 	/**
 	 * Data returned from remote.
@@ -39,7 +43,7 @@ export default class CommandData extends CommandBase {
 	/**
 	 * @param {DataTypes} type
 	 *
-	 * @returns {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}}
+	 * @returns {ApplyMethods}
 	 */
 	getApplyMethods( type = this.type ) {
 		let before, after;
@@ -87,29 +91,58 @@ export default class CommandData extends CommandBase {
 		};
 	}
 
+	/**
+	 * Function handleData().
+	 *
+	 * @param {ApplyMethods} applyMethods
+	 * @param {RequestData} requestData
+	 * @param {{}} data
+	 *
+	 * @returns {*}
+	 */
+	handleData( applyMethods, requestData, data ) {
+		this.data = data;
+
+		// Run 'after' method.
+		this.data = applyMethods.after.apply( this, [ data, this.args ] );
+
+		this.data = { data: this.data };
+
+		// Append requestData.
+		this.data = Object.assign( { __requestData__: requestData }, this.data );
+
+		return this.data;
+	}
+
 	apply() {
 		const applyMethods = this.getApplyMethods();
 
 		// Run 'before' method.
-		this.args = applyMethods.before( this.args );
+		this.args = applyMethods.before.apply( this, [ this.args ] );
 
 		const requestData = this.getRequestData();
 
-		return $e.data.fetch( requestData ).then( ( data ) => {
-			this.data = data;
+		this.data = this.getPreventDefaults();
 
-			// Run 'after' method.
-			this.data = applyMethods.after( data, this.args );
+		if ( null !== this.data ) {
+			return this.handleData( applyMethods, requestData, this.data );
+		}
 
-			this.data = { data: this.data };
+		return $e.data.fetch( requestData )
+			.then( ( data ) => this.handleData( applyMethods, requestData, data ) )
+			.catch( ( e ) => this.onCatchApply( e ) );
+	}
 
-			// Append requestData.
-			this.data = Object.assign( { __requestData__: requestData }, this.data );
-
-			return this.data;
-		} ).catch( ( e ) => {
-			this.onCatchApply( e );
-		} );
+	/**
+	 * Function getPreventDefaults.
+	 *
+	 * By defaults returns: 'null' means it will be skipped ( no prevent defaults ), anything except 'null' will triggered by apply(), to prevent the defaults.
+	 * The result from 'getPreventDefaults' will be the result of the command.
+	 *
+	 * @returns {null|*}
+	 */
+	getPreventDefaults() {
+		return null;
 	}
 
 	/**

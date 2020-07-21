@@ -1,6 +1,7 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import Commands from './commands.js';
 import Cache from './data/cache';
+import BulkComponent from './data/components/bulk/component';
 
 /**
  * @typedef {('create'|'delete'|'get'|'update')} DataTypes
@@ -52,6 +53,8 @@ export default class Data extends Commands {
 		const { namespace, version } = this.args;
 
 		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;
+
+		$e.components.register( new BulkComponent() );
 	}
 
 	/**
@@ -124,7 +127,8 @@ export default class Data extends Commands {
 	 * @returns {string} endpoint
 	 */
 	commandToEndpoint( command, args, format = null ) {
-		let endpoint = command;
+		let endpoint = command,
+			isMagicParams = false;
 
 		const argsQueryLength = args?.query ? Object.values( args.query ).length : 0;
 
@@ -153,10 +157,13 @@ export default class Data extends Commands {
 					delete args.query[ key ];
 				} );
 
+				isMagicParams = true;
 				endpoint = format;
 			}
-		} else if ( format ) {
-			// No magic params, but still format,
+		}
+
+		if ( ! isMagicParams && format ) {
+			// No magic params, but still format
 			endpoint = format;
 		}
 
@@ -178,7 +185,15 @@ export default class Data extends Commands {
 				endpoint += '?';
 
 				queryEntries.forEach( ( [ name, value ] ) => {
-					endpoint += name + '=' + value + '&';
+					if ( Array.isArray( value ) ) {
+						value.forEach( ( item ) => {
+							endpoint += name + '[]=' + item + '&';
+						} );
+					} else if ( 'string' === typeof value || 'number' === typeof value ) {
+						endpoint += name + '=' + value + '&';
+					} else {
+						throw new RangeError( 'Invalid type of value' );
+					}
 				} );
 			}
 
