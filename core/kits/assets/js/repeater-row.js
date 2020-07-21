@@ -15,8 +15,16 @@ export default class extends RepeaterRow {
 		this.$colorValue.text( this.model.get( 'color' ) );
 	}
 
+	getDisabledRemoveButtons() {
+		if ( ! this.ui.disabledRemoveButtons ) {
+			this.ui.disabledRemoveButtons = this.$el.find( '.elementor-repeater-tool-remove--disabled' );
+		}
+
+		return this.ui.disabledRemoveButtons;
+	}
+
 	getRemoveButton() {
-		return this.ui.removeButton.add( this.$el.find( '.elementor-repeater-tool-remove--disabled' ) );
+		return this.ui.removeButton.add( this.getDisabledRemoveButtons() );
 	}
 
 	triggers() {
@@ -52,10 +60,17 @@ export default class extends RepeaterRow {
 		}
 
 		if ( isColor || isPopoverToggle ) {
+			const removeButtons = this.getDisabledRemoveButtons();
+
 			this.ui.removeButton.data( 'e-global-type', globalType );
 
 			this.ui.removeButton.tipsy( {
 				title: () => elementor.translate( 'delete_global_' + globalType ),
+				gravity: () => 's',
+			} );
+
+			removeButtons.tipsy( {
+				title: () => elementor.translate( globalType + '_cannot_be_deleted' ),
 				gravity: () => 's',
 			} );
 		}

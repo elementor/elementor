@@ -677,8 +677,6 @@ class Upgrades {
 			// Convert some setting to Elementor slider format.
 			$settings_to_slider = [
 				'container_width',
-				'viewport_lg',
-				'viewport_md',
 			];
 
 			foreach ( $settings_to_slider as $setting ) {
