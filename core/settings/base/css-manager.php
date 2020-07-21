@@ -110,7 +110,7 @@ abstract class CSS_Manager extends Manager {
 
 		$css_file->add_controls_stack_style_rules(
 			$model,
-			$model->get_style_controls(),
+			$css_file->get_style_controls( $model ),
 			$model->get_settings(),
 			[ '{{WRAPPER}}' ],
 			[ $model->get_css_wrapper_selector() ]
