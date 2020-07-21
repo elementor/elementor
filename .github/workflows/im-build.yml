@@ -1,0 +1,42 @@
+name: Build-Dist
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: startsWith( github.repository, 'immediate-media/' )
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: npm install
+      - name: Build Assets
+        run: |
+          npm config set git-tag-version false
+          
+          export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
+          export PACKAGE_VERSION=$(cat package.json \
+            | grep version \
+            | head -1 \
+            | awk -F: '{ print $2 }' \
+            | sed 's/[",]//g' \
+            | tr -d '[[:space:]]')
+          grunt build
+          sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
+          sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
+      - name: Commit Assets
+        uses: EndBug/add-and-commit@v4
+        with:
+          message: 'Updating to latest version'
+          ref: "update/latest"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }} # Leave this line unchanged
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v2.8.1@master
+        with:
+          token: ${{ secrets.TOKEN }}
+          base: dist
