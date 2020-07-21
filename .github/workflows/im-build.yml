@@ -31,6 +31,7 @@ jobs:
       - name: Commit Assets
         uses: EndBug/add-and-commit@v4
         with:
+          force: true
           message: 'Updating to latest version'
           ref: "update/latest"
         env:
@@ -38,5 +39,6 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@master
         with:
+          branch: "update/latest"
+          base: "dist"
           token: ${{ secrets.TOKEN }}
-          base: dist
