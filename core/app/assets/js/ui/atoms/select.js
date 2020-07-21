@@ -28,5 +28,4 @@ Select.propTypes = {
 Select.defaultProps = {
 	className: '',
 	options: [],
-	value: '',
 };
