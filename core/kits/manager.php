@@ -100,6 +100,8 @@ class Manager {
 				'global_color' => __( 'Global Color', 'elementor' ),
 				'global_typography' => __( 'Global Typography', 'elementor' ),
 				'invalid' => __( 'Invalid', 'elementor' ),
+				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
+				'typography_cannot_be_deleted' => __( 'System Typography can\'t be deleted', 'elementor' ),
 			],
 		] );
 
@@ -172,5 +174,12 @@ class Manager {
 		add_action( 'elementor/frontend/after_enqueue_global', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
+
+		/*
+		 * Init kit controls in order to avoid init kit group control from within another group control.
+		 * (After moving the `default_font` to the kit, the Typography group control cause initialize the kit controls at: https://github.com/elementor/elementor/blob/e6e1db9eddef7e3c1a5b2ba0c2338e2af2a3bfe3/includes/controls/groups/typography.php#L91
+		 * and because the group control is a singleton, its args are changed to the last kit group control.)
+		 */
+		add_action( 'elementor/init', [ $this, 'get_active_kit_for_frontend' ] );
 	}
 }

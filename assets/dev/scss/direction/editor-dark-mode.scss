@@ -72,6 +72,65 @@ body {
 	}
 }
 
+// Globals
+.e-global {
+
+	&__select-box {
+		border-color: $theme-dark-gray-light;
+		background-color: $theme-dark-gray-darkest;
+	}
+
+	&__popover {
+
+		&-container {
+			background-color: $theme-dark-gray;
+			color: $theme-dark-light;
+		}
+
+		&-title {
+			border-bottom-color: $theme-dark-gray-dark;
+		}
+	}
+
+	&__color-title,
+	&__manage-button,
+	&__popover-title {
+		color: $theme-dark-light;
+	}
+
+	&__manage-button {
+		border-top-color: $theme-dark-gray-dark;
+	}
+
+	&__preview-item {
+
+		&:hover {
+			background-color: $theme-dark-gray-dark;
+		}
+	}
+}
+
+// Global Settings
+.elementor-control {
+
+	&-type-global-style-repeater {
+
+		.elementor-button-wrapper {
+			border-top-color: $theme-dark-gray-darkest;
+		}
+	}
+}
+
+// Elementor control tools - Typography popover header and Color Picker Header
+.e-control-tool {
+	background-color: $theme-dark-gray-darkest;
+	border-color: $theme-dark-light;
+
+	i {
+		color: $theme-dark-light;
+	}
+}
+
 //Loader
 #elementor-loading {
 	background-color: $theme-dark-gray-darkest;
@@ -144,6 +203,7 @@ select {
 .elementor-control-dynamic-switcher {
 	background-color: $theme-dark-gray-darkest;
 	border-color: $theme-dark-gray-light;
+	color: $theme-dark-light;
 }
 
 .elementor-tags-list {

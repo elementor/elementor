@@ -5,13 +5,13 @@ namespace Elementor\Data;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Data\Base\Controller;
 use Elementor\Data\Base\Processor;
-use Elementor\Data\Editor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Manager extends BaseModule {
+
 	const ROOT_NAMESPACE = 'elementor';
 
 	const REST_BASE = '';
@@ -19,18 +19,14 @@ class Manager extends BaseModule {
 	const VERSION = '1';
 
 	/**
-	 * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
-	 *
-	 * @return \Elementor\Core\Base\Module|\Elementor\Data\Manager
-	 */
-	public static function instance() {
-		return ( parent::instance() );
-	}
-
-	/**
 	 * @var \WP_REST_Server
 	 */
 	private $server;
+
+	/**
+	 * @var boolean
+	 */
+	private $is_internal = false;
 
 	/**
 	 * @var array
@@ -50,6 +46,19 @@ class Manager extends BaseModule {
 	 * @var string[]
 	 */
 	public $command_formats = [];
+
+	/**
+	 * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
+	 *
+	 * @return \Elementor\Core\Base\Module|\Elementor\Data\Manager
+	 */
+	public static function instance() {
+		return ( parent::instance() );
+	}
+
+	public function __construct() {
+		add_action( 'rest_api_init', [ $this, 'register_rest_error_handler' ] );
+	}
 
 	public function get_name() {
 		return 'data-manager';
@@ -107,6 +116,14 @@ class Manager extends BaseModule {
 	 */
 	public function register_endpoint_format( $command, $format ) {
 		$this->command_formats[ $command ] = rtrim( $format, '/' );
+	}
+
+	public function register_rest_error_handler() {
+		if ( ! $this->is_internal() ) {
+			$logger_manager = \Elementor\Core\Logger\Manager::instance();
+
+			set_error_handler( [ $logger_manager, 'rest_error_handler' ], E_ALL );
+		}
 	}
 
 	/**
@@ -212,6 +229,11 @@ class Manager extends BaseModule {
 	 * @return \WP_REST_Server
 	 */
 	public function run_server() {
+		/**
+		 * If run_server() called means, that rest api is simulated from the backend.
+		 */
+		$this->is_internal = true;
+
 		if ( ! $this->server ) {
 			$this->server = rest_get_server(); // Init API.
 		}
@@ -230,34 +252,9 @@ class Manager extends BaseModule {
 		$this->controllers = [];
 		$this->command_formats = [];
 		$this->server = false;
+		$this->is_internal = false;
 		$this->cache = [];
 		$wp_rest_server = false;
-	}
-
-	/**
-	 * Run internal.
-	 *
-	 * @param string $endpoint
-	 * @param array  $args
-	 * @param string $method
-	 *
-	 * @return \WP_REST_Response
-	 */
-	public function run_internal( $endpoint, $args, $method ) {
-		$this->run_server();
-
-		$endpoint = '/' . self::ROOT_NAMESPACE . '/v' . self::VERSION . '/' . $endpoint;
-
-		// Run reset api.
-		$request = new \WP_REST_Request( $method, $endpoint );
-
-		if ( 'GET' === $method ) {
-			$request->set_query_params( $args );
-		} else {
-			$request->set_body_params( $args );
-		}
-
-		return rest_do_request( $request );
 	}
 
 	/**
@@ -308,7 +305,38 @@ class Manager extends BaseModule {
 	}
 
 	/**
+	 * Run request.
+	 *
+	 * Simulate rest API from within the backend.
+	 * Use args as query.
+	 *
+	 * @param string $endpoint
+	 * @param array $args
+	 * @param string $method
+	 *
+	 * @return \WP_REST_Response
+	 */
+	private function run_request( $endpoint, $args, $method ) {
+		$this->run_server();
+
+		$endpoint = '/' . self::ROOT_NAMESPACE . '/v' . self::VERSION . '/' . $endpoint;
+
+		// Run reset api.
+		$request = new \WP_REST_Request( $method, $endpoint );
+
+		if ( 'GET' === $method ) {
+			$request->set_query_params( $args );
+		} else {
+			$request->set_body_params( $args );
+		}
+
+		return rest_do_request( $request );
+	}
+
+	/**
 	 * Run endpoint.
+	 *
+	 * Wrapper for `$this->run_request` return `$response->getData()` instead of `$response`.
 	 *
 	 * @param string $endpoint
 	 * @param array $args
@@ -317,7 +345,7 @@ class Manager extends BaseModule {
 	 * @return array
 	 */
 	public function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
-		$response = $this->run_internal( $endpoint, $args, $method );
+		$response = $this->run_request( $endpoint, $args, $method );
 
 		return $response->get_data();
 	}
@@ -366,7 +394,7 @@ class Manager extends BaseModule {
 
 		$this->run_processors( $command_processors, Processor\Before::class, [ $args ] );
 
-		$response = $this->run_internal( $endpoint, $args, $method );
+		$response = $this->run_request( $endpoint, $args, $method );
 		$result = $response->get_data();
 
 		if ( $response->is_error() ) {
@@ -379,5 +407,9 @@ class Manager extends BaseModule {
 		$this->set_cache( $key, $result );
 
 		return $result;
+	}
+
+	public function is_internal() {
+		return $this->is_internal;
 	}
 }

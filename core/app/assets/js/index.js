@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom';
 import App from './app';
 import { Module as SiteEditor } from '@elementor/site-editor';
 
