@@ -221,6 +221,11 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 2.9.14 - 2020-07-21 =
+* Tweak: Added compatibility with WordPress v5.4 ([#11820](https://github.com/elementor/elementor/issues/11820), [#11830](https://github.com/elementor/elementor/issues/11830))
+* Fix: Elementor posts aren't properly imported with WordPress Importer v0.7 ([#11466](https://github.com/elementor/elementor/issues/11466), [#10744](https://github.com/elementor/elementor/issues/10744))
+* Fix: Added sanitization to post titles in WordPress dashboard for better security
+
 = 2.9.13 - 2020-06-23 =
 * Fix: Duplicated Hidden type form fields inherited required attribute in Form widget ([#11578](https://github.com/elementor/elementor/issues/11578))
 * Fix: Select2 control width glitch
