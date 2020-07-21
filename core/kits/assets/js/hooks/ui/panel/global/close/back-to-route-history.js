@@ -29,10 +29,7 @@ export class KitBackToRouteHistory extends BaseOpenClose {
 			// Since the container comes from history, its not connected element.
 			historyBeforeOpen.container = historyBeforeOpen.container.lookup();
 
-			$e.run( 'panel/editor/open', {
-				view: historyBeforeOpen.container.view,
-				model: historyBeforeOpen.container.model,
-			} );
+			historyBeforeOpen.container.model.trigger( 'request:edit', { scrollIntoView: true } );
 
 			$e.route( historyBeforeOpen.route );
 		} );
