@@ -20,6 +20,9 @@ class Screenshot {
 			excluded_css_urls: [
 				'https://kit-pro.fontawesome.com',
 			],
+			include_images_urls: [
+				'https://i.ytimg.com', // Youtube images domain.
+			],
 			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
 			render_timeout: 5000, // Wait until all the element will be loaded or 5 sec and then take screenshot.
 			timerLabel: null,
@@ -56,11 +59,10 @@ class Screenshot {
 			this.createFakeContent();
 		}
 
-		this.handleIFrames();
-		this.handleSlides();
 		this.hideUnnecessaryElements();
 		this.removeUnnecessaryElements();
 		this.loadExternalCss();
+		this.loadExternalImages();
 
 		Promise.resolve()
 			.then( this.createImage.bind( this ) )
@@ -71,6 +73,9 @@ class Screenshot {
 			.catch( this.screenshotFailed.bind( this ) );
 	}
 
+	/**
+	 * Fake content for documents that dont have any content.
+	 */
 	createFakeContent() {
 		this.$elementor = jQuery( '<div></div>' ).css( {
 			height: this.config.crop.height,
@@ -85,86 +90,6 @@ class Screenshot {
 		);
 
 		document.body.prepend( this.$elementor );
-	}
-
-	/**
-	 * Html to images libraries can not snapshot IFrames
-	 * this method convert all the IFrames to some other elements.
-	 */
-	handleIFrames() {
-		this.$elementor.find( 'iframe' ).each( ( index, el ) => {
-			const $iframe = jQuery( el );
-
-			const $iframeMask = jQuery( '<div />', {
-				css: {
-					background: 'gray',
-					width: $iframe.width(),
-					height: $iframe.height(),
-				},
-			} );
-
-			if ( $iframe.next().is( '.elementor-custom-embed-image-overlay' ) ) {
-				this.handleCustomEmbedImageIFrame( $iframe, $iframeMask );
-			} else if ( -1 !== $iframe.attr( 'src' ).search( 'youtu' ) ) {
-				this.handleYouTubeIFrame( $iframe, $iframeMask );
-			}
-
-			$iframe.before( $iframeMask );
-			$iframe.remove();
-		} );
-	}
-
-	/**
-	 * @param $iframe
-	 * @param $iframeMask
-	 */
-	handleCustomEmbedImageIFrame( $iframe, $iframeMask ) {
-		const regex = /url\(\"(.*)\"/gm;
-		const url = $iframe.next().css( 'backgroundImage' );
-		const matches = regex.exec( url );
-
-		$iframeMask.css( { background: $iframe.next().css( 'background' ) } );
-
-		$iframeMask.append( jQuery( '<img />', {
-			src: matches[ 1 ],
-			css: {
-				width: $iframe.width(),
-				height: $iframe.height(),
-			},
-		} ) );
-
-		$iframe.next().remove();
-	}
-
-	/**
-	 * @param $iframe
-	 * @param $iframeMask
-	 */
-	handleYouTubeIFrame( $iframe, $iframeMask ) {
-		const regex = /^.*(?:youtu.be\/|youtube(?:-nocookie)?.com\/(?:(?:watch)??(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^?&"'>]+)/;
-		const matches = regex.exec( $iframe.attr( 'src' ) );
-
-		$iframeMask.append( jQuery( '<img />', {
-			src: this.getScreenshotProxyUrl( `https://img.youtube.com/vi/${ matches[ 1 ] }/0.jpg` ),
-			crossOrigin: 'Anonymous',
-			css: {
-				width: $iframe.width(),
-				height: $iframe.height(),
-			},
-		} ) );
-	}
-
-	/**
-	 * Slides should show only the first slide, all the other slides will be removed.
-	 */
-	handleSlides() {
-		this.$elementor.find( '.elementor-slides' ).each( ( index, el ) => {
-			const $this = jQuery( el );
-
-			$this.find( '> *' ).not( $this.find( '> :first-child' ) ).each( ( childIndex, childEl ) => {
-				jQuery( childEl ).remove();
-			} );
-		} );
 	}
 
 	/**
@@ -189,6 +114,21 @@ class Screenshot {
 
 			jQuery( 'head' ).append( $newLink );
 			$link.remove();
+		} );
+	}
+
+	/**
+	 * Make a proxy to images urls that has some problems with cross origin (like youtube).
+	 */
+	loadExternalImages() {
+		const selector = this.config.include_images_urls
+			.map( ( url ) => `img[src^="${ url }"]` )
+			.join( ', ' );
+
+		jQuery( selector ).each( ( index, el ) => {
+			const $img = jQuery( el );
+
+			$img.attr( 'src', this.getScreenshotProxyUrl( $img.attr( 'src' ) ) );
 		} );
 	}
 
@@ -249,7 +189,7 @@ class Screenshot {
 			.then( () => {
 				this.log( 'Start creating screenshot.' );
 
-				return domtoimage.toPng( document.body, {} );
+				return domtoimage.toPng( document.body );
 			} );
 	}
 
