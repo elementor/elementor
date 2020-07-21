@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Testing\Modules\Screenshots\Module;
 
 use Elementor\Modules\Screenshots\Module;

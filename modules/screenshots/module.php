@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\Screenshots;
 
 use Elementor\Plugin;
@@ -12,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-
 	const SCREENSHOT_NONCE_ACTION = 'screenshot';
 	const SCREENSHOT_PROXY_NONCE_ACTION = 'screenshot_proxy';
 
