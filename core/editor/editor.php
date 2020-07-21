@@ -593,6 +593,10 @@ class Editor {
 			'ui' => [
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 			],
+			// Legacy Mode - for backwards compatibility of older HTML markup.
+			'legacyMode' => [
+				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
+			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'edit' => __( 'Edit', 'elementor' ),
@@ -621,21 +625,21 @@ class Editor {
 				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
 				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
 				'delete_global_color' => __( 'Delete Global Color', 'elementor' ),
-				'delete_global_color_info' => __( 'Please note that by deleting a global color, all of its instances will inherit their value from an unknown source', 'elementor' ),
-				'global_colors_info' => __( 'Global colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below.', 'elementor' ),
+				'delete_global_color_info' => __( 'You\'re about to delete a Global Color. Note that if it\'s being used anywhere on your site, it will inherit a default color.', 'elementor' ),
+				'global_colors_info' => __( 'Global Colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below.', 'elementor' ),
 				'typography' => __( 'Typography', 'elementor' ),
 				'new_typography_setting' => __( 'New Typography Setting', 'elementor' ),
 				'global_typography_title' => __( 'Global Typography Settings', 'elementor' ),
 				'manage_global_typography' => __( 'Manage Global Typography', 'elementor' ),
 				'create_global_typography' => __( 'Create New Global Typography', 'elementor' ),
 				'delete_global_typography' => __( 'Delete Global Typography', 'elementor' ),
-				'delete_global_typography_info' => __( 'Please note that by deleting a Global Typography setting, all of its instances will inherit their value from an unknown source', 'elementor' ),
-				'global_typography_info' => __( 'Global typography help you work smarter. Save a typography, and use it anywhere throughout your site. Access and edit your global typography by clicking the Manage button below.', 'elementor' ),
+				'delete_global_typography_info' => __( 'You\'re about to delete a Global Typography. Note that if it\'s being used anywhere on your site, it will inherit a default typography.', 'elementor' ),
+				'global_typography_info' => __( 'Global Typography helps you work smarter. Save a Typography, and use it anywhere throughout your site. Access and edit your global typography by clicking the Manage button below.', 'elementor' ),
 				'default' => __( 'Default', 'elementor' ),
 				'create' => __( 'Create', 'elementor' ),
 				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
-				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
-				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
+				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' ),
+				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' ),
 				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Typography setting?', 'elementor' ),
 				'custom' => __( 'Custom', 'elementor' ),
 
@@ -797,7 +801,6 @@ class Editor {
 				'see_it_in_action' => __( 'See it in Action', 'elementor' ),
 				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
 				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
-				'available_in_pro_v29' => __( 'Available in Pro V2.9.', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

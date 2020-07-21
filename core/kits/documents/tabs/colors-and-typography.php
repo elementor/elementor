@@ -51,6 +51,7 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'required' => true,
 			]
 		);
 
@@ -131,6 +132,7 @@ class Colors_And_Typography extends Tab_Base {
 			[
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'required' => true,
 			]
 		);
 
