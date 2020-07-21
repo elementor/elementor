@@ -1,6 +1,6 @@
 export default function Select( props ) {
 	return (
-		<select className={ props.className } value={ props.value } onChange={ props.onChange } ref={ props.elRef }>
+		<select multiple={ props.multiple } className={ props.className } value={ props.value } onChange={ props.onChange } ref={ props.elRef }>
 			{ props.options.map( ( option ) =>
 				option.children ?
 					<optgroup label={ option.label } key={ option.label }>
@@ -23,6 +23,7 @@ Select.propTypes = {
 	onChange: PropTypes.func,
 	options: PropTypes.array,
 	elRef: PropTypes.object,
+	multiple: PropTypes.bool,
 };
 Select.defaultProps = {
 	className: '',

@@ -17,7 +17,7 @@ const getDefaultSettings = () => ( {
  * @returns {*}
  * @constructor
  */
-export function Select2( props ) {
+export default function Select2( props ) {
 	const ref = React.useRef( null );
 	// Initiate the select 2 library, call to onReady after initiate, and
 	// listen to select event on the select instance.
@@ -41,7 +41,7 @@ export function Select2( props ) {
 		jQuery( ref.current ).val( props.value ).trigger( 'change' );
 	}, [ props.value ] );
 
-	return <Select value={ props.value } onChange={ props.onChange } elRef={ ref } options={ props.options }/>;
+	return <Select multiple={ props.multiple } value={ props.value } onChange={ props.onChange } elRef={ ref } options={ props.options }/>;
 }
 Select2.propTypes = {
 	value: PropTypes.string,
@@ -49,6 +49,7 @@ Select2.propTypes = {
 	onReady: PropTypes.func,
 	options: PropTypes.array,
 	settings: PropTypes.object,
+	multiple: PropTypes.bool,
 };
 Select2.defaultProps = {
 	settings: {},
