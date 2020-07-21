@@ -87,10 +87,9 @@ class Manager {
 			'i18n' => [
 				'close' => __( 'Close', 'elementor' ),
 				'back' => __( 'Back', 'elementor' ),
-				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'site_identity' => __( 'Site Identity', 'elementor' ),
 				'lightbox' => __( 'Lightbox', 'elementor' ),
-				'layout_settings' => __( 'Layout', 'elementor' ),
+				'layout' => __( 'Layout', 'elementor' ),
 				'theme_style' => __( 'Theme Style', 'elementor' ),
 				'add_color' => __( 'Add Color', 'elementor' ),
 				'add_style' => __( 'Add Style', 'elementor' ),
@@ -102,6 +101,11 @@ class Manager {
 				'invalid' => __( 'Invalid', 'elementor' ),
 				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
 				'typography_cannot_be_deleted' => __( 'System Typography can\'t be deleted', 'elementor' ),
+				'design_system' => __( 'Design System', 'elementor' ),
+				'buttons' => __( 'Buttons', 'elementor' ),
+				'images' => __( 'Images', 'elementor' ),
+				'form_fields' => __( 'Form Fields', 'elementor' ),
+				'custom_css' => __( 'Custom CSS', 'elementor' ),
 			],
 		] );
 

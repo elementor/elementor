@@ -646,10 +646,8 @@ class Editor {
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
-				'global_colors' => __( 'Default Colors', 'elementor' ),
-				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Global Style', 'elementor' ),
-				'global_settings' => __( 'Global Settings', 'elementor' ),
+				'site_settings' => __( 'Site Settings', 'elementor' ),
 				'site_editor' => __( 'Site Editor', 'elementor' ),
 				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
