@@ -89,7 +89,7 @@ const externals = {
 const plugins = [
 	new webpack.ProvidePlugin( {
 		React: 'react',
-		ReactDOM: 'ReactDOM',
+		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
 		__: ['@wordpress/i18n', '__'],
 	} )
