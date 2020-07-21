@@ -107,8 +107,8 @@ class Screenshot {
 			.join( ', ' );
 
 		jQuery( 'link' ).not( notSelector ).each( ( index, el ) => {
-			const $link = jQuery( el );
-			const $newLink = $link.clone();
+			const $link = jQuery( el ),
+				$newLink = $link.clone();
 
 			$newLink.attr( 'href', this.getScreenshotProxyUrl( $link.attr( 'href' ) ) );
 
@@ -215,9 +215,9 @@ class Screenshot {
 	 * @returns {Promise<unknown>}
 	 */
 	cropCanvas( image ) {
-		const cropCanvas = document.createElement( 'canvas' );
-		const cropContext = cropCanvas.getContext( '2d' );
-		const ratio = this.config.crop.width / image.width;
+		const cropCanvas = document.createElement( 'canvas' ),
+			cropContext = cropCanvas.getContext( '2d' ),
+			ratio = this.config.crop.width / image.width;
 
 		cropCanvas.width = this.config.crop.width;
 		cropCanvas.height = this.config.crop.height > image.height ? image.height : this.config.crop.height;
