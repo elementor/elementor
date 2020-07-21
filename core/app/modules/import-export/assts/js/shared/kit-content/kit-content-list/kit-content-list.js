@@ -15,8 +15,7 @@ import kitContentData from '../kit-content-data/kit-content-data';
 import './kit-content-list.scss';
 
 export default function KitContentList( props ) {
-	const [ postsList, setPostsList ] = useState( [ __( 'Select custom post types (maximum of 20 posts will be included)', 'elementor' ) ] ),
-		[ isPosts, setIsPosts ] = useState( false ),
+	const [ isPosts, setIsPosts ] = useState( false ),
 		getButton = () => (
 		<Grid item>
 			<Button variant="contained" color="cta" text={ __( 'Lear More', 'elementor' ) } url="/#" />
@@ -44,7 +43,7 @@ export default function KitContentList( props ) {
 			return;
 		}
 
-		return isPosts;
+		return null;
 	};
 
 	return (
@@ -54,10 +53,10 @@ export default function KitContentList( props ) {
 					<List.Item key={ index } className="kit-content-list__item">
 						<Grid container justify="space-between" alignItems="center">
 							<Grid item container={ ! item.data.notice }>
-								<Grid container item>
+								<Grid item container>
 									<Checkbox checked={ isChecked( item.type ) } onChange={ ( event ) => setIncludes( event, item.type ) } className="kit-content-list__checkbox" />
 
-									<Grid item>
+									<Grid item className={ 'content' === item.type ? ' kit-content-list-grid--expand' : '' }>
 										<Heading variant="h3" className="kit-content-list__title">{ item.data.title }</Heading>
 
 										<Grid item>
@@ -66,12 +65,12 @@ export default function KitContentList( props ) {
 											</Text>
 
 											{ item.data.notice && getProFeaturesIndication() }
+											{ ( 'content' === item.type && 'export' === props.type ) ? <PostTypesSelect /> : null }
 										</Grid>
 									</Grid>
 								</Grid>
 
 								{ item.data.notice && getNotice( item.data.notice ) }
-								{ ( 'content' === item.type && 'export' === props.type ) ? <PostTypesSelect setIsPosts={ setIsPosts } options={ postsList }/> : null }
 							</Grid>
 
 							{ item.data.notice && getButton() }

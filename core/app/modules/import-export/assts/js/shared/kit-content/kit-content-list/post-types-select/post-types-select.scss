@@ -1,11 +1,26 @@
-.kit-content-selection-container {
-	padding: spacing(5) calc( 15px + #{ spacing(12) } );
+$kit-content-select-border-color: tints(300);
+$kit-content-select-dark-border-color: dark-tints(600);
+$kit-content-select-color: tints(600);
+$kit-content-select-dark-color: dark-tints(600);
+
+:root {
+	--kit-content-select-border-color: #{$kit-content-select-border-color};
+	--kit-content-select-color: #{$kit-content-select-color};
+}
+
+.dark {
+	--kit-content-select-border-color: #{$kit-content-select-dark-border-color};
+	--kit-content-select-color: #{$kit-content-select-dark-color};
 }
 
 .kit-content-select {
 	width: 100%;
 	border-radius: $eps-radius;
-	padding: spacing(8) spacing(5);
-	border: 1px solid tints(300);
-	color: tints(600);
+	border: 1px solid var(--kit-content-select-border-color);
+	color: var(--kit-content-select-color);
+	box-sizing: border-box;
+
+	input {
+		width: 100%!important;
+	}
 }

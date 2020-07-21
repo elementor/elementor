@@ -25,6 +25,7 @@ $kit-content-list-locked-features-dark-color: dark-tints(300);
 	}
 
 	&__checkbox {
+		flex-shrink: 0;
 		margin-inline-end: spacing(12);
 	}
 
@@ -39,5 +40,11 @@ $kit-content-list-locked-features-dark-color: dark-tints(300);
 
 	&__notice {
 		margin-top: spacing(16);
+	}
+
+	.kit-content-list-grid {
+		&--expand {
+			flex-grow: 1;
+		}
 	}
 }

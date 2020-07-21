@@ -11,15 +11,16 @@ export default function PostTypesSelect( props ) {
 		setPostTypes = ( event ) => {
 			const selectedOptions = [ ...event.target.selectedOptions ].map( ( option ) => option.value );
 
-			props.setIsPosts( selectedOptions.length );
-
 			context.dispatch( { type: 'SET_POST_TYPES', value: selectedOptions } );
 		},
 		getPostTypesOptions = () => {
 			const customPostTypes = elementorAppConfig[ 'import-export' ][ 'custom_post_types' ];
 
 			if ( ! customPostTypes ) {
-				const tempOptions = [ { label: 'Posts', value: 'post' }, { label: 'Pages', value: 'page' } ];
+				const tempOptions = [
+					{ label: 'Posts', value: 'post' },
+					{ label: 'Pages', value: 'page' },
+				];
 
 				//return;
 				return tempOptions;
@@ -32,12 +33,16 @@ export default function PostTypesSelect( props ) {
 
 	return (
 		<Grid container justify="center" className="kit-content-selection-container">
-			<select onChange={ setPostTypes } className="kit-content-select" multiple>
-
-			</select>
-			<Select2 multiple settings={ { width: '100%' } } onChange={ ( event ) => { console.log( event.target.selectedOptions ); } } options={ getPostTypesOptions() }>
-
-			</Select2>
+			<Select2
+				multiple
+				onChange={ setPostTypes }
+				options={ getPostTypesOptions() }
+				settings={ {
+					width: '100%',
+					containerCssClass: 'kit-content-select',
+					placeholder: __( 'Select custom post types (maximum of 20 posts will be included)', 'elementor' ),
+				} }
+			/>
 		</Grid>
 	);
 }
