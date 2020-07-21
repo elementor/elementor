@@ -90,12 +90,12 @@ body {
 // Globals
 .e-global {
 
-	&__select-box {
-		border-color: $theme-dark-gray-light;
-		background-color: $theme-dark-gray-darkest;
-	}
-
 	&__popover {
+
+		&-toggle {
+			border-color: $theme-dark-gray-light;
+			background-color: $theme-dark-gray-darkest;
+		}
 
 		&-container {
 			background-color: $theme-dark-gray;
