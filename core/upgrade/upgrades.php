@@ -659,6 +659,9 @@ class Upgrades {
 
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
+			$current_settings['viewport_md'] = get_option( 'elementor_viewport_md', '' );
+			$current_settings['viewport_lg'] = get_option( 'elementor_viewport_lg', '' );
+
 			$kit_settings = $kit->get_meta( $meta_key );
 
 			// Already exist.
@@ -677,6 +680,7 @@ class Upgrades {
 			// Convert some setting to Elementor slider format.
 			$settings_to_slider = [
 				'container_width',
+				'space_between_widgets',
 			];
 
 			foreach ( $settings_to_slider as $setting ) {
