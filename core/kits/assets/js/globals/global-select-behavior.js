@@ -177,7 +177,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	printGlobalSelectBox() {
 		const $globalSelectBox = jQuery( '<div>', { class: 'e-global__select-box' } ),
-			$selectedGlobal = jQuery( '<i>', { class: 'eicon-global-settings' } );
+			$selectedGlobal = jQuery( '<i>', { class: 'eicon-globe' } );
 
 		$globalSelectBox.append( $selectedGlobal );
 
