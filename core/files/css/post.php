@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Files\CSS;
 
+use Elementor\Base_Data_Control;
+use Elementor\Control_Repeater;
 use Elementor\Controls_Stack;
 use Elementor\Element_Base;
 use Elementor\Plugin;
@@ -34,6 +36,10 @@ class Post extends Base {
 	 * @var int
 	 */
 	private $post_id;
+
+	protected function is_global_parsing_supported() {
+		return true;
+	}
 
 	/**
 	 * Post CSS file constructor.
@@ -287,7 +293,7 @@ class Post extends Base {
 
 		$element_settings = $element->get_settings();
 
-		$this->add_controls_stack_style_rules( $element, $element->get_style_controls( null, $element->get_parsed_dynamic_settings() ), $element_settings, [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
+		$this->add_controls_stack_style_rules( $element, $this->get_style_controls( $element, null, $element->get_parsed_dynamic_settings() ), $element_settings, [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
 		/**
 		 * After element parse CSS.

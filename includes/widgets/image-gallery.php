@@ -1,12 +1,11 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
-use Elementor\Core\Settings\Manager;
 
 /**
  * Elementor image gallery widget.
@@ -327,7 +326,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'name' => 'typography',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_ACCENT,
+					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 				],
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
 				'condition' => [
