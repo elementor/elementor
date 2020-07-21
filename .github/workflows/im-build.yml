@@ -31,7 +31,6 @@ jobs:
       - name: Commit Assets
         uses: EndBug/add-and-commit@v4
         with:
-          force: true
           message: 'Updating to latest version'
           ref: "update/latest"
         env:
