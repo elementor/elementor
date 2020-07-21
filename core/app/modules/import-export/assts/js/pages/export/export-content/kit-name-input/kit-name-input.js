@@ -12,7 +12,6 @@ export default function KitNameInput() {
 				type="text"
 				onChange={ ( event ) => context.dispatch( { type: 'SET_TITLE', value: event.target.value } ) }
 				defaultValue={ context.kitContent.title }
-				data-value={ Math.random() }
 			/>
 		</Box>
 	), [] );
