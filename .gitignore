@@ -6,9 +6,9 @@ vendor/
 local-site/
 
 # build outputs
-build/
-assets/css/
-assets/js/
+# build/
+# assets/css/
+# assets/js/
 *.log
 *.map
 
