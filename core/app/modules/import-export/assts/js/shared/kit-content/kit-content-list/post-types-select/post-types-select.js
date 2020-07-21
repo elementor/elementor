@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Context as KitContext } from '../../../../context/kit-context';
 
 import Grid from 'elementor-app/ui/grid/grid';
+import Select2 from 'elementor-app/ui/molecules/select2.js';
 
 import './post-types-select.scss';
 
@@ -14,17 +15,14 @@ export default function PostTypesSelect( props ) {
 
 			context.dispatch( { type: 'SET_POST_TYPES', value: selectedOptions } );
 		},
-		getpostTypesOptions = () => {
+		getPostTypesOptions = () => {
 			const customPostTypes = elementorAppConfig[ 'import-export' ][ 'custom_post_types' ];
 
 			if ( ! customPostTypes ) {
+				const tempOptions = [ { label: 'Posts', value: 'post' }, { label: 'Pages', value: 'page' } ];
+
 				//return;
-				return (
-					<>
-						<option value="post">Posts</option>
-						<option value="page">Pages</option>
-					</>
-				);
+				return tempOptions;
 			}
 
 			return Object.entries( customPostTypes ).map( ( item, index ) => (
@@ -35,8 +33,11 @@ export default function PostTypesSelect( props ) {
 	return (
 		<Grid container justify="center" className="kit-content-selection-container">
 			<select onChange={ setPostTypes } className="kit-content-select" multiple>
-				{ getpostTypesOptions() }
+
 			</select>
+			<Select2  onChange={ ( event ) => { console.log( event.target.selectedOptions ); } } options={ getPostTypesOptions() }>
+
+			</Select2>
 		</Grid>
 	);
 }
