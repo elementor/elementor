@@ -59,6 +59,7 @@ class Site_Identity extends Tab_Base {
 					'id' => $custom_logo_id,
 					'url' => wp_get_attachment_image_src( $custom_logo_id, 'full' )[0],
 				],
+				'description' => __( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
 			]
 		);
 
@@ -67,6 +68,7 @@ class Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Favicon', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'description' => __( 'Suggested Favicon dimensions: 512 × 512 pixels.', 'elementor' ),
 			]
 		);
 

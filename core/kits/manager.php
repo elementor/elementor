@@ -2,7 +2,7 @@
 namespace Elementor\Core\Kits;
 
 use Elementor\Core\Kits\Controls\Repeater;
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
@@ -79,7 +79,7 @@ class Manager {
 		$settings = array_replace_recursive( $settings, [
 			'kit_id' => $kit->get_main_id(),
 			'kit_config' => [
-				'typography_prefix' => Colors_And_Typography::TYPOGRAPHY_GROUP_PREFIX,
+				'typography_prefix' => Global_Typography::TYPOGRAPHY_GROUP_PREFIX,
 			],
 			'user' => [
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
@@ -89,7 +89,6 @@ class Manager {
 				'back' => __( 'Back', 'elementor' ),
 				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'site_identity' => __( 'Site Identity', 'elementor' ),
-				'colors_and_typography' => __( 'Colors & Typography', 'elementor' ),
 				'lightbox' => __( 'Lightbox', 'elementor' ),
 				'layout_settings' => __( 'Layout', 'elementor' ),
 				'theme_style' => __( 'Theme Style', 'elementor' ),
@@ -99,6 +98,7 @@ class Manager {
 				'new_global' => __( 'New Global', 'elementor' ),
 				'global_color' => __( 'Global Color', 'elementor' ),
 				'global_typography' => __( 'Global Typography', 'elementor' ),
+				'global_colors' => __( 'Global Colors', 'elementor' ),
 				'invalid' => __( 'Invalid', 'elementor' ),
 				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
 				'typography_cannot_be_deleted' => __( 'System Typography can\'t be deleted', 'elementor' ),

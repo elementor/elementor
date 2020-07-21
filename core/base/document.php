@@ -2,7 +2,6 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Settings\Page\Manager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\DB;
