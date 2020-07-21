@@ -7,7 +7,7 @@ import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 
-import useFile from '../../shared/use-file/use-file';
+import useFile from '../../hooks/use-file/use-file';
 
 import './import.scss';
 

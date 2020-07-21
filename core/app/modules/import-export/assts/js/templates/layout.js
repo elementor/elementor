@@ -1,5 +1,5 @@
 import Page from 'elementor-app/layout/page';
-import KitContext from '../context/kit-content';
+import KitContext from '../context/kit-context';
 
 export default function Layout( props ) {
 	const config = {

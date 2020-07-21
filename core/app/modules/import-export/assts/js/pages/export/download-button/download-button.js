@@ -1,4 +1,4 @@
-import { KitConsumer } from '../../../context/kit-content';
+import { Context } from '../../../context/kit-context';
 
 import Button from 'elementor-app/ui/molecules/button';
 
@@ -22,10 +22,10 @@ export default function DownloadButton( props ) {
 	};
 
 	return (
-		<KitConsumer>
+		<Context.Consumer>
 			{
 				( context ) => {
-					const isDownloadAllowed = context.includes.length;
+					const isDownloadAllowed = context.kitContent.includes.length;
 
 					return (
 						<Button
@@ -33,7 +33,7 @@ export default function DownloadButton( props ) {
 							size="lg"
 							text={ __( 'Next', 'elementor' ) }
 							color={ isDownloadAllowed ? 'primary' : 'disabled' }
-							url={ getDownloadUrl( context, isDownloadAllowed ) }
+							url={ getDownloadUrl( context.kitContent, isDownloadAllowed ) }
 							onClick={ () => {
 								if ( isDownloadAllowed ) {
 									props.setIsDownloading( true );
@@ -43,7 +43,7 @@ export default function DownloadButton( props ) {
 					);
 				}
 			}
-		</KitConsumer>
+		</Context.Consumer>
 	);
 }
 

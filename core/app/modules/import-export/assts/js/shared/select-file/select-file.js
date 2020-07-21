@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import useFile from '../use-file/use-file';
+import useFile from '../../hooks/use-file/use-file';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './select-file.scss';

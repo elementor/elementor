@@ -4,12 +4,12 @@ export default function useFile() {
 	const [ file, setFile ] = useState();
 
 	useEffect( () => {
-		console.log( '--- file', file );
-
 		if ( file ) {
 			const formData = new FormData();
 
 			formData.append( file.name, file );
+
+			console.log( '--- file', file );
 
 			const options = {
 				data: formData,

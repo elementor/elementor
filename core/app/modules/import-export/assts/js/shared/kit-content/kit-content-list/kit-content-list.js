@@ -16,7 +16,8 @@ import './kit-content-list.scss';
 
 export default function KitContentList( props ) {
 	const [ postsList, setPostsList ] = useState( [ __( 'Select custom post types (maximum of 20 posts will be included)', 'elementor' ) ] ),
-	getButton = () => (
+		[ isPosts, setIsPosts ] = useState( false ),
+		getButton = () => (
 		<Grid item>
 			<Button variant="contained" color="cta" text={ __( 'Lear More', 'elementor' ) } url="/#" />
 		</Grid>
@@ -33,10 +34,17 @@ export default function KitContentList( props ) {
 			<strong>{ __( 'Pro Features', 'elementor' ) }</strong>
 		</Text>
 	),
-	setIncludes	= ( event, includeType ) => {
-		const action = event.target.checked ? 'add' : 'remove';
+	setIncludes	= ( event, includeValue ) => {
+		const actionType = event.target.checked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
 
-		props.setIncludes( includeType, action );
+		props.dispatch( { type: actionType, value: includeValue } );
+	},
+	isChecked = ( itemType ) => {
+		if ( 'content' !== itemType ) {
+			return;
+		}
+
+		return isPosts;
 	};
 
 	return (
@@ -47,7 +55,7 @@ export default function KitContentList( props ) {
 						<Grid container justify="space-between" alignItems="center">
 							<Grid item container={ ! item.data.notice }>
 								<Grid container item>
-									<Checkbox onChange={ ( event ) => setIncludes( event, item.type ) } className="kit-content-list__checkbox" />
+									<Checkbox checked={ isChecked( item.type ) } onChange={ ( event ) => setIncludes( event, item.type ) } className="kit-content-list__checkbox" />
 
 									<Grid item>
 										<Heading variant="h3" className="kit-content-list__title">{ item.data.title }</Heading>
@@ -63,7 +71,7 @@ export default function KitContentList( props ) {
 								</Grid>
 
 								{ item.data.notice && getNotice( item.data.notice ) }
-								{ ( 'content' === item.type && 'export' === props.type ) ? <PostTypesSelect options={ postsList }/> : null }
+								{ ( 'content' === item.type && 'export' === props.type ) ? <PostTypesSelect setIsPosts={ setIsPosts } options={ postsList }/> : null }
 							</Grid>
 
 							{ item.data.notice && getButton() }
@@ -78,7 +86,7 @@ export default function KitContentList( props ) {
 KitContentList.propTypes = {
 	classname: PropTypes.string,
 	type: PropTypes.string.isRequired,
-	setIncludes: PropTypes.func,
+	dispatch: PropTypes.func,
 };
 
 KitContentList.defaultProps = {

@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react';
-import { Context as KitContext } from '../../../../context/kit-content';
+import { Context as KitContext } from '../../../../context/kit-context';
 
 import Box from '../../../../ui/box/box';
 
@@ -10,8 +10,9 @@ export default function KitNameInput() {
 		<Box>
 			<input
 				type="text"
-				onChange={ ( event ) => context.setTitle( event.target.value ) }
-				defaultValue={ context.title }
+				onChange={ ( event ) => context.dispatch( { type: 'SET_TITLE', value: event.target.value } ) }
+				defaultValue={ context.kitContent.title }
+				data-value={ Math.random() }
 			/>
 		</Box>
 	), [] );

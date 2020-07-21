@@ -23,6 +23,8 @@ export default function Export() {
 			);
 		};
 
+	console.log( 'RE-RENDERS: Export()' );
+
 	return (
 		<Layout type="export" footer={ getFooter() }>
 			{ isDownloading ? <Redirect to="/export/complete" noThrow /> : <ExportContent /> }

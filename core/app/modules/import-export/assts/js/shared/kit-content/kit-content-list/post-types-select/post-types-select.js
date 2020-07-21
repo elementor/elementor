@@ -1,26 +1,28 @@
 import { useContext } from 'react';
-import { Context as KitContext } from '../../../../context/kit-content';
+import { Context as KitContext } from '../../../../context/kit-context';
 
 import Grid from 'elementor-app/ui/grid/grid';
 
 import './post-types-select.scss';
 
 export default function PostTypesSelect( props ) {
-	const contextData = useContext( KitContext ),
+	const context = useContext( KitContext ),
 		setPostTypes = ( event ) => {
 			const selectedOptions = [ ...event.target.selectedOptions ].map( ( option ) => option.value );
 
-			contextData.setPostTypes( selectedOptions );
+			props.setIsPosts( selectedOptions.length );
+
+			context.dispatch( { type: 'SET_POST_TYPES', value: selectedOptions } );
 		},
 		getpostTypesOptions = () => {
-			const customPostTypes = elementorAppConfig[ 'import-export' ]?.custom_post_types;
+			const customPostTypes = elementorAppConfig[ 'import-export' ][ 'custom_post_types' ];
 
 			if ( ! customPostTypes ) {
 				//return;
 				return (
 					<>
-						<option value="Posts">Posts</option>
-						<option value="Pages">Pages</option>
+						<option value="post">Posts</option>
+						<option value="page">Pages</option>
 					</>
 				);
 			}
