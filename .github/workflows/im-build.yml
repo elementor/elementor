@@ -31,12 +31,7 @@ jobs:
       - name: Commit Assets
         uses: EndBug/add-and-commit@v4
         with:
-          # The message for the commit
-          # Default: 'Commit from GitHub Actions'
           message: 'Updating to latest version'
-
-          # Name of the branch to use, if different from the one that triggered the workflow
-          # Default: the branch that triggered the workflow (from GITHUB_REF)
           ref: "update/latest"
         env:
           # This is necessary in order to push a commit to the repo
