@@ -17,10 +17,10 @@ class Screenshot {
 				width: 1200,
 				height: 1500,
 			},
-			excluded_css_urls: [
+			excluded_external_css_urls: [
 				'https://kit-pro.fontawesome.com',
 			],
-			include_images_urls: [
+			external_images_urls: [
 				'https://i.ytimg.com', // Youtube images domain.
 			],
 			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
@@ -61,6 +61,7 @@ class Screenshot {
 
 		this.hideUnnecessaryElements();
 		this.removeUnnecessaryElements();
+		this.handleIFrames();
 		this.loadExternalCss();
 		this.loadExternalImages();
 
@@ -99,7 +100,7 @@ class Screenshot {
 	loadExternalCss() {
 		const excludedUrls = [
 			this.config.home_url,
-			...this.config.excluded_css_urls,
+			...this.config.excluded_external_css_urls,
 		];
 
 		const notSelector = excludedUrls
@@ -121,7 +122,7 @@ class Screenshot {
 	 * Make a proxy to images urls that has some problems with cross origin (like youtube).
 	 */
 	loadExternalImages() {
-		const selector = this.config.include_images_urls
+		const selector = this.config.external_images_urls
 			.map( ( url ) => `img[src^="${ url }"]` )
 			.join( ', ' );
 
@@ -129,6 +130,26 @@ class Screenshot {
 			const $img = jQuery( el );
 
 			$img.attr( 'src', this.getScreenshotProxyUrl( $img.attr( 'src' ) ) );
+		} );
+	}
+
+	/**
+	 * Html to images libraries can not snapshot IFrames
+	 * this method convert all the IFrames to some other elements.
+	 */
+	handleIFrames() {
+		this.$elementor.find( 'iframe' ).each( ( index, el ) => {
+			const $iframe = jQuery( el ),
+				$iframeMask = jQuery( '<div />', {
+					css: {
+						background: 'gray',
+						width: $iframe.width(),
+						height: $iframe.height(),
+					},
+				} );
+
+			$iframe.before( $iframeMask );
+			$iframe.remove();
 		} );
 	}
 
