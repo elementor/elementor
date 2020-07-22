@@ -36,6 +36,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		this.api = new API();
 
 		this.initModules();
+
+		elementorCommon.elements.$window.trigger( 'elementorCommon:init-components' );
 	}
 
 	initModules() {
