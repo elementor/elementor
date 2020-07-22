@@ -17,11 +17,7 @@ Text.propTypes = {
 	className: PropTypes.string,
 	variant: PropTypes.string,
 	tag: PropTypes.string,
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	children: PropTypes.any.isRequired,
 };
 
 Text.defaultProps = {

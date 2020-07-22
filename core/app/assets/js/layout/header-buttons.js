@@ -18,7 +18,7 @@ export default function HeaderButtons( props ) {
 	return (
 		<div className="eps-app__header-buttons">
 			<Button
-				id="close"
+				id="eps-app-close"
 				text={ __( 'Close', 'elementor' ) }
 				icon="eicon-close"
 				className="eps-app__close-button"

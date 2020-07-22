@@ -1,0 +1,55 @@
+@import "../../helpers/variables";
+@import "../breakpoints";
+
+// Legacy SCSS for markup removed in Elementor v3.0.0
+
+.elementor-edit-area-active {
+
+	.elementor-top-section {
+
+		> .elementor-container {
+
+			> .elementor-row {
+				min-height: 40px;
+			}
+		}
+	}
+
+	.elementor-inner-section {
+
+		> .elementor-container {
+
+			> .elementor-row {
+				min-height: 40px;
+			}
+		}
+	}
+
+	.elementor-column-wrap {
+
+		&.elementor-element-empty {
+
+			.elementor-widget-wrap {
+				min-height: 30px; // In case of section with non-default content position
+
+				@media (min-width: $editor-screen-md-min) {
+					margin: 10px;
+				}
+			}
+		}
+	}
+
+	.handle {
+		display: none; //TEMP
+	}
+}
+
+// Muted elements in the editor
+[data-elementor-device-mode="desktop"] .elementor-edit-area-active .elementor-hidden-desktop,
+[data-elementor-device-mode="tablet"] .elementor-edit-area-active .elementor-hidden-tablet,
+[data-elementor-device-mode="mobile"] .elementor-edit-area-active .elementor-hidden-phone {
+
+	> .elementor-widget-container, > .elementor-column-wrap {
+		filter: alpha(0.4) saturate(0);
+	}
+}

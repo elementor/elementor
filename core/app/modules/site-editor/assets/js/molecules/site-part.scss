@@ -1,8 +1,3 @@
-// Site Part
-
-// this should emulate external packages consumption
-@import "../../../../../assets/styles/common";
-
 $indicator-bullet-border-color: theme-colors(light);
 $indicator-bullet-dark-border-color: dark-tints(600);
 $dark-svg-filter: invert(0.8) sepia(1) saturate(0.1) hue-rotate(180deg) contrast(2) brightness(1.2);

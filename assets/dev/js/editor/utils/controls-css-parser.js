@@ -229,7 +229,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		const globalArgs = $e.data.commandExtractArgs( globalKey ),
 			data = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
 
-		if ( ! data.id ) {
+		if ( ! data?.id ) {
 			return;
 		}
 

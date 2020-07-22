@@ -102,7 +102,7 @@
 		display: flex;
 		height: $app-main-height;
 		max-height: $app-main-max-height;
-		overflow-y: auto;
+		overflow: hidden;
 	}
 
 	&__sidebar {
@@ -111,7 +111,7 @@
 		width: $app-sidebar-width;
 		max-width: $app-sidebar-max-width;
 		flex-grow: 0;
-		overflow: auto;
+		overflow-y: auto;
 		box-shadow: $app-sidebar-box-shadow;
 	}
 
@@ -119,6 +119,6 @@
 		flex-grow: 1;
 		padding: $app-content-padding;
 		height: 100%;
-		overflow: scroll;
+		overflow-y: auto;
 	}
 }

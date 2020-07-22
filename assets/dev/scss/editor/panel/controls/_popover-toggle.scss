@@ -51,15 +51,10 @@
 	}
 }
 
-.elementor-control-global {
-
-	.elementor-control-input-wrapper {
-		display: flex;
-		justify-content: flex-end;
-		direction: $direction;
-	}
+.e-control-global {
 
 	.elementor-control-popover-toggle-toggle-label {
 		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+		flex-shrink: 0;
 	}
 }
