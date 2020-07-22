@@ -168,7 +168,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',
-			ignore: '.e-global__select-box',
+			ignore: '.e-global__popover-toggle',
 		},
 		tagsList: {
 			element: '.elementor-tags-list',
