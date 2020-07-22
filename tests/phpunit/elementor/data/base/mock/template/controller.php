@@ -5,6 +5,12 @@ class Controller extends \Elementor\Data\Base\Controller {
 
 	use BaseTrait;
 
+	public function __construct() {
+		parent::__construct();
+
+		$this->bypass_original_permission();
+	}
+
 	public function get_type() {
 		return 'controller';
 	}
@@ -14,7 +20,11 @@ class Controller extends \Elementor\Data\Base\Controller {
 	}
 
 	public function get_permission_callback( $request ) {
-		return true; // Bypass.
+		if ( $this->bypass_permission_status ) {
+			return true;
+		}
+
+		return parent::get_permission_callback( $request );
 	}
 
 	protected function register() {

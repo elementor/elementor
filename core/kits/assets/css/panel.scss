@@ -58,6 +58,10 @@
 				background-color: $editor-kit-accent;
 			}
 		}
+
+		#elementor-panel-page-menu {
+			padding: 25px 15px 0;
+		}
 	}
 
 	#elementor-panel-header-add-button,
@@ -75,7 +79,8 @@
 		.elementor-repeater {
 
 			&-fields {
-				margin-bottom: 25px;
+				margin-bottom: 15px;
+				position: relative;
 			}
 
 			&-row-controls {
@@ -83,9 +88,10 @@
 				align-items: center;
 			}
 
-			&-tool-remove {
-				color: $editor-lightest;
+			&-row-tool {
 				cursor: pointer;
+				color: $editor-lightest;
+				padding: 5px;
 			}
 		}
 
@@ -96,6 +102,7 @@
 				flex-grow: 1;
 
 				input {
+					max-width: $control-unit * 5;
 
 					&:not(:focus) {
 						background: none;
@@ -107,10 +114,12 @@
 			&-input-wrapper {
 				display: flex;
 				align-items: center;
+				// Fix HEX values flickering when moving the mouse over them.
+				min-width: $control-unit * 3;
 
 				&:hover {
 
-					.elementor-global-colors__color-value {
+					.e-global-colors__color-value {
 						display: none;
 					}
 				}
@@ -139,6 +148,12 @@
 		.elementor-controls-popover {
 			align-self: end;
 			margin-top: 35px;
+			top: 0;
+			width: 100%;
+
+			&:before {
+				right: 5px;
+			}
 
 			.elementor-control {
 				padding: 0 20px 15px;
@@ -151,10 +166,14 @@
 
 		.elementor-button-wrapper {
 			text-align: center;
+			border-top: 1px solid $editor-background;
+			max-width: 260px;
+			padding-top: 15px;
 		}
 
-		.pickr {
-			@include margin-start(10px);
+		.pickr,
+		.elementor-control-popover-toggle-toggle-label {
+			@include margin-start(5px);
 		}
 	}
 
@@ -164,7 +183,8 @@
 	}
 }
 
-.elementor-global-colors__color-value {
+.e-global-colors__color-value {
 	color: $editor-lightest;
 	font-size: 10px;
+	padding: 0 5px;
 }

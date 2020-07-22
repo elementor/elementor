@@ -302,6 +302,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @since 2.0.9 Added the `controls` and the `settings` parameters.
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param array $controls Optional. An array of controls. Default is null.
 	 * @param array $settings Optional. Controls settings. Default is null.
@@ -309,6 +310,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Active controls.
 	 */
 	public function get_active_controls( array $controls = null, array $settings = null ) {
+		// _deprecated_function( __METHOD__, '3.0.0' );
+
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
 		}
@@ -367,6 +370,14 @@ abstract class Controls_Stack extends Base_Object {
 			'overwrite' => false,
 			'position' => null,
 		];
+
+		if ( isset( $args['scheme'] ) ) {
+			$args['global'] = [
+				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args ),
+			];
+
+			unset( $args['scheme'] );
+		}
 
 		$options = array_merge( $default_options, $options );
 
@@ -714,6 +725,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @since 2.0.9 Added the `settings` parameter.
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param array $controls Optional. Controls list. Default is null.
 	 * @param array $settings Optional. Controls settings. Default is null.
@@ -721,6 +733,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Style controls.
 	 */
 	final public function get_style_controls( array $controls = null, array $settings = null ) {
+		// _deprecated_function( __METHOD__, '3.0.0' );
+
 		$controls = $this->get_active_controls( $controls, $settings );
 
 		$style_controls = [];
@@ -1002,9 +1016,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 2.0.14
 	 * @access public
 	 */
-	public function get_parsed_dynamic_settings( $setting = null ) {
+	public function get_parsed_dynamic_settings( $setting = null, $settings = null ) {
+		if ( null === $settings ) {
+			$settings = $this->get_settings();
+		}
+
 		if ( null === $this->parsed_dynamic_settings ) {
-			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
+			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $settings );
 		}
 
 		return self::get_items( $this->parsed_dynamic_settings, $setting );
@@ -1127,6 +1145,10 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			if ( $control_obj instanceof Control_Repeater ) {
+				if ( ! isset( $settings[ $control_name ] ) ) {
+					continue;
+				}
+
 				foreach ( $settings[ $control_name ] as & $field ) {
 					$field = $this->parse_dynamic_settings( $field, $control['fields'], $field );
 				}

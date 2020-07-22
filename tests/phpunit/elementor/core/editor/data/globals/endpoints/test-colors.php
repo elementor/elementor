@@ -2,8 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 
-// TODO: Use autoloader.
-
 use Elementor\Plugin;
 use Elementor\Core\Editor\Data;
 
@@ -20,8 +18,8 @@ class Test_Colors extends Base  {
 		$id = (string) rand();
 		$args = [
 			'id' => $id,
-			'color' => 'red',
 			'title' => 'whatever',
+			'value' => 'red',
 		];
 
 		// Create
@@ -33,7 +31,7 @@ class Test_Colors extends Base  {
 		$colors = $kit->get_settings( 'custom_colors' );
 
 		$this->assertEquals( $id, $colors[0]['_id'] );
-		$this->assertEquals( $args['color'], $colors[0]['color'] );
+		$this->assertEquals( $args['value'], $colors[0]['color'] );
 
 		return $colors;
 	}

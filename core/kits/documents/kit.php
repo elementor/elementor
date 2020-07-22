@@ -2,9 +2,11 @@
 namespace Elementor\Core\Kits\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as PageManager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -21,11 +23,17 @@ class Kit extends PageBase {
 		parent::__construct( $data );
 
 		$this->tabs = [
-			'site_identity' => new Tabs\Site_Identity( $this ),
-			'lightbox' => new Tabs\Lightbox( $this ),
-			'colors_and_typography' => new Tabs\Colors_And_Typography( $this ),
-			'layout_settings' => new Tabs\Layout_Settings( $this ),
-			'theme_style' => new Tabs\Theme_Style( $this ),
+			'global-colors' => new Tabs\Global_Colors( $this ),
+			'global-typography' => new Tabs\Global_Typography( $this ),
+			'theme-style-typography' => new Tabs\Theme_Style_Typography( $this ),
+			'theme-style-buttons' => new Tabs\Theme_Style_Buttons( $this ),
+			'theme-style-images' => new Tabs\Theme_Style_Images( $this ),
+			'theme-style-form-fields' => new Tabs\Theme_Style_Form_Fields( $this ),
+			'settings-site-identity' => new Tabs\Settings_Site_Identity( $this ),
+			'settings-background' => new Tabs\Settings_Background( $this ),
+			'settings-layout' => new Tabs\Settings_Layout( $this ),
+			'settings-lightbox' => new Tabs\Settings_Lightbox( $this ),
+			'settings-custom-css' => new Tabs\Settings_Custom_CSS( $this ),
 		];
 	}
 
@@ -61,7 +69,7 @@ class Kit extends PageBase {
 	}
 
 	public function get_css_wrapper_selector() {
-		return 'body.elementor-kit-' . $this->get_main_id();
+		return '.elementor-kit-' . $this->get_main_id();
 	}
 
 	public function save( $data ) {
@@ -118,5 +126,17 @@ class Kit extends PageBase {
 		if ( $autosave ) {
 			$autosave->add_repeater_row( $control_id, $item );
 		}
+
+		// Remove Post CSS.
+		$post_css = Post_CSS::create( $this->post->ID );
+
+		$post_css->delete();
+
+		// Refresh Cache.
+		Plugin::$instance->documents->get( $this->post->ID, false );
+
+		$post_css = Post_CSS::create( $this->post->ID );
+
+		$post_css->enqueue();
 	}
 }

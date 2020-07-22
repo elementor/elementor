@@ -1,20 +1,3 @@
-<script type="text/template" id="tmpl-elementor-kit-panel-menu">
-	<div id="elementor-panel-page-menu">
-		<div class="elementor-panel-menu-items">
-			<#
-			const tabs = $e.components.get( 'panel/global' ).getTabs();
-			Object.entries( tabs ).forEach( ( [ tab, config ] ) => { #>
-			<div class="elementor-panel-menu-item" data-tab="{{{ tab }}}">
-				<div class="elementor-panel-menu-item-icon">
-					<i class="{{{ config.icon }}}"></i>
-				</div>
-				<div class="elementor-panel-menu-item-title">{{{ config.title }}}</div>
-			</div>
-			<# } ); #>
-		</div>
-	</div>
-</script>
-
 <script type="text/template" id="tmpl-elementor-kit-panel">
 	<main id="elementor-kit__panel-content__wrapper" class="elementor-panel-content-wrapper"></main>
 </script>
@@ -35,12 +18,12 @@
 
 <script type="text/template" id="tmpl-elementor-global-style-repeater-row">
 	<# let removeClass = 'remove',
-			removeIcon = 'eicon-trash';
+			removeIcon = 'eicon-trash-o';
 
 	if ( ! itemActions.remove ) {
 		removeClass += '--disabled';
 
-		removeIcon += '-o'
+		removeIcon = 'eicon-disable-trash-o'
 	}
 	#>
 	<div class="elementor-repeater-row-tool elementor-repeater-tool-{{{ removeClass }}}">

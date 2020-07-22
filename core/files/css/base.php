@@ -2,6 +2,7 @@
 namespace Elementor\Core\Files\CSS;
 
 use Elementor\Base_Data_Control;
+use Elementor\Control_Repeater;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\Core\Files\Base as Base_File;
@@ -93,6 +94,10 @@ abstract class Base extends Base_File {
 	 * @abstract
 	 */
 	abstract public function get_name();
+
+	protected function is_global_parsing_supported() {
+		return false;
+	}
 
 	/**
 	 * CSS file constructor.
@@ -275,55 +280,89 @@ abstract class Base extends Base_File {
 	 * @param callable $value_callback Callback function for the value.
 	 * @param array    $placeholders   Placeholders.
 	 * @param array    $replacements   Replacements.
+	 * @param array    $values         Global Values.
 	 */
-	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
-		$value = call_user_func( $value_callback, $control );
-
-		if ( null === $value || empty( $control['selectors'] ) ) {
+	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements, array $values = [] ) {
+		if ( empty( $control['selectors'] ) ) {
 			return;
 		}
 
+		$control_global_key = $control['name'];
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		$global_values = [];
+		$global_key = '';
+
+		if ( ! empty( $values['__globals__'] ) ) {
+			$global_values = $values['__globals__'];
+		}
+
+		if ( ! empty( $global_values[ $control_global_key ] ) ) {
+			$global_key = $global_values[ $control_global_key ];
+		}
+
+		if ( ! $global_key ) {
+			$value = call_user_func( $value_callback, $control );
+
+			if ( null === $value ) {
+				return;
+			}
+		}
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
-			try {
-				$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
-					$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
+			$output_css_property = '';
 
-					$parsed_value = '';
+			if ( $global_key ) {
+				$selector_global_value = $this->get_selector_global_value( $control, $global_key );
 
-					if ( ! $external_control_missing ) {
-						$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
-					}
+				if ( $selector_global_value ) {
+					$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $selector_global_value . '$2', $css_property );
+				}
+			} else {
+				try {
+					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
-					if ( '' === $parsed_value ) {
-						if ( isset( $matches[4] ) ) {
-							$parsed_value = $matches[4];
+						$parsed_value = '';
 
-							$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
-
-							if ( $is_string_value ) {
-								$parsed_value = $string_matches[2];
-							} elseif ( ! is_numeric( $parsed_value ) ) {
-								if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
-									return '';
-								}
-
-								$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
-							}
+						if ( ! $external_control_missing ) {
+							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
 						}
 
 						if ( '' === $parsed_value ) {
-							if ( $external_control_missing ) {
-								return '';
+							if ( isset( $matches[4] ) ) {
+								$parsed_value = $matches[4];
+
+								$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
+
+								if ( $is_string_value ) {
+									$parsed_value = $string_matches[2];
+								} elseif ( ! is_numeric( $parsed_value ) ) {
+									if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
+										return '';
+									}
+
+									$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
+								}
 							}
 
-							throw new \Exception();
-						}
-					}
+							if ( '' === $parsed_value ) {
+								if ( $external_control_missing ) {
+									return '';
+								}
 
-					return $parsed_value;
-				}, $css_property );
-			} catch ( \Exception $e ) {
-				return;
+								throw new \Exception();
+							}
+						}
+
+						return $parsed_value;
+					}, $css_property );
+				} catch ( \Exception $e ) {
+					return;
+				}
 			}
 
 			if ( ! $output_css_property ) {
@@ -600,7 +639,7 @@ abstract class Base extends Base_File {
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
-			}, $placeholders, $replacements
+			}, $placeholders, $replacements, $values
 		);
 	}
 
@@ -620,6 +659,11 @@ abstract class Base extends Base_File {
 	 * @return mixed Style control value.
 	 */
 	private function get_style_control_value( array $control, array $values ) {
+		if ( ! empty( $values['__globals__'][ $control['name'] ] ) ) {
+			// When the control itself has no global value, but it refers to another control global value
+			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
+		}
+
 		$value = $values[ $control['name'] ];
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
@@ -701,7 +745,138 @@ abstract class Base extends Base_File {
 				return;
 			}
 
-			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
+			$this->add_controls_stack_style_rules( $tag, $this->get_style_controls( $tag ), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
 		} );
+	}
+
+	private function get_selector_global_value( $control, $global_key ) {
+		$value = Plugin::$instance->data_manager->run( $global_key );
+
+		if ( empty( $value ) ) {
+			return null;
+		}
+
+		$global_args = explode( '?id=', $global_key );
+
+		$id = $global_args[1];
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
+
+			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
+		} else {
+			$value = "var( --e-global-$control[type]-$id )";
+		}
+
+		return $value;
+	}
+
+	final protected function get_active_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+		if ( ! $controls ) {
+			$controls = $controls_stack->get_controls();
+		}
+
+		if ( ! $settings ) {
+			$settings = $controls_stack->get_controls_settings();
+		}
+
+		if ( $this->is_global_parsing_supported() ) {
+			$settings = $this->parse_global_settings( $settings, $controls );
+		}
+
+		$active_controls = array_reduce(
+			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
+				$control = $controls[ $control_key ];
+
+				if ( $controls_stack->is_control_visible( $control, $settings ) ) {
+					$active_controls[ $control_key ] = $control;
+				}
+
+				return $active_controls;
+			}, []
+		);
+
+		return $active_controls;
+	}
+
+	final public function get_style_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+		$controls = $this->get_active_controls( $controls_stack, $controls, $settings );
+
+		$style_controls = [];
+
+		foreach ( $controls as $control_name => $control ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			$control = array_merge( $control_obj->get_settings(), $control );
+
+			if ( $control_obj instanceof Control_Repeater ) {
+				$style_fields = [];
+
+				foreach ( $controls_stack->get_settings( $control_name ) as $item ) {
+					$style_fields[] = $this->get_style_controls( $controls_stack, $control['fields'], $item );
+				}
+
+				$control['style_fields'] = $style_fields;
+			}
+
+			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || $this->is_global_control( $controls_stack, $control_name, $controls ) || ! empty( $control['style_fields'] ) ) {
+				$style_controls[ $control_name ] = $control;
+			}
+		}
+
+		return $style_controls;
+	}
+
+	private function parse_global_settings( array $settings, array $controls ) {
+		foreach ( $controls as $control ) {
+			$control_name = $control['name'];
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			if ( $control_obj instanceof Control_Repeater ) {
+				foreach ( $settings[ $control_name ] as & $field ) {
+					$field = $this->parse_global_settings( $field, $control['fields'] );
+				}
+
+				continue;
+			}
+
+			if ( empty( $control['global']['active'] ) ) {
+				continue;
+			}
+
+			if ( empty( $settings['__globals__'][ $control_name ] ) ) {
+				continue;
+			}
+
+			$settings[ $control_name ] = 'global';
+		}
+
+		return $settings;
+	}
+
+	private function is_global_control( Controls_Stack $controls_stack, $control_name, $controls ) {
+		$control = $controls[ $control_name ];
+
+		$control_global_key = $control_name;
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		if ( empty( $controls[ $control_global_key ]['global']['active'] ) ) {
+			return false;
+		}
+
+		$globals = $controls_stack->get_settings( '__globals__' );
+
+		return ! empty( $globals[ $control_global_key ] );
 	}
 }

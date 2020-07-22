@@ -13,6 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Dynamic_CSS extends Post {
 
 	protected $post_id_for_data;
+
+	protected function is_global_parsing_supported() {
+		return false;
+	}
+
 	/**
 	 * Dynamic_CSS constructor.
 	 *
@@ -87,6 +92,7 @@ class Dynamic_CSS extends Post {
 	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
 		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
+
 		if ( ! empty( $dynamic_settings ) ) {
 			$controls = array_intersect_key( $controls, $dynamic_settings );
 

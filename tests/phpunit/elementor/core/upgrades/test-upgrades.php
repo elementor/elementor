@@ -114,6 +114,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$generic_font = 'some-generic-font';
 		$lightbox_color = '#e1e3ef';
 		$container_width = '1000';
+		$space_between_widgets = '25';
 		$viewport_lg = '900';
 		$viewport_md = '800';
 
@@ -121,11 +122,12 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'default_generic_fonts' => $generic_font,
 			'lightbox_color' => $lightbox_color,
 			'container_width' => $container_width,
-			'viewport_lg' => $viewport_lg,
-			'viewport_md' => $viewport_md,
+			'space_between_widgets' => $space_between_widgets,
 		];
 
 		update_option( '_elementor_general_settings', $general_settings );
+		update_option( 'elementor_viewport_lg', $viewport_lg );
+		update_option( 'elementor_viewport_md', $viewport_md );
 
 		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
 		wp_set_current_user( $user_id );
@@ -149,13 +151,13 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_generic_font_before = $kit->get_settings( 'default_generic_fonts' );
 		$kit_lightbox_color_before = $kit->get_settings( 'lightbox_color' );
 		$kit_container_width_before = $kit->get_settings( 'container_width' );
-		$kit_viewport_lg_before = $kit->get_settings( 'viewport_lg' );
+		$kit_space_between_widgets_before = $kit->get_settings( 'space_between_widgets' );
 		$kit_viewport_md_before = $kit->get_settings( 'viewport_md' );
 
 		$this->assertNotEquals( $generic_font, $kit_generic_font_before );
 		$this->assertNotEquals( $lightbox_color, $kit_lightbox_color_before );
 		$this->assertNotEquals( $container_width, $kit_container_width_before );
-		$this->assertNotEquals( $viewport_lg, $kit_viewport_lg_before );
+		$this->assertNotEquals( $space_between_widgets, $kit_space_between_widgets_before );
 		$this->assertNotEquals( $viewport_md, $kit_viewport_md_before );
 
 		$updater->set_limit( $query_limit );
@@ -184,14 +186,14 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_generic_font_after = $kit->get_settings( 'default_generic_fonts' );
 		$kit_lightbox_color_after = $kit->get_settings( 'lightbox_color' );
 		$kit_container_width_after = $kit->get_settings( 'container_width' );
-		$kit_viewport_lg_after = $kit->get_settings( 'viewport_lg' );
+		$kit_space_between_widgets_after = $kit->get_settings( 'space_between_widgets' );
 		$kit_viewport_md_after = $kit->get_settings( 'viewport_md' );
 
 		$this->assertEquals( $generic_font, $kit_generic_font_after );
 		$this->assertEquals( $lightbox_color, $kit_lightbox_color_after );
 		$this->assertEquals( $container_width, $kit_container_width_after['size'] );
-		$this->assertEquals( $viewport_lg, $kit_viewport_lg_after['size'] );
-		$this->assertEquals( $viewport_md, $kit_viewport_md_after['size'] );
+		$this->assertEquals( $space_between_widgets, $kit_space_between_widgets_after['size'] );
+		$this->assertEquals( $viewport_md, $kit_viewport_md_after );
 
 		// Assert revisions upgraded.
 
@@ -261,10 +263,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_custom_colors = $kit->get_settings( 'custom_colors' );
 
 		// First 4 saved colors are actually the 4 system colors that shouldn't be saved as custom colors.
-		$this->assertEquals( $saved_colors[5]['value'], $kit_custom_colors[0]['color'] );
-		$this->assertEquals( $saved_colors[6]['value'], $kit_custom_colors[1]['color'] );
-		$this->assertEquals( $saved_colors[7]['value'], $kit_custom_colors[2]['color'] );
-		$this->assertEquals( $saved_colors[8]['value'], $kit_custom_colors[3]['color'] );
+		$this->assertEquals( strtoupper( $saved_colors[5]['value'] ), $kit_custom_colors[0]['color'] );
+		$this->assertEquals( strtoupper( $saved_colors[6]['value'] ), $kit_custom_colors[1]['color'] );
+		$this->assertEquals( strtoupper( $saved_colors[7]['value'] ), $kit_custom_colors[2]['color'] );
+		$this->assertEquals( strtoupper( $saved_colors[8]['value'] ), $kit_custom_colors[3]['color'] );
 
 		// Assert revisions upgraded.
 		$revisions_ids = wp_get_post_revisions( $kit_id, [
@@ -276,10 +278,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$revision_system_colors = $revision->get_settings( 'custom_colors' );
 
 			// First 4 saved colors are actually the 4 system colors that shouldn't be saved as custom colors.
-			$this->assertEquals( $saved_colors[5]['value'], $revision_system_colors[0]['color'] );
-			$this->assertEquals( $saved_colors[6]['value'], $revision_system_colors[1]['color'] );
-			$this->assertEquals( $saved_colors[7]['value'], $revision_system_colors[2]['color'] );
-			$this->assertEquals( $saved_colors[8]['value'], $revision_system_colors[3]['color'] );
+			$this->assertEquals( strtoupper( $saved_colors[5]['value'] ), $revision_system_colors[0]['color'] );
+			$this->assertEquals( strtoupper( $saved_colors[6]['value'] ), $revision_system_colors[1]['color'] );
+			$this->assertEquals( strtoupper( $saved_colors[7]['value'] ), $revision_system_colors[2]['color'] );
+			$this->assertEquals( strtoupper( $saved_colors[8]['value'] ), $revision_system_colors[3]['color'] );
 		}
 	}
 
@@ -334,10 +336,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_system_colors = $kit->get_settings( 'system_colors' );
 
 		$this->assertEquals( 'primary', $kit_system_colors[0]['_id'] );
-		$this->assertEquals( $default_colors[1]['value'], $kit_system_colors[0]['color'] );
-		$this->assertEquals( $default_colors[2]['value'], $kit_system_colors[1]['color'] );
-		$this->assertEquals( $default_colors[3]['value'], $kit_system_colors[2]['color'] );
-		$this->assertEquals( $default_colors[4]['value'], $kit_system_colors[3]['color'] );
+		$this->assertEquals( strtoupper( $default_colors[1]['value'] ), $kit_system_colors[0]['color'] );
+		$this->assertEquals( strtoupper( $default_colors[2]['value'] ), $kit_system_colors[1]['color'] );
+		$this->assertEquals( strtoupper( $default_colors[3]['value'] ), $kit_system_colors[2]['color'] );
+		$this->assertEquals( strtoupper( $default_colors[4]['value'] ), $kit_system_colors[3]['color'] );
 
 		// Assert revisions upgraded.
 		$revisions_ids = wp_get_post_revisions( $kit_id, [
@@ -348,10 +350,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$revision = Plugin::$instance->documents->get( $revision_id, false );
 			$revision_system_colors = $revision->get_settings( 'system_colors' );
 
-			$this->assertEquals( $default_colors[1]['value'], $revision_system_colors[0]['color'] );
-			$this->assertEquals( $default_colors[2]['value'], $revision_system_colors[1]['color'] );
-			$this->assertEquals( $default_colors[3]['value'], $revision_system_colors[2]['color'] );
-			$this->assertEquals( $default_colors[4]['value'], $revision_system_colors[3]['color'] );
+			$this->assertEquals( strtoupper( $default_colors[1]['value'] ), $revision_system_colors[0]['color'] );
+			$this->assertEquals( strtoupper( $default_colors[2]['value'] ), $revision_system_colors[1]['color'] );
+			$this->assertEquals( strtoupper( $default_colors[3]['value'] ), $revision_system_colors[2]['color'] );
+			$this->assertEquals( strtoupper( $default_colors[4]['value'] ), $revision_system_colors[3]['color'] );
 		}
 	}
 

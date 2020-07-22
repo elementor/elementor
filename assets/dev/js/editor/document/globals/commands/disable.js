@@ -5,7 +5,7 @@ export class Disable extends DisableEnable {
 	async apply( args ) {
 		const { settings, containers = [ args.container ], options = {} } = args;
 
-		await containers.map( async ( container ) => {
+		const all = containers.map( async ( /* Container */ container ) => {
 			container = container.lookup();
 
 			let promises = [];
@@ -20,6 +20,7 @@ export class Disable extends DisableEnable {
 
 					return $e.run( 'document/globals/unlink', {
 						container,
+						options: { external: true },
 						globalValue,
 						setting: globalKey,
 					} );
@@ -35,8 +36,10 @@ export class Disable extends DisableEnable {
 
 			container.settings.set( '__globals__', container.globals.toJSON() );
 
-			container.render();
+			container.renderUI();
 		} );
+
+		await Promise.all( all );
 	}
 }
 

@@ -44,7 +44,6 @@ export default class CommandDisableEnable extends CommandHistory {
 
 	initialize( args ) {
 		super.initialize( args );
-
 		/**
 		 * Which command is running.
 		 *
