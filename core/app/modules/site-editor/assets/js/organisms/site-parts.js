@@ -53,7 +53,7 @@ export default function SiteParts( props ) {
 		<CssGrid className="site-editor__site-parts" colMinWidth={200} spacing={24}>
 			{ (
 				templateTypes.map( ( item ) => (
-					<SitePart className="site-part" actionButton={ <InfoButton { ...item.tooltip_data } /> } thumbnail={ item.urls.thumbnail } key={ item.type } { ...item }>
+					<SitePart className="site-editor__site-part" actionButton={ <InfoButton { ...item.tooltip_data } /> } thumbnail={ item.urls.thumbnail } key={ item.type } { ...item }>
 						{ React.createElement( props.hoverElement, item ) }
 					</SitePart>
 				) )
