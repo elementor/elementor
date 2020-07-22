@@ -128,9 +128,13 @@ export default class CommandData extends CommandBase {
 			return this.handleData( applyMethods, requestData, this.data );
 		}
 
-		return $e.data.fetch( requestData )
-			.then( ( data ) => this.handleData( applyMethods, requestData, data ) )
+		const promise = $e.data.args.useBulk && 'get' === this.type ?
+			$e.data.bulk.fetch( requestData ) : $e.data.fetch( requestData );
+
+		promise.then( ( data ) => this.handleData( applyMethods, requestData, data ) )
 			.catch( ( e ) => this.onCatchApply( e ) );
+
+		return promise;
 	}
 
 	/**

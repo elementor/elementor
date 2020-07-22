@@ -16,6 +16,9 @@ import BulkComponent from './data/components/bulk/component';
  * @property {{}} [args]
  * @property {number} [timestamp]
  * @property {('hit'|'miss')} [cache]
+ * Bulk:
+ * @property {Promise} [promise]
+ * @property {{}} [executor]
  */
 
 /**
@@ -38,6 +41,7 @@ export default class Data extends Commands {
 		this.args = Object.assign( args, {
 			namespace: 'elementor',
 			version: '1',
+			useBulk: true,
 		} );
 
 		this.cache = new Cache( this );
@@ -46,15 +50,18 @@ export default class Data extends Commands {
 
 		this.baseEndpointAddress = '';
 
-		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
-	}
-
-	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
 		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;
 
-		$e.components.register( new BulkComponent() );
+		if ( this.args.useBulk ) {
+			elementorCommon.elements.$window.on( 'elementorCommon:init-components', () => {
+				/**
+			    * @type {BulkComponent}
+			    */
+				this.bulk = $e.components.register( new BulkComponent() );
+			} );
+		}
 	}
 
 	/**

@@ -39,9 +39,11 @@ export class Index extends CommandData {
      *          no_cached: 'not-exist/endpoint',
 	 *	    }
 	 *	} );
+	 *
+	 * `options.force = true` will force remote fetch.
 	 * */
 	applyBeforeGet( args ) {
-		const { query = {}, options = {} } = args,
+		const { query = {}, options = { force: false } } = args,
 			newCommands = [];
 
 		/**
@@ -50,34 +52,14 @@ export class Index extends CommandData {
 		 * If not Re-format commands, to be as excepted by $e.data.
 		 */
 		Object.entries( query.commands ).forEach( ( [ namespace, /*string*/ command ] ) => {
-			/**
-			 * TODO: Since getCache require component this temporary code, merge with commands-new-bases.
-			 * After merge with branch use: CommandClass = $e.data.getCommandClass( extractedCommand.command ).getComponent().
-			 */
-			const extractedCommand = $e.data.commandExtractArgs( command ),
-				commandParts = extractedCommand.command.split( '/' );
+			let cache = false;
 
-			/**
-			 * @type {string|ComponentBase}
-			 */
-			let assumedComponent = '';
+			if ( ! options.force ) {
+				const extractedCommand = $e.data.commandExtractArgs( command ),
+					assumedComponent = this.getComponent( extractedCommand.command );
 
-			for ( const commandPart of commandParts ) {
-				assumedComponent = commandPart;
-
-				const temp = $e.components.get( assumedComponent );
-
-				if ( temp ) {
-					assumedComponent = temp;
-					break;
-				}
-
-				assumedComponent.concat( '/' );
+				cache = assumedComponent?.getNamespace ? $e.data.getCache( assumedComponent, extractedCommand.command, extractedCommand.args.query ) : null;
 			}
-			// End of getComponent().
-
-			const cache = assumedComponent.getNamespace ?
-				$e.data.getCache( assumedComponent, extractedCommand.command, extractedCommand.args.query ) : null;
 
 			if ( cache ) {
 				this.cachedResults[ namespace ] = cache;
@@ -89,8 +71,6 @@ export class Index extends CommandData {
 		} );
 
 		query.commands = newCommands;
-
-		// TODO: How to handle cache situation in bulk? cache entire bulk?, for now always fresh data.
 		options.refresh = true;
 
 		return args;
@@ -103,5 +83,37 @@ export class Index extends CommandData {
 		}
 
 		return Object.assign( data, this.cachedResults );
+	}
+
+	getComponent( command ) {
+		/**
+		 * TODO: Since getCache require component this temporary code, merge with commands-new-bases.
+		 * After merge with branch use: CommandClass = $e.data.getCommandClass( extractedCommand.command ).getComponent().
+		 */
+		const commandParts = command.split( '/' );
+
+		/**
+		 * @type {string|ComponentBase}
+		 */
+		let assumedComponent = '';
+
+		for ( const commandPart of commandParts ) {
+			assumedComponent = commandPart;
+
+			const temp = $e.components.get( assumedComponent );
+
+			if ( temp ) {
+				assumedComponent = temp;
+				break;
+			}
+
+			assumedComponent.concat( '/' );
+		}
+
+		if ( ! assumedComponent.length ) {
+			return null;
+		}
+
+		return assumedComponent;
 	}
 }
