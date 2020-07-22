@@ -108,7 +108,7 @@ class Manager {
 				'new_item' => __( 'New Item', 'elementor' ),
 				'new_global' => __( 'New Global', 'elementor' ),
 				'global_color' => __( 'Global Color', 'elementor' ),
-				'global_typography' => __( 'Global Typography', 'elementor' ),
+				'global_fonts' => __( 'Global Fonts', 'elementor' ),
 				'global_colors' => __( 'Global Colors', 'elementor' ),
 				'invalid' => __( 'Invalid', 'elementor' ),
 				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
@@ -117,6 +117,7 @@ class Manager {
 				'buttons' => __( 'Buttons', 'elementor' ),
 				'images' => __( 'Images', 'elementor' ),
 				'form_fields' => __( 'Form Fields', 'elementor' ),
+				'background' => __( 'Background', 'elementor' ),
 				'custom_css' => __( 'Custom CSS', 'elementor' ),
 			],
 		] );

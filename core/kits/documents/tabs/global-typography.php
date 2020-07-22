@@ -32,7 +32,7 @@ class Global_Typography extends Tab_Base {
 		$this->start_controls_section(
 			'section_text_style',
 			[
-				'label' => __( 'Global Typography', 'elementor' ),
+				'label' => __( 'Global Fonts', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);

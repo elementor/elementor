@@ -59,7 +59,7 @@ PanelMenu.initGroups = () => {
 PanelMenu.addAdminMenu = () => {
 	PanelMenu.groups.add( {
 		name: 'style',
-		title: elementor.translate( 'global_style' ),
+		title: elementor.translate( 'settings' ),
 		items: [
 			{
 				name: 'editor-preferences',

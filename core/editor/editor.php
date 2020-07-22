@@ -638,9 +638,8 @@ class Editor {
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
-				'global_style' => __( 'Global Style', 'elementor' ),
 				'site_settings' => __( 'Site Settings', 'elementor' ),
-				'site_editor' => __( 'Site Editor', 'elementor' ),
+				'theme_builder' => __( 'Theme Builder', 'elementor' ),
 				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'more' => __( 'More', 'elementor' ),

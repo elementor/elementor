@@ -38,7 +38,7 @@ export default class extends elementorModules.editor.utils.Module {
 		menu.addItem( {
 			name: 'site-editor',
 			icon: 'eicon-theme-builder',
-			title: elementor.translate( 'site_editor' ),
+			title: elementor.translate( 'theme_builder' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open-site-editor' ),
 		}, 'style', 'editor-preferences' );
