@@ -28,7 +28,7 @@ class Theme_Style_Typography extends Tab_Base {
 			]
 		);
 
-		$this->add_schemes_notice();
+		$this->add_default_globals_notice();
 
 		$this->add_control(
 			'body_heading',

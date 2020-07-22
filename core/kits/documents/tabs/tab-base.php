@@ -33,7 +33,7 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 		Controls_Manager::add_tab( $this->get_id(), $this->get_title() );
 	}
 
-	protected function add_schemes_notice() {
+	protected function add_default_globals_notice() {
 		// Get the current section config (array - section id and tab) to use for creating a unique control ID and name
 		$current_section = $this->parent->get_current_section();
 
