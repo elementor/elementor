@@ -258,7 +258,13 @@
 
 			this.goToSettingsTabFromHash();
 
+			this.openGetHelpInNewTab();
+
 			this.roleManager.init();
+		},
+
+		openGetHelpInNewTab: function() {
+			$( 'a[href="admin.php?page=go_knowledge_base_site"]' ).attr( 'target', '_blank' );
 		},
 
 		initTemplatesImport: function() {
