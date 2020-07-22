@@ -251,10 +251,10 @@ jQuery( () => {
 					return Promise.resolve( new Response( JSON.stringify( fakeResponse ) ) );
 				} );
 
-			assert.deepEqual( result, fakeResponse );
+			assert.deepEqual( fakeResponse, result.data );
 
 			// Validate cache.
-			assert.deepEqual( $e.data.cache.get( requestData ), result );
+			assert.deepEqual( $e.data.cache.get( requestData ), result.data );
 		} );
 
 		QUnit.test( 'fetch(): with cache loaded manually', async ( assert ) => {
@@ -291,7 +291,7 @@ jQuery( () => {
 			const result = await $e.data.fetch( requestData );
 
 			// Validate if data is same as result.data.
-			assert.deepEqual( data, result );
+			assert.deepEqual( data, result.data );
 		} );
 
 		QUnit.test( 'getCache(): simple', ( assert ) => {

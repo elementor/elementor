@@ -63,8 +63,8 @@ export default class Data extends Commands {
 		if ( this.args.useBulk ) {
 			elementorCommon.elements.$window.on( 'elementorCommon:init-components', () => {
 				/**
-			    * @type {BulkComponent}
-			    */
+				 * @type {BulkComponent}
+				 */
 				this.bulk = $e.components.register( new BulkComponent() );
 			} );
 		}
@@ -298,7 +298,7 @@ export default class Data extends Commands {
 		// Run 'after' method.
 		if ( applyMethods ) {
 			requestData.applyMethods = applyMethods;
-			response = applyMethods.after.apply( this, [ response, this.args ] );
+			response = applyMethods.after( response );
 		}
 
 		response = { data: response };

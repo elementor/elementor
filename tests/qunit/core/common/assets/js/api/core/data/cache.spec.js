@@ -35,7 +35,8 @@ jQuery( () => {
 			const result = await $e.data.cache.getAsync( requestData );
 
 			assert.equal( requestData.cache, 'hit' ); // added to requestData by receive.
-			assert.equal( randomValue, result );
+			assert.equal( requestData, result.__requestData__ );
+			assert.equal( result.data, randomValue );
 		} );
 
 		QUnit.test( 'set(): value', ( assert ) => {

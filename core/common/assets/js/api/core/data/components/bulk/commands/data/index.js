@@ -34,16 +34,16 @@ export class Index extends CommandData {
 	 *	    commands: {
 	 *	        // namespace: 'data command'.
 	 *	        globals: 'globals/index',
-     *          colors: 'globals/colors',
-     *          color_primary: 'globals/colors?id=primary',
-     *          no_cached: 'not-exist/endpoint',
+	 *          colors: 'globals/colors',
+	 *          color_primary: 'globals/colors?id=primary',
+	 *          no_cached: 'not-exist/endpoint',
 	 *	    }
 	 *	} );
 	 *
 	 * `options.force = true` will force remote fetch.
 	 * */
 	applyBeforeGet( args ) {
-		const { query = {}, options = { force: false } } = args,
+		const { query = {}, options } = args,
 			newCommands = [];
 
 		/**
@@ -54,7 +54,7 @@ export class Index extends CommandData {
 		Object.entries( query.commands ).forEach( ( [ namespace, /*string*/ command ] ) => {
 			let cache = false;
 
-			if ( ! options.force ) {
+			if ( ! options.refresh ) {
 				const extractedCommand = $e.data.commandExtractArgs( command ),
 					assumedComponent = this.getComponent( extractedCommand.command );
 
@@ -110,7 +110,7 @@ export class Index extends CommandData {
 			assumedComponent.concat( '/' );
 		}
 
-		if ( ! assumedComponent.length ) {
+		if ( ! assumedComponent.getNamespace ) {
 			return null;
 		}
 

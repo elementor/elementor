@@ -27,47 +27,63 @@ export default class BulkComponent extends ComponentBase {
 
 	/**
 	 * @param {RequestData} requestData
+	 * @returns {Promise}
 	 */
 	fetch( requestData ) {
 		if ( requestData.component === this ) {
 			return $e.data.fetch( requestData );
 		}
 
-		const cache = $e.data.getCache( requestData.component, requestData.command, requestData.args.query );
+		const cache = 'get' === requestData.type ? $e.data.fetchCache( requestData ) : false;
 
 		if ( cache ) {
-			return Promise.resolve( cache );
+			return cache;
 		}
 
 		requestData.promise = new Promise( ( resolve, reject ) =>
 			requestData.executor = { reject, resolve }
 		);
 
-		this.constructor.debounce( async () => {
-			if ( 1 === this.requests.length ) {
-				this.requests.pop().executor.resolve( await $e.data.fetch( requestData ) );
-			}
-			if ( this.requests.length ) {
-				const commands = {},
-					mapRequests = [];
-
-				this.requests.forEach( ( request ) => {
-					commands[ request.timestamp ] = request.command;
-					mapRequests[ request.timestamp ] = request;
-				} );
-
-				const result = await $e.data.get( 'bulk/index', { commands }, { force: true } ) || {};
-
-				Object.entries( result ).forEach( ( [ timestamp, data ] ) => {
-					const request = mapRequests[ timestamp ];
-
-					request.executor.resolve( data );
-				} );
-			}
-		} );
+		this.constructor.debounce( this.fetchTimeout.bind( this, requestData ) );
 
 		this.requests.push( requestData );
 
 		return requestData.promise;
+	}
+
+	async fetchTimeout( requestData ) {
+		if ( 1 === this.requests.length ) {
+			const response = await $e.data.fetch( requestData );
+
+			this.execute( this.requests.pop(), requestData, response );
+		}
+
+		if ( this.requests.length ) {
+			const commands = {},
+				mapRequests = [];
+
+			this.requests.forEach( ( request ) => {
+				commands[ request.timestamp ] = request.command;
+				mapRequests[ request.timestamp ] = request;
+			} );
+
+			const result = await $e.data.get( 'bulk/index', { commands }, { refresh: true } ) || {};
+
+			Object.entries( result.data ).forEach( ( [ timestamp, data ] ) => {
+				const currentRequestData = mapRequests[ timestamp ];
+
+				this.execute( currentRequestData, data );
+			} );
+
+			this.requests = [];
+		}
+	}
+
+	execute( requestData, data ) {
+		requestData.executor.resolve( $e.data.handleResponse( requestData, data ) );
+
+		if ( $e.data.isCacheRequired( requestData ) ) {
+			$e.data.cache.set( requestData, data );
+		}
 	}
 }

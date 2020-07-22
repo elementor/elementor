@@ -61,7 +61,10 @@ export default class CommandData extends CommandBase {
 				return false;
 		}
 
-		return { before, after };
+		return {
+			before: () => before.apply( this, [ this.args ] ),
+			after: ( response ) => after.apply( this, [ response, this.args ] ),
+		};
 	}
 
 	/**
@@ -91,7 +94,7 @@ export default class CommandData extends CommandBase {
 		const applyMethods = this.getApplyMethods();
 
 		// Run 'before' method.
-		this.args = applyMethods.before.apply( this, [ this.args ] );
+		this.args = applyMethods.before();
 
 		const requestData = this.getRequestData( applyMethods ),
 			preventDefaults = this.getPreventDefaults();
