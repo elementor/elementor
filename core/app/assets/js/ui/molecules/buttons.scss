@@ -20,7 +20,7 @@
 
 	.dark & {
 		//dark custom properties
-		// @include button-dark-custom-properties;
+		@include button-dark-custom-properties;
 	}
 
 	//  Variants
