@@ -333,22 +333,39 @@ class Compatibility {
 	 * @return array Updated post meta.
 	 */
 	public static function on_wp_import_post_meta( $post_meta ) {
+		$is_wp_importer_before_0_7 = self::is_wp_importer_before_0_7();
+
+		if ( $is_wp_importer_before_0_7 ) {
+			foreach ( $post_meta as &$meta ) {
+				if ( '_elementor_data' === $meta['key'] ) {
+					$meta['value'] = wp_slash( $meta['value'] );
+					break;
+				}
+			}
+		}
+
+		return $post_meta;
+	}
+
+	/**
+	 * Is WP Importer Before 0.7
+	 *
+	 * Checks if WP Importer is installed, and whether its version is older than 0.7.
+	 *
+	 * @return bool
+	 */
+	public static function is_wp_importer_before_0_7() {
 		$wp_importer = get_plugins( '/wordpress-importer' );
 
 		if ( ! empty( $wp_importer ) ) {
 			$wp_importer_version = $wp_importer['wordpress-importer.php']['Version'];
 
 			if ( version_compare( $wp_importer_version, '0.7', '<' ) ) {
-				foreach ( $post_meta as &$meta ) {
-					if ( '_elementor_data' === $meta['key'] ) {
-						$meta['value'] = wp_slash( $meta['value'] );
-						break;
-					}
-				}
+				return true;
 			}
 		}
 
-		return $post_meta;
+		return false;
 	}
 
 	/**
@@ -368,8 +385,12 @@ class Compatibility {
 	 * @return array Updated post meta.
 	 */
 	public static function on_wxr_importer_pre_process_post_meta( $post_meta ) {
-		if ( '_elementor_data' === $post_meta['key'] ) {
-			$post_meta['value'] = wp_slash( $post_meta['value'] );
+		$is_wp_importer_before_0_7 = self::is_wp_importer_before_0_7();
+
+		if ( $is_wp_importer_before_0_7 ) {
+			if ( '_elementor_data' === $post_meta['key'] ) {
+				$post_meta['value'] = wp_slash( $post_meta['value'] );
+			}
 		}
 
 		return $post_meta;
