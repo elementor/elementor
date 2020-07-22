@@ -50,7 +50,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 			]
 		);
 
-		$this->add_schemes_notice();
+		$this->add_default_globals_notice();
 
 		$this->add_control(
 			'form_label_heading',

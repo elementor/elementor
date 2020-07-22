@@ -44,7 +44,7 @@ PanelMenu.initGroups = () => {
 			// Todo: internal command.
 			{
 				name: 'exit-to-dashboard',
-				icon: 'eicon-wordpress',
+				icon: 'eicon-wordpress-light',
 				title: elementor.translate( 'exit_to_dashboard' ),
 				callback: () => location.href = elementor.config.document.urls.exit_to_dashboard,
 			},
@@ -59,7 +59,7 @@ PanelMenu.initGroups = () => {
 PanelMenu.addAdminMenu = () => {
 	PanelMenu.groups.add( {
 		name: 'style',
-		title: elementor.translate( 'global_style' ),
+		title: elementor.translate( 'settings' ),
 		items: [
 			{
 				name: 'editor-preferences',

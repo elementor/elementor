@@ -52,7 +52,7 @@ class Theme_Style_Buttons extends Tab_Base {
 			]
 		);
 
-		$this->add_schemes_notice();
+		$this->add_default_globals_notice();
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
