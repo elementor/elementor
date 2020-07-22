@@ -25,10 +25,10 @@ class Global_Typography extends Tab_Base {
 	}
 
 	public function get_title() {
-		return __( 'Global Typography', 'elementor' );
+		return __( 'Global Fonts', 'elementor' );
 	}
 
-	public function register_tab_controls() {
+	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_text_style',
 			[

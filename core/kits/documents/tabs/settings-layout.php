@@ -11,17 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Layout_Settings extends Tab_Base {
+class Settings_Layout extends Tab_Base {
 
 	public function get_id() {
-		return 'layout-settings';
+		return 'settings-layout';
 	}
 
 	public function get_title() {
 		return __( 'Layout', 'elementor' );
 	}
 
-	public function register_tab_controls() {
+	protected function register_tab_controls() {
 		$default_breakpoints = Responsive::get_default_breakpoints();
 
 		$this->start_controls_section(

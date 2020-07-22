@@ -24,7 +24,7 @@ class Global_Colors extends Tab_Base {
 		return __( 'Global Colors', 'elementor' );
 	}
 
-	public function register_tab_controls() {
+	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_global_colors',
 			[

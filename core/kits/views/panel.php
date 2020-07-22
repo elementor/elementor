@@ -1,26 +1,3 @@
-<script type="text/template" id="tmpl-elementor-kit-panel-menu">
-	<div id="elementor-panel-page-menu">
-		<div class="elementor-panel-menu-items">
-			<#
-			const tabs = $e.components.get( 'panel/global' ).getTabs();
-			Object.entries( tabs ).forEach( ( [ tab, config ] ) => { #>
-			<div class="elementor-panel-menu-item" data-tab="{{{ tab }}}">
-				<div class="elementor-panel-menu-item-icon">
-					<i class="{{{ config.icon }}}"></i>
-				</div>
-				<div class="elementor-panel-menu-item-title">{{{ config.title }}}</div>
-			</div>
-			<# } ); #>
-		</div>
-	</div>
-	<div id="elementor-panel__editor__help">
-		<a id="elementor-panel__editor__help__link" href="https://go.elementor.com/global-settings" target="_blank">
-			<?php echo __( 'Need Help', 'elementor' ); ?>
-			<i class="eicon-help-o"></i>
-		</a>
-	</div>
-</script>
-
 <script type="text/template" id="tmpl-elementor-kit-panel">
 	<main id="elementor-kit__panel-content__wrapper" class="elementor-panel-content-wrapper"></main>
 </script>

@@ -1,6 +1,6 @@
 import Component from './component';
-import panelView from './panel';
-import panelMenuView from './panel-menu';
+import PanelView from './panel';
+import PanelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
 import Repeater from './repeater';
 import GlobalControlSelect from './globals/global-select-behavior';
@@ -14,13 +14,13 @@ export default class extends elementorModules.editor.utils.Module {
 
 	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
-			view: panelView,
-			title: elementor.translate( 'global_settings' ),
+			view: PanelView,
+			title: elementor.translate( 'site_settings' ),
 		} );
 
 		elementor.getPanelView().addPage( 'kit_menu', {
-			view: panelMenuView,
-			title: elementor.translate( 'global_settings' ),
+			view: PanelMenuView,
+			title: elementor.translate( 'site_settings' ),
 		} );
 	}
 
@@ -30,7 +30,7 @@ export default class extends elementorModules.editor.utils.Module {
 		menu.addItem( {
 			name: 'global-settings',
 			icon: 'eicon-global-settings',
-			title: elementor.translate( 'global_settings' ),
+			title: elementor.translate( 'site_settings' ),
 			type: 'page',
 			callback: () => $e.route( 'panel/global/menu' ),
 		}, 'style', 'editor-preferences' );
