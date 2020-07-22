@@ -44,27 +44,30 @@ export default class BulkComponent extends ComponentBase {
 			requestData.executor = { reject, resolve }
 		);
 
-		this.constructor.debounce( this.fetchTimeout.bind( this, requestData ) );
-
 		this.requests.push( requestData );
+
+		this.constructor.debounce( this.handleRequests.bind( this ) );
 
 		return requestData.promise;
 	}
 
-	async fetchTimeout( requestData ) {
+	async handleRequests() {
 		if ( 1 === this.requests.length ) {
-			const response = await $e.data.fetch( requestData );
+			const requestData = this.requests.pop();
 
-			this.execute( this.requests.pop(), requestData, response );
+			this.execute( requestData, await $e.data.fetch( requestData ), false );
 		}
 
 		if ( this.requests.length ) {
 			const commands = {},
 				mapRequests = [];
 
-			this.requests.forEach( ( request ) => {
-				commands[ request.timestamp ] = request.command;
-				mapRequests[ request.timestamp ] = request;
+			this.requests.forEach( ( _requestData ) => {
+				const id = _requestData.args.query.id,
+					timestamp = _requestData.timestamp;
+
+				commands[ timestamp ] = id ? _requestData.command + '?id=' + id : _requestData.command;
+				mapRequests[ timestamp ] = _requestData;
 			} );
 
 			const result = await $e.data.get( 'bulk/index', { commands }, { refresh: true } ) || {};
@@ -79,10 +82,10 @@ export default class BulkComponent extends ComponentBase {
 		}
 	}
 
-	execute( requestData, data ) {
+	execute( requestData, data, setCache = true ) {
 		requestData.executor.resolve( $e.data.handleResponse( requestData, data ) );
 
-		if ( $e.data.isCacheRequired( requestData ) ) {
+		if ( setCache && $e.data.isCacheRequired( requestData ) ) {
 			$e.data.cache.set( requestData, data );
 		}
 	}
