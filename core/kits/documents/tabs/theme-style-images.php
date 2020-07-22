@@ -41,7 +41,7 @@ class Theme_Style_Images extends Tab_Base {
 			]
 		);
 
-		$this->add_schemes_notice();
+		$this->add_default_globals_notice();
 
 		$this->start_controls_tabs( 'tabs_image_style' );
 

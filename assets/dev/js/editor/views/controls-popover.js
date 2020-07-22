@@ -80,7 +80,7 @@ export default class ControlsPopover {
 		this.$addButton.on( 'click', () => this.onAddButtonClick() );
 
 		this.$addButton.tipsy( {
-			title: () => elementor.translate( 'create_global_typography' ),
+			title: () => elementor.translate( 'create_global_font' ),
 			gravity: () => 's',
 		} );
 	}

@@ -51,6 +51,14 @@
 			}
 		}
 
+		#elementor-panel-saver-button-publish,
+		#elementor-panel-saver-button-save-options {
+
+			&.elementor-button.elementor-button-success:not(.elementor-disabled) {
+				background-color: $editor-kit-accent;
+			}
+		}
+
 		#elementor-panel-page-menu {
 			padding: 25px 15px 0;
 		}

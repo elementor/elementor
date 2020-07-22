@@ -38,7 +38,7 @@ export default class extends elementorModules.editor.utils.Module {
 		menu.addItem( {
 			name: 'site-editor',
 			icon: 'eicon-theme-builder',
-			title: elementor.translate( 'site_editor' ),
+			title: elementor.translate( 'theme_builder' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open-site-editor' ),
 		}, 'style', 'editor-preferences' );
@@ -73,10 +73,10 @@ export default class extends elementorModules.editor.utils.Module {
 		if ( 'popover_toggle' === view.options.model.get( 'type' ) && 'typography' === view.options.model.get( 'groupType' ) && isGlobalActive ) {
 			behaviors.globals = {
 				behaviorClass: GlobalControlSelect,
-				popoverTitle: elementor.translate( 'global_typography_title' ),
-				manageButtonText: elementor.translate( 'manage_global_typography' ),
-				tooltipText: elementor.translate( 'global_typography_info' ),
-				newGlobalConfirmTitle: elementor.translate( 'create_global_typography' ),
+				popoverTitle: elementor.translate( 'global_fonts_title' ),
+				manageButtonText: elementor.translate( 'manage_global_fonts' ),
+				tooltipText: elementor.translate( 'global_fonts_info' ),
+				newGlobalConfirmTitle: elementor.translate( 'create_global_font' ),
 			};
 		}
 

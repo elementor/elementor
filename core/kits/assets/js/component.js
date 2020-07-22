@@ -16,7 +16,7 @@ export default class extends $e.modules.ComponentBase {
 				helpUrl: 'http://go.elementor.com/panel-global-colors',
 			},
 			'global-typography': {
-				title: elementor.translate( 'global_typography' ),
+				title: elementor.translate( 'global_fonts' ),
 				icon: 'eicon-t-letter',
 				helpUrl: 'http://go.elementor.com/panel-global-typography',
 			},
