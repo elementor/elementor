@@ -284,8 +284,23 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	addStyleToDocument: function() {
-		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
+	addStyleToDocument: function( position ) {
+		const $head = elementor.$previewContents.find( 'head' );
+
+		let insertMethod = 'append',
+			$insertBy = $head;
+
+		if ( position ) {
+			const $targetElement = $head.children( position.of );
+
+			if ( $targetElement.length ) {
+				insertMethod = position.at;
+
+				$insertBy = $targetElement;
+			}
+		}
+
+		$insertBy[ insertMethod ]( this.elements.$stylesheetElement );
 
 		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this.getSettings( 'context' ) );
 
