@@ -26,8 +26,6 @@ class Settings_Background extends Tab_Base {
 			]
 		);
 
-		$this->add_schemes_notice();
-
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
