@@ -103,6 +103,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			key: this.model.get( 'name' ),
 			title: elementor.translate( 'new_typography_setting' ),
 			controlType: 'typography',
+			route: 'panel/global/global-typography',
 		};
 	}
 
