@@ -29,6 +29,7 @@ const kitContentData = [
 			title: __( 'Content', 'elementor' ),
 			description: __( 'Published pages, posts, related taxonomies, menu and custom post types.', 'elementor' ),
 		},
+		hasSelect: true,
 	},
 ];
 

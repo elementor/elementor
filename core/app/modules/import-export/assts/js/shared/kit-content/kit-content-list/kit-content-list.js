@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import List from '../../../ui/list/list';
 import Box from '../../../ui/box/box';
@@ -15,8 +15,9 @@ import kitContentData from '../kit-content-data/kit-content-data';
 import './kit-content-list.scss';
 
 export default function KitContentList( props ) {
-	const [ isPosts, setIsPosts ] = useState( false ),
-		getButton = () => (
+	const [ options, setOptions ] = useState( [] ),
+	[ checkboxState, setCheckboxState ] = useState( {} ),
+	getButton = () => (
 		<Grid item>
 			<Button variant="contained" color="cta" text={ __( 'Lear More', 'elementor' ) } url="/#" />
 		</Grid>
@@ -34,16 +35,19 @@ export default function KitContentList( props ) {
 		</Text>
 	),
 	setIncludes	= ( event, includeValue ) => {
-		const actionType = event.target.checked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
+		const isChecked = event.target.checked,
+			actionType = isChecked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
+
+		setCheckboxState( ( prevState ) => ( { ...prevState, [ includeValue ]: isChecked } ) );
 
 		props.dispatch( { type: actionType, value: includeValue } );
 	},
 	isChecked = ( itemType ) => {
-		if ( 'content' !== itemType ) {
-			return;
+		if ( 'content' === itemType && options.length ) {
+			return true;
 		}
 
-		return null;
+		return checkboxState[ itemType ] || false;
 	};
 
 	return (
@@ -52,7 +56,7 @@ export default function KitContentList( props ) {
 				kitContentData.map( ( item, index ) => (
 					<List.Item key={ index } className="kit-content-list__item">
 						<Grid container justify="space-between" alignItems="center">
-							<Grid item container={ ! item.data.notice }>
+							<Grid item container={ item.hasSelect }>
 								<Grid item container>
 									<Checkbox checked={ isChecked( item.type ) } onChange={ ( event ) => setIncludes( event, item.type ) } className="kit-content-list__checkbox" />
 
@@ -65,7 +69,7 @@ export default function KitContentList( props ) {
 											</Text>
 
 											{ item.data.notice && getProFeaturesIndication() }
-											{ ( 'content' === item.type && 'export' === props.type ) ? <PostTypesSelect /> : null }
+											{ ( item.hasSelect && 'export' === props.type ) ? <PostTypesSelect itemType={ item.type } setOptions={ setOptions } dispatch={ props.dispatch } /> : null }
 										</Grid>
 									</Grid>
 								</Grid>

@@ -1,29 +1,33 @@
-import { useContext } from 'react';
-import { Context as KitContext } from '../../../../context/kit-context';
+import { memo } from 'react';
 
 import Grid from 'elementor-app/ui/grid/grid';
 import Select2 from 'elementor-app/ui/molecules/select2.js';
 
 import './post-types-select.scss';
 
-export default function PostTypesSelect( props ) {
-	const context = useContext( KitContext ),
-		setPostTypes = ( event ) => {
-			const selectedOptions = [ ...event.target.selectedOptions ].map( ( option ) => option.value );
+function PostTypesSelect( props ) {
+	const setPostTypes = ( event ) => {
+			const selectedOptions = [ ...event.target.selectedOptions ].map( ( option ) => option.value ),
+				actionType = selectedOptions.length ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
 
-			context.dispatch( { type: 'SET_POST_TYPES', value: selectedOptions } );
+			props.setOptions( selectedOptions );
+			props.dispatch( { type: 'SET_POST_TYPES', value: selectedOptions } );
+			props.dispatch( { type: actionType, value: props.itemType } );
 		},
 		getPostTypesOptions = () => {
 			const customPostTypes = elementorAppConfig[ 'import-export' ][ 'custom_post_types' ];
 
 			if ( ! customPostTypes ) {
-				const tempOptions = [
+				// const tempOptions = [
+				// 	{ label: 'Posts', value: 'post' },
+				// 	{ label: 'Pages', value: 'page' },
+				// ];
+
+				//return;
+				return [
 					{ label: 'Posts', value: 'post' },
 					{ label: 'Pages', value: 'page' },
 				];
-
-				//return;
-				return tempOptions;
 			}
 
 			return Object.entries( customPostTypes ).map( ( item, index ) => (
@@ -49,4 +53,11 @@ export default function PostTypesSelect( props ) {
 
 PostTypesSelect.propTypes = {
 	options: PropTypes.array,
+	checkboxType: PropTypes.string,
+	setCheckboxState: PropTypes.func,
+	setOptions: PropTypes.func,
+	dispatch: PropTypes.func,
+	itemType: PropTypes.string,
 };
+
+export default memo( PostTypesSelect );

@@ -14,8 +14,6 @@ new ImportExport();
 
 ReactDOM.render(
 	// TODO: Remove Strict mode.
-	<React.StrictMode>
-		<App />
-	</React.StrictMode>,
+	<App />,
   document.getElementById( 'elementor-app' )
 );
