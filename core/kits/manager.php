@@ -46,6 +46,18 @@ class Manager {
 	}
 
 
+	/**
+	 * Init kit controls.
+	 *
+	 * A temp solution in order to avoid init kit group control from within another group control.
+	 *
+	 * After moving the `default_font` to the kit, the Typography group control cause initialize the kit controls at: https://github.com/elementor/elementor/blob/e6e1db9eddef7e3c1a5b2ba0c2338e2af2a3bfe3/includes/controls/groups/typography.php#L91
+	 * and because the group control is a singleton, its args are changed to the last kit group control.
+	 */
+	public function init_kit_controls() {
+		$this->get_active_kit_for_frontend()->get_controls();
+	}
+
 	public function get_current_settings( $setting = null ) {
 		$kit = $this->get_active_kit_for_frontend();
 
@@ -87,10 +99,9 @@ class Manager {
 			'i18n' => [
 				'close' => __( 'Close', 'elementor' ),
 				'back' => __( 'Back', 'elementor' ),
-				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'site_identity' => __( 'Site Identity', 'elementor' ),
 				'lightbox' => __( 'Lightbox', 'elementor' ),
-				'layout_settings' => __( 'Layout', 'elementor' ),
+				'layout' => __( 'Layout', 'elementor' ),
 				'theme_style' => __( 'Theme Style', 'elementor' ),
 				'add_color' => __( 'Add Color', 'elementor' ),
 				'add_style' => __( 'Add Style', 'elementor' ),
@@ -102,6 +113,11 @@ class Manager {
 				'invalid' => __( 'Invalid', 'elementor' ),
 				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
 				'typography_cannot_be_deleted' => __( 'System Typography can\'t be deleted', 'elementor' ),
+				'design_system' => __( 'Design System', 'elementor' ),
+				'buttons' => __( 'Buttons', 'elementor' ),
+				'images' => __( 'Images', 'elementor' ),
+				'form_fields' => __( 'Form Fields', 'elementor' ),
+				'custom_css' => __( 'Custom CSS', 'elementor' ),
 			],
 		] );
 
@@ -153,6 +169,54 @@ class Manager {
 		return $kit;
 	}
 
+	/**
+	 * Map Scheme To Global
+	 *
+	 * Convert a given scheme value to its corresponding default global value
+	 *
+	 * @param string $type 'color'/'typography'
+	 * @param $value
+	 * @return mixed
+	 */
+	private function map_scheme_to_global( $type, $value ) {
+		$schemes_to_globals_map = [
+			'color' => [
+				'1' => Colors_And_Typography::COLOR_PRIMARY,
+				'2' => Colors_And_Typography::COLOR_SECONDARY,
+				'3' => Colors_And_Typography::COLOR_TEXT,
+				'4' => Colors_And_Typography::COLOR_ACCENT,
+			],
+			'typography' => [
+				'1' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+				'2' => Colors_And_Typography::TYPOGRAPHY_SECONDARY,
+				'3' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+				'4' => Colors_And_Typography::TYPOGRAPHY_ACCENT,
+			],
+		];
+
+		return $schemes_to_globals_map[ $type ][ $value ];
+	}
+
+	/**
+	 * Convert Scheme to Default Global
+	 *
+	 * If a control has a scheme property, convert it to a default Global.
+	 *
+	 * @param $scheme - Control scheme property
+	 * @return array - Control/group control args
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function convert_scheme_to_global( $scheme ) {
+		if ( isset( $scheme['type'] ) && isset( $scheme['value'] ) ) {
+			//_deprecated_argument( $args['scheme'], '3.0.0', 'Schemes are now deprecated - use $args[\'global\'] instead.' );
+			return $this->map_scheme_to_global( $scheme['type'], $scheme['value'] );
+		}
+
+		// Typography control 'scheme' properties usually only include the string with the typography value ('1'-'4').
+		return $this->map_scheme_to_global( 'typography', $scheme );
+	}
+
 	public function register_controls() {
 		$controls_manager = Plugin::$instance->controls_manager;
 
@@ -171,15 +235,9 @@ class Manager {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
-		add_action( 'elementor/frontend/after_enqueue_global', [ $this, 'frontend_before_enqueue_styles' ], 0 );
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
-
-		/*
-		 * Init kit controls in order to avoid init kit group control from within another group control.
-		 * (After moving the `default_font` to the kit, the Typography group control cause initialize the kit controls at: https://github.com/elementor/elementor/blob/e6e1db9eddef7e3c1a5b2ba0c2338e2af2a3bfe3/includes/controls/groups/typography.php#L91
-		 * and because the group control is a singleton, its args are changed to the last kit group control.)
-		 */
-		add_action( 'elementor/init', [ $this, 'get_active_kit_for_frontend' ] );
+		add_action( 'elementor/init', [ $this, 'init_kit_controls' ] );
 	}
 }

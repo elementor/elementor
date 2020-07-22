@@ -81,7 +81,11 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
-		controlsCSS.addStyleToDocument();
+		controlsCSS.addStyleToDocument( {
+			// Ensures we don't override default global style
+			at: 'before',
+			of: '#elementor-style-e-global-style',
+		} );
 	},
 
 	initModel: function() {

@@ -9,17 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_Identity extends Tab_Base {
+class Settings_Site_Identity extends Tab_Base {
 
 	public function get_id() {
-		return 'site-identity';
+		return 'settings-site-identity';
 	}
 
 	public function get_title() {
 		return __( 'Site Identity', 'elementor' );
 	}
 
-	public function register_tab_controls() {
+	protected function register_tab_controls() {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
 		$custom_logo_src = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 

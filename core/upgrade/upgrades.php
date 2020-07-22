@@ -654,19 +654,25 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			if ( ! $kit ) {
+				self::notice( 'Kit not found. nothing to do.' );
 				return;
 			}
 
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
+			$current_settings['viewport_md'] = get_option( 'elementor_viewport_md', '' );
+			$current_settings['viewport_lg'] = get_option( 'elementor_viewport_lg', '' );
+
 			$kit_settings = $kit->get_meta( $meta_key );
 
 			// Already exist.
 			if ( isset( $kit_settings['default_generic_fonts'] ) ) {
+				self::notice( 'General Settings already exist. nothing to do.' );
 				return;
 			}
 
 			if ( empty( $current_settings ) ) {
+				self::notice( 'Current settings are empty. nothing to do.' );
 				return;
 			}
 
@@ -677,6 +683,7 @@ class Upgrades {
 			// Convert some setting to Elementor slider format.
 			$settings_to_slider = [
 				'container_width',
+				'space_between_widgets',
 			];
 
 			foreach ( $settings_to_slider as $setting ) {
@@ -707,6 +714,7 @@ class Upgrades {
 	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+				self::notice( 'System colors are disabled. nothing to do.' );
 				return;
 			}
 
@@ -716,6 +724,7 @@ class Upgrades {
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_colors'] ) ) {
+				self::notice( 'System colors already exist. nothing to do.' );
 				return;
 			}
 
@@ -757,6 +766,7 @@ class Upgrades {
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
+				self::notice( 'Custom colors already exist. nothing to do.' );
 				return;
 			}
 
@@ -785,6 +795,7 @@ class Upgrades {
 			$colors_to_save = array_diff( $current_saved_colors, $system_colors );
 
 			if ( empty( $colors_to_save ) ) {
+				self::notice( 'Saved colors not found. nothing to do.' );
 				return;
 			}
 
@@ -810,6 +821,7 @@ class Upgrades {
 	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
+				self::notice( 'System typography is disabled. nothing to do.' );
 				return;
 			}
 
@@ -819,6 +831,7 @@ class Upgrades {
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_typography'] ) ) {
+				self::notice( 'System typography already exist. nothing to do.' );
 				return;
 			}
 
@@ -857,6 +870,7 @@ class Upgrades {
 	private static function move_settings_to_kit( $callback, $updater ) {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		if ( ! $active_kit_id ) {
+			self::notice( 'Active kit not found. nothing to do.' );
 			return false;
 		}
 
@@ -879,5 +893,10 @@ class Upgrades {
 		}
 
 		return $updater->should_run_again( $revisions_ids );
+	}
+
+	private static function notice( $message ) {
+		$logger = Plugin::$instance->logger->get_logger();
+		$logger->notice( $message );
 	}
 }

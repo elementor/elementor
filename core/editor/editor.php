@@ -451,14 +451,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-ntc',
-			ELEMENTOR_ASSETS_URL . 'lib/e-ntc/e-ntc' . $suffix . '.js',
-			[],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -501,7 +493,6 @@ class Editor {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
-				'elementor-ntc',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
@@ -621,6 +612,7 @@ class Editor {
 
 				// Global Styles
 				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'new_global_color' => __( 'New Global Color', 'elementor' ),
 				'global_colors_title' => __( 'Global Colors', 'elementor' ),
 				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
 				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
@@ -646,10 +638,8 @@ class Editor {
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
-				'global_colors' => __( 'Default Colors', 'elementor' ),
-				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Global Style', 'elementor' ),
-				'global_settings' => __( 'Global Settings', 'elementor' ),
+				'site_settings' => __( 'Site Settings', 'elementor' ),
 				'site_editor' => __( 'Site Editor', 'elementor' ),
 				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
