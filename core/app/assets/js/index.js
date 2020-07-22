@@ -1,5 +1,3 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
 import App from './app';
 import { Module as SiteEditor } from '@elementor/site-editor';
 
@@ -10,10 +8,11 @@ if ( location.href.includes( 'mode=iframe' ) ) {
 
 new SiteEditor();
 
+const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
+
 ReactDOM.render(
-	// TODO: Remove Strict mode.
-	<React.StrictMode>
+	<AppWrapper>
 		<App />
-	</React.StrictMode>,
-  document.getElementById( 'elementor-app' )
+	</AppWrapper>,
+  document.getElementById( 'e-app' )
 );

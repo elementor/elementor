@@ -149,14 +149,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_generic_font_before = $kit->get_settings( 'default_generic_fonts' );
 		$kit_lightbox_color_before = $kit->get_settings( 'lightbox_color' );
 		$kit_container_width_before = $kit->get_settings( 'container_width' );
-		$kit_viewport_lg_before = $kit->get_settings( 'viewport_lg' );
-		$kit_viewport_md_before = $kit->get_settings( 'viewport_md' );
 
 		$this->assertNotEquals( $generic_font, $kit_generic_font_before );
 		$this->assertNotEquals( $lightbox_color, $kit_lightbox_color_before );
 		$this->assertNotEquals( $container_width, $kit_container_width_before );
-		$this->assertNotEquals( $viewport_lg, $kit_viewport_lg_before );
-		$this->assertNotEquals( $viewport_md, $kit_viewport_md_before );
 
 		$updater->set_limit( $query_limit );
 
@@ -184,14 +180,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_generic_font_after = $kit->get_settings( 'default_generic_fonts' );
 		$kit_lightbox_color_after = $kit->get_settings( 'lightbox_color' );
 		$kit_container_width_after = $kit->get_settings( 'container_width' );
-		$kit_viewport_lg_after = $kit->get_settings( 'viewport_lg' );
-		$kit_viewport_md_after = $kit->get_settings( 'viewport_md' );
 
 		$this->assertEquals( $generic_font, $kit_generic_font_after );
 		$this->assertEquals( $lightbox_color, $kit_lightbox_color_after );
 		$this->assertEquals( $container_width, $kit_container_width_after['size'] );
-		$this->assertEquals( $viewport_lg, $kit_viewport_lg_after['size'] );
-		$this->assertEquals( $viewport_md, $kit_viewport_md_after['size'] );
 
 		// Assert revisions upgraded.
 

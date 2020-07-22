@@ -433,6 +433,8 @@ class Plugin {
 	 */
 	public $data_manager;
 
+	public $legacy_mode;
+
 	/**
 	 * @var Core\App\App
 	 */
@@ -625,6 +627,26 @@ class Plugin {
 		$this->common->init_components();
 
 		$this->ajax = $this->common->get_component( 'ajax' );
+	}
+
+	public function get_legacy_mode( $mode_name = null ) {
+		if ( ! $this->legacy_mode ) {
+			// If the legacy_mode variable does not exist yet, create it here.
+			$this->legacy_mode = [
+				'elementWrappers' => get_option( 'elementor_element_wrappers_legacy_mode' ),
+			];
+		}
+
+		if ( ! $mode_name ) {
+			return $this->legacy_mode;
+		}
+
+		if ( isset( $this->legacy_mode[ $mode_name ] ) ) {
+			return $this->legacy_mode[ $mode_name ];
+		}
+
+		// If there is no legacy mode with the given mode name;
+		return false;
 	}
 
 	/**

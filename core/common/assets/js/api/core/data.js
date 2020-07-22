@@ -45,10 +45,6 @@ export default class Data extends Commands {
 
 		this.baseEndpointAddress = '';
 
-		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
-	}
-
-	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
 		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;

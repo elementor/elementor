@@ -262,7 +262,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-connect">
-	<div id="elementor-template-library-connect-logo" class="elementor-gradient-logo">
+	<div id="elementor-template-library-connect-logo" class="e-logo-wrapper">
 		<i class="eicon-elementor" aria-hidden="true"></i>
 	</div>
 	<div class="elementor-template-library-blank-title">

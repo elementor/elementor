@@ -37,6 +37,44 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			} );
 	}
 
+	setCurrentActivePreviewItem() {
+		const selectedClass = 'e-global__preview-item--selected';
+
+		if ( this.activePreviewItem ) {
+			this.activePreviewItem.removeClass( selectedClass );
+		}
+
+		// If there is an active global on the control, get it.
+		let globalKey = this.view.getGlobalKey();
+
+		// If there is no active global, check if there is a default global.
+		if ( ! globalKey && elementor.config.globals.defaults_enabled[ this.view.getGlobalMeta().controlType ] ) {
+			globalKey = this.view.model.get( 'global' )?.default;
+		}
+
+		if ( ! globalKey ) {
+			// If there is no active global or global default, reset the active preview item.
+			this.activePreviewItem = null;
+
+			return;
+		}
+
+		// Extract the Global's ID from the Global key
+		const { args } = $e.data.commandExtractArgs( globalKey ),
+			globalId = args.query.id;
+
+		// Get the active global's corresponding preview item in the Global Select Popover
+		const $item = this.ui.globalPreviewItems.filter( `[data-global-id="${ globalId }"]` );
+
+		if ( ! $item ) {
+			return;
+		}
+
+		this.activePreviewItem = $item;
+
+		this.activePreviewItem.addClass( selectedClass );
+	}
+
 	applySavedGlobalValue( globalId ) {
 		this.setGlobalValue( globalId );
 
@@ -110,7 +148,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.onValueTypeChange();
 		}
 
-		this.$el.addClass( 'elementor-control-global' );
+		this.$el.addClass( 'e-control-global' );
 	}
 
 	toggleSelect() {
@@ -118,6 +156,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.popover.hide();
 		} else {
 			this.popover.show();
+
+			this.setCurrentActivePreviewItem();
 		}
 	}
 

@@ -22,7 +22,6 @@
 		"babel-plugin-transform-react-jsx": "^6.24.1",
 		"babel-preset-env": "^1.7.0",
 		"concurrently": "^4.0.1",
-		"css-loader": "^3.5.3",
 		"cssnano": "^4.1.10",
 		"eslint": "^5.4.0",
 		"eslint-config-wordpress": "^2.0.0",
@@ -62,10 +61,7 @@
 		"mini-css-extract-plugin": "^0.4.3",
 		"path": "^0.12.7",
 		"qunit": "^2.9.3",
-		"sass-loader": "^8.0.2",
-		"style-loader": "^1.2.1",
 		"terser-webpack-plugin": "^1.4.1",
-		"url-loader": "^4.1.0",
 		"webpack": "^4.16.5"
 	},
 	"dependencies": {
@@ -76,8 +72,6 @@
 		"core-js": "^2.6.5",
 		"prop-types": "^15.7.1",
 		"reach-router-hash-history": "0.0.3",
-		"react": "^16.8.6",
-		"react-dom": "^16.8.6",
 		"sass-lint": "^1.13.1"
 	}
 }
