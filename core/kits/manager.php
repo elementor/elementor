@@ -46,6 +46,18 @@ class Manager {
 	}
 
 
+	/**
+	 * Init kit controls.
+	 *
+	 * A temp solution in order to avoid init kit group control from within another group control.
+	 *
+	 * After moving the `default_font` to the kit, the Typography group control cause initialize the kit controls at: https://github.com/elementor/elementor/blob/e6e1db9eddef7e3c1a5b2ba0c2338e2af2a3bfe3/includes/controls/groups/typography.php#L91
+	 * and because the group control is a singleton, its args are changed to the last kit group control.
+	 */
+	public function init_kit_controls() {
+		$this->get_active_kit_for_frontend()->get_controls();
+	}
+
 	public function get_current_settings( $setting = null ) {
 		$kit = $this->get_active_kit_for_frontend();
 
@@ -174,12 +186,6 @@ class Manager {
 		add_action( 'elementor/frontend/after_enqueue_global', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
-
-		/*
-		 * Init kit controls in order to avoid init kit group control from within another group control.
-		 * (After moving the `default_font` to the kit, the Typography group control cause initialize the kit controls at: https://github.com/elementor/elementor/blob/e6e1db9eddef7e3c1a5b2ba0c2338e2af2a3bfe3/includes/controls/groups/typography.php#L91
-		 * and because the group control is a singleton, its args are changed to the last kit group control.)
-		 */
-		add_action( 'elementor/init', [ $this, 'get_active_kit_for_frontend' ] );
+		add_action( 'elementor/init', [ $this, 'init_kit_controls' ] );
 	}
 }
