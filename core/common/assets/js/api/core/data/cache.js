@@ -35,7 +35,11 @@ export default class Cache {
 			requestData.cache = 'hit';
 
 			return new Promise( async ( resolve ) => {
-				resolve( data );
+				if ( ! requestData.data ) {
+					$e.data.handleResponse( requestData, data );
+				}
+
+				resolve( requestData.data );
 			} );
 		}
 
@@ -79,7 +83,7 @@ export default class Cache {
 			newData = data;
 		}
 
-		let oldData = this.storage.getItem( componentName );
+		const oldData = this.storage.getItem( componentName );
 
 		// When have old data, merge it recursively with newData using jQuery.extend().
 		if ( oldData !== null ) {

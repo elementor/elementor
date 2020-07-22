@@ -8,6 +8,10 @@ import BulkComponent from './data/components/bulk/component';
  */
 
 /**
+ * @typedef {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}} ApplyMethods
+ */
+
+/**
  * @typedef {{}} RequestData
  * @property {ComponentBase} component
  * @property {string} command
@@ -16,6 +20,8 @@ import BulkComponent from './data/components/bulk/component';
  * @property {{}} [args]
  * @property {number} [timestamp]
  * @property {('hit'|'miss')} [cache]
+ * @property {*} [data]
+ * @property {ApplyMethods} applyMethods
  * Bulk:
  * @property {Promise} [promise]
  * @property {{}} [executor]
@@ -276,6 +282,36 @@ export default class Data extends Commands {
 	}
 
 	/**
+	 * Function handleResponse().
+	 *
+	 * @param {ApplyMethods} applyMethods
+	 * @param {RequestData} requestData
+	 * @param {{}} response
+	 *
+	 * @returns {*}
+	 */
+	handleResponse( requestData, response, applyMethods = false ) {
+		if ( ! applyMethods && requestData.applyMethods ) {
+			applyMethods = requestData.applyMethods;
+		}
+
+		// Run 'after' method.
+		if ( applyMethods ) {
+			requestData.applyMethods = applyMethods;
+			response = applyMethods.after.apply( this, [ response, this.args ] );
+		}
+
+		response = { data: response };
+
+		// Append requestData.
+		response = Object.assign( { __requestData__: requestData }, response );
+
+		requestData.data = response;
+
+		return response;
+	}
+
+	/**
 	 * Function prepareHeaders().
 	 *
 	 * @param {RequestData} requestData
@@ -320,28 +356,31 @@ export default class Data extends Commands {
 	}
 
 	/**
+	 * Function fetchCache().
+	 *
+	 * @param {RequestData} requestData
+	 * @returns {Promise|boolean}
+	 */
+	fetchCache( requestData ) {
+		requestData.cache = 'miss';
+
+		return this.cache.getAsync( requestData );
+	}
+
+	/**
 	 * Function fetch().
 	 *
 	 * @param {RequestData} requestData
 	 * @param {function(input: RequestInfo, init?) : Promise<Response> } [fetchAPI]
 	 *
-	 * @return {{}} params
+	 * @returns {Promise}
 	 */
 	fetch( requestData, fetchAPI = window.fetch ) {
-		requestData.cache = 'miss';
-
 		const params = this.prepareHeaders( requestData ),
-			useCache = [ 'create', 'get' ].includes( requestData.type ) && ! requestData.args.options?.refresh;
+			isCacheRequired = this.isCacheRequired( requestData ),
+			cache = isCacheRequired && 'get' === requestData.type ? this.fetchCache( requestData ) : false;
 
-		if ( useCache ) {
-			const cachePromise = this.cache.getAsync( requestData );
-
-			if ( cachePromise ) {
-				return cachePromise;
-			}
-		}
-
-		return new Promise( async ( resolve, reject ) => {
+		return cache || new Promise( async ( resolve, reject ) => {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
 			try {
@@ -361,11 +400,11 @@ export default class Data extends Commands {
 
 				// At this point, it got the resolved response from remote.
 				// So load cache, and resolve it.
-				if ( useCache ) {
+				if ( isCacheRequired ) {
 					this.cache.set( requestData, response );
 				}
 
-				resolve( response );
+				resolve( this.handleResponse( requestData, response ) );
 			} catch ( e ) {
 				reject( e );
 			}
@@ -480,6 +519,15 @@ export default class Data extends Commands {
 
 	update( command, data, query = {}, options = {} ) {
 		return this.run( 'update', command, { query, options, data } );
+	}
+
+	/**
+	 * Function isCacheRequired().
+	 *
+	 * @param {RequestData} requestData
+	 */
+	isCacheRequired( requestData ) {
+		return [ 'create', 'get' ].includes( requestData.type ) && ! requestData.args.options?.refresh;
 	}
 
 	/**

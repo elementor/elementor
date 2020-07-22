@@ -1,17 +1,6 @@
 import CommandBase from './command-base';
 
-/**
- * @typedef {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}} ApplyMethods
- */
-
 export default class CommandData extends CommandBase {
-	/**
-	 * Data returned from remote.
-	 *
-	 * @type {*}
-	 */
-	data;
-
 	/**
 	 * Fetch type.
 	 *
@@ -78,9 +67,11 @@ export default class CommandData extends CommandBase {
 	/**
 	 * Function getRequestData().
 	 *
+	 * @param {ApplyMethods} applyMethods
+	 *
 	 * @returns {RequestData}
 	 */
-	getRequestData() {
+	getRequestData( applyMethods ) {
 		return {
 			type: this.type,
 			args: this.args,
@@ -88,53 +79,39 @@ export default class CommandData extends CommandBase {
 			component: this.component,
 			command: this.currentCommand,
 			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
+			applyMethods,
 		};
 	}
 
 	/**
-	 * Function handleData().
-	 *
-	 * @param {ApplyMethods} applyMethods
-	 * @param {RequestData} requestData
-	 * @param {{}} data
-	 *
-	 * @returns {*}
+	 * @inheritDoc
+	 * @returns {Promise} promise or data
 	 */
-	handleData( applyMethods, requestData, data ) {
-		this.data = data;
-
-		// Run 'after' method.
-		this.data = applyMethods.after.apply( this, [ data, this.args ] );
-
-		this.data = { data: this.data };
-
-		// Append requestData.
-		this.data = Object.assign( { __requestData__: requestData }, this.data );
-
-		return this.data;
-	}
-
 	apply() {
 		const applyMethods = this.getApplyMethods();
 
 		// Run 'before' method.
 		this.args = applyMethods.before.apply( this, [ this.args ] );
 
-		const requestData = this.getRequestData();
+		const requestData = this.getRequestData( applyMethods ),
+			preventDefaults = this.getPreventDefaults();
 
-		this.data = this.getPreventDefaults();
+		let result;
 
-		if ( null !== this.data ) {
-			return this.handleData( applyMethods, requestData, this.data );
+		if ( null !== preventDefaults ) {
+			result = $e.data.handleResponse( requestData, preventDefaults, applyMethods );
+		} else {
+			result = $e.data.args.useBulk && 'get' === this.type ?
+				$e.data.bulk.fetch( requestData ) : $e.data.fetch( requestData );
 		}
 
-		const promise = $e.data.args.useBulk && 'get' === this.type ?
-			$e.data.bulk.fetch( requestData ) : $e.data.fetch( requestData );
+		if ( ! ( result instanceof Promise ) ) {
+			result = new Promise( ( resolve ) => resolve( result ) );
+		}
 
-		promise.then( ( data ) => this.handleData( applyMethods, requestData, data ) )
-			.catch( ( e ) => this.onCatchApply( e ) );
+		result.catch( ( e ) => this.onCatchApply( e ) );
 
-		return promise;
+		return result;
 	}
 
 	/**

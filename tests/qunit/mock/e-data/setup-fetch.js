@@ -53,6 +53,8 @@ export const removeMock = ( type, command ) => {
 };
 
 export const attachMock = () => {
+	$e.data.args.useBulk = false;
+
 	$e.data.fetch = ( /* RequestData */ requestData, fetchAPI ) => {
 		if ( fetchAPI ) {
 			return fetchOriginal( requestData, fetchAPI );
@@ -69,14 +71,19 @@ export const attachMock = () => {
 		} );
 
 		if ( undefined !== result ) {
-			result = Promise.resolve( result );
+			if ( result instanceof Promise ) {
+				result = Promise.resolve( result.then( ( data ) => $e.data.handleResponse( requestData, data ) ) );
+			} else {
+				result = $e.data.handleResponse( requestData, result );
+			}
 		}
-
 		return result;
 	};
 };
 
 export const attachCache = () => {
+	$e.data.args.useBulk = true;
+
 	$e.data.fetch = ( /* RequestData */ requestData, fetchAPI ) => {
 		if ( fetchAPI ) {
 			return fetchOriginal( requestData, fetchAPI );
@@ -87,10 +94,14 @@ export const attachCache = () => {
 };
 
 export const restoreFetch = () => {
+	$e.data.args.useBulk = true;
+
 	$e.data.fetch = fetchOriginal;
 };
 
 export const emptyFetch = () => {
+	$e.data.args.useBulk = false;
+
 	$e.data.fetch = () => Promise.resolve( {} );
 };
 
