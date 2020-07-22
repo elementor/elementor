@@ -56,8 +56,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				return;
 			}
 
-			const context = this.getSettings( 'context' ),
+			const context = this.getSettings( 'context' );
+			let globalKeys;
+
+			if ( context ) {
 				globalKeys = context.model.get( 'settings' ).get( '__globals__' );
+			}
 
 			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements, globalKeys );
 		} );
