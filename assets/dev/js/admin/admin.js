@@ -17,6 +17,7 @@
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
+				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
 			};
 
 			elements.$settingsFormPages = elements.$settingsForm.find( '.elementor-settings-form-page' );
@@ -264,7 +265,7 @@
 		},
 
 		openGetHelpInNewTab: function() {
-			$( 'a[href="admin.php?page=go_knowledge_base_site"]' ).attr( 'target', '_blank' );
+			this.elements.$menuGetHelpLink.attr( 'target', '_blank' );
 		},
 
 		initTemplatesImport: function() {
