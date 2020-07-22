@@ -2,6 +2,7 @@
 namespace Elementor\Core\Kits;
 
 use Elementor\Core\Kits\Controls\Repeater;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -181,16 +182,16 @@ class Manager {
 	private function map_scheme_to_global( $type, $value ) {
 		$schemes_to_globals_map = [
 			'color' => [
-				'1' => Colors_And_Typography::COLOR_PRIMARY,
-				'2' => Colors_And_Typography::COLOR_SECONDARY,
-				'3' => Colors_And_Typography::COLOR_TEXT,
-				'4' => Colors_And_Typography::COLOR_ACCENT,
+				'1' => Global_Colors::COLOR_PRIMARY,
+				'2' => Global_Colors::COLOR_SECONDARY,
+				'3' => Global_Colors::COLOR_TEXT,
+				'4' => Global_Colors::COLOR_ACCENT,
 			],
 			'typography' => [
-				'1' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
-				'2' => Colors_And_Typography::TYPOGRAPHY_SECONDARY,
-				'3' => Colors_And_Typography::TYPOGRAPHY_TEXT,
-				'4' => Colors_And_Typography::TYPOGRAPHY_ACCENT,
+				'1' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				'2' => Global_Typography::TYPOGRAPHY_SECONDARY,
+				'3' => Global_Typography::TYPOGRAPHY_TEXT,
+				'4' => Global_Typography::TYPOGRAPHY_ACCENT,
 			],
 		];
 
