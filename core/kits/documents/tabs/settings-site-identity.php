@@ -21,6 +21,7 @@ class Settings_Site_Identity extends Tab_Base {
 
 	protected function register_tab_controls() {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
+		$custom_logo_src = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
@@ -57,7 +58,7 @@ class Settings_Site_Identity extends Tab_Base {
 				'type' => Controls_Manager::MEDIA,
 				'default' => [
 					'id' => $custom_logo_id,
-					'url' => wp_get_attachment_image_src( $custom_logo_id, 'full' )[0],
+					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
 				],
 				'description' => __( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
 			]
