@@ -1,23 +1,8 @@
 import CommandBase from './command-base';
 
 export default class CommandData extends CommandBase {
-	/**
-	 * Fetch type.
-	 *
-	 * @type {DataTypes}
-	 */
-	type;
-
 	static getInstanceType() {
 		return 'CommandData';
-	}
-
-	constructor( args, commandsAPI = $e.data ) {
-		super( args, commandsAPI );
-
-		if ( this.args.options?.type ) {
-			this.type = this.args.options.type;
-		}
 	}
 
 	/**
@@ -29,12 +14,18 @@ export default class CommandData extends CommandBase {
 		return null;
 	}
 
+	constructor( args, commandsAPI = $e.data ) {
+		super( args, commandsAPI );
+
+		this.requestData = this.getRequestData();
+	}
+
 	/**
 	 * @param {DataTypes} type
 	 *
 	 * @returns {ApplyMethods}
 	 */
-	getApplyMethods( type = this.type ) {
+	getApplyMethods( type = this.requestData.type ) {
 		let before, after;
 		switch ( type ) {
 			case 'create':
@@ -76,7 +67,7 @@ export default class CommandData extends CommandBase {
 	 */
 	getRequestData( applyMethods ) {
 		return {
-			type: this.type,
+			type: this.args.options?.type,
 			args: this.args,
 			timestamp: new Date().getTime(),
 			component: this.component,
@@ -88,7 +79,7 @@ export default class CommandData extends CommandBase {
 
 	/**
 	 * @inheritDoc
-	 * @returns {Promise} promise or data
+	 * @returns {Promise}
 	 */
 	apply() {
 		const applyMethods = this.getApplyMethods();
@@ -96,10 +87,8 @@ export default class CommandData extends CommandBase {
 		// Run 'before' method.
 		this.args = applyMethods.before();
 
-		const requestData = this.getRequestData( applyMethods );
-
-		let result = $e.data.args.useBulk && 'get' === this.type ?
-			$e.data.bulk.fetch( requestData ) : $e.data.fetch( requestData );
+		let result = $e.data.args.useBulk && 'get' === this.requestData.type ?
+				$e.data.bulk.fetch( this.requestData ) : $e.data.fetch( this.requestData );
 
 		if ( ! ( result instanceof Promise ) ) {
 			result = new Promise( ( resolve ) => resolve( result ) );
