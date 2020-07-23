@@ -19,9 +19,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.ui.globalPreviewsContainer.on( 'click', '.e-global__preview-item', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
 		this.ui.globalPopoverToggle.on( 'click', ( event ) => this.toggleGlobalPopover( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
-			const { route } = this.view.getGlobalMeta();
+			const { route } = this.view.getGlobalMeta(),
+				args = {
+					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
+					container: this.view.options.container,
+				};
 
-			$e.run( 'panel/global/open' ).then( () => $e.route( route ) );
+			$e.run( 'panel/global/open', args ).then( () => $e.route( route ) );
 
 			this.popover.hide();
 		} );

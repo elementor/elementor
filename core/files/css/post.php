@@ -54,7 +54,7 @@ class Post extends Base {
 	public function __construct( $post_id ) {
 		$this->post_id = $post_id;
 
-		parent::__construct( self::FILE_PREFIX . $post_id . '.css' );
+		parent::__construct( static::FILE_PREFIX . $post_id . '.css' );
 	}
 
 	/**
