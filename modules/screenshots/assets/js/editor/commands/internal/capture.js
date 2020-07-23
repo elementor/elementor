@@ -4,15 +4,15 @@ export class Capture extends CommandInternalBase {
 	constructor() {
 		super();
 
-		this.iframe = null;
+		this.$iframe = null;
 	}
 
 	apply() {
 		this.component.isCapturingScreenshot = true;
 
-		this.iframe = this.createIframe();
+		this.$iframe = this.createIframe();
 
-		document.body.append( this.iframe );
+		jQuery( 'body' ).append( this.$iframe );
 
 		// The iframe send an event when the screenshot process complete
 		// then the command send a notice to the component about it.
@@ -27,13 +27,13 @@ export class Capture extends CommandInternalBase {
 				this.component.isCapturingScreenshot = false;
 
 				if ( ! elementorCommonConfig.isDebug ) {
-					this.iframe.remove();
+					this.$iframe.remove();
 				}
 
 				window.removeEventListener( 'message', listener );
 
 				return data.success ?
-					resolve( this.iframe ) :
+					resolve( this.$iframe ) :
 					reject();
 			};
 
@@ -42,13 +42,15 @@ export class Capture extends CommandInternalBase {
 	}
 
 	createIframe() {
-		const iframe = document.createElement( 'iframe' );
+		const $iframe = jQuery( '<iframe></iframe>' );
 
-		iframe.src = this.getIframeUrl();
-		iframe.width = '1200';
-		iframe.style = 'visibility: hidden;';
+		$iframe.attr( 'src', this.getIframeUrl() );
+		$iframe.css( {
+			width: '1200px',
+			visibility: 'hidden',
+		} );
 
-		return iframe;
+		return $iframe;
 	}
 
 	getIframeUrl() {
