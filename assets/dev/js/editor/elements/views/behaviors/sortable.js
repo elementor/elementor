@@ -78,6 +78,19 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return this.view.getChildViewContainer( this.view );
 	},
 
+	getSortedElementNewIndex( $element ) {
+		const draggedModel = elementor.channels.data.request( 'dragging:model' ),
+			draggedElType = draggedModel.get( 'elType' );
+
+		let	newIndex = $element.index();
+
+		if ( 'widget' === draggedElType && ! elementor.config.legacyMode.elementWrappers ) {
+			newIndex--;
+		}
+
+		return newIndex;
+	},
+
 	deactivate: function() {
 		var childViewContainer = this.getChildViewContainer();
 
@@ -101,18 +114,18 @@ SortableBehavior = Marionette.Behavior.extend( {
 			.trigger( model.get( 'elType' ) + ':drag:start' );
 	},
 
-	// Move section.
+	// On sorting element
 	updateSort: function( ui ) {
-		const at = ui.item.parent().children().index( ui.item );
-
 		$e.run( 'document/elements/move', {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view.getContainer(),
-			options: { at },
+			options: {
+				at: this.getSortedElementNewIndex( ui.item ),
+			},
 		} );
 	},
 
-	// Move Column/Widget.
+	// On receiving element from another container
 	receiveSort: function( event, ui ) {
 		event.stopPropagation();
 
@@ -137,7 +150,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view.getContainer(),
 			options: {
-				at: ui.item.index(),
+				at: this.getSortedElementNewIndex( ui.item ),
 			},
 		} );
 	},
