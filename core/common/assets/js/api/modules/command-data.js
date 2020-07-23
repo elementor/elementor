@@ -96,17 +96,10 @@ export default class CommandData extends CommandBase {
 		// Run 'before' method.
 		this.args = applyMethods.before();
 
-		const requestData = this.getRequestData( applyMethods ),
-			preventDefaults = this.getPreventDefaults();
+		const requestData = this.getRequestData( applyMethods );
 
-		let result;
-
-		if ( null !== preventDefaults ) {
-			result = $e.data.handleResponse( requestData, preventDefaults, applyMethods );
-		} else {
-			result = $e.data.args.useBulk && 'get' === this.type ?
-				$e.data.bulk.fetch( requestData ) : $e.data.fetch( requestData );
-		}
+		let result = $e.data.args.useBulk && 'get' === this.type ?
+			$e.data.bulk.fetch( requestData ) : $e.data.fetch( requestData );
 
 		if ( ! ( result instanceof Promise ) ) {
 			result = new Promise( ( resolve ) => resolve( result ) );
@@ -115,18 +108,6 @@ export default class CommandData extends CommandBase {
 		result.catch( ( e ) => this.onCatchApply( e ) );
 
 		return result;
-	}
-
-	/**
-	 * Function getPreventDefaults.
-	 *
-	 * By defaults returns: 'null' means it will be skipped ( no prevent defaults ), anything except 'null' will triggered by apply(), to prevent the defaults.
-	 * The result from 'getPreventDefaults' will be the result of the command.
-	 *
-	 * @returns {null|*}
-	 */
-	getPreventDefaults() {
-		return null;
 	}
 
 	/**

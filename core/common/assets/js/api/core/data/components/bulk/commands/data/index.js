@@ -18,15 +18,6 @@ export class Index extends CommandData {
 		this.requireArgumentConstructor( 'commands', Object, query );
 	}
 
-	getPreventDefaults() {
-		// In other words, if remote not require, return cachedResults.
-		if ( ! this.requireRemote ) {
-			return this.cachedResults;
-		}
-
-		return super.getPreventDefaults();
-	}
-
 	/**
 	 * Excepted format:
 	 * Namespace will be used in the results of each command.
