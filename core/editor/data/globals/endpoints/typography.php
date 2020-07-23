@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor\Data\Globals\Endpoints;
 
+use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Plugin;
 
 class Typography extends Base {
@@ -13,12 +14,19 @@ class Typography extends Base {
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 
-		$system_items = $kit->get_settings_for_display( 'system_typography' );
-		$custom_items = $kit->get_settings_for_display( 'custom_typography' );
+		// Use raw settings that doesn't have default values.
+		$meta_key = PageManager::META_KEY;
+		$kit_raw_settings = $kit->get_meta( $meta_key );
 
-		if ( ! $system_items ) {
-			$system_items = [];
+		if ( isset( $kit_raw_settings['system_typography'] ) ) {
+			$system_items = $kit_raw_settings['system_typography'];
+		} else {
+			// Get default items, but without empty defaults.
+			$control = $kit->get_controls( 'system_typography' );
+			$system_items = $control['default'];
 		}
+
+		$custom_items = $kit->get_settings( 'custom_typography' );
 
 		if ( ! $custom_items ) {
 			$custom_items = [];
