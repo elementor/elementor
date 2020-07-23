@@ -1,3 +1,5 @@
+import environment from 'elementor-common/utils/environment';
+
 /* global ElementorScreenshotConfig, jQuery */
 class Screenshot {
 	constructor() {
@@ -210,9 +212,10 @@ class Screenshot {
 			.then( () => {
 				this.log( 'Start creating screenshot.' );
 
-				const isSafari = /^((?!chrome|android).)*safari/i.test( navigator.userAgent );
-
-				if ( isSafari ) {
+				// Safari browser has some problems with the images that dom-to-images
+				// library creates, so in this specific case the screenshot uses html2canvas.
+				// Note that dom-to-image creates more accurate screenshot in "not safari" browsers.
+				if ( environment.safari ) {
 					this.log( 'Creating screenshot with "html2canvas"' );
 					return html2canvas( document.body ).then( ( canvas ) => {
 						return canvas.toDataURL( 'image/png' );
