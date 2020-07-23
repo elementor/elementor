@@ -80,13 +80,13 @@ export default class extends ControlBaseDataView {
 		return {
 			commandName: this.getGlobalCommand(),
 			key: this.model.get( 'name' ),
-			title: this.colorPicker?.getColorTitle(),
 			controlType: 'colors',
+			route: 'panel/global/global-colors',
 		};
 	}
 
 	getAddGlobalConfirmMessage( globalColors ) {
-		const colorTitle = this.colorPicker.getColorTitle(),
+		const colorTitle = elementor.translate( 'new_global_color' ),
 			currentValue = this.getCurrentValue(),
 			$message = jQuery( '<div>', { class: 'e-global__confirm-message' } ),
 			$messageText = jQuery( '<div>', { class: 'e-global__confirm-message-text' } ),

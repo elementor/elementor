@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor tabs widget.
@@ -254,7 +255,7 @@ class Widget_Tabs extends Widget_Base {
 					'{{WRAPPER}} .elementor-tab-title, {{WRAPPER}} .elementor-tab-title a' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_PRIMARY,
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 			]
 		);
@@ -268,7 +269,7 @@ class Widget_Tabs extends Widget_Base {
 					'{{WRAPPER}} .elementor-tab-title.elementor-active a' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_ACCENT,
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 			]
 		);
@@ -279,7 +280,7 @@ class Widget_Tabs extends Widget_Base {
 				'name' => 'tab_typography',
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				],
 			]
 		);
@@ -302,7 +303,7 @@ class Widget_Tabs extends Widget_Base {
 					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_TEXT,
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 			]
 		);
@@ -313,7 +314,7 @@ class Widget_Tabs extends Widget_Base {
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
 			]
 		);

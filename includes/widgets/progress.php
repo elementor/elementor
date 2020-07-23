@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor progress widget.
@@ -182,7 +183,7 @@ class Widget_Progress extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_PRIMARY,
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper .elementor-progress-bar' => 'background-color: {{VALUE}};',
@@ -274,7 +275,7 @@ class Widget_Progress extends Widget_Base {
 					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_PRIMARY,
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 			]
 		);
@@ -285,7 +286,7 @@ class Widget_Progress extends Widget_Base {
 				'name' => 'typography',
 				'selector' => '{{WRAPPER}} .elementor-title',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
 			]
 		);

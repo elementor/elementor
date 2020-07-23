@@ -9,18 +9,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_Identity extends Tab_Base {
+class Settings_Site_Identity extends Tab_Base {
 
 	public function get_id() {
-		return 'site-identity';
+		return 'settings-site-identity';
 	}
 
 	public function get_title() {
 		return __( 'Site Identity', 'elementor' );
 	}
 
-	public function register_tab_controls() {
+	protected function register_tab_controls() {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
+		$custom_logo_src = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
@@ -57,8 +58,9 @@ class Site_Identity extends Tab_Base {
 				'type' => Controls_Manager::MEDIA,
 				'default' => [
 					'id' => $custom_logo_id,
-					'url' => wp_get_attachment_image_src( $custom_logo_id, 'full' )[0],
+					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
 				],
+				'description' => __( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
 			]
 		);
 
@@ -67,6 +69,7 @@ class Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Favicon', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'description' => __( 'Suggested Favicon dimensions: 512 × 512 pixels.', 'elementor' ),
 			]
 		);
 

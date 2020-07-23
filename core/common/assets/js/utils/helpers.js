@@ -57,4 +57,8 @@ export default class Helpers {
 			return $1.toUpperCase();
 		} );
 	}
+
+	getUniqueId() {
+		return Math.random().toString( 16 ).substr( 2, 7 );
+	}
 }

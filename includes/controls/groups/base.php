@@ -396,6 +396,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 */
 	protected function init_args( $args ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
+
+		if ( isset( $this->args['scheme'] ) ) {
+			$this->args['global']['default'] = Plugin::$instance->kits_manager->convert_scheme_to_global( $this->args['scheme'] );
+		}
 	}
 
 	/**

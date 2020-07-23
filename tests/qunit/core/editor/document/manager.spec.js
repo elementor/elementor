@@ -24,6 +24,9 @@ jQuery( () => {
 			const documentMaster = elementor.documents.addDocumentByConfig( documentConfigMaster ),
 				documentSlave = elementor.documents.addDocumentByConfig( documentConfigSlave );
 
+			documentMaster.container = documentTemp.container;
+			documentSlave.container = documentTemp.container;
+
 			// Set current document to master.
 			elementor.documents.setCurrent( documentMaster );
 
