@@ -761,7 +761,8 @@ abstract class Base extends Base_File {
 		$id = $global_args[1];
 
 		if ( ! empty( $control['groupType'] ) ) {
-			$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
+			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
+			$property_name = str_replace( '_', '-', $property_name );
 
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
 		} else {
