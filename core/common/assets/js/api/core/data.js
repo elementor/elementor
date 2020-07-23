@@ -21,7 +21,6 @@ import BulkComponent from './data/components/bulk/component';
  * @property {number} [timestamp]
  * @property {('hit'|'miss')} [cache]
  * @property {*} [data]
- * @property {ApplyMethods} applyMethods
  * Bulk:
  * @property {Promise} [promise]
  * @property {{}} [executor]

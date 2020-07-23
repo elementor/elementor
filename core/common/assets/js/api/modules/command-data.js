@@ -25,7 +25,7 @@ export default class CommandData extends CommandBase {
 	 *
 	 * @returns {ApplyMethods}
 	 */
-	getApplyMethods( type = this.requestData.type ) {
+	getApplyMethods( type = this.args.options?.type ) {
 		let before, after;
 		switch ( type ) {
 			case 'create':
@@ -49,7 +49,7 @@ export default class CommandData extends CommandBase {
 				break;
 
 			default:
-				return false;
+				throw RangeError( `Invalid type: '${ type }'` );
 		}
 
 		return {
@@ -60,12 +60,10 @@ export default class CommandData extends CommandBase {
 
 	/**
 	 * Function getRequestData().
-	 *
-	 * @param {ApplyMethods} applyMethods
-	 *
+	 **
 	 * @returns {RequestData}
 	 */
-	getRequestData( applyMethods ) {
+	getRequestData() {
 		return {
 			type: this.args.options?.type,
 			args: this.args,
@@ -73,7 +71,6 @@ export default class CommandData extends CommandBase {
 			component: this.component,
 			command: this.currentCommand,
 			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
-			applyMethods,
 		};
 	}
 
