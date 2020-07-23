@@ -15,30 +15,17 @@ export default function Page( props ) {
 		</Footer>
 	);
 
-	const uiTheme = elementorAppConfig.ui_theme;
-	let userPrefersTheme = '';
-
-	if ( 'auto' === uiTheme ) {
-		if ( window.matchMedia && window.matchMedia( '(prefers-color-scheme: dark)' ).matches ) {
-			userPrefersTheme = ' dark';
-		}
-	} else if ( 'dark' === uiTheme ) {
-		userPrefersTheme = ' dark';
-	}
-
 	return (
-		<div className={ props.className + userPrefersTheme }>
-			<div className="eps-app__lightbox">
-				<div className="eps-app">
-					<Header title={ props.title } buttons={ props.headerButtons } />
-					<div className="eps-app__main">
-						{ props.sidebar && getSideBar() }
-						<Content>
-							{ props.content }
-						</Content>
-					</div>
-					{ props.footer && getFooter() }
+		<div className={`eps-app__lightbox ${ props.className }`}>
+			<div className="eps-app">
+				<Header title={ props.title } buttons={ props.headerButtons } />
+				<div className="eps-app__main">
+					{ props.sidebar && getSideBar() }
+					<Content>
+						{ props.content }
+					</Content>
 				</div>
+				{ props.footer && getFooter() }
 			</div>
 		</div>
 	);

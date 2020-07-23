@@ -5,15 +5,26 @@ import TemplateTypesContext from '../context/template-types';
 import './site-editor.scss';
 
 export default function Layout( props ) {
-	const config = {
-		title: __( 'Site Editor', 'elementor' ),
-		headerButtons: props.headerButtons,
-		sidebar: <Menu allPartsButton={ props.allPartsButton } promotion={props.promotion} />,
-		content: props.children,
-	};
+	const uiTheme = elementorAppConfig.ui_theme,
+		config = {
+			title: __( 'Site Editor', 'elementor' ),
+			headerButtons: props.headerButtons,
+			sidebar: <Menu allPartsButton={ props.allPartsButton } promotion={props.promotion} />,
+			content: props.children,
+		};
+
+	let userPrefersTheme = '';
+
+	if ( 'auto' === uiTheme ) {
+		if ( window.matchMedia && window.matchMedia( '(prefers-color-scheme: dark)' ).matches ) {
+			userPrefersTheme = 'dark';
+		}
+	} else if ( 'dark' === uiTheme ) {
+		userPrefersTheme = 'dark';
+	}
 
 	return (
-		<TemplateTypesContext>
+		<TemplateTypesContext theme={ userPrefersTheme }>
 			<Page { ...config } />
 		</TemplateTypesContext>
 	);
