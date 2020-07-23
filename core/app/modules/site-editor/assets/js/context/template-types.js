@@ -1,10 +1,12 @@
 export const Context = React.createContext();
 
 import './template-types.scss';
+import '../../scss/loading.scss';
 
 class TemplateTypesContext extends React.Component {
 	static propTypes = {
 		children: PropTypes.object.isRequired,
+		theme: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -44,12 +46,26 @@ class TemplateTypesContext extends React.Component {
 		}
 
 		if ( this.state.loading ) {
-			return <div className="e-loading-wrapper"><h3>{ __( 'Loading', 'elementor' ) }...</h3></div>;
+			return (
+			<div className={`elementor-loading ${ this.props.theme }`}>
+				<div className="elementor-loader-wrapper">
+					<div className="elementor-loader">
+						<div className="elementor-loader-boxes">
+							<div className="elementor-loader-box"/>
+							<div className="elementor-loader-box"/>
+							<div className="elementor-loader-box"/>
+							<div className="elementor-loader-box"/>
+						</div>
+					</div>
+					<div className="elementor-loading-title">{ __( 'Loading', 'elementor' ) }</div>
+				</div>
+			</div> );
+			// <div className="e-loading-wrapper"><h3>{ __( 'Loading', 'elementor' ) }...</h3></div>;
 		}
 
 		return (
-			<Context.Provider value={ this.state }>
-				{ this.props.children }
+			<Context.Provider value={ this.state } className={ this.props.theme }>
+				<div className={ this.props.theme }>{ this.props.children }</div>
 			</Context.Provider>
 		);
 	}

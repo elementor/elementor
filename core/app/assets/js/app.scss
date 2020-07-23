@@ -4,9 +4,11 @@
 @import "../styles/components";
 @import "../styles/shame";
 
-
 .eps-app {
 	font-size: $spp-font-size;
+	display: flex;
+	height: 100vh;
+	flex-direction: column;
 	color: var(--body-color);
 	background-color: var(--app-background-color);
 	position: absolute;
@@ -17,9 +19,12 @@
 	width: 100%;
 	max-width: $app-max-width;
 
+	/* Used for boxed version
+
 	@media (min-width: #{map-get($breakpoints, xl)}) {
 		max-width: $app-max-width-min-xl;
 	}
+	*/
 
 	&__lightbox {
 		display: flex;
@@ -35,6 +40,7 @@
 	}
 
 	&__header {
+		flex-shrink: 0;
 		font-size: $app-header-font-size;
 		color: var(--app-header-color);
 		background-color: var(--app-header-background-color);
@@ -100,9 +106,8 @@
 
 	&__main {
 		display: flex;
-		height: $app-main-height;
-		max-height: $app-main-max-height;
 		overflow: hidden;
+		flex-grow: 1;
 	}
 
 	&__sidebar {
