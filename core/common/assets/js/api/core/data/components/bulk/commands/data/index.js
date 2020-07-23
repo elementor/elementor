@@ -1,5 +1,19 @@
 import CommandData from 'elementor-api/modules/command-data';
+/*
+Excepted format:
+Namespace will be used in the results of each command.
+await $e.data.get( 'bulk/index', {
+	commands: {
+		// namespace: 'data command'.
+		globals: 'globals/index',
+		colors: 'globals/colors',
+		color_primary: 'globals/colors?id=primary',
+		no_cached: 'not-exist/endpoint',
+	}
+} );
 
+`options.force = true` will force remote fetch.
+*/
 export class Index extends CommandData {
 	// TODO: Create base internal command data.
 	static getEndpointFormat() {
@@ -19,29 +33,16 @@ export class Index extends CommandData {
 	}
 
 	/**
-	 * Excepted format:
-	 * Namespace will be used in the results of each command.
-	 *	await $e.data.get( 'bulk/index', {
-	 *	    commands: {
-	 *	        // namespace: 'data command'.
-	 *	        globals: 'globals/index',
-	 *          colors: 'globals/colors',
-	 *          color_primary: 'globals/colors?id=primary',
-	 *          no_cached: 'not-exist/endpoint',
-	 *	    }
-	 *	} );
-	 *
-	 * `options.force = true` will force remote fetch.
-	 * */
-	applyBeforeGet( args ) {
-		const { query = {}, options } = args,
-			newCommands = [];
+	 * Since $e.data does not know how to work with `query.commands` but only arrays we need override `query.commands`
+	 * This method use since its need do it before getRequestData() create the endpoint.
+	 * Run over all query.commands:
+	 * If they cached add it to `this.cachedResults`.
+	 * If not Re-format commands, to be as excepted by $e.data.
+	 */
+	getRequestData() {
+		const { query = {}, options = {} } = this.args,
+			commandsArray = [];
 
-		/**
-		 * Run over all query.commands.
-		 * If they cached add it to `this.cachedResults`.
-		 * If not Re-format commands, to be as excepted by $e.data.
-		 */
 		Object.entries( query.commands ).forEach( ( [ namespace, /*string*/ command ] ) => {
 			let cache = false;
 
@@ -51,17 +52,24 @@ export class Index extends CommandData {
 
 				cache = assumedComponent?.getNamespace ? $e.data.getCache( assumedComponent, extractedCommand.command, extractedCommand.args.query ) : null;
 			}
-
 			if ( cache ) {
 				this.cachedResults[ namespace ] = cache;
 			} else {
-				newCommands.push( namespace + ':' + command );
+				// Aka serialize.
+				commandsArray.push( namespace + ':' + command );
 
 				this.requireRemote = true;
 			}
 		} );
 
-		query.commands = newCommands;
+		query.commands = commandsArray;
+
+		return super.getRequestData();
+	}
+
+	applyBeforeGet( args ) {
+		const { options } = args;
+
 		options.refresh = true;
 
 		return args;
