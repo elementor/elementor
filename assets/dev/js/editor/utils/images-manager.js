@@ -154,6 +154,30 @@ ImagesManager = function() {
 	};
 
 	self.debounceGetRemoteItems = _.debounce( self.getRemoteItems, debounceDelay );
+
+	self.isSvgImage = function( imageUrl ) {
+		return 'svg' === imageUrl.split( '.' ).pop();
+	};
+
+	self.getImageSizeFromControlOptions = function( imageSize, sizesOptions, imageCustomDimension ) {
+		var imageData = { width: '', height: '' };
+		var imageDimensions;
+
+		if ( 'custom' === imageSize ) {
+			imageData = imageCustomDimension;
+		} else {
+			imageDimensions = sizesOptions[ imageSize ].match( /(?<=-\s)(\d*\sx\s\d*)/gi );
+
+			if ( imageDimensions && imageDimensions.length ) {
+				imageDimensions = imageDimensions[ 0 ].split( ' x ' );
+
+				imageData.width = imageDimensions[ 0 ];
+				imageData.height = imageDimensions[ 1 ];
+			}
+		}
+
+		return imageData;
+	};
 };
 
 module.exports = new ImagesManager();

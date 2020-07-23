@@ -126,6 +126,51 @@ class Images_Manager {
 		return $attributes;
 	}
 
+	private static function is_svg_image( $image_id ) {
+		return get_post_mime_type( $image_id ) === 'image/svg+xml';
+	}
+
+	public function set_svg_image_size( $image_data, $attachment_id, $size ) {
+		$image_sizes = Group_Control_Image_Size::get_all_image_sizes();
+
+		if ( ! array_key_exists( $size, $image_sizes ) ) {
+			$size = 'large';
+		}
+
+		$image_data['1'] = $image_sizes[ $size ][ 'width' ];
+		$image_data['2'] = $image_sizes[ $size ][ 'height' ];
+
+		return $image_data;
+	}
+
+	// Responsible for applying image size when the image type is svg.
+	public static function handle_svg_image_size( $action, $image_id, $image_size = '', $image_custom_size_array = [] ) {
+		if ( ! self::is_svg_image( $image_id ) ) {
+			return;
+		}
+
+		$is_custom_size = 'custom' === $image_size;
+		$callback = 'set_svg_image_size';
+		$filter = 'wp_get_attachment_image_src';
+		$self = new self();
+
+		if ( 'before_render' === $action ) {
+			if ( $is_custom_size ) {
+				$custom_dimensions = $image_custom_size_array;
+
+				add_image_size( 'custom', $custom_dimensions[ 'width' ], $custom_dimensions[ 'height' ] );
+			}
+
+			add_filter( $filter, [ $self, $callback ], 10, 4 );
+		} elseif ( 'after_render' === $action ) {
+			remove_filter( $filter, [ $self, $callback ] );
+
+			if ( $is_custom_size ) {
+				remove_image_size( 'custom' );
+			}
+		}
+	}
+
 	/**
 	 * Images manager constructor.
 	 *
