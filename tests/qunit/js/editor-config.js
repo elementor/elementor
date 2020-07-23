@@ -26,11 +26,6 @@ config.document.widgets = {
 // Settings.
 config.settings = settings;
 
-// TODO: Remove - Temporary fix, to find the issue run in debug mode ( config.settings.devToolsPreferences get conflicted. ).
-if ( ! QUnit.config.isDebug ) {
-	delete config.settings.devToolsPreferences;
-}
-
 // Elements.
 config.elements = {
 	section,

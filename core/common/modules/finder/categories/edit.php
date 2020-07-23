@@ -120,7 +120,7 @@ class Edit extends Base_Category {
 
 			$items[] = [
 				'icon' => $icon,
-				'title' => $post->post_title,
+				'title' => esc_html( $post->post_title ),
 				'description' => $description,
 				'url' => $document->get_edit_url(),
 				'actions' => [

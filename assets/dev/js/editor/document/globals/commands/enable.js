@@ -12,7 +12,7 @@ export class Enable extends DisableEnable {
 
 			container.settings.set( '__globals__', container.globals.toJSON() );
 
-			container.render();
+			container.renderUI();
 
 			// Clear custom local settings.
 			Object.values( container.getGroupRelatedControls( settings ) ).forEach( ( control ) => {

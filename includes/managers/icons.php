@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {

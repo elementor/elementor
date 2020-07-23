@@ -23,8 +23,10 @@ class Manager extends BaseModule {
 		return 'log';
 	}
 
-	public function shutdown() {
-		$last_error = error_get_last();
+	public function shutdown( $last_error = null ) {
+		if ( ! $last_error ) {
+			$last_error = error_get_last();
+		}
 
 		if ( ! $last_error ) {
 			return;
@@ -48,6 +50,34 @@ class Manager extends BaseModule {
 		$item = new PHP( $last_error );
 
 		$this->get_logger()->log( $item );
+	}
+
+	public function rest_error_handler( $error_number, $error_message, $error_file, $error_line ) {
+		$error = new \WP_Error( $error_number, $error_message, [
+			'type' => $error_number,
+			'message' => $error_message,
+			'file' => $error_file,
+			'line' => $error_line,
+		] );
+
+		// Notify $e.data.
+		if ( ! headers_sent() ) {
+			header( 'Content-Type: application/json; charset=UTF-8' );
+
+			http_response_code( 500 );
+
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				echo wp_json_encode( $error->get_error_data() );
+			} else {
+				echo wp_json_encode( [
+					'message' => 'Server error, see Elementor => System Info',
+				] );
+			}
+		}
+
+		$this->shutdown( $error->get_error_data() );
+
+		exit;
 	}
 
 	public function add_system_info_report() {

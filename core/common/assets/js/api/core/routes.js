@@ -42,6 +42,10 @@ export default class Routes extends Commands {
 		this.getComponent( route ).onCloseRoute( route );
 	}
 
+	clear() {
+		Object.keys( this.current ).forEach( ( container ) => this.clearCurrent( container ) );
+	}
+
 	saveState( container ) {
 		this.savedStates[ container ] = {
 			route: this.current[ container ],

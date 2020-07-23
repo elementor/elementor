@@ -223,7 +223,7 @@ module.exports = Marionette.Behavior.extend( {
 	onTagsListItemClick: function( event ) {
 		const $tag = jQuery( event.currentTarget );
 
-		this.setTagView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
+		this.setTagView( elementorCommon.helpers.getUniqueId(), $tag.data( 'tagName' ), {} );
 
 		// If an element has an active global value, disable it before applying the dynamic value.
 		if ( this.view.getGlobalKey() ) {

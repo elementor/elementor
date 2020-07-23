@@ -1,0 +1,215 @@
+<?php
+
+namespace Elementor\Core\Kits\Documents\Tabs;
+
+use Elementor\Controls_Manager;
+use Elementor\Group_Control_Typography;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
+class Theme_Style_Typography extends Tab_Base {
+
+	public function get_id() {
+		return 'theme-style-typography';
+	}
+
+	public function get_title() {
+		return __( 'Typography', 'elementor' );
+	}
+
+	public function register_tab_controls() {
+		$this->start_controls_section(
+			'section_typography',
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'tab' => $this->get_id(),
+			]
+		);
+
+		$this->add_default_globals_notice();
+
+		$this->add_control(
+			'body_heading',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Body', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'body_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'body_typography',
+				'selector' => '{{WRAPPER}}',
+			]
+		);
+
+		$this->add_responsive_control(
+			'paragraph_spacing',
+			[
+				'label' => __( 'Paragraph Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'em' => [
+						'min' => 0.1,
+						'max' => 20,
+					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ 'px', 'em', 'vh' ],
+			]
+		);
+
+		//Link Selectors
+		$link_selectors = [
+			'{{WRAPPER}} a',
+		];
+
+		$link_hover_selectors = [
+			'{{WRAPPER}} a:hover',
+		];
+
+		$link_selectors = implode( ',', $link_selectors );
+		$link_hover_selectors = implode( ',', $link_hover_selectors );
+
+		$this->add_control(
+			'link_heading',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Link', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_link_style' );
+
+		$this->start_controls_tab(
+			'tab_link_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'link_normal_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
+				'selectors' => [
+					$link_selectors => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'link_normal_typography',
+				'selector' => $link_selectors,
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_link_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'link_hover_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
+				'selectors' => [
+					$link_hover_selectors => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => 'link_hover_typography',
+				'selector' => $link_hover_selectors,
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		// Headings.
+		$this->add_element_controls( __( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
+		$this->add_element_controls( __( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2' );
+		$this->add_element_controls( __( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3' );
+		$this->add_element_controls( __( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4' );
+		$this->add_element_controls( __( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5' );
+		$this->add_element_controls( __( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6' );
+
+		$this->end_controls_section();
+	}
+
+	private function add_element_controls( $label, $prefix, $selector ) {
+		$this->add_control(
+			$prefix . '_heading',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => $label,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			$prefix . '_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'dynamic' => [],
+				'selectors' => [
+					$selector => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'label' => __( 'Typography', 'elementor' ),
+				'name' => $prefix . '_typography',
+				'selector' => $selector,
+			]
+		);
+	}
+}

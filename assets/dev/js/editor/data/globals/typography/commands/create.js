@@ -30,7 +30,7 @@ export class Create extends CreateBase {
 		}
 
 		if ( Object.values( availableControls ).length ) {
-			const id = elementor.helpers.getUniqueID();
+			const id = elementorCommon.helpers.getUniqueId();
 
 			result = $e.data.create( `globals/typography?id=${ id }`, {
 				title,

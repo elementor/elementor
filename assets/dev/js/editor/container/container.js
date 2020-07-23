@@ -241,7 +241,7 @@ export default class Container extends ArgsObject {
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
 		if ( ! rowId ) {
-			rowId = 'bc-' + elementor.helpers.getUniqueID();
+			rowId = 'bc-' + elementorCommon.helpers.getUniqueId();
 			rowSettingsModel.set( '_id', rowId );
 		}
 
@@ -318,6 +318,14 @@ export default class Container extends ArgsObject {
 		}
 
 		this.renderer.view.renderOnChange( this.settings );
+	}
+
+	renderUI() {
+		if ( ! this.renderer ) {
+			return;
+		}
+
+		this.renderer.view.renderUI();
 	}
 
 	isEditable() {

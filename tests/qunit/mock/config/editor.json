@@ -20,5 +20,6 @@
   "autosave_interval": 1000,
   "kit_config": {
 	  "typography_prefix": "typography_"
-  }
+  },
+  "legacyMode": {}
 }
