@@ -13,6 +13,7 @@ export default class Component extends ComponentBase {
 		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
 
 		elementor.on( 'document:loaded', () => this.updateTempStylesheet() );
+		elementor.on( 'preview:loaded', () => this.updateTempStylesheet() );
 	}
 
 	getNamespace() {
@@ -72,6 +73,11 @@ export default class Component extends ComponentBase {
 							_id: item.id,
 							...item.value,
 						};
+
+					// Enqueue fonts.
+					if ( item.value.typography_font_family ) {
+						elementor.helpers.enqueueFont( item.value.typography_font_family );
+					}
 
 					this.controlsCSS.addStyleRules( controls, values, controls, [ '{{WRAPPER}}' ], [ 'body' ] );
 				} );
