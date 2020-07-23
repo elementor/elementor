@@ -8,10 +8,6 @@ import BulkComponent from './data/components/bulk/component';
  */
 
 /**
- * @typedef {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}} ApplyMethods
- */
-
-/**
  * @typedef {{}} RequestData
  * @property {ComponentBase} component
  * @property {string} command
@@ -283,23 +279,12 @@ export default class Data extends Commands {
 	/**
 	 * Function handleResponse().
 	 *
-	 * @param {ApplyMethods} applyMethods
 	 * @param {RequestData} requestData
 	 * @param {{}} response
 	 *
 	 * @returns {*}
 	 */
-	handleResponse( requestData, response, applyMethods = false ) {
-		if ( ! applyMethods && requestData.applyMethods ) {
-			applyMethods = requestData.applyMethods;
-		}
-
-		// Run 'after' method.
-		if ( applyMethods ) {
-			requestData.applyMethods = applyMethods;
-			response = applyMethods.after( response );
-		}
-
+	handleResponse( requestData, response ) {
 		response = { data: response };
 
 		// Append requestData.

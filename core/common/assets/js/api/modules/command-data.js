@@ -1,5 +1,11 @@
 import CommandBase from './command-base';
 
+/**
+ * @typedef {Object} ApplyMethods
+ * @property {function(): {}} before
+ * @property {function( response:* ): {}} after
+ */
+
 export default class CommandData extends CommandBase {
 	static getInstanceType() {
 		return 'CommandData';
@@ -92,6 +98,7 @@ export default class CommandData extends CommandBase {
 		}
 
 		result.catch( ( e ) => this.onCatchApply( e ) );
+		result.then( ( response ) => applyMethods.after( response ) );
 
 		return result;
 	}
