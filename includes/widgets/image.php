@@ -699,11 +699,7 @@ class Widget_Image extends Widget_Base {
 			return;
 		}
 
-		$is_svg = get_post_mime_type( $settings['image']['id'] ) === 'image/svg+xml';
-
-		if ( $is_svg ) {
-			$this->handle_svg_image( 'before_render', $settings );
-		}
+		Images_Manager::handle_svg_image_size('before_render', $settings['image']['id'], $settings['image_size'], $settings['image_custom_dimension'] );
 
 		$has_caption = $this->has_caption( $settings );
 
@@ -748,9 +744,7 @@ class Widget_Image extends Widget_Base {
 		</div>
 		<?php
 
-		if ( $is_svg ) {
-			$this->handle_svg_image( 'after_render', $settings );
-		}
+		Images_Manager::handle_svg_image_size('after_render', $settings['image']['id'] );
 	}
 
 	/**
@@ -829,38 +823,12 @@ class Widget_Image extends Widget_Base {
 				#><figure class="wp-caption"><#
 			}
 
-			var getImageSizeFromControlOptions = function() {
-				var imageSizeOptions = image.model.attributes.settings.options.controls.image_size.options;
-				var imageSize = { width: '', height: '' };
-				var imageDimensions;
-
-				if ( 'custom' === image.size ) {
-					imageSize = settings.image_custom_dimension;
-				} else {
-					imageDimensions = imageSizeOptions[ image.size ].match( /(?<=-\s)(\d*\sx\s\d*)/gi );
-
-					if ( imageDimensions && imageDimensions.length ) {
-						imageDimensions = imageDimensions[0].split( ' x ' );
-
-						imageSize.width = imageDimensions[0];
-						imageSize.height = imageDimensions[1];
-					}
-				}
-
-				return imageSize;
-			};
-
-			var isSvg = 'svg' === image_url.split( '.' ).pop();
-			var svgSize = {};
-
-			if ( isSvg ) {
-				svgSize = getImageSizeFromControlOptions();
-			}
-
 			if ( link_url ) {
 					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
 			}
-					if ( isSvg ) {
+					if ( image_url && elementor.imagesManager.isSvgImage( image_url ) ) {
+						var svgSize = elementor.imagesManager.getImageSizeFromControlOptions( image.size, image.model.attributes.settings.options.controls.image_size.options, settings.image_custom_dimension );
+
 						#><img src="{{ image_url }}" class="{{ imgClass }}" width="{{ svgSize.width }}" height="{{ svgSize.height }}" /><#
 					} else {
 						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
