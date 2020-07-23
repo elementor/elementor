@@ -1,19 +1,9 @@
 import environment from 'elementor-common/utils/environment';
 
 /* global ElementorScreenshotConfig, jQuery */
-class Screenshot {
-	constructor() {
-		/**
-		 * Holds the screen shot Iframe.
-		 */
-		this.$elementor = null;
-
-		/**
-		 * The config that provided from the backend.
-		 *
-		 * @var object
-		 */
-		this.config = {
+class Screenshot extends elementorModules.ViewModule {
+	getDefaultSettings() {
+		return {
 			empty_content_headline: 'Empty Content.',
 			crop: {
 				width: 1200,
@@ -28,32 +18,37 @@ class Screenshot {
 			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
 			render_timeout: 5000, // Wait until all the element will be loaded or 5 sec and then take screenshot.
 			timerLabel: null,
+			timer_label: `${ ElementorScreenshotConfig.post_id } - timer`,
+			...ElementorScreenshotConfig,
 		};
+	}
+
+	getDefaultElements() {
+		return {
+			$elementor: jQuery( ElementorScreenshotConfig.selector ),
+		};
+	}
+
+	onInit() {
+		super.onInit();
+
+		this.log( 'Screenshot init', 'time' );
 
 		/**
 		 * hold the timeout timer
 		 *
 		 * @type {number|null}
 		 */
-		this.timeoutTimer = setTimeout( this.screenshotFailed.bind( this ), this.config.timeout );
+		this.timeoutTimer = setTimeout( this.screenshotFailed.bind( this ), this.getSettings( 'timeout' ) );
 
-		jQuery( () => this.init() );
+		return this.captureScreenshot();
 	}
 
 	/**
 	 * The main method for this class.
 	 */
-	init() {
-		this.$elementor = jQuery( ElementorScreenshotConfig.selector );
-		this.config = {
-			...this.config,
-			...ElementorScreenshotConfig,
-			timer_label: `${ ElementorScreenshotConfig.post_id } - timer`,
-		};
-
-		this.log( 'Screenshot init', 'time' );
-
-		if ( ! this.$elementor.length ) {
+	captureScreenshot() {
+		if ( ! this.elements.$elementor.length ) {
 			elementorCommon.helpers.consoleWarn(
 				'Screenshots: The content of this page is empty, the module will create a fake conent just for this screenshot.'
 			);
@@ -67,7 +62,7 @@ class Screenshot {
 		this.loadExternalCss();
 		this.loadExternalImages();
 
-		Promise.resolve()
+		return Promise.resolve()
 			.then( this.createImage.bind( this ) )
 			.then( this.createImageElement.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
@@ -80,19 +75,19 @@ class Screenshot {
 	 * Fake content for documents that dont have any content.
 	 */
 	createFakeContent() {
-		this.$elementor = jQuery( '<div></div>' ).css( {
-			height: this.config.crop.height,
-			width: this.config.crop.width,
+		this.elements.$elementor = jQuery( '<div></div>' ).css( {
+			height: this.getSettings( 'crop.height' ),
+			width: this.getSettings( 'crop.width' ),
 			display: 'flex',
 			alignItems: 'center',
 			justifyContent: 'center',
 		} );
 
-		this.$elementor.append(
-			jQuery( '<h1></h1>' ).css( { fontSize: '85px' } ).html( this.config.empty_content_headline )
+		this.elements.$elementor.append(
+			jQuery( '<h1></h1>' ).css( { fontSize: '85px' } ).html( this.getSettings( 'empty_content_headline' ) )
 		);
 
-		document.body.prepend( this.$elementor );
+		document.body.prepend( this.elements.$elementor );
 	}
 
 	/**
@@ -101,8 +96,8 @@ class Screenshot {
 	 */
 	loadExternalCss() {
 		const excludedUrls = [
-			this.config.home_url,
-			...this.config.excluded_external_css_urls,
+			this.getSettings( 'home_url' ),
+			...this.getSettings( 'excluded_external_css_urls' ),
 		];
 
 		const notSelector = excludedUrls
@@ -124,7 +119,7 @@ class Screenshot {
 	 * Make a proxy to images urls that has some problems with cross origin (like youtube).
 	 */
 	loadExternalImages() {
-		const selector = this.config.external_images_urls
+		const selector = this.getSettings( 'external_images_urls' )
 			.map( ( url ) => `img[src^="${ url }"]` )
 			.join( ', ' );
 
@@ -140,7 +135,7 @@ class Screenshot {
 	 * this method convert all the IFrames to some other elements.
 	 */
 	handleIFrames() {
-		this.$elementor.find( 'iframe' ).each( ( index, el ) => {
+		this.elements.$elementor.find( 'iframe' ).each( ( index, el ) => {
 			const $iframe = jQuery( el ),
 				$iframeMask = jQuery( '<div />', {
 					css: {
@@ -160,10 +155,10 @@ class Screenshot {
 	 */
 	hideUnnecessaryElements() {
 		jQuery( 'body' ).prepend(
-			this.$elementor
+			this.elements.$elementor
 		);
 
-		jQuery( 'body > *' ).not( this.$elementor ).css( 'display', 'none' );
+		jQuery( 'body > *' ).not( this.elements.$elementor ).css( 'display', 'none' );
 	}
 
 	/**
@@ -172,12 +167,12 @@ class Screenshot {
 	removeUnnecessaryElements() {
 		let currentHeight = 0;
 
-		this.$elementor
+		this.elements.$elementor
 			.find( ' .elementor-section-wrap > .elementor-section' )
 			.filter( ( index, el ) => {
 				let shouldBeRemoved = false;
 
-				if ( currentHeight >= this.config.crop.height ) {
+				if ( currentHeight >= this.getSettings( 'crop.height' ) ) {
 					shouldBeRemoved = true;
 				}
 
@@ -205,7 +200,7 @@ class Screenshot {
 		const timeOutPromise = new Promise( ( resolve ) => {
 			setTimeout( () => {
 				resolve();
-			}, this.config.render_timeout );
+			}, this.getSettings( 'render_timeout' ) );
 		} );
 
 		return Promise.race( [ pageLoadedPromise, timeOutPromise ] )
@@ -249,12 +244,15 @@ class Screenshot {
 	 * @returns {Promise<unknown>}
 	 */
 	cropCanvas( image ) {
+		const width = this.getSettings( 'crop.width' );
+		const height = this.getSettings( 'crop.height' );
+
 		const cropCanvas = document.createElement( 'canvas' ),
 			cropContext = cropCanvas.getContext( '2d' ),
-			ratio = this.config.crop.width / image.width;
+			ratio = width / image.width;
 
-		cropCanvas.width = this.config.crop.width;
-		cropCanvas.height = this.config.crop.height > image.height ? image.height : this.config.crop.height;
+		cropCanvas.width = width;
+		cropCanvas.height = height > image.height ? image.height : height;
 
 		cropContext.drawImage( image, 0, 0, image.width, image.height, 0, 0, image.width * ratio, image.height * ratio );
 
@@ -271,7 +269,7 @@ class Screenshot {
 		return new Promise( ( resolve, reject ) => {
 			elementorCommon.ajax.addRequest( 'screenshot_save', {
 				data: {
-					post_id: this.config.post_id,
+					post_id: this.getSettings( 'post_id' ),
 					screenshot: canvas.toDataURL( 'image/png' ),
 				},
 				success: ( url ) => {
@@ -293,7 +291,7 @@ class Screenshot {
 	 * @returns {string}
 	 */
 	getScreenshotProxyUrl( url ) {
-		return `${ this.config.home_url }?screenshot_proxy&nonce=${ this.config.nonce }&href=${ url }`;
+		return `${ this.getSettings( 'home_url' ) }?screenshot_proxy&nonce=${ this.getSettings( 'nonce' ) }&href=${ url }`;
 	}
 
 	/**
@@ -323,7 +321,7 @@ class Screenshot {
 		window.top.postMessage( {
 			name: 'capture-screenshot-done',
 			success,
-			id: this.config.post_id,
+			id: this.getSettings( 'post_id' ),
 			imageUrl,
 		}, '*' );
 
@@ -342,11 +340,13 @@ class Screenshot {
 		}
 
 		// eslint-disable-next-line no-console
-		console.log( `${ this.config.post_id } - ${ message }` );
+		console.log( `${ this.getSettings( 'post_id' ) } - ${ message }` );
 
 		// eslint-disable-next-line no-console
-		console[ timerMethod ]( this.config.timer_label );
+		console[ timerMethod ]( this.getSettings( 'timer_label' ) );
 	}
 }
 
-new Screenshot();
+jQuery( () => {
+	new Screenshot();
+} );
