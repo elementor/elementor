@@ -7,12 +7,13 @@ import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
+import PanelMenu from 'elementor-panel/pages/menu/menu';
+import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
-import Promotion from './utils/promotion';
 import ScreenshotsModule from 'elementor/modules/screenshots/assets/js/editor/module';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
@@ -147,7 +148,7 @@ export default class EditorBase extends Marionette.Application {
 						},
 					},
 					menu: {
-						Menu: require( 'elementor-panel/pages/menu/menu' ),
+						Menu: PanelMenu,
 					},
 				},
 			},
@@ -169,7 +170,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',
-			ignore: '.e-global__select-box',
+			ignore: '.e-global__popover-toggle',
 		},
 		tagsList: {
 			element: '.elementor-tags-list',

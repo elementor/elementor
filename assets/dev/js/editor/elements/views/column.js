@@ -225,10 +225,13 @@ ColumnView = BaseElementView.extend( {
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				let newIndex = jQuery( this ).index();
+				let newIndex = jQuery( event.currentTarget ).index();
 
-				if ( 'bottom' === side ) {
+				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
+				if ( 'bottom' === side && isLegacyMode ) {
 					newIndex++;
+				} else if ( 'top' === side && ! isLegacyMode ) {
+					newIndex--;
 				}
 
 				this.addElementFromPanel( { at: newIndex } );

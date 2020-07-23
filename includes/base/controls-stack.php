@@ -371,6 +371,14 @@ abstract class Controls_Stack extends Base_Object {
 			'position' => null,
 		];
 
+		if ( isset( $args['scheme'] ) ) {
+			$args['global'] = [
+				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args ),
+			];
+
+			unset( $args['scheme'] );
+		}
+
 		$options = array_merge( $default_options, $options );
 
 		if ( $options['position'] ) {
