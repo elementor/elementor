@@ -14,10 +14,6 @@
 			display: block;
 		}
 	}
-	
-	.elementor-control-unit-2 {
-		width: 21%;
-	}
 
 	&--multiple {
 		padding-bottom: 40px;
@@ -94,7 +90,9 @@
 	cursor: pointer;
 
 	&-input {
-		@include margin-start(10px);
+		width: 21%;
+		min-width: 54px;
+		@include margin-start(12px);
 	}
 
 	&__extra {
