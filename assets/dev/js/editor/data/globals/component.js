@@ -12,8 +12,7 @@ export default class Component extends ComponentBase {
 
 		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
 
-		// On open kit - destroy the temp CSS.
-		elementor.once( 'document:loaded', () => this.updateTempStylesheet() );
+		elementor.on( 'document:loaded', () => this.updateTempStylesheet() );
 	}
 
 	getNamespace() {
