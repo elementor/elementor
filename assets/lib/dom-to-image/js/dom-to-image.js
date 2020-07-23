@@ -62,10 +62,10 @@
 		options = options || {};
 		copyOptions( options );
 		return Promise.resolve( node )
+			.then( embedFonts )
 			.then( function ( node ) {
 				return cloneNode( node, options.filter, true );
 			} )
-			.then( embedFonts )
 			.then( inlineImages )
 			.then( applyOptions )
 			.then( function ( clone ) {

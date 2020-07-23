@@ -90,9 +90,17 @@ class Module extends BaseModule {
 		);
 
 		wp_enqueue_script(
+			'html2canvas',
+			ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
+			[],
+			'1.0.0-rc.5',
+			true
+		);
+
+		wp_enqueue_script(
 			'elementor-screenshot',
 			ELEMENTOR_URL . "assets/js/screenshot{$suffix}.js",
-			[ 'dom-to-image' ],
+			[ 'dom-to-image', 'html2canvas' ],
 			ELEMENTOR_VERSION,
 			true
 		);

@@ -210,6 +210,16 @@ class Screenshot {
 			.then( () => {
 				this.log( 'Start creating screenshot.' );
 
+				const isSafari = /^((?!chrome|android).)*safari/i.test( navigator.userAgent );
+
+				if ( isSafari ) {
+					this.log( 'Creating screenshot with "html2canvas"' );
+					return html2canvas( document.body ).then( ( canvas ) => {
+						return canvas.toDataURL( 'image/png' );
+					} );
+				}
+
+				this.log( 'Creating screenshot with "dom-to-image"' );
 				return domtoimage.toPng( document.body );
 			} );
 	}
