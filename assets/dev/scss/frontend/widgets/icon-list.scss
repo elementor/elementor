@@ -59,10 +59,6 @@
 			display: flex;
 			align-items: flex-start;
 		}
-
-		a {
-			width: 100%;
-		}
 	}
 
 	.elementor-icon-list-icon + .elementor-icon-list-text {
@@ -79,6 +75,13 @@
 
 		svg {
 			width: 1em;
+		}
+	}
+
+	&.elementor-list-item-link-full_width {
+
+		a {
+			width: 100%;
 		}
 	}
 
