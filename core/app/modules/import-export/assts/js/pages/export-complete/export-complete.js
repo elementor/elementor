@@ -20,19 +20,18 @@ export default function ExportComplete() {
 				<Message>
 					<img className="e-app-export-complete__main-image" src={ elementorAppConfig.assets_url + 'images/go-pro.svg' } />
 
-					<Heading variant="xl">
+					<Heading variant="display-3">
 						{ __( 'Your Kit Was Exported Successfully!', 'elementor' ) }
 					</Heading>
 
-					<Text variant="md">
+					<Text variant="xl">
 						{ __( 'Use this exported Kit on another Elementor site by uploading it via Kit Manager > Import Kit', 'elementor' ) }
 					</Text>
 
 					<Text tag="span" variant="sm">
 						{ __( 'If the download doesn\'t start automatically, please', 'elementor' ) }
+						<Button color="link" className="e-app-export-complete__click-here" text={ __( 'click here', 'elementor' ) } url="/#" />
 					</Text>
-
-					<Button color="link" className="e-app-export-complete__click-here" text={ __( 'click here', 'elementor' ) } url="/#" />
 				</Message>
 			</section>
 		</Layout>
