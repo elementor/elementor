@@ -694,16 +694,6 @@ export default class EditorBase extends Marionette.Application {
 			.trigger( 'change' );
 	}
 
-	enqueueTypographyFonts() {
-		const typographyScheme = this.schemes.getScheme( 'typography' );
-
-		this.helpers.resetEnqueuedFontsCache();
-
-		_.each( typographyScheme.items, ( item ) => {
-			this.helpers.enqueueFont( item.value.font_family );
-		} );
-	}
-
 	translate( stringKey, templateArgs, i18nStack ) {
 		// TODO: BC since 2.3.0, it always should be `this.config.i18n`
 		if ( ! i18nStack ) {
@@ -867,8 +857,6 @@ export default class EditorBase extends Marionette.Application {
 		_.defer( function() {
 			elementorFrontend.elements.window.jQuery.holdReady( false );
 		} );
-
-		this.enqueueTypographyFonts();
 
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
