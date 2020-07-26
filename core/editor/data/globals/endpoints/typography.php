@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Editor\Data\Globals\Endpoints;
 
-use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Plugin;
 
 class Typography extends Base {
