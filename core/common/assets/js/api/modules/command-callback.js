@@ -10,6 +10,6 @@ export default class CommandCallback extends Command {
 	}
 
 	apply( args = {} ) {
-		return this.constructor.getCallback().apply( $e.commands.getComponent( $e.commands.getCurrentLast() ), [ args ] );
+		return this.constructor.getCallback()( args );
 	}
 }
