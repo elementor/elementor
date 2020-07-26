@@ -111,12 +111,20 @@ class App extends BaseApp {
 			ELEMENTOR_VERSION
 		);
 
+		wp_register_style(
+			'select2',
+			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2.css',
+			[],
+			'4.0.6-rc.1'
+		);
+
 		wp_enqueue_style(
 			'elementor-app',
 			$this->get_css_assets_url( 'app' . $direction_suffix ),
 			[
 				'elementor-icons',
 				'elementor-common',
+				'select2',
 			],
 			ELEMENTOR_VERSION
 		);
@@ -132,12 +140,23 @@ class App extends BaseApp {
 			true
 		);
 
+		wp_register_script(
+			'select2',
+			ELEMENTOR_ASSETS_URL . 'lib/e-select2/js/e-select2.full.js',
+			[
+				'jquery',
+			],
+			'4.0.6-rc.1',
+			true
+		);
+
 		wp_enqueue_script(
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
 			[
 				'react',
 				'react-dom',
+				'select2',
 			],
 			ELEMENTOR_VERSION,
 			true
