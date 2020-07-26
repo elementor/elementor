@@ -64,10 +64,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				property = property.replace( 'typography_', '' );
 			}
 
-			if ( 'font_family' === property ) {
-				elementor.helpers.enqueueFont( value, 'editor' );
-			}
-
 			if ( 'font_size' === property ) {
 				// Set max size for Typography previews in the select popover so it isn't too big.
 				if ( value.size > 40 ) {

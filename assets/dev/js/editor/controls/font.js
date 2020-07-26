@@ -3,6 +3,8 @@ const ControlSelect2View = require( 'elementor-controls/select2' );
 module.exports = ControlSelect2View.extend( {
 	$previewContainer: null,
 
+	isInitial: true,
+
 	getSelect2Options() {
 		return {
 			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
@@ -16,11 +18,13 @@ module.exports = ControlSelect2View.extend( {
 		this.ui.select.select2( this.getSelect2Options() );
 		this.ui.select.on( 'select2:open', function() {
 			self.$previewContainer = jQuery( '.select2-results__options[role="tree"]:visible' );
-			// load initial?
-			setTimeout( function() {
-				self.enqueueFontsInView();
-			}, 100 );
-
+			if ( self.isInitial ) {
+				self.isInitial = false;
+				// load initial?
+				setTimeout( function() {
+					self.enqueueFontsInView();
+				}, 100 );
+			}
 			// On search
 			jQuery( 'input.select2-search__field:visible' ).on( 'keyup', function() {
 				self.typeStopDetection.action.apply( self );
@@ -76,7 +80,7 @@ module.exports = ControlSelect2View.extend( {
 
 		fontsInView.forEach( function( font ) {
 			const fontFamily = jQuery( font ).find( 'span' ).html();
-			elementor.helpers.enqueueFont( fontFamily, 'editor' );
+			elementor.helpers.enqueueFont( fontFamily );
 		} );
 	},
 
