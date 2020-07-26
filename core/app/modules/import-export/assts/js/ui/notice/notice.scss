@@ -1,0 +1,26 @@
+$import-export-box-notice-color: tints(500);
+$import-export-box-notice-dark-color: dark-tints(200);
+
+:root {
+	--import-export-box-notice-color: #{$import-export-box-notice-color};
+}
+
+.dark {
+	--import-export-box-notice-color: #{$import-export-box-notice-dark-color};
+}
+
+.import-export-notice {
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	padding: spacing(10) spacing(16);
+	font-style: italic;
+
+	&--warning {
+		border-left: 2px solid theme-colors(warning);
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+		color: var(--import-export-box-notice-color);
+	}
+}

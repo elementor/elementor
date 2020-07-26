@@ -2,14 +2,17 @@ import './box.scss';
 
 export default function Box( props ) {
 	const baseClassName = 'import-export-box',
-		classes = [ baseClassName, props.className ];
+		classes = [ baseClassName, props.className ],
+		style = {
+			'--import-export-box-spacing': props.spacing || 0,
+		};
 
 	if ( props.variant ) {
 		classes.push( baseClassName + '--' + props.variant );
 	}
 
 	return (
-		<div className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<div style={ style } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
 			{ props.children }
 		</div>
 	);
@@ -18,6 +21,7 @@ export default function Box( props ) {
 Box.propTypes = {
 	className: PropTypes.string,
 	variant: PropTypes.any,
+	spacing: PropTypes.number,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,

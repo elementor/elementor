@@ -2,44 +2,28 @@ $import-export-box-background-color: theme-colors(light);
 $import-export-box-dark-background-color: dark-tints(600);
 $import-export-box-color: tints(800);
 $import-export-box-dark-color: dark-tints(100);
-$import-export-box-notice-color: tints(800);
-$import-export-box-notice-dark-color: dark-tints(200);
 $import-export-box-input-color: tints(800);
 $import-export-box-input-dark-color: dark-tints(100);
 
 :root {
 	--import-export-box-background-color: #{$import-export-box-background-color};
 	--import-export-box-color: #{$import-export-box-color};
-	--import-export-box-notice-color: #{$import-export-box-notice-color};
 	--import-export-box-input-color: #{$import-export-box-input-color};
 }
 
 .dark {
 	--import-export-box-background-color: #{$import-export-box-dark-background-color};
 	--import-export-box-color: #{$import-export-box-dark-color};
-	--import-export-box-notice-color: #{$import-export-box-notice-dark-color};
 	--import-export-box-input-color: #{$import-export-box-input-dark-color};
 }
 
 .import-export-box {
+	padding: var(--import-export-box-spacing);
 	border-radius: $eps-radius;
-	padding: spacing(10) spacing(16);
 	background: var(--import-export-box-background-color);
 	color: var(--import-export-box-color);
-	font-size: 14px;
 
-	&--notice {
-		border-left: 2px solid theme-colors(warning);
-		font-style: italic;
-
-		* {
-			margin: 0;
-			padding: 0;
-			color: var(--import-export-box-notice-color);
-		}
-	}
-
-	input {
+	> input {
 		width: 100%;
 		outline: 0;
 		border: 0;
