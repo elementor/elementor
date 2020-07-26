@@ -15,6 +15,7 @@ $kit-content-select-dark-color: dark-tints(600);
 
 .kit-content-select {
 	width: 100%;
+	margin-top: spacing(16);
 	border-radius: $eps-radius;
 	border: 1px solid var(--kit-content-select-border-color);
 	color: var(--kit-content-select-color);

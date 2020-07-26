@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, memo } from 'react';
 
 import List from '../../../ui/list/list';
 import Box from '../../../ui/box/box';
@@ -13,8 +13,9 @@ import Button from 'elementor-app/ui/molecules/button';
 import kitContentData from '../kit-content-data/kit-content-data';
 
 import './kit-content-list.scss';
+import Notice from "../../../ui/notice/notice";
 
-export default function KitContentList( props ) {
+function KitContentList( props ) {
 	const [ options, setOptions ] = useState( [] ),
 	[ checkboxState, setCheckboxState ] = useState( {} ),
 	getButton = () => (
@@ -23,15 +24,15 @@ export default function KitContentList( props ) {
 		</Grid>
 	),
 	getNotice = ( notice ) => (
-		<Box variant="notice" className="kit-content-list__notice">
+		<Notice color="warning" className="kit-content-list__notice">
 			<Text variant="xs">
 				{ notice }
 			</Text>
-		</Box>
+		</Notice>
 	),
 	getProFeaturesIndication = () => (
 		<Text variant="md" tag="span" color="cta" className="kit-content-list__pro-indication">
-			<strong>{ __( 'Pro Features', 'elementor' ) }</strong>
+			<strong data-value={ Math.random() }>{ __( 'Pro Features', 'elementor' ) }</strong>
 		</Text>
 	),
 	setIncludes	= ( event, includeValue ) => {
@@ -49,6 +50,8 @@ export default function KitContentList( props ) {
 
 		return checkboxState[ itemType ] || false;
 	};
+
+	console.log( 'RE RENDER KIT CONTENT LIST --- FUNCTION BODY' );
 
 	return (
 		<List separated className="kit-content-list">
@@ -69,16 +72,17 @@ export default function KitContentList( props ) {
 											</Text>
 
 											{ item.data.notice && getProFeaturesIndication() }
+
 											{ ( item.hasSelect && 'export' === props.type ) ? <PostTypesSelect itemType={ item.type } setOptions={ setOptions } dispatch={ props.dispatch } /> : null }
 										</Grid>
 									</Grid>
 								</Grid>
-
-								{ item.data.notice && getNotice( item.data.notice ) }
 							</Grid>
 
 							{ item.data.notice && getButton() }
 						</Grid>
+
+						{ item.data.notice && getNotice( item.data.notice ) }
 					</List.Item>
 				) )
 			}
@@ -95,3 +99,5 @@ KitContentList.propTypes = {
 KitContentList.defaultProps = {
 	className: '',
 };
+
+export default KitContentList;
