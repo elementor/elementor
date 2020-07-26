@@ -158,6 +158,23 @@
 		.pcr-button {
 			background-color: #fff;
 		}
+
+		&.e-global__preview-item--selected {
+
+			.e-global__color-preview {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #ffffff;
+
+				&:before {
+					font-family: 'eicons';
+					font-size: 13px;
+					content: '\e90e'; // eicon-check
+					text-shadow: 0px 0px 1px #000;
+				 }
+			}
+		}
 	}
 
 	&__preview-item {
