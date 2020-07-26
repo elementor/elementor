@@ -42,8 +42,11 @@
 		border-radius: $button-border-radius;
 	}
 
-	//  Sizes
+	&--underlined {
+		text-decoration: underline;
+	}
 
+	//  Sizes
 	&--sm {
 		--button-font-size: #{$button-sm-font-size};
 		--button-line-height: #{$button-sm-line-height};
