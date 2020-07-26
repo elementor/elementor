@@ -1,10 +1,12 @@
+import Utils from 'elementor-app/utils/utils.js';
+
 import './box.scss';
 
 export default function Box( props ) {
 	const baseClassName = 'import-export-box',
 		classes = [ baseClassName, props.className ],
 		style = {
-			'--import-export-box-spacing': props.spacing || 0,
+			'--import-export-box-spacing': Utils.pxToRem( props.spacing ) || 0,
 		};
 
 	if ( props.variant ) {

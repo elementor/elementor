@@ -7,7 +7,7 @@ export default function KitNameInput() {
 	const context = useContext( KitContext );
 
 	return useMemo( () => (
-		<Box spacing={16}>
+		<Box spacing={12}>
 			<input
 				type="text"
 				onChange={ ( event ) => context.dispatch( { type: 'SET_TITLE', value: event.target.value } ) }
