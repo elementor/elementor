@@ -134,6 +134,7 @@ class App extends BaseApp {
 				'backbone-radio',
 				'elementor-common-modules',
 				'elementor-dialog',
+				'wp-api-request',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -158,7 +159,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.8.0'
+			'5.9.1'
 		);
 
 		wp_enqueue_style(

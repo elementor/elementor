@@ -117,20 +117,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * Get document icon.
-	 *
-	 * Retrieve the document icon.
-	 *
-	 * @access public
-	 * @static
-	 *
-	 * @return string document icon.
-	 */
-	public static function get_icon() {
-		return 'eicon-post';
-	}
-
-	/**
 	 * Get property.
 	 *
 	 * Retrieve the document property.
@@ -835,11 +821,20 @@ abstract class Document extends Controls_Stack {
 		if ( ! $elements_data ) {
 			$elements_data = $this->get_elements_data();
 		}
+
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
+
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
-			<div class="elementor-section-wrap">
-				<?php $this->print_elements( $elements_data ); ?>
+			<?php if ( $is_legacy_mode_active ) { ?>
+			<div class="elementor-inner">
+			<?php } ?>
+				<div class="elementor-section-wrap">
+					<?php $this->print_elements( $elements_data ); ?>
+				</div>
+			<?php if ( $is_legacy_mode_active ) { ?>
 			</div>
+			<?php } ?>
 		</div>
 		<?php
 	}

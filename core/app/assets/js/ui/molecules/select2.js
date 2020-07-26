@@ -18,13 +18,11 @@ const getDefaultSettings = () => ( {
  * @constructor
  */
 export default function Select2( props ) {
-	console.log( 'RENDER Select2 COMPONENT' );
 	const ref = React.useRef( null );
 
 	// Initiate the select 2 library, call to onReady after initiate, and
 	// listen to select event on the select instance.
 	React.useEffect( () => {
-		console.log( '---------------------------- NEW useEffect' );
 		const $select2 = jQuery( ref.current )
 			.select2( {
 				...getDefaultSettings(),
@@ -39,7 +37,6 @@ export default function Select2( props ) {
 
 		return () => {
 			$select2.select2( 'destroy' ).off( 'select2:select' ).off( 'select2:unselecting' );
-			console.log( '---------------------------- DESTROY', $select2 );
 		};
 	}, [ props.settings, props.options ] );
 
@@ -47,8 +44,6 @@ export default function Select2( props ) {
 	React.useEffect( () => {
 		jQuery( ref.current ).val( props.value ).trigger( 'change' );
 	}, [ props.value ] );
-
-	console.log( '---------------------------- RENDER SELECT ELEMENT INSIDE SELECT2' );
 
 	return <Select multiple={ props.multiple } value={ props.value } onChange={ props.onChange } elRef={ ref } options={ props.options }/>;
 }

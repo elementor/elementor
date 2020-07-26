@@ -1,5 +1,6 @@
 $eps-modal-background-color: theme-colors(light);
-$eps-modal-width: px-to-rem(900);
+$eps-modal-width: px-to-rem(700);
+$eps-modal-border-radius: $eps-radius;
 $eps-modal-overlay: rgba(theme-colors(dark), $opacity-05);
 $eps-modal-zindex: $eps-zindex-modal-backdrop;
 $eps-modal-header-type: type(text, md);
@@ -8,12 +9,13 @@ $eps-modal-header-color: theme-colors(light);
 $eps-modal-header-height: spacing(44);
 $eps-modal-header-padding: spacing(10) spacing(16);
 $eps-modal-icon-spacing: spacing(10);
-$eps-modal-body-padding: spacing(24);
+$eps-modal-body-padding: spacing(30);
 $eps-modal-close-button-spacing: spacing(16);
 $eps-modal-close-button-border: solid 1px theme-colors(light);
 $eps-tip-padding-start: spacing(12);
 $eps-tip-border-start: 3px solid theme-colors(info);
 $eps-tip-margin-bottom: spacing(30);
+$eps-tip-margin-top: spacing(30);
 
 :root {
 	--eps-modal-background-color: #{$eps-modal-background-color};
@@ -37,6 +39,9 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 .eps-modal {
 	max-width: $eps-modal-width;
 	background: var(--eps-modal-background-color);
+	border-radius: $eps-modal-border-radius;
+	overflow: hidden;
+	animation: pop 0.15s cubic-bezier(0.57, 0.53, 0.71, 1.47) forwards;
 
 	&__overlay {
 		background: $eps-modal-overlay;
@@ -73,10 +78,25 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 		&:not(:last-child) {
 			margin-bottom: $eps-tip-margin-bottom;
 		}
+
+		&:not(:first-child) {
+			margin-top: $eps-tip-margin-top;
+		}
 	}
 
 	&__close-wrapper {
 		padding-inline-start: $eps-modal-close-button-spacing;
 		border-inline-start: $eps-modal-close-button-border;
+	}
+}
+
+@keyframes pop {
+	from {
+		transform: scale(0.75);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
 	}
 }

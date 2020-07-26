@@ -1,5 +1,4 @@
 import Page from 'elementor-app/layout/page';
-import './not-found.scss';
 
 export default function NotFound() {
 	const config = {

@@ -5,11 +5,8 @@ $app-background-color: tints(200);
 $spp-font-size: type(text, base);
 $app-box-shadow-color: $eps-box-shadow-size-3;
 $app-radius: $eps-radius;
-$app-max-width: 1200px;
-$app-max-width-min-xl: #{map-get($breakpoints, xl)};
-
-$app-main-height: 920px;
-$app-main-max-height: 85vh;
+$app-max-width: 100%; // boxed version: 1200px;
+// boxed version: $app-max-width-min-xl: #{map-get($breakpoints, xl)};
 
 $app-header-background-color: theme-colors(light);
 $app-header-box-shadow: $eps-box-shadow-2;
@@ -18,6 +15,8 @@ $app-header-color: tints(800);
 $app-header-font-size: type(size, "15");
 $spp-header-padding-x: spacing(16);
 $app-header-padding-y: 0;
+
+$app-main-height: 100%; // boxed version: 920px;
 
 $app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
 $app-sidebar-padding-top: spacing(20);

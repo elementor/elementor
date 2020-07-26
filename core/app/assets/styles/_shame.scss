@@ -48,15 +48,6 @@
 	text-transform: capitalize;
 }
 
-.back-button {
-	color: #A4AFB7;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 14px;
-}
-
-
 .video-wrapper {
 	position: relative;
 	padding-bottom: 56.25%;
@@ -74,4 +65,17 @@
 
 .eps-separator {
 	margin-bottom: spacing(44);
+}
+
+
+.dark {
+	--e-app-back-button-color: #{dark-tints(200)};
+}
+.back-button, .e-app-back-button {
+	color: var(--e-app-back-button-color, #{tints(500)});
+	margin-bottom: spacing(24);
+
+	.icon {
+		margin-inline-end: spacing(5);
+	}
 }
