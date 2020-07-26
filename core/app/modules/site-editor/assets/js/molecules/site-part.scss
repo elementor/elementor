@@ -1,5 +1,5 @@
 $indicator-bullet-border-color: theme-colors(light);
-$indicator-bullet-dark-border-color: dark-tints(600);
+$indicator-bullet-dark-border-color: dark-tints(500);
 $dark-svg-filter: invert(0.8) sepia(1) saturate(0.1) hue-rotate(180deg) contrast(2) brightness(1.2);
 
 :root {
@@ -17,7 +17,7 @@ $dark-svg-filter: invert(0.8) sepia(1) saturate(0.1) hue-rotate(180deg) contrast
 $indicator-bullet-size: spacing(16) * 0.75;
 $indicator-bullet-color: tints(300);
 $indicator-bullet-color-active: theme-colors(success);
-$indicator-bullet-box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+$indicator-bullet-box-shadow: $eps-box-shadow-1;
 $indicator-bullet-radius: 100%;
 $indicator-bullet-border: 2px solid var(--indicator-bullet-border-color);
 $indicator-bullet-spacing: spacing(10);

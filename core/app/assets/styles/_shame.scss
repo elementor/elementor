@@ -72,7 +72,7 @@
 	--e-app-back-button-color: #{dark-tints(200)};
 }
 .back-button, .e-app-back-button {
-	color: var(--e-app-back-button-color, #{tints(500)});
+	--button-background-color: var(--e-app-back-button-color, #{tints(500)});
 	margin-bottom: spacing(24);
 
 	.icon {
