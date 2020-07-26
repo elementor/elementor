@@ -14,7 +14,7 @@ export default function DownloadButton( props ) {
 				elementor_export_kit: {
 					title: context.title,
 					include: context.includes,
-					custom_post_types: context.postTypes,
+					post_types: context.postTypes,
 				},
 			};
 
