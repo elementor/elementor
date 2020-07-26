@@ -107,8 +107,6 @@ export default class CommandData extends CommandBase {
 			this.data = Object.assign( { __requestData__: requestData }, this.data );
 
 			return this.data;
-		} ).catch( ( e ) => {
-			this.onCatchApply( e );
 		} );
 	}
 
