@@ -17,23 +17,12 @@ function PostTypesSelect( props ) {
 		getPostTypesOptions = () => {
 			const customPostTypes = elementorAppConfig[ 'import-export' ][ 'custom_post_types' ];
 
-			if ( ! customPostTypes ) {
-				// const tempOptions = [
-				// 	{ label: 'Posts', value: 'post' },
-				// 	{ label: 'Pages', value: 'page' },
-				// ];
-
-				//return;
-				return [
-					{ label: 'Posts', value: 'post' },
-					{ label: 'Pages', value: 'page' },
-				];
-			}
-
-			return Object.entries( customPostTypes ).map( ( item, index ) => (
-				<option key={index} value={ item[ 0 ] }>{ item[ 1 ] }</option>
+			return Object.entries( customPostTypes ).map( ( item ) => (
+				{ label: item[ 1 ], value: item[ 0 ] }
 			) );
 		};
+
+	console.log( 'RE RENDER Post Types Select --- FUNCTION BODY' );
 
 	return (
 		<Grid container justify="center" className="kit-content-selection-container">

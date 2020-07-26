@@ -23,4 +23,13 @@ class Module extends BaseModule {
 	public function get_name() {
 		return 'import-export';
 	}
+
+	public function get_init_settings() {
+		return [
+			'custom_post_types' => [
+				'post' => 'Posts',
+				'page' => 'Pages',
+			],
+		];
+	}
 }
