@@ -13,7 +13,7 @@ export default function ImportSuccess() {
 	const getFooter = () => (
 		<Footer justify="center" className="e-app-import-success__bottom_sentence">
 			<Text variant="xs" tag="span">
-				<Button color="link" text={ __( 'Click here', 'elementor' ) } className="e-app-import-success__click-here" url="/#" />
+				<Button variant="underlined" color="link" text={ __( 'Click here', 'elementor' ) } className="e-app-import-success__click-here" url="/#" />
 				{ __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
 			</Text>
 		</Footer>

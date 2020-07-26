@@ -47,7 +47,7 @@ export default function ImportFailed() {
 					<Text variant="md">
 						{ __( 'File is invalid and could not be processed', 'elementor' ) }
 						<br />
-						<Button color="link" className="e-app-import-failed__click-here" text={ __( 'Click Here', 'elementor' ) } url="/#" />
+						<Button variant="underlined" color="link" className="e-app-import-failed__click-here" text={ __( 'Click Here', 'elementor' ) } url="/#" />
 						<span>{ __( 'to try solving the issue.', 'elementor' ) }</span>
 					</Text>
 

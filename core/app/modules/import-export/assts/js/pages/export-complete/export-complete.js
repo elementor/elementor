@@ -10,7 +10,7 @@ import './export-complete.scss';
 export default function ExportComplete() {
 	const getFooter = () => (
 		<Footer justify="center" className="e-app-export-complete__learn-more">
-			<Button color="link" size="md" text={ __( 'Learn More', 'elementor' ) } url="/#" />
+			<Button variant="underlined" color="link" size="md" text={ __( 'Learn More', 'elementor' ) } url="/#" />
 		</Footer>
 	);
 
@@ -30,7 +30,7 @@ export default function ExportComplete() {
 
 					<Text tag="span" variant="sm">
 						{ __( 'If the download doesn\'t start automatically, please', 'elementor' ) }
-						<Button color="link" className="e-app-export-complete__click-here" text={ __( 'click here', 'elementor' ) } url="/#" />
+						<Button variant="underlined" color="link" className="e-app-export-complete__click-here" text={ __( 'click here', 'elementor' ) } url="/#" />
 					</Text>
 				</Message>
 			</section>
