@@ -6,13 +6,6 @@ use WP_REST_Controller;
 use WP_REST_Server;
 
 abstract class Controller extends WP_REST_Controller {
-
-	const ROOT_NAMESPACE = 'elementor';
-
-	const REST_BASE = '';
-
-	const VERSION = '1';
-
 	/**
 	 * Loaded endpoint(s).
 	 *
@@ -36,8 +29,8 @@ abstract class Controller extends WP_REST_Controller {
 	public function __construct() {
 		// TODO: Controllers and endpoints can have common interface.
 
-		$this->namespace = self::ROOT_NAMESPACE . '/v' . static::VERSION;
-		$this->rest_base = static::REST_BASE . $this->get_name();
+		$this->namespace = Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION;
+		$this->rest_base = Manager::REST_BASE . $this->get_name();
 
 		add_action( 'rest_api_init', function () {
 			$this->register(); // Because 'register' is protected.

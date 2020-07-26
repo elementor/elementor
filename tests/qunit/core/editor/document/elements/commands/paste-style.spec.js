@@ -69,7 +69,7 @@ export const PasteStyle = () => {
 				// Create widget.
 				const eButton = ElementsHelper.createAutoButton(),
 					eButtonGlobal = ElementsHelper.createAutoButton(),
-					id = elementor.helpers.getUniqueID();
+					id = elementorCommon.helpers.getUniqueId();
 
 				$e.data.setCache( $e.components.get( 'globals' ), 'globals/typography', {}, {
 					[ id ]: {

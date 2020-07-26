@@ -12,7 +12,7 @@ export class Create extends CreateBase {
 		}
 
 		// `args.id` used by tests.
-		const id = args.id || elementor.helpers.getUniqueID();
+		const id = args.id || elementorCommon.helpers.getUniqueId();
 
 		result = $e.data.create( `globals/colors?id=${ id }`, {
 			title,

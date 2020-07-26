@@ -3,7 +3,7 @@ import Panel from './panel';
 
 /**
  * TODO: ViewsOptions
- * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView)} ViewsOptions
+ * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView|BaseContainer)} ViewsOptions
  */
 
 export default class Container extends ArgsObject {
@@ -241,7 +241,7 @@ export default class Container extends ArgsObject {
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
 		if ( ! rowId ) {
-			rowId = 'bc-' + elementor.helpers.getUniqueID();
+			rowId = 'bc-' + elementorCommon.helpers.getUniqueId();
 			rowSettingsModel.set( '_id', rowId );
 		}
 
@@ -276,11 +276,11 @@ export default class Container extends ArgsObject {
 			return this;
 		}
 
-		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
+		if ( this !== this.renderer && this.renderer.view?.isDisconnected && this.renderer.view.isDisconnected() ) {
 			this.renderer = this.renderer.lookup();
 		}
 
-		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
+		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDisconnected() ) {
 			// Hack For repeater item the result is the parent container.
 			if ( 'repeater' === this.type ) {
 				this.settings = this.parent.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
@@ -318,6 +318,14 @@ export default class Container extends ArgsObject {
 		}
 
 		this.renderer.view.renderOnChange( this.settings );
+	}
+
+	renderUI() {
+		if ( ! this.renderer ) {
+			return;
+		}
+
+		this.renderer.view.renderUI();
 	}
 
 	isEditable() {

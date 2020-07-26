@@ -189,10 +189,6 @@ module.exports = Marionette.Behavior.extend( {
 	showPromotion: function() {
 		let message = elementor.translate( 'dynamic_promotion_message' );
 
-		if ( 'color' === this.view.model.get( 'type' ) ) {
-			message += '<br>' + elementor.translate( 'available_in_pro_v29' );
-		}
-
 		elementor.promotion.showDialog( {
 			headerMessage: elementor.translate( 'dynamic_content' ),
 			message: message,
@@ -227,7 +223,7 @@ module.exports = Marionette.Behavior.extend( {
 	onTagsListItemClick: function( event ) {
 		const $tag = jQuery( event.currentTarget );
 
-		this.setTagView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
+		this.setTagView( elementorCommon.helpers.getUniqueId(), $tag.data( 'tagName' ), {} );
 
 		// If an element has an active global value, disable it before applying the dynamic value.
 		if ( this.view.getGlobalKey() ) {

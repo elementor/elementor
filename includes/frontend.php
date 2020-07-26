@@ -29,6 +29,9 @@ class Frontend extends App {
 	 */
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
+	const RENDER_MODE_NORMAL = 'normal';
+	const RENDER_MODE_STATIC = 'static';
+
 	/**
 	 * Post ID.
 	 *
@@ -130,6 +133,15 @@ class Frontend extends App {
 	 * @var Document[]
 	 */
 	private $admin_bar_edit_documents = [];
+
+	/**
+	 * Determine the render mode.
+	 * if equals to self::RENDER_MODE_STATIC,
+	 * all the elements should be render without any interaction.
+	 *
+	 * @var string
+	 */
+	private $render_mode = self::RENDER_MODE_NORMAL;
 
 	/**
 	 * @var string[]
@@ -462,7 +474,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.8.0'
+			'5.9.1'
 		);
 
 		wp_register_style(
@@ -508,10 +520,24 @@ class Frontend extends App {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
 		}
 
+		$frontend_dependencies = [];
+
+		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
+			// If The Markup Legacy Mode is active, register the legacy CSS
+			wp_register_style(
+				'elementor-frontend-legacy',
+				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
+				[],
+				ELEMENTOR_VERSION
+			);
+
+			$frontend_dependencies[] = 'elementor-frontend-legacy';
+		}
+
 		wp_register_style(
 			'elementor-frontend',
 			$frontend_file_url,
-			[],
+			$frontend_dependencies,
 			$has_custom_file ? null : ELEMENTOR_VERSION
 		);
 
@@ -592,8 +618,6 @@ class Frontend extends App {
 
 		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 			$this->parse_global_css_code();
-
-			do_action( 'elementor/frontend/after_enqueue_global' );
 
 			$post_id = get_the_ID();
 			// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
@@ -1124,6 +1148,39 @@ class Frontend extends App {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function get_render_mode() {
+		return $this->render_mode;
+	}
+
+	/**
+	 * @param string $render_mode
+	 *
+	 * @return bool
+	 */
+	public function is_render_mode( $render_mode ) {
+		return $this->get_render_mode() === $render_mode;
+	}
+
+	/**
+	 * @param $render_mode
+	 *
+	 * @return $this
+	 */
+	public function set_render_mode( $render_mode ) {
+		$available_render_modes = [ self::RENDER_MODE_STATIC, self::RENDER_MODE_NORMAL ];
+
+		if ( ! in_array( $render_mode, $available_render_modes, true ) ) {
+			$render_mode = self::RENDER_MODE_NORMAL;
+		}
+
+		$this->render_mode = $render_mode;
+
+		return $this;
+	}
+
+	/**
 	 * Get Init Settings
 	 *
 	 * Used to define the default/initial settings of the object. Inheriting classes may implement this method to define
@@ -1159,6 +1216,7 @@ class Frontend extends App {
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
+			'render_mode' => $this->get_render_mode(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],

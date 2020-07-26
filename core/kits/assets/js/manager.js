@@ -1,21 +1,26 @@
 import Component from './component';
-import panelView from './panel';
-import panelMenuView from './panel-menu';
+import PanelView from './panel';
+import PanelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
 import Repeater from './repeater';
 import GlobalControlSelect from './globals/global-select-behavior';
 import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-parser';
 
 export default class extends elementorModules.editor.utils.Module {
+	loadingTriggers = {
+		preview: false,
+		globals: false,
+	};
+
 	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
-			view: panelView,
-			title: elementor.translate( 'global_settings' ),
+			view: PanelView,
+			title: elementor.translate( 'site_settings' ),
 		} );
 
 		elementor.getPanelView().addPage( 'kit_menu', {
-			view: panelMenuView,
-			title: elementor.translate( 'global_settings' ),
+			view: PanelMenuView,
+			title: elementor.translate( 'site_settings' ),
 		} );
 	}
 
@@ -25,7 +30,7 @@ export default class extends elementorModules.editor.utils.Module {
 		menu.addItem( {
 			name: 'global-settings',
 			icon: 'eicon-global-settings',
-			title: elementor.translate( 'global_settings' ),
+			title: elementor.translate( 'site_settings' ),
 			type: 'page',
 			callback: () => $e.route( 'panel/global/menu' ),
 		}, 'style', 'editor-preferences' );
@@ -33,7 +38,7 @@ export default class extends elementorModules.editor.utils.Module {
 		menu.addItem( {
 			name: 'site-editor',
 			icon: 'eicon-theme-builder',
-			title: elementor.translate( 'site_editor' ),
+			title: elementor.translate( 'theme_builder' ),
 			type: 'page',
 			callback: () => $e.run( 'panel/global/open-site-editor' ),
 		}, 'style', 'editor-preferences' );
@@ -68,10 +73,10 @@ export default class extends elementorModules.editor.utils.Module {
 		if ( 'popover_toggle' === view.options.model.get( 'type' ) && 'typography' === view.options.model.get( 'groupType' ) && isGlobalActive ) {
 			behaviors.globals = {
 				behaviorClass: GlobalControlSelect,
-				popoverTitle: elementor.translate( 'global_typography_title' ),
-				manageButtonText: elementor.translate( 'manage_global_typography' ),
-				tooltipText: elementor.translate( 'global_typography_info' ),
-				newGlobalConfirmTitle: elementor.translate( 'create_global_typography' ),
+				popoverTitle: elementor.translate( 'global_fonts_title' ),
+				manageButtonText: elementor.translate( 'manage_global_fonts' ),
+				tooltipText: elementor.translate( 'global_fonts_info' ),
+				newGlobalConfirmTitle: elementor.translate( 'create_global_font' ),
 			};
 		}
 
@@ -80,6 +85,10 @@ export default class extends elementorModules.editor.utils.Module {
 
 	// Use the Controls CSS Parser to add the global defaults CSS to the page.
 	renderGlobalsDefaultCSS() {
+		if ( ! this.loadingTriggers.preview || ! this.loadingTriggers.globals ) {
+			return;
+		}
+
 		const cssParser = new ControlsCSSParser( {
 			id: 'e-global-style',
 		} ),
@@ -164,7 +173,17 @@ export default class extends elementorModules.editor.utils.Module {
 
 			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
 
-			elementor.on( 'preview:loaded', () => this.renderGlobalsDefaultCSS() );
+			elementor.on( 'preview:loaded', () => {
+				this.loadingTriggers.preview = true;
+
+				this.renderGlobalsDefaultCSS();
+			} );
+
+			elementor.on( 'globals:loaded', () => {
+				this.loadingTriggers.globals = true;
+
+				this.renderGlobalsDefaultCSS();
+			} );
 
 			elementor.on( 'panel:init', () => {
 				this.addPanelPages();
