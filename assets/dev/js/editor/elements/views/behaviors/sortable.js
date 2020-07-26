@@ -82,7 +82,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		const draggedModel = elementor.channels.data.request( 'dragging:model' ),
 			draggedElType = draggedModel.get( 'elType' );
 
-		let	newIndex = $element.index();
+		let newIndex = $element.index();
 
 		if ( 'widget' === draggedElType && ! elementor.config.legacyMode.elementWrappers ) {
 			newIndex--;
