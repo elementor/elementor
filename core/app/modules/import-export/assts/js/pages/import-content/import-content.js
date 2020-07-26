@@ -14,7 +14,7 @@ export default function ImportContent() {
 	return (
 		<Layout type="import" footer={ getFooter() }>
 			<section className="e-app-import-content">
-				<Heading variant="md">
+				<Heading variant="h2">
 					{ __( 'Choose The Contents to Include in Your Site', 'elementor' ) }
 				</Heading>
 
