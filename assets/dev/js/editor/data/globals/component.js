@@ -48,7 +48,7 @@ export default class Component extends ComponentBase {
 		}
 
 		// The kit document has it's own CSS.
-		if ( 'kit' === elementor.documents.getCurrent().type ) {
+		if ( 'kit' === elementor.documents.getCurrent().config.type ) {
 			this.controlsCSS.stylesheet.empty();
 			return;
 		}
