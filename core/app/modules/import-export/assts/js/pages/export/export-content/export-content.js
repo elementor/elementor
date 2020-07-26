@@ -8,7 +8,7 @@ export default function ExportContent() {
 	return (
 		<section className="e-app-export">
 			<div className="e-app-export__kit-name">
-				<Heading variant="h2" tag="h1">
+				<Heading variant="h2" tag="h2">
 					{ __( 'Kit Name', 'elementor' ) }
 				</Heading>
 
@@ -16,7 +16,7 @@ export default function ExportContent() {
 			</div>
 
 			<div className="e-app-export__kit-content">
-				<Heading variant="h2">
+				<Heading variant="h2" tag="h1">
 					{ __( 'Choose What To Include In The Kit', 'elementor' ) }
 				</Heading>
 
