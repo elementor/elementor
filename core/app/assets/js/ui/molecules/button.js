@@ -33,10 +33,6 @@ export default class Button extends React.Component {
 		const baseClassName = 'eps-button',
 			classes = [ baseClassName, this.props.className ];
 
-		if ( this.props.ghost ) {
-			classes.push( baseClassName + '--ghost' );
-		}
-
 		return classes
 			.concat( this.getStylePropsClasses( baseClassName ) )
 			.filter( ( classItem ) => '' !== classItem )
