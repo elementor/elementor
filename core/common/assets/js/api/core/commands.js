@@ -19,7 +19,6 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
-		this.classes = {};
 	}
 
 	/**
