@@ -15,8 +15,7 @@ class Typography extends Base {
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 
 		// Use raw settings that doesn't have default values.
-		$meta_key = PageManager::META_KEY;
-		$kit_raw_settings = $kit->get_meta( $meta_key );
+		$kit_raw_settings = $kit->get_data( 'settings' );
 
 		if ( isset( $kit_raw_settings['system_typography'] ) ) {
 			$system_items = $kit_raw_settings['system_typography'];
