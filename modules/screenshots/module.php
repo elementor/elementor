@@ -68,9 +68,29 @@ class Module extends BaseModule {
 			->create_dir()
 			->upload()
 			->remove_old_attachment()
-			->create_new_attachment();
+			->create_new_attachment()
+			->unmark_as_failed();
 
 		return $screenshot->get_screenshot_url();
+	}
+
+	/**
+	 * Mark screenshot as failed.
+	 *
+	 * @param $data
+	 *
+	 * @return bool
+	 */
+	public function ajax_screenshot_failed( $data ) {
+		if ( empty( $data['post_id'] ) ) {
+			return false;
+		}
+
+		$screenshot = new Screenshot( $data['post_id'], null );
+
+		$screenshot->mark_as_failed();
+
+		return true;
 	}
 
 	/**
@@ -122,6 +142,7 @@ class Module extends BaseModule {
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'screenshot_save', [ $this, 'ajax_save' ] );
+		$ajax_manager->register_ajax_action( 'screenshot_failed', [ $this, 'ajax_screenshot_failed' ] );
 	}
 
 	/**

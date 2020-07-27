@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Screenshot {
 
 	const POST_META_KEY = '_elementor_screenshot';
+	const FAILED_POST_META_KEY = '_elementor_screenshot_failed';
 
 	const SCREENSHOT_DIR = 'elementor/screenshots';
 
@@ -135,6 +136,32 @@ class Screenshot {
 			'id' => $attachment_id,
 			'url' => $upload_bits['url'],
 		] );
+
+		return $this;
+	}
+
+	/**
+	 * Mark the post that the screenshot capture was failed.
+	 *
+	 * @return $this
+	 */
+	public function mark_as_failed() {
+		update_post_meta(
+			$this->post_id,
+			self::FAILED_POST_META_KEY,
+			( new \DateTime() )->format( 'Y-m-d H:i:s' )
+		);
+
+		return $this;
+	}
+
+	/**
+	 * Remove the failed_screenshot post meta.
+	 *
+	 * @return $this
+	 */
+	public function unmark_as_failed() {
+		delete_post_meta( $this->post_id, self::FAILED_POST_META_KEY );
 
 		return $this;
 	}

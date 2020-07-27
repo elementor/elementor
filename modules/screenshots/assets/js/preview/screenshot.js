@@ -222,7 +222,9 @@ class Screenshot extends elementorModules.ViewModule {
 				}
 
 				this.log( 'Creating screenshot with "dom-to-image"' );
-				return domtoimage.toPng( document.body );
+				return domtoimage.toPng( document.body, {
+					imagePlaceholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=',
+				} );
 			} );
 	}
 
@@ -291,6 +293,23 @@ class Screenshot extends elementorModules.ViewModule {
 	}
 
 	/**
+	 * Mark this post screenshot as failed.
+	 */
+	markAsFailed() {
+		elementorCommon.ajax.addRequest( 'screenshot_failed', {
+			data: {
+				post_id: this.getSettings( 'post_id' ),
+			},
+			success: () => {
+				this.log( `Marked as failed.` );
+			},
+			error: () => {
+				this.log( 'Failed to mark this screenshot as failed.' );
+			},
+		} );
+	}
+
+	/**
 	 * @param url
 	 * @returns {string}
 	 */
@@ -308,7 +327,11 @@ class Screenshot extends elementorModules.ViewModule {
 	/**
 	 * Notify that the screenshot has been failed.
 	 */
-	screenshotFailed() {
+	screenshotFailed( e ) {
+		this.log( e );
+
+		this.markAsFailed();
+
 		this.screenshotDone( false );
 	}
 
@@ -344,7 +367,11 @@ class Screenshot extends elementorModules.ViewModule {
 		}
 
 		// eslint-disable-next-line no-console
-		console.log( `${ this.getSettings( 'post_id' ) } - ${ message }` );
+		console.log(
+			'string' === typeof message ?
+				`${ this.getSettings( 'post_id' ) } - ${ message }` :
+				message
+		);
 
 		// eslint-disable-next-line no-console
 		console[ timerMethod ]( this.getSettings( 'timer_label' ) );
