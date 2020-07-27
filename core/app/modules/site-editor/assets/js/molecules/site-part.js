@@ -2,7 +2,6 @@ import Card from 'elementor-app/ui/card/card';
 import CardHeader from 'elementor-app/ui/card/card-header';
 import CardBody from 'elementor-app/ui/card/card-body';
 import CardImage from 'elementor-app/ui/card/card-image';
-import Typography from 'elementor-app/ui/atoms/typography';
 
 import './site-part.scss';
 

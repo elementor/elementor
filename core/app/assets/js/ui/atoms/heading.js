@@ -11,19 +11,19 @@ export default function Heading( props ) {
 	}
 
 	return React.createElement( tagName, {
-		className: classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ),
+		className: classes.filter( ( classItem ) => classItem ).join( ' ' ),
 	}, props.children );
 }
 
 Heading.propTypes = {
 	className: PropTypes.string,
-	variant: PropTypes.string.isRequired,
-	tag: PropTypes.string,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,
 		PropTypes.arrayOf( PropTypes.object ),
 	] ).isRequired,
+	tag: PropTypes.string,
+	variant: PropTypes.string.isRequired,
 };
 
 Heading.defaultProps = {
