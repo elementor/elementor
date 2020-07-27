@@ -8,7 +8,7 @@ export class ToggleFolding extends CommandBase {
 	apply( args ) {
 		const { element, callback } = args;
 
-		let { state } = args;
+		const { state } = args;
 
 		// If not have children or is root.
 		if ( 'widget' === element.model.get( 'elType' ) || ! element.model.get( 'elType' ) ) {
@@ -28,7 +28,6 @@ export class ToggleFolding extends CommandBase {
 		}
 
 		if ( undefined === state ) {
-			// TODO: move to UI HOOK.
 			element.ui.item.toggleClass( 'elementor-active', state );
 
 			element.ui.elements.slideToggle( 300, callback );
