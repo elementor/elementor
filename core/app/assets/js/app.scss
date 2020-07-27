@@ -1,8 +1,6 @@
 @import "../styles/common";
 @import "./app-api";
 @import "../styles/base";
-@import "../styles/components";
-@import "../styles/shame";
 
 .#{$eps-prefix}app {
 	display: flex;
