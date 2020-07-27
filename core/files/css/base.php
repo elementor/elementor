@@ -62,6 +62,8 @@ abstract class Base extends Base_File {
 
 	private $icons_fonts = [];
 
+	private $dynamic_elements_ids = [];
+
 	/**
 	 * Stylesheet object.
 	 *
@@ -161,6 +163,7 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$meta['dynamic_elements_ids'] = $this->dynamic_elements_ids;
 
 		if ( $this->is_sync_enabled() ) {
 			$this->update_meta( $meta );
@@ -521,6 +524,9 @@ abstract class Base extends Base_File {
 				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
 				// and printed in a style tag.
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
+
+				$this->dynamic_elements_ids[] = $controls_stack->get_id();
+
 				continue;
 			}
 
