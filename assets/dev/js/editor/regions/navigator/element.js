@@ -1,8 +1,8 @@
-import ElementEmpty from './element-empty';
-import RootEmpty from './root-empty';
+import NavigatorElementEmpty from './element-empty';
+import NavigatorRootEmpty from './root-empty';
 import DocumentHelper from 'elementor-document/helper';
 
-export default class Element extends Marionette.CompositeView {
+export default class NavigatorElement extends Marionette.CompositeView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}
@@ -40,11 +40,11 @@ export default class Element extends Marionette.CompositeView {
 
 	getEmptyView() {
 		if ( this.isRoot() ) {
-			return RootEmpty;
+			return NavigatorRootEmpty;
 		}
 
 		if ( this.hasChildren() ) {
-			return ElementEmpty;
+			return NavigatorElementEmpty;
 		}
 
 		return null;

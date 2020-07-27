@@ -1,14 +1,13 @@
-import Component from './component';
+import NavigatorComponent from './component';
+import NavigatorLayout from './layout';
 
 const BaseRegion = require( 'elementor-regions/base' );
-
-import NavigatorLayout from './layout';
 
 export default class Navigator extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
-		this.component = $e.components.register( new Component( { manager: this } ) );
+		this.component = $e.components.register( new NavigatorComponent( { manager: this } ) );
 
 		this.isDocked = false;
 
