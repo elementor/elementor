@@ -9,6 +9,7 @@ $eps-add-new-button-font-weight: $eps-font-weight-medium;
 	display: inline-flex;
 	--eps-add-new-button-size: #{$eps-add-new-button-size};
 	line-height: var(--eps-add-new-button-size);
+	cursor: pointer;
 
 	.icon {
 		background-color: $eps-add-new-button-background-color;
