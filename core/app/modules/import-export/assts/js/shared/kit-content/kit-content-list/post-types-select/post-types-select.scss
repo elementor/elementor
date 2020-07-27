@@ -8,13 +8,13 @@ $kit-content-select-dark-background-color: dark-tints(700);
 :root {
 	--kit-content-select-border-color: #{$kit-content-select-border-color};
 	--kit-content-select-color: #{$kit-content-select-color};
-	--kit-content-select-background-color: $kit-content-select-background-color;
+	--kit-content-select-background-color: #{$kit-content-select-background-color};
 }
 
 .dark {
 	--kit-content-select-border-color: #{$kit-content-select-dark-border-color};
 	--kit-content-select-color: #{$kit-content-select-dark-color};
-	--kit-content-select-background-color: $kit-content-select-dark-background-color;
+	--kit-content-select-background-color: #{$kit-content-select-dark-background-color};
 }
 
 .kit-content-select {
@@ -23,7 +23,7 @@ $kit-content-select-dark-background-color: dark-tints(700);
 	border-radius: $eps-radius;
 	border: 1px solid var(--kit-content-select-border-color);
 	color: var(--kit-content-select-color);
-	background: var(--kit-content-select-background-color);
+	background-color: var(--kit-content-select-background-color);
 
 	input {
 		width: 100%!important;
