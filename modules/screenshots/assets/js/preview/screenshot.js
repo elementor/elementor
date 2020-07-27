@@ -159,7 +159,7 @@ class Screenshot extends elementorModules.ViewModule {
 	 * Hide all the element except for the target element.
 	 */
 	hideUnnecessaryElements() {
-		jQuery( 'body' ).prepend(
+		elementorCommon.elements.$body.prepend(
 			this.elements.$elementor
 		);
 
