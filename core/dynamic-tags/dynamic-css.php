@@ -3,6 +3,7 @@ namespace Elementor\Core\DynamicTags;
 
 use Elementor\Controls_Stack;
 use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Plugin;
 use Elementor\Element_Base;
 
@@ -12,10 +13,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Dynamic_CSS extends Post {
 
+	private $post_dynamic_elements_ids;
+
 	protected $post_id_for_data;
 
 	protected function is_global_parsing_supported() {
 		return false;
+	}
+
+	protected function is_sync_enabled() {
+		return false;
+	}
+
+	protected function render_styles( Element_Base $element ) {
+		$id = $element->get_id();
+
+		if ( in_array( $id, $this->post_dynamic_elements_ids ) ) {
+			parent::render_styles( $element );
+		}
+
+		foreach ( $element->get_children() as $child_element ) {
+			$this->render_styles( $child_element );
+		}
 	}
 
 	/**
@@ -28,6 +47,10 @@ class Dynamic_CSS extends Post {
 	 */
 	public function __construct( $post_id, $post_id_for_data ) {
 		$this->post_id_for_data = $post_id_for_data;
+
+		$post_css_file = Post_CSS::create( $post_id_for_data );
+
+		$this->post_dynamic_elements_ids = $post_css_file->get_meta( 'dynamic_elements_ids' );
 
 		parent::__construct( $post_id );
 	}
@@ -65,25 +88,8 @@ class Dynamic_CSS extends Post {
 		return $document ? $document->get_elements_data() : [];
 	}
 
-	/**
-	 * @since 2.0.13
-	 * @access public
-	 */
-	public function get_meta( $property = null ) {
-		// Parse CSS first, to get the fonts list.
-		$css = $this->get_content();
-
-		$meta = [
-			'status' => $css ? self::CSS_STATUS_INLINE : self::CSS_STATUS_EMPTY,
-			'fonts' => $this->get_fonts(),
-			'css' => $css,
-		];
-
-		if ( $property ) {
-			return isset( $meta[ $property ] ) ? $meta[ $property ] : null;
-		}
-
-		return $meta;
+	public function is_update_required() {
+		return true;
 	}
 
 	/**
@@ -110,12 +116,6 @@ class Dynamic_CSS extends Post {
 				}
 
 				$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
-			}
-		}
-
-		if ( $controls_stack instanceof Element_Base ) {
-			foreach ( $controls_stack->get_children() as $child_element ) {
-				$this->render_styles( $child_element );
 			}
 		}
 	}
