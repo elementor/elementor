@@ -79,3 +79,20 @@
 		margin-inline-end: spacing(5);
 	}
 }
+
+.dark {
+	--input-border-color: --hr-color;
+}
+
+.eps-input {
+	border: 1px solid var(--hr-color);
+	border-radius: $eps-radius;
+	background: transparent;
+	color: inherit;
+	height: spacing(30);
+	padding: 0 spacing(5);
+
+	&--block {
+		width: 100%;
+	}
+}
