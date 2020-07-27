@@ -42,7 +42,7 @@ export class Capture extends CommandInternalBase {
 	}
 
 	createIframe() {
-		return jQuery( '<iframe>', {
+		return jQuery( '<iframe />', {
 			src: this.getIframeUrl(),
 			css: {
 				width: '1200px',

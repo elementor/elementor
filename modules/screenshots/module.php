@@ -113,9 +113,6 @@ class Module extends BaseModule {
 		];
 
 		wp_add_inline_script( 'elementor-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
-
-		$css = Post_Preview::create( $post_id );
-		$css->enqueue();
 	}
 
 	/**
