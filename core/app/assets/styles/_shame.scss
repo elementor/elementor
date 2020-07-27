@@ -63,7 +63,7 @@
 	}
 }
 
-.eps-separator {
+.#{$eps-prefix}separator {
 	margin-bottom: spacing(44);
 }
 
@@ -84,7 +84,7 @@
 	--input-border-color: --hr-color;
 }
 
-.eps-input {
+.#{$eps-prefix}input {
 	border: 1px solid var(--hr-color);
 	border-radius: $eps-radius;
 	background: transparent;

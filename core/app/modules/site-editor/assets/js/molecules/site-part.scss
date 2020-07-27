@@ -8,7 +8,7 @@ $dark-svg-filter: invert(0.8) sepia(1) saturate(0.1) hue-rotate(180deg) contrast
 
 .dark {
 	--indicator-bullet-border-color: #{$indicator-bullet-dark-border-color};
-	.site-part .card__image {
+	.site-part .#{$eps-prefix}card__image {
 		filter: $dark-svg-filter;
 		mix-blend-mode: screen;
 	}

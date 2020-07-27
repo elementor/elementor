@@ -41,7 +41,7 @@ $menu-item-action-button-dark-color: dark-tints(400);
 	--menu-item-action-button-color: #{$menu-item-action-button-dark-color};
 }
 
-.eps-menu-item {
+.#{$eps-prefix}menu-item {
 	display: flex;
 	align-items: center;
 	position: relative;
@@ -103,7 +103,7 @@ $menu-item-action-button-dark-color: dark-tints(400);
 		--menu-item-pointer-width: #{$menu-item-pointer-width};
 		box-shadow: $menu-item-active-box-shadow;
 
-		.eps-menu-item__link .icon {
+		.#{$eps-prefix}menu-item__link .icon {
 			color: $menu-item-pointer-color;
 		}
 	}

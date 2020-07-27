@@ -3,7 +3,7 @@
 // this should emulate external packages consumption
 @import "./card-api";
 
-.card {
+.#{$eps-prefix}card {
 	background-color: var(--card-background-color);
 	box-shadow: $card-box-shadow;
 	border-radius: $card-border-radius;

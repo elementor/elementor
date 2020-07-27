@@ -5,7 +5,7 @@ $eps-add-new-button-size-sm: spacing(16);
 $eps-add-new-button-icon-size: calc(var(--eps-add-new-button-size) * 0.75);
 $eps-add-new-button-font-weight: $eps-font-weight-medium;
 
-.eps-add-new-button {
+.#{$eps-prefix}add-new-button {
 	display: inline-flex;
 	--eps-add-new-button-size: #{$eps-add-new-button-size};
 	line-height: var(--eps-add-new-button-size);

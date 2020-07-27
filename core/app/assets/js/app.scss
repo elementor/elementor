@@ -4,7 +4,7 @@
 @import "../styles/components";
 @import "../styles/shame";
 
-.eps-app {
+.#{$eps-prefix}app {
 	display: flex;
 	height: 100vh;
 	flex-direction: column;

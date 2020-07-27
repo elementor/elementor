@@ -18,7 +18,7 @@ $menu-title-dark-color: tints(600);
 	--menu-title-color: #{$menu-title-dark-color};
 }
 
-.eps-menu {
+.#{$eps-prefix}menu {
 
 	ul {
 		list-style: none;
