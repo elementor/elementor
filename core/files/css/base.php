@@ -161,7 +161,12 @@ abstract class Base extends Base_File {
 			}
 		}
 
-		$this->update_meta( $meta );
+
+		if ( $this->is_sync_enabled() ) {
+			$this->update_meta( $meta );
+		} else {
+			$this->update_meta_cache( $meta );
+		}
 	}
 
 	/**
@@ -171,6 +176,16 @@ abstract class Base extends Base_File {
 	public function write() {
 		if ( $this->use_external_file() ) {
 			parent::write();
+		}
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function delete() {
+		if ( $this->use_external_file() ) {
+			parent::delete();
 		}
 	}
 
