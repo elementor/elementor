@@ -225,7 +225,6 @@ export default class extends elementorModules.editor.utils.Module {
 			elementor.on( 'preview:loaded', () => {
 				this.loadingTriggers.preview = true;
 
-				this.renderGlobalVariables();
 				this.renderGlobalsDefaultCSS();
 			} );
 
