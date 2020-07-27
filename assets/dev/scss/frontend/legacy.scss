@@ -1,0 +1,108 @@
+@import "../helpers/variables";
+@import "./breakpoints/breakpoints";
+
+// Legacy SCSS for markup removed in Elementor v3.0.0
+
+// Elementor Grid System
+.elementor-bc-flex-widget {
+
+	.elementor-section-content-top {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: flex-start;
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-section-content-middle {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: center;
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-section-content-bottom {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: flex-end;
+					}
+				}
+			}
+		}
+	}
+}
+
+.elementor-row {
+
+	> .elementor-column {
+
+		> .elementor-element-populated {
+
+			.elementor-column-gap-narrow  > & {
+				padding: 5px;
+			}
+
+			.elementor-column-gap-default > & {
+				padding: 10px;
+			}
+
+			.elementor-column-gap-extended > & {
+				padding: 15px;
+			}
+
+			.elementor-column-gap-wide > & {
+				padding: 20px;
+			}
+
+			.elementor-column-gap-wider > & {
+				padding: 30px;
+			}
+		}
+	}
+}
+
+@mixin reverse-columns($device) {
+
+	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
+		@for $i from 1 through 10 {
+			> :nth-child(#{$i}) {
+				order: -$i + 11;
+			}
+		}
+	}
+}
+
+@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+	@include reverse-columns(-tablet);
+}
+
+@media (max-width: $screen-sm-max) {
+	@include reverse-columns(-mobile);
+
+	.elementor-column {
+		width: 100%; //Default width for mobile
+	}
+}

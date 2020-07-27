@@ -1,7 +1,7 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export class Toggle extends CommandBase {
-	apply( args ) {
+	apply() {
 		if ( this.component.isOpen ) {
 			$e.run( 'navigator/close' );
 		} else {

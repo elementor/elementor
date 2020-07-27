@@ -90,6 +90,10 @@ module.exports = function( $ ) {
 	};
 
 	this.runReadyTrigger = function( scope ) {
+		if ( 'static' === elementorFrontend.config.render_mode ) {
+			return;
+		}
+
 		// Initializing the `$scope` as frontend jQuery instance
 		const $scope = jQuery( scope ),
 			elementType = $scope.attr( 'data-element_type' );

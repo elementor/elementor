@@ -39,7 +39,7 @@ module.exports = Marionette.CompositeView.extend( {
 			elType = newItem.get( 'elType' );
 		} else {
 			newItem = {
-				id: elementor.helpers.getUniqueID(),
+				id: elementorCommon.helpers.getUniqueId(),
 				elType: childTypes[ 0 ],
 				settings: {},
 				elements: [],
@@ -109,7 +109,7 @@ module.exports = Marionette.CompositeView.extend( {
 			return item.clone();
 		}
 
-		item.id = elementor.helpers.getUniqueID();
+		item.id = elementorCommon.helpers.getUniqueId();
 
 		item.settings._element_id = '';
 
@@ -123,11 +123,15 @@ module.exports = Marionette.CompositeView.extend( {
 	lookup: function() {
 		let element = this;
 
-		if ( element.isDestroyed ) {
+		if ( element.isDisconnected() ) {
 			element = $e.components.get( 'document' ).utils.findViewById( element.model.id );
 		}
 
 		return element;
+	},
+
+	isDisconnected: function() {
+		return this.isDestroyed || ! this.el.isConnected;
 	},
 
 	isCollectionFilled: function() {

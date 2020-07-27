@@ -33,6 +33,7 @@ const moduleRules = {
 							[ '@babel/plugin-proposal-class-properties' ],
 							[ '@babel/plugin-transform-runtime' ],
 							[ '@babel/plugin-transform-modules-commonjs' ],
+							[ '@babel/plugin-proposal-optional-chaining' ],
 						],
 					},
 				},
@@ -58,7 +59,7 @@ const entry = {
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
-	'qunit-tests': path.resolve( __dirname, '../tests/qunit/tests.js' ),
+	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 };
 
 const webpackConfig = {

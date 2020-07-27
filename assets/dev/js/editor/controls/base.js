@@ -64,7 +64,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 						options.container = view.getContainer();
 					} else {
 						if ( ! settingsModel.id ) {
-							settingsModel.id = 'bc-' + elementor.helpers.getUniqueID();
+							settingsModel.id = 'bc-' + elementorCommon.helpers.getUniqueId();
 						}
 
 						// Document/General/Other control.

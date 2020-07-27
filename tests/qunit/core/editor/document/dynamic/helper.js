@@ -1,3 +1,5 @@
+// TODO: Merge with globals/helper.
+
 export default class DynamicHelper {
 	static enable( eContainer, settings = {} ) {
 		return $e.run( 'document/dynamic/enable', {

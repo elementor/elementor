@@ -36,6 +36,17 @@ export default class Component extends ComponentBase {
 		const { model = false } = args;
 
 		this.manager.open( model );
+        
+
+		return true;
+	}
+
+	close( silent ) {
+		if ( ! super.close() ) {
+			return false;
+		}
+
+		this.manager.close( silent );
 
 		return true;
 	}

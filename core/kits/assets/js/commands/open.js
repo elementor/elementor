@@ -5,7 +5,6 @@ export class Open extends CommandBase {
 		const kit = elementor.documents.get( elementor.config.kit_id );
 
 		if ( kit && 'open' === kit.editor.status ) {
-			$e.route( 'panel/global/style' );
 			return jQuery.Deferred().resolve();
 		}
 
@@ -13,24 +12,12 @@ export class Open extends CommandBase {
 
 		this.component.toggleHistoryClass();
 
-		elementor.enterPreviewMode( true );
+		$e.internal( 'panel/state-loading' );
 
-		return new Promise( ( resolve ) => {
-			setTimeout( () => {
-				elementor.exitPreviewMode();
-
-				$e.internal( 'panel/state-loading' );
-
-				$e.run( 'editor/documents/switch', {
-					id: elementor.config.kit_id,
-					mode: 'autosave',
-				} ).finally( () => {
-					resolve();
-
-					$e.internal( 'panel/state-ready' );
-				} );
-			}, 500 );
-		} );
+		return $e.run( 'editor/documents/switch', {
+			id: elementor.config.kit_id,
+			mode: 'autosave',
+		} ).finally( () => $e.internal( 'panel/state-ready' ) );
 	}
 }
 

@@ -191,24 +191,57 @@
 }
 
 @mixin btn-align() {
+	&stretch {
+		.elementor-field-type-submit:not(.e-form__buttons__wrapper) {
+			.elementor-button {
+				flex-basis: 100%;
+			}
+		}
 
-	&center .elementor-field-type-submit{
-		justify-content: center;
-	}
-
-	&stretch .elementor-field-type-submit{
-
-		button {
-			flex-basis: 100%;
+		.e-form__buttons__wrapper {
+			&,
+			&__button {
+				flex-basis: 100%;
+			}
 		}
 	}
 
-	&start .elementor-field-type-submit{
-		justify-content: getValueByDirection(flex-start, flex-end);
+	&center {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: center;
+		}
 	}
 
-	&end .elementor-field-type-submit{
-		justify-content: getValueByDirection(flex-end, flex-start);
+	&start {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: getValueByDirection(flex-start, flex-end);
+		}
+	}
+
+	&end {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: getValueByDirection(flex-end, flex-start);
+		}
+	}
+
+	&center,
+	&start,
+	&end {
+		.elementor-field-type-submit:not(.e-form__buttons__wrapper) {
+			.elementor-button {
+				flex-basis: initial;
+			}
+		}
+
+		.e-form__buttons__wrapper {
+			&,
+			&__button {
+				flex-basis: initial;
+			}
+		}
 	}
 }
 
@@ -277,7 +310,7 @@
 	.elementor-button {
 		padding-top: 0;
 		padding-bottom: 0;
-		border: 0 none;
+		border: none;
 
 		& > span {
 			display: flex;

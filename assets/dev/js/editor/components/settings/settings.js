@@ -3,7 +3,6 @@ import EditorPreferences from './editor-preferences/manager';
 module.exports = elementorModules.Module.extend( {
 	modules: {
 		base: require( 'elementor-editor/components/settings/base/manager' ),
-		general: require( 'elementor-editor/components/settings/general/manager' ),
 		page: require( 'elementor-editor/components/settings/page/manager' ),
 		editorPreferences: EditorPreferences,
 	},

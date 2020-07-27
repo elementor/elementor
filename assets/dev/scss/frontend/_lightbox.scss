@@ -115,7 +115,7 @@
 
 	.elementor-swiper-button {
 		&:focus {
-			outline: none;
+			outline-width: 1px;
 		}
 
 		&-prev, &-next {
@@ -179,6 +179,7 @@
 	&__header {
 		color: var(--lightbox-ui-color);
 		display: flex;
+		flex-direction: row-reverse;
 		font-size: var(--lightbox-header-icons-size);
 		@include padding-start( 1em );
 		@include padding-end( 2.6em );
@@ -195,10 +196,10 @@
 			&:hover {
 				color: var(--lightbox-ui-color-hover);
 			}
+		}
 
-			&:first-of-type {
-				@include margin-start( auto );
-			}
+		.elementor-slideshow__counter {
+			@include margin-end( auto );
 		}
 
 		.elementor-icon-share {
@@ -213,18 +214,21 @@
 		position: absolute;
 		overflow: hidden;
 		transition: background-color 400ms;
+
+		// This is to overcome a specificity override by Theme Style
+		.elementor-slideshow__share-links a {
+			color: $gray-darkest;
+		}
 	}
 
 	&__share-links {
 		display: block;
 		position: absolute;
 		min-width: 200px;
-		@include end(67px);
-		top: 60px;
+		@include end(2.8em);
+		top: 3em;
 		background-color: #fff;
-		color: $gray-darkest;
 		border-radius: 3px;
-		font-size: 16px;
 		padding: 14px 20px;
 		transform: scale(0);
 		opacity: 0;
@@ -246,8 +250,8 @@
 			}
 
 			i {
-				@include margin-end(10px);
-				font-size: 15px;
+				font-size: 1.25em;
+				@include margin-end(0.75em);
 			}
 		}
 
@@ -255,9 +259,9 @@
 			content: '';
 			display: block;
 			position: absolute;
-			top: 0;
-			#{$end}: 15px;
-			border: 9px solid;
+			top: 1px;
+			@include end(0.5em);
+			border: .45em solid;
 			border-color: transparent transparent #fff transparent;
 			transform: translateY(-100%) scaleX(0.7);
 		}

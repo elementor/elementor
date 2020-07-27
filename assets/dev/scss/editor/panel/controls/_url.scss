@@ -7,6 +7,10 @@
 		}
 	}
 
+	.elementor-control-field {
+		position: relative;
+	}
+
 	&:not(.elementor-control-dynamic),
 	&.elementor-control-dynamic-value {
 
@@ -58,7 +62,7 @@
 				cursor: pointer;
 			}
 
-			input {
+			&-input {
 				margin: 0;
 				padding: 0;
 				border-radius: 2px;
@@ -122,17 +126,19 @@
 		&-autocomplete-spinner {
 			display: none;
 			position: absolute;
-			width: 12px;
-			height: 12px;
-			top: 7px;
-			@include start(44px);
+			top: 5px;
+			right: 0px;
+			width: 10px;
+			height: 10px;
+			font-size: 10px;
+			color: $gray-light;
 		}
 
 		&__custom-attributes {
-			margin-top: 10px;
+			margin-top: 5px;
 
 			label {
-				display: block;
+				font-size: 12px;
 			}
 
 			input {

@@ -201,6 +201,12 @@ WidgetView = BaseElementView.extend( {
 		}
 
 		this.$el.removeClass( 'elementor-loading' );
+
+		// If container document has been changed during the remote request, don't render.
+		if ( this.container.document.id !== elementor.documents.getCurrent().id ) {
+			return;
+		}
+
 		this.render();
 	},
 
@@ -230,7 +236,9 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onClickEdit: function() {
-		this.model.trigger( 'request:edit' );
+		if ( this.container.isEditable() ) {
+			this.model.trigger( 'request:edit' );
+		}
 	},
 } );
 

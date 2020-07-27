@@ -1,17 +1,17 @@
 <?php
 namespace Elementor\Core\Files\Assets\Svg;
 
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Svg_Handler {
+class Svg_Handler extends Files_Upload_Handler {
 	/**
 	 * Inline svg attachment meta key
 	 */
 	const META_KEY = '_elementor_inline_svg';
-
-	const MIME_TYPE = 'image/svg+xml';
 
 	const SCRIPT_REGEX = '/(?:\w+script|data):/xi';
 
@@ -31,40 +31,6 @@ class Svg_Handler {
 
 	public static function get_name() {
 		return 'svg-handler';
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function is_svg_uploads_enabled() {
-		return ! ! get_option( 'elementor_allow_svg', false );
-	}
-
-	/**
-	 * svg_sanitizer_can_run
-	 * @return bool
-	 */
-	public static function svg_sanitizer_can_run() {
-		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
-	}
-
-	/**
-	 * set_attachment_id
-	 * @param $attachment_id
-	 *
-	 * @return int
-	 */
-	public function set_attachment_id( $attachment_id ) {
-		$this->attachment_id = $attachment_id;
-		return $this->attachment_id;
-	}
-
-	/**
-	 * get_attachment_id
-	 * @return int
-	 */
-	public function get_attachment_id() {
-		return $this->attachment_id;
 	}
 
 	/**
@@ -88,6 +54,14 @@ class Svg_Handler {
 	 */
 	protected function delete_meta() {
 		delete_post_meta( $this->attachment_id, self::META_KEY );
+	}
+
+	public function get_mime_type() {
+		return 'image/svg+xml';
+	}
+
+	public function get_file_type() {
+		return 'svg';
 	}
 
 	/**
@@ -131,96 +105,6 @@ class Svg_Handler {
 		}
 
 		return $svg;
-	}
-
-	public function upload_mimes( $allowed_types ) {
-		if ( $this->is_elementor_media_upload() ) {
-			$allowed_types['svg'] = self::MIME_TYPE;
-		}
-		return $allowed_types;
-	}
-
-	/**
-	 * wp_handle_upload_prefilter
-	 * @param $file
-	 *
-	 * @return mixed
-	 */
-	public function wp_handle_upload_prefilter( $file ) {
-		if ( ! $this->is_elementor_media_upload() || self::MIME_TYPE !== $file['type'] ) {
-			return $file;
-		}
-
-		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
-
-		if ( 'svg' !== $ext ) {
-			$file['error'] = sprintf( __( 'The uploaded %s file is not supported. Please upload a valid SVG file', 'elementor' ), $ext );
-			return $file;
-		}
-
-		if ( ! self::is_enabled() ) {
-			$file['error'] = __( 'SVG file is not allowed for security reasons', 'elementor' );
-			return $file;
-		}
-
-		if ( self::svg_sanitizer_can_run() && ! $this->sanitize_svg( $file['tmp_name'] ) ) {
-			$file['error'] = __( 'Invalid SVG Format, file not uploaded for security reasons', 'elementor' );
-		}
-
-		return $file;
-	}
-
-	/**
-	 * is_elementor_media_upload
-	 * @return bool
-	 */
-	private function is_elementor_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-editor-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
-	}
-
-	/**
-	 * wp_check_filetype_and_ext
-	 * A workaround for upload validation which relies on a PHP extension (fileinfo)
-	 * with inconsistent reporting behaviour.
-	 * ref: https://core.trac.wordpress.org/ticket/39550
-	 * ref: https://core.trac.wordpress.org/ticket/40175
-	 *
-	 * @param $data
-	 * @param $file
-	 * @param $filename
-	 * @param $mimes
-	 *
-	 * @return mixed
-	 */
-	public function wp_check_filetype_and_ext( $data, $file, $filename, $mimes ) {
-		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
-			return $data;
-		}
-
-		$filetype = wp_check_filetype( $filename, $mimes );
-
-		if ( 'svg' === $filetype['ext'] ) {
-			$data['ext'] = 'svg';
-			$data['type'] = self::MIME_TYPE;
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Check if the contents are gzipped
-	 * @see http://www.gzip.org/zlib/rfc-gzip.html#member-format
-	 *
-	 * @param $contents
-	 * @return bool
-	 */
-	private function is_encoded( $contents ) {
-		$needle = "\x1f\x8b\x08";
-		if ( function_exists( 'mb_strpos' ) ) {
-			return 0 === mb_strpos( $contents, $needle );
-		} else {
-			return 0 === strpos( $contents, $needle );
-		}
 	}
 
 	/**
@@ -274,6 +158,22 @@ class Svg_Handler {
 		file_put_contents( $filename, $valid_svg );
 
 		return true;
+	}
+
+	/**
+	 * Check if the contents are gzipped
+	 * @see http://www.gzip.org/zlib/rfc-gzip.html#member-format
+	 *
+	 * @param $contents
+	 * @return bool
+	 */
+	private function is_encoded( $contents ) {
+		$needle = "\x1f\x8b\x08";
+		if ( function_exists( 'mb_strpos' ) ) {
+			return 0 === mb_strpos( $contents, $needle );
+		} else {
+			return 0 === strpos( $contents, $needle );
+		}
 	}
 
 	/**
@@ -337,7 +237,7 @@ class Svg_Handler {
 	 * @return false|int
 	 */
 	private function has_js_value( $value ) {
-		return preg_match( '/(script|javascript|alert\(|window\.|document)/i', $value );
+		return preg_match( '/base64|data|(?:java)?script|alert\(|window\.|document/i', $value );
 	}
 
 	/**
@@ -503,7 +403,7 @@ class Svg_Handler {
 
 			$attr_value = $element->attributes->item( $index )->value;
 
-			// Remove attribute if it has a remote reference or js
+			// Remove attribute if it has a remote reference or js or data-URI/base64
 			if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) ) {
 				$element->removeAttribute( $attr_name );
 				continue;
@@ -517,6 +417,11 @@ class Svg_Handler {
 	 */
 	private function strip_xlinks( $element ) {
 		$xlinks = $element->getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+
+		if ( ! $xlinks ) {
+			return;
+		}
+
 		$allowed_links = [
 			'data:image/png', // PNG
 			'data:image/gif', // GIF
@@ -554,40 +459,6 @@ class Svg_Handler {
 	}
 
 	/**
-	 * strip_php_tags
-	 * @param $string
-	 *
-	 * @return string
-	 */
-	private function strip_php_tags( $string ) {
-		$string = preg_replace( '/<\?(=|php)(.+?)\?>/i', '', $string );
-		// Remove XML, ASP, etc.
-		$string = preg_replace( '/<\?(.*)\?>/Us', '', $string );
-		$string = preg_replace( '/<\%(.*)\%>/Us', '', $string );
-
-		if ( ( false !== strpos( $string, '<?' ) ) || ( false !== strpos( $string, '<%' ) ) ) {
-			return '';
-		}
-		return $string;
-	}
-
-	/**
-	 * strip_comments
-	 * @param $string
-	 *
-	 * @return string
-	 */
-	private function strip_comments( $string ) {
-		// Remove comments.
-		$string = preg_replace( '/<!--(.*)-->/Us', '', $string );
-		$string = preg_replace( '/\/\*(.*)\*\//Us', '', $string );
-		if ( ( false !== strpos( $string, '<!--' ) ) || ( false !== strpos( $string, '/*' ) ) ) {
-			return '';
-		}
-		return $string;
-	}
-
-	/**
 	 * sanitize_elements
 	 */
 	private function sanitize_elements() {
@@ -610,11 +481,6 @@ class Svg_Handler {
 
 			$this->strip_xlinks( $current_element );
 
-			$href = $current_element->getAttribute( 'href' );
-			if ( 1 === preg_match( self::SCRIPT_REGEX, $href ) ) {
-				$current_element->removeAttribute( 'href' );
-			}
-
 			if ( 'use' === strtolower( $current_element->tagName ) ) { // phpcs:ignore -- php DomDocument
 				$this->validate_use_tag( $current_element );
 			}
@@ -629,8 +495,8 @@ class Svg_Handler {
 	 */
 	public function sanitizer( $content ) {
 		// Strip php tags
-		$content = $this->strip_php_tags( $content );
 		$content = $this->strip_comments( $content );
+		$content = $this->strip_php_tags( $content );
 
 		// Find the start and end tags so we can cut out miscellaneous garbage.
 		$start = strpos( $content, '<svg' );
@@ -669,6 +535,40 @@ class Svg_Handler {
 		libxml_use_internal_errors( $libxml_use_internal_errors );
 
 		return $sanitized;
+	}
+
+	/**
+	 * strip_php_tags
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	private function strip_php_tags( $string ) {
+		$string = preg_replace( '/<\?(=|php)(.+?)\?>/i', '', $string );
+		// Remove XML, ASP, etc.
+		$string = preg_replace( '/<\?(.*)\?>/Us', '', $string );
+		$string = preg_replace( '/<\%(.*)\%>/Us', '', $string );
+
+		if ( ( false !== strpos( $string, '<?' ) ) || ( false !== strpos( $string, '<%' ) ) ) {
+			return '';
+		}
+		return $string;
+	}
+
+	/**
+	 * strip_comments
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	private function strip_comments( $string ) {
+		// Remove comments.
+		$string = preg_replace( '/<!--(.*)-->/Us', '', $string );
+		$string = preg_replace( '/\/\*(.*)\*\//Us', '', $string );
+		if ( ( false !== strpos( $string, '<!--' ) ) || ( false !== strpos( $string, '/*' ) ) ) {
+			return '';
+		}
+		return $string;
 	}
 
 	/**
@@ -714,22 +614,90 @@ class Svg_Handler {
 		return $attachment_data;
 	}
 
-	public static function is_enabled() {
-		static $enabled = null;
-		if ( null === $enabled ) {
-			$enabled = self::is_svg_uploads_enabled() && self::svg_sanitizer_can_run();
-			$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
+	/**
+	 * set_attachment_id
+	 * @param $attachment_id
+	 *
+	 * @return int
+	 */
+	public function set_attachment_id( $attachment_id ) {
+		$this->attachment_id = $attachment_id;
+		return $this->attachment_id;
+	}
+
+	/**
+	 * get_attachment_id
+	 * @return int
+	 */
+	public function get_attachment_id() {
+		return $this->attachment_id;
+	}
+
+	/**
+	 * handle_upload_prefilter
+	 * @param $file
+	 *
+	 * @return mixed
+	 */
+	public function handle_upload_prefilter( $file ) {
+		if ( ! $this->is_file_should_handled( $file ) ) {
+			return $file;
 		}
-		return $enabled;
+
+		$file = parent::handle_upload_prefilter( $file );
+
+		if ( ! $file['error'] && self::file_sanitizer_can_run() && ! $this->sanitize_svg( $file['tmp_name'] ) ) {
+			$display_type = strtoupper( $this->get_file_type() );
+
+			$file['error'] = sprintf( __( 'Invalid %1$s Format, file not uploaded for security reasons', 'elementor' ), $display_type );
+		}
+
+		return $file;
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0 Use Files_Upload_Handler::file_sanitizer_can_run() instead.
+	 */
+	public function svg_sanitizer_can_run() {
+		_deprecated_function( __METHOD__, '3.0.0', 'Files_Upload_Handler::file_sanitizer_can_run()' );
+
+		return Files_Upload_Handler::file_sanitizer_can_run();
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0
+	 */
+	public function upload_mimes() {
+		_deprecated_function( __METHOD__, '3.0.0' );
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0
+	 */
+	public function wp_handle_upload_prefilter() {
+		_deprecated_function( __METHOD__, '3.0.0' );
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0 Use Files_Upload_Handler::is_enabled() instead.
+	 * @see is_enabled()
+	 */
+	public function is_svg_uploads_enabled() {
+		_deprecated_function( __METHOD__, '3.0.0', 'Files_Upload_Handler::is_enabled()' );
+
+		return Files_Upload_Handler::is_enabled();
 	}
 
 	/**
 	 * Svg_Handler constructor.
 	 */
 	public function __construct() {
-		add_filter( 'upload_mimes', [ $this, 'upload_mimes' ] );
-		add_filter( 'wp_handle_upload_prefilter', [ $this, 'wp_handle_upload_prefilter' ] );
-		add_filter( 'wp_check_filetype_and_ext', [ $this, 'wp_check_filetype_and_ext' ], 10, 4 );
+		parent::__construct();
+
 		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'wp_prepare_attachment_for_js' ], 10, 3 );
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'delete_meta_cache' ] );
 	}

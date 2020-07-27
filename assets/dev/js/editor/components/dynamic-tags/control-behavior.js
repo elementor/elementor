@@ -6,14 +6,6 @@ module.exports = Marionette.Behavior.extend( {
 
 	listenerAttached: false,
 
-	ui: {
-		dynamicSwitcher: '.elementor-control-dynamic-switcher',
-	},
-
-	events: {
-		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick',
-	},
-
 	initialize: function() {
 		if ( ! this.listenerAttached ) {
 			this.listenTo( this.view.options.container.settings, 'change:external:__dynamic__', this.onAfterExternalChange );
@@ -28,9 +20,19 @@ module.exports = Marionette.Behavior.extend( {
 
 		const $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
 
+		$dynamicSwitcher.on( 'click', ( event ) => this.onDynamicSwitcherClick( event ) );
+
 		this.$el.find( '.elementor-control-dynamic-switcher-wrapper' ).append( $dynamicSwitcher );
 
 		this.ui.dynamicSwitcher = $dynamicSwitcher;
+
+		if ( 'color' === this.view.model.get( 'type' ) ) {
+			if ( this.view.colorPicker ) {
+				this.moveDynamicSwitcherToColorPicker();
+			} else {
+				setTimeout( () => this.moveDynamicSwitcherToColorPicker() );
+			}
+		}
 
 		// Add a Tipsy Tooltip to the Dynamic Switcher
 		this.ui.dynamicSwitcher.tipsy( {
@@ -39,6 +41,14 @@ module.exports = Marionette.Behavior.extend( {
 			},
 			gravity: 's',
 		} );
+	},
+
+	moveDynamicSwitcherToColorPicker: function() {
+		const $colorPickerToolsContainer = this.view.colorPicker.$pickerToolsContainer;
+
+		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
+
+		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
 	},
 
 	toggleDynamicClass: function() {
@@ -179,10 +189,6 @@ module.exports = Marionette.Behavior.extend( {
 	showPromotion: function() {
 		let message = elementor.translate( 'dynamic_promotion_message' );
 
-		if ( 'color' === this.view.model.get( 'type' ) ) {
-			message += '<br>' + elementor.translate( 'available_in_pro_v29' );
-		}
-
 		elementor.promotion.showDialog( {
 			headerMessage: elementor.translate( 'dynamic_content' ),
 			message: message,
@@ -217,7 +223,12 @@ module.exports = Marionette.Behavior.extend( {
 	onTagsListItemClick: function( event ) {
 		const $tag = jQuery( event.currentTarget );
 
-		this.setTagView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
+		this.setTagView( elementorCommon.helpers.getUniqueId(), $tag.data( 'tagName' ), {} );
+
+		// If an element has an active global value, disable it before applying the dynamic value.
+		if ( this.view.getGlobalKey() ) {
+			this.view.triggerMethod( 'unset:global:value' );
+		}
 
 		if ( this.isDynamicMode() ) {
 			$e.run( 'document/dynamic/settings', {

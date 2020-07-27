@@ -8,7 +8,7 @@
 	background-color: #fff;
 	border: 1px solid $editor-light;
 	border-radius: 3px;
-	z-index: $first-layer;
+	z-index: $super-layer;
 
 	&__group-title {
 		color: $editor-darkest;
@@ -143,6 +143,11 @@
 		border-radius: 3px;
 		background: #fff;
 
+		&.e-control-tool {
+			height: 20px;
+			border: 0;
+		}
+
 		&-wrapper {
 			display: flex;
 		}
@@ -155,7 +160,8 @@
 	&-value {
 
 		.elementor-control-tag-area,
-		.elementor-control-dynamic-switcher {
+		.elementor-control-dynamic-switcher,
+		.e-global__popover-toggle {
 			display: none;
 		}
 	}
