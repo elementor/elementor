@@ -10,7 +10,8 @@ if ( location.href.includes( 'mode=iframe' ) ) {
 new SiteEditor();
 new ImportExport();
 
-const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
+//const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
+const AppWrapper = React.Fragment;
 
 ReactDOM.render(
 	<AppWrapper>

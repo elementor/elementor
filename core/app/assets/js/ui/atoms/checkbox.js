@@ -7,6 +7,7 @@ export default function Checkbox( props ) {
 			type="checkbox"
 			disabled={ props.disabled }
 			className={ `eps-checkbox ${ props.className }` }
+			data-value={ Math.random() }
 		/>
 	);
 }

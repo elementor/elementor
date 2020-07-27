@@ -23,6 +23,8 @@ export default function Select2( props ) {
 	// Initiate the select 2 library, call to onReady after initiate, and
 	// listen to select event on the select instance.
 	React.useEffect( () => {
+		const rand = Math.random();
+		console.log( '---------------- CREATING SELECT2 ON OBJECT - NUMBER: ', rand );
 		const $select2 = jQuery( ref.current )
 			.select2( {
 				...getDefaultSettings(),
@@ -36,7 +38,8 @@ export default function Select2( props ) {
 		}
 
 		return () => {
-			$select2.select2( 'destroy' ).off( 'select2:select' ).off( 'select2:unselecting' );
+			console.log( 'SELECT 2 DESTROY - NUMBER: ', rand );
+			$select2.select2( 'destroy' ).off( 'select2:select' ).off( 'select2:unselect' );
 		};
 	}, [ props.settings, props.options ] );
 
@@ -44,6 +47,8 @@ export default function Select2( props ) {
 	React.useEffect( () => {
 		jQuery( ref.current ).val( props.value ).trigger( 'change' );
 	}, [ props.value ] );
+
+	console.log( '--- RENDER: Select2()' );
 
 	return <Select multiple={ props.multiple } value={ props.value } onChange={ props.onChange } elRef={ ref } options={ props.options }/>;
 }

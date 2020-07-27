@@ -3,7 +3,7 @@ import KitNameInput from './kit-name-input/kit-name-input';
 import Heading from 'elementor-app/ui/atoms/heading';
 
 export default function ExportContent() {
-	console.log( 'RE-RENDERS: ExportContent()' );
+	console.log( '--- RENDER BY PARENT: ExportContent()' );
 
 	return (
 		<section className="e-app-export">

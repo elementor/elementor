@@ -1,4 +1,6 @@
-import { memo } from 'react';
+import { useContext, useMemo } from 'react';
+
+import { Context as KitContext } from '../../../../context/kit-context';
 
 import Grid from 'elementor-app/ui/grid/grid';
 import Select2 from 'elementor-app/ui/molecules/select2.js';
@@ -6,13 +8,11 @@ import Select2 from 'elementor-app/ui/molecules/select2.js';
 import './post-types-select.scss';
 
 function PostTypesSelect( props ) {
-	const setPostTypes = ( event ) => {
-			const selectedOptions = [ ...event.target.selectedOptions ].map( ( option ) => option.value ),
-				actionType = selectedOptions.length ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
+	const context = useContext( KitContext ),
+		setPostTypes = ( event ) => {
+			const selectedOptions = [ ...event.target.selectedOptions ].map( ( option ) => option.value );
 
-			props.setOptions( selectedOptions );
-			props.dispatch( { type: 'SET_POST_TYPES', value: selectedOptions } );
-			props.dispatch( { type: actionType, value: props.itemType } );
+			context.dispatch( { type: 'SET_POST_TYPES', value: selectedOptions, include: props.itemType } );
 		},
 		getPostTypesOptions = () => {
 			const customPostTypes = elementorAppConfig[ 'import-export' ][ 'custom_post_types' ];
@@ -22,9 +22,9 @@ function PostTypesSelect( props ) {
 			) );
 		};
 
-	console.log( 'RE RENDER Post Types Select --- FUNCTION BODY' );
+	console.log( '--- RENDER: PostTypesSelect()' );
 
-	return (
+	return useMemo( () => (
 		<Grid container justify="center" className="kit-content-selection-container">
 			<Select2
 				multiple
@@ -37,7 +37,7 @@ function PostTypesSelect( props ) {
 				} }
 			/>
 		</Grid>
-	);
+	), [] );
 }
 
 PostTypesSelect.propTypes = {
@@ -49,4 +49,4 @@ PostTypesSelect.propTypes = {
 	itemType: PropTypes.string,
 };
 
-export default memo( PostTypesSelect );
+export default PostTypesSelect;

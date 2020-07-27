@@ -10,11 +10,12 @@ export default function DownloadButton( props ) {
 
 		const currentBaseUrl = window.location.origin + window.location.pathname + window.location.search,
 			queryConnection = currentBaseUrl.indexOf( '?' ) > -1 ? '&' : '?',
+			currentPostTypes = context.includes.includes( 'content' ) ? context.postTypes : [],
 			exportData = {
 				elementor_export_kit: {
 					title: context.title,
 					include: context.includes,
-					post_types: context.postTypes,
+					post_types: currentPostTypes,
 				},
 			};
 
