@@ -10,7 +10,7 @@ import './export-complete.scss';
 export default function ExportComplete() {
 	const getFooter = () => (
 		<Footer justify="center" className="e-app-export-complete__learn-more">
-			<Button variant="underlined" color="link" size="md" text={ __( 'Learn More', 'elementor' ) } url="/#" />
+			<Button variant="underlined" color="link" size="xxl" text={ __( 'Learn More', 'elementor' ) } url="/#" />
 		</Footer>
 	);
 

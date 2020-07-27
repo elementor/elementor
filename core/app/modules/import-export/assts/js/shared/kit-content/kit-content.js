@@ -2,7 +2,7 @@ import { useContext, useMemo } from 'react';
 
 import { Context as KitContext } from '../../context/kit-context';
 
-import Box from "../../ui/box/box";
+import Box from '../../ui/box/box';
 import KitContentList from './kit-content-list/kit-content-list';
 
 export default function KitContent( props ) {
