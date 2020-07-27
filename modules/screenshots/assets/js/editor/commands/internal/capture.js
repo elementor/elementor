@@ -12,7 +12,7 @@ export class Capture extends CommandInternalBase {
 
 		this.$iframe = this.createIframe();
 
-		jQuery( 'body' ).append( this.$iframe );
+		elementorCommon.elements.$body.append( this.$iframe );
 
 		// The iframe send an event when the screenshot process complete
 		// then the command send a notice to the component about it.
@@ -42,15 +42,13 @@ export class Capture extends CommandInternalBase {
 	}
 
 	createIframe() {
-		const $iframe = jQuery( '<iframe></iframe>' );
-
-		$iframe.attr( 'src', this.getIframeUrl() );
-		$iframe.css( {
-			width: '1200px',
-			visibility: 'hidden',
+		return jQuery( '<iframe>', {
+			src: this.getIframeUrl(),
+			css: {
+				width: '1200px',
+				visibility: 'hidden',
+			},
 		} );
-
-		return $iframe;
 	}
 
 	getIframeUrl() {

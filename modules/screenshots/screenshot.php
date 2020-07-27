@@ -69,6 +69,8 @@ class Screenshot {
 	/**
 	 * Uploads the base64 image it self.
 	 *
+	 * TODO: Use Upload Manager when ready.
+	 *
 	 * @return $this
 	 */
 	public function upload() {

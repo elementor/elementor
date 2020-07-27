@@ -24,8 +24,13 @@ class Screenshot extends elementorModules.ViewModule {
 	}
 
 	getDefaultElements() {
+		const $elementor = jQuery( ElementorScreenshotConfig.selector );
+
 		return {
-			$elementor: jQuery( ElementorScreenshotConfig.selector ),
+			$elementor,
+			$bodyElementsWithOutElementor: jQuery( 'body > *' ).not( $elementor ),
+			$sections: $elementor.find( ' .elementor-section-wrap > .elementor-section' ),
+			$head: jQuery( 'head' ),
 		};
 	}
 
@@ -75,7 +80,7 @@ class Screenshot extends elementorModules.ViewModule {
 	 * Fake content for documents that dont have any content.
 	 */
 	createFakeContent() {
-		this.elements.$elementor = jQuery( '<div></div>' ).css( {
+		this.elements.$elementor = jQuery( '<div>' ).css( {
 			height: this.getSettings( 'crop.height' ),
 			width: this.getSettings( 'crop.width' ),
 			display: 'flex',
@@ -84,7 +89,7 @@ class Screenshot extends elementorModules.ViewModule {
 		} );
 
 		this.elements.$elementor.append(
-			jQuery( '<h1></h1>' ).css( { fontSize: '85px' } ).html( this.getSettings( 'empty_content_headline' ) )
+			jQuery( '<h1>' ).css( { fontSize: '85px' } ).html( this.getSettings( 'empty_content_headline' ) )
 		);
 
 		document.body.prepend( this.elements.$elementor );
@@ -110,7 +115,7 @@ class Screenshot extends elementorModules.ViewModule {
 
 			$newLink.attr( 'href', this.getScreenshotProxyUrl( $link.attr( 'href' ) ) );
 
-			jQuery( 'head' ).append( $newLink );
+			this.elements.$head.append( $newLink );
 			$link.remove();
 		} );
 	}
@@ -158,7 +163,7 @@ class Screenshot extends elementorModules.ViewModule {
 			this.elements.$elementor
 		);
 
-		jQuery( 'body > *' ).not( this.elements.$elementor ).css( 'display', 'none' );
+		this.elements.$bodyElementsWithOutElementor.css( 'display', 'none' );
 	}
 
 	/**
@@ -167,8 +172,7 @@ class Screenshot extends elementorModules.ViewModule {
 	removeUnnecessaryElements() {
 		let currentHeight = 0;
 
-		this.elements.$elementor
-			.find( ' .elementor-section-wrap > .elementor-section' )
+		this.elements.$sections
 			.filter( ( index, el ) => {
 				let shouldBeRemoved = false;
 
