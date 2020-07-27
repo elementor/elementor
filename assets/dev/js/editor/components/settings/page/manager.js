@@ -69,6 +69,7 @@ module.exports = BaseSettings.extend( {
 				view: {
 					lookup: () => container,
 					renderOnChange: () => this.updateStylesheet(),
+					renderUI: () => this.updateStylesheet(),
 				},
 			},
 		} );
