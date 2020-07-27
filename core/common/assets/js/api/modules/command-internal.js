@@ -2,7 +2,7 @@ import Command from './command';
 
 export default class CommandInternal extends Command {
 	static getInstanceType() {
-		return 'CommandInternalBase';
+		return 'CommandInternal';
 	}
 
 	constructor( args, commandsAPI = $e.commandsInternal ) {

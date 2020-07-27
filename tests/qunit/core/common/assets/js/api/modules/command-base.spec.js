@@ -2,37 +2,12 @@ import CommandBase from 'elementor-api/modules/command-base';
 import Command from 'elementor-api/modules/command';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandHistory from 'elementor-document/commands/base/command-history';
-import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
+import CommandHistory from 'elementor-document/base/command-history';
+import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-base.js', () => {
-		QUnit.module( 'Command', () => {
-			QUnit.test( 'constructor(): without containers', ( assert ) => {
-				assert.throws(
-					() => {
-						const instance = new CommandBase( { } );
-
-						instance.requireContainer();
-					},
-					new Error( 'container or containers are required.' )
-				);
-			} );
-
-			QUnit.test( 'constructor(): with container & containers', ( assert ) => {
-				assert.throws(
-					() => {
-						const instance = new CommandBase( {
-							container: {},
-							containers: [],
-						} );
-
-						instance.requireContainer();
-					},
-					new Error( 'container and containers cannot go together please select one of them.' )
-				);
-			} );
-
+		QUnit.module( 'CommandBase', () => {
 			QUnit.test( 'apply(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {

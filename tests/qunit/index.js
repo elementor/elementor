@@ -10,6 +10,8 @@ export const tests = () => {
 
 	require( './core/editor/container/container.spec' );
 
+	require( './core/editor/base/command-editor.spec' );
+
 	require( './core/editor/document/commands/base/command-history.spec' );
 	require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
 	require( './core/editor/document/globals/commands/base/disable-enable.spec' );

@@ -1,4 +1,4 @@
-import CommandDisableEnable from 'elementor-document/commands/base/command-disable-enable';
+import CommandDisableEnable from 'elementor-document/base/command-disable-enable';
 
 export default class DisableEnable extends CommandDisableEnable {
 	static getName() {

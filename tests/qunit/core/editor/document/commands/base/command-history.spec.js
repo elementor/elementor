@@ -1,4 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
+import CommandHistory from 'elementor-document/base/command-history';
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/commands/base/command-history', () => {

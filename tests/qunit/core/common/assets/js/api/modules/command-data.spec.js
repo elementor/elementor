@@ -2,8 +2,8 @@ import CommandBase from 'elementor-api/modules/command-base';
 import Command from 'elementor-api/modules/command';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandHistory from 'elementor-document/commands/base/command-history';
-import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
+import CommandHistory from 'elementor-document/base/command-history';
+import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
 import ComponentBase from 'elementor-api/modules/component-base';
 
 jQuery( () => {
