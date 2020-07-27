@@ -1,4 +1,3 @@
-export { KitEnqueueFonts } from './ui/document/elements/settings/enqueue-fonts';
 export { KitDeleteGlobalsCache } from './ui/document/save/save/delete-globals-cache';
 export { KitUpdateLightboxPreview } from './ui/document/elements/settings/update-lightbox-preview';
 export { KitUpdateStretchContainer } from './ui/document/elements/settings/update-stretch-container';
