@@ -184,8 +184,6 @@ export default class extends ControlBaseDataView {
 		// Empty the value saved in the control.
 		this.setValue( '' );
 
-		this.globalValue = null;
-
 		// Adjust the Global select box text according to the cleared value.
 		this.triggerMethod( 'value:type:change' );
 
