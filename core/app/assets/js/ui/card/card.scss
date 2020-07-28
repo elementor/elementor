@@ -19,8 +19,7 @@
 	}
 
 	/*
-	 TBD: Optionally remove headline styling in favor of a global atom
-	 depending on variation needs
+	 todo: TBD: Optionally remove headline styling in favor of a global atom depending on variation needs
 	*/
 
 	&__headline {
@@ -76,14 +75,6 @@
 
 	&:hover {
 		background-color: var(--card-background-color-hover);
-	}
-
-	figure {
-		margin: 0;
-	}
-
-	&__info-icon {
-		//color: $card-info-icon-color;
 	}
 }
 

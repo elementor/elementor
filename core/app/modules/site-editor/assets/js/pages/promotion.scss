@@ -1,6 +1,6 @@
-$promotion-overlay-icon-size: 20px;
+$promotion-overlay-icon-size: type(size, "18");
 $promotion-overlay-icon-spacing: spacing(16);
-$promotion-overlay-icon-color: $eps-theme-light;
+$promotion-overlay-icon-color: theme-colors(light);
 
 .promotion-overlay {
 	&__link {
