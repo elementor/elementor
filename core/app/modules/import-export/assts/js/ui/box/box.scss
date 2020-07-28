@@ -20,14 +20,14 @@ $import-export-box-input-dark-color: dark-tints(100);
 .import-export-box {
 	padding: var(--import-export-box-spacing);
 	border-radius: $eps-radius;
-	background: var(--import-export-box-background-color);
+	background-color: var(--import-export-box-background-color);
 	color: var(--import-export-box-color);
 
 	> input {
 		width: 100%;
 		outline: 0;
 		border: 0;
-		background: var(--import-export-box-background-color);
+		background-color: var(--import-export-box-background-color);
 		color: var(--import-export-box-input-color);
 	}
 }

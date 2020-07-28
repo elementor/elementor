@@ -1,6 +1,8 @@
 class ReducerActions {
 	static updateIncludes( state, value, action ) {
 		if ( 'add' === action ) {
+
+			// If the value already exist, then doing nothing
 			if ( state.includes.includes( value ) ) {
 				return state;
 			}
@@ -16,6 +18,11 @@ class ReducerActions {
 	static setPostTypes( state, selectedOptions, include ) {
 		const includesAction = selectedOptions.length ? 'add' : 'remove';
 
+		/*
+		When post types are selected:
+		We need to add their related category name (the 'include' value) to the includes list
+		This action makes the relevant category checkbox to be marked as checked
+		 */
 		state = this.updateIncludes( state, include, includesAction );
 
 		return { ...state, postTypes: selectedOptions };

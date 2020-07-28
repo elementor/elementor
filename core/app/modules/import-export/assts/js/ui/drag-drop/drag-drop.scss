@@ -15,7 +15,7 @@ $e-app-drag-drop-dark-outline-color: dark-tints(300);
 
 .e-app-drag-drop {
 	text-align: center;
-	background: var(--e-app-drag-drop-background-color);
+	background-color: var(--e-app-drag-drop-background-color);
 	outline: 2px dashed var(--e-app-drag-drop-outline-color);
 	outline-offset: spacing(12) * -1;
 	margin-bottom: spacing(24);
