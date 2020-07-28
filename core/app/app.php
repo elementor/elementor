@@ -93,8 +93,6 @@ class App extends BaseApp {
 			Plugin::$instance->common->register_scripts();
 		}
 
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
 		wp_register_style(
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
@@ -104,14 +102,14 @@ class App extends BaseApp {
 
 		wp_register_style(
 			'elementor-common',
-			$this->get_css_assets_url( 'common' . $direction_suffix ),
+			$this->get_css_assets_url( 'common', null, 'default', true ),
 			[],
 			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style(
 			'elementor-app',
-			$this->get_css_assets_url( 'app' . $direction_suffix ),
+			$this->get_css_assets_url( 'app', null, 'default', true ),
 			[
 				'elementor-icons',
 				'elementor-common',
