@@ -1,3 +1,7 @@
+import Utils from 'elementor-app/utils/utils.js';
+
+import Button from 'elementor-app/ui/molecules/button';
+
 import './click-here.scss';
 
 export default function ClickHere( props ) {
@@ -5,21 +9,18 @@ export default function ClickHere( props ) {
 		classes = [ baseClassName, props.className ];
 
 	return (
-		<div style={ style } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
-			{ props.children }
-		</div>
+		<Button
+			variant="underlined"
+			color="link"
+			className={ Utils.arrayToClassName( classes ) }
+			text={ __( 'Click here', 'elementor' ) }
+			url={ props.url } />
 	);
 }
 
 ClickHere.propTypes = {
 	className: PropTypes.string,
-	variant: PropTypes.any,
-	spacing: PropTypes.number,
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	url: PropTypes.string,
 };
 
 ClickHere.defaultProps = {

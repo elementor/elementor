@@ -20,11 +20,6 @@ $export-complete-secondary-sentence-dark-color: dark-tints(200);
 		color: var(--export-complete-secondary-sentence-color);
 	}
 
-	&__click-here {
-		margin-inline-start: spacing(5);
-		font-style: italic;
-	}
-
 	&__learn-more {
 		margin-bottom: spacing(44);
 	}

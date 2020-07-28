@@ -6,6 +6,7 @@ import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './export-complete.scss';
+import ClickHere from "../../ui/click-here/click-here";
 
 export default function ExportComplete() {
 	const getFooter = () => (
@@ -29,8 +30,7 @@ export default function ExportComplete() {
 					</Text>
 
 					<Text tag="span" variant="sm" className="e-app-export-complete__secondary-sentence">
-						{ __( 'If the download doesn\'t start automatically, please', 'elementor' ) }
-						<Button variant="underlined" color="link" className="e-app-export-complete__click-here" text={ __( 'click here', 'elementor' ) } url="/#" />
+						{ __( 'If the download doesn\'t start automatically, please', 'elementor' ) } <ClickHere url="/#" />
 					</Text>
 				</Message>
 			</section>

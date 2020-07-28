@@ -8,13 +8,13 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './import-success.scss';
+import ClickHere from "../../ui/click-here/click-here";
 
 export default function ImportSuccess() {
 	const getFooter = () => (
 		<Footer justify="center" className="e-app-import-success__bottom_sentence">
 			<Text variant="xs" tag="span">
-				<Button variant="underlined" color="link" text={ __( 'Click here', 'elementor' ) } className="e-app-import-success__click-here" url="/#" />
-				{ __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
+				<ClickHere url="/#" /> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
 			</Text>
 		</Footer>
 	);

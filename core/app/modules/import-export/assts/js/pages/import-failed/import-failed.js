@@ -1,10 +1,10 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
 import SelectFile from '../../shared/select-file/select-file';
+import ClickHere from '../../ui/click-here/click-here';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
-import Button from 'elementor-app/ui/molecules/button';
 import Grid from 'elementor-app/ui/grid/grid';
 
 import './import-failed.scss';
@@ -47,8 +47,7 @@ export default function ImportFailed() {
 					<Text variant="xl">
 						{ __( 'File is invalid and could not be processed', 'elementor' ) }
 						<br />
-						<Button variant="underlined" color="link" className="e-app-import-failed__click-here" text={ __( 'Click Here', 'elementor' ) } url="/#" />
-						<span>{ __( 'to try solving the issue.', 'elementor' ) }</span>
+						<ClickHere url="/#" /> { __( 'to try solving the issue.', 'elementor' ) }
 					</Text>
 
 					<SelectFile />

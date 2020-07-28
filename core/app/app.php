@@ -122,9 +122,9 @@ class App extends BaseApp {
 			'elementor-app',
 			$this->get_css_assets_url( 'app' . $direction_suffix ),
 			[
+				'select2',
 				'elementor-icons',
 				'elementor-common',
-				'select2',
 			],
 			ELEMENTOR_VERSION
 		);
