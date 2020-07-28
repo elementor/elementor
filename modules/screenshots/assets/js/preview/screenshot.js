@@ -296,16 +296,22 @@ class Screenshot extends elementorModules.ViewModule {
 	 * Mark this post screenshot as failed.
 	 */
 	markAsFailed() {
-		elementorCommon.ajax.addRequest( 'screenshot_failed', {
-			data: {
-				post_id: this.getSettings( 'post_id' ),
-			},
-			success: () => {
-				this.log( `Marked as failed.` );
-			},
-			error: () => {
-				this.log( 'Failed to mark this screenshot as failed.' );
-			},
+		return new Promise( ( resolve, reject ) => {
+			elementorCommon.ajax.addRequest( 'screenshot_failed', {
+				data: {
+					post_id: this.getSettings( 'post_id' ),
+				},
+				success: () => {
+					this.log( `Marked as failed.` );
+
+					resolve();
+				},
+				error: () => {
+					this.log( 'Failed to mark this screenshot as failed.' );
+
+					reject();
+				},
+			} );
 		} );
 	}
 
@@ -328,11 +334,10 @@ class Screenshot extends elementorModules.ViewModule {
 	 * Notify that the screenshot has been failed.
 	 */
 	screenshotFailed( e ) {
-		this.log( e );
+		this.log( e, null );
 
-		this.markAsFailed();
-
-		this.screenshotDone( false );
+		this.markAsFailed()
+			.then( () => this.screenshotDone( false ) );
 	}
 
 	/**
@@ -373,8 +378,10 @@ class Screenshot extends elementorModules.ViewModule {
 				message
 		);
 
-		// eslint-disable-next-line no-console
-		console[ timerMethod ]( this.getSettings( 'timer_label' ) );
+		if ( timerMethod ) {
+			// eslint-disable-next-line no-console
+			console[ timerMethod ]( this.getSettings( 'timer_label' ) );
+		}
 	}
 }
 
