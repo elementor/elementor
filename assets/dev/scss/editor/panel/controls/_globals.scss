@@ -70,9 +70,15 @@
 	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: auto;
+		margin: 5px 0;
 
 		&::-webkit-scrollbar {
 			width: 8px;
+		}
+
+		&::-webkit-scrollbar-track {
+			background-color: $editor-background-light;
+			border-radius: 10px;
 		}
 
 		&::-webkit-scrollbar-thumb {
@@ -125,7 +131,7 @@
 		align-items: center;
 
 		&:first-child {
-			margin-top: 10px;
+			margin-top: 5px;
 		}
 
 		&:last-child {
