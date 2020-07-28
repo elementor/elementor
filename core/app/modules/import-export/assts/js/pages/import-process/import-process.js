@@ -29,7 +29,7 @@ export default function ImportProcess() {
 					{ __( 'This may take a few moments to complete.\nPlease don’t close this window until importing is completed', 'elementor' ) }
 				</Text>
 
-				<Box className="e-app-import-process__box">
+				<Box spacing={12} className="e-app-import-process__box">
 					{ __( 'Importing global templates', 'elementor' ) }
 				</Box>
 			</Message>

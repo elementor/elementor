@@ -1,6 +1,6 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
-import Box from '../../ui/box/box';
+import Notice from '../../ui/notice/notice';
 import DragDrop from '../../ui/drag-drop/drag-drop';
 import SelectFile from '../../shared/select-file/select-file';
 import Icon from 'elementor-app/ui/atoms/icon';
@@ -42,11 +42,11 @@ export default function Import() {
 					</Message>
 				</DragDrop>
 
-				<Box variant="notice" className="kit-content-list__notice">
+				<Notice color="warning" className="kit-content-list__notice">
 					<Text variant="xs">
 						{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
 					</Text>
-				</Box>
+				</Notice>
 			</section>
 		</Layout>
 	);

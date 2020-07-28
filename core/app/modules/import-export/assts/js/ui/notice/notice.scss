@@ -14,9 +14,10 @@ $import-export-box-notice-dark-background-color: dark-tints(500);
 }
 
 .import-export-notice {
-	background-color: var(--import-export-box-notice-background-color);
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	padding: spacing(10) spacing(16);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	background-color: var(--import-export-box-notice-background-color);
+	color: var(--import-export-box-notice-color);
 	font-style: italic;
 
 	&--warning {
@@ -26,6 +27,5 @@ $import-export-box-notice-dark-background-color: dark-tints(500);
 	* {
 		margin: 0;
 		padding: 0;
-		color: var(--import-export-box-notice-color);
 	}
 }
