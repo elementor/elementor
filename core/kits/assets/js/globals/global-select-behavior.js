@@ -268,10 +268,32 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			onShow: () => {
 				// Put focus on the naming input.
 				this.ui.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
+				this.ui.confirmMessageText = this.confirmNewGlobalModal.getElements( 'widget' ).find( '.e-global__confirm-message-text' );
+
+				this.ui.globalNameInput.on( 'change paste keyup', () => this.onAddGlobalConfirmInputChange() );
 			},
 		} );
 
 		this.confirmNewGlobalModal.show();
+	}
+
+	onAddGlobalConfirmInputChange() {
+		if ( ! this.view.globalsList ) {
+			return;
+		}
+
+		let messageContent;
+
+		for ( const globalColor of Object.values( this.view.globalsList ) ) {
+			if ( this.ui.globalNameInput.val() === globalColor.title ) {
+				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_name_already_exists' );
+				break;
+			} else {
+				messageContent = elementor.translate( 'global_color_confirm_text' );
+			}
+		}
+
+		this.ui.confirmMessageText.html( messageContent );
 	}
 
 	onConfirmNewGlobal() {
