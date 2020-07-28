@@ -1,5 +1,3 @@
-import './typography.scss';
-
 export default function Typography( props ) {
 	const TagName = props.tagName;
 	return (

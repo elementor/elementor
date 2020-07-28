@@ -6,7 +6,6 @@ import '../../scss/loading.scss';
 class TemplateTypesContext extends React.Component {
 	static propTypes = {
 		children: PropTypes.object.isRequired,
-		theme: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -47,7 +46,7 @@ class TemplateTypesContext extends React.Component {
 
 		if ( this.state.loading ) {
 			return (
-			<div className={`elementor-loading ${ this.props.theme }`}>
+			<div className="elementor-loading">
 				<div className="elementor-loader-wrapper">
 					<div className="elementor-loader">
 						<div className="elementor-loader-boxes">
@@ -64,8 +63,8 @@ class TemplateTypesContext extends React.Component {
 		}
 
 		return (
-			<Context.Provider value={ this.state } className={ this.props.theme }>
-				<div className={ this.props.theme }>{ this.props.children }</div>
+			<Context.Provider value={ this.state }>
+				{ this.props.children }
 			</Context.Provider>
 		);
 	}

@@ -2,7 +2,7 @@ import './card.scss';
 
 export default function CardFooter( props ) {
 	return (
-		<footer className={ `card__footer ${ props.className }` }>
+		<footer className={ `eps-card__footer ${ props.className }` }>
 			{ props.children }
 		</footer>
 	);

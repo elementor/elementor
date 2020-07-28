@@ -2,7 +2,7 @@ import './card.scss';
 
 export default function CardHeader( props ) {
 	return (
-		<header className={ `card__header ${ props.className }` }>
+		<header className={ `eps-card__header ${ props.className }` }>
 			{ props.children }
 		</header>
 	);
