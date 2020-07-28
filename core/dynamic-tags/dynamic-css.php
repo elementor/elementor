@@ -2,26 +2,26 @@
 namespace Elementor\Core\DynamicTags;
 
 use Elementor\Controls_Stack;
-use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Plugin;
+use Elementor\Core\Files\CSS\Post_Local_Cache;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Element_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_CSS extends Post {
+class Dynamic_CSS extends Post_Local_Cache {
 
 	private $post_dynamic_elements_ids;
 
-	protected $post_id_for_data;
+	private $post_id_for_data;
 
-	protected function is_global_parsing_supported() {
-		return false;
+	protected function get_post_id_for_data() {
+		return $this->post_id_for_data;
 	}
 
-	protected function is_sync_enabled() {
+	protected function is_global_parsing_supported() {
 		return false;
 	}
 
@@ -42,13 +42,16 @@ class Dynamic_CSS extends Post {
 	 *
 	 * @since 2.0.13
 	 * @access public
+	 *
 	 * @param int $post_id Post ID
-	 * @param int $post_id_for_data
+	 * @param Post_CSS $post_css_file
 	 */
-	public function __construct( $post_id, $post_id_for_data ) {
-		$this->post_id_for_data = $post_id_for_data;
-
-		$post_css_file = Post_CSS::create( $post_id_for_data );
+	public function __construct( $post_id, Post_CSS $post_css_file ) {
+		if ( $post_css_file instanceof Post_Preview ) {
+			$this->post_id_for_data = $post_css_file->get_post_id_for_data();
+		} else {
+			$this->post_id_for_data = $post_id;
+		}
 
 		$this->post_dynamic_elements_ids = $post_css_file->get_meta( 'dynamic_elements_ids' );
 
@@ -76,20 +79,7 @@ class Dynamic_CSS extends Post {
 	 * @access protected
 	 */
 	protected function get_file_handle_id() {
-		return 'elementor-post-dynamic-' . $this->post_id_for_data;
-	}
-
-	/**
-	 * @since 2.0.13
-	 * @access protected
-	 */
-	protected function get_data() {
-		$document = Plugin::$instance->documents->get( $this->post_id_for_data );
-		return $document ? $document->get_elements_data() : [];
-	}
-
-	public function is_update_required() {
-		return true;
+		return 'elementor-post-dynamic-' . $this->get_post_id_for_data();
 	}
 
 	/**

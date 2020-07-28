@@ -44,15 +44,6 @@ abstract class Base {
 	private $content;
 
 	/**
-	 * Meta cache
-	 *
-	 * for files that doesn't support sync
-	 *
-	 * @var array
-	 */
-	private $meta_cache = [];
-
-	/**
 	 * @since 2.1.0
 	 * @access public
 	 * @static
@@ -164,11 +155,7 @@ abstract class Base {
 
 		$meta['time'] = time();
 
-		if ( $this->is_sync_enabled() ){
-			$this->update_meta( $meta );
-		} else {
-			$this->update_meta_cache( $meta );
-		}
+		$this->update_meta( $meta );
 	}
 
 	/**
@@ -202,9 +189,7 @@ abstract class Base {
 			unlink( $this->path );
 		}
 
-		if ( $this->is_sync_enabled() ) {
-			$this->delete_meta();
-		}
+		$this->delete_meta();
 	}
 
 	/**
@@ -225,15 +210,7 @@ abstract class Base {
 	 *                    the property does not exist.
 	 */
 	public function get_meta( $property = null ) {
-		$meta = $this->get_default_meta();
-
-		if ( $this->is_sync_enabled() ) {
-			$meta_to_merge = (array) $this->load_meta();
-		} else {
-			$meta_to_merge = $this->meta_cache;
-		}
-
-		$meta = array_merge( $meta, $meta_to_merge );
+		$meta = array_merge( $this->get_default_meta(), (array) $this->load_meta() );
 
 		if ( $property ) {
 			return isset( $meta[ $property ] ) ? $meta[ $property ] : null;
@@ -248,10 +225,6 @@ abstract class Base {
 	 * @abstract
 	 */
 	abstract protected function parse_content();
-
-	protected final function update_meta_cache( $meta ) {
-		$this->meta_cache = $meta;
-	}
 
 	/**
 	 * Load meta.
@@ -299,10 +272,6 @@ abstract class Base {
 		return [
 			'time' => 0,
 		];
-	}
-
-	protected function is_sync_enabled() {
-		return true;
 	}
 
 	/**

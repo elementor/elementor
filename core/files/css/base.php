@@ -165,11 +165,7 @@ abstract class Base extends Base_File {
 
 		$meta['dynamic_elements_ids'] = $this->dynamic_elements_ids;
 
-		if ( $this->is_sync_enabled() ) {
-			$this->update_meta( $meta );
-		} else {
-			$this->update_meta_cache( $meta );
-		}
+		$this->update_meta( $meta );
 	}
 
 	/**
@@ -566,6 +562,7 @@ abstract class Base extends Base_File {
 		return array_merge( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
 			'icons' => array_unique( $this->icons_fonts ),
+			'dynamic_elements_ids' => [],
 			'status' => '',
 		] );
 	}
