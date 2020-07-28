@@ -54,7 +54,7 @@ export default function Menu( props ) {
 
 Menu.propTypes = {
 	menuItems: PropTypes.arrayOf( PropTypes.object ),
-	children: PropTypes.object,
+	children: PropTypes.any,
 	actionButton: PropTypes.func,
 	promotion: PropTypes.bool,
 };

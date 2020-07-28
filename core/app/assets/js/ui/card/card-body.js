@@ -2,7 +2,7 @@ import './card.scss';
 
 export default function CardBody( props ) {
 	return (
-		<main className={ `card__body ${ props.className }` }>
+		<main className={ `eps-card__body ${ props.className }` }>
 			{ props.children }
 		</main>
 	);

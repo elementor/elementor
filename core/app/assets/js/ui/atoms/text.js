@@ -9,7 +9,7 @@ export default function Text( props ) {
 	classes.push( baseClassName + '-text' + variant );
 
 	return React.createElement( tagName, {
-		className: classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ),
+		className: classes.filter( ( classItem ) => classItem ).join( ' ' ),
 	}, props.children );
 }
 

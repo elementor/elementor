@@ -6,7 +6,7 @@ export default class Button extends BaseButton {
 	} );
 
 	getCssId() {
-		return `eps-app-headerBtn-` + super.getCssId();
+		return `eps-app-header-btn-` + super.getCssId();
 	}
 
 	getClassName() {

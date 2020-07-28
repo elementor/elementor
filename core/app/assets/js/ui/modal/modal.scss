@@ -36,7 +36,7 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 	EPS Modal
 ---------------------------------------------------------------- */
 
-.eps-modal {
+.#{$eps-prefix}modal {
 	max-width: $eps-modal-width;
 	background: var(--eps-modal-background-color);
 	border-radius: $eps-modal-border-radius;
@@ -72,7 +72,7 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 		padding: $eps-modal-body-padding;
 	}
 
-	&__tip, .eps-tip {
+	&__tip, .#{$eps-prefix}tip {
 		padding-inline-start: $eps-tip-padding-start;
 		border-inline-start: $eps-tip-border-start;
 		&:not(:last-child) {
