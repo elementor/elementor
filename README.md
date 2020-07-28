@@ -4,10 +4,10 @@
 **Contributors:** [elemntor](https://profiles.wordpress.org/elemntor), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet)  
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 5.0  
-**Tested up to:** 5.3  
+**Tested up to:** 5.5  
 **Requires PHP:** 5.6  
-**Stable tag:** 2.8.5  
-**Beta tag:** 2.9.0-beta5  
+**Beta tag:** 3.0.0-beta2  
+**Stable tag:** 2.9.14  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -224,6 +224,140 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 ## Changelog ##
 
+### 2.9.14 - 2020-07-21 ###
+* Tweak: Added compatibility with WordPress v5.5 ([#11820](https://github.com/elementor/elementor/issues/11820), [#11830](https://github.com/elementor/elementor/issues/11830))
+* Fix: Elementor posts aren't properly imported with WordPress Importer v0.7 ([#11466](https://github.com/elementor/elementor/issues/11466), [#10744](https://github.com/elementor/elementor/issues/10744))
+* Fix: Added sanitization to post titles in WordPress dashboard for better security
+
+### 2.9.13 - 2020-06-23 ###
+* Fix: Duplicated Hidden type form fields inherited required attribute in Form widget ([#11578](https://github.com/elementor/elementor/issues/11578))
+* Fix: Select2 control width glitch
+
+### 2.9.12 - 2020-06-14 ###
+* Fix: Dynamic default value not working in Form widget ([#11578](https://github.com/elementor/elementor/issues/11578), [#11609](https://github.com/elementor/elementor/issues/11609))
+* Fix: Dark mode glitches in Form Step items ([#11579](https://github.com/elementor/elementor/issues/11579))
+* Fix: Unfiltered files upload not working when enabled from WordPress dashboard (Props [@jrutheiser](https://github.com/jrutheiser))
+* Fix: File upload control has text cursor instead of pointer cursor
+* Fix: Dark mode glitches in File upload control
+* Fix: Clear icon dark mode glitch in the widgets search box
+
+### 2.9.11 - 2020-06-02 ###
+* Fix: Several URI protocols removed from links ([#11518](https://github.com/elementor/elementor/issues/11518))
+
+### 2.9.10 - 2020-06-01 ###
+* Tweak: Updated `eicons` library to v5.7.0
+* Tweak: Added infrastructure improvements to Repeater control to support upcoming versions
+* Fix: Popup action links triggers 404 error ([#11104](https://github.com/elementor/elementor/issues/11104))
+* Fix: Removed source map comment so browsers don't look for source map in Swiper library ([#10764](https://github.com/elementor/elementor/issues/10764))
+* Fix: Elementor posts aren't properly imported with WordPress Importer v0.7 ([#11466](https://github.com/elementor/elementor/issues/11466), [#10744](https://github.com/elementor/elementor/issues/10744))
+* Fix: Theme Style overrides link settings in some cases ([#11462](https://github.com/elementor/elementor/issues/11462))
+* Fix: UI glitch in Media controls
+* Fix: Hardened sanitization in Custom Link Attributes and in URL control to avoid security issues
+
+### 2.9.9 - 2020-05-24 ###
+* Tweak: Added 'Learn More' link to URL Custom Attributes Description
+* Tweak: Added real-time JS preview handling in Image Carousel widget
+* Tweak: Added File upload control UI
+* Tweak: Added support for processing Envato Template Kit ZIP files
+* Tweak: Allow disabling a repeater item sorting option by adding a class
+* Tweak: Adjusted CSS selectors to be more generic in Forms
+* Tweak: Updated content in Getting Started screen
+* Tweak: Added JSON files support to files upload handler
+* Tweak: Changed SVG Uploads prompt message to Unfiltered Files
+* Tweak: Added an option for repeater item to disable itself
+* Tweak: Removed temporary code from Page Settings
+* Tweak: Added infrastructure improvements to Repeater control to support upcoming versions
+* Fix: Default line-height value in Heading widget is overriding line-height setting in Theme Style ([#10501](https://github.com/elementor/elementor/issues/10501), [#10649](https://github.com/elementor/elementor/issues/10649))
+* Fix: Dynamic settings are not available in frontend JS in edge cases
+* Fix: Connectivity issues in Connect module
+* Fix: Removed source map comment so browsers don't look for source map in Swiper library ([#10764](https://github.com/elementor/elementor/issues/10764))
+* Fix: Render style on repeater item change in Page Settings
+* Fix: Added sanitization to Custom Link Attributes control to avoid security issue
+* Fix: Added sanitization to URL control to avoid security issue
+
+### 2.9.8 - 2020-04-21 ###
+* Tweak: Added `.webp` file extension support to Elementor Lightbox
+* Fix: Added missing font-family for `elementor-button` class to avoid system font ([#11166](https://github.com/elementor/elementor/issues/11166))
+* Fix: Site Part without any content has no height and not accessible in some cases
+* Fix: PHP notice in Connect module
+* Fix: Navigator resize action is not available in edge cases
+* Fix: SVG sanitizer `href` attribute for better security
+* Fix: Hardened user role that is allowed to upload unfiltered files for better security
+
+### 2.9.7 - 2020-03-25 ###
+* Tweak: Added compatibility with WordPress v5.4 ([#10745](https://github.com/elementor/elementor/issues/10745))
+* Tweak: Show Typography section to everyone in Section, Column and Inner Section elements ([#10592](https://github.com/elementor/elementor/issues/10592))
+* Fix: Custom Attributes section missing in Advanced tab ([#10881](https://github.com/elementor/elementor/issues/10881))
+* Fix: Title color & Typography settings are being overridden by Theme Style in Accordion and Toggle widget ([#10900](https://github.com/elementor/elementor/issues/10900))
+* Fix: Merged "Play On Mobile" string for better i18n in Video widget (Props [@pedro-mendonca](https://github.com/pedro-mendonca), [#10315](https://github.com/elementor/elementor/issues/10315))
+* Fix: Whatsapp share link does not escape HTML entities ([#10746](https://github.com/elementor/elementor/issues/10746))
+* Fix: Invalid request error conflict with Yoast plugin and Share Buttons widget ([#10746](https://github.com/elementor/elementor/issues/10746))
+* Fix: FontAwesome Pro icons not loading in edge cases
+* Fix: Missing Dynamic indication in Range control ([#10835](https://github.com/elementor/elementor/issues/10835))
+* Fix: Carousel spins multiple times when loading in Image Carousel widget
+* Fix: Theme style overrides Lightbox Share links color
+* Fix: Loading spinner placement glitch in URL control
+* Fix: Missing separator control in Icon widget
+* Fix: Dynamic Tags with the character “0” are not visible on frontend
+* Fix: Dashboard menu UI glitch for non-Administrator role users
+
+### 2.9.6 - 2020-03-12 ###
+* Fix: Removed redundant dynamic capabilities from all of color controls inside Group controls in Theme Style
+* Fix: Global widget is clickable when editing Theme Style
+* Fix: Dropcap not working immediately in Text Editor widget
+* Security Fix: Enable Safe Mode only for `activate_plugins` capability
+
+### 2.9.5 - 2020-03-09 ###
+* Tweak: Added new parameter to Swiper wrapper to limit breakpoint intervention ([#10525](https://github.com/elementor/elementor/issues/10525))
+* Tweak: Updated E-Gallery library to v1.1.2
+* Tweak: Show descriptive Pro Promotions only for Administrator role
+* Fix: Inconsistent responsive display issue in the Editor when using Custom Breakpoints ([#10540](https://github.com/elementor/elementor/issues/10540))
+* Fix: Editor not loading when the Library launches on load ([Topic](https://wordpress.org/support/topic/editor-broken-in-2-9-4/))
+* Fix: Gallery Columns does not update immediately in the preview when in Masonry layout
+* Fix: Navigator does not update according to the current site part being edited
+* Fix: Hidden responsive indicator missing in editor
+* Fix: Tabs widget title color not working on mobile
+
+### 2.9.4 - 2020-03-04 ###
+* Tweak: Added support for Elementor Pro v2.9.0
+* Tweak: Updated Swiper.js library to v5.3.6
+* Tweak: Added version expected release date for Theme Style Custom CSS and Dynamic Color promotions
+* Fix: Warning in `/base/controls-stack.php` when a 3rd party controls doesn’t have a default dynamic value ([#10578](https://github.com/elementor/elementor/issues/10578))
+* Fix: Alignment issue on drag when not set to Infinite Loop in Image Carousel widget
+* Fix: Title Color change both title and link color in Accordion widget
+
+### 2.9.3 - 2020-02-26 ###
+* Tweak: Don't show the "Have a look" link after successful Theme Style publish
+* Tweak: Show Database update notice only for users with `update_plugins` capability
+* Tweak: Added Custom CSS promotion section in Theme Style
+* Tweak: Added compatibility for Pro v2.9 features
+* Fix: Warning in `/base/controls-stack.php` when a control doesn't have a dynamic capability ([#10578](https://github.com/elementor/elementor/issues/10578))
+* Fix: Beta Tester sign up modal pops up multiple times after signing up
+* Fix: `<a>` Links appear with `underline` text-decoration
+* Fix: Shortcode doesn't render when exiting inline edit
+* Fix: Whatsapp not sharing the link of the page in Share buttons widget
+* Fix: Whatsapp share doesn't include line breaks between the page title and the URL in Share buttons widget
+* Fix: Box Shadow doesn't display properly in Toggle widget
+* Fix: Custom Link Attributes are not being applied in Icon Box widget
+* Fix: Added sanitization to Custom Link Attributes control to avoid security issue (Props [@yzy9951](https://github.com/yzy9951))
+
+### 2.9.2 - 2020-02-16 ###
+* Fix: Responsive issue when using Slides to Show control in carousel widgets ([#10540](https://github.com/elementor/elementor/issues/10540))
+* Fix: Title and Description causes JS error in Lightbox in edge cases
+
+### 2.9.1 - 2020-02-13 ###
+* Tweak: Added Native WordPress Gallery support for lightbox pagination
+* Tweak: Updated eicons library to v5.6.2
+* Fix: Popup builder not accessible when Pro plugin is active ([#10502](https://github.com/elementor/elementor/issues/10502))
+* Fix: Pagination not working when one item is visible in carousel widgets ([#10508](https://github.com/elementor/elementor/issues/10508), [Topic](https://wordpress.org/support/topic/carrousel-is-blocked-with-version-2-9/))
+* Fix: Empty panel after dragging a widget in edge cases
+* Fix: Theme Style button being added in Theme Builder documents
+* Fix: Google fonts enqueuing issue
+* Fix: Preview mode not changing when dismissing the exit prompt
+* Fix: Kit showing up in Finder results
+* Fix: Missing preview icon in Finder
+* Fix: Missing preview icon in Theme Builder footer
+
 ### 2.9.0 - 2020-02-10 ###
 * New: Introducing Theme Style - set your default HTML tags styling using Elementor ([#534](https://github.com/elementor/elementor/issues/534))
 * New: Added Custom Link Attributes to Link Options to allow adding custom attributes to `<a>` tags ([#5716](https://github.com/elementor/elementor/issues/5716), [#3642](https://github.com/elementor/elementor/issues/3642), [#9225](https://github.com/elementor/elementor/issues/9225), [#9079](https://github.com/elementor/elementor/issues/9079))
@@ -270,6 +404,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Fix: Beta sign-up modal closes unexpectedly ([#10355](https://github.com/elementor/elementor/issues/10355))
 * Fix: "Slides to Show" option doesn't work on Tablet view in Image Carousel widget ([#10227](https://github.com/elementor/elementor/issues/10227))
 * Fix: Previous and Next buttons are not displaying on Safari in Media Carousel's Cube mode ([#9725](https://github.com/elementor/elementor/issues/9725))
+* Fix: Form style being reset adding MailChimp/Getresponse action in Form widget ([#9313](https://github.com/elementor/elementor/issues/9313))
 * Fix: Post Title and Archive Excerpt wrong values in edge cases
 * Fix: Wrong `<select>` field width in "Add New" dialog
 * Fix: Gap created by the "Add Media" button in Text Editor widget

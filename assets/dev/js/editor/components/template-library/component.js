@@ -1,19 +1,14 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
+import * as commands from './commands/';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
 export default class Component extends ComponentModalBase {
 	__construct( args ) {
-		// Before construct because it's used in defaultTabs().
-		this.docLibraryConfig = elementor.config.document.remoteLibrary;
-
 		super.__construct( args );
 
-		if ( 'block' === this.docLibraryConfig.type ) {
-			this.setDefaultRoute( 'templates/blocks' );
-		} else {
-			this.setDefaultRoute( 'templates/pages' );
-		}
+		// When switching documents update defaultTabs.
+		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
 	}
 
 	getNamespace() {
@@ -24,11 +19,11 @@ export default class Component extends ComponentModalBase {
 		return {
 			'templates/blocks': {
 				title: elementor.translate( 'blocks' ),
-				filter: {
+				getFilter: () => ( {
 					source: 'remote',
 					type: 'block',
-					subtype: this.docLibraryConfig.category,
-				},
+					subtype: elementor.config.document.remoteLibrary.category,
+				} ),
 			},
 			'templates/pages': {
 				title: elementor.translate( 'pages' ),
@@ -51,7 +46,6 @@ export default class Component extends ComponentModalBase {
 			import: () => {
 				this.manager.layout.showImportView();
 			},
-
 			'save-template': ( args ) => {
 				this.manager.layout.showSaveTemplateView( args.model );
 			},
@@ -71,10 +65,12 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultCommands() {
-		return Object.assign( super.defaultCommands(), {
-			open: this.show,
-			'insert-template': this.insertTemplate,
-		} );
+		const modalCommands = super.defaultCommands();
+
+		return {
+			... modalCommands,
+			... this.importCommands( commands ),
+		};
 	}
 
 	defaultShortcuts() {
@@ -85,8 +81,17 @@ export default class Component extends ComponentModalBase {
 		};
 	}
 
+	onDocumentLoaded( document ) {
+		this.setDefaultRoute( document.config.remoteLibrary.default_route );
+
+		this.maybeOpenLibrary();
+	}
+
 	renderTab( tab ) {
-		this.manager.setScreen( this.tabs[ tab ].filter );
+		const currentTab = this.tabs[ tab ],
+			filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
+
+		this.manager.setScreen( filter );
 	}
 
 	activateTab( tab ) {
@@ -125,6 +130,7 @@ export default class Component extends ComponentModalBase {
 		}
 	}
 
+	// TODO: Move function to 'insert-template' command.
 	insertTemplate( args ) {
 		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings,
 			model = args.model;
@@ -230,5 +236,13 @@ export default class Component extends ComponentModalBase {
 
 	getModalLayout() {
 		return TemplateLibraryLayoutView;
+	}
+
+	maybeOpenLibrary() {
+		if ( '#library' === location.hash ) {
+			$e.run( 'library/open' );
+
+			location.hash = '';
+		}
 	}
 }

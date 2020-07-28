@@ -197,7 +197,7 @@ class Admin_Notices extends Module {
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
-		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our non-sensitive plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
+		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' );
 
 		/**
 		 * Tracker admin description text.
@@ -287,7 +287,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+		if ( strtotime( '2019-08-01' ) > $this->get_install_time() ) {
 			return false;
 		}
 
@@ -331,7 +331,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+		if ( strtotime( '2019-08-01' ) > $this->get_install_time() ) {
 			return false;
 		}
 
@@ -375,7 +375,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+		if ( strtotime( '2019-08-01' ) > $this->get_install_time() ) {
 			return false;
 		}
 
@@ -419,7 +419,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( strtotime( '2020-02-01' ) > $this->get_install_time() ) {
+		if ( strtotime( '2019-08-01' ) > $this->get_install_time() ) {
 			return false;
 		}
 

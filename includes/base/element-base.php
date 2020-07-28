@@ -450,7 +450,7 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = $url_control['url'];
+			$attributes['href'] = esc_url( $url_control['url'] );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
@@ -463,22 +463,7 @@ abstract class Element_Base extends Controls_Stack {
 
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
 			// Custom URL attributes should come as a string of comma-delimited key|value pairs
-			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
-			$blacklist = [ 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup' ];
-
-			foreach ( $custom_attributes as $attribute ) {
-				// Trim in case users inserted unwanted spaces
-				list( $attr_key, $attr_value ) = explode( '|', $attribute );
-
-				// Cover cases where key/value have spaces both before and/or after the actual value
-				$attr_key = trim( $attr_key );
-				$attr_value = trim( $attr_value );
-
-				// Implement attribute blacklist
-				if ( ! in_array( strtolower( $attr_key ), $blacklist, true ) ) {
-					$attributes[ $attr_key ] = $attr_value;
-				}
-			}
+			$attributes = array_merge( $attributes, Utils::parse_custom_attributes( $url_control['custom_attributes'] ) );
 		}
 
 		if ( $attributes ) {
@@ -815,8 +800,12 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
-			// Hide the element until the animation begins
-			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+			$is_static_render_mode = Plugin::$instance->frontend->is_render_mode( Frontend::RENDER_MODE_STATIC );
+
+			if ( ! $is_static_render_mode ) {
+				// Hide the element until the animation begins
+				$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+			}
 		}
 
 		if ( ! empty( $settings['_element_id'] ) ) {

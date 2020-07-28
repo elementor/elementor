@@ -86,6 +86,12 @@ module.exports = Marionette.ItemView.extend( {
 		return $newItem.appendTo( $subMenu );
 	},
 
+	removeSubMenuItem: function( subMenuName, itemData ) {
+		const $item = jQuery( '#elementor-panel-footer-sub-menu-item-' + itemData.name );
+
+		return $item.remove();
+	},
+
 	showSettingsPage: function() {
 		$e.route( 'panel/page-settings/settings' );
 	},

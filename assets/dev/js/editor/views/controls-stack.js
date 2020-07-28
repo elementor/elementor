@@ -1,3 +1,5 @@
+import ControlsPopover from './controls-popover';
+
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
@@ -104,6 +106,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 		return this;
 	},
+
 	activateFirstSection: function() {
 		var self = this;
 
@@ -134,42 +137,42 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return elementor.getControlView( controlType );
 	},
 
-	handlePopovers: function() {
-		var self = this,
-			popoverStarted = false,
-			$popover;
+	handlePopovers: function( view ) {
+		let popover;
 
-		self.removePopovers();
+		view.popovers = [];
 
-		self.children.each( function( child ) {
-			if ( popoverStarted ) {
-				$popover.append( child.$el );
+		this.removePopovers( view );
+
+		view.children.each( ( control ) => {
+			if ( popover ) {
+				popover.addChild( control );
 			}
 
-			var popover = child.model.get( 'popover' );
+			if ( control.children.length ) {
+				control.children.each( ( child ) => this.handlePopovers( child ) );
+			}
 
-			if ( ! popover ) {
+			const popoverData = control.model.get( 'popover' );
+
+			if ( ! popoverData ) {
 				return;
 			}
 
-			if ( popover.start ) {
-				popoverStarted = true;
+			if ( popoverData.start ) {
+				popover = new ControlsPopover( control );
 
-				$popover = jQuery( '<div>', { class: self.classes.popover } );
-
-				child.$el.before( $popover );
-
-				$popover.append( child.$el );
+				view.popovers.push( popover );
 			}
 
-			if ( popover.end ) {
-				popoverStarted = false;
+			if ( popoverData.end ) {
+				popover = null;
 			}
 		} );
 	},
 
-	removePopovers: function() {
-		this.$el.find( '.' + this.classes.popover ).remove();
+	removePopovers: function( view ) {
+		view.popovers.forEach( ( popover ) => popover.destroy() );
 	},
 
 	getNamespaceArray: function() {
@@ -196,7 +199,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onRenderCollection: function() {
 		this.openActiveSection();
 
-		this.handlePopovers();
+		this.handlePopovers( this );
 	},
 
 	onModelDestroy: function() {

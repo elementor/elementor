@@ -1,4 +1,6 @@
-export default class Commands extends elementorModules.Module {
+import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
+
+export default class Commands extends CommandsBackwardsCompatibility {
 	/**
 	 * Function constructor().
 	 *
@@ -14,6 +16,16 @@ export default class Commands extends elementorModules.Module {
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
+
+		this.classes = {};
+	}
+
+	/**
+	 * @param id
+	 * @returns {CommandBase}
+	 */
+	getCommandClass( id ) {
+		return this.classes[ id ];
 	}
 
 	/**
@@ -67,6 +79,38 @@ export default class Commands extends elementorModules.Module {
 			shortcut.command = fullCommand;
 			shortcut.callback = ( event ) => this.runShortcut( fullCommand, event );
 			$e.shortcuts.register( shortcut.keys, shortcut );
+		}
+
+		return this;
+	}
+
+	unregister( component, command ) {
+		let namespace;
+		if ( 'string' === typeof component ) {
+			namespace = component;
+			component = $e.components.get( namespace );
+
+			if ( ! component ) {
+				this.error( `'${ namespace }' component is not exist.` );
+			}
+		} else {
+			namespace = component.getNamespace();
+		}
+
+		const fullCommand = namespace + ( command ? '/' + command : '' );
+
+		if ( ! this.commands[ fullCommand ] ) {
+			this.error( `\`${ fullCommand }\` not exist.` );
+		}
+
+		delete this.commands[ fullCommand ];
+		delete this.components[ fullCommand ];
+
+		const shortcuts = component.getShortcuts(),
+			shortcut = shortcuts[ command ];
+
+		if ( shortcut ) {
+			$e.shortcuts.unregister( shortcut.keys, shortcut );
 		}
 
 		return this;
@@ -235,7 +279,7 @@ export default class Commands extends elementorModules.Module {
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;
 
-		this.trigger( 'run', component, command, args );
+		this.trigger( 'run:before', component, command, args );
 
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
@@ -249,6 +293,8 @@ export default class Commands extends elementorModules.Module {
 		}
 
 		this.afterRun( command );
+
+		this.trigger( 'run:after', component, command, args, results );
 
 		if ( false === args.returnValue ) {
 			return true;

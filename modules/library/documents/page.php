@@ -32,6 +32,7 @@ class Page extends Library_Document {
 		$properties = parent::get_properties();
 
 		$properties['support_wp_page_templates'] = true;
+		$properties['support_kit'] = true;
 
 		return $properties;
 	}
@@ -89,6 +90,7 @@ class Page extends Library_Document {
 		$config = parent::get_remote_library_config();
 
 		$config['type'] = 'page';
+		$config['default_route'] = 'templates/pages';
 
 		return $config;
 	}

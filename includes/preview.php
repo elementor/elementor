@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\App;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -13,7 +15,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Preview {
+class Preview extends App {
+
+	/**
+	 * Is Preview.
+	 *
+	 * Holds a flag if current request is a preview.
+	 * The flag is not related to a specific post or edit permissions.
+	 *
+	 * @since 2.9.5
+	 * @access private
+	 *
+	 * @var bool Is Preview.
+	 */
+
+	private $is_preview;
 
 	/**
 	 * Post ID.
@@ -26,6 +42,21 @@ class Preview {
 	 * @var int Post ID.
 	 */
 	private $post_id;
+
+	/**
+	 * Get module name.
+	 *
+	 * Retrieve the module name.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 * @abstract
+	 *
+	 * @return string Module name.
+	 */
+	public function get_name() {
+		return 'preview';
+	}
 
 	/**
 	 * Init.
@@ -54,6 +85,7 @@ class Preview {
 		}
 
 		$this->post_id = get_the_ID();
+		$this->is_preview = true;
 
 		// Don't redirect to permalink.
 		remove_action( 'template_redirect', 'redirect_canonical' );
@@ -110,6 +142,21 @@ class Preview {
 	}
 
 	/**
+	 * Is Preview.
+	 *
+	 * Whether current request is the elementor preview iframe.
+	 * The flag is not related to a specific post or edit permissions.
+	 *
+	 * @since 2.9.5
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_preview() {
+		return $this->is_preview;
+	}
+
+	/**
 	 * Whether preview mode is active.
 	 *
 	 * Used to determine whether we are in the preview mode (iframe).
@@ -122,6 +169,10 @@ class Preview {
 	 * @return bool Whether preview mode is active.
 	 */
 	public function is_preview_mode( $post_id = 0 ) {
+		if ( ! isset( $_GET['elementor-preview'] ) ) {
+			return false;
+		}
+
 		if ( empty( $post_id ) ) {
 			$post_id = get_the_ID();
 		}
@@ -130,7 +181,7 @@ class Preview {
 			return false;
 		}
 
-		if ( ! isset( $_GET['elementor-preview'] ) || $post_id !== (int) $_GET['elementor-preview'] ) {
+		if ( $post_id !== (int) $_GET['elementor-preview'] ) {
 			return false;
 		}
 
@@ -155,11 +206,6 @@ class Preview {
 			$document = Plugin::$instance->documents->get( $this->post_id );
 
 			$attributes = $document->get_container_attributes();
-
-			$attributes['id'] = 'elementor';
-
-			$attributes['class'] .= ' elementor-edit-mode';
-			$attributes['class'] .= ' elementor-' . $this->post_id;
 
 			$content = '<div ' . Utils::render_html_attributes( $attributes ) . '></div>';
 		}
@@ -206,6 +252,17 @@ class Preview {
 		);
 
 		wp_enqueue_style( 'editor-preview' );
+
+		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
+			wp_register_style(
+				'editor-preview-legacy',
+				ELEMENTOR_ASSETS_URL . 'css/editor-preview-legacy' . $direction_suffix . $suffix . '.css',
+				[],
+				ELEMENTOR_VERSION
+			);
+
+			wp_enqueue_style( 'editor-preview-legacy' );
+		}
 
 		/**
 		 * Preview enqueue styles.

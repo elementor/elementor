@@ -72,7 +72,8 @@ class Control_URL extends Control_Base_Multiple {
 				'categories' => [ TagsModule::URL_CATEGORY ],
 				'property' => 'url',
 			],
-			'custom_attributes_description' => __( 'Set custom attributes for the link element. Separate attribute keys from values using the | (pipe) character. Separate key-value pairs with a comma.', 'elementor' ),
+			'custom_attributes_description' => __( 'Set custom attributes for the link element. Separate attribute keys from values using the | (pipe) character. Separate key-value pairs with a comma.', 'elementor' )
+			. ' <a href="https://go.elementor.com/panel-link-custom-attributes/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 		];
 	}
 
@@ -113,7 +114,7 @@ class Control_URL extends Control_Base_Multiple {
 				</div>
 				<div class="elementor-control-url__custom-attributes">
 					<label for="<?php echo $custom_attributes_uid; ?>" class="elementor-control-url__custom-attributes-label"><?php echo __( 'Custom Attributes', 'elementor' ); ?></label>
-					<input type="text" id="<?php echo $custom_attributes_uid; ?>" class="elementor-control-unit-5" placeholder="key|value,key|value..." data-setting="custom_attributes">
+					<input type="text" id="<?php echo $custom_attributes_uid; ?>" class="elementor-control-unit-5" placeholder="key|value" data-setting="custom_attributes">
 				</div>
 				<# if ( ( data.options && -1 !== data.options.indexOf( 'custom_attributes' ) ) && data.custom_attributes_description ) { #>
 				<div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>

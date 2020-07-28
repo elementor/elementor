@@ -2,8 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Responsive\Responsive;
-use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
-use Elementor\Core\Settings\Manager;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -68,7 +66,11 @@ class Settings extends Settings_Page {
 	public function register_admin_menu() {
 		global $menu;
 
-		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // WPCS: override ok.
+		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
 		add_menu_page(
 			__( 'Elementor', 'elementor' ),
@@ -239,8 +241,9 @@ class Settings extends Settings_Page {
 				<div class="e-getting-started__box postbox">
 					<div class="e-getting-started__header">
 						<div class="e-getting-started__title">
-							<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
-
+							<div class="e-logo-wrapper">
+								<i class="eicon-elementor"></i>
+							</div>
 							<?php echo __( 'Getting Started', 'elementor' ); ?>
 						</div>
 						<a class="e-getting-started__skip" href="<?php echo esc_url( admin_url() ); ?>">
@@ -251,11 +254,11 @@ class Settings extends Settings_Page {
 					<div class="e-getting-started__content">
 						<div class="e-getting-started__content--narrow">
 							<h2><?php echo __( 'Welcome to Elementor', 'elementor' ); ?></h2>
-							<p><?php echo __( 'We recommend you watch this 2 minute getting started video, and then try the editor yourself by dragging and dropping elements to create your first page.', 'elementor' ); ?></p>
+							<p><?php echo __( 'Get introduced to Elementor by watching our "Getting Started" video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ); ?></p>
 						</div>
 
 						<div class="e-getting-started__video">
-							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/nZlgNmbC-Cw?rel=0&amp;controls=1&amp;modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLZyp9H25CboH8b_wsNyOmstckiOE8aUBg&amp;controls=1&amp;modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 						</div>
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
@@ -263,7 +266,7 @@ class Settings extends Settings_Page {
 							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
-							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Get the Full Guide', 'elementor' ); ?></a>
+							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Watch the Full Guide', 'elementor' ); ?></a>
 						</div>
 					</div>
 				</div>
@@ -369,9 +372,6 @@ class Settings extends Settings_Page {
 	public function on_admin_init() {
 		$this->handle_external_redirects();
 
-		// Save general settings in one list for a future usage
-		$this->handle_general_settings_update();
-
 		$this->maybe_remove_all_admin_notices();
 	}
 
@@ -405,6 +405,7 @@ class Settings extends Settings_Page {
 	 *
 	 * @since 1.7.5
 	 * @access public
+	 * @deprecated 3.0.0
 	 */
 	public function update_css_print_method() {
 		Plugin::$instance->files_manager->clear_cache();
@@ -474,7 +475,7 @@ class Settings extends Settings_Page {
 									'type' => 'checkbox',
 									'value' => 'yes',
 									'default' => '',
-									'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to get our updates.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
+									'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
 							],
@@ -487,100 +488,11 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'style' => [
 						'fields' => [
-							'default_generic_fonts' => [
-								'label' => __( 'Default Generic Fonts', 'elementor' ),
+							'notice' => [
+								'label' => __( 'Looking for the Style settings?', 'elementor' ),
 								'field_args' => [
-									'type' => 'text',
-									'std' => 'Sans-serif',
-									'class' => 'medium-text',
-									'desc' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
-								],
-							],
-							'container_width' => [
-								'label' => __( 'Content Width', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'min' => 300,
-										'placeholder' => '1140',
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
-								],
-							],
-							'space_between_widgets' => [
-								'label' => __( 'Space Between Widgets', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'placeholder' => '20',
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									'desc' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
-								],
-							],
-							'stretched_section_container' => [
-								'label' => __( 'Stretched Section Fit To', 'elementor' ),
-								'field_args' => [
-									'type' => 'text',
-									'attributes' => [
-										'placeholder' => 'body',
-										'class' => 'medium-text',
-									],
-									'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
-								],
-							],
-							'page_title_selector' => [
-								'label' => __( 'Page Title Selector', 'elementor' ),
-								'field_args' => [
-									'type' => 'text',
-									'attributes' => [
-										'placeholder' => 'h1.entry-title',
-										'class' => 'medium-text',
-									],
-									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
-								],
-							],
-							'viewport_lg' => [
-								'label' => __( 'Tablet Breakpoint', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'placeholder' => $default_breakpoints['lg'],
-										'min' => $default_breakpoints['md'] + 1,
-										'max' => $default_breakpoints['xl'] - 1,
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									/* translators: %d: Breakpoint value */
-									'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
-								],
-							],
-							'viewport_md' => [
-								'label' => __( 'Mobile Breakpoint', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'placeholder' => $default_breakpoints['md'],
-										'min' => $default_breakpoints['sm'] + 1,
-										'max' => $default_breakpoints['lg'] - 1,
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									/* translators: %d: Breakpoint value */
-									'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
-								],
-							],
-							'global_image_lightbox' => [
-								'label' => __( 'Image Lightbox', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox',
-									'value' => 'yes',
-									'std' => 'yes',
-									'sub_desc' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
-									'desc' => __( 'You can customize the lightbox design by going to: Top-left hamburger icon > Global Settings > Lightbox.', 'elementor' ),
+									'type' => 'raw_html',
+									'html' => __( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Settings Panel > Hamburger Menu > Global Settings</b>.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
 								],
 							],
 						],
@@ -619,8 +531,8 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
-							'allow_svg' => [
-								'label' => __( 'Enable SVG Uploads', 'elementor' ),
+							'unfiltered_files_upload' => [
+								'label' => __( 'Enable Unfiltered File Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'std' => '',
@@ -628,7 +540,22 @@ class Settings extends Settings_Page {
 										'' => __( 'Disable', 'elementor' ),
 										1 => __( 'Enable', 'elementor' ),
 									],
-									'desc' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+								],
+							],
+							'element_wrappers_legacy_mode' => [
+								'label' => __( 'HTML Output Legacy Mode', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'options' => [
+										'' => __( 'After 3.0', 'elementor' ),
+										1 => __( 'Before 3.0', 'elementor' ),
+									],
+									'desc' => __( 'Developers, Please Note! If you’ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy Mode allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
+										. '<br /><br />'
+										. __( 'Please note - you should not use this mode on newly created sites.', 'elementor' )
+										. '<br />'
+										. '<a href="https://go.elementor.com/legacy-mode" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
 							],
 						],
@@ -650,38 +577,6 @@ class Settings extends Settings_Page {
 	 */
 	protected function get_page_title() {
 		return __( 'Elementor', 'elementor' );
-	}
-
-	/**
-	 * Handle general settings update.
-	 *
-	 * Save general settings in one list for a future usage.
-	 *
-	 * @since 2.0.0
-	 * @access private
-	 */
-	private function handle_general_settings_update() {
-		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action'] ) {
-			check_admin_referer( 'elementor-options' );
-
-			$saved_general_settings = get_option( General_Settings_Manager::META_KEY );
-
-			if ( ! $saved_general_settings ) {
-				$saved_general_settings = [];
-			}
-
-			$general_settings = Manager::get_settings_managers( 'general' )->get_model()->get_settings();
-
-			foreach ( $general_settings as $setting_key => $setting ) {
-				if ( ! empty( $_POST[ $setting_key ] ) ) {
-					$pure_setting_key = str_replace( 'elementor_', '', $setting_key );
-
-					$saved_general_settings[ $pure_setting_key ] = $_POST[ $setting_key ];
-				}
-			}
-
-			update_option( General_Settings_Manager::META_KEY, $saved_general_settings );
-		}
 	}
 
 	/**
@@ -722,17 +617,15 @@ class Settings extends Settings_Page {
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
 		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
 
+		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
+
 		// Clear CSS Meta after change print method.
-		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+		add_action( 'add_option_elementor_css_print_method', $clear_cache_callback );
+		add_action( 'update_option_elementor_css_print_method', $clear_cache_callback );
+		add_action( 'add_option_elementor_element_wrappers_legacy_mode', $clear_cache_callback );
+		add_action( 'update_option_elementor_element_wrappers_legacy_mode', $clear_cache_callback );
 
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', [ $this, 'menu_order' ] );
-
-		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
-			foreach ( [ 'add', 'update' ] as $action ) {
-				add_action( "{$action}_option_elementor_viewport_{$breakpoint_key}", [ 'Elementor\Core\Responsive\Responsive', 'compile_stylesheet_templates' ] );
-			}
-		}
 	}
 }

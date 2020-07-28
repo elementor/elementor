@@ -2,6 +2,7 @@
 import BackwardsCompatibility from './core/backwards-compatibility';
 import CommandBase from './modules/command-base';
 import CommandInternalBase from './modules/command-internal-base';
+import CommandData from './modules/command-data';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
 import ComponentBase from './modules/component-base';
@@ -11,6 +12,7 @@ import HookBreak from './modules/hook-break';
 import Hooks from './core/hooks';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
+import Data from './core/data.js';
 
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
@@ -22,7 +24,8 @@ export default class API {
 	 * Create's 'elementor' api.
 	 */
 	constructor() {
-		this.bc = new BackwardsCompatibility();
+		window.$e = this;
+
 		this.components = new Components();
 
 		this.commands = new Commands();
@@ -31,10 +34,13 @@ export default class API {
 		this.hooks = new Hooks();
 		this.routes = new Routes();
 		this.shortcuts = new Shortcuts( jQuery( window ) );
+		this.data = new Data();
 
 		this.modules = {
 			CommandBase,
 			CommandInternalBase,
+
+			CommandData,
 
 			ComponentBase,
 			ComponentModalBase,
@@ -45,7 +51,8 @@ export default class API {
 			hookUI,
 		};
 
-		window.$e = this;
+		// Backwards compatibility should be last, in order to handle others.
+		this.bc = new BackwardsCompatibility();
 	}
 
 	/**
@@ -53,12 +60,13 @@ export default class API {
 	 *
 	 * Alias of `$e.commands.run()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} command
+	 * @param [args={}]
 	 *
 	 * @returns {*}
 	 */
-	run( ...args ) {
-		return $e.commands.run.apply( $e.commands, args );
+	run( command, args = {} ) {
+		return $e.commands.run( command, args );
 	}
 
 	/**
@@ -66,12 +74,13 @@ export default class API {
 	 *
 	 * Alias of `$e.commandsInternal.run()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} command
+	 * @param [args={}]
 	 *
 	 * @returns {boolean}
 	 */
-	internal( ...args ) {
-		return $e.commandsInternal.run.apply( $e.commandsInternal, args );
+	internal( command, args = {} ) {
+		return $e.commandsInternal.run( command, args );
 	}
 
 	/**
@@ -79,10 +88,11 @@ export default class API {
 	 *
 	 * Alias of `$e.routes.to()`.
 	 *
-	 * @param {{}} args
+	 * @param {string} route
+	 * @param [args={}]
 	 */
-	route( ...args ) {
-		return $e.routes.to.apply( $e.routes, args );
+	route( route, args = {} ) {
+		return $e.routes.to( route, args );
 	}
 
 	// TODO: shortcut();

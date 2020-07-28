@@ -1,7 +1,7 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import Document from './document';
 import * as commands from './commands/';
-import * as internalCommands from './commands/internal';
+import * as internalCommands from './commands/internal/';
 
 export default class Component extends ComponentBase {
 	__construct( args = {} ) {

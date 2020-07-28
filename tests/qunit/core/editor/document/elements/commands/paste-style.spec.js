@@ -1,5 +1,6 @@
 import ElementsHelper from '../../elements/helper';
 import HistoryHelper from '../../history/helper';
+import * as eData from 'elementor-tests-qunit/mock/e-data';
 
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {
@@ -63,6 +64,40 @@ export const PasteStyle = () => {
 				/*assert.equal( eWidgetSimple.settings.get( 'background_color' ), widgetSimpleBackground,
 					'Settings restored.' ); // TODO: in tests its not back to default color.*/
 			} );
+
+			QUnit.test( 'Globals', async ( assert ) => {
+				// Create widget.
+				const eButton = ElementsHelper.createAutoButton(),
+					eButtonGlobal = ElementsHelper.createAutoButton(),
+					id = elementorCommon.helpers.getUniqueId();
+
+				$e.data.setCache( $e.components.get( 'globals' ), 'globals/typography', {}, {
+					[ id ]: {
+						id,
+						value: { typography_text_transform: 'uppercase' },
+					},
+				} );
+
+				eData.attachCache();
+
+				ElementsHelper.settings( eButtonGlobal, {
+					typography_text_transform: 'uppercase',
+				} );
+
+				$e.run( 'document/globals/enable', {
+					container: eButtonGlobal,
+					settings: {
+						typography_typography: `globals/typography?id=${ id }`,
+					},
+				} );
+
+				ElementsHelper.copy( eButtonGlobal );
+				ElementsHelper.pasteStyle( eButton );
+
+				assert.deepEqual( eButton.settings.attributes.__globals__, eButtonGlobal.globals.attributes );
+			} );
+
+			// TODO: Paste __dynamic__.
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {

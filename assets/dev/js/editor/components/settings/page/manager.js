@@ -36,12 +36,6 @@ module.exports = BaseSettings.extend( {
 		},
 	},
 
-	onModelChange: function() {
-		$e.internal( 'document/save/set-is-modified', { status: true } );
-
-		BaseSettings.prototype.onModelChange.apply( this, arguments );
-	},
-
 	getDataToSave: function( data ) {
 		data.id = elementor.config.document.id;
 
@@ -69,8 +63,14 @@ module.exports = BaseSettings.extend( {
 			settings: editModel.get( 'settings' ),
 			label: elementor.config.document.panel.title,
 			controls: this.model.controls,
-			renderer: false,
 			children: elementor.elements,
+			// Emulate a view that can render the style.
+			renderer: {
+				view: {
+					lookup: () => container,
+					renderOnChange: () => this.updateStylesheet(),
+				},
+			},
 		} );
 
 		this.editedView = {

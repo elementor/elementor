@@ -5,8 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
-use Elementor\Core\Settings\Manager;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 
 /**
  * Elementor image carousel widget.
@@ -258,6 +257,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -275,6 +275,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -292,6 +293,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -305,10 +307,12 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
 
+		// Loop requires a re-render so no 'render_type = none'
 		$this->add_control(
 			'infinite',
 			[
@@ -346,6 +350,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Animation Speed', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 500,
+				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -360,7 +365,6 @@ class Widget_Image_Carousel extends Widget_Base {
 					'ltr' => __( 'Left', 'elementor' ),
 					'rtl' => __( 'Right', 'elementor' ),
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -660,7 +664,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
+				],
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
 			]
 		);

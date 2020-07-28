@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -142,12 +141,15 @@ class Icons_Manager {
 			[],
 			ELEMENTOR_VERSION
 		);
-		wp_enqueue_style(
-			'font-awesome-5-all',
-			self::get_fa_asset_url( 'all' ),
-			[],
-			ELEMENTOR_VERSION
-		);
+		// Make sure that the CSS in the 'all' file does not override FA Pro's CSS
+		if ( ! wp_script_is( 'font-awesome-pro' ) ) {
+			wp_enqueue_style(
+				'font-awesome-5-all',
+				self::get_fa_asset_url( 'all' ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		}
 		wp_enqueue_style(
 			'font-awesome-4-shim',
 			self::get_fa_asset_url( 'v4-shims' ),
@@ -420,12 +422,20 @@ class Icons_Manager {
 		return $settings;
 	}
 
-	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'enable_svg_uploads', [ $this, 'ajax_enable_svg_uploads' ] );
+	/**
+	 * @since 3.0.0
+	 * @deprecated 3.0.0
+	 */
+	public function register_ajax_actions() {
+		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
+	/**
+	 * @since 3.0.0.
+	 * @deprecated 3.0.0
+	 */
 	public function ajax_enable_svg_uploads() {
-		update_option( 'elementor_allow_svg', 1 );
+		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
 	/**
@@ -442,9 +452,6 @@ class Icons_Manager {
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
-
-		// Ajax.
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );

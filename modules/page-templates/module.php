@@ -80,6 +80,12 @@ class Module extends BaseModule {
 
 			if ( $document ) {
 				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
+
+				if ( ! $template_path ) {
+					$kit_default_template = Plugin::$instance->kits_manager->get_current_settings( 'default_page_template' );
+					$template_path = $this->get_template_path( $kit_default_template );
+				}
+
 				if ( $template_path ) {
 					$template = $template_path;
 
@@ -255,12 +261,6 @@ class Module extends BaseModule {
 
 		require_once ABSPATH . '/wp-admin/includes/template.php';
 
-		$options = [
-			'default' => __( 'Default', 'elementor' ),
-		];
-
-		$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
-
 		$document->start_injection( [
 			'of' => 'post_status',
 			'fallback' => [
@@ -268,14 +268,32 @@ class Module extends BaseModule {
 			],
 		] );
 
+		$control_options = [
+			'options' => array_flip( get_page_templates( null, $document->get_main_post()->post_type ) ),
+		];
+
+		$this->add_template_controls( $document, $control_id, $control_options );
+
+		$document->end_injection();
+	}
+
+	// The $options variable is an array of $control_options to overwrite the default
+	public function add_template_controls( Document $document, $control_id, $control_options ) {
+		// Default Control Options
+		$default_control_options = [
+			'label' => __( 'Page Layout', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => 'default',
+			'options' => [
+				'default' => __( 'Default', 'elementor' ),
+			],
+		];
+
+		$control_options = array_replace_recursive( $default_control_options, $control_options );
+
 		$document->add_control(
 			$control_id,
-			[
-				'label' => __( 'Page Layout', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => $options,
-			]
+			$control_options
 		);
 
 		$document->add_control(
@@ -316,8 +334,6 @@ class Module extends BaseModule {
 				],
 			]
 		);
-
-		$document->end_injection();
 	}
 
 	/**

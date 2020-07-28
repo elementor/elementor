@@ -336,7 +336,7 @@ class Controls_Manager {
 	 * @param string $tab_name  Tab name.
 	 * @param string $tab_label Tab label.
 	 */
-	public static function add_tab( $tab_name, $tab_label ) {
+	public static function add_tab( $tab_name, $tab_label = '' ) {
 		if ( ! self::$tabs ) {
 			self::init_tabs();
 		}
@@ -878,16 +878,27 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param Controls_Stack $controls_stack.
+	 * @param Controls_Stack $controls_stack .
+	 * @param string $tab
+	 * @param array $additional_messages
+	 *
 	 */
-	public function add_custom_css_controls( Controls_Stack $controls_stack ) {
+	public function add_custom_css_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED, $additional_messages = [] ) {
 		$controls_stack->start_controls_section(
 			'section_custom_css_pro',
 			[
 				'label' => __( 'Custom CSS', 'elementor' ),
-				'tab' => self::TAB_ADVANCED,
+				'tab' => $tab,
 			]
 		);
+
+		$messages = [
+			__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ),
+		];
+
+		if ( $additional_messages ) {
+			$messages = array_merge( $messages, $additional_messages );
+		}
 
 		$controls_stack->add_control(
 			'custom_css_pro',
@@ -895,9 +906,7 @@ class Controls_Manager {
 				'type' => self::RAW_HTML,
 				'raw' => $this->get_teaser_template( [
 					'title' => __( 'Meet Our Custom CSS', 'elementor' ),
-					'messages' => [
-						__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ),
-					],
+					'messages' => $messages,
 					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash',
 				] ),
 			]

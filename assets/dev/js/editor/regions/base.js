@@ -20,7 +20,11 @@ module.exports = Marionette.Region.extend( {
 		elementorCommon.storage.set( this.getStorageKey(), this.storage );
 	},
 
-	saveSize: function() {
-		this.saveStorage( 'size', elementor.helpers.getElementInlineStyle( this.$el, this.storageSizeKeys ) );
+	saveSize: function( size ) {
+		if ( ! size ) {
+			size = elementor.helpers.getElementInlineStyle( this.$el, this.storageSizeKeys );
+		}
+
+		this.saveStorage( 'size', size );
 	},
 } );

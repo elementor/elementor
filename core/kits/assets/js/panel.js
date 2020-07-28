@@ -10,7 +10,7 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	onBeforeShow() {
-		const	container = elementor.documents.getCurrent().container,
+		const container = elementor.documents.getCurrent().container,
 			options = {
 				container,
 				model: container.model,

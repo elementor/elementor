@@ -94,7 +94,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_z_index',
 			[
 				'label' => __( 'Z-Index', 'elementor' ),
@@ -755,9 +755,7 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_controls_section();
 
-		if ( ! Utils::has_pro() ) {
-			Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
-		}
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}

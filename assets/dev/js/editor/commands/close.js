@@ -33,7 +33,7 @@ export class Close extends CommandBase {
 				break;
 		}
 
-		elementor.unloadDocument( document );
+		$e.internal( 'editor/documents/unload', { document } );
 
 		if ( onClose ) {
 			await onClose( document );

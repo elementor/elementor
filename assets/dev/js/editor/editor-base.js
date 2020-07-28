@@ -1,6 +1,5 @@
 /* global ElementorConfig */
 
-import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from 'elementor-common/utils/environment';
@@ -9,9 +8,13 @@ import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import Document from './document';
+import HistoryManager from 'elementor/modules/history/assets/js/module';
 import EditorDocuments from 'elementor-editor/component';
+import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
-import KitManager from 'elementor/core/kits/assets/js/manager.js';
+import KitManager from '../../../../core/kits/assets/js/manager.js';
+import Preview from 'elementor-views/preview';
+import PopoverToggleControl from 'elementor-controls/popover-toggle';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -104,7 +107,7 @@ export default class EditorBase extends Marionette.Application {
 			Media: require( 'elementor-controls/media' ),
 			Number: require( 'elementor-controls/number' ),
 			Order: require( 'elementor-controls/order' ),
-			Popover_toggle: require( 'elementor-controls/popover-toggle' ),
+			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
 			Section: require( 'elementor-controls/section' ),
@@ -143,7 +146,7 @@ export default class EditorBase extends Marionette.Application {
 						},
 					},
 					menu: {
-						Menu: require( 'elementor-panel/pages/menu/menu' ),
+						Menu: PanelMenu,
 					},
 				},
 			},
@@ -162,6 +165,10 @@ export default class EditorBase extends Marionette.Application {
 		popover: {
 			element: '.elementor-controls-popover',
 			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+		},
+		globalControlsSelect: {
+			element: '.e-global__popover',
+			ignore: '.e-global__popover-toggle',
 		},
 		tagsList: {
 			element: '.elementor-tags-list',
@@ -284,11 +291,19 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getPreviewView() {
-		return this.sections.currentView;
+		return this.previewView;
 	}
 
 	getPreviewContainer() {
 		return this.getPreviewView().getContainer();
+	}
+
+	getContainer( id ) {
+		if ( 'document' === id ) {
+			return this.getPreviewContainer();
+		}
+
+		return $e.components.get( 'document' ).utils.findContainerById( id );
 	}
 
 	initComponents() {
@@ -328,6 +343,8 @@ export default class EditorBase extends Marionette.Application {
 			}
 		};
 
+		this.documents = $e.components.register( new EditorDocuments() );
+
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
@@ -342,7 +359,7 @@ export default class EditorBase extends Marionette.Application {
 		let config = this.config.document.elements;
 
 		// If it's an reload, use the not-saved data
-		if ( this.elements && this.config.document.id === this.config.initial_document.id ) {
+		if ( this.elements && this.elements.length && this.config.document.id === this.config.initial_document.id ) {
 			config = this.elements.toJSON();
 		}
 
@@ -375,12 +392,33 @@ export default class EditorBase extends Marionette.Application {
 		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	}
 
+	initPreviewView( document ) {
+		elementor.trigger( 'document:before:preview', document );
+
+		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
+
+		preview.$el.empty();
+
+		preview.resetChildViewContainer();
+
+		// In order to force rendering of children
+		preview.isRendered = true;
+
+		preview._renderChildren();
+
+		preview.triggerMethod( 'render' );
+
+		this.previewView = preview;
+	}
+
 	initFrontend() {
 		const frontendWindow = this.$preview[ 0 ].contentWindow;
 
 		window.elementorFrontend = frontendWindow.elementorFrontend;
 
 		frontendWindow.elementor = this;
+
+		frontendWindow.elementorCommon = elementorCommon;
 
 		elementorFrontend.init();
 
@@ -503,7 +541,9 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			if ( ! isClickInsideElementor ) {
+			// It's a click on the preview area, not in the edit area,
+			// and a document is open and has an edit area.
+			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
 				$e.internal( 'panel/open-default' );
 			}
 		} );
@@ -593,14 +633,6 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
-	openLibraryOnStart() {
-		if ( '#library' === location.hash ) {
-			$e.run( 'library/open' );
-
-			location.hash = '';
-		}
-	}
-
 	enterPreviewMode( hidePanel ) {
 		let $elements = elementorFrontend.elements.$body;
 
@@ -612,9 +644,11 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
-		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview' );
+		const $element = this.documents.getCurrent().$element;
+
+		if ( $element ) {
+			$element.removeClass( 'elementor-edit-area-active' );
+		}
 
 		if ( hidePanel ) {
 			// Handle panel resize
@@ -630,9 +664,7 @@ export default class EditorBase extends Marionette.Application {
 			.addClass( 'elementor-editor-active' );
 
 		if ( elementor.config.document.panel.has_elements ) {
-			this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-preview' )
-			.addClass( 'elementor-edit-area-active' );
+			this.documents.getCurrent().$element.addClass( 'elementor-edit-area-active' );
 		}
 	}
 
@@ -669,16 +701,6 @@ export default class EditorBase extends Marionette.Application {
 			.reply( 'previousMode', oldDeviceMode )
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
-	}
-
-	enqueueTypographyFonts() {
-		const typographyScheme = this.schemes.getScheme( 'typography' );
-
-		this.helpers.resetEnqueuedFontsCache();
-
-		_.each( typographyScheme.items, ( item ) => {
-			this.helpers.enqueueFont( item.value.font_family );
-		} );
 	}
 
 	translate( stringKey, templateArgs, i18nStack ) {
@@ -740,7 +762,8 @@ export default class EditorBase extends Marionette.Application {
 				this.addWidgetsCache( data );
 
 				if ( this.loaded ) {
-					this.schemes.printSchemesStyle();
+					this.kitManager.renderGlobalsDefaultCSS();
+
 					$e.internal( 'panel/state-ready' );
 				} else {
 					this.once( 'panel:init', () => {
@@ -773,8 +796,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initComponents();
 
-		elementor.documents = $e.components.register( new EditorDocuments() );
-
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
 		}
@@ -793,12 +814,14 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
+		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
 			} );
 
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+		this.initNavigator();
 
 		this.logSite();
 	}
@@ -817,8 +840,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initFrontend();
 
 		this.schemes.init();
-
-		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 
@@ -846,8 +867,6 @@ export default class EditorBase extends Marionette.Application {
 			elementorFrontend.elements.window.jQuery.holdReady( false );
 		} );
 
-		this.enqueueTypographyFonts();
-
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
@@ -859,8 +878,6 @@ export default class EditorBase extends Marionette.Application {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
-
-		this.openLibraryOnStart();
 
 		this.previewLoadedOnce = true;
 	}
@@ -965,73 +982,6 @@ export default class EditorBase extends Marionette.Application {
 		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	}
 
-	unloadDocument( document ) {
-		if ( document.id !== this.config.document.id ) {
-			return;
-		}
-
-		this.saver.stopAutoSave( document );
-
-		this.channels.dataEditMode.trigger( 'switch', 'preview' );
-
-		this.$previewContents.find( `.elementor-${ document.id }` )
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
-
-		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
-
-		this.settings.page.destroy();
-
-		this.heartbeat.destroy();
-
-		document.editor.status = 'closed';
-
-		this.config.document = {};
-
-		this.documents.unsetCurrent();
-	}
-
-	/**
-	 * @param {{}} config
-	 */
-	loadDocument( config ) {
-		this.config.document = config;
-
-		this.setAjax();
-
-		this.addWidgetsCache( config.widgets );
-
-		this.templates.init();
-
-		const document = new Document( config );
-
-		elementor.documents.add( document );
-
-		// Must set current before create a container.
-		elementor.documents.setCurrent( document );
-
-		this.settings.page = new this.settings.modules.page( config.settings );
-
-		document.container = this.settings.page.getEditedView().getContainer();
-
-		// Reference container back to document.
-		document.container.document = document;
-
-		this.heartbeat = new Heartbeat( document );
-
-		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
-
-		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
-			this.showFlexBoxAttentionDialog();
-		}
-
-		if ( this.loaded ) {
-			$e.internal( 'editor/documents/attach-preview' );
-		}
-
-		return document;
-	}
-
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
 			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
@@ -1089,6 +1039,14 @@ export default class EditorBase extends Marionette.Application {
 			get() {
 				elementorCommon.helpers.softDeprecated( 'elementor.config.widgets', '2.9.0', 'elementor.widgetsCache' );
 				return elementor.widgetsCache;
+			},
+		} );
+
+		Object.defineProperty( this, '$previewElementorEl', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.$previewElementorEl', '2.9.4', 'elementor.documents.getCurrent().$element' );
+
+				return elementor.documents.getCurrent().$element;
 			},
 		} );
 	}

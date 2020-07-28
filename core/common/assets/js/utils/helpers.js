@@ -27,6 +27,20 @@ export default class Helpers {
 		console.warn( ...args ); // eslint-disable-line no-console
 	}
 
+	consoleError( message ) {
+		// TODO: function is part of $e.
+		// Show an error if devTools is available.
+		if ( $e.devTools ) {
+			$e.devTools.log.error( message );
+		}
+
+		// If not a 'Hook-Break' then show error.
+		if ( ! ( message instanceof $e.modules.HookBreak ) ) {
+			// eslint-disable-next-line no-console
+			console.error( message );
+		}
+	}
+
 	deprecatedMethod( methodName, version, replacement ) {
 		this.deprecatedMessage( 'hard', methodName, version, replacement );
 
@@ -42,5 +56,9 @@ export default class Helpers {
 		return ( string + '' ).replace( /^(.)|\s+(.)/g, function( $1 ) {
 			return $1.toUpperCase();
 		} );
+	}
+
+	getUniqueId() {
+		return Math.random().toString( 16 ).substr( 2, 7 );
 	}
 }

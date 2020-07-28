@@ -1,4 +1,5 @@
 import ComponentBase from './component-base';
+import * as commands from './commands/';
 
 export default class ComponentModalBase extends ComponentBase {
 	registerAPI() {
@@ -11,17 +12,7 @@ export default class ComponentModalBase extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			open: () => $e.route( this.getNamespace() ),
-			close: () => this.close(),
-			toggle: () => {
-				if ( this.isOpen ) {
-					this.close();
-				} else {
-					$e.route( this.getNamespace() );
-				}
-			},
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultRoutes() {
