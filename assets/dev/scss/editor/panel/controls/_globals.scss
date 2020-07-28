@@ -70,6 +70,7 @@
 	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: auto;
+		margin: 5px 0;
 
 		&::-webkit-scrollbar {
 			width: 8px;
@@ -125,7 +126,7 @@
 		align-items: center;
 
 		&:first-child {
-			margin-top: 10px;
+			margin-top: 5px;
 		}
 
 		&:last-child {
@@ -157,6 +158,23 @@
 
 		.pcr-button {
 			background-color: #fff;
+		}
+
+		&.e-global__preview-item--selected {
+
+			.e-global__color-preview {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #ffffff;
+
+				&:before {
+					font-family: 'eicons';
+					font-size: 13px;
+					content: '\e90e'; // eicon-check
+					text-shadow: 0px 0px 1px #000;
+				 }
+			}
 		}
 	}
 
