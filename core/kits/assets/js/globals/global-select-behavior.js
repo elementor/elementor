@@ -175,11 +175,23 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	buildGlobalPopover() {
 		const $popover = jQuery( '<div>', { class: 'e-global__popover-container' } ),
 			$popoverTitle = jQuery( '<div>', { class: 'e-global__popover-title' } )
-				.html( '<div class="e-global__popover-info"><i class="eicon-info-circle"></i></div>' + this.getOption( 'popoverTitle' ) ),
-			$manageGlobalPresetsLink = jQuery( '<div>', { class: 'e-global__manage-button' } )
-				.html( '<span class="e-global__manage-button__text">' + this.getOption( 'manageButtonText' ) + '</span>' + '<i class="eicon-cog"></i>' );
+				.html( '<div class="e-global__popover-info"><i class="eicon-info-circle"></i></div>' + '<span>' + this.getOption( 'popoverTitle' ) + '</span>' ),
+			$manageGlobalsLink = jQuery( '<div>', { class: 'e-global__manage-button' } )
+				.html( '<i class="eicon-cog"></i>' );
 
-		$popover.append( $popoverTitle, $manageGlobalPresetsLink );
+		$popoverTitle.append( $manageGlobalsLink );
+
+		$popover.append( $popoverTitle );
+
+		this.manageButtonTooltipText = this.getOption( 'manageButtonText' );
+
+		$manageGlobalsLink.tipsy( {
+			title: () => {
+				return this.manageButtonTooltipText;
+			},
+			offset: 3,
+			gravity: () => 's',
+		} );
 
 		return $popover;
 	}

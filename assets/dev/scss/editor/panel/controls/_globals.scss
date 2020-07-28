@@ -24,6 +24,8 @@
 			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 			border-radius: 3px;
 			background-color: #fff;
+			display: flex;
+			flex-direction: column;
 		}
 
 		&-title {
@@ -31,10 +33,15 @@
 			font-weight: bold;
 			color: $editor-dark;
 			border-bottom: 1px solid $editor-background;
+			display: flex;
 
-			i {
+			& > i {
 				@include margin-end(5px);
 				color: $editor-lightest;
+			}
+
+			span {
+				flex-grow: 1;
 			}
 		}
 
@@ -84,18 +91,15 @@
 	}
 
 	&__manage-button {
-		color: $editor-dark;
 		font-weight: 500;
-		padding: 15px 20px;
-		border-top: 1px solid $editor-background;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
 		cursor: pointer;
 
-		&:hover {
-			background-color: $editor-kit-accent;
-			color: #fff;
+		&:hover i {
+				color: $editor-kit-accent;
+		}
+
+		i {
+			color: $editor-dark;
 		}
 	}
 
