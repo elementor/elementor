@@ -7,7 +7,7 @@ export default function Layout( props ) {
 		headerButtons: props.headerButtons,
 		content: props.children,
 		footer: props.footer,
-		className: '',
+		className: 'dark',
 	},
 	Context = KitContext;
 

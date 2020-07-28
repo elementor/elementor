@@ -25,12 +25,14 @@ export default function ImportProcess() {
 					{ __( 'Your Kit Is Being Imported', 'elementor' ) }
 				</Heading>
 
-				<Text variant="md">
+				<Text variant="xl">
 					{ __( 'This may take a few moments to complete.\nPlease don’t close this window until importing is completed', 'elementor' ) }
 				</Text>
 
 				<Box spacing={12} className="e-app-import-process__box">
-					{ __( 'Importing global templates', 'elementor' ) }
+					<Text variant="sm">
+						{ __( 'Importing global templates', 'elementor' ) }
+					</Text>
 				</Box>
 			</Message>
 		</Layout>

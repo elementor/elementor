@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { Context as KitContext } from '../../../../context/kit-context';
 
@@ -14,11 +14,11 @@ export default function KitContentCheckbox( props ) {
 			context.dispatch( { type: actionType, value: props.type } );
 		};
 
-	console.log( '--- RENDER: KitContentCheckbox()' );
+	console.log( '--- RENDER: KitContentCheckbox() 222' );
 
-	return (
+	return useMemo( () => (
 		<Checkbox checked={ isSelected() } onChange={ setIncludes } className={ props.className } />
-	);
+	), [ context.kitContent.includes ] );
 }
 
 KitContentCheckbox.propTypes = {

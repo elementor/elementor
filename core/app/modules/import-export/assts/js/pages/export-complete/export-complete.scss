@@ -1,8 +1,23 @@
+$export-complete-secondary-sentence-color: tints(500);
+$export-complete-secondary-sentence-dark-color: dark-tints(200);
+
+:root {
+	--export-complete-secondary-sentence-color: #{$export-complete-secondary-sentence-color};
+}
+
+.dark {
+	--export-complete-secondary-sentence-color: #{$export-complete-secondary-sentence-dark-color};
+}
+
 .e-app-export-complete {
 	height: 100%;
 
 	&__main-image {
 		margin-bottom: spacing(30);
+	}
+
+	&__secondary-sentence {
+		color: var(--export-complete-secondary-sentence-color);
 	}
 
 	&__click-here {

@@ -28,7 +28,7 @@ export default function ExportComplete() {
 						{ __( 'Use this exported Kit on another Elementor site by uploading it via Kit Manager > Import Kit', 'elementor' ) }
 					</Text>
 
-					<Text tag="span" variant="sm">
+					<Text tag="span" variant="sm" className="e-app-export-complete__secondary-sentence">
 						{ __( 'If the download doesn\'t start automatically, please', 'elementor' ) }
 						<Button variant="underlined" color="link" className="e-app-export-complete__click-here" text={ __( 'click here', 'elementor' ) } url="/#" />
 					</Text>

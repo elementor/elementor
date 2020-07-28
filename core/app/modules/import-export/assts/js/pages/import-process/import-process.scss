@@ -11,6 +11,12 @@
 
 	&__box {
 		margin-top: 50px;
+		text-align: initial;
+
+		* {
+			margin: 0;
+            padding: 0;
+		}
 	}
 }
 

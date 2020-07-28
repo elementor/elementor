@@ -34,7 +34,7 @@ export default function Import() {
 							{ __( 'Drag & Drop your zip template file', 'elementor' ) }
 						</Text>
 
-						<Text variant="lg">
+						<Text variant="xl">
 							{ __( 'Or', 'elementor' ) }
 						</Text>
 
