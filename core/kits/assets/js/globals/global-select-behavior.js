@@ -17,9 +17,16 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerEvents() {
 		this.ui.globalPreviewsContainer.on( 'click', '.e-global__preview-item', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
-		this.ui.globalControlSelect.on( 'click', ( event ) => this.toggleSelect( event ) );
+		this.ui.globalPopoverToggle.on( 'click', ( event ) => this.toggleGlobalPopover( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
-			$e.run( 'panel/global/open' ).then( () => $e.route( 'panel/global/colors-and-typography' ) );
+			const { route } = this.view.getGlobalMeta(),
+				args = {
+					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
+					container: this.view.options.container,
+				};
+
+			$e.run( 'panel/global/open', args ).then( () => $e.route( route ) );
+
 			this.popover.hide();
 		} );
 	}
@@ -85,18 +92,14 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// Update the behavior's components.
 	onValueTypeChange() {
-		this.updateSelectBoxText();
+		this.updateCurrentGlobalName();
 	}
 
-	updateSelectBoxText( value ) {
-		if ( ! this.ui.globalControlSelected ) {
-			return;
-		}
-
-		let selectBoxText = '';
+	updateCurrentGlobalName( value ) {
+		let globalTooltipText = '';
 
 		if ( value ) {
-			selectBoxText = value;
+			globalTooltipText = value;
 		} else {
 			value = this.view.getControlValue();
 
@@ -118,26 +121,32 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 							text = elementor.translate( 'default' );
 						}
 
-						this.updateSelectBoxText( text );
+						this.updateCurrentGlobalName( text );
 					} );
+
+				this.ui.globalPopoverToggle.addClass( 'e-global__popover-toggle--active' );
 
 				return;
 			} else if ( value ) {
 				// If there is a value and it is not a global, set the text to custom.
-				selectBoxText = elementor.translate( 'custom' );
+				globalTooltipText = elementor.translate( 'custom' );
 			} else {
 				// If there is no value, set the text as default.
-				selectBoxText = elementor.translate( 'default' );
+				globalTooltipText = elementor.translate( 'default' );
 			}
+
+			// If there is no value, remove the 'active' class from the Global Toggle button.
+			this.ui.globalPopoverToggle.removeClass( 'e-global__popover-toggle--active' );
 		}
 
-		this.ui.globalControlSelected.html( selectBoxText );
+		// This is used in the Global Toggle Button's tooltip.
+		this.globalName = globalTooltipText;
 	}
 
 	// The Global Control elements are initialized onRender and not with initialize() because their position depends
 	// on elements that are not yet rendered when initialize() is called.
 	onRender() {
-		this.printGlobalSelectBox();
+		this.printGlobalToggleButton();
 
 		this.initGlobalPopover();
 
@@ -151,7 +160,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.$el.addClass( 'e-control-global' );
 	}
 
-	toggleSelect() {
+	toggleGlobalPopover() {
 		if ( this.popover.isVisible() ) {
 			this.popover.hide();
 		} else {
@@ -173,17 +182,25 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		return $popover;
 	}
 
-	printGlobalSelectBox() {
-		const $globalSelectBox = jQuery( '<div>', { class: 'e-global__select-box' } ),
-			$selectedGlobal = jQuery( '<span>', { class: 'e-global__select-box-text' } )
-				.html( elementor.translate( 'default' ) );
+	printGlobalToggleButton() {
+		const $globalToggleButton = jQuery( '<div>', { class: 'e-global__popover-toggle elementor-control-unit-1' } ),
+			$globalPopoverToggleIcon = jQuery( '<i>', { class: 'eicon-globe' } );
 
-		$globalSelectBox.append( $selectedGlobal, '<i class="eicon-caret-down"></i>' );
+		$globalToggleButton.append( $globalPopoverToggleIcon );
 
-		this.$el.find( '.elementor-control-input-wrapper' ).prepend( $globalSelectBox );
+		this.$el.find( '.elementor-control-input-wrapper' ).prepend( $globalToggleButton );
 
-		this.ui.globalControlSelect = $globalSelectBox;
-		this.ui.globalControlSelected = $selectedGlobal;
+		this.ui.globalPopoverToggle = $globalToggleButton;
+		this.ui.globalPopoverToggleIcon = $globalPopoverToggleIcon;
+
+		// Add tooltip to the Global Popover toggle button, displaying the current Global Name / 'Default' / 'Custom'.
+		this.ui.globalPopoverToggleIcon.tipsy( {
+			title: () => {
+				return this.globalName;
+			},
+			offset: 7,
+			gravity: () => 's',
+		} );
 	}
 
 	initGlobalPopover() {

@@ -1,33 +1,24 @@
 // Elementor Global Controls
 .e-global {
 
-	&__select-box {
-		border: 1px solid $editor-lightest;
-		@include border-end(0);
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 5px;
-		width: 100%;
-		cursor: pointer;
-
-		i {
-			@include padding-start(5px);
-			@include padding-end(2px);
-		}
-
-		&-text {
-			white-space: nowrap;
-			overflow: hidden;
-			height: 14px;
-		}
-	}
-
 	&__popover {
 		width: 270px;
 		z-index: 1;
 		font-size: 12px;
+
+		&-toggle {
+			border: 1px solid $editor-lightest;
+			@include border-end(0);
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+
+			&--active i {
+				color: $editor-info;
+			}
+		}
 
 		&-container {
 			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);

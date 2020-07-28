@@ -302,6 +302,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @since 2.0.9 Added the `controls` and the `settings` parameters.
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param array $controls Optional. An array of controls. Default is null.
 	 * @param array $settings Optional. Controls settings. Default is null.
@@ -309,6 +310,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Active controls.
 	 */
 	public function get_active_controls( array $controls = null, array $settings = null ) {
+		// _deprecated_function( __METHOD__, '3.0.0' );
+
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
 		}
@@ -316,8 +319,6 @@ abstract class Controls_Stack extends Base_Object {
 		if ( ! $settings ) {
 			$settings = $this->get_controls_settings();
 		}
-
-		$settings = $this->parse_global_settings( $settings, $controls );
 
 		$active_controls = array_reduce(
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
@@ -369,6 +370,14 @@ abstract class Controls_Stack extends Base_Object {
 			'overwrite' => false,
 			'position' => null,
 		];
+
+		if ( isset( $args['scheme'] ) ) {
+			$args['global'] = [
+				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args['scheme'] ),
+			];
+
+			unset( $args['scheme'] );
+		}
 
 		$options = array_merge( $default_options, $options );
 
@@ -716,6 +725,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @since 2.0.9 Added the `settings` parameter.
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param array $controls Optional. Controls list. Default is null.
 	 * @param array $settings Optional. Controls settings. Default is null.
@@ -723,6 +733,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Style controls.
 	 */
 	final public function get_style_controls( array $controls = null, array $settings = null ) {
+		// _deprecated_function( __METHOD__, '3.0.0' );
+
 		$controls = $this->get_active_controls( $controls, $settings );
 
 		$style_controls = [];
@@ -746,30 +758,12 @@ abstract class Controls_Stack extends Base_Object {
 				$control['style_fields'] = $style_fields;
 			}
 
-			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || $this->is_global_control( $control_name, $controls ) || ! empty( $control['style_fields'] ) ) {
+			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || ! empty( $control['style_fields'] ) ) {
 				$style_controls[ $control_name ] = $control;
 			}
 		}
 
 		return $style_controls;
-	}
-
-	private function is_global_control( $control_name, $controls ) {
-		$control = $controls[ $control_name ];
-
-		$control_global_key = $control_name;
-
-		if ( ! empty( $control['groupType'] ) ) {
-			$control_global_key = $control['groupPrefix'] . $control['groupType'];
-		}
-
-		if ( empty( $controls[ $control_global_key ]['global']['active'] ) ) {
-			return false;
-		}
-
-		$globals = $this->get_settings( '__globals__' );
-
-		return ! empty( $globals[ $control_global_key ] );
 	}
 
 	/**
@@ -2075,36 +2069,5 @@ abstract class Controls_Stack extends Base_Object {
 				$this->init( $data );
 			}
 		}
-	}
-
-	private function parse_global_settings( array $settings, array $controls ) {
-		foreach ( $controls as $control ) {
-			$control_name = $control['name'];
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
-
-			if ( ! $control_obj instanceof Base_Data_Control ) {
-				continue;
-			}
-
-			if ( $control_obj instanceof Control_Repeater ) {
-				foreach ( $settings[ $control_name ] as & $field ) {
-					$field = $this->parse_global_settings( $field, $control['fields'] );
-				}
-
-				continue;
-			}
-
-			if ( empty( $control['global']['active'] ) ) {
-				continue;
-			}
-
-			if ( empty( $settings['__globals__'][ $control_name ] ) ) {
-				continue;
-			}
-
-			$settings[ $control_name ] = 'global';
-		}
-
-		return $settings;
 	}
 }

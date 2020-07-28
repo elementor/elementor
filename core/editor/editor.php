@@ -451,14 +451,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-ntc',
-			ELEMENTOR_ASSETS_URL . 'lib/e-ntc/e-ntc' . $suffix . '.js',
-			[],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -501,7 +493,6 @@ class Editor {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
-				'elementor-ntc',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
@@ -623,6 +614,7 @@ class Editor {
 
 				// Global Styles
 				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'new_global_color' => __( 'New Global Color', 'elementor' ),
 				'global_colors_title' => __( 'Global Colors', 'elementor' ),
 				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
 				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
@@ -631,28 +623,25 @@ class Editor {
 				'global_colors_info' => __( 'Global Colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below.', 'elementor' ),
 				'typography' => __( 'Typography', 'elementor' ),
 				'new_typography_setting' => __( 'New Typography Setting', 'elementor' ),
-				'global_typography_title' => __( 'Global Typography Settings', 'elementor' ),
-				'manage_global_typography' => __( 'Manage Global Typography', 'elementor' ),
-				'create_global_typography' => __( 'Create New Global Typography', 'elementor' ),
-				'delete_global_typography' => __( 'Delete Global Typography', 'elementor' ),
-				'delete_global_typography_info' => __( 'You\'re about to delete a Global Typography. Note that if it\'s being used anywhere on your site, it will inherit a default typography.', 'elementor' ),
-				'global_typography_info' => __( 'Global Typography helps you work smarter. Save a Typography, and use it anywhere throughout your site. Access and edit your global typography by clicking the Manage button below.', 'elementor' ),
+				'global_fonts_title' => __( 'Global Fonts', 'elementor' ),
+				'manage_global_fonts' => __( 'Manage Global Fonts', 'elementor' ),
+				'create_global_font' => __( 'Create New Global Font', 'elementor' ),
+				'delete_global_font' => __( 'Delete Global Font', 'elementor' ),
+				'delete_global_font_info' => __( 'You\'re about to delete a Global Font. Note that if it\'s being used anywhere on your site, it will inherit a default typography.', 'elementor' ),
+				'global_fonts_info' => __( 'Global Fonts helps you work smarter. Save a Typography, and use it anywhere throughout your site. Access and edit your global fonts by clicking the Manage button below.', 'elementor' ),
 				'default' => __( 'Default', 'elementor' ),
 				'create' => __( 'Create', 'elementor' ),
 				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
 				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' ),
 				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' ),
-				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Typography setting?', 'elementor' ),
+				'global_fonts_confirm_text' => __( 'Are you sure you want to create a new Global Font setting?', 'elementor' ),
 				'custom' => __( 'Custom', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
-				'global_colors' => __( 'Default Colors', 'elementor' ),
-				'global_fonts' => __( 'Default Fonts', 'elementor' ),
-				'global_style' => __( 'Global Style', 'elementor' ),
-				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'site_editor' => __( 'Site Editor', 'elementor' ),
+				'site_settings' => __( 'Site Settings', 'elementor' ),
+				'theme_builder' => __( 'Theme Builder', 'elementor' ),
 				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'more' => __( 'More', 'elementor' ),

@@ -11,35 +11,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Layout_Settings extends Tab_Base {
+class Settings_Layout extends Tab_Base {
 
 	public function get_id() {
-		return 'layout-settings';
+		return 'settings-layout';
 	}
 
 	public function get_title() {
 		return __( 'Layout', 'elementor' );
 	}
 
-	public function register_tab_controls() {
+	protected function register_tab_controls() {
 		$default_breakpoints = Responsive::get_default_breakpoints();
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
 			[
-				'label' => $this->get_title(),
+				'label' => __( 'Layout Settings', 'elementor' ),
 				'tab' => $this->get_id(),
-			]
-		);
-
-		$this->add_control(
-			'default_generic_fonts',
-			[
-				'label' => __( 'Default Generic Fonts', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => 'Sans-serif',
-				'description' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
-				'label_block' => true,
 			]
 		);
 
@@ -137,38 +126,55 @@ class Layout_Settings extends Tab_Base {
 
 		$page_templates_module->add_template_controls( $this->parent, 'default_page_template', $page_template_control_options );
 
-		$this->add_control(
-			'breakpoints_heading',
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_breakpoints',
 			[
 				'label' => __( 'Breakpoints', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
+				'tab' => $this->get_id(),
 			]
 		);
 
 		$this->add_control(
-			'viewport_lg',
+			'breakpoint_md_heading',
 			[
-				'label' => __( 'Tablet', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'min' => $default_breakpoints['md'] + 1,
-				'max' => $default_breakpoints['xl'] - 1,
-				'default' => $default_breakpoints['lg'],
-				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
+				'label' => __( 'Mobile', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 			]
 		);
 
 		$this->add_control(
 			'viewport_md',
 			[
-				'label' => __( 'Mobile', 'elementor' ),
+				'label' => __( 'Breakpoint (px)', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => $default_breakpoints['sm'] + 1,
 				'max' => $default_breakpoints['lg'] - 1,
 				'default' => $default_breakpoints['md'],
 				/* translators: %d: Breakpoint value */
 				'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
+			]
+		);
+
+		$this->add_control(
+			'breakpoint_lg_heading',
+			[
+				'label' => __( 'Tablet', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
+
+		$this->add_control(
+			'viewport_lg',
+			[
+				'label' => __( 'Breakpoint (px)', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'min' => $default_breakpoints['md'] + 1,
+				'max' => $default_breakpoints['xl'] - 1,
+				'default' => $default_breakpoints['lg'],
+				/* translators: %d: Breakpoint value */
+				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
 			]
 		);
 

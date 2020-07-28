@@ -3,7 +3,6 @@
 namespace Elementor\Data;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Data\Base\Controller;
 use Elementor\Data\Base\Processor;
 
 if ( ! defined( 'ABSPATH' ) ) {

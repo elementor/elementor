@@ -4,7 +4,6 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Core\Base\Module;
 use Elementor\Tracker;
-use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
