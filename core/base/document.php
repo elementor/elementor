@@ -2,7 +2,6 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Settings\Page\Manager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\DB;
@@ -821,11 +820,20 @@ abstract class Document extends Controls_Stack {
 		if ( ! $elements_data ) {
 			$elements_data = $this->get_elements_data();
 		}
+
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
+
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
-			<div class="elementor-section-wrap">
-				<?php $this->print_elements( $elements_data ); ?>
+			<?php if ( $is_legacy_mode_active ) { ?>
+			<div class="elementor-inner">
+			<?php } ?>
+				<div class="elementor-section-wrap">
+					<?php $this->print_elements( $elements_data ); ?>
+				</div>
+			<?php if ( $is_legacy_mode_active ) { ?>
 			</div>
+			<?php } ?>
 		</div>
 		<?php
 	}

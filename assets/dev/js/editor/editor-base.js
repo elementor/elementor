@@ -8,8 +8,8 @@ import NoticeBar from './utils/notice-bar';
 import IconsManager from './components/icons-manager/icons-manager';
 import ColorControl from './controls/color';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
-import Document from './document';
 import Documents from 'elementor-editor/documents/component';
+import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 import Preview from 'elementor-views/preview';
@@ -146,7 +146,7 @@ export default class EditorBase extends Marionette.Application {
 						},
 					},
 					menu: {
-						Menu: require( 'elementor-panel/pages/menu/menu' ),
+						Menu: PanelMenu,
 					},
 				},
 			},
@@ -168,7 +168,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',
-			ignore: '.e-global__select-box',
+			ignore: '.e-global__popover-toggle',
 		},
 		tagsList: {
 			element: '.elementor-tags-list',
@@ -696,16 +696,6 @@ export default class EditorBase extends Marionette.Application {
 			.trigger( 'change' );
 	}
 
-	enqueueTypographyFonts() {
-		const typographyScheme = this.schemes.getScheme( 'typography' );
-
-		this.helpers.resetEnqueuedFontsCache();
-
-		_.each( typographyScheme.items, ( item ) => {
-			this.helpers.enqueueFont( item.value.font_family );
-		} );
-	}
-
 	translate( stringKey, templateArgs, i18nStack ) {
 		// TODO: BC since 2.3.0, it always should be `this.config.i18n`
 		if ( ! i18nStack ) {
@@ -869,8 +859,6 @@ export default class EditorBase extends Marionette.Application {
 		_.defer( function() {
 			elementorFrontend.elements.window.jQuery.holdReady( false );
 		} );
-
-		this.enqueueTypographyFonts();
 
 		$e.shortcuts.bindListener( elementorFrontend.elements.$window );
 

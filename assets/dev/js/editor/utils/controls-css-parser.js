@@ -76,18 +76,9 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			globalKey = globalKeys[ controlGlobalKey ];
 		}
 
-		let value,
-			globalArgs;
+		let value;
 
-		if ( globalKey ) {
-			globalArgs = $e.data.commandExtractArgs( globalKey );
-
-			value = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
-
-			if ( ! value.id ) {
-				return;
-			}
-		} else {
+		if ( ! globalKey ) {
 			value = this.getStyleControlValue( control, values );
 
 			if ( undefined === value ) {
@@ -98,23 +89,20 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		_.each( control.selectors, ( cssProperty, selector ) => {
 			var outputCssProperty;
 
-			if ( globalArgs ) {
-				const id = value.id;
+			if ( globalKey ) {
+				const selectorGlobalValue = this.getSelectorGlobalValue( control, globalKey );
 
-				let propertyValue;
+				if ( selectorGlobalValue ) {
+					if ( 'font' === control.type ) {
+						$e.data.get( globalKey ).then( ( response ) => {
+								elementor.helpers.enqueueFont( response.data.value.typography_font_family );
+						} );
+					}
 
-				// it's a global settings with additional controls in group.
-				if ( control.groupType ) {
-					const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' ).replace( /(_tablet|_mobile)$/, '' );
-
-					propertyValue = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
-				} else {
-					propertyValue = `var( --e-global-${ control.type }-${ id } )`;
+					// This regex handles a case where a control's selector property value includes more than one CSS selector.
+					// Example: 'selector' => 'background: {{VALUE}}; background-color: {{VALUE}};'.
+					outputCssProperty = cssProperty.replace( /(:)[^;]+(;?)/g, '$1' + selectorGlobalValue + '$2' );
 				}
-
-				// This regex handles a case where a control's selector property value includes more than one CSS selector.
-				// Example: 'selector' => 'background: {{VALUE}}; background-color: {{VALUE}};'.
-				outputCssProperty = cssProperty.replace( /(:)[^;]+(;?)/g, '$1' + propertyValue + '$2' );
 			} else {
 				try {
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
@@ -150,6 +138,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 								throw '';
 							}
+						}
+
+						if ( 'font' === control.type ) {
+							elementor.helpers.enqueueFont( parsedValue );
 						}
 
 						return parsedValue;
@@ -225,6 +217,11 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	getStyleControlValue: function( control, values ) {
+		if ( values.__globals__?.[ control.name ] ) {
+			// When the control itself has no global value, but it refers to another control global value
+			return this.getSelectorGlobalValue( control, values.__globals__[ control.name ] );
+		}
+
 		var value = values[ control.name ];
 
 		if ( control.selectors_dictionary ) {
@@ -233,6 +230,30 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
 			return;
+		}
+
+		return value;
+	},
+
+	getSelectorGlobalValue( control, globalKey ) {
+		const globalArgs = $e.data.commandExtractArgs( globalKey ),
+			data = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
+
+		if ( ! data?.id ) {
+			return;
+		}
+
+		const id = data.id;
+
+		let value;
+
+		// it's a global settings with additional controls in group.
+		if ( control.groupType ) {
+			const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' ).replace( /(_tablet|_mobile)$/, '' );
+
+			value = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
+		} else {
+			value = `var( --e-global-${ control.type }-${ id } )`;
 		}
 
 		return value;
@@ -273,8 +294,23 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	addStyleToDocument: function() {
-		elementor.$previewContents.find( 'head' ).append( this.elements.$stylesheetElement );
+	addStyleToDocument: function( position ) {
+		const $head = elementor.$previewContents.find( 'head' );
+
+		let insertMethod = 'append',
+			$insertBy = $head;
+
+		if ( position ) {
+			const $targetElement = $head.children( position.of );
+
+			if ( $targetElement.length ) {
+				insertMethod = position.at;
+
+				$insertBy = $targetElement;
+			}
+		}
+
+		$insertBy[ insertMethod ]( this.elements.$stylesheetElement );
 
 		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this.getSettings( 'context' ) );
 

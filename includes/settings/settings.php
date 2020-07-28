@@ -241,8 +241,9 @@ class Settings extends Settings_Page {
 				<div class="e-getting-started__box postbox">
 					<div class="e-getting-started__header">
 						<div class="e-getting-started__title">
-							<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
-
+							<div class="e-logo-wrapper">
+								<i class="eicon-elementor"></i>
+							</div>
 							<?php echo __( 'Getting Started', 'elementor' ); ?>
 						</div>
 						<a class="e-getting-started__skip" href="<?php echo esc_url( admin_url() ); ?>">
@@ -404,6 +405,7 @@ class Settings extends Settings_Page {
 	 *
 	 * @since 1.7.5
 	 * @access public
+	 * @deprecated 3.0.0
 	 */
 	public function update_css_print_method() {
 		Plugin::$instance->files_manager->clear_cache();
@@ -473,7 +475,7 @@ class Settings extends Settings_Page {
 									'type' => 'checkbox',
 									'value' => 'yes',
 									'default' => '',
-									'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to get our updates.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
+									'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
 							],
@@ -490,7 +492,7 @@ class Settings extends Settings_Page {
 								'label' => __( 'Looking for the Style settings?', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => __( 'The Style settings changed location and now can be found under: Editor > Menu > Global Settings.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
+									'html' => __( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Settings Panel > Hamburger Menu > Global Settings</b>.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
 								],
 							],
 						],
@@ -539,6 +541,21 @@ class Settings extends Settings_Page {
 										1 => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+								],
+							],
+							'element_wrappers_legacy_mode' => [
+								'label' => __( 'HTML Output Legacy Mode', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'options' => [
+										'' => __( 'After 3.0', 'elementor' ),
+										1 => __( 'Before 3.0', 'elementor' ),
+									],
+									'desc' => __( 'Developers, Please Note! If you’ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy Mode allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
+										. '<br /><br />'
+										. __( 'Please note - you should not use this mode on newly created sites.', 'elementor' )
+										. '<br />'
+										. '<a href="https://go.elementor.com/legacy-mode" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
 							],
 						],
@@ -600,9 +617,13 @@ class Settings extends Settings_Page {
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
 		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
 
+		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
+
 		// Clear CSS Meta after change print method.
-		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+		add_action( 'add_option_elementor_css_print_method', $clear_cache_callback );
+		add_action( 'update_option_elementor_css_print_method', $clear_cache_callback );
+		add_action( 'add_option_elementor_element_wrappers_legacy_mode', $clear_cache_callback );
+		add_action( 'update_option_elementor_element_wrappers_legacy_mode', $clear_cache_callback );
 
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', [ $this, 'menu_order' ] );

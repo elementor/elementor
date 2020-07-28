@@ -56,16 +56,8 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		} );
 	},
 
-	onFieldChange: function( event ) {
-		var $select = this.$( event.currentTarget ),
-			currentValue = elementor.schemes.getSchemeValue( 'typography', this.model.get( 'key' ) ).value,
-			fieldKey = $select.attr( 'name' );
-
-		currentValue[ fieldKey ] = $select.val();
-
-		if ( 'font_family' === fieldKey && ! _.isEmpty( currentValue[ fieldKey ] ) ) {
-			elementor.helpers.enqueueFont( currentValue[ fieldKey ] );
-		}
+	onFieldChange: function() {
+		var currentValue = elementor.schemes.getSchemeValue( 'typography', this.model.get( 'key' ) ).value;
 
 		this.triggerMethod( 'value:change', currentValue );
 	},
