@@ -76,11 +76,6 @@
 			width: 8px;
 		}
 
-		&::-webkit-scrollbar-track {
-			background-color: $editor-background-light;
-			border-radius: 10px;
-		}
-
 		&::-webkit-scrollbar-thumb {
 			background-color: $editor-light;
 			outline: 1px solid $editor-darker;
