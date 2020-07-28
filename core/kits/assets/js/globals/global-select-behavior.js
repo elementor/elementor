@@ -38,6 +38,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				this.onValueTypeChange();
 
+				$e.components.get( 'globals' ).updateTempStylesheet();
+
 				this.view.applySavedValue();
 
 				return globalData.data;
@@ -279,8 +281,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		this.createNewGlobal( globalMeta )
 			.then( ( result ) => {
-				elementor.kitManager.refreshKitCssFiles();
-
 				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
