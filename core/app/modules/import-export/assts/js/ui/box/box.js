@@ -14,7 +14,7 @@ export default function Box( props ) {
 	}
 
 	return (
-		<div style={ style } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<div style={ style } className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
 		</div>
 	);

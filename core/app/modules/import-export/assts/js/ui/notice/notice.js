@@ -1,3 +1,5 @@
+import Utils from 'elementor-app/utils/utils.js';
+
 import './notice.scss';
 
 export default function Notice( props ) {
@@ -9,7 +11,7 @@ export default function Notice( props ) {
 	}
 
 	return (
-		<div className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<div className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
 		</div>
 	);

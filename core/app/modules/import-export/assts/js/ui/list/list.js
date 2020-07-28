@@ -1,3 +1,5 @@
+import Utils from 'elementor-app/utils/utils.js';
+
 import './list.scss';
 
 export default function List( props ) {
@@ -8,7 +10,7 @@ export default function List( props ) {
 		];
 
 		return (
-		<ul className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<ul className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
 		</ul>
 	);

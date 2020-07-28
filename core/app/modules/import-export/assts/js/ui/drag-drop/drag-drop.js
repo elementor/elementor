@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import Utils from 'elementor-app/utils/utils.js';
+
 import './drag-drop.scss';
 
 export default function DragDrop( props ) {
@@ -12,7 +14,7 @@ export default function DragDrop( props ) {
 				classes.push( baseClassName + '--drag-over' );
 			}
 
-			return classes.filter( ( classItem ) => '' !== classItem ).join( ' ' );
+			return Utils.arrayToClassName( classes );
 		},
 		onDragDropActions = ( event ) => {
 			event.preventDefault();
