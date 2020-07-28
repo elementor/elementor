@@ -46,8 +46,6 @@ export default class extends RepeaterRow {
 
 			globalType = 'color';
 
-			this.ui.removeButton.data( 'e-global-type', 'color' );
-
 			this.updateColorValue();
 		}
 
@@ -56,7 +54,7 @@ export default class extends RepeaterRow {
 				.find( '.elementor-control-input-wrapper' )
 				.append( this.getRemoveButton() );
 
-			globalType = 'typography';
+			globalType = 'font';
 		}
 
 		if ( isColor || isPopoverToggle ) {

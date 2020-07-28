@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.9.0
  */
-class Post_Preview extends Post {
+class Post_Preview extends Post_Local_Cache {
 
 	/**
 	 * Preview ID.
@@ -24,7 +24,7 @@ class Post_Preview extends Post {
 	 *
 	 * @var int
 	 */
-	private $preview_id;
+	private $post_id_for_data;
 
 	/**
 	 * Post preview CSS file constructor.
@@ -38,34 +38,26 @@ class Post_Preview extends Post {
 	 * @param int $post_id Post ID.
 	 */
 	public function __construct( $post_id ) {
-		$this->preview_id = $post_id;
+		$this->post_id_for_data = $post_id;
 
 		$parent_id = wp_get_post_parent_id( $post_id );
 
 		parent::__construct( $parent_id );
 	}
 
-	/**
-	 * @since 2.1.0
-	 * @access public
-	 */
-	public function get_preview_id() {
-		return $this->preview_id;
+	protected function get_post_id_for_data() {
+		return $this->post_id_for_data;
 	}
 
 	/**
-	 * Get data.
-	 *
-	 * Retrieve raw post data from the database.
-	 *
-	 * @since 1.9.0
-	 * @access protected
-	 *
-	 * @return array Post data.
+	 * @since 2.1.0
+	 * @access public
+	 * @deprecated 3.0.0 Use `Post_Preview::get_post_id_for_data()` instead
 	 */
-	protected function get_data() {
-		$document = Plugin::$instance->documents->get( $this->preview_id );
-		return $document ? $document->get_elements_data() : [];
+	protected function get_preview_id() {
+		_deprecated_function( __METHOD__, '3.0.0', __CLASS__ . '::get_post_id_for_data()' );
+
+		return $this->get_post_id_for_data();
 	}
 
 	/**
@@ -79,36 +71,6 @@ class Post_Preview extends Post {
 	 * @return string CSS file handle ID.
 	 */
 	protected function get_file_handle_id() {
-		return 'elementor-preview-' . $this->preview_id;
-	}
-
-	/**
-	 * Get meta data.
-	 *
-	 * Retrieve the previewed post CSS file meta data.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 *
-	 * @param string $property Optional. Custom meta data property. Default is
-	 *                         null.
-	 *
-	 * @return array Previewed post CSS file meta data.
-	 */
-	public function get_meta( $property = null ) {
-		// Parse CSS first, to get the fonts list.
-		$css = $this->get_content();
-
-		$meta = [
-			'status' => self::CSS_STATUS_INLINE,
-			'fonts' => $this->get_fonts(),
-			'css' => $css,
-		];
-
-		if ( $property ) {
-			return isset( $meta[ $property ] ) ? $meta[ $property ] : null;
-		}
-
-		return $meta;
+		return 'elementor-preview-' . $this->get_post_id_for_data();
 	}
 }

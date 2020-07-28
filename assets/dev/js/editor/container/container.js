@@ -3,7 +3,7 @@ import Panel from './panel';
 
 /**
  * TODO: ViewsOptions
- * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView)} ViewsOptions
+ * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView|BaseContainer)} ViewsOptions
  */
 
 export default class Container extends ArgsObject {
@@ -276,11 +276,11 @@ export default class Container extends ArgsObject {
 			return this;
 		}
 
-		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
+		if ( this !== this.renderer && this.renderer.view?.isDisconnected && this.renderer.view.isDisconnected() ) {
 			this.renderer = this.renderer.lookup();
 		}
 
-		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
+		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDisconnected() ) {
 			// Hack For repeater item the result is the parent container.
 			if ( 'repeater' === this.type ) {
 				this.settings = this.parent.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );

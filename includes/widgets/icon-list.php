@@ -186,6 +186,21 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'link_click',
+			[
+				'label' => __( 'Apply Link On', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'full_width' => __( 'Full Width', 'elementor' ),
+					'inline' => __( 'Inline', 'elementor' ),
+				],
+				'default' => 'full_width',
+				'separator' => 'before',
+				'prefix_class' => 'elementor-list-item-link-',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(

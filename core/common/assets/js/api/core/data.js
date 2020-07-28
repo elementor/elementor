@@ -361,10 +361,18 @@ export default class Data extends Commands {
 	 */
 	fetch( requestData, fetchAPI = window.fetch ) {
 		const params = this.prepareHeaders( requestData ),
-			isCacheRequired = this.isCacheRequired( requestData ),
-			cache = isCacheRequired && 'get' === requestData.type ? this.fetchCache( requestData ) : false;
+			getCache = this.isGetCache( requestData ),
+			saveCache = this.isSaveCache( requestData );
 
-		return cache || new Promise( async ( resolve, reject ) => {
+		if ( getCache ) {
+			const cachePromise = this.cache.getAsync( requestData );
+
+			if ( cachePromise ) {
+				return cachePromise;
+			}
+		}
+
+		return new Promise( async ( resolve, reject ) => {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
 			try {
@@ -384,7 +392,7 @@ export default class Data extends Commands {
 
 				// At this point, it got the resolved response from remote.
 				// So load cache, and resolve it.
-				if ( isCacheRequired ) {
+				if ( saveCache ) {
 					this.cache.set( requestData, response );
 				}
 
@@ -506,11 +514,20 @@ export default class Data extends Commands {
 	}
 
 	/**
-	 * Function isCacheRequired().
+	 * Function isGetCache().
 	 *
 	 * @param {RequestData} requestData
 	 */
-	isCacheRequired( requestData ) {
+	isGetCache( requestData ) {
+		return 'get' === requestData.type && ! requestData.args.options?.refresh;
+	}
+
+	/**
+	 * Function isSaveCache().
+	 *
+	 * @param {RequestData} requestData
+	 */
+	isSaveCache( requestData ) {
 		return [ 'create', 'get' ].includes( requestData.type ) && ! requestData.args.options?.refresh;
 	}
 

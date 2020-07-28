@@ -85,7 +85,7 @@ export default class BulkComponent extends ComponentBase {
 	execute( requestData, data, setCache = true ) {
 		requestData.executor.resolve( $e.data.handleResponse( requestData, data ) );
 
-		if ( setCache && $e.data.isCacheRequired( requestData ) ) {
+		if ( setCache && $e.data.isSaveCache( requestData ) ) {
 			$e.data.cache.set( requestData, data );
 		}
 	}
