@@ -38,7 +38,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				this.onValueTypeChange();
 
-				$e.components.get( 'globals' ).updateTempStylesheet();
+				elementor.kitManager.renderGlobalVariables();
 
 				this.view.applySavedValue();
 
