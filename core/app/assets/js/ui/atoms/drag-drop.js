@@ -10,7 +10,7 @@ export default function DragDrop( props ) {
 			const baseClassName = 'e-app-drag-drop',
 				classes = [ baseClassName, props.className ];
 
-			if ( isDragOver ) {
+			if ( isDragOver && ! props.isLoading ) {
 				classes.push( baseClassName + '--drag-over' );
 			}
 
@@ -62,7 +62,7 @@ DragDrop.propTypes = {
 	children: PropTypes.any,
 	onDrop: PropTypes.func,
 	onDragOver: PropTypes.func,
-	onDragLeave: PropTypes.func,
+	isLoading: PropTypes.bool,
 };
 
 DragDrop.defaultProps = {
