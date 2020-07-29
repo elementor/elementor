@@ -49,7 +49,7 @@ $card-dark-image-overlay-background-color: rgba(dark-tints(700), $opacity-05);
 	--card-image-overlay-background-color: #{$card-image-overlay-background-color};
 }
 
-.dark {
+.eps-theme-dark {
 	--card-background-color: #{$card-dark-background-color};
 	--card-background-color-hover: #{$card-dark-background-color-hover};
 	--card-box-shadow: #{$card-dark-box-shadow};

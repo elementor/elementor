@@ -2,7 +2,7 @@
 // - Generated via loops from relevant maps.
 
 // Custom variable values only support SassScript inside `#{}`.
-.dark {
+.eps-theme-dark {
 	@each $color, $value in $eps-dark-theme-colors {
 		@if map-get($eps-dark-theme-colors, $color) {
 			--#{$color}: #{$value};

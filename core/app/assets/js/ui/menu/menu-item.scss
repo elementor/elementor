@@ -33,7 +33,7 @@ $menu-item-dark-background-color-active: dark-tints(600);
 $menu-item-icon-dark-color: dark-tints(200);
 $menu-item-action-button-dark-color: dark-tints(400);
 
-.dark {
+.eps-theme-dark {
 	--menu-item-color: #{$menu-item-dark-color};
 	--menu-item-color-hover: #{$menu-item-dark-color-hover};
 	--menu-item-background-color-active: #{$menu-item-dark-background-color-active};

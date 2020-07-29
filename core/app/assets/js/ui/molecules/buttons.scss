@@ -18,7 +18,7 @@
 		--button-background-color: var(--button-hover-background-color);
 	}
 
-	.dark & {
+	.eps-theme-dark & {
 		//dark custom properties
 		@include button-dark-custom-properties;
 	}

@@ -22,7 +22,7 @@ $eps-box-shadow-alpha-unit-dark: 0.2;
 	--color-box-shadow-color: rgba(0, 0, 0, var(--eps-box-shadow-alpha-unit));
 }
 
-.dark {
+.eps-theme-dark {
 	--eps-box-shadow-alpha-unit: #{$eps-box-shadow-alpha-unit-dark};
 }
 
