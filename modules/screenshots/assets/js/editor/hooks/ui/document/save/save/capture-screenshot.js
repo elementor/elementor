@@ -13,7 +13,11 @@ export class CaptureScreenshot extends After {
 	}
 
 	getConditions( args = {} ) {
-		return 'publish' === args.status;
+		// Temporary this hook is disabled.
+		// Original check:
+		// return 'publish' === args.status;
+
+		return false;
 	}
 
 	apply() {
