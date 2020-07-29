@@ -33,8 +33,8 @@ export class Index extends CommandData {
 	}
 
 	/**
-	 * Since $e.data does not know how to work with `query.commands` but only arrays we need override `query.commands`
-	 * This method use since its need do it before getRequestData() create the endpoint.
+	 * Since $e.data does not know how to work with `query.commands` but only array, override `query.commands`.
+	 * getRequestData method is used since, need to handle it before getRequestData() create the endpoint.
 	 * Run over all query.commands:
 	 * If they cached add it to `this.cachedResults`.
 	 * If not Re-format commands, to be as excepted by $e.data.

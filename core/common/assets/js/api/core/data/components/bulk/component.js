@@ -62,12 +62,12 @@ export default class BulkComponent extends ComponentBase {
 			const commands = {},
 				mapRequests = [];
 
-			this.requests.forEach( ( _requestData ) => {
-				const id = _requestData.args.query.id,
-					timestamp = _requestData.timestamp;
+			this.requests.forEach( ( requestData ) => {
+				const id = requestData.args.query.id,
+					timestamp = requestData.timestamp;
 
-				commands[ timestamp ] = id ? _requestData.command + '?id=' + id : _requestData.command;
-				mapRequests[ timestamp ] = _requestData;
+				commands[ timestamp ] = id ? requestData.command + '?id=' + id : requestData.command;
+				mapRequests[ timestamp ] = requestData;
 			} );
 
 			const result = await $e.data.get( 'bulk/index', { commands }, { refresh: true } ) || {};
