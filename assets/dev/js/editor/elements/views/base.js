@@ -568,58 +568,6 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	renderOnChange( settings ) {
-		if ( ! this.allowRender ) {
-			return;
-		}
-
-		// Make sure is correct model
-		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
-			const hasChanged = settings.hasChanged();
-			let isContentChanged = ! hasChanged,
-				isRenderRequired = ! hasChanged;
-
-			_.each( settings.changedAttributes(), ( settingValue, settingKey ) => {
-				const control = settings.getControl( settingKey );
-
-				if ( '_column_size' === settingKey ) {
-					isRenderRequired = true;
-					return;
-				}
-
-				if ( ! control ) {
-					isRenderRequired = true;
-					isContentChanged = true;
-					return;
-				}
-
-				if ( 'none' !== control.render_type ) {
-					isRenderRequired = true;
-				}
-
-				if ( -1 !== [ 'none', 'ui' ].indexOf( control.render_type ) ) {
-					return;
-				}
-
-				if ( 'template' === control.render_type || ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) ) {
-					isContentChanged = true;
-				}
-			} );
-
-			if ( ! isRenderRequired ) {
-				return;
-			}
-
-			if ( ! isContentChanged ) {
-				this.renderUI();
-				return;
-			}
-		}
-
-		// Re-render the template
-		this.renderHTML();
-	},
-
 	getDynamicParsingSettings() {
 		const self = this;
 

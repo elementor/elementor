@@ -38,7 +38,7 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container settings.
 	 *
-	 * @type {Backbone.Model}
+	 * @type {(Backbone.Model|BaseSettingsModel)}
 	 */
 	settings;
 
@@ -305,19 +305,60 @@ export default class Container extends ArgsObject {
 
 	/**
 	 * Function render().
-	 *
-	 * Call view render.
-	 *
-	 * Run's `this.renderer.view.renderOnChange( this.settings ) `.
-	 * When `this.renderer` exist.
-	 *
+	 * source: `elements/views/base/renderOnChange`.
 	 */
 	render() {
-		if ( ! this.renderer ) {
+		if ( ! this.renderer || ! this.renderer.view.allowRender ) {
 			return;
 		}
 
-		this.renderer.view.renderOnChange( this.settings );
+		const settings = this.settings;
+
+		// Make sure is correct model
+		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
+			const hasChanged = settings.hasChanged();
+			let isContentChanged = ! hasChanged,
+				isRenderRequired = ! hasChanged;
+
+			Object.keys( settings.changedAttributes() ).forEach( ( settingKey ) => {
+				const control = settings.getControl( settingKey );
+
+				if ( '_column_size' === settingKey ) {
+					isRenderRequired = true;
+					return;
+				}
+
+				if ( ! control ) {
+					isRenderRequired = true;
+					isContentChanged = true;
+					return;
+				}
+
+				if ( 'none' !== control.render_type ) {
+					isRenderRequired = true;
+				}
+
+				if ( -1 !== [ 'none', 'ui' ].indexOf( control.render_type ) ) {
+					return;
+				}
+
+				if ( 'template' === control.render_type || ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) ) {
+					isContentChanged = true;
+				}
+			} );
+
+			if ( ! isRenderRequired ) {
+				return;
+			}
+
+			if ( ! isContentChanged ) {
+				this.renderUI();
+				return;
+			}
+		}
+
+		// Re-render the template
+		this.renderer.view.renderHTML();
 	}
 
 	renderUI() {
