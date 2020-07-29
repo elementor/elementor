@@ -119,7 +119,7 @@ class Manager {
 				'global_colors' => __( 'Global Colors', 'elementor' ),
 				'invalid' => __( 'Invalid', 'elementor' ),
 				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
-				'typography_cannot_be_deleted' => __( 'System Typography can\'t be deleted', 'elementor' ),
+				'font_cannot_be_deleted' => __( 'System Font can\'t be deleted', 'elementor' ),
 				'design_system' => __( 'Design System', 'elementor' ),
 				'buttons' => __( 'Buttons', 'elementor' ),
 				'images' => __( 'Images', 'elementor' ),
