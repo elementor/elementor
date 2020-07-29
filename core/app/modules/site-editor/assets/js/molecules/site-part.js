@@ -2,6 +2,7 @@ import Card from 'elementor-app/ui/card/card';
 import CardHeader from 'elementor-app/ui/card/card-header';
 import CardBody from 'elementor-app/ui/card/card-body';
 import CardImage from 'elementor-app/ui/card/card-image';
+import Heading from 'elementor-app/ui/atoms/heading';
 
 import './site-part.scss';
 
@@ -9,7 +10,7 @@ export default function SitePart( props ) {
 	return (
 		<Card className="site-part">
 			<CardHeader>
-				<h1 className="eps-card__headline">{ props.title }</h1>
+				<Heading tag="h1" variant="text-sm" className="eps-card__headline">{ props.title }</Heading>
 				{ props.actionButton }
 			</CardHeader>
 			<CardBody>

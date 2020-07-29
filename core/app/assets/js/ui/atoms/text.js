@@ -3,7 +3,7 @@ export default function Text( props ) {
 		classes = [
 			props.className,
 		],
-		tagName = props.tag || 'p',
+		tagName = props.tag,
 		variant = props.variant && 'md' !== props.variant ? '-' + props.variant : '';
 
 	classes.push( baseClassName + '-text' + variant );
@@ -22,4 +22,5 @@ Text.propTypes = {
 
 Text.defaultProps = {
 	className: '',
+	tag: 'p',
 };

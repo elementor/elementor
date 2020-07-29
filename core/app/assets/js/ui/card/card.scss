@@ -23,8 +23,7 @@
 	*/
 
 	&__headline {
-		--h1-color: var(--card-headline-color);
-		font-size: $card-headline-font-size;
+		color: var(--card-headline-color);
 		margin-bottom: 0;
 		font-weight: $card-headline-font-weight;
 		flex-grow: 1;
