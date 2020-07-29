@@ -1,24 +1,27 @@
 import { useRef } from 'react';
-import useFile from '../../hooks/use-file/use-file';
+
 import Button from 'elementor-app/ui/molecules/button';
 
 import './select-file.scss';
 
-export default function SelectFile() {
-	const { setFile } = useFile(),
-		fileInput = useRef(),
-		onFileSelect = ( event ) => {
-			setFile( event.target.files[ 0 ] );
-		};
+export default function SelectFile( props ) {
+	const fileInput = useRef( null );
 
 	return (
 		<div>
-			<input ref={ fileInput } onChange={ onFileSelect } type="file" className="e-app-select-file__input" />
+			<input
+				ref={ fileInput }
+				type="file"
+				className="e-app-select-file__input"
+				onChange={ ( event ) => {
+					props.onFileSelect( event );
+				} }
+			/>
 
 			<Button
 				onClick={ () => fileInput.current.click() }
 				className="e-app-select-file__button"
-				text={ __( 'Select File', 'elementor' ) }
+				text={ props.text }
 				variant="contained"
 				color="primary"
 				size="sm"
@@ -26,3 +29,14 @@ export default function SelectFile() {
 		</div>
 	);
 }
+
+SelectFile.propTypes = {
+	className: PropTypes.string,
+	text: PropTypes.string,
+	onFileSelect: PropTypes.func,
+};
+
+SelectFile.defaultProps = {
+	className: '',
+	text: __( 'Select File', 'elementor' ),
+};
