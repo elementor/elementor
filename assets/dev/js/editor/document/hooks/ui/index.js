@@ -4,5 +4,3 @@
 export * from './create/';
 export * from './delete/';
 export * from './settings/';
-
-export * from './globals/';

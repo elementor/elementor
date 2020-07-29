@@ -27,6 +27,8 @@ export const tests = () => {
 	require( './core/editor/document/save/component.spec' );
 
 	require( './core/editor/data/globals/component.spec' );
+
+	require( './modules/screenshots/assets/js/editor/component.spec' );
 };
 
 // export for external build.

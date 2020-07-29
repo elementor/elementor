@@ -74,6 +74,7 @@ class Modules_Manager {
 			'wp-cli',
 			'safe-mode',
 			'usage',
+			'screenshots',
 		];
 	}
 

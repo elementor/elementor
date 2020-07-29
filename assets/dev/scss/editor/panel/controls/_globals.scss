@@ -1,33 +1,24 @@
 // Elementor Global Controls
 .e-global {
 
-	&__select-box {
-		border: 1px solid $editor-lightest;
-		@include border-end(0);
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 5px;
-		width: 100%;
-		cursor: pointer;
-
-		i {
-			@include padding-start(5px);
-			@include padding-end(2px);
-		}
-
-		&-text {
-			white-space: nowrap;
-			overflow: hidden;
-			height: 14px;
-		}
-	}
-
 	&__popover {
 		width: 270px;
 		z-index: 1;
 		font-size: 12px;
+
+		&-toggle {
+			border: 1px solid $editor-lightest;
+			@include border-end(0);
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+
+			&--active i {
+				color: $editor-info;
+			}
+		}
 
 		&-container {
 			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
@@ -79,6 +70,7 @@
 	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: auto;
+		margin: 5px 0;
 
 		&::-webkit-scrollbar {
 			width: 8px;
@@ -134,7 +126,7 @@
 		align-items: center;
 
 		&:first-child {
-			margin-top: 10px;
+			margin-top: 5px;
 		}
 
 		&:last-child {
@@ -166,6 +158,23 @@
 
 		.pcr-button {
 			background-color: #fff;
+		}
+
+		&.e-global__preview-item--selected {
+
+			.e-global__color-preview {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #ffffff;
+
+				&:before {
+					font-family: 'eicons';
+					font-size: 13px;
+					content: '\e90e'; // eicon-check
+					text-shadow: 0px 0px 1px #000;
+				 }
+			}
 		}
 	}
 

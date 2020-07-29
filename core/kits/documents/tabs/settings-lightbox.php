@@ -8,17 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Lightbox extends Tab_Base {
+class Settings_Lightbox extends Tab_Base {
 
 	public function get_id() {
-		return 'lightbox';
+		return 'settings-lightbox';
 	}
 
 	public function get_title() {
 		return __( 'Lightbox', 'elementor' );
 	}
 
-	public function register_tab_controls() {
+	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
 			[
