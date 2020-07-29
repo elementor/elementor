@@ -267,10 +267,12 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			onConfirm: () => this.onConfirmNewGlobal(),
 			onShow: () => {
 				// Put focus on the naming input.
-				this.ui.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
-				this.ui.confirmMessageText = this.confirmNewGlobalModal.getElements( 'widget' ).find( '.e-global__confirm-message-text' );
+				const modalWidget = this.confirmNewGlobalModal.getElements( 'widget' );
 
-				this.ui.globalNameInput.on( 'change paste keyup', () => this.onAddGlobalConfirmInputChange() );
+				this.ui.globalNameInput = modalWidget.find( 'input' ).focus();
+				this.ui.confirmMessageText = modalWidget.find( '.e-global__confirm-message-text' );
+
+				this.ui.globalNameInput.on( 'input', () => this.onAddGlobalConfirmInputChange() );
 			},
 		} );
 
@@ -284,12 +286,12 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		let messageContent;
 
-		for ( const globalColor of Object.values( this.view.globalsList ) ) {
-			if ( this.ui.globalNameInput.val() === globalColor.title ) {
-				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_name_already_exists' );
+		for ( const globalValue of Object.values( this.view.globalsList ) ) {
+			if ( this.ui.globalNameInput.val() === globalValue.title ) {
+				messageContent = this.view.getNameAlreadyExistsMessage();
 				break;
 			} else {
-				messageContent = elementor.translate( 'global_color_confirm_text' );
+				messageContent = this.view.getConfirmTextMessage();
 			}
 		}
 

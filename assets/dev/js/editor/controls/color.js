@@ -85,6 +85,14 @@ export default class extends ControlBaseDataView {
 		};
 	}
 
+	getNameAlreadyExistsMessage() {
+		return '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
+	}
+
+	getConfirmTextMessage() {
+		return elementor.translate( 'global_color_confirm_text' );
+	}
+
 	getAddGlobalConfirmMessage( globalColors ) {
 		const colorTitle = elementor.translate( 'new_global_color' ),
 			currentValue = this.getCurrentValue(),
@@ -100,10 +108,10 @@ export default class extends ControlBaseDataView {
 		// Check if the color already exists in the global colors, and display an appropriate message.
 		for ( const globalColor of Object.values( globalColors ) ) {
 			if ( currentValue === globalColor.value ) {
-				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
+				messageContent = this.getNameAlreadyExistsMessage();
 				break;
 			} else if ( colorTitle === globalColor.title ) {
-				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_name_already_exists' );
+				messageContent = this.getConfirmTextMessage();
 				break;
 			} else {
 				messageContent = elementor.translate( 'global_color_confirm_text' );
