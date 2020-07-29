@@ -88,10 +88,8 @@ class App extends BaseApp {
 	}
 
 	private function enqueue_assets() {
-		if ( empty( $_GET['mode'] ) || 'iframe' !== $_GET['mode'] ) {
-			Plugin::$instance->init_common();
-			Plugin::$instance->common->register_scripts();
-		}
+		Plugin::$instance->init_common();
+		Plugin::$instance->common->register_scripts();
 
 		wp_register_style(
 			'elementor-icons',
