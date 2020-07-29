@@ -3,6 +3,8 @@ import BasePrefixStorage from './base-prefix-storage';
 export default class LocalStorage extends BasePrefixStorage {
 	constructor() {
 		super( localStorage );
+
+		this.clear();
 	}
 
 	debug() {
