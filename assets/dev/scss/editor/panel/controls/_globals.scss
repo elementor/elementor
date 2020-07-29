@@ -24,8 +24,7 @@
 			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 			border-radius: 3px;
 			background-color: #fff;
-			display: flex;
-			flex-direction: column;
+			padding-bottom: 5px;
 		}
 
 		&-title {
@@ -77,7 +76,7 @@
 	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: auto;
-		margin: 5px 0;
+		margin-top: 5px;
 
 		&::-webkit-scrollbar {
 			width: 8px;
