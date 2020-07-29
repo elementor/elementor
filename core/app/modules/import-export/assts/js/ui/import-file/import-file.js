@@ -1,4 +1,4 @@
-import SelectFile from '../../shared/select-file/select-file';
+import SelectFile from 'elementor-app/ui/molecules/select-file';
 import DragDrop from 'elementor-app/ui/atoms/drag-drop';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
@@ -6,14 +6,16 @@ import Text from 'elementor-app/ui/atoms/text';
 
 export default function ImportFile( props ) {
 	const dragDropEvents = {
-		onDrop: ( event ) => {
-			props.onFileSelect( event );
-		},
-	};
+			onDrop: ( event ) => {
+				if ( ! props.isLoading ) {
+					props.onFileSelect( event.dataTransfer.files, event );
+				}
+			},
+		};
 
 	return (
 		<section className="e-app-import">
-			<DragDrop { ...dragDropEvents }>
+			<DragDrop { ...dragDropEvents } isLoading={ props.isLoading }>
 				{ ! props.noIcon && <Icon className={ `e-app-import__icon ${ props.icon }` } /> }
 
 				{ props.heading && <Heading variant="display-3">{ props.heading }</Heading> }
@@ -22,7 +24,7 @@ export default function ImportFile( props ) {
 
 				{ props.secondaryText && <Text variant="xl">{ props.secondaryText }</Text> }
 
-				{ ! props.noButton && <SelectFile onFileSelect={ props.onFileSelect } text={ props.buttonText } /> }
+				{ ! props.noButton && <SelectFile isLoading={ props.isLoading } onFileSelect={ props.onFileSelect } text={ props.buttonText } /> }
 			</DragDrop>
 		</section>
 	);
@@ -42,10 +44,10 @@ ImportFile.propTypes = {
 	icon: PropTypes.string,
 	noIcon: PropTypes.bool,
 	noButton: PropTypes.bool,
+	isLoading: PropTypes.bool,
 };
 
 ImportFile.defaultProps = {
 	className: '',
 	icon: 'eicon-library-upload',
 };
-
