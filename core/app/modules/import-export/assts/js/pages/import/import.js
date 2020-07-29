@@ -3,26 +3,24 @@ import { useState, useEffect } from 'react';
 import Layout from '../../templates/layout';
 import Notice from '../../ui/notice/notice';
 import Text from 'elementor-app/ui/atoms/text';
+import ImportFile from 'elementor-app/organisms/import-file';
 
 import useFile from '../../hooks/use-file/use-file';
 
 import './import.scss';
-import ImportFile from "../../ui/import-file/import-file";
 
 export default function Import() {
 	const [ isLoading, setLoading ] = useState( false ),
 		{ setFile } = useFile(),
-		dragDropEvents = {
-			onDrop: ( event ) => {
-				setFile( event.dataTransfer.files[ 0 ] );
-			},
+		onFileSelect = ( files ) => {
+			setFile( files[ 0 ] );
 		};
 
 	useEffect( () => {
 		if ( isLoading ) {
 			setTimeout( () => {
 				setLoading(false);
-			}, 8000 );
+			}, 5000 );
 		}
 	}, [ isLoading ] );
 
@@ -34,9 +32,9 @@ export default function Import() {
 					text={ __( 'Drag & Drop your zip template file', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
 					isLoading={ isLoading }
-					onFileSelect={ ( files, e ) => {
+					onFileSelect={ ( files ) => {
 						setLoading(true);
-						console.log( 'File is ready to be sent: ', files, e );
+						setFile( files[ 0 ] );
 					} }
 				/>
 				<Notice color="warning" className="kit-content-list__notice">

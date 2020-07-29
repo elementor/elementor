@@ -1,15 +1,19 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
-import SelectFile from '../../shared/select-file/select-file';
 import ClickHere from '../../ui/click-here/click-here';
+import SelectFile from 'elementor-app/molecules/select-file';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 
+import useFile from '../../hooks/use-file/use-file';
+
 import './import-failed.scss';
 
 export default function ImportFailed() {
+	const { setFile } = useFile();
+
 	return (
 		<Layout type="import">
 			<Message className="e-app-import-failed">
@@ -50,7 +54,9 @@ export default function ImportFailed() {
 						<ClickHere url="/#" /> { __( 'to try solving the issue.', 'elementor' ) }
 					</Text>
 
-					<SelectFile />
+					<SelectFile onFileSelect={ ( files ) => {
+						setFile( files[ 0 ] );
+					} } />
 				</div>
 			</Message>
 		</Layout>
