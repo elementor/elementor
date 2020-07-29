@@ -35,6 +35,16 @@ abstract class Controller extends WP_REST_Controller {
 		add_action( 'rest_api_init', function () {
 			$this->register(); // Because 'register' is protected.
 		} );
+
+		/**
+		 * Since all actions were removed for custom internal REST server.
+		 * Re-add the actions.
+		 */
+		add_action( 'elementor_rest_api_before_init', function () {
+			add_action( 'rest_api_init', function () {
+				$this->register();
+			} );
+		} );
 	}
 
 	/**
