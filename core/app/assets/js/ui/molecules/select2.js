@@ -1,5 +1,7 @@
 import Select from '../atoms/select';
 
+import './select2.scss';
+
 /**
  * Default settings of the select 2
  *
