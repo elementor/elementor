@@ -1,8 +1,6 @@
-import './icon.scss';
-
 export default function Icon( props ) {
 	return (
-		<i className={ `icon ${ props.className }` }></i>
+		<i className={ `icon ${ props.className }` }/>
 	);
 }
 

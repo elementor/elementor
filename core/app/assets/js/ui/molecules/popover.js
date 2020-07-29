@@ -9,7 +9,7 @@ export default function Popover( props ) {
 }
 
 Popover.propTypes = {
-	children: PropTypes.any,
+	children: PropTypes.any.isRequired,
 	className: PropTypes.string,
 };
 

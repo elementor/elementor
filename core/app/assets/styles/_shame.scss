@@ -3,50 +3,6 @@
 // This will enable to refactor it bit by bit into structured code without effecting current output.
 
 //todo: discuss, is this needed?
-.heading {
-	color: #6D7882;
-	font-weight: 500;
-	font-size: 26px;
-	line-height: 26px;
-}
-
-.card_headline {
-	color: #6D7882;
-	font-weight: 500;
-	font-size: 12px;
-	line-height: 17px;
-}
-
-.menu-item {
-	color: #6D7882;
-	font-weight: 500;
-	font-size: 12px;
-	line-height: 14px;
-}
-
-.header-title {
-	color: #495157;
-	font-weight: bold;
-	font-size: 15px;
-	line-height: 18px;
-	text-transform: uppercase;
-}
-
-.add-new-button {
-	color: #495157;
-	font-weight: 500;
-	font-size: 18px;
-	line-height: 20px;
-}
-
-.get-pro-button {
-	color: #FFFFFF;
-	font-weight: 500;
-	font-size: 13px;
-	line-height: 15px;
-	text-align: center;
-	text-transform: capitalize;
-}
 
 .video-wrapper {
 	position: relative;
@@ -63,7 +19,7 @@
 	}
 }
 
-.eps-separator {
+.#{$eps-prefix}separator {
 	margin-bottom: spacing(44);
 }
 
@@ -71,11 +27,29 @@
 .dark {
 	--e-app-back-button-color: #{dark-tints(200)};
 }
+
 .back-button, .e-app-back-button {
-	color: var(--e-app-back-button-color, #{tints(500)});
+	--button-background-color: var(--e-app-back-button-color, #{tints(500)});
 	margin-bottom: spacing(24);
 
 	.icon {
 		margin-inline-end: spacing(5);
+	}
+}
+
+.dark {
+	--input-border-color: --hr-color;
+}
+
+.#{$eps-prefix}input {
+	border: 1px solid var(--hr-color);
+	border-radius: $eps-radius;
+	background: transparent;
+	color: inherit;
+	height: spacing(30);
+	padding: 0 spacing(5);
+
+	&--block {
+		width: 100%;
 	}
 }

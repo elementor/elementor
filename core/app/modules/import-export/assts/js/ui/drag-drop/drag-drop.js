@@ -51,7 +51,7 @@ export default function DragDrop( props ) {
 		};
 
 	return (
-		<div { ...dragDropEvents } className={ getClassName() } data-value={ Math.random() }>
+		<div { ...dragDropEvents } className={ getClassName() }>
 			{ props.children }
 		</div>
 	);
