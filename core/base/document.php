@@ -93,6 +93,7 @@ abstract class Document extends Controls_Stack {
 			'default_route' => 'panel/elements/categories',
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
+			'support_site_editor' => static::get_property( 'support_site_editor' ),
 			'messages' => [
 				/* translators: %s: the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
