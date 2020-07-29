@@ -6,7 +6,7 @@ $dark-svg-filter: invert(0.8) sepia(1) saturate(0.1) hue-rotate(180deg) contrast
 	--indicator-bullet-border-color: #{$indicator-bullet-border-color};
 }
 
-.dark {
+.eps-theme-dark {
 	--indicator-bullet-border-color: #{$indicator-bullet-dark-border-color};
 	.site-part .#{$eps-prefix}card__image {
 		filter: $dark-svg-filter;
@@ -48,7 +48,7 @@ $info-toggle-hover-color: tints(500);
 $info-toggle-dark-color: dark-tints(400);
 $info-toggle-dark-hover-color: dark-tints(200);
 
-.dark {
+.eps-theme-dark {
 	--info-toggle-color: #{$info-toggle-dark-color};
 	--info-toggle-hover-color: #{$info-toggle-dark-hover-color};
 }

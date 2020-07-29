@@ -27,7 +27,7 @@ $eps-tip-margin-top: spacing(30);
 $eps-dark-modal-background-color: dark-tints(700);
 $eps-dark-modal-header-background-color: dark-theme-colors(info);
 
-.dark {
+.eps-theme-dark {
 	--eps-modal-background-color: #{$eps-dark-modal-background-color};
 	--eps-modal-header-background-color: #{$eps-dark-modal-header-background-color};
 }
