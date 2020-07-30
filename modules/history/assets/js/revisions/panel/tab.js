@@ -176,33 +176,6 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewDetailsAreaClick: function( childView ) {
-		const revisionID = childView.model.get( 'id' );
-
-		if ( revisionID === this.currentPreviewId ) {
-			return;
-		}
-
-		if ( this.currentPreviewItem ) {
-			this.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
-		}
-
-		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
-
-		const revision = ( null === this.currentPreviewId || elementor.config.document.revisions.current_id === this.currentPreviewId );
-
-		if ( revision && elementor.saver.isEditorChanged() ) {
-			// TODO: Change to 'document/save/auto' ?.
-			$e.internal( 'document/save/save', {
-				status: 'autosave',
-				onSuccess: () => {
-					this.getRevisionViewData( childView );
-				},
-			} );
-		} else {
-			this.getRevisionViewData( childView );
-		}
-
-		this.currentPreviewItem = childView;
-		this.currentPreviewId = revisionID;
+		$e.run( 'panel/history/revisions/preview', { view: childView } );
 	},
 } );
