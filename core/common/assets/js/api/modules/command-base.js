@@ -6,13 +6,6 @@ export default class CommandBase extends ArgsObject {
 	}
 
 	/**
-	 * Current component.
-	 *
-	 * @type {Component}
-	 */
-	component;
-
-	/**
 	 * Function constructor().
 	 *
 	 * Create Commands Base.
