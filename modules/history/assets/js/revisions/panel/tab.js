@@ -26,13 +26,11 @@ module.exports = Marionette.CompositeView.extend( {
 	document: null,
 
 	initialize: function( options ) {
-		this.document = options.document;
+		options.tab = this;
 
-		this.collection = this.document.revisions.getItems();
+		$e.run( 'panel/history/revisions/initialize', options );
 
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
-
-		this.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	getRevisionViewData: function( revisionView ) {

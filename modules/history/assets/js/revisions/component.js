@@ -2,7 +2,12 @@ import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
 import * as hooks from './hooks/';
 
-export default class Component extends ComponentBase {
+export default class RevisionsComponent extends ComponentBase {
+	/**
+	 * @type {Document}
+	 */
+	currentDocument;
+
 	getNamespace() {
 		return 'panel/history/revisions';
 	}
