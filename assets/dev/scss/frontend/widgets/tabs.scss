@@ -64,6 +64,35 @@
 		}
 	}
 
+	&.elementor-tabs-alignment- {
+
+		&center {
+
+			.elementor-tabs-wrapper {
+				display: flex;
+				justify-content: center;
+			}
+		}
+
+		&end {
+			.elementor-tabs-wrapper {
+				display: flex;
+				justify-content: flex-end;
+			}
+		}
+
+		&stretch {
+
+			.elementor-tabs-wrapper {
+				display: flex;
+			}
+
+			.elementor-tab-title {
+				width: 100%;
+			}
+		}
+	}
+
 	.elementor-tab-title,
 	.elementor-tab-title:before,
 	.elementor-tab-title:after,

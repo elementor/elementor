@@ -149,7 +149,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'type',
 			[
-				'label' => __( 'Type', 'elementor' ),
+				'label' => __( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'horizontal',
 				'options' => [
@@ -158,6 +158,36 @@ class Widget_Tabs extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-tabs-view-',
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'tabs_align',
+			[
+				'label' => __( 'Alignment', 'elementor-pro' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'' => [
+						'title' => __( 'Start', 'elementor-pro' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor-pro' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor-pro' ),
+						'icon' => 'eicon-h-align-right',
+					],
+					'stretch' => [
+						'title' => __( 'Justified', 'elementor-pro' ),
+						'icon' => 'eicon-h-align-stretch',
+					],
+				],
+				'prefix_class' => 'elementor-tabs-alignment-',
+				'condition' => [
+					'type' => 'horizontal',
+				],
 			]
 		);
 
@@ -281,6 +311,34 @@ class Widget_Tabs extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_align',
+			[
+				'label' => __( 'Alignment', 'elementor-pro' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor-pro' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor-pro' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor-pro' ),
+						'icon' => 'eicon-text-align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-tab-title' => 'text-align: {{VALUE}};',
+				],
+				'condition' => [
+					'tabs_align' => 'stretch',
 				],
 			]
 		);
