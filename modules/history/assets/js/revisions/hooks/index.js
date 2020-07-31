@@ -1,1 +1,1 @@
-export { RevisionsAfterSave } from './data/save';
+export { RevisionsUpdate } from './data/document/save/save/revisions-update';
