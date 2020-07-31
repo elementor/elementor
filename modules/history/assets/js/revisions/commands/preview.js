@@ -15,12 +15,6 @@ export class Preview extends CommandBase {
 			return;
 		}
 
-		if ( tab.currentPreviewItem ) {
-			tab.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
-		}
-
-		view.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
-
 		const revision = ( null === tab.currentPreviewId || elementor.config.document.revisions.current_id === tab.currentPreviewId );
 
 		if ( revision && elementor.saver.isEditorChanged() ) {
