@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { memo } from 'react';
 
 import List from '../../../ui/list/list';
 import PostTypesSelect from './post-types-select/post-types-select';
