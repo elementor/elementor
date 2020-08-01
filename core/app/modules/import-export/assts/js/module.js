@@ -8,6 +8,8 @@ import ImportSuccess from './pages/import-success/import-success';
 
 import Export from './pages/export/export';
 import ExportComplete from './pages/export-complete/export-complete';
+import ExportPluginsMessage from './pages/export-plugins-message/export-plugins-message';
+import ExportPlugins from './pages/export-plugins/export-plugins';
 
 export default class ImportExport {
 	routes = [
@@ -39,6 +41,14 @@ export default class ImportExport {
 		{
 			path: '/export/complete',
 			component: ExportComplete,
+		},
+		{
+			path: '/export/export-plugins-message',
+			component: ExportPluginsMessage,
+		},
+		{
+			path: '/export/export-plugins',
+			component: ExportPlugins,
 		},
 	];
 

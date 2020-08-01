@@ -1,12 +1,12 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
 import Footer from '../../shared/footer/footer';
+import ClickHere from '../../ui/click-here/click-here';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './export-complete.scss';
-import ClickHere from "../../ui/click-here/click-here";
 
 export default function ExportComplete() {
 	const getFooter = () => (
