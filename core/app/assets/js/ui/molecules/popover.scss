@@ -1,16 +1,5 @@
 @import "popover-api";
 
-
-/* Suggested markup
-	<ul className="eps-popover">
-        // modifiers [--danger]
-		<li className="eps-popover__item">
-			<i className="icon eicon-header eps-popover__item-icon"></i>
-			<span>Export</span>
-		</li>
-	</ul>
-*/
-
 // checkbox label
 .#{$eps-prefix}popover {
 	padding: $eps-popover-padding-y 0;

@@ -14,9 +14,9 @@ export default function Promotion() {
 		PromotionHoverElement = ( props ) => {
 			const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
 			return (
-				<CardOverlay className="promotion-overlay">
-					<a className="promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
-						<i className="promotion-overlay__icon eicon-lock" />
+				<CardOverlay className="e-site-editor__promotion-overlay">
+					<a className="e-site-editor__promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
+						<i className="e-site-editor__promotion-overlay__icon eicon-lock" />
 						<Button size="sm" color="cta" variant="contained" text={__( 'Get Pro', 'elementor' )} />
 					</a>
 				</CardOverlay>
