@@ -3,6 +3,7 @@ import router from '@elementor/router';
 import Import from './pages/import/import';
 import ImportFailed from './pages/import-failed/import-failed';
 import ImportContent from './pages/import-content/import-content';
+import ImportPlugins from './pages/import-plugins/import-plugins';
 import ImportProcess from './pages/import-process/import-process';
 import ImportSuccess from './pages/import-success/import-success';
 
@@ -26,6 +27,10 @@ export default class ImportExport {
 			component: ImportContent,
 		},
 		{
+			path: '/import/plugins',
+			component: ImportPlugins,
+		},
+		{
 			path: '/import/process',
 			component: ImportProcess,
 		},
@@ -43,11 +48,11 @@ export default class ImportExport {
 			component: ExportComplete,
 		},
 		{
-			path: '/export/export-plugins-message',
+			path: '/export/plugins-message',
 			component: ExportPluginsMessage,
 		},
 		{
-			path: '/export/export-plugins',
+			path: '/export/plugins',
 			component: ExportPlugins,
 		},
 	];

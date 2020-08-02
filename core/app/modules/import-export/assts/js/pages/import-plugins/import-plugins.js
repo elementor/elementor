@@ -1,11 +1,11 @@
 import Layout from '../../templates/layout';
 import Footer from '../../shared/footer/footer';
 import Box from '../../ui/box/box';
-import ExportPluginsList from './export-plugins-list/export-plugins-list';
+import ImportPluginsList from './import-plugins-list/import-plugins-list';
 import Button from 'elementor-app/ui/molecules/button';
 import Heading from 'elementor-app/ui/atoms/heading';
 
-export default function ExportPlugins() {
+export default function ImportPlugins() {
 	const getFooter = () => (
 		<Footer separator justify="end">
 			<Button variant="contained" color="primary" text={ __( 'Next', 'elementor' ) } url="/export-plugins" />
@@ -20,7 +20,7 @@ export default function ExportPlugins() {
 				</Heading>
 
 				<Box>
-					<ExportPluginsList />
+					<ImportPluginsList />
 				</Box>
 			</section>
 		</Layout>
