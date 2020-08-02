@@ -111,19 +111,13 @@ class App extends BaseApp {
 	 *
 	 * @since 3.0.0
 	 * @access public
-	 *
-	 * @return string Preferred UI theme.
 	 */
 	private function enqueue_dark_theme_detection_script() {
 		if ( 'auto' === $this->get_elementor_ui_theme_preference() ) {
-			wp_register_script( 'detect-dark', '' );
-			wp_enqueue_script( 'detect-dark', '', 'elementor-app' );
-			wp_add_inline_script( 'detect-dark',
+			wp_add_inline_script( 'elementor-app',
 				'if ( window.matchMedia && window.matchMedia(`(prefers-color-scheme: dark)`).matches )
 							{ document.body.classList.add( `eps-theme-dark` ); }' );
 		}
-
-		return $this;
 	}
 
 	private function enqueue_assets() {
