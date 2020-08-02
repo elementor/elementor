@@ -61,7 +61,7 @@ DragDrop.propTypes = {
 	className: PropTypes.string,
 	children: PropTypes.any,
 	onDrop: PropTypes.func,
-	onDragOver: PropTypes.func,
+	onDragLeave: PropTypes.func,
 	isLoading: PropTypes.bool,
 };
 
