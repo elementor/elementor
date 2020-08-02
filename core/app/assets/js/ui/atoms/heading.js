@@ -1,3 +1,5 @@
+import Utils from 'elementor-app/utils/utils.js';
+
 export default function Heading( props ) {
 	const baseClassName = 'eps',
 		allowedTags = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
@@ -11,7 +13,7 @@ export default function Heading( props ) {
 	}
 
 	return React.createElement( tagName, {
-		className: classes.filter( ( classItem ) => classItem ).join( ' ' ),
+		className: Utils.arrayToClassName( classes ),
 	}, props.children );
 }
 

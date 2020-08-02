@@ -1,3 +1,5 @@
+import Utils from 'elementor-app/utils/utils.js';
+
 export default function Text( props ) {
 	const baseClassName = 'eps',
 		classes = [
@@ -9,7 +11,7 @@ export default function Text( props ) {
 	classes.push( baseClassName + '-text' + variant );
 
 	return React.createElement( tagName, {
-		className: classes.filter( ( classItem ) => classItem ).join( ' ' ),
+		className: Utils.arrayToClassName( classes ),
 	}, props.children );
 }
 
