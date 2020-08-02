@@ -15,7 +15,6 @@ $kit-content-list-locked-features-dark-color: dark-tints(300);
 
 .kit-content-list {
 	&__item {
-		padding: spacing(20);
 		border-bottom: 1px solid var(--kit-content-list-item-border-color);
 	}
 

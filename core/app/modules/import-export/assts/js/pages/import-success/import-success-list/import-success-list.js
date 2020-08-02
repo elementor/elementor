@@ -12,7 +12,7 @@ export default function ImportSuccessList() {
 		<List className="import-success-list">
 			{
 				kitContentData.map( ( item, index ) => (
-					<List.Item key={ index } className="import-success-list__item">
+					<List.Item key={ index } className="import-success-list__item" spacing={10}>
 						<Grid container justify="space-between">
 							<Grid item>
 								<Text variant="xs" tag="span" className="import-success-list__title"><strong>{ item.data.title + ':' }</strong></Text>
