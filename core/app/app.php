@@ -2,6 +2,7 @@
 namespace Elementor\Core\App;
 
 use Elementor\Core\Base\App as BaseApp;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -87,6 +88,44 @@ class App extends BaseApp {
 		require __DIR__ . '/view.php';
 	}
 
+	/**
+	 * Get Elementor UI theme preference.
+	 *
+	 * Retrieve the user UI theme preference as defined by editor preferences manager.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 *
+	 * @return string Preferred UI theme.
+	 */
+	private function get_elementor_ui_theme_preference() {
+		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
+
+		return $editor_preferences->get_model()->get_settings( 'ui_theme' );
+	}
+
+	/**
+	 * Enqueue dark theme detection script.
+	 *
+	 * Enqueues an inline script that detects user-agent settings for dark mode and adds a complimentary class to the body tag.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 *
+	 * @return string Preferred UI theme.
+	 */
+	private function enqueue_dark_theme_detection_script() {
+		if ( 'auto' === $this->get_elementor_ui_theme_preference() ) {
+			wp_register_script( 'detect-dark', '' );
+			wp_enqueue_script( 'detect-dark', '', 'elementor-app' );
+			wp_add_inline_script( 'detect-dark',
+				'if ( window.matchMedia && window.matchMedia(`(prefers-color-scheme: dark)`).matches )
+							{ document.body.classList.add( `eps-theme-dark` ); }' );
+		}
+
+		return $this;
+	}
+
 	private function enqueue_assets() {
 		Plugin::$instance->init_common();
 		Plugin::$instance->common->register_scripts();
@@ -136,6 +175,8 @@ class App extends BaseApp {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		$this->enqueue_dark_theme_detection_script();
 
 		wp_set_script_translations( 'elementor-app', 'elementor', ELEMENTOR_PATH . 'languages' );
 

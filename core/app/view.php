@@ -1,25 +1,16 @@
 <?php
 namespace Elementor\Core\App;
 
-use Elementor\Core\Settings\Manager as SettingsManager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
-$ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
-$theme_class = 'dark' === $ui_theme ? 'eps-theme-dark' : '';
-
-if ( 'auto' === $ui_theme ) {
-	wp_register_script( 'detect-dark', '' );
-	wp_enqueue_script( 'detect-dark' );
-	wp_add_inline_script( 'detect-dark', 'if ( window.matchMedia && window.matchMedia(`(prefers-color-scheme: dark)`).matches )
-						{ document.body.classList.add( `eps-theme-dark` ); }' );
-}
 /**
  * @var App $this
  */
+
+
+$theme_class = 'dark' === $this->get_elementor_ui_theme_preference() ? 'eps-theme-dark' : '';
 
 ?>
 <!DOCTYPE html>

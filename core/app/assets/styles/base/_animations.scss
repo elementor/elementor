@@ -1,6 +1,6 @@
-$eps-pop-animation: pop 0.15s cubic-bezier(0.57, 0.53, 0.71, 1.47) forwards;
+$eps-pop-animation: eps-animation-pop 0.15s cubic-bezier(0.57, 0.53, 0.71, 1.47) forwards;
 
-@keyframes pop {
+@keyframes eps-animation-pop {
 	from {
 		transform: scale(0.75);
 		opacity: 0;
