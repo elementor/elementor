@@ -9,10 +9,6 @@ export default function Box( props ) {
 			'--eps-box-spacing': Utils.pxToRem( props.spacing ) || 0,
 		};
 
-	if ( props.variant ) {
-		classes.push( baseClassName + '--' + props.variant );
-	}
-
 	return (
 		<div style={ style } className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
@@ -22,7 +18,6 @@ export default function Box( props ) {
 
 Box.propTypes = {
 	className: PropTypes.string,
-	variant: PropTypes.any,
 	spacing: PropTypes.number,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
