@@ -7,6 +7,8 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
+import './import-process-style.scss';
+
 export default function ImportProcess() {
 	const getFooter = () => (
 		<Footer separator justify="end">
