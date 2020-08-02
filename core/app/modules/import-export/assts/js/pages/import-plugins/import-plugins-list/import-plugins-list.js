@@ -27,7 +27,7 @@ export default function ImportPluginsList() {
 	),
 	getActiveIndication = () => (
 		<Grid container>
-			<Checkbox checked disabled className="import-plugins-list__checkbox" />
+			<Checkbox rounded checked disabled className="import-plugins-list__checkbox" />
 			<Text>{ __( 'Activated', 'elementor' ) }</Text>
 		</Grid>
 	),
