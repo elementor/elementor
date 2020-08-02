@@ -27,7 +27,7 @@ export default function HeaderButtons( props ) {
 						window.top.location = elementorAppConfig.return_url;
 					} else {
 						// Iframe.
-						$e.run( 'app/close' );
+						window.top.$e.run( 'app/close' );
 					}
 				} }
 			/>
