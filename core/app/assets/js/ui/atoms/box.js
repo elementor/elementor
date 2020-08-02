@@ -9,9 +9,9 @@ export default function Box( props ) {
 	let style;
 
 	if ( props.spacing ) {
-		const spacingValues = props.spacing.split( ' ' );
+		let spacingValues = props.spacing.split( ' ' );
 
-		spacingValues.map( ( value ) => Utils.pxToRem( value ) );
+		spacingValues = spacingValues.map( ( value ) => Utils.pxToRem( value ) );
 
 		style = {
 			'--eps-box-spacing': spacingValues.join( ' ' ),
