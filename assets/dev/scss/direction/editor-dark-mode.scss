@@ -72,15 +72,30 @@ body {
 	}
 }
 
+.pickr {
+	background-color: $theme-dark-gray-darkest;
+	border-color: $theme-dark-gray-light;
+}
+
+.e-control-color {
+
+	&--no-value {
+
+		.pcr-button {
+			border-color: $theme-dark-gray-light;
+		}
+	}
+}
+
 // Globals
 .e-global {
 
-	&__select-box {
-		border-color: $theme-dark-gray-light;
-		background-color: $theme-dark-gray-darkest;
-	}
-
 	&__popover {
+
+		&-toggle {
+			border-color: $theme-dark-gray-light;
+			background-color: $theme-dark-gray-darkest;
+		}
 
 		&-container {
 			background-color: $theme-dark-gray;
@@ -804,27 +819,6 @@ body.rtl .elementor-control-type-gallery {
 	}
 }
 
-//Color Picker
-.pickr {
-	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray-light;
-}
-
-.elementor-color-picker {
-
-	&__dropping-area {
-		border: 1px dashed $theme-dark-gray-lighter;
-		color: $theme-dark-gray-lightest;
-
-		&.elementor-active {
-			border-color: $theme-dark-gray-lightest;
-
-			i {
-				color: $theme-dark-danger;
-			}
-		}
-	}
-}
 
 //Structure Control
 .elementor-control-type-structure {

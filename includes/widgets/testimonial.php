@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor testimonial widget.
@@ -228,7 +229,7 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_TEXT,
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'default' => '',
 				'selectors' => [
@@ -242,7 +243,7 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'name' => 'content_typography',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
 				'selector' => '{{WRAPPER}} .elementor-testimonial-content',
 			]
@@ -318,7 +319,7 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_PRIMARY,
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 				'default' => '',
 				'selectors' => [
@@ -332,7 +333,7 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'name' => 'name_typography',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				],
 				'selector' => '{{WRAPPER}} .elementor-testimonial-name',
 			]
@@ -355,7 +356,7 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_SECONDARY,
+					'default' => Global_Colors::COLOR_SECONDARY,
 				],
 				'default' => '',
 				'selectors' => [
@@ -369,7 +370,7 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'name' => 'job_typography',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_SECONDARY,
+					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
 				],
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 			]

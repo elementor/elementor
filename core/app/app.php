@@ -88,12 +88,8 @@ class App extends BaseApp {
 	}
 
 	private function enqueue_assets() {
-		if ( empty( $_GET['mode'] ) || 'iframe' !== $_GET['mode'] ) {
-			Plugin::$instance->init_common();
-			Plugin::$instance->common->register_scripts();
-		}
-
-		$direction_suffix = is_rtl() ? '-rtl' : '';
+		Plugin::$instance->init_common();
+		Plugin::$instance->common->register_scripts();
 
 		wp_register_style(
 			'elementor-icons',
@@ -104,7 +100,7 @@ class App extends BaseApp {
 
 		wp_register_style(
 			'elementor-common',
-			$this->get_css_assets_url( 'common' . $direction_suffix ),
+			$this->get_css_assets_url( 'common', null, 'default', true ),
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -118,7 +114,7 @@ class App extends BaseApp {
 
 		wp_enqueue_style(
 			'elementor-app',
-			$this->get_css_assets_url( 'app' . $direction_suffix ),
+			$this->get_css_assets_url( 'app', null, 'default', true ),
 			[
 				'select2',
 				'elementor-icons',

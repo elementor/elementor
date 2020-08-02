@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor icon box widget.
@@ -267,7 +268,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'label' => __( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_PRIMARY,
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 				'default' => '',
 				'selectors' => [
@@ -537,7 +538,7 @@ class Widget_Icon_Box extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_PRIMARY,
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 			]
 		);
@@ -548,7 +549,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				],
 			]
 		);
@@ -572,7 +573,7 @@ class Widget_Icon_Box extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_TEXT,
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 			]
 		);
@@ -583,7 +584,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
 			]
 		);

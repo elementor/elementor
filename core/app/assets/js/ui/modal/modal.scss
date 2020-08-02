@@ -12,6 +12,7 @@ $eps-modal-icon-spacing: spacing(10);
 $eps-modal-body-padding: spacing(30);
 $eps-modal-close-button-spacing: spacing(16);
 $eps-modal-close-button-border: solid 1px theme-colors(light);
+$eps-modal-animation: $eps-pop-animation;
 $eps-tip-padding-start: spacing(12);
 $eps-tip-border-start: 3px solid theme-colors(info);
 $eps-tip-margin-bottom: spacing(30);
@@ -27,7 +28,7 @@ $eps-tip-margin-top: spacing(30);
 $eps-dark-modal-background-color: dark-tints(700);
 $eps-dark-modal-header-background-color: dark-theme-colors(info);
 
-.dark {
+.eps-theme-dark {
 	--eps-modal-background-color: #{$eps-dark-modal-background-color};
 	--eps-modal-header-background-color: #{$eps-dark-modal-header-background-color};
 }
@@ -40,8 +41,8 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 	max-width: $eps-modal-width;
 	background: var(--eps-modal-background-color);
 	border-radius: $eps-modal-border-radius;
+	animation: $eps-modal-animation;
 	overflow: hidden;
-	animation: pop 0.15s cubic-bezier(0.57, 0.53, 0.71, 1.47) forwards;
 
 	&__overlay {
 		background: $eps-modal-overlay;
@@ -87,16 +88,5 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 	&__close-wrapper {
 		padding-inline-start: $eps-modal-close-button-spacing;
 		border-inline-start: $eps-modal-close-button-border;
-	}
-}
-
-@keyframes pop {
-	from {
-		transform: scale(0.75);
-		opacity: 0;
-	}
-	to {
-		transform: scale(1);
-		opacity: 1;
 	}
 }

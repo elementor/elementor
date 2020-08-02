@@ -13,11 +13,10 @@ $card-padding: spacing(10);
 
 $card-header-padding: $card-padding;
 $card-header-footer-border: $eps-border;
-$card-header-height: spacing(20) * 2;
+$card-header-height: $card-padding * 4;
 
 $card-headline-color: tints(600);
 
-$card-headline-font-size: type(caption);
 $card-headline-font-weight: $eps-font-weight-bold;
 $card-headline-line-height: $line-height-2;
 
@@ -49,7 +48,7 @@ $card-dark-image-overlay-background-color: rgba(dark-tints(700), $opacity-05);
 	--card-image-overlay-background-color: #{$card-image-overlay-background-color};
 }
 
-.dark {
+.eps-theme-dark {
 	--card-background-color: #{$card-dark-background-color};
 	--card-background-color-hover: #{$card-dark-background-color-hover};
 	--card-box-shadow: #{$card-dark-box-shadow};
