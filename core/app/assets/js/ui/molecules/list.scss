@@ -1,8 +1,13 @@
 .eps-list {
-	padding: var(--eps-list-spacing);
 	list-style-type: none;
 
+	&--spacing {
+		padding: var(--eps-list-spacing);
+	}
+
 	&__item {
-		padding: var(--eps-list-item-spacing);
+		&--spacing {
+			padding: var(--eps-list-item-spacing);
+		}
 	}
 }

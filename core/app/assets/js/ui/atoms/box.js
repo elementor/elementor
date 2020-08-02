@@ -4,13 +4,20 @@ import './box.scss';
 
 export default function Box( props ) {
 	const baseClassName = 'eps-box',
-		classes = [ baseClassName, props.className ],
+		classes = [ baseClassName, props.className ];
+
+	let style;
+
+	if ( props.spacing ) {
+		const spacingValues = props.spacing.split( ' ' );
+
+		spacingValues.map( ( value ) => Utils.pxToRem( value ) );
+
 		style = {
-			'--eps-box-spacing': Utils.pxToRem( props.spacing ) || 0,
+			'--eps-box-spacing': spacingValues.join( ' ' ),
 		};
 
-	if ( props.variant ) {
-		classes.push( baseClassName + '--' + props.variant );
+		classes.push( baseClassName + '--spacing' );
 	}
 
 	return (
@@ -22,8 +29,7 @@ export default function Box( props ) {
 
 Box.propTypes = {
 	className: PropTypes.string,
-	variant: PropTypes.any,
-	spacing: PropTypes.number,
+	spacing: PropTypes.string,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,

@@ -4,13 +4,17 @@ import './list.scss';
 
 export default function List( props ) {
 	const baseClassName = 'eps-list',
-		classes = [
-			baseClassName,
-			props.className,
-		],
+		classes = [	baseClassName, props.className ];
+
+	let style;
+
+	if ( props.spacing ) {
 		style = {
 			'--eps-list-spacing': Utils.pxToRem( props.spacing ) || 0,
 		};
+
+		classes.push( baseClassName + '--spacing' );
+	}
 
 	return (
 		<ul style={ style } className={ Utils.arrayToClassName( classes ) }>
@@ -35,12 +39,21 @@ List.defaultProps = {
 };
 
 List.Item = function ListItem( props ) {
-	const style = {
-		'--eps-list-item-spacing': Utils.pxToRem( props.spacing ) || 0,
-	};
+	const baseClassName = 'eps-list__item',
+		classes = [ baseClassName, props.className ];
+
+	let style;
+
+	if ( props.spacing ) {
+		style = {
+			'--eps-list-item-spacing': Utils.pxToRem( props.spacing ) || 0,
+		};
+
+		classes.push( baseClassName + '--spacing' );
+	}
 
 	return (
-		<li style={ style } className={ `eps-list__item ${ props.className }` }>
+		<li style={ style } className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
 		</li>
 	);

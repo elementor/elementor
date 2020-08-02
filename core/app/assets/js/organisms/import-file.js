@@ -33,9 +33,6 @@ export default function ImportFile( props ) {
 ImportFile.propTypes = {
 	className: PropTypes.string,
 	children: PropTypes.any,
-	onDrop: PropTypes.func,
-	onDragOver: PropTypes.func,
-	onDragLeave: PropTypes.func,
 	onFileSelect: PropTypes.func,
 	heading: PropTypes.string,
 	text: PropTypes.string,
