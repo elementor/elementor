@@ -72,7 +72,7 @@ $app-dark-lightbox-background-color: rgba(dark-theme-colors(dark), $opacity-08);
 	--app-lightbox-background-color: #{$app-lightbox-background-color};
 }
 
-.dark {
+.eps-theme-dark {
 	--app-background-color: #{$app-dark-background-color};
 	--app-box-shadow-color: #{$app-dark-box-shadow-color};
 	--app-header-background-color: #{$app-dark-header-background-color};

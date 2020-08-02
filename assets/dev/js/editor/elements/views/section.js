@@ -124,7 +124,7 @@ const SectionView = BaseElementView.extend( {
 		var sectionConnectClass = this.isInner() ? '.elementor-inner-section' : '.elementor-top-section';
 
 		return {
-			connectWith: sectionConnectClass + this.childViewContainer,
+			connectWith: sectionConnectClass + this.childViewContainer(),
 			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
 			items: '> .elementor-column',
 			forcePlaceholderSize: true,

@@ -2,6 +2,7 @@
 namespace Elementor\Core\Files\CSS;
 
 use Elementor\Base_Data_Control;
+use Elementor\Control_Repeater;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\Core\Files\Base as Base_File;
@@ -61,6 +62,8 @@ abstract class Base extends Base_File {
 
 	private $icons_fonts = [];
 
+	private $dynamic_elements_ids = [];
+
 	/**
 	 * Stylesheet object.
 	 *
@@ -93,6 +96,10 @@ abstract class Base extends Base_File {
 	 * @abstract
 	 */
 	abstract public function get_name();
+
+	protected function is_global_parsing_supported() {
+		return false;
+	}
 
 	/**
 	 * CSS file constructor.
@@ -156,6 +163,8 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$meta['dynamic_elements_ids'] = $this->dynamic_elements_ids;
+
 		$this->update_meta( $meta );
 	}
 
@@ -166,6 +175,16 @@ abstract class Base extends Base_File {
 	public function write() {
 		if ( $this->use_external_file() ) {
 			parent::write();
+		}
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function delete() {
+		if ( $this->use_external_file() ) {
+			parent::delete();
 		}
 	}
 
@@ -275,6 +294,7 @@ abstract class Base extends Base_File {
 	 * @param callable $value_callback Callback function for the value.
 	 * @param array    $placeholders   Placeholders.
 	 * @param array    $replacements   Replacements.
+	 * @param array    $values         Global Values.
 	 */
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements, array $values = [] ) {
 		if ( empty( $control['selectors'] ) ) {
@@ -500,6 +520,9 @@ abstract class Base extends Base_File {
 				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
 				// and printed in a style tag.
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
+
+				$this->dynamic_elements_ids[] = $controls_stack->get_id();
+
 				continue;
 			}
 
@@ -539,6 +562,7 @@ abstract class Base extends Base_File {
 		return array_merge( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
 			'icons' => array_unique( $this->icons_fonts ),
+			'dynamic_elements_ids' => [],
 			'status' => '',
 		] );
 	}
@@ -739,7 +763,7 @@ abstract class Base extends Base_File {
 				return;
 			}
 
-			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
+			$this->add_controls_stack_style_rules( $tag, $this->get_style_controls( $tag ), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
 		} );
 	}
 
@@ -755,7 +779,8 @@ abstract class Base extends Base_File {
 		$id = $global_args[1];
 
 		if ( ! empty( $control['groupType'] ) ) {
-			$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
+			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
+			$property_name = str_replace( '_', '-', $property_name );
 
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
 		} else {
@@ -763,5 +788,114 @@ abstract class Base extends Base_File {
 		}
 
 		return $value;
+	}
+
+	final protected function get_active_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+		if ( ! $controls ) {
+			$controls = $controls_stack->get_controls();
+		}
+
+		if ( ! $settings ) {
+			$settings = $controls_stack->get_controls_settings();
+		}
+
+		if ( $this->is_global_parsing_supported() ) {
+			$settings = $this->parse_global_settings( $settings, $controls );
+		}
+
+		$active_controls = array_reduce(
+			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
+				$control = $controls[ $control_key ];
+
+				if ( $controls_stack->is_control_visible( $control, $settings ) ) {
+					$active_controls[ $control_key ] = $control;
+				}
+
+				return $active_controls;
+			}, []
+		);
+
+		return $active_controls;
+	}
+
+	final public function get_style_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+		$controls = $this->get_active_controls( $controls_stack, $controls, $settings );
+
+		$style_controls = [];
+
+		foreach ( $controls as $control_name => $control ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			$control = array_merge( $control_obj->get_settings(), $control );
+
+			if ( $control_obj instanceof Control_Repeater ) {
+				$style_fields = [];
+
+				foreach ( $controls_stack->get_settings( $control_name ) as $item ) {
+					$style_fields[] = $this->get_style_controls( $controls_stack, $control['fields'], $item );
+				}
+
+				$control['style_fields'] = $style_fields;
+			}
+
+			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || $this->is_global_control( $controls_stack, $control_name, $controls ) || ! empty( $control['style_fields'] ) ) {
+				$style_controls[ $control_name ] = $control;
+			}
+		}
+
+		return $style_controls;
+	}
+
+	private function parse_global_settings( array $settings, array $controls ) {
+		foreach ( $controls as $control ) {
+			$control_name = $control['name'];
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			if ( $control_obj instanceof Control_Repeater ) {
+				foreach ( $settings[ $control_name ] as & $field ) {
+					$field = $this->parse_global_settings( $field, $control['fields'] );
+				}
+
+				continue;
+			}
+
+			if ( empty( $control['global']['active'] ) ) {
+				continue;
+			}
+
+			if ( empty( $settings['__globals__'][ $control_name ] ) ) {
+				continue;
+			}
+
+			$settings[ $control_name ] = 'global';
+		}
+
+		return $settings;
+	}
+
+	private function is_global_control( Controls_Stack $controls_stack, $control_name, $controls ) {
+		$control = $controls[ $control_name ];
+
+		$control_global_key = $control_name;
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		if ( empty( $controls[ $control_global_key ]['global']['active'] ) ) {
+			return false;
+		}
+
+		$globals = $controls_stack->get_settings( '__globals__' );
+
+		return ! empty( $globals[ $control_global_key ] );
 	}
 }

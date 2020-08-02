@@ -20,13 +20,11 @@ export class Load extends CommandBase {
 			document.body.appendChild( component.iframe );
 		}
 
-		const url = args.url.replace( 'elementor-app', 'elementor-app&mode=iframe' );
-
-		if ( url === component.iframe.src ) {
+		if ( args.url === component.iframe.src ) {
 			return;
 		}
 
-		component.iframe.src = url;
+		component.iframe.src = args.url;
 	}
 }
 

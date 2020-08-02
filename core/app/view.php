@@ -9,7 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
 $ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
+$theme_class = 'dark' === $ui_theme ? 'eps-theme-dark' : '';
 
+if ( 'auto' === $ui_theme ) {
+	wp_register_script( 'detect-dark', '' );
+	wp_enqueue_script( 'detect-dark' );
+	wp_add_inline_script( 'detect-dark', 'if ( window.matchMedia && window.matchMedia(`(prefers-color-scheme: dark)`).matches )
+						{ document.body.classList.add( `eps-theme-dark` ); }' );
+}
 /**
  * @var App $this
  */
@@ -24,14 +31,7 @@ $ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
 		<base target="_parent">
 		<?php wp_print_styles(); ?>
 	</head>
-	<body class="<?php echo $ui_theme; ?>">
-		<?php if ( 'auto' === $ui_theme ) { ?>
-			<script>
-				if ( window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ) {
-					document.body.classList.add('dark');
-				}
-			</script>
-		<?php } ?>
+	<body class="<?php echo $theme_class; ?>">
 		<div id="e-app"></div>
 		<?php wp_print_footer_scripts(); ?>
 	</body>

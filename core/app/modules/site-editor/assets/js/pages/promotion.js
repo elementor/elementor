@@ -30,7 +30,7 @@ export default function Promotion() {
 
 	return (
 		<Layout allPartsButton={ <AllPartsButton promotion/> } promotion>
-			<section className="site-editor__promotion">
+			<section className="e-site-editor__promotion">
 				<Grid container className="page-header">
 					<Grid item sm={7} justify="end">
 						<Heading variant="h1">

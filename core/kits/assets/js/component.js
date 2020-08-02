@@ -10,30 +10,60 @@ export default class extends $e.modules.ComponentBase {
 
 	defaultTabs() {
 		return {
-			'site-identity': {
+			'global-colors': {
+				title: elementor.translate( 'global_colors' ),
+				icon: 'eicon-global-colors',
+				helpUrl: 'http://go.elementor.com/panel-global-colors',
+			},
+			'global-typography': {
+				title: elementor.translate( 'global_fonts' ),
+				icon: 'eicon-t-letter',
+				helpUrl: 'http://go.elementor.com/panel-global-typography',
+			},
+			'theme-style-typography': {
+				title: elementor.translate( 'typography' ),
+				icon: 'eicon-typography-1',
+				helpUrl: 'http://go.elementor.com/panel-global-typography',
+			},
+			'theme-style-buttons': {
+				title: elementor.translate( 'buttons' ),
+				icon: 'eicon-button',
+				helpUrl: 'http://go.elementor.com/panel-global-theme-style-buttons',
+			},
+			'theme-style-images': {
+				title: elementor.translate( 'images' ),
+				icon: 'eicon-image',
+				helpUrl: 'http://go.elementor.com/panel-global-theme-style-images',
+			},
+			'theme-style-form-fields': {
+				title: elementor.translate( 'form_fields' ),
+				icon: 'eicon-form-horizontal',
+				helpUrl: 'http://go.elementor.com/panel-global-theme-style-form-fields',
+			},
+			'settings-site-identity': {
 				title: elementor.translate( 'site_identity' ),
 				icon: 'eicon-site-identity',
-				helpUrl: 'http://go.elementor.com/panel-site-identity',
+				helpUrl: 'http://go.elementor.com/panel-settings-site-identity',
 			},
-			'colors-and-typography': {
-				title: elementor.translate( 'colors_and_typography' ),
-				icon: 'eicon-colors-typography',
-				helpUrl: 'http://go.elementor.com/panel-colors-and-typography',
+			'settings-background': {
+				title: elementor.translate( 'background' ),
+				icon: 'eicon-background',
+				helpUrl: 'http://go.elementor.com/panel-settings-background',
 			},
-			lightbox: {
+			'settings-layout': {
+				title: elementor.translate( 'layout' ),
+				icon: 'eicon-layout-settings',
+				helpUrl: 'http://go.elementor.com/panel-settings-layout',
+			},
+			'settings-lightbox': {
 				title: elementor.translate( 'lightbox' ),
 				icon: 'eicon-lightbox-expand',
-				helpUrl: 'http://go.elementor.com/panel-lightbox',
+				helpUrl: 'http://go.elementor.com/panel-settings-lightbox',
 			},
-			'layout-settings': {
-				title: elementor.translate( 'layout_settings' ),
-				icon: 'eicon-layout-settings',
-				helpUrl: 'http://go.elementor.com/panel-layout-settings',
-			},
-			'theme-style': {
-				title: elementor.translate( 'theme_style' ),
-				icon: 'eicon-theme-style',
-				helpUrl: 'http://go.elementor.com/panel-theme-style',
+			'settings-custom-css': {
+				title: elementor.translate( 'custom_css' ),
+				icon: 'eicon-custom-css',
+				helpUrl: 'http://go.elementor.com/panel-settings-custom-css',
 			},
 		};
 	}
