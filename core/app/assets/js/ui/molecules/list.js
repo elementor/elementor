@@ -7,10 +7,13 @@ export default function List( props ) {
 		classes = [
 			baseClassName,
 			props.className,
-		];
+		],
+		style = {
+			'--eps-list-spacing': Utils.pxToRem( props.spacing ) || 0,
+		};
 
 	return (
-		<ul className={ Utils.arrayToClassName( classes ) }>
+		<ul style={ style } className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
 		</ul>
 	);
@@ -20,6 +23,7 @@ List.propTypes = {
 	className: PropTypes.string,
 	divided: PropTypes.any,
 	separated: PropTypes.any,
+	spacing: PropTypes.number,
 	children: PropTypes.oneOfType( [
 		PropTypes.object,
 		PropTypes.arrayOf( PropTypes.object ),
@@ -31,8 +35,12 @@ List.defaultProps = {
 };
 
 List.Item = function ListItem( props ) {
+	const style = {
+		'--eps-list-item-spacing': Utils.pxToRem( props.spacing ) || 0,
+	};
+
 	return (
-		<li className={ `eps-list__item ${ props.className }` }>
+		<li style={ style } className={ `eps-list__item ${ props.className }` }>
 			{ props.children }
 		</li>
 	);
@@ -40,6 +48,7 @@ List.Item = function ListItem( props ) {
 
 List.Item.propTypes = {
 	className: PropTypes.string,
+	spacing: PropTypes.number,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,
