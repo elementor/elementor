@@ -7,8 +7,6 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
 
-import './import-process.scss';
-
 export default function ImportProcess() {
 	const getFooter = () => (
 		<Footer separator justify="end">
@@ -19,7 +17,7 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import" footer={ getFooter() }>
 			<Message className="e-app-import-process">
-				<Icon className="e-app-import-process__icon eicon-loading" />
+				<Icon className="e-app-import-process__icon eicon-loading eicon-animation-spin" />
 
 				<Heading variant="lg" className="e-app-import-process__main-title">
 					{ __( 'Your Kit Is Being Imported', 'elementor' ) }

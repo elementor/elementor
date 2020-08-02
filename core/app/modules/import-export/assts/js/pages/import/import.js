@@ -33,7 +33,7 @@ export default function Import() {
 					secondaryText={ __( 'Or', 'elementor' ) }
 					isLoading={ isLoading }
 					onFileSelect={ ( files ) => {
-						setLoading(true);
+						setLoading( true );
 						setFile( files[ 0 ] );
 					} }
 				/>
