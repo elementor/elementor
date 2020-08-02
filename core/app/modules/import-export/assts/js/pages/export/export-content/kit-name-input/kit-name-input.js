@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { Context as KitContext } from '../../../../context/kit-context';
 
-import Box from '../../../../ui/box/box';
+import Box from 'elementor-app/ui/atoms/box';
 
 export default function KitNameInput() {
 	const context = useContext( KitContext );

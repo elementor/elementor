@@ -1,4 +1,4 @@
-import List from '../../../ui/list/list';
+import List from 'elementor-app/ui/molecules/list';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';

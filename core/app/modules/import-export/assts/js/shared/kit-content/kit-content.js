@@ -1,4 +1,4 @@
-import Box from '../../ui/box/box';
+import Box from 'elementor-app/ui/atoms/box';
 import KitContentList from './kit-content-list/kit-content-list';
 
 export default function KitContent( props ) {
