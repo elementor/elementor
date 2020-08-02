@@ -94,7 +94,7 @@ class App extends BaseApp {
 	 * Retrieve the user UI theme preference as defined by editor preferences manager.
 	 *
 	 * @since 3.0.0
-	 * @access public
+	 * @access private
 	 *
 	 * @return string Preferred UI theme.
 	 */
@@ -110,12 +110,12 @@ class App extends BaseApp {
 	 * Enqueues an inline script that detects user-agent settings for dark mode and adds a complimentary class to the body tag.
 	 *
 	 * @since 3.0.0
-	 * @access public
+	 * @access private
 	 */
 	private function enqueue_dark_theme_detection_script() {
 		if ( 'auto' === $this->get_elementor_ui_theme_preference() ) {
 			wp_add_inline_script( 'elementor-app',
-				'if ( window.matchMedia && window.matchMedia(`(prefers-color-scheme: dark)`).matches )
+				'if ( window.matchMedia && window.matchMedia( `(prefers-color-scheme: dark)` ).matches )
 							{ document.body.classList.add( `eps-theme-dark` ); }' );
 		}
 	}
