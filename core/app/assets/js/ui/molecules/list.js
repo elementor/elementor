@@ -8,9 +8,9 @@ export default function List( props ) {
 
 	let style;
 
-	if ( props.spacing ) {
+	if ( props.padding ) {
 		style = {
-			'--eps-list-spacing': Utils.pxToRem( props.spacing ) || 0,
+			'--eps-list-spacing': Utils.stringToRemValues( props.padding ),
 		};
 
 		classes.push( baseClassName + '--spacing' );
@@ -27,7 +27,7 @@ List.propTypes = {
 	className: PropTypes.string,
 	divided: PropTypes.any,
 	separated: PropTypes.any,
-	spacing: PropTypes.number,
+	padding: PropTypes.number,
 	children: PropTypes.oneOfType( [
 		PropTypes.object,
 		PropTypes.arrayOf( PropTypes.object ),
@@ -44,9 +44,9 @@ List.Item = function ListItem( props ) {
 
 	let style;
 
-	if ( props.spacing ) {
+	if ( props.padding ) {
 		style = {
-			'--eps-list-item-spacing': Utils.pxToRem( props.spacing ) || 0,
+			'--eps-list-item-spacing': Utils.stringToRemValues( props.padding ),
 		};
 
 		classes.push( baseClassName + '--spacing' );
@@ -61,7 +61,7 @@ List.Item = function ListItem( props ) {
 
 List.Item.propTypes = {
 	className: PropTypes.string,
-	spacing: PropTypes.number,
+	padding: PropTypes.number,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,

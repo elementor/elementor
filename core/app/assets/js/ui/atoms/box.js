@@ -8,13 +8,9 @@ export default function Box( props ) {
 
 	let style;
 
-	if ( props.spacing ) {
-		let spacingValues = props.spacing.split( ' ' );
-
-		spacingValues = spacingValues.map( ( value ) => Utils.pxToRem( value ) );
-
+	if ( props.padding ) {
 		style = {
-			'--eps-box-spacing': spacingValues.join( ' ' ),
+			'--eps-box-spacing': Utils.stringToRemValues( props.padding ),
 		};
 
 		classes.push( baseClassName + '--spacing' );
@@ -29,7 +25,7 @@ export default function Box( props ) {
 
 Box.propTypes = {
 	className: PropTypes.string,
-	spacing: PropTypes.string,
+	padding: PropTypes.string,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,
