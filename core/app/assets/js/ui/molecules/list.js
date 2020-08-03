@@ -31,7 +31,7 @@ List.propTypes = {
 	className: PropTypes.string,
 	divided: PropTypes.any,
 	separated: PropTypes.any,
-	padding: PropTypes.number,
+	padding: PropTypes.string,
 	children: PropTypes.oneOfType( [
 		PropTypes.object,
 		PropTypes.arrayOf( PropTypes.object ),
@@ -65,7 +65,7 @@ List.Item = function ListItem( props ) {
 
 List.Item.propTypes = {
 	className: PropTypes.string,
-	padding: PropTypes.number,
+	padding: PropTypes.string,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,
