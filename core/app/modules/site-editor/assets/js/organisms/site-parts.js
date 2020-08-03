@@ -9,7 +9,7 @@ const InfoButton = ( props ) => {
 	const toggleButtonProps = {
 		text: __( 'Info', 'elementor' ),
 		hideText: true,
-		icon: 'eicon-info-circle info-toggle',
+		icon: 'eicon-info-circle e-site-part__info-toggle',
 	};
 
 	return (
@@ -50,10 +50,10 @@ export default function SiteParts( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext );
 
 	return (
-		<CssGrid className="site-editor__site-parts" colMinWidth={200} spacing={24}>
+		<CssGrid className="e-site-editor__site-parts" colMinWidth={200} spacing={24}>
 			{ (
 				templateTypes.map( ( item ) => (
-					<SitePart className="site-editor__site-part" actionButton={ <InfoButton type={ item.title }{ ...item.tooltip_data } /> } thumbnail={ item.urls.thumbnail } key={ item.type } { ...item }>
+					<SitePart className="e-site-editor__site-part" actionButton={ <InfoButton type={ item.title }{ ...item.tooltip_data } /> } thumbnail={ item.urls.thumbnail } key={ item.type } { ...item }>
 						{ React.createElement( props.hoverElement, item ) }
 					</SitePart>
 				) )

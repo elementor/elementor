@@ -5,8 +5,7 @@ $app-background-color: tints(200);
 $spp-font-size: type(text, base);
 $app-box-shadow-color: $eps-box-shadow-size-3;
 $app-radius: $eps-radius;
-$app-max-width: 100%; // boxed version: 1200px;
-// boxed version: $app-max-width-min-xl: #{map-get($breakpoints, xl)};
+$app-max-width: 100%;
 
 $app-header-background-color: theme-colors(light);
 $app-header-box-shadow: $eps-box-shadow-2;
@@ -16,7 +15,7 @@ $app-header-font-size: type(size, "15");
 $spp-header-padding-x: spacing(16);
 $app-header-padding-y: 0;
 
-$app-main-height: 100%; // boxed version: 920px;
+$app-main-height: 100%;
 
 $app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
 $app-sidebar-padding-top: spacing(20);
@@ -28,7 +27,7 @@ $app-logo-size: px-to-rem(28);
 $app-logo-font-size: calc(0.4 * #{$app-logo-size});
 $app-logo-radius: 50%;
 $app-logo-color: theme-colors(light);
-$app-logo-background-color: darken(theme-colors(cta), 5%); // Temporary Style choice made by me. (Josh)
+$app-logo-background-color: darken(theme-colors(cta), 5%);
 $app-logo-margin-end: spacing(10);
 
 $app-header-buttons-separator-color: tints(300);

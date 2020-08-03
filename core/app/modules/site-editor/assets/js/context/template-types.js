@@ -1,6 +1,5 @@
 export const Context = React.createContext();
 
-import './template-types.scss';
 import '../../scss/loading.scss';
 
 class TemplateTypesContext extends React.Component {

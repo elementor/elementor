@@ -18,7 +18,6 @@ import NotFound from './pages/not-found';
 import Page from './layout/page';
 import Popover from './ui/molecules/popover';
 import Text from './ui/atoms/text';
-import Typography from './ui/atoms/typography';
 
 export default {
 	AddNewButton,
@@ -40,5 +39,4 @@ export default {
 	Page,
 	Popover,
 	Text,
-	Typography,
 };
