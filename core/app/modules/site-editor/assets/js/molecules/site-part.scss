@@ -1,39 +1,9 @@
-$indicator-bullet-border-color: theme-colors(light);
-$indicator-bullet-dark-border-color: dark-tints(500);
 $dark-svg-filter: invert(0.8) sepia(1) saturate(0.1) hue-rotate(180deg) contrast(2) brightness(1.2);
 
-:root {
-	--indicator-bullet-border-color: #{$indicator-bullet-border-color};
-}
-
 .eps-theme-dark {
-	--indicator-bullet-border-color: #{$indicator-bullet-dark-border-color};
-	.site-part .#{$eps-prefix}card__image {
+	.e-site-part .#{$eps-prefix}card__image {
 		filter: $dark-svg-filter;
 		mix-blend-mode: screen;
-	}
-}
-
-$indicator-bullet-size: spacing(16) * 0.75;
-$indicator-bullet-color: tints(300);
-$indicator-bullet-color-active: theme-colors(success);
-$indicator-bullet-box-shadow: $eps-box-shadow-1;
-$indicator-bullet-radius: 100%;
-$indicator-bullet-border: 2px solid var(--indicator-bullet-border-color);
-$indicator-bullet-spacing: spacing(10);
-
-.indicator-bullet {
-	display: block;
-	width: $indicator-bullet-size;
-	height: $indicator-bullet-size;
-	box-shadow: $indicator-bullet-box-shadow;
-	background-color: $indicator-bullet-color;
-	border: $indicator-bullet-border;
-	border-radius: $indicator-bullet-radius;
-	margin-inline-end: $indicator-bullet-spacing;
-
-	&--active {
-		background-color: $indicator-bullet-color-active;
 	}
 }
 
@@ -53,7 +23,7 @@ $info-toggle-dark-hover-color: dark-tints(200);
 	--info-toggle-hover-color: #{$info-toggle-dark-hover-color};
 }
 
-.info-toggle {
+.e-site-part__info-toggle {
 	color: var(--info-toggle-color);
 
 	&:hover {

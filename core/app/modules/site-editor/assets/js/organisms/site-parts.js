@@ -9,7 +9,7 @@ const InfoButton = ( props ) => {
 	const toggleButtonProps = {
 		text: __( 'Info', 'elementor' ),
 		hideText: true,
-		icon: 'eicon-info-circle info-toggle',
+		icon: 'eicon-info-circle e-site-part__info-toggle',
 	};
 
 	return (
