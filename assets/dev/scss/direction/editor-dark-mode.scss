@@ -1161,6 +1161,13 @@ label.elementor-template-library-order-label,
 			}
 		}
 
+		.elementor-control-type-select {
+
+			.elementor-control-input-wrapper:after {
+				color: inherit;
+			}
+		}
+
 		.elementor-theme-builder-conditions-repeater-row-controls {
 
 			.elementor-control:not(:first-child) {
