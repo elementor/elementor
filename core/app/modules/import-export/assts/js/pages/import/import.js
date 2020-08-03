@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import Layout from '../../templates/layout';
-import Notice from '../../ui/notice/notice';
-import Text from 'elementor-app/ui/atoms/text';
+import Notice from 'elementor-app/ui/molecules/notice';
 import ImportFile from 'elementor-app/organisms/import-file';
 
 import useFile from '../../hooks/use-file/use-file';

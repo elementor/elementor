@@ -2,8 +2,8 @@ import { memo } from 'react';
 
 import PostTypesSelect from './post-types-select/post-types-select';
 import TemplatesFeatures from './templates-features/templates-features';
-import Notice from '../../../ui/notice/notice';
 import KitContentCheckbox from './kit-content-checkbox/kit-content-checkbox';
+import Notice from 'elementor-app/ui/molecules/notice';
 import List from 'elementor-app/ui/molecules/list';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
