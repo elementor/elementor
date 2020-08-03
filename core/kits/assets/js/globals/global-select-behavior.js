@@ -279,11 +279,35 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			onConfirm: () => this.onConfirmNewGlobal(),
 			onShow: () => {
 				// Put focus on the naming input.
-				this.ui.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
+				const modalWidget = this.confirmNewGlobalModal.getElements( 'widget' );
+
+				this.ui.globalNameInput = modalWidget.find( 'input' ).focus();
+				this.ui.confirmMessageText = modalWidget.find( '.e-global__confirm-message-text' );
+
+				this.ui.globalNameInput.on( 'input', () => this.onAddGlobalConfirmInputChange() );
 			},
 		} );
 
 		this.confirmNewGlobalModal.show();
+	}
+
+	onAddGlobalConfirmInputChange() {
+		if ( ! this.view.globalsList ) {
+			return;
+		}
+
+		let messageContent;
+
+		for ( const globalValue of Object.values( this.view.globalsList ) ) {
+			if ( this.ui.globalNameInput.val() === globalValue.title ) {
+				messageContent = this.view.getNameAlreadyExistsMessage();
+				break;
+			} else {
+				messageContent = this.view.getConfirmTextMessage();
+			}
+		}
+
+		this.ui.confirmMessageText.html( messageContent );
 	}
 
 	onConfirmNewGlobal() {
