@@ -14,7 +14,6 @@ $import-success-list-item-border: 1px solid var(--import-success-list-item-borde
 .import-success-list {
 	&__item {
 		border-top: $import-success-list-item-border;
-		padding: spacing(10) 0;
 
 		&:last-child {
 			border-bottom: $import-success-list-item-border;

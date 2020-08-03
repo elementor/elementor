@@ -39,7 +39,7 @@ function KitContentList( props ) {
 		<List separated className="kit-content-list">
 			{
 				kitContentData.map( ( item, index ) => (
-					<List.Item key={ index } className="kit-content-list__item" spacing={20}>
+					<List.Item separated padding="20" key={ index } className="kit-content-list__item">
 						<Grid container justify="space-between" alignItems="center">
 							<Grid item container={ item.hasSelect }>
 								<Grid item container>

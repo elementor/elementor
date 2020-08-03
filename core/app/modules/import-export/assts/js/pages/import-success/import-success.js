@@ -1,6 +1,7 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
 import ImportSuccessList from './import-success-list/import-success-list';
+import ClickHere from '../../ui/click-here/click-here';
 import Footer from '../../shared/footer/footer';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
@@ -8,7 +9,6 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
 
 import './import-success.scss';
-import ClickHere from "../../ui/click-here/click-here";
 
 export default function ImportSuccess() {
 	const getFooter = () => (

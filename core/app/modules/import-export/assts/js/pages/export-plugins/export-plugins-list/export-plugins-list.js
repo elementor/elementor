@@ -26,7 +26,7 @@ export default function ExportPluginsList() {
 		<List separated className="export-plugins-list">
 			{
 				pluginsData.map( ( plugin, index ) => (
-					<List.Item key={ index } className="export-plugins-list__item">
+					<List.Item separated padding="10" key={ index } className="export-plugins-list__item">
 						<Grid container justify="space-between" alignItems="center">
 							<Grid item>
 								<Grid container>
