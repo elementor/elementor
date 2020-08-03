@@ -10,10 +10,10 @@ export default function Box( props ) {
 
 	if ( props.padding ) {
 		style = {
-			'--eps-box-spacing': Utils.stringToRemValues( props.padding ),
+			'--eps-box-padding': Utils.stringToRemValues( props.padding ),
 		};
 
-		classes.push( baseClassName + '--spacing' );
+		classes.push( baseClassName + '--padding' );
 	}
 
 	return (

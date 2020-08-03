@@ -18,12 +18,13 @@ $eps-box-input-dark-color: dark-tints(100);
 }
 
 .eps-box {
+	padding: 0;
 	border-radius: $eps-radius;
 	background-color: var(--eps-box-background-color);
 	color: var(--eps-box-color);
 
-	&--spacing {
-		padding: var(--eps-box-spacing);
+	&--padding {
+		padding: var(--eps-box-padding);
 	}
 
 	> input {

@@ -12,15 +12,18 @@ $eps-list-item-separated-dark-border-color: dark-tints(700);
 .eps-list {
 	$parent: &;
 
+	padding: 0;
 	list-style-type: none;
 
-	&--spacing {
-		padding: var(--eps-list-spacing);
+	&--padding {
+		padding: var(--eps-list-padding);
 	}
 
 	&__item {
-		&--spacing {
-			padding: var(--eps-list-item-spacing);
+		padding: 0;
+
+		&--padding {
+			padding: var(--eps-list-item-padding);
 		}
 
 		#{$parent}--separated &:not(:last-child) {
