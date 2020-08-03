@@ -2,16 +2,20 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Collapse extends CommandBase {
 	validateArgs( args ) {
-		this.requireArgument( 'element', args );
+		this.requireContainer( args );
 	}
 
 	apply( args ) {
-		const { element, callback } = args;
+		const { containers = [ args.container ], callback } = args;
 
-		// TODO: move to UI HOOK.
-		element.ui.item.toggleClass( 'elementor-active', false );
+		containers.forEach( ( container ) => {
+			const element = container.navView;
 
-		element.ui.elements.slideUp( 300, callback );
+			// TODO: move to UI HOOK.
+			element.ui.item.toggleClass( 'elementor-active', false );
+
+			element.ui.elements.slideUp( 300, callback );
+		} );
 	}
 }
 

@@ -95,6 +95,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
+		// TODO: Try HOOk(s).
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
             .listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
@@ -113,9 +114,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		const args = {
-			element: this,
-		};
+		const args = {};
 
 		if ( state ) {
 			args.state = state;
@@ -125,7 +124,13 @@ export default class NavigatorElement extends Marionette.CompositeView {
 			args.callback = callback;
 		}
 
-		$e.run( 'navigator/elements/toggle-folding', args );
+		if ( this.model.id ) {
+			args.container = $e.components.get( 'document' ).utils.findContainerById( this.model.id );
+			// TODO: Temp fix, find better solution.
+			args.container.navView = this;
+
+			$e.run( 'navigator/elements/toggle-folding', args );
+		}
 	}
 
 	toggleHiddenClass() {
@@ -306,7 +311,12 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	onToggleClick( event ) {
 		event.stopPropagation();
 
-		$e.run( 'navigator/elements/toggle-visibility', { element: this } );
+		const container = $e.components.get( 'document' ).utils.findContainerById( this.model.id );
+
+		// TODO: Temp fix, find better solution.
+		container.navView = this;
+
+		$e.run( 'navigator/elements/toggle-visibility', { container } );
 	}
 
 	onTitleDoubleClick() {

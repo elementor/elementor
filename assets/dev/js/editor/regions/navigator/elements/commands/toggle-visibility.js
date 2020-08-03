@@ -2,17 +2,19 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class ToggleVisibility extends CommandBase {
 	validateArgs( args ) {
-		this.requireArgument( 'element', args );
+		this.requireContainer( args );
 	}
 
 	apply( args ) {
-		const { element } = args;
+		const { containers = [ args.container ] } = args;
 
-		if ( element.model.get( 'hidden' ) ) {
-			$e.run( 'navigator/elements/show', { element } );
-		} else {
-			$e.run( 'navigator/elements/hide', { element } );
-		}
+		containers.forEach( ( container ) => {
+			if ( container.navView.model.get( 'hidden' ) ) {
+				$e.run( 'navigator/elements/show', { container } );
+			} else {
+				$e.run( 'navigator/elements/hide', { container } );
+			}
+		} );
 	}
 }
 

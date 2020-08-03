@@ -11,9 +11,11 @@ export class Show extends After {
 	}
 
 	apply( args ) {
-		const { element } = args;
+		const { containers = [ args.container ] } = args;
 
-		Helper.toggleVisibilityClass( element.model.get( 'id' ) );
+		containers.forEach( ( container ) => {
+			Helper.toggleVisibilityClass( container.id );
+		} );
 	}
 }
 
