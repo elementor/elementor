@@ -16,13 +16,6 @@
 	width: 100%;
 	max-width: $app-max-width;
 
-	/* Used for boxed version
-
-	@media (min-width: #{map-get($breakpoints, xl)}) {
-		max-width: $app-max-width-min-xl;
-	}
-	*/
-
 	&__lightbox {
 		display: flex;
 		align-items: center;

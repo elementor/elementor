@@ -11,7 +11,6 @@ export default function AllPartsButton( props ) {
 
 				return (
 					<MenuItem
-						id="all-parts"
 						text={__( 'All Parts', 'elementor' )}
 						className={ className }
 						icon="eicon-filter"

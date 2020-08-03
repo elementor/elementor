@@ -112,7 +112,7 @@ export default class SiteEditor {
 			},
 			{
 				type: 'product',
-				icon: 'eicon-product',
+				icon: 'eicon-single-product',
 				title: __( 'Product', 'elementor' ),
 				urls: {
 					thumbnail: elementorAppConfig.assets_url + '/images/app/site-editor/product.svg',

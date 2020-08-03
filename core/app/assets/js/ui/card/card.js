@@ -2,7 +2,7 @@ import './card.scss';
 
 export default function Card( props ) {
 	return (
-		<article id={ `type-${ props.type }` } className={ `eps-card ${ props.className }` }>
+		<article className={ `eps-card ${ props.className }` }>
 			{ props.children }
 		</article>
 	);
