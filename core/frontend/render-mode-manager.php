@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Frontend;
 
-use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Normal;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Interface;
 

@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Core\Frontend\RenderModes;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 interface Render_Mode_Interface {
 	/**
 	 * Returns the key name of the class.
