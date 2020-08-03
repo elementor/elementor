@@ -98,7 +98,7 @@ class Render_Mode_Manager {
 	public function __construct() {
 		$this->register_render_mode( Render_Mode_Normal::class );
 
-		do_action( 'elementor/frontend/render_mode/register' );
+		do_action( 'elementor/frontend/render_mode/register', $this );
 
 		$this->set_current_render_mode();
 		$this->add_current_actions();
