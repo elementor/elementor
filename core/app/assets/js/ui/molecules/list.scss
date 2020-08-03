@@ -1,4 +1,17 @@
+$eps-list-item-separated-border-color: tints(200);
+$eps-list-item-separated-dark-border-color: dark-tints(700);
+
+:root {
+	--eps-list-item-separated-border-color: #{$eps-box-background-color};
+}
+
+.eps-theme-dark {
+	--eps-list-item-separated-border-color: #{$eps-box-dark-background-color};
+}
+
 .eps-list {
+	$parent: &;
+
 	list-style-type: none;
 
 	&--spacing {
@@ -8,6 +21,10 @@
 	&__item {
 		&--spacing {
 			padding: var(--eps-list-item-spacing);
+		}
+
+		#{$parent}--separated &:not(:last-child) {
+			border-bottom: 1px solid var(--eps-list-item-separated-border-color);
 		}
 	}
 }

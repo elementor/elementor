@@ -16,6 +16,10 @@ export default function List( props ) {
 		classes.push( baseClassName + '--spacing' );
 	}
 
+	if ( props.separated ) {
+		classes.push( baseClassName + '--separated' );
+	}
+
 	return (
 		<ul style={ style } className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
