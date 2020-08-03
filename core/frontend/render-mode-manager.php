@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Render_Mode_Manager {
+	const QUERY_STRING_PARAM_NAME = 'render_mode';
+	const QUERY_STRING_NONCE_PARAM_NAME = 'render_mode_nonce';
+	const NONCE_ACTION_PATTERN = 'render_mode_{post_id}';
+
 	/**
 	 * @var Render_Mode_Interface
 	 */
@@ -59,14 +63,14 @@ class Render_Mode_Manager {
 
 		$key = null;
 		$nonce = null;
-		$nonce_action = str_replace( '{post_id}', $post_id, Render_Mode_Base::NONCE_ACTION_PATTERN );
+		$nonce_action = str_replace( '{post_id}', $post_id, self::NONCE_ACTION_PATTERN );
 
-		if ( isset( $_GET[ Render_Mode_Base::QUERY_STRING_NONCE_PARAM_NAME ] ) ) {
-			$nonce = $_GET[ Render_Mode_Base::QUERY_STRING_NONCE_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
+		if ( isset( $_GET[ self::QUERY_STRING_NONCE_PARAM_NAME ] ) ) {
+			$nonce = $_GET[ self::QUERY_STRING_NONCE_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
 		}
 
-		if ( isset( $_GET[ Render_Mode_Base::QUERY_STRING_PARAM_NAME ] ) ) {
-			$key = $_GET[ Render_Mode_Base::QUERY_STRING_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
+		if ( isset( $_GET[ self::QUERY_STRING_PARAM_NAME ] ) ) {
+			$key = $_GET[ self::QUERY_STRING_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
 		}
 
 		if (

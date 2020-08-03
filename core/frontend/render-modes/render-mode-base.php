@@ -1,15 +1,13 @@
 <?php
 namespace Elementor\Core\Frontend\RenderModes;
 
+use Elementor\Core\Frontend\Render_Mode_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 abstract class Render_Mode_Base implements Render_Mode_Interface {
-	const QUERY_STRING_PARAM_NAME = 'render_mode';
-	const QUERY_STRING_NONCE_PARAM_NAME = 'render_mode_nonce';
-	const NONCE_ACTION_PATTERN = 'render_mode_{post_id}';
-
 	/**
 	 * @param $post_id
 	 *
@@ -18,10 +16,10 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	public static function get_url( $post_id ) {
 		return add_query_arg( [
 			'post_id' => $post_id,
-			static::QUERY_STRING_PARAM_NAME => static::get_name(),
+			Render_Mode_Manager::QUERY_STRING_PARAM_NAME => static::get_name(),
 			'ver' => time(),
-			static::QUERY_STRING_NONCE_PARAM_NAME => wp_create_nonce(
-				str_replace( '{post_id}', $post_id, static::NONCE_ACTION_PATTERN )
+			Render_Mode_Manager::QUERY_STRING_NONCE_PARAM_NAME => wp_create_nonce(
+				str_replace( '{post_id}', $post_id, Render_Mode_Manager::NONCE_ACTION_PATTERN )
 			),
 		], get_permalink( $post_id ) );
 	}
