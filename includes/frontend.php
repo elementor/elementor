@@ -1155,12 +1155,12 @@ class Frontend extends App {
 
 	/**
 	 * Is the current render mode is static.
-	 * the render mode manage is exists only in frontend,
-	 * so bu default if it not exist the method will return false.
 	 *
 	 * @return bool
 	 */
 	public function is_static_render_mode() {
+		// The render mode manager is exists only in frontend,
+		// so bu default if it is not exist the method will return false.
 		if ( ! $this->render_mode_manager ) {
 			return false;
 		}

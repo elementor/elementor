@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Frontend;
 
+use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Normal;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Interface;
 
@@ -58,14 +59,14 @@ class Render_Mode_Manager {
 
 		$key = null;
 		$nonce = null;
-		$nonce_action = str_replace( '{post_id}', $post_id, Render_Mode_Interface::NONCE_ACTION_PATTERN );
+		$nonce_action = str_replace( '{post_id}', $post_id, Render_Mode_Base::NONCE_ACTION_PATTERN );
 
-		if ( isset( $_GET[ Render_Mode_Interface::QUERY_STRING_NONCE_PARAM_NAME ] ) ) {
-			$nonce = $_GET[ Render_Mode_Interface::QUERY_STRING_NONCE_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
+		if ( isset( $_GET[ Render_Mode_Base::QUERY_STRING_NONCE_PARAM_NAME ] ) ) {
+			$nonce = $_GET[ Render_Mode_Base::QUERY_STRING_NONCE_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
 		}
 
-		if ( isset( $_GET[ Render_Mode_Interface::QUERY_STRING_PARAM_NAME ] ) ) {
-			$key = $_GET[ Render_Mode_Interface::QUERY_STRING_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
+		if ( isset( $_GET[ Render_Mode_Base::QUERY_STRING_PARAM_NAME ] ) ) {
+			$key = $_GET[ Render_Mode_Base::QUERY_STRING_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
 		}
 
 		if (
@@ -82,7 +83,7 @@ class Render_Mode_Manager {
 		return $this;
 	}
 
-	private function run_current_actions() {
+	private function add_current_actions() {
 		$this->current->prepare_render();
 
 		add_action( 'wp_enqueue_scripts', [ $this->current, 'enqueue_scripts' ] );
@@ -100,6 +101,6 @@ class Render_Mode_Manager {
 		do_action( 'elementor/frontend/render_mode/register' );
 
 		$this->set_current_render_mode();
-		$this->run_current_actions();
+		$this->add_current_actions();
 	}
 }

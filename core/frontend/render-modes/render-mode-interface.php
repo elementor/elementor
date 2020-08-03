@@ -2,10 +2,6 @@
 namespace Elementor\Core\Frontend\RenderModes;
 
 interface Render_Mode_Interface {
-	const QUERY_STRING_PARAM_NAME = 'render_mode';
-	const QUERY_STRING_NONCE_PARAM_NAME = 'render_mode_nonce';
-	const NONCE_ACTION_PATTERN = 'render_mode_{post_id}';
-
 	/**
 	 * Returns the key name of the class.
 	 *
@@ -22,18 +18,16 @@ interface Render_Mode_Interface {
 
 	/**
 	 * Will execute all the logic that related to the current render mode.
-	 *
-	 * @return static
 	 */
 	public function prepare_render();
 
 	/**
-	 * @return static
+	 * Enqueue scripts for the current render.
 	 */
 	public function enqueue_scripts();
 
 	/**
-	 * @return static
+	 * Enqueue styles for the current render.
 	 */
 	public function enqueue_styles();
 }
