@@ -2,11 +2,11 @@ $eps-list-item-separated-border-color: tints(200);
 $eps-list-item-separated-dark-border-color: dark-tints(700);
 
 :root {
-	--eps-list-item-separated-border-color: #{$eps-box-background-color};
+	--eps-list-item-separated-border-color: #{$eps-list-item-separated-border-color};
 }
 
 .eps-theme-dark {
-	--eps-list-item-separated-border-color: #{$eps-box-dark-background-color};
+	--eps-list-item-separated-border-color: #{$eps-list-item-separated-dark-border-color};
 }
 
 .eps-list {
