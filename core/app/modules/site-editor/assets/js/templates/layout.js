@@ -6,7 +6,7 @@ import './site-editor.scss';
 
 export default function Layout( props ) {
 	const config = {
-			title: __( 'Site Editor', 'elementor' ),
+			title: __( 'Theme Builder', 'elementor' ),
 			headerButtons: props.headerButtons,
 			sidebar: <Menu allPartsButton={ props.allPartsButton } promotion={props.promotion} />,
 			content: props.children,
