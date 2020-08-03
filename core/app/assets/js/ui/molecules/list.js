@@ -10,10 +10,10 @@ export default function List( props ) {
 
 	if ( props.padding ) {
 		style = {
-			'--eps-list-spacing': Utils.stringToRemValues( props.padding ),
+			'--eps-list-padding': Utils.stringToRemValues( props.padding ),
 		};
 
-		classes.push( baseClassName + '--spacing' );
+		classes.push( baseClassName + '--padding' );
 	}
 
 	if ( props.separated ) {
@@ -50,10 +50,10 @@ List.Item = function ListItem( props ) {
 
 	if ( props.padding ) {
 		style = {
-			'--eps-list-item-spacing': Utils.stringToRemValues( props.padding ),
+			'--eps-list-item-padding': Utils.stringToRemValues( props.padding ),
 		};
 
-		classes.push( baseClassName + '--spacing' );
+		classes.push( baseClassName + '--padding' );
 	}
 
 	return (
