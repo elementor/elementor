@@ -22,9 +22,7 @@ function KitContentList( props ) {
 	),
 	getNotice = ( notice ) => (
 		<Notice color="warning" className="kit-content-list__notice">
-			<Text variant="xs">
-				{ notice }
-			</Text>
+			{ notice }
 		</Notice>
 	),
 	getProFeaturesIndication = () => (

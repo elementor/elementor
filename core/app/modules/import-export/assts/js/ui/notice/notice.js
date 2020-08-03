@@ -1,9 +1,11 @@
 import Utils from 'elementor-app/utils/utils.js';
 
+import Text from 'elementor-app/ui/atoms/text';
+
 import './notice.scss';
 
 export default function Notice( props ) {
-	const baseClassName = 'import-export-notice',
+	const baseClassName = 'eps-notice',
 		classes = [ baseClassName, props.className ];
 
 	if ( props.color ) {
@@ -12,7 +14,9 @@ export default function Notice( props ) {
 
 	return (
 		<div className={ Utils.arrayToClassName( classes ) }>
-			{ props.children }
+			<Text variant="xs" className="eps-notice__text">
+				{ props.children }
+			</Text>
 		</div>
 	);
 }

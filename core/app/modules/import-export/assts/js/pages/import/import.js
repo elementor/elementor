@@ -38,9 +38,7 @@ export default function Import() {
 					} }
 				/>
 				<Notice color="warning" className="kit-content-list__notice">
-					<Text variant="xs">
-						{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
-					</Text>
+					{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
 				</Notice>
 			</section>
 		</Layout>
