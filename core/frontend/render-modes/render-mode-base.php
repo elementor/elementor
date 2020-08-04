@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Render_Mode_Base implements Render_Mode_Interface {
+	const ENQUEUE_SCRIPTS_PRIORITY = 10;
+	const ENQUEUE_STYLES_PRIORITY = 10;
+
 	/**
 	 * @var int
 	 */
@@ -18,7 +21,7 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	/**
 	 * @var Document
 	 */
-	protected $post;
+	protected $document;
 
 	/**
 	 * Render_Mode_Base constructor.
@@ -42,7 +45,8 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	 * By default do not do nothing.
 	 */
 	public function prepare_render() {
-		//
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], static::ENQUEUE_SCRIPTS_PRIORITY );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], static::ENQUEUE_STYLES_PRIORITY );
 	}
 
 	/**
@@ -65,7 +69,7 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	 * @return bool
 	 */
 	public function get_permissions_callback() {
-		return $this->get_post()->is_editable_by_current_user();
+		return $this->get_document()->is_editable_by_current_user();
 	}
 
 	/**
@@ -80,11 +84,11 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	/**
 	 * @return Document
 	 */
-	public function get_post() {
-		if ( ! $this->post ) {
-			$this->post = Plugin::$instance->documents->get( $this->post_id );
+	public function get_document() {
+		if ( ! $this->document ) {
+			$this->document = Plugin::$instance->documents->get( $this->post_id );
 		}
 
-		return $this->post;
+		return $this->document;
 	}
 }

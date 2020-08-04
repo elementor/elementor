@@ -126,9 +126,6 @@ class Render_Mode_Manager {
 
 		// Run when 'template-redirect' actually because the the class is instantiate when 'template-redirect' run.
 		$this->current->prepare_render();
-
-		add_action( 'wp_enqueue_scripts', [ $this->current, 'enqueue_scripts' ] );
-		add_action( 'wp_enqueue_scripts', [ $this->current, 'enqueue_styles' ] );
 	}
 
 	/**
