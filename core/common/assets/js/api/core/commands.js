@@ -292,9 +292,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			args.onAfter.apply( component, [ args, results ] );
 		}
 
-		this.afterRun( command );
-
 		this.trigger( 'run:after', component, command, args, results );
+
+		this.afterRun( command );
 
 		if ( false === args.returnValue ) {
 			return true;
