@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Render_Mode_Manager {
 	const QUERY_STRING_PARAM_NAME = 'render_mode';
+	const QUERY_STRING_POST_ID = 'post_id';
 	const QUERY_STRING_NONCE_PARAM_NAME = 'render_mode_nonce';
 	const NONCE_ACTION_PATTERN = 'render_mode_{post_id}';
 
@@ -22,6 +23,30 @@ class Render_Mode_Manager {
 	 * @var Render_Mode_Interface[]
 	 */
 	private $render_modes = [];
+
+	/**
+	 * @param $post_id
+	 * @param $render_mode_name
+	 *
+	 * @return string
+	 */
+	public static function get_base_url( $post_id, $render_mode_name ) {
+		return add_query_arg( [
+			self::QUERY_STRING_POST_ID => $post_id,
+			self::QUERY_STRING_PARAM_NAME => $render_mode_name,
+			self::QUERY_STRING_NONCE_PARAM_NAME => wp_create_nonce( self::get_nonce_action( $post_id ) ),
+			'ver' => time(),
+		], get_permalink( $post_id ) );
+	}
+
+	/**
+	 * @param $post_id
+	 *
+	 * @return string
+	 */
+	public static function get_nonce_action( $post_id ) {
+		return str_replace( '{post_id}', $post_id, self::NONCE_ACTION_PATTERN );
+	}
 
 	/**
 	 * Register a new render mode into the render mode manager.
@@ -58,11 +83,13 @@ class Render_Mode_Manager {
 	 * @return $this
 	 */
 	private function set_current_render_mode() {
-		$post_id = get_the_ID();
-
+		$post_id = null;
 		$key = null;
 		$nonce = null;
-		$nonce_action = str_replace( '{post_id}', $post_id, self::NONCE_ACTION_PATTERN );
+
+		if ( isset( $_GET[ self::QUERY_STRING_POST_ID ] ) ) {
+			$post_id = $_GET[ self::QUERY_STRING_POST_ID ]; // phpcs:ignore -- Nonce will be checked next line.
+		}
 
 		if ( isset( $_GET[ self::QUERY_STRING_NONCE_PARAM_NAME ] ) ) {
 			$nonce = $_GET[ self::QUERY_STRING_NONCE_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
@@ -73,14 +100,15 @@ class Render_Mode_Manager {
 		}
 
 		if (
+			$post_id &&
 			$nonce &&
-			wp_verify_nonce( $nonce, $nonce_action ) &&
+			wp_verify_nonce( $nonce, self::get_nonce_action( $post_id ) ) &&
 			$key &&
 			array_key_exists( $key, $this->render_modes )
 		) {
-			$this->current = new $this->render_modes[ $key ]();
+			$this->current = new $this->render_modes[ $key ]( $post_id );
 		} else {
-			$this->current = new Render_Mode_Normal();
+			$this->current = new Render_Mode_Normal( $post_id );
 		}
 
 		return $this;
@@ -88,8 +116,14 @@ class Render_Mode_Manager {
 
 	/**
 	 * Add actions base on the current render.
+	 *
+	 * @throws \Requests_Exception_HTTP_403
 	 */
 	private function add_current_actions() {
+		if ( ! $this->current->get_permissions_callback() ) {
+			throw new \Requests_Exception_HTTP_403();
+		}
+
 		// Run when 'template-redirect' actually because the the class is instantiate when 'template-redirect' run.
 		$this->current->prepare_render();
 

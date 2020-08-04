@@ -6,6 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 interface Render_Mode_Interface {
+
+	/**
+	 * Render_Mode_Interface constructor.
+	 *
+	 * @param $post_id
+	 */
+	public function __construct( $post_id );
+
 	/**
 	 * Returns the key name of the class.
 	 *
@@ -34,4 +42,9 @@ interface Render_Mode_Interface {
 	 * Enqueue styles for the current render.
 	 */
 	public function enqueue_styles();
+
+	/**
+	 * Check permissions before start this render mode.
+	 */
+	public function get_permissions_callback();
 }

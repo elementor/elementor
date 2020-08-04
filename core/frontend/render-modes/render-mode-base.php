@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Frontend\RenderModes;
 
+use Elementor\Plugin;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,19 +11,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Render_Mode_Base implements Render_Mode_Interface {
 	/**
+	 * @var int
+	 */
+	protected $post_id;
+
+	/**
+	 * @var Document
+	 */
+	protected $post;
+
+	/**
+	 * Render_Mode_Base constructor.
+	 *
+	 * @param $post_id
+	 */
+	public function __construct( $post_id ) {
+		$this->post_id = intval( $post_id );
+	}
+
+	/**
 	 * @param $post_id
 	 *
 	 * @return string
 	 */
 	public static function get_url( $post_id ) {
-		return add_query_arg( [
-			'post_id' => $post_id,
-			Render_Mode_Manager::QUERY_STRING_PARAM_NAME => static::get_name(),
-			'ver' => time(),
-			Render_Mode_Manager::QUERY_STRING_NONCE_PARAM_NAME => wp_create_nonce(
-				str_replace( '{post_id}', $post_id, Render_Mode_Manager::NONCE_ACTION_PATTERN )
-			),
-		], get_permalink( $post_id ) );
+		return Render_Mode_Manager::get_base_url( $post_id, static::get_name() );
 	}
 
 	/**
@@ -45,6 +59,14 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 		//
 	}
 
+	/**
+	 * Check if the current user has permissions for the current render mode.
+	 *
+	 * @return bool
+	 */
+	public function get_permissions_callback() {
+		return $this->post->is_editable_by_current_user();
+	}
 
 	/**
 	 * By default returns false.
@@ -53,5 +75,16 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	 */
 	public function is_static() {
 		return false;
+	}
+
+	/**
+	 * @return Document
+	 */
+	public function get_post() {
+		if ( ! $this->post ) {
+			$this->post = Plugin::$instance->documents->get( $this->post_id );
+		}
+
+		return $this->post;
 	}
 }
