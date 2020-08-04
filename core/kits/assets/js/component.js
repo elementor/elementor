@@ -48,7 +48,7 @@ export default class extends $e.modules.ComponentBase {
 			'settings-background': {
 				title: elementor.translate( 'background' ),
 				icon: 'eicon-background',
-				helpUrl: 'http://go.elementor.com/panel-settings-background',
+				helpUrl: 'http://go.elementor.com/global-background',
 			},
 			'settings-layout': {
 				title: elementor.translate( 'layout' ),
