@@ -65,7 +65,7 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	 * @return bool
 	 */
 	public function get_permissions_callback() {
-		return $this->post->is_editable_by_current_user();
+		return $this->get_post()->is_editable_by_current_user();
 	}
 
 	/**
