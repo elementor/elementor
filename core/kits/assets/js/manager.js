@@ -101,7 +101,7 @@ export default class extends elementorModules.editor.utils.Module {
 
 		// The kit document has its own CSS.
 		if ( 'kit' === elementor.documents.getCurrent().config.type ) {
-			this.variablesCSS.stylesheet.empty();
+			this.variablesCSS.removeStyleFromDocument();
 			return;
 		}
 
