@@ -86,7 +86,11 @@ class Render_Mode_Manager {
 		return $this;
 	}
 
+	/**
+	 * Add actions base on the current render.
+	 */
 	private function add_current_actions() {
+		// Run when 'template-redirect' actually because the the class is instantiate when 'template-redirect' run.
 		$this->current->prepare_render();
 
 		add_action( 'wp_enqueue_scripts', [ $this->current, 'enqueue_scripts' ] );
