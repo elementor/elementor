@@ -99,6 +99,7 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	public function test_register_internal_endpoints() {
+		// test.
 		$controller = new ControllerTemplate();
 		$controller->do_register_internal_endpoints();
 		$this->manager->run_server();
