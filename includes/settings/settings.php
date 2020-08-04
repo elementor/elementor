@@ -555,7 +555,7 @@ class Settings extends Settings_Page {
 										. '<br /><br />'
 										. __( 'Please note - you should not use this mode on newly created sites.', 'elementor' )
 										. '<br />'
-										. '<a href="https://go.elementor.com/legacy-mode" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
 							],
 						],
