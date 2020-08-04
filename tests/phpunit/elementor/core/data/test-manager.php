@@ -265,10 +265,10 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->manager->run_server();
 
 		$this->assertEquals( [
+			'bulk/index' => 'bulk/index',
 			'globals/index' => 'globals/index',
 			'globals/colors' => 'globals/colors/{id}',
 			'globals/typography' => 'globals/typography/{id}',
-			'bulk/index' => 'bulk/index',
 		], $this->manager->command_formats );
 	}
 }

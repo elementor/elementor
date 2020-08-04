@@ -31,8 +31,15 @@
 		box-shadow: none;
 	}
 
-	.elementor-widget:not(.elementor-widget-text-editor) figure {
-		margin: 0;
+	.elementor-widget {
+
+		// Classic Editor & Gutenberg Compatibility
+		&:not(.elementor-widget-text-editor):not(.elementor-widget-theme-post-content) {
+
+			figure {
+				margin: 0;
+			}
+		}
 	}
 
 	// Responsive Embed
