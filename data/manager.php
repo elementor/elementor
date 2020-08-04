@@ -234,6 +234,12 @@ class Manager extends BaseModule {
 		$this->is_internal = true;
 
 		if ( ! $this->server ) {
+			// Remove all 'rest_api_init' actions.
+			remove_all_actions( 'rest_api_init' );
+
+			// Call custom reset api loader.
+			do_action( 'elementor_rest_api_before_init' );
+
 			$this->server = rest_get_server(); // Init API.
 		}
 

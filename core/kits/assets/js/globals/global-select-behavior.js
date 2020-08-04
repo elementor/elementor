@@ -38,6 +38,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				this.onValueTypeChange();
 
+				elementor.kitManager.renderGlobalVariables();
+
 				this.view.applySavedValue();
 
 				return globalData.data;
@@ -173,11 +175,23 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	buildGlobalPopover() {
 		const $popover = jQuery( '<div>', { class: 'e-global__popover-container' } ),
 			$popoverTitle = jQuery( '<div>', { class: 'e-global__popover-title' } )
-				.html( '<div class="e-global__popover-info"><i class="eicon-info-circle"></i></div>' + this.getOption( 'popoverTitle' ) ),
-			$manageGlobalPresetsLink = jQuery( '<div>', { class: 'e-global__manage-button' } )
-				.html( '<span class="e-global__manage-button__text">' + this.getOption( 'manageButtonText' ) + '</span>' + '<i class="eicon-cog"></i>' );
+				.html( '<div class="e-global__popover-info"><i class="eicon-info-circle"></i></div>' + '<span class="e-global__popover-title-text">' + this.getOption( 'popoverTitle' ) + '</span>' ),
+			$manageGlobalsLink = jQuery( '<div>', { class: 'e-global__manage-button' } )
+				.html( '<i class="eicon-cog"></i>' );
 
-		$popover.append( $popoverTitle, $manageGlobalPresetsLink );
+		$popoverTitle.append( $manageGlobalsLink );
+
+		$popover.append( $popoverTitle );
+
+		this.manageButtonTooltipText = this.getOption( 'manageButtonText' );
+
+		$manageGlobalsLink.tipsy( {
+			title: () => {
+				return this.manageButtonTooltipText;
+			},
+			offset: 3,
+			gravity: () => 's',
+		} );
 
 		return $popover;
 	}
@@ -265,11 +279,35 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			onConfirm: () => this.onConfirmNewGlobal(),
 			onShow: () => {
 				// Put focus on the naming input.
-				this.ui.globalNameInput = this.confirmNewGlobalModal.getElements( 'widget' ).find( 'input' ).focus();
+				const modalWidget = this.confirmNewGlobalModal.getElements( 'widget' );
+
+				this.ui.globalNameInput = modalWidget.find( 'input' ).focus();
+				this.ui.confirmMessageText = modalWidget.find( '.e-global__confirm-message-text' );
+
+				this.ui.globalNameInput.on( 'input', () => this.onAddGlobalConfirmInputChange() );
 			},
 		} );
 
 		this.confirmNewGlobalModal.show();
+	}
+
+	onAddGlobalConfirmInputChange() {
+		if ( ! this.view.globalsList ) {
+			return;
+		}
+
+		let messageContent;
+
+		for ( const globalValue of Object.values( this.view.globalsList ) ) {
+			if ( this.ui.globalNameInput.val() === globalValue.title ) {
+				messageContent = this.view.getNameAlreadyExistsMessage();
+				break;
+			} else {
+				messageContent = this.view.getConfirmTextMessage();
+			}
+		}
+
+		this.ui.confirmMessageText.html( messageContent );
 	}
 
 	onConfirmNewGlobal() {
@@ -279,8 +317,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		this.createNewGlobal( globalMeta )
 			.then( ( result ) => {
-				elementor.kitManager.refreshKitCssFiles();
-
 				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );

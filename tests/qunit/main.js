@@ -1,9 +1,12 @@
-import EditorTest from './js/editor-test';
-import * as Ajax from './mock/ajax/';
-import * as eData from './mock/e-data/';
 import tests from './';
 
+/* global require */
+
 function initialize() {
+		const EditorTest = require( './js/editor-test' ).default,
+			ajax = require( './mock/ajax/' ),
+			eData = require( './mock/e-data/' );
+
 	const $body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
 		$elementorTest = $body.find( '#elementor-test' );
 
@@ -20,7 +23,7 @@ function initialize() {
 		cacheKey = elementorCommon.ajax.getCacheKey( request );
 	elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
-	Ajax.silence();
+	ajax.silence();
 	eData.emptyFetch();
 
 	elementor.on( 'preview:loaded', () => {
