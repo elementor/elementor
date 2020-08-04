@@ -3,7 +3,6 @@ namespace Elementor\Core\Files\CSS;
 
 use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
-use Elementor\Scheme_Base;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -93,21 +92,7 @@ class Global_CSS extends Base {
 	 * @return bool True if the CSS requires an update, False otherwise.
 	 */
 	protected function is_update_required() {
-		$file_last_updated = $this->get_meta( 'time' );
-
-		$schemes_last_update = get_option( Scheme_Base::LAST_UPDATED_META );
-
-		if ( $file_last_updated < $schemes_last_update ) {
-			return true;
-		}
-
-		$elementor_settings_last_updated = get_option( Settings::UPDATE_TIME_FIELD );
-
-		if ( $file_last_updated < $elementor_settings_last_updated ) {
-			return true;
-		}
-
-		return false;
+		return $this->get_meta( 'time' ) < get_option( Settings::UPDATE_TIME_FIELD );
 	}
 
 	/**
@@ -168,31 +153,6 @@ class Global_CSS extends Base {
 
 			foreach ( $global_controls as $control ) {
 				$this->add_control_rules( $control, $controls, function( $control ) {}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ], $global_values );
-			}
-
-			// TODO: When removing the Schemes mechanism, handle this as well.
-			$scheme_controls = $widget->get_scheme_controls();
-
-			foreach ( $scheme_controls as $control ) {
-				$this->add_control_rules(
-					$control, $controls, function( $control ) use ( $elementor ) {
-						$scheme_value = $elementor->schemes_manager->get_scheme_value( $control['scheme']['type'], $control['scheme']['value'] );
-
-						if ( empty( $scheme_value ) ) {
-							return null;
-						}
-
-						if ( ! empty( $control['scheme']['key'] ) ) {
-							$scheme_value = $scheme_value[ $control['scheme']['key'] ];
-						}
-
-						if ( empty( $scheme_value ) ) {
-							return null;
-						}
-
-						return $scheme_value;
-					}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ]
-				);
 			}
 		}
 	}

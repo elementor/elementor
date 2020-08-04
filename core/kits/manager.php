@@ -88,11 +88,17 @@ class Manager {
 
 	public function localize_settings( $settings ) {
 		$kit = $this->get_active_kit();
+		$kit_controls = $kit->get_controls();
+		$design_system_controls = [
+			'colors' => $kit_controls['system_colors']['fields'],
+			'typography' => $kit_controls['system_typography']['fields'],
+		];
 
 		$settings = array_replace_recursive( $settings, [
 			'kit_id' => $kit->get_main_id(),
 			'kit_config' => [
 				'typography_prefix' => Global_Typography::TYPOGRAPHY_GROUP_PREFIX,
+				'design_system_controls' => $design_system_controls,
 			],
 			'user' => [
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
@@ -113,7 +119,7 @@ class Manager {
 				'global_colors' => __( 'Global Colors', 'elementor' ),
 				'invalid' => __( 'Invalid', 'elementor' ),
 				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
-				'typography_cannot_be_deleted' => __( 'System Typography can\'t be deleted', 'elementor' ),
+				'font_cannot_be_deleted' => __( 'System Font can\'t be deleted', 'elementor' ),
 				'design_system' => __( 'Design System', 'elementor' ),
 				'buttons' => __( 'Buttons', 'elementor' ),
 				'images' => __( 'Images', 'elementor' ),
