@@ -1,6 +1,6 @@
 export default class Helper {
-	static toggleVisibilityClass( elementId ) {
-		const view = $e.components.get( 'document' ).utils.findViewById( elementId );
+	static toggleVisibilityClass( containerId ) {
+		const { view } = elementor.getContainer( containerId );
 
 		if ( view ) {
 			view.toggleVisibilityClass();

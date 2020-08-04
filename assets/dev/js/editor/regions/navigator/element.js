@@ -125,7 +125,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		}
 
 		if ( this.model.id ) {
-			args.container = $e.components.get( 'document' ).utils.findContainerById( this.model.id );
+			args.container = elementor.getContainer( this.model.id );
 			// TODO: Temp fix, find better solution.
 			args.container.navView = this;
 
@@ -311,7 +311,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	onToggleClick( event ) {
 		event.stopPropagation();
 
-		const container = $e.components.get( 'document' ).utils.findContainerById( this.model.id );
+		const container = elementor.getContainer( this.model.id );
 
 		// TODO: Temp fix, find better solution.
 		container.navView = this;
