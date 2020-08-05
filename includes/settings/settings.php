@@ -544,18 +544,15 @@ class Settings extends Settings_Page {
 								],
 							],
 							'element_wrappers_legacy_mode' => [
-								'label' => __( 'HTML Output Legacy Mode', 'elementor' ),
+								'label' => __( 'Optimized DOM Output', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'options' => [
-										'' => __( 'After 3.0', 'elementor' ),
-										1 => __( 'Before 3.0', 'elementor' ),
+										'' => __( 'Enable', 'elementor' ),
+										1 => __( 'Disable', 'elementor' ),
 									],
-									'desc' => __( 'Developers, Please Note! If you’ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy Mode allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-										. '<br /><br />'
-										. __( 'Please note - you should not use this mode on newly created sites.', 'elementor' )
-										. '<br />'
-										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+									'desc' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
+										. '<a href="https://go.elementor.com/legacy-mode" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
 							],
 						],
