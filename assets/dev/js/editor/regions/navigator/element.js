@@ -218,16 +218,12 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	exitTitleEditing() {
 		this.ui.title.attr( 'contenteditable', false );
 
-		const settingsModel = this.model.get( 'settings' ),
-			oldTitle = settingsModel.get( '_title' ),
-			newTitle = this.ui.title.text().trim();
-
-		// When there isn't an old title and a new title, allow backbone to recognize the `set` as a change
-		if ( ! oldTitle ) {
-			settingsModel.unset( '_title', { silent: true } );
-		}
-
-		settingsModel.set( '_title', newTitle );
+		$e.run( 'document/elements/settings', {
+			container: elementor.getContainer( this.model.id ),
+			settings: {
+				_title: this.ui.title.text().trim(),
+			},
+		} );
 
 		elementor.removeBackgroundClickListener( 'navigator' );
 	}

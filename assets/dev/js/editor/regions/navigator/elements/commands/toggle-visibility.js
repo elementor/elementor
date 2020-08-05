@@ -9,6 +9,13 @@ export class ToggleVisibility extends CommandBase {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			if ( ! container.navView ) {
+				if ( $e.devTools ) {
+					$e.devTools.log.error( 'Container.navView is required' );
+				}
+				return;
+			}
+
 			if ( container.navView.model.get( 'hidden' ) ) {
 				$e.run( 'navigator/elements/show', { container } );
 			} else {
