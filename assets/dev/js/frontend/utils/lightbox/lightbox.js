@@ -928,7 +928,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		this.openSlideshow( element.dataset.elementorLightboxSlideshow, element.href );
+		const initialSlideURL = element.dataset.elementorLightboxVideo ? element.dataset.elementorLightboxVideo : element.href;
+
+		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
 	},
 
 	bindEvents: function() {
