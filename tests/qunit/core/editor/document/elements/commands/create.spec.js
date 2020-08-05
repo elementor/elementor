@@ -284,7 +284,7 @@ export const Create = () => {
 						);
 					} );
 
-					Object.entries( innerSectionAfterRedoColumnsIds ).forEach( ( [ key, ids ] ) => { // eslint-disable-line no-unused-vars
+					Object.values( innerSectionAfterRedoColumnsIds ).forEach( ( ids ) => {
 						assert.equal( ids.length, DEFAULT_INNER_SECTION_COLUMNS,
 							`Inner Section have "${ DEFAULT_INNER_SECTION_COLUMNS } columns"` );
 					} );

@@ -703,10 +703,12 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.4.0
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @return array Scheme controls.
 	 */
 	final public function get_scheme_controls() {
+		// _deprecated_function( __METHOD__, '3.0.0' );
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
 		return array_filter(

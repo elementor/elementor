@@ -56,8 +56,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				return;
 			}
 
-			const context = this.getSettings( 'context' ),
+			const context = this.getSettings( 'context' );
+			let globalKeys;
+
+			if ( context ) {
 				globalKeys = context.model.get( 'settings' ).get( '__globals__' );
+			}
 
 			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements, globalKeys );
 		} );
@@ -93,6 +97,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				const selectorGlobalValue = this.getSelectorGlobalValue( control, globalKey );
 
 				if ( selectorGlobalValue ) {
+					if ( 'font' === control.type ) {
+						$e.data.get( globalKey ).then( ( response ) => {
+								elementor.helpers.enqueueFont( response.data.value.typography_font_family );
+						} );
+					}
+
 					// This regex handles a case where a control's selector property value includes more than one CSS selector.
 					// Example: 'selector' => 'background: {{VALUE}}; background-color: {{VALUE}};'.
 					outputCssProperty = cssProperty.replace( /(:)[^;]+(;?)/g, '$1' + selectorGlobalValue + '$2' );
@@ -132,6 +142,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 								throw '';
 							}
+						}
+
+						if ( 'font' === control.type ) {
+							elementor.helpers.enqueueFont( parsedValue );
 						}
 
 						return parsedValue;

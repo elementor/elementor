@@ -62,6 +62,8 @@ abstract class Base extends Base_File {
 
 	private $icons_fonts = [];
 
+	private $dynamic_elements_ids = [];
+
 	/**
 	 * Stylesheet object.
 	 *
@@ -161,6 +163,8 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$meta['dynamic_elements_ids'] = $this->dynamic_elements_ids;
+
 		$this->update_meta( $meta );
 	}
 
@@ -171,6 +175,16 @@ abstract class Base extends Base_File {
 	public function write() {
 		if ( $this->use_external_file() ) {
 			parent::write();
+		}
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function delete() {
+		if ( $this->use_external_file() ) {
+			parent::delete();
 		}
 	}
 
@@ -506,6 +520,9 @@ abstract class Base extends Base_File {
 				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
 				// and printed in a style tag.
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
+
+				$this->dynamic_elements_ids[] = $controls_stack->get_id();
+
 				continue;
 			}
 
@@ -545,6 +562,7 @@ abstract class Base extends Base_File {
 		return array_merge( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
 			'icons' => array_unique( $this->icons_fonts ),
+			'dynamic_elements_ids' => [],
 			'status' => '',
 		] );
 	}
@@ -761,7 +779,8 @@ abstract class Base extends Base_File {
 		$id = $global_args[1];
 
 		if ( ! empty( $control['groupType'] ) ) {
-			$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
+			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
+			$property_name = str_replace( '_', '-', $property_name );
 
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
 		} else {

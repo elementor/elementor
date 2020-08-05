@@ -6,7 +6,10 @@
 	padding: 0;
 	margin: 0;
 	line-height: 1;
+}
 
+// The double selector here is for specificity reasons - to avoid being overridden by default Globals CSS.
+.elementor-widget-heading .elementor-heading-title {
 	&[class*="elementor-size-"] {
 
 		> a {
