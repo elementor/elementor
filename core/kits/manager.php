@@ -56,7 +56,7 @@ class Manager {
 	 * and because the group control is a singleton, its args are changed to the last kit group control.
 	 */
 	public function init_kit_controls() {
-		$this->get_active_kit_for_frontend()->get_controls();
+		$this->get_active_kit_for_frontend()->get_settings();
 	}
 
 	public function get_current_settings( $setting = null ) {
