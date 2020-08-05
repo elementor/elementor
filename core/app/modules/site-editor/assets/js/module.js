@@ -1,5 +1,6 @@
 import router from '@elementor/router';
 import SiteEditorPromotion from './pages/promotion';
+import NotFound from './pages/not-found';
 
 export default class SiteEditor {
 	constructor() {
@@ -8,6 +9,11 @@ export default class SiteEditor {
 		router.addRoute( {
 			path: '/site-editor/promotion',
 			component: SiteEditorPromotion,
+		} );
+
+		router.addRoute( {
+			path: '/site-editor/*',
+			component: NotFound,
 		} );
 	}
 
