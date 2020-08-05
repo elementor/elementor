@@ -20,11 +20,7 @@ PanelMenu.createGroupItems = ( groupName, keys ) => {
 				title: tab.title,
 			};
 
-		if ( 'additional-settings' === key ) {
-			item.type = 'link';
-			item.link = '/wp-admin/admin.php?page=elementor';
-			item.newTab = true;
-		} else {
+		if ( ! 'additional-settings' === key ) {
 			item.callback = () => $e.route( 'panel/global/' + fullKey );
 		}
 
@@ -33,6 +29,15 @@ PanelMenu.createGroupItems = ( groupName, keys ) => {
 };
 
 PanelMenu.initGroups = () => {
+	const settingsItems = PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css', 'additional-settings' ] ),
+		additionalSettingsProps = {
+			type: 'link',
+			link: '/wp-admin/admin.php?page=elementor',
+			newTab: true,
+		};
+
+	settingsItems[ settingsItems.length - 1 ] = jQuery.extend( settingsItems[ settingsItems.length - 1 ], additionalSettingsProps );
+
 	PanelMenu.groups = new Backbone.Collection( [
 		{
 			name: 'design_system',
@@ -47,7 +52,7 @@ PanelMenu.initGroups = () => {
 		{
 			name: 'settings',
 			title: elementor.translate( 'settings' ),
-			items: PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css', 'additional-settings' ] ),
+			items: settingsItems,
 		},
 	] );
 };
