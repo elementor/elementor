@@ -10,7 +10,7 @@ export class KitSaveRouteHistory extends BaseOpenClose {
 	}
 
 	getConditions( args = {}, result ) {
-		return args.route && args.container;
+		return args.route;
 	}
 
 	apply( args ) {

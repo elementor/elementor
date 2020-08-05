@@ -37,7 +37,11 @@ export default class extends elementorModules.editor.utils.Module {
 			icon: 'eicon-global-settings',
 			title: elementor.translate( 'site_settings' ),
 			type: 'page',
-			callback: () => $e.route( 'panel/global/menu' ),
+			callback: () => {
+				$e.run( 'panel/global/open', {
+					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
+				} );
+			},
 		}, 'style', 'editor-preferences' );
 
 		menu.addItem( {
