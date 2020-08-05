@@ -65,6 +65,10 @@ export default class extends $e.modules.ComponentBase {
 				icon: 'eicon-custom-css',
 				helpUrl: 'http://go.elementor.com/panel-settings-custom-css',
 			},
+			'settings-additional-settings': {
+				title: elementor.translate( 'additional_settings' ),
+				icon: 'eicon-tools',
+			},
 		};
 	}
 

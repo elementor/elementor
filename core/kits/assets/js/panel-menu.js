@@ -13,14 +13,22 @@ PanelMenu.createGroupItems = ( groupName, keys ) => {
 
 	return keys.map( ( key ) => {
 		const fullKey = groupName + '-' + key,
-			tab = tabs[ fullKey ];
+			tab = tabs[ fullKey ],
+			item = {
+				name: fullKey,
+				icon: tab.icon,
+				title: tab.title,
+			};
 
-		return {
-			name: fullKey,
-			icon: tab.icon,
-			title: tab.title,
-			callback: () => $e.route( 'panel/global/' + fullKey ),
-		};
+		if ( 'additional-settings' === key ) {
+			item.type = 'link';
+			item.link = '/wp-admin/admin.php?page=elementor';
+			item.newTab = true;
+		} else {
+			item.callback = () => $e.route( 'panel/global/' + fullKey );
+		}
+
+		return item;
 	} );
 };
 
@@ -39,7 +47,7 @@ PanelMenu.initGroups = () => {
 		{
 			name: 'settings',
 			title: elementor.translate( 'settings' ),
-			items: PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css' ] ),
+			items: PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css', 'additional-settings' ] ),
 		},
 	] );
 };
