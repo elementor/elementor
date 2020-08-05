@@ -29,7 +29,7 @@ class Module extends BaseModule {
 		$wp_admin_bar->add_menu( [
 			'id' => 'elementor_app_site_editor',
 			'parent' => 'elementor_edit_page',
-			'title' => __( 'Open Site Editor', 'elementor' ),
+			'title' => __( 'Open Theme Builder', 'elementor' ),
 			'href' => Plugin::$instance->app->get_settings( 'menu_url' ),
 			'meta' => [
 				'class' => 'elementor-app-link',
