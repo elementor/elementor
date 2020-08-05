@@ -17,21 +17,25 @@ class Test_Render_Mode_Manager extends Elementor_Test_Base {
 
 		$nonce = wp_create_nonce( Render_Mode_Manager::get_nonce_action( $post->ID ) );
 
-		$this->prepare(Render_Mode_Mock::class, Render_Mode_Mock::get_name(), $post->ID, $nonce);
+		$this->prepare( Render_Mode_Mock::class, Render_Mode_Mock::get_name(), $post->ID, $nonce );
 
 		$render_mode_manager = new Render_Mode_Manager();
 
+		do_action('wp_enqueue_scripts');
+
 		$this->assertTrue( $render_mode_manager->get_current() instanceof Render_Mode_Mock );
+		$this->assertTrue( wp_script_is( 'fake-script' ) );
+		$this->assertTrue( wp_style_is( 'fake-style' ) );
 	}
 
 	public function test_throw_exception_if_get_permissions_callback_return_false() {
-		$this->expectException(\Requests_Exception_HTTP_403::class);
+		$this->expectException( \Requests_Exception_HTTP_403::class );
 
 		$post = $this->factory()->create_and_get_default_post();
 
 		$nonce = wp_create_nonce( Render_Mode_Manager::get_nonce_action( $post->ID ) );
 
-		$this->prepare(Render_Mode_Mock_Forbidden::class, Render_Mode_Mock_Forbidden::get_name(), $post->ID, $nonce);
+		$this->prepare( Render_Mode_Mock_Forbidden::class, Render_Mode_Mock_Forbidden::get_name(), $post->ID, $nonce );
 
 		new Render_Mode_Manager();
 	}
@@ -44,7 +48,7 @@ class Test_Render_Mode_Manager extends Elementor_Test_Base {
 	 * @param $nonce
 	 */
 	public function test_it_should_set_default_render_mock_if_query_params_are_not_valid( $name, $post_id, $nonce ) {
-		$this->prepare(Render_Mode_Mock::class, $name, $post_id, $nonce);
+		$this->prepare( Render_Mode_Mock::class, $name, $post_id, $nonce );
 
 		$render_mode_manager = new Render_Mode_Manager();
 
@@ -92,6 +96,14 @@ class Render_Mode_Mock extends Render_Mode_Base {
 
 	public function get_permissions_callback() {
 		return true;
+	}
+
+	public function enqueue_scripts() {
+		wp_enqueue_script( 'fake-script', 'fake-path' );
+	}
+
+	public function enqueue_styles() {
+		wp_enqueue_style( 'fake-style', 'fake-path' );
 	}
 }
 
