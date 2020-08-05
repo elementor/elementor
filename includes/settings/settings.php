@@ -552,7 +552,7 @@ class Settings extends Settings_Page {
 										1 => __( 'Disable', 'elementor' ),
 									],
 									'desc' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-										. '<a href="https://go.elementor.com/legacy-mode" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
+										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
 							],
 						],
