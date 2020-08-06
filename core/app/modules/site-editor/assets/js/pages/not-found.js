@@ -5,6 +5,6 @@ export default function NotFound() {
 	const url = elementorAppConfig.menu_url.split( '#' )?.[ 1 ] || '/site-editor';
 
 	return (
-		<ErrorDialog goBackHandler={ () => router.appHistory.navigate( url ) }/>
+		<ErrorDialog backButtonHandler={ () => router.appHistory.navigate( url ) }/>
 	);
 }

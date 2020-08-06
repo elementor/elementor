@@ -108,7 +108,7 @@ export default class Button extends React.Component {
 		if ( this.props.url ) {
 			if ( 0 === this.props.url.indexOf( 'http' ) ) {
 				return (
-					<a href={ this.props.url } target={this.props.target} { ...attributes }>
+					<a href={ this.props.url } target={ this.props.target } { ...attributes }>
 						{ buttonContent }
 					</a>
 				);

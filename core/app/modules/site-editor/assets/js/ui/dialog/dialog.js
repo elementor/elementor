@@ -3,9 +3,11 @@ import './dialog.scss';
 
 export default function Dialog( props ) {
 	const WrapperTag = props.wrapperTag;
-	const wrapperProps = {
-		...'form' === props.wrapperTag && { onSubmit: props.onSubmit },
-	};
+	const wrapperProps = {};
+
+	if ( 'form' === props.wrapperTag ) {
+		wrapperProps.onSubmit = props.onSubmit;
+	}
 
 	return (
 		<section className="eps-modal__overlay">

@@ -8,20 +8,20 @@ import DialogContent from '../ui/dialog/dialog-content';
 export default function ErrorDialog( props ) {
 	return (
 		<Dialog>
-			<>
-				<DialogContent>
-					<>
-						<DialogTitle>{ props.title }</DialogTitle>
-						<DialogText>{ props.text }</DialogText>
-					</>
-				</DialogContent>
-				<DialogActions>
-					<>
-						<DialogButton text="Go Back" onClick={ props.goBackHandler } tabIndex="2"/>
-						<DialogButton text="Learn More" url={ props.learnMoreUrl } tabIndex="1" color="link" target="_blank"/>
-					</>
-				</DialogActions>
-			</>
+			<DialogContent>
+				<DialogTitle>{ props.title }</DialogTitle>
+				<DialogText>{ props.text }</DialogText>
+			</DialogContent>
+			<DialogActions>
+				<DialogButton text={ props.backButtonText } onClick={ props.backButtonHandler } tabIndex="2"/>
+				<DialogButton
+					text={ props.learnButtonText }
+					url={ props.learnButtonUrl }
+					tabIndex="1"
+					color="link"
+					target="_blank"
+				/>
+			</DialogActions>
 		</Dialog>
 	);
 }
@@ -29,13 +29,17 @@ export default function ErrorDialog( props ) {
 ErrorDialog.propTypes = {
 	title: PropTypes.string,
 	text: PropTypes.string,
-	learnMoreUrl: PropTypes.string,
-	goBackHandler: PropTypes.func,
+	learnButtonUrl: PropTypes.string,
+	backButtonHandler: PropTypes.func,
+	learnButtonText: PropTypes.string,
+	backButtonText: PropTypes.string,
 };
 
 ErrorDialog.defaultProps = {
 	title: __( 'Theme Builder could not be loaded', 'elementor' ),
 	text: __( 'We’re sorry, but something went wrong. Click on ‘Learn more’ and follow each of the steps to quickly solve it.', 'elementor' ),
-	learnMoreUrl: 'https://go.elementor.com/app-theme-builder-load-issue',
-	goBackHandler: () => history.back(),
+	learnButtonUrl: 'https://go.elementor.com/app-theme-builder-load-issue',
+	backButtonHandler: () => history.back(),
+	learnButtonText: __( 'Learn More', 'elementor' ),
+	backButtonText: __( 'Go Back', 'elementor' ),
 };
