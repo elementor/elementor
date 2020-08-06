@@ -13,30 +13,29 @@ PanelMenu.createGroupItems = ( groupName, keys ) => {
 
 	return keys.map( ( key ) => {
 		const fullKey = groupName + '-' + key,
-			tab = tabs[ fullKey ],
-			item = {
-				name: fullKey,
-				icon: tab.icon,
-				title: tab.title,
-			};
+			tab = tabs[ fullKey ];
 
-		if ( ! 'additional-settings' === key ) {
-			item.callback = () => $e.route( 'panel/global/' + fullKey );
-		}
-
-		return item;
+		return {
+			name: fullKey,
+			icon: tab.icon,
+			title: tab.title,
+			callback: () => $e.route( 'panel/global/' + fullKey ),
+		};
 	} );
 };
 
 PanelMenu.initGroups = () => {
-	const settingsItems = PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css', 'additional-settings' ] ),
+	const settingsItems = PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css' ] ),
 		additionalSettingsProps = {
+			name: 'settings-additional-settings',
+			icon: 'eicon-tools',
+			title: elementor.translate( 'additional_settings' ),
 			type: 'link',
 			link: '/wp-admin/admin.php?page=elementor',
 			newTab: true,
 		};
 
-	settingsItems[ settingsItems.length - 1 ] = jQuery.extend( settingsItems[ settingsItems.length - 1 ], additionalSettingsProps );
+	settingsItems.push( additionalSettingsProps );
 
 	PanelMenu.groups = new Backbone.Collection( [
 		{
