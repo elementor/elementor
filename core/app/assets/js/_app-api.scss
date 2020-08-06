@@ -4,7 +4,7 @@
 $app-background-color: tints(200);
 $spp-font-size: type(text, base);
 $app-box-shadow-color: $eps-box-shadow-size-3;
-$app-radius: $eps-radius;
+$app-radius: 0;
 $app-max-width: 100%;
 
 $app-header-background-color: theme-colors(light);
@@ -27,7 +27,7 @@ $app-logo-size: px-to-rem(28);
 $app-logo-font-size: calc(0.4 * #{$app-logo-size});
 $app-logo-radius: 50%;
 $app-logo-color: theme-colors(light);
-$app-logo-background-color: darken(theme-colors(cta), 5%);
+$app-logo-background-color: theme-colors(cta);
 $app-logo-margin-end: spacing(10);
 
 $app-header-buttons-separator-color: tints(300);
