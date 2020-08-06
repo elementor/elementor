@@ -35,8 +35,8 @@ class App extends BaseApp {
 	public function register_admin_menu() {
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
-			__( 'Site Editor', 'elementor' ),
-			__( 'Site Editor', 'elementor' ),
+			__( 'Theme Builder', 'elementor' ),
+			__( 'Theme Builder', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID
 		);

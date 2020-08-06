@@ -37,7 +37,7 @@ export default function Promotion() {
 							{ __( 'Create Full Site', 'elementor' ) }
 						</Heading>
 						<Text>
-							{ __( 'Site Editor is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce', 'elementor' ) }
+							{ __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce', 'elementor' ) }
 						</Text>
 					</Grid>
 					<Grid item container justify="end" alignItems="start" sm={5}>

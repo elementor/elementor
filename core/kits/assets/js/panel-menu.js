@@ -4,10 +4,6 @@ export default class PanelMenu extends MenuPageView {
 	initialize() {
 		this.collection = PanelMenu.getGroups();
 	}
-
-	onBeforeShow() {
-		$e.run( 'panel/global/open' );
-	}
 }
 
 PanelMenu.groups = null;
