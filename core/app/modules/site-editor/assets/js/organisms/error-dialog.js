@@ -30,8 +30,8 @@ ErrorDialog.propTypes = {
 	title: PropTypes.string,
 	text: PropTypes.string,
 	learnButtonUrl: PropTypes.string,
-	backButtonHandler: PropTypes.func,
 	learnButtonText: PropTypes.string,
+	backButtonHandler: PropTypes.func,
 	backButtonText: PropTypes.string,
 };
 
@@ -39,7 +39,7 @@ ErrorDialog.defaultProps = {
 	title: __( 'Theme Builder could not be loaded', 'elementor' ),
 	text: __( 'We’re sorry, but something went wrong. Click on ‘Learn more’ and follow each of the steps to quickly solve it.', 'elementor' ),
 	learnButtonUrl: 'https://go.elementor.com/app-theme-builder-load-issue',
-	backButtonHandler: () => history.back(),
 	learnButtonText: __( 'Learn More', 'elementor' ),
+	backButtonHandler: () => history.back(),
 	backButtonText: __( 'Go Back', 'elementor' ),
 };
