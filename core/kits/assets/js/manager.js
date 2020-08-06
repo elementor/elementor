@@ -49,7 +49,7 @@ export default class extends elementorModules.editor.utils.Module {
 			icon: 'eicon-theme-builder',
 			title: elementor.translate( 'theme_builder' ),
 			type: 'page',
-			callback: () => $e.run( 'panel/global/open-site-editor' ),
+			callback: () => $e.run( 'app/open' ),
 		}, 'style', 'editor-preferences' );
 	}
 

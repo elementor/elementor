@@ -74,6 +74,7 @@ export default class extends Marionette.CompositeView {
 
 	attributes() {
 		return {
+			'data-id': this.model.id,
 			'data-model-cid': this.model.cid,
 		};
 	}

@@ -1,0 +1,12 @@
+//Map Collect function
+// Since the builtin map-merge function in Sass only take 2 arguments, it can only merge 2 maps at a time.
+// The map-collect function below allows you to combine multiple maps together in a cleaner way.
+
+@function map-collect($maps...) {
+  $collection: ();
+
+  @each $map in $maps {
+	$collection: map-merge($collection, $map);
+  }
+  @return $collection;
+}

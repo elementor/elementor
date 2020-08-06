@@ -1,0 +1,11 @@
+// map deep get
+@function map-deep-get($map, $keys...) {
+    @each $key in $keys {
+        @if map-has-key($map, $key) {
+            $map: map-get($map, $key);
+        } @else {
+            @error "arguments are:#{$keys}, no key #{$key} found, did you mean #{map-keys($map)}?";
+        }
+    }
+    @return $map;
+}
