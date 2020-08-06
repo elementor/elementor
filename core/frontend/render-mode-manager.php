@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Core\Frontend;
 
+use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Normal;
-use Elementor\Core\Frontend\RenderModes\Render_Mode_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,12 +15,12 @@ class Render_Mode_Manager {
 	const NONCE_ACTION_PATTERN = 'render_mode_{post_id}';
 
 	/**
-	 * @var Render_Mode_Interface
+	 * @var Render_Mode_Base
 	 */
 	private $current;
 
 	/**
-	 * @var Render_Mode_Interface[]
+	 * @var Render_Mode_Base[]
 	 */
 	private $render_modes = [];
 
@@ -57,10 +57,8 @@ class Render_Mode_Manager {
 	 * @throws \Exception
 	 */
 	public function register_render_mode( $class_name ) {
-		$interfaces = class_implements( $class_name );
-
-		if ( ! $interfaces || ! in_array( Render_Mode_Interface::class, $interfaces, true ) ) {
-			throw new \Exception( "'{$class_name}' must implements 'Render_Mode_Interface'" );
+		if ( ! is_subclass_of( $class_name, Render_Mode_Base::class ) ) {
+			throw new \Exception( "'{$class_name}' must extends 'Render_Mode_Base'" );
 		}
 
 		$this->render_modes[ $class_name::get_name() ] = $class_name;
@@ -71,7 +69,7 @@ class Render_Mode_Manager {
 	/**
 	 * Get the current render mode.
 	 *
-	 * @return Render_Mode_Interface
+	 * @return Render_Mode_Base
 	 */
 	public function get_current() {
 		return $this->current;

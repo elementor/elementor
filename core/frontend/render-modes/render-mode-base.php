@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Render_Mode_Base implements Render_Mode_Interface {
+abstract class Render_Mode_Base {
 	const ENQUEUE_SCRIPTS_PRIORITY = 10;
 	const ENQUEUE_STYLES_PRIORITY = 10;
 
@@ -33,6 +33,13 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	}
 
 	/**
+	 * Returns the key name of the class.
+	 *
+	 * @return string
+	 */
+	abstract public static function get_name();
+
+	/**
 	 * @param $post_id
 	 *
 	 * @return string
@@ -45,21 +52,26 @@ abstract class Render_Mode_Base implements Render_Mode_Interface {
 	 * By default do not do nothing.
 	 */
 	public function prepare_render() {
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], static::ENQUEUE_SCRIPTS_PRIORITY );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], static::ENQUEUE_STYLES_PRIORITY );
+		add_action( 'wp_enqueue_scripts', function () {
+			$this->enqueue_scripts();
+		}, static::ENQUEUE_SCRIPTS_PRIORITY );
+
+		add_action( 'wp_enqueue_scripts', function () {
+			$this->enqueue_styles();
+		}, static::ENQUEUE_STYLES_PRIORITY );
 	}
 
 	/**
 	 * By default do not do nothing.
 	 */
-	public function enqueue_scripts() {
+	protected function enqueue_scripts() {
 		//
 	}
 
 	/**
 	 * By default do not do nothing.
 	 */
-	public function enqueue_styles() {
+	protected function enqueue_styles() {
 		//
 	}
 

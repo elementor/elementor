@@ -28,6 +28,19 @@ class Test_Render_Mode_Manager extends Elementor_Test_Base {
 		$this->assertTrue( wp_style_is( 'fake-style' ) );
 	}
 
+	public function test_it_should_not_accept_render_mode_that_do_not_extend_the_base(  ) {
+		$this->expectException(\Exception::class);
+
+		add_action(
+			'elementor/frontend/render_mode/register',
+			function ( Render_Mode_Manager $manager ) {
+				$manager->register_render_mode( Render_Mode_Without_Extend::class );
+			}
+		);
+
+		new Render_Mode_Manager();
+	}
+
 	public function test_throw_exception_if_get_permissions_callback_return_false() {
 		$this->expectException( \Requests_Exception_HTTP_403::class );
 
@@ -85,7 +98,8 @@ class Test_Render_Mode_Manager extends Elementor_Test_Base {
 			'elementor/frontend/render_mode/register',
 			function ( Render_Mode_Manager $manager ) use ( $render_mode_class_name ) {
 				$manager->register_render_mode( $render_mode_class_name );
-			} );
+			}
+		);
 	}
 }
 
@@ -116,4 +130,6 @@ class Render_Mode_Mock_Forbidden extends Render_Mode_Base {
 		return false;
 	}
 }
+
+class Render_Mode_Without_Extend {}
 
