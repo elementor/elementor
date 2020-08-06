@@ -36,20 +36,24 @@ abstract class Render_Mode_Base {
 	 * Returns the key name of the class.
 	 *
 	 * @return string
+	 * @throws \Exception
 	 */
-	abstract public static function get_name();
+	public static function get_name() {
+		throw new \Exception( 'You must implements `get_name` static method in ' . static::class );
+	}
 
 	/**
 	 * @param $post_id
 	 *
 	 * @return string
+	 * @throws \Exception
 	 */
 	public static function get_url( $post_id ) {
 		return Render_Mode_Manager::get_base_url( $post_id, static::get_name() );
 	}
 
 	/**
-	 * By default do not do nothing.
+	 * Runs before the render, by default load scripts and styles.
 	 */
 	public function prepare_render() {
 		add_action( 'wp_enqueue_scripts', function () {
@@ -62,14 +66,14 @@ abstract class Render_Mode_Base {
 	}
 
 	/**
-	 * By default do not do nothing.
+	 * By default do not do anything.
 	 */
 	protected function enqueue_scripts() {
 		//
 	}
 
 	/**
-	 * By default do not do nothing.
+	 * By default do not do anything.
 	 */
 	protected function enqueue_styles() {
 		//
@@ -85,7 +89,7 @@ abstract class Render_Mode_Base {
 	}
 
 	/**
-	 * By default returns false.
+	 * Checks if the current render mode is static render, By default returns false.
 	 *
 	 * @return bool
 	 */
