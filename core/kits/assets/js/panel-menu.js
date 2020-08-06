@@ -31,7 +31,7 @@ PanelMenu.initGroups = () => {
 			icon: 'eicon-tools',
 			title: elementor.translate( 'additional_settings' ),
 			type: 'link',
-			link: '/wp-admin/admin.php?page=elementor',
+			link: elementor.config.admin_settings_url,
 			newTab: true,
 		};
 
