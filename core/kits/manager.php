@@ -126,6 +126,7 @@ class Manager {
 				'form_fields' => __( 'Form Fields', 'elementor' ),
 				'background' => __( 'Background', 'elementor' ),
 				'custom_css' => __( 'Custom CSS', 'elementor' ),
+				'additional_settings' => __( 'Additional Settings', 'elementor' ),
 				'kit_changes_updated' => __( 'Your changes have been updated.', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 			],
