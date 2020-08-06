@@ -1,4 +1,4 @@
-import Icon from 'elementor-app/ui/atoms/icon';
+import Button from 'elementor-app/ui/molecules/button';
 import './dialog.scss';
 
 export default function Dialog( props ) {
@@ -9,7 +9,16 @@ export default function Dialog( props ) {
 
 	return (
 		<section className="eps-modal__overlay">
-			{ props.onClose && <Icon className="eps-dialog__x eicon-close"/> }
+			{
+				props.onClose &&
+				<Button
+					onClick={ props.onClose }
+					text={ __( 'Close', 'elementor' ) }
+					hideText={ true }
+					icon="eicon-close"
+					className="eps-dialog__x"
+				/>
+			}
 			<WrapperTag className="eps-modal eps-dialog" { ...wrapperProps }>
 				{ props.children }
 			</WrapperTag>
