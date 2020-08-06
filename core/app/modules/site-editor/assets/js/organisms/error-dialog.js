@@ -11,7 +11,7 @@ export default function ErrorDialog( props ) {
 			<>
 				<DialogContent>
 					<>
-						<DialogTitle className="">{ props.title }</DialogTitle>
+						<DialogTitle>{ props.title }</DialogTitle>
 						<DialogText>{ props.text }</DialogText>
 					</>
 				</DialogContent>

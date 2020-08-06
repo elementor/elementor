@@ -1,17 +1,10 @@
-import { Redirect } from '@reach/router';
+import router from 'elementor-app/router';
 import ErrorDialog from '../organisms/error-dialog';
 
 export default function NotFound() {
-	const [ redirect, setRedirect ] = React.useState( false );
-
-	if ( redirect ) {
-		const url = elementorAppConfig.menu_url.split( '#' )?.[ 1 ] || '/site-editor';
-
-		// TODO: Check what happen to the redirect.
-		return <Redirect from={'/'} to={ url } noThrow={ true }/>;
-	}
+	const url = elementorAppConfig.menu_url.split( '#' )?.[ 1 ] || '/site-editor';
 
 	return (
-		<ErrorDialog goBackHandler={ () => setRedirect( true ) }/>
+		<ErrorDialog goBackHandler={ () => router.appHistory.navigate( url ) }/>
 	);
 }

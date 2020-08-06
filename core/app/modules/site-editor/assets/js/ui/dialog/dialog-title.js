@@ -11,10 +11,12 @@ export default function DialogTitle( props ) {
 
 DialogTitle.propTypes = {
 	...Heading.propTypes,
+	className: PropTypes.string,
 };
 
 DialogTitle.defaultProps = {
 	...Heading.propTypes,
 	variant: 'h3',
 	tag: 'h3',
+	className: '',
 };

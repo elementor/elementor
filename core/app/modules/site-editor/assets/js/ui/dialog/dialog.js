@@ -1,6 +1,7 @@
+import Icon from 'elementor-app/ui/atoms/icon';
 import './dialog.scss';
 
-export default function Modal( props ) {
+export default function Dialog( props ) {
 	const WrapperTag = props.wrapperTag;
 	const wrapperProps = {
 		...'form' === props.wrapperTag && { onSubmit: props.onSubmit },
@@ -8,20 +9,22 @@ export default function Modal( props ) {
 
 	return (
 		<section className="eps-modal__overlay">
-			<WrapperTag className="eps-modal eps-dialog" {...wrapperProps}>
+			{ props.onClose && <Icon className="eps-dialog__x eicon-close"/> }
+			<WrapperTag className="eps-modal eps-dialog" { ...wrapperProps }>
 				{ props.children }
 			</WrapperTag>
 		</section>
 	);
 }
 
-Modal.propTypes = {
+Dialog.propTypes = {
 	wrapperTag: PropTypes.string,
 	onSubmit: PropTypes.func,
 	children: PropTypes.any,
+	onClose: PropTypes.func,
 };
 
-Modal.defaultProps = {
+Dialog.defaultProps = {
 	wrapperTag: 'div',
 	onSubmit: () => {},
 };
