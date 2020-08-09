@@ -300,8 +300,7 @@ class Module extends BaseModule {
 			$control_id . '_default_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Default Page Template from your theme', 'elementor' ),
-				'separator' => 'none',
+				'raw' => '<b>' . __( 'Default Page Template from your theme', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => 'default',
@@ -313,8 +312,7 @@ class Module extends BaseModule {
 			$control_id . '_canvas_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'No header, no footer, just Elementor', 'elementor' ),
-				'separator' => 'none',
+				'raw' => '<b>' . __( 'No header, no footer, just Elementor', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => self::TEMPLATE_CANVAS,
@@ -326,12 +324,20 @@ class Module extends BaseModule {
 			$control_id . '_header_footer_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'This template includes the header, full-width content and footer', 'elementor' ),
-				'separator' => 'none',
+				'raw' => '<b>' . __( 'This template includes the header, full-width content and footer', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => self::TEMPLATE_HEADER_FOOTER,
 				],
+			]
+		);
+
+		$document->add_control(
+			'reload_preview_description',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Changes will be reflected in the preview only after the page reloads', 'elementor' ),
+				'content_classes' => 'elementor-descriptor',
 			]
 		);
 	}
