@@ -44,8 +44,8 @@ export default class InstanceType {
 
 	constructor() {
 		// Since anonymous classes sometimes do not get validated by babel, do it manually.
-		let target = new.target,
-			prototypes = [];
+		let target = new.target;
+		const prototypes = [];
 
 		while ( target.__proto__ && target.__proto__.name ) {
 			prototypes.push( target.__proto__ );
