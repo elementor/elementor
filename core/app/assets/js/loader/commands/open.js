@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class Open extends CommandBase {
+export class Open extends Command {
 	apply( args ) {
 		$e.route( 'app', args );
 

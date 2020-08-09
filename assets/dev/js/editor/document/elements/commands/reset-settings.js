@@ -1,4 +1,4 @@
-import CommandHistory from '../../commands/base/command-history';
+import CommandHistory from 'elementor-document/base/command-history';
 
 export class ResetSettings extends CommandHistory {
 	validateArgs( args ) {

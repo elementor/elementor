@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class Exit extends CommandBase {
+export class Exit extends Command {
 	apply() {
 		return $e.run( 'editor/documents/close', {
 			id: elementor.config.kit_id,
