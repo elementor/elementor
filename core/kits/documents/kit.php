@@ -65,7 +65,7 @@ class Kit extends PageBase {
 		$config = parent::get_editor_panel_config();
 		$config['default_route'] = 'panel/global/menu';
 
-		$config['isGlobalSettingsMenu'] = true;
+		$config['needHelpUrl'] = 'https://go.elementor.com/global-settings';
 
 		return $config;
 	}
