@@ -203,8 +203,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.editRow( newChild );
 
 		this.toggleMinRowsClass();
-
-		this._parent.handlePopovers( newChild );
 	},
 
 	onChildviewClickRemove: function( childView ) {
