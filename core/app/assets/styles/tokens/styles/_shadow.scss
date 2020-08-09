@@ -1,14 +1,14 @@
 // TOKENS STYLES: SHADOW presets
 
-$eps-box-shadow-alpha-unit: 0.1;
+$eps-box-shadow-alpha-unit: 0.05;
 
 $eps-box-shadow-color: theme-colors(dark);
-$eps-box-shadow-size: 0 4px 6px;
+$eps-box-shadow-size: 0 3px 6px;
 $eps-box-shadow-size-1: 0 2px 3px 1px;
 $eps-box-shadow-size-2: 0 4px 10px;
 $eps-box-shadow-size-3: 2px 8px 23px 3px;
 
-$eps-box-shadow-alpha-unit-dark: 0.2;
+$eps-box-shadow-alpha-unit-dark: 0.15;
 
 :root {
 	--eps-box-shadow-alpha-unit: #{$eps-box-shadow-alpha-unit};

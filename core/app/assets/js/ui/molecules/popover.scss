@@ -12,6 +12,7 @@
 	z-index: 1;
 	margin-top: $eps-popover-arrow-height;
 	transform: translateX(-50%);
+	left: px-to-rem(4);
 
 	&__container {
 		position: relative;
@@ -23,8 +24,7 @@
 		position: absolute;
 		width: $eps-popover-arrow-width;
 		height: $eps-popover-arrow-height;
-		margin: 0 $eps-popover-border-radius;
-		margin-bottom: $eps-popover-arrow-height;
+		margin: 0 $eps-popover-border-radius $eps-popover-arrow-height;
 		top: -$eps-popover-arrow-height;
 		left: 50%;
 		transform: translateX(-50%);
@@ -55,7 +55,7 @@
 			}
 		}
 
-		.icon {
+		.#{$eps-prefix}icon {
 			font-size: inherit;
 			margin-inline-end: spacing(5);
 		}
