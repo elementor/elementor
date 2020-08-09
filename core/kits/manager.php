@@ -56,7 +56,7 @@ class Manager {
 	 * and because the group control is a singleton, its args are changed to the last kit group control.
 	 */
 	public function init_kit_controls() {
-		$this->get_active_kit_for_frontend()->get_controls();
+		$this->get_active_kit_for_frontend()->get_settings();
 	}
 
 	public function get_current_settings( $setting = null ) {
@@ -126,6 +126,9 @@ class Manager {
 				'form_fields' => __( 'Form Fields', 'elementor' ),
 				'background' => __( 'Background', 'elementor' ),
 				'custom_css' => __( 'Custom CSS', 'elementor' ),
+				'additional_settings' => __( 'Additional Settings', 'elementor' ),
+				'kit_changes_updated' => __( 'Your changes have been updated.', 'elementor' ),
+				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 			],
 		] );
 

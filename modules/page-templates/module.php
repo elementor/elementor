@@ -81,7 +81,7 @@ class Module extends BaseModule {
 			if ( $document ) {
 				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
 
-				if ( ! $template_path ) {
+				if ( ! $template_path && $document->is_built_with_elementor() ) {
 					$kit_default_template = Plugin::$instance->kits_manager->get_current_settings( 'default_page_template' );
 					$template_path = $this->get_template_path( $kit_default_template );
 				}

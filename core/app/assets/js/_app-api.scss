@@ -27,7 +27,7 @@ $app-logo-size: px-to-rem(28);
 $app-logo-font-size: calc(0.4 * #{$app-logo-size});
 $app-logo-radius: 50%;
 $app-logo-color: theme-colors(light);
-$app-logo-background-color: darken(theme-colors(cta), 5%);
+$app-logo-background-color: theme-colors(cta);
 $app-logo-margin-end: spacing(10);
 
 $app-header-buttons-separator-color: tints(300);

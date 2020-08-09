@@ -292,9 +292,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			args.onAfter.apply( component, [ args, results ] );
 		}
 
-		this.afterRun( command );
-
 		this.trigger( 'run:after', component, command, args, results );
+
+		this.afterRun( command );
 
 		if ( false === args.returnValue ) {
 			return true;
@@ -322,7 +322,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	/**
 	 * Function afterRun().
 	 *
-	 * Method fired before the command runs.
+	 * Method fired after the command runs.
 	 *
 	 * @param {string} command
 	 */
