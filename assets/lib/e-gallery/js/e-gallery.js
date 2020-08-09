@@ -703,7 +703,7 @@ function () {
       this.$items.each(function (index, item) {
         var $item = jQuery(item);
 
-        if (!item.loaded && !$item.hasClass(_this6.settings.classes.hidden) && Object(_utils__WEBPACK_IMPORTED_MODULE_2__["elementInView"])(item)) {
+        if (!item.loaded && !$item.hasClass(_this6.getItemClass(_this6.settings.classes.hidden)) && Object(_utils__WEBPACK_IMPORTED_MODULE_2__["elementInView"])(item)) {
           var image = new Image(),
               promise = new Promise(function (resolve) {
             image.onload = resolve;
