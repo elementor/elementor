@@ -1,6 +1,6 @@
-import CommandBase from './command-base';
+import Command from './command';
 
-export default class CommandData extends CommandBase {
+export default class CommandData extends Command {
 	/**
 	 * Data returned from remote.
 	 *

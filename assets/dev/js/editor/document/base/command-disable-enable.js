@@ -22,16 +22,16 @@ export default class CommandDisableEnable extends CommandHistory {
 
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
-			commandClass = $e.commands.getCommandClass( data.command );
+			CommandClass = $e.commands.getCommandClass( data.command );
 
 		// Upon `disable` command toggle `isRedo`.
-		if ( commandClass.getDisableCommand() === data.command ) {
+		if ( CommandClass.getDisableCommand() === data.command ) {
 			isRedo = ! isRedo;
 		}
 
 		historyItem.get( 'containers' ).forEach( ( container ) => {
 			const settings = data.changes[ container.id ],
-				toggle = isRedo ? commandClass.getEnableCommand() : commandClass.getDisableCommand();
+				toggle = isRedo ? CommandClass.getEnableCommand() : CommandClass.getDisableCommand();
 
 			$e.run( toggle, {
 				container,

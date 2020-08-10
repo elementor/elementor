@@ -1,6 +1,9 @@
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
+import Command from '../modules/command';
 
 export default class Commands extends CommandsBackwardsCompatibility {
+	static trace = [];
+
 	/**
 	 * Function constructor().
 	 *
@@ -8,24 +11,21 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {{}} args
 	 */
-	constructor( ...args ) {
-		super( ...args );
+	constructor( ... args ) {
+		super( ... args );
 
 		this.current = {};
 		this.currentArgs = {};
 		this.currentTrace = [];
 		this.commands = {};
 		this.components = {};
-
-		this.classes = {};
 	}
 
 	/**
-	 * @param id
-	 * @returns {CommandBase}
+	 * @returns {Command}
 	 */
 	getCommandClass( id ) {
-		return this.classes[ id ];
+		return this.commands[ id ];
 	}
 
 	/**
@@ -240,22 +240,36 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		return this.currentTrace[ 0 ];
 	}
 
+	validateRun( command, args = {} ) {
+		if ( ! this.commands[ command ] ) {
+			this.error( `\`${ command }\` not found.` );
+		}
+
+		return this.getComponent( command ).dependency( command, args );
+	}
+
 	/**
 	 * Function beforeRun().
 	 *
 	 * @param {string} command
 	 * @param {} args
-	 *
-	 * @returns {boolean} dependency result
 	 */
 	beforeRun( command, args = {} ) {
-		if ( ! this.commands[ command ] ) {
-			this.error( `\`${ command }\` not found.` );
-		}
+		const component = this.getComponent( command ),
+			container = component.getRootContainer();
 
 		this.currentTrace.push( command );
 
-		return this.getComponent( command ).dependency( command, args );
+		Commands.trace.push( command );
+
+		this.current[ container ] = command;
+		this.currentArgs[ container ] = args;
+
+		if ( args.onBefore ) {
+			args.onBefore.apply( component, [ args ] );
+		}
+
+		this.trigger( 'run:before', component, command, args );
 	}
 
 	/**
@@ -269,38 +283,108 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @returns {boolean|*} results
 	 */
 	run( command, args = {} ) {
-		if ( ! this.beforeRun( command, args ) ) {
+		if ( ! this.validateRun( command, args ) ) {
 			return false;
 		}
 
-		const component = this.getComponent( command ),
-			container = component.getRootContainer();
+		this.beforeRun( command, args );
 
-		this.current[ container ] = command;
-		this.currentArgs[ container ] = args;
+		// Call to new command or callback.
+		let instance = this.commands[ command ];
 
-		this.trigger( 'run:before', component, command, args );
-
-		if ( args.onBefore ) {
-			args.onBefore.apply( component, [ args ] );
+		if ( instance.getInstanceType ) {
+			instance = new instance( args );
 		}
 
-		const results = this.commands[ command ].apply( component, [ args ] );
+		let results;
 
-		// TODO: Consider add results to `$e.devTools`.
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args, results ] );
+		// Route?.
+		if ( ! ( instance instanceof Command ) ) {
+			results = instance.apply( this.getComponent( command ), [ args ] );
+
+			this.afterRun( command, args, results );
+
+			return results;
 		}
 
-		this.trigger( 'run:after', component, command, args, results );
-
-		this.afterRun( command );
-
-		if ( false === args.returnValue ) {
-			return true;
+		// TODO: Check with mati.
+		if ( ! this.validateInstance( instance, command ) ) {
+			return;
 		}
 
-		return results;
+		// For UI Hooks.
+		instance.onBeforeRun( instance.args );
+
+		try {
+			// For data hooks.
+			instance.onBeforeApply( instance.args );
+
+			results = instance.run();
+		} catch ( e ) {
+			instance.onCatchApply( e );
+
+			if ( e instanceof $e.modules.HookBreak ) {
+				this.afterRun( command, args, e ); // To clear current.
+				return false;
+			}
+		}
+
+		return this.runAfter( command, instance, results );
+	}
+
+	runAfter( command, instance, result ) {
+		const onAfter = ( _result ) => {
+				// Run Data hooks.
+				instance.onAfterApply( instance.args, _result );
+
+				// TODO: Create Command-Base for Command-Document and apply it on after.
+				if ( instance.isDataChanged() ) {
+					$e.internal( 'document/save/set-is-modified', { status: true } );
+				}
+
+				// For UI hooks.
+				instance.onAfterRun( instance.args, _result );
+
+				this.afterRun( command, instance.args, _result );
+			},
+			asyncOnAfter = async ( _result ) => {
+				// Run Data hooks.
+				const results = instance.onAfterApply( instance.args, _result ),
+					promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
+
+				if ( promises.length ) {
+					// Wait for hooks before return the value.
+					await Promise.all( promises );
+				}
+
+				if ( instance.isDataChanged() ) {
+					// TODO: Create Command-Base for Command-Document and apply it on after.
+					$e.internal( 'document/save/set-is-modified', { status: true } );
+				}
+
+				// For UI hooks.
+				instance.onAfterRun( instance.args, _result );
+
+				this.afterRun( command, instance.args, _result );
+			};
+
+		// TODO: Temp code determine if it's a jQuery deferred object.
+		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
+			result.fail( instance.onCatchApply.bind( instance ) );
+			result.done( onAfter );
+		} else if ( result instanceof Promise ) {
+			// Override initial result ( promise ) to await onAfter promises, first!.
+			return ( async () => {
+				await result.catch( instance.onCatchApply.bind( instance ) );
+				await result.then( ( _result ) => asyncOnAfter( _result ) );
+
+				return result;
+			} )();
+		} else {
+			onAfter( result );
+		}
+
+		return result;
 	}
 
 	/**
@@ -325,15 +409,42 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Method fired after the command runs.
 	 *
 	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} results
 	 */
-	afterRun( command ) {
+	afterRun( command, args, results ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
 
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args, results ] );
+		}
+
+		this.trigger( 'run:after', component, command, args, results );
+
 		this.currentTrace.pop();
+		Commands.trace.pop();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
+	}
+
+	validateInstance( instance, command ) {
+		if ( ! ( instance instanceof Command ) ) {
+			this.error( `invalid instance, command: '${ command }' ` );
+		}
+
+		const component = this.getComponent( command );
+
+		if ( component !== instance.component ) {
+			if ( $e.devTools ) {
+				$e.devTools.log.error( `Command: '${ command }' registerArgs.component: '${ instance.component.getNamespace() }' while current: '${ component.getNamespace() }'` );
+			}
+
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
