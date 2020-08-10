@@ -337,11 +337,6 @@ export default class Commands extends CommandsBackwardsCompatibility {
 				// Run Data hooks.
 				instance.onAfterApply( instance.args, _result );
 
-				// TODO: Create Command-Base for Command-Document and apply it on after.
-				if ( instance.isDataChanged() ) {
-					$e.internal( 'document/save/set-is-modified', { status: true } );
-				}
-
 				// For UI hooks.
 				instance.onAfterRun( instance.args, _result );
 
@@ -355,11 +350,6 @@ export default class Commands extends CommandsBackwardsCompatibility {
 				if ( promises.length ) {
 					// Wait for hooks before return the value.
 					await Promise.all( promises );
-				}
-
-				if ( instance.isDataChanged() ) {
-					// TODO: Create Command-Base for Command-Document and apply it on after.
-					$e.internal( 'document/save/set-is-modified', { status: true } );
 				}
 
 				// For UI hooks.
