@@ -28,30 +28,25 @@ export class FooterSaverAfterSave extends HookUIAfter {
 	}
 
 	onPageStatusChange( newStatus ) {
-		if ( elementor.config.document.support_site_editor ) {
+		// Don't add the "Have a look" link in the theme builder.
+		if ( elementor.config.document.support_site_editor || 'publish' !== newStatus || ! elementor.config.document.urls.have_a_look ) {
 			return;
 		}
 
-		if ( 'publish' === newStatus ) {
-			const options = {
-				message: elementor.config.document.panel.messages.publish_notification,
-			};
-
-			// Don't add the "Have a look" link in the theme builder.
-			if ( elementor.config.document.urls.have_a_look ) {
-				options.buttons = [
-					{
-						name: 'view_page',
-						text: elementor.translate( 'have_a_look' ),
-						callback() {
-							open( elementor.config.document.urls.have_a_look );
-						},
+		const options = {
+			message: elementor.config.document.panel.messages.publish_notification,
+			buttons: [
+				{
+					name: 'view_page',
+					text: elementor.translate( 'have_a_look' ),
+					callback() {
+						open( elementor.config.document.urls.have_a_look );
 					},
-				];
-			}
+				},
+			],
+		};
 
-			elementor.notifications.showToast( options );
-		}
+		elementor.notifications.showToast( options );
 	}
 }
 
