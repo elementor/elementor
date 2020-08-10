@@ -34,7 +34,26 @@ export class FooterSaverAfterSave extends HookUIAfter {
 			};
 
 			// Don't add the "Have a look" link in the theme builder.
-			if ( elementor.config.document.urls.have_a_look && ! elementor.config.document.support_site_editor ) {
+			if ( elementor.config.document.support_site_editor ) {
+				options.buttons = [
+					{
+						name: 'open_site_editor',
+						text: '<i class="eicon-external-link-square"></i><span class="e-theme-builder-toaster-button-text">' + elementorPro.translate( 'open_site_editor' ) + '</span>',
+						callback() {
+							$e.run( 'app/open' );
+						},
+					},
+					{
+						name: 'view_live_site',
+						text: '<i class="eicon-preview-medium"></i><span class="e-theme-builder-toaster-button-text">' + elementorPro.translate( 'view_live_site' ) + '</span>',
+						callback() {
+							open( elementor.config.document.urls.permalink );
+						},
+					},
+				];
+
+				options.classes = 'e-theme-builder-save-toaster';
+			} else if ( elementor.config.document.urls.have_a_look ) {
 				options.buttons = [
 					{
 						name: 'view_page',

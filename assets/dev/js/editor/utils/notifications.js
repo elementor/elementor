@@ -79,6 +79,10 @@ module.exports = elementorModules.Module.extend( {
 			toast.getElements( 'buttonsWrapper' ).remove();
 		}
 
+		if ( options.classes ) {
+			toast.getElements( 'widget' ).addClass( options.classes );
+		}
+
 		toast.show();
 	},
 
