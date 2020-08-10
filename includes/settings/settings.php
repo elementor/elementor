@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Upgrade\Upgrades;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -526,6 +527,7 @@ class Settings extends Settings_Page {
 										'' => __( 'Enable', 'elementor' ),
 										1 => __( 'Disable', 'elementor' ),
 									],
+									'std' => Upgrades::plugin_installed_before_v_3_0_0() ? 1 : '',
 									'desc' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
 										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
