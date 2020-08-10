@@ -33,7 +33,7 @@ export default class CommandBase extends ArgsObject {
 	constructor( args = {}, commandsAPI = $e.commands ) {
 		super( args );
 
-		if ( ( 'register' === $e.components.state || elementorCommonConfig.isTesting ) && 0 === $e.commands.constructor.trace.length ) {
+		if ( elementorCommonConfig.isTesting || 0 === $e.commands.constructor.trace.length ) {
 			this.constructor.registerArgs = args;
 
 			return;

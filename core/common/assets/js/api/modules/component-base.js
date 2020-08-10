@@ -115,7 +115,7 @@ export default class ComponentBase extends elementorModules.Module {
 	 * @param {string} command
 	 * @param {(function()|CommandBase)} context
 	 */
-	registerCommand( command, context ) {
+	registerCommand( command, context, commandsAPI = $e.commands ) {
 		const fullCommand = this.getNamespace() + '/' + command,
 			instanceType = context.getInstanceType ? context.getInstanceType() : false,
 			registerArgs = {
@@ -138,7 +138,7 @@ export default class ComponentBase extends elementorModules.Module {
 			throw Error( `Command: '${ fullCommand }' should inherent "Command" class.` );
 		}
 
-		$e.commands.register( this, command, context );
+		commandsAPI.register( this, command, context );
 	}
 
 	/**
@@ -148,16 +148,16 @@ export default class ComponentBase extends elementorModules.Module {
 		return instance.register();
 	}
 
-	registerCommandInternal( command, callback ) {
-		$e.commandsInternal.register( this, command, callback );
+	registerCommandInternal( command, context ) {
+		this.registerCommand( command, context, $e.commandsInternal );
 	}
 
 	registerRoute( route, callback ) {
 		$e.routes.register( this, route, callback );
 	}
 
-	registerData( command, callback ) {
-		$e.data.register( this, command, callback );
+	registerData( command, context ) {
+		this.registerCommand( command, context, $e.data );
 	}
 
 	unregisterRoute( route ) {

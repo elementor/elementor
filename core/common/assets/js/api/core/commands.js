@@ -329,38 +329,58 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			}
 		}
 
-		const onAfter = ( _results ) => {
-			// For data hooks.
-			instance.onAfterApply( instance.args, _results );
+		return this.runAfter( instance, results );
+	}
 
-			if ( instance.isDataChanged() ) {
-				$e.internal( 'document/save/set-is-modified', { status: true } );
-			}
+	runAfter( instance, result ) {
+		const onAfter = ( _result ) => {
+				// Run Data hooks.
+				instance.onAfterApply( instance.args, _result );
 
-			this.afterRun( command );
+				// TODO: Create Command-Base for Command-Document and apply it on after.
+				if ( instance.isDataChanged() ) {
+					$e.internal( 'document/save/set-is-modified', { status: true } );
+				}
 
-			// For UI hooks.
-			instance.onAfterRun( instance.args, _results );
+				// For UI hooks.
+				instance.onAfterRun( instance.args, _result );
+			},
+			asyncOnAfter = async ( _result ) => {
+				// Run Data hooks.
+				const results = instance.onAfterApply( instance.args, _result ),
+					promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
 
-			this.afterRun( command, args, results );
-		};
+				if ( promises.length ) {
+					// Wait for hooks before return the value.
+					await Promise.all( promises );
+				}
+
+				if ( instance.isDataChanged() ) {
+					// TODO: Create Command-Base for Command-Document and apply it on after.
+					$e.internal( 'document/save/set-is-modified', { status: true } );
+				}
+
+				// For UI hooks.
+				instance.onAfterRun( instance.args, _result );
+			};
 
 		// TODO: Temp code determine if it's a jQuery deferred object.
-		if ( results && 'object' === typeof results && results.promise && results.then && results.fail ) {
-			results.fail( instance.onCatchApply.bind( instance ) );
-			results.done( onAfter );
-		} else if ( results instanceof Promise ) {
-			results.catch( instance.onCatchApply.bind( instance ) );
-			results.then( onAfter );
+		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
+			result.fail( instance.onCatchApply.bind( instance ) );
+			result.done( onAfter );
+		} else if ( result instanceof Promise ) {
+			// Override initial result ( promise ) to await onAfter promises, first!.
+			return ( async () => {
+				await result.catch( instance.onCatchApply.bind( instance ) );
+				await result.then( ( _result ) => asyncOnAfter( _result ) );
+
+				return result;
+			} )();
 		} else {
-			onAfter( results );
+			onAfter( result );
 		}
 
-		if ( false === args.returnValue ) {
-			return true;
-		}
-
-		return results;
+		return result;
 	}
 
 	/**
