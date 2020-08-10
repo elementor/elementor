@@ -46,12 +46,12 @@
 		cursor: pointer;
 
 		&:hover {
-			--popover-item-color: var(--popover-item-hover-color);
+			color: var(--popover-item-hover-color);
 		}
 
 		&--danger {
 			&:hover {
-				--popover-item-color: var(--popover-item-danger-hover-color);
+				color: var(--popover-item-danger-hover-color);
 			}
 		}
 
