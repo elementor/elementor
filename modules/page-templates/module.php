@@ -4,6 +4,7 @@ namespace Elementor\Modules\PageTemplates;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -332,14 +333,16 @@ class Module extends BaseModule {
 			]
 		);
 
-		$document->add_control(
-			'reload_preview_description',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Changes will be reflected in the preview only after the page reloads', 'elementor' ),
-				'content_classes' => 'elementor-descriptor',
-			]
-		);
+		if ( $document instanceof Kit ) {
+			$document->add_control(
+				'reload_preview_description',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => __( 'Changes will be reflected in the preview only after the page reloads', 'elementor' ),
+					'content_classes' => 'elementor-descriptor',
+				]
+			);
+		}
 	}
 
 	/**
