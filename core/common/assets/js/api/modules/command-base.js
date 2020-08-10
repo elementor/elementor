@@ -7,20 +7,23 @@ export default class CommandBase extends ArgsObject {
 		return 'CommandBase';
 	}
 
+	/**
+	 * Self command name.
+	 *
+	 * @returns {string}
+	 */
 	static getCommand() {
 		return this.registerArgs.__command;
 	}
 
+	/**
+	 * Self component.
+	 *
+	 * @returns {ComponentBase}
+	 */
 	static getComponent() {
 		return this.registerArgs.__component;
 	}
-
-	/**
-	 * Current component.
-	 *
-	 * @type {Component}
-	 */
-	component;
 
 	/**
 	 * Function constructor().
@@ -40,11 +43,10 @@ export default class CommandBase extends ArgsObject {
 		}
 
 		// Acknowledge self about which command it run.
-		// TODO: rename `this.currentCommand` to `this.command`.
-		this.currentCommand = this.constructor.getCommand() || commandsAPI.getCurrentLast();
+		this.command = this.constructor.getCommand() || commandsAPI.getCurrentLast();
 
 		// Assign instance of current component.
-		this.component = this.constructor.getComponent() || commandsAPI.getComponent( this.currentCommand );
+		this.component = this.constructor.getComponent() || commandsAPI.getComponent( this.command );
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );

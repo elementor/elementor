@@ -48,7 +48,7 @@ export default class CommandDisableEnable extends CommandHistory {
 		 *
 		 * @type {string}
 		 */
-		this.type = this.currentCommand === this.constructor.getEnableCommand() ?
+		this.type = this.command === this.constructor.getEnableCommand() ?
 			'enable' : 'disable';
 
 		// Override default logic, since getHistory() depends on `this.type`.
@@ -83,7 +83,7 @@ export default class CommandDisableEnable extends CommandHistory {
 			subTitle,
 			data: {
 				changes,
-				command: this.currentCommand,
+				command: this.command,
 			},
 			type,
 			restore: this.constructor.restore,

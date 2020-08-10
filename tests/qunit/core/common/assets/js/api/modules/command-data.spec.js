@@ -32,7 +32,7 @@ jQuery( () => {
 					commandFull = component.getNamespace() + '/test-command';
 
 				command.component = component;
-				command.currentCommand = commandFull;
+				command.command = commandFull;
 
 				const requestData = command.getRequestData();
 
