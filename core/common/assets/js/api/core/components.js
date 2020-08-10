@@ -4,6 +4,8 @@ export default class extends elementorModules.Module {
 
 		this.components = {};
 		this.activeComponents = {};
+
+		this.state = 'none';
 	}
 
 	getAll() {
@@ -15,7 +17,15 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
+		this.state = 'register';
+
+		if ( component.isRegistered ) {
+			throw Error( `component: '${ component.getNamespace() }' is already registered.` );
+		}
+
 		component.registerAPI();
+
+		this.state = 'register:after:' + component.getNamespace();
 
 		this.components[ component.getNamespace() ] = component;
 
