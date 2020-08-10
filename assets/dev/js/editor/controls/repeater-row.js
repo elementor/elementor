@@ -1,7 +1,6 @@
-var ControlBaseDataView = require( 'elementor-controls/base-data' ),
-	RepeaterRowView;
+import ControlsStack from 'elementor-views/controls-stack';
 
-RepeaterRowView = Marionette.CompositeView.extend( {
+module.exports = Marionette.CompositeView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' ),
 
 	className: 'elementor-repeater-fields',
@@ -83,6 +82,8 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	onRender: function() {
 		this.setTitle();
+
+		ControlsStack.handlePopovers( this );
 	},
 
 	onModelChange: function() {
@@ -97,5 +98,3 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		}
 	},
 } );
-
-module.exports = RepeaterRowView;
