@@ -1,0 +1,10 @@
+// Function: size
+// Simple Rem based multiplier
+// - Use to convert pixel dimension to REM units
+// - Default is 0.5rem (8px) which is our Spacing unit.
+// - Optional: Add variable based value to $unit when 1rem is not 16px.
+// E.g: size(5) will output: 2.5rem which is 40px;
+
+@function size($multiplier, $unit:0.5rem) {
+    @return $multiplier * $unit;
+}

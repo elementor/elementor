@@ -90,7 +90,7 @@ module.exports = function( $ ) {
 	};
 
 	this.runReadyTrigger = function( scope ) {
-		if ( 'static' === elementorFrontend.config.render_mode ) {
+		if ( elementorFrontend.config.is_static ) {
 			return;
 		}
 

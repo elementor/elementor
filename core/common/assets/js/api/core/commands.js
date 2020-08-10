@@ -337,6 +337,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 				$e.internal( 'document/save/set-is-modified', { status: true } );
 			}
 
+			this.afterRun( command );
+
 			// For UI hooks.
 			instance.onAfterRun( instance.args, _results );
 
@@ -380,7 +382,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	/**
 	 * Function afterRun().
 	 *
-	 * Method fired before the command runs.
+	 * Method fired after the command runs.
 	 *
 	 * @param {string} command
 	 * @param {{}} args
@@ -394,13 +396,13 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			args.onAfter.apply( component, [ args, results ] );
 		}
 
+        this.trigger( 'run:after', component, command, args, results );
+
 		this.currentTrace.pop();
 		Commands.trace.pop();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
-
-        this.trigger( 'run:after', component, command, args, results );
 	}
 
 	validateInstance( instance, command ) {

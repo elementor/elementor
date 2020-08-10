@@ -12,6 +12,11 @@ export default class extends elementorModules.editor.utils.Module {
 		globals: false,
 	};
 
+	/**
+	 * @type {ControlsCSSParser}
+	 */
+	variablesCSS = null;
+
 	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: PanelView,
@@ -32,7 +37,11 @@ export default class extends elementorModules.editor.utils.Module {
 			icon: 'eicon-global-settings',
 			title: elementor.translate( 'site_settings' ),
 			type: 'page',
-			callback: () => $e.route( 'panel/global/menu' ),
+			callback: () => {
+				$e.run( 'panel/global/open', {
+					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
+				} );
+			},
 		}, 'style', 'editor-preferences' );
 
 		menu.addItem( {
@@ -40,7 +49,7 @@ export default class extends elementorModules.editor.utils.Module {
 			icon: 'eicon-theme-builder',
 			title: elementor.translate( 'theme_builder' ),
 			type: 'page',
-			callback: () => $e.run( 'panel/global/open-site-editor' ),
+			callback: () => $e.run( 'app/open' ),
 		}, 'style', 'editor-preferences' );
 	}
 
@@ -81,6 +90,57 @@ export default class extends elementorModules.editor.utils.Module {
 		}
 
 		return behaviors;
+	}
+
+	/**
+	 * In case there is a new global color/typography convert current globals to CSS variables.
+	 */
+	renderGlobalVariables() {
+		if ( ! this.variablesCSS ) {
+			this.variablesCSS = new ControlsCSSParser( {
+				id: 'e-kit-variables',
+				settingsModel: new elementorModules.editor.elements.models.BaseSettings( {}, {} ),
+			} );
+		}
+
+		// The kit document has its own CSS.
+		if ( 'kit' === elementor.documents.getCurrent().config.type ) {
+			this.variablesCSS.removeStyleFromDocument();
+			return;
+		}
+
+		$e.data.get( 'globals/index' ).then( ( { data } ) => {
+			if ( data.colors ) {
+				Object.values( data.colors ).forEach( ( item ) => {
+					const controls = elementor.config.kit_config.design_system_controls.colors,
+						values = {
+							_id: item.id,
+							color: item.value,
+						};
+
+					this.variablesCSS.addStyleRules( controls, values, controls, [ '{{WRAPPER}}' ], [ 'body' ] );
+				} );
+			}
+
+			if ( data.typography ) {
+				Object.values( data.typography ).forEach( ( item ) => {
+					const controls = elementor.config.kit_config.design_system_controls.typography,
+						values = {
+							_id: item.id,
+							...item.value,
+						};
+
+					// Enqueue fonts.
+					if ( item.value.typography_font_family ) {
+						elementor.helpers.enqueueFont( item.value.typography_font_family );
+					}
+
+					this.variablesCSS.addStyleRules( controls, values, controls, [ '{{WRAPPER}}' ], [ 'body' ] );
+				} );
+			}
+
+			this.variablesCSS.addStyleToDocument();
+		} );
 	}
 
 	// Use the Controls CSS Parser to add the global defaults CSS to the page.
@@ -146,13 +206,6 @@ export default class extends elementorModules.editor.utils.Module {
 		cssParser.addStyleToDocument();
 	}
 
-	refreshKitCssFiles() {
-		const $link = elementor.$previewContents.find( `#elementor-post-${ elementor.config.kit_id }-css` ),
-			href = $link.attr( 'href' ).split( '?' )[ 0 ];
-
-		$link.attr( { href: `${ href }?ver=${ ( new Date() ).getTime() }` } );
-	}
-
 	onInit() {
 		super.onInit();
 
@@ -177,6 +230,10 @@ export default class extends elementorModules.editor.utils.Module {
 				this.loadingTriggers.preview = true;
 
 				this.renderGlobalsDefaultCSS();
+			} );
+
+			elementor.on( 'document:loaded', () => {
+				this.renderGlobalVariables();
 			} );
 
 			elementor.on( 'globals:loaded', () => {

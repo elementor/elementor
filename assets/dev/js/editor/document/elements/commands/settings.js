@@ -106,7 +106,7 @@ export class Settings extends CommandHistoryDebounce {
 			container.oldValues = {};
 
 			// Set oldValues, For each setting is about to change save setting value.
-			Object.entries( newSettings ).forEach( ( [ key, value ] ) => { 	// eslint-disable-line no-unused-vars
+			Object.keys( newSettings ).forEach( ( key ) => {
 				container.oldValues[ key ] = oldSettings[ key ];
 			} );
 

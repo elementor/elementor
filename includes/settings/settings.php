@@ -158,7 +158,6 @@ class Settings extends Settings_Page {
 			[ $this, 'handle_external_redirects' ]
 		);
 
-		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
 		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
@@ -339,27 +338,6 @@ class Settings extends Settings_Page {
 	}
 
 	/**
-	 * Display settings page.
-	 *
-	 * Output the content for the Theme Templates page.
-	 *
-	 * @since 2.4.0
-	 * @access public
-	 */
-	public function elementor_theme_templates() {
-		?>
-		<div class="wrap">
-			<div class="elementor-blank_state">
-				<i class="eicon-nerd-chuckle"></i>
-				<h2><?php echo __( 'Get Theme Builder', 'elementor' ); ?></h2>
-				<p><?php echo __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/theme-builder/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
-			</div>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
-	/**
 	 * On admin init.
 	 *
 	 * Preform actions on WordPress admin initialization.
@@ -405,6 +383,7 @@ class Settings extends Settings_Page {
 	 *
 	 * @since 1.7.5
 	 * @access public
+	 * @deprecated 3.0.0
 	 */
 	public function update_css_print_method() {
 		Plugin::$instance->files_manager->clear_cache();
@@ -491,7 +470,7 @@ class Settings extends Settings_Page {
 								'label' => __( 'Looking for the Style settings?', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => __( 'The Style settings changed location and now can be found under: Editor > Menu > Global Settings.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
+									'html' => __( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Settings Panel > Hamburger Menu > Global Settings</b>.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
 								],
 							],
 						],
@@ -543,18 +522,15 @@ class Settings extends Settings_Page {
 								],
 							],
 							'element_wrappers_legacy_mode' => [
-								'label' => __( 'HTML Output Legacy Mode', 'elementor' ),
+								'label' => __( 'Optimized DOM Output', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'options' => [
-										'' => __( 'After 3.0', 'elementor' ),
-										1 => __( 'Before 3.0', 'elementor' ),
+										'' => __( 'Enable', 'elementor' ),
+										1 => __( 'Disable', 'elementor' ),
 									],
-									'desc' => __( 'Developers, Please Note! If you’ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy Mode allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-										. '<br /><br />'
-										. __( 'Please note - you should not use this mode on newly created sites.', 'elementor' )
-										. '<br />'
-										. '<a href="https://go.elementor.com/legacy-mode" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+									'desc' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
+										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
 							],
 						],
@@ -589,7 +565,6 @@ class Settings extends Settings_Page {
 			'elementor_custom_icons',
 			'elementor-license',
 			'popup_templates',
-			'theme_templates',
 		];
 
 		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {
@@ -616,9 +591,13 @@ class Settings extends Settings_Page {
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
 		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
 
+		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
+
 		// Clear CSS Meta after change print method.
-		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+		add_action( 'add_option_elementor_css_print_method', $clear_cache_callback );
+		add_action( 'update_option_elementor_css_print_method', $clear_cache_callback );
+		add_action( 'add_option_elementor_element_wrappers_legacy_mode', $clear_cache_callback );
+		add_action( 'update_option_elementor_element_wrappers_legacy_mode', $clear_cache_callback );
 
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', [ $this, 'menu_order' ] );

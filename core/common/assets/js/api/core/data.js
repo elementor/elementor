@@ -45,10 +45,6 @@ export default class Data extends Commands {
 
 		this.baseEndpointAddress = '';
 
-		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
-	}
-
-	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
 		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;
@@ -309,9 +305,11 @@ export default class Data extends Commands {
 		requestData.cache = 'miss';
 
 		const params = this.prepareHeaders( requestData ),
-			useCache = [ 'create', 'get' ].includes( requestData.type ) && ! requestData.args.options?.refresh;
+			refresh = requestData.args.options?.refresh,
+			getCache = 'get' === requestData.type && ! refresh,
+			saveCache = [ 'create', 'get' ].includes( requestData.type ) && ! refresh;
 
-		if ( useCache ) {
+		if ( getCache ) {
 			const cachePromise = this.cache.getAsync( requestData );
 
 			if ( cachePromise ) {
@@ -339,7 +337,7 @@ export default class Data extends Commands {
 
 				// At this point, it got the resolved response from remote.
 				// So load cache, and resolve it.
-				if ( useCache ) {
+				if ( saveCache ) {
 					this.cache.set( requestData, response );
 				}
 

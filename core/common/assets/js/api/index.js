@@ -8,11 +8,11 @@ import CommandsInternal from './core/commands-internal';
 import ComponentBase from './modules/component-base';
 import ComponentModalBase from './modules/component-modal-base';
 import Components from './core/components';
+import Data from './core/data.js';
 import HookBreak from './modules/hook-break';
 import Hooks from './core/hooks';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
-import Data from './core/data.js';
 
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
