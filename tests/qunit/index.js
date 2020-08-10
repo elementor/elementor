@@ -1,8 +1,10 @@
 export const tests = () => {
+	// JS API modules.
 	require( './core/common/assets/js/api/modules/command-base.spec.js' );
 	require( './core/common/assets/js/api/modules/command-data.spec.js' );
 	require( './core/common/assets/js/api/modules/command.spec.js' );
 
+	// JS API core.
 	require( './core/common/assets/js/api/core/components.spec.js' );
 	require( './core/common/assets/js/api/core/data.spec.js' );
 
@@ -10,9 +12,15 @@ export const tests = () => {
 
 	require( './core/editor/container/container.spec' );
 
+	// JS API editor
 	require( './core/editor/base/command-editor.spec' );
+	require( './core/editor/base/command-editor-internal.spec' );
 
-	require( './core/editor/document/commands/base/command-history.spec' );
+	// JS API editor document.
+	require( './core/editor/document/base/command-disable-enable.spec' );
+	require( './core/editor/document/base/command-history.spec' );
+	require( './core/editor/document/base/command-history-debounce.spec' );
+
 	require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
 	require( './core/editor/document/globals/commands/base/disable-enable.spec' );
 
@@ -29,10 +37,11 @@ export const tests = () => {
 	require( './core/editor/document/ui/component.spec' );
 	require( './core/editor/document/save/component.spec' );
 
+	// JS API editor data.
 	require( './core/editor/data/globals/component.spec' );
 };
 
-// export for external build.
+// Export for external build.
 if ( $e?.devTools?.external && ! $e.devTools.external.tests ) {
 	$e.devTools.external.tests = tests;
 }

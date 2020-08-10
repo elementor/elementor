@@ -1,4 +1,7 @@
 import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
+import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandData from 'elementor-api/modules/command-data';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command.js', () => {
@@ -39,6 +42,21 @@ jQuery( () => {
 					},
 					new Error( random )
 				);
+			} );
+
+			QUnit.test( 'instanceOf(): validation', ( assert ) => {
+				const validateCommand = ( command ) => {
+					assert.equal( command instanceof CommandBase, true );
+					assert.equal( command instanceof Command, true );
+					assert.equal( command instanceof CommandInternal, false, );
+					assert.equal( command instanceof CommandData, false, );
+					assert.equal( command instanceof $e.modules.Command, true );
+					assert.equal( command instanceof $e.modules.CommandInternal, false );
+					assert.equal( command instanceof $e.modules.CommandData, false );
+				};
+
+				validateCommand( new Command( {} ) );
+				validateCommand( new $e.modules.Command( {} ) );
 			} );
 		} );
 	} );

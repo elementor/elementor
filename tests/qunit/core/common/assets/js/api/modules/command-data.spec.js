@@ -2,8 +2,6 @@ import CommandBase from 'elementor-api/modules/command-base';
 import Command from 'elementor-api/modules/command';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandHistory from 'elementor-document/base/command-history';
-import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
 import ComponentBase from 'elementor-api/modules/component-base';
 
 jQuery( () => {
@@ -45,20 +43,15 @@ jQuery( () => {
 				assert.equal( requestData.type, 'get' );
 			} );
 
-			// TODO: Same with all instanceOf validations, each file handle his own tests.
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommandData = ( command ) => {
 					assert.equal( command instanceof CommandBase, true, );
 					assert.equal( command instanceof Command, true, );
 					assert.equal( command instanceof CommandInternal, false );
-					assert.equal( command instanceof CommandData, true, );
-					assert.equal( command instanceof CommandHistory, false );
-					assert.equal( command instanceof CommandHistoryDebounce, false );
+					assert.equal( command instanceof CommandData, true, );;
 					assert.equal( command instanceof $e.modules.Command, true );
 					assert.equal( command instanceof $e.modules.CommandInternal, false );
 					assert.equal( command instanceof $e.modules.CommandData, true );
-					assert.equal( command instanceof $e.modules.document.CommandHistory, false );
-					assert.equal( command instanceof $e.modules.document.CommandHistoryDebounce, false );
 				};
 
 				validateCommandData( new CommandData( {} ) );

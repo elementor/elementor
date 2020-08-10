@@ -309,6 +309,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		// TODO: Check with mati.
 		if ( ! this.validateInstance( instance, command ) ) {
+			this.currentTrace.pop();
+			Commands.trace.pop();
+
 			return;
 		}
 

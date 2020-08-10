@@ -13,7 +13,7 @@ export default class Component extends ComponentBase {
 				elementorCommon.helpers.hardDeprecated(
 					'$e.modules.document.CommandHistoryBase',
 					'3.0.0',
-					'$e.modules.document.CommandHistory'
+					'$e.modules.editor.document.CommandHistory'
 				);
 
 				return this.CommandHistory;
@@ -22,7 +22,7 @@ export default class Component extends ComponentBase {
 				elementorCommon.helpers.hardDeprecated(
 					'$e.modules.document.CommandHistoryDebounceBase',
 					'3.0.0',
-					'$e.modules.document.CommandHistoryDebounce'
+					'$e.modules.editor.document.CommandHistoryDebounce'
 				);
 
 				return this.CommandHistoryDebounce;

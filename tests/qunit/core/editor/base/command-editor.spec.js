@@ -2,14 +2,12 @@ import CommandBase from 'elementor-api/modules/command-base';
 import Command from 'elementor-api/modules/command';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandHistory from 'elementor-document/base/command-history';
-import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
 import CommandEditor from 'elementor-editor/base/command-editor';
 import CommandEditorInternal from 'elementor-editor/base/command-editor-internal';
 
 jQuery( () => {
 	QUnit.module( 'File: assets/dev/js/editor/base/command-editor.js', () => {
-		QUnit.module( 'Command', () => {
+		QUnit.module( 'CommandEditor', () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
 					() => {
@@ -46,24 +44,28 @@ jQuery( () => {
 				);
 			} );
 
-			QUnit.test( 'instanceOf', ( assert ) => {
+			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommandEditor = ( commandEditor ) => {
+					// Base.
 					assert.equal( commandEditor instanceof CommandBase, true );
 					assert.equal( commandEditor instanceof Command, true );
 					assert.equal( commandEditor instanceof CommandInternal, false, );
 					assert.equal( commandEditor instanceof CommandData, false, );
-					assert.equal( commandEditor instanceof CommandHistory, false );
-					assert.equal( commandEditor instanceof CommandHistoryDebounce, false );
+					// Editor.
+					assert.equal( commandEditor instanceof CommandEditor, true, );
 					assert.equal( commandEditor instanceof CommandEditorInternal, false );
 
+					// Base.
 					assert.equal( commandEditor instanceof $e.modules.Command, true );
 					assert.equal( commandEditor instanceof $e.modules.CommandInternal, false );
 					assert.equal( commandEditor instanceof $e.modules.CommandData, false );
-					assert.equal( commandEditor instanceof $e.modules.document.CommandHistory, false );
-					assert.equal( commandEditor instanceof $e.modules.document.CommandHistoryDebounce, false );
+					// Editor.
+					assert.equal( commandEditor instanceof $e.modules.editor.CommandEditor, true );
+					assert.equal( commandEditor instanceof $e.modules.editor.CommandEditorInternal, false );
 				};
 
 				validateCommandEditor( new CommandEditor( {} ) );
+				validateCommandEditor( new $e.modules.editor.CommandEditor( {} ) );
 			} );
 		} );
 	} );
