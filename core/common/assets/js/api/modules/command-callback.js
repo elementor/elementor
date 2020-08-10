@@ -5,6 +5,13 @@ export default class CommandCallback extends Command {
 		return 'CommandCallback';
 	}
 
+	/**
+	 * Get original callback of the command.
+	 *
+	 * Support pure callbacks ( Non command-base ).
+	 *
+	 * @returns {(function())}
+	 */
 	static getCallback() {
 		return this.registerArgs.__callback;
 	}

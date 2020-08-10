@@ -428,7 +428,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		if ( component !== instance.component ) {
 			if ( $e.devTools ) {
-				$e.devTools.log.error( `Command: '${ command }' registerArgs.component: '${ instance.component.getNamespace() }' while current: '${ component.getNamespace() }'` );
+				$e.devTools.log.error( `Command: '${ command }' registerArgs.component: '${ instance.component.getNamespace() }' while current component is: '${ component.getNamespace() }'` );
 			}
 
 			return false;
