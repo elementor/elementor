@@ -624,6 +624,18 @@ class Admin extends App {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
 	}
 
+	public function major_update_warning( $current_version ) {
+		if ( version_compare( $current_version, '3.0.0', '>=' ) ) {
+			return;
+		}
+		?>
+		<div class="e-major-update-warning">
+			<div class="e-major-update-warning__title"><?php echo __( 'Heads up, Please backup before upgrade!', 'elementor' ); ?></div>
+			<div class="e-major-update-warning__message"><?php echo __( 'The latest update is a major version, which means it includes some substantial changes across different areas of the plugin. We highly recommend you backup your site before upgrading, and make sure you first update in a staging environment', 'elementor' ); ?></div>
+		</div>
+		<?php
+	}
+
 	/**
 	 * @access public
 	 */
@@ -674,6 +686,9 @@ class Admin extends App {
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 		add_action( 'current_screen', [ $this, 'init_beta_tester' ] );
 
+		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function() {
+			$this->major_update_warning( ELEMENTOR_VERSION );
+		} );
 	}
 
 	/**
