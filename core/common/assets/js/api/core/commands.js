@@ -311,8 +311,14 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		// TODO: Check with mati.
 		if ( ! this.validateInstanceScope( instance, command, currentComponent ) ) {
+			// TODO: Code duplication, handle after review with mati.
+			const container = currentComponent.getRootContainer();
+
 			this.currentTrace.pop();
 			Commands.trace.pop();
+
+			delete this.current[ container ];
+			delete this.currentArgs[ container ];
 
 			return;
 		}
@@ -365,12 +371,18 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
-			result.fail( instance.onCatchApply.bind( instance ) );
+			result.fail( ( e ) => {
+				instance.onCatchApply( e );
+				this.afterRun( command, instance.args, e );
+			} );
 			result.done( onAfter );
 		} else if ( result instanceof Promise ) {
 			// Override initial result ( promise ) to await onAfter promises, first!.
 			return ( async () => {
-				await result.catch( instance.onCatchApply.bind( instance ) );
+				await result.catch( ( e ) => {
+					instance.onCatchApply( e );
+					this.afterRun( command, instance.args, e );
+				} );
 				await result.then( ( _result ) => asyncOnAfter( _result ) );
 
 				return result;
@@ -407,7 +419,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @param {{}} args
 	 * @param {*} results
 	 */
-	afterRun( command, args, results ) {
+	afterRun( command, args, results = undefined ) {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
 
