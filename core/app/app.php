@@ -45,6 +45,10 @@ class App extends BaseApp {
 	public function fix_submenu( $menu ) {
 		global $submenu;
 
+		if ( is_multisite() && is_network_admin() ) {
+			return $menu;
+		}
+
 		// Hack to add a link to sub menu.
 		foreach ( $submenu[ Source_Local::ADMIN_MENU_SLUG ] as &$item ) {
 			if ( self::PAGE_ID === $item[2] ) {
