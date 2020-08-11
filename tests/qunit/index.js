@@ -7,26 +7,16 @@ export const tests = () => {
 
 	require( './core/common/assets/js/api/core/hooks/base.spec.js' );
 
-	require( './core/editor/container/container.spec' );
+	require( './assets/dev/js/editor/container/container.spec' );
 
-	require( './core/editor/document/commands/base/command-history.spec' );
-	require( './core/editor/document/dynamic/commands/base/disable-enable.spec' );
-	require( './core/editor/document/globals/commands/base/disable-enable.spec' );
+	require( './assets/dev/js/editor/document/commands/base/command-history.spec' );
+	require( './assets/dev/js/editor/document/dynamic/commands/base/disable-enable.spec' );
+	require( './assets/dev/js/editor/document/globals/commands/base/disable-enable.spec' );
 
-	require( './core/editor/document/component.spec' );
-	require( './core/editor/document/manager.spec' );
+	require( './assets/dev/js/editor/document/manager.spec' );
+	require( './assets/dev/js/editor/document/component.spec' );
 
-	// TODO: Require all components from one file.
-
-	require( './core/editor/document/elements/component.spec' );
-	require( './core/editor/document/globals/component.spec' );
-	require( './core/editor/document/repeater/component.spec' );
-	require( './core/editor/document/dynamic/component.spec' );
-	require( './core/editor/document/history/component.spec' );
-	require( './core/editor/document/ui/component.spec' );
-	require( './core/editor/document/save/component.spec' );
-
-	require( './core/editor/data/globals/component.spec' );
+	require( './assets/dev/js/editor/data/globals/component.spec' );
 };
 
 // export for external build.
