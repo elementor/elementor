@@ -78,6 +78,19 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return this.view.getChildViewContainer( this.view );
 	},
 
+	getSortedElementNewIndex( $element ) {
+		const draggedModel = elementor.channels.data.request( 'dragging:model' ),
+			draggedElType = draggedModel.get( 'elType' );
+
+		let newIndex = $element.index();
+
+		if ( 'widget' === draggedElType && ! elementor.config.legacyMode.elementWrappers ) {
+			newIndex--;
+		}
+
+		return newIndex;
+	},
+
 	deactivate: function() {
 		var childViewContainer = this.getChildViewContainer();
 
@@ -89,30 +102,28 @@ SortableBehavior = Marionette.Behavior.extend( {
 	startSort: function( event, ui ) {
 		event.stopPropagation();
 
-		var model = this.view.collection.get( {
-			cid: ui.item.data( 'model-cid' ),
-		} );
+		const container = elementor.getContainer( ui.item.attr( 'data-id' ) );
 
 		elementor.channels.data
-			.reply( 'dragging:model', model )
-			.reply( 'dragging:view', this.view.children.findByModel( model ) )
+			.reply( 'dragging:model', container.model )
+			.reply( 'dragging:view', container.view )
 			.reply( 'dragging:parent:view', this.view )
-			.trigger( 'drag:start', model )
-			.trigger( model.get( 'elType' ) + ':drag:start' );
+			.trigger( 'drag:start', container.model )
+			.trigger( container.model.get( 'elType' ) + ':drag:start' );
 	},
 
-	// Move section.
+	// On sorting element
 	updateSort: function( ui ) {
-		const at = ui.item.parent().children().index( ui.item );
-
 		$e.run( 'document/elements/move', {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view.getContainer(),
-			options: { at },
+			options: {
+				at: this.getSortedElementNewIndex( ui.item ),
+			},
 		} );
 	},
 
-	// Move Column/Widget.
+	// On receiving element from another container
 	receiveSort: function( event, ui ) {
 		event.stopPropagation();
 
@@ -137,7 +148,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view.getContainer(),
 			options: {
-				at: ui.item.index(),
+				at: this.getSortedElementNewIndex( ui.item ),
 			},
 		} );
 	},

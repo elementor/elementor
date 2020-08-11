@@ -23,20 +23,21 @@ export default class Data extends HooksBase {
 					// Throw custom break to be catch by the base for 'Safe' exit.
 					throw new $e.modules.HookBreak;
 				}
+				return true;
 			}
-			break;
 
 			case 'catch':
 			case 'after': {
-				callback.callback( args, result );
+				/**
+				 * When handling HOOK which is data after (not breakable),
+				 * even the result of the callback is negative, it is required to return positive,
+				 * since result of runCallback determine if the callback succeeded.
+				 */
+				return callback.callback( args, result ) || 'after' === event;
 			}
-			break;
-
-			default:
-				return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	shouldRun( callbacks ) {
@@ -48,7 +49,7 @@ export default class Data extends HooksBase {
 			return;
 		}
 
-		$e.devTools.log.hookRun( this.getType(), command, args, event );
+		$e.devTools.log.callbacks().run( this.getType(), command, args, event );
 	}
 
 	onCallback( command, args, event, id ) {
@@ -56,7 +57,6 @@ export default class Data extends HooksBase {
 			return;
 		}
 
-		$e.devTools.log.hookCallback( this.getType(), command, args, event, id );
+		$e.devTools.log.callbacks().callback( this.getType(), command, args, event, id );
 	}
 }
-

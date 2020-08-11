@@ -1,6 +1,6 @@
-import Debounce from 'elementor-document/commands/base/history/debounce';
+import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 
-export class Settings extends Debounce {
+export class Settings extends CommandHistoryDebounce {
 	/**
 	 * Function getSubTitle().
 	 *
@@ -106,7 +106,7 @@ export class Settings extends Debounce {
 			container.oldValues = {};
 
 			// Set oldValues, For each setting is about to change save setting value.
-			Object.entries( newSettings ).forEach( ( [ key, value ] ) => { 	// eslint-disable-line no-unused-vars
+			Object.keys( newSettings ).forEach( ( key ) => {
 				container.oldValues[ key ] = oldSettings[ key ];
 			} );
 

@@ -293,7 +293,7 @@ export default class HooksBase extends elementorModules.Module {
 	 * @param {{}} args
 	 * @param {*} result
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 */
 	run( event, command, args, result = undefined ) {
 		const callbacks = this.getCallbacks( event, command, args );
@@ -303,9 +303,7 @@ export default class HooksBase extends elementorModules.Module {
 
 			this.onRun( command, args, event );
 
-			this.runCallbacks( event, command, callbacks, args, result );
-
-			return true;
+			return this.runCallbacks( event, command, callbacks, args, result );
 		}
 
 		return false;
@@ -320,9 +318,11 @@ export default class HooksBase extends elementorModules.Module {
 	 * @param {string} command
 	 * @param {array} callbacks
 	 * @param {{}} args
-	 * @param {*} result
+	 * @param {[]} result
 	 */
 	runCallbacks( event, command, callbacks, args, result ) {
+		const callbacksResult = [];
+
 		for ( const i in callbacks ) {
 			const callback = callbacks[ i ];
 
@@ -342,9 +342,13 @@ export default class HooksBase extends elementorModules.Module {
 				this.onCallback( command, args, event, callback.id );
 
 				try {
-					if ( ! this.runCallback( event, callback, args, result ) ) {
+					const callbackResult = this.runCallback( event, callback, args, result );
+
+					if ( ! callbackResult ) {
 						throw Error( `Callback failed, event: '${ event }'` );
 					}
+
+					callbacksResult.push( callbackResult );
 				} catch ( e ) {
 					// If its 'Hook-Break' then parent `try {}` will handle it.
 					if ( e instanceof $e.modules.HookBreak ) {
@@ -357,6 +361,8 @@ export default class HooksBase extends elementorModules.Module {
 
 			this.depth[ event ][ callback.id ]--;
 		}
+
+		return callbacksResult;
 	}
 
 	/**
@@ -369,7 +375,7 @@ export default class HooksBase extends elementorModules.Module {
 	 * @param {{}} args
 	 * @param {*} result
 	 *
-	 * @returns {boolean}
+	 * @returns {*}
 	 *
 	 * @throw {Error}
 	 */

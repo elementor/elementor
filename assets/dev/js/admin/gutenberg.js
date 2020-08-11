@@ -5,20 +5,18 @@
 	var ElementorGutenbergApp = {
 
 		cacheElements: function() {
-			this.isElementorMode = ElementorGutenbergSettings.isElementorMode;
-
-			this.cache = {};
-
-			this.cache.$gutenberg = $( '#editor' );
-			this.cache.$switchMode = $( $( '#elementor-gutenberg-button-switch-mode' ).html() );
-
-			this.cache.$gutenberg.find( '.edit-post-header-toolbar' ).append( this.cache.$switchMode );
-			this.cache.$switchModeButton = this.cache.$switchMode.find( '#elementor-switch-mode-button' );
-
-			this.toggleStatus();
-			this.buildPanel();
-
 			var self = this;
+
+			self.isElementorMode = ElementorGutenbergSettings.isElementorMode;
+
+			self.cache = {};
+
+			self.cache.$gutenberg = $( '#editor' );
+			self.cache.$switchMode = $( $( '#elementor-gutenberg-button-switch-mode' ).html() );
+			self.cache.$switchModeButton = self.cache.$switchMode.find( '#elementor-switch-mode-button' );
+
+			self.bindEvents();
+			self.toggleStatus();
 
 			wp.data.subscribe( function() {
 				setTimeout( function() {
@@ -29,6 +27,10 @@
 
 		buildPanel: function() {
 			var self = this;
+
+			if ( ! self.cache.$gutenberg.find( '#elementor-switch-mode' ).length ) {
+				self.cache.$gutenberg.find( '.edit-post-header-toolbar' ).append( self.cache.$switchMode );
+			}
 
 			if ( ! $( '#elementor-editor' ).length ) {
 				self.cache.$editorPanel = $( $( '#elementor-gutenberg-panel' ).html() );
@@ -107,11 +109,7 @@
 		},
 
 		init: function() {
-			var self = this;
-			setTimeout( function() {
-				self.cacheElements();
-				self.bindEvents();
-			}, 1 );
+			this.cacheElements();
 		},
 	};
 

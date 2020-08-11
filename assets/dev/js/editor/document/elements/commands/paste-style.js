@@ -1,6 +1,6 @@
-import History from 'elementor-document/commands/base/history';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 
-export class PasteStyle extends History {
+export class PasteStyle extends CommandHistory {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -45,10 +45,24 @@ export class PasteStyle extends History {
 			const targetSettings = targetContainer.settings,
 				targetSettingsAttributes = targetSettings.attributes,
 				targetControls = targetSettings.controls,
-				diffSettings = {};
+				diffSettings = {},
+				addExtraControls = ( sourceSettings, extraType ) => {
+					if ( sourceSettings[ extraType ] ) {
+						Object.entries( sourceSettings[ extraType ] ).forEach( ( [ controlName, value ] ) => {
+							const control = targetControls[ controlName ];
+							if ( targetContainer.view.isStyleTransferControl( control ) ) {
+								diffSettings[ extraType ] = diffSettings[ extraType ] || {};
+								diffSettings[ extraType ][ controlName ] = value;
+							}
+						} );
+					}
+				};
 
 			storageData.forEach( ( sourceModel ) => {
 				const sourceSettings = sourceModel.settings;
+
+				addExtraControls( sourceSettings, '__globals__' );
+				addExtraControls( sourceSettings, '__dynamic__' );
 
 				Object.entries( targetControls ).forEach( ( [ controlName, control ] ) => {
 					if ( ! targetContainer.view.isStyleTransferControl( control ) ) {

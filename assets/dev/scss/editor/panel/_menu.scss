@@ -43,6 +43,7 @@
 			text-align: center;
 			width: 50px;
 			color: $editor-light;
+			font-size: 19px;
 
 			.eicon-editor-external-link {
 				font-size: 18px;
@@ -75,6 +76,10 @@
 			.elementor-panel-menu-item-icon {
 				color: #fff;
 			}
+		}
+
+		&-settings-additional-settings {
+			background-color: $editor-background-light;
 		}
 	}
 }

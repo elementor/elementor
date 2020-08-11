@@ -7,11 +7,6 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			duplicate: ( args ) => ( new commands.Duplicate( args ) ).run(),
-			insert: ( args ) => ( new commands.Insert( args ) ).run(),
-			move: ( args ) => ( new commands.Move( args ) ).run(),
-			remove: ( args ) => ( new commands.Remove( args ) ).run(),
-		};
+		return this.importCommands( commands );
 	}
 }

@@ -96,7 +96,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$image['id'] = '';
 		}
 
-		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) ) {
+		$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
+
+		// On static mode don't use WP responsive images.
+		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! $is_static_render_mode ) {
 			$image_class .= " attachment-$size size-$size";
 			$image_attr = [
 				'class' => trim( $image_class ),
@@ -195,7 +198,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		} else {
 			// Use BFI_Thumb script
 			// TODO: Please rewrite this code.
-			require_once( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
+			require_once ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php';
 
 			$custom_dimension = $settings[ $image_size_key . '_custom_dimension' ];
 

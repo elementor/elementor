@@ -1,3 +1,4 @@
+/*! E-Gallery v1.2.0 by Elementor */
 .e-gallery-container {
   position: relative;
   display: flex;
@@ -74,7 +75,7 @@
   .e-gallery-masonry .e-gallery-item {
     position: absolute;
     width: calc(100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns)));
-    top: calc(var(--percent-height) + (var(--row) * var(--vgap))); }
+    top: calc(var(--percent-height) + (var(--items-in-column) * var(--vgap))); }
   .e-gallery-masonry .e-gallery-image {
     padding-bottom: var(--item-height); }
 

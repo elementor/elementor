@@ -207,8 +207,6 @@ class Preview extends App {
 
 			$attributes = $document->get_container_attributes();
 
-			$attributes['class'] .= ' elementor-' . $this->post_id;
-
 			$content = '<div ' . Utils::render_html_attributes( $attributes ) . '></div>';
 		}
 
@@ -254,6 +252,17 @@ class Preview extends App {
 		);
 
 		wp_enqueue_style( 'editor-preview' );
+
+		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
+			wp_register_style(
+				'editor-preview-legacy',
+				ELEMENTOR_ASSETS_URL . 'css/editor-preview-legacy' . $direction_suffix . $suffix . '.css',
+				[],
+				ELEMENTOR_VERSION
+			);
+
+			wp_enqueue_style( 'editor-preview-legacy' );
+		}
 
 		/**
 		 * Preview enqueue styles.

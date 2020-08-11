@@ -31,8 +31,15 @@
 		box-shadow: none;
 	}
 
-	.elementor-widget:not(.elementor-widget-text-editor) figure {
-		margin: 0;
+	.elementor-widget {
+
+		// Classic Editor & Gutenberg Compatibility
+		&:not(.elementor-widget-text-editor):not(.elementor-widget-theme-post-content) {
+
+			figure {
+				margin: 0;
+			}
+		}
 	}
 
 	// Responsive Embed
@@ -342,4 +349,13 @@
 		content: "\f348";
 		top: 2px;
 	}
+}
+
+// Elementor Page Title
+:root {
+	--page-title-display: block;
+}
+
+.elementor-page-title, h1.entry-title {
+	display: var(--page-title-display);
 }

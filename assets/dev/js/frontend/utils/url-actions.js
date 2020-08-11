@@ -2,7 +2,7 @@ export default class extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				links: 'a[href^="%23elementor-action"]',
+				links: 'a[href^="%23elementor-action"], a[href^="#elementor-action"]',
 			},
 		};
 	}
@@ -65,6 +65,7 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	createActionHash( action, settings ) {
+		// We need to encode the hash tag (#) here, in order to support share links for a variety of providers
 		return encodeURIComponent( `#elementor-action:action=${ action }&settings=${ btoa( JSON.stringify( settings ) ) }` );
 	}
 

@@ -105,8 +105,8 @@ $twitter:		#1DA1F2;
 $viber:			#665cac;
 $vimeo:			#1ab7ea;
 $vk:			#45668e;
-$weibo:			#df2029;
-$weixin:		#7bb32e; //WeChat
+$weibo:			#DD2430;
+$weixin:		#31A918; //WeChat
 $whatsapp:		#25d366;
 $wordpress:		#21759b;
 $xing:			#026466;
@@ -118,6 +118,12 @@ $five-h-px:		#0099e5; //500px
 $wp-primary: #0085ba;
 $admin-font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
 
+//Brand Colors
+$brand-color-dark-pink: #93003c;
+$brand-color-royal-blue: #010150;
+$brand-color-dark: #434363;
+$brand-color-light: #93003c; //fallback (deprecated v3.0)
+
 // Editor colors
 $editor-darkest:#495157;
 $editor-darker: #556068;
@@ -127,7 +133,7 @@ $editor-light: #a4afb7;
 $editor-lighter: #c2cbd2;
 $editor-lightest: #d5dadf;
 
-$editor-accent: #D30C5C;
+$editor-accent: $brand-color-dark-pink;
 $editor-background: $gray-bg;
 $editor-background-light: #f1f3f5;
 $editor-background-lighter: #fcfcfc;
@@ -139,9 +145,6 @@ $editor-danger: $editor-red;
 $editor-warning: #b01b1b;
 $editor-success: #39b54a;
 $editor-info: #71d7f7;
-
-$brand-color-light: #f2295b;
-$brand-color-dark: #434363;
 
 $editor-kit-accent: #4ab7f4;
 

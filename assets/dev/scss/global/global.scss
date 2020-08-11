@@ -4,6 +4,7 @@
 @import "aspect_ratio";
 @import "flatpicker";
 @import "modal-wrapper";
+@import "core/app/modules/site-editor/assets/scss/admin/admin-bar";
 
 .elementor-hidden {
 	display: none;
@@ -33,14 +34,16 @@
 	height: 0;
 }
 
-.elementor-gradient-logo {
-	background-image: linear-gradient(-135deg, $brand-color-light, $brand-color-dark);
+//Elementor icon logo wrapper
+.e-logo-wrapper {
+	background: $editor-accent;
 	display: inline-block;
-	padding: 0.6em;
-	border-radius: 0.2em;
+	padding: 0.75em;
+	border-radius: 50%;
+	line-height: 1;
 
 	i {
 		color: #fff;
-		display: block;
+		font-size: 1em;
 	}
 }

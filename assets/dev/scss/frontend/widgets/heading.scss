@@ -2,34 +2,38 @@
 // Heading
 //
 
-.elementor-widget-heading {
+.elementor-heading-title {
+	padding: 0;
+	margin: 0;
+	line-height: 1;
+}
 
-	.elementor-heading-title {
-		padding: 0;
-		margin: 0;
-		line-height: 1;
+// The double selector here is for specificity reasons - to avoid being overridden by default Globals CSS.
+.elementor-widget-heading .elementor-heading-title {
+	&[class*="elementor-size-"] {
 
 		> a {
 			color: inherit;
 			font-size: inherit;
+			line-height: inherit;
 		}
+	}
 
-		&.elementor-size- {
-			&small {
-				font-size: 15px;
-			}
-			&medium {
-				font-size: 19px;
-			}
-			&large {
-				font-size: 29px;
-			}
-			&xl {
-				font-size: 39px;
-			}
-			&xxl {
-				font-size: 59px;
-			}
+	&.elementor-size- {
+		&small {
+			font-size: 15px;
+		}
+		&medium {
+			font-size: 19px;
+		}
+		&large {
+			font-size: 29px;
+		}
+		&xl {
+			font-size: 39px;
+		}
+		&xxl {
+			font-size: 59px;
 		}
 	}
 }

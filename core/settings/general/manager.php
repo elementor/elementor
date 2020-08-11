@@ -1,9 +1,7 @@
 <?php
 namespace Elementor\Core\Settings\General;
 
-use Elementor\Controls_Manager;
 use Elementor\Core\Files\CSS\Base;
-use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Settings\Base\CSS_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 
@@ -12,19 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor general settings manager.
- *
- * Elementor general settings manager handler class is responsible for registering
- * and managing Elementor general settings managers.
- *
- * @since 1.6.0
+ * This class is deprecated, use Plugin::$instance->kits_manager->get_active_kit_for_frontend() instead.
+ * it changed to support call like this: Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' )
+ * @deprecated since 3.0.0
  */
-class Manager extends CSS_Manager {
 
-	/**
-	 * Lightbox panel tab.
-	 */
-	const PANEL_TAB_LIGHTBOX = 'lightbox';
+class Manager extends CSS_Manager {
 
 	/**
 	 * Meta key for the general settings.
@@ -42,7 +33,11 @@ class Manager extends CSS_Manager {
 	public function __construct() {
 		parent::__construct();
 
-		$this->add_panel_tabs();
+		// TODO: _deprecated_file( __FILE__, '3.0.0', 'Plugin::$instance->kits_manager->get_active_kit_for_frontend()' );
+
+		$name = $this->get_css_file_name();
+
+		remove_action( "elementor/css-file/{$name}/parse", [ $this, 'add_settings_css_rules' ] );
 	}
 
 	/**
@@ -74,37 +69,10 @@ class Manager extends CSS_Manager {
 	}
 
 	/**
-	 * Get saved settings.
-	 *
-	 * Retrieve the saved settings from the site options.
-	 *
-	 * @since 1.6.0
-	 * @access protected
-	 *
-	 * @param int $id Post ID.
-	 *
-	 * @return array Saved settings.
+	 * @deprecated
 	 */
 	protected function get_saved_settings( $id ) {
-		$model_controls = Model::get_controls_list();
-
-		$settings = [];
-
-		foreach ( $model_controls as $tab_name => $sections ) {
-
-			foreach ( $sections as $section_name => $section_data ) {
-
-				foreach ( $section_data['controls'] as $control_name => $control_data ) {
-					$saved_setting = get_option( $control_name, null );
-
-					if ( null !== $saved_setting ) {
-						$settings[ $control_name ] = $saved_setting;
-					}
-				}
-			}
-		}
-
-		return $settings;
+		return [];
 	}
 
 	/**
@@ -123,88 +91,23 @@ class Manager extends CSS_Manager {
 	}
 
 	/**
-	 * Save settings to DB.
-	 *
-	 * Save general settings to the database, as site options.
-	 *
-	 * @since 1.6.0
-	 * @access protected
-	 *
-	 * @param array $settings Settings.
-	 * @param int   $id       Post ID.
+	 * @deprecated
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
-		$model_controls = Model::get_controls_list();
-
-		$one_list_settings = [];
-
-		foreach ( $model_controls as $tab_name => $sections ) {
-
-			foreach ( $sections as $section_name => $section_data ) {
-
-				foreach ( $section_data['controls'] as $control_name => $control_data ) {
-					if ( isset( $settings[ $control_name ] ) ) {
-						$one_list_control_name = str_replace( 'elementor_', '', $control_name );
-
-						$one_list_settings[ $one_list_control_name ] = $settings[ $control_name ];
-
-						update_option( $control_name, $settings[ $control_name ] );
-					} else {
-						delete_option( $control_name );
-					}
-				}
-			}
-		}
-
-		// Save all settings in one list for a future usage
-		if ( ! empty( $one_list_settings ) ) {
-			update_option( self::META_KEY, $one_list_settings );
-		} else {
-			delete_option( self::META_KEY );
-		}
+		throw new \Exception( __CLASS__ . ' is deprecated. Use Plugin::$instance->kits_manager->get_active_kit_for_frontend()' );
 	}
 
 	/**
-	 * Get model for CSS file.
-	 *
-	 * Retrieve the model for the CSS file.
-	 *
-	 * @since 1.6.0
-	 * @access protected
-	 *
-	 * @param Base $css_file The requested CSS file.
-	 *
-	 * @return BaseModel The model object.
+	 * @deprecated
 	 */
 	protected function get_model_for_css_file( Base $css_file ) {
-		return $this->get_model();
+		return false;
 	}
 
 	/**
-	 * Get CSS file for update.
-	 *
-	 * Retrieve the CSS file before updating the it.
-	 *
-	 * @since 1.6.0
-	 * @access protected
-	 *
-	 * @param int $id Post ID.
-	 *
-	 * @return Global_CSS The global CSS file object.
+	 * @deprecated
 	 */
 	protected function get_css_file_for_update( $id ) {
-		return Global_CSS::create( 'global.css' );
-	}
-
-	/**
-	 * Add panel tabs.
-	 *
-	 * Register new panel tab for the lightbox settings.
-	 *
-	 * @since 1.6.0
-	 * @access private
-	 */
-	private function add_panel_tabs() {
-		Controls_Manager::add_tab( self::PANEL_TAB_LIGHTBOX, __( 'Lightbox', 'elementor' ) );
+		return false;
 	}
 }
