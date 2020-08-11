@@ -96,7 +96,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		 */
 		$kit_settings = $kit->get_meta( PageManager::META_KEY );
 
-		$default_fonts = $kit_settings['default_generic_fonts'];
+		$default_fonts = isset( $kit_settings['default_generic_fonts'] ) ? $kit_settings['default_generic_fonts'] : 'Sans-serif';
 
 		if ( $default_fonts ) {
 			$default_fonts = ', ' . $default_fonts;
