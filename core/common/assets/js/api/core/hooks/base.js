@@ -48,13 +48,13 @@ export default class HooksBase extends elementorModules.Module {
 
 	activate() {
 		this.getAll( true ).forEach( ( callback ) => {
-			callback.isActive = true;
+			callback.activate();
 		} );
 	}
 
 	deactivate() {
 		this.getAll( true ).forEach( ( callback ) => {
-			callback.isActive = false;
+			callback.deactivate();
 		} );
 	}
 
@@ -67,6 +67,10 @@ export default class HooksBase extends elementorModules.Module {
 	 */
 	getType() {
 		elementorModules.forceMethodImplementation();
+	}
+
+	get( id ) {
+		return this.getAll( true ).find( ( callback ) => callback.id === id );
 	}
 
 	/**
@@ -258,10 +262,18 @@ export default class HooksBase extends elementorModules.Module {
 			this.callbacks[ event ][ command ] = {};
 		}
 
+		// TODO: Create HookCallback class/type.
 		const callback = {
 			id,
 			callback: instance.run.bind( instance ),
 			isActive: true,
+
+			activate: function() {
+				this.isActive = true;
+			},
+			deactivate: function() {
+				this.isActive = false;
+			},
 		};
 
 		if ( containerType ) {
