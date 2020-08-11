@@ -37,7 +37,7 @@ jQuery( () => {
 				};
 
 				validateHistoryDebounceCommand( new CommandHistoryDebounce( {} ) );
-				validateHistoryDebounceCommand( new $e.modules.document.CommandHistoryDebounce( {} ) );
+				validateHistoryDebounceCommand( new $e.modules.editor.document.CommandHistoryDebounce( {} ) );
 			} );
 		} );
 	} );

@@ -1,6 +1,6 @@
 import CommandEditor from './command-editor';
 
-export default class CommandInternal extends CommandEditor {
+export default class CommandEditorInternal extends CommandEditor {
 	static getInstanceType() {
 		return 'CommandEditorInternal';
 	}
