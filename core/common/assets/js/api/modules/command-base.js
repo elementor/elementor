@@ -145,5 +145,5 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * @param {Error} e
 	 */
-	onCatchApply( e ) {} // // eslint-disable-line no-unused-vars
+	onCatchApply( e ) {} // eslint-disable-line no-unused-vars
 }

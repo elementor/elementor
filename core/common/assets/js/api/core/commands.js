@@ -302,7 +302,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		// Route?.
 		if ( ! ( instance instanceof Command ) ) {
-			results = instance.apply( currentComponent , [ args ] );
+			results = instance.apply( currentComponent, [ args ] );
 
 			this.afterRun( command, args, results );
 
