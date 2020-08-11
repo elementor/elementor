@@ -43,17 +43,17 @@ export default class HooksBase extends elementorModules.Module {
 			catch: {},
 		};
 
-		this.callbacksFlatList = [];
+		this.callbacksFlatList = {};
 	}
 
 	activate() {
-		this.getAll( true ).forEach( ( callback ) => {
+		Object.values( this.getAll( true ) ).forEach( ( callback ) => {
 			callback.activate();
 		} );
 	}
 
 	deactivate() {
-		this.getAll( true ).forEach( ( callback ) => {
+		Object.values( this.getAll( true ) ).forEach( ( callback ) => {
 			callback.deactivate();
 		} );
 	}
@@ -70,7 +70,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	get( id ) {
-		return this.getAll( true ).find( ( callback ) => callback.id === id );
+		return this.callbacksFlatList[ id ];
 	}
 
 	/**
@@ -290,7 +290,7 @@ export default class HooksBase extends elementorModules.Module {
 			this.callbacks[ event ][ command ].all.push( callback );
 		}
 
-		this.callbacksFlatList.push( callback );
+		this.callbacksFlatList[ callback.id ] = callback;
 
 		return callback;
 	}
