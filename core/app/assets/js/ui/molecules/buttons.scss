@@ -6,7 +6,8 @@
 	@include button-custom-properties;
 	// definitions
 	color: var(--button-background-color, currentColor);
-	font-size: inherit;
+	font-size: var(--button-font-size, inherit);
+	font-weight: $button-font-weight;
 	line-height: var(--button-line-height);
 	cursor: pointer;
 
@@ -30,7 +31,6 @@
 		color: var(--button-color);
 		padding: var(--button-padding-y) var(--button-padding-x);
 		background-color: var(--button-background-color, transparent);
-		font-size: var(--button-font-size);
 
 		&:hover {
 			color: var(--button-color);

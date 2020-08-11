@@ -9,6 +9,7 @@ $card-box-shadow: $eps-box-shadow-2;
 $card-border-radius: $eps-radius;
 $card-transition: $eps-transition-duration;
 $card-font-size: type(text,xs);
+$card-footer-font-size: type(text,xxs);
 $card-padding: spacing(10);
 
 $card-header-padding: $card-padding;
@@ -24,7 +25,7 @@ $card-body-padding-y: $card-padding;
 $card-body-padding-x: $card-padding;
 
 $card-figure-background-color: tints(200);
-$card-figure-padding-bottom: var(--card-image-aspect-ratio, #{$ratio-portrait});
+$card-image-aspect-ratio: var(--card-image-aspect-ratio, #{$ratio-portrait});
 
 $card-image-overlay-background-color: rgba(theme-colors(dark), $opacity-02);
 $card-image-overlay-transition: $card-transition;

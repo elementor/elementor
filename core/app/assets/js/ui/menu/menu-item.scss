@@ -1,7 +1,7 @@
 $menu-item-font-size: $eps-font-size-caption;
 $menu-item-line-height: $eps-line-height-sm;
 $menu-item-link-spacing: spacing(12);
-$menu-item-icon-size: spacing(16);
+$menu-item-icon-size: $font-size-18;
 $menu-item-padding-y: spacing(8);
 $menu-item-padding-x: spacing(30);
 $menu-item-height: spacing(44);
@@ -66,6 +66,10 @@ $menu-item-action-button-dark-color: dark-tints(400);
 	&:hover, &--active {
 		--menu-item-color: var(--menu-item-color-hover);
 		--eps-link-color: var(--menu-item-color-hover);
+		--menu-item-icon-color: #{$menu-item-pointer-color};
+	}
+
+	&--active {
 		background-color: var(--menu-item-background-color-active);
 	}
 
@@ -84,7 +88,7 @@ $menu-item-action-button-dark-color: dark-tints(400);
 			padding-inline-end: 0;
 		}
 
-		.icon {
+		.eps-icon {
 			font-size: $menu-item-icon-size;
 			color: var(--menu-item-icon-color);
 			margin-inline-end: $menu-item-link-spacing;
@@ -103,7 +107,7 @@ $menu-item-action-button-dark-color: dark-tints(400);
 		--menu-item-pointer-width: #{$menu-item-pointer-width};
 		box-shadow: $menu-item-active-box-shadow;
 
-		.#{$eps-prefix}menu-item__link .icon {
+		.#{$eps-prefix}menu-item__link .eps-icon {
 			color: $menu-item-pointer-color;
 		}
 	}

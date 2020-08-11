@@ -1,6 +1,6 @@
 export default function Icon( props ) {
 	return (
-		<i className={ `icon ${ props.className }` }/>
+		<i className={ `eps-icon ${ props.className }` }/>
 	);
 }
 
