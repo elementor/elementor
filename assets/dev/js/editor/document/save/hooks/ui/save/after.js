@@ -29,7 +29,7 @@ export class FooterSaverAfterSave extends HookUIAfter {
 
 	onPageStatusChange( newStatus ) {
 		// Don't add the "Have a look" link in the theme builder.
-		if ( elementor.config.document.support_site_editor || 'publish' !== newStatus || ! elementor.config.document.urls.have_a_look ) {
+		if ( 'publish' !== newStatus || ! elementor.config.document.urls.have_a_look ) {
 			return;
 		}
 
