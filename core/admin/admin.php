@@ -624,8 +624,11 @@ class Admin extends App {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
 	}
 
-	public function major_update_warning( $current_version ) {
-		if ( version_compare( $current_version, '3.0.0', '>=' ) ) {
+	public function version_update_warning( $current_version, $new_version ) {
+		$current_version_minor_part = explode( '.', $current_version )[1];
+		$new_version_minor_part = explode( '.', $new_version )[1];
+
+		if ( $current_version_minor_part === $new_version_minor_part ) {
 			return;
 		}
 		?>
@@ -686,8 +689,8 @@ class Admin extends App {
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 		add_action( 'current_screen', [ $this, 'init_beta_tester' ] );
 
-		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function() {
-			$this->major_update_warning( ELEMENTOR_VERSION );
+		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
+			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
 		} );
 	}
 
