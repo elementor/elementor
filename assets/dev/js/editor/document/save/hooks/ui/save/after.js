@@ -28,25 +28,24 @@ export class FooterSaverAfterSave extends HookUIAfter {
 	}
 
 	onPageStatusChange( newStatus ) {
-		// Don't add the "Have a look" link in the theme builder.
-		if ( 'publish' !== newStatus || ! elementor.config.document.urls.have_a_look ) {
-			return;
-		}
+		if ( 'publish' === newStatus ) {
+			const buttons = [];
 
-		const options = {
-			message: elementor.config.document.panel.messages.publish_notification,
-			buttons: [
-				{
+			if ( elementor.config.document.urls.have_a_look ) {
+				buttons.push( {
 					name: 'view_page',
 					text: elementor.translate( 'have_a_look' ),
 					callback() {
 						open( elementor.config.document.urls.have_a_look );
 					},
-				},
-			],
-		};
+				} );
+			}
 
-		elementor.notifications.showToast( options );
+			elementor.notifications.showToast( {
+				message: elementor.config.document.panel.messages.publish_notification,
+				buttons,
+			} );
+		}
 	}
 }
 
