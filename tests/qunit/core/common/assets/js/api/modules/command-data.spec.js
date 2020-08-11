@@ -48,7 +48,7 @@ jQuery( () => {
 					assert.equal( command instanceof CommandBase, true, );
 					assert.equal( command instanceof Command, true, );
 					assert.equal( command instanceof CommandInternal, false );
-					assert.equal( command instanceof CommandData, true, );;
+					assert.equal( command instanceof CommandData, true, );
 					assert.equal( command instanceof $e.modules.Command, true );
 					assert.equal( command instanceof $e.modules.CommandInternal, false );
 					assert.equal( command instanceof $e.modules.CommandData, true );
