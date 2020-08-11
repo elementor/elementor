@@ -1,8 +1,10 @@
 export const tests = () => {
 	// JS API modules.
-	require( './core/common/assets/js/api/modules/command-base.spec.js' );
-	require( './core/common/assets/js/api/modules/command-data.spec.js' );
 	require( './core/common/assets/js/api/modules/command.spec.js' );
+	require( './core/common/assets/js/api/modules/command-base.spec.js' );
+	require( './core/common/assets/js/api/modules/command-callback.spec.js' );
+	require( './core/common/assets/js/api/modules/command-data.spec.js' );
+	require( './core/common/assets/js/api/modules/command-internal.spec.js' );
 
 	// JS API core.
 	require( './core/common/assets/js/api/core/components.spec.js' );
