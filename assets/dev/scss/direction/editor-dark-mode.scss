@@ -1140,6 +1140,7 @@ label.elementor-template-library-order-label,
 	}
 }
 
+// Theme Builder
 #elementor-publish {
 
 	#elementor-theme-builder-conditions {
@@ -1180,6 +1181,13 @@ label.elementor-template-library-order-label,
 				background-color: $theme-dark-gray;
 			}
 		}
+	}
+}
+
+#elementor-toast {
+
+	.e-toast-button {
+		background-color: $theme-dark-gray;
 	}
 }
 
