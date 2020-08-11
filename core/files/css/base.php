@@ -764,6 +764,7 @@ abstract class Base extends Base_File {
 		if ( ! empty( $control['groupType'] ) ) {
 			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
 
+			// TODO: This check won't retrieve the proper answer for array values (multiple controls).
 			if ( empty( $data['value'][ Global_Typography::TYPOGRAPHY_GROUP_PREFIX . $property_name ] ) ) {
 				return null;
 			}
