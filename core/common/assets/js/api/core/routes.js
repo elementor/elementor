@@ -179,8 +179,6 @@ export default class Routes extends Commands {
 		return match;
 	}
 
-	validateInstance( instance, component, command ) {} // eslint-disable-line no-unused-vars
-
 	error( message ) {
 		throw Error( 'Routes: ' + message );
 	}

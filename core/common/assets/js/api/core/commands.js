@@ -298,9 +298,11 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		let results;
 
+		const currentComponent = this.getComponent( command );
+
 		// Route?.
 		if ( ! ( instance instanceof Command ) ) {
-			results = instance.apply( this.getComponent( command ), [ args ] );
+			results = instance.apply( currentComponent , [ args ] );
 
 			this.afterRun( command, args, results );
 
@@ -308,7 +310,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		}
 
 		// TODO: Check with mati.
-		if ( ! this.validateInstance( instance, command ) ) {
+		if ( ! this.validateInstanceScope( instance, command, currentComponent ) ) {
 			this.currentTrace.pop();
 			Commands.trace.pop();
 
@@ -422,16 +424,15 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		delete this.currentArgs[ container ];
 	}
 
-	validateInstance( instance, command ) {
+	validateInstanceScope( instance, command, currentComponent ) {
 		if ( ! ( instance instanceof Command ) ) {
 			this.error( `invalid instance, command: '${ command }' ` );
 		}
 
-		const component = this.getComponent( command );
-
-		if ( component !== instance.component ) {
+		// In case of different scope.
+		if ( currentComponent !== instance.component ) {
 			if ( $e.devTools ) {
-				$e.devTools.log.error( `Command: '${ command }' registerArgs.component: '${ instance.component.getNamespace() }' while current component is: '${ component.getNamespace() }'` );
+				$e.devTools.log.warn( `Command: '${ command }' registerArgs.component: '${ instance.component.getNamespace() }' while current component is: '${ currentComponent.getNamespace() }'` );
 			}
 
 			return false;
