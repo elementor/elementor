@@ -18,8 +18,6 @@ export default class ComponentBase extends elementorModules.Module {
 
 		this.defaultRoute = '';
 		this.currentTab = '';
-
-		this.isRegistered = false;
 	}
 
 	registerAPI() {
@@ -34,8 +32,6 @@ export default class ComponentBase extends elementorModules.Module {
 		Object.values( this.getHooks() ).forEach( ( instance ) => this.registerHook( instance ) );
 
 		Object.entries( this.getData() ).forEach( ( [ command, callback ] ) => this.registerData( command, callback ) );
-
-		this.isRegistered = true;
 	}
 
 	/**
