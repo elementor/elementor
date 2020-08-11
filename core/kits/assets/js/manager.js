@@ -37,7 +37,11 @@ export default class extends elementorModules.editor.utils.Module {
 			icon: 'eicon-global-settings',
 			title: elementor.translate( 'site_settings' ),
 			type: 'page',
-			callback: () => $e.route( 'panel/global/menu' ),
+			callback: () => {
+				$e.run( 'panel/global/open', {
+					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
+				} );
+			},
 		}, 'style', 'editor-preferences' );
 
 		menu.addItem( {
@@ -45,7 +49,7 @@ export default class extends elementorModules.editor.utils.Module {
 			icon: 'eicon-theme-builder',
 			title: elementor.translate( 'theme_builder' ),
 			type: 'page',
-			callback: () => $e.run( 'panel/global/open-site-editor' ),
+			callback: () => $e.run( 'app/open' ),
 		}, 'style', 'editor-preferences' );
 	}
 
@@ -101,7 +105,7 @@ export default class extends elementorModules.editor.utils.Module {
 
 		// The kit document has its own CSS.
 		if ( 'kit' === elementor.documents.getCurrent().config.type ) {
-			this.variablesCSS.stylesheet.empty();
+			this.variablesCSS.removeStyleFromDocument();
 			return;
 		}
 

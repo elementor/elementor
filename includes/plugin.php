@@ -436,6 +436,11 @@ class Plugin {
 	public $legacy_mode;
 
 	/**
+	 * @var Core\App\App
+	 */
+	public $app;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -601,6 +606,8 @@ class Plugin {
 		Tracker::init();
 
 		$this->upgrade = new Core\Upgrade\Manager();
+
+		$this->app = new Core\App\App();
 
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();

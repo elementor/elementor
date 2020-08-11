@@ -496,6 +496,8 @@ class Editor {
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
+				'react',
+				'react-dom',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -528,6 +530,7 @@ class Editor {
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
+			'admin_settings_url' => admin_url( 'admin.php?page=' . Settings::PAGE_ID ),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'tabs' => $plugin->controls_manager->get_tabs(),
 			'controls' => $plugin->controls_manager->get_controls_data(),

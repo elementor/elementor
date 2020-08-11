@@ -24,6 +24,14 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 <script type="text/template" id="tmpl-elementor-panel-menu">
 	<div id="elementor-panel-page-menu-content"></div>
+	<# if ( elementor.config.document.panel.needHelpUrl ) { #>
+	<div id="elementor-panel__editor__help">
+		<a id="elementor-panel__editor__help__link" href="{{{ elementor.config.document.panel.needHelpUrl }}}" target="_blank">
+			<?php echo __( 'Need Help', 'elementor' ); ?>
+			<i class="eicon-help-o"></i>
+		</a>
+	</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-menu-group">

@@ -178,20 +178,4 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 
 		$this->assertTrue( in_array( 'elementor-invisible', $element->get_render_attributes( '_wrapper', 'class' ) ) );
 	}
-
-	public function test_do_not_add_invisible_class_attribute_when_animation_on_and_render_mode_is_static() {
-		$plugin = Plugin::$instance;
-
-		$plugin->frontend->set_render_mode( Frontend::RENDER_MODE_STATIC );
-
-		$element = $plugin->elements_manager->create_element_instance( self::$element_mock );
-
-		$element->set_settings( 'animation', true );
-
-		ob_start();
-		$element->print_element();
-		ob_end_clean();
-
-		$this->assertFalse( in_array( 'elementor-invisible', $element->get_render_attributes( '_wrapper', 'class' ) ) );
-	}
 }

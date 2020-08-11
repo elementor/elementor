@@ -322,7 +322,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	/**
 	 * Function afterRun().
 	 *
-	 * Method fired before the command runs.
+	 * Method fired after the command runs.
 	 *
 	 * @param {string} command
 	 */

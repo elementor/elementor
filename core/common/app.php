@@ -134,6 +134,7 @@ class App extends BaseApp {
 				'backbone-radio',
 				'elementor-common-modules',
 				'elementor-dialog',
+				'wp-api-request',
 			],
 			ELEMENTOR_VERSION,
 			true

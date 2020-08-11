@@ -1,6 +1,6 @@
 name: Image Compare
 
-on: [push]
+on: push
 
 jobs:
   run:
@@ -29,7 +29,7 @@ jobs:
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
-          curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT}}&type=by-commit"
+          curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=by-commit"
           echo ::set-env name=BUILD_PATH::"builds/by-commit/$(date '+%Y-%m')/${PLUGIN_ZIP_FILENAME}"
           echo ::set-env name=PACKAGE_VERSION::${PACKAGE_VERSION}
       - name: Run Tests
