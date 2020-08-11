@@ -1,13 +1,13 @@
 import After from 'elementor-api/modules/hooks/ui/after';
 import Helper from './helper.js';
 
-export class Hide extends After {
+export class NavigatorHide extends After {
 	getCommand() {
 		return 'navigator/elements/hide';
 	}
 
 	getId() {
-		return 'navigator-elements-hide';
+		return 'navigator-elements-hide--/navigator/elements/hide';
 	}
 
 	apply( args ) {
@@ -19,4 +19,4 @@ export class Hide extends After {
 	}
 }
 
-export default Hide;
+export default NavigatorHide;

@@ -1,4 +1,4 @@
 // Alphabetical order.
 
-export { Hide } from './hide';
-export { Show } from './show';
+export { NavigatorHide } from './hide';
+export { NavigatorShow } from './show';
