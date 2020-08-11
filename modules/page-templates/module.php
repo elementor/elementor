@@ -338,7 +338,7 @@ class Module extends BaseModule {
 				'reload_preview_description',
 				[
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Changes will be reflected in the preview only after the page reloads', 'elementor' ),
+					'raw' => __( 'Changes will be reflected in the preview only after the page reloads.', 'elementor' ),
 					'content_classes' => 'elementor-descriptor',
 				]
 			);
