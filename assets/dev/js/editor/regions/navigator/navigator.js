@@ -151,8 +151,6 @@ export default class Navigator extends BaseRegion {
 
 		elementor.$previewWrapper.css( side, this.storage.size.width );
 
-		this.$el.resizable( 'destroy' );
-
 		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
 
 		resizableOptions.resize = ( event, ui ) => {
