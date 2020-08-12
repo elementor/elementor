@@ -32,6 +32,15 @@ class Settings_Site_Identity extends Tab_Base {
 		);
 
 		$this->add_control(
+			$this->get_id() . '_refresh_notice',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Changes will be reflected in the preview only after the page reloads.', 'elementor' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+			]
+		);
+
+		$this->add_control(
 			'site_name',
 			[
 				'label' => __( 'Site Name', 'elementor' ),

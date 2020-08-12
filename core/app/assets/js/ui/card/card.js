@@ -1,12 +1,12 @@
 import './card.scss';
 
-export default function Card( props ) {
+const Card = React.forwardRef( ( props, ref ) => {
 	return (
-		<article className={ `eps-card ${ props.className }` }>
+		<article className={ `eps-card ${ props.className }` } ref={ ref }>
 			{ props.children }
 		</article>
 	);
-}
+} );
 
 Card.propTypes = {
 	type: PropTypes.string,
@@ -17,3 +17,7 @@ Card.propTypes = {
 Card.defaultProps = {
 	className: '',
 };
+
+Card.displayName = 'Card';
+
+export default Card;
