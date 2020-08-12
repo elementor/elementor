@@ -81,10 +81,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		const modal = module.exports.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
-			closeButtonClass: 'eicon-close',
 			closeButtonOptions: {
-				tabIndex: 0,
-				ariaLabel: elementorFrontend.config.i18n.close,
+				class: 'eicon-close',
+				attributes: {
+					tabindex: 0,
+					role: 'button',
+					'aria-label': elementorFrontend.config.i18n.close + ' (Esc)',
+				},
 			},
 			selectors: {
 				preventClose: '.' + this.getSettings( 'classes.preventClose' ),
