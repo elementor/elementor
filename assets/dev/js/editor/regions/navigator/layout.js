@@ -1,4 +1,4 @@
-import NavigatorElement from './element';
+import NavigatorElement from './elements/view/element';
 
 export default class NavigatorLayout extends Marionette.LayoutView {
 	getTemplate() {
