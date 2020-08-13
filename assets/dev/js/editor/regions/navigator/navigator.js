@@ -95,7 +95,7 @@ export default class Navigator extends BaseRegion {
 		this.$el.show();
 
 		if ( this.storage.docked ) {
-			this.dock();
+			$e.run( 'navigator/dock' );
 
 			this.setDockedSize();
 		} else {
@@ -117,7 +117,7 @@ export default class Navigator extends BaseRegion {
 		this.$el.hide();
 
 		if ( this.isDocked ) {
-			this.undock( true );
+			$e.run( 'navigator/undock', { silent: true } );
 		}
 
 		if ( ! silent ) {
@@ -136,50 +136,21 @@ export default class Navigator extends BaseRegion {
 	}
 
 	dock() {
-		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
+			'3.0.0',
+			"$e.run( 'navigator/dock' )"
+		);
 
-		const side = elementorCommon.config.isRTL ? 'left' : 'right',
-			resizableOptions = this.getResizableOptions();
-
-		this.$el.css( {
-			height: '',
-			top: '',
-			bottom: '',
-			left: '',
-			right: '',
-		} );
-
-		elementor.$previewWrapper.css( side, this.storage.size.width );
-
-		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
-
-		resizableOptions.resize = ( event, ui ) => {
-			elementor.$previewWrapper.css( side, ui.size.width );
-		};
-
-		this.$el.resizable( resizableOptions );
-
-		this.isDocked = true;
-
-		this.saveStorage( 'docked', true );
+		$e.run( 'navigator/dock' );
 	}
 
 	undock( silent ) {
-		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.undock()',
+			'3.0.0',
+			"$e.run( 'navigator/undock', { silent } )"
+		);
 
-		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
-
-		this.setSize();
-
-		this.$el.resizable( 'destroy' );
-
-		this.$el.resizable( this.getResizableOptions() );
-
-		this.isDocked = false;
-
-		if ( ! silent ) {
-			this.saveStorage( 'docked', false );
-		}
+		$e.run( 'navigator/undock', { silent } );
 	}
 
 	setSize() {
@@ -221,7 +192,7 @@ export default class Navigator extends BaseRegion {
 					return false;
 				}
 			} else {
-				this.undock();
+				$e.run( 'navigator/undock' );
 			}
 
 			return;
@@ -255,7 +226,7 @@ export default class Navigator extends BaseRegion {
 		const elementRight = ui.position.left + this.el.offsetWidth;
 
 		if ( 0 > ui.position.left || elementRight > innerWidth ) {
-			this.dock();
+			$e.run( 'navigator/dock' );
 		}
 
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator--dock-hint' );
