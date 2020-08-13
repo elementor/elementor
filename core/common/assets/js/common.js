@@ -1,5 +1,6 @@
 import Helpers from './utils/helpers';
 import Storage from './utils/storage';
+import Debug from './utils/debug';
 import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
 import Finder from 'elementor-common-modules/finder/assets/js/finder';
 import Connect from 'elementor-common-modules/connect/assets/js/connect';
@@ -34,6 +35,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		this.dialogsManager = new DialogsManager.Instance();
 
 		this.api = new API();
+
+		this.debug = new Debug();
 
 		this.initModules();
 	}

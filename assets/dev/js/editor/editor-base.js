@@ -28,7 +28,7 @@ export default class EditorBase extends Marionette.Application {
 
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.
-	debug = require( 'elementor-editor-utils/debug' );
+	debug = elementorCommon.debug;
 	schemes = require( 'elementor-editor-utils/schemes' );
 	presetsFactory = require( 'elementor-editor-utils/presets-factory' );
 	templates = require( 'elementor-templates/manager' );
