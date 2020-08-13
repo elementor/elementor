@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
-
 /**
  * Elementor column element.
  *
@@ -610,17 +608,6 @@ class Element_Column extends Element_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
-
-		if ( in_array( Schemes\Color::get_type(), Schemes\Manager::get_enabled_schemes(), true ) ) {
-			$this->add_control(
-				'colors_warning',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following set of controls has been deprecated. Those controls are only visible if they were previously populated.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
-				]
-			);
-		}
 
 		$this->add_control(
 			'heading_color',

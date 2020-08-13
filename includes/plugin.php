@@ -15,6 +15,7 @@ use Elementor\Core\Modules_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
+use Elementor\Core\Upgrade\Upgrades;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
@@ -437,6 +438,11 @@ class Plugin {
 	public $legacy_mode;
 
 	/**
+	 * @var Core\App\App
+	 */
+	public $app;
+
+	/**
 	 * @var Import_Export_Manager
 	 */
 	public $import_export;
@@ -608,6 +614,8 @@ class Plugin {
 
 		$this->upgrade = new Core\Upgrade\Manager();
 
+		$this->app = new Core\App\App();
+
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
@@ -633,7 +641,7 @@ class Plugin {
 		if ( ! $this->legacy_mode ) {
 			// If the legacy_mode variable does not exist yet, create it here.
 			$this->legacy_mode = [
-				'elementWrappers' => get_option( 'elementor_element_wrappers_legacy_mode' ),
+				'elementWrappers' => get_option( 'elementor_element_wrappers_legacy_mode', Upgrades::plugin_installed_before_v_3_0_0() ),
 			];
 		}
 
