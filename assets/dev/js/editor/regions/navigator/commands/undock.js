@@ -4,6 +4,10 @@ export class Undock extends CommandBase {
 	apply( args ) {
 		const { silent } = args;
 
+		if ( ! elementor.navigator.isDocked ) {
+			return false;
+		}
+
 		// TODO: Move to UI hook
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
 
@@ -20,6 +24,8 @@ export class Undock extends CommandBase {
 		if ( ! silent ) {
 			elementor.navigator.saveStorage( 'docked', false );
 		}
+
+		return true;
 	}
 }
 

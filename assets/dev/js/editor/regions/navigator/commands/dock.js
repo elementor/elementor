@@ -2,6 +2,10 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Dock extends CommandBase {
 	apply() {
+		if ( elementor.navigator.isDocked ) {
+			return false;
+		}
+
 		// TODO: Move to UI hook.
 		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
 
@@ -29,6 +33,8 @@ export class Dock extends CommandBase {
 		elementor.navigator.isDocked = true;
 
 		elementor.navigator.saveStorage( 'docked', true );
+
+		return true;
 	}
 }
 
