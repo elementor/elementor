@@ -117,9 +117,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	toggleList( state, callback ) {
 		const args = {};
 
-		if ( state ) {
-			args.state = state;
-		}
+		args.state = state;
 
 		if ( callback ) {
 			args.callback = callback;

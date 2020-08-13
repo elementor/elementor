@@ -7,5 +7,7 @@ jQuery( () => {
 		hooks.after( () => $e.run( 'navigator/close' ) );
 
 		DocumentHelper.testCommands( commands );
+
+		require( './elements/component.spec' );
 	} );
 } );
