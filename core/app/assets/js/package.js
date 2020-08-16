@@ -8,6 +8,7 @@ import CardImage from './ui/card/card-image';
 import CardHeader from './ui/card/card-header';
 import CardOverlay from './ui/card/card-overlay';
 import CssGrid from './ui/atoms/css-grid';
+import Dialog from './ui/dialog/dialog';
 import Heading from './ui/atoms/heading';
 import Grid from './ui/grid/grid';
 import Icon from './ui/atoms/icon';
@@ -29,6 +30,7 @@ export default {
 	CardImage,
 	CardOverlay,
 	CssGrid,
+	Dialog,
 	Heading,
 	Grid,
 	Icon,
