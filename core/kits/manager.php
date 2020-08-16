@@ -126,6 +126,7 @@ class Manager {
 				'form_fields' => __( 'Form Fields', 'elementor' ),
 				'background' => __( 'Background', 'elementor' ),
 				'custom_css' => __( 'Custom CSS', 'elementor' ),
+				'additional_settings' => __( 'Additional Settings', 'elementor' ),
 				'kit_changes_updated' => __( 'Your changes have been updated.', 'elementor' ),
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 			],
@@ -248,6 +249,5 @@ class Manager {
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
-		add_action( 'elementor/init', [ $this, 'init_kit_controls' ] );
 	}
 }

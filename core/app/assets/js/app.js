@@ -5,6 +5,7 @@ import router from '@elementor/router';
 import { Router, LocationProvider, createHistory } from '@reach/router';
 import { createHashSource } from 'reach-router-hash-history';
 import NotFound from 'elementor-app/pages/not-found';
+import Index from 'elementor-app/pages/index';
 import './app.scss';
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
 		<LocationProvider history={ router.appHistory }>
 			<Router>
 				{ router.getRoutes() }
+				<Index path="/" />
 				<NotFound default />
 			</Router>
 		</LocationProvider>

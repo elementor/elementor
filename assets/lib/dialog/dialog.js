@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.7.6
+ * Dialogs Manager v4.7.7
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -289,8 +289,7 @@
 			}
 
 			if (settings.closeButton) {
-				const { i18n } = elementorFrontend.config;
-				self.addElement('closeButton', '<div tabindex="0" role="button" aria-label="' + i18n.close + ' (Esc)"><i class="' + settings.closeButtonClass + '"></i></div>');
+				self.addElement('closeButton', '<div><i class="' + settings.closeButtonClass + '"></i></div>');
 			}
 
 			var id = self.getSettings('id');
@@ -773,7 +772,7 @@
 
 			classes += settings.classes.globalPrefix + '-button';
 
-			var $button = self.addElement(options.name, $('<' + buttonSettings.tag + '>').text(options.text), classes);
+			var $button = self.addElement(options.name, $('<' + buttonSettings.tag + '>').html(options.text), classes);
 
 			self.buttons.push($button);
 

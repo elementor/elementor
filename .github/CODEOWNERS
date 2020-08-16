@@ -27,6 +27,7 @@
 
 # Core
 /core                             		@kingyes
+/core/app                             	@matipojo @kobizz
 /core/admin                       		@kingyes
 /core/base                        		@kingyes @matipojo @kobizz
 /core/base/db-upgrades-manager.php		@kingyes @matipojo
