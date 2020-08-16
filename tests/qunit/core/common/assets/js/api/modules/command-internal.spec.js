@@ -5,7 +5,11 @@ import CommandData from 'elementor-api/modules/command-data';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-internal.js', () => {
-		QUnit.module( 'CommandInternal', () => {
+		QUnit.module( 'CommandInternal', ( hooks ) => {
+			hooks.beforeEach( () => $e.components.isRegistering = true );
+
+			hooks.afterEach( () => $e.components.isRegistering = false );
+
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateInternalCommand = ( internalCommand ) => {
 						assert.equal( internalCommand instanceof CommandBase, true, );

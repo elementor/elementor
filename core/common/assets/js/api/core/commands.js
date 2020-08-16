@@ -252,7 +252,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * Function beforeRun().
 	 *
 	 * @param {string} command
-	 * @param {} args
+	 * @param {{}} args
 	 */
 	beforeRun( command, args = {} ) {
 		const component = this.getComponent( command ),

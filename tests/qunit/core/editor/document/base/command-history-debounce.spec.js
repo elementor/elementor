@@ -9,7 +9,11 @@ import CommandEditorInternal from 'elementor-editor/base/command-editor-internal
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/commands/command-history-debounce.js', () => {
-		QUnit.module( 'CommandHistoryDebounce', () => {
+		QUnit.module( 'CommandHistoryDebounce', ( hooks ) => {
+			hooks.beforeEach( () => $e.components.isRegistering = true );
+
+			hooks.afterEach( () => $e.components.isRegistering = false );
+
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateHistoryDebounceCommand = ( historyDebounceCommand ) => {
 					// Base.

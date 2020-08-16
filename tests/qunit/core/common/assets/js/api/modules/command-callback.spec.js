@@ -6,8 +6,10 @@ import CommandCallback from 'elementor-api/modules/command-callback';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-callback.js', () => {
-		QUnit.module( 'CommandCallback', () => {
-			// TODO: Add more tests.
+		QUnit.module( 'CommandCallback', ( hooks ) => {
+			hooks.beforeEach( () => $e.components.isRegistering = true );
+
+			hooks.afterEach( () => $e.components.isRegistering = false );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const commandCallback = new CommandCallback( {} );
@@ -21,6 +23,9 @@ jQuery( () => {
 				assert.equal( commandCallback instanceof $e.modules.CommandInternal, false );
 				assert.equal( commandCallback instanceof $e.modules.CommandData, false );
 			} );
+
+			// TODO: Add more tests.
+
 		} );
 	} );
 } );

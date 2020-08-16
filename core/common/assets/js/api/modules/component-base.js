@@ -21,6 +21,11 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	registerAPI() {
+		if ( ! $e.components.isRegistering ) {
+			// Should be something like doingItWrong().
+			throw RangeError( 'Doing it wrong: $e.components.isRegistering is false' );
+		}
+
 		Object.entries( this.getTabs() ).forEach( ( tab ) => this.registerTabRoute( tab[ 0 ] ) );
 
 		Object.entries( this.getRoutes() ).forEach( ( [ route, callback ] ) => this.registerRoute( route, callback ) );
