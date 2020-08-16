@@ -30,6 +30,7 @@ export default function Dialog( props ) {
 				<DialogContent>
 					{ props.title && <DialogTitle>{ props.title }</DialogTitle> }
 					{ props.text && <DialogText>{ props.text }</DialogText> }
+					{ props.children }
 				</DialogContent>
 				<DialogActions>
 					<DialogButton
@@ -58,6 +59,7 @@ export default function Dialog( props ) {
 Dialog.propTypes = {
 	title: PropTypes.any,
 	text: PropTypes.any,
+	children: PropTypes.any,
 	onSubmit: PropTypes.func,
 	onClose: PropTypes.func,
 	dismissButtonText: PropTypes.string.isRequired,
