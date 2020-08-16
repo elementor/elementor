@@ -1,5 +1,5 @@
 export const Toggle = () => {
-	QUnit.module( 'Toggle', ( hooks ) => {
+	QUnit.module( 'Toggle', () => {
 		QUnit.test( 'Simple', ( assert ) => {
 			const initialState = elementor.navigator.isOpen();
 
