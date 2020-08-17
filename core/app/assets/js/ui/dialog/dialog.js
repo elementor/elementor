@@ -1,4 +1,4 @@
-import Button from 'elementor-app/ui/molecules/button';
+import DialogWrapper from './dialog-wrapper';
 import DialogContent from './dialog-content';
 import DialogTitle from './dialog-title';
 import DialogText from './dialog-text';
@@ -8,51 +8,33 @@ import DialogButton from './dialog-button';
 import './dialog.scss';
 
 export default function Dialog( props ) {
-	let WrapperTag = 'div';
-
-	if ( props.onSubmit ) {
-		WrapperTag = 'form';
-	}
-
 	return (
-		<section className="eps-modal__overlay">
-			{
-				props.onClose &&
-				<Button
-					onClick={ props.onClose }
-					text={ __( 'Close', 'elementor' ) }
-					hideText={ true }
-					icon="eicon-close"
-					className="eps-dialog__x"
+		<DialogWrapper onSubmit={ props.onSubmit } onClose={ props.onClose }>
+			<DialogContent>
+				{ props.title && <DialogTitle>{ props.title }</DialogTitle> }
+				{ props.text && <DialogText>{ props.text }</DialogText> }
+				{ props.children }
+			</DialogContent>
+			<DialogActions>
+				<DialogButton
+					key="dismiss"
+					text={ props.dismissButtonText }
+					onClick={ props.dismissButtonOnClick }
+					url={ props.dismissButtonUrl }
+					target={ props.dismissButtonTarget }
+					tabIndex="2"
 				/>
-			}
-			<WrapperTag className="eps-modal eps-dialog" onSubmit={ props.onSubmit }>
-				<DialogContent>
-					{ props.title && <DialogTitle>{ props.title }</DialogTitle> }
-					{ props.text && <DialogText>{ props.text }</DialogText> }
-					{ props.children }
-				</DialogContent>
-				<DialogActions>
-					<DialogButton
-						key="dismiss"
-						text={ props.dismissButtonText }
-						onClick={ props.dismissButtonOnClick }
-						url={ props.dismissButtonUrl }
-						target={ props.dismissButtonTarget }
-						tabIndex="2"
-					/>
-					<DialogButton
-						key="approve"
-						text={ props.approveButtonText }
-						onClick={ props.approveButtonOnClick }
-						url={ props.approveButtonUrl }
-						target={ props.approveButtonTarget }
-						color={ props.approveButtonColor }
-						tabIndex="1"
-					/>
-				</DialogActions>
-			</WrapperTag>
-		</section>
+				<DialogButton
+					key="approve"
+					text={ props.approveButtonText }
+					onClick={ props.approveButtonOnClick }
+					url={ props.approveButtonUrl }
+					target={ props.approveButtonTarget }
+					color={ props.approveButtonColor }
+					tabIndex="1"
+				/>
+			</DialogActions>
+		</DialogWrapper>
 	);
 }
 
@@ -74,3 +56,10 @@ Dialog.propTypes = {
 };
 
 Dialog.defaultProps = {};
+
+Dialog.Wrapper = DialogWrapper;
+Dialog.Content = DialogContent;
+Dialog.Title = DialogTitle;
+Dialog.Text = DialogText;
+Dialog.Actions = DialogActions;
+Dialog.Button = DialogButton;
