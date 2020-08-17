@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.8.0
+ * Dialogs Manager v4.8.1
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -289,8 +289,13 @@
 			}
 
 			if (settings.closeButton) {
+				if ( settings.closeButtonClass ) {
+					//  Backwards compatibility
+					settings.closeButtonOptions.iconClass = settings.closeButtonClass;
+				}
+
 				const $button = $('<div>', settings.closeButtonOptions.attributes),
-					$buttonIcon = $('<i>', {class: settings.closeButtonOptions.class});
+					$buttonIcon = $('<i>', {class: settings.closeButtonOptions.iconClass});
 
 				$button.append($buttonIcon);
 
@@ -335,7 +340,7 @@
 				iframe: null,
 				closeButton: false,
 				closeButtonOptions: {
-					class: parentSettings.classPrefix + '-close-button-icon',
+					iconClass: parentSettings.classPrefix + '-close-button-icon',
 					attributes: {},
 				},
 				position: {
