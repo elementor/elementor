@@ -67,40 +67,40 @@ $button-dark-disabled-color: dark-theme-colors(light);
 
 // using mixing to transfer custom properties
 @mixin button-custom-properties() {
-  --button-font-size: #{$button-font-size};
-  --button-line-height: #{$button-line-height};
-  --button-padding-y: #{$button-padding-y};
-  --button-padding-x: #{$button-padding-x};
-  // primary
-  --button-primary-background-color: #{$button-primary-background-color};
-  --button-primary-hover-background-color: #{$button-primary-hover-background-color};
-  --button-primary-active-background-color: #{$button-primary-active-background-color};
-  --button-primary-color: #{$button-primary-color};
-  // secondary
-  --button-secondary-background-color: #{$button-secondary-background-color};
-  --button-secondary-hover-background-color: #{$button-secondary-hover-background-color};
-  --button-secondary-active-background-color: #{$button-secondary-active-background-color};
-  --button-secondary-color: #{$button-secondary-color};
+	--button-font-size: #{$button-font-size};
+	--button-line-height: #{$button-line-height};
+	--button-padding-y: #{$button-padding-y};
+	--button-padding-x: #{$button-padding-x};
+	// primary
+	--button-primary-background-color: #{$button-primary-background-color};
+	--button-primary-hover-background-color: #{$button-primary-hover-background-color};
+	--button-primary-active-background-color: #{$button-primary-active-background-color};
+	--button-primary-color: #{$button-primary-color};
+	// secondary
+	--button-secondary-background-color: #{$button-secondary-background-color};
+	--button-secondary-hover-background-color: #{$button-secondary-hover-background-color};
+	--button-secondary-active-background-color: #{$button-secondary-active-background-color};
+	--button-secondary-color: #{$button-secondary-color};
 	// danger
 	--button-danger-background-color: #{$button-danger-background-color};
 	--button-danger-hover-background-color: #{$button-danger-hover-background-color};
 	--button-danger-active-background-color: #{$button-danger-active-background-color};
 	--button-danger-color: #{$button-danger-color};
 	// cta
-  --button-cta-background-color: #{$button-cta-background-color};
-  --button-cta-hover-background-color: #{$button-cta-hover-background-color};
-  --button-cta-active-background-color: #{$button-cta-active-background-color};
-  --button-cta-color: #{$button-cta-color};
-  // link
-  --button-link-background-color: #{$button-link-background-color};
-  --button-link-hover-background-color: #{$button-link-hover-background-color};
-  --button-link-active-background-color: #{$button-link-active-background-color};
-  --button-link-color: #{$button-link-color};
-  // disabled
-  --button-disabled-background-color: #{$button-disabled-background-color};
-  --button-disabled-hover-background-color: #{$button-disabled-hover-background-color};
-  --button-disabled-active-background-color: #{$button-disabled-active-background-color};
-  --button-disabled-color: #{$button-disabled-color};
+	--button-cta-background-color: #{$button-cta-background-color};
+	--button-cta-hover-background-color: #{$button-cta-hover-background-color};
+	--button-cta-active-background-color: #{$button-cta-active-background-color};
+	--button-cta-color: #{$button-cta-color};
+	// link
+	--button-link-background-color: #{$button-link-background-color};
+	--button-link-hover-background-color: #{$button-link-hover-background-color};
+	--button-link-active-background-color: #{$button-link-active-background-color};
+	--button-link-color: #{$button-link-color};
+	// disabled
+	--button-disabled-background-color: #{$button-disabled-background-color};
+	--button-disabled-hover-background-color: #{$button-disabled-hover-background-color};
+	--button-disabled-active-background-color: #{$button-disabled-active-background-color};
+	--button-disabled-color: #{$button-disabled-color};
 }
 
 @mixin button-dark-custom-properties() {
