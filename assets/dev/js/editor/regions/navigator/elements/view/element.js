@@ -99,8 +99,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.linkContainerNavView();
 
 		// TODO: Try HOOk(s).
-		this.listenTo( this.model, 'request:edit', this.onEditRequest )
-            .listenTo( this.model, 'change', this.onModelChange )
+		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 	}
 
@@ -414,16 +413,6 @@ export default class NavigatorElement extends Marionette.CompositeView {
 
 	onContextMenu( event ) {
 		this.model.trigger( 'request:contextmenu', event );
-	}
-
-	onEditRequest() {
-		this.recursiveParentInvoke( 'toggleList', true );
-
-		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
-
-		this.addEditingClass();
-
-		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.getLayout().elements.$el );
 	}
 
 	onIndicatorClick( event ) {
