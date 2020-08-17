@@ -860,6 +860,10 @@ class Upgrades {
 		return self::move_settings_to_kit( $callback, $updater );
 	}
 
+	public static function plugin_installed_before_v_3_0_0() {
+		return Plugin::$instance->get_install_time() < strtotime( '23 August 2020' );
+	}
+
 
 	/**
 	 * @param callback $callback

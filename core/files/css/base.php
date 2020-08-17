@@ -8,6 +8,7 @@ use Elementor\Controls_Stack;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
@@ -768,9 +769,9 @@ abstract class Base extends Base_File {
 	}
 
 	private function get_selector_global_value( $control, $global_key ) {
-		$value = Plugin::$instance->data_manager->run( $global_key );
+		$data = Plugin::$instance->data_manager->run( $global_key );
 
-		if ( empty( $value ) ) {
+		if ( empty( $data['value'] ) ) {
 			return null;
 		}
 
@@ -780,6 +781,12 @@ abstract class Base extends Base_File {
 
 		if ( ! empty( $control['groupType'] ) ) {
 			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
+
+			// TODO: This check won't retrieve the proper answer for array values (multiple controls).
+			if ( empty( $data['value'][ Global_Typography::TYPOGRAPHY_GROUP_PREFIX . $property_name ] ) ) {
+				return null;
+			}
+
 			$property_name = str_replace( '_', '-', $property_name );
 
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
