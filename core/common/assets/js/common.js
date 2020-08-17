@@ -28,6 +28,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 	}
 
 	initComponents() {
+		this.debug = new Debug();
+
 		this.helpers = new Helpers();
 
 		this.storage = new Storage();
@@ -35,8 +37,6 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		this.dialogsManager = new DialogsManager.Instance();
 
 		this.api = new API();
-
-		this.debug = new Debug();
 
 		this.initModules();
 	}
