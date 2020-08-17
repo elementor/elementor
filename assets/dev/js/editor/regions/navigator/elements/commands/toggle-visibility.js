@@ -1,21 +1,10 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandNavView from './base/command-nav-view';
 
-export class ToggleVisibility extends CommandBase {
-	validateArgs( args ) {
-		this.requireContainer( args );
-	}
-
+export class ToggleVisibility extends CommandNavView {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			if ( ! container.navView ) {
-				if ( $e.devTools ) {
-					$e.devTools.log.error( 'Container.navView is required' );
-				}
-				return;
-			}
-
 			if ( container.navView.model.get( 'hidden' ) ) {
 				$e.run( 'navigator/elements/show', { container } );
 			} else {

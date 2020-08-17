@@ -1,10 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandNavView from './base/command-nav-view';
 
-export class Show extends CommandBase {
-	validateArgs( args ) {
-		this.requireContainer( args );
-	}
-
+export class Show extends CommandNavView {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 

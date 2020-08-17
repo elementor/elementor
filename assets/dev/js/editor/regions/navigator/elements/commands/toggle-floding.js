@@ -1,10 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandNavView from './base/command-nav-view';
 
-export class ToggleFolding extends CommandBase {
-	validateArgs( args ) {
-		this.requireContainer( args );
-	}
-
+export class ToggleFolding extends CommandNavView {
 	apply( args ) {
 		const { containers = [ args.container ], callback, state } = args;
 

@@ -1,10 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandNavView from './base/command-nav-view';
 
-export class Hide extends CommandBase {
-	validateArgs( args ) {
-		this.requireContainer( args );
-	}
-
+export class Hide extends CommandNavView {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 

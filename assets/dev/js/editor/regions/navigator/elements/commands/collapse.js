@@ -1,10 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandNavView from './base/command-nav-view';
 
-export class Collapse extends CommandBase {
-	validateArgs( args ) {
-		this.requireContainer( args );
-	}
-
+export class Collapse extends CommandNavView {
 	apply( args ) {
 		const { containers = [ args.container ], callback } = args;
 
