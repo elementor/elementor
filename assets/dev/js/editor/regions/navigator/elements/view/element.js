@@ -96,10 +96,27 @@ export default class NavigatorElement extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
+		this.linkContainerNavView();
+
 		// TODO: Try HOOk(s).
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
             .listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
+	}
+
+	linkContainerNavView() {
+		if ( ! this.container && this.model.id ) {
+			// TODO: Temp fix, remove whole block, find better solution.
+			this.container = elementor.getContainer( this.model.id );
+
+			if ( ! this.container ) {
+				return setTimeout( () => this.linkContainerNavView() );
+			}
+
+			if ( this.container ) {
+				this.container.navView = this;
+			}
+		}
 	}
 
 	getIndent() {
@@ -115,7 +132,9 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		const args = {};
+		const args = {
+			container: this.container,
+		};
 
 		args.state = state;
 
@@ -124,10 +143,6 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		}
 
 		if ( this.model.id ) {
-			args.container = elementor.getContainer( this.model.id );
-			// TODO: Temp fix, find better solution.
-			args.container.navView = this;
-
 			$e.run( 'navigator/elements/toggle-folding', args );
 		}
 	}
@@ -307,9 +322,6 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		event.stopPropagation();
 
 		const container = elementor.getContainer( this.model.id );
-
-		// TODO: Temp fix, find better solution.
-		container.navView = this;
 
 		$e.run( 'navigator/elements/toggle-visibility', { container } );
 	}
