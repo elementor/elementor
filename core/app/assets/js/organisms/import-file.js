@@ -4,6 +4,8 @@ import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 
+import './import-file.scss';
+
 export default function ImportFile( props ) {
 	const dragDropEvents = {
 		onDrop: ( event ) => {
@@ -14,9 +16,9 @@ export default function ImportFile( props ) {
 	};
 
 	return (
-		<section className="e-app-import">
+		<section className="e-app-import-file">
 			<DragDrop { ...dragDropEvents } isLoading={ props.isLoading }>
-				{ ! props.noIcon && <Icon className={ `e-app-import__icon ${ props.icon }` } /> }
+				{ ! props.noIcon && <Icon className={ `e-app-import-file__icon ${ props.icon }` } /> }
 
 				{ props.heading && <Heading variant="display-3">{ props.heading }</Heading> }
 
