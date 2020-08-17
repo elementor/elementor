@@ -1,5 +1,5 @@
 import After from 'elementor-api/modules/hooks/ui/after';
-import Helper from './helper.js';
+import Helper from '../helper.js';
 
 export class NavigatorHide extends After {
 	getCommand() {

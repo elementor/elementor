@@ -1,5 +1,5 @@
 import After from 'elementor-api/modules/hooks/ui/after';
-import Helper from './helper';
+import Helper from '../helper';
 
 export class NavigatorShow extends After {
 	getCommand() {
