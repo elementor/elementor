@@ -802,7 +802,7 @@ class Upgrades {
 			foreach ( $colors_to_save as $index => $color ) {
 				$kit->add_repeater_row( 'custom_colors', [
 					'_id' => Utils::generate_random_string(),
-					'title' => __( 'Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
 					'color' => $color,
 				] );
 			}
@@ -858,6 +858,10 @@ class Upgrades {
 		};
 
 		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	public static function plugin_installed_before_v_3_0_0() {
+		return Plugin::$instance->get_install_time() < strtotime( '23 August 2020' );
 	}
 
 

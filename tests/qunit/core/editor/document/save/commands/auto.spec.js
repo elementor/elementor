@@ -9,7 +9,7 @@ export const Auto = () => {
 			assert.equal( response.data.status, 'inherit', 'The response status is: "inherit"' );
 		} );
 
-		QUnit.test( 'rejected: "Document is not editable"', async ( assert ) => {
+		QUnit.test( 'rejected: "Document is not editable"', ( assert ) => {
 			// Create fake document.
 			const document = elementor.documents.getCurrent(),
 				defaultStatus = document.editor.status;
@@ -17,12 +17,19 @@ export const Auto = () => {
 			// Editor is not edit able!
 			document.editor.status = 'closed';
 
-			// Ensure rejected.
-			assert.rejects( $e.run( 'document/save/auto', { document } ),
-				'Document is not editable' );
+			// TODO: Cannot use `assert.rejects` since its return JQuery promise.
+			assert.expect( 1 );
+
+			const deferred = $e.run( 'document/save/auto', { document } );
+
+			deferred.fail( ( message ) => {
+				assert.equal( message, 'Document is not editable' );
+			} );
 
 			// Put back as it was before.
-			document.editor.status = defaultStatus;
+			deferred.always( () => {
+				document.editor.status = defaultStatus;
+			} );
 		} );
 
 		QUnit.test( 'Resolved: "Document is not changed"', async ( assert ) => {

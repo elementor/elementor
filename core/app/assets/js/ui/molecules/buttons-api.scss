@@ -1,8 +1,9 @@
 // BTN API
 $button-font-size: type(text,sm);
-$button-line-height: 15px;
-$button-padding-y: 0.75em;
-$button-padding-x: 1.75em;
+$button-font-weight: $eps-font-weight-medium;
+$button-line-height: 16px;
+$button-padding-y: 0.5em;
+$button-padding-x: 1.5em;
 $button-border-radius: $eps-radius;
 $button-hover-constant: 5%;
 $button-active-constant: 3%;

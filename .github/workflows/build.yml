@@ -22,7 +22,8 @@ jobs:
             then npm version patch
           fi
           if [[ "${GITHUB_REF:11:7}" == "release" ]];
-            then npm version minor
+            #then npm version minor
+            then npm version major
           fi
           export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
           export PACKAGE_VERSION=$(cat package.json \

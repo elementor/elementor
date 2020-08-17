@@ -35,8 +35,8 @@ class App extends BaseApp {
 	public function register_admin_menu() {
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
-			__( 'Site Editor', 'elementor' ),
-			__( 'Site Editor', 'elementor' ),
+			__( 'Theme Builder', 'elementor' ),
+			__( 'Theme Builder', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID
 		);
@@ -44,6 +44,10 @@ class App extends BaseApp {
 
 	public function fix_submenu( $menu ) {
 		global $submenu;
+
+		if ( is_multisite() && is_network_admin() ) {
+			return $menu;
+		}
 
 		// Hack to add a link to sub menu.
 		foreach ( $submenu[ Source_Local::ADMIN_MENU_SLUG ] as &$item ) {
