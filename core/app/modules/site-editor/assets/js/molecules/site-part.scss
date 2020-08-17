@@ -1,12 +1,5 @@
 $dark-svg-filter: invert(0.8) sepia(1) saturate(0.1) hue-rotate(180deg) contrast(2) brightness(1.2);
 
-.eps-theme-dark {
-	.e-site-part .#{$eps-prefix}card__image {
-		filter: $dark-svg-filter;
-		mix-blend-mode: screen;
-	}
-}
-
 $info-toggle-color: tints(300);
 $info-toggle-hover-color: tints(500);
 
@@ -19,14 +12,23 @@ $info-toggle-dark-color: dark-tints(400);
 $info-toggle-dark-hover-color: dark-tints(200);
 
 .eps-theme-dark {
+	--placeholder-filter: #{$dark-svg-filter};
+	--placeholder-blend-mode: screen;
 	--info-toggle-color: #{$info-toggle-dark-color};
 	--info-toggle-hover-color: #{$info-toggle-dark-hover-color};
 }
 
-.e-site-part__info-toggle {
-	color: var(--info-toggle-color);
+.e-site-part {
+	.#{$eps-prefix}card__image {
+		filter: var(--placeholder-filter, none);
+		mix-blend-mode: var(--placeholder-blend-mode, normal);
+	}
 
-	&:hover {
-		--info-toggle-color: var(--info-toggle-hover-color);
+	&__info-toggle {
+		color: var(--info-toggle-color);
+
+		&:hover {
+			--info-toggle-color: var(--info-toggle-hover-color);
+		}
 	}
 }
