@@ -32,6 +32,7 @@
 		line-height: spacing(44);
 		text-align: center;
 		justify-content: center;
+
 		&:last-child:not(:first-child) {
 			border-inline-start: 1px solid var(--hr-color);
 		}
