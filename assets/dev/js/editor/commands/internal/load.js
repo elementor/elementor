@@ -44,13 +44,9 @@ export class Load extends CommandInternalBase {
 		if ( elementor.loaded ) {
 			// TODO: Find better solution - Fix issue when globals does not render after saving from kit.
 			// The issue is that the css-parser is depends upon cache and cache is not available during this time.
-			if ( ! $e.data.getCache( $e.components.get( 'globals' ), 'globals/index' ) ) {
-				$e.data.get( 'globals/index' ).then( () =>
-					$e.internal( 'editor/documents/attach-preview' )
-				);
-			} else {
-				$e.internal( 'editor/documents/attach-preview' );
-			}
+			$e.data.get( 'globals/index' ).then( () =>
+				$e.internal( 'editor/documents/attach-preview' )
+			);
 		}
 
 		return document;
