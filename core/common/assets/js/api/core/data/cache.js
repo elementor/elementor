@@ -79,7 +79,7 @@ export default class Cache {
 			newData = data;
 		}
 
-		let oldData = this.storage.getItem( componentName );
+		const oldData = this.storage.getItem( componentName );
 
 		// When have old data, merge it recursively with newData using jQuery.extend().
 		if ( oldData !== null ) {

@@ -1,6 +1,6 @@
-/* global jQuery */
 import * as Ajax from './index';
 
+// eslint-disable-next-line no-unused-vars
 const fakeActionFailed = ( action, fullParams ) => {
 	return {
 		success: false,

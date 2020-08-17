@@ -42,8 +42,6 @@ export default class DocumentHelper {
 	}
 
 	static testCommands( commands ) {
-		// TODO: Use Object.values()
-		// eslint-disable-next-line no-unused-vars
-		Object.entries( commands ).forEach( ( [ command, reference ] ) => reference() );
+		Object.values( commands ).forEach( ( reference ) => reference() );
 	}
 }

@@ -37,8 +37,10 @@ class Controller extends \Elementor\Data\Base\Controller {
 	public function do_register_internal_endpoints() {
 		$this->bypass_original_register();
 
-		add_action( 'rest_api_init', function () {
-			$this->register_internal_endpoints();
+		add_action( 'elementor_rest_api_before_init', function () {
+			add_action( 'rest_api_init', function() {
+				$this->register_internal_endpoints();
+			} );
 		} );
 	}
 

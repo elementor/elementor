@@ -61,6 +61,6 @@ export default class extends BaseManager {
 
 	onEditButtonsChanged() {
 		// Let the button change before the high-performance action of rendering the entire page
-		setTimeout( () => elementor.getPreviewView().render(), 300 );
+		setTimeout( () => elementor.getPreviewView()._renderChildren(), 300 );
 	}
 }

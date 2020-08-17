@@ -14,7 +14,6 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
-import ScreenshotsModule from 'elementor/modules/screenshots/assets/js/editor/module';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -38,7 +37,6 @@ export default class EditorBase extends Marionette.Application {
 	ajax = elementorCommon.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
 	history = require( 'elementor/modules/history/assets/js/module' );
-	screenshots = new ScreenshotsModule();
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
