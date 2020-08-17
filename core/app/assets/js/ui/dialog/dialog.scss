@@ -10,12 +10,13 @@
 		margin-right: spacing(10);
 		z-index: $eps-zindex-modal;
 		font-size: size(2.5);
-		color: #fff;
+		color: theme-colors(light);
 	}
 
 	&__content {
 		padding: spacing(24) spacing(30) spacing(16);
-		font-size: type(text, xs)
+		font-size: type(text, xs);
+		text-align: center;
 	}
 
 	&__title {
@@ -32,6 +33,7 @@
 		line-height: spacing(44);
 		text-align: center;
 		justify-content: center;
+
 		&:last-child:not(:first-child) {
 			border-inline-start: 1px solid var(--hr-color);
 		}
