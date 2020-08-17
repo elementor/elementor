@@ -16,7 +16,7 @@ export default function DialogWrapper( props ) {
 					text={ __( 'Close', 'elementor' ) }
 					hideText={ true }
 					icon="eicon-close"
-					className="eps-dialog__x"
+					className="eps-dialog__close-button"
 				/>
 			}
 			<WrapperTag className="eps-modal eps-dialog" onSubmit={ props.onSubmit }>
