@@ -125,17 +125,17 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		const args = {
-			container: this.container,
-		};
+		if ( this.container ) {
+			const args = {
+				container: this.container,
+			};
 
-		args.state = state;
+			args.state = state;
 
-		if ( callback ) {
-			args.callback = callback;
-		}
+			if ( callback ) {
+				args.callback = callback;
+			}
 
-		if ( this.model.id ) {
 			$e.run( 'navigator/elements/toggle-folding', args );
 		}
 	}
