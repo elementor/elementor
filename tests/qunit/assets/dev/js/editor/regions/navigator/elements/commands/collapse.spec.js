@@ -6,7 +6,7 @@ export const Collapse = () => {
 			const eWidget = ElementsHelper.createAutoButton(),
 				eColumn = eWidget.parent,
 				eSection = eColumn.parent,
-				all = [ eSection, eWidget /*, eColumn*/ ]; // BUG in tests: eColumn does not provide .navView.
+				all = [ eSection, eColumn, eWidget ];
 
 			// TODO: Timeout & promising because of 'container.navView'.
 			setTimeout( () => {
