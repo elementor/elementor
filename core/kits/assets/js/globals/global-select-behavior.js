@@ -27,16 +27,19 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerUiElements() {
-		const popoverWidget = this.popover.getElements( 'widget' );
+		const popoverWidget = this.popover.getElements( 'widget' ),
+			classes = this.getClassNames();
 
-		this.ui.globalPreviewsContainer = popoverWidget.find( '.e-global__preview-items-container' );
-		this.ui.globalPreviewItems = popoverWidget.find( '.e-global__preview-item' );
-		this.ui.manageGlobalsButton = popoverWidget.find( '.e-global__manage-button' );
+		this.ui.globalPreviewsContainer = popoverWidget.find( `.${ classes.previewItemsContainer }` );
+		this.ui.globalPreviewItems = popoverWidget.find( `.${ classes.previewItem }` );
+		this.ui.manageGlobalsButton = popoverWidget.find( `.${ classes.manageButton }` );
 	}
 
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerEvents() {
-		this.ui.globalPreviewsContainer.on( 'click', '.e-global__preview-item', ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
+		const classes = this.getClassNames();
+
+		this.ui.globalPreviewsContainer.on( 'click', `.${ classes.previewItem }`, ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
 		this.ui.globalPopoverToggle.on( 'click', ( event ) => this.toggleGlobalPopover( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
 			const { route } = this.view.getGlobalMeta(),
@@ -127,6 +130,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	updateCurrentGlobalName( value ) {
+		const classes = this.getClassNames();
+
 		let globalTooltipText = '';
 
 		if ( value ) {
@@ -155,7 +160,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 						this.updateCurrentGlobalName( text );
 					} );
 
-				this.ui.globalPopoverToggle.addClass( 'e-global__popover-toggle--active' );
+				this.ui.globalPopoverToggle.addClass( classes.popoverToggleActive );
 
 				return;
 			} else if ( value ) {
@@ -167,7 +172,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			}
 
 			// If there is no value, remove the 'active' class from the Global Toggle button.
-			this.ui.globalPopoverToggle.removeClass( 'e-global__popover-toggle--active' );
+			this.ui.globalPopoverToggle.removeClass( classes.popoverToggleActive );
 		}
 
 		// This is used in the Global Toggle Button's tooltip.
@@ -188,7 +193,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			this.onValueTypeChange();
 		}
 
-		this.$el.addClass( 'e-control-global' );
+		this.$el.addClass( this.getClassNames().controlGlobal );
 	}
 
 	toggleGlobalPopover() {
@@ -202,10 +207,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	buildGlobalPopover() {
-		const $popover = jQuery( '<div>', { class: 'e-global__popover-container' } ),
-			$popoverTitle = jQuery( '<div>', { class: 'e-global__popover-title' } )
-				.html( '<div class="e-global__popover-info"><i class="eicon-info-circle"></i></div>' + '<span class="e-global__popover-title-text">' + this.getOption( 'popoverTitle' ) + '</span>' ),
-			$manageGlobalsLink = jQuery( '<div>', { class: 'e-global__manage-button' } )
+		const classes = this.getClassNames(),
+			$popover = jQuery( '<div>', { class: classes.globalPopoverContainer } ),
+			$popoverTitle = jQuery( '<div>', { class: classes.globalPopoverTitle } )
+				.html( '<div class="' + classes.globalPopoverInfo + '"><i class="eicon-info-circle"></i></div><span class="' + classes.globalPopoverTitleText + '">' + this.getOption( 'popoverTitle' ) + '</span>' ),
+			$manageGlobalsLink = jQuery( '<div>', { class: classes.manageButton } )
 				.html( '<i class="eicon-cog"></i>' );
 
 		$popoverTitle.append( $manageGlobalsLink );
@@ -226,7 +232,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	printGlobalToggleButton() {
-		const $globalToggleButton = jQuery( '<div>', { class: 'e-global__popover-toggle elementor-control-unit-1' } ),
+		const $globalToggleButton = jQuery( '<div>', { class: this.getClassNames().popoverToggle + ' elementor-control-unit-1' } ),
 			$globalPopoverToggleIcon = jQuery( '<i>', { class: 'eicon-globe' } );
 
 		$globalToggleButton.append( $globalPopoverToggleIcon );
@@ -248,7 +254,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	initGlobalPopover() {
 		this.popover = elementorCommon.dialogsManager.createWidget( 'simple', {
-			className: 'e-global__popover',
+			className: this.getClassNames().popover,
 			message: this.buildGlobalPopover(),
 			effects: {
 				show: 'show',
@@ -280,7 +286,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	addGlobalsListToPopover( globalsList ) {
 		const $globalsList = this.view.buildGlobalsList( globalsList );
 
-		this.popover.getElements( 'widget' ).find( '.e-global__popover-title' ).after( $globalsList );
+		this.popover.getElements( 'widget' ).find( `.${ this.getClassNames().globalPopoverTitle }` ).after( $globalsList );
 	}
 
 	registerUiElementsAndEvents() {
@@ -294,8 +300,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	// This method is not called directly, but triggered by Marionette's .triggerMethod(),
 	// in the onAddGlobalButtonClick() method in the color and typography global controls.
 	onAddGlobalToList( $confirmMessage ) {
+		const classes = this.getClassNames();
+
 		this.confirmNewGlobalModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
-			className: 'e-global__confirm-add',
+			className: classes.confirmAddNewGlobal,
 			headerMessage: this.getOption( 'newGlobalConfirmTitle' ),
 			message: $confirmMessage,
 			strings: {
@@ -311,7 +319,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				const modalWidget = this.confirmNewGlobalModal.getElements( 'widget' );
 
 				this.ui.globalNameInput = modalWidget.find( 'input' ).focus();
-				this.ui.confirmMessageText = modalWidget.find( '.e-global__confirm-message-text' );
+				this.ui.confirmMessageText = modalWidget.find( classes.confirmMessageText );
 
 				this.ui.globalNameInput.on( 'input', () => this.onAddGlobalConfirmInputChange() );
 			},
@@ -424,10 +432,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	createGlobalInfoTooltip() {
-		const $infoIcon = this.popover.getElements( 'widget' ).find( '.e-global__popover-info' );
+		const classes = this.getClassNames(),
+			$infoIcon = this.popover.getElements( 'widget' ).find( `.${ classes.globalPopoverInfo }` );
 
 		this.globalInfoTooltip = elementorCommon.dialogsManager.createWidget( 'simple', {
-			className: 'e-global__popover-info-tooltip',
+			className: classes.globalPopoverInfoTooltip,
 			message: this.getOption( 'tooltipText' ),
 			effects: {
 				show: 'show',
