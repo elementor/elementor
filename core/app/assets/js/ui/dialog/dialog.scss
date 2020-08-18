@@ -10,7 +10,7 @@
 		margin-right: spacing(10);
 		z-index: $eps-zindex-modal;
 		font-size: size(2.5);
-		color: #fff;
+		color: theme-colors(light);
 	}
 
 	&__content {
@@ -18,7 +18,7 @@
 		font-size: type(text, xs)
 	}
 
-	&__title {
+	&__title, &__text {
 		text-align: center;
 	}
 
