@@ -82,7 +82,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			className: 'elementor-lightbox',
 			closeButton: true,
 			closeButtonOptions: {
-				class: 'eicon-close',
+				iconClass: 'eicon-close',
 				attributes: {
 					tabindex: 0,
 					role: 'button',
