@@ -5,6 +5,26 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		};
 	}
 
+	getClassNames() {
+		return {
+			previewItemsContainer: 'e-global__preview-items-container',
+			previewItem: 'e-global__preview-item',
+			selectedPreviewItem: 'e-global__preview-item--selected',
+			manageButton: 'e-global__manage-button',
+			popover: 'e-global__popover',
+			popoverToggle: 'e-global__popover-toggle',
+			popoverToggleActive: 'e-global__popover-toggle--active',
+			controlGlobal: 'e-control-global',
+			globalPopoverContainer: 'e-global__popover-container',
+			globalPopoverTitle: 'e-global__popover-title',
+			globalPopoverTitleText: 'e-global__popover-title-text',
+			globalPopoverInfo: 'e-global__popover-info',
+			globalPopoverInfoTooltip: 'e-global__popover-info-tooltip',
+			confirmAddNewGlobal: 'e-global__confirm-add',
+			confirmMessageText: '.e-global__confirm-message-text',
+		};
+	}
+
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerUiElements() {
 		const popoverWidget = this.popover.getElements( 'widget' );
@@ -47,17 +67,18 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	setCurrentActivePreviewItem() {
-		const selectedClass = 'e-global__preview-item--selected';
+		const selectedClass = this.getClassNames().selectedPreviewItem,
+			defaultGlobalsAreEnabled = elementor.config.globals.defaults_enabled[ this.view.getGlobalMeta().controlType ];
 
 		if ( this.activePreviewItem ) {
-			this.activePreviewItem.removeClass( selectedClass );
+			this.resetActivePreviewItem();
 		}
 
 		// If there is an active global on the control, get it.
 		let globalKey = this.view.getGlobalKey();
 
-		// If there is no active global, check if there is a default global.
-		if ( ! globalKey && elementor.config.globals.defaults_enabled[ this.view.getGlobalMeta().controlType ] ) {
+		// If the control has no active global and no active custom value, check if there is a default global and use it.
+		if ( ! globalKey && ! this.view.getControlValue() && defaultGlobalsAreEnabled ) {
 			globalKey = this.view.model.get( 'global' )?.default;
 		}
 
@@ -82,6 +103,14 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		this.activePreviewItem = $item;
 
 		this.activePreviewItem.addClass( selectedClass );
+	}
+
+	resetActivePreviewItem() {
+		if ( this.activePreviewItem ) {
+			this.activePreviewItem.removeClass( this.getClassNames().selectedPreviewItem );
+		}
+
+		this.activePreviewItem = null;
 	}
 
 	applySavedGlobalValue( globalId ) {
@@ -371,6 +400,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				this.onValueTypeChange();
 
 				this.view.globalValue = null;
+
+				this.resetActivePreviewItem();
 			} );
 	}
 
@@ -384,9 +415,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			options: { external: true },
 		} )
 			.then( () => {
-			this.onValueTypeChange();
+				this.onValueTypeChange();
 
-			this.view.globalValue = null;
+				this.view.globalValue = null;
+
+				this.resetActivePreviewItem();
 		} );
 	}
 
