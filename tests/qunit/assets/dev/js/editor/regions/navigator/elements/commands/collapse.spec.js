@@ -8,9 +8,14 @@ export const Collapse = () => {
 				eSection = eColumn.parent,
 				all = [ eSection, eWidget /*, eColumn*/ ]; // BUG in tests: eColumn does not provide .navView.
 
+			// TODO: Timeout & promising because of 'container.navView'.
+			setTimeout( () => {
+				// Expand all
+				$e.run( 'navigator/elements/toggle-folding-all', { state: true } );
+			} );
+
 			assert.expect( all.length );
 
-			// TODO: Timeout & promising because of 'container.navView'.
 			const promises = all.map( ( container ) => new Promise( ( resolve ) => {
 				setTimeout( () => {
 					$e.run( 'navigator/elements/collapse', { container } );

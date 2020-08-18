@@ -6,15 +6,17 @@ export const Expand = () => {
 			const eWidget = ElementsHelper.createAutoButton(),
 				eColumn = eWidget.parent,
 				eSection = eColumn.parent,
-				all = [ eSection, eWidget /*, eColumn*/ ]; // BUG in tests: eColumn does not provide .navView.
+				all = [ eSection, eColumn, eWidget ];
 
 			assert.expect( all.length );
 
-
-			// Collapse all. ( not working since eColumn does not have .navView ).
-			// $e.run( 'navigator/elements/toggle-folding-all', { state: false } );
-
 			// TODO: Timeout & promising because of 'container.navView'.
+			setTimeout( () => {
+				// Collapse all
+				$e.run( 'navigator/elements/toggle-folding-all', { state: false } );
+
+			} );
+
 			const promises = all.map( ( container ) => new Promise( ( resolve ) => {
 				setTimeout( () => {
 					$e.run( 'navigator/elements/expand', { container } );
