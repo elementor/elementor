@@ -309,3 +309,17 @@ body {
 		}
 	}
 }
+
+.e-major-update-warning {
+	margin-bottom: 5px;
+	max-width: 1000px;
+
+	&__title {
+		font-weight: bold;
+		margin: 10px 0;
+	}
+
+	+ p {
+		display: none;
+	}
+}
