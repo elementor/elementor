@@ -21,6 +21,8 @@ import NotFound from './pages/not-found';
 import Page from './layout/page';
 import Popover from './ui/molecules/popover';
 import SelectFile from './molecules/select-file';
+import Select from './ui/atoms/select';
+import Select2 from './ui/molecules/select2';
 import Text from './ui/atoms/text';
 
 export default {
@@ -46,5 +48,7 @@ export default {
 	Page,
 	Popover,
 	SelectFile,
+	Select,
+	Select2,
 	Text,
 };

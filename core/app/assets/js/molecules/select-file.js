@@ -23,7 +23,7 @@ export default function SelectFile( props ) {
 				text={ props.text }
 				variant="contained"
 				color="primary"
-				size="sm"
+				size="lg"
 				hideText={ props.isLoading }
 				icon={ props.isLoading ? 'eicon-loading eicon-animation-spin' : '' }
 				onClick={ () => {
