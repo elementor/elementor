@@ -2,19 +2,26 @@ import ElementsHelper from 'elementor-tests-qunit/assets/dev/js/editor/document/
 
 export const Collapse = () => {
 	QUnit.module( 'Collapse', () => {
-		QUnit.test( 'Simple', ( assert ) => {
+		QUnit.test( 'Simple', async ( assert ) => {
 			const eWidget = ElementsHelper.createAutoButton(),
 				eColumn = eWidget.parent,
-				eSection = eColumn.parent;
+				eSection = eColumn.parent,
+				all = [ eSection, eWidget /*, eColumn*/ ]; // BUG in tests: eColumn does not provide .navView.
 
-			// Collapse all.
-			$e.run( 'navigator/elements/toggle-folding-all', { state: true } );
+			assert.expect( all.length );
 
-			[ eSection, eColumn, eWidget ].forEach( ( container ) => {
-				$e.run( 'navigator/elements/collapse', { container } );
+			// TODO: Timeout & promising because of 'container.navView'.
+			const promises = all.map( ( container ) => new Promise( ( resolve ) => {
+				setTimeout( () => {
+					$e.run( 'navigator/elements/collapse', { container } );
 
-				assert.equal( container.navView.$el.children().hasClass( 'elementor-active' ), false );
-			} );
+					assert.equal( container.navView.$el.children().hasClass( 'elementor-active' ), false);
+
+					resolve();
+				} );
+			} ) );
+
+			await Promise.all( promises );
 		} );
 	} );
 };
