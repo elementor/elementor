@@ -14,7 +14,6 @@ export const Expand = () => {
 			setTimeout( () => {
 				// Collapse all
 				$e.run( 'navigator/elements/toggle-folding-all', { state: false } );
-
 			} );
 
 			const promises = all.map( ( container ) => new Promise( ( resolve ) => {
