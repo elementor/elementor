@@ -1,3 +1,4 @@
+
 export default class NavigatorElementEmpty extends Marionette.ItemView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements--empty';

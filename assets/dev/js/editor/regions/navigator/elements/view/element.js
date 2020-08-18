@@ -96,21 +96,15 @@ export default class NavigatorElement extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
-		this.linkContainerNavView();
-
 		// TODO: Try HOOk(s).
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 	}
 
+	// TODO: Temp fix, remove whole block, find better solution.
 	linkContainerNavView() {
-		if ( ! this.container && this.model.id ) {
-			// TODO: Temp fix, remove whole block, find better solution.
+		if ( ! this.container?.navView && this.model.id ) {
 			this.container = elementor.getContainer( this.model.id );
-
-			if ( ! this.container ) {
-				return setTimeout( () => this.linkContainerNavView() );
-			}
 
 			if ( this.container ) {
 				this.container.navView = this;
@@ -291,6 +285,8 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.toggleHiddenClass();
 
 		this.renderIndicators();
+
+		setTimeout( this.linkContainerNavView.bind( this ) );
 	}
 
 	onModelChange() {
