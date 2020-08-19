@@ -37,7 +37,7 @@ export default function Select2( props ) {
 		}
 
 		return () => {
-			$select2.select2( 'destroy' ).off( 'select2:select' ).off( 'select2:unselect' );
+			$select2.select2( 'destroy' ).off( 'select2:select select2:unselect' );
 		};
 	}, [ props.settings, props.options ] );
 
