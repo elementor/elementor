@@ -1,14 +1,14 @@
 $select-box-selected-item-default-color: #5897fb;
 
 // Selection Box
-$select2-selection-closed-unfocused-background-color: theme-colors(light);
-$select2-selection-closed-unfocused-dark-background-color: dark-tints(700);
+$select2-selection-background-color: theme-colors(light);
+$select2-selection-dark-background-color: dark-tints(700);
 
-$select2-selection-closed-unfocused-color: tints(600);
-$select2-selection-closed-unfocused-dark-color: dark-tints(100);
+$select2-selection-color: tints(600);
+$select2-selection-dark-color: dark-tints(100);
 
-$select2-selection-closed-unfocused-border-color: tints(300);
-$select2-selection-closed-unfocused-dark-border-color: dark-tints(400);
+$select2-selection-border-color: tints(300);
+$select2-selection-dark-border-color: dark-tints(400);
 
 $select2-selection-opened-focused-border-color: tints(200);
 $select2-selection-opened-focused-dark-border-color: dark-tints(300);
@@ -74,9 +74,9 @@ $select2-dropdown-dark-border-color: dark-tints(400);
 
 :root {
 	// Selection Box
-	--select2-selection-closed-unfocused-background-color: #{$select2-selection-closed-unfocused-background-color};
-	--select2-selection-closed-unfocused-color: #{$select2-selection-closed-unfocused-color};
-	--select2-selection-closed-unfocused-border-color: #{$select2-selection-closed-unfocused-border-color};
+	--select2-selection-background-color: #{$select2-selection-background-color};
+	--select2-selection-color: #{$select2-selection-color};
+	--select2-selection-border-color: #{$select2-selection-border-color};
 	--select2-selection-opened-focused-border-color: #{$select2-selection-opened-focused-border-color};
 
 	--select2-single-selection-rendered-color: #{$select2-single-selection-rendered-color};
@@ -113,9 +113,9 @@ $select2-dropdown-dark-border-color: dark-tints(400);
 
 .eps-theme-dark {
 	// Selection Box
-	--select2-selection-closed-unfocused-background-color: #{$select2-selection-closed-unfocused-dark-background-color};
-	--select2-selection-closed-unfocused-color: #{$select2-selection-closed-unfocused-dark-color};
-	--select2-selection-closed-unfocused-border-color: #{$select2-selection-closed-unfocused-dark-border-color};
+	--select2-selection-background-color: #{$select2-selection-dark-background-color};
+	--select2-selection-color: #{$select2-selection-dark-color};
+	--select2-selection-border-color: #{$select2-selection-dark-border-color};
 	--select2-selection-opened-focused-border-color: #{$select2-selection-opened-focused-dark-border-color};
 
 	--select2-single-selection-rendered-color: #{$select2-single-selection-rendered-dark-color};
