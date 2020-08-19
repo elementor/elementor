@@ -152,7 +152,7 @@
 			width: 100%;
 
 			&:before {
-				right: 5px;
+				#{$end}: 5px;
 			}
 
 			.elementor-control {
