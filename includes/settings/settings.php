@@ -519,15 +519,15 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
-							'element_wrappers_legacy_mode' => [
+							'optimized_dom_output' => [
 								'label' => __( 'Optimized DOM Output', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'options' => [
-										'' => __( 'Enable', 'elementor' ),
-										1 => __( 'Disable', 'elementor' ),
+										'' => __( 'Default', 'elementor' ),
+										'enabled' => __( 'Enable', 'elementor' ),
+										'disabled' => __( 'Disable', 'elementor' ),
 									],
-									'std' => Upgrades_Manager::install_compare( '3.0.0', '<' ) ? 1 : '',
 									'desc' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
 										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
@@ -595,8 +595,8 @@ class Settings extends Settings_Page {
 		// Clear CSS Meta after change print method.
 		add_action( 'add_option_elementor_css_print_method', $clear_cache_callback );
 		add_action( 'update_option_elementor_css_print_method', $clear_cache_callback );
-		add_action( 'add_option_elementor_element_wrappers_legacy_mode', $clear_cache_callback );
-		add_action( 'update_option_elementor_element_wrappers_legacy_mode', $clear_cache_callback );
+		add_action( 'add_option_elementor_optimized_dom_output', $clear_cache_callback );
+		add_action( 'update_option_elementor_optimized_dom_output', $clear_cache_callback );
 
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', [ $this, 'menu_order' ] );

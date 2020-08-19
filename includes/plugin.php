@@ -632,9 +632,16 @@ class Plugin {
 
 	public function get_legacy_mode( $mode_name = null ) {
 		if ( ! $this->legacy_mode ) {
-			// If the legacy_mode variable does not exist yet, create it here.
+			$optimized_dom_output = get_option( 'elementor_optimized_dom_output' );
+
+			if ( $optimized_dom_output ) {
+				$element_wrappers_legacy_mode = 'disabled' === $optimized_dom_output;
+			} else {
+				$element_wrappers_legacy_mode = Upgrades_Manager::install_compare( '3.0.0', '<' );
+			}
+
 			$this->legacy_mode = [
-				'elementWrappers' => get_option( 'elementor_element_wrappers_legacy_mode', Upgrades_Manager::install_compare( '3.0.0', '<' ) ),
+				'elementWrappers' => $element_wrappers_legacy_mode,
 			];
 		}
 
