@@ -17,12 +17,14 @@ export default class Button extends React.Component {
 		variant: PropTypes.string,
 		color: PropTypes.string,
 		size: PropTypes.string,
+		target: PropTypes.string,
 	};
 
 	static defaultProps = {
 		id: '',
 		className: '',
 		variant: '',
+		target: '_parent',
 	};
 
 	getCssId() {
@@ -106,7 +108,7 @@ export default class Button extends React.Component {
 		if ( this.props.url ) {
 			if ( 0 === this.props.url.indexOf( 'http' ) ) {
 				return (
-					<a href={ this.props.url } target="_parent" { ...attributes }>
+					<a href={ this.props.url } target={ this.props.target } { ...attributes }>
 						{ buttonContent }
 					</a>
 				);

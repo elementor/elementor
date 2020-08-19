@@ -860,7 +860,6 @@ class Upgrades {
 		return self::move_settings_to_kit( $callback, $updater );
 	}
 
-
 	/**
 	 * @param callback $callback
 	 * @param Updater $updater
