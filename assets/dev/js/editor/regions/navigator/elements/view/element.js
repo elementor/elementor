@@ -97,8 +97,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.childViewContainer = '.elementor-navigator__elements';
 
 		// TODO: Try HOOk(s).
-		this.listenTo( this.model, 'change', this.onModelChange )
-			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
+		this.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 	}
 
 	// TODO: Temp fix, remove whole block, find better solution.
@@ -287,12 +286,6 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.renderIndicators();
 
 		setTimeout( this.linkContainerNavView.bind( this ) );
-	}
-
-	onModelChange() {
-		if ( undefined !== this.model.changed.hidden ) {
-			this.toggleHiddenClass();
-		}
 	}
 
 	onModelSettingsChange( settingsModel ) {

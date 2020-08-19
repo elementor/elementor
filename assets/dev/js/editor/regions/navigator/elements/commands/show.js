@@ -6,6 +6,7 @@ export class Show extends CommandNavView {
 
 		containers.forEach( ( container ) => {
 			container.navView.model.set( 'hidden', false );
+			container.navView.toggleHiddenClass();
 		} );
 	}
 }
