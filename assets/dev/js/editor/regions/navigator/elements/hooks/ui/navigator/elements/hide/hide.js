@@ -1,5 +1,4 @@
 import After from 'elementor-api/modules/hooks/ui/after';
-import Helper from '../helper.js';
 
 export class NavigatorHide extends After {
 	getCommand() {
@@ -13,9 +12,7 @@ export class NavigatorHide extends After {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		containers.forEach( ( container ) => {
-			Helper.toggleVisibilityClass( container.id );
-		} );
+		containers.forEach( ( container ) => container.view.toggleVisibilityClass() );
 	}
 }
 
