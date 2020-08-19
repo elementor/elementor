@@ -310,13 +310,21 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	}
 
 	onItemClick() {
-		this.model.trigger( 'request:edit', { scrollIntoView: true } );
+		const container = this.container || elementor.getContainer( this.model.id );
+
+		$e.run( 'panel/editor/open', {
+			model: container.model,
+			view: container.view,
+		} );
+
+		// Will not effect recording.
+		elementor.helpers.scrollToView( container.view.$el );
 	}
 
 	onToggleClick( event ) {
 		event.stopPropagation();
 
-		const container = elementor.getContainer( this.model.id );
+		const container = this.container || elementor.getContainer( this.model.id );
 
 		$e.run( 'navigator/elements/toggle-visibility', { container } );
 	}
