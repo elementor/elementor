@@ -31,7 +31,6 @@ export class NavigatorRenderIndicators extends After {
 			} );
 		} );
 	}
-
 }
 
 export default NavigatorRenderIndicators;

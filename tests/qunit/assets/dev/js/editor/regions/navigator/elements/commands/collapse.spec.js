@@ -20,7 +20,7 @@ export const Collapse = () => {
 				setTimeout( () => {
 					$e.run( 'navigator/elements/collapse', { container } );
 
-					assert.equal( container.navView.$el.children().hasClass( 'elementor-active' ), false);
+					assert.equal( container.navView.$el.children().hasClass( 'elementor-active' ), false );
 
 					resolve();
 				} );

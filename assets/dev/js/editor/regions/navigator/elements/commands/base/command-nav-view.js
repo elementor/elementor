@@ -8,7 +8,6 @@ export class CommandNavView extends CommandBase {
 
 		containers.forEach( ( container ) => {
 			if ( ! container.navView ) {
-				debugger;
 				throw Error( `'container.navView' is required, container id: '${ container.id }' ` );
 			}
 		} );
