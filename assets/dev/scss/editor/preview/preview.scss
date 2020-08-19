@@ -919,4 +919,8 @@ html.elementor-html {
 	> .elementor-widget-container, > .elementor-widget-wrap {
 		filter: alpha(0.4) saturate(0);
 	}
+	//Compatibility for hidden element by the navigator
+	&.elementor-edit-hidden {
+		display: none;
+	}
 }
