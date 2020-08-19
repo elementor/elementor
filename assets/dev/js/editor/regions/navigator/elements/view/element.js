@@ -95,19 +95,20 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.collection = this.model.get( 'elements' );
 
 		this.childViewContainer = '.elementor-navigator__elements';
-
-		// TODO: Try HOOk(s).
-		this.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 	}
 
 	// TODO: Temp fix, remove whole block, find better solution.
 	linkContainerNavView() {
-		if ( ! this.container?.navView && this.model.id ) {
-			this.container = elementor.getContainer( this.model.id );
+		if ( ! this.model.id ) {
+			return;
+		}
 
-			if ( this.container ) {
-				this.container.navView = this;
-			}
+		if ( ! this.container ) {
+			this.container = elementor.getContainer( this.model.id );
+		}
+
+		if ( this.container ) {
+			this.container.navView = this;
 		}
 	}
 
@@ -286,20 +287,6 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.renderIndicators();
 
 		setTimeout( this.linkContainerNavView.bind( this ) );
-	}
-
-	onModelSettingsChange( settingsModel ) {
-		if ( undefined !== settingsModel.changed._title ) {
-			this.ui.title.text( this.model.getTitle() );
-		}
-
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
-			if ( Object.keys( settingsModel.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
-				this.renderIndicators();
-
-				return false;
-			}
-		} );
 	}
 
 	onItemClick() {
