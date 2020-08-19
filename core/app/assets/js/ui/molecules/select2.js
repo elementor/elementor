@@ -30,8 +30,7 @@ export default function Select2( props ) {
 				...getDefaultSettings(),
 				...props.settings,
 			} )
-			.on( 'select2:select', props.onChange )
-			.on( 'select2:unselect', props.onChange );
+			.on( 'select2:select select2:unselect', props.onChange );
 
 		if ( props.onReady ) {
 			props.onReady( $select2 );
