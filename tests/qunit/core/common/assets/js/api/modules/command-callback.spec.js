@@ -25,7 +25,6 @@ jQuery( () => {
 			} );
 
 			// TODO: Add more tests.
-
 		} );
 	} );
 } );
