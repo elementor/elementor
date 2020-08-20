@@ -28,7 +28,6 @@ export default class EditorBase extends Marionette.Application {
 
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.
-	debug = elementorCommon.debug;
 	schemes = require( 'elementor-editor-utils/schemes' );
 	presetsFactory = require( 'elementor-editor-utils/presets-factory' );
 	templates = require( 'elementor-templates/manager' );
@@ -46,6 +45,16 @@ export default class EditorBase extends Marionette.Application {
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
 	};
+
+	get debug() {
+		elementorCommon.helpers.softDeprecated(
+			'elementor.debug',
+			'3.0.0',
+			'elementorCommon.debug'
+		);
+
+		return elementorCommon.debug;
+	}
 
 	/**
 	 * Exporting modules that can be used externally
