@@ -14,6 +14,7 @@ use Elementor\Core\Modules_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
+use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
@@ -436,6 +437,11 @@ class Plugin {
 	public $legacy_mode;
 
 	/**
+	 * @var Core\App\App
+	 */
+	public $app;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -602,6 +608,8 @@ class Plugin {
 
 		$this->upgrade = new Core\Upgrade\Manager();
 
+		$this->app = new Core\App\App();
+
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
@@ -624,9 +632,16 @@ class Plugin {
 
 	public function get_legacy_mode( $mode_name = null ) {
 		if ( ! $this->legacy_mode ) {
-			// If the legacy_mode variable does not exist yet, create it here.
+			$optimized_dom_output = get_option( 'elementor_optimized_dom_output' );
+
+			if ( $optimized_dom_output ) {
+				$element_wrappers_legacy_mode = 'disabled' === $optimized_dom_output;
+			} else {
+				$element_wrappers_legacy_mode = Upgrades_Manager::install_compare( '3.0.0', '<' );
+			}
+
 			$this->legacy_mode = [
-				'elementWrappers' => get_option( 'elementor_element_wrappers_legacy_mode' ),
+				'elementWrappers' => $element_wrappers_legacy_mode,
 			];
 		}
 

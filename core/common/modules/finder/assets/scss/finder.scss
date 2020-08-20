@@ -2,6 +2,7 @@
 
 	&__modal {
 		background: none;
+		z-index: 99999; // Above Theme Builder Modal
 
 		.dialog-widget-content {
 			$modal-width: 650px;
@@ -42,7 +43,7 @@
 			font-size: 14px;
 			color: $editor-darkest;
 			box-shadow: none;
-			
+
 			&::placeholder {
 				color: $editor-light;
 				font-style: italic;

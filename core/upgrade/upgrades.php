@@ -802,7 +802,7 @@ class Upgrades {
 			foreach ( $colors_to_save as $index => $color ) {
 				$kit->add_repeater_row( 'custom_colors', [
 					'_id' => Utils::generate_random_string(),
-					'title' => __( 'Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
 					'color' => $color,
 				] );
 			}
@@ -859,7 +859,6 @@ class Upgrades {
 
 		return self::move_settings_to_kit( $callback, $updater );
 	}
-
 
 	/**
 	 * @param callback $callback

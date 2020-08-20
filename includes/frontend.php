@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\App;
 use Elementor\Core\Base\Document;
+use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -29,9 +30,6 @@ class Frontend extends App {
 	 */
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
-	const RENDER_MODE_NORMAL = 'normal';
-	const RENDER_MODE_STATIC = 'static';
-
 	/**
 	 * Post ID.
 	 *
@@ -54,6 +52,13 @@ class Frontend extends App {
 	 * @var array Used fonts. Default is an empty array.
 	 */
 	public $fonts_to_enqueue = [];
+
+	/**
+	 * Holds the class that respond to manage the render mode.
+	 *
+	 * @var Render_Mode_Manager
+	 */
+	public $render_mode_manager;
 
 	/**
 	 * Registered fonts.
@@ -135,15 +140,6 @@ class Frontend extends App {
 	private $admin_bar_edit_documents = [];
 
 	/**
-	 * Determine the render mode.
-	 * if equals to self::RENDER_MODE_STATIC,
-	 * all the elements should be render without any interaction.
-	 *
-	 * @var string
-	 */
-	private $render_mode = self::RENDER_MODE_NORMAL;
-
-	/**
 	 * @var string[]
 	 */
 	private $body_classes = [
@@ -165,6 +161,7 @@ class Frontend extends App {
 			return;
 		}
 
+		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
@@ -188,6 +185,17 @@ class Frontend extends App {
 	 */
 	public function get_name() {
 		return 'frontend';
+	}
+
+	/**
+	 * Init render mode manager.
+	 */
+	public function init_render_mode() {
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			return;
+		}
+
+		$this->render_mode_manager = new Render_Mode_Manager();
 	}
 
 	/**
@@ -224,6 +232,7 @@ class Frontend extends App {
 
 		// Priority 7 to allow google fonts in header template to load in <head> tag
 		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
+		add_action( 'wp_head', [ $this, 'add_theme_color_meta_tag' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar.
@@ -243,6 +252,23 @@ class Frontend extends App {
 			$this->body_classes = array_merge( $this->body_classes, $class );
 		} else {
 			$this->body_classes[] = $class;
+		}
+	}
+
+	/**
+	 * Add Theme Color Meta Tag
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function add_theme_color_meta_tag() {
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		$mobile_theme_color = $kit->get_settings( 'mobile_theme_color' );
+
+		if ( ! empty( $mobile_theme_color ) ) {
+			?>
+			<meta name="theme-color" content="<?php echo $mobile_theme_color; ?>">
+			<?php
 		}
 	}
 
@@ -395,7 +421,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.6',
+			'4.8.1',
 			true
 		);
 
@@ -784,7 +810,15 @@ class Frontend extends App {
 				'cs_CZ' => 'latin-ext',
 				'ro_RO' => 'latin-ext',
 				'pl_PL' => 'latin-ext',
+				'hr_HR' => 'latin-ext',
+				'hu_HU' => 'latin-ext',
+				'sk_SK' => 'latin-ext',
+				'tr_TR' => 'latin-ext',
+				'lt_LT' => 'latin-ext',
 			];
+
+			$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
+
 			$locale = get_locale();
 
 			if ( isset( $subsets[ $locale ] ) ) {
@@ -1148,36 +1182,18 @@ class Frontend extends App {
 	}
 
 	/**
-	 * @return string
-	 */
-	public function get_render_mode() {
-		return $this->render_mode;
-	}
-
-	/**
-	 * @param string $render_mode
+	 * Is the current render mode is static.
 	 *
 	 * @return bool
 	 */
-	public function is_render_mode( $render_mode ) {
-		return $this->get_render_mode() === $render_mode;
-	}
-
-	/**
-	 * @param $render_mode
-	 *
-	 * @return $this
-	 */
-	public function set_render_mode( $render_mode ) {
-		$available_render_modes = [ self::RENDER_MODE_STATIC, self::RENDER_MODE_NORMAL ];
-
-		if ( ! in_array( $render_mode, $available_render_modes, true ) ) {
-			$render_mode = self::RENDER_MODE_NORMAL;
+	public function is_static_render_mode() {
+		// The render mode manager is exists only in frontend,
+		// so by default if it is not exist the method will return false.
+		if ( ! $this->render_mode_manager ) {
+			return false;
 		}
 
-		$this->render_mode = $render_mode;
-
-		return $this;
+		return $this->render_mode_manager->get_current()->is_static();
 	}
 
 	/**
@@ -1216,7 +1232,7 @@ class Frontend extends App {
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
-			'render_mode' => $this->get_render_mode(),
+			'is_static' => $this->is_static_render_mode(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],

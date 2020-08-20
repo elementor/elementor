@@ -102,16 +102,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 	startSort: function( event, ui ) {
 		event.stopPropagation();
 
-		var model = this.view.collection.get( {
-			cid: ui.item.data( 'model-cid' ),
-		} );
+		const container = elementor.getContainer( ui.item.attr( 'data-id' ) );
 
 		elementor.channels.data
-			.reply( 'dragging:model', model )
-			.reply( 'dragging:view', this.view.children.findByModel( model ) )
+			.reply( 'dragging:model', container.model )
+			.reply( 'dragging:view', container.view )
 			.reply( 'dragging:parent:view', this.view )
-			.trigger( 'drag:start', model )
-			.trigger( model.get( 'elType' ) + ':drag:start' );
+			.trigger( 'drag:start', container.model )
+			.trigger( container.model.get( 'elType' ) + ':drag:start' );
 	},
 
 	// On sorting element

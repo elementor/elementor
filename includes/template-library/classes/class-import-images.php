@@ -137,6 +137,12 @@ class Import_Images {
 		}
 
 		$post_id = wp_insert_attachment( $post, $upload['file'] );
+
+		// On REST requests.
+		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+			require_once ABSPATH . '/wp-admin/includes/image.php';
+		}
+
 		wp_update_attachment_metadata(
 			$post_id,
 			wp_generate_attachment_metadata( $post_id, $upload['file'] )

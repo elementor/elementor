@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
+use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,6 +44,15 @@ class Settings_Background extends Tab_Base {
 						'dynamic' => [],
 					],
 				],
+			]
+		);
+
+		$this->add_control(
+			'mobile_browser_background',
+			[
+				'label' => __( 'Mobile Browser Background', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'description' => __( 'The `theme-color` meta tag will only be available in supported browsers and devices.', 'elementor' ),
 			]
 		);
 
