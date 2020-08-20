@@ -1,11 +1,11 @@
-import CommandBase from 'elementor-api/modules/command-base';
-import Document from 'elementor-editor/document.js'; // TODO: Fix conflict between 'document/index.js and document.js'.
-import RevisionsTab from '../panel/tab';
+import CommandInternal from 'elementor-api/modules/command-internal-base';
+import Document from 'elementor-editor/../../../../assets/dev/js/editor/document'; // TODO: Fix conflict between 'document/index.js and document.js'.
+import RevisionsTab from '../../panel/tab';
 
 /**
  * @property {RevisionsComponent} component
  */
-export class Initialize extends CommandBase {
+export class Initialize extends CommandInternal {
 	validateArgs( args = {} ) {
 		this.requireArgumentConstructor( 'tab', RevisionsTab, args );
 		this.requireArgumentConstructor( 'document', Document, args );

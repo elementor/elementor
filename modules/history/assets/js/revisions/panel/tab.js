@@ -28,8 +28,9 @@ module.exports = Marionette.CompositeView.extend( {
 	initialize: function( options ) {
 		options.tab = this;
 
-		$e.run( 'panel/history/revisions/initialize', options );
+		$e.internal( 'panel/history/revisions/initialize', options );
 
+		// TODO use hooks.
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 

@@ -1,5 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
+import * as commandsInternal from './commands/internal/';
 import * as hooks from './hooks/';
 
 export default class RevisionsComponent extends ComponentBase {
@@ -14,6 +15,10 @@ export default class RevisionsComponent extends ComponentBase {
 
 	defaultCommands() {
 		return this.importCommands( commands );
+	}
+
+	defaultCommandsInternal() {
+		return this.importCommands( commandsInternal );
 	}
 
 	defaultHooks() {
