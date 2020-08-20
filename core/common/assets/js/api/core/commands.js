@@ -296,13 +296,11 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			instance = new instance( args );
 		}
 
-		let results;
-
 		const currentComponent = this.getComponent( command );
 
 		// Route?.
 		if ( ! ( instance instanceof Command ) ) {
-			results = instance.apply( currentComponent, [ args ] );
+			const results = instance.apply( currentComponent, [ args ] );
 
 			this.afterRun( command, args, results );
 
@@ -322,6 +320,12 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 			return;
 		}
+
+		return this.runInstance( command, args, instance );
+	}
+
+	runInstance( command, args, instance ) {
+		let results = null;
 
 		// For UI Hooks.
 		instance.onBeforeRun( instance.args );
@@ -367,28 +371,37 @@ export default class Commands extends CommandsBackwardsCompatibility {
 				instance.onAfterRun( instance.args, _result );
 
 				this.afterRun( command, instance.args, _result );
-			};
-
-		// TODO: Temp code determine if it's a jQuery deferred object.
-		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
-			result.fail( ( e ) => {
-				instance.onCatchApply( e );
-				this.afterRun( command, instance.args, e );
-			} );
-			result.done( onAfter );
-		} else if ( result instanceof Promise ) {
-			// Override initial result ( promise ) to await onAfter promises, first!.
-			return ( async () => {
-				await result.catch( ( e ) => {
+			},
+			handleResultJQueryDeferred = ( _result ) => {
+				_result.fail( ( e ) => {
 					instance.onCatchApply( e );
 					this.afterRun( command, instance.args, e );
 				} );
-				await result.then( ( _result ) => asyncOnAfter( _result ) );
+				_result.done( onAfter );
 
-				return result;
-			} )();
+				return _result;
+			},
+			handleResultPromise = ( _result ) => {
+				// Override initial result ( promise ) to await onAfter promises, first!.
+				return ( async () => {
+					await result.catch( ( e ) => {
+						instance.onCatchApply( e );
+						this.afterRun( command, instance.args, e );
+					} );
+					await result.then( ( __result ) => asyncOnAfter( __result ) );
+
+					return result;
+				} )();
+			},
+			handleResultNormal = ( _result ) => onAfter( _result );
+
+		// TODO: Temp code determine if it's a jQuery deferred object.
+		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
+			handleResultJQueryDeferred( result );
+		} else if ( result instanceof Promise ) {
+			return handleResultPromise( result );
 		} else {
-			onAfter( result );
+			handleResultNormal( result );
 		}
 
 		return result;
