@@ -130,7 +130,7 @@ class App extends BaseApp {
 
 		wp_register_style(
 			'select2',
-			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2.css',
+			$this->get_css_assets_url( 'e-select2','assets/lib/e-select2/css/' ),
 			[],
 			'4.0.6-rc.1'
 		);
@@ -173,7 +173,7 @@ class App extends BaseApp {
 
 		wp_register_script(
 			'select2',
-			ELEMENTOR_ASSETS_URL . 'lib/e-select2/js/e-select2.full.js',
+			$this->get_js_assets_url('e-select2.full', 'assets/lib/e-select2/js/' ),
 			[
 				'jquery',
 			],
