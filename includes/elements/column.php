@@ -988,8 +988,7 @@ class Element_Column extends Element_Base {
 	 * @since 1.3.0
 	 * @access protected
 	 */
-	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
+	protected function _add_render_attributes() {	
 
 		$is_inner = $this->get_data( 'isInner' );
 
@@ -1004,6 +1003,8 @@ class Element_Column extends Element_Base {
 				'elementor-' . $column_type . '-column',
 			]
 		);
+
+		parent::_add_render_attributes();
 	}
 
 	/**
