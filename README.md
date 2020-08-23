@@ -244,6 +244,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Tweak: Updated `eicons` library to `v5.9.1`
 * Tweak: Updated `e-gallery` library to `v1.2.0`
 * Tweak: Updated Dialog library to `v4.8.1`
+* Tweak: Updated Google Fonts list to 07/2020
 * Tweak: Added lazyload to Lightbox slideshow images
 * Tweak: Removed unused `elementor-edit-area-preview` class
 * Tweak: Adding support to Vimeo external links structure
@@ -266,6 +267,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Tweak: Added Improved DOM Output option in Elementor settings to allow legacy mode of HTML DOM prior to v3.0
 * Tweak: Removed v2.9 reference from the Dynamic promotions
 * Fix: Image block alignment broken by Elementor general figure styling ([#11906](https://github.com/elementor/elementor/issues/11906), [#9259](https://github.com/elementor/elementor/issues/9259), [#7331](https://github.com/elementor/elementor/issues/7331))
+* Fix: Elementor posts aren't properly imported with WordPress Importer v0.7 ([#11466](https://github.com/elementor/elementor/issues/11466), [#10744](https://github.com/elementor/elementor/issues/10744), [#11927](https://github.com/elementor/elementor/issues/11927))
 * Fix: Divider can't use `EM` font-size unit in Divider widget ([#11352](https://github.com/elementor/elementor/issues/11352))
 * Fix: Theme Style overrides Icon List items typography values when list items are links in Icon List widget ([#12021](https://github.com/elementor/elementor/issues/12021))
 * Fix: Responsive glitch in Range control ([#11233](https://github.com/elementor/elementor/issues/11233))
@@ -275,6 +277,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Fix: The wrong video being opened in Media Carousel widget
 * Fix: Dark mode UI glitch in Display conditions modal
 * Fix: Connect issues when using non-latin character domains
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-0-planned-deprecations/)
 
 ### 2.9.14 - 2020-07-21 ###
 * Tweak: Added compatibility with WordPress v5.5 ([#11820](https://github.com/elementor/elementor/issues/11820), [#11830](https://github.com/elementor/elementor/issues/11830))
