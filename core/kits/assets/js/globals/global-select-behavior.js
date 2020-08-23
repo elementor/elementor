@@ -40,7 +40,14 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 				elementor.kitManager.renderGlobalVariables();
 
-				this.view.applySavedValue();
+				// TODO: Remove temp fix, this.ui.globalSelect pt-850.
+				try {
+					this.view.applySavedValue();
+				} catch ( e ) {
+					if ( $e.devTools ) {
+						$e.devTools.log.error( e );
+					}
+				}
 
 				return globalData.data;
 			} );
@@ -148,18 +155,21 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	// The Global Control elements are initialized onRender and not with initialize() because their position depends
 	// on elements that are not yet rendered when initialize() is called.
 	onRender() {
-		this.printGlobalToggleButton();
+		// TODO: Remove temp fix, this.ui.globalSelect pt-850.
+		setTimeout( () => {
+			this.printGlobalToggleButton();
 
-		this.initGlobalPopover();
+			this.initGlobalPopover();
 
-		if ( this.view.getGlobalKey() ) {
-			// This setTimeout is here to overcome an issue with a requestAnimationFrame that runs in the Pickr library.
-			setTimeout( () => this.fetchGlobalValue(), 50 );
-		} else {
-			this.onValueTypeChange();
-		}
+			if ( this.view.getGlobalKey() ) {
+				// This setTimeout is here to overcome an issue with a requestAnimationFrame that runs in the Pickr library.
+				this.fetchGlobalValue();
+			} else {
+				this.onValueTypeChange();
+			}
 
-		this.$el.addClass( 'e-control-global' );
+			this.$el.addClass( 'e-control-global' );
+		} );
 	}
 
 	toggleGlobalPopover() {
@@ -237,8 +247,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 
 		// Render the list of globals and append them to the Globals popover.
-		this.view.getGlobalsList()
-			.then(
+		this.view.getGlobalsList().then(
 			( globalsList ) => {
 				this.addGlobalsListToPopover( globalsList );
 
