@@ -51,8 +51,13 @@ ControlsStack = Marionette.CompositeView.extend( {
 		},
 	},
 
-	initialize: function() {
+	initialize: function( options ) {
 		this.initCollection();
+
+		if ( options.tab ) {
+			this.activeTab = options.tab;
+			this.activateFirstSection();
+		}
 
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
