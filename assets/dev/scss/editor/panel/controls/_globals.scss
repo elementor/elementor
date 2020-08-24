@@ -29,7 +29,7 @@
 
 		&-title {
 			padding: 15px 20px;
-			font-weight: bold;
+			font-weight: 500;
 			color: $editor-dark;
 			border-bottom: 1px solid $editor-background;
 			display: flex;
@@ -68,6 +68,7 @@
 
 			i {
 				color: $editor-lightest;
+				font-size: 13px;
 			}
 		}
 	}
@@ -78,11 +79,11 @@
 		margin-top: 5px;
 
 		&::-webkit-scrollbar {
-			width: 8px;
+			width: 7px;
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background-color: $editor-light;
+			background-color: $editor-lighter;
 			outline: 1px solid $editor-darker;
 			border-radius: 10px;
 		}
@@ -155,7 +156,7 @@
 		&-hex {
 			font-size: 10px;
 			font-weight: 500;
-			color: $editor-light;
+			color: $editor-lighter;
 		}
 
 		.pcr-button {
@@ -186,6 +187,10 @@
 
 		&:hover {
 			background-color: $editor-background-light;
+
+			.e-global__color-hex {
+				color: $editor-light;
+			}
 		}
 	}
 
