@@ -152,6 +152,7 @@ class Settings_Layout extends Tab_Base {
 				'min' => $default_breakpoints['sm'] + 1,
 				'max' => $default_breakpoints['lg'] - 1,
 				'default' => $default_breakpoints['md'],
+				'placeholder' => $default_breakpoints['md'],
 				/* translators: %d: Breakpoint value */
 				'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
 			]
@@ -173,6 +174,7 @@ class Settings_Layout extends Tab_Base {
 				'min' => $default_breakpoints['md'] + 1,
 				'max' => $default_breakpoints['xl'] - 1,
 				'default' => $default_breakpoints['lg'],
+				'placeholder' => $default_breakpoints['lg'],
 				/* translators: %d: Breakpoint value */
 				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
 			]
