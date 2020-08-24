@@ -1,0 +1,54 @@
+// SHAME:
+// Purpose of this partial is to gather all ad hock, not structured code.
+// This will enable to refactor it bit by bit into structured code without effecting current output.
+
+//todo: discuss, is this needed?
+
+.video-wrapper {
+	position: relative;
+	padding-bottom: $eps-ratio-16-9;
+	height: 0;
+
+	iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.#{$eps-prefix}separator {
+	margin-bottom: spacing(44);
+}
+
+
+.eps-theme-dark {
+	--e-app-back-button-color: #{dark-tints(200)};
+}
+
+.back-button, .e-app-back-button {
+	--button-background-color: var(--e-app-back-button-color, #{tints(500)});
+	margin-bottom: spacing(24);
+
+	.eps-icon {
+		margin-inline-end: spacing(5);
+	}
+}
+
+.eps-theme-dark {
+	--input-border-color: --hr-color;
+}
+
+.#{$eps-prefix}input {
+	border: 1px solid var(--hr-color);
+	border-radius: $eps-radius;
+	background: transparent;
+	color: inherit;
+	height: spacing(30);
+	padding: 0 spacing(5);
+
+	&--block {
+		width: 100%;
+	}
+}

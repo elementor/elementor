@@ -1,6 +1,6 @@
-import History from 'elementor-document/commands/base/history';
+import CommandHistory from 'elementor-document/commands/base/command-history';
 
-export class Remove extends History {
+export class Remove extends CommandHistory {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' );
@@ -48,6 +48,8 @@ export class Remove extends History {
 			result = [];
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			const collection = container.settings.get( name ),
 				model = collection.at( index );
 
@@ -60,7 +62,7 @@ export class Remove extends History {
 			}
 
 			// Remove from container and add to result.
-			result.push( container.children.splice( index, 1 ) );
+			result.push( container.repeaters[ name ].children.splice( index, 1 ) );
 
 			collection.remove( model );
 

@@ -4,7 +4,10 @@ import DocumentHelper from 'elementor-editor/document/helper';
 module.exports = {
 	document: DocumentHelper,
 
-	_enqueuedFonts: [],
+	_enqueuedFonts: {
+		editor: [],
+		preview: [],
+	},
 	_enqueuedIconFonts: [],
 	_inlineSvg: [],
 
@@ -198,8 +201,13 @@ module.exports = {
 		};
 	},
 
-	enqueueFont( font ) {
-		if ( -1 !== this._enqueuedFonts.indexOf( font ) ) {
+	// The target parameter = 'editor'/'preview'. Defaults to 'preview' for backwards compatibility.
+	enqueueFont( font, target = 'preview' ) {
+		if ( $e.devTools ) {
+			$e.devTools.log.info( `enqueueFont font: '${ font }', target: '${ target }'` );
+		}
+
+		if ( -1 !== this._enqueuedFonts[ target ].indexOf( font ) ) {
 			return;
 		}
 
@@ -232,16 +240,24 @@ module.exports = {
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
-			this.enqueuePreviewStylesheet( fontUrl );
+			if ( 'editor' === target ) {
+				// TODO: Find better solution, temporary fix, covering issue: 'fonts does not rendered in global styles'.
+				this.enqueueCSS( fontUrl, elementorCommon.elements.$document );
+			} else {
+				this.enqueueCSS( fontUrl, elementor.$previewContents );
+			}
 		}
 
-		this._enqueuedFonts.push( font );
+		this._enqueuedFonts[ target ].push( font );
 
 		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
 	resetEnqueuedFontsCache() {
-		this._enqueuedFonts = [];
+		this._enqueuedFonts = {
+			editor: [],
+			preview: [],
+		};
 		this._enqueuedIconFonts = [];
 	},
 
@@ -277,7 +293,9 @@ module.exports = {
 	},
 
 	getUniqueID() {
-		return Math.random().toString( 16 ).substr( 2, 7 );
+		elementorCommon.helpers.softDeprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
+
+		return elementorCommon.helpers.getUniqueId();
 	},
 
 	getSocialNetworkNameFromIcon( iconsControl, fallbackControl, toUpperCase = false, migrated = null, withIcon = false ) {

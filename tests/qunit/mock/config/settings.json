@@ -1,111 +1,55 @@
 {
-  "general": {
-	"name": "general",
-	"panelPage": {
-	  "title": "Global Settings"
-	},
-	"cssWrapperSelector": "",
-	"controls": {
-	  "style": {
-		"type": "section",
-		"tab": "style",
-		"label": "Style",
-		"name": "style"
-	  },
-	  "elementor_default_generic_fonts": {
-		"type": "text",
-		"tab": "style",
-		"section": "style",
-		"label": "Default Generic Fonts",
-		"default": "Sans-serif",
-		"description": "The list of fonts used if the chosen font is not available.",
-		"label_block": true,
-		"name": "elementor_default_generic_fonts"
-	  },
-	  "lightbox": {
-		"type": "section",
-		"tab": "lightbox",
-		"label": "Lightbox",
-		"name": "lightbox"
-	  },
-	  "elementor_global_image_lightbox": {
-		"type": "switcher",
-		"tab": "lightbox",
-		"section": "lightbox",
-		"label": "Image Lightbox",
-		"default": "yes",
-		"description": "Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.",
-		"frontend_available": true,
-		"name": "elementor_global_image_lightbox"
-	  }
-	},
-	"tabs": {
-	  "style": "Style",
-	  "lightbox": "Lightbox"
-	},
-	"settings": {
-	  "elementor_default_generic_fonts": "Sans-serif ",
-	  "elementor_container_width": "1083",
-	  "elementor_space_between_widgets": "6",
-	  "elementor_stretched_section_container": "0",
-	  "elementor_page_title_selector": "5552222",
-	  "elementor_lightbox_color": "#383838",
-	  "elementor_lightbox_ui_color": "#ffffff",
-	  "elementor_global_image_lightbox": "yes",
-	  "elementor_lightbox_ui_color_hover": ""
-	}
-  },
-  "editorPreferences": {
-	"name": "editorPreferences",
-	"panelPage": {
-	  "title": "Editor Preferences"
-	},
-	"controls": {
-	  "preferences": {
-		"type": "section",
-		"tab": "settings",
-		"label": "Preferences",
-		"name": "preferences"
-	  },
-	  "ui_theme": {
-		"type": "select",
-		"tab": "settings",
-		"section": "preferences",
-		"label": "UI Theme",
-		"description": "Set light or dark mode, or use Auto Detect to sync it with your OS setting.",
-		"default": "auto",
-		"options": {
-		  "auto": "Auto Detect",
-		  "light": "Light",
-		  "dark": "Dark"
+	"editorPreferences": {
+		"name": "editorPreferences",
+		"panelPage": {
+			"title": "User Preferences"
 		},
-		"name": "ui_theme"
-	  },
-	  "edit_buttons": {
-		"type": "switcher",
-		"tab": "settings",
-		"section": "preferences",
-		"label": "Editing Handles",
-		"description": "Show editing handles when hovering over the element edit button.",
-		"name": "edit_buttons",
-		"default": ""
-	  },
-	  "lightbox_in_editor": {
-		"type": "switcher",
-		"tab": "settings",
-		"section": "preferences",
-		"label": "Enable Lightbox In Editor",
-		"default": "yes",
-		"name": "lightbox_in_editor"
-	  }
-	},
-	"tabs": {
-	  "settings": "Settings"
-	},
-	"settings": {
-	  "ui_theme": "dark",
-	  "edit_buttons": "",
-	  "lightbox_in_editor": "yes"
+		"controls": {
+			"preferences": {
+				"type": "section",
+				"tab": "settings",
+				"label": "Preferences",
+				"name": "preferences"
+			},
+			"ui_theme": {
+				"type": "select",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "UI Theme",
+				"description": "Set light or dark mode, or use Auto Detect to sync it with your OS setting.",
+				"default": "auto",
+				"options": {
+					"auto": "Auto Detect",
+					"light": "Light",
+					"dark": "Dark"
+				},
+				"name": "ui_theme"
+			},
+			"edit_buttons": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Editing Handles",
+				"description": "Show editing handles when hovering over the element edit button.",
+				"name": "edit_buttons",
+				"default": ""
+			},
+			"lightbox_in_editor": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Enable Lightbox In Editor",
+				"default": "yes",
+				"name": "lightbox_in_editor"
+			}
+		},
+		"tabs": {
+			"settings": "Settings"
+		},
+		"settings": {
+			"ui_theme": "dark",
+			"edit_buttons": "",
+			"lightbox_in_editor": "yes"
+		}
 	}
-  }
 }

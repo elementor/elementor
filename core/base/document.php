@@ -820,13 +820,20 @@ abstract class Document extends Controls_Stack {
 		if ( ! $elements_data ) {
 			$elements_data = $this->get_elements_data();
 		}
+
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
+
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
+			<?php if ( $is_legacy_mode_active ) { ?>
 			<div class="elementor-inner">
+			<?php } ?>
 				<div class="elementor-section-wrap">
 					<?php $this->print_elements( $elements_data ); ?>
 				</div>
+			<?php if ( $is_legacy_mode_active ) { ?>
 			</div>
+			<?php } ?>
 		</div>
 		<?php
 	}
@@ -973,17 +980,6 @@ abstract class Document extends Controls_Stack {
 			 */
 			do_action( 'elementor/document/save_version', $this );
 		}
-	}
-
-	/**
-	 * @since 2.0.0
-	 * @access public
-	 * @deprecated 2.2.0 Use `Document::save_template_type()`.
-	 */
-	public function save_type() {
-		_deprecated_function( __METHOD__, '2.2.0', __CLASS__ . '::save_template_type()' );
-
-		$this->save_template_type();
 	}
 
 	/**

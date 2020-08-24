@@ -35,13 +35,16 @@
 	width: 100% !important;
 	outline: none;
 	z-index: $editor-layer;
+	font-size: 12px;
 
 	&.select2-container--default {
 
 		.select2-selection--single {
+			height: 27px;
 
 			.select2-selection__rendered {
 				color: $editor-dark;
+				line-height: 27px;
 			}
 		}
 
@@ -84,10 +87,6 @@
 	&--single {
 		height: $control-unit;
 	}
-}
-
-.select2-selection__rendered {
-	line-height: $control-unit;
 }
 
 .select2-selection__arrow {
@@ -184,6 +183,56 @@
 		&:before {
 			content: '\e8b6';
 		}
+	}
+}
+
+// Color Picker / Typography popovers common CSS
+.e-group-control-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-weight: bold;
+	font-size: 12px;
+	padding: 10px;
+	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+	margin-bottom: 15px;
+}
+
+.e-control-tools {
+	display: flex;
+}
+
+.e-control-tool {
+	width: 20px;
+	height: 20px;
+	display: inline-flex;
+	border-radius: 3px;
+	margin: 0 3px 0;
+	border: 0;
+	position: relative;
+	background-color: #fff;
+
+	&:not(.e-control-tool-disabled) {
+		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+		cursor: pointer;
+	}
+
+	&-disabled {
+		background: $editor-background;
+		pointer-events: none;
+
+		i {
+			color: #fff;
+		}
+	}
+
+	i {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		color: $editor-dark;
+		font-size: 13px;
 	}
 }
 

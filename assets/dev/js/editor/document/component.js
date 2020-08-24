@@ -1,15 +1,38 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import BackwardsCompatibility from './backwards-compatibility.js';
-import CommandHistoryBase from './commands/base/history';
-import CommandHistoryDebounceBase from './commands/base/history/debounce';
+import CommandHistory from './commands/base/command-history';
+import CommandHistoryDebounce from './commands/base/command-history-debounce';
+
+import * as components from './';
 import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
 	static getModules() {
-		return {
-			CommandHistoryBase,
-			CommandHistoryDebounceBase,
+		const modules = {
+			get CommandHistoryBase() {
+				elementorCommon.helpers.hardDeprecated(
+					'$e.modules.document.CommandHistoryBase',
+					'3.0.0',
+					'$e.modules.document.CommandHistory'
+				);
+
+				return this.CommandHistory;
+			},
+			get CommandHistoryDebounceBase() {
+				elementorCommon.helpers.hardDeprecated(
+					'$e.modules.document.CommandHistoryDebounceBase',
+					'3.0.0',
+					'$e.modules.document.CommandHistoryDebounce'
+				);
+
+				return this.CommandHistoryDebounce;
+			},
+
+			CommandHistory,
+			CommandHistoryDebounce,
 		};
+
+		return modules;
 	}
 
 	getNamespace() {
@@ -18,6 +41,10 @@ export default class Component extends ComponentBase {
 
 	registerAPI() {
 		new BackwardsCompatibility();
+
+		Object.values( components ).forEach( ( ComponentClass ) =>
+			$e.components.register( new ComponentClass )
+		);
 
 		super.registerAPI();
 	}

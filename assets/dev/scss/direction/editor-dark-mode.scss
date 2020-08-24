@@ -72,6 +72,80 @@ body {
 	}
 }
 
+.pickr {
+	background-color: $theme-dark-gray-darkest;
+	border-color: $theme-dark-gray-light;
+}
+
+.e-control-color {
+
+	&--no-value {
+
+		.pcr-button {
+			border-color: $theme-dark-gray-light;
+		}
+	}
+}
+
+// Globals
+.e-global {
+
+	&__popover {
+
+		&-toggle {
+			border-color: $theme-dark-gray-light;
+			background-color: $theme-dark-gray-darkest;
+		}
+
+		&-container {
+			background-color: $theme-dark-gray;
+			color: $theme-dark-light;
+		}
+
+		&-title {
+			border-bottom-color: $theme-dark-gray-dark;
+		}
+	}
+
+	&__color-title,
+	&__manage-button,
+	&__popover-title {
+		color: $theme-dark-light;
+	}
+
+	&__manage-button {
+		border-top-color: $theme-dark-gray-dark;
+	}
+
+	&__preview-item {
+
+		&:hover {
+			background-color: $theme-dark-gray-dark;
+		}
+	}
+}
+
+// Global Settings
+.elementor-control {
+
+	&-type-global-style-repeater {
+
+		.elementor-button-wrapper {
+			border-top-color: $theme-dark-gray-darkest;
+		}
+	}
+}
+
+// Elementor control tools - Typography popover header and Color Picker Header
+.e-control-tool {
+	background-color: $theme-dark-gray-darkest;
+	border-color: $theme-dark-light;
+
+	i {
+		color: $theme-dark-light;
+	}
+}
+
 //Loader
 #elementor-loading {
 	background-color: $theme-dark-gray-darkest;
@@ -144,6 +218,7 @@ select {
 .elementor-control-dynamic-switcher {
 	background-color: $theme-dark-gray-darkest;
 	border-color: $theme-dark-gray-light;
+	color: $theme-dark-light;
 }
 
 .elementor-tags-list {
@@ -211,15 +286,6 @@ select {
 			+ i {
 				color: $theme-dark-light;
 			}
-		}
-
-		&::-webkit-search-cancel-button {
-			-webkit-appearance: none;
-			height: 8px;
-			width: 8px;
-			background:
-					linear-gradient(45deg, transparent 45%, $theme-dark-gray-lightest 45%, $theme-dark-gray-lightest 55%, transparent 55%),
-					linear-gradient(135deg, transparent 45%, $theme-dark-gray-lightest 45%, $theme-dark-gray-lightest 55%, transparent 55%);
 		}
 	}
 
@@ -328,16 +394,14 @@ select {
 	//Menu
 	.elementor-panel-menu-item {
 
-		&:not(.elementor-panel-menu-item-exit-to-dashboard) {
-			background-color: $theme-dark-gray-dark;
+		background-color: $theme-dark-gray-dark;
 
-			&:hover {
-				background-color: $theme-dark-gray;
-			}
+		&:hover {
+			background-color: $theme-dark-gray;
+		}
 
-			a {
-				color: $theme-dark-light;
-			}
+		a {
+			color: $theme-dark-light;
 		}
 
 		&-icon {
@@ -411,8 +475,13 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 //Media Control
+.elementor-control-media-upload-button {
+	background-color: $theme-dark-gray-darkest;
+}
+
 .elementor-control-media__remove {
-	border-color: $theme-dark-gray-light;
+	background-color: $theme-dark-gray-light;
+	color: $theme-dark-gray-lightest;
 }
 
 .elementor-control-media {
@@ -433,7 +502,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 		&,
 		&__controls {
-			background-color: $theme-dark-gray-darkest;
 			border-color: $theme-dark-gray-light;
 		}
 	}
@@ -471,6 +539,26 @@ $devices: 'desktop', 'tablet', 'mobile';
 	.elementor-control-gallery-status,
 	.elementor-control-media__content {
 		border-color: $theme-dark-gray-light;
+	}
+
+	&.elementor-control-dynamic {
+
+		.elementor-control-gallery-clear {
+			border-color: $theme-dark-gray-light;
+		}
+	}
+
+	.elementor-control-dynamic-switcher {
+		border-bottom: 1px solid $theme-dark-gray-light;
+		border-left: 1px solid $theme-dark-gray-light;
+		border-radius: 0 3px 0 0;
+	}
+}
+
+body.rtl .elementor-control-type-gallery {
+	.elementor-control-dynamic-switcher {
+		border-right: 1px solid $theme-dark-gray-light;
+		border-left: none;
 	}
 }
 
@@ -731,27 +819,6 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 }
 
-//Color Picker
-.pickr {
-	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray-light;
-}
-
-.elementor-color-picker {
-
-	&__dropping-area {
-		border: 1px dashed $theme-dark-gray-lighter;
-		color: $theme-dark-gray-lightest;
-
-		&.elementor-active {
-			border-color: $theme-dark-gray-lightest;
-
-			i {
-				color: $theme-dark-danger;
-			}
-		}
-	}
-}
 
 //Structure Control
 .elementor-control-type-structure {
@@ -1073,6 +1140,7 @@ label.elementor-template-library-order-label,
 	}
 }
 
+// Theme Builder
 #elementor-publish {
 
 	#elementor-theme-builder-conditions {
@@ -1094,6 +1162,13 @@ label.elementor-template-library-order-label,
 			}
 		}
 
+		.elementor-control-type-select {
+
+			.elementor-control-input-wrapper:after {
+				color: inherit;
+			}
+		}
+
 		.elementor-theme-builder-conditions-repeater-row-controls {
 
 			.elementor-control:not(:first-child) {
@@ -1106,6 +1181,13 @@ label.elementor-template-library-order-label,
 				background-color: $theme-dark-gray;
 			}
 		}
+	}
+}
+
+#elementor-toast {
+
+	.e-toast-button {
+		background-color: $theme-dark-gray;
 	}
 }
 
@@ -1335,7 +1417,7 @@ label.elementor-template-library-order-label,
 	color: $editor-dark;
 }
 
-.elementor-color-picker__swatch-tool {
+.elementor-color-picker__tool {
 	background-color: $theme-dark-light;
 
 	i {

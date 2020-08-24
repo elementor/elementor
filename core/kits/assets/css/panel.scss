@@ -1,4 +1,3 @@
-
 .elementor-panel {
 
 	#elementor-panel-header {
@@ -38,7 +37,7 @@
 		.elementor-panel-navigation {
 
 			.elementor-panel-navigation-tab{
-				
+
 				&.elementor-active{
 					border-bottom-color: $editor-kit-accent;
 				}
@@ -59,6 +58,10 @@
 				background-color: $editor-kit-accent;
 			}
 		}
+
+		#elementor-panel-page-menu {
+			padding: 25px 15px 0;
+		}
 	}
 
 	#elementor-panel-header-add-button,
@@ -67,4 +70,121 @@
 	#elementor-panel-footer-navigator {
 		display: none;
 	}
+}
+
+.elementor-control {
+
+	&-type-global-style-repeater {
+
+		.elementor-repeater {
+
+			&-fields {
+				margin-bottom: 15px;
+				position: relative;
+			}
+
+			&-row-controls {
+				display: flex;
+				align-items: center;
+			}
+
+			&-row-tool {
+				cursor: pointer;
+				color: $editor-lightest;
+				padding: 5px;
+			}
+		}
+
+		.elementor-control {
+			padding: 0;
+
+			&-title {
+				flex-grow: 1;
+
+				input {
+					max-width: $control-unit * 5;
+
+					&:not(:focus) {
+						background: none;
+						border: none;
+					}
+				}
+			}
+
+			&-input-wrapper {
+				display: flex;
+				align-items: center;
+				// Fix HEX values flickering when moving the mouse over them.
+				min-width: $control-unit * 3;
+
+				&:hover {
+
+					.e-global-colors__color-value {
+						display: none;
+					}
+				}
+
+				&:not(:hover) {
+
+					.elementor-repeater-tool-remove,
+					.elementor-repeater-tool-remove--disabled {
+						display: none;
+					}
+				}
+			}
+		}
+
+		// Hard selector to override default margin
+		.elementor-control-content {
+
+			> .elementor-control-field {
+
+				> .elementor-control-input-wrapper {
+					margin-top: 0;
+				}
+			}
+		}
+
+		.elementor-controls-popover {
+			align-self: end;
+			margin-top: 35px;
+			top: 0;
+			width: 100%;
+
+			&:before {
+				@include end(5px);
+			}
+
+			.elementor-control {
+				padding: 0 20px 15px;
+
+				&-title {
+					flex-grow: initial;
+				}
+			}
+		}
+
+		.elementor-button-wrapper {
+			text-align: center;
+			border-top: 1px solid $editor-background;
+			max-width: 260px;
+			padding-top: 15px;
+		}
+
+		.pickr,
+		.elementor-control-popover-toggle-toggle-label {
+			@include margin-start(5px);
+		}
+	}
+
+	&-system_colors,
+	&-system_typography {
+		padding-bottom: 0;
+	}
+}
+
+.e-global-colors__color-value {
+	color: $editor-lightest;
+	font-size: 10px;
+	padding: 0 5px;
 }

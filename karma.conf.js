@@ -26,6 +26,8 @@ module.exports = function( config ) {
 			'tests/qunit/vendor/wp-includes/jquery.js',
 			'tests/qunit/vendor/wp-includes/underscore.min.js',
 			'tests/qunit/vendor/wp-includes/backbone.min.js',
+			'tests/qunit/vendor/wp-includes/react.min.js',
+			'tests/qunit/vendor/wp-includes/react-dom.min.js',
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
 
@@ -99,6 +101,7 @@ module.exports = function( config ) {
 		client: {
 			clearContext: true,
 			qunit: {
+				isDebug,
 				showUI: false,
 				testTimeout: 5000,
 			},
@@ -111,7 +114,7 @@ module.exports = function( config ) {
 		if ( fs.existsSync( '../elementor-dev-tools' ) ) {
 			const last = karmaConfig.files.pop();
 
-			karmaConfig.files.push( { pattern: '../elementor-dev-tools/modules/dev-tools/assets/js/*.js', type: 'module' } );
+			karmaConfig.files.push( { pattern: '../elementor-dev-tools/assets/js/editor.js', type: 'module' } );
 
 			karmaConfig.files.push( last );
 		}

@@ -218,11 +218,10 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-filter {
-	@include border-end(1px solid $editor-lightest);
 
 	.select2 {
 		text-align: $start;
-		@include margin-end(25px);
+		width: calc(#{$control-unit} * 5) !important;
 	}
 
 	.select2-selection__rendered {
@@ -234,6 +233,8 @@ label.elementor-template-library-order-label {
 
 	.select2-results__option {
 		text-transform: capitalize;
+		text-align: $start;
+		@include padding-start(5px);
 	}
 }
 

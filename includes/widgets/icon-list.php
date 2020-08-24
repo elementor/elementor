@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor icon list widget.
@@ -155,7 +156,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'icon_list',
 			[
-				'label' => '',
+				'label' => __( 'Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
 				'default' => [
@@ -182,6 +183,21 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'title_field' => '{{{ elementor.helpers.renderIcon( this, selected_icon, {}, "i", "panel" ) || \'<i class="{{ icon }}" aria-hidden="true"></i>\' }}} {{{ text }}}',
+			]
+		);
+
+		$this->add_control(
+			'link_click',
+			[
+				'label' => __( 'Apply Link On', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'full_width' => __( 'Full Width', 'elementor' ),
+					'inline' => __( 'Inline', 'elementor' ),
+				],
+				'default' => 'full_width',
+				'separator' => 'before',
+				'prefix_class' => 'elementor-list-item-link-',
 			]
 		);
 
@@ -352,9 +368,8 @@ class Widget_Icon_List extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'condition' => [
 					'divider' => 'yes',
@@ -385,9 +400,8 @@ class Widget_Icon_List extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'fill: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 			]
 		);
@@ -470,9 +484,8 @@ class Widget_Icon_List extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+				'global' => [
+					'default' => Global_Colors::COLOR_SECONDARY,
 				],
 			]
 		);
@@ -509,8 +522,10 @@ class Widget_Icon_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'icon_typography',
-				'selector' => '{{WRAPPER}} .elementor-icon-list-item',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'selector' => '{{WRAPPER}} .elementor-icon-list-item, {{WRAPPER}} .elementor-icon-list-item a',
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 

@@ -302,6 +302,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @since 2.0.9 Added the `controls` and the `settings` parameters.
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param array $controls Optional. An array of controls. Default is null.
 	 * @param array $settings Optional. Controls settings. Default is null.
@@ -309,6 +310,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Active controls.
 	 */
 	public function get_active_controls( array $controls = null, array $settings = null ) {
+		// _deprecated_function( __METHOD__, '3.0.0' );
+
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
 		}
@@ -368,6 +371,14 @@ abstract class Controls_Stack extends Base_Object {
 			'position' => null,
 		];
 
+		if ( isset( $args['scheme'] ) ) {
+			$args['global'] = [
+				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args['scheme'] ),
+			];
+
+			unset( $args['scheme'] );
+		}
+
 		$options = array_merge( $default_options, $options );
 
 		if ( $options['position'] ) {
@@ -379,31 +390,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
-			$target_section_args = $this->current_section;
-
-			$target_tab = $this->current_tab;
-
-			if ( $this->injection_point ) {
-				$target_section_args = $this->injection_point['section'];
-
-				if ( ! empty( $this->injection_point['tab'] ) ) {
-					$target_tab = $this->injection_point['tab'];
-				}
-			}
-
-			if ( null !== $target_section_args ) {
-				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
-					_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $id ), '1.0.0' );
-				}
-
-				$args = array_replace_recursive( $target_section_args, $args );
-
-				if ( null !== $target_tab ) {
-					$args = array_replace_recursive( $target_tab, $args );
-				}
-			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
-				wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
-			}
+			$args = $this->handle_control_position( $args, $id, $options['overwrite'] );
 		}
 
 		if ( $options['position'] ) {
@@ -716,10 +703,12 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.4.0
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @return array Scheme controls.
 	 */
 	final public function get_scheme_controls() {
+		// _deprecated_function( __METHOD__, '3.0.0' );
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
 		return array_filter(
@@ -738,6 +727,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @since 2.0.9 Added the `settings` parameter.
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param array $controls Optional. Controls list. Default is null.
 	 * @param array $settings Optional. Controls settings. Default is null.
@@ -745,6 +735,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Style controls.
 	 */
 	final public function get_style_controls( array $controls = null, array $settings = null ) {
+		// _deprecated_function( __METHOD__, '3.0.0' );
+
 		$controls = $this->get_active_controls( $controls, $settings );
 
 		$style_controls = [];
@@ -757,8 +749,6 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$control = array_merge( $control_obj->get_settings(), $control );
-
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			if ( $control_obj instanceof Control_Repeater ) {
 				$style_fields = [];
@@ -776,28 +766,6 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return $style_controls;
-	}
-
-	/**
-	 * Get class controls.
-	 *
-	 * Retrieve the controls that use the same prefix class from all the active
-	 * controls
-	 *
-	 * @since 1.4.0
-	 * @deprecated 2.1.0
-	 * @access public
-	 *
-	 * @return array Class controls.
-	 */
-	final public function get_class_controls() {
-		_deprecated_function( __METHOD__, '2.1.0' );
-
-		return array_filter(
-			$this->get_active_controls(), function( $control ) {
-				return ( isset( $control['prefix_class'] ) );
-			}
-		);
 	}
 
 	/**
@@ -1050,9 +1018,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 2.0.14
 	 * @access public
 	 */
-	public function get_parsed_dynamic_settings( $setting = null ) {
+	public function get_parsed_dynamic_settings( $setting = null, $settings = null ) {
+		if ( null === $settings ) {
+			$settings = $this->get_settings();
+		}
+
 		if ( null === $this->parsed_dynamic_settings ) {
-			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
+			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $settings );
 		}
 
 		return self::get_items( $this->parsed_dynamic_settings, $setting );
@@ -1175,6 +1147,10 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			if ( $control_obj instanceof Control_Repeater ) {
+				if ( ! isset( $settings[ $control_name ] ) ) {
+					continue;
+				}
+
 				foreach ( $settings[ $control_name ] as & $field ) {
 					$field = $this->parse_dynamic_settings( $field, $control['fields'], $field );
 				}
@@ -1951,6 +1927,40 @@ abstract class Controls_Stack extends Base_Object {
 		} else {
 			$this->register_controls();
 		}
+	}
+
+	protected function handle_control_position( array $args, $control_id, $overwrite ) {
+		if ( isset( $args['type'] ) && in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
+			return $args;
+		}
+
+		$target_section_args = $this->current_section;
+
+		$target_tab = $this->current_tab;
+
+		if ( $this->injection_point ) {
+			$target_section_args = $this->injection_point['section'];
+
+			if ( ! empty( $this->injection_point['tab'] ) ) {
+				$target_tab = $this->injection_point['tab'];
+			}
+		}
+
+		if ( null !== $target_section_args ) {
+			if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
+				_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $control_id ), '1.0.0' );
+			}
+
+			$args = array_replace_recursive( $target_section_args, $args );
+
+			if ( null !== $target_tab ) {
+				$args = array_replace_recursive( $target_tab, $args );
+			}
+		} elseif ( empty( $args['section'] ) && ( ! $overwrite || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id ) ) ) ) {
+			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
+		}
+
+		return $args;
 	}
 
 	/**

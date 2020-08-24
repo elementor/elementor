@@ -401,23 +401,26 @@ class Source_Local extends Source_Base {
 
 		if ( ! empty( $args['type'] ) ) {
 			$template_types = $args['type'];
+			unset( $args['type'] );
 		}
 
-		$templates_query = new \WP_Query(
-			[
-				'post_type' => self::CPT,
-				'post_status' => 'publish',
-				'posts_per_page' => -1,
-				'orderby' => 'title',
-				'order' => 'ASC',
-				'meta_query' => [
-					[
-						'key' => Document::TYPE_META_KEY,
-						'value' => $template_types,
-					],
+		$defaults = [
+			'post_type' => self::CPT,
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+			'orderby' => 'title',
+			'order' => 'ASC',
+			'meta_query' => [
+				[
+					'key' => Document::TYPE_META_KEY,
+					'value' => $template_types,
 				],
-			]
-		);
+			],
+		];
+
+		$query_args = wp_parse_args( $args, $defaults );
+
+		$templates_query = new \WP_Query( $query_args );
 
 		$templates = [];
 
@@ -582,7 +585,9 @@ class Source_Local extends Source_Base {
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
 			'date' => $date,
 			'human_date' => date_i18n( get_option( 'date_format' ), $date ),
+			'human_modified_date' => date_i18n( get_option( 'date_format' ), strtotime( $post->post_modified ) ),
 			'author' => $user->display_name,
+			'status' => $post->post_status,
 			'hasPageSettings' => ! empty( $page_settings ),
 			'tags' => [],
 			'export_link' => $this->get_export_link( $template_id ),
@@ -1607,7 +1612,7 @@ class Source_Local extends Source_Base {
 		return $posts_columns;
 	}
 
-	private function get_current_tab_group( $default = '' ) {
+	public function get_current_tab_group( $default = '' ) {
 		$current_tabs_group = $default;
 
 		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {

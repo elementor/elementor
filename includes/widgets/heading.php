@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor heading widget.
@@ -223,9 +224,8 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
@@ -237,7 +237,9 @@ class Widget_Heading extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
 			]
 		);

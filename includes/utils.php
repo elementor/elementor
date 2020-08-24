@@ -30,7 +30,7 @@ class Utils {
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		// _deprecated_function( __METHOD__, '2.6.0', `wp_doing_ajax()` );
+		 _deprecated_function( __METHOD__, '2.6.0', 'wp_doing_ajax()' );
 
 		return wp_doing_ajax();
 	}
@@ -48,51 +48,6 @@ class Utils {
 	 */
 	public static function is_script_debug() {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
-	}
-
-	/**
-	 * Get edit link.
-	 *
-	 * Retrieve Elementor edit link.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_edit_url()` method instead.
-	 *
-	 * @access public
-	 * @static
-	 *
-	 * @param int $post_id Optional. Post ID. Default is `0`.
-	 *
-	 * @return string Post edit link.
-	 */
-	public static function get_edit_link( $post_id = 0 ) {
-		_deprecated_function( __METHOD__, '2.6.0', 'Plugin::$instance->documents->get( $post_id )->get_edit_url()' );
-
-		if ( ! $post_id ) {
-			$post_id = get_the_ID();
-		}
-
-		$edit_link = '';
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		if ( $document ) {
-			$edit_link = $document->get_edit_url();
-		}
-
-		/**
-		 * Get edit link.
-		 *
-		 * Filters the Elementor edit link.
-		 *
-		 * @since 1.0.0
-		 * @deprecated 2.0.0 Use `elementor/document/urls/edit` filter instead.
-		 *
-		 * @param string $edit_link New URL query string (unescaped).
-		 * @param int    $post_id   Post ID.
-		 */
-		$edit_link = apply_filters_deprecated( 'elementor/utils/get_edit_link', [ $edit_link, $post_id ], '2.0.0', 'elementor/document/urls/edit' );
-
-		return $edit_link;
 	}
 
 	/**
@@ -125,78 +80,6 @@ class Utils {
 		$link = add_query_arg( 'utm_term', $theme_name, $link );
 
 		return $link;
-	}
-
-	/**
-	 * Get preview URL.
-	 *
-	 * Retrieve the post preview URL.
-	 *
-	 * @since 1.6.4
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_preview_url()` method instead.
-	 *
-	 * @access public
-	 * @static
-	 *
-	 * @param int $post_id Optional. Post ID. Default is `0`.
-	 *
-	 * @return string Post preview URL.
-	 */
-	public static function get_preview_url( $post_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_preview_url()' );
-
-		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
-
-		/**
-		 * Preview URL.
-		 *
-		 * Filters the Elementor preview URL.
-		 *
-		 * @since 1.6.4
-		 * @deprecated 2.0.0 Use `elementor/document/urls/preview` filter instead.
-		 *
-		 * @param string $preview_url URL with chosen scheme.
-		 * @param int    $post_id     Post ID.
-		 */
-		$url = apply_filters_deprecated( 'elementor/utils/preview_url', [ $url, $post_id ], '2.0.0', 'elementor/document/urls/preview' );
-
-		return $url;
-	}
-
-	/**
-	 * Get WordPress preview url.
-	 *
-	 * Retrieve WordPress preview URL for any given post ID.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()` method instead.
-	 *
-	 * @access public
-	 * @static
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return string WordPress preview URL.
-	 */
-	public static function get_wp_preview_url( $post_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()' );
-
-		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
-
-		/**
-		 * WordPress preview URL.
-		 *
-		 * Filters the WordPress preview URL.
-		 *
-		 * @since 1.9.0
-		 * @deprecated 2.0.0 Use `elementor/document/urls/wp_preview` filter instead.
-		 *
-		 * @param string $wp_preview_url WordPress preview URL.
-		 * @param int    $post_id        Post ID.
-		 */
-		$wp_preview_url = apply_filters_deprecated( 'elementor/utils/wp_preview_url', [ $wp_preview_url, $post_id ], '2.0.0', 'elementor/document/urls/wp_preview' );
-
-		return $wp_preview_url;
 	}
 
 	/**
@@ -247,27 +130,6 @@ class Utils {
 			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
-	}
-
-	/**
-	 * Get exit to dashboard URL.
-	 *
-	 * Retrieve WordPress preview URL for any given post ID.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()` method instead.
-	 *
-	 * @access public
-	 * @static
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return string Exit to dashboard URL.
-	 */
-	public static function get_exit_to_dashboard_url( $post_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()' );
-
-		return Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
 	}
 
 	/**
@@ -446,29 +308,6 @@ class Utils {
 		}
 
 		return $timezone_string;
-	}
-
-	/**
-	 * Get last edited string.
-	 *
-	 * Retrieve a string saying when the post was saved or the last time it was edited.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_last_edited()` method instead.
-	 *
-	 * @access public
-	 * @static
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return string Last edited string.
-	 */
-	public static function get_last_edited( $post_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_last_edited()' );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		return $document->get_last_edited();
 	}
 
 	/**
@@ -726,5 +565,23 @@ class Utils {
 		}
 
 		return $result;
+	}
+
+	public static function find_element_recursive( $elements, $id ) {
+		foreach ( $elements as $element ) {
+			if ( $id === $element['id'] ) {
+				return $element;
+			}
+
+			if ( ! empty( $element['elements'] ) ) {
+				$element = self::find_element_recursive( $element['elements'], $id );
+
+				if ( $element ) {
+					return $element;
+				}
+			}
+		}
+
+		return false;
 	}
 }

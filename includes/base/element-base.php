@@ -450,7 +450,11 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = esc_url( $url_control['url'] );
+			$allowed_protocols = wp_allowed_protocols();
+
+			$allowed_protocols += [ 'skype', 'viber' ];
+
+			$attributes['href'] = esc_url( $url_control['url'], $allowed_protocols );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
@@ -800,8 +804,12 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
-			// Hide the element until the animation begins
-			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
+
+			if ( ! $is_static_render_mode ) {
+				// Hide the element until the animation begins
+				$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+			}
 		}
 
 		if ( ! empty( $settings['_element_id'] ) ) {

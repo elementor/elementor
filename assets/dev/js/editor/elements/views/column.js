@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
+	childViewContainer: elementor.config.legacyMode.elementWrappers ? '> .elementor-column-wrap > .elementor-widget-wrap' : '> .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -43,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = '> .elementor-column-wrap';
+		ui.columnInner = elementor.config.legacyMode.elementWrappers ? '> .elementor-column-wrap' : '> .elementor-widget-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
@@ -195,35 +195,46 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-		var self = this;
+		const isLegacyMode = elementor.config.legacyMode.elementWrappers;
 
-		BaseElementView.prototype.onRender.apply( self, arguments );
+		let itemsClasses = '';
 
-		self.changeChildContainerClasses();
+		if ( isLegacyMode ) {
+			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		} else {
+			itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		}
 
-		self.changeSizeUI();
+		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		self.$el.html5Droppable( {
-			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
+		this.changeChildContainerClasses();
+
+		this.changeSizeUI();
+
+		this.$el.html5Droppable( {
+			items: itemsClasses,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
+			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: function( side, event ) {
+			onDropping: ( side, event ) => {
 				event.stopPropagation();
 
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				var newIndex = jQuery( this ).index();
+				let newIndex = jQuery( event.currentTarget ).index();
 
-				if ( 'bottom' === side ) {
+				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
+				if ( 'bottom' === side && isLegacyMode ) {
 					newIndex++;
+				} else if ( 'top' === side && ! isLegacyMode ) {
+					newIndex--;
 				}
 
-				self.addElementFromPanel( { at: newIndex } );
+				this.addElementFromPanel( { at: newIndex } );
 			},
 		} );
 	},

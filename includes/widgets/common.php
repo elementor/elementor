@@ -75,7 +75,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-widget-container' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -87,14 +87,14 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-widget-container' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_z_index',
 			[
 				'label' => __( 'Z-Index', 'elementor' ),

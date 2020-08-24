@@ -17,6 +17,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Editor\Data;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -495,6 +496,8 @@ class Editor {
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
+				'react',
+				'react-dom',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -512,22 +515,22 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$page_title_selector = get_option( 'elementor_page_title_selector' );
+		$page_title_selector = Plugin::$instance->kits_manager->get_current_settings( 'page_title_selector' );
 
-		if ( empty( $page_title_selector ) ) {
-			$page_title_selector = 'h1.entry-title';
-		}
+		$page_title_selector .= ', .elementor-page-title';
 
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
 
 		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
+		$kits_manager = Plugin::$instance->kits_manager;
 
 		$config = [
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
+			'admin_settings_url' => admin_url( 'admin.php?page=' . Settings::PAGE_ID ),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'tabs' => $plugin->controls_manager->get_tabs(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
@@ -535,6 +538,12 @@ class Editor {
 			'schemes' => [
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
+			],
+			'globals' => [
+				'defaults_enabled' => [
+					'colors' => $kits_manager->is_custom_colors_enabled(),
+					'typography' => $kits_manager->is_custom_typography_enabled(),
+				],
 			],
 			'icons' => [
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
@@ -578,6 +587,10 @@ class Editor {
 			'ui' => [
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 			],
+			// Legacy Mode - for backwards compatibility of older HTML markup.
+			'legacyMode' => [
+				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
+			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'edit' => __( 'Edit', 'elementor' ),
@@ -596,20 +609,44 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
-				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
 				'saved_colors' => __( 'Saved Colors', 'elementor' ),
 				'drag_to_delete' => __( 'Drag To Delete', 'elementor' ),
+				'color_picker' => __( 'Color Picker', 'elementor' ),
+
+				// Global Styles
+				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'new_global_color' => __( 'New Global Color', 'elementor' ),
+				'global_colors_title' => __( 'Global Colors', 'elementor' ),
+				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
+				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
+				'delete_global_color' => __( 'Delete Global Color', 'elementor' ),
+				'delete_global_color_info' => __( 'You\'re about to delete a Global Color. Note that if it\'s being used anywhere on your site, it will inherit a default color.', 'elementor' ),
+				'global_colors_info' => __( 'Global Colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button.', 'elementor' ),
+				'typography' => __( 'Typography', 'elementor' ),
+				'new_typography_setting' => __( 'New Typography Setting', 'elementor' ),
+				'global_fonts_title' => __( 'Global Fonts', 'elementor' ),
+				'manage_global_fonts' => __( 'Manage Global Fonts', 'elementor' ),
+				'create_global_font' => __( 'Create New Global Font', 'elementor' ),
+				'delete_global_font' => __( 'Delete Global Font', 'elementor' ),
+				'delete_global_font_info' => __( 'You\'re about to delete a Global Font. Note that if it\'s being used anywhere on your site, it will inherit a default typography.', 'elementor' ),
+				'global_fonts_info' => __( 'Global Fonts help you work smarter. Save a Typography, and use it anywhere throughout your site. Access and edit your Global Fonts by clicking the Manage button.', 'elementor' ),
+				'default' => __( 'Default', 'elementor' ),
+				'create' => __( 'Create', 'elementor' ),
+				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
+				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' ),
+				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' ),
+				'global_fonts_confirm_text' => __( 'Are you sure you want to create a new Global Font setting?', 'elementor' ),
+				'custom' => __( 'Custom', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
-				'global_colors' => __( 'Default Colors', 'elementor' ),
-				'global_fonts' => __( 'Default Fonts', 'elementor' ),
-				'global_style' => __( 'Global Style', 'elementor' ),
-				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'preferences' => __( 'Preferences', 'elementor' ),
+				'site_settings' => __( 'Site Settings', 'elementor' ),
+				'theme_builder' => __( 'Theme Builder', 'elementor' ),
+				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'more' => __( 'More', 'elementor' ),
+				'navigate_from_page' => __( 'Navigate From Page', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),
 				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
@@ -624,8 +661,8 @@ class Editor {
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
-				// Enable unfiltered files upload.
-				'enable_unfiltered_files_upload' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
+				// Enable unfiltered file uploads.
+				'enable_unfiltered_files_upload' => __( 'Enable Unfiltered File Uploads', 'elementor' ),
 				'dialog_confirm_enable_unfiltered_files_upload' => __( 'Before you enable unfiltered files upload, note that this kind of files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
 
 				// Enable fontawesome 5 if needed.
@@ -756,7 +793,6 @@ class Editor {
 				'see_it_in_action' => __( 'See it in Action', 'elementor' ),
 				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
 				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
-				'available_in_pro_v29' => __( 'Available in Pro V2.9.', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -1064,6 +1100,8 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
+		Plugin::$instance->data_manager->register_controller( Data\Globals\Controller::class );
+
 		$this->notice_bar = new Notice_Bar();
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );

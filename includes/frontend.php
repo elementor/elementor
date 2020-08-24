@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\App;
 use Elementor\Core\Base\Document;
+use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -51,6 +52,13 @@ class Frontend extends App {
 	 * @var array Used fonts. Default is an empty array.
 	 */
 	public $fonts_to_enqueue = [];
+
+	/**
+	 * Holds the class that respond to manage the render mode.
+	 *
+	 * @var Render_Mode_Manager
+	 */
+	public $render_mode_manager;
 
 	/**
 	 * Registered fonts.
@@ -153,6 +161,7 @@ class Frontend extends App {
 			return;
 		}
 
+		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
@@ -176,6 +185,17 @@ class Frontend extends App {
 	 */
 	public function get_name() {
 		return 'frontend';
+	}
+
+	/**
+	 * Init render mode manager.
+	 */
+	public function init_render_mode() {
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			return;
+		}
+
+		$this->render_mode_manager = new Render_Mode_Manager();
 	}
 
 	/**
@@ -212,6 +232,7 @@ class Frontend extends App {
 
 		// Priority 7 to allow google fonts in header template to load in <head> tag
 		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
+		add_action( 'wp_head', [ $this, 'add_theme_color_meta_tag' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar.
@@ -231,6 +252,23 @@ class Frontend extends App {
 			$this->body_classes = array_merge( $this->body_classes, $class );
 		} else {
 			$this->body_classes[] = $class;
+		}
+	}
+
+	/**
+	 * Add Theme Color Meta Tag
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function add_theme_color_meta_tag() {
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		$mobile_theme_color = $kit->get_settings( 'mobile_theme_color' );
+
+		if ( ! empty( $mobile_theme_color ) ) {
+			?>
+			<meta name="theme-color" content="<?php echo $mobile_theme_color; ?>">
+			<?php
 		}
 	}
 
@@ -383,7 +421,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.6',
+			'4.8.1',
 			true
 		);
 
@@ -393,7 +431,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'1.1.3',
+			'1.2.0',
 			true
 		);
 
@@ -462,7 +500,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.7.0'
+			'5.9.1'
 		);
 
 		wp_register_style(
@@ -483,7 +521,7 @@ class Frontend extends App {
 			'elementor-gallery',
 			$this->get_css_assets_url( 'e-gallery', 'assets/lib/e-gallery/css/' ),
 			[],
-			'1.1.3'
+			'1.2.0'
 		);
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
@@ -508,10 +546,24 @@ class Frontend extends App {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
 		}
 
+		$frontend_dependencies = [];
+
+		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
+			// If The Markup Legacy Mode is active, register the legacy CSS
+			wp_register_style(
+				'elementor-frontend-legacy',
+				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
+				[],
+				ELEMENTOR_VERSION
+			);
+
+			$frontend_dependencies[] = 'elementor-frontend-legacy';
+		}
+
 		wp_register_style(
 			'elementor-frontend',
 			$frontend_file_url,
-			[],
+			$frontend_dependencies,
 			$has_custom_file ? null : ELEMENTOR_VERSION
 		);
 
@@ -592,8 +644,6 @@ class Frontend extends App {
 
 		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 			$this->parse_global_css_code();
-
-			do_action( 'elementor/frontend/after_enqueue_global' );
 
 			$post_id = get_the_ID();
 			// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
@@ -760,7 +810,15 @@ class Frontend extends App {
 				'cs_CZ' => 'latin-ext',
 				'ro_RO' => 'latin-ext',
 				'pl_PL' => 'latin-ext',
+				'hr_HR' => 'latin-ext',
+				'hu_HU' => 'latin-ext',
+				'sk_SK' => 'latin-ext',
+				'tr_TR' => 'latin-ext',
+				'lt_LT' => 'latin-ext',
 			];
+
+			$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
+
 			$locale = get_locale();
 
 			if ( isset( $subsets[ $locale ] ) ) {
@@ -1124,6 +1182,21 @@ class Frontend extends App {
 	}
 
 	/**
+	 * Is the current render mode is static.
+	 *
+	 * @return bool
+	 */
+	public function is_static_render_mode() {
+		// The render mode manager is exists only in frontend,
+		// so by default if it is not exist the method will return false.
+		if ( ! $this->render_mode_manager ) {
+			return false;
+		}
+
+		return $this->render_mode_manager->get_current()->is_static();
+	}
+
+	/**
 	 * Get Init Settings
 	 *
 	 * Used to define the default/initial settings of the object. Inheriting classes may implement this method to define
@@ -1146,17 +1219,29 @@ class Frontend extends App {
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
 				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
 				'pinIt' => __( 'Pin it', 'elementor' ),
+				'download' => __( 'Download', 'elementor' ),
 				'downloadImage' => __( 'Download image', 'elementor' ),
+				'fullscreen' => __( 'Fullscreen', 'elementor' ),
+				'zoom' => __( 'Zoom', 'elementor' ),
+				'share' => __( 'Share', 'elementor' ),
+				'playVideo' => __( 'Play Video', 'elementor' ),
+				'previous' => __( 'Previous', 'elementor' ),
+				'next' => __( 'Next', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
+			'is_static' => $this->is_static_render_mode(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		$settings['kit'] = $kit->get_frontend_settings();
 
 		if ( is_singular() ) {
 			$post = get_post();

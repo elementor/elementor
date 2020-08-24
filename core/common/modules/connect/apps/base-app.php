@@ -226,7 +226,12 @@ abstract class Base_App {
 			'nonce' => wp_create_nonce( $this->get_slug() . $action ),
 		] + $params;
 
-		return add_query_arg( $params, Admin::$url );
+		// Encode base url, the encode is limited to 64 chars.
+		$admin_url = \Requests_IDNAEncoder::encode( get_admin_url() );
+
+		$admin_url .= 'admin.php?page=' . Admin::PAGE_ID;
+
+		return add_query_arg( $params, $admin_url );
 	}
 
 	/**

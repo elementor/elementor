@@ -1,5 +1,13 @@
 .elementor-control-type-color {
 
+	&.e-control-global {
+
+		.e-global__popover-toggle ~ .pickr {
+			border-radius: getValueByDirection(0px 3px 3px 0, 3px 0 0 3px);
+			flex-shrink: 0;
+		}
+	}
+
 	.elementor-control-title {
 		flex-grow: 1;
 	}

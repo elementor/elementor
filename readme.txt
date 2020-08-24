@@ -4,6 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
+Beta tag: 3.0.0-beta6
 Stable tag: 2.9.14
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -220,6 +221,61 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.0 - 2020-08-23 =
+* New: Introducing Site Settings - manage your entire site within the Editor
+* New: Meet Global Fonts - the smartest way to manage your text styles ([#1553](https://github.com/elementor/elementor/issues/1553), [#1863](https://github.com/elementor/elementor/issues/1863))
+* New: Meet Global Colors - manage your site colors more consistently ([#1553](https://github.com/elementor/elementor/issues/1553), [#1324](https://github.com/elementor/elementor/issues/1324))
+* Tweak: Improved Elementor's frontend dynamic CSS rendering performance significantly ([#8053](https://github.com/elementor/elementor/issues/8053))
+* Tweak: Removed `.elementor-inner`, `.elementor-row` and `.elementor-column-wrap` from DOM output to improve performance (#7351, #7817, Developers Blog Post - https://developers.elementor.com/dom-improvements-ahead-html-wrappers-removal-from-v3-0/)
+* Tweak: Added an option to set columns in Social Icons widget ([#11295](https://github.com/elementor/elementor/issues/11295))
+* Tweak: Added Default Page Layout to Global Layout Settings ([#4925](https://github.com/elementor/elementor/issues/4925))
+* Tweak: Made 'z-index' control responsive in widgets Advanced tab ([#10918](https://github.com/elementor/elementor/issues/10918))
+* Tweak: Added `rem` unit support for Padding and Margins controls ([#2810](https://github.com/elementor/elementor/issues/2810))
+* Tweak: Added control for setting link width in Icon List widget ([#11945](https://github.com/elementor/elementor/issues/11945))
+* Tweak: Added image Border Radius control to Image Box widget ([#9301](https://github.com/elementor/elementor/issues/9301))
+* Tweak: Added more Google Fonts subsets ([#1630](https://github.com/elementor/elementor/issues/1630), [#1915](https://github.com/elementor/elementor/issues/1915), [#8186](https://github.com/elementor/elementor/issues/8186), Props [@andrejm](https://github.com/andrejm))
+* Tweak: Improved Lightbox accessibility (Props [@ramiy](https://github.com/ramiy))
+* Tweak: Added "Height" & "Object Fit" controls to Image Widget ([#10962](https://github.com/elementor/elementor/issues/10962), Props [@ramiy](https://github.com/ramiy))
+* Tweak: Added a filter for allowing adding Google Fonts subsets (Props [@andrejm](https://github.com/andrejm))
+* Tweak: Changed Elementor grid to work with CSS Variables ([Developers Blog Post](https://developers.elementor.com/elementor-dropping-support-ie/))
+* Tweak: Updated `eicons` library to `v5.9.1`
+* Tweak: Updated `e-gallery` library to `v1.2.0`
+* Tweak: Updated Dialog library to `v4.8.1`
+* Tweak: Updated Google Fonts list to 07/2020
+* Tweak: Added lazyload to Lightbox slideshow images
+* Tweak: Removed unused `elementor-edit-area-preview` class
+* Tweak: Adding support to Vimeo external links structure
+* Tweak: Improved Masonry layout mechanism in Gallery widget
+* Tweak: Allow using Repeater control in page settings
+* Tweak: Save all Global settings to the Kit entity
+* Tweak: Converted schemes to Global variables
+* Tweak: Updated WeChat and Weibo social networks colors in Social Icons widget
+* Tweak: Added font-family property to text-area control for better readability
+* Tweak: Migrated Elementor Style settings from WP dashboard to the Global Settings menu
+* Tweak: Added real-time JS handling to prevent redundant renders in Image Carousel widget and Background Slideshow
+* Tweak: Moved "Stretch Section" control to the end of layout settings in Section element
+* Tweak: Color tweaks to editor panel elements
+* Tweak: Minor UI improvements in the editor panel
+* Tweak: Added backup warning before major version plugin upgrade
+* Tweak: Improved dialog a11y to support more accessible lightbox close button
+* Tweak: Added infrastructure support for the new Theme Builder
+* Tweak: Added an option to set the mobile browser header color in supported devices
+* Tweak: Changed panel behavior when switching document to prevent laggy behavior
+* Tweak: Added Improved DOM Output option in Elementor settings to allow legacy mode of HTML DOM prior to v3.0
+* Tweak: Removed v2.9 reference from the Dynamic promotions
+* Fix: Image block alignment broken by Elementor general figure styling ([#11906](https://github.com/elementor/elementor/issues/11906), [#9259](https://github.com/elementor/elementor/issues/9259), [#7331](https://github.com/elementor/elementor/issues/7331))
+* Fix: Elementor posts aren't properly imported with WordPress Importer v0.7 ([#11466](https://github.com/elementor/elementor/issues/11466), [#10744](https://github.com/elementor/elementor/issues/10744), [#11927](https://github.com/elementor/elementor/issues/11927))
+* Fix: Divider can't use `EM` font-size unit in Divider widget ([#11352](https://github.com/elementor/elementor/issues/11352))
+* Fix: Theme Style overrides Icon List items typography values when list items are links in Icon List widget ([#12021](https://github.com/elementor/elementor/issues/12021))
+* Fix: Responsive glitch in Range control ([#11233](https://github.com/elementor/elementor/issues/11233))
+* Fix: Multiple repeater controls in the same panel causes JS errors ([#11523](https://github.com/elementor/elementor/issues/11523))
+* Fix: Multiple repeater control types in same panel glitches
+* Fix: Dark mode UI glitches in Display Conditions modal
+* Fix: The wrong video being opened in Media Carousel widget
+* Fix: Dark mode UI glitch in Display conditions modal
+* Fix: Connect issues when using non-latin character domains
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-0-planned-deprecations/)
 
 = 2.9.14 - 2020-07-21 =
 * Tweak: Added compatibility with WordPress v5.5 ([#11820](https://github.com/elementor/elementor/issues/11820), [#11830](https://github.com/elementor/elementor/issues/11830))

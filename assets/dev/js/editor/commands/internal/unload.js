@@ -22,7 +22,7 @@ export class Unload extends CommandInternalBase {
 		if ( document.$element ) {
 			document.$element
 				.removeClass( 'elementor-edit-area-active elementor-edit-mode' )
-				.addClass( 'elementor-edit-area-preview elementor-editor-preview' );
+				.addClass( 'elementor-editor-preview' );
 		}
 
 		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );

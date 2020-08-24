@@ -9,7 +9,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@master
       - name: Install Dependencies
-        run: yarn
+        run: npm i
       - name: Run Lint
         run: ./node_modules/eslint/bin/eslint.js .
 

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 /* global jQuery, wp */
 
 wp = {

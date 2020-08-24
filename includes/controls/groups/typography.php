@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Page\Manager as PageManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -88,7 +88,15 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+
+		/**
+		 * Retrieve the settings directly from DB, because of an open issue when a controls group is being initialized
+		 * from within another group
+		 */
+		$kit_settings = $kit->get_meta( PageManager::META_KEY );
+
+		$default_fonts = isset( $kit_settings['default_generic_fonts'] ) ? $kit_settings['default_generic_fonts'] : 'Sans-serif';
 
 		if ( $default_fonts ) {
 			$default_fonts = ', ' . $default_fonts;
@@ -227,6 +235,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function prepare_fields( $fields ) {
 		array_walk(
 			$fields, function( &$field, $field_name ) {
+
 				if ( in_array( $field_name, [ 'typography', 'popover_toggle' ] ) ) {
 					return;
 				}
@@ -257,6 +266,9 @@ class Group_Control_Typography extends Group_Control_Base {
 	 */
 	protected function add_group_args_to_field( $control_id, $field_args ) {
 		$field_args = parent::add_group_args_to_field( $control_id, $field_args );
+
+		$field_args['groupPrefix'] = $this->get_controls_prefix();
+		$field_args['groupType'] = 'typography';
 
 		$args = $this->get_args();
 
@@ -289,6 +301,10 @@ class Group_Control_Typography extends Group_Control_Base {
 				'starter_title' => _x( 'Typography', 'Typography Control', 'elementor' ),
 				'settings' => [
 					'render_type' => 'ui',
+					'groupType' => 'typography',
+					'global' => [
+						'active' => true,
+					],
 				],
 			],
 		];

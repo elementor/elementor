@@ -41,7 +41,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	behaviors: function() {
-		const behaviors = {},
+		const behaviors = ControlBaseView.prototype.behaviors.apply( this, arguments ),
 			dynamicSettings = this.options.model.get( 'dynamic' );
 
 		if ( dynamicSettings && dynamicSettings.active ) {
@@ -76,6 +76,55 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return this.container.settings.get( this.model.get( 'name' ) );
 	},
 
+	getGlobalKey: function() {
+		return this.container.globals.get( this.model.get( 'name' ) );
+	},
+
+	getGlobalValue: function() {
+		return this.globalValue;
+	},
+
+	getGlobalDefault: function() {
+		const controlGlobalArgs = this.model.get( 'global' );
+
+		if ( controlGlobalArgs?.default ) {
+			// If the control is a color/typography control and default colors/typography are disabled, don't return the global value.
+			if ( ! elementor.config.globals.defaults_enabled[ this.getGlobalMeta().controlType ] ) {
+				return '';
+			}
+
+			const { command, args } = $e.data.commandExtractArgs( controlGlobalArgs.default ),
+				result = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
+
+			return result?.value;
+		}
+
+		// No global default.
+		return '';
+	},
+
+	getCurrentValue: function() {
+		if ( this.getGlobalKey() && ! this.globalValue ) {
+			return '';
+		}
+
+		if ( this.globalValue ) {
+			return this.globalValue;
+		}
+
+		const controlValue = this.getControlValue();
+
+		if ( controlValue ) {
+			return controlValue;
+		}
+
+		return this.getGlobalDefault();
+	},
+
+	isGlobalActive: function() {
+		return this.options.model.get( 'global' )?.active;
+	},
+
 	setValue: function( value ) {
 		this.setSettingsModel( value );
 	},
@@ -107,7 +156,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	setEditSetting: function( settingKey, settingValue ) {
-		var settings = this.getOption( 'elementEditSettings' );
+		const settings = this.getOption( 'elementEditSettings' ) || this.getOption( 'container' ).settings;
 
 		settings.set( settingKey, settingValue );
 	},

@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Manager as SettingsManager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -460,8 +458,9 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 */
 	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false ) {
-		$general_settings_model = SettingsManager::get_settings_managers( 'general' )->get_model();
-		$is_global_image_lightbox_enabled = 'yes' === $general_settings_model->get_settings( 'elementor_global_image_lightbox' );
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$is_global_image_lightbox_enabled = 'yes' === $kit->get_settings( 'global_image_lightbox' );
 
 		if ( 'no' === $lightbox_setting_key ) {
 			if ( $is_global_image_lightbox_enabled ) {

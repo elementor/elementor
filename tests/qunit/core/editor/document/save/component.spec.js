@@ -2,7 +2,7 @@ import DocumentHelper from '../helper';
 import ElementsHelper from '../elements/helper';
 import * as commands from './commands/index.spec.js';
 import * as commandsInternal from './commands/internal/index.spec.js';
-import * as Ajax from 'elementor-tests-qunit/ajax';
+import * as Ajax from 'elementor-tests-qunit/mock/ajax';
 
 jQuery( () => {
 	QUnit.module( 'Component: document/save', ( hooks ) => {
@@ -37,7 +37,7 @@ jQuery( () => {
 			 * on promise resolve, it will eventually set 'elementor.documents.getCurrent().editor.isSaved = true'.
 			 * Explanation: on after save, we catch the promise via '_results', then await for promise resolve.
 			 */
-			$e.commandsInternal.on( 'run', ( component, command, args ) => {
+			$e.commandsInternal.on( 'run:before', ( component, command, args ) => {
 				if ( 'document/save/save' === command ) {
 					args.onAfter = async ( _args, _results ) => {
 						const saveResult = await _results;

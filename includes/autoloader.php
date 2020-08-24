@@ -92,6 +92,7 @@ class Autoloader {
 			'Conditions' => 'includes/conditions.php',
 			'Controls_Manager' => 'includes/managers/controls.php',
 			'Controls_Stack' => 'includes/base/controls-stack.php',
+			'Sub_Controls_Stack' => 'includes/base/sub-controls-stack.php',
 			'DB' => 'includes/db.php',
 			'Elements_Manager' => 'includes/managers/elements.php',
 			'Embed' => 'includes/embed.php',

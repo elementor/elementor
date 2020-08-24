@@ -1,10 +1,12 @@
 import ElementsHelper from './elements/helper.js';
+import * as eData from 'elementor-tests-qunit/mock/e-data/index';
 
 let documentTemp;
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/manager', ( hooks ) => {
 		hooks.before( () => {
+			eData.attachCache();
 			// Save current document before go.
 			documentTemp = elementor.documents.getCurrent();
 		} );
@@ -21,6 +23,9 @@ jQuery( () => {
 			// Add fake documents.
 			const documentMaster = elementor.documents.addDocumentByConfig( documentConfigMaster ),
 				documentSlave = elementor.documents.addDocumentByConfig( documentConfigSlave );
+
+			documentMaster.container = documentTemp.container;
+			documentSlave.container = documentTemp.container;
 
 			// Set current document to master.
 			elementor.documents.setCurrent( documentMaster );

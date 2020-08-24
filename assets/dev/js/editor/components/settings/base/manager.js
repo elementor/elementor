@@ -57,6 +57,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			view: false,
 			label: this.getSettings( 'panelPage' ).title,
 			controls: this.model.controls,
+			document: this.getDocument(),
 			renderer: false,
 		} );
 
@@ -65,6 +66,10 @@ module.exports = elementorModules.ViewModule.extend( {
 			getEditModel: () => editModel,
 			model: editModel,
 		};
+	},
+
+	getDocument() {
+		return false;
 	},
 
 	updateStylesheet: function( keepOldEntries ) {
@@ -76,7 +81,11 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
-		controlsCSS.addStyleToDocument();
+		controlsCSS.addStyleToDocument( {
+			// Ensures we don't override default global style
+			at: 'before',
+			of: '#elementor-style-e-global-style',
+		} );
 	},
 
 	initModel: function() {

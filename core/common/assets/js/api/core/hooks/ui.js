@@ -36,7 +36,7 @@ export default class Ui extends HooksBase {
 			return;
 		}
 
-		$e.devTools.log.hookRun( this.getType(), command, args, event );
+		$e.devTools.log.callbacks().run( this.getType(), command, args, event );
 	}
 
 	onCallback( command, args, event, id ) {
@@ -44,7 +44,7 @@ export default class Ui extends HooksBase {
 			return;
 		}
 
-		$e.devTools.log.hookCallback( this.getType(), command, args, event, id );
+		$e.devTools.log.callbacks().callback( this.getType(), command, args, event, id );
 	}
 }
 

@@ -1,4 +1,10 @@
-export default class ArgsObject {
+import InstanceType from './instance-type';
+
+export default class ArgsObject extends InstanceType {
+	static getInstanceType() {
+		return 'ArgsObject';
+	}
+
 	/**
 	 * Function constructor().
 	 *
@@ -7,6 +13,8 @@ export default class ArgsObject {
 	 * @param {{}} args
 	 */
 	constructor( args ) {
+		super();
+
 		this.args = args;
 	}
 

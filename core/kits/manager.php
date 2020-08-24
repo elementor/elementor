@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Core\Kits;
 
+use Elementor\Core\Kits\Controls\Repeater;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
@@ -37,6 +40,35 @@ class Manager {
 		return Plugin::$instance->documents->get( $id );
 	}
 
+	public function get_active_kit_for_frontend() {
+		$id = $this->get_active_id();
+
+		return Plugin::$instance->documents->get_doc_for_frontend( $id );
+	}
+
+
+	/**
+	 * Init kit controls.
+	 *
+	 * A temp solution in order to avoid init kit group control from within another group control.
+	 *
+	 * After moving the `default_font` to the kit, the Typography group control cause initialize the kit controls at: https://github.com/elementor/elementor/blob/e6e1db9eddef7e3c1a5b2ba0c2338e2af2a3bfe3/includes/controls/groups/typography.php#L91
+	 * and because the group control is a singleton, its args are changed to the last kit group control.
+	 */
+	public function init_kit_controls() {
+		$this->get_active_kit_for_frontend()->get_settings();
+	}
+
+	public function get_current_settings( $setting = null ) {
+		$kit = $this->get_active_kit_for_frontend();
+
+		if ( ! $kit ) {
+			return '';
+		}
+
+		return $kit->get_settings( $setting );
+	}
+
 	private function create_default() {
 		$kit = Plugin::$instance->documents->create( 'kit', [
 			'post_type' => Source_Local::CPT,
@@ -56,16 +88,47 @@ class Manager {
 
 	public function localize_settings( $settings ) {
 		$kit = $this->get_active_kit();
+		$kit_controls = $kit->get_controls();
+		$design_system_controls = [
+			'colors' => $kit_controls['system_colors']['fields'],
+			'typography' => $kit_controls['system_typography']['fields'],
+		];
 
 		$settings = array_replace_recursive( $settings, [
 			'kit_id' => $kit->get_main_id(),
+			'kit_config' => [
+				'typography_prefix' => Global_Typography::TYPOGRAPHY_GROUP_PREFIX,
+				'design_system_controls' => $design_system_controls,
+			],
 			'user' => [
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
 			],
 			'i18n' => [
-				'Close' => __( 'Close', 'elementor' ),
-				'Back' => __( 'Back', 'elementor' ),
-				'Theme Style' => __( 'Theme Style', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
+				'back' => __( 'Back', 'elementor' ),
+				'site_identity' => __( 'Site Identity', 'elementor' ),
+				'lightbox' => __( 'Lightbox', 'elementor' ),
+				'layout' => __( 'Layout', 'elementor' ),
+				'theme_style' => __( 'Theme Style', 'elementor' ),
+				'add_color' => __( 'Add Color', 'elementor' ),
+				'add_style' => __( 'Add Style', 'elementor' ),
+				'new_item' => __( 'New Item', 'elementor' ),
+				'new_global' => __( 'New Global', 'elementor' ),
+				'global_color' => __( 'Global Color', 'elementor' ),
+				'global_fonts' => __( 'Global Fonts', 'elementor' ),
+				'global_colors' => __( 'Global Colors', 'elementor' ),
+				'invalid' => __( 'Invalid', 'elementor' ),
+				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
+				'font_cannot_be_deleted' => __( 'System Font can\'t be deleted', 'elementor' ),
+				'design_system' => __( 'Design System', 'elementor' ),
+				'buttons' => __( 'Buttons', 'elementor' ),
+				'images' => __( 'Images', 'elementor' ),
+				'form_fields' => __( 'Form Fields', 'elementor' ),
+				'background' => __( 'Background', 'elementor' ),
+				'custom_css' => __( 'Custom CSS', 'elementor' ),
+				'additional_settings' => __( 'Additional Settings', 'elementor' ),
+				'kit_changes_updated' => __( 'Your changes have been updated.', 'elementor' ),
+				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 			],
 		] );
 
@@ -117,11 +180,74 @@ class Manager {
 		return $kit;
 	}
 
+	/**
+	 * Map Scheme To Global
+	 *
+	 * Convert a given scheme value to its corresponding default global value
+	 *
+	 * @param string $type 'color'/'typography'
+	 * @param $value
+	 * @return mixed
+	 */
+	private function map_scheme_to_global( $type, $value ) {
+		$schemes_to_globals_map = [
+			'color' => [
+				'1' => Global_Colors::COLOR_PRIMARY,
+				'2' => Global_Colors::COLOR_SECONDARY,
+				'3' => Global_Colors::COLOR_TEXT,
+				'4' => Global_Colors::COLOR_ACCENT,
+			],
+			'typography' => [
+				'1' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				'2' => Global_Typography::TYPOGRAPHY_SECONDARY,
+				'3' => Global_Typography::TYPOGRAPHY_TEXT,
+				'4' => Global_Typography::TYPOGRAPHY_ACCENT,
+			],
+		];
+
+		return $schemes_to_globals_map[ $type ][ $value ];
+	}
+
+	/**
+	 * Convert Scheme to Default Global
+	 *
+	 * If a control has a scheme property, convert it to a default Global.
+	 *
+	 * @param $scheme - Control scheme property
+	 * @return array - Control/group control args
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function convert_scheme_to_global( $scheme ) {
+		if ( isset( $scheme['type'] ) && isset( $scheme['value'] ) ) {
+			//_deprecated_argument( $args['scheme'], '3.0.0', 'Schemes are now deprecated - use $args[\'global\'] instead.' );
+			return $this->map_scheme_to_global( $scheme['type'], $scheme['value'] );
+		}
+
+		// Typography control 'scheme' properties usually only include the string with the typography value ('1'-'4').
+		return $this->map_scheme_to_global( 'typography', $scheme );
+	}
+
+	public function register_controls() {
+		$controls_manager = Plugin::$instance->controls_manager;
+
+		$controls_manager->register_control( Repeater::CONTROL_TYPE, new Repeater() );
+	}
+
+	public function is_custom_colors_enabled() {
+		return ! get_option( 'elementor_disable_color_schemes' );
+	}
+
+	public function is_custom_typography_enabled() {
+		return ! get_option( 'elementor_disable_typography_schemes' );
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
-		add_action( 'elementor/frontend/after_enqueue_global', [ $this, 'frontend_before_enqueue_styles' ], 0 );
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
+		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
 	}
 }

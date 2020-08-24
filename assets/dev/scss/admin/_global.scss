@@ -58,20 +58,6 @@ body.admin-color-fresh {
 	font-weight: bold;
 }
 
-
-.e-logo-wrapper {
-	display: inline-block;
-	padding: .75em;
-	background-image: linear-gradient(-135deg, #EF295A, #434363);
-	border-radius: 7.5%;
-	line-height: 1;
-
-	i {
-		color: #ffffff;
-		font-size: 1em;
-	}
-}
-
 // Switcher Editor
 #elementor-switch-mode {
 	margin: 15px 0;
@@ -321,5 +307,19 @@ body {
 		table.media .column-title .media-icon img[src$=".svg"] {
 			width: 100%;
 		}
+	}
+}
+
+.e-major-update-warning {
+	margin-bottom: 5px;
+	max-width: 1000px;
+
+	&__title {
+		font-weight: bold;
+		margin: 10px 0;
+	}
+
+	+ p {
+		display: none;
 	}
 }

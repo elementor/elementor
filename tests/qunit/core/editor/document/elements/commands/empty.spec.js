@@ -31,13 +31,11 @@ export const Empty = () => {
 				};
 
 			let orig = $e.run,
-				tempCommand = '',
-				tempArgs = '';
+				tempCommand = '';
 
 			// TODO: Do not override '$e.run', use 'on' method instead.
-			$e.run = ( command, args ) => {
+			$e.run = ( command ) => {
 				tempCommand = command;
-				tempArgs = args;
 			};
 
 			// redo: `true`
@@ -58,7 +56,7 @@ export const Empty = () => {
 			elementor.getPreviewView().addChildModel = ( data ) => tempData = data;
 
 			// TODO: Do not override '$e.run', use 'on' method instead.
-			$e.run = ( command, args ) => {
+			$e.run = ( command ) => {
 				tempCommand = command;
 			};
 

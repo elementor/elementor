@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.7.0");
-  src: url("../fonts/eicons.eot?5.7.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.7.0") format("woff2"), url("../fonts/eicons.woff?5.7.0") format("woff"), url("../fonts/eicons.ttf?5.7.0") format("truetype"), url("../fonts/eicons.svg?5.7.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.9.1");
+  src: url("../fonts/eicons.eot?5.9.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.9.1") format("woff2"), url("../fonts/eicons.woff?5.9.1") format("woff"), url("../fonts/eicons.ttf?5.9.1") format("truetype"), url("../fonts/eicons.svg?5.9.1#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -84,7 +84,7 @@
 .eicon-elementor:before {
   content: '\e812'; }
 
-.eicon-elementor-square:before {
+.eicon-elementor-circle:before {
   content: '\e813'; }
 
 .eicon-pojome:before {
@@ -1146,5 +1146,35 @@
 .eicon-single-product:before {
   content: '\e974'; }
 
+.eicon-disable-trash-o:before {
+  content: '\e975'; }
+
+.eicon-single-page:before {
+  content: '\e976'; }
+
+.eicon-wordpress-light:before {
+  content: '\e977'; }
+
+.eicon-cogs-check:before {
+  content: '\e978'; }
+
+.eicon-custom-css:before {
+  content: '\e979'; }
+
+.eicon-global-colors:before {
+  content: '\e97a'; }
+
+.eicon-globe:before {
+  content: '\e97b'; }
+
+.eicon-typography-1:before {
+  content: '\e97c'; }
+
+.eicon-background:before {
+  content: '\e97d'; }
+
 .eicon-eye:before {
   content: '\e8ac'; }
+
+.eicon-elementor-square:before {
+  content: '\e813'; }

@@ -1,9 +1,11 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -398,7 +400,7 @@ class Upgrades {
 		// upgrade `video` widget settings (merge providers).
 		$post_ids = $updater->query_col(
 			'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = "_elementor_data" AND (
-			`meta_value` LIKE \'%"widgetType":"image"%\' 
+			`meta_value` LIKE \'%"widgetType":"image"%\'
 			OR `meta_value` LIKE \'%"widgetType":"theme-post-featured-image"%\'
 			OR `meta_value` LIKE \'%"widgetType":"theme-site-logo"%\'
 			OR `meta_value` LIKE \'%"widgetType":"woocommerce-category-image"%\'
@@ -570,8 +572,8 @@ class Upgrades {
 		global $wpdb;
 
 		$post_ids = $updater->query_col( $wpdb->prepare(
-			"SELECT p1.ID FROM {$wpdb->posts} AS p 
-					LEFT JOIN {$wpdb->posts} AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID) 
+			"SELECT p1.ID FROM {$wpdb->posts} AS p
+					LEFT JOIN {$wpdb->posts} AS p1 ON (p.ID = p1.post_parent || p.ID = p1.ID)
 					WHERE p.post_type = %s;", $type ) );
 
 		if ( empty( $post_ids ) ) {
@@ -638,5 +640,262 @@ class Upgrades {
 	public static function _v_2_8_3_recalc_usage_data( $updater ) {
 		// Re-calc since older version(s) had invalid values.
 		return self::recalc_usage_data( $updater );
+	}
+
+	/**
+	 * Move general & lightbox settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_general_settings_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			if ( ! $kit ) {
+				self::notice( 'Kit not found. nothing to do.' );
+				return;
+			}
+
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$current_settings = get_option( '_elementor_general_settings', [] );
+			$current_settings['viewport_md'] = get_option( 'elementor_viewport_md', '' );
+			$current_settings['viewport_lg'] = get_option( 'elementor_viewport_lg', '' );
+
+			$kit_settings = $kit->get_meta( $meta_key );
+
+			// Already exist.
+			if ( isset( $kit_settings['default_generic_fonts'] ) ) {
+				self::notice( 'General Settings already exist. nothing to do.' );
+				return;
+			}
+
+			if ( empty( $current_settings ) ) {
+				self::notice( 'Current settings are empty. nothing to do.' );
+				return;
+			}
+
+			if ( ! $kit_settings ) {
+				$kit_settings = [];
+			}
+
+			// Convert some setting to Elementor slider format.
+			$settings_to_slider = [
+				'container_width',
+				'space_between_widgets',
+			];
+
+			foreach ( $settings_to_slider as $setting ) {
+				if ( ! empty( $current_settings[ $setting ] ) ) {
+					$current_settings[ $setting ] = [
+						'unit' => 'px',
+						'size' => $current_settings[ $setting ],
+					];
+				}
+			}
+
+			$kit_settings = array_merge( $kit_settings, $current_settings );
+
+			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+			$page_settings_manager->save_settings( $kit_settings, $kit_id );
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * Move default colors settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+				self::notice( 'System colors are disabled. nothing to do.' );
+				return;
+			}
+
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['system_colors'] ) ) {
+				self::notice( 'System colors already exist. nothing to do.' );
+				return;
+			}
+
+			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color' );
+
+			$default_colors = $scheme_obj->get_scheme();
+
+			$new_ids = [
+				'primary',
+				'secondary',
+				'text',
+				'accent',
+			];
+
+			foreach ( $default_colors as $index => $color ) {
+				$kit->add_repeater_row( 'system_colors', [
+					'_id' => $new_ids[ $index - 1 ], // $default_colors starts from 1.
+					'title' => $color['title'],
+					'color' => strtoupper( $color['value'] ),
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * Move saved colors settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_saved_colors_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
+				self::notice( 'Custom colors already exist. nothing to do.' );
+				return;
+			}
+
+			$system_colors_rows = $kit->get_settings( 'system_colors' );
+
+			if ( ! $system_colors_rows ) {
+				$system_colors_rows = [];
+			}
+
+			$system_colors = [];
+
+			foreach ( $system_colors_rows as $color_row ) {
+				$system_colors[] = strtoupper( $color_row['color'] );
+			}
+
+			$saved_scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color-picker' );
+
+			$current_saved_colors_rows = $saved_scheme_obj->get_scheme();
+
+			$current_saved_colors = [];
+
+			foreach ( $current_saved_colors_rows as $color_row ) {
+				$current_saved_colors[] = strtoupper( $color_row['value'] );
+			}
+
+			$colors_to_save = array_diff( $current_saved_colors, $system_colors );
+
+			if ( empty( $colors_to_save ) ) {
+				self::notice( 'Saved colors not found. nothing to do.' );
+				return;
+			}
+
+			foreach ( $colors_to_save as $index => $color ) {
+				$kit->add_repeater_row( 'custom_colors', [
+					'_id' => Utils::generate_random_string(),
+					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'color' => $color,
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * Move default typography settings to active kit and all it's revisions.
+	 *
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
+				self::notice( 'System typography is disabled. nothing to do.' );
+				return;
+			}
+
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			// Already exist. use raw settings that doesn't have default values.
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$kit_raw_settings = $kit->get_meta( $meta_key );
+			if ( isset( $kit_raw_settings['system_typography'] ) ) {
+				self::notice( 'System typography already exist. nothing to do.' );
+				return;
+			}
+
+			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'typography' );
+
+			$default_typography = $scheme_obj->get_scheme();
+
+			$new_ids = [
+				'primary',
+				'secondary',
+				'text',
+				'accent',
+			];
+
+			foreach ( $default_typography as $index => $typography ) {
+				$kit->add_repeater_row( 'system_typography', [
+					'_id' => $new_ids[ $index - 1 ], // $default_typography starts from 1.
+					'title' => $typography['title'],
+					'typography_typography' => 'custom',
+					'typography_font_family' => $typography['value']['font_family'],
+					'typography_font_weight' => $typography['value']['font_weight'],
+				] );
+			}
+		};
+
+		return self::move_settings_to_kit( $callback, $updater );
+	}
+
+	/**
+	 * @param callback $callback
+	 * @param Updater $updater
+	 *
+	 * @return mixed
+	 */
+	private static function move_settings_to_kit( $callback, $updater ) {
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+		if ( ! $active_kit_id ) {
+			self::notice( 'Active kit not found. nothing to do.' );
+			return false;
+		}
+
+		$offset = $updater->get_current_offset();
+
+		// On first iteration apply on active kit itself.
+		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
+		if ( 0 === $offset ) {
+			$callback( $active_kit_id );
+		}
+
+		$revisions_ids = wp_get_post_revisions( $active_kit_id, [
+			'fields' => 'ids',
+			'posts_per_page' => $updater->get_limit(),
+			'offset' => $offset,
+		] );
+
+		foreach ( $revisions_ids as $revision_id ) {
+			$callback( $revision_id );
+		}
+
+		return $updater->should_run_again( $revisions_ids );
+	}
+
+	private static function notice( $message ) {
+		$logger = Plugin::$instance->logger->get_logger();
+		$logger->notice( $message );
 	}
 }

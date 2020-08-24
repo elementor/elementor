@@ -52,7 +52,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var isMultipleControl = jQuery.isPlainObject( control.default );
 
 			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! hasDynamicSettings ) {
-				elementor.debug.addCustomError(
+				elementorCommon.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
 					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ controlName ] + '> as `' + controlName + '` value. Expected array or object.'
@@ -84,14 +84,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 							options.controls = {};
 
-							// eslint-disable-next-line no-unused-vars
-							Object.entries( field.fields ).map( ( [ key, item ] ) => {
+							Object.values( field.fields ).map( ( item ) => {
 								options.controls[ item.name ] = item;
 							} );
 
 							// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
 							if ( ! attributes._id ) {
-								attributes._id = elementor.helpers.getUniqueID();
+								attributes._id = elementorCommon.helpers.getUniqueId();
 							}
 
 							return new BaseSettingsModel( attributes, options );
@@ -139,12 +138,30 @@ BaseSettingsModel = Backbone.Model.extend( {
 				control.styleFields = styleFields;
 			}
 
-			if ( control.fields || ( control.dynamic && control.dynamic.active ) || self.isStyleControl( control.name, controls ) ) {
+			if ( control.fields || ( control.dynamic?.active ) || self.isGlobalControl( control, controls ) || self.isStyleControl( control.name, controls ) ) {
 				styleControls.push( control );
 			}
 		} );
 
 		return styleControls;
+	},
+
+	isGlobalControl: function( control, controls ) {
+		let controlGlobalKey = control.name;
+
+		if ( control.groupType ) {
+			controlGlobalKey = control.groupPrefix + control.groupType;
+		}
+
+		const globalControl = controls[ controlGlobalKey ];
+
+		if ( ! globalControl.global?.active ) {
+			return false;
+		}
+
+		const globalValue = this.attributes.__globals__?.[ controlGlobalKey ];
+
+		return !! globalValue;
 	},
 
 	isStyleControl: function( attribute, controls ) {
@@ -189,6 +206,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 		if ( ! attributes ) {
 			attributes = this.attributes;
 		}
+
+		attributes = this.parseGlobalSettings( attributes, controls );
 
 		jQuery.each( controls, ( controlKey, control ) => {
 			if ( elementor.helpers.isActiveControl( control, attributes ) ) {
@@ -286,6 +305,53 @@ BaseSettingsModel = Backbone.Model.extend( {
 				settings[ control.name ][ dynamicSettings.property ] = dynamicValue;
 			} else {
 				settings[ control.name ] = dynamicValue;
+			}
+		} );
+
+		return settings;
+	},
+
+	parseGlobalSettings: function( settings, controls ) {
+		settings = elementorCommon.helpers.cloneObject( settings );
+
+		controls = controls || this.controls;
+
+		jQuery.each( controls, ( index, control ) => {
+			let valueToParse;
+
+			if ( control.is_repeater ) {
+				valueToParse = settings[ control.name ];
+
+				valueToParse.forEach( ( value, key ) => {
+					valueToParse[ key ] = this.parseGlobalSettings( value, control.fields );
+				} );
+
+				return;
+			}
+
+			valueToParse = settings.__globals__?.[ control.name ];
+
+			if ( ! valueToParse ) {
+				return;
+			}
+
+			let globalSettings = control.global;
+
+			if ( undefined === globalSettings ) {
+				globalSettings = elementor.config.controls[ control.type ].global;
+			}
+
+			if ( ! globalSettings?.active ) {
+				return;
+			}
+
+			const { command, args } = $e.data.commandExtractArgs( valueToParse ),
+				globalValue = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
+
+			if ( control.groupType ) {
+				settings[ control.name ] = 'custom';
+			} else {
+				settings[ control.name ] = globalValue;
 			}
 		} );
 

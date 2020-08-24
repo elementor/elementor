@@ -1,35 +1,7 @@
 const ControlSelect2View = require( 'elementor-controls/select2' );
 
 module.exports = ControlSelect2View.extend( {
-	_enqueuedFonts: [],
-
 	$previewContainer: null,
-
-	enqueueFont( font ) {
-		if ( -1 !== this._enqueuedFonts.indexOf( font ) ) {
-			return;
-		}
-
-		let fontUrl;
-		const fontType = elementor.config.controls.font.options[ font ];
-
-		switch ( fontType ) {
-			case 'googlefonts' :
-				fontUrl = 'https://fonts.googleapis.com/css?family=' + font + '&text=' + font;
-				break;
-
-			case 'earlyaccess' :
-				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
-				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
-				break;
-		}
-
-		if ( ! _.isEmpty( fontUrl ) ) {
-			jQuery( 'head' ).find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
-		}
-
-		this._enqueuedFonts.push( font );
-	},
 
 	getSelect2Options() {
 		return {
@@ -104,7 +76,7 @@ module.exports = ControlSelect2View.extend( {
 
 		fontsInView.forEach( function( font ) {
 			const fontFamily = jQuery( font ).find( 'span' ).html();
-			self.enqueueFont( fontFamily );
+			elementor.helpers.enqueueFont( fontFamily, 'editor' );
 		} );
 	},
 

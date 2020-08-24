@@ -115,7 +115,7 @@
 
 	.elementor-swiper-button {
 		&:focus {
-			outline: none;
+			outline-width: 1px;
 		}
 
 		&-prev, &-next {
@@ -179,6 +179,7 @@
 	&__header {
 		color: var(--lightbox-ui-color);
 		display: flex;
+		flex-direction: row-reverse;
 		font-size: var(--lightbox-header-icons-size);
 		@include padding-start( 1em );
 		@include padding-end( 2.6em );
@@ -195,10 +196,10 @@
 			&:hover {
 				color: var(--lightbox-ui-color-hover);
 			}
+		}
 
-			&:first-of-type {
-				@include margin-start( auto );
-			}
+		.elementor-slideshow__counter {
+			@include margin-end( auto );
 		}
 
 		.elementor-icon-share {

@@ -2,11 +2,13 @@
 namespace Elementor\Core\Files\CSS;
 
 use Elementor\Base_Data_Control;
+use Elementor\Control_Repeater;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
@@ -61,6 +63,8 @@ abstract class Base extends Base_File {
 
 	private $icons_fonts = [];
 
+	private $dynamic_elements_ids = [];
+
 	/**
 	 * Stylesheet object.
 	 *
@@ -93,6 +97,10 @@ abstract class Base extends Base_File {
 	 * @abstract
 	 */
 	abstract public function get_name();
+
+	protected function is_global_parsing_supported() {
+		return false;
+	}
 
 	/**
 	 * CSS file constructor.
@@ -156,6 +164,8 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$meta['dynamic_elements_ids'] = $this->dynamic_elements_ids;
+
 		$this->update_meta( $meta );
 	}
 
@@ -166,6 +176,16 @@ abstract class Base extends Base_File {
 	public function write() {
 		if ( $this->use_external_file() ) {
 			parent::write();
+		}
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function delete() {
+		if ( $this->use_external_file() ) {
+			parent::delete();
 		}
 	}
 
@@ -239,20 +259,6 @@ abstract class Base extends Base_File {
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
-		 * @since 1.9.0
-		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
-		 *
-		 * @param Base $this The current CSS file.
-		 */
-		do_action_deprecated( "elementor/{$name}-css-file/enqueue", [ $this ], '2.0.0', "elementor/css-file/{$name}/enqueue" );
-
-		/**
-		 * Enqueue CSS file.
-		 *
-		 * Fires when CSS file is enqueued on Elementor.
-		 *
-		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
-		 *
 		 * @since 2.0.0
 		 *
 		 * @param Base $this The current CSS file.
@@ -289,55 +295,89 @@ abstract class Base extends Base_File {
 	 * @param callable $value_callback Callback function for the value.
 	 * @param array    $placeholders   Placeholders.
 	 * @param array    $replacements   Replacements.
+	 * @param array    $values         Global Values.
 	 */
-	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
-		$value = call_user_func( $value_callback, $control );
-
-		if ( null === $value || empty( $control['selectors'] ) ) {
+	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements, array $values = [] ) {
+		if ( empty( $control['selectors'] ) ) {
 			return;
 		}
 
+		$control_global_key = $control['name'];
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		$global_values = [];
+		$global_key = '';
+
+		if ( ! empty( $values['__globals__'] ) ) {
+			$global_values = $values['__globals__'];
+		}
+
+		if ( ! empty( $global_values[ $control_global_key ] ) ) {
+			$global_key = $global_values[ $control_global_key ];
+		}
+
+		if ( ! $global_key ) {
+			$value = call_user_func( $value_callback, $control );
+
+			if ( null === $value ) {
+				return;
+			}
+		}
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
-			try {
-				$output_css_property = preg_replace_callback( '/\{\{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
-					$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
+			$output_css_property = '';
 
-					$parsed_value = '';
+			if ( $global_key ) {
+				$selector_global_value = $this->get_selector_global_value( $control, $global_key );
 
-					if ( ! $external_control_missing ) {
-						$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
-					}
+				if ( $selector_global_value ) {
+					$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $selector_global_value . '$2', $css_property );
+				}
+			} else {
+				try {
+					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
-					if ( '' === $parsed_value ) {
-						if ( isset( $matches[4] ) ) {
-							$parsed_value = $matches[4];
+						$parsed_value = '';
 
-							$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
-
-							if ( $is_string_value ) {
-								$parsed_value = $string_matches[2];
-							} elseif ( ! is_numeric( $parsed_value ) ) {
-								if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
-									return '';
-								}
-
-								$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
-							}
+						if ( ! $external_control_missing ) {
+							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
 						}
 
 						if ( '' === $parsed_value ) {
-							if ( $external_control_missing ) {
-								return '';
+							if ( isset( $matches[4] ) ) {
+								$parsed_value = $matches[4];
+
+								$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
+
+								if ( $is_string_value ) {
+									$parsed_value = $string_matches[2];
+								} elseif ( ! is_numeric( $parsed_value ) ) {
+									if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
+										return '';
+									}
+
+									$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
+								}
 							}
 
-							throw new \Exception();
-						}
-					}
+							if ( '' === $parsed_value ) {
+								if ( $external_control_missing ) {
+									return '';
+								}
 
-					return $parsed_value;
-				}, $css_property );
-			} catch ( \Exception $e ) {
-				return;
+								throw new \Exception();
+							}
+						}
+
+						return $parsed_value;
+					}, $css_property );
+				} catch ( \Exception $e ) {
+					return;
+				}
 			}
 
 			if ( ! $output_css_property ) {
@@ -353,7 +393,7 @@ abstract class Base extends Base_File {
 			if ( $device_rules ) {
 				$selector = preg_replace( $device_pattern, '', $selector );
 
-				preg_match_all( '/\(([^\)]+)\)/', $device_rules[0], $pure_device_rules );
+				preg_match_all( '/\(([^)]+)\)/', $device_rules[0], $pure_device_rules );
 
 				$pure_device_rules = $pure_device_rules[1];
 
@@ -426,23 +466,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * Get CSS.
-	 *
-	 * Retrieve the CSS. If the CSS is empty, parse it again.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 * @deprecated 2.1.0 Use `CSS_File::get_content()` method instead
-	 *
-	 * @return string The CSS.
-	 */
-	public function get_css() {
-		_deprecated_function( __METHOD__, '2.1.0', __CLASS__ . '::get_content()' );
-
-		return $this->get_content();
-	}
-
-	/**
 	 * Get stylesheet.
 	 *
 	 * Retrieve the CSS file stylesheet instance.
@@ -498,6 +521,9 @@ abstract class Base extends Base_File {
 				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
 				// and printed in a style tag.
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
+
+				$this->dynamic_elements_ids[] = $controls_stack->get_id();
+
 				continue;
 			}
 
@@ -537,6 +563,7 @@ abstract class Base extends Base_File {
 		return array_merge( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
 			'icons' => array_unique( $this->icons_fonts ),
+			'dynamic_elements_ids' => [],
 			'status' => '',
 		] );
 	}
@@ -604,20 +631,6 @@ abstract class Base extends Base_File {
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
-		 * @since 1.2.0
-		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
-		 *
-		 * @param Base $this The current CSS file.
-		 */
-		do_action_deprecated( "elementor/{$name}-css-file/parse", [ $this ], '2.0.0', "elementor/css-file/{$name}/parse" );
-
-		/**
-		 * Parse CSS file.
-		 *
-		 * Fires when CSS file is parsed on Elementor.
-		 *
-		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
-		 *
 		 * @since 2.0.0
 		 *
 		 * @param Base $this The current CSS file.
@@ -645,7 +658,7 @@ abstract class Base extends Base_File {
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
-			}, $placeholders, $replacements
+			}, $placeholders, $replacements, $values
 		);
 	}
 
@@ -665,6 +678,11 @@ abstract class Base extends Base_File {
 	 * @return mixed Style control value.
 	 */
 	private function get_style_control_value( array $control, array $values ) {
+		if ( ! empty( $values['__globals__'][ $control['name'] ] ) ) {
+			// When the control itself has no global value, but it refers to another control global value
+			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
+		}
+
 		$value = $values[ $control['name'] ];
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
@@ -746,7 +764,145 @@ abstract class Base extends Base_File {
 				return;
 			}
 
-			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
+			$this->add_controls_stack_style_rules( $tag, $this->get_style_controls( $tag ), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
 		} );
+	}
+
+	private function get_selector_global_value( $control, $global_key ) {
+		$data = Plugin::$instance->data_manager->run( $global_key );
+
+		if ( empty( $data['value'] ) ) {
+			return null;
+		}
+
+		$global_args = explode( '?id=', $global_key );
+
+		$id = $global_args[1];
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
+
+			// TODO: This check won't retrieve the proper answer for array values (multiple controls).
+			if ( empty( $data['value'][ Global_Typography::TYPOGRAPHY_GROUP_PREFIX . $property_name ] ) ) {
+				return null;
+			}
+
+			$property_name = str_replace( '_', '-', $property_name );
+
+			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
+		} else {
+			$value = "var( --e-global-$control[type]-$id )";
+		}
+
+		return $value;
+	}
+
+	final protected function get_active_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+		if ( ! $controls ) {
+			$controls = $controls_stack->get_controls();
+		}
+
+		if ( ! $settings ) {
+			$settings = $controls_stack->get_controls_settings();
+		}
+
+		if ( $this->is_global_parsing_supported() ) {
+			$settings = $this->parse_global_settings( $settings, $controls );
+		}
+
+		$active_controls = array_reduce(
+			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
+				$control = $controls[ $control_key ];
+
+				if ( $controls_stack->is_control_visible( $control, $settings ) ) {
+					$active_controls[ $control_key ] = $control;
+				}
+
+				return $active_controls;
+			}, []
+		);
+
+		return $active_controls;
+	}
+
+	final public function get_style_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+		$controls = $this->get_active_controls( $controls_stack, $controls, $settings );
+
+		$style_controls = [];
+
+		foreach ( $controls as $control_name => $control ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			$control = array_merge( $control_obj->get_settings(), $control );
+
+			if ( $control_obj instanceof Control_Repeater ) {
+				$style_fields = [];
+
+				foreach ( $controls_stack->get_settings( $control_name ) as $item ) {
+					$style_fields[] = $this->get_style_controls( $controls_stack, $control['fields'], $item );
+				}
+
+				$control['style_fields'] = $style_fields;
+			}
+
+			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || $this->is_global_control( $controls_stack, $control_name, $controls ) || ! empty( $control['style_fields'] ) ) {
+				$style_controls[ $control_name ] = $control;
+			}
+		}
+
+		return $style_controls;
+	}
+
+	private function parse_global_settings( array $settings, array $controls ) {
+		foreach ( $controls as $control ) {
+			$control_name = $control['name'];
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			if ( $control_obj instanceof Control_Repeater ) {
+				foreach ( $settings[ $control_name ] as & $field ) {
+					$field = $this->parse_global_settings( $field, $control['fields'] );
+				}
+
+				continue;
+			}
+
+			if ( empty( $control['global']['active'] ) ) {
+				continue;
+			}
+
+			if ( empty( $settings['__globals__'][ $control_name ] ) ) {
+				continue;
+			}
+
+			$settings[ $control_name ] = 'global';
+		}
+
+		return $settings;
+	}
+
+	private function is_global_control( Controls_Stack $controls_stack, $control_name, $controls ) {
+		$control = $controls[ $control_name ];
+
+		$control_global_key = $control_name;
+
+		if ( ! empty( $control['groupType'] ) ) {
+			$control_global_key = $control['groupPrefix'] . $control['groupType'];
+		}
+
+		if ( empty( $controls[ $control_global_key ]['global']['active'] ) ) {
+			return false;
+		}
+
+		$globals = $controls_stack->get_settings( '__globals__' );
+
+		return ! empty( $globals[ $control_global_key ] );
 	}
 }

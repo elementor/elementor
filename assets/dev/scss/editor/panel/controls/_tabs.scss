@@ -10,7 +10,7 @@
 	text-align: center;
 	width: 100%;
 	padding: 0;
-	line-height: $control-unit;
+	line-height: $control-unit - 2;
 	border-top: 1px solid $editor-lightest;
 	border-bottom: 1px solid $editor-lightest;
 	@include border-end(1px solid $editor-lightest);

@@ -5,11 +5,24 @@ import DocumentHelper from 'elementor-document/helper';
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
 const Preview = BaseSectionsContainerView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-preview' ),
 
-	className: 'elementor-inner',
+	getChildViewContainer: function() {
+		if ( ! this.$childViewContainer ) {
+			this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
-	childViewContainer: '.elementor-section-wrap',
+			if ( elementor.config.legacyMode.elementWrappers ) {
+				const inner = jQuery( '<div>', { class: 'elementor-inner' } );
+
+				inner.append( this.$childViewContainer );
+
+				this.$el.prepend( inner );
+			} else {
+				this.$el.prepend( this.$childViewContainer );
+			}
+		}
+
+		return this.$childViewContainer;
+	},
 
 	behaviors: function() {
 		var parentBehaviors = BaseSectionsContainerView.prototype.behaviors.apply( this, arguments ),
@@ -69,7 +82,7 @@ const Preview = BaseSectionsContainerView.extend( {
 						title: elementor.translate( 'delete_all_content' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/empty' ),
-},
+					},
 				],
 			},
 		];

@@ -1,4 +1,4 @@
-/*! E-Gallery v1.1.3 by Elementor */
+/*! E-Gallery v1.2.0 by Elementor */
 var EGallery =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -247,16 +247,30 @@ module.exports = _setPrototypeOf;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-function _typeof(obj) {
-  "@babel/helpers - typeof";
+function _typeof3(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof3 = function _typeof3(obj) { return typeof obj; }; } else { _typeof3 = function _typeof3(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof3(obj); }
 
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+function _typeof2(obj) {
+  if (typeof Symbol === "function" && _typeof3(Symbol.iterator) === "symbol") {
+    _typeof2 = function _typeof2(obj) {
+      return _typeof3(obj);
+    };
+  } else {
+    _typeof2 = function _typeof2(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof3(obj);
+    };
+  }
+
+  return _typeof2(obj);
+}
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
     module.exports = _typeof = function _typeof(obj) {
-      return typeof obj;
+      return _typeof2(obj);
     };
   } else {
     module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
     };
   }
 
@@ -536,6 +550,13 @@ function () {
           activeIndexes = [];
 
       if (!activeTags.length) {
+        if (returnIndexes) {
+          this.$items.each(function (index) {
+            activeIndexes.push(index);
+          });
+          return activeIndexes;
+        }
+
         return this.$items;
       }
 
@@ -695,33 +716,35 @@ function () {
     value: function lazyLoadImages() {
       var _this6 = this;
 
-      if (this.settings.lazyLoadComplete) {
+      if (this.lazyLoadComplete) {
         return;
       }
 
-      var loadedItems = 0;
-      this.$items.each(function (index, item) {
-        var $item = jQuery(item);
+      var $items = this.getActiveItems(),
+          itemsIndexes = this.getActiveItems(true);
+      $items.each(function (index, item) {
+        var itemData = _this6.settings.items[itemsIndexes[index]];
 
-        if (!item.loaded && !$item.hasClass(_this6.settings.classes.hidden) && Object(_utils__WEBPACK_IMPORTED_MODULE_2__["elementInView"])(item)) {
-          var image = new Image(),
-              promise = new Promise(function (resolve) {
-            image.onload = resolve;
-          });
-          promise.then(function () {
-            $item.find(_this6.settings.selectors.image).css('background-image', 'url("' + _this6.settings.items[index].thumbnail + '")').addClass(_this6.getItemClass(_this6.settings.classes.imageLoaded));
-            item.loaded = true;
-          });
-          image.src = _this6.settings.items[index].thumbnail;
+        if (itemData.loading || !Object(_utils__WEBPACK_IMPORTED_MODULE_2__["elementInView"])(item)) {
+          return true;
         }
 
-        if (item.loaded) {
-          loadedItems++;
+        itemData.loading = true;
+        var $item = jQuery(item),
+            image = new Image(),
+            promise = new Promise(function (resolve) {
+          image.onload = resolve;
+        });
+        promise.then(function () {
+          $item.find(_this6.settings.selectors.image).css('background-image', 'url("' + itemData.thumbnail + '")').addClass(_this6.getItemClass(_this6.settings.classes.imageLoaded));
+          _this6.loadedItemsCount++;
 
-          if (loadedItems === _this6.settings.items.length) {
-            _this6.settings.lazyLoadComplete = true;
+          if (_this6.loadedItemsCount === _this6.settings.items.length) {
+            _this6.lazyLoadComplete = true;
           }
-        }
+        });
+        image.src = itemData.thumbnail;
+        return true;
       });
     }
   }, {
@@ -776,6 +799,8 @@ function () {
       this.imagesData = [];
 
       if (this.settings.lazyLoad) {
+        this.loadedItemsCount = 0;
+        this.lazyLoadComplete = false;
         this.createImagesData();
       } else {
         this.loadImages();
@@ -1160,42 +1185,50 @@ function (_BaseGalleryType) {
 
       this.currentBreakpoint = currentBreakpoint;
       var heights = [],
+          itemsInColumn = [],
           aggregatedHeights = [],
           columns = this.getCurrentDeviceSetting('columns'),
           containerWidth = this.$container.width(),
           horizontalGap = this.getCurrentDeviceSetting('horizontalGap'),
           itemWidth = (containerWidth - horizontalGap * (columns - 1)) / columns,
           $items = this.getActiveItems();
+      var naturalColumnHeight = 0;
+
+      for (var i = 0; i < columns; i++) {
+        itemsInColumn[i] = 0;
+        heights[i] = 0;
+      }
+
       $items.each(function (index, item) {
-        var row = Math.floor(index / columns),
-            indexAtRow = index % columns,
-            imageData = _this.getImageData(index),
+        var imageData = _this.getImageData(index),
             itemHeight = itemWidth / imageData.ratio;
 
+        var indexAtRow = index % columns;
+        naturalColumnHeight = heights[indexAtRow];
+        jQuery.each(heights, function (colNumber, currentColHeight) {
+          if (currentColHeight && naturalColumnHeight > currentColHeight + 5) {
+            naturalColumnHeight = currentColHeight;
+            indexAtRow = colNumber;
+          }
+        });
+        aggregatedHeights[index] = heights[indexAtRow];
+        heights[indexAtRow] += itemHeight;
         item.style.setProperty('--item-height', imageData.height / imageData.width * 100 + '%');
         item.style.setProperty('--column', indexAtRow);
-
-        if (row) {
-          aggregatedHeights[index] = heights[indexAtRow];
-          heights[indexAtRow] += itemHeight;
-        } else {
-          heights.push(itemHeight);
-        }
+        item.style.setProperty('--items-in-column', itemsInColumn[indexAtRow]);
+        itemsInColumn[indexAtRow]++;
       });
       var highestColumn = Math.max.apply(Math, heights),
           highestColumnIndex = heights.indexOf(highestColumn),
-          rows = Math.floor(this.settings.items.length / columns),
-          rowsRemainder = this.settings.items.length % columns,
-          highestColumnsGapsCount = rowsRemainder > highestColumnIndex ? rows : rows - 1,
+          rows = itemsInColumn[highestColumnIndex],
+          highestColumnsGapsCount = rows - 1,
           containerAspectRatio = highestColumn / containerWidth;
       this.$container[0].style.setProperty('--columns', columns);
       this.$container[0].style.setProperty('--highest-column-gap-count', highestColumnsGapsCount);
       this.$container.css('padding-bottom', containerAspectRatio * 100 + '%');
       $items.each(function (index, item) {
-        var percentHeight = aggregatedHeights[index] ? aggregatedHeights[index] / highestColumn * 100 : 0,
-            row = Math.floor(index / columns);
+        var percentHeight = aggregatedHeights[index] ? aggregatedHeights[index] / highestColumn * 100 : 0;
         item.style.setProperty('--percent-height', percentHeight + '%');
-        item.style.setProperty('--row', row);
       });
     }
   }]);
