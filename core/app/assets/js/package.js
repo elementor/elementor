@@ -9,6 +9,8 @@ import CardHeader from './ui/card/card-header';
 import CardOverlay from './ui/card/card-overlay';
 import CssGrid from './ui/atoms/css-grid';
 import Dialog from './ui/dialog/dialog';
+import DragDrop from './ui/atoms/drag-drop';
+import DropZone from './organisms/drop-zone';
 import Heading from './ui/atoms/heading';
 import Grid from './ui/grid/grid';
 import Icon from './ui/atoms/icon';
@@ -18,7 +20,10 @@ import ModalProvider from './ui/modal/modal';
 import NotFound from './pages/not-found';
 import Page from './layout/page';
 import Popover from './ui/molecules/popover';
+import Select from './ui/atoms/select';
+import Select2 from './ui/molecules/select2';
 import Text from './ui/atoms/text';
+import UploadFile from './molecules/upload-file';
 
 export default {
 	AddNewButton,
@@ -31,6 +36,8 @@ export default {
 	CardOverlay,
 	CssGrid,
 	Dialog,
+	DragDrop,
+	DropZone,
 	Heading,
 	Grid,
 	Icon,
@@ -40,5 +47,8 @@ export default {
 	NotFound,
 	Page,
 	Popover,
+	Select,
+	Select2,
 	Text,
+	UploadFile,
 };
