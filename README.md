@@ -225,17 +225,11 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 ## Changelog ##
 
 ### 3.0.1 - 2020-08-25 ###
-* Tweak: Added Skype and Viber to the allowed URI protocols ([#11619](https://github.com/elementor/elementor/issues/11619))
-* Tweak: Added default values as placeholders to the number inputs in the Breakpoints settings section
 * Tweak: Changed "Exit to Dashboard" and "View Page" panel menu links to use `<a>` tag
 * Fix: `set-error-handler` conflict with 3rd party addons that uses REST-API ([#12219](https://github.com/elementor/elementor/issues/12219))
-* Fix: Column & Section Elements fires `elementor/element/after_add_attributes` early ([#12185](https://github.com/elementor/elementor/issues/12185), Props [@ibndawood](https://github.com/ibndawood))
-* Fix: Conflict between responsive options and the Navigator "hide" option ([#12123](https://github.com/elementor/elementor/issues/12123))
+* Fix: Conflict between responsive options and the Navigator "Hide" option ([#12123](https://github.com/elementor/elementor/issues/12123))
 * Fix: Radio inputs layout breaks when using Multi-Step Form
-* Fix: Global Color dropdown shows Primary as marked when a custom value is added
-* Fix: Clicking on the Theme Builder Logo reopens it
 * Fix: Global typography popover glitch in RTL websites
-* Fix: Finder gets loaded in preview iframes
 
 ### 3.0.0 - 2020-08-23 ###
 * New: Introducing Site Settings - manage your entire site within the Editor
