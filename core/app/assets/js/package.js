@@ -9,6 +9,7 @@ import CardHeader from './ui/card/card-header';
 import CardOverlay from './ui/card/card-overlay';
 import CssGrid from './ui/atoms/css-grid';
 import Dialog from './ui/dialog/dialog';
+import ErrorBoundary from './organisms/error-boundary';
 import Heading from './ui/atoms/heading';
 import Grid from './ui/grid/grid';
 import Icon from './ui/atoms/icon';
@@ -31,6 +32,7 @@ export default {
 	CardOverlay,
 	CssGrid,
 	Dialog,
+	ErrorBoundary,
 	Heading,
 	Grid,
 	Icon,
