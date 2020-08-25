@@ -64,7 +64,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 				defaut => display: none,
-				flyover => display: block
+				flyover => display: block,
 	}
 
 	/**
