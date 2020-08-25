@@ -130,7 +130,7 @@ class App extends BaseApp {
 
 		wp_register_style(
 			'select2',
-			$this->get_css_assets_url( 'e-select2','assets/lib/e-select2/css/' ),
+			$this->get_css_assets_url( 'e-select2', 'assets/lib/e-select2/css/' ),
 			[],
 			'4.0.6-rc.1'
 		);
