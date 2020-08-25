@@ -167,6 +167,7 @@ class App extends BaseApp {
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
 			[
+				'wp-i18n',
 				'react',
 				'react-dom',
 			],
@@ -176,7 +177,8 @@ class App extends BaseApp {
 
 		$this->enqueue_dark_theme_detection_script();
 
-		wp_set_script_translations( 'elementor-app', 'elementor', ELEMENTOR_PATH . 'languages' );
+		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
+		wp_set_script_translations( 'elementor-app', 'elementor' );
 
 		$this->print_config();
 	}
