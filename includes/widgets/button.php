@@ -57,6 +57,16 @@ class Widget_Button extends Widget_Base {
 	 */
 	public function get_icon() {
 		return 'eicon-button';
+	$this->add_control(
+			'Icon on the flyover',
+			[
+				'label' => __( 'Icon on the flyover', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+				defaut => display: none,
+				flyover => display: block
+
+}
 	}
 
 	/**
