@@ -173,7 +173,7 @@ class App extends BaseApp {
 
 		wp_register_script(
 			'select2',
-			$this->get_js_assets_url('e-select2.full', 'assets/lib/e-select2/js/' ),
+			$this->get_js_assets_url( 'e-select2.full', 'assets/lib/e-select2/js/' ),
 			[
 				'jquery',
 			],
