@@ -38,7 +38,7 @@ export default class SiteEditor {
 					content: __( 'The Global Header allows you to easily design and edit custom WordPress headers so you are no longer constrained by your theme’s header design limitations.', 'elementor' ),
 					tip: __( 'You can create multiple headers, and assign each to different areas of your site.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-header',
-					video_url: 'https://www.youtube.com/embed/tDePkL-1tu4',
+					video_url: 'https://www.youtube.com/embed/HHy5RK6W-6I',
 				},
 			},
 			{
@@ -53,7 +53,7 @@ export default class SiteEditor {
 					content: __( 'The Global Footer allows you to easily design and edit custom WordPress footers without the limits of your theme’s footer design constraints', 'elementor' ),
 					tip: __( 'You can create multiple footers, and assign each to different areas of your site.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-footer',
-					video_url: 'https://www.youtube.com/embed/ob7SMEfVRfc',
+					video_url: 'https://www.youtube.com/embed/xa8DoR4tQrY',
 				},
 			},
 			{
@@ -68,7 +68,7 @@ export default class SiteEditor {
 					content: __( 'A global page template allows you to easily create the layout and style of pages, ensuring design consistency across all the pages of your site.', 'elementor' ),
 					tip: __( 'You can create multiple global page templates, and assign each to different areas of your site.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-page',
-					video_url: 'https://www.youtube.com/embed/5LWrOIAGOsc',
+					video_url: 'https://www.youtube.com/embed/_y5eZ60lVoY',
 				},
 			},
 			{
@@ -83,7 +83,7 @@ export default class SiteEditor {
 					content: __( 'A global post template allows you to easily design the layout and style of posts, ensuring a design consistency throughout all your blog posts, for example.', 'elementor' ),
 					tip: __( 'You can create multiple global post templates, and assign each to a different category.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-post',
-					video_url: 'https://www.youtube.com/embed/KMPVOt_1F2A',
+					video_url: 'https://www.youtube.com/embed/8Fk-Edu7DL0',
 				},
 			},
 			{
@@ -98,7 +98,7 @@ export default class SiteEditor {
 					content: __( 'A global archive template allows you to easily design the layout and style of archive pages - those pages that show a list of posts (e.g. a blog’s list of recent posts), which may be filtered by terms such as authors, categories, tags, search results, etc.', 'elementor' ),
 					tip: __( 'If you’d like a different style for a specific category, it’s easy to create a separate global archive template whose condition is to only display when users are viewing that category’s list of posts.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-archive',
-					video_url: __( 'https://www.youtube.com/embed/7rDIS1Li4jM', 'elementor' ),
+					video_url: __( 'https://www.youtube.com/embed/wxElpEh9bfA', 'elementor' ),
 				},
 			},
 			{
@@ -113,7 +113,7 @@ export default class SiteEditor {
 					content: __( 'You can easily control the layout and design of the Search Results page with the Search Results template, which is simply a special archive template just for displaying search results.', 'elementor' ),
 					tip: __( 'You can customize the message if there are no results for the search term.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-search-results',
-					video_url: 'https://www.youtube.com/embed/kPAUEShgdoo',
+					video_url: 'https://www.youtube.com/embed/KKkIU_L5sDo',
 				},
 			},
 			{
@@ -128,7 +128,7 @@ export default class SiteEditor {
 					content: __( 'A global product template allows you to easily design the layout and style of WooCommerce single product pages, and apply that template to various conditions that you assign.', 'elementor' ),
 					tip: __( 'You can create multiple global product templates, and assign each to different types of products, enabling a custom design for each group of similar products.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-product',
-					video_url: 'https://www.youtube.com/embed/F2gyAeZdU9s',
+					video_url: 'https://www.youtube.com/embed/PjhoB1RWkBM',
 				},
 			},
 			{
@@ -158,7 +158,7 @@ export default class SiteEditor {
 					content: __( 'A 404 page template allows you to easily design the layout and style of the page that is displayed when a visitor arrives at a page that does not exist.', 'elementor' ),
 					tip: __( 'Keep your site\'s visitors happy when they get lost by displaying your recent posts, a search bar, or any information that might help the user find what they were looking for.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-404',
-					video_url: 'https://www.youtube.com/embed/Z2GoYYbWciU',
+					video_url: 'https://www.youtube.com/embed/ACCNp9tBMQg',
 				},
 			},
 			];
