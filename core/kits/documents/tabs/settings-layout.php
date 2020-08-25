@@ -147,7 +147,7 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control(
 			'viewport_md',
 			[
-				'label' => __( 'Breakpoint (px)', 'elementor' ),
+				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
 				'min' => $default_breakpoints['sm'] + 1,
 				'max' => $default_breakpoints['lg'] - 1,
@@ -169,7 +169,7 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control(
 			'viewport_lg',
 			[
-				'label' => __( 'Breakpoint (px)', 'elementor' ),
+				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
 				'min' => $default_breakpoints['md'] + 1,
 				'max' => $default_breakpoints['xl'] - 1,
