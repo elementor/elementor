@@ -76,7 +76,7 @@ PanelMenu.addAdminMenu = () => {
 	PanelMenu.addItem( {
 		name: 'finder',
 		icon: 'eicon-search',
-		title: elementorCommon.translate( 'find_anything', 'finder' ),
+		title: elementorCommon.translate( 'finder', 'finder' ),
 		callback: () => $e.route( 'finder' ),
 	}, 'navigate_from_page', 'view-page' );
 };

@@ -450,7 +450,11 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = esc_url( $url_control['url'] );
+			$allowed_protocols = wp_allowed_protocols();
+
+			$allowed_protocols += [ 'skype', 'viber' ];
+
+			$attributes['href'] = esc_url( $url_control['url'], $allowed_protocols );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
