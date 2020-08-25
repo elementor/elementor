@@ -65,8 +65,6 @@ class Widget_Button extends Widget_Base {
 				'options' => [
 				defaut => display: none,
 				flyover => display: block
-
-}
 	}
 
 	/**
