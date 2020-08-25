@@ -7,7 +7,7 @@
 **Tested up to:** 5.5  
 **Requires PHP:** 5.6  
 **Beta tag:** 3.0.0-beta6  
-**Stable tag:** 2.9.14  
+**Stable tag:** 3.0.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -223,6 +223,13 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 3.0.1 - 2020-08-25 ###
+* Tweak: Changed "Exit to Dashboard" and "View Page" panel menu links to use `<a>` tag
+* Fix: `set-error-handler` conflict with 3rd party addons that uses REST-API ([#12219](https://github.com/elementor/elementor/issues/12219))
+* Fix: Conflict between responsive options and the Navigator "Hide" option ([#12123](https://github.com/elementor/elementor/issues/12123))
+* Fix: Radio inputs layout breaks when using Multi-Step Form
+* Fix: Global typography popover glitch in RTL websites
 
 ### 3.0.0 - 2020-08-23 ###
 * New: Introducing Site Settings - manage your entire site within the Editor
