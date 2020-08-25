@@ -39,14 +39,16 @@ PanelMenu.initGroups = () => {
 				name: 'view-page',
 				icon: 'eicon-preview-thin',
 				title: elementor.translate( 'view_page' ),
-				callback: () => location.href = elementor.config.document.urls.permalink,
+				type: 'link',
+				link: elementor.config.document.urls.permalink,
 			},
 			// Todo: internal command.
 			{
 				name: 'exit-to-dashboard',
 				icon: 'eicon-wordpress-light',
 				title: elementor.translate( 'exit_to_dashboard' ),
-				callback: () => location.href = elementor.config.document.urls.exit_to_dashboard,
+				type: 'link',
+				link: elementor.config.document.urls.exit_to_dashboard,
 			},
 		],
 	} );
