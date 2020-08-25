@@ -98,7 +98,7 @@ export default class SiteEditor {
 					content: __( 'A global archive template allows you to easily design the layout and style of archive pages - those pages that show a list of posts (e.g. a blog’s list of recent posts), which may be filtered by terms such as authors, categories, tags, search results, etc.', 'elementor' ),
 					tip: __( 'If you’d like a different style for a specific category, it’s easy to create a separate global archive template whose condition is to only display when users are viewing that category’s list of posts.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-archive',
-					video_url: __( 'https://www.youtube.com/embed/wxElpEh9bfA', 'elementor' ),
+					video_url: 'https://www.youtube.com/embed/wxElpEh9bfA',
 				},
 			},
 			{
