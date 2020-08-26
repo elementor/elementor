@@ -205,7 +205,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$space_between_widgets_selector = $is_legacy_mode_active ? '> .elementor-column-wrap > ' : '';
+		$space_between_widgets_selector = $is_legacy_mode_active ? '> .elementor-column-wrap ' : '';
 
 		$this->add_responsive_control(
 			'space_between_widgets',
