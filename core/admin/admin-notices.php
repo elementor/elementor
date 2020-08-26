@@ -500,6 +500,8 @@ class Admin_Notices extends Module {
 		$default_options = [
 			'title' => '',
 			'description' => '',
+			'classes' => [ 'notice' ],
+			'dismissible' => false,
 			'button' => [
 				'text' => '',
 				'url' => '',
@@ -507,9 +509,19 @@ class Admin_Notices extends Module {
 			],
 		];
 
+		$notice_classes = $default_options['classes'];
+
+		if ( isset( $options['classes'] ) ) {
+			$notice_classes = array_merge( $options['classes'], $notice_classes );
+		}
+
+		$notice_classes = implode( ' ', $notice_classes );
+
 		$options = array_replace_recursive( $default_options, $options );
+
+		$id = isset( $options['id'] ) ? 'id=' . $options['id'] : '';
 		?>
-		<div class="notice elementor-message">
+		<div class="elementor-message <?php echo $notice_classes; ?>" <?php echo $id; ?>>
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
 					<div class="e-logo-wrapper">
@@ -530,6 +542,9 @@ class Admin_Notices extends Module {
 					</div>
 				<?php } ?>
 			</div>
+			<?php if ( true === $options['dismissible'] ) { ?>
+				<button type="button" class="notice-dismiss"><span class="screen-reader-text"><?php echo __( 'Dismiss', 'elementor' ); ?></span></button>
+			<?php } ?>
 		</div>
 		<?php
 	}

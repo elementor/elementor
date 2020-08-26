@@ -5,8 +5,34 @@
 .notice {
 
 	&.elementor-message {
+		position: relative;
 		padding: 20px;
 		@include border-start-property(color, $editor-accent);
+
+		&.notice-warning {
+			@include border-start-property(color, $editor-alert-warning);
+
+			.e-logo-wrapper {
+				background: $editor-alert-warning;
+			}
+		}
+
+		&.notice-error {
+			@include border-start-property(color, $editor-warning);
+
+			.e-logo-wrapper {
+				background: $editor-warning;
+			}
+		}
+
+		&.notice-success {
+			@include border-start-property(color, $editor-success);
+
+			.e-logo-wrapper {
+				background: $editor-success;
+			}
+		}
+
 		.elementor-message-inner {
 			display: flex;
 			align-items: center;
