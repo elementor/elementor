@@ -11,6 +11,7 @@ import CssGrid from './ui/atoms/css-grid';
 import Dialog from './ui/dialog/dialog';
 import DragDrop from './ui/atoms/drag-drop';
 import DropZone from './organisms/drop-zone';
+import ErrorBoundary from './organisms/error-boundary';
 import Heading from './ui/atoms/heading';
 import Grid from './ui/grid/grid';
 import Icon from './ui/atoms/icon';
@@ -38,6 +39,7 @@ export default {
 	Dialog,
 	DragDrop,
 	DropZone,
+	ErrorBoundary,
 	Heading,
 	Grid,
 	Icon,
