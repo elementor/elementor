@@ -584,4 +584,16 @@ class Utils {
 
 		return false;
 	}
+
+	public static function is_elementor_path( $path ) {
+		$path = wp_normalize_path( $path );
+		// `untrailingslashit` in order to include other plugins prefixed with elementor.
+		$elementor_path = untrailingslashit( wp_normalize_path( ELEMENTOR_PATH ) );
+
+		if ( false === strpos( $path, $elementor_path ) ) {
+			return false;
+		}
+
+		return true;
+	}
 }
