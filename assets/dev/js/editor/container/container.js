@@ -245,7 +245,7 @@ export default class Container extends ArgsObject {
 			rowSettingsModel.set( '_id', rowId );
 		}
 
-		this.repeaters[ repeaterName ].children[ index ] = new elementorModules.editor.Container( {
+		this.repeaters[ repeaterName ].children.splice( index, 0, new elementorModules.editor.Container( {
 			type: 'repeater',
 			id: rowSettingsModel.get( '_id' ),
 			model: new Backbone.Model( {
@@ -257,7 +257,7 @@ export default class Container extends ArgsObject {
 			label: this.label + ' ' + elementor.translate( 'Item' ),
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
-		} );
+		} ) );
 	}
 
 	/**
