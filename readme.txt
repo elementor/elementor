@@ -221,6 +221,22 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.0.2 - 2020-08-26 =
+* Tweak: Added Select2 And File Import Components to Theme Builder application
+* Tweak: Added default values as placeholders to the number inputs in the Breakpoints settings section
+* Tweak: Minor UI tweaks to Globals dropdown
+* Tweak: Updated video tutorials in Theme Builder
+* Fix: Column & Section Elements fires `elementor/element/after_add_attributes` early ([#12185](https://github.com/elementor/elementor/issues/12185), Props [@ibndawood](https://github.com/ibndawood))
+* Fix: `hexdec()` returns a deprecation notice ([#12161](https://github.com/elementor/elementor/issues/12161))
+* Fix: Repeater controls issue after the moving to `container.repeaters` ([#12239](https://github.com/elementor/elementor/issues/12239), [#12221](https://github.com/elementor/elementor/issues/12221))
+* Fix: Column Widget Space is not working when DOM Improvement is disabled ([#12256](https://github.com/elementor/elementor/issues/12256), [Topic](https://wordpress.org/support/topic/widgets-space-doesnt-work-after-updating-to-3-0/))
+* Fix: Resetting a style throws JS errors
+* Fix: Repeater controls backwards compatibility
+* Fix: Global Color dropdown shows Primary as marked when a custom value is added
+* Fix: Adding new Global Fonts won't be added to the dropdown list until page reloads
+* Fix: Clicking on the Theme Builder Logo reopens it
+* Fix: Finder gets loaded in preview iframes
+
 = 3.0.1 - 2020-08-25 =
 * Tweak: Changed "Exit to Dashboard" and "View Page" panel menu links to use `<a>` tag
 * Fix: `set-error-handler` conflict with 3rd party addons that uses REST-API ([#12219](https://github.com/elementor/elementor/issues/12219))
