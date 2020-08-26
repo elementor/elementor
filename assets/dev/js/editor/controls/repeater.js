@@ -68,6 +68,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	initialize: function() {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
+		this.listenTo( this.collection, 'reset', () => this.options.container.repeaters[ this.model.get( 'name' ) ].children = [] );
+
 		this.fillCollection();
 	},
 
@@ -175,9 +177,28 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
-	onAddChild: function() {
+	onAddChild: function( childView ) {
 		this.updateChildIndexes();
 		this.updateActiveRow();
+		this.updateContainer( childView );
+	},
+
+	// BC since 3.0.0, ensure a new child is appeare in container children
+	updateContainer( childView ) {
+		// TODO: Remove on 3.0.5, support wrong repeater implementation.
+		if ( ! childView ) {
+			return;
+		}
+
+		const container = this.options.container.repeaters[ this.model.get( 'name' ) ],
+			isInChildren = container.children.filter( ( child ) => {
+				return child.id === childView.model.get( '_id' );
+			} );
+
+		if ( ! isInChildren.length ) {
+			elementorCommon.helpers.softDeprecated( 'Don\'t add models directly to the repeater', '3.0.0', 'container.addRepeaterItem' );
+			this.options.container.addRepeaterItem( this.model.get( 'name' ), childView.model, childView._index );
+		}
 	},
 
 	getDefaults: function() {
