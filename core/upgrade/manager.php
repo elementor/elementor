@@ -52,25 +52,45 @@ class Manager extends DB_Upgrades_Manager {
 		return 'Elementor\Core\Upgrade\Upgrades';
 	}
 
-	protected function update_db_version() {
-		parent::update_db_version();
-
-		$installs_history = self::get_installs_history();
-
-		$installs_history[ ELEMENTOR_VERSION ] = time();
-
-		uksort( $installs_history, 'version_compare' );
-
-		update_option( self::INSTALLS_HISTORY_META, $installs_history );
-	}
-
 	public static function get_installs_history() {
-		return get_option( self::INSTALLS_HISTORY_META, [] );
+		$installs_history = get_option( self::INSTALLS_HISTORY_META, [] );
+
+		if ( empty( $installs_history[ ELEMENTOR_VERSION ] ) ) {
+			self::update_history( $installs_history, ELEMENTOR_VERSION, time() );
+		}
+
+		return $installs_history;
 	}
 
 	public static function install_compare( $version, $operator ) {
 		$installs_history = self::get_installs_history();
 
 		return version_compare( key( $installs_history ), $version, $operator );
+	}
+
+	protected function update_db_version() {
+		parent::update_db_version();
+
+		$installs_history = self::get_installs_history();
+
+		$old_version = $this->get_current_version();
+
+		if ( $old_version && empty( $installs_history[ $old_version ] ) ) {
+			$old_version_install_time = time();
+
+			if ( ! empty( $installs_history[ ELEMENTOR_VERSION ] ) ) {
+				$old_version_install_time = $installs_history[ ELEMENTOR_VERSION ] - 1;
+			}
+
+			$this->update_history( $installs_history, $old_version, $old_version_install_time );
+		}
+	}
+
+	private static function update_history( $history, $version, $time ) {
+		$history[ $version ] = $time;
+
+		uksort( $history, 'version_compare' );
+
+		update_option( self::INSTALLS_HISTORY_META, $history );
 	}
 }
