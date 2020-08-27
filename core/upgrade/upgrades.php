@@ -711,7 +711,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
 				self::notice( 'System colors are disabled. nothing to do.' );
@@ -748,7 +748,7 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -758,7 +758,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_saved_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_saved_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
@@ -808,7 +808,7 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -818,7 +818,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
 				self::notice( 'System typography is disabled. nothing to do.' );
@@ -857,16 +857,18 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
 	 * @param callback $callback
-	 * @param Updater $updater
+	 * @param Updater  $updater
+	 *
+	 * @param bool     $include_revisions
 	 *
 	 * @return mixed
 	 */
-	private static function move_settings_to_kit( $callback, $updater ) {
+	private static function move_settings_to_kit( $callback, $updater, $include_revisions = true ) {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		if ( ! $active_kit_id ) {
 			self::notice( 'Active kit not found. nothing to do.' );
@@ -879,6 +881,10 @@ class Upgrades {
 		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
 		if ( 0 === $offset ) {
 			$callback( $active_kit_id );
+		}
+
+		if ( ! $include_revisions ) {
+			return false;
 		}
 
 		$revisions_ids = wp_get_post_revisions( $active_kit_id, [
