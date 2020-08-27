@@ -359,33 +359,6 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return settings;
 	},
 
-	removeDataDefaults( data, controls ) {
-		jQuery.each( data, ( key ) => {
-			const control = controls[ key ];
-
-			if ( ! control ) {
-				return;
-			}
-
-			// TODO: use `save_default` in text|textarea controls.
-			if ( control.save_default || ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) ) {
-				return;
-			}
-
-			if ( control.is_repeater ) {
-				data[ key ].forEach( ( repeaterRow ) => {
-					this.removeDataDefaults( repeaterRow, control.fields );
-				} );
-
-				return;
-			}
-
-			if ( _.isEqual( data[ key ], control.default ) ) {
-				delete data[ key ];
-			}
-		} );
-	},
-
 	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
@@ -401,8 +374,26 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 		} );
 
-		if ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) {
-			this.removeDataDefaults( data, this.controls );
+		// TODO: `options.removeDefault` is a bc since 2.5.14
+		if ( ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) || options.removeDefault ) {
+			var controls = this.controls;
+
+			_.each( data, function( value, key ) {
+				const control = controls[ key ];
+
+				if ( ! control ) {
+					return;
+				}
+
+				// TODO: use `save_default` in text|textarea controls.
+				if ( control.save_default || ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) ) {
+					return;
+				}
+
+				if ( _.isEqual( data[ key ], control.default ) ) {
+					delete data[ key ];
+				}
+			} );
 		}
 
 		return elementorCommon.helpers.cloneObject( data );
