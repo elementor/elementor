@@ -13,10 +13,7 @@ const notifications = createSlice( {
 	reducers: {
 		notify: ( state, action ) => {
 			state.active = [
-				{
-					id: elementorCommon.helpers.getUniqueId(),
-					...action.payload,
-				},
+				action.payload,
 				...state.active,
 			];
 		},
@@ -28,6 +25,21 @@ const notifications = createSlice( {
 			];
 
 			state.active = state.active.filter( ( notification ) => notification.id !== action.payload );
+		},
+	},
+	controllers: {
+		notifyAnErrorDialog( { dispatch, actions }, payload ) {
+			const notification = {
+				id: elementorCommon.helpers.getUniqueId(),
+				ui: 'dialog',
+				props: {
+					...payload,
+				},
+			};
+
+			dispatch( actions.notify( notification ) );
+
+			return notification;
 		},
 	},
 } );

@@ -1,6 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
-
-export { createSlice } from '@reduxjs/toolkit';
+import { configureStore, createSlice as createSliceBase } from '@reduxjs/toolkit';
 
 export {
 	Provider,
@@ -8,13 +6,23 @@ export {
 	useSelector,
 } from 'react-redux';
 
+export function createSlice( { controllers, selectors, ...options } ) {
+	const baseSlice = createSliceBase( options );
+
+	return {
+		...baseSlice,
+		selectors,
+		controllers,
+	};
+}
+
 export class StoreManager {
 	/**
 	 * Holds all the slices of the app.
 	 *
-	 * @type {{}}
+	 * @type {*[]}
 	 */
-	slices = {};
+	slices = [];
 
 	/**
 	 * Add slice of state to the store
@@ -24,14 +32,14 @@ export class StoreManager {
 	 * @returns {StoreManager}
 	 */
 	addSlice( key, slice ) {
-		if ( this.slices.hasOwnProperty( key ) ) {
+		if ( this.getSlice( key, false ) ) {
 			// TODO: Warn that slice is already exists
 		}
 
-		this.slices[ key ] = {
+		this.slices.push( {
 			key,
 			slice,
-		};
+		} );
 
 		return this;
 	}
@@ -54,22 +62,27 @@ export class StoreManager {
 	 * Get specific slice.
 	 *
 	 * @param key
-	 * @returns {*}
+	 * @param shouldWarn
+	 * @returns {null|*}
 	 */
-	getSlice( key ) {
-		if ( ! this.slices.hasOwnProperty( key ) ) {
-			// TODO: Warn that slice is not exists
+	getSlice( key, shouldWarn = true ) {
+		const slice = this.slices.find( ( s ) => s.key === key );
+
+		if ( ! slice ) {
+			if ( shouldWarn ) {
+				// TODO: Warn that slice is not exists
+			}
 
 			return null;
 		}
 
-		return this.slices[ key ].slice;
+		return slice.slice;
 	}
 
 	/**
 	 * Return all the slices
 	 *
-	 * @returns {{}}
+	 * @returns {*[]}
 	 */
 	getSlices() {
 		return this.slices;
@@ -81,7 +94,7 @@ export class StoreManager {
 	 * @returns {{}}
 	 */
 	getSlicesReducers() {
-		return Object.values( this.getSlices() ).reduce( ( current, { key, slice } ) => {
+		return this.getSlices().reduce( ( current, { key, slice } ) => {
 			return { ...current, [ key ]: slice.reducer };
 		}, {} );
 	}
@@ -92,13 +105,38 @@ export class StoreManager {
 	 * @returns {EnhancedStore<{}, AnyAction, [ThunkMiddlewareFor<{}>]>}
 	 */
 	createStore() {
-		return configureStore( {
+		const store = configureStore( {
 			reducer: this.getSlicesReducers(),
 		} );
+
+		this.slices = this.getSlices().map( ( { key, slice } ) => {
+			return {
+				key,
+				slice: {
+					...slice,
+					controllers: Object.keys( slice.controllers )
+						.reduce( ( current, controllerKey ) => {
+							return {
+								...current,
+								[ controllerKey ]: ( payload ) => slice.controllers[ controllerKey ]( {
+									dispatch: store.dispatch,
+									actions: slice.actions,
+								}, payload ),
+							};
+						}, {} ),
+				},
+			};
+		} );
+
+		return store;
 	}
 }
 
 export const manager = new StoreManager();
+
+export function useSlice( sliceKey ) {
+	return React.useMemo( () => manager.getSlice( sliceKey ), [ sliceKey ] );
+}
 
 /**
  * An hook to create shortcut for consume slice actions.
@@ -107,11 +145,9 @@ export const manager = new StoreManager();
  * @returns {{}}
  */
 export function useSliceActions( sliceKey ) {
-	const slice = React.useMemo( () => manager.getSlice( sliceKey ), [ sliceKey ] );
+	return useSlice( sliceKey ).actions;
+}
 
-	if ( ! slice ) {
-		return {};
-	}
-
-	return slice.actions;
+export function useSliceControllers( sliceKey ) {
+	return useSlice( sliceKey ).controllers;
 }
