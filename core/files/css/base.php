@@ -180,16 +180,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * @since 3.0.0
-	 * @access public
-	 */
-	public function delete() {
-		if ( $this->use_external_file() ) {
-			parent::delete();
-		}
-	}
-
-	/**
 	 * Enqueue CSS.
 	 *
 	 * Either enqueue the CSS file in Elementor or add inline style.
