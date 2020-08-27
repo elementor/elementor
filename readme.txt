@@ -221,6 +221,13 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.0.3 - 2020-08-27 =
+* Tweak: Added option to re-migrate Global Colors and Fonts from earlier versions
+* Fix: Repeater controls doesn't work in some edge cases
+* Fix: Load Theme Builder with relevant UI theme
+* Fix: Dialog texts are not center aligned in Theme Builder
+* Fix: Changes are not reflecting on frontend when CSS Print Method is set to Internal Embedding
+
 = 3.0.2 - 2020-08-26 =
 * Tweak: Added Select2 And File Import Components to Theme Builder application
 * Tweak: Added default values as placeholders to the number inputs in the Breakpoints settings section
