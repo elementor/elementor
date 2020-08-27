@@ -67,11 +67,13 @@
 	"dependencies": {
 		"@babel/plugin-transform-modules-commonjs": "^7.2.0",
 		"@babel/plugin-transform-runtime": "^7.3.4",
+		"@reduxjs/toolkit": "^1.4.0",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^2.2.0",
 		"@wordpress/babel-preset-default": "^2.1.0",
 		"core-js": "^2.6.5",
 		"prop-types": "^15.7.1",
 		"reach-router-hash-history": "0.0.3",
+		"react-redux": "^7.2.1",
 		"sass-lint": "^1.13.1"
 	}
 }

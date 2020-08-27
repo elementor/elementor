@@ -166,6 +166,7 @@ class App extends BaseApp {
 			[
 				'wp-i18n',
 				'react',
+				'react-dom',
 			],
 			ELEMENTOR_VERSION,
 			true

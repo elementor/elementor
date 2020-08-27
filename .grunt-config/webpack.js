@@ -79,11 +79,12 @@ const entry = {
 
 const externals = {
 	'@wordpress/i18n': 'wp.i18n',
-		react: 'React',
-		'react-dom': 'ReactDOM',
-		'@elementor/app-ui': 'elementorAppPackages.appUi',
-		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-		'@elementor/router': 'elementorAppPackages.router',
+	react: 'React',
+	'react-dom': 'ReactDOM',
+	'@elementor/app-ui': 'elementorAppPackages.appUi',
+	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+	'@elementor/router': 'elementorAppPackages.router',
+	'@elementor/store': 'elementorAppPackages.store',
 };
 
 const plugins = [
