@@ -68,9 +68,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	initialize: function() {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
-		this.listenTo( this.collection, 'reset', () => this.options.container.repeaters[ this.model.get( 'name' ) ].children = [] );
-
 		this.fillCollection();
+
+		this.listenTo( this.collection, 'reset', this.resetContainer.bind( this ) );
+
+		this.listenTo( this.collection, 'add', this.updateContainer.bind( this ) );
 	},
 
 	editRow: function( rowView ) {
@@ -177,28 +179,28 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
-	onAddChild: function( childView ) {
+	onAddChild: function() {
 		this.updateChildIndexes();
 		this.updateActiveRow();
-		this.updateContainer( childView );
 	},
 
-	// BC since 3.0.0, ensure a new child is appeare in container children
-	updateContainer( childView ) {
-		// TODO: Remove on 3.0.5, support wrong repeater implementation.
-		if ( ! childView ) {
-			return;
-		}
-
+	// BC since 3.0.0, ensure a new child is appear in container children.
+	updateContainer( model ) {
 		const container = this.options.container.repeaters[ this.model.get( 'name' ) ],
 			isInChildren = container.children.filter( ( child ) => {
-				return child.id === childView.model.get( '_id' );
+				return child.id === model.get( '_id' );
 			} );
 
 		if ( ! isInChildren.length ) {
-			elementorCommon.helpers.softDeprecated( 'Don\'t add models directly to the repeater', '3.0.0', 'container.addRepeaterItem' );
-			this.options.container.addRepeaterItem( this.model.get( 'name' ), childView.model, childView._index );
+			elementorCommon.helpers.softDeprecated( 'Don\'t add models directly to the repeater.', '3.0.0', '$e.run( \'document/repeater/insert\' )' );
+			this.options.container.addRepeaterItem( this.model.get( 'name' ), model, model.collection.indexOf( model ) );
 		}
+	},
+
+	// BC since 3.0.0, ensure a container children are reset on collection reset.
+	resetContainer: function() {
+		elementorCommon.helpers.softDeprecated( 'Don\'t reset repeater collection directly.', '3.0.0', '$e.run( \'document/repeater/remove\' )' );
+		this.options.container.repeaters[ this.model.get( 'name' ) ].children = [];
 	},
 
 	getDefaults: function() {
