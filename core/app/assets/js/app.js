@@ -8,6 +8,7 @@ import { createHashSource } from 'reach-router-hash-history';
 import NotFound from 'elementor-app/pages/not-found';
 import Index from 'elementor-app/pages/index';
 import ErrorBoundary from 'elementor-app/organisms/error-boundary';
+import NotificationCenter from 'elementor-app/organisms/notification-center';
 import storeSlices from './store/index';
 
 import './app.scss';
@@ -30,6 +31,7 @@ export default function App() {
 						<Index path="/" />
 						<NotFound default />
 					</Router>
+					<NotificationCenter />
 				</LocationProvider>
 			</StoreProvider>
 		</ErrorBoundary>

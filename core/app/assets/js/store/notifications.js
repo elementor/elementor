@@ -12,18 +12,22 @@ const notifications = createSlice( {
 	initialState,
 	reducers: {
 		notify: ( state, action ) => {
-			state.active = [ action.payload, ...state.active ];
+			state.active = [
+				{
+					id: elementorCommon.helpers.getUniqueId(),
+					...action.payload,
+				},
+				...state.active,
+			];
 		},
 
 		dismiss: ( state, action ) => {
-			const findNotificationCallback = ( notification ) => notification.id === action.payload;
-
 			state.history = [
-				state.active.find( findNotificationCallback ),
+				state.active.find( ( notification ) => notification.id === action.payload ),
 				...state.history,
 			];
 
-			state.active = state.filter( () => ! findNotificationCallback() );
+			state.active = state.active.filter( ( notification ) => notification.id !== action.payload );
 		},
 	},
 } );
