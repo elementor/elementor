@@ -123,7 +123,7 @@ class Widget_Spacer extends Widget_Base {
 					'%' => [
 						'min' => 1,
 						'max' => 100,
-		
+	
 					],
 				],
 				'selectors' => [
