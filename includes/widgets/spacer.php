@@ -120,11 +120,10 @@ class Widget_Spacer extends Widget_Base {
 						'min' => 0.1,
 						'max' => 20,
 					],
-					'%' =>  [
+					'%' => [
 						'min' => 1,
 						'max' => 100,
-					],
-						
+					],	
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-spacer-inner' => 'height: {{SIZE}}{{UNIT}};',
