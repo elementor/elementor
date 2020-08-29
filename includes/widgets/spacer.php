@@ -121,8 +121,8 @@ class Widget_Spacer extends Widget_Base {
 						'max' => 20,
 					],
 					'%' => [
-						'min' => 100,
-						'max' => 300,
+						'min' => 1,
+						'max' => 100,
 					],
 						
 				],
