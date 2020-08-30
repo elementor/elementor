@@ -21,10 +21,10 @@ class Frontend extends elementorModules.ViewModule {
 
 	// TODO: BC since 2.5.0
 	get Module() {
-		if ( this.isEditMode() ) {
-			if(window.elementorCommon) {
-				window.elementorCommon.helpers.hardDeprecated( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
-			}
+
+		var elementorCommon=window.parent.elementorCommon||window.elementorCommon;
+		if(elementorCommon) {
+			elementorCommon.helpers.hardDeprecated( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
 		}
 
 		return elementorModules.frontend.handlers.Base;
@@ -77,10 +77,9 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getGeneralSettings( settingName ) {
-		if ( this.isEditMode() ) {
-			if( window.elementorCommon ) {
-				window.elementorCommon.helpers.softDeprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
-			}
+		var elementorCommon=window.parent.elementorCommon||window.elementorCommon;
+		if(elementorCommon) {
+			elementorCommon.elementorCommon.helpers.softDeprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
 		}
 		return this.getKitSettings( `elementor_${ settingName }` );
 	}
