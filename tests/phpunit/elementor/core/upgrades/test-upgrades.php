@@ -429,6 +429,82 @@ class Test_Upgrades extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_v_3_0_5_re_move_space_between_widgets_to_kit() {
+		$updater = $this->create_updater();
+
+		// Prepare.
+		$space_between_widgets = '0';
+
+		$general_settings = [
+			'space_between_widgets' => $space_between_widgets,
+		];
+
+		update_option( '_elementor_general_settings', $general_settings );
+
+		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
+		wp_set_current_user( $user_id );
+
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id );
+
+		// Create revisions.
+		$revisions_count = 10;
+		$query_limit = 3;
+		$expected_iterations = (int) ceil( $revisions_count / $query_limit );
+		$upgrade_iterations = 1;
+
+		for ( $i = 0; $i < $revisions_count; $i++ ) {
+			$kit->save( [
+				'elements' => [],
+			] );
+		}
+
+		// Ensure the testable values are not default values of the kit.
+		$kit_space_between_widgets_before = $kit->get_settings( 'space_between_widgets' );
+
+		$this->assertNotEquals( $space_between_widgets, $kit_space_between_widgets_before );
+
+		$updater->set_limit( $query_limit );
+
+		// Run upgrade.
+		while ( Upgrades::_v_3_0_5_re_move_space_between_widgets_to_kit( $updater ) ) {
+			$upgrade_iterations++;
+
+			$updater->set_current_item( [
+				'iterate_num' => $upgrade_iterations,
+			] );
+
+			// Avoid infinity loop.
+			if ( $upgrade_iterations > $revisions_count ) {
+				break;
+			}
+		}
+
+		// Assert iterations.
+		$this->assertEquals( $expected_iterations, $upgrade_iterations );
+
+		// Refresh kit.
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+
+		// Assert kit upgraded.
+		$kit_space_between_widgets_after = $kit->get_settings( 'space_between_widgets' );
+
+		$this->assertEquals( $space_between_widgets, $kit_space_between_widgets_after['size'] );
+
+		// Assert revisions upgraded.
+		$revisions_ids = wp_get_post_revisions( $kit_id, [
+			'fields' => 'ids',
+		] );
+
+		foreach ( $revisions_ids as $revision_id ) {
+			$revision = Plugin::$instance->documents->get( $revision_id, false );
+
+			$revision_space_between_widgets_after = $revision->get_settings( 'space_between_widgets' );
+
+			$this->assertEquals( $space_between_widgets, $revision_space_between_widgets_after['size'] );
+		}
+	}
+
 
 	/**
 	 * @param string $post_type
