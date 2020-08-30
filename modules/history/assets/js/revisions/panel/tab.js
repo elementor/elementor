@@ -161,7 +161,7 @@ module.exports = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		var currentPreviewModel = this.collection.findWhere( { id: component.currentPreviewId } );
+		const currentPreviewModel = this.collection.findWhere( { id: parseInt( component.currentPreviewId ) } );
 
 		// Ensure the model is exist and not deleted during a save.
 		if ( currentPreviewModel ) {

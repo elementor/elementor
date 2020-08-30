@@ -18,20 +18,7 @@ export class Preview extends CommandBase {
 			return;
 		}
 
-		const revision = ( null === this.component.currentPreviewId ||
-			elementor.config.document.revisions.current_id === this.component.currentPreviewId );
-
-		if ( revision && elementor.saver.isEditorChanged() ) {
-			// TODO: Change to 'document/save/auto' ?.
-			$e.internal( 'document/save/save', {
-				status: 'autosave',
-				onSuccess: () => {
-					tab.getRevisionViewData( view );
-				},
-			} );
-		} else {
-			tab.getRevisionViewData( view );
-		}
+		tab.getRevisionViewData( view );
 
 		this.component.currentPreviewItem = view;
 		this.component.currentPreviewId = revisionID;
