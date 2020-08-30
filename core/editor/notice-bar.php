@@ -21,7 +21,7 @@ class Notice_Bar extends Base_Object {
 			'muted_period' => 90,
 			'option_key' => '_elementor_editor_upgrade_notice_dismissed',
 			'message' => __( 'Love using Elementor? <a href="%s">Learn how you can build better sites with Elementor Pro.</a>', 'elementor' ),
-			'action_title' => __( 'Get Pro', 'elementor' ),
+			'action_title' => __( 'Go Pro', 'elementor' ),
 			'action_url' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=editor-notice-bar&utm_campaign=gopro&utm_medium=wp-dash' ),
 		];
 	}
