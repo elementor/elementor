@@ -53,13 +53,7 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public static function get_installs_history() {
-		$installs_history = get_option( self::INSTALLS_HISTORY_META, [] );
-
-		if ( empty( $installs_history[ ELEMENTOR_VERSION ] ) ) {
-			self::update_history( $installs_history, ELEMENTOR_VERSION, time() );
-		}
-
-		return $installs_history;
+		return get_option( self::INSTALLS_HISTORY_META, [] );
 	}
 
 	public static function install_compare( $version, $operator ) {
@@ -73,21 +67,16 @@ class Manager extends DB_Upgrades_Manager {
 
 		$installs_history = self::get_installs_history();
 
+		$time = time();
+
+		$installs_history[ ELEMENTOR_VERSION ] = $time;
+
 		$old_version = $this->get_current_version();
 
+		// If there was an old version of Elementor, and there's no record for that install yet
 		if ( $old_version && empty( $installs_history[ $old_version ] ) ) {
-			$old_version_install_time = time();
-
-			if ( ! empty( $installs_history[ ELEMENTOR_VERSION ] ) ) {
-				$old_version_install_time = $installs_history[ ELEMENTOR_VERSION ] - 1;
-			}
-
-			$this->update_history( $installs_history, $old_version, $old_version_install_time );
+			$installs_history[ $old_version ] = $installs_history[ ELEMENTOR_VERSION ] - 1;
 		}
-	}
-
-	private static function update_history( $history, $version, $time ) {
-		$history[ $version ] = $time;
 
 		uksort( $history, 'version_compare' );
 
