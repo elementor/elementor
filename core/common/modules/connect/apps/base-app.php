@@ -578,7 +578,7 @@ abstract class Base_App {
 					$options = [
 						'description' => $notice['content'],
 						'dismissible' => true,
-						'classes' => [ 'updated', 'is-dismissible', 'notice-' . $notice['type'] ],
+						'classes' => [ 'updated', 'notice-' . $notice['type'] ],
 					];
 
 					$admin_notices->print_admin_notice( $options );
