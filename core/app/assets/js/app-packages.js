@@ -6,7 +6,7 @@
 // Make router available for use within packages.
 import router from './router';
 
-import * as store from './store.js';
+import * as store from './store-package';
 
 // Alphabetical order.
 import appUi from './package';

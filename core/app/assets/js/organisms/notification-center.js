@@ -1,8 +1,9 @@
-import { useSelector } from '@elementor/store';
+import { useSelector, useModulesSelectors } from '@elementor/store';
 import Notification from '../molecules/notification';
 
 export default function NotificationCenter() {
-	const active = useSelector( ( state ) => state.notifications.active );
+	const { active: activeSelector } = useModulesSelectors( 'notifications' ),
+		active = useSelector( activeSelector );
 
 	return active.map( ( notification ) => {
 		return <Notification

@@ -1,5 +1,5 @@
 import { Dialog } from '@elementor/app-ui';
-import { useDispatch, useSliceActions } from '@elementor/store';
+import { useModulesBoundedActions } from '@elementor/store';
 
 const notificationComponents = {
 	dialog: Dialog,
@@ -8,18 +8,15 @@ const notificationComponents = {
 const defaultNotification = 'dialog';
 
 export default function Notification( props ) {
-	const dispatch = useDispatch(),
-		{ dismiss } = useSliceActions( 'notifications' ),
-		onCloseHandler = React.useCallback( () => {
-			dispatch( dismiss( props.id ) );
-		}, [] ),
-		NotificationComponent = React.useMemo(
-			() => notificationComponents[ props.ui ] || notificationComponents[ defaultNotification ],
-			[ props.ui ]
-		);
+		const { dismiss: dismissAction } = useModulesBoundedActions( 'notifications' ),
+			dismiss = React.useCallback( () => dismissAction( props.id ), [ props.id, dismissAction ] ),
+			NotificationComponent = React.useMemo(
+				() => notificationComponents[ props.ui ] || notificationComponents[ defaultNotification ],
+				[ props.ui ]
+			);
 
 	return (
-		<NotificationComponent onClose={ onCloseHandler } { ...props.componentProps } />
+		<NotificationComponent dismissButtonOnClick={ dismiss } onClose={ dismiss } { ...props.componentProps } />
 	);
 }
 

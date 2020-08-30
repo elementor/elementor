@@ -2,12 +2,12 @@ import { createSlice } from '@elementor/store';
 
 const name = 'notifications';
 
-const initialState = {
+export const initialState = {
 	active: [],
 	history: [],
 };
 
-const notifications = createSlice( {
+const slice = createSlice( {
 	name,
 	initialState,
 	reducers: {
@@ -27,21 +27,8 @@ const notifications = createSlice( {
 			state.active = state.active.filter( ( notification ) => notification.id !== action.payload );
 		},
 	},
-	controllers: {
-		notifyAnErrorDialog( { dispatch, actions }, payload ) {
-			const notification = {
-				id: elementorCommon.helpers.getUniqueId(),
-				ui: 'dialog',
-				props: {
-					...payload,
-				},
-			};
-
-			dispatch( actions.notify( notification ) );
-
-			return notification;
-		},
-	},
 } );
 
-export default notifications;
+export const sliceActions = slice.actions;
+
+export default slice;
