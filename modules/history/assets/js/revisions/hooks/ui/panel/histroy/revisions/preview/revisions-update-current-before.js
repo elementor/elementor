@@ -1,18 +1,12 @@
 import HookUIBefore from 'elementor-api/modules/hooks/ui/before';
 
-export class RevisionsUpdateCurrent extends HookUIBefore {
+export class RevisionsUpdateCurrentBefore extends HookUIBefore {
 	getCommand() {
 		return 'panel/history/revisions/preview';
 	}
 
 	getId() {
-		return 'revisions-update-current--/panel/history/revisions/preview';
-	}
-
-	getConditions( args ) {
-		const { view } = args;
-
-		return view.model.get( 'id' ).toString() !== $e.components.get( 'panel/history/revisions' ).currentPreviewId;
+		return 'revisions-update-current-before--/panel/history/revisions/preview';
 	}
 
 	apply( args ) {
@@ -27,4 +21,4 @@ export class RevisionsUpdateCurrent extends HookUIBefore {
 	}
 }
 
-export default RevisionsUpdateCurrent;
+export default RevisionsUpdateCurrentBefore;

@@ -36,7 +36,7 @@ module.exports = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
-	getRevisionViewData: function( revisionView ) {
+	getRevisionViewData: function( revisionView, onSuccessCallback = null ) {
 		const document = component.currentDocument;
 
 		document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
@@ -49,13 +49,13 @@ module.exports = Marionette.CompositeView.extend( {
 
 				this.setRevisionsButtonsActive( true );
 
-				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
-
 				this.enterReviewMode();
+
+				if ( onSuccessCallback ) {
+					onSuccessCallback( data );
+				}
 			},
 			error: ( errorMessage ) => {
-				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
-
 				component.currentPreviewItem = null;
 
 				component.currentPreviewId = null;

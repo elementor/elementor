@@ -11,7 +11,7 @@ export class RevisionsUpdate extends HookDataAfter {
 
 	apply( args, result ) {
 		const { data } = result,
-			revisionsManager = elementor.documents.getCurrent().revisions;
+			revisionsManager = args.document.revisions;
 
 		if ( data.latest_revisions ) {
 			revisionsManager.addRevisions( data.latest_revisions );
