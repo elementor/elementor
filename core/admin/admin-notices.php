@@ -500,12 +500,13 @@ class Admin_Notices extends Module {
 		$default_options = [
 			'title' => '',
 			'description' => '',
-			'classes' => [ 'notice' ],
+			'classes' => [ 'elementor-message', 'notice' ],
 			'dismissible' => false,
 			'button' => [
 				'text' => '',
 				'url' => '',
 				'class' => 'elementor-button',
+				'new_window' => false,
 			],
 		];
 
@@ -519,9 +520,20 @@ class Admin_Notices extends Module {
 
 		$options = array_replace_recursive( $default_options, $options );
 
-		$id = isset( $options['id'] ) ? 'id=' . $options['id'] : '';
+		if ( true === $options['dismissible'] ) {
+			$notice_classes .= ' is-dismissible';
+		}
+
+		$open_new_window = $options['button']['new_window'] ? ' target="_blank"' : '';
+
+		$wrapper_attributes = isset( $options['wrapper_attributes'] ) ? $this->get_parsed_attributes_string( $options['wrapper_attributes'] ) : '';
+
+		if ( isset( $options['button']['icon_classes'] ) ) {
+			// If there should be an icon next to the button text, add it here.
+			$options['button']['text'] = '<i class="' . $options['button']['icon_classes'] . '" aria-hidden="true"></i> ' . $options['button']['text'];
+		}
 		?>
-		<div class="elementor-message <?php echo $notice_classes; ?>" <?php echo $id; ?>>
+		<div class="<?php echo $notice_classes; ?>" <?php echo $wrapper_attributes; ?>>
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
 					<div class="e-logo-wrapper">
@@ -538,15 +550,24 @@ class Admin_Notices extends Module {
 				</div>
 				<?php if ( $options['button']['text'] ) { ?>
 					<div class="elementor-message-action">
-						<a class="<?php echo $options['button']['class']; ?>" href="<?php echo esc_url( $options['button']['url'] ); ?>"><?php echo $options['button']['text']; ?></a>
+						<a class="<?php echo $options['button']['class']; ?>" href="<?php echo esc_url( $options['button']['url'] ); ?>"<?php echo $open_new_window; ?>><?php echo $options['button']['text']; ?></a>
 					</div>
 				<?php } ?>
 			</div>
-			<?php if ( true === $options['dismissible'] ) { ?>
-				<button type="button" class="notice-dismiss"><span class="screen-reader-text"><?php echo __( 'Dismiss', 'elementor' ); ?></span></button>
-			<?php } ?>
 		</div>
 		<?php
+	}
+
+	private function get_parsed_attributes_string( $attributes ) {
+		$attributes_string = '';
+
+		foreach ( $attributes as $attribute => $value ) {
+			// Note the space after each attribute.
+			$attributes_string .= $attribute . '="' . $value . '" ';
+		}
+
+		// Remove last space.
+		return substr( $attributes_string, 0, -1 );
 	}
 
 	public function admin_notices() {
