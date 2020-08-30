@@ -566,7 +566,7 @@ class Widget_Icon_List extends Widget_Base {
 				$this->add_inline_editing_attributes( $repeater_setting_key );
 				$migration_allowed = Icons_Manager::is_migration_allowed();
 				?>
-				<li class="elementor-icon-list-item" >
+				<li <?php echo $this->get_render_attribute_string( 'list_item' ); ?>>
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
 						$link_key = 'link_' . $index;

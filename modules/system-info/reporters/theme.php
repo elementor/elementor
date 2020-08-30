@@ -188,7 +188,7 @@ class Theme extends Base {
 			$result['recommendation'] = sprintf(
 				/* translators: %s: Codex URL */
 				_x( 'If you want to modify the source code of your theme, we recommend using a <a href="%s">child theme</a>.', 'System Info', 'elementor' ),
-				'https://codex.wordpress.org/Child_Themes'
+				'https://go.elementor.com/wordpress-child-themes/'
 			);
 		}
 

@@ -186,6 +186,8 @@ abstract class Base extends Base_File {
 	public function delete() {
 		if ( $this->use_external_file() ) {
 			parent::delete();
+		} else {
+			$this->delete_meta();
 		}
 	}
 
