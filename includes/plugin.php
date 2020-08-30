@@ -637,7 +637,7 @@ class Plugin {
 			if ( $optimized_dom_output ) {
 				$element_wrappers_legacy_mode = 'disabled' === $optimized_dom_output;
 			} else {
-				$element_wrappers_legacy_mode = Upgrades_Manager::install_compare( '3.0.4', '<' );
+				$element_wrappers_legacy_mode = Upgrades_Manager::install_compare( '3.1.0', '<' );
 			}
 
 			$this->legacy_mode = [
