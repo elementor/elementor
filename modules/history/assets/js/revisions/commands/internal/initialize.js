@@ -22,12 +22,9 @@ export class Initialize extends CommandInternal {
 
 		this.component.currentTab = tab;
 		this.component.currentDocument = document;
+		this.component.currentPreviewId = elementor.config.document.revisions.current_id;
 
 		tab.collection = document.revisions.getItems();
-
-		// TODO: next code should be part of RevisionsComponent.
-		tab.document = document;
-		tab.currentPreviewId = elementor.config.document.revisions.current_id;
 	}
 }
 

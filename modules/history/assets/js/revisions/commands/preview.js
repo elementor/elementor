@@ -1,6 +1,9 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import RevisionView from '../panel/view';
 
+/**
+ * @property {RevisionsComponent} component
+ */
 export class Preview extends CommandBase {
 	validateArgs( args = {} ) {
 		this.requireArgumentConstructor( 'view', RevisionView, args );
@@ -11,11 +14,12 @@ export class Preview extends CommandBase {
 			revisionID = view.model.get( 'id' ),
 			tab = elementor.getPanelView().getCurrentPageView().getCurrentTab();
 
-		if ( revisionID === tab.currentPreviewId ) {
+		if ( revisionID === this.component.currentPreviewId ) {
 			return;
 		}
 
-		const revision = ( null === tab.currentPreviewId || elementor.config.document.revisions.current_id === tab.currentPreviewId );
+		const revision = ( null === this.component.currentPreviewId ||
+			elementor.config.document.revisions.current_id === this.component.currentPreviewId );
 
 		if ( revision && elementor.saver.isEditorChanged() ) {
 			// TODO: Change to 'document/save/auto' ?.
@@ -29,8 +33,8 @@ export class Preview extends CommandBase {
 			tab.getRevisionViewData( view );
 		}
 
-		tab.currentPreviewItem = view;
-		tab.currentPreviewId = revisionID;
+		this.component.currentPreviewItem = view;
+		this.component.currentPreviewId = revisionID;
 	}
 }
 

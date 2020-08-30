@@ -12,15 +12,15 @@ export class RevisionsUpdateCurrent extends HookUIBefore {
 	getConditions( args ) {
 		const { view } = args;
 
-		return view.model.get( 'id' ).toString() !== elementor.getPanelView().getCurrentPageView().getCurrentTab().currentPreviewId;
+		return view.model.get( 'id' ).toString() !== $e.components.get( 'panel/history/revisions' ).currentPreviewId;
 	}
 
 	apply( args ) {
 		const { view } = args,
-			tab = elementor.getPanelView().getCurrentPageView().getCurrentTab();
+			component = $e.components.get( 'panel/history/revisions' );
 
-		if ( tab.currentPreviewItem ) {
-			tab.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
+		if ( component.currentPreviewItem ) {
+			component.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 		}
 
 		view.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );

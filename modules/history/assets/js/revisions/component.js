@@ -9,6 +9,12 @@ export default class RevisionsComponent extends ComponentBase {
 	 */
 	currentDocument;
 
+	currentPreviewId = null;
+
+	currentPreviewItem = null;
+
+	isRevisionApplied = false;
+
 	getNamespace() {
 		return 'panel/history/revisions';
 	}

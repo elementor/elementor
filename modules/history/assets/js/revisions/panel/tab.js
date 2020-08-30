@@ -1,3 +1,8 @@
+/**
+ * @type {RevisionsComponent|Component}
+ */
+let component = null;
+
 module.exports = Marionette.CompositeView.extend( {
 	id: 'elementor-panel-revisions',
 
@@ -17,15 +22,12 @@ module.exports = Marionette.CompositeView.extend( {
 		'click @ui.apply': 'onApplyClick',
 	},
 
-	isRevisionApplied: false,
-
-	currentPreviewId: null,
-
-	currentPreviewItem: null,
-
-	document: null,
-
 	initialize: function( options ) {
+		// TODO: Remove - Temporal solution.
+		if ( ! component ) {
+			component = $e.components.get( 'panel/history/revisions' );
+		}
+
 		options.tab = this;
 
 		$e.internal( 'panel/history/revisions/initialize', options );
@@ -35,10 +37,12 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getRevisionViewData: function( revisionView ) {
-		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
+		const document = component.currentDocument;
+
+		document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: ( data ) => {
-				if ( this.document.config.panel.has_elements ) {
-					this.document.revisions.setEditorData( data.elements );
+				if ( document.config.panel.has_elements ) {
+					document.revisions.setEditorData( data.elements );
 				}
 
 				elementor.settings.page.model.set( data.settings );
@@ -52,9 +56,9 @@ module.exports = Marionette.CompositeView.extend( {
 			error: ( errorMessage ) => {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
-				this.currentPreviewItem = null;
+				component.currentPreviewItem = null;
 
-				this.currentPreviewId = null;
+				component.currentPreviewId = null;
 
 				alert( errorMessage );
 			},
@@ -71,13 +75,13 @@ module.exports = Marionette.CompositeView.extend( {
 	deleteRevision: function( revisionView ) {
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
-		this.document.revisions.deleteRevision( revisionView.model, {
+		component.currentDocument.revisions.deleteRevision( revisionView.model, {
 			success: () => {
-				if ( revisionView.model.get( 'id' ) === this.currentPreviewId ) {
+				if ( revisionView.model.get( 'id' ) === component.currentPreviewId ) {
 					this.onDiscardClick();
 				}
 
-				this.currentPreviewId = null;
+				component.currentPreviewId = null;
 			},
 			error: () => {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
@@ -96,11 +100,11 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	navigate: function( reverse ) {
-		if ( ! this.currentPreviewId || ! this.currentPreviewItem || this.children.length <= 1 ) {
+		if ( ! component.currentPreviewId || ! component.currentPreviewItem || this.children.length <= 1 ) {
 			return;
 		}
 
-		var currentPreviewItemIndex = this.collection.indexOf( this.currentPreviewItem.model ),
+		var currentPreviewItemIndex = this.collection.indexOf( component.currentPreviewItem.model ),
 			requiredIndex = reverse ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
 
 		if ( requiredIndex < 0 ) {
@@ -119,7 +123,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.setRevisionsButtonsActive( false );
 
-		this.currentPreviewId = elementor.config.document.revisions.current_id;
+		component.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	onApplyClick: function() {
@@ -127,50 +131,52 @@ module.exports = Marionette.CompositeView.extend( {
 
 		$e.run( 'document/save/auto', { force: true } );
 
-		this.isRevisionApplied = true;
+		component.isRevisionApplied = true;
 
-		this.currentPreviewId = null;
+		component.currentPreviewId = null;
 
-		this.document.history.getItems().reset();
+		component.currentDocument.history.getItems().reset();
 	},
 
 	onDiscardClick: function() {
-		if ( this.document.config.panel.has_elements ) {
-			this.document.revisions.setEditorData( elementor.config.document.elements );
+		const document = component.currentDocument;
+
+		if ( document.config.panel.has_elements ) {
+			document.revisions.setEditorData( elementor.config.document.elements );
 		}
 
-		$e.internal( 'document/save/set-is-modified', { status: this.isRevisionApplied } );
+		$e.internal( 'document/save/set-is-modified', { status: component.isRevisionApplied } );
 
-		this.isRevisionApplied = false;
+		component.isRevisionApplied = false;
 
 		this.setRevisionsButtonsActive( false );
 
-		this.currentPreviewId = null;
+		component.currentPreviewId = null;
 
 		this.exitReviewMode();
 
-		if ( this.currentPreviewItem ) {
-			this.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
+		if ( component.currentPreviewItem ) {
+			component.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
 		}
 	},
 
 	onDestroy: function() {
-		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.document.revisions.current_id ) {
+		if ( component.currentPreviewId && component.currentPreviewId !== elementor.config.document.revisions.current_id ) {
 			this.onDiscardClick();
 		}
 	},
 
 	onRenderCollection: function() {
-		if ( ! this.currentPreviewId ) {
+		if ( ! component.currentPreviewId ) {
 			return;
 		}
 
-		var currentPreviewModel = this.collection.findWhere( { id: this.currentPreviewId } );
+		var currentPreviewModel = this.collection.findWhere( { id: component.currentPreviewId } );
 
 		// Ensure the model is exist and not deleted during a save.
 		if ( currentPreviewModel ) {
-			this.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
-			this.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+			component.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
+			component.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
 		}
 	},
 
