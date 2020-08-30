@@ -221,6 +221,13 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.0.4 - 2020-08-30 =
+* Tweak: Added Skype and Viber to the allowed URI protocols ([#11619](https://github.com/elementor/elementor/issues/11619))
+* Tweak: Replaced WordPress "Learn More" links with dynamic links for better control over time ([#12312](https://github.com/elementor/elementor/issues/12312))
+* Fix: Global Colors and Fonts inconsistencies between Editor and Frontend ([#12245](https://github.com/elementor/elementor/issues/12245), [#12235](https://github.com/elementor/elementor/issues/12235), [#12303](https://github.com/elementor/elementor/issues/12303), [#12249](https://github.com/elementor/elementor/issues/12249))
+* Fix: Global dropdown is not available for all users
+* Fix: Removed unused strings
+
 = 3.0.3 - 2020-08-27 =
 * Tweak: Added option to re-migrate Global Colors and Fonts from earlier versions
 * Fix: Repeater controls doesn't work in some edge cases
