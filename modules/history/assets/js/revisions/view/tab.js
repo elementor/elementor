@@ -77,14 +77,14 @@ const RevisionsTabView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		var currentPreviewItemIndex = this.collection.indexOf( component.currentPreviewItem.model ),
+		var currentPreviewItemIndex = component.collection.indexOf( component.currentPreviewItem.model ),
 			requiredIndex = reverse ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
 
 		if ( requiredIndex < 0 ) {
-			requiredIndex = this.collection.length - 1;
+			requiredIndex = component.collection.length - 1;
 		}
 
-		if ( requiredIndex >= this.collection.length ) {
+		if ( requiredIndex >= component.collection.length ) {
 			requiredIndex = 0;
 		}
 
@@ -132,7 +132,7 @@ const RevisionsTabView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		const currentPreviewModel = this.collection.findWhere( { id: parseInt( component.currentPreviewId ) } );
+		const currentPreviewModel = component.collection.findWhere( { id: parseInt( component.currentPreviewId ) } );
 
 		// Ensure the model is exist and not deleted during a save.
 		if ( currentPreviewModel ) {

@@ -14,7 +14,8 @@ export class Initialize extends CommandInternal {
 	/**
 	 * @inheritDoc
 	 * @param {Object} args
-	 * @param {RevisionsTab} args.tab
+	 * @param {RevisionsTabView} args.tab
+	 * @param {{}} args.collection
 	 * @param {Document} args.document
 	 */
 	apply( args = {} ) {
@@ -23,8 +24,10 @@ export class Initialize extends CommandInternal {
 		this.component.tab = tab;
 		this.component.currentDocument = document;
 		this.component.currentPreviewId = elementor.config.document.revisions.current_id;
+		this.component.collection = document.revisions.getItems();
 
-		tab.collection = document.revisions.getItems();
+		// Saving original reference - to effect tab view mechanism.
+		tab.collection = this.component.collection;
 	}
 }
 

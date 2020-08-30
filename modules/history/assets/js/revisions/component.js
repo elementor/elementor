@@ -21,6 +21,8 @@ export default class RevisionsComponent extends ComponentBase {
 
 	isRevisionApplied = false;
 
+	collection;
+
 	getNamespace() {
 		return 'panel/history/revisions';
 	}
