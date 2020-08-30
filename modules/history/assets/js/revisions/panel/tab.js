@@ -19,7 +19,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	events: {
 		'click @ui.discard': 'onDiscardClick',
-		'click @ui.apply': 'onApplyClick',
+		'click @ui.apply': () => $e.run( 'panel/history/revisions/apply' ),
 	},
 
 	initialize: function( options ) {
@@ -126,18 +126,6 @@ module.exports = Marionette.CompositeView.extend( {
 		this.setRevisionsButtonsActive( false );
 
 		component.currentPreviewId = elementor.config.document.revisions.current_id;
-	},
-
-	onApplyClick: function() {
-		$e.internal( 'document/save/set-is-modified', { status: true } );
-
-		$e.run( 'document/save/auto', { force: true } );
-
-		component.isRevisionApplied = true;
-
-		component.currentPreviewId = null;
-
-		component.currentDocument.history.getItems().reset();
 	},
 
 	onDiscardClick: function() {
