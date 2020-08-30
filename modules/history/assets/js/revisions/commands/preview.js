@@ -1,12 +1,12 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import RevisionView from '../panel/view';
+import RevisionsTabItemView from '../view/tab-item';
 
 /**
  * @property {RevisionsComponent} component
  */
 export class Preview extends CommandBase {
 	validateArgs( args = {} ) {
-		this.requireArgumentConstructor( 'view', RevisionView, args );
+		this.requireArgumentConstructor( 'view', RevisionsTabItemView, args );
 	}
 
 	apply( args ) {

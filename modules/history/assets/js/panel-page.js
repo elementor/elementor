@@ -1,8 +1,8 @@
 var TabHistoryView = require( './history/panel-tab' );
 
-import TabRevisionsLoadingView from './revisions/panel/loading';
-import TabRevisionsView from './revisions/panel/tab';
-import TabRevisionsEmptyView from './revisions/panel/empty';
+import RevisionsTabView from './revisions/view/tab';
+import RevisionsTabEmptyView from './revisions/view/tab-empty';
+import RevisionsTabLoadingView from './revisions/view/tab-loading';
 
 module.exports = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-history-page',
@@ -48,14 +48,14 @@ module.exports = Marionette.LayoutView.extend( {
 					const revisionsItems = this.document.revisions.getItems();
 
 					if ( ! revisionsItems ) {
-						return TabRevisionsLoadingView;
+						return RevisionsTabLoadingView;
 					}
 
 					if ( 1 === revisionsItems.length && 'current' === revisionsItems.models[ 0 ].get( 'type' ) ) {
-						return TabRevisionsEmptyView;
+						return RevisionsTabEmptyView;
 					}
 
-					return TabRevisionsView;
+					return RevisionsTabView;
 				},
 				options: {
 					document: this.document,

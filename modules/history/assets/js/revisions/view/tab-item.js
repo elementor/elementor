@@ -1,4 +1,4 @@
-module.exports = Marionette.ItemView.extend( {
+const RevisionsTabItemView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-revisions-revision-item',
 
 	className: 'elementor-revision-item',
@@ -11,3 +11,5 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.detailsArea': 'detailsArea:click',
 	},
 } );
+
+module.exports = RevisionsTabItemView;

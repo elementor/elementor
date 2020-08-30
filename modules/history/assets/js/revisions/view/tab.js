@@ -3,12 +3,12 @@
  */
 let component = null;
 
-module.exports = Marionette.CompositeView.extend( {
+const RevisionsTabView = Marionette.CompositeView.extend( {
 	id: 'elementor-panel-revisions',
 
 	template: '#tmpl-elementor-panel-revisions',
 
-	childView: require( './view' ),
+	childView: require( './tab-item' ),
 
 	childViewContainer: '#elementor-revisions-list',
 
@@ -174,3 +174,5 @@ module.exports = Marionette.CompositeView.extend( {
 		$e.run( 'panel/history/revisions/preview', { view: childView } );
 	},
 } );
+
+module.exports = RevisionsTabView;
