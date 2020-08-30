@@ -285,22 +285,30 @@ abstract class Endpoint {
 	/**
 	 * Register item route.
 	 *
+	 * @param string $methods
 	 * @param array $args
 	 * @param string $route
-	 * @param string $methods
+	 * @param bool $should_add_id_arg
 	 *
 	 * @throws \Exception
 	 */
-	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
-		$args = array_merge( [
-			'id' => [
-				'description' => 'Unique identifier for the object.',
-				'type' => 'string',
-			],
-		], $args );
+	public function register_item_route(
+		$methods = WP_REST_Server::READABLE,
+		$args = [],
+		$route = '/',
+		$should_add_id_arg = true
+	) {
+		if ( $should_add_id_arg ) {
+			$args = array_merge( [
+				'id' => [
+					'description' => 'Unique identifier for the object.',
+					'type' => 'string',
+				],
+			], $args );
 
-		if ( isset( $args['id'] ) && $args['id'] ) {
-			$route .= '(?P<id>[\w]+)/';
+			if ( isset( $args['id'] ) && $args['id'] ) {
+				$route .= '(?P<id>[\w]+)/';
+			}
 		}
 
 		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
@@ -309,16 +317,16 @@ abstract class Endpoint {
 	}
 
 	/**
-	 * Register items route.
-	 *
 	 * @param string $methods
+	 * @param array $args
+	 * @param string $route
 	 *
 	 * @throws \Exception
 	 */
-	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
-		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
+	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '' ) {
+		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request, true );
-		} );
+		}, $args );
 	}
 
 	/**
