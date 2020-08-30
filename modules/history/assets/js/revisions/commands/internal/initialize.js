@@ -20,7 +20,7 @@ export class Initialize extends CommandInternal {
 	apply( args = {} ) {
 		const { tab, document } = args;
 
-		this.component.currentTab = tab;
+		this.component.tab = tab;
 		this.component.currentDocument = document;
 		this.component.currentPreviewId = elementor.config.document.revisions.current_id;
 

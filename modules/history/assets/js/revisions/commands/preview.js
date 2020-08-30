@@ -12,17 +12,19 @@ export class Preview extends CommandBase {
 	apply( args ) {
 		return new Promise( ( resolve, reject ) => {
 			const { view } = args,
-				revisionID = view.model.get( 'id' ),
-				tab = elementor.getPanelView().getCurrentPageView().getCurrentTab();
+				revisionID = view.model.get( 'id' );
 
 			if ( revisionID === this.component.currentPreviewId ) {
 				reject( `Revision with id: '${ revisionID }' is already in preview` );
+				return false;
 			}
 
-			tab.getRevisionViewData( view, resolve );
+			this.component.getRevisionViewData( view, resolve );
 
 			this.component.currentPreviewItem = view;
 			this.component.currentPreviewId = revisionID;
+
+			return true;
 		} );
 	}
 }

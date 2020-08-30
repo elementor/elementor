@@ -36,41 +36,12 @@ const RevisionsTabView = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
-	getRevisionViewData: function( revisionView, onSuccessCallback = null ) {
-		const document = component.currentDocument;
-
-		document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
-			success: ( data ) => {
-				if ( document.config.panel.has_elements ) {
-					document.revisions.setEditorData( data.elements );
-				}
-
-				elementor.settings.page.model.set( data.settings );
-
-				this.setRevisionsButtonsActive( true );
-
-				this.enterReviewMode();
-
-				if ( onSuccessCallback ) {
-					onSuccessCallback( data );
-				}
-			},
-			error: ( errorMessage ) => {
-				component.currentPreviewItem = null;
-
-				component.currentPreviewId = null;
-
-				alert( errorMessage );
-			},
-		} );
-	},
-
 	setRevisionsButtonsActive: function( active ) {
-		const { currentTab } = component;
+		const { tab } = component;
 
 		// Check the tab is open.
-		if ( ! currentTab.isDestroyed ) {
-			currentTab.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+		if ( ! tab.isDestroyed ) {
+			tab.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
 		}
 	},
 

@@ -9,6 +9,12 @@ export default class RevisionsComponent extends ComponentBase {
 	 */
 	currentDocument;
 
+	/**
+	 * Temporary.
+	 * @type {RevisionsTabView}
+	 */
+	tab;
+
 	currentPreviewId = null;
 
 	currentPreviewItem = null;
@@ -48,5 +54,34 @@ export default class RevisionsComponent extends ComponentBase {
 		if ( elementor.documents.getCurrent().revisions.getItems().length > 1 ) {
 			elementor.getPanelView().getCurrentPageView().currentTab.navigate( up );
 		}
+	}
+
+	getRevisionViewData( revisionView, onSuccessCallback = null ) {
+		const document = this.currentDocument;
+
+		document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
+			success: ( data ) => {
+				if ( document.config.panel.has_elements ) {
+					document.revisions.setEditorData( data.elements );
+				}
+
+				elementor.settings.page.model.set( data.settings );
+
+				this.tab.setRevisionsButtonsActive( true );
+
+				this.tab.enterReviewMode();
+
+				if ( onSuccessCallback ) {
+					onSuccessCallback( data );
+				}
+			},
+			error: ( errorMessage ) => {
+				this.currentPreviewItem = null;
+
+				this.currentPreviewId = null;
+
+				alert( errorMessage );
+			},
+		} );
 	}
 }
