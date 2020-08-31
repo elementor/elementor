@@ -125,12 +125,10 @@ class Admin_Notices extends Module {
 			'button' => [
 				'icon_classes' => 'dashicons dashicons-update',
 				'text' => __( 'Update Now', 'elementor' ),
-				'url' => esc_url( $upgrade_url ),
+				'url' => $upgrade_url,
 				'class' => 'elementor-button',
 			],
-			'wrapper_attributes' => [
-				'data-notice_id' => $notice_id,
-			],
+			'id' => $notice_id,
 		];
 
 		$this->print_admin_notice( $options );
@@ -161,9 +159,7 @@ class Admin_Notices extends Module {
 			'title' => __( 'Update Notification', 'elementor' ),
 			'description' => $admin_notice['notice_text'],
 			'dismissible' => true,
-			'wrapper_attributes' => [
-				'data-notice_id' => $notice_id,
-			],
+			'id' => $notice_id,
 		];
 
 		$this->print_admin_notice( $options );
@@ -253,9 +249,7 @@ class Admin_Notices extends Module {
 		$options = [
 			'description' => $message,
 			'dismissible' => true,
-			'wrapper_attributes' => [
-				'data-notice_id' => esc_attr( $notice_id ),
-			],
+			'id' => $notice_id,
 		];
 
 		$this->print_admin_notice( $options );
@@ -289,9 +283,7 @@ class Admin_Notices extends Module {
 		$options = [
 			'description' => __( 'Using WooCommerce? With Elementor Pro’s WooCommerce Builder, you’ll be able to design your store without coding!', 'elementor' ),
 			'dismissible' => true,
-			'wrapper_attributes' => [
-				'data-notice_id' => esc_attr( $notice_id ),
-			],
+			'id' => $notice_id,
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-woocommerce/',
@@ -331,9 +323,7 @@ class Admin_Notices extends Module {
 		$options = [
 			'description' => __( 'Using Elementor & Contact Form 7? Try out Elementor Pro and design your forms visually with one powerful tool.', 'elementor' ),
 			'dismissible' => true,
-			'wrapper_attributes' => [
-				'data-notice_id' => esc_attr( $notice_id ),
-			],
+			'id' => $notice_id,
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-contactform7/',
@@ -373,9 +363,7 @@ class Admin_Notices extends Module {
 		$options = [
 			'description' => __( 'Want to design better MailChimp forms? Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ),
 			'dismissible' => true,
-			'wrapper_attributes' => [
-				'data-notice_id' => esc_attr( $notice_id ),
-			],
+			'id' => $notice_id,
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-mc4wp/',
@@ -415,9 +403,7 @@ class Admin_Notices extends Module {
 		$options = [
 			'description' => __( 'Using popups on your site? Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ),
 			'dismissible' => true,
-			'wrapper_attributes' => [
-				'data-notice_id' => esc_attr( $notice_id ),
-			],
+			'id' => $notice_id,
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-popupmaker/',
@@ -458,9 +444,7 @@ class Admin_Notices extends Module {
 		$options = [
 			'description' => __( 'Managing a multi-user site? With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ),
 			'dismissible' => true,
-			'wrapper_attributes' => [
-				'data-notice_id' => esc_attr( $notice_id ),
-			],
+			'id' => $notice_id,
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-role-manager/',
@@ -507,14 +491,18 @@ class Admin_Notices extends Module {
 
 		$open_new_tab = $options['button']['new_tab'] ? ' target="_blank"' : '';
 
-		$wrapper_attributes = isset( $options['wrapper_attributes'] ) ? $this->get_parsed_attributes_string( $options['wrapper_attributes'] ) : '';
+		$id = '';
+
+		if ( isset( $options['id'] ) ) {
+			$id = ' data-notice_id="' . $options['id'] . '"';
+		}
 
 		if ( isset( $options['button']['icon_classes'] ) ) {
 			// If there should be an icon next to the button text, add it here.
 			$options['button']['text'] = '<i class="' . $options['button']['icon_classes'] . '" aria-hidden="true"></i> ' . $options['button']['text'];
 		}
 		?>
-		<div class="<?php echo $notice_classes; ?>" <?php echo $wrapper_attributes; ?>>
+		<div class="<?php echo $notice_classes; ?>"<?php echo $id; ?>>
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
 					<div class="e-logo-wrapper">
@@ -537,18 +525,6 @@ class Admin_Notices extends Module {
 			</div>
 		</div>
 		<?php
-	}
-
-	private function get_parsed_attributes_string( $attributes ) {
-		$attributes_string = '';
-
-		foreach ( $attributes as $attribute => $value ) {
-			// Note the space after each attribute.
-			$attributes_string .= $attribute . '="' . $value . '" ';
-		}
-
-		// Remove last space.
-		return substr( $attributes_string, 0, -1 );
 	}
 
 	public function admin_notices() {
