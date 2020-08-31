@@ -301,7 +301,7 @@ class Admin_Notices extends Module {
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-woocommerce/',
 				'class' => 'button button-secondary',
-				'new_window' => true,
+				'new_tab' => true,
 			],
 		];
 
@@ -344,7 +344,7 @@ class Admin_Notices extends Module {
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-contactform7/',
 				'class' => 'button button-secondary',
-				'new_window' => true,
+				'new_tab' => true,
 			],
 		];
 
@@ -387,7 +387,7 @@ class Admin_Notices extends Module {
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-mc4wp/',
 				'class' => 'button button-secondary',
-				'new_window' => true,
+				'new_tab' => true,
 			],
 		];
 
@@ -430,7 +430,7 @@ class Admin_Notices extends Module {
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-popupmaker/',
 				'class' => 'button button-secondary',
-				'new_window' => true,
+				'new_tab' => true,
 			],
 		];
 
@@ -474,7 +474,7 @@ class Admin_Notices extends Module {
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-role-manager/',
 				'class' => 'button button-secondary',
-				'new_window' => true,
+				'new_tab' => true,
 			],
 		];
 
@@ -496,7 +496,7 @@ class Admin_Notices extends Module {
 				'text' => '',
 				'url' => '',
 				'class' => 'elementor-button',
-				'new_window' => false,
+				'new_tab' => false,
 			],
 		];
 
@@ -514,7 +514,7 @@ class Admin_Notices extends Module {
 			$notice_classes .= ' is-dismissible';
 		}
 
-		$open_new_window = $options['button']['new_window'] ? ' target="_blank"' : '';
+		$open_new_tab = $options['button']['new_tab'] ? ' target="_blank"' : '';
 
 		$wrapper_attributes = isset( $options['wrapper_attributes'] ) ? $this->get_parsed_attributes_string( $options['wrapper_attributes'] ) : '';
 
@@ -540,7 +540,7 @@ class Admin_Notices extends Module {
 				</div>
 				<?php if ( $options['button']['text'] ) { ?>
 					<div class="elementor-message-action">
-						<a class="<?php echo $options['button']['class']; ?>" href="<?php echo esc_url( $options['button']['url'] ); ?>"<?php echo $open_new_window; ?>><?php echo $options['button']['text']; ?></a>
+						<a class="<?php echo $options['button']['class']; ?>" href="<?php echo esc_url( $options['button']['url'] ); ?>"<?php echo $open_new_tab; ?>><?php echo $options['button']['text']; ?></a>
 					</div>
 				<?php } ?>
 			</div>
