@@ -510,7 +510,7 @@ class Admin_Notices extends Module {
 
 		$options = array_replace_recursive( $default_options, $options );
 
-		if ( true === $options['dismissible'] ) {
+		if ( $options['dismissible'] ) {
 			$notice_classes .= ' is-dismissible';
 		}
 
