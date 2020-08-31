@@ -14,7 +14,6 @@ assets/js/
 
 # build tools lock
 composer.lock
-package-lock.json
 yarn.lock
 
 # IDE's

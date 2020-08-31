@@ -421,7 +421,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.6',
+			'4.8.1',
 			true
 		);
 

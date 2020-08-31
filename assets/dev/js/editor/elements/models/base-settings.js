@@ -52,7 +52,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var isMultipleControl = jQuery.isPlainObject( control.default );
 
 			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! hasDynamicSettings ) {
-				elementor.debug.addCustomError(
+				elementorCommon.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
 					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ controlName ] + '> as `' + controlName + '` value. Expected array or object.'
