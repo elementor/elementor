@@ -87,7 +87,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$options = [
 			'description' => $message,
-			'classes' => [ 'notice-error' ],
+			'type' => 'error',
 			'button' => [
 				'text' => __( 'Update Now', 'elementor' ),
 				'url' => $upgrade_link,
@@ -109,7 +109,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$options = [
 			'description' => $message,
-			'classes' => [ 'notice-warning' ],
+			'type' => 'warning',
 			'button' => [
 				'text' => __( 'Taking a while?', 'elementor' ) . ' ' . __( 'Click here to run it now', 'elementor' ),
 				'url' => $upgrade_link,
@@ -132,7 +132,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$options = [
 			'description' => $message,
-			'classes' => [ 'notice-success' ],
+			'type' => 'success',
 		];
 
 		$admin_notices->print_admin_notice( $options );

@@ -121,7 +121,6 @@ class Admin_Notices extends Module {
 		$options = [
 			'title' => __( 'Update Notification', 'elementor' ),
 			'description' => $message,
-			'classes' => [ 'elementor-message-dismissed', 'updated' ],
 			'dismissible' => true,
 			'button' => [
 				'icon_classes' => 'dashicons dashicons-update',
@@ -161,7 +160,6 @@ class Admin_Notices extends Module {
 		$options = [
 			'title' => __( 'Update Notification', 'elementor' ),
 			'description' => $admin_notice['notice_text'],
-			'classes' => [ 'elementor-message-dismissed', 'updated', 'elementor-message-announcement' ],
 			'dismissible' => true,
 			'wrapper_attributes' => [
 				'data-notice_id' => $notice_id,
@@ -219,7 +217,6 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'description' => $message,
-			'classes' => [ 'updated' ],
 		];
 
 		$this->print_admin_notice( $options );
@@ -255,7 +252,6 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'description' => $message,
-			'classes' => [ 'updated', 'elementor-message-dismissed' ],
 			'dismissible' => true,
 			'wrapper_attributes' => [
 				'data-notice_id' => esc_attr( $notice_id ),
@@ -292,7 +288,6 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'description' => __( 'Using WooCommerce? With Elementor Pro’s WooCommerce Builder, you’ll be able to design your store without coding!', 'elementor' ),
-			'classes' => [ 'updated', 'elementor-message-dismissed' ],
 			'dismissible' => true,
 			'wrapper_attributes' => [
 				'data-notice_id' => esc_attr( $notice_id ),
@@ -335,7 +330,6 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'description' => __( 'Using Elementor & Contact Form 7? Try out Elementor Pro and design your forms visually with one powerful tool.', 'elementor' ),
-			'classes' => [ 'updated', 'elementor-message-dismissed' ],
 			'dismissible' => true,
 			'wrapper_attributes' => [
 				'data-notice_id' => esc_attr( $notice_id ),
@@ -378,7 +372,6 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'description' => __( 'Want to design better MailChimp forms? Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ),
-			'classes' => [ 'updated', 'elementor-message-dismissed' ],
 			'dismissible' => true,
 			'wrapper_attributes' => [
 				'data-notice_id' => esc_attr( $notice_id ),
@@ -421,7 +414,6 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'description' => __( 'Using popups on your site? Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ),
-			'classes' => [ 'updated', 'elementor-message-dismissed' ],
 			'dismissible' => true,
 			'wrapper_attributes' => [
 				'data-notice_id' => esc_attr( $notice_id ),
@@ -465,7 +457,6 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'description' => __( 'Managing a multi-user site? With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ),
-			'classes' => [ 'updated', 'elementor-message-dismissed' ],
 			'dismissible' => true,
 			'wrapper_attributes' => [
 				'data-notice_id' => esc_attr( $notice_id ),
@@ -502,8 +493,8 @@ class Admin_Notices extends Module {
 
 		$notice_classes = $default_options['classes'];
 
-		if ( isset( $options['classes'] ) ) {
-			$notice_classes = array_merge( $options['classes'], $notice_classes );
+		if ( isset( $options['type'] ) ) {
+			$notice_classes[] = 'notice-' . $options['type'];
 		}
 
 		$notice_classes = implode( ' ', $notice_classes );
@@ -511,7 +502,7 @@ class Admin_Notices extends Module {
 		$options = array_replace_recursive( $default_options, $options );
 
 		if ( $options['dismissible'] ) {
-			$notice_classes .= ' is-dismissible';
+			$notice_classes .= ' is-dismissible elementor-message-dismissed';
 		}
 
 		$open_new_tab = $options['button']['new_tab'] ? ' target="_blank"' : '';
