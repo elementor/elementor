@@ -124,8 +124,7 @@ export default class Data extends Commands {
 
 		const argsQueryLength = args?.query ? Object.values( args.query ).length : 0;
 
-		if ( argsQueryLength ) {
-			if ( format && format.includes( '/{' ) ) {
+		if ( argsQueryLength && format && format.includes( '/{' ) ) {
 				// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
 				const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
 
@@ -148,11 +147,9 @@ export default class Data extends Commands {
 
 					delete args.query[ key ];
 				} );
+		}
 
-				endpoint = format;
-			}
-		} else if ( format ) {
-			// No magic params, but still format,
+		if ( format ) {
 			endpoint = format;
 		}
 
