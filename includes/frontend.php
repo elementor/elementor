@@ -1233,6 +1233,9 @@ class Frontend extends App {
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
+			'legacyMode' => [
+				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
+			],
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],

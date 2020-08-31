@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 3.0.0
+Stable tag: 3.0.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,44 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.4 - 2020-08-30 =
+* Tweak: Added Skype and Viber to the allowed URI protocols ([#11619](https://github.com/elementor/elementor/issues/11619))
+* Tweak: Replaced WordPress "Learn More" links with dynamic links for better control over time ([#12312](https://github.com/elementor/elementor/issues/12312))
+* Fix: Global Colors and Fonts inconsistencies between Editor and Frontend ([#12245](https://github.com/elementor/elementor/issues/12245), [#12235](https://github.com/elementor/elementor/issues/12235), [#12303](https://github.com/elementor/elementor/issues/12303), [#12249](https://github.com/elementor/elementor/issues/12249))
+* Fix: Global dropdown is not available for all users
+* Fix: Removed unused strings
+
+= 3.0.3 - 2020-08-27 =
+* Tweak: Added option to re-migrate Global Colors and Fonts from earlier versions
+* Fix: Repeater controls doesn't work in some edge cases
+* Fix: Load Theme Builder with relevant UI theme
+* Fix: Dialog texts are not center aligned in Theme Builder
+* Fix: Changes are not reflecting on frontend when CSS Print Method is set to Internal Embedding
+* Fix: Icon List widget does not use render attribute (Props [@ibndawood](https://github.com/ibndawood))
+
+= 3.0.2 - 2020-08-26 =
+* Tweak: Added Select2 And File Import Components to Theme Builder application
+* Tweak: Added default values as placeholders to the number inputs in the Breakpoints settings section
+* Tweak: Minor UI tweaks to Globals dropdown
+* Tweak: Updated video tutorials in Theme Builder
+* Fix: Column & Section Elements fires `elementor/element/after_add_attributes` early ([#12185](https://github.com/elementor/elementor/issues/12185), Props [@ibndawood](https://github.com/ibndawood))
+* Fix: `hexdec()` returns a deprecation notice ([#12161](https://github.com/elementor/elementor/issues/12161))
+* Fix: Repeater controls issue after the moving to `container.repeaters` ([#12239](https://github.com/elementor/elementor/issues/12239), [#12221](https://github.com/elementor/elementor/issues/12221))
+* Fix: Column Widget Space is not working when DOM Improvement is disabled ([#12256](https://github.com/elementor/elementor/issues/12256), [Topic](https://wordpress.org/support/topic/widgets-space-doesnt-work-after-updating-to-3-0/))
+* Fix: Resetting a style throws JS errors
+* Fix: Repeater controls backwards compatibility
+* Fix: Global Color dropdown shows Primary as marked when a custom value is added
+* Fix: Adding new Global Fonts won't be added to the dropdown list until page reloads
+* Fix: Clicking on the Theme Builder Logo reopens it
+* Fix: Finder gets loaded in preview iframes
+
+= 3.0.1 - 2020-08-25 =
+* Tweak: Changed "Exit to Dashboard" and "View Page" panel menu links to use `<a>` tag
+* Fix: `set-error-handler` conflict with 3rd party addons that uses REST-API ([#12219](https://github.com/elementor/elementor/issues/12219))
+* Fix: Conflict between responsive options and the Navigator "Hide" option ([#12123](https://github.com/elementor/elementor/issues/12123))
+* Fix: Radio inputs layout breaks when using Multi-Step Form
+* Fix: Global typography popover glitch in RTL websites
 
 = 3.0.0 - 2020-08-23 =
 * New: Introducing Site Settings - manage your entire site within the Editor

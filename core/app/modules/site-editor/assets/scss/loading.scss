@@ -9,7 +9,7 @@ $e-elementor-loader-background-color: rgba(theme-colors(light), .9);
 $e-elementor-loader-dark-background-color: dark-tints(500);
 $e-elementor-loader-container-dark-background-color: dark-tints(700);
 
-:root {
+.eps-theme-dark {
 	--e-elementor-loader-container-background-color: #{$e-elementor-loader-container-dark-background-color};
 	--e-elementor-loader-background-color: #{$e-elementor-loader-dark-background-color};
 }

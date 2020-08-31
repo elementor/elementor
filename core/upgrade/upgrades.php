@@ -711,7 +711,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
 				self::notice( 'System colors are disabled. nothing to do.' );
@@ -748,7 +748,7 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -758,7 +758,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_saved_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_saved_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
@@ -808,7 +808,7 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -818,7 +818,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
 				self::notice( 'System typography is disabled. nothing to do.' );
@@ -857,16 +857,59 @@ class Upgrades {
 			}
 		};
 
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
+	}
+
+	/**
+	 * Re move `space_between_widgets` settings to kit.
+	 *
+	 * Due to a bug in previous upgrade, the setting `space_between_widgets` with a value `0` didn't upgraded properly.
+	 * Try to re move it, if it's not already set manually in the kit.
+	 *
+	 * @param $updater
+	 *
+	 * @return false|mixed
+	 */
+	public static function _v_3_0_5_re_move_space_between_widgets_to_kit( $updater ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			if ( ! $kit ) {
+				self::notice( 'Kit not found. nothing to do.' );
+				return;
+			}
+
+			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$old_settings = get_option( '_elementor_general_settings', [] );
+			$kit_settings = $kit->get_meta( $meta_key );
+
+			if ( ! $kit_settings ) {
+				$kit_settings = [];
+			}
+
+			if ( isset( $old_settings['space_between_widgets'] ) && ! isset( $kit_settings['space_between_widgets'] ) ) {
+				$kit_settings['space_between_widgets'] = [
+					'unit' => 'px',
+					'size' => $old_settings['space_between_widgets'],
+				];
+
+				$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+				$page_settings_manager->save_settings( $kit_settings, $kit_id );
+			}
+		};
+
 		return self::move_settings_to_kit( $callback, $updater );
 	}
 
 	/**
 	 * @param callback $callback
-	 * @param Updater $updater
+	 * @param Updater  $updater
+	 *
+	 * @param bool     $include_revisions
 	 *
 	 * @return mixed
 	 */
-	private static function move_settings_to_kit( $callback, $updater ) {
+	private static function move_settings_to_kit( $callback, $updater, $include_revisions = true ) {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		if ( ! $active_kit_id ) {
 			self::notice( 'Active kit not found. nothing to do.' );
@@ -879,6 +922,10 @@ class Upgrades {
 		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
 		if ( 0 === $offset ) {
 			$callback( $active_kit_id );
+		}
+
+		if ( ! $include_revisions ) {
+			return false;
 		}
 
 		$revisions_ids = wp_get_post_revisions( $active_kit_id, [

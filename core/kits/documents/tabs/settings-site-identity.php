@@ -55,7 +55,7 @@ class Settings_Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Description', 'elementor' ),
 				'default' => get_option( 'blogdescription' ),
-				'placeholder' => __( 'Choose Description', 'elementor' ),
+				'placeholder' => __( 'Choose description', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -78,7 +78,7 @@ class Settings_Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Favicon', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'description' => __( 'Suggested Favicon dimensions: 512 × 512 pixels.', 'elementor' ),
+				'description' => __( 'Suggested favicon dimensions: 512 × 512 pixels.', 'elementor' ),
 			]
 		);
 
