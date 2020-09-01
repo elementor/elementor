@@ -1,3 +1,5 @@
+export { KitGlobalsUpdateColors } from './data/globals/colors/globals-update-colors';
+export { KitGlobalsUpdateTypography } from './data/globals/typography/globals-update-typography';
 export { KitDeleteGlobalsCache } from './ui/document/save/save/delete-globals-cache';
 export { KitAfterSave } from './ui/document/save/save/after';
 export { KitUpdateLightboxPreview } from './ui/document/elements/settings/update-lightbox-preview';
