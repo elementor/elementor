@@ -491,10 +491,12 @@ class Admin_Notices extends Module {
 
 		$open_new_tab = $options['button']['new_tab'] ? ' target="_blank"' : '';
 
-		$id = '';
+		$wrapper_attributes = [
+			'class' => $notice_classes,
+		];
 
 		if ( isset( $options['id'] ) ) {
-			$id = ' data-notice_id="' . $options['id'] . '"';
+			$wrapper_attributes['data-notice_id'] = $options['id'];
 		}
 
 		if ( isset( $options['button']['icon_classes'] ) ) {
@@ -502,7 +504,7 @@ class Admin_Notices extends Module {
 			$options['button']['text'] = '<i class="' . $options['button']['icon_classes'] . '" aria-hidden="true"></i> ' . $options['button']['text'];
 		}
 		?>
-		<div class="<?php echo $notice_classes; ?>"<?php echo $id; ?>>
+		<div <?php echo Utils::render_html_attributes( $wrapper_attributes ); ?>>
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
 					<div class="e-logo-wrapper">
