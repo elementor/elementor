@@ -145,7 +145,7 @@ class Settings_Layout extends Tab_Base {
 		);
 
 		$this->add_control(
-			'viewport_md',
+			Responsive::BREAKPOINT_OPTION_PREFIX . 'md',
 			[
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
@@ -167,7 +167,7 @@ class Settings_Layout extends Tab_Base {
 		);
 
 		$this->add_control(
-			'viewport_lg',
+			Responsive::BREAKPOINT_OPTION_PREFIX . 'lg',
 			[
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
