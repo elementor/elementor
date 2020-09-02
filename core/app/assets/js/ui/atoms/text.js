@@ -1,3 +1,5 @@
+import Utils from '../../utils/utils';
+
 export default function Text( props ) {
 	const baseClassName = 'eps',
 		classes = [
@@ -7,19 +9,11 @@ export default function Text( props ) {
 
 	classes.push( baseClassName + '-text' + variant );
 
-	const classesString = Utils.arrayToClassName( classes );
+	const Element = () => React.createElement( props.tag, {
+		className: Utils.arrayToClassName( classes ),
+	}, props.children );
 
-	if ( props.tag ) {
-		return React.createElement( props.tag, {
-			className: classesString,
-		}, props.children );
-	}
-
-	return (
-		<p className={ classesString }>
-			{ props.children }
-		</p>
-	);
+	return <Element />;
 }
 
 Text.propTypes = {
