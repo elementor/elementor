@@ -68,6 +68,7 @@ const entry = {
 	'app': path.resolve( __dirname, '../core/app/assets/js/index.js' ),
 	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
 	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
+	'app-shared': path.resolve( __dirname, '../core/app/shared/assets/js/app-shared' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),

@@ -161,9 +161,21 @@ class App extends BaseApp {
 		);
 
 		wp_enqueue_script(
+			'elementor-app-shared',
+			$this->get_js_assets_url( 'app-shared' ),
+			[
+				'wp-i18n',
+				'react',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_enqueue_script(
 			'elementor-app-packages',
 			$this->get_js_assets_url( 'app-packages' ),
 			[
+				'elementor-app-shared',
 				'wp-i18n',
 				'react',
 			],
