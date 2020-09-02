@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 3.0.3
+Stable tag: 3.0.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,21 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.5 - 2020-08-31 =
+* Fix: Motion Effects not working when assigned to a column and throws JS error when DOM optimization is disabled ([#12299](https://github.com/elementor/elementor/issues/12299), [#12275](https://github.com/elementor/elementor/issues/12275))
+* Fix: Elements behave unexpectedly in the Editor when a custom repeater control is added to Column and Section elements ([#12275](https://github.com/elementor/elementor/issues/12275),  [#12242](https://github.com/elementor/elementor/issues/12242))
+* Fix: Glitches in migration script for Gap Between Widgets global setting ([#12298](https://github.com/elementor/elementor/issues/12298))
+* Fix: Console error `elementorCommon is undefined` (Props [@shimondoodkin](https://github.com/shimondoodkin))
+* Fix: Missing translation string for 'color_picker' in the Color Picker title
+* Fix: Revisions won't get updated to the correct one
+
+= 3.0.4 - 2020-08-30 =
+* Tweak: Added Skype and Viber to the allowed URI protocols ([#11619](https://github.com/elementor/elementor/issues/11619))
+* Tweak: Replaced WordPress "Learn More" links with dynamic links for better control over time ([#12312](https://github.com/elementor/elementor/issues/12312))
+* Fix: Global Colors and Fonts inconsistencies between Editor and Frontend ([#12245](https://github.com/elementor/elementor/issues/12245), [#12235](https://github.com/elementor/elementor/issues/12235), [#12303](https://github.com/elementor/elementor/issues/12303), [#12249](https://github.com/elementor/elementor/issues/12249))
+* Fix: Global dropdown is not available for all users
+* Fix: Removed unused strings
 
 = 3.0.3 - 2020-08-27 =
 * Tweak: Added option to re-migrate Global Colors and Fonts from earlier versions
