@@ -103,20 +103,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * CSS file constructor.
-	 *
-	 * Initializing Elementor CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 */
-	public function __construct( $file_name ) {
-		parent::__construct( $file_name );
-
-		$this->init_stylesheet();
-	}
-
-	/**
 	 * Use external file.
 	 *
 	 * Whether to use external CSS file of not. When there are new schemes or settings
@@ -202,6 +188,8 @@ abstract class Base extends Base_File {
 	 * @access public
 	 */
 	public function enqueue() {
+		$this->init_stylesheet();
+
 		$handle_id = $this->get_file_handle_id();
 
 		if ( isset( self::$printed[ $handle_id ] ) ) {
