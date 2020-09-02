@@ -74,7 +74,7 @@ abstract class Base extends Base_File {
 	 *
 	 * @var Stylesheet
 	 */
-	protected $stylesheet_obj;
+	private $stylesheet_obj;
 
 	/**
 	 * Printed.
@@ -188,8 +188,6 @@ abstract class Base extends Base_File {
 	 * @access public
 	 */
 	public function enqueue() {
-		$this->init_stylesheet();
-
 		$handle_id = $this->get_file_handle_id();
 
 		if ( isset( self::$printed[ $handle_id ] ) ) {
@@ -317,6 +315,8 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$stylesheet = $this->get_stylesheet();
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
 
@@ -410,7 +410,7 @@ abstract class Base extends Base_File {
 				}
 			}
 
-			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );
+			$stylesheet->add_rules( $parsed_selector, $output_css_property, $query );
 		}
 	}
 
@@ -466,6 +466,10 @@ abstract class Base extends Base_File {
 	 * @return Stylesheet The stylesheet object.
 	 */
 	public function get_stylesheet() {
+		if ( ! $this->stylesheet_obj ) {
+			$this->init_stylesheet();
+		}
+
 		return $this->stylesheet_obj;
 	}
 
@@ -627,7 +631,7 @@ abstract class Base extends Base_File {
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
-		return $this->stylesheet_obj->__toString();
+		return $this->get_stylesheet()->__toString();
 	}
 
 	/**
