@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import Layout from '../../templates/layout';
 import Notice from 'elementor-app/ui/molecules/notice';
-import ImportFile from 'elementor-app/organisms/import-file';
+import DropZone from 'elementor-app/organisms/drop-zone';
 
 import useFile from '../../hooks/use-file/use-file';
 
@@ -26,7 +26,7 @@ export default function Import() {
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
-				<ImportFile
+				<DropZone
 					heading={ __( 'Import a Kit to Your Site', 'elementor' ) }
 					text={ __( 'Drag & Drop your zip template file', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
