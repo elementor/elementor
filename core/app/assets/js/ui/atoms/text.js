@@ -3,19 +3,28 @@ export default function Text( props ) {
 		classes = [
 			props.className,
 		],
-		tagName = props.tag,
 		variant = props.variant && 'md' !== props.variant ? '-' + props.variant : '';
 
 	classes.push( baseClassName + '-text' + variant );
 
-	return React.createElement( tagName, {
-		className: classes.filter( ( classItem ) => classItem ).join( ' ' ),
-	}, props.children );
+	const classesString = Utils.arrayToClassName( classes );
+
+	if ( props.tag ) {
+		return React.createElement( props.tag, {
+			className: classesString,
+		}, props.children );
+	}
+
+	return (
+		<p className={ classesString }>
+			{ props.children }
+		</p>
+	);
 }
 
 Text.propTypes = {
 	className: PropTypes.string,
-	variant: PropTypes.string,
+	variant: PropTypes.oneOf( [ 'xl', 'lg', 'md', 'sm', 'xs', 'xxs' ] ),
 	tag: PropTypes.string,
 	children: PropTypes.any.isRequired,
 };

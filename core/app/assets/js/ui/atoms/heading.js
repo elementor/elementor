@@ -10,9 +10,19 @@ export default function Heading( props ) {
 		classes.push( baseClassName + '-' + props.variant );
 	}
 
-	return React.createElement( tagName, {
-		className: classes.filter( ( classItem ) => classItem ).join( ' ' ),
-	}, props.children );
+	const classesString = Utils.arrayToClassName( classes );
+
+	if ( props.tag ) {
+		return React.createElement( tagName, {
+			className: classesString,
+		}, props.children );
+	}
+
+	return (
+		<h1 className={ classesString }>
+			{ props.children }
+		</h1>
+	);
 }
 
 Heading.propTypes = {
@@ -23,7 +33,7 @@ Heading.propTypes = {
 		PropTypes.arrayOf( PropTypes.object ),
 	] ).isRequired,
 	tag: PropTypes.string,
-	variant: PropTypes.string.isRequired,
+	variant: PropTypes.oneOf( [ 'display-1', 'display-2', 'display-3', 'display-4', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] ).isRequired,
 };
 
 Heading.defaultProps = {
