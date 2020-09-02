@@ -74,7 +74,7 @@ abstract class Base extends Base_File {
 	 *
 	 * @var Stylesheet
 	 */
-	private $stylesheet_obj;
+	protected $stylesheet_obj;
 
 	/**
 	 * Printed.
