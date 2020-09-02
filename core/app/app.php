@@ -129,6 +129,13 @@ class App extends BaseApp {
 		Plugin::$instance->common->register_scripts();
 
 		wp_register_style(
+			'select2',
+			$this->get_css_assets_url( 'e-select2', 'assets/lib/e-select2/css/' ),
+			[],
+			'4.0.6-rc.1'
+		);
+
+		wp_register_style(
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
@@ -156,6 +163,7 @@ class App extends BaseApp {
 				'select2',
 				'elementor-icons',
 				'elementor-common',
+				'select2',
 			],
 			ELEMENTOR_VERSION
 		);
@@ -173,7 +181,7 @@ class App extends BaseApp {
 
 		wp_register_script(
 			'select2',
-			ELEMENTOR_ASSETS_URL . 'lib/e-select2/js/e-select2.full.js',
+			$this->get_js_assets_url( 'e-select2.full', 'assets/lib/e-select2/js/' ),
 			[
 				'jquery',
 			],
@@ -185,6 +193,7 @@ class App extends BaseApp {
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
 			[
+				'wp-i18n',
 				'react',
 				'react-dom',
 				'select2',
@@ -195,7 +204,8 @@ class App extends BaseApp {
 
 		$this->enqueue_dark_theme_detection_script();
 
-		wp_set_script_translations( 'elementor-app', 'elementor', ELEMENTOR_PATH . 'languages' );
+		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
+		wp_set_script_translations( 'elementor-app', 'elementor' );
 
 		$this->print_config();
 	}

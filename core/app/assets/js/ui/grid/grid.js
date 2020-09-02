@@ -1,5 +1,3 @@
-import Utils from 'elementor-app/utils/utils.js';
-
 import './grid.scss';
 
 export default function Grid( props ) {
@@ -25,7 +23,7 @@ export default function Grid( props ) {
 		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
 
 	return (
-		<div style={ getStyle() } className={ Utils.arrayToClassName( classes ) }>
+		<div style={ getStyle() } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
 			{ props.children }
 		</div>
 	);
@@ -83,7 +81,11 @@ Grid.propTypes = {
 	lg: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	xl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	xxl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	children: PropTypes.any.isRequired,
+	children: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.object,
+		PropTypes.arrayOf( PropTypes.object ),
+	] ).isRequired,
 };
 
 Grid.defaultProps = {

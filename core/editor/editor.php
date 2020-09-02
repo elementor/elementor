@@ -609,12 +609,9 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
-				'saved_colors' => __( 'Saved Colors', 'elementor' ),
-				'drag_to_delete' => __( 'Drag To Delete', 'elementor' ),
 				'color_picker' => __( 'Color Picker', 'elementor' ),
 
 				// Global Styles
-				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
 				'new_global_color' => __( 'New Global Color', 'elementor' ),
 				'global_colors_title' => __( 'Global Colors', 'elementor' ),
 				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
@@ -639,8 +636,6 @@ class Editor {
 				'custom' => __( 'Custom', 'elementor' ),
 
 				// Menu.
-				'about_elementor' => __( 'About Elementor', 'elementor' ),
-				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
 				'site_settings' => __( 'Site Settings', 'elementor' ),
 				'theme_builder' => __( 'Theme Builder', 'elementor' ),
 				'user_preferences' => __( 'User Preferences', 'elementor' ),

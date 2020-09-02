@@ -2,9 +2,9 @@ import { useRef } from 'react';
 
 import Button from 'elementor-app/ui/molecules/button';
 
-import './select-file.scss';
+import './upload-file.scss';
 
-export default function SelectFile( props ) {
+export default function UploadFile( props ) {
 	const fileInput = useRef( null );
 
 	return (
@@ -12,18 +12,18 @@ export default function SelectFile( props ) {
 			<input
 				ref={ fileInput }
 				type="file"
-				className="e-app-select-file__input"
+				className="e-app-upload-file__input"
 				onChange={ ( event ) => {
 					props.onFileSelect( event.target.files, event );
 				} }
 			/>
 
 			<Button
-				className="e-app-select-file__button"
+				className="e-app-upload-file__button"
 				text={ props.text }
 				variant="contained"
 				color="primary"
-				size="sm"
+				size="lg"
 				hideText={ props.isLoading }
 				icon={ props.isLoading ? 'eicon-loading eicon-animation-spin' : '' }
 				onClick={ () => {
@@ -36,14 +36,14 @@ export default function SelectFile( props ) {
 	);
 }
 
-SelectFile.propTypes = {
+UploadFile.propTypes = {
 	className: PropTypes.string,
 	text: PropTypes.string,
 	onFileSelect: PropTypes.func,
 	isLoading: PropTypes.bool,
 };
 
-SelectFile.defaultProps = {
+UploadFile.defaultProps = {
 	className: '',
 	text: __( 'Select File', 'elementor' ),
 };

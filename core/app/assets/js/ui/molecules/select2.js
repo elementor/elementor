@@ -30,15 +30,14 @@ export default function Select2( props ) {
 				...getDefaultSettings(),
 				...props.settings,
 			} )
-			.on( 'select2:select', props.onChange )
-			.on( 'select2:unselect', props.onChange );
+			.on( 'select2:select select2:unselect', props.onChange );
 
 		if ( props.onReady ) {
 			props.onReady( $select2 );
 		}
 
 		return () => {
-			$select2.select2( 'destroy' ).off( 'select2:select' ).off( 'select2:unselect' );
+			$select2.select2( 'destroy' ).off( 'select2:select select2:unselect' );
 		};
 	}, [ props.settings, props.options ] );
 

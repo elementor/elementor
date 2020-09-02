@@ -11,6 +11,7 @@
 @import "../js/ui/modal/modal.scss";
 @import "../js/ui/grid/grid.scss";
 @import "../js/ui/card/card.scss";
+@import "../js/ui/dialog/dialog.scss";
 
 @import "../../modules/site-editor/assets/js/molecules/site-part.scss";
 @import "../../modules/site-editor/assets/js/pages/promotion";
@@ -42,3 +43,7 @@
 @import "../js/ui/molecules/list.scss";
 @import "../js/ui/molecules/notice.scss";
 @import "../js/organisms/import-file.scss";
+@import "../js/ui/atoms/drag-drop.scss";
+@import "../js/molecules/upload-file.scss";
+@import "../js/organisms/drop-zone.scss";
+@import "../js/ui/molecules/select2.scss";

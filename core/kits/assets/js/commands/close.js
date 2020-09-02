@@ -20,6 +20,9 @@ export class Close extends CommandBase {
 
 				$e.components.get( 'panel/global' ).close();
 				$e.routes.clearHistory( this.component.getRootContainer() );
+
+				// The kit shouldn't be cached for next open. (it may be changed via create colors/typography).
+				elementor.documents.invalidateCache( elementor.config.kit_id );
 			},
 		} ).finally( () => $e.internal( 'panel/state-ready' ) );
 	}

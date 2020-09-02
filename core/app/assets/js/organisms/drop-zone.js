@@ -1,12 +1,12 @@
-import SelectFile from 'elementor-app/molecules/select-file';
+import UploadFile from 'elementor-app/molecules/upload-file';
 import DragDrop from 'elementor-app/ui/atoms/drag-drop';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 
-import './import-file.scss';
+import './drop-zone.scss';
 
-export default function ImportFile( props ) {
+export default function DropZone( props ) {
 	const dragDropEvents = {
 		onDrop: ( event ) => {
 			if ( ! props.isLoading ) {
@@ -16,9 +16,9 @@ export default function ImportFile( props ) {
 	};
 
 	return (
-		<section className="e-app-import-file">
+		<section className="e-app-drop-zone">
 			<DragDrop { ...dragDropEvents } isLoading={ props.isLoading }>
-				{ ! props.noIcon && <Icon className={ `e-app-import-file__icon ${ props.icon }` } /> }
+				{ props.icon && <Icon className={ `e-app-drop-zone__icon ${ props.icon }` } /> }
 
 				{ props.heading && <Heading variant="display-3">{ props.heading }</Heading> }
 
@@ -26,13 +26,13 @@ export default function ImportFile( props ) {
 
 				{ props.secondaryText && <Text variant="xl">{ props.secondaryText }</Text> }
 
-				{ ! props.noButton && <SelectFile isLoading={ props.isLoading } onFileSelect={ props.onFileSelect } text={ props.buttonText } /> }
+				{ props.showButton && <UploadFile isLoading={ props.isLoading } onFileSelect={ props.onFileSelect } text={ props.buttonText } /> }
 			</DragDrop>
 		</section>
 	);
 }
 
-ImportFile.propTypes = {
+DropZone.propTypes = {
 	className: PropTypes.string,
 	children: PropTypes.any,
 	onFileSelect: PropTypes.func,
@@ -41,12 +41,14 @@ ImportFile.propTypes = {
 	secondaryText: PropTypes.string,
 	buttonText: PropTypes.string,
 	icon: PropTypes.string,
-	noIcon: PropTypes.bool,
-	noButton: PropTypes.bool,
+	showButton: PropTypes.bool,
+	showIcon: PropTypes.bool,
 	isLoading: PropTypes.bool,
 };
 
-ImportFile.defaultProps = {
+DropZone.defaultProps = {
 	className: '',
 	icon: 'eicon-library-upload',
+	showButton: true,
+	showIcon: true,
 };
