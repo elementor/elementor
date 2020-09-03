@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Import_Export;
 
+use Elementor\Plugin;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -25,6 +27,7 @@ class Manager {
 
 	public function __construct() {
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
 	public function on_elementor_init() {
@@ -35,6 +38,12 @@ class Manager {
 		if ( isset( $_POST[ self::IMPORT_TRIGGER_KEY ] ) ) {
 			$this->import = new Import();
 		}
+
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( self::IMPORT_TRIGGER_KEY, function() {
+			return $this->import = new Import();
+		} );
+	}
 
 	}
 }

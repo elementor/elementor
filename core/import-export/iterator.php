@@ -15,7 +15,7 @@ abstract class Iterator extends Base_Object {
 	abstract protected function run();
 
 	public function __construct() {
-		$this->run();
+		return $this->run();
 	}
 
 	protected function get_archive_file_path( $file_name ) {

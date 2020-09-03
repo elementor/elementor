@@ -26,9 +26,11 @@ class Import extends Iterator {
 
 		$root_directory = new Root( $this );
 
-		$root_directory->run_import( $settings );
+		$import_result = $root_directory->run_import( $settings );
 
-		rmdir( $this->files_base_dir );
+//		rmdir( $this->files_base_dir );
+
+		return $import_result;
 	}
 
 	final protected function read_json_file( $name ) {
