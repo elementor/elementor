@@ -103,20 +103,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * CSS file constructor.
-	 *
-	 * Initializing Elementor CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 */
-	public function __construct( $file_name ) {
-		parent::__construct( $file_name );
-
-		$this->init_stylesheet();
-	}
-
-	/**
 	 * Use external file.
 	 *
 	 * Whether to use external CSS file of not. When there are new schemes or settings
@@ -329,6 +315,8 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$stylesheet = $this->get_stylesheet();
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
 
@@ -422,7 +410,7 @@ abstract class Base extends Base_File {
 				}
 			}
 
-			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );
+			$stylesheet->add_rules( $parsed_selector, $output_css_property, $query );
 		}
 	}
 
@@ -478,6 +466,10 @@ abstract class Base extends Base_File {
 	 * @return Stylesheet The stylesheet object.
 	 */
 	public function get_stylesheet() {
+		if ( ! $this->stylesheet_obj ) {
+			$this->init_stylesheet();
+		}
+
 		return $this->stylesheet_obj;
 	}
 
@@ -639,7 +631,7 @@ abstract class Base extends Base_File {
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
-		return $this->stylesheet_obj->__toString();
+		return $this->get_stylesheet()->__toString();
 	}
 
 	/**
