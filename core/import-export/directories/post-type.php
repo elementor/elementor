@@ -2,7 +2,7 @@
 
 namespace Elementor\Core\Import_Export\Directories;
 
-use Elementor\Core\Import_Export\Export;
+use Elementor\Core\Import_Export\Iterator;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,8 +17,8 @@ class Post_Type extends Base {
 		return $this->post_type;
 	}
 
-	public function __construct( Export $exporter, Base $parent, $post_type ) {
-		parent::__construct( $exporter, $parent );
+	public function __construct( Iterator $iterator, Base $parent, $post_type ) {
+		parent::__construct( $iterator, $parent );
 
 		$this->post_type = $post_type;
 	}

@@ -47,8 +47,8 @@ class Root extends Base {
 
 	protected function get_default_sub_directories() {
 		return [
-			new Templates( $this->exporter, $this ),
-			new Content( $this->exporter, $this ),
+			new Templates( $this->iterator, $this ),
+			new Content( $this->iterator, $this ),
 		];
 	}
 }
