@@ -102,11 +102,13 @@ class Import_Images {
 	 *
 	 * @return false|array Imported image data, or false.
 	 */
-		$saved_image = $this->get_saved_image( $attachment );
 	public function import( $attachment, $parent_post_id = null ) {
+		if ( ! empty( $attachment['id'] ) ) {
+			$saved_image = $this->get_saved_image( $attachment );
 
-		if ( $saved_image ) {
-			return $saved_image;
+			if ( $saved_image ) {
+				return $saved_image;
+			}
 		}
 
 		// Extract the file name and extension from the url.
@@ -155,7 +157,11 @@ class Import_Images {
 			'id' => $post_id,
 			'url' => $upload['url'],
 		];
-		$this->_replace_image_ids[ $attachment['id'] ] = $new_attachment;
+
+		if ( ! empty( $attachment['id'] ) ) {
+			$this->_replace_image_ids[ $attachment['id'] ] = $new_attachment;
+		}
+
 		return $new_attachment;
 	}
 
