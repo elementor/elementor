@@ -13,12 +13,12 @@ class Content extends Base {
 	}
 
 	protected function get_default_sub_directories() {
-		$post_types = $this->exporter->get_settings( 'custom_post_types' );
+		$post_types = $this->iterator->get_settings( 'custom_post_types' );
 
 		$sub_directories = [];
 
 		foreach( $post_types as $post_type ) {
-			$sub_directories[] = new Post_Type( $this->exporter, $this, $post_type );
+			$sub_directories[] = new Post_Type( $this->iterator, $this, $post_type );
 		}
 
 		return $sub_directories;
