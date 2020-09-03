@@ -99,6 +99,9 @@ class Widget_Tabs extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Tab Title', 'elementor' ),
 				'placeholder' => __( 'Tab Title', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
 				'label_block' => true,
 			]
 		);
