@@ -28,12 +28,17 @@ class Root extends Base {
 
 		$kit_post = $kit->get_post();
 
+		$kit_title = $this->exporter->get_settings( 'title' );
+
+		$kit_name = sanitize_title( $kit_title );
+
 		$manifest_data = [
 			'author' => get_the_author_meta( 'display_name', $kit_post->post_author ),
 			'version' => Manager::FORMAT_VERSION,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'created' => date( 'Y-m-d H:i:s' ),
-			'title' => $this->exporter->get_settings( 'title' ),
+			'name' => $kit_name,
+			'title' => $kit_title,
 			'description' => $kit_post->post_excerpt,
 			'image' => get_the_post_thumbnail_url( $kit_post ),
 		];
