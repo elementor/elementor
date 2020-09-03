@@ -15,6 +15,10 @@ class Content extends Base {
 	protected function get_default_sub_directories() {
 		$post_types = $this->iterator->get_settings( 'custom_post_types' );
 
+		if ( ! $post_types ) {
+			return [];
+		}
+
 		$sub_directories = [];
 
 		foreach( $post_types as $post_type ) {
