@@ -94,14 +94,16 @@ class Import_Images {
 	 * attachment metadata.
 	 *
 	 * @since 1.0.0
+	 * @since 3.1.0 New `$parent_post_id` option added
 	 * @access public
 	 *
 	 * @param array $attachment The attachment.
+	 * @param int $parent_post_id Optional
 	 *
 	 * @return false|array Imported image data, or false.
 	 */
-	public function import( $attachment ) {
 		$saved_image = $this->get_saved_image( $attachment );
+	public function import( $attachment, $parent_post_id = null ) {
 
 		if ( $saved_image ) {
 			return $saved_image;
@@ -136,7 +138,7 @@ class Import_Images {
 			// return new \WP_Error( 'attachment_processing_error', __( 'Invalid file type.', 'elementor' ) );
 		}
 
-		$post_id = wp_insert_attachment( $post, $upload['file'] );
+		$post_id = wp_insert_attachment( $post, $upload['file'], $parent_post_id );
 
 		// On REST requests.
 		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
