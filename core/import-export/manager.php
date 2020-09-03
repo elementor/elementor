@@ -34,10 +34,7 @@ class Manager {
 		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
 			$this->export = new Export();
 		}
-
-		if ( isset( $_POST[ self::IMPORT_TRIGGER_KEY ] ) ) {
-			$this->import = new Import();
-		}
+	}
 
 	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( self::IMPORT_TRIGGER_KEY, function() {
