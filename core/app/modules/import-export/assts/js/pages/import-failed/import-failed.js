@@ -1,16 +1,14 @@
 import Layout from '../../templates/layout';
 import Message from '../../ui/message/message';
 import ClickHere from '../../ui/click-here/click-here';
-import SelectFile from 'elementor-app/molecules/select-file';
+import UploadFile from 'elementor-app/molecules/upload-file';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
-import Grid from 'elementor-app/ui/grid/grid';
 
 import useFile from '../../hooks/use-file/use-file';
 
 import './import-failed.scss';
-import DragDrop from "../../../../../../assets/js/ui/atoms/drag-drop";
 
 export default function ImportFailed() {
 	const { setFile } = useFile();
@@ -31,7 +29,7 @@ export default function ImportFailed() {
 						<ClickHere url="/#" /> { __( 'to try solving the issue.', 'elementor' ) }
 					</Text>
 
-					<SelectFile onFileSelect={ ( files ) => {
+					<UploadFile onFileSelect={ ( files ) => {
 						setFile( files[ 0 ] );
 					} } />
 				</div>

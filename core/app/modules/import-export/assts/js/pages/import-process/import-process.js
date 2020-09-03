@@ -21,7 +21,7 @@ export default function ImportProcess() {
 			<Message className="e-app-import-process">
 				<Icon className="e-app-import-process__icon eicon-loading eicon-animation-spin" />
 
-				<Heading variant="lg" className="e-app-import-process__main-title">
+				<Heading variant="display-3" className="e-app-import-process__main-title">
 					{ __( 'Your Kit Is Being Imported', 'elementor' ) }
 				</Heading>
 
