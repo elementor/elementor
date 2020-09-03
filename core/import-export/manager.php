@@ -41,6 +41,4 @@ class Manager {
 			return $this->import = new Import();
 		} );
 	}
-
-	}
 }
