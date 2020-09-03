@@ -3,6 +3,7 @@
 namespace Elementor\Core\Import_Export\Directories;
 
 use Elementor\Core\Import_Export\Export;
+use Elementor\Core\Import_Export\Import;
 use Elementor\Core\Import_Export\Iterator;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,12 +33,20 @@ abstract class Base {
 	protected $exporter;
 
 	/**
+	 * @var Import
 	 */
+	protected $importer;
 
 	abstract protected function get_name();
 
 	public function __construct( Iterator $iterator, Base $parent = null ) {
 		$this->iterator = $iterator;
+
+		if ( $iterator instanceof Export ) {
+			$this->exporter = $iterator;
+		} else {
+			$this->importer = $iterator;
+		}
 
 		$this->parent = $parent;
 
@@ -66,10 +75,33 @@ abstract class Base {
 		return $manifest_data;
 	}
 
+	final public function run_import( array $settings ) {
+		$this->importer->set_current_archive_path( $this->get_path() );
+
+		$meta_data = $this->import( $settings );
+
+		foreach( $this->sub_directories as $sub_directory ) {
+			$sub_directory_name = $sub_directory->get_name();
+
+			$meta_data[ $sub_directory_name ] = $sub_directory->run_import( $settings[ $sub_directory_name ] );
+		}
+
+		return $meta_data;
+	}
+
 	/**
 	 * @return array
 	 */
 	protected function export() {
+		return [];
+	}
+
+	/**
+	 * @param array $settings
+	 *
+	 * @return array
+	 */
+	protected function import( array $settings ) {
 		return [];
 	}
 

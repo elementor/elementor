@@ -45,6 +45,17 @@ class Root extends Base {
 		return $manifest_data;
 	}
 
+	protected function import( array $settings ) {
+		$new_kit_id = Plugin::$instance->kits_manager->create( [
+			'post_title' => $settings['title'],
+			'post_excerpt' => $settings['description'],
+		] );
+
+		$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( [
+			'url' => $settings['image'],
+		], $new_kit_id );
+	}
+
 	protected function get_default_sub_directories() {
 		return [
 			new Templates( $this->iterator, $this ),
