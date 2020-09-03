@@ -71,6 +71,8 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
 
 		$requestedContent[ settings.showTabFn ]();
+
+		jQuery( window ).resize();
 	}
 
 	isActiveTab( tabIndex ) {
