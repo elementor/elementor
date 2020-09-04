@@ -57,17 +57,6 @@ class Widget_Button extends Widget_Base {
 	 */
 	public function get_icon() {
 		return 'eicon-button';
-	
-		$this->add_control(
-			'flyover',
-			[
-				'label' => __( 'Icon on the flyover', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'flyover' => __( 'flyover', 'elementor' ),
-				'default' => 'default',
-				],
 	}
 
 	/**
@@ -246,6 +235,19 @@ class Widget_Button extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'flyover',
+			[
+				'label' => __( 'Icon on the flyover', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'flyover' => __( 'flyover', 'elementor' ),
 				],
 			]
 		);
