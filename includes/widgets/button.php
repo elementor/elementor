@@ -247,7 +247,7 @@ class Widget_Button extends Widget_Base {
 				'default' => 'default',
 				'options' => [
 					'default' => __( 'Default', 'elementor' ),
-					'flyover' => __( 'flyover', 'elementor' ),
+					'flyover' => __( 'Flyover', 'elementor' ),
 				],
 			]
 		);
