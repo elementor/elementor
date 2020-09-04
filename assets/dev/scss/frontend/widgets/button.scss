@@ -82,6 +82,19 @@
 		}
 	}
 
+	.elementor-flyover-icon- {
+
+		&default {
+			selector;
+    			display: none;
+		}
+		
+		&flyover {
+			selector:hover;
+    			display: block;
+		}
+	}
+
 	span {
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
 	}
