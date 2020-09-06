@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 3.0.5
+Stable tag: 3.0.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,19 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.6 - 2020-09-06 =
+* Tweak: Added dismiss button for data updater notices
+* Fix: Global Colors and Fonts are missing on front-end ([#12363](https://github.com/elementor/elementor/issues/12363))
+* Fix: Database update script causes unexpected errors ([#12305](https://github.com/elementor/elementor/issues/12305))
+* Fix: Custom Breakpoints stopped working since v3.0 ([#12320](https://github.com/elementor/elementor/issues/12320))
+* Fix: Shortcuts for Navigator is not correct ([#12365](https://github.com/elementor/elementor/issues/12365))
+* Fix: Can't close a Navigator since v3.0 ([#11836](https://github.com/elementor/elementor/issues/11836))
+* Fix: Select field dropdown caret visibility issue in edge cases in Form widget ([#12053](https://github.com/elementor/elementor/issues/12053))
+* Fix: Missing iFrame `title` attribute in Google Maps widget ([#9955](https://github.com/elementor/elementor/issues/9955))
+* Fix: Missing default size unit selection in default Global Font properties `font-size` and `line-height` controls
+* Fix: Toggle widget title style missing in Editor
+* Fix: Exiting Site Settings menu after accessing it from "Manage Global Fonts/Colors" Global dropdown menu throws a JS error
 
 = 3.0.5 - 2020-08-31 =
 * Fix: Motion Effects not working when assigned to a column and throws JS error when DOM optimization is disabled ([#12299](https://github.com/elementor/elementor/issues/12299), [#12275](https://github.com/elementor/elementor/issues/12275))
