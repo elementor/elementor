@@ -77,6 +77,7 @@ abstract class Document extends Controls_Stack {
 			'show_in_finder' => true,
 			'show_on_admin_bar' => true,
 			'support_kit' => false,
+			'deprecated' => false,
 		];
 	}
 

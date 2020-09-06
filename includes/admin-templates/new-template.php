@@ -7,21 +7,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-$document_types = Plugin::$instance->documents->get_document_types();
+$document_types = Plugin::$instance->documents->get_document_types([
+	'show_in_library' => true,
+	'deprecated' => false,
+]);
 
 $types = [];
 
 $selected = get_query_var( 'elementor_library_type' );
 
 foreach ( $document_types as $document_type ) {
-	if ( $document_type::get_property( 'show_in_library' ) ) {
-		/**
-		 * @var Document $instance
-		 */
-		$instance = new $document_type();
+	/** @var Document $instance */
+	$instance = new $document_type();
 
-		$types[ $instance->get_name() ] = $document_type::get_title();
-	}
+	$types[ $instance->get_name() ] = $document_type::get_title();
 }
 
 /**
