@@ -1735,7 +1735,27 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 1.4.0
 	 * @access protected
 	 */
-	protected function _register_controls() {}
+	protected function _register_controls() {
+		_deprecated_function( __METHOD__, '3.1.0', 'register_controls' );
+
+		$this->register_controls();
+	}
+
+	/**
+	 * Register controls.
+	 *
+	 * Used to add new controls to any element type. For example, external
+	 * developers use this method to register controls in a widget.
+	 *
+	 * Should be inherited and register new controls using `add_control()`,
+	 * `add_responsive_control()` and `add_group_control()`, inside control
+	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
+	 * `start_controls_tab()`.
+	 *
+	 * @since 1.4.0
+	 * @access protected
+	 */
+	protected function register_controls() {}
 
 	/**
 	 * Get default data.
@@ -1898,8 +1918,8 @@ abstract class Controls_Stack extends Base_Object {
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
 		// This `if` statement should be removed when the method is removed
-		if ( method_exists( $this, '_register_controls' ) ) {
-			$this->_register_controls();
+		if ( method_exists( $this, 'register_controls') ) {
+			$this->register_controls();
 		} else {
 			$this->register_controls();
 		}

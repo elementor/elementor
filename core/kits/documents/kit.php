@@ -90,7 +90,7 @@ class Kit extends PageBase {
 	 * @since 2.0.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->register_document_controls();
 
 		foreach ( $this->tabs as $tab ) {
