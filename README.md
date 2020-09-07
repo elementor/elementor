@@ -1,6 +1,6 @@
-<p align="center"><a href="https://elementor.com/"><img src="https://i.imgur.com/0Guj2pn.png" alt="Elementor Website Builder"></a></p>
+<p align="center"><a href="https://elementor.com/"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a></p>
 
-<p align="center" style="font-weight:bold;">Welcome to the Elementor GitHub repository. The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.</p>
+<p align="center">Welcome to the Elementor GitHub repository. The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.</p>
 
 <p align="center"><a href="https://elementor.com/"><img src="https://ps.w.org/elementor/assets/screenshot-1.gif" alt="Elementor Website Builder"></a></p>
 
