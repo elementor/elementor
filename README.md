@@ -1,4 +1,4 @@
-<p><a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a></p>
+# <p><a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a></p>
 
 **Welcome to the Elementor GitHub repository. The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.**
 
@@ -8,17 +8,17 @@ Introducing a WordPress website builder, with no limits of design. A website bui
 
 It's time for **[Elementor Website Builder](https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme)**.
 
-### The leading website builder for any purpose ###
+### The leading website builder for any purpose
 Whether you’re a web designer looking for a way to achieve pixel-perfect websites, a marketer looking to get online fast or a developer who wants to expand their capabilities, Elementor’s website builder has what you need - intuitive drag-and-drop Editor, advanced design features and a full open-source approach.
 
 There are many other [features](https://elementor.com/features/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) to help you build better websites, join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=github-repo&utm_medium=link&utm_campaign=readme)!
 
-### Developer API ###
+## Developer API
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
 
 To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme).
 
-### Be a contributor ###
+## Be a contributor
 Community contributions are always welcome and help us remain the Number 1 WordPress Website Builder, feel free to answering questions on GitHub and within the various Elementor communities.
 
 There are many ways to contribute to Elementor:
@@ -29,7 +29,7 @@ There are many ways to contribute to Elementor:
 
 **Translate**: You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
 
-### Support ###
+## Support
 Please **DO NOT** open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on one of the proper support channels:
 
 - For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme).
@@ -39,7 +39,7 @@ Please **DO NOT** open issues for general support questions as we want to keep G
 
 If you have purchased [Elementor Pro](https://elementor.com/pro/?utm_source=github-repo&utm_medium=link&utm_campaign=readme), you are entitled for personal support, please see your Elementor account for details.
 
-### Liked Elementor? ###
+## Liked Elementor?
 - Join our [Facebook Group](https://www.facebook.com/groups/Elementors/).
 - Learn from our tutorials on [YouTube Channel](https://www.youtube.com/c/elementor).
 - Or rate us on [WordPress](https://wordpress.org/support/plugin/elementor/reviews/?filter=5/#new-post) :)
