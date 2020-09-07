@@ -1,8 +1,8 @@
-# Elementor 
+<p align="center"><a href="https://elementor.com/"><img src="https://i.imgur.com/0Guj2pn.png" alt="Elementor Website Builder"></a></p>
 
-Welcome to the Elementor GitHub repository. The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
+<p align="center">**Welcome to the Elementor GitHub repository. The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.**</p>
 
-<p align="center"><img src="https://ps.w.org/elementor/assets/screenshot-1.gif" alt="Elementor Website Builder"></p>
+<p align="center"><a href="https://elementor.com/"><img src="https://ps.w.org/elementor/assets/screenshot-1.gif" alt="Elementor Website Builder"></a></p>
 
 Introducing a WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
 
@@ -13,7 +13,7 @@ Whether you’re a web designer looking for a way to achieve pixel-perfect websi
 
 There are many other [features](https://elementor.com/features/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) to help you build better websites, join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=github-repo&utm_medium=link&utm_campaign=readme)!
 
-### Developer API. ###
+### Developer API ###
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
 
 To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme).
@@ -37,35 +37,9 @@ Please **DO NOT** open issues for general support questions as we want to keep G
 - For more information about features, FAQs and documentation, check out our website at [Elementor website Builder](https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme).
 - Join [Elementor Community](https://www.facebook.com/groups/Elementors/) on Facebook
 
-If you have purchased [Elementor Pro](https://elementor.com/pro), you are entitled for personal support, please see your Elementor account for details.
-
+If you have purchased [Elementor Pro](https://elementor.com/pro/?utm_source=github-repo&utm_medium=link&utm_campaign=readme), you are entitled for personal support, please see your Elementor account for details.
 
 ### Liked Elementor? ###
 - Join our [Facebook Group](https://www.facebook.com/groups/Elementors/).
 - Learn from our tutorials on [YouTube Channel](https://www.youtube.com/c/elementor).
 - Or rate us on [WordPress](https://wordpress.org/support/plugin/elementor/reviews/?filter=5/#new-post) :)
-
-## Installation ##
-
-**Minimum Requirements:**
-
-* WordPress 5.0 or greater
-* PHP version 5.6 or greater
-* MySQL version 5.0 or greater
-
-**We recommend your host supports:**
-
-* PHP version 7.0 or greater
-* MySQL version 5.6 or greater
-* WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
-
-**Instructions:**
-
-1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Pages > Add New
-4. Press the 'Edit with Elementor' button.
-5. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
-
-For documentation and tutorials visit our [Knowledge Base](https://docs.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme).
-
