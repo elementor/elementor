@@ -1,8 +1,8 @@
-<p><a href="https://elementor.com/utm_source=github-repo&utm_medium=link&utm_campaign=readme"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a></p>
+<p><a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a></p>
 
 Welcome to the Elementor GitHub repository. The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
 
-<p><a href="https://elementor.com/"><img src="https://ps.w.org/elementor/assets/screenshot-1.gif" alt="Elementor Website Builder"></a></p>
+<p><a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme"><img src="https://ps.w.org/elementor/assets/screenshot-1.gif" alt="Elementor Website Builder"></a></p>
 
 Introducing a WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
 
