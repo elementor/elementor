@@ -113,7 +113,7 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		if ( $is_type_instance ) {
-			$this->_register_skins();
+			$this->register_skins();
 
 			$widget_name = $this->get_name();
 
@@ -273,6 +273,19 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Register widget skins - deprecated prefixed method
+	 *
+	 * @since 1.7.12
+	 * @access protected
+	 * @deprecated since 3.1.0
+	 */
+	protected function _register_skins() {
+		//_deprecated_function( __METHOD__, '3.1.0', 'register_skins' );
+
+		$this->register_skins();
+	}
+
+	/**
 	 * Register widget skins.
 	 *
 	 * This method is activated while initializing the widget base class. It is
@@ -280,14 +293,14 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Usage:
 	 *
-	 *    protected function _register_skins() {
+	 *    protected function register_skins() {
 	 *        $this->add_skin( new Skin_Classic( $this ) );
 	 *    }
 	 *
-	 * @since 1.7.12
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_skins() {}
+	protected function register_skins() {}
 
 	/**
 	 * Get initial config.
@@ -400,8 +413,8 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
 
 		$this->add_render_attribute(
 			'_wrapper', 'class', [
@@ -656,7 +669,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _print_content() {
+	protected function print_content() {
 		$this->render_content();
 	}
 

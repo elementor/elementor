@@ -222,33 +222,6 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
-	 * Get items.
-	 *
-	 * Utility method that receives an array with a needle and returns all the
-	 * items that match the needle. If needle is not defined the entire haystack
-	 * will be returned.
-	 *
-	 * @since 1.4.0
-	 * @deprecated 2.3.0 Use `Controls_Stack::get_items()` instead
-	 * @access protected
-	 * @static
-	 *
-	 * @param array  $haystack An array of items.
-	 * @param string $needle   Optional. Needle. Default is null.
-	 *
-	 * @return mixed The whole haystack or the needle from the haystack when requested.
-	 */
-	protected static function _get_items( array $haystack, $needle = null ) {
-		 _deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_items()' );
-
-		if ( $needle ) {
-			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
-		}
-
-		return $haystack;
-	}
-
-	/**
 	 * Get current section.
 	 *
 	 * When inserting new controls, this method will retrieve the current section.
