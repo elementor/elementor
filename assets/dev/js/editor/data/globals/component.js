@@ -27,6 +27,8 @@ export default class Component extends ComponentBase {
 	}
 
 	onElementorLoaded() {
+		$e.data.deleteCache( $e.components.get( 'globals' ), 'globals/index' );
+
 		// Add globals to cache before render.
 		$e.data.get( 'globals/index' ).then( () => elementor.trigger( 'globals:loaded' ) );
 	}
