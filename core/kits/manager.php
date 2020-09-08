@@ -21,16 +21,14 @@ class Manager {
 
 	public function get_active_id() {
 		$id = get_option( self::OPTION_ACTIVE );
-		$kit_post = null;
 
-		if ( $id ) {
-			$kit_post = get_post( $id );
-		}
+		$kit_document = Plugin::$instance->documents->get( $id );
 
-		if ( ! $id || ! $kit_post || 'trash' === $kit_post->post_status ) {
+		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
 			$id = $this->create_default();
 			update_option( self::OPTION_ACTIVE, $id );
 		}
+
 		return $id;
 	}
 
