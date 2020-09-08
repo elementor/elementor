@@ -210,6 +210,8 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function init() {
+		Plugin::$instance->init_common();
+
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			return;
 		}
@@ -220,9 +222,6 @@ class Frontend extends App {
 			return;
 		}
 
-		if ( current_user_can( 'manage_options' ) ) {
-			Plugin::$instance->init_common();
-		}
 
 		$this->post_id = get_the_ID();
 
@@ -348,6 +347,7 @@ class Frontend extends App {
 			'elementor-frontend-modules',
 			$this->get_js_assets_url( 'frontend-modules' ),
 			[
+				'elementor-common',
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
@@ -449,6 +449,7 @@ class Frontend extends App {
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
 			[
+				'elementor-common',
 				'elementor-frontend-modules',
 				'elementor-dialog',
 				'elementor-waypoints',
@@ -546,7 +547,9 @@ class Frontend extends App {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
 		}
 
-		$frontend_dependencies = [];
+		$frontend_dependencies = [
+				'elementor-common',
+		];
 
 		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
 			// If The Markup Legacy Mode is active, register the legacy CSS
@@ -595,7 +598,7 @@ class Frontend extends App {
 		 */
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
-		wp_enqueue_script( 'elementor-frontend' );
+		wp_enqueue_script( 'elementor-frontend', '', [ 'elementor-common' ] );
 
 		$this->print_config();
 
