@@ -1,6 +1,6 @@
 # <p><a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a></p>
 
-**Welcome to the Elementor GitHub repository. The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.**
+**Welcome to the Elementor GitHub repository. Elementor is the most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.**
 
 <p><a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme"><img src="https://ps.w.org/elementor/assets/screenshot-1.gif" alt="Elementor Website Builder"></a></p>
 
@@ -11,7 +11,7 @@ It's time for **[Elementor Website Builder](https://elementor.com/?utm_source=gi
 ### The leading website builder for any purpose
 Whether you’re a web designer looking for a way to achieve pixel-perfect websites, a marketer looking to get online fast or a developer who wants to expand their capabilities, Elementor’s website builder has what you need - intuitive drag-and-drop Editor, advanced design features and a full open-source approach.
 
-There are many other [features](https://elementor.com/features/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) to help you build better websites, join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=github-repo&utm_medium=link&utm_campaign=readme)!
+There are many other [features](https://elementor.com/features/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) to help you build better websites. Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=github-repo&utm_medium=link&utm_campaign=readme)!
 
 ## Developer API
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
