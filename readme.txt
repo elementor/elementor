@@ -80,7 +80,6 @@ Making changes to your theme shouldn't be so hard. Endless coding, dealing with 
 
 There are many other [features](https://elementor.com/features/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to help you build better websites:
 
-
 * [Motion Effects](https://go.elementor.com/motion-effects/)
 * [Industry leading Theme Builder](https://go.elementor.com/theme-builder/)
 * [WooCommerce Builder](https://go.elementor.com/woocomemrce-builder/)
