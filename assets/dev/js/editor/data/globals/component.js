@@ -27,9 +27,12 @@ export default class Component extends ComponentBase {
 	}
 
 	onElementorLoaded() {
+		this.refreshGlobalData().then( () => elementor.trigger( 'globals:loaded' ) );
+	}
+
+	refreshGlobalData() {
 		$e.data.deleteCache( $e.components.get( 'globals' ), 'globals/index' );
 
-		// Add globals to cache before render.
-		$e.data.get( 'globals/index' ).then( () => elementor.trigger( 'globals:loaded' ) );
+		return $e.data.get( 'globals/index' ).then( () => elementor.trigger( 'globals:refreshed' ) );
 	}
 }
