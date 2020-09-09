@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 3.0.6
+Stable tag: 3.0.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,6 +217,15 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.7 - 2020-09-09 =
+* Fix: Additional cases of Global Style inconsistencies in Editor and Frontend ([#12363](https://github.com/elementor/elementor/issues/12363))
+* Fix: Plugins conflict on non-admin login to the dashboard ([#12383](https://github.com/elementor/elementor/issues/12383), [#12388](https://github.com/elementor/elementor/issues/12388))
+* Fix: PHP error undefined method `add_repeater_row` caused data updater issues and server overload ([#12305](https://github.com/elementor/elementor/issues/12305))
+* Fix: Global Colors and Fonts not being saved when created in Site Settings ([#12272](https://github.com/elementor/elementor/issues/12272))
+* Fix: Shared link is attached to post text in Twitter Share Button widget (Props [@LensDigitalUK](https://github.com/LensDigitalUK))
+* Fix: "No route was found matching the URL and request method" error when using plain permalinks
+* Fix: Site favicon that was set from WordPress customizer is missing in Site Identity screen
 
 = 3.0.6 - 2020-09-06 =
 * Tweak: Added dismiss button for data updater notices
