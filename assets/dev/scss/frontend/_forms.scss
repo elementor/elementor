@@ -289,7 +289,7 @@
 		font-weight: normal;
 		font-style: normal;
 		vertical-align: middle;
-		margin-right: 5px;
+		@include margin-end(5px);
 	}
 
 	&.elementor-message-danger {
