@@ -778,7 +778,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Add new skin.
 	 *
 	 * Register new widget skin to allow the user to set custom designs. Must be
-	 * called inside the `_register_skins()` method.
+	 * called inside the `register_skins()` method.
 	 *
 	 * @since 1.0.0
 	 * @access public
