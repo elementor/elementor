@@ -81,6 +81,22 @@ module.exports = function( $ ) {
 		}
 	};
 
+	this.attachHandler = ( elementName, Handlers, skin ) => {
+		if ( ! Array.isArray( Handlers ) ) {
+			Handlers = [ Handlers ];
+		}
+
+		Handlers.forEach( ( Handler ) => this.addHandlerWithHook( elementName, Handler, skin ) );
+	};
+
+	this.addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
+		skin = skin ? '.' + skin : '';
+
+		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }${ skin }`, ( $element ) => {
+			this.addHandler( Handler, { $element: $element }, true );
+		} );
+	};
+
 	this.getHandlers = function( handlerName ) {
 		if ( handlerName ) {
 			return handlers[ handlerName ];
