@@ -12,6 +12,10 @@ module.exports = elementorModules.ViewModule.extend( {
 	isEdit: null,
 
 	__construct: function( settings ) {
+		if ( ! this.isActive( settings ) ) {
+			return;
+		}
+
 		this.$element = settings.$element;
 
 		this.isEdit = this.$element.hasClass( 'elementor-element-edit-mode' );
@@ -19,6 +23,10 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( this.isEdit ) {
 			this.addEditorListeners();
 		}
+	},
+
+	isActive: function() {
+		return true;
 	},
 
 	findElement: function( selector ) {
@@ -38,7 +46,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			$element = this.$element;
 		}
 
-		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+		return $element && cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
 	},
 
 	initEditorListeners: function() {
@@ -214,6 +222,12 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	getCurrentDeviceSetting: function( settingKey ) {
 		return elementorFrontend.getCurrentDeviceSetting( this.getElementSettings(), settingKey );
+	},
+
+	onInit: function() {
+		if ( this.isActive( this.getSettings() ) ) {
+			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
+		}
 	},
 
 	onDestroy: function() {
