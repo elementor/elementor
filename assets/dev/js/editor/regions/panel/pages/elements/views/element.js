@@ -51,8 +51,8 @@ module.exports = Marionette.ItemView.extend( {
 
 	onMouseDown: function() {
 		elementor.promotion.showDialog( {
-			headerMessage: elementor.translate( 'element_promotion_dialog_header', [ this.model.get( 'title' ) ] ),
-			message: elementor.translate( 'element_promotion_dialog_message', [ this.model.get( 'title' ) ] ),
+			headerMessage: sprintf( __( '%s Widget', 'elementor' ), this.model.get( 'title' ) ),
+			message: sprintf( __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ), this.model.get( 'title' ) ),
 			top: '-7',
 			element: this.el,
 			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) ),

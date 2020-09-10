@@ -558,6 +558,8 @@ class Frontend extends App {
 			);
 
 			$frontend_dependencies[] = 'elementor-frontend-legacy';
+
+			$frontend_dependencies[] = 'wp-i18n';
 		}
 
 		wp_register_style(
@@ -596,6 +598,8 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
+
+		wp_set_script_translations( 'elementor-frontend', 'elementor' );
 
 		$this->print_config();
 

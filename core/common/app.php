@@ -130,6 +130,7 @@ class App extends BaseApp {
 			[
 				'jquery',
 				'jquery-ui-draggable',
+				'wp-i18n',
 				'backbone-marionette',
 				'backbone-radio',
 				'elementor-common-modules',
@@ -139,6 +140,8 @@ class App extends BaseApp {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-common', 'elementor' );
 
 		$this->print_config();
 

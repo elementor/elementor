@@ -58,17 +58,18 @@ export default class extends RepeaterRow {
 		}
 
 		if ( isColor || isPopoverToggle ) {
-			const removeButtons = this.getDisabledRemoveButtons();
+			const removeButtons = this.getDisabledRemoveButtons(),
+				capitalizedGlobalType = elementorCommon.helpers.upperCaseWords( globalType );
 
 			this.ui.removeButton.data( 'e-global-type', globalType );
 
 			this.ui.removeButton.tipsy( {
-				title: () => elementor.translate( 'delete_global_' + globalType ),
+				title: () => sprintf( __( 'Delete Global %s', 'elementor' ), capitalizedGlobalType ),
 				gravity: () => 's',
 			} );
 
 			removeButtons.tipsy( {
-				title: () => elementor.translate( globalType + '_cannot_be_deleted' ),
+				title: () => sprintf( __( 'System %s can\'t be deleted', 'elementor' ), capitalizedGlobalType ),
 				gravity: () => 's',
 			} );
 		}
@@ -81,15 +82,17 @@ export default class extends RepeaterRow {
 	}
 
 	onRemoveButtonClick() {
-		const globalType = this.ui.removeButton.data( 'e-global-type' );
+		const globalType = this.ui.removeButton.data( 'e-global-type' ),
+			capitalizedGlobalType = elementorCommon.helpers.upperCaseWords( globalType ),
+			translatedMessage = sprintf( __( 'You\'re about to delete a Global %s. Note that if it\'s being used anywhere on your site, it will inherit a default typography.', 'elementor' ), capitalizedGlobalType, 'Font' === capitalizedGlobalType ? 'typography' : 'color' );
 
 		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			className: 'e-global__confirm-delete',
-			headerMessage: elementor.translate( 'delete_global_' + globalType ),
-			message: '<i class="eicon-info-circle"></i> ' + elementor.translate( 'delete_global_' + globalType + '_info' ),
+			headerMessage: sprintf( __( 'Delete Global %s', 'elementor' ), capitalizedGlobalType ),
+			message: '<i class="eicon-info-circle"></i> ' + translatedMessage,
 			strings: {
-				confirm: elementor.translate( 'delete' ),
-				cancel: elementor.translate( 'cancel' ),
+				confirm: __( 'Delete', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			hide: {
 				onBackgroundClick: false,

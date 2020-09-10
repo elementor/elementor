@@ -92,6 +92,7 @@ const plugins = [
 		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
 		__: ['@wordpress/i18n', '__'],
+		sprintf: ['@wordpress/i18n', 'sprintf'],
 	} )
 ];
 

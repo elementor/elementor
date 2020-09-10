@@ -435,15 +435,15 @@ export default class EditorBase extends Marionette.Application {
 
 			dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 				id: 'elementor-clear-page-dialog',
-				headerMessage: elementor.translate( 'clear_page' ),
-				message: elementor.translate( 'dialog_confirm_clear_page' ),
+				headerMessage: __( 'Delete All Content', 'elementor' ),
+				message: __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 				position: {
 					my: 'center center',
 					at: 'center center',
 				},
 				strings: {
-					confirm: elementor.translate( 'delete' ),
-					cancel: elementor.translate( 'cancel' ),
+					confirm: __( 'Delete', 'elementor' ),
+					cancel: __( 'Cancel', 'elementor' ),
 				},
 				onConfirm: () => $e.run( 'document/elements/empty', { force: true } ),
 			} );
@@ -625,7 +625,7 @@ export default class EditorBase extends Marionette.Application {
 				buttons: [
 					{
 						name: 'view_revisions',
-						text: elementor.translate( 'view_all_revisions' ),
+						text: __( 'View All Revisions', 'elementor' ),
 						callback: () => $e.route( 'panel/history/revisions' ),
 					},
 				],
@@ -897,7 +897,7 @@ export default class EditorBase extends Marionette.Application {
 			headerMessage: this.translate( 'device_incompatible_header' ),
 			message: this.translate( 'device_incompatible_message' ),
 			strings: {
-				confirm: elementor.translate( 'proceed_anyway' ),
+				confirm: __( 'Proceed Anyway', 'elementor' ),
 			},
 			hide: {
 				onButtonClick: true,

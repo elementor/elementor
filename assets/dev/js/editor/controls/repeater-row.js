@@ -63,7 +63,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! title ) {
-			title = elementor.translate( 'Item #%s', [ this.getOption( 'itemIndex' ) ] );
+			title = sprintf( __( 'Item %s', 'elementor' ), this.getOption( 'itemIndex' ) );
 		}
 
 		this.ui.itemTitle.html( title );

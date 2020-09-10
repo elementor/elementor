@@ -67,7 +67,12 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	}
 
 	setMenuItems( document ) {
-		const postStatus = document.container.settings.get( 'post_status' );
+		const postStatus = document.container.settings.get( 'post_status' ),
+			translationMap = {
+				publish: 'Publish',
+				update: 'Update',
+				submit: 'Submit',
+			};
 
 		let publishLabel = 'publish';
 
@@ -96,7 +101,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 				break;
 		}
 
-		this.ui.buttonPublishLabel.html( elementor.translate( publishLabel ) );
+		this.ui.buttonPublishLabel.html( sprintf( __( '%s', 'elementor' ), translationMap[ publishLabel ] ), );
 	}
 
 	addTooltip() {

@@ -478,6 +478,7 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
+				'wp-i18n',
 				'elementor-common',
 				'elementor-editor-modules',
 				'elementor-editor-document',
@@ -821,6 +822,8 @@ class Editor {
 		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
 		wp_enqueue_script( 'elementor-editor' );
+
+		wp_set_script_translations( 'elementor-editor', 'elementor' );
 
 		$plugin->controls_manager->enqueue_control_scripts();
 
