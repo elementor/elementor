@@ -1918,7 +1918,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
 		// This `if` statement should be removed when the method is removed
-		if ( method_exists( $this, 'register_controls') ) {
+		if ( method_exists( $this, 'register_controls' ) ) {
 			$this->register_controls();
 		} else {
 			$this->register_controls();
