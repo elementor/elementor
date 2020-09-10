@@ -40,29 +40,6 @@ class Manager {
 	}
 
 	/**
-	 * Localize settings.
-	 *
-	 * Add new localized settings for the dynamic module.
-	 *
-	 * Fired by `elementor/editor/localize_settings` filter.
-	 *
-	 * @access public
-	 *
-	 * @param array $settings Localized settings.
-	 *
-	 * @return array Localized settings.
-	 */
-	public function localize_settings( $settings ) {
-		$settings = array_replace_recursive( $settings, [
-			'i18n' => [
-				'dynamic' => __( 'Dynamic', 'elementor' ),
-			],
-		] );
-
-		return $settings;
-	}
-
-	/**
 	 * Parse dynamic tags text.
 	 *
 	 * Receives the dynamic tag text, and returns a single value or multiple values

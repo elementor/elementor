@@ -331,42 +331,6 @@ class Revisions_Manager {
 		return $settings;
 	}
 
-	/**
-	 * Localize settings.
-	 *
-	 * Add new localized settings for the revisions manager.
-	 *
-	 * Fired by `elementor/editor/editor_settings` filter.
-	 *
-	 * @since 1.7.0
-	 * @access public
-	 * @static
-	 */
-	public static function editor_settings( $settings ) {
-		$settings = array_replace_recursive( $settings, [
-			'i18n' => [
-				'edit_draft' => __( 'Edit Draft', 'elementor' ),
-				'edit_published' => __( 'Edit Published', 'elementor' ),
-				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
-				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-				'current' => __( 'Current Version', 'elementor' ),
-				'restore' => __( 'Restore', 'elementor' ),
-				'restore_auto_saved_data' => __( 'Restore Auto Saved Data', 'elementor' ),
-				'restore_auto_saved_data_message' => __( 'There is an autosave of this post that is more recent than the version below. You can restore the saved data fron the Revisions panel', 'elementor' ),
-				'revision' => __( 'Revision', 'elementor' ),
-				'revision_history' => __( 'Revision History', 'elementor' ),
-				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
-				'revisions_disabled_2' => sprintf(
-					/* translators: %s: Codex URL */
-					__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
-					'https://go.elementor.com/wordpress-revisions/'
-				),
-			],
-		] );
-
-		return $settings;
-	}
-
 	public static function ajax_get_revisions() {
 		return self::get_revisions();
 	}

@@ -96,15 +96,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 	}
 
-	public function localize_settings( $settings ) {
-		return array_replace_recursive( $settings, [
-			'i18n' => [
-				'connect_error' => __( 'Unable to connect', 'elementor' ),
-				'connected_successfully' => __( 'Connected successfully', 'elementor' ),
-			],
-		] );
-	}
-
 	/**
 	 * Register app.
 	 *

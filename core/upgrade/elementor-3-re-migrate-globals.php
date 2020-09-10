@@ -23,15 +23,6 @@ class Elementor_3_Re_Migrate_Globals {
 		return true;
 	}
 
-	public function admin_localize_settings( $settings ) {
-		return array_replace_recursive( $settings, [
-			'i18n' => [
-				're_migrate_globals_confirm' => __( 'Please note that this process will revert all changes made to Global Colors and Fonts since upgrading to v3.x.', 'elementor' ),
-				're_migrate_globals' => __( 'Migrate to v3.0', 'elementor' ),
-			],
-		] );
-	}
-
 	public function register_admin_tools_fields( Tools $tools ) {
 		// Add the re-migrate button only if needed.
 		if ( ! $this->has_typography() && ! $this->has_colors() && ! $this->has_saved_colors() ) {
