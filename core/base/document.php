@@ -35,6 +35,11 @@ abstract class Document extends Controls_Stack {
 
 	private $main_id;
 
+	/**
+	 * @var bool
+	 */
+	private $is_saving = false;
+
 	private static $properties = [];
 
 	/**
@@ -519,6 +524,8 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
+		$this->set_is_saving( true );
+
 		/**
 		 * Before document save.
 		 *
@@ -573,6 +580,8 @@ abstract class Document extends Controls_Stack {
 		 * @param $data.
 		 */
 		do_action( 'elementor/document/after_save', $this, $data );
+
+		$this->set_is_saving( false );
 
 		return true;
 	}
@@ -1100,6 +1109,25 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $last_edited;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function is_saving() {
+		return $this->is_saving;
+	}
+
+	/**
+	 * @param $is_saving
+	 *
+	 * @return $this
+	 */
+	public function set_is_saving( $is_saving ) {
+		$this->is_saving = $is_saving;
+
+		return $this;
 	}
 
 	/**
