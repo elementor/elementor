@@ -93,9 +93,16 @@ class Settings_Site_Identity extends Tab_Base {
 	}
 
 	public function on_save( $data ) {
-		if ( ! isset( $data['settings'] ) || DB::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
+		if (
+			! isset( $data['settings'] ) ||
+			DB::STATUS_PUBLISH !== $data['settings']['post_status'] ||
+			// Should check for the current action to avoid infinite loop
+			// when updating options like: "blogname" and "blogdescription".
+			strpos( current_action(), 'update_option_' ) === 0
+		) {
 			return;
 		}
+
 		if ( isset( $data['settings']['site_name'] ) ) {
 			update_option( 'blogname', $data['settings']['site_name'] );
 		}
