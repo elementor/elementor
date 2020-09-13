@@ -4,7 +4,7 @@ import HandlesPosition from './handles-position';
 import StretchedSection from './stretched-section';
 import Shapes from './shapes';
 
-export const SectionHandlers = [
+export default [
 	BackgroundSlideshow,
 	BackgroundVideo,
 	HandlesPosition,

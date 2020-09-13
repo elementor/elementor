@@ -7,8 +7,8 @@ import Toggle from './handlers/toggle';
 import Video from './handlers/video';
 import ImageCarousel from './handlers/image-carousel';
 import TextEditor from './handlers/text-editor';
-import { SectionHandlers } from './handlers/section/section';
-import { ColumnHandlers } from './handlers/column';
+import sectionHandlers from './handlers/section/section';
+import columnHandlers from './handlers/column';
 import globalHandler from './handlers/global';
 
 module.exports = function( $ ) {
@@ -17,8 +17,8 @@ module.exports = function( $ ) {
 	// element-type.skin-type
 	const handlers = {
 		// Elements
-		section: SectionHandlers,
-		column: ColumnHandlers,
+		section: sectionHandlers,
+		column: columnHandlers,
 
 		// Widgets
 		'accordion.default': Accordion,
@@ -47,6 +47,14 @@ module.exports = function( $ ) {
 			const skin = elementData[ 1 ] || null;
 
 			this.attachHandler( elementName, Handlers, skin );
+		} );
+	};
+
+	const addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
+		skin = skin ? '.' + skin : '';
+
+		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }${ skin }`, ( $element ) => {
+			this.addHandler( Handler, { $element: $element }, true );
 		} );
 	};
 
@@ -92,15 +100,7 @@ module.exports = function( $ ) {
 			Handlers = [ Handlers ];
 		}
 
-		Handlers.forEach( ( Handler ) => this.addHandlerWithHook( elementName, Handler, skin ) );
-	};
-
-	this.addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
-		skin = skin ? '.' + skin : '';
-
-		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }${ skin }`, ( $element ) => {
-			this.addHandler( Handler, { $element: $element }, true );
-		} );
+		Handlers.forEach( ( Handler ) => addHandlerWithHook( elementName, Handler, skin ) );
 	};
 
 	this.getHandlers = function( handlerName ) {

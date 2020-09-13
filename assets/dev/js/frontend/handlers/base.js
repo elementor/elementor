@@ -46,7 +46,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			$element = this.$element;
 		}
 
-		return $element && cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
 	},
 
 	initEditorListeners: function() {
