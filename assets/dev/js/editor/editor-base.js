@@ -906,7 +906,7 @@ export default class EditorBase extends Marionette.Application {
 
 	onPreviewLoadingError() {
 		const debugUrl = this.config.document.urls.preview + '&preview-debug',
-			previewDebugLinkText = this.config.i18n.preview_debug_link_text,
+			previewDebugLinkText = __( 'Click here for preview debug', 'elementor' ),
 			previewDebugLink = '<div id="elementor-preview-debug-link-text"><a href="' + debugUrl + '" target="_blank">' + previewDebugLinkText + '</a></div>',
 			debugData = elementor.config.preview.debug_data,
 			dialogOptions = {
