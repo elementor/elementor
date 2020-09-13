@@ -974,6 +974,7 @@ class Widget_Divider extends Widget_Base {
 			$attr['fill'] = 'black';
 			$attr['stroke'] = 'none';
 		} else {
+			$attr['fill'] = 'none';
 			$attr['stroke'] = 'black';
 			$attr['stroke-width'] = $settings['weight']['size'];
 			$attr['stroke-linecap'] = 'square';
