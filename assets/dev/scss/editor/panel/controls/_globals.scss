@@ -159,9 +159,7 @@
 			}
 
 			&-transparent-bg {
-				background-image: linear-gradient(45deg,#ddd 25%,transparent 0,transparent 75%,#ddd 0,#ddd),linear-gradient(45deg,#ddd 25%,transparent 0,transparent 75%,#ddd 0,#ddd);
-				background-size: 12px 12px;
-				background-position: 0 0,6.5px 6.5px;
+				@include checkers-background(12px);
 			}
 		}
 

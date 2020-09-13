@@ -84,4 +84,10 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
+
+@mixin checkers-background( $checker-size ) {
+	background-image: linear-gradient(45deg,#ddd 25%,transparent 0,transparent 75%,#ddd 0,#ddd),linear-gradient(45deg,#ddd 25%,transparent 0,transparent 75%,#ddd 0,#ddd);
+	background-size: $checker-size $checker-size;
+	background-position: 0 0,6.5px 6.5px;
+}
 //End
