@@ -246,7 +246,7 @@ export default class EditorBase extends Marionette.Application {
 		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
-			elementConfig.title = this.translate( 'inner_section' );
+			elementConfig.title = __( 'Inner Section', 'elementor' );
 		}
 
 		return elementConfig;
@@ -508,15 +508,15 @@ export default class EditorBase extends Marionette.Application {
 		let message;
 
 		if ( 4 === xmlHttpRequest.readyState ) {
-			message = this.translate( 'server_error' );
+			message = __( 'Server Error', 'elementor' );
 
 			if ( 200 !== xmlHttpRequest.status ) {
 				message += ' (' + xmlHttpRequest.status + ' ' + xmlHttpRequest.statusText + ')';
 			}
 		} else if ( 0 === xmlHttpRequest.readyState ) {
-			message = this.translate( 'server_connection_lost' );
+			message = __( 'Connection Lost', 'elementor' );
 		} else {
-			message = this.translate( 'unknown_error' );
+			message = __( 'Unknown Error', 'elementor' );
 		}
 
 		return message + '.';
@@ -571,8 +571,8 @@ export default class EditorBase extends Marionette.Application {
 				at: 'center center',
 			},
 			strings: {
-				confirm: this.translate( 'learn_more' ),
-				cancel: this.translate( 'go_back' ),
+				confirm: __( 'Learn More', 'elementor' ),
+				cancel: __( 'Go Back', 'elementor' ),
 			},
 			onConfirm: null,
 			onCancel: () => parent.history.go( -1 ),
@@ -593,15 +593,15 @@ export default class EditorBase extends Marionette.Application {
 			dialogType: 'confirm',
 			dialogOptions: {
 				id: 'elementor-flexbox-attention-dialog',
-				headerMessage: this.translate( 'flexbox_attention_header' ),
-				message: this.translate( 'flexbox_attention_message' ),
+				headerMessage: __( 'Note: Flexbox Changes', 'elementor' ),
+				message: __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
 				position: {
 					my: 'center center',
 					at: 'center center',
 				},
 				strings: {
-					confirm: this.translate( 'learn_more' ),
-					cancel: this.translate( 'got_it' ),
+					confirm: __( 'Learn More', 'elementor' ),
+					cancel: __( 'Got It', 'elementor' ),
 				},
 				hide: {
 					onButtonClick: false,
@@ -621,7 +621,7 @@ export default class EditorBase extends Marionette.Application {
 	checkPageStatus() {
 		if ( elementor.documents.getCurrent().isDraft() ) {
 			this.notifications.showToast( {
-				message: this.translate( 'working_on_draft_notification' ),
+				message: __( 'This is just a draft. Play around and when you\'re done - click update.', 'elementor' ),
 				buttons: [
 					{
 						name: 'view_revisions',
@@ -892,8 +892,8 @@ export default class EditorBase extends Marionette.Application {
 
 	onEnvNotCompatible() {
 		this.showFatalErrorDialog( {
-			headerMessage: this.translate( 'device_incompatible_header' ),
-			message: this.translate( 'device_incompatible_message' ),
+			headerMessage: __( 'Your browser isn\'t compatible', 'elementor' ),
+			message: __( 'Your browser isn\'t compatible with all of Elementor\'s editing features. We recommend you switch to another browser like Chrome or Firefox.', 'elementor' ),
 			strings: {
 				confirm: __( 'Proceed Anyway', 'elementor' ),
 			},
@@ -941,8 +941,8 @@ export default class EditorBase extends Marionette.Application {
 
 		if ( ! args ) {
 			args = {
-				headerMessage: this.translate( 'preview_el_not_found_header' ),
-				message: this.translate( 'preview_el_not_found_message' ),
+				headerMessage: __( 'Sorry, the content area was not found in your page.', 'elementor' ),
+				message: __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
 				confirmURL: elementor.config.help_the_content_url,
 			};
 		}
