@@ -50,8 +50,6 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
-
 		add_action( 'elementor/editor/init', [ $this, 'add_templates' ] );
 	}
 }

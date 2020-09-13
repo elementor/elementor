@@ -142,7 +142,6 @@ class Elementor_3_Re_Migrate_Globals {
 
 	public function __construct() {
 		add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_fields' ], 60 /* After plugins rollback */ );
-		add_action( 'elementor/admin/localize_settings', [ $this, 'admin_localize_settings' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 	}
