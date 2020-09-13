@@ -1,16 +1,10 @@
 $eps-list-item-separated-border-color: tints(200);
 $eps-list-item-separated-dark-border-color: dark-tints(700);
 
-:root {
+$root: eps-list;
+
+.#{$root} {
 	--eps-list-item-separated-border-color: #{$eps-list-item-separated-border-color};
-}
-
-.eps-theme-dark {
-	--eps-list-item-separated-border-color: #{$eps-list-item-separated-dark-border-color};
-}
-
-.eps-list {
-	$parent: &;
 
 	padding: 0;
 	list-style-type: none;
@@ -26,8 +20,14 @@ $eps-list-item-separated-dark-border-color: dark-tints(700);
 			padding: var(--eps-list-item-padding);
 		}
 
-		#{$parent}--separated &:not(:last-child) {
+		.#{$root}--separated &:not(:last-child) {
 			border-bottom: 1px solid var(--eps-list-item-separated-border-color);
 		}
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--eps-list-item-separated-border-color: #{$eps-list-item-separated-dark-border-color};
 	}
 }
