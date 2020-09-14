@@ -2,7 +2,6 @@ import Component from './component';
 import PanelView from './panel';
 import PanelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
-import Repeater from './repeater';
 import GlobalControlSelect from './globals/global-select-behavior';
 import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-parser';
 
@@ -20,12 +19,12 @@ export default class extends elementorModules.editor.utils.Module {
 	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
 			view: PanelView,
-			title: elementor.translate( 'site_settings' ),
+			title: __( 'Site Settings', 'elementor' ),
 		} );
 
 		elementor.getPanelView().addPage( 'kit_menu', {
 			view: PanelMenuView,
-			title: elementor.translate( 'site_settings' ),
+			title: __( 'Site Settings', 'elementor' ),
 		} );
 	}
 
@@ -35,7 +34,7 @@ export default class extends elementorModules.editor.utils.Module {
 		menu.addItem( {
 			name: 'global-settings',
 			icon: 'eicon-global-settings',
-			title: elementor.translate( 'site_settings' ),
+			title: __( 'Site Settings', 'elementor' ),
 			type: 'page',
 			callback: () => {
 				$e.run( 'panel/global/open', {
@@ -47,7 +46,7 @@ export default class extends elementorModules.editor.utils.Module {
 		menu.addItem( {
 			name: 'site-editor',
 			icon: 'eicon-theme-builder',
-			title: elementor.translate( 'theme_builder' ),
+			title: __( 'Theme Builder', 'elementor' ),
 			type: 'page',
 			callback: () => $e.run( 'app/open' ),
 		}, 'style', 'editor-preferences' );
@@ -72,20 +71,20 @@ export default class extends elementorModules.editor.utils.Module {
 		if ( 'color' === view.options.model.get( 'type' ) && isGlobalActive ) {
 			behaviors.globals = {
 				behaviorClass: GlobalControlSelect,
-				popoverTitle: elementor.translate( 'global_colors_title' ),
-				manageButtonText: elementor.translate( 'manage_global_colors' ),
-				tooltipText: elementor.translate( 'global_colors_info' ),
-				newGlobalConfirmTitle: elementor.translate( 'create_global_color' ),
+				popoverTitle: __( 'Global Colors', 'elementor' ),
+				manageButtonText: __( 'Manage Global Colors', 'elementor' ),
+				tooltipText: __( 'Global Colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button.', 'elementor' ),
+				newGlobalConfirmTitle: __( 'Create New Global Color', 'elementor' ),
 			};
 		}
 
 		if ( 'popover_toggle' === view.options.model.get( 'type' ) && 'typography' === view.options.model.get( 'groupType' ) && isGlobalActive ) {
 			behaviors.globals = {
 				behaviorClass: GlobalControlSelect,
-				popoverTitle: elementor.translate( 'global_fonts_title' ),
-				manageButtonText: elementor.translate( 'manage_global_fonts' ),
-				tooltipText: elementor.translate( 'global_fonts_info' ),
-				newGlobalConfirmTitle: elementor.translate( 'create_global_font' ),
+				popoverTitle: __( 'Global Fonts', 'elementor' ),
+				manageButtonText: __( 'Manage Global Fonts', 'elementor' ),
+				tooltipText: __( 'Global Fonts help you work smarter. Save a Typography, and use it anywhere throughout your site. Access and edit your Global Fonts by clicking the Manage button.', 'elementor' ),
+				newGlobalConfirmTitle: __( 'Create New Global Font', 'elementor' ),
 			};
 		}
 
@@ -214,18 +213,6 @@ export default class extends elementorModules.editor.utils.Module {
 				return;
 			}
 
-			if ( ! elementor.config.user.can_edit_kit ) {
-				return;
-			}
-
-			$e.components.register( new Component( { manager: this } ) );
-
-			elementor.addControlView( 'global-style-repeater', Repeater );
-
-			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
-
-			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
-
 			elementor.on( 'preview:loaded', () => {
 				this.loadingTriggers.preview = true;
 
@@ -242,11 +229,13 @@ export default class extends elementorModules.editor.utils.Module {
 				this.renderGlobalsDefaultCSS();
 			} );
 
-			elementor.on( 'panel:init', () => {
-				this.addPanelPages();
+			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
 
-				this.addPanelMenuItem();
-			} );
+			if ( ! elementor.config.user.can_edit_kit ) {
+				return;
+			}
+
+			$e.components.register( new Component( { manager: this } ) );
 		} );
 	}
 }

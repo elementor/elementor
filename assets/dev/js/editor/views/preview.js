@@ -58,7 +58,7 @@ const Preview = BaseSectionsContainerView.extend( {
 				actions: [
 					{
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
+						title: __( 'Paste', 'elementor' ),
 						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
 						callback: ( at ) => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
@@ -74,12 +74,12 @@ const Preview = BaseSectionsContainerView.extend( {
 				actions: [
 					{
 						name: 'copy_all_content',
-						title: elementor.translate( 'copy_all_content' ),
+						title: __( 'Copy All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
-						title: elementor.translate( 'delete_all_content' ),
+						title: __( 'Delete All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/empty' ),
 					},

@@ -101,7 +101,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return {
 			commandName: this.getGlobalCommand(),
 			key: this.model.get( 'name' ),
-			title: elementor.translate( 'new_typography_setting' ),
+			title: __( 'New Typography Setting', 'elementor' ),
 			controlType: 'typography',
 			route: 'panel/global/global-typography',
 		};
@@ -111,7 +111,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		const globalData = this.getGlobalMeta(),
 			$message = jQuery( '<div>', { class: 'e-global__confirm-message' } ),
 			$messageText = jQuery( '<div>' )
-				.html( elementor.translate( 'global_fonts_confirm_text' ) ),
+				.html( __( 'Are you sure you want to create a new Global Font setting?', 'elementor' ) ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global__confirm-input-wrapper' } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: globalData.title } )
 				.val( globalData.title );
