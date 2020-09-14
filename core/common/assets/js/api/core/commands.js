@@ -285,16 +285,24 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		const results = this.commands[ command ].apply( component, [ args ] );
+		const results = this.commands[ command ].apply( component, [ args ] ),
+			onAfter = () => {
+				// TODO: Consider add results to `$e.devTools`.
+				if ( args.onAfter ) {
+					args.onAfter.apply( component, [ args, results ] );
+				}
 
-		// TODO: Consider add results to `$e.devTools`.
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args, results ] );
+				this.trigger( 'run:after', component, command, args, results );
+
+				this.afterRun( command );
+			};
+
+		// TODO: Handle JQuery deferred or remove them.
+		if ( results instanceof Promise ) {
+			results.then( onAfter );
+		} else {
+			onAfter();
 		}
-
-		this.trigger( 'run:after', component, command, args, results );
-
-		this.afterRun( command );
 
 		if ( false === args.returnValue ) {
 			return true;
