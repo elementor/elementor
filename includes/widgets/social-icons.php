@@ -390,7 +390,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--icon-size: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
