@@ -43,15 +43,15 @@ TemplateLibraryManager = function() {
 		};
 
 		const translationMap = {
-			page: 'Page',
-			section: 'Section',
+			page: __( 'Page', 'elementor' ),
+			section: __( 'Section', 'elementor' ),
 			[ elementor.config.document.type ]: elementor.config.document.panel.title,
 		};
 
-		_.each( [ 'page', 'section', elementor.config.document.type ], function( type ) {
+		jQuery.each( translationMap, function( type, title ) {
 			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
-					title: sprintf( __( 'Save Your %s to Library', 'elementor' ), sprintf( __( '%s', 'elementor' ), translationMap[ type ] ) ),
+					title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
 				},
 			} );
 

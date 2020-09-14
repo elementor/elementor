@@ -13,7 +13,7 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend( {
 	changeLabelTitle: function() {
 		var reverseOrder = this.getControlValue( 'reverse_order' );
 
-		this.ui.reverseOrderLabel.attr( 'title', sprintf( __( '%s', 'elementor' ), reverseOrder ? 'Ascending order' : 'Descending order' ) );
+		this.ui.reverseOrderLabel.attr( 'title', reverseOrder ? __( 'Ascending order', 'elementor' ) : __( 'Descending order', 'elementor' ) );
 	},
 
 	onRender: function() {

@@ -66,7 +66,7 @@ export default class extends ControlBaseDataView {
 
 				// If there is a global enabled for the control, but the global has no value.
 				if ( this.getGlobalKey() && ! currentValue ) {
-					currentValue = `${ __( 'Invalid', 'elementor' ) } ${ __( 'Global Color', 'elementor' ) }`;
+					currentValue = `${ __( 'Invalid Global Color', 'elementor' ) }`;
 				}
 
 				return currentValue || '';
