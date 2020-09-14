@@ -509,7 +509,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 .elementor-control-media-area, .pcr-app[data-theme=monolith] .pcr-color-palette, .pcr-button {
-	@include checkers-background( 12px, $theme-dark-gray-darkest );
+	@include checkers-background(12px, $theme-dark-gray-darkest);
 	background-color: $theme-dark-gray-light;
 }
 
