@@ -28,12 +28,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div id="elementor-revisions-list" class="elementor-panel-box-content"></div>
 	</div>
 </script>
-
 <script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
+	<#
+	var no_revisions_1 = wp.i18n.__( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
+		no_revisions_2 = wp.i18n.__( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
+		revisions_disabled_1 = wp.i18n.__( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
+		revisions_disabled_2 = sprintf( wp.i18n.__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://go.elementor.com/wordpress-revisions/' ); /* translators: %s: Codex URL */
+	#>
 	<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; ?>" />
 	<div class="elementor-nerd-box-title"><?php echo __( 'No Revisions Saved Yet', 'elementor' ); ?></div>
-	<div class="elementor-nerd-box-message">{{{ elementor.translate( elementor.config.document.revisions.enabled ? 'no_revisions_1' : 'revisions_disabled_1' ) }}}</div>
-	<div class="elementor-nerd-box-message">{{{ elementor.translate( elementor.config.document.revisions.enabled ? 'no_revisions_2' : 'revisions_disabled_2' ) }}}</div>
+	<div class="elementor-nerd-box-message">{{{ elementor.config.document.revisions.enabled ? no_revisions_1 : revisions_disabled_1 }}}</div>
+	<div class="elementor-nerd-box-message">{{{ elementor.config.document.revisions.enabled ? no_revisions_2 : revisions_disabled_2 }}}</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-loading">
@@ -45,7 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
 		<div class="elementor-revision-item__details">
 			<div class="elementor-revision-date">{{{ date }}}</div>
-			<div class="elementor-revision-meta"><span>{{{ elementor.translate( type ) }}}</span> <?php echo __( 'By', 'elementor' ); ?> {{{ author }}}</div>
+			<div class="elementor-revision-meta"><span>{{{ typeLabel }}}</span> <?php echo __( 'By', 'elementor' ); ?> {{{ author }}}</div>
 		</div>
 		<div class="elementor-revision-item__tools">
 			<# if ( 'current' === type ) { #>

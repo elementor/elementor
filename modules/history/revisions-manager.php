@@ -148,10 +148,13 @@ class Revisions_Manager {
 
 			if ( $revision->ID === $post->ID ) {
 				$type = 'current';
+				$type_label = __( 'Current Version', 'elementor' );
 			} elseif ( false !== strpos( $revision->post_name, 'autosave' ) ) {
 				$type = 'autosave';
+				$type_label = __( 'Autosave', 'elementor' );
 			} else {
 				$type = 'revision';
+				$type_label = __( 'Revision', 'elementor' );
 			}
 
 			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
@@ -172,6 +175,7 @@ class Revisions_Manager {
 					$date
 				),
 				'type' => $type,
+				'typeLabel' => $type_label,
 				'gravatar' => self::$authors[ $revision->post_author ]['avatar'],
 			];
 		}
