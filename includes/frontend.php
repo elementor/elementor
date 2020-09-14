@@ -546,8 +546,6 @@ class Frontend extends App {
 			);
 
 			$frontend_dependencies[] = 'elementor-frontend-legacy';
-
-			$frontend_dependencies[] = 'wp-i18n';
 		}
 
 		wp_register_style(

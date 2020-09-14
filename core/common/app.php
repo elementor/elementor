@@ -130,7 +130,6 @@ class App extends BaseApp {
 			[
 				'jquery',
 				'jquery-ui-draggable',
-				'wp-i18n',
 				'backbone-marionette',
 				'backbone-radio',
 				'elementor-common-modules',

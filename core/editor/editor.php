@@ -478,7 +478,6 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
-				'wp-i18n',
 				'elementor-common',
 				'elementor-editor-modules',
 				'elementor-editor-document',
