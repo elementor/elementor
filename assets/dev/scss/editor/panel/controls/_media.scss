@@ -36,7 +36,7 @@
 	}
 
 	&-area {
-		@include checkers-background( 16px );
+		@include checkers-background(16px);
 		background-color: #f6f6f6;
 
 		&:not(:hover) {
