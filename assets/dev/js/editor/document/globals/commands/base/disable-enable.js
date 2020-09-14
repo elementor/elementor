@@ -5,6 +5,10 @@ export default class DisableEnable extends CommandDisableEnable {
 		return 'globals';
 	}
 
+	static getTitle() {
+		return __( 'Globals' );
+	}
+
 	static getEnableCommand() {
 		return 'document/globals/enable';
 	}

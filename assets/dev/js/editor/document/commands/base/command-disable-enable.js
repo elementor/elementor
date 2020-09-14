@@ -6,6 +6,10 @@ export default class CommandDisableEnable extends CommandHistory {
 		elementorModules.ForceMethodImplementation();
 	}
 
+	static getTitle() {
+		elementorModules.ForceMethodImplementation();
+	}
+
 	/**
 	 * @returns {string}
 	 */
@@ -73,7 +77,7 @@ export default class CommandDisableEnable extends CommandHistory {
 			changes[ id ] = settings;
 		} );
 
-		const subTitle = sprintf( __( '%s', 'elementor' ), this.constructor.getName() ) + ' ' + ElementsSettings.getSubTitle( args ),
+		const subTitle = this.constructor.getTitle() + ' ' + ElementsSettings.getSubTitle( args ),
 			type = this.type;
 
 		return {
