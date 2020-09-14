@@ -310,13 +310,9 @@ class Widget_Social_Icons extends Widget_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 				],
-				'selectors_dictionary' => [
-					'left' => 'flex-' . $start,
-					'right' => 'flex-' . $end,
-				],
 				'default' => 'center',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'justify-content: {{VALUE}};',
+					'{{WRAPPER}} .elementor-widget-container' => 'text-align: {{VALUE}}',
 				],
 			]
 		);

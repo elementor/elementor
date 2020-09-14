@@ -11,11 +11,12 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 
 	&.elementor-grid-0 {
 		.elementor-grid {
-			display: block;
+			display: inline-block;
 			font-size: 0;
 			word-spacing: var(--grid-column-gap, 5px);
 
 			.elementor-grid-item {
+				display: inline-block;
 				margin-bottom: var(--grid-row-gap);
 			}
 		}
@@ -38,6 +39,7 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	}
 
 	.elementor-grid {
+		display: inline-grid;
 		grid-column-gap: var(--grid-column-gap, 5px);
 		grid-row-gap: var(--grid-row-gap, 5px);
 		grid-template-columns: var(--grid-template-columns);
