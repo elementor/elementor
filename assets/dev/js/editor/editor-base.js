@@ -1,6 +1,5 @@
 /* global ElementorConfig */
 
-import { __, sprintf } from '@wordpress/i18n';
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from 'elementor-editor/component';
@@ -418,9 +417,6 @@ export default class EditorBase extends Marionette.Application {
 		window.elementorFrontend = frontendWindow.elementorFrontend;
 
 		frontendWindow.elementor = this;
-
-		window.__ = __;
-		window.sprintf = sprintf;
 
 		frontendWindow.elementorCommon = elementorCommon;
 
