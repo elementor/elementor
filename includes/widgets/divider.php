@@ -556,7 +556,7 @@ class Widget_Divider extends Widget_Base {
 				'default' => '#000',
 				'render_type' => 'template',
 				'selectors' => [
-					'{{WRAPPER}}' => '--divider-border-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--divider-color: {{VALUE}}',
 				],
 			]
 		);
@@ -971,12 +971,12 @@ class Widget_Divider extends Widget_Base {
 		];
 
 		if ( 'line' !== $selected_pattern['group'] ) {
-			$attr['fill'] = $settings['color'];
+			$attr['fill'] = 'black';
 			$attr['stroke'] = 'none';
 		} else {
-			$attr['stroke'] = $settings['color'];
-			$attr['stroke-width'] = $settings['weight']['size'];
 			$attr['fill'] = 'none';
+			$attr['stroke'] = 'black';
+			$attr['stroke-width'] = $settings['weight']['size'];
 			$attr['stroke-linecap'] = 'square';
 			$attr['stroke-miterlimit'] = '10';
 		}

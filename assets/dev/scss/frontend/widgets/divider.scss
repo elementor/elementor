@@ -118,16 +118,20 @@
 
 			.elementor-divider-separator, .elementor-divider-separator:before, .elementor-divider-separator:after {
 				width: 100%;
+				background-color: var(--divider-color);
 				min-height: var(--divider-pattern-height);
-				background-image: var(--divider-pattern-url);
-				background-size: var(--divider-pattern-size) 100%;
-				background-repeat: var(--divider-pattern-repeat);
+				-webkit-mask-image: var(--divider-pattern-url);
+				mask-image: var(--divider-pattern-url);
+				-webkit-mask-size: var(--divider-pattern-size) 100%;
+				mask-size: var(--divider-pattern-size) 100%;
+				-webkit-mask-repeat: var(--divider-pattern-repeat);
+				mask-repeat: var(--divider-pattern-repeat);
 			}
 
 			&.elementor-widget-divider--view {
 				&-line_text, &-line_icon {
 					.elementor-divider-separator {
-						background-image: none;
+						--divider-pattern-url: none;
 					}
 				}
 			}
