@@ -2,60 +2,29 @@
 // Social Icons
 //
 
-$icon-size: var(--icon-size, 25px);
-$icon-padding: var(--icon-padding, 0.5em);
-$icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
-
-
 .elementor-widget-social-icons {
 
-	&.elementor-grid-0 {
-		.elementor-grid {
-			display: block;
-			font-size: 0;
-			word-spacing: var(--grid-column-gap, 5px);
-
-			.elementor-grid-item {
-				margin-bottom: var(--grid-row-gap);
-			}
-		}
-
-		.elementor-widget-container {
-			margin-bottom: calc(-1 * var(--grid-row-gap));
-		}
-	}
-
-	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-		&.elementor-grid-tablet-0 .elementor-grid {
-			grid-template-columns: repeat(auto-fill, $icon-total-size);
-		}
-	}
-
-	@media (max-width: $screen-sm-max) {
-		&.elementor-grid-mobile-0 .elementor-grid {
-			grid-template-columns: repeat(auto-fill, $icon-total-size);
-		}
-	}
-
-	.elementor-grid {
-		grid-column-gap: var(--grid-column-gap, 5px);
-		grid-row-gap: var(--grid-row-gap, 5px);
+	&:not(.elementor-grid-0) .elementor-grid {
+		display: inline-grid;
 		grid-template-columns: var(--grid-template-columns);
-		justify-content: var(--justify-content, center);
-		justify-items: var(--justify-content, center);
+	}
+
+	.elementor-widget-container {
+		display: flex;
+		justify-content: center;
 	}
 }
 
 .elementor-social-icons-wrapper {
+	font-size: 0;
 }
 
 .elementor-social-icon {
 	background-color: $gray;
-	font-size: $icon-size;
-	line-height: $icon-size;
-	width: $icon-total-size;
+	font-size: 25px;
 	text-align: center;
-	padding: $icon-padding;
+	padding: 0.5em;
+	@include margin-end(5px);
 	cursor: pointer;
 
 	i {
