@@ -7,7 +7,7 @@ jQuery( () => {
 	QUnit.module( 'Component: panel/global', () => {
 		QUnit.module( 'hooks', ( qunitHooks ) => {
 			qunitHooks.before( async () => {
-				// Hook `elementorCommon.ajax.send` mock.
+				// Hook `elementorCommonAdmin.ajax.send` mock.
 				ajax.mock();
 
 				// Default addMock callback is return args.data merged with args.query.
@@ -23,7 +23,7 @@ jQuery( () => {
 				await $e.run( 'panel/global/close', { mode: 'discard' } );
 				ajax.silence();
 
-				// Hook `elementorCommon.ajax.send` silence (empty function).
+				// Hook `elementorCommonAdmin.ajax.send` silence (empty function).
 				eData.emptyFetch();
 
 				eData.removeMock( 'get', 'globals/index' );

@@ -171,7 +171,7 @@ class Autoloader {
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
 			'Core\Ajax' => [
-				'replacement' => 'Core\Common\Modules\Ajax\Module',
+				'replacement' => 'Core\Common\Modules\Ajax\Module', // TODO: What about this?
 				'version' => '2.3.0',
 			],
 			'Editor' => [

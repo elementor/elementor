@@ -2,7 +2,7 @@
 namespace Elementor\Core\Logger;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Common\Modules\Ajax\Module;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module;
 use Elementor\Core\Logger\Loggers\Logger_Interface;
 use Elementor\Core\Logger\Items\PHP;
 use Elementor\Core\Logger\Items\JS;
@@ -99,7 +99,7 @@ class Manager extends BaseModule {
 	 */
 	public function js_log() {
 		/** @var Module $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+		$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 		if ( ! $ajax->verify_request_nonce() || empty( $_POST['data'] ) ) {
 			wp_send_json_error();

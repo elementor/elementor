@@ -7,12 +7,12 @@ import * as Ajax from 'elementor-tests-qunit/mock/ajax';
 jQuery( () => {
 	QUnit.module( 'Component: document/save', ( hooks ) => {
 		hooks.before( () => {
-			// Hook `elementorCommon.ajax.send` mock.
+			// Hook `elementorCommonAdmin.ajax.send` mock.
 			Ajax.mock();
 		} );
 
 		hooks.after( () => {
-			// Hook `elementorCommon.ajax.send` silence (empty function).
+			// Hook `elementorCommonAdmin.ajax.send` silence (empty function).
 			Ajax.silence();
 		} );
 

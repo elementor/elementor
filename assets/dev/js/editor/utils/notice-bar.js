@@ -24,6 +24,6 @@ export default class extends elementorModules.ViewModule {
 	onCloseClick() {
 		this.elements.$notice.slideUp();
 
-		elementorCommon.ajax.addRequest( 'notice_bar_dismiss' );
+		elementorCommonAdmin.ajax.addRequest( 'notice_bar_dismiss' );
 	}
 }

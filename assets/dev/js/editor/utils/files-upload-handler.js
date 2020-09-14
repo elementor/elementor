@@ -15,7 +15,7 @@ export default class FilesUploadHandler {
 
 	static getUnfilteredFilesNotEnabledDialog( callback ) {
 		const onConfirm = () => {
-			elementorCommon.ajax.addRequest( 'enable_unfiltered_files_upload', {}, true );
+			elementorCommonAdmin.ajax.addRequest( 'enable_unfiltered_files_upload', {}, true );
 			elementor.config.filesUpload.unfilteredFiles = true;
 			callback();
 		};

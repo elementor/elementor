@@ -23,7 +23,7 @@ export default class RevisionsManager {
 			return;
 		}
 
-		elementorCommon.ajax.addRequest( 'get_revisions', {
+		elementorCommonAdmin.ajax.addRequest( 'get_revisions', {
 			success: ( data ) => {
 				this.revisions = new RevisionsCollection( data );
 
@@ -47,7 +47,7 @@ export default class RevisionsManager {
 			},
 		} );
 
-		return elementorCommon.ajax.addRequest( 'get_revision_data', options );
+		return elementorCommonAdmin.ajax.addRequest( 'get_revision_data', options );
 	}
 
 	addRevisions( items ) {
@@ -86,7 +86,7 @@ export default class RevisionsManager {
 			params.error = options.error;
 		}
 
-		elementorCommon.ajax.addRequest( 'delete_revision', params );
+		elementorCommonAdmin.ajax.addRequest( 'delete_revision', params );
 	}
 
 	onRevisionsUpdate() {

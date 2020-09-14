@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 $user = wp_get_current_user();
 
-$ajax = Plugin::$instance->common->get_component( 'ajax' );
+$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 $beta_tester_email = $user->user_email;
 

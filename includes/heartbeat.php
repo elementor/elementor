@@ -42,8 +42,8 @@ class Heartbeat {
 				$response['locked_user'] = $locked_user->display_name;
 			}
 
-			/** @var Core\Common\Modules\Ajax\Module $ajax */
-			$ajax = Plugin::$instance->common->get_component( 'ajax' );
+			/** @var Core\CommonAdmin\Modules\Ajax\Module $ajax */
+			$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 			$response['elementorNonce'] = $ajax->create_nonce();
 		}
@@ -70,8 +70,8 @@ class Heartbeat {
 	 */
 	public function refresh_nonces( $response, $data ) {
 		if ( isset( $data['elementor_post_lock']['post_ID'] ) ) {
-			/** @var Core\Common\Modules\Ajax\Module $ajax */
-			$ajax = Plugin::$instance->common->get_component( 'ajax' );
+			/** @var Core\CommonAdmin\Modules\Ajax\Module $ajax */
+			$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 			$response['elementor-refresh-nonces'] = [
 				'elementorNonce' => $ajax->create_nonce(),

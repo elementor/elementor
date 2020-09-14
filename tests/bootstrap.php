@@ -53,4 +53,5 @@ if ( getenv( 'PART_RUN' ) ) {
 	do_action( 'plugins_loaded' );
 
 	\Elementor\Plugin::$instance->init_common();
+	\Elementor\Plugin::$instance->init_common_admin();
 }

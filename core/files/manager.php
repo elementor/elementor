@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Files;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Files\Assets\Json\Json_Handler;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;

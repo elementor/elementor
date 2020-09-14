@@ -2,8 +2,9 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Admin;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
+use Elementor\Core\CommonAdmin\App as CommonAdminApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
@@ -416,6 +417,11 @@ class Plugin {
 	public $common;
 
 	/**
+	 * @var CommonAdminApp
+	 */
+	public $common_admin;
+
+	/**
 	 * @var Log_Manager
 	 */
 	public $logger;
@@ -628,8 +634,14 @@ class Plugin {
 		$this->common = new CommonApp();
 
 		$this->common->init_components();
+	}
 
-		$this->ajax = $this->common->get_component( 'ajax' );
+	public function init_common_admin() {
+		$this->common_admin = new CommonAdminApp();
+
+		$this->common_admin->init_components();
+
+		$this->ajax = $this->common_admin->get_component( 'ajax' );
 	}
 
 	public function get_legacy_mode( $mode_name = null ) {

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Plugin;

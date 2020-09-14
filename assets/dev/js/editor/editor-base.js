@@ -33,7 +33,7 @@ export default class EditorBase extends Marionette.Application {
 	templates = require( 'elementor-templates/manager' );
 
 	// TODO = BC Since 2.3.0
-	ajax = elementorCommon.ajax;
+	ajax = elementorCommonAdmin.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
 	history = require( 'elementor/modules/history/assets/js/module' );
 
@@ -494,10 +494,10 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	setAjax() {
-		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
-		elementorCommon.ajax.addRequestConstant( 'initial_document_id', this.config.initial_document.id );
+		elementorCommonAdmin.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
+		elementorCommonAdmin.ajax.addRequestConstant( 'initial_document_id', this.config.initial_document.id );
 
-		elementorCommon.ajax.on( 'request:unhandledError', ( xmlHttpRequest ) => {
+		elementorCommonAdmin.ajax.on( 'request:unhandledError', ( xmlHttpRequest ) => {
 			elementor.notifications.showToast( {
 				message: elementor.createAjaxErrorMessage( xmlHttpRequest ),
 			} );
@@ -754,7 +754,7 @@ export default class EditorBase extends Marionette.Application {
 			}
 		} );
 
-		elementorCommon.ajax.addRequest( 'get_widgets_config', {
+		elementorCommonAdmin.ajax.addRequest( 'get_widgets_config', {
 			data: {
 				exclude: excludeWidgets,
 			},

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Plugin;

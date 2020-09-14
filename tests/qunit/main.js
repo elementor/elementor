@@ -20,8 +20,8 @@ function initialize() {
 			unique_id: `document-1`,
 			data: { id: 1 },
 		},
-		cacheKey = elementorCommon.ajax.getCacheKey( request );
-	elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
+		cacheKey = elementorCommonAdmin.ajax.getCacheKey( request );
+	elementorCommonAdmin.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
 	ajax.silence();
 	eData.emptyFetch();

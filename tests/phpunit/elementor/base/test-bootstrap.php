@@ -19,6 +19,7 @@ class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 		do_action( 'plugins_loaded' );
 
 		\Elementor\Plugin::$instance->init_common();
+		\Elementor\Plugin::$instance->init_common_admin();
 	}
 
 	public function test_plugin_activated() {

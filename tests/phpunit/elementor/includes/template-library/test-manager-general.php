@@ -25,7 +25,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 
 	public function test_should_return_wp_error_wrong_instance_source_from_register_source() {
-		$this->assertWPError( self::$manager->register_source( 'Elementor\Core\Common\Modules\Ajax\Module' ), 'wrong_instance_source' );
+		$this->assertWPError( self::$manager->register_source( 'Elementor\Core\CommonAdmin\Modules\Ajax\Module' ), 'wrong_instance_source' );
 	}
 
 	public function test_should_fail_to_return_source() {

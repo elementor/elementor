@@ -2,8 +2,8 @@
 namespace Elementor\Core\Editor;
 
 use Elementor\Api;
-use Elementor\Core\Common\Modules\Ajax\Module;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Responsive\Responsive;
@@ -244,7 +244,7 @@ class Editor {
 		}
 
 		/** @var Module ajax */
-		$ajax_data = Plugin::$instance->common->get_component( 'ajax' )->get_current_action_data();
+		$ajax_data = Plugin::$instance->common_admin->get_component( 'ajax' )->get_current_action_data();
 
 		if ( ! empty( $ajax_data ) && 'get_document_config' === $ajax_data['action'] ) {
 			return true;
@@ -1159,7 +1159,7 @@ class Editor {
 		_deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
 
 		/** @var Ajax $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+		$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 		return $ajax->create_nonce();
 	}
@@ -1203,7 +1203,7 @@ class Editor {
 		_deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
 
 		/** @var Ajax $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+		$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 		return $ajax->verify_request_nonce();
 	}
@@ -1222,7 +1222,7 @@ class Editor {
 		_deprecated_function( __METHOD__, '2.3.0' );
 
 		/** @var Ajax $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+		$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 		if ( ! $ajax->verify_request_nonce() ) {
 			wp_send_json_error( new \WP_Error( 'token_expired', 'Nonce token expired.' ) );

@@ -258,7 +258,7 @@
 					onConfirm: () => {
 						$this.removeClass( 'success' ).addClass( 'loading' );
 
-						elementorCommon.ajax.addRequest( 're_migrate_globals', {
+						elementorCommonAdmin.ajax.addRequest( 're_migrate_globals', {
 							success: () => $this.removeClass( 'loading' ).addClass( 'success' ),
 						} );
 					},

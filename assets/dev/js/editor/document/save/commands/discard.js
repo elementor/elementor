@@ -5,7 +5,7 @@ export class Discard extends Base {
 		const { document = elementor.documents.getCurrent() } = args;
 
 		// Start server request before undo, because the undo can take time.
-		const deferred = elementorCommon.ajax.addRequest( 'discard_changes' );
+		const deferred = elementorCommonAdmin.ajax.addRequest( 'discard_changes' );
 
 		$e.run( 'document/history/undo-all', { document } );
 

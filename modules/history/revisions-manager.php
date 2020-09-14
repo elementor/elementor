@@ -2,7 +2,7 @@
 namespace Elementor\Modules\History;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Plugin;
 use Elementor\Utils;

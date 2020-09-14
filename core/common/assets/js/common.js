@@ -1,10 +1,6 @@
 import Helpers from './utils/helpers';
 import Storage from './utils/storage';
 import Debug from './utils/debug';
-import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
-import Finder from 'elementor-common-modules/finder/assets/js/finder';
-import Connect from 'elementor-common-modules/connect/assets/js/connect';
-import API from './api/';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -36,8 +32,6 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.dialogsManager = new DialogsManager.Instance();
 
-		this.api = new API();
-
 		this.initModules();
 	}
 
@@ -45,9 +39,7 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		const { activeModules } = this.config;
 
 		const modules = {
-			ajax: Ajax,
-			finder: Finder,
-			connect: Connect,
+			// No modules.
 		};
 
 		activeModules.forEach( ( name ) => {
@@ -108,7 +100,6 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		this.setMarionetteTemplateCompiler();
 	}
 }
-
 window.elementorCommon = new ElementorCommonApp();
 
 elementorCommon.initComponents();

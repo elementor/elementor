@@ -366,8 +366,8 @@ class Module extends BaseModule {
 	 */
 	public function filter_update_meta( $check, $object_id, $meta_key ) {
 		if ( '_wp_page_template' === $meta_key && Plugin::$instance->common ) {
-			/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
-			$ajax = Plugin::$instance->common->get_component( 'ajax' );
+			/** @var \Elementor\Core\CommonAdmin\Modules\Ajax\Module $ajax */
+			$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 			$ajax_data = $ajax->get_current_action_data();
 

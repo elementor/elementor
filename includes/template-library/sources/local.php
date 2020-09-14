@@ -943,8 +943,8 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
-		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+		/** @var \Elementor\Core\CommonAdmin\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 		?>
 		<div id="elementor-hidden-area">
 			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo __( 'Import Templates', 'elementor' ); ?></a>
@@ -1055,7 +1055,7 @@ class Source_Local extends Source_Base {
 	 */
 	private function get_export_link( $template_id ) {
 		// TODO: BC since 2.3.0 - Use `$ajax->create_nonce()`
-		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
+		/** @var \Elementor\Core\CommonAdmin\Modules\Ajax\Module $ajax */
 		// $ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return add_query_arg(

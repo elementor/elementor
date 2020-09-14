@@ -17,7 +17,7 @@ const mockActions = {
 	get_document_config: Ajax.getDocumentConfig,
 };
 
-export const sendOriginal = elementorCommon.ajax.send;
+export const sendOriginal = elementorCommonAdmin.ajax.send;
 
 export const handleSend = ( params ) => {
 	if ( params.data && 'elementor_ajax' === params.data.action ) {
@@ -48,8 +48,8 @@ export const handleSend = ( params ) => {
 };
 
 export const mock = () => {
-	elementorCommon.ajax.send = ( action, options ) => {
-		const params = elementorCommon.ajax.prepareSend( action, options );
+	elementorCommonAdmin.ajax.send = ( action, options ) => {
+		const params = elementorCommonAdmin.ajax.prepareSend( action, options );
 
 		if ( params.data && params.data.actions ) {
 			params.data.actions = JSON.parse( params.data.actions );
@@ -62,9 +62,9 @@ export const mock = () => {
 };
 
 export const silence = () => {
-	elementorCommon.ajax.send = () => {};
+	elementorCommonAdmin.ajax.send = () => {};
 };
 
 export const free = () => {
-	elementorCommon.ajax.send = sendOriginal;
+	elementorCommonAdmin.ajax.send = sendOriginal;
 };

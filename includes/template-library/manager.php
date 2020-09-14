@@ -2,7 +2,7 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
@@ -599,7 +599,7 @@ class Manager {
 		}
 
 		/** @var Ajax $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+		$ajax = Plugin::$instance->common_admin->get_component( 'ajax' );
 
 		if ( ! $ajax->verify_request_nonce() ) {
 			$this->handle_direct_action_error( 'Access Denied' );

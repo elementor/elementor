@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Core\CommonAdmin\Modules\Connect\Apps\Library;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -227,7 +227,7 @@ class Api {
 	 */
 	public static function get_template_content( $template_id ) {
 		/** @var Library $library */
-		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		$library = Plugin::$instance->common_admin->get_component( 'connect' )->get_app( 'library' );
 
 		return $library->get_template_content( $template_id );
 	}

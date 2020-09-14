@@ -125,7 +125,7 @@ export default class Component extends ComponentBase {
 		this.currentDocument = this.documents[ document.id ];
 		this.currentDocument.editor.status = 'open';
 
-		elementorCommon.ajax.addRequestConstant( 'editor_post_id', document.id );
+		elementorCommonAdmin.ajax.addRequestConstant( 'editor_post_id', document.id );
 	}
 
 	isCurrent( id ) {
@@ -134,15 +134,15 @@ export default class Component extends ComponentBase {
 
 	unsetCurrent() {
 		this.currentDocument = null;
-		elementorCommon.ajax.addRequestConstant( 'editor_post_id', null );
+		elementorCommonAdmin.ajax.addRequestConstant( 'editor_post_id', null );
 	}
 
 	request( id ) {
-		return elementorCommon.ajax.load( this.getRequestArgs( id ), true );
+		return elementorCommonAdmin.ajax.load( this.getRequestArgs( id ), true );
 	}
 
 	invalidateCache( id ) {
-		elementorCommon.ajax.invalidateCache( this.getRequestArgs( id ) );
+		elementorCommonAdmin.ajax.invalidateCache( this.getRequestArgs( id ) );
 	}
 
 	getRequestArgs( id ) {
@@ -179,6 +179,6 @@ export default class Component extends ComponentBase {
 	 */
 	saveInitialDocumentToCache() {
 		const document = elementor.config.initial_document;
-		elementorCommon.ajax.addRequestCache( this.getRequestArgs( document.id ), document );
+		elementorCommonAdmin.ajax.addRequestCache( this.getRequestArgs( document.id ), document );
 	}
 }

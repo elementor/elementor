@@ -659,6 +659,7 @@ class Admin extends App {
 	 */
 	public function __construct() {
 		Plugin::$instance->init_common();
+		Plugin::$instance->init_common_admin();
 
 		$this->add_component( 'feedback', new Feedback() );
 		$this->add_component( 'canary-deployment', new Canary_Deployment() );

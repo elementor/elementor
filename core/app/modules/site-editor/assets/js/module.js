@@ -19,7 +19,7 @@ export default class SiteEditor {
 
 	saveTemplateTypesToCache() {
 		const types = this.getTypes();
-		elementorCommon.ajax.addRequestCache( {
+		elementorCommonAdmin.ajax.addRequestCache( {
 			unique_id: 'app_site_editor_template_types',
 		}, types );
 	}

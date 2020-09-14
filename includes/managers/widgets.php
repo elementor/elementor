@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Exceptions;
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -133,6 +133,9 @@ class App extends BaseApp {
 		Plugin::$instance->init_common();
 		Plugin::$instance->common->register_scripts();
 
+		Plugin::instance()->init_common_admin();
+		Plugin::$instance->common_admin->register_scripts();
+
 		wp_register_style(
 			'select2',
 			$this->get_css_assets_url( 'e-select2', 'assets/lib/e-select2/css/' ),

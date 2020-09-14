@@ -2,7 +2,7 @@
 namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 use Elementor\Core\DocumentTypes\Page;
 use Elementor\Core\DocumentTypes\Post;
 use Elementor\DB;

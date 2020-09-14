@@ -57,7 +57,7 @@ export default class extends elementorModules.Module {
 	setViewed() {
 		this.introductionViewed = true;
 
-		elementorCommon.ajax.addRequest( 'introduction_viewed', {
+		elementorCommonAdmin.ajax.addRequest( 'introduction_viewed', {
 			data: {
 				introductionKey: this.getSettings( 'introductionKey' ),
 			},

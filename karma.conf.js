@@ -36,6 +36,7 @@ module.exports = function( config ) {
 			'assets/lib/dialog/dialog.js',
 			'assets/js/common-modules.js',
 			'assets/js/common.js',
+			'assets/js/common-admin.js',
 
 			// Editor Fixtures.
 			'tests/qunit/index.html',

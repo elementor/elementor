@@ -173,10 +173,10 @@ class Library extends \WP_CLI_Command {
 	}
 
 	/**
-	 * @return \Elementor\Core\Common\Modules\Connect\Apps\Library
+	 * @return \Elementor\Core\CommonAdmin\Modules\Connect\Apps\Library
 	 */
 	private function get_library_app() {
-		$connect = Plugin::$instance->common->get_component( 'connect' );
+		$connect = Plugin::$instance->common_admin->get_component( 'connect' );
 		$app = $connect->get_app( 'library' );
 		// Before init.
 		if ( ! $app ) {

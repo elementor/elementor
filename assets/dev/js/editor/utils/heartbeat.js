@@ -74,7 +74,7 @@ export default class Heartbeat {
 			this.getModal().hide();
 		}
 
-		elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
+		elementorCommonAdmin.ajax.addRequestConstant( '_nonce', response.elementorNonce );
 	}
 
 	onRefreshNonce( event, response ) {
@@ -82,7 +82,7 @@ export default class Heartbeat {
 
 		if ( nonces ) {
 			if ( nonces.heartbeatNonce ) {
-				elementorCommon.ajax.addRequestConstant( '_nonce', nonces.elementorNonce );
+				elementorCommonAdmin.ajax.addRequestConstant( '_nonce', nonces.elementorNonce );
 			}
 
 			if ( nonces.heartbeatNonce ) {

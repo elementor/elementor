@@ -271,7 +271,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-message">
 		{{{ message }}}
 	</div>
-	<?php $url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize' ); ?>
+	<?php $url = Plugin::$instance->common_admin->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize' ); ?>
 	<a id="elementor-template-library-connect__button" class="elementor-button elementor-button-success" href="<?php echo esc_attr( $url ); ?>">
 		{{{ button }}}
 	</a>

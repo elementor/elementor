@@ -122,7 +122,7 @@ Schemes = function() {
 			itemsToSave[ key ] = item.value;
 		} );
 
-		return elementorCommon.ajax.addRequest( 'apply_scheme', {
+		return elementorCommonAdmin.ajax.addRequest( 'apply_scheme', {
 			data: {
 				scheme_name: schemeName,
 				data: JSON.stringify( itemsToSave ),

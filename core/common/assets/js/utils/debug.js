@@ -115,11 +115,11 @@ var Debug = function() {
 		elements.$window.off( 'error', onError );
 
 		jQuery.ajax( {
-			url: elementorCommon.config.ajax.url,
+			url: elementorCommonAdmin.config.ajax.url,
 			method: 'POST',
 			data: {
 				action: 'elementor_js_log',
-				_nonce: elementorCommon.ajax.getSettings( 'nonce' ),
+				_nonce: elementorCommonAdmin.ajax.getSettings( 'nonce' ),
 				data: errorStack,
 			},
 			success: function() {

@@ -5,7 +5,7 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tools;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\CommonAdmin\Modules\Ajax\Module as Ajax;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -303,13 +303,13 @@ class Module extends \Elementor\Core\Base\Module {
 			var ElementorSafeMode = function() {
 				var attachEvents = function() {
 				  jQuery( '.elementor-disable-safe-mode' ).on( 'click', function( e ) {
-						if ( ! elementorCommon || ! elementorCommon.ajax ) {
+						if ( ! elementorCommon || ! elementorCommonAdmin.ajax ) {
 							return;
 						}
 
 						e.preventDefault();
 
-						elementorCommon.ajax.addRequest(
+						elementorCommonAdmin.ajax.addRequest(
 							'disable_safe_mode', {
 								success: function() {
 									if ( -1 === location.href.indexOf( 'elementor-mode=safe' ) ) {
@@ -376,13 +376,13 @@ class Module extends \Elementor\Core\Base\Module {
 			var ElementorTrySafeMode = function() {
 				var attachEvents = function() {
 					jQuery( '.elementor-enable-safe-mode' ).on( 'click', function( e ) {
-						if ( ! elementorCommon || ! elementorCommon.ajax ) {
+						if ( ! elementorCommon || ! elementorCommonAdmin.ajax ) {
 							return;
 						}
 
 						e.preventDefault();
 
-						elementorCommon.ajax.addRequest(
+						elementorCommonAdmin.ajax.addRequest(
 							'enable_safe_mode', {
 								data: {
 									editor_post_id: '<?php echo Plugin::$instance->editor->get_post_id(); ?>',
@@ -459,7 +459,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function register_scripts() {
-		wp_add_inline_script( 'elementor-common', 'elementorCommon.ajax.addRequestConstant( "elementor-mode", "safe" );' );
+		wp_add_inline_script( 'elementor-common', 'elementorCommonAdmin.ajax.addRequestConstant( "elementor-mode", "safe" );' );
 	}
 
 	private function is_enabled() {

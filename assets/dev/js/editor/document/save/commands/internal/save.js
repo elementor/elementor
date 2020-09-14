@@ -35,7 +35,7 @@ export class Save extends CommandInternalBase {
 			currentHistoryId: document.history.currentItem.get( 'id' ),
 		};
 
-		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
+		const deferred = elementorCommonAdmin.ajax.addRequest( 'save_builder', {
 				data: {
 					status,
 					elements: elements,
