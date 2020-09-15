@@ -10,11 +10,11 @@ $root: eps-notice;
 	--eps-box-notice-background-color: #{$eps-box-notice-background-color};
 
 	padding: spacing(10) spacing(16);
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	box-shadow: $eps-box-shadow-1;
 	background-color: var(--eps-box-notice-background-color);
 
 	&--warning {
-		border-left: 2px solid theme-colors(warning);
+		border-inline-start: $eps-border-width-md $border-style-solid theme-colors(warning);
 	}
 
 	&__text {
