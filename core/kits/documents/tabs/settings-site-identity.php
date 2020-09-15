@@ -4,6 +4,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\DB;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -25,6 +26,9 @@ class Settings_Site_Identity extends Tab_Base {
 
 		$site_icon_id = get_option( 'site_icon' );
 		$site_icon_src = wp_get_attachment_image_src( $site_icon_id, 'full' );
+
+		// If CANNOT upload svg normally, it will add a custom inline option to force svg upload if requested. (in logo and favicon)
+		$should_include_svg_inline_option = ! Files_Upload_Handler::is_enabled();
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
@@ -68,6 +72,7 @@ class Settings_Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Logo', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'should_include_svg_inline_option' => $should_include_svg_inline_option,
 				'default' => [
 					'id' => $custom_logo_id,
 					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
@@ -81,6 +86,7 @@ class Settings_Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Favicon', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'should_include_svg_inline_option' => $should_include_svg_inline_option,
 				'default' => [
 					'id' => $site_icon_id,
 					'url' => $site_icon_src ? $site_icon_src[0] : '',
