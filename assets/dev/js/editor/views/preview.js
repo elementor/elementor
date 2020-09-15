@@ -10,15 +10,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		if ( ! this.$childViewContainer ) {
 			this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
-			if ( elementor.config.legacyMode.elementWrappers ) {
-				const inner = jQuery( '<div>', { class: 'elementor-inner' } );
-
-				inner.append( this.$childViewContainer );
-
-				this.$el.prepend( inner );
-			} else {
-				this.$el.prepend( this.$childViewContainer );
-			}
+			this.$el.prepend( this.$childViewContainer );
 		}
 
 		return this.$childViewContainer;
@@ -92,11 +84,20 @@ const Preview = BaseSectionsContainerView.extend( {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
+
 		var addNewSectionView = new AddSectionView();
 
 		addNewSectionView.render();
 
-		this.$el.append( addNewSectionView.$el );
+		if ( elementor.config.legacyMode.elementWrappers ) {
+			const inner = jQuery( '<div>', { class: 'elementor-inner' } );
+
+			inner.append( this.$childViewContainer, addNewSectionView.$el );
+
+			this.$el.html( inner );
+		} else {
+			this.$el.append( addNewSectionView.$el );
+		}
 	},
 } );
 
