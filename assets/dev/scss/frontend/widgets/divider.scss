@@ -5,7 +5,7 @@
 .elementor-widget-divider {
 	--divider-border-style: none;
 	--divider-border-width: 1px;
-	--divider-border-color: $gray-darkest;
+	--divider-color: #{$gray-darkest};
 	--divider-icon-size: 20px;
 	--divider-element-spacing: 10px;
 	--divider-pattern-height: 24px;
@@ -58,7 +58,7 @@
 					content: '';
 					border-bottom: 0;
 					flex-grow: 1;
-					border-top: var(--divider-border-width) var(--divider-border-style) var(--divider-border-color);
+					border-top: var(--divider-border-width) var(--divider-border-style) var(--divider-color);
 				}
 			}
 		}
@@ -107,7 +107,7 @@
 
 	&:not(.elementor-widget-divider--view-line_text):not(.elementor-widget-divider--view-line_icon) {
 		.elementor-divider-separator {
-			border-top: var(--divider-border-width) var(--divider-border-style) var(--divider-border-color);
+			border-top: var(--divider-border-width) var(--divider-border-style) var(--divider-color);
 		}
 	}
 
@@ -116,20 +116,18 @@
 		&-pattern {
 			--divider-border-style: none;
 
-			.elementor-divider-separator, .elementor-divider-separator:before, .elementor-divider-separator:after {
+			&.elementor-widget-divider--view-line .elementor-divider-separator,
+			&:not(.elementor-widget-divider--view-line) .elementor-divider-separator:before,
+			&:not(.elementor-widget-divider--view-line) .elementor-divider-separator:after {
 				width: 100%;
 				min-height: var(--divider-pattern-height);
-				background-image: var(--divider-pattern-url);
-				background-size: var(--divider-pattern-size) 100%;
-				background-repeat: var(--divider-pattern-repeat);
-			}
-
-			&.elementor-widget-divider--view {
-				&-line_text, &-line_icon {
-					.elementor-divider-separator {
-						background-image: none;
-					}
-				}
+				-webkit-mask-size: var(--divider-pattern-size) 100%;
+				mask-size: var(--divider-pattern-size) 100%;
+				-webkit-mask-repeat: var(--divider-pattern-repeat);
+				mask-repeat: var(--divider-pattern-repeat);
+				background-color: var(--divider-color);
+				-webkit-mask-image: var(--divider-pattern-url);
+				mask-image: var(--divider-pattern-url);
 			}
 		}
 	}
