@@ -72,6 +72,7 @@
 		"core-js": "^2.6.5",
 		"prop-types": "^15.7.1",
 		"reach-router-hash-history": "0.0.3",
-		"sass-lint": "^1.13.1"
+		"sass-lint": "^1.13.1",
+		"styled-components": "^5.2.0"
 	}
 }

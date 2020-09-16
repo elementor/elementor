@@ -92,6 +92,8 @@ const plugins = [
 		React: 'react',
 		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
+		styled: ['styled-components', 'default'],
+		css: ['styled-components', 'css'],
 		__: ['@wordpress/i18n', '__'],
 	} )
 ];
