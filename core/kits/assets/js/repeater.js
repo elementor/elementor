@@ -11,7 +11,7 @@ export default class extends Repeater {
 	templateHelpers() {
 		const templateHelpers = super.templateHelpers();
 
-		templateHelpers.addButtonText = sprintf( __( 'Add %s', 'elementor' ), 'custom_colors' === this.model.get( 'name' ) ? __( 'Color', 'elementor' ) : __( 'Style', 'elementor' ) );
+		templateHelpers.addButtonText = 'custom_colors' === this.model.get( 'name' ) ? __( 'Add Color', 'elementor' ) : __( 'Add Style', 'elementor' );
 
 		return templateHelpers;
 	}
