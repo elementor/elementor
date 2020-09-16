@@ -95,6 +95,8 @@ const plugins = [
 		styled: ['styled-components', 'default'],
 		css: ['styled-components', 'css'],
 		__: ['@wordpress/i18n', '__'],
+		_$: [ 'elementor-styles/style.js', 'default' ],
+		Styled: [ 'elementor-app/ui/styled/index.js', 'default' ],
 	} )
 ];
 

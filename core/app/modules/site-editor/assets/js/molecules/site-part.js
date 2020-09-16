@@ -10,7 +10,7 @@ export default function SitePart( props ) {
 	return (
 		<Card className="e-site-part">
 			<CardHeader>
-				<Heading tag="h1" variant="text-sm" className="eps-card__headline">{ props.title }</Heading>
+				<Heading tag="h1" variant="h6" className="eps-card__headline">{ props.title }</Heading>
 				{ props.actionButton }
 			</CardHeader>
 			<CardBody>
