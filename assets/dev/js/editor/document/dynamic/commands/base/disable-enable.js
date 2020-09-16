@@ -5,10 +5,6 @@ export default class DisableEnable extends CommandDisableEnable {
 		return 'dynamic';
 	}
 
-	static getTitle() {
-		return __( 'Dynamic' );
-	}
-
 	static getEnableCommand() {
 		return 'document/dynamic/enable';
 	}
