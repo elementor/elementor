@@ -95,7 +95,7 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 */
 	public function localize_settings() {
 		return [];
