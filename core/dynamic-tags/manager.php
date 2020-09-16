@@ -40,26 +40,10 @@ class Manager {
 	}
 
 	/**
-	 * Localize settings.
-	 *
-	 * Add new localized settings for the dynamic module.
-	 *
-	 * Fired by `elementor/editor/localize_settings` filter.
-	 *
-	 * @access public
-	 *
-	 * @param array $settings Localized settings.
-	 *
-	 * @return array Localized settings.
+	 * @deprecated since 3.1.0
 	 */
-	public function localize_settings( $settings ) {
-		$settings = array_replace_recursive( $settings, [
-			'i18n' => [
-				'dynamic' => __( 'Dynamic', 'elementor' ),
-			],
-		] );
-
-		return $settings;
+	public function localize_settings() {
+		return [];
 	}
 
 	/**
@@ -453,6 +437,5 @@ class Manager {
 	private function add_actions() {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'elementor/css-file/post/enqueue', [ $this, 'after_enqueue_post_css' ] );
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 	}
 }
