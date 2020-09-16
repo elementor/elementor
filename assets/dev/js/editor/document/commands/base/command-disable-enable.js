@@ -73,7 +73,7 @@ export default class CommandDisableEnable extends CommandHistory {
 			changes[ id ] = settings;
 		} );
 
-		const subTitle = this.constructor.getName() + ' ' + ElementsSettings.getSubTitle( args ),
+		const subTitle = this.getName() + ' ' + ElementsSettings.getSubTitle( args ),
 			type = this.type;
 
 		return {
