@@ -30,10 +30,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 <script type="text/template" id="tmpl-elementor-panel-revisions-no-revisions">
 	<#
-	var no_revisions_1 = wp.i18n.__( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
-		no_revisions_2 = wp.i18n.__( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-		revisions_disabled_1 = wp.i18n.__( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
-		revisions_disabled_2 = sprintf( wp.i18n.__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://go.elementor.com/wordpress-revisions/' ); /* translators: %s: Codex URL */
+	var no_revisions_1 = <?php __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ); ?>,
+		no_revisions_2 = <?php __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ); ?>,
+		revisions_disabled_1 = <?php __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ); ?>,
+		revisions_disabled_2 = <?php sprintf( __( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://go.elementor.com/wordpress-revisions/' ); /* translators: %s: Codex URL */ ?>;
 	#>
 	<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; ?>" />
 	<div class="elementor-nerd-box-title"><?php echo __( 'No Revisions Saved Yet', 'elementor' ); ?></div>
