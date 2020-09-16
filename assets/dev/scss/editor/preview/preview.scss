@@ -892,7 +892,7 @@ html.elementor-html {
 [data-elementor-device-mode="desktop"] .elementor-edit-area-active .elementor-hidden-desktop,
 [data-elementor-device-mode="tablet"] .elementor-edit-area-active .elementor-hidden-tablet,
 [data-elementor-device-mode="mobile"] .elementor-edit-area-active .elementor-hidden-phone {
-	display: inherit;
+	display: inherit; //to overcome the display:none;
 	background: repeating-linear-gradient(125deg,rgba(0, 0, 0, 0.05),rgba(0, 0, 0, 0.05) 1px,transparent 2px,transparent 9px);
 	border: 1px solid rgba(0, 0, 0, 0.02);
 
@@ -913,6 +913,13 @@ html.elementor-html {
 			height: 100%;
 			background-color: rgba(255, 255, 255, 0.6);
 			z-index: 9997;
+		}
+	}
+
+	&.elementor-inner-section {
+
+		.elementor-container {
+			width: 100%;//to handle with display: inherit; > issues#12376
 		}
 	}
 

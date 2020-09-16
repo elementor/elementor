@@ -13,6 +13,8 @@ const mockActions = {
 
 	get_widgets_config: fakeActionFailed,
 	get_revisions: fakeActionFailed,
+
+	get_document_config: Ajax.getDocumentConfig,
 };
 
 export const sendOriginal = elementorCommon.ajax.send;
@@ -23,9 +25,9 @@ export const handleSend = ( params ) => {
 			responses = {};
 
 		Object.keys( mockActions ).forEach( ( mockAction ) => {
-			Object.values( actions ).forEach( ( action ) => {
+			Object.entries( actions ).forEach( ( [ actionKey, action ] ) => {
 				if ( mockAction === action.action ) {
-					responses[ mockAction ] = mockActions[ mockAction ]( action, params );
+					responses[ actionKey ] = mockActions[ mockAction ]( action, params );
 				}
 			} );
 		} );
