@@ -24,7 +24,7 @@ class Elementor_3_Re_Migrate_Globals {
 	}
 
 	/**
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 */
 	public function admin_localize_settings() {
 		return [];

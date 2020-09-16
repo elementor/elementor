@@ -345,7 +345,7 @@ class Revisions_Manager {
 	 * @since 1.7.0
 	 * @access public
 	 * @static
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 */
 	public static function editor_settings() {
 		return [];

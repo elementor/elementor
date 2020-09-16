@@ -41,7 +41,7 @@ class Module extends BaseModule {
 	 *
 	 * @since 1.7.0
 	 * @access public
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 *
 	 * @return array Localized settings.
 	 */
