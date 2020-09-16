@@ -401,7 +401,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}}',
 				],
 				'default' => [
 					'unit' => 'em',
@@ -436,7 +436,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'size' => 5,
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--grid-column-gap: {{SIZE}}{{UNIT}}; --grid-side-margin: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--grid-column-gap: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -450,7 +450,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'size' => 0,
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--grid-row-gap: {{SIZE}}{{UNIT}}; --grid-bottom-margin: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--grid-row-gap: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
