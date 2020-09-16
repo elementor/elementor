@@ -1,6 +1,6 @@
 name: Image Compare
 
-on: push
+on: [push, pull_request]
 
 jobs:
   run:
