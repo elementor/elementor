@@ -21,8 +21,12 @@ const Button = styled.div`
 
 const isDarkMode = false;
 
-export const StyledButton = () => (
+export const StyledButton = ( props ) => (
 	<ThemeProvider theme={ isDarkMode ? darkTheme : theme }>
-		<Button />
+		<Button>{ props.children }</Button>
 	</ThemeProvider>
 );
+
+StyledButton.propTypes = {
+	children: PropTypes.any,
+};
