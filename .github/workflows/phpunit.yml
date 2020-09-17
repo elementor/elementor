@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['latest', '5.3', '5.2', '5.1', '5.0']
+        wordpress_versions: ['latest', '5.4', '5.3', '5.2', '5.1', '5.0']
     name: WordPress ${{ matrix.wordpress_versions }}
     steps:
       - name: Startup MySQL service
