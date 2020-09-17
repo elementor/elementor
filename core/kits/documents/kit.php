@@ -76,17 +76,24 @@ class Kit extends PageBase {
 	public function save( $data ) {
 		$saved = parent::save( $data );
 
-		if ( $saved ) {
-			// Should set is_saving to true, to avoid infinite loop when updating
-			// settings like: 'site_name" or "site_description".
-			$this->set_is_saving( true );
-
-			foreach ( $this->tabs as $tab ) {
-				$tab->on_save( $data );
-			}
-
-			$this->set_is_saving( false );
+		if ( ! $saved ) {
+			return false;
 		}
+
+		// Should set is_saving to true, to avoid infinite loop when updating
+		// settings like: 'site_name" or "site_description".
+		$this->set_is_saving( true );
+
+		foreach ( $this->tabs as $tab ) {
+			$tab->on_save( $data );
+		}
+
+		$this->set_is_saving( false );
+
+		// When deleting a global color or typo, the css variable still exists in the frontend
+		// but without any value and it makes the element to be un styled even if there is a default style for the base element,
+		// for that reason this method removes css files of the entire site.
+		Plugin::instance()->files_manager->clear_cache();
 
 		return $saved;
 	}

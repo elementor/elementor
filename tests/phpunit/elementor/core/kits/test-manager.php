@@ -4,8 +4,16 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Kits;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Core\Files\Manager as Files_Manager;
 
 class Test_Manager extends Elementor_Test_Base {
+
+	public static function setUpBeforeClass() {
+		parent::setUpBeforeClass();
+
+		// TODO: Checks why this is needed to 'test_it_should_clear_files_cache_when_saving_kit'.
+		Plugin::$instance->kits_manager->get_active_kit();
+	}
 
 	public function test_get_active_id() {
 		// Test deleted kit.
@@ -39,7 +47,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNotEquals( $active_id, $active_id_after_invalidate, $test_description );
 	}
 
-	public function test_when_updating_blogname_or_blogdescription_option_it_should_update_the_kit(  ) {
+	public function test_when_updating_blogname_or_blogdescription_option_it_should_update_the_kit() {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -75,5 +83,24 @@ class Test_Manager extends Elementor_Test_Base {
 
 		update_option( 'blogname', $name );
 		update_option( 'blogdescription', $description );
+	}
+
+	public function test_it_should_clear_files_cache_when_saving_kit() {
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		$file_manager = Plugin::instance()->files_manager;
+
+		$mock = $this->getMockBuilder( Files_Manager::class )
+		             ->setMethods( [ 'clear_cache' ] )
+		             ->getMock();
+
+		$mock->expects( $this->once() )
+		     ->method( 'clear_cache' );
+
+		Plugin::instance()->files_manager = $mock;
+
+		Plugin::$instance->kits_manager->get_active_kit()->save( [] );
+
+		Plugin::instance()->files_manager = $file_manager;
 	}
 }
