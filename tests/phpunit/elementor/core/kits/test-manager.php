@@ -40,6 +40,23 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_when_updating_blogname_or_blogdescription_option_it_should_update_the_kit(  ) {
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$custom_colors_array = [
+			[
+				'_id' => 'test-id',
+				'title' => 'test',
+				'color' => '#000000',
+			],
+		];
+
+		$kit->update_settings(['custom_colors' => $custom_colors_array]);
+
+		// Make sure that it fetched again from the DB and not from the cache.
+		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
+
 		$name = get_option( 'blogname' );
 		$description = get_option( 'blogdescription' );
 
@@ -52,10 +69,9 @@ class Test_Manager extends Elementor_Test_Base {
 		update_option( 'blogname', $expected_name );
 		update_option( 'blogdescription', $expected_description );
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
 		$this->assertEquals( $expected_name, $kit->get_settings( 'site_name' ) );
 		$this->assertEquals( $expected_description, $kit->get_settings( 'site_description' ) );
+		$this->assertEquals( $custom_colors_array, $kit->get_settings( 'custom_colors' ), 'It should not remove the old kit settings.' );
 
 		update_option( 'blogname', $name );
 		update_option( 'blogdescription', $description );

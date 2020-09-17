@@ -122,10 +122,12 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'default_generic_fonts' => $generic_font,
 			'lightbox_color' => $lightbox_color,
 			'container_width' => $container_width,
-			'space_between_widgets' => $space_between_widgets,
 		];
 
 		update_option( '_elementor_general_settings', $general_settings );
+
+		// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+		update_option( 'elementor_space_between_widgets', $space_between_widgets );
 		update_option( 'elementor_viewport_lg', $viewport_lg );
 		update_option( 'elementor_viewport_md', $viewport_md );
 
