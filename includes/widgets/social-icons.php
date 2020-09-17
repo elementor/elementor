@@ -401,7 +401,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-social-icon' => '--icon-padding: {{SIZE}}{{UNIT}}',
 				],
 				'default' => [
 					'unit' => 'em',

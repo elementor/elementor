@@ -31,16 +31,16 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	}
 }
 
-.elementor-social-icons-wrapper {
-}
-
 .elementor-social-icon {
+	display: inline-flex;
 	background-color: $gray;
 	font-size: $icon-size;
 	line-height: $icon-size;
 	width: $icon-total-size;
+	height: $icon-total-size;
+	align-items: center;
+	justify-content: center;
 	text-align: center;
-	padding: $icon-padding;
 	cursor: pointer;
 
 	i {
