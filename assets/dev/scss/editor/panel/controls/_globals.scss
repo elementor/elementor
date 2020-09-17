@@ -271,4 +271,8 @@
 			direction: $direction;
 		}
 	}
+
+	.elementor-control-spinner {
+		@include margin-end(4px);
+	}
 }

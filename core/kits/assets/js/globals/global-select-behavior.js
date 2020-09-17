@@ -235,7 +235,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		const $globalToggleButton = jQuery( '<div>', { class: this.getClassNames().popoverToggle + ' elementor-control-unit-1' } ),
 			$globalPopoverToggleIcon = jQuery( '<i>', { class: 'eicon-globe' } ),
 			$globalsLoadingSpinner = jQuery( '<span>', { class: 'elementor-control-spinner' } )
-				.html( '<i class="eicon-spinner eicon-animation-spin"></i>&nbsp;</span>' );
+				.html( '<i class="eicon-spinner eicon-animation-spin"></i></span>' );
 
 		$globalToggleButton.append( $globalPopoverToggleIcon );
 
@@ -282,7 +282,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			( globalsList ) => {
 				this.addGlobalsListToPopover( globalsList );
 
-				this.ui.$globalsLoadingSpinner.remove();
+				//this.ui.$globalsLoadingSpinner.remove();
 
 				this.registerUiElementsAndEvents();
 			} );
