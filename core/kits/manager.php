@@ -185,7 +185,7 @@ class Manager {
 			return;
 		}
 
-		$active_kit->save( [ 'settings' => [ $key => $value ] ] );
+		$active_kit->update_settings( [ $key => $value ] );
 	}
 
 	/**
