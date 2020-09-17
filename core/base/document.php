@@ -11,6 +11,7 @@ use Elementor\User;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
+use Elementor\Core\Settings\Page\Manager as PageManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -584,6 +585,25 @@ abstract class Document extends Controls_Stack {
 		$this->set_is_saving( false );
 
 		return true;
+	}
+
+	/**
+	 * @param array $new_settings
+	 *
+	 * @return static
+	 */
+	public function update_settings( array $new_settings ) {
+		$document_settings = $this->get_meta( PageManager::META_KEY );
+
+		if ( ! $document_settings ) {
+			$document_settings = [];
+		}
+
+		$this->save_settings(
+			array_replace_recursive( $document_settings, $new_settings )
+		);
+
+		return $this;
 	}
 
 	/**
