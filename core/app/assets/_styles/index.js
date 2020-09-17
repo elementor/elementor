@@ -1,6 +1,6 @@
 import Colors from 'elementor-styles/colors.js';
 
-export default class Style {
+export default class Index {
 	static themeColors = Colors.theme;
 	static tints = null;
 	static darkTints = null;

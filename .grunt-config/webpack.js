@@ -80,11 +80,11 @@ const entry = {
 
 const externals = {
 	'@wordpress/i18n': 'wp.i18n',
-		react: 'React',
-		'react-dom': 'ReactDOM',
-		'@elementor/app-ui': 'elementorAppPackages.appUi',
-		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-		'@elementor/router': 'elementorAppPackages.router',
+	react: 'React',
+	'react-dom': 'ReactDOM',
+	'@elementor/app-ui': 'elementorAppPackages.appUi',
+	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+	'@elementor/router': 'elementorAppPackages.router',
 };
 
 const plugins = [
@@ -92,10 +92,11 @@ const plugins = [
 		React: 'react',
 		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
-		styled: ['styled-components', 'default'],
-		css: ['styled-components', 'css'],
 		__: ['@wordpress/i18n', '__'],
-		_$: [ 'elementor-styles/style.js', 'default' ],
+		//styled: ['styled-components', 'default'],
+		//css: ['styled-components', 'css'],
+		//ThemeProvider: ['styled-components', 'ThemeProvider'],
+		//_$: [ 'elementor-styles/style.js', 'default' ],
 	} )
 ];
 

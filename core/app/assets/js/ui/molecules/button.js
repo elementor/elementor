@@ -2,6 +2,8 @@ import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
 import Icon from 'elementor-app/ui/atoms/icon';
 
+import { Styled } from 'elementor-app/styled';
+
 import './buttons.scss';
 
 export default class Button extends React.Component {
@@ -108,9 +110,11 @@ export default class Button extends React.Component {
 		if ( this.props.url ) {
 			if ( 0 === this.props.url.indexOf( 'http' ) ) {
 				return (
-					<a href={ this.props.url } target={ this.props.target } { ...attributes }>
-						{ buttonContent }
-					</a>
+					<Styled.Button>
+						<a href={ this.props.url } target={ this.props.target } { ...attributes }>
+							{ buttonContent }
+						</a>
+					</Styled.Button>
 				);
 			}
 
@@ -128,16 +132,20 @@ export default class Button extends React.Component {
 			return (
 				<LocationProvider history={ router.appHistory }>
 					<Link to={ this.props.url } { ...attributes } >
-						{ buttonContent }
+						<Styled.Button>
+							{ buttonContent }
+						</Styled.Button>
 					</Link>
 				</LocationProvider>
 			);
 		}
 
+		// { ...attributes }
+
 		return (
-			<div { ...attributes }>
+			<Styled.Button>
 				{ buttonContent }
-			</div>
+			</Styled.Button>
 		);
 	}
 }
