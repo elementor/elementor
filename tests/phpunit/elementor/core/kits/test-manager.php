@@ -8,6 +8,13 @@ use Elementor\Core\Files\Manager as Files_Manager;
 
 class Test_Manager extends Elementor_Test_Base {
 
+	public static function setUpBeforeClass() {
+		parent::setUpBeforeClass();
+
+		// TODO: Checks why this is needed to 'test_it_should_clear_files_cache_when_saving_kit'.
+		Plugin::$instance->kits_manager->get_active_kit();
+	}
+
 	public function test_get_active_id() {
 		// Test deleted kit.
 		$test_description = 'active id should return a new kit id after delete kit';
@@ -81,8 +88,6 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_it_should_clear_files_cache_when_saving_kit() {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
 		$file_manager = Plugin::instance()->files_manager;
 
 		$mock = $this->getMockBuilder( Files_Manager::class )
@@ -94,7 +99,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		Plugin::instance()->files_manager = $mock;
 
-		$kit->save( [] );
+		Plugin::$instance->kits_manager->get_active_kit()->save( [] );
 
 		Plugin::instance()->files_manager = $file_manager;
 	}
