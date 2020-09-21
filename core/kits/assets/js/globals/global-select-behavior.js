@@ -27,11 +27,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerUiElements() {
-		const popoverWidget = this.popover.getElements( 'widget' ),
-			classes = this.getClassNames();
+		const popoverWidget = this.popover.getElements( 'widget' );
 
-		this.registerPreviewElements();
-		this.ui.manageGlobalsButton = popoverWidget.find( `.${ classes.manageButton }` );
+		this.ui.manageGlobalsButton = popoverWidget.find( `.${ this.getClassNames().manageButton }` );
 	}
 
 	registerPreviewElements() {
@@ -44,8 +42,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerEvents() {
-		this.addPreviewItemsClickListener();
-
 		this.ui.globalPopoverToggle.on( 'click', ( event ) => this.toggleGlobalPopover( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
 			const { route } = this.view.getGlobalMeta(),
@@ -210,7 +206,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		if ( this.popover.isVisible() ) {
 			this.popover.hide();
 		} else {
-			this.ui.globalPreviewsContainer.remove();
+			if ( this.ui.globalPreviewsContainer ) {
+				// This element is not defined when the controls popover is first loaded.
+				this.ui.globalPreviewsContainer.remove();
+			}
 
 			this.view.getGlobalsList()
 				.then(
@@ -294,14 +293,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			},
 		} );
 
-		// Render the list of globals and append them to the Globals popover.
-		this.view.getGlobalsList()
-			.then(
-			( globalsList ) => {
-				this.addGlobalsListToPopover( globalsList );
-
-				this.registerUiElementsAndEvents();
-			} );
+		// Add Popover elements to the this.ui object and register click events.
+		this.registerUiElementsAndEvents();
 
 		this.createGlobalInfoTooltip();
 	}
