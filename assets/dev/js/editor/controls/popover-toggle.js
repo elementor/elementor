@@ -138,8 +138,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				$globalPreviewItemsContainer.append( $typographyPreview );
 			}
 		} );
-
-		return $globalPreviewItemsContainer;
 	}
 
 	onAddGlobalButtonClick() {

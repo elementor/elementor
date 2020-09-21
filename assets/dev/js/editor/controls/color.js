@@ -172,8 +172,6 @@ export default class extends ControlBaseDataView {
 
 			$globalPreviewItemsContainer.append( $color );
 		} );
-
-		return $globalPreviewItemsContainer;
 	}
 
 	onPickerChange() {

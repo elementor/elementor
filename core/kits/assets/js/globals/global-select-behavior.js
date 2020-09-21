@@ -301,12 +301,12 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	addGlobalsListToPopover( globalsList ) {
 		const $globalPreviewItemsContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
 
-		const $globalsList = this.view.buildGlobalsList( globalsList, $globalPreviewItemsContainer );
+		this.view.buildGlobalsList( globalsList, $globalPreviewItemsContainer );
 
-		this.popover.getElements( 'widget' ).find( `.${ this.getClassNames().globalPopoverTitle }` ).after( $globalsList );
+		this.popover.getElements( 'widget' ).find( `.${ this.getClassNames().globalPopoverTitle }` ).after( $globalPreviewItemsContainer );
 
 		// The populated list is nested under the previews container element.
-		this.ui.$globalPreviewItemsContainer = $globalsList;
+		this.ui.$globalPreviewItemsContainer = $globalPreviewItemsContainer;
 	}
 
 	registerUiElementsAndEvents() {
