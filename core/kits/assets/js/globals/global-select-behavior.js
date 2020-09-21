@@ -361,20 +361,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		globalMeta.title = this.ui.globalNameInput.val();
 
-		this.ui.$globalsLoadingSpinner.show();
-
-		this.createNewGlobal( globalMeta )
-			.then( ( result ) => {
-				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
-
-				this.ui.globalPreviewsContainer.append( $globalPreview );
-
-				this.ui.$globalsLoadingSpinner.hide();
-			} );
+		this.createNewGlobal( globalMeta );
 	}
 
 	createNewGlobal( globalMeta ) {
-		return $e.run( globalMeta.commandName + '/create', {
+		this.ui.$globalsLoadingSpinner.show();
+
+		$e.run( globalMeta.commandName + '/create', {
 			container: this.view.container,
 			setting: globalMeta.key, // group control name
 			title: globalMeta.title,
@@ -382,7 +375,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			.then( ( result ) => {
 				this.applySavedGlobalValue( result.data.id );
 
-				return result;
+				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
+
+				this.ui.globalPreviewsContainer.append( $globalPreview );
+
+				this.ui.$globalsLoadingSpinner.hide();
 			} );
 	}
 
