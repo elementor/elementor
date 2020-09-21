@@ -203,6 +203,8 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
 			]
 		);
 
@@ -235,6 +237,9 @@ class Widget_Button extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'selected_icon[value]!' => '',
 				],
 			]
 		);
