@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Testing;
 
+use Elementor\Core\Base\Document;
+use Elementor\Plugin;
+
 class Local_Factory extends \WP_UnitTestCase {
 
 	/**
@@ -115,6 +118,25 @@ class Local_Factory extends \WP_UnitTestCase {
 		return $this->factory()->user->create_and_get( [ 'role' => 'editor' ] );
 	}
 
+	/**
+	 * @return Document|false
+	 */
+	public function create_post() {
+		$admin = $this->create_and_get_administrator_user();
+
+		wp_set_current_user( $admin->ID );
+
+		$post = $this->create_and_get_custom_post( [
+			'post_author' => $admin->ID,
+			'post_type' => 'post',
+		] );
+
+		add_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
+
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		return $document;
+	}
 
 	private function create_template( $template_data = [ 'title' => 'new template' ] ) {
 		$template_id = $this->factory()->post->create(
