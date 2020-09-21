@@ -30,16 +30,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		const popoverWidget = this.popover.getElements( 'widget' ),
 			classes = this.getClassNames();
 
+		this.registerPreviewElements();
+		this.ui.manageGlobalsButton = popoverWidget.find( `.${ classes.manageButton }` );
+	}
+
+	registerPreviewElements() {
+		const popoverWidget = this.popover.getElements( 'widget' ),
+			classes = this.getClassNames();
+
 		this.ui.globalPreviewsContainer = popoverWidget.find( `.${ classes.previewItemsContainer }` );
 		this.ui.globalPreviewItems = popoverWidget.find( `.${ classes.previewItem }` );
-		this.ui.manageGlobalsButton = popoverWidget.find( `.${ classes.manageButton }` );
 	}
 
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerEvents() {
-		const classes = this.getClassNames();
+		this.addPreviewItemsClickListener();
 
-		this.ui.globalPreviewsContainer.on( 'click', `.${ classes.previewItem }`, ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
 		this.ui.globalPopoverToggle.on( 'click', ( event ) => this.toggleGlobalPopover( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
 			const { route } = this.view.getGlobalMeta(),
@@ -52,6 +58,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 			this.popover.hide();
 		} );
+	}
+
+	addPreviewItemsClickListener() {
+		this.ui.globalPreviewsContainer.on( 'click', `.${ this.getClassNames().previewItem }`, ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
 	}
 
 	fetchGlobalValue() {
@@ -200,9 +210,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		if ( this.popover.isVisible() ) {
 			this.popover.hide();
 		} else {
-			this.popover.show();
+			this.ui.globalPreviewsContainer.remove();
 
-			this.setCurrentActivePreviewItem();
+			this.view.getGlobalsList()
+				.then(
+					( globalsList ) => {
+						// We just deleted the existing list of global preview items, so we need to rebuild it
+						// with the updated list of globals, register the elements and re-add the on click listeners.
+						this.addGlobalsListToPopover( globalsList );
+
+						this.registerPreviewElements();
+						this.addPreviewItemsClickListener();
+
+						this.popover.show();
+
+						this.setCurrentActivePreviewItem();
+					} );
 		}
 	}
 
