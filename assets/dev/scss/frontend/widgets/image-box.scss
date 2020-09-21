@@ -95,4 +95,15 @@
 	.elementor-image-box-description {
 		margin: 0;
 	}
+
+	.keep-image-box-left .elementor-widget-image-box .elementor-image-box-wrapper {
+  		display: flex;
+  		flex-direction: row;
+	}
+
+	.keep-image-box-left .elementor-widget-image-box .elementor-image-box-icon {
+ 		flex: 0 0 auto;
+  		margin-left: 0px !important;
+ 		margin-right: 14px !important;
+	}
 }
