@@ -79,7 +79,7 @@ class Module extends BaseModule {
 		if ( is_singular() ) {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
-			if ( $document ) {
+			if ( $document && $document::get_property( 'support_wp_page_templates' ) ) {
 				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
 
 				if ( ! $template_path && $document->is_built_with_elementor() ) {
