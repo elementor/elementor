@@ -97,4 +97,15 @@
 	.elementor-icon-box-description {
 		margin: 0;
 	}
+
+	.keep-icon-box-left .elementor-widget-icon-box .elementor-icon-box-wrapper {
+  	display: flex;
+  	flex-direction: row;
+	}
+
+	.keep-icon-box-left .elementor-widget-icon-box .elementor-icon-box-icon {
+  	flex: 0 0 auto;
+ 	margin-left: 0px !important;
+  	margin-right: 14px !important;
+	}
 }
