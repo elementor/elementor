@@ -284,8 +284,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			( globalsList ) => {
 				this.addGlobalsListToPopover( globalsList );
 
-				this.ui.$globalsLoadingSpinner.hide();
-
 				this.registerUiElementsAndEvents();
 			} );
 
