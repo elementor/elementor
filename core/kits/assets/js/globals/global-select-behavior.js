@@ -36,7 +36,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		const popoverWidget = this.popover.getElements( 'widget' ),
 			classes = this.getClassNames();
 
-		this.ui.globalPreviewsContainer = popoverWidget.find( `.${ classes.previewItemsContainer }` );
 		this.ui.globalPreviewItems = popoverWidget.find( `.${ classes.previewItem }` );
 	}
 
@@ -57,7 +56,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	addPreviewItemsClickListener() {
-		this.ui.globalPreviewsContainer.on( 'click', `.${ this.getClassNames().previewItem }`, ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
+		this.ui.$globalPreviewItemsContainer.on( 'click', `.${ this.getClassNames().previewItem }`, ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
 	}
 
 	fetchGlobalValue() {
@@ -206,9 +205,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		if ( this.popover.isVisible() ) {
 			this.popover.hide();
 		} else {
-			if ( this.ui.globalPreviewsContainer ) {
+			if ( this.ui.$globalPreviewItemsContainer ) {
 				// This element is not defined when the controls popover is first loaded.
-				this.ui.globalPreviewsContainer.remove();
+				this.ui.$globalPreviewItemsContainer.remove();
 			}
 
 			this.view.getGlobalsList()
@@ -300,9 +299,14 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 	}
 
 	addGlobalsListToPopover( globalsList ) {
-		const $globalsList = this.view.buildGlobalsList( globalsList );
+		const $globalPreviewItemsContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
+
+		const $globalsList = this.view.buildGlobalsList( globalsList, $globalPreviewItemsContainer );
 
 		this.popover.getElements( 'widget' ).find( `.${ this.getClassNames().globalPopoverTitle }` ).after( $globalsList );
+
+		// The populated list is nested under the previews container element.
+		this.ui.$globalPreviewItemsContainer = $globalsList;
 	}
 
 	registerUiElementsAndEvents() {
@@ -372,7 +376,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			.then( ( result ) => {
 				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
 
-				this.ui.globalPreviewsContainer.append( $globalPreview );
+				this.ui.$globalPreviewItemsContainer.append( $globalPreview );
 			} );
 	}
 
