@@ -255,6 +255,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 
 		$globalToggleButton.before( $globalsLoadingSpinner );
+
+		this.ui.$globalsLoadingSpinner.hide();
 	}
 
 	initGlobalPopover() {
@@ -282,7 +284,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			( globalsList ) => {
 				this.addGlobalsListToPopover( globalsList );
 
-				this.ui.$globalsLoadingSpinner.remove();
+				this.ui.$globalsLoadingSpinner.hide();
 
 				this.registerUiElementsAndEvents();
 			} );
@@ -359,11 +361,15 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		globalMeta.title = this.ui.globalNameInput.val();
 
+		this.ui.$globalsLoadingSpinner.show();
+
 		this.createNewGlobal( globalMeta )
 			.then( ( result ) => {
 				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
 
 				this.ui.globalPreviewsContainer.append( $globalPreview );
+
+				this.ui.$globalsLoadingSpinner.hide();
 			} );
 	}
 
