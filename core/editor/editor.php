@@ -524,7 +524,7 @@ class Editor {
 
 		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
 
-		$page_title_selector .= ', .elementor-page-title';
+		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
 		$config = [
 			'initial_document' => $document->get_config(),
