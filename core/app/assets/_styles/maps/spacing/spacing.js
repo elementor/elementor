@@ -1,7 +1,3 @@
-import _base from 'elementor-styles/data/spacing/base.json';
-import _values from 'elementor-styles/data/spacing/values.json';
+import _spacing from 'elementor-styles/data/spacing/spacing.json';
 
-export default {
-	base: _base,
-	values: _values,
-};
+export default _spacing;

@@ -1,5 +1,8 @@
 import styled, { css } from 'styled-components';
-import _$ from 'elementor-styles';
+import _$, { direction } from 'elementor-styles';
+import Utils from "../utils/utils";
+
+console.log( 'direction', direction );
 
 const Grid = styled.div`
 	${ ( props ) => props.container && css`
@@ -18,16 +21,8 @@ const Grid = styled.div`
 	` }
 
 	${ ( props ) => props.item && css`
-		flex-grow: 0;
+		// _$.breakpoints()
 	` }
-
-	${ ( props ) => {
-		const breakpoints = _$.breakpoints();
-
-		for ( const key in breakpoints ) {
-			console.log( 'breakpoint', key );
-		}
-	} }
 `;
 
 export const StyledGrid = ( props ) => (
@@ -36,5 +31,5 @@ export const StyledGrid = ( props ) => (
 
 StyledGrid.propTypes = {
 	children: PropTypes.any,
-	justify: PropTypes.oneOf( [ 'flex-start', 'center', 'flex-end' ] ),
+	//justify: PropTypes.oneOf( [ 'flex-start', 'center', 'flex-end', 'space-betwen' ] ),
 };

@@ -90,6 +90,8 @@ class App extends BaseApp {
 			'menu_url' => $this->get_base_url() . '#site-editor/promotion',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'return_url' => isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : admin_url(),
+			'is_rtl' => is_rtl(),
+			'ui_theme' => $this->get_elementor_ui_theme_preference(),
 		];
 	}
 
