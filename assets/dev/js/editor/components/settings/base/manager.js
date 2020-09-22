@@ -213,14 +213,10 @@ module.exports = elementorModules.ViewModule.extend( {
 		self.debounceSave();
 	},
 
-	onElementorDocumentLoaded: function() {
+	onElementorDocumentLoaded: function( document ) {
 		this.updateStylesheet();
 
 		this.addPanelPage();
-
-		if ( ! elementor.userCan( 'design' ) ) {
-			$e.route( 'panel/page-settings/settings' );
-		}
 	},
 
 	destroy: function() {

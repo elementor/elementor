@@ -92,11 +92,17 @@ abstract class Document extends Controls_Stack {
 	 * @static
 	 */
 	public static function get_editor_panel_config() {
+		$default_route = 'panel/elements/categories';
+
+		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
+			$default_route = 'panel/page-settings/settings';
+		}
+
 		return [
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
-			'default_route' => 'panel/elements/categories',
+			'default_route' => $default_route,
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
