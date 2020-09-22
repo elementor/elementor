@@ -80,22 +80,26 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	onRender: function() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
-		}
-
-		var addNewSectionView = new AddSectionView();
-
-		addNewSectionView.render();
+		let $contentContainer;
 
 		if ( elementor.config.legacyMode.elementWrappers ) {
-			const inner = jQuery( '<div>', { class: 'elementor-inner' } );
+			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );
 
-			inner.append( this.$childViewContainer, addNewSectionView.$el );
+			this.$el.html( $inner );
 
-			this.$el.html( inner );
+			$contentContainer = $inner;
 		} else {
-			this.$el.append( this.$childViewContainer, addNewSectionView.$el );
+			$contentContainer = this.$el;
+		}
+
+		$contentContainer.html( this.$childViewContainer );
+
+		if ( elementor.userCan( 'design' ) ) {
+			const addNewSectionView = new AddSectionView();
+
+			addNewSectionView.render();
+
+			$contentContainer.append( addNewSectionView.$el );
 		}
 	},
 } );
