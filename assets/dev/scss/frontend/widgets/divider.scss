@@ -117,7 +117,6 @@
 			--divider-border-style: none;
 
 			&.elementor-widget-divider--view-line .elementor-divider-separator,
-			&:not([class*=elementor-widget-divider--view]) .elementor-divider-separator, // BC since v3.0.10
 			&:not(.elementor-widget-divider--view-line) .elementor-divider-separator:before,
 			&:not(.elementor-widget-divider--view-line) .elementor-divider-separator:after {
 				width: 100%;
