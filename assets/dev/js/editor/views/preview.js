@@ -5,14 +5,13 @@ import DocumentHelper from 'elementor-document/helper';
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
 const Preview = BaseSectionsContainerView.extend( {
+	initialize: function() {
+		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
+
+		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
+	},
 
 	getChildViewContainer: function() {
-		if ( ! this.$childViewContainer ) {
-			this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
-
-			this.$el.prepend( this.$childViewContainer );
-		}
-
 		return this.$childViewContainer;
 	},
 
@@ -96,7 +95,7 @@ const Preview = BaseSectionsContainerView.extend( {
 
 			this.$el.html( inner );
 		} else {
-			this.$el.append( addNewSectionView.$el );
+			this.$el.append( this.$childViewContainer, addNewSectionView.$el );
 		}
 	},
 } );
