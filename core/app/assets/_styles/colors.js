@@ -1,4 +1,5 @@
 import themeColors from 'elementor-styles/maps/colors/theme-colors.js';
+import tints from 'elementor-styles/maps/colors/tints.js';
 
 export default class Colors {
 	static theme( key ) {
@@ -6,6 +7,6 @@ export default class Colors {
 	}
 
 	static tints( key ) {
-
+		return tints[ key ] ? tints[ key ].hex : 'initial';
 	}
 }

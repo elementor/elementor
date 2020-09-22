@@ -1,3 +1,5 @@
+import { Styled } from 'elementor-app/styled';
+
 import './grid.scss';
 
 export default function Grid( props ) {
@@ -21,6 +23,12 @@ export default function Grid( props ) {
 		},
 		getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': props.spacing } : {},
 		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
+
+	return (
+		<Styled.Grid { ...props }>
+			{ props.children }
+		</Styled.Grid>
+	);
 
 	return (
 		<div style={ getStyle() } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>

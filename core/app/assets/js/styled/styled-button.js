@@ -1,12 +1,13 @@
-import styled, { ThemeProvider } from 'styled-components';
+import styled from 'styled-components';
 import _$ from 'elementor-styles';
+import Theme from './theme';
 
-const theme = {
-	backgroundColor: _$.themeColors( 'success' ),
+const defaultTheme = {
+	backgroundColor: _$.themeColors( 'info' ),
 };
 
 const darkTheme = {
-	backgroundColor: _$.themeColors( 'info' ),
+	backgroundColor: _$.themeColors( 'warning' ),
 };
 
 const Button = styled.div`
@@ -19,12 +20,10 @@ const Button = styled.div`
 	padding: 10px;
 `;
 
-const isDarkMode = false;
-
 export const StyledButton = ( props ) => (
-	<ThemeProvider theme={ isDarkMode ? darkTheme : theme }>
+	<Theme default={ defaultTheme } dark={ darkTheme }>
 		<Button>{ props.children }</Button>
-	</ThemeProvider>
+	</Theme>
 );
 
 StyledButton.propTypes = {

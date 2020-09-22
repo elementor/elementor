@@ -31,7 +31,7 @@ export default function Promotion() {
 	return (
 		<Layout allPartsButton={ <AllPartsButton promotion/> } promotion>
 			<section className="e-site-editor__promotion">
-				<Grid container className="page-header">
+				<Grid container className="page-header" spacing={20}>
 					<Grid item sm={7} justify="end">
 						<Heading variant="h1">
 							{ __( 'Create Full Site', 'elementor' ) }
