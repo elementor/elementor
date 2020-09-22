@@ -113,7 +113,7 @@ BaseElementView = BaseContainer.extend( {
 			this.container = new elementorModules.editor.Container( {
 				type: this.model.get( 'elType' ),
 				id: this.model.id,
-				model: this.getEditModel(),
+				model: this.model,
 				settings: settingsModel,
 				view: this,
 				parent: this._parent ? this._parent.getContainer() : {},
