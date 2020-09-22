@@ -83,7 +83,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		/**
 		 * @var Admin_Notices $admin_notices
 		 */
-		$admin_notices = Plugin::$instance->common->get_component( 'admin-notices' );
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
 			'description' => $message,
@@ -106,7 +106,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		/**
 		 * @var Admin_Notices $admin_notices
 		 */
-		$admin_notices = Plugin::$instance->common->get_component( 'admin-notices' );
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
 			'description' => $message,
@@ -130,7 +130,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		/**
 		 * @var Admin_Notices $admin_notices
 		 */
-		$admin_notices = Plugin::$instance->common->get_component( 'admin-notices' );
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
 			'description' => $message,
