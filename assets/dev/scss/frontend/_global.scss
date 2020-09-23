@@ -31,11 +31,6 @@
 		box-shadow: none;
 	}
 
-	// This accommodates a native WP (Gutenberg) class that is overridden by `.elementor img`.
-	.is-style-rounded img {
-		border-radius: 9999px;
-	}
-
 	.elementor-widget {
 
 		// Classic Editor & Gutenberg Compatibility
