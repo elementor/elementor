@@ -460,12 +460,17 @@ abstract class Document extends Controls_Stack {
 		$post_type_object = get_post_type_object( $this->get_main_post()->post_type );
 
 		$settings = SettingsManager::get_settings_managers_config();
+		$page_settings = [];
+
+		if ( isset( $settings['page'] ) ) {
+			$page_settings = $settings['page'];
+		}
 
 		$config = [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
 			'version' => $this->get_main_meta( '_elementor_version' ),
-			'settings' => $settings['page'],
+			'settings' => $page_settings,
 			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),

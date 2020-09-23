@@ -213,7 +213,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		self.debounceSave();
 	},
 
-	onElementorDocumentLoaded: function( document ) {
+	onElementorDocumentLoaded: function() {
 		this.updateStylesheet();
 
 		this.addPanelPage();
