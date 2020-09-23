@@ -5,6 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -98,6 +99,8 @@ class Module extends BaseModule {
 	 * @deprecated 3.1.0
 	 */
 	public function localize_settings() {
+		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
 		return [];
 	}
 
