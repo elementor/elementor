@@ -66,14 +66,6 @@ class Test_Deprecation extends Elementor_Test_Base {
 		], $versions );
 	}
 
-	public function test_get_soft_deprecated_version() {
-		$this->assertEquals( '3.4.0', $this->deprecation->get_soft_deprecated_version( '3.0.0' ) );
-	}
-
-	public function test_get_hard_deprecated_version() {
-		$this->assertEquals( '3.8.0', $this->deprecation->get_hard_deprecated_version( '3.0.0' ) );
-	}
-
 	public function test_compare_version() {
 		$tests = [
 			[
@@ -141,6 +133,15 @@ class Test_Deprecation extends Elementor_Test_Base {
 		foreach ( $tests as $test ) {
 			$this->assertEquals( $test['diff'], $this->deprecation->compare_version( $test['base_version'], $test['compare_version'] ) );
 		}
+	}
+
+	public function test_compare_version_major2_higher_then_9() {
+		// If you want to compare between 3.2.0 and 3.3.0, and there is also a 2.10.0 version, you cannot get the right comparison!.
+		$a_diff = $this->deprecation->compare_version( '2.10.0', '0.0.0' );
+		$b_diff = $this->deprecation->compare_version( '3.0.0', '0.0.0' );
+
+		// Since $this->deprecation->get_total_major cannot determine how much really versions between 3.2.0 and 3.3.0.
+		$this->assertEquals( $a_diff, $b_diff, 'They should be the same' );
 	}
 
 	public function test_compare_version_dynamic() {

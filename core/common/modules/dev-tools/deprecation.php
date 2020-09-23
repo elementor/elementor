@@ -19,16 +19,20 @@ class Deprecation {
 	/**
 	 * Get total of major.
 	 *
-	 * @param object $parsed_version
+	 * Since `get_total_major` cannot determine how much really versions between 3.2.0 and 3.3.0 if there is 2.10.0 version for example,
+	 * versions with major2 more then 9 will be added to total.
+	 *
+	 * @param array $parsed_version
 	 *
 	 * @return int
 	 */
 	public function get_total_major( $parsed_version ) {
-		$major2 = $parsed_version->major2;
+		$major1 = $parsed_version['major1'];
+		$major2 = $parsed_version['major2'];
 		$major2 = $major2 > 9 ? 9 : $major2;
 		$minor = 0;
 
-		$total = intval( "{$parsed_version->major1}{$major2}{$minor}" );
+		$total = intval( "{$major1}{$major2}{$minor}" );
 
 		if ( $total > 99 ) {
 			$total = $total / 10;
@@ -36,8 +40,8 @@ class Deprecation {
 			$total = intval( $total / 10 );
 		}
 
-		if ( $parsed_version->major2 > 9 ) {
-			$total += $parsed_version->major2 - 9;
+		if ( $parsed_version['major2'] > 9 ) {
+			$total += $parsed_version['major2'] - 9;
 		}
 
 		return $total;
@@ -62,29 +66,21 @@ class Deprecation {
 			return false;
 		}
 
-		$version->total = $this->get_total_major( $version );
+		$version['total'] = $this->get_total_major( $version ) + $count;
 
-		$version->total += $count;
+		$total = $version['total'];
 
-		if ( $version->total > 9 ) {
-			$version->major1 = intval( $version->total / 10 );
-			$version->major2 = intval( $version->total % 10 );
+		if ( $total > 9 ) {
+			$version['major1'] = intval( $total / 10 );
+			$version['major2'] = $total % 10;
 		} else {
-			$version->major1 = 0;
-			$version->major2 = $version->total;
+			$version['major1'] = 0;
+			$version['major2'] = $total;
 		}
 
-		$version->minor = 0;
+		$version['minor'] = 0;
 
 		return $this->implode_version( $version );
-	}
-
-	public function get_soft_deprecated_version( $version ) {
-		return $this->get_next_version( $version, self::SOFT_VERSIONS_COUNT );
-	}
-
-	public function get_hard_deprecated_version( $version ) {
-		return $this->get_next_version( $version, self::HARD_VERSIONS_COUNT );
 	}
 
 	/**
@@ -95,15 +91,19 @@ class Deprecation {
 	 * @return string
 	 */
 	public function implode_version( $parsed_version ) {
-		return "{$parsed_version->major1}.{$parsed_version->major2}.{$parsed_version->minor}";
+		$major1 = $parsed_version['major1'];
+		$major2 = $parsed_version['major2'];
+		$minor = $parsed_version['minor'];
+
+		return "{$major1}.{$major2}.{$minor}";
 	}
 
 	/**
-	 * Parse version('0.0.0') to an informative object.
+	 * Parse version('0.0.0') to an informative array.
 	 *
 	 * @param string $version
 	 *
-	 * @return object|false
+	 * @return array|false
 	 */
 	public function parse_version( $version ) {
 		$version_explode = explode( '.', $version );
@@ -116,7 +116,7 @@ class Deprecation {
 
 		list( $major1, $major2, $minor ) = $version_explode;
 
-		return (object) [
+		return [
 			'major1' => intval( $major1 ),
 			'major2' => intval( $major2 ),
 			'minor' => intval( $minor ),
@@ -125,6 +125,8 @@ class Deprecation {
 
 	/**
 	 * Compare two versions, result is equal to diff of major versions.
+	 * Notice: If you want to compare between 3.2.0 and 3.3.0, and there is also a 2.10.0 version, you cannot get the right comparison
+	 * Since $this->deprecation->get_total_major cannot determine how much really versions between 3.2.0 and 3.3.0.
 	 *
 	 * @param {string} $version1
 	 * @param {string} $version2
@@ -136,17 +138,19 @@ class Deprecation {
 		$version2 = self::parse_version( $version2 );
 
 		if ( $version1 && $version2 ) {
-			foreach ( [ $version1, $version2 ] as $version ) {
-				$version->total = self::get_total_major( $version );
+			$versions = [ &$version1, &$version2 ];
+
+			foreach ( $versions as $key => &$version ) {
+				$version['total'] = self::get_total_major( $version );
 			}
 
-			return $version1->total - $version2->total;
+			return $version1['total'] - $version2['total'];
 		}
 
 		return false;
 	}
 
-	public function deprecated_function( $function, $version, $replacement, $base_version = null ) {
+	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
 		if ( null === $base_version ) {
 			$base_version = $this->current_version;
 		}

@@ -13,13 +13,6 @@ class Module extends BaseModule {
 	 */
 	public $deprecation;
 
-	/**
-	 * @return \Elementor\Core\Base\Module|\Elementor\Core\Common\Modules\DevTools\Module
-	 */
-	public static function instance() {
-		return ( parent::instance() );
-	}
-
 	public function __construct() {
 		$this->deprecation = new Deprecation( ELEMENTOR_VERSION );
 	}
