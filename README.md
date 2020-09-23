@@ -1,4 +1,4 @@
-# Elementor Website Builder [![Build Status](https://travis-ci.org/pojome/elementor.svg?branch=master)](https://travis-ci.org/pojome/elementor) [![Coverage Status](https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master)](https://coveralls.io/github/pojome/elementor?branch=pojome/elementor) [![Dependency Status](https://david-dm.org/pojome/elementor/dev-status.svg)](https://david-dm.org/pojome/elementor#info=devDependencies) [![WordPress](https://img.shields.io/wordpress/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/)
+# Elementor Website Builder [![Build Status](https://travis-ci.org/pojome/elementor.svg?branch=master)](https://travis-ci.org/pojome/elementor) [![Coverage Status](https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master)](https://coveralls.io/github/pojome/elementor?branch=pojome/elementor) [![Dependency Status](https://david-dm.org/pojome/elementor/dev-status.svg)](https://david-dm.org/pojome/elementor#info=devDependencies) [![WordPress](https://img.shields.io/wordpress/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/) 
 
 
 **Contributors:** [elemntor](https://profiles.wordpress.org/elemntor), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet)  
@@ -6,7 +6,7 @@
 **Requires at least:** 5.0  
 **Tested up to:** 5.5  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.0.7  
+**Stable tag:** 3.0.9.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -219,6 +219,24 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 3.0.9 - 2020-09-17 ###
+* Fix: Kit settings get deleted when modifying the Site Title or Tagline in WordPress Settings and Customizer screens ([#12540](https://github.com/elementor/elementor/issues/12540), [#12538](https://github.com/elementor/elementor/issues/12538), [#12562](https://github.com/elementor/elementor/issues/12562))
+
+### 3.0.8.1 - 2020-09-14 ###
+* Fix: Reverted Shape Dividers are in front other elements in Chrome 85 fix due to display glitches ([#12393](https://github.com/elementor/elementor/issues/12393))
+* Fix: Auto Columns control setting causes layout to be displayed in one row in a Social icons ([Topic](https://wordpress.org/support/topic/sloppy-updates/), [#12519](https://github.com/elementor/elementor/issues/12519))
+
+### 3.0.8 - 2020-09-14 ###
+* Fix: Additional cases of Global Style inconsistencies in Editor and Frontend ([#12363](https://github.com/elementor/elementor/issues/12363))
+* Fix: Edit with Elementor button is missing from the admin top bar in some cases since WordPress 5.4 ([#11728](https://github.com/elementor/elementor/issues/11728), [#12175](https://github.com/elementor/elementor/issues/12175))
+* Fix: Unexpected columns view when Inner Section is muted ([#12376](https://github.com/elementor/elementor/issues/12376))
+* Fix: Some Shape Dividers are in front other elements in Chrome 85 ([#12393](https://github.com/elementor/elementor/issues/12393))
+* Fix: JS error `elementorCommon` is undefined ([#12323](https://github.com/elementor/elementor/issues/12323), Props [@shimondoodkin](https://github.com/shimondoodkin))
+* Fix: Site description doesn't get updated from the 'Customizer' screen
+* Fix: When Global values aren't available don't return an empty object
+* Fix: Message After Submit RTL icon spacing glitch
+* Fix: Select2 control dimensions adjustments
 
 ### 3.0.7 - 2020-09-09 ###
 * Fix: Additional cases of Global Style inconsistencies in Editor and Frontend ([#12363](https://github.com/elementor/elementor/issues/12363))

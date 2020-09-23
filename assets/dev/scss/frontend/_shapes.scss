@@ -9,7 +9,6 @@
 	width: 100%;
 	line-height: 0;
 	direction: ltr; // Fix for RTL pages
-	z-index: -1; // Fix for Chrome 85 bug that brings shape to front when flipped and inverted
 
 	&-top {
 		top: -1px;
