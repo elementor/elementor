@@ -16,6 +16,13 @@ class Test_Document extends Elementor_Test_Base {
 
 		$default_route_excepted = 'panel/elements/categories';
 		$document = Plugin::$instance->documents->get( $this->factory()->create_and_get_default_post()->ID );
+
+		query_posts( [
+			'p' => $document->get_main_id(),
+		] );
+
+		the_post();
+
 		$config = $document->get_config();
 
 		$this->assertEquals( $default_route_excepted, $config['panel']['default_route'],
