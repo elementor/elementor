@@ -11,6 +11,7 @@ use Elementor\User;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
+use Elementor\Core\Settings\Page\Manager as PageManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -34,6 +35,11 @@ abstract class Document extends Controls_Stack {
 	const PAGE_META_KEY = '_elementor_page_settings';
 
 	private $main_id;
+
+	/**
+	 * @var bool
+	 */
+	private $is_saving = false;
 
 	private static $properties = [];
 
@@ -519,6 +525,8 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
+		$this->set_is_saving( true );
+
 		/**
 		 * Before document save.
 		 *
@@ -574,7 +582,28 @@ abstract class Document extends Controls_Stack {
 		 */
 		do_action( 'elementor/document/after_save', $this, $data );
 
+		$this->set_is_saving( false );
+
 		return true;
+	}
+
+	/**
+	 * @param array $new_settings
+	 *
+	 * @return static
+	 */
+	public function update_settings( array $new_settings ) {
+		$document_settings = $this->get_meta( PageManager::META_KEY );
+
+		if ( ! $document_settings ) {
+			$document_settings = [];
+		}
+
+		$this->save_settings(
+			array_replace_recursive( $document_settings, $new_settings )
+		);
+
+		return $this;
 	}
 
 	/**
@@ -1100,6 +1129,25 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $last_edited;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function is_saving() {
+		return $this->is_saving;
+	}
+
+	/**
+	 * @param $is_saving
+	 *
+	 * @return $this
+	 */
+	public function set_is_saving( $is_saving ) {
+		$this->is_saving = $is_saving;
+
+		return $this;
 	}
 
 	/**

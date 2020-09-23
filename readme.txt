@@ -1,72 +1,45 @@
-=== Elementor Page Builder ===
+=== Elementor Website Builder ===
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 3.0.2
+Stable tag: 3.0.9.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-The most advanced frontend drag & drop page builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
+The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
 
 == Description ==
 
 https://www.youtube.com/watch?v=kB4U67tiQLA
 
-It's about time for a live page builder, with no limits of design. A page builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
+Introducing a WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
 
-It's time for **[Elementor Page Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**.
+It's time for **[Elementor Website Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**.
+
+= The leading website builder for any purpose =
+Whether you’re a web designer looking for a way to achieve pixel-perfect websites, a marketer looking to get online fast or a developer who wants to expand their capabilities, Elementor’s website builder has what you need - intuitive drag-and-drop Editor, advanced design features and a full open-source approach.
 
 = Faster. Much faster. =
-Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop page builder, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
+Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop website builder, instant live edit, instant page load. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
 
 = Live design. Truly live. =
-Never again work on the backend and guess what the frontend will look like. With Elementor page builder, you edit the page and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode. It also works perfectly with or without Gutenberg.
+Never again work on the backend and guess what the frontend will look like. With Elementor, you’re editing the site live, and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode. It also works perfectly with or without Gutenberg.
 
-= Surprises you won’t see anywhere else. =
-With Elementor's unique features, you can create websites that have that certain 'designer touch'. Among our page builder features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
+= Professional features right out of the box =
+With Elementor’s unique features, you can create websites that have that certain ‘designer touch’. Among our design features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
 
-= Pre-Designed Templates & Blocks =
-Choose from 100+ of beautiful full page [WordPress templates](https://library.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and customize them to make them your own. You can also build your page by choosing from 300+ Blocks.
+= 100s of Pre-Designed Templates & Blocks =
+Choose from 100+ of beautiful full page [WordPress templates](https://library.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and customize them to make them your own. You can also build your website by choosing and combining from over 300+ Blocks.
 
 Blocks are pre-designed section templates that can be easily combined into any page. Blocks include a variety of categories: services, testimonials, call to action and more. Save and reuse Elementor templates on different pages, or export them to a different website with a click.
 
-= Mobile First. Mobile Editing. =
-Elementor Page Builder comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size, padding and margin per device, to reverse column ordering, this is the most powerful mobile page builder for creating perfect responsive websites.
+= Responsive Live Editing =
+Elementor Website  Builder comes with an exclusive toolset, that lets you create a truly responsive website in a whole new and visual way. From different font size, padding and margin per device, to reverse column ordering, this is the most powerful mobile site builder for creating perfect responsive websites.
 
-= Undo / Redo & Revision History. =
-Our page builder includes undo and redo for any action you make. Click on Ctrl / Cmd + Z, or browse through the complete list of actions. Want to go back ever further? Switch to Revisions to view a complete list of all earlier saved versions of the page.
-
-= Canvas. A Blank Page Template for Landing Pages. =
-Design your entire page in the page builder. No header, no footer, just Elementor. This is perfect for landing pages and coming soon pages. Canvas works on any theme, and lets you get rid of the header area so you get a blank template to work on.
-
-= Built-in Maintenance Mode & Under Construction. =
-Need to get your site offline for maintenance? Use Elementor page builder's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page.
-
-= Try Elementor Pro. The Best page Builder for WordPress. =
-[Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) vastly improves your design workflow and lets you design faster and better than ever. With Elementor Pro, everything is done visually and without code.
-
-Making changes to your theme shouldn't be so hard. Endless coding, dealing with developers, switching themes. The [Theme Builder](https://elementor.com/theme-builder/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) in Elementor Pro turns the entire process of creating WordPress websites 100% visual including your site's header, footer, single post and archive page design.
-
-There are many other [features](https://elementor.com/features/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to help you build better websites:
-
-* Visual and intuitive form builder
-* Marketing automation and CRM integrations
-* Custom fonts
-* Role manager
-* Blog post layout widget
-* Image & video sliders
-* WooCommerce
-* Global widgets
-* Custom CSS
-* Animated headlines
-* And much more.
-
-Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
-
-= 30 free widgets and counting =
-We packed 30 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
+= 40+ free widgets and counting =
+We packed 40+ of the most useful widgets into our website builder. True, that’s way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
@@ -100,11 +73,35 @@ We packed 30 of the most useful widgets into our page builder. True, that's way 
 - **Columns**. Create inner columns within the column.
 - **And counting...**
 
-= Multilingual & RTL supported. =
-We've integrated RTL and multi language support within the framework of our page builder, so you get a translated panel out of the box, as well as RTL typography support, and developer options to add even more languages.
+= Take it a step further with Elementor Pro =
+The most professional WordPress Website Builder out there. [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) vastly improves your design workflow and lets you design faster and better than ever. Elementor Pro gives you access to more professional widgets, options and tools to really push your to the next level.
+
+Making changes to your theme shouldn't be so hard. Endless coding, dealing with developers, switching themes. The [Theme Builder](https://go.elementor.com/theme-builder/) in Elementor Pro turns the entire process of creating WordPress websites 100% visual including your site's header, footer, single post and archive page design.
+
+There are many other [features](https://elementor.com/features/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to help you build better websites:
+
+* [Motion Effects](https://go.elementor.com/motion-effects/)
+* [Industry leading Theme Builder](https://go.elementor.com/theme-builder/)
+* [WooCommerce Builder](https://go.elementor.com/woocomemrce-builder/)
+* [Advanced Popup Builder](https://go.elementor.com/popup-builder/)
+* [Visual and intuitive form builder](https://go.elementor.com/form-builder/)
+* Marketing automation and CRM integrations
+* Custom fonts & icons
+* Role manager
+* Blog post layout widget
+* Image & video sliders
+* Global widgets
+* Custom CSS
+* And many more.
+
+Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
+
+= Translated to 56+ Languages & RTL supported. =
+We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (56+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Developer API. =
-Elementor page builder is free and open source. It's the perfect page builder plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons already developed.
+Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
+
 To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 = Translations =
@@ -150,7 +147,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 = Documentation and Support =
 - For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 - If you have any more questions, visit our support on the [Plugin's Forum](https://wordpress.org/support/plugin/elementor).
-- For more information about features, FAQs and documentation, check out our website at [Elementor Page Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- For more information about features, FAQs and documentation, check out our website at [Elementor website Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 = Liked Elementor? =
 - Join our [Facebook Group](https://www.facebook.com/groups/Elementors/).
@@ -199,7 +196,7 @@ Sure can! Plugin widgets that appear in the WordPress widgets menu will also app
 
 **Do I need to know how to code to use Elementor?**
 
-Absolutely not! Elementor is a live frontend page builder, that lets you reach a high end design with no need to write even a line of code or CSS.
+Absolutely not! Elementor is a live frontend website builder, that lets you reach a high end design with no need to write even a line of code or CSS.
 
 **Will Elementor work with RTL or other languages?**
 
@@ -220,6 +217,69 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.9 - 2020-09-17 =
+* Fix: Kit settings get deleted when modifying the Site Title or Tagline in WordPress Settings and Customizer screens ([#12540](https://github.com/elementor/elementor/issues/12540), [#12538](https://github.com/elementor/elementor/issues/12538), [#12562](https://github.com/elementor/elementor/issues/12562))
+
+= 3.0.8.1 - 2020-09-14 =
+* Fix: Reverted Shape Dividers are in front other elements in Chrome 85 fix due to display glitches ([#12393](https://github.com/elementor/elementor/issues/12393))
+* Fix: Auto Columns control setting causes layout to be displayed in one row in a Social icons ([Topic](https://wordpress.org/support/topic/sloppy-updates/), [#12519](https://github.com/elementor/elementor/issues/12519))
+
+= 3.0.8 - 2020-09-14 =
+* Fix: Additional cases of Global Style inconsistencies in Editor and Frontend ([#12363](https://github.com/elementor/elementor/issues/12363))
+* Fix: Edit with Elementor button is missing from the admin top bar in some cases since WordPress 5.4 ([#11728](https://github.com/elementor/elementor/issues/11728), [#12175](https://github.com/elementor/elementor/issues/12175))
+* Fix: Unexpected columns view when Inner Section is muted ([#12376](https://github.com/elementor/elementor/issues/12376))
+* Fix: Some Shape Dividers are in front other elements in Chrome 85 ([#12393](https://github.com/elementor/elementor/issues/12393))
+* Fix: JS error `elementorCommon` is undefined ([#12323](https://github.com/elementor/elementor/issues/12323), Props [@shimondoodkin](https://github.com/shimondoodkin))
+* Fix: Site description doesn't get updated from the 'Customizer' screen
+* Fix: When Global values aren't available don't return an empty object
+* Fix: Message After Submit RTL icon spacing glitch
+* Fix: Select2 control dimensions adjustments
+
+= 3.0.7 - 2020-09-09 =
+* Fix: Additional cases of Global Style inconsistencies in Editor and Frontend ([#12363](https://github.com/elementor/elementor/issues/12363))
+* Fix: Plugins conflict on non-admin login to the dashboard ([#12383](https://github.com/elementor/elementor/issues/12383), [#12388](https://github.com/elementor/elementor/issues/12388))
+* Fix: PHP error undefined method `add_repeater_row` caused data updater issues and server overload ([#12305](https://github.com/elementor/elementor/issues/12305))
+* Fix: Global Colors and Fonts not being saved when created in Site Settings ([#12272](https://github.com/elementor/elementor/issues/12272))
+* Fix: Shared link is attached to post text in Twitter Share Button widget (Props [@LensDigitalUK](https://github.com/LensDigitalUK))
+* Fix: "No route was found matching the URL and request method" error when using plain permalinks
+* Fix: Site favicon that was set from WordPress customizer is missing in Site Identity screen
+
+= 3.0.6 - 2020-09-06 =
+* Tweak: Added dismiss button for data updater notices
+* Fix: Global Colors and Fonts are missing on front-end ([#12363](https://github.com/elementor/elementor/issues/12363))
+* Fix: Database update script causes unexpected errors ([#12305](https://github.com/elementor/elementor/issues/12305))
+* Fix: Custom Breakpoints stopped working since v3.0 ([#12320](https://github.com/elementor/elementor/issues/12320))
+* Fix: Shortcuts for Navigator is not correct ([#12365](https://github.com/elementor/elementor/issues/12365))
+* Fix: Can't close a Navigator since v3.0 ([#11836](https://github.com/elementor/elementor/issues/11836))
+* Fix: Select field dropdown caret visibility issue in edge cases in Form widget ([#12053](https://github.com/elementor/elementor/issues/12053))
+* Fix: Missing iFrame `title` attribute in Google Maps widget ([#9955](https://github.com/elementor/elementor/issues/9955))
+* Fix: Missing default size unit selection in default Global Font properties `font-size` and `line-height` controls
+* Fix: Toggle widget title style missing in Editor
+* Fix: Exiting Site Settings menu after accessing it from "Manage Global Fonts/Colors" Global dropdown menu throws a JS error
+
+= 3.0.5 - 2020-08-31 =
+* Fix: Motion Effects not working when assigned to a column and throws JS error when DOM optimization is disabled ([#12299](https://github.com/elementor/elementor/issues/12299), [#12275](https://github.com/elementor/elementor/issues/12275))
+* Fix: Elements behave unexpectedly in the Editor when a custom repeater control is added to Column and Section elements ([#12275](https://github.com/elementor/elementor/issues/12275),  [#12242](https://github.com/elementor/elementor/issues/12242))
+* Fix: Glitches in migration script for Gap Between Widgets global setting ([#12298](https://github.com/elementor/elementor/issues/12298))
+* Fix: Console error `elementorCommon is undefined` (Props [@shimondoodkin](https://github.com/shimondoodkin))
+* Fix: Missing translation string for 'color_picker' in the Color Picker title
+* Fix: Revisions won't get updated to the correct one
+
+= 3.0.4 - 2020-08-30 =
+* Tweak: Added Skype and Viber to the allowed URI protocols ([#11619](https://github.com/elementor/elementor/issues/11619))
+* Tweak: Replaced WordPress "Learn More" links with dynamic links for better control over time ([#12312](https://github.com/elementor/elementor/issues/12312))
+* Fix: Global Colors and Fonts inconsistencies between Editor and Frontend ([#12245](https://github.com/elementor/elementor/issues/12245), [#12235](https://github.com/elementor/elementor/issues/12235), [#12303](https://github.com/elementor/elementor/issues/12303), [#12249](https://github.com/elementor/elementor/issues/12249))
+* Fix: Global dropdown is not available for all users
+* Fix: Removed unused strings
+
+= 3.0.3 - 2020-08-27 =
+* Tweak: Added option to re-migrate Global Colors and Fonts from earlier versions
+* Fix: Repeater controls doesn't work in some edge cases
+* Fix: Load Theme Builder with relevant UI theme
+* Fix: Dialog texts are not center aligned in Theme Builder
+* Fix: Changes are not reflecting on frontend when CSS Print Method is set to Internal Embedding
+* Fix: Icon List widget does not use render attribute (Props [@ibndawood](https://github.com/ibndawood))
 
 = 3.0.2 - 2020-08-26 =
 * Tweak: Added Select2 And File Import Components to Theme Builder application
