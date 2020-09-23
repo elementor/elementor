@@ -92,11 +92,17 @@ abstract class Document extends Controls_Stack {
 	 * @static
 	 */
 	public static function get_editor_panel_config() {
+		$default_route = 'panel/elements/categories';
+
+		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
+			$default_route = 'panel/page-settings/settings';
+		}
+
 		return [
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
-			'default_route' => 'panel/elements/categories',
+			'default_route' => $default_route,
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
@@ -454,12 +460,17 @@ abstract class Document extends Controls_Stack {
 		$post_type_object = get_post_type_object( $this->get_main_post()->post_type );
 
 		$settings = SettingsManager::get_settings_managers_config();
+		$page_settings = [];
+
+		if ( isset( $settings['page'] ) ) {
+			$page_settings = $settings['page'];
+		}
 
 		$config = [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
 			'version' => $this->get_main_meta( '_elementor_version' ),
-			'settings' => $settings['page'],
+			'settings' => $page_settings,
 			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
