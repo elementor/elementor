@@ -217,10 +217,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.updateStylesheet();
 
 		this.addPanelPage();
-
-		if ( ! elementor.userCan( 'design' ) ) {
-			$e.route( 'panel/page-settings/settings' );
-		}
 	},
 
 	destroy: function() {

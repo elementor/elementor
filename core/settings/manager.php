@@ -149,7 +149,6 @@ class Manager {
 
 		foreach ( self::$settings_managers as $name => $manager ) {
 			$settings_model = $manager->get_model_for_config();
-
 			$tabs = $settings_model->get_tabs_controls();
 
 			if ( ! $user_can ) {

@@ -5,22 +5,13 @@ import DocumentHelper from 'elementor-document/helper';
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
 const Preview = BaseSectionsContainerView.extend( {
+	initialize: function() {
+		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
+
+		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
+	},
 
 	getChildViewContainer: function() {
-		if ( ! this.$childViewContainer ) {
-			this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
-
-			if ( elementor.config.legacyMode.elementWrappers ) {
-				const inner = jQuery( '<div>', { class: 'elementor-inner' } );
-
-				inner.append( this.$childViewContainer );
-
-				this.$el.prepend( inner );
-			} else {
-				this.$el.prepend( this.$childViewContainer );
-			}
-		}
-
 		return this.$childViewContainer;
 	},
 
@@ -89,14 +80,27 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	onRender: function() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
+		let $contentContainer;
+
+		if ( elementor.config.legacyMode.elementWrappers ) {
+			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );
+
+			this.$el.html( $inner );
+
+			$contentContainer = $inner;
+		} else {
+			$contentContainer = this.$el;
 		}
-		var addNewSectionView = new AddSectionView();
 
-		addNewSectionView.render();
+		$contentContainer.html( this.$childViewContainer );
 
-		this.$el.append( addNewSectionView.$el );
+		if ( elementor.userCan( 'design' ) ) {
+			const addNewSectionView = new AddSectionView();
+
+			addNewSectionView.render();
+
+			$contentContainer.append( addNewSectionView.$el );
+		}
 	},
 } );
 

@@ -661,6 +661,8 @@ class Upgrades {
 
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
+			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
 			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
 			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
 
@@ -688,7 +690,7 @@ class Upgrades {
 			];
 
 			foreach ( $settings_to_slider as $setting ) {
-				if ( ! empty( $current_settings[ $setting ] ) ) {
+				if ( isset( $current_settings[ $setting ] ) ) {
 					$current_settings[ $setting ] = [
 						'unit' => 'px',
 						'size' => $current_settings[ $setting ],
@@ -859,47 +861,6 @@ class Upgrades {
 		};
 
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
-	}
-
-	/**
-	 * Re move `space_between_widgets` settings to kit.
-	 *
-	 * Due to a bug in previous upgrade, the setting `space_between_widgets` with a value `0` didn't upgraded properly.
-	 * Try to re move it, if it's not already set manually in the kit.
-	 *
-	 * @param $updater
-	 *
-	 * @return false|mixed
-	 */
-	public static function _v_3_0_5_re_move_space_between_widgets_to_kit( $updater ) {
-		$callback = function( $kit_id ) {
-			$kit = Plugin::$instance->documents->get( $kit_id );
-
-			if ( ! $kit ) {
-				self::notice( 'Kit not found. nothing to do.' );
-				return;
-			}
-
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
-			$old_settings = get_option( '_elementor_general_settings', [] );
-			$kit_settings = $kit->get_meta( $meta_key );
-
-			if ( ! $kit_settings ) {
-				$kit_settings = [];
-			}
-
-			if ( isset( $old_settings['space_between_widgets'] ) && ! isset( $kit_settings['space_between_widgets'] ) ) {
-				$kit_settings['space_between_widgets'] = [
-					'unit' => 'px',
-					'size' => $old_settings['space_between_widgets'],
-				];
-
-				$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
-				$page_settings_manager->save_settings( $kit_settings, $kit_id );
-			}
-		};
-
-		return self::move_settings_to_kit( $callback, $updater );
 	}
 
 	/**
