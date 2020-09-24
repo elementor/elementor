@@ -83,7 +83,7 @@ class Theme extends Base {
 	 * @return \WP_Theme WordPress theme object.
 	 */
 	protected function _get_theme() {
-		_deprecated_function( __METHOD__, '3.1.0', 'get_theme' );
+		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'get_theme' );
 
 		return $this->get_theme();
 	}

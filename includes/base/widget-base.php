@@ -280,7 +280,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @deprecated since 3.1.0
 	 */
 	protected function _register_skins() {
-		//_deprecated_function( __METHOD__, '3.1.0', 'register_skins' );
+		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'register_skins' );
 
 		$this->register_skins();
 	}

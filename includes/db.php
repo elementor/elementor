@@ -115,7 +115,7 @@ class DB {
 	 * @return array Decoded JSON data from post meta.
 	 */
 	protected function _get_json_meta( $post_id, $key ) {
-		_deprecated_function( __METHOD__, '3.1.0' );
+		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
 		$meta = get_post_meta( $post_id, $key, true );
 
