@@ -5,6 +5,7 @@ use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Finder\Module as Finder;
 use Elementor\Core\Common\Modules\Connect\Module as Connect;
+use Elementor\Core\Common\Modules\DevTools\Module as Devtools;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -61,6 +62,7 @@ class App extends BaseApp {
 		}
 
 		$this->add_component( 'connect', new Connect() );
+		$this->add_component( 'devTools', new Devtools() );
 	}
 
 	/**
