@@ -1,8 +1,5 @@
 import styled, { css } from 'styled-components';
-import _$, { direction } from 'elementor-styles';
-import Utils from "../utils/utils";
-
-console.log( 'direction', direction );
+import _$ from 'elementor-styles';
 
 const Grid = styled.div`
 	${ ( props ) => props.container && css`

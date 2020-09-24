@@ -110,7 +110,7 @@ export default class Button extends React.Component {
 		if ( this.props.url ) {
 			if ( 0 === this.props.url.indexOf( 'http' ) ) {
 				return (
-					<Styled.Button>
+					<Styled.Button { ...this.props }>
 						<a href={ this.props.url } target={ this.props.target } { ...attributes }>
 							{ buttonContent }
 						</a>
@@ -132,7 +132,7 @@ export default class Button extends React.Component {
 			return (
 				<LocationProvider history={ router.appHistory }>
 					<Link to={ this.props.url } { ...attributes } >
-						<Styled.Button>
+						<Styled.Button { ...this.props }>
 							{ buttonContent }
 						</Styled.Button>
 					</Link>
@@ -143,7 +143,7 @@ export default class Button extends React.Component {
 		// { ...attributes }
 
 		return (
-			<Styled.Button>
+			<Styled.Button { ...this.props }>
 				{ buttonContent }
 			</Styled.Button>
 		);

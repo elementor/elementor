@@ -10,48 +10,54 @@ const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
-const moduleRules = {
-	rules: [
-		// {
-		// 	enforce: 'pre',
-		// 	test: /\.js$/,
-		// 	exclude: /node_modules/,
-		// 	loader: 'eslint-loader',
-		// 	options: {
-		// 		failOnError: true,
-		// 	}
-		// },
-		{
-			test: /core[/\\]app.*\.(s)?css$/i,
-			use: [
-				{
-					loader: './loaders/app-imports.js',
-				},
-			],
-		},
-		{
-			test: /\.js$/,
-			exclude: /node_modules/,
-			use: [
-				{
-					loader: 'babel-loader',
-					query: {
-						presets: [ '@wordpress/default' ],
-						plugins: [
-							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
-							[ '@babel/plugin-transform-react-jsx', {
-								'pragmaFrag': 'React.Fragment',
-							} ],
-							[ '@babel/plugin-proposal-class-properties' ],
-							[ '@babel/plugin-transform-runtime' ],
-							[ '@babel/plugin-transform-modules-commonjs' ],
-							[ '@babel/plugin-proposal-optional-chaining' ],
-						],
+const moduleRules = ( env ) => {
+	return {
+		rules: [
+			// {
+			// 	enforce: 'pre',
+			// 	test: /\.js$/,
+			// 	exclude: /node_modules/,
+			// 	loader: 'eslint-loader',
+			// 	options: {
+			// 		failOnError: true,
+			// 	}
+			// },
+			{
+				test: /core[/\\]app.*\.(s)?css$/i,
+				use: [
+					{
+						loader: './loaders/app-imports.js',
 					},
-				},
-			],
-		},
-	],
+				],
+			},
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'babel-loader',
+						query: {
+							presets: [ '@wordpress/default' ],
+							plugins: [
+								[ '@wordpress/babel-plugin-import-jsx-pragma' ],
+								[ '@babel/plugin-transform-react-jsx', {
+									'pragmaFrag': 'React.Fragment',
+								} ],
+								[ 'babel-plugin-styled-components',	{
+									'displayName': 'dev' === env,
+								}
+								],
+								[ '@babel/plugin-proposal-class-properties' ],
+								[ '@babel/plugin-transform-runtime' ],
+								[ '@babel/plugin-transform-modules-commonjs' ],
+								[ '@babel/plugin-proposal-optional-chaining' ],
+							],
+						},
+					},
+				],
+			},
+		],
+	};
 };
 
 const entry = {
@@ -106,11 +112,11 @@ const baseConfig = {
 	devtool: 'source-map',
 	externals,
 	plugins,
-	module: moduleRules,
 	resolve: aliasList,
 };
 
 const webpackConfig = Object.assign( {}, baseConfig, {
+	module: moduleRules( 'dev' ),
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
@@ -122,6 +128,7 @@ const webpackConfig = Object.assign( {}, baseConfig, {
 } );
 
 const webpackProductionConfig = Object.assign( {}, baseConfig, {
+	module: moduleRules( 'prod' ),
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),

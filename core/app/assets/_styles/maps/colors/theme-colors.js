@@ -9,5 +9,6 @@ export default {
 	cta: _palette[ 'red-rose-garnet' ],
 	danger: _palette[ 'red-carnelian' ],
 	success: _palette[ 'green-spandex' ],
+	primary: _palette[ 'green-spandex' ],
 	warning: _palette[ 'yellow-hot-sun' ],
 };

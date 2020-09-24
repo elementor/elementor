@@ -10,8 +10,7 @@ export default {
 	darkTints: null,
 	spacing: Spacing.get,
 	type: null,
-	breakpoints: Breakpoints.get,
+	breakpoints: Breakpoints,
 	utils: Utils,
+	direction: Direction.get,
 }
-
-export const direction = ( value ) => Direction.get( value );
