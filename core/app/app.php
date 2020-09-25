@@ -49,6 +49,11 @@ class App extends BaseApp {
 			return $menu;
 		}
 
+		// Non admin role / custom wp menu.
+		if ( empty( $submenu[ Source_Local::ADMIN_MENU_SLUG ] ) ) {
+			return $menu;
+		}
+
 		// Hack to add a link to sub menu.
 		foreach ( $submenu[ Source_Local::ADMIN_MENU_SLUG ] as &$item ) {
 			if ( self::PAGE_ID === $item[2] ) {
@@ -129,6 +134,13 @@ class App extends BaseApp {
 		Plugin::$instance->common->register_scripts();
 
 		wp_register_style(
+			'select2',
+			$this->get_css_assets_url( 'e-select2', 'assets/lib/e-select2/css/' ),
+			[],
+			'4.0.6-rc.1'
+		);
+
+		wp_register_style(
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
@@ -148,6 +160,7 @@ class App extends BaseApp {
 			[
 				'elementor-icons',
 				'elementor-common',
+				'select2',
 			],
 			ELEMENTOR_VERSION
 		);
@@ -163,12 +176,24 @@ class App extends BaseApp {
 			true
 		);
 
+		wp_register_script(
+			'select2',
+			$this->get_js_assets_url( 'e-select2.full', 'assets/lib/e-select2/js/' ),
+			[
+				'jquery',
+			],
+			'4.0.6-rc.1',
+			true
+		);
+
 		wp_enqueue_script(
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
 			[
+				'wp-i18n',
 				'react',
 				'react-dom',
+				'select2',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -176,7 +201,8 @@ class App extends BaseApp {
 
 		$this->enqueue_dark_theme_detection_script();
 
-		wp_set_script_translations( 'elementor-app', 'elementor', ELEMENTOR_PATH . 'languages' );
+		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
+		wp_set_script_translations( 'elementor-app', 'elementor' );
 
 		$this->print_config();
 	}

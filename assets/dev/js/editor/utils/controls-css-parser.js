@@ -243,7 +243,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		const globalArgs = $e.data.commandExtractArgs( globalKey ),
 			data = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
 
-		if ( ! data?.id ) {
+		if ( ! data?.value ) {
 			return;
 		}
 
@@ -253,7 +253,13 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 		// it's a global settings with additional controls in group.
 		if ( control.groupType ) {
-			const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' ).replace( /(_tablet|_mobile)$/, '' );
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+
+			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
+				return;
+			}
+
+			propertyName = propertyName.replace( '_', '-' );
 
 			value = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
 		} else {

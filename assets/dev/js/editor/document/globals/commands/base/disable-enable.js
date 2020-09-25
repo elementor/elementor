@@ -2,7 +2,7 @@ import CommandDisableEnable from 'elementor-document/base/command-disable-enable
 
 export default class DisableEnable extends CommandDisableEnable {
 	static getName() {
-		return 'globals';
+		return 'Global';
 	}
 
 	static getEnableCommand() {

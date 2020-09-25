@@ -39,6 +39,8 @@ export const tests = () => {
 	require( './core/editor/document/ui/component.spec' );
 	require( './core/editor/document/save/component.spec' );
 
+	require( './core/kits/assets/js/component.spec' );
+
 	// JS API editor data.
 	require( './core/editor/data/globals/component.spec' );
 };

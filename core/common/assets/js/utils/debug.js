@@ -1,3 +1,4 @@
+// Moved from assets/dev/js/editor/utils
 var Debug = function() {
 	var self = this,
 		errorStack = [],
@@ -133,4 +134,4 @@ var Debug = function() {
 	init();
 };
 
-module.exports = new Debug();
+module.exports = Debug;

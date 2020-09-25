@@ -7,8 +7,6 @@ export class Open extends Command {
 
 			args.model.trigger( 'request:edit' );
 		} else {
-			this.component.openEditor( args.model, args.view );
-
 			$e.route( this.component.getDefaultRoute(), args );
 		}
 
