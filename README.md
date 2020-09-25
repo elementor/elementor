@@ -1,4 +1,4 @@
-# Elementor Website Builder [![Build Status](https://travis-ci.org/pojome/elementor.svg?branch=master)](https://travis-ci.org/pojome/elementor) [![Coverage Status](https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master)](https://coveralls.io/github/pojome/elementor?branch=pojome/elementor) [![Dependency Status](https://david-dm.org/pojome/elementor/dev-status.svg)](https://david-dm.org/pojome/elementor#info=devDependencies) [![WordPress](https://img.shields.io/wordpress/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/) 
+# Elementor Website Builder [![Build Status](https://travis-ci.org/pojome/elementor.svg?branch=master)](https://travis-ci.org/pojome/elementor) [![Coverage Status](https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master)](https://coveralls.io/github/pojome/elementor?branch=pojome/elementor) [![Dependency Status](https://david-dm.org/pojome/elementor/dev-status.svg)](https://david-dm.org/pojome/elementor#info=devDependencies) [![WordPress](https://img.shields.io/wordpress/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/)
 
 
 **Contributors:** [elemntor](https://profiles.wordpress.org/elemntor), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet)  
@@ -6,7 +6,7 @@
 **Requires at least:** 5.0  
 **Tested up to:** 5.5  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.0.9.1  
+**Stable tag:** 3.0.10  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -219,6 +219,18 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 3.0.10 - 2020-09-23 ###
+* Fix: `space_between_widgets` is missing on upgrade in some cases ([#12298](https://github.com/elementor/elementor/issues/12298))
+* Fix: Global Color does not apply to some patterns in Divider widget ([#12501](https://github.com/elementor/elementor/issues/12501))
+* Fix: Users with "Access to edit content only" aren't able to access the Editor ([#12521](https://github.com/elementor/elementor/issues/12521))
+* Fix: If the default page layout is set to "Canvas" Headers and Footers cannot be edited ([#12509](https://github.com/elementor/elementor/issues/12509))
+* Fix: Global Color and Fonts that were deleted might cause style removal from the same element
+* Fix: Opacity indication is missing in the Global Color control dropdown and in the creation prompt
+* Fix: Wrong placement of "Add New" section in a Popup when using Optimized DOM mode
+* Fix: "Edit with Elementor" button is not in the correct location
+* Fix: Global Dropdown scrollbar has redundant border in Chromium based browsers
+* Fix: Entrance animation isn't working on edge cases in Tabs widget
 
 ### 3.0.9 - 2020-09-17 ###
 * Fix: Kit settings get deleted when modifying the Site Title or Tagline in WordPress Settings and Customizer screens ([#12540](https://github.com/elementor/elementor/issues/12540), [#12538](https://github.com/elementor/elementor/issues/12538), [#12562](https://github.com/elementor/elementor/issues/12562))

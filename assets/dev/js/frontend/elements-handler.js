@@ -1,14 +1,14 @@
-import accordionHandler from './handlers/accordion';
-import alertHandler from './handlers/alert';
-import counterHandler from './handlers/counter';
-import progressHandler from './handlers/progress';
-import tabsHandler from './handlers/tabs';
-import toggleHandler from './handlers/toggle';
-import videoHandler from './handlers/video';
-import imageCarouselHandler from './handlers/image-carousel';
-import textEditorHandler from './handlers/text-editor';
-import sectionHandler from './handlers/section/section';
-import columnHandler from './handlers/column';
+import Accordion from './handlers/accordion';
+import Alert from './handlers/alert';
+import Counter from './handlers/counter';
+import Progress from './handlers/progress';
+import Tabs from './handlers/tabs';
+import Toggle from './handlers/toggle';
+import Video from './handlers/video';
+import ImageCarousel from './handlers/image-carousel';
+import TextEditor from './handlers/text-editor';
+import sectionHandlers from './handlers/section/section';
+import columnHandlers from './handlers/column';
 import globalHandler from './handlers/global';
 
 module.exports = function( $ ) {
@@ -17,19 +17,19 @@ module.exports = function( $ ) {
 	// element-type.skin-type
 	const handlers = {
 		// Elements
-		section: sectionHandler,
-		column: columnHandler,
+		section: sectionHandlers,
+		column: columnHandlers,
 
 		// Widgets
-		'accordion.default': accordionHandler,
-		'alert.default': alertHandler,
-		'counter.default': counterHandler,
-		'progress.default': progressHandler,
-		'tabs.default': tabsHandler,
-		'toggle.default': toggleHandler,
-		'video.default': videoHandler,
-		'image-carousel.default': imageCarouselHandler,
-		'text-editor.default': textEditorHandler,
+		'accordion.default': Accordion,
+		'alert.default': Alert,
+		'counter.default': Counter,
+		'progress.default': Progress,
+		'tabs.default': Tabs,
+		'toggle.default': Toggle,
+		'video.default': Video,
+		'image-carousel.default': ImageCarousel,
+		'text-editor.default': TextEditor,
 	};
 
 	const handlersInstances = {};
@@ -38,13 +38,27 @@ module.exports = function( $ ) {
 		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 	};
 
-	const addElementsHandlers = function() {
-		$.each( handlers, function( elementName, funcCallback ) {
-			elementorFrontend.hooks.addAction( 'frontend/element_ready/' + elementName, funcCallback );
+	const addElementsHandlers = () => {
+		$.each( handlers, ( elementName, Handlers ) => {
+			const elementData = elementName.split( '.' );
+
+			elementName = elementData[ 0 ];
+
+			const skin = elementData[ 1 ] || null;
+
+			this.attachHandler( elementName, Handlers, skin );
 		} );
 	};
 
-	const init = function() {
+	const addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
+		skin = skin ? '.' + skin : '';
+
+		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }${ skin }`, ( $element ) => {
+			this.addHandler( Handler, { $element: $element }, true );
+		} );
+	};
+
+	this.init = function() {
 		self.initHandlers();
 	};
 
@@ -81,6 +95,14 @@ module.exports = function( $ ) {
 		}
 	};
 
+	this.attachHandler = ( elementName, Handlers, skin ) => {
+		if ( ! Array.isArray( Handlers ) ) {
+			Handlers = [ Handlers ];
+		}
+
+		Handlers.forEach( ( Handler ) => addHandlerWithHook( elementName, Handler, skin ) );
+	};
+
 	this.getHandlers = function( handlerName ) {
 		if ( handlerName ) {
 			return handlers[ handlerName ];
@@ -110,6 +132,4 @@ module.exports = function( $ ) {
 			elementorFrontend.hooks.doAction( 'frontend/element_ready/' + $scope.attr( 'data-widget_type' ), $scope, $ );
 		}
 	};
-
-	init();
 };
