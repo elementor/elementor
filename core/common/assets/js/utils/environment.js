@@ -6,8 +6,9 @@ const userAgent = navigator.userAgent,
 		edge: -1 !== userAgent.indexOf( 'Edg' ),
 		mac: -1 !== userAgent.indexOf( 'Macintosh' ),
 		safari: /^((?!chrome|android).)*safari/i.test( userAgent ),
+		opera: -1 !== userAgent.indexOf( 'OPR' ),
 	};
 
-environment.chrome = -1 !== userAgent.indexOf( 'Chrome' ) && -1 === userAgent.indexOf( 'OPR' ) && ! environment.edge;
+environment.chrome = -1 !== userAgent.indexOf( 'Chrome' ) && ! environment.opera && ! environment.edge;
 
 export default environment;
