@@ -250,7 +250,7 @@ class Widget_Button extends Widget_Base {
 					'flyover' => __( 'Flyover', 'elementor' ),
 					],
 				],
-				'selectors' => [
+				'selector' => [
 					'{{WRAPPER}} .elementor-button .elementor-flyover-icon'
 				],
 			]
