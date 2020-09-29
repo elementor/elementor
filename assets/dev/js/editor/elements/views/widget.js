@@ -135,7 +135,6 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	handleEmptyWidget: function() {
-		// TODO: REMOVE THIS !!
 		this.$el
 			.addClass( 'elementor-widget-empty' )
 			.append( '<i class="elementor-widget-empty-icon ' + this.getEditModel().getIcon() + '"></i>' );
