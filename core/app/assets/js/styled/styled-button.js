@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 import _$ from 'elementor-styles';
 import Theme from './theme';
 
@@ -10,26 +10,21 @@ const darkTheme = {
 	backgroundColor: _$.themeColors( 'warning' ),
 };
 
-const GlobalStyle = createGlobalStyle`
-	.eps-button {
-		font-size: 40px;
-	}
-`;
-
 const Button = styled.div`
 	display: inline-flex;
 	color: white;
-	background-color: ${ ( props ) => _$.themeColors( props.color ) };
+	background-color: ${ ( props ) => props.theme.backgroundColor };
 	line-height: 1;
 	cursor: pointer;
 	padding: 10px;
-`;
 
-Button.displayName = 'rotem123';
+	.rotem {
+		color: yellow;
+	}
+`;
 
 export const StyledButton = ( props ) => (
 	<Theme default={ defaultTheme } dark={ darkTheme }>
-		<GlobalStyle />
 		<Button { ...props } className="eps-button">{ props.children }</Button>
 	</Theme>
 );
