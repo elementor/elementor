@@ -21,16 +21,14 @@ class Manager {
 
 	public function get_active_id() {
 		$id = get_option( self::OPTION_ACTIVE );
-		$kit_post = null;
 
-		if ( $id ) {
-			$kit_post = get_post( $id );
-		}
+		$kit_document = Plugin::$instance->documents->get( $id );
 
-		if ( ! $id || ! $kit_post || 'trash' === $kit_post->post_status ) {
+		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
 			$id = $this->create_default();
 			update_option( self::OPTION_ACTIVE, $id );
 		}
+
 		return $id;
 	}
 
@@ -179,6 +177,17 @@ class Manager {
 		return $kit;
 	}
 
+	public function update_kit_settings_based_on_option( $key, $value ) {
+		/** @var Kit $active_kit */
+		$active_kit = $this->get_active_kit();
+
+		if ( $active_kit->is_saving() ) {
+			return;
+		}
+
+		$active_kit->update_settings( [ $key => $value ] );
+	}
+
 	/**
 	 * Map Scheme To Global
 	 *
@@ -248,5 +257,13 @@ class Manager {
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
+
+		add_action( 'update_option_blogname', function ( $old_value, $value ) {
+			$this->update_kit_settings_based_on_option( 'site_name', $value );
+		}, 10, 2 );
+
+		add_action( 'update_option_blogdescription', function ( $old_value, $value ) {
+			$this->update_kit_settings_based_on_option( 'site_description', $value );
+		}, 10, 2 );
 	}
 }

@@ -133,12 +133,6 @@ class Frontend extends App {
 	 */
 	private $content_removed_filters = [];
 
-
-	/**
-	 * @var Document[]
-	 */
-	private $admin_bar_edit_documents = [];
-
 	/**
 	 * @var string[]
 	 */
@@ -234,12 +228,6 @@ class Frontend extends App {
 		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
 		add_action( 'wp_head', [ $this, 'add_theme_color_meta_tag' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
-
-		// Add Edit with the Elementor in Admin Bar.
-		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
-
-		// Detect Elementor documents via their css that printed before the Admin Bar.
-		add_action( 'elementor/css-file/post/enqueue', [ $this, 'add_document_to_admin_bar' ] );
 	}
 
 	/**
@@ -1003,60 +991,9 @@ class Frontend extends App {
 
 		Plugin::$instance->documents->restore_document();
 
+		do_action( 'elementor/frontend/get_builder_content', $document, $this->_is_excerpt, $with_css );
+
 		return $content;
-	}
-
-	/**
-	 * @param Post_CSS $css_file
-	 */
-	public function add_document_to_admin_bar( $css_file ) {
-		$document = Plugin::$instance->documents->get( $css_file->get_post_id() );
-
-		if ( $document::get_property( 'show_on_admin_bar' ) && $document->is_editable_by_current_user() ) {
-			$this->admin_bar_edit_documents[ $document->get_main_id() ] = $document;
-		}
-	}
-
-	/**
-	 * Add Elementor menu to admin bar.
-	 *
-	 * Add new admin bar item only on singular pages, to display a link that
-	 * allows the user to edit with Elementor.
-	 *
-	 * Fired by `admin_bar_menu` action.
-	 *
-	 * @since 1.3.4
-	 * @access public
-	 *
-	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
-	 */
-	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
-		if ( empty( $this->admin_bar_edit_documents ) ) {
-			return;
-		}
-
-		$queried_object_id = get_queried_object_id();
-
-		$menu_args = [
-			'id' => 'elementor_edit_page',
-			'title' => __( 'Edit with Elementor', 'elementor' ),
-		];
-
-		if ( is_singular() && isset( $this->admin_bar_edit_documents[ $queried_object_id ] ) ) {
-			$menu_args['href'] = $this->admin_bar_edit_documents[ $queried_object_id ]->get_edit_url();
-			unset( $this->admin_bar_edit_documents[ $queried_object_id ] );
-		}
-
-		$wp_admin_bar->add_node( $menu_args );
-
-		foreach ( $this->admin_bar_edit_documents as $document ) {
-			$wp_admin_bar->add_menu( [
-				'id' => 'elementor_edit_doc_' . $document->get_main_id(),
-				'parent' => 'elementor_edit_page',
-				'title' => sprintf( '<span class="elementor-edit-link-title">%s</span><span class="elementor-edit-link-type">%s</span>', $document->get_post()->post_title, $document::get_title() ),
-				'href' => $document->get_edit_url(),
-			] );
-		}
 	}
 
 	/**

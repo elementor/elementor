@@ -108,10 +108,12 @@
 		flex-grow: 0;
 		overflow-y: auto;
 		box-shadow: $app-sidebar-box-shadow;
+		z-index: 2;
 	}
 
 	&__content {
 		flex-grow: 1;
+		position: relative;
 		padding: $app-content-padding;
 		height: 100%;
 		overflow-y: auto;

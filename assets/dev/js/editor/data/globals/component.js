@@ -8,7 +8,7 @@ export default class Component extends ComponentBase {
 	__construct( args = {} ) {
 		super.__construct( args );
 
-		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
+		elementorCommon.elements.$window.on( 'elementor:loaded', () => this.refreshGlobalData() );
 	}
 
 	getNamespace() {
@@ -26,8 +26,7 @@ export default class Component extends ComponentBase {
 		return this.importCommands( commandsData );
 	}
 
-	onElementorLoaded() {
-		// Add globals to cache before render.
-		$e.data.get( 'globals/index' ).then( () => elementor.trigger( 'globals:loaded' ) );
+	refreshGlobalData() {
+		$e.data.deleteCache( $e.components.get( 'globals' ), 'globals/index' );
 	}
 }

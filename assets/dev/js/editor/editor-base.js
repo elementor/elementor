@@ -399,8 +399,6 @@ export default class EditorBase extends Marionette.Application {
 
 		preview.$el.empty();
 
-		preview.resetChildViewContainer();
-
 		// In order to force rendering of children
 		preview.isRendered = true;
 
@@ -861,8 +859,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.changeDeviceMode( DEFAULT_DEVICE_MODE );
 
-		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
-
 		_.defer( function() {
 			elementorFrontend.elements.window.jQuery.holdReady( false );
 		} );
@@ -871,7 +867,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
-		$e.internal( 'editor/documents/attach-preview' );
+		$e.internal( 'editor/documents/attach-preview' ).then( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
 
 		this.loaded = true;
 	}

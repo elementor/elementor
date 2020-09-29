@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 3.0.6
+Stable tag: 3.0.10
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,6 +217,45 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.10 - 2020-09-23 =
+* Fix: `space_between_widgets` is missing on upgrade in some cases ([#12298](https://github.com/elementor/elementor/issues/12298))
+* Fix: Global Color does not apply to some patterns in Divider widget ([#12501](https://github.com/elementor/elementor/issues/12501))
+* Fix: Users with "Access to edit content only" aren't able to access the Editor ([#12521](https://github.com/elementor/elementor/issues/12521))
+* Fix: If the default page layout is set to "Canvas" Headers and Footers cannot be edited ([#12509](https://github.com/elementor/elementor/issues/12509))
+* Fix: Global Color and Fonts that were deleted might cause style removal from the same element
+* Fix: Opacity indication is missing in the Global Color control dropdown and in the creation prompt
+* Fix: Wrong placement of "Add New" section in a Popup when using Optimized DOM mode
+* Fix: "Edit with Elementor" button is not in the correct location
+* Fix: Global Dropdown scrollbar has redundant border in Chromium based browsers
+* Fix: Entrance animation isn't working on edge cases in Tabs widget
+
+= 3.0.9 - 2020-09-17 =
+* Fix: Kit settings get deleted when modifying the Site Title or Tagline in WordPress Settings and Customizer screens ([#12540](https://github.com/elementor/elementor/issues/12540), [#12538](https://github.com/elementor/elementor/issues/12538), [#12562](https://github.com/elementor/elementor/issues/12562))
+
+= 3.0.8.1 - 2020-09-14 =
+* Fix: Reverted Shape Dividers are in front other elements in Chrome 85 fix due to display glitches ([#12393](https://github.com/elementor/elementor/issues/12393))
+* Fix: Auto Columns control setting causes layout to be displayed in one row in a Social icons ([Topic](https://wordpress.org/support/topic/sloppy-updates/), [#12519](https://github.com/elementor/elementor/issues/12519))
+
+= 3.0.8 - 2020-09-14 =
+* Fix: Additional cases of Global Style inconsistencies in Editor and Frontend ([#12363](https://github.com/elementor/elementor/issues/12363))
+* Fix: Edit with Elementor button is missing from the admin top bar in some cases since WordPress 5.4 ([#11728](https://github.com/elementor/elementor/issues/11728), [#12175](https://github.com/elementor/elementor/issues/12175))
+* Fix: Unexpected columns view when Inner Section is muted ([#12376](https://github.com/elementor/elementor/issues/12376))
+* Fix: Some Shape Dividers are in front other elements in Chrome 85 ([#12393](https://github.com/elementor/elementor/issues/12393))
+* Fix: JS error `elementorCommon` is undefined ([#12323](https://github.com/elementor/elementor/issues/12323), Props [@shimondoodkin](https://github.com/shimondoodkin))
+* Fix: Site description doesn't get updated from the 'Customizer' screen
+* Fix: When Global values aren't available don't return an empty object
+* Fix: Message After Submit RTL icon spacing glitch
+* Fix: Select2 control dimensions adjustments
+
+= 3.0.7 - 2020-09-09 =
+* Fix: Additional cases of Global Style inconsistencies in Editor and Frontend ([#12363](https://github.com/elementor/elementor/issues/12363))
+* Fix: Plugins conflict on non-admin login to the dashboard ([#12383](https://github.com/elementor/elementor/issues/12383), [#12388](https://github.com/elementor/elementor/issues/12388))
+* Fix: PHP error undefined method `add_repeater_row` caused data updater issues and server overload ([#12305](https://github.com/elementor/elementor/issues/12305))
+* Fix: Global Colors and Fonts not being saved when created in Site Settings ([#12272](https://github.com/elementor/elementor/issues/12272))
+* Fix: Shared link is attached to post text in Twitter Share Button widget (Props [@LensDigitalUK](https://github.com/LensDigitalUK))
+* Fix: "No route was found matching the URL and request method" error when using plain permalinks
+* Fix: Site favicon that was set from WordPress customizer is missing in Site Identity screen
 
 = 3.0.6 - 2020-09-06 =
 * Tweak: Added dismiss button for data updater notices
