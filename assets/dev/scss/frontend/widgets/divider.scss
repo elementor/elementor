@@ -13,8 +13,17 @@
 	--divider-pattern-url: none;
 	--divider-pattern-repeat: repeat-x;
 
+
+	/* Backwards compatibility */
+	&:not(.elementor-widget-divider--view-line_text):not(.elementor-widget-divider--view-line_icon):not(.elementor-widget-divider--separator-type-pattern) {
+
+		.elementor-divider-separator {
+			display: inline-block;
+		}
+	}
+
 	.elementor-divider {
-		display: flex;
+		line-height: 0;
 
 		&__text {
 			font-size: 15px;
