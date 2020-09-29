@@ -84,14 +84,8 @@
 
 	.elementor-flyover-icon- {
 
-		&default {
-			selector;
-    			display: none;
-		}
-		
-		&flyover {
-			selector:hover;
-    			display: block;
+		div: hover {
+  		display: block;
 		}
 	}
 
