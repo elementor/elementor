@@ -585,10 +585,6 @@ class Plugin {
 		$this->files_manager = new Files_Manager();
 		$this->assets_manager = new Assets_Manager();
 		$this->icons_manager = new Icons_Manager();
-		/*
-		 * @TODO: Remove deprecated alias
-		 */
-		$this->posts_css_manager = $this->files_manager;
 		$this->settings = new Settings();
 		$this->tools = new Tools();
 		$this->editor = new Editor();

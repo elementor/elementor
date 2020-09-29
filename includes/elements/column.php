@@ -176,8 +176,6 @@ class Element_Column extends Element_Base {
 					'bottom' => 'flex-end',
 				],
 				'selectors' => [
-					// TODO: The following line is for BC since 2.7.0
-					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-' . $main_selector_element . '-wrap' => 'align-items: {{VALUE}}',
 					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position)
 					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-' . $main_selector_element . '-wrap.elementor-element-populated' . $widget_wrap_child => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],

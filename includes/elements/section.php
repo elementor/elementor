@@ -426,8 +426,6 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					$content_position_selector => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
-				// TODO: The following line is for BC since 2.7.0
-				'prefix_class' => 'elementor-section-content-',
 			]
 		);
 

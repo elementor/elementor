@@ -59,7 +59,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 				return;
 			}
 
-			// TODO: FIGURE OUT WHAT THE FINAL VALUE KEY FORMAT IS AND ADJUST THIS ACCORDINGLY
 			if ( property.startsWith( 'typography_' ) ) {
 				property = property.replace( 'typography_', '' );
 			}
