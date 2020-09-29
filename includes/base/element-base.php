@@ -641,7 +641,13 @@ abstract class Element_Base extends Controls_Stack {
 		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
 		ob_start();
-		$this->print_content();
+
+		if ( method_exists( $this, '_print_content' ) ) {
+			$this->_print_content();
+		} else {
+			$this->print_content();
+		}
+
 		$content = ob_get_clean();
 
 		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
@@ -659,7 +665,11 @@ abstract class Element_Base extends Controls_Stack {
 		$should_render = apply_filters( "elementor/frontend/{$element_type}/should_render", $should_render, $this );
 
 		if ( $should_render ) {
-			$this->add_render_attributes();
+			if ( method_exists( $this, '_add_render_attributes' ) ) {
+				$this->_add_render_attributes();
+			} else {
+				$this->add_render_attributes();
+			}
 
 			$this->before_render();
 			echo $content;

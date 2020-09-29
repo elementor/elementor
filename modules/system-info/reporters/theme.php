@@ -98,7 +98,7 @@ class Theme extends Base {
 	 *
 	 * @return \WP_Theme WordPress theme object.
 	 */
-	protected function get_theme() {
+	private function get_theme() {
 		if ( is_null( $this->theme ) ) {
 			$this->theme = wp_get_theme();
 		}

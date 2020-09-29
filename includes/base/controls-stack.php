@@ -1752,7 +1752,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
 	 * `start_controls_tab()`.
 	 *
-	 * @since 1.4.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
 	protected function register_controls() {}

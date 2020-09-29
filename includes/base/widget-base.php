@@ -113,7 +113,11 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		if ( $is_type_instance ) {
-			$this->register_skins();
+			if ( method_exists( $this, '_register_skins' ) ) {
+				$this->_register_skins();
+			} else {
+				$this->register_skins();
+			}
 
 			$widget_name = $this->get_name();
 
