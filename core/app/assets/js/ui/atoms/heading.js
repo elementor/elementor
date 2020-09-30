@@ -1,10 +1,13 @@
 import Utils from '../../utils/utils';
+import { Styled } from 'elementor-app/styled';
 
 export default function Heading( props ) {
 	const baseClassName = 'eps',
 		classes = [
 			props.className,
 		];
+
+	return <Styled.Heading { ...props }>{ props.children }</Styled.Heading>;
 
 	if ( props.variant ) {
 		classes.push( baseClassName + '-' + props.variant );

@@ -1,9 +1,11 @@
 import styled from 'styled-components';
 import _$ from 'elementor-styles';
+import Utils from './utils.js';
 
 const Heading = styled.h1`
-	font-size: 30px;
 	border-${ _$.direction`start` }: 5px solid green;
+
+	${ ( props ) => 'h1' === props.variant && Utils.bindVariant( 'Heading', props.variant ) }
 `;
 
 export const StyledHeading = ( props ) => (

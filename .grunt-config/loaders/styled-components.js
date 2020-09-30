@@ -1,13 +1,13 @@
-const path = require( 'path' ),
-	fs = require('fs'),
-	dir = path.resolve( __dirname, '../../' ),
-	importsFile = dir + '/core/app/assets/styles/app-imports.scss';
+const fs = require( 'fs' );
 
 module.exports = function() {
+	return '';
 	const resourcePath = this.resourcePath.replace( /\\/g, '/' ),
-		fileContent = fs.readFileSync( resourcePath ).toString();
+		fileContent = fs.readFileSync( resourcePath ).toString().match( /`[^]+`.*;/g );
 
-	console.log( 'fileContent', fileContent );
+	if ( fileContent ) {
+		console.log( 'fileContent', fileContent[0].substring(1, fileContent[0].length-1) );
+	}
 	console.log( '' );
 
 	return '';

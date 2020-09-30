@@ -22,14 +22,14 @@ const moduleRules = ( env ) => {
 			// 		failOnError: true,
 			// 	}
 			// },
-			{
-				test: /core[/\\]app[/\\]assets[/\\]js[/\\]styled[/\\]styled-.*/,
-				use: [
-					{
-						loader: './loaders/styled-components.js',
-					},
-				],
-			},
+			// {
+			// 	test: /core[/\\]app[/\\]assets[/\\]js[/\\]styled[/\\]styled-.*/,
+			// 	use: [
+			// 		{
+			// 			loader: './loaders/styled-components.js',
+			// 		},
+			// 	],
+			// },
 			{
 				test: /core[/\\]app.*\.(s)?css$/i,
 				use: [
