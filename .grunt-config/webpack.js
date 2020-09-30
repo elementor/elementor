@@ -23,7 +23,7 @@ const moduleRules = ( env ) => {
 			// 	}
 			// },
 			{
-				test: /core[/\\]app[/\\]assets[/\\]js[/\\]styled.*/,
+				test: /core[/\\]app[/\\]assets[/\\]js[/\\]styled[/\\]styled-.*/,
 				use: [
 					{
 						loader: './loaders/styled-components.js',

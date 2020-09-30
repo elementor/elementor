@@ -4,9 +4,11 @@ const path = require( 'path' ),
 	importsFile = dir + '/core/app/assets/styles/app-imports.scss';
 
 module.exports = function() {
-	const resourceRelativePath = path.relative( path.dirname(importsFile), this.resourcePath ).replace( /\\/g, '/' );
+	const resourcePath = this.resourcePath.replace( /\\/g, '/' ),
+		fileContent = fs.readFileSync( resourcePath ).toString();
 
-	console.log( '------------------------ this.resourcePath', this.resourcePath );
+	console.log( 'fileContent', fileContent );
+	console.log( '' );
 
 	return '';
 }
