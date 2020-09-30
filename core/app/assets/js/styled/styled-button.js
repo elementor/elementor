@@ -17,10 +17,6 @@ const Button = styled.div`
 	line-height: 1;
 	cursor: pointer;
 	padding: 10px;
-
-	.rotem {
-		color: yellow;
-	}
 `;
 
 export const StyledButton = ( props ) => (
@@ -28,6 +24,8 @@ export const StyledButton = ( props ) => (
 		<Button { ...props } className="eps-button">{ props.children }</Button>
 	</Theme>
 );
+
+export const Element = Button;
 
 StyledButton.propTypes = {
 	children: PropTypes.any,
