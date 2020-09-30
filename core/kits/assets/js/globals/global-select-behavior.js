@@ -254,7 +254,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	printGlobalToggleButton() {
 		const $globalToggleButton = jQuery( '<div>', { class: this.getClassNames().popoverToggle + ' elementor-control-unit-1' } ),
-			$globalPopoverToggleIcon = jQuery( '<i>', { class: 'eicon-globe' } );
+			$globalPopoverToggleIcon = jQuery( '<i>', { class: 'eicon-globe' } ),
+			$globalsLoadingSpinner = jQuery( '<span>', { class: 'elementor-control-spinner' } )
+				.html( '<i class="eicon-spinner eicon-animation-spin"></i></span>' );
 
 		$globalToggleButton.append( $globalPopoverToggleIcon );
 
@@ -262,6 +264,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		this.ui.globalPopoverToggle = $globalToggleButton;
 		this.ui.globalPopoverToggleIcon = $globalPopoverToggleIcon;
+		this.ui.$globalsLoadingSpinner = $globalsLoadingSpinner;
 
 		// Add tooltip to the Global Popover toggle button, displaying the current Global Name / 'Default' / 'Custom'.
 		this.ui.globalPopoverToggleIcon.tipsy( {
@@ -271,6 +274,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			offset: 7,
 			gravity: () => 's',
 		} );
+
+		$globalToggleButton.before( $globalsLoadingSpinner );
+
+		this.ui.$globalsLoadingSpinner.hide();
 	}
 
 	initGlobalPopover() {
@@ -372,16 +379,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		globalMeta.title = this.ui.globalNameInput.val();
 
-		this.createNewGlobal( globalMeta )
-			.then( ( result ) => {
-				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
-
-				this.ui.$globalPreviewItemsContainer.append( $globalPreview );
-			} );
+		this.createNewGlobal( globalMeta );
 	}
 
 	createNewGlobal( globalMeta ) {
-		return $e.run( globalMeta.commandName + '/create', {
+		this.ui.$globalsLoadingSpinner.show();
+
+		$e.run( globalMeta.commandName + '/create', {
 			container: this.view.container,
 			setting: globalMeta.key, // group control name
 			title: globalMeta.title,
@@ -389,7 +393,11 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			.then( ( result ) => {
 				this.applySavedGlobalValue( result.data.id );
 
-				return result;
+				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
+
+				this.ui.$globalPreviewItemsContainer.append( $globalPreview );
+
+				this.ui.$globalsLoadingSpinner.hide();
 			} );
 	}
 

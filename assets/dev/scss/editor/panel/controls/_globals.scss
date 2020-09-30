@@ -84,7 +84,6 @@
 
 		&::-webkit-scrollbar-thumb {
 			background-color: $editor-lighter;
-			outline: 1px solid $editor-darker;
 			border-radius: 10px;
 		}
 	}
@@ -271,5 +270,9 @@
 		.elementor-control-input-wrapper {
 			direction: $direction;
 		}
+	}
+
+	.elementor-control-spinner {
+		@include margin-end(4px);
 	}
 }
