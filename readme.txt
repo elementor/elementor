@@ -218,6 +218,15 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.0.11 - 2020-09-30 =
+* Tweak: Added "Loading" state for Global controls to reflect data loading state
+* Fix: Inaccurate height in Divider widget ([#12569]https://github.com/elementor/elementor/issues/12569), [#12630]https://github.com/elementor/elementor/issues/12630))
+* Fix: Global Colors and Fonts are not being generated on non Elementor pages ([#12637]https://github.com/elementor/elementor/issues/12637))
+* Fix: Inactive "Delicious" social network from Social Icons widget
+* Fix: Can't restore the Site Settings document revisions
+* Fix: Creating a new Global Color or Font won't reflect in other dropdowns until the controls section init
+* Fix: Selecting a new Global Color or Font won't be indicated in the dropdown until the controls section init
+
 = 3.0.10 - 2020-09-23 =
 * Fix: `space_between_widgets` is missing on upgrade in some cases ([#12298](https://github.com/elementor/elementor/issues/12298))
 * Fix: Global Color does not apply to some patterns in Divider widget ([#12501](https://github.com/elementor/elementor/issues/12501))
