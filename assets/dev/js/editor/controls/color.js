@@ -162,9 +162,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	// Create the markup for the colors in the global select dropdown.
-	buildGlobalsList( globalColors ) {
-		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
-
+	buildGlobalsList( globalColors, $globalPreviewItemsContainer ) {
 		Object.values( globalColors ).forEach( ( color ) => {
 			if ( ! color.value ) {
 				return;
@@ -172,12 +170,8 @@ export default class extends ControlBaseDataView {
 
 			const $color = this.createGlobalItemMarkup( color );
 
-			$globalColorsPreviewContainer.append( $color );
+			$globalPreviewItemsContainer.append( $color );
 		} );
-
-		this.ui.$globalColorsPreviewContainer = $globalColorsPreviewContainer;
-
-		return $globalColorsPreviewContainer;
 	}
 
 	onPickerChange() {
