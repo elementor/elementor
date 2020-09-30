@@ -393,10 +393,6 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			.then( ( result ) => {
 				this.applySavedGlobalValue( result.data.id );
 
-				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
-
-				this.ui.$globalPreviewItemsContainer.append( $globalPreview );
-
 				this.ui.$globalsLoadingSpinner.hide();
 			} );
 	}
