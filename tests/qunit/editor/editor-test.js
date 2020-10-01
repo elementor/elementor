@@ -1,6 +1,6 @@
 import EditorBase from 'elementor-editor/editor-base';
 import config from './editor-config';
-import frontend from './frontend';
+import frontend from './editor-frontend';
 
 export default class EditorTest extends EditorBase {
 	constructor( options ) {
