@@ -28,7 +28,7 @@ export default function Page( props ) {
 	return (
 		<div className={`eps-app__lightbox ${ props.className }`}>
 			<div className="eps-app">
-				<Header title={ props.title } buttons={ props.headerButtons } />
+				<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } />
 				<div className="eps-app__main">
 					{ AppSidebar() }
 					<Content>
@@ -43,6 +43,7 @@ export default function Page( props ) {
 
 Page.propTypes = {
 	title: PropTypes.string,
+	titleRedirectRoute: PropTypes.string,
 	className: PropTypes.string,
 	headerButtons: PropTypes.arrayOf( PropTypes.object ),
 	sidebar: PropTypes.object,

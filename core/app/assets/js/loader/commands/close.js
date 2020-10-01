@@ -6,8 +6,8 @@ export class Close extends CommandBase {
 			return false;
 		}
 
-		this.component.iframe.style.display = 'none';
-		document.body.style.overflow = '';
+		this.component.iframe.remove();
+		this.component.iframe = null;
 
 		return true;
 	}

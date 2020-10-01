@@ -143,7 +143,6 @@ class Import_Images {
 			require_once ABSPATH . '/wp-admin/includes/image.php';
 		}
 
-
 		wp_update_attachment_metadata(
 			$post_id,
 			wp_generate_attachment_metadata( $post_id, $upload['file'] )

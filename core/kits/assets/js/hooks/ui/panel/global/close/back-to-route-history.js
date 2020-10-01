@@ -25,16 +25,18 @@ export class KitBackToRouteHistory extends BaseOpenClose {
 		 * Cache deleted, it asks the remote ( $e.data ) for specific colors/typography endpoints and causes a delay in global select box.
 		 * To handle the the issue, request globals manually, then back to route.
 		 */
-		$e.data.get( 'globals/index' ).then( () => {
-			// Since the container comes from history, its not connected element.
-			if ( historyBeforeOpen.container ) {
+		if ( historyBeforeOpen.container ) {
+			$e.data.get( 'globals/index' ).then( () => {
+				// Since the container comes from history, its not connected element.
 				historyBeforeOpen.container = historyBeforeOpen.container.lookup();
-
 				historyBeforeOpen.container.model.trigger( 'request:edit', { scrollIntoView: true } );
-			}
 
-			$e.route( historyBeforeOpen.route );
-		} );
+				$e.route( historyBeforeOpen.route, {
+					model: historyBeforeOpen.container.model,
+					view: historyBeforeOpen.container.view,
+				} );
+			} );
+		}
 	}
 }
 

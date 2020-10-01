@@ -129,19 +129,15 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return result.data;
 	}
 
-	buildGlobalsList( globalTypographies ) {
-		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
-
+	buildGlobalsList( globalTypographies, $globalPreviewItemsContainer ) {
 		Object.values( globalTypographies ).forEach( ( typography ) => {
 			// Only build markup if the typography is valid.
 			if ( typography ) {
 				const $typographyPreview = this.createGlobalItemMarkup( typography );
 
-				$globalTypographyContainer.append( $typographyPreview );
+				$globalPreviewItemsContainer.append( $typographyPreview );
 			}
 		} );
-
-		return $globalTypographyContainer;
 	}
 
 	onAddGlobalButtonClick() {
