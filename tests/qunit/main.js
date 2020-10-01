@@ -1,9 +1,9 @@
-import tests from './';
+import tests from './tests/';
 
 /* global require */
 
 function initialize() {
-		const EditorTest = require( './js/editor-test' ).default,
+		const EditorTest = require( './editor/editor-test' ).default,
 			ajax = require( './mock/ajax/' ),
 			eData = require( './mock/e-data/' );
 
