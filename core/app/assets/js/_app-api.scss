@@ -42,7 +42,7 @@ $app-header-btn-line-height: spacing(20);
 $app-title-font-size: type(text, lg);
 $app-title-font-weight: $eps-font-weight-bold;
 
-$app-content-padding: px-to-rem(45);
+$app-content-padding: spacing(44);
 
 $app-lightbox-background-color: rgba($eps-dark-theme-dark, $opacity-08);
 $app-lightbox-z-index: $eps-zindex-modal;

@@ -89,6 +89,19 @@ jQuery( () => {
 			assert.equal( endpoint, 'component/command/valueA?paramB=valueB', 'Valid endpoint.' );
 		} );
 
+		QUnit.test( 'commandToEndpoint(): with query params that has "/" should replaced to encoded version', ( assert ) => {
+			const command = 'component/command',
+				format = 'component/command',
+				args = { query: {} };
+
+			args.query.paramA = 'a/b';
+			args.query.paramB = 'c/d';
+
+			const endpoint = $e.data.commandToEndpoint( command, args, format );
+
+			assert.equal( endpoint, 'component/command?paramA=a%2Fb&paramB=c%2Fd', 'Valid endpoint.' );
+		} );
+
 		QUnit.test( 'commandExtractArgs(): simple', ( assert ) => {
 			const queryCommand = 'component/command?paramA=valueA',
 				args = {},
@@ -171,6 +184,32 @@ jQuery( () => {
 			assert.throws( () => $e.data.prepareHeaders( requestData ),
 				new Error( `Invalid requestData.args.data` )
 			);
+		} );
+
+		QUnit.test( 'prepareEndpoint(): basic endpoint should not be changed ', ( assert ) => {
+			const oldBaseUrl = $e.data.baseEndpointAddress;
+
+			$e.data.baseEndpointAddress = 'https://example.com/wp-json/';
+			const endpoint = 'component/command?a=1&b=2';
+
+			const result = $e.data.prepareEndpoint( endpoint );
+
+			assert.equal( result, 'https://example.com/wp-json/' + endpoint );
+
+			$e.data.baseEndpointAddress = oldBaseUrl;
+		} );
+
+		QUnit.test( 'prepareEndpoint(): permalinks in plain mode ', ( assert ) => {
+			const oldBaseUrl = $e.data.baseEndpointAddress;
+
+			$e.data.baseEndpointAddress = 'https://example.com/index.php?route=/';
+			const endpoint = 'component/command?a=1&b=2';
+
+			const result = $e.data.prepareEndpoint( endpoint );
+
+			assert.equal( result, 'https://example.com/index.php?route=/' + 'component/command&a=1&b=2' );
+
+			$e.data.baseEndpointAddress = oldBaseUrl;
 		} );
 
 		/**

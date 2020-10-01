@@ -29,7 +29,7 @@
 
 		&-title {
 			padding: 15px 20px;
-			font-weight: bold;
+			font-weight: 500;
 			color: $editor-dark;
 			border-bottom: 1px solid $editor-background;
 			display: flex;
@@ -68,6 +68,7 @@
 
 			i {
 				color: $editor-lightest;
+				font-size: 13px;
 			}
 		}
 	}
@@ -78,12 +79,11 @@
 		margin-top: 5px;
 
 		&::-webkit-scrollbar {
-			width: 8px;
+			width: 7px;
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background-color: $editor-light;
-			outline: 1px solid $editor-darker;
+			background-color: $editor-lighter;
 			border-radius: 10px;
 		}
 	}
@@ -136,12 +136,30 @@
 		}
 
 		&-preview {
-			height: 20px;
-			width: 20px;
-			border-radius: 3px;
-			border: 1px solid rgba(0, 0, 0, 0.1);
-			@include margin-end(10px);
-			flex-shrink: 0;
+
+			&-container {
+				height: 20px;
+				width: 20px;
+				border-radius: 3px;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				@include margin-end(10px);
+				flex-shrink: 0;
+				position: relative;
+			}
+
+			&-color,
+			&-transparent-bg {
+				border-radius: 3px;
+				height: 100%;
+				width: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+
+			&-transparent-bg {
+				@include checkers-background(12px);
+			}
 		}
 
 		&-title {
@@ -155,7 +173,7 @@
 		&-hex {
 			font-size: 10px;
 			font-weight: 500;
-			color: $editor-light;
+			color: $editor-lighter;
 		}
 
 		.pcr-button {
@@ -164,7 +182,7 @@
 
 		&.e-global__preview-item--selected {
 
-			.e-global__color-preview {
+			.e-global__color-preview-container {
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -175,6 +193,7 @@
 					font-size: 13px;
 					content: '\e90e'; // eicon-check
 					text-shadow: 0px 0px 1px #000;
+					z-index: 1;
 				 }
 			}
 		}
@@ -186,6 +205,10 @@
 
 		&:hover {
 			background-color: $editor-background-light;
+
+			.e-global__color-hex {
+				color: $editor-light;
+			}
 		}
 	}
 
@@ -247,5 +270,9 @@
 		.elementor-control-input-wrapper {
 			direction: $direction;
 		}
+	}
+
+	.elementor-control-spinner {
+		@include margin-end(4px);
 	}
 }

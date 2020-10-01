@@ -1,5 +1,6 @@
 //Variables
 @import "../helpers/variables";
+@import "../helpers/mixins";
 
 $theme-dark-gray-darkest: #34383C;
 $theme-dark-gray-darker: #475158;
@@ -508,7 +509,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 .elementor-control-media-area, .pcr-app[data-theme=monolith] .pcr-color-palette, .pcr-button {
-	background-image: linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest), linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest);
+	@include checkers-background(12px, $theme-dark-gray-darkest);
 	background-color: $theme-dark-gray-light;
 }
 
@@ -1140,6 +1141,7 @@ label.elementor-template-library-order-label,
 	}
 }
 
+// Theme Builder
 #elementor-publish {
 
 	#elementor-theme-builder-conditions {
@@ -1180,6 +1182,13 @@ label.elementor-template-library-order-label,
 				background-color: $theme-dark-gray;
 			}
 		}
+	}
+}
+
+#elementor-toast {
+
+	.e-toast-button {
+		background-color: $theme-dark-gray;
 	}
 }
 

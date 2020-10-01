@@ -61,6 +61,7 @@ const entry = {
 		path.resolve( __dirname, '../assets/dev/js/editor/editor.js' ),
 	],
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
+	'admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
@@ -91,7 +92,7 @@ const plugins = [
 		React: 'react',
 		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
-		__: ['@wordpress/i18n', '__'],
+		__: [ '@wordpress/i18n', '__' ],
 	} )
 ];
 

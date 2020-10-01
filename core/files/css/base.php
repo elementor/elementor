@@ -8,6 +8,7 @@ use Elementor\Controls_Stack;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
@@ -102,20 +103,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * CSS file constructor.
-	 *
-	 * Initializing Elementor CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 */
-	public function __construct( $file_name ) {
-		parent::__construct( $file_name );
-
-		$this->init_stylesheet();
-	}
-
-	/**
 	 * Use external file.
 	 *
 	 * Whether to use external CSS file of not. When there are new schemes or settings
@@ -185,6 +172,8 @@ abstract class Base extends Base_File {
 	public function delete() {
 		if ( $this->use_external_file() ) {
 			parent::delete();
+		} else {
+			$this->delete_meta();
 		}
 	}
 
@@ -326,6 +315,8 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$stylesheet = $this->get_stylesheet();
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
 
@@ -419,7 +410,7 @@ abstract class Base extends Base_File {
 				}
 			}
 
-			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );
+			$stylesheet->add_rules( $parsed_selector, $output_css_property, $query );
 		}
 	}
 
@@ -475,6 +466,10 @@ abstract class Base extends Base_File {
 	 * @return Stylesheet The stylesheet object.
 	 */
 	public function get_stylesheet() {
+		if ( ! $this->stylesheet_obj ) {
+			$this->init_stylesheet();
+		}
+
 		return $this->stylesheet_obj;
 	}
 
@@ -636,7 +631,7 @@ abstract class Base extends Base_File {
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
-		return $this->stylesheet_obj->__toString();
+		return $this->get_stylesheet()->__toString();
 	}
 
 	/**
@@ -768,9 +763,9 @@ abstract class Base extends Base_File {
 	}
 
 	private function get_selector_global_value( $control, $global_key ) {
-		$value = Plugin::$instance->data_manager->run( $global_key );
+		$data = Plugin::$instance->data_manager->run( $global_key );
 
-		if ( empty( $value ) ) {
+		if ( empty( $data['value'] ) ) {
 			return null;
 		}
 
@@ -780,6 +775,12 @@ abstract class Base extends Base_File {
 
 		if ( ! empty( $control['groupType'] ) ) {
 			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
+
+			// TODO: This check won't retrieve the proper answer for array values (multiple controls).
+			if ( empty( $data['value'][ Global_Typography::TYPOGRAPHY_GROUP_PREFIX . $property_name ] ) ) {
+				return null;
+			}
+
 			$property_name = str_replace( '_', '-', $property_name );
 
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";

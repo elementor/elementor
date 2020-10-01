@@ -18,7 +18,9 @@ export const tests = () => {
 
 	require( './assets/dev/js/editor/data/globals/component.spec' );
 
-	require( './assets/dev/js/editor/regions/navigator/component.spec' );
+	require( './core/kits/assets/js/component.spec' );
+
+    require( './assets/dev/js/editor/regions/navigator/component.spec' );
 };
 
 // export for external build.
