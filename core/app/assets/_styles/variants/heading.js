@@ -12,3 +12,5 @@ export const Heading = {
 		'line-height': '18px',
 	},
 };
+
+exports.Heaindg = Heading;

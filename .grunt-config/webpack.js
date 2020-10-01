@@ -10,6 +10,8 @@ const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
+const jsToCss = require( './js-to-css.js' );
+
 const moduleRules = ( env ) => {
 	return {
 		rules: [
@@ -22,14 +24,14 @@ const moduleRules = ( env ) => {
 			// 		failOnError: true,
 			// 	}
 			// },
-			// {
-			// 	test: /core[/\\]app[/\\]assets[/\\]js[/\\]styled[/\\]styled-.*/,
-			// 	use: [
-			// 		{
-			// 			loader: './loaders/styled-components.js',
-			// 		},
-			// 	],
-			// },
+			{
+				test: /assets[/\\]js[/\\]styled.min.js/,
+				use: [
+					{
+						loader: './loaders/styled-components.js',
+					},
+				],
+			},
 			{
 				test: /core[/\\]app.*\.(s)?css$/i,
 				use: [
@@ -157,6 +159,30 @@ const webpackProductionConfig = Object.assign( {}, baseConfig, {
 	},
 } );
 
+const webpackStyledConfig = Object.assign( {}, baseConfig, {
+	module: moduleRules( 'prod' ),
+	mode: 'production',
+	output: {
+		path: path.resolve( __dirname, '../assets/js' ),
+		filename: '[name].js',
+	},
+	entry: {
+		styled: path.resolve( __dirname, '../core/app/assets/_styles/variants/index.js' ),
+	},
+	performance: { hints: false },
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new TerserPlugin( {
+				terserOptions: {
+					keep_fnames: true,
+				},
+				include: /\.min\.js$/
+			} ),
+		],
+	},
+} );
+
 // Add minified entry points
 for ( const entryPoint in entry ) {
 	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
@@ -165,7 +191,8 @@ for ( const entryPoint in entry ) {
 
 const gruntWebpackConfig = {
 	development: webpackConfig,
-	production: webpackProductionConfig
+	production: webpackProductionConfig,
+	styles: webpackProductionConfig
 };
 
 module.exports = gruntWebpackConfig;

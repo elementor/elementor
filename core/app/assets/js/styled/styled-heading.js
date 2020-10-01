@@ -5,7 +5,7 @@ import Utils from './utils.js';
 const Heading = styled.h1`
 	border-${ _$.direction`start` }: 5px solid green;
 
-	${ ( props ) => 'h1' === props.variant && Utils.bindVariant( 'Heading', props.variant ) }
+	${ ( props ) => Utils.bindVariant( 'Heading', props.variant ) }
 `;
 
 export const StyledHeading = ( props ) => (
