@@ -2,13 +2,13 @@ const _$ = require('../index');
 
 module.exports = {
 	h1: {
-		'font-size': '12px',
+		'font-size': '20px',
 		color: _$.themeColors( 'primary' ),
-		'line-height': '12px',
+		'line-height': '20px',
 	},
 	h2: {
-		'font-size': '11px',
+		'font-size': '18px',
 		color: _$.themeColors( 'info' ),
-		'line-height': '11px',
+		'line-height': '18px',
 	},
 };
