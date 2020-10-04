@@ -25,14 +25,6 @@ const moduleRules = ( env ) => {
 			// 	}
 			// },
 			{
-				test: /assets[/\\]js[/\\]styled.min.js/,
-				use: [
-					{
-						loader: './loaders/styled-components.js',
-					},
-				],
-			},
-			{
 				test: /core[/\\]app.*\.(s)?css$/i,
 				use: [
 					{
@@ -66,6 +58,16 @@ const moduleRules = ( env ) => {
 					},
 				],
 			},
+			{
+				test:/e-style.*\.(s)?css$/i,
+				use: [
+					{
+						loader: 'file-loader',
+						options: { outputPath: '../css', name: 'e-style.css'}
+					},
+					'sass-loader',
+				],
+			},
 		],
 	};
 };
@@ -92,6 +94,7 @@ const entry = {
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
+	'e-style': path.resolve( __dirname, '../assets/dev/scss/app/e-style.scss' ),
 };
 
 const externals = {
@@ -104,6 +107,7 @@ const externals = {
 };
 
 const plugins = [
+	new jsToCss(),
 	new webpack.ProvidePlugin( {
 		React: 'react',
 		ReactDOM: 'react-dom',
@@ -159,30 +163,6 @@ const webpackProductionConfig = Object.assign( {}, baseConfig, {
 	},
 } );
 
-const webpackStyledConfig = Object.assign( {}, baseConfig, {
-	module: moduleRules( 'prod' ),
-	mode: 'production',
-	output: {
-		path: path.resolve( __dirname, '../assets/js' ),
-		filename: '[name].js',
-	},
-	entry: {
-		styled: path.resolve( __dirname, '../core/app/assets/_styles/variants/index.js' ),
-	},
-	performance: { hints: false },
-	optimization: {
-		minimize: true,
-		minimizer: [
-			new TerserPlugin( {
-				terserOptions: {
-					keep_fnames: true,
-				},
-				include: /\.min\.js$/
-			} ),
-		],
-	},
-} );
-
 // Add minified entry points
 for ( const entryPoint in entry ) {
 	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
@@ -192,7 +172,6 @@ for ( const entryPoint in entry ) {
 const gruntWebpackConfig = {
 	development: webpackConfig,
 	production: webpackProductionConfig,
-	styles: webpackProductionConfig
 };
 
 module.exports = gruntWebpackConfig;

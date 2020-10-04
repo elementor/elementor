@@ -3,7 +3,7 @@ import _$ from 'elementor-styles';
 import Utils from './utils.js';
 
 const Heading = styled.h1`
-	border-${ _$.direction`start` }: 5px solid green;
+	border-${ _$.direction`start` }: 5px solid aqua;
 
 	${ ( props ) => Utils.bindVariant( 'Heading', props.variant ) }
 `;

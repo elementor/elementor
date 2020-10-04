@@ -1,6 +1,6 @@
-import _palette from 'elementor-styles/data/colors/palette.json';
+const _palette = require( '../../data/colors/palette' );
 
-export default {
+module.exports = {
 	"800": _palette[ 'gray-lamp-post' ],
 	"700": _palette[ 'gray-blue-planet' ],
 	"600": _palette[ 'gray-sheffield' ],

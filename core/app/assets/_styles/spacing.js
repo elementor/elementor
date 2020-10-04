@@ -1,7 +1,7 @@
-import spacing from 'elementor-styles/maps/spacing/spacing.js';
+const spacing = require( './maps/spacing/spacing' );
 
-export default class Spacing {
-	static get( key ) {
+module.exports = {
+	get: ( key ) => {
 		return spacing.values[ key ] && ( spacing.values[ key ] * spacing.base.spacer ) + spacing.base.units;
-	}
-}
+	},
+};

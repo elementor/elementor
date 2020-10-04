@@ -1,16 +1,14 @@
-import _$ from 'elementor-styles';
+const _$ = require('../index');
 
-export const Heading = {
+module.exports = {
 	h1: {
-		'font-size': '20px',
+		'font-size': '12px',
 		color: _$.themeColors( 'primary' ),
-		'line-height': '20px',
+		'line-height': '12px',
 	},
 	h2: {
-		'font-size': '18px',
-		color: _$.themeColors( 'secondary' ),
-		'line-height': '18px',
+		'font-size': '11px',
+		color: _$.themeColors( 'info' ),
+		'line-height': '11px',
 	},
 };
-
-exports.Heaindg = Heading;

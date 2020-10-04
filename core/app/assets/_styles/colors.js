@@ -1,12 +1,12 @@
-import themeColors from 'elementor-styles/maps/colors/theme-colors.js';
-import tints from 'elementor-styles/maps/colors/tints.js';
+const themeColors = require( './maps/colors/theme-colors' );
+const tints = require( './maps/colors/tints' );
 
-export default class Colors {
-	static theme( key ) {
+module.exports = {
+	theme: ( key ) => {
 		return themeColors[ key ] ? themeColors[ key ].hex : 'initial';
-	}
+	},
 
-	static tints( key ) {
+	tints: ( key ) => {
 		return tints[ key ] ? tints[ key ].hex : 'initial';
-	}
-}
+	},
+};

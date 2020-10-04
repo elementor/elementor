@@ -1,5 +1,7 @@
-import { Heading } from './heading';
+const Heading = require('./heading.js');
 
-export default {
-	Heading
+const variants = {
+	Heading,
 };
+
+module.exports = variants;

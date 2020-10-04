@@ -1,3 +1,3 @@
-import _spacing from 'elementor-styles/data/spacing/spacing.json';
+const _spacing = require( '../../data/spacing/spacing' );
 
-export default _spacing;
+module.exports = _spacing;

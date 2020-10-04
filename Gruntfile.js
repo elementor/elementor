@@ -53,7 +53,6 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'watch_scripts', () => {
 		grunt.task.run( 'webpack:development' );
-		grunt.task.run( 'webpack:styles' );
 	} );
 
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {

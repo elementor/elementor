@@ -1,6 +1,6 @@
-import _palette from 'elementor-styles/data/colors/palette.json';
+const _palette = require( '../../data/colors/palette' );
 
-export default {
+module.exports = {
 	'text-muted': _palette[ 'gray-hidden-creek' ],
 	disabled: _palette[ 'gray-stone-golem' ],
 	light: _palette.white,

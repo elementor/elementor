@@ -1,5 +1,5 @@
-export default class Direction {
-	static get( arr ) {
+module.exports = {
+	get: ( arr ) => {
 		const value = arr[ 0 ],
 			isRtl = false; // elementorAppConfig.is_rtl
 
@@ -10,5 +10,5 @@ export default class Direction {
 		}
 
 		return direction;
-	}
-}
+	},
+};

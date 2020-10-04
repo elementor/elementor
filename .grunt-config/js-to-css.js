@@ -1,20 +1,35 @@
 'use strict';
 
 var JSToCssPlugin = (function () {
-	const write = require('write');
 	const path = require('path');
-	const styled = require( '../assets/js/styled.min.js' );
+	const fs = require('fs');
+	const variants = require( '../core/app/assets/_styles/variants/index.js' );
+	let css = '';
 
-	function JSToCssPlugin(options) {
-		if (options === void 0) {
-			//throw new Error(`Please provide 'options' for the JSToCssPlugin config`);
+	function JSToCssPlugin() {
+		const filePath = path.resolve( __dirname, '../assets/dev/scss/app/e-style.scss' );
+
+		console.log( '------------------------------------------------' );
+		console.log( 'variants', variants );
+		console.log( '------------------------------------------------' );
+
+		fs.writeFileSync(filePath, processJS( variants ), (err) => { if (err) throw err; });
+	}
+
+	function processJS( obj, prevProp ) {
+		for ( const key in obj ) {
+			const value = obj[ key ];
+
+			if ( 'string' === typeof value ) {
+				css += key + ': ' + value + ';';
+			} else {
+				css += prevProp ? '&--' + key + ' {' : '.' + key + ' {';
+				processJS( value, key );
+				css += ' } ';
+			}
 		}
 
-		console.log( '----------------------- JS TO CSS' );
-		console.log( styled );
-		console.log( '----------------------- JS TO CSS - END' );
-
-		//this.options = options;
+		return css;
 	}
 
 	JSToCssPlugin.prototype.apply = function ( compiler ) {
