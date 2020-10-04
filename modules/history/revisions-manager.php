@@ -348,7 +348,7 @@ class Revisions_Manager {
 	 * @deprecated 3.1.0
 	 */
 	public static function editor_settings() {
-		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
 		return [];
 	}
