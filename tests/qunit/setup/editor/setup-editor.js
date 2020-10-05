@@ -5,8 +5,8 @@ module.exports = ( config ) => {
 		'tests/qunit/index.html',
 
 		// Editor Tinymce.
-		'tests/qunit/vendor/wp-includes/quicktags.min.js',
 		'tests/qunit/setup/editor/setup-tinymce.js',
+		'tests/qunit/vendor/wp-includes/quicktags.min.js',
 
 		// Editor Config.
 		'tests/qunit/setup/editor/setup-wp.js',
