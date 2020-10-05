@@ -13,12 +13,30 @@ export default class Utils {
 	static bindProps = ( arr ) => arr.map( ( obj ) => this.bindProp( obj ) );
 
 	static bindVariant = ( component, propValue ) => {
-		if ( ! propValue ) {
-			return;
+		const componentData = Variants[ component ];
+
+		if ( ! componentData ) {
+			return '';
 		}
 
-		if ( Variants[ component ] && Variants[ component ][ propValue ] ) {
-			const cssString = Object.entries( Variants[ component ][ propValue ] ).map( ( [key, value] ) => `${ key }: ${ value };` ).join( '' );
+		if ( ! propValue ) {
+			let baseStyle = '';
+
+			for ( const key in componentData ) {
+				const cssValue = componentData[ key ];
+
+				if ( 'string' === typeof cssValue ) {
+					baseStyle += `${ key }: ${ cssValue };`;
+				}
+			}
+
+			return baseStyle;
+		}
+
+		const variantData = componentData?.[ propValue ];
+
+		if ( variantData ) {
+			const cssString = Object.entries( variantData ).map( ( [key, value] ) => `${ key }: ${ value };` ).join( '' );
 
 			return css`${ cssString }`;
 		}

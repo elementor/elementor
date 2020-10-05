@@ -10,7 +10,7 @@ const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
-const jsToCss = require( './js-to-css.js' );
+const jsToScss = require( './js-to-scss.js' );
 
 const moduleRules = ( env ) => {
 	return {
@@ -107,7 +107,7 @@ const externals = {
 };
 
 const plugins = [
-	new jsToCss(),
+	new jsToScss(),
 	new webpack.ProvidePlugin( {
 		React: 'react',
 		ReactDOM: 'react-dom',

@@ -1,6 +1,6 @@
 'use strict';
 
-var JSToCssPlugin = (function () {
+var JsToScssPlugin = (function () {
 	const path = require('path');
 	const fs = require('fs');
 	const variants = require( '../core/app/assets/_styles/variants/index.js' );
@@ -10,13 +10,13 @@ var JSToCssPlugin = (function () {
 		return ( str.charAt( 0 ).toLowerCase() + str.slice( 1 ) ).replace( /([A-Z])/g, ( _, char ) => '-' + char.toLowerCase() );
 	}
 
-	function JSToCssPlugin() {
+	function JsToScssPlugin() {
 		const filePath = path.resolve( __dirname, '../assets/dev/scss/app/e-style.scss' );
 
 		fs.writeFileSync(filePath, processJS( variants ), (err) => { if (err) throw err; });
 	}
 
-	function processJS( obj, prevProp ) {
+	function processJS( obj, prevKey, prevSelector ) {
 		for ( let key in obj ) {
 			const value = obj[ key ];
 
@@ -25,8 +25,12 @@ var JSToCssPlugin = (function () {
 			} else {
 				key = pascalCaseToDashCase( key );
 
-				css += prevProp ? '&--' + key + ' {' : '.eps-' + key + ' {';
-				processJS( value, key );
+				const prefix = '.eps-';
+				const connector = prevSelector && prevSelector.indexOf( 'eps' ) > -1 ? '&--' : '&-';
+				const selector = prevKey ? connector + key : prefix + key;
+
+				css += selector + ' {';
+				processJS( value, key, selector );
 				css += ' } ';
 			}
 		}
@@ -34,11 +38,11 @@ var JSToCssPlugin = (function () {
 		return css;
 	}
 
-	JSToCssPlugin.prototype.apply = function ( compiler ) {
+	JsToScssPlugin.prototype.apply = function ( compiler ) {
 
 	};
 
-	return JSToCssPlugin;
+	return JsToScssPlugin;
 })();
 
-module.exports = JSToCssPlugin;
+module.exports = JsToScssPlugin;
