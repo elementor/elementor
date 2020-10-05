@@ -8,6 +8,8 @@ const Heading = styled.h1`
 	${ Utils.bindVariant( 'Heading' ) }
 `;
 
+console.log( '### Heading', Heading );
+
 export const StyledHeading = ( props ) => (
 	<Heading { ...props } as={ props.tag }>{ props.children }</Heading>
 );

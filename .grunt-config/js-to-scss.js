@@ -23,15 +23,28 @@ var JsToScssPlugin = (function () {
 			if ( 'string' === typeof value ) {
 				css += key + ': ' + value + ';';
 			} else {
-				key = pascalCaseToDashCase( key );
+				if ( key.indexOf( '@media' ) > -1 ) {
+					css += key + ' {';
+					processJS( value );
+					css += ' } ';
+				} else {
+					key = pascalCaseToDashCase( key );
 
-				const prefix = '.eps-';
-				const connector = prevSelector && prevSelector.indexOf( 'eps' ) > -1 ? '&--' : '&-';
-				const selector = prevKey ? connector + key : prefix + key;
+					const prefix = '.eps-';
+					const connector = prevSelector && prevSelector.indexOf( prefix ) > -1 ? '&--' : '&-';
 
-				css += selector + ' {';
-				processJS( value, key, selector );
-				css += ' } ';
+					let selector = '';
+
+					if ( prevKey ) {
+						selector = ( key.indexOf( '&' ) === -1 ) ? connector + key : key;
+					} else {
+						selector = prefix + key;
+					}
+
+					css += selector + ' {';
+					processJS( value, key, selector );
+					css += ' } ';
+				}
 			}
 		}
 
