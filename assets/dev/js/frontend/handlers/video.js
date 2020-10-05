@@ -131,12 +131,12 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 		const elementSettings = this.getElementSettings();
 
-		if ( 'youtube' === elementSettings.video_type ) {
-			this.apiProvider = elementorFrontend.utils.youtube;
-		} else {
+		if ( 'youtube' !== elementSettings.video_type ) {
 			// Currently the only API integration in the Video widget is for the YT API
 			return;
 		}
+
+		this.apiProvider = elementorFrontend.utils.youtube;
 
 		this.videoID = this.apiProvider.getVideoIDFromURL( elementSettings.youtube_url );
 
@@ -145,9 +145,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
-		this.apiProvider.onApiReady( ( apiObject ) => {
-			this.prepareYTVideo( apiObject );
-		} );
+		this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
 	}
 
 	onElementChange( propertyName ) {
