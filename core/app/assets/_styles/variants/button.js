@@ -1,6 +1,12 @@
 const _$ = require('../index');
 
 module.exports = {
+	display: 'inline-flex',
+	'font-size': '16px',
+	'font-weight': 'bold',
+	'line-height': '1',
+	cursor: 'pointer',
+
 	variant: {
 		contained: {
 			padding: '30px',
@@ -10,12 +16,13 @@ module.exports = {
 			'text-decoration': 'underline',
 		},
 	},
+
 	color: {
 		primary: {
-			'background-color': 'green',
+			'background-color': _$.themeColors( 'primary' ),
 		},
 		secondary: {
-			'background-color': 'orange',
+			'background-color': _$.themeColors( 'info' ),
 		}
 	},
 };
