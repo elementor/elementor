@@ -799,7 +799,9 @@ class Widget_Video extends Widget_Base {
 			return;
 		}
 
-		if ( 'youtube' !== $settings['video_type'] ) {
+		if ( 'youtube' === $settings['video_type'] ) {
+			$video_html = '<div class="elementor-video"></div>';
+		} else {
 			if ( 'hosted' === $settings['video_type'] ) {
 				ob_start();
 
@@ -839,11 +841,7 @@ class Widget_Video extends Widget_Base {
 		<div <?php echo $this->get_render_attribute_string( 'video-wrapper' ); ?>>
 			<?php
 			if ( ! $settings['lightbox'] ) {
-				if ( 'youtube' === $settings['video_type'] ) {
-					echo '<div class="elementor-video"></div>';
-				} else {
-					echo $video_html; // XSS ok.
-				}
+				echo $video_html; // XSS ok.
 			}
 
 			if ( $this->has_image_overlay() ) {
