@@ -12,7 +12,7 @@ const EventManager = require( 'elementor-utils/hooks' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox/lightbox' );
 
-class Frontend extends elementorModules.ViewModule {
+class FrontendBase extends elementorModules.ViewModule {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -304,7 +304,7 @@ class Frontend extends elementorModules.ViewModule {
 	}
 }
 
-window.elementorFrontend = new Frontend();
+window.elementorFrontend = new FrontendBase();
 
 if ( ! elementorFrontend.isEditMode() ) {
 	jQuery( () => elementorFrontend.init() );
