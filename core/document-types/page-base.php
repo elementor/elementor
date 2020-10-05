@@ -5,8 +5,6 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Group_Control_Background;
 use Elementor\Plugin;
-use Elementor\Settings;
-use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -88,7 +86,7 @@ abstract class PageBase extends Document {
 			[
 				'label' => __( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'description' => __( 'Not working? You can set a different selector for the title in Global Settings > Layout', 'elementor' ),
+				'description' => __( 'Not working? You can set a different selector for the title in Site Settings > Layout', 'elementor' ),
 				'selectors' => [
 					':root' => '--page-title-display: none',
 				],

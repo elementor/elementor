@@ -103,6 +103,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			key: this.model.get( 'name' ),
 			title: elementor.translate( 'new_typography_setting' ),
 			controlType: 'typography',
+			route: 'panel/global/global-typography',
 		};
 	}
 
@@ -110,7 +111,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		const globalData = this.getGlobalMeta(),
 			$message = jQuery( '<div>', { class: 'e-global__confirm-message' } ),
 			$messageText = jQuery( '<div>' )
-				.html( elementor.translate( 'global_typography_confirm_text' ) ),
+				.html( elementor.translate( 'global_fonts_confirm_text' ) ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global__confirm-input-wrapper' } ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: globalData.title } )
 				.val( globalData.title );
@@ -128,19 +129,15 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return result.data;
 	}
 
-	buildGlobalsList( globalTypographies ) {
-		const $globalTypographyContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
-
+	buildGlobalsList( globalTypographies, $globalPreviewItemsContainer ) {
 		Object.values( globalTypographies ).forEach( ( typography ) => {
 			// Only build markup if the typography is valid.
 			if ( typography ) {
 				const $typographyPreview = this.createGlobalItemMarkup( typography );
 
-				$globalTypographyContainer.append( $typographyPreview );
+				$globalPreviewItemsContainer.append( $typographyPreview );
 			}
 		} );
-
-		return $globalTypographyContainer;
 	}
 
 	onAddGlobalButtonClick() {

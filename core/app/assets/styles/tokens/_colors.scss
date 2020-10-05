@@ -1,0 +1,40 @@
+// COLORS: colors registration, semantics and maps
+// Flow:
+// - register hex value as unique names (aliases)
+// - comment color rgb,hsl values for further check
+// - assign aliases to semantics
+// - create color map with aliases as key, values
+// - create semantic map with semantics as key, values
+// -- eg: (malibu: $color-stack-malibu), (info:$brand-color-info)
+// Tooling:
+// https://www.color-hex.com/ get color specs
+// https://colornamer.robertcooper.me/ generate unique names
+
+// stacks: registered hex with unique names
+$color-white: #fff; // RGB (255,255,255), HSL(0, 0%, 100%)
+$color-black: #000; // RGB (0, 0, 0), HSL(0, 0%, 0%)
+$color-cyan-ionized-air-glow: #58d0f5; // RGB(88,208,245), HSL(0.54, 0.89, 0.65)
+$color-red-rose-garnet: #93003F; // RGB(211,12,92), HSL(0.93, 0.89, 0.44)
+$color-red-carnelian: #b01b1b; // RGB(176,27,27), HSL(0, 0.73, 0.40)
+$color-red-tomato-frog: #F84343; // RGB(248, 67, 67), HSL(0.00, 0.93, 0.62)
+$color-yellow-hot-sun: #fcb92c; // RGB(252, 185, 44), HSL(0.11, 0.97, 0.58)
+$color-green-spandex: #39b54a; // RGB(57, 181, 74), HSL(0.36, 0.52, 0.47)
+
+// GRAYS
+// - Sorted by lightness , from dark to light
+$color-gray-anthracite: #26292C; // RGB(38, 41, 44)		HSL(0.58, 0.07, 0.16)	$theme-dark-dark			$eps-dark-gray-800
+$color-gray-metalise: #34383c; // RGB(52, 56, 60)		HSL(0.58, 0.07, 0.22)	$theme-dark-gray-darkest	$eps-dark-gray-700
+$color-gray-napoleon: #404349; // RGB(64, 67, 73)		HSL(0.61, 0.07, 0.27)	$theme-dark-gray-dark		$eps-dark-gray-600
+$color-gray-lamp-post: #495157; // RGB(73, 81, 87)		HSL(0.57, 0.09, 0.31)	$editor-darkest				$eps-gray-800
+$color-gray-abbey: #4c4f56; // RGB(76, 79, 86)		HSL(0.62, 0.06, 0.32)	$theme-dark-gray			$eps-dark-gray-500
+$color-gray-blue-planet: #556068; // RGB(85, 96, 104)		HSL(0.57, 0.10, 0.37)	$editor-darker				$eps-gray-700
+$color-gray-stone-hearth: #64666a; // RGB(100, 102, 106)	HSL(0.61, 0.03, 0.40)	$theme-dark-gray-light	 	$eps-dark-gray-400
+$color-gray-sheffield: #6d7882; // RGB(109, 120, 130)	HSL(0.58, 0.09, 0.47)	$editor-dark				$eps-gray-600
+$color-gray-silver-filigree: #7d7e82; // RGB(125, 126, 130)	HSL(0.63, 0.02, 0.50)	$theme-dark-gray-lighter	$eps-dark-gray-300
+$color-gray-special-delivery: #a4afb7; // RGB(164, 175, 183)	HSL(0.57, 0.12, 0.68)	$editor-light				$eps-gray-500
+$color-gray-brainstem: #b4b5b7; // RGB(180, 181, 183)	HSL(0.61, 0.02, 0.71)	$theme-dark-gray-lightest 	$eps-dark-gray-200
+$color-gray-stone-golem: #c2cbd2; // RGB(194, 203, 210)	HSL(0.57, 0.15, 0.79)	$editor-lighter				$eps-gray-400
+$color-gray-hidden-creek: #d5dadf; // RGB(213, 218, 223)	HSL(0.58, 0.14, 0.85)	$editor-lightest			$eps-gray-300
+$color-gray-yin-bai-silver: #e0e1e3; // RGB(224, 225, 227)	HSL(0.61, 0.05, 0.88)	$theme-dark-light			$eps-dark-gray-100
+$color-gray-anti-flash: #f1f3f5; // RGB(241, 243, 245)	HSL(0.58, 0.17, 0.95)	$editor-background-light	$eps-gray-200
+$color-gray-emptiness: #fcfcfc; // RGB(252, 252, 252)	HSL(0, 0, 0.99)			$editor-background-lighter	$eps-gray-100

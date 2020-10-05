@@ -1,8 +1,7 @@
 import Component from './component';
-import panelView from './panel';
-import panelMenuView from './panel-menu';
+import PanelView from './panel';
+import PanelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
-import Repeater from './repeater';
 import GlobalControlSelect from './globals/global-select-behavior';
 import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-parser';
 
@@ -12,15 +11,20 @@ export default class extends elementorModules.editor.utils.Module {
 		globals: false,
 	};
 
+	/**
+	 * @type {ControlsCSSParser}
+	 */
+	variablesCSS = null;
+
 	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
-			view: panelView,
-			title: elementor.translate( 'global_settings' ),
+			view: PanelView,
+			title: elementor.translate( 'site_settings' ),
 		} );
 
 		elementor.getPanelView().addPage( 'kit_menu', {
-			view: panelMenuView,
-			title: elementor.translate( 'global_settings' ),
+			view: PanelMenuView,
+			title: elementor.translate( 'site_settings' ),
 		} );
 	}
 
@@ -30,17 +34,21 @@ export default class extends elementorModules.editor.utils.Module {
 		menu.addItem( {
 			name: 'global-settings',
 			icon: 'eicon-global-settings',
-			title: elementor.translate( 'global_settings' ),
+			title: elementor.translate( 'site_settings' ),
 			type: 'page',
-			callback: () => $e.route( 'panel/global/menu' ),
+			callback: () => {
+				$e.run( 'panel/global/open', {
+					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
+				} );
+			},
 		}, 'style', 'editor-preferences' );
 
 		menu.addItem( {
 			name: 'site-editor',
 			icon: 'eicon-theme-builder',
-			title: elementor.translate( 'site_editor' ),
+			title: elementor.translate( 'theme_builder' ),
 			type: 'page',
-			callback: () => $e.run( 'panel/global/open-site-editor' ),
+			callback: () => $e.run( 'app/open' ),
 		}, 'style', 'editor-preferences' );
 	}
 
@@ -73,14 +81,65 @@ export default class extends elementorModules.editor.utils.Module {
 		if ( 'popover_toggle' === view.options.model.get( 'type' ) && 'typography' === view.options.model.get( 'groupType' ) && isGlobalActive ) {
 			behaviors.globals = {
 				behaviorClass: GlobalControlSelect,
-				popoverTitle: elementor.translate( 'global_typography_title' ),
-				manageButtonText: elementor.translate( 'manage_global_typography' ),
-				tooltipText: elementor.translate( 'global_typography_info' ),
-				newGlobalConfirmTitle: elementor.translate( 'create_global_typography' ),
+				popoverTitle: elementor.translate( 'global_fonts_title' ),
+				manageButtonText: elementor.translate( 'manage_global_fonts' ),
+				tooltipText: elementor.translate( 'global_fonts_info' ),
+				newGlobalConfirmTitle: elementor.translate( 'create_global_font' ),
 			};
 		}
 
 		return behaviors;
+	}
+
+	/**
+	 * In case there is a new global color/typography convert current globals to CSS variables.
+	 */
+	renderGlobalVariables() {
+		if ( ! this.variablesCSS ) {
+			this.variablesCSS = new ControlsCSSParser( {
+				id: 'e-kit-variables',
+				settingsModel: new elementorModules.editor.elements.models.BaseSettings( {}, {} ),
+			} );
+		}
+
+		// The kit document has its own CSS.
+		if ( 'kit' === elementor.documents.getCurrent().config.type ) {
+			this.variablesCSS.removeStyleFromDocument();
+			return;
+		}
+
+		$e.data.get( 'globals/index' ).then( ( { data } ) => {
+			if ( data.colors ) {
+				Object.values( data.colors ).forEach( ( item ) => {
+					const controls = elementor.config.kit_config.design_system_controls.colors,
+						values = {
+							_id: item.id,
+							color: item.value,
+						};
+
+					this.variablesCSS.addStyleRules( controls, values, controls, [ '{{WRAPPER}}' ], [ 'body' ] );
+				} );
+			}
+
+			if ( data.typography ) {
+				Object.values( data.typography ).forEach( ( item ) => {
+					const controls = elementor.config.kit_config.design_system_controls.typography,
+						values = {
+							_id: item.id,
+							...item.value,
+						};
+
+					// Enqueue fonts.
+					if ( item.value.typography_font_family ) {
+						elementor.helpers.enqueueFont( item.value.typography_font_family );
+					}
+
+					this.variablesCSS.addStyleRules( controls, values, controls, [ '{{WRAPPER}}' ], [ 'body' ] );
+				} );
+			}
+
+			this.variablesCSS.addStyleToDocument();
+		} );
 	}
 
 	// Use the Controls CSS Parser to add the global defaults CSS to the page.
@@ -146,13 +205,6 @@ export default class extends elementorModules.editor.utils.Module {
 		cssParser.addStyleToDocument();
 	}
 
-	refreshKitCssFiles() {
-		const $link = elementor.$previewContents.find( `#elementor-post-${ elementor.config.kit_id }-css` ),
-			href = $link.attr( 'href' ).split( '?' )[ 0 ];
-
-		$link.attr( { href: `${ href }?ver=${ ( new Date() ).getTime() }` } );
-	}
-
 	onInit() {
 		super.onInit();
 
@@ -161,35 +213,29 @@ export default class extends elementorModules.editor.utils.Module {
 				return;
 			}
 
-			if ( ! elementor.config.user.can_edit_kit ) {
-				return;
-			}
-
-			$e.components.register( new Component( { manager: this } ) );
-
-			elementor.addControlView( 'global-style-repeater', Repeater );
-
-			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
-
-			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
-
 			elementor.on( 'preview:loaded', () => {
 				this.loadingTriggers.preview = true;
 
 				this.renderGlobalsDefaultCSS();
 			} );
 
-			elementor.on( 'globals:loaded', () => {
+			elementor.on( 'document:loaded', () => {
+				this.renderGlobalVariables();
+			} );
+
+			elementor.once( 'globals:loaded', () => {
 				this.loadingTriggers.globals = true;
 
 				this.renderGlobalsDefaultCSS();
 			} );
 
-			elementor.on( 'panel:init', () => {
-				this.addPanelPages();
+			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
 
-				this.addPanelMenuItem();
-			} );
+			if ( ! elementor.config.user.can_edit_kit ) {
+				return;
+			}
+
+			$e.components.register( new Component( { manager: this } ) );
 		} );
 	}
 }

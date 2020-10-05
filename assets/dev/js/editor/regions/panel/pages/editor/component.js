@@ -30,14 +30,22 @@ export default class Component extends ComponentBase {
 		return '.elementor-panel-navigation';
 	}
 
-	renderTab( tab ) {
-		this.manager.getCurrentPageView().activateTab( tab );
+	renderTab( tab, args ) {
+		const { model, view } = args,
+			title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] );
+
+		elementor.getPanelView().setPage( 'editor', title, {
+			tab,
+			model: model,
+			controls: elementor.getElementControls( model ),
+			editedElementView: view,
+		} );
 	}
 
-	activateTab( tab ) {
-		this.activeTabs[ this.manager.getCurrentPageView().model.id ] = tab;
+	activateTab( tab, args ) {
+		this.activeTabs[ args.model.id ] = tab;
 
-		super.activateTab( tab );
+		super.activateTab( tab, args );
 	}
 
 	setDefaultTab( args ) {
@@ -66,16 +74,5 @@ export default class Component extends ComponentBase {
 		}
 
 		return false;
-	}
-
-	openEditor( model, view ) {
-		const title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ),
-			editor = elementor.getPanelView().setPage( 'editor', title, {
-				model: model,
-				controls: elementor.getElementControls( model ),
-				editedElementView: view,
-			} );
-
-		return editor;
 	}
 }

@@ -80,18 +80,26 @@ export default class extends ControlBaseDataView {
 		return {
 			commandName: this.getGlobalCommand(),
 			key: this.model.get( 'name' ),
-			title: this.colorPicker?.getColorTitle(),
 			controlType: 'colors',
+			route: 'panel/global/global-colors',
 		};
 	}
 
+	getNameAlreadyExistsMessage() {
+		return '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
+	}
+
+	getConfirmTextMessage() {
+		return elementor.translate( 'global_color_confirm_text' );
+	}
+
 	getAddGlobalConfirmMessage( globalColors ) {
-		const colorTitle = this.colorPicker.getColorTitle(),
+		const colorTitle = elementor.translate( 'new_global_color' ),
 			currentValue = this.getCurrentValue(),
 			$message = jQuery( '<div>', { class: 'e-global__confirm-message' } ),
 			$messageText = jQuery( '<div>', { class: 'e-global__confirm-message-text' } ),
 			$inputWrapper = jQuery( '<div>', { class: 'e-global__confirm-input-wrapper' } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global__color-preview', style: 'background-color: ' + currentValue } ),
+			$colorPreview = this.createColorPreviewBox( currentValue ),
 			$input = jQuery( '<input>', { type: 'text', name: 'global-name', placeholder: colorTitle } )
 				.val( colorTitle );
 
@@ -100,10 +108,10 @@ export default class extends ControlBaseDataView {
 		// Check if the color already exists in the global colors, and display an appropriate message.
 		for ( const globalColor of Object.values( globalColors ) ) {
 			if ( currentValue === globalColor.value ) {
-				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
+				messageContent = this.getNameAlreadyExistsMessage();
 				break;
 			} else if ( colorTitle === globalColor.title ) {
-				messageContent = '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_name_already_exists' );
+				messageContent = this.getConfirmTextMessage();
 				break;
 			} else {
 				messageContent = elementor.translate( 'global_color_confirm_text' );
@@ -126,7 +134,7 @@ export default class extends ControlBaseDataView {
 	// The globalData parameter is received from the Data API.
 	createGlobalItemMarkup( globalData ) {
 		const $color = jQuery( '<div>', { class: 'e-global__preview-item e-global__color', 'data-global-id': globalData.id } ),
-			$colorPreview = jQuery( '<div>', { class: 'e-global__color-preview', style: 'background-color: ' + globalData.value } ),
+			$colorPreview = this.createColorPreviewBox( globalData.value ),
 			$colorTitle = jQuery( '<span>', { class: 'e-global__color-title' } )
 				.html( globalData.title ),
 			$colorHex = jQuery( '<span>', { class: 'e-global__color-hex' } )
@@ -137,6 +145,16 @@ export default class extends ControlBaseDataView {
 		return $color;
 	}
 
+	createColorPreviewBox( color ) {
+		const $colorPreviewContainer = jQuery( '<div>', { class: 'e-global__color-preview-container' } ),
+			$colorPreviewColor = jQuery( '<div>', { class: 'e-global__color-preview-color', style: 'background-color: ' + color } ),
+			$colorPreviewBg = jQuery( '<div>', { class: 'e-global__color-preview-transparent-bg' } );
+
+		$colorPreviewContainer.append( $colorPreviewBg, $colorPreviewColor );
+
+		return $colorPreviewContainer;
+	}
+
 	async getGlobalsList() {
 		const result = await $e.data.get( this.getGlobalCommand() );
 
@@ -144,9 +162,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	// Create the markup for the colors in the global select dropdown.
-	buildGlobalsList( globalColors ) {
-		const $globalColorsPreviewContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
-
+	buildGlobalsList( globalColors, $globalPreviewItemsContainer ) {
 		Object.values( globalColors ).forEach( ( color ) => {
 			if ( ! color.value ) {
 				return;
@@ -154,12 +170,8 @@ export default class extends ControlBaseDataView {
 
 			const $color = this.createGlobalItemMarkup( color );
 
-			$globalColorsPreviewContainer.append( $color );
+			$globalPreviewItemsContainer.append( $color );
 		} );
-
-		this.ui.$globalColorsPreviewContainer = $globalColorsPreviewContainer;
-
-		return $globalColorsPreviewContainer;
 	}
 
 	onPickerChange() {
@@ -205,6 +217,8 @@ export default class extends ControlBaseDataView {
 
 	onAddGlobalButtonClick() {
 		this.getGlobalsList().then( ( globalsList ) => {
+			this.globalsList = globalsList;
+
 			this.triggerMethod( 'add:global:to:list', this.getAddGlobalConfirmMessage( globalsList ) );
 		} );
 	}

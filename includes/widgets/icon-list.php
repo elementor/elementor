@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor icon list widget.
@@ -185,6 +186,21 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'link_click',
+			[
+				'label' => __( 'Apply Link On', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'full_width' => __( 'Full Width', 'elementor' ),
+					'inline' => __( 'Inline', 'elementor' ),
+				],
+				'default' => 'full_width',
+				'separator' => 'before',
+				'prefix_class' => 'elementor-list-item-link-',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -353,7 +369,7 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_TEXT,
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'condition' => [
 					'divider' => 'yes',
@@ -385,7 +401,7 @@ class Widget_Icon_List extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'fill: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_PRIMARY,
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 			]
 		);
@@ -469,7 +485,7 @@ class Widget_Icon_List extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_SECONDARY,
+					'default' => Global_Colors::COLOR_SECONDARY,
 				],
 			]
 		);
@@ -506,9 +522,9 @@ class Widget_Icon_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'icon_typography',
-				'selector' => '{{WRAPPER}} .elementor-icon-list-item',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-item, {{WRAPPER}} .elementor-icon-list-item a',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
 			]
 		);
@@ -550,7 +566,7 @@ class Widget_Icon_List extends Widget_Base {
 				$this->add_inline_editing_attributes( $repeater_setting_key );
 				$migration_allowed = Icons_Manager::is_migration_allowed();
 				?>
-				<li class="elementor-icon-list-item" >
+				<li <?php echo $this->get_render_attribute_string( 'list_item' ); ?>>
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
 						$link_key = 'link_' . $index;

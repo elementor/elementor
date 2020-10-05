@@ -152,7 +152,9 @@ export default class extends BaseRegion {
 
 		elementor.$previewWrapper.css( side, this.storage.size.width );
 
-		this.$el.resizable( 'destroy' );
+		if ( this.$el.resizable( 'instance' ) ) {
+			this.$el.resizable( 'destroy' );
+		}
 
 		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
 
@@ -174,9 +176,11 @@ export default class extends BaseRegion {
 
 		this.setSize();
 
-		this.$el.resizable( 'destroy' );
+		if ( this.$el.resizable( 'instance' ) ) {
+			this.$el.resizable( 'destroy' );
 
-		this.$el.resizable( this.getResizableOptions() );
+			this.$el.resizable( this.getResizableOptions() );
+		}
 
 		this.isDocked = false;
 

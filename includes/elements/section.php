@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
-
 /**
  * Elementor section element.
  *
@@ -402,6 +400,9 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
+		$content_position_selector = $is_legacy_mode_active ? '{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap' : '{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap';
+
 		$this->add_control(
 			'content_position',
 			[
@@ -423,7 +424,7 @@ class Element_Section extends Element_Base {
 					'bottom' => 'flex-end',
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					$content_position_selector => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 				// TODO: The following line is for BC since 2.7.0
 				'prefix_class' => 'elementor-section-content-',
@@ -1052,17 +1053,6 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		if ( in_array( Schemes\Color::get_type(), Schemes\Manager::get_enabled_schemes(), true ) ) {
-			$this->add_control(
-				'colors_warning',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following set of controls has been deprecated. Those controls are only visible if they were previously populated.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
-				]
-			);
-		}
-
 		$this->add_control(
 			'heading_color',
 			[
@@ -1153,7 +1143,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'allowed_dimensions' => 'vertical',
 				'placeholder' => [
 					'top' => '',
@@ -1172,7 +1162,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1403,7 +1393,11 @@ class Element_Section extends Element_Base {
 		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
-		<div class="elementor-container elementor-column-gap-{{ settings.gap }}"></div>
+		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
+			<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+				<div class="elementor-row"></div>
+			<?php } ?>
+		</div>
 		<?php
 	}
 
@@ -1465,7 +1459,9 @@ class Element_Section extends Element_Base {
 			}
 			?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
-		<?php
+			<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+				<div class="elementor-row">
+			<?php }
 	}
 
 	/**
@@ -1478,6 +1474,9 @@ class Element_Section extends Element_Base {
 	 */
 	public function after_render() {
 		?>
+		<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+				</div>
+		<?php } ?>
 			</div>
 		</<?php echo esc_html( $this->get_html_tag() ); ?>>
 		<?php
@@ -1492,7 +1491,6 @@ class Element_Section extends Element_Base {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
 
 		$section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
 
@@ -1502,6 +1500,8 @@ class Element_Section extends Element_Base {
 				'elementor-' . $section_type . '-section',
 			]
 		);
+
+		parent::_add_render_attributes();
 	}
 
 	/**

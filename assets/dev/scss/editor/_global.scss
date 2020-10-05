@@ -49,6 +49,7 @@
 		}
 
 		.select2-selection--multiple {
+			min-height: $control-unit;
 
 			.select2-selection__clear {
 				display: none;
@@ -192,6 +193,7 @@
 	justify-content: space-between;
 	align-items: center;
 	font-weight: bold;
+	font-size: 12px;
 	padding: 10px;
 	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 	margin-bottom: 15px;

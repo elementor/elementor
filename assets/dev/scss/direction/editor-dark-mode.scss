@@ -1,5 +1,6 @@
 //Variables
 @import "../helpers/variables";
+@import "../helpers/mixins";
 
 $theme-dark-gray-darkest: #34383C;
 $theme-dark-gray-darker: #475158;
@@ -69,6 +70,80 @@ body {
 				}
 			}
 		}
+	}
+}
+
+.pickr {
+	background-color: $theme-dark-gray-darkest;
+	border-color: $theme-dark-gray-light;
+}
+
+.e-control-color {
+
+	&--no-value {
+
+		.pcr-button {
+			border-color: $theme-dark-gray-light;
+		}
+	}
+}
+
+// Globals
+.e-global {
+
+	&__popover {
+
+		&-toggle {
+			border-color: $theme-dark-gray-light;
+			background-color: $theme-dark-gray-darkest;
+		}
+
+		&-container {
+			background-color: $theme-dark-gray;
+			color: $theme-dark-light;
+		}
+
+		&-title {
+			border-bottom-color: $theme-dark-gray-dark;
+		}
+	}
+
+	&__color-title,
+	&__manage-button,
+	&__popover-title {
+		color: $theme-dark-light;
+	}
+
+	&__manage-button {
+		border-top-color: $theme-dark-gray-dark;
+	}
+
+	&__preview-item {
+
+		&:hover {
+			background-color: $theme-dark-gray-dark;
+		}
+	}
+}
+
+// Global Settings
+.elementor-control {
+
+	&-type-global-style-repeater {
+
+		.elementor-button-wrapper {
+			border-top-color: $theme-dark-gray-darkest;
+		}
+	}
+}
+
+// Elementor control tools - Typography popover header and Color Picker Header
+.e-control-tool {
+	background-color: $theme-dark-gray-darkest;
+	border-color: $theme-dark-light;
+
+	i {
+		color: $theme-dark-light;
 	}
 }
 
@@ -144,6 +219,7 @@ select {
 .elementor-control-dynamic-switcher {
 	background-color: $theme-dark-gray-darkest;
 	border-color: $theme-dark-gray-light;
+	color: $theme-dark-light;
 }
 
 .elementor-tags-list {
@@ -433,7 +509,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 .elementor-control-media-area, .pcr-app[data-theme=monolith] .pcr-color-palette, .pcr-button {
-	background-image: linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest), linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest);
+	@include checkers-background(12px, $theme-dark-gray-darkest);
 	background-color: $theme-dark-gray-light;
 }
 
@@ -744,27 +820,6 @@ body.rtl .elementor-control-type-gallery {
 	}
 }
 
-//Color Picker
-.pickr {
-	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray-light;
-}
-
-.elementor-color-picker {
-
-	&__dropping-area {
-		border: 1px dashed $theme-dark-gray-lighter;
-		color: $theme-dark-gray-lightest;
-
-		&.elementor-active {
-			border-color: $theme-dark-gray-lightest;
-
-			i {
-				color: $theme-dark-danger;
-			}
-		}
-	}
-}
 
 //Structure Control
 .elementor-control-type-structure {
@@ -1086,6 +1141,7 @@ label.elementor-template-library-order-label,
 	}
 }
 
+// Theme Builder
 #elementor-publish {
 
 	#elementor-theme-builder-conditions {
@@ -1107,6 +1163,13 @@ label.elementor-template-library-order-label,
 			}
 		}
 
+		.elementor-control-type-select {
+
+			.elementor-control-input-wrapper:after {
+				color: inherit;
+			}
+		}
+
 		.elementor-theme-builder-conditions-repeater-row-controls {
 
 			.elementor-control:not(:first-child) {
@@ -1119,6 +1182,13 @@ label.elementor-template-library-order-label,
 				background-color: $theme-dark-gray;
 			}
 		}
+	}
+}
+
+#elementor-toast {
+
+	.e-toast-button {
+		background-color: $theme-dark-gray;
 	}
 }
 

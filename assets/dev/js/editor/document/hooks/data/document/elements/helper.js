@@ -5,7 +5,7 @@ export default class Helper {
 		containers.forEach( ( /**Container*/ container ) => {
 			for ( let loopIndex = 0; loopIndex < columns; loopIndex++ ) {
 				const model = {
-					id: elementor.helpers.getUniqueID(),
+					id: elementorCommon.helpers.getUniqueId(),
 					elType: 'column',
 					settings: {},
 					elements: [],

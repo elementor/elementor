@@ -14,6 +14,8 @@ use Elementor\Core\Modules_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
+use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
+use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
@@ -433,6 +435,13 @@ class Plugin {
 	 */
 	public $data_manager;
 
+	public $legacy_mode;
+
+	/**
+	 * @var Core\App\App
+	 */
+	public $app;
+
 	/**
 	 * Clone.
 	 *
@@ -600,11 +609,14 @@ class Plugin {
 
 		$this->upgrade = new Core\Upgrade\Manager();
 
+		$this->app = new Core\App\App();
+
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
+			new Elementor_3_Re_Migrate_Globals();
 		}
 	}
 
@@ -618,6 +630,33 @@ class Plugin {
 		$this->common->init_components();
 
 		$this->ajax = $this->common->get_component( 'ajax' );
+	}
+
+	public function get_legacy_mode( $mode_name = null ) {
+		if ( ! $this->legacy_mode ) {
+			$optimized_dom_output = get_option( 'elementor_optimized_dom_output' );
+
+			if ( $optimized_dom_output ) {
+				$element_wrappers_legacy_mode = 'disabled' === $optimized_dom_output;
+			} else {
+				$element_wrappers_legacy_mode = true;
+			}
+
+			$this->legacy_mode = [
+				'elementWrappers' => $element_wrappers_legacy_mode,
+			];
+		}
+
+		if ( ! $mode_name ) {
+			return $this->legacy_mode;
+		}
+
+		if ( isset( $this->legacy_mode[ $mode_name ] ) ) {
+			return $this->legacy_mode[ $mode_name ];
+		}
+
+		// If there is no legacy mode with the given mode name;
+		return false;
 	}
 
 	/**

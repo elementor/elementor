@@ -811,7 +811,7 @@ class Widget_Video extends Widget_Base {
 
 				$embed_options = $this->get_embed_options();
 
-				$is_static_render_mode = Plugin::$instance->frontend->is_render_mode( Frontend::RENDER_MODE_STATIC );
+				$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
 				$post_id = get_queried_object_id();
 
 				if ( $is_static_render_mode ) {

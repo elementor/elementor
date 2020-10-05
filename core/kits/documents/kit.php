@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Kit extends PageBase {
-
 	/**
 	 * @var Tabs\Tab_Base[]
 	 */
@@ -23,11 +22,17 @@ class Kit extends PageBase {
 		parent::__construct( $data );
 
 		$this->tabs = [
-			'site_identity' => new Tabs\Site_Identity( $this ),
-			'lightbox' => new Tabs\Lightbox( $this ),
-			'colors_and_typography' => new Tabs\Colors_And_Typography( $this ),
-			'layout_settings' => new Tabs\Layout_Settings( $this ),
-			'theme_style' => new Tabs\Theme_Style( $this ),
+			'global-colors' => new Tabs\Global_Colors( $this ),
+			'global-typography' => new Tabs\Global_Typography( $this ),
+			'theme-style-typography' => new Tabs\Theme_Style_Typography( $this ),
+			'theme-style-buttons' => new Tabs\Theme_Style_Buttons( $this ),
+			'theme-style-images' => new Tabs\Theme_Style_Images( $this ),
+			'theme-style-form-fields' => new Tabs\Theme_Style_Form_Fields( $this ),
+			'settings-site-identity' => new Tabs\Settings_Site_Identity( $this ),
+			'settings-background' => new Tabs\Settings_Background( $this ),
+			'settings-layout' => new Tabs\Settings_Layout( $this ),
+			'settings-lightbox' => new Tabs\Settings_Lightbox( $this ),
+			'settings-custom-css' => new Tabs\Settings_Custom_CSS( $this ),
 		];
 	}
 
@@ -59,21 +64,36 @@ class Kit extends PageBase {
 		$config = parent::get_editor_panel_config();
 		$config['default_route'] = 'panel/global/menu';
 
+		$config['needHelpUrl'] = 'https://go.elementor.com/global-settings';
+
 		return $config;
 	}
 
 	public function get_css_wrapper_selector() {
-		return 'body.elementor-kit-' . $this->get_main_id();
+		return '.elementor-kit-' . $this->get_main_id();
 	}
 
 	public function save( $data ) {
 		$saved = parent::save( $data );
 
-		if ( $saved ) {
-			foreach ( $this->tabs as $tab ) {
-				$tab->on_save( $data );
-			}
+		if ( ! $saved ) {
+			return false;
 		}
+
+		// Should set is_saving to true, to avoid infinite loop when updating
+		// settings like: 'site_name" or "site_description".
+		$this->set_is_saving( true );
+
+		foreach ( $this->tabs as $tab ) {
+			$tab->on_save( $data );
+		}
+
+		$this->set_is_saving( false );
+
+		// When deleting a global color or typo, the css variable still exists in the frontend
+		// but without any value and it makes the element to be un styled even if there is a default style for the base element,
+		// for that reason this method removes css files of the entire site.
+		Plugin::instance()->files_manager->clear_cache();
 
 		return $saved;
 	}

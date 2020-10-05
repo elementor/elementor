@@ -20,7 +20,7 @@ jobs:
             | sed 's/[",]//g' \
             | tr -d '[[:space:]]')
           npm install semver --no-save
-          export NEXT_PACKAGE_VERSION=$(./node_modules/semver/bin/semver.js $PACKAGE_VERSION -i major)
+          export NEXT_PACKAGE_VERSION=$(./node_modules/semver/bin/semver.js $PACKAGE_VERSION -i minor)
           git config --local user.email "${{ secrets.MAINTAIN_EMAIL }}"
           git config --local user.name "${{ secrets.MAINTAIN_USERNAME }}"
           git checkout "release/${NEXT_PACKAGE_VERSION}"

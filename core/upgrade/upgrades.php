@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
@@ -654,19 +655,27 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			if ( ! $kit ) {
+				self::notice( 'Kit not found. nothing to do.' );
 				return;
 			}
 
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
+			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
+			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
+			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
+
 			$kit_settings = $kit->get_meta( $meta_key );
 
 			// Already exist.
 			if ( isset( $kit_settings['default_generic_fonts'] ) ) {
+				self::notice( 'General Settings already exist. nothing to do.' );
 				return;
 			}
 
 			if ( empty( $current_settings ) ) {
+				self::notice( 'Current settings are empty. nothing to do.' );
 				return;
 			}
 
@@ -677,12 +686,11 @@ class Upgrades {
 			// Convert some setting to Elementor slider format.
 			$settings_to_slider = [
 				'container_width',
-				'viewport_lg',
-				'viewport_md',
+				'space_between_widgets',
 			];
 
 			foreach ( $settings_to_slider as $setting ) {
-				if ( ! empty( $current_settings[ $setting ] ) ) {
+				if ( isset( $current_settings[ $setting ] ) ) {
 					$current_settings[ $setting ] = [
 						'unit' => 'px',
 						'size' => $current_settings[ $setting ],
@@ -706,9 +714,10 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+				self::notice( 'System colors are disabled. nothing to do.' );
 				return;
 			}
 
@@ -718,6 +727,7 @@ class Upgrades {
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_colors'] ) ) {
+				self::notice( 'System colors already exist. nothing to do.' );
 				return;
 			}
 
@@ -741,7 +751,7 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -751,7 +761,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_saved_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_saved_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
@@ -759,6 +769,7 @@ class Upgrades {
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
+				self::notice( 'Custom colors already exist. nothing to do.' );
 				return;
 			}
 
@@ -787,19 +798,20 @@ class Upgrades {
 			$colors_to_save = array_diff( $current_saved_colors, $system_colors );
 
 			if ( empty( $colors_to_save ) ) {
+				self::notice( 'Saved colors not found. nothing to do.' );
 				return;
 			}
 
 			foreach ( $colors_to_save as $index => $color ) {
 				$kit->add_repeater_row( 'custom_colors', [
 					'_id' => Utils::generate_random_string(),
-					'title' => __( 'Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
 					'color' => $color,
 				] );
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -809,9 +821,10 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
+				self::notice( 'System typography is disabled. nothing to do.' );
 				return;
 			}
 
@@ -821,6 +834,7 @@ class Upgrades {
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_typography'] ) ) {
+				self::notice( 'System typography already exist. nothing to do.' );
 				return;
 			}
 
@@ -846,19 +860,21 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
-
 
 	/**
 	 * @param callback $callback
-	 * @param Updater $updater
+	 * @param Updater  $updater
+	 *
+	 * @param bool     $include_revisions
 	 *
 	 * @return mixed
 	 */
-	private static function move_settings_to_kit( $callback, $updater ) {
+	private static function move_settings_to_kit( $callback, $updater, $include_revisions = true ) {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		if ( ! $active_kit_id ) {
+			self::notice( 'Active kit not found. nothing to do.' );
 			return false;
 		}
 
@@ -868,6 +884,10 @@ class Upgrades {
 		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
 		if ( 0 === $offset ) {
 			$callback( $active_kit_id );
+		}
+
+		if ( ! $include_revisions ) {
+			return false;
 		}
 
 		$revisions_ids = wp_get_post_revisions( $active_kit_id, [
@@ -881,5 +901,10 @@ class Upgrades {
 		}
 
 		return $updater->should_run_again( $revisions_ids );
+	}
+
+	private static function notice( $message ) {
+		$logger = Plugin::$instance->logger->get_logger();
+		$logger->notice( $message );
 	}
 }

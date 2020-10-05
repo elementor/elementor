@@ -451,14 +451,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-ntc',
-			ELEMENTOR_ASSETS_URL . 'lib/e-ntc/e-ntc' . $suffix . '.js',
-			[],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'jquery-hover-intent',
 			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
 			[],
@@ -501,10 +493,11 @@ class Editor {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
-				'elementor-ntc',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
+				'react',
+				'react-dom',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -537,6 +530,7 @@ class Editor {
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
+			'admin_settings_url' => admin_url( 'admin.php?page=' . Settings::PAGE_ID ),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'tabs' => $plugin->controls_manager->get_tabs(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
@@ -593,6 +587,10 @@ class Editor {
 			'ui' => [
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 			],
+			// Legacy Mode - for backwards compatibility of older HTML markup.
+			'legacyMode' => [
+				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
+			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'edit' => __( 'Edit', 'elementor' ),
@@ -611,42 +609,35 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
-				'saved_colors' => __( 'Saved Colors', 'elementor' ),
-				'drag_to_delete' => __( 'Drag To Delete', 'elementor' ),
 				'color_picker' => __( 'Color Picker', 'elementor' ),
 
 				// Global Styles
-				'add_picked_color' => __( 'Add Picked Color', 'elementor' ),
+				'new_global_color' => __( 'New Global Color', 'elementor' ),
 				'global_colors_title' => __( 'Global Colors', 'elementor' ),
 				'manage_global_colors' => __( 'Manage Global Colors', 'elementor' ),
 				'create_global_color' => __( 'Create New Global Color', 'elementor' ),
 				'delete_global_color' => __( 'Delete Global Color', 'elementor' ),
-				'delete_global_color_info' => __( 'Please note that by deleting a global color, all of its instances will inherit their value from an unknown source', 'elementor' ),
-				'global_colors_info' => __( 'Global colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button below.', 'elementor' ),
+				'delete_global_color_info' => __( 'You\'re about to delete a Global Color. Note that if it\'s being used anywhere on your site, it will inherit a default color.', 'elementor' ),
+				'global_colors_info' => __( 'Global Colors help you work smarter. Save a color, and use it anywhere throughout your site. Access and edit your global colors by clicking the Manage button.', 'elementor' ),
 				'typography' => __( 'Typography', 'elementor' ),
 				'new_typography_setting' => __( 'New Typography Setting', 'elementor' ),
-				'global_typography_title' => __( 'Global Typography Settings', 'elementor' ),
-				'manage_global_typography' => __( 'Manage Global Typography', 'elementor' ),
-				'create_global_typography' => __( 'Create New Global Typography', 'elementor' ),
-				'delete_global_typography' => __( 'Delete Global Typography', 'elementor' ),
-				'delete_global_typography_info' => __( 'Please note that by deleting a Global Typography setting, all of its instances will inherit their value from an unknown source', 'elementor' ),
-				'global_typography_info' => __( 'Global typography help you work smarter. Save a typography, and use it anywhere throughout your site. Access and edit your global typography by clicking the Manage button below.', 'elementor' ),
+				'global_fonts_title' => __( 'Global Fonts', 'elementor' ),
+				'manage_global_fonts' => __( 'Manage Global Fonts', 'elementor' ),
+				'create_global_font' => __( 'Create New Global Font', 'elementor' ),
+				'delete_global_font' => __( 'Delete Global Font', 'elementor' ),
+				'delete_global_font_info' => __( 'You\'re about to delete a Global Font. Note that if it\'s being used anywhere on your site, it will inherit a default typography.', 'elementor' ),
+				'global_fonts_info' => __( 'Global Fonts help you work smarter. Save a Typography, and use it anywhere throughout your site. Access and edit your Global Fonts by clicking the Manage button.', 'elementor' ),
 				'default' => __( 'Default', 'elementor' ),
 				'create' => __( 'Create', 'elementor' ),
 				'global_color_confirm_text' => __( 'Are you sure you want to create a new Global Color?', 'elementor' ),
-				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
-				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to save it?', 'elementor' ),
-				'global_typography_confirm_text' => __( 'Are you sure you want to create a new Global Typography setting?', 'elementor' ),
+				'global_color_already_exists' => __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' ),
+				'global_color_name_already_exists' => __( 'Please note that a color with the same exact name already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' ),
+				'global_fonts_confirm_text' => __( 'Are you sure you want to create a new Global Font setting?', 'elementor' ),
 				'custom' => __( 'Custom', 'elementor' ),
 
 				// Menu.
-				'about_elementor' => __( 'About Elementor', 'elementor' ),
-				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
-				'global_colors' => __( 'Default Colors', 'elementor' ),
-				'global_fonts' => __( 'Default Fonts', 'elementor' ),
-				'global_style' => __( 'Global Style', 'elementor' ),
-				'global_settings' => __( 'Global Settings', 'elementor' ),
-				'site_editor' => __( 'Site Editor', 'elementor' ),
+				'site_settings' => __( 'Site Settings', 'elementor' ),
+				'theme_builder' => __( 'Theme Builder', 'elementor' ),
 				'user_preferences' => __( 'User Preferences', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'more' => __( 'More', 'elementor' ),
@@ -797,7 +788,6 @@ class Editor {
 				'see_it_in_action' => __( 'See it in Action', 'elementor' ),
 				'dynamic_content' => __( 'Dynamic Content', 'elementor' ),
 				'dynamic_promotion_message' => __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' ),
-				'available_in_pro_v29' => __( 'Available in Pro V2.9.', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

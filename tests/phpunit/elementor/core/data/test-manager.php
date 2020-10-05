@@ -23,6 +23,12 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->manager->kill_server();
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+
+		$this->manager->kill_server();
+	}
+
 	public function test_get_controllers() {
 		$controller = $this->manager->register_controller( ControllerTemplate::class );
 		$controllers = $this->manager->get_controllers();
@@ -200,20 +206,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->manager->kill_server();
 
 		$this->assertEquals( false, !! $wp_rest_server );
-	}
-
-	public function test_run_internal() {
-		$controller = new ControllerSimple(); // controller with endpoint.
-		$controller = $this->manager->register_controller_instance( $controller );
-
-		$this->manager->run_server();
-		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
-
-		$endpoint = $this->manager->command_to_endpoint( $controller->get_name() . '/' . $endpoint_instance->get_name(), false, [] );
-
-		$data = $this->manager->run_internal( $endpoint, [], 'GET' );
-
-		$this->assertEquals( 200, $data->get_status() );
 	}
 
 	public function test_run_processor() {

@@ -2,7 +2,6 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Settings\Page\Manager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\DB;
@@ -12,6 +11,7 @@ use Elementor\User;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
+use Elementor\Core\Settings\Page\Manager as PageManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -35,6 +35,11 @@ abstract class Document extends Controls_Stack {
 	const PAGE_META_KEY = '_elementor_page_settings';
 
 	private $main_id;
+
+	/**
+	 * @var bool
+	 */
+	private $is_saving = false;
 
 	private static $properties = [];
 
@@ -87,11 +92,17 @@ abstract class Document extends Controls_Stack {
 	 * @static
 	 */
 	public static function get_editor_panel_config() {
+		$default_route = 'panel/elements/categories';
+
+		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
+			$default_route = 'panel/page-settings/settings';
+		}
+
 		return [
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
-			'default_route' => 'panel/elements/categories',
+			'default_route' => $default_route,
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
@@ -520,6 +531,8 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
+		$this->set_is_saving( true );
+
 		/**
 		 * Before document save.
 		 *
@@ -575,7 +588,28 @@ abstract class Document extends Controls_Stack {
 		 */
 		do_action( 'elementor/document/after_save', $this, $data );
 
+		$this->set_is_saving( false );
+
 		return true;
+	}
+
+	/**
+	 * @param array $new_settings
+	 *
+	 * @return static
+	 */
+	public function update_settings( array $new_settings ) {
+		$document_settings = $this->get_meta( PageManager::META_KEY );
+
+		if ( ! $document_settings ) {
+			$document_settings = [];
+		}
+
+		$this->save_settings(
+			array_replace_recursive( $document_settings, $new_settings )
+		);
+
+		return $this;
 	}
 
 	/**
@@ -821,11 +855,20 @@ abstract class Document extends Controls_Stack {
 		if ( ! $elements_data ) {
 			$elements_data = $this->get_elements_data();
 		}
+
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
+
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
-			<div class="elementor-section-wrap">
-				<?php $this->print_elements( $elements_data ); ?>
+			<?php if ( $is_legacy_mode_active ) { ?>
+			<div class="elementor-inner">
+			<?php } ?>
+				<div class="elementor-section-wrap">
+					<?php $this->print_elements( $elements_data ); ?>
+				</div>
+			<?php if ( $is_legacy_mode_active ) { ?>
 			</div>
+			<?php } ?>
 		</div>
 		<?php
 	}
@@ -1092,6 +1135,25 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $last_edited;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function is_saving() {
+		return $this->is_saving;
+	}
+
+	/**
+	 * @param $is_saving
+	 *
+	 * @return $this
+	 */
+	public function set_is_saving( $is_saving ) {
+		$this->is_saving = $is_saving;
+
+		return $this;
 	}
 
 	/**

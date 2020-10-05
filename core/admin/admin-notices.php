@@ -197,7 +197,7 @@ class Admin_Notices extends Module {
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
-		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our non-sensitive plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
+		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' );
 
 		/**
 		 * Tracker admin description text.
@@ -491,6 +491,47 @@ class Admin_Notices extends Module {
 		<?php
 
 		return true;
+	}
+
+	/*
+	 * @TODO: Rewrite this method markup and use it for every admin notice
+	 */
+	public function print_admin_notice( array $options ) {
+		$default_options = [
+			'title' => '',
+			'description' => '',
+			'button' => [
+				'text' => '',
+				'url' => '',
+				'class' => 'elementor-button',
+			],
+		];
+
+		$options = array_replace_recursive( $default_options, $options );
+		?>
+		<div class="notice elementor-message">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<?php if ( $options['title'] ) { ?>
+						<strong><?php echo $options['title']; ?></strong>
+					<?php } ?>
+					<?php if ( $options['description'] ) { ?>
+						<p><?php echo $options['description']; ?></p>
+					<?php } ?>
+				</div>
+				<?php if ( $options['button']['text'] ) { ?>
+					<div class="elementor-message-action">
+						<a class="<?php echo $options['button']['class']; ?>" href="<?php echo esc_url( $options['button']['url'] ); ?>"><?php echo $options['button']['text']; ?></a>
+					</div>
+				<?php } ?>
+			</div>
+		</div>
+		<?php
 	}
 
 	public function admin_notices() {

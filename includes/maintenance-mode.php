@@ -176,7 +176,7 @@ class Maintenance_Mode {
 		$templates_options = [];
 
 		foreach ( $templates as $template ) {
-			$templates_options[ $template['template_id'] ] = $template['title'];
+			$templates_options[ $template['template_id'] ] = esc_html( $template['title'] );
 		}
 
 		ob_start();

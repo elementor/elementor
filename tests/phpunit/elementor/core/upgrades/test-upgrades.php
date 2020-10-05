@@ -114,6 +114,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$generic_font = 'some-generic-font';
 		$lightbox_color = '#e1e3ef';
 		$container_width = '1000';
+		$space_between_widgets = '0'; // Ensure that value 0 is also upgraded (#12298).
 		$viewport_lg = '900';
 		$viewport_md = '800';
 
@@ -121,11 +122,14 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'default_generic_fonts' => $generic_font,
 			'lightbox_color' => $lightbox_color,
 			'container_width' => $container_width,
-			'viewport_lg' => $viewport_lg,
-			'viewport_md' => $viewport_md,
 		];
 
 		update_option( '_elementor_general_settings', $general_settings );
+
+		// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+		update_option( 'elementor_space_between_widgets', $space_between_widgets );
+		update_option( 'elementor_viewport_lg', $viewport_lg );
+		update_option( 'elementor_viewport_md', $viewport_md );
 
 		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
 		wp_set_current_user( $user_id );
@@ -149,13 +153,13 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_generic_font_before = $kit->get_settings( 'default_generic_fonts' );
 		$kit_lightbox_color_before = $kit->get_settings( 'lightbox_color' );
 		$kit_container_width_before = $kit->get_settings( 'container_width' );
-		$kit_viewport_lg_before = $kit->get_settings( 'viewport_lg' );
+		$kit_space_between_widgets_before = $kit->get_settings( 'space_between_widgets' );
 		$kit_viewport_md_before = $kit->get_settings( 'viewport_md' );
 
 		$this->assertNotEquals( $generic_font, $kit_generic_font_before );
 		$this->assertNotEquals( $lightbox_color, $kit_lightbox_color_before );
 		$this->assertNotEquals( $container_width, $kit_container_width_before );
-		$this->assertNotEquals( $viewport_lg, $kit_viewport_lg_before );
+		$this->assertNotEquals( $space_between_widgets, $kit_space_between_widgets_before );
 		$this->assertNotEquals( $viewport_md, $kit_viewport_md_before );
 
 		$updater->set_limit( $query_limit );
@@ -184,14 +188,14 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit_generic_font_after = $kit->get_settings( 'default_generic_fonts' );
 		$kit_lightbox_color_after = $kit->get_settings( 'lightbox_color' );
 		$kit_container_width_after = $kit->get_settings( 'container_width' );
-		$kit_viewport_lg_after = $kit->get_settings( 'viewport_lg' );
+		$kit_space_between_widgets_after = $kit->get_settings( 'space_between_widgets' );
 		$kit_viewport_md_after = $kit->get_settings( 'viewport_md' );
 
 		$this->assertEquals( $generic_font, $kit_generic_font_after );
 		$this->assertEquals( $lightbox_color, $kit_lightbox_color_after );
 		$this->assertEquals( $container_width, $kit_container_width_after['size'] );
-		$this->assertEquals( $viewport_lg, $kit_viewport_lg_after['size'] );
-		$this->assertEquals( $viewport_md, $kit_viewport_md_after['size'] );
+		$this->assertEquals( $space_between_widgets, $kit_space_between_widgets_after['size'] );
+		$this->assertEquals( $viewport_md, $kit_viewport_md_after );
 
 		// Assert revisions upgraded.
 
@@ -426,7 +430,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$this->assertEquals( $saved_typography[4]['value']['font_family'], $revision_saved_typography[3]['typography_font_family'] );
 		}
 	}
-
 
 	/**
 	 * @param string $post_type

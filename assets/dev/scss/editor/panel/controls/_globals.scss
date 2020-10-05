@@ -1,48 +1,46 @@
 // Elementor Global Controls
 .e-global {
 
-	&__select-box {
-		border: 1px solid $editor-lightest;
-		@include border-end(0);
-		border-radius: 3px 0 0 3px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 4px;
-		width: 97px;
-		cursor: pointer;
-
-		i {
-			@include padding-start(5px);
-			@include padding-end(2px);
-		}
-
-		&-text {
-			white-space: nowrap;
-			overflow: hidden;
-		}
-	}
-
 	&__popover {
 		width: 270px;
 		z-index: 1;
 		font-size: 12px;
 
+		&-toggle {
+			border: 1px solid $editor-lightest;
+			@include border-end(0);
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+
+			&--active i {
+				color: $editor-info;
+			}
+		}
+
 		&-container {
 			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 			border-radius: 3px;
 			background-color: #fff;
+			padding-bottom: 5px;
 		}
 
 		&-title {
 			padding: 15px 20px;
-			font-weight: bold;
+			font-weight: 500;
 			color: $editor-dark;
 			border-bottom: 1px solid $editor-background;
+			display: flex;
 
-			i {
+			& > i {
 				@include margin-end(5px);
 				color: $editor-lightest;
+			}
+
+			&-text {
+				flex-grow: 1;
 			}
 		}
 
@@ -70,45 +68,56 @@
 
 			i {
 				color: $editor-lightest;
+				font-size: 13px;
 			}
 		}
-
 	}
 
 	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: auto;
+		margin-top: 5px;
 
 		&::-webkit-scrollbar {
-			width: 8px;
+			width: 7px;
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background-color: $editor-light;
-			outline: 1px solid $editor-darker;
+			background-color: $editor-lighter;
 			border-radius: 10px;
 		}
 	}
 
 	&__manage-button {
-		color: $editor-dark;
 		font-weight: 500;
-		padding: 15px 20px;
-		border-top: 1px solid $editor-background;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
 		cursor: pointer;
 
-		&:hover {
-			background-color: $editor-kit-accent;
-			color: #fff;
+		&:hover i {
+				color: $editor-kit-accent;
+		}
+
+		i {
+			color: $editor-dark;
 		}
 	}
 
 	// Typography Globals
 	&__typography {
-		padding: 5px 35px;
+		padding: getValueByDirection(5px 10px 5px 35px, 5px 35px 5px 10px);
+		@include ellipsis;
+
+		&.e-global__preview-item--selected {
+
+			&:before {
+				font-family: 'eicons';
+				font-size: 13px;
+				content: '\e90e'; // eicon-check
+				position: absolute;
+				transform: translateY(-50%);
+				top: 50%;
+				left: 12px;
+			}
+		}
 	}
 
 	// Color Globals
@@ -119,7 +128,7 @@
 		align-items: center;
 
 		&:first-child {
-			margin-top: 10px;
+			margin-top: 5px;
 		}
 
 		&:last-child {
@@ -127,35 +136,79 @@
 		}
 
 		&-preview {
-			height: 20px;
-			width: 20px;
-			border-radius: 3px;
-			border: 1px solid rgba(0, 0, 0, 0.1);
-			@include margin-end(10px);
+
+			&-container {
+				height: 20px;
+				width: 20px;
+				border-radius: 3px;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				@include margin-end(10px);
+				flex-shrink: 0;
+				position: relative;
+			}
+
+			&-color,
+			&-transparent-bg {
+				border-radius: 3px;
+				height: 100%;
+				width: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+
+			&-transparent-bg {
+				@include checkers-background(12px);
+			}
 		}
 
 		&-title {
 			font-weight: 500;
 			color: $editor-dark;
 			flex-grow: 1;
+			@include ellipsis;
+			@include padding-end(10px);
 		}
 
 		&-hex {
 			font-size: 10px;
 			font-weight: 500;
-			color: $editor-light;
+			color: $editor-lighter;
 		}
 
 		.pcr-button {
 			background-color: #fff;
 		}
+
+		&.e-global__preview-item--selected {
+
+			.e-global__color-preview-container {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #ffffff;
+
+				&:before {
+					font-family: 'eicons';
+					font-size: 13px;
+					content: '\e90e'; // eicon-check
+					text-shadow: 0px 0px 1px #000;
+					z-index: 1;
+				 }
+			}
+		}
 	}
 
 	&__preview-item {
 		cursor: pointer;
+		position: relative;
 
 		&:hover {
 			background-color: $editor-background-light;
+
+			.e-global__color-hex {
+				color: $editor-light;
+			}
 		}
 	}
 
@@ -199,5 +252,27 @@
 				border: 0;
 			}
 		}
+	}
+}
+
+.e-control-global {
+
+	.elementor-control-input-wrapper {
+		display: flex;
+		justify-content: flex-end;
+		max-width: $control-unit * 5;
+		width: 100%;
+	}
+
+	&.elementor-control {
+
+		// A hardened selector to override popover-toggle's inverse direction CSS (in _popover-toggle.scss)
+		.elementor-control-input-wrapper {
+			direction: $direction;
+		}
+	}
+
+	.elementor-control-spinner {
+		@include margin-end(4px);
 	}
 }

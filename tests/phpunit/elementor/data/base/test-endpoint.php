@@ -19,6 +19,11 @@ class Test_Endpoint extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->manager = Manager::instance();
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+
 		$this->manager->kill_server();
 	}
 

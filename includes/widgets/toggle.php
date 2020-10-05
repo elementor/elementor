@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Kits\Documents\Tabs\Colors_And_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor toggle widget.
@@ -316,7 +317,7 @@ class Widget_Toggle extends Widget_Base {
 					'{{WRAPPER}} .elementor-toggle-title, {{WRAPPER}} .elementor-toggle-icon' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_PRIMARY,
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 			]
 		);
@@ -330,7 +331,7 @@ class Widget_Toggle extends Widget_Base {
 					'{{WRAPPER}} .elementor-tab-title.elementor-active a, {{WRAPPER}} .elementor-tab-title.elementor-active .elementor-toggle-icon' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_ACCENT,
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 			]
 		);
@@ -341,7 +342,7 @@ class Widget_Toggle extends Widget_Base {
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-title',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_PRIMARY,
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				],
 			]
 		);
@@ -463,7 +464,7 @@ class Widget_Toggle extends Widget_Base {
 					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'color: {{VALUE}};',
 				],
 				'global' => [
-					'default' => Colors_And_Typography::COLOR_TEXT,
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 			]
 		);
@@ -474,7 +475,7 @@ class Widget_Toggle extends Widget_Base {
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-content',
 				'global' => [
-					'default' => Colors_And_Typography::TYPOGRAPHY_TEXT,
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
 			]
 		);
@@ -625,7 +626,7 @@ class Widget_Toggle extends Widget_Base {
 								<# } #>
 							</span>
 							<# } #>
-							<a href="">{{{ item.tab_title }}}</a>
+							<a href="" class="elementor-toggle-title">{{{ item.tab_title }}}</a>
 						</{{{ settings.title_html_tag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>

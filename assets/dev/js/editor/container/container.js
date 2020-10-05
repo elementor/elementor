@@ -3,7 +3,7 @@ import Panel from './panel';
 
 /**
  * TODO: ViewsOptions
- * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView)} ViewsOptions
+ * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView|BaseContainer)} ViewsOptions
  */
 
 export default class Container extends ArgsObject {
@@ -224,15 +224,17 @@ export default class Container extends ArgsObject {
 
 		// Backwards Compatibility: if there is only one repeater (type=repeater), set it's children as current children.
 		// Since 3.0.0.
-		const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
+		if ( [ 'widget', 'document' ].includes( this.type ) ) {
+			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
 
-		if ( 1 === repeaters.length ) {
-			Object.defineProperty( this, 'children', {
-				get() {
-					elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
-					return this.repeaters[ repeaters[ 0 ].name ].children;
-				},
-			} );
+			if ( 1 === repeaters.length ) {
+				Object.defineProperty( this, 'children', {
+					get() {
+						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						return this.repeaters[ repeaters[ 0 ].name ].children;
+					},
+				} );
+			}
 		}
 	}
 
@@ -241,11 +243,11 @@ export default class Container extends ArgsObject {
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
 		if ( ! rowId ) {
-			rowId = 'bc-' + elementor.helpers.getUniqueID();
+			rowId = 'bc-' + elementorCommon.helpers.getUniqueId();
 			rowSettingsModel.set( '_id', rowId );
 		}
 
-		this.repeaters[ repeaterName ].children[ index ] = new elementorModules.editor.Container( {
+		this.repeaters[ repeaterName ].children.splice( index, 0, new elementorModules.editor.Container( {
 			type: 'repeater',
 			id: rowSettingsModel.get( '_id' ),
 			model: new Backbone.Model( {
@@ -257,7 +259,7 @@ export default class Container extends ArgsObject {
 			label: this.label + ' ' + elementor.translate( 'Item' ),
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
-		} );
+		} ) );
 	}
 
 	/**
@@ -276,11 +278,11 @@ export default class Container extends ArgsObject {
 			return this;
 		}
 
-		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
+		if ( this !== this.renderer && this.renderer.view?.isDisconnected && this.renderer.view.isDisconnected() ) {
 			this.renderer = this.renderer.lookup();
 		}
 
-		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
+		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDisconnected() ) {
 			// Hack For repeater item the result is the parent container.
 			if ( 'repeater' === this.type ) {
 				this.settings = this.parent.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
@@ -318,6 +320,14 @@ export default class Container extends ArgsObject {
 		}
 
 		this.renderer.view.renderOnChange( this.settings );
+	}
+
+	renderUI() {
+		if ( ! this.renderer ) {
+			return;
+		}
+
+		this.renderer.view.renderUI();
 	}
 
 	isEditable() {

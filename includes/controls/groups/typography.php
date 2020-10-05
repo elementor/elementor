@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Settings\Page\Manager as PageManager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -86,8 +88,15 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		// TODO: IMPLEMEMENT SOLUTION IN FRONTEND
-		$default_fonts = '';// Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+
+		/**
+		 * Retrieve the settings directly from DB, because of an open issue when a controls group is being initialized
+		 * from within another group
+		 */
+		$kit_settings = $kit->get_meta( PageManager::META_KEY );
+
+		$default_fonts = isset( $kit_settings['default_generic_fonts'] ) ? $kit_settings['default_generic_fonts'] : 'Sans-serif';
 
 		if ( $default_fonts ) {
 			$default_fonts = ', ' . $default_fonts;
