@@ -304,8 +304,4 @@ class FrontendBase extends elementorModules.ViewModule {
 	}
 }
 
-window.elementorFrontend = new FrontendBase();
-
-if ( ! elementorFrontend.isEditMode() ) {
-	jQuery( () => elementorFrontend.init() );
-}
+export default FrontendBase;
