@@ -1,4 +1,4 @@
-import tests from '../tests';
+import tests from '../tests/editor';
 
 /* global require */
 
