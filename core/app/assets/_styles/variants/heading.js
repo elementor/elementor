@@ -3,7 +3,7 @@ const _$ = require('../index');
 console.log( '_$', _$ );
 module.exports = {
 	'text-decoration': 'underline',
-	color: 'orange',
+	color: 'purple',
 	h1: {
 		'font-size': '70px',
 		color: _$.themeColors( 'primary' ),

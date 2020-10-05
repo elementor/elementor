@@ -107,7 +107,10 @@ const externals = {
 };
 
 const plugins = [
-	new jsToScss(),
+	new jsToScss( {
+		jsSourcePath: '../core/app/assets/_styles/variants/index.js',
+		scssDestination: '../assets/dev/scss/app/e-style.scss',
+	} ),
 	new webpack.ProvidePlugin( {
 		React: 'react',
 		ReactDOM: 'react-dom',

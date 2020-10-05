@@ -3,15 +3,15 @@
 var JsToScssPlugin = (function () {
 	const path = require('path');
 	const fs = require('fs');
-	const variants = require( '../core/app/assets/_styles/variants/index.js' );
 	let css = '';
 
 	function pascalCaseToDashCase( str ) {
 		return ( str.charAt( 0 ).toLowerCase() + str.slice( 1 ) ).replace( /([A-Z])/g, ( _, char ) => '-' + char.toLowerCase() );
 	}
 
-	function JsToScssPlugin() {
-		const filePath = path.resolve( __dirname, '../assets/dev/scss/app/e-style.scss' );
+	function JsToScssPlugin( { jsSourcePath, scssDestination } ) {
+		const variants = require( jsSourcePath ),
+			filePath = path.resolve( __dirname, scssDestination );
 
 		fs.writeFileSync(filePath, processJS( variants ), (err) => { if (err) throw err; });
 	}
