@@ -1,7 +1,7 @@
 import EditorBootstrap from 'elementor-tests-qunit/editor/editor-bootstrap';
 import FrontendBootstrap from 'elementor-tests-qunit/frontend/frontend-bootstrap';
 
-const { target } = __karma__.config;
+const { target = 'editor' } = __karma__?.config;
 
 if ( 'editor' === target && ! window.elementor ) {
 	new EditorBootstrap();

@@ -18,10 +18,12 @@ module.exports = function( config ) {
 		karmaArguments.push( argument );
 	} );
 
-	let target = 'editor';
+	let target = 'editor',
+		targetArgument = karmaArguments.find( ( arg ) => 'target' === arg[ 0 ] );
 
-	const targetArgument = karmaArguments.find( ( arg ) => 'target' === arg[ 0 ] ) ||
-		global.arguments ? [ 'target', global.arguments.target ] : false;
+	if ( ! targetArgument ) {
+		targetArgument = global.arguments ? [ 'target', global.arguments.target ] : false;
+	}
 
 	if ( targetArgument ) {
 		target = targetArgument[ 1 ];
