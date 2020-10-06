@@ -1,11 +1,10 @@
-import styled from 'styled-components';
-import _$ from 'elementor-styles';
-import Utils from './utils.js';
+import styled, {css} from 'styled-components';
+import _$ from 'elementor-app/styled/utils';
 
 const Heading = styled.h1`
 	border-${ _$.direction`start` }: 5px solid aqua;
 
-	${ Utils.bindVariant( 'Heading' ) }
+	${ props => _$.utils.bindVariant( 'heading', props.variant ) }
 `;
 
 console.log( '### Heading', Heading );

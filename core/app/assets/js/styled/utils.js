@@ -1,7 +1,8 @@
 import { css } from 'styled-components';
-import Variants from 'elementor-styles/variants';
+import Variants from './variants';
+import styleHelpers from 'elementor-styles';
 
-export default class Utils {
+class Utils {
 	static bindProp = ( obj ) => {
 		const [ key, value ] = Object.entries( obj )[ 0 ];
 
@@ -12,33 +13,76 @@ export default class Utils {
 
 	static bindProps = ( arr ) => arr.map( ( obj ) => this.bindProp( obj ) );
 
-	static bindVariant = ( component, propValue ) => {
-		const componentData = Variants[ component ];
+	static bindVariant = ( variant, propValue ) => {
+		const variantObj = Variants[ variant ],
+			variantDarkObj = Variants[ variant + '.dark' ],
+			isDarkMode = document.body.classList.contains( 'eps-theme-dark' );
 
-		if ( ! componentData ) {
-			return '';
-		}
+		let baseStyle = '';
 
-		if ( ! propValue ) {
-			let baseStyle = '';
+		function getBaseStyle( obj ) {
+			for ( const key in obj ) {
+				const cssValue = obj[ key ];
 
-			for ( const key in componentData ) {
-				const cssValue = componentData[ key ];
-
-				if ( 'string' === typeof cssValue ) {
+				if ( 'string' === typeof cssValue  ) {
 					baseStyle += `${ key }: ${ cssValue };`;
+				} else if ( key.indexOf( '@media' ) > -1 ) {
+					baseStyle += key + ' {';
+					getBaseStyle( cssValue );
+					baseStyle += '}';
 				}
 			}
 
 			return baseStyle;
 		}
 
-		const variantData = componentData?.[ propValue ];
+		if ( ! variantObj ) {
+			return '';
+		}
 
-		if ( variantData ) {
-			const cssString = Object.entries( variantData ).map( ( [key, value] ) => `${ key }: ${ value };` ).join( '' );
+		if ( ! propValue ) {
+			let baseStyle = getBaseStyle( variantObj );
+
+			if ( isDarkMode && variantDarkObj ) {
+				baseStyle += getBaseStyle( variantDarkObj );
+			}
+
+			return baseStyle;
+		}
+
+		const variantStyle = variantObj?.[ propValue ],
+			variantDarkStyle = variantDarkObj?.[ propValue ];
+
+		function getVariantStyle( obj ) {
+			return Object.entries( obj ).map( ( [ key, value ] ) => {
+				if ( key.indexOf( '@media' ) > -1 ) {
+					const mediaQueryObj = value;
+					let mediaQueryCSS = key + ' {';
+
+					for ( const mediaKey in mediaQueryObj ) {
+						mediaQueryCSS += `${ mediaKey }: ${ mediaQueryObj[ mediaKey ] };`;
+					}
+
+					return mediaQueryCSS += '}';
+				}
+
+				return `${ key }: ${ value };`
+			} ).join( '' );
+		}
+
+		if ( variantStyle ) {
+			let cssString = getVariantStyle( variantStyle );
+
+			if ( isDarkMode && variantDarkStyle ) {
+				cssString += getVariantStyle( variantDarkStyle );
+			}
 
 			return css`${ cssString }`;
 		}
 	};
 }
+
+export default {
+	...styleHelpers,
+	utils: Utils,
+};

@@ -13,10 +13,18 @@ var JsToScssPlugin = (function () {
 		const variants = require( jsSourcePath ),
 			filePath = path.resolve( __dirname, scssDestination );
 
-		fs.writeFileSync(filePath, processJS( variants ), (err) => { if (err) throw err; });
+		parseVariants( variants );
+
+		fs.writeFileSync(filePath, css, (err) => { if (err) throw err; });
 	}
 
-	function processJS( obj, prevKey, prevSelector ) {
+	function parseVariants( variants ) {
+		for ( const key in variants ) {
+			parseJS( variants[ key ] );
+		}
+	}
+
+	function parseJS( obj, prevKey, prevSelector ) {
 		for ( let key in obj ) {
 			const value = obj[ key ];
 
@@ -25,7 +33,7 @@ var JsToScssPlugin = (function () {
 			} else {
 				if ( key.indexOf( '@media' ) > -1 ) {
 					css += key + ' {';
-					processJS( value );
+					parseJS( value );
 					css += ' } ';
 				} else {
 					key = pascalCaseToDashCase( key );
@@ -35,14 +43,15 @@ var JsToScssPlugin = (function () {
 
 					let selector = '';
 
-					if ( prevKey ) {
+					// prevKey.substr is mainly for .dark prefix class
+					if ( prevKey && prevKey.substr( 0, 1 ) !== '.' ) {
 						selector = ( key.indexOf( '&' ) === -1 ) ? connector + key : key;
 					} else {
-						selector = prefix + key;
+						selector = key.substr( 0, 1 ) === '.' ? key : prefix + key;
 					}
 
 					css += selector + ' {';
-					processJS( value, key, selector );
+					parseJS( value, key, selector );
 					css += ' } ';
 				}
 			}
