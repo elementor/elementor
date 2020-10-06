@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
-import _$ from 'elementor-styles';
-import Utils from './utils';
+import _$ from 'elementor-app/styled/utils';
 
 const Grid = styled.div`
 	${ ( props ) => props.container && css`
@@ -8,7 +7,7 @@ const Grid = styled.div`
 		display: flex;
 		flex-wrap: ${ props.noWrap && 'nowrap' || props.wrapReverse && 'wrap-reverse' || 'wrap' };
 
-		${ ( props ) => Utils.bindProps( [
+		${ ( props ) => _$.utils.bindProps( [
 			{ 'padding': _$.spacing( props.spacing ) },
 			{ 'flex-direction': props.direction },
 			{ 'justify-content': props.justify },

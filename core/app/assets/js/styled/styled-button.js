@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import _$ from 'elementor-styles';
+import _$ from 'elementor-app/styled/utils';
 import Theme from './theme';
 
 const defaultTheme = {
