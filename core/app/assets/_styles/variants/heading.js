@@ -1,7 +1,7 @@
 const _$ = require('../index');
 const { dark, ltr, rtl } = _$.selectors;
 
-const h1h1DirectionVal = '90px';
+const h1DirectionVal = '90px';
 
 const style = {
 	heading: {
@@ -11,8 +11,6 @@ const style = {
 			'font-size': '60px',
 			color: _$.themeColors( 'warning' ),
 			'line-height': '60px',
-			position: 'absolute',
-			top: '0',
 		},
 		h2: {
 			'font-size': '60px',

@@ -9,14 +9,9 @@ const GlobalStyle = createGlobalStyle`
   color: pink;
 }
 .eps-heading--h1 {
-  font-size: 70px;
+  font-size: 60px;
   color: #fcb92c;
-  line-height: 70px;
-}
-@media screen and (max-width: 960px) {
-  .eps-heading--h1 {
-    color: grey;
-  }
+  line-height: 60px;
 }
 .eps-heading--h2 {
   font-size: 60px;
@@ -24,8 +19,8 @@ const GlobalStyle = createGlobalStyle`
   line-height: 60px;
 }
 @media screen and (max-width: 960px) {
-  .eps-heading {
-    color: orange;
+  .eps-heading--h2 {
+    color: blue;
   }
 }
 
@@ -81,17 +76,13 @@ const GlobalStyle = createGlobalStyle`
 
 const Heading = styled.h1`
 	color: green;
-	${ props => {
-		return false;
-		return _$.utils.bindVariant( 'Heading', props.variant );
-	} }
+	${ props =>  _$.utils.bindVariant( 'Heading', props.variant ) }
 `;
 
 console.log( '### Heading', Heading );
 
 export const StyledHeading = ( props ) => (
 	<>
-		<GlobalStyle />
 		<Heading { ...props } className="eps-heading--h1"  as={ props.tag }>{ props.children }</Heading>
 	</>
 );
