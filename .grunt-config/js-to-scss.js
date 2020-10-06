@@ -28,7 +28,7 @@ var JsToScssPlugin = (function () {
 		for ( let key in obj ) {
 			const value = obj[ key ];
 
-			if ( 'string' === typeof value ) {
+			if ( 'object' !== typeof value ) {
 				css += key + ': ' + value + ';';
 			} else {
 				if ( key.indexOf( '@media' ) > -1 ) {
@@ -36,7 +36,19 @@ var JsToScssPlugin = (function () {
 					parseJS( value );
 					css += ' } ';
 				} else {
-					key = pascalCaseToDashCase( key );
+					const varKey = key.match( /{{(.*?)}}/ );
+
+					if ( varKey ) {
+						const varKeysMap = {
+							ltr: ':not([dir=rtl])',
+							rtl: '[dir=rtl]',
+							dark: '.eps-theme-dark',
+						};
+
+						key = varKeysMap[ varKey[ 1 ].trim() ];
+					} else {
+						key = pascalCaseToDashCase( key );
+					}
 
 					const prefix = '.eps-';
 					const connector = prevSelector && prevSelector.indexOf( prefix ) > -1 ? '&--' : '&-';
@@ -44,10 +56,11 @@ var JsToScssPlugin = (function () {
 					let selector = '';
 
 					// prevKey.substr is mainly for .dark prefix class
-					if ( prevKey && prevKey.substr( 0, 1 ) !== '.' ) {
+					// TODO: make better detection when there is a class or an attribute target as prevKey
+					if ( prevKey && prevKey.substr( 0, 1 ) !== '.' && prevKey.substr( 0, 1 ) !== '[' && prevKey.substr( 0, 1 ) !== ':' ) {
 						selector = ( key.indexOf( '&' ) === -1 ) ? connector + key : key;
 					} else {
-						selector = key.substr( 0, 1 ) === '.' ? key : prefix + key;
+						selector = key.substr( 0, 1 ) === '.' || key.substr( 0, 1 ) === '[' || key.substr( 0, 1 ) === ':' ? key : prefix + key;
 					}
 
 					css += selector + ' {';
