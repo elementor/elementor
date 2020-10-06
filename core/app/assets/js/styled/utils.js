@@ -23,9 +23,9 @@ class Utils {
 		}
 
 		// TODO: Detect by value, not by string
-		const darkObj = variantData[ '{{ dark }}' ][ variantName ],
-			ltrObj = variantData[ '{{ ltr }}' ][ variantName ],
-			rtlObj = variantData[ '{{ rtl }}' ][ variantName ],
+		const darkObj = variantData[ styleHelpers.selectors.dark ][ variantName ],
+			ltrObj = variantData[ styleHelpers.selectors.ltr ][ variantName ],
+			rtlObj = variantData[ styleHelpers.selectors.rtl ][ variantName ],
 			isDarkMode = document.body.classList.contains( 'eps-theme-dark' ), // TODO: read from a proper source
 			isRtlMode = 'rtl' === getComputedStyle(document.body).direction; // TODO: read from a proper source
 

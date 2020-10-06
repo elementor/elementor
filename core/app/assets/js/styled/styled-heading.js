@@ -80,8 +80,9 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Heading = styled.h1`
+	color: green;
 	${ props => {
-		console.log( 'FINAL STYLE: ', _$.utils.bindVariant( 'Heading', props.variant ) );
+		return false;
 		return _$.utils.bindVariant( 'Heading', props.variant );
 	} }
 `;
@@ -90,6 +91,7 @@ console.log( '### Heading', Heading );
 
 export const StyledHeading = ( props ) => (
 	<>
+		<GlobalStyle />
 		<Heading { ...props } className="eps-heading--h1"  as={ props.tag }>{ props.children }</Heading>
 	</>
 );

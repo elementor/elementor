@@ -9,4 +9,9 @@ module.exports = {
 	spacing: Spacing.get,
 	type: null,
 	direction: Direction.get,
+	selectors: {
+		dark: '.eps-theme-dark',
+		ltr: ':not([dir=rtl])',
+		rtl: '[dir=rtl]',
+	}
 };

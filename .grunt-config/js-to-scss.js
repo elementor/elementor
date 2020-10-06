@@ -36,19 +36,7 @@ var JsToScssPlugin = (function () {
 					parseJS( value );
 					css += ' } ';
 				} else {
-					const varKey = key.match( /{{(.*?)}}/ );
-
-					if ( varKey ) {
-						const varKeysMap = {
-							ltr: ':not([dir=rtl])',
-							rtl: '[dir=rtl]',
-							dark: '.eps-theme-dark',
-						};
-
-						key = varKeysMap[ varKey[ 1 ].trim() ];
-					} else {
-						key = pascalCaseToDashCase( key );
-					}
+					key = pascalCaseToDashCase( key );
 
 					const prefix = '.eps-';
 					const connector = prevSelector && prevSelector.indexOf( prefix ) > -1 ? '&--' : '&-';

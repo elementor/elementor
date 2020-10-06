@@ -1,49 +1,47 @@
 const _$ = require('../index');
+const { dark, ltr, rtl } = _$.selectors;
 
-const direction = 'left';
-const directionVal = '90px';
+const h1h1DirectionVal = '90px';
 
 const style = {
 	heading: {
 		'text-decoration': 'underline',
 		color: 'pink',
 		h1: {
-			'font-size': '70px',
+			'font-size': '60px',
 			color: _$.themeColors( 'warning' ),
-			'line-height': '70px',
-
-			'@media screen and (max-width: 960px)': {
-				color: 'grey',
-			}
+			'line-height': '60px',
+			position: 'absolute',
+			top: '0',
 		},
 		h2: {
 			'font-size': '60px',
 			color: _$.themeColors( 'info' ),
 			'line-height': '60px',
-		},
 
-		'@media screen and (max-width: 960px)': {
-			color: 'orange',
-		}
+			'@media screen and (max-width: 960px)': {
+				color: 'blue',
+			}
+		},
 	},
-	'{{ dark }}': {
+	[ dark ]: {
 		heading: {
 			h1: {
 				color: 'pink',
 			}
 		}
 	},
-	'{{ ltr }}': {
+	[ ltr ]: {
 		heading: {
 			h1: {
-				left: directionVal,
+				left: h1DirectionVal,
 			},
 		},
 	},
-	'{{ rtl }}': {
+	[ rtl ]: {
 		heading: {
 			h1: {
-				right: directionVal,
+				right: h1DirectionVal,
 			},
 		},
 	}
