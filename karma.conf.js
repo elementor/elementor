@@ -1,4 +1,5 @@
-const karmaParameters = [];
+const karmaParameters = [],
+	karmaArguments = [];
 
 if ( process.argv[ process.argv.length - 1 ] ) {
 	process.argv[ process.argv.length - 1 ].split( ':' ).forEach(
@@ -9,9 +10,23 @@ if ( process.argv[ process.argv.length - 1 ] ) {
 	karmaParameters.shift();
 }
 
-const isDebug = karmaParameters.includes( 'debug' );
-
 module.exports = function( config ) {
+	config.client.args.forEach( ( argument ) => {
+		argument = argument.split( ':' );
+		argument[ 0 ] = argument[ 0 ].replace( /--/g, '' );
+
+		karmaArguments.push( argument );
+	} );
+
+	let target = 'editor';
+
+	const targetArgument = karmaArguments.find( ( arg ) => 'target' === arg[ 0 ] ) ||
+		global.arguments ? [ 'target', global.arguments.target ] : false;
+
+	if ( targetArgument ) {
+		target = targetArgument[ 1 ];
+	}
+
 	const karmaConfig = {
 		basePath: './',
 		frameworks: [ 'qunit' ],
@@ -37,11 +52,9 @@ module.exports = function( config ) {
 			'assets/js/common.js',
 		],
 		preprocessors: {
-			'tests/qunit/index.html': [ 'html2js' ],
 			'assets/js/common-modules.js': [ 'coverage' ],
 			'assets/js/common.js': [ 'coverage' ],
 			'assets/js/editor-document.js': [ 'coverage' ],
-
 		},
 		reporters: [ 'progress' ],
 		coverageIstanbulReporter: {
@@ -71,16 +84,19 @@ module.exports = function( config ) {
 
 		// client configuration
 		client: {
+			karmaParameters,
+			karmaArguments,
+			target,
 			clearContext: true,
 			qunit: {
-				isDebug,
+				isDebug: karmaParameters.includes( 'debug' ),
 				showUI: false,
 				testTimeout: 5000,
 			},
 		},
 	};
 
-	if ( isDebug ) {
+	if ( 'editor' === target && karmaConfig.client.qunit.isDebug ) {
 		const fs = require( 'fs' );
 
 		if ( fs.existsSync( '../elementor-dev-tools' ) ) {
@@ -92,11 +108,11 @@ module.exports = function( config ) {
 		}
 	}
 
-	if ( ! karmaParameters[ 2 ] || 'editor' === karmaParameters[ 2 ] ) {
-		const setupEditor = require( '../elementor/tests/qunit/setup/editor/setup-editor' );
+	const setupHandler = require( `../elementor/tests/qunit/setup/${ target }/setup-${ target }` );
 
-		setupEditor( karmaConfig );
-	}
+	console.log( `preparing tests environment for: '${ target }'.` );
+
+	setupHandler( karmaConfig );
 
 	config.set( karmaConfig );
 };

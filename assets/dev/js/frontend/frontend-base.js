@@ -16,7 +16,7 @@ class FrontendBase extends elementorModules.ViewModule {
 	constructor( ...args ) {
 		super( ...args );
 
-		this.config = elementorFrontendConfig;
+		this.config = this.getConfig();
 	}
 
 	// TODO: BC since 2.5.0
@@ -26,6 +26,10 @@ class FrontendBase extends elementorModules.ViewModule {
 		}
 
 		return elementorModules.frontend.handlers.Base;
+	}
+
+	getConfig() {
+		return elementorFrontendConfig;
 	}
 
 	getDefaultSettings() {

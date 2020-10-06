@@ -2,7 +2,7 @@ module.exports = ( config ) => {
 	config.files = [
 		...config.files,
 		// Editor Fixtures.
-		'tests/qunit/index.html',
+		'tests/qunit/setup/editor/index.html',
 
 		// Editor Tinymce.
 		'tests/qunit/setup/editor/setup-tinymce.js',
@@ -29,4 +29,6 @@ module.exports = ( config ) => {
 		// Tests.
 		'assets/js/qunit-tests.js',
 	];
+
+	config.preprocessors[ 'tests/qunit/setup/editor/index.html' ] = [ 'html2js' ];
 };
