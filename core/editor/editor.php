@@ -609,6 +609,7 @@ class Editor {
 				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
+				'color_picker' => __( 'Color Picker', 'elementor' ),
 
 				// Global Styles
 				'new_global_color' => __( 'New Global Color', 'elementor' ),

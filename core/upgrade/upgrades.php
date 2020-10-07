@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
@@ -660,8 +661,10 @@ class Upgrades {
 
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
-			$current_settings['viewport_md'] = get_option( 'elementor_viewport_md', '' );
-			$current_settings['viewport_lg'] = get_option( 'elementor_viewport_lg', '' );
+			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
+			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
+			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
 
 			$kit_settings = $kit->get_meta( $meta_key );
 
@@ -687,7 +690,7 @@ class Upgrades {
 			];
 
 			foreach ( $settings_to_slider as $setting ) {
-				if ( ! empty( $current_settings[ $setting ] ) ) {
+				if ( isset( $current_settings[ $setting ] ) ) {
 					$current_settings[ $setting ] = [
 						'unit' => 'px',
 						'size' => $current_settings[ $setting ],
