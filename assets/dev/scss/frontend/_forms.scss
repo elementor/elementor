@@ -238,6 +238,15 @@
 				flex-basis: initial;
 			}
 		}
+
+		.e-form__buttons__wrapper {
+			flex-grow: initial;
+
+			&,
+			&__button {
+				flex-basis: initial;
+			}
+		}
 	}
 }
 
