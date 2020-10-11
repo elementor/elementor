@@ -581,7 +581,7 @@ class Editor {
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
-			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
+			'tinymceHasCustomConfig' => ( class_exists( 'Tinymce_Advanced' ) || class_exists( 'Advanced_Editor_Tools' ) ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
 			'ui' => [
