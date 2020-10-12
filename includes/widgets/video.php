@@ -116,7 +116,6 @@ class Widget_Video extends Widget_Base {
 					'dailymotion' => __( 'Dailymotion', 'elementor' ),
 					'hosted' => __( 'Self Hosted', 'elementor' ),
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -138,7 +137,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'youtube',
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -245,7 +243,9 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Start Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
-				'frontend_available' => true,
+				'condition' => [
+					'loop' => '',
+				],
 			]
 		);
 
@@ -256,9 +256,9 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
 				'condition' => [
+					'loop' => '',
 					'video_type' => [ 'youtube', 'hosted' ],
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -276,7 +276,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'frontend_available' => true,
 			]
 		);
 
@@ -288,7 +287,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -297,7 +295,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Mute', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'frontend_available' => true,
 			]
 		);
 
@@ -309,7 +306,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type!' => 'dailymotion',
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -324,7 +320,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type!' => 'vimeo',
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -351,7 +346,6 @@ class Widget_Video extends Widget_Base {
 					'video_type' => [ 'youtube' ],
 					'controls' => 'yes',
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -379,7 +373,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'youtube',
 				],
-				'frontend_available' => true,
 			]
 		);
 
@@ -502,7 +495,6 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'Hide', 'elementor' ),
 				'label_on' => __( 'Show', 'elementor' ),
-				'frontend_available' => true,
 			]
 		);
 
@@ -799,35 +791,31 @@ class Widget_Video extends Widget_Base {
 			return;
 		}
 
-		if ( 'youtube' === $settings['video_type'] ) {
-			$video_html = '<div class="elementor-video"></div>';
+		if ( 'hosted' === $settings['video_type'] ) {
+			ob_start();
+
+			$this->render_hosted_video();
+
+			$video_html = ob_get_clean();
 		} else {
-			if ( 'hosted' === $settings['video_type'] ) {
-				ob_start();
+			$embed_params = $this->get_embed_params();
 
-				$this->render_hosted_video();
+			$embed_options = $this->get_embed_options();
 
-				$video_html = ob_get_clean();
+			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
+			$post_id = get_queried_object_id();
+
+			if ( $is_static_render_mode ) {
+				$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
 			} else {
-				$embed_params = $this->get_embed_params();
-
-				$embed_options = $this->get_embed_options();
-
-				$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
-				$post_id = get_queried_object_id();
-
-				if ( $is_static_render_mode ) {
-					$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
-				} else {
-					$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
-				}
+				$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
 			}
+		}
 
-			if ( empty( $video_html ) ) {
-				echo esc_url( $video_url );
+		if ( empty( $video_html ) ) {
+			echo esc_url( $video_url );
 
-				return;
-			}
+			return;
 		}
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-wrapper' );
