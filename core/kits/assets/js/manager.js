@@ -236,7 +236,7 @@ export default class extends elementorModules.editor.utils.Module {
 				this.renderGlobalVariables();
 			} );
 
-			elementor.on( 'globals:loaded', () => {
+			elementor.once( 'globals:loaded', () => {
 				this.loadingTriggers.globals = true;
 
 				this.renderGlobalsDefaultCSS();

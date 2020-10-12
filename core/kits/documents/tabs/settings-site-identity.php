@@ -23,6 +23,9 @@ class Settings_Site_Identity extends Tab_Base {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
 		$custom_logo_src = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 
+		$site_icon_id = get_option( 'site_icon' );
+		$site_icon_src = wp_get_attachment_image_src( $site_icon_id, 'full' );
+
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
 			[
@@ -78,6 +81,10 @@ class Settings_Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Favicon', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'default' => [
+					'id' => $site_icon_id,
+					'url' => $site_icon_src ? $site_icon_src[0] : '',
+				],
 				'description' => __( 'Suggested favicon dimensions: 512 × 512 pixels.', 'elementor' ),
 			]
 		);
@@ -86,9 +93,16 @@ class Settings_Site_Identity extends Tab_Base {
 	}
 
 	public function on_save( $data ) {
-		if ( ! isset( $data['settings'] ) || DB::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
+		if (
+			! isset( $data['settings'] ) ||
+			DB::STATUS_PUBLISH !== $data['settings']['post_status'] ||
+			// Should check for the current action to avoid infinite loop
+			// when updating options like: "blogname" and "blogdescription".
+			strpos( current_action(), 'update_option_' ) === 0
+		) {
 			return;
 		}
+
 		if ( isset( $data['settings']['site_name'] ) ) {
 			update_option( 'blogname', $data['settings']['site_name'] );
 		}

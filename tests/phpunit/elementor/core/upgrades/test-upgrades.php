@@ -114,7 +114,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$generic_font = 'some-generic-font';
 		$lightbox_color = '#e1e3ef';
 		$container_width = '1000';
-		$space_between_widgets = '25';
+		$space_between_widgets = '0'; // Ensure that value 0 is also upgraded (#12298).
 		$viewport_lg = '900';
 		$viewport_md = '800';
 
@@ -122,10 +122,12 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'default_generic_fonts' => $generic_font,
 			'lightbox_color' => $lightbox_color,
 			'container_width' => $container_width,
-			'space_between_widgets' => $space_between_widgets,
 		];
 
 		update_option( '_elementor_general_settings', $general_settings );
+
+		// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+		update_option( 'elementor_space_between_widgets', $space_between_widgets );
 		update_option( 'elementor_viewport_lg', $viewport_lg );
 		update_option( 'elementor_viewport_md', $viewport_md );
 
@@ -428,83 +430,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$this->assertEquals( $saved_typography[4]['value']['font_family'], $revision_saved_typography[3]['typography_font_family'] );
 		}
 	}
-
-	public function test_v_3_0_5_re_move_space_between_widgets_to_kit() {
-		$updater = $this->create_updater();
-
-		// Prepare.
-		$space_between_widgets = '0';
-
-		$general_settings = [
-			'space_between_widgets' => $space_between_widgets,
-		];
-
-		update_option( '_elementor_general_settings', $general_settings );
-
-		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
-		wp_set_current_user( $user_id );
-
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$kit = Plugin::$instance->documents->get( $kit_id );
-
-		// Create revisions.
-		$revisions_count = 10;
-		$query_limit = 3;
-		$expected_iterations = (int) ceil( $revisions_count / $query_limit );
-		$upgrade_iterations = 1;
-
-		for ( $i = 0; $i < $revisions_count; $i++ ) {
-			$kit->save( [
-				'elements' => [],
-			] );
-		}
-
-		// Ensure the testable values are not default values of the kit.
-		$kit_space_between_widgets_before = $kit->get_settings( 'space_between_widgets' );
-
-		$this->assertNotEquals( $space_between_widgets, $kit_space_between_widgets_before );
-
-		$updater->set_limit( $query_limit );
-
-		// Run upgrade.
-		while ( Upgrades::_v_3_0_5_re_move_space_between_widgets_to_kit( $updater ) ) {
-			$upgrade_iterations++;
-
-			$updater->set_current_item( [
-				'iterate_num' => $upgrade_iterations,
-			] );
-
-			// Avoid infinity loop.
-			if ( $upgrade_iterations > $revisions_count ) {
-				break;
-			}
-		}
-
-		// Assert iterations.
-		$this->assertEquals( $expected_iterations, $upgrade_iterations );
-
-		// Refresh kit.
-		$kit = Plugin::$instance->documents->get( $kit_id, false );
-
-		// Assert kit upgraded.
-		$kit_space_between_widgets_after = $kit->get_settings( 'space_between_widgets' );
-
-		$this->assertEquals( $space_between_widgets, $kit_space_between_widgets_after['size'] );
-
-		// Assert revisions upgraded.
-		$revisions_ids = wp_get_post_revisions( $kit_id, [
-			'fields' => 'ids',
-		] );
-
-		foreach ( $revisions_ids as $revision_id ) {
-			$revision = Plugin::$instance->documents->get( $revision_id, false );
-
-			$revision_space_between_widgets_after = $revision->get_settings( 'space_between_widgets' );
-
-			$this->assertEquals( $space_between_widgets, $revision_space_between_widgets_after['size'] );
-		}
-	}
-
 
 	/**
 	 * @param string $post_type

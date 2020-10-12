@@ -29,7 +29,24 @@ jQuery( () => {
 			// Stimulate and start auto save timer.
 			ElementsHelper.createSection( 1 );
 
-			const done = assert.async( 2 );
+			const done = assert.async( 2 ),
+				callback = ( component, command, args ) => {
+					if ( 'document/save/save' === command ) {
+						$e.commandsInternal.off( 'run:before', callback );
+
+						args.onAfter = async ( _args, _results ) => {
+							const saveResult = await _results;
+							assert.equal( saveResult.data.status, 'inherit' );
+							assert.equal( elementor.documents.getCurrent().editor.isSaved, true );
+
+							// Restore defaults.
+							saveComponent.autoSaveInterval = defaultAutoSaveInterval;
+
+							// Resume.
+							done();
+						};
+					}
+				};
 
 			/**
 			 * Flow: Create section will trigger 'document/save/set-is-modified' that will trigger
@@ -37,22 +54,7 @@ jQuery( () => {
 			 * on promise resolve, it will eventually set 'elementor.documents.getCurrent().editor.isSaved = true'.
 			 * Explanation: on after save, we catch the promise via '_results', then await for promise resolve.
 			 */
-			$e.commandsInternal.on( 'run:before', ( component, command, args ) => {
-				if ( 'document/save/save' === command ) {
-					args.onAfter = async ( _args, _results ) => {
-						const saveResult = await _results;
-
-						assert.equal( saveResult.data.status, 'inherit' );
-						assert.equal( elementor.documents.getCurrent().editor.isSaved, true );
-
-						// Restore defaults.
-						saveComponent.autoSaveInterval = defaultAutoSaveInterval;
-
-						// Resume.
-						done();
-					};
-				}
-			} );
+			$e.commandsInternal.on( 'run:before', callback );
 		} );
 	} );
 } );
