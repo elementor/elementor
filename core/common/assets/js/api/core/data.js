@@ -125,12 +125,12 @@ export default class Data extends Commands {
 		const argsQueryLength = args?.query ? Object.values( args.query ).length : 0;
 
 		if ( argsQueryLength ) {
-			if ( format && format.includes( '/{' ) ) {
-				// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
-				const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
+			const magicParams = format?.match( /{.*?}/g );
 
+			// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
+			if ( magicParams?.length ) {
+				// Remove the '{', '}'.
 				magicParams.forEach( ( param ) => {
-					// Remove the '{', '}'.
 					param = param.replace( '{', '' );
 					param = param.replace( '}', '' );
 
@@ -268,6 +268,10 @@ export default class Data extends Commands {
 				credentials: 'include', // cookies is required for wp reset.
 			},
 			headers = { 'X-WP-Nonce': nonce };
+
+		if ( requestData.args?.headers ) {
+			Object.assign( headers, requestData.args.headers );
+		}
 
 		/**
 		 * Translate:

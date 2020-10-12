@@ -73,6 +73,19 @@ export default class Cache {
 				return accumulator[ pureEndpointPart ];
 			}, newData );
 
+			// TODO: Test.
+			// TODO: Test that ensure only first level depth get reordered.
+			// If data is array and content include id, reorder data as object with id as key.
+			if ( Array.isArray( data ) && data[ 0 ]?.id ) {
+				const newObject = {};
+
+				data.forEach( ( value ) => {
+					newObject[ value.id ] = value;
+				} );
+
+				data = newObject;
+			}
+
 			// 'result' is equal to 'newData' with a deeper pointer, build based on 'pureEndpointParts' ( will effect newData ).
 			Object.assign( result, data );
 		} else {

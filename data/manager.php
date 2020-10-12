@@ -70,6 +70,15 @@ class Manager extends BaseModule {
 		return $this->controllers;
 	}
 
+	/**
+	 * @param string $name
+	 *
+	 * @return \Elementor\Data\Base\Controller
+	 */
+	public function get_controller( $name ) {
+		return $this->controllers[ $name ];
+	}
+
 	private function get_cache( $key ) {
 		return self::get_items( $this->cache, $key );
 	}

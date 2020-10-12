@@ -30,14 +30,14 @@ abstract class Endpoint {
 	private $sub_endpoints = [];
 
 	/**
-	 * Get format suffix.
+	 * Get format.
 	 *
 	 * Examples:
 	 * '{one_parameter_name}'.
 	 * '{one_parameter_name}/{two_parameter_name}/'.
 	 * '{one_parameter_name}/whatever/anything/{two_parameter_name}/' and so on for each endpoint or sub-endpoint.
-	 *
-	 * @return string current location will later be added automatically.
+	 * @note get_format() is used only in `Data\Manager::run()`.
+	 * @return string
 	 */
 	public static function get_format() {
 		return '';
@@ -75,7 +75,7 @@ abstract class Endpoint {
 	 *
 	 * @return string
 	 */
-	public function get_base_route() {
+	public function get_base_route() { // TODO: normalize sub-endpoint.
 		$endpoint_name = $this->get_name();
 
 		// TODO: Allow this only for internal routes.
@@ -84,7 +84,11 @@ abstract class Endpoint {
 			$endpoint_name = '';
 		}
 
-		return '/' . $this->controller->get_rest_base() . '/' . $endpoint_name;
+		if ( $endpoint_name ) {
+			$endpoint_name = '/' . $endpoint_name;
+		}
+
+		return '/' . $this->controller->get_rest_base() . $endpoint_name;
 	}
 
 	/**
@@ -104,14 +108,14 @@ abstract class Endpoint {
 	 * @param string $route
 	 * @param string $endpoint_class
 	 *
-	 * @return \Elementor\Data\Base\SubEndpoint
-	 * @throws \Exception
+	 * @return \Elementor\Data\Base\SubEndpoint|false
 	 */
-	protected function register_sub_endpoint( $route, $endpoint_class ) {
+	public function register_sub_endpoint( $route, $endpoint_class ) {
 		$endpoint_instance = new $endpoint_class( $route, $this );
 
 		if ( ! ( $endpoint_instance instanceof SubEndpoint ) ) {
-			throw new \Exception( 'Invalid endpoint instance.' );
+			trigger_error( 'Invalid endpoint instance.' );
+			return false;
 		}
 
 		$endpoint_route = $route . '/' . $endpoint_instance->get_name();
@@ -119,13 +123,30 @@ abstract class Endpoint {
 		$this->sub_endpoints[ $endpoint_route ] = $endpoint_instance;
 
 		$component_name = $endpoint_instance->controller->get_rest_base();
-		$parent_instance = $endpoint_instance->get_parent();
-		$parent_name = $endpoint_instance->get_name();
-		$parent_format_suffix = $parent_instance::get_format();
-		$current_format_suffix = $endpoint_instance::get_format();
 
-		$command = $component_name . '/' . $parent_name;
-		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $current_format_suffix;
+		$parent_instance = $endpoint_instance->get_parent();
+
+		$parent_name = '';
+		$parent_format_suffix = '';
+
+		// TODO: Refactor.
+		// In case parent is sub-endpoint, then its require to have all the ancestry.
+		// To support deep sub-endpoints magic params in `Manager::run()` for magic params.
+		if ( $parent_instance instanceof SubEndpoint ) {
+			$parent_name = $endpoint_instance->get_name_ancestry() . $parent_instance->get_name();
+			$parent_command = $component_name . '/' . $parent_name;
+			$parent_format_prefix = Manager::instance()->command_formats[ $parent_command ];
+
+			$format = $parent_format_prefix . '/' . $endpoint_instance->get_name();
+			$command = $component_name . '/' . $parent_name . '/' . $endpoint_instance->get_name();
+		} else {
+			$parent_name .= $endpoint_instance->get_name();
+			$parent_format_suffix .= $parent_instance::get_format();
+			$current_format_suffix = $endpoint_instance::get_format();
+
+			$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $current_format_suffix;
+			$command = $component_name . '/' . $parent_name;
+		}
 
 		Manager::instance()->register_endpoint_format( $command, $format );
 

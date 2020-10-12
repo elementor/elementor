@@ -284,9 +284,14 @@ export default class ComponentBase extends elementorModules.Module {
 		const hooks = {};
 
 		for ( const key in hooksFromImport ) {
-			const hook = new hooksFromImport[ key ];
+			const hook = new hooksFromImport[ key ],
+				id = hook.getId();
 
-			hooks[ hook.getId() ] = hook;
+			if ( hooks[ id ] ) {
+				throw Error( `Hook with id: '${ id }' already imported` );
+			}
+
+			hooks[ id ] = hook;
 		}
 
 		return hooks;

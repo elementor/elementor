@@ -150,16 +150,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register internal endpoints.
 	 */
 	protected function register_internal_endpoints() {
-		register_rest_route( $this->get_namespace(), '/' . $this->get_rest_base(), [
-			[
-				'methods' => WP_REST_Server::READABLE,
-				'callback' => array( $this, 'get_items' ),
-				'args' => [],
-				'permission_callback' => function ( $request ) {
-					return $this->get_permission_callback( $request );
-				},
-			],
-		] );
+		$this->register_endpoint( Endpoints\Internal\Index::class );
 	}
 
 	/**
@@ -167,12 +158,15 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @param string $endpoint_class
 	 *
-	 * @return \Elementor\Data\Base\Endpoint
+	 * @return \Elementor\Data\Base\Endpoint|false
 	 */
 	protected function register_endpoint( $endpoint_class ) {
 		$endpoint_instance = new $endpoint_class( $this );
 
-		// TODO: Validate instance like in register_sub_endpoint().
+		if ( ! ( $endpoint_instance instanceof Endpoint ) ) {
+			trigger_error( 'Invalid endpoint instance.' );
+			return false;
+		}
 
 		$endpoint_route = $this->get_name() . '/' . $endpoint_instance->get_name();
 
