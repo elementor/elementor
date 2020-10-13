@@ -94,13 +94,19 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			var outputCssProperty;
 
 			if ( globalKey ) {
-				const selectorGlobalValue = this.getSelectorGlobalValue( control, globalKey );
+				let selectorGlobalValue = this.getSelectorGlobalValue( control, globalKey );
 
 				if ( selectorGlobalValue ) {
 					if ( 'font' === control.type ) {
 						$e.data.get( globalKey ).then( ( response ) => {
 								elementor.helpers.enqueueFont( response.data.value.typography_font_family );
 						} );
+
+						if ( 'Family' === control.label ) {
+							const fallbackFonts = elementorFrontend.getKitSettings( 'default_generic_fonts' ) ? elementorFrontend.getKitSettings( 'default_generic_fonts' ) : 'Sans-serif';
+
+							selectorGlobalValue += ', ' + fallbackFonts;
+						}
 					}
 
 					// This regex handles a case where a control's selector property value includes more than one CSS selector.

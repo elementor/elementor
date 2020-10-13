@@ -14,6 +14,7 @@ use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
+use Elementor\Core\Settings\Page\Manager as PageManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -322,6 +323,15 @@ abstract class Base extends Base_File {
 
 			if ( $global_key ) {
 				$selector_global_value = $this->get_selector_global_value( $control, $global_key );
+
+				if ( 'font' === $control['type'] && 'Family' === $control['label'] ) {
+					$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+
+					$kit_settings = $kit->get_meta( PageManager::META_KEY );
+					$default_fonts = isset( $kit_settings['default_generic_fonts'] ) ? $kit_settings['default_generic_fonts'] : 'Sans-serif';
+
+					$selector_global_value .= ', ' . $default_fonts;
+				}
 
 				if ( $selector_global_value ) {
 					$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $selector_global_value . '$2', $css_property );

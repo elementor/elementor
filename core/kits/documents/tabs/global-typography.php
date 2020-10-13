@@ -166,6 +166,7 @@ class Global_Typography extends Tab_Base {
 				'description' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 				'label_block' => true,
 				'separator' => 'before',
+				'frontend_available' => true,
 			]
 		);
 
