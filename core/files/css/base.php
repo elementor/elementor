@@ -784,6 +784,14 @@ abstract class Base extends Base_File {
 			$property_name = str_replace( '_', '-', $property_name );
 
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
+
+			if ( $control['groupPrefix'] . 'font_family' === $control['name'] ) {
+				preg_match( '/VALUE}}"(.*)/', $control['selector_value'], $default_fonts );
+
+				if ( ! empty( $default_fonts[1] ) ) {
+					$value  .= $default_fonts[1];
+				}
+			}
 		} else {
 			$value = "var( --e-global-$control[type]-$id )";
 		}

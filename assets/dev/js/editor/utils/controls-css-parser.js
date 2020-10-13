@@ -262,6 +262,14 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			propertyName = propertyName.replace( '_', '-' );
 
 			value = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
+
+			if ( control.groupPrefix + 'font_family' === control.name ) {
+				const defaultFonts = control.selector_value.match( /VALUE}}"(.*)/ );
+
+				if ( defaultFonts[ 1 ] ) {
+					value += defaultFonts[ 1 ];
+				}
+			}
 		} else {
 			value = `var( --e-global-${ control.type }-${ id } )`;
 		}
