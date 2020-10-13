@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Recursive;
 
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
+use Elementor\Data\Base\Endpoint\Internal\IndexRecursive;
 
 class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller {
 
@@ -19,6 +20,6 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Templ
 	}
 
 	protected function register_internal_endpoints() {
-		$this->register_endpoint( Internal_Endpoint::class );
+		$this->register_endpoint( IndexRecursive::class );
 	}
 }

@@ -2,24 +2,17 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Data;
 
 use Elementor\Data\Base\Processor;
-use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Data_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
 
 
-class Test_Manager extends Elementor_Test_Base {
-
-	/**
-	 * @var \Elementor\Data\Manager
-	 */
-	protected $manager;
+class Test_Manager extends Data_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
 
-		$this->manager = Manager::instance();
 		$this->manager->kill_server();
 	}
 
@@ -246,7 +239,9 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->manager->run_server();
 		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
 
-		$endpoint = $this->manager->command_to_endpoint( $controller->get_name() . '/' . $endpoint_instance->get_name(), false, [] );
+		$command = $controller->get_name() . '/' . $endpoint_instance->get_name();
+
+		$endpoint = $this->manager->command_to_endpoint( $command, false, [] );
 
 		$data = $this->manager->run_endpoint( $endpoint );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );

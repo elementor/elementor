@@ -2,6 +2,7 @@
 
 namespace Elementor\Data\Base;
 
+use Elementor\Data\Base\Endpoint\Internal;
 use Elementor\Data\Manager;
 use WP_REST_Server;
 
@@ -36,8 +37,8 @@ abstract class Endpoint {
 	 * '{one_parameter_name}'.
 	 * '{one_parameter_name}/{two_parameter_name}/'.
 	 * '{one_parameter_name}/whatever/anything/{two_parameter_name}/' and so on for each endpoint or sub-endpoint.
-	 *
-	 * @return string current location will later be added automatically.
+	 * @note get_format() is used only in `Data\Manager::run()`.
+	 * @return string
 	 */
 	public static function get_format() {
 		return '';
@@ -78,13 +79,26 @@ abstract class Endpoint {
 	public function get_base_route() {
 		$endpoint_name = $this->get_name();
 
-		// TODO: Allow this only for internal routes.
-		// TODO: Make difference between internal and external endpoints.
-		if ( 'index' === $endpoint_name ) {
+		if ( $this instanceof Internal && 'index' === $endpoint_name ) {
 			$endpoint_name = '';
 		}
 
-		return '/' . $this->controller->get_rest_base() . '/' . $endpoint_name;
+		if ( $endpoint_name ) {
+			$endpoint_name = '/' . $endpoint_name;
+		}
+
+		return '/' . $this->controller->get_rest_base() . $endpoint_name;
+	}
+
+	/**
+	 * Convert endpoint to assumed command.
+	 */
+	public function get_full_command() {
+		if ( $this->controller instanceof SubController ) {
+			return $this->controller->parent_controller->get_name() . '/' . $this->controller->get_name() . '/' . $this->get_name();
+		}
+
+		return $this->controller->get_name() . '/' . $this->get_name();
 	}
 
 	/**
@@ -104,28 +118,26 @@ abstract class Endpoint {
 	 * @param string $route
 	 * @param string $endpoint_class
 	 *
-	 * @return \Elementor\Data\Base\SubEndpoint
-	 * @throws \Exception
+	 * @return \Elementor\Data\Base\SubEndpoint|false
 	 */
-	protected function register_sub_endpoint( $route, $endpoint_class ) {
+	public function register_sub_endpoint( $route, $endpoint_class ) {
 		$endpoint_instance = new $endpoint_class( $route, $this );
 
 		if ( ! ( $endpoint_instance instanceof SubEndpoint ) ) {
-			throw new \Exception( 'Invalid endpoint instance.' );
+			trigger_error( 'Invalid endpoint instance.' );
+			return false;
 		}
 
-		$endpoint_route = $route . '/' . $endpoint_instance->get_name();
+		$command = $endpoint_instance->get_full_command();
+		$format = $endpoint_instance->get_format_ancestry();
 
-		$this->sub_endpoints[ $endpoint_route ] = $endpoint_instance;
+		$this->sub_endpoints[ $command ] = $endpoint_instance;
 
-		$component_name = $endpoint_instance->controller->get_rest_base();
-		$parent_instance = $endpoint_instance->get_parent();
-		$parent_name = $endpoint_instance->get_name();
-		$parent_format_suffix = $parent_instance::get_format();
-		$current_format_suffix = $endpoint_instance::get_format();
+		if ( ! $format ) {
+			$format = $endpoint_instance->get_base_route();
+		}
 
-		$command = $component_name . '/' . $parent_name;
-		$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $current_format_suffix;
+		// TODO: Handle format for sub-endpoints.
 
 		Manager::instance()->register_endpoint_format( $command, $format );
 

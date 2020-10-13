@@ -1,16 +1,15 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 
-use \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\BaseTrait;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\MockNameType;
 
 class Format extends \Elementor\Data\Base\Endpoint {
+	use MockNameType;
 
 	/**
 	 * @var \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller
 	 */
 	protected $controller;
-
-	use BaseTrait;
 
 	public function get_type() {
 		return 'endpoint';
