@@ -38,7 +38,7 @@ export default class extends RepeaterRow {
 		let globalType = '';
 
 		if ( isColor ) {
-			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value' } );
+			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value elementor-control-unit-3' } );
 
 			childView.$el
 				.find( '.elementor-control-input-wrapper' )
