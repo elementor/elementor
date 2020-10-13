@@ -290,8 +290,7 @@ ul.elementor-icon-list-items.elementor-inline-items {
 	grid-row-gap: var(--grid-row-gap);
 
 	.elementor-grid-item {
-		line-height: 0;
-		min-width: 0; // Prevent columns from overflowing the grid area in Firefox browser
+		min-width: 0; // Prevent columns from overflowing the grid area in Firefox browser (Doesn't seem to do anything  --Josh)
 	}
 
 	@mixin grid_loop($device) {
@@ -299,7 +298,6 @@ ul.elementor-icon-list-items.elementor-inline-items {
 		&#{$device}-0 {
 			.elementor-grid {
 				display: inline-block;
-				font-size: 0;
 				word-spacing: var(--grid-column-gap);
 				margin-bottom: calc(-1 * var(--grid-row-gap));
 
