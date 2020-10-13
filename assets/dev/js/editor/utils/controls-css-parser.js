@@ -99,7 +99,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				if ( selectorGlobalValue ) {
 					if ( 'font' === control.type ) {
 						$e.data.get( globalKey ).then( ( response ) => {
-								elementor.helpers.enqueueFont( response.data.value.typography_font_family );
+							elementor.helpers.enqueueFont( response.data.value.typography_font_family );
 						} );
 					}
 
