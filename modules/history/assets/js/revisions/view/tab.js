@@ -31,9 +31,6 @@ const RevisionsTabView = Marionette.CompositeView.extend( {
 		options.tab = this;
 
 		$e.internal( 'panel/history/revisions/initialize', options );
-
-		// TODO use hooks.
-		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
 	},
 
 	setRevisionsButtonsActive: function( active ) {
@@ -89,14 +86,6 @@ const RevisionsTabView = Marionette.CompositeView.extend( {
 		}
 
 		this.children.findByIndex( requiredIndex ).ui.detailsArea.trigger( 'click' );
-	},
-
-	onEditorSaved: function() {
-		this.exitReviewMode();
-
-		this.setRevisionsButtonsActive( false );
-
-		component.currentPreviewId = elementor.config.document.revisions.current_id;
 	},
 
 	onDiscardClick: function() {

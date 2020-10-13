@@ -2,6 +2,7 @@ import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
 import * as commandsInternal from './commands/internal/';
 import * as hooks from './hooks/';
+import * as commandsRevisions from './data/editor/documents/';
 
 export default class RevisionsComponent extends ComponentBase {
 	/**
@@ -25,6 +26,17 @@ export default class RevisionsComponent extends ComponentBase {
 
 	getNamespace() {
 		return 'panel/history/revisions';
+	}
+
+	registerAPI() {
+		super.registerAPI();
+
+		const documentsComponent = $e.components.get( 'editor/documents' ),
+			revisionsCommands = documentsComponent.importCommands( commandsRevisions );
+
+		Object.entries( revisionsCommands ).forEach( ( [ command, callback ] ) => {
+			documentsComponent.registerData( command, callback );
+		} );
 	}
 
 	defaultCommands() {
@@ -56,34 +68,5 @@ export default class RevisionsComponent extends ComponentBase {
 		if ( elementor.documents.getCurrent().revisions.getItems().length > 1 ) {
 			elementor.getPanelView().getCurrentPageView().currentTab.navigate( up );
 		}
-	}
-
-	getRevisionViewData( revisionView, onSuccessCallback = null ) {
-		const document = this.currentDocument;
-
-		document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
-			success: ( data ) => {
-				if ( document.config.panel.has_elements ) {
-					document.revisions.setEditorData( data.elements );
-				}
-
-				elementor.settings.page.model.set( data.settings );
-
-				this.tab.setRevisionsButtonsActive( true );
-
-				this.tab.enterReviewMode();
-
-				if ( onSuccessCallback ) {
-					onSuccessCallback( data );
-				}
-			},
-			error: ( errorMessage ) => {
-				this.currentPreviewItem = null;
-
-				this.currentPreviewId = null;
-
-				alert( errorMessage );
-			},
-		} );
 	}
 }

@@ -12,19 +12,24 @@ export class Preview extends CommandBase {
 	apply( args ) {
 		return new Promise( ( resolve, reject ) => {
 			const { view } = args,
-				revisionID = view.model.get( 'id' );
+				revisionId = view.model.get( 'id' );
 
-			if ( revisionID === this.component.currentPreviewId ) {
-				reject( `Revision with id: '${ revisionID }' is already in preview` );
+			if ( revisionId === this.component.currentPreviewId ) {
+				reject( `Revision with id: '${ revisionId }' is already in preview` );
 				return false;
 			}
 
-			this.component.getRevisionViewData( view, resolve );
+			const result = $e.data.get( 'editor/documents/revisions', {
+				documentId: this.component.currentDocument.id,
+				revisionId,
+			} );
+
+			result.catch( reject );
 
 			this.component.currentPreviewItem = view;
-			this.component.currentPreviewId = revisionID;
+			this.component.currentPreviewId = revisionId;
 
-			return true;
+			result.then( resolve );
 		} );
 	}
 }

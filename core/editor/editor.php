@@ -1096,6 +1096,7 @@ class Editor {
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager->register_controller( Data\Globals\Controller::class );
+		Plugin::$instance->data_manager->register_controller( Data\Documents\Controller::class );
 
 		$this->notice_bar = new Notice_Bar();
 

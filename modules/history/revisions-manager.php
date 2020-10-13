@@ -142,6 +142,7 @@ class Revisions_Manager {
 
 		/** @var \WP_Post $revision */
 		foreach ( $posts as $revision ) {
+			//$revision_document = Plugin::$instance->documents->get( $revision->ID );
 			$date = date_i18n( _x( 'M j @ H:i', 'revision date format', 'elementor' ), strtotime( $revision->post_modified ) );
 
 			$human_time = human_time_diff( strtotime( $revision->post_modified ), $current_time );
@@ -173,6 +174,8 @@ class Revisions_Manager {
 				),
 				'type' => $type,
 				'gravatar' => self::$authors[ $revision->post_author ]['avatar'],
+				//'settings' => $revision_document->get_settings(),
+				//'elements' => $revision_document->get_elements_data(),
 			];
 		}
 
@@ -233,6 +236,8 @@ class Revisions_Manager {
 	 * @throws \Exception
 	 */
 	public static function ajax_get_revision_data( array $data ) {
+		//_deprecated_function();
+
 		if ( ! isset( $data['id'] ) ) {
 			throw new \Exception( 'You must set the revision ID.' );
 		}
@@ -368,6 +373,7 @@ class Revisions_Manager {
 	}
 
 	public static function ajax_get_revisions() {
+		//_deprecated_function();
 		return self::get_revisions();
 	}
 

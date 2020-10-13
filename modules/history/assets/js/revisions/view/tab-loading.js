@@ -8,8 +8,8 @@ export default class RevisionsTabLoadingView extends Marionette.ItemView {
 	}
 
 	onRender() {
-		this.options.document.revisions.requestRevisions( () => {
-			setTimeout( () => $e.routes.refreshContainer( 'panel' ) );
+		$e.data.get( 'editor/documents/revisions', {
+			documentId: this.options.document.id,
 		} );
 	}
 }

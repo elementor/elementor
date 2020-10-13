@@ -75,7 +75,7 @@ abstract class Endpoint {
 	 *
 	 * @return string
 	 */
-	public function get_base_route() { // TODO: normalize sub-endpoint.
+	public function get_base_route() {
 		$endpoint_name = $this->get_name();
 
 		// TODO: Allow this only for internal routes.

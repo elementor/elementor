@@ -91,5 +91,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 
 		add_action( 'elementor/editor/init', [ $this, 'add_templates' ] );
+
+		Plugin::$instance->data_manager->register_controller( Data\Documents\Revisions\Controller::class );
 	}
 }
