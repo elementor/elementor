@@ -66,26 +66,29 @@
 
 	&.elementor-tabs-alignment- {
 
-		&center {
+		&center,
+		&end,
+		&stretch {
 
 			.elementor-tabs-wrapper {
 				display: flex;
+			}
+		}
+
+		&center {
+
+			.elementor-tabs-wrapper {
 				justify-content: center;
 			}
 		}
 
 		&end {
 			.elementor-tabs-wrapper {
-				display: flex;
 				justify-content: flex-end;
 			}
 		}
 
 		&stretch {
-
-			.elementor-tabs-wrapper {
-				display: flex;
-			}
 
 			.elementor-tab-title {
 				width: 100%;
