@@ -2,7 +2,6 @@ import Component from './component';
 import PanelView from './panel';
 import PanelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
-import Repeater from './repeater';
 import GlobalControlSelect from './globals/global-select-behavior';
 import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-parser';
 
@@ -214,18 +213,6 @@ export default class extends elementorModules.editor.utils.Module {
 				return;
 			}
 
-			if ( ! elementor.config.user.can_edit_kit ) {
-				return;
-			}
-
-			$e.components.register( new Component( { manager: this } ) );
-
-			elementor.addControlView( 'global-style-repeater', Repeater );
-
-			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
-
-			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
-
 			elementor.on( 'preview:loaded', () => {
 				this.loadingTriggers.preview = true;
 
@@ -236,17 +223,19 @@ export default class extends elementorModules.editor.utils.Module {
 				this.renderGlobalVariables();
 			} );
 
-			elementor.on( 'globals:loaded', () => {
+			elementor.once( 'globals:loaded', () => {
 				this.loadingTriggers.globals = true;
 
 				this.renderGlobalsDefaultCSS();
 			} );
 
-			elementor.on( 'panel:init', () => {
-				this.addPanelPages();
+			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
 
-				this.addPanelMenuItem();
-			} );
+			if ( ! elementor.config.user.can_edit_kit ) {
+				return;
+			}
+
+			$e.components.register( new Component( { manager: this } ) );
 		} );
 	}
 }

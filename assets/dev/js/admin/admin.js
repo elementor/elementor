@@ -18,6 +18,7 @@
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
+				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
 
 			elements.$settingsFormPages = elements.$settingsForm.find( '.elementor-settings-form-page' );
@@ -238,6 +239,28 @@
 						$this.addClass( 'loading' );
 
 						location.href = $this.attr( 'href' );
+					},
+				} ).show();
+			} );
+
+			self.elements.$reMigrateGlobalsButton.on( 'click', ( event ) => {
+				event.preventDefault();
+
+				const $this = $( event.currentTarget );
+
+				elementorCommon.dialogsManager.createWidget( 'confirm', {
+					headerMessage: self.translate( 're_migrate_globals' ),
+					message: self.translate( 're_migrate_globals_confirm' ),
+					strings: {
+						confirm: self.translate( 'yes' ),
+						cancel: self.translate( 'cancel' ),
+					},
+					onConfirm: () => {
+						$this.removeClass( 'success' ).addClass( 'loading' );
+
+						elementorCommon.ajax.addRequest( 're_migrate_globals', {
+							success: () => $this.removeClass( 'loading' ).addClass( 'success' ),
+						} );
 					},
 				} ).show();
 			} );

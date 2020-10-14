@@ -468,7 +468,7 @@ class Settings extends Settings_Page {
 								'label' => __( 'Looking for the Style settings?', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => __( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Settings Panel > Hamburger Menu > Global Settings</b>.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
+									'html' => __( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Settings Panel > Hamburger Menu > Site Settings</b>.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
 								],
 							],
 						],
@@ -592,11 +592,18 @@ class Settings extends Settings_Page {
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 
-		// Clear CSS Meta after change print method.
-		add_action( 'add_option_elementor_css_print_method', $clear_cache_callback );
-		add_action( 'update_option_elementor_css_print_method', $clear_cache_callback );
-		add_action( 'add_option_elementor_optimized_dom_output', $clear_cache_callback );
-		add_action( 'update_option_elementor_optimized_dom_output', $clear_cache_callback );
+		// Clear CSS Meta after change css related methods.
+		$css_settings = [
+			'elementor_disable_color_schemes',
+			'elementor_disable_typography_schemes',
+			'elementor_css_print_method',
+			'elementor_optimized_dom_output',
+		];
+
+		foreach ( $css_settings as $option_name ) {
+			add_action( "add_option_{$option_name}", $clear_cache_callback );
+			add_action( "update_option_{$option_name}", $clear_cache_callback );
+		}
 
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', [ $this, 'menu_order' ] );

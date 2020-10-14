@@ -203,6 +203,8 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
 			]
 		);
 

@@ -17,7 +17,7 @@ export default function Promotion() {
 				<CardOverlay className="e-site-editor__promotion-overlay">
 					<a className="e-site-editor__promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
 						<i className="e-site-editor__promotion-overlay__icon eicon-lock" />
-						<Button size="sm" color="cta" variant="contained" text={__( 'Get Pro', 'elementor' )} />
+						<Button size="sm" color="cta" variant="contained" text={__( 'Go Pro', 'elementor' )} />
 					</a>
 				</CardOverlay>
 			);
@@ -41,7 +41,7 @@ export default function Promotion() {
 						</Text>
 					</Grid>
 					<Grid item container justify="end" alignItems="start" sm={5}>
-						<Button size="sm" color="cta" variant="contained" url={ promotionUrl }text={__( 'Get Pro', 'elementor' )} />
+						<Button size="sm" color="cta" variant="contained" url={ promotionUrl }text={__( 'Go Pro', 'elementor' )} />
 					</Grid>
 				</Grid>
 				<hr className="eps-separator"/>

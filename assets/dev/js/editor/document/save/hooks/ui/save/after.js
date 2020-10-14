@@ -22,30 +22,26 @@ export class FooterSaverAfterSave extends HookUIAfter {
 		footerSaver.refreshWpPreview();
 		footerSaver.setLastEdited( data.config.document.last_edited );
 
-		if ( result.statusChanged ) {
-			this.onPageStatusChange( status );
+		if ( result.statusChanged && 'publish' === status && elementor.config.document.urls.have_a_look ) {
+			this.onPageStatusChange();
 		}
 	}
 
-	onPageStatusChange( newStatus ) {
-		if ( 'publish' === newStatus ) {
-			const buttons = [];
+	onPageStatusChange() {
+		const buttons = [];
 
-			if ( elementor.config.document.urls.have_a_look ) {
-				buttons.push( {
-					name: 'view_page',
-					text: elementor.translate( 'have_a_look' ),
-					callback() {
-						open( elementor.config.document.urls.have_a_look );
-					},
-				} );
-			}
+		buttons.push( {
+			name: 'view_page',
+			text: elementor.translate( 'have_a_look' ),
+			callback() {
+				open( elementor.config.document.urls.have_a_look );
+			},
+		} );
 
-			elementor.notifications.showToast( {
-				message: elementor.config.document.panel.messages.publish_notification,
-				buttons,
-			} );
-		}
+		elementor.notifications.showToast( {
+			message: elementor.config.document.panel.messages.publish_notification,
+			buttons,
+		} );
 	}
 }
 

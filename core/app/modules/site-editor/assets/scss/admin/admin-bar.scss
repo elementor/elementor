@@ -6,14 +6,4 @@
 		font-size: 13px;
 		color: inherit;
 	}
-
-	&:hover {
-		background: $editor-kit-accent;
-		color: $white;
-
-		&:before {
-			color: $white;
-		}
-
-	}
 }

@@ -1612,7 +1612,7 @@ class Source_Local extends Source_Base {
 		return $posts_columns;
 	}
 
-	private function get_current_tab_group( $default = '' ) {
+	public function get_current_tab_group( $default = '' ) {
 		$current_tabs_group = $default;
 
 		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {
