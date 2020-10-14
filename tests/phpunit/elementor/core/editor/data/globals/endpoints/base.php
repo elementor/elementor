@@ -25,6 +25,12 @@ abstract class Base extends Elementor_Test_Base {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID);
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+
+		$this->manager->kill_server();
+	}
+
 	public function set_manager( $manager = null ) {
 		if ( ! $manager ) {
 			$manager = Manager::instance();

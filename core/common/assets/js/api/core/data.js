@@ -45,10 +45,6 @@ export default class Data extends Commands {
 
 		this.baseEndpointAddress = '';
 
-		elementorCommon.elements.$window.on( 'elementor:loaded', this.onElementorLoaded.bind( this ) );
-	}
-
-	onElementorLoaded() {
 		const { namespace, version } = this.args;
 
 		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;
@@ -178,6 +174,10 @@ export default class Data extends Commands {
 				endpoint += '?';
 
 				queryEntries.forEach( ( [ name, value ] ) => {
+					// Replace the character '/' with the encoded version,
+					// mostly because when saving this endpoint value to the cache it splits the url base on the '/' character.
+					value = `${ value }`.replace( /\//g, '%2F' );
+
 					endpoint += name + '=' + value + '&';
 				} );
 			}
@@ -298,6 +298,29 @@ export default class Data extends Commands {
 	}
 
 	/**
+	 * This method response for building a final endpoint,
+	 * the main problem is with plain permalink mode + command with query params that creates a weird url,
+	 * the current method should fix it.
+	 *
+	 * @param endpoint
+	 * @returns {string}
+	 */
+	prepareEndpoint( endpoint ) {
+		const splitUrl = endpoint.split( '?' ),
+			path = splitUrl.shift();
+
+		let url = this.baseEndpointAddress + path;
+
+		if ( splitUrl.length ) {
+			const separator = url.includes( '?' ) ? '&' : '?';
+
+			url += separator + splitUrl.pop();
+		}
+
+		return url;
+	}
+
+	/**
 	 * Function fetch().
 	 *
 	 * @param {RequestData} requestData
@@ -325,7 +348,8 @@ export default class Data extends Commands {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
 			try {
-				const request = fetchAPI( this.baseEndpointAddress + requestData.endpoint, params ),
+				const endpoint = this.prepareEndpoint( requestData.endpoint ),
+					request = fetchAPI( endpoint, params ),
 					response = await request.then( async ( _response ) => {
 						if ( ! _response.ok ) {
 							// Catch WP REST errors.

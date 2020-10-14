@@ -14,7 +14,6 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
-import ScreenshotsModule from 'elementor/modules/screenshots/assets/js/editor/module';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -29,7 +28,6 @@ export default class EditorBase extends Marionette.Application {
 
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.
-	debug = require( 'elementor-editor-utils/debug' );
 	schemes = require( 'elementor-editor-utils/schemes' );
 	presetsFactory = require( 'elementor-editor-utils/presets-factory' );
 	templates = require( 'elementor-templates/manager' );
@@ -38,7 +36,6 @@ export default class EditorBase extends Marionette.Application {
 	ajax = elementorCommon.ajax;
 	conditions = require( 'elementor-editor-utils/conditions' );
 	history = require( 'elementor/modules/history/assets/js/module' );
-	screenshots = new ScreenshotsModule();
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -48,6 +45,16 @@ export default class EditorBase extends Marionette.Application {
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
 	};
+
+	get debug() {
+		elementorCommon.helpers.softDeprecated(
+			'elementor.debug',
+			'3.0.0',
+			'elementorCommon.debug'
+		);
+
+		return elementorCommon.debug;
+	}
 
 	/**
 	 * Exporting modules that can be used externally
@@ -391,8 +398,6 @@ export default class EditorBase extends Marionette.Application {
 		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
 
 		preview.$el.empty();
-
-		preview.resetChildViewContainer();
 
 		// In order to force rendering of children
 		preview.isRendered = true;
@@ -854,8 +859,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.changeDeviceMode( DEFAULT_DEVICE_MODE );
 
-		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
-
 		_.defer( function() {
 			elementorFrontend.elements.window.jQuery.holdReady( false );
 		} );
@@ -864,7 +867,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
-		$e.internal( 'editor/documents/attach-preview' );
+		$e.internal( 'editor/documents/attach-preview' ).then( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
 
 		this.loaded = true;
 	}

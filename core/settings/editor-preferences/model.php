@@ -35,7 +35,7 @@ class Model extends BaseModel {
 	 */
 	public function get_panel_page_settings() {
 		return [
-			'title' => __( 'Editor Preferences', 'elementor' ),
+			'title' => __( 'User Preferences', 'elementor' ),
 		];
 	}
 

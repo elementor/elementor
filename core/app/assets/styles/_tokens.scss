@@ -1,0 +1,37 @@
+// Global tokens
+// - Sort Order has meaning
+// -- Core
+@import "./tokens/global";
+@import "./tokens/colors";
+@import "./tokens/theme";
+@import "./tokens/spacing";
+@import "./tokens/font";
+@import "./tokens/type";
+@import "./tokens/ratio";
+@import "./tokens/opacity";
+@import "./tokens/z-index";
+
+// - Sort Order is A-Z
+// -- These tokens might use definitions from core layer
+@import "./tokens/styles/border";
+@import "./tokens/styles/motion";
+@import "./tokens/styles/radius";
+@import "./tokens/styles/shadow";
+
+// Maps
+// - Sorted by roles
+@import "./tokens/maps/opacity-map";
+@import "./tokens/maps/theme-map";
+@import "./tokens/maps/tints-map";
+@import "./tokens/maps/spacing-map";
+@import "./tokens/maps/type-map";
+@import "./tokens/maps/z-index-map";
+@import "./tokens/maps/shadow-map";
+@import "./tokens/maps/atoms";
+
+// Map Semantic functions
+@import "./tokens/map-functions";
+
+// Themes
+@import "themes/dark-tokens";
+

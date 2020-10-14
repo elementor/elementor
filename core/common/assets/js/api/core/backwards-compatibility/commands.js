@@ -22,5 +22,5 @@ export default class CommandsBackwardsCompatibility extends elementorModules.Mod
 		}
 
 		this.onOrig( eventName, callback );
-	}
+	};
 }

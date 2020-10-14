@@ -44,7 +44,7 @@ export const Draft = () => {
 			assert.equal( result.data.status, 'draft' );
 		} );
 
-		QUnit.test( 'rejected: "Document is not editable"', async ( assert ) => {
+		QUnit.test( 'rejected: "Document is not editable"', ( assert ) => {
 			// Create fake document.
 			const document = elementor.documents.getCurrent(),
 				defaultStatus = document.editor.status;
@@ -57,12 +57,20 @@ export const Draft = () => {
 				post_status: 'private',
 			} );
 
+			// TODO: Cannot use `assert.rejects` since its return JQuery promise.
+			assert.expect( 1 );
+
+			const deferred = $e.run( 'document/save/draft', { document } );
+
 			// Ensure rejected.
-			assert.rejects( $e.run( 'document/save/draft', { document } ),
-				'Document is not editable' );
+			deferred.fail( ( message ) => {
+				assert.equal( message, 'Document is not editable' );
+			} );
 
 			// Put back as it was before.
-			document.editor.status = defaultStatus;
+			deferred.always( () => {
+				document.editor.status = defaultStatus;
+			} );
 		} );
 	} );
 };

@@ -4,6 +4,7 @@ namespace Elementor\Modules\PageTemplates;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -78,10 +79,10 @@ class Module extends BaseModule {
 		if ( is_singular() ) {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
-			if ( $document ) {
+			if ( $document && $document::get_property( 'support_wp_page_templates' ) ) {
 				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
 
-				if ( ! $template_path ) {
+				if ( ! $template_path && $document->is_built_with_elementor() ) {
 					$kit_default_template = Plugin::$instance->kits_manager->get_current_settings( 'default_page_template' );
 					$template_path = $this->get_template_path( $kit_default_template );
 				}
@@ -300,8 +301,7 @@ class Module extends BaseModule {
 			$control_id . '_default_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Default Page Template from your theme', 'elementor' ),
-				'separator' => 'none',
+				'raw' => '<b>' . __( 'Default Page Template from your theme', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => 'default',
@@ -313,8 +313,7 @@ class Module extends BaseModule {
 			$control_id . '_canvas_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'No header, no footer, just Elementor', 'elementor' ),
-				'separator' => 'none',
+				'raw' => '<b>' . __( 'No header, no footer, just Elementor', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => self::TEMPLATE_CANVAS,
@@ -326,14 +325,24 @@ class Module extends BaseModule {
 			$control_id . '_header_footer_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'This template includes the header, full-width content and footer', 'elementor' ),
-				'separator' => 'none',
+				'raw' => '<b>' . __( 'This template includes the header, full-width content and footer', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => self::TEMPLATE_HEADER_FOOTER,
 				],
 			]
 		);
+
+		if ( $document instanceof Kit ) {
+			$document->add_control(
+				'reload_preview_description',
+				[
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => __( 'Changes will be reflected in the preview only after the page reloads.', 'elementor' ),
+					'content_classes' => 'elementor-descriptor',
+				]
+			);
+		}
 	}
 
 	/**

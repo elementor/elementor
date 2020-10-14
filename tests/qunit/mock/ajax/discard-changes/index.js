@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 export const discardChanges = ( action, fullParams ) => {
 	return {
 		success: true,

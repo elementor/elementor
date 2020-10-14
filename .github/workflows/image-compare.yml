@@ -1,11 +1,10 @@
 name: Image Compare
 
-on: [push]
+on: push
 
 jobs:
   run:
     runs-on: ubuntu-16.04
-    if: ( startsWith( github.repository, 'elementor/' ) || startsWith( github.repository, 'kobizz/' ) || startsWith( github.repository, 'matipojo/' ) || startsWith( github.repository, 'iNewLegend/' ) || startsWith( github.repository, 'joshmarom/' ) || startsWith( github.repository, 'udidol/' ) || startsWith( github.repository, 'rotemee/' ) )
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
@@ -29,7 +28,7 @@ jobs:
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
-          curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT}}&type=by-commit"
+          curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=by-commit"
           echo ::set-env name=BUILD_PATH::"builds/by-commit/$(date '+%Y-%m')/${PLUGIN_ZIP_FILENAME}"
           echo ::set-env name=PACKAGE_VERSION::${PACKAGE_VERSION}
       - name: Run Tests
