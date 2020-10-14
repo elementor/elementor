@@ -164,23 +164,23 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'tabs_align',
 			[
-				'label' => __( 'Alignment', 'elementor-pro' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'' => [
-						'title' => __( 'Start', 'elementor-pro' ),
+						'title' => __( 'Start', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor-pro' ),
+						'title' => __( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
 					],
 					'end' => [
-						'title' => __( 'End', 'elementor-pro' ),
+						'title' => __( 'End', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
 					'stretch' => [
-						'title' => __( 'Justified', 'elementor-pro' ),
+						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'eicon-h-align-stretch',
 					],
 				],
@@ -318,19 +318,19 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'title_align',
 			[
-				'label' => __( 'Alignment', 'elementor-pro' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Left', 'elementor-pro' ),
+						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor-pro' ),
+						'title' => __( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
-						'title' => __( 'Right', 'elementor-pro' ),
+						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 				],
