@@ -294,7 +294,7 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_responsive_control(
-			'gap_columns-custom',
+			'gap_columns_custom',
 			[
 				'label' => __( 'Custom Columns Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
