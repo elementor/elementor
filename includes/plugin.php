@@ -14,7 +14,8 @@ use Elementor\Core\Modules_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
-use Elementor\Core\Upgrade\Upgrades;
+use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
+use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
@@ -615,6 +616,7 @@ class Plugin {
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
+			new Elementor_3_Re_Migrate_Globals();
 		}
 	}
 
@@ -632,9 +634,16 @@ class Plugin {
 
 	public function get_legacy_mode( $mode_name = null ) {
 		if ( ! $this->legacy_mode ) {
-			// If the legacy_mode variable does not exist yet, create it here.
+			$optimized_dom_output = get_option( 'elementor_optimized_dom_output' );
+
+			if ( $optimized_dom_output ) {
+				$element_wrappers_legacy_mode = 'disabled' === $optimized_dom_output;
+			} else {
+				$element_wrappers_legacy_mode = true;
+			}
+
 			$this->legacy_mode = [
-				'elementWrappers' => get_option( 'elementor_element_wrappers_legacy_mode', Upgrades::plugin_installed_before_v_3_0_0() ),
+				'elementWrappers' => $element_wrappers_legacy_mode,
 			];
 		}
 

@@ -154,6 +154,7 @@ class Element_Column extends Element_Base {
 		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
 		$main_selector_element = $is_legacy_mode_active ? 'column' : 'widget';
 		$widget_wrap_child = $is_legacy_mode_active ? ' > .elementor-widget-wrap' : '';
+		$column_wrap_child = $is_legacy_mode_active ? ' > .elementor-column-wrap' : '';
 
 		$this->add_responsive_control(
 			'content_position',
@@ -199,12 +200,12 @@ class Element_Column extends Element_Base {
 					'space-evenly' => __( 'Space Evenly', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-column > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
+					'{{WRAPPER}}.elementor-column' . $column_wrap_child . ' > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
 				],
 			]
 		);
 
-		$space_between_widgets_selector = $is_legacy_mode_active ? '> .elementor-column-wrap > ' : '';
+		$space_between_widgets_selector = $is_legacy_mode_active ? '> .elementor-column-wrap ' : '';
 
 		$this->add_responsive_control(
 			'space_between_widgets',
@@ -993,7 +994,6 @@ class Element_Column extends Element_Base {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
 
 		$is_inner = $this->get_data( 'isInner' );
 
@@ -1008,6 +1008,8 @@ class Element_Column extends Element_Base {
 				'elementor-' . $column_type . '-column',
 			]
 		);
+
+		parent::_add_render_attributes();
 	}
 
 	/**

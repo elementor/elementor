@@ -11,12 +11,11 @@ $eps-box-shadow-size-3: 2px 8px 23px 3px;
 $eps-box-shadow-alpha-unit-dark: 0.15;
 
 :root {
-	--eps-box-shadow-alpha-unit: #{$eps-box-shadow-alpha-unit};
-	--color-box-shadow-color: rgba(0, 0, 0, var(--eps-box-shadow-alpha-unit));
+	--color-box-shadow-color: rgba(0, 0, 0, 0.05);
 }
 
 .eps-theme-dark {
-	--eps-box-shadow-alpha-unit: #{$eps-box-shadow-alpha-unit-dark};
+	--color-box-shadow-color: rgba(0, 0, 0, 0.1);
 }
 
 // shadow presets

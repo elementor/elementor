@@ -73,6 +73,13 @@
 		--button-active-background-color: var(--button-secondary-active-background-color);
 	}
 
+	&--danger {
+		--button-color: var(--buton-danger-color);
+		--button-background-color: var(--button-danger-background-color);
+		--button-hover-background-color: var(--button-danger-hover-background-color);
+		--button-active-background-color: var(--button-danger-active-background-color);
+	}
+
 	&--cta {
 		--button-color: var(--button-cta-color);
 		--button-background-color: var(--button-cta-background-color);

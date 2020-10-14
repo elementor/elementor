@@ -493,6 +493,47 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
+	/*
+	 * @TODO: Rewrite this method markup and use it for every admin notice
+	 */
+	public function print_admin_notice( array $options ) {
+		$default_options = [
+			'title' => '',
+			'description' => '',
+			'button' => [
+				'text' => '',
+				'url' => '',
+				'class' => 'elementor-button',
+			],
+		];
+
+		$options = array_replace_recursive( $default_options, $options );
+		?>
+		<div class="notice elementor-message">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<?php if ( $options['title'] ) { ?>
+						<strong><?php echo $options['title']; ?></strong>
+					<?php } ?>
+					<?php if ( $options['description'] ) { ?>
+						<p><?php echo $options['description']; ?></p>
+					<?php } ?>
+				</div>
+				<?php if ( $options['button']['text'] ) { ?>
+					<div class="elementor-message-action">
+						<a class="<?php echo $options['button']['class']; ?>" href="<?php echo esc_url( $options['button']['url'] ); ?>"><?php echo $options['button']['text']; ?></a>
+					</div>
+				<?php } ?>
+			</div>
+		</div>
+		<?php
+	}
+
 	public function admin_notices() {
 		$this->install_time = Plugin::$instance->get_install_time();
 		$this->current_screen_id = get_current_screen()->id;
