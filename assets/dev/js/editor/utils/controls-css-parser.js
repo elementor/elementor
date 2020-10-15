@@ -99,7 +99,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				if ( selectorGlobalValue ) {
 					if ( 'font' === control.type ) {
 						$e.data.get( globalKey ).then( ( response ) => {
-								elementor.helpers.enqueueFont( response.data.value.typography_font_family );
+							elementor.helpers.enqueueFont( response.data.value.typography_font_family );
 						} );
 					}
 
@@ -262,6 +262,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			propertyName = propertyName.replace( '_', '-' );
 
 			value = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
+
+			if ( elementor.config.ui.defaultGenericFonts && control.groupPrefix + 'font_family' === control.name ) {
+				value += `, ${ elementor.config.ui.defaultGenericFonts }`;
+			}
 		} else {
 			value = `var( --e-global-${ control.type }-${ id } )`;
 		}
