@@ -38,16 +38,6 @@
       white-space: nowrap; }
   .select2-container .select2-search--inline {
     float: left; }
-  .select2-container:not(.select2-container--all-selected) .select2-search--inline::before {
-    content: '+';
-	cursor: pointer;
-    margin-right: 5px;
-    padding: 1px 5px 2px;
-	background-color: #e4e4e4;
-	color: #999;
-	position: relative;
-	bottom: -0.5px;
-    font-size: 0.9em; }
     .select2-container .select2-search--inline .select2-search__field {
       box-sizing: border-box;
       border: none;

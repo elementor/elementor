@@ -3240,12 +3240,10 @@ S2.define('select2/data/select',[
 
     container.on('select', function (params) {
       self.select(params.data);
-      container._setAllSelectedClass();
     });
 
     container.on('unselect', function (params) {
       self.unselect(params.data);
-      container._setAllSelectedClass();
     });
   };
 
@@ -5233,25 +5231,9 @@ S2.define('select2/core',[
 
     // Ensure backwards compatibility with $element.data('select2').
     $element.data('select2', this);
-
-    this._setAllSelectedClass();
   };
 
   Utils.Extend(Select2, Utils.Observable);
-
-  Select2.prototype._setAllSelectedClass = function() {
-    var self = this;
-
-    this.dataAdapter.query( {}, function( data ) {
-    	var className = 'select2-container--all-selected';
-
-    	if ( data.results.length === self.$element.select2( 'data' ).length ) {
-			self.$container.addClass( className ).data( 'isAllSelected', true );
-		} else if ( self.$container.data( 'isAllSelected' ) ) {
-			self.$container.removeClass( className ).data( 'isAllSelected', false );
-		}
-    } );
-  };
 
   Select2.prototype._generateId = function ($element) {
     var id = '';
