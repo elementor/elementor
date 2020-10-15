@@ -263,12 +263,8 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 			value = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
 
-			if ( control.groupPrefix + 'font_family' === control.name ) {
-				const defaultFonts = control.selector_value.match( /VALUE}}"(.*)/ );
-
-				if ( defaultFonts[ 1 ] ) {
-					value += defaultFonts[ 1 ];
-				}
+			if ( elementor.config.ui.defaultGenericFonts && control.groupPrefix + 'font_family' === control.name ) {
+				value += `, ${ elementor.config.ui.defaultGenericFonts }`;
 			}
 		} else {
 			value = `var( --e-global-${ control.type }-${ id } )`;

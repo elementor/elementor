@@ -586,6 +586,7 @@ class Editor {
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
 			'ui' => [
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
+				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
 			],
 			// Legacy Mode - for backwards compatibility of older HTML markup.
 			'legacyMode' => [

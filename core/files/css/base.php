@@ -786,10 +786,10 @@ abstract class Base extends Base_File {
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
 
 			if ( $control['groupPrefix'] . 'font_family' === $control['name'] ) {
-				preg_match( '/VALUE}}"(.*)/', $control['selector_value'], $default_fonts );
+				$default_generic_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
 
-				if ( ! empty( $default_fonts[1] ) ) {
-					$value  .= $default_fonts[1];
+				if ( $default_generic_fonts ) {
+					$value  .= ", $default_generic_fonts";
 				}
 			}
 		} else {
