@@ -47,6 +47,18 @@
 			border-color: $editor-light;
 		}
 	}
+
+	&:not(.select2-container--all-selected) .select2-selection--multiple .select2-search--inline::before {
+		content: '+';
+		cursor: pointer;
+		position: relative;
+		bottom: -0.5px;
+		margin-right: 5px;
+		padding: 1px 5px 2px;
+		background-color: #e4e4e4;
+		color: #999;
+		font-size: 0.9em;
+	}
 }
 
 .select2-selection {
