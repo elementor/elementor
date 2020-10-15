@@ -515,16 +515,16 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$page_title_selector = Plugin::$instance->kits_manager->get_current_settings( 'page_title_selector' );
-
-		$page_title_selector .= ', .elementor-page-title';
-
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
 
 		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
 		$kits_manager = Plugin::$instance->kits_manager;
+
+		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
+
+		$page_title_selector .= ', .elementor-page-title';
 
 		$config = [
 			'initial_document' => $document->get_config(),
