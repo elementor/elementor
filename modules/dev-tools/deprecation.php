@@ -88,7 +88,7 @@ class Deprecation {
 	/**
 	 * Implode parsed version to string version.
 	 *
-	 * @param object $parsed_version
+	 * @param array $parsed_version
 	 *
 	 * @return string
 	 */
@@ -101,7 +101,7 @@ class Deprecation {
 	}
 
 	/**
-	 * Parse version('0.0.0') to an informative array.
+	 * Parse to an informative array.
 	 *
 	 * @param string $version
 	 *
@@ -109,12 +109,9 @@ class Deprecation {
 	 */
 	public function parse_version( $version ) {
 		$version_explode = explode( '.', $version );
+		$version_explode_count = count( $version_explode );
 
-		if ( count( $version_explode ) > 3 ) {
-			$version_explode = array_slice( $version_explode, 0, 3 );
-		}
-
-		if ( count( $version_explode ) !== 3 ) {
+		if ( $version_explode_count < 3 || $version_explode_count > 4 ) {
 			trigger_error( 'Invalid Semantic Version string provided' );
 
 			return false;
@@ -122,11 +119,17 @@ class Deprecation {
 
 		list( $major1, $major2, $minor ) = $version_explode;
 
-		return [
+		$result = [
 			'major1' => intval( $major1 ),
 			'major2' => intval( $major2 ),
 			'minor' => intval( $minor ),
 		];
+
+		if ( $version_explode_count > 3 ) {
+			$result['build'] = $version_explode[3];
+		}
+
+		return $result;
 	}
 
 	/**

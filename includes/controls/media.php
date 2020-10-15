@@ -130,8 +130,14 @@ class Control_Media extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<# if ( 'image' === data.media_type || 'video' === data.media_type ) { #>
-			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
+			<# if ( 'image' === data.media_type || 'video' === data.media_type ) {
+			var inputWrapperClasses = 'elementor-control-input-wrapper elementor-aspect-ratio-219';
+
+			if ( ! data.label_block ) {
+				inputWrapperClasses += ' elementor-control-unit-5';
+			}
+			#>
+			<div class="{{{ inputWrapperClasses }}}">
 				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
 					<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button elementor-fit-aspect-ratio">
 						<i class="eicon-plus-circle" aria-hidden="true"></i>

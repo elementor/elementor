@@ -57,7 +57,7 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'elementor-admin-bar',
 			$this->get_js_assets_url( 'admin-bar' ),
-			[ 'elementor-common' ],
+			[ 'elementor-frontend-modules' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -122,6 +122,6 @@ class Module extends BaseApp {
 	 */
 	public function __construct() {
 		add_action( 'elementor/frontend/get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
-		add_action( 'wp_footer', [ $this, 'enqueue_scripts' ] );
+		add_action( 'wp_footer', [ $this, 'enqueue_scripts' ], 11 /* after third party scripts */ );
 	}
 }
