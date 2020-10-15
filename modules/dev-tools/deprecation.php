@@ -165,11 +165,11 @@ class Deprecation {
 	 * Checks whether the given entity is valid. If valid, this method checks whether the deprecation
 	 * should be soft (browser console notice) or hard (use WordPress' native deprecation methods).
 	 *
-	 * @param $type - Deprecation type (function|hook|argument... etc)
 	 * @param $entity - The Deprecated entity (the function/hook itself)
-	 * @param $version
-	 * @param $replacement
-	 * @param $base_version
+	 * @param string $version
+	 * @param string $replacement Optional
+	 * @param string $base_version Optional. Default is `null`
+	 *
 	 * @return bool|void
 	 */
 	private function check_deprecation( $entity, $version, $replacement, $base_version = null ) {
@@ -212,9 +212,9 @@ class Deprecation {
 	 * Handles the deprecation process for functions.
 	 *
 	 * @param $function
-	 * @param $version
-	 * @param string $replacement
-	 * @param null $base_version
+	 * @param string $version
+	 * @param string $replacement Optional. Default is ''
+	 * @param string $base_version Optional. Default is `null`
 	 */
 	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
 		$print_deprecated = $this->check_deprecation( $function, $version, $replacement, $base_version );
@@ -231,15 +231,14 @@ class Deprecation {
 	 *
 	 * @param $hook
 	 * @param $version
-	 * @param string $replacement
-	 * @param string $message
-	 * @param null $base_version
+	 * @param string $replacement Optional. Default is ''
+	 * @param string $base_version Optional. Default is `null`
 	 */
-	public function deprecated_hook( $hook, $version, $replacement = '', $message = '', $base_version = null ) {
+	public function deprecated_hook( $hook, $version, $replacement = '', $base_version = null ) {
 		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement, $base_version );
 
 		if ( $print_deprecated ) {
-			_deprecated_hook( $hook, $version, $replacement, $message );
+			_deprecated_hook( $hook, $version, $replacement );
 		}
 	}
 
@@ -250,13 +249,12 @@ class Deprecation {
 	 *
 	 * @param $function
 	 * @param $version
-	 * @param string $message
 	 */
-	public function deprecated_argument( $function, $version, $message = '' ) {
+	public function deprecated_argument( $function, $version ) {
 		$print_deprecated = $this->check_deprecation( $function, $version, '' );
 
 		if ( $print_deprecated ) {
-			_deprecated_argument( $function, $version, $message );
+			_deprecated_argument( $function, $version );
 		}
 	}
 }
