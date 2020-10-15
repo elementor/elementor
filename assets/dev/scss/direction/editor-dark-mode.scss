@@ -907,6 +907,10 @@ body.rtl .elementor-control-type-gallery {
 		.select2-selection__choice {
 			background-color: $theme-dark-gray;
 			border-color: $theme-dark-gray;
+
+			&__remove {
+				color: $theme-dark-gray-lightest;
+			}
 		}
 	}
 
