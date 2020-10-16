@@ -14,6 +14,7 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
+import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -343,6 +344,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
+		this.devTools = new DevTools();
+
 		this.documents = $e.components.register( new EditorDocuments() );
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
@@ -398,8 +401,6 @@ export default class EditorBase extends Marionette.Application {
 		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
 
 		preview.$el.empty();
-
-		preview.resetChildViewContainer();
 
 		// In order to force rendering of children
 		preview.isRendered = true;

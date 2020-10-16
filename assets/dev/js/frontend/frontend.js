@@ -143,6 +143,7 @@ class Frontend extends elementorModules.ViewModule {
 			lightbox: new LightboxModule(),
 			urlActions: new URLActions(),
 			swiper: Swiper,
+			environment: environment,
 		};
 
 		// TODO: BC since 2.4.0
