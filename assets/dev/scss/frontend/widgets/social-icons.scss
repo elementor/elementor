@@ -2,29 +2,45 @@
 // Social Icons
 //
 
+$icon-size: var(--icon-size, 25px);
+$icon-padding: var(--icon-padding, 0.5em);
+$icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
+
+
 .elementor-widget-social-icons {
+/*TODO: This Grid-0 needs to be removed after PRO is Updated */
+	&.elementor-grid-0, &.elementor-grid-tablet-0, &.elementor-grid-mobile-0 {
+		.elementor-widget-container {
+			line-height: 1;
+			font-size: 0;
+		}
+	}
 
-	&:not(.elementor-grid-0) .elementor-grid {
-		display: inline-grid;
+	&:not(.elementor-grid-0):not(.elementor-grid-tablet-0):not(.elementor-grid-mobile-0) {
+		.elementor-grid {
+			display: inline-grid;
+		}
+	}
+
+	.elementor-grid {
+		grid-column-gap: var(--grid-column-gap, 5px);
+		grid-row-gap: var(--grid-row-gap, 5px);
 		grid-template-columns: var(--grid-template-columns);
+		justify-content: var(--justify-content, center);
+		justify-items: var(--justify-content, center);
 	}
-
-	.elementor-widget-container {
-		display: flex;
-		justify-content: center;
-	}
-}
-
-.elementor-social-icons-wrapper {
-	font-size: 0;
 }
 
 .elementor-social-icon {
+	display: inline-flex;
 	background-color: $gray;
-	font-size: 25px;
+	font-size: $icon-size;
+	line-height: $icon-size;
+	width: $icon-total-size;
+	height: $icon-total-size;
+	align-items: center;
+	justify-content: center;
 	text-align: center;
-	padding: 0.5em;
-	@include margin-end(5px);
 	cursor: pointer;
 
 	i {
