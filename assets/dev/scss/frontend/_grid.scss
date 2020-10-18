@@ -298,6 +298,7 @@ ul.elementor-icon-list-items.elementor-inline-items {
 		&#{$device}-0 {
 			.elementor-grid {
 				display: inline-block;
+				width: 100%;
 				word-spacing: var(--grid-column-gap);
 				margin-bottom: calc(-1 * var(--grid-row-gap));
 
