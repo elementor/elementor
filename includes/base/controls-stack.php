@@ -1736,7 +1736,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'register_controls' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'register_controls' );
 
 		$this->register_controls();
 	}
@@ -1826,7 +1826,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'get_initial_config' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'get_initial_config' );
 
 		return $this->get_initial_config();
 	}
@@ -1900,7 +1900,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access protected
 	 */
 	protected function _content_template() {
-		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'content_template' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'content_template' );
 
 		$this->content_template();
 	}
@@ -1987,7 +1987,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param array $data Initial data.
 	 */
 	protected function _init( $data ) {
-		Plugin::$instance->common->get_component( 'devTools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'init' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'init' );
 
 		$this->init( $data );
 	}
