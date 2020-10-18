@@ -100,6 +100,9 @@ class Widget_Tabs extends Widget_Base {
 				'default' => __( 'Tab Title', 'elementor' ),
 				'placeholder' => __( 'Tab Title', 'elementor' ),
 				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -111,9 +114,6 @@ class Widget_Tabs extends Widget_Base {
 				'placeholder' => __( 'Tab Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
 				'show_label' => false,
-				'dynamic' => [
-					'active' => false,
-				],
 			]
 		);
 
