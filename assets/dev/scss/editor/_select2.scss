@@ -48,16 +48,21 @@
 		}
 	}
 
+	& .select2-selection--multiple .select2-search--inline {
+		padding-top: 0.6px;
+	}
+
 	&:not(.select2-container--all-selected) .select2-selection--multiple .select2-search--inline::before {
 		content: '+';
 		cursor: pointer;
 		position: relative;
-		bottom: -0.5px;
+		display: inline-block;
 		margin-right: 5px;
-		padding: 1px 5px 2px;
+		padding: 3px 5px;
 		background-color: #e4e4e4;
 		color: #999;
 		font-size: 0.9em;
+		text-align: center;
 	}
 }
 
