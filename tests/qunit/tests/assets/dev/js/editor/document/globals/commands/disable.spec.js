@@ -1,6 +1,6 @@
 import ElementsHelper from '../../elements/helper';
 import GlobalsHelper from '../helper';
-import * as eData from 'elementor-tests-qunit/mock/e-data';
+import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 export const Disable = () => {
 	QUnit.module( 'Disable', ( hooks ) => {

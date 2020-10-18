@@ -8,7 +8,7 @@ export default class EditorBootstrap {
 	}
 
 	initialize() {
-		const EditorTest = require( './editor-test' ).default,
+		const EditorTest = require( './test' ).default,
 			ajax = require( '../mock/ajax' ),
 			eData = require( '../mock/e-data' ),
 			$body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),

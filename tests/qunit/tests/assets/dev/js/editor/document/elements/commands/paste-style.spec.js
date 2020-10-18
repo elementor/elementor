@@ -1,6 +1,6 @@
 import ElementsHelper from '../helper';
 import HistoryHelper from '../../history/helper';
-import * as eData from 'elementor-tests-qunit/mock/e-data';
+import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 export const PasteStyle = () => {
 	QUnit.module( 'PasteStyle', () => {

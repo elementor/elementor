@@ -1,7 +1,7 @@
 import { CREATABLE, DELETABLE, EDITABLE, READABLE } from 'elementor-api/core/data';
 import ComponentBase from 'elementor-api/modules/component-base';
 import CommandData from 'elementor-api/modules/command-data';
-import * as eData from 'elementor-tests-qunit/mock/e-data';
+import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 // Test cache module.
 require( './data/cache.spec.js' );
