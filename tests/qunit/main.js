@@ -1,5 +1,5 @@
-import EditorBootstrap from 'elementor-tests-qunit/editor/editor-bootstrap';
-import FrontendBootstrap from 'elementor-tests-qunit/frontend/frontend-bootstrap';
+import EditorBootstrap from 'elementor/tests/qunit/editor/bootstrap';
+import FrontendBootstrap from 'elementor/tests/qunit/frontend/bootstrap';
 
 const { target = 'editor' } = __karma__?.config;
 

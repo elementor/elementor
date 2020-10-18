@@ -1,7 +1,7 @@
 import ElementsHelper from '../helper';
 import HistoryHelper from '../../history/helper';
-import BlockFaq from 'elementor-tests-qunit/mock/library/blocks/faq.json';
-import PageLandingPageHotel from 'elementor-tests-qunit/mock/library/pages/landing-page-hotel.json';
+import BlockFaq from 'elementor/tests/qunit/mock/library/blocks/faq.json';
+import PageLandingPageHotel from 'elementor/tests/qunit/mock/library/pages/landing-page-hotel.json';
 
 export const Import = () => {
 	QUnit.module( 'Import', () => {

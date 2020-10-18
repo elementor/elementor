@@ -11,6 +11,7 @@ if ( process.argv[ process.argv.length - 1 ] ) {
 }
 
 module.exports = function( config ) {
+	// Support arguments like '--whatever:value' when running 'karma:unit' from grunt.
 	config.client.args.forEach( ( argument ) => {
 		argument = argument.split( ':' );
 		argument[ 0 ] = argument[ 0 ].replace( /--/g, '' );
@@ -48,7 +49,7 @@ module.exports = function( config ) {
 			'assets/lib/backbone/backbone.radio.min.js',
 
 			// Elementor Common.
-			'tests/qunit/setup/common/setup-elementor-common.js',
+			'tests/qunit/setup/common/elementor-common.js',
 			'assets/lib/dialog/dialog.js',
 			'assets/js/common-modules.js',
 			'assets/js/common.js',
@@ -110,7 +111,7 @@ module.exports = function( config ) {
 		}
 	}
 
-	const setupHandler = require( `../elementor/tests/qunit/setup/${ target }/setup-${ target }` );
+	const setupHandler = require( `../elementor/tests/qunit/setup/${ target }/setup` );
 
 	console.log( `preparing tests environment for: '${ target }'.` );
 

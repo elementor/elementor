@@ -1,5 +1,5 @@
 import Frontend from 'elementor-frontend/frontend-base';
-import config from './frontend-config';
+import config from './config';
 
 export default class FrontendTest extends Frontend {
 	getConfig() {

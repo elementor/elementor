@@ -6,7 +6,7 @@ export default class FrontendBootstrap {
 	}
 
 	initialize() {
-		const FrontendTest = require( './frontend-test' ).default,
+		const FrontendTest = require( './test' ).default,
 			$body = jQuery( 'body' ).append( '<div id="elementor-test"></div>' ),
 			$elementorTest = $body.find( '#elementor-test' );
 

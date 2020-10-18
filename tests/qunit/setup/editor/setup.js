@@ -5,12 +5,12 @@ module.exports = ( config ) => {
 		'tests/qunit/setup/editor/index.html',
 
 		// Editor Tinymce.
-		'tests/qunit/setup/editor/setup-tinymce.js',
+		'tests/qunit/setup/editor/tinymce.js',
 		'tests/qunit/vendor/wp-includes/quicktags.min.js',
 
 		// Editor Config.
-		'tests/qunit/setup/editor/setup-wp.js',
-		'tests/qunit/setup/editor/setup-marionette.js',
+		'tests/qunit/setup/editor/wordpress.js',
+		'tests/qunit/setup/editor/marionette.js',
 
 		// Editor Dependencies.
 		'tests/qunit/vendor/wp-includes/jquery-ui.min.js',
