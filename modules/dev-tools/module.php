@@ -7,11 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
- * Its tells to the editor that instance() return right module. instead of base module.
- * @method Module instance()
- */
 class Module extends BaseModule {
 	/**
 	 * @var \Elementor\Modules\DevTools\Deprecation
