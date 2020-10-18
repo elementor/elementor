@@ -27,6 +27,11 @@
 
 // Temporary Compatibility for Elementor-Pro Share Buttons
 // TODO: Remove after Elementor Pro update.
+
+.elementor-portfolio.elementor-grid {
+	display: grid;
+}
+
 @mixin share-buttons-align($device) {
 	.elementor-share-buttons {
 		&#{$device} {
