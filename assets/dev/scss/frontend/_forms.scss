@@ -200,7 +200,9 @@
 		}
 
 		.e-form__buttons__wrapper {
-			&,
+			flex-basis: 50%;
+			flex-grow: 1;
+
 			&__button {
 				flex-basis: 100%;
 			}
@@ -238,6 +240,8 @@
 		}
 
 		.e-form__buttons__wrapper {
+			flex-grow: initial;
+
 			&,
 			&__button {
 				flex-basis: initial;

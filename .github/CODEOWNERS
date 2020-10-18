@@ -1,19 +1,10 @@
 # Default
 *                                 		@kingyes
-*.js                              		@kobizz
+*.js                              		@kobizz @matipojo
 *.php                             		@matipojo
 
 # Assets
-/assets/dev/js							@kobizz
-/assets/dev/js/editor					@kobizz @matipojo
 /assets/dev/js/editor/commands    		@matipojo
-/assets/dev/js/editor/controls    		@kobizz
-/assets/dev/js/editor/document    		@matipojo
-/assets/dev/js/editor/document/dynamic	@matipojo @kobizz
-/assets/dev/js/editor/document/elements	@matipojo @kobizz
-/assets/dev/js/editor/document/hooks	@matipojo @kobizz
-/assets/dev/js/editor/document/repeater	@matipojo @kobizz
-/assets/dev/js/editor/document/ui    	@matipojo @kobizz
 /assets/dev/scss                  		@kobizz
 
 # External Libraries
