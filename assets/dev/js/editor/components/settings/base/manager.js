@@ -79,6 +79,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			controlsCSS.stylesheet.empty();
 		}
 
+		this.model.handleRepeaterData( this.model.attributes );
+
 		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
 		controlsCSS.addStyleToDocument( {
