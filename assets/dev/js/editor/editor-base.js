@@ -402,8 +402,6 @@ export default class EditorBase extends Marionette.Application {
 
 		preview.$el.empty();
 
-		preview.resetChildViewContainer();
-
 		// In order to force rendering of children
 		preview.isRendered = true;
 

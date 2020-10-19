@@ -473,6 +473,7 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Add Element', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'default' => 'line',
 				'options' => [
 					'line' => [
 						'title' => __( 'None', 'elementor' ),
@@ -489,6 +490,7 @@ class Widget_Divider extends Widget_Base {
 				],
 				'separator' => 'before',
 				'prefix_class' => 'elementor-widget-divider--view-',
+				'toggle' => false,
 				'render_type' => 'template',
 			]
 		);

@@ -143,6 +143,7 @@ class Frontend extends elementorModules.ViewModule {
 			lightbox: new LightboxModule(),
 			urlActions: new URLActions(),
 			swiper: Swiper,
+			environment: environment,
 		};
 
 		// TODO: BC since 2.4.0
@@ -151,7 +152,7 @@ class Frontend extends elementorModules.ViewModule {
 			Masonry: elementorModules.utils.Masonry,
 		};
 
-		this.elementsHandler = new ElementsHandler( jQuery );
+		this.elementsHandler.init();
 
 		if ( this.isEditMode() ) {
 			elementor.once( 'document:loaded', () => this.onDocumentLoaded() );
@@ -278,6 +279,8 @@ class Frontend extends elementorModules.ViewModule {
 		this.hooks = new EventManager();
 
 		this.storage = new Storage();
+
+		this.elementsHandler = new ElementsHandler( jQuery );
 
 		this.addIeCompatibility();
 

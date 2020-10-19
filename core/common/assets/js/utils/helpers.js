@@ -10,7 +10,7 @@ export default class Helpers {
 	}
 
 	deprecatedMessage( type, name, version, replacement ) {
-		let message = `%c   %c\`${ name }\` is ${ type } deprecated since ${ version }`;
+		let message = `\`${ name }\` is ${ type } deprecated since ${ version }`;
 
 		if ( replacement ) {
 			message += ` - Use \`${ replacement }\` instead`;
@@ -22,7 +22,7 @@ export default class Helpers {
 	consoleWarn( ...args ) {
 		const style = `font-size: 12px; background-image: url("${ elementorCommon.config.urls.assets }images/logo-icon.png"); background-repeat: no-repeat; background-size: contain;`;
 
-		args.push( style, '' );
+		args.unshift( '%c  %c', style, '' );
 
 		console.warn( ...args ); // eslint-disable-line no-console
 	}
