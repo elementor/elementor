@@ -57,9 +57,9 @@ export default class Select2 extends elementorModules.ViewModule {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		const { element, options } = this.getSettings();
+		const { $element, options } = this.getSettings();
 
-		this.select2 = element.select2( options ).data( 'select2' );
+		this.select2 = $element.select2( options ).data( 'select2' );
 
 		this.state = {
 			isAllSelected: false,

@@ -25,7 +25,7 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 
 		if ( ! this.select2Instance ) {
 			this.select2Instance = new Select2( {
-				element: this.ui.select,
+				$element: this.ui.select,
 				options: this.getSelect2Options(),
 			} );
 		} else {
