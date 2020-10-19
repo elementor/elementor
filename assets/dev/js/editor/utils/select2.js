@@ -48,12 +48,6 @@ export default class Select2 extends elementorModules.ViewModule {
 		this.elements.$element.select2( 'destroy' );
 	}
 
-	onDestroy() {
-		super.onDestroy();
-
-		this.destroy();
-	}
-
 	onInit( ...args ) {
 		super.onInit( ...args );
 

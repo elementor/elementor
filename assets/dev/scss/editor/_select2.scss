@@ -48,7 +48,8 @@
 		}
 	}
 
-	& .select2-selection--multiple .select2-search--inline {
+	/* Due to the add-new-item button, we need to make the button vertically aligned to the selected item before it. */
+	.select2-selection--multiple .select2-search--inline {
 		padding-top: 0.6px;
 	}
 
