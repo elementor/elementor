@@ -8,7 +8,7 @@ Stable tag: 3.0.11
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-The most advanced frontend drag & drop website builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
+The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!
 
 == Description ==
 
@@ -18,16 +18,16 @@ Introducing a WordPress website builder, with no limits of design. A website bui
 
 It's time for **[Elementor Website Builder](https://elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**.
 
-= The leading website builder for any purpose =
+= The Leading Website & Page Builder =
 Whether you’re a web designer looking for a way to achieve pixel-perfect websites, a marketer looking to get online fast or a developer who wants to expand their capabilities, Elementor’s website builder has what you need - intuitive drag-and-drop Editor, advanced design features and a full open-source approach.
 
-= Faster. Much faster. =
+= Faster. Much Faster. =
 Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop website builder, instant live edit, instant page load. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
 
-= Live design. Truly live. =
+= Live design. Truly Live. =
 Never again work on the backend and guess what the frontend will look like. With Elementor, you’re editing the site live, and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode. It also works perfectly with or without Gutenberg.
 
-= Professional features right out of the box =
+= Professional Features Right Out of the Box =
 With Elementor’s unique features, you can create websites that have that certain ‘designer touch’. Among our design features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
 
 = 100s of Pre-Designed Templates & Blocks =
@@ -39,7 +39,7 @@ Blocks are pre-designed section templates that can be easily combined into any p
 Elementor Website  Builder comes with an exclusive toolset, that lets you create a truly responsive website in a whole new and visual way. From different font size, padding and margin per device, to reverse column ordering, this is the most powerful mobile site builder for creating perfect responsive websites.
 
 = 40+ free widgets and counting =
-We packed 40+ of the most useful widgets into our website builder. True, that’s way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
+No other page builder or website builder can compare to Elementor. We packed 40+ of the most useful widgets into our website builder. True, that’s way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
@@ -74,9 +74,9 @@ We packed 40+ of the most useful widgets into our website builder. True, that’
 - **And counting...**
 
 = Take it a step further with Elementor Pro =
-The most professional WordPress Website Builder out there. [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) vastly improves your design workflow and lets you design faster and better than ever. Elementor Pro gives you access to more professional widgets, options and tools to really push your to the next level.
+The most professional WordPress Website Builder out there. [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) vastly improves your design workflow and lets you design faster and better than ever. Get access to more professional widgets, options and tools to really push your design to the next level.
 
-Making changes to your theme shouldn't be so hard. Endless coding, dealing with developers, switching themes. The [Theme Builder](https://go.elementor.com/theme-builder/) in Elementor Pro turns the entire process of creating WordPress websites 100% visual including your site's header, footer, single post and archive page design.
+Elementor is much more than a page builder! Making changes to your theme shouldn't be so hard. Endless coding, dealing with developers, switching themes. The [Theme Builder](https://go.elementor.com/theme-builder/) in Elementor Pro turns the entire process of creating WordPress websites 100% visual including your site's header, footer, single post and archive page design.
 
 There are many other [features](https://elementor.com/features/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to help you build better websites:
 
