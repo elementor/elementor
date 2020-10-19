@@ -107,6 +107,7 @@ class DB {
 	 * Retrieve post meta data, and return the JSON decoded data.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 3.1.0 Use `get_post_meta( $post_id, $key, true )` and then `json_decode( $meta, true )` instead
 	 * @access protected
 	 *
 	 * @param int    $post_id Post ID.
@@ -115,6 +116,8 @@ class DB {
 	 * @return array Decoded JSON data from post meta.
 	 */
 	protected function _get_json_meta( $post_id, $key ) {
+		_deprecated_function( __METHOD__, '3.1.0', 'get_post_meta( $post_id, $key, true ) and then json_decode( $meta, true )' );
+
 		$meta = get_post_meta( $post_id, $key, true );
 
 		if ( is_string( $meta ) && ! empty( $meta ) ) {
