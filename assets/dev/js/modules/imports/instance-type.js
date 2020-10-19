@@ -7,6 +7,11 @@ export default class InstanceType {
 		 */
 		let result = super[ Symbol.hasInstance ]( target );
 
+		// Act normal when validate a class, which does not have instance type.
+		if ( target && ! target.constructor.getInstanceType ) {
+			return result;
+		}
+
 		if ( target ) {
 			if ( ! target.instanceTypes ) {
 				target.instanceTypes = [];
@@ -27,7 +32,7 @@ export default class InstanceType {
 			}
 		}
 
-		if ( ! result ) {
+		if ( ! result && target ) {
 			// Check if the given 'target', is instance of known types.
 			result = target.instanceTypes &&
 				Array.isArray( target.instanceTypes ) &&
@@ -39,8 +44,8 @@ export default class InstanceType {
 
 	constructor() {
 		// Since anonymous classes sometimes do not get validated by babel, do it manually.
-		let target = new.target,
-			prototypes = [];
+		let target = new.target;
+		const prototypes = [];
 
 		while ( target.__proto__ && target.__proto__.name ) {
 			prototypes.push( target.__proto__ );

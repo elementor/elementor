@@ -12,6 +12,7 @@ export default class extends BaseManager {
 
 		this.changeCallbacks = {
 			ui_theme: this.onUIThemeChanged,
+			panel_width: this.onPanelWidthChanged,
 			edit_buttons: this.onEditButtonsChanged,
 		};
 	}
@@ -52,8 +53,14 @@ export default class extends BaseManager {
 		$link.attr( 'media', 'auto' === newValue ? '(prefers-color-scheme: dark)' : '' ).appendTo( elementorCommon.elements.$body );
 	}
 
+	onPanelWidthChanged( newValue ) {
+		elementor.panel.saveSize( { width: newValue.size + newValue.unit } );
+
+		elementor.panel.setSize();
+	}
+
 	onEditButtonsChanged() {
 		// Let the button change before the high-performance action of rendering the entire page
-		setTimeout( () => elementor.getPreviewView().render(), 300 );
+		setTimeout( () => elementor.getPreviewView()._renderChildren(), 300 );
 	}
 }

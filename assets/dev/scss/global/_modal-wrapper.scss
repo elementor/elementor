@@ -90,14 +90,11 @@
 
 			&__icon-wrapper {
 				@include margin-end(10px);
+				font-size: 12px;
 			}
 
 			&__title {
 				padding-top: 2px;
-			}
-
-			i {
-				font-size: 10px;
 			}
 		}
 
@@ -127,7 +124,7 @@
 		&__close {
 
 			&--normal {
-				width: 45px;
+				width: 47px;
 				@include border-start(1px solid $editor-background);
 
 				i {

@@ -4,7 +4,12 @@ export class AttachPreview extends CommandInternalBaseBase {
 	apply() {
 		const document = elementor.documents.getCurrent();
 
-		return this.attachDocumentToPreview( document )
+		return $e.data.get( 'globals/index' )
+			.then( () => {
+				elementor.trigger( 'globals:loaded' );
+
+				return this.attachDocumentToPreview( document );
+			} )
 			.then( () => {
 				elementor.toggleDocumentCssFiles( document, false );
 
@@ -57,7 +62,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 
 			document.$element
 				.addClass( 'elementor-edit-area-active' )
-				.removeClass( 'elementor-edit-area-preview elementor-editor-preview' );
+				.removeClass( 'elementor-editor-preview' );
 
 			resolve();
 		} );

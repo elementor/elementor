@@ -79,9 +79,15 @@ module.exports = elementorModules.ViewModule.extend( {
 			controlsCSS.stylesheet.empty();
 		}
 
+		this.model.handleRepeaterData( this.model.attributes );
+
 		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
-		controlsCSS.addStyleToDocument();
+		controlsCSS.addStyleToDocument( {
+			// Ensures we don't override default global style
+			at: 'before',
+			of: '#elementor-style-e-global-style',
+		} );
 	},
 
 	initModel: function() {
@@ -213,10 +219,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.updateStylesheet();
 
 		this.addPanelPage();
-
-		if ( ! elementor.userCan( 'design' ) ) {
-			$e.route( 'panel/page-settings/settings' );
-		}
 	},
 
 	destroy: function() {

@@ -8,7 +8,7 @@
 
 	&.elementor-labels-above {
 
-		> .elementor-field-group {
+		.elementor-field-group {
 
 			> input, > textarea, > .elementor-select-wrapper, .elementor-field-subgroup {
 				flex-basis: 100%;
@@ -84,6 +84,7 @@
 			transform: translateY(-50%);
 			@include end(10px);
 			pointer-events: none;
+			text-shadow: 0 0 3px rgba(0,0,0,0.3);//To show when the border color is lighter (#12053)
 		}
 	}
 
@@ -191,31 +192,61 @@
 }
 
 @mixin btn-align() {
+	&stretch {
+		.elementor-field-type-submit:not(.e-form__buttons__wrapper) {
+			.elementor-button {
+				flex-basis: 100%;
+			}
+		}
 
-	&center, &start, &end {
+		.e-form__buttons__wrapper {
+			flex-basis: 50%;
+			flex-grow: 1;
 
-		.elementor-field-type-submit button {
-			flex-basis: initial;
+			&__button {
+				flex-basis: 100%;
+			}
 		}
 	}
 
-	&center .elementor-field-type-submit{
-		justify-content: center;
-	}
-
-	&stretch .elementor-field-type-submit{
-
-		button {
-			flex-basis: 100%;
+	&center {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: center;
 		}
 	}
 
-	&start .elementor-field-type-submit{
-		justify-content: getValueByDirection(flex-start, flex-end);
+	&start {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: getValueByDirection(flex-start, flex-end);
+		}
 	}
 
-	&end .elementor-field-type-submit{
-		justify-content: getValueByDirection(flex-end, flex-start);
+	&end {
+		.elementor-field-type-submit,
+		.e-form__buttons {
+			justify-content: getValueByDirection(flex-end, flex-start);
+		}
+	}
+
+	&center,
+	&start,
+	&end {
+		.elementor-field-type-submit:not(.e-form__buttons__wrapper) {
+			.elementor-button {
+				flex-basis: initial;
+			}
+		}
+
+		.e-form__buttons__wrapper {
+			flex-grow: initial;
+
+			&,
+			&__button {
+				flex-basis: initial;
+			}
+		}
 	}
 }
 
@@ -262,7 +293,7 @@
 		font-weight: normal;
 		font-style: normal;
 		vertical-align: middle;
-		margin-right: 5px;
+		@include margin-end(5px);
 	}
 
 	&.elementor-message-danger {
@@ -284,7 +315,7 @@
 	.elementor-button {
 		padding-top: 0;
 		padding-bottom: 0;
-		border: 0 none;
+		border: none;
 
 		& > span {
 			display: flex;

@@ -5,8 +5,6 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Group_Control_Background;
 use Elementor\Plugin;
-use Elementor\Settings;
-use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -88,11 +86,7 @@ abstract class PageBase extends Document {
 			[
 				'label' => __( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'description' => sprintf(
-					/* translators: %s: Setting page link */
-					__( 'Not working? You can set a different selector for the title in the <a href="%s" target="_blank">Settings page</a>.', 'elementor' ),
-					Settings::get_url() . '#tab-style'
-				),
+				'description' => __( 'Not working? You can set a different selector for the title in Site Settings > Layout', 'elementor' ),
 				'selectors' => [
 					':root' => '--page-title-display: none',
 				],
@@ -182,7 +176,7 @@ abstract class PageBase extends Document {
 					'type' => Controls_Manager::MEDIA,
 					'default' => [
 						'id' => get_post_thumbnail_id(),
-						'url' => get_the_post_thumbnail_url( $document->post->ID ),
+						'url' => (string) get_the_post_thumbnail_url( $document->post->ID ),
 					],
 				]
 			);

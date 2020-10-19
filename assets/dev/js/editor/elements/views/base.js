@@ -446,16 +446,6 @@ BaseElementView = BaseContainer.extend( {
 		const editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
-		jQuery.each( settings.getFontControls(), ( index, control ) => {
-			const fontFamilyName = editModel.getSetting( control.name );
-
-			if ( ! fontFamilyName ) {
-				return;
-			}
-
-			elementor.helpers.enqueueFont( fontFamilyName );
-		} );
-
 		// Enqueue Icon Fonts
 		jQuery.each( settings.getIconsControls(), ( index, control ) => {
 			const iconType = editModel.getSetting( control.name );

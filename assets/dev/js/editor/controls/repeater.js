@@ -32,7 +32,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		const elementContainer = this.getOption( 'container' );
 
 		return {
-			container: elementContainer.children[ index ],
+			container: elementContainer.repeaters[ this.model.get( 'name' ) ].children[ index ],
 			controlFields: this.model.get( 'fields' ),
 			titleField: this.model.get( 'title_field' ),
 			itemActions: this.model.get( 'item_actions' ),
@@ -69,6 +69,10 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		this.fillCollection();
+
+		this.listenTo( this.collection, 'reset', this.resetContainer.bind( this ) );
+
+		this.listenTo( this.collection, 'add', this.updateContainer.bind( this ) );
 	},
 
 	editRow: function( rowView ) {
@@ -126,7 +130,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		if ( this.model.get( 'item_actions' ).sort ) {
-			this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
+			this.ui.fieldContainer.sortable( {
+				axis: 'y',
+				handle: '.elementor-repeater-row-tools',
+				items: ' > :not(.elementor-repeater-row--disable-sort)',
+			} );
 		}
 
 		this.toggleMinRowsClass();
@@ -176,7 +184,26 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	onButtonAddRowClick: function() {
+	// BC since 3.0.0, ensure a new child is appear in container children.
+	updateContainer( model ) {
+		const container = this.options.container.repeaters[ this.model.get( 'name' ) ],
+			isInChildren = container.children.filter( ( child ) => {
+				return child.id === model.get( '_id' );
+			} );
+
+		if ( ! isInChildren.length ) {
+			elementorCommon.helpers.softDeprecated( 'Don\'t add models directly to the repeater.', '3.0.0', '$e.run( \'document/repeater/insert\' )' );
+			this.options.container.addRepeaterItem( this.model.get( 'name' ), model, model.collection.indexOf( model ) );
+		}
+	},
+
+	// BC since 3.0.0, ensure a container children are reset on collection reset.
+	resetContainer: function() {
+		elementorCommon.helpers.softDeprecated( 'Don\'t reset repeater collection directly.', '3.0.0', '$e.run( \'document/repeater/remove\' )' );
+		this.options.container.repeaters[ this.model.get( 'name' ) ].children = [];
+	},
+
+	getDefaults: function() {
 		const defaults = {};
 
 		// Get default fields.
@@ -184,13 +211,20 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			defaults[ field.name ] = field.default;
 		} );
 
+		return defaults;
+	},
+
+	onButtonAddRowClick: function() {
 		const newModel = $e.run( 'document/repeater/insert', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
-			model: defaults,
+			model: this.getDefaults(),
 		} );
 
-		this.editRow( this.children.findByModel( newModel ) );
+		const newChild = this.children.findByModel( newModel );
+
+		this.editRow( newChild );
+
 		this.toggleMinRowsClass();
 	},
 

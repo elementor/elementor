@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
-
 /**
  * Elementor column element.
  *
@@ -153,6 +151,11 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
+		$main_selector_element = $is_legacy_mode_active ? 'column' : 'widget';
+		$widget_wrap_child = $is_legacy_mode_active ? ' > .elementor-widget-wrap' : '';
+		$column_wrap_child = $is_legacy_mode_active ? ' > .elementor-column-wrap' : '';
+
 		$this->add_responsive_control(
 			'content_position',
 			[
@@ -174,9 +177,9 @@ class Element_Column extends Element_Base {
 				],
 				'selectors' => [
 					// TODO: The following line is for BC since 2.7.0
-					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-widget-wrap' => 'align-items: {{VALUE}}',
+					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-' . $main_selector_element . '-wrap' => 'align-items: {{VALUE}}',
 					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position)
-					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-widget-wrap.elementor-element-populated' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-' . $main_selector_element . '-wrap.elementor-element-populated' . $widget_wrap_child => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 			]
 		);
@@ -197,10 +200,12 @@ class Element_Column extends Element_Base {
 					'space-evenly' => __( 'Space Evenly', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-column > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
+					'{{WRAPPER}}.elementor-column' . $column_wrap_child . ' > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
 				],
 			]
 		);
+
+		$space_between_widgets_selector = $is_legacy_mode_active ? '> .elementor-column-wrap ' : '';
 
 		$this->add_responsive_control(
 			'space_between_widgets',
@@ -209,7 +214,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
+					'{{WRAPPER}} ' . $space_between_widgets_selector . '> .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
 				],
 			]
 		);
@@ -263,7 +268,7 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background',
 				'types' => [ 'classic', 'gradient', 'slideshow' ],
-				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-widget-wrap, {{WRAPPER}} > .elementor-widget-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
+				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-' . $main_selector_element . '-wrap, {{WRAPPER}} > .elementor-' . $main_selector_element . '-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -605,17 +610,6 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		if ( in_array( Schemes\Color::get_type(), Schemes\Manager::get_enabled_schemes(), true ) ) {
-			$this->add_control(
-				'colors_warning',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following set of controls has been deprecated. Those controls are only visible if they were previously populated.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
-				]
-			);
-		}
-
 		$this->add_control(
 			'heading_color',
 			[
@@ -707,7 +701,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -719,7 +713,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -915,9 +909,15 @@ class Element_Column extends Element_Base {
 	 * @access protected
 	 */
 	protected function content_template() {
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
+		$wrapper_element = $is_legacy_mode_active ? 'column' : 'widget';
+
 		?>
-		<div class="elementor-widget-wrap">
+		<div class="elementor-<?php echo $wrapper_element; ?>-wrap">
 			<div class="elementor-background-overlay"></div>
+			<?php if ( $is_legacy_mode_active ) { ?>
+				<div class="elementor-widget-wrap"></div>
+			<?php } ?>
 		</div>
 		<?php
 	}
@@ -936,7 +936,10 @@ class Element_Column extends Element_Base {
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		$column_wrap_classes = [ 'elementor-widget-wrap' ];
+		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
+		$wrapper_attribute_string = $is_legacy_mode_active ? '_inner_wrapper' : '_widget_wrapper';
+
+		$column_wrap_classes = $is_legacy_mode_active ? [ 'elementor-column-wrap' ] : [ 'elementor-widget-wrap' ];
 
 		if ( $this->get_children() ) {
 			$column_wrap_classes[] = 'elementor-element-populated';
@@ -947,7 +950,7 @@ class Element_Column extends Element_Base {
 				'class' => $column_wrap_classes,
 			],
 			'_widget_wrapper' => [
-				'class' => $column_wrap_classes,
+				'class' => $is_legacy_mode_active ? 'elementor-widget-wrap' : $column_wrap_classes,
 			],
 			'_background_overlay' => [
 				'class' => [ 'elementor-background-overlay' ],
@@ -955,9 +958,12 @@ class Element_Column extends Element_Base {
 		] );
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
-			<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
+			<div <?php echo $this->get_render_attribute_string( $wrapper_attribute_string ); ?>>
 		<?php if ( $has_background_overlay ) : ?>
 			<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
+		<?php endif; ?>
+		<?php if ( $is_legacy_mode_active ) : ?>
+			<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
 		<?php endif; ?>
 		<?php
 	}
@@ -971,7 +977,9 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		?>
+		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+				</div>
+		<?php } ?>
 			</div>
 		</<?php echo $this->get_html_tag(); ?>>
 		<?php
@@ -986,7 +994,6 @@ class Element_Column extends Element_Base {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
 
 		$is_inner = $this->get_data( 'isInner' );
 
@@ -1001,6 +1008,8 @@ class Element_Column extends Element_Base {
 				'elementor-' . $column_type . '-column',
 			]
 		);
+
+		parent::_add_render_attributes();
 	}
 
 	/**

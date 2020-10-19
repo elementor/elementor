@@ -11,6 +11,7 @@ export default class ComponentBase extends elementorModules.Module {
 		this.tabs = this.defaultTabs();
 		this.shortcuts = this.defaultShortcuts();
 		this.utils = this.defaultUtils();
+		this.data = this.defaultData();
 
 		this.defaultRoute = '';
 		this.currentTab = '';
@@ -25,9 +26,14 @@ export default class ComponentBase extends elementorModules.Module {
 
 		Object.entries( this.getCommandsInternal() ).forEach( ( [ command, callback ] ) => this.registerCommandInternal( command, callback ) );
 
-		Object.entries( this.getHooks() ).forEach( ( [ hook, instance ] ) => this.registerHook( instance ) ); // eslint-disable-line no-unused-vars
+		Object.values( this.getHooks() ).forEach( ( instance ) => this.registerHook( instance ) );
+
+		Object.entries( this.getData() ).forEach( ( [ command, callback ] ) => this.registerData( command, callback ) );
 	}
 
+	/**
+	 * @returns {string}
+	 */
 	getNamespace() {
 		elementorModules.ForceMethodImplementation();
 	}
@@ -65,6 +71,10 @@ export default class ComponentBase extends elementorModules.Module {
 		return {};
 	}
 
+	defaultData() {
+		return {};
+	}
+
 	getCommands() {
 		return this.commands;
 	}
@@ -89,6 +99,10 @@ export default class ComponentBase extends elementorModules.Module {
 		return this.shortcuts;
 	}
 
+	getData() {
+		return this.data;
+	}
+
 	registerCommand( command, callback ) {
 		$e.commands.register( this, command, callback );
 	}
@@ -108,12 +122,16 @@ export default class ComponentBase extends elementorModules.Module {
 		$e.routes.register( this, route, callback );
 	}
 
+	registerData( command, callback ) {
+		$e.data.register( this, command, callback );
+	}
+
 	unregisterRoute( route ) {
 		$e.routes.unregister( this, route );
 	}
 
 	registerTabRoute( tab ) {
-		this.registerRoute( tab, () => this.activateTab( tab ) );
+		this.registerRoute( tab, ( args ) => this.activateTab( tab, args ) );
 	}
 
 	dependency() {
@@ -216,14 +234,14 @@ export default class ComponentBase extends elementorModules.Module {
 
 	renderTab( tab ) {} // eslint-disable-line
 
-	activateTab( tab ) {
+	activateTab( tab, args ) {
 		this.currentTab = tab;
-		this.renderTab( tab );
+		this.renderTab( tab, args );
 
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
 			.off( 'click' )
 			.on( 'click', ( event ) => {
-				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ) );
+				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ), args );
 			} )
 			.removeClass( 'elementor-active' )
 			.filter( '[data-tab="' + tab + '"]' )
@@ -253,6 +271,10 @@ export default class ComponentBase extends elementorModules.Module {
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
 			const command = this.normalizeCommandName( className );
 			commands[ command ] = ( args ) => ( new Class( args ) ).run();
+
+			// TODO: Temporary code, remove after merge with 'require-commands-base' branch.
+			// should not return callback, but Class or Instance without run ( gain performance ).
+			$e.commands.classes[ this.getNamespace() + '/' + command ] = Class;
 		} );
 
 		return commands;

@@ -1,3 +1,5 @@
+import ElementsHelper from 'elementor-tests-qunit/core/editor/document/elements/helper';
+
 let tempPostStatus;
 
 export const Draft = () => {
@@ -17,18 +19,24 @@ export const Draft = () => {
 				document = elementor.documents.getCurrent();
 
 			for ( const status of testStatuses ) {
-				document.container.settings.set( 'post_status', status );
+				ElementsHelper.settings( document.container, {
+					post_status: status,
+				} );
 
 				const result = await $e.run( 'document/save/draft' );
 
 				assert.equal( result.data.status, 'inherit' );
+
+				$e.internal( 'document/save/set-is-modified', { status: false } );
 			}
 		} );
 
 		QUnit.test( 'Document post_status is "draft"', async ( assert ) => {
 			const document = elementor.documents.getCurrent();
 
-			document.container.settings.set( 'post_status', 'draft' );
+			ElementsHelper.settings( document.container, {
+				post_status: 'draft',
+			} );
 
 			const result = await $e.run( 'document/save/draft' );
 
@@ -36,7 +44,7 @@ export const Draft = () => {
 			assert.equal( result.data.status, 'draft' );
 		} );
 
-		QUnit.test( 'rejected: "Document is not editable"', async ( assert ) => {
+		QUnit.test( 'rejected: "Document is not editable"', ( assert ) => {
 			// Create fake document.
 			const document = elementor.documents.getCurrent(),
 				defaultStatus = document.editor.status;
@@ -45,14 +53,24 @@ export const Draft = () => {
 			document.editor.status = 'closed';
 
 			// Put something that is not 'draft' to reach reject.
-			document.container.settings.set( 'post_status', 'private' );
+			ElementsHelper.settings( document.container, {
+				post_status: 'private',
+			} );
+
+			// TODO: Cannot use `assert.rejects` since its return JQuery promise.
+			assert.expect( 1 );
+
+			const deferred = $e.run( 'document/save/draft', { document } );
 
 			// Ensure rejected.
-			assert.rejects( $e.run( 'document/save/draft', { document } ),
-				'Document is not editable' );
+			deferred.fail( ( message ) => {
+				assert.equal( message, 'Document is not editable' );
+			} );
 
 			// Put back as it was before.
-			document.editor.status = defaultStatus;
+			deferred.always( () => {
+				document.editor.status = defaultStatus;
+			} );
 		} );
 	} );
 };

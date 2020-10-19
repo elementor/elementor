@@ -1,4 +1,3 @@
-
 .elementor-panel {
 
 	#elementor-panel-header {
@@ -59,6 +58,10 @@
 				background-color: $editor-kit-accent;
 			}
 		}
+
+		#elementor-panel-page-menu {
+			padding: 25px 15px 0;
+		}
 	}
 
 	#elementor-panel-header-add-button,
@@ -69,64 +72,121 @@
 	}
 }
 
-.elementor-control-type-global-style-repeater {
+.elementor-control {
 
-	.elementor-repeater {
+	&-type-global-style-repeater {
 
-		&-fields {
-			margin-bottom: 15px;
+		.elementor-repeater {
+
+			&-fields {
+				margin-bottom: 15px;
+				position: relative;
+			}
+
+			&-row-controls {
+				display: flex;
+				align-items: center;
+			}
+
+			&-row-tool {
+				cursor: pointer;
+				color: $editor-lightest;
+				padding: 5px;
+			}
 		}
 
-		&-row-controls {
-			display: flex;
+		.elementor-control {
+			padding: 0;
+
+			&-title {
+				flex-grow: 1;
+
+				input {
+					max-width: $control-unit * 5;
+
+					&:not(:focus) {
+						background: none;
+						border: none;
+					}
+				}
+			}
+
+			&-input-wrapper {
+				display: flex;
+				align-items: center;
+				// Fix HEX values flickering when moving the mouse over them.
+				min-width: $control-unit * 3;
+
+				&:hover {
+
+					.e-global-colors__color-value {
+						display: none;
+					}
+				}
+
+				&:not(:hover) {
+
+					.elementor-repeater-tool-remove,
+					.elementor-repeater-tool-remove--disabled {
+						display: none;
+					}
+				}
+			}
 		}
 
-		&-tool-remove {
-			color: $editor-lightest;
-			cursor: pointer;
+		// Hard selector to override default margin
+		.elementor-control-content {
+
+			> .elementor-control-field {
+
+				> .elementor-control-input-wrapper {
+					margin-top: 0;
+				}
+			}
+		}
+
+		.elementor-controls-popover {
+			align-self: end;
+			margin-top: 35px;
+			top: 0;
+			width: 100%;
+
+			&:before {
+				@include end(5px);
+			}
+
+			.elementor-control {
+				padding: 0 20px 15px;
+
+				&-title {
+					flex-grow: initial;
+				}
+			}
+		}
+
+		.elementor-button-wrapper {
+			text-align: center;
+			border-top: 1px solid $editor-background;
+			max-width: 260px;
+			padding-top: 15px;
+		}
+
+		.pickr,
+		.elementor-control-popover-toggle-toggle-label {
+			@include margin-start(5px);
 		}
 	}
 
-	.elementor-control {
-		margin: 0;
-		padding: 0;
-
-		&-title {
-
-			input {
-
-				&:not(:focus) {
-					background: none;
-					border: none;
-				}
-			}
-		}
-
-		&-input-wrapper {
-			align-items: center;
-
-			&:hover {
-
-				.elementor-global-colors__color-value {
-					display: none;
-				}
-			}
-
-			&:not(:hover) {
-
-				.elementor-repeater-tool-remove {
-					display: none;
-				}
-			}
-		}
-	}
-
-	.pickr {
-		@include margin-start(10px);
+	&-system_colors,
+	&-system_typography {
+		padding-bottom: 0;
 	}
 }
 
-.elementor-global-colors__color-value {
+.e-global-colors__color-value {
 	color: $editor-lightest;
 	font-size: 10px;
+	padding: 0 5px;
+	text-align: $end;
+	@include ellipsis;
 }

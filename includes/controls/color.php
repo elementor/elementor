@@ -51,6 +51,9 @@ class Control_Color extends Base_Data_Control {
 				<div class="elementor-color-picker-placeholder"></div>
 			</div>
 		</div>
+		<# if ( data.description ) { #>
+		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 
@@ -73,6 +76,9 @@ class Control_Color extends Base_Data_Control {
 				'categories' => [
 					TagsModule::COLOR_CATEGORY,
 				],
+				'active' => true,
+			],
+			'global' => [
 				'active' => true,
 			],
 		];

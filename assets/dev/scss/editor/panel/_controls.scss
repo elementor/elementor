@@ -201,6 +201,10 @@
 			}
 		}
 	}
+
+	&.elementor-control-custom_css_title {
+		font-size: 12px;
+	}
 }
 
 .elementor-control,
@@ -287,6 +291,19 @@
 	}
 
 	&.elementor-control-hidden-label:not(.elementor-control-dynamic) {
+
+		> .elementor-control-content {
+
+			> .elementor-control-field {
+
+				> .elementor-control-input-wrapper {
+					margin-top: 0;
+				}
+			}
+		}
+	}
+
+	&.elementor-control-hidden-label.elementor-label-block {
 
 		> .elementor-control-content {
 
@@ -496,6 +513,8 @@ $devices: 'desktop', 'tablet', 'mobile';
 @import "controls/icons";
 
 @import "controls/gallery";
+
+@import "controls/globals";
 
 @import "controls/hidden";
 

@@ -1,3 +1,5 @@
+import ControlsPopover from './controls-popover';
+
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
@@ -49,8 +51,13 @@ ControlsStack = Marionette.CompositeView.extend( {
 		},
 	},
 
-	initialize: function() {
+	initialize: function( options ) {
 		this.initCollection();
+
+		if ( options.tab ) {
+			this.activeTab = options.tab;
+			this.activateFirstSection();
+		}
 
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
@@ -104,6 +111,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 		return this;
 	},
+
 	activateFirstSection: function() {
 		var self = this;
 
@@ -111,8 +119,14 @@ ControlsStack = Marionette.CompositeView.extend( {
 			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
 		} );
 
+		let sectionToActivate;
+
 		if ( ! sectionControls[ 0 ] ) {
-			return;
+			self.activeSection = null;
+
+			sectionToActivate = null;
+		} else {
+			sectionToActivate = sectionControls[ 0 ].get( 'name' );
 		}
 
 		var preActivatedSection = sectionControls.filter( function( controlModel ) {
@@ -123,7 +137,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		self.activateSection( sectionControls[ 0 ].get( 'name' ) );
+		self.activateSection( sectionToActivate );
 
 		return this;
 	},
@@ -132,44 +146,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 		var controlType = item.get( 'type' );
 
 		return elementor.getControlView( controlType );
-	},
-
-	handlePopovers: function() {
-		var self = this,
-			popoverStarted = false,
-			$popover;
-
-		self.removePopovers();
-
-		self.children.each( function( child ) {
-			if ( popoverStarted ) {
-				$popover.append( child.$el );
-			}
-
-			var popover = child.model.get( 'popover' );
-
-			if ( ! popover ) {
-				return;
-			}
-
-			if ( popover.start ) {
-				popoverStarted = true;
-
-				$popover = jQuery( '<div>', { class: self.classes.popover } );
-
-				child.$el.before( $popover );
-
-				$popover.append( child.$el );
-			}
-
-			if ( popover.end ) {
-				popoverStarted = false;
-			}
-		} );
-	},
-
-	removePopovers: function() {
-		this.$el.find( '.' + this.classes.popover ).remove();
 	},
 
 	getNamespaceArray: function() {
@@ -196,7 +172,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onRenderCollection: function() {
 		this.openActiveSection();
 
-		this.handlePopovers();
+		ControlsStack.handlePopovers( this );
 	},
 
 	onModelDestroy: function() {
@@ -225,6 +201,39 @@ ControlsStack = Marionette.CompositeView.extend( {
 		if ( 'desktop' === device ) {
 			this.$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}
+	},
+}, {
+	handlePopovers: function( view ) {
+		let popover;
+
+		view.popovers = [];
+
+		this.removePopovers( view );
+
+		view.children.each( ( control ) => {
+			if ( popover ) {
+				popover.addChild( control );
+			}
+
+			const popoverData = control.model.get( 'popover' );
+
+			if ( ! popoverData ) {
+				return;
+			}
+
+			if ( popoverData.start ) {
+				popover = new ControlsPopover( control );
+
+				view.popovers.push( popover );
+			}
+
+			if ( popoverData.end ) {
+				popover = null;
+			}
+		} );
+	},
+	removePopovers: function( view ) {
+		view.popovers.forEach( ( popover ) => popover.destroy() );
 	},
 } );
 

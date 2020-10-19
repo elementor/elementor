@@ -1,8 +1,8 @@
 <?php
-
 namespace Elementor\Core\Base;
 
 use Elementor\Plugin;
+use Elementor\Core\Base\BackgroundProcess\WP_Background_Process;
 
 /**
  * Based on https://github.com/woocommerce/woocommerce/blob/master/includes/abstracts/class-wc-background-process.php
@@ -11,13 +11,10 @@ use Elementor\Plugin;
 
 defined( 'ABSPATH' ) || exit;
 
-include_once ELEMENTOR_PATH . '/includes/libraries/wp-background-process/wp-async-request.php';
-include_once ELEMENTOR_PATH . '/includes/libraries/wp-background-process/wp-background-process.php';
-
 /**
  * WC_Background_Process class.
  */
-abstract class Background_Task extends \WP_Background_Process {
+abstract class Background_Task extends WP_Background_Process {
 	protected $current_item;
 
 	/**
@@ -46,7 +43,7 @@ abstract class Background_Task extends \WP_Background_Process {
 		$sql = preg_replace( '/;$/', '', $sql );
 		$sql .= ' LIMIT %d, %d;';
 
-		$results = $wpdb->get_col( $wpdb->prepare( $sql, $this->get_current_offset(), $this->get_limit() ) ); // WPCS: unprepared SQL OK.
+		$results = $wpdb->get_col( $wpdb->prepare( $sql, $this->get_current_offset(), $this->get_limit() ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( ! empty( $results ) ) {
 			$this->set_total();

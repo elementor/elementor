@@ -1,27 +1,16 @@
 <?php
 namespace Elementor\Testing;
 
+use Elementor\Core\Base\Document;
+use Elementor\Plugin;
+
 class Local_Factory extends \WP_UnitTestCase {
-
-	private $default_post;
-	private $custom_post;
-	private $parent_post;
-	private $child_post;
-
-	private $local_template_id;
-
-	private $administrator_user;
-	private $subscriber_user;
 
 	/**
 	 * @return \WP_Post
 	 */
 	public function get_default_post() {
-		if ( ! $this->default_post ) {
-			$this->default_post = $this->factory()->post->create_and_get();
-		}
-
-		return $this->default_post;
+		return $this->factory()->post->create_and_get();
 	}
 
 	/**
@@ -37,11 +26,11 @@ class Local_Factory extends \WP_UnitTestCase {
 	 * @return \WP_Post
 	 */
 	public function get_custom_post( $args ) {
-		$this->custom_post = clone $this->get_default_post();
+		$custom_post = clone $this->get_default_post();
 
-		$this->factory()->post->update_object( $this->custom_post->ID, $args );
+		$this->factory()->post->update_object( $custom_post->ID, $args );
 
-		return $this->custom_post;
+		return $custom_post;
 	}
 
 	/**
@@ -87,11 +76,7 @@ class Local_Factory extends \WP_UnitTestCase {
 	 * @return int|\WP_Error
 	 */
 	public function get_local_template_id() {
-		if ( ! $this->local_template_id ) {
-			$this->local_template_id = $this->create_template();
-		}
-
-		return $this->local_template_id;
+		return $this->create_template();
 	}
 
 	/**
@@ -109,31 +94,48 @@ class Local_Factory extends \WP_UnitTestCase {
 	 * @return \WP_User
 	 */
 	public function create_and_get_administrator_user() {
-		$this->administrator_user = $this->factory()->user->create_and_get( [ 'role' => 'administrator' ] );
-
-		return $this->administrator_user;
+		return $this->factory()->user->create_and_get( [ 'role' => 'administrator' ] );
 	}
 
 	/**
 	 * @return \WP_User
 	 */
 	public function get_administrator_user() {
-		if ( ! $this->administrator_user ) {
-			$this->administrator_user = $this->factory()->user->create_and_get( [ 'role' => 'administrator' ] );
-		}
-
-		return $this->administrator_user;
+		return $this->factory()->user->create_and_get( [ 'role' => 'administrator' ] );
 	}
 
 	/**
 	 * @return \WP_User
 	 */
 	public function get_subscriber_user() {
-		if ( ! $this->subscriber_user ) {
-			$this->subscriber_user = $this->factory()->user->create_and_get( [ 'role' => 'subscriber' ] );
-		}
+		return $this->factory()->user->create_and_get( [ 'role' => 'subscriber' ] );
+	}
 
-		return $this->subscriber_user;
+	/**
+	 * @return \WP_User
+	 */
+	public function get_editor_user() {
+		return $this->factory()->user->create_and_get( [ 'role' => 'editor' ] );
+	}
+
+	/**
+	 * @return Document|false
+	 */
+	public function create_post() {
+		$admin = $this->create_and_get_administrator_user();
+
+		wp_set_current_user( $admin->ID );
+
+		$post = $this->create_and_get_custom_post( [
+			'post_author' => $admin->ID,
+			'post_type' => 'post',
+		] );
+
+		add_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
+
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		return $document;
 	}
 
 	private function create_template( $template_data = [ 'title' => 'new template' ] ) {

@@ -144,7 +144,7 @@ class Maintenance_Mode {
 		}
 
 		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
-		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // WPCS: override ok.
+		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
 		query_posts( [
@@ -176,7 +176,7 @@ class Maintenance_Mode {
 		$templates_options = [];
 
 		foreach ( $templates as $template ) {
-			$templates_options[ $template['template_id'] ] = $template['title'];
+			$templates_options[ $template['template_id'] ] = esc_html( $template['title'] );
 		}
 
 		ob_start();

@@ -48,6 +48,8 @@ export class Remove extends CommandHistory {
 			result = [];
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			const collection = container.settings.get( name ),
 				model = collection.at( index );
 
@@ -60,7 +62,7 @@ export class Remove extends CommandHistory {
 			}
 
 			// Remove from container and add to result.
-			result.push( container.children.pop( index ) );
+			result.push( container.repeaters[ name ].children.splice( index, 1 ) );
 
 			collection.remove( model );
 

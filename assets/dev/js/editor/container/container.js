@@ -3,7 +3,7 @@ import Panel from './panel';
 
 /**
  * TODO: ViewsOptions
- * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView)} ViewsOptions
+ * @typedef {(Marionette.View|Marionette.CompositeView|BaseElementView|SectionView|BaseContainer)} ViewsOptions
  */
 
 export default class Container extends ArgsObject {
@@ -71,6 +71,13 @@ export default class Container extends ArgsObject {
 	dynamic;
 
 	/**
+	 * Container globals.
+	 *
+	 * @type {Backbone.Model}
+	 */
+	globals;
+
+	/**
 	 * Container label.
 	 *
 	 * @type {string}
@@ -83,6 +90,13 @@ export default class Container extends ArgsObject {
 	 * @type {{}}
 	 */
 	controls = {};
+
+	/**
+	 * Repeaters containers
+	 *
+	 * @type {{}}
+	 */
+	repeaters = {};
 
 	/**
 	 * Container renderer (The one who render).
@@ -134,6 +148,7 @@ export default class Container extends ArgsObject {
 		}
 
 		this.dynamic = new Backbone.Model( this.settings.get( '__dynamic__' ) );
+		this.globals = new Backbone.Model( this.settings.get( '__globals__' ) );
 		this.panel = new Panel( this );
 
 		this.handleRepeaterChildren();
@@ -147,19 +162,79 @@ export default class Container extends ArgsObject {
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
 	}
 
-	handleRepeaterChildren() {
-		// TODO: add a repeater attribute: `'repeater_type' => 'main`` and filter by it.
-		const repeaterControls = Object.values( this.controls ).filter( ( control ) => {
-			return 'repeater' === control.type;
+	/**
+	 * Function getGroupRelatedControls().
+	 *
+	 * Example:
+	 * Settings = { typography_typography: 'whatever', button_text_color: 'whatever' };
+	 * Result { control_name: controlValue, ... - and so on };
+	 * `Object.keys( Result ) = [ 'typography_typography', 'typography_font_family', 'typography_font_size', 'typography_font_size_tablet', 'typography_font_size_mobile', 'typography_font_weight', 'typography_text_transform', 'typography_font_style', 'typography_text_decoration', 'typography_line_height', 'typography_line_height_tablet', 'typography_line_height_mobile', 'typography_letter_spacing', 'typography_letter_spacing_tablet', 'typography_letter_spacing_mobile', 'button_text_color' ]`.
+	 *
+	 * @param {{}} settings
+	 *
+	 * @return {{}}
+	 */
+	getGroupRelatedControls( settings ) {
+		const result = {};
+
+		Object.keys( settings ).forEach( ( settingKey ) => {
+			Object.values( this.controls ).forEach( ( control ) => {
+				if ( settingKey === control.name ) {
+					result[ control.name ] = control;
+				} else if ( this.controls[ settingKey ]?.groupPrefix ) {
+					const { groupPrefix } = this.controls[ settingKey ];
+
+					if ( control.name.toString().startsWith( groupPrefix ) ) {
+						result[ control.name ] = control;
+					}
+				}
+			} );
 		} );
 
-		// Only if has one repeater convert it to container children.
-		if ( 1 === repeaterControls.length ) {
-			const mainRepeaterName = repeaterControls[ 0 ].name;
+		return result;
+	}
 
-			this.settings.get( mainRepeaterName ).forEach( ( rowModel, index ) => {
-				this.addRepeaterItem( mainRepeaterName, rowModel, index );
+	handleRepeaterChildren() {
+		Object.values( this.controls ).forEach( ( control ) => {
+			if ( ! control.is_repeater ) {
+				return;
+			}
+
+			const model = new Backbone.Model( {
+				name: control.name,
 			} );
+
+			this.repeaters[ control.name ] = new elementorModules.editor.Container( {
+				// TODO: replace to `repeater`, and the item should by `repeater-item`.
+				type: 'repeater-control',
+				id: control.name,
+				model,
+				settings: model,
+				view: this.view,
+				parent: this,
+				label: control.label || control.name,
+				controls: {},
+				renderer: this.renderer,
+			} );
+
+			this.settings.get( control.name ).forEach( ( rowModel, index ) => {
+				this.addRepeaterItem( control.name, rowModel, index );
+			} );
+		} );
+
+		// Backwards Compatibility: if there is only one repeater (type=repeater), set it's children as current children.
+		// Since 3.0.0.
+		if ( [ 'widget', 'document' ].includes( this.type ) ) {
+			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
+
+			if ( 1 === repeaters.length ) {
+				Object.defineProperty( this, 'children', {
+					get() {
+						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						return this.repeaters[ repeaters[ 0 ].name ].children;
+					},
+				} );
+			}
 		}
 	}
 
@@ -168,11 +243,11 @@ export default class Container extends ArgsObject {
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
 		if ( ! rowId ) {
-			rowId = 'bc-' + elementor.helpers.getUniqueID();
+			rowId = 'bc-' + elementorCommon.helpers.getUniqueId();
 			rowSettingsModel.set( '_id', rowId );
 		}
 
-		this.children[ index ] = new elementorModules.editor.Container( {
+		this.repeaters[ repeaterName ].children.splice( index, 0, new elementorModules.editor.Container( {
 			type: 'repeater',
 			id: rowSettingsModel.get( '_id' ),
 			model: new Backbone.Model( {
@@ -180,11 +255,11 @@ export default class Container extends ArgsObject {
 			} ),
 			settings: rowSettingsModel,
 			view: this.view,
-			parent: this,
+			parent: this.repeaters[ repeaterName ],
 			label: this.label + ' ' + elementor.translate( 'Item' ),
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
-		} );
+		} ) );
 	}
 
 	/**
@@ -203,14 +278,14 @@ export default class Container extends ArgsObject {
 			return this;
 		}
 
-		if ( this !== this.renderer && this.renderer.view.isDestroyed ) {
+		if ( this !== this.renderer && this.renderer.view?.isDisconnected && this.renderer.view.isDisconnected() ) {
 			this.renderer = this.renderer.lookup();
 		}
 
-		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDestroyed ) {
+		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDisconnected() ) {
 			// Hack For repeater item the result is the parent container.
 			if ( 'repeater' === this.type ) {
-				this.settings = this.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
+				this.settings = this.parent.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
 			}
 			return result;
 		}
@@ -245,6 +320,14 @@ export default class Container extends ArgsObject {
 		}
 
 		this.renderer.view.renderOnChange( this.settings );
+	}
+
+	renderUI() {
+		if ( ! this.renderer ) {
+			return;
+		}
+
+		this.renderer.view.renderUI();
 	}
 
 	isEditable() {

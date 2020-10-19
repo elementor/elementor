@@ -450,7 +450,9 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = $url_control['url'];
+			$allowed_protocols = array_merge( wp_allowed_protocols(), [ 'skype', 'viber' ] );
+
+			$attributes['href'] = esc_url( $url_control['url'], $allowed_protocols );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
@@ -463,33 +465,7 @@ abstract class Element_Base extends Controls_Stack {
 
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
 			// Custom URL attributes should come as a string of comma-delimited key|value pairs
-			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
-			$blacklist = [ 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup' ];
-
-			foreach ( $custom_attributes as $attribute ) {
-				// Trim in case users inserted unwanted spaces
-				$attr_key_value = explode( '|', $attribute );
-
-				$attr_key = $attr_key_value[0];
-
-				// Cover cases where key/value have spaces both before and/or after the actual value
-				preg_match( '/[^=]+/', $attr_key, $attr_key_matches );
-
-				$attr_key = trim( $attr_key_matches[0] );
-
-				// Implement attribute blacklist
-				if ( in_array( strtolower( $attr_key ), $blacklist, true ) ) {
-					continue;
-				}
-
-				if ( isset( $attr_key_value[1] ) ) {
-					$attr_value = trim( $attr_key_value[1] );
-				} else {
-					$attr_value = '';
-				}
-
-				$attributes[ $attr_key ] = $attr_value;
-			}
+			$attributes = array_merge( $attributes, Utils::parse_custom_attributes( $url_control['custom_attributes'] ) );
 		}
 
 		if ( $attributes ) {
@@ -826,8 +802,12 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
-			// Hide the element until the animation begins
-			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
+
+			if ( ! $is_static_render_mode ) {
+				// Hide the element until the animation begins
+				$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+			}
 		}
 
 		if ( ! empty( $settings['_element_id'] ) ) {

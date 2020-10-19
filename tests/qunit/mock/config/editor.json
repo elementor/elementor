@@ -7,7 +7,8 @@
   },
   "user": {
 	"introduction": {},
-	"restrictions": []
+	"restrictions": [],
+	"can_edit_kit": true
   },
   "elements": {},
   "dynamicTags": {},
@@ -17,18 +18,16 @@
   "icons": {
 	"libraries": []
   },
-  "controls": {
-	"font": {
-	  "options": {}
-	},
-	"repeater": {
-	  "item_actions": {
-		"add": true,
-		"duplicate": true,
-		"remove": true,
-		"sort": true
-	  }
-	}
+  "autosave_interval": 1000,
+  "kit_id": "5",
+  "kit_config": {
+	  "typography_prefix": "typography_"
   },
-  "autosave_interval": 1000
+  "legacyMode": {},
+  "globals": {
+	"defaults_enabled": {
+	  "colors": true,
+	  "typography": true
+	}
+  }
 }

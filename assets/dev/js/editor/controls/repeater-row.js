@@ -1,7 +1,6 @@
-var ControlBaseDataView = require( 'elementor-controls/base-data' ),
-	RepeaterRowView;
+import ControlsStack from 'elementor-views/controls-stack';
 
-RepeaterRowView = Marionette.CompositeView.extend( {
+module.exports = Marionette.CompositeView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' ),
 
 	className: 'elementor-repeater-fields',
@@ -55,20 +54,11 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	},
 
 	setTitle: function() {
-		var titleField = this.getOption( 'titleField' ),
-			title = '';
+		const titleField = this.getOption( 'titleField' );
+
+		let title = '';
 
 		if ( titleField ) {
-			var values = {};
-
-			this.children.each( function( child ) {
-				if ( ! ( child instanceof ControlBaseDataView ) ) {
-					return;
-				}
-
-				values[ child.model.get( 'name' ) ] = child.getControlValue();
-			} );
-
 			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( this.model.parseDynamicSettings() );
 		}
 
@@ -77,6 +67,10 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		}
 
 		this.ui.itemTitle.html( title );
+	},
+
+	toggleSort( enable ) {
+		this.$el.toggleClass( 'elementor-repeater-row--disable-sort', ! enable );
 	},
 
 	initialize: function( options ) {
@@ -88,6 +82,8 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	onRender: function() {
 		this.setTitle();
+
+		ControlsStack.handlePopovers( this );
 	},
 
 	onModelChange: function() {
@@ -102,5 +98,3 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		}
 	},
 } );
-
-module.exports = RepeaterRowView;
