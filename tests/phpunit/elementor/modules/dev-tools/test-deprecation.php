@@ -66,6 +66,14 @@ class Test_Deprecation extends Elementor_Test_Base {
 		], $versions );
 	}
 
+	public function test_parse_version_invalid() {
+		// Works in PHPUnit 7.5.14 with '@expectedException \PHPUnit\Framework\Error\Notice'.
+		$this->markTestSkipped( 'didnt found any solution for handling `trigger_error` in a PHPUnit version that runs in github checks.' );
+		return;
+		$this->deprecation->parse_version( '0.0' );
+		$this->deprecation->parse_version( '0.0.0.0 ' );
+	}
+
 	public function test_compare_version() {
 		$tests = [
 			[
@@ -128,6 +136,21 @@ class Test_Deprecation extends Elementor_Test_Base {
 				'compare_version' => '3.15.0',
 				'diff' => -35,
 			],
+			[
+				'base_version' => '1.0.0',
+				'compare_version' => '2.2.2',
+				'diff' => -12,
+			],
+			[
+				'base_version' => '1.0.0',
+				'compare_version' => '2.2.2.2',
+				'diff' => -12,
+			],
+			[
+				'base_version' => '1.0.0',
+				'compare_version' => '2.2.2.2-beta1',
+				'diff' => -12,
+			],
 		];
 
 		foreach ( $tests as $test ) {
@@ -163,5 +186,23 @@ class Test_Deprecation extends Elementor_Test_Base {
 		}
 
 		$this->assertEquals( 101, $dynamic_diff );
+	}
+
+	public function test_deprecated_function_soft() {
+		$this->deprecation->deprecated_function( __FUNCTION__, '0.0.0', '', '0.4.0' );
+
+		$settings = $this->deprecation->get_settings();
+
+		$this->assertContains( [
+			'test_deprecated_function_soft',
+			'0.0.0',
+			'',
+		], $settings['soft_notices'] );
+	}
+
+	public function test_deprecated_function_hard() {
+		$this->setExpectedDeprecated( __FUNCTION__ );
+
+		$this->deprecation->deprecated_function( __FUNCTION__, '0.0.0', '', '0.5.0' );
 	}
 }

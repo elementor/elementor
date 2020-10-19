@@ -29,6 +29,8 @@ export const tests = () => {
 	require( './core/kits/assets/js/component.spec' );
 
 	require( './core/editor/data/globals/component.spec' );
+
+	require( './modules/dev-tools/assets/js/editor/dev-tools.spec' );
 };
 
 // export for external build.
