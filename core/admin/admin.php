@@ -199,7 +199,7 @@ class Admin extends App {
 			return;
 		}
 
-		Plugin::$instance->db->set_is_elementor_page( $post_id, ! empty( $_POST['_elementor_post_mode'] ) );
+		Plugin::$instance->documents->get( $post_id )->set_is_built_with_elementor( ! empty( $_POST['_elementor_post_mode'] ) );
 	}
 
 	/**
