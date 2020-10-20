@@ -21,7 +21,6 @@ use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
-use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -422,11 +421,6 @@ class Plugin {
 	public $logger;
 
 	/**
-	 * @var Dev_Tools
-	 */
-	private $dev_tools;
-
-	/**
 	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
@@ -712,7 +706,6 @@ class Plugin {
 		$this->register_autoloader();
 
 		$this->logger = Log_Manager::instance();
-		$this->dev_tools = Dev_Tools::instance();
 		$this->data_manager = Data_Manager::instance();
 
 		Maintenance::init();
