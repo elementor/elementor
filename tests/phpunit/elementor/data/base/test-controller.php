@@ -2,50 +2,31 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
 use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
-use \Elementor\Data\Base\Controller as ControllerBase;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\Format as EndpointFormatTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Processor as ProcessorTemplate;
 
-class Test_Controller extends Elementor_Test_Base {
-
-	/**
-	 * @var \Elementor\Data\Manager
-	 */
-	protected $manager;
-
-	public function setUp() {
-		parent::setUp();
-
-		$this->manager = Manager::instance();
-	}
-
-	public function tearDown() {
-		parent::tearDown();
-
-		$this->manager->kill_server();
-	}
-
+class Test_Controller extends Data_Test_Base {
 	public function test_create_simple() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
 		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
 		$rest_routes = $rest_index['routes'];
 
-		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_internal_endpoints();`.' );
-
 		foreach ( $controller->endpoints as $endpoint ) {
 			$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() ], $rest_routes, 'Validate `$this->register_endpoints();`.' );
 		}
+
+		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_internal_endpoints();`.' );
+		$this->assertCount( 1, $controller->endpoints_internal );
 	}
 
 	public function test_get_name() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 
 		$name = $controller->get_name();
 
@@ -53,19 +34,19 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	public function test_get_namespace() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 
 		$this->assertEquals( Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION, $controller->get_namespace() );
 	}
 
 	public function test_get_reset_base() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 
 		$this->assertEquals( Manager::REST_BASE . $controller->get_name(), $controller->get_rest_base() );
 	}
 
 	public function test_get_controller_route() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 
 		$this->assertEquals( $controller->get_namespace() . '/' . $controller->get_rest_base(), $controller->get_controller_route() );
 	}
@@ -156,13 +137,12 @@ class Test_Controller extends Elementor_Test_Base {
 		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
 		$endpoint_instance0 = $controller_instance->do_register_endpoint( EndpointTemplate::class );
 		$endpoint_instance1 = $controller_instance->do_register_endpoint( EndpointTemplate::class );
-		$endpoint_index_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\Index::class );
 
 		$endpoint_instance0->set_test_data( 'get_items', 'endpoint0_result');
 		$endpoint_instance1->set_test_data( 'get_items', 'endpoint1_result');
 
 		// Result should include both endpoints result.
-		$results = $controller_instance->get_items_recursive( [ $endpoint_index_instance ] );
+		$results = $controller_instance->get_items_recursive();
 		$count = 0;
 
 		foreach ( $results as $result ) {
@@ -172,11 +152,6 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	public function test_get_items_recursive_simulated() {
-		/**
-		 * TODO: Create Base Endpoint\Internal
-		 * TODO: Create Base Endpoint\Internal\Index
-		 */
-
 		$controller = $this->manager->register_controller_instance( new Mock\Recursive\Controller );
 		$this->manager->run_server(); // Ensure controller loaded.
 
@@ -197,7 +172,7 @@ class Test_Controller extends Elementor_Test_Base {
 		// Set admin.
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 		$controller->bypass_original_permission( false );
 
 		$methods = explode( ', ', \WP_REST_Server::ALLMETHODS );

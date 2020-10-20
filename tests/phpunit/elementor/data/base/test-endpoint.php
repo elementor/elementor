@@ -1,34 +1,14 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
-use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
 use Exception;
 
-class Test_Endpoint extends Elementor_Test_Base {
-
-	/**
-	 * @var \Elementor\Data\Manager
-	 */
-	protected $manager;
-
-	public function setUp() {
-		parent::setUp();
-
-		$this->manager = Manager::instance();
-	}
-
-	public function tearDown() {
-		parent::tearDown();
-
-		$this->manager->kill_server();
-	}
-
+class Test_Endpoint extends Data_Test_Base {
 	public function test_create_simple() {
-		$test_controller_instance = new ControllerSimple();
+		$test_controller_instance = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
 		// Validate `$this->>register()`.
@@ -42,7 +22,7 @@ class Test_Endpoint extends Elementor_Test_Base {
 	}
 
 	public function test_get_base_route() {
-		$controller_instance = new ControllerSimple();
+		$controller_instance = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
 		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
@@ -54,9 +34,9 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$this->manager->run_server();
 		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
 
-		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\Index::class );
+		$endpoint_instance = $controller_instance->do_register_endpoint( \Elementor\Data\Base\Endpoint\Internal\Index::class );
 
-		$this->assertEquals( '/' . $controller_instance->get_name() . '/' , $endpoint_instance->get_base_route() );
+		$this->assertEquals( '/' . $controller_instance->get_name(), $endpoint_instance->get_base_route() );
 	}
 
 	public function test_register() {
@@ -79,10 +59,13 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
 		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
 
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint( 'test-route/', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint::class );
+		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint( 'test-route', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint::class );
 		$sub_endpoint_instance->set_test_data( 'get_items', 'valid' );
 
-		$endpoint = $controller_instance->get_name() .  '/test-route/' . $sub_endpoint_instance->get_name();
+		$endpoint = $controller_instance->get_name()  . '/' .
+			$endpoint_instance->get_name() .
+            '/test-route/' .
+            $sub_endpoint_instance->get_name();
 
 		$data = $this->manager->run_endpoint( $endpoint  );
 
@@ -98,6 +81,67 @@ class Test_Endpoint extends Elementor_Test_Base {
 		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
 
 		$endpoint_instance->do_register_sub_endpoint( 'test-route/', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+	}
+
+	// TODO: test_register_sub_endpoint_validate_format
+
+	public function test_register_sub_endpoint_run_as_command() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$this->manager->register_controller_instance( $controller_instance );
+
+		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint( 'test-route', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint::class );
+		$sub_endpoint_instance->set_test_data( 'get_items', 'valid' );
+
+		$data = $this->manager->run( $sub_endpoint_instance->get_full_command() );
+
+		$this->assertEquals( $data, 'valid' );
+	}
+
+	public function test_register_sub_endpoint_with_sub_endpoint_parent() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$this->manager->register_controller_instance( $controller_instance );
+
+		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint( 'first-sub-route', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint::class );
+
+		$descendant_endpoint_instance = $sub_endpoint_instance->register_sub_endpoint( 'second-sub-route', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint::class );
+		$descendant_endpoint_instance->set_test_data( 'get_items', 'valid' );
+
+		$endpoint = $controller_instance->get_name() . '/' .
+		            $endpoint_instance->get_name() . '/' .
+		            'first-sub-route/' .
+		            $sub_endpoint_instance->get_name() . '/' .
+		            'second-sub-route/' .
+		            $descendant_endpoint_instance->get_name();
+
+		$data = $this->manager->run_endpoint( $endpoint  );
+
+		$this->assertEquals( $data, 'valid' );
+	}
+
+	public function test_register_sub_endpoint_with_sub_endpoint_parent_run_as_command() {
+		$this->manager->run_server();
+
+		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
+		$endpoint_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint( $controller_instance );
+
+		$this->manager->register_controller_instance( $controller_instance );
+
+		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint( 'first-sub-route', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint::class );
+
+		$descendant_endpoint_instance = $sub_endpoint_instance->register_sub_endpoint( 'first-sub-route/second-sub-route', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint::class );
+		$descendant_endpoint_instance->set_test_data( 'get_items', 'valid' );
+
+		$data = $this->manager->run( $descendant_endpoint_instance->get_full_command()  );
+
+		$this->assertEquals( $data, 'valid' );
 	}
 
 	public function test_base_callback() {
@@ -199,9 +243,6 @@ class Test_Endpoint extends Elementor_Test_Base {
 
 		$this->assertEquals( 'valid', $this->manager->run_endpoint( trim( $endpoint_instance->get_base_route(), '/' ) ) );
 	}
-
-	// TODO: Add test_get_permission_callback(), when get_permission_callback() function is completed.
-
 
 	public function test_create_item() {
 		$this->manager->run_server();

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Data\Base;
 
-// TODO: Add test.
+use Elementor\Data\Base\Endpoint\Internal;
 
 abstract class SubEndpoint extends Endpoint {
 
@@ -15,7 +15,8 @@ abstract class SubEndpoint extends Endpoint {
 	 */
 	protected $route = '';
 
-	public function __construct( $route, $parent_endpoint ) {
+	public function __construct( $parent_endpoint, $route = '' ) {
+		$this->route = $route;
 		$this->parent_endpoint = $parent_endpoint;
 
 		$this->route = $route;
@@ -33,23 +34,56 @@ abstract class SubEndpoint extends Endpoint {
 	}
 
 	public function get_base_route() {
-		return $this->controller->get_rest_base() . '/' . $this->route . '/' . $this->get_name();
+		$name = $this->get_name();
+		$parent = $this->get_parent();
+		$is_parent_sub_endpoint = $parent instanceof SubEndpoint;
+
+		$route = $this->route;
+
+		if ( $route ) {
+			$route .= '/';
+		}
+
+		// Parent sub endpoint
+		if ( $is_parent_sub_endpoint ) {
+			return $parent->get_base_route() . '/' . $route . $name;
+		}
+
+		// Parent internal sub internal endpoint.
+		if ( $this->controller instanceof SubController && $parent instanceof Internal\IndexSub ) {
+			return $parent->get_base_route() . '/' . $this->controller->get_route() . '/' . $name;
+		}
+
+		$parent_name = $parent->get_name();
+
+		// Parent internal index endpoint.
+		if ( $parent instanceof Internal && 'index' && $parent_name ) {
+			$parent_name = '';
+		}
+
+		if ( $parent_name ) {
+			$parent_name = $parent_name . '/';
+		}
+
+		// Parent endpoint
+		return $this->controller->get_rest_base() . '/' . $parent_name . $route . $name;
 	}
 
-	public function get_name_ancestry( $skip_first = true ) {
-		if ( $skip_first ) {
-			return '';
+	public function get_full_command() {
+		if ( $this->controller instanceof SubController ) {
+			return $this->controller->get_parent()->get_name() . '/' . $this->controller->get_name() . '/' . $this->get_name_ancestry();
 		}
 
-		$name = $this->parent_endpoint->get_name();
+		return $this->controller->get_name() . '/' . $this->get_name_ancestry();
+	}
 
-		// TODO: Instance of IndexEndpoint ...
-		if ( 'index' === $name ) {
-			$name = $this->parent_endpoint->controller->get_name();
-		}
+	public function get_name_ancestry() {
+		$name = $this->get_name();
 
 		if ( $this->parent_endpoint instanceof SubEndpoint ) {
-			$name = $this->parent_endpoint->get_name_ancestry( false ) . '/' . $name;
+			$name = $this->parent_endpoint->get_name_ancestry() . '/' . $name;
+		} else if ( ! $this->parent_endpoint instanceof Internal ) {
+			$name = $this->parent_endpoint->get_name() . '/' . $name;
 		}
 
 		return $name;

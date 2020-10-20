@@ -1,9 +1,13 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
 
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\MockBypassPermission;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\MockBypassRegister;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\MockNameType;
+
 class Controller extends \Elementor\Data\Base\Controller {
 
-	use BaseTrait;
+	use MockNameType, MockBypassPermission, MockBypassRegister;
 
 	public function __construct() {
 		parent::__construct();
@@ -17,21 +21,6 @@ class Controller extends \Elementor\Data\Base\Controller {
 
 	public function register_endpoints() {
 		// TODO: Implement register_endpoints() method.
-	}
-
-	public function get_permission_callback( $request ) {
-		if ( $this->bypass_permission_status ) {
-			return true;
-		}
-
-		return parent::get_permission_callback( $request );
-	}
-
-	protected function register() {
-		// Can be part of BaseTrait.
-		if ( ! $this->bypass_register_status ) {
-			parent::register();
-		}
 	}
 
 	public function do_register_internal_endpoints() {
@@ -54,9 +43,5 @@ class Controller extends \Elementor\Data\Base\Controller {
 
 	public function do_register_processor( $processor_class ) {
 		return $this->register_processor( $processor_class );
-	}
-
-	public function do_register() {
-		parent::register();
 	}
 }

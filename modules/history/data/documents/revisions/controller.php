@@ -21,7 +21,7 @@ class Controller extends SubController {
 	public function register_endpoints() {
 		// Using internal endpoint as 'base route' for 'data' endpoint.
 		// TODO: Try not use here sub-endpoint but endpoint.
-		$this->endpoints['revisions/index']->register_sub_endpoint(
+		$this->endpoints_internal['documents/revisions/index']->register_sub_endpoint(
 			'(?P<revision_id>[\w]+)',
 			Endpoints\Data::class
 		);
