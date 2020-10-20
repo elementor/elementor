@@ -16,6 +16,12 @@ abstract class Data_Test_Base extends Elementor_Test_Base {
 		$this->set_manager();
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+
+		$this->manager->kill_server();
+	}
+
 	public function set_manager( $manager = null ) {
 		if ( ! $manager ) {
 			$manager = Manager::instance();

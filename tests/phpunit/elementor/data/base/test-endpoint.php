@@ -1,22 +1,14 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
-use Elementor\Data\Manager;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
 use Exception;
 
 class Test_Endpoint extends Data_Test_Base {
-
-	public function tearDown() {
-		parent::tearDown();
-
-		$this->manager->kill_server();
-	}
-
 	public function test_create_simple() {
-		$test_controller_instance = new ControllerSimple();
+		$test_controller_instance = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
 		// Validate `$this->>register()`.
@@ -30,7 +22,7 @@ class Test_Endpoint extends Data_Test_Base {
 	}
 
 	public function test_get_base_route() {
-		$controller_instance = new ControllerSimple();
+		$controller_instance = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
 		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
@@ -133,8 +125,6 @@ class Test_Endpoint extends Data_Test_Base {
 
 		$this->assertEquals( $data, 'valid' );
 	}
-
-	// TODO: test_register_sub_endpoint_with_sub_endpoint_parent_validate_format
 
 	public function test_register_sub_endpoint_with_sub_endpoint_parent_run_as_command() {
 		$this->manager->run_server();

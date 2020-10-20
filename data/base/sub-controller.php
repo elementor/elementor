@@ -2,6 +2,7 @@
 
 namespace Elementor\Data\Base;
 
+use Elementor\Data\Base\Endpoint\Internal;
 use Elementor\Data\Manager;
 
 abstract class SubController extends Controller {
@@ -37,14 +38,18 @@ abstract class SubController extends Controller {
 		parent::__construct();
 	}
 
+	public function get_full_name() {
+		return $this->parent_controller->get_name() . '/' . $this->get_name();
+	}
+
 	public function get_rest_base() {
 		$route = $this->get_route();
 
 		if ( $route ) {
-			$route .= '/';
+			$route = '/' . $route;
 		}
 
-		return $this->parent_controller->get_rest_base() . '/' . $route . $this->get_name();
+		return $this->parent_controller->get_rest_base() . $route . '/' . $this->get_name();
 	}
 
 	/**
@@ -52,10 +57,27 @@ abstract class SubController extends Controller {
 	 */
 	abstract public function get_route();
 
+	public function get_parent() {
+		return $this->parent_controller;
+	}
 	/**
 	 * @return string
 	 */
 	public function get_parent_name() {
 		trigger_error( 'get_parent_name() or passing parent via constructor is required.', E_USER_ERROR );
+	}
+
+	public function register_endpoint_format( $command, $command_public, $endpoint_instance ) {
+		if ( $endpoint_instance instanceof Internal\IndexSub  ) {
+			$format = $this->parent_controller->get_name() . '/{id}/'. $this->get_name() . '/' . $endpoint_instance::get_format();
+
+			return Manager::instance()->register_endpoint_format( $command, $format );
+		}
+
+		parent::register_endpoint_format( $command, $command_public, $endpoint_instance );
+	}
+
+	protected function register_internal_endpoints() {
+		$this->register_endpoint( Internal\IndexSub::class );
 	}
 }

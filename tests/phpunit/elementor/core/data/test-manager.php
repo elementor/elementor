@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Data;
 use Elementor\Data\Base\Processor;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Data_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
 
 
@@ -60,7 +60,7 @@ class Test_Manager extends Data_Test_Base {
 	}
 
 	public function test_find_controller_instance_advance() {
-		$controller = new ControllerSimple(); // controller with endpoint.
+		$controller = new ControllerWithEndpoint(); // controller with endpoint.
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
@@ -233,7 +233,7 @@ class Test_Manager extends Data_Test_Base {
 	}
 
 	public function test_run_endpoint() {
-		$controller = new ControllerSimple(); // controller with endpoint.
+		$controller = new ControllerWithEndpoint(); // controller with endpoint.
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
@@ -250,7 +250,7 @@ class Test_Manager extends Data_Test_Base {
 	}
 
 	public function test_run() {
-		$controller = new ControllerSimple(); // controller with endpoint.
+		$controller = new ControllerWithEndpoint(); // controller with endpoint.
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
@@ -266,7 +266,7 @@ class Test_Manager extends Data_Test_Base {
 		$this->manager->run_server();
 
 		$this->assertEquals( [
-			'globals/index' => 'globals/index',
+			'globals/index' => 'globals/{id}',
 			'globals/colors' => 'globals/colors/{id}',
 			'globals/typography' => 'globals/typography/{id}',
 		], $this->manager->command_formats );
