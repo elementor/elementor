@@ -28,7 +28,7 @@ abstract class Endpoint {
 	 *
 	 * @var \Elementor\Data\Base\SubEndpoint[]
 	 */
-	private $sub_endpoints = [];
+	protected $sub_endpoints = [];
 
 	/**
 	 * Get format suffix.
@@ -50,6 +50,7 @@ abstract class Endpoint {
 	 * run `$this->>register()`.
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller
+	 * @param string $route
 	 *
 	 * @throws \Exception
 	 */
@@ -77,28 +78,34 @@ abstract class Endpoint {
 	 * @return string
 	 */
 	public function get_base_route() {
-		$endpoint_name = $this->get_name();
+		$endpoint_public_name = $this->get_command_public();
 
-		if ( $this instanceof Internal && 'index' === $endpoint_name ) {
-			$endpoint_name = '';
+		if ( $endpoint_public_name ) {
+			$endpoint_public_name = '/' . $endpoint_public_name;
 		}
 
-		if ( $endpoint_name ) {
-			$endpoint_name = '/' . $endpoint_name;
-		}
-
-		return '/' . $this->controller->get_rest_base() . $endpoint_name;
+		return '/' . $this->controller->get_rest_base() . $endpoint_public_name;
 	}
 
 	/**
-	 * Convert endpoint to assumed command.
+	 * Convert endpoint to command name ( without internal ).
 	 */
-	public function get_full_command() {
-		if ( $this->controller instanceof SubController ) {
-			return $this->controller->parent_controller->get_name() . '/' . $this->controller->get_name() . '/' . $this->get_name();
+	public function get_command_public() {
+		$endpoint_public_name = $this->get_name();
+
+		if ( $this instanceof Internal && 'index' === $endpoint_public_name ) {
+			$endpoint_public_name = '';
 		}
 
-		return $this->controller->get_name() . '/' . $this->get_name();
+		return $endpoint_public_name;
+	}
+
+
+	/**
+	 * Convert endpoint to full command name ( including internal ).
+	 */
+	public function get_full_command() {
+		return $this->controller->get_full_name() . '/' . $this->get_name();
 	}
 
 	/**
@@ -121,7 +128,7 @@ abstract class Endpoint {
 	 * @return \Elementor\Data\Base\SubEndpoint|false
 	 */
 	public function register_sub_endpoint( $route, $endpoint_class ) {
-		$endpoint_instance = new $endpoint_class( $route, $this );
+		$endpoint_instance = new $endpoint_class( $this, $route );
 
 		if ( ! ( $endpoint_instance instanceof SubEndpoint ) ) {
 			trigger_error( 'Invalid endpoint instance.' );
@@ -129,15 +136,13 @@ abstract class Endpoint {
 		}
 
 		$command = $endpoint_instance->get_full_command();
-		$format = $endpoint_instance->get_format_ancestry();
+		$format = $endpoint_instance::get_format();
 
 		$this->sub_endpoints[ $command ] = $endpoint_instance;
 
 		if ( ! $format ) {
 			$format = $endpoint_instance->get_base_route();
 		}
-
-		// TODO: Handle format for sub-endpoints.
 
 		Manager::instance()->register_endpoint_format( $command, $format );
 
@@ -297,23 +302,29 @@ abstract class Endpoint {
 	/**
 	 * Register item route.
 	 *
-	 * @param array $args
 	 * @param string $route
+	 * @param array $args
 	 * @param string $methods
 	 *
 	 * @throws \Exception
 	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
+		$custom_id = 'id';
+
+		if ( isset( $args['custom_id'] ) && $args['custom_id'] ) {
+			$custom_id = $args['custom_id'];
+
+			unset( $args['custom_id'] );
+		}
+
 		$args = array_merge( [
-			'id' => [
+			$custom_id => [
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
 			],
 		], $args );
 
-		if ( isset( $args['id'] ) && $args['id'] ) {
-			$route .= '(?P<id>[\w]+)/';
-		}
+		$route .= '(?P<' . $custom_id . '>[\w]+)/';
 
 		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request );

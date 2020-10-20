@@ -3,21 +3,15 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
 use Elementor\Data\Manager;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\Format as EndpointFormatTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Processor as ProcessorTemplate;
 
 class Test_Controller extends Data_Test_Base {
-	public function tearDown() {
-		parent::tearDown();
-
-		$this->manager->kill_server();
-	}
-
 	public function test_create_simple() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
 		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
@@ -32,27 +26,35 @@ class Test_Controller extends Data_Test_Base {
 	}
 
 	public function test_get_name() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 
 		$name = $controller->get_name();
 
 		$this->assertEquals( 'test-controller-' . $controller->random, $name );
 	}
 
+	public function test_get_full_name() {
+		$controller = new ControllerWithEndpoint();
+
+		$name = $controller->get_full_name();
+
+		$this->assertEquals( 'test-controller-' . $controller->random, $name );
+	}
+
 	public function test_get_namespace() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 
 		$this->assertEquals( Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION, $controller->get_namespace() );
 	}
 
 	public function test_get_reset_base() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 
 		$this->assertEquals( Manager::REST_BASE . $controller->get_name(), $controller->get_rest_base() );
 	}
 
 	public function test_get_controller_route() {
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 
 		$this->assertEquals( $controller->get_namespace() . '/' . $controller->get_rest_base(), $controller->get_controller_route() );
 	}
@@ -178,7 +180,7 @@ class Test_Controller extends Data_Test_Base {
 		// Set admin.
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 
-		$controller = new ControllerSimple();
+		$controller = new ControllerWithEndpoint();
 		$controller->bypass_original_permission( false );
 
 		$methods = explode( ', ', \WP_REST_Server::ALLMETHODS );

@@ -237,7 +237,7 @@ class Manager extends BaseModule {
 			$endpoint = $formatted;
 		}
 
-		// TODO: Test or delete.
+		// TODO: Test or delete - update method comment.
 		$endpoint = str_replace( '/index', '', $endpoint );
 
 		return $endpoint;
