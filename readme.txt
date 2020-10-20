@@ -218,6 +218,26 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.0.12 - 2020-10-20 =
+* Tweak: Added "Read More" link to major version upgrade notice
+* Tweak: Added System Info CLI command
+* Fix: Redundant padding in Social Icons widget ([#12833](https://github.com/elementor/elementor/issues/12833))
+* Fix: Editor role can't see "Edit with Elementor" button in top admin-bar ([#12175](https://github.com/elementor/elementor/issues/12175))
+* Fix: Dynamic content promotion is shown when self hosted option is selected in Video widget ([#11468](https://github.com/elementor/elementor/issues/11468))
+* Fix: 'description' is not supported in the color control ([#12747](https://github.com/elementor/elementor/issues/12747))
+* Fix: Some Shape Dividers overlap other elements since Chrome 85 ([#12393](https://github.com/elementor/elementor/issues/12393))
+* Fix: Image preview area disappears when 'label_block' is `false` in Media Control ([#11756](https://github.com/elementor/elementor/issues/11756))
+* Fix: Missing compatibility for Advanced Editor Tools (previously TinyMCE Advanced) ([#12768](https://github.com/elementor/elementor/issues/12768))
+* Fix: Different panel tab is shown when panel tab includes only sections with display conditions that are unmet ([#12658](https://github.com/elementor/elementor/issues/12658))
+* Fix: Default Generic Fonts are not printed along with a global value ([#12410](https://github.com/elementor/elementor/issues/12410))
+* Fix: Remove source map comment to prevent 404 console warning ([Topic](https://wordpress.org/support/topic/issue-with-picker-js-map))
+* Fix: Buttons are cropped when applying some hover animations to Social Icons widget
+* Fix: Custom Panel tab not working when added to Page Settings
+* Fix: Globals Dropdown popover is not aligned to the picker when panel is wide
+* Fix: Popups are missing from "Edit With Elementor" top admin-bar list
+* Fix: Global Color panel UI glitch on upgrade to v3.0.x when user has RGBA values
+* Fix: Can't upload SVG files to Favicon control in Site Settings
+
 = 3.0.11 - 2020-09-30 =
 * Tweak: Added "Loading" state for Global controls to reflect data loading state
 * Fix: Inaccurate height in Divider widget ([#12569](https://github.com/elementor/elementor/issues/12569), [#12630](https://github.com/elementor/elementor/issues/12630))
