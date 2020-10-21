@@ -61,8 +61,10 @@ abstract class Controller extends WP_REST_Controller {
 	abstract public function get_name();
 
 	/**
-	 *
 	 * Get full controller name.
+	 *
+	 * The 'main' job of this method, is to be extend, for example sub-controller will return it's parent name,
+	 * including his self.
 	 *
 	 * @return string
 	 */
