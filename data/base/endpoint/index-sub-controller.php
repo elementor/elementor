@@ -2,12 +2,17 @@
 namespace Elementor\Data\Base\Endpoint;
 
 class IndexSubController extends Index {
-	public static function get_format() {
-		return '{sub_id}';
-	}
+	/***
+	 * @var \Elementor\Data\Base\SubController
+	 */
+	public $controller;
 
 	public function get_name() {
 		return 'index';
+	}
+
+	public function get_format() {
+		return $this->controller->get_parent()->get_name() . '/{id}/' . $this->controller->get_name() . '/{sub_id}';
 	}
 
 	public function get_base_route() {

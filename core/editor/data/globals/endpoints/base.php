@@ -6,10 +6,6 @@ use Elementor\Plugin;
 use Elementor\Core\Utils\Exceptions;
 
 abstract class Base extends Endpoint {
-	public static function get_format() {
-		return '{id}';
-	}
-
 	protected function register() {
 		parent::register();
 

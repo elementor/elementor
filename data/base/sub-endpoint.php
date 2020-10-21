@@ -20,6 +20,10 @@ abstract class SubEndpoint extends Endpoint {
 		parent::__construct( $this->parent_endpoint->controller );
 	}
 
+	public function get_format() {
+		return $this->get_base_route();
+	}
+
 	/**
 	 * Get parent route.
 	 *

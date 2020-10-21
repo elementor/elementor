@@ -2,12 +2,12 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Standards\OnlySubEndpoint;
 
 class BetaSubEndpoint extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint {
-	public static function get_format() {
-		return 'alpha/{id}/beta/{sub_id}';
-	}
-
 	public function get_name() {
 		return 'beta';
+	}
+
+	public function get_format() {
+		return 'alpha/{id}/beta/{sub_id}';
 	}
 
 	public function get_items( $request ) {

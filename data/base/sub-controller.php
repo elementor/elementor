@@ -67,16 +67,6 @@ abstract class SubController extends Controller {
 		trigger_error( 'get_parent_name() or passing parent via constructor is required.', E_USER_ERROR );
 	}
 
-	protected function register_endpoint_format( $command, $endpoint_instance ) {
-		if ( $endpoint_instance instanceof Endpoint\IndexSubController ) {
-			$format = $this->parent_controller->get_name() . '/{id}/' . $this->get_name() . '/' . $endpoint_instance::get_format();
-
-			return Manager::instance()->register_endpoint_format( $command, $format );
-		}
-
-		parent::register_endpoint_format( $command, $endpoint_instance );
-	}
-
 	protected function register_index_endpoint() {
 		$this->register_endpoint( Endpoint\IndexSubController::class );
 	}

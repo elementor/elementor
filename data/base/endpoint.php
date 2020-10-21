@@ -31,20 +31,6 @@ abstract class Endpoint {
 	protected $sub_endpoints = [];
 
 	/**
-	 * Get format suffix.
-	 *
-	 * Examples:
-	 * '{one_parameter_name}'.
-	 * '{one_parameter_name}/{two_parameter_name}/'.
-	 * '{one_parameter_name}/whatever/anything/{two_parameter_name}/' and so on for each endpoint or sub-endpoint.
-	 * @note get_format() is used only in `Data\Manager::run()`.
-	 * @return string
-	 */
-	public static function get_format() {
-		return '';
-	}
-
-	/**
 	 * Endpoint constructor.
 	 *
 	 * run `$this->>register()`.
@@ -68,6 +54,20 @@ abstract class Endpoint {
 	 * @return string
 	 */
 	abstract public function get_name();
+
+	/**
+	 * Get format suffix.
+	 *
+	 * Examples:
+	 * '{one_parameter_name}'.
+	 * '{one_parameter_name}/{two_parameter_name}/'.
+	 * '{one_parameter_name}/whatever/anything/{two_parameter_name}/' and so on for each endpoint or sub-endpoint.
+	 * @note get_format() is used only in `Data\Manager::run()`.
+	 * @return string
+	 */
+	public function get_format() {
+		return '';
+	}
 
 	/**
 	 * Get base route.
@@ -141,13 +141,9 @@ abstract class Endpoint {
 		}
 
 		$command = $endpoint_instance->get_full_command();
-		$format = $endpoint_instance::get_format();
+		$format = $endpoint_instance->get_format();
 
 		$this->sub_endpoints[ $command ] = $endpoint_instance;
-
-		if ( ! $format ) {
-			$format = $endpoint_instance->get_base_route();
-		}
 
 		Manager::instance()->register_endpoint_format( $command, $format );
 
